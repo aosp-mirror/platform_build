@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d6b6b00_7b19dca1",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 995,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2016-12-02T02:00:40Z",
+      "side": 1,
+      "message": "PS2 also corrected the comment here. full OTA has a different order of the three stages.",
+      "range": {
+        "startLine": 995,
+        "startChar": 12,
+        "endLine": 995,
+        "endChar": 15
+      },
+      "revId": "d42e97ebb45fdc5a30799a3f37e482948d318010",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
