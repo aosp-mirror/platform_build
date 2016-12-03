@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0dd8cb6b_2234b498",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2016-12-03T04:54:42Z",
+      "side": 0,
+      "message": "will this break the neverallow CTS tests?",
+      "revId": "c316783843f718839b17dd53085af82c2983e789",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
