@@ -437,7 +437,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     prop_dict["original_partition_size"] = str(partition_size)
 
   if fs_type.startswith("ext"):
-    build_command = ["mkuserimg.sh"]
+    build_command = [prop_dict["ext_mkuserimg"]]
     if "extfs_sparse_flag" in prop_dict:
       build_command.append(prop_dict["extfs_sparse_flag"])
       run_fsck = True
@@ -610,6 +610,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "squashfs_sparse_flag",
       "selinux_fc",
       "skip_fsck",
+      "ext_mkuserimg",
       "verity",
       "verity_key",
       "verity_signer_cmd",
