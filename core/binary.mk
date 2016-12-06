@@ -835,7 +835,6 @@ endif
 ###########################################################
 proto_sources := $(filter %.proto,$(my_src_files))
 ifneq ($(proto_sources),)
-my_soong_problems += proto
 proto_gen_dir := $(generated_sources_dir)/proto
 proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
 
@@ -974,7 +973,6 @@ endif  # $(dbus_definitions) non-empty
 aidl_src := $(strip $(filter %.aidl,$(my_src_files)))
 aidl_gen_cpp :=
 ifneq ($(aidl_src),)
-my_soong_problems += aidl
 
 # Use the intermediates directory to avoid writing our own .cpp -> .o rules.
 aidl_gen_cpp_root := $(intermediates)/aidl-generated/src
@@ -1286,7 +1284,6 @@ objcpp_objects := $(addprefix $(intermediates)/,$(objcpp_sources:.mm=.o))
 $(call track-src-file-obj,$(objcpp_sources),$(objcpp_objects))
 
 ifneq ($(strip $(objcpp_objects)),)
-my_soong_problems += objc
 $(objcpp_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.mm \
     $(my_additional_dependencies)
 	$(transform-$(PRIVATE_HOST)mm-to-o)
