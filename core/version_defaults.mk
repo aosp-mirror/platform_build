@@ -81,7 +81,7 @@ ifeq "" "$(PLATFORM_JACK_MIN_SDK_VERSION)"
   # PLATFORM_SDK_VERSION. During development, this number may be incremented
   # before PLATFORM_SDK_VERSION if the plateform starts to add new java
   # language supports.
-  PLATFORM_JACK_MIN_SDK_VERSION := 25
+  PLATFORM_JACK_MIN_SDK_VERSION := o-b1
 endif
 
 ifeq "" "$(PLATFORM_VERSION_CODENAME)"
