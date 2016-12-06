@@ -551,7 +551,6 @@ BISON_DATA := $(wildcard external/bison/data/* external/bison/data/*/*)
 YASM := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/yasm/yasm
 
 DOXYGEN:= doxygen
-AIDL_CPP := $(HOST_OUT_EXECUTABLES)/aidl-cpp$(HOST_EXECUTABLE_SUFFIX)
 ifeq ($(HOST_OS),linux)
 BREAKPAD_DUMP_SYMS := $(HOST_OUT_EXECUTABLES)/dump_syms
 else
