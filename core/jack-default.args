@@ -4,3 +4,4 @@
 --sanity-checks off
 -D jack.reporter.level.file=error=--,warning=-
 --verbose error
+-D jack.jayce.cache=false
