@@ -59,6 +59,8 @@ my_shared_library_path := $($(my_2nd_arch_prefix)TARGET_OUT$(partition_tag)_SHAR
 $(LOCAL_INSTALLED_MODULE) : $(addprefix $(my_shared_library_path)/, $(my_jni_filenames))
 
 # Create symlink in the app specific lib path
+# Skip creating this symlink when running the second part of a target sanitization build.
+ifndef SANITIZE_TARGET
 ifdef LOCAL_POST_INSTALL_CMD
 # Add a shell command separator
 LOCAL_POST_INSTALL_CMD += ;
@@ -70,6 +72,11 @@ LOCAL_POST_INSTALL_CMD += \
   mkdir -p $(my_app_lib_path) \
   $(foreach lib, $(my_jni_filenames), ;ln -sf $(my_symlink_target_dir)/$(lib) $(my_app_lib_path)/$(lib))
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
+else
+ifdef LOCAL_POST_INSTALL_CMD
+$(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
+endif
+endif
 
 # Clear jni_shared_libraries to not embed it into the apk.
 my_jni_shared_libraries :=
