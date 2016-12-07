@@ -90,6 +90,7 @@ $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_i
 	$(hide) echo "mount_point=$(PRIVATE_MOUNT_POINT)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt
 	$(hide) echo "fs_type=$(PRIVATE_FILE_SYSTEM_TYPE)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt
 	$(hide) echo "partition_size=$(PRIVATE_PARTITION_SIZE)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt
+	$(hide) echo "ext_mkuserimg=$(MKEXTUSERIMG)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt
 	$(if $(PRIVATE_SELINUX),$(hide) echo "selinux_fc=$(SELINUX_FC)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt)
 	$(if $(PRIVATE_SUPPORT_VERITY),\
 	  $(hide) echo "verity=$(PRIVATE_SUPPORT_VERITY)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt;\
