@@ -37,6 +37,7 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "DevicePrefer32BitExecutables": $(if $(filter true,$(TARGET_PREFER_32_BIT_EXECUTABLES)),true,false),'; \
 	echo '    "UseGoma": $(if $(filter-out false,$(USE_GOMA)),true,false),'; \
 	echo '    "Debuggable": $(if $(filter userdebug eng,$(TARGET_BUILD_VARIANT)),true,false),'; \
+	echo '    "Eng": $(if $(filter eng,$(TARGET_BUILD_VARIANT)),true,false),'; \
 	echo '    "VendorPath": "$(TARGET_COPY_OUT_VENDOR)",'; \
 	echo ''; \
 	echo '    "ClangTidy": $(if $(filter 1 true,$(WITH_TIDY)),true,false),'; \
