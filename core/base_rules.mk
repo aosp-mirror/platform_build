@@ -553,16 +553,26 @@ endif
 endif
 ifdef LOCAL_IS_HOST_MODULE
 h_or_t := host
+ifeq ($(my_host_cross),true)
+h_or_hc_or_t := host-cross
 else
+h_or_hc_or_t := host
+endif
+else
+h_or_hc_or_t := target
 h_or_t := target
 endif
+
 
 ifdef j_or_n
 $(j_or_n) $(h_or_t) $(j_or_n)-$(h_or_t) : $(my_checked_module)
 ifneq (,$(filter $(my_module_tags),tests))
 $(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(my_checked_module)
 endif
-$(LOCAL_MODULE)-$(h_or_t) : $(my_all_targets)
+$(LOCAL_MODULE)-$(h_or_hc_or_t) : $(my_all_targets)
+ifeq ($(j_or_n),native)
+$(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix) : $(my_all_targets)
+endif
 endif
 
 ###########################################################
