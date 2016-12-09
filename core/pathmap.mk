@@ -126,26 +126,27 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v14/preference \
         v17/preference-leanback \
         documents-archive \
-        customtabs
+        customtabs \
+        exifinterface
 
 #
 # A list of all source roots under frameworks/multidex.
 #
 FRAMEWORKS_MULTIDEX_SUBDIRS := \
-        multidex/library/src \
-        multidex/instrumentation/src
+    multidex/library/src \
+    multidex/instrumentation/src
 
 #
 # A version of FRAMEWORKS_SUPPORT_SUBDIRS that is expanded to full paths from
 # the root of the tree.
 #
 FRAMEWORKS_SUPPORT_JAVA_SRC_DIRS := \
-	$(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS)) \
-	$(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS)) \
-        frameworks/support/graphics/drawable/animated \
-        frameworks/support/graphics/drawable/static \
-	frameworks/support/v7/appcompat/src \
-	frameworks/support/v7/recyclerview/src
+    $(addprefix frameworks/support/,$(FRAMEWORKS_SUPPORT_SUBDIRS)) \
+    $(addprefix frameworks/,$(FRAMEWORKS_MULTIDEX_SUBDIRS)) \
+    frameworks/support/graphics/drawable/animated \
+    frameworks/support/graphics/drawable/static \
+    frameworks/support/v7/appcompat/src \
+    frameworks/support/v7/recyclerview/src
 
 #
 # A list of support library modules.
@@ -164,14 +165,14 @@ FRAMEWORKS_SUPPORT_JAVA_LIBRARIES := \
 # A list of all documented source roots under frameworks/data-binding.
 #
 FRAMEWORKS_DATA_BINDING_SUBDIRS := \
-        baseLibrary/src/main \
-        extensions/library/src/main \
-        extensions/library/src/doc
+    baseLibrary/src/main \
+    extensions/library/src/main \
+    extensions/library/src/doc
 
 #
 # A version of FRAMEWORKS_DATA_BINDING_SUBDIRS that is expanded to full paths from
 # the root of the tree.
 #
 FRAMEWORKS_DATA_BINDING_JAVA_SRC_DIRS := \
-	$(addprefix frameworks/data-binding/,$(FRAMEWORKS_DATA_BINDING_SUBDIRS))
+    $(addprefix frameworks/data-binding/,$(FRAMEWORKS_DATA_BINDING_SUBDIRS))
 
