@@ -81,15 +81,18 @@ LOCAL_SHARED_LIBRARIES := libcutils
 LOCAL_CFLAGS := -Werror -Wno-error=\#warnings
 
 ifneq ($(TARGET_FS_CONFIG_GEN),)
+system_android_filesystem_config := system/core/include/private/android_filesystem_config.h
 gen := $(local-generated-sources-dir)/$(ANDROID_FS_CONFIG_H)
 $(gen): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
 $(gen): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(gen): PRIVATE_CUSTOM_TOOL = $(PRIVATE_LOCAL_PATH)/fs_config_generator.py fsconfig $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
-$(gen): $(TARGET_FS_CONFIG_GEN) $(LOCAL_PATH)/fs_config_generator.py
+$(gen): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
+$(gen): PRIVATE_CUSTOM_TOOL = $(PRIVATE_LOCAL_PATH)/fs_config_generator.py fsconfig --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
+$(gen): $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(LOCAL_PATH)/fs_config_generator.py
 	$(transform-generated-source)
 
 LOCAL_GENERATED_SOURCES := $(gen)
 my_fs_config_h := $(gen)
+system_android_filesystem_config :=
 gen :=
 endif
 

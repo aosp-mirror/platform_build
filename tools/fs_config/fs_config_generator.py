@@ -66,6 +66,27 @@ class generator(object):  # pylint: disable=invalid-name
         return generator._generators
 
 
+class Utils(object):
+    """Various assorted static utilities."""
+
+    @staticmethod
+    def in_any_range(value, ranges):
+        """Tests if a value is in a list of given closed range tuples.
+
+        A range tuple is a closed range. That means it's inclusive of its
+        start and ending values.
+
+        Args:
+            value (int): The value to test.
+            range [(int, int)]: The closed range list to test value within.
+
+        Returns:
+            True if value is within the closed range, false otherwise.
+        """
+
+        return any(lower <= value <= upper for (lower, upper) in ranges)
+
+
 class AID(object):
     """This class represents an Android ID or an AID.
 
@@ -124,6 +145,294 @@ class FSConfig(object):
         self.filename = filename
 
 
+class AIDHeaderParser(object):
+    """Parses an android_filesystem_config.h file.
+
+    Parses a C header file and extracts lines starting with #define AID_<name>
+    It provides some basic sanity checks. The information extracted from this
+    file can later be used to sanity check other things (like oem ranges) as
+    well as generating a mapping of names to uids. It was primarily designed to
+    parse the private/android_filesystem_config.h, but any C header should
+    work.
+    """
+
+    _SKIPWORDS = ['UNUSED']
+    _AID_KW = 'AID_'
+    _AID_DEFINE = re.compile(r'\s*#define\s+%s.*' % _AID_KW)
+    _OEM_START_KW = 'START'
+    _OEM_END_KW = 'END'
+    _OEM_RANGE = re.compile('AID_OEM_RESERVED_[0-9]*_{0,1}(%s|%s)' %
+                            (_OEM_START_KW, _OEM_END_KW))
+
+    # Some of the AIDS like AID_MEDIA_EX had names like mediaex
+    # list a map of things to fixup until we can correct these
+    # at a later date.
+    _FIXUPS = {
+        'media_drm': 'mediadrm',
+        'media_ex': 'mediaex',
+        'media_codec': 'mediacodec'
+    }
+
+    def __init__(self, aid_header):
+        """
+        Args:
+            aid_header (str): file name for the header
+                file containing AID entries.
+        """
+        self._aid_header = aid_header
+        self._aid_name_to_value = {}
+        self._aid_value_to_name = {}
+        self._oem_ranges = {}
+
+        with open(aid_header) as open_file:
+            self._parse(open_file)
+
+        try:
+            self._process_and_check()
+        except ValueError as exception:
+            sys.exit('Error processing parsed data: "%s"' % (str(exception)))
+
+    def _parse(self, aid_file):
+        """Parses an AID header file. Internal use only.
+
+        Args:
+            aid_file (file): The open AID header file to parse.
+        """
+
+        for lineno, line in enumerate(aid_file):
+            def error_message(msg):
+                """Creates an error message with the current parsing state."""
+                return 'Error "{}" in file: "{}" on line: {}'.format(
+                    msg, self._aid_header, str(lineno))
+
+            if AIDHeaderParser._AID_DEFINE.match(line):
+                chunks = line.split()
+
+                if any(x in chunks[1] for x in AIDHeaderParser._SKIPWORDS):
+                    continue
+
+                identifier = chunks[1]
+                value = chunks[2]
+
+                try:
+                    if AIDHeaderParser._is_oem_range(identifier):
+                        self._handle_oem_range(identifier, value)
+                    else:
+                        self._handle_aid(identifier, value)
+                except ValueError as exception:
+                    sys.exit(error_message(
+                        '{} for "{}"'.format(exception, identifier)))
+
+    def _handle_aid(self, identifier, value):
+        """Handle an AID C #define.
+
+        Handles an AID, sanity checking, generating the friendly name and
+        adding it to the internal maps. Internal use only.
+
+        Args:
+            identifier (str): The name of the #define identifier. ie AID_FOO.
+            value (str): The value associated with the identifier.
+
+        Raises:
+            ValueError: With message set to indicate the error.
+        """
+
+        # friendly name
+        name = AIDHeaderParser._convert_friendly(identifier)
+
+        # duplicate name
+        if name in self._aid_name_to_value:
+            raise ValueError('Duplicate aid "%s"' % identifier)
+
+        if value in self._aid_value_to_name:
+            raise ValueError('Duplicate aid value "%u" for %s' % value,
+                             identifier)
+
+        self._aid_name_to_value[name] = AID(identifier, value, self._aid_header)
+        self._aid_value_to_name[value] = name
+
+    def _handle_oem_range(self, identifier, value):
+        """Handle an OEM range C #define.
+
+        When encountering special AID defines, notably for the OEM ranges
+        this method handles sanity checking and adding them to the internal
+        maps. For internal use only.
+
+        Args:
+            identifier (str): The name of the #define identifier.
+                ie AID_OEM_RESERVED_START/END.
+            value (str): The value associated with the identifier.
+
+        Raises:
+            ValueError: With message set to indicate the error.
+        """
+
+        try:
+            int_value = int(value, 0)
+        except ValueError:
+            raise ValueError(
+                'Could not convert "%s" to integer value, got: "%s"' %
+                (identifier, value))
+
+        # convert AID_OEM_RESERVED_START or AID_OEM_RESERVED_<num>_START
+        # to AID_OEM_RESERVED or AID_OEM_RESERVED_<num>
+        is_start = identifier.endswith(AIDHeaderParser._OEM_START_KW)
+
+        if is_start:
+            tostrip = len(AIDHeaderParser._OEM_START_KW)
+        else:
+            tostrip = len(AIDHeaderParser._OEM_END_KW)
+
+        # ending _
+        tostrip = tostrip + 1
+
+        strip = identifier[:-tostrip]
+        if strip not in self._oem_ranges:
+            self._oem_ranges[strip] = []
+
+        if len(self._oem_ranges[strip]) > 2:
+            raise ValueError('Too many same OEM Ranges "%s"' % identifier)
+
+        if len(self._oem_ranges[strip]) == 1:
+            tmp = self._oem_ranges[strip][0]
+
+            if tmp == int_value:
+                raise ValueError('START and END values equal %u' % int_value)
+            elif is_start and tmp < int_value:
+                raise ValueError('END value %u less than START value %u' %
+                                 (tmp, int_value))
+            elif not is_start and tmp > int_value:
+                raise ValueError('END value %u less than START value %u' %
+                                 (int_value, tmp))
+
+        # Add START values to the head of the list and END values at the end.
+        # Thus, the list is ordered with index 0 as START and index 1 as END.
+        if is_start:
+            self._oem_ranges[strip].insert(0, int_value)
+        else:
+            self._oem_ranges[strip].append(int_value)
+
+    def _process_and_check(self):
+        """Process, check and populate internal data structures.
+
+        After parsing and generating the internal data structures, this method
+        is responsible for sanity checking ALL of the acquired data.
+
+        Raises:
+            ValueError: With the message set to indicate the specific error.
+        """
+
+        # tuplefy the lists since range() does not like them mutable.
+        self._oem_ranges = [
+            AIDHeaderParser._convert_lst_to_tup(k, v)
+            for k, v in self._oem_ranges.iteritems()
+        ]
+
+        # Check for overlapping ranges
+        for i, range1 in enumerate(self._oem_ranges):
+            for range2 in self._oem_ranges[i + 1:]:
+                if AIDHeaderParser._is_overlap(range1, range2):
+                    raise ValueError("Overlapping OEM Ranges found %s and %s" %
+                                     (str(range1), str(range2)))
+
+        # No core AIDs should be within any oem range.
+        for aid in self._aid_value_to_name:
+
+            if Utils.in_any_range(aid, self._oem_ranges):
+                name = self._aid_value_to_name[aid]
+                raise ValueError(
+                    'AID "%s" value: %u within reserved OEM Range: "%s"' %
+                    (name, aid, str(self._oem_ranges)))
+
+    @property
+    def oem_ranges(self):
+        """Retrieves the OEM closed ranges as a list of tuples.
+
+        Returns:
+            A list of closed range tuples: [ (0, 42), (50, 105) ... ]
+        """
+        return self._oem_ranges
+
+    @property
+    def aids(self):
+        """Retrieves the list of found AIDs.
+
+        Returns:
+            A list of AID() objects.
+        """
+        return self._aid_name_to_value.values()
+
+    @staticmethod
+    def _convert_lst_to_tup(name, lst):
+        """Converts a mutable list to a non-mutable tuple.
+
+        Used ONLY for ranges and thus enforces a length of 2.
+
+        Args:
+            lst (List): list that should be "tuplefied".
+
+        Raises:
+            ValueError if lst is not a list or len is not 2.
+
+        Returns:
+            Tuple(lst)
+        """
+        if not lst or len(lst) != 2:
+            raise ValueError('Mismatched range for "%s"' % name)
+
+        return tuple(lst)
+
+    @staticmethod
+    def _convert_friendly(identifier):
+        """
+        Translate AID_FOO_BAR to foo_bar (ie name)
+
+        Args:
+            identifier (str): The name of the #define.
+
+        Returns:
+            The friendly name as a str.
+        """
+
+        name = identifier[len(AIDHeaderParser._AID_KW):].lower()
+
+        if name in AIDHeaderParser._FIXUPS:
+            return AIDHeaderParser._FIXUPS[name]
+
+        return name
+
+    @staticmethod
+    def _is_oem_range(aid):
+        """Detects if a given aid is within the reserved OEM range.
+
+        Args:
+            aid (int): The aid to test
+
+        Returns:
+            True if it is within the range, False otherwise.
+        """
+
+        return AIDHeaderParser._OEM_RANGE.match(aid)
+
+    @staticmethod
+    def _is_overlap(range_a, range_b):
+        """Calculates the overlap of two range tuples.
+
+        A range tuple is a closed range. A closed range includes its endpoints.
+        Note that python tuples use () notation which collides with the
+        mathematical notation for open ranges.
+
+        Args:
+            range_a: The first tuple closed range eg (0, 5).
+            range_b: The second tuple closed range eg (3, 7).
+
+        Returns:
+            True if they overlap, False otherwise.
+        """
+
+        return max(range_a[0], range_b[0]) <= min(range_a[1], range_b[1])
+
+
 class FSConfigFileParser(object):
     """Parses a config.fs ini format file.
 
@@ -131,19 +440,15 @@ class FSConfigFileParser(object):
     It collects and checks all the data in these files and makes it available
     for consumption post processed.
     """
-    # from system/core/include/private/android_filesystem_config.h
-    _AID_OEM_RESERVED_RANGES = [
-        (2900, 2999),
-        (5000, 5999),
-    ]
 
     _AID_MATCH = re.compile('AID_[a-zA-Z]+')
 
-    def __init__(self, config_files):
+    def __init__(self, config_files, oem_ranges):
         """
         Args:
             config_files ([str]): The list of config.fs files to parse.
                 Note the filename is not important.
+            oem_ranges ([(),()]): range tuples indicating reserved OEM ranges.
         """
 
         self._files = []
@@ -153,6 +458,8 @@ class FSConfigFileParser(object):
         self._seen_paths = {}
         # (name to file, value to aid)
         self._seen_aids = ({}, {})
+
+        self._oem_ranges = oem_ranges
 
         self._config_files = config_files
 
@@ -242,13 +549,10 @@ class FSConfigFileParser(object):
                 error_message('Invalid "value", not aid number, got: \"%s\"' %
                               value))
 
-        # Values must be within OEM range.
-        if not any(lower <= int(aid.value, 0) <= upper
-                   for (lower, upper
-                       ) in FSConfigFileParser._AID_OEM_RESERVED_RANGES):
+        # Values must be within OEM range
+        if not Utils.in_any_range(int(aid.value, 0), self._oem_ranges):
             emsg = '"value" not in valid range %s, got: %s'
-            emsg = emsg % (str(FSConfigFileParser._AID_OEM_RESERVED_RANGES),
-                           value)
+            emsg = emsg % (str(self._oem_ranges), value)
             sys.exit(error_message(emsg))
 
         # use the normalized int value in the dict and detect
@@ -539,9 +843,18 @@ class FSConfigGen(BaseGenerator):
         opt_group.add_argument(
             'fsconfig', nargs='+', help='The list of fsconfig files to parse')
 
+        opt_group.add_argument(
+            '--aid-header',
+            required=True,
+            help='An android_filesystem_config.h file'
+            ' to parse AIDs and OEM Ranges from')
+
     def __call__(self, args):
 
-        parser = FSConfigFileParser(args['fsconfig'])
+        hdr = AIDHeaderParser(args['aid_header'])
+        oem_ranges = hdr.oem_ranges
+
+        parser = FSConfigFileParser(args['fsconfig'], oem_ranges)
         FSConfigGen._generate(parser.files, parser.dirs, parser.aids)
 
     @staticmethod
