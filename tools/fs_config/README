@@ -50,12 +50,12 @@ mode:
   prefixed with a 0, else mode is used as is.
 
 user:
-  The exact, C define for a valid AID. Note custom AIDs can be defined in the
+  Either the C define for a valid AID or the friendly name. For instance both
+  AID_RADIO and radio are acceptable. Note custom AIDs can be defined in the
   AID section documented below.
 
 group:
-  The exact, C define for a valid AID. Note custom AIDs can be defined in the
-  AID section documented below.
+  Same as user.
 
 caps:
   The name as declared in
