@@ -33,7 +33,7 @@ ifdef notice_file
 # compliance.
 # Includes the leading slash
 ifdef LOCAL_INSTALLED_MODULE
-  module_installed_filename := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
+  module_installed_filename := $(patsubst $(PRODUCT_OUT)/%,%,$(LOCAL_INSTALLED_MODULE))
 else
   # This module isn't installable
   ifeq ($(LOCAL_MODULE_CLASS),STATIC_LIBRARIES)
@@ -41,7 +41,7 @@ else
     # We can't use xxx_OUT_STATIC_LIBRARIES because it points into
     # device-obj or host-obj.
     module_installed_filename := \
-        $(patsubst $(PRODUCT_OUT)%,%,$($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_SHARED_LIBRARIES))/$(notdir $(LOCAL_BUILT_MODULE))
+        $(patsubst $(PRODUCT_OUT)/%,%,$($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_SHARED_LIBRARIES))/$(notdir $(LOCAL_BUILT_MODULE))
   else
     ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
       # Stick the static java libraries with the regular java libraries.
@@ -53,7 +53,7 @@ else
         module_leaf := $(LOCAL_MODULE).jar
       endif
       module_installed_filename := \
-          $(patsubst $(PRODUCT_OUT)%,%,$($(my_prefix)OUT_JAVA_LIBRARIES))/$(module_leaf)
+          $(patsubst $(PRODUCT_OUT)/%,%,$($(my_prefix)OUT_JAVA_LIBRARIES))/$(module_leaf)
     else
       $(error Cannot determine where to install NOTICE file for $(LOCAL_MODULE))
     endif # JAVA_LIBRARIES
@@ -61,8 +61,8 @@ else
 endif
 
 # In case it's actually a host file
-module_installed_filename := $(patsubst $(HOST_OUT)%,%,$(module_installed_filename))
-module_installed_filename := $(patsubst $(HOST_CROSS_OUT)%,%,$(module_installed_filename))
+module_installed_filename := $(patsubst $(HOST_OUT)/%,%,$(module_installed_filename))
+module_installed_filename := $(patsubst $(HOST_CROSS_OUT)/%,%,$(module_installed_filename))
 
 installed_notice_file := $($(my_prefix)OUT_NOTICE_FILES)/src/$(module_installed_filename).txt
 
