@@ -124,3 +124,19 @@ For OEMs wishing to use the define AIDs in their native code, one can access the
 file like so:
   1. In your C code just #include "generated_oem_aid.h" and start using the declared identifiers.
   2. In your Makefile add this static library like so: LOCAL_STATIC_LIBRARIES := liboemaids
+
+Unit Tests:
+
+From within the fs_config directory, unit tests can be executed like so:
+$ python -m unittest test_fs_config_generator.Tests
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.004s
+
+OK
+
+One could also use nose if they would like:
+$ nose2
+
+To add new tests, simply add a test_<xxx> method to the test class. It will automatically
+get picked up and added to the test suite.
