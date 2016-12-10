@@ -87,6 +87,11 @@ PRODUCT_PACKAGES += \
     sepolicy \
     service_contexts
 
+# AID Generation for
+# <pwd.h> and friends.
+PRODUCT_PACKAGES += \
+    passwd
+
 # Ensure that this property is always defined so that bionic_systrace.cpp
 # can rely on it being initially set by init.
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
