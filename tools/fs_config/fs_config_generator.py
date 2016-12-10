@@ -444,7 +444,19 @@ class FSConfigFileParser(object):
     for consumption post processed.
     """
 
-    _AID_MATCH = re.compile('AID_[a-zA-Z]+')
+    # These _AID vars work together to ensure that an AID section name
+    # cannot contain invalid characters for a C define or a passwd/group file.
+    # Since _AID_PREFIX is within the set of _AID_MATCH the error logic only
+    # checks end, if you change this, you may have to update the error
+    # detection code.
+    _AID_PREFIX = 'AID_'
+    _AID_MATCH = re.compile('%s[A-Z0-9_]+' % _AID_PREFIX)
+    _AID_ERR_MSG = 'Expecting upper case, a number or underscore'
+
+    # list of handler to required options, used to identify the
+    # parsing section
+    _SECTIONS = [('_handle_aid', ('value',)),
+                 ('_handle_path', ('mode', 'user', 'group', 'caps'))]
 
     def __init__(self, config_files, oem_ranges):
         """
@@ -493,17 +505,21 @@ class FSConfigFileParser(object):
 
         for section in config.sections():
 
-            if FSConfigFileParser._AID_MATCH.match(
-                    section) and config.has_option(section, 'value'):
-                FSConfigFileParser._handle_dup('AID', file_name, section,
-                                               self._seen_aids[0])
-                self._seen_aids[0][section] = file_name
-                self._handle_aid(file_name, section, config)
-            else:
-                FSConfigFileParser._handle_dup('path', file_name, section,
-                                               self._seen_paths)
-                self._seen_paths[section] = file_name
-                self._handle_path(file_name, section, config)
+            found = False
+
+            for test in FSConfigFileParser._SECTIONS:
+                handler = test[0]
+                options = test[1]
+
+                if all([config.has_option(section, item) for item in options]):
+                    handler = getattr(self, handler)
+                    handler(file_name, section, config)
+                    found = True
+                    break
+
+            if not found:
+                sys.exit('Invalid section "%s" in file: "%s"' %
+                         (section, file_name))
 
             # sort entries:
             # * specified path before prefix match
@@ -540,6 +556,16 @@ class FSConfigFileParser(object):
             return '{} for: "{}" file: "{}"'.format(msg, section_name,
                                                     file_name)
 
+        FSConfigFileParser._handle_dup_and_add('AID', file_name, section_name,
+                                               self._seen_aids[0])
+
+        match = FSConfigFileParser._AID_MATCH.match(section_name)
+        invalid = match.end() if match else len(FSConfigFileParser._AID_PREFIX)
+        if invalid != len(section_name):
+            tmp_errmsg = ('Invalid characters in AID section at "%d" for: "%s"'
+                          % (invalid, FSConfigFileParser._AID_ERR_MSG))
+            sys.exit(error_message(tmp_errmsg))
+
         value = config.get(section_name, 'value')
 
         if not value:
@@ -560,19 +586,8 @@ class FSConfigFileParser(object):
 
         # use the normalized int value in the dict and detect
         # duplicate definitions of the same value
-        if aid.normalized_value in self._seen_aids[1]:
-            # map of value to aid name
-            aid = self._seen_aids[1][aid.normalized_value]
-
-            # aid name to file
-            file_name = self._seen_aids[0][aid]
-
-            emsg = 'Duplicate AID value "%s" found on AID: "%s".' % (
-                value, self._seen_aids[1][aid.normalized_value])
-            emsg += ' Previous found in file: "%s."' % file_name
-            sys.exit(error_message(emsg))
-
-        self._seen_aids[1][aid.normalized_value] = section_name
+        FSConfigFileParser._handle_dup_and_add(
+            'AID', file_name, aid.normalized_value, self._seen_aids[1])
 
         # Append aid tuple of (AID_*, base10(value), _path(value))
         # We keep the _path version of value so we can print that out in the
@@ -595,6 +610,9 @@ class FSConfigFileParser(object):
             section_name (str): The name of the section to parse.
             config (str): The config parser.
         """
+
+        FSConfigFileParser._handle_dup_and_add('path', file_name, section_name,
+                                               self._seen_paths)
 
         mode = config.get(section_name, 'mode')
         user = config.get(section_name, 'user')
@@ -740,7 +758,7 @@ class FSConfigFileParser(object):
         return StringWrapper(fs_config.path)
 
     @staticmethod
-    def _handle_dup(name, file_name, section_name, seen):
+    def _handle_dup_and_add(name, file_name, section_name, seen):
         """Tracks and detects duplicates. Internal use only.
 
         Calls sys.exit() on a duplicate.
