@@ -72,6 +72,19 @@ else
 my_fs_config_h := $(LOCAL_PATH)/default/$(ANDROID_FS_CONFIG_H)
 endif
 
+# We only include targets for:
+# fs_config_files
+# fs_config_dirs
+# If TARGET_FS_CONFIG_GEN or TARGET_ANDROID_FILESYSTEM_CONFIG_H
+# is set.
+#
+# We only include targets for:
+# passwd
+# group
+# If TARGET_FS_CONFIG_GEN is set.
+#
+ifneq ($(TARGET_FS_CONFIG_GEN)$(TARGET_ANDROID_FILESYSTEM_CONFIG_H),)
+
 ##################################
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := fs_config_generate.c
@@ -138,6 +151,10 @@ $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
 	$< -F -o $@
 
+endif # TARGET_FS_CONFIG_GEN or TARGET_ANDROID_FILESYSTEM_CONFIG_H
+
+# The newer passwd/group targets are only generated if you
+# use the new TARGET_FS_CONFIG_GEN method.
 ifneq ($(TARGET_FS_CONFIG_GEN),)
 
 ##################################
