@@ -91,7 +91,9 @@ PRODUCT_PACKAGES += \
 # <pwd.h> and <grp.h>
 PRODUCT_PACKAGES += \
     passwd \
-    group
+    group \
+    fs_config_files \
+    fs_config_dirs
 
 # Ensure that this property is always defined so that bionic_systrace.cpp
 # can rely on it being initially set by init.
