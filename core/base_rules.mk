@@ -161,6 +161,7 @@ my_module_path := $(my_multilib_module_path)
 else
 my_module_path := $(strip $(LOCAL_MODULE_PATH))
 endif
+my_module_path := $(patsubst %/,%,$(my_module_path))
 my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
 ifeq ($(my_module_path),)
   ifdef LOCAL_IS_HOST_MODULE
