@@ -84,7 +84,7 @@ ifneq ($(TARGET_FS_CONFIG_GEN),)
 gen := $(local-generated-sources-dir)/$(ANDROID_FS_CONFIG_H)
 $(gen): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
 $(gen): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(gen): PRIVATE_CUSTOM_TOOL = $(PRIVATE_LOCAL_PATH)/fs_config_generator.py $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
+$(gen): PRIVATE_CUSTOM_TOOL = $(PRIVATE_LOCAL_PATH)/fs_config_generator.py fsconfig $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
 $(gen): $(TARGET_FS_CONFIG_GEN) $(LOCAL_PATH)/fs_config_generator.py
 	$(transform-generated-source)
 
