@@ -105,7 +105,6 @@ LOCAL_GENERATED_SOURCES := $(oem) $(gen)
 
 my_fs_config_h := $(gen)
 my_gen_oem_aid := $(oem)
-system_android_filesystem_config :=
 gen :=
 oem :=
 endif
@@ -151,6 +150,25 @@ LOCAL_EXPORT_C_INCLUDE_DIRS := $(dir $(my_gen_oem_aid))
 LOCAL_EXPORT_C_INCLUDE_DEPS := $(my_gen_oem_aid)
 include $(BUILD_STATIC_LIBRARY)
 
+##################################
+# Generate the system/etc/passwd text file for the target
+# This file may be empty if no AIDs are defined in
+# TARGET_FS_CONFIG_GEN files.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := passwd
+LOCAL_MODULE_CLASS := ETC
+
+include $(BUILD_SYSTEM)/base_rules.mk
+
+$(LOCAL_BUILT_MODULE): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config)
+	@mkdir -p $(dir $@)
+	$(hide) $< passwd --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
+
+system_android_filesystem_config :=
 endif
 
 ANDROID_FS_CONFIG_H :=
