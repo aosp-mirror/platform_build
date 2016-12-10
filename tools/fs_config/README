@@ -82,7 +82,8 @@ value: <number>
 Where:
 
 [AID_<name>]
-  The <name> can be any valid character for a #define identifier in C.
+  The <name> can contain characters in the set uppercase, numbers
+  and underscores.
 
 value:
   A valid C style number string. Hex, octal, binary and decimal are supported.
