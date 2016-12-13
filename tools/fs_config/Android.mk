@@ -81,19 +81,35 @@ LOCAL_SHARED_LIBRARIES := libcutils
 LOCAL_CFLAGS := -Werror -Wno-error=\#warnings
 
 ifneq ($(TARGET_FS_CONFIG_GEN),)
+system_android_filesystem_config := system/core/include/private/android_filesystem_config.h
+
+# Generate the "generated_oem_aid.h" file
+oem := $(local-generated-sources-dir)/generated_oem_aid.h
+$(oem): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
+$(oem): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+$(oem): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
+$(oem): PRIVATE_CUSTOM_TOOL = $(PRIVATE_LOCAL_PATH)/fs_config_generator.py oemaid --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
+$(oem): $(TARGET_FS_CONFIG_GEN) $(LOCAL_PATH)/fs_config_generator.py
+	$(transform-generated-source)
+
+# Generate the fs_config header
 gen := $(local-generated-sources-dir)/$(ANDROID_FS_CONFIG_H)
 $(gen): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
 $(gen): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
-$(gen): PRIVATE_CUSTOM_TOOL = $(PRIVATE_LOCAL_PATH)/fs_config_generator.py $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
-$(gen): $(TARGET_FS_CONFIG_GEN) $(LOCAL_PATH)/fs_config_generator.py
+$(gen): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
+$(gen): PRIVATE_CUSTOM_TOOL = $(PRIVATE_LOCAL_PATH)/fs_config_generator.py fsconfig --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
+$(gen): $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config) $(LOCAL_PATH)/fs_config_generator.py
 	$(transform-generated-source)
 
-LOCAL_GENERATED_SOURCES := $(gen)
+LOCAL_GENERATED_SOURCES := $(oem) $(gen)
+
 my_fs_config_h := $(gen)
+my_gen_oem_aid := $(oem)
 gen :=
+oem :=
 endif
 
-LOCAL_C_INCLUDES := $(dir $(my_fs_config_h))
+LOCAL_C_INCLUDES := $(dir $(my_fs_config_h)) $(dir $(my_gen_oem_aid))
 
 include $(BUILD_HOST_EXECUTABLE)
 fs_config_generate_bin := $(LOCAL_INSTALLED_MODULE)
@@ -122,6 +138,60 @@ $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
 	$< -F -o $@
 
+# The newer passwd/group targets are only generated if you
+# use the new TARGET_FS_CONFIG_GEN method.
+ifneq ($(TARGET_FS_CONFIG_GEN),)
+
+##################################
+# Build the oemaid library when fs config files are present.
+# Intentionally break build if you require generated AIDS
+# header file, but are not using any fs config files.
+include $(CLEAR_VARS)
+LOCAL_MODULE := liboemaids
+LOCAL_EXPORT_C_INCLUDE_DIRS := $(dir $(my_gen_oem_aid))
+LOCAL_EXPORT_C_INCLUDE_DEPS := $(my_gen_oem_aid)
+include $(BUILD_STATIC_LIBRARY)
+
+##################################
+# Generate the system/etc/passwd text file for the target
+# This file may be empty if no AIDs are defined in
+# TARGET_FS_CONFIG_GEN files.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := passwd
+LOCAL_MODULE_CLASS := ETC
+
+include $(BUILD_SYSTEM)/base_rules.mk
+
+$(LOCAL_BUILT_MODULE): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config)
+	@mkdir -p $(dir $@)
+	$(hide) $< passwd --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
+
+##################################
+# Generate the system/etc/group text file for the target
+# This file may be empty if no AIDs are defined in
+# TARGET_FS_CONFIG_GEN files.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := group
+LOCAL_MODULE_CLASS := ETC
+
+include $(BUILD_SYSTEM)/base_rules.mk
+
+$(LOCAL_BUILT_MODULE): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+$(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config)
+	@mkdir -p $(dir $@)
+	$(hide) $< group --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
+
+system_android_filesystem_config :=
+endif
+
 ANDROID_FS_CONFIG_H :=
 my_fs_config_h :=
 fs_config_generate_bin :=
+my_gen_oem_aid :=
