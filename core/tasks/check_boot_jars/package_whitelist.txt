@@ -116,9 +116,11 @@ com\.android\..*
 
 
 ###################################################
-# core-junit.jar
+# legacy-test.jar
 junit\.extensions
 junit\.framework
+android\.test
+android\.test\.suitebuilder\.annotation
 
 
 ###################################################
