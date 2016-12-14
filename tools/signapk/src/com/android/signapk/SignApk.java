@@ -37,6 +37,7 @@ import org.conscrypt.OpenSSLProvider;
 import com.android.apksig.ApkSignerEngine;
 import com.android.apksig.DefaultApkSignerEngine;
 import com.android.apksig.apk.ApkUtils;
+import com.android.apksig.apk.MinSdkVersionException;
 import com.android.apksig.util.DataSink;
 import com.android.apksig.util.DataSources;
 import com.android.apksig.zip.ZipFormatException;
@@ -890,6 +891,37 @@ class SignApk {
         return result;
     }
 
+    /**
+     * Returns the API Level corresponding to the APK's minSdkVersion.
+     *
+     * @throws MinSdkVersionException if the API Level cannot be determined from the APK.
+     */
+    private static final int getMinSdkVersion(JarFile apk) throws MinSdkVersionException {
+        JarEntry manifestEntry = apk.getJarEntry("AndroidManifest.xml");
+        if (manifestEntry == null) {
+            throw new MinSdkVersionException("No AndroidManifest.xml in APK");
+        }
+        byte[] manifestBytes;
+        try {
+            try (InputStream manifestIn = apk.getInputStream(manifestEntry)) {
+                manifestBytes = toByteArray(manifestIn);
+            }
+        } catch (IOException e) {
+            throw new MinSdkVersionException("Failed to read AndroidManifest.xml", e);
+        }
+        return ApkUtils.getMinSdkVersionFromBinaryAndroidManifest(ByteBuffer.wrap(manifestBytes));
+    }
+
+    private static byte[] toByteArray(InputStream in) throws IOException {
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buf = new byte[65536];
+        int chunkSize;
+        while ((chunkSize = in.read(buf)) != -1) {
+            result.write(buf, 0, chunkSize);
+        }
+        return result.toByteArray();
+    }
+
     private static void usage() {
         System.err.println("Usage: signapk [-w] " +
                            "[-a <alignment>] " +
@@ -916,7 +948,7 @@ class SignApk {
         boolean signWholeFile = false;
         String providerClass = null;
         int alignment = 4;
-        int minSdkVersion = 0;
+        Integer minSdkVersionOverride = null;
         boolean signUsingApkSignatureSchemeV2 = true;
 
         int argstart = 0;
@@ -936,7 +968,7 @@ class SignApk {
             } else if ("--min-sdk-version".equals(args[argstart])) {
                 String minSdkVersionString = args[++argstart];
                 try {
-                    minSdkVersion = Integer.parseInt(minSdkVersionString);
+                    minSdkVersionOverride = Integer.parseInt(minSdkVersionString);
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException(
                             "--min-sdk-version must be a decimal number: " + minSdkVersionString);
@@ -1004,6 +1036,20 @@ class SignApk {
                         timestamp,
                         outputFile);
             } else {
+                // Determine the value to use as minSdkVersion of the APK being signed
+                int minSdkVersion;
+                if (minSdkVersionOverride != null) {
+                    minSdkVersion = minSdkVersionOverride;
+                } else {
+                    try {
+                        minSdkVersion = getMinSdkVersion(inputJar);
+                    } catch (MinSdkVersionException e) {
+                        throw new IllegalArgumentException(
+                                "Cannot detect minSdkVersion. Use --min-sdk-version to override",
+                                e);
+                    }
+                }
+
                 try (ApkSignerEngine apkSigner =
                         new DefaultApkSignerEngine.Builder(
                                 createSignerConfigs(privateKey, publicKey), minSdkVersion)
