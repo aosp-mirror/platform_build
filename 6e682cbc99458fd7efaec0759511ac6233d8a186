@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7adff7_e237ea9a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-12-14T01:12:29Z",
+      "side": 1,
+      "message": "seems like .. in the prefix might be useful for makefiles?",
+      "revId": "6e682cbc99458fd7efaec0759511ac6233d8a186",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
