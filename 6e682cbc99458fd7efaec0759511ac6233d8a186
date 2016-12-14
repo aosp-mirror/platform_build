@@ -16,6 +16,24 @@
       "revId": "6e682cbc99458fd7efaec0759511ac6233d8a186",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7adff7_22ae6282",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 474,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-12-14T01:17:54Z",
+      "side": 1,
+      "message": "Yeah, an intermediate implementation would have broken with .. in base, but it should be fine now. I\u0027ll loosen that up.",
+      "parentUuid": "7a7adff7_e237ea9a",
+      "revId": "6e682cbc99458fd7efaec0759511ac6233d8a186",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
