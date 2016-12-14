@@ -996,8 +996,8 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
     script.Comment("Stage 1/3")
 
   # Dump fingerprints
-  script.Print(source_fp)
-  script.Print(target_fp)
+  script.Print("Source: %s" % (source_fp,))
+  script.Print("Target: %s" % (target_fp,))
 
   script.Print("Verifying current system...")
 
