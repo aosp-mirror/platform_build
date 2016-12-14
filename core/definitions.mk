@@ -2621,7 +2621,6 @@ endef
 define sign-package-arg
 $(hide) mv $(1) $(1).unsigned
 $(hide) java -Djava.library.path=$(SIGNAPK_JNI_LIBRARY_PATH) -jar $(SIGNAPK_JAR) \
-    --min-sdk-version $(call get-package-min-sdk-version-int,$@.unsigned) \
     $(PRIVATE_CERTIFICATE) $(PRIVATE_PRIVATE_KEY) \
     $(PRIVATE_ADDITIONAL_CERTIFICATES) $(1).unsigned $(1).signed
 $(hide) mv $(1).signed $(1)
