@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7adff7_a2db32d6",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-12-14T00:48:30Z",
+      "side": 1,
+      "message": "identifier not chunks[], that was the point of moving this block down.",
+      "revId": "b1ebbbca8a47e1fd2c4467f567cbe8580c422ab2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
