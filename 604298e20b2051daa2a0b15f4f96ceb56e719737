@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7adff7_17927ea6",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-12-14T00:28:43Z",
+      "side": 1,
+      "message": "FYI: yapf -i --style\u003dgoogle wanted it this way",
+      "revId": "604298e20b2051daa2a0b15f4f96ceb56e719737",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
