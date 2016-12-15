@@ -716,8 +716,11 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT := $(call first_non_empt
 $(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
 endif
 
-# define clang/llvm tools and global flags
-include $(BUILD_SYSTEM)/clang/config.mk
+# These will come from Soong, drop the environment versions
+unexport CLANG
+unexport CLANG_CXX
+unexport CCC_CC
+unexport CCC_CXX
 
 # ###############################################################
 # Collect a list of the SDK versions that we could compile against
