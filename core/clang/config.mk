@@ -1,13 +1,6 @@
 ## Clang configurations.
 
-LLVM_PREBUILTS_PATH := $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/bin
 LLVM_RTLIB_PATH := $(LLVM_PREBUILTS_PATH)/../lib64/clang/$(LLVM_RELEASE_VERSION)/lib/linux/
-
-# These will come from Soong, drop the environment versions
-unexport CLANG
-unexport CLANG_CXX
-unexport CCC_CC
-unexport CCC_CXX
 
 CLANG_TBLGEN := $(BUILD_OUT_EXECUTABLES)/clang-tblgen$(BUILD_EXECUTABLE_SUFFIX)
 LLVM_TBLGEN := $(BUILD_OUT_EXECUTABLES)/llvm-tblgen$(BUILD_EXECUTABLE_SUFFIX)
