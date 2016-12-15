@@ -81,7 +81,8 @@ PRODUCT_PACKAGES += \
 # SELinux packages
 PRODUCT_PACKAGES += \
     file_contexts.bin \
-    mac_permissions.xml \
+    nonplat_mac_permissions.xml \
+    plat_mac_permissions.xml \
     property_contexts \
     seapp_contexts \
     selinux_version \
