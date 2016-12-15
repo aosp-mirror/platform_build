@@ -1805,6 +1805,10 @@ endif
 $(LOCAL_BUILT_MODULE) : | $(export_includes) $(my_link_type)
 
 ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+ifneq (,$(filter-out $(LOCAL_PATH)/%,$(my_export_c_include_dirs)))
+my_soong_problems += non_local__export_c_include_dirs
+endif
+
 SOONG_CONV.$(LOCAL_MODULE).PROBLEMS := \
     $(SOONG_CONV.$(LOCAL_MODULE).PROBLEMS) $(my_soong_problems)
 SOONG_CONV.$(LOCAL_MODULE).DEPS := \
