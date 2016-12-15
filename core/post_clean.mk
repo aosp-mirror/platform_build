@@ -17,7 +17,7 @@
 
 #######################################################
 # Check if we need to delete obsolete generated java files.
-# When an aidl/proto/etc file gets deleted (or renamed), the generated java file is obsolete.
+# When an proto/etc file gets deleted (or renamed), the generated java file is obsolete.
 previous_gen_java_config := $(TARGET_OUT_COMMON_INTERMEDIATES)/previous_gen_java_config.mk
 current_gen_java_config := $(TARGET_OUT_COMMON_INTERMEDIATES)/current_gen_java_config.mk
 
@@ -29,8 +29,7 @@ $(shell rm -rf $(current_gen_java_config) \
 intermediates_to_clean :=
 modules_with_gen_java_files :=
 $(foreach p, $(ALL_MODULES), \
-  $(eval gs := $(strip $(ALL_MODULES.$(p).AIDL_FILES)\
-                       $(ALL_MODULES.$(p).PROTO_FILES)\
+  $(eval gs := $(strip $(ALL_MODULES.$(p).PROTO_FILES)\
                        $(ALL_MODULES.$(p).RS_FILES)))\
   $(if $(gs),\
     $(eval modules_with_gen_java_files += $(p))\
