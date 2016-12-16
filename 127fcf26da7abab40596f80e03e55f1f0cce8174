@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba4b7745_15a2f690",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-12-16T03:54:03Z",
+      "side": 0,
+      "message": "This comment already appears in the conditional block for passwd and group, so it was duplicate and could be safely removed.",
+      "revId": "127fcf26da7abab40596f80e03e55f1f0cce8174",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
