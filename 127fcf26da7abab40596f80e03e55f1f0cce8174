@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7adff7_44d09fdf",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2016-12-16T00:45:30Z",
+      "side": 1,
+      "message": "Here is the bug, in the case of the marlin, neither of these is set as it\u0027s \"discovered\". A local change I was using for testing actually glossed over this. I hit an error where make fs_config_files returned no target defined.\n\nI have removed this, and seems OK. Doing a full clean build and mounting system.img to verify.",
+      "revId": "127fcf26da7abab40596f80e03e55f1f0cce8174",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
