@@ -40,6 +40,9 @@ PRODUCT_PACKAGES += \
     fsck_msdos \
     hid \
     ime \
+    incidentd \
+    incident \
+    incident_report \
     input \
     input.evdev.default \
     inputflinger \
