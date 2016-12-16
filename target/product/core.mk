@@ -44,6 +44,7 @@ PRODUCT_PACKAGES += \
     Launcher2 \
     ManagedProvisioning \
     MtpDocumentsProvider \
+    NetworkRecommendation \
     PicoTts \
     PacProcessor \
     libpac \
