@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba4b7745_3c40be73",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 717,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2016-12-16T21:07:53Z",
+      "side": 1,
+      "message": "Is stashes used as a counter here; and the \u0027sid\u0027 above hasn\u0027t been used.",
+      "range": {
+        "startLine": 717,
+        "startChar": 9,
+        "endLine": 717,
+        "endChar": 26
+      },
+      "revId": "e27acfdc412047c55a25c0929a2dde3d545bd61e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
