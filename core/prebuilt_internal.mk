@@ -299,7 +299,7 @@ embedded_prebuilt_jni_libs := 'lib/*.so'
 endif
 $(built_module): PRIVATE_EMBEDDED_JNI_LIBS := $(embedded_prebuilt_jni_libs)
 
-$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR) $(AAPT)
+$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
 	$(uncompress-shared-libs)
 ifdef LOCAL_DEX_PREOPT
@@ -346,7 +346,7 @@ my_src_dir := $(LOCAL_PATH)/$(my_src_dir)
 $(built_apk_splits) : $(LOCAL_CERTIFICATE).pk8 $(LOCAL_CERTIFICATE).x509.pem
 $(built_apk_splits) : PRIVATE_PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
 $(built_apk_splits) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
-$(built_apk_splits) : $(built_module_path)/%.apk : $(my_src_dir)/%.apk | $(AAPT)
+$(built_apk_splits) : $(built_module_path)/%.apk : $(my_src_dir)/%.apk
 	$(copy-file-to-new-target)
 	$(sign-package)
 
