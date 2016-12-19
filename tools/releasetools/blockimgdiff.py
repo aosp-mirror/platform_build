@@ -723,6 +723,7 @@ class BlockImageDiff(object):
     num_of_bytes = new_blocks * self.tgt.blocksize
     print("  Total %d blocks (%d bytes) are packed as new blocks due to "
           "insufficient cache size." % (new_blocks, num_of_bytes))
+    return new_blocks
 
   def ComputePatches(self, prefix):
     print("Reticulating splines...")

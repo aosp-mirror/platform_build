@@ -19,8 +19,7 @@ from __future__ import print_function
 import common
 import unittest
 
-from collections import OrderedDict
-from blockimgdiff import BlockImageDiff, EmptyImage, DataImage, Transfer
+from blockimgdiff import BlockImageDiff, EmptyImage, Transfer
 from rangelib import RangeSet
 
 class BlockImageDiffTest(unittest.TestCase):
@@ -75,3 +74,70 @@ class BlockImageDiffTest(unittest.TestCase):
     self.assertEqual(t2, elements[0])
     self.assertEqual(t0, elements[1])
     self.assertEqual(t1, elements[2])
+
+  def test_ReviseStashSize(self):
+    """ReviseStashSize should convert transfers to 'new' commands as needed.
+
+    t1: diff <20-29> => <11-15>
+    t2: diff <11-15> => <20-29>
+    """
+
+    src = EmptyImage()
+    tgt = EmptyImage()
+    block_image_diff = BlockImageDiff(tgt, src, version=3)
+
+    transfers = block_image_diff.transfers
+    Transfer("t1", "t1", RangeSet("11-15"), RangeSet("20-29"), "diff",
+             transfers)
+    Transfer("t2", "t2", RangeSet("20-29"), RangeSet("11-15"), "diff",
+             transfers)
+
+    block_image_diff.GenerateDigraph()
+    block_image_diff.FindVertexSequence()
+    block_image_diff.ReverseBackwardEdges()
+
+    # Sufficient cache to stash 5 blocks (size * 0.8 >= 5).
+    common.OPTIONS.cache_size = 7 * 4096
+    self.assertEqual(0, block_image_diff.ReviseStashSize())
+
+    # Insufficient cache to stash 5 blocks (size * 0.8 < 5).
+    common.OPTIONS.cache_size = 6 * 4096
+    self.assertEqual(10, block_image_diff.ReviseStashSize())
+
+  def test_ReviseStashSize_bug_33687949(self):
+    """ReviseStashSize() should "free" the used stash _after_ the command.
+
+    t1: diff <1-5> => <11-15>
+    t2: diff <11-15> => <21-25>
+    t3: diff <11-15 30-39> => <1-5 30-39>
+
+    For transfer t3, the used stash "11-15" should not be freed until the
+    command finishes. Assume the allowed cache size is 12-block, it should
+    convert the command to 'new' due to insufficient cache (12 < 5 + 10).
+    """
+
+    src = EmptyImage()
+    tgt = EmptyImage()
+    block_image_diff = BlockImageDiff(tgt, src, version=3)
+
+    transfers = block_image_diff.transfers
+    t1 = Transfer("t1", "t1", RangeSet("11-15"), RangeSet("1-5"), "diff",
+                  transfers)
+    t2 = Transfer("t2", "t2", RangeSet("21-25"), RangeSet("11-15"), "diff",
+                  transfers)
+    t3 = Transfer("t3", "t3", RangeSet("1-5 30-39"), RangeSet("11-15 30-39"),
+                  "diff", transfers)
+
+    block_image_diff.GenerateDigraph()
+
+    # Instead of calling FindVertexSequence() and ReverseBackwardEdges(), we
+    # just set up the stash_before and use_stash manually. Otherwise it will
+    # reorder the transfer, which makes testing ReviseStashSize() harder.
+    t1.stash_before.append((0, RangeSet("11-15")))
+    t2.use_stash.append((0, RangeSet("11-15")))
+    t1.stash_before.append((1, RangeSet("11-15")))
+    t3.use_stash.append((1, RangeSet("11-15")))
+
+    # Insufficient cache to stash 15 blocks (size * 0.8 < 15).
+    common.OPTIONS.cache_size = 15 * 4096
+    self.assertEqual(15, block_image_diff.ReviseStashSize())
