@@ -62,7 +62,9 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "CrossHost": "$(HOST_CROSS_OS)",'; \
 	echo '    "CrossHostArch": "$(HOST_CROSS_ARCH)",'; \
 	echo '    "CrossHostSecondaryArch": "$(HOST_CROSS_2ND_ARCH)",'; \
-	echo '    "Safestack": $(if $(filter true,$(USE_SAFESTACK)),true,false)'; \
+	echo '    "Safestack": $(if $(filter true,$(USE_SAFESTACK)),true,false),'; \
+	echo ''; \
+	echo '    "ArtUseReadBarrier": $(if $(filter true,$(PRODUCT_ART_USE_READ_BARRIER)),true,false)'; \
 	echo '}') > $(SOONG_VARIABLES_TMP); \
 	if ! cmp -s $(SOONG_VARIABLES_TMP) $(SOONG_VARIABLES); then \
 	  mv $(SOONG_VARIABLES_TMP) $(SOONG_VARIABLES); \
