@@ -59,6 +59,7 @@ PRODUCT_PACKAGES += \
     keystore \
     keystore.default \
     ld.mc \
+    liboboe \
     libOpenMAXAL \
     libOpenSLES \
     libdownmix \
