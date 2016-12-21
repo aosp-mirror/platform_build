@@ -1032,15 +1032,6 @@ tests : host-tests target-tests
 # Phony target to run all java compilations that use javac instead of jack.
 .PHONY: javac-check
 
-# To catch more build breakage, check build tests modules in eng and userdebug builds.
-ifneq ($(ANDROID_NO_TEST_CHECK),true)
-ifneq ($(TARGET_BUILD_PDK),true)
-ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
-droidcore : target-tests host-tests
-endif
-endif
-endif
-
 ifneq (,$(filter samplecode, $(MAKECMDGOALS)))
 .PHONY: samplecode
 sample_MODULES := $(sort $(call get-tagged-modules,samples))
