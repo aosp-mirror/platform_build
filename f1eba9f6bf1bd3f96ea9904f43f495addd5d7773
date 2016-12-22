@@ -22,6 +22,30 @@
       "revId": "f1eba9f6bf1bd3f96ea9904f43f495addd5d7773",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37b082be_3819c791",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-12-22T22:19:32Z",
+      "side": 1,
+      "message": "Good point. Removed.",
+      "parentUuid": "37b082be_18916b2f",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 43
+      },
+      "revId": "f1eba9f6bf1bd3f96ea9904f43f495addd5d7773",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
