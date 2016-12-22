@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "37b082be_6af0c81d",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-12-22T18:38:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37b082be_aaf48064",
+      "revId": "42c82e4e5389935cadff79c8e8138af7909d4769",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "37b082be_ea635856",
         "filename": "core/java_common.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2016-12-22T18:17:36Z",
       "side": 1,
       "message": "This comment is obsolete",
+      "revId": "42c82e4e5389935cadff79c8e8138af7909d4769",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37b082be_aa400056",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-12-22T18:38:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37b082be_ea635856",
       "revId": "42c82e4e5389935cadff79c8e8138af7909d4769",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "d7a2c67b_08328c4c",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-12-22T18:38:26Z",
+      "side": 1,
+      "message": "I can\u0027t, since the the underlying rules use this private variable unconditionally, even when java.mk is not included. In those cases, it would get a random setting of PRIVATE_HAS_RS_SOURCES depending on the order kati resolved the dependencies in.",
+      "parentUuid": "37b082be_2a5970a2",
+      "revId": "42c82e4e5389935cadff79c8e8138af7909d4769",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "37b082be_6a4f68dc",
         "filename": "core/java_common.mk",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2016-12-22T18:17:36Z",
       "side": 1,
       "message": "Move this to java.mk",
+      "revId": "42c82e4e5389935cadff79c8e8138af7909d4769",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37b082be_4a55cc11",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-12-22T18:38:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37b082be_6a4f68dc",
       "revId": "42c82e4e5389935cadff79c8e8138af7909d4769",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
