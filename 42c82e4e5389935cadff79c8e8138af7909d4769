@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "37b082be_aaf48064",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 387,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-12-22T18:17:36Z",
+      "side": 1,
+      "message": "out/host/common/obj/JAVA_LIBRARIES too",
+      "revId": "42c82e4e5389935cadff79c8e8138af7909d4769",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37b082be_ea635856",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-12-22T18:17:36Z",
+      "side": 1,
+      "message": "This comment is obsolete",
+      "revId": "42c82e4e5389935cadff79c8e8138af7909d4769",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37b082be_2a5970a2",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-12-22T18:17:36Z",
+      "side": 1,
+      "message": "Leave this out",
+      "revId": "42c82e4e5389935cadff79c8e8138af7909d4769",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37b082be_6a4f68dc",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2016-12-22T18:17:36Z",
+      "side": 1,
+      "message": "Move this to java.mk",
+      "revId": "42c82e4e5389935cadff79c8e8138af7909d4769",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
