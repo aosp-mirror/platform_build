@@ -510,9 +510,6 @@ endif # dont_bother
 
 endif # ONE_SHOT_MAKEFILE
 
-# Now with all Android.mks loaded we can do post cleaning steps.
-include $(BUILD_SYSTEM)/post_clean.mk
-
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
