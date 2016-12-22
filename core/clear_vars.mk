@@ -79,6 +79,7 @@ LOCAL_GCNO_FILES:=
 LOCAL_GENERATED_SOURCES:=
 # Group static libraries with "-Wl,--start-group" and "-Wl,--end-group" when linking.
 LOCAL_GROUP_STATIC_LIBRARIES:=
+LOCAL_GTEST:=true
 LOCAL_HAL_STATIC_LIBRARIES:=
 LOCAL_INIT_RC:=
 LOCAL_INSTALLED_MODULE:=
