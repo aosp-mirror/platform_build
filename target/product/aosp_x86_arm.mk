@@ -35,6 +35,7 @@ PRODUCT_PACKAGES += \
   libmediandk_arm \
   libOpenMAXAL_arm \
   libstdc++_arm \
+  liboboe_arm \
   libOpenSLES_arm \
   libz_arm \
 
