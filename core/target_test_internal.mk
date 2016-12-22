@@ -2,11 +2,12 @@
 ## Shared definitions for all target test compilations.
 #######################################################
 
-LOCAL_CFLAGS += -DGTEST_OS_LINUX_ANDROID -DGTEST_HAS_STD_STRING
+ifeq ($(LOCAL_GTEST),true)
+  LOCAL_CFLAGS += -DGTEST_OS_LINUX_ANDROID -DGTEST_HAS_STD_STRING
 
-ifndef LOCAL_SDK_VERSION
+  ifndef LOCAL_SDK_VERSION
     LOCAL_STATIC_LIBRARIES += libgtest_main libgtest
-else
+  else
     ifneq (,$(filter c++_%,$(LOCAL_NDK_STL_VARIANT)))
         my_ndk_gtest_suffix := _c++
     else ifneq ($(filter stlport_,$(LOCAL_NDK_STL_VARIANT)),)
@@ -19,6 +20,7 @@ else
     LOCAL_STATIC_LIBRARIES += \
         libgtest_main_ndk$(my_ndk_gtest_suffix) \
         libgtest_ndk$(my_ndk_gtest_suffix)
+  endif
 endif
 
 ifdef LOCAL_MODULE_PATH
