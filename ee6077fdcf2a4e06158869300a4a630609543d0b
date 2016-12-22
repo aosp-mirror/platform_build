@@ -16,6 +16,24 @@
       "revId": "ee6077fdcf2a4e06158869300a4a630609543d0b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37b082be_5b283d4a",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1026058
+      },
+      "writtenOn": "2016-12-22T23:55:31Z",
+      "side": 1,
+      "message": "It is used to build our system images as well (e.g. /system) so that dependency will have to be removed before we can remove this.",
+      "parentUuid": "37b082be_9618cd5c",
+      "revId": "ee6077fdcf2a4e06158869300a4a630609543d0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
