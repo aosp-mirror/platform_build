@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "37b082be_9618cd5c",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1108565
+      },
+      "writtenOn": "2016-12-22T21:41:19Z",
+      "side": 1,
+      "message": "I\u0027m assuming this is not going to be around after the split?",
+      "revId": "ee6077fdcf2a4e06158869300a4a630609543d0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
