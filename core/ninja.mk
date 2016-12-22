@@ -97,7 +97,7 @@ ifeq ($(KATI_EMULATE_FIND),false)
 endif
 $(KATI_BUILD_NINJA): $(CKATI) $(MAKEPARALLEL) $(DUMMY_OUT_MKS) run_soong FORCE
 	@echo Running kati to generate build$(KATI_NINJA_SUFFIX).ninja...
-	+$(hide) $(KATI_MAKEPARALLEL) $(CKATI) --ninja --ninja_dir=$(OUT_DIR) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_dirty=$(OUT_DIR)/% --no_ignore_dirty=$(SOONG_OUT_DIR)/%.mk --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo $(KATI_FIND_EMULATOR) -f build/core/main.mk $(KATI_GOALS) --gen_all_targets BUILDING_WITH_NINJA=true SOONG_ANDROID_MK=$(SOONG_ANDROID_MK) SOONG_MAKEVARS_MK=$(SOONG_MAKEVARS_MK)
+	+$(hide) $(KATI_MAKEPARALLEL) $(CKATI) --ninja --ninja_dir=$(OUT_DIR) --ninja_suffix=$(KATI_NINJA_SUFFIX) --regen --ignore_optional_include=$(OUT_DIR)/%.P --detect_android_echo $(KATI_FIND_EMULATOR) -f build/core/main.mk $(KATI_GOALS) --gen_all_targets BUILDING_WITH_NINJA=true SOONG_ANDROID_MK=$(SOONG_ANDROID_MK) SOONG_MAKEVARS_MK=$(SOONG_MAKEVARS_MK)
 
 .PHONY: FORCE
 FORCE:
