@@ -152,7 +152,7 @@ rs_compatibility_jni_libs :=
 ifneq ($(renderscript_sources),)
 renderscript_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(renderscript_sources))
 RenderScript_file_stamp := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/RenderScript.stamp
-renderscript_intermediate.COMMON := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/renderscript
+renderscript_intermediate.COMMON := $(intermediates.COMMON)/renderscript
 
 # Defaulting to an empty string uses the latest available platform SDK.
 renderscript_target_api :=
@@ -356,6 +356,9 @@ java_sources := $(addprefix $(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES)))
 all_java_sources := $(java_sources) $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/, $(filter %.java,$(LOCAL_INTERMEDIATE_SOURCES)))
 
 include $(BUILD_SYSTEM)/java_common.mk
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HAS_RS_SOURCES := $(if $(renderscript_sources),true)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RS_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/renderscript
 
 #######################################
 # defines built_odex along with rule to install odex

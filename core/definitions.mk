@@ -2208,6 +2208,10 @@ $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_CLASS_INTERMEDIATES_
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
           find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list; \
 fi
+$(if $(PRIVATE_HAS_PROTO_SOURCES), \
+    $(hide) find $(PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list )
+$(if $(PRIVATE_HAS_RS_SOURCES), \
+    $(hide) find $(PRIVATE_RS_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list )
 $(hide) tr ' ' '\n' < $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list \
     | $(NORMALIZE_PATH) | sort -u > $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
 $(hide) if [ -s $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
@@ -2270,6 +2274,10 @@ $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_JACK_INTERMEDIATES_D
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
           find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list; \
 fi
+$(if $(PRIVATE_HAS_PROTO_SOURCES), \
+    $(hide) find $(PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list )
+$(if $(PRIVATE_HAS_RS_SOURCES), \
+    $(hide) find $(PRIVATE_RS_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list )
 $(hide) tr ' ' '\n' < $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list \
     | $(NORMALIZE_PATH) | sort -u > $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq
 $(if $(PRIVATE_JACK_PROGUARD_FLAGS), \
@@ -2336,6 +2344,10 @@ $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$@.java-source-list)
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
           find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $@.java-source-list; \
 fi
+$(if $(PRIVATE_HAS_PROTO_SOURCES), \
+    $(hide) find $(PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $@.java-source-list )
+$(if $(PRIVATE_HAS_RS_SOURCES), \
+    $(hide) find $(PRIVATE_RS_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $@.java-source-list )
 $(hide) tr ' ' '\n' < $@.java-source-list \
     | sort -u > $@.java-source-list-uniq
 $(hide) if [ -s $@.java-source-list-uniq ] ; then \
@@ -2445,6 +2457,10 @@ $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_JACK_INTERMEDIATES_D
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
           find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list; \
 fi
+$(if $(PRIVATE_HAS_PROTO_SOURCES), \
+    $(hide) find $(PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list )
+$(if $(PRIVATE_HAS_RS_SOURCES), \
+    $(hide) find $(PRIVATE_RS_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list )
 $(hide) tr ' ' '\n' < $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list \
     | $(NORMALIZE_PATH) | sort -u > $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq
 $(if $(PRIVATE_JACK_PROGUARD_FLAGS), \
