@@ -390,6 +390,11 @@ $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/previous_gen_java_config.mk)
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/current_gen_java_config.mk)
 
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/*/package-res.apk)
+$(call add-clean-step, rm -rf $(TARGET_OUT_INTERMEDIATES)/APPS/*/package-res.apk)
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/*_intermediates/src)
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/*_intermediates/src)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
