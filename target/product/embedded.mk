@@ -20,6 +20,7 @@
 PRODUCT_PACKAGES += \
     adb \
     adbd \
+    android.hidl.memory@1.0-service \
     atrace \
     bootanimation \
     bootstat \
