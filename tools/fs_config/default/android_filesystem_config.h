@@ -19,13 +19,6 @@
 ** by the device side of adb.
 */
 
-/*
-** Resorting to the default file means someone requested fs_config_dirs or
-** fs_config_files in their device configuration without providing an
-** associated header.
-*/
-#warning No device-supplied android_filesystem_config.h, using empty default.
-
 /* Rules for directories.
 ** These rules are applied based on "first match", so they
 ** should start with the most specific path and work their
