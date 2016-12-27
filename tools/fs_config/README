@@ -50,12 +50,12 @@ mode:
   prefixed with a 0, else mode is used as is.
 
 user:
-  The exact, C define for a valid AID. Note custom AIDs can be defined in the
+  Either the C define for a valid AID or the friendly name. For instance both
+  AID_RADIO and radio are acceptable. Note custom AIDs can be defined in the
   AID section documented below.
 
 group:
-  The exact, C define for a valid AID. Note custom AIDs can be defined in the
-  AID section documented below.
+  Same as user.
 
 caps:
   The name as declared in
@@ -82,7 +82,8 @@ value: <number>
 Where:
 
 [AID_<name>]
-  The <name> can be any valid character for a #define identifier in C.
+  The <name> can contain characters in the set uppercase, numbers
+  and underscores.
 
 value:
   A valid C style number string. Hex, octal, binary and decimal are supported.
@@ -118,3 +119,24 @@ The declared AIDS are sorted in ascending numerical order based on the option "v
 representation of value is preserved. Both choices were made for maximum readability of the generated
 file and to line up files. Sync lines are placed with the source file as comments in the generated
 header file.
+
+For OEMs wishing to use the define AIDs in their native code, one can access the generated header
+file like so:
+  1. In your C code just #include "generated_oem_aid.h" and start using the declared identifiers.
+  2. In your Makefile add this static library like so: LOCAL_STATIC_LIBRARIES := liboemaids
+
+Unit Tests:
+
+From within the fs_config directory, unit tests can be executed like so:
+$ python -m unittest test_fs_config_generator.Tests
+.............
+----------------------------------------------------------------------
+Ran 13 tests in 0.004s
+
+OK
+
+One could also use nose if they would like:
+$ nose2
+
+To add new tests, simply add a test_<xxx> method to the test class. It will automatically
+get picked up and added to the test suite.
