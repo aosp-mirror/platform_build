@@ -34,6 +34,24 @@
       "revId": "ee6077fdcf2a4e06158869300a4a630609543d0b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37b082be_c2766af6",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1108565
+      },
+      "writtenOn": "2016-12-28T20:37:24Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "37b082be_5b283d4a",
+      "revId": "ee6077fdcf2a4e06158869300a4a630609543d0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
