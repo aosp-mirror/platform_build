@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "37b082be_643d3bec",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-12-30T00:04:30Z",
+      "side": 1,
+      "message": "Do you have any data for this?",
+      "range": {
+        "startLine": 18,
+        "startChar": 6,
+        "endLine": 18,
+        "endChar": 39
+      },
+      "revId": "d347a44b11e65043d7b700dd64452f68daf6df5a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37b082be_44903fda",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 597,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2016-12-30T00:04:30Z",
+      "side": 1,
+      "message": "I\u0027ve definitely used these as a subset of a full checkbuild.\n\nFor prebuilts this is actually increasing the amount of work we do, as the my_checked_module is actually just the source file. Though that shouldn\u0027t be too bad (until October, this would have been a functional change, since we weren\u0027t verifying that prebuilts even existed before then)",
+      "revId": "d347a44b11e65043d7b700dd64452f68daf6df5a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
