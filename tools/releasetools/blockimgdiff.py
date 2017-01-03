@@ -14,8 +14,6 @@
 
 from __future__ import print_function
 
-from collections import deque, OrderedDict
-from hashlib import sha1
 import array
 import common
 import functools
@@ -23,12 +21,14 @@ import heapq
 import itertools
 import multiprocessing
 import os
+import os.path
 import re
 import subprocess
 import threading
-import time
 import tempfile
 
+from collections import deque, OrderedDict
+from hashlib import sha1
 from rangelib import RangeSet
 
 
@@ -348,7 +348,7 @@ class BlockImageDiff(object):
       This prevents the target size of one command from being too large; and
       might help to avoid fsync errors on some devices."""
 
-      assert (style == "new" or style == "zero")
+      assert style == "new" or style == "zero"
       blocks_limit = 1024
       total = 0
       while target_blocks:
@@ -359,15 +359,25 @@ class BlockImageDiff(object):
       return total
 
     out = []
-
     total = 0
 
+    # In BBOTA v2, 'stashes' records the map from 'stash_raw_id' to 'stash_id'
+    # (aka 'sid', which is the stash slot id). The stash in a 'stash_id' will
+    # be freed immediately after its use. So unlike 'stash_raw_id' (which
+    # uniquely identifies each pair of stashed blocks), the same 'stash_id'
+    # may be reused during the life cycle of an update (maintained by
+    # 'free_stash_ids' heap and 'next_stash_id').
+    #
+    # In BBOTA v3+, it uses the hash of the stashed blocks as the stash slot
+    # id. 'stashes' records the map from 'hash' to the ref count. The stash
+    # will be freed only if the count decrements to zero.
     stashes = {}
     stashed_blocks = 0
     max_stashed_blocks = 0
 
-    free_stash_ids = []
-    next_stash_id = 0
+    if self.version == 2:
+      free_stash_ids = []
+      next_stash_id = 0
 
     for xf in self.transfers:
 
@@ -375,15 +385,15 @@ class BlockImageDiff(object):
         assert not xf.stash_before
         assert not xf.use_stash
 
-      for s, sr in xf.stash_before:
-        assert s not in stashes
-        if free_stash_ids:
-          sid = heapq.heappop(free_stash_ids)
-        else:
-          sid = next_stash_id
-          next_stash_id += 1
-        stashes[s] = sid
+      for stash_raw_id, sr in xf.stash_before:
         if self.version == 2:
+          assert stash_raw_id not in stashes
+          if free_stash_ids:
+            sid = heapq.heappop(free_stash_ids)
+          else:
+            sid = next_stash_id
+            next_stash_id += 1
+          stashes[stash_raw_id] = sid
           stashed_blocks += sr.size()
           out.append("stash %d %s\n" % (sid, sr.to_string_raw()))
         else:
@@ -417,14 +427,13 @@ class BlockImageDiff(object):
 
         unstashed_src_ranges = xf.src_ranges
         mapped_stashes = []
-        for s, sr in xf.use_stash:
-          # TODO: We don't need 'sid' (nor free_stash_ids) in BBOTA v3+.
-          sid = stashes.pop(s)
+        for stash_raw_id, sr in xf.use_stash:
           unstashed_src_ranges = unstashed_src_ranges.subtract(sr)
           sh = self.HashBlocks(self.src, sr)
           sr = xf.src_ranges.map_within(sr)
           mapped_stashes.append(sr)
           if self.version == 2:
+            sid = stashes.pop(stash_raw_id)
             src_str.append("%d:%s" % (sid, sr.to_string_raw()))
             # A stash will be used only once. We need to free the stash
             # immediately after the use, instead of waiting for the automatic
@@ -433,15 +442,15 @@ class BlockImageDiff(object):
             # Bug: 23119955
             free_string.append("free %d\n" % (sid,))
             free_size += sr.size()
+            heapq.heappush(free_stash_ids, sid)
           else:
             assert sh in stashes
             src_str.append("%s:%s" % (sh, sr.to_string_raw()))
             stashes[sh] -= 1
             if stashes[sh] == 0:
-              free_size += sr.size()
               free_string.append("free %s\n" % (sh,))
+              free_size += sr.size()
               stashes.pop(sh)
-          heapq.heappush(free_stash_ids, sid)
 
         if unstashed_src_ranges:
           src_str.insert(1, unstashed_src_ranges.to_string_raw())
@@ -594,10 +603,14 @@ class BlockImageDiff(object):
 
     out.insert(0, "%d\n" % (self.version,))   # format version number
     out.insert(1, "%d\n" % (total,))
-    if self.version >= 2:
-      # version 2 only: after the total block count, we give the number
-      # of stash slots needed, and the maximum size needed (in blocks)
+    if self.version == 2:
+      # v2 only: after the total block count, we give the number of stash slots
+      # needed, and the maximum size needed (in blocks).
       out.insert(2, str(next_stash_id) + "\n")
+      out.insert(3, str(max_stashed_blocks) + "\n")
+    elif self.version >= 3:
+      # v3+: the number of stash slots is unused.
+      out.insert(2, "0\n")
       out.insert(3, str(max_stashed_blocks) + "\n")
 
     with open(prefix + ".transfer.list", "wb") as f:
@@ -622,15 +635,15 @@ class BlockImageDiff(object):
     stash_map = {}
 
     # Create the map between a stash and its def/use points. For example, for a
-    # given stash of (idx, sr), stashes[idx] = (sr, def_cmd, use_cmd).
+    # given stash of (raw_id, sr), stashes[raw_id] = (sr, def_cmd, use_cmd).
     for xf in self.transfers:
       # Command xf defines (stores) all the stashes in stash_before.
-      for idx, sr in xf.stash_before:
-        stash_map[idx] = (sr, xf)
+      for stash_raw_id, sr in xf.stash_before:
+        stash_map[stash_raw_id] = (sr, xf)
 
       # Record all the stashes command xf uses.
-      for idx, _ in xf.use_stash:
-        stash_map[idx] += (xf,)
+      for stash_raw_id, _ in xf.use_stash:
+        stash_map[stash_raw_id] += (xf,)
 
     # Compute the maximum blocks available for stash based on /cache size and
     # the threshold.
@@ -638,12 +651,14 @@ class BlockImageDiff(object):
     stash_threshold = common.OPTIONS.stash_threshold
     max_allowed = cache_size * stash_threshold / self.tgt.blocksize
 
+    # See the comments for 'stashes' in WriteTransfers().
     stashes = {}
     stashed_blocks = 0
     new_blocks = 0
 
-    free_stash_ids = []
-    next_stash_id = 0
+    if self.version == 2:
+      free_stash_ids = []
+      next_stash_id = 0
 
     # Now go through all the commands. Compute the required stash size on the
     # fly. If a command requires excess stash than available, it deletes the
@@ -653,18 +668,17 @@ class BlockImageDiff(object):
       replaced_cmds = []
 
       # xf.stash_before generates explicit stash commands.
-      for idx, sr in xf.stash_before:
-        assert idx not in stashes
-        if free_stash_ids:
-          sid = heapq.heappop(free_stash_ids)
-        else:
-          sid = next_stash_id
-          next_stash_id += 1
-        stashes[idx] = sid
-
+      for stash_raw_id, sr in xf.stash_before:
         # Check the post-command stashed_blocks.
         stashed_blocks_after = stashed_blocks
         if self.version == 2:
+          assert stash_raw_id not in stashes
+          if free_stash_ids:
+            sid = heapq.heappop(free_stash_ids)
+          else:
+            sid = next_stash_id
+            next_stash_id += 1
+          stashes[stash_raw_id] = sid
           stashed_blocks_after += sr.size()
         else:
           sh = self.HashBlocks(self.src, sr)
@@ -677,7 +691,7 @@ class BlockImageDiff(object):
         if stashed_blocks_after > max_allowed:
           # We cannot stash this one for a later command. Find out the command
           # that will use this stash and replace the command with "new".
-          use_cmd = stash_map[idx][2]
+          use_cmd = stash_map[stash_raw_id][2]
           replaced_cmds.append(use_cmd)
           print("%10d  %9s  %s" % (sr.size(), "explicit", use_cmd))
         else:
@@ -696,21 +710,22 @@ class BlockImageDiff(object):
       for cmd in replaced_cmds:
         # It no longer uses any commands in "use_stash". Remove the def points
         # for all those stashes.
-        for idx, sr in cmd.use_stash:
-          def_cmd = stash_map[idx][1]
-          assert (idx, sr) in def_cmd.stash_before
-          def_cmd.stash_before.remove((idx, sr))
+        for stash_raw_id, sr in cmd.use_stash:
+          def_cmd = stash_map[stash_raw_id][1]
+          assert (stash_raw_id, sr) in def_cmd.stash_before
+          def_cmd.stash_before.remove((stash_raw_id, sr))
 
         # Add up blocks that violates space limit and print total number to
         # screen later.
         new_blocks += cmd.tgt_ranges.size()
         cmd.ConvertToNew()
 
-      # xf.use_stash generates free commands.
-      for idx, sr in xf.use_stash:
-        sid = stashes.pop(idx)
+      # xf.use_stash may generate free commands.
+      for stash_raw_id, sr in xf.use_stash:
         if self.version == 2:
+          sid = stashes.pop(stash_raw_id)
           stashed_blocks -= sr.size()
+          heapq.heappush(free_stash_ids, sid)
         else:
           sh = self.HashBlocks(self.src, sr)
           assert sh in stashes
@@ -718,7 +733,6 @@ class BlockImageDiff(object):
           if stashes[sh] == 0:
             stashed_blocks -= sr.size()
             stashes.pop(sh)
-        heapq.heappush(free_stash_ids, sid)
 
     num_of_bytes = new_blocks * self.tgt.blocksize
     print("  Total %d blocks (%d bytes) are packed as new blocks due to "
@@ -962,10 +976,21 @@ class BlockImageDiff(object):
            lost_source))
 
   def ReverseBackwardEdges(self):
+    """Reverse unsatisfying edges and compute pairs of stashed blocks.
+
+    For each transfer, make sure it properly stashes the blocks it touches and
+    will be used by later transfers. It uses pairs of (stash_raw_id, range) to
+    record the blocks to be stashed. 'stash_raw_id' is an id that uniquely
+    identifies each pair. Note that for the same range (e.g. RangeSet("1-5")),
+    it is possible to have multiple pairs with different 'stash_raw_id's. Each
+    'stash_raw_id' will be consumed by one transfer. In BBOTA v3+, identical
+    blocks will be written to the same stash slot in WriteTransfers().
+    """
+
     print("Reversing backward edges...")
     in_order = 0
     out_of_order = 0
-    stashes = 0
+    stash_raw_id = 0
     stash_size = 0
 
     for xf in self.transfers:
@@ -983,9 +1008,9 @@ class BlockImageDiff(object):
           overlap = xf.src_ranges.intersect(u.tgt_ranges)
           assert overlap
 
-          u.stash_before.append((stashes, overlap))
-          xf.use_stash.append((stashes, overlap))
-          stashes += 1
+          u.stash_before.append((stash_raw_id, overlap))
+          xf.use_stash.append((stash_raw_id, overlap))
+          stash_raw_id += 1
           stash_size += overlap.size()
 
           # reverse the edge direction; now xf must go after u
