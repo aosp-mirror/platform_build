@@ -26,7 +26,6 @@ SYSTEM_OTHER_ODEX_FILTER ?= app/% priv-app/%
 # The default values for pre-opting: always preopt PIC.
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
-  WITH_DEXPREOPT_PIC ?= true
   WITH_DEXPREOPT ?= true
 # For an eng build only pre-opt the boot image. This gives reasonable performance and still
 # allows a simple workflow: building in frameworks/base and syncing.
@@ -40,10 +39,6 @@ ifeq ($(HOST_OS),linux)
 endif
 
 GLOBAL_DEXPREOPT_FLAGS :=
-ifeq ($(WITH_DEXPREOPT_PIC),true)
-# Compile boot.oat as position-independent code if WITH_DEXPREOPT_PIC=true
-GLOBAL_DEXPREOPT_FLAGS += --compile-pic
-endif
 
 # $(1): the .jar or .apk to remove classes.dex
 define dexpreopt-remove-classes.dex
