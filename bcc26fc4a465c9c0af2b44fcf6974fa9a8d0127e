@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57a6d6c4_38e3e8c2",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-01-04T21:17:06Z",
+      "side": 1,
+      "message": "I really hope we\u0027ve got a plan to remove this... it\u0027s a mess right now.",
+      "range": {
+        "startLine": 68,
+        "startChar": 36,
+        "endLine": 68,
+        "endChar": 79
+      },
+      "revId": "bcc26fc4a465c9c0af2b44fcf6974fa9a8d0127e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57a6d6c4_d8aadc4e",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-01-04T21:17:06Z",
+      "side": 1,
+      "message": "Why do you need this?",
+      "range": {
+        "startLine": 72,
+        "startChar": 38,
+        "endLine": 72,
+        "endChar": 72
+      },
+      "revId": "bcc26fc4a465c9c0af2b44fcf6974fa9a8d0127e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
