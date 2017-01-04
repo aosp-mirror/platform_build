@@ -252,7 +252,7 @@ class AIDHeaderParser(object):
     _AID_DEFINE = re.compile(r'\s*#define\s+%s.*' % AID.PREFIX)
     _OEM_START_KW = 'START'
     _OEM_END_KW = 'END'
-    _OEM_RANGE = re.compile('%s_OEM_RESERVED_[0-9]*_{0,1}(%s|%s)' %
+    _OEM_RANGE = re.compile('%sOEM_RESERVED_[0-9]*_{0,1}(%s|%s)' %
                             (AID.PREFIX, _OEM_START_KW, _OEM_END_KW))
     # AID lines cannot end with _START or _END, ie AID_FOO is OK
     # but AID_FOO_START is skiped. Note that AID_FOOSTART is NOT skipped.
