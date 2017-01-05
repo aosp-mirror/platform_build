@@ -93,6 +93,30 @@
       "revId": "bcc26fc4a465c9c0af2b44fcf6974fa9a8d0127e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57a6d6c4_6755cddd",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-01-05T02:18:59Z",
+      "side": 1,
+      "message": "It\u0027s unlikely you\u0027ll be able to use it effectively with Soong. It looks like in that case, LOCAL_PROPRIETARY_MODULE :\u003d true should have been used instead of LOCAL_MODULE_PATH/TARGET_OUT_VENDOR_SHARED_LIBRARIES. (Soong\u0027s equivalent is proprietary: true)",
+      "parentUuid": "57a6d6c4_e7fe1db9",
+      "range": {
+        "startLine": 72,
+        "startChar": 38,
+        "endLine": 72,
+        "endChar": 72
+      },
+      "revId": "bcc26fc4a465c9c0af2b44fcf6974fa9a8d0127e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
