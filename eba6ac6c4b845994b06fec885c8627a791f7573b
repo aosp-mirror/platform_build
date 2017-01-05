@@ -16,6 +16,24 @@
       "revId": "eba6ac6c4b845994b06fec885c8627a791f7573b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57a6d6c4_07e5e11e",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1079148
+      },
+      "writtenOn": "2017-01-05T02:17:46Z",
+      "side": 1,
+      "message": "debuggerd still exists as the command line interface for \"dump this process\"",
+      "parentUuid": "57a6d6c4_e7cc5dc9",
+      "revId": "eba6ac6c4b845994b06fec885c8627a791f7573b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
