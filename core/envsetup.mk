@@ -188,7 +188,15 @@ else ifdef BOARD_USES_VENDORIMAGE
 $(error TARGET_COPY_OUT_VENDOR must be set to 'vendor' to use a vendor image)
 endif
 ###########################################
-
+# Ensure that only TARGET_RECOVERY_UPDATER_LIBS *or* AB_OTA_UPDATER is set.
+TARGET_RECOVERY_UPDATER_LIBS ?=
+AB_OTA_UPDATER ?=
+.KATI_READONLY := TARGET_RECOVERY_UPDATER_LIBS AB_OTA_UPDATER
+ifeq ($(AB_OTA_UPDATER),true)
+  ifneq ($(strip $(TARGET_RECOVERY_UPDATER_LIBS)),)
+    $(error Do not use TARGET_RECOVERY_UPDATER_LIBS when using AB_OTA_UPDATER)
+  endif
+endif
 
 # ---------------------------------------------------------------
 # Set up configuration for target machine.
