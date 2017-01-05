@@ -528,6 +528,9 @@ my_required_modules += $(LOCAL_REQUIRED_MODULES_$($(my_prefix)OS))
 endif
 ALL_MODULES.$(my_register_name).REQUIRED := \
     $(strip $(ALL_MODULES.$(my_register_name).REQUIRED) $(my_required_modules))
+ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED := \
+    $(strip $(ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED)\
+        $(my_required_modules))
 ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS := \
     $(ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS) $(event_log_tags)
 ALL_MODULES.$(my_register_name).MAKEFILE := \
