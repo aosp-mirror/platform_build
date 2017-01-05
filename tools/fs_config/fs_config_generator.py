@@ -286,8 +286,10 @@ class AIDHeaderParser(object):
         """
 
         for lineno, line in enumerate(aid_file):
+
             def error_message(msg):
                 """Creates an error message with the current parsing state."""
+                # pylint: disable=cell-var-from-loop
                 return 'Error "{}" in file: "{}" on line: {}'.format(
                     msg, self._aid_header, str(lineno))
 
@@ -307,8 +309,9 @@ class AIDHeaderParser(object):
                             for x in AIDHeaderParser._AID_SKIP_RANGE):
                         self._handle_aid(identifier, value)
                 except ValueError as exception:
-                    sys.exit(error_message(
-                        '{} for "{}"'.format(exception, identifier)))
+                    sys.exit(
+                        error_message('{} for "{}"'.format(exception,
+                                                           identifier)))
 
     def _handle_aid(self, identifier, value):
         """Handle an AID C #define.
