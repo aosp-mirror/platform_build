@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "57a6d6c4_671b0d9a",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1121403
+      },
+      "writtenOn": "2017-01-05T02:15:43Z",
+      "side": 1,
+      "message": "Agreed. However, for now, we have to take this compromise.",
+      "parentUuid": "57a6d6c4_38e3e8c2",
+      "range": {
+        "startLine": 68,
+        "startChar": 36,
+        "endLine": 68,
+        "endChar": 79
+      },
+      "revId": "bcc26fc4a465c9c0af2b44fcf6974fa9a8d0127e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "57a6d6c4_d8aadc4e",
         "filename": "core/soong_config.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-01-04T21:17:06Z",
       "side": 1,
       "message": "Why do you need this?",
+      "range": {
+        "startLine": 72,
+        "startChar": 38,
+        "endLine": 72,
+        "endChar": 72
+      },
+      "revId": "bcc26fc4a465c9c0af2b44fcf6974fa9a8d0127e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57a6d6c4_e7fe1db9",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1121403
+      },
+      "writtenOn": "2017-01-05T02:15:43Z",
+      "side": 1,
+      "message": "It was used in one of our Android.mk file (system/bt/vendor_libs/test_vendor_lib/Android.mk). I am investigating on how to remove it.",
+      "parentUuid": "57a6d6c4_d8aadc4e",
       "range": {
         "startLine": 72,
         "startChar": 38,
