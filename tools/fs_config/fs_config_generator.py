@@ -289,6 +289,7 @@ class AIDHeaderParser(object):
 
             def error_message(msg):
                 """Creates an error message with the current parsing state."""
+                # pylint: disable=cell-var-from-loop
                 return 'Error "{}" in file: "{}" on line: {}'.format(
                     msg, self._aid_header, str(lineno))
 
