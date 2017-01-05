@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57a6d6c4_e7cc5dc9",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-01-05T02:09:36Z",
+      "side": 1,
+      "message": "remove debuggerd?",
+      "revId": "eba6ac6c4b845994b06fec885c8627a791f7573b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
