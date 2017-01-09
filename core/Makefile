@@ -1722,8 +1722,11 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar \
-  $(MAKE_EXT4FS) \
-  $(MKEXTUSERIMG) \
+  $(HOST_OUT_EXECUTABLES)/make_ext4fs \
+  $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
+  $(HOST_OUT_EXECUTABLES)/mke2fs \
+  $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs.sh \
+  $(HOST_OUT_EXECUTABLES)/e2fsdroid \
   $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh \
   $(HOST_OUT_EXECUTABLES)/mksquashfs \
   $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh \
