@@ -121,10 +121,12 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Specify the arguments needed for payload signer.
 """
 
+from __future__ import print_function
+
 import sys
 
 if sys.hexversion < 0x02070000:
-  print >> sys.stderr, "Python 2.7 or newer is required."
+  print("Python 2.7 or newer is required.", file=sys.stderr)
   sys.exit(1)
 
 import multiprocessing
@@ -292,14 +294,14 @@ class Item(object):
 
   def Dump(self, indent=0):
     if self.uid is not None:
-      print "%s%s %d %d %o" % (
-          "  " * indent, self.name, self.uid, self.gid, self.mode)
+      print("%s%s %d %d %o" % (
+          "  " * indent, self.name, self.uid, self.gid, self.mode))
     else:
-      print "%s%s %s %s %s" % (
-          "  " * indent, self.name, self.uid, self.gid, self.mode)
+      print("%s%s %s %s %s" % (
+          "  " * indent, self.name, self.uid, self.gid, self.mode))
     if self.is_dir:
-      print "%s%s" % ("  "*indent, self.descendants)
-      print "%s%s" % ("  "*indent, self.best_subtree)
+      print("%s%s" % ("  " * indent, self.descendants))
+      print("%s%s" % ("  " * indent, self.best_subtree))
       for i in self.children:
         i.Dump(indent=indent+1)
 
@@ -485,11 +487,11 @@ def _WriteRecoveryImageToBoot(script, output_zip):
         OPTIONS.input_tmp, "RECOVERY")
     common.ZipWriteStr(
         output_zip, recovery_two_step_img_name, recovery_two_step_img.data)
-    print "two-step package: using %s in stage 1/3" % (
-        recovery_two_step_img_name,)
+    print("two-step package: using %s in stage 1/3" % (
+        recovery_two_step_img_name,))
     script.WriteRawImage("/boot", recovery_two_step_img_name)
   else:
-    print "two-step package: using recovery.img in stage 1/3"
+    print("two-step package: using recovery.img in stage 1/3")
     # The "recovery.img" entry has been written into package earlier.
     script.WriteRawImage("/boot", "recovery.img")
 
@@ -533,11 +535,11 @@ def GetImage(which, tmpdir, info_dict):
   path = os.path.join(tmpdir, "IMAGES", which + ".img")
   mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
   if os.path.exists(path) and os.path.exists(mappath):
-    print "using %s.img from target-files" % (which,)
+    print("using %s.img from target-files" % (which,))
     # This is a 'new' target-files, which already has the image in it.
 
   else:
-    print "building %s.img from target-files" % (which,)
+    print("building %s.img from target-files" % (which,))
 
     # This is an 'old' target-files, which does not contain images
     # already built.  Build them.
@@ -1048,8 +1050,8 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
     else:
       include_full_boot = False
 
-      print "boot      target: %d  source: %d  diff: %d" % (
-          target_boot.size, source_boot.size, len(d))
+      print("boot      target: %d  source: %d  diff: %d" % (
+          target_boot.size, source_boot.size, len(d)))
 
       common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
 
@@ -1095,19 +1097,19 @@ else
   if OPTIONS.two_step:
     common.ZipWriteStr(output_zip, "boot.img", target_boot.data)
     script.WriteRawImage("/boot", "boot.img")
-    print "writing full boot image (forced by two-step mode)"
+    print("writing full boot image (forced by two-step mode)")
 
   if not OPTIONS.two_step:
     if updating_boot:
       if include_full_boot:
-        print "boot image changed; including full."
+        print("boot image changed; including full.")
         script.Print("Installing boot image...")
         script.WriteRawImage("/boot", "boot.img")
       else:
         # Produce the boot image by applying a patch to the current
         # contents of the boot partition, and write it back to the
         # partition.
-        print "boot image changed; including patch."
+        print("boot image changed; including patch.")
         script.Print("Patching boot image...")
         script.ShowProgress(0.1, 10)
         script.ApplyPatch("%s:%s:%d:%s:%d:%s"
@@ -1118,7 +1120,7 @@ else
                           target_boot.size, target_boot.sha1,
                           source_boot.sha1, "patch/boot.img.p")
     else:
-      print "boot image unchanged; skipping."
+      print("boot image unchanged; skipping.")
 
   # Do device-specific installation (eg, write radio image).
   device_specific.IncrementalOTA_InstallEnd()
@@ -1381,7 +1383,7 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
       care_map_data = target_zip.read(care_map_path)
       common.ZipWriteStr(output_zip, "care_map.txt", care_map_data)
     else:
-      print "Warning: cannot find care map file in target_file package"
+      print("Warning: cannot find care map file in target_file package")
     common.ZipClose(target_zip)
 
   # Sign the whole package to comply with the Android OTA package format.
@@ -1393,9 +1395,9 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
 class FileDifference(object):
   def __init__(self, partition, source_zip, target_zip, output_zip):
     self.deferred_patch_list = None
-    print "Loading target..."
+    print("Loading target...")
     self.target_data = target_data = LoadPartitionFiles(target_zip, partition)
-    print "Loading source..."
+    print("Loading source...")
     self.source_data = source_data = LoadPartitionFiles(source_zip, partition)
 
     self.verbatim_targets = verbatim_targets = []
@@ -1422,14 +1424,14 @@ class FileDifference(object):
       assert fn == tf.name
       sf = ClosestFileMatch(tf, matching_file_cache, renames)
       if sf is not None and sf.name != tf.name:
-        print "File has moved from " + sf.name + " to " + tf.name
+        print("File has moved from " + sf.name + " to " + tf.name)
         renames[sf.name] = tf
 
       if sf is None or fn in OPTIONS.require_verbatim:
         # This file should be included verbatim
         if fn in OPTIONS.prohibit_verbatim:
           raise common.ExternalError("\"%s\" must be sent verbatim" % (fn,))
-        print "send", fn, "verbatim"
+        print("send", fn, "verbatim")
         tf.AddToZip(output_zip)
         verbatim_targets.append((fn, tf.size, tf.sha1))
         if fn in target_data.keys():
@@ -1517,7 +1519,7 @@ class FileDifference(object):
     if len(self.renames) > 0:
       script.Print("Renaming files...")
       for src, tgt in self.renames.iteritems():
-        print "Renaming " + src + " to " + tgt.name
+        print("Renaming " + src + " to " + tgt.name)
         script.RenameFile(src, tgt.name)
 
 
@@ -1719,8 +1721,8 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
   if updating_boot:
     d = common.Difference(target_boot, source_boot)
     _, _, d = d.ComputePatch()
-    print "boot      target: %d  source: %d  diff: %d" % (
-        target_boot.size, source_boot.size, len(d))
+    print("boot      target: %d  source: %d  diff: %d" % (
+        target_boot.size, source_boot.size, len(d)))
 
     common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
 
@@ -1759,7 +1761,7 @@ else
   if OPTIONS.two_step:
     common.ZipWriteStr(output_zip, "boot.img", target_boot.data)
     script.WriteRawImage("/boot", "boot.img")
-    print "writing full boot image (forced by two-step mode)"
+    print("writing full boot image (forced by two-step mode)")
 
   script.Print("Removing unneeded files...")
   system_diff.RemoveUnneededFiles(script, ("/system/recovery.img",))
@@ -1794,9 +1796,9 @@ else
                         source_boot.sha1, "patch/boot.img.p")
       so_far += target_boot.size
       script.SetProgress(so_far / total_patch_size)
-      print "boot image changed; including."
+      print("boot image changed; including.")
     else:
-      print "boot image unchanged; skipping."
+      print("boot image unchanged; skipping.")
 
   system_items = ItemSet("system", "META/filesystem_config.txt")
   if vendor_diff:
@@ -1822,9 +1824,9 @@ else
       script.DeleteFiles(["/system/recovery-from-boot.p",
                           "/system/etc/recovery.img",
                           "/system/etc/install-recovery.sh"])
-    print "recovery image changed; including as patch from boot."
+    print("recovery image changed; including as patch from boot.")
   else:
-    print "recovery image unchanged; skipping."
+    print("recovery image unchanged; skipping.")
 
   script.ShowProgress(0.1, 10)
 
@@ -2087,11 +2089,11 @@ def main(argv):
       common.ZipClose(source_zip)
 
     if OPTIONS.verbose:
-      print "--- target info ---"
+      print("--- target info ---")
       common.DumpInfoDict(OPTIONS.info_dict)
 
       if OPTIONS.incremental_source is not None:
-        print "--- source info ---"
+        print("--- source info ---")
         common.DumpInfoDict(OPTIONS.source_info_dict)
 
     WriteABOTAPackageWithBrilloScript(
@@ -2099,20 +2101,20 @@ def main(argv):
         output_file=args[1],
         source_file=OPTIONS.incremental_source)
 
-    print "done."
+    print("done.")
     return
 
   if OPTIONS.extra_script is not None:
     OPTIONS.extra_script = open(OPTIONS.extra_script).read()
 
-  print "unzipping target target-files..."
+  print("unzipping target target-files...")
   OPTIONS.input_tmp, input_zip = common.UnzipTemp(args[0])
 
   OPTIONS.target_tmp = OPTIONS.input_tmp
   OPTIONS.info_dict = common.LoadInfoDict(input_zip, OPTIONS.target_tmp)
 
   if OPTIONS.verbose:
-    print "--- target info ---"
+    print("--- target info ---")
     common.DumpInfoDict(OPTIONS.info_dict)
 
   # If the caller explicitly specified the device-specific extensions
@@ -2125,7 +2127,7 @@ def main(argv):
   if OPTIONS.device_specific is None:
     from_input = os.path.join(OPTIONS.input_tmp, "META", "releasetools.py")
     if os.path.exists(from_input):
-      print "(using device-specific extensions from target_files)"
+      print("(using device-specific extensions from target_files)")
       OPTIONS.device_specific = from_input
     else:
       OPTIONS.device_specific = OPTIONS.info_dict.get("tool_extensions", None)
@@ -2158,7 +2160,7 @@ def main(argv):
   # Non A/B OTAs rely on /cache partition to store temporary files.
   cache_size = OPTIONS.info_dict.get("cache_size", None)
   if cache_size is None:
-    print "--- can't determine the cache partition size ---"
+    print("--- can't determine the cache partition size ---")
   OPTIONS.cache_size = cache_size
 
   # Generate a verify package.
@@ -2172,14 +2174,14 @@ def main(argv):
   # Generate an incremental OTA. It will fall back to generate a full OTA on
   # failure unless no_fallback_to_full is specified.
   else:
-    print "unzipping source target-files..."
+    print("unzipping source target-files...")
     OPTIONS.source_tmp, source_zip = common.UnzipTemp(
         OPTIONS.incremental_source)
     OPTIONS.target_info_dict = OPTIONS.info_dict
     OPTIONS.source_info_dict = common.LoadInfoDict(source_zip,
                                                    OPTIONS.source_tmp)
     if OPTIONS.verbose:
-      print "--- source info ---"
+      print("--- source info ---")
       common.DumpInfoDict(OPTIONS.source_info_dict)
     try:
       WriteIncrementalOTAPackage(input_zip, source_zip, output_zip)
@@ -2194,7 +2196,7 @@ def main(argv):
     except ValueError:
       if not OPTIONS.fallback_to_full:
         raise
-      print "--- failed to build incremental; falling back to full ---"
+      print("--- failed to build incremental; falling back to full ---")
       OPTIONS.incremental_source = None
       WriteFullOTAPackage(input_zip, output_zip)
 
@@ -2205,7 +2207,7 @@ def main(argv):
     SignOutput(temp_zip_file.name, args[1])
     temp_zip_file.close()
 
-  print "done."
+  print("done.")
 
 
 if __name__ == '__main__':
@@ -2213,9 +2215,7 @@ if __name__ == '__main__':
     common.CloseInheritedPipes()
     main(sys.argv[1:])
   except common.ExternalError as e:
-    print
-    print "   ERROR: %s" % (e,)
-    print
+    print("\n   ERROR: %s\n" % (e,))
     sys.exit(1)
   finally:
     common.Cleanup()
