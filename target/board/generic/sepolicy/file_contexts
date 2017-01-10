@@ -9,6 +9,7 @@
 /dev/block/vdc               u:object_r:userdata_block_device:s0
 
 /dev/goldfish_pipe           u:object_r:qemu_device:s0
+/dev/goldfish_sync           u:object_r:qemu_device:s0
 /dev/qemu_.*                 u:object_r:qemu_device:s0
 /dev/socket/qemud            u:object_r:qemud_socket:s0
 /dev/ttyGF[0-9]*             u:object_r:serial_device:s0
