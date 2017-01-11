@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "037501b9_7010c938",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-01-11T21:40:50Z",
+      "side": 1,
+      "message": "Add a blank line above the bluetooth stuff\n\n\techo \u0027\u0027; \\",
+      "revId": "a01ef429e6be2bbfe30781fda4a88e0ef1781662",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
