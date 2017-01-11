@@ -196,7 +196,7 @@ LOCAL_RENDERSCRIPT_INCLUDES := \
 else
 LOCAL_RENDERSCRIPT_INCLUDES := \
     $(TOPDIR)external/clang/lib/Headers \
-    $(TOPDIR)frameworks/rs/scriptc \
+    $(TOPDIR)frameworks/rs/script_api/include \
     $(LOCAL_RENDERSCRIPT_INCLUDES)
 endif
 
