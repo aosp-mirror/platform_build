@@ -788,7 +788,7 @@ renderscript_flags += -m$(my_32_64_bit_suffix)
 
 renderscript_includes := \
     $(TOPDIR)external/clang/lib/Headers \
-    $(TOPDIR)frameworks/rs/scriptc \
+    $(TOPDIR)frameworks/rs/script_api/include \
     $(LOCAL_RENDERSCRIPT_INCLUDES)
 
 ifneq ($(LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE),)
