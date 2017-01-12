@@ -151,7 +151,11 @@ AUX_ALL_SUBARCHS :=
 variant_sfx :=_aux_variant_config.mk
 os_sfx :=_aux_os_config.mk
 
-all_configs := $(shell find device vendor -maxdepth 4 -name '*$(variant_sfx)' -o -name '*$(os_sfx)' | sort)
+config_roots := $(wildcard device vendor)
+all_configs :=
+ifdef config_roots
+all_configs := $(shell find $(config_roots) -maxdepth 4 -name '*$(variant_sfx)' -o -name '*$(os_sfx)' | sort)
+endif
 all_os_configs := $(filter %$(os_sfx),$(all_configs))
 all_variant_configs := $(filter %$(variant_sfx),$(all_configs))
 
