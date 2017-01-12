@@ -64,7 +64,11 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "CrossHostSecondaryArch": "$(HOST_CROSS_2ND_ARCH)",'; \
 	echo '    "Safestack": $(if $(filter true,$(USE_SAFESTACK)),true,false),'; \
 	echo ''; \
-	echo '    "ArtUseReadBarrier": $(if $(filter true,$(PRODUCT_ART_USE_READ_BARRIER)),true,false)'; \
+	echo '    "ArtUseReadBarrier": $(if $(filter true,$(PRODUCT_ART_USE_READ_BARRIER)),true,false),'; \
+	echo ''; \
+	echo '    "BtConfigIncludeDir": "$(BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR)",'; \
+	echo '    "BtHcilpIncluded": "$(BOARD_BLUETOOTH_BDROID_HCILP_INCLUDED)",'; \
+	echo '    "BtHciUseMct": $(if $(filter true,$(BLUETOOTH_HCI_USE_MCT)),true,false)'; \
 	echo '}') > $(SOONG_VARIABLES_TMP); \
 	if ! cmp -s $(SOONG_VARIABLES_TMP) $(SOONG_VARIABLES); then \
 	  mv $(SOONG_VARIABLES_TMP) $(SOONG_VARIABLES); \
