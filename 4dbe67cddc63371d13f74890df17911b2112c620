@@ -16,6 +16,24 @@
       "revId": "4dbe67cddc63371d13f74890df17911b2112c620",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43c7f965_f76253e7",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-01-13T22:39:10Z",
+      "side": 0,
+      "message": "It\u0027s removed intentionally - has become a dead line with zeuthen@\u0027s CL in https://android-review.googlesource.com/#/c/275054/5/tools/releasetools/add_img_to_target_files.py",
+      "parentUuid": "43c7f965_37192ba9",
+      "revId": "4dbe67cddc63371d13f74890df17911b2112c620",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
