@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43c7f965_37192ba9",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-01-13T22:33:52Z",
+      "side": 0,
+      "message": "?",
+      "revId": "4dbe67cddc63371d13f74890df17911b2112c620",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
