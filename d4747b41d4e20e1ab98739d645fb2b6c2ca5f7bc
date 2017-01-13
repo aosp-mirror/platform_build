@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43c7f965_f77c1361",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1003966
+      },
+      "writtenOn": "2017-01-13T22:45:34Z",
+      "side": 1,
+      "message": "nit: should be delete, not deprecate",
+      "range": {
+        "startLine": 7,
+        "startChar": 14,
+        "endLine": 7,
+        "endChar": 23
+      },
+      "revId": "d4747b41d4e20e1ab98739d645fb2b6c2ca5f7bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
