@@ -22,6 +22,30 @@
       "revId": "cad173eed54f9901be6707189e5a134b0a45ec63",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43c7f965_8a857731",
+        "filename": "target/product/telephony.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1121193
+      },
+      "writtenOn": "2017-01-13T19:50:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "43c7f965_6a949b86",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 25,
+        "endChar": 21
+      },
+      "revId": "cad173eed54f9901be6707189e5a134b0a45ec63",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
