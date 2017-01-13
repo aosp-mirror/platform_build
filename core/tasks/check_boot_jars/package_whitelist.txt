@@ -29,6 +29,11 @@ java\.security\.spec
 java\.sql
 java\.text
 java\.text\.spi
+java\.time
+java\.time\.chrono
+java\.time\.format
+java\.time\.temporal
+java\.time\.zone
 java\.util
 java\.util\.concurrent
 java\.util\.concurrent\.atomic
