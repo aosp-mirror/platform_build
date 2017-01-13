@@ -34,6 +34,24 @@
       "revId": "4dbe67cddc63371d13f74890df17911b2112c620",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43c7f965_570067b8",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 386,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-01-13T22:49:42Z",
+      "side": 0,
+      "message": "mention that in checkin comment or remove it in a separate CL?",
+      "parentUuid": "43c7f965_f76253e7",
+      "revId": "4dbe67cddc63371d13f74890df17911b2112c620",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
