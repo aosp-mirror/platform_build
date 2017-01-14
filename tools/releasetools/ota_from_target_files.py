@@ -75,9 +75,6 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
   -e  (--extra_script)  <file>
       Insert the contents of file at the end of the update script.
 
-  -a  (--aslr_mode)  <on|off>
-      Specify whether to turn on ASLR for the package (on by default).
-
   -2  (--two_step)
       Generate a 'two-step' OTA package, where recovery is updated
       first, so that any changes made to the system partition are done
@@ -148,7 +145,6 @@ OPTIONS.patch_threshold = 0.95
 OPTIONS.wipe_user_data = False
 OPTIONS.downgrade = False
 OPTIONS.extra_script = None
-OPTIONS.aslr_mode = True
 OPTIONS.worker_threads = multiprocessing.cpu_count() // 2
 if OPTIONS.worker_threads == 0:
   OPTIONS.worker_threads = 1
@@ -1987,11 +1983,6 @@ def main(argv):
       OPTIONS.oem_no_mount = True
     elif o in ("-e", "--extra_script"):
       OPTIONS.extra_script = a
-    elif o in ("-a", "--aslr_mode"):
-      if a in ("on", "On", "true", "True", "yes", "Yes"):
-        OPTIONS.aslr_mode = True
-      else:
-        OPTIONS.aslr_mode = False
     elif o in ("-t", "--worker_threads"):
       if a.isdigit():
         OPTIONS.worker_threads = int(a)
@@ -2029,7 +2020,7 @@ def main(argv):
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:we:t:a:2o:",
+                             extra_opts="b:k:i:d:we:t:2o:",
                              extra_long_opts=[
                                  "board_config=",
                                  "package_key=",
@@ -2040,7 +2031,6 @@ def main(argv):
                                  "downgrade",
                                  "extra_script=",
                                  "worker_threads=",
-                                 "aslr_mode=",
                                  "two_step",
                                  "no_signing",
                                  "block",
