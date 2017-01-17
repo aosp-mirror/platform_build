@@ -462,6 +462,10 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     build_command.extend(["-L", prop_dict["mount_point"]])
     if "extfs_inode_count" in prop_dict:
       build_command.extend(["-i", prop_dict["extfs_inode_count"]])
+    if "flash_erase_block_size" in prop_dict:
+      build_command.extend(["-e", prop_dict["flash_erase_block_size"]])
+    if "flash_logical_block_size" in prop_dict:
+      build_command.extend(["-o", prop_dict["flash_logical_block_size"]])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("squash"):
@@ -665,6 +669,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("fs_type", "fs_type")
     copy_prop("userdata_fs_type", "fs_type")
     copy_prop("userdata_size", "partition_size")
+    copy_prop("flash_logical_block_size","flash_logical_block_size")
+    copy_prop("flash_erase_block_size", "flash_erase_block_size")
   elif mount_point == "cache":
     copy_prop("cache_fs_type", "fs_type")
     copy_prop("cache_size", "partition_size")
