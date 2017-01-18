@@ -86,13 +86,14 @@ PRODUCT_PACKAGES += \
     file_contexts.bin \
     nonplat_file_contexts \
     nonplat_mac_permissions.xml \
+    nonplat_property_contexts \
     nonplat_seapp_contexts \
     nonplat_service_contexts \
     plat_file_contexts \
     plat_mac_permissions.xml \
+    plat_property_contexts \
     plat_seapp_contexts \
     plat_service_contexts \
-    property_contexts \
     selinux_version \
     sepolicy
 
