@@ -317,13 +317,27 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  std::string jarg = "-j" + std::to_string(tokens + 1);
+  std::string jarg;
+  if (parallel) {
+    if (tokens == 0) {
+      if (ninja) {
+        // ninja is parallel by default
+        jarg = "";
+      } else {
+        // make -j with no argument, guess a reasonable parallelism like ninja does
+        jarg = "-j" + std::to_string(sysconf(_SC_NPROCESSORS_ONLN) + 2);
+      }
+    } else {
+      jarg = "-j" + std::to_string(tokens + 1);
+    }
+  }
+
 
   if (ninja) {
     if (!parallel) {
       // ninja is parallel by default, pass -j1 to disable parallelism if make wasn't parallel
       args.push_back(strdup("-j1"));
-    } else if (tokens > 0) {
+    } else {
       args.push_back(strdup(jarg.c_str()));
     }
     if (keep_going) {
