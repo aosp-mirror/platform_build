@@ -46,6 +46,24 @@
       "revId": "ce0bae2f470373131f2d5f9d79838c2340f0ba0e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6854da0e_6feb4183",
+        "filename": "tools/makeparallel/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-01-18T23:03:30Z",
+      "side": 0,
+      "message": "SGTM. I really hope that this can mostly go away if we remove the top level make (but the build server explicitly calling \u0027make\u0027 will keep it around until we can fix that)",
+      "parentUuid": "6854da0e_cca12397",
+      "revId": "ce0bae2f470373131f2d5f9d79838c2340f0ba0e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
