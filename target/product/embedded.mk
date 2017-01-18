@@ -85,13 +85,14 @@ PRODUCT_PACKAGES += \
     nonplat_file_contexts \
     nonplat_mac_permissions.xml \
     nonplat_seapp_contexts \
+    nonplat_service_contexts \
     plat_file_contexts \
     plat_mac_permissions.xml \
     plat_seapp_contexts \
+    plat_service_contexts \
     property_contexts \
     selinux_version \
-    sepolicy \
-    service_contexts
+    sepolicy
 
 # AID Generation for
 # <pwd.h> and <grp.h>
