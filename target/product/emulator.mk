@@ -50,7 +50,7 @@ PRODUCT_PACKAGES += \
     vibrator.goldfish \
     power.goldfish \
     fingerprint.ranchu \
-    fingerprintd \
+    android.hardware.biometrics.fingerprint@2.1-service \
     sensors.ranchu
 
 PRODUCT_COPY_FILES += \
