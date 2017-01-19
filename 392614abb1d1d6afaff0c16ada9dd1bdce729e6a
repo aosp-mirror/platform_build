@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6854da0e_bb33bb16",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2017-01-19T02:02:45Z",
+      "side": 1,
+      "message": "missing indentation",
+      "revId": "392614abb1d1d6afaff0c16ada9dd1bdce729e6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
