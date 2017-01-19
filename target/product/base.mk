@@ -37,7 +37,6 @@ PRODUCT_PACKAGES += \
     dnsmasq \
     dpm \
     framework \
-    framework-sysconfig.xml \
     fsck_msdos \
     hid \
     ime \
