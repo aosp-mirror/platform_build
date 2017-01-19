@@ -27,7 +27,8 @@ PRODUCT_PACKAGES += \
     bootstat \
     charger \
     cmd \
-    debuggerd \
+    crash_dump \
+    debuggerd\
     dumpstate \
     dumpsys \
     fastboot \
@@ -77,6 +78,7 @@ PRODUCT_PACKAGES += \
     sh \
     storaged \
     surfaceflinger \
+    tombstoned \
     toolbox \
     toybox \
     tzdatacheck \
