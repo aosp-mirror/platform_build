@@ -3,6 +3,7 @@
 ##############################################
 
 my_sanitize := $(strip $(LOCAL_SANITIZE))
+my_sanitize_diag := $(strip $(LOCAL_SANITIZE_DIAG))
 
 # SANITIZE_HOST is only in effect if the module is already using clang (host
 # modules that haven't set `LOCAL_CLANG := false` and device modules that
@@ -59,6 +60,12 @@ endif
 # Never always wins.
 ifeq ($(LOCAL_SANITIZE),never)
   my_sanitize :=
+endif
+
+# If CFI is disabled globally, remove it from my_sanitize.
+ifeq ($(strip $(ENABLE_CFI)),)
+  my_sanitize := $(filter-out cfi,$(my_sanitize))
+  my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
 
 my_nosanitize = $(strip $(LOCAL_NOSANITIZE))
@@ -195,8 +202,8 @@ ifneq ($(strip $(LOCAL_SANITIZE_RECOVER)),)
   my_cflags += -fsanitize-recover=$(recover_arg)
 endif
 
-ifneq ($(strip $(LOCAL_SANITIZE_DIAG)),)
-  notrap_arg := $(subst $(space),$(comma),$(LOCAL_SANITIZE_DIAG)),
+ifneq ($(my_sanitize_diag),)
+  notrap_arg := $(subst $(space),$(comma),$(my_sanitize_diag)),
   my_cflags += -fno-sanitize-trap=$(notrap_arg)
   # Diagnostic requires a runtime library, unless ASan or TSan are also enabled.
   ifeq ($(filter address thread,$(my_sanitize)),)
