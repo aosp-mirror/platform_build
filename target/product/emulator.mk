@@ -47,11 +47,19 @@ PRODUCT_PACKAGES += \
     fingerprint.goldfish \
     sensors.goldfish \
     audio.primary.goldfish \
+    audio.primary.goldfish_legacy \
+    android.hardware.audio@2.0-service \
     vibrator.goldfish \
     power.goldfish \
     fingerprint.ranchu \
     android.hardware.biometrics.fingerprint@2.1-service \
     sensors.ranchu
+
+PRODUCT_PACKAGES += \
+    android.hardware.audio@2.0-impl \
+    android.hardware.audio.effect@2.0-impl \
+    android.hardware.broadcastradio@1.0-impl \
+    android.hardware.soundtrigger@2.0-impl
 
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/fstab.goldfish:root/fstab.goldfish \
