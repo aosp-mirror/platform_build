@@ -1587,6 +1587,7 @@ define transform-o-to-static-lib
 $(extract-and-include-target-whole-static-libs)
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
+    $(PRIVATE_ARFLAGS) \
     $@,$(PRIVATE_ALL_OBJECTS))
 endef
 

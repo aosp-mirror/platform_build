@@ -57,6 +57,7 @@ my_generated_sources := $(LOCAL_GENERATED_SOURCES)
 my_additional_dependencies := $(LOCAL_ADDITIONAL_DEPENDENCIES)
 my_export_c_include_dirs := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
 my_export_c_include_deps := $(LOCAL_EXPORT_C_INCLUDE_DEPS)
+my_arflags :=
 
 ifneq (,$(strip $(foreach dir,$(subst $(comma),$(space),$(COVERAGE_PATHS)),$(filter $(dir)%,$(LOCAL_PATH)))))
   my_native_coverage := true
@@ -1736,6 +1737,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LDFLAGS := $(my_ldflags)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LDLIBS := $(my_ldlibs)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TIDY_CHECKS := $(my_tidy_checks)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TIDY_FLAGS := $(my_tidy_flags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ARFLAGS := $(my_arflags)
 
 # this is really the way to get the files onto the command line instead
 # of using $^, because then LOCAL_ADDITIONAL_DEPENDENCIES doesn't work
