@@ -145,6 +145,7 @@ endif
 ifneq ($(filter cfi,$(my_sanitize)),)
   my_cflags += -flto -fsanitize-cfi-cross-dso -fvisibility=default
   my_ldflags += -flto -fsanitize-cfi-cross-dso -fsanitize=cfi -Wl,-plugin-opt,O1 -Wl,-export-dynamic-symbol=__cfi_check
+  my_arflags += --plugin $(LLVM_PREBUILTS_PATH)/../lib64/LLVMgold.so
 endif
 
 # If local or global modules need ASAN, add linker flags.
