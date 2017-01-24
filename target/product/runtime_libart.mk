@@ -53,6 +53,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     dalvikvm \
     dex2oat \
+    dexoptanalyzer \
     libart \
     libart_fake \
     libopenjdkjvmti \
