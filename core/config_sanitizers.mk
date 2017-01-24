@@ -143,6 +143,10 @@ ifneq ($(my_sanitize),)
 endif
 
 ifneq ($(filter cfi,$(my_sanitize)),)
+  # __cfi_check needs to be built as Thumb (see the code in linker_cfi.cpp).
+  # LLVM is not set up to do this on a function basis, so force Thumb on the
+  # entire module.
+  LOCAL_ARM_MODE := thumb
   my_cflags += -flto -fsanitize-cfi-cross-dso -fvisibility=default
   my_ldflags += -flto -fsanitize-cfi-cross-dso -fsanitize=cfi -Wl,-plugin-opt,O1 -Wl,-export-dynamic-symbol=__cfi_check
   my_arflags += --plugin $(LLVM_PREBUILTS_PATH)/../lib64/LLVMgold.so
