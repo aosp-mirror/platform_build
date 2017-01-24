@@ -65,7 +65,7 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "Safestack": $(if $(filter true,$(USE_SAFESTACK)),true,false),'; \
 	echo '    "EnableCFI": $(if $(filter true,$(ENABLE_CFI)),true,false),'; \
 	echo ''; \
-	echo '    "ArtUseReadBarrier": $(if $(filter true,$(PRODUCT_ART_USE_READ_BARRIER)),true,false),'; \
+	echo '    "ArtUseReadBarrier": $(if $(filter false,$(PRODUCT_ART_USE_READ_BARRIER)),false,true),'; \
 	echo ''; \
 	echo '    "BtConfigIncludeDir": "$(BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR)",'; \
 	echo '    "BtHcilpIncluded": "$(BOARD_BLUETOOTH_BDROID_HCILP_INCLUDED)",'; \
