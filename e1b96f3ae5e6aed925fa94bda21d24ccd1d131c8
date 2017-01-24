@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "68f3faab_d7c7361b",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2017-01-24T01:21:00Z",
+      "side": 1,
+      "message": "It might be better to define a new variable in soong for the library path. We are using this ../lib64 thing elsewhere too.",
+      "range": {
+        "startLine": 148,
+        "startChar": 25,
+        "endLine": 148,
+        "endChar": 56
+      },
+      "revId": "e1b96f3ae5e6aed925fa94bda21d24ccd1d131c8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
