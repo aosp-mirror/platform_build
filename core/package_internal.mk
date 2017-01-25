@@ -639,12 +639,15 @@ ifdef LOCAL_COMPATIBILITY_SUITE
 cts_testcase_file := $(foreach s,$(my_split_suffixes),$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE)_$(s).apk)
 $(cts_testcase_file) : $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk | $(ACP)
 	$(copy-file-to-new-target)
+common_testcase_file := $(foreach s,$(my_split_suffixes),$($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)_$(s).apk)
+$(common_testcase_file) : $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk
+	$(copy-file-to-new-target)
 
 COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES := \
   $(COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES) \
-  $(cts_testcase_file)
+  $(cts_testcase_file) $(common_testcase_file)
 
-$(my_register_name) : $(cts_testcase_file)
+$(my_register_name) : $(cts_testcase_file) $(common_testcase_file)
 endif # LOCAL_COMPATIBILITY_SUITE
 endif # LOCAL_PACKAGE_SPLITS
 

@@ -377,7 +377,8 @@ endif
 
 # The module itself.
 my_compat_dist := \
-  $(LOCAL_BUILT_MODULE):$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(my_installed_module_stem)
+  $(LOCAL_BUILT_MODULE):$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(my_installed_module_stem) \
+  $(LOCAL_BUILT_MODULE):$($(my_prefix)OUT_TESTCASES)/$(my_installed_module_stem)
 
 # Make sure we only add the files once for multilib modules.
 ifndef $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
@@ -387,17 +388,22 @@ $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files := true
 my_compat_dist += $(foreach f, $(LOCAL_COMPATIBILITY_SUPPORT_FILES),\
   $(eval p := $(subst :,$(space),$(f)))\
   $(eval s := $(word 1,$(p)))\
-  $(eval d := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(or $(word 2,$(p)),$(notdir $(word 1,$(p)))))\
-  $(s):$(d))
+  $(eval n := $(or $(word 2,$(p)),$(notdir $(word 1, $(p))))) \
+  $(eval d := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(n)) \
+  $(s):$(d) $(s):$($(my_prefix)OUT_TESTCASES)/$(n))
 
 ifneq (,$(wildcard $(LOCAL_PATH)/AndroidTest.xml))
 my_compat_dist += \
   $(LOCAL_PATH)/AndroidTest.xml:$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE).config
+my_compat_dist += \
+  $(LOCAL_PATH)/AndroidTest.xml:$($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE).config
 endif
 
 ifneq (,$(wildcard $(LOCAL_PATH)/DynamicConfig.xml))
 my_compat_dist += \
   $(LOCAL_PATH)/DynamicConfig.xml:$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE).dynamic
+my_compat_dist += \
+  $(LOCAL_PATH)/DynamicConfig.xml:$($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE).dynamic
 endif
 endif # $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
 
