@@ -61,6 +61,10 @@ PRODUCT_PACKAGES += \
     android.hardware.broadcastradio@1.0-impl \
     android.hardware.soundtrigger@2.0-impl
 
+PRODUCT_PACKAGES += \
+	android.hardware.keymaster@3.0-impl \
+	android.hardware.keymaster@3.0-service
+
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/fstab.goldfish:root/fstab.goldfish \
     device/generic/goldfish/init.goldfish.rc:root/init.goldfish.rc \
