@@ -1226,6 +1226,25 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                                       source_file=None):
   """Generate an Android OTA package that has A/B update payload."""
 
+  def ComputeStreamingMetadata(zip_file):
+    """Compute the streaming metadata for a given zip."""
+
+    def ComputeEntryOffsetSize(name):
+      """Compute the zip entry offset and size."""
+      info = zip_file.getinfo(name)
+      offset = info.header_offset + len(info.FileHeader())
+      size = info.file_size
+      return '%s:%d:%d' % (name, offset, size)
+
+    # payload.bin and payload_properties.txt must exist.
+    offsets = [ComputeEntryOffsetSize('payload.bin'),
+               ComputeEntryOffsetSize('payload_properties.txt')]
+
+    # care_map.txt is available only if dm-verity is enabled.
+    if 'care_map.txt' in zip_file.namelist():
+      offsets.append(ComputeEntryOffsetSize('care_map.txt'))
+    return ','.join(offsets)
+
   # The place where the output from the subprocess should go.
   log_file = sys.stdout if OPTIONS.verbose else subprocess.PIPE
 
@@ -1363,11 +1382,15 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
       f.write("POWERWASH=1\n")
     metadata["ota-wipe"] = "yes"
 
-  # Add the signed payload file and properties into the zip.
-  common.ZipWrite(output_zip, properties_file, arcname="payload_properties.txt")
+  # Add the signed payload file and properties into the zip. In order to
+  # support streaming, we pack payload.bin, payload_properties.txt and
+  # care_map.txt as ZIP_STORED. So these entries can be read directly with
+  # the offset and length pairs.
   common.ZipWrite(output_zip, signed_payload_file, arcname="payload.bin",
                   compress_type=zipfile.ZIP_STORED)
-  WriteMetadata(metadata, output_zip)
+  common.ZipWrite(output_zip, properties_file,
+                  arcname="payload_properties.txt",
+                  compress_type=zipfile.ZIP_STORED)
 
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
@@ -1377,15 +1400,42 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
     namelist = target_zip.namelist()
     if care_map_path in namelist:
       care_map_data = target_zip.read(care_map_path)
-      common.ZipWriteStr(output_zip, "care_map.txt", care_map_data)
+      common.ZipWriteStr(output_zip, "care_map.txt", care_map_data,
+          compress_type=zipfile.ZIP_STORED)
     else:
       print("Warning: cannot find care map file in target_file package")
     common.ZipClose(target_zip)
 
-  # Sign the whole package to comply with the Android OTA package format.
+  # SignOutput(), which in turn calls signapk.jar, will possibly reorder the
+  # zip entries, as well as padding the entry headers. We sign the current
+  # package (without the metadata entry) to allow that to happen. Then compute
+  # the zip entry offsets, write the metadata and do the signing again.
   common.ZipClose(output_zip)
-  SignOutput(temp_zip_file.name, output_file)
+  temp_signing = tempfile.NamedTemporaryFile()
+  SignOutput(temp_zip_file.name, temp_signing.name)
   temp_zip_file.close()
+
+  # Open the signed zip. Compute the metadata that's needed for streaming.
+  output_zip = zipfile.ZipFile(temp_signing, "a",
+                               compression=zipfile.ZIP_DEFLATED)
+  metadata['streaming-property-files'] = ComputeStreamingMetadata(output_zip)
+
+  # Write the metadata entry into the zip.
+  WriteMetadata(metadata, output_zip)
+  common.ZipClose(output_zip)
+
+  # Re-sign the package after adding the metadata entry, which should not
+  # affect the entries that are needed for streaming. Because signapk packs
+  # ZIP_STORED entries first, then the ZIP_DEFLATED entries such as metadata.
+  SignOutput(temp_signing.name, output_file)
+  temp_signing.close()
+
+  # Reopen the signed zip to double check the streaming metadata.
+  output_zip = zipfile.ZipFile(output_file, "r")
+  assert (metadata['streaming-property-files'] ==
+          ComputeStreamingMetadata(output_zip)), \
+              "Mismatching streaming metadata."
+  common.ZipClose(output_zip)
 
 
 class FileDifference(object):
