@@ -354,18 +354,16 @@ PRODUCT_COPY_FILES := \
 # whitespace characters on either side of the '='.
 PRODUCT_PROPERTY_OVERRIDES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PROPERTY_OVERRIDES))
+.KATI_READONLY := PRODUCT_PROPERTY_OVERRIDES
 
 PRODUCT_SHIPPING_API_LEVEL := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SHIPPING_API_LEVEL))
-ifdef PRODUCT_SHIPPING_API_LEVEL
-ADDITIONAL_BUILD_PROPERTIES += \
-    ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
-endif
 
 # A list of property assignments, like "key = value", with zero or more
 # whitespace characters on either side of the '='.
 # used for adding properties to default.prop
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
+.KATI_READONLY := PRODUCT_DEFAULT_PROPERTY_OVERRIDES
 
 # Should we use the default resources or add any product specific overlays
 PRODUCT_PACKAGE_OVERLAYS := \
@@ -376,11 +374,6 @@ DEVICE_PACKAGE_OVERLAYS := \
 # The list of product-specific kernel header dirs
 PRODUCT_VENDOR_KERNEL_HEADERS := \
     $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_KERNEL_HEADERS)
-
-# Add the product-defined properties to the build properties.
-ADDITIONAL_BUILD_PROPERTIES := \
-    $(ADDITIONAL_BUILD_PROPERTIES) \
-    $(PRODUCT_PROPERTY_OVERRIDES)
 
 # The OTA key(s) specified by the product config, if any.  The names
 # of these keys are stored in the target-files zip so that post-build
