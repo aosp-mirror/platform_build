@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "034c51ef_c33a856e",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1246,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-01-25T18:31:44Z",
+      "side": 1,
+      "message": "this is the new bit that differs from the reverted CL",
+      "range": {
+        "startLine": 1243,
+        "startChar": 0,
+        "endLine": 1246,
+        "endChar": 28
+      },
+      "revId": "c96316c89b6b4fdcccdb46c8a39c79eb62468fff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
