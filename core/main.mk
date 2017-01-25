@@ -230,6 +230,31 @@ ifeq (true,$(EMMA_INSTRUMENT_STATIC))
 EMMA_INSTRUMENT := true
 endif
 
+#
+# -----------------------------------------------------------------
+# Validate ADDITIONAL_DEFAULT_PROPERTIES.
+ifneq ($(ADDITIONAL_DEFAULT_PROPERTIES),)
+$(error ADDITIONAL_DEFAULT_PROPERTIES must not be set before here: $(ADDITIONAL_DEFAULT_PROPERTIES))
+endif
+
+#
+# -----------------------------------------------------------------
+# Validate ADDITIONAL_BUILD_PROPERTIES.
+ifneq ($(ADDITIONAL_BUILD_PROPERTIES),)
+$(error ADDITIONAL_BUILD_PROPERTIES must not be set before here: $(ADDITIONAL_BUILD_PROPERTIES))
+endif
+
+#
+# -----------------------------------------------------------------
+# Add the product-defined properties to the build properties.
+ifdef PRODUCT_SHIPPING_API_LEVEL
+ADDITIONAL_BUILD_PROPERTIES += \
+  ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
+endif
+ADDITIONAL_BUILD_PROPERTIES := \
+  $(ADDITIONAL_BUILD_PROPERTIES) \
+  $(PRODUCT_PROPERTY_OVERRIDES)
+
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
 
@@ -447,8 +472,12 @@ endif
 FULL_BUILD := true
 
 # Before we go and include all of the module makefiles, mark the PRODUCT_*
-# values readonly so that they won't be modified.
+# and ADDITIONAL*PROPERTIES values readonly so that they won't be modified.
 $(call readonly-product-vars)
+ADDITIONAL_DEFAULT_PROPERTIES := $(strip $(ADDITIONAL_DEFAULT_PROPERTIES))
+.KATI_READONLY := ADDITIONAL_DEFAULT_PROPERTIES
+ADDITIONAL_BUILD_PROPERTIES := $(strip $(ADDITIONAL_BUILD_PROPERTIES))
+.KATI_READONLY := ADDITIONAL_BUILD_PROPERTIES
 
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
