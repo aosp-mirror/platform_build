@@ -74,12 +74,12 @@ endif
 # default.prop
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_ROOT_OUT)/default.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_DEFAULT_PROP_TARGET)
-ADDITIONAL_DEFAULT_PROPERTIES := \
+FINAL_DEFAULT_PROPERTIES := \
     $(call collapse-pairs, $(ADDITIONAL_DEFAULT_PROPERTIES))
-ADDITIONAL_DEFAULT_PROPERTIES += \
+FINAL_DEFAULT_PROPERTIES += \
     $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
-ADDITIONAL_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(ADDITIONAL_DEFAULT_PROPERTIES),=)
+FINAL_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
+    $(FINAL_DEFAULT_PROPERTIES),=)
 
 intermediate_system_build_prop := $(call intermediates-dir-for,ETC,system_build_prop)/build.prop
 
@@ -89,7 +89,7 @@ $(INSTALLED_DEFAULT_PROP_TARGET): $(intermediate_system_build_prop)
 	$(hide) echo "#" > $@; \
 	        echo "# ADDITIONAL_DEFAULT_PROPERTIES" >> $@; \
 	        echo "#" >> $@;
-	$(hide) $(foreach line,$(ADDITIONAL_DEFAULT_PROPERTIES), \
+	$(hide) $(foreach line,$(FINAL_DEFAULT_PROPERTIES), \
 		echo "$(line)" >> $@;)
 	$(hide) echo "#" >> $@; \
 	        echo "# BOOTIMAGE_BUILD_PROPERTIES" >> $@; \
@@ -103,10 +103,10 @@ $(INSTALLED_DEFAULT_PROP_TARGET): $(intermediate_system_build_prop)
 # build.prop
 INSTALLED_BUILD_PROP_TARGET := $(TARGET_OUT)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_BUILD_PROP_TARGET)
-ADDITIONAL_BUILD_PROPERTIES := \
+FINAL_BUILD_PROPERTIES := \
     $(call collapse-pairs, $(ADDITIONAL_BUILD_PROPERTIES))
-ADDITIONAL_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(ADDITIONAL_BUILD_PROPERTIES),=)
+FINAL_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
+    $(FINAL_BUILD_PROPERTIES),=)
 
 # A list of arbitrary tags describing the build configuration.
 # Force ":=" so we can use +=
@@ -256,12 +256,12 @@ endif
 			echo "#" >> $@; \
 			cat $(file) >> $@; \
 		fi;)
-	$(if $(ADDITIONAL_BUILD_PROPERTIES), \
+	$(if $(FINAL_BUILD_PROPERTIES), \
 		$(hide) echo >> $@; \
 		        echo "#" >> $@; \
 		        echo "# ADDITIONAL_BUILD_PROPERTIES" >> $@; \
 		        echo "#" >> $@; )
-	$(hide) $(foreach line,$(ADDITIONAL_BUILD_PROPERTIES), \
+	$(hide) $(foreach line,$(FINAL_BUILD_PROPERTIES), \
 		echo "$(line)" >> $@;)
 	$(hide) cat $(INSTALLED_ANDROID_INFO_TXT_TARGET) | grep 'require version-' | sed -e 's/require version-/ro.build.expect./g' >> $@
 	$(hide) build/tools/post_process_props.py $@ $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_PROPERTY_BLACKLIST)
