@@ -70,6 +70,7 @@ PRODUCT_PACKAGES += \
     lmkd \
     logcat \
     logwrapper \
+    lshal \
     mkshrc \
     reboot \
     recovery \
