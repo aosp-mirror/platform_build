@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "92cded76_5739c9e9",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-01-31T01:04:19Z",
+      "side": 1,
+      "message": "Could we have a comment on the else saying something like \"#USE_SOONG_UI\"?",
+      "revId": "8721d78ff74125e9016fb981f229f896947c7259",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
