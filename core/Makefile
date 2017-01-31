@@ -71,13 +71,33 @@ $(gen): frameworks/base/docs/docs-redirect-index.html
 endif
 
 # -----------------------------------------------------------------
+# vendor_default_property_overrides_split_enabled and
+# vendor_build_property_overrides_split_enabled
+vendor_default_property_overrides_split_enabled :=
+vendor_build_property_overrides_split_enabled :=
+ifeq ($(ENABLE_TREBLE), true)
+  ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+    vendor_build_property_overrides_split_enabled := true
+
+    # Checks whether early mount for vendor partition is enabled or not.
+    # TODO(jaekyun): Early mount will be mandatory for ENABLE_TREBLE=true. After
+    # that is done, this condition check should be removed.
+    ifeq ($(ENABLE_EARLY_MOUNT), true)
+      vendor_default_property_overrides_split_enabled := true
+    endif
+  endif
+endif
+
+# -----------------------------------------------------------------
 # default.prop
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_ROOT_OUT)/default.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_DEFAULT_PROP_TARGET)
 FINAL_DEFAULT_PROPERTIES := \
     $(call collapse-pairs, $(ADDITIONAL_DEFAULT_PROPERTIES))
-FINAL_DEFAULT_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
+ifndef vendor_default_property_overrides_split_enabled
+  FINAL_DEFAULT_PROPERTIES += \
+      $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
+endif
 FINAL_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_DEFAULT_PROPERTIES),=)
 
@@ -98,6 +118,30 @@ $(INSTALLED_DEFAULT_PROP_TARGET): $(intermediate_system_build_prop)
 	$(hide) echo ro.bootimage.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
 	$(hide) echo ro.bootimage.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
 	$(hide) build/tools/post_process_props.py $@
+
+# -----------------------------------------------------------------
+# vendor default.prop
+INSTALLED_VENDOR_DEFAULT_PROP_TARGET :=
+ifdef vendor_default_property_overrides_split_enabled
+INSTALLED_VENDOR_DEFAULT_PROP_TARGET := $(TARGET_OUT_VENDOR)/default.prop
+ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET)
+
+FINAL_VENDOR_DEFAULT_PROPERTIES += \
+    $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
+FINAL_VENDOR_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
+    $(FINAL_VENDOR_DEFAULT_PROPERTIES),=)
+
+$(INSTALLED_VENDOR_DEFAULT_PROP_TARGET): $(INSTALLED_DEFAULT_PROP_TARGET)
+	@echo Target buildinfo: $@
+	@mkdir -p $(dir $@)
+	$(hide) echo "#" > $@; \
+	        echo "# ADDITIONAL VENDOR DEFAULT PROPERTIES" >> $@; \
+	        echo "#" >> $@;
+	$(hide) $(foreach line,$(FINAL_VENDOR_DEFAULT_PROPERTIES), \
+		echo "$(line)" >> $@;)
+	$(hide) build/tools/post_process_props.py $@
+
+endif  # vendor_default_property_overrides_split_enabled
 
 # -----------------------------------------------------------------
 # build.prop
@@ -288,14 +332,30 @@ endif
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 INSTALLED_VENDOR_BUILD_PROP_TARGET := $(TARGET_OUT_VENDOR)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
-$(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
+
+ifdef vendor_build_property_overrides_split_enabled
+FINAL_VENDOR_BUILD_PROPERTIES += \
+    $(call collapse-pairs, $(PRODUCT_PROPERTY_OVERRIDES))
+FINAL_VENDOR_BUILD_PROPERTIES := $(call uniq-pairs-by-first-component, \
+    $(FINAL_VENDOR_BUILD_PROPERTIES),=)
+endif  # vendor_build_property_overrides_split_enabled
+
+$(INSTALLED_VENDOR_BUILD_PROP_TARGET):
 	@echo Target vendor buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) echo > $@
 	$(hide) echo ro.vendor.build.date=`$(DATE_FROM_FILE)`>>$@
 	$(hide) echo ro.vendor.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
 	$(hide) echo ro.vendor.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
-endif
+ifdef vendor_build_property_overrides_split_enabled
+	$(hide) echo "#" >> $@; \
+	        echo "# ADDITIONAL VENDOR BUILD PROPERTIES" >> $@; \
+	        echo "#" >> $@;
+	$(hide) $(foreach line,$(FINAL_VENDOR_BUILD_PROPERTIES), \
+		echo "$(line)" >> $@;)
+	$(hide) build/tools/post_process_props.py $@
+endif  # vendor_build_property_overrides_split_enabled
+endif  # BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 
 # ----------------------------------------------------------------
 
@@ -905,7 +965,10 @@ recovery_initrc := $(call include-path-for, recovery)/etc/init.rc
 recovery_sepolicy := $(call intermediates-dir-for,ETC,sepolicy.recovery)/sepolicy.recovery
 recovery_kernel := $(INSTALLED_KERNEL_TARGET) # same as a non-recovery system
 recovery_ramdisk := $(PRODUCT_OUT)/ramdisk-recovery.img
-recovery_build_prop := $(intermediate_system_build_prop)
+recovery_build_props := $(intermediate_system_build_prop)
+ifdef vendor_build_property_overrides_split_enabled
+recovery_build_props += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
+endif
 recovery_resources_common := $(call include-path-for, recovery)/res
 
 # Set recovery_density to the density bucket of the device.
@@ -1037,8 +1100,13 @@ define build-recoveryimage-target
   $(if $(strip $(recovery_wipe)), \
     $(hide) cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/etc/recovery.wipe)
   $(hide) cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
-  $(hide) cat $(INSTALLED_DEFAULT_PROP_TARGET) $(recovery_build_prop) \
+  $(hide) cat $(INSTALLED_DEFAULT_PROP_TARGET) \
           > $(TARGET_RECOVERY_ROOT_OUT)/default.prop
+  $(if $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET), \
+    $(hide) cat $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET) \
+            >> $(TARGET_RECOVERY_ROOT_OUT)/default.prop)
+  $(hide) cat $(recovery_build_props) \
+          >> $(TARGET_RECOVERY_ROOT_OUT)/default.prop
   $(BOARD_RECOVERY_IMAGE_PREPARE)
   $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)), \
     $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system_root; \
@@ -1080,9 +1148,10 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 		$(INTERNAL_RECOVERYIMAGE_FILES) \
 		$(recovery_initrc) $(recovery_sepolicy) $(recovery_kernel) \
 		$(INSTALLED_2NDBOOTLOADER_TARGET) \
-		$(recovery_build_prop) $(recovery_resource_deps) \
+		$(recovery_build_props) $(recovery_resource_deps) \
 		$(recovery_fstab) \
-		$(RECOVERY_INSTALL_OTA_KEYS)
+		$(RECOVERY_INSTALL_OTA_KEYS) \
+		$(INSTALLED_VENDOR_DEFAULT_PROP_TARGET)
 		$(call pretty,"Target boot image from recovery: $@")
 		$(call build-recoveryimage-target, $@)
 endif
@@ -1093,9 +1162,10 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 		$(INTERNAL_RECOVERYIMAGE_FILES) \
 		$(recovery_initrc) $(recovery_sepolicy) $(recovery_kernel) \
 		$(INSTALLED_2NDBOOTLOADER_TARGET) \
-		$(recovery_build_prop) $(recovery_resource_deps) \
+		$(recovery_build_props) $(recovery_resource_deps) \
 		$(recovery_fstab) \
-		$(RECOVERY_INSTALL_OTA_KEYS)
+		$(RECOVERY_INSTALL_OTA_KEYS) \
+		$(INSTALLED_VENDOR_DEFAULT_PROP_TARGET)
 		$(call build-recoveryimage-target, $@)
 
 ifdef RECOVERY_RESOURCE_ZIP
