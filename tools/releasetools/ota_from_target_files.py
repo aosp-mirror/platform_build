@@ -1418,7 +1418,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # Open the signed zip. Compute the metadata that's needed for streaming.
   output_zip = zipfile.ZipFile(temp_signing, "a",
                                compression=zipfile.ZIP_DEFLATED)
-  metadata['streaming-property-files'] = ComputeStreamingMetadata(output_zip)
+  metadata['ota-streaming-property-files'] = ComputeStreamingMetadata(
+      output_zip)
 
   # Write the metadata entry into the zip.
   WriteMetadata(metadata, output_zip)
@@ -1432,7 +1433,7 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
 
   # Reopen the signed zip to double check the streaming metadata.
   output_zip = zipfile.ZipFile(output_file, "r")
-  assert (metadata['streaming-property-files'] ==
+  assert (metadata['ota-streaming-property-files'] ==
           ComputeStreamingMetadata(output_zip)), \
               "Mismatching streaming metadata."
   common.ZipClose(output_zip)
