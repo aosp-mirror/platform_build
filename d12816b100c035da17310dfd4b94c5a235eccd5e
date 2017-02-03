@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7d4543d4_3f0404d6",
+        "filename": "core/clang/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2017-02-03T21:18:12Z",
+      "side": 0,
+      "message": "I just want to be clear that the Soong-side changes here ensure that these variable names exist for the RS build rules that use them.",
+      "revId": "d12816b100c035da17310dfd4b94c5a235eccd5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
