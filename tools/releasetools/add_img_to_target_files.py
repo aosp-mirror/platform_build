@@ -62,6 +62,7 @@ import zipfile
 
 import build_image
 import common
+import rangelib
 import sparse_img
 
 OPTIONS = common.OPTIONS
@@ -82,6 +83,16 @@ def GetCareMap(which, imgname):
   care_map_list = []
   care_map_list.append(blk_device)
   care_map_list.append(simg.care_map.to_string_raw())
+
+  care_map_ranges = simg.care_map
+  key = which + "_adjusted_partition_size"
+  adjusted_blocks = OPTIONS.info_dict.get(key)
+  if adjusted_blocks:
+    assert adjusted_blocks > 0, "blocks should be positive for " + which
+    care_map_ranges = care_map_ranges.intersect(rangelib.RangeSet(
+        "0-%d" % (adjusted_blocks,)))
+
+  care_map_list.append(care_map_ranges.to_string_raw())
   return care_map_list
 
 
@@ -211,6 +222,14 @@ def CreateImage(input_dir, info_dict, what, block_list=None):
   succ = build_image.BuildImage(os.path.join(input_dir, what),
                                 image_props, img)
   assert succ, "build " + what + ".img image failed"
+
+  is_verity_partition = "verity_block_device" in image_props
+  verity_supported = image_props.get("verity") == "true"
+  if is_verity_partition and verity_supported:
+    adjusted_blocks_value = image_props.get("partition_size")
+    if adjusted_blocks_value:
+      adjusted_blocks_key = what + "_adjusted_partition_size"
+      info_dict[adjusted_blocks_key] = int(adjusted_blocks_value)/4096 - 1
 
   return img
 
