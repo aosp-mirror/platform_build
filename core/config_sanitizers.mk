@@ -68,6 +68,12 @@ ifeq ($(strip $(ENABLE_CFI)),)
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
 
+# CFI needs gold linker, and mips toolchain does not have one.
+ifneq ($(filter mips mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
+  my_sanitize := $(filter-out cfi,$(my_sanitize))
+  my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
+endif
+
 my_nosanitize = $(strip $(LOCAL_NOSANITIZE))
 ifneq ($(my_nosanitize),)
   my_sanitize := $(filter-out $(my_nosanitize),$(my_sanitize))
@@ -150,6 +156,11 @@ ifneq ($(filter cfi,$(my_sanitize)),)
   my_cflags += -flto -fsanitize-cfi-cross-dso -fvisibility=default
   my_ldflags += -flto -fsanitize-cfi-cross-dso -fsanitize=cfi -Wl,-plugin-opt,O1 -Wl,-export-dynamic-symbol=__cfi_check
   my_arflags += --plugin $(LLVM_PREBUILTS_PATH)/../lib64/LLVMgold.so
+  # Workaround for b/33678192. CFI jumptables need Thumb2 codegen.  Revert when
+  # Clang is updated past r290384.
+  ifneq ($(filter arm,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
+    my_ldflags += -march=armv7-a
+  endif
 endif
 
 # If local or global modules need ASAN, add linker flags.
