@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d24ce86f_7fe5cd6d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1633,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-02-06T20:59:04Z",
+      "side": 1,
+      "message": "I think historically make has been sensitive about whitespace, although I think it is better now.  I don\u0027t want to mix whitespace change into the functional changes though, and I expect any large scale whitespace changes to have too many downstream conflicts to be worthwhile.",
+      "parentUuid": "e942c98c_656147a7",
+      "revId": "e14d9b7f7e699fce137c6914cb61533c38812852",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f2faf0cc_760b12aa",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -48,6 +66,24 @@
       "side": 1,
       "message": "We don\u0027t commonly set variables in this context, and nothing else has direct access to $@, though I suspect $(eval ... :\u003d ...) would work?",
       "parentUuid": "f2faf0cc_760b12aa",
+      "revId": "e14d9b7f7e699fce137c6914cb61533c38812852",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e02f8a4d_6004bedd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1734,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-02-06T20:59:04Z",
+      "side": 1,
+      "message": "I expect $(eval) would set variables in the global context though",
+      "parentUuid": "8acd70c3_5940b1f6",
       "revId": "e14d9b7f7e699fce137c6914cb61533c38812852",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
