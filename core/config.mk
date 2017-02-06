@@ -701,7 +701,7 @@ endif
 
 # allow overriding default Java libraries on a per-target basis
 ifeq ($(TARGET_DEFAULT_JAVA_LIBRARIES),)
-  TARGET_DEFAULT_JAVA_LIBRARIES := core-oj core-libart ext framework okhttp
+  TARGET_DEFAULT_JAVA_LIBRARIES := core-oj core-libart legacy-test ext framework okhttp
 endif
 
 # Flags for DEX2OAT
