@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db8be2d2_60118c62",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-06T23:08:46Z",
+      "side": 1,
+      "message": "Nan pointed out that the old version was confusing (even though it was copied from how we were triggering ninja_wrapper). It also printed out a warning with duplicated input like (m -j adb adb). In ninja_wrapper we fix that via $(sort), but this seems cleaner since these really should be PHONY rules.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 30
+      },
+      "revId": "3eb10cf6fa577f0233982ab5bdd394cf8131bb77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
