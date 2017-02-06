@@ -82,7 +82,6 @@ def GetCareMap(which, imgname):
   simg = sparse_img.SparseImage(imgname)
   care_map_list = []
   care_map_list.append(blk_device)
-  care_map_list.append(simg.care_map.to_string_raw())
 
   care_map_ranges = simg.care_map
   key = which + "_adjusted_partition_size"
