@@ -394,8 +394,21 @@ else ifeq ($(my_clang),)
     my_clang := true
 endif
 
-my_c_std_version := $(DEFAULT_C_STD_VERSION)
-my_cpp_std_version := $(DEFAULT_CPP_STD_VERSION)
+ifeq ($(LOCAL_C_STD),)
+    my_c_std_version := $(DEFAULT_C_STD_VERSION)
+else ifeq ($(LOCAL_C_STD),experimental)
+    my_c_std_version := $(EXPERIMENTAL_C_STD_VERSION)
+else
+    my_c_std_version := $(LOCAL_C_STD)
+endif
+
+ifeq ($(LOCAL_CPP_STD),)
+    my_cpp_std_version := $(DEFAULT_CPP_STD_VERSION)
+else ifeq ($(LOCAL_CPP_STD),experimental)
+    my_cpp_std_version := $(EXPERIMENTAL_CPP_STD_VERSION)
+else
+    my_cpp_std_version := $(LOCAL_CPP_STD)
+endif
 
 ifneq ($(my_clang),true)
     # GCC uses an invalid C++14 ABI (emits calls to
