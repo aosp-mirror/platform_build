@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "8acd70c3_5940b1f6",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1734,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-06T18:46:00Z",
+      "side": 1,
+      "message": "We don\u0027t commonly set variables in this context, and nothing else has direct access to $@, though I suspect $(eval ... :\u003d ...) would work?",
+      "parentUuid": "f2faf0cc_760b12aa",
+      "revId": "e14d9b7f7e699fce137c6914cb61533c38812852",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "39d4bbab_5e63bbc9",
         "filename": "core/definitions.mk",
         "patchSetId": 1
