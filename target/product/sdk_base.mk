@@ -18,6 +18,7 @@ PRODUCT_PROPERTY_OVERRIDES :=
 
 PRODUCT_PACKAGES := \
 	ApiDemos \
+	CellBroadcastReceiver \
 	CubeLiveWallpapers \
 	CustomLocale \
 	Development \
