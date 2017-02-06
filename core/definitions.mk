@@ -1541,6 +1541,7 @@ $(call _concat-if-arg2-not-empty,$(1),$(wordlist 3001,99999,$(2)))
 endef
 
 # $(1): the full path of the source static library.
+# $(2): the full path of the destination static library.
 define _extract-and-include-single-target-whole-static-lib
 $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
     rm -rf $$ldir; \
@@ -1562,20 +1563,22 @@ $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;
         filelist="$$filelist $$ldir/$$ext$$f"; \
     done ; \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
-        $@ $$filelist
+        $(2) $$filelist
 
 endef
 
 # $(1): the full path of the source static library.
+# $(2): the full path of the destination static library.
 define extract-and-include-whole-static-libs-first
 $(if $(strip $(1)),
-$(hide) cp $(1) $@)
+$(hide) cp $(1) $(2))
 endef
 
+# $(1): the full path of the destination static library.
 define extract-and-include-target-whole-static-libs
-$(call extract-and-include-whole-static-libs-first, $(firstword $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)))
+$(call extract-and-include-whole-static-libs-first, $(firstword $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)),$(1))
 $(foreach lib,$(wordlist 2,999,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)), \
-    $(call _extract-and-include-single-target-whole-static-lib, $(lib)))
+    $(call _extract-and-include-single-target-whole-static-lib, $(lib), $(1)))
 endef
 
 # Explicitly delete the archive first so that ar doesn't
@@ -1583,15 +1586,17 @@ endef
 define transform-o-to-static-lib
 @echo "$($(PRIVATE_PREFIX)DISPLAY) StaticLib: $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
-@rm -f $@
-$(extract-and-include-target-whole-static-libs)
+@rm -f $@ $@.tmp
+$(call extract-and-include-target-whole-static-libs,$@.tmp)
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
     $(PRIVATE_ARFLAGS) \
-    $@,$(PRIVATE_ALL_OBJECTS))
+    $@.tmp,$(PRIVATE_ALL_OBJECTS))
+$(hide) mv -f $@.tmp $@
 endef
 
 # $(1): the full path of the source static library.
+# $(2): the full path of the destination static library.
 define _extract-and-include-single-aux-whole-static-lib
 $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
     rm -rf $$ldir; \
@@ -1612,14 +1617,14 @@ $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;
         $(PRIVATE_AR) p $$lib_to_include $$f > $$ldir/$$ext$$f; \
         filelist="$$filelist $$ldir/$$ext$$f"; \
     done ; \
-    $(PRIVATE_AR) $(AUX_GLOBAL_ARFLAGS) $@ $$filelist
+    $(PRIVATE_AR) $(AUX_GLOBAL_ARFLAGS) $(2) $$filelist
 
 endef
 
 define extract-and-include-aux-whole-static-libs
-$(call extract-and-include-whole-static-libs-first, $(firstword $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)))
+$(call extract-and-include-whole-static-libs-first, $(firstword $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)),$(1))
 $(foreach lib,$(wordlist 2,999,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)), \
-    $(call _extract-and-include-single-aux-whole-static-lib, $(lib)))
+    $(call _extract-and-include-single-aux-whole-static-lib, $(lib), $(1)))
 endef
 
 # Explicitly delete the archive first so that ar doesn't
@@ -1627,10 +1632,11 @@ endef
 define transform-o-to-aux-static-lib
 @echo "$($(PRIVATE_PREFIX)DISPLAY) StaticLib: $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
-@rm -f $@
-$(extract-and-include-aux-whole-static-libs)
+@rm -f $@ $@.tmp
+$(call extract-and-include-aux-whole-static-libs,$@.tmp)
 $(call split-long-arguments,$(PRIVATE_AR) \
-    $(AUX_GLOBAL_ARFLAGS) $@,$(PRIVATE_ALL_OBJECTS))
+    $(AUX_GLOBAL_ARFLAGS) $@.tmp,$(PRIVATE_ALL_OBJECTS))
+$(hide) mv -f $@.tmp $@
 endef
 
 define transform-o-to-aux-executable-inner
@@ -1677,6 +1683,7 @@ endef
 ###########################################################
 
 # $(1): the full path of the source static library.
+# $(2): the full path of the destination static library.
 define _extract-and-include-single-host-whole-static-lib
 $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;\
     rm -rf $$ldir; \
@@ -1698,30 +1705,30 @@ $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;
         filelist="$$filelist $$ldir/$$ext$$f"; \
     done ; \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)AR) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)GLOBAL_ARFLAGS) \
-        $@ $$filelist
+        $(2) $$filelist
 
 endef
 
 define extract-and-include-host-whole-static-libs
-$(call extract-and-include-whole-static-libs-first, $(firstword $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)))
+$(call extract-and-include-whole-static-libs-first, $(firstword $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)),$(1))
 $(foreach lib,$(wordlist 2,999,$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)), \
-    $(call _extract-and-include-single-host-whole-static-lib, $(lib)))
+    $(call _extract-and-include-single-host-whole-static-lib, $(lib),$(1)))
 endef
 
 ifeq ($(HOST_OS),darwin)
 # On Darwin the host ar fails if there is nothing to add to .a at all.
 # We work around by adding a dummy.o and then deleting it.
 define create-dummy.o-if-no-objs
-$(if $(PRIVATE_ALL_OBJECTS),,$(hide) touch $(dir $@)dummy.o)
+$(if $(PRIVATE_ALL_OBJECTS),,$(hide) touch $(dir $(1))dummy.o)
 endef
 
 define get-dummy.o-if-no-objs
-$(if $(PRIVATE_ALL_OBJECTS),,$(dir $@)dummy.o)
+$(if $(PRIVATE_ALL_OBJECTS),,$(dir $(1))dummy.o)
 endef
 
 define delete-dummy.o-if-no-objs
-$(if $(PRIVATE_ALL_OBJECTS),,$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)AR) d $@ $(dir $@)dummy.o \
-  && rm -f $(dir $@)dummy.o)
+$(if $(PRIVATE_ALL_OBJECTS),,$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)AR) d $(1) $(dir $(1))dummy.o \
+  && rm -f $(dir $(1))dummy.o)
 endef
 endif  # HOST_OS is darwin
 
@@ -1730,13 +1737,14 @@ endif  # HOST_OS is darwin
 define transform-host-o-to-static-lib
 @echo "$($(PRIVATE_PREFIX)DISPLAY) StaticLib: $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
-@rm -f $@
-$(extract-and-include-host-whole-static-libs)
-$(create-dummy.o-if-no-objs)
+@rm -f $@ $@.tmp
+$(call extract-and-include-host-whole-static-libs,$@.tmp)
+$(call create-dummy.o-if-no-objs,$@.tmp)
 $(call split-long-arguments,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)AR) \
-    $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)GLOBAL_ARFLAGS) $@,\
-    $(PRIVATE_ALL_OBJECTS) $(get-dummy.o-if-no-objs))
-$(delete-dummy.o-if-no-objs)
+    $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)GLOBAL_ARFLAGS) $@.tmp,\
+    $(PRIVATE_ALL_OBJECTS) $(call get-dummy.o-if-no-objs,$@.tmp))
+$(call delete-dummy.o-if-no-objs,$@.tmp)
+$(hide) mv -f $@.tmp $@
 endef
 
 
