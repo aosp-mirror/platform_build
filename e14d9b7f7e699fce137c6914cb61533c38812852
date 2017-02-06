@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e942c98c_656147a7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1633,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-06T17:36:28Z",
+      "side": 1,
+      "message": "Are lines 1627 through 1633 supposed to be indented as part of the definition?",
+      "revId": "e14d9b7f7e699fce137c6914cb61533c38812852",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f2faf0cc_760b12aa",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1734,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-06T17:36:28Z",
+      "side": 1,
+      "message": "Since \u0027$@.tmp\u0027 is used so many times, I would extract it to a variable\n\nWhich would also make it easier to change if \u0027$@.tmp\u0027 becomes \u0027$(1).tmp\u0027 in the future\n\n\nActually I\u0027d replace it everywhere but this one has the most uses",
+      "revId": "e14d9b7f7e699fce137c6914cb61533c38812852",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "39d4bbab_5e63bbc9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1741,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-06T17:36:28Z",
+      "side": 1,
+      "message": "indent?",
+      "range": {
+        "startLine": 1741,
+        "startChar": 7,
+        "endLine": 1741,
+        "endChar": 8
+      },
+      "revId": "e14d9b7f7e699fce137c6914cb61533c38812852",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
