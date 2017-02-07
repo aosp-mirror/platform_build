@@ -30,6 +30,12 @@ PROP_VALUE_MAX = 91
 def mangle_build_prop(prop):
   pass
 
+# Put the modifications that you need to make into /vendor/default.prop and
+# /odm/default.prop into this function. The prop object has get(name) and
+# put(name,value) methods.
+def mangle_default_prop_override(prop):
+  pass
+
 # Put the modifications that you need to make into the /default.prop into this
 # function. The prop object has get(name) and put(name,value) methods.
 def mangle_default_prop(prop):
@@ -119,6 +125,9 @@ def main(argv):
 
   if filename.endswith("/build.prop"):
     mangle_build_prop(properties)
+  elif (filename.endswith("/vendor/default.prop") or
+        filename.endswith("/odm/default.prop")):
+    mangle_default_prop_override(properties)
   elif filename.endswith("/default.prop"):
     mangle_default_prop(properties)
   else:
