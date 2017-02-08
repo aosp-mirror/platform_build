@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "80a6aeb2_de2b8a91",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2017-02-08T20:35:21Z",
+      "side": 1,
+      "message": "one of these two should be full cfi",
+      "revId": "191a0f869ea1ba57a1bc1d5efc64f5bc5424b523",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
