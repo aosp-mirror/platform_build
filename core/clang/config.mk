@@ -5,16 +5,6 @@ LLVM_RTLIB_PATH := $(LLVM_PREBUILTS_PATH)/../lib64/clang/$(LLVM_RELEASE_VERSION)
 CLANG_TBLGEN := $(BUILD_OUT_EXECUTABLES)/clang-tblgen$(BUILD_EXECUTABLE_SUFFIX)
 LLVM_TBLGEN := $(BUILD_OUT_EXECUTABLES)/llvm-tblgen$(BUILD_EXECUTABLE_SUFFIX)
 
-# RenderScript-specific tools
-# These are tied to the version of LLVM directly in external/, so they might
-# trail the host prebuilts being used for the rest of the build process.
-RS_LLVM_PREBUILTS_VERSION := clang-3289846
-RS_LLVM_PREBUILTS_BASE := prebuilts/clang/host
-RS_LLVM_PREBUILTS_PATH := $(RS_LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(RS_LLVM_PREBUILTS_VERSION)/bin
-RS_CLANG := $(RS_LLVM_PREBUILTS_PATH)/clang$(BUILD_EXECUTABLE_SUFFIX)
-RS_LLVM_AS := $(RS_LLVM_PREBUILTS_PATH)/llvm-as$(BUILD_EXECUTABLE_SUFFIX)
-RS_LLVM_LINK := $(RS_LLVM_PREBUILTS_PATH)/llvm-link$(BUILD_EXECUTABLE_SUFFIX)
-
 define convert-to-clang-flags
 $(strip $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(1)))
 endef
