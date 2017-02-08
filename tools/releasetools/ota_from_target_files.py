@@ -815,6 +815,32 @@ def AddToKnownPaths(filename, known_paths):
     dirs.pop()
 
 
+def HandleDowngradeMetadata(metadata):
+  # Only incremental OTAs are allowed to reach here.
+  assert OPTIONS.incremental_source is not None
+
+  post_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.target_info_dict)
+  pre_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.source_info_dict)
+  is_downgrade = long(post_timestamp) < long(pre_timestamp)
+
+  if OPTIONS.downgrade:
+    metadata["ota-downgrade"] = "yes"
+    if not is_downgrade:
+      raise RuntimeError("--downgrade specified but no downgrade detected: "
+                         "pre: %s, post: %s" % (pre_timestamp, post_timestamp))
+  else:
+    if is_downgrade:
+      # Non-fatal here to allow generating such a package which may require
+      # manual work to adjust the post-timestamp. A legit use case is that we
+      # cut a new build C (after having A and B), but want to enfore the
+      # update path of A -> C -> B. Specifying --downgrade may not help since
+      # that would enforce a data wipe for C -> B update.
+      print("\nWARNING: downgrade detected: pre: %s, post: %s.\n"
+            "The package may not be deployed properly. "
+            "Try --downgrade?\n" % (pre_timestamp, post_timestamp))
+    metadata["post-timestamp"] = post_timestamp
+
+
 def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   # TODO(tbao): We should factor out the common parts between
   # WriteBlockIncrementalOTAPackage() and WriteIncrementalOTAPackage().
@@ -847,26 +873,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       "ota-type": "BLOCK",
   }
 
-  post_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.target_info_dict)
-  pre_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.source_info_dict)
-  is_downgrade = long(post_timestamp) < long(pre_timestamp)
-
-  if OPTIONS.downgrade:
-    metadata["ota-downgrade"] = "yes"
-    if not is_downgrade:
-      raise RuntimeError("--downgrade specified but no downgrade detected: "
-                         "pre: %s, post: %s" % (pre_timestamp, post_timestamp))
-  else:
-    if is_downgrade:
-      # Non-fatal here to allow generating such a package which may require
-      # manual work to adjust the post-timestamp. A legit use case is that we
-      # cut a new build C (after having A and B), but want to enfore the
-      # update path of A -> C -> B. Specifying --downgrade may not help since
-      # that would enforce a data wipe for C -> B update.
-      print("\nWARNING: downgrade detected: pre: %s, post: %s.\n"
-            "The package may not be deployed properly. "
-            "Try --downgrade?\n" % (pre_timestamp, post_timestamp))
-    metadata["post-timestamp"] = post_timestamp
+  HandleDowngradeMetadata(metadata)
 
   device_specific = common.DeviceSpecificParams(
       source_zip=source_zip,
@@ -1317,7 +1324,6 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                                               OPTIONS.info_dict),
       "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
                                    OPTIONS.info_dict),
-      "post-timestamp": GetBuildProp("ro.build.date.utc", OPTIONS.info_dict),
       "ota-required-cache": "0",
       "ota-type": "AB",
   }
@@ -1327,6 +1333,11 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                                                  OPTIONS.source_info_dict)
     metadata["pre-build-incremental"] = GetBuildProp(
         "ro.build.version.incremental", OPTIONS.source_info_dict)
+
+    HandleDowngradeMetadata(metadata)
+  else:
+    metadata["post-timestamp"] = GetBuildProp(
+        "ro.build.date.utc", OPTIONS.info_dict)
 
   # 1. Generate payload.
   payload_file = common.MakeTempFile(prefix="payload-", suffix=".bin")
@@ -1657,26 +1668,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       "ota-type": "FILE",
   }
 
-  post_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.target_info_dict)
-  pre_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.source_info_dict)
-  is_downgrade = long(post_timestamp) < long(pre_timestamp)
-
-  if OPTIONS.downgrade:
-    metadata["ota-downgrade"] = "yes"
-    if not is_downgrade:
-      raise RuntimeError("--downgrade specified but no downgrade detected: "
-                         "pre: %s, post: %s" % (pre_timestamp, post_timestamp))
-  else:
-    if is_downgrade:
-      # Non-fatal here to allow generating such a package which may require
-      # manual work to adjust the post-timestamp. A legit use case is that we
-      # cut a new build C (after having A and B), but want to enfore the
-      # update path of A -> C -> B. Specifying --downgrade may not help since
-      # that would enforce a data wipe for C -> B update.
-      print("\nWARNING: downgrade detected: pre: %s, post: %s.\n"
-            "The package may not be deployed properly. "
-            "Try --downgrade?\n" % (pre_timestamp, post_timestamp))
-    metadata["post-timestamp"] = post_timestamp
+  HandleDowngradeMetadata(metadata)
 
   device_specific = common.DeviceSpecificParams(
       source_zip=source_zip,
