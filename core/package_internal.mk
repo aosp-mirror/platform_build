@@ -639,8 +639,8 @@ ifdef LOCAL_COMPATIBILITY_SUITE
 cts_testcase_file := $(foreach s,$(my_split_suffixes),$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE)_$(s).apk)
 $(cts_testcase_file) : $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk | $(ACP)
 	$(copy-file-to-new-target)
-common_testcase_file := $(foreach s,$(my_split_suffixes),$($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)_$(s).apk)
-$(common_testcase_file) : $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk
+common_testcase_file := $(foreach s,$(my_split_suffixes),$($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)/$(LOCAL_MODULE)_$(s).apk)
+$(common_testcase_file) : $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk
 	$(copy-file-to-new-target)
 
 COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES := \
