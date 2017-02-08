@@ -80,4 +80,5 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.dalvik.vm.native.bridge=0 \
     dalvik.vm.usejit=true \
     dalvik.vm.usejitprofiles=true \
+    dalvik.vm.dexopt.secondary=true \
     dalvik.vm.appimageformat=lz4
