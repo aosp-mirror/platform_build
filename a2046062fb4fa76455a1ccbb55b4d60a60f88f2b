@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b78d4574_48c8e04a",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2017-02-09T22:05:28Z",
+      "side": 1,
+      "message": "merge it with the block on line 78?",
+      "revId": "a2046062fb4fa76455a1ccbb55b4d60a60f88f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
