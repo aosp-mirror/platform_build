@@ -22,6 +22,30 @@
       "revId": "3eb10cf6fa577f0233982ab5bdd394cf8131bb77",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3be4be64_9637bf2b",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-02-09T01:02:17Z",
+      "side": 1,
+      "message": "I think the old version was necessary to avoid these messages when building for multiple targets:\n\nm -j USE_SOONG_UI\u003dtrue checkbuild tests cts blueprint_tools\nmake: Nothing to be done for `tests\u0027.\nmake: Nothing to be done for `cts\u0027.\nmake: Nothing to be done for `blueprint_tools\u0027.",
+      "parentUuid": "db8be2d2_60118c62",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 30
+      },
+      "revId": "3eb10cf6fa577f0233982ab5bdd394cf8131bb77",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
