@@ -24,7 +24,8 @@ run_soong_ui:
 	+@prebuilts/build-tools/$(host_prebuilts)/bin/makeparallel --ninja build/soong/soong_ui.bash --make-mode $(MAKECMDGOALS)
 
 .PHONY: $(MAKECMDGOALS)
-$(MAKECMDGOALS) : run_soong_ui
+$(sort $(MAKECMDGOALS)) : run_soong_ui
+	@#empty
 
 else # USE_SOONG_UI
 
