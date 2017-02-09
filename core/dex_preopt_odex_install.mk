@@ -50,10 +50,14 @@ endif
 
 built_odex :=
 built_vdex :=
+built_art :=
 installed_odex :=
 installed_vdex :=
+installed_art :=
 built_installed_odex :=
 built_installed_vdex :=
+built_installed_art :=
+
 ifdef LOCAL_DEX_PREOPT
 dexpreopt_boot_jar_module := $(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE))
 ifdef dexpreopt_boot_jar_module
@@ -103,8 +107,10 @@ endif  # boot jar
 
 built_odex := $(strip $(built_odex))
 built_vdex := $(strip $(built_vdex))
+built_art := $(strip $(built_art))
 installed_odex := $(strip $(installed_odex))
 installed_vdex := $(strip $(installed_vdex))
+installed_art := $(strip $(installed_art))
 
 ifdef built_odex
 ifndef LOCAL_DEX_PREOPT_FLAGS
@@ -113,16 +119,18 @@ ifndef LOCAL_DEX_PREOPT_FLAGS
 LOCAL_DEX_PREOPT_FLAGS := $(PRODUCT_DEX_PREOPT_DEFAULT_FLAGS)
 endif
 endif
-
 $(built_odex): PRIVATE_DEX_PREOPT_FLAGS := $(LOCAL_DEX_PREOPT_FLAGS)
 $(built_vdex): $(built_odex)
+$(built_art): $(built_odex)
 endif
 
 # Add the installed_odex to the list of installed files for this module.
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_vdex)
+ALL_MODULES.$(my_register_name).INSTALLED += $(installed_art)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_odex)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_vdex)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_art)
 
 # Record dex-preopt config.
 DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -138,6 +146,6 @@ DEXPREOPT.MODULES.$(LOCAL_MODULE_CLASS) := $(sort \
 
 
 # Make sure to install the .odex and .vdex when you run "make <module_name>"
-$(my_all_targets): $(installed_odex) $(installed_vdex)
+$(my_all_targets): $(installed_odex) $(installed_vdex) $(installed_art)
 
 endif # LOCAL_DEX_PREOPT

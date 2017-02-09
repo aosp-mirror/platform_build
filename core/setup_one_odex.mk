@@ -36,6 +36,17 @@ my_installed_odex := $(call get-odex-installed-file-path,$($(my_2nd_arch_prefix)
 
 my_built_vdex := $(patsubst %.odex,%.vdex,$(my_built_odex))
 my_installed_vdex := $(patsubst %.odex,%.vdex,$(my_installed_odex))
+my_installed_art := $(patsubst %.odex,%.art,$(my_installed_odex))
+
+ifeq (true,$(WITH_DEXPREOPT_APP_IMAGE))
+my_built_art := $(patsubst %.odex,%.art,$(my_built_odex))
+$(my_built_odex): PRIVATE_ART_FILE_PREOPT_FLAGS := --app-image-file=$(my_built_art) \
+    --image-format=lz4
+$(eval $(call copy-one-file,$(my_built_art),$(my_installed_art)))
+built_art += $(my_built_art)
+installed_art += $(my_installed_art)
+built_installed_art += $(my_built_art):$(my_installed_art)
+endif
 
 $(eval $(call copy-one-file,$(my_built_odex),$(my_installed_odex)))
 $(eval $(call copy-one-file,$(my_built_vdex),$(my_installed_vdex)))
