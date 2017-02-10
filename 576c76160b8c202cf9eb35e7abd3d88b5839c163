@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2bf15469_24ca3200",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1071489
+      },
+      "writtenOn": "2017-02-10T00:13:51Z",
+      "side": 0,
+      "message": "Even though both flags not used anymore, they are still\nincluded in some device config files BoardConfigVendor.mk and BoardConfig.mk\nWe should trim them from current config files,\nso they are not copied around anymore.",
+      "range": {
+        "startLine": 71,
+        "startChar": 33,
+        "endLine": 72,
+        "endChar": 69
+      },
+      "revId": "576c76160b8c202cf9eb35e7abd3d88b5839c163",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
