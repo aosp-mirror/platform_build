@@ -16,6 +16,24 @@
       "revId": "a2046062fb4fa76455a1ccbb55b4d60a60f88f2b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fdbee380_72c492d8",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-02-10T20:17:08Z",
+      "side": 1,
+      "message": "Sorry - didn\u0027t see this. I thought it was better to keep this separate to more clearly indicate that this was a temporary fix until the LLVM bug was fixed. The block on 78 is permanent (or at least far longer term) since we don\u0027t expect MIPS support to land anytime soon.\n\nWhat do you think? If you\u0027d rather I merged it in anyway I can do that too.",
+      "parentUuid": "b78d4574_48c8e04a",
+      "revId": "a2046062fb4fa76455a1ccbb55b4d60a60f88f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
