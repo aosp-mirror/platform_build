@@ -116,9 +116,19 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     vndk-sp
 
+# WiFi
+PRODUCT_PACKAGES += \
+	execns \
+	hostapd \
+	ip \
+	ipv6proxy \
+	iw \
+	wpa_supplicant \
+
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/init.ranchu-core.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-core.sh \
     device/generic/goldfish/init.ranchu-net.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-net.sh \
+    device/generic/goldfish/wifi/init.wifi.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.wifi.sh \
     device/generic/goldfish/init.ranchu.rc:root/init.ranchu.rc \
     device/generic/goldfish/fstab.ranchu:root/fstab.ranchu \
     device/generic/goldfish/fstab.ranchu.early:root/fstab.ranchu.early \
@@ -127,6 +137,8 @@ PRODUCT_COPY_FILES += \
     device/generic/goldfish/manifest.xml:$(TARGET_COPY_OUT_VENDOR)/manifest.xml \
     device/generic/goldfish/data/etc/permissions/privapp-permissions-goldfish.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/privapp-permissions-goldfish.xml \
     device/generic/goldfish/data/etc/config.ini:config.ini \
+    device/generic/goldfish/wifi/simulated_hostapd.conf:system/etc/simulated_hostapd.conf \
+    device/generic/goldfish/wifi/wpa_supplicant.conf:data/misc/wifi/wpa_supplicant.conf \
     frameworks/native/data/etc/android.hardware.wifi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.wifi.xml
 
 PRODUCT_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
