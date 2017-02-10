@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2ae4e9d1_60ca0a25",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-10T21:07:53Z",
+      "side": 1,
+      "message": "The comment in line 190 was needed because it isn\u0027t obvious that we need to create a fake gcno archive. This is handling prebuilt coverage archives, so IMO the comment would just be describing this ifneq statement..",
+      "parentUuid": "c713266b_06d32978",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bf52b5a4_b89045b0",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ad555d4_460fb3ed",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-10T21:07:53Z",
+      "side": 1,
+      "message": "For make, yes, that\u0027s more or less what happens. There are some outdated docs in build/make/core/build-system.html. This is such a uncommon usecase (other than Soong integration) that I don\u0027t think we\u0027d want to document it for most users.\n\nFor soong, it\u0027s much more consistently defined, and we\u0027ve got automatically generated module / property lists. We\u0027ve talked about having some sort of integration test checked in somewhere, but it\u0027s been tough to make that useful with the number of options we\u0027ve got. File a bug if you\u0027ve got any good ideas.\n\nAnd to answer your questions, LOCAL_PREBUILT_COVERAGE_ARCHIVE is TOP-relative (like LOCAL_PREBUILT_MODULE_FILE). It only accepts one file (it\u0027s singular). And it refers to the current module.",
+      "parentUuid": "bf52b5a4_b89045b0",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "55e62fba_eacfe70e",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-10T21:07:53Z",
+      "side": 1,
+      "message": "No, this is defining where to install the gcno file, soong doesn\u0027t handle this installation today. Eventually once we moved installation from Make to Soong we\u0027d need something like this, but it would look significantly different. Most of the complexity here is because TARGET_OUT isn\u0027t equivalent to HOST_OUT. PRODUCT_OUT is unfortunately the equivalent.",
+      "parentUuid": "3d2d9635_0f123474",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "113e76a4_543e0096",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2017-02-10T20:35:39Z",
       "side": 1,
       "message": "I would think we would rename \"my_coverage_path\" to \"my_code_coverage_config_path\" or something like that to clarify that if the .gcnodir contains instructions for doing code coverage rather than the source code being tested",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27f3a525_a9cf2838",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-10T21:07:53Z",
+      "side": 1,
+      "message": "It\u0027s not a config file, it\u0027s the data file generated from the source/binary that\u0027s needed to decode outputs from the running binaries. We\u0027ll never be touching the gcda files (generated from running the binaries), so this is really the only coverage file we need to know about.",
+      "parentUuid": "113e76a4_543e0096",
       "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "9481a719_286dc48f",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-10T21:07:53Z",
+      "side": 1,
+      "message": "Yes, line 178 takes care of everything that 193-199 does.",
+      "parentUuid": "8c49f314_faa12c99",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8544e5d2_f562ebab",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 2
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "4e77f5c7_d9233207",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-10T21:07:53Z",
+      "side": 1,
+      "message": "Yeah, indentation in make is difficult.",
+      "parentUuid": "8544e5d2_f562ebab",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7fcb9932_4a751b9b",
         "filename": "core/soong_config.mk",
         "patchSetId": 2
@@ -115,6 +223,24 @@
       "writtenOn": "2017-02-10T20:35:39Z",
       "side": 1,
       "message": "Is the second \u0027subst\u0027 necessary?",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf0e9e0a_910b5813",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-10T21:07:53Z",
+      "side": 1,
+      "message": "Because the rest of the code allows you to specify either a space separated or comma separated list.",
+      "parentUuid": "7fcb9932_4a751b9b",
       "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
