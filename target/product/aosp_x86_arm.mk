@@ -23,6 +23,7 @@ include $(SRC_TARGET_DIR)/product/full_x86.mk
 # Their dependency libraries will be automatically pulled in.
 PRODUCT_PACKAGES += \
   libandroid_arm \
+  libaaudio_arm \
   libc_arm \
   libdl_arm \
   libEGL_arm \
@@ -35,7 +36,6 @@ PRODUCT_PACKAGES += \
   libmediandk_arm \
   libOpenMAXAL_arm \
   libstdc++_arm \
-  liboboe_arm \
   libOpenSLES_arm \
   libz_arm \
 
