@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c713266b_06d32978",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-10T20:35:39Z",
+      "side": 1,
+      "message": "I think this could use a comment like the one on line 190",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf52b5a4_b89045b0",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-10T20:35:39Z",
+      "side": 1,
+      "message": "What process do people currently use to discover which properties are available for a particular Makefile? Is it a mix of copying from other Makefiles, browsing clear_vars.mk, and asking you and Colin for suggestions?\n\nBasically I wonder whether someday in the future we want a directory of integration tests that users can browse to see examples of how to use various pieces of functionality\n\nI\u0027ve been spending a while trying to figure out \"Does LOCAL_PREBUILT_COVERAGE_ARCHIVE get used in the project building the prebuilt or the project using the prebuilt? Is it a comma-separated list of all the archives or does it only support one? Is it an absolute file path or is it relative based on some root?\" I think (based on the comments at the top of this file) that it\u0027s a single file path, relative from the Makefile that it includes it, that references the .gcnodir file that corresponds to the dependency prebuilt, but I\u0027m not completely sure.",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d2d9635_0f123474",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-10T20:35:39Z",
+      "side": 1,
+      "message": "Is this if-statement something that\u0027s going to be moved into separate configs in Soong later? (I don\u0027t think that cleaning it up in Soong is a prerequisite to merging this; I\u0027m just curious)",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "113e76a4_543e0096",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-10T20:35:39Z",
+      "side": 1,
+      "message": "I would think we would rename \"my_coverage_path\" to \"my_code_coverage_config_path\" or something like that to clarify that if the .gcnodir contains instructions for doing code coverage rather than the source code being tested",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c49f314_faa12c99",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-10T20:35:39Z",
+      "side": 1,
+      "message": "If LOCAL_PREBUILT_COVERAGE_ARCHIVE is nonempty but LOCAL_UNINSTALLABLE_MOBULE is false, then we won\u0027t even get to line 190. Is that intended?",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8544e5d2_f562ebab",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-10T20:35:39Z",
+      "side": 1,
+      "message": "it\u0027s too bad that the tab on line 199 discourages the indentation of lines 190 through 201 (is that the correct reason?)",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7fcb9932_4a751b9b",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-10T20:35:39Z",
+      "side": 1,
+      "message": "Is the second \u0027subst\u0027 necessary?",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
