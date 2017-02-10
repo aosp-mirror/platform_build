@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "e749133f_741cad3d",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-10T22:31:53Z",
+      "side": 1,
+      "message": "Like most other module types, we\u0027ve got to set up a copy into a well known(/guessable) location for other modules to build against, and again for the installation into the final output. We split everything into the two steps partially because the final output location isn\u0027t guessable, and partially because we want to support building a module without installing it (for checkbuild and similar).",
+      "parentUuid": "e0694ef0_f02d3514",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bf52b5a4_b89045b0",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 2
@@ -108,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "35064e7f_af678992",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-10T22:31:53Z",
+      "side": 1,
+      "message": "There\u0027s pointers in build/soong/README.md: https://android.googlesource.com/platform/build/soong/+/master/README.md",
+      "parentUuid": "af27345f_75ef7de4",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "50ee6492_97b0b0bc",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 2
@@ -119,6 +155,24 @@
       "writtenOn": "2017-02-10T22:08:50Z",
       "side": 1,
       "message": "Does this \u0027copy-one-file\u0027 run before any actual tasks? Is it a supported use case to run `make clean all`? Would that usage result in copying the file (during the parsing of the makefile), deleting the file (during \u0027clean\u0027), and then trying to use it (during an actual task)?\n\nAm I correct to assume that users already don\u0027t expect `make clean all` to be supported?",
+      "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e28b50b4_be38ed85",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-10T22:31:53Z",
+      "side": 1,
+      "message": "No, copy-one-file sets up a rule to copy the file when it\u0027s necessary. The prebuilt archive usually doesn\u0027t exist at this point.\n\nAnd no, we don\u0027t support mixing clean/clobber/*clean/etc with real build rules. Search for \"dont_bother_goals\" -- any goal in there prevents us from loading any Android.mk file.",
+      "parentUuid": "50ee6492_97b0b0bc",
       "revId": "0f90908026b13ab465c327f99d1ac1c50d28d80e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
