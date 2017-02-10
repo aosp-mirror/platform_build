@@ -43,6 +43,9 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "ClangTidy": $(if $(filter 1 true,$(WITH_TIDY)),true,false),'; \
 	echo '    "TidyChecks": "$(WITH_TIDY_CHECKS)",'; \
 	echo ''; \
+	echo '    "NativeCoverage": $(if $(filter true,$(NATIVE_COVERAGE)),true,false),'; \
+	echo '    "CoveragePaths": [$(if $(COVERAGE_PATHS),"$(subst $(space),"$(comma)",$(subst $(comma),$(space),$(COVERAGE_PATHS)))")],'; \
+	echo ''; \
 	echo '    "DeviceName": "$(TARGET_DEVICE)",'; \
 	echo '    "DeviceArch": "$(TARGET_ARCH)",'; \
 	echo '    "DeviceArchVariant": "$(TARGET_ARCH_VARIANT)",'; \
