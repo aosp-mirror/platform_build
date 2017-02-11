@@ -395,6 +395,9 @@ $(call add-clean-step, rm -rf $(TARGET_OUT_INTERMEDIATES)/APPS/*/package-res.apk
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/*_intermediates/src)
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/*_intermediates/src)
 
+$(call add-clean-step, rm -rf $(HOST_OUT_TESTCASES))
+$(call add-clean-step, rm -rf $(TARGET_OUT_TESTCASES))
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
