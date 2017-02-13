@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3d69f7ad_cf48ecce",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 1123943
+      },
+      "writtenOn": "2017-02-13T17:53:29Z",
+      "side": 1,
+      "message": "This will strip out liblog.",
+      "range": {
+        "startLine": 303,
+        "startChar": 0,
+        "endLine": 304,
+        "endChar": 66
+      },
+      "revId": "e6cc804c19798a15cf9f1098634fb4a11f86f676",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
