@@ -68,6 +68,12 @@ ifeq ($(strip $(ENABLE_CFI)),)
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
 
+# Disable CFI for arm32 (b/35157333).
+ifneq ($(filter arm,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
+  my_sanitize := $(filter-out cfi,$(my_sanitize))
+  my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
+endif
+
 # CFI needs gold linker, and mips toolchain does not have one.
 ifneq ($(filter mips mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
   my_sanitize := $(filter-out cfi,$(my_sanitize))
