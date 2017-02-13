@@ -635,7 +635,7 @@ class BlockImageDiff(object):
     stash_map = {}
 
     # Create the map between a stash and its def/use points. For example, for a
-    # given stash of (raw_id, sr), stashes[raw_id] = (sr, def_cmd, use_cmd).
+    # given stash of (raw_id, sr), stash_map[raw_id] = (sr, def_cmd, use_cmd).
     for xf in self.transfers:
       # Command xf defines (stores) all the stashes in stash_before.
       for stash_raw_id, sr in xf.stash_before:
@@ -672,20 +672,10 @@ class BlockImageDiff(object):
         # Check the post-command stashed_blocks.
         stashed_blocks_after = stashed_blocks
         if self.version == 2:
-          assert stash_raw_id not in stashes
-          if free_stash_ids:
-            sid = heapq.heappop(free_stash_ids)
-          else:
-            sid = next_stash_id
-            next_stash_id += 1
-          stashes[stash_raw_id] = sid
           stashed_blocks_after += sr.size()
         else:
           sh = self.HashBlocks(self.src, sr)
-          if sh in stashes:
-            stashes[sh] += 1
-          else:
-            stashes[sh] = 1
+          if sh not in stashes:
             stashed_blocks_after += sr.size()
 
         if stashed_blocks_after > max_allowed:
@@ -695,6 +685,20 @@ class BlockImageDiff(object):
           replaced_cmds.append(use_cmd)
           print("%10d  %9s  %s" % (sr.size(), "explicit", use_cmd))
         else:
+          # Update the stashes map.
+          if self.version == 2:
+            assert stash_raw_id not in stashes
+            if free_stash_ids:
+              sid = heapq.heappop(free_stash_ids)
+            else:
+              sid = next_stash_id
+              next_stash_id += 1
+            stashes[stash_raw_id] = sid
+          else:
+            if sh in stashes:
+              stashes[sh] += 1
+            else:
+              stashes[sh] = 1
           stashed_blocks = stashed_blocks_after
 
       # "move" and "diff" may introduce implicit stashes in BBOTA v3. Prior to
