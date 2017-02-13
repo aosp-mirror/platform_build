@@ -34,6 +34,24 @@
       "revId": "a2046062fb4fa76455a1ccbb55b4d60a60f88f2b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8d4afecf_5b03beff",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2017-02-13T18:44:54Z",
+      "side": 1,
+      "message": "I don\u0027t have a strong opinion about this. Either way is fine.",
+      "parentUuid": "fdbee380_72c492d8",
+      "revId": "a2046062fb4fa76455a1ccbb55b4d60a60f88f2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
