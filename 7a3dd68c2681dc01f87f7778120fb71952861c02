@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ce8c47d_26471259",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-02-13T23:12:05Z",
+      "side": 1,
+      "message": "instead of organizing this way, can we group them per file? something like:\n\n/system/bin/toolbox x-y\n  x: ...\n  x+1: ...\n\nAnd put the blocks without a mapped name to the end.",
+      "range": {
+        "startLine": 102,
+        "startChar": 0,
+        "endLine": 106,
+        "endChar": 21
+      },
+      "revId": "7a3dd68c2681dc01f87f7778120fb71952861c02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9afccd86_738c830c",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-02-13T23:12:05Z",
+      "side": 1,
+      "message": "doesn\u0027t match your description above (\" \" vs \": \")",
+      "range": {
+        "startLine": 114,
+        "startChar": 23,
+        "endLine": 114,
+        "endChar": 56
+      },
+      "revId": "7a3dd68c2681dc01f87f7778120fb71952861c02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5de5a979_aeb58d33",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-02-13T23:12:05Z",
+      "side": 1,
+      "message": "this looks even worse than giving a warning. because it hides a potential mismatch between the care_map and images.",
+      "range": {
+        "startLine": 541,
+        "startChar": 6,
+        "endLine": 541,
+        "endChar": 72
+      },
+      "revId": "7a3dd68c2681dc01f87f7778120fb71952861c02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2a613953_6664a0cc",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-02-13T23:12:05Z",
+      "side": 1,
+      "message": "has_vendor? then assert?",
+      "range": {
+        "startLine": 549,
+        "startChar": 7,
+        "endLine": 549,
+        "endChar": 22
+      },
+      "revId": "7a3dd68c2681dc01f87f7778120fb71952861c02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "31f77769_3696eebe",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-02-13T23:12:05Z",
+      "side": 1,
+      "message": "BlockSha1List?",
+      "range": {
+        "startLine": 163,
+        "startChar": 6,
+        "endLine": 163,
+        "endChar": 18
+      },
+      "revId": "7a3dd68c2681dc01f87f7778120fb71952861c02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "79982ec9_29e4b542",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-02-13T23:12:05Z",
+      "side": 1,
+      "message": "map.",
+      "range": {
+        "startLine": 164,
+        "startChar": 66,
+        "endLine": 164,
+        "endChar": 69
+      },
+      "revId": "7a3dd68c2681dc01f87f7778120fb71952861c02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "849059e4_090aa77a",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-02-13T23:12:05Z",
+      "side": 1,
+      "message": "why excluding clobbered_blocks?",
+      "range": {
+        "startLine": 167,
+        "startChar": 4,
+        "endLine": 168,
+        "endChar": 53
+      },
+      "revId": "7a3dd68c2681dc01f87f7778120fb71952861c02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
