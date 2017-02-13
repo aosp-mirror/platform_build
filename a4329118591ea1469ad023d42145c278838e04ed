@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6ea343b8_66254131",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 701,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-02-13T20:11:07Z",
+      "side": 1,
+      "message": "I\u0027m thinking if the logic is over-complicated.\nIs it equivalent to say:\n\nstashed_blocks_after \u003d stashed_blocks + sr.size()\nif stashed_blocks_after \u003e max_allowed:\n  #replace cmd\nelse:\n  if self.version \u003d\u003d 2:\n    # update stash\n  else:\n    # update hash and stash\n  \n  stashed_blocks \u003d stashed_blocks_after",
+      "range": {
+        "startLine": 698,
+        "startChar": 7,
+        "endLine": 701,
+        "endChar": 42
+      },
+      "revId": "a4329118591ea1469ad023d42145c278838e04ed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
