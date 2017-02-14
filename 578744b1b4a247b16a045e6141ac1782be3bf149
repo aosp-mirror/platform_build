@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "29e94ba5_6ffe3b07",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-14T23:39:16Z",
+      "side": 1,
+      "message": "This seems like it could be an error (or at least trigger an error after everything has been read if we want multiple errors).\n\nFor all of these messages, they shouldn\u0027t use $(warning / $(error directly, since that\u0027ll attribute the warnings back to the build system instead of the cause of the warning. See local_vndk.mk, but what I\u0027ve been using recently is:\n\n  $(shell echo $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): \u003cmsg\u003e \u003e\u00262)\n\nWe could probably abstract that to a macro in definitions.mk so that it\u0027s in a standardized format that can be understood by build/make/tools/warn.py (the warnings.html output from the build server)",
+      "range": {
+        "startLine": 206,
+        "startChar": 8,
+        "endLine": 206,
+        "endChar": 16
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c8a5617_45fabce0",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-14T23:39:16Z",
+      "side": 1,
+      "message": "There are no vndk libraries defined yet, so this should be an error",
+      "range": {
+        "startLine": 212,
+        "startChar": 8,
+        "endLine": 212,
+        "endChar": 15
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af195e91_86f6fb40",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-14T23:39:16Z",
+      "side": 1,
+      "message": "else error?",
+      "range": {
+        "startLine": 232,
+        "startChar": 2,
+        "endLine": 232,
+        "endChar": 7
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d16c75d1_a926c074",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-14T23:39:16Z",
+      "side": 1,
+      "message": "What about putting it where we think it should go, then providing a symlink back to where they asked for it? (essentially setting my_module_legacy_path to my_module_path)",
+      "range": {
+        "startLine": 264,
+        "startChar": 0,
+        "endLine": 265,
+        "endChar": 59
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68f8c4c4_300149f4",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-14T23:39:16Z",
+      "side": 1,
+      "message": "Are you actually hitting this somewhere? This seems like a bug.",
+      "range": {
+        "startLine": 269,
+        "startChar": 8,
+        "endLine": 270,
+        "endChar": 65
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22e08dee_d24ecd61",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-14T23:39:16Z",
+      "side": 1,
+      "message": "Why do we need to guess? What more information do we need to provide from Soong to Make to make everything else work?\n\nIs this just because we evaluate the relative path in Soong?",
+      "range": {
+        "startLine": 286,
+        "startChar": 0,
+        "endLine": 288,
+        "endChar": 59
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72ff4708_18c25c4b",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-14T23:39:16Z",
+      "side": 1,
+      "message": "This would need to go before the /vndk substitution, since this is substring substitution (which is why it\u0027s best not to use it with paths :)",
+      "range": {
+        "startLine": 295,
+        "startChar": 35,
+        "endLine": 295,
+        "endChar": 44
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b016d0f0_86d805db",
+        "filename": "core/configure_module_stem.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-14T23:39:16Z",
+      "side": 1,
+      "message": "This is an argument to require these modules to be defined in Soong, where we can know this (and run more sanity checks)",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 27
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "102c8cd7_1ba16430",
+        "filename": "core/definitions.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 2832,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-14T23:39:16Z",
+      "side": 1,
+      "message": "-r is not available on Mac, so the build system can\u0027t use it.",
+      "range": {
+        "startLine": 2832,
+        "startChar": 16,
+        "endLine": 2832,
+        "endChar": 18
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
