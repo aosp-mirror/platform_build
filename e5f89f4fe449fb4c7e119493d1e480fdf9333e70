@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4eeb0324_df5e1492",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-02-14T21:06:24Z",
+      "side": 1,
+      "message": "This is getting complicated enough that it might be worth exporting this list from a single config variable in soong, see build/soong/cc/makevars.go",
+      "revId": "e5f89f4fe449fb4c7e119493d1e480fdf9333e70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc0c5639_2c1d1c0c",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-02-14T21:06:24Z",
+      "side": 1,
+      "message": "Don\u0027t mix tabs and spaces",
+      "range": {
+        "startLine": 163,
+        "startChar": 0,
+        "endLine": 163,
+        "endChar": 8
+      },
+      "revId": "e5f89f4fe449fb4c7e119493d1e480fdf9333e70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
