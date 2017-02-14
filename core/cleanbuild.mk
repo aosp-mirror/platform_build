@@ -194,22 +194,33 @@ current_build_config :=
 # installclean logic
 #
 
-# The files/dirs to delete during an installclean.  This includes the
-# non-common APPS directory, which may contain the wrong resources.
+# The files/dirs to delete during an installclean.
 #
-# Deletes all of the files that change between different build types,
-# like "make user" vs. "make sdk".  This lets you work with different
-# build types without having to do a full clean each time.  E.g.:
+# Deletes all of the installed files -- the intent is to remove files
+# that may no longer be installed, either because the user previously
+# installed them, or they were previously installed by default but no
+# longer are.
 #
-#     $ make -j8 all
-#     $ make installclean
-#     $ make -j8 user
-#     $ make installclean
-#     $ make -j8 sdk
+# This is faster than a full clean, since we're not deleting the
+# intermediates. Instead of recompiling, we can just copy the results.
 #
+# Host bin, frameworks, and lib* are intentionally omitted, since
+# otherwise we'd have to rebuild any generated files created with those
+# tools.
 installclean_files := \
 	$(HOST_OUT)/obj/NOTICE_FILES \
+	$(HOST_OUT)/obj/PACKAGING \
+	$(HOST_OUT)/coverage \
+	$(HOST_OUT)/cts \
+	$(HOST_OUT)/nativetest* \
 	$(HOST_OUT)/sdk \
+	$(HOST_OUT)/sdk_addon \
+	$(HOST_OUT)/testcases \
+	$(HOST_OUT)/vts \
+	$(HOST_CROSS_OUT)/bin \
+	$(HOST_CROSS_OUT)/coverage \
+	$(HOST_CROSS_OUT)/lib* \
+	$(HOST_CROSS_OUT)/nativetest* \
 	$(PRODUCT_OUT)/*.img \
 	$(PRODUCT_OUT)/*.ini \
 	$(PRODUCT_OUT)/*.txt \
@@ -226,7 +237,14 @@ installclean_files := \
 	$(PRODUCT_OUT)/system_other \
 	$(PRODUCT_OUT)/vendor \
 	$(PRODUCT_OUT)/oem \
-	$(PRODUCT_OUT)/obj/FAKE
+	$(PRODUCT_OUT)/obj/FAKE \
+	$(PRODUCT_OUT)/breakpad \
+	$(PRODUCT_OUT)/cache \
+	$(PRODUCT_OUT)/coverage \
+	$(PRODUCT_OUT)/installer \
+	$(PRODUCT_OUT)/odm \
+	$(PRODUCT_OUT)/sysloader \
+	$(PRODUCT_OUT)/testcases \
 
 # The files/dirs to delete during a dataclean, which removes any files
 # in the staging and emulator data partitions.
