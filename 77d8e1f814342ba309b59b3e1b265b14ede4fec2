@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b4129cdb_6648e879",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-15T19:31:10Z",
+      "side": 1,
+      "message": "Would it be equally accurate to rename the variable \"my_module_desired_path\" to \"my_default_installation_path\" and then simplify the comment down to \"my_default_installation_path can be overridden by LOCAL_MODULE_PATH\"?",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c56f79ca_61681cdf",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-15T19:31:10Z",
+      "side": 1,
+      "message": "If it happens to be easy to change, it might help readability below to have the default value of partition_tag be \"_framework\" or \"_SYSTEM\" or at least \"_UNSPECIFIED\" or something like that",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09a93301_4eb1c546",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-15T19:31:10Z",
+      "side": 1,
+      "message": "Do you think \"unhandled install path\" could be clearer as \"undefined install path variable\"?",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d820800_96673ab8",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-15T19:31:10Z",
+      "side": 1,
+      "message": "Can we shorten this comment to something like \"NDK_PREBUILT_SHARED_LIBRARIES go in system partition\"? I like the error message that you have here",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b10cff16_87efb685",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-15T19:31:10Z",
+      "side": 1,
+      "message": "Can we shorten this comment to something like \"VNDK libraries mustbe installed in system partition\"?",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "112bf33c_c4d51bd9",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-15T19:31:10Z",
+      "side": 1,
+      "message": "Can we simplify this comment down to \"save old path in case we need to symlink to it later\" and then move the the remaining relevant part of the comment down to where the symlinking happens?",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f5ddafb0_76a71876",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-15T19:31:10Z",
+      "side": 1,
+      "message": "Is there a token in here that I\u0027m not seeing that makes it difficult to indent these ifs?",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3138f686_e592f18e",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-15T19:31:10Z",
+      "side": 1,
+      "message": "It seems odd to me for the code to say that the symlinks must be removed before a particular launch. It doesn\u0027t look to me like it\u0027s actually required to remove it before O launch, is it?\n\nI would think that we\u0027d rather describe (or hint at) the reason that the symlinks should be removed, something like \"remove symlinks after everything migrates to the new paths; ideally before O launch\"",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5d4fb67_a3a987c5",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-15T19:31:10Z",
+      "side": 1,
+      "message": "Given that BOARD_SYMLINKS_FOR_LIBS can override the value of _symlink_required, I\u0027d be inclined to rename _symlink_required to _symlink_possible or _symlink_relevant or _symlink_available or something like that",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f448b6c_7c2b6c02",
+        "filename": "core/definitions.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 2857,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-15T19:31:10Z",
+      "side": 1,
+      "message": "I would think that we would implement this using string concatenation and passing it into \"ln\" so we don\u0027t have two separate (python and bash) implementations of slightly different variants of linking",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
