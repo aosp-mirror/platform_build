@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "81de6447_cda4857f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-15T12:45:09Z",
+      "side": 1,
+      "message": "Done with the macro.",
+      "parentUuid": "29e94ba5_6ffe3b07",
+      "range": {
+        "startLine": 206,
+        "startChar": 8,
+        "endLine": 206,
+        "endChar": 16
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3c8a5617_45fabce0",
         "filename": "core/base_rules.mk",
         "patchSetId": 12
@@ -36,6 +60,30 @@
       "writtenOn": "2017-02-14T23:39:16Z",
       "side": 1,
       "message": "There are no vndk libraries defined yet, so this should be an error",
+      "range": {
+        "startLine": 212,
+        "startChar": 8,
+        "endLine": 212,
+        "endChar": 15
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "587e2abd_cfdedbdd",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-15T12:45:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3c8a5617_45fabce0",
       "range": {
         "startLine": 212,
         "startChar": 8,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "f6c7a4ee_179e20a9",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-15T12:45:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "af195e91_86f6fb40",
+      "range": {
+        "startLine": 232,
+        "startChar": 2,
+        "endLine": 232,
+        "endChar": 7
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d16c75d1_a926c074",
         "filename": "core/base_rules.mk",
         "patchSetId": 12
@@ -82,6 +154,30 @@
       "writtenOn": "2017-02-14T23:39:16Z",
       "side": 1,
       "message": "What about putting it where we think it should go, then providing a symlink back to where they asked for it? (essentially setting my_module_legacy_path to my_module_path)",
+      "range": {
+        "startLine": 264,
+        "startChar": 0,
+        "endLine": 265,
+        "endChar": 59
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05f7b375_aa16c05d",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-15T12:45:09Z",
+      "side": 1,
+      "message": "In general, we can\u0027t. Please consider libart_fake. https://cs.corp.google.com/android/art/libart_fake/Android.mk\n\nIt is instructed to be installed to /system/fake-libs/libart.so. We can\u0027t move this to /system/lib/framework because we already have the original libart.so in the directory.\n\nAlso consider libbase and libbase-ext. Their legacy_path are both /system/lib (since they are just shared lib), so we can\u0027t have two symlinks there.\n\nOne last example is when the partitions are different: LOCAL_MODULE_PATH to vendor and my_module_desired_path is on system.\n\nAnyway, I tried this but it ended up with many hard-coded blacklists, so I think this is infeasible.\n\nI only provide symlink for Soong-defined modules.",
+      "parentUuid": "d16c75d1_a926c074",
       "range": {
         "startLine": 264,
         "startChar": 0,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "9ce80311_d11fb3dd",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-15T12:45:09Z",
+      "side": 1,
+      "message": "soong-defined NDK libraries are hitting here.\n\nLOCAL_MODULE :\u003d libEGL.ndk.21\nLOCAL_MODULE_CLASS:\u003d SHARED_LIBRARIES\nLOCAL_MODULE_PATH :\u003d out/soong/ndk/platforms/....\n\nSo, ifeq ($(filter $(OUT_DIR)/soong/%,$(LOCAL_MODULE_MAKEFILE)),) only will be enough. Thank you.",
+      "parentUuid": "68f8c4c4_300149f4",
+      "range": {
+        "startLine": 269,
+        "startChar": 8,
+        "endLine": 270,
+        "endChar": 65
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "22e08dee_d24ecd61",
         "filename": "core/base_rules.mk",
         "patchSetId": 12
@@ -128,6 +248,30 @@
       "writtenOn": "2017-02-14T23:39:16Z",
       "side": 1,
       "message": "Why do we need to guess? What more information do we need to provide from Soong to Make to make everything else work?\n\nIs this just because we evaluate the relative path in Soong?",
+      "range": {
+        "startLine": 286,
+        "startChar": 0,
+        "endLine": 288,
+        "endChar": 59
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5724f2a_9c379a28",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-15T12:45:09Z",
+      "side": 1,
+      "message": "Yes, I once considered this. In order to remove this code fragment, soong needs to give relative_install_path as LOCAL_MODULE_RELATIVE_PATH to Make and let Make to compose the final path by concatenating LOCAL_MODULE_PATH with the relative path.\n\nIt is doable, but since this symlink thing is temporary, I thought modifying Soong for this temporary work is not a good idea. How do you think?",
+      "parentUuid": "22e08dee_d24ecd61",
       "range": {
         "startLine": 286,
         "startChar": 0,
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "2cc611d1_e43b011a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-15T12:45:09Z",
+      "side": 1,
+      "message": "Good point. Thank you.",
+      "parentUuid": "72ff4708_18c25c4b",
+      "range": {
+        "startLine": 295,
+        "startChar": 35,
+        "endLine": 295,
+        "endChar": 44
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b016d0f0_86d805db",
         "filename": "core/configure_module_stem.mk",
         "patchSetId": 12
@@ -186,6 +354,30 @@
     },
     {
       "key": {
+        "uuid": "04fbbf55_d7b8b6ae",
+        "filename": "core/configure_module_stem.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-15T12:45:09Z",
+      "side": 1,
+      "message": "I fully agree. However, we still have many libs in Make. Do you think we need to prevent defining VNDK-ext libs in Make?",
+      "parentUuid": "b016d0f0_86d805db",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 27
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "102c8cd7_1ba16430",
         "filename": "core/definitions.mk",
         "patchSetId": 12
@@ -197,6 +389,30 @@
       "writtenOn": "2017-02-14T23:39:16Z",
       "side": 1,
       "message": "-r is not available on Mac, so the build system can\u0027t use it.",
+      "range": {
+        "startLine": 2832,
+        "startChar": 16,
+        "endLine": 2832,
+        "endChar": 18
+      },
+      "revId": "578744b1b4a247b16a045e6141ac1782be3bf149",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e596890_b3d7045a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 2832,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-15T12:45:09Z",
+      "side": 1,
+      "message": "I didn\u0027t know that. My laptop is linux. I changed this to use python\u0027s os.path.relpath and os.symlink, which I confirmed workin in mac.\n\nThank you for letting me know this.",
+      "parentUuid": "102c8cd7_1ba16430",
       "range": {
         "startLine": 2832,
         "startChar": 16,
