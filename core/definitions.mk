@@ -850,18 +850,37 @@ endef
 
 
 ###########################################################
-## Color-coded warnings and errors in build rules
-##
-## $(1): message to print
+## Color-coded warnings and errors
+## Use echo-(warning|error) in a build rule
+## Use pretty-(warning|error) instead of $(warning)/$(error)
 ###########################################################
+ESC_BOLD := \e[1m
+ESC_WARNING := \e[35m
+ESC_ERROR := \e[31m
+ESC_RESET := \e[0m
+
+# $(1): path (and optionally line) information
+# $(2): message to print
 define echo-warning
-echo -e "\e[1;35mwarning:\e[0m \e[1m" $(1) "\e[0m\n"
+echo -e "$(ESC_BOLD)$(1): $(ESC_WARNING)warning:$(ESC_RESET)$(ESC_BOLD)" $(2) "$(ESC_RESET)" >&2
 endef
 
+# $(1): path (and optionally line) information
+# $(2): message to print
 define echo-error
-echo -e "\e[1;31merror:\e[0m \e[1m" $(1) "\e[0m\n"
+echo -e "$(ESC_BOLD)$(1): $(ESC_ERROR)error:$(ESC_RESET)$(ESC_BOLD)" $(2) "$(ESC_RESET)" >&2
 endef
 
+# $(1): message to print
+define pretty-warning
+$(shell $(call echo-warning,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
+endef
+
+# $(1): message to print
+define pretty-error
+$(shell $(call echo-error,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
+$(error done)
+endef
 
 ###########################################################
 ## Package filtering
