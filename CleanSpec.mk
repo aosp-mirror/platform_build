@@ -398,6 +398,8 @@ $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/
 $(call add-clean-step, rm -rf $(HOST_OUT_TESTCASES))
 $(call add-clean-step, rm -rf $(TARGET_OUT_TESTCASES))
 
+$(call add-clean-step, rm -rf $(TARGET_OUT_ETC)/init)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
