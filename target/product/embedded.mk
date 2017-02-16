@@ -22,7 +22,7 @@ PRODUCT_PACKAGES += \
     adbd \
     android.hardware.configstore@1.0-impl \
     android.hardware.configstore@1.0-service \
-    android.hidl.memory@1.0-service \
+    android.hidl.allocator@1.0-service \
     android.hidl.memory@1.0-impl \
     atrace \
     bootanimation \
