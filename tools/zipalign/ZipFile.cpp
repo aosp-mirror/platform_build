@@ -359,8 +359,7 @@ bail:
  * safely written.  Not really a concern for us.
  */
 status_t ZipFile::addCommon(const char* fileName, const void* data, size_t size,
-    const char* storageName, int sourceType, int compressionMethod,
-    ZipEntry** ppEntry)
+    const char* storageName, int compressionMethod, ZipEntry** ppEntry)
 {
     ZipEntry* pEntry = NULL;
     status_t result = NO_ERROR;
@@ -414,80 +413,50 @@ status_t ZipFile::addCommon(const char* fileName, const void* data, size_t size,
     /*
      * Copy the data in, possibly compressing it as we go.
      */
-    if (sourceType == ZipEntry::kCompressStored) {
-        if (compressionMethod == ZipEntry::kCompressDeflated) {
-            bool failed = false;
-            result = compressFpToFp(mZipFp, inputFp, data, size, &crc);
-            if (result != NO_ERROR) {
-                ALOGD("compression failed, storing\n");
-                failed = true;
-            } else {
-                /*
-                 * Make sure it has compressed "enough".  This probably ought
-                 * to be set through an API call, but I don't expect our
-                 * criteria to change over time.
-                 */
-                long src = inputFp ? ftell(inputFp) : size;
-                long dst = ftell(mZipFp) - startPosn;
-                if (dst + (dst / 10) > src) {
-                    ALOGD("insufficient compression (src=%ld dst=%ld), storing\n",
-                        src, dst);
-                    failed = true;
-                }
-            }
-
-            if (failed) {
-                compressionMethod = ZipEntry::kCompressStored;
-                if (inputFp) rewind(inputFp);
-                fseek(mZipFp, startPosn, SEEK_SET);
-                /* fall through to kCompressStored case */
-            }
-        }
-        /* handle "no compression" request, or failed compression from above */
-        if (compressionMethod == ZipEntry::kCompressStored) {
-            if (inputFp) {
-                result = copyFpToFp(mZipFp, inputFp, &crc);
-            } else {
-                result = copyDataToFp(mZipFp, data, size, &crc);
-            }
-            if (result != NO_ERROR) {
-                // don't need to truncate; happens in CDE rewrite
-                ALOGD("failed copying data in\n");
-                goto bail;
-            }
-        }
-
-        // currently seeked to end of file
-        uncompressedLen = inputFp ? ftell(inputFp) : size;
-    } else if (sourceType == ZipEntry::kCompressDeflated) {
-        /* we should support uncompressed-from-compressed, but it's not
-         * important right now */
-        assert(compressionMethod == ZipEntry::kCompressDeflated);
-
-        bool scanResult;
-        int method;
-        long compressedLen;
-        unsigned long longcrc;
-
-        scanResult = ZipUtils::examineGzip(inputFp, &method, &uncompressedLen,
-                        &compressedLen, &longcrc);
-        if (!scanResult || method != ZipEntry::kCompressDeflated) {
-            ALOGD("this isn't a deflated gzip file?");
-            result = UNKNOWN_ERROR;
-            goto bail;
-        }
-        crc = longcrc;
-
-        result = copyPartialFpToFp(mZipFp, inputFp, compressedLen, NULL);
+    if (compressionMethod == ZipEntry::kCompressDeflated) {
+        bool failed = false;
+        result = compressFpToFp(mZipFp, inputFp, data, size, &crc);
         if (result != NO_ERROR) {
-            ALOGD("failed copying gzip data in\n");
+            ALOGD("compression failed, storing\n");
+            failed = true;
+        } else {
+            /*
+             * Make sure it has compressed "enough".  This probably ought
+             * to be set through an API call, but I don't expect our
+             * criteria to change over time.
+             */
+            long src = inputFp ? ftell(inputFp) : size;
+            long dst = ftell(mZipFp) - startPosn;
+            if (dst + (dst / 10) > src) {
+                ALOGD("insufficient compression (src=%ld dst=%ld), storing\n",
+                    src, dst);
+                failed = true;
+            }
+        }
+
+        if (failed) {
+            compressionMethod = ZipEntry::kCompressStored;
+            if (inputFp) rewind(inputFp);
+            fseek(mZipFp, startPosn, SEEK_SET);
+            /* fall through to kCompressStored case */
+        }
+    }
+    /* handle "no compression" request, or failed compression from above */
+    if (compressionMethod == ZipEntry::kCompressStored) {
+        if (inputFp) {
+            result = copyFpToFp(mZipFp, inputFp, &crc);
+        } else {
+            result = copyDataToFp(mZipFp, data, size, &crc);
+        }
+        if (result != NO_ERROR) {
+            // don't need to truncate; happens in CDE rewrite
+            ALOGD("failed copying data in\n");
             goto bail;
         }
-    } else {
-        assert(false);
-        result = UNKNOWN_ERROR;
-        goto bail;
     }
+
+    // currently seeked to end of file
+    uncompressedLen = inputFp ? ftell(inputFp) : size;
 
     /*
      * We could write the "Data Descriptor", but there doesn't seem to
