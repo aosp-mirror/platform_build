@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "d8fed29e_c1a801f1",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-16T19:39:17Z",
+      "side": 1,
+      "message": "Oh ok. In that case I could also see it making sense to replace all instances in this file of LOCAL_MODULE_PATH with my_legacy_path_override, and then add a line at the top of this file saying \"my_legacy_path_override :\u003d LOCAL_MODULE_PATH\" to remove the need to explain LOCAL_MODULE_PATH in a couple spots",
+      "parentUuid": "978753a5_b4955696",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c56f79ca_61681cdf",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "I would love to, but line#192 prevents me from doing that.  In fact, \"\u0027empty partation_tag\u0027 \u003d\u003d system partition\" is assumed in many places. The path for the system partition is recorded in a variable named TARGET_OUT, not TARGET_OUT_SYSTEM.",
       "parentUuid": "c56f79ca_61681cdf",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e44869c_d247c73a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-16T19:39:17Z",
+      "side": 1,
+      "message": "Ok that sounds fine to me then\n\n(For line 192, we could change that by adding another line saying \"TARGET_OUT_SYSTEM :\u003d TARGET_OUT\", although if there are a bunch of other places using it then it sounds fine to me to leave it)",
+      "parentUuid": "a66731bb_d8ca9433",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -107,6 +143,24 @@
     },
     {
       "key": {
+        "uuid": "80220bea_c46aa74d",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-16T19:39:17Z",
+      "side": 1,
+      "message": "Oh I see. I\u0027d be inclined to write it as something like \"internal error in base_rules.mk; $(install_path_var) is undefined\"",
+      "parentUuid": "28cb87cd_e0f9c3a0",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6d820800_96673ab8",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
@@ -136,6 +190,24 @@
       "side": 1,
       "message": "Hmm, I didn\u0027t intend to repeat the error message in comment. \n\nMy intention was to give a message to vendors/OEMs (who might see the error message and attempt to add more libraries to ndk or vndk sets) that they shouldn\u0027t.\n\nI will elaborate the comment as such.",
       "parentUuid": "6d820800_96673ab8",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b7351a6_7ad98f97",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-16T19:39:17Z",
+      "side": 1,
+      "message": "Oh I see. In case the vendor overrides this variable in a different file, I\u0027d be inclined to put all the information in the error message and then delete the comment. Something like \"NDK library must be installed at system partition, where other libraries will look for it. It cannot be moved.\" that explains that moving the library would cause a failure",
+      "parentUuid": "e5286db5_f1d95e89",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -177,6 +249,24 @@
     },
     {
       "key": {
+        "uuid": "2bedce76_afad0551",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-16T19:39:17Z",
+      "side": 1,
+      "message": "Me too.",
+      "parentUuid": "f3518f4e_e092546d",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "112bf33c_c4d51bd9",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
@@ -206,6 +296,24 @@
       "side": 1,
       "message": "Done",
       "parentUuid": "112bf33c_c4d51bd9",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83b83e27_bef18dc0",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-16T19:39:17Z",
+      "side": 1,
+      "message": "I like it.",
+      "parentUuid": "524f1056_3605d5b4",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -317,6 +425,24 @@
     },
     {
       "key": {
+        "uuid": "d0171f1d_05f6413e",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-16T19:39:17Z",
+      "side": 1,
+      "message": "That sounds good to me. Now that you mention it, _lib_moved also sounds good to me too.",
+      "parentUuid": "613b0c9f_56ee684b",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4f448b6c_7c2b6c02",
         "filename": "core/definitions.mk",
         "patchSetId": 13
@@ -346,6 +472,24 @@
       "side": 1,
       "message": "This python script is required because \"-r\" (relative path) option is not supported in Mac. So I need a portable way of making a relative symbolic link.\n\nFor example, \nln -sfr out/.../system/lib/framework/hw/libX.so out/.../system/lib/hw/libX.so\n\nwill create \nout/.../system/lib/hw/libX.so -\u003e ../framework/hw/libX.so\n\nThis isn\u0027t possible without the \u0027r\u0027 option and can\u0027t be easily implemented using string concatenation.",
       "parentUuid": "4f448b6c_7c2b6c02",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f238c61a_9bd5ba55",
+        "filename": "core/definitions.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 2857,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-02-16T19:39:17Z",
+      "side": 1,
+      "message": "Oh that\u0027s weird. I expected there would be a bash function for that. Now that I look, I don\u0027t see one in Ubuntu 14.04. In that case I don\u0027t have a better idea than what you have here.",
+      "parentUuid": "8784b632_bef356e8",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
