@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ab7e23d2_b00afa0c",
+        "filename": "core/host_java_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-16T01:11:24Z",
+      "side": 1,
+      "message": "Just drop this change",
+      "revId": "dc41d1669dacc49fc184df484a2a21d3bd034faa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
