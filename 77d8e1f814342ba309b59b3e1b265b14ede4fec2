@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "978753a5_b4955696",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-16T10:28:30Z",
+      "side": 1,
+      "message": "I will change the name to a more meaningful one. However, I am afraid that the description \"my_..._path can be overridden by LOCAL_MODULE_PATH\" is somewhat misleading. It sounds like such overriding is intended, legit and have no problem, but it is not. AFAIK, we want to discourage the use of LOCAL_MODULE_PATH (in Soong we even don\u0027t have such mechanism). We allow overriding just because there still exist modules that are using it and we don\u0027t want to make trouble by suddenly not allowing it.",
+      "parentUuid": "b4129cdb_6648e879",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c56f79ca_61681cdf",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
@@ -30,6 +48,24 @@
       "writtenOn": "2017-02-15T19:31:10Z",
       "side": 1,
       "message": "If it happens to be easy to change, it might help readability below to have the default value of partition_tag be \"_framework\" or \"_SYSTEM\" or at least \"_UNSPECIFIED\" or something like that",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a66731bb_d8ca9433",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-16T10:28:30Z",
+      "side": 1,
+      "message": "I would love to, but line#192 prevents me from doing that.  In fact, \"\u0027empty partation_tag\u0027 \u003d\u003d system partition\" is assumed in many places. The path for the system partition is recorded in a variable named TARGET_OUT, not TARGET_OUT_SYSTEM.",
+      "parentUuid": "c56f79ca_61681cdf",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "28cb87cd_e0f9c3a0",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-16T10:28:30Z",
+      "side": 1,
+      "message": "I think unhandled is more correct in this context, because the install path is not something defined from outside, but determined by the build system itself.",
+      "parentUuid": "09a93301_4eb1c546",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6d820800_96673ab8",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
@@ -64,6 +118,24 @@
       "writtenOn": "2017-02-15T19:31:10Z",
       "side": 1,
       "message": "Can we shorten this comment to something like \"NDK_PREBUILT_SHARED_LIBRARIES go in system partition\"? I like the error message that you have here",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5286db5_f1d95e89",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-16T10:28:30Z",
+      "side": 1,
+      "message": "Hmm, I didn\u0027t intend to repeat the error message in comment. \n\nMy intention was to give a message to vendors/OEMs (who might see the error message and attempt to add more libraries to ndk or vndk sets) that they shouldn\u0027t.\n\nI will elaborate the comment as such.",
+      "parentUuid": "6d820800_96673ab8",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "f3518f4e_e092546d",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-16T10:28:30Z",
+      "side": 1,
+      "message": "Same as above.",
+      "parentUuid": "b10cff16_87efb685",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "112bf33c_c4d51bd9",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
@@ -98,6 +188,24 @@
       "writtenOn": "2017-02-15T19:31:10Z",
       "side": 1,
       "message": "Can we simplify this comment down to \"save old path in case we need to symlink to it later\" and then move the the remaining relevant part of the comment down to where the symlinking happens?",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "524f1056_3605d5b4",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-16T10:28:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "112bf33c_c4d51bd9",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "ae119fcc_14f0a748",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-16T10:28:30Z",
+      "side": 1,
+      "message": "Well, I intentionally didn\u0027t use indentation because the ifs are essentially at the same level; \u0027AND\u0027 condition. (we don\u0027t have AND in ifs in GNU make)",
+      "parentUuid": "f5ddafb0_76a71876",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3138f686_e592f18e",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
@@ -132,6 +258,24 @@
       "writtenOn": "2017-02-15T19:31:10Z",
       "side": 1,
       "message": "It seems odd to me for the code to say that the symlinks must be removed before a particular launch. It doesn\u0027t look to me like it\u0027s actually required to remove it before O launch, is it?\n\nI would think that we\u0027d rather describe (or hint at) the reason that the symlinks should be removed, something like \"remove symlinks after everything migrates to the new paths; ideally before O launch\"",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8f72907_c3f97cce",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-16T10:28:30Z",
+      "side": 1,
+      "message": "Done. I amended the comment and moved it to where BOARD_SYMLINK_FOR_LIBS is tested.",
+      "parentUuid": "3138f686_e592f18e",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -155,6 +299,24 @@
     },
     {
       "key": {
+        "uuid": "613b0c9f_56ee684b",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-16T10:28:30Z",
+      "side": 1,
+      "message": "I would rather use _lib_installed_to_new_path. How do you think?",
+      "parentUuid": "c5d4fb67_a3a987c5",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4f448b6c_7c2b6c02",
         "filename": "core/definitions.mk",
         "patchSetId": 13
@@ -166,6 +328,24 @@
       "writtenOn": "2017-02-15T19:31:10Z",
       "side": 1,
       "message": "I would think that we would implement this using string concatenation and passing it into \"ln\" so we don\u0027t have two separate (python and bash) implementations of slightly different variants of linking",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8784b632_bef356e8",
+        "filename": "core/definitions.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 2857,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-16T10:28:30Z",
+      "side": 1,
+      "message": "This python script is required because \"-r\" (relative path) option is not supported in Mac. So I need a portable way of making a relative symbolic link.\n\nFor example, \nln -sfr out/.../system/lib/framework/hw/libX.so out/.../system/lib/hw/libX.so\n\nwill create \nout/.../system/lib/hw/libX.so -\u003e ../framework/hw/libX.so\n\nThis isn\u0027t possible without the \u0027r\u0027 option and can\u0027t be easily implemented using string concatenation.",
+      "parentUuid": "4f448b6c_7c2b6c02",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
