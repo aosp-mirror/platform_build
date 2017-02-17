@@ -36,7 +36,7 @@ ifdef LOCAL_INSTALLED_MODULE
   module_installed_filename := $(patsubst $(PRODUCT_OUT)/%,%,$(LOCAL_INSTALLED_MODULE))
 else
   # This module isn't installable
-  ifeq ($(LOCAL_MODULE_CLASS),STATIC_LIBRARIES)
+  ifneq ($(filter STATIC_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
     # Stick the static libraries with the dynamic libraries.
     # We can't use xxx_OUT_STATIC_LIBRARIES because it points into
     # device-obj or host-obj.

@@ -564,6 +564,7 @@ ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(LOCAL_STATIC_LIBRARIES) \
   $(LOCAL_WHOLE_STATIC_LIBRARIES) \
   $(LOCAL_SHARED_LIBRARIES) \
+  $(LOCAL_HEADER_LIBRARIES) \
   $(LOCAL_STATIC_JAVA_LIBRARIES) \
   $(LOCAL_JAVA_LIBRARIES)\
   $(LOCAL_JNI_SHARED_LIBRARIES))
@@ -585,7 +586,7 @@ $(foreach tag,$(my_module_tags),\
 ## umbrella targets used to verify builds
 ###########################################################
 j_or_n :=
-ifneq (,$(filter EXECUTABLES SHARED_LIBRARIES STATIC_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)))
+ifneq (,$(filter EXECUTABLES SHARED_LIBRARIES STATIC_LIBRARIES HEADER_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)))
 j_or_n := native
 else
 ifneq (,$(filter JAVA_LIBRARIES APPS,$(LOCAL_MODULE_CLASS)))
