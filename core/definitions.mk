@@ -2887,6 +2887,30 @@ $(strip $(if $(filter $(TARGET_ARCH),$(1)),$(TARGET_ARCH),\
 endef
 
 ###########################################################
+## Compatibility suite tools
+###########################################################
+
+# Return a list of output directories for a given suite and the current LOCAL_MODULE
+define compatibility_suite_dirs
+  $(strip \
+    $(COMPATIBILITY_TESTCASES_OUT_$(1)) \
+    $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE))
+endef
+
+# For each suite:
+# 1. Copy the files to the many suite output directories.
+# 2. Add all the files to each suite's dependent files list.
+# 3. Do the dependency addition to my_all_targets
+# Requires for each suite: my_compat_dist_$(suite) to be defined.
+define create-suite-dependencies
+$(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(eval my_compat_files_$(suite) := $(call copy-many-files, $(my_compat_dist_$(suite)))) \
+  $(eval COMPATIBILITY.$(suite).FILES := \
+    $(COMPATIBILITY.$(suite).FILES) $(my_compat_files_$(suite))) \
+  $(eval $(my_register_name) : $(my_compat_files_$(suite))))
+endef
+
+###########################################################
 ## Other includes
 ###########################################################
 
