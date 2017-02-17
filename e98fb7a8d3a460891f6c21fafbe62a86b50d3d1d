@@ -22,6 +22,53 @@
       "revId": "e98fb7a8d3a460891f6c21fafbe62a86b50d3d1d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b10f22bf_1f3bcc12",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1750,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-02-17T22:41:40Z",
+      "side": 1,
+      "message": "Currently we want to use unified otatools.zip across targets. So we cannot make it conditional here.",
+      "parentUuid": "3d943bbd_e1f88d10",
+      "range": {
+        "startLine": 1749,
+        "startChar": 0,
+        "endLine": 1750,
+        "endChar": 17
+      },
+      "revId": "e98fb7a8d3a460891f6c21fafbe62a86b50d3d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "85b6ee54_ff3c28a6",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 624,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-02-17T22:41:40Z",
+      "side": 1,
+      "message": "Dan: I also tried to rename this back to futility. However it failed when generating the final output, because there\u0027s also an intermediate dir called \"futility\":\n\n[ 99% 103/104] host Executable: futility (out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility)\nFAILED: out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility\n/bin/bash -c \"prebuilts/clang/host/linux-x86/clang-3688880/bin/clang++ out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/futility.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/cmd_dump_fmap.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/cmd_gbb_utility.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/misc.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/cmd_dump_kernel_config.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/cmd_load_fmap.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/cmd_pcr.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/cmd_show.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/cmd_sign.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/cmd_vbutil_firmware.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/cmd_vbutil_kernel.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/cmd_vbutil_key.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/cmd_vbutil_keyblock.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/file_type.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/traversal.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility/vb1_helper.o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility_cmds.o -Wl,--whole-archive  -Wl,--no-whole-archive   out/host/linux-x86/obj/STATIC_LIBRARIES/libvboot_util-host_intermediates/libvboot_util-host.a  out/host/linux-x86/obj/STATIC_LIBRARIES/libcompiler_rt-extras_intermediates/libcompiler_rt-extras.a    out/host/linux-x86/obj/lib/libcrypto.so out/host/linux-x86/obj/lib/libc++.so -Wl,-rpath-link\u003dout/host/linux-x86/obj/lib  -Wl,-rpath,\\\\\\$ORIGIN/../lib64  -Wl,-rpath,\\\\\\$ORIGIN/lib64  -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now -Wl,--no-undefined-version --gcc-toolchain\u003dprebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8 --sysroot prebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/sysroot -m64 -Bprebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/lib/gcc/x86_64-linux/4.8 -Lprebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/lib/gcc/x86_64-linux/4.8 -Lprebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/x86_64-linux/lib64   -target x86_64-linux-gnu -Bprebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/x86_64-linux/bin  -pie -nodefaultlibs -Wl,--no-undefined -o out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility -lpthread -lm  -lgcc_s -lgcc -lc -lgcc_s -lgcc\"\nprebuilts/gcc/linux-x86/host/x86_64-linux-glibc2.15-4.8/x86_64-linux/bin/ld: fatal error: out/host/linux-x86/obj/EXECUTABLES/futility_intermediates/futility: open: Is a directory\nclang++.real: error: linker command failed with exit code 1 (use -v to see invocation)",
+      "range": {
+        "startLine": 624,
+        "startChar": 36,
+        "endLine": 624,
+        "endChar": 49
+      },
+      "revId": "e98fb7a8d3a460891f6c21fafbe62a86b50d3d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
