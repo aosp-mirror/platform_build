@@ -38,6 +38,44 @@ ifneq "" "$(INTERNAL_BUILD_ID_MAKEFILE)"
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
+# Returns all words in $1 up to and including $2
+define find_and_earlier
+  $(strip $(if $(1),
+    $(firstword $(1))
+    $(if $(filter $(firstword $(1)),$(2)),,
+      $(call find_and_earlier,$(wordlist 2,$(words $(1)),$(1)),$(2)))))
+endef
+
+#$(warning $(call find_and_earlier,A B C,A))
+#$(warning $(call find_and_earlier,A B C,B))
+#$(warning $(call find_and_earlier,A B C,C))
+#$(warning $(call find_and_earlier,A B C,D))
+
+define version-list
+$(1) $(1)DR1 $(1)DR2 $(1)MR1 $(1)MR2
+endef
+
+ALL_VERSIONS := O P
+ALL_VERSIONS := $(foreach v,$(ALL_VERSIONS),$(call version-list,$(v)))
+
+ifeq (,$(TARGET_PLATFORM_VERSION))
+  # Default targeted platform version
+  # TODO: PLATFORM_VERSION, PLATFORM_SDK_VERSION, etc. should be conditional
+  # on this
+  TARGET_PLATFORM_VERSION := O
+endif
+
+ifeq (,$(filter $(ALL_VERSIONS), $(TARGET_PLATFORM_VERSION)))
+$(warning Invalid TARGET_PLATFORM_VERSION '$(TARGET_PLATFORM_VERSION)', must be one of)
+$(warning $(ALL_VERSIONS))
+$(error Stopping...)
+endif
+
+ENABLED_VERSIONS := $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
+
+$(foreach v,$(ENABLED_VERSIONS), \
+  $(eval IS_AT_LEAST_$(v) := true))
+
 ifeq "" "$(PLATFORM_VERSION)"
   # This is the canonical definition of the platform version,
   # which is the version that we reveal to the end user.
