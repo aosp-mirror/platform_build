@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "18a53691_8c93bf85",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2529,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-17T22:59:50Z",
+      "side": 1,
+      "message": "It seems like this should be parameterized",
+      "range": {
+        "startLine": 2529,
+        "startChar": 22,
+        "endLine": 2529,
+        "endChar": 24
+      },
+      "revId": "a688e4b41aa5b2f5717f27a47f698be316a41497",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9fcd8370_6fd8608f",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-17T22:59:50Z",
+      "side": 1,
+      "message": "Is this related? We should just drop LEGACY_USE_JAVA7",
+      "range": {
+        "startLine": 149,
+        "startChar": 0,
+        "endLine": 150,
+        "endChar": 31
+      },
+      "revId": "a688e4b41aa5b2f5717f27a47f698be316a41497",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
