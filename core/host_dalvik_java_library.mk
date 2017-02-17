@@ -31,27 +31,39 @@ include $(BUILD_SYSTEM)/configure_local_jack.mk
 #######################################
 include $(BUILD_SYSTEM)/host_java_library_common.mk
 #######################################
+ifdef LOCAL_JACK_ENABLED
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
   # For static library, $(LOCAL_BUILT_MODULE) is $(full_classes_jack).
   LOCAL_BUILT_MODULE_STEM := classes.jack
+endif
 endif
 
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
   LOCAL_JAVA_LIBRARIES :=  core-oj-hostdex core-libart-hostdex $(LOCAL_JAVA_LIBRARIES)
 endif
 
+full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
+full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
+full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_jack := $(intermediates.COMMON)/classes.jack
 jack_check_timestamp := $(intermediates.COMMON)/jack.check.timestamp
 built_dex := $(intermediates.COMMON)/classes.dex
 
 LOCAL_INTERMEDIATE_TARGETS += \
+    $(full_classes_compiled_jar) \
+    $(full_classes_jarjar_jar) \
     $(full_classes_jack) \
+    $(full_classes_jar) \
     $(jack_check_timestamp) \
     $(built_dex)
 
 # See comment in java.mk
 ifndef LOCAL_CHECKED_MODULE
+ifdef LOCAL_JACK_ENABLED
 LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
+else
+LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
+endif
 endif
 
 #######################################
@@ -65,6 +77,63 @@ include $(BUILD_SYSTEM)/java_common.mk
 
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 
+ifndef LOCAL_JACK_ENABLED
+
+$(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
+$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JAVACFLAGS)
+$(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
+$(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
+$(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
+$(full_classes_compiled_jar): \
+        $(java_sources) \
+        $(java_resource_sources) \
+        $(full_java_lib_deps) \
+        $(jar_manifest_file) \
+        $(proto_java_sources_file_stamp) \
+        $(NORMALIZE_PATH) \
+        $(JAVAC_FILTER) \
+        $(LOCAL_ADDITIONAL_DEPENDENCIES)
+	$(transform-host-java-to-package)
+
+# Run jarjar if necessary, otherwise just copy the file.
+ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
+$(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
+$(full_classes_jarjar_jar): $(full_classes_compiled_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
+	@echo JarJar: $@
+	$(hide) java -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+else
+$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
+	@echo Copying: $@
+	$(hide) $(ACP) -fp $< $@
+endif
+
+$(full_classes_jar): $(full_classes_jarjar_jar) | $(ACP)
+	@echo Copying: $@
+	$(hide) $(ACP) -fp $< $@
+
+ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
+# No dex; all we want are the .class files with resources.
+$(LOCAL_BUILT_MODULE) : $(java_resource_sources)
+$(LOCAL_BUILT_MODULE) : $(full_classes_jar)
+	@echo "host Static Jar: $(PRIVATE_MODULE) ($@)"
+	$(copy-file-to-target)
+
+else # !LOCAL_IS_STATIC_JAVA_LIBRARY
+$(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
+$(built_dex): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
+$(built_dex): $(full_classes_jar) $(DX)
+	$(transform-classes.jar-to-dex)
+
+$(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
+$(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
+$(LOCAL_BUILT_MODULE): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
+$(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
+	@echo "Host Jar: $(PRIVATE_MODULE) ($@)"
+	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
+	$(add-dex-to-package)
+
+endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
+else # LOCAL_JACK_ENABLED
 $(LOCAL_INTERMEDIATE_TARGETS): \
   PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
 
@@ -116,6 +185,7 @@ endif  # LOCAL_IS_STATIC_JAVA_LIBRARY
 $(jack_check_timestamp): $(jack_all_deps) | setup-jack-server
 	@echo Checking build with Jack: $@
 	$(jack-check-java)
+endif # LOCAL_JACK_ENABLED
 
 USE_CORE_LIB_BOOTCLASSPATH :=
 
