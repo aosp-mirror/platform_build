@@ -69,6 +69,30 @@
       "revId": "e98fb7a8d3a460891f6c21fafbe62a86b50d3d1d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fd8229ca_c4cb1e02",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 624,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-17T22:46:34Z",
+      "side": 1,
+      "message": "Yeah... that\u0027s because the LOCAL_SRC_FILES start with futility/... - we could move that module definition under external/vboot_references/futility, strip the futility/ from the start of the src files, then the module could be named \"futility\"\n\nSoong doesn\u0027t have this problem, if you want me to convert it over.",
+      "parentUuid": "85b6ee54_ff3c28a6",
+      "range": {
+        "startLine": 624,
+        "startChar": 36,
+        "endLine": 624,
+        "endChar": 49
+      },
+      "revId": "e98fb7a8d3a460891f6c21fafbe62a86b50d3d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
