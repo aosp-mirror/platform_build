@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3d943bbd_e1f88d10",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1750,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-02-17T22:39:44Z",
+      "side": 1,
+      "message": "should these be in an if PRODUCT_SUPPORTS_VBOOT?",
+      "range": {
+        "startLine": 1749,
+        "startChar": 0,
+        "endLine": 1750,
+        "endChar": 17
+      },
+      "revId": "e98fb7a8d3a460891f6c21fafbe62a86b50d3d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
