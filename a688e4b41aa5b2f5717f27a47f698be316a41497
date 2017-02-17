@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "c8dde4df_2e958f1c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2529,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-17T23:10:10Z",
+      "side": 1,
+      "message": "Less than this value does things differently, and we have apps that have min sdk versions \u003c 24.",
+      "parentUuid": "b9a0614f_f9f8f6d3",
+      "range": {
+        "startLine": 2529,
+        "startChar": 22,
+        "endLine": 2529,
+        "endChar": 24
+      },
+      "revId": "a688e4b41aa5b2f5717f27a47f698be316a41497",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9fcd8370_6fd8608f",
         "filename": "core/main.mk",
         "patchSetId": 3
