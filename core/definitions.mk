@@ -2217,7 +2217,7 @@ $(if $(PRIVATE_HAS_RS_SOURCES), \
 $(hide) tr ' ' '\n' < $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list \
     | $(NORMALIZE_PATH) | sort -u > $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
 $(hide) if [ -s $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
-    $(1) -encoding UTF-8 \
+    ( $(1) -encoding UTF-8 \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
     $(2) \
     $(addprefix -classpath ,$(strip \
@@ -2226,7 +2226,7 @@ $(hide) if [ -s $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq ] ; the
     -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
     $(PRIVATE_JAVACFLAGS) \
     \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq \
-    || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 ) \
+    || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 ) ) 2>&1 | $(JAVAC_FILTER); \
 fi
 $(if $(PRIVATE_JAVA_LAYERS_FILE), $(hide) build/tools/java-layers.py \
     $(PRIVATE_JAVA_LAYERS_FILE) \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq,)
@@ -2353,8 +2353,9 @@ $(if $(PRIVATE_HAS_RS_SOURCES), \
 $(hide) tr ' ' '\n' < $@.java-source-list \
     | sort -u > $@.java-source-list-uniq
 $(hide) if [ -s $@.java-source-list-uniq ] ; then \
-	$(call call-jack) \
+	$(call call-jack,$(PRIVATE_JACK_EXTRA_ARGS)) \
 	    $(strip $(PRIVATE_JACK_FLAGS)) \
+	    $(strip $(PRIVATE_JACK_DEBUG_FLAGS)) \
 	    $(addprefix --classpath ,$(strip \
 	        $(call normalize-path-list,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES)) $(PRIVATE_JACK_SHARED_LIBRARIES)))) \
 	    -D jack.import.resource.policy=keep-first \
@@ -2514,6 +2515,25 @@ $(hide) java -classpath $(EMMA_JAR) emma instr -outmode fullcopy -outfile \
     $(addprefix -ix , $(PRIVATE_EMMA_COVERAGE_FILTER))
 endef
 
+#TODO: use a smaller -Xmx value for most libraries;
+#      only core.jar and framework.jar need a heap this big.
+define transform-classes.jar-to-dex
+@echo "target Dex: $(PRIVATE_MODULE)"
+@mkdir -p $(dir $@)
+$(hide) rm -f $(dir $@)classes*.dex
+$(hide) $(DX) \
+    -JXms16M -JXmx2048M \
+    --dex --output=$(dir $@) \
+    $(if $(NO_OPTIMIZE_DX), \
+        --no-optimize) \
+    $(if $(GENERATE_DEX_DEBUG), \
+	    --debug --verbose \
+	    --dump-to=$(@:.dex=.lst) \
+	    --dump-width=1000) \
+    $(PRIVATE_DX_FLAGS) \
+    $<
+endef
+
 # Create a mostly-empty .jar file that we'll add to later.
 # The MacOS jar tool doesn't like creating empty jar files,
 # so we need to give it something.
@@ -2531,6 +2551,17 @@ endef
 # so we need to give it something.
 define create-empty-package
 $(call create-empty-package-at,$@)
+endef
+
+# Copy an arhchive file and delete any class files and empty folders inside.
+# $(1): the source archive file.
+# $(2): the destination archive file.
+define initialize-package-file
+@mkdir -p $(dir $(2))
+$(hide) cp -f $(1) $(2)
+$(hide) zip -qd $(2) "*.class" \
+    $(if $(strip $(PRIVATE_DONT_DELETE_JAR_DIRS)),,"*/") \
+    || true # Ignore the error when nothing to delete.
 endef
 
 #TODO: we kinda want to build different asset packages for
