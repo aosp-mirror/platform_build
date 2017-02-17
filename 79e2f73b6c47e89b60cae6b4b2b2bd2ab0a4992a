@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7e7ce649_5e5c1827",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-17T18:06:09Z",
+      "side": 1,
+      "message": "this is \u0027full\u0027 right now",
+      "range": {
+        "startLine": 98,
+        "startChar": 53,
+        "endLine": 98,
+        "endChar": 61
+      },
+      "revId": "79e2f73b6c47e89b60cae6b4b2b2bd2ab0a4992a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
