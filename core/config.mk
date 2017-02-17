@@ -496,8 +496,6 @@ MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
 ZIP2ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/zip2zip
 
-JAVAC_FILTER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_filter
-
 # Always use prebuilts for ckati and makeparallel
 prebuilt_build_tools := prebuilts/build-tools
 ifeq ($(filter address,$(SANITIZE_HOST)),)
