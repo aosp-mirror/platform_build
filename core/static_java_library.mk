@@ -75,10 +75,12 @@ endif
 
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
 
+ifdef LOCAL_JACK_ENABLED
 ifndef LOCAL_JACK_PROGUARD_FLAGS
     LOCAL_JACK_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS)
 endif
 LOCAL_JACK_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_JACK_PROGUARD_FLAGS)
+endif # LOCAL_JACK_ENABLED
 
 R_file_stamp := $(intermediates.COMMON)/src/R.stamp
 LOCAL_INTERMEDIATE_TARGETS += $(R_file_stamp)
@@ -164,10 +166,13 @@ $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_
 	$(hide) find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name R.java | xargs cat > $@
 endif  # LOCAL_USE_AAPT2
 
-$(LOCAL_BUILT_MODULE) \
-$(full_classes_compiled_jar) \
-$(noshrob_classes_jack) $(full_classes_jack) $(jack_check_timestamp) \
-  : $(R_file_stamp)
+$(LOCAL_BUILT_MODULE): $(R_file_stamp)
+ifdef LOCAL_JACK_ENABLED
+$(noshrob_classes_jack): $(R_file_stamp)
+$(full_classes_jack): $(R_file_stamp)
+$(jack_check_timestamp): $(R_file_stamp)
+endif # LOCAL_JACK_ENABLED
+$(full_classes_compiled_jar): $(R_file_stamp)
 
 
 # if we have custom proguarding done use the proguarded classes jar instead of the normal classes jar
