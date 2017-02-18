@@ -547,8 +547,10 @@ ifneq ($(dont_bother),true)
 #
 
 subdir_makefiles := $(SOONG_ANDROID_MK) $(call first-makefiles-under,$(TOP))
+subdir_makefiles_total := $(words $(subdir_makefiles))
+.KATI_READONLY := subdir_makefiles_total
 
-$(foreach mk,$(subdir_makefiles),$(info including $(mk) ...)$(eval include $(mk)))
+$(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
 
 ifdef PDK_FUSION_PLATFORM_ZIP
 # Bring in the PDK platform.zip modules.
