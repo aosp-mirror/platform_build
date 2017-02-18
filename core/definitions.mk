@@ -2541,6 +2541,24 @@ $(hide) java -classpath $(EMMA_JAR) emma instr -outmode fullcopy -outfile \
     $(addprefix -ix , $(PRIVATE_EMMA_COVERAGE_FILTER))
 endef
 
+define desugar-classpath
+$(filter-out -classpath -bootclasspath "",$(subst :,$(space),$(1)))
+endef
+
+define desugar-classes-jar
+@echo Desugar: $@
+@mkdir -p $(dir $@)
+$(hide) rm -f $@ $@.tmp
+$(hide) java -jar $(DESUGAR) \
+    $(addprefix --bootclasspath_entry ,$(call desugar-bootclasspath,$(PRIVATE_BOOTCLASSPATH))) \
+    $(addprefix --classpath_entry ,$(PRIVATE_ALL_JAVA_LIBRARIES)) \
+    --min_sdk_version 24 --allow_empty_bootclasspath \
+    $(if $(filter --core-library,$(PRIVATE_DX_FLAGS)),--core_library) \
+    -i $< -o $@.tmp
+    mv $@.tmp $@
+endef
+
+
 #TODO: use a smaller -Xmx value for most libraries;
 #      only core.jar and framework.jar need a heap this big.
 define transform-classes.jar-to-dex
