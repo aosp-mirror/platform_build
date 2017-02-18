@@ -352,7 +352,11 @@ ifdef full_classes_jar
 ifdef LOCAL_JACK_ENABLED
 LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
 else
+ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
+else
+LOCAL_CHECKED_MODULE := $(built_dex)
+endif
 endif
 endif
 endif
