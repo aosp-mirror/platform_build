@@ -76,21 +76,33 @@ ENABLED_VERSIONS := $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VE
 $(foreach v,$(ENABLED_VERSIONS), \
   $(eval IS_AT_LEAST_$(v) := true))
 
+# Default versions for each TARGET_PLATFORM_VERSION
+
+# This is the canonical definition of the platform version,
+# which is the version that we reveal to the end user.
+# Update this value when the platform version changes (rather
+# than overriding it somewhere else).  Can be an arbitrary string.
+
+# When you add a new PLATFORM_VERSION which will result in a new
+# PLATFORM_SDK_VERSION please ensure you add a corresponding isAtLeast*
+# method in the following java file:
+# frameworks/support/compat/gingerbread/android/support/v4/os/BuildCompat.java
+
+# When you change PLATFORM_VERSION for a given PLATFORM_SDK_VERSION
+# please add that PLATFORM_VERSION to the following text file:
+# cts/tests/tests/os/assets/platform_versions.txt
+PLATFORM_VERSION.O := O
+
+# This is the current development code-name, if the build is not a final
+# release build.  If this is a final release build, it is simply "REL".
+PLATFORM_VERSION_CODENAME.O := O
+
 ifndef PLATFORM_VERSION
-  # This is the canonical definition of the platform version,
-  # which is the version that we reveal to the end user.
-  # Update this value when the platform version changes (rather
-  # than overriding it somewhere else).  Can be an arbitrary string.
-
-  # When you add a new PLATFORM_VERSION which will result in a new
-  # PLATFORM_SDK_VERSION please ensure you add a corresponding isAtLeast*
-  # method in the following java file:
-  # frameworks/support/compat/gingerbread/android/support/v4/os/BuildCompat.java
-
-  # When you change PLATFORM_VERSION for a given PLATFORM_SDK_VERSION
-  # please add that PLATFORM_VERSION to the following text file:
-  # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_VERSION := O
+  PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
+  ifndef PLATFORM_VERSION
+    # PLATFORM_VERSION falls back to TARGET_PLATFORM_VERSION
+    PLATFORM_VERSION := $(TARGET_PLATFORM_VERSION)
+  endif
 endif
 
 ifndef PLATFORM_SDK_VERSION
@@ -123,9 +135,11 @@ ifndef PLATFORM_JACK_MIN_SDK_VERSION
 endif
 
 ifndef PLATFORM_VERSION_CODENAME
-  # This is the current development code-name, if the build is not a final
-  # release build.  If this is a final release build, it is simply "REL".
-  PLATFORM_VERSION_CODENAME := O
+  PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
+  ifndef PLATFORM_VERSION_CODENAME
+    # PLATFORM_VERSION_CODENAME falls back to TARGET_PLATFORM_VERSION
+    PLATFORM_VERSION_CODENAME := $(TARGET_PLATFORM_VERSION)
+  endif
 
   # This is all of the development codenames that are active.  Should be either
   # the same as PLATFORM_VERSION_CODENAME or a comma-separated list of additional
