@@ -116,6 +116,7 @@ proguard_jar_leaf := noproguard.classes.jar
 endif
 
 full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
+full_classes_desugar_jar := $(intermediates.COMMON)/desugar.classes.jar
 jarjar_leaf := classes-jarjar.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/$(jarjar_leaf)
 emma_intermediates_dir := $(intermediates.COMMON)/emma_out
@@ -142,6 +143,7 @@ jack_check_timestamp := $(intermediates.COMMON)/jack.check.timestamp
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
+    $(full_classes_desugar_jar) \
     $(full_classes_jarjar_jar) \
     $(full_classes_emma_jar) \
     $(full_classes_jar) \
@@ -446,14 +448,28 @@ $(full_classes_compiled_jar): \
 javac-check : $(full_classes_compiled_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
 
+my_desugaring :=
+ifndef LOCAL_JACK_ENABLED
+ifeq ($(LOCAL_JAVA_LANGUAGE_VERSION),1.8)
+my_desugaring := true
+$(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
+$(full_classes_desugar_jar): $(full_classes_compiled_jar) $(DESUGAR)
+	$(desugar-classes-jar)
+endif
+endif
+
+ifndef my_desugaring
+full_classes_desugar_jar := $(full_classes_compiled_jar)
+endif
+
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
+$(full_classes_jarjar_jar): $(full_classes_desugar_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
 	@echo JarJar: $@
 	$(hide) java -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
+$(full_classes_jarjar_jar): $(full_classes_desugar_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 endif
