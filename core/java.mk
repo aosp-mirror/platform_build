@@ -512,7 +512,8 @@ $(full_classes_emma_jar): $(full_classes_jarjar_jar)
 endif
 
 # Keep a copy of the jar just before proguard processing.
-$(full_classes_jar): $(full_classes_emma_jar) | $(ACP)
+# TODO: this should depend on full_classes_emma_jar once coverage works again
+$(full_classes_jar): $(full_classes_jarjar_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 
