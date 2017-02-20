@@ -74,6 +74,7 @@ $(full_classes_compiled_jar): \
         $(jar_manifest_file) \
         $(proto_java_sources_file_stamp) \
         $(NORMALIZE_PATH) \
+        $(JAVAC_FILTER) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-java-to-package)
 
