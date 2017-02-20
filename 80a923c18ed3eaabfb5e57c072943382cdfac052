@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57d3a998_224e53c0",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-20T06:35:09Z",
+      "side": 1,
+      "message": "Dan, I am using your pretty-* macro. However, the escape code for the color looks pretty dirty (^[[1mart/libart_fake/Android.mk: ^[[35mwarning:^[[0m^[[1m) when the log is redirected to a file. Maybe we need to disable the color (or turn it on or off depending on whether stdout is redirected to a file or not)",
+      "range": {
+        "startLine": 207,
+        "startChar": 13,
+        "endLine": 207,
+        "endChar": 25
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
