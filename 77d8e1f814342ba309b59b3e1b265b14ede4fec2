@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "d8601611_f99cfe7c",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-20T06:35:09Z",
+      "side": 1,
+      "message": "Well, I think it is not a good idea. LOCAL_MODULE_PATH (along with LOCAL_MODULE_PATH_32 and _64) are only referenced just above this line.",
+      "parentUuid": "d8fed29e_c1a801f1",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c56f79ca_61681cdf",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
@@ -102,6 +120,24 @@
       "side": 1,
       "message": "Ok that sounds fine to me then\n\n(For line 192, we could change that by adding another line saying \"TARGET_OUT_SYSTEM :\u003d TARGET_OUT\", although if there are a bunch of other places using it then it sounds fine to me to leave it)",
       "parentUuid": "a66731bb_d8ca9433",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8a8454f_5e275179",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-20T06:35:09Z",
+      "side": 1,
+      "message": "TARGET_OUT_SYSTEM alone is not enough. There are bunch of TARGET_OUT_* in envsetup.mk and they all need to be changed to TARGET_OUT_SYSTEM_*. (and of course all the places that reference them).\n\nI think this is too much and such clean-up is far outside the scope of this CL.",
+      "parentUuid": "2e44869c_d247c73a",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -161,6 +197,24 @@
     },
     {
       "key": {
+        "uuid": "773ef185_f9620d00",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-20T06:35:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80220bea_c46aa74d",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6d820800_96673ab8",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
@@ -208,6 +262,24 @@
       "side": 1,
       "message": "Oh I see. In case the vendor overrides this variable in a different file, I\u0027d be inclined to put all the information in the error message and then delete the comment. Something like \"NDK library must be installed at system partition, where other libraries will look for it. It cannot be moved.\" that explains that moving the library would cause a failure",
       "parentUuid": "e5286db5_f1d95e89",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12d146c6_7b8e0f1b",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-20T06:35:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4b7351a6_7ad98f97",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -267,6 +339,24 @@
     },
     {
       "key": {
+        "uuid": "897d1031_d6054f4a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-20T06:35:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2bedce76_afad0551",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "112bf33c_c4d51bd9",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
@@ -320,6 +410,24 @@
     },
     {
       "key": {
+        "uuid": "684641ad_c80be1d1",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-20T06:35:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "83b83e27_bef18dc0",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f5ddafb0_76a71876",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
@@ -349,6 +457,24 @@
       "side": 1,
       "message": "Well, I intentionally didn\u0027t use indentation because the ifs are essentially at the same level; \u0027AND\u0027 condition. (we don\u0027t have AND in ifs in GNU make)",
       "parentUuid": "f5ddafb0_76a71876",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b15cb9f_2d9281f5",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-20T06:35:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ae119fcc_14f0a748",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -443,6 +569,24 @@
     },
     {
       "key": {
+        "uuid": "7efef30d_a9f46808",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-20T06:35:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d0171f1d_05f6413e",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4f448b6c_7c2b6c02",
         "filename": "core/definitions.mk",
         "patchSetId": 13
@@ -490,6 +634,24 @@
       "side": 1,
       "message": "Oh that\u0027s weird. I expected there would be a bash function for that. Now that I look, I don\u0027t see one in Ubuntu 14.04. In that case I don\u0027t have a better idea than what you have here.",
       "parentUuid": "8784b632_bef356e8",
+      "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c6fcd2b_423d5f9b",
+        "filename": "core/definitions.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 2857,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-20T06:35:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f238c61a_9bd5ba55",
       "revId": "77d8e1f814342ba309b59b3e1b265b14ede4fec2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
