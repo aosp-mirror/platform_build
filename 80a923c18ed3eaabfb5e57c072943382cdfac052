@@ -22,6 +22,30 @@
       "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7001fa5a_689ebb5d",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-21T19:03:15Z",
+      "side": 1,
+      "message": "Yeah, I\u0027m working on stripping control codes when we detect that we\u0027re running in a dumb terminal.",
+      "parentUuid": "57d3a998_224e53c0",
+      "range": {
+        "startLine": 207,
+        "startChar": 13,
+        "endLine": 207,
+        "endChar": 25
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
