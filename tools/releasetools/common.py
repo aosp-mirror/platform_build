@@ -497,13 +497,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   elif info_dict.get("vboot", None):
     path = "/" + os.path.basename(sourcedir).lower()
     img_keyblock = tempfile.NamedTemporaryFile()
-    # We have switched from the prebuilt futility binary to using the tool
-    # (futility-host) built from the source. Override the setting in the old
-    # TF.zip.
-    futility = info_dict["futility"]
-    if futility.startswith("prebuilts/"):
-      futility = "futility-host"
-    cmd = [info_dict["vboot_signer_cmd"], futility,
+    cmd = [info_dict["vboot_signer_cmd"], info_dict["futility"],
            img_unsigned.name, info_dict["vboot_key"] + ".vbpubk",
            info_dict["vboot_key"] + ".vbprivk",
            info_dict["vboot_subkey"] + ".vbprivk",
