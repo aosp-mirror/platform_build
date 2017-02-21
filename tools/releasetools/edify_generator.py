@@ -77,26 +77,28 @@ class EdifyGenerator(object):
     with temporary=True) to this one."""
     self.script.extend(other.script)
 
-  def AssertOemProperty(self, name, value):
-    """Assert that a property on the OEM paritition matches a value."""
+  def AssertOemProperty(self, name, values):
+    """Assert that a property on the OEM paritition matches allowed values."""
     if not name:
       raise ValueError("must specify an OEM property")
-    if not value:
+    if not values:
       raise ValueError("must specify the OEM value")
+    get_prop_command = None
     if common.OPTIONS.oem_no_mount:
-      cmd = ('getprop("{name}") == "{value}" || '
-             'abort("E{code}: This package expects the value \\"{value}\\" for '
-             '\\"{name}\\"; this has value \\"" + '
-             'getprop("{name}") + "\\".");').format(
-                 code=common.ErrorCode.OEM_PROP_MISMATCH,
-                 name=name, value=value)
+      get_prop_command = 'getprop("%s")' % name
     else:
-      cmd = ('file_getprop("/oem/oem.prop", "{name}") == "{value}" || '
-             'abort("E{code}: This package expects the value \\"{value}\\" for '
-             '\\"{name}\\" on the OEM partition; this has value \\"" + '
-             'file_getprop("/oem/oem.prop", "{name}") + "\\".");').format(
-                 code=common.ErrorCode.OEM_PROP_MISMATCH,
-                 name=name, value=value)
+      get_prop_command = 'file_getprop("/oem/oem.prop", "%s")' % name
+
+    cmd = ''
+    for value in values:
+      cmd += '%s == "%s" || ' % (get_prop_command, value)
+    cmd += (
+        'abort("E{code}: This package expects the value \\"{values}\\" for '
+        '\\"{name}\\"; this has value \\"" + '
+        '{get_prop_command} + "\\".");').format(
+            code=common.ErrorCode.OEM_PROP_MISMATCH,
+            get_prop_command=get_prop_command, name=name,
+            values='\\" or \\"'.join(values))
     self.script.append(cmd)
 
   def AssertSomeFingerprint(self, *fp):
