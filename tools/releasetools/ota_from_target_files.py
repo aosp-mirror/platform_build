@@ -50,9 +50,11 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Remount and verify the checksums of the files written to the
       system and vendor (if used) partitions.  Incremental builds only.
 
-  -o  (--oem_settings)  <file>
-      Use the file to specify the expected OEM-specific properties
-      on the OEM partition of the intended device.
+  -o  (--oem_settings)  <main_file[,additional_files...]>
+      Comma seperated list of files used to specify the expected OEM-specific
+      properties on the OEM partition of the intended device.
+      Multiple expected values can be used by providing multiple files.
+
 
   --oem_no_mount
       For devices with OEM-specific properties but without an OEM partition,
@@ -445,20 +447,38 @@ def SignOutput(temp_zip_name, output_zip_name):
                   whole_file=True)
 
 
-def AppendAssertions(script, info_dict, oem_dict=None):
+def AppendAssertions(script, info_dict, oem_dicts=None):
   oem_props = info_dict.get("oem_fingerprint_properties")
   if not oem_props:
     device = GetBuildProp("ro.product.device", info_dict)
     script.AssertDevice(device)
   else:
-    if oem_dict is None:
+    if not oem_dicts:
       raise common.ExternalError(
           "No OEM file provided to answer expected assertions")
     for prop in oem_props.split():
-      if oem_dict.get(prop) is None:
+      values = []
+      for oem_dict in oem_dicts:
+        if oem_dict.get(prop):
+          values.append(oem_dict[prop])
+      if not values:
         raise common.ExternalError(
             "The OEM file is missing the property %s" % prop)
-      script.AssertOemProperty(prop, oem_dict.get(prop))
+      script.AssertOemProperty(prop, values)
+
+
+def _LoadOemDicts(script, recovery_mount_options):
+  """Returns the list of loaded OEM properties dict."""
+  oem_dicts = None
+  if OPTIONS.oem_source is None:
+    raise common.ExternalError("OEM source required for this build")
+  if not OPTIONS.oem_no_mount:
+    script.Mount("/oem", recovery_mount_options)
+  oem_dicts = []
+  for oem_file in OPTIONS.oem_source:
+    oem_dicts.append(common.LoadDictionaryFromLines(
+        open(oem_file).readlines()))
+  return oem_dicts
 
 
 def _WriteRecoveryImageToBoot(script, output_zip):
@@ -571,19 +591,15 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
-  oem_dict = None
+  oem_dicts = None
   if oem_props:
-    if OPTIONS.oem_source is None:
-      raise common.ExternalError("OEM source required for this build")
-    if not OPTIONS.oem_no_mount:
-      script.Mount("/oem", recovery_mount_options)
-    oem_dict = common.LoadDictionaryFromLines(
-        open(OPTIONS.oem_source).readlines())
+    oem_dicts = _LoadOemDicts(script, recovery_mount_options)
 
-  target_fp = CalculateFingerprint(oem_props, oem_dict, OPTIONS.info_dict)
+  target_fp = CalculateFingerprint(oem_props, oem_dicts and oem_dicts[0],
+                                   OPTIONS.info_dict)
   metadata = {
-      "post-build": target_fp,
-      "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
+      "pre-device": GetOemProperty("ro.product.device", oem_props,
+                                   oem_dicts and oem_dicts[0],
                                    OPTIONS.info_dict),
       "post-timestamp": GetBuildProp("ro.build.date.utc", OPTIONS.info_dict),
   }
@@ -606,7 +622,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
   ts_text = GetBuildProp("ro.build.date", OPTIONS.info_dict)
   script.AssertOlderBuild(ts, ts_text)
 
-  AppendAssertions(script, OPTIONS.info_dict, oem_dict)
+  AppendAssertions(script, OPTIONS.info_dict, oem_dicts)
   device_specific.FullOTA_Assertions()
 
   # Two-step package strategy (in chronological order, which is *not*
@@ -858,18 +874,14 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       "recovery_mount_options")
   source_oem_props = OPTIONS.source_info_dict.get("oem_fingerprint_properties")
   target_oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
-  oem_dict = None
-  if source_oem_props or target_oem_props:
-    if OPTIONS.oem_source is None:
-      raise common.ExternalError("OEM source required for this build")
-    if not OPTIONS.oem_no_mount:
-      script.Mount("/oem", recovery_mount_options)
-    oem_dict = common.LoadDictionaryFromLines(
-        open(OPTIONS.oem_source).readlines())
+  oem_dicts = None
+  if source_oem_props and target_oem_props:
+    oem_dicts = _LoadOemDicts(script, recovery_mount_options)
 
   metadata = {
       "pre-device": GetOemProperty("ro.product.device", source_oem_props,
-                                   oem_dict, OPTIONS.source_info_dict),
+                                   oem_dicts and oem_dicts[0],
+                                   OPTIONS.source_info_dict),
       "ota-type": "BLOCK",
   }
 
@@ -885,9 +897,9 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       metadata=metadata,
       info_dict=OPTIONS.source_info_dict)
 
-  source_fp = CalculateFingerprint(source_oem_props, oem_dict,
+  source_fp = CalculateFingerprint(source_oem_props, oem_dicts and oem_dicts[0],
                                    OPTIONS.source_info_dict)
-  target_fp = CalculateFingerprint(target_oem_props, oem_dict,
+  target_fp = CalculateFingerprint(target_oem_props, oem_dicts and oem_dicts[0],
                                    OPTIONS.target_info_dict)
   metadata["pre-build"] = source_fp
   metadata["post-build"] = target_fp
@@ -952,7 +964,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   else:
     vendor_diff = None
 
-  AppendAssertions(script, OPTIONS.target_info_dict, oem_dict)
+  AppendAssertions(script, OPTIONS.target_info_dict, oem_dicts)
   device_specific.IncrementalOTA_Assertions()
 
   # Two-step incremental package strategy (in chronological order,
@@ -1162,19 +1174,16 @@ def WriteVerifyPackage(input_zip, output_zip):
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
   recovery_mount_options = OPTIONS.info_dict.get(
       "recovery_mount_options")
-  oem_dict = None
+  oem_dicts = None
   if oem_props:
-    if OPTIONS.oem_source is None:
-      raise common.ExternalError("OEM source required for this build")
-    if not OPTIONS.oem_no_mount:
-      script.Mount("/oem", recovery_mount_options)
-    oem_dict = common.LoadDictionaryFromLines(
-        open(OPTIONS.oem_source).readlines())
+    oem_dicts = _LoadOemDicts(script, oem_props, recovery_mount_options)
 
-  target_fp = CalculateFingerprint(oem_props, oem_dict, OPTIONS.info_dict)
+  target_fp = CalculateFingerprint(oem_props, oem_dicts and oem_dicts[0],
+                                   OPTIONS.info_dict)
   metadata = {
       "post-build": target_fp,
-      "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
+      "pre-device": GetOemProperty("ro.product.device", oem_props,
+                                   oem_dicts and oem_dicts[0],
                                    OPTIONS.info_dict),
       "post-timestamp": GetBuildProp("ro.build.date.utc", OPTIONS.info_dict),
   }
@@ -1188,7 +1197,7 @@ def WriteVerifyPackage(input_zip, output_zip):
       metadata=metadata,
       info_dict=OPTIONS.info_dict)
 
-  AppendAssertions(script, OPTIONS.info_dict, oem_dict)
+  AppendAssertions(script, OPTIONS.info_dict, oem_dicts)
 
   script.Print("Verifying device images against %s..." % target_fp)
   script.AppendExtra("")
@@ -1310,26 +1319,25 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
 
   # Metadata to comply with Android OTA package format.
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties", None)
-  oem_dict = None
+  oem_dicts = None
   if oem_props:
-    if OPTIONS.oem_source is None:
-      raise common.ExternalError("OEM source required for this build")
-    oem_dict = common.LoadDictionaryFromLines(
-        open(OPTIONS.oem_source).readlines())
+    oem_dicts = _LoadOemDicts(script, None)
 
   metadata = {
-      "post-build": CalculateFingerprint(oem_props, oem_dict,
+      "post-build": CalculateFingerprint(oem_props, oem_dicts and oem_dicts[0],
                                          OPTIONS.info_dict),
       "post-build-incremental" : GetBuildProp("ro.build.version.incremental",
                                               OPTIONS.info_dict),
-      "pre-device": GetOemProperty("ro.product.device", oem_props, oem_dict,
+      "pre-device": GetOemProperty("ro.product.device", oem_props,
+                                   oem_dicts and oem_dicts[0],
                                    OPTIONS.info_dict),
       "ota-required-cache": "0",
       "ota-type": "AB",
   }
 
   if source_file is not None:
-    metadata["pre-build"] = CalculateFingerprint(oem_props, oem_dict,
+    metadata["pre-build"] = CalculateFingerprint(oem_props,
+                                                 oem_dicts and oem_dicts[0],
                                                  OPTIONS.source_info_dict)
     metadata["pre-build-incremental"] = GetBuildProp(
         "ro.build.version.incremental", OPTIONS.source_info_dict)
@@ -1653,18 +1661,14 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
       "recovery_mount_options")
   source_oem_props = OPTIONS.source_info_dict.get("oem_fingerprint_properties")
   target_oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
-  oem_dict = None
+  oem_dicts = None
   if source_oem_props or target_oem_props:
-    if OPTIONS.oem_source is None:
-      raise common.ExternalError("OEM source required for this build")
-    if not OPTIONS.oem_no_mount:
-      script.Mount("/oem", recovery_mount_options)
-    oem_dict = common.LoadDictionaryFromLines(
-        open(OPTIONS.oem_source).readlines())
+    oem_dicts = _LoadOemDicts(script, recovery_mount_options)
 
   metadata = {
       "pre-device": GetOemProperty("ro.product.device", source_oem_props,
-                                   oem_dict, OPTIONS.source_info_dict),
+                                   oem_dicts and oem_dicts[0],
+                                   OPTIONS.source_info_dict),
       "ota-type": "FILE",
   }
 
@@ -1688,9 +1692,9 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   else:
     vendor_diff = None
 
-  target_fp = CalculateFingerprint(target_oem_props, oem_dict,
+  target_fp = CalculateFingerprint(target_oem_props, oem_dicts and oem_dicts[0],
                                    OPTIONS.target_info_dict)
-  source_fp = CalculateFingerprint(source_oem_props, oem_dict,
+  source_fp = CalculateFingerprint(source_oem_props, oem_dicts and oem_dicts[0],
                                    OPTIONS.source_info_dict)
 
   if source_oem_props is None and target_oem_props is None:
@@ -1736,7 +1740,7 @@ def WriteIncrementalOTAPackage(target_zip, source_zip, output_zip):
   #  0.1 for unpacking verbatim files, symlinking, and doing the
   #      device-specific commands.
 
-  AppendAssertions(script, OPTIONS.target_info_dict, oem_dict)
+  AppendAssertions(script, OPTIONS.target_info_dict, oem_dicts)
   device_specific.IncrementalOTA_Assertions()
 
   # Two-step incremental package strategy (in chronological order,
@@ -2072,7 +2076,7 @@ def main(argv):
       OPTIONS.downgrade = True
       OPTIONS.wipe_user_data = True
     elif o in ("-o", "--oem_settings"):
-      OPTIONS.oem_source = a
+      OPTIONS.oem_source = a.split(',')
     elif o == "--oem_no_mount":
       OPTIONS.oem_no_mount = True
     elif o in ("-e", "--extra_script"):
