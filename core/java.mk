@@ -540,7 +540,8 @@ endif
 endif
 
 # jack already has the libraries in its classpath and doesn't support jars
-legacy_proguard_flags := $(addprefix -libraryjars ,$(my_support_library_sdk_raise) $(full_shared_java_libs))
+legacy_proguard_flags := $(addprefix -libraryjars ,$(my_support_library_sdk_raise) \
+  $(filter-out $(my_support_library_sdk_raise),$(full_shared_java_libs)))
 
 legacy_proguard_flags += -printmapping $(proguard_dictionary)
 jack_proguard_flags := -printmapping $(jack_dictionary)
