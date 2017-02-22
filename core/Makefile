@@ -5,7 +5,7 @@
 LOCAL_PATH := $(BUILD_SYSTEM)
 
 # Pick a reasonable string to use to identify files.
-ifneq "" "$(filter eng.%,$(BUILD_NUMBER))"
+ifneq (,$(filter eng.%,$(BUILD_NUMBER)))
   # BUILD_NUMBER has a timestamp in it, which means that
   # it will change every time.  Pick a stable value.
   FILE_NAME_TAG := eng.$(USER)
@@ -215,7 +215,7 @@ ifeq ($(TARGET_BUILD_VARIANT),user)
   # release build number or branch.buld_number non-release builds
 
   # Dev. branches should have DISPLAY_BUILD_NUMBER set
-  ifeq "true" "$(DISPLAY_BUILD_NUMBER)"
+  ifeq (true,$(DISPLAY_BUILD_NUMBER))
     BUILD_DISPLAY_ID := $(BUILD_ID).$(BUILD_NUMBER_FROM_FILE) $(BUILD_KEYS)
   else
     BUILD_DISPLAY_ID := $(BUILD_ID) $(BUILD_KEYS)
