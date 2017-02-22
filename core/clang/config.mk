@@ -72,6 +72,7 @@ COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES := libcompiler_rt-extras
 # INTERNAL_LOCAL_CLANG_EXCEPTION_PROJECTS is defined later in other config.mk.
 LOCAL_CLANG_EXCEPTION_PROJECTS = \
   bionic/tests/ \
+  device/google/contexthub/ \
   device/huawei/angler/ \
   device/lge/bullhead/ \
   external/gentoo/integration/ \
