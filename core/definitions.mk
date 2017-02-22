@@ -2545,7 +2545,8 @@ $(hide) rm -f $@ $@.tmp
 $(hide) java -jar $(DESUGAR) \
     $(addprefix --bootclasspath_entry ,$(call desugar-bootclasspath,$(PRIVATE_BOOTCLASSPATH))) \
     $(addprefix --classpath_entry ,$(PRIVATE_ALL_JAVA_LIBRARIES)) \
-    --min_sdk_version 24 --allow_empty_bootclasspath \
+    --min_sdk_version $(PRIVATE_SDK_VERSION) \
+    --allow_empty_bootclasspath \
     $(if $(filter --core-library,$(PRIVATE_DX_FLAGS)),--core_library) \
     -i $< -o $@.tmp
     mv $@.tmp $@
@@ -2561,6 +2562,7 @@ $(hide) rm -f $(dir $@)classes*.dex
 $(hide) $(DX) \
     -JXms16M -JXmx2048M \
     --dex --output=$(dir $@) \
+    --min-sdk-version=$(PRIVATE_SDK_VERSION) \
     $(if $(NO_OPTIMIZE_DX), \
         --no-optimize) \
     $(if $(GENERATE_DEX_DEBUG), \
