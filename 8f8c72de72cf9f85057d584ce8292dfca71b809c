@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ab0f06db_8f1c2cea",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-22T01:09:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cd817709_08dc709d",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 21
+      },
+      "revId": "8f8c72de72cf9f85057d584ce8292dfca71b809c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c3efb5db_e25cee26",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-02-16T21:22:34Z",
       "side": 1,
       "message": "Why is this split out into it\u0027s own variable?",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 32
+      },
+      "revId": "8f8c72de72cf9f85057d584ce8292dfca71b809c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36092f87_ffb8deca",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-22T01:09:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c3efb5db_e25cee26",
       "range": {
         "startLine": 16,
         "startChar": 0,
