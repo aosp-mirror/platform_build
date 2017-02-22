@@ -629,6 +629,23 @@ extra_input_jar := $(call intermediates-dir-for,APPS,$(LOCAL_TEST_MODULE_TO_PROG
 else
 extra_input_jar :=
 endif
+
+# If not using jack and building against the current SDK version then filter
+# out junit and android.test classes from the application that are to be
+# removed from the Android API as part of b/30188076 but which are still
+# present in the Android API. This is to allow changes to be made to the
+# build to statically include those classes into the application without
+# simultaneously removing those classes from the API.
+proguard_injar_filters :=
+ifndef LOCAL_JACK_ENABLED
+ifdef LOCAL_SDK_VERSION
+ifeq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
+proguard_injar_filters := (!junit/framework/**,!junit/runner/**,!android/test/**)
+endif
+endif
+endif
+
+$(full_classes_proguard_jar): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
 $(full_classes_proguard_jar): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
 $(full_classes_proguard_jar) : $(full_classes_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) | $(PROGUARD)
