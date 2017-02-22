@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5fdffc4a_5e1565b2",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 635,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-22T00:48:09Z",
+      "side": 0,
+      "message": "This $(ACP) is completely gone now, you seemed to say before it didn\u0027t matter but just FYI.",
+      "range": {
+        "startLine": 635,
+        "startChar": 143,
+        "endLine": 635,
+        "endChar": 150
+      },
+      "revId": "557ce055e76da1bb705738dd6f726909aa4fab8c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
