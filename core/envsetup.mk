@@ -515,8 +515,8 @@ ifeq (,$(strip $(DIST_DIR)))
   DIST_DIR := $(OUT_DIR)/dist
 endif
 
-ifeq ($(PRINT_BUILD_CONFIG),)
-PRINT_BUILD_CONFIG := true
+ifndef KATI
+PRINT_BUILD_CONFIG ?= true
 endif
 
 ifeq ($(USE_CLANG_PLATFORM_BUILD),)
