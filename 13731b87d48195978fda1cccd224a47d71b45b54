@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "53a42d97_6c844738",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2017-02-23T21:27:50Z",
+      "side": 1,
+      "message": "Should go in binary.mk, right? This doesn\u0027t have anything to do with the STL.",
+      "revId": "13731b87d48195978fda1cccd224a47d71b45b54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
