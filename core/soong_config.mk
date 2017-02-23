@@ -31,8 +31,6 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "SanitizeDevice": [$(if $(SANITIZE_TARGET),"$(subst $(space),"$(comma)",$(SANITIZE_TARGET))")],'; \
 	echo '    "SanitizeDeviceArch": [$(if $(SANITIZE_TARGET_ARCH),"$(subst $(space),"$(comma)",$(SANITIZE_TARGET_ARCH))")],'; \
 	echo '    "HostStaticBinaries": $(if $(strip $(BUILD_HOST_static)),true,false),'; \
-	echo '    "Cpusets": $(if $(strip $(ENABLE_CPUSETS)),true,false),'; \
-	echo '    "Schedboost": $(if $(strip $(ENABLE_SCHEDBOOST)),true,false),'; \
 	echo '    "Binder32bit": $(if $(BINDER32BIT),true,false),'; \
 	echo '    "DevicePrefer32BitExecutables": $(if $(filter true,$(TARGET_PREFER_32_BIT_EXECUTABLES)),true,false),'; \
 	echo '    "UseGoma": $(if $(filter-out false,$(USE_GOMA)),true,false),'; \
