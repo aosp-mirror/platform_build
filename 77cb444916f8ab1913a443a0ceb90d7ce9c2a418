@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5d39ace0_82ade774",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 3295,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-23T23:04:33Z",
+      "side": 1,
+      "message": "I don\u0027t think this does what I think it does, but it just worked with dumb luck and now I realize I don\u0027t even need this line.",
+      "range": {
+        "startLine": 3295,
+        "startChar": 0,
+        "endLine": 3295,
+        "endChar": 54
+      },
+      "revId": "77cb444916f8ab1913a443a0ceb90d7ce9c2a418",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
