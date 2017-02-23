@@ -308,13 +308,6 @@ endif
 
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
-ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-$(LOCAL_INTERMEDIATE_TARGETS): \
-    PRIVATE_DEFAULT_APP_TARGET_SDK := $(LOCAL_SDK_VERSION)
-else
-$(LOCAL_INTERMEDIATE_TARGETS): \
-    PRIVATE_DEFAULT_APP_TARGET_SDK := $(DEFAULT_APP_TARGET_SDK)
-endif
 
 ifeq ($(LOCAL_DATA_BINDING),true)
 data_binding_stamp := $(data_binding_intermediates)/data-binding.stamp
