@@ -1820,6 +1820,12 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(FUTILITY) \
   $(VBOOT_SIGNER)
 
+ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT))
+OTATOOLS += \
+  $(FUTILITY) \
+  $(VBOOT_SIGNER)
+endif
+
 # Shared libraries.
 OTATOOLS += \
   $(HOST_LIBRARY_PATH)/libc++$(HOST_SHLIB_SUFFIX) \
@@ -1863,6 +1869,10 @@ $(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP)
 	$(hide) $(ACP) -p system/extras/verity/build_verity_metadata.py $(zip_root)/system/extras/verity/
 	$(hide) $(ACP) -p -r external/vboot_reference/tests/devkeys/* $(zip_root)/external/vboot_reference/tests/devkeys
 	$(hide) $(ACP) -r -d -p build/tools/releasetools/* $(zip_root)/releasetools
+ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT))
+	$(hide) mkdir -p $(zip_root)/external/vboot_reference/tests/devkeys
+	$(hide) $(ACP) -r -d -p external/vboot_reference/tests/devkeys/* $(zip_root)/external/vboot_reference/tests/devkeys
+endif
 	$(hide) rm -rf $@ $(zip_root)/releasetools/*.pyc
 	$(hide) (cd $(zip_root) && zip -qryX $(abspath $@) *)
 	$(hide) zip -qryX $(abspath $@) build/target/product/security/
