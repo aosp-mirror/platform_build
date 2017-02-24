@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2cc904f3_b9e14f33",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-02-24T21:01:21Z",
+      "side": 1,
+      "message": "File a bug to move this to a LOCAL_NOTICE_FILE on the libwinpthreads module in the soong Android.mk",
+      "revId": "4d9268e704b3936b913069258a9a3a5f77d92ba2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
