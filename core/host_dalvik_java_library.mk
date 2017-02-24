@@ -43,6 +43,7 @@ ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 endif
 
 full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
+full_classes_desugar_jar := $(intermediates.COMMON)/desugar.classes.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_jack := $(intermediates.COMMON)/classes.jack
@@ -51,6 +52,7 @@ built_dex := $(intermediates.COMMON)/classes.dex
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
+    $(full_classes_desugar_jar) \
     $(full_classes_jarjar_jar) \
     $(full_classes_jack) \
     $(full_classes_jar) \
@@ -62,7 +64,11 @@ ifndef LOCAL_CHECKED_MODULE
 ifdef LOCAL_JACK_ENABLED
 LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
 else
+ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
+else
+LOCAL_CHECKED_MODULE := $(built_dex)
+endif
 endif
 endif
 
@@ -95,14 +101,26 @@ $(full_classes_compiled_jar): \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-java-to-package)
 
+my_desugaring :=
+ifeq ($(LOCAL_JAVA_LANGUAGE_VERSION),1.8)
+my_desugaring := true
+$(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
+$(full_classes_desugar_jar): $(full_classes_compiled_jar) $(DESUGAR)
+	$(desugar-classes-jar)
+endif
+
+ifndef my_desugaring
+full_classes_desugar_jar := $(full_classes_compiled_jar)
+endif
+
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
+$(full_classes_jarjar_jar): $(full_classes_desugar_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
 	@echo JarJar: $@
 	$(hide) java -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
+$(full_classes_jarjar_jar): $(full_classes_desugar_jar) | $(ACP)
 	@echo Copying: $@
 	$(hide) $(ACP) -fp $< $@
 endif
