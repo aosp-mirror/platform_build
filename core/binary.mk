@@ -456,6 +456,11 @@ ifeq (,$(WITHOUT_LIBCOMPILER_RT))
 endif
 endif
 
+# Statically link libwinpthread when cross compiling win32.
+ifeq ($($(my_prefix)OS),windows)
+  my_static_libraries += libwinpthread
+endif
+
 ifneq ($(filter ../%,$(my_src_files)),)
 my_soong_problems += dotdot_srcs
 endif
