@@ -3250,6 +3250,11 @@ endef
 #$(warning 42 == $(call math_max,5,42))
 #$(warning 42 == $(call math_max,42,5))
 
+# $1 is the variable name to increment
+define inc_and_print
+$(strip $(eval $(1) := $($(1)) .)$(words $($(1))))
+endef
+
 ###########################################################
 ## Other includes
 ###########################################################
