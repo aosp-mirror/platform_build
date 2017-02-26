@@ -567,7 +567,7 @@ class BlockImageDiff(object):
         cache_size = common.OPTIONS.cache_size
         stash_threshold = common.OPTIONS.stash_threshold
         max_allowed = cache_size * stash_threshold
-        assert max_stashed_blocks * self.tgt.blocksize < max_allowed, \
+        assert max_stashed_blocks * self.tgt.blocksize <= max_allowed, \
                'Stash size %d (%d * %d) exceeds the limit %d (%d * %.2f)' % (
                    max_stashed_blocks * self.tgt.blocksize, max_stashed_blocks,
                    self.tgt.blocksize, max_allowed, cache_size,
