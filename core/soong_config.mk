@@ -45,6 +45,7 @@ $(SOONG_VARIABLES): FORCE
 	echo ''; \
 	echo '    "NativeCoverage": $(if $(filter true,$(NATIVE_COVERAGE)),true,false),'; \
 	echo '    "CoveragePaths": [$(if $(COVERAGE_PATHS),"$(subst $(space),"$(comma)",$(subst $(comma),$(space),$(COVERAGE_PATHS)))")],'; \
+	echo '    "CoverageExcludePaths": [$(if $(COVERAGE_EXCLUDE_PATHS),"$(subst $(space),"$(comma)",$(subst $(comma),$(space),$(COVERAGE_EXCLUDE_PATHS)))")],'; \
 	echo ''; \
 	echo '    "DeviceName": "$(TARGET_DEVICE)",'; \
 	echo '    "DeviceArch": "$(TARGET_ARCH)",'; \
