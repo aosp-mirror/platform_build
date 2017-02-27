@@ -1753,9 +1753,13 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/brillo_update_payload \
   $(HOST_OUT_EXECUTABLES)/lib/shflags/shflags \
   $(HOST_OUT_EXECUTABLES)/delta_generator \
-  $(BLK_ALLOC_TO_BASE_FS) \
+  $(BLK_ALLOC_TO_BASE_FS)
+
+ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT))
+OTATOOLS += \
   $(FUTILITY) \
   $(VBOOT_SIGNER)
+endif
 
 ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT))
 OTATOOLS += \
@@ -1800,11 +1804,10 @@ $(BUILT_OTATOOLS_PACKAGE): zip_root := $(call intermediates-dir-for,PACKAGING,ot
 $(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) | $(ACP)
 	@echo "Package OTA tools: $@"
 	$(hide) rm -rf $@ $(zip_root)
-	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools $(zip_root)/system/extras/verity $(zip_root)/external/vboot_reference/tests/devkeys
+	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools $(zip_root)/system/extras/verity
 	$(call copy-files-with-structure,$(OTATOOLS),$(HOST_OUT)/,$(zip_root))
 	$(hide) $(ACP) $(HOST_OUT_JAVA_LIBRARIES)/VeritySigner.jar $(zip_root)/framework/
 	$(hide) $(ACP) -p system/extras/verity/build_verity_metadata.py $(zip_root)/system/extras/verity/
-	$(hide) $(ACP) -p -r external/vboot_reference/tests/devkeys/* $(zip_root)/external/vboot_reference/tests/devkeys
 	$(hide) $(ACP) -r -d -p build/tools/releasetools/* $(zip_root)/releasetools
 ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT))
 	$(hide) mkdir -p $(zip_root)/external/vboot_reference/tests/devkeys
