@@ -84,6 +84,7 @@ PRODUCT_PACKAGES += \
 
 # SELinux packages
 PRODUCT_PACKAGES += \
+    secilc \
     file_contexts.bin \
     nonplat_file_contexts \
     nonplat_mac_permissions.xml \
