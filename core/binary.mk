@@ -61,7 +61,11 @@ my_export_c_include_deps := $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 my_arflags :=
 
 ifneq (,$(strip $(foreach dir,$(subst $(comma),$(space),$(COVERAGE_PATHS)),$(filter $(dir)%,$(LOCAL_PATH)))))
+ifeq (,$(strip $(foreach dir,$(subst $(comma),$(space),$(COVERAGE_EXCLUDE_PATHS)),$(filter $(dir)%,$(LOCAL_PATH)))))
   my_native_coverage := true
+else
+  my_native_coverage := false
+endif
 else
   my_native_coverage := false
 endif
