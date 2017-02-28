@@ -38,7 +38,14 @@ my_built_vdex := $(patsubst %.odex,%.vdex,$(my_built_odex))
 my_installed_vdex := $(patsubst %.odex,%.vdex,$(my_installed_odex))
 my_installed_art := $(patsubst %.odex,%.art,$(my_installed_odex))
 
-ifeq (true,$(WITH_DEXPREOPT_APP_IMAGE))
+ifndef LOCAL_DEX_PREOPT_APP_IMAGE
+# Local override not defined, use the global one.
+ifeq (true,$(WITH_DEX_PREOPT_APP_IMAGE))
+  LOCAL_DEX_PREOPT_APP_IMAGE := true
+endif
+endif
+
+ifeq (true,$(LOCAL_DEX_PREOPT_APP_IMAGE))
 my_built_art := $(patsubst %.odex,%.art,$(my_built_odex))
 $(my_built_odex): PRIVATE_ART_FILE_PREOPT_FLAGS := --app-image-file=$(my_built_art) \
     --image-format=lz4
@@ -46,6 +53,33 @@ $(eval $(call copy-one-file,$(my_built_art),$(my_installed_art)))
 built_art += $(my_built_art)
 installed_art += $(my_installed_art)
 built_installed_art += $(my_built_art):$(my_installed_art)
+endif
+
+ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
+ifeq (true,$(WITH_DEX_PREOPT_GENERATE_PROFILE))
+  LOCAL_DEX_PREOPT_GENERATE_PROFILE := true
+endif
+endif
+
+ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+ifndef LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING
+$(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING))
+endif
+my_built_profile := $(dir $(my_built_odex))../../$($(my_2nd_arch_prefix)DEX2OAT_TARGET_ARCH).prof
+my_profile_classes := $(patsubst %.prof,%.classes,$(my_built_profile))
+my_dex_location := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
+$(my_built_odex): $(my_built_profile)
+$(my_built_odex): PRIVATE_PROFILE_PREOPT_FLAGS := --profile-file=$(my_built_profile)
+$(my_built_profile): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
+$(my_built_profile): PRIVATE_DEX_LOCATION := $(my_dex_location)
+$(my_built_profile): PRIVATE_PROFILE_CLASSES := $(my_profile_classes)
+$(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
+$(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
+$(my_built_profile): $(PROFMAN)
+$(my_built_profile): $(PRIVATE_INSTALLED_MODULE)
+$(my_built_profile):
+	cp $(PRIVATE_SOURCE_CLASSES) $(PRIVATE_PROFILE_CLASSES)
+	$(PROFMAN) --create-profile-from=$(PRIVATE_PROFILE_CLASSES) --apk=$(PRIVATE_INSTALLED_MODULE) --dex-location=$(PRIVATE_DEX_LOCATION) --reference-profile-file=$@
 endif
 
 $(eval $(call copy-one-file,$(my_built_odex),$(my_installed_odex)))
