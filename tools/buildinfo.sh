@@ -30,7 +30,6 @@ echo "ro.product.model=$PRODUCT_MODEL"
 echo "ro.product.brand=$PRODUCT_BRAND"
 echo "ro.product.name=$PRODUCT_NAME"
 echo "ro.product.device=$TARGET_DEVICE"
-echo "ro.product.board=$TARGET_BOOTLOADER_BOARD_NAME"
 
 # These values are deprecated, use "ro.product.cpu.abilist"
 # instead (see below).
@@ -49,7 +48,6 @@ if [ -n "$PRODUCT_DEFAULT_LOCALE" ] ; then
   echo "ro.product.locale=$PRODUCT_DEFAULT_LOCALE"
 fi
 echo "ro.wifi.channels=$PRODUCT_DEFAULT_WIFI_CHANNELS"
-echo "ro.board.platform=$TARGET_BOARD_PLATFORM"
 
 echo "# ro.build.product is obsolete; use ro.product.device"
 echo "ro.build.product=$TARGET_DEVICE"
