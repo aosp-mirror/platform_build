@@ -121,7 +121,7 @@ endif
 # makefiles. Anything else is either a typo or a source of unexpected
 # behaviors.
 ifneq ($(filter-out debug eng tests optional samples,$(my_module_tags)),)
-$(warning unusual tags $(my_module_tags) on $(LOCAL_MODULE) at $(LOCAL_PATH))
+$(call pretty-warning,unusual tags $(my_module_tags))
 endif
 
 # Add implicit tags.
