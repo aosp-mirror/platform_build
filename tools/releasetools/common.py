@@ -146,30 +146,13 @@ def LoadInfoDict(input_file, input_dir=None):
       except IOError as e:
         if e.errno == errno.ENOENT:
           raise KeyError(fn)
-  d = {}
+
   try:
     d = LoadDictionaryFromLines(read_helper("META/misc_info.txt").split("\n"))
   except KeyError:
-    # ok if misc_info.txt doesn't exist
-    pass
+    raise ValueError("can't find META/misc_info.txt in input target-files")
 
-  # backwards compatibility: These values used to be in their own
-  # files.  Look for them, in case we're processing an old
-  # target_files zip.
-
-  if "recovery_api_version" not in d:
-    try:
-      d["recovery_api_version"] = read_helper(
-          "META/recovery-api-version.txt").strip()
-    except KeyError:
-      raise ValueError("can't find recovery API version in input target-files")
-
-  if "tool_extensions" not in d:
-    try:
-      d["tool_extensions"] = read_helper("META/tool-extensions.txt").strip()
-    except KeyError:
-      # ok if extensions don't exist
-      pass
+  assert "recovery_api_version" in d
 
   if "fstab_version" not in d:
     d["fstab_version"] = "1"
