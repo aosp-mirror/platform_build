@@ -10,7 +10,7 @@ SHELL := /bin/bash
 endif
 
 ifndef KATI
-USE_SOONG_UI ?= false
+USE_SOONG_UI ?= true
 endif
 ifeq ($(USE_SOONG_UI),true)
 
