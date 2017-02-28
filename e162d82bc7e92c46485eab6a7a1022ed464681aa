@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8cca51af_cc00788a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-28T02:42:23Z",
+      "side": 1,
+      "message": "I may be able to collapse these two top level for-loops a bit.",
+      "range": {
+        "startLine": 428,
+        "startChar": 0,
+        "endLine": 443,
+        "endChar": 26
+      },
+      "revId": "e162d82bc7e92c46485eab6a7a1022ed464681aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b692a6df_cd89c5f9",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-28T02:42:23Z",
+      "side": 1,
+      "message": "I can collapse these two loops.",
+      "range": {
+        "startLine": 459,
+        "startChar": 0,
+        "endLine": 465,
+        "endChar": 65
+      },
+      "revId": "e162d82bc7e92c46485eab6a7a1022ed464681aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "838e5e95_b36bfdba",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-28T02:42:23Z",
+      "side": 1,
+      "message": "I can likely collapse all 3 of these.",
+      "range": {
+        "startLine": 630,
+        "startChar": 7,
+        "endLine": 641,
+        "endChar": 64
+      },
+      "revId": "e162d82bc7e92c46485eab6a7a1022ed464681aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
