@@ -204,7 +204,7 @@ $(foreach f, $(all_product_configs),\
     $(eval _cpm_word2 := $(word 2,$(_cpm_words)))\
     $(if $(_cpm_word2),\
         $(eval all_product_makefiles += $(_cpm_word2))\
-        $(eval all_named_products += $(_cpm_word2))\
+        $(eval all_named_products += $(_cpm_word1))\
         $(if $(filter $(TARGET_PRODUCT),$(_cpm_word1)),\
             $(eval current_product_makefile += $(_cpm_word2)),),\
         $(eval all_product_makefiles += $(f))\
