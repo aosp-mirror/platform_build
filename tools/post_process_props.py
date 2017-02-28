@@ -19,10 +19,9 @@ import sys
 # Usage: post_process_props.py file.prop [blacklist_key, ...]
 # Blacklisted keys are removed from the property file, if present
 
-# See PROP_NAME_MAX and PROP_VALUE_MAX system_properties.h.
-# The constants in system_properties.h includes the termination NUL,
-# so we decrease the values by 1 here.
-PROP_NAME_MAX = 31
+# See PROP_VALUE_MAX in system_properties.h.
+# The constant in system_properties.h includes the terminating NUL,
+# so we decrease the value by 1 here.
 PROP_VALUE_MAX = 91
 
 # Put the modifications that you need to make into the /system/build.prop into this
@@ -59,11 +58,6 @@ def validate(prop):
   buildprops = prop.to_dict()
   for key, value in buildprops.iteritems():
     # Check build properties' length.
-    if len(key) > PROP_NAME_MAX:
-      check_pass = False
-      sys.stderr.write("error: %s cannot exceed %d bytes: " %
-                       (key, PROP_NAME_MAX))
-      sys.stderr.write("%s (%d)\n" % (key, len(key)))
     if len(value) > PROP_VALUE_MAX:
       check_pass = False
       sys.stderr.write("error: %s cannot exceed %d bytes: " %
