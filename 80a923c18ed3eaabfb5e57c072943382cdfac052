@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b600c77e_88764642",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-28T12:10:28Z",
+      "side": 1,
+      "message": "ok. this will also give them a motivation for migrating to Soong.",
+      "parentUuid": "fe563e37_6c133f19",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 16
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6c6bb146_59a33ec4",
         "filename": "CleanSpec.mk",
         "patchSetId": 17
@@ -36,6 +60,30 @@
       "writtenOn": "2017-02-28T02:11:11Z",
       "side": 1,
       "message": "This won\u0027t work for devices like fugu that don\u0027t have a vendor image (but still have a vendor folder). Probably easiest just to add a third line:\n\n  $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/lib*)",
+      "range": {
+        "startLine": 405,
+        "startChar": 45,
+        "endLine": 405,
+        "endChar": 51
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40fd1641_536431bd",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-28T12:10:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c6bb146_59a33ec4",
       "range": {
         "startLine": 405,
         "startChar": 45,
@@ -119,6 +167,30 @@
     },
     {
       "key": {
+        "uuid": "58d7e678_0ab1efcb",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-28T12:10:28Z",
+      "side": 1,
+      "message": "Great. Thanks!",
+      "parentUuid": "aa4cda7f_6f0d8be3",
+      "range": {
+        "startLine": 207,
+        "startChar": 13,
+        "endLine": 207,
+        "endChar": 25
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "cd97d8f1_8f15de23",
         "filename": "core/base_rules.mk",
         "patchSetId": 17
@@ -130,6 +202,30 @@
       "writtenOn": "2017-02-28T02:11:11Z",
       "side": 1,
       "message": "Remove this",
+      "range": {
+        "startLine": 217,
+        "startChar": 0,
+        "endLine": 222,
+        "endChar": 24
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c26d50ff_a5b12664",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-28T12:10:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cd97d8f1_8f15de23",
       "range": {
         "startLine": 217,
         "startChar": 0,
@@ -165,6 +261,30 @@
     },
     {
       "key": {
+        "uuid": "ab13c1da_0a884f58",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-28T12:10:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f6be39c9_5f2f26a7",
+      "range": {
+        "startLine": 236,
+        "startChar": 35,
+        "endLine": 236,
+        "endChar": 44
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1494f10f_06f7bb20",
         "filename": "core/clear_vars.mk",
         "patchSetId": 17
@@ -176,6 +296,30 @@
       "writtenOn": "2017-02-28T02:11:11Z",
       "side": 1,
       "message": "Just remove this",
+      "range": {
+        "startLine": 147,
+        "startChar": 0,
+        "endLine": 147,
+        "endChar": 22
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3a05f1f4_75592771",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-28T12:10:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1494f10f_06f7bb20",
       "range": {
         "startLine": 147,
         "startChar": 0,
@@ -211,6 +355,30 @@
     },
     {
       "key": {
+        "uuid": "b727812d_2cf03a98",
+        "filename": "core/configure_module_stem.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-28T12:10:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7830c925_2c352298",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 7
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "73d28263_4217e5eb",
         "filename": "core/definitions.mk",
         "patchSetId": 17
@@ -234,6 +402,30 @@
     },
     {
       "key": {
+        "uuid": "e694b457_14b2814d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 1815,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-28T12:10:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "73d28263_4217e5eb",
+      "range": {
+        "startLine": 1815,
+        "startChar": 25,
+        "endLine": 1815,
+        "endChar": 39
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "43da3eb3_5fab1f48",
         "filename": "core/shared_library_internal.mk",
         "patchSetId": 17
@@ -245,6 +437,30 @@
       "writtenOn": "2017-02-28T02:11:11Z",
       "side": 1,
       "message": "Remove this",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 5
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "77dc33d4_6a4cf7f3",
+        "filename": "core/shared_library_internal.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-28T12:10:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "43da3eb3_5fab1f48",
       "range": {
         "startLine": 63,
         "startChar": 0,
