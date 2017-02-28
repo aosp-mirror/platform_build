@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca64d73b_5bcfcf32",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 18
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-28T12:14:37Z",
+      "side": 1,
+      "message": "This is now error, in sync with soong.",
+      "range": {
+        "startLine": 221,
+        "startChar": 13,
+        "endLine": 221,
+        "endChar": 28
+      },
+      "revId": "f08ec55fc6f2e48639ab8b3519c866c160a8dd17",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b85bc57c_983ab691",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 18
+      },
+      "lineNbr": 312,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-02-28T12:14:37Z",
+      "side": 1,
+      "message": "This is a little bit hacky, but I think it is safe enough unless someone uses vndk-ext as a file name.",
+      "range": {
+        "startLine": 312,
+        "startChar": 1,
+        "endLine": 312,
+        "endChar": 72
+      },
+      "revId": "f08ec55fc6f2e48639ab8b3519c866c160a8dd17",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
