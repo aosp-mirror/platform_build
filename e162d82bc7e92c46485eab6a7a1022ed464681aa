@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5d908156_77ce3d92",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 429,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-28T20:38:51Z",
+      "side": 1,
+      "message": "That sounds cleaner and essentially the same.",
+      "parentUuid": "e3eb882f_076fde1e",
+      "range": {
+        "startLine": 429,
+        "startChar": 53,
+        "endLine": 429,
+        "endChar": 89
+      },
+      "revId": "e162d82bc7e92c46485eab6a7a1022ed464681aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8cca51af_cc00788a",
         "filename": "core/base_rules.mk",
         "patchSetId": 5
@@ -60,6 +84,30 @@
       "side": 1,
       "message": "I don\u0027t think so, since the first one is always executed, and the second one is only executed once when there\u0027s multiple arches for a module",
       "parentUuid": "8cca51af_cc00788a",
+      "range": {
+        "startLine": 428,
+        "startChar": 0,
+        "endLine": 443,
+        "endChar": 26
+      },
+      "revId": "e162d82bc7e92c46485eab6a7a1022ed464681aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "423ae01c_01248922",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-28T20:38:51Z",
+      "side": 1,
+      "message": "Ahh right I missed the ifndef.",
+      "parentUuid": "ba9304e3_67feaeb2",
       "range": {
         "startLine": 428,
         "startChar": 0,
@@ -119,6 +167,30 @@
     },
     {
       "key": {
+        "uuid": "e46a5a3e_ec385e83",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 465,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-28T20:38:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0f6fd9f_b8953d9f",
+      "range": {
+        "startLine": 459,
+        "startChar": 0,
+        "endLine": 465,
+        "endChar": 65
+      },
+      "revId": "e162d82bc7e92c46485eab6a7a1022ed464681aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "537b8c4b_60391e09",
         "filename": "core/definitions.mk",
         "patchSetId": 5
@@ -130,6 +202,24 @@
       "writtenOn": "2017-02-28T05:07:58Z",
       "side": 1,
       "message": "Can you put this above line 3426? I\u0027d like to keep the other includes at the end.",
+      "revId": "e162d82bc7e92c46485eab6a7a1022ed464681aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d82b61ad_b6bf25c2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 3291,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-28T20:38:51Z",
+      "side": 1,
+      "message": "Assuming you meant 3246.",
+      "parentUuid": "537b8c4b_60391e09",
       "revId": "e162d82bc7e92c46485eab6a7a1022ed464681aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -171,6 +261,30 @@
       "side": 1,
       "message": "The last two, and the one below are common between this file and base_rules.mk, so there could be some opportunity to share there as well. (Or we can keep them separate, up to you)",
       "parentUuid": "838e5e95_b36bfdba",
+      "range": {
+        "startLine": 630,
+        "startChar": 7,
+        "endLine": 641,
+        "endChar": 64
+      },
+      "revId": "e162d82bc7e92c46485eab6a7a1022ed464681aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82fa6295_9e2cd292",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 641,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-02-28T20:38:51Z",
+      "side": 1,
+      "message": "Good call, refactored.",
+      "parentUuid": "67b5ee9a_9b7fb2f0",
       "range": {
         "startLine": 630,
         "startChar": 7,
