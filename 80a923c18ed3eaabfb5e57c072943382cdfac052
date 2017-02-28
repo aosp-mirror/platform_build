@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "fe563e37_6c133f19",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 17
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-28T02:11:11Z",
+      "side": 1,
+      "message": "Let\u0027s simplify this and only support extending vndk modules in Soong (since we need to know the stem information from the original library, and will need to do abi comparisons)",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 52,
+        "endChar": 16
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c6bb146_59a33ec4",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-28T02:11:11Z",
+      "side": 1,
+      "message": "This won\u0027t work for devices like fugu that don\u0027t have a vendor image (but still have a vendor folder). Probably easiest just to add a third line:\n\n  $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/lib*)",
+      "range": {
+        "startLine": 405,
+        "startChar": 45,
+        "endLine": 405,
+        "endChar": 51
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "57d3a998_224e53c0",
         "filename": "core/base_rules.mk",
         "patchSetId": 17
@@ -42,6 +88,168 @@
         "startChar": 13,
         "endLine": 207,
         "endChar": 25
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa4cda7f_6f0d8be3",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-28T02:11:11Z",
+      "side": 1,
+      "message": "This now happens when you set USE_SOONG_UI\u003dtrue in your environment. That\u0027ll be the default at some point soon.",
+      "parentUuid": "7001fa5a_689ebb5d",
+      "range": {
+        "startLine": 207,
+        "startChar": 13,
+        "endLine": 207,
+        "endChar": 25
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd97d8f1_8f15de23",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-28T02:11:11Z",
+      "side": 1,
+      "message": "Remove this",
+      "range": {
+        "startLine": 217,
+        "startChar": 0,
+        "endLine": 222,
+        "endChar": 24
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6be39c9_5f2f26a7",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-28T02:11:11Z",
+      "side": 1,
+      "message": "lib_type",
+      "range": {
+        "startLine": 236,
+        "startChar": 35,
+        "endLine": 236,
+        "endChar": 44
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1494f10f_06f7bb20",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-28T02:11:11Z",
+      "side": 1,
+      "message": "Just remove this",
+      "range": {
+        "startLine": 147,
+        "startChar": 0,
+        "endLine": 147,
+        "endChar": 22
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7830c925_2c352298",
+        "filename": "core/configure_module_stem.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-28T02:11:11Z",
+      "side": 1,
+      "message": "Just remove this",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 7
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73d28263_4217e5eb",
+        "filename": "core/definitions.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 1815,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-28T02:11:11Z",
+      "side": 1,
+      "message": "Remove this change",
+      "range": {
+        "startLine": 1815,
+        "startChar": 25,
+        "endLine": 1815,
+        "endChar": 39
+      },
+      "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43da3eb3_5fab1f48",
+        "filename": "core/shared_library_internal.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-02-28T02:11:11Z",
+      "side": 1,
+      "message": "Remove this",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 5
       },
       "revId": "80a923c18ed3eaabfb5e57c072943382cdfac052",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
