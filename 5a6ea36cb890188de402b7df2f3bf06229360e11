@@ -16,6 +16,24 @@
       "revId": "5a6ea36cb890188de402b7df2f3bf06229360e11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1536a2f_3757d648",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1872,
+      "author": {
+        "id": 1121516
+      },
+      "writtenOn": "2017-03-01T01:15:48Z",
+      "side": 1,
+      "message": "LOCAL_GCNO_FILES is still here. It just now contains a subset of all_objects (with .gcno extensions instead of .o).",
+      "parentUuid": "733acb0c_dfd6eb4d",
+      "revId": "5a6ea36cb890188de402b7df2f3bf06229360e11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
