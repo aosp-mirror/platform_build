@@ -121,3 +121,7 @@ PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.configfs.rc:root/init.usb.configfs.rc \
     system/core/rootdir/ueventd.rc:root/ueventd.rc \
     system/core/rootdir/etc/hosts:system/etc/hosts
+
+# Framework Manifest
+PRODUCT_COPY_FILES += \
+    system/libhidl/sintf.xml:system/manifest.xml
