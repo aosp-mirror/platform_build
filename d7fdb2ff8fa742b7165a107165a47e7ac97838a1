@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a882133a_3c51a42f",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3251,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-01T01:46:14Z",
+      "side": 1,
+      "message": "These don\u0027t actually look like useful test cases, which is what i was doing above (uncommenting them to test)",
+      "range": {
+        "startLine": 3250,
+        "startChar": 0,
+        "endLine": 3251,
+        "endChar": 36
+      },
+      "revId": "d7fdb2ff8fa742b7165a107165a47e7ac97838a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58aecbfd_4d405f12",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-01T01:46:14Z",
+      "side": 1,
+      "message": "Can we at least add something in the commit message (if not here) about what fully enabled means?",
+      "range": {
+        "startLine": 346,
+        "startChar": 44,
+        "endLine": 346,
+        "endChar": 57
+      },
+      "revId": "d7fdb2ff8fa742b7165a107165a47e7ac97838a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
