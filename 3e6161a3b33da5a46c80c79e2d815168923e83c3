@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "817aaad3_5d4350d7",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 2180,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-03-01T01:06:34Z",
+      "side": 1,
+      "message": "have you been reading poetry again? :-)",
+      "revId": "3e6161a3b33da5a46c80c79e2d815168923e83c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
