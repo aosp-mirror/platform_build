@@ -1859,6 +1859,14 @@ endif
 # Coverage packaging.
 ###########################################################
 ifeq ($(my_native_coverage),true)
-LOCAL_GCNO_FILES := $(patsubst %.o,%.gcno,$(all_objects))
-$(foreach f,$(all_objects),$(eval $(call gcno-touch-rule,$(f),$(f:.o=.gcno))))
+my_gcno_objects := \
+    $(cpp_objects) \
+    $(gen_cpp_objects) \
+    $(c_objects) \
+    $(gen_c_objects) \
+    $(objc_objects) \
+    $(objcpp_objects)
+
+LOCAL_GCNO_FILES := $(patsubst %.o,%.gcno,$(my_gcno_objects))
+$(foreach f,$(my_gcno_objects),$(eval $(call gcno-touch-rule,$(f),$(f:.o=.gcno))))
 endif
