@@ -69,6 +69,24 @@
       "revId": "c57baba06259dd1535c4570d026653324c78833c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c88673aa_f9a568e7",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-03-01T02:21:55Z",
+      "side": 1,
+      "message": "Actually, I take that back. Full is good because upgrade devices will be partial treble.",
+      "parentUuid": "acb56674_94f33ff9",
+      "revId": "c57baba06259dd1535c4570d026653324c78833c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
