@@ -25,6 +25,7 @@ PRODUCT_PACKAGES += \
     BlockedNumberProvider \
     BookmarkProvider \
     Browser2 \
+    BuiltInPrintService \
     Calendar \
     CalendarProvider \
     CaptivePortalLogin \
