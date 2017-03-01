@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "eba09a72_1bdd2ad2",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-03-01T02:21:12Z",
+      "side": 1,
+      "message": "allocator \u003d binderized\nmapping memory in a process \u003d passthrough\n\nI can update it to be more clear",
+      "parentUuid": "aaeda49f_2c3c4c7a",
+      "revId": "c57baba06259dd1535c4570d026653324c78833c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "78b93501_1932f51f",
         "filename": "core/main.mk",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2017-03-01T02:08:46Z",
       "side": 1,
       "message": "* Why not drop FULL? What does it add? Are we going to have some additional PRODUCT_*_TREBLE variables down the line?",
+      "revId": "c57baba06259dd1535c4570d026653324c78833c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "acb56674_94f33ff9",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-03-01T02:21:12Z",
+      "side": 1,
+      "message": "Let me s/FULL/IS/",
+      "parentUuid": "78b93501_1932f51f",
       "revId": "c57baba06259dd1535c4570d026653324c78833c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
