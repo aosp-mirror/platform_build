@@ -77,11 +77,10 @@ def GetCareMap(which, imgname):
   """Generate care_map of system (or vendor) partition"""
 
   assert which in ("system", "vendor")
-  _, blk_device = common.GetTypeAndDevice("/" + which, OPTIONS.info_dict)
 
   simg = sparse_img.SparseImage(imgname)
   care_map_list = []
-  care_map_list.append(blk_device)
+  care_map_list.append(which)
 
   care_map_ranges = simg.care_map
   key = which + "_adjusted_partition_size"
