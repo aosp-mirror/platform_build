@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aaeda49f_2c3c4c7a",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 347,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-03-01T02:08:46Z",
+      "side": 1,
+      "message": "Nit: Isn\u0027t it so that even with \"full Treble\" some HALs are not binderized, such as allocator HAL and perhaps some more?",
+      "revId": "c57baba06259dd1535c4570d026653324c78833c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "78b93501_1932f51f",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-03-01T02:08:46Z",
+      "side": 1,
+      "message": "* Why not drop FULL? What does it add? Are we going to have some additional PRODUCT_*_TREBLE variables down the line?",
+      "revId": "c57baba06259dd1535c4570d026653324c78833c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
