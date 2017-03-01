@@ -1148,8 +1148,7 @@ function stacks()
             adb shell cat $TMP
         else
             # Dump stacks of native process
-            local USE64BIT="$(is64bit $PID)"
-            adb shell debuggerd$USE64BIT -b $PID
+            adb shell debuggerd -b $PID
         fi
     fi
 }
