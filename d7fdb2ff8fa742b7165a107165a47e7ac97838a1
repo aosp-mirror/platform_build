@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "44a1ce4b_95654e16",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3251,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-03-01T01:49:37Z",
+      "side": 1,
+      "message": "I was hoping you could tell me how to do binary \u0027not\u0027 so that I can add more",
+      "parentUuid": "a882133a_3c51a42f",
+      "range": {
+        "startLine": 3250,
+        "startChar": 0,
+        "endLine": 3251,
+        "endChar": 36
+      },
+      "revId": "d7fdb2ff8fa742b7165a107165a47e7ac97838a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "58aecbfd_4d405f12",
         "filename": "core/main.mk",
         "patchSetId": 2
