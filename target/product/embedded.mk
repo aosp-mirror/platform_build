@@ -124,4 +124,4 @@ PRODUCT_COPY_FILES += \
 
 # Framework Manifest
 PRODUCT_COPY_FILES += \
-    system/libhidl/sintf.xml:system/manifest.xml
+    system/libhidl/manifest.xml:system/manifest.xml
