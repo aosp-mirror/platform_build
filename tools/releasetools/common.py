@@ -153,9 +153,7 @@ def LoadInfoDict(input_file, input_dir=None):
     raise ValueError("can't find META/misc_info.txt in input target-files")
 
   assert "recovery_api_version" in d
-
-  if "fstab_version" not in d:
-    d["fstab_version"] = "1"
+  assert "fstab_version" in d
 
   # A few properties are stored as links to the files in the out/ directory.
   # It works fine with the build system. However, they are no longer available
@@ -251,6 +249,7 @@ def LoadInfoDict(input_file, input_dir=None):
   d["build.prop"] = LoadBuildProp(read_helper)
   return d
 
+
 def LoadBuildProp(read_helper):
   try:
     data = read_helper("SYSTEM/build.prop")
@@ -258,6 +257,7 @@ def LoadBuildProp(read_helper):
     print("Warning: could not find SYSTEM/build.prop in %s" % (zip,))
     data = ""
   return LoadDictionaryFromLines(data.split("\n"))
+
 
 def LoadDictionaryFromLines(lines):
   d = {}
@@ -270,15 +270,15 @@ def LoadDictionaryFromLines(lines):
       d[name] = value
   return d
 
+
 def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
                       system_root_image=False):
   class Partition(object):
-    def __init__(self, mount_point, fs_type, device, length, device2, context):
+    def __init__(self, mount_point, fs_type, device, length, context):
       self.mount_point = mount_point
       self.fs_type = fs_type
       self.device = device
       self.length = length
-      self.device2 = device2
       self.context = context
 
   try:
@@ -287,81 +287,44 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
     print("Warning: could not find {}".format(recovery_fstab_path))
     data = ""
 
-  if fstab_version == 1:
-    d = {}
-    for line in data.split("\n"):
-      line = line.strip()
-      if not line or line.startswith("#"):
-        continue
-      pieces = line.split()
-      if not 3 <= len(pieces) <= 4:
-        raise ValueError("malformed recovery.fstab line: \"%s\"" % (line,))
-      options = None
-      if len(pieces) >= 4:
-        if pieces[3].startswith("/"):
-          device2 = pieces[3]
-          if len(pieces) >= 5:
-            options = pieces[4]
-        else:
-          device2 = None
-          options = pieces[3]
+  assert fstab_version == 2
+
+  d = {}
+  for line in data.split("\n"):
+    line = line.strip()
+    if not line or line.startswith("#"):
+      continue
+
+    # <src> <mnt_point> <type> <mnt_flags and options> <fs_mgr_flags>
+    pieces = line.split()
+    if len(pieces) != 5:
+      raise ValueError("malformed recovery.fstab line: \"%s\"" % (line,))
+
+    # Ignore entries that are managed by vold.
+    options = pieces[4]
+    if "voldmanaged=" in options:
+      continue
+
+    # It's a good line, parse it.
+    length = 0
+    options = options.split(",")
+    for i in options:
+      if i.startswith("length="):
+        length = int(i[7:])
       else:
-        device2 = None
-
-      mount_point = pieces[0]
-      length = 0
-      if options:
-        options = options.split(",")
-        for i in options:
-          if i.startswith("length="):
-            length = int(i[7:])
-          else:
-            print("%s: unknown option \"%s\"" % (mount_point, i))
-
-      d[mount_point] = Partition(mount_point=mount_point, fs_type=pieces[1],
-                                 device=pieces[2], length=length,
-                                 device2=device2)
-
-  elif fstab_version == 2:
-    d = {}
-    for line in data.split("\n"):
-      line = line.strip()
-      if not line or line.startswith("#"):
-        continue
-      # <src> <mnt_point> <type> <mnt_flags and options> <fs_mgr_flags>
-      pieces = line.split()
-      if len(pieces) != 5:
-        raise ValueError("malformed recovery.fstab line: \"%s\"" % (line,))
-
-      # Ignore entries that are managed by vold
-      options = pieces[4]
-      if "voldmanaged=" in options:
+        # Ignore all unknown options in the unified fstab.
         continue
 
-      # It's a good line, parse it
-      length = 0
-      options = options.split(",")
-      for i in options:
-        if i.startswith("length="):
-          length = int(i[7:])
-        else:
-          # Ignore all unknown options in the unified fstab
-          continue
+    mount_flags = pieces[3]
+    # Honor the SELinux context if present.
+    context = None
+    for i in mount_flags.split(","):
+      if i.startswith("context="):
+        context = i
 
-      mount_flags = pieces[3]
-      # Honor the SELinux context if present.
-      context = None
-      for i in mount_flags.split(","):
-        if i.startswith("context="):
-          context = i
-
-      mount_point = pieces[1]
-      d[mount_point] = Partition(mount_point=mount_point, fs_type=pieces[2],
-                                 device=pieces[0], length=length,
-                                 device2=None, context=context)
-
-  else:
-    raise ValueError("Unknown fstab_version: \"%d\"" % (fstab_version,))
+    mount_point = pieces[1]
+    d[mount_point] = Partition(mount_point=mount_point, fs_type=pieces[2],
+                               device=pieces[0], length=length, context=context)
 
   # / is used for the system mount point when the root directory is included in
   # system. Other areas assume system is always at "/system" so point /system
