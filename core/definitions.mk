@@ -3144,7 +3144,8 @@ STATS.MODULE_TYPE := \
   NOTICE_FILE \
   HOST_DALVIK_JAVA_LIBRARY \
   HOST_DALVIK_STATIC_JAVA_LIBRARY \
-  base_rules
+  base_rules \
+  HEADER_LIBRARY
 
 $(foreach $(s),$(STATS.MODULE_TYPE),$(eval STATS.MODULE_TYPE.$(s) :=))
 define record-module-type
