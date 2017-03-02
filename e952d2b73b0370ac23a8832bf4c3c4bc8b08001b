@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d1f4ee65_6bce8db7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-02T23:15:33Z",
+      "side": 1,
+      "message": "Is the internal change going to be submitted first, or are you just going to submit this change?",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 68
+      },
+      "revId": "e952d2b73b0370ac23a8832bf4c3c4bc8b08001b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "efab5832_2713ee32",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-02T23:15:33Z",
+      "side": 1,
+      "message": "This should match the internal change if they\u0027re both being submitted",
+      "revId": "e952d2b73b0370ac23a8832bf4c3c4bc8b08001b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
