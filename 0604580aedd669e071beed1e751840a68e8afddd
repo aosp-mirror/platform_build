@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "164c10cf_55c4991e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-03-03T17:19:01Z",
+      "side": 1,
+      "message": "nit: I think this format won\u0027t be able to post the CL to these two bugs both. Need to put them into separate lines:\n\nBug: 1\nBug: 2\n...",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 22
+      },
+      "revId": "0604580aedd669e071beed1e751840a68e8afddd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
