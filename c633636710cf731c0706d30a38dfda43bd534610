@@ -46,6 +46,30 @@
       "revId": "c633636710cf731c0706d30a38dfda43bd534610",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2ba2be2_65d67dfd",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-03T20:27:37Z",
+      "side": 1,
+      "message": "In that case, this should be split into two rules -- one to create PRIVATE_PROFILE_CLASSES, which would just be cp today, and then this rule which would depend on that output.\n\nNinja will then ensure that the output directories are created for each of these",
+      "parentUuid": "1d8b898f_921c28e4",
+      "range": {
+        "startLine": 84,
+        "startChar": 26,
+        "endLine": 84,
+        "endChar": 49
+      },
+      "revId": "c633636710cf731c0706d30a38dfda43bd534610",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
