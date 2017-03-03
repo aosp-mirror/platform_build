@@ -66,21 +66,18 @@ ifndef LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING
 $(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING))
 endif
 my_built_profile := $(dir $(my_built_odex))../../$($(my_2nd_arch_prefix)DEX2OAT_TARGET_ARCH).prof
-my_profile_classes := $(patsubst %.prof,%.classes,$(my_built_profile))
 my_dex_location := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
 $(my_built_odex): $(my_built_profile)
 $(my_built_odex): PRIVATE_PROFILE_PREOPT_FLAGS := --profile-file=$(my_built_profile)
 $(my_built_profile): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
 $(my_built_profile): PRIVATE_DEX_LOCATION := $(my_dex_location)
-$(my_built_profile): PRIVATE_PROFILE_CLASSES := $(my_profile_classes)
 $(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 $(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 $(my_built_profile): $(PROFMAN)
 $(my_built_profile): $(PRIVATE_INSTALLED_MODULE)
 $(my_built_profile):
-	cp $(PRIVATE_SOURCE_CLASSES) $(PRIVATE_PROFILE_CLASSES)
 	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
-		--create-profile-from=$(PRIVATE_PROFILE_CLASSES) \
+		--create-profile-from=$(PRIVATE_SOURCE_CLASSES) \
 		--apk=$(PRIVATE_INSTALLED_MODULE) \
 		--dex-location=$(PRIVATE_DEX_LOCATION) \
 		--reference-profile-file=$@
