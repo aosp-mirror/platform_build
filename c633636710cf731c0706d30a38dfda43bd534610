@@ -22,6 +22,30 @@
       "revId": "c633636710cf731c0706d30a38dfda43bd534610",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d8b898f_921c28e4",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2017-03-03T19:38:26Z",
+      "side": 1,
+      "message": "True, I suppose I don\u0027t need the temporary yet. I may generate PRIVATE_PROFILE_CLASSES from a more complicated tool in the future.",
+      "parentUuid": "7d2d46b7_898f3541",
+      "range": {
+        "startLine": 84,
+        "startChar": 26,
+        "endLine": 84,
+        "endChar": 49
+      },
+      "revId": "c633636710cf731c0706d30a38dfda43bd534610",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
