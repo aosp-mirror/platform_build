@@ -79,7 +79,11 @@ $(my_built_profile): $(PROFMAN)
 $(my_built_profile): $(PRIVATE_INSTALLED_MODULE)
 $(my_built_profile):
 	cp $(PRIVATE_SOURCE_CLASSES) $(PRIVATE_PROFILE_CLASSES)
-	$(PROFMAN) --create-profile-from=$(PRIVATE_PROFILE_CLASSES) --apk=$(PRIVATE_INSTALLED_MODULE) --dex-location=$(PRIVATE_DEX_LOCATION) --reference-profile-file=$@
+	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
+		--create-profile-from=$(PRIVATE_PROFILE_CLASSES) \
+		--apk=$(PRIVATE_INSTALLED_MODULE) \
+		--dex-location=$(PRIVATE_DEX_LOCATION) \
+		--reference-profile-file=$@
 endif
 
 $(eval $(call copy-one-file,$(my_built_odex),$(my_installed_odex)))
