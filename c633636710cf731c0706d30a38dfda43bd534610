@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7d2d46b7_898f3541",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-03T19:36:34Z",
+      "side": 1,
+      "message": "Does profman change this file? If not, why wouldn\u0027t we just pass PRIVATE_SOURCE_CLASSES to it?",
+      "range": {
+        "startLine": 84,
+        "startChar": 26,
+        "endLine": 84,
+        "endChar": 49
+      },
+      "revId": "c633636710cf731c0706d30a38dfda43bd534610",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
