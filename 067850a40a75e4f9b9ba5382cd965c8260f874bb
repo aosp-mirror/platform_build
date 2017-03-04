@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5827b1ae_fb2f8c82",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-04T00:00:59Z",
+      "side": 1,
+      "message": "So we may have built two odex files above. I suspect we should be defining the profile generation first, then allowing setup_one_odex to do this with my_built_profile",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 130,
+        "endChar": 81
+      },
+      "revId": "067850a40a75e4f9b9ba5382cd965c8260f874bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
