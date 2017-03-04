@@ -420,3 +420,7 @@ _psmc_modules :=
 # Make this art variable visible to soong_config.mk.
 PRODUCT_ART_USE_READ_BARRIER := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ART_USE_READ_BARRIER))
+
+# Whether the product is an Android Things variant.
+PRODUCT_IOT := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_IOT))
