@@ -55,34 +55,6 @@ installed_art += $(my_installed_art)
 built_installed_art += $(my_built_art):$(my_installed_art)
 endif
 
-ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
-ifeq (true,$(WITH_DEX_PREOPT_GENERATE_PROFILE))
-  LOCAL_DEX_PREOPT_GENERATE_PROFILE := true
-endif
-endif
-
-ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
-ifndef LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING
-$(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING))
-endif
-my_built_profile := $(dir $(my_built_odex))../../$($(my_2nd_arch_prefix)DEX2OAT_TARGET_ARCH).prof
-my_dex_location := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
-$(my_built_odex): $(my_built_profile)
-$(my_built_odex): PRIVATE_PROFILE_PREOPT_FLAGS := --profile-file=$(my_built_profile)
-$(my_built_profile): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
-$(my_built_profile): PRIVATE_DEX_LOCATION := $(my_dex_location)
-$(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
-$(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
-$(my_built_profile): $(PROFMAN)
-$(my_built_profile): $(PRIVATE_INSTALLED_MODULE)
-$(my_built_profile):
-	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
-		--create-profile-from=$(PRIVATE_SOURCE_CLASSES) \
-		--apk=$(PRIVATE_INSTALLED_MODULE) \
-		--dex-location=$(PRIVATE_DEX_LOCATION) \
-		--reference-profile-file=$@
-endif
-
 $(eval $(call copy-one-file,$(my_built_odex),$(my_installed_odex)))
 $(eval $(call copy-one-file,$(my_built_vdex),$(my_installed_vdex)))
 
