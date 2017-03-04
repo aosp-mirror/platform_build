@@ -46,6 +46,30 @@
       "revId": "067850a40a75e4f9b9ba5382cd965c8260f874bb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d17769fc_b2e786fa",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-04T00:20:29Z",
+      "side": 1,
+      "message": "Yeah, got confused w/my_built_odex vs built_odex. This will work.\n\nI missed this before, but you will want to explicitly set PRIVATE_PROFILE_PREOPT_FLAGS to empty if you aren\u0027t generating a profile though, otherwise there\u0027s a chance that you\u0027d end up with variable inheritance.",
+      "parentUuid": "035897eb_3bde2520",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 130,
+        "endChar": 81
+      },
+      "revId": "067850a40a75e4f9b9ba5382cd965c8260f874bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
