@@ -184,6 +184,8 @@ OPTIONS.payload_signer = None
 OPTIONS.payload_signer_args = []
 
 METADATA_NAME = 'META-INF/com/android/metadata'
+UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'RADIO/*']
+
 
 def MostPopularKey(d, default):
   """Given a dict, return the key corresponding to the largest
@@ -2214,7 +2216,8 @@ def main(argv):
     OPTIONS.extra_script = open(OPTIONS.extra_script).read()
 
   print("unzipping target target-files...")
-  OPTIONS.input_tmp, input_zip = common.UnzipTemp(args[0])
+  OPTIONS.input_tmp, input_zip = common.UnzipTemp(
+      args[0], UNZIP_PATTERN if OPTIONS.block_based else None)
 
   OPTIONS.target_tmp = OPTIONS.input_tmp
   OPTIONS.info_dict = common.LoadInfoDict(input_zip, OPTIONS.target_tmp)
@@ -2282,7 +2285,8 @@ def main(argv):
   else:
     print("unzipping source target-files...")
     OPTIONS.source_tmp, source_zip = common.UnzipTemp(
-        OPTIONS.incremental_source)
+        OPTIONS.incremental_source,
+        UNZIP_PATTERN if OPTIONS.block_based else None)
     OPTIONS.target_info_dict = OPTIONS.info_dict
     OPTIONS.source_info_dict = common.LoadInfoDict(source_zip,
                                                    OPTIONS.source_tmp)
