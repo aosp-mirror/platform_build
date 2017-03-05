@@ -104,7 +104,7 @@ def verify_package(cert, package):
 
   # Get the signature from the input package.
   signature = package_bytes[signature_start:-6]
-  sig_file = common.MakeTempFile(prefix='sig-', suffix='')
+  sig_file = common.MakeTempFile(prefix='sig-')
   with open(sig_file, 'wb') as f:
     f.write(signature)
 
@@ -116,12 +116,12 @@ def verify_package(cert, package):
 
   digest_line = sig.strip().split('\n')[-1]
   digest_string = digest_line.split(':')[3]
-  digest_file = common.MakeTempFile(prefix='digest-', suffix='')
+  digest_file = common.MakeTempFile(prefix='digest-')
   with open(digest_file, 'wb') as f:
     f.write(digest_string.decode('hex'))
 
   # Verify the digest by outputing the decrypted result in ASN.1 structure.
-  decrypted_file = common.MakeTempFile(prefix='decrypted-', suffix='')
+  decrypted_file = common.MakeTempFile(prefix='decrypted-')
   cmd = ['openssl', 'rsautl', '-verify', '-certin', '-inkey', cert,
          '-in', digest_file, '-out', decrypted_file]
   p1 = common.Run(cmd, stdout=subprocess.PIPE)
