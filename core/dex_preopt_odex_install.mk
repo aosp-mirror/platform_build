@@ -133,7 +133,7 @@ $(my_built_profile): PRIVATE_DEX_LOCATION := $(my_dex_location)
 $(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 $(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 $(my_built_profile): $(PROFMAN)
-$(my_built_profile): $(PRIVATE_INSTALLED_MODULE)
+$(my_built_profile): $(LOCAL_INSTALLED_MODULE)
 $(my_built_profile):
 	$(hide) mkdir -p $(dir $@)
 	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
