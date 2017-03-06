@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "28c57316_85be5fd4",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-03-06T23:47:37Z",
+      "side": 1,
+      "message": "common.MakeTempFile() has done this (possibly the cause of the change to common.Cleanup()?)",
+      "range": {
+        "startLine": 87,
+        "startChar": 6,
+        "endLine": 87,
+        "endChar": 41
+      },
+      "revId": "b27a36f04f95a2b94a33a21b796ee0e9964d06be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "06a99a1e_c0c8420f",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-03-06T23:47:37Z",
+      "side": 1,
+      "message": "This line makes it look odd, especially for the \u0027True\u0027. Then I realize it\u0027s to handle the call from ota_from_target_files.py, on a path that has become obsolete (to deal with \"old\" target_files.zips that don\u0027t have IMAGES/ folder, which happened only in pre-LMP).\n\nShall I just kill that caller first? Then we can a) make the output_file parameter as required for CreateImage; b) kill the return value for CreateImage() as well; c) Kill the \"output_zip\" parameter for OutputFile.Write()...",
+      "range": {
+        "startLine": 202,
+        "startChar": 18,
+        "endLine": 202,
+        "endChar": 64
+      },
+      "revId": "b27a36f04f95a2b94a33a21b796ee0e9964d06be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
