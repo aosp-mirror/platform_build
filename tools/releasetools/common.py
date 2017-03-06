@@ -564,7 +564,7 @@ def UnzipTemp(filename, pattern=None):
   def unzip_to_dir(filename, dirname):
     cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
     if pattern is not None:
-      cmd.append(pattern)
+      cmd.extend(pattern)
     p = Run(cmd, stdout=subprocess.PIPE)
     p.communicate()
     if p.returncode != 0:
