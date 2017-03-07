@@ -22,6 +22,30 @@
       "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17eb63cc_0c66d148",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-03-07T20:40:32Z",
+      "side": 1,
+      "message": "we now release user build, as CTS required.",
+      "parentUuid": "ad15287a_731353f6",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 41
+      },
+      "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
