@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "05497b35_43361715",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-07T22:37:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ee10f2b_4d285308",
+      "range": {
+        "startLine": 91,
+        "startChar": 24,
+        "endLine": 91,
+        "endChar": 35
+      },
+      "revId": "8b0851d61d3719d70ae0f176f2c2e56505c8b3b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c523dd29_3e3cbac0",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2017-03-07T22:18:17Z",
       "side": 1,
       "message": "this line is no-op, right?",
+      "range": {
+        "startLine": 404,
+        "startChar": 4,
+        "endLine": 404,
+        "endChar": 21
+      },
+      "revId": "8b0851d61d3719d70ae0f176f2c2e56505c8b3b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b060df22_56759722",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-07T22:37:26Z",
+      "side": 1,
+      "message": "Yeah, I did this so that nobody was tempted to use it in the rest of the function, since it\u0027s only defined in this half of the if statement.",
+      "parentUuid": "c523dd29_3e3cbac0",
       "range": {
         "startLine": 404,
         "startChar": 4,
