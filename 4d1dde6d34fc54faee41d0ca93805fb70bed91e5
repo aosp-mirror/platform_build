@@ -190,6 +190,29 @@
       "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a50e2c9_60c03357",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-07T21:14:15Z",
+      "side": 1,
+      "message": "Can we make /proc/cmdline more specific than proc:file?",
+      "range": {
+        "startLine": 13,
+        "startChar": 17,
+        "endLine": 13,
+        "endChar": 26
+      },
+      "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
