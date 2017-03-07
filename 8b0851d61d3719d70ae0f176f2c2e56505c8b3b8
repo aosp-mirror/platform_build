@@ -93,6 +93,30 @@
       "revId": "8b0851d61d3719d70ae0f176f2c2e56505c8b3b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3af8c446_e593562b",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 404,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-03-07T22:49:21Z",
+      "side": 1,
+      "message": "Ack. I was thinking this \u0027images_dir\u0027 was probably a flag to be used later (since it\u0027s explicitly set to None), but didn\u0027t find any other reference.",
+      "parentUuid": "b060df22_56759722",
+      "range": {
+        "startLine": 404,
+        "startChar": 4,
+        "endLine": 404,
+        "endChar": 21
+      },
+      "revId": "8b0851d61d3719d70ae0f176f2c2e56505c8b3b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
