@@ -118,6 +118,30 @@
       "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab9d1c45_57c801ae",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-03-07T20:55:38Z",
+      "side": 1,
+      "message": "any comment on why logpersist not supposed to run on user build ? \nsecurity concern ?",
+      "parentUuid": "9fdd5bb9_b074c567",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 41
+      },
+      "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
