@@ -22,6 +22,7 @@ help:
 	@echo "droid                   Default target"
 	@echo "clean                   (aka clobber) equivalent to rm -rf out/"
 	@echo "snod                    Quickly rebuild the system image from built packages"
+	@echo "vnod                    Quickly rebuild the vendor image from built packages"
 	@echo "offline-sdk-docs        Generate the HTML for the developer SDK docs"
 	@echo "doc-comment-check-docs  Check HTML doc links & validity, without generating HTML"
 	@echo "libandroid_runtime      All the JNI framework stuff"
