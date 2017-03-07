@@ -556,36 +556,21 @@ def CalculateFingerprint(oem_props, oem_dict, info_dict):
       GetBuildProp("ro.build.thumbprint", info_dict))
 
 
-def GetImage(which, tmpdir, info_dict):
-  # Return an image object (suitable for passing to BlockImageDiff)
-  # for the 'which' partition (most be "system" or "vendor").  If a
-  # prebuilt image and file map are found in tmpdir they are used,
-  # otherwise they are reconstructed from the individual files.
+def GetImage(which, tmpdir):
+  """Returns an image object suitable for passing to BlockImageDiff.
+
+  'which' partition must be "system" or "vendor". A prebuilt image and file
+  map must already exist in tmpdir.
+  """
 
   assert which in ("system", "vendor")
 
   path = os.path.join(tmpdir, "IMAGES", which + ".img")
   mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
-  if os.path.exists(path) and os.path.exists(mappath):
-    print("using %s.img from target-files" % (which,))
-    # This is a 'new' target-files, which already has the image in it.
 
-  else:
-    print("building %s.img from target-files" % (which,))
-
-    # This is an 'old' target-files, which does not contain images
-    # already built.  Build them.
-
-    mappath = tempfile.mkstemp()[1]
-    OPTIONS.tempfiles.append(mappath)
-
-    import add_img_to_target_files
-    if which == "system":
-      path = add_img_to_target_files.BuildSystem(
-          tmpdir, info_dict, block_list=mappath)
-    elif which == "vendor":
-      path = add_img_to_target_files.BuildVendor(
-          tmpdir, info_dict, block_list=mappath)
+  # The image and map files must have been created prior to calling
+  # ota_from_target_files.py (since LMP).
+  assert os.path.exists(path) and os.path.exists(mappath)
 
   # Bug: http://b/20939131
   # In ext4 filesystems, block 0 might be changed even being mounted
@@ -712,7 +697,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     # image.  This has the effect of writing new data from the package
     # to the entire partition, but lets us reuse the updater code that
     # writes incrementals to do it.
-    system_tgt = GetImage("system", OPTIONS.input_tmp, OPTIONS.info_dict)
+    system_tgt = GetImage("system", OPTIONS.input_tmp)
     system_tgt.ResetFileMap()
     system_diff = common.BlockDifference("system", system_tgt, src=None)
     system_diff.WriteScript(script, output_zip)
@@ -745,7 +730,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.ShowProgress(0.1, 0)
 
     if block_based:
-      vendor_tgt = GetImage("vendor", OPTIONS.input_tmp, OPTIONS.info_dict)
+      vendor_tgt = GetImage("vendor", OPTIONS.input_tmp)
       vendor_tgt.ResetFileMap()
       vendor_diff = common.BlockDifference("vendor", vendor_tgt)
       vendor_diff.WriteScript(script, output_zip)
@@ -934,8 +919,8 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   target_recovery = common.GetBootableImage(
       "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
 
-  system_src = GetImage("system", OPTIONS.source_tmp, OPTIONS.source_info_dict)
-  system_tgt = GetImage("system", OPTIONS.target_tmp, OPTIONS.target_info_dict)
+  system_src = GetImage("system", OPTIONS.source_tmp)
+  system_tgt = GetImage("system", OPTIONS.target_tmp)
 
   blockimgdiff_version = 1
   if OPTIONS.info_dict:
@@ -962,10 +947,8 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if HasVendorPartition(target_zip):
     if not HasVendorPartition(source_zip):
       raise RuntimeError("can't generate incremental that adds /vendor")
-    vendor_src = GetImage("vendor", OPTIONS.source_tmp,
-                          OPTIONS.source_info_dict)
-    vendor_tgt = GetImage("vendor", OPTIONS.target_tmp,
-                          OPTIONS.target_info_dict)
+    vendor_src = GetImage("vendor", OPTIONS.source_tmp)
+    vendor_tgt = GetImage("vendor", OPTIONS.target_tmp)
 
     # Check first block of vendor partition for remount R/W only if
     # disk type is ext4
@@ -1235,13 +1218,13 @@ def WriteVerifyPackage(input_zip, output_zip):
       recovery_type, recovery_device, recovery_img.size, recovery_img.sha1))
   script.AppendExtra("")
 
-  system_tgt = GetImage("system", OPTIONS.input_tmp, OPTIONS.info_dict)
+  system_tgt = GetImage("system", OPTIONS.input_tmp)
   system_tgt.ResetFileMap()
   system_diff = common.BlockDifference("system", system_tgt, src=None)
   system_diff.WriteStrictVerifyScript(script)
 
   if HasVendorPartition(input_zip):
-    vendor_tgt = GetImage("vendor", OPTIONS.input_tmp, OPTIONS.info_dict)
+    vendor_tgt = GetImage("vendor", OPTIONS.input_tmp)
     vendor_tgt.ResetFileMap()
     vendor_diff = common.BlockDifference("vendor", vendor_tgt, src=None)
     vendor_diff.WriteStrictVerifyScript(script)
