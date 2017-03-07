@@ -851,7 +851,7 @@ dont_bother_goals := clean clobber dataclean installclean \
     userdataimage-nodeps userdatatarball-nodeps \
     cacheimage-nodeps \
     bptimage-nodeps \
-    vendorimage-nodeps \
+    vnod vendorimage-nodeps \
     systemotherimage-nodeps \
     ramdisk-nodeps \
     bootimage-nodeps \
