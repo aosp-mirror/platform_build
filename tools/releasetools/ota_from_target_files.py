@@ -55,7 +55,6 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       properties on the OEM partition of the intended device.
       Multiple expected values can be used by providing multiple files.
 
-
   --oem_no_mount
       For devices with OEM-specific properties but without an OEM partition,
       do not mount the OEM partition in the updater-script. This should be
@@ -482,12 +481,12 @@ def AppendAssertions(script, info_dict, oem_dicts=None):
       script.AssertOemProperty(prop, values)
 
 
-def _LoadOemDicts(script, recovery_mount_options):
+def _LoadOemDicts(script, recovery_mount_options=None):
   """Returns the list of loaded OEM properties dict."""
   oem_dicts = None
   if OPTIONS.oem_source is None:
     raise common.ExternalError("OEM source required for this build")
-  if not OPTIONS.oem_no_mount:
+  if not OPTIONS.oem_no_mount and script:
     script.Mount("/oem", recovery_mount_options)
   oem_dicts = []
   for oem_file in OPTIONS.oem_source:
@@ -1192,7 +1191,7 @@ def WriteVerifyPackage(input_zip, output_zip):
       "recovery_mount_options")
   oem_dicts = None
   if oem_props:
-    oem_dicts = _LoadOemDicts(script, oem_props, recovery_mount_options)
+    oem_dicts = _LoadOemDicts(script, recovery_mount_options)
 
   target_fp = CalculateFingerprint(oem_props, oem_dicts and oem_dicts[0],
                                    OPTIONS.info_dict)
@@ -1337,7 +1336,7 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties", None)
   oem_dicts = None
   if oem_props:
-    oem_dicts = _LoadOemDicts(script, None)
+    oem_dicts = _LoadOemDicts(None)
 
   metadata = {
       "post-build": CalculateFingerprint(oem_props, oem_dicts and oem_dicts[0],
