@@ -94,6 +94,30 @@
       "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9fdd5bb9_b074c567",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1054468
+      },
+      "writtenOn": "2017-03-07T20:52:11Z",
+      "side": 1,
+      "message": "That doesn\u0027t answer my question. Logpersist isn\u0027t supposed to run on user builds. Why is it being allowed on the emulator?",
+      "parentUuid": "8335602d_c1102913",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 41
+      },
+      "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
