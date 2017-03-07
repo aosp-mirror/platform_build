@@ -70,6 +70,30 @@
       "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8335602d_c1102913",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-03-07T20:48:04Z",
+      "side": 1,
+      "message": "we dont release debug build anymore;\n\nthis CL goes with another CL in the logcat\nwe want to send logcat output to the pipe, instead of the\nadb channel (which has been a flaky headache)\n\nthe logcat -Q needs to read the cmdline",
+      "parentUuid": "516f051b_e3f1ef7b",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 41
+      },
+      "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
