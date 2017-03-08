@@ -213,6 +213,30 @@
       "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aba5a207_f0085b33",
+        "filename": "target/board/generic/sepolicy/logpersist.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1054468
+      },
+      "writtenOn": "2017-03-08T06:24:38Z",
+      "side": 1,
+      "message": "\u003e Can we make /proc/cmdline more specific than proc:file?\n\nThis would also be useful for change: https://android-review.googlesource.com/#/c/348792/",
+      "parentUuid": "0a50e2c9_60c03357",
+      "range": {
+        "startLine": 13,
+        "startChar": 17,
+        "endLine": 13,
+        "endChar": 26
+      },
+      "revId": "4d1dde6d34fc54faee41d0ca93805fb70bed91e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
