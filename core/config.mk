@@ -817,6 +817,7 @@ ANDROID_WARNING_DISALLOWED_PROJECTS := \
     art/% \
     bionic/% \
     external/fio/% \
+    hardware/interfaces/% \
 
 define find_warning_disallowed_projects
     $(filter $(ANDROID_WARNING_DISALLOWED_PROJECTS),$(1)/)
