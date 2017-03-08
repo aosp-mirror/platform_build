@@ -1191,6 +1191,10 @@ class File(object):
     t.flush()
     return t
 
+  def WriteToDir(self, d):
+    with open(os.path.join(d, self.name), "wb") as fp:
+      fp.write(self.data)
+
   def AddToZip(self, z, compression=None):
     ZipWriteStr(z, self.name, self.data, compress_type=compression)
 
