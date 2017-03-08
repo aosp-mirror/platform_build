@@ -2052,9 +2052,7 @@ ifdef PRODUCT_EXTRA_RECOVERY_KEYS
 endif
 	$(hide) echo 'mkbootimg_args=$(BOARD_MKBOOTIMG_ARGS)' >> $(zip_root)/META/misc_info.txt
 	$(hide) echo 'mkbootimg_version_args=$(INTERNAL_MKBOOTIMG_VERSION_ARGS)' >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "use_set_metadata=1" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "multistage_support=1" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "update_rename_support=1" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "blockimgdiff_versions=1,2,3,4" >> $(zip_root)/META/misc_info.txt
 ifneq ($(OEM_THUMBPRINT_PROPERTIES),)
 	# OTA scripts are only interested in fingerprint related properties
