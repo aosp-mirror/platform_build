@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f72b7a6b_9529af2b",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-03-08T22:36:16Z",
+      "side": 1,
+      "message": "If I recall correctly, the value of PRODUCT_FULL_TREBLE is always empty in this file. Does this actually work? This is the reason why conditional inclusion is done in system/core/init/Android.mk, as suggested by dwillemsen@.",
+      "revId": "146eec6f9295ff0f85fc5e785d948aff5bba28eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
