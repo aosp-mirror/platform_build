@@ -92,6 +92,7 @@ PRODUCT_PACKAGES := \
     android.hardware.vibrator@1.0 \
     android.hardware.vr@1.0 \
     android.hardware.wifi@1.0 \
+    android.hardware.wifi.supplicant@1.0 \
     android.hidl.allocator@1.0 \
     android.hidl.base@1.0 \
     android.hidl.manager@1.0 \
@@ -102,7 +103,17 @@ PRODUCT_PACKAGES += \
     libxml2 \
     libtinyalsa \
     libtinycompress \
-    cplay
+    cplay \
+
+# WiFi
+# Note: Wifi HAL (android.hardware.wifi@1.0-service, wpa_supplicant,
+# and wpa_supplicant.conf) is not here. They are at vendor.img
+PRODUCT_PACKAGES += \
+    libwpa_client \
+    hostapd \
+    hostapd_cli \
+    wificond \
+    wifilogd \
 
 PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/bootdevice/by-name/system
 
