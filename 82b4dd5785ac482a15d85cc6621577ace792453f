@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1085a698_dc4ef7ff",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1060,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-03-10T21:03:15Z",
+      "side": 1,
+      "message": "I\u0027m still unhappy about these exclusions duplicating the recovery_sepolicy assignment above. If these two lists get out of sync, bad things might happen... Ideas welcome.",
+      "range": {
+        "startLine": 1058,
+        "startChar": 6,
+        "endLine": 1060,
+        "endChar": 32
+      },
+      "revId": "82b4dd5785ac482a15d85cc6621577ace792453f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
