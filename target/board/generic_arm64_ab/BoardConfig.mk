@@ -73,6 +73,10 @@ TARGET_NO_RECOVERY := true
 BOARD_USES_RECOVERY_AS_BOOT := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 
+# TODO(jiyong) These might be SoC specific.
+BOARD_ROOT_EXTRA_FOLDERS := bt_firmware firmware firmware/radio persist
+BOARD_ROOT_EXTRA_SYMLINKS := /vendor/lib/dsp:/dsp
+
 # TODO(b/35603549): this is currently set to 2.5GB to support sailfish/marlin
 # Fix this!
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2147483648

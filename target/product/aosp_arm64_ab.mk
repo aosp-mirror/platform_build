@@ -115,6 +115,12 @@ PRODUCT_PACKAGES += \
     wificond \
     wifilogd \
 
+# TODO(jiyong) move ims to vendor partition
+#PRODUCT_PACKAGES += ims
+
+# TODO(jiyong) remove this!!!
+PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/google/certs/devkeys/devkey
+
 PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/bootdevice/by-name/system
 
 AB_OTA_UPDATER := true

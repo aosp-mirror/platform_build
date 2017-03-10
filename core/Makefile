@@ -896,6 +896,10 @@ INTERNAL_USERIMAGES_DEPS += $(SELINUX_FC)
 
 INTERNAL_USERIMAGES_DEPS += $(BLK_ALLOC_TO_BASE_FS)
 
+INTERNAL_USERIMAGES_DEPS += \
+    $(ALL_MODULES.fs_config_dirs.INSTALLED) \
+    $(ALL_MODULES.fs_config_files.INSTALLED) \
+
 # $(1): the path of the output dictionary file
 # $(2): additional "key=value" pairs to append to the dictionary file.
 define generate-userimage-prop-dictionary
