@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "659a8f2c_98a08365",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-03-10T23:18:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c212948_fd4fc986",
+      "range": {
+        "startLine": 57,
+        "startChar": 4,
+        "endLine": 57,
+        "endChar": 16
+      },
+      "revId": "79799c60a17d45d24f65568f0db875e82b302721",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8448f5c0_04dae475",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2017-03-10T19:53:02Z",
       "side": 1,
       "message": "already printed in RunCommand?",
+      "range": {
+        "startLine": 193,
+        "startChar": 2,
+        "endLine": 193,
+        "endChar": 21
+      },
+      "revId": "79799c60a17d45d24f65568f0db875e82b302721",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec908968_ef7979d3",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-03-10T23:18:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8448f5c0_04dae475",
       "range": {
         "startLine": 193,
         "startChar": 2,
