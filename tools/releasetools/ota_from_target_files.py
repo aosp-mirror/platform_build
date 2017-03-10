@@ -331,6 +331,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
   target_fp = CalculateFingerprint(oem_props, oem_dicts and oem_dicts[0],
                                    OPTIONS.info_dict)
   metadata = {
+      "post-build": target_fp,
       "pre-device": GetOemProperty("ro.product.device", oem_props,
                                    oem_dicts and oem_dicts[0],
                                    OPTIONS.info_dict),
