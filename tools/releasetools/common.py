@@ -1340,6 +1340,7 @@ class BlockDifference(object):
         version = max(
             int(i) for i in
             OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+    assert version >= 3
     self.version = version
 
     b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
@@ -1404,7 +1405,7 @@ class BlockDifference(object):
 
     # incremental OTA
     else:
-      if touched_blocks_only and self.version >= 3:
+      if touched_blocks_only:
         ranges = self.touched_src_ranges
         expected_sha1 = self.touched_src_sha1
       else:
@@ -1416,16 +1417,12 @@ class BlockDifference(object):
         return
 
       ranges_str = ranges.to_string_raw()
-      if self.version >= 3:
-        script.AppendExtra(('if (range_sha1("%s", "%s") == "%s" || '
-                            'block_image_verify("%s", '
-                            'package_extract_file("%s.transfer.list"), '
-                            '"%s.new.dat", "%s.patch.dat")) then') % (
-                            self.device, ranges_str, expected_sha1,
-                            self.device, partition, partition, partition))
-      else:
-        script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' % (
-                           self.device, ranges_str, self.src.TotalSha1()))
+      script.AppendExtra(('if (range_sha1("%s", "%s") == "%s" || '
+                          'block_image_verify("%s", '
+                          'package_extract_file("%s.transfer.list"), '
+                          '"%s.new.dat", "%s.patch.dat")) then') % (
+                          self.device, ranges_str, expected_sha1,
+                          self.device, partition, partition, partition))
       script.Print('Verified %s image...' % (partition,))
       script.AppendExtra('else')
 
