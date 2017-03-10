@@ -127,7 +127,8 @@ FRAMEWORKS_SUPPORT_SUBDIRS := \
         v17/preference-leanback \
         documents-archive \
         customtabs \
-        exifinterface
+        exifinterface \
+        dynamic-animation
 
 #
 # A list of all source roots under frameworks/multidex.
