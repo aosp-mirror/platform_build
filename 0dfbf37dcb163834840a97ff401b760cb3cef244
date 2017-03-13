@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f943e0fe_345c4472",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1519,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-13T19:49:05Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this always be true now?",
+      "range": {
+        "startLine": 1519,
+        "startChar": 8,
+        "endLine": 1519,
+        "endChar": 49
+      },
+      "revId": "0dfbf37dcb163834840a97ff401b760cb3cef244",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c3bfae1_53aafba9",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1684,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-13T19:49:05Z",
+      "side": 1,
+      "message": "All of these should be translated over to full paths now, right? We shouldn\u0027t be linking with -L / -l at all, right?",
+      "range": {
+        "startLine": 1684,
+        "startChar": 4,
+        "endLine": 1684,
+        "endChar": 50
+      },
+      "revId": "0dfbf37dcb163834840a97ff401b760cb3cef244",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
