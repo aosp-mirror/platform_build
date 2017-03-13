@@ -718,6 +718,9 @@ class BlockImageDiff(object):
 
       diff_total = len(diff_queue)
       patches = [None] * diff_total
+      if sys.stdout.isatty():
+        global diff_done
+        diff_done = 0
 
       # Using multiprocessing doesn't give additional benefits, due to the
       # pattern of the code. The diffing work is done by subprocess.call, which
@@ -758,7 +761,9 @@ class BlockImageDiff(object):
           with lock:
             patches[patch_index] = (xf_index, patch)
             if sys.stdout.isatty():
-              progress = len(patches) * 100 / diff_total
+              global diff_done
+              diff_done += 1
+              progress = diff_done * 100 / diff_total
               # '\033[K' is to clear to EOL.
               print(' [%d%%] %s\033[K' % (progress, xf.tgt_name), end='\r')
               sys.stdout.flush()
