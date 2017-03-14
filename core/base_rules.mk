@@ -227,9 +227,9 @@ in Android.bp to do so.")
     # Here, vendor means vendor/oem/odm
     lib_type := vendor_provided
   else
-    # Test lib falls into this. No lib_type required for them.
-    ifneq ($(filter tests,$(LOCAL_MODULE_TAGS)),tests)
-      $(call pretty-error,Cannot determine the type of this library)
+    # Test, samples lib falls into this. No lib_type required for them.
+    ifeq ($(filter tests samples,$(LOCAL_MODULE_TAGS)),)
+      $(call pretty-warning,Cannot determine the type of this library)
     endif
     lib_type :=
   endif
