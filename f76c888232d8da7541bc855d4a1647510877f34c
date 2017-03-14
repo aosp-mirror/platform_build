@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "adb52795_38d555a6",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-14T23:28:32Z",
+      "side": 1,
+      "message": "So if you run with both \"general-tests device-tests\" in your command line, the zip files will be identical. Should we only zip up what\u0027s in $(COMPATIBILITY.device-tests.FILES)?",
+      "revId": "f76c888232d8da7541bc855d4a1647510877f34c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
