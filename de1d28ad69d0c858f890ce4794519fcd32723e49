@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e2f36ff6_2edf8247",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-03-14T23:31:54Z",
+      "side": 1,
+      "message": "The zip file and the list both get duplicated into my android source root which I don\u0027t want to happen.",
+      "range": {
+        "startLine": 20,
+        "startChar": 1,
+        "endLine": 20,
+        "endChar": 54
+      },
+      "revId": "de1d28ad69d0c858f890ce4794519fcd32723e49",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

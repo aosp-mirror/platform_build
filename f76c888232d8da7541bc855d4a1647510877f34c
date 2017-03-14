@@ -16,6 +16,24 @@
       "revId": "f76c888232d8da7541bc855d4a1647510877f34c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "352cb04d_16e4a086",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-03-14T23:31:54Z",
+      "side": 1,
+      "message": "I was just about to request how I can do this? I tried passing  $(COMPATIBILITY.device-tests.FILES) to -l and via -f and hit deadends. -f only took the first file.",
+      "parentUuid": "adb52795_38d555a6",
+      "revId": "f76c888232d8da7541bc855d4a1647510877f34c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
