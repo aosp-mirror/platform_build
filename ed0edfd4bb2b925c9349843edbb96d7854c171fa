@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f6409110_e8d0b505",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-14T00:37:31Z",
+      "side": 1,
+      "message": "Remove?",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 89
+      },
+      "revId": "ed0edfd4bb2b925c9349843edbb96d7854c171fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
