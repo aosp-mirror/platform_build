@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8936844d_03ec6401",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-14T22:42:44Z",
+      "side": 1,
+      "message": "This should be $(SOONG_OUT_DIR)/ndk.timestamp, not this phony rule that would trigger this to be re-run every time.\n\nAlso, this seems like it should at least depend on frameworks/native/docs/{header,footer}.html, but maybe just make it $(call find-files-in-subdirs,frameworks/native/docs,\"*\",.) to include everything under that directory.",
+      "range": {
+        "startLine": 76,
+        "startChar": 47,
+        "endLine": 76,
+        "endChar": 50
+      },
+      "revId": "9d05952f5cebb95159a9bf8e03c250680ed3f9ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03b254af_dcdbbdc2",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-14T22:42:44Z",
+      "side": 1,
+      "message": "This appears to be a new dependency (at least for any normal target, include `m docs`), and isn\u0027t installed by default. Can we use a source or prebuilt checked into the tree?",
+      "range": {
+        "startLine": 82,
+        "startChar": 5,
+        "endLine": 82,
+        "endChar": 12
+      },
+      "revId": "9d05952f5cebb95159a9bf8e03c250680ed3f9ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
