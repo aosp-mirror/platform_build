@@ -891,7 +891,7 @@ INTERNAL_USERIMAGES_DEPS += $(FEC)
 endif
 endif
 
-SELINUX_FC := $(TARGET_ROOT_OUT)/file_contexts.bin
+SELINUX_FC := $(call intermediates-dir-for,ETC,file_contexts.bin)/file_contexts.bin
 INTERNAL_USERIMAGES_DEPS += $(SELINUX_FC)
 
 INTERNAL_USERIMAGES_DEPS += $(BLK_ALLOC_TO_BASE_FS)
