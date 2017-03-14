@@ -78,6 +78,8 @@ ifdef LOCAL_2ND_ARCH_VAR_PREFIX
 endif
 endif
 
+my_module_is_soong := $(if $(filter $(OUT_DIR)/soong/%,$(LOCAL_MODULE_MAKEFILE)),true,false)
+
 # Ninja has an implicit dependency on the command being run, and kati will
 # regenerate the ninja manifest if any read makefile changes, so there is no
 # need to have dependencies on makefiles.
@@ -163,6 +165,14 @@ my_module_path := $(strip $(LOCAL_MODULE_PATH))
 endif
 my_module_path := $(patsubst %/,%,$(my_module_path))
 my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
+
+# my_module_default_path is the path that is automatically chosen according to the attributes of
+# a module. It is used when the module does not explicitly specify install path using LOCAL_MODULE_PATH.
+# If LOCAL_MODULE_PATH is specified, it is always respected and my_module_default_path is
+# ignored. However, for shared libraries, such conflict generates warning so that module owner
+# can place the library in the correct location (, stop using LOCAL_MODULE_PATH, or migrate to Soong to
+# be better).
+my_module_default_path :=
 ifdef LOCAL_IS_HOST_MODULE
   partition_tag :=
 else
@@ -180,20 +190,135 @@ else
   partition_tag := $(if $(call should-install-to-system,$(my_module_tags)),,_DATA)
 endif
 endif
-ifeq ($(my_module_path),)
-  install_path_var := $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT$(partition_tag)_$(LOCAL_MODULE_CLASS)
-  ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
-    install_path_var := $(install_path_var)_PRIVILEGED
-  endif
+install_path_var := $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT$(partition_tag)_$(LOCAL_MODULE_CLASS)
+ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
+  install_path_var := $(install_path_var)_PRIVILEGED
+endif
 
-  my_module_path := $($(install_path_var))
-  ifeq ($(strip $(my_module_path)),)
-    $(error $(LOCAL_PATH): unhandled install path "$(install_path_var) for $(LOCAL_MODULE)")
+my_module_default_path := $($(install_path_var))
+ifeq ($(strip $(my_module_path)$(my_module_default_path)),)
+  $(call pretty-error,internal error in base_rules.mk; $(install_path_var) is not defined.)
+endif
+
+# Determine lib_type and do some sanity checks.
+ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
+  ifneq ($(filter $(LOCAL_MODULE),$(addprefix lib,$(NDK_PREBUILT_SHARED_LIBRARIES))),)
+    ifneq ($(partition_tag),)
+      $(call pretty-error,"NDK library must be installed at system partition, where other libraries will look for it. It cannot be moved.")
+    endif
+    lib_type := ndk
+  else ifneq ($(filter $(LOCAL_MODULE),$(VNDK_LIBRARIES) $(VNDK_INDIRECT_LIBRARIES)),)
+    ifneq ($(partition_tag),)
+      $(call pretty-error,"VNDK library must be installed at system partition. DO NOT modify VNDK_LIBRARIES or VNDK_LIBRARIES. \
+If your library needs to be shared between system.img and vendor.img then define it as a VNDK-ext library. Use vndk_ext_library {...} \
+in Android.bp to do so.")
+    endif
+    lib_type := vndk
+  else ifneq ($(filter $(LOCAL_MODULE),$(BOARD_SAME_PROCESS_HAL_DEPS)),)
+    # List of libraries implementing same-process HALs (and their internal sub-libraries) is
+    # defined by vendors.
+    ifeq ($(partition_tag),)
+      $(call pretty-error,Sameprocess HAL must not be installed at system partition)
+    endif
+    lib_type := sameprocess_hal
+  else ifeq ($(LOCAL_IS_HOST_MODULE)$(partition_tag),)
+    lib_type := framework
+  else ifneq ($(partition_tag),_DATA)
+    # Here, vendor means vendor/oem/odm
+    lib_type := vendor_provided
+  else
+    # Test lib falls into this. No lib_type required for them.
+    ifneq ($(filter tests,$(LOCAL_MODULE_TAGS)),tests)
+      $(call pretty-error,Cannot determine the type of this library)
+    endif
+    lib_type :=
+  endif
+else
+  lib_type :=
+endif
+
+# This is the default path until N. From O, the default path is changed.
+# Let's save the old default path in case we need a symlink to it later.
+my_module_pre_o_default_path := $(my_module_default_path)
+
+# Special case for pre_o_default_path of Soong defined modules.
+# For those modules, we guess their pre_o_default_path by removing /ndk, /vndk, etc.
+# from their LOCAL_MODULE_PATH. This is because relative_install_path is already
+# embedded to my_module_path.
+ifeq ($(my_module_is_soong),true)
+ifndef LOCAL_IS_HOST_MODULE
+ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
+  my_module_pre_o_default_path := $(my_module_path)
+  my_module_pre_o_default_path := $(subst /vndk-ext,,$(my_module_pre_o_default_path))
+  my_module_pre_o_default_path := $(subst /vndk,,$(my_module_pre_o_default_path))
+  my_module_pre_o_default_path := $(subst /ndk,,$(my_module_pre_o_default_path))
+  my_module_pre_o_default_path := $(subst /sameprocess,,$(my_module_pre_o_default_path))
+endif
+endif
+endif
+
+# Amend the default_path once again depending on lib_type. This is new from O.
+ifeq ($(lib_type),vndk)
+  my_module_default_path := $(my_module_default_path)/vndk
+  # TODO(b/35020246): before P, we should support installing two snapshots of VNDK
+  # libraries. One for framework libs and execs and the other for vendor libs and execs.
+else ifeq ($(lib_type),ndk)
+  my_module_default_path := $(my_module_default_path)/ndk
+else ifeq ($(lib_type),sameprocess_hal)
+  my_module_default_path := $(my_module_default_path)/sameprocess
+endif
+
+# Relative path is appended to path resolved so far
+ifneq ($(my_module_relative_path),)
+  my_module_default_path := $(my_module_default_path)/$(my_module_relative_path)
+  my_module_pre_o_default_path := $(my_module_pre_o_default_path)/$(my_module_relative_path)
+  ifneq ($(my_module_path),)
+    my_module_path := $(my_module_path)/$(my_module_relative_path)
   endif
 endif
-ifneq ($(my_module_relative_path),)
-  my_module_path := $(my_module_path)/$(my_module_relative_path)
+
+_lib_moved :=
+ifeq ($(my_module_path),)
+  # If LOCAL_MODULE_PATH is not specified, use the automatically determined path.
+  my_module_path := $(my_module_default_path)
+
+  # Mark if the lib is installed to a different path than before. With this hint,
+  # a symlink is created if BOARD_SYMLINK_FOR_LIBS is true.
+  ifneq ($(my_module_path),$(my_module_pre_o_default_path))
+    _lib_moved := true
+  endif
+else
+  # If LOCAL_MODULE_PATH is specified, we respect it.
+  ifndef LOCAL_IS_HOST_MODULE
+  ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
+  ifeq ($(filter $(TARGET_OUT_DATA)%,$(my_module_path)),)
+    # However, we are kind enough to warn if it seems to be wrong.
+    # Warn only for Android.mk defined shared libraries that will be installed
+    # to system or vendor partition. For other types of files - especially
+    # Soong-defined libs -, we don't warn because Soong always gives us correct
+    # paths.
+    ifeq ($(my_module_is_soong),false)
+      ifneq ($(my_module_path),$(my_module_default_path))
+        # TODO(b/35020635): s/warning/error/
+        $(call pretty-warning,$(lib_type) library must be installed to \
+$(subst $(PRODUCT_OUT)/,,$(my_module_default_path)) but requested to be installed at \
+$(subst $(PRODUCT_OUT)/,,$(my_module_path)). Please fix.)
+      endif
+    else
+      # For Soong-defined module, symlink is provided if the path has been amended
+      # ...except for vndk-ext libraries because there already is a symlink for the
+      # vndk (unmodified) version of the vndk-ext library.
+      ifneq ($(my_module_path),$(my_module_pre_o_default_path))
+        ifeq ($(filter vndk-ext,$(subst /,$(space),$(my_module_path))),)
+          _lib_moved := true
+        endif
+      endif
+    endif
+  endif
+  endif
+  endif
 endif
+
 endif # not LOCAL_UNINSTALLABLE_MODULE
 
 ifneq ($(strip $(LOCAL_BUILT_MODULE)$(LOCAL_INSTALLED_MODULE)),)
@@ -384,8 +509,30 @@ endif # !LOCAL_IS_HOST_MODULE
 
 # Rule to install the module's companion symlinks
 my_installed_symlinks := $(addprefix $(my_module_path)/,$(LOCAL_MODULE_SYMLINKS) $(LOCAL_MODULE_SYMLINKS_$(my_32_64_bit_suffix)))
+
+# If this lib is installed to the different directory than before,
+# make a symlink from the old path to the new path.
+# This symlink is required because there are so many plances that expect the old
+# path (e.g. systemproperty rild.libpath). Until that places are all fixed,
+# we keep this symlink.
+# TODO(b/34917183): remove symlinks after everything migrations to the new paths;
+# this should be done before O launch unless it will be a security hole that
+# we can't restrict access to a certain set of libraries by using the directory
+# path.
+ifneq ($(BOARD_SYMLINK_FOR_LIBS),false)
+ifeq ($(_lib_moved),true)
+  my_installed_symlinks += $(my_module_pre_o_default_path)/$(my_installed_module_stem)
+endif
+else
+# Symlinks for ndk libs are permanent.
+ifeq ($(lib_type)$(_lib_moved),ndktrue)
+  my_installed_symlinks += $(my_module_pre_o_default_path)/$(my_installed_module_stem)
+endif
+endif
+
+# Make a symlink $(symlink) -> $(LOCAL_INSTALLED_MODULE)
 $(foreach symlink,$(my_installed_symlinks),\
-    $(call symlink-file,$(LOCAL_INSTALLED_MODULE),$(my_installed_module_stem),$(symlink)))
+    $(call symlink-file,$(LOCAL_INSTALLED_MODULE),$(LOCAL_INSTALLED_MODULE),$(symlink),true))
 
 $(my_all_targets) : | $(my_installed_symlinks)
 
