@@ -22,6 +22,30 @@
       "revId": "de1d28ad69d0c858f890ce4794519fcd32723e49",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9251bb4c_2881ac1c",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-14T23:38:03Z",
+      "side": 1,
+      "message": "-C is the prefix to strip, so instead of $(dir $@) it probably should be something like $OUT_DIR, or with two different list files, $(HOST_OUT_TESTCASES) / $(TARGET_OUT_TESTCASES), perhaps with a new add-prefix flag that Nan needs as well.",
+      "parentUuid": "e2f36ff6_2edf8247",
+      "range": {
+        "startLine": 20,
+        "startChar": 1,
+        "endLine": 20,
+        "endChar": 54
+      },
+      "revId": "de1d28ad69d0c858f890ce4794519fcd32723e49",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
