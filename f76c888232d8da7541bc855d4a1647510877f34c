@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "4b8b674c_60aa93dd",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-03-14T23:32:38Z",
+      "side": 1,
+      "message": "This should be $(PRODUCT_OUT)/device-tests.zip (since it will change based on the selected product), and $(OUT_DIR)/$@ should be $@ in the rule.",
+      "revId": "f76c888232d8da7541bc855d4a1647510877f34c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a420b6a8_f5e71c5f",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-03-14T23:32:38Z",
+      "side": 1,
+      "message": "This will guarantee that device-tests.zip is built after all the files listed in $(COMPATIBILITY.device-tests.FILES), but if other files are copied into $(HOST_OUT_TESTCASES) by other rules a random subset of them will get zipped up.  If you already have a list of files, can you use echo $(COMPATIBILITY.device-tests.FILES) \u003e $@.list?  It will require $(COMPATIBILITY.device-tests.FILES) to be comprehensive, including all test data files, dependencies, etc.",
+      "revId": "f76c888232d8da7541bc855d4a1647510877f34c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "adb52795_38d555a6",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 1
