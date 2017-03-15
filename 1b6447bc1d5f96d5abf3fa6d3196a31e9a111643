@@ -69,6 +69,30 @@
       "revId": "1b6447bc1d5f96d5abf3fa6d3196a31e9a111643",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6651af5c_a392214f",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2520,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-03-15T09:45:45Z",
+      "side": 1,
+      "message": "I\u0027m sure you\u0027re correct, but that wouldn\u0027t be obvious without context given the literal meaning of those words. Is that distinction written down anywhere?",
+      "parentUuid": "c7c9235c_0fbe2152",
+      "range": {
+        "startLine": 2520,
+        "startChar": 49,
+        "endLine": 2520,
+        "endChar": 53
+      },
+      "revId": "1b6447bc1d5f96d5abf3fa6d3196a31e9a111643",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
