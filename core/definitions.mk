@@ -2110,7 +2110,6 @@ $(hide) $(AAPT2) link -o $@ \
   $(addprefix --manifest ,$(PRIVATE_ANDROID_MANIFEST)) \
   $(addprefix -I ,$(PRIVATE_AAPT_INCLUDES)) \
   $(addprefix -I ,$(PRIVATE_SHARED_ANDROID_LIBRARIES)) \
-  $(addprefix -A ,$(PRIVATE_ASSET_DIR)) \
   $(addprefix --java ,$(PRIVATE_SOURCE_INTERMEDIATES_DIR)) \
   $(addprefix --proguard ,$(PRIVATE_PROGUARD_OPTIONS_FILE)) \
   $(addprefix --min-sdk-version ,$(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
