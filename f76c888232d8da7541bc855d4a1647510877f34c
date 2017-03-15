@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "33f9c7e8_593db880",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-03-15T18:13:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4b8b674c_60aa93dd",
+      "revId": "f76c888232d8da7541bc855d4a1647510877f34c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a420b6a8_f5e71c5f",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 1
