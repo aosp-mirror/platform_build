@@ -46,6 +46,30 @@
       "revId": "de1d28ad69d0c858f890ce4794519fcd32723e49",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e3298cf_eed0d34f",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-03-15T00:12:39Z",
+      "side": 1,
+      "message": "I am working on it right now to add a new flag which takes a list of file path pairs. each pair is \u003cdest, src\u003e the dest is the path under the zip file. which can be more flexible.",
+      "parentUuid": "9251bb4c_2881ac1c",
+      "range": {
+        "startLine": 20,
+        "startChar": 1,
+        "endLine": 20,
+        "endChar": 54
+      },
+      "revId": "de1d28ad69d0c858f890ce4794519fcd32723e49",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
