@@ -355,6 +355,8 @@ ifdef LOCAL_USE_AAPT2
 my_compiled_res_base_dir := $(intermediates)/flat-res
 my_generated_res_dirs := $(rs_generated_res_dir)
 my_generated_res_dirs_deps := $(RenderScript_file_stamp)
+my_asset_dirs := $(LOCAL_ASSET_DIR)
+my_full_asset_paths := $(all_assets)
 # Add AAPT2 link specific flags.
 $(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --no-static-lib-packages
 include $(BUILD_SYSTEM)/aapt2.mk
