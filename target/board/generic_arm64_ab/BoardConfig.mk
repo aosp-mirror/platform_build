@@ -88,3 +88,5 @@ BOARD_FLASH_BLOCK_SIZE := 512
 # Must be moved after early-mount is supported.
 ###############################################################################
 BOARD_SEPOLICY_DIRS += device/google/marlin/sepolicy
+
+BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
