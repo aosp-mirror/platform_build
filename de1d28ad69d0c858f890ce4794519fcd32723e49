@@ -70,6 +70,30 @@
       "revId": "de1d28ad69d0c858f890ce4794519fcd32723e49",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36629da4_9f66979c",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-03-15T00:30:27Z",
+      "side": 1,
+      "message": "Hmm yes, stripping out the PRODUCT_DIR AND HOST_DIR prefixes separately would be nice.\n\n\nNan is there an ETA on that change?",
+      "parentUuid": "1e3298cf_eed0d34f",
+      "range": {
+        "startLine": 20,
+        "startChar": 1,
+        "endLine": 20,
+        "endChar": 54
+      },
+      "revId": "de1d28ad69d0c858f890ce4794519fcd32723e49",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
