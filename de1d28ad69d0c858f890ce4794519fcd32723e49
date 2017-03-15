@@ -94,6 +94,30 @@
       "revId": "de1d28ad69d0c858f890ce4794519fcd32723e49",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d3c6a6f_db1b6e76",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-15T00:36:44Z",
+      "side": 1,
+      "message": "You can strip them separately today -- you can specify -C multiple times, and the most recently specified one will be used. So something like:\n\n  $(SOONG_ZIP) -d -o $@ -C $(HOST_OUT_TESTCASES) -l $(host_list_file) -C $(TARGET_OUT_TESTCASES) -l $(target_list_file)\n\nEither adding a prefix, or the more complicated (but flexible) src:dst change isn\u0027t available right now though.",
+      "parentUuid": "36629da4_9f66979c",
+      "range": {
+        "startLine": 20,
+        "startChar": 1,
+        "endLine": 20,
+        "endChar": 54
+      },
+      "revId": "de1d28ad69d0c858f890ce4794519fcd32723e49",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
