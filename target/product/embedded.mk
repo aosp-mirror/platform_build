@@ -95,8 +95,7 @@ PRODUCT_PACKAGES += \
     plat_mac_permissions.xml \
     plat_property_contexts \
     plat_seapp_contexts \
-    plat_service_contexts \
-    selinux_version
+    plat_service_contexts
 
 # AID Generation for
 # <pwd.h> and <grp.h>
