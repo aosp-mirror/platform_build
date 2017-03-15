@@ -22,6 +22,29 @@
       "revId": "1b6447bc1d5f96d5abf3fa6d3196a31e9a111643",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1592c720_810e9f41",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2520,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-03-15T09:28:19Z",
+      "side": 1,
+      "message": "I don\u0027t know if it\u0027s relevant or if we\u0027d benefit from consistency or making it higher, but FYI:\n\nThe number we have hardcoded as placeholder for \"latest\" is 10000.\n\nhttps://android.googlesource.com/platform/libcore/+/master/libart/src/main/java/dalvik/system/VMRuntime.java#60",
+      "range": {
+        "startLine": 2520,
+        "startChar": 49,
+        "endLine": 2520,
+        "endChar": 53
+      },
+      "revId": "1b6447bc1d5f96d5abf3fa6d3196a31e9a111643",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
