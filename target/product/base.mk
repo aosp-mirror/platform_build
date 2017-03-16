@@ -62,6 +62,7 @@ PRODUCT_PACKAGES += \
     libcamera2ndk \
     libdl \
     libdrmclearkeyplugin \
+    libclearkeycasplugin \
     libeffectproxy \
     libeffects \
     libinput \
