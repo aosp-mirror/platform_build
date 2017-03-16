@@ -404,7 +404,6 @@ def AddImagesToTargetFiles(filename):
     images_dir = None
 
   has_recovery = (OPTIONS.info_dict.get("no_recovery") != "true")
-  system_root_image = (OPTIONS.info_dict.get("system_root_image", None) == "true")
 
   def banner(s):
     print("\n\n++++ " + s + " ++++\n\n")
