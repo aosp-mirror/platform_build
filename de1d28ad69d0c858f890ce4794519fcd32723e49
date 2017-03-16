@@ -166,6 +166,30 @@
       "revId": "de1d28ad69d0c858f890ce4794519fcd32723e49",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b48f40a3_28e7f9ab",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-03-16T00:58:08Z",
+      "side": 1,
+      "message": "Hey thanks Nan but I don\u0027t think I\u0027ll need to rely on it.",
+      "parentUuid": "edae19e4_393bdc83",
+      "range": {
+        "startLine": 20,
+        "startChar": 1,
+        "endLine": 20,
+        "endChar": 54
+      },
+      "revId": "de1d28ad69d0c858f890ce4794519fcd32723e49",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
