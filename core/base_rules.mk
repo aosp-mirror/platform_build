@@ -299,10 +299,12 @@ else
     # paths.
     ifeq ($(my_module_is_soong),false)
       ifneq ($(my_module_path),$(my_module_default_path))
+        ifeq ($(SHOW_MODULE_PATH_WARNINGS),true)
         # TODO(b/35020635): s/warning/error/
         $(call pretty-warning,$(lib_type) library must be installed to \
 $(subst $(PRODUCT_OUT)/,,$(my_module_default_path)) but requested to be installed at \
 $(subst $(PRODUCT_OUT)/,,$(my_module_path)). Please fix.)
+        endif
       endif
     else
       # For Soong-defined module, symlink is provided if the path has been amended
