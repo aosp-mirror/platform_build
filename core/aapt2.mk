@@ -5,6 +5,8 @@
 # - my_res_resources
 # - my_overlay_resources
 # - my_compiled_res_base_dir
+# - my_asset_dirs
+# - my_full_asset_paths
 # - my_res_package
 # - R_file_stamp
 # - proguard_options_file
@@ -66,8 +68,10 @@ $(my_res_package): PRIVATE_RES_FLAT := $(my_res_resources_flat)
 $(my_res_package): PRIVATE_OVERLAY_FLAT := $(my_static_library_resources) $(my_generated_resources_flata) $(my_overlay_resources_flat)
 $(my_res_package): PRIVATE_SHARED_ANDROID_LIBRARIES := $(my_shared_library_resources)
 $(my_res_package): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
-$(my_res_package) : $(full_android_manifest) $(my_static_library_resources) $(my_shared_library_resources)
-$(my_res_package) : $(my_res_resources_flat) $(my_overlay_resources_flat) \
+$(my_res_package): PRIVATE_ASSET_DIRS := $(my_asset_dirs)
+$(my_res_package): $(full_android_manifest) $(my_static_library_resources) $(my_shared_library_resources)
+$(my_res_package): $(my_full_asset_paths)
+$(my_res_package): $(my_res_resources_flat) $(my_overlay_resources_flat) \
   $(my_generated_resources_flata) $(my_static_library_resources) \
   $(AAPT2)
 	@echo "AAPT2 link $@"
