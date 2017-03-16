@@ -77,7 +77,19 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       will be replaced by "ota-downgrade=yes" in the metadata file. A data
       wipe will always be enforced, so "ota-wipe=yes" will also be included in
       the metadata file. The update-binary in the source build will be used in
-      the OTA package, unless --binary flag is specified.
+      the OTA package, unless --binary flag is specified. Please also check the
+      doc for --override_timestamp below.
+
+  --override_timestamp
+      Intentionally generate an incremental OTA that updates from a newer
+      build to an older one (based on timestamp comparison), by overriding the
+      timestamp in package metadata. This differs from --downgrade flag: we
+      know for sure this is NOT an actual downgrade case, but two builds are
+      cut in a reverse order. A legit use case is that we cut a new build C
+      (after having A and B), but want to enfore an update path of A -> C -> B.
+      Specifying --downgrade may not help since that would enforce a data wipe
+      for C -> B update. The value of "post-timestamp" will be set to the newer
+      timestamp plus one, so that the package can be pushed and applied.
 
   -e  (--extra_script)  <file>
       Insert the contents of file at the end of the update script.
@@ -155,6 +167,7 @@ OPTIONS.patch_threshold = 0.95
 OPTIONS.wipe_user_data = False
 OPTIONS.omit_prereq = False
 OPTIONS.downgrade = False
+OPTIONS.timestamp = False
 OPTIONS.extra_script = None
 OPTIONS.aslr_mode = True
 OPTIONS.worker_threads = multiprocessing.cpu_count() // 2
@@ -848,20 +861,21 @@ def HandleDowngradeMetadata(metadata):
   is_downgrade = long(post_timestamp) < long(pre_timestamp)
 
   if OPTIONS.downgrade:
-    metadata["ota-downgrade"] = "yes"
     if not is_downgrade:
       raise RuntimeError("--downgrade specified but no downgrade detected: "
                          "pre: %s, post: %s" % (pre_timestamp, post_timestamp))
+    metadata["ota-downgrade"] = "yes"
+  elif OPTIONS.timestamp:
+    if not is_downgrade:
+      raise RuntimeError("--timestamp specified but no timestamp hack needed: "
+                         "pre: %s, post: %s" % (pre_timestamp, post_timestamp))
+    metadata["post-timestamp"] = str(long(pre_timestamp) + 1)
   else:
     if is_downgrade:
-      # Non-fatal here to allow generating such a package which may require
-      # manual work to adjust the post-timestamp. A legit use case is that we
-      # cut a new build C (after having A and B), but want to enfore the
-      # update path of A -> C -> B. Specifying --downgrade may not help since
-      # that would enforce a data wipe for C -> B update.
-      print("\nWARNING: downgrade detected: pre: %s, post: %s.\n"
-            "The package may not be deployed properly. "
-            "Try --downgrade?\n" % (pre_timestamp, post_timestamp))
+      raise RuntimeError("Downgrade detected based on timestamp check: "
+                         "pre: %s, post: %s. Need to specify --timestamp OR "
+                         "--downgrade to allow building the incremental." % (
+                             pre_timestamp, post_timestamp))
     metadata["post-timestamp"] = post_timestamp
 
 
@@ -1968,6 +1982,8 @@ def main(argv):
     elif o == "--downgrade":
       OPTIONS.downgrade = True
       OPTIONS.wipe_user_data = True
+    elif o == "--override_timestamp":
+      OPTIONS.timestamp = True
     elif o in ("-o", "--oem_settings"):
       OPTIONS.oem_source = a.split(',')
     elif o == "--oem_no_mount":
@@ -2026,6 +2042,7 @@ def main(argv):
                                  "wipe_user_data",
                                  "no_prereq",
                                  "downgrade",
+                                 "override_timestamp",
                                  "extra_script=",
                                  "worker_threads=",
                                  "aslr_mode=",
@@ -2059,6 +2076,9 @@ def main(argv):
     if OPTIONS.incremental_source is None:
       raise ValueError("Cannot generate downgradable full OTAs - consider"
                        "using --omit_prereq?")
+
+  assert not (OPTIONS.downgrade and OPTIONS.timestamp), \
+      "Cannot have --downgrade AND --override_timestamp both"
 
   # Load the dict file from the zip directly to have a peek at the OTA type.
   # For packages using A/B update, unzipping is not needed.
