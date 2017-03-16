@@ -36,23 +36,21 @@ __all__ = ["EmptyImage", "DataImage", "BlockImageDiff"]
 
 
 def compute_patch(srcfile, tgtfile, imgdiff=False):
-  patchfile = common.MakeTempFile(prefix="patch-")
+  patchfile = common.MakeTempFile(prefix='patch-')
 
-  if imgdiff:
-    p = subprocess.call(
-        ["imgdiff", "-z", srcfile, tgtfile, patchfile],
-        stdout=open(os.devnull, 'w'),
-        stderr=subprocess.STDOUT)
-  else:
-    p = subprocess.call(
-        ["bsdiff", srcfile, tgtfile, patchfile],
-        stdout=open(os.devnull, 'w'),
-        stderr=subprocess.STDOUT)
+  cmd = ['imgdiff', '-z'] if imgdiff else ['bsdiff']
+  cmd.extend([srcfile, tgtfile, patchfile])
 
-  if p:
-    raise ValueError("diff failed: " + str(p))
+  # Not using common.Run(), which would otherwise dump all the bsdiff/imgdiff
+  # commands when OPTIONS.verbose is True - not useful for the case here, since
+  # they contain temp filenames only.
+  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  output, _ = p.communicate()
 
-  with open(patchfile, "rb") as f:
+  if p.returncode != 0:
+    raise ValueError(output)
+
+  with open(patchfile, 'rb') as f:
     return f.read()
 
 
@@ -718,6 +716,7 @@ class BlockImageDiff(object):
 
       diff_total = len(diff_queue)
       patches = [None] * diff_total
+      error_messages = []
       if sys.stdout.isatty():
         global diff_done
         diff_done = 0
@@ -754,9 +753,13 @@ class BlockImageDiff(object):
           try:
             patch = compute_patch(src_file, tgt_file, imgdiff)
           except ValueError as e:
-            raise ValueError(
-                "Failed to generate diff for %s: src=%s, tgt=%s: %s" % (
-                    xf.tgt_name, xf.src_ranges, xf.tgt_ranges, e.message))
+            with lock:
+              error_messages.append(
+                  "Failed to generate %s for %s: tgt=%s, src=%s:\n%s" % (
+                      "imgdiff" if imgdiff else "bsdiff",
+                      xf.tgt_name if xf.tgt_name == xf.src_name else
+                          xf.tgt_name + " (from " + xf.src_name + ")",
+                      xf.tgt_ranges, xf.src_ranges, e.message))
 
           with lock:
             patches[patch_index] = (xf_index, patch)
@@ -777,6 +780,10 @@ class BlockImageDiff(object):
 
       if sys.stdout.isatty():
         print('\n')
+
+      if error_messages:
+        print('\n'.join(error_messages))
+        sys.exit(1)
     else:
       patches = []
 
