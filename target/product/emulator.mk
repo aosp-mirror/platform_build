@@ -53,7 +53,9 @@ PRODUCT_PACKAGES += \
     power.goldfish \
     fingerprint.ranchu \
     android.hardware.biometrics.fingerprint@2.1-service \
-    sensors.ranchu
+    sensors.ranchu \
+	hwcomposer.goldfish \
+	hwcomposer.ranchu \
 
 PRODUCT_PACKAGES += \
     android.hardware.audio@2.0-impl \
