@@ -10,3 +10,4 @@ unix_socket_connect(logpersist, logdr, logd)
 
 # Write to /dev/ttyS2 and /dev/ttyGF2.
 allow logpersist serial_device:chr_file { write open };
+get_prop(logpersist, qemu_cmdline)
