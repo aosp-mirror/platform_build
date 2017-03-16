@@ -519,6 +519,10 @@ ADDITIONAL_DEFAULT_PROPERTIES := $(strip $(ADDITIONAL_DEFAULT_PROPERTIES))
 ADDITIONAL_BUILD_PROPERTIES := $(strip $(ADDITIONAL_BUILD_PROPERTIES))
 .KATI_READONLY := ADDITIONAL_BUILD_PROPERTIES
 
+ifeq ($(BOARD_ENFORCE_RRO),true)
+ENFORCE_RRO_SOURCES :=
+endif
+
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
 # with a subdirectory's makefile.
@@ -585,6 +589,13 @@ endif # ONE_SHOT_MAKEFILE
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
 
+# -------------------------------------------------------------------
+# Enforce to generate all RRO packages for modules having resource
+# overlays.
+# -------------------------------------------------------------------
+ifeq ($(BOARD_ENFORCE_RRO),true)
+$(call generate_all_enforce_rro_packages)
+endif
 
 # -------------------------------------------------------------------
 # Fix up CUSTOM_MODULES to refer to installed files rather than
