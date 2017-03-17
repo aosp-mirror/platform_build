@@ -45,6 +45,30 @@
       "revId": "9d05952f5cebb95159a9bf8e03c250680ed3f9ac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5360ace3_027fca20",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2017-03-17T08:48:31Z",
+      "side": 1,
+      "message": "Is getting it added to the buildbots via apt not an option? We could get a prebuilt checked in, but that\u0027s not something I\u0027m going to have time to do any time soon.\n\nIf I removed this from the docs target and just left it as ndk-docs, would that be okay for now? People that need to run it could invoke the ndk-docs target and just be expected to get it from apt (though I\u0027m not sure this is any better than just leaving it as a manually invoked makefile in frameworks/native/docs).",
+      "parentUuid": "03b254af_dcdbbdc2",
+      "range": {
+        "startLine": 82,
+        "startChar": 5,
+        "endLine": 82,
+        "endChar": 12
+      },
+      "revId": "9d05952f5cebb95159a9bf8e03c250680ed3f9ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
