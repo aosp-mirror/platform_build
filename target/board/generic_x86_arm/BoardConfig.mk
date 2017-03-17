@@ -43,6 +43,8 @@ ifeq ($(HOST_OS),linux)
   endif
 endif
 
+TARGET_USES_HWC2 := true
+
 # Build OpenGLES emulation host and guest libraries
 BUILD_EMULATOR_OPENGL := true
 
