@@ -112,12 +112,12 @@ ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
   # that for the generated libraries. Clip the API level to the minimum where
   # appropriate.
   ifdef LOCAL_USE_VNDK
-    my_ndk_api := $(BOARD_VNDK_VERSION)
+    my_ndk_api := current
   else
     my_ndk_api := $(LOCAL_SDK_VERSION)
-  endif
-  ifneq ($(my_ndk_api),current)
+    ifneq ($(my_ndk_api),current)
       my_ndk_api := $(call math_max,$(my_ndk_api),$(my_min_sdk_version))
+    endif
   endif
 
   my_ndk_api_def := $(my_ndk_api)
