@@ -10,9 +10,6 @@ SHELL := /bin/bash
 endif
 
 ifndef KATI
-USE_SOONG_UI ?= true
-endif
-ifeq ($(USE_SOONG_UI),true)
 
 host_prebuilts := linux-x86
 ifeq ($(shell uname),Darwin)
@@ -27,7 +24,7 @@ run_soong_ui:
 $(sort $(MAKECMDGOALS)) : run_soong_ui
 	@#empty
 
-else # USE_SOONG_UI
+else # KATI
 
 # Absolute path of the present working direcotry.
 # This overrides the shell variable $PWD, which does not necessarily points to
@@ -47,22 +44,9 @@ $(DEFAULT_GOAL): droid_targets
 .PHONY: droid_targets
 droid_targets:
 
-# Targets that provide quick help on the build system.
-include $(BUILD_SYSTEM)/help.mk
-
 # Set up various standard variables based on configuration
 # and host information.
 include $(BUILD_SYSTEM)/config.mk
-
-ifndef KATI
-ifdef USE_NINJA
-$(warning USE_NINJA is ignored. Ninja is always used.)
-endif
-
-# Mark this is a ninja build.
-$(shell mkdir -p $(OUT_DIR) && touch $(OUT_DIR)/ninja_build)
-include build/core/ninja.mk
-else # KATI
 
 ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
 dont_bother := true
@@ -1166,4 +1150,3 @@ ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 all_link_types:
 
 endif # KATI
-endif # USE_SOONG_UI
