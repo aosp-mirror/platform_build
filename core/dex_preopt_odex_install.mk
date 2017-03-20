@@ -128,17 +128,17 @@ my_built_profile := $(dir $(LOCAL_BUILT_MODULE))/profile.prof
 my_dex_location := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
 $(built_odex): $(my_built_profile)
 $(built_odex): PRIVATE_PROFILE_PREOPT_FLAGS := --profile-file=$(my_built_profile)
-$(my_built_profile): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
+$(my_built_profile): PRIVATE_BUILT_MODULE := $(LOCAL_BUILT_MODULE)
 $(my_built_profile): PRIVATE_DEX_LOCATION := $(my_dex_location)
 $(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 $(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 $(my_built_profile): $(PROFMAN)
-$(my_built_profile): $(LOCAL_INSTALLED_MODULE)
+$(my_built_profile): $(LOCAL_BUILT_MODULE)
 $(my_built_profile):
 	$(hide) mkdir -p $(dir $@)
 	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
 		--create-profile-from=$(PRIVATE_SOURCE_CLASSES) \
-		--apk=$(PRIVATE_INSTALLED_MODULE) \
+		--apk=$(PRIVATE_BUILT_MODULE) \
 		--dex-location=$(PRIVATE_DEX_LOCATION) \
 		--reference-profile-file=$@
 else
