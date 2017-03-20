@@ -99,6 +99,7 @@ PRODUCT_PACKAGES := \
 
 PRODUCT_PACKAGES += \
     libdynamic_sensor_ext \
+    libaudioroute \
     libxml2 \
     libtinyalsa \
     libtinycompress \
