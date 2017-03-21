@@ -2513,6 +2513,13 @@ define desugar-classpath
 $(filter-out -classpath -bootclasspath "",$(subst :,$(space),$(1)))
 endef
 
+# Takes an sdk version that might be PLATFORM_VERSION_CODENAME (for example P),
+# returns a number greater than the highest existing sdk version if it is, or
+# the input if it is not.
+define codename-or-sdk-to-sdk
+$(if $(filter $(1),$(PLATFORM_VERSION_CODENAME)),10000,$(1))
+endef
+
 define desugar-classes-jar
 @echo Desugar: $@
 @mkdir -p $(dir $@)
@@ -2520,7 +2527,7 @@ $(hide) rm -f $@ $@.tmp
 $(hide) java -jar $(DESUGAR) \
     $(addprefix --bootclasspath_entry ,$(call desugar-bootclasspath,$(PRIVATE_BOOTCLASSPATH))) \
     $(addprefix --classpath_entry ,$(PRIVATE_ALL_JAVA_LIBRARIES)) \
-    --min_sdk_version $(PRIVATE_SDK_VERSION) \
+    --min_sdk_version $(call codename-or-sdk-to-sdk,$(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
     --allow_empty_bootclasspath \
     $(if $(filter --core-library,$(PRIVATE_DX_FLAGS)),--core_library) \
     -i $< -o $@.tmp
@@ -2537,7 +2544,7 @@ $(hide) rm -f $(dir $@)classes*.dex
 $(hide) $(DX) \
     -JXms16M -JXmx2048M \
     --dex --output=$(dir $@) \
-    --min-sdk-version=$(PRIVATE_SDK_VERSION) \
+    --min-sdk-version=$(call codename-or-sdk-to-sdk,$(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
     $(if $(NO_OPTIMIZE_DX), \
         --no-optimize) \
     $(if $(GENERATE_DEX_DEBUG), \
