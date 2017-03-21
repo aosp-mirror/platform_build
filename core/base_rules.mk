@@ -65,6 +65,16 @@ else
   my_host_cross :=
 endif
 
+ifndef LOCAL_PROPRIETARY_MODULE
+  LOCAL_PROPRIETARY_MODULE := $(LOCAL_VENDOR_MODULE)
+endif
+ifndef LOCAL_VENDOR_MODULE
+  LOCAL_VENDOR_MODULE := $(LOCAL_PROPRIETARY_MODULE)
+endif
+ifneq ($(filter-out $(LOCAL_PROPRIETARY_MODULE),$(LOCAL_VENDOR_MODULE))$(filter-out $(LOCAL_VENDOR_MODULE),$(LOCAL_PROPRIETARY_MODULE)),)
+$(call pretty-error,Only one of LOCAL_PROPRIETARY_MODULE[$(LOCAL_PROPRIETARY_MODULE)] and LOCAL_VENDOR_MODULE[$(LOCAL_VENDOR_MODULE)] may be set, or they must be equal)
+endif
+
 include $(BUILD_SYSTEM)/local_vndk.mk
 
 my_module_tags := $(LOCAL_MODULE_TAGS)
@@ -166,7 +176,7 @@ my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
 ifdef LOCAL_IS_HOST_MODULE
   partition_tag :=
 else
-ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
+ifeq (true,$(LOCAL_VENDOR_MODULE))
   partition_tag := _VENDOR
 else ifeq (true,$(LOCAL_OEM_MODULE))
   partition_tag := _OEM
