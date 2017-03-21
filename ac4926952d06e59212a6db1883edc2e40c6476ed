@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "325dfba8_2dce3872",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-21T01:27:42Z",
+      "side": 1,
+      "message": "Did you check to see if the zip file list before/after?",
+      "revId": "ac4926952d06e59212a6db1883edc2e40c6476ed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
