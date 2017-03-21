@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "f8cbc71d_3c0f11e2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1004277
+      },
+      "writtenOn": "2017-03-21T20:47:44Z",
+      "side": 1,
+      "message": "concatenate",
+      "range": {
+        "startLine": 19,
+        "startChar": 42,
+        "endLine": 19,
+        "endChar": 53
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b6ab81d8_2c275fad",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -71,6 +94,75 @@
     },
     {
       "key": {
+        "uuid": "2a4208c7_d6bacd11",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1004277
+      },
+      "writtenOn": "2017-03-21T20:47:44Z",
+      "side": 1,
+      "message": "Maybe enough of these to justify adding an ARRAY_SIZE macro.",
+      "range": {
+        "startLine": 69,
+        "startChar": 11,
+        "endLine": 69,
+        "endChar": 51
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "949fd9a3_50e454df",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1004277
+      },
+      "writtenOn": "2017-03-21T20:47:44Z",
+      "side": 1,
+      "message": "This could be a bit confusing, suggest 2 error messages for the 2 error conditions.",
+      "range": {
+        "startLine": 131,
+        "startChar": 65,
+        "endLine": 131,
+        "endChar": 75
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "982083af_e23886d4",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1004277
+      },
+      "writtenOn": "2017-03-21T20:47:44Z",
+      "side": 1,
+      "message": "Suggest adding a comment about the following.",
+      "range": {
+        "startLine": 168,
+        "startChar": 4,
+        "endLine": 168,
+        "endChar": 61
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a3077789_a896355f",
         "filename": "tools/fs_config/fs_config_generate.c",
         "patchSetId": 1
@@ -87,6 +179,29 @@
         "startChar": 13,
         "endLine": 169,
         "endChar": 43
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2ddb50f7_d20f89ca",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 181,
+      "author": {
+        "id": 1004277
+      },
+      "writtenOn": "2017-03-21T20:47:44Z",
+      "side": 1,
+      "message": "Suggest a comment on this.",
+      "range": {
+        "startLine": 181,
+        "startChar": 4,
+        "endLine": 181,
+        "endChar": 53
       },
       "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
