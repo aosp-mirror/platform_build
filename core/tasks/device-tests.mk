@@ -25,5 +25,3 @@ $(device-tests-zip): $(COMPATIBILITY.device-tests.FILES) $(SOONG_ZIP)
 
 device-tests: $(device-tests-zip)
 $(call dist-for-goals, device-tests, $(device-tests-zip))
-
-tests: device-tests
