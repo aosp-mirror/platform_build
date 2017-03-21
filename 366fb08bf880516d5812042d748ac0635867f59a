@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "ec5fddf5_620a8139",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-21T21:47:38Z",
+      "side": 1,
+      "message": "So (untested) next patch can introduce individual components mined from above, or we can abandon the -S usage above and introduce new build entities:\n\ninclude $(CLEAR_VARS)\n\nLOCAL_MODULE :\u003d fs_config_files.system\nLOCAL_MODULE_CLASS :\u003d ETC\ninclude $(BUILD_SYSTEM)/base_rules.mk\n$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)\n\t@mkdir -p $(dir $@)\n\t@rm -f $(dir $@)/[0-9]-$(notdir $@).*\n\t$\u003c -F -S -o $@\n\t@cp $(dir $@)/[0-9]-$(notdir $@).system $@\n\nLOCAL_MODULE :\u003d fs_config_files.oem\nLOCAL_MODULE_CLASS :\u003d ETC\ninclude $(BUILD_SYSTEM)/base_rules.mk\n\u003cmumble_some_build_goo_that_pushes_final_result_to_oem/etc/fs_config_files\u003e\n$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)\n\t@mkdir -p $(dir $@)\n\t@rm -f $(dir $@)/[0-9]-$(notdir $@).*\n\t$\u003c -F -S -o $@\n\t@cp $(dir $@)/[0-9]-$(notdir $@).oem $@\n\n$(fs_config_generate_bin) can run many times, it is fast.",
+      "range": {
+        "startLine": 145,
+        "startChar": 0,
+        "endLine": 145,
+        "endChar": 1
+      },
+      "revId": "366fb08bf880516d5812042d748ac0635867f59a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "19d1da3b_f8260472",
         "filename": "tools/fs_config/fs_config_generate.c",
         "patchSetId": 2
