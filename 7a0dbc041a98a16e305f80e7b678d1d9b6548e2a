@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "b6ab81d8_2c275fad",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-21T20:26:22Z",
+      "side": 1,
+      "message": "remove this confusing fragment",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 4
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "560510b0_55fc4ebb",
         "filename": "tools/fs_config/Android.mk",
         "patchSetId": 1
