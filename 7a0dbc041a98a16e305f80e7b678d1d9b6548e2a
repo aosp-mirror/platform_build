@@ -143,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "951ba647_5499e495",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-21T21:40:48Z",
+      "side": 1,
+      "message": "Priority as stated in .../system/core/libcutils/fs_conf.c is to evaluate /system/etc/fs_config_(dirs|files) first, then /vendor/etc/fs_config_(dirs|files) second, then /oem/etc/fs_config_(dirs|files) third, then finally our built-in rules last. There is a somewhat incestual relationship between fs_conf.c used by build tools and system runtime tools, and fs_config_generate.c.\n\nSo having one build produce multiple components is verboten, but make can deal with them on assumption, so if we made fs_config_dirs $(LOCAL_BUILD_MODULE) public with something like $(fs_config_generated_dirs), then the individual filesystem variants can be picked up without undue extra build nonsense and still have a valid dependency to work with?",
+      "parentUuid": "60816870_17419e34",
+      "range": {
+        "startLine": 128,
+        "startChar": 6,
+        "endLine": 128,
+        "endChar": 10
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "745370da_859f486e",
         "filename": "tools/fs_config/fs_config_generate.c",
         "patchSetId": 1
