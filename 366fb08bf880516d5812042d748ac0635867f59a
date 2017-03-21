@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "a1597cf3_e12f4c47",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-21T22:32:27Z",
+      "side": 1,
+      "message": "Based on the above comment, I could abandon the automated splitting into the trio, instead focus on adding a \u0027-P \u003cpartitionname\u003e\u0027 argument that matches the partition table we support, that only produced the output for the named partition. Yes, the generator runs three times as many, but it is a run per sub-product which would make the build happier. A lot of what it does is similar though, so not a bit leap.",
+      "parentUuid": "ec5fddf5_620a8139",
+      "range": {
+        "startLine": 145,
+        "startChar": 0,
+        "endLine": 145,
+        "endChar": 1
+      },
+      "revId": "366fb08bf880516d5812042d748ac0635867f59a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "19d1da3b_f8260472",
         "filename": "tools/fs_config/fs_config_generate.c",
         "patchSetId": 2
