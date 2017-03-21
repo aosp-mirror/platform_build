@@ -52,17 +52,22 @@ endef
 #$(warning $(call find_and_earlier,A B C,D))
 
 define version-list
-$(1) $(1)DR1 $(1)DR2 $(1)MR1 $(1)MR2
+$(1)PR1 $(1)PD1 $(1)PD2 $(1)PM1 $(1)PM2
 endef
 
 ALL_VERSIONS := O P
 ALL_VERSIONS := $(foreach v,$(ALL_VERSIONS),$(call version-list,$(v)))
 
+# HACK: forward P to PPR1 until the build server config is updated
+ifeq (P,$(TARGET_PLATFORM_VERSION))
+  TARGET_PLATFORM_VERSION := PPR1
+endif
+
 ifeq (,$(TARGET_PLATFORM_VERSION))
   # Default targeted platform version
   # TODO: PLATFORM_VERSION, PLATFORM_SDK_VERSION, etc. should be conditional
   # on this
-  TARGET_PLATFORM_VERSION := O
+  TARGET_PLATFORM_VERSION := OPR1
 endif
 
 ifeq (,$(filter $(ALL_VERSIONS), $(TARGET_PLATFORM_VERSION)))
@@ -82,11 +87,11 @@ $(foreach v,$(ENABLED_VERSIONS), \
 # which is the version that we reveal to the end user.
 # Update this value when the platform version changes (rather
 # than overriding it somewhere else).  Can be an arbitrary string.
-PLATFORM_VERSION.O := O
+PLATFORM_VERSION.OPR1 := O
 
 # This is the current development code-name, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.O := O
+PLATFORM_VERSION_CODENAME.OPR1 := O
 
 ifndef PLATFORM_VERSION
   PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
