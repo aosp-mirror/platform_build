@@ -119,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "60816870_17419e34",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-21T21:09:10Z",
+      "side": 1,
+      "message": "At some point we\u0027re going to need to know which outputs we\u0027re installed into which partitions anyways (and we may not care about some partitions if we\u0027re not going to build them. So hardcoded partitions seems relatively simple.\n\nWhat\u0027s the priority for?",
+      "parentUuid": "9ebddae7_6d935321",
+      "range": {
+        "startLine": 128,
+        "startChar": 6,
+        "endLine": 128,
+        "endChar": 10
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "745370da_859f486e",
         "filename": "tools/fs_config/fs_config_generate.c",
         "patchSetId": 1
