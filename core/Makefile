@@ -2161,7 +2161,7 @@ endif
 	@# Zip everything up, preserving symlinks and placing META/ files first to
 	@# help early validation of the .zip file while uploading it.
 	$(hide) find $(zip_root)/META | sort >$@.list
-	$(hide) find $(zip_root) | grep -v "^$(zip_root)/META/" | sort >>$@.list
+	$(hide) find $(zip_root) -path $(zip_root)/META -prune -o -print | sort >>$@.list
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(zip_root) -l $@.list
 
 .PHONY: target-files-package
