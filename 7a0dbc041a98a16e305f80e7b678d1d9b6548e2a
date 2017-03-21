@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "745370da_859f486e",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-21T17:15:59Z",
+      "side": 1,
+      "message": "double newline here to give whitespace between description and usage.",
+      "range": {
+        "startLine": 58,
+        "startChar": 47,
+        "endLine": 58,
+        "endChar": 48
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a3077789_a896355f",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-21T17:15:59Z",
+      "side": 1,
+      "message": "if we were more concerned about runtime this would be performed on initialization into an array.",
+      "range": {
+        "startLine": 169,
+        "startChar": 13,
+        "endLine": 169,
+        "endChar": 43
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
