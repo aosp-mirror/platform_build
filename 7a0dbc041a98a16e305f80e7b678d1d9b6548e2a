@@ -95,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "9ebddae7_6d935321",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-21T21:03:37Z",
+      "side": 1,
+      "message": "Agreed, the order for consistent and expected results should be system, vendor and oem.\n\nI want to reduce the number of places where I put this priority and hard-coded list. I can fix this by making the tool report \u003cbasename\u003e.\u003cpriority\u003e.\u003cpartition\u003e. If I do so, then I run into a problem of when I create the per-partition products eg:\n\ninclude $(CLEAR_VARS)\nLOCAL_MODULE :\u003d fs_config_dirs.system\nLOCAL_MODULE_CLASS :\u003d ETC\ninclude $(BUILD_SYSTEM)/base_rules.mk\n$(LOCAL_BUILD_MODULE): fs_config_dirs\n    @mkdir -p $(dir $@)\n    @cp \u003cmumble\u003e/fs_config_dirs.1.system $@\n\nSimilar problem if I use \u003cpriority\u003e-\u003cbasename\u003e.\u003cpartition\u003e\n\nWhat do you suggest to make a nicer set of per-partition etc targets?",
+      "parentUuid": "560510b0_55fc4ebb",
+      "range": {
+        "startLine": 128,
+        "startChar": 6,
+        "endLine": 128,
+        "endChar": 10
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "745370da_859f486e",
         "filename": "tools/fs_config/fs_config_generate.c",
         "patchSetId": 1
