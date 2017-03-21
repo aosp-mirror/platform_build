@@ -22,6 +22,29 @@
       "revId": "366fb08bf880516d5812042d748ac0635867f59a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "19d1da3b_f8260472",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1004277
+      },
+      "writtenOn": "2017-03-21T21:45:42Z",
+      "side": 1,
+      "message": "Consider using basename(3)",
+      "range": {
+        "startLine": 136,
+        "startChar": 8,
+        "endLine": 136,
+        "endChar": 42
+      },
+      "revId": "366fb08bf880516d5812042d748ac0635867f59a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
