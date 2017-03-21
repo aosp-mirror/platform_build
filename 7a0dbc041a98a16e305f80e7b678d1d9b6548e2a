@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "560510b0_55fc4ebb",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-21T20:25:56Z",
+      "side": 1,
+      "message": "This may produce inconsistent results if the file ordering is different. We\u0027d also want to remove all $@.* modules before running the command so that no files are left over from last time.",
+      "range": {
+        "startLine": 128,
+        "startChar": 6,
+        "endLine": 128,
+        "endChar": 10
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "745370da_859f486e",
         "filename": "tools/fs_config/fs_config_generate.c",
         "patchSetId": 1
