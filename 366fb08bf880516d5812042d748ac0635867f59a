@@ -68,6 +68,30 @@
       "revId": "366fb08bf880516d5812042d748ac0635867f59a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0f6f410b_90a16ae1",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-21T21:56:48Z",
+      "side": 1,
+      "message": "Can not because basename (and dirname) modify the supplied contents, we have to make a copy for them to work on.\n\nUsing basename and dirname on copies that are subsequently freed might look easier to maintain, but are more error prone (forget to free on error etc) IMHO.\n\nI have flipped this coin before, and I have lost every time someone had no idea what strrchr did ... ;-/",
+      "parentUuid": "19d1da3b_f8260472",
+      "range": {
+        "startLine": 136,
+        "startChar": 8,
+        "endLine": 136,
+        "endChar": 42
+      },
+      "revId": "366fb08bf880516d5812042d748ac0635867f59a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
