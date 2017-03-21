@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "f3c2fc3b_ea169dbc",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-21T20:50:21Z",
+      "side": 1,
+      "message": "And once you do want to install these separately, since make doesn\u0027t support one tool having multiple outputs, you\u0027re probably going to want to specify which partition you want the tool to output, and run the tool three times.",
+      "parentUuid": "560510b0_55fc4ebb",
+      "range": {
+        "startLine": 128,
+        "startChar": 6,
+        "endLine": 128,
+        "endChar": 10
+      },
+      "revId": "7a0dbc041a98a16e305f80e7b678d1d9b6548e2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "745370da_859f486e",
         "filename": "tools/fs_config/fs_config_generate.c",
         "patchSetId": 1
