@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45c10225_e0244f7c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-21T19:57:28Z",
+      "side": 1,
+      "message": "Can you update the commit message with the new method?",
+      "revId": "f4f510c8a71bce5c251cf9e5a6fa4bcb6dfcbd5a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
