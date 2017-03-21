@@ -34,6 +34,23 @@
       "revId": "ac4926952d06e59212a6db1883edc2e40c6476ed",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8b7f876_06fd21c9",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2163,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-03-21T17:53:11Z",
+      "side": 1,
+      "message": "Do we care about the possibility of there being a file in META whose name starts with a dot (which isn\u0027t generally matched by a \"*\")?\n\nYou could simultaneously address that problem and also keep \"$(zip_root)/META/\" into the upper section by removing the \"/*\" on this line and then on the line below replacing\n`find $(zip_root) | grep \"^$(zip_root)/META/\"`\nwith\n`find $(zip_root) -path $(zip_root)/META -prune -o -print`\n(assuming that this implementation of \u0027find\u0027 supports the usual \u0027find\u0027 arguments)",
+      "revId": "ac4926952d06e59212a6db1883edc2e40c6476ed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
