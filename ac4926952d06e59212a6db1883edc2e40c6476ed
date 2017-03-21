@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "981008f6_6afd3105",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-03-21T19:51:59Z",
+      "side": 1,
+      "message": "Thanks Dan. I have compared old and new zip files list and the META file only got copied by once.",
+      "parentUuid": "f5ba9a62_464704ca",
+      "revId": "ac4926952d06e59212a6db1883edc2e40c6476ed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b8b7f876_06fd21c9",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -51,6 +69,24 @@
       "revId": "ac4926952d06e59212a6db1883edc2e40c6476ed",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8074a4e_7728a65a",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2163,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-03-21T19:51:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b8b7f876_06fd21c9",
+      "revId": "ac4926952d06e59212a6db1883edc2e40c6476ed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
