@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8aab3cd1_a2ac78e3",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-03-22T23:48:40Z",
+      "side": 1,
+      "message": "nit, two lines",
+      "range": {
+        "startLine": 29,
+        "startChar": 10,
+        "endLine": 29,
+        "endChar": 17
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4a8e0c4_9c813f9a",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-03-22T23:48:40Z",
+      "side": 1,
+      "message": "is this necessary? Can you import a module instead? :(",
+      "range": {
+        "startLine": 38,
+        "startChar": 19,
+        "endLine": 38,
+        "endChar": 22
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0972a7ef_4c0592c9",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-03-22T23:48:40Z",
+      "side": 1,
+      "message": "This should be set to something like BUILD_TEST_EXECUTABLE. That\u0027s not right. Dan will know. Same above.",
+      "range": {
+        "startLine": 58,
+        "startChar": 10,
+        "endLine": 58,
+        "endChar": 31
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
