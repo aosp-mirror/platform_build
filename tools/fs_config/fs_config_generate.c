@@ -28,7 +28,11 @@
  * the binary format used in the /system/etc/fs_config_dirs and
  * the /system/etc/fs_config_files to be used by the runtimes.
  */
+#ifdef ANDROID_FILESYSTEM_CONFIG
+#include ANDROID_FILESYSTEM_CONFIG
+#else
 #include "android_filesystem_config.h"
+#endif
 
 #ifdef NO_ANDROID_FILESYSTEM_CONFIG_DEVICE_DIRS
   static const struct fs_path_config android_device_dirs[] = {
