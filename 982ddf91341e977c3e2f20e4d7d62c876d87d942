@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58b5ec7c_6340d558",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 4
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1004277
+      },
+      "writtenOn": "2017-03-22T20:31:53Z",
+      "side": 1,
+      "message": "partition\u0027s",
+      "range": {
+        "startLine": 161,
+        "startChar": 16,
+        "endLine": 161,
+        "endChar": 26
+      },
+      "revId": "982ddf91341e977c3e2f20e4d7d62c876d87d942",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eb5fe9f0_23489481",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 4
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1004277
+      },
+      "writtenOn": "2017-03-22T20:31:53Z",
+      "side": 1,
+      "message": "deal with arg \u003d\u003d NULL",
+      "range": {
+        "startLine": 150,
+        "startChar": 12,
+        "endLine": 150,
+        "endChar": 25
+      },
+      "revId": "982ddf91341e977c3e2f20e4d7d62c876d87d942",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
