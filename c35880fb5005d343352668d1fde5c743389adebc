@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ac4ae6c_2a4eb64f",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 1
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-03-22T23:46:00Z",
+      "side": 1,
+      "message": "nit: s/\\.  /\\. /g to matchup with the rest of the file",
+      "revId": "c35880fb5005d343352668d1fde5c743389adebc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
