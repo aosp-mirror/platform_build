@@ -117,6 +117,30 @@
       "revId": "6a3e15032b76b3e1bce276721063555f9c918ac3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ca59b32_92121da3",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-22T17:57:28Z",
+      "side": 1,
+      "message": "Since this program is not about performance, and educated shortcuts like this have already created doubt in your mind, I can wrap strtok_r loop with if (arg) while (!!arg \u003d strtok_r....) to get the same desired effect.\n\nIt is on purpose ambiguous (sadly). First call, they mean str !\u003d NULL. saveptr is _not_ ignored if str \u003d\u003d NULL, so it better have a \"safe\" value.\n\nIn the 80\u0027s saveptr was to be initialized to str, POSIX.1-2001 removed the requirement because it caused user confusion and could result in implementations that assume this initialization.\n\nProper use (as taught in the \u002780s) of strtok_r to be known safe is saveptr to be initialized to either NULL, or to str, leaving it uninitialized is bad programming practice. Initializing it is also secure programming practice. I prefer NULL because it is the universal indication in all implementations since epoch of no more tokens (I implemented strtok_r for SVr3 in \u002781, and I kind of have watched ever since whenever I see it reimplemented from time to time).",
+      "parentUuid": "8aa8aede_b68c4c37",
+      "range": {
+        "startLine": 144,
+        "startChar": 12,
+        "endLine": 144,
+        "endChar": 27
+      },
+      "revId": "6a3e15032b76b3e1bce276721063555f9c918ac3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
