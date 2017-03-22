@@ -1235,6 +1235,8 @@ def main(argv):
       OPTIONS.payload_signer = a
     elif o == "--payload_signer_args":
       OPTIONS.payload_signer_args = shlex.split(a)
+    elif o == "--extracted_input_target_files":
+      OPTIONS.extracted_input = a
     else:
       return False
     return True
@@ -1265,6 +1267,7 @@ def main(argv):
                                  "log_diff=",
                                  "payload_signer=",
                                  "payload_signer_args=",
+                                 "extracted_input_target_files=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -1287,9 +1290,12 @@ def main(argv):
 
   # Load the dict file from the zip directly to have a peek at the OTA type.
   # For packages using A/B update, unzipping is not needed.
-  input_zip = zipfile.ZipFile(args[0], "r")
-  OPTIONS.info_dict = common.LoadInfoDict(input_zip)
-  common.ZipClose(input_zip)
+  if OPTIONS.extracted_input is not None:
+    OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.extracted_input, OPTIONS.extracted_input)
+  else:
+    input_zip = zipfile.ZipFile(args[0], "r")
+    OPTIONS.info_dict = common.LoadInfoDict(input_zip)
+    common.ZipClose(input_zip)
 
   ab_update = OPTIONS.info_dict.get("ab_update") == "true"
 
@@ -1319,12 +1325,18 @@ def main(argv):
   if OPTIONS.extra_script is not None:
     OPTIONS.extra_script = open(OPTIONS.extra_script).read()
 
-  print("unzipping target target-files...")
-  OPTIONS.input_tmp, input_zip = common.UnzipTemp(
-      args[0], UNZIP_PATTERN)
+  if OPTIONS.extracted_input is not None:
+    OPTIONS.input_tmp = OPTIONS.extracted_input
+    OPTIONS.target_tmp = OPTIONS.input_tmp
+    OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.input_tmp, OPTIONS.input_tmp)
+    input_zip = zipfile.ZipFile(args[0], "r")
+  else:
+    print("unzipping target target-files...")
+    OPTIONS.input_tmp, input_zip = common.UnzipTemp(
+        args[0], UNZIP_PATTERN)
 
-  OPTIONS.target_tmp = OPTIONS.input_tmp
-  OPTIONS.info_dict = common.LoadInfoDict(input_zip, OPTIONS.target_tmp)
+    OPTIONS.target_tmp = OPTIONS.input_tmp
+    OPTIONS.info_dict = common.LoadInfoDict(input_zip, OPTIONS.target_tmp)
 
   if OPTIONS.verbose:
     print("--- target info ---")
