@@ -47,8 +47,6 @@ TARGET_COPY_OUT_VENDOR := vendor
 # Generic AOSP image does NOT support HWC1
 TARGET_USES_HWC2 := true
 
-BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
-
 # TODO(jiyong): Remove these two. These are required in order to remove
 # board-specific sysprops from system.img. This should be replaced with
 # a more meaningful build flags such as BOARD_SYSPROP_SPLIT.
