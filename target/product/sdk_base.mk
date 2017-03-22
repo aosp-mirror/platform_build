@@ -47,6 +47,7 @@ PRODUCT_PACKAGES := \
 	sqlite3 \
 	SystemUI \
 	EasterEgg \
+	WallpaperPicker \
 	WidgetPreview
 
 # Define the host tools and libs that are parts of the SDK.
