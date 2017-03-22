@@ -93,6 +93,30 @@
       "revId": "6a3e15032b76b3e1bce276721063555f9c918ac3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8aa8aede_b68c4c37",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1004277
+      },
+      "writtenOn": "2017-03-22T16:49:24Z",
+      "side": 1,
+      "message": "\"On the first call to strtok_r(), str should point to the string to be parsed, and the value of saveptr is  ignored.  In subsequent calls, str should be NULL, and saveptr should be unchanged since the previous call.\"\n\nOK if that\u0027s known safe, it seems a bit ambiguous to me.",
+      "parentUuid": "84f16b12_d704ab90",
+      "range": {
+        "startLine": 144,
+        "startChar": 12,
+        "endLine": 144,
+        "endChar": 27
+      },
+      "revId": "6a3e15032b76b3e1bce276721063555f9c918ac3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
