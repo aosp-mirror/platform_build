@@ -156,9 +156,28 @@ properties are preserved during runtime operations. The host files in the
 ${OUT} directory are used in the final stages when building the filesystem
 images to set the file and directory properties.
 
+For systems with separate partition images, such as vendor or oem,
+fs_config_generate can be instructed to filter the specific file references
+to land in each partition's etc/fs_config_dirs or etc/fs_config_files
+locations. The filter can be instructed to blacklist a partition's data by
+providing the comma separated minus sign prefixed partition names. The filter
+can be instructed to whitelist partition data by providing the partition name.
+
+For example:
+- For system.img, but not vendor, oem or odm file references:
+      -P -vendor,-oem,-odm
+  This makes sure the results only contain content associated with the
+  system, and not vendor, oem or odm, blacklisting their content.
+- For vendor.img file references: -P vendor
+- For oem.img file references: -P oem
+- For odm.img file references: -P odm
+
 fs_config_generate --help reports:
 
 Generate binary content for fs_config_dirs (-D) and fs_config_files (-F)
-from device-specific android_filesystem_config.h override
+from device-specific android_filesystem_config.h override. Filter based
+on a comma separated partition list (-P) whitelist or prefixed by a
+minus blacklist. Partitions are identified as path references to
+<partition>/ or system/<partition>
 
-Usage: fs_config_generate -D|-F [-o output-file]
+Usage: fs_config_generate -D|-F [-P list] [-o output-file]
