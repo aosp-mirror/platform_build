@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "76a0f6ae_a6ea985f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1239,
+      "author": {
+        "id": 1018026
+      },
+      "writtenOn": "2017-03-22T14:11:58Z",
+      "side": 1,
+      "message": "Should this be defined in common.py ?",
+      "range": {
+        "startLine": 1239,
+        "startChar": 14,
+        "endLine": 1239,
+        "endChar": 29
+      },
+      "revId": "cea5cd210e5c0251025e5125215fa1fab1d18dfb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
