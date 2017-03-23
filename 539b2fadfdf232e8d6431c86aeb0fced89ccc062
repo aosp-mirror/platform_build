@@ -48,6 +48,168 @@
     },
     {
       "key": {
+        "uuid": "6111d76d_ccad1ffd",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T01:03:19Z",
+      "side": 1,
+      "message": "Yeah, please don\u0027t do this. If you want to build fs_config_generate.c, this modules should be up a directory.",
+      "parentUuid": "b4a8e0c4_9c813f9a",
+      "range": {
+        "startLine": 38,
+        "startChar": 19,
+        "endLine": 38,
+        "endChar": 22
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7a5a77f_5b673455",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T01:03:19Z",
+      "side": 1,
+      "message": "Remove this",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 33
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c3257875_738a6c8b",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T01:03:19Z",
+      "side": 1,
+      "message": "Is this actually a test, or just a host version of the binary? If you consider this just a test make this install into the tests directory alongside the binary below, then just use the binary from the same directory:\n\n  LOCAL_MODULE :\u003d fs_config_generate_test\n  ...\n  LOCAL_MODULE_RELATIVE_PATH :\u003d fs_config\n  LOCAL_GTEST :\u003d false\n  include $(BUILD_HOST_NATIVE_TEST)\n\n  ...\n  LOCAL_MODULE :\u003d fs_config-unit-tests\n  ...\n  LOCAL_MODULE_RELATIVE_PATH :\u003d fs_config\n  LOCAL_REQUIRED_MODULE :\u003d fs_config_generate_test\n  include $(BUILD_HOST_NATIVE_TEST)\n\nThen they\u0027ll both be installed to:\n\n  out/host/linux-x86/nativetest[64]/fs_config/fs_config_generate_test\n  out/host/linux-x86/nativetest[64]/fs_config/fs_config-unit-tests\n\nAnd you can execute the other binary next to the current binary.",
+      "range": {
+        "startLine": 44,
+        "startChar": 8,
+        "endLine": 44,
+        "endChar": 32
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "654fc6e6_432cc1da",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T01:03:19Z",
+      "side": 1,
+      "message": "This is quite fragile, please don\u0027t use it.",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 56
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02093132_61439a9e",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T01:03:19Z",
+      "side": 1,
+      "message": "Remove this",
+      "range": {
+        "startLine": 50,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 33
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b7e62bd_b44c0822",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T01:03:19Z",
+      "side": 1,
+      "message": "Just use the binary in the same directory",
+      "range": {
+        "startLine": 53,
+        "startChar": 16,
+        "endLine": 53,
+        "endChar": 71
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bffef07c_0a5a5c40",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T01:03:19Z",
+      "side": 1,
+      "message": "Remove this",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 55,
+        "endChar": 58
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0972a7ef_4c0592c9",
         "filename": "tools/fs_config/tests/Android.mk",
         "patchSetId": 1
@@ -59,6 +221,30 @@
       "writtenOn": "2017-03-22T23:48:40Z",
       "side": 1,
       "message": "This should be set to something like BUILD_TEST_EXECUTABLE. That\u0027s not right. Dan will know. Same above.",
+      "range": {
+        "startLine": 58,
+        "startChar": 10,
+        "endLine": 58,
+        "endChar": 31
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9209cd94_71b37384",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T01:03:19Z",
+      "side": 1,
+      "message": "BUILD_HOST_NATIVE_TEST",
+      "parentUuid": "0972a7ef_4c0592c9",
       "range": {
         "startLine": 58,
         "startChar": 10,
