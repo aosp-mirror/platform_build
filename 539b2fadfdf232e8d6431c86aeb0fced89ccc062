@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "78b186f2_c9390bbf",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-23T17:18:36Z",
+      "side": 1,
+      "message": "This is necessary because #include \"android_filesystem_config.h\" includes the one in the test directory, but if we moved up one, then the _real_ fs_config_generate.c would include our test one rather than the supplied and generated one.\n\nEven if I could resolve that problem, I have grave concerns about the confusion surrounding android_filesystem_config.h ... moving to a subdirectly keeps us clean.\n\nWould a symbolic link to ../fs_config_generate.c be OK?",
+      "parentUuid": "b4a8e0c4_9c813f9a",
+      "range": {
+        "startLine": 38,
+        "startChar": 19,
+        "endLine": 38,
+        "endChar": 22
+      },
+      "revId": "539b2fadfdf232e8d6431c86aeb0fced89ccc062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c7a5a77f_5b673455",
         "filename": "tools/fs_config/tests/Android.mk",
         "patchSetId": 1
