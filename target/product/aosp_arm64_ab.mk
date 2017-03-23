@@ -40,6 +40,9 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGE_OVERLAYS := \
     device/google/marlin/overlay
 
+#split selinux policy
+PRODUCT_FULL_TREBLE_OVERRIDE := true
+
 # Some of HAL interface libraries are automatically added by the dependencies from
 # the framework. However, we list them all here to make it explicit and prevent
 # possible mistake.
