@@ -22,6 +22,144 @@
       "revId": "53f939209aef4318b2603646cb594f0d20540527",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ce6ae9d_823e4d29",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-23T22:32:30Z",
+      "side": 1,
+      "message": "Should be TARGET_OUT_VENDOR",
+      "range": {
+        "startLine": 175,
+        "startChar": 23,
+        "endLine": 175,
+        "endChar": 41
+      },
+      "revId": "53f939209aef4318b2603646cb594f0d20540527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8eccda1e_db42e1d7",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-23T22:32:30Z",
+      "side": 1,
+      "message": "TARGET_OUT_VENDOR",
+      "range": {
+        "startLine": 189,
+        "startChar": 23,
+        "endLine": 189,
+        "endChar": 41
+      },
+      "revId": "53f939209aef4318b2603646cb594f0d20540527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ea55396_da33afc5",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-23T22:32:30Z",
+      "side": 1,
+      "message": "TARGET_OUT_OEM",
+      "range": {
+        "startLine": 203,
+        "startChar": 23,
+        "endLine": 203,
+        "endChar": 38
+      },
+      "revId": "53f939209aef4318b2603646cb594f0d20540527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "046e2ddc_070c4f43",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-23T22:32:30Z",
+      "side": 1,
+      "message": "TARGET_OUT_OEM",
+      "range": {
+        "startLine": 217,
+        "startChar": 23,
+        "endLine": 217,
+        "endChar": 38
+      },
+      "revId": "53f939209aef4318b2603646cb594f0d20540527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "24207bc1_270ca039",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-23T22:32:30Z",
+      "side": 1,
+      "message": "TARGET_OUT_ODM if set",
+      "range": {
+        "startLine": 231,
+        "startChar": 23,
+        "endLine": 231,
+        "endChar": 38
+      },
+      "revId": "53f939209aef4318b2603646cb594f0d20540527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "60bd9c38_6f13a495",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-23T22:32:30Z",
+      "side": 1,
+      "message": "TARGET_OUT_ODM if set?",
+      "range": {
+        "startLine": 245,
+        "startChar": 23,
+        "endLine": 245,
+        "endChar": 39
+      },
+      "revId": "53f939209aef4318b2603646cb594f0d20540527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
