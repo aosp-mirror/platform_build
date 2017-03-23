@@ -31,7 +31,7 @@ ifdef JAVAC_WRAPPER
 endif
 
 # Whatever compiler is on this system.
-COMMON_JAVAC := $(JAVACC) -J-Xmx1024M $(common_jdk_flags)
+COMMON_JAVAC := $(JAVACC) -J-Xmx2048M $(common_jdk_flags)
 
 # Eclipse.
 ifeq ($(CUSTOM_JAVA_COMPILER), eclipse)
