@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "706dc80c_02b23174",
+        "filename": "envsetup.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T02:15:03Z",
+      "side": 1,
+      "message": "should we bump this?",
+      "revId": "9d3545313a5440a2a81a19de702eb0dfb2abed1a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
