@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "127ca41e_a5f4226b",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T01:21:42Z",
+      "side": 1,
+      "message": "tab vs space",
+      "range": {
+        "startLine": 583,
+        "startChar": 0,
+        "endLine": 583,
+        "endChar": 1
+      },
+      "revId": "5ecb715fbab029b13944a9191e128f2cc7e8e86c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee76aeb9_21737e57",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T01:21:42Z",
+      "side": 1,
+      "message": "why? (and tab vs space)",
+      "range": {
+        "startLine": 602,
+        "startChar": 0,
+        "endLine": 602,
+        "endChar": 5
+      },
+      "revId": "5ecb715fbab029b13944a9191e128f2cc7e8e86c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2cdeadd9_0171f3e2",
+        "filename": "tests/envsetup_tests.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-23T01:21:42Z",
+      "side": 1,
+      "message": ":-/ is this actually necessary? Can we enable -u too, or does something break?",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 7
+      },
+      "revId": "5ecb715fbab029b13944a9191e128f2cc7e8e86c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
