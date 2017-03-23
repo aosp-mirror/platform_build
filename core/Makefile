@@ -1964,6 +1964,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(BUILD_IMAGE_SRCS) \
 		| $(ACP)
 	@echo "Package target files: $@"
+	$(call create-system-vendor-symlink)
 	$(hide) rm -rf $@ $@.list $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
 ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
