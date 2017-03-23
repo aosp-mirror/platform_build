@@ -1897,14 +1897,18 @@ $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_RECOVERY_FSTAB_VERSION := $(RECOVERY_FSTA
 
 ifeq ($(TARGET_RELEASETOOLS_EXTENSIONS),)
 # default to common dir for device vendor
-$(BUILT_TARGET_FILES_PACKAGE): tool_extensions := $(TARGET_DEVICE_DIR)/../common
+tool_extensions := $(TARGET_DEVICE_DIR)/../common
 else
-$(BUILT_TARGET_FILES_PACKAGE): tool_extensions := $(TARGET_RELEASETOOLS_EXTENSIONS)
+tool_extensions := $(TARGET_RELEASETOOLS_EXTENSIONS)
 endif
+tool_extension := $(wildcard $(tool_extensions)/releasetools.py)
+$(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSIONS := $(tool_extensions)
+$(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSION := $(tool_extension)
 
 ifeq ($(AB_OTA_UPDATER),true)
 # Build zlib fingerprint if using the AB Updater.
 updater_dep := $(TARGET_OUT_COMMON_GEN)/zlib_fingerprint
+updater_dep += system/update_engine/update_engine.conf
 else
 # Build OTA tools if not using the AB Updater.
 updater_dep := $(built_ota_tools)
@@ -1916,6 +1920,18 @@ ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
 $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_RECOVERY_OUT := BOOT
 else
 $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_RECOVERY_OUT := RECOVERY
+endif
+
+ifeq ($(AB_OTA_UPDATER),true)
+  ifdef BRILLO_VENDOR_PARTITIONS
+    $(BUILT_TARGET_FILES_PACKAGE): $(foreach p,$(BRILLO_VENDOR_PARTITIONS),\
+                                     $(call word-colon,1,$(p))/$(call word-colon,2,$(p)))
+  endif
+  ifdef OSRELEASED_DIRECTORY
+    $(BUILT_TARGET_FILES_PACKAGE): $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_id
+    $(BUILT_TARGET_FILES_PACKAGE): $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_version
+    $(BUILT_TARGET_FILES_PACKAGE): $(TARGET_OUT_ETC)/$(OSRELEASED_DIRECTORY)/system_version
+  endif
 endif
 
 # Run fs_config while creating the target files package
@@ -1931,17 +1947,21 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_RADIOIMAGE_TARGET) \
 		$(INSTALLED_RECOVERYIMAGE_TARGET) \
-		$(INSTALLED_SYSTEMIMAGE) \
+		$(FULL_SYSTEMIMAGE_DEPS) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_CACHEIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
-		$(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
+		$(INTERNAL_SYSTEMOTHERIMAGE_FILES) \
 		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
+		$(INSTALLED_KERNEL_TARGET) \
+		$(INSTALLED_2NDBOOTLOADER_TARGET) \
+		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_BASE_FS_PATH) \
+		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH) \
 		$(SELINUX_FC) \
 		$(APKCERTS_FILE) \
 		$(SOONG_ZIP) \
 		$(HOST_OUT_EXECUTABLES)/fs_config \
-		build/tools/releasetools/add_img_to_target_files \
+		$(BUILD_IMAGE_SRCS) \
 		| $(ACP)
 	@echo "Package target files: $@"
 	$(hide) rm -rf $@ $@.list $(zip_root)
@@ -1952,11 +1972,10 @@ ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_
 	$(hide) $(call package_files-copy-root, \
 		$(TARGET_RECOVERY_ROOT_OUT),$(zip_root)/$(PRIVATE_RECOVERY_OUT)/RAMDISK)
 ifdef INSTALLED_KERNEL_TARGET
-	$(hide) $(ACP) $(INSTALLED_KERNEL_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/kernel
+	$(hide) cp $(INSTALLED_KERNEL_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/kernel
 endif
 ifdef INSTALLED_2NDBOOTLOADER_TARGET
-	$(hide) $(ACP) \
-		$(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/second
+	$(hide) cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/second
 endif
 ifdef INTERNAL_KERNEL_CMDLINE
 	$(hide) echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/cmdline
@@ -1981,11 +2000,10 @@ endif
 	@# If we are using recovery as boot, this is already done when processing recovery.
 ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
 ifdef INSTALLED_KERNEL_TARGET
-	$(hide) $(ACP) $(INSTALLED_KERNEL_TARGET) $(zip_root)/BOOT/kernel
+	$(hide) cp $(INSTALLED_KERNEL_TARGET) $(zip_root)/BOOT/kernel
 endif
 ifdef INSTALLED_2NDBOOTLOADER_TARGET
-	$(hide) $(ACP) \
-		$(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/BOOT/second
+	$(hide) cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/BOOT/second
 endif
 ifdef INTERNAL_KERNEL_CMDLINE
 	$(hide) echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/BOOT/cmdline
@@ -1999,7 +2017,7 @@ endif
 endif # BOARD_USES_RECOVERY_AS_BOOT
 	$(hide) $(foreach t,$(INSTALLED_RADIOIMAGE_TARGET),\
 	            mkdir -p $(zip_root)/RADIO; \
-	            $(ACP) $(t) $(zip_root)/RADIO/$(notdir $(t));)
+	            cp $(t) $(zip_root)/RADIO/$(notdir $(t));)
 	@# Contents of the system image
 	$(hide) $(call package_files-copy-root, \
 		$(SYSTEMIMAGE_SOURCE_DIR),$(zip_root)/SYSTEM)
@@ -2018,20 +2036,22 @@ ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 endif
 	@# Extra contents of the OTA package
 	$(hide) mkdir -p $(zip_root)/OTA
-	$(hide) $(ACP) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(zip_root)/OTA/
+	$(hide) cp $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(zip_root)/OTA/
 ifneq ($(AB_OTA_UPDATER),true)
 ifneq ($(built_ota_tools),)
 	$(hide) mkdir -p $(zip_root)/OTA/bin
-	$(hide) $(ACP) $(PRIVATE_OTA_TOOLS) $(zip_root)/OTA/bin/
+	$(hide) cp $(PRIVATE_OTA_TOOLS) $(zip_root)/OTA/bin/
 endif
 endif
 	@# Files that do not end up in any images, but are necessary to
 	@# build them.
 	$(hide) mkdir -p $(zip_root)/META
-	$(hide) $(ACP) $(APKCERTS_FILE) $(zip_root)/META/apkcerts.txt
-	$(hide) if test -e $(tool_extensions)/releasetools.py; then $(ACP) $(tool_extensions)/releasetools.py $(zip_root)/META/; fi
+	$(hide) cp $(APKCERTS_FILE) $(zip_root)/META/apkcerts.txt
+ifneq ($(tool_extension),)
+	$(hide) cp $(PRIVATE_TOOL_EXTENSION) $(zip_root)/META/
+endif
 	$(hide) echo "$(PRODUCT_OTA_PUBLIC_KEYS)" > $(zip_root)/META/otakeys.txt
-	$(hide) $(ACP) $(SELINUX_FC) $(zip_root)/META/file_contexts.bin
+	$(hide) cp $(SELINUX_FC) $(zip_root)/META/file_contexts.bin
 	$(hide) echo "recovery_api_version=$(PRIVATE_RECOVERY_API_VERSION)" > $(zip_root)/META/misc_info.txt
 	$(hide) echo "fstab_version=$(PRIVATE_RECOVERY_FSTAB_VERSION)" >> $(zip_root)/META/misc_info.txt
 ifdef BOARD_FLASH_BLOCK_SIZE
@@ -2058,7 +2078,7 @@ ifdef TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS
 else
 	$(hide) echo "recovery_mount_options=$(DEFAULT_TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS)" >> $(zip_root)/META/misc_info.txt
 endif
-	$(hide) echo "tool_extensions=$(tool_extensions)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "tool_extensions=$(PRIVATE_TOOL_EXTENSIONS)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "default_system_dev_certificate=$(DEFAULT_SYSTEM_DEV_CERTIFICATE)" >> $(zip_root)/META/misc_info.txt
 ifdef PRODUCT_EXTRA_RECOVERY_KEYS
 	$(hide) echo "extra_recovery_keys=$(PRODUCT_EXTRA_RECOVERY_KEYS)" >> $(zip_root)/META/misc_info.txt
@@ -2072,11 +2092,11 @@ ifneq ($(OEM_THUMBPRINT_PROPERTIES),)
 	$(hide) echo "oem_fingerprint_properties=$(OEM_THUMBPRINT_PROPERTIES)" >> $(zip_root)/META/misc_info.txt
 endif
 ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_BASE_FS_PATH),)
-	$(hide) $(ACP) $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_BASE_FS_PATH) \
+	$(hide) cp $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_BASE_FS_PATH) \
 	  $(zip_root)/META/$(notdir $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_BASE_FS_PATH))
 endif
 ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH),)
-	$(hide) $(ACP) $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH) \
+	$(hide) cp $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH) \
 	  $(zip_root)/META/$(notdir $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH))
 endif
 ifneq ($(strip $(SANITIZE_TARGET)),)
@@ -2110,8 +2130,8 @@ ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 endif
 ifeq ($(AB_OTA_UPDATER),true)
 	@# When using the A/B updater, include the updater config files in the zip.
-	$(hide) $(ACP) $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
-	$(hide) $(ACP) $(TARGET_OUT_COMMON_GEN)/zlib_fingerprint $(zip_root)/META/zlib_fingerprint.txt
+	$(hide) cp $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
+	$(hide) cp $(TARGET_OUT_COMMON_GEN)/zlib_fingerprint $(zip_root)/META/zlib_fingerprint.txt
 	$(hide) for part in $(AB_OTA_PARTITIONS); do \
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
@@ -2129,13 +2149,13 @@ ifdef BRILLO_VENDOR_PARTITIONS
 	  src=$${pair1}/$${pair2}; \
 	  dest=$(zip_root)/VENDOR_IMAGES/$${pair2}; \
 	  mkdir -p $$(dirname "$${dest}"); \
-	  $(ACP) $${src} $${dest}; \
+	  cp $${src} $${dest}; \
 	done;
 endif
 ifdef OSRELEASED_DIRECTORY
-	$(hide) $(ACP) $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_id $(zip_root)/META/product_id.txt
-	$(hide) $(ACP) $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_version $(zip_root)/META/product_version.txt
-	$(hide) $(ACP) $(TARGET_OUT_ETC)/$(OSRELEASED_DIRECTORY)/system_version $(zip_root)/META/system_version.txt
+	$(hide) cp $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_id $(zip_root)/META/product_id.txt
+	$(hide) cp $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_version $(zip_root)/META/product_version.txt
+	$(hide) cp $(TARGET_OUT_ETC)/$(OSRELEASED_DIRECTORY)/system_version $(zip_root)/META/system_version.txt
 endif
 endif
 ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
