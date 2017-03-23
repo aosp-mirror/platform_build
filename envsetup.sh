@@ -28,9 +28,9 @@ Environment options:
 
 Look at the source to view more functions. The complete list is:
 EOF
-    T=$(gettop)
-    local A
-    A=""
+    local T=$(gettop)
+    local A=""
+    local i
     for i in `cat $T/build/envsetup.sh | sed -n "/^[[:blank:]]*function /s/function \([a-z_]*\).*/\1/p" | sort | uniq`; do
       A="$A $i"
     done
@@ -40,7 +40,7 @@ EOF
 # Get all the build variables needed by this script in a single call to the build system.
 function build_build_var_cache()
 {
-    T=$(gettop)
+    local T=$(gettop)
     # Grep out the variable names from the script.
     cached_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
     cached_abs_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_abs_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
@@ -74,6 +74,7 @@ function build_build_var_cache()
 function destroy_build_var_cache()
 {
     unset BUILD_VAR_CACHE_READY
+    local v
     for v in $cached_vars; do
       unset var_cache_$v
     done
@@ -93,7 +94,7 @@ function get_abs_build_var()
     return
     fi
 
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
@@ -111,7 +112,7 @@ function get_build_var()
     return
     fi
 
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
@@ -123,7 +124,7 @@ function get_build_var()
 # check to see if the supplied product is one we can build
 function check_product()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
@@ -141,6 +142,7 @@ VARIANT_CHOICES=(user userdebug eng)
 # check to see if the supplied variant is valid
 function check_variant()
 {
+    local v
     for v in ${VARIANT_CHOICES[@]}
     do
         if [ "$v" = "$1" ]
@@ -153,7 +155,7 @@ function check_variant()
 
 function setpaths()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return
@@ -184,18 +186,19 @@ function setpaths()
     fi
 
     # and in with the new
-    prebuiltdir=$(getprebuilt)
-    gccprebuiltdir=$(get_abs_build_var ANDROID_GCC_PREBUILTS)
+    local prebuiltdir=$(getprebuilt)
+    local gccprebuiltdir=$(get_abs_build_var ANDROID_GCC_PREBUILTS)
 
     # defined in core/config.mk
-    targetgccversion=$(get_build_var TARGET_GCC_VERSION)
-    targetgccversion2=$(get_build_var 2ND_TARGET_GCC_VERSION)
+    local targetgccversion=$(get_build_var TARGET_GCC_VERSION)
+    local targetgccversion2=$(get_build_var 2ND_TARGET_GCC_VERSION)
     export TARGET_GCC_VERSION=$targetgccversion
 
     # The gcc toolchain does not exists for windows/cygwin. In this case, do not reference it.
     export ANDROID_TOOLCHAIN=
     export ANDROID_TOOLCHAIN_2ND_ARCH=
     local ARCH=$(get_build_var TARGET_ARCH)
+    local toolchaindir toolchaindir2=
     case $ARCH in
         x86) toolchaindir=x86/x86_64-linux-android-$targetgccversion/bin
             ;;
@@ -217,7 +220,7 @@ function setpaths()
         export ANDROID_TOOLCHAIN=$gccprebuiltdir/$toolchaindir
     fi
 
-    if [ -d "$gccprebuiltdir/$toolchaindir2" ]; then
+    if [ "$toolchaindir2" -a -d "$gccprebuiltdir/$toolchaindir2" ]; then
         export ANDROID_TOOLCHAIN_2ND_ARCH=$gccprebuiltdir/$toolchaindir2
     fi
 
@@ -273,7 +276,7 @@ function setpaths()
 
 function printconfig()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
@@ -399,6 +402,7 @@ function choosetype()
 #
 function chooseproduct()
 {
+    local default_value
     if [ "x$TARGET_PRODUCT" != x ] ; then
         default_value=$TARGET_PRODUCT
     else
@@ -702,7 +706,7 @@ function gettop
             PWD= /bin/pwd
         else
             local HERE=$PWD
-            T=
+            local T=
             while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
                 \cd ..
                 T=`PWD= /bin/pwd -P`
@@ -750,9 +754,9 @@ function m()
 
 function findmakefile()
 {
-    TOPFILE=build/core/envsetup.mk
+    local TOPFILE=build/core/envsetup.mk
     local HERE=$PWD
-    T=
+    local T=
     while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
         T=`PWD= /bin/pwd`
         if [ -f "$T/Android.mk" -o -f "$T/Android.bp" ]; then
@@ -788,6 +792,7 @@ function mm()
             echo "Couldn't locate a makefile from the current directory."
             return 1
         else
+            local ARG
             for ARG in $@; do
                 case $ARG in
                   GET-INSTALL-PATH) GET_INSTALL_PATH=$ARG;;
@@ -945,7 +950,7 @@ function mmma()
 
 function croot()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ "$T" ]; then
         if [ "$1" ]; then
             \cd $(gettop)/$1
@@ -959,9 +964,9 @@ function croot()
 
 function cproj()
 {
-    TOPFILE=build/core/envsetup.mk
+    local TOPFILE=build/core/envsetup.mk
     local HERE=$PWD
-    T=
+    local T=
     while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
         T=$PWD
         if [ -f "$T/Android.mk" ]; then
@@ -1212,6 +1217,7 @@ function cgrep()
 
 function resgrep()
 {
+    local dir
     for dir in `find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -name res -type d`; do
         find $dir -type f -name '*\.xml' -exec grep --color -n "$@" {} +
     done
@@ -1273,7 +1279,7 @@ function getprebuilt
 
 function tracedmdump()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return
@@ -1450,7 +1456,7 @@ function smoketest()
         echo "Couldn't locate output files.  Try running 'lunch' first." >&2
         return
     fi
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
@@ -1467,7 +1473,7 @@ function smoketest()
 # simple shortcut to the runtest command
 function runtest()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
@@ -1480,7 +1486,8 @@ function godir () {
         echo "Usage: godir <regex>"
         return
     fi
-    T=$(gettop)
+    local T=$(gettop)
+    local FILELIST
     if [ ! "$OUT_DIR" = "" ]; then
         mkdir -p $OUT_DIR
         FILELIST=$OUT_DIR/filelist
