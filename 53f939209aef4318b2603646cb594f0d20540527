@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1cd89f1f_dcf63346",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-23T18:18:18Z",
+      "side": 1,
+      "message": "This is really system/vendor/etc, or do we want to land in vendor/etc?",
+      "range": {
+        "startLine": 175,
+        "startChar": 0,
+        "endLine": 175,
+        "endChar": 45
+      },
+      "revId": "53f939209aef4318b2603646cb594f0d20540527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
