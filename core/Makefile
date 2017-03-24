@@ -1955,6 +1955,8 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(APKCERTS_FILE) \
 		$(SOONG_ZIP) \
 		$(HOST_OUT_EXECUTABLES)/fs_config \
+		$(HOST_OUT_EXECUTABLES)/imgdiff \
+		$(HOST_OUT_EXECUTABLES)/bsdiff \
 		$(BUILD_IMAGE_SRCS) \
 		| $(ACP)
 	@echo "Package target files: $@"
