@@ -41,14 +41,14 @@ class BlockImageDiffTest(unittest.TestCase):
     block_image_diff = BlockImageDiff(tgt, src)
 
     transfers = block_image_diff.transfers
-    t0 = Transfer(
-        "t1", "t1", RangeSet("10-15"), RangeSet("0-5"), "move", transfers)
-    t1 = Transfer(
-        "t2", "t2", RangeSet("20-25"), RangeSet("0-7"), "move", transfers)
-    t2 = Transfer(
-        "t3", "t3", RangeSet("30-35"), RangeSet("0-4"), "move", transfers)
-    t3 = Transfer(
-        "t4", "t4", RangeSet("0-10"), RangeSet("40-50"), "move", transfers)
+    t0 = Transfer("t1", "t1", RangeSet("10-15"), RangeSet("0-5"), "t1hash",
+                  "t1hash", "move", transfers)
+    t1 = Transfer("t2", "t2", RangeSet("20-25"), RangeSet("0-7"), "t2hash",
+                  "t2hash", "move", transfers)
+    t2 = Transfer("t3", "t3", RangeSet("30-35"), RangeSet("0-4"), "t3hash",
+                  "t3hash", "move", transfers)
+    t3 = Transfer("t4", "t4", RangeSet("0-10"), RangeSet("40-50"), "t4hash",
+                  "t4hash", "move", transfers)
 
     block_image_diff.GenerateDigraph()
     t3_goes_after_copy = t3.goes_after.copy()
@@ -87,10 +87,10 @@ class BlockImageDiffTest(unittest.TestCase):
     block_image_diff = BlockImageDiff(tgt, src, version=3)
 
     transfers = block_image_diff.transfers
-    Transfer("t1", "t1", RangeSet("11-15"), RangeSet("20-29"), "diff",
-             transfers)
-    Transfer("t2", "t2", RangeSet("20-29"), RangeSet("11-15"), "diff",
-             transfers)
+    Transfer("t1", "t1", RangeSet("11-15"), RangeSet("20-29"), "t1hash",
+             "t1hash", "diff", transfers)
+    Transfer("t2", "t2", RangeSet("20-29"), RangeSet("11-15"), "t2hash",
+             "t2hash", "diff", transfers)
 
     block_image_diff.GenerateDigraph()
     block_image_diff.FindVertexSequence()
@@ -121,12 +121,12 @@ class BlockImageDiffTest(unittest.TestCase):
     block_image_diff = BlockImageDiff(tgt, src, version=3)
 
     transfers = block_image_diff.transfers
-    t1 = Transfer("t1", "t1", RangeSet("11-15"), RangeSet("1-5"), "diff",
-                  transfers)
-    t2 = Transfer("t2", "t2", RangeSet("21-25"), RangeSet("11-15"), "diff",
-                  transfers)
+    t1 = Transfer("t1", "t1", RangeSet("11-15"), RangeSet("1-5"), "t1hash",
+                  "t1hash", "diff", transfers)
+    t2 = Transfer("t2", "t2", RangeSet("21-25"), RangeSet("11-15"), "t2hash",
+                  "t2hash", "diff", transfers)
     t3 = Transfer("t3", "t3", RangeSet("1-5 30-39"), RangeSet("11-15 30-39"),
-                  "diff", transfers)
+                  "t3hash", "t3hash", "diff", transfers)
 
     block_image_diff.GenerateDigraph()
 
