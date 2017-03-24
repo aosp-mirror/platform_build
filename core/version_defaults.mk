@@ -58,6 +58,8 @@ endef
 ALL_VERSIONS := O P
 ALL_VERSIONS := $(foreach v,$(ALL_VERSIONS),$(call version-list,$(v)))
 
+DEFAULT_PLATFORM_VERSION := OPR1
+
 # HACK: forward P to PPR1 until the build server config is updated
 ifeq (P,$(TARGET_PLATFORM_VERSION))
   TARGET_PLATFORM_VERSION := PPR1
@@ -67,7 +69,7 @@ ifeq (,$(TARGET_PLATFORM_VERSION))
   # Default targeted platform version
   # TODO: PLATFORM_VERSION, PLATFORM_SDK_VERSION, etc. should be conditional
   # on this
-  TARGET_PLATFORM_VERSION := OPR1
+  TARGET_PLATFORM_VERSION := $(DEFAULT_PLATFORM_VERSION)
 endif
 
 ifeq (,$(filter $(ALL_VERSIONS), $(TARGET_PLATFORM_VERSION)))

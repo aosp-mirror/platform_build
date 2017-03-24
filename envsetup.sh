@@ -296,7 +296,7 @@ function set_stuff_for_environment()
 
 function set_sequence_number()
 {
-    export BUILD_ENV_SEQUENCE_NUMBER=12
+    export BUILD_ENV_SEQUENCE_NUMBER=13
 }
 
 function settitle()
@@ -571,50 +571,42 @@ function lunch()
         then
             selection=${LUNCH_MENU_CHOICES[$(($answer-1))]}
         fi
-    elif (echo -n $answer | grep -q -e "^[^\-][^\-]*-[^\-][^\-]*$")
-    then
+    else
         selection=$answer
-    fi
-
-    if [ -z "$selection" ]
-    then
-        echo
-        echo "Invalid lunch combo: $answer"
-        return 1
     fi
 
     export TARGET_BUILD_APPS=
 
-    local variant=$(echo -n $selection | sed -e "s/^[^\-]*-//")
-    check_variant $variant
-    if [ $? -ne 0 ]
-    then
-        echo
-        echo "** Invalid variant: '$variant'"
-        echo "** Must be one of ${VARIANT_CHOICES[@]}"
-        variant=
+    local product variant_and_version variant version
+
+    product=${selection%%-*} # Trim everything after first dash
+    variant_and_version=${selection#*-} # Trim everything up to first dash
+    if [ "$variant_and_version" != "$selection" ]; then
+        variant=${variant_and_version%%-*}
+        if [ "$variant" != "$variant_and_version" ]; then
+            version=${variant_and_version#*-}
+        fi
     fi
 
-    local product=$(echo -n $selection | sed -e "s/-.*$//")
-    TARGET_PRODUCT=$product \
-    TARGET_BUILD_VARIANT=$variant \
-    build_build_var_cache
-    if [ $? -ne 0 ]
+    if [ -z "$product" ]
     then
         echo
-        echo "** Don't have a product spec for: '$product'"
-        echo "** Do you have the right repo manifest?"
-        product=
-    fi
-
-    if [ -z "$product" -o -z "$variant" ]
-    then
-        echo
+        echo "Invalid lunch combo: $selection"
         return 1
     fi
 
-    export TARGET_PRODUCT=$product
-    export TARGET_BUILD_VARIANT=$variant
+    TARGET_PRODUCT=$product \
+    TARGET_BUILD_VARIANT=$variant \
+    TARGET_PLATFORM_VERSION=$version \
+    build_build_var_cache
+    if [ $? -ne 0 ]
+    then
+        return 1
+    fi
+
+    export TARGET_PRODUCT=$(get_build_var TARGET_PRODUCT)
+    export TARGET_BUILD_VARIANT=$(get_build_var TARGET_BUILD_VARIANT)
+    export TARGET_PLATFORM_VERSION=$(get_build_var TARGET_PLATFORM_VERSION)
     export TARGET_BUILD_TYPE=release
 
     echo
