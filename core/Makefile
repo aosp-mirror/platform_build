@@ -1250,6 +1250,15 @@ INTERNAL_SYSTEMIMAGE_FILES := $(filter $(TARGET_OUT)/%, \
 
 
 FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEPS)
+
+# ASAN libraries in the system image - add dependency.
+ASAN_IN_SYSTEM_INSTALLED := $(TARGET_OUT)/asan.tar.bz2
+ifneq (,$(SANITIZE_TARGET))
+  ifeq (true,$(SANITIZE_TARGET_SYSTEM))
+    FULL_SYSTEMIMAGE_DEPS += $(ASAN_IN_SYSTEM_INSTALLED)
+  endif
+endif
+
 # -----------------------------------------------------------------
 # installed file list
 # Depending on anything that $(BUILT_SYSTEMIMAGE) depends on.
@@ -1526,9 +1535,11 @@ endef
 
 # We just build this directly to the install location.
 INSTALLED_USERDATAIMAGE_TARGET := $(BUILT_USERDATAIMAGE_TARGET)
-$(INSTALLED_USERDATAIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) \
-                                   $(INTERNAL_USERDATAIMAGE_FILES) \
-                                   $(BUILD_IMAGE_SRCS)
+INSTALLED_USERDATAIMAGE_TARGET_DEPS := \
+    $(INTERNAL_USERIMAGES_DEPS) \
+    $(INTERNAL_USERDATAIMAGE_FILES) \
+    $(BUILD_IMAGE_SRCS)
+$(INSTALLED_USERDATAIMAGE_TARGET): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS)
 	$(build-userdataimage-target)
 
 .PHONY: userdataimage-nodeps
@@ -1537,6 +1548,17 @@ userdataimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
 
 endif # not skip_userdata.img
 skip_userdata.img :=
+
+# ASAN libraries in the system image - build rule.
+ASAN_OUT_DIRS_FOR_SYSTEM_INSTALL := $(sort $(patsubst $(PRODUCT_OUT)/%,%,\
+  $(TARGET_OUT_SHARED_LIBRARIES) \
+  $(2ND_TARGET_OUT_SHARED_LIBRARIES) \
+  $(TARGET_OUT_VENDOR_SHARED_LIBRARIES) \
+  $(2ND_TARGET_OUT_VENDOR_SHARED_LIBRARIES)))
+# Note: experimentally, it seems not worth it to try to get "best" compression. We don't save
+#       enough space.
+$(ASAN_IN_SYSTEM_INSTALLED): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS)
+	tar cfj $(ASAN_IN_SYSTEM_INSTALLED) -C $(TARGET_OUT_DATA)/.. $(ASAN_OUT_DIRS_FOR_SYSTEM_INSTALL) >/dev/null
 
 #######
 ## data partition tarball
