@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec33a703_3d55e428",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-24T16:23:44Z",
+      "side": 1,
+      "message": "Or is it?",
+      "range": {
+        "startLine": 234,
+        "startChar": 0,
+        "endLine": 234,
+        "endChar": 53
+      },
+      "revId": "60d0e61f307b63ce80994e2141fa331840f9eb2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
