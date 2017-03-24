@@ -103,6 +103,7 @@ PRODUCT_PACKAGES += \
     libtinyalsa \
     libtinycompress \
     cplay \
+    libion \
 
 # WiFi
 # Note: Wifi HAL (android.hardware.wifi@1.0-service, wpa_supplicant,
