@@ -1638,7 +1638,8 @@ $(INSTALLED_FILES_FILE_SYSTEMOTHER) : $(INTERNAL_SYSTEMOTHERIMAGE_FILES)
 	@echo Installed file list: $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(hide) build/tools/fileslist.py $(TARGET_OUT_SYSTEM_OTHER) > $@
+	$(hide) build/tools/fileslist.py $(TARGET_OUT_SYSTEM_OTHER) > $(@:.txt=.json)
+	$(hide) build/tools/fileslist_util.py -c $(@:.txt=.json) > $@
 
 systemotherimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,system_other)
