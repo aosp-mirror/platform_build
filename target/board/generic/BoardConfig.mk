@@ -23,7 +23,6 @@ TARGET_ARCH_VARIANT := armv7-a
 TARGET_CPU_VARIANT := generic
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
-
 HAVE_HTC_AUDIO_DRIVER := true
 BOARD_USES_GENERIC_AUDIO := true
 
@@ -38,6 +37,8 @@ ifeq ($(HOST_OS),linux)
     WITH_DEXPREOPT_BOOT_IMG_ONLY := false
   endif
 endif
+
+TARGET_USES_HWC2 := true
 
 # Build OpenGLES emulation guest and host libraries
 BUILD_EMULATOR_OPENGL := true

@@ -54,6 +54,7 @@ PRODUCT_PACKAGES += \
     fingerprint.ranchu \
     android.hardware.biometrics.fingerprint@2.1-service \
     sensors.ranchu \
+    android.hardware.graphics.composer@2.1-impl \
 	hwcomposer.goldfish \
 	hwcomposer.ranchu \
 

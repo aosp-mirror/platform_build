@@ -31,6 +31,8 @@ WITH_DEXPREOPT ?= true
 WITH_DEXPREOPT_BOOT_IMG_ONLY ?= false
 endif
 
+TARGET_USES_HWC2 := true
+
 # Build OpenGLES emulation host and guest libraries
 BUILD_EMULATOR_OPENGL := true
 
