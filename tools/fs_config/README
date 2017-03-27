@@ -3,8 +3,7 @@
 |  _  <|   __||  _  ||  |  ||  \/  ||   __|
 \__|\_/\_____/\__|__/|_____/\__ \__/\_____/
 
-
-Generating the android_filesystem_config.h
+Generating the android_filesystem_config.h:
 
 To generate the android_filesystem_config.h file, one can choose from
 one of two methods. The first method, is to declare
@@ -140,3 +139,26 @@ $ nose2
 
 To add new tests, simply add a test_<xxx> method to the test class. It will automatically
 get picked up and added to the test suite.
+
+Using the android_filesystem_config.h:
+
+The tool fs_config_generate is built as a dependency to fs_config_dirs and
+fs_config_files host targets, and #includes the above supplied or generated
+android_filesystem_config.h file, and can be instructed to generate the binary
+data that lands in the device target locations /system/etc/fs_config_dirs and
+/system/etc/fs_config_files and in the host's ${OUT} locations
+${OUT}/target/product/<device>/system/etc/fs_config_dirs and
+${OUT}/target/product/<device>/system/etc/fs_config_files. The binary files
+are interpreted by the libcutils fs_conf() function, along with the built-in
+defaults, to serve as overrides to complete the results. The Target files are
+used by filesystem and adb tools to ensure that the file and directory
+properties are preserved during runtime operations. The host files in the
+${OUT} directory are used in the final stages when building the filesystem
+images to set the file and directory properties.
+
+fs_config_generate --help reports:
+
+Generate binary content for fs_config_dirs (-D) and fs_config_files (-F)
+from device-specific android_filesystem_config.h override
+
+Usage: fs_config_generate -D|-F [-o output-file]
