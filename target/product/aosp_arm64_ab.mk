@@ -22,14 +22,12 @@
 PRODUCT_COPY_FILES := \
     device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml
 
-# TODO(jiyong): remove sailfish/marlin rc and fstab files. They should be in
+# TODO(jiyong): remove sailfish/marlin rc files. They should be in
 # /vendor/etc/init after b/35269867
 PRODUCT_COPY_FILES += \
-    device/google/marlin/fstab.common:root/fstab.sailfish \
     device/google/marlin/init.recovery.common.rc:root/init.recovery.sailfish.rc \
 
 PRODUCT_COPY_FILES += \
-    device/google/marlin/fstab.common:root/fstab.marlin \
     device/google/marlin/init.recovery.common.rc:root/init.recovery.marlin.rc \
 
 # For now, let's use marlin bootanimation as the default boot animation
