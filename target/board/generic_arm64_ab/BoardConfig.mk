@@ -85,10 +85,8 @@ BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2147483648
 BOARD_NAND_SPARE_SIZE := 0
 BOARD_FLASH_BLOCK_SIZE := 512
 
-###############################################################################
-# Below are sailfish/marlin specific configs.
-# Must be moved after early-mount is supported.
-###############################################################################
-BOARD_SEPOLICY_DIRS += device/google/marlin/sepolicy
-
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
+
+# TODO(b/36764215): remove this setting when the generic system image
+# no longer has QCOM-specific directories under /.
+BOARD_SEPOLICY_DIRS += build/target/board/generic_arm64_ab/sepolicy
