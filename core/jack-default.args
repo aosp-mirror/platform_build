@@ -5,3 +5,5 @@
 -D jack.reporter.level.file=error=--,warning=-
 --verbose error
 -D jack.jayce.cache=false
+-D jack.lambda.grouping-scope=package
+-D jack.lambda.simplify-stateless=true
