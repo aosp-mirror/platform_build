@@ -1043,7 +1043,7 @@ define build-image-kernel-modules
     $(hide) mkdir -p $(4)/lib/modules/0.0/$(3)lib/modules
     $(hide) cp $(1) $(4)/lib/modules/0.0/$(3)lib/modules
     $(hide) $(DEPMOD) -b $(4) 0.0
-    $(hide) sed -e 's/\(.*modules.*\):/\/\1:/g' -e 's/: \(.*modules.*\)/: \/\1/g' -i $(4)/lib/modules/0.0/modules.dep
+    $(hide) sed -e 's/\(.*modules.*\):/\/\1:/g' -e 's/ \([^ ]*modules[^ ]*\)/ \/\1/g' -i $(4)/lib/modules/0.0/modules.dep
     $(hide) cp $(4)/lib/modules/0.0/modules.dep $(2)/lib/modules
 endef
 
