@@ -1187,11 +1187,11 @@ FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEP
 # so that we can get the size stat even if the build fails due to too large
 # system image.
 INSTALLED_FILES_FILE := $(PRODUCT_OUT)/installed-files.txt
-$(INSTALLED_FILES_FILE): $(FULL_SYSTEMIMAGE_DEPS)
+$(INSTALLED_FILES_FILE): $(FULL_SYSTEMIMAGE_DEPS) $(FILESLIST)
 	@echo Installed file list: $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(hide) build/tools/fileslist.py $(TARGET_OUT) > $(@:.txt=.json)
+	$(hide) $(FILESLIST) $(TARGET_OUT) > $(@:.txt=.json)
 	$(hide) build/tools/fileslist_util.py -c $(@:.txt=.json) > $@
 
 .PHONY: installed-file-list
@@ -1634,11 +1634,11 @@ INTERNAL_SYSTEMOTHERIMAGE_FILES := \
       $(ALL_PDK_FUSION_FILES))
 
 INSTALLED_FILES_FILE_SYSTEMOTHER := $(PRODUCT_OUT)/installed-files-system-other.txt
-$(INSTALLED_FILES_FILE_SYSTEMOTHER) : $(INTERNAL_SYSTEMOTHERIMAGE_FILES)
+$(INSTALLED_FILES_FILE_SYSTEMOTHER) : $(INTERNAL_SYSTEMOTHERIMAGE_FILES) $(FILESLIST)
 	@echo Installed file list: $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(hide) build/tools/fileslist.py $(TARGET_OUT_SYSTEM_OTHER) > $(@:.txt=.json)
+	$(hide) $(FILESLIST) $(TARGET_OUT_SYSTEM_OTHER) > $(@:.txt=.json)
 	$(hide) build/tools/fileslist_util.py -c $(@:.txt=.json) > $@
 
 systemotherimage_intermediates := \
@@ -1681,11 +1681,11 @@ INTERNAL_VENDORIMAGE_FILES := \
 $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_VENDORIMAGE_FILES)
 
 INSTALLED_FILES_FILE_VENDOR := $(PRODUCT_OUT)/installed-files-vendor.txt
-$(INSTALLED_FILES_FILE_VENDOR) : $(INTERNAL_VENDORIMAGE_FILES)
+$(INSTALLED_FILES_FILE_VENDOR) : $(INTERNAL_VENDORIMAGE_FILES) $(FILESLIST)
 	@echo Installed file list: $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(hide) build/tools/fileslist.py $(TARGET_OUT_VENDOR) > $(@:.txt=.json)
+	$(hide) $(FILESLIST) $(TARGET_OUT_VENDOR) > $(@:.txt=.json)
 	$(hide) build/tools/fileslist_util.py -c $(@:.txt=.json) > $@
 
 vendorimage_intermediates := \
