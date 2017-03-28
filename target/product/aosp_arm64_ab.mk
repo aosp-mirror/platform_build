@@ -34,10 +34,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     vendor/google/products/marlin/bootanimation-1440-256col.zip:system/media/bootanimation.zip
 
-# TODO(jiyong): remove this marlin-specific overlay when b/35742444 is fixed.
-PRODUCT_PACKAGE_OVERLAYS := \
-    device/google/marlin/overlay
-
 #split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
