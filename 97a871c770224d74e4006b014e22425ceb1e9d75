@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "69dc6de2_072fd0a1",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-03-28T20:19:55Z",
+      "side": 1,
+      "message": "$(call find-and-earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))",
+      "range": {
+        "startLine": 143,
+        "startChar": 22,
+        "endLine": 143,
+        "endChar": 34
+      },
+      "revId": "97a871c770224d74e4006b014e22425ceb1e9d75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
