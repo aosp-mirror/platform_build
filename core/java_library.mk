@@ -67,11 +67,7 @@ include $(BUILD_SYSTEM)/java.mk
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 # No dex; all we want are the .class files with resources.
 $(common_javalib.jar) : $(java_resource_sources)
-ifdef LOCAL_PROGUARD_ENABLED
-$(common_javalib.jar) : $(full_classes_proguard_jar)
-else
 $(common_javalib.jar) : $(full_classes_jar)
-endif
 	@echo "target Static Jar: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target)
 
@@ -85,7 +81,7 @@ endif
 else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
 $(common_javalib.jar): PRIVATE_DEX_FILE := $(built_dex)
-$(common_javalib.jar): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
+$(common_javalib.jar): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar)
 $(common_javalib.jar): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
 $(common_javalib.jar) : $(built_dex) $(java_resource_sources) | $(ZIPTIME)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
