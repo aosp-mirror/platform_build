@@ -36,7 +36,7 @@ ifneq ($(full_classes_jar),)
 $(built_dpi_apk): PRIVATE_DEX_FILE := $(built_dex)
 ifndef LOCAL_JACK_ENABLED
 # Use the jarjar processed arhive as the initial package file.
-$(built_dpi_apk): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
+$(built_dpi_apk): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar)
 else
 $(built_dpi_apk): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
 endif # LOCAL_JACK_ENABLED

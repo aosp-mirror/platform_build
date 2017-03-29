@@ -171,9 +171,9 @@ $(full_classes_compiled_jar): $(R_file_stamp)
 
 # if we have custom proguarding done use the proguarded classes jar instead of the normal classes jar
 ifeq ($(filter custom,$(LOCAL_PROGUARD_ENABLED)),custom)
-aar_classes_jar = $(full_classes_proguard_jar)
-else
 aar_classes_jar = $(full_classes_jar)
+else
+aar_classes_jar = $(full_classes_pre_proguard_jar)
 endif
 
 # Rule to build AAR, archive including classes.jar, resource, etc.
