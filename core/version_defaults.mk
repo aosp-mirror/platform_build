@@ -38,52 +38,27 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-# Returns all words in $1 up to and including $2
-define find_and_earlier
-  $(strip $(if $(1),
-    $(firstword $(1))
-    $(if $(filter $(firstword $(1)),$(2)),,
-      $(call find_and_earlier,$(wordlist 2,$(words $(1)),$(1)),$(2)))))
-endef
-
-#$(warning $(call find_and_earlier,A B C,A))
-#$(warning $(call find_and_earlier,A B C,B))
-#$(warning $(call find_and_earlier,A B C,C))
-#$(warning $(call find_and_earlier,A B C,D))
-
-define version-list
-$(1)PR1 $(1)PD1 $(1)PD2 $(1)PM1 $(1)PM2
-endef
-
-ALL_VERSIONS := O P
-ALL_VERSIONS := $(foreach v,$(ALL_VERSIONS),$(call version-list,$(v)))
-
 DEFAULT_PLATFORM_VERSION := OPR1
+MIN_PLATFORM_VERSION := OPR1
+MAX_PLATFORM_VERSION := PPR1
 
-# HACK: forward P to PPR1 until the build server config is updated
-ifeq (P,$(TARGET_PLATFORM_VERSION))
-  TARGET_PLATFORM_VERSION := PPR1
-endif
+ALLOWED_VERSIONS := $(call allowed-platform-versions,\
+  $(MIN_PLATFORM_VERSION),\
+  $(MAX_PLATFORM_VERSION),\
+  $(DEFAULT_PLATFORM_VERSION))
 
-ifeq (,$(TARGET_PLATFORM_VERSION))
-  # Default targeted platform version
-  # TODO: PLATFORM_VERSION, PLATFORM_SDK_VERSION, etc. should be conditional
-  # on this
+ifndef TARGET_PLATFORM_VERSION
   TARGET_PLATFORM_VERSION := $(DEFAULT_PLATFORM_VERSION)
 endif
 
-ifeq (,$(filter $(ALL_VERSIONS), $(TARGET_PLATFORM_VERSION)))
-$(warning Invalid TARGET_PLATFORM_VERSION '$(TARGET_PLATFORM_VERSION)', must be one of)
-$(warning $(ALL_VERSIONS))
-$(error Stopping...)
+ifeq (,$(filter $(ALLOWED_VERSIONS), $(TARGET_PLATFORM_VERSION)))
+  $(warning Invalid TARGET_PLATFORM_VERSION '$(TARGET_PLATFORM_VERSION)', must be one of)
+  $(error $(ALLOWED_VERSIONS))
 endif
 
-ENABLED_VERSIONS := $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
-
-$(foreach v,$(ENABLED_VERSIONS), \
-  $(eval IS_AT_LEAST_$(v) := true))
-
 # Default versions for each TARGET_PLATFORM_VERSION
+# TODO: PLATFORM_VERSION, PLATFORM_SDK_VERSION, etc. should be conditional
+# on this
 
 # This is the canonical definition of the platform version,
 # which is the version that we reveal to the end user.
