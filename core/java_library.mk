@@ -35,9 +35,14 @@ LOCAL_BUILT_MODULE_STEM := classes.jack
 endif
 endif
 
+# For non-static java libraries, other modules should depend on
+# out/target/common/obj/JAVA_LIBRARIES/.../javalib.jar (for jack)
+# or out/target/common/obj/JAVA_LIBRARIES/.../classes.jar (for javac).
+# For static java libraries, other modules should depend on
+# out/target/common/obj/JAVA_LIBRARIES/.../classes.jar
+# There are some dependencies outside the build system that assume static
+# java libraries produce javalib.jar, so we will copy classes.jar there too.
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
-
-# This file will be the one that other modules should depend on.
 common_javalib.jar := $(intermediates.COMMON)/javalib.jar
 LOCAL_INTERMEDIATE_TARGETS += $(common_javalib.jar)
 
@@ -65,18 +70,15 @@ include $(BUILD_SYSTEM)/java.mk
 #################################
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
-# No dex; all we want are the .class files with resources.
-$(common_javalib.jar) : $(java_resource_sources)
-$(common_javalib.jar) : $(full_classes_jar)
-	@echo "target Static Jar: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target)
+# There are some dependencies outside the build system that assume classes.jar
+# is available as javalib.jar so copy it there too.
+$(eval $(call copy-one-file,$(full_classes_jar),$(common_javalib.jar)))
 
 ifdef LOCAL_JACK_ENABLED
-$(LOCAL_BUILT_MODULE) : $(full_classes_jack)
+$(eval $(call copy-one-file,$(full_classes_jack),$(LOCAL_BUILT_MODULE)))
 else
-$(LOCAL_BUILT_MODULE) : $(common_javalib.jar)
+$(eval $(call copy-one-file,$(full_classes_jar),$(LOCAL_BUILT_MODULE)))
 endif
-	$(copy-file-to-target)
 
 else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
@@ -100,8 +102,7 @@ ifdef LOCAL_DEX_PREOPT
 ifneq ($(dexpreopt_boot_jar_module),) # boot jar
 # boot jar's rules are defined in dex_preopt.mk
 dexpreopted_boot_jar := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(dexpreopt_boot_jar_module)_nodex.jar
-$(LOCAL_BUILT_MODULE) : $(dexpreopted_boot_jar)
-	$(call copy-file-to-target)
+$(eval $(call copy-one-file,$(dexpreopted_boot_jar),$(LOCAL_BUILT_MODULE)))
 
 # For libart boot jars, we don't have .odex files.
 else # ! boot jar
@@ -111,8 +112,7 @@ $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(common_javalib.jar)
 	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
 	$(call dexpreopt-one-file,$<,$@)
 
-$(LOCAL_BUILT_MODULE) : $(common_javalib.jar)
-	$(call copy-file-to-target)
+$(eval $(call copy-one-file,$(common_javalib.jar),$(LOCAL_BUILT_MODULE)))
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
@@ -120,8 +120,7 @@ endif
 endif # ! boot jar
 
 else # LOCAL_DEX_PREOPT
-$(LOCAL_BUILT_MODULE) : $(common_javalib.jar)
-	$(call copy-file-to-target)
+$(eval $(call copy-one-file,$(common_javalib.jar),$(LOCAL_BUILT_MODULE)))
 
 endif # LOCAL_DEX_PREOPT
 endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
