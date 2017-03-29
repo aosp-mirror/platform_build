@@ -427,7 +427,22 @@ endif # LOCAL_MODULE_CLASS != APPS
 
 ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
 my_src_jar := $(my_prebuilt_src_file)
-ifeq ($(LOCAL_IS_HOST_MODULE),)
+
+ifdef LOCAL_IS_HOST_MODULE
+# for host java libraries deps should be in the common dir, so we make a copy in
+# the common dir.
+common_classes_jar := $(intermediates.COMMON)/classes.jar
+common_javalib_jar := $(intermediates.COMMON)/javalib.jar
+
+$(common_classes_jar) $(common_javalib_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
+
+$(common_classes_jar) : $(my_src_jar)
+	$(transform-prebuilt-to-target)
+
+$(common_javalib_jar) : $(common_classes_jar)
+	$(transform-prebuilt-to-target)
+
+else # !LOCAL_IS_HOST_MODULE
 # for target java libraries, the LOCAL_BUILT_MODULE is in a product-specific dir,
 # while the deps should be in the common dir, so we make a copy in the common dir.
 common_classes_jar := $(intermediates.COMMON)/classes.jar
@@ -520,6 +535,7 @@ endif # LOCAL_IS_HOST_MODULE is not set
 
 ifneq ($(prebuilt_module_is_dex_javalib),true)
 
+ifdef LOCAL_JACK_ENABLED
 # We may be building classes.jack from a host jar for host dalvik Java library.
 $(intermediates.COMMON)/classes.jack : PRIVATE_JACK_FLAGS:=$(LOCAL_JACK_FLAGS)
 $(intermediates.COMMON)/classes.jack : PRIVATE_JACK_MIN_SDK_VERSION := $(if $(strip $(LOCAL_MIN_SDK_VERSION)),$(LOCAL_MIN_SDK_VERSION),1)
@@ -534,7 +550,7 @@ $(intermediates.COMMON)/classes.jack : $(LOCAL_JACK_PLUGIN_PATH) $(my_src_jar) \
 # always rebuilt.
 $(intermediates.COMMON)/classes.dex.toc: $(intermediates.COMMON)/classes.jack
 	touch $@
-
+endif # LOCAL_JACK_ENABLED
 endif # ! prebuilt_module_is_dex_javalib
 endif # JAVA_LIBRARIES
 

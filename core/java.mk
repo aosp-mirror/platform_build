@@ -640,7 +640,7 @@ $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 $(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
 endif
-$(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
+$(built_dex_intermediate): $(full_classes_jar) $(DX)
 	$(transform-classes.jar-to-dex)
 endif # LOCAL_JACK_ENABLED is disabled
 
