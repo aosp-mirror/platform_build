@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c8c70171_196be6d0",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 1079733
+      },
+      "writtenOn": "2017-03-29T03:57:59Z",
+      "side": 1,
+      "message": "I think you got it reversed, we don\u0027t want to replace the key, Android does.\nSo either ifeq ($(PRODUCT_IOT),) or ifneq ($(PRODUCT_IOT),true) should be good, I prefer the former.",
+      "range": {
+        "startLine": 766,
+        "startChar": 0,
+        "endLine": 766,
+        "endChar": 26
+      },
+      "revId": "807c6c2bb254bf0e258231e7f272e13ac6d375fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
