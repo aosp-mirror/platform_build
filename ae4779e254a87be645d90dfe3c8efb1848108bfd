@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5787fa0f_2e5544ad",
+        "filename": "tools/signapk/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-03-29T16:11:20Z",
+      "side": 0,
+      "message": "Does it mean IOT targets will also need libconscrypt_openjdk_jni.so?",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 17
+      },
+      "revId": "ae4779e254a87be645d90dfe3c8efb1848108bfd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

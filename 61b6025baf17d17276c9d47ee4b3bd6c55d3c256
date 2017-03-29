@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ebbdcc76_63e4b8b0",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 762,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-03-29T16:11:20Z",
+      "side": 1,
+      "message": "nit: also update the comment?",
+      "range": {
+        "startLine": 762,
+        "startChar": 51,
+        "endLine": 762,
+        "endChar": 61
+      },
+      "revId": "61b6025baf17d17276c9d47ee4b3bd6c55d3c256",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
