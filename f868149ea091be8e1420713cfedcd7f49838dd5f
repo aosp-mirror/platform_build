@@ -22,6 +22,30 @@
       "revId": "f868149ea091be8e1420713cfedcd7f49838dd5f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ce41062_36502abc",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1491,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2017-03-29T22:37:23Z",
+      "side": 1,
+      "message": "They\u0027re not defaults. But considering all the problems with ext4crypt, I don\u0027t think we have things correct in $OUT/data anyways. Will remove.",
+      "parentUuid": "18dd07a7_9c54e00d",
+      "range": {
+        "startLine": 1491,
+        "startChar": 37,
+        "endLine": 1491,
+        "endChar": 62
+      },
+      "revId": "f868149ea091be8e1420713cfedcd7f49838dd5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
