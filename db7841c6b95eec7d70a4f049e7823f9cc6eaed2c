@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc3d900c_508ed889",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-03-30T17:52:21Z",
+      "side": 1,
+      "message": "These are rooted at $(PRODUCT_OUT), so make this $(TARGET_COPY_OUT_DATA)/asan (and move it below data in the list)",
+      "revId": "db7841c6b95eec7d70a4f049e7823f9cc6eaed2c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
