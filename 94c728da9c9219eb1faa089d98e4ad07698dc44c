@@ -22,6 +22,30 @@
       "revId": "94c728da9c9219eb1faa089d98e4ad07698dc44c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af9b63b0_319724b4",
+        "filename": "core/host_dalvik_java_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-03-30T22:50:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8a03aa7a_b2bf481b",
+      "range": {
+        "startLine": 126,
+        "startChar": 0,
+        "endLine": 128,
+        "endChar": 21
+      },
+      "revId": "94c728da9c9219eb1faa089d98e4ad07698dc44c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
