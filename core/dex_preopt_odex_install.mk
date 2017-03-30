@@ -152,10 +152,15 @@ LOCAL_DEX_PREOPT_FLAGS := $(PRODUCT_DEX_PREOPT_DEFAULT_FLAGS)
 endif
 endif
 
-# Jars of system server, and apps loaded into system server should be
-# compiled with the 'speed' compiler filter.
 ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS) $(PRODUCT_SYSTEM_SERVER_APPS),$(LOCAL_MODULE)))
+  # Jars of system server, and apps loaded into system server should be
+  # compiled with the 'speed' compiler filter.
   LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed
+else
+  # If no compiler filter is specified, default to 'interpret-only' to save on storage.
+  ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
+    LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=interpret-only
+  endif
 endif
 
 $(built_odex): PRIVATE_DEX_PREOPT_FLAGS := $(LOCAL_DEX_PREOPT_FLAGS)
