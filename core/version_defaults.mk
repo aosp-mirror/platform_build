@@ -38,8 +38,8 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-DEFAULT_PLATFORM_VERSION := OPR1
-MIN_PLATFORM_VERSION := OPR1
+DEFAULT_PLATFORM_VERSION := OPD1
+MIN_PLATFORM_VERSION := OPD1
 MAX_PLATFORM_VERSION := PPR1
 
 ALLOWED_VERSIONS := $(call allowed-platform-versions,\
@@ -74,10 +74,15 @@ endif
 # please add that PLATFORM_VERSION to the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
 PLATFORM_VERSION.OPR1 := O
+PLATFORM_VERSION.OPD1 := ODR
+PLATFORM_VERSION.OPM1 := OMR1
 PLATFORM_VERSION.PPR1 := P
 
-# These are the current development codenames.
+# These are the current development codenames, if the build is not a final
+# release build.  If this is a final release build, it is simply "REL".
 PLATFORM_VERSION_CODENAME.OPR1 := O
+PLATFORM_VERSION_CODENAME.OPD1 := ODR
+PLATFORM_VERSION_CODENAME.OPM1 := OMR1
 PLATFORM_VERSION_CODENAME.PPR1 := P
 
 ifndef PLATFORM_VERSION
@@ -158,7 +163,7 @@ else
     # assuming the device can only support APIs as of the previous official
     # public release.
     # This value will always be 0 for release builds.
-    PLATFORM_PREVIEW_SDK_VERSION := 2
+    PLATFORM_PREVIEW_SDK_VERSION := 1
   endif
 endif
 
