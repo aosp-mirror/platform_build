@@ -42,7 +42,7 @@ endif
 # if installing into system, and odex are being installed into system_other, don't strip
 ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
 ifeq ($(LOCAL_DEX_PREOPT),true)
-ifneq ($(filter $(foreach f,$(SYSTEM_OTHER_ODEX_FILTER),$(TARGET_OUT)/$(f)),$(my_module_path)),)
+ifneq ($(call install-on-system-other, $(my_module_path)),)
 LOCAL_DEX_PREOPT := nostripping
 endif
 endif
@@ -151,6 +151,13 @@ ifndef LOCAL_DEX_PREOPT_FLAGS
 LOCAL_DEX_PREOPT_FLAGS := $(PRODUCT_DEX_PREOPT_DEFAULT_FLAGS)
 endif
 endif
+
+# Jars of system server, and apps loaded into system server should be
+# compiled with the 'speed' compiler filter.
+ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS) $(PRODUCT_SYSTEM_SERVER_APPS),$(LOCAL_MODULE)))
+  LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed
+endif
+
 $(built_odex): PRIVATE_DEX_PREOPT_FLAGS := $(LOCAL_DEX_PREOPT_FLAGS)
 $(built_vdex): $(built_odex)
 $(built_art): $(built_odex)
