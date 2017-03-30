@@ -61,7 +61,7 @@ endef
 # $(2): the full install path (including file name) of the corresponding .apk.
 ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
 define get-odex-installed-file-path
-$(if $(filter $(foreach f,$(SYSTEM_OTHER_ODEX_FILTER),$(TARGET_OUT)/$(f)),$(2)),
+$(if $(call install-on-system-other, $(2)),
   $(call get-odex-file-path,$(1),$(patsubst $(TARGET_OUT)/%,$(TARGET_OUT_SYSTEM_OTHER)/%,$(2))),
   $(call get-odex-file-path,$(1),$(2)))
 endef
