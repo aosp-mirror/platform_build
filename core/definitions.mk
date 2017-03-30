@@ -3306,3 +3306,40 @@ include $(BUILD_SYSTEM)/distdir.mk
 #	  sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' \
 #	      -e '/^$$/ d' -e 's/$$/ :/' < $*.d >> $*.P; \
 #	  rm -f $*.d
+
+
+###########################################################
+# Append the information to generate a RRO package for the
+# source module.
+#
+#  $(1): Source module name.
+#  $(2): Whether $(3) is a manifest package name or not.
+#  $(3): Manifest package name if $(2) is true.
+#        Otherwise, android manifest file path of the
+#        source module.
+#  $(4): Whether LOCAL_EXPORT_PACKAGE_RESOURCES is set or
+#        not for the source module.
+#  $(5): Resource overlay list.
+###########################################################
+define append_enforce_rro_sources
+  $(eval ENFORCE_RRO_SOURCES += \
+      $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||$(call normalize-path-list, $(strip $(5))))
+endef
+
+###########################################################
+# Generate all RRO packages for source modules stored in
+# ENFORCE_RRO_SOURCES
+###########################################################
+define generate_all_enforce_rro_packages
+$(foreach source,$(ENFORCE_RRO_SOURCES), \
+  $(eval _o := $(subst ||,$(space),$(source))) \
+  $(eval enforce_rro_source_module := $(word 1,$(_o))) \
+  $(eval enforce_rro_source_is_manifest_package_name := $(word 2,$(_o))) \
+  $(eval enforce_rro_source_manifest_package_info := $(word 3,$(_o))) \
+  $(eval enforce_rro_use_res_lib := $(word 4,$(_o))) \
+  $(eval enforce_rro_source_overlays := $(subst :, ,$(word 5,$(_o)))) \
+  $(eval enforce_rro_module := $(enforce_rro_source_module)__auto_generated_rro) \
+  $(eval include $(BUILD_SYSTEM)/generate_enforce_rro.mk) \
+  $(eval ALL_MODULES.$(enforce_rro_source_module).REQUIRED += $(enforce_rro_module)) \
+)
+endef
