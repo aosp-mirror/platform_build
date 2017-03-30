@@ -446,7 +446,6 @@ $(full_classes_compiled_jar): \
         $(RenderScript_file_stamp) \
         $(proto_java_sources_file_stamp) \
         $(NORMALIZE_PATH) \
-        $(JAVAC_FILTER) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-java-to-classes.jar)
 
