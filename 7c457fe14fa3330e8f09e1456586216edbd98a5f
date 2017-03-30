@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a8bc43b_20275bc0",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-03-30T19:51:04Z",
+      "side": 1,
+      "message": "filter, otherwise O will match ODR1",
+      "range": {
+        "startLine": 121,
+        "startChar": 11,
+        "endLine": 121,
+        "endChar": 21
+      },
+      "revId": "7c457fe14fa3330e8f09e1456586216edbd98a5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
