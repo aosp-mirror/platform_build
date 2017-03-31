@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f09487c5_5743c5c6",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1596,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-03-31T09:14:02Z",
+      "side": 1,
+      "message": "The variable will be empty here, investigating.",
+      "range": {
+        "startLine": 1596,
+        "startChar": 39,
+        "endLine": 1596,
+        "endChar": 67
+      },
+      "revId": "6aff27d0ec7fb27bcf12c096ea7b51abe3e4e802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
