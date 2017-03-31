@@ -70,6 +70,30 @@
       "revId": "e2cf21c934fcd0642697c432eef1f6e2ed3e8f31",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "168edd07_351ed37a",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-03-31T00:57:43Z",
+      "side": 1,
+      "message": "The inheritance will still happen with a copy rule, so I can\u0027t tell if the comment is obsolete.",
+      "parentUuid": "4aa31ec9_fb4b61bd",
+      "range": {
+        "startLine": 413,
+        "startChar": 0,
+        "endLine": 416,
+        "endChar": 41
+      },
+      "revId": "e2cf21c934fcd0642697c432eef1f6e2ed3e8f31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
