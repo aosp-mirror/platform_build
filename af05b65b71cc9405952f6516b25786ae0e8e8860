@@ -16,6 +16,24 @@
       "revId": "af05b65b71cc9405952f6516b25786ae0e8e8860",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a0bb34a2_64396b03",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2017-03-31T19:45:23Z",
+      "side": 1,
+      "message": "I\u0027m pretty sure it will never be empty, since there will be some amount of N+1 release work in the N release branch.\n\nStill, will implement it differently so it can be factored out.",
+      "parentUuid": "74e921d8_c0002b88",
+      "revId": "af05b65b71cc9405952f6516b25786ae0e8e8860",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
