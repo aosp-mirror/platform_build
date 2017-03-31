@@ -22,6 +22,30 @@
       "revId": "37c866885706106798b51d336736849a6b87296a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f9538ec_f7233a1d",
+        "filename": "core/fuzz_test.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2017-03-31T18:01:43Z",
+      "side": 1,
+      "message": "libFuzzer is the name of the prebuilt libraries (and their name in all public documentation), which I thought was easier to track for when people might want to peek at some of the internals.",
+      "parentUuid": "3d0c0d23_7e5f79da",
+      "range": {
+        "startLine": 12,
+        "startChar": 26,
+        "endLine": 12,
+        "endChar": 35
+      },
+      "revId": "37c866885706106798b51d336736849a6b87296a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
