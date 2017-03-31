@@ -59,6 +59,7 @@ PRODUCT_PACKAGES += \
     Telecom \
     TeleService \
     VpnDialogs \
+    vr \
     MmsService
 
 # The set of packages whose code can be loaded by the system server.
