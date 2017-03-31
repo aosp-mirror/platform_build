@@ -22,6 +22,30 @@
       "revId": "d2de062b1d88acfff8cb0a4dcdf3cbbcd7f64d19",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5c7547e_42401f83",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-03-31T03:15:07Z",
+      "side": 1,
+      "message": "Oops...done.",
+      "parentUuid": "58f9847e_13a38e92",
+      "range": {
+        "startLine": 397,
+        "startChar": 51,
+        "endLine": 397,
+        "endChar": 75
+      },
+      "revId": "d2de062b1d88acfff8cb0a4dcdf3cbbcd7f64d19",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
