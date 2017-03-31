@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "74e921d8_c0002b88",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-03-31T19:20:05Z",
+      "side": 1,
+      "message": "Is PLATFORM_VERSION_ALL_CODENAMES guaranteed to be non-empty?  If it is empty this will be [\"\"] instead of []\n\nThe same pattern is used a lot below, although usually with $(space).  Break this out into a function that takes a list and a separator?",
+      "revId": "af05b65b71cc9405952f6516b25786ae0e8e8860",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
