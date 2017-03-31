@@ -1555,10 +1555,12 @@ ASAN_OUT_DIRS_FOR_SYSTEM_INSTALL := $(sort $(patsubst $(PRODUCT_OUT)/%,%,\
   $(2ND_TARGET_OUT_SHARED_LIBRARIES) \
   $(TARGET_OUT_VENDOR_SHARED_LIBRARIES) \
   $(2ND_TARGET_OUT_VENDOR_SHARED_LIBRARIES)))
+# Extra options: Enforce the system user for the files to avoid having to change ownership.
+ASAN_SYSTEM_INSTALL_OPTIONS := --owner=1000 --group=1000
 # Note: experimentally, it seems not worth it to try to get "best" compression. We don't save
 #       enough space.
 $(ASAN_IN_SYSTEM_INSTALLED): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS)
-	tar cfj $(ASAN_IN_SYSTEM_INSTALLED) -C $(TARGET_OUT_DATA)/.. $(ASAN_OUT_DIRS_FOR_SYSTEM_INSTALL) >/dev/null
+	tar cfj $(ASAN_IN_SYSTEM_INSTALLED) $(ASAN_SYSTEM_INSTALL_OPTIONS) -C $(TARGET_OUT_DATA)/.. $(ASAN_OUT_DIRS_FOR_SYSTEM_INSTALL) >/dev/null
 
 #######
 ## data partition tarball
