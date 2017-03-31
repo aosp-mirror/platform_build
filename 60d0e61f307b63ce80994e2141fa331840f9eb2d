@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0f853930_ecf9628d",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-31T16:20:18Z",
+      "side": 1,
+      "message": "Need ideas (as asked for, this specific CL was more like an RFC), because how it is split matters. I do not know what build flags signal a separate vendor, oem or odm partition. _please_ tell me how I can differentiate them.\n\nMore importantly, how do I take a request for fs_config_dirs target and make it split content.\n\nI created these targets to get something going, but the automation has me spinning my wheels as to the correct way to do this.",
+      "parentUuid": "add61189_bf6c6b82",
+      "range": {
+        "startLine": 143,
+        "startChar": 6,
+        "endLine": 143,
+        "endChar": 20
+      },
+      "revId": "60d0e61f307b63ce80994e2141fa331840f9eb2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "296ce4b2_e0cb8105",
         "filename": "tools/fs_config/Android.mk",
         "patchSetId": 2
@@ -36,6 +60,24 @@
       "writtenOn": "2017-03-31T00:55:15Z",
       "side": 1,
       "message": "Does it matter?",
+      "revId": "60d0e61f307b63ce80994e2141fa331840f9eb2d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90358e2d_97c37e9e",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-31T16:20:18Z",
+      "side": 1,
+      "message": "Yes, because if we do not support odm, I want the odm content in system.\n\nBut not the point, I was asking how the build system tells me what is, and what isn\u0027t supported, or requested for, for split image systems.",
+      "parentUuid": "296ce4b2_e0cb8105",
       "revId": "60d0e61f307b63ce80994e2141fa331840f9eb2d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
