@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ac90b772_67e7f1f0",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 7
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-31T16:12:58Z",
+      "side": 1,
+      "message": "See b/36071012?\n\nsystem but not vendor or oem; or rather, everything, but not vendor or oem.\n\nblacklist vendor and oem entries from the table of everything. The overrides for oem and vendor partitions do not belong on the system partition as they are assembled separately and partitions can be mixed and matched separately.",
+      "parentUuid": "a16b9d3f_edfce21c",
+      "revId": "c0b9b49f171ff7c5ed6edd2c8f88214276d313e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f139f442_68568740",
         "filename": "tools/fs_config/fs_config_generate.c",
         "patchSetId": 7
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "65299f82_31aaec31",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-31T16:12:58Z",
+      "side": 1,
+      "message": "I would need to add libbase as a dependency, and maybe even C++ify this file first because there are templates in that header in order to use it.",
+      "parentUuid": "f139f442_68568740",
+      "revId": "c0b9b49f171ff7c5ed6edd2c8f88214276d313e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2fe42517_6e6871ea",
         "filename": "tools/fs_config/fs_config_generate.c",
         "patchSetId": 7
@@ -47,6 +83,24 @@
       "writtenOn": "2017-03-31T00:52:12Z",
       "side": 1,
       "message": "I don\u0027t understand this, but it sounds scary.  Are you saying you are just continuing without filtering if strdup failed?  If so, failing loudly is absolutely better than producing random output silently.",
+      "revId": "c0b9b49f171ff7c5ed6edd2c8f88214276d313e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63aea23b_63484cb0",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-31T16:12:58Z",
+      "side": 1,
+      "message": "Correct, we do not want content from vendor, oem or odm mixing in with system. A development build will have no problem with that. A release build will.\n\nAny suggestions on how to differentiate the class of builds?",
+      "parentUuid": "2fe42517_6e6871ea",
       "revId": "c0b9b49f171ff7c5ed6edd2c8f88214276d313e7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -81,6 +135,24 @@
       "writtenOn": "2017-03-31T00:52:12Z",
       "side": 1,
       "message": "This seems like an odd structure for this test.  Why not just run the generator, and then loop through the result and make sure none of the results start with vendor or oem?  It also seems worth having a helper function that takes extra arguments like -P and returns the output.",
+      "revId": "c0b9b49f171ff7c5ed6edd2c8f88214276d313e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b42e158_1ec5e0c9",
+        "filename": "tools/fs_config/tests/fs_conf_test.cpp",
+        "patchSetId": 7
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-31T16:12:58Z",
+      "side": 1,
+      "message": "I am also strictly checking the order of the results, not that that matters, but it does confirm that we get all the results we expect, with none of the results we do not expect.",
+      "parentUuid": "275de0cb_36bc4bda",
       "revId": "c0b9b49f171ff7c5ed6edd2c8f88214276d313e7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
