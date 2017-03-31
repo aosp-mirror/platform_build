@@ -76,8 +76,7 @@ endif
 PLATFORM_VERSION.OPR1 := O
 PLATFORM_VERSION.PPR1 := P
 
-# This is the current development code-name, if the build is not a final
-# release build.  If this is a final release build, it is simply "REL".
+# These are the current development codenames.
 PLATFORM_VERSION_CODENAME.OPR1 := O
 PLATFORM_VERSION_CODENAME.PPR1 := P
 
@@ -128,7 +127,22 @@ ifndef PLATFORM_VERSION_CODENAME
   # This is all of the development codenames that are active.  Should be either
   # the same as PLATFORM_VERSION_CODENAME or a comma-separated list of additional
   # codenames after PLATFORM_VERSION_CODENAME.
-  PLATFORM_VERSION_ALL_CODENAMES := $(PLATFORM_VERSION_CODENAME)
+  PLATFORM_VERSION_ALL_CODENAMES :=
+
+  # Build a list of all possible code names. Avoid duplicates, and stop when we
+  # reach a codename that matches PLATFORM_VERSION_CODENAME (anything beyond
+  # that is not included in our build.
+  _versions_in_target := \
+    $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
+  $(foreach version,$(_versions_in_target),\
+    $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
+    $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
+      $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
+
+  # And convert from space separated to comma separated.
+  PLATFORM_VERSION_ALL_CODENAMES := \
+    $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_CODENAMES)))
+
 endif
 
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
