@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "ba661732_656380bf",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 7
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-03-31T17:02:27Z",
+      "side": 1,
+      "message": "Why are you trying to special case strdup failing?  If strdup fails, exit with an error code like you would anywhere else.",
+      "parentUuid": "63aea23b_63484cb0",
+      "revId": "c0b9b49f171ff7c5ed6edd2c8f88214276d313e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "33b13e88_b59ccaef",
         "filename": "tools/fs_config/tests/fs_conf_test.cpp",
         "patchSetId": 7
