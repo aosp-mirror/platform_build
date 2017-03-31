@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2ac45343_38e6289b",
+        "filename": "tools/fs_config/tests/fs_conf_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-31T16:13:46Z",
+      "side": 1,
+      "message": "All I need is the fs_path_config_from_file structure (the endian code is pretty common). Laziness and a desire to keep this one structure from getting out in private headers if at all possible. I remain concerned, even with private headers, about others starting to use the detail. Only libcutils/fs_config and this test (now) need it and _no_one_else_. But will spin a patch for this new header shortly in system/core because I can buy reduced cost of maintenance if changes occur in the future ...",
+      "parentUuid": "eb7b7577_494fe624",
+      "revId": "7d3f9637bf7b788302c816dd042dfb4ff5f60f4e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b9b00c6a_23c4f9c5",
         "filename": "tools/fs_config/tests/fs_conf_test.cpp",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "dd57b9e3_c674b573",
+        "filename": "tools/fs_config/tests/fs_conf_test.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-31T16:13:46Z",
+      "side": 1,
+      "message": "The code does searching for a reason, to abstract all. It does not provide iteration, nor should I export a means for iteration. I do _not_ want anyone to be able to directly interpret the data _except_ this test. private header describing the structure is a lesser evil than adding new fs_Config iteration interfaces IMHO.",
+      "parentUuid": "b9b00c6a_23c4f9c5",
+      "revId": "7d3f9637bf7b788302c816dd042dfb4ff5f60f4e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "14a0fda8_e23df3a7",
         "filename": "tools/fs_config/tests/fs_config_generate.c",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2017-03-31T00:29:35Z",
       "side": 1,
       "message": "Build this as a static library in the parent directory?",
+      "revId": "7d3f9637bf7b788302c816dd042dfb4ff5f60f4e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "200155b4_99550fdd",
+        "filename": "tools/fs_config/tests/fs_config_generate.c",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-03-31T16:13:46Z",
+      "side": 1,
+      "message": "Already covered, can not, as it is built by including a custom header placed in _this_ subdirectory for testing purposes. Anyone uses that library and they get _garbage_.\n\nfs_config_generate is not just a tool, but a tool that has compiled in the table of fs_config overrides for the specific target from the constructed android_filesystem_config.h file.\n\nThe only way around this is to make fs_config_generate a C compiler interpreter that converts a structure into a binary table. I considered that option when I first wrote fs_config_generate and then decided it was not KISS.",
+      "parentUuid": "14a0fda8_e23df3a7",
       "revId": "7d3f9637bf7b788302c816dd042dfb4ff5f60f4e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
