@@ -94,6 +94,30 @@
       "revId": "e2cf21c934fcd0642697c432eef1f6e2ed3e8f31",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f19cca3f_315c6fbc",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-03-31T02:22:31Z",
+      "side": 1,
+      "message": "This only gets used by https://cs.corp.google.com/android/build/make/core/tasks/sdk-addon.mk?rcl\u003df0f4c6edddd7594743a3e52430e91e28f6261264\u0026l\u003d42 which doesn\u0027t look like it uses any PRIVATE_* variables, and looks like it never did?\n\nThe existence of PRIVATE_SOURCE_FILE is vestigial - this used to depend on $(LOCAL_BUILT_MODULE) but copy $(full_classes_jar), I guess so it could pick up private variables from LOCAL_BUILT_MODULE while copying an intermediate.  However, that was broken when Jack was added, and now $\u003c and PRIVATE_SOURCE_FILE are the same and it doesn\u0027t depend on LOCAL_BUILT_MODULE.\n\nThis is only used by sdk-addon builds, so I will verify build.ninja for them after removing this.",
+      "parentUuid": "168edd07_351ed37a",
+      "range": {
+        "startLine": 413,
+        "startChar": 0,
+        "endLine": 416,
+        "endChar": 41
+      },
+      "revId": "e2cf21c934fcd0642697c432eef1f6e2ed3e8f31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
