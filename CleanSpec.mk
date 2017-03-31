@@ -410,6 +410,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/lib*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/lib*)
 
+# Sanitized libraries now live in a different location.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/lib*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/vendor/lib*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
