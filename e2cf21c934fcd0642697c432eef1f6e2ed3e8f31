@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a23c1454_8ca4ca1d",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-31T00:17:34Z",
+      "side": 1,
+      "message": "copy-one-file here too?",
+      "range": {
+        "startLine": 413,
+        "startChar": 0,
+        "endLine": 416,
+        "endChar": 41
+      },
+      "revId": "e2cf21c934fcd0642697c432eef1f6e2ed3e8f31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
