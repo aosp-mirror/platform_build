@@ -34,6 +34,24 @@
       "revId": "af05b65b71cc9405952f6516b25786ae0e8e8860",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7726961_86325c2e",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2017-03-31T20:15:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a0bb34a2_64396b03",
+      "revId": "af05b65b71cc9405952f6516b25786ae0e8e8860",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
