@@ -46,6 +46,30 @@
       "revId": "e2cf21c934fcd0642697c432eef1f6e2ed3e8f31",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4aa31ec9_fb4b61bd",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 416,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-03-31T00:37:40Z",
+      "side": 1,
+      "message": ":( That implies that we are relying on variable inheritance... that\u0027s a huge minefield. But I don\u0027t see PRIVATE_SOURCE_FILE used anywhere else in the tree, unless it\u0027s talking about other PRIVATE_* variables :-/. Want to move this over to copy-one-file and compare the build-...ninja files? (then remove the comment if that verifies it wasn\u0027t used elsewhere)",
+      "parentUuid": "a4c88240_e0fe4f07",
+      "range": {
+        "startLine": 413,
+        "startChar": 0,
+        "endLine": 416,
+        "endChar": 41
+      },
+      "revId": "e2cf21c934fcd0642697c432eef1f6e2ed3e8f31",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
