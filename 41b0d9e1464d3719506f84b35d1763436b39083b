@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "760560d0_41008142",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1060219
+      },
+      "writtenOn": "2017-04-01T05:59:18Z",
+      "side": 0,
+      "message": "Dan, why did you remove this part of  the comment?  It is still accurate",
+      "range": {
+        "startLine": 69,
+        "startChar": 43,
+        "endLine": 70,
+        "endChar": 71
+      },
+      "revId": "41b0d9e1464d3719506f84b35d1763436b39083b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
