@@ -113,12 +113,6 @@ ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
 LOCAL_PROGUARD_ENABLED :=
 endif
 
-ifdef LOCAL_PROGUARD_ENABLED
-proguard_jar_leaf := proguard.classes.jar
-else
-proguard_jar_leaf := noproguard.classes.jar
-endif
-
 full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
 full_classes_desugar_jar := $(intermediates.COMMON)/desugar.classes.jar
 jarjar_leaf := classes-jarjar.jar
@@ -127,7 +121,7 @@ emma_intermediates_dir := $(intermediates.COMMON)/emma_out
 # emma is hardcoded to use the leaf name of its input for the output file --
 # only the output directory can be changed
 full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(jarjar_leaf)
-full_classes_proguard_jar := $(intermediates.COMMON)/$(proguard_jar_leaf)
+full_classes_proguard_jar := $(intermediates.COMMON)/proguard.classes.jar
 built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)/classes.dex
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 
@@ -415,15 +409,7 @@ ifdef full_classes_jar
 # Droiddoc isn't currently able to generate stubs for modules, so we're just
 # allowing it to use the classes.jar as the "stubs" that would be use to link
 # against, for the cases where someone needs the jar to link against.
-# - Use the classes.jar instead of the handful of other intermediates that
-#   we have, because it's the most processed, but still hasn't had dex run on
-#   it, so it's closest to what's on the device.
-# - This extra copy, with the dependency on LOCAL_BUILT_MODULE allows the
-#   PRIVATE_ vars to be preserved.
-$(full_classes_stubs_jar): PRIVATE_SOURCE_FILE := $(full_classes_jar)
-$(full_classes_stubs_jar) : $(full_classes_jar) | $(ACP)
-	@echo Copying $(PRIVATE_SOURCE_FILE)
-	$(hide) $(ACP) -fp $(PRIVATE_SOURCE_FILE) $@
+$(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_stubs_jar)))
 ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
 
 # The layers file allows you to enforce a layering between java packages.
@@ -456,7 +442,6 @@ $(full_classes_compiled_jar): \
         $(RenderScript_file_stamp) \
         $(proto_java_sources_file_stamp) \
         $(NORMALIZE_PATH) \
-        $(JAVAC_FILTER) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-java-to-classes.jar)
 
@@ -477,16 +462,14 @@ ifndef my_desugaring
 full_classes_desugar_jar := $(full_classes_compiled_jar)
 endif
 
-# Run jarjar if necessary, otherwise just copy the file.
+# Run jarjar if necessary
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 $(full_classes_jarjar_jar): $(full_classes_desugar_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
 	@echo JarJar: $@
 	$(hide) java -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
-$(full_classes_jarjar_jar): $(full_classes_desugar_jar) | $(ACP)
-	@echo Copying: $@
-	$(hide) $(ACP) -fp $< $@
+full_classes_jarjar_jar := $(full_classes_desugar_jar)
 endif
 
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
@@ -507,20 +490,16 @@ $(full_classes_emma_jar): $(full_classes_jarjar_jar) | $(EMMA_JAR)
 	$(transform-classes.jar-to-emma)
 
 else
-$(full_classes_emma_jar): $(full_classes_jarjar_jar)
-	@echo Copying: $@
-	$(copy-file-to-target)
+full_classes_emma_jar := $(full_classes_jarjar_jar)
 endif
 
 # Keep a copy of the jar just before proguard processing.
 # TODO: this should depend on full_classes_emma_jar once coverage works again
-$(full_classes_jar): $(full_classes_jarjar_jar) | $(ACP)
-	@echo Copying: $@
-	$(hide) $(ACP) -fp $< $@
+$(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
 $(call define-jar-to-toc-rule, $(full_classes_jar))
 
-# Run proguard if necessary, otherwise just copy the file.
+# Run proguard if necessary
 ifdef LOCAL_PROGUARD_ENABLED
 ifneq ($(filter-out full custom nosystem obfuscation optimization shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
     $(warning while processing: $(LOCAL_MODULE))
@@ -653,10 +632,7 @@ $(full_classes_proguard_jar) : $(full_classes_jar) $(extra_input_jar) $(my_suppo
 	$(call transform-jar-to-proguard)
 
 else  # LOCAL_PROGUARD_ENABLED not defined
-$(full_classes_proguard_jar) : $(full_classes_jar) | $(ACP)
-	@echo Copying: $@
-	$(hide) $(ACP) -fp $< $@
-
+full_classes_proguard_jar := $(full_classes_jar)
 endif # LOCAL_PROGUARD_ENABLED defined
 
 ifndef LOCAL_JACK_ENABLED
@@ -674,11 +650,11 @@ $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
 	$(transform-classes.jar-to-dex)
 endif # LOCAL_JACK_ENABLED is disabled
 
-$(built_dex): $(built_dex_intermediate) | $(ACP)
+$(built_dex): $(built_dex_intermediate)
 	@echo Copying: $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $(dir $@)/classes*.dex
-	$(hide) $(ACP) -fp $(dir $<)/classes*.dex $(dir $@)
+	$(hide) cp -fp $(dir $<)/classes*.dex $(dir $@)
 
 findbugs_xml := $(intermediates.COMMON)/findbugs.xml
 $(findbugs_xml): PRIVATE_AUXCLASSPATH := $(addprefix -auxclasspath ,$(strip \

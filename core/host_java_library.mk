@@ -74,7 +74,6 @@ $(full_classes_compiled_jar): \
         $(jar_manifest_file) \
         $(proto_java_sources_file_stamp) \
         $(NORMALIZE_PATH) \
-        $(JAVAC_FILTER) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-java-to-package)
 
@@ -88,9 +87,7 @@ $(full_classes_jarjar_jar): $(full_classes_compiled_jar) $(LOCAL_JARJAR_RULES) |
 	@echo JarJar: $@
 	$(hide) java -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
-	@echo Copying: $@
-	$(hide) $(ACP) -fp $< $@
+full_classes_jarjar_jar := $(full_classes_compiled_jar)
 endif
 
 ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
@@ -107,13 +104,8 @@ endif
 # $(full_classes_emma_jar)
 $(full_classes_emma_jar) : $(full_classes_jarjar_jar) | $(EMMA_JAR)
 	$(transform-classes.jar-to-emma)
-
-$(LOCAL_BUILT_MODULE) : $(full_classes_emma_jar)
-	@echo Copying: $@
-	$(hide) $(ACP) -fp $< $@
-
 else # LOCAL_EMMA_INSTRUMENT
-$(LOCAL_BUILT_MODULE) : $(full_classes_jarjar_jar) | $(ACP)
-	@echo Copying: $@
-	$(hide) $(ACP) -fp $< $@
+full_classes_emma_jar := $(full_classes_jarjar_jar)
 endif # LOCAL_EMMA_INSTRUMENT
+
+$(eval $(call copy-one-file,$(full_classes_emma_jar),$(LOCAL_BUILT_MODULE)))

@@ -11,8 +11,64 @@
 #         This can be useful if you set OUT_DIR to be a different directory
 #         than other outputs of your build system.
 
+# Returns all words in $1 up to and including $2
+define find_and_earlier
+  $(strip $(if $(1),
+    $(firstword $(1))
+    $(if $(filter $(firstword $(1)),$(2)),,
+      $(call find_and_earlier,$(wordlist 2,$(words $(1)),$(1)),$(2)))))
+endef
+
+#$(warning $(call find_and_earlier,A B C,A))
+#$(warning $(call find_and_earlier,A B C,B))
+#$(warning $(call find_and_earlier,A B C,C))
+#$(warning $(call find_and_earlier,A B C,D))
+
+define version-list
+$(1)PR1 $(1)PD1 $(1)PD2 $(1)PM1 $(1)PM2
+endef
+
+ALL_VERSIONS := O P Q R S T U V W X Y Z
+ALL_VERSIONS := $(foreach v,$(ALL_VERSIONS),$(call version-list,$(v)))
+
+# Filters ALL_VERSIONS down to the range [$1, $2], and errors if $1 > $2 or $3 is
+# not in [$1, $2]
+# $(1): min platform version
+# $(2): max platform version
+# $(3): default platform version
+define allowed-platform-versions
+$(strip \
+  $(if $(filter $(ALL_VERSIONS),$(1)),,
+    $(error Invalid MIN_PLATFORM_VERSION '$(1)'))
+  $(if $(filter $(ALL_VERSIONS),$(2)),,
+    $(error Invalid MAX_PLATFORM_VERSION '$(2)'))
+  $(if $(filter $(ALL_VERSIONS),$(3)),,
+    $(error Invalid DEFAULT_PLATFORM_VERSION '$(3)'))
+
+  $(eval allowed_versions_ := $(call find_and_earlier,$(ALL_VERSIONS),$(2)))
+
+  $(if $(filter $(allowed_versions_),$(1)),,
+    $(error MIN_PLATFORM_VERSION '$(1)' must be before MAX_PLATFORM_VERSION '$(2)'))
+
+  $(eval allowed_versions_ := $(1) \
+    $(filter-out $(call find_and_earlier,$(allowed_versions_),$(1)),$(allowed_versions_)))
+
+  $(if $(filter $(allowed_versions_),$(3)),,
+    $(error DEFAULT_PLATFORM_VERSION '$(3)' must be between MIN_PLATFORM_VERSION '$(1)' and MAX_PLATFORM_VERSION '$(2)'))
+
+  $(allowed_versions_))
+endef
+
+#$(warning $(call allowed-platform-versions,OPR1,PPR1,OPR1))
+#$(warning $(call allowed-platform-versions,OPM1,PPR1,OPR1))
+
 # Set up version information.
 include $(BUILD_SYSTEM)/version_defaults.mk
+
+ENABLED_VERSIONS := $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
+
+$(foreach v,$(ENABLED_VERSIONS), \
+  $(eval IS_AT_LEAST_$(v) := true))
 
 # ---------------------------------------------------------------
 # If you update the build system such that the environment setup
