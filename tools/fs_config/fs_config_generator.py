@@ -709,7 +709,7 @@ class FSConfigFileParser(object):
                 int(cap, 0)
                 tmp.append('(' + cap + ')')
             except ValueError:
-                tmp.append('(1ULL << CAP_' + cap.upper() + ')')
+                tmp.append('CAP_MASK_LONG(CAP_' + cap.upper() + ')')
 
         caps = tmp
 
