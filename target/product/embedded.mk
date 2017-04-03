@@ -33,8 +33,6 @@ PRODUCT_PACKAGES += \
     dumpsys \
     fastboot \
     gralloc.default \
-    grep \
-    gzip \
     healthd \
     hwservicemanager \
     init \
@@ -71,16 +69,12 @@ PRODUCT_PACKAGES += \
     logcat \
     logwrapper \
     lshal \
-    mkshrc \
-    reboot \
     recovery \
     service \
     servicemanager \
-    sh \
+    shell_and_utilities \
     surfaceflinger \
     tombstoned \
-    toolbox \
-    toybox \
     tzdatacheck \
 
 # SELinux packages
