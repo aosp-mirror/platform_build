@@ -97,9 +97,11 @@ package_resource_overlays := $(strip \
       $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))))
 
 enforce_rro_enabled :=
-ifeq ($(BOARD_ENFORCE_RRO),true)
-  ifeq (,$(filter $(LOCAL_PACKAGE_NAME), $(BOARD_ENFORCE_RRO_EXEMPT_SOURCES)))
-    ifneq ($(package_resource_overlays),)
+ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
+  ifneq ($(package_resource_overlays),)
+    ifeq ($(PRODUCT_ENFORCE_RRO_TARGETS),*)
+      enforce_rro_enabled := true
+    else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
       enforce_rro_enabled := true
     endif
   endif

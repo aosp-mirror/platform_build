@@ -425,3 +425,7 @@ PRODUCT_ART_USE_READ_BARRIER := \
 # Whether the product is an Android Things variant.
 PRODUCT_IOT := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_IOT))
+
+# Package list to apply enforcing RRO.
+PRODUCT_ENFORCE_RRO_TARGETS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_RRO_TARGETS))
