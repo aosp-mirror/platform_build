@@ -47,12 +47,6 @@ TARGET_COPY_OUT_VENDOR := vendor
 # Generic AOSP image does NOT support HWC1
 TARGET_USES_HWC2 := true
 
-# TODO(jiyong): Remove these two. These are required in order to remove
-# board-specific sysprops from system.img. This should be replaced with
-# a more meaningful build flags such as BOARD_SYSPROP_SPLIT.
-ENABLE_TREBLE := true
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
