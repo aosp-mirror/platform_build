@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eb60566c_123a5cd7",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1742,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-04-04T22:34:38Z",
+      "side": 1,
+      "message": "thanks :)",
+      "revId": "de797c301cc67396a0540214f5967b4386c176f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
