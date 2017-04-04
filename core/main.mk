@@ -503,7 +503,7 @@ ADDITIONAL_DEFAULT_PROPERTIES := $(strip $(ADDITIONAL_DEFAULT_PROPERTIES))
 ADDITIONAL_BUILD_PROPERTIES := $(strip $(ADDITIONAL_BUILD_PROPERTIES))
 .KATI_READONLY := ADDITIONAL_BUILD_PROPERTIES
 
-ifeq ($(BOARD_ENFORCE_RRO),true)
+ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
 ENFORCE_RRO_SOURCES :=
 endif
 
@@ -577,7 +577,7 @@ endif # ONE_SHOT_MAKEFILE
 # Enforce to generate all RRO packages for modules having resource
 # overlays.
 # -------------------------------------------------------------------
-ifeq ($(BOARD_ENFORCE_RRO),true)
+ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
 $(call generate_all_enforce_rro_packages)
 endif
 
