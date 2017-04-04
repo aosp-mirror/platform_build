@@ -2,6 +2,8 @@
 # Set up product-global definitions and include product-specific rules.
 #
 
+LOCAL_PATH := $(call my-dir)
+
 -include $(TARGET_DEVICE_DIR)/AndroidBoard.mk
 
 # Generate a file that contains various information about the
@@ -24,4 +26,26 @@ ifdef board_info_txt
 	$(hide) grep -v '#' $< > $@
 else
 	$(hide) echo "board=$(TARGET_BOOTLOADER_BOARD_NAME)" > $@
+endif
+
+# Copy compatibility metadata to the device.
+
+ifdef DEVICE_MANIFEST_FILE
+include $(CLEAR_VARS)
+LOCAL_MODULE        := manifest.xml
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)
+LOCAL_PREBUILT_MODULE_FILE := $(DEVICE_MANIFEST_FILE)
+INSTALLED_VENDOR_MANIFEST := $(LOCAL_MODULE_PATH)/$(LOCAL_MODULE)
+include $(BUILD_PREBUILT)
+endif
+
+ifdef DEVICE_MATRIX_FILE
+include $(CLEAR_VARS)
+LOCAL_MODULE        := matrix.xml
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)
+LOCAL_PREBUILT_MODULE_FILE := $(DEVICE_MATRIX_FILE)
+INSTALLED_VENDOR_MATRIX := $(LOCAL_MODULE_PATH)/$(LOCAL_MODULE)
+include $(BUILD_PREBUILT)
 endif
