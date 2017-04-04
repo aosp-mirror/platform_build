@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5057c6a6_665882e9",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1741,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-04-04T18:12:37Z",
+      "side": 1,
+      "message": "If you could turn \"Soong includes\" into \"Soong already includes\" I think that\u0027d help; I was expecting \u0027includes\u0027 to be a noun :(",
+      "revId": "6ac09cde9dbc813026812ac2bd1c99464fb9404f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7bdb1ea_9a940966",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-04-04T18:12:37Z",
+      "side": 1,
+      "message": "another \u0027already\u0027 to insert if you feel like it",
+      "revId": "6ac09cde9dbc813026812ac2bd1c99464fb9404f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
