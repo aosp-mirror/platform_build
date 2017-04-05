@@ -70,6 +70,30 @@
       "revId": "0d3ed809d0cbb18937dfaf0282b2da6b94aadcdd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7167f1b1_3636a0fa",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-05T19:29:31Z",
+      "side": 1,
+      "message": "I don\u0027t like sometimes including the arch and sometimes not, it will cause tests to move around when you enable multilib or new arches.  For native tests we use different top level directories for 32 and 64 bit tests (/data/nativetest and /data/nativetest64).  Could you have $OUT/testcases and $OUT/testcases32?",
+      "parentUuid": "c01367f6_235b0289",
+      "range": {
+        "startLine": 449,
+        "startChar": 9,
+        "endLine": 449,
+        "endChar": 29
+      },
+      "revId": "0d3ed809d0cbb18937dfaf0282b2da6b94aadcdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
