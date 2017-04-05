@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "59ff844e_b7d6cfd4",
+        "filename": "tools/fs_config/tests/fs_conf_test.cpp",
+        "patchSetId": 8
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-04-05T20:15:05Z",
+      "side": 1,
+      "message": "Ooops, forgot to use libbase.",
+      "range": {
+        "startLine": 116,
+        "startChar": 8,
+        "endLine": 121,
+        "endChar": 68
+      },
+      "revId": "ea0c3bece46a42a3aea803ee9e8e9e069f2b77bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
