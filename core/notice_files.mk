@@ -14,6 +14,14 @@ ifeq ($(LOCAL_MODULE_CLASS),GYP)
   notice_file :=
 endif
 
+# Soong generates stub libraries that don't need NOTICE files
+ifdef LOCAL_NO_NOTICE_FILE
+  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    $(call pretty-error,LOCAL_NO_NOTICE_FILE should not be used by Android.mk files)
+  endif
+  notice_file :=
+endif
+
 ifeq ($(LOCAL_MODULE_CLASS),NOTICE_FILES)
 # If this is a NOTICE-only module, we don't include base_rule.mk,
 # so my_prefix is not set at this point.
