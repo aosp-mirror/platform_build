@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "fedd4906_6c8fb4be",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-04-05T20:02:32Z",
+      "side": 1,
+      "message": "$OUT/testcases and $OUT/testcases32 will lead to another problem, that is there will be multiple test config sharing the same name under different directories.\n\nSimran\u0027s change will put the test config in the parent folder, and test binaries in each arch dir inside the parent folder. That way, TF can discover the single test config and run all the test binaries.\n\nI think it\u0027s fine we remove that if check, and force an arch subfolder for test binaries. Users can always be educated.",
+      "parentUuid": "7167f1b1_3636a0fa",
+      "range": {
+        "startLine": 449,
+        "startChar": 9,
+        "endLine": 449,
+        "endChar": 29
+      },
+      "revId": "0d3ed809d0cbb18937dfaf0282b2da6b94aadcdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4b0494ce_8246a399",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
