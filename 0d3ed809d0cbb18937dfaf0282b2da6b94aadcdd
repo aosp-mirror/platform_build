@@ -121,6 +121,30 @@
     },
     {
       "key": {
+        "uuid": "5afca729_09582913",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-04-05T20:22:51Z",
+      "side": 1,
+      "message": "I\u0027ll remove this check and that way its at least always the same directory structure for the testcase directories.",
+      "parentUuid": "fedd4906_6c8fb4be",
+      "range": {
+        "startLine": 449,
+        "startChar": 9,
+        "endLine": 449,
+        "endChar": 29
+      },
+      "revId": "0d3ed809d0cbb18937dfaf0282b2da6b94aadcdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4b0494ce_8246a399",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
