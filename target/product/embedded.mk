@@ -78,6 +78,7 @@ PRODUCT_PACKAGES += \
     surfaceflinger \
     tombstoned \
     tzdatacheck \
+    vndservicemanager \
 
 # SELinux packages
 PRODUCT_PACKAGES += \
@@ -89,7 +90,8 @@ PRODUCT_PACKAGES += \
     plat_property_contexts \
     plat_seapp_contexts \
     plat_service_contexts \
-    selinux_policy
+    selinux_policy \
+    vndservice_contexts
 
 # AID Generation for
 # <pwd.h> and <grp.h>
