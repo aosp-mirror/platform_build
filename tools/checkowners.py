@@ -5,6 +5,7 @@
 import argparse
 import re
 import sys
+import urllib
 import urllib2
 
 parser = argparse.ArgumentParser(description='Check OWNERS file syntax')
@@ -29,7 +30,8 @@ def echo(msg):
 
 def find_address(address):
   if address not in checked_addresses:
-    request = gerrit_server + '/accounts/?suggest&q=' + address
+    request = (gerrit_server + '/accounts/?n=1&o=ALL_EMAILS&q=email:'
+               + urllib.quote(address))
     echo('Checking email address: ' + address)
     result = urllib2.urlopen(request).read()
     expected = '"email": "' + address + '"'
