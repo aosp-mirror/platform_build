@@ -242,7 +242,7 @@ ifneq ($(apk_libraries),)
   link_apk_libraries := \
       $(foreach lib,$(apk_libraries), \
         $(call intermediates-dir-for, \
-              APPS,$(lib),,COMMON)/classes.jar)
+              APPS,$(lib),,COMMON)/classes-pre-proguard.jar)
 
   # link against the jar with full original names (before proguard processing).
   full_shared_java_libs += $(link_apk_libraries)
@@ -263,7 +263,7 @@ ifdef LOCAL_INSTRUMENTATION_FOR
   link_instr_intermediates_dir.COMMON := $(call intermediates-dir-for, \
       APPS,$(LOCAL_INSTRUMENTATION_FOR),,COMMON)
   # link against the jar with full original names (before proguard processing).
-  link_instr_classes_jar := $(link_instr_intermediates_dir.COMMON)/classes.jar
+  link_instr_classes_jar := $(link_instr_intermediates_dir.COMMON)/classes-pre-proguard.jar
   full_java_libs += $(link_instr_classes_jar)
   full_java_lib_deps += $(link_instr_classes_jar)
 endif  # LOCAL_INSTRUMENTATION_FOR

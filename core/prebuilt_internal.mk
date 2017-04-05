@@ -431,6 +431,7 @@ ifeq ($(LOCAL_IS_HOST_MODULE),)
 # for target java libraries, the LOCAL_BUILT_MODULE is in a product-specific dir,
 # while the deps should be in the common dir, so we make a copy in the common dir.
 common_classes_jar := $(intermediates.COMMON)/classes.jar
+common_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
 common_javalib_jar := $(intermediates.COMMON)/javalib.jar
 
 $(common_classes_jar) $(common_javalib_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
@@ -471,6 +472,9 @@ $(my_src_jar) : $(my_src_aar)
 endif
 
 $(common_classes_jar) : $(my_src_jar)
+	$(transform-prebuilt-to-target)
+
+$(common_classes_pre_proguard_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)
 
 $(common_javalib_jar) : $(common_classes_jar)
