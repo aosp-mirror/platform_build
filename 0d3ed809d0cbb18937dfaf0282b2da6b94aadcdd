@@ -22,6 +22,30 @@
       "revId": "0d3ed809d0cbb18937dfaf0282b2da6b94aadcdd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e9ad3b61_273487e5",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-04-05T19:16:22Z",
+      "side": 1,
+      "message": "This only affects testcases output, I think it will be cleaner to remove the spacial tests. One concern is that this will add an arch parent dir for all tests, even those built with only one arch type, right?\n\nThe problem of that is GTestResultParser will include the arch dir as part of the test name (b/36897004). users will see a different test name in blackbox, which can be questionable.\n\nFor that reason, I guess we can keep the existing behavior, and only apply the logic to builds that generate multiple binaries with the same name for different arch.",
+      "parentUuid": "daf39b44_51534386",
+      "range": {
+        "startLine": 449,
+        "startChar": 9,
+        "endLine": 449,
+        "endChar": 29
+      },
+      "revId": "0d3ed809d0cbb18937dfaf0282b2da6b94aadcdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
