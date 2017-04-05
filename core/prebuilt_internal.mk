@@ -126,17 +126,23 @@ else  # my_strip_module and my_pack_module_relocations not true
 
 ifdef prebuilt_module_is_a_library
 export_includes := $(intermediates)/export_includes
-$(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(LOCAL_EXPORT_C_INCLUDE_DIRS)
+export_cflags := $(foreach d,$(LOCAL_EXPORT_C_INCLUDE_DIRS),-I $(d))
+# Soong exports cflags instead of include dirs, so that -isystem can be included.
+ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+export_cflags += $(LOCAL_EXPORT_CFLAGS)
+else ifdef LOCAL_EXPORT_CFLAGS
+$(call pretty-error,LOCAL_EXPORT_CFLAGS can only be used by Soong, use LOCAL_EXPORT_C_INCLUDE_DIRS instead)
+endif
+$(export_includes): PRIVATE_EXPORT_CFLAGS := $(export_cflags)
 $(export_includes): $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@
-ifdef LOCAL_EXPORT_C_INCLUDE_DIRS
-	$(hide) for d in $(PRIVATE_EXPORT_C_INCLUDE_DIRS); do \
-	        echo "-I $$d" >> $@; \
-	        done
+ifdef export_cflags
+	$(hide) echo "$(PRIVATE_EXPORT_CFLAGS)" >$@
 else
 	$(hide) touch $@
 endif
+export_cflags :=
 
 my_link_type := $(intermediates)/link_type
 $(my_link_type): PRIVATE_LINK_TYPE := native:$(if $(LOCAL_SDK_VERSION),ndk,platform)

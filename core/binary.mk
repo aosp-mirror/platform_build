@@ -1738,7 +1738,14 @@ $(LOCAL_INSTALLED_MODULE): | $(installed_static_library_notice_file_targets)
 # Export includes
 ###########################################################
 export_includes := $(intermediates)/export_includes
-$(export_includes): PRIVATE_EXPORT_C_INCLUDE_DIRS := $(my_export_c_include_dirs)
+export_cflags := $(foreach d,$(my_export_c_include_dirs),-I $(d))
+# Soong exports cflags instead of include dirs, so that -isystem can be included.
+ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+export_cflags += $(LOCAL_EXPORT_CFLAGS)
+else ifdef LOCAL_EXPORT_CFLAGS
+$(call pretty-error,LOCAL_EXPORT_CFLAGS can only be used by Soong, use LOCAL_EXPORT_C_INCLUDE_DIRS instead)
+endif
+$(export_includes): PRIVATE_EXPORT_CFLAGS := $(export_cflags)
 # Headers exported by whole static libraries are also exported by this library.
 export_include_deps := $(strip \
    $(foreach l,$(my_whole_static_libraries), \
@@ -1761,10 +1768,8 @@ $(export_includes): PRIVATE_REEXPORTED_INCLUDES := $(export_include_deps)
 $(export_includes) : $(my_export_c_include_deps) $(my_generated_sources) $(export_include_deps) $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 	@echo Export includes file: $< -- $@
 	$(hide) mkdir -p $(dir $@) && rm -f $@.tmp && touch $@.tmp
-ifdef my_export_c_include_dirs
-	$(hide) for d in $(PRIVATE_EXPORT_C_INCLUDE_DIRS); do \
-	        echo "-I $$d" >> $@.tmp; \
-	        done
+ifdef export_cflags
+	$(hide) echo "$(PRIVATE_EXPORT_CFLAGS)" >>$@.tmp
 endif
 ifdef export_include_deps
 	$(hide) for f in $(PRIVATE_REEXPORTED_INCLUDES); do \
@@ -1776,6 +1781,7 @@ endif
 	else \
 	  mv $@.tmp $@ ; \
 	fi
+export_cflags :=
 
 # Kati adds restat=1 to ninja. GNU make does nothing for this.
 .KATI_RESTAT: $(export_includes)
