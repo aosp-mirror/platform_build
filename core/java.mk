@@ -629,6 +629,7 @@ $(eval $(call copy-one-file,$(full_classes_proguard_jar),$(full_classes_jar)))
 
 $(call define-jar-to-toc-rule, $(full_classes_jar))
 
+ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 ifndef LOCAL_JACK_ENABLED
 $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 # If you instrument class files that have local variable debug information in
@@ -649,6 +650,8 @@ $(built_dex): $(built_dex_intermediate)
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $(dir $@)/classes*.dex
 	$(hide) cp -fp $(dir $<)/classes*.dex $(dir $@)
+
+endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
 findbugs_xml := $(intermediates.COMMON)/findbugs.xml
 $(findbugs_xml): PRIVATE_AUXCLASSPATH := $(addprefix -auxclasspath ,$(strip \

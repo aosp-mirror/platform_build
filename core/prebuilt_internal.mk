@@ -438,14 +438,10 @@ ifdef LOCAL_IS_HOST_MODULE
 # for host java libraries deps should be in the common dir, so we make a copy in
 # the common dir.
 common_classes_jar := $(intermediates.COMMON)/classes.jar
-common_javalib_jar := $(intermediates.COMMON)/javalib.jar
 
-$(common_classes_jar) $(common_javalib_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
+$(common_classes_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
 
 $(common_classes_jar) : $(my_src_jar)
-	$(transform-prebuilt-to-target)
-
-$(common_javalib_jar) : $(common_classes_jar)
 	$(transform-prebuilt-to-target)
 
 else # !LOCAL_IS_HOST_MODULE
