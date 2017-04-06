@@ -116,7 +116,7 @@ $(call auto-prebuilt-boilerplate, \
     $(prebuilt_module_tags), \
     , \
     , \
-    $(if $(prebuilt_is_host),classes.jar,javalib.jar))
+    javalib.jar)
 
 $(call auto-prebuilt-boilerplate, \
     $(prebuilt_static_java_libraries), \
@@ -125,7 +125,7 @@ $(call auto-prebuilt-boilerplate, \
     $(prebuilt_module_tags), \
     , \
     true, \
-    classes.jar)
+    javalib.jar)
 
 prebuilt_static_libs :=
 prebuilt_shared_libs :=
