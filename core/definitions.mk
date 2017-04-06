@@ -681,7 +681,7 @@ endef
 # $(1): library name
 # $(2): Non-empty if IS_HOST_MODULE
 define _java-lib-full-classes.jar
-$(call _java-lib-dir,$(1),$(2))/$(if $(2),javalib,classes)$(COMMON_JAVA_PACKAGE_SUFFIX)
+$(call _java-lib-dir,$(1),$(2))/classes.jar
 endef
 
 # Get the jar files (you can pass to "javac -classpath") of static or shared
@@ -704,14 +704,6 @@ define java-lib-deps
 $(call java-lib-files,$(1),$(2))
 endef
 
-# Get the jar files (you can pass to "javac -classpath") of host dalvik Java libraries.
-# You can also use them as dependency files.
-# A host dalvik Java library is different from a host Java library in that
-# the java lib file is classes.jar, not javalib.jar.
-# $(1): library name list
-define host-dex-java-lib-files
-$(foreach lib,$(1),$(call _java-lib-dir,$(lib),true)/classes.jar)
-endef
 
 ###########################################################
 ## Convert "core ext framework" to "out/.../classes.jack ..."

@@ -37,6 +37,7 @@ emma_intermediates_dir := $(intermediates.COMMON)/emma_out
 # emma is hardcoded to use the leaf name of its input for the output file --
 # only the output directory can be changed
 full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(notdir $(full_classes_jarjar_jar))
+full_classes_jar := $(intermediates.COMMON)/classes.jar
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
@@ -109,3 +110,4 @@ full_classes_emma_jar := $(full_classes_jarjar_jar)
 endif # LOCAL_EMMA_INSTRUMENT
 
 $(eval $(call copy-one-file,$(full_classes_emma_jar),$(LOCAL_BUILT_MODULE)))
+$(eval $(call copy-one-file,$(full_classes_emma_jar),$(full_classes_jar)))
