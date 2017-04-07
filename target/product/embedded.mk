@@ -78,6 +78,7 @@ PRODUCT_PACKAGES += \
     surfaceflinger \
     tombstoned \
     tzdatacheck \
+    vndservice \
     vndservicemanager \
 
 # SELinux packages
