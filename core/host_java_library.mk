@@ -64,7 +64,7 @@ LOCAL_JAVACFLAGS += $(LOCAL_ERROR_PRONE_FLAGS)
 endif
 
 $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
-$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JAVACFLAGS)
+$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
@@ -74,6 +74,7 @@ $(full_classes_compiled_jar): \
         $(full_java_lib_deps) \
         $(jar_manifest_file) \
         $(proto_java_sources_file_stamp) \
+        $(annotation_processor_deps) \
         $(NORMALIZE_PATH) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	$(transform-host-java-to-package)
