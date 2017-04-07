@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17e468a8_a27e710e",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-04-07T00:31:47Z",
+      "side": 1,
+      "message": "Instead of patsubst, you can use addprefix:\n\n  $(addprefix -,$(fs_config_generate_extra_partition_list))",
+      "range": {
+        "startLine": 134,
+        "startChar": 29,
+        "endLine": 135,
+        "endChar": 13
+      },
+      "revId": "dca5d1582c78d057e08522046b779e770e097310",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ced1db62_3dc0d0bc",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-04-07T00:31:47Z",
+      "side": 1,
+      "message": "fs_config_dirs_vendor (similar changes for each one below)\n\nor if you actually want fs_config_dirs to trigger this, add this just before line 129/144:\n\n  LOCAL_REQUIRED_MODULES :\u003d fs_config_dirs_vendor fs_config_files_vendor ...\n\n(It\u0027s fine to include things that may not exist, so the checks around the definitions are enough)",
+      "range": {
+        "startLine": 155,
+        "startChar": 6,
+        "endLine": 155,
+        "endChar": 20
+      },
+      "revId": "dca5d1582c78d057e08522046b779e770e097310",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
