@@ -592,6 +592,17 @@ alphabetically.</p>
 </ul>
 </p>
 
+<h4>LOCAL_ANNOTATION_PROCESSORS</h4>
+<p>Set this to a list of modules built with <code>BUILD_HOST_JAVA_LIBRARY</code>
+to have their jars passed to javac with -processorpath for use as annotation
+processors.</p>
+
+<h4>LOCAL_ANNOTATION_PROCESSOR_CLASSES</h4>
+<p>Set this to a list of classes to be passed to javac as -processor arguments.
+This list is would be unnecessary, as javac will autodetect annotation processor
+classes, except that the Grok tool that is used on the Android source code
+does not autodetect them and requires listing them manually.</p>
+
 <h4>LOCAL_ASSET_FILES</h4>
 <p>In Android.mk files that <code>include $(BUILD_PACKAGE)</code> set this
 to the set of files you want built into your app.  Usually:</p>
