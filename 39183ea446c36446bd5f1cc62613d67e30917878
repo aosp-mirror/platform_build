@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4a656b31_2bde3268",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-04-07T00:16:42Z",
+      "side": 1,
+      "message": "what is this for?",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 18
+      },
+      "revId": "39183ea446c36446bd5f1cc62613d67e30917878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f98ce359_bec4c566",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-04-07T00:16:42Z",
+      "side": 1,
+      "message": "LOCAL",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 6
+      },
+      "revId": "39183ea446c36446bd5f1cc62613d67e30917878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54f6d1c2_f78f3d44",
+        "filename": "tools/fs_config/tests/Android.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-04-07T00:16:42Z",
+      "side": 1,
+      "message": "This will be empty. Is this actually something you need to compile this test?",
+      "range": {
+        "startLine": 52,
+        "startChar": 33,
+        "endLine": 52,
+        "endChar": 63
+      },
+      "revId": "39183ea446c36446bd5f1cc62613d67e30917878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
