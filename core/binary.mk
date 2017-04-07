@@ -80,9 +80,8 @@ endif
 my_ndk_sysroot :=
 my_ndk_sysroot_include :=
 my_ndk_sysroot_lib :=
-ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
+ifneq ($(LOCAL_SDK_VERSION),)
   ifdef LOCAL_IS_HOST_MODULE
-    # LOCAL_USE_VNDK is checked in local_vndk.mk
     $(error $(LOCAL_PATH): LOCAL_SDK_VERSION cannot be used in host module)
   endif
 
@@ -111,13 +110,9 @@ ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
   # missing API levels to existing ones where necessary, but we're not doing
   # that for the generated libraries. Clip the API level to the minimum where
   # appropriate.
-  ifdef LOCAL_USE_VNDK
-    my_ndk_api := current
-  else
-    my_ndk_api := $(LOCAL_SDK_VERSION)
-    ifneq ($(my_ndk_api),current)
-      my_ndk_api := $(call math_max,$(my_ndk_api),$(my_min_sdk_version))
-    endif
+  my_ndk_api := $(LOCAL_SDK_VERSION)
+  ifneq ($(my_ndk_api),current)
+    my_ndk_api := $(call math_max,$(my_ndk_api),$(my_min_sdk_version))
   endif
 
   my_ndk_api_def := $(my_ndk_api)
@@ -165,20 +160,18 @@ ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
   my_built_ndk_libs := $(my_ndk_platform_dir)/usr/$(my_ndk_libdir_name)
   my_ndk_sysroot_lib := $(my_ndk_sysroot)/usr/$(my_ndk_libdir_name)
 
-  ifndef LOCAL_USE_VNDK
-    # The bionic linker now has support for packed relocations and gnu style
-    # hashes (which are much faster!), but shipping to older devices requires
-    # the old style hash. Fortunately, we can build with both and it'll work
-    # anywhere.
-    #
-    # This is not currently supported on MIPS architectures.
-    ifeq (,$(filter mips mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
-      my_ldflags += -Wl,--hash-style=both
-    endif
-
-    # We don't want to expose the relocation packer to the NDK just yet.
-    LOCAL_PACK_MODULE_RELOCATIONS := false
+  # The bionic linker now has support for packed relocations and gnu style
+  # hashes (which are much faster!), but shipping to older devices requires
+  # the old style hash. Fortunately, we can build with both and it'll work
+  # anywhere.
+  #
+  # This is not currently supported on MIPS architectures.
+  ifeq (,$(filter mips mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
+    my_ldflags += -Wl,--hash-style=both
   endif
+
+  # We don't want to expose the relocation packer to the NDK just yet.
+  LOCAL_PACK_MODULE_RELOCATIONS := false
 
   # Set up the NDK stl variant. Starting from NDK-r5 the c++ stl resides in a separate location.
   # See ndk/docs/CPLUSPLUS-SUPPORT.html
@@ -186,7 +179,6 @@ ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
   my_ndk_stl_shared_lib_fullpath :=
   my_ndk_stl_static_lib :=
   my_ndk_cpp_std_version :=
-  ifndef LOCAL_USE_VNDK
   my_cpu_variant := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)
   ifeq (mips32r6,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH_VARIANT))
     my_cpu_variant := mips32r6
@@ -274,7 +266,10 @@ ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
   endif
   endif
   endif
-  endif
+endif
+
+ifneq ($(LOCAL_USE_VNDK),)
+  my_cflags += -D__ANDROID_API__=__ANDROID_API_FUTURE__
 endif
 
 ifndef LOCAL_IS_HOST_MODULE
@@ -295,7 +290,7 @@ my_shared_libraries += $(patsubst -l%,lib%,$(filter-out $(my_allowed_ldlibs),$(m
 my_ldlibs := $(filter $(my_allowed_ldlibs),$(my_ldlibs))
 endif
 
-ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
+ifneq ($(LOCAL_SDK_VERSION),)
   my_all_ndk_libraries := \
       $(NDK_MIGRATED_LIBS) $(addprefix lib,$(NDK_PREBUILT_SHARED_LIBRARIES))
   my_ndk_shared_libraries := \
@@ -519,6 +514,15 @@ endif
 ###########################################################
 my_asflags += -D__ASSEMBLY__
 
+###########################################################
+## When compiling against the VNDK, use LL-NDK libraries
+###########################################################
+ifneq ($(LOCAL_USE_VNDK),)
+  my_shared_libraries := $(foreach lib,$(my_shared_libraries),\
+      $(if $(filter $(LLNDK_LIBRARIES),$(lib)),$(lib).llndk,$(lib)))
+  my_system_shared_libraries := $(foreach lib,$(my_system_shared_libraries),\
+      $(if $(filter $(LLNDK_LIBRARIES),$(lib)),$(lib).llndk,$(lib)))
+endif
 
 ###########################################################
 ## Define PRIVATE_ variables from global vars
@@ -528,8 +532,7 @@ ifdef LOCAL_USE_VNDK
 my_target_global_c_includes := \
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES)
 my_target_global_c_system_includes := \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES) \
-    $(my_ndk_sysroot_include)
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES)
 else ifdef LOCAL_SDK_VERSION
 my_target_global_c_includes :=
 my_target_global_c_system_includes := $(my_ndk_stl_include_path) $(my_ndk_sysroot_include)
@@ -1326,7 +1329,7 @@ endif
 ## they may cusomize their install path with LOCAL_MODULE_PATH
 ##########################################################
 # Get the list of INSTALLED libraries as module names.
-ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
+ifneq ($(LOCAL_SDK_VERSION),)
   installed_shared_library_module_names := \
       $(my_shared_libraries)
 else
@@ -1499,7 +1502,7 @@ ALL_C_CPP_ETC_OBJECTS += $(all_objects)
 so_suffix := $($(my_prefix)SHLIB_SUFFIX)
 a_suffix := $($(my_prefix)STATIC_LIB_SUFFIX)
 
-ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
+ifneq ($(LOCAL_SDK_VERSION),)
 built_shared_libraries := \
     $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
       $(addsuffix $(so_suffix), \
@@ -1681,7 +1684,7 @@ my_ldflags := $(filter-out -l%,$(my_ldlib_flags))
 # One last verification check for ldlibs
 ifndef LOCAL_IS_HOST_MODULE
 my_allowed_ldlibs :=
-ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
+ifneq ($(LOCAL_SDK_VERSION),)
   my_allowed_ldlibs := $(addprefix -l,$(NDK_PREBUILT_SHARED_LIBRARIES))
 endif
 
