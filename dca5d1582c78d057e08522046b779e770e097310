@@ -45,6 +45,30 @@
       "revId": "dca5d1582c78d057e08522046b779e770e097310",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71a28e9e_985c62c7",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-04-07T15:22:07Z",
+      "side": 1,
+      "message": "Yes, should report \u0027fs_config_dirs or fs_config_dirs_vendor\u0027 and ditto down the line.\n\nI will filter LOCAL_REQUIRED_MODULES based on the known configured set, replacing that for what I \u0027hacked\u0027 on line 130 and line 145 respectively.",
+      "parentUuid": "ced1db62_3dc0d0bc",
+      "range": {
+        "startLine": 155,
+        "startChar": 6,
+        "endLine": 155,
+        "endChar": 20
+      },
+      "revId": "dca5d1582c78d057e08522046b779e770e097310",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
