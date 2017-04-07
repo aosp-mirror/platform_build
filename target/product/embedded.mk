@@ -84,6 +84,7 @@ PRODUCT_PACKAGES += \
     toolbox \
     toybox \
     tzdatacheck \
+    vndservice \
     vndservicemanager \
 
 # SELinux packages
