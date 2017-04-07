@@ -225,6 +225,16 @@ function setpaths()
     fi
 
     export ANDROID_DEV_SCRIPTS=$T/development/scripts:$T/prebuilts/devtools/tools:$T/external/selinux/prebuilts/bin
+
+    # add kernel specific binaries
+    case $(uname -s) in
+        Linux)
+            export ANDROID_DEV_SCRIPTS=$ANDROID_DEV_SCRIPTS:$T/prebuilts/misc/linux-x86/dtc:$T/prebuilts/misc/linux-x86/libufdt
+            ;;
+        *)
+            ;;
+    esac
+
     export ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_TOOLCHAIN:$ANDROID_TOOLCHAIN_2ND_ARCH:$ANDROID_DEV_SCRIPTS:
 
     # If prebuilts/android-emulator/<system>/ exists, prepend it to our PATH
