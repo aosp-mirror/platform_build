@@ -48,11 +48,14 @@ my_target_libatomic := $(call intermediates-dir-for,STATIC_LIBRARIES,libatomic,,
 ifeq ($(LOCAL_NO_CRT),true)
 my_target_crtbegin_so_o :=
 my_target_crtend_so_o :=
+else ifdef LOCAL_USE_VNDK
+my_target_crtbegin_so_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_so.vendor.o
+my_target_crtend_so_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_so.vendor.o
 else
 my_target_crtbegin_so_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_so.o
 my_target_crtend_so_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_so.o
 endif
-ifneq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
+ifneq ($(LOCAL_SDK_VERSION),)
 my_target_crtbegin_so_o := $(wildcard $(my_ndk_sysroot_lib)/crtbegin_so.o)
 my_target_crtend_so_o := $(wildcard $(my_ndk_sysroot_lib)/crtend_so.o)
 endif
