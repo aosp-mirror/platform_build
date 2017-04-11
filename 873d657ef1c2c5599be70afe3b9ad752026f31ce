@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae952a6b_eead00fa",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 732,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-11T20:13:26Z",
+      "side": 1,
+      "message": "An example of what this looks like would help",
+      "revId": "873d657ef1c2c5599be70afe3b9ad752026f31ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1d75afba_5103fc68",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 791,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-11T20:13:26Z",
+      "side": 1,
+      "message": "Document what $1 and $2 are for all of these",
+      "revId": "873d657ef1c2c5599be70afe3b9ad752026f31ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d46e1eb0_53c26335",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 797,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-11T20:13:26Z",
+      "side": 1,
+      "message": "Add a message about using ALLOW_MISSING_DEPENDENCIES\u003dtrue",
+      "revId": "873d657ef1c2c5599be70afe3b9ad752026f31ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
