@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "50f43e04_a1491f20",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2688,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-04-11T16:52:28Z",
+      "side": 1,
+      "message": "This warn.py is imported to google3 to run in cron jobs.\nIt needs to pass gpylint.\nPlease run \"gpylint warn.py\".\nIt has now the following warning:\n\nC6113:2688: Args section is missing, does not match arg list or is badly indented.\nExpected: sev, kind\n\n\nBut, instead of returning the whole csv file content,\ncould you pass in an output file object and dump to that file?",
+      "range": {
+        "startLine": 2688,
+        "startChar": 5,
+        "endLine": 2688,
+        "endChar": 10
+      },
+      "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "786559a0_1fb64fe3",
         "filename": "tools/warn.py",
         "patchSetId": 1
@@ -42,6 +65,52 @@
         "startChar": 2,
         "endLine": 2730,
         "endChar": 47
+      },
+      "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b9759d13_7ecb1d78",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2739,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-04-11T16:52:28Z",
+      "side": 1,
+      "message": "Could you pass the output file object or stdout to dump_csv?",
+      "range": {
+        "startLine": 2739,
+        "startChar": 14,
+        "endLine": 2739,
+        "endChar": 22
+      },
+      "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8ccaff93_3b8ecdbf",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2741,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-04-11T16:52:28Z",
+      "side": 1,
+      "message": "Do you need to print csv data to both stdout and a file?\nHow about just\n  if args.csvpath:\n     # dump csv to a file\n  if args.gencsv and not args.csvpath:\n     # dump csv to stdout\n  else:\n     # dump html to stdout\n\nNote that our current cron jobs collect this scripts output in stdout.",
+      "range": {
+        "startLine": 2741,
+        "startChar": 4,
+        "endLine": 2741,
+        "endChar": 9
       },
       "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
