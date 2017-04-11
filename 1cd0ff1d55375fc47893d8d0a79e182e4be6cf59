@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "ccaea0b1_88dc335c",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2730,
+      "author": {
+        "id": 1099348
+      },
+      "writtenOn": "2017-04-11T18:11:54Z",
+      "side": 1,
+      "message": "I agree, seems like a good improvement to do after this.",
+      "parentUuid": "db2018eb_71a290dc",
+      "range": {
+        "startLine": 2730,
+        "startChar": 2,
+        "endLine": 2730,
+        "endChar": 47
+      },
+      "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b9759d13_7ecb1d78",
         "filename": "tools/warn.py",
         "patchSetId": 1
@@ -191,6 +215,30 @@
     },
     {
       "key": {
+        "uuid": "8ec44831_d4b99c52",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2739,
+      "author": {
+        "id": 1099348
+      },
+      "writtenOn": "2017-04-11T18:11:54Z",
+      "side": 1,
+      "message": "We should be passing data in and data out and implement printers based on the data.\nRight now I made this change to align the code with this idea of data in and data out (string).\n\nIdeally dump_csv would return a dict structure that we would pass into a csv formatter that would optionally save to a file.\nThese all seem like good improvements to make after this change.\n\nas far as the size argument for returning strings I think we are pretty far from hitting memory limits, and if we do, we can implement streaming solutions to avoid this.",
+      "parentUuid": "c334cfae_3b68ec24",
+      "range": {
+        "startLine": 2739,
+        "startChar": 14,
+        "endLine": 2739,
+        "endChar": 22
+      },
+      "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ccaff93_3b8ecdbf",
         "filename": "tools/warn.py",
         "patchSetId": 1
@@ -250,6 +298,30 @@
       "side": 1,
       "message": "Okay, if gencsv and csvpath are not going to be used together, we should add a check and reject that combination. Or, if we want to allow that combination, the users would most likely expect output only to the file, not also to the stdout.\n\nAs we are thinking about providing also option to dump html to a named file, in the future, we would try to make all flag combinations easier to remember.",
       "parentUuid": "97fd468b_5903b792",
+      "range": {
+        "startLine": 2741,
+        "startChar": 4,
+        "endLine": 2741,
+        "endChar": 9
+      },
+      "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1d7597af_b3396975",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2741,
+      "author": {
+        "id": 1099348
+      },
+      "writtenOn": "2017-04-11T18:11:54Z",
+      "side": 1,
+      "message": "Sure, change made to make them exclusive",
+      "parentUuid": "80f85345_8dd8dfcd",
       "range": {
         "startLine": 2741,
         "startChar": 4,
