@@ -148,6 +148,20 @@ endif
 need_compile_java := $(strip $(all_java_sources)$(all_res_assets)$(java_resource_sources))$(LOCAL_STATIC_JAVA_LIBRARIES)$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED))
 ifdef need_compile_java
 
+annotation_processor_flags :=
+annotation_processor_deps :=
+
+ifdef LOCAL_ANNOTATION_PROCESSORS
+  annotation_processor_jars := $(call java-lib-deps,$(LOCAL_ANNOTATION_PROCESSORS),true)
+  annotation_processor_flags += -processorpath $(call normalize-path-list,$(annotation_processor_jars))
+  annotation_processor_deps += $(annotation_processor_jars)
+
+  # b/25860419: annotation processors must be explicitly specified for grok
+  annotation_processor_flags += $(foreach class,$(LOCAL_ANNOTATION_PROCESSOR_CLASSES),-processor $(class))
+
+  annotation_processor_jars :=
+endif
+
 full_static_java_libs := \
     $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
       $(call intermediates-dir-for, \
@@ -159,6 +173,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASSET_DIR := $(LOCAL_ASSET_DIR)
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ANNO_INTERMEDIATES_DIR := $(intermediates.COMMON)/anno
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/src
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HAS_PROTO_SOURCES := $(if $(proto_sources),true)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/proto
