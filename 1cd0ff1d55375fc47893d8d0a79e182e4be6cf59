@@ -22,6 +22,30 @@
       "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "72c7158e_cdbbcf5c",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2730,
+      "author": {
+        "id": 1099348
+      },
+      "writtenOn": "2017-04-11T16:41:15Z",
+      "side": 1,
+      "message": "yes, it is indeed questionable why this code implements a custom csv printer, also there are a lot of other \"opportunities\"  that I would like to fix as follow ups to this code.",
+      "parentUuid": "786559a0_1fb64fe3",
+      "range": {
+        "startLine": 2730,
+        "startChar": 2,
+        "endLine": 2730,
+        "endChar": 47
+      },
+      "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
