@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "786559a0_1fb64fe3",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2730,
+      "author": {
+        "id": 1000980
+      },
+      "writtenOn": "2017-04-11T16:38:24Z",
+      "side": 1,
+      "message": "https://docs.python.org/2/library/csv.html?",
+      "range": {
+        "startLine": 2730,
+        "startChar": 2,
+        "endLine": 2730,
+        "endChar": 47
+      },
+      "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
