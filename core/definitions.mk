@@ -2515,12 +2515,6 @@ $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) echo unsupported options JAR_EXCLU
 $(if $(PRIVATE_JAR_MANIFEST), $(hide) echo unsupported options JAR_MANIFEST in $@; exit 53)
 endef
 
-define transform-classes.jar-to-emma
-$(hide) $(JAVA) -classpath $(EMMA_JAR) emma instr -outmode fullcopy -outfile \
-    $(PRIVATE_EMMA_COVERAGE_FILE) -ip $< -d $(PRIVATE_EMMA_INTERMEDIATES_DIR) \
-    $(addprefix -ix , $(PRIVATE_EMMA_COVERAGE_FILTER))
-endef
-
 define desugar-classpath
 $(filter-out -classpath -bootclasspath "",$(subst :,$(space),$(1)))
 endef
