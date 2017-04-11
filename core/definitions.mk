@@ -2188,9 +2188,9 @@ endef
 # $(2): bootclasspath
 define compile-java
 $(hide) rm -f $@
-$(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR)
+$(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(dir $@)
-$(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR)
+$(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR)
 $(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES),$(PRIVATE_CLASS_INTERMEDIATES_DIR))
 $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list)
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
@@ -2209,7 +2209,7 @@ $(hide) if [ -s $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq ] ; the
     $(addprefix -classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_ALL_JAVA_LIBRARIES)))) \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
-    -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
+    -extdirs "" -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) -s $(PRIVATE_ANNO_INTERMEDIATES_DIR) \
     $(PRIVATE_JAVACFLAGS) \
     \@$(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 ) \
