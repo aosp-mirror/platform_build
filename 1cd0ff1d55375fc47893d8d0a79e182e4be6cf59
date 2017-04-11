@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "db2018eb_71a290dc",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2730,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-04-11T17:57:15Z",
+      "side": 1,
+      "message": "This script used simple print to stdout and dump html only, before I added csv dump and changed to dump dynamic html code. So I used simple print first.\nIf anyone has plan to improve the code further, yes, i think we should use standard library and more google coding style.",
+      "parentUuid": "72c7158e_cdbbcf5c",
+      "range": {
+        "startLine": 2730,
+        "startChar": 2,
+        "endLine": 2730,
+        "endChar": 47
+      },
+      "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b9759d13_7ecb1d78",
         "filename": "tools/warn.py",
         "patchSetId": 1
@@ -143,6 +167,30 @@
     },
     {
       "key": {
+        "uuid": "c334cfae_3b68ec24",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2739,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-04-11T17:57:15Z",
+      "side": 1,
+      "message": "In the past we have wanted to clean up this script and make it possibile to dump to a file too, for both csv and html file.\nWhile csv output is small now, it could grow.\nCurrent html output is already very big and impractical to return a whole string.\nFor future adoption of csv write library,\nI think you will need to pass a file object down.\nFor testing, wouldn\u0027t StringIO object work as a file object?",
+      "parentUuid": "d628584b_3e06490d",
+      "range": {
+        "startLine": 2739,
+        "startChar": 14,
+        "endLine": 2739,
+        "endChar": 22
+      },
+      "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8ccaff93_3b8ecdbf",
         "filename": "tools/warn.py",
         "patchSetId": 1
@@ -178,6 +226,30 @@
       "side": 1,
       "message": "I left the existing code path is for your consumer,\nI am not going to exercise this branch of the logic.\n\nSo for me, I want to \n\n1. write the html to stdout (as the current behavior is)\n2. also write the csv report to a file, not using stdout (new behavior)",
       "parentUuid": "8ccaff93_3b8ecdbf",
+      "range": {
+        "startLine": 2741,
+        "startChar": 4,
+        "endLine": 2741,
+        "endChar": 9
+      },
+      "revId": "1cd0ff1d55375fc47893d8d0a79e182e4be6cf59",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "80f85345_8dd8dfcd",
+        "filename": "tools/warn.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 2741,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-04-11T17:57:15Z",
+      "side": 1,
+      "message": "Okay, if gencsv and csvpath are not going to be used together, we should add a check and reject that combination. Or, if we want to allow that combination, the users would most likely expect output only to the file, not also to the stdout.\n\nAs we are thinking about providing also option to dump html to a named file, in the future, we would try to make all flag combinations easier to remember.",
+      "parentUuid": "97fd468b_5903b792",
       "range": {
         "startLine": 2741,
         "startChar": 4,
