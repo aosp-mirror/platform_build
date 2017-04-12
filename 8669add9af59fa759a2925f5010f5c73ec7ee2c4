@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6e259ce_15a9fa42",
+        "filename": "tools/warn.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2726,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-04-12T17:26:00Z",
+      "side": 1,
+      "message": "Now dump_csv does not return string.",
+      "revId": "8669add9af59fa759a2925f5010f5c73ec7ee2c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04ec906b_23680964",
+        "filename": "tools/warn.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2735,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-04-12T17:26:00Z",
+      "side": 1,
+      "message": "Why not just\n  total +\u003d count_severity(writer, ...)",
+      "revId": "8669add9af59fa759a2925f5010f5c73ec7ee2c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8a3ac21f_f838d073",
+        "filename": "tools/warn.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2774,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-04-12T17:26:00Z",
+      "side": 1,
+      "message": "We can save two new classes. Could you try passing just the file object? It can be a file, sys.stdout and also be used by csv.writer like this:\n\ndef dump(f):\n  f.write(....)  # simple write\n  writer \u003d csv.writer(f)\n  writer.writerow([....]) # write a line of csv items\n\ndump(sys.stdout)  # output to stdout\n\nwith io.open(args.csvpath, \u0027wb\u0027) as f:\n   dump(f)  # write to f",
+      "revId": "8669add9af59fa759a2925f5010f5c73ec7ee2c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4578823f_d4a6e255",
+        "filename": "tools/warn.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2775,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-04-12T17:26:00Z",
+      "side": 1,
+      "message": "With given args.csvpath, the dump of html is disabled?\nI remember that you want to be able to output both html and csv files.",
+      "revId": "8669add9af59fa759a2925f5010f5c73ec7ee2c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
