@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "cb2ff2ab_844be624",
+        "filename": "tools/warn.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2726,
+      "author": {
+        "id": 1099348
+      },
+      "writtenOn": "2017-04-12T17:48:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6e259ce_15a9fa42",
+      "revId": "8669add9af59fa759a2925f5010f5c73ec7ee2c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "04ec906b_23680964",
         "filename": "tools/warn.py",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2017-04-12T17:26:00Z",
       "side": 1,
       "message": "Why not just\n  total +\u003d count_severity(writer, ...)",
+      "revId": "8669add9af59fa759a2925f5010f5c73ec7ee2c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1cbeb476_01ab3f05",
+        "filename": "tools/warn.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2735,
+      "author": {
+        "id": 1099348
+      },
+      "writtenOn": "2017-04-12T17:48:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "04ec906b_23680964",
       "revId": "8669add9af59fa759a2925f5010f5c73ec7ee2c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "ef8c75ab_54706730",
+        "filename": "tools/warn.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2774,
+      "author": {
+        "id": 1099348
+      },
+      "writtenOn": "2017-04-12T17:48:09Z",
+      "side": 1,
+      "message": "I would much prefer to hold on migrating to csv writer in this change set as it is a more significant change that is more of a sidestep from the original intent of this change. \n\nI think the current class interface gives us a good starting point to make future improvements to the file.\n\nWe can be iterative about this change.",
+      "parentUuid": "8a3ac21f_f838d073",
+      "revId": "8669add9af59fa759a2925f5010f5c73ec7ee2c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4578823f_d4a6e255",
         "filename": "tools/warn.py",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2017-04-12T17:26:00Z",
       "side": 1,
       "message": "With given args.csvpath, the dump of html is disabled?\nI remember that you want to be able to output both html and csv files.",
+      "revId": "8669add9af59fa759a2925f5010f5c73ec7ee2c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "680a82ba_04071f9e",
+        "filename": "tools/warn.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2775,
+      "author": {
+        "id": 1099348
+      },
+      "writtenOn": "2017-04-12T17:48:09Z",
+      "side": 1,
+      "message": "Updated the the logic, something was lost in translation between our previous exchange leading me down this path.\nI know before you mentioned that we should not output the csv to stdout and to a file, but if someone does pass both flags, we can do it, so I changed the logic to enable this.",
+      "parentUuid": "4578823f_d4a6e255",
       "revId": "8669add9af59fa759a2925f5010f5c73ec7ee2c4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
