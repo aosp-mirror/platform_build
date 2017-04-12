@@ -3243,11 +3243,12 @@ endef
 ## Compatibility suite tools
 ###########################################################
 
-# Return a list of output directories for a given suite and the current LOCAL_MODULE
+# Return a list of output directories for a given suite and the current LOCAL_MODULE.
+# Can be passed a subdirectory to use for the common testcase directory.
 define compatibility_suite_dirs
   $(strip \
     $(COMPATIBILITY_TESTCASES_OUT_$(1)) \
-    $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE))
+    $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)$(2))
 endef
 
 # For each suite:
