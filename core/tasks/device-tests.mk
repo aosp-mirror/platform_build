@@ -21,7 +21,7 @@ $(device-tests-zip): $(COMPATIBILITY.device-tests.FILES) $(SOONG_ZIP)
 	sed -i -e 's/\s\+/\n/g' $@.list
 	grep $(HOST_OUT_TESTCASES) $@.list > $@-host.list || true
 	grep $(TARGET_OUT_TESTCASES) $@.list > $@-target.list || true
-	$(hide) $(SOONG_ZIP) -d -o $@ -C $(HOST_OUT) -l $@-host.list -C $(PRODUCT_OUT) -l $@-target.list
+	$(hide) $(SOONG_ZIP) -d -o $@ -P host -C $(HOST_OUT) -l $@-host.list -P target -C $(PRODUCT_OUT) -l $@-target.list
 
 device-tests: $(device-tests-zip)
 $(call dist-for-goals, device-tests, $(device-tests-zip))
