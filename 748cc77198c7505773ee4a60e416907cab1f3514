@@ -34,6 +34,24 @@
       "revId": "748cc77198c7505773ee4a60e416907cab1f3514",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3646b73e_65584d9e",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-13T22:56:46Z",
+      "side": 1,
+      "message": "It\u0027s not a regex, it\u0027s a shell pattern, but my proposed one rewrites it as a shell pattern",
+      "parentUuid": "8b52a126_60a96007",
+      "revId": "748cc77198c7505773ee4a60e416907cab1f3514",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
