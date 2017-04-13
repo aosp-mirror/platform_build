@@ -87,10 +87,12 @@ PRODUCT_PACKAGES += \
     nonplat_property_contexts \
     nonplat_seapp_contexts \
     nonplat_service_contexts \
+    nonplat_hwservice_contexts \
     plat_mac_permissions.xml \
     plat_property_contexts \
     plat_seapp_contexts \
     plat_service_contexts \
+    plat_hwservice_contexts \
     selinux_policy \
     vndservice_contexts
 
