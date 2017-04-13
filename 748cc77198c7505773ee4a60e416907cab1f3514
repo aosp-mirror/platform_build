@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b8a3512a_f3547883",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-13T22:47:59Z",
+      "side": 1,
+      "message": "This regex seems like overkill, and dangerous when combined with rm -rf.\n\nMaybe find $(OUT_DIR) -name \"*@[0-9].[0-9]-java*\"\n\nAlso, find in $(OUT_DIR) is going to be very slow, can you restrict this more?  Maybe $(OUT_DIR)/target/common/obj/JAVA_LIBRARIES $(PRODUCT_OUT)/obj*/JAVA_LIBRARIES and $(PRODUCT_OUT)/system?",
+      "revId": "748cc77198c7505773ee4a60e416907cab1f3514",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
