@@ -73,14 +73,9 @@ Use option --gencsv to output warning counts in CSV format.
 # New dynamic HTML related function to emit data:
 #   escape_string, strip_escape_string, emit_warning_arrays
 #   emit_js_data():
-#
-# To emit csv files of warning message counts:
-#   flag --gencsv
-#   description_for_csv, string_for_csv:
-#   count_severity(sev, kind):
-#   dump_csv():
 
 import argparse
+import csv
 import multiprocessing
 import os
 import re
@@ -88,6 +83,9 @@ import signal
 import sys
 
 parser = argparse.ArgumentParser(description='Convert a build log into HTML')
+parser.add_argument('--csvpath',
+                    help='Save CSV warning file to the passed absolute path',
+                    default=None)
 parser.add_argument('--gencsv',
                     help='Generate a CSV file with number of various warnings',
                     action='store_true',
@@ -2672,48 +2670,46 @@ def description_for_csv(category):
   return category['description']
 
 
-def string_for_csv(s):
-  # Only some Java warning desciptions have used quotation marks.
-  # TODO(chh): if s has double quote character, s should be quoted.
-  if ',' in s:
-    # TODO(chh): replace a double quote with two double quotes in s.
-    return '"{}"'.format(s)
-  return s
-
-
-def count_severity(sev, kind):
+def count_severity(writer, sev, kind):
   """Count warnings of given severity."""
   total = 0
   for i in warn_patterns:
     if i['severity'] == sev and i['members']:
       n = len(i['members'])
       total += n
-      warning = string_for_csv(kind + ': ' + description_for_csv(i))
-      print '{},,{}'.format(n, warning)
+      warning = kind + ': ' + description_for_csv(i)
+      writer.writerow([n, '', warning])
       # print number of warnings for each project, ordered by project name.
       projects = i['projects'].keys()
       projects.sort()
       for p in projects:
-        print '{},{},{}'.format(i['projects'][p], p, warning)
-  print '{},,{}'.format(total, kind + ' warnings')
+        writer.writerow([i['projects'][p], p, warning])
+  writer.writerow([total, '', kind + ' warnings'])
+
   return total
 
 
 # dump number of warnings in csv format to stdout
-def dump_csv():
+def dump_csv(writer):
   """Dump number of warnings in csv format to stdout."""
   sort_warnings()
   total = 0
   for s in Severity.range:
-    total += count_severity(s, Severity.column_headers[s])
-  print '{},,{}'.format(total, 'All warnings')
+    total += count_severity(writer, s, Severity.column_headers[s])
+  writer.writerow([total, '', 'All warnings'])
 
 
 def main():
   warning_lines = parse_input_file(open(args.buildlog, 'r'))
   parallel_classify_warnings(warning_lines)
+  # If a user pases a csv path, save the fileoutput to the path
+  # If the user also passed gencsv write the output to stdout
+  # If the user did not pass gencsv flag dump the html report to stdout.
+  if args.csvpath:
+    with open(args.csvpath, 'w') as f:
+      dump_csv(csv.writer(f, lineterminator='\n'))
   if args.gencsv:
-    dump_csv()
+    dump_csv(csv.writer(sys.stdout, lineterminator='\n'))
   else:
     dump_html()
 
