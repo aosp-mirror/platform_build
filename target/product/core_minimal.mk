@@ -59,6 +59,7 @@ PRODUCT_PACKAGES += \
     gatekeeperd \
     keystore \
     keystore.default \
+    ld.config.txt \
     ld.mc \
     libaaudio \
     libOpenMAXAL \
@@ -131,9 +132,6 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
-
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/etc/ld.config.txt:system/etc/ld.config.txt
 
 # Different dexopt types for different package update/install times.
 # On eng builds, make "boot" reasons do pure JIT for faster turnaround.
