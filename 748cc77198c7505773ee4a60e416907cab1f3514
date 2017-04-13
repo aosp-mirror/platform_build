@@ -16,6 +16,24 @@
       "revId": "748cc77198c7505773ee4a60e416907cab1f3514",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8b52a126_60a96007",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 421,
+      "author": {
+        "id": 1014088
+      },
+      "writtenOn": "2017-04-13T22:54:20Z",
+      "side": 1,
+      "message": "I had tried the \"-name\" approach before, but discovered that -name doesn\u0027t actually take a regexp, just a \"pattern\". If this rule is a problem, I\u0027ll probably just remove this project from the topic and maybe clean up later. This was purely to recover space and its absence should not impact correctness of the build.",
+      "parentUuid": "b8a3512a_f3547883",
+      "revId": "748cc77198c7505773ee4a60e416907cab1f3514",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
