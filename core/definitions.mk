@@ -1832,18 +1832,21 @@ endef
 define transform-to-stripped-keep-mini-debug-info
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Strip (mini debug info): $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
-$(hide) $(PRIVATE_NM) -D $< --format=posix --defined-only | awk '{ print $$1 }' | sort >$@.dynsyms
-$(hide) $(PRIVATE_NM) $< --format=posix --defined-only | awk '{ if ($$2 == "T" || $$2 == "t" || $$2 == "D") print $$1 }' | sort >$@.funcsyms
-$(hide) comm -13 $@.dynsyms $@.funcsyms >$@.keep_symbols
-$(hide) $(PRIVATE_OBJCOPY) --only-keep-debug $< $@.debug
-$(hide) $(PRIVATE_OBJCOPY) --rename-section .debug_frame=saved_debug_frame $@.debug $@.mini_debuginfo
-$(hide) $(PRIVATE_OBJCOPY) -S --remove-section .gdb_index --remove-section .comment --keep-symbols=$@.keep_symbols $@.mini_debuginfo
-$(hide) $(PRIVATE_OBJCOPY) --rename-section saved_debug_frame=.debug_frame $@.mini_debuginfo
-$(hide) $(PRIVATE_STRIP) --strip-all -R .comment $< -o $@
-$(hide) rm -f $@.mini_debuginfo.xz
-$(hide) xz $@.mini_debuginfo
-$(hide) $(PRIVATE_OBJCOPY) --add-section .gnu_debugdata=$@.mini_debuginfo.xz $@
-$(hide) rm -f $@.dynsyms $@.funcsyms $@.keep_symbols $@.debug $@.mini_debuginfo.xz
+$(hide) rm -f $@ $@.dynsyms $@.funcsyms $@.keep_symbols $@.debug $@.mini_debuginfo.xz
+if $(PRIVATE_STRIP) --strip-all -R .comment $< -o $@; then \
+  $(PRIVATE_OBJCOPY) --only-keep-debug $< $@.debug && \
+  $(PRIVATE_NM) -D $< --format=posix --defined-only | awk '{ print $$1 }' | sort >$@.dynsyms && \
+  $(PRIVATE_NM) $< --format=posix --defined-only | awk '{ if ($$2 == "T" || $$2 == "t" || $$2 == "D") print $$1 }' | sort >$@.funcsyms && \
+  comm -13 $@.dynsyms $@.funcsyms >$@.keep_symbols && \
+  $(PRIVATE_OBJCOPY) --rename-section .debug_frame=saved_debug_frame $@.debug $@.mini_debuginfo && \
+  $(PRIVATE_OBJCOPY) -S --remove-section .gdb_index --remove-section .comment --keep-symbols=$@.keep_symbols $@.mini_debuginfo && \
+  $(PRIVATE_OBJCOPY) --rename-section saved_debug_frame=.debug_frame $@.mini_debuginfo && \
+  rm -f $@.mini_debuginfo.xz && \
+  xz $@.mini_debuginfo && \
+  $(PRIVATE_OBJCOPY) --add-section .gnu_debugdata=$@.mini_debuginfo.xz $@; \
+else \
+  cp -f $< $@; \
+fi
 endef
 
 define transform-to-stripped-keep-symbols
