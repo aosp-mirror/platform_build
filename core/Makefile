@@ -2064,6 +2064,8 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(HOST_OUT_EXECUTABLES)/imgdiff \
 		$(HOST_OUT_EXECUTABLES)/bsdiff \
 		$(BUILD_IMAGE_SRCS) \
+		$(INSTALLED_VENDOR_MANIFEST) \
+		$(INSTALLED_VENDOR_MATRIX) \
 		| $(ACP)
 	@echo "Package target files: $@"
 	$(call create-system-vendor-symlink)
@@ -2285,6 +2287,15 @@ endif
 ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_OTHER,system/) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
+	@# Metadata for compatibility verification.
+	$(hide) cp $(INSTALLED_SYSTEM_MANIFEST) $(zip_root)/META/system_manifest.xml
+ifdef INSTALLED_VENDOR_MANIFEST
+	$(hide) cp $(INSTALLED_VENDOR_MANIFEST) $(zip_root)/META/vendor_manifest.xml
+endif
+ifdef INSTALLED_VENDOR_MATRIX
+	$(hide) cp $(INSTALLED_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
+endif
+
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    ./build/tools/releasetools/add_img_to_target_files -a -v -p $(HOST_OUT) $(zip_root)
 	@# Zip everything up, preserving symlinks and placing META/ files first to
