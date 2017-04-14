@@ -104,7 +104,9 @@ PRODUCT_BOOT_JARS := \
     voip-common \
     ims-common \
     apache-xml \
-    org.apache.http.legacy.boot
+    org.apache.http.legacy.boot \
+    android.hidl.base-V1.0-java \
+    android.hidl.manager-V1.0-java
 
 # The order of PRODUCT_SYSTEM_SERVER_JARS matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
