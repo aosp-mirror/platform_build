@@ -811,7 +811,7 @@ overridden_packages := $(call get-package-overrides,$(modules_to_install))
 ifdef overridden_packages
 #  old_modules_to_install := $(modules_to_install)
   modules_to_install := \
-      $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk %/$(p).odex), \
+      $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk %/$(p).odex %/$(p).vdex), \
           $(modules_to_install))
 endif
 #$(error filtered out
