@@ -22,6 +22,30 @@
       "revId": "ca6f3ebd47f6fdf4afe5ecc5ecb9b4999272ebf1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bc76f7b2_f82ca455",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1705,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-04-14T15:58:24Z",
+      "side": 1,
+      "message": "nit: put a \"\\\" after \"+\u003d\" to break the long line?",
+      "parentUuid": "20f1689b_2ffed02b",
+      "range": {
+        "startLine": 1703,
+        "startChar": 0,
+        "endLine": 1705,
+        "endChar": 5
+      },
+      "revId": "ca6f3ebd47f6fdf4afe5ecc5ecb9b4999272ebf1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
