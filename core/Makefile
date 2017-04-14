@@ -1698,11 +1698,14 @@ BUILT_VBMETAIMAGE_TARGET := $(PRODUCT_OUT)/vbmeta.img
 INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS := \
     --include_descriptors_from_image $(INSTALLED_BOOTIMAGE_TARGET) \
     --include_descriptors_from_image $(INSTALLED_SYSTEMIMAGE) \
-    --generate_dm_verity_cmdline_from_hashtree $(INSTALLED_SYSTEMIMAGE)
 
 ifdef INSTALLED_VENDORIMAGE_TARGET
 INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
     --include_descriptors_from_image $(INSTALLED_VENDORIMAGE_TARGET)
+endif
+
+ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += --setup_rootfs_from_kernel $(BUILT_SYSTEMIMAGE)
 endif
 
 ifdef BOARD_AVB_ROLLBACK_INDEX
