@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "20f1689b_2ffed02b",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1705,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-04-14T12:52:00Z",
+      "side": 1,
+      "message": "Actually just add this part.\n\nBut need to move the entire vbmeta image after vendor.img to get INSTALLED_VENDORIMAGE_TARGET.",
+      "range": {
+        "startLine": 1703,
+        "startChar": 0,
+        "endLine": 1705,
+        "endChar": 5
+      },
+      "revId": "ca6f3ebd47f6fdf4afe5ecc5ecb9b4999272ebf1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
