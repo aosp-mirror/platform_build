@@ -293,10 +293,11 @@ def AddVBMeta(output_zip, boot_img_path, system_img_path, vendor_img_path,
   cmd = [avbtool, "make_vbmeta_image",
          "--output", img.name,
          "--include_descriptors_from_image", boot_img_path,
-         "--include_descriptors_from_image", system_img_path,
-         "--generate_dm_verity_cmdline_from_hashtree", system_img_path]
+         "--include_descriptors_from_image", system_img_path]
   if vendor_img_path is not None:
     cmd.extend(["--include_descriptors_from_image", vendor_img_path])
+  if OPTIONS.info_dict.get("system_root_image", None) == "true":
+    cmd.extend(["--setup_rootfs_from_kernel", system_img_path])
   common.AppendAVBSigningArgs(cmd)
   args = OPTIONS.info_dict.get("board_avb_make_vbmeta_image_args", None)
   if args and args.strip():
