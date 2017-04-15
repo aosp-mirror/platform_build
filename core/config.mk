@@ -686,7 +686,7 @@ else
   DEFAULT_SYSTEM_DEV_CERTIFICATE := build/target/product/security/testkey
 endif
 
-INSTALLED_SYSTEM_MANIFEST := $(PRODUCT_OUT)/system/manifest.xml
+FRAMEWORK_MANIFEST_FILE := system/libhidl/manifest.xml
 
 # ###############################################################
 # Set up final options.
