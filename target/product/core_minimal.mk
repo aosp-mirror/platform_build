@@ -37,6 +37,8 @@ PRODUCT_PACKAGES += \
     Shell \
     StatementService \
     WallpaperBackup \
+    android.hidl.base-V1.0-java \
+    android.hidl.manager-V1.0-java \
     bcc \
     bu \
     com.android.future.usb.accessory \
