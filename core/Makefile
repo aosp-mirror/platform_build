@@ -2288,12 +2288,12 @@ ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_OTHER,system/) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
 	@# Metadata for compatibility verification.
-	$(hide) cp $(INSTALLED_SYSTEM_MANIFEST) $(zip_root)/META/system_manifest.xml
-ifdef INSTALLED_VENDOR_MANIFEST
-	$(hide) cp $(INSTALLED_VENDOR_MANIFEST) $(zip_root)/META/vendor_manifest.xml
+	$(hide) cp $(BUILT_SYSTEM_MANIFEST) $(zip_root)/META/system_manifest.xml
+ifdef BUILT_VENDOR_MANIFEST
+	$(hide) cp $(BUILT_VENDOR_MANIFEST) $(zip_root)/META/vendor_manifest.xml
 endif
-ifdef INSTALLED_VENDOR_MATRIX
-	$(hide) cp $(INSTALLED_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
+ifdef BUILT_VENDOR_MATRIX
+	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
 endif
 
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
