@@ -22,6 +22,30 @@
       "revId": "41b0d9e1464d3719506f84b35d1763436b39083b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "81bd0260_a5be50bf",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2017-04-17T21:57:08Z",
+      "side": 0,
+      "message": "Sorry, was on vacation the past couple weeks. I think I assumed it wasn\u0027t valid in a trunk stable world, but I\u0027m not sure why I would have thought that. I\u0027ll need to take a look through this stuff again and make sure it\u0027s still valid if one of these becomes REL.",
+      "parentUuid": "760560d0_41008142",
+      "range": {
+        "startLine": 69,
+        "startChar": 43,
+        "endLine": 70,
+        "endChar": 71
+      },
+      "revId": "41b0d9e1464d3719506f84b35d1763436b39083b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
