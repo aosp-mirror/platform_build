@@ -22,13 +22,6 @@
 PRODUCT_COPY_FILES := \
     device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml
 
-PRODUCT_COPY_FILES += \
-    device/google/marlin/init.recovery.common.rc:root/init.recovery.marlin.rc \
-
-# For now, let's use marlin bootanimation as the default boot animation
-PRODUCT_COPY_FILES += \
-    vendor/google/products/marlin/bootanimation-1440-256col.zip:system/media/bootanimation.zip
-
 #split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
@@ -106,9 +99,6 @@ PRODUCT_PACKAGES += \
 
 # TODO(jiyong) move ims to vendor partition
 #PRODUCT_PACKAGES += ims
-
-# TODO(jiyong) remove this!!!
-PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/google/certs/devkeys/devkey
 
 PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/bootdevice/by-name/system
 
