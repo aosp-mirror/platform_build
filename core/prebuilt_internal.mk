@@ -458,6 +458,7 @@ ifdef LOCAL_IS_HOST_MODULE
 common_classes_jar := $(intermediates.COMMON)/classes.jar
 
 $(common_classes_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
+$(common_classes_jar): PRIVATE_PREFIX := $(my_prefix)
 
 $(common_classes_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)
@@ -469,7 +470,8 @@ common_classes_jar := $(intermediates.COMMON)/classes.jar
 common_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
 common_javalib_jar := $(intermediates.COMMON)/javalib.jar
 
-$(common_classes_jar) $(common_javalib_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
+$(common_classes_jar) $(common_classes_pre_proguard_jar) $(common_javalib_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
+$(common_classes_jar) $(common_classes_pre_proguard_jar) $(common_javalib_jar): PRIVATE_PREFIX := $(my_prefix)
 
 my_link_type := $(intermediates.COMMON)/link_type
 ifeq ($(LOCAL_SDK_VERSION),system_current)
