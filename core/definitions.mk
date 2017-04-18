@@ -2206,7 +2206,7 @@ $(if $(PRIVATE_HAS_RS_SOURCES), \
 $(hide) tr ' ' '\n' < $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list \
     | $(NORMALIZE_PATH) | sort -u > $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq
 $(hide) if [ -s $(PRIVATE_CLASS_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
-    $(1) -encoding UTF-8 \
+    $(SOONG_JAVAC_WRAPPER) $(1) -encoding UTF-8 \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
     $(2) \
     $(addprefix -classpath ,$(strip \
