@@ -956,6 +956,8 @@ $(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_signing_args=$(INTERNAL_AVB_SIGNING_A
 $(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_avbtool=$(AVBTOOL)" >> $(1))
 $(if $(BOARD_AVB_ENABLE),$(hide) echo "system_avb_enable=$(BOARD_AVB_ENABLE)" >> $(1))
 $(if $(BOARD_AVB_ENABLE),$(hide) echo "system_avb_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
+$(if $(BOARD_AVB_ENABLE),$(hide) echo "vendor_avb_enable=$(BOARD_AVB_ENABLE)" >> $(1))
+$(if $(BOARD_AVB_ENABLE),$(hide) echo "vendor_avb_add_hashtree_footer_args=$(BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
 $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(hide) echo "recovery_as_boot=true" >> $(1))
 $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
@@ -1659,61 +1661,6 @@ IGNORE_CACHE_LINK := --exclude=cache
 endif # BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
 
 # -----------------------------------------------------------------
-# vbmeta image
-ifeq ($(BOARD_AVB_ENABLE),true)
-
-BUILT_VBMETAIMAGE_TARGET := $(PRODUCT_OUT)/vbmeta.img
-
-INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS := \
-    --include_descriptors_from_image $(INSTALLED_BOOTIMAGE_TARGET) \
-    --include_descriptors_from_image $(INSTALLED_SYSTEMIMAGE) \
-    --generate_dm_verity_cmdline_from_hashtree $(INSTALLED_SYSTEMIMAGE)
-
-ifdef BOARD_AVB_ROLLBACK_INDEX
-INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += --rollback_index $(BOARD_AVB_ROLLBACK_INDEX)
-endif
-
-ifndef BOARD_AVB_KEY_PATH
-# If key path isn't specified, use the 4096-bit test key.
-INTERNAL_AVB_SIGNING_ARGS := \
-    --algorithm SHA256_RSA4096 \
-    --key external/avb/test/data/testkey_rsa4096.pem
-else
-INTERNAL_AVB_SIGNING_ARGS := \
-    --algorithm $(BOARD_AVB_ALGORITHM) --key $(BOARD_AVB_KEY_PATH)
-endif
-
-ifndef BOARD_BOOTIMAGE_PARTITION_SIZE
-  $(error BOARD_BOOTIMAGE_PARTITION_SIZE must be set for BOARD_AVB_ENABLE)
-endif
-
-ifndef BOARD_SYSTEMIMAGE_PARTITION_SIZE
-  $(error BOARD_SYSTEMIMAGE_PARTITION_SIZE must be set for BOARD_AVB_ENABLE)
-endif
-
-define build-vbmetaimage-target
-  $(call pretty,"Target vbmeta image: $(INSTALLED_VBMETAIMAGE_TARGET)")
-  $(hide) $(AVBTOOL) make_vbmeta_image \
-    $(INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS) \
-    $(INTERNAL_AVB_SIGNING_ARGS) \
-    $(BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS) \
-    --output $@
-endef
-
-INSTALLED_VBMETAIMAGE_TARGET := $(BUILT_VBMETAIMAGE_TARGET)
-$(INSTALLED_VBMETAIMAGE_TARGET): $(AVBTOOL) $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_SYSTEMIMAGE)
-	$(build-vbmetaimage-target)
-
-.PHONY: vbmetaimage-nodeps
-vbmetaimage-nodeps:
-	$(build-vbmetaimage-target)
-
-# We need $(AVBTOOL) for system.img generation.
-FULL_SYSTEMIMAGE_DEPS += $(AVBTOOL)
-
-endif # BOARD_AVB_ENABLE
-
-# -----------------------------------------------------------------
 # system_other partition image
 ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
 BOARD_USES_SYSTEM_OTHER := true
@@ -1815,6 +1762,69 @@ else ifdef BOARD_PREBUILT_VENDORIMAGE
 INSTALLED_VENDORIMAGE_TARGET := $(PRODUCT_OUT)/vendor.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_VENDORIMAGE),$(INSTALLED_VENDORIMAGE_TARGET)))
 endif
+
+# -----------------------------------------------------------------
+# vbmeta image
+ifeq ($(BOARD_AVB_ENABLE),true)
+
+BUILT_VBMETAIMAGE_TARGET := $(PRODUCT_OUT)/vbmeta.img
+
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS := \
+    --include_descriptors_from_image $(INSTALLED_BOOTIMAGE_TARGET) \
+    --include_descriptors_from_image $(INSTALLED_SYSTEMIMAGE) \
+
+ifdef INSTALLED_VENDORIMAGE_TARGET
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
+    --include_descriptors_from_image $(INSTALLED_VENDORIMAGE_TARGET)
+endif
+
+ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += --setup_rootfs_from_kernel $(BUILT_SYSTEMIMAGE)
+endif
+
+ifdef BOARD_AVB_ROLLBACK_INDEX
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += --rollback_index $(BOARD_AVB_ROLLBACK_INDEX)
+endif
+
+ifndef BOARD_AVB_KEY_PATH
+# If key path isn't specified, use the 4096-bit test key.
+INTERNAL_AVB_SIGNING_ARGS := \
+    --algorithm SHA256_RSA4096 \
+    --key external/avb/test/data/testkey_rsa4096.pem
+else
+INTERNAL_AVB_SIGNING_ARGS := \
+    --algorithm $(BOARD_AVB_ALGORITHM) --key $(BOARD_AVB_KEY_PATH)
+endif
+
+ifndef BOARD_BOOTIMAGE_PARTITION_SIZE
+  $(error BOARD_BOOTIMAGE_PARTITION_SIZE must be set for BOARD_AVB_ENABLE)
+endif
+
+ifndef BOARD_SYSTEMIMAGE_PARTITION_SIZE
+  $(error BOARD_SYSTEMIMAGE_PARTITION_SIZE must be set for BOARD_AVB_ENABLE)
+endif
+
+define build-vbmetaimage-target
+  $(call pretty,"Target vbmeta image: $(INSTALLED_VBMETAIMAGE_TARGET)")
+  $(hide) $(AVBTOOL) make_vbmeta_image \
+    $(INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS) \
+    $(INTERNAL_AVB_SIGNING_ARGS) \
+    $(BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS) \
+    --output $@
+endef
+
+INSTALLED_VBMETAIMAGE_TARGET := $(BUILT_VBMETAIMAGE_TARGET)
+$(INSTALLED_VBMETAIMAGE_TARGET): $(AVBTOOL) $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_SYSTEMIMAGE) $(INSTALLED_VENDORIMAGE_TARGET)
+	$(build-vbmetaimage-target)
+
+.PHONY: vbmetaimage-nodeps
+vbmetaimage-nodeps:
+	$(build-vbmetaimage-target)
+
+# We need $(AVBTOOL) for system.img generation.
+FULL_SYSTEMIMAGE_DEPS += $(AVBTOOL)
+
+endif # BOARD_AVB_ENABLE
 
 # -----------------------------------------------------------------
 # bring in the installer image generation defines if necessary
