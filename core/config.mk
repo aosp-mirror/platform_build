@@ -499,6 +499,8 @@ SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
 ZIP2ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/zip2zip
 FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
 
+SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
+
 # Always use prebuilts for ckati and makeparallel
 prebuilt_build_tools := prebuilts/build-tools
 ifeq ($(filter address,$(SANITIZE_HOST)),)
