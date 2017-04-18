@@ -97,7 +97,9 @@ $(full_classes_compiled_jar): \
         $(jar_manifest_file) \
         $(proto_java_sources_file_stamp) \
         $(annotation_processor_deps) \
-        $(LOCAL_ADDITIONAL_DEPENDENCIES)
+        $(NORMALIZE_PATH) \
+        $(LOCAL_ADDITIONAL_DEPENDENCIES) \
+        | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-package)
 
 my_desugaring :=
