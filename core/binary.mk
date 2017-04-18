@@ -309,7 +309,7 @@ endif
 ifneq ($(LOCAL_NO_PIC),true)
 ifneq ($($(my_prefix)OS),windows)
 ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-my_cflags += -fpie
+my_cflags += -fPIE
 else
 my_cflags += -fPIC
 endif
