@@ -117,6 +117,30 @@
       "revId": "e3d5f47a5a237307b02d4020ef7e3681478a4aff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bca4e296_339738b0",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2017-04-19T14:57:20Z",
+      "side": 1,
+      "message": "No, they didn\u0027t fix it.\n\nHowever, FileChannel.map() allows you to specify a long offset within a file to obtain a ByteBuffer. The size is still restricted to Integer.MAX_VALUE though, but that seems irrelevant given elliott\u0027s comment.",
+      "parentUuid": "15c62697_b6c0b1b1",
+      "range": {
+        "startLine": 856,
+        "startChar": 15,
+        "endLine": 857,
+        "endChar": 100
+      },
+      "revId": "e3d5f47a5a237307b02d4020ef7e3681478a4aff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
