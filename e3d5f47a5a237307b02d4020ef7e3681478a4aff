@@ -93,6 +93,30 @@
       "revId": "e3d5f47a5a237307b02d4020ef7e3681478a4aff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "15c62697_b6c0b1b1",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-04-19T14:51:00Z",
+      "side": 1,
+      "message": "narayan might know better, but it doesn\u0027t look like Sun fixed this since i last paid any attention.\n\nseems like you don\u0027t really need a ByteBuffer that covers the whole range; just mapping/reading the last MiB should be fine?",
+      "parentUuid": "0bb137bc_4240107e",
+      "range": {
+        "startLine": 856,
+        "startChar": 15,
+        "endLine": 857,
+        "endChar": 100
+      },
+      "revId": "e3d5f47a5a237307b02d4020ef7e3681478a4aff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
