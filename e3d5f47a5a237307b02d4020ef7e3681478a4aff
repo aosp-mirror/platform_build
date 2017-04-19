@@ -213,6 +213,30 @@
       "revId": "e3d5f47a5a237307b02d4020ef7e3681478a4aff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aae39e73_5f6f4bc6",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-04-19T21:34:15Z",
+      "side": 1,
+      "message": "they\u0027ll hit the size limit soon enough. maybe not this year or next, but we\u0027re getting really close to 2GiB at this point and many partners are already over it.",
+      "parentUuid": "e6ca870f_15e5dacc",
+      "range": {
+        "startLine": 856,
+        "startChar": 15,
+        "endLine": 857,
+        "endChar": 100
+      },
+      "revId": "e3d5f47a5a237307b02d4020ef7e3681478a4aff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
