@@ -316,6 +316,59 @@ def GetImage(which, tmpdir):
   return sparse_img.SparseImage(path, mappath, clobbered_blocks)
 
 
+def AddCompatibilityArchive(target_zip, output_zip, system_included=True,
+                            vendor_included=True):
+  """Adds compatibility info from target files into the output zip.
+
+  Metadata used for on-device compatibility verification is retrieved from
+  target_zip then added to compatibility.zip which is added to the output_zip
+  archive.
+
+  Compatibility archive should only be included for devices with a vendor
+  partition as checking provides value when system and vendor are independently
+  versioned.
+
+  Args:
+    target_zip: Zip file containing the source files to be included for OTA.
+    output_zip: Zip file that will be sent for OTA.
+    system_included: If True, the system image will be updated and therefore
+        its metadata should be included.
+    vendor_included: If True, the vendor image will be updated and therefore
+        its metadata should be included.
+  """
+
+  # Determine what metadata we need. Files are names relative to META/.
+  compatibility_files = []
+  vendor_metadata = ("vendor_manifest.xml", "vendor_matrix.xml")
+  system_metadata = ("system_manifest.xml", "system_matrix.xml")
+  if vendor_included:
+    compatibility_files += vendor_metadata
+  if system_included:
+    compatibility_files += system_metadata
+
+  # Create new archive.
+  compatibility_archive = tempfile.NamedTemporaryFile()
+  compatibility_archive_zip = zipfile.ZipFile(compatibility_archive, "w",
+      compression=zipfile.ZIP_DEFLATED)
+
+  # Add metadata.
+  for file_name in compatibility_files:
+    target_file_name = "META/" + file_name
+
+    if target_file_name in target_zip.namelist():
+      data = target_zip.read(target_file_name)
+      common.ZipWriteStr(compatibility_archive_zip, file_name, data)
+
+  # Ensure files are written before we copy into output_zip.
+  compatibility_archive_zip.close()
+
+  # Only add the archive if we have any compatibility info.
+  if compatibility_archive_zip.namelist():
+    common.ZipWrite(output_zip, compatibility_archive.name,
+                    arcname="compatibility.zip",
+                    compress_type=zipfile.ZIP_STORED)
+
+
 def WriteFullOTAPackage(input_zip, output_zip):
   # TODO: how to determine this?  We don't know what version it will
   # be installed on top of. For now, we expect the API just won't
@@ -943,6 +996,9 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
     if 'care_map.txt' in zip_file.namelist():
       offsets.append(ComputeEntryOffsetSize('care_map.txt'))
 
+    if 'compatibility.zip' in zip_file.namelist():
+      offsets.append(ComputeEntryOffsetSize('compatibility.zip'))
+
     # 'META-INF/com/android/metadata' is required. We don't know its actual
     # offset and length (as well as the values for other entries). So we
     # reserve 10-byte as a placeholder, which is to cover the space for metadata
@@ -1114,8 +1170,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
 
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
+  target_zip = zipfile.ZipFile(target_file, "r")
   if OPTIONS.info_dict.get("verity") == "true":
-    target_zip = zipfile.ZipFile(target_file, "r")
     care_map_path = "META/care_map.txt"
     namelist = target_zip.namelist()
     if care_map_path in namelist:
@@ -1124,7 +1180,34 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
           compress_type=zipfile.ZIP_STORED)
     else:
       print("Warning: cannot find care map file in target_file package")
-    common.ZipClose(target_zip)
+
+  if HasVendorPartition(target_zip):
+    update_vendor = True
+    update_system = True
+
+    # If incremental then figure out what is being updated so metadata only for
+    # the updated image is included.
+    if source_file is not None:
+      input_tmp, input_zip = common.UnzipTemp(
+          target_file, UNZIP_PATTERN)
+      source_tmp, source_zip = common.UnzipTemp(
+          source_file, UNZIP_PATTERN)
+
+      vendor_src = GetImage("vendor", source_tmp)
+      vendor_tgt = GetImage("vendor", input_tmp)
+      system_src = GetImage("system", source_tmp)
+      system_tgt = GetImage("system", input_tmp)
+
+      update_system = system_src.TotalSha1() != system_tgt.TotalSha1()
+      update_vendor = vendor_src.TotalSha1() != vendor_tgt.TotalSha1()
+
+      input_zip.close()
+      source_zip.close()
+
+    target_zip = zipfile.ZipFile(target_file, "r")
+    AddCompatibilityArchive(target_zip, output_zip, update_system,
+                            update_vendor)
+  common.ZipClose(target_zip)
 
   # Write the current metadata entry with placeholders.
   metadata['ota-streaming-property-files'] = ComputeStreamingMetadata(
