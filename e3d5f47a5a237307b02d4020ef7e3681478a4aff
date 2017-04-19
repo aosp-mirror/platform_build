@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5fc11c3c_96a3fd68",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-19T06:52:32Z",
+      "side": 1,
+      "message": "I think we could since we control the process to generate the package.  And we can fall back to the old method if there\u0027s an exception.",
+      "parentUuid": "4496005c_56ec3862",
+      "range": {
+        "startLine": 10,
+        "startChar": 52,
+        "endLine": 11,
+        "endChar": 59
+      },
+      "revId": "e3d5f47a5a237307b02d4020ef7e3681478a4aff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d4bdec2a_c98c75f3",
         "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2017-04-19T04:38:56Z",
       "side": 1,
       "message": "This is ~2GB. I\u0027m somewhat concerned about this, but since this is only the non-AB case, I don\u0027t know how large those will grow. It looks like the full OTA packages hit ~1GB today, though the target files packages (which probably contain too much) go over 3GB.",
+      "range": {
+        "startLine": 856,
+        "startChar": 15,
+        "endLine": 857,
+        "endChar": 100
+      },
+      "revId": "e3d5f47a5a237307b02d4020ef7e3681478a4aff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0bb137bc_4240107e",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-19T06:52:32Z",
+      "side": 1,
+      "message": "Would be helpful if there\u0027s a better API, and we can change the internal zip utilities accordingly.",
+      "parentUuid": "d4bdec2a_c98c75f3",
       "range": {
         "startLine": 856,
         "startChar": 15,
