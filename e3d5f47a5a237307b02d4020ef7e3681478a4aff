@@ -141,6 +141,30 @@
       "revId": "e3d5f47a5a237307b02d4020ef7e3681478a4aff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aaa39a0f_f0eca403",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 857,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-19T21:10:30Z",
+      "side": 1,
+      "message": "Yeah, but I\u0027m trying best to avoid duplicate code. And almost all the internal helper functions (to read central directory and local headers) use Bytebuffer for now. I haven\u0027t thought of a way to utilize them with a segment of buffer.\nHere\u0027re a few examples:\nhttps://cs.corp.google.com/android/tools/apksig/src/main/java/com/android/apksig/internal/zip/CentralDirectoryRecord.java?l\u003d116\n\nhttps://cs.corp.google.com/android/build/make/tools/signapk/src/com/android/signapk/SignApk.java?l\u003d861\n\nhttps://cs.corp.google.com/android/tools/apksig/src/main/java/com/android/apksig/internal/zip/LocalFileRecord.java?l\u003d124",
+      "parentUuid": "15c62697_b6c0b1b1",
+      "range": {
+        "startLine": 856,
+        "startChar": 15,
+        "endLine": 857,
+        "endChar": 100
+      },
+      "revId": "e3d5f47a5a237307b02d4020ef7e3681478a4aff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
