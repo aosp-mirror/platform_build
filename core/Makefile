@@ -709,13 +709,14 @@ endif
 
 .PHONY: notice_files
 
-# Create the rule to combine the files into text and html forms
-# $(1) - Plain text output file
-# $(2) - HTML output file
-# $(3) - File title
-# $(4) - Directory to use.  Notice files are all $(4)/src.  Other
+# Create the rule to combine the files into text and html/xml forms
+# $(1) - xml_excluded_vendor|xml_vendor|html
+# $(2) - Plain text output file
+# $(3) - HTML/XML output file
+# $(4) - File title
+# $(5) - Directory to use.  Notice files are all $(4)/src.  Other
 #		 directories in there will be used for scratch
-# $(5) - Dependencies for the output files
+# $(6) - Dependencies for the output files
 #
 # The algorithm here is that we go collect a hash for each of the notice
 # files and write the names of the files that match that hash.  Then
@@ -729,12 +730,16 @@ endif
 # original notice files instead of making rules to copy them somwehere.
 # Then we could traverse that without quite as much bash drama.
 define combine-notice-files
-$(1) $(2): PRIVATE_MESSAGE := $(3)
-$(1) $(2): PRIVATE_DIR := $(4)
-$(1) : $(2)
-$(2) : $(5) $(BUILD_SYSTEM)/Makefile build/tools/generate-notice-files.py
-	build/tools/generate-notice-files.py $(1) $(2) $$(PRIVATE_MESSAGE) $$(PRIVATE_DIR)/src
-notice_files: $(1) $(2)
+$(2) $(3): PRIVATE_MESSAGE := $(4)
+$(2) $(3): PRIVATE_DIR := $(5)
+$(2) : $(3)
+$(3) : $(6) $(BUILD_SYSTEM)/Makefile build/tools/generate-notice-files.py
+	build/tools/generate-notice-files.py --text-output $(2) \
+		$(if $(filter $(1),xml_excluded_vendor),-e vendor --xml-output, \
+		  $(if $(filter $(1),xml_vendor),-i vendor --xml-output, \
+		    --html-output)) $(3) \
+		-t $$(PRIVATE_MESSAGE) -s $$(PRIVATE_DIR)/src
+notice_files: $(2) $(3)
 endef
 
 # TODO These intermediate NOTICE.txt/NOTICE.html files should go into
@@ -742,24 +747,51 @@ endef
 # the src subdirectory.
 
 target_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE.txt
-target_notice_file_html := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html
-target_notice_file_html_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html.gz
+target_notice_file_html_or_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html
+target_notice_file_html_or_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html.gz
+installed_notice_html_or_xml_gz := $(TARGET_OUT)/etc/NOTICE.html.gz
 tools_notice_file_txt := $(HOST_OUT_INTERMEDIATES)/NOTICE.txt
 tools_notice_file_html := $(HOST_OUT_INTERMEDIATES)/NOTICE.html
+
+ifeq ($(PRODUCT_FULL_TREBLE),true)
+target_notice_file_html_or_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml
+target_notice_file_html_or_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml.gz
+installed_notice_html_or_xml_gz := $(TARGET_OUT)/etc/NOTICE.xml.gz
+
+target_vendor_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE_VENDOR.txt
+target_vendor_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE_VENDOR.xml
+target_vendor_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_VENDOR.xml.gz
+installed_vendor_notice_xml_gz := $(TARGET_OUT_VENDOR)/etc/NOTICE.xml.gz
+endif
 
 ifndef TARGET_BUILD_APPS
 kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
 winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
 pdk_fusion_notice_files := $(filter $(TARGET_OUT_NOTICE_FILES)/%, $(ALL_PDK_FUSION_FILES))
 
-$(eval $(call combine-notice-files, \
+ifdef target_vendor_notice_file_xml_gz
+$(eval $(call combine-notice-files, xml_excluded_vendor, \
 			$(target_notice_file_txt), \
-			$(target_notice_file_html), \
+			$(target_notice_file_html_or_xml), \
 			"Notices for files contained in the filesystem images in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
 			$(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files)))
+$(eval $(call combine-notice-files, xml_vendor, \
+			$(target_vendor_notice_file_txt), \
+			$(target_vendor_notice_file_xml), \
+			"Notices for files contained in the vendor filesystem image in this directory:", \
+			$(TARGET_OUT_NOTICE_FILES), \
+			$(target_notice_file_html_or_xml)))
+else
+$(eval $(call combine-notice-files, html, \
+			$(target_notice_file_txt), \
+			$(target_notice_file_html_or_xml), \
+			"Notices for files contained in the filesystem images in this directory:", \
+			$(TARGET_OUT_NOTICE_FILES), \
+			$(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files)))
+endif
 
-$(eval $(call combine-notice-files, \
+$(eval $(call combine-notice-files, html, \
 			$(tools_notice_file_txt), \
 			$(tools_notice_file_html), \
 			"Notices for files contained in the tools directory:", \
@@ -772,15 +804,25 @@ $(eval $(call combine-notice-files, \
 # the module processing has already been done -- in fact, we used the
 # fact that all that has been done to get the list of modules that we
 # need notice files for.
-$(target_notice_file_html_gz): $(target_notice_file_html) | $(MINIGZIP)
+$(target_notice_file_html_or_xml_gz): $(target_notice_file_html_or_xml) | $(MINIGZIP)
 	$(hide) $(MINIGZIP) -9 < $< > $@
-installed_notice_html_gz := $(TARGET_OUT)/etc/NOTICE.html.gz
-$(installed_notice_html_gz): $(target_notice_file_html_gz)
+$(installed_notice_html_or_xml_gz): $(target_notice_file_html_or_xml_gz)
 	$(copy-file-to-target)
+
+ifdef target_vendor_notice_file_xml_gz
+# Install the vendor html file at /vendor/etc/NOTICE.xml.gz.
+$(target_vendor_notice_file_xml_gz): $(target_vendor_notice_file_xml) | $(MINIGZIP)
+	$(hide) $(MINIGZIP) -9 < $< > $@
+$(installed_vendor_notice_xml_gz): $(target_vendor_notice_file_xml_gz)
+	$(copy-file-to-target)
+endif
 
 # if we've been run my mm, mmm, etc, don't reinstall this every time
 ifeq ($(ONE_SHOT_MAKEFILE),)
-ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_gz)
+  ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
+  ifdef target_vendor_notice_file_xml_gz
+    ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_notice_xml_gz)
+  endif
 endif
 endif  # TARGET_BUILD_APPS
 
