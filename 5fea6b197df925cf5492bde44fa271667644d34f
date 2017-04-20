@@ -1,0 +1,163 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c1c9f711_e8d009d7",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T16:57:33Z",
+      "side": 1,
+      "message": "com.android.apksig.internal.** is private/unstable API. It\u0027s not meant to be used outside of tools/apksig. Who is going to maintain this file when that API changes? I suggest switching to some JAR/APK builder library, perhaps singlejar which Bazel/Blaze use these days.",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "31f07335_ed25f2ee",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T16:57:33Z",
+      "side": 1,
+      "message": "try-with-resources missing for RandomAccessFile, meaning this file isn\u0027t closed currently.",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4e514dfe_51a4d3f6",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T16:57:33Z",
+      "side": 1,
+      "message": "* Check whether CD size is more than Integer.MAX_VALUE before casting it to int. \n* Style: space missing after )",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1cc8c562_46d75cf7",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T16:57:33Z",
+      "side": 1,
+      "message": "It might be dangerous to leave the old cert in. The old cert could leak company-internal info of the OEM which signs OTA update packages, because it\u0027s likely a dev cert.",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "85490fc6_3a24a94a",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T16:57:33Z",
+      "side": 1,
+      "message": "Style: Space missing after ). Also, why not drop (short) entirely?",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bbcbb59d_99503f09",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T16:57:33Z",
+      "side": 1,
+      "message": "modifiedEocd.remaining() might be better than hard-coding 22",
+      "range": {
+        "startLine": 552,
+        "startChar": 73,
+        "endLine": 552,
+        "endChar": 75
+      },
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "228ac64d_02e0b4aa",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T16:57:33Z",
+      "side": 1,
+      "message": "Which ByteBuffer? I believe your current code can handle any ZIP just fine. However, ZIP64 is not supported and this means the size limit is 4 GB.",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4cddfc79_77c4bde1",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 882,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T16:57:33Z",
+      "side": 1,
+      "message": "Style: This should be on the previous line, after }",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2136fe4c_c2aa28d5",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 883,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T16:57:33Z",
+      "side": 1,
+      "message": "Re-throw as IOException and let the higher layers deal with it?",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
