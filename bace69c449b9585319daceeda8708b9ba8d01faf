@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7b83836f_378a4726",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 700,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-04-20T01:06:22Z",
+      "side": 1,
+      "message": "Don\u0027t duplicate all of this -- just use another argument on combine-notice-files",
+      "range": {
+        "startLine": 683,
+        "startChar": 0,
+        "endLine": 700,
+        "endChar": 5
+      },
+      "revId": "bace69c449b9585319daceeda8708b9ba8d01faf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "35948c3d_de273cac",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-04-20T01:06:22Z",
+      "side": 1,
+      "message": "PRODUCT_FULL_TREBLE isn\u0027t the right conditional here -- we should probably always separate these (or maybe only separate if we\u0027re building a separate vendor partition? depends on the UX in settings)",
+      "range": {
+        "startLine": 711,
+        "startChar": 0,
+        "endLine": 711,
+        "endChar": 34
+      },
+      "revId": "bace69c449b9585319daceeda8708b9ba8d01faf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b097be83_4c6fa73b",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 734,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-04-20T01:06:22Z",
+      "side": 1,
+      "message": "do we really need the kernel notice file on both system and vendor?",
+      "range": {
+        "startLine": 734,
+        "startChar": 35,
+        "endLine": 734,
+        "endChar": 57
+      },
+      "revId": "bace69c449b9585319daceeda8708b9ba8d01faf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5e7e201_26608cf9",
+        "filename": "tools/generate-notice-files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-04-20T01:06:22Z",
+      "side": 1,
+      "message": "why not just use the multi-argument feature in argparse (-i vendor:odm vs -i vendor -i odm)",
+      "range": {
+        "startLine": 178,
+        "startChar": 27,
+        "endLine": 178,
+        "endChar": 59
+      },
+      "revId": "bace69c449b9585319daceeda8708b9ba8d01faf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
