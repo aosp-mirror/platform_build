@@ -148,21 +148,20 @@ else
 endif
 export_cflags :=
 
-my_link_type := $(intermediates)/link_type
 ifdef LOCAL_SDK_VERSION
-$(my_link_type): PRIVATE_LINK_TYPE := native:ndk
+my_link_type := native:ndk
 else ifdef LOCAL_USE_VNDK
-$(my_link_type): PRIVATE_LINK_TYPE := native:vendor
+my_link_type := native:vendor
 else
-$(my_link_type): PRIVATE_LINK_TYPE := native:platform
+my_link_type := native:platform
 endif
-$(eval $(call link-type-partitions,$(my_link_type)))
-$(my_link_type):
-	@echo Check module type: $@
-	$(hide) mkdir -p $(dir $@) && rm -f $@
-	$(hide) echo "$(PRIVATE_LINK_TYPE)" >$@
 
-$(LOCAL_BUILT_MODULE) : | $(export_includes) $(my_link_type)
+# TODO: check dependencies of prebuilt files
+my_link_deps :=
+
+my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
+my_common :=
+include $(BUILD_SYSTEM)/link_type.mk
 endif  # prebuilt_module_is_a_library
 
 # The real dependency will be added after all Android.mks are loaded and the install paths
@@ -473,20 +472,20 @@ common_javalib_jar := $(intermediates.COMMON)/javalib.jar
 $(common_classes_jar) $(common_classes_pre_proguard_jar) $(common_javalib_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
 $(common_classes_jar) $(common_classes_pre_proguard_jar) $(common_javalib_jar): PRIVATE_PREFIX := $(my_prefix)
 
-my_link_type := $(intermediates.COMMON)/link_type
 ifeq ($(LOCAL_SDK_VERSION),system_current)
-$(my_link_type): PRIVATE_LINK_TYPE := java:system
+my_link_type := java:system
 else ifneq ($(LOCAL_SDK_VERSION),)
-$(my_link_type): PRIVATE_LINK_TYPE := java:sdk
+my_link_type := java:sdk
 else
-$(my_link_type): PRIVATE_LINK_TYPE := java:platform
+my_link_type := java:platform
 endif
-$(eval $(call link-type-partitions,$(my_link_type)))
-$(my_link_type):
-	@echo Check module type: $@
-	$(hide) mkdir -p $(dir $@) && rm -f $@
-	$(hide) echo "$(PRIVATE_LINK_TYPE)" >$@
-$(LOCAL_BUILT_MODULE): $(my_link_type)
+
+# TODO: check dependencies of prebuilt files
+my_link_deps :=
+
+my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
+my_common := COMMON
+include $(BUILD_SYSTEM)/link_type.mk
 
 ifeq ($(prebuilt_module_is_dex_javalib),true)
 # For prebuilt shared Java library we don't have classes.jar.
