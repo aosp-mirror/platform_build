@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b8e27aba_09944851",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1159783
+      },
+      "writtenOn": "2017-04-20T15:00:45Z",
+      "side": 1,
+      "message": "nit: fix indentation",
+      "range": {
+        "startLine": 79,
+        "startChar": 1,
+        "endLine": 80,
+        "endChar": 3
+      },
+      "revId": "75022d5fd7683ae05a45cc4a9a30237d62a7ff76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
