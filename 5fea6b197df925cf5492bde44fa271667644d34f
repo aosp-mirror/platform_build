@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "42cd5301_e926c551",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T20:56:45Z",
+      "side": 1,
+      "message": "No, apksig is not going to expose ZIP manipulation to its clients.\n\nI guess I might be wrong about singlejar. However, there\u0027s this in Bazel: https://github.com/bazelbuild/bazel/tree/master/src/java_tools/singlejar/java/com/google/devtools/build/zip. Does this work for you?",
+      "parentUuid": "ad932772_be5e724c",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "31f07335_ed25f2ee",
         "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
         "patchSetId": 4
