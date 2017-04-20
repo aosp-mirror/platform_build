@@ -726,6 +726,168 @@ p :=
 deps :=
 add-required-deps :=
 
+################################################################################
+# Link type checking
+#
+# ALL_LINK_TYPES contains a list of all link type prefixes (generally one per
+# module, but APKs can "link" to both java and native code). The link type
+# prefix consists of all the information needed by intermediates-dir-for:
+#
+#  LINK_TYPE:TARGET:_:2ND:STATIC_LIBRARIES:libfoo
+#
+#   1: LINK_TYPE literal
+#   2: prefix
+#     - TARGET
+#     - HOST
+#     - HOST_CROSS
+#     - AUX
+#   3: Whether to use the common intermediates directory or not
+#     - _
+#     - COMMON
+#   4: Whether it's the second arch or not
+#     - _
+#     - 2ND_
+#   5: Module Class
+#     - STATIC_LIBRARIES
+#     - SHARED_LIBRARIES
+#     - ...
+#   6: Module Name
+#
+# Then fields under that are separated by a period and the field name:
+#   - TYPE: the link types for this module
+#   - MAKEFILE: Where this module was defined
+#   - BUILT: The built module location
+#   - DEPS: the link type prefixes for the module's dependencies
+#   - ALLOWED: the link types to allow in this module's dependencies
+#   - WARN: the link types to warn about in this module's dependencies
+#
+# All of the dependency link types not listed in ALLOWED or WARN will become
+# errors.
+################################################################################
+
+link_type_error :=
+
+define link-type-prefix
+$(word 2,$(subst :,$(space),$(1)))
+endef
+define link-type-common
+$(patsubst _,,$(word 3,$(subst :,$(space),$(1))))
+endef
+define link-type-2ndarchprefix
+$(patsubst _,,$(word 4,$(subst :,$(space),$(1))))
+endef
+define link-type-class
+$(word 5,$(subst :,$(space),$(1)))
+endef
+define link-type-name
+$(word 6,$(subst :,$(space),$(1)))
+endef
+define link-type-os
+$(strip $(eval _p := $(link-type-prefix))\
+  $(if $(filter HOST HOST_CROSS,$(_p)),\
+    $($(_p)_OS),\
+    $(if $(filter AUX,$(_p)),AUX,android)))
+endef
+define link-type-arch
+$($(link-type-prefix)_$(link-type-2ndarchprefix)ARCH)
+endef
+define link-type-name-variant
+$(link-type-name) ($(link-type-class) $(link-type-os)-$(link-type-arch))
+endef
+
+# $(1): the prefix of the module doing the linking
+# $(2): the prefix of the linked module
+define link-type-warning
+$(shell $(call echo-warning,$($(1).MAKEFILE),"$(call link-type-name,$(1)) ($($(1).TYPE)) should not link against $(call link-type-name,$(2)) ($(3))"))
+endef
+
+# $(1): the prefix of the module doing the linking
+# $(2): the prefix of the linked module
+define link-type-error
+$(shell $(call echo-error,$($(1).MAKEFILE),"$(call link-type-name,$(1)) ($($(1).TYPE)) can not link against $(call link-type-name,$(2)) ($(3))"))\
+$(eval link_type_error := true)
+endef
+
+link-type-missing :=
+ifneq ($(ALLOW_MISSING_DEPENDENCIES),true)
+  # Print an error message if the linked-to module is missing
+  # $(1): the prefix of the module doing the linking
+  # $(2): the prefix of the missing module
+  define link-type-missing
+    $(shell $(call echo-error,$($(1).MAKEFILE),"$(call link-type-name-variant,$(1)) missing $(call link-type-name-variant,$(2))"))\
+    $(eval available_variants := $(filter %:$(call link-type-name,$(2)),$(ALL_LINK_TYPES)))\
+    $(if $(available_variants),\
+      $(info Available variants:)\
+      $(foreach v,$(available_variants),$(info $(space)$(space)$(call link-type-name-variant,$(v)))))\
+    $(info You can set ALLOW_MISSING_DEPENDENCIES=true in your environment if this is intentional, but that may defer real problems until later in the build.)\
+    $(eval link_type_error := true)
+  endef
+else
+  define link-type-missing
+    $(eval $$(1).MISSING := true)
+  endef
+endif
+
+# Verify that $(1) can link against $(2)
+# Both $(1) and $(2) are the link type prefix defined above
+define verify-link-type
+$(foreach t,$($(2).TYPE),\
+  $(if $(filter-out $($(1).ALLOWED),$(t)),\
+    $(if $(filter $(t),$($(1).WARN)),\
+      $(call link-type-warning,$(1),$(2),$(t)),\
+      $(call link-type-error,$(1),$(2),$(t)))))
+endef
+
+# TODO: Verify all branches/configs have reasonable warnings/errors, and remove
+# these overrides
+link-type-missing = $(eval $$(1).MISSING := true)
+verify-link-type = $(eval $$(1).MISSING := true)
+
+$(foreach lt,$(ALL_LINK_TYPES),\
+  $(foreach d,$($(lt).DEPS),\
+    $(if $($(d).TYPE),\
+      $(call verify-link-type,$(lt),$(d)),\
+      $(call link-type-missing,$(lt),$(d)))))
+
+ifdef link_type_error
+  $(error exiting from previous errors)
+endif
+
+# The intermediate filename for link type rules
+#
+# APPS are special -- they have up to three different rules:
+#  1. The COMMON rule for Java libraries
+#  2. The jni_link_type rule for embedded native code
+#  3. The 2ND_jni_link_type for the second architecture native code
+define link-type-file
+$(call intermediates-dir-for,$(link-type-class),$(link-type-name),$(filter AUX HOST HOST_CROSS,$(link-type-prefix)),$(link-type-common),$(link-type-2ndarchprefix),$(filter HOST_CROSS,$(link-type-prefix)))/$(if $(filter APPS,$(link-type-class)),$(if $(link-type-common),,$(link-type-2ndarchprefix)jni_))link_type
+endef
+
+# Write out the file-based link_type rules for the ALLOW_MISSING_DEPENDENCIES
+# case. We always need to write the file for mm to work, but only need to
+# check it if we weren't able to check it when reading the Android.mk files.
+define link-type-file-rule
+my_link_type_deps := $(foreach l,$($(1).DEPS),$(call link-type-file,$(l)))
+my_link_type_file := $(call link-type-file,$(1))
+$($(1).BUILT): | $$(my_link_type_file)
+$$(my_link_type_file): PRIVATE_DEPS := $$(my_link_type_deps)
+ifeq ($($(1).MISSING),true)
+$$(my_link_type_file): $(CHECK_LINK_TYPE)
+endif
+$$(my_link_type_file): $$(my_link_type_deps)
+	@echo Check module type: $$@
+	$$(hide) mkdir -p $$(dir $$@) && rm -f $$@
+ifeq ($($(1).MISSING),true)
+	$$(hide) $(CHECK_LINK_TYPE) --makefile $($(1).MAKEFILE) --module $(link-type-name) \
+	  --type "$($(1).TYPE)" $(addprefix --allowed ,$($(1).ALLOWED)) \
+	  $(addprefix --warn ,$($(1).WARN)) $$(PRIVATE_DEPS)
+endif
+	$$(hide) echo "$($(1).TYPE)" >$$@
+endef
+
+$(foreach lt,$(ALL_LINK_TYPES),\
+  $(eval $(call link-type-file-rule,$(lt))))
+
 # -------------------------------------------------------------------
 # Figure out our module sets.
 #
@@ -1139,8 +1301,5 @@ tidy_only:
 
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
-
-.PHONY: all_link_types
-all_link_types:
 
 endif # KATI
