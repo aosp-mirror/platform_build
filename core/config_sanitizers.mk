@@ -63,7 +63,7 @@ ifeq ($(LOCAL_SANITIZE),never)
 endif
 
 # If CFI is disabled globally, remove it from my_sanitize.
-ifeq ($(strip $(ENABLE_CFI)),)
+ifeq ($(strip $(ENABLE_CFI)),false)
   my_sanitize := $(filter-out cfi,$(my_sanitize))
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
