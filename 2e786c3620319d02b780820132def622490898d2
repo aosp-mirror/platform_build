@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7989f6c5_654b4bda",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-04-20T20:21:18Z",
+      "side": 1,
+      "message": "wrong place (L57)",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 45
+      },
+      "revId": "2e786c3620319d02b780820132def622490898d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41f98906_09312b67",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-04-20T20:21:18Z",
+      "side": 1,
+      "message": "https://google.github.io/styleguide/javaguide.html#s4.5.2-line-wrapping-indent\n\n\"In general, two continuation lines use the same indentation level if and only if they begin with syntactically parallel elements.\"",
+      "range": {
+        "startLine": 390,
+        "startChar": 20,
+        "endLine": 392,
+        "endChar": 74
+      },
+      "revId": "2e786c3620319d02b780820132def622490898d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aca484bb_e7ce1782",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-04-20T20:21:18Z",
+      "side": 1,
+      "message": "nit: format",
+      "range": {
+        "startLine": 430,
+        "startChar": 4,
+        "endLine": 434,
+        "endChar": 6
+      },
+      "revId": "2e786c3620319d02b780820132def622490898d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "010be21c_18bc8768",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1192,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-04-20T20:21:18Z",
+      "side": 1,
+      "message": "As a user, this is the part I don\u0027t get. When should I use this \"--ota-fast-sign\" flag? Only for debugging purpose (to use at my own risk)? Or knowing the under-signing package already has certain structure?",
+      "range": {
+        "startLine": 1192,
+        "startChar": 22,
+        "endLine": 1192,
+        "endChar": 39
+      },
+      "revId": "2e786c3620319d02b780820132def622490898d2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
