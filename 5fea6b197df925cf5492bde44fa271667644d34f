@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a40afc66_f5a8235d",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-20T19:46:42Z",
+      "side": 1,
+      "message": "hmm, the utilities in Bazel/Blaze doesn\u0027t seem to have a way to tweak the internal structures of the zip file. (or anywhere else in code search.)  The r/w with java zip API it\u0027s using is exactly what we are trying to avoid...\n\nIs there a way to make part of the internal API more stable?",
+      "parentUuid": "c1c9f711_e8d009d7",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "31f07335_ed25f2ee",
         "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2017-04-20T16:57:33Z",
       "side": 1,
       "message": "try-with-resources missing for RandomAccessFile, meaning this file isn\u0027t closed currently.",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca7f25b6_c5f457c9",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 440,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-20T19:46:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "31f07335_ed25f2ee",
       "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "c5a141c2_f38713a3",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-20T19:46:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4e514dfe_51a4d3f6",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1cc8c562_46d75cf7",
         "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
         "patchSetId": 4
@@ -64,6 +118,24 @@
       "writtenOn": "2017-04-20T16:57:33Z",
       "side": 1,
       "message": "It might be dangerous to leave the old cert in. The old cert could leak company-internal info of the OEM which signs OTA update packages, because it\u0027s likely a dev cert.",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c558d4b0_d0bc011a",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 488,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-20T19:46:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1cc8c562_46d75cf7",
       "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "f2a90df1_2714432f",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-20T19:46:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "85490fc6_3a24a94a",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bbcbb59d_99503f09",
         "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
         "patchSetId": 4
@@ -98,6 +188,30 @@
       "writtenOn": "2017-04-20T16:57:33Z",
       "side": 1,
       "message": "modifiedEocd.remaining() might be better than hard-coding 22",
+      "range": {
+        "startLine": 552,
+        "startChar": 73,
+        "endLine": 552,
+        "endChar": 75
+      },
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4bfa8be6_5ca643e8",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-20T19:46:42Z",
+      "side": 1,
+      "message": "We\u0027re dropping the old signing block in the comments...",
+      "parentUuid": "bbcbb59d_99503f09",
       "range": {
         "startLine": 552,
         "startChar": 73,
@@ -163,6 +277,24 @@
     },
     {
       "key": {
+        "uuid": "16579560_60175f78",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-20T19:46:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "86c0f434_db870ef5",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4cddfc79_77c4bde1",
         "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
         "patchSetId": 4
@@ -180,6 +312,24 @@
     },
     {
       "key": {
+        "uuid": "beac4b43_9570446d",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 882,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-20T19:46:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4cddfc79_77c4bde1",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2136fe4c_c2aa28d5",
         "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
         "patchSetId": 4
@@ -191,6 +341,24 @@
       "writtenOn": "2017-04-20T16:57:33Z",
       "side": 1,
       "message": "Re-throw as IOException and let the higher layers deal with it?",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "03c16e16_6d26dd11",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 883,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-04-20T19:46:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2136fe4c_c2aa28d5",
       "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
