@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b3f86088_0cf463aa",
+        "filename": "core/install_jni_libs.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-20T21:56:02Z",
+      "side": 1,
+      "message": "Can we have a more specific flag for split vendor that is set based on whatever the current treble design is?",
+      "revId": "86686e14ded9dbb5167d2354c4ae3c8dbb24e815",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0f12045e_27365e03",
+        "filename": "core/install_jni_libs.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-20T21:56:02Z",
+      "side": 1,
+      "message": "indent",
+      "revId": "86686e14ded9dbb5167d2354c4ae3c8dbb24e815",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
