@@ -77,7 +77,7 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "CrossHostArch": "$(HOST_CROSS_ARCH)",'; \
 	echo '    "CrossHostSecondaryArch": "$(HOST_CROSS_2ND_ARCH)",'; \
 	echo '    "Safestack": $(if $(filter true,$(USE_SAFESTACK)),true,false),'; \
-	echo '    "EnableCFI": $(if $(filter true,$(ENABLE_CFI)),true,false),'; \
+	echo '    "EnableCFI": $(if $(filter false,$(ENABLE_CFI)),false,true),'; \
 	echo ''; \
 	echo '    "ArtUseReadBarrier": $(if $(filter false,$(PRODUCT_ART_USE_READ_BARRIER)),false,true),'; \
 	echo ''; \
