@@ -145,6 +145,24 @@
     },
     {
       "key": {
+        "uuid": "86c0f434_db870ef5",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T17:20:59Z",
+      "side": 1,
+      "message": "Oh, but that\u0027s just the ZIP Central Directory. It\u0027s unlikely to ever be more than 2 GB in a non-ZIP64 archive. It\u0027s roughly 60-70 bytes * number of ZIP entries.",
+      "parentUuid": "d4eb1744_867a0676",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4cddfc79_77c4bde1",
         "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
         "patchSetId": 4
