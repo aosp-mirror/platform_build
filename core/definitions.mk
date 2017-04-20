@@ -3135,44 +3135,6 @@ $(strip $(if $(LOCAL_RECORDED_MODULE_TYPE),,
 endef
 
 ###########################################################
-# Link type checking
-###########################################################
-define check-link-type
-$(hide) mkdir -p $(dir $@) && rm -f $@
-$(hide) $(CHECK_LINK_TYPE) --makefile $(PRIVATE_MAKEFILE) --module $(PRIVATE_MODULE) \
-  --type "$(PRIVATE_LINK_TYPE)" $(addprefix --allowed ,$(PRIVATE_ALLOWED_TYPES)) \
-  $(addprefix --warn ,$(PRIVATE_WARN_TYPES)) $(PRIVATE_DEPS)
-$(hide) echo "$(PRIVATE_LINK_TYPE)" >$@
-endef
-
-define link-type-partitions
-ifndef LOCAL_IS_HOST_MODULE
-ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-ifneq ($(filter $(TARGET_OUT_VENDOR)/%,$(my_module_path)),)
-$(1): PRIVATE_LINK_TYPE += partition:vendor
-$(1): PRIVATE_WARN_TYPES += partition:data
-$(1): PRIVATE_ALLOWED_TYPES += partition:vendor partition:oem partition:odm
-else ifneq ($(filter $(TARGET_OUT_OEM)/%,$(my_module_path)),)
-$(1): PRIVATE_LINK_TYPE += partition:oem
-$(1): PRIVATE_WARN_TYPES += partition:data
-$(1): PRIVATE_ALLOWED_TYPES += partition:vendor partition:oem partition:odm
-else ifneq ($(filter $(TARGET_OUT_ODM)/%,$(my_module_path)),)
-$(1): PRIVATE_LINK_TYPE += partition:odm
-$(1): PRIVATE_WARN_TYPES += partition:data
-$(1): PRIVATE_ALLOWED_TYPES += partition:vendor partition:oem partition:odm
-else ifneq ($(filter $(TARGET_OUT_DATA)/%,$(my_module_path)),)
-$(1): PRIVATE_LINK_TYPE += partition:data
-$(1): PRIVATE_ALLOWED_TYPES += partition:data partition:vendor partition:oem partition:odm
-else
-$(1): PRIVATE_WARN_TYPES += partition:vendor partition:oem partition:odm partition:data
-endif
-else # uninstallable module
-$(1): PRIVATE_ALLOWED_TYPES += partition:vendor partition:oem partition:odm partition:data
-endif
-endif
-endef
-
-###########################################################
 # Basic math functions for positive integers <= 100
 #
 # (SDK versions for example)

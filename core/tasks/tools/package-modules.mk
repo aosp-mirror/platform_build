@@ -25,6 +25,12 @@ $(foreach m,$(my_modules),\
   $(eval my_modules_and_deps += $(_explicitly_required))\
 )
 
+# Ignore unknown installed files on partial builds
+my_missing_files :=
+ifneq ($(ALLOW_MISSING_DEPENDENCIES),true)
+my_missing_files = $(shell $(call echo-warning,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))
+endif
+
 # Iterate over modules' built files and installed files;
 # Calculate the dest files in the output zip file.
 
@@ -34,7 +40,7 @@ $(foreach m,$(my_modules_and_deps),\
   $(eval _built_files := $(strip $(ALL_MODULES.$(m).BUILT_INSTALLED)\
     $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).BUILT_INSTALLED)))\
   $(if $(_pickup_files)$(_built_files),,\
-    $(shell $(call echo-warning,$(my_makefile),$(my_package_name): Unknown installed file for module '$(m)')))\
+    $(call my_missing_files,$(m)))\
   $(eval my_pickup_files += $(_pickup_files))\
   $(foreach i, $(_built_files),\
     $(eval bui_ins := $(subst :,$(space),$(i)))\
