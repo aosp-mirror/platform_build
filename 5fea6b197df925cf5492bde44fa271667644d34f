@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "a2c5d1b7_20a2dbd9",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T19:55:50Z",
+      "side": 1,
+      "message": "What about singlejar library?\n\napksig library is about signing APKs, not about manipulating internal structure of ZIP files. Thus, it\u0027s not going to expose such low-level ZIP manipulation APIs. Please don\u0027t use these internal classes.",
+      "parentUuid": "a40afc66_f5a8235d",
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "31f07335_ed25f2ee",
         "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
         "patchSetId": 4
@@ -212,6 +230,30 @@
       "side": 1,
       "message": "We\u0027re dropping the old signing block in the comments...",
       "parentUuid": "bbcbb59d_99503f09",
+      "range": {
+        "startLine": 552,
+        "startChar": 73,
+        "endLine": 552,
+        "endChar": 75
+      },
+      "revId": "5fea6b197df925cf5492bde44fa271667644d34f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "03d3916c_14d0b52e",
+        "filename": "tools/signapk/src/com/android/signapk/SignApk.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-04-20T19:55:50Z",
+      "side": 1,
+      "message": "What do you mean?",
+      "parentUuid": "4bfa8be6_5ca643e8",
       "range": {
         "startLine": 552,
         "startChar": 73,
