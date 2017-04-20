@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "68683e4a_9f845602",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 711,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-04-20T21:14:21Z",
+      "side": 1,
+      "message": "It\u0027s not meaningless -- it both unifies the codepaths taken and improves what happens when building for devices on AOSP (which drops the vendor notices today, since we\u0027re only building system).\n\nI\u0027m also slightly worried about putting random things behind that variable, since to use aosp_arm64, you\u0027re going to need to migrate the emulator over. But that\u0027s probably not a huge deal.",
+      "parentUuid": "624b0865_dc772cba",
+      "range": {
+        "startLine": 711,
+        "startChar": 0,
+        "endLine": 711,
+        "endChar": 34
+      },
+      "revId": "bace69c449b9585319daceeda8708b9ba8d01faf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b097be83_4c6fa73b",
         "filename": "core/Makefile",
         "patchSetId": 2
