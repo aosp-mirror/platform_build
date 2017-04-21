@@ -64,7 +64,6 @@ TARGET_USES_64_BIT_BINDER := true
 
 # Enable A/B update
 TARGET_NO_RECOVERY := true
-BOARD_USES_RECOVERY_AS_BOOT := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 
 # TODO(jiyong) These might be SoC specific.
