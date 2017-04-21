@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "dc4379b8_f9eb76f4",
+        "filename": "core/install_jni_libs.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-04-21T16:18:24Z",
+      "side": 1,
+      "message": "BOARD_VNDK_VERSION :\u003d current perhaps",
+      "parentUuid": "b3f86088_0cf463aa",
+      "revId": "86686e14ded9dbb5167d2354c4ae3c8dbb24e815",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0f12045e_27365e03",
         "filename": "core/install_jni_libs.mk",
         "patchSetId": 3
