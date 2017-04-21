@@ -515,37 +515,6 @@ endif
 my_asflags += -D__ASSEMBLY__
 
 ###########################################################
-## When compiling against the VNDK, use LL-NDK libraries
-###########################################################
-ifneq ($(LOCAL_USE_VNDK),)
-  ####################################################
-  ## Soong modules may be built twice, once for /system
-  ## and once for /vendor. If we're using the VNDK,
-  ## switch all soong libraries over to the /vendor
-  ## variant.
-  ####################################################
-  ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-    # Soong-built libraries should always use the .vendor variant
-    my_whole_static_libraries := $(addsuffix .vendor,$(my_whole_static_libraries))
-    my_static_libraries := $(addsuffix .vendor,$(my_static_libraries))
-    my_shared_libraries := $(addsuffix .vendor,$(my_shared_libraries))
-    my_system_shared_libraries := $(addsuffix .vendor,$(my_system_shared_libraries))
-    my_header_libraries := $(addsuffix .vendor,$(my_header_libraries))
-  else
-    my_whole_static_libraries := $(foreach l,$(my_whole_static_libraries),\
-      $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_static_libraries := $(foreach l,$(my_static_libraries),\
-      $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
-      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_system_shared_libraries := $(foreach l,$(my_system_shared_libraries),\
-      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_header_libraries := $(foreach l,$(my_header_libraries),\
-      $(if $(SPLIT_VENDOR.HEADER_LIBRARIES.$(l)),$(l).vendor,$(l)))
-  endif
-endif
-
-###########################################################
 ## Define PRIVATE_ variables from global vars
 ###########################################################
 ifndef LOCAL_IS_HOST_MODULE
@@ -1343,6 +1312,36 @@ $(call track-src-file-obj,$(asm_sources_asm),$(asm_objects_asm))
 asm_objects += $(asm_objects_asm)
 endif
 
+###########################################################
+## When compiling against the VNDK, use LL-NDK libraries
+###########################################################
+ifneq ($(LOCAL_USE_VNDK),)
+  ####################################################
+  ## Soong modules may be built twice, once for /system
+  ## and once for /vendor. If we're using the VNDK,
+  ## switch all soong libraries over to the /vendor
+  ## variant.
+  ####################################################
+  ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    # Soong-built libraries should always use the .vendor variant
+    my_whole_static_libraries := $(addsuffix .vendor,$(my_whole_static_libraries))
+    my_static_libraries := $(addsuffix .vendor,$(my_static_libraries))
+    my_shared_libraries := $(addsuffix .vendor,$(my_shared_libraries))
+    my_system_shared_libraries := $(addsuffix .vendor,$(my_system_shared_libraries))
+    my_header_libraries := $(addsuffix .vendor,$(my_header_libraries))
+  else
+    my_whole_static_libraries := $(foreach l,$(my_whole_static_libraries),\
+      $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
+    my_static_libraries := $(foreach l,$(my_static_libraries),\
+      $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
+    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+    my_system_shared_libraries := $(foreach l,$(my_system_shared_libraries),\
+      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+    my_header_libraries := $(foreach l,$(my_header_libraries),\
+      $(if $(SPLIT_VENDOR.HEADER_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  endif
+endif
 
 ##########################################################
 ## Set up installed module dependency
