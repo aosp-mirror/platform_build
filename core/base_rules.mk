@@ -479,6 +479,13 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
     $(LOCAL_PATH)/DynamicConfig.xml:$(dir)/$(LOCAL_MODULE).dynamic)))
 endif
+
+ifneq (,$(wildcard $(LOCAL_PATH)/$(LOCAL_MODULE)_*.config))
+$(foreach extra_config, $(wildcard $(LOCAL_PATH)/$(LOCAL_MODULE)_*.config), \
+  $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+    $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+      $(extra_config):$(dir)/$(notdir $(extra_config))))))
+endif
 endif # $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
 
 $(call create-suite-dependencies)
