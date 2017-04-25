@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "52e60bb8_d38fb844",
+        "filename": "tools/fs_config/fs_config_test.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-04-25T22:06:16Z",
+      "side": 1,
+      "message": "Just arraysize, build breaks because of this",
+      "range": {
+        "startLine": 79,
+        "startChar": 31,
+        "endLine": 79,
+        "endChar": 55
+      },
+      "revId": "b5c5583124adb5f8d522da4f8f0211bb3ffc78ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
