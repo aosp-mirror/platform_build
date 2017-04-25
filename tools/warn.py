@@ -2463,10 +2463,11 @@ scripts_for_warning_groups = """
     if (FlagURL == "") return line;
     if (FlagSeparator == "") {
       return line.replace(ParseLinePattern,
-        "<a href='" + FlagURL + "/$1'>$1</a>:$2:$3");
+        "<a target='_blank' href='" + FlagURL + "/$1'>$1</a>:$2:$3");
     }
     return line.replace(ParseLinePattern,
-      "<a href='" + FlagURL + "/$1" + FlagSeparator + "$2'>$1:$2</a>:$3");
+      "<a target='_blank' href='" + FlagURL + "/$1" + FlagSeparator +
+        "$2'>$1:$2</a>:$3");
   }
   function createArrayOfDictionaries(n) {
     var result = [];
