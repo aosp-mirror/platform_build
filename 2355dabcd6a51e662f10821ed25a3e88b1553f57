@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fc6e6fed_4f66bbf1",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 14
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-25T20:13:24Z",
+      "side": 1,
+      "message": "This seems like an odd error check.  Could you whitelist the valid partitions instead?  Also this wouldn\u0027t catch -ooutputfile",
+      "revId": "2355dabcd6a51e662f10821ed25a3e88b1553f57",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
