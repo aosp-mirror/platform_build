@@ -16,6 +16,24 @@
       "revId": "2355dabcd6a51e662f10821ed25a3e88b1553f57",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0822b20c_8df465eb",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 14
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-04-25T21:18:51Z",
+      "side": 1,
+      "message": "Could we please keep this KISS check as it offers us a simple and understandable error message.\n\nRationalization: KISS, This does catch a common issue in a makefile, when a variable housing the partition list is empty. getopt should be the one that recognizes the failure to find a argument, but it does not.\n\nThere is no list of valid partitions and their combinations (they are to be a comma separate list officially, but not), we should be able to make up any partitions here and they should work (future proofing if for nothing else). If I had a valid list of partition names I could parse it and validate it, but it would be far more complex (see line 173 to 216).\n\nThe test of valid partitions _could_ be added in 173-216, but its message would be confusing as compared to this error message ...\n\nwhile we were initially reviewing this, someone added odm partition as a valid. Tomorrow some vendor will want vendor and vendor-firmware, lets not cap them from doing so.\n\nIt does catch -D -F -P -h and -o (of course, with a space to any following parameter). Not being able to catch -ooutputfile is acceptable because who is to say we do not want to blacklist the ooutputfile directory?",
+      "parentUuid": "fc6e6fed_4f66bbf1",
+      "revId": "2355dabcd6a51e662f10821ed25a3e88b1553f57",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
