@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd281972_c1d4c76e",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-25T21:22:56Z",
+      "side": 1,
+      "message": "Use spaces here, but the rest of the tabs below are ok (they are in recipes)",
+      "range": {
+        "startLine": 130,
+        "startChar": 0,
+        "endLine": 130,
+        "endChar": 1
+      },
+      "revId": "8a30483f79687d75fe0a2e761fa7e9abd5dbdb27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
