@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "efd5f8d2_e2a10b93",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-25T20:04:32Z",
+      "side": 1,
+      "message": "Put test executable on the next line.",
+      "revId": "cb508f187cfcc804e71882f3cd2b9f45a478c88b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9b1083e3_a3cfc1ac",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-25T20:04:32Z",
+      "side": 1,
+      "message": "This is more characters and less readable than just using fs_config-unit-tests",
+      "revId": "cb508f187cfcc804e71882f3cd2b9f45a478c88b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dfa4cc70_718f05f2",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-25T20:04:32Z",
+      "side": 1,
+      "message": "This is only used once, just put the source files here",
+      "revId": "cb508f187cfcc804e71882f3cd2b9f45a478c88b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f1c30f84_dba35553",
+        "filename": "tools/fs_config/fs_config_test.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-25T20:04:32Z",
+      "side": 1,
+      "message": "We only support little endian on both host and device, I think you can drop all of this.",
+      "revId": "cb508f187cfcc804e71882f3cd2b9f45a478c88b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "12372a5c_fc08b1ef",
+        "filename": "tools/fs_config/fs_config_test.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-25T20:04:32Z",
+      "side": 1,
+      "message": "android::base::arraysize",
+      "range": {
+        "startLine": 95,
+        "startChar": 31,
+        "endLine": 95,
+        "endChar": 41
+      },
+      "revId": "cb508f187cfcc804e71882f3cd2b9f45a478c88b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
