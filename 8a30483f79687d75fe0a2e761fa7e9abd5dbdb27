@@ -22,6 +22,30 @@
       "revId": "8a30483f79687d75fe0a2e761fa7e9abd5dbdb27",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "46295cc3_5cdeb585",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-04-25T21:26:30Z",
+      "side": 1,
+      "message": "Besides, I did not perform the same here as in line 145 ...",
+      "parentUuid": "fd281972_c1d4c76e",
+      "range": {
+        "startLine": 130,
+        "startChar": 0,
+        "endLine": 130,
+        "endChar": 1
+      },
+      "revId": "8a30483f79687d75fe0a2e761fa7e9abd5dbdb27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
