@@ -70,6 +70,24 @@
     },
     {
       "key": {
+        "uuid": "1765808a_886127f3",
+        "filename": "tools/fs_config/fs_config_test.cpp",
+        "patchSetId": 10
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2017-04-25T21:16:48Z",
+      "side": 1,
+      "message": "This matches what is done in fs_config.c in libcutils, I can toss it, but doing so means a pedantic difference between the test and the tool and library.",
+      "parentUuid": "f1c30f84_dba35553",
+      "revId": "cb508f187cfcc804e71882f3cd2b9f45a478c88b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "12372a5c_fc08b1ef",
         "filename": "tools/fs_config/fs_config_test.cpp",
         "patchSetId": 10
