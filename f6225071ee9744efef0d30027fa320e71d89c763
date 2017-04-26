@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d7cbccee_b9a00ee9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2017-04-26T10:18:22Z",
+      "side": 1,
+      "message": "\"32-bit\" added.",
+      "parentUuid": "a3a145d5_999b78e3",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "f6225071ee9744efef0d30027fa320e71d89c763",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a6d3c5bc_7488da0a",
         "filename": "target/board/generic_arm_a/BoardConfig.mk",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "d81a3d43_e07d4240",
+        "filename": "target/board/generic_arm_a/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2017-04-26T10:18:22Z",
+      "side": 1,
+      "message": "Done.",
+      "parentUuid": "a6d3c5bc_7488da0a",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 33
+      },
+      "revId": "f6225071ee9744efef0d30027fa320e71d89c763",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "58331965_ce82c032",
         "filename": "target/board/generic_arm_a/BoardConfig.mk",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2017-04-26T08:18:33Z",
       "side": 1,
       "message": "do we need this?",
+      "range": {
+        "startLine": 65,
+        "startChar": 0,
+        "endLine": 65,
+        "endChar": 46
+      },
+      "revId": "f6225071ee9744efef0d30027fa320e71d89c763",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "15221ebd_91a98603",
+        "filename": "target/board/generic_arm_a/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2017-04-26T10:18:22Z",
+      "side": 1,
+      "message": "This is needed so vendor image can be built successfully. Even though we don\u0027t need vendor image here, it\u0027s still built by a general build command \"make -j\".\nWe may remove it later after the BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE above is removed.",
+      "parentUuid": "58331965_ce82c032",
       "range": {
         "startLine": 65,
         "startChar": 0,
