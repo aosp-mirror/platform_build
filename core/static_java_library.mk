@@ -149,8 +149,23 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_INSTRUMENTATION_FOR :=
 ifdef LOCAL_USE_AAPT2
 # One more level with name res so we can zip up the flat resources that can be linked by apps.
 my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res/res
+renderscript_target_api :=
+ifneq (,$(LOCAL_RENDERSCRIPT_TARGET_API))
+renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
+else
+ifneq (,$(LOCAL_SDK_VERSION))
+# Set target-api for LOCAL_SDK_VERSIONs other than current.
+ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
+renderscript_target_api := $(LOCAL_SDK_VERSION)
+endif
+endif  # LOCAL_SDK_VERSION is set
+endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
+ifneq (,$(renderscript_target_api))
+ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
 my_generated_res_dirs := $(rs_generated_res_dir)
 my_generated_res_dirs_deps := $(RenderScript_file_stamp)
+endif  # renderscript_target_api < 21
+endif  # renderscript_target_api is set
 include $(BUILD_SYSTEM)/aapt2.mk
 $(my_res_package) : $(framework_res_package_export_deps)
 else
