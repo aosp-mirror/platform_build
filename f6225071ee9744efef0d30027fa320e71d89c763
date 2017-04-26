@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "a3a145d5_999b78e3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1120915
+      },
+      "writtenOn": "2017-04-26T08:19:37Z",
+      "side": 1,
+      "message": "for 32 bits?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "f6225071ee9744efef0d30027fa320e71d89c763",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a6d3c5bc_7488da0a",
         "filename": "target/board/generic_arm_a/BoardConfig.mk",
         "patchSetId": 1
