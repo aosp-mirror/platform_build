@@ -2262,9 +2262,10 @@ $(hide) mkdir -p $(dir $(PRIVATE_CLASSES_JACK))
 $(hide) mkdir -p $(PRIVATE_JACK_INTERMEDIATES_DIR)
 $(if $(PRIVATE_JACK_INCREMENTAL_DIR),$(hide) mkdir -p $(PRIVATE_JACK_INCREMENTAL_DIR))
 $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list)
-$(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
-          find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list; \
-fi
+$(if $(PRIVATE_SOURCE_INTERMEDIATES_DIR), \
+    $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
+            find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list; \
+    fi)
 $(if $(PRIVATE_HAS_PROTO_SOURCES), \
     $(hide) find $(PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list )
 $(if $(PRIVATE_HAS_RS_SOURCES), \
@@ -2281,6 +2282,10 @@ $(if $(PRIVATE_EXTRA_JAR_ARGS),
     $(hide) $(call add-java-resources-to,$@.res.tmp.zip)
     $(hide) unzip -qo $@.res.tmp.zip -d $@.res.tmp
     $(hide) rm $@.res.tmp.zip)
+$(if $(PRIVATE_JACK_IMPORT_JAR),
+    $(hide) mkdir -p $@.tmpjill.res
+    $(hide) unzip -qo $(PRIVATE_JACK_IMPORT_JAR) -d $@.tmpjill.res
+    $(hide) find $@.tmpjill.res -iname "*.class" -delete)
 $(hide) if [ -s $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
     export tmpEcjArg="@$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq"; \
 else \
@@ -2293,6 +2298,8 @@ $(call call-jack) \
         -D jack.dex.optimize="false") \
     $(if $(PRIVATE_RMTYPEDEFS), \
         -D jack.android.remove-typedef="true") \
+    $(if $(PRIVATE_JACK_IMPORT_JAR), \
+        --import $(PRIVATE_JACK_IMPORT_JAR) --import-resource $@.tmpjill.res) \
     $(addprefix --classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_JACK_SHARED_LIBRARIES)))) \
     $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
