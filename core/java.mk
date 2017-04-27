@@ -346,11 +346,7 @@ else
 LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
 endif
 else
-ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
-else
-LOCAL_CHECKED_MODULE := $(built_dex)
-endif
 endif
 endif
 endif
@@ -662,6 +658,8 @@ $(built_dex): $(built_dex_intermediate)
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $(dir $@)/classes*.dex
 	$(hide) cp -fp $(dir $<)/classes*.dex $(dir $@)
+
+java-dex: $(built_dex)
 
 endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
