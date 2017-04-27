@@ -1080,7 +1080,7 @@ $(call dist-for-goals,sdk win_sdk, \
 # umbrella targets to assit engineers in verifying builds
 .PHONY: java native target host java-host java-target native-host native-target \
         java-host-tests java-target-tests native-host-tests native-target-tests \
-        java-tests native-tests host-tests target-tests tests
+        java-tests native-tests host-tests target-tests tests java-dex
 # some synonyms
 .PHONY: host-java target-java host-native target-native \
         target-java-tests target-native-tests
