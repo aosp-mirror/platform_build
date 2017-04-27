@@ -3238,6 +3238,141 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
 endef
 
 ###########################################################
+## Path Cleaning
+###########################################################
+
+# Remove "dir .." combinations (but keep ".. ..")
+#
+# $(1): The expanded path, where / is converted to ' ' to work with $(word)
+define _clean-path-strip-dotdot
+$(strip \
+  $(if $(word 2,$(1)),
+    $(if $(call streq,$(word 2,$(1)),..),
+      $(if $(call streq,$(word 1,$(1)),..),
+        $(word 1,$(1)) $(call _clean-path-strip-dotdot,$(wordlist 2,$(words $(1)),$(1)))
+      ,
+        $(call _clean-path-strip-dotdot,$(wordlist 3,$(words $(1)),$(1)))
+      )
+    ,
+      $(word 1,$(1)) $(call _clean-path-strip-dotdot,$(wordlist 2,$(words $(1)),$(1)))
+    )
+  ,
+    $(1)
+  )
+)
+endef
+
+# Remove any leading .. from the path (in case of /..)
+#
+# Should only be called if the original path started with /
+# $(1): The expanded path, where / is converted to ' ' to work with $(word)
+define _clean-path-strip-root-dotdots
+$(strip $(if $(call streq,$(firstword $(1)),..),
+  $(call _clean-path-strip-root-dotdots,$(wordlist 2,$(words $(1)),$(1))),
+  $(1)))
+endef
+
+# Call _clean-path-strip-dotdot until the path stops changing
+# $(1): Non-empty if this path started with a /
+# $(2): The expanded path, where / is converted to ' ' to work with $(word)
+define _clean-path-expanded
+$(strip \
+  $(eval _ep := $(call _clean-path-strip-dotdot,$(2)))
+  $(if $(1),$(eval _ep := $(call _clean-path-strip-root-dotdots,$(_ep))))
+  $(if $(call streq,$(2),$(_ep)),
+    $(_ep),
+    $(call _clean-path-expanded,$(1),$(_ep))))
+endef
+
+# Clean the file path -- remove //, dir/.., extra .
+#
+# This should be the same semantics as golang's filepath.Clean
+#
+# $(1): The file path to clean
+define clean-path
+$(strip \
+  $(if $(call streq,$(words $(1)),1),
+    $(eval _rooted := $(filter /%,$(1)))
+    $(eval _expanded_path := $(filter-out .,$(subst /,$(space),$(1))))
+    $(eval _path := $(if $(_rooted),/)$(subst $(space),/,$(call _clean-path-expanded,$(_rooted),$(_expanded_path))))
+    $(if $(_path),
+      $(_path),
+      .
+     )
+  ,
+    $(if $(call streq,$(words $(1)),0),
+      .,
+      $(error Call clean-path with only one path (without spaces))
+    )
+  )
+)
+endef
+
+ifeq ($(TEST_MAKE_clean_path),true)
+  define my_test
+    $(if $(call streq,$(call clean-path,$(1)),$(2)),,
+      $(eval my_failed := true)
+      $(warning clean-path test '$(1)': expected '$(2)', got '$(call clean-path,$(1))'))
+  endef
+  my_failed :=
+
+  # Already clean
+  $(call my_test,abc,abc)
+  $(call my_test,abc/def,abc/def)
+  $(call my_test,a/b/c,a/b/c)
+  $(call my_test,.,.)
+  $(call my_test,..,..)
+  $(call my_test,../..,../..)
+  $(call my_test,../../abc,../../abc)
+  $(call my_test,/abc,/abc)
+  $(call my_test,/,/)
+
+  # Empty is current dir
+  $(call my_test,,.)
+
+  # Remove trailing slash
+  $(call my_test,abc/,abc)
+  $(call my_test,abc/def/,abc/def)
+  $(call my_test,a/b/c/,a/b/c)
+  $(call my_test,./,.)
+  $(call my_test,../,..)
+  $(call my_test,../../,../..)
+  $(call my_test,/abc/,/abc)
+
+  # Remove doubled slash
+  $(call my_test,abc//def//ghi,abc/def/ghi)
+  $(call my_test,//abc,/abc)
+  $(call my_test,///abc,/abc)
+  $(call my_test,//abc//,/abc)
+  $(call my_test,abc//,abc)
+
+  # Remove . elements
+  $(call my_test,abc/./def,abc/def)
+  $(call my_test,/./abc/def,/abc/def)
+  $(call my_test,abc/.,abc)
+
+  # Remove .. elements
+  $(call my_test,abc/def/ghi/../jkl,abc/def/jkl)
+  $(call my_test,abc/def/../ghi/../jkl,abc/jkl)
+  $(call my_test,abc/def/..,abc)
+  $(call my_test,abc/def/../..,.)
+  $(call my_test,/abc/def/../..,/)
+  $(call my_test,abc/def/../../..,..)
+  $(call my_test,/abc/def/../../..,/)
+  $(call my_test,abc/def/../../../ghi/jkl/../../../mno,../../mno)
+  $(call my_test,/../abc,/abc)
+
+  # Combinations
+  $(call my_test,abc/./../def,def)
+  $(call my_test,abc//./../def,def)
+  $(call my_test,abc/../../././../def,../../def)
+
+  ifdef my_failed
+    $(error failed clean-path test)
+  endif
+endif
+
+###########################################################
 ## Other includes
 ###########################################################
 
