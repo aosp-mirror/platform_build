@@ -2385,7 +2385,8 @@ def normalize_warning_line(line):
 
 
 def parse_input_file(infile):
-  """Parse input file, match warning lines."""
+  """Parse input file, collect parameters and warning lines."""
+  global android_root
   global platform_version
   global target_product
   global target_variant
@@ -2412,6 +2413,9 @@ def parse_input_file(infile):
       m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
       if m is not None:
         target_variant = m.group(0)
+      m = re.search('.* TOP=([^ ]*) .*', line)
+      if m is not None:
+        android_root = m.group(1)
   return warning_lines
 
 
