@@ -126,7 +126,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs
 LOCAL_MODULE_CLASS := ETC
-LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partion_list),$(LOCAL_MODULE)_$(t))
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
 include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
@@ -141,7 +141,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files
 LOCAL_MODULE_CLASS := ETC
-LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partion_list),$(LOCAL_MODULE)_$(t))
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
 include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
