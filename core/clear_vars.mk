@@ -102,7 +102,7 @@ LOCAL_IS_RUNTIME_RESOURCE_OVERLAY:=
 LOCAL_JACK_CLASSPATH:=
 LOCAL_JACK_COVERAGE_EXCLUDE_FILTER:=
 LOCAL_JACK_COVERAGE_INCLUDE_FILTER:=
-# '' (ie disabled), disabled, full, incremental
+# '' (ie disabled), disabled, full, incremental, javac_frontend
 LOCAL_JACK_ENABLED:=$(DEFAULT_JACK_ENABLED)
 LOCAL_JACK_FLAGS:=
 LOCAL_JACK_PLUGIN:=
