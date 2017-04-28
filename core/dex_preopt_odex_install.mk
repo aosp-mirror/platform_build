@@ -157,9 +157,9 @@ ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS) $(PRODUCT_SYSTEM_SERVER_APPS),$(L
   # compiled with the 'speed' compiler filter.
   LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed
 else
-  # If no compiler filter is specified, default to 'interpret-only' to save on storage.
+  # If no compiler filter is specified, default to 'quicken' to save on storage.
   ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
-    LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=interpret-only
+    LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=quicken
   endif
 endif
 
