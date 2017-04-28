@@ -22,6 +22,30 @@
       "revId": "de50f115bc0c9041d157d66a5800873eebb62c1b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c403cf3b_6613ba93",
+        "filename": "core/configure_local_jack.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-04-28T00:00:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dcdd9444_3d5001e8",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 34
+      },
+      "revId": "de50f115bc0c9041d157d66a5800873eebb62c1b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
