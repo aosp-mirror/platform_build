@@ -1,0 +1,176 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d604b68_7a12814f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-04-28T06:09:45Z",
+      "side": 1,
+      "message": "what is \"+\" for?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 1
+      },
+      "revId": "7ac70ebf90996e3e0e4e85da6eb72db0883c9d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "61e20b56_3d8c3b79",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-04-28T06:09:45Z",
+      "side": 1,
+      "message": "link to the bug for more context to reviewers?",
+      "revId": "7ac70ebf90996e3e0e4e85da6eb72db0883c9d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "68b657a1_5c23f28f",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1216,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-04-28T06:09:45Z",
+      "side": 1,
+      "message": "LOCAL_MODULE -\u003e LOCAL_MODULE_CLASS ?\n\nifneq -\u003e ifeq ?",
+      "range": {
+        "startLine": 1214,
+        "startChar": 0,
+        "endLine": 1216,
+        "endChar": 5
+      },
+      "revId": "7ac70ebf90996e3e0e4e85da6eb72db0883c9d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37e6f140_86de7b1e",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1220,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-04-28T06:09:45Z",
+      "side": 1,
+      "message": "you may need to additionally check module\u0027s install path.",
+      "range": {
+        "startLine": 1218,
+        "startChar": 0,
+        "endLine": 1220,
+        "endChar": 5
+      },
+      "revId": "7ac70ebf90996e3e0e4e85da6eb72db0883c9d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "faacf8f1_312fdef9",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1226,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-04-28T06:09:45Z",
+      "side": 1,
+      "message": "why not ifeq (..., true)?",
+      "range": {
+        "startLine": 1226,
+        "startChar": 0,
+        "endLine": 1226,
+        "endChar": 42
+      },
+      "revId": "7ac70ebf90996e3e0e4e85da6eb72db0883c9d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "967da5ab_6536e561",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1703,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-04-28T06:09:45Z",
+      "side": 1,
+      "message": "indent using space",
+      "range": {
+        "startLine": 1703,
+        "startChar": 0,
+        "endLine": 1703,
+        "endChar": 1
+      },
+      "revId": "7ac70ebf90996e3e0e4e85da6eb72db0883c9d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a1ebc678_5fed4937",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1775,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-04-28T06:09:45Z",
+      "side": 1,
+      "message": "I don\u0027t think hard-coding this is appropriate.",
+      "range": {
+        "startLine": 1775,
+        "startChar": 94,
+        "endLine": 1775,
+        "endChar": 103
+      },
+      "revId": "7ac70ebf90996e3e0e4e85da6eb72db0883c9d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b33023de_046c4b61",
+        "filename": "core/shared_library_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-04-28T06:09:45Z",
+      "side": 1,
+      "message": "new line required since we are defining a new target rule here",
+      "revId": "7ac70ebf90996e3e0e4e85da6eb72db0883c9d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
