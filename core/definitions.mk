@@ -2393,13 +2393,16 @@ else \
 fi
 endef
 
+# b/37756495
+IJAR_ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=0
+
 ## Rule to create a table of contents from a .jar file.
 ## Must be called with $(eval).
 # $(1): A .jar file
 define _transform-jar-to-toc
 $1.toc: $1 | $(IJAR)
 	@echo Generating TOC: $$@
-	$(hide) $(IJAR) $$< $$@.tmp
+	$(hide) $(IJAR_ASAN_OPTIONS) $(IJAR) $$< $$@.tmp
 	$$(call commit-change-for-toc,$$@)
 endef
 
