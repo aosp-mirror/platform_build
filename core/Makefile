@@ -2341,6 +2341,7 @@ ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 endif
 	@# Metadata for compatibility verification.
 	$(hide) cp $(BUILT_SYSTEM_MANIFEST) $(zip_root)/META/system_manifest.xml
+	$(hide) cp $(BUILT_SYSTEM_COMPATIBILITY_MATRIX) $(zip_root)/META/system_compatibility_matrix.xml
 ifdef BUILT_VENDOR_MANIFEST
 	$(hide) cp $(BUILT_VENDOR_MANIFEST) $(zip_root)/META/vendor_manifest.xml
 endif

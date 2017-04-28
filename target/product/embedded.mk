@@ -86,9 +86,10 @@ PRODUCT_PACKAGES += \
     tzdatacheck \
     vndservice \
     vndservicemanager \
-    matrix.xml \
+    compatibility_matrix.xml \
     manifest.xml \
     system_manifest.xml \
+    system_compatibility_matrix.xml \
 
 # SELinux packages
 PRODUCT_PACKAGES += \

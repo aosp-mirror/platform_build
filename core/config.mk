@@ -687,6 +687,7 @@ else
 endif
 
 FRAMEWORK_MANIFEST_FILE := system/libhidl/manifest.xml
+FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.xml
 
 # ###############################################################
 # Set up final options.
