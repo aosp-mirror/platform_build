@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4b29e433_5c781b7a",
+        "filename": "core/configure_local_jack.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2017-04-28T09:24:12Z",
+      "side": 1,
+      "message": "This is changing the behavior of ANDROID_COMPILE_WITH_JACK false: with this change you prevent a module to forcefully use Jack. Is it on purpose?",
+      "revId": "32c65ce1853802d7093df2d8e54bab8e76d4e189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "456fdfc1_df06026d",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 786,
+      "author": {
+        "id": 1023201
+      },
+      "writtenOn": "2017-04-28T09:24:12Z",
+      "side": 1,
+      "message": "You need to clear those too:\nPRIVATE_SOURCE_INTERMEDIATES_DIR\nPRIVATE_HAS_PROTO_SOURCES\nPRIVATE_HAS_RS_SOURCES",
+      "revId": "32c65ce1853802d7093df2d8e54bab8e76d4e189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
