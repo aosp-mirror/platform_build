@@ -498,7 +498,7 @@ ifneq ($(my_src_aar),)
 my_src_jar := $(intermediates.COMMON)/aar/classes.jar
 
 $(my_src_jar) : $(my_src_aar)
-	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@)
+	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@) $(dir $@)/res
 	$(hide) unzip -qo -d $(dir $@) $<
 	# Make sure the extracted classes.jar has a new timestamp.
 	$(hide) touch $@
@@ -543,6 +543,7 @@ my_res_package := $(intermediates.COMMON)/package-res.apk
 
 # We needed only very few PRIVATE variables and aapt2.mk input variables. Reset the unnecessary ones.
 $(my_res_package): PRIVATE_AAPT2_CFLAGS :=
+$(my_res_package): PRIVATE_AAPT_FLAGS := --static-lib --no-static-lib-packages
 $(my_res_package): PRIVATE_ANDROID_MANIFEST := $(intermediates.COMMON)/aar/AndroidManifest.xml
 $(my_res_package): PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
 $(my_res_package): PRIVATE_SOURCE_INTERMEDIATES_DIR :=
