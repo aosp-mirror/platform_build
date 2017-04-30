@@ -120,26 +120,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown
 
-# Different dexopt types for different package update/install times.
-# On eng builds, make "boot" reasons do pure JIT for faster turnaround.
-ifeq (eng,$(TARGET_BUILD_VARIANT))
-    PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-        pm.dexopt.first-boot=verify-at-runtime \
-        pm.dexopt.boot=verify-at-runtime
-else
-    PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-        pm.dexopt.first-boot=interpret-only \
-        pm.dexopt.boot=verify-profile
-endif
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    pm.dexopt.install=interpret-only \
-    pm.dexopt.bg-dexopt=speed-profile \
-    pm.dexopt.ab-ota=speed-profile \
-    pm.dexopt.nsys-library=speed \
-    pm.dexopt.shared-apk=speed \
-    pm.dexopt.forced-dexopt=speed \
-    pm.dexopt.core-app=speed
-
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
