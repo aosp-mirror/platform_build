@@ -35,7 +35,7 @@ def mangle_build_prop(prop):
 def mangle_default_prop_override(prop):
   pass
 
-# Put the modifications that you need to make into the /default.prop into this
+# Put the modifications that you need to make into the /system/etc/prop.default into this
 # function. The prop object has get(name) and put(name,value) methods.
 def mangle_default_prop(prop):
   # If ro.debuggable is 1, then enable adb on USB by default
@@ -122,7 +122,8 @@ def main(argv):
   elif (filename.endswith("/vendor/default.prop") or
         filename.endswith("/odm/default.prop")):
     mangle_default_prop_override(properties)
-  elif filename.endswith("/default.prop"):
+  elif (filename.endswith("/default.prop") or # legacy
+        filename.endswith("/prop.default")):
     mangle_default_prop(properties)
   else:
     sys.stderr.write("bad command line: " + str(argv) + "\n")
