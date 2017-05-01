@@ -1171,9 +1171,9 @@ apps_only: $(unbundled_build_modules)
 droid_targets: apps_only
 
 # Combine the NOTICE files for a apps_only build
-$(eval $(call combine-notice-files, \
+$(eval $(call combine-notice-files, html, \
     $(target_notice_file_txt), \
-    $(target_notice_file_html), \
+    $(target_notice_file_html_or_xml), \
     "Notices for files for apps:", \
     $(TARGET_OUT_NOTICE_FILES), \
     $(apps_only_installed_files)))
