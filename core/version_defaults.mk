@@ -49,6 +49,12 @@ ALLOWED_VERSIONS := $(call allowed-platform-versions,\
 
 ifndef TARGET_PLATFORM_VERSION
   TARGET_PLATFORM_VERSION := $(DEFAULT_PLATFORM_VERSION)
+else ifeq ($(TARGET_PLATFORM_VERSION),OPR1)
+  # HACK: lunch currently sets TARGET_PLATFORM_VERSION to
+  # DEFAULT_PLATFORM_VERSION, which causes unnecessary pain
+  # when the old DEFAULT_PLATFORM_VERSION becomes invalid.
+  # For now, silently upgrade OPR1 to the current default.
+  TARGET_PLATFORM_VERSION := $(DEFAULT_PLATFORM_VERSION)
 endif
 
 ifeq (,$(filter $(ALLOWED_VERSIONS), $(TARGET_PLATFORM_VERSION)))
