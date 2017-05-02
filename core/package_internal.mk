@@ -367,8 +367,23 @@ endif  # LOCAL_DATA_BINDING
 ifeq ($(need_compile_res),true)
 ifdef LOCAL_USE_AAPT2
 my_compiled_res_base_dir := $(intermediates)/flat-res
+renderscript_target_api :=
+ifneq (,$(LOCAL_RENDERSCRIPT_TARGET_API))
+renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
+else
+ifneq (,$(LOCAL_SDK_VERSION))
+# Set target-api for LOCAL_SDK_VERSIONs other than current.
+ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
+renderscript_target_api := $(LOCAL_SDK_VERSION)
+endif
+endif  # LOCAL_SDK_VERSION is set
+endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
+ifneq (,$(renderscript_target_api))
+ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
 my_generated_res_dirs := $(rs_generated_res_dir)
 my_generated_res_dirs_deps := $(RenderScript_file_stamp)
+endif  # renderscript_target_api < 21
+endif  # renderscript_target_api is set
 # Add AAPT2 link specific flags.
 $(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --no-static-lib-packages
 include $(BUILD_SYSTEM)/aapt2.mk
