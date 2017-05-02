@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ba910aa_78b7a2ed",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 547,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-02T16:57:35Z",
+      "side": 1,
+      "message": "will be changed to prebuilts depending on whether we decide to enable all of these checks on all builds or check-builds.",
+      "range": {
+        "startLine": 545,
+        "startChar": 0,
+        "endLine": 547,
+        "endChar": 58
+      },
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e731888a_f11b1f3f",
+        "filename": "core/static_library_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-02T16:57:35Z",
+      "side": 1,
+      "message": "This could probably use some de-duplication wrt to shared library abi diffing rules.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 43
+      },
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

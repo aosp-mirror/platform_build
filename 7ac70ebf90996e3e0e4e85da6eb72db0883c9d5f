@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ac0cf04a_17b4a1be",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-02T16:57:35Z",
+      "side": 1,
+      "message": "It means add make support, but I\u0027ll correct this :)",
+      "parentUuid": "1d604b68_7a12814f",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 1
+      },
+      "revId": "7ac70ebf90996e3e0e4e85da6eb72db0883c9d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "61e20b56_3d8c3b79",
         "filename": "/COMMIT_MSG",
         "patchSetId": 2
@@ -145,6 +169,30 @@
       "writtenOn": "2017-04-28T06:09:45Z",
       "side": 1,
       "message": "I don\u0027t think hard-coding this is appropriate.",
+      "range": {
+        "startLine": 1775,
+        "startChar": 94,
+        "endLine": 1775,
+        "endChar": 103
+      },
+      "revId": "7ac70ebf90996e3e0e4e85da6eb72db0883c9d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "240818fe_f4a98d32",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1775,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-02T16:57:35Z",
+      "side": 1,
+      "message": "True, it\u0027s better to export a variable from soong and use that.",
+      "parentUuid": "a1ebc678_5fed4937",
       "range": {
         "startLine": 1775,
         "startChar": 94,
