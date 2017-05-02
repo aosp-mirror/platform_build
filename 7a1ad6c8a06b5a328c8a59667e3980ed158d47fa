@@ -22,6 +22,30 @@
       "revId": "7a1ad6c8a06b5a328c8a59667e3980ed158d47fa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88c62fc9_d8bd1add",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-02T23:29:05Z",
+      "side": 1,
+      "message": "Without this I get:\n\nerror: resource \u0027com.google.android.gms:integer/google_play_services_version\u0027 has a conflicting value for configuration ().",
+      "parentUuid": "281da944_ec4bfb9b",
+      "range": {
+        "startLine": 548,
+        "startChar": 54,
+        "endLine": 548,
+        "endChar": 78
+      },
+      "revId": "7a1ad6c8a06b5a328c8a59667e3980ed158d47fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
