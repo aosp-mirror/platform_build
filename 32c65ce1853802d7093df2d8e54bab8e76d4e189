@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2a9c6efa_d666765f",
+        "filename": "core/configure_local_jack.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-02T01:08:18Z",
+      "side": 1,
+      "message": "Yes, otherwise adding LOCAL_JACK_ENABLED :\u003d javac_frontend will go back to using jack.  I haven\u0027t needed a mixed jack/javac build to workaround javac/desugar/proguard/dx issues yet, hopefully I won\u0027t in the future either.  If I do I can make this check more nuanced.",
+      "parentUuid": "4b29e433_5c781b7a",
+      "revId": "32c65ce1853802d7093df2d8e54bab8e76d4e189",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "456fdfc1_df06026d",
         "filename": "core/java.mk",
         "patchSetId": 3
