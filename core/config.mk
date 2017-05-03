@@ -610,11 +610,7 @@ DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/tools/fat16copy.py
 CHECK_LINK_TYPE := build/tools/check_link_type.py
 
-ifeq ($(ANDROID_COMPILE_WITH_JACK),true)
 DEFAULT_JACK_ENABLED:=full
-else
-DEFAULT_JACK_ENABLED:=
-endif
 ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
 JACK_DEFAULT_ARGS :=
 DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
