@@ -16,7 +16,7 @@
 
 general-tests-zip := $(PRODUCT_OUT)/general-tests.zip
 $(general-tests-zip): $(COMPATIBILITY.general-tests.FILES) $(SOONG_ZIP)
-	echo $(COMPATIBILITY.general-tests.FILES) > $@.list
+	echo $(sort $(COMPATIBILITY.general-tests.FILES)) > $@.list
 	sed -i -e 's/\s\+/\n/g' $@.list
 	grep $(HOST_OUT_TESTCASES) $@.list > $@-host.list || true
 	grep $(TARGET_OUT_TESTCASES) $@.list > $@-target.list || true
