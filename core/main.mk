@@ -335,8 +335,8 @@ endif
 
 # Boolean variable determining if Treble is fully enabled
 PRODUCT_FULL_TREBLE := false
-ifeq ($(PRODUCT_FULL_TREBLE_OVERRIDE),true)
-  PRODUCT_FULL_TREBLE := true
+ifneq ($(PRODUCT_FULL_TREBLE_OVERRIDE),)
+  PRODUCT_FULL_TREBLE := $(PRODUCT_FULL_TREBLE_OVERRIDE)
 else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
   #$(warning no product shipping level defined)
 else ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),26),)
@@ -1242,7 +1242,7 @@ $(call dist-for-goals,sdk win_sdk, \
 # umbrella targets to assit engineers in verifying builds
 .PHONY: java native target host java-host java-target native-host native-target \
         java-host-tests java-target-tests native-host-tests native-target-tests \
-        java-tests native-tests host-tests target-tests tests
+        java-tests native-tests host-tests target-tests tests java-dex
 # some synonyms
 .PHONY: host-java target-java host-native target-native \
         target-java-tests target-native-tests

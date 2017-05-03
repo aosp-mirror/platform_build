@@ -49,6 +49,12 @@ ALLOWED_VERSIONS := $(call allowed-platform-versions,\
 
 ifndef TARGET_PLATFORM_VERSION
   TARGET_PLATFORM_VERSION := $(DEFAULT_PLATFORM_VERSION)
+else ifeq ($(TARGET_PLATFORM_VERSION),OPR1)
+  # HACK: lunch currently sets TARGET_PLATFORM_VERSION to
+  # DEFAULT_PLATFORM_VERSION, which causes unnecessary pain
+  # when the old DEFAULT_PLATFORM_VERSION becomes invalid.
+  # For now, silently upgrade OPR1 to the current default.
+  TARGET_PLATFORM_VERSION := $(DEFAULT_PLATFORM_VERSION)
 endif
 
 ifeq (,$(filter $(ALLOWED_VERSIONS), $(TARGET_PLATFORM_VERSION)))
@@ -105,14 +111,14 @@ ifndef PLATFORM_SDK_VERSION
   # When you increment the PLATFORM_SDK_VERSION please ensure you also
   # clear out the following text file of all older PLATFORM_VERSION's:
   # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 25
+  PLATFORM_SDK_VERSION := 26
 endif
 
 ifndef PLATFORM_JACK_MIN_SDK_VERSION
   # This is definition of the min SDK version given to Jack for the current
   # platform. For released version it should be the same as
   # PLATFORM_SDK_VERSION. During development, this number may be incremented
-  # before PLATFORM_SDK_VERSION if the plateform starts to add new java
+  # before PLATFORM_SDK_VERSION if the platform starts to add new java
   # language supports.
   PLATFORM_JACK_MIN_SDK_VERSION := o-b1
 endif

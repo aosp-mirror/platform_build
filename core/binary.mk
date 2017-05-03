@@ -1814,10 +1814,11 @@ SOONG_CONV.$(LOCAL_MODULE).PROBLEMS := \
     $(SOONG_CONV.$(LOCAL_MODULE).PROBLEMS) $(my_soong_problems)
 SOONG_CONV.$(LOCAL_MODULE).DEPS := \
     $(SOONG_CONV.$(LOCAL_MODULE).DEPS) \
-    $(my_static_libraries) \
-    $(my_whole_static_libraries) \
-    $(my_shared_libraries) \
-    $(my_system_shared_libraries)
+    $(filter-out $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY),\
+        $(my_static_libraries) \
+        $(my_whole_static_libraries) \
+        $(my_shared_libraries) \
+        $(my_system_shared_libraries))
 SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
 endif
 

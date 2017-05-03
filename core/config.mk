@@ -636,6 +636,7 @@ BOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/boot_signer
 FUTILITY := $(HOST_OUT_EXECUTABLES)/futility-host
 VBOOT_SIGNER := prebuilts/misc/scripts/vboot_signer/vboot_signer.sh
 FEC := $(HOST_OUT_EXECUTABLES)/fec
+BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump2$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
