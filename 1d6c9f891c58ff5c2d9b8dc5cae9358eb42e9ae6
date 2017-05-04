@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21fb7ec8_72d570dd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3235,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-05-04T22:21:34Z",
+      "side": 1,
+      "message": "Add some quotes around \".. ..\" to match the quoting of \"dir ..\" ?",
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "285d40e8_49974135",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3238,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-05-04T22:21:34Z",
+      "side": 1,
+      "message": "I like the naming you used on line 3252: \"strip\"",
+      "range": {
+        "startLine": 3238,
+        "startChar": 19,
+        "endLine": 3238,
+        "endChar": 27
+      },
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49de276e_eeb7e932",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3252,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-05-04T22:21:34Z",
+      "side": 1,
+      "message": "How would you feel about renaming \"dotdot\" to \"dotdots\" to indicate its recursion?",
+      "range": {
+        "startLine": 3252,
+        "startChar": 30,
+        "endLine": 3252,
+        "endChar": 36
+      },
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fcc4456_65c6eee9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3262,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-05-04T22:21:34Z",
+      "side": 1,
+      "message": "How would you feel about making $(1) into a bool, evaluated on line 3273?",
+      "range": {
+        "startLine": 3262,
+        "startChar": 7,
+        "endLine": 3262,
+        "endChar": 23
+      },
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9bd0e05_eeae5ce7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3263,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-05-04T22:21:34Z",
+      "side": 1,
+      "message": "When should this case happen?",
+      "range": {
+        "startLine": 3263,
+        "startChar": 40,
+        "endLine": 3263,
+        "endChar": 81
+      },
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "297c0292_2d7ed2f4",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3274,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-05-04T22:21:34Z",
+      "side": 1,
+      "message": "This comma is the one that goes with the \u0027if\u0027 on line 3272, right? I\u0027d expect that the comma would get its own line, that the \u0027if\u0027 on line 3272 would get its own line, and that lines 3273, 3274, and 3275 (but not the comma) would get indented to make it more obvious\n\nActually I\u0027d expect all of the commas and all of the dollar signs to start their own lines (except in function calls that don\u0027t contain nested function calls as arguments) but that seems to be too much of an ask\n\nIs whitespace expensive in these Makefiles?",
+      "range": {
+        "startLine": 3274,
+        "startChar": 21,
+        "endLine": 3274,
+        "endChar": 22
+      },
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
