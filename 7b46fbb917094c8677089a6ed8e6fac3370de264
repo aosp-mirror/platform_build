@@ -2,6 +2,126 @@
   "comments": [
     {
       "key": {
+        "uuid": "50f47324_d5227c2c",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1217,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-04T00:11:32Z",
+      "side": 1,
+      "message": "The comments seem to not match the source here (and on 1213)",
+      "range": {
+        "startLine": 1217,
+        "startChar": 2,
+        "endLine": 1217,
+        "endChar": 73
+      },
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c1a4e21_c6109f16",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1225,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-04T00:11:32Z",
+      "side": 1,
+      "message": "Perhaps we should make this an error -- everything in the vndk set should be using clang",
+      "range": {
+        "startLine": 1225,
+        "startChar": 0,
+        "endLine": 1225,
+        "endChar": 25
+      },
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac85b1d2_b5dd2a6f",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1235,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-04T00:11:32Z",
+      "side": 1,
+      "message": "TOPDIR is generally unnecessary, it\u0027s hardcoded",
+      "range": {
+        "startLine": 1235,
+        "startChar": 46,
+        "endLine": 1235,
+        "endChar": 55
+      },
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43ce6ec4_bb57be13",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1243,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-04T00:11:32Z",
+      "side": 1,
+      "message": "You added dependencies to the .o files above, but not here?",
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eef0e5ab_e96ba700",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1250,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-04T00:11:32Z",
+      "side": 1,
+      "message": "What about generated sources?",
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c8e51a4_3e5a9ce3",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1705,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-04T00:11:32Z",
+      "side": 1,
+      "message": "Why?",
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4ba910aa_78b7a2ed",
         "filename": "core/config.mk",
         "patchSetId": 3
@@ -25,6 +145,23 @@
     },
     {
       "key": {
+        "uuid": "87f71583_6b8bc158",
+        "filename": "core/shared_library_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-04T00:11:32Z",
+      "side": 1,
+      "message": "At least some newlines would make this easier to read. I\u0027d say indentation too, but you can\u0027t do that with the embedded rules (though you could actually put the entire rule in the macro with $(eval))",
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e731888a_f11b1f3f",
         "filename": "core/static_library_internal.mk",
         "patchSetId": 3
@@ -45,6 +182,30 @@
       "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "80f3860a_6bdf3b0d",
+        "filename": "core/static_library_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-04T00:11:32Z",
+      "side": 1,
+      "message": "Yeah, pushing more of this into a macro would be good",
+      "parentUuid": "e731888a_f11b1f3f",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 43
+      },
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
