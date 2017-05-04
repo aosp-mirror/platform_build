@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "adde835e_3bb5b988",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-04T17:55:08Z",
+      "side": 1,
+      "message": "This is a bit confusing (between A/B OTA and \"Android Build\" since they both live in the same gerrit project). Can you change it to \"releasetools\" or \"OTA Tools\"?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 8
+      },
+      "revId": "00f4e8aee546e933dcb5f2d5912a1c872b06d1a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12cd3495_a0b7ca43",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-04T17:55:08Z",
+      "side": 1,
+      "message": "We should be able to query OPTIONS.key_passwords[OPTIONS.package_key] at this point? That way we can just make the right call in one shot.",
+      "range": {
+        "startLine": 1034,
+        "startChar": 4,
+        "endLine": 1052,
+        "endChar": 55
+      },
+      "revId": "00f4e8aee546e933dcb5f2d5912a1c872b06d1a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa67a1eb_949a85f9",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1399,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-04T17:55:08Z",
+      "side": 1,
+      "message": "nit: can you wrap the line use the 80-char limit (and add a full stop \".\" to the end of the sentence)?",
+      "range": {
+        "startLine": 1399,
+        "startChar": 69,
+        "endLine": 1399,
+        "endChar": 89
+      },
+      "revId": "00f4e8aee546e933dcb5f2d5912a1c872b06d1a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
