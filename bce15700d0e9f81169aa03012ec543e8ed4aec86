@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e5de706d_f882bb91",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 884,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-04T23:39:35Z",
+      "side": 1,
+      "message": "I think we have to hard-code these since there is no vendor available in make",
+      "range": {
+        "startLine": 869,
+        "startChar": 15,
+        "endLine": 884,
+        "endChar": 33
+      },
+      "revId": "bce15700d0e9f81169aa03012ec543e8ed4aec86",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
