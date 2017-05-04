@@ -73,9 +73,14 @@ LOCAL_MODULE_PATH   := $(TARGET_OUT)
 GEN := $(local-generated-sources-dir)/manifest.xml
 
 $(GEN): PRIVATE_FLAGS :=
+
+# TODO(b/37954458), (b/37321309) remove check of PRODUCT_FULL_TREBLE after
+# putting device compatibility matrices for non-treble devices.
+ifeq ($(PRODUCT_FULL_TREBLE),true)
 ifdef BUILT_VENDOR_MATRIX
 $(GEN): $(BUILT_VENDOR_MATRIX)
 $(GEN): PRIVATE_FLAGS := -c "$(BUILT_VENDOR_MATRIX)"
+endif
 endif
 
 $(GEN): $(FRAMEWORK_MANIFEST_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
@@ -95,9 +100,14 @@ LOCAL_MODULE_PATH   := $(TARGET_OUT)
 GEN := $(local-generated-sources-dir)/compatibility_matrix.xml
 
 $(GEN): PRIVATE_FLAGS :=
+
+# TODO(b/37954458), (b/37321309) remove check of PRODUCT_FULL_TREBLE after
+# putting complete HAL manifests on non-treble devices.
+ifeq ($(PRODUCT_FULL_TREBLE),true)
 ifdef BUILT_VENDOR_MANIFEST
 $(GEN): $(BUILT_VENDOR_MANIFEST)
 $(GEN): PRIVATE_FLAGS := -c "$(BUILT_VENDOR_MANIFEST)"
+endif
 endif
 
 $(GEN): $(FRAMEWORK_COMPATIBILITY_MATRIX_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
