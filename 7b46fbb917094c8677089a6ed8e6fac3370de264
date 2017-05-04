@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d030830e_d468e729",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1217,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-04T23:14:15Z",
+      "side": 1,
+      "message": "I removed these conditions since now we have to look at a list of the eligible libraries in make itself (since there\u0027s no vendor available in make)",
+      "parentUuid": "50f47324_d5227c2c",
+      "range": {
+        "startLine": 1217,
+        "startChar": 2,
+        "endLine": 1217,
+        "endChar": 73
+      },
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7c1a4e21_c6109f16",
         "filename": "core/binary.mk",
         "patchSetId": 3
@@ -71,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "3de98ad0_86b3a3c8",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1235,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-04T23:14:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ac85b1d2_b5dd2a6f",
+      "range": {
+        "startLine": 1235,
+        "startChar": 46,
+        "endLine": 1235,
+        "endChar": 55
+      },
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "43ce6ec4_bb57be13",
         "filename": "core/binary.mk",
         "patchSetId": 3
@@ -82,6 +130,24 @@
       "writtenOn": "2017-05-04T00:11:32Z",
       "side": 1,
       "message": "You added dependencies to the .o files above, but not here?",
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23205e04_217ae227",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1243,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-04T23:14:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "43ce6ec4_bb57be13",
       "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -105,6 +171,24 @@
     },
     {
       "key": {
+        "uuid": "a1ad4ad5_1c098990",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1250,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-04T23:14:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eef0e5ab_e96ba700",
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2c8e51a4_3e5a9ce3",
         "filename": "core/binary.mk",
         "patchSetId": 3
@@ -116,6 +200,24 @@
       "writtenOn": "2017-05-04T00:11:32Z",
       "side": 1,
       "message": "Why?",
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88fef38a_80211f89",
+        "filename": "core/binary.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1705,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-04T23:14:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2c8e51a4_3e5a9ce3",
       "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -162,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "7a2a448d_49017b39",
+        "filename": "core/shared_library_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-04T23:14:15Z",
+      "side": 1,
+      "message": "Replaced the diffing with an eval, the linking seems like a simple enough rule to not put it in an eval.",
+      "parentUuid": "87f71583_6b8bc158",
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e731888a_f11b1f3f",
         "filename": "core/static_library_internal.mk",
         "patchSetId": 3
@@ -197,6 +317,30 @@
       "side": 1,
       "message": "Yeah, pushing more of this into a macro would be good",
       "parentUuid": "e731888a_f11b1f3f",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 43
+      },
+      "revId": "7b46fbb917094c8677089a6ed8e6fac3370de264",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8a64364_7d7af89c",
+        "filename": "core/static_library_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-04T23:14:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80f3860a_6bdf3b0d",
       "range": {
         "startLine": 30,
         "startChar": 0,
