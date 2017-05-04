@@ -1017,12 +1017,15 @@ $(foreach d,$1, \
 $(hide) echo >> $2
 endef
 
+# b/37755219
+RS_CC_ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=0:detect_container_overflow=0
+
 define transform-renderscripts-to-java-and-bc
 @echo "RenderScript: $(PRIVATE_MODULE) <= $(PRIVATE_RS_SOURCE_FILES)"
 $(hide) rm -rf $(PRIVATE_RS_OUTPUT_DIR)
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/res/raw
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/src
-$(hide) $(PRIVATE_RS_CC) \
+$(hide) $(RS_CC_ASAN_OPTIONS) $(PRIVATE_RS_CC) \
   -o $(PRIVATE_RS_OUTPUT_DIR)/res/raw \
   -p $(PRIVATE_RS_OUTPUT_DIR)/src \
   -d $(PRIVATE_RS_OUTPUT_DIR) \
@@ -1058,7 +1061,7 @@ define transform-renderscripts-to-cpp-and-bc
 @echo "RenderScript: $(PRIVATE_MODULE) <= $(PRIVATE_RS_SOURCE_FILES)"
 $(hide) rm -rf $(PRIVATE_RS_OUTPUT_DIR)
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/
-$(hide) $(PRIVATE_RS_CC) \
+$(hide) $(RS_CC_ASAN_OPTIONS) $(PRIVATE_RS_CC) \
   -o $(PRIVATE_RS_OUTPUT_DIR)/ \
   -d $(PRIVATE_RS_OUTPUT_DIR) \
   -a $@ -MD \
@@ -2000,6 +2003,9 @@ else
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
 endif
 
+# b/37750224
+AAPT_ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=0
+
 # TODO: Right now we generate the asset resources twice, first as part
 # of generating the Java classes, then at the end when packaging the final
 # assets.  This should be changed to do one of two things: (1) Don't generate
@@ -2014,7 +2020,7 @@ endif
 define create-resource-java-files
 @mkdir -p $(PRIVATE_SOURCE_INTERMEDIATES_DIR)
 @mkdir -p $(dir $(PRIVATE_RESOURCE_PUBLICS_OUTPUT))
-$(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
+$(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
     $(eval # PRIVATE_PRODUCT_AAPT_CONFIG is intentionally missing-- see comment.) \
     $(addprefix -J , $(PRIVATE_SOURCE_INTERMEDIATES_DIR)) \
     $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
@@ -2394,13 +2400,16 @@ else \
 fi
 endef
 
+# b/37756495
+IJAR_ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=0
+
 ## Rule to create a table of contents from a .jar file.
 ## Must be called with $(eval).
 # $(1): A .jar file
 define _transform-jar-to-toc
 $1.toc: $1 | $(IJAR)
 	@echo Generating TOC: $$@
-	$(hide) $(IJAR) $$< $$@.tmp
+	$(hide) $(IJAR_ASAN_OPTIONS) $(IJAR) $$< $$@.tmp
 	$$(call commit-change-for-toc,$$@)
 endef
 
@@ -2597,7 +2606,7 @@ endef
 #values; applications can override these by explicitly stating
 #them in their manifest.
 define add-assets-to-package
-$(hide) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
+$(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -c , $(PRIVATE_PRODUCT_AAPT_CONFIG)) \
     $(addprefix --preferred-density , $(PRIVATE_PRODUCT_AAPT_PREF_CONFIG)) \
     $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
