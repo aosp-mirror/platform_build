@@ -111,14 +111,14 @@ ifndef PLATFORM_SDK_VERSION
   # When you increment the PLATFORM_SDK_VERSION please ensure you also
   # clear out the following text file of all older PLATFORM_VERSION's:
   # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 26
+  PLATFORM_SDK_VERSION := 25
 endif
 
 ifndef PLATFORM_JACK_MIN_SDK_VERSION
   # This is definition of the min SDK version given to Jack for the current
   # platform. For released version it should be the same as
   # PLATFORM_SDK_VERSION. During development, this number may be incremented
-  # before PLATFORM_SDK_VERSION if the platform starts to add new java
+  # before PLATFORM_SDK_VERSION if the plateform starts to add new java
   # language supports.
   PLATFORM_JACK_MIN_SDK_VERSION := o-b1
 endif
