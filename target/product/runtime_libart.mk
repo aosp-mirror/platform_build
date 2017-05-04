@@ -98,8 +98,4 @@ endif
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     pm.dexopt.install=quicken \
     pm.dexopt.bg-dexopt=speed-profile \
-    pm.dexopt.ab-ota=speed-profile \
-    pm.dexopt.nsys-library=speed \
-    pm.dexopt.shared-apk=speed \
-    pm.dexopt.forced-dexopt=speed \
-    pm.dexopt.core-app=speed
+    pm.dexopt.ab-ota=speed-profile
