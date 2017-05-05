@@ -159,7 +159,12 @@ ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS) $(PRODUCT_DEXPREOPT_SPEED_APPS) $
 else
   # If no compiler filter is specified, default to 'quicken' to save on storage.
   ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
-    LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=quicken
+    ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+      # For non system server jars, use speed-profile when we have a profile.
+      LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed-profile
+    else
+      LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=quicken
+    endif
   endif
 endif
 
