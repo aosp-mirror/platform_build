@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "05ce1dda_a9e14cf6",
+        "filename": "core/binary.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 1227,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-05T21:05:46Z",
+      "side": 1,
+      "message": "collapsing these conditions into a single $(or..) reduces readability?",
+      "range": {
+        "startLine": 1214,
+        "startChar": 0,
+        "endLine": 1227,
+        "endChar": 5
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
