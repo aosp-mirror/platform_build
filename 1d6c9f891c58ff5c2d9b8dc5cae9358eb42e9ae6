@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "69239214_34744fb5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3235,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-06T03:52:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21fb7ec8_72d570dd",
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "285d40e8_49974135",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -30,6 +48,30 @@
       "writtenOn": "2017-05-04T22:21:34Z",
       "side": 1,
       "message": "I like the naming you used on line 3252: \"strip\"",
+      "range": {
+        "startLine": 3238,
+        "startChar": 19,
+        "endLine": 3238,
+        "endChar": 27
+      },
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f7c6247_4ad97201",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3238,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-06T03:52:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "285d40e8_49974135",
       "range": {
         "startLine": 3238,
         "startChar": 19,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "8938bc8d_0e1fc757",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3252,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-06T03:52:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "49de276e_eeb7e932",
+      "range": {
+        "startLine": 3252,
+        "startChar": 30,
+        "endLine": 3252,
+        "endChar": 36
+      },
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4fcc4456_65c6eee9",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -76,6 +142,30 @@
       "writtenOn": "2017-05-04T22:21:34Z",
       "side": 1,
       "message": "How would you feel about making $(1) into a bool, evaluated on line 3273?",
+      "range": {
+        "startLine": 3262,
+        "startChar": 7,
+        "endLine": 3262,
+        "endChar": 23
+      },
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62fe5bee_99185a73",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3262,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-06T03:52:19Z",
+      "side": 1,
+      "message": "I did it here because 3273 was getting long, but i\u0027ll look at adding another variable there and doing that.\n\nOf course, there\u0027s no such thing as a bool in make :) It\u0027s empty vs non-empty.\n\nDone",
+      "parentUuid": "4fcc4456_65c6eee9",
       "range": {
         "startLine": 3262,
         "startChar": 7,
@@ -111,6 +201,30 @@
     },
     {
       "key": {
+        "uuid": "977aae40_8d8efe1e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3263,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-06T03:52:19Z",
+      "side": 1,
+      "message": "When you\u0027ve got ../../a/b, the first call with move it to ../b, then the second to \"\" (which will convert to . on 3274)",
+      "parentUuid": "e9bd0e05_eeae5ce7",
+      "range": {
+        "startLine": 3263,
+        "startChar": 40,
+        "endLine": 3263,
+        "endChar": 81
+      },
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "297c0292_2d7ed2f4",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -122,6 +236,30 @@
       "writtenOn": "2017-05-04T22:21:34Z",
       "side": 1,
       "message": "This comma is the one that goes with the \u0027if\u0027 on line 3272, right? I\u0027d expect that the comma would get its own line, that the \u0027if\u0027 on line 3272 would get its own line, and that lines 3273, 3274, and 3275 (but not the comma) would get indented to make it more obvious\n\nActually I\u0027d expect all of the commas and all of the dollar signs to start their own lines (except in function calls that don\u0027t contain nested function calls as arguments) but that seems to be too much of an ask\n\nIs whitespace expensive in these Makefiles?",
+      "range": {
+        "startLine": 3274,
+        "startChar": 21,
+        "endLine": 3274,
+        "endChar": 22
+      },
+      "revId": "1d6c9f891c58ff5c2d9b8dc5cae9358eb42e9ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2746ceb7_fdb39794",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3274,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-06T03:52:19Z",
+      "side": 1,
+      "message": "Whitespace becomes important, especially on 3273 where we\u0027re converting between spaces and /. But I can make this a little cleaner. Most of it gets stripped out by $(strip or $(filter calls.",
+      "parentUuid": "297c0292_2d7ed2f4",
       "range": {
         "startLine": 3274,
         "startChar": 21,
