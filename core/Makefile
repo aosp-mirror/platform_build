@@ -1112,6 +1112,7 @@ define build-image-kernel-modules
     $(hide) $(DEPMOD) -b $(4) 0.0
     $(hide) sed -e 's/\(.*modules.*\):/\/\1:/g' -e 's/ \([^ ]*modules[^ ]*\)/ \/\1/g' -i $(4)/lib/modules/0.0/modules.dep
     $(hide) cp $(4)/lib/modules/0.0/modules.dep $(2)/lib/modules
+    $(hide) cp $(4)/lib/modules/0.0/modules.alias $(2)/lib/modules
 endef
 
 # $(1): output file
