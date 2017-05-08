@@ -22,6 +22,351 @@
       "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "698127c8_b8cbc11f",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 870,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/c/390542/",
+      "range": {
+        "startLine": 870,
+        "startChar": 2,
+        "endLine": 870,
+        "endChar": 15
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6184ca3_c04cd9c4",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 871,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "not in Android.mk anymore: https://android-review.googlesource.com/c/389656/",
+      "range": {
+        "startLine": 871,
+        "startChar": 2,
+        "endLine": 871,
+        "endChar": 17
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "44c2a322_970ab318",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 872,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "Why is this here? It\u0027s GPL (though it\u0027s rather trivial to convert to Android.bp)",
+      "range": {
+        "startLine": 872,
+        "startChar": 2,
+        "endLine": 872,
+        "endChar": 12
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52c2bdcb_56b94ff0",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 873,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "This looks rather trivial to convert to soong",
+      "range": {
+        "startLine": 873,
+        "startChar": 2,
+        "endLine": 873,
+        "endChar": 9
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d4b0ee5_812b79e3",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 874,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "This isn\u0027t in Android.mk anymore",
+      "range": {
+        "startLine": 874,
+        "startChar": 2,
+        "endLine": 874,
+        "endChar": 23
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "efe6da7b_401e1ddd",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 875,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "This isn\u0027t in Android.mk anymore",
+      "range": {
+        "startLine": 875,
+        "startChar": 2,
+        "endLine": 875,
+        "endChar": 13
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa0cf948_4a5e4f19",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 876,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/c/390879/",
+      "range": {
+        "startLine": 876,
+        "startChar": 2,
+        "endLine": 876,
+        "endChar": 16
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1d6af25_f70527ee",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 877,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "This isn\u0027t in Android.mk anymore: https://android-review.googlesource.com/c/377076/",
+      "range": {
+        "startLine": 877,
+        "startChar": 2,
+        "endLine": 877,
+        "endChar": 15
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0eb30cb_d593f110",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 878,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "This would be trivial to move to Android.bp",
+      "range": {
+        "startLine": 878,
+        "startChar": 2,
+        "endLine": 878,
+        "endChar": 21
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9e16965_c8fcd4b8",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 879,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "This shouldn\u0027t be too hard to move over",
+      "range": {
+        "startLine": 879,
+        "startChar": 2,
+        "endLine": 879,
+        "endChar": 11
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25bafe86_39b79319",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 880,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/390879",
+      "range": {
+        "startLine": 880,
+        "startChar": 2,
+        "endLine": 880,
+        "endChar": 13
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1fc188ec_cc443016",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 881,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "This is already on the first line. But this isn\u0027t going to be trivial to switch --we need extra soong support for it.",
+      "range": {
+        "startLine": 881,
+        "startChar": 2,
+        "endLine": 881,
+        "endChar": 13
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c476f0d_6f96f49e",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 882,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "This looks trivial to convert",
+      "range": {
+        "startLine": 882,
+        "startChar": 2,
+        "endLine": 882,
+        "endChar": 9
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "17b62202_3b8f5f37",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 883,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "Again, this is GPL, why would we be exposing it? (It would be rather trivial to convert to Soong)",
+      "range": {
+        "startLine": 883,
+        "startChar": 2,
+        "endLine": 883,
+        "endChar": 16
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ebafa5b8_36d1867a",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 884,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-08T21:43:42Z",
+      "side": 1,
+      "message": "This looks like it\u0027ll be a decent amount of work to convert, though there don\u0027t appear to be any blockers.",
+      "range": {
+        "startLine": 884,
+        "startChar": 2,
+        "endLine": 884,
+        "endChar": 31
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
