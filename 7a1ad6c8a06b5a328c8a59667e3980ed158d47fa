@@ -46,6 +46,30 @@
       "revId": "7a1ad6c8a06b5a328c8a59667e3980ed158d47fa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df4cf302_cac422c5",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 1043034
+      },
+      "writtenOn": "2017-05-08T21:32:28Z",
+      "side": 1,
+      "message": "So two libraries with the same package name are declaring the same value? What are the dependencies of the target that is failing with that message?",
+      "parentUuid": "88c62fc9_d8bd1add",
+      "range": {
+        "startLine": 548,
+        "startChar": 54,
+        "endLine": 548,
+        "endChar": 78
+      },
+      "revId": "7a1ad6c8a06b5a328c8a59667e3980ed158d47fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
