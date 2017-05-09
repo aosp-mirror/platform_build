@@ -324,6 +324,30 @@
     },
     {
       "key": {
+        "uuid": "3c040a92_cf38d48a",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 882,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-09T23:19:32Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/#/q/topic:libcups-to-bp+(status:open+OR+status:merged)",
+      "parentUuid": "4c476f0d_6f96f49e",
+      "range": {
+        "startLine": 882,
+        "startChar": 2,
+        "endLine": 882,
+        "endChar": 9
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "17b62202_3b8f5f37",
         "filename": "core/config.mk",
         "patchSetId": 5
