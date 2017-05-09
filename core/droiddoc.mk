@@ -177,6 +177,7 @@ $(full_target): \
                 -encoding UTF-8 \
                 \@$(PRIVATE_SRC_LIST_FILE) \
                 -J-Xmx1600m \
+                -J-XX:-OmitStackTraceInFastThrow \
                 -XDignore.symbol.file \
                 $(PRIVATE_PROFILING_OPTIONS) \
                 -quiet \
