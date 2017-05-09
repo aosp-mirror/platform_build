@@ -1,0 +1,297 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8872d895_2b0ddf69",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "not used?",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 9
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ff5fcbd6_a487a83e",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "Would be better to put some documentation. Could be just one-liner for major class/functions only.",
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "25d1830a_c4026e3a",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "use \"in\"",
+      "range": {
+        "startLine": 35,
+        "startChar": 22,
+        "endLine": 35,
+        "endChar": 29
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3e43f814_0dd467ef",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "Let\u0027s use logging module for new code, which is easier to manager log verbosity.",
+      "range": {
+        "startLine": 36,
+        "startChar": 6,
+        "endLine": 36,
+        "endChar": 11
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e6fc1809_1d3c3d47",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "nit: not a sentence (and it has grammar issue: expect ..., has ...)",
+      "range": {
+        "startLine": 77,
+        "startChar": 23,
+        "endLine": 77,
+        "endChar": 54
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d7a30d7_8bc9448c",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "move them alongside the actual data? e.g. blocks written: \u003cactual\u003e (expected: \u003cexpected\u003e)",
+      "range": {
+        "startLine": 79,
+        "startChar": 26,
+        "endLine": 80,
+        "endChar": 40
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2de6775c_c227396d",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "we have been using \"metadata\" as a single word in OTA packages. Can you remove the space in-between? Also can you replace other \"meta\" occurrences with \"metadata\"?",
+      "range": {
+        "startLine": 169,
+        "startChar": 13,
+        "endLine": 169,
+        "endChar": 22
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4582ae4_bc9ecc02",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "meta_info.get(\"ota-type\") \u003d\u003d \"BLOCK\"",
+      "range": {
+        "startLine": 174,
+        "startChar": 11,
+        "endLine": 174,
+        "endChar": 71
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "136407e1_0186fcc7",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "add a TODO for boot/radio/bootloader partitions?",
+      "range": {
+        "startLine": 188,
+        "startChar": 6,
+        "endLine": 188,
+        "endChar": 37
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16139781_e0fed843",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "nit: space before (",
+      "range": {
+        "startLine": 192,
+        "startChar": 24,
+        "endLine": 192,
+        "endChar": 25
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c37afe12_12f7643a",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "is there a specific reason for using this? looks like for forward compatibility (or to tolerant with buggy callers...)",
+      "range": {
+        "startLine": 205,
+        "startChar": 25,
+        "endLine": 205,
+        "endChar": 41
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ffd705c_d5b15afd",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "avoid using negative exit code. because we won\u0027t see that negative value from shell (echo $?)",
+      "range": {
+        "startLine": 213,
+        "startChar": 13,
+        "endLine": 213,
+        "endChar": 15
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1779c1b4_b4145266",
+        "filename": "tools/releasetools/ota_package_parser.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-09T01:21:12Z",
+      "side": 1,
+      "message": "nit: why putting so many blank lines?",
+      "range": {
+        "startLine": 218,
+        "startChar": 0,
+        "endLine": 226,
+        "endChar": 0
+      },
+      "revId": "9363f68fd6715fd97fd27567364872e1918d2a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
