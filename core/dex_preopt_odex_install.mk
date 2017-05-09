@@ -59,6 +59,25 @@ built_installed_vdex :=
 built_installed_art :=
 
 ifdef LOCAL_DEX_PREOPT
+
+ifeq (false,$(WITH_DEX_PREOPT_GENERATE_PROFILE))
+LOCAL_DEX_PREOPT_GENERATE_PROFILE := false
+endif
+
+ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
+# If LOCAL_DEX_PREOPT_GENERATE_PROFILE is not defined, default it based on the existence of the
+# profile class listing. TODO: Use product specific directory here.
+my_classes_directory := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)
+LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING := $(my_classes_directory)/$(LOCAL_MODULE).prof.txt
+ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)))
+# Profile listing exists, use it to generate the profile.
+ifeq ($(LOCAL_DEX_PREOPT_APP_IMAGE),)
+LOCAL_DEX_PREOPT_APP_IMAGE := true
+endif
+LOCAL_DEX_PREOPT_GENERATE_PROFILE := true
+endif
+endif
+
 dexpreopt_boot_jar_module := $(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE))
 ifdef dexpreopt_boot_jar_module
 # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
@@ -113,13 +132,6 @@ installed_vdex := $(strip $(installed_vdex))
 installed_art := $(strip $(installed_art))
 
 ifdef built_odex
-
-ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
-ifeq (true,$(WITH_DEX_PREOPT_GENERATE_PROFILE))
-  LOCAL_DEX_PREOPT_GENERATE_PROFILE := true
-endif
-endif
-
 ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
 ifndef LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING
 $(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING))
