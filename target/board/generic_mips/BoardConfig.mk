@@ -47,6 +47,7 @@ ifeq ($(HOST_OS),linux)
 endif
 
 TARGET_USES_HWC2 := true
+NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # Build OpenGLES emulation guest and host libraries
 BUILD_EMULATOR_OPENGL := true
