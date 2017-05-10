@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0b9c13d_5ef83a21",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-10T23:53:48Z",
+      "side": 1,
+      "message": "This should be \"\" for non-encrypted keys.\n\nI merged the common lines here and uploaded a new PS.",
+      "range": {
+        "startLine": 1029,
+        "startChar": 13,
+        "endLine": 1029,
+        "endChar": 17
+      },
+      "revId": "a8114404bc9bf0aa0653574d1db307a73c0273cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2697a072_5940413b",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1041,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-10T23:53:48Z",
+      "side": 1,
+      "message": "I added a parameter to common.Run() to allow caller specifying the verbosity (commit 39451582c4d92c70e7ed91195aee01bf239e677f). Updated in the new PS. Can you help check if that makes sense to you?",
+      "range": {
+        "startLine": 1040,
+        "startChar": 6,
+        "endLine": 1041,
+        "endChar": 29
+      },
+      "revId": "a8114404bc9bf0aa0653574d1db307a73c0273cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
