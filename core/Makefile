@@ -225,10 +225,15 @@ endef
 BUILDINFO_SH := build/tools/buildinfo.sh
 VENDOR_BUILDINFO_SH := build/tools/vendor_buildinfo.sh
 
-# TARGET_BUILD_FLAVOR and ro.build.flavor are used only by the test harness to distinguish builds.
+# TARGET_BUILD_FLAVOR and ro.build.flavor are used only by the test
+# harness to distinguish builds. Only add _asan for a sanitized build
+# if it isn't already a part of the flavor (via a dedicated lunch
+# config for example).
 TARGET_BUILD_FLAVOR := $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)
 ifdef SANITIZE_TARGET
+ifeq (,$(findstring _asan,$(TARGET_BUILD_FLAVOR)))
 TARGET_BUILD_FLAVOR := $(TARGET_BUILD_FLAVOR)_asan
+endif
 endif
 
 ifdef TARGET_SYSTEM_PROP
@@ -1152,6 +1157,7 @@ define build-image-kernel-modules
     $(hide) $(DEPMOD) -b $(4) 0.0
     $(hide) sed -e 's/\(.*modules.*\):/\/\1:/g' -e 's/ \([^ ]*modules[^ ]*\)/ \/\1/g' -i $(4)/lib/modules/0.0/modules.dep
     $(hide) cp $(4)/lib/modules/0.0/modules.dep $(2)/lib/modules
+    $(hide) cp $(4)/lib/modules/0.0/modules.alias $(2)/lib/modules
 endef
 
 # $(1): output file

@@ -1684,6 +1684,12 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
     ifeq ($(my_tidy_flags),)
       my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
     endif
+
+    # We might be using the static analyzer through clang-tidy.
+    # https://bugs.llvm.org/show_bug.cgi?id=32914
+    ifneq ($(my_tidy_checks),)
+      my_tidy_flags += "-extra-arg-before=-D__clang_analyzer__"
+    endif
   endif
 endif
 
