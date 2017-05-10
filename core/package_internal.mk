@@ -92,6 +92,7 @@ ifeq (,$(LOCAL_RESOURCE_DIR))
   LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res
 else
   need_compile_res := true
+  LOCAL_RESOURCE_DIR := $(foreach d,$(LOCAL_RESOURCE_DIR),$(call clean-path,$(d)))
 endif
 
 package_resource_overlays := $(strip \
