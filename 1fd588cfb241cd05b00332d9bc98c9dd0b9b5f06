@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c3c0f06_45d892b8",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 15
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2017-05-10T23:12:25Z",
+      "side": 1,
+      "message": "Shouldn\u0027t one clear this variable at the end of the Makefile?",
+      "revId": "1fd588cfb241cd05b00332d9bc98c9dd0b9b5f06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "31878bd7_79e7aa9a",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 15
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2017-05-10T23:12:25Z",
+      "side": 1,
+      "message": "What happens if someone modifies something on system in their device tree config file? Wouldn\u0027t that \"change\" still end up on the system partition fs_config_\u003cfiles|dirs\u003e and defeat treble?\n\nWhat if someone does something dumb like?\n/*",
+      "revId": "1fd588cfb241cd05b00332d9bc98c9dd0b9b5f06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b1fb9b6a_a49404b5",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 15
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2017-05-10T23:12:25Z",
+      "side": 1,
+      "message": "Any particular reason you didn\u0027t define an function for this and just (pseudo code):\n\n$(foreach p,$(fs_config_generate_extra_partition_list),$(eval $(call add_files_and_dirs,$(p))))",
+      "revId": "1fd588cfb241cd05b00332d9bc98c9dd0b9b5f06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
