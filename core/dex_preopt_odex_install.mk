@@ -64,6 +64,11 @@ ifeq (false,$(WITH_DEX_PREOPT_GENERATE_PROFILE))
 LOCAL_DEX_PREOPT_GENERATE_PROFILE := false
 endif
 
+ifdef LOCAL_VENDOR_MODULE
+ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+$(error profiles are not supported for vendor modules)
+endif
+else
 ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
 # If LOCAL_DEX_PREOPT_GENERATE_PROFILE is not defined, default it based on the existence of the
 # profile class listing. TODO: Use product specific directory here.
@@ -75,6 +80,7 @@ ifeq ($(LOCAL_DEX_PREOPT_APP_IMAGE),)
 LOCAL_DEX_PREOPT_APP_IMAGE := true
 endif
 LOCAL_DEX_PREOPT_GENERATE_PROFILE := true
+endif
 endif
 endif
 
@@ -153,7 +159,12 @@ $(my_built_profile):
 		--apk=$(PRIVATE_BUILT_MODULE) \
 		--dex-location=$(PRIVATE_DEX_LOCATION) \
 		--reference-profile-file=$@
+my_installed_profile := $(LOCAL_INSTALLED_MODULE).prof
+$(eval $(call copy-one-file,$(my_built_profile),$(my_installed_profile)))
+build_installed_profile:=$(my_built_profile):$(my_installed_profile)
 else
+build_installed_profile:=
+my_installed_profile :=
 $(built_odex): PRIVATE_PROFILE_PREOPT_FLAGS :=
 endif
 
@@ -189,9 +200,11 @@ endif
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_vdex)
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_art)
+ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed_profile)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_odex)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_vdex)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_art)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(build_installed_profile)
 
 # Record dex-preopt config.
 DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -207,6 +220,6 @@ DEXPREOPT.MODULES.$(LOCAL_MODULE_CLASS) := $(sort \
 
 
 # Make sure to install the .odex and .vdex when you run "make <module_name>"
-$(my_all_targets): $(installed_odex) $(installed_vdex) $(installed_art)
+$(my_all_targets): $(installed_odex) $(installed_vdex) $(installed_art) $(my_installed_profile)
 
 endif # LOCAL_DEX_PREOPT
