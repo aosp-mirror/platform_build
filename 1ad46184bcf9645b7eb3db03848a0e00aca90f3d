@@ -117,6 +117,30 @@
     },
     {
       "key": {
+        "uuid": "ef9d21bc_6256a496",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 873,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-11T16:58:27Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/#/c/394713/",
+      "parentUuid": "52c2bdcb_56b94ff0",
+      "range": {
+        "startLine": 873,
+        "startChar": 2,
+        "endLine": 873,
+        "endChar": 9
+      },
+      "revId": "1ad46184bcf9645b7eb3db03848a0e00aca90f3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7d4b0ee5_812b79e3",
         "filename": "core/config.mk",
         "patchSetId": 5
