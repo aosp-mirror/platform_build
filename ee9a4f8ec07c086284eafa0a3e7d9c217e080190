@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f9a2176_91825c57",
+        "filename": "core/config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 879,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-12T20:02:31Z",
+      "side": 1,
+      "message": "I\u0027ve left the libraries which still have pending CL\u0027s for conversion to soong.",
+      "range": {
+        "startLine": 872,
+        "startChar": 2,
+        "endLine": 879,
+        "endChar": 31
+      },
+      "revId": "ee9a4f8ec07c086284eafa0a3e7d9c217e080190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
