@@ -493,11 +493,11 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     shutil.rmtree(staging_system, ignore_errors=True)
     shutil.copytree(origin_in, staging_system, symlinks=True)
 
-  reserved_blocks = prop_dict.get("has_ext4_reserved_blocks") == "true"
+  has_reserved_blocks = prop_dict.get("has_ext4_reserved_blocks") == "true"
   ext4fs_output = None
 
   try:
-    if reserved_blocks and fs_type.startswith("ext4"):
+    if fs_type.startswith("ext4"):
       (ext4fs_output, exit_code) = RunCommand(build_command)
     else:
       (_, exit_code) = RunCommand(build_command)
@@ -518,7 +518,9 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   # not writable even with root privilege. It only affects devices using
   # file-based OTA and a kernel version of 3.10 or greater (currently just
   # sprout).
-  if reserved_blocks and fs_type.startswith("ext4"):
+  # Separately, check if there's enough headroom space available. This is useful for
+  # devices with low disk space that have system image variation between builds.
+  if (has_reserved_blocks or "partition_headroom" in prop_dict) and fs_type.startswith("ext4"):
     assert ext4fs_output is not None
     ext4fs_stats = re.compile(
         r'Created filesystem with .* (?P<used_blocks>[0-9]+)/'
@@ -526,14 +528,21 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     m = ext4fs_stats.match(ext4fs_output.strip().split('\n')[-1])
     used_blocks = int(m.groupdict().get('used_blocks'))
     total_blocks = int(m.groupdict().get('total_blocks'))
-    reserved_blocks = min(4096, int(total_blocks * 0.02))
-    adjusted_blocks = total_blocks - reserved_blocks
+    reserved_blocks = 0
+    headroom_blocks = 0
+    adjusted_blocks = total_blocks
+    if has_reserved_blocks:
+      reserved_blocks = min(4096, int(total_blocks * 0.02))
+      adjusted_blocks -= reserved_blocks
+    if "partition_headroom" in prop_dict:
+      headroom_blocks = int(prop_dict.get('partition_headroom')) / BLOCK_SIZE
+      adjusted_blocks -= headroom_blocks
     if used_blocks > adjusted_blocks:
       mount_point = prop_dict.get("mount_point")
       print("Error: Not enough room on %s (total: %d blocks, used: %d blocks, "
-            "reserved: %d blocks, available: %d blocks)" % (
+            "reserved: %d blocks, headroom: %d blocks, available: %d blocks)" % (
                 mount_point, total_blocks, used_blocks, reserved_blocks,
-                adjusted_blocks))
+                headroom_blocks, adjusted_blocks))
       return False
 
   if not fs_spans_partition:
@@ -614,9 +623,10 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   d["mount_point"] = mount_point
   if mount_point == "system":
     copy_prop("fs_type", "fs_type")
-    # Copy the generic sysetem fs type first, override with specific one if
+    # Copy the generic system fs type first, override with specific one if
     # available.
     copy_prop("system_fs_type", "fs_type")
+    copy_prop("system_headroom", "partition_headroom")
     copy_prop("system_size", "partition_size")
     copy_prop("system_journal_size", "journal_size")
     copy_prop("system_verity_block_device", "verity_block_device")
