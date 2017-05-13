@@ -1270,14 +1270,6 @@ endif  # samplecode in $(MAKECMDGOALS)
 .PHONY: findbugs
 findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
-.PHONY: clean
-clean:
-	@rm -rf $(OUT_DIR)/*
-	@echo "Entire build directory removed."
-
-.PHONY: clobber
-clobber: clean
-
 # The rules for dataclean and installclean are defined in cleanbuild.mk.
 
 #xxx scrape this from ALL_MODULE_NAME_TAGS
