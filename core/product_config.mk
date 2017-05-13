@@ -429,3 +429,7 @@ PRODUCT_IOT := \
 # Package list to apply enforcing RRO.
 PRODUCT_ENFORCE_RRO_TARGETS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_RRO_TARGETS))
+
+# Add reserved headroom to a system image.
+PRODUCT_SYSTEM_HEADROOM := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_HEADROOM))
