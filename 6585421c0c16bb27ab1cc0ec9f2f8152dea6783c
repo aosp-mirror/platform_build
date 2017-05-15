@@ -94,6 +94,30 @@
       "revId": "6585421c0c16bb27ab1cc0ec9f2f8152dea6783c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fdb15c2d_50206403",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-15T23:52:30Z",
+      "side": 1,
+      "message": "That\u0027s not actually evaluating it at that time -- it\u0027s used as text that gets substituted into rule context.\n\nI\u0027d prefer a separate variable (and could be convinced to append to a copy of the dict so that it\u0027s not duplicated information)",
+      "parentUuid": "62ef614f_b42097ba",
+      "range": {
+        "startLine": 77,
+        "startChar": 37,
+        "endLine": 77,
+        "endChar": 39
+      },
+      "revId": "6585421c0c16bb27ab1cc0ec9f2f8152dea6783c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
