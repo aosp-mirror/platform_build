@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7995eeb2_1b3b266b",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2017-05-15T22:42:33Z",
+      "side": 1,
+      "message": "Granted this may be slower if it iterates over the string 26 times.... we could just go to the shell here.",
+      "revId": "ebf5659d5a87f14bf99ef188f28eb35bb878227e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
