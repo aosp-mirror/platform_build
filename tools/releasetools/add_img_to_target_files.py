@@ -166,6 +166,13 @@ def AddVendor(output_zip, prefix="IMAGES/"):
               block_list=block_list)
   return img.name
 
+def FindDtboPrebuilt(prefix="IMAGES/"):
+  """Find the prebuilt image of DTBO partition."""
+
+  prebuilt_path = os.path.join(OPTIONS.input_tmp, prefix, "dtbo.img")
+  if os.path.exists(prebuilt_path):
+    return prebuilt_path
+  return None
 
 def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   print("creating " + what + ".img...")
@@ -286,7 +293,7 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
 
 
 def AddVBMeta(output_zip, boot_img_path, system_img_path, vendor_img_path,
-              prefix="IMAGES/"):
+              dtbo_img_path, prefix="IMAGES/"):
   """Create a VBMeta image and store it in output_zip."""
   img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "vbmeta.img")
   avbtool = os.getenv('AVBTOOL') or "avbtool"
@@ -296,6 +303,8 @@ def AddVBMeta(output_zip, boot_img_path, system_img_path, vendor_img_path,
          "--include_descriptors_from_image", system_img_path]
   if vendor_img_path is not None:
     cmd.extend(["--include_descriptors_from_image", vendor_img_path])
+  if dtbo_img_path is not None:
+    cmd.extend(["--include_descriptors_from_image", dtbo_img_path])
   if OPTIONS.info_dict.get("system_root_image", None) == "true":
     cmd.extend(["--setup_rootfs_from_kernel", system_img_path])
   common.AppendAVBSigningArgs(cmd)
@@ -481,7 +490,9 @@ def AddImagesToTargetFiles(filename):
   if OPTIONS.info_dict.get("board_avb_enable", None) == "true":
     banner("vbmeta")
     boot_contents = boot_image.WriteToTemp()
-    AddVBMeta(output_zip, boot_contents.name, system_img_path, vendor_img_path)
+    dtbo_img_path = FindDtboPrebuilt()
+    AddVBMeta(output_zip, boot_contents.name, system_img_path,
+              vendor_img_path, dtbo_img_path)
 
   # For devices using A/B update, copy over images from RADIO/ and/or
   # VENDOR_IMAGES/ to IMAGES/ and make sure we have all the needed
