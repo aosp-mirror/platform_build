@@ -22,6 +22,29 @@
       "revId": "ee9a4f8ec07c086284eafa0a3e7d9c217e080190",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63df1808_579ac8e2",
+        "filename": "core/static_library_internal.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-15T22:30:16Z",
+      "side": 1,
+      "message": "This should be $(HEADER_ABI_LINKER).",
+      "range": {
+        "startLine": 26,
+        "startChar": 37,
+        "endLine": 26,
+        "endChar": 65
+      },
+      "revId": "ee9a4f8ec07c086284eafa0a3e7d9c217e080190",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
