@@ -609,7 +609,7 @@ extra_input_jar :=
 endif
 
 # If not using jack and building against the current SDK version then filter
-# out junit and android.test classes from the application that are to be
+# out the junit, android.test and c.a.i.u.Predicate classes that are to be
 # removed from the Android API as part of b/30188076 but which are still
 # present in the Android API. This is to allow changes to be made to the
 # build to statically include those classes into the application without
@@ -618,7 +618,7 @@ proguard_injar_filters :=
 ifndef LOCAL_JACK_ENABLED
 ifdef LOCAL_SDK_VERSION
 ifeq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-proguard_injar_filters := (!junit/framework/**,!junit/runner/**,!android/test/**)
+proguard_injar_filters := (!junit/framework/**,!junit/runner/**,!android/test/**,!com/android/internal/util/*)
 endif
 endif
 endif
