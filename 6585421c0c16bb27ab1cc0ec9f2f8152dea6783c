@@ -22,6 +22,30 @@
       "revId": "6585421c0c16bb27ab1cc0ec9f2f8152dea6783c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8f5bc6e_8197b294",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1079733
+      },
+      "writtenOn": "2017-05-15T22:29:41Z",
+      "side": 1,
+      "message": "Well it worked for me :)\nI think that $$ in makefile means that it\u0027s calling cat via shell to workaround that cat not being a make function.\nCUSTOM_IMAGE_DICT_FILE is a very small file, but if you really hate reading any file, how about adding a CUSTOM_IMAGE_AVB_ENABLE?",
+      "parentUuid": "66d29954_0c16d17b",
+      "range": {
+        "startLine": 77,
+        "startChar": 37,
+        "endLine": 77,
+        "endChar": 39
+      },
+      "revId": "6585421c0c16bb27ab1cc0ec9f2f8152dea6783c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
