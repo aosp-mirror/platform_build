@@ -16,6 +16,24 @@
       "revId": "ebf5659d5a87f14bf99ef188f28eb35bb878227e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "14092894_c8b624f9",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-15T22:55:46Z",
+      "side": 1,
+      "message": "$(shell) is nearly guaranteed to be slower -- we can cache the results of a make function, we can\u0027t cache shell results",
+      "parentUuid": "7995eeb2_1b3b266b",
+      "revId": "ebf5659d5a87f14bf99ef188f28eb35bb878227e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
