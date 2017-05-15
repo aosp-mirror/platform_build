@@ -46,6 +46,30 @@
       "revId": "6585421c0c16bb27ab1cc0ec9f2f8152dea6783c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22eb174c_b2e607b8",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-15T22:37:14Z",
+      "side": 1,
+      "message": "In a rule context (like the tabbed-in portion below), sure $$ condenses down to $ and is then bash will execute is as a $(...). But even then you wouldn\u0027t be able to use $(findstring) on the results of that, since findstring needs to execute before bash does.\n\nHere, that\u0027s just plain text.\n\nA separate variable would be fine with me.",
+      "parentUuid": "d8f5bc6e_8197b294",
+      "range": {
+        "startLine": 77,
+        "startChar": 37,
+        "endLine": 77,
+        "endChar": 39
+      },
+      "revId": "6585421c0c16bb27ab1cc0ec9f2f8152dea6783c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
