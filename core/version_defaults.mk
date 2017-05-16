@@ -73,11 +73,11 @@ endif
 # When you change PLATFORM_VERSION for a given PLATFORM_SDK_VERSION
 # please add that PLATFORM_VERSION to the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
-PLATFORM_VERSION.OPR1 := O
+PLATFORM_VERSION.OPR1 := 8.0.0
 
 # This is the current development code-name, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.OPR1 := O
+PLATFORM_VERSION_CODENAME.OPR1 := REL
 
 ifndef PLATFORM_VERSION
   PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
@@ -142,7 +142,7 @@ else
     # assuming the device can only support APIs as of the previous official
     # public release.
     # This value will always be 0 for release builds.
-    PLATFORM_PREVIEW_SDK_VERSION := 2
+    PLATFORM_PREVIEW_SDK_VERSION := 0
   endif
 endif
 
