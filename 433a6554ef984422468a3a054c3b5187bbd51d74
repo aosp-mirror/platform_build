@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be5eacdd_bb19cbc4",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-16T00:31:21Z",
+      "side": 1,
+      "message": "Should we do this above line 105, so that they\u0027re not under the \"# Properites from ...\" header?",
+      "revId": "433a6554ef984422468a3a054c3b5187bbd51d74",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
