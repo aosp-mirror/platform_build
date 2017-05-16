@@ -417,6 +417,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/vendor/lib*)
 # Soong module variant change, remove obsolete intermediates
 $(call add-clean-step, rm -rf $(OUT_DIR)/soong/.intermediates)
 
+# Version checking moving to Soong
+$(call add-clean-step, rm -rf $(OUT_DIR)/versions_checked.mk)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
