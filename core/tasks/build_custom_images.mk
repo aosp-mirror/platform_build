@@ -54,6 +54,8 @@ custom_image_parameter_variables := \
   CUSTOM_IMAGE_SELINUX \
   CUSTOM_IMAGE_SUPPORT_VERITY \
   CUSTOM_IMAGE_VERITY_BLOCK_DEVICE \
+  CUSTOM_IMAGE_AVB_ENABLE \
+  CUSTOM_IMAGE_AVB_ADD_HASHTREE_FOOTER_ARGS \
 
 # We don't expect product makefile to inherit/override PRODUCT_CUSTOM_IMAGE_MAKEFILES,
 # so we don't put it in the _product_var_list.
