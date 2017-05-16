@@ -16,6 +16,24 @@
       "revId": "8e9bbd6cdc1150f4b183eb7c741e1d969a3b941f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6208e897_de45a554",
+        "filename": "core/tasks/tools/package-modules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-05-16T19:49:35Z",
+      "side": 1,
+      "message": "It prevents running into a zip error when there are no files to zip up (which happens for some package based test files)",
+      "parentUuid": "e3b53a3f_005cc8c0",
+      "revId": "8e9bbd6cdc1150f4b183eb7c741e1d969a3b941f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
