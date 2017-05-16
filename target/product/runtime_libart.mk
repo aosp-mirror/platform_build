@@ -63,6 +63,7 @@ PRODUCT_PACKAGES += \
 # ART/dex helpers.
 PRODUCT_PACKAGES += \
     ahat \
+    dexdiag \
     dexdump \
     dexlist \
     hprof-conv \
