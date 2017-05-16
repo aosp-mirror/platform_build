@@ -73,11 +73,11 @@ endif
 # When you change PLATFORM_VERSION for a given PLATFORM_SDK_VERSION
 # please add that PLATFORM_VERSION to the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
-PLATFORM_VERSION.OPR1 := O
+PLATFORM_VERSION.OPR1 := 8.0.0
 
 # This is the current development code-name, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.OPR1 := O
+PLATFORM_VERSION_CODENAME.OPR1 := REL
 
 ifndef PLATFORM_VERSION
   PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
@@ -104,14 +104,14 @@ ifndef PLATFORM_SDK_VERSION
   # When you increment the PLATFORM_SDK_VERSION please ensure you also
   # clear out the following text file of all older PLATFORM_VERSION's:
   # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 25
+  PLATFORM_SDK_VERSION := 26
 endif
 
 ifndef PLATFORM_JACK_MIN_SDK_VERSION
   # This is definition of the min SDK version given to Jack for the current
   # platform. For released version it should be the same as
   # PLATFORM_SDK_VERSION. During development, this number may be incremented
-  # before PLATFORM_SDK_VERSION if the plateform starts to add new java
+  # before PLATFORM_SDK_VERSION if the platform starts to add new java
   # language supports.
   PLATFORM_JACK_MIN_SDK_VERSION := o-b1
 endif
@@ -142,7 +142,7 @@ else
     # assuming the device can only support APIs as of the previous official
     # public release.
     # This value will always be 0 for release builds.
-    PLATFORM_PREVIEW_SDK_VERSION := 2
+    PLATFORM_PREVIEW_SDK_VERSION := 0
   endif
 endif
 
