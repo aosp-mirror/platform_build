@@ -492,7 +492,16 @@ LLVM_RS_CC := $(HOST_OUT_EXECUTABLES)/llvm-rs-cc
 BCC_COMPAT := $(HOST_OUT_EXECUTABLES)/bcc_compat
 DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
 
+#TODO: use a smaller -Xmx value for most libraries;
+#      only core.jar and framework.jar need a heap this big.
+ifndef DX_ALT_JAR
 DX := $(HOST_OUT_EXECUTABLES)/dx
+DX_COMMAND := $(DX) -JXms16M -JXmx2048M
+else
+DX := $(DX_ALT_JAR)
+DX_COMMAND := java -Xms16M -Xmx2048M -jar $(DX)
+endif
+
 MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
 
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
