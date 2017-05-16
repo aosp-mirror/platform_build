@@ -236,4 +236,4 @@ org\.apache\.xalan\.xslt
 ###################################################
 # Packages in the google namespace across all bootclasspath jars.
 com\.google\.android\..*
-com\.google\.vr\.gvr\..*
+com\.google\.vr\.platform.*
