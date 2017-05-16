@@ -370,7 +370,7 @@ endif
 ## Install split apks.
 ifdef LOCAL_PACKAGE_SPLITS
 # LOCAL_PACKAGE_SPLITS is a list of apks to be installed.
-built_apk_splits := $(addprefix $(built_module_path)/,$(notdir $(LOCAL_PACKAGE_SPLITS)))
+built_apk_splits := $(addprefix $(intermediates)/,$(notdir $(LOCAL_PACKAGE_SPLITS)))
 installed_apk_splits := $(addprefix $(my_module_path)/,$(notdir $(LOCAL_PACKAGE_SPLITS)))
 
 # Rules to sign the split apks.
@@ -383,19 +383,19 @@ my_src_dir := $(LOCAL_PATH)/$(my_src_dir)
 $(built_apk_splits) : $(LOCAL_CERTIFICATE).pk8 $(LOCAL_CERTIFICATE).x509.pem
 $(built_apk_splits) : PRIVATE_PRIVATE_KEY := $(LOCAL_CERTIFICATE).pk8
 $(built_apk_splits) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
-$(built_apk_splits) : $(built_module_path)/%.apk : $(my_src_dir)/%.apk
+$(built_apk_splits) : $(intermediates)/%.apk : $(my_src_dir)/%.apk
 	$(copy-file-to-new-target)
 	$(sign-package)
 
 # Rules to install the split apks.
-$(installed_apk_splits) : $(my_module_path)/%.apk : $(built_module_path)/%.apk
+$(installed_apk_splits) : $(my_module_path)/%.apk : $(intermediates)/%.apk
 	@echo "Install: $@"
 	$(copy-file-to-new-target)
 
 # Register the additional built and installed files.
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_apk_splits)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += \
-  $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(built_module_path)/$(notdir $(s)):$(my_module_path)/$(notdir $(s)))
+  $(foreach s,$(LOCAL_PACKAGE_SPLITS),$(intermediates)/$(notdir $(s)):$(my_module_path)/$(notdir $(s)))
 
 # Make sure to install the splits when you run "make <module_name>".
 $(my_all_targets): $(installed_apk_splits)
