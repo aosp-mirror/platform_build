@@ -16,6 +16,24 @@
       "revId": "433a6554ef984422468a3a054c3b5187bbd51d74",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcd4fa03_d21ad517",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1079733
+      },
+      "writtenOn": "2017-05-16T00:38:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be5eacdd_bb19cbc4",
+      "revId": "433a6554ef984422468a3a054c3b5187bbd51d74",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
