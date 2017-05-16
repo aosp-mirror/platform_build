@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3b53a3f_005cc8c0",
+        "filename": "core/tasks/tools/package-modules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2017-05-16T18:51:57Z",
+      "side": 1,
+      "message": "what does this change do?",
+      "revId": "8e9bbd6cdc1150f4b183eb7c741e1d969a3b941f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
