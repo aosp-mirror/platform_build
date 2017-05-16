@@ -18,7 +18,7 @@ endif
 ifneq ($(filter tests samples, $(LOCAL_MODULE_TAGS)),)
 my_embed_jni := true
 endif
-ifneq ($(BOARD_VNDK_VERSION),)
+ifeq ($(PRODUCT_FULL_TREBLE),true)
   ifeq ($(filter $(TARGET_OUT)/%, $(my_module_path)),)
     # If this app isn't to be installed to the system partition, and the device
     # is fully treble-ized then jni libs are embedded, Otherwise, access to the
