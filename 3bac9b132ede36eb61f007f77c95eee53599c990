@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c427c266_cfbf8061",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1945,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-17T00:46:38Z",
+      "side": 1,
+      "message": "Seems $(HOST_OUT_JAVA_LIBRARIES)/VeritySigner.jar is the only one we need? Other files come from the source tree directly.",
+      "parentUuid": "4727365e_aa5dc99a",
+      "range": {
+        "startLine": 1945,
+        "startChar": 0,
+        "endLine": 1945,
+        "endChar": 47
+      },
+      "revId": "3bac9b132ede36eb61f007f77c95eee53599c990",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c3bb42bf_3b88ecd5",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -60,6 +84,30 @@
       "side": 1,
       "message": "Each build machine could have different mke2fs.conf. we\u0027d want them all use the same one from ext4_utils.",
       "parentUuid": "c3bb42bf_3b88ecd5",
+      "range": {
+        "startLine": 1952,
+        "startChar": 19,
+        "endLine": 1952,
+        "endChar": 55
+      },
+      "revId": "3bac9b132ede36eb61f007f77c95eee53599c990",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6538ac93_ec7d929a",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1952,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-17T00:46:38Z",
+      "side": 1,
+      "message": "I guess Dan meant using $(MKE2FS_CONF) since we have defined one... I will come up with another CL to change that.",
+      "parentUuid": "8b627a1c_d8d4e6c3",
       "range": {
         "startLine": 1952,
         "startChar": 19,
