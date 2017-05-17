@@ -44,6 +44,8 @@ PRODUCT_PACKAGES += \
     SettingsProvider \
     Shell \
     WallpaperBackup \
+    android.hidl.base-V1.0-java \
+    android.hidl.manager-V1.0-java \
     bcc \
     bu \
     com.android.location.provider \
@@ -98,7 +100,9 @@ PRODUCT_BOOT_JARS := \
     ims-common \
     apache-xml \
     nullwebview \
-    org.apache.http.legacy.boot
+    org.apache.http.legacy.boot \
+    android.hidl.base-V1.0-java \
+    android.hidl.manager-V1.0-java
 
 # The order of PRODUCT_SYSTEM_SERVER_JARS matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
