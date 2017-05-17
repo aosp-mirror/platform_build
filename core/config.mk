@@ -662,13 +662,21 @@ COLUMN:= column
 
 # We may not have the right JAVA_HOME/PATH set up yet when this is run from envsetup.sh.
 ifneq ($(CALLED_FROM_SETUP),true)
-HOST_JDK_TOOLS_JAR:= $(shell $(BUILD_SYSTEM)/find-jdk-tools-jar.sh)
+
+# Path to tools.jar, or empty if EXPERIMENTAL_USE_OPENJDK9 is set
+HOST_JDK_TOOLS_JAR :=
+# TODO: Remove HOST_JDK_TOOLS_JAR and all references to it once OpenJDK 8
+# toolchains are no longer supported (i.e. when what is now
+# EXPERIMENTAL_USE_OPENJDK9 becomes the standard). http://b/38418220
+ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+HOST_JDK_TOOLS_JAR := $(shell $(BUILD_SYSTEM)/find-jdk-tools-jar.sh)
 
 ifneq ($(HOST_JDK_TOOLS_JAR),)
 ifeq ($(wildcard $(HOST_JDK_TOOLS_JAR)),)
 $(error Error: could not find jdk tools.jar at $(HOST_JDK_TOOLS_JAR), please check if your JDK was installed correctly)
 endif
 endif
+endif # ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
 
 # Is the host JDK 64-bit version?
 HOST_JDK_IS_64BIT_VERSION :=
@@ -684,9 +692,13 @@ else
 MD5SUM:=md5sum
 endif
 
-APICHECK_CLASSPATH := $(HOST_JDK_TOOLS_JAR)
-APICHECK_CLASSPATH := $(APICHECK_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX)
-APICHECK_CLASSPATH := $(APICHECK_CLASSPATH):$(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX)
+APICHECK_CLASSPATH_ENTRIES := \
+    $(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX) \
+    $(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX) \
+    $(HOST_JDK_TOOLS_JAR) \
+    )
+APICHECK_CLASSPATH := $(subst $(space),:,$(strip $(APICHECK_CLASSPATH_ENTRIES)))
+
 APICHECK_COMMAND := $(APICHECK) -JXmx1024m -J"classpath $(APICHECK_CLASSPATH)"
 
 # The default key if not set as LOCAL_CERTIFICATE
