@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "7f0d7577_c6629e95",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-17T05:02:06Z",
+      "side": 1,
+      "message": "Oh, I see.\n\nThis is mainly for system/libvintf to getenv(\"BOARD_AVBVERSION\").\n\nI\u0027ll probably move the logic inside system/libvintf/Android.mk with LOCAL_REQUIRED_MODULES :\u003d avbtool\n\nhttps://cs.corp.google.com/android/system/libvintf/assemble_vintf.cpp?q\u003dpackage:android+assemble_vintf.cpp\u0026dr\u0026l\u003d38",
+      "parentUuid": "34abe3ae_82e1736d",
+      "range": {
+        "startLine": 592,
+        "startChar": 23,
+        "endLine": 592,
+        "endChar": 39
+      },
+      "revId": "76118e18955b0ed8e47e6f6069b1695e8432dbbf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "41345618_c340263f",
         "filename": "core/config.mk",
         "patchSetId": 3
