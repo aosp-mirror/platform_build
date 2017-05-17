@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "233b7590_59e88fd0",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-17T02:21:43Z",
+      "side": 1,
+      "message": "OK, I\u0027ll move $(AVBTOOL) to other file. Maybe \u0027build/core/Makefile\u0027?\n\nFor \u0027BOARD_CUSTOM_AVBTOOL\u0027, yup it\u0027s supposed to support the same format but it seems we didn\u0027t define this clearly.\n\nDavid, how about remove BOARD_CUSTOM_AVBTOOL for now?\nOr add the requirement into:\n  https://android.googlesource.com/platform/external/avb/+/master/README.md",
+      "parentUuid": "781be84b_3d010248",
+      "range": {
+        "startLine": 592,
+        "startChar": 23,
+        "endLine": 592,
+        "endChar": 39
+      },
+      "revId": "76118e18955b0ed8e47e6f6069b1695e8432dbbf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "41345618_c340263f",
         "filename": "core/config.mk",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2017-05-16T17:21:24Z",
       "side": 1,
       "message": "Don\u0027t use shell for simple things. We have to execute each one every time you run a build, even if we can otherwise skip reading this file. Likely $(subst and $(word can do everything you need here.",
+      "range": {
+        "startLine": 596,
+        "startChar": 29,
+        "endLine": 596,
+        "endChar": 39
+      },
+      "revId": "76118e18955b0ed8e47e6f6069b1695e8432dbbf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32d0cd71_7243a4a8",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 596,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-17T02:21:43Z",
+      "side": 1,
+      "message": "Act, will do.",
+      "parentUuid": "41345618_c340263f",
       "range": {
         "startLine": 596,
         "startChar": 29,
