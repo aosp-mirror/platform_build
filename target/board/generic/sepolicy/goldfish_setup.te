@@ -1,5 +1,5 @@
 # goldfish-setup service: runs init.goldfish.sh script
-type goldfish_setup, domain, domain_deprecated;
+type goldfish_setup, domain;
 type goldfish_setup_exec, exec_type, file_type;
 
 init_daemon_domain(goldfish_setup)

@@ -375,7 +375,7 @@ my_apk_split_configs :=
 ifdef LOCAL_PACKAGE_SPLITS
 my_apk_split_configs := $(LOCAL_PACKAGE_SPLITS)
 my_split_suffixes := $(subst $(comma),_,$(my_apk_split_configs))
-built_apk_splits := $(foreach s,$(my_split_suffixes),$(built_module_path)/package_$(s).apk)
+built_apk_splits := $(foreach s,$(my_split_suffixes),$(intermediates)/package_$(s).apk)
 installed_apk_splits := $(foreach s,$(my_split_suffixes),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
 endif
 
@@ -655,7 +655,7 @@ ifdef LOCAL_PACKAGE_SPLITS
 # That way the build system will rerun the aapt after the user changes the splitting parameters.
 $(built_apk_splits): PRIVATE_PRIVATE_KEY := $(private_key)
 $(built_apk_splits): PRIVATE_CERTIFICATE := $(certificate)
-$(built_apk_splits) : $(built_module_path)/%.apk : $(LOCAL_BUILT_MODULE)
+$(built_apk_splits) : $(intermediates)/%.apk : $(LOCAL_BUILT_MODULE)
 	$(hide) if [ ! -f $@ ]; then \
 	  echo 'No $@ generated, check your apk splitting parameters.' 1>&2; \
 	  rm $<; exit 1; \
@@ -663,14 +663,14 @@ $(built_apk_splits) : $(built_module_path)/%.apk : $(LOCAL_BUILT_MODULE)
 	$(sign-package)
 
 # Rules to install the splits
-$(installed_apk_splits) : $(my_module_path)/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk
+$(installed_apk_splits) : $(my_module_path)/$(LOCAL_MODULE)_%.apk : $(intermediates)/package_%.apk
 	@echo "Install: $@"
 	$(copy-file-to-new-target)
 
 # Register the additional built and installed files.
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_apk_splits)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += \
-  $(foreach s,$(my_split_suffixes),$(built_module_path)/package_$(s).apk:$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
+  $(foreach s,$(my_split_suffixes),$(intermediates)/package_$(s).apk:$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
 
 # Make sure to install the splits when you run "make <module_name>".
 $(my_all_targets): $(installed_apk_splits)
@@ -680,7 +680,7 @@ ifdef LOCAL_COMPATIBILITY_SUITE
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
     $(foreach s,$(my_split_suffixes),\
-      $(built_module_path)/package_$(s).apk:$(dir)/$(LOCAL_MODULE)_$(s).apk))))
+      $(intermediates)/package_$(s).apk:$(dir)/$(LOCAL_MODULE)_$(s).apk))))
 
 $(call create-suite-dependencies)
 
