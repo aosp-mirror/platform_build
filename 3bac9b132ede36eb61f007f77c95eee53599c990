@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4727365e_aa5dc99a",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1945,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-17T00:39:07Z",
+      "side": 1,
+      "message": "This doesn\u0027t depend on most of the files it manually copies :-/",
+      "range": {
+        "startLine": 1945,
+        "startChar": 0,
+        "endLine": 1945,
+        "endChar": 47
+      },
+      "revId": "3bac9b132ede36eb61f007f77c95eee53599c990",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c3bb42bf_3b88ecd5",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1952,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-17T00:39:07Z",
+      "side": 1,
+      "message": "Why wouldn\u0027t this use MKE2FS_CONF?",
+      "range": {
+        "startLine": 1952,
+        "startChar": 19,
+        "endLine": 1952,
+        "endChar": 55
+      },
+      "revId": "3bac9b132ede36eb61f007f77c95eee53599c990",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
