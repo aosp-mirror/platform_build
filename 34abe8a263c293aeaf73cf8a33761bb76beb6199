@@ -34,6 +34,24 @@
       "revId": "34abe8a263c293aeaf73cf8a33761bb76beb6199",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "165535d4_ec4d1aad",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2537,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-17T21:55:48Z",
+      "side": 1,
+      "message": "Instead, if the desugar command fails with an error the last line won\u0027t be executed and the next run might pick up old files.  Plus, it may be useful to examine the contents after a build.",
+      "parentUuid": "21bfa0cb_eaebc8a5",
+      "revId": "34abe8a263c293aeaf73cf8a33761bb76beb6199",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
