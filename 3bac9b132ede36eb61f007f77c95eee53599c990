@@ -141,6 +141,30 @@
       "revId": "3bac9b132ede36eb61f007f77c95eee53599c990",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c30749dd_895b4ff4",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1952,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-17T00:50:55Z",
+      "side": 1,
+      "message": "Oh I realize the reason of not using MKE2FS_CONF is it\u0027s defined conditionally. We\u0027re trying to have a single otatools.zip regardless of TARGET_USES_MKE2FS.",
+      "parentUuid": "6538ac93_ec7d929a",
+      "range": {
+        "startLine": 1952,
+        "startChar": 19,
+        "endLine": 1952,
+        "endChar": 55
+      },
+      "revId": "3bac9b132ede36eb61f007f77c95eee53599c990",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
