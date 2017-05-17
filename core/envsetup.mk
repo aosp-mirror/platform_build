@@ -187,6 +187,12 @@ TARGET_COPY_OUT_OEM := oem
 TARGET_COPY_OUT_ODM := odm
 TARGET_COPY_OUT_ROOT := root
 TARGET_COPY_OUT_RECOVERY := recovery
+
+# Returns the non-sanitized version of the path provided in $1.
+define get_non_asan_path
+$(patsubst $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/%,$(PRODUCT_OUT)/%,$1)
+endef
+
 ###########################################
 # Define TARGET_COPY_OUT_VENDOR to a placeholder, for at this point
 # we don't know if the device wants to build a separate vendor.img
