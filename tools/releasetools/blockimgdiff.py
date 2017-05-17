@@ -41,10 +41,10 @@ def compute_patch(srcfile, tgtfile, imgdiff=False):
   cmd = ['imgdiff', '-z'] if imgdiff else ['bsdiff']
   cmd.extend([srcfile, tgtfile, patchfile])
 
-  # Not using common.Run(), which would otherwise dump all the bsdiff/imgdiff
-  # commands when OPTIONS.verbose is True - not useful for the case here, since
-  # they contain temp filenames only.
-  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  # Don't dump the bsdiff/imgdiff commands, which are not useful for the case
+  # here, since they contain temp filenames only.
+  p = common.Run(cmd, verbose=False, stdout=subprocess.PIPE,
+                 stderr=subprocess.STDOUT)
   output, _ = p.communicate()
 
   if p.returncode != 0:

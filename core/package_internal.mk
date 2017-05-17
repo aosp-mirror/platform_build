@@ -88,6 +88,7 @@ ifeq (,$(LOCAL_RESOURCE_DIR))
   LOCAL_RESOURCE_DIR := $(LOCAL_PATH)/res
 else
   need_compile_res := true
+  LOCAL_RESOURCE_DIR := $(foreach d,$(LOCAL_RESOURCE_DIR),$(call clean-path,$(d)))
 endif
 
 package_resource_overlays := $(strip \
@@ -374,14 +375,29 @@ my_apk_split_configs :=
 ifdef LOCAL_PACKAGE_SPLITS
 my_apk_split_configs := $(LOCAL_PACKAGE_SPLITS)
 my_split_suffixes := $(subst $(comma),_,$(my_apk_split_configs))
-built_apk_splits := $(foreach s,$(my_split_suffixes),$(built_module_path)/package_$(s).apk)
+built_apk_splits := $(foreach s,$(my_split_suffixes),$(intermediates)/package_$(s).apk)
 installed_apk_splits := $(foreach s,$(my_split_suffixes),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
 endif
 
 ifdef LOCAL_USE_AAPT2
 my_compiled_res_base_dir := $(intermediates)/flat-res
+renderscript_target_api :=
+ifneq (,$(LOCAL_RENDERSCRIPT_TARGET_API))
+renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
+else
+ifneq (,$(LOCAL_SDK_VERSION))
+# Set target-api for LOCAL_SDK_VERSIONs other than current.
+ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
+renderscript_target_api := $(LOCAL_SDK_VERSION)
+endif
+endif  # LOCAL_SDK_VERSION is set
+endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
+ifneq (,$(renderscript_target_api))
+ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
 my_generated_res_dirs := $(rs_generated_res_dir)
 my_generated_res_dirs_deps := $(RenderScript_file_stamp)
+endif  # renderscript_target_api < 21
+endif  # renderscript_target_api is set
 my_asset_dirs := $(LOCAL_ASSET_DIR)
 my_full_asset_paths := $(all_assets)
 # Add AAPT2 link specific flags.
@@ -639,7 +655,7 @@ ifdef LOCAL_PACKAGE_SPLITS
 # That way the build system will rerun the aapt after the user changes the splitting parameters.
 $(built_apk_splits): PRIVATE_PRIVATE_KEY := $(private_key)
 $(built_apk_splits): PRIVATE_CERTIFICATE := $(certificate)
-$(built_apk_splits) : $(built_module_path)/%.apk : $(LOCAL_BUILT_MODULE)
+$(built_apk_splits) : $(intermediates)/%.apk : $(LOCAL_BUILT_MODULE)
 	$(hide) if [ ! -f $@ ]; then \
 	  echo 'No $@ generated, check your apk splitting parameters.' 1>&2; \
 	  rm $<; exit 1; \
@@ -647,14 +663,14 @@ $(built_apk_splits) : $(built_module_path)/%.apk : $(LOCAL_BUILT_MODULE)
 	$(sign-package)
 
 # Rules to install the splits
-$(installed_apk_splits) : $(my_module_path)/$(LOCAL_MODULE)_%.apk : $(built_module_path)/package_%.apk
+$(installed_apk_splits) : $(my_module_path)/$(LOCAL_MODULE)_%.apk : $(intermediates)/package_%.apk
 	@echo "Install: $@"
 	$(copy-file-to-new-target)
 
 # Register the additional built and installed files.
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_apk_splits)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += \
-  $(foreach s,$(my_split_suffixes),$(built_module_path)/package_$(s).apk:$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
+  $(foreach s,$(my_split_suffixes),$(intermediates)/package_$(s).apk:$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
 
 # Make sure to install the splits when you run "make <module_name>".
 $(my_all_targets): $(installed_apk_splits)
@@ -664,7 +680,7 @@ ifdef LOCAL_COMPATIBILITY_SUITE
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
     $(foreach s,$(my_split_suffixes),\
-      $(built_module_path)/package_$(s).apk:$(dir)/$(LOCAL_MODULE)_$(s).apk))))
+      $(intermediates)/package_$(s).apk:$(dir)/$(LOCAL_MODULE)_$(s).apk))))
 
 $(call create-suite-dependencies)
 

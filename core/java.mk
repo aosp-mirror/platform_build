@@ -344,13 +344,13 @@ endif
 ifndef LOCAL_CHECKED_MODULE
 ifdef full_classes_jar
 ifdef LOCAL_JACK_ENABLED
-LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
-else
-ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
+ifeq ($(LOCAL_JACK_ENABLED),javac_frontend)
 LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
 else
-LOCAL_CHECKED_MODULE := $(built_dex)
+LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
 endif
+else
+LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
 endif
 endif
 endif
@@ -613,7 +613,7 @@ extra_input_jar :=
 endif
 
 # If not using jack and building against the current SDK version then filter
-# out junit and android.test classes from the application that are to be
+# out the junit, android.test and c.a.i.u.Predicate classes that are to be
 # removed from the Android API as part of b/30188076 but which are still
 # present in the Android API. This is to allow changes to be made to the
 # build to statically include those classes into the application without
@@ -622,7 +622,7 @@ proguard_injar_filters :=
 ifndef LOCAL_JACK_ENABLED
 ifdef LOCAL_SDK_VERSION
 ifeq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-proguard_injar_filters := (!junit/framework/**,!junit/runner/**,!android/test/**)
+proguard_injar_filters := (!junit/framework/**,!junit/runner/**,!android/test/**,!com/android/internal/util/*)
 endif
 endif
 endif
@@ -662,6 +662,8 @@ $(built_dex): $(built_dex_intermediate)
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $(dir $@)/classes*.dex
 	$(hide) cp -fp $(dir $<)/classes*.dex $(dir $@)
+
+java-dex: $(built_dex)
 
 endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
@@ -777,6 +779,26 @@ $(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS := \
 else
 $(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS :=
 endif
+
+# Compiling with javac to jar, then converting jar to dex with jack
+ifeq ($(LOCAL_JACK_ENABLED),javac_frontend)
+
+# PRIVATE_EXTRA_JAR_ARGS and source files were already handled during javac
+$(built_dex_intermediate): PRIVATE_EXTRA_JAR_ARGS :=
+$(built_dex_intermediate): PRIVATE_JAVA_SOURCES :=
+$(built_dex_intermediate): PRIVATE_SOURCE_INTERMEDIATES_DIR :=
+$(built_dex_intermediate): PRIVATE_HAS_PROTO_SOURCES :=
+$(built_dex_intermediate): PRIVATE_HAS_RS_SOURCES :=
+
+# Incremental compilation is not supported when mixing javac and jack
+$(built_dex_intermediate): PRIVATE_JACK_INCREMENTAL_DIR :=
+
+# Pass output of javac to jack
+$(built_dex_intermediate): PRIVATE_JACK_IMPORT_JAR := $(full_classes_compiled_jar)
+$(built_dex_intermediate): $(full_classes_compiled_jar)
+else # LOCAL_JACK_ENABLED != javac_frontend
+$(built_dex_intermediate): PRIVATE_JACK_IMPORT_JAR :=
+endif # LOCAL_JACK_ENABLED != javac_frontend
 
 $(built_dex_intermediate): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
 $(built_dex_intermediate): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)

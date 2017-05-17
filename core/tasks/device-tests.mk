@@ -17,7 +17,7 @@
 
 device-tests-zip := $(PRODUCT_OUT)/device-tests.zip
 $(device-tests-zip): $(COMPATIBILITY.device-tests.FILES) $(SOONG_ZIP)
-	echo $(COMPATIBILITY.device-tests.FILES) > $@.list
+	echo $(sort $(COMPATIBILITY.device-tests.FILES)) > $@.list
 	sed -i -e 's/\s\+/\n/g' $@.list
 	grep $(HOST_OUT_TESTCASES) $@.list > $@-host.list || true
 	grep $(TARGET_OUT_TESTCASES) $@.list > $@-target.list || true

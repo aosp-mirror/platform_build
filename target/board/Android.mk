@@ -30,6 +30,7 @@ endif
 
 # Copy compatibility metadata to the device.
 
+# Device Manifest
 ifdef DEVICE_MANIFEST_FILE
 include $(CLEAR_VARS)
 LOCAL_MODULE        := manifest.xml
@@ -45,16 +46,24 @@ include $(BUILD_PREBUILT)
 BUILT_VENDOR_MANIFEST := $(LOCAL_BUILT_MODULE)
 endif
 
+# Device Compatibility Matrix
 ifdef DEVICE_MATRIX_FILE
 include $(CLEAR_VARS)
-LOCAL_MODULE        := matrix.xml
+LOCAL_MODULE        := compatibility_matrix.xml
 LOCAL_MODULE_CLASS  := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)
-LOCAL_PREBUILT_MODULE_FILE := $(DEVICE_MATRIX_FILE)
+
+GEN := $(local-generated-sources-dir)/compatibility_matrix.xml
+$(GEN): $(DEVICE_MATRIX_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
+	# TODO(b/37342627): put BOARD_VNDK_VERSION & BOARD_VNDK_LIBRARIES into device matrix.
+	$(HOST_OUT_EXECUTABLES)/assemble_vintf -i $< -o $@
+
+LOCAL_PREBUILT_MODULE_FILE := $(GEN)
 include $(BUILD_PREBUILT)
 BUILT_VENDOR_MATRIX := $(LOCAL_BUILT_MODULE)
 endif
 
+# Framework Manifest
 include $(CLEAR_VARS)
 LOCAL_MODULE        := system_manifest.xml
 LOCAL_MODULE_STEM   := manifest.xml
@@ -62,9 +71,48 @@ LOCAL_MODULE_CLASS  := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT)
 
 GEN := $(local-generated-sources-dir)/manifest.xml
+
+$(GEN): PRIVATE_FLAGS :=
+
+# TODO(b/37954458), (b/37321309) remove check of PRODUCT_FULL_TREBLE after
+# putting device compatibility matrices for non-treble devices.
+ifeq ($(PRODUCT_FULL_TREBLE),true)
+ifdef BUILT_VENDOR_MATRIX
+$(GEN): $(BUILT_VENDOR_MATRIX)
+$(GEN): PRIVATE_FLAGS := -c "$(BUILT_VENDOR_MATRIX)"
+endif
+endif
+
 $(GEN): $(FRAMEWORK_MANIFEST_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
-	BOARD_SEPOLICY_VERS=$(BOARD_SEPOLICY_VERS) $(HOST_OUT_EXECUTABLES)/assemble_vintf -i $< -o $@
+	BOARD_SEPOLICY_VERS=$(BOARD_SEPOLICY_VERS) $(HOST_OUT_EXECUTABLES)/assemble_vintf -i $< -o $@ $(PRIVATE_FLAGS)
 
 LOCAL_PREBUILT_MODULE_FILE := $(GEN)
 include $(BUILD_PREBUILT)
 BUILT_SYSTEM_MANIFEST := $(LOCAL_BUILT_MODULE)
+
+# Framework Compatibility Matrix
+include $(CLEAR_VARS)
+LOCAL_MODULE        := system_compatibility_matrix.xml
+LOCAL_MODULE_STEM   := compatibility_matrix.xml
+LOCAL_MODULE_CLASS  := ETC
+LOCAL_MODULE_PATH   := $(TARGET_OUT)
+
+GEN := $(local-generated-sources-dir)/compatibility_matrix.xml
+
+$(GEN): PRIVATE_FLAGS :=
+
+# TODO(b/37954458), (b/37321309) remove check of PRODUCT_FULL_TREBLE after
+# putting complete HAL manifests on non-treble devices.
+ifeq ($(PRODUCT_FULL_TREBLE),true)
+ifdef BUILT_VENDOR_MANIFEST
+$(GEN): $(BUILT_VENDOR_MANIFEST)
+$(GEN): PRIVATE_FLAGS := -c "$(BUILT_VENDOR_MANIFEST)"
+endif
+endif
+
+$(GEN): $(FRAMEWORK_COMPATIBILITY_MATRIX_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
+	# TODO(b/37405869) (b/37715375) inject avb versions as well for devices that have avb enabled.
+	POLICYVERS=$(POLICYVERS) BOARD_SEPOLICY_VERS=$(BOARD_SEPOLICY_VERS) $(HOST_OUT_EXECUTABLES)/assemble_vintf -i $< -o $@ $(PRIVATE_FLAGS)
+LOCAL_PREBUILT_MODULE_FILE := $(GEN)
+include $(BUILD_PREBUILT)
+BUILT_SYSTEM_COMPATIBILITY_MATRIX := $(LOCAL_BUILT_MODULE)

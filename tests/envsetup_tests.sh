@@ -19,8 +19,9 @@ default_version=$(get_build_var DEFAULT_PLATFORM_VERSION)
 valid_version=PPR1
 
 # lunch tests
-check_lunch "aosp_arm64"                                "aosp_arm64" "eng"       "$default_version"
-check_lunch "aosp_arm64-userdebug"                      "aosp_arm64" "userdebug" "$default_version"
+check_lunch "aosp_arm64"                                "aosp_arm64" "eng"       ""
+check_lunch "aosp_arm64-userdebug"                      "aosp_arm64" "userdebug" ""
+check_lunch "aosp_arm64-userdebug-$default_version"     "aosp_arm64" "userdebug" "$default_version"
 check_lunch "aosp_arm64-userdebug-$valid_version"       "aosp_arm64" "userdebug" "$valid_version"
 check_lunch "abc"                                       "" "" ""
 check_lunch "aosp_arm64-abc"                            "" "" ""

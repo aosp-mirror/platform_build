@@ -1017,12 +1017,15 @@ $(foreach d,$1, \
 $(hide) echo >> $2
 endef
 
+# b/37755219
+RS_CC_ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=0:detect_container_overflow=0
+
 define transform-renderscripts-to-java-and-bc
 @echo "RenderScript: $(PRIVATE_MODULE) <= $(PRIVATE_RS_SOURCE_FILES)"
 $(hide) rm -rf $(PRIVATE_RS_OUTPUT_DIR)
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/res/raw
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/src
-$(hide) $(PRIVATE_RS_CC) \
+$(hide) $(RS_CC_ASAN_OPTIONS) $(PRIVATE_RS_CC) \
   -o $(PRIVATE_RS_OUTPUT_DIR)/res/raw \
   -p $(PRIVATE_RS_OUTPUT_DIR)/src \
   -d $(PRIVATE_RS_OUTPUT_DIR) \
@@ -1058,7 +1061,7 @@ define transform-renderscripts-to-cpp-and-bc
 @echo "RenderScript: $(PRIVATE_MODULE) <= $(PRIVATE_RS_SOURCE_FILES)"
 $(hide) rm -rf $(PRIVATE_RS_OUTPUT_DIR)
 $(hide) mkdir -p $(PRIVATE_RS_OUTPUT_DIR)/
-$(hide) $(PRIVATE_RS_CC) \
+$(hide) $(RS_CC_ASAN_OPTIONS) $(PRIVATE_RS_CC) \
   -o $(PRIVATE_RS_OUTPUT_DIR)/ \
   -d $(PRIVATE_RS_OUTPUT_DIR) \
   -a $@ -MD \
@@ -2006,6 +2009,9 @@ else
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
 endif
 
+# b/37750224
+AAPT_ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=0
+
 # TODO: Right now we generate the asset resources twice, first as part
 # of generating the Java classes, then at the end when packaging the final
 # assets.  This should be changed to do one of two things: (1) Don't generate
@@ -2020,7 +2026,7 @@ endif
 define create-resource-java-files
 @mkdir -p $(PRIVATE_SOURCE_INTERMEDIATES_DIR)
 @mkdir -p $(dir $(PRIVATE_RESOURCE_PUBLICS_OUTPUT))
-$(hide) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
+$(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
     $(eval # PRIVATE_PRODUCT_AAPT_CONFIG is intentionally missing-- see comment.) \
     $(addprefix -J , $(PRIVATE_SOURCE_INTERMEDIATES_DIR)) \
     $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
@@ -2270,9 +2276,10 @@ $(hide) mkdir -p $(dir $(PRIVATE_CLASSES_JACK))
 $(hide) mkdir -p $(PRIVATE_JACK_INTERMEDIATES_DIR)
 $(if $(PRIVATE_JACK_INCREMENTAL_DIR),$(hide) mkdir -p $(PRIVATE_JACK_INCREMENTAL_DIR))
 $(call dump-words-to-file,$(PRIVATE_JAVA_SOURCES),$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list)
-$(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
-          find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list; \
-fi
+$(if $(PRIVATE_SOURCE_INTERMEDIATES_DIR), \
+    $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
+            find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list; \
+    fi)
 $(if $(PRIVATE_HAS_PROTO_SOURCES), \
     $(hide) find $(PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR) -name '*.java' >> $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list )
 $(if $(PRIVATE_HAS_RS_SOURCES), \
@@ -2289,6 +2296,10 @@ $(if $(PRIVATE_EXTRA_JAR_ARGS),
     $(hide) $(call add-java-resources-to,$@.res.tmp.zip)
     $(hide) unzip -qo $@.res.tmp.zip -d $@.res.tmp
     $(hide) rm $@.res.tmp.zip)
+$(if $(PRIVATE_JACK_IMPORT_JAR),
+    $(hide) mkdir -p $@.tmpjill.res
+    $(hide) unzip -qo $(PRIVATE_JACK_IMPORT_JAR) -d $@.tmpjill.res
+    $(hide) find $@.tmpjill.res -iname "*.class" -delete)
 $(hide) if [ -s $(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq ] ; then \
     export tmpEcjArg="@$(PRIVATE_JACK_INTERMEDIATES_DIR)/java-source-list-uniq"; \
 else \
@@ -2301,6 +2312,8 @@ $(call call-jack) \
         -D jack.dex.optimize="false") \
     $(if $(PRIVATE_RMTYPEDEFS), \
         -D jack.android.remove-typedef="true") \
+    $(if $(PRIVATE_JACK_IMPORT_JAR), \
+        --import $(PRIVATE_JACK_IMPORT_JAR) --import-resource $@.tmpjill.res) \
     $(addprefix --classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_JACK_SHARED_LIBRARIES)))) \
     $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
@@ -2395,13 +2408,16 @@ else \
 fi
 endef
 
+# b/37756495
+IJAR_ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=0
+
 ## Rule to create a table of contents from a .jar file.
 ## Must be called with $(eval).
 # $(1): A .jar file
 define _transform-jar-to-toc
 $1.toc: $1 | $(IJAR)
 	@echo Generating TOC: $$@
-	$(hide) $(IJAR) $$< $$@.tmp
+	$(hide) $(IJAR_ASAN_OPTIONS) $(IJAR) $$< $$@.tmp
 	$$(call commit-change-for-toc,$$@)
 endef
 
@@ -2538,14 +2554,11 @@ $(hide) java -jar $(DESUGAR) \
 endef
 
 
-#TODO: use a smaller -Xmx value for most libraries;
-#      only core.jar and framework.jar need a heap this big.
 define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
 $(hide) rm -f $(dir $@)classes*.dex
-$(hide) $(DX) \
-    -JXms16M -JXmx2048M \
+$(hide) $(DX_COMMAND) \
     --dex --output=$(dir $@) \
     --min-sdk-version=$(call codename-or-sdk-to-sdk,$(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
     $(if $(NO_OPTIMIZE_DX), \
@@ -2598,7 +2611,7 @@ endef
 #values; applications can override these by explicitly stating
 #them in their manifest.
 define add-assets-to-package
-$(hide) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
+$(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -c , $(PRIVATE_PRODUCT_AAPT_CONFIG)) \
     $(addprefix --preferred-density , $(PRIVATE_PRODUCT_AAPT_PREF_CONFIG)) \
     $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
@@ -3228,6 +3241,141 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $(COMPATIBILITY.$(suite).FILES) $(my_compat_files_$(suite))) \
   $(eval $(my_all_targets) : $(my_compat_files_$(suite))))
 endef
+
+###########################################################
+## Path Cleaning
+###########################################################
+
+# Remove "dir .." combinations (but keep ".. ..")
+#
+# $(1): The expanded path, where / is converted to ' ' to work with $(word)
+define _clean-path-strip-dotdot
+$(strip \
+  $(if $(word 2,$(1)),
+    $(if $(call streq,$(word 2,$(1)),..),
+      $(if $(call streq,$(word 1,$(1)),..),
+        $(word 1,$(1)) $(call _clean-path-strip-dotdot,$(wordlist 2,$(words $(1)),$(1)))
+      ,
+        $(call _clean-path-strip-dotdot,$(wordlist 3,$(words $(1)),$(1)))
+      )
+    ,
+      $(word 1,$(1)) $(call _clean-path-strip-dotdot,$(wordlist 2,$(words $(1)),$(1)))
+    )
+  ,
+    $(1)
+  )
+)
+endef
+
+# Remove any leading .. from the path (in case of /..)
+#
+# Should only be called if the original path started with /
+# $(1): The expanded path, where / is converted to ' ' to work with $(word)
+define _clean-path-strip-root-dotdots
+$(strip $(if $(call streq,$(firstword $(1)),..),
+  $(call _clean-path-strip-root-dotdots,$(wordlist 2,$(words $(1)),$(1))),
+  $(1)))
+endef
+
+# Call _clean-path-strip-dotdot until the path stops changing
+# $(1): Non-empty if this path started with a /
+# $(2): The expanded path, where / is converted to ' ' to work with $(word)
+define _clean-path-expanded
+$(strip \
+  $(eval _ep := $(call _clean-path-strip-dotdot,$(2)))
+  $(if $(1),$(eval _ep := $(call _clean-path-strip-root-dotdots,$(_ep))))
+  $(if $(call streq,$(2),$(_ep)),
+    $(_ep),
+    $(call _clean-path-expanded,$(1),$(_ep))))
+endef
+
+# Clean the file path -- remove //, dir/.., extra .
+#
+# This should be the same semantics as golang's filepath.Clean
+#
+# $(1): The file path to clean
+define clean-path
+$(strip \
+  $(if $(call streq,$(words $(1)),1),
+    $(eval _rooted := $(filter /%,$(1)))
+    $(eval _expanded_path := $(filter-out .,$(subst /,$(space),$(1))))
+    $(eval _path := $(if $(_rooted),/)$(subst $(space),/,$(call _clean-path-expanded,$(_rooted),$(_expanded_path))))
+    $(if $(_path),
+      $(_path),
+      .
+     )
+  ,
+    $(if $(call streq,$(words $(1)),0),
+      .,
+      $(error Call clean-path with only one path (without spaces))
+    )
+  )
+)
+endef
+
+ifeq ($(TEST_MAKE_clean_path),true)
+  define my_test
+    $(if $(call streq,$(call clean-path,$(1)),$(2)),,
+      $(eval my_failed := true)
+      $(warning clean-path test '$(1)': expected '$(2)', got '$(call clean-path,$(1))'))
+  endef
+  my_failed :=
+
+  # Already clean
+  $(call my_test,abc,abc)
+  $(call my_test,abc/def,abc/def)
+  $(call my_test,a/b/c,a/b/c)
+  $(call my_test,.,.)
+  $(call my_test,..,..)
+  $(call my_test,../..,../..)
+  $(call my_test,../../abc,../../abc)
+  $(call my_test,/abc,/abc)
+  $(call my_test,/,/)
+
+  # Empty is current dir
+  $(call my_test,,.)
+
+  # Remove trailing slash
+  $(call my_test,abc/,abc)
+  $(call my_test,abc/def/,abc/def)
+  $(call my_test,a/b/c/,a/b/c)
+  $(call my_test,./,.)
+  $(call my_test,../,..)
+  $(call my_test,../../,../..)
+  $(call my_test,/abc/,/abc)
+
+  # Remove doubled slash
+  $(call my_test,abc//def//ghi,abc/def/ghi)
+  $(call my_test,//abc,/abc)
+  $(call my_test,///abc,/abc)
+  $(call my_test,//abc//,/abc)
+  $(call my_test,abc//,abc)
+
+  # Remove . elements
+  $(call my_test,abc/./def,abc/def)
+  $(call my_test,/./abc/def,/abc/def)
+  $(call my_test,abc/.,abc)
+
+  # Remove .. elements
+  $(call my_test,abc/def/ghi/../jkl,abc/def/jkl)
+  $(call my_test,abc/def/../ghi/../jkl,abc/jkl)
+  $(call my_test,abc/def/..,abc)
+  $(call my_test,abc/def/../..,.)
+  $(call my_test,/abc/def/../..,/)
+  $(call my_test,abc/def/../../..,..)
+  $(call my_test,/abc/def/../../..,/)
+  $(call my_test,abc/def/../../../ghi/jkl/../../../mno,../../mno)
+  $(call my_test,/../abc,/abc)
+
+  # Combinations
+  $(call my_test,abc/./../def,def)
+  $(call my_test,abc//./../def,def)
+  $(call my_test,abc/../../././../def,../../def)
+
+  ifdef my_failed
+    $(error failed clean-path test)
+  endif
+endif
 
 ###########################################################
 ## Other includes

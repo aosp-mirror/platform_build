@@ -74,8 +74,6 @@ PRODUCT_PACKAGES := \
     android.hardware.wifi@1.0 \
     android.hardware.wifi.supplicant@1.0 \
     android.hidl.allocator@1.0 \
-    android.hidl.base@1.0 \
-    android.hidl.manager@1.0 \
     android.hidl.memory@1.0 \
 
 PRODUCT_PACKAGES += \
