@@ -1977,12 +1977,6 @@ OTATOOLS += \
   $(VBOOT_SIGNER)
 endif
 
-ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT))
-OTATOOLS += \
-  $(FUTILITY) \
-  $(VBOOT_SIGNER)
-endif
-
 # Shared libraries.
 OTATOOLS += \
   $(HOST_LIBRARY_PATH)/libc++$(HOST_SHLIB_SUFFIX) \
