@@ -16,6 +16,24 @@
       "revId": "a9924360d44d47a7b832818e7238b78bfe91bf14",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b3f25183_3b96f7ed",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 193,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-05-17T17:18:19Z",
+      "side": 1,
+      "message": "Good point - I\u0027ll make that change.",
+      "parentUuid": "0e3002d9_d8a41a61",
+      "revId": "a9924360d44d47a7b832818e7238b78bfe91bf14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
