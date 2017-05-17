@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "e5652110_5f8098af",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1945,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-17T00:49:07Z",
+      "side": 1,
+      "message": "Source tree dependencies are still required so that we ensure BUILT_OTATOOLS_PACKAGE is updated when necessary.",
+      "parentUuid": "c427c266_cfbf8061",
+      "range": {
+        "startLine": 1945,
+        "startChar": 0,
+        "endLine": 1945,
+        "endChar": 47
+      },
+      "revId": "3bac9b132ede36eb61f007f77c95eee53599c990",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c3bb42bf_3b88ecd5",
         "filename": "core/Makefile",
         "patchSetId": 1
