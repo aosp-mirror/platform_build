@@ -45,6 +45,30 @@
       "revId": "3bac9b132ede36eb61f007f77c95eee53599c990",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b627a1c_d8d4e6c3",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1952,
+      "author": {
+        "id": 1051712
+      },
+      "writtenOn": "2017-05-17T00:44:34Z",
+      "side": 1,
+      "message": "Each build machine could have different mke2fs.conf. we\u0027d want them all use the same one from ext4_utils.",
+      "parentUuid": "c3bb42bf_3b88ecd5",
+      "range": {
+        "startLine": 1952,
+        "startChar": 19,
+        "endLine": 1952,
+        "endChar": 55
+      },
+      "revId": "3bac9b132ede36eb61f007f77c95eee53599c990",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
