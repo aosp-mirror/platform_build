@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "34abe3ae_82e1736d",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-17T03:22:11Z",
+      "side": 1,
+      "message": "No, it\u0027s a built file, and all the makefiles are read before we actually build anything. So no makefile can call $(shell $(AVBTOOL)) at all. You may be able to call it inside a rule so that you can depend on it before running, but that\u0027ll be bash, not $(shell)",
+      "parentUuid": "233b7590_59e88fd0",
+      "range": {
+        "startLine": 592,
+        "startChar": 23,
+        "endLine": 592,
+        "endChar": 39
+      },
+      "revId": "76118e18955b0ed8e47e6f6069b1695e8432dbbf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "41345618_c340263f",
         "filename": "core/config.mk",
         "patchSetId": 3
