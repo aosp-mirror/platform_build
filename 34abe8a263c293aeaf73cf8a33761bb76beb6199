@@ -16,6 +16,24 @@
       "revId": "34abe8a263c293aeaf73cf8a33761bb76beb6199",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21bfa0cb_eaebc8a5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2537,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-05-17T21:45:02Z",
+      "side": 1,
+      "message": "You mean instead of doing in line 2550, or in addition? Have done the former now.",
+      "parentUuid": "b5580c3d_2c469c1f",
+      "revId": "34abe8a263c293aeaf73cf8a33761bb76beb6199",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
