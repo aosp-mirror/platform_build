@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b5580c3d_2c469c1f",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2537,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-17T18:31:08Z",
+      "side": 1,
+      "message": "remove $(dir $@)/desugar_dumped_classes here",
+      "revId": "34abe8a263c293aeaf73cf8a33761bb76beb6199",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
