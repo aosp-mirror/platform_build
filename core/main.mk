@@ -1130,8 +1130,6 @@ endif  # samplecode in $(MAKECMDGOALS)
 .PHONY: findbugs
 findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
-# The rules for dataclean and installclean are defined in cleanbuild.mk.
-
 #xxx scrape this from ALL_MODULE_NAME_TAGS
 .PHONY: modules
 modules:
