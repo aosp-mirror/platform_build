@@ -85,7 +85,6 @@ PLATFORM_VERSION.PPR1 := P
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.OPR1 := O
 PLATFORM_VERSION_CODENAME.OPD1 := ODR
 PLATFORM_VERSION_CODENAME.OPM1 := OMR1
 PLATFORM_VERSION_CODENAME.PPR1 := P
