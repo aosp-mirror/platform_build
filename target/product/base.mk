@@ -141,6 +141,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.media.omx@1.0-service
 
+# XML schema files
+PRODUCT_PACKAGES += \
+    media_profiles_V1_0.dtd
+
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     perfprofd
