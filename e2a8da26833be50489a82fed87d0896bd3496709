@@ -22,6 +22,30 @@
       "revId": "e2a8da26833be50489a82fed87d0896bd3496709",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88e745f1_be0813f6",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2541,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-05-18T15:36:27Z",
+      "side": 1,
+      "message": "FYI the reason why this error in the desugar command line as picked up neither by treehugger nor by local testing is because both treehugger and my local testing used jack to build (which is the default) instead of desugar + dx.\n\nThe build that broke was passing \"ANDROID_COMPILE_WITH_JACK\u003dfalse\" to the make command line.\n\nI\u0027ll verify my attempt #2 of this CL by making checkbuild both with and without jack.",
+      "parentUuid": "b58aa457_760326dd",
+      "range": {
+        "startLine": 2541,
+        "startChar": 0,
+        "endLine": 2541,
+        "endChar": 56
+      },
+      "revId": "e2a8da26833be50489a82fed87d0896bd3496709",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
