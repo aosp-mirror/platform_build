@@ -34,6 +34,24 @@
       "revId": "d8eabaa6c7975e59380bf2b6f9ef3af068ae2d2e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "89e8c466_7de76c75",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-18T18:13:28Z",
+      "side": 1,
+      "message": "Treehugger doesn\u0027t do incremental builds, and I don\u0027t think it will any time soon, although there is a design doc for it.  Won\u0027t this increase the time for doing clean asan builds?",
+      "parentUuid": "829badf8_4a10d4c2",
+      "revId": "d8eabaa6c7975e59380bf2b6f9ef3af068ae2d2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
