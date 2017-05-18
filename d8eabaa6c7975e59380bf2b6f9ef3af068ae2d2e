@@ -52,6 +52,24 @@
       "revId": "d8eabaa6c7975e59380bf2b6f9ef3af068ae2d2e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2b783b77_f4777053",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2017-05-18T18:38:18Z",
+      "side": 1,
+      "message": "Good point. What are the numbers for clean build with and without this change?\nWhat if we only do this for the soong half of the build? The make half is supposed to shrink over time.",
+      "parentUuid": "89e8c466_7de76c75",
+      "revId": "d8eabaa6c7975e59380bf2b6f9ef3af068ae2d2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
