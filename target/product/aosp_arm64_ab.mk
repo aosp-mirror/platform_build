@@ -43,7 +43,7 @@ PRODUCT_PACKAGES := \
     android.hardware.camera.device@1.0 \
     android.hardware.camera.device@3.2 \
     android.hardware.camera.provider@2.4 \
-    android.hardware.configstore@1.0 \
+    android.hardware.configstore@1.1 \
     android.hardware.contexthub@1.0 \
     android.hardware.drm@1.0 \
     android.hardware.gatekeeper@1.0 \
