@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9259aa54_663c8cb7",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2017-05-18T21:24:28Z",
+      "side": 1,
+      "message": "Should this be HIGH?",
+      "range": {
+        "startLine": 458,
+        "startChar": 46,
+        "endLine": 458,
+        "endChar": 52
+      },
+      "revId": "4e15989267d755d307595d567a22d91df58a9826",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "85aae853_eb80a582",
+        "filename": "tools/warn.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1768,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2017-05-18T21:24:28Z",
+      "side": 1,
+      "message": "unknown",
+      "range": {
+        "startLine": 1768,
+        "startChar": 35,
+        "endLine": 1768,
+        "endChar": 42
+      },
+      "revId": "4e15989267d755d307595d567a22d91df58a9826",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
