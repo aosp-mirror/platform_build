@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b58aa457_760326dd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2541,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-05-18T13:56:39Z",
+      "side": 1,
+      "message": "yuck. This line wasn\u0027t supposed to be part of this CL. Will submit a fix shortly.\n\n(I have no idea why this didn\u0027t fail in my testing?!?)",
+      "range": {
+        "startLine": 2541,
+        "startChar": 0,
+        "endLine": 2541,
+        "endChar": 56
+      },
+      "revId": "e2a8da26833be50489a82fed87d0896bd3496709",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
