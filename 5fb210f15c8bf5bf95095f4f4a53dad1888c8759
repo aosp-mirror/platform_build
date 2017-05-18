@@ -22,6 +22,30 @@
       "revId": "5fb210f15c8bf5bf95095f4f4a53dad1888c8759",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c062b00e_d8be27c7",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-05-18T16:45:27Z",
+      "side": 1,
+      "message": "Are you concerned about intermediates that may have asan/ in the path? I don\u0027t know if that\u0027s likely - but you\u0027re right that it\u0027s the cleaner way to do it. Will make the change here and other places.",
+      "parentUuid": "16f43abf_70bc30a6",
+      "range": {
+        "startLine": 401,
+        "startChar": 0,
+        "endLine": 405,
+        "endChar": 5
+      },
+      "revId": "5fb210f15c8bf5bf95095f4f4a53dad1888c8759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
