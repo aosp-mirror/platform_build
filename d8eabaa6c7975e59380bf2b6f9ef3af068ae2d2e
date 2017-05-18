@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "81f00126_c17258c7",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-18T17:55:50Z",
+      "side": 1,
+      "message": "Won\u0027t this cause all of the app packages, etc. to rebuild into obj_asan?  It seems like you would only want to change this for modules that have asan enabled, but that would break the way make finds files from other modules.",
+      "revId": "d8eabaa6c7975e59380bf2b6f9ef3af068ae2d2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
