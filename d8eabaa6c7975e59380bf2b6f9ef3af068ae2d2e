@@ -16,6 +16,24 @@
       "revId": "d8eabaa6c7975e59380bf2b6f9ef3af068ae2d2e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "829badf8_4a10d4c2",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-05-18T18:06:51Z",
+      "side": 1,
+      "message": "Yeah - I need to find a way to do this more selectively (without breaking other things). I think this is still a good first step though. There\u0027s the increased cost of rebuilding  extra components, but it speeds up incremental builds overall - and makes TreeHugger presubmit tests using ASAN targets more viable. \n\nI\u0027m still going to continue to look at better ways of doing this, but maybe we can have it be this way for now?",
+      "parentUuid": "81f00126_c17258c7",
+      "revId": "d8eabaa6c7975e59380bf2b6f9ef3af068ae2d2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
