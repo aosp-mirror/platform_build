@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db323d2e_72df43fa",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 684,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-05-18T16:16:12Z",
+      "side": 1,
+      "message": "It might be easier to find later and remove (e.g. when OpenJDK 9 becomes the toolchain of choice) if you made this contingent on EXPERIMENTAL_USE_OPENJDK9 instead of if HOST_JDK_TOOLS_JAR \u003d\u003d \"\", since it also implies HOST_JDK_TOOLS_JAR is non-empty but is more obvious why it exists and less prone to working incorrectly just because it is unset for other reasons.",
+      "range": {
+        "startLine": 684,
+        "startChar": 9,
+        "endLine": 684,
+        "endChar": 36
+      },
+      "revId": "85c2818cbf70a9aecfec4bb2b0b99676ccaed4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ab810f4_3cccde28",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-05-18T16:16:12Z",
+      "side": 1,
+      "message": "My make-fu is weak, so I\u0027m probably just misunderstanding....\n\n$(droiddoc) appears to be a list of targets, but $(HOST_JDK_TOOLS_JAR) is a variable pointing to the location of a JDK tool, not a build artifact.\n\nWhat is this actually here for?\nPerhaps Dan or Colin can explain.  (The way I\u0027d check if they don\u0027t respond or don\u0027t know is just to remove it and see what happens under JDK 8 - it may be possible to just remove it)",
+      "range": {
+        "startLine": 136,
+        "startChar": 3,
+        "endLine": 136,
+        "endChar": 30
+      },
+      "revId": "85c2818cbf70a9aecfec4bb2b0b99676ccaed4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
