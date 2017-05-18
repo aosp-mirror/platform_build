@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "16f43abf_70bc30a6",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 405,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2017-05-18T16:39:04Z",
+      "side": 1,
+      "message": "Hm. Why not cleanly separate this? Subdirectories could lead to trouble.",
+      "range": {
+        "startLine": 401,
+        "startChar": 0,
+        "endLine": 405,
+        "endChar": 5
+      },
+      "revId": "5fb210f15c8bf5bf95095f4f4a53dad1888c8759",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
