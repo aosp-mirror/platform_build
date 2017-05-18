@@ -175,7 +175,6 @@ $(full_target): \
 	$(hide) ( \
 		javadoc \
                 -encoding UTF-8 \
-                -source 1.8 \
                 \@$(PRIVATE_SRC_LIST_FILE) \
                 -J-Xmx1600m \
                 -XDignore.symbol.file \
