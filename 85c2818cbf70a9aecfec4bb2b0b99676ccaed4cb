@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "c86a406e_f1d8d458",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 683,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-18T17:35:45Z",
+      "side": 1,
+      "message": "Make APICHECK_CLASSPATH a list of jars, so adding an empty  jar to the list won\u0027t affect anything.  Then use $(subst $(space),:,$(strip $(APICHECK_CLASSPATH)))",
+      "revId": "85c2818cbf70a9aecfec4bb2b0b99676ccaed4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "db323d2e_72df43fa",
         "filename": "core/config.mk",
         "patchSetId": 2
@@ -36,6 +53,30 @@
       "writtenOn": "2017-05-18T16:16:12Z",
       "side": 1,
       "message": "My make-fu is weak, so I\u0027m probably just misunderstanding....\n\n$(droiddoc) appears to be a list of targets, but $(HOST_JDK_TOOLS_JAR) is a variable pointing to the location of a JDK tool, not a build artifact.\n\nWhat is this actually here for?\nPerhaps Dan or Colin can explain.  (The way I\u0027d check if they don\u0027t respond or don\u0027t know is just to remove it and see what happens under JDK 8 - it may be possible to just remove it)",
+      "range": {
+        "startLine": 136,
+        "startChar": 3,
+        "endLine": 136,
+        "endChar": 30
+      },
+      "revId": "85c2818cbf70a9aecfec4bb2b0b99676ccaed4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c70d78a3_e5da8e67",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-18T17:35:45Z",
+      "side": 1,
+      "message": "$(droiddoc) is a list of dependencies.  Build artifacts in the list will be built before the $(full_target): rule below is run, pointing at the tools.jar will cause the rule to be re-run if tools.jar changes.",
+      "parentUuid": "3ab810f4_3cccde28",
       "range": {
         "startLine": 136,
         "startChar": 3,
