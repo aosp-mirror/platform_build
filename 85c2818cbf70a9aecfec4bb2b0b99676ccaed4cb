@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9e78f602_48e003f0",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 683,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-05-19T13:35:20Z",
+      "side": 1,
+      "message": "Thanks, good idea! I didn\u0027t know the syntax to make a list, but paulduffin@ helped. Instead of the complicated expression to turn the space separated list into a \":\" separated list of paths, I found a function normalize-path-list so I used that.\n\nMy understanding is that this will break if there are spaces in any path, but my understanding is that AOSP never uses those.",
+      "parentUuid": "c86a406e_f1d8d458",
+      "revId": "85c2818cbf70a9aecfec4bb2b0b99676ccaed4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "db323d2e_72df43fa",
         "filename": "core/config.mk",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2017-05-18T16:16:12Z",
       "side": 1,
       "message": "It might be easier to find later and remove (e.g. when OpenJDK 9 becomes the toolchain of choice) if you made this contingent on EXPERIMENTAL_USE_OPENJDK9 instead of if HOST_JDK_TOOLS_JAR \u003d\u003d \"\", since it also implies HOST_JDK_TOOLS_JAR is non-empty but is more obvious why it exists and less prone to working incorrectly just because it is unset for other reasons.",
+      "range": {
+        "startLine": 684,
+        "startChar": 9,
+        "endLine": 684,
+        "endChar": 36
+      },
+      "revId": "85c2818cbf70a9aecfec4bb2b0b99676ccaed4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "402e1247_3277d238",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 684,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-05-19T13:35:20Z",
+      "side": 1,
+      "message": "ifneq is no longer required because normalize-path-list collapses spaces and trims the trailing ones.",
+      "parentUuid": "db323d2e_72df43fa",
       "range": {
         "startLine": 684,
         "startChar": 9,
