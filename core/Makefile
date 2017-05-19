@@ -938,9 +938,9 @@ $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "futili
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_signer_cmd=$(VBOOT_SIGNER)" >> $(1))
 $(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_signing_args=$(INTERNAL_AVB_SIGNING_ARGS)" >> $(1))
 $(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_avbtool=$(AVBTOOL)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "system_avb_enable=$(BOARD_AVB_ENABLE)" >> $(1))
+$(if $(BOARD_AVB_ENABLE),$(hide) echo "system_avb_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
 $(if $(BOARD_AVB_ENABLE),$(hide) echo "system_avb_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
-$(if $(BOARD_AVB_ENABLE),$(hide) echo "vendor_avb_enable=$(BOARD_AVB_ENABLE)" >> $(1))
+$(if $(BOARD_AVB_ENABLE),$(hide) echo "vendor_avb_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
 $(if $(BOARD_AVB_ENABLE),$(hide) echo "vendor_avb_add_hashtree_footer_args=$(BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
 $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(hide) echo "recovery_as_boot=true" >> $(1))
