@@ -88,6 +88,24 @@
       "revId": "d8eabaa6c7975e59380bf2b6f9ef3af068ae2d2e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "af787c33_1ab80d01",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2017-05-19T17:27:24Z",
+      "side": 1,
+      "message": "Interesting, it means there are parts of the build with very little parallelism, so building basically twice as much stuff barely affects the total wall time.\n\nThis sounds like the right trade-off.",
+      "parentUuid": "6bf15831_ac8c75d7",
+      "revId": "d8eabaa6c7975e59380bf2b6f9ef3af068ae2d2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
