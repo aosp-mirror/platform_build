@@ -70,6 +70,24 @@
       "revId": "d8eabaa6c7975e59380bf2b6f9ef3af068ae2d2e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6bf15831_ac8c75d7",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 408,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-05-19T01:33:58Z",
+      "side": 1,
+      "message": "Ok ran the numbers:\nWithout this CL:\nClean build\n  --\u003e 7039.93s user 1334.72s system 374% cpu 37:18.64 total\nIncremental build\n  --\u003e  2530.01s user 783.00s system 228% cpu 24:07.16 total\n  --\u003e  2513.28s user 733.22s system 251% cpu 21:33.11 total\n\nWith this CL:\nClean build\n  ---\u003e 11494.76s user 1546.72s system 603% cpu 36:01.79 total\nIncremental build\n  --\u003e  3795.44s user 658.36s system 587% cpu 12:37.66 total\n  --\u003e 3907.25s user 558.55s system 678% cpu 10:58.11 total\n\nSo looks like clean builds are almost unaffected, but incremental is roughly halved. I think this is worth landing (also confirmed that incremental build support for TH is expected soon-ish).",
+      "parentUuid": "2b783b77_f4777053",
+      "revId": "d8eabaa6c7975e59380bf2b6f9ef3af068ae2d2e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
