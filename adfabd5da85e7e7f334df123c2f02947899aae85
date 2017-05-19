@@ -22,6 +22,30 @@
       "revId": "adfabd5da85e7e7f334df123c2f02947899aae85",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "930bcebb_c37ca75d",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 604,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-19T04:22:43Z",
+      "side": 1,
+      "message": "Yeah, you\u0027d need to do this in bash if you wanted to do it in a rule",
+      "parentUuid": "072dce93_58e3eb0b",
+      "range": {
+        "startLine": 604,
+        "startChar": 0,
+        "endLine": 604,
+        "endChar": 25
+      },
+      "revId": "adfabd5da85e7e7f334df123c2f02947899aae85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
