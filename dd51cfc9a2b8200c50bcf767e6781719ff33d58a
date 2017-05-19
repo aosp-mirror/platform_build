@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "31463270_832810a4",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1079733
+      },
+      "writtenOn": "2017-05-19T18:10:23Z",
+      "side": 0,
+      "message": "We need this to solve dependency race condition",
+      "revId": "dd51cfc9a2b8200c50bcf767e6781719ff33d58a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
