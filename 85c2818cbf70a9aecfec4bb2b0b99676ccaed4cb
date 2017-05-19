@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "ef0b9b02_06ebe9d3",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 683,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-05-19T16:47:04Z",
+      "side": 1,
+      "message": "Turns out APICHECK_CLASSPATH ended up empty - I suspect that the cause is that normalize-path-list is not known at this point (perhaps because config.mk doesn\u0027t import definitions.mk?).\n\nTrying again with the snippet that you initially suggested.",
+      "parentUuid": "9e78f602_48e003f0",
+      "revId": "85c2818cbf70a9aecfec4bb2b0b99676ccaed4cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "db323d2e_72df43fa",
         "filename": "core/config.mk",
         "patchSetId": 2
