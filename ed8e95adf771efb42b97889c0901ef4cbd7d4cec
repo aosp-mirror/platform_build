@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "59ab924d_3e07693b",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-19T04:31:33Z",
+      "side": 1,
+      "message": "Only checked if avb_enable is set (line 594)",
+      "range": {
+        "startLine": 603,
+        "startChar": 4,
+        "endLine": 603,
+        "endChar": 70
+      },
+      "revId": "ed8e95adf771efb42b97889c0901ef4cbd7d4cec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
