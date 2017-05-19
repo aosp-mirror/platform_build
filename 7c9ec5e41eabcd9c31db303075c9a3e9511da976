@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "01be259a_7455577c",
+        "filename": "core/config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 879,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-05-19T02:55:26Z",
+      "side": 1,
+      "message": "whole static dependencies need to be added instead. whole static libraries are combined in a different way as compared to soong.",
+      "range": {
+        "startLine": 879,
+        "startChar": 2,
+        "endLine": 879,
+        "endChar": 31
+      },
+      "revId": "7c9ec5e41eabcd9c31db303075c9a3e9511da976",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
