@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "454aed05_205c8c5c",
+        "filename": "core/config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-19T04:18:41Z",
+      "side": 1,
+      "message": "We don\u0027t want more warnings. Make this an error and fix all of our boards, or don\u0027t include it.",
+      "range": {
+        "startLine": 602,
+        "startChar": 0,
+        "endLine": 602,
+        "endChar": 80
+      },
+      "revId": "cbee454b328a85d4eda18f10eea44c4670a3ce00",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
