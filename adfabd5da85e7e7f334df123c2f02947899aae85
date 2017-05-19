@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "072dce93_58e3eb0b",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 604,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-19T04:19:18Z",
+      "side": 1,
+      "message": "Cannot use this in a Android.mk, e.g.,\n\n BOARD_AVB_VBMETA_VERSION\u003d$(call get_vbmeta_version) $(HOST_OUT_EXECUTABLES)/assemble_vintf \n\n./build/target/board/Android.mk:114: error: kati doesn\u0027t support passing results of $(shell) to other make constructs: out/host/linux-x86/bin/avbtool version | cut -d\" \" -f2",
+      "range": {
+        "startLine": 604,
+        "startChar": 0,
+        "endLine": 604,
+        "endChar": 25
+      },
+      "revId": "adfabd5da85e7e7f334df123c2f02947899aae85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

@@ -22,6 +22,29 @@
       "revId": "cbee454b328a85d4eda18f10eea44c4670a3ce00",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "792a5e22_365cbb09",
+        "filename": "core/config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 604,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-19T04:19:18Z",
+      "side": 1,
+      "message": "Drop the proposal to get default version from `avbtool version` because kati cannot pass results of $(shell), as commented in other PS.\n\nAdding the variable should be fine as the final check is against \"Minimum required libavb version\" in `avbtool info_image --image system.img` instead of `avbtool version`.\n\nAs we don\u0027t change libavb version much this should not be a concern.",
+      "range": {
+        "startLine": 604,
+        "startChar": 0,
+        "endLine": 604,
+        "endChar": 24
+      },
+      "revId": "cbee454b328a85d4eda18f10eea44c4670a3ce00",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
