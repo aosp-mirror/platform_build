@@ -2,6 +2,80 @@
   "comments": [
     {
       "key": {
+        "uuid": "c20be686_41dd3ce0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2017-05-19T19:43:26Z",
+      "side": 1,
+      "message": "When would I set BOARD_AVB_VBMETA_VERSION and what would it be set to? For example, would it be set to the version of libavb used in the bootloader?\n\nShould we document BOARD_AVB_VBMETA_VERSION in external/avb/README.md?",
+      "revId": "ed8e95adf771efb42b97889c0901ef4cbd7d4cec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "348022c8_5c3c5331",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2017-05-19T19:43:26Z",
+      "side": 1,
+      "message": "Shouldn\u0027t the comparison be  \u003e\u003d or \u003c\u003d instead of \u003d\u003d?",
+      "revId": "ed8e95adf771efb42b97889c0901ef4cbd7d4cec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0b7a53b3_a405f00f",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2017-05-19T19:43:26Z",
+      "side": 1,
+      "message": "spelling",
+      "range": {
+        "startLine": 150,
+        "startChar": 13,
+        "endLine": 150,
+        "endChar": 19
+      },
+      "revId": "ed8e95adf771efb42b97889c0901ef4cbd7d4cec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3880c9a6_3a794ccd",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2017-05-19T19:43:26Z",
+      "side": 1,
+      "message": "Instead of this it would be nicer to have \u0027avbtool info_image --print_minimum_libavb_version\u0027 which just prints e.g. \"1.2\" and exits.",
+      "revId": "ed8e95adf771efb42b97889c0901ef4cbd7d4cec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "59ab924d_3e07693b",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 8
