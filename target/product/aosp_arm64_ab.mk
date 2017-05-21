@@ -29,7 +29,7 @@ PRODUCT_FULL_TREBLE_OVERRIDE := true
 # the framework. However, we list them all here to make it explicit and prevent
 # possible mistake.
 PRODUCT_PACKAGES := \
-    android.dvr.composer@1.0 \
+    android.frameworks.vr.composer@1.0 \
     android.hardware.audio@2.0 \
     android.hardware.audio.common@2.0 \
     android.hardware.audio.common@2.0-util \
@@ -43,7 +43,7 @@ PRODUCT_PACKAGES := \
     android.hardware.camera.device@1.0 \
     android.hardware.camera.device@3.2 \
     android.hardware.camera.provider@2.4 \
-    android.hardware.configstore@1.0 \
+    android.hardware.configstore@1.1 \
     android.hardware.contexthub@1.0 \
     android.hardware.drm@1.0 \
     android.hardware.gatekeeper@1.0 \
