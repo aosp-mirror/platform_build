@@ -305,6 +305,7 @@ ANDROID_FS_CONFIG_H :=
 my_fs_config_h :=
 fs_config_generate_bin :=
 my_gen_oem_aid :=
+fs_config_generate_extra_partition_list :=
 
 # -----------------------------------------------------------------------------
 # Unit tests.

@@ -23,7 +23,7 @@ intermediates := $(call local-intermediates-dir,,$(LOCAL_2ND_ARCH_VAR_PREFIX))
 # The basename of this target must be the same as the final output
 # binary name, because it's used to set the "soname" in the binary.
 # The includer of this file will define a rule to build this target.
-linked_module := $(intermediates)/LINKED/$(my_built_module_stem)
+linked_module := $(intermediates)/LINKED/$(notdir $(my_installed_module_stem))
 
 ALL_ORIGINAL_DYNAMIC_BINARIES += $(linked_module)
 
