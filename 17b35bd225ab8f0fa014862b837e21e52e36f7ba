@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7a9aded_81ae1bf3",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 2538,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-05-22T10:18:52Z",
+      "side": 1,
+      "message": "Sorry, I had to change this once more: Support for relative paths in Desugar was broken shortly after it was fixed, so I decided to use an absolute path here instead. There are several other uses of realpath across AOSP makefiles, so the AOSP build appears to already depend on availability of that command.",
+      "range": {
+        "startLine": 2538,
+        "startChar": 8,
+        "endLine": 2538,
+        "endChar": 29
+      },
+      "revId": "17b35bd225ab8f0fa014862b837e21e52e36f7ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
