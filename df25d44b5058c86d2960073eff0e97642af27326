@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a5c37259_1258d801",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-22T11:18:34Z",
+      "side": 1,
+      "message": "This is required for custom images.",
+      "range": {
+        "startLine": 108,
+        "startChar": 15,
+        "endLine": 108,
+        "endChar": 29
+      },
+      "revId": "df25d44b5058c86d2960073eff0e97642af27326",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1c507c8c_854eb421",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 704,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-22T11:18:34Z",
+      "side": 1,
+      "message": "partition_name is added here for non-custom images.",
+      "range": {
+        "startLine": 704,
+        "startChar": 2,
+        "endLine": 704,
+        "endChar": 35
+      },
+      "revId": "df25d44b5058c86d2960073eff0e97642af27326",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "11e5de82_c5c7f976",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-22T11:18:34Z",
+      "side": 1,
+      "message": "Making custom images will go for this route.\n\nIt needs to specify both \u0027mount_point\u0027 and \u0027partition_name\u0027 in image_info.txt.",
+      "range": {
+        "startLine": 733,
+        "startChar": 6,
+        "endLine": 733,
+        "endChar": 17
+      },
+      "revId": "df25d44b5058c86d2960073eff0e97642af27326",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2b8d25c4_347870fc",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 756,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-22T11:18:34Z",
+      "side": 1,
+      "message": "\u0027partition_name\u0027 will be added into glob_dict inside ImagePropFromGlobalDict().",
+      "range": {
+        "startLine": 756,
+        "startChar": 23,
+        "endLine": 756,
+        "endChar": 46
+      },
+      "revId": "df25d44b5058c86d2960073eff0e97642af27326",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
