@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "197a7e78_7041f095",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 2538,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-05-22T22:10:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "83b23c5a_82020b74",
+      "range": {
+        "startLine": 2538,
+        "startChar": 8,
+        "endLine": 2538,
+        "endChar": 29
+      },
+      "revId": "17b35bd225ab8f0fa014862b837e21e52e36f7ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7da3108d_cd107d81",
         "filename": "core/definitions.mk",
         "patchSetId": 7
@@ -60,6 +84,30 @@
       "writtenOn": "2017-05-22T21:04:34Z",
       "side": 1,
       "message": "I don\u0027t see many uses of realpath, but we do use abspath sometimes.",
+      "range": {
+        "startLine": 2541,
+        "startChar": 45,
+        "endLine": 2541,
+        "endChar": 53
+      },
+      "revId": "17b35bd225ab8f0fa014862b837e21e52e36f7ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "147d1805_a8f45e60",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 2541,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-05-22T22:10:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7da3108d_cd107d81",
       "range": {
         "startLine": 2541,
         "startChar": 45,
