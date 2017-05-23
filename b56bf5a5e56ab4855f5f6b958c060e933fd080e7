@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d6bc1632_e5e82d79",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 450,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-23T00:32:11Z",
+      "side": 1,
+      "message": "No, these rules are always created, but nothing depends on them when jack is enabled.",
+      "parentUuid": "306c63f9_3bcc06f1",
+      "range": {
+        "startLine": 450,
+        "startChar": 6,
+        "endLine": 450,
+        "endChar": 25
+      },
+      "revId": "b56bf5a5e56ab4855f5f6b958c060e933fd080e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0a8989fa_913df6f0",
         "filename": "core/java.mk",
         "patchSetId": 1
@@ -36,6 +60,24 @@
       "writtenOn": "2017-05-22T23:49:28Z",
       "side": 1,
       "message": "Might want to put a comment here about why these are named in \u0026 out",
+      "revId": "b56bf5a5e56ab4855f5f6b958c060e933fd080e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "77e31549_7ce9ae1c",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 451,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-23T00:32:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0a8989fa_913df6f0",
       "revId": "b56bf5a5e56ab4855f5f6b958c060e933fd080e7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
