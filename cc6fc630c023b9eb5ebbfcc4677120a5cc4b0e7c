@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec8c4000_706fe809",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-23T00:04:53Z",
+      "side": 1,
+      "message": "Why hex instead of octal here? (At least this appears to be the file type/mode which is normally represented in octal).\n\nThe group and other permissions are likely going to change from machine to machine depending on what the umask is set to -- it\u0027s definitely not standardized on our fleet. Can we make sure the program using these files ignores/standardizes the group/other permissions?\n\nThat being said, 0700 doesn\u0027t seem like a great default for symlinks, so feel free to change this or file a bug against me.",
+      "range": {
+        "startLine": 15,
+        "startChar": 17,
+        "endLine": 16,
+        "endChar": 23
+      },
+      "revId": "cc6fc630c023b9eb5ebbfcc4677120a5cc4b0e7c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
