@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a201633_2d2fda99",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3238,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-05-23T23:39:57Z",
+      "side": 1,
+      "message": "Shouldn\u0027t these both be indented by 2 more spaces each?",
+      "range": {
+        "startLine": 3237,
+        "startChar": 0,
+        "endLine": 3238,
+        "endChar": 8
+      },
+      "revId": "6fd5d7daec2b1aaea4dd1d6f85d530b8bb3721a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
