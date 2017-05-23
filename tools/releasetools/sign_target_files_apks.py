@@ -93,6 +93,7 @@ import errno
 import os
 import re
 import shutil
+import stat
 import subprocess
 import tempfile
 import zipfile
@@ -191,6 +192,9 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
   # tmpdir will only be used to regenerate the recovery-from-boot patch.
   tmpdir = tempfile.mkdtemp()
+  # We're not setting the permissions precisely as in attr, because that work
+  # will be handled by mkbootfs (using the values from the canned or the
+  # compiled-in fs_config).
   def write_to_temp(fn, attr, data):
     fn = os.path.join(tmpdir, fn)
     if fn.endswith("/"):
@@ -201,7 +205,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if d and not os.path.exists(d):
         os.makedirs(d)
 
-      if attr >> 16 == 0xa1ff:
+      if stat.S_ISLNK(attr >> 16):
         os.symlink(data, fn)
       else:
         with open(fn, "wb") as f:
