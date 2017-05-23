@@ -22,6 +22,30 @@
       "revId": "6fd5d7daec2b1aaea4dd1d6f85d530b8bb3721a1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2d70478f_d3fc4cfb",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3238,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-23T23:42:47Z",
+      "side": 1,
+      "message": "No, it\u0027s outside of the foreach so that we only call copy-many-files once, with the de-duplicated list (sort both sorts and de-duplicates)",
+      "parentUuid": "1a201633_2d2fda99",
+      "range": {
+        "startLine": 3237,
+        "startChar": 0,
+        "endLine": 3238,
+        "endChar": 8
+      },
+      "revId": "6fd5d7daec2b1aaea4dd1d6f85d530b8bb3721a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
