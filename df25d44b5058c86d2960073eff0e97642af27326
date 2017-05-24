@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "460d8cae_3b99b39c",
+        "filename": "core/tasks/build_custom_images.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-24T06:22:11Z",
+      "side": 1,
+      "message": "Thanks, good eyesight!\nDone.",
+      "parentUuid": "06f0ccf5_025aaa74",
+      "range": {
+        "startLine": 47,
+        "startChar": 30,
+        "endLine": 47,
+        "endChar": 31
+      },
+      "revId": "df25d44b5058c86d2960073eff0e97642af27326",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4116dd50_c9874ddc",
         "filename": "core/tasks/tools/build_custom_image.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2017-05-24T05:48:32Z",
       "side": 1,
       "message": "Shall we also have a check to assert these two are not set at the same time?",
+      "range": {
+        "startLine": 91,
+        "startChar": 23,
+        "endLine": 91,
+        "endChar": 90
+      },
+      "revId": "df25d44b5058c86d2960073eff0e97642af27326",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "91db31f1_94848289",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-24T06:22:11Z",
+      "side": 1,
+      "message": "OK, let\u0027s add a check to avoid it.",
+      "parentUuid": "4116dd50_c9874ddc",
       "range": {
         "startLine": 91,
         "startChar": 23,
