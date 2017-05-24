@@ -16,6 +16,24 @@
       "revId": "9a9d733d002b9849cc00461a6697bd60d678d4fb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9fdfa80f_f7454712",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-05-24T21:58:38Z",
+      "side": 1,
+      "message": "Argh! Done.\n\n(why is the package name com.android.apksig then, rather than .sigapk?)",
+      "parentUuid": "0dfbc0b0_468c83de",
+      "revId": "9a9d733d002b9849cc00461a6697bd60d678d4fb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
