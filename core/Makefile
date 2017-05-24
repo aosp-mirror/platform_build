@@ -2338,6 +2338,8 @@ endif
 ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_OTHER,system/) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
+
+ifeq ($(PRODUCT_FULL_TREBLE),true)
 	@# Metadata for compatibility verification.
 	$(hide) cp $(BUILT_SYSTEM_MANIFEST) $(zip_root)/META/system_manifest.xml
 	$(hide) cp $(BUILT_SYSTEM_COMPATIBILITY_MATRIX) $(zip_root)/META/system_compatibility_matrix.xml
@@ -2346,6 +2348,7 @@ ifdef BUILT_VENDOR_MANIFEST
 endif
 ifdef BUILT_VENDOR_MATRIX
 	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
+endif
 endif
 
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
