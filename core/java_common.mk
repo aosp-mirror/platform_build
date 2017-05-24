@@ -19,12 +19,7 @@ ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
   ifneq (,$(filter $(LOCAL_SDK_VERSION), $(private_sdk_versions_without_any_java_18_support)))
     LOCAL_JAVA_LANGUAGE_VERSION := 1.7
   else
-    # This retains 1.7 for ART build bots only. http://b/27583810
-    ifeq (,$(LEGACY_USE_JAVA7))
-      LOCAL_JAVA_LANGUAGE_VERSION := 1.8
-    else
-      LOCAL_JAVA_LANGUAGE_VERSION := 1.7
-    endif
+    LOCAL_JAVA_LANGUAGE_VERSION := 1.8
   endif
 endif
 LOCAL_JAVACFLAGS += -source $(LOCAL_JAVA_LANGUAGE_VERSION) -target $(LOCAL_JAVA_LANGUAGE_VERSION)
