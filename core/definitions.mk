@@ -3232,10 +3232,10 @@ endef
 # Requires for each suite: my_compat_dist_$(suite) to be defined.
 define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_files_$(suite) := $(call copy-many-files, $(my_compat_dist_$(suite)))) \
   $(eval COMPATIBILITY.$(suite).FILES := \
-    $(COMPATIBILITY.$(suite).FILES) $(my_compat_files_$(suite))) \
-  $(eval $(my_all_targets) : $(my_compat_files_$(suite))))
+    $(COMPATIBILITY.$(suite).FILES) $(foreach f,$(my_compat_dist_$(suite)),$(call word-colon,2,$(f))))) \
+$(eval $(my_all_targets) : $(call copy-many-files, \
+  $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE),$(my_compat_dist_$(suite))))))
 endef
 
 ###########################################################
