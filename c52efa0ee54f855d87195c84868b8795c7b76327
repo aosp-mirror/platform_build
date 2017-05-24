@@ -45,6 +45,29 @@
       "revId": "c52efa0ee54f855d87195c84868b8795c7b76327",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "43ac023f_053e84f6",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-24T09:27:26Z",
+      "side": 1,
+      "message": "Needed because the output is \u00271.0\\n\u0027.",
+      "range": {
+        "startLine": 167,
+        "startChar": 28,
+        "endLine": 167,
+        "endChar": 43
+      },
+      "revId": "c52efa0ee54f855d87195c84868b8795c7b76327",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
