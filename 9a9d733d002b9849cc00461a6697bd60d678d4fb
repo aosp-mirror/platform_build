@@ -34,6 +34,24 @@
       "revId": "9a9d733d002b9849cc00461a6697bd60d678d4fb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3ea55953_494d67d2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-05-24T22:19:02Z",
+      "side": 1,
+      "message": "Because the signapk tool uses apksig library which is the component which contains this illegal access.",
+      "parentUuid": "9fdfa80f_f7454712",
+      "revId": "9a9d733d002b9849cc00461a6697bd60d678d4fb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
