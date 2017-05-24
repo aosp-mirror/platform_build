@@ -885,8 +885,7 @@ endef
 
 # These goals don't need to collect and include Android.mks/CleanSpec.mks
 # in the source tree.
-dont_bother_goals := dataclean installclean \
-    help out \
+dont_bother_goals := out \
     snod systemimage-nodeps \
     stnod systemtarball-nodeps \
     userdataimage-nodeps userdatatarball-nodeps \

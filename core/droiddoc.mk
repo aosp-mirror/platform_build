@@ -175,6 +175,7 @@ $(full_target): \
 	$(hide) ( \
 		javadoc \
                 -encoding UTF-8 \
+                -source 1.8 \
                 \@$(PRIVATE_SRC_LIST_FILE) \
                 -J-Xmx1600m \
                 -J-XX:-OmitStackTraceInFastThrow \
@@ -216,7 +217,7 @@ $(full_target): $(full_src_files) $(full_java_lib_deps)
                 \@$(PRIVATE_SRC_LIST_FILE) \
                 -J-Xmx1024m \
                 -XDignore.symbol.file \
-                $(if $(LEGACY_USE_JAVA7),,-Xdoclint:none) \
+                -Xdoclint:none \
                 $(PRIVATE_PROFILING_OPTIONS) \
                 $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
                 $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH)) \
