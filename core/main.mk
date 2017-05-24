@@ -193,6 +193,8 @@ ifneq ($(PLATFORM_VERSION_CODENAME),REL)
   ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
 endif
 
+ADDITIONAL_BUILD_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
+
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
