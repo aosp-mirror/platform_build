@@ -32,14 +32,18 @@ endif
 
 # Device Manifest
 ifdef DEVICE_MANIFEST_FILE
+# $(DEVICE_MANIFEST_FILE) can be a list of files
 include $(CLEAR_VARS)
 LOCAL_MODULE        := manifest.xml
 LOCAL_MODULE_CLASS  := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)
 
 GEN := $(local-generated-sources-dir)/manifest.xml
+$(GEN): PRIVATE_DEVICE_MANIFEST_FILE := $(DEVICE_MANIFEST_FILE)
 $(GEN): $(DEVICE_MANIFEST_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
-	BOARD_SEPOLICY_VERS=$(BOARD_SEPOLICY_VERS) $(HOST_OUT_EXECUTABLES)/assemble_vintf -i $< -o $@
+	BOARD_SEPOLICY_VERS=$(BOARD_SEPOLICY_VERS) \
+	$(HOST_OUT_EXECUTABLES)/assemble_vintf -o $@ \
+		-i $(call normalize-path-list,$(PRIVATE_DEVICE_MANIFEST_FILE))
 
 LOCAL_PREBUILT_MODULE_FILE := $(GEN)
 include $(BUILD_PREBUILT)
