@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "06f0ccf5_025aaa74",
+        "filename": "core/tasks/build_custom_images.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-24T05:48:32Z",
+      "side": 1,
+      "message": "nit: missing \u0027M\u0027",
+      "range": {
+        "startLine": 47,
+        "startChar": 30,
+        "endLine": 47,
+        "endChar": 31
+      },
+      "revId": "df25d44b5058c86d2960073eff0e97642af27326",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4116dd50_c9874ddc",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-24T05:48:32Z",
+      "side": 1,
+      "message": "Shall we also have a check to assert these two are not set at the same time?",
+      "range": {
+        "startLine": 91,
+        "startChar": 23,
+        "endLine": 91,
+        "endChar": 90
+      },
+      "revId": "df25d44b5058c86d2960073eff0e97642af27326",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a5c37259_1258d801",
         "filename": "core/tasks/tools/build_custom_image.mk",
         "patchSetId": 2
