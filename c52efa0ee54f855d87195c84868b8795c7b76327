@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "56343339_7a73a9b2",
+        "filename": "core/Makefile",
+        "patchSetId": 10
+      },
+      "lineNbr": 1843,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-24T09:25:03Z",
+      "side": 1,
+      "message": "For build-systemimage-target to invoke generate-userimage-prop-dictionary as well.",
+      "range": {
+        "startLine": 1843,
+        "startChar": 0,
+        "endLine": 1843,
+        "endChar": 21
+      },
+      "revId": "c52efa0ee54f855d87195c84868b8795c7b76327",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fb3ac449_aa5ef73f",
+        "filename": "core/Makefile",
+        "patchSetId": 10
+      },
+      "lineNbr": 1846,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-24T09:25:03Z",
+      "side": 1,
+      "message": "This is depended by the following build targets which invoke \u0027generate-userimage-prop-dictionary\u0027:\n - build-userdataimage-target\n - build-cacheimage-target\n - build-systemotherimage-target\n - build-vendorimage-target",
+      "range": {
+        "startLine": 1846,
+        "startChar": 0,
+        "endLine": 1846,
+        "endChar": 24
+      },
+      "revId": "c52efa0ee54f855d87195c84868b8795c7b76327",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
