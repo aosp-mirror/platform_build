@@ -46,6 +46,30 @@
       "revId": "adfabd5da85e7e7f334df123c2f02947899aae85",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fedeb6bf_0cd0969e",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 604,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-24T08:36:53Z",
+      "side": 1,
+      "message": "Done! By using $$(...) instead of $(shell ...).\nThanks.",
+      "parentUuid": "930bcebb_c37ca75d",
+      "range": {
+        "startLine": 604,
+        "startChar": 0,
+        "endLine": 604,
+        "endChar": 25
+      },
+      "revId": "adfabd5da85e7e7f334df123c2f02947899aae85",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
