@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5617a46d_23e1e89e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-24T08:36:01Z",
+      "side": 1,
+      "message": "Hi,\nBOARD_AVB_VBMETA_VERSION is actually just the minimum libavb version of system.img.\n\nFor libavb version used in bootloader, it\u0027s sysprop \u0027ro.boot.vbmeta.avb_version\u0027.\n\nOk, documented it in: \nhttps://android-review.googlesource.com/#/c/401872/1/README.md@486",
+      "parentUuid": "c20be686_41dd3ce0",
+      "revId": "ed8e95adf771efb42b97889c0901ef4cbd7d4cec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "348022c8_5c3c5331",
         "filename": "/COMMIT_MSG",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2017-05-19T19:43:26Z",
       "side": 1,
       "message": "Shouldn\u0027t the comparison be  \u003e\u003d or \u003c\u003d instead of \u003d\u003d?",
+      "revId": "ed8e95adf771efb42b97889c0901ef4cbd7d4cec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "af887040_4d54274d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-24T08:36:01Z",
+      "side": 1,
+      "message": "Same as above, it\u0027s a static value and the check will be performed else where.\n\nSee here for how it\u0027s checked:\nhttps://googleplex-android-review.git.corp.google.com/#/c/2302590/2/RuntimeInfo.cpp\n\nOr the design doc:\nhttps://docs.google.com/document/d/1jnCNutEghY46s3FlC1uZ8OKZycn07-ah6M0HgL9L8ho/edit#heading\u003dh.e6w538w3glef",
+      "parentUuid": "348022c8_5c3c5331",
       "revId": "ed8e95adf771efb42b97889c0901ef4cbd7d4cec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -59,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "b4bd140d_fb0aff9d",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-24T08:36:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0b7a53b3_a405f00f",
+      "range": {
+        "startLine": 150,
+        "startChar": 13,
+        "endLine": 150,
+        "endChar": 19
+      },
+      "revId": "ed8e95adf771efb42b97889c0901ef4cbd7d4cec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3880c9a6_3a794ccd",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 8
@@ -70,6 +130,24 @@
       "writtenOn": "2017-05-19T19:43:26Z",
       "side": 1,
       "message": "Instead of this it would be nicer to have \u0027avbtool info_image --print_minimum_libavb_version\u0027 which just prints e.g. \"1.2\" and exits.",
+      "revId": "ed8e95adf771efb42b97889c0901ef4cbd7d4cec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "50b09a09_26009bb8",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-05-24T08:36:01Z",
+      "side": 1,
+      "message": "Sounds good!\nDone here: https://android-review.googlesource.com/#/c/401872/",
+      "parentUuid": "3880c9a6_3a794ccd",
       "revId": "ed8e95adf771efb42b97889c0901ef4cbd7d4cec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
