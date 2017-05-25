@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "70adb5e4_30fbe2cc",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-25T20:09:15Z",
+      "side": 1,
+      "message": "I prefer to fix b/62096364 first. Then we don\u0027t need to guard this with \"is_signing\".",
+      "range": {
+        "startLine": 129,
+        "startChar": 4,
+        "endLine": 132,
+        "endChar": 59
+      },
+      "revId": "9260814d07235c49337c28f03f038d06e9b30dd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "341bcac0_5580ec66",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-25T20:09:15Z",
+      "side": 1,
+      "message": "add_img_to_target_files",
+      "revId": "9260814d07235c49337c28f03f038d06e9b30dd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98079746_ad7ec368",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-25T20:09:15Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 654,
+        "startChar": 22,
+        "endLine": 654,
+        "endChar": 31
+      },
+      "revId": "9260814d07235c49337c28f03f038d06e9b30dd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34c7ceae_ac5166a5",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 656,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-25T20:09:15Z",
+      "side": 1,
+      "message": "cannot append?",
+      "range": {
+        "startLine": 656,
+        "startChar": 13,
+        "endLine": 656,
+        "endChar": 19
+      },
+      "revId": "9260814d07235c49337c28f03f038d06e9b30dd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
