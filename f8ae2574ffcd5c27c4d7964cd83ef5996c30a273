@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b666c45b_50dbd8a9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 2699,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-25T17:32:02Z",
+      "side": 1,
+      "message": "Same here, comment needs to go outside the recipe",
+      "revId": "f8ae2574ffcd5c27c4d7964cd83ef5996c30a273",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
