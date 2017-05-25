@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a5a72cb7_6a5cb615",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2540,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-25T16:53:21Z",
+      "side": 1,
+      "message": "This goes in a recipe, which means the # will be passed to bash in the middle of a complicated command line.  It is safer not to use comments in recipes.",
+      "revId": "30c311aff852823068f24d3ffe0ad3bc87418b27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
