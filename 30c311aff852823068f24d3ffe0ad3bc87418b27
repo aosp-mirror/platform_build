@@ -16,6 +16,24 @@
       "revId": "30c311aff852823068f24d3ffe0ad3bc87418b27",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7845eb01_1502efe3",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2540,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-05-25T17:11:22Z",
+      "side": 1,
+      "message": "Moved the comment to just before the start of the recipe.",
+      "parentUuid": "a5a72cb7_6a5cb615",
+      "revId": "30c311aff852823068f24d3ffe0ad3bc87418b27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
