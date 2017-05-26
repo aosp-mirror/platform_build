@@ -129,11 +129,7 @@ BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java
 # Parse out any modifier targets.
 # ###############################################################
 
-# The 'showcommands' goal says to show the full command
-# lines being executed, instead of a short message about
-# the kind of operation being done.
-SHOW_COMMANDS:= $(filter showcommands,$(MAKECMDGOALS))
-hide := $(if $(SHOW_COMMANDS),,@)
+hide := @
 
 ################################################################
 # Tools needed in product configuration makefiles.
