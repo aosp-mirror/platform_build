@@ -22,6 +22,30 @@
       "revId": "0a5e81ea5ab3a0ed8244fbaa2a29141616fd9ee2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7e0aa6ef_ec3619ae",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 1057232
+      },
+      "writtenOn": "2017-05-26T20:50:22Z",
+      "side": 1,
+      "message": "I see, it is good to know that.\nFixed.",
+      "parentUuid": "47186108_909f8067",
+      "range": {
+        "startLine": 1052,
+        "startChar": 24,
+        "endLine": 1053,
+        "endChar": 12
+      },
+      "revId": "0a5e81ea5ab3a0ed8244fbaa2a29141616fd9ee2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
