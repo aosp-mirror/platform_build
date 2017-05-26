@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "59fa4563_50fa8c90",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-26T21:53:00Z",
+      "side": 1,
+      "message": "\"SYSTEM/\"",
+      "range": {
+        "startLine": 7,
+        "startChar": 32,
+        "endLine": 7,
+        "endChar": 39
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b7326f9_e9d23271",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-26T21:53:00Z",
+      "side": 1,
+      "message": "recovery patch",
+      "range": {
+        "startLine": 7,
+        "startChar": 43,
+        "endLine": 7,
+        "endChar": 51
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e332434_37061074",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-26T21:53:00Z",
+      "side": 1,
+      "message": "This is not true (and this has been confusing based on the bad flag name). By specifying --rebuild_recovery, it will only rebuild the recovery _patch_, if IMAGES/recovery.img already exists. Whether to rebuild the recovery image doesn\u0027t rely on this flag.",
+      "range": {
+        "startLine": 9,
+        "startChar": 58,
+        "endLine": 10,
+        "endChar": 5
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cbdf369_1ed2bd6a",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-26T21:53:00Z",
+      "side": 1,
+      "message": "use common.ZipWrite() instead.",
+      "range": {
+        "startLine": 135,
+        "startChar": 6,
+        "endLine": 135,
+        "endChar": 24
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "836189bb_d48ac51a",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-26T21:53:00Z",
+      "side": 1,
+      "message": "--rebuild_recovery has been confusing. So name it like ReplaceRecoveryPatchFiles()?\n\nSimilarly for the newly added list: replace_recovery_patch_files_list?",
+      "range": {
+        "startLine": 395,
+        "startChar": 4,
+        "endLine": 395,
+        "endChar": 24
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "890a7123_613ce76e",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-26T21:53:00Z",
+      "side": 1,
+      "message": "nit: \"SYSTEM/\" is the actual one in the zip.",
+      "range": {
+        "startLine": 396,
+        "startChar": 36,
+        "endLine": 396,
+        "endChar": 43
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dad662f3_e49d5f6e",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-26T21:53:00Z",
+      "side": 1,
+      "message": "common.ZipWrite() directly",
+      "range": {
+        "startLine": 408,
+        "startChar": 4,
+        "endLine": 409,
+        "endChar": 52
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
