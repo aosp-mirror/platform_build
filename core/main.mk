@@ -91,7 +91,7 @@ include $(BUILD_SYSTEM)/cleanbuild.mk
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
 # (must be defined before including definitions.make)
-INTERNAL_MODIFIER_TARGETS := showcommands all
+INTERNAL_MODIFIER_TARGETS := all
 
 # EMMA_INSTRUMENT_STATIC merges the static emma library to each emma-enabled module.
 ifeq (true,$(EMMA_INSTRUMENT_STATIC))
@@ -326,7 +326,7 @@ endef
 endif
 
 
-# If they only used the modifier goals (showcommands, etc), we'll actually
+# If they only used the modifier goals (all, etc), we'll actually
 # build the default target.
 ifeq ($(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS)),)
 .PHONY: $(INTERNAL_MODIFIER_TARGETS)
@@ -1126,10 +1126,6 @@ modules:
 	@echo "Available sub-modules:"
 	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
 	      tr -s ' ' '\n' | sort -u | $(COLUMN)
-
-.PHONY: showcommands
-showcommands:
-	@echo >/dev/null
 
 .PHONY: nothing
 nothing:
