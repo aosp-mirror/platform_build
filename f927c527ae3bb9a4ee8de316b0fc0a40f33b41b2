@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41e3cdd6_c5db8b70",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-26T19:47:46Z",
+      "side": 1,
+      "message": "This should go inside the dont_bother check (line 400)",
+      "revId": "f927c527ae3bb9a4ee8de316b0fc0a40f33b41b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
