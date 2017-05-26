@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "e2b14ab9_3b3b8ffa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-05-26T22:20:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0b7326f9_e9d23271",
+      "range": {
+        "startLine": 7,
+        "startChar": 43,
+        "endLine": 7,
+        "endChar": 51
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6e332434_37061074",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -59,6 +83,30 @@
       "writtenOn": "2017-05-26T21:53:00Z",
       "side": 1,
       "message": "This is not true (and this has been confusing based on the bad flag name). By specifying --rebuild_recovery, it will only rebuild the recovery _patch_, if IMAGES/recovery.img already exists. Whether to rebuild the recovery image doesn\u0027t rely on this flag.",
+      "range": {
+        "startLine": 9,
+        "startChar": 58,
+        "endLine": 10,
+        "endChar": 5
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "154af290_2955dd05",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-05-26T22:20:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6e332434_37061074",
       "range": {
         "startLine": 9,
         "startChar": 58,
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "2794d709_df247fb0",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-05-26T22:20:54Z",
+      "side": 1,
+      "message": "somehow the comment in common.zipwrite() and zipwritestr() leads me to think zipwrite() may fail for zip64...",
+      "parentUuid": "3cbdf369_1ed2bd6a",
+      "range": {
+        "startLine": 135,
+        "startChar": 6,
+        "endLine": 135,
+        "endChar": 24
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "836189bb_d48ac51a",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 1
@@ -105,6 +177,30 @@
       "writtenOn": "2017-05-26T21:53:00Z",
       "side": 1,
       "message": "--rebuild_recovery has been confusing. So name it like ReplaceRecoveryPatchFiles()?\n\nSimilarly for the newly added list: replace_recovery_patch_files_list?",
+      "range": {
+        "startLine": 395,
+        "startChar": 4,
+        "endLine": 395,
+        "endChar": 24
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfa46bb9_2bb3952d",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-05-26T22:20:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "836189bb_d48ac51a",
       "range": {
         "startLine": 395,
         "startChar": 4,
@@ -140,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "715efbb7_0e5127f6",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-05-26T22:20:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "890a7123_613ce76e",
+      "range": {
+        "startLine": 396,
+        "startChar": 36,
+        "endLine": 396,
+        "endChar": 43
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dad662f3_e49d5f6e",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 1
@@ -151,6 +271,30 @@
       "writtenOn": "2017-05-26T21:53:00Z",
       "side": 1,
       "message": "common.ZipWrite() directly",
+      "range": {
+        "startLine": 408,
+        "startChar": 4,
+        "endLine": 409,
+        "endChar": 52
+      },
+      "revId": "fd59cd3f1f6428d04383dfbb365a567f7e67f377",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ffa4a57d_1f635cda",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-05-26T22:20:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dad662f3_e49d5f6e",
       "range": {
         "startLine": 408,
         "startChar": 4,
