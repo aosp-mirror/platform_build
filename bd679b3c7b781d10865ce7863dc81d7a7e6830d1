@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "247d11f1_0a9611b3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-26T22:36:21Z",
+      "side": 1,
+      "message": "SYSTEM/ (and below)",
+      "range": {
+        "startLine": 10,
+        "startChar": 42,
+        "endLine": 10,
+        "endChar": 49
+      },
+      "revId": "bd679b3c7b781d10865ce7863dc81d7a7e6830d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "952053cd_8dd0a4fa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-26T22:36:21Z",
+      "side": 1,
+      "message": "Drop the leading \"/\", since \"/SYSTEM/reocovery-from-boot.p\" doesn\u0027t exist in the TF.zip (we pack relative paths only).",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 28
+      },
+      "revId": "bd679b3c7b781d10865ce7863dc81d7a7e6830d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
