@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47186108_909f8067",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-26T20:28:14Z",
+      "side": 1,
+      "message": "The way we\u0027re doing this everywhere else is to use the path name to the shared library instead of -l:\n\n  $(call intermediates-dir-for,SHARED_LIBRARIES,libRSSupport)/libRSSupport.so",
+      "range": {
+        "startLine": 1052,
+        "startChar": 24,
+        "endLine": 1053,
+        "endChar": 12
+      },
+      "revId": "0a5e81ea5ab3a0ed8244fbaa2a29141616fd9ee2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
