@@ -1049,8 +1049,9 @@ $(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) -nostdlib \
 	$(dir $@)/$(notdir $(<:.bc=.o)) \
 	$(RS_PREBUILT_COMPILER_RT) \
 	-o $@ $(TARGET_GLOBAL_LDFLAGS) -Wl,--hash-style=sysv -L prebuilts/gcc/ \
-	$(RS_PREBUILT_LIBPATH) -L $(TARGET_OUT_INTERMEDIATE_LIBRARIES) \
-	-lRSSupport -lm -lc
+	$(RS_PREBUILT_LIBPATH) \
+	$(call intermediates-dir-for,SHARED_LIBRARIES,libRSSupport)/libRSSupport.so \
+	-lm -lc
 endef
 
 ###########################################################
