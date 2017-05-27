@@ -42,6 +42,24 @@
     },
     {
       "key": {
+        "uuid": "40add90f_9a05c943",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-05-27T00:23:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "341bcac0_5580ec66",
+      "revId": "9260814d07235c49337c28f03f038d06e9b30dd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "98079746_ad7ec368",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 3
@@ -65,6 +83,30 @@
     },
     {
       "key": {
+        "uuid": "4b4ad332_05d0e7db",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-05-27T00:23:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "98079746_ad7ec368",
+      "range": {
+        "startLine": 654,
+        "startChar": 22,
+        "endLine": 654,
+        "endChar": 31
+      },
+      "revId": "9260814d07235c49337c28f03f038d06e9b30dd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "34c7ceae_ac5166a5",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 3
@@ -76,6 +118,30 @@
       "writtenOn": "2017-05-25T20:09:15Z",
       "side": 1,
       "message": "cannot append?",
+      "range": {
+        "startLine": 656,
+        "startChar": 13,
+        "endLine": 656,
+        "endChar": 19
+      },
+      "revId": "9260814d07235c49337c28f03f038d06e9b30dd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "81559db9_a6850669",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 656,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-05-27T00:23:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34c7ceae_ac5166a5",
       "range": {
         "startLine": 656,
         "startChar": 13,
