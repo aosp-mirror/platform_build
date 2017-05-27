@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd4061f4_ce6c6438",
+        "filename": "core/host_dalvik_java_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-27T02:31:26Z",
+      "side": 1,
+      "message": "Technically, the dependencies should still be in full_classes_compiled_jar / etc, except for any that we need to handle the find commands. We could teach any dependency checkers about the graph and what restat does, but it doesn\u0027t work if we want to rely on hashes of inputs.",
+      "range": {
+        "startLine": 89,
+        "startChar": 0,
+        "endLine": 89,
+        "endChar": 21
+      },
+      "revId": "a60120b6d8af511fbc873c541bf1777126919f3b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4734c8a0_1a156f6d",
+        "filename": "core/host_dalvik_java_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-27T02:31:26Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 90,
+        "startChar": 11,
+        "endLine": 90,
+        "endChar": 19
+      },
+      "revId": "a60120b6d8af511fbc873c541bf1777126919f3b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "225224cb_329b2c56",
+        "filename": "core/host_java_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-27T02:31:26Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 70,
+        "startChar": 11,
+        "endLine": 70,
+        "endChar": 19
+      },
+      "revId": "a60120b6d8af511fbc873c541bf1777126919f3b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db560432_4119bede",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-27T02:31:26Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 432,
+        "startChar": 11,
+        "endLine": 432,
+        "endChar": 19
+      },
+      "revId": "a60120b6d8af511fbc873c541bf1777126919f3b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
