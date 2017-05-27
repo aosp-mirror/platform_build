@@ -69,6 +69,7 @@ OPTIONS = common.OPTIONS
 
 OPTIONS.add_missing = False
 OPTIONS.rebuild_recovery = False
+OPTIONS.replace_recovery_patch_files_list = []
 OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
 OPTIONS.is_signing = False
@@ -126,6 +127,12 @@ def AddSystem(output_zip, prefix="IMAGES/", recovery_img=None, boot_img=None):
     ofile = open(os.path.join(OPTIONS.input_tmp, "SYSTEM", fn), "w")
     ofile.write(data)
     ofile.close()
+
+    arc_name = "SYSTEM/" + fn
+    if arc_name in output_zip.namelist():
+      OPTIONS.replace_recovery_patch_files_list.append(arc_name)
+    else:
+      common.ZipWrite(output_zip, ofile.name, arc_name)
 
   if OPTIONS.rebuild_recovery:
     print("Building new recovery patch")
@@ -385,6 +392,23 @@ def AddCache(output_zip, prefix="IMAGES/"):
   img.Write()
 
 
+def ReplaceRecoveryPatchFiles(zip_filename):
+  """Update the related files under SYSTEM/ after rebuilding recovery."""
+
+  cmd = ["zip", "-d", zip_filename] + OPTIONS.replace_recovery_patch_files_list
+  p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  p.communicate()
+
+  output_zip = zipfile.ZipFile(zip_filename, "a",
+                               compression=zipfile.ZIP_DEFLATED,
+                               allowZip64=True)
+  for item in OPTIONS.replace_recovery_patch_files_list:
+    file_path = os.path.join(OPTIONS.input_tmp, item)
+    assert os.path.exists(file_path)
+    common.ZipWrite(output_zip, file_path, arcname=item)
+  common.ZipClose(output_zip)
+
+
 def AddImagesToTargetFiles(filename):
   if os.path.isdir(filename):
     OPTIONS.input_tmp = os.path.abspath(filename)
@@ -558,6 +582,9 @@ def AddImagesToTargetFiles(filename):
 
   if output_zip:
     common.ZipClose(output_zip)
+    if OPTIONS.replace_recovery_patch_files_list:
+      ReplaceRecoveryPatchFiles(output_zip.filename)
+
 
 def main(argv):
   def option_handler(o, a):
