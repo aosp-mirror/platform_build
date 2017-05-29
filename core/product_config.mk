@@ -88,6 +88,7 @@ INTERNAL_VALID_VARIANTS := user userdebug eng
 # Provide "PRODUCT-<prodname>-<goal>" targets, which lets you build
 # a particular configuration without needing to set up the environment.
 #
+ifndef KATI
 product_goals := $(strip $(filter PRODUCT-%,$(MAKECMDGOALS)))
 ifdef product_goals
   # Scrape the product and build names out of the goal,
@@ -113,54 +114,42 @@ ifdef product_goals
     $(error "tests" has been deprecated as a build variant. Use it as a build goal instead.)
   endif
 
-  # The build server wants to do make PRODUCT-dream-installclean
-  # which really means TARGET_PRODUCT=dream make installclean.
+  # The build server wants to do make PRODUCT-dream-sdk
+  # which really means TARGET_PRODUCT=dream make sdk.
   ifneq ($(filter-out $(INTERNAL_VALID_VARIANTS),$(TARGET_BUILD_VARIANT)),)
-    MAKECMDGOALS := $(MAKECMDGOALS) $(TARGET_BUILD_VARIANT)
+    override MAKECMDGOALS := $(MAKECMDGOALS) $(TARGET_BUILD_VARIANT)
     TARGET_BUILD_VARIANT := userdebug
     default_goal_substitution :=
   else
-    default_goal_substitution := $(DEFAULT_GOAL)
+    default_goal_substitution := droid
   endif
 
   # Replace the PRODUCT-* goal with the build goal that it refers to.
   # Note that this will ensure that it appears in the same relative
   # position, in case it matters.
-  #
-  # Note that modifying this will not affect the goals that make will
-  # attempt to build, but it's important because we inspect this value
-  # in certain situations (like for "make sdk").
-  #
-  MAKECMDGOALS := $(patsubst $(goal_name),$(default_goal_substitution),$(MAKECMDGOALS))
-
-  # Define a rule for the PRODUCT-* goal, and make it depend on the
-  # patched-up command-line goals as well as any other goals that we
-  # want to force.
-  #
-.PHONY: $(goal_name)
-$(goal_name): $(MAKECMDGOALS)
+  override MAKECMDGOALS := $(patsubst $(goal_name),$(default_goal_substitution),$(MAKECMDGOALS))
 endif
+endif # !KATI
 # else: Use the value set in the environment or buildspec.mk.
 
 # ---------------------------------------------------------------
 # Provide "APP-<appname>" targets, which lets you build
 # an unbundled app.
 #
+ifndef KATI
 unbundled_goals := $(strip $(filter APP-%,$(MAKECMDGOALS)))
 ifdef unbundled_goals
   ifneq ($(words $(unbundled_goals)),1)
     $(error Only one APP-* goal may be specified; saw "$(unbundled_goals)")
   endif
   TARGET_BUILD_APPS := $(strip $(subst -, ,$(patsubst APP-%,%,$(unbundled_goals))))
-  ifneq ($(filter $(DEFAULT_GOAL),$(MAKECMDGOALS)),)
-    MAKECMDGOALS := $(patsubst $(unbundled_goals),,$(MAKECMDGOALS))
+  ifneq ($(filter droid,$(MAKECMDGOALS)),)
+    override MAKECMDGOALS := $(patsubst $(unbundled_goals),,$(MAKECMDGOALS))
   else
-    MAKECMDGOALS := $(patsubst $(unbundled_goals),$(DEFAULT_GOAL),$(MAKECMDGOALS))
+    override MAKECMDGOALS := $(patsubst $(unbundled_goals),droid,$(MAKECMDGOALS))
   endif
-
-.PHONY: $(unbundled_goals)
-$(unbundled_goals): $(MAKECMDGOALS)
 endif # unbundled_goals
+endif
 
 # Default to building dalvikvm on hosts that support it...
 ifeq ($(HOST_OS),linux)
