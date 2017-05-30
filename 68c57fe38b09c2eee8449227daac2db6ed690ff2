@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "90f74707_34f5dfe2",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 466,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-05-30T18:18:30Z",
+      "side": 1,
+      "message": "it seems all variables setting below are using :\u003d instead of \u003d",
+      "revId": "68c57fe38b09c2eee8449227daac2db6ed690ff2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
