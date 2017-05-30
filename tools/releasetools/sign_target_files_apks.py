@@ -92,8 +92,6 @@ import copy
 import errno
 import os
 import re
-import shutil
-import stat
 import subprocess
 import tempfile
 import zipfile
@@ -105,6 +103,7 @@ OPTIONS = common.OPTIONS
 
 OPTIONS.extra_apks = {}
 OPTIONS.key_map = {}
+OPTIONS.rebuild_recovery = False
 OPTIONS.replace_ota_keys = False
 OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
@@ -187,29 +186,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
   maxsize = max([len(os.path.basename(i.filename))
                  for i in input_tf_zip.infolist()
                  if i.filename.endswith('.apk')])
-  rebuild_recovery = False
   system_root_image = misc_info.get("system_root_image") == "true"
-
-  # tmpdir will only be used to regenerate the recovery-from-boot patch.
-  tmpdir = tempfile.mkdtemp()
-  # We're not setting the permissions precisely as in attr, because that work
-  # will be handled by mkbootfs (using the values from the canned or the
-  # compiled-in fs_config).
-  def write_to_temp(fn, attr, data):
-    fn = os.path.join(tmpdir, fn)
-    if fn.endswith("/"):
-      fn = os.path.join(tmpdir, fn)
-      os.mkdir(fn)
-    else:
-      d = os.path.dirname(fn)
-      if d and not os.path.exists(d):
-        os.makedirs(d)
-
-      if stat.S_ISLNK(attr >> 16):
-        os.symlink(data, fn)
-      else:
-        with open(fn, "wb") as f:
-          f.write(data)
 
   for info in input_tf_zip.infolist():
     if info.filename.startswith("IMAGES/"):
@@ -241,21 +218,17 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       print "rewriting %s:" % (info.filename,)
       new_data = RewriteProps(data, misc_info)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
-      if info.filename in ("BOOT/RAMDISK/default.prop",
-                           "ROOT/default.prop",
-                           "RECOVERY/RAMDISK/default.prop"):
-        write_to_temp(info.filename, info.external_attr, new_data)
 
     elif info.filename.endswith("mac_permissions.xml"):
       print "rewriting %s with new keys." % (info.filename,)
       new_data = ReplaceCerts(data)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
 
-    # Trigger a rebuild of the recovery patch if needed.
+    # Ask add_img_to_target_files to rebuild the recovery patch if needed.
     elif info.filename in ("SYSTEM/recovery-from-boot.p",
                            "SYSTEM/etc/recovery.img",
                            "SYSTEM/bin/install-recovery.sh"):
-      rebuild_recovery = True
+      OPTIONS.rebuild_recovery = True
 
     # Don't copy OTA keys if we're replacing them.
     elif (OPTIONS.replace_ota_keys and
@@ -287,31 +260,12 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif info.filename == "META/care_map.txt":
       pass
 
-    # Copy BOOT/, RECOVERY/, META/, ROOT/ to rebuild recovery patch. This case
-    # must come AFTER other matching rules.
-    elif (info.filename.startswith("BOOT/") or
-          info.filename.startswith("RECOVERY/") or
-          info.filename.startswith("META/") or
-          info.filename.startswith("ROOT/") or
-          info.filename == "SYSTEM/etc/recovery-resource.dat"):
-      write_to_temp(info.filename, info.external_attr, data)
-      common.ZipWriteStr(output_tf_zip, out_info, data)
-
     # A non-APK file; copy it verbatim.
     else:
       common.ZipWriteStr(output_tf_zip, out_info, data)
 
   if OPTIONS.replace_ota_keys:
-    new_recovery_keys = ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
-    if new_recovery_keys:
-      if system_root_image:
-        recovery_keys_location = "BOOT/RAMDISK/res/keys"
-      else:
-        recovery_keys_location = "RECOVERY/RAMDISK/res/keys"
-      # The "new_recovery_keys" has been already written into the output_tf_zip
-      # while calling ReplaceOtaKeys(). We're just putting the same copy to
-      # tmpdir in case we need to regenerate the recovery-from-boot patch.
-      write_to_temp(recovery_keys_location, 0o755 << 16, new_recovery_keys)
+    ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
 
   # Replace the keyid string in META/misc_info.txt.
   if OPTIONS.replace_verity_private_key:
@@ -325,33 +279,13 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       dest = "BOOT/RAMDISK/verity_key"
     # We are replacing the one in boot image only, since the one under
     # recovery won't ever be needed.
-    new_data = ReplaceVerityPublicKey(
+    ReplaceVerityPublicKey(
         output_tf_zip, dest, OPTIONS.replace_verity_public_key[1])
-    write_to_temp(dest, 0o755 << 16, new_data)
 
   # Replace the keyid string in BOOT/cmdline.
   if OPTIONS.replace_verity_keyid:
-    new_cmdline = ReplaceVerityKeyId(input_tf_zip, output_tf_zip,
-      OPTIONS.replace_verity_keyid[1])
-    # Writing the new cmdline to tmpdir is redundant as the bootimage
-    # gets build in the add_image_to_target_files and rebuild_recovery
-    # is not exercised while building the boot image for the A/B
-    # path
-    write_to_temp("BOOT/cmdline", 0o755 << 16, new_cmdline)
-
-  if rebuild_recovery:
-    recovery_img = common.GetBootableImage(
-        "recovery.img", "recovery.img", tmpdir, "RECOVERY", info_dict=misc_info)
-    boot_img = common.GetBootableImage(
-        "boot.img", "boot.img", tmpdir, "BOOT", info_dict=misc_info)
-
-    def output_sink(fn, data):
-      common.ZipWriteStr(output_tf_zip, "SYSTEM/" + fn, data)
-
-    common.MakeRecoveryPatch(tmpdir, output_sink, recovery_img, boot_img,
-                             info_dict=misc_info)
-
-  shutil.rmtree(tmpdir)
+    ReplaceVerityKeyId(input_tf_zip, output_tf_zip,
+                       OPTIONS.replace_verity_keyid[1])
 
 
 def ReplaceCerts(data):
@@ -715,7 +649,12 @@ def main(argv):
   common.ZipClose(output_zip)
 
   # Skip building userdata.img and cache.img when signing the target files.
-  new_args = ["--is_signing", args[1]]
+  new_args = ["--is_signing"]
+  # add_img_to_target_files builds the system image from scratch, so the
+  # recovery patch is guaranteed to be regenerated there.
+  if OPTIONS.rebuild_recovery:
+    new_args.append("--rebuild_recovery")
+  new_args.append(args[1])
   add_img_to_target_files.main(new_args)
 
   print "done."
