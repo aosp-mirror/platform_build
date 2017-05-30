@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e2dea29b_1ab7fa4d",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1955,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-30T19:55:59Z",
+      "side": 1,
+      "message": "Adding the missing dependency for this line (along with others around here) is tracked in https://android-review.googlesource.com/c/398995/.",
+      "range": {
+        "startLine": 1955,
+        "startChar": 1,
+        "endLine": 1955,
+        "endChar": 90
+      },
+      "revId": "fbadff6d70937aece64a4ecb2f74001a2691defd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
