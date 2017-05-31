@@ -174,6 +174,23 @@
     },
     {
       "key": {
+        "uuid": "8c3be7d9_fd0527df",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-05-31T17:45:13Z",
+      "side": 1,
+      "message": "For the filename target, we can tell people more specific like:\nit should be:\nPath.join(\".intermediates\", ModuleDir, ModuleName, ModuleSubDir, filename)\nthe ModuleSubDir is the variation name created by mutators applied to the original module.",
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "25ed8aa5_3593b8b7",
         "filename": "core/help.sh",
         "patchSetId": 1
@@ -285,6 +302,46 @@
         "endLine": 53,
         "endChar": 52
       },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "47178347_a1f9592d",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-05-31T17:45:13Z",
+      "side": 1,
+      "message": "The build-\u003cproduct\u003e-\u003cvariant\u003e.ninja are all the phony targets Make used to control mma/mm?, I am not sure user care about all those phony targets.\nI think out/soong/build.ninja is How Soong generate target build rule, which is sometimes more useful for user to check if their build rule is expected or not from debugging perspectives.",
+      "range": {
+        "startLine": 53,
+        "startChar": 54,
+        "endLine": 53,
+        "endChar": 0
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ef5b9b4_8cce67d0",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-05-31T17:45:13Z",
+      "side": 1,
+      "message": "Another thing I want to mention maybe we can document how out/soong/Android-\u003cproduct\u003e-\u003cvariant\u003e.mk get used? since it is installation information that Soong exported to Make. For a new user, like me, when I  add a new project, I am confused on how to figure out where the installation information I can get.",
       "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
