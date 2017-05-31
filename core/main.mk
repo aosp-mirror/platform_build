@@ -417,6 +417,8 @@ ifdef PDK_FUSION_PLATFORM_ZIP
 include $(BUILD_SYSTEM)/pdk_fusion_modules.mk
 endif # PDK_FUSION_PLATFORM_ZIP
 
+droid_targets : blueprint_tools
+
 endif # dont_bother
 
 endif # ONE_SHOT_MAKEFILE
