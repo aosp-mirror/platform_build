@@ -2,6 +2,46 @@
   "comments": [
     {
       "key": {
+        "uuid": "8add66b9_5ff49c8d",
+        "filename": "core/help.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "This file is only called by build/soong/ui/build/build.go -- if we\u0027re going to change it to a shell script just remove this file and modify the caller",
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c609884e_d1fdb78c",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "This would need to handle OUT_DIR_COMMON_BASE too, though if you execute within the soong_ui wrapper, $OUT_DIR will be set properly for all of these defaults (and TOP\u003d\u003d$PWD)",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 2
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6ba7cc1a_827a319b",
         "filename": "core/help.sh",
         "patchSetId": 1
@@ -25,6 +65,75 @@
     },
     {
       "key": {
+        "uuid": "ed9d87da_c3e06d34",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "This is one of the most advanced targets that we only expect to be used by build servers. We\u0027d much prefer users set the correct environment variables through lunch, or manually.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 70
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3cd9c33_aa785f9d",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "This isn\u0027t even complete -- PRODUCT-* supports a random target in here too, along with some special cases that default variant to eng or userdebug based on the target. I\u0027d love to remove that, but it\u0027s still being used.\n\nReally, I\u0027d prefer to remove PRODUCT-* and APP-* entirely. Everyone should be using the environment variables instead.",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 21,
+        "endChar": 13
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a31e47f_ad629abc",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "It sets all sorts of other environment variables too, and significant number of vendor makefiles seem to expect them to be set, even though they\u0027re not when building with PRODUCT-*, so their builds break on our build servers.",
+      "range": {
+        "startLine": 34,
+        "startChar": 6,
+        "endLine": 35,
+        "endChar": 63
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "87f927de_09f8e5da",
         "filename": "core/help.sh",
         "patchSetId": 1
@@ -39,6 +148,29 @@
       "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2cd81a62_a8ab2e7f",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "You may want to mention that the filename is not relative to the current directory, but relative to the top of the source tree (at least for now, another thing that would be nice to fix...)",
+      "range": {
+        "startLine": 37,
+        "startChar": 2,
+        "endLine": 37,
+        "endChar": 74
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     },
     {
       "key": {
@@ -88,6 +220,75 @@
     },
     {
       "key": {
+        "uuid": "6d7d8f9b_ba147dae",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "This name can change based on the arguments passed in. It also doesn\u0027t contain all of the available targets -- it\u0027s missing all the soong-defined ones. I\u0027m not sure we should be pointing users to the raw ninja files. (Maybe advanced users / build system docs, but not the general user documentation)",
+      "range": {
+        "startLine": 53,
+        "startChar": 21,
+        "endLine": 53,
+        "endChar": 52
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "18e084ab_f4c9c21e",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "These can absolutely be the only target -- they just act as if you didn\u0027t specify a target then (defaults to \"droid\")",
+      "range": {
+        "startLine": 55,
+        "startChar": 37,
+        "endLine": 55,
+        "endChar": 83
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f28a1706_b07bb282",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "These two lines seem redundant",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 24
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "abae63c7_3fe52374",
         "filename": "core/help.sh",
         "patchSetId": 1
@@ -105,6 +306,69 @@
     },
     {
       "key": {
+        "uuid": "f11214cf_1b179f99",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "There\u0027s also -l and -k that should mostly match \u0027make\u0027. We may want to be clear that \u0027-j\u0027 autodetects how many processes to run at once, while -j\u003cX\u003e can specify the number.",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 62,
+        "endChar": 69
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8221c9ed_64081e4c",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "I don\u0027t know if I\u0027d specify make here -- they\u0027re variables, that they\u0027re used in Make is an implementation detail we\u0027re working on fixing :)",
+      "range": {
+        "startLine": 65,
+        "startChar": 2,
+        "endLine": 65,
+        "endChar": 6
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e0cfe41d_e874897f",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "OUT_DIR is technically more complicated than that, it can change based on OUT_DIR_COMMON_BASE too",
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "22eb4ff2_1a28e161",
         "filename": "core/help.sh",
         "patchSetId": 1
@@ -119,6 +383,52 @@
       "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "42ea2a27_e5dbdb6b",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "This is not a list of variables that can be passed into a build -- for the most part it\u0027s a list of make variables that Soong enforces the value of.",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 75,
+        "endChar": 61
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2dad0dd3_13e255af",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T00:34:25Z",
+      "side": 1,
+      "message": "Let\u0027s use \u0027m\u0027 instead -- I suspect when I get around to removing the make wrapper, \u0027make\u0027 will still be make (wrapped by our function below), while \u0027m\u0027 will just go to the new path.",
+      "range": {
+        "startLine": 4,
+        "startChar": 5,
+        "endLine": 4,
+        "endChar": 9
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
