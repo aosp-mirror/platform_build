@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b57f4d5c_be1c504a",
+        "filename": "core/help.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-05-31T21:07:12Z",
+      "side": 1,
+      "message": "might as well remove, same below",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 3
+      },
+      "revId": "f36bb9d1d0e2e4ed398f41e0fd5e39c4528fe9a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "efe633c0_9c03fbfb",
+        "filename": "core/help.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-05-31T21:07:12Z",
+      "side": 1,
+      "message": "nit: can you also add `nothing`? It\u0027s one of my favorite targets.",
+      "revId": "f36bb9d1d0e2e4ed398f41e0fd5e39c4528fe9a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
