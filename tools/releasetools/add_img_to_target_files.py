@@ -173,13 +173,43 @@ def AddVendor(output_zip, prefix="IMAGES/"):
               block_list=block_list)
   return img.name
 
-def FindDtboPrebuilt(prefix="IMAGES/"):
-  """Find the prebuilt image of DTBO partition."""
 
-  prebuilt_path = os.path.join(OPTIONS.input_tmp, prefix, "dtbo.img")
-  if os.path.exists(prebuilt_path):
-    return prebuilt_path
-  return None
+def AddDtbo(output_zip, prefix="IMAGES/"):
+  """Adds the DTBO image.
+
+  Uses the image under prefix if it already exists. Otherwise looks for the
+  image under PREBUILT_IMAGES/, signs it as needed, and returns the image name.
+  """
+
+  img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "dtbo.img")
+  if os.path.exists(img.input_name):
+    print("dtbo.img already exists in %s, no need to rebuild..." % (prefix,))
+    return img.input_name
+
+  dtbo_prebuilt_path = os.path.join(
+      OPTIONS.input_tmp, "PREBUILT_IMAGES", "dtbo.img")
+  assert os.path.exists(dtbo_prebuilt_path)
+  shutil.copy(dtbo_prebuilt_path, img.name)
+
+  # AVB-sign the image as needed.
+  if OPTIONS.info_dict.get("board_avb_enable") == "true":
+    avbtool = os.getenv('AVBTOOL') or OPTIONS.info_dict["avb_avbtool"]
+    part_size = OPTIONS.info_dict.get("dtbo_size")
+    # The AVB hash footer will be replaced if already present.
+    cmd = [avbtool, "add_hash_footer", "--image", img.name,
+           "--partition_size", str(part_size), "--partition_name", "dtbo"]
+    common.AppendAVBSigningArgs(cmd)
+    args = OPTIONS.info_dict.get("board_avb_dtbo_add_hash_footer_args")
+    if args and args.strip():
+      cmd.extend(shlex.split(args))
+    p = common.Run(cmd, stdout=subprocess.PIPE)
+    p.communicate()
+    assert p.returncode == 0, \
+        "avbtool add_hash_footer of %s failed" % (img.name,)
+
+  img.Write()
+  return img.name
+
 
 def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   print("creating " + what + ".img...")
@@ -303,7 +333,7 @@ def AddVBMeta(output_zip, boot_img_path, system_img_path, vendor_img_path,
               dtbo_img_path, prefix="IMAGES/"):
   """Create a VBMeta image and store it in output_zip."""
   img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "vbmeta.img")
-  avbtool = os.getenv('AVBTOOL') or "avbtool"
+  avbtool = os.getenv('AVBTOOL') or OPTIONS.info_dict["avb_avbtool"]
   cmd = [avbtool, "make_vbmeta_image",
          "--output", img.name,
          "--include_descriptors_from_image", boot_img_path,
@@ -312,10 +342,10 @@ def AddVBMeta(output_zip, boot_img_path, system_img_path, vendor_img_path,
     cmd.extend(["--include_descriptors_from_image", vendor_img_path])
   if dtbo_img_path is not None:
     cmd.extend(["--include_descriptors_from_image", dtbo_img_path])
-  if OPTIONS.info_dict.get("system_root_image", None) == "true":
+  if OPTIONS.info_dict.get("system_root_image") == "true":
     cmd.extend(["--setup_rootfs_from_kernel", system_img_path])
   common.AppendAVBSigningArgs(cmd)
-  args = OPTIONS.info_dict.get("board_avb_make_vbmeta_image_args", None)
+  args = OPTIONS.info_dict.get("board_avb_make_vbmeta_image_args")
   if args and args.strip():
     cmd.extend(shlex.split(args))
   p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -495,7 +525,7 @@ def AddImagesToTargetFiles(filename):
 
   banner("system")
   system_img_path = AddSystem(
-    output_zip, recovery_img=recovery_image, boot_img=boot_image)
+      output_zip, recovery_img=recovery_image, boot_img=boot_image)
   vendor_img_path = None
   if has_vendor:
     banner("vendor")
@@ -508,13 +538,19 @@ def AddImagesToTargetFiles(filename):
     AddUserdata(output_zip)
     banner("cache")
     AddCache(output_zip)
-  if OPTIONS.info_dict.get("board_bpt_enable", None) == "true":
+
+  if OPTIONS.info_dict.get("board_bpt_enable") == "true":
     banner("partition-table")
     AddPartitionTable(output_zip)
-  if OPTIONS.info_dict.get("board_avb_enable", None) == "true":
+
+  dtbo_img_path = None
+  if OPTIONS.info_dict.get("has_dtbo") == "true":
+    banner("dtbo")
+    dtbo_img_path = AddDtbo(output_zip)
+
+  if OPTIONS.info_dict.get("board_avb_enable") == "true":
     banner("vbmeta")
     boot_contents = boot_image.WriteToTemp()
-    dtbo_img_path = FindDtboPrebuilt()
     AddVBMeta(output_zip, boot_contents.name, system_img_path,
               vendor_img_path, dtbo_img_path)
 
