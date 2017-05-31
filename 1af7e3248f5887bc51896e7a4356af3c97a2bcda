@@ -197,6 +197,30 @@
     },
     {
       "key": {
+        "uuid": "3c1c85dd_07921d97",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-05-31T03:12:27Z",
+      "side": 1,
+      "message": "I\u0027m not expecting users to read the file; I\u0027m thinking something more like grep. Occasionally it comes in handy for me if I want to know whether the changes to my shell command worked correctly, without having to add \u0027showcommands\u0027 and wait for the build to execute.\n\nDo you think the word \"see\" should be replaced with a different verb, like \"obtain\"?",
+      "parentUuid": "25ed8aa5_3593b8b7",
+      "range": {
+        "startLine": 52,
+        "startChar": 11,
+        "endLine": 52,
+        "endChar": 31
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f0f9d087_944ecb19",
         "filename": "core/help.sh",
         "patchSetId": 1
@@ -231,6 +255,30 @@
       "writtenOn": "2017-05-31T00:34:25Z",
       "side": 1,
       "message": "This name can change based on the arguments passed in. It also doesn\u0027t contain all of the available targets -- it\u0027s missing all the soong-defined ones. I\u0027m not sure we should be pointing users to the raw ninja files. (Maybe advanced users / build system docs, but not the general user documentation)",
+      "range": {
+        "startLine": 53,
+        "startChar": 21,
+        "endLine": 53,
+        "endChar": 52
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "76db7c3d_8370e79f",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-05-31T03:12:27Z",
+      "side": 1,
+      "message": "Do you have a better idea for what we can write here that will enable people to learn of all the targets?\n\nHow about I just add mention of the Android.mk\u0027s and the Android.bp\u0027s (and put that mention higher than this)?\n\nI remember that you mentioned that people said that the build system commands were \"black magic\"",
+      "parentUuid": "6d7d8f9b_ba147dae",
       "range": {
         "startLine": 53,
         "startChar": 21,
