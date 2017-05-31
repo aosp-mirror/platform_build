@@ -209,6 +209,24 @@
     },
     {
       "key": {
+        "uuid": "4369357d_76545e63",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-05-31T20:29:25Z",
+      "side": 1,
+      "message": "that works. From my understanding, the mapping file target for installation is usually:\nout/soong/.intermediate/......  -------\u003e out/soong/target[host]/.......\nbut I am not sure if there the case that some file target generated in out/soong/.intermediate/, but didn\u0027t get install/copied to out/soong/target[host], which means that target doesn\u0027t have any installation rule?",
+      "parentUuid": "e1ba9ae4_5333b6f1",
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "25ed8aa5_3593b8b7",
         "filename": "core/help.sh",
         "patchSetId": 1
