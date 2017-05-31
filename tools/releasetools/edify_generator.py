@@ -230,11 +230,6 @@ class EdifyGenerator(object):
           p.mount_point, mount_flags))
       self.mounts.add(p.mount_point)
 
-  def UnpackPackageDir(self, src, dst):
-    """Unpack a given directory from the OTA package into the given
-    destination directory."""
-    self.script.append('package_extract_dir("%s", "%s");' % (src, dst))
-
   def Comment(self, comment):
     """Write a comment into the update script."""
     self.script.append("")
