@@ -79,7 +79,7 @@ endif
 # When you change PLATFORM_VERSION for a given PLATFORM_SDK_VERSION
 # please add that PLATFORM_VERSION to the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
-PLATFORM_VERSION.OPD1 := 8.0.1
+PLATFORM_VERSION.OPD1 := ODR
 PLATFORM_VERSION.OPM1 := OMR1
 PLATFORM_VERSION.PPR1 := P
 
