@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2d805d14_d2a66d8e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3178,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-05-31T20:10:38Z",
+      "side": 1,
+      "message": "You need these too",
+      "range": {
+        "startLine": 3150,
+        "startChar": 0,
+        "endLine": 3178,
+        "endChar": 30
+      },
+      "revId": "6aa35f1b51e989450ce082d8a49f2a70f9229c35",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
