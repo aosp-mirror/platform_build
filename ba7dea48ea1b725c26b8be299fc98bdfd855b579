@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "bb0e886d_53f4a1fa",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1818,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2017-05-31T20:24:02Z",
+      "side": 1,
+      "message": "If BOARD_AVB_CHAIN_SYSTEM_KEY_PATH is true and BOARD_BUILD_SYSTEM_ROOT_IMAGE we need to use --setup_as_rootfs_from_kernel on system.img ... right?\n\nAlternatively I think it would be nicer to just always just use --setup_as_rootfs_from_kernel on system.img and never use --setup_rootfs_from_kernel on vbmeta.img. This will work because in the chained-case it\u0027s what we want and in the non-chained case we\u0027ll get the cmdline descriptor via --include_descriptors_from_image. Would need to manually test all this though :-)",
+      "revId": "ba7dea48ea1b725c26b8be299fc98bdfd855b579",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e2dc115c_a56aec47",
         "filename": "core/Makefile",
         "patchSetId": 2
