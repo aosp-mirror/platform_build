@@ -227,6 +227,24 @@
     },
     {
       "key": {
+        "uuid": "6df3367a_d99c4afd",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-31T20:33:26Z",
+      "side": 1,
+      "message": "intermediates is way too much information to try to describe here.  You could link to a separate page of build system internals documentation.",
+      "parentUuid": "4369357d_76545e63",
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "25ed8aa5_3593b8b7",
         "filename": "core/help.sh",
         "patchSetId": 1
