@@ -39,6 +39,24 @@
       "revId": "f36bb9d1d0e2e4ed398f41e0fd5e39c4528fe9a7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27ee3e27_b8eea929",
+        "filename": "core/help.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-05-31T21:15:48Z",
+      "side": 1,
+      "message": "oh interesting. Good idea",
+      "parentUuid": "efe633c0_9c03fbfb",
+      "revId": "f36bb9d1d0e2e4ed398f41e0fd5e39c4528fe9a7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
