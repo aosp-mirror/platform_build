@@ -97,18 +97,19 @@ def ZeroPadSimg(image_file, pad_size):
   simg = sparse_img.SparseImage(image_file, mode="r+b", build_map=False)
   simg.AppendFillChunk(0, blocks)
 
-def AVBCalcMaxImageSize(avbtool, partition_size, additional_args):
+def AVBCalcMaxImageSize(avbtool, footer_type, partition_size, additional_args):
   """Calculates max image size for a given partition size.
 
   Args:
     avbtool: String with path to avbtool.
+    footer_type: 'hash' or 'hashtree' for generating footer.
     partition_size: The size of the partition in question.
     additional_args: Additional arguments to pass to 'avbtool
       add_hashtree_image'.
   Returns:
     The maximum image size or 0 if an error occurred.
   """
-  cmdline = "%s add_hashtree_footer " % avbtool
+  cmdline = "%s add_%s_footer " % (avbtool, footer_type)
   cmdline += "--partition_size %d " % partition_size
   cmdline += "--calc_max_image_size "
   cmdline += additional_args
@@ -118,13 +119,14 @@ def AVBCalcMaxImageSize(avbtool, partition_size, additional_args):
   else:
     return int(output)
 
-def AVBAddHashtree(image_path, avbtool, partition_size, partition_name,
-                   signing_args, additional_args):
+def AVBAddFooter(image_path, avbtool, footer_type, partition_size,
+                 partition_name, signing_args, additional_args):
   """Adds dm-verity hashtree and AVB metadata to an image.
 
   Args:
     image_path: Path to image to modify.
     avbtool: String with path to avbtool.
+    footer_type: 'hash' or 'hashtree' for generating footer.
     partition_size: The size of the partition in question.
     partition_name: The name of the partition - will be embedded in metadata.
     signing_args: Arguments for signing the image.
@@ -133,7 +135,7 @@ def AVBAddHashtree(image_path, avbtool, partition_size, partition_name,
   Returns:
     True if the operation succeeded.
   """
-  cmdline = "%s add_hashtree_footer " % avbtool
+  cmdline = "%s add_%s_footer " % (avbtool, footer_type)
   cmdline += "--partition_size %d " % partition_size
   cmdline += "--partition_name %s " % partition_name
   cmdline += "--image %s " % image_path
@@ -410,12 +412,19 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     prop_dict["original_partition_size"] = str(partition_size)
     prop_dict["verity_size"] = str(verity_size)
 
-  # Adjust partition size for AVB.
-  if prop_dict.get("avb_enable") == "true":
+  # Adjust partition size for AVB hash footer or AVB hashtree footer.
+  avb_footer_type = ''
+  if prop_dict.get("avb_hash_enable") == "true":
+    avb_footer_type = 'hash'
+  elif prop_dict.get("avb_hashtree_enable") == "true":
+    avb_footer_type = 'hashtree'
+
+  if avb_footer_type:
     avbtool = prop_dict.get("avb_avbtool")
     partition_size = int(prop_dict.get("partition_size"))
-    additional_args = prop_dict["avb_add_hashtree_footer_args"]
-    max_image_size = AVBCalcMaxImageSize(avbtool, partition_size,
+    # avb_add_hash_footer_args or avb_add_hashtree_footer_args.
+    additional_args = prop_dict["avb_add_" + avb_footer_type + "_footer_args"]
+    max_image_size = AVBCalcMaxImageSize(avbtool, avb_footer_type, partition_size,
                                          additional_args)
     if max_image_size == 0:
       return False
@@ -561,15 +570,16 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     if not MakeVerityEnabledImage(out_file, verity_fec_supported, prop_dict):
       return False
 
-  # Add AVB hashtree and metadata.
-  if "avb_enable" in prop_dict:
+  # Add AVB HASH or HASHTREE footer (metadata).
+  if avb_footer_type:
     avbtool = prop_dict.get("avb_avbtool")
     original_partition_size = int(prop_dict.get("original_partition_size"))
     partition_name = prop_dict["partition_name"]
     signing_args = prop_dict["avb_signing_args"]
-    additional_args = prop_dict["avb_add_hashtree_footer_args"]
-    if not AVBAddHashtree(out_file, avbtool, original_partition_size,
-                          partition_name, signing_args, additional_args):
+    # avb_add_hash_footer_args or avb_add_hashtree_footer_args
+    additional_args = prop_dict["avb_add_" + avb_footer_type + "_footer_args"]
+    if not AVBAddFooter(out_file, avbtool, avb_footer_type, original_partition_size,
+                      partition_name, signing_args, additional_args):
       return False
 
   if run_fsck and prop_dict.get("skip_fsck") != "true":
@@ -639,7 +649,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
     copy_prop("system_squashfs_disable_4k_align", "squashfs_disable_4k_align")
     copy_prop("system_base_fs_file", "base_fs_file")
-    copy_prop("system_avb_enable", "avb_enable")
+    copy_prop("system_avb_hashtree_enable", "avb_hashtree_enable")
     copy_prop("system_avb_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
     copy_prop("system_extfs_inode_count", "extfs_inode_count")
@@ -656,7 +666,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
     copy_prop("system_base_fs_file", "base_fs_file")
-    copy_prop("system_avb_enable", "avb_enable")
+    copy_prop("system_avb_hashtree_enable", "avb_hashtree_enable")
     copy_prop("system_avb_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
     copy_prop("system_extfs_inode_count", "extfs_inode_count")
@@ -681,7 +691,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("vendor_squashfs_block_size", "squashfs_block_size")
     copy_prop("vendor_squashfs_disable_4k_align", "squashfs_disable_4k_align")
     copy_prop("vendor_base_fs_file", "base_fs_file")
-    copy_prop("vendor_avb_enable", "avb_enable")
+    copy_prop("vendor_avb_hashtree_enable", "avb_hashtree_enable")
     copy_prop("vendor_avb_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
     copy_prop("vendor_extfs_inode_count", "extfs_inode_count")
