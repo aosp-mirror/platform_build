@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6ba7cc1a_827a319b",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-31T00:25:46Z",
+      "side": 1,
+      "message": "This is not the first thing we want to document.  PRODUCT-* is used by the build servers, but basically nowhere else, and we shouldn\u0027t encourage it to be used more.  Document $TARGET_PRODUCT and $TARGET_BUILD_VARIANT instead, and maybe mention PRODUCT-* at the very end.",
+      "range": {
+        "startLine": 19,
+        "startChar": 41,
+        "endLine": 19,
+        "endChar": 69
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87f927de_09f8e5da",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-31T00:25:46Z",
+      "side": 1,
+      "message": "There\u0027s also a bunch of other useful ones:\njava\nnative\nhost\ntarget\njava-host (etc.)\ntests\n\nA target can also be a module name, like make adb, with various suffixes:\nadb\nadb-host\nadb-target\nadb-host32\nadb-target32",
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "25ed8aa5_3593b8b7",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-31T00:25:46Z",
+      "side": 1,
+      "message": "This is not a full list, many of them are in ${OUT_DIR}/soong/build.ninja.  Also, I\u0027m not sure we should be recommending reading 500MB ninja files in the basic help.",
+      "range": {
+        "startLine": 52,
+        "startChar": 11,
+        "endLine": 52,
+        "endChar": 31
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f0f9d087_944ecb19",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-31T00:25:46Z",
+      "side": 1,
+      "message": "variant is not part of the filename",
+      "range": {
+        "startLine": 53,
+        "startChar": 38,
+        "endLine": 53,
+        "endChar": 45
+      },
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "abae63c7_3fe52374",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-31T00:25:46Z",
+      "side": 1,
+      "message": "Document that -j picks a reasonable number automatically, and -j\u003cN\u003e uses a fixed number",
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "22eb4ff2_1a28e161",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-05-31T00:25:46Z",
+      "side": 1,
+      "message": "These are variables passed from soong back to make, and are not useful to document.",
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
