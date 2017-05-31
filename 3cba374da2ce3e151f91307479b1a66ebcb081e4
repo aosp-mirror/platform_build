@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2ad0d062_a3798be5",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-31T23:10:53Z",
+      "side": 1,
+      "message": "found one issue during verification. missed the \"OPTIONS.\" part :/",
+      "range": {
+        "startLine": 494,
+        "startChar": 38,
+        "endLine": 494,
+        "endChar": 46
+      },
+      "revId": "3cba374da2ce3e151f91307479b1a66ebcb081e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
