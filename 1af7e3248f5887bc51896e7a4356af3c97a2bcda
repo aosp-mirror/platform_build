@@ -191,6 +191,24 @@
     },
     {
       "key": {
+        "uuid": "e1ba9ae4_5333b6f1",
+        "filename": "core/help.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-05-31T20:00:17Z",
+      "side": 1,
+      "message": "Do you mean that we want to specifically call out the \u0027.intermediates\u0027 directory? What if instead we add a different way for users to learn where files will get copied into, for example fileMappingHelp.sh ?",
+      "parentUuid": "8c3be7d9_fd0527df",
+      "revId": "1af7e3248f5887bc51896e7a4356af3c97a2bcda",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "25ed8aa5_3593b8b7",
         "filename": "core/help.sh",
         "patchSetId": 1
