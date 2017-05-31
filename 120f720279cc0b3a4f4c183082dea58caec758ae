@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f58f272_4d2d50f3",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-05-31T18:28:49Z",
+      "side": 1,
+      "message": "Can we try to keep this one in common.py, and expose the same info as before? That way device-specific script can just include \u0027common.py\u0027 (i.e. w/o any change)? Maybe move the image related classes into a separate file, and import that from common.py and this file both?",
+      "revId": "120f720279cc0b3a4f4c183082dea58caec758ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
