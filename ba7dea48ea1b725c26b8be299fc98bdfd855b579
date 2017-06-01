@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "795efc3f_19e26ab9",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1818,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-01T13:45:15Z",
+      "side": 1,
+      "message": "Good idea.\nI\u0027ve verified both cases and device can boot!",
+      "parentUuid": "bb0e886d_53f4a1fa",
+      "revId": "ba7dea48ea1b725c26b8be299fc98bdfd855b579",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e2dc115c_a56aec47",
         "filename": "core/Makefile",
         "patchSetId": 2
