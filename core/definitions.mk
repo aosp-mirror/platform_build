@@ -846,10 +846,10 @@ endef
 ## Use echo-(warning|error) in a build rule
 ## Use pretty-(warning|error) instead of $(warning)/$(error)
 ###########################################################
-ESC_BOLD := \e[1m
-ESC_WARNING := \e[35m
-ESC_ERROR := \e[31m
-ESC_RESET := \e[0m
+ESC_BOLD := \033[1m
+ESC_WARNING := \033[35m
+ESC_ERROR := \033[31m
+ESC_RESET := \033[0m
 
 # $(1): path (and optionally line) information
 # $(2): message to print
