@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2a408d07_683002d4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-02T00:49:45Z",
+      "side": 1,
+      "message": "be used",
+      "range": {
+        "startLine": 10,
+        "startChar": 61,
+        "endLine": 10,
+        "endChar": 65
+      },
+      "revId": "3d7e4e60b394bb1033bd94fe93eb9944028a4c2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ee010e9_4debb16f",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-02T00:49:45Z",
+      "side": 1,
+      "message": "build_image.py shows we will have system_avb_hashtree_enable and vendor_avb_hashtree_enable only (i.e. no system_avb_hash_enable case).\n\nverity_supported can be extended to additional check for \"board_avb_enable\" \u003d\u003d \"true\"?",
+      "range": {
+        "startLine": 244,
+        "startChar": 33,
+        "endLine": 244,
+        "endChar": 48
+      },
+      "revId": "3d7e4e60b394bb1033bd94fe93eb9944028a4c2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de15b57b_b96a1202",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1171,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-02T00:49:45Z",
+      "side": 1,
+      "message": "nit:\n\nif (... or\n    ...):\n\ngives a better readability",
+      "range": {
+        "startLine": 1170,
+        "startChar": 2,
+        "endLine": 1171,
+        "endChar": 36
+      },
+      "revId": "3d7e4e60b394bb1033bd94fe93eb9944028a4c2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
