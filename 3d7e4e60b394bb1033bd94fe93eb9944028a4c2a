@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b6cbd4f4_a7fa1762",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-06-02T01:19:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2a408d07_683002d4",
+      "range": {
+        "startLine": 10,
+        "startChar": 61,
+        "endLine": 10,
+        "endChar": 65
+      },
+      "revId": "3d7e4e60b394bb1033bd94fe93eb9944028a4c2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3ee010e9_4debb16f",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2017-06-02T00:49:45Z",
       "side": 1,
       "message": "build_image.py shows we will have system_avb_hashtree_enable and vendor_avb_hashtree_enable only (i.e. no system_avb_hash_enable case).\n\nverity_supported can be extended to additional check for \"board_avb_enable\" \u003d\u003d \"true\"?",
+      "range": {
+        "startLine": 244,
+        "startChar": 33,
+        "endLine": 244,
+        "endChar": 48
+      },
+      "revId": "3d7e4e60b394bb1033bd94fe93eb9944028a4c2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1281c88c_7e29cb33",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-06-02T01:19:20Z",
+      "side": 1,
+      "message": "Done. \u0027hash\u0027 seems to be a valid option for verified boot 2.0. And the \u0027avb_hash_enable\u0027 actually shows up in dr1 branch: https://cs.corp.google.com/android/build/make/tools/releasetools/build_image.py?l\u003d417\nWe can add that back if necessary.",
+      "parentUuid": "3ee010e9_4debb16f",
       "range": {
         "startLine": 244,
         "startChar": 33,
