@@ -1781,7 +1781,7 @@ endif
 
 ifdef INSTALLED_DTBOIMAGE_TARGET
 INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-		--include_descriptors_from_image $(INSTALLED_DTBOIMAGE_TARGET)
+    --include_descriptors_from_image $(INSTALLED_DTBOIMAGE_TARGET)
 endif
 
 ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
@@ -2292,8 +2292,14 @@ ifdef BOARD_PREBUILT_VENDORIMAGE
 	$(hide) cp $(INSTALLED_VENDORIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
 ifdef BOARD_PREBUILT_DTBOIMAGE
-	$(hide) mkdir -p $(zip_root)/IMAGES
-	$(hide) cp $(INSTALLED_DTBOIMAGE_TARGET) $(zip_root)/IMAGES/
+	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
+	$(hide) cp $(INSTALLED_DTBOIMAGE_TARGET) $(zip_root)/PREBUILT_IMAGES/
+	$(hide) echo "has_dtbo=true" >> $(zip_root)/META/misc_info.txt
+ifeq ($(BOARD_AVB_ENABLE),true)
+	$(hide) echo "dtbo_size=$(BOARD_DTBOIMG_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "board_avb_dtbo_add_hash_footer_args=$(BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS)" \
+	    >> $(zip_root)/META/misc_info.txt
+endif
 endif
 	@# Run fs_config on all the system, vendor, boot ramdisk,
 	@# and recovery ramdisk files in the zip, and save the output
