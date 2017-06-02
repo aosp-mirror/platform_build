@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46411bdf_52cdb716",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 481,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-06-02T22:55:28Z",
+      "side": 1,
+      "message": "then do we need $(strip ...) here so that  we can get rid of the tailing/leading spaces as default/fallback values.",
+      "revId": "ccc48163ea0216bf945226b97b3e8584e1a09e5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
