@@ -1167,7 +1167,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
   target_zip = zipfile.ZipFile(target_file, "r")
-  if OPTIONS.info_dict.get("verity") == "true":
+  if (OPTIONS.info_dict.get("verity") == "true" or
+      OPTIONS.info_dict.get("board_avb_enable") == "true"):
     care_map_path = "META/care_map.txt"
     namelist = target_zip.namelist()
     if care_map_path in namelist:
