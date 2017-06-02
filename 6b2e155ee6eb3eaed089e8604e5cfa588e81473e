@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "278353c6_4b5a5dee",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-06-02T04:42:39Z",
+      "side": 1,
+      "message": "add \u0027board_avb_enable\" to image_prop to keep symmetry",
+      "range": {
+        "startLine": 617,
+        "startChar": 2,
+        "endLine": 617,
+        "endChar": 25
+      },
+      "revId": "6b2e155ee6eb3eaed089e8604e5cfa588e81473e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
