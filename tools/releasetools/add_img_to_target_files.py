@@ -236,9 +236,14 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   if block_list:
     block_list.Write()
 
+  # Set the 'adjusted_partition_size' that excludes the verity blocks of the
+  # given image. When avb is enabled, this size is the max image size returned
+  # by the avb tool.
   is_verity_partition = "verity_block_device" in image_props
-  verity_supported = image_props.get("verity") == "true"
-  if is_verity_partition and verity_supported:
+  verity_supported = (image_props.get("verity") == "true" or
+                      image_props.get("board_avb_enable") == "true")
+  is_avb_enable = image_props.get("avb_hashtree_enable") == "true"
+  if verity_supported and (is_verity_partition or is_avb_enable):
     adjusted_blocks_value = image_props.get("partition_size")
     if adjusted_blocks_value:
       adjusted_blocks_key = what + "_adjusted_partition_size"
@@ -530,12 +535,14 @@ def AddImagesToTargetFiles(filename):
     # partitions (if present), then write this file to target_files package.
     care_map_list = []
     for line in lines:
-      if line.strip() == "system" and OPTIONS.info_dict.get(
-          "system_verity_block_device", None) is not None:
+      if line.strip() == "system" and (
+          "system_verity_block_device" in OPTIONS.info_dict or
+          OPTIONS.info_dict.get("system_avb_hashtree_enable") == "true"):
         assert os.path.exists(system_img_path)
         care_map_list += GetCareMap("system", system_img_path)
-      if line.strip() == "vendor" and OPTIONS.info_dict.get(
-          "vendor_verity_block_device", None) is not None:
+      if line.strip() == "vendor" and (
+          "vendor_verity_block_device" in OPTIONS.info_dict or
+          OPTIONS.info_dict.get("vendor_avb_hashtree_enable") == "true"):
         assert os.path.exists(vendor_img_path)
         care_map_list += GetCareMap("vendor", vendor_img_path)
 
