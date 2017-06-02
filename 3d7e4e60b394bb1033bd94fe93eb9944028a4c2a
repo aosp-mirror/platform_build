@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "9628c5df_969a0d15",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-02T02:52:50Z",
+      "side": 1,
+      "message": "Not for system and vendor.\n\nhash is for \"small\" partition; while hashtree is for large partition. For the cases of system and vendor, hashtree is the only option. That\u0027s hard-coded in build/make/core/Makefile.",
+      "parentUuid": "1281c88c_7e29cb33",
+      "range": {
+        "startLine": 244,
+        "startChar": 33,
+        "endLine": 244,
+        "endChar": 48
+      },
+      "revId": "3d7e4e60b394bb1033bd94fe93eb9944028a4c2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "de15b57b_b96a1202",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 3
