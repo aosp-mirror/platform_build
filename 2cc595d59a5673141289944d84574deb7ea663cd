@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "12057fee_1a9264e7",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2314,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-03T16:23:51Z",
+      "side": 1,
+      "message": "cool! I spotted the inconsistency the other day, but wasn\u0027t sure if it should be removed or releasetools should pick up the flag.",
+      "parentUuid": "563ea7bb_b9f40498",
+      "range": {
+        "startLine": 2314,
+        "startChar": 15,
+        "endLine": 2314,
+        "endChar": 39
+      },
+      "revId": "2cc595d59a5673141289944d84574deb7ea663cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9d73c09c_04cfa00f",
         "filename": "core/Makefile",
         "patchSetId": 4

@@ -92,6 +92,30 @@
       "revId": "4536e45f66b7ca4b48be2941ae9f402768ecbd7f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "adadb006_a0bad44e",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-03T16:23:51Z",
+      "side": 0,
+      "message": "We may need a way to handle the \"BOARD_AVB_CHAIN_PUBKEY_DIR\" in \"--chain_partition vendor:$(BOARD_AVB_CHAIN_VENDOR_ROLLBACK_INDEX_LOCATION):$(BOARD_AVB_CHAIN_PUBKEY_DIR)/vendor.avbpubkey\" (which is part of the \"board_avb_make_vbmeta_image_args\"). When re-generating the images, this dir path needs to be updated accordingly.",
+      "parentUuid": "76dd8259_6e3b3bcc",
+      "range": {
+        "startLine": 344,
+        "startChar": 0,
+        "endLine": 351,
+        "endChar": 63
+      },
+      "revId": "4536e45f66b7ca4b48be2941ae9f402768ecbd7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
