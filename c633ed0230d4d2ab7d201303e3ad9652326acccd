@@ -22,6 +22,29 @@
       "revId": "c633ed0230d4d2ab7d201303e3ad9652326acccd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c24e5307_3d7faab0",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 198,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T06:53:22Z",
+      "side": 1,
+      "message": "Oh, saw this! Please ignore my previous comment.",
+      "range": {
+        "startLine": 198,
+        "startChar": 6,
+        "endLine": 198,
+        "endChar": 61
+      },
+      "revId": "c633ed0230d4d2ab7d201303e3ad9652326acccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
