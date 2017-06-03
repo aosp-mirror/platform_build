@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ebefd1e3_2df63385",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1829,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T15:03:00Z",
+      "side": 1,
+      "message": "merging BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS into INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS.\n\nThen pass INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS to add_img_to_target_files.py.",
+      "range": {
+        "startLine": 1829,
+        "startChar": 0,
+        "endLine": 1829,
+        "endChar": 74
+      },
+      "revId": "2cc595d59a5673141289944d84574deb7ea663cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa8c3664_09756782",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1882,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T15:03:00Z",
+      "side": 1,
+      "message": "also need to extract_public_key for \u0027make dist\u0027. Will fix this in next PS.",
+      "range": {
+        "startLine": 1882,
+        "startChar": 23,
+        "endLine": 1882,
+        "endChar": 41
+      },
+      "revId": "2cc595d59a5673141289944d84574deb7ea663cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "563ea7bb_b9f40498",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2314,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T15:03:00Z",
+      "side": 1,
+      "message": "this can be removed, will do in next PS.",
+      "range": {
+        "startLine": 2314,
+        "startChar": 15,
+        "endLine": 2314,
+        "endChar": 39
+      },
+      "revId": "2cc595d59a5673141289944d84574deb7ea663cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9d73c09c_04cfa00f",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2320,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T15:03:00Z",
+      "side": 1,
+      "message": "My understanding is that:\n - add_img_to_target_files.py needs to handle *.img without native file system. e.g., boot.img, dtbo.img, vbmeta.img\n\n - build_image.py handles vendor.img, system.img, etc with native file system that can be \u0027mounted\u0027 directly.\n  \nThe high-level idea is to pass the \"merged\" args to add_img_to_target_files.py without re-generating args there. So if there is any further changes for the avbtool options, we only need to change one place (this file) here.\n  \nThe args passed to add_img_to_target_files.py:\n  - boot.img: board_avb_boot_signing_args\n              board_avb_boot_add_hash_footer_args\n\n  - dtbo.img: board_avb_dtbo_signing_args\n              board_avb_dtbo_add_hash_footer_args\n\n  - vbmeta.img: board_avb_signing_args\n                board_avb_make_vbmeta_image_args",
+      "range": {
+        "startLine": 2315,
+        "startChar": 1,
+        "endLine": 2320,
+        "endChar": 121
+      },
+      "revId": "2cc595d59a5673141289944d84574deb7ea663cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ad952607_cb4222c3",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T15:03:00Z",
+      "side": 1,
+      "message": "this gets board_avb_dtbo_signing_args",
+      "range": {
+        "startLine": 201,
+        "startChar": 38,
+        "endLine": 201,
+        "endChar": 42
+      },
+      "revId": "2cc595d59a5673141289944d84574deb7ea663cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8033e04d_43f0835e",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T15:03:00Z",
+      "side": 1,
+      "message": "this gets board_avb_signing_args",
+      "range": {
+        "startLine": 344,
+        "startChar": 9,
+        "endLine": 344,
+        "endChar": 29
+      },
+      "revId": "2cc595d59a5673141289944d84574deb7ea663cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a4e181dc_2c1970cd",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 502,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T15:03:00Z",
+      "side": 1,
+      "message": "this gets board_avb_boot_signing_args",
+      "range": {
+        "startLine": 502,
+        "startChar": 31,
+        "endLine": 502,
+        "endChar": 35
+      },
+      "revId": "2cc595d59a5673141289944d84574deb7ea663cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

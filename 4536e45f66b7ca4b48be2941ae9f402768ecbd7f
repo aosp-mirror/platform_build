@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "32bdc6dc_5a5d7a33",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2238,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T15:03:00Z",
+      "side": 0,
+      "message": "merging key + algorithm into board_avb_${partition}_signing_args.",
+      "range": {
+        "startLine": 2237,
+        "startChar": 0,
+        "endLine": 2238,
+        "endChar": 58
+      },
+      "revId": "4536e45f66b7ca4b48be2941ae9f402768ecbd7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b894a6fd_4fd52692",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2240,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T15:03:00Z",
+      "side": 0,
+      "message": "This looks not used based on cs:\nhttps://cs.corp.google.com/search/?q\u003dboard_avb_system_add_hashtree_footer_args+p:android\u0026type\u003dcs",
+      "range": {
+        "startLine": 2240,
+        "startChar": 15,
+        "endLine": 2240,
+        "endChar": 56
+      },
+      "revId": "4536e45f66b7ca4b48be2941ae9f402768ecbd7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "76dd8259_6e3b3bcc",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T15:03:00Z",
+      "side": 0,
+      "message": "No need re-construction here, because \"board_avb_make_vbmeta_image_args\" below now contains  $(INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS).",
+      "range": {
+        "startLine": 344,
+        "startChar": 0,
+        "endLine": 351,
+        "endChar": 63
+      },
+      "revId": "4536e45f66b7ca4b48be2941ae9f402768ecbd7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
