@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "8d8459ee_fd42ab4d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2240,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-03T15:43:30Z",
+      "side": 0,
+      "message": "yeah, i was trying to kill this and the above two flags in https://android-review.googlesource.com/408685.",
+      "parentUuid": "b894a6fd_4fd52692",
+      "range": {
+        "startLine": 2240,
+        "startChar": 15,
+        "endLine": 2240,
+        "endChar": 56
+      },
+      "revId": "4536e45f66b7ca4b48be2941ae9f402768ecbd7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "76dd8259_6e3b3bcc",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 4
