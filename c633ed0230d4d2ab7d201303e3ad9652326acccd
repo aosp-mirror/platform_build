@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2466609d_4fe2e975",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2296,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-03T06:51:20Z",
+      "side": 1,
+      "message": "Hi,\nShould this be BOARD_PREBUILT_DTBOIMAGE?\nBecause INSTALLED_DTBOIMAGE_TARGET already has the hash footer here: https://android-review.googlesource.com/#/c/407572/3/core/Makefile@1755",
+      "range": {
+        "startLine": 2296,
+        "startChar": 14,
+        "endLine": 2296,
+        "endChar": 40
+      },
+      "revId": "c633ed0230d4d2ab7d201303e3ad9652326acccd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
