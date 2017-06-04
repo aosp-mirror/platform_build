@@ -79,6 +79,10 @@ SRC_TEST_API_DIR := $(TOPDIR)prebuilts/sdk/test-api
 # Some specific paths to tools
 SRC_DROIDDOC_DIR := $(TOPDIR)build/tools/droiddoc
 
+# Set up efficient math functions which are used in make.
+# Here since this file is included by envsetup as well as during build.
+include $(BUILD_SYSTEM)/math.mk
+
 # Various mappings to avoid hard-coding paths all over the place
 include $(BUILD_SYSTEM)/pathmap.mk
 
