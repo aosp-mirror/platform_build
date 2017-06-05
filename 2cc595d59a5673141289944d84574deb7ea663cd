@@ -95,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "23643be6_513c2daf",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2314,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-05T06:43:56Z",
+      "side": 1,
+      "message": "Yup, I grep it under build/tools/releasetools but not observe anyone uses it. \n  \nThe rollback index is only used when making vbmeta.img. It will be included in INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS then pass to releasetools via board_avb_make_vbmeta_image_args.",
+      "parentUuid": "12057fee_1a9264e7",
+      "range": {
+        "startLine": 2314,
+        "startChar": 15,
+        "endLine": 2314,
+        "endChar": 39
+      },
+      "revId": "2cc595d59a5673141289944d84574deb7ea663cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9d73c09c_04cfa00f",
         "filename": "core/Makefile",
         "patchSetId": 4

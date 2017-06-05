@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "7330d34c_0ad0bbd6",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2240,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-05T06:43:56Z",
+      "side": 0,
+      "message": "Oh, good!\nDo you prefer to merge your CL first or just let me clean up here? I\u0027m ok with either.",
+      "parentUuid": "8d8459ee_fd42ab4d",
+      "range": {
+        "startLine": 2240,
+        "startChar": 15,
+        "endLine": 2240,
+        "endChar": 56
+      },
+      "revId": "4536e45f66b7ca4b48be2941ae9f402768ecbd7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "76dd8259_6e3b3bcc",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 4
@@ -107,6 +131,30 @@
       "side": 0,
       "message": "We may need a way to handle the \"BOARD_AVB_CHAIN_PUBKEY_DIR\" in \"--chain_partition vendor:$(BOARD_AVB_CHAIN_VENDOR_ROLLBACK_INDEX_LOCATION):$(BOARD_AVB_CHAIN_PUBKEY_DIR)/vendor.avbpubkey\" (which is part of the \"board_avb_make_vbmeta_image_args\"). When re-generating the images, this dir path needs to be updated accordingly.",
       "parentUuid": "76dd8259_6e3b3bcc",
+      "range": {
+        "startLine": 344,
+        "startChar": 0,
+        "endLine": 351,
+        "endChar": 63
+      },
+      "revId": "4536e45f66b7ca4b48be2941ae9f402768ecbd7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "254fda5c_b5946f90",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-05T06:43:56Z",
+      "side": 0,
+      "message": "Yup, this is the remaining issue I\u0027m trying to solve now.\nWill include this in the next PS.\n\nThanks for the comment!",
+      "parentUuid": "adadb006_a0bad44e",
       "range": {
         "startLine": 344,
         "startChar": 0,
