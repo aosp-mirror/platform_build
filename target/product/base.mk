@@ -23,6 +23,7 @@ PRODUCT_PACKAGES += \
     appops \
     am \
     android.policy \
+    android.test.mock \
     android.test.runner \
     app_process \
     applypatch \
