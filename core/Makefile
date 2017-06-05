@@ -2234,10 +2234,7 @@ endif
 ifeq ($(BOARD_AVB_ENABLE),true)
 	$(hide) echo "board_avb_enable=true" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "board_avb_rollback_index=$(BOARD_AVB_ROLLBACK_INDEX)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "board_avb_key_path=$(BOARD_AVB_KEY_PATH)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "board_avb_algorithm=$(BOARD_AVB_ALGORITHM)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "board_avb_boot_add_hash_footer_args=$(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "board_avb_system_add_hashtree_footer_args=$(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "board_avb_make_vbmeta_image_args=$(BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS)" >> $(zip_root)/META/misc_info.txt
 endif
 ifdef BOARD_BPT_INPUT_FILES
