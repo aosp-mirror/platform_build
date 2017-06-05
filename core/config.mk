@@ -308,6 +308,7 @@ include $(BUILD_SYSTEM)/goma.mk
 
 export CC_WRAPPER
 export CXX_WRAPPER
+export JAVAC_WRAPPER
 endif
 
 ifdef TARGET_PREFER_32_BIT
