@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b8b34c86_bc08a0ab",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1778,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-05T14:55:53Z",
+      "side": 1,
+      "message": "Use a place holder for chain key dir",
+      "range": {
+        "startLine": 1776,
+        "startChar": 0,
+        "endLine": 1778,
+        "endChar": 56
+      },
+      "revId": "9ca669ea0d9cc021134f12a45e3f3e3df346b10d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0285c0cf_1d3b8d6f",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1785,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-05T14:55:53Z",
+      "side": 1,
+      "message": "Need a placeholder for INSTALLED_BOOTIMAGE_TARGET to be replaced by boot_img_path in add_img_to_target_files.py.\n\nSame for the following --include_descriptors_from_image",
+      "range": {
+        "startLine": 1785,
+        "startChar": 4,
+        "endLine": 1785,
+        "endChar": 66
+      },
+      "revId": "9ca669ea0d9cc021134f12a45e3f3e3df346b10d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8a6ba8bb_70d74ab4",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1880,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-05T14:55:53Z",
+      "side": 1,
+      "message": "chain key dir",
+      "range": {
+        "startLine": 1880,
+        "startChar": 2,
+        "endLine": 1880,
+        "endChar": 6
+      },
+      "revId": "9ca669ea0d9cc021134f12a45e3f3e3df346b10d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b8b53040_011dd7c4",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1901,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-05T14:55:53Z",
+      "side": 1,
+      "message": "substitute AVB_CHAIN_KEY_DIR_PLACEHOLDER for \u0027make\u0027",
+      "range": {
+        "startLine": 1901,
+        "startChar": 3,
+        "endLine": 1901,
+        "endChar": 113
+      },
+      "revId": "9ca669ea0d9cc021134f12a45e3f3e3df346b10d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c205fcc8_9a28e44b",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2152,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-05T14:55:53Z",
+      "side": 1,
+      "message": "substitute AVB_CHAIN_KEY_DIR_PLACEHOLDER for \u0027make dist\u0027",
+      "range": {
+        "startLine": 2152,
+        "startChar": 111,
+        "endLine": 2152,
+        "endChar": 135
+      },
+      "revId": "9ca669ea0d9cc021134f12a45e3f3e3df346b10d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

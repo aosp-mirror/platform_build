@@ -164,6 +164,29 @@
       "revId": "4536e45f66b7ca4b48be2941ae9f402768ecbd7f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7d9af4_84c237c0",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-05T14:55:53Z",
+      "side": 0,
+      "message": "We need to use those {boot,system,vendor,dtbo}_img_path here to build vbmeta.img. Cannot directly use the \u0027board_avb_make_vbmeta_image_args\u0027 from Makefile because the image is from $OUT/*.img. \n\nNeed to create a \u0027placeholder\u0027 for those variables and do substitution here.",
+      "range": {
+        "startLine": 344,
+        "startChar": 0,
+        "endLine": 349,
+        "endChar": 67
+      },
+      "revId": "4536e45f66b7ca4b48be2941ae9f402768ecbd7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
