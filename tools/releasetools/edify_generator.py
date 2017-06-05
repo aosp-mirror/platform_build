@@ -130,7 +130,7 @@ class EdifyGenerator(object):
            '    getprop("ro.build.thumbprint") == "{tp}" ||\n'
            '    abort("Package expects build fingerprint of {fp} or '
            'thumbprint of {tp}; this device has a fingerprint of " '
-           '+ getprop("ro.build.fingerprint") and a thumbprint of " '
+           '+ getprop("ro.build.fingerprint") + " and a thumbprint of " '
            '+ getprop("ro.build.thumbprint") + ".");').format(fp=fp, tp=tp)
     self.script.append(cmd)
 
