@@ -111,6 +111,7 @@ PRODUCT_PACKAGES += \
     mediaserver \
     mediametrics \
     mediaextractor \
+    lowpan_cmd \
     monkey \
     mtpd \
     ndc \
