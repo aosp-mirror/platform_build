@@ -194,11 +194,11 @@ def AddDtbo(output_zip, prefix="IMAGES/"):
   # AVB-sign the image as needed.
   if OPTIONS.info_dict.get("board_avb_enable") == "true":
     avbtool = os.getenv('AVBTOOL') or OPTIONS.info_dict["avb_avbtool"]
-    part_size = OPTIONS.info_dict.get("dtbo_size")
+    part_size = OPTIONS.info_dict["dtbo_size"]
     # The AVB hash footer will be replaced if already present.
     cmd = [avbtool, "add_hash_footer", "--image", img.name,
            "--partition_size", str(part_size), "--partition_name", "dtbo"]
-    common.AppendAVBSigningArgs(cmd)
+    cmd.extend(shlex.split(OPTIONS.info_dict["avb_signing_args"]))
     args = OPTIONS.info_dict.get("board_avb_dtbo_add_hash_footer_args")
     if args and args.strip():
       cmd.extend(shlex.split(args))
@@ -349,7 +349,7 @@ def AddVBMeta(output_zip, boot_img_path, system_img_path, vendor_img_path,
     cmd.extend(["--include_descriptors_from_image", dtbo_img_path])
   if OPTIONS.info_dict.get("system_root_image") == "true":
     cmd.extend(["--setup_rootfs_from_kernel", system_img_path])
-  common.AppendAVBSigningArgs(cmd)
+  cmd.extend(shlex.split(OPTIONS.info_dict["avb_signing_args"]))
   args = OPTIONS.info_dict.get("board_avb_make_vbmeta_image_args")
   if args and args.strip():
     cmd.extend(shlex.split(args))
