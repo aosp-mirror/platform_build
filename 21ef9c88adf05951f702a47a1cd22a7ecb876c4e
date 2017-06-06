@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "88021791_2246abcc",
+        "filename": "core/host_java_library.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-06T21:53:05Z",
+      "side": 1,
+      "message": "Make this match java.mk",
+      "revId": "21ef9c88adf05951f702a47a1cd22a7ecb876c4e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f566091d_460e066e",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-06T21:53:05Z",
+      "side": 1,
+      "message": "This isn\u0027t used any more",
+      "revId": "21ef9c88adf05951f702a47a1cd22a7ecb876c4e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
