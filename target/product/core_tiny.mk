@@ -83,7 +83,6 @@ PRODUCT_PACKAGES += \
     telephony-common \
     voip-common \
     logd \
-    lowpan-service \
     wifi-service
 
 # The order matters
@@ -108,7 +107,6 @@ PRODUCT_BOOT_JARS := \
 # The order of PRODUCT_SYSTEM_SERVER_JARS matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
     services \
-    lowpan-service \
     wifi-service
 
 # The set of packages whose code can be loaded by the system server.

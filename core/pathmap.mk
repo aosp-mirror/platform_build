@@ -86,7 +86,6 @@ FRAMEWORKS_BASE_SUBDIRS := \
 	    telecomm \
 	    telephony \
 	    wifi \
-	    lowpan \
 	    keystore \
 	    rs \
 	 )

@@ -88,7 +88,6 @@ PRODUCT_PACKAGES += \
     voip-common \
     webview \
     webview_zygote \
-    lowpan-service \
     wifi-service
 
 PRODUCT_COPY_FILES += \
@@ -121,7 +120,6 @@ PRODUCT_BOOT_JARS := \
 PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service \
-    lowpan-service \
     wifi-service
 
 # The set of packages whose code can be loaded by the system server.
