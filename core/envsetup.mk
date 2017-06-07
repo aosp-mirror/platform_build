@@ -79,23 +79,6 @@ $(foreach v,$(ENABLED_VERSIONS), \
 CORRECT_BUILD_ENV_SEQUENCE_NUMBER := 13
 
 # ---------------------------------------------------------------
-# Whether we can expect a full build graph
-ALLOW_MISSING_DEPENDENCIES := $(filter true,$(ALLOW_MISSING_DEPENDENCIES))
-ifneq ($(TARGET_BUILD_APPS),)
-ALLOW_MISSING_DEPENDENCIES := true
-endif
-ifeq ($(TARGET_BUILD_PDK),true)
-ALLOW_MISSING_DEPENDENCIES := true
-endif
-ifneq ($(filter true,$(SOONG_ALLOW_MISSING_DEPENDENCIES)),)
-ALLOW_MISSING_DEPENDENCIES := true
-endif
-ifneq ($(ONE_SHOT_MAKEFILE),)
-ALLOW_MISSING_DEPENDENCIES := true
-endif
-.KATI_READONLY := ALLOW_MISSING_DEPENDENCIES
-
-# ---------------------------------------------------------------
 # The product defaults to generic on hardware
 # NOTE: This will be overridden in product_config.mk if make
 # was invoked with a PRODUCT-xxx-yyy goal.

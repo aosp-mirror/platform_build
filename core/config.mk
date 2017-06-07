@@ -476,6 +476,23 @@ endif
 
 BUILD_PLATFORM_ZIP := $(filter platform platform-java,$(MAKECMDGOALS))
 
+# ---------------------------------------------------------------
+# Whether we can expect a full build graph
+ALLOW_MISSING_DEPENDENCIES := $(filter true,$(ALLOW_MISSING_DEPENDENCIES))
+ifneq ($(TARGET_BUILD_APPS),)
+ALLOW_MISSING_DEPENDENCIES := true
+endif
+ifeq ($(TARGET_BUILD_PDK),true)
+ALLOW_MISSING_DEPENDENCIES := true
+endif
+ifneq ($(filter true,$(SOONG_ALLOW_MISSING_DEPENDENCIES)),)
+ALLOW_MISSING_DEPENDENCIES := true
+endif
+ifneq ($(ONE_SHOT_MAKEFILE),)
+ALLOW_MISSING_DEPENDENCIES := true
+endif
+.KATI_READONLY := ALLOW_MISSING_DEPENDENCIES
+
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
