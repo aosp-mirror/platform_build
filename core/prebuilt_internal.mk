@@ -498,7 +498,7 @@ ifneq ($(my_src_aar),)
 my_src_jar := $(intermediates.COMMON)/aar/classes.jar
 
 $(my_src_jar) : $(my_src_aar)
-	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@)
+	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@) $(dir $@)/res
 	$(hide) unzip -qo -d $(dir $@) $<
 	# Make sure the extracted classes.jar has a new timestamp.
 	$(hide) touch $@
@@ -518,12 +518,34 @@ $(call define-jar-to-toc-rule, $(common_classes_jar))
 
 ifdef LOCAL_USE_AAPT2
 ifneq ($(my_src_aar),)
+LOCAL_SDK_RES_VERSION:=$(strip $(LOCAL_SDK_RES_VERSION))
+ifeq ($(LOCAL_SDK_RES_VERSION),)
+  LOCAL_SDK_RES_VERSION:=$(LOCAL_SDK_VERSION)
+endif
+
+framework_res_package_export :=
+framework_res_package_export_deps :=
+# Please refer to package.mk
+ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
+framework_res_package_export := \
+    $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
+framework_res_package_export_deps := $(framework_res_package_export)
+else
+framework_res_package_export := \
+    $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
+framework_res_package_export_deps := \
+    $(dir $(framework_res_package_export))src/R.stamp
+endif
+endif
+
 my_res_package := $(intermediates.COMMON)/package-res.apk
 
 # We needed only very few PRIVATE variables and aapt2.mk input variables. Reset the unnecessary ones.
 $(my_res_package): PRIVATE_AAPT2_CFLAGS :=
+$(my_res_package): PRIVATE_AAPT_FLAGS := --static-lib --no-static-lib-packages
 $(my_res_package): PRIVATE_ANDROID_MANIFEST := $(intermediates.COMMON)/aar/AndroidManifest.xml
-$(my_res_package): PRIVATE_AAPT_INCLUDES :=
+$(my_res_package): PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
 $(my_res_package): PRIVATE_SOURCE_INTERMEDIATES_DIR :=
 $(my_res_package): PRIVATE_PROGUARD_OPTIONS_FILE :=
 $(my_res_package): PRIVATE_DEFAULT_APP_TARGET_SDK :=
@@ -531,11 +553,12 @@ $(my_res_package): PRIVATE_DEFAULT_APP_TARGET_SDK :=
 $(my_res_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
 $(my_res_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 $(my_res_package): PRIVATE_TARGET_AAPT_CHARACTERISTICS :=
+$(my_res_package) : $(framework_res_package_export_deps)
 
 full_android_manifest :=
 my_res_resources :=
 my_overlay_resources :=
-my_compiled_res_base_dir :=
+my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res
 R_file_stamp :=
 proguard_options_file :=
 my_generated_res_dirs := $(intermediates.COMMON)/aar/res
