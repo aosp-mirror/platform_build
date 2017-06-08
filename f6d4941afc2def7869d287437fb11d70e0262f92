@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "9ad43c7d_69391508",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-08T22:14:09Z",
+      "side": 1,
+      "message": "cat ../../../out/*.ninja will print ninja files for all the different products you\u0027ve built.\n\nI\u0027m thinking of a tool that prints something nicely formatted - asking people to read 500MB ninja files isn\u0027t helpful.\n\nThe build system can already produce a modules.json file, so something that wraps that might work.",
+      "parentUuid": "c31aa8b7_6a6caf62",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a2f79e71_9752b476",
         "filename": "core/help.sh",
         "patchSetId": 3
