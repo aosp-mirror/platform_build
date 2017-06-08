@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "95aee5be_c056c933",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-08T22:04:24Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "c5323f4b_436deb4c",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f7f02248_36122e2e",
         "filename": "core/help.sh",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2017-06-08T21:17:08Z",
       "side": 1,
       "message": "I still don\u0027t like documenting these build system internals in the first level documentation.  If there is a need for seeing the list, we should provide a tool and document that.",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c31aa8b7_6a6caf62",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-08T22:04:24Z",
+      "side": 1,
+      "message": "How about I make a script called \"listTargets.sh\" that executes `cat ../../../out/*.ninja`?\n\nOne case in which I find it convenient to view the targets is when I\u0027ve done something to change the targets and want to know whether my change had the effect I wanted without waiting for a full \u0027showcommands\u0027 build to complete.\n\nAnother case is when I want to discover which targets exist.",
+      "parentUuid": "f7f02248_36122e2e",
       "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "42f3438b_4ed9b6dd",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-08T22:04:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2f79e71_9752b476",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9801e1a7_efbfe5bc",
         "filename": "core/help.sh",
         "patchSetId": 3
@@ -64,6 +118,24 @@
       "writtenOn": "2017-06-08T21:17:08Z",
       "side": 1,
       "message": "Same here, this is an implementation detail and not something that should be documented here.",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cc5db0ff_3db2ae4c",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-08T22:04:24Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "9801e1a7_efbfe5bc",
       "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
