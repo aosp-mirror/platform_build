@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c5323f4b_436deb4c",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-08T21:17:08Z",
+      "side": 1,
+      "message": "Explain lunch first, as that is the common case.",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7f02248_36122e2e",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-08T21:17:08Z",
+      "side": 1,
+      "message": "I still don\u0027t like documenting these build system internals in the first level documentation.  If there is a need for seeing the list, we should provide a tool and document that.",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a2f79e71_9752b476",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-08T21:17:08Z",
+      "side": 1,
+      "message": "This one won\u0027t do anything, you would have to do export I_AM_A_SHELL_VAR\u003d1 to make it visible to make.",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9801e1a7_efbfe5bc",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-08T21:17:08Z",
+      "side": 1,
+      "message": "Same here, this is an implementation detail and not something that should be documented here.",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
