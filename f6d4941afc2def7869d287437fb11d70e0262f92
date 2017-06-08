@@ -108,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "98f1f5c2_fe576adf",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-08T23:53:19Z",
+      "side": 1,
+      "message": "Re: https://groups.google.com/a/google.com/d/msg/android-chatty-eng/_RWYZ3jdPo8/voUg1gP3AQAJ (which Colin sent via email to explain module-info.json)\n\nHmm. That looks somewhat relevant although it doesn\u0027t seem to list shell arguments, dependencies, or tasks - just modules.\n\nWhat do you envision as the downside with mentioning a file that happens to be an implementation detail? My plan is that if I mention it, then it lowers the amount of effort required for other people to discover it, and leaves them more time to write the tool that you\u0027ve asked for, and it will be informed by their knowledge of what they need it to do. Would you like it better if I emphasized that the ninja file was an implementation detail and that pull requests providing a tool are welcome?\n\nThis doesn\u0027t recommend that users read the ninja file line-by-line in a text editor; it just mentions its existence and leaves it up to the user to decide on their own viewing method (generally I open it in vim and do a search). Would you like it better if I replaced \"see\" with another verb like \"notice\"?",
+      "parentUuid": "e3ec7f2a_8160438a",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a2f79e71_9752b476",
         "filename": "core/help.sh",
         "patchSetId": 3
