@@ -90,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "e3ec7f2a_8160438a",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-08T22:24:42Z",
+      "side": 1,
+      "message": "How do I learn about modules.json so I can consider documenting it here? What\u0027s a sample shell invocation that will create it?",
+      "parentUuid": "9ad43c7d_69391508",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a2f79e71_9752b476",
         "filename": "core/help.sh",
         "patchSetId": 3
