@@ -2427,7 +2427,7 @@ def parse_input_file(infile):
     if warning_pattern.match(line):
       line = normalize_warning_line(line)
       warning_lines.add(line)
-    elif line_counter < 50:
+    elif line_counter < 100:
       # save a little bit of time by only doing this for the first few lines
       line_counter += 1
       m = re.search('(?<=^PLATFORM_VERSION=).*', line)
