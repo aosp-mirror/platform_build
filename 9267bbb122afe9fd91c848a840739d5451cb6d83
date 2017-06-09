@@ -16,6 +16,24 @@
       "revId": "9267bbb122afe9fd91c848a840739d5451cb6d83",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ccd3967_7c75b1f3",
+        "filename": "core/help.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-09T01:22:02Z",
+      "side": 1,
+      "message": "Hmmm. Maintaining a list here of which targets go in which ninja files sounds to me like a lot of effort (and a lot of text to read), and the cost of specifying two files seems fairly low to me since the user just checks both files.\n\nWe could extract this into a separate help script and put clarifications into there. We talked offline and I got the impression that you were content to save it until later, since we\u0027d either have to make the tool that Collin describes, or we\u0027d have to explain what Soong is, what Make is, why both exist, and where the ninja files come from. Let me know if my impression of your opinion was correct.",
+      "parentUuid": "591d4c09_bfa430a2",
+      "revId": "9267bbb122afe9fd91c848a840739d5451cb6d83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
