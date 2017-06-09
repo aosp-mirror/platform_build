@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26b51387_edfdc603",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-09T08:36:44Z",
+      "side": 1,
+      "message": "This is empty if BOOT is non-chain. Same for other partitions.\n\nIn this case, avbtool info_image --image boot.img will have:\n\nMinimum libavb version:   1.0\nHeader Block:             256 bytes\nAuthentication Block:     0 bytes   \u003c--- \nAuxiliary Block:          256 bytes\nAlgorithm:                NONE     \u003c---",
+      "range": {
+        "startLine": 577,
+        "startChar": 27,
+        "endLine": 577,
+        "endChar": 57
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "31f2b4ef_7b8bdf5b",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 950,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-09T08:36:44Z",
+      "side": 1,
+      "message": "Those only needed for chain partition. Same for other partitions.",
+      "range": {
+        "startLine": 947,
+        "startChar": 3,
+        "endLine": 950,
+        "endChar": 111
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4cc852a6_50d0d136",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 2332,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-09T08:36:44Z",
+      "side": 1,
+      "message": "Only output those when boot partition is chain-ed.",
+      "range": {
+        "startLine": 2328,
+        "startChar": 0,
+        "endLine": 2332,
+        "endChar": 31
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
