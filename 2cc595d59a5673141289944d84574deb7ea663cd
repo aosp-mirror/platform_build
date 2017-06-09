@@ -142,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "54f7191b_9b8850d6",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2320,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-09T08:47:23Z",
+      "side": 1,
+      "message": "We cannot rely on Makefile because add_img_to_target_files.py should be able to work standalone can only rely on META/misc_info.txt. See test steps in https://android-review.googlesource.com/#/c/407572/.\n\nSo we need to pass both --key and --algorithm in misc_info.txt for it to extract public key then re-assemble signing_args during re-signing.\n\nThe latest PS fix this.",
+      "parentUuid": "9d73c09c_04cfa00f",
+      "range": {
+        "startLine": 2315,
+        "startChar": 1,
+        "endLine": 2320,
+        "endChar": 121
+      },
+      "revId": "2cc595d59a5673141289944d84574deb7ea663cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ad952607_cb4222c3",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 4
