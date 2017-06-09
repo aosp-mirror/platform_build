@@ -126,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "83288a2c_65dfcbe0",
+        "filename": "core/help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-09T22:59:27Z",
+      "side": 1,
+      "message": "Also I\u0027ve now opened b/62494155 to make task-browsing easier",
+      "parentUuid": "98f1f5c2_fe576adf",
+      "revId": "f6d4941afc2def7869d287437fb11d70e0262f92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a2f79e71_9752b476",
         "filename": "core/help.sh",
         "patchSetId": 3
