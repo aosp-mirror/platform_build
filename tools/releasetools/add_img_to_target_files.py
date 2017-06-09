@@ -69,7 +69,7 @@ OPTIONS = common.OPTIONS
 
 OPTIONS.add_missing = False
 OPTIONS.rebuild_recovery = False
-OPTIONS.replace_recovery_patch_files_list = []
+OPTIONS.replace_updated_files_list = []
 OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
 OPTIONS.is_signing = False
@@ -99,8 +99,7 @@ def GetCareMap(which, imgname):
   assert which in ("system", "vendor")
 
   simg = sparse_img.SparseImage(imgname)
-  care_map_list = []
-  care_map_list.append(which)
+  care_map_list = [which]
 
   care_map_ranges = simg.care_map
   key = which + "_adjusted_partition_size"
@@ -130,7 +129,7 @@ def AddSystem(output_zip, prefix="IMAGES/", recovery_img=None, boot_img=None):
 
     arc_name = "SYSTEM/" + fn
     if arc_name in output_zip.namelist():
-      OPTIONS.replace_recovery_patch_files_list.append(arc_name)
+      OPTIONS.replace_updated_files_list.append(arc_name)
     else:
       common.ZipWrite(output_zip, ofile.name, arc_name)
 
@@ -427,17 +426,21 @@ def AddCache(output_zip, prefix="IMAGES/"):
   img.Write()
 
 
-def ReplaceRecoveryPatchFiles(zip_filename):
-  """Update the related files under SYSTEM/ after rebuilding recovery."""
+def ReplaceUpdatedFiles(zip_filename, files_list):
+  """Update all the zip entries listed in the files_list.
 
-  cmd = ["zip", "-d", zip_filename] + OPTIONS.replace_recovery_patch_files_list
+  For now the list includes META/care_map.txt, and the related files under
+  SYSTEM/ after rebuilding recovery.
+  """
+
+  cmd = ["zip", "-d", zip_filename] + files_list
   p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   p.communicate()
 
   output_zip = zipfile.ZipFile(zip_filename, "a",
                                compression=zipfile.ZIP_DEFLATED,
                                allowZip64=True)
-  for item in OPTIONS.replace_recovery_patch_files_list:
+  for item in files_list:
     file_path = os.path.join(OPTIONS.input_tmp, item)
     assert os.path.exists(file_path)
     common.ZipWrite(output_zip, file_path, arcname=item)
@@ -616,17 +619,20 @@ def AddImagesToTargetFiles(filename):
         assert os.path.exists(img_path), "cannot find " + img_name
 
     if care_map_list:
-      file_path = "META/care_map.txt"
-      if output_zip:
-        common.ZipWriteStr(output_zip, file_path, '\n'.join(care_map_list))
+      care_map_path = "META/care_map.txt"
+      if output_zip and care_map_path not in output_zip.namelist():
+        common.ZipWriteStr(output_zip, care_map_path, '\n'.join(care_map_list))
       else:
-        with open(os.path.join(OPTIONS.input_tmp, file_path), 'w') as fp:
+        with open(os.path.join(OPTIONS.input_tmp, care_map_path), 'w') as fp:
           fp.write('\n'.join(care_map_list))
+        if output_zip:
+          OPTIONS.replace_updated_files_list.append(care_map_path)
 
   if output_zip:
     common.ZipClose(output_zip)
-    if OPTIONS.replace_recovery_patch_files_list:
-      ReplaceRecoveryPatchFiles(output_zip.filename)
+    if OPTIONS.replace_updated_files_list:
+      ReplaceUpdatedFiles(output_zip.filename,
+                          OPTIONS.replace_updated_files_list)
 
 
 def main(argv):
