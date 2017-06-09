@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "591d4c09_bfa430a2",
+        "filename": "core/help.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-06-09T00:39:55Z",
+      "side": 1,
+      "message": "Do we need distinguish these two ninja files a little bit here? maybe so that it can give users some clues which one they want to dig into it.",
+      "revId": "9267bbb122afe9fd91c848a840739d5451cb6d83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
