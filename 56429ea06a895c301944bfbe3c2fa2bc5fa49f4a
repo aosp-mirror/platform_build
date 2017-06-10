@@ -48,6 +48,29 @@
     },
     {
       "key": {
+        "uuid": "3cd1aa2d_f8a03cac",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1762,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-10T04:15:54Z",
+      "side": 1,
+      "message": "Do we also need to add a dependency on BOARD_AVB_DTBO_KEY_PATH?",
+      "range": {
+        "startLine": 1762,
+        "startChar": 59,
+        "endLine": 1762,
+        "endChar": 69
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e323e8ac_672ce214",
         "filename": "core/Makefile",
         "patchSetId": 7
@@ -137,6 +160,29 @@
       "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eab4869b_45eed164",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-10T04:15:54Z",
+      "side": 1,
+      "message": "nit: do an early return instead?",
+      "range": {
+        "startLine": 338,
+        "startChar": 2,
+        "endLine": 338,
+        "endChar": 26
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     },
     {
       "key": {
