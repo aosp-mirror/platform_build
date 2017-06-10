@@ -48,6 +48,75 @@
     },
     {
       "key": {
+        "uuid": "e323e8ac_672ce214",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1781,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-10T02:28:42Z",
+      "side": 1,
+      "message": "TARGET_OUT_INTERMEDIATES?",
+      "range": {
+        "startLine": 1781,
+        "startChar": 23,
+        "endLine": 1781,
+        "endChar": 34
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "294052be_649961a2",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1856,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-10T02:28:42Z",
+      "side": 1,
+      "message": "not seeing this function definition?",
+      "range": {
+        "startLine": 1856,
+        "startChar": 14,
+        "endLine": 1856,
+        "endChar": 36
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd95b70a_1b345cc5",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 2327,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-10T02:28:42Z",
+      "side": 1,
+      "message": "Shall we consolidate the prefix of these flags? Something like \"avb_\"?\n\navb_enable\u003dtrue\n\navb_vbmeta_algorithm\u003d\navb_vbmeta_key\u003d\navb_vbmeta_args\u003d\n\navb_boot_add_hash_footer_args\u003d\navb_boot_algorithm\u003d\navb_boot_key\u003d\navb_boot_rollback_index_location\u003d",
+      "range": {
+        "startLine": 2323,
+        "startChar": 15,
+        "endLine": 2327,
+        "endChar": 23
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4cc852a6_50d0d136",
         "filename": "core/Makefile",
         "patchSetId": 7
@@ -68,6 +137,98 @@
       "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9f642c55_26e121cc",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-10T02:28:42Z",
+      "side": 1,
+      "message": "nit: No need to specify the default value?",
+      "range": {
+        "startLine": 340,
+        "startChar": 66,
+        "endLine": 340,
+        "endChar": 70
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0dbe9e29_647817ba",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-10T02:28:42Z",
+      "side": 1,
+      "message": "why not putting the list directly?",
+      "range": {
+        "startLine": 357,
+        "startChar": 17,
+        "endLine": 357,
+        "endChar": 40
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64a25587_25453a00",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-10T02:28:42Z",
+      "side": 1,
+      "message": "missing space\n\nbut can we construct cmdline into a list directly?",
+      "range": {
+        "startLine": 145,
+        "startChar": 42,
+        "endLine": 145,
+        "endChar": 44
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e31c4fa2_75143216",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-10T02:28:42Z",
+      "side": 1,
+      "message": "nit: not aligned",
+      "range": {
+        "startLine": 586,
+        "startChar": 22,
+        "endLine": 586,
+        "endChar": 24
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
