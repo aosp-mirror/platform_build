@@ -19,6 +19,8 @@
 #   test_suite_tradefed: the name of this test suite's tradefed wrapper
 #   test_suite_dynamic_config: the path to this test suite's dynamic configuration file
 #   test_suite_readme: the path to a README file for this test suite
+#   test_suite_prebuilt_tools: the set of prebuilt tools to be included directly
+#                         in the 'tools' subdirectory of the test suite.
 # Output variables:
 #   compatibility_zip: the path to the output zip file.
 
@@ -39,10 +41,10 @@ test_tools := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar \
 compatibility_zip := $(out_dir).zip
 $(compatibility_zip): PRIVATE_NAME := android-$(test_suite_name)
 $(compatibility_zip): PRIVATE_OUT_DIR := $(out_dir)
-$(compatibility_zip): PRIVATE_TOOLS := $(test_tools)
+$(compatibility_zip): PRIVATE_TOOLS := $(test_tools) $(test_suite_prebuilt_tools)
 $(compatibility_zip): PRIVATE_SUITE_NAME := $(test_suite_name)
 $(compatibility_zip): PRIVATE_DYNAMIC_CONFIG := $(test_suite_dynamic_config)
-$(compatibility_zip): $(test_artifacts) $(test_tools) $(test_suite_dynamic_config) $(SOONG_ZIP) | $(ADB) $(ACP)
+$(compatibility_zip): $(test_artifacts) $(test_tools) $(test_suite_prebuilt_tools) $(test_suite_dynamic_config) $(SOONG_ZIP) | $(ADB) $(ACP)
 # Make dir structure
 	$(hide) mkdir -p $(PRIVATE_OUT_DIR)/tools $(PRIVATE_OUT_DIR)/testcases
 # Copy tools
@@ -56,3 +58,4 @@ test_suite_name :=
 test_suite_tradefed :=
 test_suite_dynamic_config :=
 test_suite_readme :=
+test_suite_prebuilt_tools :=
