@@ -68,4 +68,7 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     KeyChain \
     Telecom \
 
+# The set of packages we want to force 'speed' compilation on.
+PRODUCT_DEXPREOPT_SPEED_APPS += \
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_base.mk)
