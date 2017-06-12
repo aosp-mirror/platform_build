@@ -116,6 +116,9 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     SettingsProvider \
     WallpaperBackup \
 
+# The set of packages we want to force 'speed' compilation on.
+PRODUCT_DEXPREOPT_SPEED_APPS := \
+
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.zygote=zygote32
 PRODUCT_COPY_FILES += \
