@@ -235,21 +235,15 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # System properties.
     elif info.filename in ("SYSTEM/build.prop",
                            "VENDOR/build.prop",
-                           "SYSTEM/etc/prop.default",
-                           "BOOT/RAMDISK/default.prop",  # legacy
-                           "ROOT/default.prop",  # legacy
-                           "RECOVERY/RAMDISK/prop.default",
-                           "RECOVERY/RAMDISK/default.prop"):  # legacy
+                           "BOOT/RAMDISK/default.prop",
+                           "ROOT/default.prop",
+                           "RECOVERY/RAMDISK/default.prop"):
       print "rewriting %s:" % (info.filename,)
-      if stat.S_ISLNK(info.external_attr >> 16):
-        new_data = data
-      else:
-        new_data = RewriteProps(data, misc_info)
+      new_data = RewriteProps(data, misc_info)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
-      if info.filename in ("BOOT/RAMDISK/default.prop",  # legacy
-                           "ROOT/default.prop",  # legacy
-                           "RECOVERY/RAMDISK/prop.default",
-                           "RECOVERY/RAMDISK/default.prop"):  # legacy
+      if info.filename in ("BOOT/RAMDISK/default.prop",
+                           "ROOT/default.prop",
+                           "RECOVERY/RAMDISK/default.prop"):
         write_to_temp(info.filename, info.external_attr, new_data)
 
     elif info.filename.endswith("mac_permissions.xml"):
