@@ -353,6 +353,30 @@
     },
     {
       "key": {
+        "uuid": "db7167fb_6f40a0ad",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-12T12:24:14Z",
+      "side": 1,
+      "message": "OK, got it. Can ignore the 2nd argument.",
+      "parentUuid": "9f642c55_26e121cc",
+      "range": {
+        "startLine": 340,
+        "startChar": 66,
+        "endLine": 340,
+        "endChar": 70
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0dbe9e29_647817ba",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 7

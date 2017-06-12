@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6f51b698_bef4d61b",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-12T12:24:14Z",
+      "side": 1,
+      "message": "algorithm of each partition (boot, system, etc) isn\u0027t required when making vbmeta.img",
+      "range": {
+        "startLine": 354,
+        "startChar": 4,
+        "endLine": 354,
+        "endChar": 13
+      },
+      "revId": "8442995c67f59b0cf6d1d2a7d9b7c057f6bf630b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
