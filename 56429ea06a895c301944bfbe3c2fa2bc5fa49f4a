@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "9f4a64d9_ac7f3537",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1762,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-12T11:44:55Z",
+      "side": 1,
+      "message": "Seems not needed, because the key is just a file path and won\u0027t be built by Android build system:\n  BOARD_AVB_DTBO_KEY_PATH :\u003d external/avb/test/data/testkey_rsa4096.pem\n\nDoes that sound good?",
+      "parentUuid": "3cd1aa2d_f8a03cac",
+      "range": {
+        "startLine": 1762,
+        "startChar": 59,
+        "endLine": 1762,
+        "endChar": 69
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e323e8ac_672ce214",
         "filename": "core/Makefile",
         "patchSetId": 7
@@ -82,6 +106,30 @@
       "writtenOn": "2017-06-10T02:28:42Z",
       "side": 1,
       "message": "TARGET_OUT_INTERMEDIATES?",
+      "range": {
+        "startLine": 1781,
+        "startChar": 23,
+        "endLine": 1781,
+        "endChar": 34
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d143b8f_9ff5f4fa",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1781,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-12T11:44:55Z",
+      "side": 1,
+      "message": "Done! Good suggestion, thanks.",
+      "parentUuid": "e323e8ac_672ce214",
       "range": {
         "startLine": 1781,
         "startChar": 23,
@@ -117,6 +165,30 @@
     },
     {
       "key": {
+        "uuid": "bf7c9dfe_32e1a40e",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1856,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-12T11:44:55Z",
+      "side": 1,
+      "message": "Oh, this should be removed!\nI tried to define a function for this before but it just need one line \"--include_descriptors_from_image...\", so removed it.",
+      "parentUuid": "294052be_649961a2",
+      "range": {
+        "startLine": 1856,
+        "startChar": 14,
+        "endLine": 1856,
+        "endChar": 36
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bd95b70a_1b345cc5",
         "filename": "core/Makefile",
         "patchSetId": 7
@@ -128,6 +200,30 @@
       "writtenOn": "2017-06-10T02:28:42Z",
       "side": 1,
       "message": "Shall we consolidate the prefix of these flags? Something like \"avb_\"?\n\navb_enable\u003dtrue\n\navb_vbmeta_algorithm\u003d\navb_vbmeta_key\u003d\navb_vbmeta_args\u003d\n\navb_boot_add_hash_footer_args\u003d\navb_boot_algorithm\u003d\navb_boot_key\u003d\navb_boot_rollback_index_location\u003d",
+      "range": {
+        "startLine": 2323,
+        "startChar": 15,
+        "endLine": 2327,
+        "endChar": 23
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a1c21e4_c7e4a0eb",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 2327,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-12T11:44:55Z",
+      "side": 1,
+      "message": "Done, this looks better.\n\nMy original thought is to follow \u003cpartition\u003e_* like other params. e.g., system_size, system_extfs_inode_count, system_journal_size, etc.\n\nBut looks like we can just group AVB params by avb_\u003cpartition\u003e_*",
+      "parentUuid": "bd95b70a_1b345cc5",
       "range": {
         "startLine": 2323,
         "startChar": 15,
@@ -186,6 +282,30 @@
     },
     {
       "key": {
+        "uuid": "771e3358_8f88d4fb",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-12T11:44:55Z",
+      "side": 1,
+      "message": "Ok, it\u0027s better!",
+      "parentUuid": "eab4869b_45eed164",
+      "range": {
+        "startLine": 338,
+        "startChar": 2,
+        "endLine": 338,
+        "endChar": 26
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9f642c55_26e121cc",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 7
@@ -197,6 +317,30 @@
       "writtenOn": "2017-06-10T02:28:42Z",
       "side": 1,
       "message": "nit: No need to specify the default value?",
+      "range": {
+        "startLine": 340,
+        "startChar": 66,
+        "endLine": 340,
+        "endChar": 70
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d5d3f93_3e9ebf29",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-12T11:44:55Z",
+      "side": 1,
+      "message": "No need to have default value.\n  \n  - avb_\u003cpartition\u003e_key_path can be none: non-chain.\n  - avb_\u003cpartition\u003e_key_path is not none: chain partition.\n  \nIn non-chain case, we just need to\ncmd.extend([\"--include_descriptors_from_image\", img_path]) below.\n  \nIt\u0027s similar as what we did in Makefile:\n  \nifdef BOARD_AVB_SYSTEM_KEY_PATH\n$(eval $(call check-and-set-avb-chain-args,SYSTEM))\nelse\nINTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS +\u003d \\\n    --include_descriptors_from_image $(INSTALLED_SYSTEMIMAGE)\nendif",
+      "parentUuid": "9f642c55_26e121cc",
       "range": {
         "startLine": 340,
         "startChar": 66,
@@ -232,6 +376,30 @@
     },
     {
       "key": {
+        "uuid": "5246567a_90a2bc38",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 357,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-12T11:44:55Z",
+      "side": 1,
+      "message": "OK, it works as well.",
+      "parentUuid": "0dbe9e29_647817ba",
+      "range": {
+        "startLine": 357,
+        "startChar": 17,
+        "endLine": 357,
+        "endChar": 40
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "64a25587_25453a00",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 7
@@ -255,6 +423,30 @@
     },
     {
       "key": {
+        "uuid": "eeb48a55_7608a453",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-12T11:44:55Z",
+      "side": 1,
+      "message": "OK, let\u0027s change to list directly.\n\nPreviously I just followed original style in this function here.",
+      "parentUuid": "64a25587_25453a00",
+      "range": {
+        "startLine": 145,
+        "startChar": 42,
+        "endLine": 145,
+        "endChar": 44
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e31c4fa2_75143216",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 7
@@ -266,6 +458,30 @@
       "writtenOn": "2017-06-10T02:28:42Z",
       "side": 1,
       "message": "nit: not aligned",
+      "range": {
+        "startLine": 586,
+        "startChar": 22,
+        "endLine": 586,
+        "endChar": 24
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc71dd65_4a24655c",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 586,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-12T11:44:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e31c4fa2_75143216",
       "range": {
         "startLine": 586,
         "startChar": 22,
