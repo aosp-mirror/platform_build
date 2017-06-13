@@ -46,6 +46,30 @@
       "revId": "322e0ad022ca5275da25c621febbcd0b2bbada23",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ca7229d_1ef37732",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-13T18:36:33Z",
+      "side": 1,
+      "message": "Why do we want that?",
+      "parentUuid": "3ec39369_59303d4f",
+      "range": {
+        "startLine": 623,
+        "startChar": 0,
+        "endLine": 628,
+        "endChar": 44
+      },
+      "revId": "322e0ad022ca5275da25c621febbcd0b2bbada23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
