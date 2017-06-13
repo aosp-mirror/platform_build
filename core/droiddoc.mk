@@ -130,7 +130,13 @@ ifneq ($(strip $(LOCAL_DROIDDOC_USE_STANDARD_DOCLET)),true)
 ##
 
 droiddoc_templates := \
-    $(sort $(shell find $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR) -type f))
+    $(sort $(shell find $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR) -type f $(if $(ALLOW_MISSING_DEPENDENCIES),2>/dev/null)))
+
+ifdef ALLOW_MISSING_DEPENDENCIES
+  ifndef droiddoc_templates
+    droiddoc_templates := $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR)
+  endif
+endif
 
 droiddoc := \
 	$(HOST_JDK_TOOLS_JAR) \
