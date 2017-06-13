@@ -22,6 +22,30 @@
       "revId": "0e84e639851c5262e9599289378edeb68a29fd7d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94e97d0e_5ed6495c",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 631,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-06-13T06:19:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "22d720b5_851b03a4",
+      "range": {
+        "startLine": 631,
+        "startChar": 4,
+        "endLine": 631,
+        "endChar": 58
+      },
+      "revId": "0e84e639851c5262e9599289378edeb68a29fd7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
