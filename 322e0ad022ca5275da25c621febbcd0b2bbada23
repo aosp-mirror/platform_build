@@ -22,6 +22,30 @@
       "revId": "322e0ad022ca5275da25c621febbcd0b2bbada23",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ec39369_59303d4f",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 628,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-06-13T18:22:31Z",
+      "side": 1,
+      "message": "This way we won\u0027t write care_map to input_tmp if there\u0027s a duplicated entry... Add a check for output_zip when writing to the files_list.",
+      "parentUuid": "de4081a6_5696fe61",
+      "range": {
+        "startLine": 623,
+        "startChar": 0,
+        "endLine": 628,
+        "endChar": 44
+      },
+      "revId": "322e0ad022ca5275da25c621febbcd0b2bbada23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
