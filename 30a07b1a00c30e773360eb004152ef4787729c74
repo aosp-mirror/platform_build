@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e3d5d3a0_af9efc08",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-13T06:35:03Z",
+      "side": 1,
+      "message": "I mean this line can be merged into the \u0027if\u0027 at L623 (in PS3)? That way we don\u0027t need the check here (and care_map_path can stay inside L622).",
+      "range": {
+        "startLine": 632,
+        "startChar": 6,
+        "endLine": 632,
+        "endChar": 62
+      },
+      "revId": "30a07b1a00c30e773360eb004152ef4787729c74",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
