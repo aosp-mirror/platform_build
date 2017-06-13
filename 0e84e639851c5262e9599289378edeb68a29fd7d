@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "22d720b5_851b03a4",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 631,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-13T03:27:22Z",
+      "side": 1,
+      "message": "Shall we just keep one global list, such as OPTIONS.replace_updated_files_list?",
+      "range": {
+        "startLine": 631,
+        "startChar": 4,
+        "endLine": 631,
+        "endChar": 58
+      },
+      "revId": "0e84e639851c5262e9599289378edeb68a29fd7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
