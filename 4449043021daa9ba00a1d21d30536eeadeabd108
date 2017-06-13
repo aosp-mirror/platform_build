@@ -22,6 +22,30 @@
       "revId": "4449043021daa9ba00a1d21d30536eeadeabd108",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ac55712a_69c37342",
+        "filename": "target/product/core_tiny.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1021471
+      },
+      "writtenOn": "2017-06-13T23:05:45Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6106365c_78bc032a",
+      "range": {
+        "startLine": 88,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 3
+      },
+      "revId": "4449043021daa9ba00a1d21d30536eeadeabd108",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
