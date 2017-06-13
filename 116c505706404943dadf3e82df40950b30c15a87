@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "324f6bb4_718c3212",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-13T06:28:21Z",
+      "side": 1,
+      "message": "nit: no longer needed",
+      "range": {
+        "startLine": 438,
+        "startChar": 43,
+        "endLine": 438,
+        "endChar": 46
+      },
+      "revId": "116c505706404943dadf3e82df40950b30c15a87",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

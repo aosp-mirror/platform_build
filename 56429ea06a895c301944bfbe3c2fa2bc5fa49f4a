@@ -95,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "6d85807c_a3acee97",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1762,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-06-13T06:28:21Z",
+      "side": 1,
+      "message": "My understanding is (Dan knows better): a change to the key file (unlikely event though) will need to trigger a rebuild of the dtbo image.",
+      "parentUuid": "9f4a64d9_ac7f3537",
+      "range": {
+        "startLine": 1762,
+        "startChar": 59,
+        "endLine": 1762,
+        "endChar": 69
+      },
+      "revId": "56429ea06a895c301944bfbe3c2fa2bc5fa49f4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e323e8ac_672ce214",
         "filename": "core/Makefile",
         "patchSetId": 7
