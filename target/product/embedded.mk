@@ -76,6 +76,7 @@ PRODUCT_PACKAGES += \
     shell_and_utilities \
     storaged \
     surfaceflinger \
+    thermalserviced \
     tombstoned \
     tzdatacheck \
     vndservice \
