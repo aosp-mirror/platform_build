@@ -1854,6 +1854,8 @@ INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
     --include_descriptors_from_image $(INSTALLED_DTBOIMAGE_TARGET)
 endif
 
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096
+
 ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += --setup_rootfs_from_kernel $(BUILT_SYSTEMIMAGE)
 endif
