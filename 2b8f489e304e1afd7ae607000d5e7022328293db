@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3124058d_25907f82",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-06-14T00:13:04Z",
+      "side": 1,
+      "message": "do you think this is something we need to start planning for?",
+      "range": {
+        "startLine": 9,
+        "startChar": 58,
+        "endLine": 10,
+        "endChar": 45
+      },
+      "revId": "2b8f489e304e1afd7ae607000d5e7022328293db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
