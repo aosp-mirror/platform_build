@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e0981041_f8984ad5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1021471
+      },
+      "writtenOn": "2017-06-14T17:49:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80a836cc_385230d9",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 13
+      },
+      "revId": "4449043021daa9ba00a1d21d30536eeadeabd108",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6106365c_78bc032a",
         "filename": "target/product/core_tiny.mk",
         "patchSetId": 1
@@ -60,6 +84,30 @@
       "side": 1,
       "message": "Ack",
       "parentUuid": "6106365c_78bc032a",
+      "range": {
+        "startLine": 88,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 3
+      },
+      "revId": "4449043021daa9ba00a1d21d30536eeadeabd108",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a6df2750_b8b0509c",
+        "filename": "target/product/core_tiny.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1021471
+      },
+      "writtenOn": "2017-06-14T17:49:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ac55712a_69c37342",
       "range": {
         "startLine": 88,
         "startChar": 0,
