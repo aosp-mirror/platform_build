@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "80a836cc_385230d9",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2017-06-14T12:44:52Z",
+      "side": 1,
+      "message": "Test: ?",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 13
+      },
+      "revId": "4449043021daa9ba00a1d21d30536eeadeabd108",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6106365c_78bc032a",
         "filename": "target/product/core_tiny.mk",
         "patchSetId": 1
