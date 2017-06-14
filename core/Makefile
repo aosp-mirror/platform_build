@@ -1022,7 +1022,8 @@ INTERNAL_RECOVERYIMAGE_FILES := $(filter $(TARGET_RECOVERY_OUT)/%, \
 recovery_initrc := $(call include-path-for, recovery)/etc/init.rc
 recovery_sepolicy := \
     $(TARGET_RECOVERY_ROOT_OUT)/sepolicy \
-    $(TARGET_RECOVERY_ROOT_OUT)/file_contexts.bin \
+    $(TARGET_RECOVERY_ROOT_OUT)/plat_file_contexts \
+    $(TARGET_RECOVERY_ROOT_OUT)/nonplat_file_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/plat_property_contexts \
     $(TARGET_RECOVERY_ROOT_OUT)/nonplat_property_contexts
 # Passed into rsync from non-recovery root to recovery root, to avoid overwriting recovery-specific
@@ -1849,6 +1850,8 @@ ifdef INSTALLED_DTBOIMAGE_TARGET
 INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
     --include_descriptors_from_image $(INSTALLED_DTBOIMAGE_TARGET)
 endif
+
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096
 
 ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += --setup_rootfs_from_kernel $(BUILT_SYSTEMIMAGE)

@@ -634,7 +634,9 @@ def main(argv):
     sys.exit(1)
 
   input_zip = zipfile.ZipFile(args[0], "r")
-  output_zip = zipfile.ZipFile(args[1], "w")
+  output_zip = zipfile.ZipFile(args[1], "w",
+                               compression=zipfile.ZIP_DEFLATED,
+                               allowZip64=True)
 
   misc_info = common.LoadInfoDict(input_zip)
 
