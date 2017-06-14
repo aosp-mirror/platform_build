@@ -22,6 +22,7 @@ PRODUCT_FULL_TREBLE_OVERRIDE := true
 #   from the framework. However, we list them all here to make it explicit and
 #   prevent possible mistake.
 PRODUCT_PACKAGES := \
+    android.frameworks.displayservice@1.0 \
     android.frameworks.schedulerservice@1.0 \
     android.frameworks.sensorservice@1.0 \
     android.frameworks.vr.composer@1.0 \
@@ -29,6 +30,10 @@ PRODUCT_PACKAGES := \
     android.hardware.audio.common@2.0 \
     android.hardware.audio.common@2.0-util \
     android.hardware.audio.effect@2.0 \
+    android.hardware.automotive.evs@1.0 \
+    android.hardware.automotive.vehicle@2.0 \
+    android.hardware.automotive.vehicle@2.0-manager-lib-shared \
+    android.hardware.automotive.vehicle@2.1 \
     android.hardware.biometrics.fingerprint@2.1 \
     android.hardware.bluetooth@1.0 \
     android.hardware.boot@1.0 \
@@ -37,6 +42,7 @@ PRODUCT_PACKAGES := \
     android.hardware.camera.common@1.0 \
     android.hardware.camera.device@1.0 \
     android.hardware.camera.device@3.2 \
+    android.hardware.camera.metadata@3.2 \
     android.hardware.camera.provider@2.4 \
     android.hardware.configstore-utils \
     android.hardware.configstore@1.0 \
@@ -115,6 +121,7 @@ PRODUCT_PACKAGES += \
     libldacBT_abr \
     libldacBT_enc \
     liblz4 \
+    liblzma \
     libmdnssd \
     libmemtrack \
     libmemunreachable \
@@ -152,11 +159,33 @@ PRODUCT_PACKAGES += \
     libvorbisidec \
     libwebrtc_audio_preprocessing \
     libxml2 \
+    libyuv \
     libziparchive \
 
 # VNDK-SP:
 PRODUCT_PACKAGES += \
     vndk-sp \
+
+# LL-VNDK:
+PRODUCT_PACKAGES += \
+    libandroid_net \
+    libc \
+    libdl \
+    liblog \
+    libm \
+    libstdc++ \
+    libvndksupport \
+    libz \
+
+# SP-NDK:
+PRODUCT_PACKAGES += \
+    libEGL \
+    libGLESv1_CM \
+    libGLESv2 \
+    libGLESv3 \
+    libnativewindow \
+    libsync \
+    libvulkan \
 
 PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/bootdevice/by-name/system
 
