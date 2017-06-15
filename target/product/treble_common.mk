@@ -22,6 +22,7 @@ PRODUCT_FULL_TREBLE_OVERRIDE := true
 #   from the framework. However, we list them all here to make it explicit and
 #   prevent possible mistake.
 PRODUCT_PACKAGES := \
+    android.frameworks.displayservice@1.0 \
     android.frameworks.schedulerservice@1.0 \
     android.frameworks.sensorservice@1.0 \
     android.frameworks.vr.composer@1.0 \
@@ -29,6 +30,10 @@ PRODUCT_PACKAGES := \
     android.hardware.audio.common@2.0 \
     android.hardware.audio.common@2.0-util \
     android.hardware.audio.effect@2.0 \
+    android.hardware.automotive.evs@1.0 \
+    android.hardware.automotive.vehicle@2.0 \
+    android.hardware.automotive.vehicle@2.0-manager-lib-shared \
+    android.hardware.automotive.vehicle@2.1 \
     android.hardware.biometrics.fingerprint@2.1 \
     android.hardware.bluetooth@1.0 \
     android.hardware.boot@1.0 \
@@ -37,6 +42,7 @@ PRODUCT_PACKAGES := \
     android.hardware.camera.common@1.0 \
     android.hardware.camera.device@1.0 \
     android.hardware.camera.device@3.2 \
+    android.hardware.camera.metadata@3.2 \
     android.hardware.camera.provider@2.4 \
     android.hardware.configstore-utils \
     android.hardware.configstore@1.0 \
@@ -114,6 +120,7 @@ PRODUCT_PACKAGES += \
     libldacBT_abr \
     libldacBT_enc \
     liblz4 \
+    liblzma \
     libmdnssd \
     libmemtrack \
     libmemunreachable \
@@ -151,11 +158,33 @@ PRODUCT_PACKAGES += \
     libvorbisidec \
     libwebrtc_audio_preprocessing \
     libxml2 \
+    libyuv \
     libziparchive \
 
 # VNDK-SP:
 PRODUCT_PACKAGES += \
     vndk-sp \
+
+# LL-VNDK:
+PRODUCT_PACKAGES += \
+    libandroid_net \
+    libc \
+    libdl \
+    liblog \
+    libm \
+    libstdc++ \
+    libvndksupport \
+    libz \
+
+# SP-NDK:
+PRODUCT_PACKAGES += \
+    libEGL \
+    libGLESv1_CM \
+    libGLESv2 \
+    libGLESv3 \
+    libnativewindow \
+    libsync \
+    libvulkan \
 
 PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/bootdevice/by-name/system
 
@@ -170,14 +199,13 @@ USE_XML_AUDIO_POLICY_CONF := 1
 # The following policy XML files are used as fallback for
 # vendors/devices not using XML to configure audio policy.
 PRODUCT_COPY_FILES += \
-    frameworks/av/services/audiopolicy/config/audio_policy_configuration.xml:system/etc/audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/a2dp_audio_policy_configuration.xml:system/etc/a2dp_audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/usb_audio_policy_configuration.xml:system/etc/usb_audio_policy_configuration.xml \
+    frameworks/av/services/audiopolicy/config/audio_policy_configuration_generic.xml:system/etc/audio_policy_configuration.xml \
+    frameworks/av/services/audiopolicy/config/primary_audio_policy_configuration.xml:system/etc/primary_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:system/etc/r_submix_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/audio_policy_volumes.xml:system/etc/audio_policy_volumes.xml \
     frameworks/av/services/audiopolicy/config/default_volume_tables.xml:system/etc/default_volume_tables.xml \
 
 # May need to review why the followings are needed in generic system image.
-PRODUCT_COPY_FILES := \
+PRODUCT_COPY_FILES += \
     device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml
 
