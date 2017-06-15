@@ -85,13 +85,18 @@ PRODUCT_PACKAGES += \
 
 # The order matters
 PRODUCT_BOOT_JARS := \
-    $(TARGET_CORE_JARS) \
+    core-oj \
+    core-libart \
+    conscrypt \
+    okhttp \
     legacy-test \
+    bouncycastle \
     ext \
     framework \
     telephony-common \
     voip-common \
     ims-common \
+    apache-xml \
     nullwebview \
     org.apache.http.legacy.boot
 
