@@ -45,6 +45,7 @@ ifneq ($(filter-out false,$(USE_GOMA)),)
   # use both ccache and gomacc.
   CC_WRAPPER := $(strip $(CC_WRAPPER) $(GOMA_CC))
   CXX_WRAPPER := $(strip $(CXX_WRAPPER) $(GOMA_CC))
+  JAVAC_WRAPPER := $(strip $(JAVAC_WRAPPER) $(GOMA_CC))
 
   # gomacc can start goma client's daemon process automatically, but
   # it is safer and faster to start up it beforehand. We run this as a
