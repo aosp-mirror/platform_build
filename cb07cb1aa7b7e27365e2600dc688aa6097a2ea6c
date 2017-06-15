@@ -34,6 +34,24 @@
       "revId": "cb07cb1aa7b7e27365e2600dc688aa6097a2ea6c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ed1b4479_a4ebb0c7",
+        "filename": "target/product/core_minimal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1021471
+      },
+      "writtenOn": "2017-06-15T21:49:47Z",
+      "side": 0,
+      "message": "Does dex2oat even proceed if there\u0027s any collisions there? That should be the only way changing order matters (for a regular class).",
+      "parentUuid": "0e66fb1b_236dc247",
+      "revId": "cb07cb1aa7b7e27365e2600dc688aa6097a2ea6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
