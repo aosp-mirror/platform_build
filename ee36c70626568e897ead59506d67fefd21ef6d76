@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "27aff65e_bf67944a",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-06-16T22:28:32Z",
+      "side": 1,
+      "message": "Pretty sure a lot of warnings will be spit out if multiple modules have the same required module dependency.\n\nDan/Colin thoughts on how to address that?",
+      "range": {
+        "startLine": 549,
+        "startChar": 3,
+        "endLine": 549,
+        "endChar": 58
+      },
+      "revId": "ee36c70626568e897ead59506d67fefd21ef6d76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
