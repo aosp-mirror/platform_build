@@ -98,20 +98,19 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.preview_sdk.xml:system/etc/permissions/android.software.preview_sdk.xml
 endif
 
+ifeq ($(TARGET_CORE_JARS),)
+$(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
+endif
+
 # The order of PRODUCT_BOOT_JARS matters.
 PRODUCT_BOOT_JARS := \
-    core-oj \
-    core-libart \
-    conscrypt \
-    okhttp \
+    $(TARGET_CORE_JARS) \
     legacy-test \
-    bouncycastle \
     ext \
     framework \
     telephony-common \
     voip-common \
     ims-common \
-    apache-xml \
     org.apache.http.legacy.boot \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java
