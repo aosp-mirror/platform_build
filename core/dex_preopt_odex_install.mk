@@ -175,17 +175,17 @@ LOCAL_DEX_PREOPT_FLAGS := $(PRODUCT_DEX_PREOPT_DEFAULT_FLAGS)
 endif
 endif
 
-ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS) $(PRODUCT_DEXPREOPT_SPEED_APPS) $(PRODUCT_SYSTEM_SERVER_APPS),$(LOCAL_MODULE)))
-  # Jars of system server, apps loaded into system server, and apps the product wants to be
-  # compiled with the 'speed' compiler filter.
-  LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed
-else
-  # If no compiler filter is specified, default to 'quicken' to save on storage.
-  ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
+ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
+  ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS) $(PRODUCT_DEXPREOPT_SPEED_APPS) $(PRODUCT_SYSTEM_SERVER_APPS),$(LOCAL_MODULE)))
+    # Jars of system server, apps loaded into system server, and apps the product default to being
+    # compiled with the 'speed' compiler filter.
+    LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed
+  else
     ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
       # For non system server jars, use speed-profile when we have a profile.
       LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed-profile
     else
+      # If no compiler filter is specified, default to 'quicken' to save on storage.
       LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=quicken
     endif
   endif
