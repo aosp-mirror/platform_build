@@ -65,6 +65,12 @@ my_boot_image_flags := --compiler-filter=speed-profile
 my_boot_image_flags += --profile-file=$(my_out_boot_image_profile_location)
 endif
 
+ifneq (addresstrue,$(SANITIZE_TARGET)$(SANITIZE_LITE))
+# Skip recompiling the boot image for the second sanitization phase. We'll get separate paths
+# and invalidate first-stage artifacts which are crucial to SANITIZE_LITE builds.
+# Note: this is technically incorrect. Compiled code contains stack checks which may depend
+#       on ASAN settings.
+
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_BOOT_IMAGE_FLAGS := $(my_boot_image_flags)
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_2ND_ARCH_VAR_PREFIX := $(my_2nd_arch_prefix)
 # Use dex2oat debug version for better error reporting
@@ -92,3 +98,5 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--no-generate-debug-info --generate-build-id \
 		--multi-image --no-inline-from=core-oj.jar \
 		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS)
+
+endif
