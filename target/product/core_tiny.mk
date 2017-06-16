@@ -83,20 +83,19 @@ PRODUCT_PACKAGES += \
     logd \
     wifi-service
 
+ifeq ($(TARGET_CORE_JARS),)
+$(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
+endif
+
 # The order matters
 PRODUCT_BOOT_JARS := \
-    core-oj \
-    core-libart \
-    conscrypt \
-    okhttp \
+    $(TARGET_CORE_JARS) \
     legacy-test \
-    bouncycastle \
     ext \
     framework \
     telephony-common \
     voip-common \
     ims-common \
-    apache-xml \
     nullwebview \
     org.apache.http.legacy.boot
 

@@ -190,6 +190,13 @@ _vendor_path_placeholder := ||VENDOR-PATH-PH||
 TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
 ###########################################
 
+#################################################################
+# Set up minimal BOOTCLASSPATH list of jars to build/execute
+# java code with dalvikvm/art.
+TARGET_CORE_JARS := core-oj core-libart conscrypt okhttp bouncycastle apache-xml
+HOST_CORE_JARS := $(addsuffix -hostdex,$(TARGET_CORE_JARS))
+#################################################################
+
 # Read the product specs so we can get TARGET_DEVICE and other
 # variables that we need in order to locate the output files.
 include $(BUILD_SYSTEM)/product_config.mk
