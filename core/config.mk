@@ -308,6 +308,7 @@ include $(BUILD_SYSTEM)/goma.mk
 
 export CC_WRAPPER
 export CXX_WRAPPER
+export JAVAC_WRAPPER
 endif
 
 ifdef TARGET_PREFER_32_BIT
@@ -832,13 +833,6 @@ SUPPORT_LIBRARY_ROOT := $(HISTORICAL_SDK_VERSIONS_ROOT)/current/support
 else
 SUPPORT_LIBRARY_ROOT := frameworks/support
 endif
-
-#################################################################
-# Set up minimal BOOTCLASSPATH list of jars to build/execute
-# java code with dalvikvm/art.
-#################################################################
-TARGET_CORE_JARS := core-oj core-libart conscrypt okhttp bouncycastle apache-xml
-HOST_CORE_JARS := $(addsuffix -hostdex,$(TARGET_CORE_JARS))
 
 # Historical SDK version N is stored in $(HISTORICAL_SDK_VERSIONS_ROOT)/N.
 # The 'current' version is whatever this source tree is.

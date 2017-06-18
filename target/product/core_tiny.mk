@@ -85,6 +85,10 @@ PRODUCT_PACKAGES += \
     logd \
     wifi-service
 
+ifeq ($(TARGET_CORE_JARS),)
+$(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
+endif
+
 # The order matters
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
@@ -110,6 +114,9 @@ PRODUCT_SYSTEM_SERVER_APPS += \
     InputDevices \
     SettingsProvider \
     WallpaperBackup \
+
+# The set of packages we want to force 'speed' compilation on.
+PRODUCT_DEXPREOPT_SPEED_APPS := \
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.zygote=zygote32
