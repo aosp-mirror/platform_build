@@ -46,6 +46,30 @@
       "revId": "b4c15ed0f13d70b2dac818466f226321a64a6a6f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "18c9fe6f_784c9f6b",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 544,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-06-19T23:51:29Z",
+      "side": 1,
+      "message": "In general, we should keep the copying in base_rules.mk and only add dependencies, similar to how add-required-deps is used just above this.\n\nIt\u0027s pretty easy for us to mix things up at this stage, which is why the above .REQUIRED -\u003e add-required-deps pass goes and runs a filter for each type of directory so that we don\u0027t get cross-type dependencies. Iterating over the different suites, filtering the installed files for that module of that suite, and the installed files of the dependencies in that same suite, then calling add-required-deps would probably be the best solution.",
+      "parentUuid": "34d6032a_ca476e13",
+      "range": {
+        "startLine": 543,
+        "startChar": 0,
+        "endLine": 544,
+        "endChar": 90
+      },
+      "revId": "b4c15ed0f13d70b2dac818466f226321a64a6a6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
