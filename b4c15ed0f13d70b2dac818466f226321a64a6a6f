@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6e8134f1_99aea15f",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 544,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-06-19T20:59:44Z",
+      "side": 1,
+      "message": "I\u0027m only getting nativetest64 binaries so not sure what to do here...",
+      "range": {
+        "startLine": 543,
+        "startChar": 0,
+        "endLine": 544,
+        "endChar": 90
+      },
+      "revId": "b4c15ed0f13d70b2dac818466f226321a64a6a6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
