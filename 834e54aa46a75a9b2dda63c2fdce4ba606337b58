@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1bfb9a61_4ebc8ab5",
+        "filename": "tools/releasetools/validate_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-06-19T22:06:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8a21f774_edc12714",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 3
+      },
+      "revId": "834e54aa46a75a9b2dda63c2fdce4ba606337b58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "94549c60_7b7359e6",
         "filename": "tools/releasetools/validate_target_files.py",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2017-06-16T06:37:47Z",
       "side": 1,
       "message": "nit: \"SHA-1\" if it\u0027s in comments",
+      "range": {
+        "startLine": 46,
+        "startChar": 19,
+        "endLine": 46,
+        "endChar": 23
+      },
+      "revId": "834e54aa46a75a9b2dda63c2fdce4ba606337b58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9491d00e_23cb5443",
+        "filename": "tools/releasetools/validate_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-06-19T22:06:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "94549c60_7b7359e6",
       "range": {
         "startLine": 46,
         "startChar": 19,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "e6671eb9_77ae2153",
+        "filename": "tools/releasetools/validate_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-06-19T22:06:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f3a44c95_99fe4796",
+      "range": {
+        "startLine": 68,
+        "startChar": 39,
+        "endLine": 69,
+        "endChar": 30
+      },
+      "revId": "834e54aa46a75a9b2dda63c2fdce4ba606337b58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "eb21406e_67f2fa6c",
         "filename": "tools/releasetools/validate_target_files.py",
         "patchSetId": 2
@@ -82,6 +154,30 @@
       "writtenOn": "2017-06-16T06:37:47Z",
       "side": 1,
       "message": "can we also verify the line that checks for installed recovery image?\n(\"if ! applypatch -c %(type)s:%(device)s:%(size)d:%(sha1)s; then\")",
+      "range": {
+        "startLine": 119,
+        "startChar": 2,
+        "endLine": 119,
+        "endChar": 5
+      },
+      "revId": "834e54aa46a75a9b2dda63c2fdce4ba606337b58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4bd1613_772ff290",
+        "filename": "tools/releasetools/validate_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-06-19T22:06:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eb21406e_67f2fa6c",
       "range": {
         "startLine": 119,
         "startChar": 2,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "38a1d3cb_cdda2f7b",
+        "filename": "tools/releasetools/validate_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-06-19T22:06:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ed4efb4e_3a6970d9",
+      "range": {
+        "startLine": 138,
+        "startChar": 4,
+        "endLine": 138,
+        "endChar": 26
+      },
+      "revId": "834e54aa46a75a9b2dda63c2fdce4ba606337b58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2b1f3082_99606108",
         "filename": "tools/releasetools/validate_target_files.py",
         "patchSetId": 2
@@ -128,6 +248,30 @@
       "writtenOn": "2017-06-16T06:37:47Z",
       "side": 1,
       "message": "I\u0027m feeling the way we hard code indices here might be broken without being noticed. Is it possible to have a unit test for common.py that ensures common.MakeRecoveryPatch() matches validate_target_files.ValidateInstallRecoveryScript()?\n\nAlso the condition between full vs recovery-from-boot should be based on \"full_recovery_image\"?",
+      "range": {
+        "startLine": 144,
+        "startChar": 4,
+        "endLine": 156,
+        "endChar": 27
+      },
+      "revId": "834e54aa46a75a9b2dda63c2fdce4ba606337b58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "593eb991_89c02fc4",
+        "filename": "tools/releasetools/validate_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-06-19T22:06:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b1f3082_99606108",
       "range": {
         "startLine": 144,
         "startChar": 4,
