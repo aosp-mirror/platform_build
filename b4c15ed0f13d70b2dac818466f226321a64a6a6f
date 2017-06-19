@@ -22,6 +22,30 @@
       "revId": "b4c15ed0f13d70b2dac818466f226321a64a6a6f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "34d6032a_ca476e13",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 544,
+      "author": {
+        "id": 1121516
+      },
+      "writtenOn": "2017-06-19T22:54:10Z",
+      "side": 1,
+      "message": "Try adding $(TARGET_2ND_ARCH_MODULE_SUFFIX) before .INSTALLED.\n\ne.g. $(ALL_MODULES.$(mod)$(TARGET_2ND_ARCH_MODULE_SUFFIX).INSTALLED)\n\nChanging line 544 to the suggestion above produced both 32- and 64-bit binaries but the folders are wonky:\n64-bit libs: android-vts/testcases/data/nativetest64/bionic-loader-test-libs\n32-bit libs: android-vts/testcases/nativetest64/bionic-loader-test-libs\n\nIf you play with it a little I\u0027m sure that\u0027s an easy fix.",
+      "parentUuid": "6e8134f1_99aea15f",
+      "range": {
+        "startLine": 543,
+        "startChar": 0,
+        "endLine": 544,
+        "endChar": 90
+      },
+      "revId": "b4c15ed0f13d70b2dac818466f226321a64a6a6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
