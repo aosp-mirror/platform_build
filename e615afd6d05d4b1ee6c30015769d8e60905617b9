@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eb46630b_c709dcf9",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1777,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-20T15:35:22Z",
+      "side": 1,
+      "message": "I lied to add both to-upper and to-lower in the previous CL.\nNow I think just adding to-lower should be fine, as we don\u0027t need to-upper now.",
+      "range": {
+        "startLine": 1777,
+        "startChar": 0,
+        "endLine": 1777,
+        "endChar": 8
+      },
+      "revId": "e615afd6d05d4b1ee6c30015769d8e60905617b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
