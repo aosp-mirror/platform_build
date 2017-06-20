@@ -46,6 +46,30 @@
       "revId": "3e599ead66fee82837928ed3fb1b46bd7ec13a41",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0fb989ad_3a303c0d",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1803,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-06-20T06:09:39Z",
+      "side": 1,
+      "message": "Yep, it doesn\u0027t look like we\u0027ve got a copy of that in any common android makefiles, though I have seen reviews that have included it before they got rewritten.",
+      "parentUuid": "eb0bab31_9acc0e2f",
+      "range": {
+        "startLine": 1803,
+        "startChar": 12,
+        "endLine": 1803,
+        "endChar": 46
+      },
+      "revId": "3e599ead66fee82837928ed3fb1b46bd7ec13a41",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
