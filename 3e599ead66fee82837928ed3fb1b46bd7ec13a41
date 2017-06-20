@@ -70,6 +70,30 @@
       "revId": "3e599ead66fee82837928ed3fb1b46bd7ec13a41",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc5faedb_a9132820",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1803,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-06-20T06:57:26Z",
+      "side": 1,
+      "message": "I see. Looks like this is not new.\nhttps://cs.corp.google.com/search/?q\u003d%22subst+A,a%22+p:android\u0026type\u003dcs\n\nI\u0027ll add this in another CL (with both toupper and tolower) and add your \u0027cache\u0027 info in the commit message directly.",
+      "parentUuid": "0fb989ad_3a303c0d",
+      "range": {
+        "startLine": 1803,
+        "startChar": 12,
+        "endLine": 1803,
+        "endChar": 46
+      },
+      "revId": "3e599ead66fee82837928ed3fb1b46bd7ec13a41",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
