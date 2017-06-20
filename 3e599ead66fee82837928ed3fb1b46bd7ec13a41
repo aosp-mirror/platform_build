@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5fcb5bcc_8d7e277a",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1803,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-06-20T05:55:20Z",
+      "side": 1,
+      "message": "We prefer pure make functions for this, since calling $(shell) means that we can\u0027t cache the result, and we have to run these on every build even if we don\u0027t have to re-read the makefiles. Even a fairly simple $(subst A,a,$(subst B,b,...)) can be better. We do understand some calls to find and rewrite them to be cacheable, but we don\u0027t understand other commands.",
+      "range": {
+        "startLine": 1803,
+        "startChar": 12,
+        "endLine": 1803,
+        "endChar": 46
+      },
+      "revId": "3e599ead66fee82837928ed3fb1b46bd7ec13a41",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
