@@ -166,7 +166,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     vndk-sp \
 
-# LL-VNDK:
+# LL-NDK:
 PRODUCT_PACKAGES += \
     libandroid_net \
     libc \
@@ -205,8 +205,3 @@ PRODUCT_COPY_FILES += \
     frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:system/etc/r_submix_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/audio_policy_volumes.xml:system/etc/audio_policy_volumes.xml \
     frameworks/av/services/audiopolicy/config/default_volume_tables.xml:system/etc/default_volume_tables.xml \
-
-# May need to review why the followings are needed in generic system image.
-PRODUCT_COPY_FILES += \
-    device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml
-
