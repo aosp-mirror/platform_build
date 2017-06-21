@@ -1773,6 +1773,12 @@ endif
 
 endif
 
+# Convert to lower case without requiring a shell, which isn't cacheable.
+to-lower = $(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(subst G,g,\
+$(subst H,h,$(subst I,i,$(subst J,j,$(subst K,k,$(subst L,l,$(subst M,m,$(subst N,n,$(subst O,o,\
+$(subst P,p,$(subst Q,q,$(subst R,r,$(subst S,s,$(subst T,t,$(subst U,u,$(subst V,v,$(subst W,w,\
+$(subst X,x,$(subst Y,y,$(subst Z,z,$1))))))))))))))))))))))))))
+
 # -----------------------------------------------------------------
 # vbmeta image
 ifeq ($(BOARD_AVB_ENABLE),true)
@@ -1800,7 +1806,7 @@ VENDOR_FOOTER_ARGS := BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS
 # $(1): the partition to enable AVB chain, e.g., BOOT or SYSTEM.
 define check-and-set-avb-chain-args
 $(eval PART := $(1))
-$(eval part=$(shell echo $(PART) | tr A-Z a-z))
+$(eval part=$(call to-lower,$(PART)))
 
 $(eval _key_path := BOARD_AVB_$(PART)_KEY_PATH)
 $(eval _signing_algorithm := BOARD_AVB_$(PART)_ALGORITHM)
