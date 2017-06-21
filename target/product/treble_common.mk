@@ -205,3 +205,9 @@ PRODUCT_COPY_FILES += \
     frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:system/etc/r_submix_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/audio_policy_volumes.xml:system/etc/audio_policy_volumes.xml \
     frameworks/av/services/audiopolicy/config/default_volume_tables.xml:system/etc/default_volume_tables.xml \
+
+# Bluetooth:
+#   audio.a2dp.default is a system module. Generic system image includes
+#   audio.a2dp.default to support A2DP if board has the capability.
+PRODUCT_PACKAGES += \
+    audio.a2dp.default
