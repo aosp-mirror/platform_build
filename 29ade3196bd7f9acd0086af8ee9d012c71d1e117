@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6321490a_307c607a",
+        "filename": "core/clang/OWNERS",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2017-06-21T23:04:34Z",
+      "side": 1,
+      "message": "Maybe this entire directory should be owned by our team:\nchh@\npirama@\nsrhines@\nyikong@",
+      "revId": "29ade3196bd7f9acd0086af8ee9d012c71d1e117",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
