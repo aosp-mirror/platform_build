@@ -144,3 +144,9 @@ custom_images $(my_custom_image_name) : $(my_installed_custom_image)
 
 # Archive the built image.
 $(call dist-for-goals, $(my_custom_image_name) custom_images,$(my_installed_custom_image))
+
+my_staging_dir :=
+my_built_modules :=
+my_copy_dest :=
+my_copy_pairs :=
+my_pickup_files :=
