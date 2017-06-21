@@ -205,6 +205,12 @@ PRODUCT_COPY_FILES += \
     frameworks/av/services/audiopolicy/config/audio_policy_volumes.xml:system/etc/audio_policy_volumes.xml \
     frameworks/av/services/audiopolicy/config/default_volume_tables.xml:system/etc/default_volume_tables.xml \
 
+# Bluetooth:
+#   audio.a2dp.default is a system module. Generic system image includes
+#   audio.a2dp.default to support A2DP if board has the capability.
+PRODUCT_PACKAGES += \
+    audio.a2dp.default
+
 # May need to review why the followings are needed in generic system image.
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml
