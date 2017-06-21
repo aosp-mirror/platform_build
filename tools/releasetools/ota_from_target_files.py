@@ -1168,7 +1168,7 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # into A/B OTA package.
   target_zip = zipfile.ZipFile(target_file, "r")
   if (OPTIONS.info_dict.get("verity") == "true" or
-      OPTIONS.info_dict.get("board_avb_enable") == "true"):
+      OPTIONS.info_dict.get("avb_enable") == "true"):
     care_map_path = "META/care_map.txt"
     namelist = target_zip.namelist()
     if care_map_path in namelist:

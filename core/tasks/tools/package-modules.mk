@@ -4,6 +4,7 @@
 # Input variables:
 #   my_modules: a list of module names
 #   my_package_name: the name of the output zip file.
+#   my_copy_pairs: a list of extra files to install (in src:dest format)
 # Output variables:
 #   my_package_zip: the path to the output zip file.
 #
@@ -11,8 +12,8 @@
 
 my_makefile := $(lastword $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
 my_staging_dir := $(call intermediates-dir-for,PACKAGING,$(my_package_name))
-my_built_modules :=
-my_copy_pairs :=
+my_built_modules := $(foreach p,$(my_copy_pairs),$(call word-colon,1,$(p)))
+my_copy_pairs := $(foreach p,$(my_copy_pairs),$(call word-colon,1,$(p)):$(my_staging_dir)/$(call word-colon,2,$(p)))
 my_pickup_files :=
 
 # Iterate over the modules and include their direct dependencies stated in the
@@ -67,3 +68,12 @@ $(my_package_zip) : $(my_built_modules)
 	$(hide) $(foreach f, $(PRIVATE_PICKUP_FILES),\
 	  cp -RfL $(f) $(dir $@) && ) true
 	$(hide) cd $(dir $@) && zip -rqX $(notdir $@) *
+
+my_makefile :=
+my_staging_dir :=
+my_built_modules :=
+my_copy_dest :=
+my_copy_pairs :=
+my_pickup_files :=
+my_missing_files :=
+my_modules_and_deps :=
