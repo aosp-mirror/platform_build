@@ -768,6 +768,9 @@ ifdef FULL_BUILD
   # Filter out the overridden packages before doing expansion
   product_MODULES := $(filter-out $(foreach p, $(product_MODULES), \
       $(PACKAGES.$(p).OVERRIDES)), $(product_MODULES))
+  # Filter out executables as well
+  product_MODULES := $(filter-out $(foreach m, $(product_MODULES), \
+      $(EXECUTABLES.$(m).OVERRIDES)), $(product_MODULES))
 
   # Resolve the :32 :64 module name
   modules_32 := $(patsubst %:32,%,$(filter %:32, $(product_MODULES)))
