@@ -41,7 +41,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     libjavacore \
     libopenjdk \
-    libopenjdkjvm \
 
 # Libcore ICU. TODO: Try to figure out if/why we need them explicitly.
 PRODUCT_PACKAGES += \
@@ -49,24 +48,9 @@ PRODUCT_PACKAGES += \
     libicuuc \
 
 # ART.
-PRODUCT_PACKAGES += \
-    dalvikvm \
-    dex2oat \
-    dexoptanalyzer \
-    libart \
-    libart_fake \
-    libopenjdkjvmti \
-    patchoat \
-    profman
-
+PRODUCT_PACKAGES += art-runtime
 # ART/dex helpers.
-PRODUCT_PACKAGES += \
-    ahat \
-    dexdiag \
-    dexdump \
-    dexlist \
-    hprof-conv \
-    oatdump \
+PRODUCT_PACKAGES += art-tools
 
 # Certificates.
 PRODUCT_PACKAGES += \
