@@ -201,6 +201,21 @@ ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
   endif
 endif
 
+# PRODUCT_SYSTEM_SERVER_DEBUG_INFO overrides WITH_DEXPREOPT_DEBUG_INFO.
+my_system_server_debug_info := $(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)
+ifeq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
+# Only enable for non-eng builds.
+ifeq (,$(my_system_server_debug_info))
+my_system_server_debug_info := true
+endif
+endif
+
+ifeq (true, $(my_system_server_debug_info))
+  ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
+    LOCAL_DEX_PREOPT_FLAGS += --generate-mini-debug-info
+  endif
+endif
+
 $(built_odex): PRIVATE_DEX_PREOPT_FLAGS := $(LOCAL_DEX_PREOPT_FLAGS)
 $(built_vdex): $(built_odex)
 $(built_art): $(built_odex)
