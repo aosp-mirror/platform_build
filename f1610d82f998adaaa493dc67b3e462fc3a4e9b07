@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0193adbd_89e586c6",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 765,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-06-23T01:07:01Z",
+      "side": 0,
+      "message": "It\u0027s ok that this is no longer possible, right?",
+      "range": {
+        "startLine": 765,
+        "startChar": 0,
+        "endLine": 765,
+        "endChar": 63
+      },
+      "revId": "f1610d82f998adaaa493dc67b3e462fc3a4e9b07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
