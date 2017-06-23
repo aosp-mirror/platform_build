@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "743e0c0e_97dc91a5",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 1006,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-23T22:37:22Z",
+      "side": 0,
+      "message": "oops, I should keep support for Jack code coverage when ANDROID_COMPILE_WITH_JACK\u003d\u003dtrue",
+      "revId": "6cb7688e85fc241cea65b4ff99a87dd5020d9b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
