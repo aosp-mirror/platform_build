@@ -51,6 +51,7 @@ PRODUCT_PACKAGES += \
     android.hardware.audio@2.0-service \
     vibrator.goldfish \
     power.goldfish \
+    power.ranchu \
     fingerprint.ranchu \
     android.hardware.biometrics.fingerprint@2.1-service \
     sensors.ranchu \
@@ -75,6 +76,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 	android.hardware.sensors@1.0-impl \
 	android.hardware.sensors@1.0-service
+
+PRODUCT_PACKAGES += \
+    android.hardware.power@1.0-service \
+    android.hardware.power@1.0-impl
 
 # camera service treble disable until all backwards compat is complete
 PRODUCT_PROPERTY_OVERRIDES += \

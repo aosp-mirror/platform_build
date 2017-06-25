@@ -187,10 +187,15 @@ include build/core/pdk_config.mk
 
 #
 # -----------------------------------------------------------------
-# Enable dynamic linker developer warnings for all builds except
-# final release.
+# Enable dynamic linker developer warnings for userdebug, eng
+# and non-REL builds
+ifneq ($(TARGET_BUILD_VARIANT),user)
+  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
+else
+# Enable it for user builds as long as they are not final.
 ifneq ($(PLATFORM_VERSION_CODENAME),REL)
   ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
+endif
 endif
 
 ADDITIONAL_BUILD_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
@@ -220,6 +225,11 @@ ifdef TARGET_2ND_ARCH
   ifneq ($($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES),)
     ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.isa.$(TARGET_2ND_ARCH).features=$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES)
   endif
+endif
+
+# Add the system server compiler filter if they are specified for the product.
+ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
+ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.systemservercompilerfilter=$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER)
 endif
 
 ## user/userdebug ##
