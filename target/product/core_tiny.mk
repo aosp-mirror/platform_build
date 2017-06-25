@@ -83,7 +83,11 @@ PRODUCT_PACKAGES += \
     telephony-common \
     voip-common \
     logd \
-    wifi-service
+
+# Wifi modules
+PRODUCT_PACKAGES += \
+    wifi-service \
+    wificond \
 
 # The order matters
 PRODUCT_BOOT_JARS := \

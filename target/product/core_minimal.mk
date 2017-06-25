@@ -88,7 +88,11 @@ PRODUCT_PACKAGES += \
     voip-common \
     webview \
     webview_zygote \
-    wifi-service
+
+# Wifi modules
+PRODUCT_PACKAGES += \
+    wifi-service \
+    wificond \
 
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.webview.xml:system/etc/permissions/android.software.webview.xml
