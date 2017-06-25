@@ -83,7 +83,11 @@ PRODUCT_PACKAGES += \
     telephony-common \
     voip-common \
     logd \
-    wifi-service
+
+# Wifi modules
+PRODUCT_PACKAGES += \
+    wifi-service \
+    wificond \
 
 ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)

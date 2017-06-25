@@ -60,6 +60,10 @@ PRODUCT_PACKAGES += \
     libwebrtc_audio_preprocessing \
     mdnsd \
     requestsync \
-    wifi-service
+
+# Wifi modules
+PRODUCT_PACKAGES += \
+    wifi-service \
+    wificond \
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_minimal.mk)
