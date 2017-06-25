@@ -189,12 +189,6 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/bootdevice/by-name/system
 
-# Wifi:
-#   Wifi HAL (android.hardware.wifi@1.0-service, wpa_supplicant,
-#   and wpa_supplicant.conf) is not here. They are in vendor.img
-PRODUCT_PACKAGES += \
-    wificond \
-
 # Audio:
 USE_XML_AUDIO_POLICY_CONF := 1
 # The following policy XML files are used as fallback for
