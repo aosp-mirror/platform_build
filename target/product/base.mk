@@ -76,8 +76,6 @@ PRODUCT_PACKAGES += \
     libnetlink \
     libnetutils \
     libpdfium \
-    libradio \
-    libradioservice \
     libradio_metadata \
     libreference-ril \
     libreverbwrapper \
