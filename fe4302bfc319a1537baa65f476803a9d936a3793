@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07900115_de5a90b6",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2017-06-26T19:52:41Z",
+      "side": 1,
+      "message": "BOARD_ODM_KERNEL_MODULES should be defined somewhere as a dependency I think. Not sure how you add that as a dependency since this is a generic custom image rule... Worst case a separate ODM rule could be added but hopefully there\u0027s an easier way.",
+      "revId": "fe4302bfc319a1537baa65f476803a9d936a3793",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
