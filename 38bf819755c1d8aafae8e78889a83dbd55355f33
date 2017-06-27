@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae7fdd6e_f9e4abc3",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T22:46:03Z",
+      "side": 1,
+      "message": "Why \"$(space)\" here and \" \" below?",
+      "range": {
+        "startLine": 38,
+        "startChar": 51,
+        "endLine": 38,
+        "endChar": 59
+      },
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e266715c_e9411d72",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T22:46:03Z",
+      "side": 1,
+      "message": "Single quotes might be safer in case the list includes inner classes with $",
+      "range": {
+        "startLine": 38,
+        "startChar": 32,
+        "endLine": 38,
+        "endChar": 33
+      },
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eb86be2a_5d25eb3a",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T22:46:03Z",
+      "side": 1,
+      "message": "What is this for?  Mac readlink doesn\u0027t support -f, and doesn\u0027t print anything when run on a non-symlink.",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30443ac3_acf32b0d",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T22:46:03Z",
+      "side": 1,
+      "message": "soong_zip might be easier to use here, it lets you give a -C path and a file containing a list of files to zip relative to the last -C path, so you can run it from the top of the build.",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2cc66277_a4d19787",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T22:46:03Z",
+      "side": 1,
+      "message": "To avoid having to keep track of the path like this I usually use cd in a subshell:\n\n(\n  cd $(PRIVATE_JACOCO_INSTRUMENTED_PATH)\n  zip ...\n)\nmv ...",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "89880673_d7c77f5f",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T22:46:03Z",
+      "side": 1,
+      "message": "space after #",
+      "range": {
+        "startLine": 139,
+        "startChar": 5,
+        "endLine": 139,
+        "endChar": 6
+      },
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
