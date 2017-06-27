@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "05d5e7b0_bf3fa19e",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2477,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T18:13:32Z",
+      "side": 1,
+      "message": "Ah, I missed that dependency, which is better than depending on INSTALLED_SYSTEMIMAGE.",
+      "parentUuid": "5987f54c_969e7ec1",
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "084499ab_1d8e857b",
         "filename": "core/jacoco.mk",
         "patchSetId": 6
