@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5987f54c_969e7ec1",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2477,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-27T02:07:33Z",
+      "side": 1,
+      "message": "Do you mean that by having JACOCO_REPORT_CLASSES_ALL depend on SYMBOLS_ZIP that it should fix much of the risk where JACOCO_REPORT_CLASSES_ALL might be run too early before its dependencies are built?\n\nIf so then that sounds good to me.\n\nI copied the existing Jack/Emma code in core/main.mk that seemed to be doing something similar on lines 1007 and 1070, involving adding a dependency on apps_only_installed_files and INSTALLED_SYSTEMIMAGE , but if SYMBOLS_ZIP should work too then that sounds good to me too\n\nWhen you say \"Unfortunately...during a checkbuild a random selection...get included\" is that because checkbuild doesn\u0027t build the SYMBOLS_ZIP?",
+      "parentUuid": "cdec3e06_a1f6972d",
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "084499ab_1d8e857b",
         "filename": "core/jacoco.mk",
         "patchSetId": 6
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "48263488_8b5fb94e",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-27T02:07:33Z",
+      "side": 1,
+      "message": "thanks",
+      "parentUuid": "084499ab_1d8e857b",
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1d8b646d_3bcaf25d",
         "filename": "core/jacoco.mk",
         "patchSetId": 6
@@ -47,6 +83,24 @@
       "writtenOn": "2017-06-27T00:46:50Z",
       "side": 1,
       "message": "Any reason unzip and rezip need to be separate rules?  If all of these rules are always going to run in sequence they could just be one big rule.",
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bbda4c40_d0acd2f0",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-27T02:07:33Z",
+      "side": 1,
+      "message": "There\u0027s a slight increase in parallelism opportunity by having them as separate tasks, since it\u0027s possible to be simultaneously zipping jacoco-report-classes.jar while instrumenting the unzipped class files (in preparation to zip the result as jacoco-classes.jar)\n\nI\u0027m happy to merge them into one task if you think that\u0027s better",
+      "parentUuid": "1d8b646d_3bcaf25d",
       "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -76,6 +130,30 @@
     },
     {
       "key": {
+        "uuid": "823cf6c6_5df2aa03",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-27T02:07:33Z",
+      "side": 1,
+      "message": "oh cool",
+      "parentUuid": "f5f0ab41_6c665f1e",
+      "range": {
+        "startLine": 58,
+        "startChar": 1,
+        "endLine": 58,
+        "endChar": 3
+      },
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2b76de1e_cdc4ca13",
         "filename": "core/jacoco.mk",
         "patchSetId": 6
@@ -87,6 +165,24 @@
       "writtenOn": "2017-06-27T00:46:50Z",
       "side": 1,
       "message": "Just add the commands to the $(LOCAL_FULL_CLASSES_JACOCO_JAR) rule?  Anyone who uses the file will need to know to depend on $(LOCAL_FULL_CLASSES_JACOCO_JAR) instead of $(my_jacoco_classes_to_report_on_path)",
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "005366a4_fec17f80",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-27T02:07:33Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "2b76de1e_cdc4ca13",
       "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
