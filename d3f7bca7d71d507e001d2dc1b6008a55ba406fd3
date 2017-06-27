@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "40f01ad4_19c336ea",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2477,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-27T18:26:12Z",
+      "side": 1,
+      "message": "Does that mean that INSTALLED_SYSTEMIMAGE is the preferred dependency, or SYMBOLS_ZIP?",
+      "parentUuid": "05d5e7b0_bf3fa19e",
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "084499ab_1d8e857b",
         "filename": "core/jacoco.mk",
         "patchSetId": 6
