@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "964fc592_2b3c735b",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T21:58:02Z",
+      "side": 1,
+      "message": "wrap the comments to 80 chars",
+      "revId": "ca129c1c6590e24846963f255e17f5aa786b3bd9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
