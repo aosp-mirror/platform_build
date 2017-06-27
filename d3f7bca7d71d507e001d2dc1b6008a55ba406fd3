@@ -222,6 +222,24 @@
       "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4ced9273_3d66df4c",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-27T21:49:26Z",
+      "side": 1,
+      "message": "It looks like that would be tied to consolidating the tasks into one. I\u0027m happy to do that if you like; all that my latest patchset changes here is just to remove the uncertainty of the comment",
+      "parentUuid": "005366a4_fec17f80",
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
