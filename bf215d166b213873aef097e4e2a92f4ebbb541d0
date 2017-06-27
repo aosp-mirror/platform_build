@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a79b901b_0723dac4",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2017-06-27T23:57:50Z",
+      "side": 0,
+      "message": "this is not going to break ndk builds, is it?",
+      "revId": "bf215d166b213873aef097e4e2a92f4ebbb541d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
