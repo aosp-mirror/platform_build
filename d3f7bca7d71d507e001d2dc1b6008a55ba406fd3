@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cdec3e06_a1f6972d",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2477,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T00:46:50Z",
+      "side": 1,
+      "message": "I don\u0027t see anything that adds a dependency from the jacoco-report-classes.jar to here.  If the build system feels like it it can run this rule first, before anything has been built.  You can use something like $(SYMBOLS_ZIP), which will ensure all installed files have been built:\n\n$(SYMBOLS_ZIP): $(INSTALLED_SYSTEMIMAGE) \\\n\t\t$(INSTALLED_BOOTIMAGE_TARGET) \\\n\t\t$(INSTALLED_USERDATAIMAGE_TARGET) \\\n\t\t$(INSTALLED_VENDORIMAGE_TARGET) \\\n\t\t$(updater_dep)\n\nUnfortunately this means that during a checkbuild a random selection coverage files from modules that are built but not installed will get included in the zip.",
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "084499ab_1d8e857b",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T00:46:50Z",
+      "side": 1,
+      "message": "Add copyright header",
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1d8b646d_3bcaf25d",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T00:46:50Z",
+      "side": 1,
+      "message": "Any reason unzip and rezip need to be separate rules?  If all of these rules are always going to run in sequence they could just be one big rule.",
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5f0ab41_6c665f1e",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T00:46:50Z",
+      "side": 1,
+      "message": "Why \u0026\u0026 everywhere?  Kati turns a list of commands into a single sequence separated by \u0026\u0026",
+      "range": {
+        "startLine": 58,
+        "startChar": 1,
+        "endLine": 58,
+        "endChar": 3
+      },
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2b76de1e_cdc4ca13",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-27T00:46:50Z",
+      "side": 1,
+      "message": "Just add the commands to the $(LOCAL_FULL_CLASSES_JACOCO_JAR) rule?  Anyone who uses the file will need to know to depend on $(LOCAL_FULL_CLASSES_JACOCO_JAR) instead of $(my_jacoco_classes_to_report_on_path)",
+      "revId": "d3f7bca7d71d507e001d2dc1b6008a55ba406fd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
