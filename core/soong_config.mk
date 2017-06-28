@@ -41,6 +41,7 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "Allow_missing_dependencies": $(if $(ALLOW_MISSING_DEPENDENCIES),true,false),'; \
 	echo '    "SanitizeHost": $(call json_list,$(SANITIZE_HOST)),'; \
 	echo '    "SanitizeDevice": $(call json_list,$(SANITIZE_TARGET)),'; \
+	echo '    "SanitizeDeviceDiag": $(call json_list,$(SANITIZE_TARGET_DIAG)),'; \
 	echo '    "SanitizeDeviceArch": $(call json_list,$(SANITIZE_TARGET_ARCH)),'; \
 	echo '    "HostStaticBinaries": $(if $(strip $(BUILD_HOST_static)),true,false),'; \
 	echo '    "Binder32bit": $(if $(BINDER32BIT),true,false),'; \
