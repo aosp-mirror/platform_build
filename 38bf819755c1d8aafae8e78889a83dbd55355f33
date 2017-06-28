@@ -48,6 +48,54 @@
     },
     {
       "key": {
+        "uuid": "8542a2a9_72589ea8",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-28T01:00:46Z",
+      "side": 1,
+      "message": "good call",
+      "parentUuid": "e266715c_e9411d72",
+      "range": {
+        "startLine": 38,
+        "startChar": 32,
+        "endLine": 38,
+        "endChar": 33
+      },
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bd625f7d_ce4ac749",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-28T01:00:46Z",
+      "side": 1,
+      "message": "I\u0027ll make this one be \" \" too",
+      "parentUuid": "ae7fdd6e_f9e4abc3",
+      "range": {
+        "startLine": 38,
+        "startChar": 51,
+        "endLine": 38,
+        "endChar": 59
+      },
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eb86be2a_5d25eb3a",
         "filename": "core/jacoco.mk",
         "patchSetId": 9
@@ -59,6 +107,24 @@
       "writtenOn": "2017-06-27T22:46:03Z",
       "side": 1,
       "message": "What is this for?  Mac readlink doesn\u0027t support -f, and doesn\u0027t print anything when run on a non-symlink.",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "28e04c54_0a213797",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-28T01:00:46Z",
+      "side": 1,
+      "message": "It was to compute an absolute file path for use later. I\u0027ll use (cd x \u0026\u0026 pwd \u0026\u0026 cd -) instead",
+      "parentUuid": "eb86be2a_5d25eb3a",
       "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -82,6 +148,24 @@
     },
     {
       "key": {
+        "uuid": "8f2507df_426f6ea5",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-28T01:00:46Z",
+      "side": 1,
+      "message": "Hmm. Does soong_zip have a way to update files in an existing zip?\n\nIt just seemed preferable to me to avoid copying the unzipped files an extra time.",
+      "parentUuid": "30443ac3_acf32b0d",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2cc66277_a4d19787",
         "filename": "core/jacoco.mk",
         "patchSetId": 9
@@ -99,6 +183,24 @@
     },
     {
       "key": {
+        "uuid": "ed58c3b0_43bff636",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-28T01:00:46Z",
+      "side": 1,
+      "message": "Hmm when I try that, it thinks that I intend the open-paren to run in a separate subshell from the body which would goes in a separate subshell from the close-paren. I looked for an example via \"grep -r \u0027^[^$](\u0027 .\" and couldn\u0027t find any - could you point me to one?",
+      "parentUuid": "2cc66277_a4d19787",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "89880673_d7c77f5f",
         "filename": "core/jacoco.mk",
         "patchSetId": 9
@@ -110,6 +212,30 @@
       "writtenOn": "2017-06-27T22:46:03Z",
       "side": 1,
       "message": "space after #",
+      "range": {
+        "startLine": 139,
+        "startChar": 5,
+        "endLine": 139,
+        "endChar": 6
+      },
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7e3ecf63_e0b2507f",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-06-28T01:00:46Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "89880673_d7c77f5f",
       "range": {
         "startLine": 139,
         "startChar": 5,
