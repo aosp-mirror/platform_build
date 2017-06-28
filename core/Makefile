@@ -78,8 +78,13 @@ ifeq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
 endif
 
 # -----------------------------------------------------------------
-# default.prop
+# prop.default
+ifdef property_overrides_split_enabled
+INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_OUT)/etc/prop.default
+else
+# legacy path
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_ROOT_OUT)/default.prop
+endif
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_DEFAULT_PROP_TARGET)
 FINAL_DEFAULT_PROPERTIES := \
     $(call collapse-pairs, $(ADDITIONAL_DEFAULT_PROPERTIES))
@@ -95,6 +100,7 @@ intermediate_system_build_prop := $(call intermediates-dir-for,ETC,system_build_
 $(INSTALLED_DEFAULT_PROP_TARGET): $(intermediate_system_build_prop)
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
+	@rm -f $@
 	$(hide) echo "#" > $@; \
 	        echo "# ADDITIONAL_DEFAULT_PROPERTIES" >> $@; \
 	        echo "#" >> $@;
@@ -107,6 +113,10 @@ $(INSTALLED_DEFAULT_PROP_TARGET): $(intermediate_system_build_prop)
 	$(hide) echo ro.bootimage.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
 	$(hide) echo ro.bootimage.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
 	$(hide) build/tools/post_process_props.py $@
+ifdef property_overrides_split_enabled
+	$(hide) mkdir -p $(TARGET_ROOT_OUT)
+	$(hide) ln -sf system/etc/prop.default $(TARGET_ROOT_OUT)/default.prop
+endif
 
 # -----------------------------------------------------------------
 # vendor default.prop
@@ -1196,12 +1206,13 @@ define build-recoveryimage-target
     $(hide) cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/etc/recovery.wipe)
   $(hide) cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
   $(hide) cat $(INSTALLED_DEFAULT_PROP_TARGET) \
-          > $(TARGET_RECOVERY_ROOT_OUT)/default.prop
+          > $(TARGET_RECOVERY_ROOT_OUT)/prop.default
   $(if $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET), \
     $(hide) cat $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET) \
-            >> $(TARGET_RECOVERY_ROOT_OUT)/default.prop)
+            >> $(TARGET_RECOVERY_ROOT_OUT)/prop.default)
   $(hide) cat $(recovery_build_props) \
-          >> $(TARGET_RECOVERY_ROOT_OUT)/default.prop
+          >> $(TARGET_RECOVERY_ROOT_OUT)/prop.default
+  $(hide) ln -sf prop.default $(TARGET_RECOVERY_ROOT_OUT)/default.prop
   $(BOARD_RECOVERY_IMAGE_PREPARE)
   $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)), \
     $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system_root; \
