@@ -16,6 +16,24 @@
       "revId": "fe4302bfc319a1537baa65f476803a9d936a3793",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4d9fc20f_4f9fd250",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1135739
+      },
+      "writtenOn": "2017-06-28T06:17:35Z",
+      "side": 1,
+      "message": "I see, I put the use case, which is board specific, in another CL \nhttps://googleplex-android-review.googlesource.com/#/c/2446585/",
+      "parentUuid": "07900115_de5a90b6",
+      "revId": "fe4302bfc319a1537baa65f476803a9d936a3793",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
