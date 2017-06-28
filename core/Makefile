@@ -2409,6 +2409,11 @@ ifdef BOARD_AVB_DTBO_KEY_PATH
 endif # BOARD_AVB_DTBO_KEY_PATH
 endif # BOARD_AVB_ENABLE
 endif # BOARD_PREBUILT_DTBOIMAGE
+	@# The radio images in BOARD_PACK_RADIOIMAGES will be additionally copied from RADIO/ into
+	@# IMAGES/, which then will be added into <product>-img.zip. Such images must be listed in
+	@# INSTALLED_RADIOIMAGE_TARGET.
+	$(hide) $(foreach part,$(BOARD_PACK_RADIOIMAGES), \
+	    echo $(part) >> $(zip_root)/META/pack_radioimages.txt;)
 	@# Run fs_config on all the system, vendor, boot ramdisk,
 	@# and recovery ramdisk files in the zip, and save the output
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM,system/) > $(zip_root)/META/filesystem_config.txt
