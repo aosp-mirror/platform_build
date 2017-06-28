@@ -34,6 +34,24 @@
       "revId": "fe4302bfc319a1537baa65f476803a9d936a3793",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1e3ca036_66d79c24",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-06-28T06:54:46Z",
+      "side": 1,
+      "message": "BOARD_ODM_KERNEL_MODULES still needs to be defined as a dependency (on 82-83, but only if the partition is odm). It also needs to depend on $(DEPMOD)",
+      "parentUuid": "4d9fc20f_4f9fd250",
+      "revId": "fe4302bfc319a1537baa65f476803a9d936a3793",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
