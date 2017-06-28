@@ -187,8 +187,6 @@ PRODUCT_PACKAGES += \
     libsync \
     libvulkan \
 
-PRODUCT_SYSTEM_VERITY_PARTITION := /dev/block/bootdevice/by-name/system
-
 # Audio:
 USE_XML_AUDIO_POLICY_CONF := 1
 # The following policy XML files are used as fallback for
