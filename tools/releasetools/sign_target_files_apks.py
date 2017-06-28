@@ -212,11 +212,17 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # System properties.
     elif info.filename in ("SYSTEM/build.prop",
                            "VENDOR/build.prop",
-                           "BOOT/RAMDISK/default.prop",
-                           "ROOT/default.prop",
-                           "RECOVERY/RAMDISK/default.prop"):
+                           "SYSTEM/etc/prop.default",
+                           "BOOT/RAMDISK/prop.default",
+                           "BOOT/RAMDISK/default.prop",  # legacy
+                           "ROOT/default.prop",  # legacy
+                           "RECOVERY/RAMDISK/prop.default",
+                           "RECOVERY/RAMDISK/default.prop"):  # legacy
       print "rewriting %s:" % (info.filename,)
-      new_data = RewriteProps(data, misc_info)
+      if stat.S_ISLNK(info.external_attr >> 16):
+        new_data = data
+      else:
+        new_data = RewriteProps(data, misc_info)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
 
     elif info.filename.endswith("mac_permissions.xml"):
