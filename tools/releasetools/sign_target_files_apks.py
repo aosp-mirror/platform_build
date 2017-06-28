@@ -246,9 +246,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
               "SYSTEM/etc/update_engine/update-payload-key.pub.pem")):
       pass
 
-    # Skip META/misc_info.txt if we will replace the verity private key later.
-    elif (OPTIONS.replace_verity_private_key and
-          info.filename == "META/misc_info.txt"):
+    # Skip META/misc_info.txt since we will write back the new values later.
+    elif info.filename == "META/misc_info.txt":
       pass
 
     # Skip verity public key if we will replace it.
@@ -273,10 +272,9 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
   if OPTIONS.replace_ota_keys:
     ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
 
-  # Replace the keyid string in META/misc_info.txt.
+  # Replace the keyid string in misc_info dict.
   if OPTIONS.replace_verity_private_key:
-    ReplaceVerityPrivateKey(input_tf_zip, output_tf_zip, misc_info,
-                            OPTIONS.replace_verity_private_key[1])
+    ReplaceVerityPrivateKey(misc_info, OPTIONS.replace_verity_private_key[1])
 
   if OPTIONS.replace_verity_public_key:
     if system_root_image:
@@ -292,6 +290,9 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
   if OPTIONS.replace_verity_keyid:
     ReplaceVerityKeyId(input_tf_zip, output_tf_zip,
                        OPTIONS.replace_verity_keyid[1])
+
+  # Write back misc_info with the latest values.
+  ReplaceMiscInfoTxt(input_tf_zip, output_tf_zip, misc_info)
 
 
 def ReplaceCerts(data):
@@ -470,20 +471,12 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
 
 
 def ReplaceVerityPublicKey(targetfile_zip, filename, key_path):
-  print "Replacing verity public key with %s" % key_path
-  with open(key_path) as f:
-    data = f.read()
-  common.ZipWriteStr(targetfile_zip, filename, data)
-  return data
+  print "Replacing verity public key with %s" % (key_path,)
+  common.ZipWrite(targetfile_zip, key_path, arcname=filename)
 
 
-def ReplaceVerityPrivateKey(targetfile_input_zip, targetfile_output_zip,
-                            misc_info, key_path):
-  print "Replacing verity private key with %s" % key_path
-  current_key = misc_info["verity_key"]
-  original_misc_info = targetfile_input_zip.read("META/misc_info.txt")
-  new_misc_info = original_misc_info.replace(current_key, key_path)
-  common.ZipWriteStr(targetfile_output_zip, "META/misc_info.txt", new_misc_info)
+def ReplaceVerityPrivateKey(misc_info, key_path):
+  print "Replacing verity private key with %s" % (key_path,)
   misc_info["verity_key"] = key_path
 
 
@@ -512,7 +505,21 @@ def ReplaceVerityKeyId(targetfile_input_zip, targetfile_output_zip, keypath):
   out_cmdline = out_cmdline.strip()
   print "out_cmdline %s" % (out_cmdline)
   common.ZipWriteStr(targetfile_output_zip, "BOOT/cmdline", out_cmdline)
-  return out_cmdline
+
+
+def ReplaceMiscInfoTxt(input_zip, output_zip, misc_info):
+  """Replaces META/misc_info.txt.
+
+  Only writes back the ones in the original META/misc_info.txt. Because the
+  current in-memory dict contains additional items computed at runtime.
+  """
+  misc_info_old = common.LoadDictionaryFromLines(
+      input_zip.read('META/misc_info.txt').split('\n'))
+  items = []
+  for key in sorted(misc_info):
+    if key in misc_info_old:
+      items.append('%s=%s' % (key, misc_info[key]))
+  common.ZipWriteStr(output_zip, "META/misc_info.txt", '\n'.join(items))
 
 
 def BuildKeyMap(misc_info, key_mapping_options):
