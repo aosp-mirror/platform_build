@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "03085c07_156a5d3d",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-06-28T19:33:04Z",
+      "side": 1,
+      "message": "please don\u0027t call out to $(shell) for this -- we can\u0027t cache the result, so we run these commands way more than necessary.",
+      "range": {
+        "startLine": 83,
+        "startChar": 35,
+        "endLine": 83,
+        "endChar": 101
+      },
+      "revId": "51230166ddd7c7195e8b2943b320c65b890809cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cca0f923_bfd6e9ee",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-06-28T19:33:04Z",
+      "side": 1,
+      "message": "This needs to use a PRIVATE_* variable (along with the rest of the my_* variables in the next line)",
+      "range": {
+        "startLine": 97,
+        "startChar": 8,
+        "endLine": 97,
+        "endChar": 31
+      },
+      "revId": "51230166ddd7c7195e8b2943b320c65b890809cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
