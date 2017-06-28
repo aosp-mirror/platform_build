@@ -72,6 +72,8 @@ PRODUCT_PACKAGES := \
     android.hardware.radio.deprecated@1.0 \
     android.hardware.sensors@1.0 \
     android.hardware.soundtrigger@2.0 \
+    android.hardware.tetheroffload.config@1.0 \
+    android.hardware.tetheroffload.control@1.0 \
     android.hardware.thermal@1.0 \
     android.hardware.tv.cec@1.0 \
     android.hardware.tv.input@1.0 \
