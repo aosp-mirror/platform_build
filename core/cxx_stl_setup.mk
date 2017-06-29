@@ -99,8 +99,6 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
 
         ifeq ($(my_link_type),static)
             my_static_libraries += libm libc libdl
-        else
-            my_shared_libraries += libdl
         endif
     endif
 else ifeq ($(my_cxx_stl),ndk)
