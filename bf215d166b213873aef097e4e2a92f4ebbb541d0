@@ -16,6 +16,24 @@
       "revId": "bf215d166b213873aef097e4e2a92f4ebbb541d0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b1c9b087_183363af",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-06-29T22:10:59Z",
+      "side": 0,
+      "message": "Nope, the NDK STL configuration is handled in binary.mk",
+      "parentUuid": "a79b901b_0723dac4",
+      "revId": "bf215d166b213873aef097e4e2a92f4ebbb541d0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
