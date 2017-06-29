@@ -166,6 +166,24 @@
     },
     {
       "key": {
+        "uuid": "4684714e_12697b06",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-29T23:29:35Z",
+      "side": 1,
+      "message": "No, but with multiple -C/-l arguments you usually don\u0027t need any extra copies or to update an existing zip.",
+      "parentUuid": "8f2507df_426f6ea5",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2cc66277_a4d19787",
         "filename": "core/jacoco.mk",
         "patchSetId": 9
@@ -195,6 +213,42 @@
       "side": 1,
       "message": "Hmm when I try that, it thinks that I intend the open-paren to run in a separate subshell from the body which would goes in a separate subshell from the close-paren. I looked for an example via \"grep -r \u0027^[^$](\u0027 .\" and couldn\u0027t find any - could you point me to one?",
       "parentUuid": "2cc66277_a4d19787",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e427d4c4_c8890c93",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-29T23:29:35Z",
+      "side": 1,
+      "message": "I\u0027m not sure what you mean, but search for \"(cd \" in build/make/core/definitions.mk and you\u0027ll see some examples",
+      "parentUuid": "ed58c3b0_43bff636",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2b6693c2_9293aa00",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-06-29T23:29:35Z",
+      "side": 1,
+      "message": "You probably need the open and close parens to be on the same \"line\", meaning combining the commands with \u0026\u0026 and \\ escaping newlines.  I don\u0027t see any examples of multiline subshells.",
+      "parentUuid": "ed58c3b0_43bff636",
       "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
