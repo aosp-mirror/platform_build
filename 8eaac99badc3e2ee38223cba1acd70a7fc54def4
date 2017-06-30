@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46232ae2_b9cf8a07",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-06-30T23:35:06Z",
+      "side": 1,
+      "message": "Does clang automatically add this file to the depfile, or do we need to add an explicit dependency?",
+      "range": {
+        "startLine": 92,
+        "startChar": 38,
+        "endLine": 92,
+        "endChar": 79
+      },
+      "revId": "8eaac99badc3e2ee38223cba1acd70a7fc54def4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
