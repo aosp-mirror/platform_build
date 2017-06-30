@@ -16,16 +16,20 @@ endif
 
 common_jdk_flags := -Xmaxerrs 9999999
 
+ANDROID_JAVA_HOME := prebuilts/jdk/jdk8/$(HOST_PREBUILT_TAG)
+ANDROID_JAVA_TOOLCHAIN := $(ANDROID_JAVA_HOME)/bin
+export JAVA_HOME := $(ANDROID_JAVA_HOME)
+
 # Use the indexer wrapper to index the codebase instead of the javac compiler
 ifeq ($(ALTERNATE_JAVAC),)
-JAVACC := javac
+JAVACC := $(ANDROID_JAVA_TOOLCHAIN)/javac
 else
 JAVACC := $(ALTERNATE_JAVAC)
 endif
 
-JAVA := java
-JAVADOC := javadoc
-JAR := jar
+JAVA := $(ANDROID_JAVA_TOOLCHAIN)/java
+JAVADOC := $(ANDROID_JAVA_TOOLCHAIN)/javadoc
+JAR := $(ANDROID_JAVA_TOOLCHAIN)/jar
 
 # The actual compiler can be wrapped by setting the JAVAC_WRAPPER var.
 ifdef JAVAC_WRAPPER
@@ -34,15 +38,7 @@ ifdef JAVAC_WRAPPER
     endif
 endif
 
-# Whatever compiler is on this system.
 COMMON_JAVAC := $(JAVACC) -J-Xmx2048M $(common_jdk_flags)
-
-# Eclipse.
-ifeq ($(CUSTOM_JAVA_COMPILER), eclipse)
-    COMMON_JAVAC := java -Xmx256m -jar prebuilt/common/ecj/ecj.jar -5 \
-        -maxProblems 9999999 -nowarn
-    $(info CUSTOM_JAVA_COMPILER=eclipse)
-endif
 
 GLOBAL_JAVAC_DEBUG_FLAGS := -g
 
