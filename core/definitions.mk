@@ -2243,9 +2243,9 @@ $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
 $(if $(PRIVATE_JAR_MANIFEST), \
     $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
             $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf && \
-        jar -cfm $@ $(dir $@)/manifest.mf \
+        $(JAR) -cfm $@ $(dir $@)/manifest.mf \
             -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ., \
-    $(hide) jar -cf $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .)
+    $(hide) $(JAR) -cf $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .)
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 endef
 
@@ -2516,7 +2516,7 @@ $(if $(PRIVATE_JAR_MANIFEST), $(hide) echo unsupported options JAR_MANIFEST in $
 endef
 
 define transform-classes.jar-to-emma
-$(hide) java -classpath $(EMMA_JAR) emma instr -outmode fullcopy -outfile \
+$(hide) $(JAVA) -classpath $(EMMA_JAR) emma instr -outmode fullcopy -outfile \
     $(PRIVATE_EMMA_COVERAGE_FILE) -ip $< -d $(PRIVATE_EMMA_INTERMEDIATES_DIR) \
     $(addprefix -ix , $(PRIVATE_EMMA_COVERAGE_FILTER))
 endef
@@ -2539,7 +2539,7 @@ define desugar-classes-jar
 $(hide) rm -f $@ $@.tmp
 @rm -rf $(dir $@)/desugar_dumped_classes
 @mkdir $(dir $@)/desugar_dumped_classes
-$(hide) java \
+$(hide) $(JAVA) \
     $(if $(EXPERIMENTAL_USE_OPENJDK9),--add-opens java.base/java.lang.invoke=ALL-UNNAMED,) \
     -Djdk.internal.lambda.dumpProxyClasses=$(abspath $(dir $@))/desugar_dumped_classes \
     -jar $(DESUGAR) \
@@ -2577,7 +2577,7 @@ endef
 define create-empty-package-at
 @mkdir -p $(dir $(1))
 $(hide) touch $(dir $(1))zipdummy
-$(hide) (cd $(dir $(1)) && jar cf $(notdir $(1)) zipdummy)
+$(hide) $(JAR) cf $(1) -C $(dir $(1)) zipdummy
 $(hide) zip -qd $(1) zipdummy
 $(hide) rm $(dir $(1))zipdummy
 endef
@@ -2671,7 +2671,7 @@ endef
 #
 define add-java-resources-to
 $(call dump-words-to-file, $(PRIVATE_EXTRA_JAR_ARGS), $(1).jar-arg-list)
-$(hide) jar uf $(1) @$(1).jar-arg-list
+$(hide) $(JAR) uf $(1) @$(1).jar-arg-list
 @rm -f $(1).jar-arg-list
 endef
 
@@ -2683,7 +2683,7 @@ define add-carried-jack-resources
         | sed -e "s?^$(PRIVATE_JACK_INTERMEDIATES_DIR)/? -C \"$(PRIVATE_JACK_INTERMEDIATES_DIR)\" \"?" -e "s/$$/\"/" \
         > $(dir $@)jack_res_jar_flags; \
     if [ -s $(dir $@)jack_res_jar_flags ] ; then \
-        jar uf $@ @$(dir $@)jack_res_jar_flags; \
+        $(JAR) uf $@ @$(dir $@)jack_res_jar_flags; \
     fi; \
 fi
 endef
@@ -2698,7 +2698,7 @@ endef
 # $(1): the package file we are signing.
 define sign-package-arg
 $(hide) mv $(1) $(1).unsigned
-$(hide) java -Djava.library.path=$(SIGNAPK_JNI_LIBRARY_PATH) \
+$(hide) $(JAVA) -Djava.library.path=$(SIGNAPK_JNI_LIBRARY_PATH) \
     $(if $(EXPERIMENTAL_USE_OPENJDK9),--add-exports java.base/sun.security.pkcs=ALL-UNNAMED,) \
     $(if $(EXPERIMENTAL_USE_OPENJDK9),--add-exports java.base/sun.security.x509=ALL-UNNAMED,) \
     -jar $(SIGNAPK_JAR) \

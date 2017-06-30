@@ -23,6 +23,10 @@ else
 JAVACC := $(ALTERNATE_JAVAC)
 endif
 
+JAVA := java
+JAVADOC := javadoc
+JAR := jar
+
 # The actual compiler can be wrapped by setting the JAVAC_WRAPPER var.
 ifdef JAVAC_WRAPPER
     ifneq ($(JAVAC_WRAPPER),$(firstword $(JAVACC)))
