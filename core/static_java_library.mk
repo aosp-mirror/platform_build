@@ -207,7 +207,7 @@ $(built_aar) : $(aar_classes_jar) $(full_android_manifest)
 	# Note: Use "cp -n" to honor the resource overlay rules, if multiple res dirs exist.
 	$(hide) $(foreach res,$(PRIVATE_RESOURCE_DIR),cp -Rfn $(res)/* $(dir $@)aar/res;)
 	$(hide) cp $(PRIVATE_R_TXT) $(dir $@)aar/R.txt
-	$(hide) jar -cMf $@ \
+	$(hide) $(JAR) -cMf $@ \
 	  -C $(dir $@)aar .
 
 # Register the aar file.
