@@ -463,7 +463,7 @@ out :=
 $(full_classes_processed_jar): $(full_classes_compiled_jar) $(LOCAL_JAR_PROCESSOR)
 	@echo Processing $@ with $(PRIVATE_JAR_PROCESSOR)
 	$(hide) rm -f $@ $(PRIVATE_TMP_OUT)
-	$(hide) java -jar $(PRIVATE_JAR_PROCESSOR) $(PRIVATE_JAR_PROCESSOR_ARGS)
+	$(hide) $(JAVA) -jar $(PRIVATE_JAR_PROCESSOR) $(PRIVATE_JAR_PROCESSOR_ARGS)
 	$(hide) mv $(PRIVATE_TMP_OUT) $@
 
 else
@@ -489,7 +489,7 @@ ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
 $(full_classes_jarjar_jar): $(full_classes_desugar_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
 	@echo JarJar: $@
-	$(hide) java -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
 full_classes_jarjar_jar := $(full_classes_desugar_jar)
 endif
