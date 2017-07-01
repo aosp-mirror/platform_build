@@ -517,7 +517,7 @@ DX := $(HOST_OUT_EXECUTABLES)/dx
 DX_COMMAND := $(DX) -JXms16M -JXmx2048M
 else
 DX := $(DX_ALT_JAR)
-DX_COMMAND := java -Xms16M -Xmx2048M -jar $(DX)
+DX_COMMAND := $(JAVA) -Xms16M -Xmx2048M -jar $(DX)
 endif
 
 MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
@@ -676,7 +676,7 @@ FINDBUGS := $(FINDBUGS_DIR)/findbugs
 EMMA_JAR := external/emma/lib/emma$(COMMON_JAVA_PACKAGE_SUFFIX)
 
 # Tool to merge AndroidManifest.xmls
-ANDROID_MANIFEST_MERGER := java -classpath prebuilts/devtools/tools/lib/manifest-merger.jar com.android.manifmerger.Main merge
+ANDROID_MANIFEST_MERGER := $(JAVA) -classpath prebuilts/devtools/tools/lib/manifest-merger.jar com.android.manifmerger.Main merge
 
 COLUMN:= column
 
@@ -700,7 +700,7 @@ endif # ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
 
 # Is the host JDK 64-bit version?
 HOST_JDK_IS_64BIT_VERSION :=
-ifneq ($(filter 64-Bit, $(shell java -version 2>&1)),)
+ifneq ($(filter 64-Bit, $(shell $(JAVA) -version 2>&1)),)
 HOST_JDK_IS_64BIT_VERSION := true
 endif
 endif  # CALLED_FROM_SETUP not true

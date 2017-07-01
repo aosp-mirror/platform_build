@@ -35,7 +35,7 @@ endef
 define stub-addon-jar
 $(call stub-addon-jar-file,$(1)): $(1) | mkstubs
 	$(info Stubbing addon jar using $(PRODUCT_SDK_ADDON_STUB_DEFS))
-	$(hide) java -jar $(call module-installed-files,mkstubs) $(if $(hide),,--v) \
+	$(hide) $(JAVA) -jar $(call module-installed-files,mkstubs) $(if $(hide),,--v) \
 		"$$<" "$$@" @$(PRODUCT_SDK_ADDON_STUB_DEFS)
 endef
 
