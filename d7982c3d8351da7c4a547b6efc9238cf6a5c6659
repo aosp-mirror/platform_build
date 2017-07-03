@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d0d1d0d_7501f0f8",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2017-07-03T09:30:57Z",
+      "side": 1,
+      "message": "remove this TODO, given that you\u0027ve already conditioned this on a PRODUCT_ flag ?",
+      "range": {
+        "startLine": 432,
+        "startChar": 0,
+        "endLine": 433,
+        "endChar": 48
+      },
+      "revId": "d7982c3d8351da7c4a547b6efc9238cf6a5c6659",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
