@@ -1940,7 +1940,7 @@ INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
 endif
 endif
 
-INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096
 
 # Add kernel cmdline descriptor for kernel to mount system.img as root with
 # dm-verity. This works when system.img is either chained or not-chained:

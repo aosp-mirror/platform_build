@@ -78,6 +78,16 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
   --replace_verity_keyid <path_to_X509_PEM_cert_file>
       Replace the veritykeyid in BOOT/cmdline of input_target_file_zip
       with keyid of the cert pointed by <path_to_X509_PEM_cert_file>.
+
+  --avb_{boot,system,vendor,dtbo,vbmeta}_algorithm <algorithm>
+  --avb_{boot,system,vendor,dtbo,vbmeta}_key <key>
+      Use the specified algorithm (e.g. SHA256_RSA4096) and the key to AVB-sign
+      the specified image. Otherwise it uses the existing values in info dict.
+
+  --avb_{boot,system,vendor,dtbo,vbmeta}_extra_args <args>
+      Specify any additional args that are needed to AVB-sign the image
+      (e.g. "--signing_helper /path/to/helper"). The args will be appended to
+      the existing ones in info dict.
 """
 
 import sys
@@ -109,6 +119,9 @@ OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
 OPTIONS.replace_verity_keyid = False
 OPTIONS.tag_changes = ("-test-keys", "-dev-keys", "+release-keys")
+OPTIONS.avb_keys = {}
+OPTIONS.avb_algorithms = {}
+OPTIONS.avb_extra_args = {}
 
 def GetApkCerts(tf_zip):
   certmap = common.ReadApkCerts(tf_zip)
@@ -246,9 +259,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
               "SYSTEM/etc/update_engine/update-payload-key.pub.pem")):
       pass
 
-    # Skip META/misc_info.txt if we will replace the verity private key later.
-    elif (OPTIONS.replace_verity_private_key and
-          info.filename == "META/misc_info.txt"):
+    # Skip META/misc_info.txt since we will write back the new values later.
+    elif info.filename == "META/misc_info.txt":
       pass
 
     # Skip verity public key if we will replace it.
@@ -273,10 +285,9 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
   if OPTIONS.replace_ota_keys:
     ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
 
-  # Replace the keyid string in META/misc_info.txt.
+  # Replace the keyid string in misc_info dict.
   if OPTIONS.replace_verity_private_key:
-    ReplaceVerityPrivateKey(input_tf_zip, output_tf_zip, misc_info,
-                            OPTIONS.replace_verity_private_key[1])
+    ReplaceVerityPrivateKey(misc_info, OPTIONS.replace_verity_private_key[1])
 
   if OPTIONS.replace_verity_public_key:
     if system_root_image:
@@ -292,6 +303,12 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
   if OPTIONS.replace_verity_keyid:
     ReplaceVerityKeyId(input_tf_zip, output_tf_zip,
                        OPTIONS.replace_verity_keyid[1])
+
+  # Replace the AVB signing keys, if any.
+  ReplaceAvbSigningKeys(misc_info)
+
+  # Write back misc_info with the latest values.
+  ReplaceMiscInfoTxt(input_tf_zip, output_tf_zip, misc_info)
 
 
 def ReplaceCerts(data):
@@ -470,20 +487,12 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
 
 
 def ReplaceVerityPublicKey(targetfile_zip, filename, key_path):
-  print "Replacing verity public key with %s" % key_path
-  with open(key_path) as f:
-    data = f.read()
-  common.ZipWriteStr(targetfile_zip, filename, data)
-  return data
+  print "Replacing verity public key with %s" % (key_path,)
+  common.ZipWrite(targetfile_zip, key_path, arcname=filename)
 
 
-def ReplaceVerityPrivateKey(targetfile_input_zip, targetfile_output_zip,
-                            misc_info, key_path):
-  print "Replacing verity private key with %s" % key_path
-  current_key = misc_info["verity_key"]
-  original_misc_info = targetfile_input_zip.read("META/misc_info.txt")
-  new_misc_info = original_misc_info.replace(current_key, key_path)
-  common.ZipWriteStr(targetfile_output_zip, "META/misc_info.txt", new_misc_info)
+def ReplaceVerityPrivateKey(misc_info, key_path):
+  print "Replacing verity private key with %s" % (key_path,)
   misc_info["verity_key"] = key_path
 
 
@@ -512,7 +521,56 @@ def ReplaceVerityKeyId(targetfile_input_zip, targetfile_output_zip, keypath):
   out_cmdline = out_cmdline.strip()
   print "out_cmdline %s" % (out_cmdline)
   common.ZipWriteStr(targetfile_output_zip, "BOOT/cmdline", out_cmdline)
-  return out_cmdline
+
+
+def ReplaceMiscInfoTxt(input_zip, output_zip, misc_info):
+  """Replaces META/misc_info.txt.
+
+  Only writes back the ones in the original META/misc_info.txt. Because the
+  current in-memory dict contains additional items computed at runtime.
+  """
+  misc_info_old = common.LoadDictionaryFromLines(
+      input_zip.read('META/misc_info.txt').split('\n'))
+  items = []
+  for key in sorted(misc_info):
+    if key in misc_info_old:
+      items.append('%s=%s' % (key, misc_info[key]))
+  common.ZipWriteStr(output_zip, "META/misc_info.txt", '\n'.join(items))
+
+
+def ReplaceAvbSigningKeys(misc_info):
+  """Replaces the AVB signing keys."""
+
+  AVB_FOOTER_ARGS_BY_PARTITION = {
+    'boot' : 'avb_boot_add_hash_footer_args',
+    'dtbo' : 'avb_dtbo_add_hash_footer_args',
+    'system' : 'avb_system_add_hashtree_footer_args',
+    'vendor' : 'avb_vendor_add_hashtree_footer_args',
+    'vbmeta' : 'avb_vbmeta_args',
+  }
+
+  def ReplaceAvbPartitionSigningKey(partition):
+    key = OPTIONS.avb_keys.get(partition)
+    if not key:
+      return
+
+    algorithm = OPTIONS.avb_algorithms.get(partition)
+    assert algorithm, 'Missing AVB signing algorithm for %s' % (partition,)
+
+    print 'Replacing AVB signing key for %s with "%s" (%s)' % (
+        partition, key, algorithm)
+    misc_info['avb_' + partition + '_algorithm'] = algorithm
+    misc_info['avb_' + partition + '_key_path'] = key
+
+    extra_args = OPTIONS.avb_extra_args.get(partition)
+    if extra_args:
+      print 'Setting extra AVB signing args for %s to "%s"' % (
+          partition, extra_args)
+      args_key = AVB_FOOTER_ARGS_BY_PARTITION[partition]
+      misc_info[args_key] = (misc_info.get(args_key, '') + ' ' + extra_args)
+
+  for partition in AVB_FOOTER_ARGS_BY_PARTITION:
+    ReplaceAvbPartitionSigningKey(partition)
 
 
 def BuildKeyMap(misc_info, key_mapping_options):
@@ -612,21 +670,69 @@ def main(argv):
       OPTIONS.replace_verity_private_key = (True, a)
     elif o == "--replace_verity_keyid":
       OPTIONS.replace_verity_keyid = (True, a)
+    elif o == "--avb_vbmeta_key":
+      OPTIONS.avb_keys['vbmeta'] = a
+    elif o == "--avb_vbmeta_algorithm":
+      OPTIONS.avb_algorithms['vbmeta'] = a
+    elif o == "--avb_vbmeta_extra_args":
+      OPTIONS.avb_extra_args['vbmeta'] = a
+    elif o == "--avb_boot_key":
+      OPTIONS.avb_keys['boot'] = a
+    elif o == "--avb_boot_algorithm":
+      OPTIONS.avb_algorithms['boot'] = a
+    elif o == "--avb_boot_extra_args":
+      OPTIONS.avb_extra_args['boot'] = a
+    elif o == "--avb_dtbo_key":
+      OPTIONS.avb_keys['dtbo'] = a
+    elif o == "--avb_dtbo_algorithm":
+      OPTIONS.avb_algorithms['dtbo'] = a
+    elif o == "--avb_dtbo_extra_args":
+      OPTIONS.avb_extra_args['dtbo'] = a
+    elif o == "--avb_system_key":
+      OPTIONS.avb_keys['system'] = a
+    elif o == "--avb_system_algorithm":
+      OPTIONS.avb_algorithms['system'] = a
+    elif o == "--avb_system_extra_args":
+      OPTIONS.avb_extra_args['system'] = a
+    elif o == "--avb_vendor_key":
+      OPTIONS.avb_keys['vendor'] = a
+    elif o == "--avb_vendor_algorithm":
+      OPTIONS.avb_algorithms['vendor'] = a
+    elif o == "--avb_vendor_extra_args":
+      OPTIONS.avb_extra_args['vendor'] = a
     else:
       return False
     return True
 
-  args = common.ParseOptions(argv, __doc__,
-                             extra_opts="e:d:k:ot:",
-                             extra_long_opts=["extra_apks=",
-                                              "default_key_mappings=",
-                                              "key_mapping=",
-                                              "replace_ota_keys",
-                                              "tag_changes=",
-                                              "replace_verity_public_key=",
-                                              "replace_verity_private_key=",
-                                              "replace_verity_keyid="],
-                             extra_option_handler=option_handler)
+  args = common.ParseOptions(
+      argv, __doc__,
+      extra_opts="e:d:k:ot:",
+      extra_long_opts=[
+        "extra_apks=",
+        "default_key_mappings=",
+        "key_mapping=",
+        "replace_ota_keys",
+        "tag_changes=",
+        "replace_verity_public_key=",
+        "replace_verity_private_key=",
+        "replace_verity_keyid=",
+        "avb_vbmeta_algorithm=",
+        "avb_vbmeta_key=",
+        "avb_vbmeta_extra_args=",
+        "avb_boot_algorithm=",
+        "avb_boot_key=",
+        "avb_boot_extra_args=",
+        "avb_dtbo_algorithm=",
+        "avb_dtbo_key=",
+        "avb_dtbo_extra_args=",
+        "avb_system_algorithm=",
+        "avb_system_key=",
+        "avb_system_extra_args=",
+        "avb_vendor_algorithm=",
+        "avb_vendor_key=",
+        "avb_vendor_extra_args=",
+      ],
+      extra_option_handler=option_handler)
 
   if len(args) != 2:
     common.Usage(__doc__)
@@ -674,3 +780,5 @@ if __name__ == '__main__':
     print "   ERROR: %s" % (e,)
     print
     sys.exit(1)
+  finally:
+    common.Cleanup()
