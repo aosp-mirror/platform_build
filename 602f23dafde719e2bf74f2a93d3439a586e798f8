@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7b0a7200_bed7a9c8",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2700,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-03T17:26:15Z",
+      "side": 1,
+      "message": "I think this now needs to be $(JAVA) because of a conflicting change by Colin.",
+      "range": {
+        "startLine": 2700,
+        "startChar": 8,
+        "endLine": 2700,
+        "endChar": 12
+      },
+      "revId": "602f23dafde719e2bf74f2a93d3439a586e798f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
