@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "89c79add_cf5f76ab",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-04T15:15:32Z",
+      "side": 1,
+      "message": "This doesn\u0027t look like it has been made into a proper PRODUCT_* variable in build/make/core/product.mk and build/make/core/product_config.mk.",
+      "revId": "a2a1ed06e8b6d8305ffd1bc82116f46d3bde68c7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
