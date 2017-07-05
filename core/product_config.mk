@@ -408,6 +408,10 @@ $(foreach c,$(PRODUCT_SANITIZER_MODULE_CONFIGS),\
     $(eval SANITIZER.$(TARGET_PRODUCT).$(m).CONFIG := $(cf))))
 _psmc_modules :=
 
+# Whether the product wants to ship libartd. For rules and meaning, see art/Android.mk.
+PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD))
+
 # Make this art variable visible to soong_config.mk.
 PRODUCT_ART_USE_READ_BARRIER := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ART_USE_READ_BARRIER))
