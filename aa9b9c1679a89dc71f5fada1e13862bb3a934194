@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "897530ab_36a4e474",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-05T23:16:16Z",
+      "side": 1,
+      "message": "No, an actual PRIVATE_* variable (specific to this rule) -- look at the examples above:\n\n  $(my_build_custom_image): PRIVATE_KERNEL_MODULES :\u003d ...\n\nYou don\u0027t need to do this for the _var variable, since it\u0027s just used temporarily, not in the rule itself.",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 97,
+        "endChar": 35
+      },
+      "revId": "aa9b9c1679a89dc71f5fada1e13862bb3a934194",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79b7e38e_ec45b390",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-05T23:16:16Z",
+      "side": 1,
+      "message": "This can\u0027t be used directly in the rule either, since it may have been overwritten by another makefile by the time we evaluate it in the rule. So pass it as a PRIVATE_ variable too.",
+      "range": {
+        "startLine": 111,
+        "startChar": 96,
+        "endLine": 111,
+        "endChar": 116
+      },
+      "revId": "aa9b9c1679a89dc71f5fada1e13862bb3a934194",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
