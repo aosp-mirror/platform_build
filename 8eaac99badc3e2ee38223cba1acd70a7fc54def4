@@ -46,6 +46,30 @@
       "revId": "8eaac99badc3e2ee38223cba1acd70a7fc54def4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5058e910_d0956224",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1115178
+      },
+      "writtenOn": "2017-07-05T23:22:40Z",
+      "side": 1,
+      "message": "Yup, just checked, this is being added to depfiles.",
+      "parentUuid": "bf4db0ba_32187b87",
+      "range": {
+        "startLine": 92,
+        "startChar": 38,
+        "endLine": 92,
+        "endChar": 79
+      },
+      "revId": "8eaac99badc3e2ee38223cba1acd70a7fc54def4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
