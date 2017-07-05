@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5fbcb68a_6d753794",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-05T17:16:18Z",
+      "side": 1,
+      "message": "Remove the TODO",
+      "revId": "f360d4db01fee9280492011b1a97686ccbfe6806",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
