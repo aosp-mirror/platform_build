@@ -46,6 +46,29 @@
       "revId": "e873c2c564f1b9779970f937aa368b2105abf9b5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9aaf4c8e_c163b3e8",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 1080224
+      },
+      "writtenOn": "2017-07-06T21:23:39Z",
+      "side": 1,
+      "message": "Technically not related to this CL but I noticed some cts tests invokes $(DX) directly with their own parameters.\n\nExample: cts/tools/vm-tests-tf/Android.mk\n\nThat I think might break after this.",
+      "range": {
+        "startLine": 560,
+        "startChar": 0,
+        "endLine": 560,
+        "endChar": 2
+      },
+      "revId": "e873c2c564f1b9779970f937aa368b2105abf9b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
