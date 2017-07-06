@@ -22,6 +22,30 @@
       "revId": "e873c2c564f1b9779970f937aa368b2105abf9b5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "471336a4_e983d732",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-06T21:05:07Z",
+      "side": 1,
+      "message": "aosp/429679\n\nIt allows dx to be replaced with a non-jar tool",
+      "parentUuid": "0cfe2fc1_3df090a2",
+      "range": {
+        "startLine": 556,
+        "startChar": 0,
+        "endLine": 557,
+        "endChar": 9
+      },
+      "revId": "e873c2c564f1b9779970f937aa368b2105abf9b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
