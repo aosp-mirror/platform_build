@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0cfe2fc1_3df090a2",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 557,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-06T21:00:43Z",
+      "side": 1,
+      "message": "Why? it wasn\u0027t before...",
+      "range": {
+        "startLine": 556,
+        "startChar": 0,
+        "endLine": 557,
+        "endChar": 9
+      },
+      "revId": "e873c2c564f1b9779970f937aa368b2105abf9b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
