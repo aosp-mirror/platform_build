@@ -1,0 +1,3 @@
+#============= hal_gnss_default ==============
+allow hal_gnss_default vndbinder_device:chr_file { ioctl open read write };
+
