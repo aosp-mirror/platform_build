@@ -17,4 +17,6 @@
 /system/bin/qemud            u:object_r:qemud_exec:s0
 /sys/qemu_trace(/.*)?        u:object_r:sysfs_writable:s0
 /system/etc/init.goldfish.sh u:object_r:goldfish_setup_exec:s0
+/system/vendor/bin/init.ranchu-core.sh u:object_r:goldfish_setup_exec:s0
+/system/vendor/bin/init.ranchu-net.sh u:object_r:goldfish_setup_exec:s0
 /system/bin/qemu-props       u:object_r:qemu_props_exec:s0
