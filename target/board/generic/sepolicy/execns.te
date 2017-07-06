@@ -10,6 +10,12 @@ allow execns self:capability sys_admin;
 #Allow execns itself to be run by init in its own domain
 domain_auto_trans(init, execns_exec, execns);
 
+# Allow dhcpclient to be run by execns in its own domain
+domain_auto_trans(execns, dhcpclient_exec, dhcpclient);
+
+# Allow dhcpserver to be run by execns in its own domain
+domain_auto_trans(execns, dhcpserver_exec, dhcpserver);
+
 # Allow hostapd to be run by execns in its own domain
 domain_auto_trans(execns, hostapd_exec, hostapd);
 allow hostapd execns:fd use;
