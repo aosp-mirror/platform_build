@@ -523,6 +523,7 @@ ifdef LOCAL_USE_VNDK
 my_target_global_c_includes := \
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES)
 my_target_global_c_system_includes := \
+    $(TARGET_OUT_HEADERS) \
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES)
 else ifdef LOCAL_SDK_VERSION
 my_target_global_c_includes :=
