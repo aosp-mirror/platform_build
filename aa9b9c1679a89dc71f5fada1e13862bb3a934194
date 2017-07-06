@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "947285bd_5c87d485",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1135739
+      },
+      "writtenOn": "2017-07-06T05:03:02Z",
+      "side": 1,
+      "message": "Thank you for the comments. Refined accordingly in set 6 which \n* pass my_custom_image_modules as PRIVATE_KERNEL_MODULES\n* keep temporarily variables which are used to generate the dependency.",
+      "parentUuid": "897530ab_36a4e474",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 97,
+        "endChar": 35
+      },
+      "revId": "aa9b9c1679a89dc71f5fada1e13862bb3a934194",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "79b7e38e_ec45b390",
         "filename": "core/tasks/tools/build_custom_image.mk",
         "patchSetId": 4
