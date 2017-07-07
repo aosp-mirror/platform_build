@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ffe62882_efaf4e26",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-07T07:00:29Z",
+      "side": 1,
+      "message": "This is going to have a significant impact on the incremental builds on master -- what\u0027s the percentage increase here?\n\nNearly half the time (5 out of 11 minutes) of a minimal incremental build of angler is just generating the current OTA package. That looks even bigger if I can find a fix and revert a workaround that\u0027s adding 2+ minutes to the start of every build.\n\nIt\u0027s a smaller problem for the full builds, since it\u0027s a smaller percentage (and thus happens less often), and can often be hidden behind other tasks, but it\u0027s still machine time.\n\n(None of this is saying we can\u0027t do this, it\u0027s just going to slow down the builds and we need to be ready for that)",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 52
+      },
+      "revId": "13bfe1ccc3a129eb9400db0a6de21088e81de191",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
