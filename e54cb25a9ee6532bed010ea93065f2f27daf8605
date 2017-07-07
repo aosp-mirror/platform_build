@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d3382db5_a6ff73f9",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-07T05:52:28Z",
+      "side": 1,
+      "message": "ANDROID_BUILD_TOP is an optional environment variable, not something that can be used in make rules. Can this be a relative path? We guarantee that the current directory is the top of the source tree.",
+      "range": {
+        "startLine": 228,
+        "startChar": 22,
+        "endLine": 228,
+        "endChar": 39
+      },
+      "revId": "e54cb25a9ee6532bed010ea93065f2f27daf8605",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
