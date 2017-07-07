@@ -69,6 +69,30 @@
       "revId": "aa9b9c1679a89dc71f5fada1e13862bb3a934194",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8809e28d_bdf41bda",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-07T06:13:41Z",
+      "side": 1,
+      "message": "This comment still applies (my_custom_image_name)",
+      "parentUuid": "79b7e38e_ec45b390",
+      "range": {
+        "startLine": 111,
+        "startChar": 96,
+        "endLine": 111,
+        "endChar": 116
+      },
+      "revId": "aa9b9c1679a89dc71f5fada1e13862bb3a934194",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
