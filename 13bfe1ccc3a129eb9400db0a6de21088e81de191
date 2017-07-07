@@ -46,6 +46,30 @@
       "revId": "13bfe1ccc3a129eb9400db0a6de21088e81de191",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e50e3fd4_7bd48251",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-07T19:55:16Z",
+      "side": 1,
+      "message": "K, I\u0027ll get some more real numbers once this passes a treehugger run.\n\nAll the builds on the build servers (both incremental and full builds) create a full OTA package as part of the initial build. Incremental OTAs are only generated later (and for certain configs).",
+      "parentUuid": "e81e58a0_71e1a4c1",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 52
+      },
+      "revId": "13bfe1ccc3a129eb9400db0a6de21088e81de191",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
