@@ -81,6 +81,30 @@
       "revId": "0b047cc87a2cd3d0419fa58e3f6c7d82ed588a23",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "faed5040_e3c5b20e",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2477,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-07T22:38:39Z",
+      "side": 1,
+      "message": "Yeah, you can get lucky :) I\u0027ve got a feeling we\u0027re still missing a bunch of dependencies in this file -- we keep finding them when people email android-building@ after building with really low -j values, which isn\u0027t a common pattern for us.",
+      "parentUuid": "ed58492f_e0ec1d92",
+      "range": {
+        "startLine": 2476,
+        "startChar": 0,
+        "endLine": 2477,
+        "endChar": 48
+      },
+      "revId": "0b047cc87a2cd3d0419fa58e3f6c7d82ed588a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
