@@ -429,6 +429,16 @@ ifeq ($(RUN_ERROR_PRONE),true)
 LOCAL_JAVACFLAGS += $(LOCAL_ERROR_PRONE_FLAGS)
 endif
 
+# For user / userdebug builds, strip the local variable table and the local variable
+# type table. This has no bearing on stack traces, but will leave less information
+# available via JDWP.
+ifneq (,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO))
+ifneq (,$(filter userdebug user,$(TARGET_BUILD_VARIANT)))
+LOCAL_JAVACFLAGS+= -g:source,lines
+LOCAL_JACK_FLAGS+= -D jack.dex.debug.vars=false -D jack.dex.debug.vars.synthetic=false
+endif
+endif
+
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
