@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "388ee309_55adee4d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-07T04:49:08Z",
+      "side": 1,
+      "message": "Can you run build/soong/build_test.bash on internal master too?",
+      "revId": "79a095f6fe9264cd738d82d2abc39b5097929ae6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
