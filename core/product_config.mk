@@ -435,3 +435,7 @@ PRODUCT_ENFORCE_RRO_TARGETS := \
 # Add reserved headroom to a system image.
 PRODUCT_SYSTEM_HEADROOM := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_HEADROOM))
+
+# Whether to save disk space by minimizing java debug info
+PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_MINIMIZE_JAVA_DEBUG_INFO))
