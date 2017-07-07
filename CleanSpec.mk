@@ -420,6 +420,10 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/soong/.intermediates)
 # Version checking moving to Soong
 $(call add-clean-step, rm -rf $(OUT_DIR)/versions_checked.mk)
 
+# Vendor tests were being installed into /vendor/bin accidentally
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/nativetest*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/nativetest*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
