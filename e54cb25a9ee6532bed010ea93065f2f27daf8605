@@ -22,6 +22,30 @@
       "revId": "e54cb25a9ee6532bed010ea93065f2f27daf8605",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7823e63_ac97fdff",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-07T14:23:54Z",
+      "side": 1,
+      "message": "Thanks heaps for letting me know! Fixed.",
+      "parentUuid": "d3382db5_a6ff73f9",
+      "range": {
+        "startLine": 228,
+        "startChar": 22,
+        "endLine": 228,
+        "endChar": 39
+      },
+      "revId": "e54cb25a9ee6532bed010ea93065f2f27daf8605",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
