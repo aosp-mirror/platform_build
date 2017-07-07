@@ -22,6 +22,30 @@
       "revId": "13bfe1ccc3a129eb9400db0a6de21088e81de191",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e81e58a0_71e1a4c1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-07-07T17:43:45Z",
+      "side": 1,
+      "message": "Oh, we plan to compress new data for full OTA only; and the ~5 mins increase is measured based on a 2.0G system.new.dat.\n\nIn my experiment for incremental packages, the size of new.dat is in 10Ms even for N-\u003eO target files ; which may not worth the efforts at all. On the other hand, brotli compression of these smaller files takes much less times also (in seconds).",
+      "parentUuid": "ffe62882_efaf4e26",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 52
+      },
+      "revId": "13bfe1ccc3a129eb9400db0a6de21088e81de191",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
