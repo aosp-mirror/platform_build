@@ -554,6 +554,7 @@ SIGNAPK_JAR := $(prebuilt_sdk_tools)/lib/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
 SIGNAPK_JNI_LIBRARY_PATH := $(prebuilt_sdk_tools)/$(HOST_OS)/lib64
 
 DX := $(prebuilt_sdk_tools)/dx
+DX_COMMAND := $(DX) -JXms16M -JXmx2048M
 MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
 
 # Don't use prebuilts in PDK
