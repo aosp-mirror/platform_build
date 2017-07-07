@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "845be54d_fdea7d34",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2040,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-07-07T21:24:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd8a2dd7_9e9d3cf9",
+      "revId": "0b047cc87a2cd3d0419fa58e3f6c7d82ed588a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "09363596_b92db630",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2017-07-07T19:55:16Z",
       "side": 1,
       "message": "This needs to depend on $(BRO) too (at least for !AB)",
+      "range": {
+        "startLine": 2476,
+        "startChar": 0,
+        "endLine": 2477,
+        "endChar": 48
+      },
+      "revId": "0b047cc87a2cd3d0419fa58e3f6c7d82ed588a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed58492f_e0ec1d92",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2477,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-07-07T21:24:58Z",
+      "side": 1,
+      "message": "Done. hmm, I didn\u0027t add the dependency before and somehow it still worked",
+      "parentUuid": "09363596_b92db630",
       "range": {
         "startLine": 2476,
         "startChar": 0,
