@@ -9,6 +9,7 @@ my_sanitize_diag := $(strip $(LOCAL_SANITIZE_DIAG))
 # modules that haven't set `LOCAL_CLANG := false` and device modules that
 # have set `LOCAL_CLANG := true`.
 my_global_sanitize :=
+my_global_sanitize_diag :=
 ifeq ($(my_clang),true)
   ifdef LOCAL_IS_HOST_MODULE
     my_global_sanitize := $(strip $(SANITIZE_HOST))
@@ -17,11 +18,15 @@ ifeq ($(my_clang),true)
     my_global_sanitize := $(subst true,address,$(my_global_sanitize))
   else
     my_global_sanitize := $(strip $(SANITIZE_TARGET))
+    my_global_sanitize_diag := $(strip $(SANITIZE_TARGET_DIAG))
   endif
 endif
 
 ifneq ($(my_global_sanitize),)
   my_sanitize := $(my_global_sanitize) $(my_sanitize)
+endif
+ifneq ($(my_global_sanitize_diag),)
+  my_sanitize_diag := $(my_global_sanitize_diag) $(my_sanitize_diag)
 endif
 
 # The sanitizer specified in the product configuration wins over the previous.
@@ -29,6 +34,7 @@ ifneq ($(SANITIZER.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG),)
   my_sanitize := $(SANITIZER.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG)
   ifeq ($(my_sanitize),never)
     my_sanitize :=
+    my_sanitize_diag :=
   endif
 endif
 
@@ -37,6 +43,7 @@ ifndef LOCAL_IS_HOST_MODULE
   SANITIZE_TARGET_ARCH ?= $(TARGET_ARCH) $(TARGET_2ND_ARCH)
   ifeq ($(filter $(SANITIZE_TARGET_ARCH),$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
     my_sanitize :=
+    my_sanitize_diag :=
   endif
 endif
 
@@ -47,6 +54,7 @@ ifneq (,$(SANITIZE_NEVER_BY_OWNER))
     ifneq (,$(filter $(LOCAL_MODULE_OWNER),$(subst :, ,$(SANITIZE_NEVER_BY_OWNER))))
       $(warning Not sanitizing $(LOCAL_MODULE) based on module owner.)
       my_sanitize :=
+      my_sanitize_diag :=
     endif
   endif
 endif
@@ -55,11 +63,13 @@ endif
 ifdef LOCAL_SDK_VERSION
   my_sanitize :=
   my_global_sanitize :=
+  my_sanitize_diag :=
 endif
 
 # Never always wins.
 ifeq ($(LOCAL_SANITIZE),never)
   my_sanitize :=
+  my_sanitize_diag :=
 endif
 
 # If CFI is disabled globally, remove it from my_sanitize.
@@ -85,6 +95,22 @@ ifneq ($(filter mips mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
   my_sanitize := $(filter-out cfi,$(my_sanitize))
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
+
+# Support for local sanitize blacklist paths.
+ifneq ($(my_sanitize)$(my_global_sanitize),)
+  ifneq ($(LOCAL_SANITIZE_BLACKLIST),)
+    my_cflags += -fsanitize-blacklist=$(LOCAL_PATH)/$(LOCAL_SANITIZE_BLACKLIST)
+  endif
+endif
+
+# Disable integer_overflow if LOCAL_NOSANITIZE=integer.
+ifneq ($(filter integer_overflow, $(my_global_sanitize) $(my_sanitize)),)
+  ifneq ($(filter integer, $(strip $(LOCAL_NOSANITIZE))),)
+    my_sanitize := $(filter-out integer_overflow,$(my_sanitize))
+    my_sanitize_diag := $(filter-out integer_overflow,$(my_sanitize_diag))
+  endif
+endif
+
 
 my_nosanitize = $(strip $(LOCAL_NOSANITIZE))
 ifneq ($(my_nosanitize),)
@@ -140,6 +166,37 @@ ifneq ($(filter coverage,$(my_sanitize)),)
   endif
   my_cflags += -fsanitize-coverage=trace-pc-guard
   my_sanitize := $(filter-out coverage,$(my_sanitize))
+endif
+
+ifneq ($(filter integer_overflow,$(my_sanitize)),)
+  ifneq ($(filter SHARED_LIBRARIES EXECUTABLES,$(LOCAL_MODULE_CLASS)),)
+    ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+
+      # Respect LOCAL_NOSANITIZE for integer-overflow flags.
+      ifeq ($(filter signed-integer-overflow, $(strip $(LOCAL_NOSANITIZE))),)
+        my_cflags += -fsanitize=signed-integer-overflow
+      endif
+      ifeq ($(filter unsigned-integer-overflow, $(strip $(LOCAL_NOSANITIZE))),)
+        my_cflags += -fsanitize=unsigned-integer-overflow
+      endif
+      my_cflags += -fsanitize-trap=all
+      my_cflags += -ftrap-function=abort
+      my_cflags += $(INTEGER_OVERFLOW_EXTRA_CFLAGS)
+
+      # Check for diagnostics mode (on by default).
+      ifneq ($(filter integer_overflow,$(my_sanitize_diag)),)
+        my_cflags += -fno-sanitize-trap=signed-integer-overflow,unsigned-integer-overflow
+        my_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY) $(my_shared_libraries)
+      endif
+    endif
+  endif
+  my_sanitize := $(filter-out integer_overflow,$(my_sanitize))
+endif
+
+# Makes sure integer_overflow diagnostics is removed from the diagnostics list
+# even if integer_overflow is not set for some reason.
+ifneq ($(filter integer_overflow,$(my_sanitize_diag)),)
+  my_sanitize_diag := $(filter-out integer_overflow,$(my_sanitize_diag))
 endif
 
 ifneq ($(my_sanitize),)
