@@ -16,6 +16,24 @@
       "revId": "a8efb60211ba6307d325c53003e82d78f2c468cd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25bd0c9f_f780f0bf",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1377,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-07-08T01:23:50Z",
+      "side": 1,
+      "message": "Good point. Changing this to LOCAL_USE_VNDK. Omitting check for !LOCAL_IS_HOST_MODULE since LOCAL_USE_VNDK always implies target module.",
+      "parentUuid": "4300b9e9_55230f02",
+      "revId": "a8efb60211ba6307d325c53003e82d78f2c468cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
