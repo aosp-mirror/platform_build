@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4300b9e9_55230f02",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1377,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-08T01:03:03Z",
+      "side": 1,
+      "message": "So this means that we\u0027re going to be adding the device specific kernel headers to the command line twice, since we\u0027re not limiting this to the VNDK. That\u0027s probably fine, but it would be nice to limit the duplication.",
+      "revId": "a8efb60211ba6307d325c53003e82d78f2c468cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
