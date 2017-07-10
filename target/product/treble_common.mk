@@ -46,7 +46,6 @@ PRODUCT_PACKAGES := \
     android.hardware.camera.provider@2.4 \
     android.hardware.configstore-utils \
     android.hardware.configstore@1.0 \
-    android.hardware.configstore@1.1 \
     android.hardware.contexthub@1.0 \
     android.hardware.drm@1.0 \
     android.hardware.dumpstate@1.0 \
