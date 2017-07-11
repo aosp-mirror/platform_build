@@ -93,7 +93,12 @@ ifeq (true,$(filter true, $(CUSTOM_IMAGE_AVB_HASH_ENABLE) $(CUSTOM_IMAGE_AVB_HAS
 else ifneq (,$(filter true, $(CUSTOM_IMAGE_AVB_HASH_ENABLE) $(CUSTOM_IMAGE_AVB_HASHTREE_ENABLE)))
   $(error Cannot set both CUSTOM_IMAGE_AVB_HASH_ENABLE and CUSTOM_IMAGE_AVB_HASHTREE_ENABLE to true)
 endif
-$(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_image_copy_files) \
+my_custom_image_modules_var:=BOARD_$(strip $(call to-upper,$(my_custom_image_name)))_KERNEL_MODULES
+my_custom_image_modules:=$($(my_custom_image_modules_var))
+my_custom_image_modules_dep:=$(if $(my_custom_image_modules),$(my_custom_image_modules) $(DEPMOD),)
+$(my_built_custom_image): PRIVATE_KERNEL_MODULES := $(my_custom_image_modules)
+$(my_built_custom_image): PRIVATE_IMAGE_NAME := $(my_custom_image_name)
+$(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_image_copy_files) $(my_custom_image_modules_dep) \
   $(CUSTOM_IMAGE_DICT_FILE)
 	@echo "Build image $@"
 	$(hide) rm -rf $(PRIVATE_INTERMEDIATES) && mkdir -p $(PRIVATE_INTERMEDIATES)
@@ -103,6 +108,8 @@ $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_i
 	          $(eval pair := $(subst :,$(space),$(p)))\
 	          mkdir -p $(dir $(word 2,$(pair)));\
 	          cp -Rf $(word 1,$(pair)) $(word 2,$(pair));)
+	$(if $(PRIVATE_KERNEL_MODULES), \
+		$(call build-image-kernel-modules,$(PRIVATE_KERNEL_MODULES),$(PRIVATE_STAGING_DIR),$(PRIVATE_IMAGE_NAME)/,$(call intermediates-dir-for,PACKAGING,depmod_$(PRIVATE_IMAGE_NAME))))
 	$(if $($(PRIVATE_PICKUP_FILES)),$(hide) cp -Rf $(PRIVATE_PICKUP_FILES) $(PRIVATE_STAGING_DIR))
 	# Generate the dict.
 	$(hide) echo "# For all accepted properties, see BuildImage() in tools/releasetools/build_image.py" > $(PRIVATE_INTERMEDIATES)/image_info.txt
