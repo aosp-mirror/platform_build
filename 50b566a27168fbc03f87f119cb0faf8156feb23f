@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e400f516_fd64817a",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-11T22:20:09Z",
+      "side": 1,
+      "message": "So Soong only uses a different vendor path when using the VNDK (and thus needing different linker namespace settings).",
+      "range": {
+        "startLine": 483,
+        "startChar": 65,
+        "endLine": 483,
+        "endChar": 72
+      },
+      "revId": "50b566a27168fbc03f87f119cb0faf8156feb23f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b56f6515_33173ec4",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-11T22:20:09Z",
+      "side": 1,
+      "message": "I think this is consistent with Soong, but please check.",
+      "range": {
+        "startLine": 499,
+        "startChar": 93,
+        "endLine": 499,
+        "endChar": 118
+      },
+      "revId": "50b566a27168fbc03f87f119cb0faf8156feb23f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
