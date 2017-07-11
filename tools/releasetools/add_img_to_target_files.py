@@ -599,12 +599,12 @@ def AddImagesToTargetFiles(filename):
     for line in lines:
       if line.strip() == "system" and (
           "system_verity_block_device" in OPTIONS.info_dict or
-          OPTIONS.info_dict.get("system_avb_hashtree_enable") == "true"):
+          OPTIONS.info_dict.get("avb_system_hashtree_enable") == "true"):
         assert os.path.exists(system_img_path)
         care_map_list += GetCareMap("system", system_img_path)
       if line.strip() == "vendor" and (
           "vendor_verity_block_device" in OPTIONS.info_dict or
-          OPTIONS.info_dict.get("vendor_avb_hashtree_enable") == "true"):
+          OPTIONS.info_dict.get("avb_vendor_hashtree_enable") == "true"):
         assert os.path.exists(vendor_img_path)
         care_map_list += GetCareMap("vendor", vendor_img_path)
 
