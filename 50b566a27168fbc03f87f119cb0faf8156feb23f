@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9f8b9cd7_23259c57",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-07-12T00:51:30Z",
+      "side": 1,
+      "message": "Yes, but, even when I have it like this, I can\u0027t get modules to build tests in the vendor location.",
+      "parentUuid": "e400f516_fd64817a",
+      "range": {
+        "startLine": 483,
+        "startChar": 65,
+        "endLine": 483,
+        "endChar": 72
+      },
+      "revId": "50b566a27168fbc03f87f119cb0faf8156feb23f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b56f6515_33173ec4",
         "filename": "core/envsetup.mk",
         "patchSetId": 3
