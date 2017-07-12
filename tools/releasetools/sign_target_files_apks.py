@@ -102,6 +102,7 @@ import copy
 import errno
 import os
 import re
+import stat
 import subprocess
 import tempfile
 import zipfile
