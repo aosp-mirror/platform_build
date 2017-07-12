@@ -205,3 +205,11 @@ PRODUCT_COPY_FILES += \
 #   audio.a2dp.default to support A2DP if board has the capability.
 PRODUCT_PACKAGES += \
     audio.a2dp.default
+
+# Net:
+#   Vendors can use the platform-provided network configuration utilities (ip,
+#   iptable, etc.) to configure the Linux networking stack, but these utilities
+#   do not yet include a HIDL interface wrapper. This is a solution on
+#   Android O.
+PRODUCT_PACKAGES += \
+    netutils-wrapper-1.0
