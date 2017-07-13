@@ -255,6 +255,24 @@
     },
     {
       "key": {
+        "uuid": "7dbb0a73_9df61f4a",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-07-13T23:24:59Z",
+      "side": 1,
+      "message": "Hmm maybe we just want to talk in person about it since even describing the problem (filtering pieces of the zip) is a bunch of effort.\n\nFor this particular part, I kept it as a single shell so one part of the command could export a variable to be read the other part.",
+      "parentUuid": "e427d4c4_c8890c93",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "89880673_d7c77f5f",
         "filename": "core/jacoco.mk",
         "patchSetId": 9
