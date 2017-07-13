@@ -273,6 +273,24 @@
     },
     {
       "key": {
+        "uuid": "f8b90cf8_f273f5ed",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-13T23:36:48Z",
+      "side": 1,
+      "message": "Something like:\n\n   JarPath\u003d$$(cd $(dir $(PRIVATE_TEMP_JAR_PATH) \u0026\u0026 pwd))/$(notdir $(PRIVATE_TEMP_JAR_PATH)) \u0026\u0026 \\\n   ( cd $(PRIVATE_INSTRUMENTED_PATH) \u0026\u0026 zip -r -q $$JarPath . )\n\nAlternatively, the jar command is more suited to this:\n\n   $(JAR) -cf $(PRIVATE_TEMP_JAR_PATH) -C $(PRIVATE_INSTRUMENTED_PATH) .",
+      "parentUuid": "7dbb0a73_9df61f4a",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "89880673_d7c77f5f",
         "filename": "core/jacoco.mk",
         "patchSetId": 9

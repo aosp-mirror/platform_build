@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bfa82726_c6e2f5eb",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-13T23:36:48Z",
+      "side": 1,
+      "message": "No need to split leaf and stem, just use $(notdir $(PRIVATE_TEMP_JAR_PATH)) and $(dir $(PRIVATE_TEMP_JAR_PATH))",
+      "revId": "d21bfba0ccaaf8a844861f515c2305e0e069a42a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
