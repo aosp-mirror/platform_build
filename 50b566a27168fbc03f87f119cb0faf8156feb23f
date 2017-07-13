@@ -69,6 +69,30 @@
       "revId": "50b566a27168fbc03f87f119cb0faf8156feb23f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "468b4e08_04b3400c",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-07-13T15:49:36Z",
+      "side": 1,
+      "message": "Btw, all I did was look here:\nhttp://cs/android/build/soong/cc/installer.go?l\u003d72\u0026rcl\u003d2a7df1ca654852ced42048ce94999f39273f308e\n\nI\u0027m actually not sure how to build something w/ second arch, but I\u0027m thinking now this may have to do with TARGET_TRANSLATE_2ND_ARCH not being set on my platform.",
+      "parentUuid": "b56f6515_33173ec4",
+      "range": {
+        "startLine": 499,
+        "startChar": 93,
+        "endLine": 499,
+        "endChar": 118
+      },
+      "revId": "50b566a27168fbc03f87f119cb0faf8156feb23f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
