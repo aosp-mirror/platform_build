@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "69127cde_e2389a4b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-07-14T17:25:40Z",
+      "side": 1,
+      "message": "i think you mean \"deflation\"",
+      "range": {
+        "startLine": 9,
+        "startChar": 43,
+        "endLine": 9,
+        "endChar": 52
+      },
+      "revId": "57c33ee4fd8ff905f6058fb259edfe44cc0689a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a322077b_b4694541",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-07-14T17:25:40Z",
+      "side": 1,
+      "message": "also mention the gain? or maybe in the code comment around the \"quality 6\" (i was wondering how much that \"6\" matters when reading the code)",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 39
+      },
+      "revId": "57c33ee4fd8ff905f6058fb259edfe44cc0689a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6085144_98d3a02f",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2004,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-07-14T17:25:40Z",
+      "side": 1,
+      "message": "$(BRO), since you\u0027ve defined the var",
+      "range": {
+        "startLine": 2004,
+        "startChar": 2,
+        "endLine": 2004,
+        "endChar": 29
+      },
+      "revId": "57c33ee4fd8ff905f6058fb259edfe44cc0689a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f7324cf5_f308e62e",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 3
@@ -13,6 +82,30 @@
       "writtenOn": "2017-07-14T04:00:27Z",
       "side": 1,
       "message": "I thought we can set a threshold for improvement, say 5%, before  choose to use brotli. But probably not worth it.",
+      "range": {
+        "startLine": 1520,
+        "startChar": 4,
+        "endLine": 1520,
+        "endChar": 20
+      },
+      "revId": "57c33ee4fd8ff905f6058fb259edfe44cc0689a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c46e5d91_13d789ce",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1520,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-07-14T17:25:40Z",
+      "side": 1,
+      "message": "document the save in your testcase?",
+      "parentUuid": "f7324cf5_f308e62e",
       "range": {
         "startLine": 1520,
         "startChar": 4,
