@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f8abae14_291ed4af",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-14T16:51:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "776ea9e2_579b53bb",
+      "range": {
+        "startLine": 169,
+        "startChar": 2,
+        "endLine": 169,
+        "endChar": 8
+      },
+      "revId": "193595663367aed506b805f8e1bc9e7224c350f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "95b0ab88_bc059677",
         "filename": "core/droiddoc.mk",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "c40a17af_4fc79ed3",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-14T16:51:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "95b0ab88_bc059677",
+      "range": {
+        "startLine": 219,
+        "startChar": 2,
+        "endLine": 224,
+        "endChar": 53
+      },
+      "revId": "193595663367aed506b805f8e1bc9e7224c350f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "276e6c22_f403036b",
         "filename": "core/droiddoc.mk",
         "patchSetId": 4
@@ -59,6 +107,30 @@
       "writtenOn": "2017-07-14T16:39:20Z",
       "side": 1,
       "message": "# For Java 8 we can -bootclasspath. to define the core libraries code.",
+      "range": {
+        "startLine": 231,
+        "startChar": 0,
+        "endLine": 231,
+        "endChar": 2
+      },
+      "revId": "193595663367aed506b805f8e1bc9e7224c350f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "39126301_83476891",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-14T16:51:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "276e6c22_f403036b",
       "range": {
         "startLine": 231,
         "startChar": 0,
