@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1780665f_0c54f424",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-14T20:09:00Z",
+      "side": 1,
+      "message": "Every time you mentioned that you needed updating I failed to understand the significance, since zip doesn\u0027t have a separate flag to enable updating it looked like it was creating a zip.",
+      "range": {
+        "startLine": 128,
+        "startChar": 9,
+        "endLine": 128,
+        "endChar": 10
+      },
+      "revId": "aaae43cd242a56124431d82e4ecae41b870e6653",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
