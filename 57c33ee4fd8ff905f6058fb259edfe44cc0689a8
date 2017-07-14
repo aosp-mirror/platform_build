@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5c5d8961_57b5186b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-07-14T18:34:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "69127cde_e2389a4b",
+      "range": {
+        "startLine": 9,
+        "startChar": 43,
+        "endLine": 9,
+        "endChar": 52
+      },
+      "revId": "57c33ee4fd8ff905f6058fb259edfe44cc0689a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a322077b_b4694541",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "4639d468_28fb636e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-07-14T18:34:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a322077b_b4694541",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 39
+      },
+      "revId": "57c33ee4fd8ff905f6058fb259edfe44cc0689a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d6085144_98d3a02f",
         "filename": "core/Makefile",
         "patchSetId": 3
@@ -59,6 +107,30 @@
       "writtenOn": "2017-07-14T17:25:40Z",
       "side": 1,
       "message": "$(BRO), since you\u0027ve defined the var",
+      "range": {
+        "startLine": 2004,
+        "startChar": 2,
+        "endLine": 2004,
+        "endChar": 29
+      },
+      "revId": "57c33ee4fd8ff905f6058fb259edfe44cc0689a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62ad3e92_23903c72",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2004,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-07-14T18:34:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6085144_98d3a02f",
       "range": {
         "startLine": 2004,
         "startChar": 2,
@@ -106,6 +178,30 @@
       "side": 1,
       "message": "document the save in your testcase?",
       "parentUuid": "f7324cf5_f308e62e",
+      "range": {
+        "startLine": 1520,
+        "startChar": 4,
+        "endLine": 1520,
+        "endChar": 20
+      },
+      "revId": "57c33ee4fd8ff905f6058fb259edfe44cc0689a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e014a7e_0f69f570",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1520,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-07-14T18:34:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c46e5d91_13d789ce",
       "range": {
         "startLine": 1520,
         "startChar": 4,
