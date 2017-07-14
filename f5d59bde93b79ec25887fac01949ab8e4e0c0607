@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "587506fd_cd099d04",
+        "filename": "envsetup.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-14T20:46:03Z",
+      "side": 1,
+      "message": "We probably should set JAVA_HOME to ANDROID_JAVA_HOME, so that any other tools can assume that JAVA_HOME matches `which java`",
+      "revId": "f5d59bde93b79ec25887fac01949ab8e4e0c0607",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
