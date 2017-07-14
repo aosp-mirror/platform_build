@@ -16,6 +16,24 @@
       "revId": "d21bfba0ccaaf8a844861f515c2305e0e069a42a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e6906c7d_b6d91a59",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-07-14T18:20:28Z",
+      "side": 1,
+      "message": "thanks",
+      "parentUuid": "bfa82726_c6e2f5eb",
+      "revId": "d21bfba0ccaaf8a844861f515c2305e0e069a42a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

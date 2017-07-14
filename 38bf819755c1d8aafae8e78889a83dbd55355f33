@@ -291,6 +291,24 @@
     },
     {
       "key": {
+        "uuid": "d6930d2c_b595e618",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-07-14T18:20:28Z",
+      "side": 1,
+      "message": "Oh neat thanks. The fact that `jar` supports an \u0027update\u0027 mode and also gives control over the relative path in the zip should make this easier.\n\nHmm when I try to use \u0027$(JAR)\u0027, the variable resolves to an empty string. Do I have to wait for your checking-java-into-the-tree patches to be done before I can use that? In the meanwhile do I just use the text \u0027jar\u0027?",
+      "parentUuid": "f8b90cf8_f273f5ed",
+      "revId": "38bf819755c1d8aafae8e78889a83dbd55355f33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "89880673_d7c77f5f",
         "filename": "core/jacoco.mk",
         "patchSetId": 9
