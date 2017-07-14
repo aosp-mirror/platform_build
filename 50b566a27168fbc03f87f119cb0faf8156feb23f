@@ -93,6 +93,30 @@
       "revId": "50b566a27168fbc03f87f119cb0faf8156feb23f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f20adf80_a5512da1",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-07-14T01:04:51Z",
+      "side": 1,
+      "message": "Yes, I can confirm. I choose a target with TARGET_ARCH\u003dx86, TARGET_2ND_ARCH\u003darm, and TARGET_TRANSLATE_2ND_ARCH\u003dtrue, and built a test marked as vendor:true with BOARD_VNDK_VERSION set. Then the arm variant of the test was installed to \n\n/data/nativetest/arm/vendor/\u003ctestname\u003e",
+      "parentUuid": "468b4e08_04b3400c",
+      "range": {
+        "startLine": 499,
+        "startChar": 93,
+        "endLine": 499,
+        "endChar": 118
+      },
+      "revId": "50b566a27168fbc03f87f119cb0faf8156feb23f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
