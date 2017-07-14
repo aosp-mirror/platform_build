@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7324cf5_f308e62e",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1520,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-07-14T04:00:27Z",
+      "side": 1,
+      "message": "I thought we can set a threshold for improvement, say 5%, before  choose to use brotli. But probably not worth it.",
+      "range": {
+        "startLine": 1520,
+        "startChar": 4,
+        "endLine": 1520,
+        "endChar": 20
+      },
+      "revId": "57c33ee4fd8ff905f6058fb259edfe44cc0689a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
