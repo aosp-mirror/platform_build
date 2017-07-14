@@ -1515,9 +1515,34 @@ class BlockDifference(object):
     ZipWrite(output_zip,
              '{}.transfer.list'.format(self.path),
              '{}.transfer.list'.format(self.partition))
-    ZipWrite(output_zip,
-             '{}.new.dat'.format(self.path),
-             '{}.new.dat'.format(self.partition))
+
+    # For full OTA, compress the new.dat with brotli with quality 6 to reduce its size. Quailty 9
+    # almost triples the compression time but doesn't further reduce the size too much.
+    # For a typical 1.8G system.new.dat
+    #                       zip  | brotli(quality 6)  | brotli(quality 9)
+    #   compressed_size:    942M | 869M (~8% reduced) | 854M
+    #   compression_time:   75s  | 265s               | 719s
+    #   decompression_time: 15s  | 25s                | 25s
+
+    if not self.src:
+      bro_cmd = ['bro', '--quality', '6',
+                 '--input', '{}.new.dat'.format(self.path),
+                 '--output', '{}.new.dat.br'.format(self.path)]
+      print("Compressing {}.new.dat with brotli".format(self.partition))
+      p = Run(bro_cmd, stdout=subprocess.PIPE)
+      p.communicate()
+      assert p.returncode == 0,\
+          'compression of {}.new.dat failed'.format(self.partition)
+
+      new_data_name = '{}.new.dat.br'.format(self.partition)
+      ZipWrite(output_zip,
+               '{}.new.dat.br'.format(self.path),
+               new_data_name,
+               compress_type=zipfile.ZIP_STORED)
+    else:
+      new_data_name = '{}.new.dat'.format(self.partition)
+      ZipWrite(output_zip, '{}.new.dat'.format(self.path), new_data_name)
+
     ZipWrite(output_zip,
              '{}.patch.dat'.format(self.path),
              '{}.patch.dat'.format(self.partition),
@@ -1530,9 +1555,10 @@ class BlockDifference(object):
 
     call = ('block_image_update("{device}", '
             'package_extract_file("{partition}.transfer.list"), '
-            '"{partition}.new.dat", "{partition}.patch.dat") ||\n'
+            '"{new_data_name}", "{partition}.patch.dat") ||\n'
             '  abort("E{code}: Failed to update {partition} image.");'.format(
-                device=self.device, partition=self.partition, code=code))
+                device=self.device, partition=self.partition,
+                new_data_name=new_data_name, code=code))
     script.AppendExtra(script.WordWrap(call))
 
   def _HashBlocks(self, source, ranges): # pylint: disable=no-self-use
