@@ -464,18 +464,21 @@ ifdef LOCAL_JAR_PROCESSOR
 # using deferred evaluation (LOCAL_JAR_PROCESSOR_ARGS = instead of :=).
 in := $(full_classes_compiled_jar)
 out := $(full_classes_processed_jar).tmp
+my_jar_processor := $(HOST_OUT_JAVA_LIBRARIES)/$(LOCAL_JAR_PROCESSOR).jar
+
 $(full_classes_processed_jar): PRIVATE_JAR_PROCESSOR_ARGS := $(LOCAL_JAR_PROCESSOR_ARGS)
-$(full_classes_processed_jar): PRIVATE_JAR_PROCESSOR := $(HOST_OUT_JAVA_LIBRARIES)/$(LOCAL_JAR_PROCESSOR).jar
+$(full_classes_processed_jar): PRIVATE_JAR_PROCESSOR := $(my_jar_processor)
 $(full_classes_processed_jar): PRIVATE_TMP_OUT := $(out)
 in :=
 out :=
 
-$(full_classes_processed_jar): $(full_classes_compiled_jar) $(LOCAL_JAR_PROCESSOR)
+$(full_classes_processed_jar): $(full_classes_compiled_jar) $(my_jar_processor)
 	@echo Processing $@ with $(PRIVATE_JAR_PROCESSOR)
 	$(hide) rm -f $@ $(PRIVATE_TMP_OUT)
 	$(hide) $(JAVA) -jar $(PRIVATE_JAR_PROCESSOR) $(PRIVATE_JAR_PROCESSOR_ARGS)
 	$(hide) mv $(PRIVATE_TMP_OUT) $@
 
+my_jar_processor :=
 else
 full_classes_processed_jar := $(full_classes_compiled_jar)
 endif
