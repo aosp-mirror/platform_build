@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "776ea9e2_579b53bb",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-07-14T16:39:20Z",
+      "side": 1,
+      "message": "As discussed. Think this should be phrased as a TODO (with owner).",
+      "range": {
+        "startLine": 169,
+        "startChar": 2,
+        "endLine": 169,
+        "endChar": 8
+      },
+      "revId": "193595663367aed506b805f8e1bc9e7224c350f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "95b0ab88_bc059677",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-07-14T16:39:20Z",
+      "side": 1,
+      "message": "Suggestion:\n# For Java 9 we use --patch-module to define the core libraries code.\n# TODO(tobiast): Reorganize this code when adding proper support for Java 9 modules. Here we treat all code in core libraries as being in java.base to work around the module system in Java 9. http://b/62039770.",
+      "range": {
+        "startLine": 219,
+        "startChar": 2,
+        "endLine": 224,
+        "endChar": 53
+      },
+      "revId": "193595663367aed506b805f8e1bc9e7224c350f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "276e6c22_f403036b",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 231,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-07-14T16:39:20Z",
+      "side": 1,
+      "message": "# For Java 8 we can -bootclasspath. to define the core libraries code.",
+      "range": {
+        "startLine": 231,
+        "startChar": 0,
+        "endLine": 231,
+        "endChar": 2
+      },
+      "revId": "193595663367aed506b805f8e1bc9e7224c350f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
