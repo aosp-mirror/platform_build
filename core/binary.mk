@@ -1468,7 +1468,8 @@ my_tracked_src_files :=
 
 my_c_includes += $(TOPDIR)$(LOCAL_PATH) $(intermediates) $(generated_sources_dir)
 
-ifndef LOCAL_SDK_VERSION
+# The platform JNI header is for platform modules only.
+ifeq ($(LOCAL_SDK_VERSION)$(LOCAL_USE_VNDK),)
   my_c_includes += $(JNI_H_INCLUDE)
 endif
 
