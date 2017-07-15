@@ -79,6 +79,7 @@ $(my_built_custom_image): PRIVATE_COPY_PAIRS := $(my_copy_pairs)
 $(my_built_custom_image): PRIVATE_PICKUP_FILES := $(my_pickup_files)
 $(my_built_custom_image): PRIVATE_SELINUX := $(CUSTOM_IMAGE_SELINUX)
 $(my_built_custom_image): PRIVATE_SUPPORT_VERITY := $(CUSTOM_IMAGE_SUPPORT_VERITY)
+$(my_built_custom_image): PRIVATE_SUPPORT_VERITY_FEC := $(CUSTOM_IMAGE_SUPPORT_VERITY_FEC)
 $(my_built_custom_image): PRIVATE_VERITY_KEY := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY)
 $(my_built_custom_image): PRIVATE_VERITY_BLOCK_DEVICE := $(CUSTOM_IMAGE_VERITY_BLOCK_DEVICE)
 $(my_built_custom_image): PRIVATE_DICT_FILE := $(CUSTOM_IMAGE_DICT_FILE)
@@ -92,6 +93,9 @@ ifeq (true,$(filter true, $(CUSTOM_IMAGE_AVB_HASH_ENABLE) $(CUSTOM_IMAGE_AVB_HAS
   $(my_built_custom_image): $(AVBTOOL)
 else ifneq (,$(filter true, $(CUSTOM_IMAGE_AVB_HASH_ENABLE) $(CUSTOM_IMAGE_AVB_HASHTREE_ENABLE)))
   $(error Cannot set both CUSTOM_IMAGE_AVB_HASH_ENABLE and CUSTOM_IMAGE_AVB_HASHTREE_ENABLE to true)
+endif
+ifeq (true,$(CUSTOM_IMAGE_SUPPORT_VERITY_FEC))
+  $(my_built_custom_image): $(FEC)
 endif
 my_custom_image_modules_var:=BOARD_$(strip $(call to-upper,$(my_custom_image_name)))_KERNEL_MODULES
 my_custom_image_modules:=$($(my_custom_image_modules_var))
@@ -124,6 +128,8 @@ $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_i
 	    echo "verity_key=$(PRIVATE_VERITY_KEY)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt;\
 	    echo "verity_signer_cmd=$(VERITY_SIGNER)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt;\
 	    echo "verity_block_device=$(PRIVATE_VERITY_BLOCK_DEVICE)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt)
+	$(if $(PRIVATE_SUPPORT_VERITY_FEC),\
+	  $(hide) echo "verity_fec=$(PRIVATE_SUPPORT_VERITY_FEC)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt)
 	$(hide) echo "avb_avbtool=$(PRIVATE_AVB_AVBTOOL)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt
 	$(hide) echo "avb_signing_args=$(PRIVATE_AVB_SIGNING_ARGS)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt
 	$(if $(PRIVATE_AVB_HASH_ENABLE),\
