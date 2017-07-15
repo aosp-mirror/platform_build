@@ -36,6 +36,8 @@
 #     image. <dest> is relativ to the root of the image.
 #   - CUSTOM_IMAGE_SELINUX, set to "true" if the image supports selinux.
 #   - CUSTOM_IMAGE_SUPPORT_VERITY, set to "true" if the product supports verity.
+#   - CUSTOM_IMAGE_SUPPORT_VERITY_FEC, set to "true" if the product supports
+#     verity FEC (forward error correction).
 #   - CUSTOM_IMAGE_VERITY_BLOCK_DEVICE
 #   - CUSTOM_IMAGE_AVB_HASH_ENABLE, set to "true" to add AVB HASH footer.
 #   - CUSTOM_IMAGE_AVB_ADD_HASH_FOOTER_ARGS, additional args of AVB HASH footer.
@@ -61,6 +63,7 @@ custom_image_parameter_variables := \
   CUSTOM_IMAGE_COPY_FILES \
   CUSTOM_IMAGE_SELINUX \
   CUSTOM_IMAGE_SUPPORT_VERITY \
+  CUSTOM_IMAGE_SUPPORT_VERITY_FEC \
   CUSTOM_IMAGE_VERITY_BLOCK_DEVICE \
   CUSTOM_IMAGE_AVB_HASH_ENABLE \
   CUSTOM_IMAGE_AVB_ADD_HASH_FOOTER_ARGS \
