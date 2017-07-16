@@ -753,7 +753,7 @@ function m()
     local T=$(gettop)
     local DRV=$(getdriver $T)
     if [ "$T" ]; then
-        $DRV make -C $T -f build/core/main.mk $@
+        _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return 1
@@ -782,9 +782,9 @@ function mm()
     local T=$(gettop)
     local DRV=$(getdriver $T)
     # If we're sitting in the root of the build tree, just do a
-    # normal make.
-    if [ -f build/core/envsetup.mk -a -f Makefile ]; then
-        $DRV make $@
+    # normal build.
+    if [ -f build/soong/soong_ui.bash ]; then
+        _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
     else
         # Find the closest Android.mk file.
         local M=$(findmakefile)
@@ -819,7 +819,7 @@ function mm()
             if [ "1" = "${WITH_TIDY_ONLY}" -o "true" = "${WITH_TIDY_ONLY}" ]; then
               MODULES=tidy_only
             fi
-            ONE_SHOT_MAKEFILE=$M $DRV make -C $T -f build/core/main.mk $MODULES $ARGS
+            ONE_SHOT_MAKEFILE=$M _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $MODULES $ARGS
         fi
     fi
 }
@@ -887,7 +887,7 @@ function mmm()
         fi
         # Convert "/" to "-".
         MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-        ONE_SHOT_MAKEFILE="$MAKEFILE" $DRV make -C $T -f build/core/main.mk $DASH_ARGS $MODULES $MODULES_IN_PATHS $ARGS
+        ONE_SHOT_MAKEFILE="$MAKEFILE" _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $MODULES $MODULES_IN_PATHS $ARGS
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return 1
@@ -898,8 +898,8 @@ function mma()
 {
   local T=$(gettop)
   local DRV=$(getdriver $T)
-  if [ -f build/core/envsetup.mk -a -f Makefile ]; then
-    $DRV make $@
+  if [ -f build/soong/soong_ui.bash ]; then
+    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
   else
     if [ ! "$T" ]; then
       echo "Couldn't locate the top of the tree.  Try setting TOP."
@@ -911,7 +911,7 @@ function mma()
     local MODULES_IN_PATHS=MODULES-IN-$(dirname ${M})
     # Convert "/" to "-".
     MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-    $DRV make -C $T -f build/core/main.mk $@ $MODULES_IN_PATHS
+    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@ $MODULES_IN_PATHS
   fi
 }
 
@@ -949,7 +949,7 @@ function mmma()
     done
     # Convert "/" to "-".
     MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-    $DRV make -C $T -f build/core/main.mk $DASH_ARGS $ARGS $MODULES_IN_PATHS
+    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $ARGS $MODULES_IN_PATHS
   else
     echo "Couldn't locate the top of the tree.  Try setting TOP."
     return 1
@@ -1595,13 +1595,18 @@ function pez {
 
 function get_make_command()
 {
-  echo command make
+    # If we're in the top of an Android tree, use soong_ui.bash instead of make
+    if [ -f build/soong/soong_ui.bash ]; then
+        echo build/soong/soong_ui.bash --make-mode
+    else
+        echo command make
+    fi
 }
 
-function make()
+function _wrap_build()
 {
     local start_time=$(date +"%s")
-    $(get_make_command) "$@"
+    "$@"
     local ret=$?
     local end_time=$(date +"%s")
     local tdiff=$(($end_time-$start_time))
@@ -1620,9 +1625,9 @@ function make()
     fi
     echo
     if [ $ret -eq 0 ] ; then
-        echo -n "${color_success}#### make completed successfully "
+        echo -n "${color_success}#### build completed successfully "
     else
-        echo -n "${color_failed}#### make failed to build some targets "
+        echo -n "${color_failed}#### failed to build some targets "
     fi
     if [ $hours -gt 0 ] ; then
         printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
@@ -1634,6 +1639,11 @@ function make()
     echo " ####${color_reset}"
     echo
     return $ret
+}
+
+function make()
+{
+    _wrap_build $(get_make_command) "$@"
 }
 
 function provision()
