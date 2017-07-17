@@ -245,7 +245,7 @@ endif # LOCAL_JACK_ENABLED
 
 ifeq (true,$(EMMA_INSTRUMENT))
 ifndef LOCAL_EMMA_INSTRUMENT
-# No emma for test apks.
+# No jacoco for test apks.
 ifeq (,$(LOCAL_INSTRUMENTATION_FOR))
 LOCAL_EMMA_INSTRUMENT := true
 endif # No test apk
@@ -256,21 +256,14 @@ endif # EMMA_INSTRUMENT is true
 
 ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
 ifeq (true,$(EMMA_INSTRUMENT_STATIC))
-ifdef LOCAL_JACK_ENABLED
-# Jack supports coverage with Jacoco
 ifneq ($(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),)
 # Only add jacocoagent if the package contains some java code
 LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
 endif # Contains java code
 else
-LOCAL_STATIC_JAVA_LIBRARIES += emma
-endif # LOCAL_JACK_ENABLED
-else
 ifdef LOCAL_SDK_VERSION
 ifdef TARGET_BUILD_APPS
 # In unbundled build, merge the coverage library into the apk.
-ifdef LOCAL_JACK_ENABLED
-# Jack supports coverage with Jacoco
 ifneq ($(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),)
 # Only add jacocoagent if the package contains some java code
 LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
@@ -278,9 +271,6 @@ LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
 LOCAL_PROGUARD_FLAGS += -include $(BUILD_SYSTEM)/proguard.jacoco.flags
 LOCAL_JACK_PROGUARD_FLAGS += -include $(BUILD_SYSTEM)/proguard.jacoco.flags
 endif # Contains java code
-else  # ! LOCAL_JACK_ENABLED
-LOCAL_STATIC_JAVA_LIBRARIES += emma
-endif # ! LOCAL_JACK_ENABLED
 else  # ! TARGET_BUILD_APPS
 ifdef LOCAL_JACK_ENABLED
 # If build against the SDK in full build, core.jar is not used
@@ -291,11 +281,6 @@ ifdef LOCAL_JACK_ENABLED
 # Note: we have nothing to do for proguard since jacoco will be
 # on the classpath only, thus not modified during the compilation.
 LOCAL_JAVA_LIBRARIES += jacocoagent
-else  # ! LOCAL_JACK_ENABLED
-# If build against the SDK in full build, core.jar is not used,
-# we have to use prebiult emma.jar to make Proguard happy;
-# Otherwise emma classes are included in core.jar.
-LOCAL_PROGUARD_FLAGS += -libraryjars $(EMMA_JAR)
 endif # ! LOCAL_JACK_ENABLED
 endif # ! TARGET_BUILD_APPS
 endif # LOCAL_SDK_VERSION

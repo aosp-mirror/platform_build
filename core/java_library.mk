@@ -53,12 +53,7 @@ endif
 ifeq (true,$(EMMA_INSTRUMENT))
 ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
 ifeq (true,$(EMMA_INSTRUMENT_STATIC))
-ifdef LOCAL_JACK_ENABLED
-# Jack supports coverage with Jacoco
 LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
-else
-LOCAL_STATIC_JAVA_LIBRARIES += emma
-endif # LOCAL_JACK_ENABLED
 endif # LOCAL_EMMA_INSTRUMENT
 endif # EMMA_INSTRUMENT_STATIC
 else
