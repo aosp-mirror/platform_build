@@ -83,6 +83,7 @@ PRODUCT_PACKAGES := \
     android.hardware.vr@1.0 \
     android.hardware.weaver@1.0 \
     android.hardware.wifi@1.0 \
+    android.hardware.wifi@1.1 \
     android.hardware.wifi.supplicant@1.0 \
     android.hidl.allocator@1.0 \
     android.hidl.manager@1.0 \
