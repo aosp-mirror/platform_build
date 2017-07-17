@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7b3da3be_66d960c0",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-17T20:08:55Z",
+      "side": 1,
+      "message": "I think you had mentioned making this a product variable.  If you want it to be both a product and command line variable, add a PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS to product_config.mk and product.mk, and then check both it and INTEGER_OVERFLOW_EXCLUDE_PATHS here with whatever semantics make sense when they are both set",
+      "range": {
+        "startLine": 108,
+        "startChar": 59,
+        "endLine": 108,
+        "endChar": 89
+      },
+      "revId": "dcb8a49fc694ad852ca2848172ce1c3a2ddc08da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
