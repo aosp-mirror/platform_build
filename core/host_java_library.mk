@@ -33,16 +33,11 @@ endif
 
 full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
-emma_intermediates_dir := $(intermediates.COMMON)/emma_out
-# emma is hardcoded to use the leaf name of its input for the output file --
-# only the output directory can be changed
-full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(notdir $(full_classes_jarjar_jar))
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
     $(full_classes_jarjar_jar) \
-    $(full_classes_emma_jar)
 
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
@@ -95,23 +90,13 @@ else
 full_classes_jarjar_jar := $(full_classes_compiled_jar)
 endif
 
-ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
-$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.em
-$(full_classes_emma_jar): PRIVATE_EMMA_INTERMEDIATES_DIR := $(emma_intermediates_dir)
-ifdef LOCAL_EMMA_COVERAGE_FILTER
-$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILTER := $(LOCAL_EMMA_COVERAGE_FILTER)
-else
-# by default, avoid applying emma instrumentation onto emma classes itself,
-# otherwise there will be exceptions thrown
-$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILTER := *,-emma,-emmarun,-com.vladium.*
-endif
-# this rule will generate both $(PRIVATE_EMMA_COVERAGE_FILE) and
-# $(full_classes_emma_jar)
-$(full_classes_emma_jar) : $(full_classes_jarjar_jar) | $(EMMA_JAR)
-	$(transform-classes.jar-to-emma)
-else # LOCAL_EMMA_INSTRUMENT
-full_classes_emma_jar := $(full_classes_jarjar_jar)
-endif # LOCAL_EMMA_INSTRUMENT
 
-$(eval $(call copy-one-file,$(full_classes_emma_jar),$(LOCAL_BUILT_MODULE)))
-$(eval $(call copy-one-file,$(full_classes_emma_jar),$(full_classes_jar)))
+LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_jarjar_jar)
+
+#######################################
+include $(BUILD_SYSTEM)/jacoco.mk
+#######################################
+
+$(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(LOCAL_BUILT_MODULE)))
+$(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(full_classes_jar)))
+
