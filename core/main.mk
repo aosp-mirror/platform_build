@@ -1006,9 +1006,13 @@ ifneq ($(TARGET_BUILD_APPS),)
   $(call dist-for-goals,apps_only, $(apps_only_dist_built_files))
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    $(EMMA_META_ZIP) : $(apps_only_installed_files)
-
-    $(call dist-for-goals,apps_only, $(EMMA_META_ZIP))
+    ifeq ($(ANDROID_COMPILE_WITH_JACK),false)
+      $(JACOCO_REPORT_CLASSES_ALL) : $(apps_only_installed_files)
+      $(call dist-for-goals,apps_only, $(JACOCO_REPORT_CLASSES_ALL))
+    else
+      $(EMMA_META_ZIP) : $(apps_only_installed_files)
+      $(call dist-for-goals,apps_only, $(EMMA_META_ZIP))
+    endif
   endif
 
   $(PROGUARD_DICT_ZIP) : $(apps_only_installed_files)
@@ -1065,9 +1069,13 @@ else # TARGET_BUILD_APPS
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    $(EMMA_META_ZIP) : $(INSTALLED_SYSTEMIMAGE)
-
-    $(call dist-for-goals, dist_files, $(EMMA_META_ZIP))
+    ifeq ($(ANDROID_COMPILE_WITH_JACK),false)
+      $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE)
+      $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
+    else
+      $(EMMA_META_ZIP) : $(INSTALLED_SYSTEMIMAGE)
+      $(call dist-for-goals, dist_files, $(EMMA_META_ZIP))
+    endif
   endif
 
 # Building a full system-- the default is to build droidcore
