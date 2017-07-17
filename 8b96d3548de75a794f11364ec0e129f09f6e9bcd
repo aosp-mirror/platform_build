@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a0b7fdf_7a30263b",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-17T19:45:39Z",
+      "side": 1,
+      "message": "Wrong bug number, should be 62049770",
+      "range": {
+        "startLine": 223,
+        "startChar": 55,
+        "endLine": 223,
+        "endChar": 63
+      },
+      "revId": "8b96d3548de75a794f11364ec0e129f09f6e9bcd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4e3c8bcb_deac5cb7",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-17T19:45:39Z",
+      "side": 1,
+      "message": "Why are these source paths?  Is javadoc going to read from these paths?  Would it accept the $(PRIVATE_BOOTCLASSPATH) jars instead?",
+      "revId": "8b96d3548de75a794f11364ec0e129f09f6e9bcd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
