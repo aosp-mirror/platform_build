@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "0c2f0247_b1b24831",
+        "filename": "help.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-07-18T23:07:52Z",
+      "side": 1,
+      "message": "ok",
+      "parentUuid": "15bb8b60_fe0fa960",
+      "revId": "7bc9c668a8e4f55c00eda49d9c4dccdd357ec1be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9ae3d743_bf9f887c",
         "filename": "help.sh",
         "patchSetId": 5
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "3504ae1b_4e7330cb",
+        "filename": "help.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-07-18T23:07:52Z",
+      "side": 1,
+      "message": "thanks",
+      "parentUuid": "9ae3d743_bf9f887c",
+      "revId": "7bc9c668a8e4f55c00eda49d9c4dccdd357ec1be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e884ee73_32202aa9",
         "filename": "help.sh",
         "patchSetId": 5
@@ -47,6 +83,24 @@
       "writtenOn": "2017-07-18T22:06:35Z",
       "side": 1,
       "message": "make -j",
+      "revId": "7bc9c668a8e4f55c00eda49d9c4dccdd357ec1be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "93b214b8_0cb3dcb4",
+        "filename": "help.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-07-18T23:07:52Z",
+      "side": 1,
+      "message": "thanks",
+      "parentUuid": "e884ee73_32202aa9",
       "revId": "7bc9c668a8e4f55c00eda49d9c4dccdd357ec1be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
