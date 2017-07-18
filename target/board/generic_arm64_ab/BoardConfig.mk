@@ -41,7 +41,6 @@ ifeq ($(HOST_OS),linux)
 endif
 
 # Generic AOSP image always requires separate vendor.img
-BOARD_USES_VENDORIMAGE := true
 TARGET_COPY_OUT_VENDOR := vendor
 
 # Generic AOSP image does NOT support HWC1
