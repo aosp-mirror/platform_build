@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85fe18eb_d2a8e8da",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-18T20:46:36Z",
+      "side": 1,
+      "message": "-bootclasspath replaces the JDK jars with ours, does --patch-module do the same, or does it leave any JDK classes that were not replaced?",
+      "revId": "0b05860556cefc73935c57a6ae72659b89ba8e03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
