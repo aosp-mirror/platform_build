@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15ca53ea_aad1ee1c",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-07-18T06:29:53Z",
+      "side": 1,
+      "message": "Colin, do you have any idea to handle this case? There are lots of similar cases in this file, but I only modified this as an example.\n\nLack of this conditional causes following error.\nout/soong/Android-taimen.mk: error: libc++.vendor (native:vendor) should not link to libcompiler_rt-extras (native:ndk)\nout/soong/Android-taimen.mk: error: libcrypto.vendor (native:vendor) should not link to libcompiler_rt-extras (native:ndk)\nout/soong/Android-taimen.mk: error: liblzma.vendor (native:vendor) should not link to libcompiler_rt-extras (native:ndk)\nout/soong/Android-taimen.mk: error: libz.vendor (native:vendor) should not link to libcompiler_rt-extras (native:ndk)\nout/soong/Android-taimen.mk: error: libcrypto.vendor (native:vendor) should not link to libcompiler_rt-extras (native:ndk)\n\n\nWhen parsing Android-\u003ctarget\u003e.mk file, because make does not know whether the such auto-added library has a vendor variant or not (and thus have \u003cname\u003e.vendor exists), we can\u0027t blindly add .vendor suffix later around #1335.",
+      "range": {
+        "startLine": 472,
+        "startChar": 0,
+        "endLine": 478,
+        "endChar": 85
+      },
+      "revId": "d0ea6d05409f20dd575746990ffd525089ae0672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
