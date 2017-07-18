@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15bb8b60_fe0fa960",
+        "filename": "help.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-18T22:06:35Z",
+      "side": 1,
+      "message": "How does this get the source code?  Also, all the other documentation generally assumes running commands from \"${TOP}\", not \"${TOP}/build\".",
+      "revId": "7bc9c668a8e4f55c00eda49d9c4dccdd357ec1be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ae3d743_bf9f887c",
+        "filename": "help.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-18T22:06:35Z",
+      "side": 1,
+      "message": "This is normally source build/envsetup.sh",
+      "revId": "7bc9c668a8e4f55c00eda49d9c4dccdd357ec1be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e884ee73_32202aa9",
+        "filename": "help.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-18T22:06:35Z",
+      "side": 1,
+      "message": "make -j",
+      "revId": "7bc9c668a8e4f55c00eda49d9c4dccdd357ec1be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
