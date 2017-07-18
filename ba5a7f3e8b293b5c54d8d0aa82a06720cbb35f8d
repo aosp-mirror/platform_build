@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "daa16821_ff9d74b8",
+        "filename": "README.md",
+        "patchSetId": 6
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-18T22:09:26Z",
+      "side": 1,
+      "message": "This doesn\u0027t render well as markdown:\nhttps://android.googlesource.com/platform/build/+/refs/changes/73/405673/6/README.md",
+      "revId": "ba5a7f3e8b293b5c54d8d0aa82a06720cbb35f8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "adb92dc0_cb860c11",
+        "filename": "README.md",
+        "patchSetId": 6
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-18T22:09:26Z",
+      "side": 1,
+      "message": "Might as well wrap everything at 80 columns to make this readable in a shell",
+      "revId": "ba5a7f3e8b293b5c54d8d0aa82a06720cbb35f8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
