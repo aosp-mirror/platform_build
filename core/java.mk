@@ -118,10 +118,6 @@ full_classes_processed_jar := $(intermediates.COMMON)/classes-processed.jar
 full_classes_desugar_jar := $(intermediates.COMMON)/classes-desugar.jar
 jarjar_leaf := classes-jarjar.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/$(jarjar_leaf)
-emma_intermediates_dir := $(intermediates.COMMON)/emma_out
-# emma is hardcoded to use the leaf name of its input for the output file --
-# only the output directory can be changed
-full_classes_emma_jar := $(emma_intermediates_dir)/lib/$(jarjar_leaf)
 full_classes_proguard_jar := $(intermediates.COMMON)/classes-proguard.jar
 built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)/classes.dex
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
@@ -144,7 +140,6 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
     $(full_classes_desugar_jar) \
     $(full_classes_jarjar_jar) \
-    $(full_classes_emma_jar) \
     $(full_classes_jar) \
     $(full_classes_proguard_jar) \
     $(built_dex_intermediate) \
@@ -511,29 +506,13 @@ else
 full_classes_jarjar_jar := $(full_classes_desugar_jar)
 endif
 
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILE := $(intermediates.COMMON)/coverage.emma.ignore
-$(full_classes_emma_jar): PRIVATE_EMMA_INTERMEDIATES_DIR := $(emma_intermediates_dir)
-# module level coverage filter can be defined using LOCAL_EMMA_COVERAGE_FILTER
-# in Android.mk
-ifdef LOCAL_EMMA_COVERAGE_FILTER
-$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILTER := $(LOCAL_EMMA_COVERAGE_FILTER)
-else
-# by default, avoid applying emma instrumentation onto emma classes itself,
-# otherwise there will be exceptions thrown
-$(full_classes_emma_jar): PRIVATE_EMMA_COVERAGE_FILTER := *,-emma,-emmarun,-com.vladium.*
-endif
-# this rule will generate both $(PRIVATE_EMMA_COVERAGE_FILE) and
-# $(full_classes_emma_jar)
-$(full_classes_emma_jar): $(full_classes_jarjar_jar) | $(EMMA_JAR)
-	$(transform-classes.jar-to-emma)
+LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_jarjar_jar)
 
-else
-full_classes_emma_jar := $(full_classes_jarjar_jar)
-endif
+#######################################
+include $(BUILD_SYSTEM)/jacoco.mk
+#######################################
 
-# TODO: this should depend on full_classes_emma_jar once coverage works again
-full_classes_pre_proguard_jar := $(full_classes_jarjar_jar)
+full_classes_pre_proguard_jar := $(LOCAL_FULL_CLASSES_JACOCO_JAR)
 
 # Keep a copy of the jar just before proguard processing.
 $(eval $(call copy-one-file,$(full_classes_pre_proguard_jar),$(intermediates.COMMON)/classes-pre-proguard.jar))
@@ -690,7 +669,7 @@ $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 $(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
 endif
-$(built_dex_intermediate): $(full_classes_jar) $(DX)
+$(built_dex_intermediate): $(full_classes_jar) $(DX_DEPS)
 	$(transform-classes.jar-to-dex)
 endif # LOCAL_JACK_ENABLED is disabled
 

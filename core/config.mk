@@ -499,6 +499,11 @@ prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
 
 USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
+# TODO(ccross): remove this once the build server no longer references it
+ifdef DX_ALT_JAR
+DX_JAR := DX_ALT_JAR
+endif
+
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
@@ -506,24 +511,16 @@ ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
   AIDL := $(HOST_OUT_EXECUTABLES)/aidl
   AAPT := $(HOST_OUT_EXECUTABLES)/aapt
   AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
+  DX_JAR ?= $(HOST_OUT_JAVA_LIBRARIES)/dx.jar
   MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
   SIGNAPK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(HOST_OUT_SHARED_LIBRARIES)
   ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign
-
-  ifndef DX_ALT_JAR
-    DX := $(HOST_OUT_EXECUTABLES)/dx
-    DX_COMMAND := $(DX) -JXms16M -JXmx2048M
-  else
-    DX := $(DX_ALT_JAR)
-    DX_COMMAND := $(JAVA) -Xms16M -Xmx2048M -jar $(DX)
-  endif
 else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   AIDL := $(prebuilt_sdk_tools_bin)/aidl
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
   AAPT2 := $(prebuilt_sdk_tools_bin)/aapt2
-  DX := $(prebuilt_sdk_tools)/dx
-  DX_COMMAND := $(DX) -JXms16M -JXmx2048M
+  DX_JAR ?= $(prebuilt_sdk_tools)/lib/dx.jar
   MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
   ZIPALIGN := $(prebuilt_sdk_tools_bin)/zipalign
   SIGNAPK_JAR := $(prebuilt_sdk_tools)/lib/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
@@ -560,6 +557,16 @@ SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
 ZIP2ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/zip2zip
 ZIPTIME := $(prebuilt_build_tools_bin)/ziptime
+
+# DX can be overriden on the command line
+ifndef DX
+#TODO: use a smaller -Xmx value for most libraries;
+#      only core.jar and framework.jar need a heap this big.
+DX := $(JAVA) -Xms16M -Xmx2048M -jar $(DX_JAR)
+DX_DEPS := $(DX_JAR)
+else
+DX_DEPS ?= $(DX)
+endif
 
 # ---------------------------------------------------------------
 # Generic tools.
@@ -669,7 +676,7 @@ RELOCATION_PACKER := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/relocation
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
-EMMA_JAR := external/emma/lib/emma$(COMMON_JAVA_PACKAGE_SUFFIX)
+JACOCO_CLI_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jacoco-cli$(COMMON_JAVA_PACKAGE_SUFFIX)
 
 # Tool to merge AndroidManifest.xmls
 ANDROID_MANIFEST_MERGER := $(JAVA) -classpath prebuilts/devtools/tools/lib/manifest-merger.jar com.android.manifmerger.Main merge
