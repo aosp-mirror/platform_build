@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ec0bfdb5_b12b452e",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-18T14:56:12Z",
+      "side": 1,
+      "message": "Woah. Good catch, thanks! I don\u0027t know what happened - I don\u0027t normally copy bug numbers by hand.",
+      "parentUuid": "6a0b7fdf_7a30263b",
+      "range": {
+        "startLine": 223,
+        "startChar": 55,
+        "endLine": 223,
+        "endChar": 63
+      },
+      "revId": "8b96d3548de75a794f11364ec0e129f09f6e9bcd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4e3c8bcb_deac5cb7",
         "filename": "core/droiddoc.mk",
         "patchSetId": 5
@@ -36,6 +60,24 @@
       "writtenOn": "2017-07-17T19:45:39Z",
       "side": 1,
       "message": "Why are these source paths?  Is javadoc going to read from these paths?  Would it accept the $(PRIVATE_BOOTCLASSPATH) jars instead?",
+      "revId": "8b96d3548de75a794f11364ec0e129f09f6e9bcd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dfff4bb3_834eefa8",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-18T14:56:12Z",
+      "side": 1,
+      "message": "\u003e Why are these source paths?  Is javadoc going to read from these paths?\n\nYes.\n\n\u003e Would it accept the $(PRIVATE_BOOTCLASSPATH) jars instead?\n\nGood idea. Seems to work! Awesome.",
+      "parentUuid": "4e3c8bcb_deac5cb7",
       "revId": "8b96d3548de75a794f11364ec0e129f09f6e9bcd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
