@@ -22,6 +22,30 @@
       "revId": "d0ea6d05409f20dd575746990ffd525089ae0672",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e9e5a15_ed43d546",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-19T22:35:38Z",
+      "side": 1,
+      "message": "For these static libraries additions, we should be able to just ignore static library links for prebuilts coming from Soong. That\u0027s probably the case for most shared lib additions as well, since we should have specified all the install-time dependencies coming from soong already.\n\nWe could also whitelist Soong modules from dependency checking, assuming everything is working properly. But it\u0027s nice to catch differences between Soong and Make.",
+      "parentUuid": "15ca53ea_aad1ee1c",
+      "range": {
+        "startLine": 472,
+        "startChar": 0,
+        "endLine": 478,
+        "endChar": 85
+      },
+      "revId": "d0ea6d05409f20dd575746990ffd525089ae0672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
