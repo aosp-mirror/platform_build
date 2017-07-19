@@ -79,6 +79,7 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "CrossHostSecondaryArch": "$(HOST_CROSS_2ND_ARCH)",'; \
 	echo '    "Safestack": $(if $(filter true,$(USE_SAFESTACK)),true,false),'; \
 	echo '    "EnableCFI": $(if $(filter false,$(ENABLE_CFI)),false,true),'; \
+	echo '    "IntegerOverflowExcludePaths": $(call json_list,$(INTEGER_OVERFLOW_EXCLUDE_PATHS) $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS)),'; \
 	echo '    "Device_uses_hwc2": $(if $(filter true,$(TARGET_USES_HWC2)),true,false),'; \
 	echo '    "Override_rs_driver": "$(OVERRIDE_RS_DRIVER)",'; \
 	echo '    "Treble": $(if $(filter true,$(PRODUCT_FULL_TREBLE)),true,false),'; \
