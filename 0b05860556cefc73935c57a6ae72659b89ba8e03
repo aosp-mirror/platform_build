@@ -16,6 +16,24 @@
       "revId": "0b05860556cefc73935c57a6ae72659b89ba8e03",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b46d1d68_72d41c6c",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-19T09:49:24Z",
+      "side": 1,
+      "message": "I believe it leaves the OpenJDK classes that were not replaced, based on the phrasing in JEP 261 (\"Before it checks the actual module, whether part of the system or defined on a module path, it first checks, in order, each module definition specified to the option\").\n\nIt may (I\u0027m not sure) be possible to completely remove all OpenJDK java.base classes by specifying a new --module-path, but I believe that that would require us to re-organize our .java files in subdirectories named after the modules.\n\nFYI I don\u0027t suspect that pretending that all libcore code belongs to java.base is a feasible approach for java or javac invocations, only for javadoc. This is because I interpret JEP 261 to say that these classes wouldn\u0027t be found when looking for a class of the same name in another module; the fact that each package can only be in one module could also be problematic (or a savior). JEP 261 is a bit vague in this sense - but I don\u0027t expect that it\u0027d ever bite us accidentally, since by default only java.base is on the module path for java/javac.\n\nFor the purposes of javadoc invocations, and as long as the produced HTML doesn\u0027t refer to modules, putting everything in java.base should work. Empirically, the result is the same as with OpenJDK 8 javadoc, apart from the module-unrelated issues mentioned in bug 62049770.",
+      "parentUuid": "85fe18eb_d2a8e8da",
+      "revId": "0b05860556cefc73935c57a6ae72659b89ba8e03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
