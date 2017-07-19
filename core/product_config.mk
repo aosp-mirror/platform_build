@@ -445,3 +445,7 @@ PRODUCT_SYSTEM_HEADROOM := \
 # Whether to save disk space by minimizing java debug info
 PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_MINIMIZE_JAVA_DEBUG_INFO))
+
+# Whether any paths are excluded from sanitization when SANITIZE_TARGET=integer_overflow
+PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
