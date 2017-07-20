@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "31ef68df_da826a5a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-07-20T02:24:21Z",
+      "side": 1,
+      "message": "vendor apks must not use full platform API, otherwise framework-only OTA will break the vendor apks. So, i think we can\u0027t mark them as app:platform.",
+      "parentUuid": "dfb861c8_081f4cbf",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 12
+      },
+      "revId": "4f05da582d9924522fe9772c37b24aec51981332",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "414df170_70cede94",
         "filename": "core/install_jni_libs_internal.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2017-07-20T00:56:36Z",
       "side": 1,
       "message": "This should still be app:platform, since LOCAL_USE_VNDK does not affect which SDK you\u0027re building against. We could consider allowing native:vendor as an allowed_type however.",
+      "range": {
+        "startLine": 117,
+        "startChar": 16,
+        "endLine": 117,
+        "endChar": 26
+      },
+      "revId": "4f05da582d9924522fe9772c37b24aec51981332",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98f2191a_377a0c0f",
+        "filename": "core/install_jni_libs_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-07-20T02:24:21Z",
+      "side": 1,
+      "message": "I can\u0027t understand what you mean. apps in vendor partition should be treated differently than apps in system partition.\n\n\u003e We could consider allowing native:vendor as an allowed_type however.\n\nAre you saying that app:platform -\u003e native:vendor should be allowed? Isn\u0027t it a Treble violation?",
+      "parentUuid": "414df170_70cede94",
       "range": {
         "startLine": 117,
         "startChar": 16,
