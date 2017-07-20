@@ -141,6 +141,30 @@
       "revId": "4f05da582d9924522fe9772c37b24aec51981332",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a478531_53601493",
+        "filename": "core/install_jni_libs_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-07-20T04:52:57Z",
+      "side": 1,
+      "message": "Ok. You mean that, since vendor apps are still allowed to use all platform \u0027Java\u0027 APIs, they should be marked as app:platform until we have something like Vendor-SDK and force them to depend on it.\n\nThen, I will add native:vendor to allowed_types of app:platform.",
+      "parentUuid": "9bc940ae_05b753e7",
+      "range": {
+        "startLine": 117,
+        "startChar": 16,
+        "endLine": 117,
+        "endChar": 26
+      },
+      "revId": "4f05da582d9924522fe9772c37b24aec51981332",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
