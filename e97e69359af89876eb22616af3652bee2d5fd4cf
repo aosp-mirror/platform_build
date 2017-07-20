@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b243c616_277a6303",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-20T15:30:00Z",
+      "side": 1,
+      "message": "am I understanding correctly that to use a different toolchain (e.g. OpenJDK 9), the correct place to change after this CL is this line, and nothing else?\n\n(I\u0027m not saying that we should encourage or generally support this - only the bundled toolchain should be supported - but it\u0027s necessary during development, e.g. in the middle of migration to a new toolchain version).",
+      "range": {
+        "startLine": 19,
+        "startChar": 21,
+        "endLine": 19,
+        "endChar": 60
+      },
+      "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
