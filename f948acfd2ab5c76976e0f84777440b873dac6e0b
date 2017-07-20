@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "641e3b8d_ad3eacaa",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-20T18:21:12Z",
+      "side": 1,
+      "message": "Might as well put the strip here",
+      "revId": "f948acfd2ab5c76976e0f84777440b873dac6e0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
