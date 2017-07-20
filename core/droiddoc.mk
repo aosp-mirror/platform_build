@@ -86,8 +86,7 @@ full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES)) $(LOCAL_CLASSPA
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES)) $(LOCAL_CLASSPATH)
 endif # !LOCAL_IS_HOST_MODULE
 
-$(full_target): PRIVATE_CLASSPATH := $(subst $(space),:,$(full_java_libs))
-
+$(full_target): PRIVATE_CLASSPATH := $(call normalize-path-list,$(full_java_libs))
 
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
