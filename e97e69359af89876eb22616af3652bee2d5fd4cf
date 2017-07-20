@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "0a13ac1a_a315f9bf",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-20T22:22:16Z",
+      "side": 1,
+      "message": "Yes, for a checked in toolchain you can add a conditional here on EXPERIMENTAL_USE_OPENJDK9.\n\nI didn\u0027t want to use ANDROID_JAVA_HOME to override the toolchain because it is likely to be set on various people\u0027s machines for reasons that are obsoleted by this change.\n\nIf you just need to override javac you can set ALTERNATE_JAVAC.  If you need to override all the java tools, but don\u0027t want to check in a toolchain yet, we can figure out a new flag to pass (ALTERNATE_JAVA_TOOLCHAIN?)",
+      "parentUuid": "7ab49a6a_94c3ac6a",
+      "range": {
+        "startLine": 19,
+        "startChar": 21,
+        "endLine": 19,
+        "endChar": 60
+      },
+      "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e6d671ca_e95aa63d",
         "filename": "core/config.mk",
         "patchSetId": 2
@@ -72,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "086efc48_9be20b03",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 844,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-20T22:22:16Z",
+      "side": 1,
+      "message": "Yes, outside of the build tools should either assume that lunch has already been run, or source build/envsetup.sh and use setpaths or get_build_var/get_abs_build_var to find the java tools.",
+      "parentUuid": "e6d671ca_e95aa63d",
+      "range": {
+        "startLine": 844,
+        "startChar": 56,
+        "endLine": 844,
+        "endChar": 61
+      },
+      "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "95163a21_7216b61d",
         "filename": "envsetup.sh",
         "patchSetId": 2
@@ -83,6 +131,24 @@
       "writtenOn": "2017-07-20T20:19:45Z",
       "side": 1,
       "message": "Colin, as we discussed offline earlier calling this directly is very slow.\n\nI first have to call build_build_var_cache and then setpaths and it\u0027s fine speed.\n\nWe could either change it to call build_build_var_cache if it wasn\u0027t built already, or I could have a separate ART script that just does both calls.\n\n # without build_build_var_cache\n\n iam@invoker:/mnt/ssd3/workspace/aosp_master_art$ time setpaths\n\n real\t0m4.091s\n user\t0m2.748s\n sys\t0m0.772s\n\n\n iam@invoker:/mnt/ssd3/workspace/aosp_master_art$ time build_build_var_cache\n\n real\t0m0.420s\n user\t0m0.224s\n sys\t0m0.120s\n\n # after build_build_var_cache\n\n iam@invoker:/mnt/ssd3/workspace/aosp_master_art$ time setpaths\n\n real\t0m0.030s\n user\t0m0.004s\n sys\t0m0.008s",
+      "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8a1d7a9d_287db587",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-20T22:22:16Z",
+      "side": 1,
+      "message": "Everything else seems to do:\n\n    build_build_var_cache\n    set_stuff_for_environment\n    destroy_build_var_cache\n\nMaybe move setpaths to setpaths_cached, and then add setpaths:\n\n    build_build_var_cache\n    setpaths_cached\n    destroy_build_var_cache",
+      "parentUuid": "95163a21_7216b61d",
       "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
