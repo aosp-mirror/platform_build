@@ -22,6 +22,53 @@
       "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ab49a6a_94c3ac6a",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-07-20T16:14:10Z",
+      "side": 1,
+      "message": "Ah yes - this is what I\u0027m talking about on the other review. We probably want to retain some ability to override the location with an environment variable, but we can do that as a follow up.\n\nWith that in mind, would it be better to have the environment variable inform the build, not the other way round?",
+      "parentUuid": "b243c616_277a6303",
+      "range": {
+        "startLine": 19,
+        "startChar": 21,
+        "endLine": 19,
+        "endChar": 60
+      },
+      "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6d671ca_e95aa63d",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 844,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-07-20T16:14:10Z",
+      "side": 1,
+      "message": "As I probably mentioned elsewhere, we also have some host tools run outside of the build (vogar, ICU src gen) and rely on the build setting the path that should be able to find the correct java runtime.\n\nLooks like you\u0027re setting an environment variable in envsetup.sh so we should just start using that.",
+      "range": {
+        "startLine": 844,
+        "startChar": 56,
+        "endLine": 844,
+        "endChar": 61
+      },
+      "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
