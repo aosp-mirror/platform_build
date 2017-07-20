@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "659cd814_05dd04ae",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-20T03:56:12Z",
+      "side": 1,
+      "message": "I agree, but \"app:platform\" is a result of which API they\u0027re using, we shouldn\u0027t change it until they\u0027re actually using something other than the full platform API.",
+      "parentUuid": "31ef68df_da826a5a",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 12
+      },
+      "revId": "4f05da582d9924522fe9772c37b24aec51981332",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "414df170_70cede94",
         "filename": "core/install_jni_libs_internal.mk",
         "patchSetId": 2
@@ -84,6 +108,30 @@
       "side": 1,
       "message": "I can\u0027t understand what you mean. apps in vendor partition should be treated differently than apps in system partition.\n\n\u003e We could consider allowing native:vendor as an allowed_type however.\n\nAre you saying that app:platform -\u003e native:vendor should be allowed? Isn\u0027t it a Treble violation?",
       "parentUuid": "414df170_70cede94",
+      "range": {
+        "startLine": 117,
+        "startChar": 16,
+        "endLine": 117,
+        "endChar": 26
+      },
+      "revId": "4f05da582d9924522fe9772c37b24aec51981332",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bc940ae_05b753e7",
+        "filename": "core/install_jni_libs_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-20T03:56:12Z",
+      "side": 1,
+      "message": "I\u0027m saying this problem happens well before we\u0027re doing link type checking -- unless we\u0027re choosing something other than the full platform API based on LOCAL_USE_VNDK, we shouldn\u0027t be changing what link type it claims to be.\n\nSo if we\u0027re going to require using one of the SDKs, we\u0027d need to implement that in a bunch of places, but particularly in places like java_common.mk where it sets up my_bootclasspath. (There\u0027s a separate link_type check for java -\u003e java code in java_common.mk too)\n\n(Using LOCAL_USE_VNDK to change the API seems like the wrong choice -- since the name is talking about native code, but it may be something using very similar logic, or just LOCAL_VENDOR_MODULE)",
+      "parentUuid": "98f2191a_377a0c0f",
       "range": {
         "startLine": 117,
         "startChar": 16,
