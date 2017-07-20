@@ -16,6 +16,24 @@
       "revId": "193175094081e9cc3c44e2b3ee290195b1b89613",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b404a61_d3ea9d15",
+        "filename": "envsetup.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-20T17:26:57Z",
+      "side": 1,
+      "message": "That should be fine",
+      "parentUuid": "48615dc5_d1520c77",
+      "revId": "193175094081e9cc3c44e2b3ee290195b1b89613",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
