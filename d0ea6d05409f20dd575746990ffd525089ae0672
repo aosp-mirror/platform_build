@@ -46,6 +46,30 @@
       "revId": "d0ea6d05409f20dd575746990ffd525089ae0672",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1181710e_9b3aadbc",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-07-20T02:48:23Z",
+      "side": 1,
+      "message": "Yes, for static libs we can ignore.\n\nFor shared libs, I am not sure. We have to check whether the dependency is really specified in soong or not.\n\nBTW, even so, we have to at least check whether this module is coming from soong or not when adding a lib to my_shared_libraries. This requires me to touch many places in build/make/core than originally expected. A macro can simplify the process though.\n\nDo you want me to follow this path?",
+      "parentUuid": "3e9e5a15_ed43d546",
+      "range": {
+        "startLine": 472,
+        "startChar": 0,
+        "endLine": 478,
+        "endChar": 85
+      },
+      "revId": "d0ea6d05409f20dd575746990ffd525089ae0672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
