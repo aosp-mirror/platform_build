@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "48615dc5_d1520c77",
+        "filename": "envsetup.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1021471
+      },
+      "writtenOn": "2017-07-20T17:11:01Z",
+      "side": 1,
+      "message": "I experimented and I think the way to fix any [ART] scripts that call into java, javac, etc outside of the build is to add this to the top of the script:\n  \n\n   source $TOP/build/envsetup.sh\n   setpaths\n\nafter this \u0027which java\u0027, \u0027which javac\u0027, etc will correctly be set to use the prebuilts jdk8.\n\nIs that the right intention here?\n\n\n\n(As an alternative I see there\u0027s also get_build_var JAVA, JAVACC but I would prefer to only manually do that for non-bash scripts)",
+      "revId": "193175094081e9cc3c44e2b3ee290195b1b89613",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
