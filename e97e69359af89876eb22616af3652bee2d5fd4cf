@@ -69,6 +69,23 @@
       "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "95163a21_7216b61d",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1021471
+      },
+      "writtenOn": "2017-07-20T20:19:45Z",
+      "side": 1,
+      "message": "Colin, as we discussed offline earlier calling this directly is very slow.\n\nI first have to call build_build_var_cache and then setpaths and it\u0027s fine speed.\n\nWe could either change it to call build_build_var_cache if it wasn\u0027t built already, or I could have a separate ART script that just does both calls.\n\n # without build_build_var_cache\n\n iam@invoker:/mnt/ssd3/workspace/aosp_master_art$ time setpaths\n\n real\t0m4.091s\n user\t0m2.748s\n sys\t0m0.772s\n\n\n iam@invoker:/mnt/ssd3/workspace/aosp_master_art$ time build_build_var_cache\n\n real\t0m0.420s\n user\t0m0.224s\n sys\t0m0.120s\n\n # after build_build_var_cache\n\n iam@invoker:/mnt/ssd3/workspace/aosp_master_art$ time setpaths\n\n real\t0m0.030s\n user\t0m0.004s\n sys\t0m0.008s",
+      "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
