@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "781cd219_821c2ac7",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-21T09:27:06Z",
+      "side": 1,
+      "message": "Ugh, (Y/n) prompts in the middle of a build sound horrible.\n\nHow about:\nifndef EXPERIMENTAL_USE_OPENJDK9\nANDROID_JAVA_HOME :\u003d $(ANDROID_JAVA_HOME)  # env variable\nelse\nANDROID_JAVA_HOME :\u003d ANDROID_JAVA_HOME :\u003d \nendif\n\nOr, if we don\u0027t want it specific to OpenJDK 9, use ANDROID_BUILD_USE_ANDROID_JAVA_HOME or something less wordy.",
+      "parentUuid": "806fe720_da2a55b2",
+      "range": {
+        "startLine": 19,
+        "startChar": 21,
+        "endLine": 19,
+        "endChar": 60
+      },
+      "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e6d671ca_e95aa63d",
         "filename": "core/config.mk",
         "patchSetId": 2
