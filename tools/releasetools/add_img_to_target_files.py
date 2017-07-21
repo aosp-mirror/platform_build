@@ -376,7 +376,27 @@ def AddVBMeta(output_zip, boot_img_path, system_img_path, vendor_img_path,
 
   args = OPTIONS.info_dict.get("avb_vbmeta_args")
   if args and args.strip():
-    cmd.extend(shlex.split(args))
+    split_args = shlex.split(args)
+    for index, arg in enumerate(split_args[:-1]):
+      # Sanity check that the image file exists. Some images might be defined
+      # as a path relative to source tree, which may not be available at the
+      # same location when running this script (we have the input target_files
+      # zip only). For such cases, we additionally scan other locations (e.g.
+      # IMAGES/, RADIO/, etc) before bailing out.
+      if arg == '--include_descriptors_from_image':
+        image_path = split_args[index + 1]
+        if os.path.exists(image_path):
+          continue
+        found = False
+        for dir in ['IMAGES', 'RADIO', 'VENDOR_IMAGES', 'PREBUILT_IMAGES']:
+          alt_path = os.path.join(
+              OPTIONS.input_tmp, dir, os.path.basename(image_path))
+          if os.path.exists(alt_path):
+            split_args[index + 1] = alt_path
+            found = True
+            break
+        assert found, 'failed to find %s' % (image_path,)
+    cmd.extend(split_args)
 
   p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   p.communicate()
