@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "806fe720_da2a55b2",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-07-21T08:51:40Z",
+      "side": 1,
+      "message": "This isn\u0027t just for Tobias, who I think will be happy once we have a prebuilt 9 JDK as well and EXPERIMENTAL_USE_OPENJDK9 would just switch between the two prebuilts. Until then he\u0027ll want some way of specifying the JAVA_HOME location, and preferably without a local patch.\n\n\u003e I didn\u0027t want to use ANDROID_JAVA_HOME to override the \n\u003e toolchain because it is likely to be set on various \n\u003e people\u0027s machines for reasons that are obsoleted by this \n\u003e change.\n\nShame, ANDROID_JAVA_HOME seems like a good name.\n\nThinking out loud / making suggestions:\n\nI was hoping we could go with something like:\n\n\"if ANDROID_JAVA_HOME shell env var not set: use prebuilts/jdk/....\"\n\nAlso, if ANDROID_JAVA_HOME is a risk, what if we put something in envsetup.sh to warn and output the value when it\u0027s set?\n\ne.g.\n\n\"ANDROID_JAVA_HOME is set to: xxxxxx\n This version will be used instead of the reference prebuilt OpenJDK.\n Note: This configuration is unsupported and intended for toolchain testing only.\"\n\n\nIf it\u0027s a big deal and we think people won\u0027t notice, maybe we could put in a prompt from envsetup.\n\nAre you sure you want to use a custom OpenJDK? (Y/n)",
+      "parentUuid": "0a13ac1a_a315f9bf",
+      "range": {
+        "startLine": 19,
+        "startChar": 21,
+        "endLine": 19,
+        "endChar": 60
+      },
+      "revId": "e97e69359af89876eb22616af3652bee2d5fd4cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e6d671ca_e95aa63d",
         "filename": "core/config.mk",
         "patchSetId": 2
