@@ -22,6 +22,18 @@ ifeq ($(my_clang),true)
   endif
 endif
 
+# Disable global integer_overflow in excluded paths.
+ifneq ($(filter integer_overflow, $(my_global_sanitize)),)
+  combined_exclude_paths := $(INTEGER_OVERFLOW_EXCLUDE_PATHS) \
+                            $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS)
+
+  ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
+    my_global_sanitize := $(filter-out integer_overflow,$(my_global_sanitize))
+    my_global_sanitize_diag := $(filter-out integer_overflow,$(my_global_sanitize_diag))
+  endif
+endif
+
 ifneq ($(my_global_sanitize),)
   my_sanitize := $(my_global_sanitize) $(my_sanitize)
 endif
@@ -103,17 +115,8 @@ ifneq ($(my_sanitize)$(my_global_sanitize),)
   endif
 endif
 
+# Disable integer_overflow if LOCAL_NOSANITIZE=integer.
 ifneq ($(filter integer_overflow, $(my_global_sanitize) $(my_sanitize)),)
-  # Disable integer_overflow in excluded paths.
-  combined_exclude_paths := $(INTEGER_OVERFLOW_EXCLUDE_PATHS) \
-                            $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS)
-
-  ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
-         $(filter $(dir)%,$(LOCAL_PATH)))),)
-    my_sanitize := $(filter-out integer_overflow,$(my_sanitize))
-    my_sanitize_diag := $(filter-out integer_overflow,$(my_sanitize_diag))
-  endif
-  # Disable integer_overflow if LOCAL_NOSANITIZE=integer.
   ifneq ($(filter integer, $(strip $(LOCAL_NOSANITIZE))),)
     my_sanitize := $(filter-out integer_overflow,$(my_sanitize))
     my_sanitize_diag := $(filter-out integer_overflow,$(my_sanitize_diag))
