@@ -1,5 +1,5 @@
 # qemu-props service:  Sets system properties on boot.
-type qemu_props, domain, domain_deprecated;
+type qemu_props, domain;
 type qemu_props_exec, exec_type, file_type;
 
 init_daemon_domain(qemu_props)
