@@ -83,11 +83,24 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 # general-tests-specific-config.
 -include tools/tradefederation/build/suites/general-tests/config.mk
 
-# This allows us to force a clean build - included after the config.mk
-# environment setup is done, but before we generate any dependencies.  This
-# file does the rm -rf inline so the deps which are all done below will
-# be generated correctly
-include $(BUILD_SYSTEM)/cleanbuild.mk
+# Clean rules
+.PHONY: clean-jack-files
+clean-jack-files: clean-dex-files
+	$(hide) find $(OUT_DIR) -name "*.jack" | xargs rm -f
+	$(hide) find $(OUT_DIR) -type d -name "jack" | xargs rm -rf
+	@echo "All jack files have been removed."
+
+.PHONY: clean-dex-files
+clean-dex-files:
+	$(hide) find $(OUT_DIR) -name "*.dex" ! -path "*/jack-incremental/*" | xargs rm -f
+	$(hide) for i in `find $(OUT_DIR) -name "*.jar" -o -name "*.apk"` ; do ((unzip -l $$i 2> /dev/null | \
+				grep -q "\.dex$$" && rm -f $$i) || continue ) ; done
+	@echo "All dex files and archives containing dex files have been removed."
+
+.PHONY: clean-jack-incremental
+clean-jack-incremental:
+	$(hide) find $(OUT_DIR) -name "jack-incremental" -type d | xargs rm -rf
+	@echo "All jack incremental dirs have been removed."
 
 # Include the google-specific config
 -include vendor/google/build/config.mk
