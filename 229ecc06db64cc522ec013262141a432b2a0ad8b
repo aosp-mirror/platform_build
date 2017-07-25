@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23d61936_6aee72ae",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-25T16:16:41Z",
+      "side": 1,
+      "message": "Does this ever happen?  I\u0027d expect soong to already have cleaned these up.",
+      "revId": "229ecc06db64cc522ec013262141a432b2a0ad8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "59269082_3b3a88fe",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 479,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-25T16:16:41Z",
+      "side": 1,
+      "message": "Maybe just add ifneq (...) around this whole section?",
+      "range": {
+        "startLine": 467,
+        "startChar": 0,
+        "endLine": 479,
+        "endChar": 5
+      },
+      "revId": "229ecc06db64cc522ec013262141a432b2a0ad8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "06e1764d_2de1d112",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 915,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-25T16:16:41Z",
+      "side": 1,
+      "message": "This should never happen because proto_sources should always be empty for soong modules.",
+      "revId": "229ecc06db64cc522ec013262141a432b2a0ad8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
