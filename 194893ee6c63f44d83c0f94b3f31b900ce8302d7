@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dee951c4_10039593",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 691,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-25T20:01:24Z",
+      "side": 0,
+      "message": "Maybe just remove this variable?  It\u0027s only used by packages/inputmethods/LatinIME/tools/dicttool/Android.mk, which doesn\u0027t even build (for some reason it doesn\u0027t build as part of checkbuild or mma, but m -j dicttool_aosp gives java errors), and the variable shouldn\u0027t be necessary anyways, just remove LOCAL_MULTILIB and let it build for both.",
+      "revId": "194893ee6c63f44d83c0f94b3f31b900ce8302d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
