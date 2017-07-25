@@ -18,7 +18,7 @@ common_jdk_flags := -Xmaxerrs 9999999
 
 ANDROID_JAVA_HOME := prebuilts/jdk/jdk8/$(HOST_PREBUILT_TAG)
 ANDROID_JAVA_TOOLCHAIN := $(ANDROID_JAVA_HOME)/bin
-export JAVA_HOME := $(ANDROID_JAVA_HOME)
+export JAVA_HOME := $(abspath $(ANDROID_JAVA_HOME))
 
 # Use the indexer wrapper to index the codebase instead of the javac compiler
 ifeq ($(ALTERNATE_JAVAC),)
