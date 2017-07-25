@@ -212,7 +212,7 @@ ifndef BUILD_DATETIME
   BUILD_DATETIME := $(shell date +%s)
 endif
 
-ifneq (,$(findstring Darwin,$(shell uname -sm)))
+ifneq (,$(findstring Darwin,$(UNAME)))
 DATE := date -r $(BUILD_DATETIME)
 else
 DATE := date -d @$(BUILD_DATETIME)
