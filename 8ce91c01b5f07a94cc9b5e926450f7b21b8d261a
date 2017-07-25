@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3d8d5ac4_536dc3c1",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-25T20:03:30Z",
+      "side": 1,
+      "message": "Does this actually save anything?  uname is 3ms on my machines.",
+      "revId": "8ce91c01b5f07a94cc9b5e926450f7b21b8d261a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
