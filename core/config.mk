@@ -685,12 +685,6 @@ ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA_TOOLCHAIN)/../lib/tools.jar
 endif # ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
 
-# Is the host JDK 64-bit version?
-HOST_JDK_IS_64BIT_VERSION :=
-ifneq ($(filter 64-Bit, $(shell $(JAVA) -version 2>&1)),)
-HOST_JDK_IS_64BIT_VERSION := true
-endif
-
 # It's called md5 on Mac OS and md5sum on Linux
 ifeq ($(HOST_OS),darwin)
 MD5SUM:=md5 -q
