@@ -464,6 +464,8 @@ else
   my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LINKER)
 endif
 
+# Modules from soong do not need this since the dependencies are already handled there.
+ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 include $(BUILD_SYSTEM)/config_sanitizers.mk
 
 ifneq ($(LOCAL_NO_LIBCOMPILER_RT),true)
@@ -477,6 +479,7 @@ endif
 ifeq ($($(my_prefix)OS),windows)
   my_static_libraries += libwinpthread
 endif
+endif # this module is not from soong
 
 ifneq ($(filter ../%,$(my_src_files)),)
 my_soong_problems += dotdot_srcs
@@ -1324,14 +1327,9 @@ ifneq ($(LOCAL_USE_VNDK),)
   ## switch all soong libraries over to the /vendor
   ## variant.
   ####################################################
-  ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-    # Soong-built libraries should always use the .vendor variant
-    my_whole_static_libraries := $(addsuffix .vendor,$(my_whole_static_libraries))
-    my_static_libraries := $(addsuffix .vendor,$(my_static_libraries))
-    my_shared_libraries := $(addsuffix .vendor,$(my_shared_libraries))
-    my_system_shared_libraries := $(addsuffix .vendor,$(my_system_shared_libraries))
-    my_header_libraries := $(addsuffix .vendor,$(my_header_libraries))
-  else
+  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    # We don't do this renaming for soong-defined modules since they already have correct
+    # names (with .vendor suffix when necessary) in their LOCAL_*_LIBRARIES.
     my_whole_static_libraries := $(foreach l,$(my_whole_static_libraries),\
       $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
     my_static_libraries := $(foreach l,$(my_static_libraries),\
@@ -1375,7 +1373,7 @@ endif
 import_includes := $(intermediates)/import_includes
 import_includes_deps := $(strip \
     $(if $(LOCAL_USE_VNDK),\
-      $(call intermediates-dir-for,HEADER_LIBRARIES,device_kernel_headers.vendor,$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes) \
+      $(call intermediates-dir-for,HEADER_LIBRARIES,device_kernel_headers,$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes) \
     $(foreach l, $(installed_shared_library_module_names), \
       $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes) \
     $(foreach l, $(my_static_libraries) $(my_whole_static_libraries), \
