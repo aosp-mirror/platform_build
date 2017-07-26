@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4c5ce965_f91047d4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-07-26T08:11:22Z",
+      "side": 1,
+      "message": "I see, thanks for the feedback.\n\nHow about:\nAdd two more default (but optional) partition: oem and odm.\nThen it makes sense to include them during `make` and include their metadata into vbemta.img. This is also easier for OTA support (b/63974895)\n\nFor custom_images, their keys or metadata shouldn\u0027t be included in vbmeta.img. Because it might have multiple odm images: odm1.img, odm2.img, odm3.img, etc and only one of them will be included in a device (same mount point /odm). So the inclusion of custom images vbmeta should be an offline/separate process. \n  odm1.img should have a corresponding vbmeta1.img.\n  so on and so forth.",
+      "parentUuid": "945d4bef_6c196d87",
+      "range": {
+        "startLine": 18,
+        "startChar": 40,
+        "endLine": 20,
+        "endChar": 21
+      },
+      "revId": "c6ab47d69ab0421f9448d5df409b88d2cd9a4450",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "482824cf_58a4a0d0",
         "filename": "core/Makefile",
         "patchSetId": 1
