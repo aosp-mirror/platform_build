@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5fc599d0_9a31b6b4",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-07-26T02:20:53Z",
+      "side": 1,
+      "message": "No. I now see that Soong never adds LOCAL_LDFLAGS and LOCAL_LDLIBS. I was just paranoid about lines that add something to my_*_libraries.",
+      "parentUuid": "23d61936_6aee72ae",
+      "revId": "229ecc06db64cc522ec013262141a432b2a0ad8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "59269082_3b3a88fe",
         "filename": "core/binary.mk",
         "patchSetId": 4
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "761a0d43_2a22d0c3",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 479,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-07-26T02:20:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59269082_3b3a88fe",
+      "range": {
+        "startLine": 467,
+        "startChar": 0,
+        "endLine": 479,
+        "endChar": 5
+      },
+      "revId": "229ecc06db64cc522ec013262141a432b2a0ad8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "06e1764d_2de1d112",
         "filename": "core/binary.mk",
         "patchSetId": 4
@@ -53,6 +95,24 @@
       "writtenOn": "2017-07-25T16:16:41Z",
       "side": 1,
       "message": "This should never happen because proto_sources should always be empty for soong modules.",
+      "revId": "229ecc06db64cc522ec013262141a432b2a0ad8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8d917835_aaef82ec",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 915,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-07-26T02:20:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06e1764d_2de1d112",
       "revId": "229ecc06db64cc522ec013262141a432b2a0ad8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
