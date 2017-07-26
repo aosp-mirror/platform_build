@@ -16,6 +16,24 @@
       "revId": "8ce91c01b5f07a94cc9b5e926450f7b21b8d261a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "86da70b5_df79d90a",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-26T08:25:53Z",
+      "side": 1,
+      "message": "Probably not significantly, I mainly saw this because I was looking into the list of shell commands that kati was re-running when I split out the CleanSpec.mk processing.\n\nAnd even at 3ms each, that\u0027s ~10ms of extra mostly serial work done during a build (once we have three make calls: product config, cleanspec, android.mk)",
+      "parentUuid": "3d8d5ac4_536dc3c1",
+      "revId": "8ce91c01b5f07a94cc9b5e926450f7b21b8d261a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
