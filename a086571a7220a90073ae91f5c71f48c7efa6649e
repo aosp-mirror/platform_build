@@ -70,6 +70,30 @@
       "revId": "a086571a7220a90073ae91f5c71f48c7efa6649e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d7304e84_4496f509",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-26T16:32:17Z",
+      "side": 1,
+      "message": "For that \"quick hack\" use case, you can just temporarily edit line 23 to point to your own (unsupported) toolchain (and never upload that change); of course then you\u0027re on your own with regards to any issues caused by that unsupported toolchain :) Hopefully it shouldn\u0027t be necessary at all because the bundled toolchain should now guarantee that everyone uses the same one, and that that version works.",
+      "parentUuid": "57492898_ba39e0e0",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 36
+      },
+      "revId": "a086571a7220a90073ae91f5c71f48c7efa6649e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
