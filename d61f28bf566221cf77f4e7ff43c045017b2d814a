@@ -16,6 +16,24 @@
       "revId": "d61f28bf566221cf77f4e7ff43c045017b2d814a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c1b8731d_fa7e6e85",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-26T21:37:20Z",
+      "side": 1,
+      "message": "Until the version with \u003dtrue compiles successfully, at which point the other option (which is the only one that currently builds successfully) can be dropped.\n\nNote that two different values are already needed because in tools/apksig/Android.mk, the parameters such as:\n\n--add-exports java.base/sun.security.pkcs\u003dALL-UNNAMED\n\nare *required* when targeting 1.9 but *must not occur* (javac rejects them) when targeting 1.8; I\u0027d like to keep the ability to target 1.8 while I work as a baseline, rather than temporarily breaking it in my work towards support for 1.9.\n\nNote that I expect only very few people to ever use this option, quite possibly only myself.",
+      "parentUuid": "3008fd6d_0bf28818",
+      "revId": "d61f28bf566221cf77f4e7ff43c045017b2d814a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
