@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3510769_46fbe98d",
+        "filename": "core/tasks/build_custom_images.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-07-26T07:41:38Z",
+      "side": 0,
+      "message": "Removing this so `make` will build custom images + vbmeta.img at the same time.\n\nI\u0027m not quite sure the removal is a good idea or not.",
+      "range": {
+        "startLine": 53,
+        "startChar": 48,
+        "endLine": 53,
+        "endChar": 48
+      },
+      "revId": "2aef19528e05d014db280ce9aa6431580cc19f7c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "482824cf_58a4a0d0",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1931,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-07-26T07:41:38Z",
+      "side": 1,
+      "message": "Add the dependency here, so `make` will also build custom images.",
+      "range": {
+        "startLine": 1931,
+        "startChar": 183,
+        "endLine": 1931,
+        "endChar": 196
+      },
+      "revId": "c6ab47d69ab0421f9448d5df409b88d2cd9a4450",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
