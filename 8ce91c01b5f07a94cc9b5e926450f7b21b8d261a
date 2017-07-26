@@ -51,6 +51,24 @@
       "revId": "8ce91c01b5f07a94cc9b5e926450f7b21b8d261a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2711947_89253682",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-07-26T17:39:41Z",
+      "side": 1,
+      "message": "Oh. my bad. do we need fall back to /usr/lib/os-release if it doesn\u0027t exist?",
+      "parentUuid": "f17914ec_b71f561e",
+      "revId": "8ce91c01b5f07a94cc9b5e926450f7b21b8d261a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
