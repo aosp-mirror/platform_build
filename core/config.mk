@@ -71,6 +71,8 @@ $(warning The build system needs unmodified output of grep.)
 $(error Please remove --color=always from your  $$GREP_OPTIONS)
 endif
 
+UNAME := $(shell uname -sm)
+
 SRC_TARGET_DIR := $(TOPDIR)build/target
 SRC_API_DIR := $(TOPDIR)prebuilts/sdk/api
 SRC_SYSTEM_API_DIR := $(TOPDIR)prebuilts/sdk/system-api
@@ -684,12 +686,6 @@ HOST_JDK_TOOLS_JAR :=
 ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA_TOOLCHAIN)/../lib/tools.jar
 endif # ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
-
-# Is the host JDK 64-bit version?
-HOST_JDK_IS_64BIT_VERSION :=
-ifneq ($(filter 64-Bit, $(shell $(JAVA) -version 2>&1)),)
-HOST_JDK_IS_64BIT_VERSION := true
-endif
 
 # It's called md5 on Mac OS and md5sum on Linux
 ifeq ($(HOST_OS),darwin)
