@@ -69,6 +69,24 @@
       "revId": "8ce91c01b5f07a94cc9b5e926450f7b21b8d261a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ac3363a_adc3910f",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-26T17:43:41Z",
+      "side": 1,
+      "message": "From what I was reading, it\u0027s heavily suggested that distributions put a symlink from /etc/os-release to /usr/lib/os-release so that applications don\u0027t have to fall back.\n\nSince this is at best informational, this seems fine.",
+      "parentUuid": "c2711947_89253682",
+      "revId": "8ce91c01b5f07a94cc9b5e926450f7b21b8d261a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
