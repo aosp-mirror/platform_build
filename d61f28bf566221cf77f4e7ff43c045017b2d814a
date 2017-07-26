@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3008fd6d_0bf28818",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-26T21:32:27Z",
+      "side": 1,
+      "message": "This seems like an odd setup, how long do you expect to maintain this distinction while you get -source 1.9 -target 1.9 to work?",
+      "revId": "d61f28bf566221cf77f4e7ff43c045017b2d814a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
