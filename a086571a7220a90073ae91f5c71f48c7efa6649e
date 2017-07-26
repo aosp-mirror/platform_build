@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "93288f8e_b66128d7",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1050354
+      },
+      "writtenOn": "2017-07-26T16:13:29Z",
+      "side": 1,
+      "message": "You can then use any toolchain, that is set to in $ANDROID_JAVA_HOME, even another JDK8 one.\n\nDoesn\u0027t it make more sense to use something like \"CUSTOM_JDK\" instead of \"OPENJDK9\", because nothing really forces it to be a JDK9 install?\n\nor even just checking, if $ANDROID_JAVA_HOME is empty and if, set it to the bundled one?",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 36
+      },
+      "revId": "a086571a7220a90073ae91f5c71f48c7efa6649e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
