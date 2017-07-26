@@ -46,6 +46,30 @@
       "revId": "a086571a7220a90073ae91f5c71f48c7efa6649e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57492898_ba39e0e0",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1050354
+      },
+      "writtenOn": "2017-07-26T16:29:15Z",
+      "side": 1,
+      "message": "This all makes perfect sense now (my fault was, that i discovered the additional flags after commenting).\n\n\u003e Do you have another use case ...\n\nExcept working around a buggy bundled toolchain (which should never happen in a perfect world) and using the system\u0027s or any other toolchain as dirty workaround, none i could think of :)",
+      "parentUuid": "fd39a170_c2af2508",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 36
+      },
+      "revId": "a086571a7220a90073ae91f5c71f48c7efa6649e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
