@@ -22,6 +22,30 @@
       "revId": "a086571a7220a90073ae91f5c71f48c7efa6649e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fd39a170_c2af2508",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-26T16:23:00Z",
+      "side": 1,
+      "message": "The reason I picked EXPERIMENTAL_USE_OPENJDK9 is because that\u0027s an environment variable that already exists (I see you\u0027ve now noticed that), and because I don\u0027t know about another reasonable use case.\n\nDo you have another use case (a good reason to use a custom toolchain)? The bundled toolchain is specifically so we can guarantee that the toolchain exhibits exactly the expected/supported behavior (e.g. has appropriate set of bug fixes / bugs :).",
+      "parentUuid": "93288f8e_b66128d7",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 36
+      },
+      "revId": "a086571a7220a90073ae91f5c71f48c7efa6649e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
