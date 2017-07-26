@@ -34,6 +34,24 @@
       "revId": "d61f28bf566221cf77f4e7ff43c045017b2d814a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57eafce1_15943614",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-26T21:42:07Z",
+      "side": 1,
+      "message": "Since this is only for you I\u0027m fine with \"true\", but it means the \"normal\" value (EXPERIMENTAL_USE_OPENJDK9\u003dtrue) will stop compiling after this change.  I\u0027d keep EXPERIMENTAL_USE_OPENJDK9\u003dtrue always building, and use something more explicit like \"source1.9\" for the not-working-yet features, and then fold them into \"true\" once they work.",
+      "parentUuid": "c1b8731d_fa7e6e85",
+      "revId": "d61f28bf566221cf77f4e7ff43c045017b2d814a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
