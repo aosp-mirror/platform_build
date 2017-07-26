@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "945d4bef_6c196d87",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-26T07:57:25Z",
+      "side": 1,
+      "message": "custom_images was designed so that you could build multiple different versions of a single partition (with different setting/brandings, etc). I don\u0027t think we can change that.\n\nIt doesn\u0027t make sense for the rest of the build to depend on the output from custom_images, since only some (or maybe none) of them will actually be installed on the device.\n\nIf you want another default (but optional) partition, it should be added in parallel with the current system/vendor/etc support (and/or that should be refactored into something that looks closer to what custom_images is).",
+      "range": {
+        "startLine": 18,
+        "startChar": 40,
+        "endLine": 20,
+        "endChar": 21
+      },
+      "revId": "c6ab47d69ab0421f9448d5df409b88d2cd9a4450",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "482824cf_58a4a0d0",
         "filename": "core/Makefile",
         "patchSetId": 1
