@@ -19,7 +19,11 @@ ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
   ifneq (,$(filter $(LOCAL_SDK_VERSION), $(private_sdk_versions_without_any_java_18_support)))
     LOCAL_JAVA_LANGUAGE_VERSION := 1.7
   else
-    LOCAL_JAVA_LANGUAGE_VERSION := 1.8
+    ifneq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+      LOCAL_JAVA_LANGUAGE_VERSION := 1.8
+    else
+      LOCAL_JAVA_LANGUAGE_VERSION := 1.9
+    endif
   endif
 endif
 LOCAL_JAVACFLAGS += -source $(LOCAL_JAVA_LANGUAGE_VERSION) -target $(LOCAL_JAVA_LANGUAGE_VERSION)
