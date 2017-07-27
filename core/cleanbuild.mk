@@ -58,7 +58,7 @@ INTERNAL_CLEAN_STEPS := $(strip $(INTERNAL_CLEAN_STEPS))
 
 # If the clean_steps.mk file is missing (usually after a clean build)
 # then we won't do anything.
-CURRENT_CLEAN_BUILD_VERSION := $(INTERNAL_CLEAN_BUILD_VERSION)
+CURRENT_CLEAN_BUILD_VERSION := MISSING
 CURRENT_CLEAN_STEPS := $(INTERNAL_CLEAN_STEPS)
 
 # Read the current state from the file, if present.
@@ -67,7 +67,9 @@ CURRENT_CLEAN_STEPS := $(INTERNAL_CLEAN_STEPS)
 clean_steps_file := $(PRODUCT_OUT)/clean_steps.mk
 -include $(clean_steps_file)
 
-ifneq ($(CURRENT_CLEAN_BUILD_VERSION),$(INTERNAL_CLEAN_BUILD_VERSION))
+ifeq ($(CURRENT_CLEAN_BUILD_VERSION),MISSING)
+  # Do nothing
+else ifneq ($(CURRENT_CLEAN_BUILD_VERSION),$(INTERNAL_CLEAN_BUILD_VERSION))
   # The major clean version is out-of-date.  Do a full clean, and
   # don't even bother with the clean steps.
   $(info *** A clean build is required because of a recent change.)
@@ -109,36 +111,19 @@ endif
 
 # Write the new state to the file.
 #
-rewrite_clean_steps_file :=
 ifneq ($(CURRENT_CLEAN_BUILD_VERSION)-$(CURRENT_CLEAN_STEPS),$(INTERNAL_CLEAN_BUILD_VERSION)-$(INTERNAL_CLEAN_STEPS))
-rewrite_clean_steps_file := true
-endif
-ifeq ($(wildcard $(clean_steps_file)),)
-# This is the first build.
-rewrite_clean_steps_file := true
-endif
-ifeq ($(rewrite_clean_steps_file),true)
-$(shell \
-  mkdir -p $(dir $(clean_steps_file)) && \
-  echo "CURRENT_CLEAN_BUILD_VERSION := $(INTERNAL_CLEAN_BUILD_VERSION)" > \
-      $(clean_steps_file) ;\
-  echo "CURRENT_CLEAN_STEPS := $(wordlist 1,500,$(INTERNAL_CLEAN_STEPS))" >> $(clean_steps_file) \
- )
-define -cs-write-clean-steps-if-arg1-not-empty
-$(if $(1),$(shell echo "CURRENT_CLEAN_STEPS += $(1)" >> $(clean_steps_file)))
-endef
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 501,1000,$(INTERNAL_CLEAN_STEPS)))
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 1001,1500,$(INTERNAL_CLEAN_STEPS)))
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 1501,2000,$(INTERNAL_CLEAN_STEPS)))
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 2001,2500,$(INTERNAL_CLEAN_STEPS)))
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 2501,3000,$(INTERNAL_CLEAN_STEPS)))
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 3001,99999,$(INTERNAL_CLEAN_STEPS)))
+$(shell mkdir -p $(dir $(clean_steps_file)))
+$(file >$(clean_steps_file).tmp,CURRENT_CLEAN_BUILD_VERSION := $(INTERNAL_CLEAN_BUILD_VERSION)$(newline)CURRENT_CLEAN_STEPS := $(INTERNAL_CLEAN_STEPS)$(newline))
+$(shell if ! cmp -s $(clean_steps_file).tmp $(clean_steps_file); then \
+          mv $(clean_steps_file).tmp $(clean_steps_file); \
+        else \
+          rm $(clean_steps_file).tmp; \
+        fi)
 endif
 
 CURRENT_CLEAN_BUILD_VERSION :=
 CURRENT_CLEAN_STEPS :=
 clean_steps_file :=
-rewrite_clean_steps_file :=
 INTERNAL_CLEAN_STEPS :=
 INTERNAL_CLEAN_BUILD_VERSION :=
 
