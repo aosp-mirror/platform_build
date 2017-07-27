@@ -52,6 +52,24 @@
       "revId": "d61f28bf566221cf77f4e7ff43c045017b2d814a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7786db28_0c2f0e3f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-07-27T10:40:36Z",
+      "side": 1,
+      "message": "\"true\" has always been the bleeding edge, which has not worked most of the time, since the goal of the bleeding edge advanced as soon as something started working.\n\nYou can arbitrarily use the value \"target1.8\" to refer to the milestone of -source 1.8 -target 1.8 that has been working for a while and that I intend to keep working.\n\nI\u0027ve sent you an email with more details. Let me know if this doesn\u0027t convince you.",
+      "parentUuid": "57eafce1_15943614",
+      "revId": "d61f28bf566221cf77f4e7ff43c045017b2d814a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
