@@ -16,7 +16,12 @@ endif
 
 common_jdk_flags := -Xmaxerrs 9999999
 
+ifeq ($(OVERRIDE_ANDROID_JAVA_HOME),)
 ANDROID_JAVA_HOME := prebuilts/jdk/jdk8/$(HOST_PREBUILT_TAG)
+else
+# Use this build toolchain instead of the bundled one.
+ANDROID_JAVA_HOME := $(OVERRIDE_ANDROID_JAVA_HOME)
+endif
 ANDROID_JAVA_TOOLCHAIN := $(ANDROID_JAVA_HOME)/bin
 export JAVA_HOME := $(abspath $(ANDROID_JAVA_HOME))
 
