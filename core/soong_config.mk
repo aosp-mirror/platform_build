@@ -34,7 +34,8 @@ $(SOONG_VARIABLES): FORCE
 	echo '    "Make_suffix": "-$(TARGET_PRODUCT)",'; \
 	echo ''; \
 	echo '    "Platform_sdk_version": $(PLATFORM_SDK_VERSION),'; \
-	echo '    "Platform_version_all_codenames": $(call csv_to_json_list,$(PLATFORM_VERSION_ALL_CODENAMES)),'; \
+	echo '    "Platform_version_active_codenames": $(call csv_to_json_list,$(PLATFORM_VERSION_ALL_CODENAMES)),'; \
+	echo '    "Platform_version_future_codenames": $(call csv_to_json_list,$(PLATFORM_VERSION_FUTURE_CODENAMES)),'; \
 	echo '    "Unbundled_build": $(if $(TARGET_BUILD_APPS),true,false),'; \
 	echo '    "Brillo": $(if $(BRILLO),true,false),'; \
 	echo '    "Malloc_not_svelte": $(if $(filter true,$(MALLOC_SVELTE)),false,true),'; \
