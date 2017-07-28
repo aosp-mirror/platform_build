@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d2fdcb9a_5e440c7f",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2654,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-28T19:44:01Z",
+      "side": 1,
+      "message": "(and below) This also needs to depend on ${MK_QEMU_IMAGE_SH} and any tools that it uses.",
+      "range": {
+        "startLine": 2654,
+        "startChar": 29,
+        "endLine": 2654,
+        "endChar": 55
+      },
+      "revId": "090fd7c39ca565e5627a08d2c127737bf1bf309e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e84dd74e_45083e60",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2656,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-28T19:44:01Z",
+      "side": 1,
+      "message": "Why not just make it actually work from any directory (take an input / output / label?)",
+      "range": {
+        "startLine": 2656,
+        "startChar": 2,
+        "endLine": 2656,
+        "endChar": 54
+      },
+      "revId": "090fd7c39ca565e5627a08d2c127737bf1bf309e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4d24d31_a3c53716",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2664,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-28T19:44:01Z",
+      "side": 1,
+      "message": "seems like this should be vendorimage?",
+      "range": {
+        "startLine": 2664,
+        "startChar": 0,
+        "endLine": 2664,
+        "endChar": 11
+      },
+      "revId": "090fd7c39ca565e5627a08d2c127737bf1bf309e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd2e005a_76584001",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2666,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-07-28T19:44:01Z",
+      "side": 1,
+      "message": "I assume that you\u0027re going to want to distribute these images as well?",
+      "revId": "090fd7c39ca565e5627a08d2c127737bf1bf309e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
