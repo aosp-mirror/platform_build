@@ -46,6 +46,30 @@
       "revId": "79490070829225344d40c257cb5556354c567f57",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b7cb791f_51f28ea3",
+        "filename": "tools/buildinfo.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-28T21:12:33Z",
+      "side": 1,
+      "message": "Maybe PLATFORM_VERSION_HISTORICAL_CODENAMES, and then combine it with PLATFORM_VERSION_ALL_CODENAMES if you need all of them?  I\u0027d be less averse to keeping the PLATFORM_VERSION_ACTIVE_CODENAMES rename as long as there wasn\u0027t also an ALL_CODENAMES that didn\u0027t match the all_codenames property.",
+      "parentUuid": "dd9d7615_4dbbf491",
+      "range": {
+        "startLine": 12,
+        "startChar": 23,
+        "endLine": 12,
+        "endChar": 36
+      },
+      "revId": "79490070829225344d40c257cb5556354c567f57",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
