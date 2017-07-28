@@ -94,6 +94,30 @@
       "revId": "79490070829225344d40c257cb5556354c567f57",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0808a5cd_14e87cbc",
+        "filename": "tools/buildinfo.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-28T21:21:02Z",
+      "side": 1,
+      "message": "FUTURE_CODENAMES?",
+      "parentUuid": "26c9d5cb_89200193",
+      "range": {
+        "startLine": 12,
+        "startChar": 23,
+        "endLine": 12,
+        "endChar": 36
+      },
+      "revId": "79490070829225344d40c257cb5556354c567f57",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
