@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fc82cfda_12a2c774",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-28T20:11:51Z",
+      "side": 1,
+      "message": "Test with something that is not -C too",
+      "revId": "b95f7240ea16a900f754a0c80942d8a6f0b82d1b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8d5e3cbd_ec7d8cea",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1547,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-28T20:11:51Z",
+      "side": 1,
+      "message": "probably want quotes around both $arg and -C*",
+      "revId": "b95f7240ea16a900f754a0c80942d8a6f0b82d1b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
