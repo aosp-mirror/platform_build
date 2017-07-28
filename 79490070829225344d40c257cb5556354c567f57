@@ -118,6 +118,30 @@
       "revId": "79490070829225344d40c257cb5556354c567f57",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "037f52ff_b8b2d75f",
+        "filename": "tools/buildinfo.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2017-07-28T22:55:24Z",
+      "side": 1,
+      "message": "Yeah, that should be fine I think. Order matters, but as long as we take care to always concatenate these in the right order it\u0027s nbd.",
+      "parentUuid": "0808a5cd_14e87cbc",
+      "range": {
+        "startLine": 12,
+        "startChar": 23,
+        "endLine": 12,
+        "endChar": 36
+      },
+      "revId": "79490070829225344d40c257cb5556354c567f57",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
