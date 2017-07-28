@@ -38,8 +38,8 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-DEFAULT_PLATFORM_VERSION := OPR1
-MIN_PLATFORM_VERSION := OPR1
+DEFAULT_PLATFORM_VERSION := PPR1
+MIN_PLATFORM_VERSION := PPR1
 MAX_PLATFORM_VERSION := PPR1
 
 ALLOWED_VERSIONS := $(call allowed-platform-versions,\
@@ -79,12 +79,10 @@ endif
 # When you change PLATFORM_VERSION for a given PLATFORM_SDK_VERSION
 # please add that PLATFORM_VERSION to the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
-PLATFORM_VERSION.OPR1 := 8.0.0
 PLATFORM_VERSION.PPR1 := P
 
 # This is the current development code-name, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.OPR1 := REL
 PLATFORM_VERSION_CODENAME.PPR1 := P
 
 ifndef PLATFORM_VERSION
