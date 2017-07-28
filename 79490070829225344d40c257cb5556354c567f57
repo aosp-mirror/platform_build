@@ -70,6 +70,30 @@
       "revId": "79490070829225344d40c257cb5556354c567f57",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "26c9d5cb_89200193",
+        "filename": "tools/buildinfo.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2017-07-28T21:19:16Z",
+      "side": 1,
+      "message": "It\u0027s not actually a historical codenames thing (we don\u0027t track those at all). If you lunch O, ALL_CODENAMES \u003d\u003d O. If you lunch P, ALL_CODENAMES \u003d\u003d O,P. I need a list of O,P even in O is the target because I still need to recognize invalid codenames in .map.txt files.",
+      "parentUuid": "b7cb791f_51f28ea3",
+      "range": {
+        "startLine": 12,
+        "startChar": 23,
+        "endLine": 12,
+        "endChar": 36
+      },
+      "revId": "79490070829225344d40c257cb5556354c567f57",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
