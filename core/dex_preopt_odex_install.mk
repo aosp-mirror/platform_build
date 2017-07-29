@@ -59,6 +59,31 @@ built_installed_vdex :=
 built_installed_art :=
 
 ifdef LOCAL_DEX_PREOPT
+
+ifeq (false,$(WITH_DEX_PREOPT_GENERATE_PROFILE))
+LOCAL_DEX_PREOPT_GENERATE_PROFILE := false
+endif
+
+ifdef LOCAL_VENDOR_MODULE
+ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+$(error profiles are not supported for vendor modules)
+endif
+else
+ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
+# If LOCAL_DEX_PREOPT_GENERATE_PROFILE is not defined, default it based on the existence of the
+# profile class listing. TODO: Use product specific directory here.
+my_classes_directory := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)
+LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING := $(my_classes_directory)/$(LOCAL_MODULE).prof.txt
+ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)))
+# Profile listing exists, use it to generate the profile.
+ifeq ($(LOCAL_DEX_PREOPT_APP_IMAGE),)
+LOCAL_DEX_PREOPT_APP_IMAGE := true
+endif
+LOCAL_DEX_PREOPT_GENERATE_PROFILE := true
+endif
+endif
+endif
+
 dexpreopt_boot_jar_module := $(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE))
 ifdef dexpreopt_boot_jar_module
 # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
@@ -113,13 +138,6 @@ installed_vdex := $(strip $(installed_vdex))
 installed_art := $(strip $(installed_art))
 
 ifdef built_odex
-
-ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
-ifeq (true,$(WITH_DEX_PREOPT_GENERATE_PROFILE))
-  LOCAL_DEX_PREOPT_GENERATE_PROFILE := true
-endif
-endif
-
 ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
 ifndef LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING
 $(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING))
@@ -141,7 +159,12 @@ $(my_built_profile):
 		--apk=$(PRIVATE_BUILT_MODULE) \
 		--dex-location=$(PRIVATE_DEX_LOCATION) \
 		--reference-profile-file=$@
+my_installed_profile := $(LOCAL_INSTALLED_MODULE).prof
+$(eval $(call copy-one-file,$(my_built_profile),$(my_installed_profile)))
+build_installed_profile:=$(my_built_profile):$(my_installed_profile)
 else
+build_installed_profile:=
+my_installed_profile :=
 $(built_odex): PRIVATE_PROFILE_PREOPT_FLAGS :=
 endif
 
@@ -152,14 +175,44 @@ LOCAL_DEX_PREOPT_FLAGS := $(PRODUCT_DEX_PREOPT_DEFAULT_FLAGS)
 endif
 endif
 
-ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS) $(PRODUCT_DEXPREOPT_SPEED_APPS) $(PRODUCT_SYSTEM_SERVER_APPS),$(LOCAL_MODULE)))
-  # Jars of system server, apps loaded into system server, and apps the product wants to be
-  # compiled with the 'speed' compiler filter.
-  LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed
-else
-  # If no compiler filter is specified, default to 'quicken' to save on storage.
-  ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
-    LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=quicken
+my_system_server_compiler_filter := $(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER)
+ifeq (,$(my_system_server_compiler_filter))
+my_system_server_compiler_filter := speed
+endif
+
+ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
+  ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
+    # Jars of system server, use the product option if it is set, speed otherwise.
+    LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=$(my_system_server_compiler_filter)
+  else
+    ifneq (,$(filter $(PRODUCT_DEXPREOPT_SPEED_APPS) $(PRODUCT_SYSTEM_SERVER_APPS),$(LOCAL_MODULE)))
+      # Apps loaded into system server, and apps the product default to being compiled with the
+      # 'speed' compiler filter.
+      LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed
+    else
+      ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+        # For non system server jars, use speed-profile when we have a profile.
+        LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed-profile
+      else
+        # If no compiler filter is specified, default to 'quicken' to save on storage.
+        LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=quicken
+      endif
+    endif
+  endif
+endif
+
+# PRODUCT_SYSTEM_SERVER_DEBUG_INFO overrides WITH_DEXPREOPT_DEBUG_INFO.
+my_system_server_debug_info := $(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)
+ifeq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
+# Only enable for non-eng builds.
+ifeq (,$(my_system_server_debug_info))
+my_system_server_debug_info := true
+endif
+endif
+
+ifeq (true, $(my_system_server_debug_info))
+  ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
+    LOCAL_DEX_PREOPT_FLAGS += --generate-mini-debug-info
   endif
 endif
 
@@ -172,9 +225,11 @@ endif
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_vdex)
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_art)
+ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed_profile)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_odex)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_vdex)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_art)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(build_installed_profile)
 
 # Record dex-preopt config.
 DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -190,6 +245,6 @@ DEXPREOPT.MODULES.$(LOCAL_MODULE_CLASS) := $(sort \
 
 
 # Make sure to install the .odex and .vdex when you run "make <module_name>"
-$(my_all_targets): $(installed_odex) $(installed_vdex) $(installed_art)
+$(my_all_targets): $(installed_odex) $(installed_vdex) $(installed_art) $(my_installed_profile)
 
 endif # LOCAL_DEX_PREOPT

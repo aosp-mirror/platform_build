@@ -214,6 +214,11 @@ ifdef TARGET_2ND_ARCH
   endif
 endif
 
+# Add the system server compiler filter if they are specified for the product.
+ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
+ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.systemservercompilerfilter=$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER)
+endif
+
 ## user/userdebug ##
 
 user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
