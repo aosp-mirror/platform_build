@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4349ef5b_e04ceef4",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-29T00:29:20Z",
+      "side": 1,
+      "message": "wrap here",
+      "range": {
+        "startLine": 74,
+        "startChar": 117,
+        "endLine": 74,
+        "endChar": 121
+      },
+      "revId": "22ed569370301fd2be6206ef6efce27473594690",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
