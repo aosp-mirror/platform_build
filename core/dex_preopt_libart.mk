@@ -88,6 +88,42 @@ LIBART_TARGET_BOOT_DEX_FILES := $(foreach jar,$(LIBART_TARGET_BOOT_JARS),$(call 
 LIBART_TARGET_BOOT_ART_EXTRA_FILES := $(foreach jar,$(wordlist 2,999,$(LIBART_TARGET_BOOT_JARS)),boot-$(jar).art boot-$(jar).oat boot-$(jar).vdex)
 LIBART_TARGET_BOOT_ART_EXTRA_FILES += boot.oat boot.vdex
 
+# If we use a boot image profile.
+my_use_profile_for_boot_image := $(PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE)
+ifeq (,$(my_use_profile_for_boot_image))
+# If not set, use the default.
+my_use_profile_for_boot_image := false
+endif
+
+ifeq (true,$(my_use_profile_for_boot_image))
+
+# Location of text based profile for the boot image.
+my_boot_image_profile_location := $(PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION)
+ifeq (,$(my_boot_image_profile_location))
+# If not set, use the default.
+my_boot_image_profile_location := frameworks/base/boot-image-profile.txt
+endif
+
+# Code to create the boot image profile, not in dex_preopt_libart_boot.mk since the profile is the same for all archs.
+my_out_boot_image_profile_location := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/boot.prof
+$(my_out_boot_image_profile_location): PRIVATE_PROFILE_INPUT_LOCATION := $(my_boot_image_profile_location)
+$(my_out_boot_image_profile_location): $(PROFMAN) $(LIBART_TARGET_BOOT_DEX_FILES) $(my_boot_image_profile_location)
+	@echo "target profman: $@"
+	@mkdir -p $(dir $@)
+	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
+		--create-profile-from=$(PRIVATE_PROFILE_INPUT_LOCATION) \
+		$(addprefix --apk=,$(LIBART_TARGET_BOOT_DEX_FILES)) \
+		$(addprefix --dex-location=,$(LIBART_TARGET_BOOT_DEX_LOCATIONS)) \
+		--reference-profile-file=$@
+
+# We want to install the profile even if we are not using preopt since it is required to generate
+# the image on the device.
+my_installed_profile := $(TARGET_OUT)/etc/boot-image.prof
+$(eval $(call copy-one-file,$(my_out_boot_image_profile_location),$(my_installed_profile)))
+ALL_DEFAULT_INSTALLED_MODULES += $(my_installed_profile)
+
+endif
+
 my_2nd_arch_prefix :=
 include $(BUILD_SYSTEM)/dex_preopt_libart_boot.mk
 

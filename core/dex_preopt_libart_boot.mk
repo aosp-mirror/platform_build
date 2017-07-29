@@ -50,18 +50,27 @@ $($(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES) : $($(my_2n
 	@mkdir -p $(dir $@)
 	$(hide) $(ACP) -fp $(dir $<)$(notdir $@) $@
 
+ifeq (,$(my_out_boot_image_profile_location))
+my_boot_image_flags := $(COMPILED_CLASSES_FLAGS)
+my_boot_image_flags += --image-classes=$(PRELOADED_CLASSES)
+else
+my_boot_image_flags := --compiler-filter=speed-profile
+my_boot_image_flags += --profile-file=$(my_out_boot_image_profile_location)
+endif
+
+$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_BOOT_IMAGE_FLAGS := $(my_boot_image_flags)
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_2ND_ARCH_VAR_PREFIX := $(my_2nd_arch_prefix)
 # Use dex2oat debug version for better error reporting
-$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGET_BOOT_DEX_FILES) $(PRELOADED_CLASSES) $(COMPILED_CLASSES) $(DEX2OAT_DEPENDENCY)
+$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGET_BOOT_DEX_FILES) $(PRELOADED_CLASSES) $(COMPILED_CLASSES) $(DEX2OAT_DEPENDENCY) $(my_out_profile_location)
 	@echo "target dex2oat: $@"
 	@mkdir -p $(dir $@)
 	@mkdir -p $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))
 	@rm -f $(dir $@)/*.art $(dir $@)/*.oat
 	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.art
 	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.oat
-	$(hide) ANDROID_LOG_TAGS="*:e" $(DEX2OAT) --runtime-arg -Xms$(DEX2OAT_IMAGE_XMS) \
+	$(DEX2OAT) --runtime-arg -Xms$(DEX2OAT_IMAGE_XMS) \
 		--runtime-arg -Xmx$(DEX2OAT_IMAGE_XMX) \
-		--image-classes=$(PRELOADED_CLASSES) \
+		$(PRIVATE_BOOT_IMAGE_FLAGS) \
 		$(addprefix --dex-file=,$(LIBART_TARGET_BOOT_DEX_FILES)) \
 		$(addprefix --dex-location=,$(LIBART_TARGET_BOOT_DEX_LOCATIONS)) \
 		--oat-symbols=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED) \
@@ -75,4 +84,4 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--runtime-arg -Xnorelocate --compile-pic \
 		--no-generate-debug-info --generate-build-id \
 		--multi-image --no-inline-from=core-oj.jar \
-		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(COMPILED_CLASSES_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS)
+		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS)
