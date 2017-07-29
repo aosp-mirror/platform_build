@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d8e63145_45350dea",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-07-29T00:22:29Z",
+      "side": 1,
+      "message": "Convenient link to the comment where Colin recommended something like this:\n\nhttps://android-review.googlesource.com/c/398900/9/core%252Fjacoco.mk#130",
+      "revId": "d9991fbeddabbd334aaf2f7959395069c5ec9a14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
