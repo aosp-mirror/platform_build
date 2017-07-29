@@ -1544,6 +1544,13 @@ function get_make_command()
 {
     # If we're in the top of an Android tree, use soong_ui.bash instead of make
     if [ -f build/soong/soong_ui.bash ]; then
+        # Always use the real make if -C is passed in
+        for arg in "$@"; do
+            if [[ $arg == -C* ]]; then
+                echo command make
+                return
+            fi
+        done
         echo build/soong/soong_ui.bash --make-mode
     else
         echo command make
@@ -1590,7 +1597,7 @@ function _wrap_build()
 
 function make()
 {
-    _wrap_build $(get_make_command) "$@"
+    _wrap_build $(get_make_command "$@") "$@"
 }
 
 function provision()
