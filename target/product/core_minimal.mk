@@ -72,6 +72,7 @@ PRODUCT_PACKAGES += \
     libfilterfw \
     libkeystore \
     libgatekeeper \
+    libneuralnetworks \
     libwebviewchromium_loader \
     libwebviewchromium_plat_support \
     libwilhelm \
