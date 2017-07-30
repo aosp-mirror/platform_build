@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d23cd2da_b4234228",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2654,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-07-30T03:46:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2fdcb9a_5e440c7f",
+      "range": {
+        "startLine": 2654,
+        "startChar": 29,
+        "endLine": 2654,
+        "endChar": 55
+      },
+      "revId": "090fd7c39ca565e5627a08d2c127737bf1bf309e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e84dd74e_45083e60",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-07-28T19:44:01Z",
       "side": 1,
       "message": "Why not just make it actually work from any directory (take an input / output / label?)",
+      "range": {
+        "startLine": 2656,
+        "startChar": 2,
+        "endLine": 2656,
+        "endChar": 54
+      },
+      "revId": "090fd7c39ca565e5627a08d2c127737bf1bf309e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f855ec2f_4a8a414d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2656,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-07-30T03:46:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e84dd74e_45083e60",
       "range": {
         "startLine": 2656,
         "startChar": 2,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "e0f05597_61f30a21",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2664,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-07-30T03:46:53Z",
+      "side": 1,
+      "message": "it wont create vendor-qemu.img if I just do\nvendorimg: $(INSTALLED_QEMU_VENDORIMAGE)\nand then\nlunch aosp_x86-eng\nmake -j100\n\n(make vendorimage does create vendor-qemu.img, but that is not the default)",
+      "parentUuid": "e4d24d31_a3c53716",
+      "range": {
+        "startLine": 2664,
+        "startChar": 0,
+        "endLine": 2664,
+        "endChar": 11
+      },
+      "revId": "090fd7c39ca565e5627a08d2c127737bf1bf309e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "cd2e005a_76584001",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -82,6 +154,24 @@
       "writtenOn": "2017-07-28T19:44:01Z",
       "side": 1,
       "message": "I assume that you\u0027re going to want to distribute these images as well?",
+      "revId": "090fd7c39ca565e5627a08d2c127737bf1bf309e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d16238e_516fc70f",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2666,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-07-30T03:46:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cd2e005a_76584001",
       "revId": "090fd7c39ca565e5627a08d2c127737bf1bf309e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
