@@ -90,6 +90,7 @@ PRODUCT_PACKAGES := \
     android.hidl.manager@1.0 \
     android.hidl.memory@1.0 \
     android.hidl.token@1.0 \
+    android.system.net.netd@1.0 \
     android.system.wifi.keystore@1.0 \
 
 # VNDK:
