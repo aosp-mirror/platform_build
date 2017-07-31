@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c80b43d3_96d5bf4a",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 2659,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-31T23:25:33Z",
+      "side": 1,
+      "message": "Should this be inside ifeq ($(BOARD_USES_VENDORIMAGE),true)?",
+      "revId": "83f63059594c93dad1531416cfc3eacb37680b9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
