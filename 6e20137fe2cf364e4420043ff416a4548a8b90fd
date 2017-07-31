@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9b32317_2f9be73b",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2653,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-31T23:15:11Z",
+      "side": 1,
+      "message": "This is always blank, just leave it out.",
+      "range": {
+        "startLine": 2653,
+        "startChar": 20,
+        "endLine": 2653,
+        "endChar": 29
+      },
+      "revId": "6e20137fe2cf364e4420043ff416a4548a8b90fd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "20bd7818_0a7f7499",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2654,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-31T23:15:11Z",
+      "side": 1,
+      "message": "$(HOST_OUT_EXECUTABLES)",
+      "range": {
+        "startLine": 2654,
+        "startChar": 17,
+        "endLine": 2654,
+        "endChar": 30
+      },
+      "revId": "6e20137fe2cf364e4420043ff416a4548a8b90fd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a5f48e46_eecbc56d",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2655,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-31T23:15:11Z",
+      "side": 1,
+      "message": "This should be a real dependency and not an order-only dependency so that system-qemu.img gets regenerated when the shell script changes.",
+      "range": {
+        "startLine": 2655,
+        "startChar": 56,
+        "endLine": 2655,
+        "endChar": 58
+      },
+      "revId": "6e20137fe2cf364e4420043ff416a4548a8b90fd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9120f4d7_df92d427",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2664,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-31T23:15:11Z",
+      "side": 1,
+      "message": "Use droidcore:, thats what main.mk uses to depend on INSTALLED_VENDORIMAGE_TARGET.",
+      "revId": "6e20137fe2cf364e4420043ff416a4548a8b90fd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4251deff_442b41f9",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2667,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-31T23:15:11Z",
+      "side": 1,
+      "message": "Remove this",
+      "revId": "6e20137fe2cf364e4420043ff416a4548a8b90fd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eaa5b1a9_fc6eaffc",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2668,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-07-31T23:15:11Z",
+      "side": 1,
+      "message": "droidcore:",
+      "revId": "6e20137fe2cf364e4420043ff416a4548a8b90fd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
