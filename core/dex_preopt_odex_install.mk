@@ -175,19 +175,44 @@ LOCAL_DEX_PREOPT_FLAGS := $(PRODUCT_DEX_PREOPT_DEFAULT_FLAGS)
 endif
 endif
 
-ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS) $(PRODUCT_DEXPREOPT_SPEED_APPS) $(PRODUCT_SYSTEM_SERVER_APPS),$(LOCAL_MODULE)))
-  # Jars of system server, apps loaded into system server, and apps the product wants to be
-  # compiled with the 'speed' compiler filter.
-  LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed
-else
-  # If no compiler filter is specified, default to 'quicken' to save on storage.
-  ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
-    ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
-      # For non system server jars, use speed-profile when we have a profile.
-      LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed-profile
+my_system_server_compiler_filter := $(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER)
+ifeq (,$(my_system_server_compiler_filter))
+my_system_server_compiler_filter := speed
+endif
+
+ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
+  ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
+    # Jars of system server, use the product option if it is set, speed otherwise.
+    LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=$(my_system_server_compiler_filter)
+  else
+    ifneq (,$(filter $(PRODUCT_DEXPREOPT_SPEED_APPS) $(PRODUCT_SYSTEM_SERVER_APPS),$(LOCAL_MODULE)))
+      # Apps loaded into system server, and apps the product default to being compiled with the
+      # 'speed' compiler filter.
+      LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed
     else
-      LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=quicken
+      ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+        # For non system server jars, use speed-profile when we have a profile.
+        LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed-profile
+      else
+        # If no compiler filter is specified, default to 'quicken' to save on storage.
+        LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=quicken
+      endif
     endif
+  endif
+endif
+
+# PRODUCT_SYSTEM_SERVER_DEBUG_INFO overrides WITH_DEXPREOPT_DEBUG_INFO.
+my_system_server_debug_info := $(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)
+ifeq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
+# Only enable for non-eng builds.
+ifeq (,$(my_system_server_debug_info))
+my_system_server_debug_info := true
+endif
+endif
+
+ifeq (true, $(my_system_server_debug_info))
+  ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
+    LOCAL_DEX_PREOPT_FLAGS += --generate-mini-debug-info
   endif
 endif
 
