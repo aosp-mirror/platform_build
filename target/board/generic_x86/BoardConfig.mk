@@ -30,6 +30,10 @@ TARGET_USES_HWC2 := true
 # Build OpenGLES emulation host and guest libraries
 BUILD_EMULATOR_OPENGL := true
 
+# Build partitioned system.img and vendor.img (if applicable)
+# for qemu, otherwise, init cannot find PART_NAME
+BUILD_QEMU_IMAGES := true
+
 # Build and enable the OpenGL ES View renderer. When running on the emulator,
 # the GLES renderer disables itself if host GL acceleration isn't available.
 USE_OPENGL_RENDERER := true
