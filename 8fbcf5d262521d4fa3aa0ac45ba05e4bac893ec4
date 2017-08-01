@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5a9f8ac_f8cde069",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-01T00:39:27Z",
+      "side": 1,
+      "message": "This still doesn\u0027t work, mac sed doesn\u0027t understand \\s \\+ or \\n.  \\s can be replaced with [[:space:]], + works if -E is passed, but I don\u0027t see a solution for \\n.",
+      "range": {
+        "startLine": 20,
+        "startChar": 59,
+        "endLine": 20,
+        "endChar": 72
+      },
+      "revId": "8fbcf5d262521d4fa3aa0ac45ba05e4bac893ec4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
