@@ -44,6 +44,7 @@ PRODUCT_PACKAGES += \
     ime \
     incidentd \
     incident \
+    incident_helper \
     incident_report \
     input \
     javax.obex \
