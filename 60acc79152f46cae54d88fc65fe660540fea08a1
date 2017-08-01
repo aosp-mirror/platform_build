@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd89dc12_5540bf02",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2759,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-01T19:27:14Z",
+      "side": 1,
+      "message": "This is not correct, it may build far more than necessary.  Just add $(INSTALLED_QEMU_SYSTEMIMAGE), they will be blank if BUILD_QEMU_IMAGES is not set.",
+      "revId": "60acc79152f46cae54d88fc65fe660540fea08a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
