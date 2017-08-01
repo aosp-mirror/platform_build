@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7cc004e4_4d7a6508",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1097918
+      },
+      "writtenOn": "2017-08-01T01:46:19Z",
+      "side": 1,
+      "message": "link-type checking is building the rules for dependency checking; rule generator is invoking macros that try to generate paths for intermediate files.\nfor AUX projects, such macro can only be invoked while AUX environment is valid, otherwise it won\u0027t produce correct path.\nAUX environment is only valid after aux_toolchain.mk is included (which happens in a AUX MODULE context).\nHowever, the link-type-file macro is called outside AUX MODULE context (after all the modules are parsed), which is why AUX environment is no longer valid and link-type paths can\u0027t be correctly calculated.\nHope it is clear(er) now.",
+      "parentUuid": "48de2e36_fb0a7ee2",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 52
+      },
+      "revId": "ae707dc2dc867c3177ffadf2912c8194b58ec188",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3b3ee337_fa711677",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -36,6 +60,24 @@
       "writtenOn": "2017-08-01T01:29:03Z",
       "side": 1,
       "message": "This is missing the required Test: field\n\nI know there\u0027s a bug for this as well.",
+      "revId": "ae707dc2dc867c3177ffadf2912c8194b58ec188",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "44a0755c_33633e6c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1097918
+      },
+      "writtenOn": "2017-08-01T01:46:19Z",
+      "side": 1,
+      "message": "I found the bug: https://b.corp.google.com/issues/62060489",
+      "parentUuid": "3b3ee337_fa711677",
       "revId": "ae707dc2dc867c3177ffadf2912c8194b58ec188",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
