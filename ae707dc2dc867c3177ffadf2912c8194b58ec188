@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "48de2e36_fb0a7ee2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-01T01:29:03Z",
+      "side": 1,
+      "message": "This doesn\u0027t make sense to me, outside what context?",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 52
+      },
+      "revId": "ae707dc2dc867c3177ffadf2912c8194b58ec188",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3b3ee337_fa711677",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-01T01:29:03Z",
+      "side": 1,
+      "message": "This is missing the required Test: field\n\nI know there\u0027s a bug for this as well.",
+      "revId": "ae707dc2dc867c3177ffadf2912c8194b58ec188",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
