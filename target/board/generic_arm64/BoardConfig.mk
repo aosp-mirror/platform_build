@@ -71,7 +71,6 @@ endif
 
 # Build OpenGLES emulation host and guest libraries
 BUILD_EMULATOR_OPENGL := true
-BUILD_QEMU_IMAGES := true
 
 # Build and enable the OpenGL ES View renderer. When running on the emulator,
 # the GLES renderer disables itself if host GL acceleration isn't available.
