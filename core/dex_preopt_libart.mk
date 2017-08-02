@@ -25,6 +25,10 @@ PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
 COMPILED_CLASSES := $(call word-colon,1,$(firstword \
     $(filter %system/etc/compiled-classes,$(PRODUCT_COPY_FILES))))
 
+# Use the first dirty-image-objects file in PRODUCT_COPY_FILES.
+DIRTY_IMAGE_OBJECTS := $(call word-colon,1,$(firstword \
+    $(filter %system/etc/dirty-image-objects,$(PRODUCT_COPY_FILES))))
+
 define get-product-default-property
 $(strip $(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))))
 endef
