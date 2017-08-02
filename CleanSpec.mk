@@ -424,6 +424,10 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/versions_checked.mk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/nativetest*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/nativetest*)
 
+# Jack is no longer the default compiler, remove the intermediates
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/*/*/classes*.jack)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/*/*/jack*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
