@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a9a90655_8638d5e7",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-02T22:28:50Z",
+      "side": 1,
+      "message": "$(filter-out $(PLATFORM_VERSION_ALL_CODENAMES),$(ALL_VERSIONS))",
+      "revId": "7f2c70871b8b2d732c9106e5e14f60a0af2d37a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
