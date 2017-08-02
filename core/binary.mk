@@ -270,7 +270,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
 endif
 
 ifneq ($(LOCAL_USE_VNDK),)
-  my_cflags += -D__ANDROID_API__=__ANDROID_API_FUTURE__
+  my_cflags += -D__ANDROID_API__=__ANDROID_API_FUTURE__ -D__ANDROID_VNDK__
 endif
 
 ifndef LOCAL_IS_HOST_MODULE
