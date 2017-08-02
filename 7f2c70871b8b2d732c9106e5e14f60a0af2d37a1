@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "50585f80_73ee92a5",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-02T22:42:05Z",
+      "side": 1,
+      "message": "You could rename this to active to make soong internally consistent, as long as you don\u0027t reuse all to mean something else.",
+      "range": {
+        "startLine": 37,
+        "startChar": 29,
+        "endLine": 37,
+        "endChar": 32
+      },
+      "revId": "7f2c70871b8b2d732c9106e5e14f60a0af2d37a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a9a90655_8638d5e7",
         "filename": "core/version_defaults.mk",
         "patchSetId": 2
