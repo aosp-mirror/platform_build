@@ -63,7 +63,7 @@ endif
 
 # Files copied in the system-image directory
 files_to_copy += \
-	$(addon_dir_img):$(BUILT_SYSTEMIMAGE):images/$(TARGET_CPU_ABI)/system.img \
+	$(addon_dir_img):$(INSTALLED_QEMU_SYSTEMIMAGE):images/$(TARGET_CPU_ABI)/system.img \
 	$(addon_dir_img):$(BUILT_USERDATAIMAGE_TARGET):images/$(TARGET_CPU_ABI)/userdata.img \
 	$(addon_dir_img):$(BUILT_RAMDISK_TARGET):images/$(TARGET_CPU_ABI)/ramdisk.img \
 	$(addon_dir_img):$(PRODUCT_OUT)/system/build.prop:images/$(TARGET_CPU_ABI)/build.prop \

@@ -2740,6 +2740,26 @@ endif # TARGET_BUILD_APPS
 .PHONY: dalvikfiles
 dalvikfiles: $(INTERNAL_DALVIK_MODULES)
 
+ifeq ($(BUILD_QEMU_IMAGES),true)
+INSTALLED_QEMU_SYSTEMIMAGE := $(PRODUCT_OUT)/system-qemu.img
+MK_QEMU_IMAGE_SH := device/generic/goldfish/tools/mk_qemu_image.sh
+SGDISK_HOST := $(HOST_OUT_EXECUTABLES)/sgdisk
+$(INSTALLED_QEMU_SYSTEMIMAGE): $(INSTALLED_SYSTEMIMAGE) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST)
+	@echo Create system-qemu.img
+	(export SGDISK=$(SGDISK_HOST); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/system.img)
+
+systemimage: $(INSTALLED_QEMU_SYSTEMIMAGE)
+droidcore: $(INSTALLED_QEMU_SYSTEMIMAGE)
+ifeq ($(BOARD_USES_VENDORIMAGE),true)
+INSTALLED_QEMU_VENDORIMAGE := $(PRODUCT_OUT)/vendor-qemu.img
+$(INSTALLED_QEMU_VENDORIMAGE): $(INSTALLED_VENDORIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST)
+	@echo Create vendor-qemu.img
+	(export SGDISK=$(SGDISK_HOST); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/vendor.img)
+
+vendorimage: $(INSTALLED_QEMU_VENDORIMAGE)
+droidcore: $(INSTALLED_QEMU_VENDORIMAGE)
+endif
+endif
 # -----------------------------------------------------------------
 # The emulator package
 ifeq ($(BUILD_EMULATOR),true)
@@ -2835,6 +2855,7 @@ deps := \
 	$(SYMBOLS_ZIP) \
 	$(COVERAGE_ZIP) \
 	$(INSTALLED_SYSTEMIMAGE) \
+	$(INSTALLED_QEMU_SYSTEMIMAGE) \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \
 	$(INSTALLED_RAMDISK_TARGET) \
 	$(INSTALLED_SDK_BUILD_PROP_TARGET) \
