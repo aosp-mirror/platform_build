@@ -2684,6 +2684,17 @@ define add-carried-jack-resources
 fi
 endef
 
+# Add resources (non .class files) from a jar to a package
+# $(1): the package file
+# $(2): the jar file
+# $(3): temporary directory
+define add-jar-resources-to-package
+  rm -rf $(3)
+  mkdir -p $(3)
+  unzip -qo $(2) -d $(3) $$(zipinfo -1 $(2) | grep -v -E "\.class$$")
+  $(JAR) uf $(1) -C $(3) .
+endef
+
 # Sign a package using the specified key/cert.
 #
 define sign-package
