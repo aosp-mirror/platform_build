@@ -133,14 +133,17 @@ ifndef PLATFORM_VERSION_CODENAME
     PLATFORM_VERSION_CODENAME := $(TARGET_PLATFORM_VERSION)
   endif
 
-  # This is all of the development codenames that are active.  Should be either
-  # the same as PLATFORM_VERSION_CODENAME or a comma-separated list of additional
-  # codenames after PLATFORM_VERSION_CODENAME.
+  # This is all of the *active* development codenames. There are future
+  # codenames not included in this list. This confusing name is needed because
+  # all_codenames has been baked into build.prop for ages.
+  #
+  # Should be either the same as PLATFORM_VERSION_CODENAME or a comma-separated
+  # list of additional codenames after PLATFORM_VERSION_CODENAME.
   PLATFORM_VERSION_ALL_CODENAMES :=
 
-  # Build a list of all possible code names. Avoid duplicates, and stop when we
+  # Build a list of all active code names. Avoid duplicates, and stop when we
   # reach a codename that matches PLATFORM_VERSION_CODENAME (anything beyond
-  # that is not included in our build.
+  # that is not included in our build).
   _versions_in_target := \
     $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
   $(foreach version,$(_versions_in_target),\
@@ -148,9 +151,23 @@ ifndef PLATFORM_VERSION_CODENAME
     $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
       $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
 
+  # This is all of the inactive development codenames. Available to be targeted
+  # in this branch but in the future relative to our current target.
+  PLATFORM_VERSION_FUTURE_CODENAMES :=
+
+  # Build a list of all untargeted code names. Avoid duplicates.
+  _versions_not_in_target := \
+    $(filter-out $(PLATFORM_VERSION_ALL_CODENAMES),$(ALL_VERSIONS))
+  $(foreach version,$(_versions_not_in_target),\
+    $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
+    $(if $(filter $(_codename),$(PLATFORM_VERSION_FUTURE_CODENAMES)),,\
+      $(eval PLATFORM_VERSION_FUTURE_CODENAMES += $(_codename))))
+
   # And convert from space separated to comma separated.
   PLATFORM_VERSION_ALL_CODENAMES := \
     $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_CODENAMES)))
+  PLATFORM_VERSION_FUTURE_CODENAMES := \
+    $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_FUTURE_CODENAMES)))
 
 endif
 
