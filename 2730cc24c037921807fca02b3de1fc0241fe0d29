@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "057ef31c_1113642b",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 1203558
+      },
+      "writtenOn": "2017-08-04T19:14:06Z",
+      "side": 1,
+      "message": "It looks like this target accepts a module name, correct? \nMaybe reword to \"under the path of the given module name\"?",
+      "revId": "2730cc24c037921807fca02b3de1fc0241fe0d29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
