@@ -548,7 +548,10 @@ else
     $(my_res_package) $(LOCAL_BUILT_MODULE): PRIVATE_PRODUCT_AAPT_PREF_CONFIG := $(PRODUCT_AAPT_PREF_CONFIG)
 endif
 endif
+
 $(LOCAL_BUILT_MODULE): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
+$(LOCAL_BUILT_MODULE): PRIVATE_RESOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/resources
+$(LOCAL_BUILT_MODULE): PRIVATE_FULL_CLASSES_JAR := $(full_classes_jar)
 $(LOCAL_BUILT_MODULE) : $(jni_shared_libraries)
 ifdef LOCAL_USE_AAPT2
 $(LOCAL_BUILT_MODULE): PRIVATE_RES_PACKAGE := $(my_res_package)
@@ -577,6 +580,11 @@ ifeq ($(full_classes_jar),)
 	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 else  # full_classes_jar
 	$(add-dex-to-package)
+ifdef LOCAL_USE_AAPT2
+ifndef LOCAL_JACK_ENABLED
+	$(call add-jar-resources-to-package,$@,$(PRIVATE_FULL_CLASSES_JAR),$(PRIVATE_RESOURCE_INTERMEDIATES_DIR))
+endif
+endif
 endif  # full_classes_jar
 ifdef LOCAL_JACK_ENABLED
 	$(add-carried-jack-resources)
