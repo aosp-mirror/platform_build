@@ -403,7 +403,7 @@ ifneq ($(dont_bother),true)
 # Include all of the makefiles in the system
 #
 
-subdir_makefiles := $(SOONG_ANDROID_MK) $(call first-makefiles-under,$(TOP))
+subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)/.module_paths/Android.mk.list)
 subdir_makefiles_total := $(words $(subdir_makefiles))
 .KATI_READONLY := subdir_makefiles_total
 
