@@ -71,7 +71,8 @@ endif
 # frameworks/support/compat/gingerbread/android/support/v4/os/BuildCompat.java
 
 # When you change PLATFORM_VERSION for a given PLATFORM_SDK_VERSION
-# please add that PLATFORM_VERSION to the following text file:
+# please add that PLATFORM_VERSION as well as clean up obsolete PLATFORM_VERSION's
+# in the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
 PLATFORM_VERSION.OPM1 := OMR1
 
