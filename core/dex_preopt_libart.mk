@@ -11,9 +11,9 @@ else
 DEX2OAT := $(HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
 endif
 
-# Pass special classpath to skip uses library check.
+# Pass special class loader context to skip the classpath and collision check.
 # Should modify build system to pass used libraries properly later.
-DEX2OAT_CLASSPATH := "&"
+DEX2OAT_CLASS_LOADER_CONTEXT := "&"
 
 DEX2OAT_DEPENDENCY += $(DEX2OAT)
 
@@ -24,6 +24,10 @@ PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
 # Use the first compiled-classes file in PRODUCT_COPY_FILES.
 COMPILED_CLASSES := $(call word-colon,1,$(firstword \
     $(filter %system/etc/compiled-classes,$(PRODUCT_COPY_FILES))))
+
+# Use the first dirty-image-objects file in PRODUCT_COPY_FILES.
+DIRTY_IMAGE_OBJECTS := $(call word-colon,1,$(firstword \
+    $(filter %system/etc/dirty-image-objects,$(PRODUCT_COPY_FILES))))
 
 define get-product-default-property
 $(strip $(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))))
@@ -146,7 +150,7 @@ $(hide) rm -f $(2)
 $(hide) mkdir -p $(dir $(2))
 $(hide) ANDROID_LOG_TAGS="*:e" $(DEX2OAT) \
 	--runtime-arg -Xms$(DEX2OAT_XMS) --runtime-arg -Xmx$(DEX2OAT_XMX) \
-	--runtime-arg -classpath --runtime-arg $(DEX2OAT_CLASSPATH) \
+	--class-loader-context=$(DEX2OAT_CLASS_LOADER_CONTEXT) \
 	--boot-image=$(PRIVATE_DEX_PREOPT_IMAGE_LOCATION) \
 	--dex-file=$(1) \
 	--dex-location=$(PRIVATE_DEX_LOCATION) \
