@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7b16e16a_7a667877",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-08-07T20:12:34Z",
+      "side": 1,
+      "message": "Okay with your example use-case (i.e. framework is defined in frameworks/base):\n\nAren\u0027t MODULES-IN-frameworks-base and MODULES-UNDER-framework equivalent? Only difference here is the caller didn\u0027t need to search the tree to determine where framework was defined and create the specialized make target.\n\n\nFor your other point, I tend to find that module-info.json only exists when I do a full build. What exactly needs to be built for that file?\n\nNote: Big request of atest is to be fast. I really don\u0027t want to call make twice and get hit with that time cost.",
+      "parentUuid": "a8dba526_2a4d9664",
+      "range": {
+        "startLine": 10,
+        "startChar": 29,
+        "endLine": 10,
+        "endChar": 54
+      },
+      "revId": "2730cc24c037921807fca02b3de1fc0241fe0d29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "98d04842_e4d20722",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-08-07T19:00:06Z",
       "side": 1,
       "message": "MODULES-UNDER-CtsOsHostTestCases?",
+      "range": {
+        "startLine": 14,
+        "startChar": 11,
+        "endLine": 14,
+        "endChar": 29
+      },
+      "revId": "2730cc24c037921807fca02b3de1fc0241fe0d29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a1c75538_5e0eba76",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-08-07T20:12:34Z",
+      "side": 1,
+      "message": "Correct, my mistake when writing the commit message.",
+      "parentUuid": "98d04842_e4d20722",
       "range": {
         "startLine": 14,
         "startChar": 11,
@@ -76,6 +124,30 @@
       "writtenOn": "2017-08-07T19:00:06Z",
       "side": 1,
       "message": "The distinction between MODULES-UNDER and MODULES-IN is confusing.  Just seeing the names, I would expect MODULES-IN to build things in but not under a directory, and MODULES-UNDER to build thing in and under a directory.",
+      "range": {
+        "startLine": 383,
+        "startChar": 0,
+        "endLine": 383,
+        "endChar": 13
+      },
+      "revId": "2730cc24c037921807fca02b3de1fc0241fe0d29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2d0aaabf_3665848f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-08-07T20:12:34Z",
+      "side": 1,
+      "message": "I am open to alternative names as well, suggestions welcome :).\n\n\nINCLUDE-SUBFOLDERS-$(LOCAL_MODULE), INCLUDE-SUBMODULES-$(LOCAL_MODULE), $(LOCAL_MODULE)-INCLUDE-SUBFOLDERS, etc.",
+      "parentUuid": "873c0e90_6c55036b",
       "range": {
         "startLine": 383,
         "startChar": 0,
