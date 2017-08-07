@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "6a52fe99_4ad30d54",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-08-07T21:03:39Z",
+      "side": 1,
+      "message": "So now we\u0027re going in circles as using LOCAL_REQUIRED_MODULES was my last proposed solution...\n\nFrom DanW\u0027s comment on this Doc: https://docs.google.com/document/d/17QOMpefSYBE9HWaRyNQUe19BwShoKLJfruquUWCo1AA/edit\n\n\"This is somewhat problematic -- we almost never cross between host \u0026 device for install dependencies, since in every other case they\u0027re completely independent. And we have modules of the same name that are otherwise unrelated, and no way to untangle that in make, so we can\u0027t allow cross-host-device install dependencies everywhere.\"\n\n\nHe proposes that we limit this edge-case to the \"atest \u003cdirectory\u003e\" logic but I feel that limits the usability of the tool if `atest \u003ctest module\u003e:\u003coptional class name\u003e:\u003coptional method\u003e\u0027 works in some cases but not all cases where it should theoretically work. Odds are someone will file a bug saying it doesn\u0027t work every so often and I\u0027d rather not respond this particular edge case is unsupported continuously.",
+      "parentUuid": "4412939f_e1eae4e0",
+      "range": {
+        "startLine": 10,
+        "startChar": 29,
+        "endLine": 10,
+        "endChar": 54
+      },
+      "revId": "2730cc24c037921807fca02b3de1fc0241fe0d29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "98d04842_e4d20722",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
