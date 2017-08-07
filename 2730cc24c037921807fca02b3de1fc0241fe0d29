@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "4412939f_e1eae4e0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-07T20:41:40Z",
+      "side": 1,
+      "message": "They will build the same thing, but saying \"build me everything defined in the directories under where the framework module is defined\" doesn\u0027t have much meaning, because the modules under frameworks/base is basically an implementation detail.  It is fairly specific to the CTS layout that building everything under a module\u0027s directory is required to make the test work.\n\nI think the correct solution is for the CtsOsHostTestCases module to depend on its test apps using LOCAL_REQUIRED_MODULES :\u003d",
+      "parentUuid": "7b16e16a_7a667877",
+      "range": {
+        "startLine": 10,
+        "startChar": 29,
+        "endLine": 10,
+        "endChar": 54
+      },
+      "revId": "2730cc24c037921807fca02b3de1fc0241fe0d29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "98d04842_e4d20722",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
