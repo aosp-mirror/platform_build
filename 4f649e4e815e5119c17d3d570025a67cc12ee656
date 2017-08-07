@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "467e429d_930d5998",
+        "filename": "core/cleanspec.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-07T22:06:06Z",
+      "side": 1,
+      "message": "This can be:\n\n  $(file \u003c$(SOONG_OUT_DIR)/module_paths/CleanSpec.mk.list)",
+      "range": {
+        "startLine": 67,
+        "startChar": 4,
+        "endLine": 67,
+        "endChar": 64
+      },
+      "revId": "4f649e4e815e5119c17d3d570025a67cc12ee656",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
