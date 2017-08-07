@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "a8dba526_2a4d9664",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-07T19:00:06Z",
+      "side": 1,
+      "message": "This is kind of a strange target, and very specific to the way these modules are laid out.  For example, m -j MODULES-UNDER-framework is going to build all sorts of random tools, not just tests.\n\nCould you get the mapping from module name to source directory from $OUT/module-info.json instead?",
+      "range": {
+        "startLine": 10,
+        "startChar": 29,
+        "endLine": 10,
+        "endChar": 54
+      },
+      "revId": "2730cc24c037921807fca02b3de1fc0241fe0d29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "98d04842_e4d20722",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-07T19:00:06Z",
+      "side": 1,
+      "message": "MODULES-UNDER-CtsOsHostTestCases?",
+      "range": {
+        "startLine": 14,
+        "startChar": 11,
+        "endLine": 14,
+        "endChar": 29
+      },
+      "revId": "2730cc24c037921807fca02b3de1fc0241fe0d29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "057ef31c_1113642b",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
@@ -13,6 +59,29 @@
       "writtenOn": "2017-08-04T19:14:06Z",
       "side": 1,
       "message": "It looks like this target accepts a module name, correct? \nMaybe reword to \"under the path of the given module name\"?",
+      "revId": "2730cc24c037921807fca02b3de1fc0241fe0d29",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "873c0e90_6c55036b",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-07T19:00:06Z",
+      "side": 1,
+      "message": "The distinction between MODULES-UNDER and MODULES-IN is confusing.  Just seeing the names, I would expect MODULES-IN to build things in but not under a directory, and MODULES-UNDER to build thing in and under a directory.",
+      "range": {
+        "startLine": 383,
+        "startChar": 0,
+        "endLine": 383,
+        "endChar": 13
+      },
       "revId": "2730cc24c037921807fca02b3de1fc0241fe0d29",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
