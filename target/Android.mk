@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010 The Android Open Source Project
+# Copyright (C) 2017 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,6 +18,6 @@ LOCAL_PATH := $(call my-dir)
 
 # Only if this Android.mk was included not by a symlink should it be used.
 # This facilitates the transition away from symlinks: b/64397960
-ifeq ($(LOCAL_PATH),build/make/tools)
-include $(call all-makefiles-under,$(LOCAL_PATH))
+ifeq ($(LOCAL_PATH),build/make/target)
+include $(call first-makefiles-under,$(LOCAL_PATH))
 endif
