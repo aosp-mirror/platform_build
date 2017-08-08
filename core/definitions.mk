@@ -2515,7 +2515,7 @@ $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) echo unsupported options JAR_EXCLU
 $(if $(PRIVATE_JAR_MANIFEST), $(hide) echo unsupported options JAR_MANIFEST in $@; exit 53)
 endef
 
-define desugar-classpath
+define desugar-bootclasspath
 $(filter-out -classpath -bootclasspath "",$(subst :,$(space),$(1)))
 endef
 
