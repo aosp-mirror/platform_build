@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "aa9536ef_41d125e7",
+        "filename": "README.txt",
+        "patchSetId": 9
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-08-09T19:39:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47e01198_df7d81ba",
+      "range": {
+        "startLine": 26,
+        "startChar": 63,
+        "endLine": 26,
+        "endChar": 77
+      },
+      "revId": "cc3157a8da3e7ccc9b9dc05a5af56840a5ba913f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6da94406_a34c0a67",
         "filename": "README.txt",
         "patchSetId": 9
@@ -36,6 +60,30 @@
       "writtenOn": "2017-08-09T05:06:42Z",
       "side": 1,
       "message": "Move this to the prose instead of a comment",
+      "range": {
+        "startLine": 32,
+        "startChar": 37,
+        "endLine": 32,
+        "endChar": 78
+      },
+      "revId": "cc3157a8da3e7ccc9b9dc05a5af56840a5ba913f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e6e621aa_d32e636c",
+        "filename": "README.txt",
+        "patchSetId": 9
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-08-09T19:39:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6da94406_a34c0a67",
       "range": {
         "startLine": 32,
         "startChar": 37,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "932de124_cb9599dc",
+        "filename": "README.txt",
+        "patchSetId": 9
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-08-09T19:39:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "73ac3659_68aba022",
+      "range": {
+        "startLine": 56,
+        "startChar": 14,
+        "endLine": 56,
+        "endChar": 33
+      },
+      "revId": "cc3157a8da3e7ccc9b9dc05a5af56840a5ba913f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "272b25f8_7f34dddb",
         "filename": "README.txt",
         "patchSetId": 9
@@ -82,6 +154,30 @@
       "writtenOn": "2017-08-09T05:06:42Z",
       "side": 1,
       "message": "I_AM_A_MAKE_VAR",
+      "range": {
+        "startLine": 73,
+        "startChar": 42,
+        "endLine": 73,
+        "endChar": 58
+      },
+      "revId": "cc3157a8da3e7ccc9b9dc05a5af56840a5ba913f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c34210d1_a09b4414",
+        "filename": "README.txt",
+        "patchSetId": 9
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-08-09T19:39:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "272b25f8_7f34dddb",
       "range": {
         "startLine": 73,
         "startChar": 42,
