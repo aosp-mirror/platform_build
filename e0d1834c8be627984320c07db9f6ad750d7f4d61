@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf783d7a_e79cdd4b",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-09T23:06:17Z",
+      "side": 1,
+      "message": "If other parts of the build system support them then this one can be modified to support it too, no need for the extra variable.",
+      "range": {
+        "startLine": 40,
+        "startChar": 33,
+        "endLine": 40,
+        "endChar": 58
+      },
+      "revId": "e0d1834c8be627984320c07db9f6ad750d7f4d61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c83ff039_db909a3f",
+        "filename": "core/combo/arch/arm/armv8-a.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-09T23:06:17Z",
+      "side": 1,
+      "message": "ARMv8-a",
+      "range": {
+        "startLine": 2,
+        "startChar": 30,
+        "endLine": 2,
+        "endChar": 71
+      },
+      "revId": "e0d1834c8be627984320c07db9f6ad750d7f4d61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d51971b_63e250fb",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-09T23:06:17Z",
+      "side": 1,
+      "message": "Fix this too",
+      "revId": "e0d1834c8be627984320c07db9f6ad750d7f4d61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
