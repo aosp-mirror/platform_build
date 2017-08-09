@@ -79,7 +79,7 @@ endif
 # When you change PLATFORM_VERSION for a given PLATFORM_SDK_VERSION
 # please add that PLATFORM_VERSION to the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
-PLATFORM_VERSION.OPD1 := v8.0.0
+PLATFORM_VERSION.OPD1 := 8.0.0
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
