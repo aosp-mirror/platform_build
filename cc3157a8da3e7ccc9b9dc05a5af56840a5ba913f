@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47e01198_df7d81ba",
+        "filename": "README.txt",
+        "patchSetId": 9
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-09T05:06:42Z",
+      "side": 1,
+      "message": "a system image -\u003e the images.  By default it builds all the images",
+      "range": {
+        "startLine": 26,
+        "startChar": 63,
+        "endLine": 26,
+        "endChar": 77
+      },
+      "revId": "cc3157a8da3e7ccc9b9dc05a5af56840a5ba913f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6da94406_a34c0a67",
+        "filename": "README.txt",
+        "patchSetId": 9
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-09T05:06:42Z",
+      "side": 1,
+      "message": "Move this to the prose instead of a comment",
+      "range": {
+        "startLine": 32,
+        "startChar": 37,
+        "endLine": 32,
+        "endChar": 78
+      },
+      "revId": "cc3157a8da3e7ccc9b9dc05a5af56840a5ba913f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "73ac3659_68aba022",
+        "filename": "README.txt",
+        "patchSetId": 9
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-09T05:06:42Z",
+      "side": 1,
+      "message": "I\u0027d take this whole paragraph out, but any tool would browse the blueprint files or metadata like $OUT/module-info.json, and not the ninja file directly.",
+      "range": {
+        "startLine": 56,
+        "startChar": 14,
+        "endLine": 56,
+        "endChar": 33
+      },
+      "revId": "cc3157a8da3e7ccc9b9dc05a5af56840a5ba913f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "272b25f8_7f34dddb",
+        "filename": "README.txt",
+        "patchSetId": 9
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-09T05:06:42Z",
+      "side": 1,
+      "message": "I_AM_A_MAKE_VAR",
+      "range": {
+        "startLine": 73,
+        "startChar": 42,
+        "endLine": 73,
+        "endChar": 58
+      },
+      "revId": "cc3157a8da3e7ccc9b9dc05a5af56840a5ba913f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
