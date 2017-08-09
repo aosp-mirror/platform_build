@@ -1,7 +1,13 @@
 function hmm() {
 cat <<EOF
+
+Run "m help" for help with the build system itself.
+
 Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
 - lunch:     lunch <product_name>-<build_variant>
+             Selects <product_name> as the product to build, and <build_variant> as the variant to
+             build, and stores those selections in the environment to be read by subsequent
+             invocations of 'm' etc.
 - tapas:     tapas [<App1> <App2> ...] [arm|x86|mips|armv5|arm64|x86_64|mips64] [eng|userdebug|user]
 - croot:     Changes directory to the top of the tree.
 - m:         Makes from the top of the tree.
