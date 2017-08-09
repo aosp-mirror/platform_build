@@ -34,6 +34,7 @@ PRODUCT_LOCALES := \
         de_DE \
         el_GR \
         en_AU \
+        en_CA \
         en_GB \
         en_IN \
         en_XA \
