@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "efdf401c_fdec5e57",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-10T04:09:07Z",
+      "side": 1,
+      "message": "cortex-a53.a57 should be in this list too",
+      "revId": "067c9a950b9a6daa7836965a3726e946ea310fad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ca8610bd_40c6748a",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-10T04:09:07Z",
+      "side": 1,
+      "message": "Use filter instead of findstring",
+      "range": {
+        "startLine": 41,
+        "startChar": 10,
+        "endLine": 41,
+        "endChar": 20
+      },
+      "revId": "067c9a950b9a6daa7836965a3726e946ea310fad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
