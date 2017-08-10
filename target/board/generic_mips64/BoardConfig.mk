@@ -62,6 +62,7 @@ ifeq ($(HOST_OS),linux)
 endif
 
 TARGET_USES_HWC2 := true
+NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # Build OpenGLES emulation guest and host libraries
 BUILD_EMULATOR_OPENGL := true
@@ -83,6 +84,7 @@ BOARD_CACHEIMAGE_PARTITION_SIZE := 69206016
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 
 BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
 

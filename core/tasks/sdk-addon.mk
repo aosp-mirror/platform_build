@@ -64,6 +64,7 @@ endif
 # Files copied in the system-image directory
 files_to_copy += \
 	$(addon_dir_img):$(INSTALLED_QEMU_SYSTEMIMAGE):images/$(TARGET_CPU_ABI)/system.img \
+	$(addon_dir_img):$(INSTALLED_QEMU_VENDORIMAGE):images/$(TARGET_CPU_ABI)/vendor.img \
 	$(addon_dir_img):$(BUILT_USERDATAIMAGE_TARGET):images/$(TARGET_CPU_ABI)/userdata.img \
 	$(addon_dir_img):$(BUILT_RAMDISK_TARGET):images/$(TARGET_CPU_ABI)/ramdisk.img \
 	$(addon_dir_img):$(PRODUCT_OUT)/system/build.prop:images/$(TARGET_CPU_ABI)/build.prop \
@@ -114,9 +115,10 @@ $(full_target): $(sdk_addon_deps) | $(ACP)
 	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_STAGING_DIR)/.. && zip -rqX $$F $(notdir $(PRIVATE_STAGING_DIR)) )
 
 $(full_target_img): PRIVATE_STAGING_DIR := $(call append-path,$(staging),$(addon_dir_img))/images/$(TARGET_CPU_ABI)
-$(full_target_img): $(full_target) $(addon_img_source_prop)
+$(full_target_img): $(full_target) $(addon_img_source_prop) | $(ACP)
 	@echo Packaging SDK Addon System-Image: $@
 	$(hide) mkdir -p $(dir $@)
+	$(ACP) -r $(PRODUCT_OUT)/data $(PRIVATE_STAGING_DIR)/data
 	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_STAGING_DIR)/.. && zip -rqX $$F $(notdir $(PRIVATE_STAGING_DIR)) )
 
 

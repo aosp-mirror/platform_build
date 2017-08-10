@@ -32,6 +32,7 @@ WITH_DEXPREOPT_BOOT_IMG_ONLY ?= false
 endif
 
 TARGET_USES_HWC2 := true
+NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # Build OpenGLES emulation host and guest libraries
 BUILD_EMULATOR_OPENGL := true
@@ -54,6 +55,7 @@ BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
+DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 
 BOARD_SEPOLICY_DIRS += \
         build/target/board/generic/sepolicy \
