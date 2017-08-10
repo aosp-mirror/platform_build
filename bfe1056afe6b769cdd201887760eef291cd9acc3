@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26f3859b_3d3996b6",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-10T01:21:33Z",
+      "side": 1,
+      "message": "I don\u0027t think you need the SOONG_ prefix",
+      "revId": "bfe1056afe6b769cdd201887760eef291cd9acc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
