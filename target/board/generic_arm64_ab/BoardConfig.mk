@@ -17,6 +17,9 @@
 # Common boardconfig settings for generic AOSP products targetting mobile
 # (phone/table) devices.
 
+# System properties
+TARGET_SYSTEM_PROP := build/make/target/board/treble_system.prop
+
 # Bootloader is not part of generic AOSP image
 TARGET_NO_BOOTLOADER := true
 
