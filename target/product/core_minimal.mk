@@ -107,7 +107,8 @@ PRODUCT_BOOT_JARS := \
 PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service \
-    wifi-service
+    wifi-service \
+    com.android.location.provider \
 
 # The set of packages whose code can be loaded by the system server.
 PRODUCT_SYSTEM_SERVER_APPS += \
