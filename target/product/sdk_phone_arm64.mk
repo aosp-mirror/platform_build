@@ -46,3 +46,5 @@ PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_arm64
 PRODUCT_DEVICE := generic_arm64
 PRODUCT_MODEL := Android SDK built for arm64
+
+
