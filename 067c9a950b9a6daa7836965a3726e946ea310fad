@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "421b41c7_095520de",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2017-08-10T08:18:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "efdf401c_fdec5e57",
+      "revId": "067c9a950b9a6daa7836965a3726e946ea310fad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ca8610bd_40c6748a",
         "filename": "core/combo/TARGET_linux-arm.mk",
         "patchSetId": 6
@@ -30,6 +48,30 @@
       "writtenOn": "2017-08-10T04:09:07Z",
       "side": 1,
       "message": "Use filter instead of findstring",
+      "range": {
+        "startLine": 41,
+        "startChar": 10,
+        "endLine": 41,
+        "endChar": 20
+      },
+      "revId": "067c9a950b9a6daa7836965a3726e946ea310fad",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c33dc514_e6b37909",
+        "filename": "core/combo/TARGET_linux-arm.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2017-08-10T08:18:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ca8610bd_40c6748a",
       "range": {
         "startLine": 41,
         "startChar": 10,
