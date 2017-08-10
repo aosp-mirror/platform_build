@@ -16,6 +16,24 @@
       "revId": "bfe1056afe6b769cdd201887760eef291cd9acc3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59fcb527_ef696252",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-08-10T01:29:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "26f3859b_3d3996b6",
+      "revId": "bfe1056afe6b769cdd201887760eef291cd9acc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
