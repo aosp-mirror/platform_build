@@ -55,6 +55,10 @@ TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_VARIANT := generic
 
+# Enable A/B update
+TARGET_NO_RECOVERY := true
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1610612736
 
 # TODO(b/35790399): remove when b/35790399 is fixed.
