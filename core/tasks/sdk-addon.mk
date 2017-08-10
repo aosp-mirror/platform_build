@@ -64,6 +64,7 @@ endif
 # Files copied in the system-image directory
 files_to_copy += \
 	$(addon_dir_img):$(INSTALLED_QEMU_SYSTEMIMAGE):images/$(TARGET_CPU_ABI)/system.img \
+	$(addon_dir_img):$(INSTALLED_QEMU_VENDORIMAGE):images/$(TARGET_CPU_ABI)/vendor.img \
 	$(addon_dir_img):$(BUILT_USERDATAIMAGE_TARGET):images/$(TARGET_CPU_ABI)/userdata.img \
 	$(addon_dir_img):$(BUILT_RAMDISK_TARGET):images/$(TARGET_CPU_ABI)/ramdisk.img \
 	$(addon_dir_img):$(PRODUCT_OUT)/system/build.prop:images/$(TARGET_CPU_ABI)/build.prop \
@@ -117,6 +118,7 @@ $(full_target_img): PRIVATE_STAGING_DIR := $(call append-path,$(staging),$(addon
 $(full_target_img): $(full_target) $(addon_img_source_prop) | $(SOONG_ZIP)
 	@echo Packaging SDK Addon System-Image: $@
 	$(hide) mkdir -p $(dir $@)
+	$(ACP) -r $(PRODUCT_OUT)/data $(PRIVATE_STAGING_DIR)/data
 	$(hide) $(SOONG_ZIP) -o $@ -C $(dir $(PRIVATE_STAGING_DIR)) -D $(PRIVATE_STAGING_DIR)
 
 
