@@ -32,6 +32,11 @@ else
     my_embed_jni := true
   endif
 endif
+# If we're installing this APP as a compressed module, we include all JNI libraries
+# in the compressed artifact, rather than as separate files on the partition in question.
+ifdef LOCAL_COMPRESSED_MODULE
+my_embed_jni := true
+endif
 
 jni_shared_libraries :=
 jni_shared_libraries_abis :=
