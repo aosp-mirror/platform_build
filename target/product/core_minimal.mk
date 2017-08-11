@@ -144,7 +144,7 @@ PRODUCT_COPY_FILES += \
 
 # Enable boot.oat filtering of compiled classes to reduce boot.oat size. b/28026683
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
-    frameworks/base/compiled-classes-phone:system/etc/compiled-classes)
+    frameworks/base/config/compiled-classes-phone:system/etc/compiled-classes)
 
 # Enable dirty image object binning to reduce dirty pages in the image.
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
