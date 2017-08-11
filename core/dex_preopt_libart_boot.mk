@@ -37,6 +37,12 @@ ifneq ($(COMPILED_CLASSES),)
   COMPILED_CLASSES_FLAGS := --compiled-classes=$(COMPILED_CLASSES)
 endif
 
+# If we have a dirty-image-objects file, create a parameter.
+DIRTY_IMAGE_OBJECTS_FLAGS :=
+ifneq ($(DIRTY_IMAGE_OBJECTS),)
+  DIRTY_IMAGE_OBJECTS_FLAGS := --dirty-image-objects=$(DIRTY_IMAGE_OBJECTS)
+endif
+
 # The rule to install boot.art
 # Depends on installed boot.oat, boot-*.art, boot-*.oat
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE) : $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) | $(ACP) $($(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES)
@@ -53,6 +59,7 @@ $($(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES) : $($(my_2n
 ifeq (,$(my_out_boot_image_profile_location))
 my_boot_image_flags := $(COMPILED_CLASSES_FLAGS)
 my_boot_image_flags += --image-classes=$(PRELOADED_CLASSES)
+my_boot_image_flags += $(DIRTY_IMAGE_OBJECTS_FLAGS)
 else
 my_boot_image_flags := --compiler-filter=speed-profile
 my_boot_image_flags += --profile-file=$(my_out_boot_image_profile_location)
@@ -61,7 +68,7 @@ endif
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_BOOT_IMAGE_FLAGS := $(my_boot_image_flags)
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_2ND_ARCH_VAR_PREFIX := $(my_2nd_arch_prefix)
 # Use dex2oat debug version for better error reporting
-$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGET_BOOT_DEX_FILES) $(PRELOADED_CLASSES) $(COMPILED_CLASSES) $(DEX2OAT_DEPENDENCY) $(my_out_profile_location)
+$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGET_BOOT_DEX_FILES) $(PRELOADED_CLASSES) $(COMPILED_CLASSES) $(DIRTY_IMAGE_OBJECTS) $(DEX2OAT_DEPENDENCY) $(my_out_profile_location)
 	@echo "target dex2oat: $@"
 	@mkdir -p $(dir $@)
 	@mkdir -p $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))
