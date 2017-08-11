@@ -150,11 +150,5 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/compiled-classes-phone:system/etc/compiled-classes)
 
-# On userdebug builds, collect more tombstones by default.
-ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    tombstoned.max_tombstone_count=50
-endif
-
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
