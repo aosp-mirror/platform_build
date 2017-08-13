@@ -14,12 +14,7 @@
 # limitations under the License.
 #
 
-include build/make/target/board/treble_common_64.mk
+include build/make/target/board/treble_common.mk
 
-TARGET_CPU_ABI := x86_64
-TARGET_ARCH := x86_64
-TARGET_ARCH_VARIANT := x86_64
-
-TARGET_2ND_CPU_ABI := x86
-TARGET_2ND_ARCH := x86
-TARGET_2ND_ARCH_VARIANT := x86_64
+# Enable 64-bits binder
+TARGET_USES_64_BIT_BINDER := true

@@ -2183,7 +2183,7 @@ define unzip-jar-files
       echo Missing file $$f; \
       exit 1; \
     fi; \
-    unzip -qo $$f -d $(2); \
+    unzip -qo $$f -d $(2) -x module-info.class; \
   done
   $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,$(hide) rm -rf $(2)/META-INF)
 endef
@@ -2734,6 +2734,15 @@ $(hide) if ! $(ZIPALIGN) -c $(ZIPALIGN_PAGE_ALIGN_FLAGS) 4 $@ >/dev/null ; then 
     $@.unaligned $@.aligned; \
   mv $@.aligned $@; \
   fi
+endef
+
+# Compress a package using the standard gzip algorithm.
+define compress-package
+$(hide) \
+  mv $@ $@.uncompressed; \
+  $(MINIGZIP) -c $@.uncompressed > $@.compressed; \
+  rm -f $@.uncompressed; \
+  mv $@.compressed $@;
 endef
 
 # Remove dynamic timestamps from packages
