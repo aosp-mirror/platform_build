@@ -14,40 +14,7 @@
 # limitations under the License.
 #
 
-# Common boardconfig settings for generic AOSP products targetting mobile
-# (phone/table) devices.
-
-# System properties
-TARGET_SYSTEM_PROP := build/make/target/board/treble_system.prop
-
-# Bootloader is not part of generic AOSP image
-TARGET_NO_BOOTLOADER := true
-
-# Kernel is also not part of generic AOSP image
-TARGET_NO_KERNEL := true
-
-# system.img is always ext4 with sparse option
-TARGET_USERIMAGES_USE_EXT4 := true
-TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
-TARGET_USES_MKE2FS := true
-
-# Enable dex pre-opt to speed up initial boot
-ifeq ($(HOST_OS),linux)
-  ifeq ($(WITH_DEXPREOPT),)
-    WITH_DEXPREOPT := true
-    WITH_DEXPREOPT_PIC := true
-    ifneq ($(TARGET_BUILD_VARIANT),user)
-      # Retain classes.dex in APK's for non-user builds
-      DEX_PREOPT_DEFAULT := nostripping
-    endif
-  endif
-endif
-
-# Generic AOSP image always requires separate vendor.img
-TARGET_COPY_OUT_VENDOR := vendor
-
-# Generic AOSP image does NOT support HWC1
-TARGET_USES_HWC2 := true
+include build/make/target/board/treble_common_64.mk
 
 TARGET_CPU_ABI := x86_64
 TARGET_ARCH := x86_64
@@ -57,15 +24,6 @@ TARGET_2ND_CPU_ABI := x86
 TARGET_2ND_ARCH := x86
 TARGET_2ND_ARCH_VARIANT := x86_64
 
-TARGET_USES_64_BIT_BINDER := true
-
 # Enable A/B update
+TARGET_NO_RECOVERY := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
-
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1610612736	# 1.5 GB
-
-# TODO(b/35790399): remove when b/35790399 is fixed.
-BOARD_NAND_SPARE_SIZE := 0
-BOARD_FLASH_BLOCK_SIZE := 512
-
-BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true

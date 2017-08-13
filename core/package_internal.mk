@@ -215,8 +215,19 @@ R_file_stamp := $(intermediates.COMMON)/src/R.stamp
 LOCAL_INTERMEDIATE_TARGETS += $(R_file_stamp)
 endif
 
+ifdef LOCAL_COMPRESSED_MODULE
+ifneq (true,$(LOCAL_COMPRESSED_MODULE))
+$(call pretty-error, Unknown value for LOCAL_COMPRESSED_MODULE $(LOCAL_COMPRESSED_MODULE))
+endif
+endif
+
+ifdef LOCAL_COMPRESSED_MODULE
+LOCAL_BUILT_MODULE_STEM := package.apk.gz
+LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk.gz
+else  # !LOCAL_COMPRESSED_MODULE
 LOCAL_BUILT_MODULE_STEM := package.apk
 LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
+endif
 
 LOCAL_PROGUARD_ENABLED:=$(strip $(LOCAL_PROGUARD_ENABLED))
 ifndef LOCAL_PROGUARD_ENABLED
@@ -307,6 +318,12 @@ LOCAL_RESOURCE_DIR := $(data_binding_res_out)
 LOCAL_AAPT_FLAGS += --auto-add-overlay --extra-packages com.android.databinding.library
 endif  # LOCAL_DATA_BINDING
 
+# If the module is a compressed module, we don't pre-opt it because its final
+# installation location will be the data partition.
+ifdef LOCAL_COMPRESSED_MODULE
+LOCAL_DEX_PREOPT := false
+endif
+
 include $(BUILD_SYSTEM)/android_manifest.mk
 
 #################################
@@ -358,6 +375,10 @@ installed_apk_splits :=
 my_apk_split_configs :=
 
 ifdef LOCAL_PACKAGE_SPLITS
+ifdef LOCAL_COMPRESSED_MODULE
+$(error $(LOCAL_MODULE): LOCAL_COMPRESSED_MODULE is not currently supported for split installs)
+endif  # LOCAL_COMPRESSED_MODULE
+
 my_apk_split_configs := $(LOCAL_PACKAGE_SPLITS)
 my_split_suffixes := $(subst $(comma),_,$(my_apk_split_configs))
 built_apk_splits := $(foreach s,$(my_split_suffixes),$(intermediates)/package_$(s).apk)
@@ -571,6 +592,9 @@ $(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2) | $(ACP)
 else
 $(LOCAL_BUILT_MODULE) : $(all_res_assets) $(full_android_manifest) $(AAPT)
 endif
+ifdef LOCAL_COMPRESSED_MODULE
+$(LOCAL_BUILT_MODULE) : $(MINIGZIP)
+endif
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
 ifdef LOCAL_USE_AAPT2
 	$(call copy-file-to-new-target)
@@ -606,6 +630,9 @@ ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 endif
 endif
 	$(sign-package)
+ifdef LOCAL_COMPRESSED_MODULE
+	$(compress-package)
+endif  # LOCAL_COMPRESSED_MODULE
 
 ###############################
 ## Build dpi-specific apks, if it's apps_only build.
