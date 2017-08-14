@@ -1,12 +1,9 @@
 # qemu-props service:  Sets system properties on boot.
 type qemu_props, domain;
-type qemu_props_exec, exec_type, file_type;
+type qemu_props_exec, vendor_file_type, exec_type, file_type;
 
 init_daemon_domain(qemu_props)
 
-# Set properties.
 set_prop(qemu_props, qemu_prop)
 set_prop(qemu_props, dalvik_prop)
-set_prop(qemu_props, config_prop)
-set_prop(qemu_props, opengles_prop)
 set_prop(qemu_props, qemu_cmdline)
