@@ -3,4 +3,3 @@
 #
 
 rild.libpath=/vendor/lib64/libreference-ril.so
-rild.libargs=-d /dev/ttyS0
