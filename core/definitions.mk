@@ -2701,14 +2701,10 @@ define sign-package
 $(call sign-package-arg,$@)
 endef
 
-# signapk uses internal APIs from sun.security.{pkcs,x509}; see http://b/37137869
 # $(1): the package file we are signing.
 define sign-package-arg
 $(hide) mv $(1) $(1).unsigned
-$(hide) $(JAVA) -Djava.library.path=$(SIGNAPK_JNI_LIBRARY_PATH) \
-    $(if $(EXPERIMENTAL_USE_OPENJDK9),--add-exports java.base/sun.security.pkcs=ALL-UNNAMED,) \
-    $(if $(EXPERIMENTAL_USE_OPENJDK9),--add-exports java.base/sun.security.x509=ALL-UNNAMED,) \
-    -jar $(SIGNAPK_JAR) \
+$(hide) $(JAVA) -Djava.library.path=$(SIGNAPK_JNI_LIBRARY_PATH) -jar $(SIGNAPK_JAR) \
     $(PRIVATE_CERTIFICATE) $(PRIVATE_PRIVATE_KEY) \
     $(PRIVATE_ADDITIONAL_CERTIFICATES) $(1).unsigned $(1).signed
 $(hide) mv $(1).signed $(1)
