@@ -419,8 +419,10 @@ package-stats: $(PACKAGE_STATS_FILE)
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
-define _apkcerts_echo_with_newline
-$(hide) echo $(1)
+define _apkcerts_write_line
+$(hide) echo -n 'name="$(1).apk" certificate="$2" private_key="$3"' >> $5
+$(if $(4), $(hide) echo -n ' compressed="$4"' >> $5)
+$(hide) echo '' >> $5
 
 endef
 
@@ -440,12 +442,8 @@ $(APKCERTS_FILE):
 	@rm -f $@
 	$(foreach p,$(PACKAGES),\
 	  $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
-	    $(call _apkcerts_echo_with_newline,\
-	      'name="$(p).apk" certificate="EXTERNAL" \
-	      private_key=""' >> $@),\
-	    $(call _apkcerts_echo_with_newline,\
-	      'name="$(p).apk" certificate="$(PACKAGES.$(p).CERTIFICATE)" \
-	      private_key="$(PACKAGES.$(p).PRIVATE_KEY)"' >> $@)))
+	    $(call _apkcerts_write_line,$(p),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$@),\
+	    $(call _apkcerts_write_line,$(p),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$@)))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
 
