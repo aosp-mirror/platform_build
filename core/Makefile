@@ -1027,6 +1027,23 @@ $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
 $(if $(2),$(hide) $(foreach kv,$(2),echo "$(kv)" >> $(1);))
 endef
 
+# $(1): modules list
+# $(2): output dir
+# $(3): mount point
+# $(4): staging dir
+# Depmod requires a well-formed kernel version so 0.0 is used as a placeholder.
+define build-image-kernel-modules
+    $(hide) rm -rf $(2)/lib/modules
+    $(hide) mkdir -p $(2)/lib/modules
+    $(hide) cp $(1) $(2)/lib/modules/
+    $(hide) rm -rf $(4)
+    $(hide) mkdir -p $(4)/lib/modules/0.0/$(3)lib/modules
+    $(hide) cp $(1) $(4)/lib/modules/0.0/$(3)lib/modules
+    $(hide) $(DEPMOD) -b $(4) 0.0
+    $(hide) sed -e 's/\(.*modules.*\):/\/\1:/g' -e 's/ \([^ ]*modules[^ ]*\)/ \/\1/g' $(4)/lib/modules/0.0/modules.dep > $(2)/lib/modules/modules.dep
+    $(hide) cp $(4)/lib/modules/0.0/modules.alias $(2)/lib/modules
+endef
+
 # -----------------------------------------------------------------
 # Recovery image
 
@@ -1160,22 +1177,6 @@ $(RECOVERY_INSTALL_OTA_KEYS): $(OTA_PUBLIC_KEYS) $(DUMPKEY_JAR) $(extra_keys)
 	$(JAVA) -jar $(DUMPKEY_JAR) $(PRIVATE_OTA_PUBLIC_KEYS) $(extra_keys) > $@
 
 RECOVERYIMAGE_ID_FILE := $(PRODUCT_OUT)/recovery.id
-
-# $(1): modules list
-# $(2): output dir
-# $(3): mount point
-# $(4): staging dir
-# Depmod requires a well-formed kernel version so 0.0 is used as a placeholder.
-define build-image-kernel-modules
-    $(hide) rm -rf $(2)/lib/modules
-    $(hide) mkdir -p $(2)/lib/modules
-    $(hide) cp $(1) $(2)/lib/modules/
-    $(hide) rm -rf $(4)
-    $(hide) mkdir -p $(4)/lib/modules/0.0/$(3)lib/modules
-    $(hide) cp $(1) $(4)/lib/modules/0.0/$(3)lib/modules
-    $(hide) $(DEPMOD) -b $(4) 0.0
-    $(hide) sed -e 's/\(.*modules.*\):/\/\1:/g' -e 's/ \([^ ]*modules[^ ]*\)/ \/\1/g' $(4)/lib/modules/0.0/modules.dep > $(2)/lib/modules/modules.dep
-endef
 
 # $(1): output file
 define build-recoveryimage-target
