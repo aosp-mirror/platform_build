@@ -240,7 +240,7 @@ VENDOR_BUILDINFO_SH := build/tools/vendor_buildinfo.sh
 # if it isn't already a part of the flavor (via a dedicated lunch
 # config for example).
 TARGET_BUILD_FLAVOR := $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)
-ifdef SANITIZE_TARGET
+ifneq (, $(filter address, $(SANITIZE_TARGET)))
 ifeq (,$(findstring _asan,$(TARGET_BUILD_FLAVOR)))
 TARGET_BUILD_FLAVOR := $(TARGET_BUILD_FLAVOR)_asan
 endif
