@@ -7,16 +7,29 @@
 /dev/block/vda               u:object_r:system_block_device:s0
 /dev/block/vdb               u:object_r:cache_block_device:s0
 /dev/block/vdc               u:object_r:userdata_block_device:s0
+/dev/block/vdd               u:object_r:metadata_block_device:s0
+/dev/block/vde               u:object_r:system_block_device:s0
 
 /dev/goldfish_pipe           u:object_r:qemu_device:s0
 /dev/goldfish_sync           u:object_r:qemu_device:s0
 /dev/qemu_.*                 u:object_r:qemu_device:s0
-/dev/socket/qemud            u:object_r:qemud_socket:s0
 /dev/ttyGF[0-9]*             u:object_r:serial_device:s0
 /dev/ttyS2                   u:object_r:console_device:s0
-/system/bin/qemud            u:object_r:qemud_exec:s0
 /sys/qemu_trace(/.*)?        u:object_r:sysfs_writable:s0
-/system/etc/init.goldfish.sh u:object_r:goldfish_setup_exec:s0
-/system/vendor/bin/init.ranchu-core.sh u:object_r:goldfish_setup_exec:s0
-/system/vendor/bin/init.ranchu-net.sh u:object_r:goldfish_setup_exec:s0
-/system/bin/qemu-props       u:object_r:qemu_props_exec:s0
+/vendor/bin/init\.ranchu-core\.sh u:object_r:goldfish_setup_exec:s0
+/vendor/bin/init\.ranchu-net\.sh u:object_r:goldfish_setup_exec:s0
+/vendor/bin/qemu-props       u:object_r:qemu_props_exec:s0
+
+/vendor/bin/hw/android\.hardware\.drm@1\.0-service\.widevine          u:object_r:hal_drm_widevine_exec:s0
+
+/vendor/lib(64)?/hw/gralloc\.ranchu\.so   u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libEGL_emulation\.so          u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libGLESv1_CM_emulation\.so    u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libGLESv2_emulation\.so       u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libEGL_swiftshader\.so          u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libGLESv1_CM_swiftshader\.so    u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libGLESv2_swiftshader\.so       u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libOpenglSystemCommon\.so       u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/lib_renderControl_enc\.so       u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libGLESv1_enc\.so       u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libGLESv2_enc\.so       u:object_r:same_process_hal_file:s0
