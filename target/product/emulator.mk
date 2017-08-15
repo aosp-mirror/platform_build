@@ -36,11 +36,13 @@ PRODUCT_PACKAGES += \
     libGLESv2_emulation \
     libGLESv1_enc \
     qemu-props \
-    qemud \
     camera.goldfish \
     camera.goldfish.jpeg \
     camera.ranchu \
     camera.ranchu.jpeg \
+    keystore.goldfish \
+    keystore.ranchu \
+    gatekeeper.ranchu \
     lights.goldfish \
     gps.goldfish \
     gps.ranchu \
@@ -62,7 +64,9 @@ PRODUCT_PACKAGES += \
     android.hardware.graphics.mapper@2.0-impl \
     hwcomposer.goldfish \
     hwcomposer.ranchu \
+    sh_vendor \
     vintf \
+    toybox_vendor \
     CarrierConfig
 
 PRODUCT_PACKAGES += \
@@ -72,40 +76,78 @@ PRODUCT_PACKAGES += \
     android.hardware.soundtrigger@2.0-impl
 
 PRODUCT_PACKAGES += \
-	android.hardware.keymaster@3.0-impl \
-	android.hardware.keymaster@3.0-service
+    android.hardware.keymaster@3.0-impl \
+    android.hardware.keymaster@3.0-service
 
 PRODUCT_PACKAGES += \
     android.hardware.gnss@1.0-service \
     android.hardware.gnss@1.0-impl
 
 PRODUCT_PACKAGES += \
-	android.hardware.sensors@1.0-impl \
-	android.hardware.sensors@1.0-service
+    android.hardware.sensors@1.0-impl \
+    android.hardware.sensors@1.0-service
+
+PRODUCT_PACKAGES += \
+    android.hardware.drm@1.0-service \
+    android.hardware.drm@1.0-impl
 
 PRODUCT_PACKAGES += \
     android.hardware.power@1.0-service \
     android.hardware.power@1.0-impl
 
-# camera service treble disable until all backwards compat is complete
-PRODUCT_PROPERTY_OVERRIDES += \
-    camera.disable_treble=1
+PRODUCT_PACKAGES += \
+    camera.device@1.0-impl \
+    android.hardware.camera.provider@2.4-service \
+    android.hardware.camera.provider@2.4-impl \
+
+PRODUCT_PACKAGES += \
+    android.hardware.gatekeeper@1.0-impl \
+    android.hardware.gatekeeper@1.0-service
+
+# need this for gles libraries to load properly
+# after moving to /vendor/lib/
+PRODUCT_PACKAGES += \
+    android.hardware.renderscript@1.0.vndk-sp\
+    android.hardware.graphics.allocator@2.0.vndk-sp\
+    android.hardware.graphics.mapper@2.0.vndk-sp\
+    android.hardware.graphics.common@1.0.vndk-sp\
+    libhwbinder.vndk-sp\
+    libbase.vndk-sp\
+    libcutils.vndk-sp\
+    libhardware.vndk-sp\
+    libhidlbase.vndk-sp\
+    libhidltransport.vndk-sp\
+    libutils.vndk-sp\
+    libc++.vndk-sp\
+    libRS_internal.vndk-sp\
+    libRSDriver.vndk-sp\
+    libRSCpuRef.vndk-sp\
+    libbcinfo.vndk-sp\
+    libblas.vndk-sp\
+    libft2.vndk-sp\
+    libpng.vndk-sp\
+    libcompiler_rt.vndk-sp\
+    libbacktrace.vndk-sp\
+    libunwind.vndk-sp\
+    liblzma.vndk-sp\
+    libz.vndk-sp\
+
 
 PRODUCT_COPY_FILES += \
-    device/generic/goldfish/fstab.goldfish:root/fstab.goldfish \
-    device/generic/goldfish/init.goldfish.rc:root/init.goldfish.rc \
-    device/generic/goldfish/init.goldfish.sh:system/etc/init.goldfish.sh \
-    device/generic/goldfish/init.ranchu-core.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-core.sh \
-    device/generic/goldfish/init.ranchu-net.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-net.sh \
-    device/generic/goldfish/init.ranchu.rc:root/init.ranchu.rc \
-    device/generic/goldfish/ueventd.goldfish.rc:root/ueventd.goldfish.rc \
+    device/generic/goldfish/init.ranchu-core.sh:vendor/bin/init.ranchu-core.sh \
+    device/generic/goldfish/init.ranchu-net.sh:vendor/bin/init.ranchu-net.sh \
     device/generic/goldfish/init.ranchu.rc:root/init.ranchu.rc \
     device/generic/goldfish/fstab.ranchu:root/fstab.ranchu \
+    device/generic/goldfish/fstab.ranchu.early:root/fstab.ranchu.early \
     device/generic/goldfish/ueventd.ranchu.rc:root/ueventd.ranchu.rc \
-    device/generic/goldfish/manifest.xml:$(TARGET_COPY_OUT_VENDOR)/manifest.xml \
     device/generic/goldfish/input/goldfish_rotary.idc:system/usr/idc/goldfish_rotary.idc \
+    device/generic/goldfish/manifest.xml:$(TARGET_COPY_OUT_VENDOR)/manifest.xml \
+    device/generic/goldfish/data/etc/permissions/privapp-permissions-goldfish.xml:system/etc/permissions/privapp-permissions-goldfish.xml \
+    device/generic/goldfish/data/etc/config.ini:config.ini \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml
 
 PRODUCT_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
 
 PRODUCT_CHARACTERISTICS := emulator
+
+PRODUCT_FULL_TREBLE_OVERRIDE := true
