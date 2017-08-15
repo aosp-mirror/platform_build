@@ -19,17 +19,4 @@
 # on the generic system image, place them in build/make/target/board/
 # treble_system.prop.
 
-include build/make/target/product/treble_common_32.mk
-
-AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS := system
-PRODUCT_PACKAGES += \
-    update_engine \
-    update_verifier
-
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
-
-PRODUCT_NAME := aosp_arm_ab
-PRODUCT_DEVICE := generic_arm_ab
-PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on ARM32
+include build/make/target/product/treble_common.mk
