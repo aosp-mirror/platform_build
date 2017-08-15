@@ -19,17 +19,17 @@
 # on the generic system image, place them in build/make/target/board/
 # treble_system.prop.
 
-include build/make/target/product/treble_common_32.mk
+include build/make/target/product/treble_common.mk
 
-AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS := system
-PRODUCT_PACKAGES += \
-    update_engine \
-    update_verifier
+# For now this will allow 64-bit apps, but still compile all apps with JNI
+# for 32-bit only.
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
+# Copy the 64-bit primary, 32-bit secondary zygote startup script
+PRODUCT_COPY_FILES += system/core/rootdir/init.zygote64_32.rc:root/init.zygote64_32.rc
 
-PRODUCT_NAME := aosp_arm_ab
-PRODUCT_DEVICE := generic_arm_ab
-PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on ARM32
+# Set the zygote property to select the 64-bit primary, 32-bit secondary script
+# This line must be parsed before the one in core_minimal.mk
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote64_32
+
+TARGET_SUPPORTS_32_BIT_APPS := true
+TARGET_SUPPORTS_64_BIT_APPS := true
