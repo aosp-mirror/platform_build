@@ -22,6 +22,30 @@
       "revId": "11428ffda7370277d1c1e968697ccc34bf9825e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "484176d6_db952324",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1054,
+      "author": {
+        "id": 1057232
+      },
+      "writtenOn": "2017-08-16T23:52:15Z",
+      "side": 1,
+      "message": "I think we should use the NDK stubs. Updated in PS2.",
+      "parentUuid": "4930586e_658b00fd",
+      "range": {
+        "startLine": 1053,
+        "startChar": 0,
+        "endLine": 1054,
+        "endChar": 60
+      },
+      "revId": "11428ffda7370277d1c1e968697ccc34bf9825e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
