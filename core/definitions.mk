@@ -2183,7 +2183,8 @@ define unzip-jar-files
       echo Missing file $$f; \
       exit 1; \
     fi; \
-    unzip -qo $$f -d $(2) -x module-info.class; \
+    unzip -qo $$f -d $(2); \
+    rm -f $(2)/module-info.class; \
   done
   $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,$(hide) rm -rf $(2)/META-INF)
 endef
