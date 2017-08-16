@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c3b6acb2_3fd578b6",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-16T19:53:38Z",
+      "side": 1,
+      "message": "I\u0027d be very tempted to add \u0026\u0026 rm -rf $(EMPTY_DIRECTORY)/*",
+      "range": {
+        "startLine": 75,
+        "startChar": 35,
+        "endLine": 75,
+        "endChar": 36
+      },
+      "revId": "5141b66d75262be22fd6c0a89cb0def274e85991",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
