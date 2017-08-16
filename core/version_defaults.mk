@@ -74,7 +74,7 @@ endif
 # please add that PLATFORM_VERSION as well as clean up obsolete PLATFORM_VERSION's
 # in the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
-PLATFORM_VERSION.OPM1 := OMR1
+PLATFORM_VERSION.OPM1 := 8.1.0
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
