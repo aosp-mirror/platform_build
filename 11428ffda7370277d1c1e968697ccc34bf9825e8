@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4930586e_658b00fd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1054,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-16T23:23:08Z",
+      "side": 1,
+      "message": "Do you actually want the platform versions, or do you want to continue linking against the NDK stubs? (We build those now).\n\nEither way, this probably needs to have some new dependencies set up.",
+      "range": {
+        "startLine": 1053,
+        "startChar": 0,
+        "endLine": 1054,
+        "endChar": 60
+      },
+      "revId": "11428ffda7370277d1c1e968697ccc34bf9825e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
