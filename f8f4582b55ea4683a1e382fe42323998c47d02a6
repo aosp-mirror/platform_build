@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e734017d_66aa4fa2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1051,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2017-08-16T23:55:55Z",
+      "side": 1,
+      "message": "http://i0.kym-cdn.com/photos/images/newsfeed/000/538/731/0fc.gif",
+      "range": {
+        "startLine": 1051,
+        "startChar": 49,
+        "endLine": 1051,
+        "endChar": 53
+      },
+      "revId": "f8f4582b55ea4683a1e382fe42323998c47d02a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4af91894_7b1d6ec9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1051,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2017-08-16T23:55:55Z",
+      "side": 1,
+      "message": "Uh, not sure how this ever got here. This doesn\u0027t have libs in it.",
+      "range": {
+        "startLine": 1051,
+        "startChar": 54,
+        "endLine": 1051,
+        "endChar": 71
+      },
+      "revId": "f8f4582b55ea4683a1e382fe42323998c47d02a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1bf0b22e_1c3e055d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2017-08-16T23:55:55Z",
+      "side": 1,
+      "message": "$(LOCAL_SDK_VERSION)",
+      "range": {
+        "startLine": 1052,
+        "startChar": 40,
+        "endLine": 1052,
+        "endChar": 47
+      },
+      "revId": "f8f4582b55ea4683a1e382fe42323998c47d02a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
