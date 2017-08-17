@@ -68,6 +68,30 @@
       "revId": "f8f4582b55ea4683a1e382fe42323998c47d02a6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82b0daec_d808b298",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-17T00:07:22Z",
+      "side": 1,
+      "message": "LOCAL_ would be incorrect here, you\u0027d need to use something like PRIVATE_SDK_VERSION",
+      "parentUuid": "1bf0b22e_1c3e055d",
+      "range": {
+        "startLine": 1052,
+        "startChar": 40,
+        "endLine": 1052,
+        "endChar": 47
+      },
+      "revId": "f8f4582b55ea4683a1e382fe42323998c47d02a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
