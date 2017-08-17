@@ -16,6 +16,24 @@
       "revId": "128800f2c8d3f27d6ae29b9cb8e62cb26bcf5f2f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d730f57_52bc8d89",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 2259,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-17T22:08:05Z",
+      "side": 1,
+      "message": "This is the end ) from the $(if $(PRIVATE_JAR_MANIFEST) on line 2255.",
+      "parentUuid": "e93fc3c2_f0bab4e0",
+      "revId": "128800f2c8d3f27d6ae29b9cb8e62cb26bcf5f2f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
