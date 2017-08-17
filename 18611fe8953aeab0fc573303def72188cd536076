@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "0a1bf7b6_18c1d3c4",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 824,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2017-08-17T00:48:49Z",
+      "side": 1,
+      "message": "I don\u0027t think this should be specifically the minimum target. It should be PRIVATE_SDK_VERSION, right?\n\nIf this should be the minimum target, don\u0027t hard code it. I have a patch in flight right now that will break this.",
+      "range": {
+        "startLine": 824,
+        "startChar": 65,
+        "endLine": 824,
+        "endChar": 66
+      },
+      "revId": "18611fe8953aeab0fc573303def72188cd536076",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e7edae5c_ef8db8ae",
         "filename": "core/definitions.mk",
         "patchSetId": 4
