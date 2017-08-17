@@ -24,12 +24,14 @@ include build/make/target/product/treble_common.mk
 # For now this will allow 64-bit apps, but still compile all apps with JNI
 # for 32-bit only.
 
-# Copy the 64-bit primary, 32-bit secondary zygote startup script
-PRODUCT_COPY_FILES += system/core/rootdir/init.zygote64_32.rc:root/init.zygote64_32.rc
-
-# Set the zygote property to select the 64-bit primary, 32-bit secondary script
-# This line must be parsed before the one in core_minimal.mk
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote64_32
+# Copy different zygote settings for vendor.img to select by setting property
+# ro.zygote=zygote64_32 or ro.zygote=zygote32_64:
+#   1. 64-bit primary, 32-bit secondary OR
+#   2. 32-bit primary, 64-bit secondary
+#   3. 64-bit only is currently forbidden (b/64280459#comment6)
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/init.zygote64_32.rc:root/init.zygote64_32.rc \
+    system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc
 
 TARGET_SUPPORTS_32_BIT_APPS := true
 TARGET_SUPPORTS_64_BIT_APPS := true
