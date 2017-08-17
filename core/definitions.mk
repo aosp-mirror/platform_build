@@ -2187,6 +2187,17 @@ define call-jack
  JACK_VERSION=$(PRIVATE_JACK_VERSION) $(JACK) $(DEFAULT_JACK_EXTRA_ARGS)
 endef
 
+# Return jar arguments to compress files in a given directory
+# $(1): directory
+#
+# Returns an @-file argument that contains the output of a subshell
+# that looks like -C $(1) path/to/file1 -C $(1) path/to/file2
+# Also adds "-C out/empty ." which avoids errors in jar when
+# there are no files in the directory.
+define jar-args-sorted-files-in-directory
+    @<(find $(1) -type f | sort | $(JAR_ARGS) $(1); echo "-C $(EMPTY_DIRECTORY) .")
+endef
+
 # Common definition to invoke javac on the host and target.
 #
 # Some historical notes:
@@ -2244,9 +2255,9 @@ $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
 $(if $(PRIVATE_JAR_MANIFEST), \
     $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
             $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf && \
-        $(JAR) -cfm $@ $(dir $@)/manifest.mf \
-            -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) ., \
-    $(hide) $(JAR) -cf $@ -C $(PRIVATE_CLASS_INTERMEDIATES_DIR) .)
+        $(JAR) -cfm $@ $(dir $@)/manifest.mf, \
+    $(hide) $(JAR) -cf $@) \
+        $(call jar-args-sorted-files-in-directory,$(PRIVATE_CLASS_INTERMEDIATES_DIR))
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 endef
 
@@ -2693,7 +2704,7 @@ define add-jar-resources-to-package
   rm -rf $(3)
   mkdir -p $(3)
   unzip -qo $(2) -d $(3) $$(zipinfo -1 $(2) | grep -v -E "\.class$$")
-  $(JAR) uf $(1) -C $(3) .
+  $(JAR) uf $(1) $(call jar-args-sorted-files-in-directory,$(3))
 endef
 
 # Sign a package using the specified key/cert.
