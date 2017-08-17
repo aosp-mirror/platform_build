@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1575fd85_478c2a7c",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-17T23:37:00Z",
+      "side": 1,
+      "message": "Just use MIN_SUPPORTED_SDK_VERSION",
+      "range": {
+        "startLine": 107,
+        "startChar": 28,
+        "endLine": 107,
+        "endChar": 59
+      },
+      "revId": "afb270e7bc4494f87a7bb3f6f80dbe85a9252d46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
