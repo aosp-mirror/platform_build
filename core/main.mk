@@ -70,6 +70,10 @@ else
 DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
 endif
 
+# Make an empty directory, which can be used to make empty jars
+EMPTY_DIRECTORY := $(OUT_DIR)/empty
+$(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
+
 # CTS-specific config.
 -include cts/build/config.mk
 # VTS-specific config.
