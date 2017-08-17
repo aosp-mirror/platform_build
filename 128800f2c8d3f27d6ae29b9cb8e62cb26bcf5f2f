@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e93fc3c2_f0bab4e0",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 2259,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-08-17T19:27:41Z",
+      "side": 1,
+      "message": "It seems that \")\" is redundant here.",
+      "revId": "128800f2c8d3f27d6ae29b9cb8e62cb26bcf5f2f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
