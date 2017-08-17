@@ -13,9 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
+# BUILD_ID is of the form NPM1.YYMMDD.nnn
+#
+# N - dessert designator
+# P - vertical, or category of release
+# M1 - release abbreviation
+# YY - year
+# MM - month
+# DD - day
+# nnn - the patch sequence, starting at 001 for the initial snap
+#
+# OPAT.161221.002
+#
+# See also:
+#
+# https://docs.google.com/document/d/17eqVTxMc2do05T6qwt4eASVyxy8u3Cme4u4fVD5q0VM/view#
+#
 
-export BUILD_ID=OPR1.170623.023
+export BUILD_ID=OPR6.170623.013
