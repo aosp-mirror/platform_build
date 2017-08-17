@@ -71,6 +71,7 @@ $(full_classes_compiled_jar): \
         $(proto_java_sources_file_stamp) \
         $(annotation_processor_deps) \
         $(NORMALIZE_PATH) \
+        $(JAR_ARGS) \
         $(ZIPTIME) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES) \
         | $(SOONG_JAVAC_WRAPPER)
