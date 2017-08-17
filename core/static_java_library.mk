@@ -199,6 +199,7 @@ $(built_aar): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
 $(built_aar): PRIVATE_CLASSES_JAR := $(aar_classes_jar)
 $(built_aar): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
 $(built_aar): PRIVATE_R_TXT := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/R.txt
+$(built_aar): $(JAR_ARGS)
 $(built_aar) : $(aar_classes_jar) $(full_android_manifest)
 	@echo "target AAR:  $(PRIVATE_MODULE) ($@)"
 	$(hide) rm -rf $(dir $@)aar && mkdir -p $(dir $@)aar/res
@@ -208,7 +209,7 @@ $(built_aar) : $(aar_classes_jar) $(full_android_manifest)
 	$(hide) $(foreach res,$(PRIVATE_RESOURCE_DIR),cp -Rfn $(res)/* $(dir $@)aar/res;)
 	$(hide) cp $(PRIVATE_R_TXT) $(dir $@)aar/R.txt
 	$(hide) $(JAR) -cMf $@ \
-	  -C $(dir $@)aar .
+	  $(call jar-args-sorted-files-in-directory,(dir $@)aar)
 
 # Register the aar file.
 ALL_MODULES.$(LOCAL_MODULE).AAR := $(built_aar)
