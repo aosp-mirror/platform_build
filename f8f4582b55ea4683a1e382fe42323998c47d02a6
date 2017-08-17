@@ -48,6 +48,54 @@
     },
     {
       "key": {
+        "uuid": "44f31ddd_8c0081f7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1051,
+      "author": {
+        "id": 1057232
+      },
+      "writtenOn": "2017-08-17T00:13:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e734017d_66aa4fa2",
+      "range": {
+        "startLine": 1051,
+        "startChar": 49,
+        "endLine": 1051,
+        "endChar": 53
+      },
+      "revId": "f8f4582b55ea4683a1e382fe42323998c47d02a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f5d1ef66_681d274c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1051,
+      "author": {
+        "id": 1057232
+      },
+      "writtenOn": "2017-08-17T00:13:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4af91894_7b1d6ec9",
+      "range": {
+        "startLine": 1051,
+        "startChar": 54,
+        "endLine": 1051,
+        "endChar": 71
+      },
+      "revId": "f8f4582b55ea4683a1e382fe42323998c47d02a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1bf0b22e_1c3e055d",
         "filename": "core/definitions.mk",
         "patchSetId": 2
@@ -82,6 +130,30 @@
       "writtenOn": "2017-08-17T00:07:22Z",
       "side": 1,
       "message": "LOCAL_ would be incorrect here, you\u0027d need to use something like PRIVATE_SDK_VERSION",
+      "parentUuid": "1bf0b22e_1c3e055d",
+      "range": {
+        "startLine": 1052,
+        "startChar": 40,
+        "endLine": 1052,
+        "endChar": 47
+      },
+      "revId": "f8f4582b55ea4683a1e382fe42323998c47d02a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c733ecbd_b34805ed",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 1057232
+      },
+      "writtenOn": "2017-08-17T00:13:55Z",
+      "side": 1,
+      "message": "Ah, yes. the compiled librs.NAME.sos should support back to API 9 (32bit) or 21 (64bit).\nI revived RS_PREBUILT_LIBPATH for this.",
       "parentUuid": "1bf0b22e_1c3e055d",
       "range": {
         "startLine": 1052,
