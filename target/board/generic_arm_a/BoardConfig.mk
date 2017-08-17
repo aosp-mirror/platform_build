@@ -21,7 +21,3 @@ TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_VARIANT := generic
-
-# b/64458958
-# Partition size is 734MB for ARM32 (non A/B update)
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 769654784

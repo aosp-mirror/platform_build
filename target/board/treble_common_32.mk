@@ -16,5 +16,5 @@
 
 include build/make/target/board/treble_common.mk
 
-# Partition size is default 0.75GB (768MB) for 32 bits projects
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 805306368
+# Partition size is default 1GB (1024MB) for 32 bits projects
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1073741824
