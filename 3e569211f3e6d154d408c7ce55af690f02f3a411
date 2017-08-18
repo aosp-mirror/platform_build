@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "71538e2a_cc9eed53",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-18T03:58:58Z",
+      "side": 1,
+      "message": "We need to clear the exported variables like my_cxx_ldlibs so that we don\u0027t use a previous version of it",
+      "revId": "3e569211f3e6d154d408c7ce55af690f02f3a411",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
