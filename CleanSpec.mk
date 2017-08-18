@@ -424,6 +424,10 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/versions_checked.mk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/nativetest*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/nativetest*)
 
+# Move adbd from $(PRODUCT_OUT)/root/sbin to $(PRODUCT_OUT)/system/bin
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/sbin/adbd)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/symbols/sbin/adbd)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
