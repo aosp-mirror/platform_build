@@ -104,7 +104,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
   ifneq (,$(filter arm64 mips64 x86_64,$(my_arch)))
     my_min_sdk_version := 21
   else
-    my_min_sdk_version := 9
+    my_min_sdk_version := $(MIN_SUPPORTED_SDK_VERSION)
   endif
 
   # Historically we've just set up a bunch of symlinks in prebuilts/ndk to map
