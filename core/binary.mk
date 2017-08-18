@@ -53,6 +53,7 @@ my_asflags := $(LOCAL_ASFLAGS)
 my_cc := $(LOCAL_CC)
 my_cc_wrapper := $(CC_WRAPPER)
 my_cxx := $(LOCAL_CXX)
+my_cxx_ldlibs :=
 my_cxx_wrapper := $(CXX_WRAPPER)
 my_c_includes := $(LOCAL_C_INCLUDES)
 my_generated_sources := $(LOCAL_GENERATED_SOURCES)
@@ -447,7 +448,10 @@ my_static_libraries := $(LOCAL_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_V
 my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_WHOLE_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_whole_static_libraries)
 my_header_libraries := $(LOCAL_HEADER_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_HEADER_LIBRARIES_$(my_32_64_bit_suffix)) $(my_header_libraries)
 
+# soong defined modules already have done through this
+ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 include $(BUILD_SYSTEM)/cxx_stl_setup.mk
+endif
 
 # Add static HAL libraries
 ifdef LOCAL_HAL_STATIC_LIBRARIES
