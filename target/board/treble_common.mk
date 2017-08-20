@@ -17,6 +17,9 @@
 # Common boardconfig settings for generic AOSP products targetting mobile
 # (phone/table) devices.
 
+# VNDK
+BOARD_VNDK_VERSION := current
+
 # Properties
 TARGET_SYSTEM_PROP := build/make/target/board/treble_system.prop
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true

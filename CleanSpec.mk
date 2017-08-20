@@ -428,6 +428,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/nativetest*)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/*/*/classes*.jack)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/*/*/jack*)
 
+# Move adbd from $(PRODUCT_OUT)/root/sbin to $(PRODUCT_OUT)/system/bin
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/sbin/adbd)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/symbols/sbin/adbd)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

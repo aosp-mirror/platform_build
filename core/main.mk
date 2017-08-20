@@ -70,6 +70,10 @@ else
 DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
 endif
 
+# Make an empty directory, which can be used to make empty jars
+EMPTY_DIRECTORY := $(OUT_DIR)/empty
+$(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
+
 # CTS-specific config.
 -include cts/build/config.mk
 # VTS-specific config.
@@ -416,7 +420,7 @@ ifneq ($(dont_bother),true)
 # Include all of the makefiles in the system
 #
 
-subdir_makefiles := $(SOONG_ANDROID_MK) $(call first-makefiles-under,$(TOP))
+subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)/.module_paths/Android.mk.list)
 subdir_makefiles_total := $(words $(subdir_makefiles))
 .KATI_READONLY := subdir_makefiles_total
 

@@ -53,6 +53,7 @@ PRODUCT_PACKAGES += \
     ProxyHandler \
     QuickSearchBox \
     Settings \
+    SettingsIntelligence \
     SharedStorageBackup \
     StorageManager \
     Telecom \
