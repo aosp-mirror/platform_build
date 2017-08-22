@@ -142,16 +142,19 @@ ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
 ifndef LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING
 $(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING))
 endif
+ifeq (,$(dex_preopt_profile_src_file))
+$(call pretty-error, Internal error: dex_preopt_profile_src_file must be set)
+endif
 my_built_profile := $(dir $(LOCAL_BUILT_MODULE))/profile.prof
 my_dex_location := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
 $(built_odex): $(my_built_profile)
 $(built_odex): PRIVATE_PROFILE_PREOPT_FLAGS := --profile-file=$(my_built_profile)
-$(my_built_profile): PRIVATE_BUILT_MODULE := $(LOCAL_BUILT_MODULE)
+$(my_built_profile): PRIVATE_BUILT_MODULE := $(dex_preopt_profile_src_file)
 $(my_built_profile): PRIVATE_DEX_LOCATION := $(my_dex_location)
 $(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 $(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 $(my_built_profile): $(PROFMAN)
-$(my_built_profile): $(LOCAL_BUILT_MODULE)
+$(my_built_profile): $(dex_preopt_profile_src_file)
 $(my_built_profile):
 	$(hide) mkdir -p $(dir $@)
 	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
@@ -159,6 +162,7 @@ $(my_built_profile):
 		--apk=$(PRIVATE_BUILT_MODULE) \
 		--dex-location=$(PRIVATE_DEX_LOCATION) \
 		--reference-profile-file=$@
+dex_preopt_profile_src_file:=
 my_installed_profile := $(LOCAL_INSTALLED_MODULE).prof
 $(eval $(call copy-one-file,$(my_built_profile),$(my_installed_profile)))
 build_installed_profile:=$(my_built_profile):$(my_installed_profile)
