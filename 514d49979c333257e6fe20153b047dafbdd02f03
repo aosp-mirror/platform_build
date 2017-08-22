@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "00fc59c2_8b5842ff",
+        "filename": "core/cleanbuild.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-22T23:53:17Z",
+      "side": 1,
+      "message": "This seems complicated enough to be worth trying to share in a future patch",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 67
+      },
+      "revId": "514d49979c333257e6fe20153b047dafbdd02f03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
