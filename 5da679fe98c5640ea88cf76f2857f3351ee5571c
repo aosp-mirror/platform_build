@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8c8d9fe4_d18d13d5",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1405,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-23T22:21:12Z",
+      "side": 1,
+      "message": "Can\u0027t we just check to see if LOCAL_MODULE is in VNDK_PRIVATE_LIBRARIES / VNDK_CORE_LIBRARIES / VNDK_SAMEPROCESS_LIBRARIES as appropriate, and have the else case assume \"normal\" vendor modules?",
+      "range": {
+        "startLine": 1405,
+        "startChar": 0,
+        "endLine": 1405,
+        "endChar": 166
+      },
+      "revId": "5da679fe98c5640ea88cf76f2857f3351ee5571c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a8d56d8_f2f41e58",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-23T22:21:12Z",
+      "side": 1,
+      "message": "Why aren\u0027t we handling this with the same conditionals as binary.mk?",
+      "range": {
+        "startLine": 158,
+        "startChar": 0,
+        "endLine": 158,
+        "endChar": 29
+      },
+      "revId": "5da679fe98c5640ea88cf76f2857f3351ee5571c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
