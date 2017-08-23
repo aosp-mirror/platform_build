@@ -1635,6 +1635,14 @@ function provision()
     "$ANDROID_PRODUCT_OUT/provision-device" "$@"
 }
 
+function atest()
+{
+    # TODO (sbasi): Replace this to be a destination in the build out when & if
+    # atest is built by the build system. (This will be necessary if it ever
+    # depends on external pip projects).
+    "$(gettop)"/tools/tradefederation/core/atest/atest.py "$@"
+}
+
 if [ "x$SHELL" != "x/bin/bash" ]; then
     case `ps -o command -p $$` in
         *bash*)
