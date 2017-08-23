@@ -13,8 +13,32 @@
 # limitations under the License.
 #
 
-# Don't bother with the cleanspecs if you are running mm/mmm
-ifeq ($(ONE_SHOT_MAKEFILE)$(dont_bother)$(NO_ANDROID_CLEANSPEC),)
+# Absolute path of the present working direcotry.
+# This overrides the shell variable $PWD, which does not necessarily points to
+# the top of the source tree, for example when "make -C" is used in m/mm/mmm.
+PWD := $(shell pwd)
+
+TOP := .
+TOPDIR :=
+
+BUILD_SYSTEM := $(TOPDIR)build/core
+
+# Set up various standard variables based on configuration
+# and host information.
+include $(BUILD_SYSTEM)/config.mk
+
+include $(SOONG_MAKEVARS_MK)
+
+include $(BUILD_SYSTEM)/clang/config.mk
+
+# CTS-specific config.
+-include cts/build/config.mk
+# VTS-specific config.
+-include test/vts/tools/vts-tradefed/build/config.mk
+# device-tests-specific-config.
+-include tools/tradefederation/build/suites/device-tests/config.mk
+# general-tests-specific-config.
+-include tools/tradefederation/build/suites/general-tests/config.mk
 
 INTERNAL_CLEAN_STEPS :=
 
@@ -126,25 +150,3 @@ CURRENT_CLEAN_STEPS :=
 clean_steps_file :=
 INTERNAL_CLEAN_STEPS :=
 INTERNAL_CLEAN_BUILD_VERSION :=
-
-endif  # if not ONE_SHOT_MAKEFILE dont_bother NO_ANDROID_CLEANSPEC
-
-###########################################################
-
-.PHONY: clean-jack-files
-clean-jack-files: clean-dex-files
-	$(hide) find $(OUT_DIR) -name "*.jack" | xargs rm -f
-	$(hide) find $(OUT_DIR) -type d -name "jack" | xargs rm -rf
-	@echo "All jack files have been removed."
-
-.PHONY: clean-dex-files
-clean-dex-files:
-	$(hide) find $(OUT_DIR) -name "*.dex" ! -path "*/jack-incremental/*" | xargs rm -f
-	$(hide) for i in `find $(OUT_DIR) -name "*.jar" -o -name "*.apk"` ; do ((unzip -l $$i 2> /dev/null | \
-				grep -q "\.dex$$" && rm -f $$i) || continue ) ; done
-	@echo "All dex files and archives containing dex files have been removed."
-
-.PHONY: clean-jack-incremental
-clean-jack-incremental:
-	$(hide) find $(OUT_DIR) -name "jack-incremental" -type d | xargs rm -rf
-	@echo "All jack incremental dirs have been removed."
