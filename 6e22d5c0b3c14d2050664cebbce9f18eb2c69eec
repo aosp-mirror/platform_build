@@ -16,6 +16,24 @@
       "revId": "6e22d5c0b3c14d2050664cebbce9f18eb2c69eec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6cb55ddc_2b0b604d",
+        "filename": "tapasHelp.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-08-24T20:02:33Z",
+      "side": 1,
+      "message": "thanks",
+      "parentUuid": "bde5853b_b9a00c36",
+      "revId": "6e22d5c0b3c14d2050664cebbce9f18eb2c69eec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
