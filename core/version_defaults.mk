@@ -78,7 +78,7 @@ PLATFORM_VERSION.OPM1 := 8.1.0
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.OPM1 := OMR1
+PLATFORM_VERSION_CODENAME.OPM1 := REL
 
 ifndef PLATFORM_VERSION
   PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
@@ -158,7 +158,7 @@ else
     # assuming the device can only support APIs as of the previous official
     # public release.
     # This value will always be 0 for release builds.
-    PLATFORM_PREVIEW_SDK_VERSION := 1
+    PLATFORM_PREVIEW_SDK_VERSION := 0
   endif
 endif
 
