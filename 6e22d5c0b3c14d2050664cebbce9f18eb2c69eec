@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bde5853b_b9a00c36",
+        "filename": "tapasHelp.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-24T17:53:46Z",
+      "side": 1,
+      "message": "It also makes the app suitable for installing on any API-compatible device\nby putting the dex file in the APK, which a platform build might not do.",
+      "revId": "6e22d5c0b3c14d2050664cebbce9f18eb2c69eec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
