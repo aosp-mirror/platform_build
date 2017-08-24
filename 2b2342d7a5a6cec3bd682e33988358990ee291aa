@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3b3424f_67cadbf7",
+        "filename": "tapasHelp.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-24T20:05:31Z",
+      "side": 1,
+      "message": "this might be overstating the case a little.  We prevent a few known things that make them unsuitable, but I\u0027m sure there are additional ways to make them unsuitable.",
+      "range": {
+        "startLine": 15,
+        "startChar": 15,
+        "endLine": 15,
+        "endChar": 59
+      },
+      "revId": "2b2342d7a5a6cec3bd682e33988358990ee291aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
