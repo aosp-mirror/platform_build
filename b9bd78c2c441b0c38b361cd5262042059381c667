@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d9eee765_13c73dda",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-24T18:08:42Z",
+      "side": 1,
+      "message": "What\u0027s the purpose of this function?  It is only used once, why not inline it where it is being called?",
+      "revId": "b9bd78c2c441b0c38b361cd5262042059381c667",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1810f47_ae7db257",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-24T18:08:42Z",
+      "side": 1,
+      "message": "The function also contains $(eval) statements, are both necessary?",
+      "range": {
+        "startLine": 78,
+        "startChar": 2,
+        "endLine": 78,
+        "endChar": 6
+      },
+      "revId": "b9bd78c2c441b0c38b361cd5262042059381c667",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
