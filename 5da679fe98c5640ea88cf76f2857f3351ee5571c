@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6538cf0c_516f9472",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1405,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-08-24T05:00:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c8d9fe4_d18d13d5",
+      "range": {
+        "startLine": 1405,
+        "startChar": 0,
+        "endLine": 1405,
+        "endChar": 166
+      },
+      "revId": "5da679fe98c5640ea88cf76f2857f3351ee5571c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a8d56d8_f2f41e58",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2017-08-23T22:21:12Z",
       "side": 1,
       "message": "Why aren\u0027t we handling this with the same conditionals as binary.mk?",
+      "range": {
+        "startLine": 158,
+        "startChar": 0,
+        "endLine": 158,
+        "endChar": 29
+      },
+      "revId": "5da679fe98c5640ea88cf76f2857f3351ee5571c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9ad7563_0db2eeea",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-08-24T05:00:15Z",
+      "side": 1,
+      "message": "my mistake. fixed. thanks.\n\nbtw, this revealed a bug that allowed a vndk lib to depend on vendor lib. libstagefright_foundation (a vndk lib) is using libclang_rt.ubsan* prebuilt libraries (currently just vendor_available:true.\n\nI marked the prebuilt libraries as vndk and modified soong to have prebuilt VNDK libraries in VNDK_*_LIBRARIES lists.",
+      "parentUuid": "9a8d56d8_f2f41e58",
       "range": {
         "startLine": 158,
         "startChar": 0,
