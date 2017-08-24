@@ -135,9 +135,10 @@ KERNEL_VERSIONS := 3.18 4.4 4.9
 KERNEL_CONFIG_DATA := test/vts-testcase/kernel/config/data
 
 $(GEN): $(foreach version,$(KERNEL_VERSIONS),\
-	$(KERNEL_CONFIG_DATA)/android-$(version)/android-base.cfg)
+	$(wildcard $(KERNEL_CONFIG_DATA)/android-$(version)/android-base*.cfg))
 $(GEN): PRIVATE_FLAGS += $(foreach version,$(KERNEL_VERSIONS),\
-	--kernel=$(version):$(KERNEL_CONFIG_DATA)/android-$(version)/android-base.cfg)
+	--kernel=$(version):$(call normalize-path-list,\
+		$(wildcard $(KERNEL_CONFIG_DATA)/android-$(version)/android-base*.cfg)))
 
 KERNEL_VERSIONS :=
 KERNEL_CONFIG_DATA :=
