@@ -22,6 +22,29 @@
       "revId": "2b2342d7a5a6cec3bd682e33988358990ee291aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "77534f38_1aa536e3",
+        "filename": "tapasHelp.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-24T20:07:55Z",
+      "side": 1,
+      "message": "I don\u0027t think we actually verify this today -- as long as you\u0027ve got the necessary core libs in your manifest, you can still use internal APIs.",
+      "range": {
+        "startLine": 16,
+        "startChar": 27,
+        "endLine": 17,
+        "endChar": 33
+      },
+      "revId": "2b2342d7a5a6cec3bd682e33988358990ee291aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
