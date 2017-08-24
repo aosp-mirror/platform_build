@@ -32,14 +32,18 @@ endif
 
 # Device Manifest
 ifdef DEVICE_MANIFEST_FILE
+# $(DEVICE_MANIFEST_FILE) can be a list of files
 include $(CLEAR_VARS)
 LOCAL_MODULE        := manifest.xml
 LOCAL_MODULE_CLASS  := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)
 
 GEN := $(local-generated-sources-dir)/manifest.xml
+$(GEN): PRIVATE_DEVICE_MANIFEST_FILE := $(DEVICE_MANIFEST_FILE)
 $(GEN): $(DEVICE_MANIFEST_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
-	BOARD_SEPOLICY_VERS=$(BOARD_SEPOLICY_VERS) $(HOST_OUT_EXECUTABLES)/assemble_vintf -i $< -o $@
+	BOARD_SEPOLICY_VERS=$(BOARD_SEPOLICY_VERS) \
+	$(HOST_OUT_EXECUTABLES)/assemble_vintf -o $@ \
+		-i $(call normalize-path-list,$(PRIVATE_DEVICE_MANIFEST_FILE))
 
 LOCAL_PREBUILT_MODULE_FILE := $(GEN)
 include $(BUILD_PREBUILT)
@@ -79,7 +83,7 @@ $(GEN): PRIVATE_FLAGS :=
 ifeq ($(PRODUCT_FULL_TREBLE),true)
 ifdef BUILT_VENDOR_MATRIX
 $(GEN): $(BUILT_VENDOR_MATRIX)
-$(GEN): PRIVATE_FLAGS := -c "$(BUILT_VENDOR_MATRIX)"
+$(GEN): PRIVATE_FLAGS += -c "$(BUILT_VENDOR_MATRIX)"
 endif
 endif
 
@@ -106,13 +110,40 @@ $(GEN): PRIVATE_FLAGS :=
 ifeq ($(PRODUCT_FULL_TREBLE),true)
 ifdef BUILT_VENDOR_MANIFEST
 $(GEN): $(BUILT_VENDOR_MANIFEST)
-$(GEN): PRIVATE_FLAGS := -c "$(BUILT_VENDOR_MANIFEST)"
+$(GEN): PRIVATE_FLAGS += -c "$(BUILT_VENDOR_MANIFEST)"
 endif
 endif
 
+ifeq (true,$(BOARD_AVB_ENABLE))
+$(GEN): $(AVBTOOL)
+# INTERNAL_AVB_SYSTEM_SIGNING_ARGS consists of BOARD_AVB_SYSTEM_KEY_PATH and
+# BOARD_AVB_SYSTEM_ALGORITHM. We should add the dependency of key path, which
+# is a file, here.
+$(GEN): $(BOARD_AVB_SYSTEM_KEY_PATH)
+# Use deferred assignment (=) instead of immediate assignment (:=).
+# Otherwise, cannot get INTERNAL_AVB_SYSTEM_SIGNING_ARGS.
+FRAMEWORK_VBMETA_VERSION = $$("$(AVBTOOL)" add_hashtree_footer \
+                              --print_required_libavb_version \
+                              $(INTERNAL_AVB_SYSTEM_SIGNING_ARGS) \
+                              $(BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS))
+else
+FRAMEWORK_VBMETA_VERSION := 0.0
+endif
+
+# All kernel versions that the system image works with.
+$(GEN): test/vts-testcase/kernel/config/data/android-3.18/android-base.cfg
+$(GEN): test/vts-testcase/kernel/config/data/android-4.4/android-base.cfg
+$(GEN): test/vts-testcase/kernel/config/data/android-4.9/android-base.cfg
+$(GEN): PRIVATE_FLAGS += --kernel=3.18:test/vts-testcase/kernel/config/data/android-3.18/android-base.cfg
+$(GEN): PRIVATE_FLAGS += --kernel=4.4:test/vts-testcase/kernel/config/data/android-4.4/android-base.cfg
+$(GEN): PRIVATE_FLAGS += --kernel=4.9:test/vts-testcase/kernel/config/data/android-4.9/android-base.cfg
+
 $(GEN): $(FRAMEWORK_COMPATIBILITY_MATRIX_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
 	# TODO(b/37405869) (b/37715375) inject avb versions as well for devices that have avb enabled.
-	POLICYVERS=$(POLICYVERS) BOARD_SEPOLICY_VERS=$(BOARD_SEPOLICY_VERS) $(HOST_OUT_EXECUTABLES)/assemble_vintf -i $< -o $@ $(PRIVATE_FLAGS)
+	POLICYVERS=$(POLICYVERS) \
+		BOARD_SEPOLICY_VERS=$(BOARD_SEPOLICY_VERS) \
+		FRAMEWORK_VBMETA_VERSION=$(FRAMEWORK_VBMETA_VERSION) \
+		$(HOST_OUT_EXECUTABLES)/assemble_vintf -i $< -o $@ $(PRIVATE_FLAGS)
 LOCAL_PREBUILT_MODULE_FILE := $(GEN)
 include $(BUILD_PREBUILT)
 BUILT_SYSTEM_COMPATIBILITY_MATRIX := $(LOCAL_BUILT_MODULE)
