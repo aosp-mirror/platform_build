@@ -1,0 +1,2 @@
+vndbinder_use(hal_drm_default);
+hal_client_domain(hal_drm_default, hal_graphics_composer)
