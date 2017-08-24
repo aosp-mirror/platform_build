@@ -1,0 +1,141 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "49e92f80_8e89fb92",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2217,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-24T23:13:46Z",
+      "side": 1,
+      "message": "java-source-list-uniq",
+      "range": {
+        "startLine": 2217,
+        "startChar": 33,
+        "endLine": 2217,
+        "endChar": 49
+      },
+      "revId": "9e96c1d6e9104237d248e7147a30717fc5f55e45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b854f05e_4a0d64e5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2218,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-24T23:13:46Z",
+      "side": 1,
+      "message": "Why would it need to be empty?",
+      "range": {
+        "startLine": 2218,
+        "startChar": 54,
+        "endLine": 2218,
+        "endChar": 102
+      },
+      "revId": "9e96c1d6e9104237d248e7147a30717fc5f55e45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d74be9a6_43c85591",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2222,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-24T23:13:46Z",
+      "side": 1,
+      "message": "I had https://android-review.googlesource.com/c/platform/build/+/404743 to create the file list as a separate rule, but it had some problems in presubmit that I never fixed.  You could consider it instead of running the find for javac and turbine.",
+      "revId": "9e96c1d6e9104237d248e7147a30717fc5f55e45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab09a887_888d49ff",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2236,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-24T23:13:46Z",
+      "side": 1,
+      "message": "I don\u0027t see any other users of this, why pull it out to a separate function?\n\nIf we keep it, maybe also list the other variables this reads, like PRIVATE_JAR_PACKAGES, etc.",
+      "revId": "9e96c1d6e9104237d248e7147a30717fc5f55e45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ba78cbb_93189258",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2301,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-24T23:13:46Z",
+      "side": 1,
+      "message": "Maybe classes-turbine?",
+      "range": {
+        "startLine": 2301,
+        "startChar": 18,
+        "endLine": 2301,
+        "endChar": 30
+      },
+      "revId": "9e96c1d6e9104237d248e7147a30717fc5f55e45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bada7caf_7138c712",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2313,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-24T23:13:46Z",
+      "side": 1,
+      "message": "I prefer not to remove these files, because it makes copying and pasting the rule harder.  Can you put these in $(dir $@) instead of turbine-temp so they dont\u0027 end up in the jar file if they are not deleted?",
+      "revId": "9e96c1d6e9104237d248e7147a30717fc5f55e45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "61da3413_c52b8b7d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2817,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-24T23:13:46Z",
+      "side": 1,
+      "message": "Can you explain this split?  Since host-dalvik-java-library is the odd one out, I\u0027d prefer to keep transform-host-java-to-package for the normal case, and use transform-host-java-to-dalvik-package for the dalvik case.",
+      "revId": "9e96c1d6e9104237d248e7147a30717fc5f55e45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
