@@ -470,11 +470,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   if HasVendorPartition(input_zip):
     system_progress -= 0.1
 
-  # Place a copy of file_contexts.bin into the OTA package which will be used
-  # by the recovery program.
-  if "selinux_fc" in OPTIONS.info_dict:
-    WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
-
   recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
 
   script.ShowProgress(system_progress, 0)
@@ -538,10 +533,6 @@ endif;
   script.AddToZip(input_zip, output_zip, input_path=OPTIONS.updater_binary)
   metadata["ota-required-cache"] = str(script.required_cache)
   WriteMetadata(metadata, output_zip)
-
-
-def WritePolicyConfig(file_name, output_zip):
-  common.ZipWrite(output_zip, file_name, os.path.basename(file_name))
 
 
 def WriteMetadata(metadata, output_zip):
