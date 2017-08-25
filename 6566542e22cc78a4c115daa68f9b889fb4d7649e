@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c00549a3_d91445f5",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-25T05:23:41Z",
+      "side": 1,
+      "message": "these should all be:\n\nifndef CUSTOM_IMAGE_AVB_KEY_PATH\n  $(error CUSTOM_IMAGE_AVB_KEY_PATH is not defined)\nendif",
+      "revId": "6566542e22cc78a4c115daa68f9b889fb4d7649e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
