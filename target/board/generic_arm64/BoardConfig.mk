@@ -35,11 +35,11 @@ ifneq ($(TARGET_BUILD_APPS)$(filter cts,$(MAKECMDGOALS)),)
 # platforms.
 #
 # If you're building a 64 bit platform (and not an application) the
-# ARM-v8 specification allows you to assume NEON and all the features
-# available in a cortex-A15 CPU. You should be able to set :
+# ARM-v8 specification allows you to assume all the features available in an
+# armv7-a-neon CPU. You should set the following as 2nd arch/cpu variant:
 #
-# TARGET_2ND_ARCH_VARIANT := armv7-a-neon
-# TARGET_2ND_CPU_VARIANT := cortex-a15
+# TARGET_2ND_ARCH_VARIANT := armv8-a
+# TARGET_2ND_CPU_VARIANT := generic
 #
 # DO NOT USE
 # DO NOT USE
@@ -50,8 +50,8 @@ TARGET_2ND_CPU_VARIANT := generic
 # DO NOT USE
 # DO NOT USE
 else
-TARGET_2ND_ARCH_VARIANT := armv7-a-neon
-TARGET_2ND_CPU_VARIANT := cortex-a15
+TARGET_2ND_ARCH_VARIANT := armv8-a
+TARGET_2ND_CPU_VARIANT := generic
 endif
 
 
