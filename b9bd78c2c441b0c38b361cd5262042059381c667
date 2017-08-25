@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f9820f1a_6c13ee5c",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-08-25T05:22:13Z",
+      "side": 1,
+      "message": "Done.\n\nMy bad, I copied a function from core/Makefile then rename and modify it. Correct, it\u0027s only used once so let\u0027s remove this function.",
+      "parentUuid": "d9eee765_13c73dda",
+      "revId": "b9bd78c2c441b0c38b361cd5262042059381c667",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d1810f47_ae7db257",
         "filename": "core/tasks/tools/build_custom_image.mk",
         "patchSetId": 3
@@ -30,6 +48,30 @@
       "writtenOn": "2017-08-24T18:08:42Z",
       "side": 1,
       "message": "The function also contains $(eval) statements, are both necessary?",
+      "range": {
+        "startLine": 78,
+        "startChar": 2,
+        "endLine": 78,
+        "endChar": 6
+      },
+      "revId": "b9bd78c2c441b0c38b361cd5262042059381c667",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29baca4b_172c334e",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-08-25T05:22:13Z",
+      "side": 1,
+      "message": "Yup, this is needed.\nBecause $(call ...) can only be invoked in either (IIRC):\n\n  1. Inside a $(foreach ...)\n  2. Under a makefile target. e.g., the $(my_bulit_custom_image): below\n  3. assign to another variable. e.g., a :\u003d $(call ..)\n\nJust $(call ...) here will have build error:\n  error: missing separator.",
+      "parentUuid": "d1810f47_ae7db257",
       "range": {
         "startLine": 78,
         "startChar": 2,
