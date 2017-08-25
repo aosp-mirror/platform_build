@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "12862ef4_30e09a74",
+        "filename": "target/board/generic_arm64/system.prop",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-08-25T17:41:10Z",
+      "side": 1,
+      "message": "/system/vendor is an implementation detail, /vendor should be used instead",
+      "range": {
+        "startLine": 5,
+        "startChar": 13,
+        "endLine": 5,
+        "endChar": 27
+      },
+      "revId": "cdd0d16d1bdd9bdadbea7faaa5b2f2aeead79807",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
