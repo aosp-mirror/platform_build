@@ -16,6 +16,24 @@
       "revId": "6566542e22cc78a4c115daa68f9b889fb4d7649e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "093765d2_1a66786e",
+        "filename": "core/tasks/tools/build_custom_image.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-08-25T05:31:38Z",
+      "side": 1,
+      "message": "OK, done!\n\nAlso remove the check of CUSTOM_IMAGE_AVB_KEY_PATH inside ifdef CUSTOM_IMAGE_AVB_KEY_PATH, as it\u0027s redundant.",
+      "parentUuid": "c00549a3_d91445f5",
+      "revId": "6566542e22cc78a4c115daa68f9b889fb4d7649e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
