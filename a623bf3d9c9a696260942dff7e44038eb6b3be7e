@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2e89f8d3_117e4d45",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-08-28T21:06:37Z",
+      "side": 1,
+      "message": "This is actually a way in Python to explicitly specify an one-element tuple, with the only element being \"prop\". To handle a case like below:\n\nprop \u003d (\"x\", \"y\")\n\nUsing \"...%s\" % (prop) or \"...%s\" % prop would both give exception. But \"...%s\" % (prop,) would give the desired output, by interpreting everything in \"prop\" as single element",
+      "parentUuid": "f36185f7_d3592c14",
+      "range": {
+        "startLine": 567,
+        "startChar": 55,
+        "endLine": 567,
+        "endChar": 56
+      },
+      "revId": "a623bf3d9c9a696260942dff7e44038eb6b3be7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "70aea6b2_0ad8bcfd",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2017-08-28T16:58:30Z",
       "side": 1,
       "message": "Seems like some opportunity for reuse in this block and the block on 700.",
+      "range": {
+        "startLine": 1206,
+        "startChar": 5,
+        "endLine": 1206,
+        "endChar": 21
+      },
+      "revId": "a623bf3d9c9a696260942dff7e44038eb6b3be7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c0e4f4cb_47bca3e1",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1206,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-08-28T21:06:37Z",
+      "side": 1,
+      "message": "Makes sense. I\u0027ll upload a new PS to move the common pieces into one function",
+      "parentUuid": "70aea6b2_0ad8bcfd",
       "range": {
         "startLine": 1206,
         "startChar": 5,
