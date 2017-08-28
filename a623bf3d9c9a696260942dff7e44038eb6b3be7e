@@ -93,6 +93,30 @@
       "revId": "a623bf3d9c9a696260942dff7e44038eb6b3be7e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2fa41616_ed0e038f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1206,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-08-28T22:21:07Z",
+      "side": 1,
+      "message": "Done\n\nAll moved into AddCompatibilityArchiveIfTrebleEnabled().",
+      "parentUuid": "c0e4f4cb_47bca3e1",
+      "range": {
+        "startLine": 1206,
+        "startChar": 5,
+        "endLine": 1206,
+        "endChar": 21
+      },
+      "revId": "a623bf3d9c9a696260942dff7e44038eb6b3be7e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
