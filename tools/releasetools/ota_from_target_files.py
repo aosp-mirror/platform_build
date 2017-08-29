@@ -275,6 +275,11 @@ def HasVendorPartition(target_files_zip):
     return False
 
 
+def HasTrebleEnabled(target_files_zip, info_dict):
+  return (HasVendorPartition(target_files_zip) and
+          GetBuildProp("ro.treble.enabled", info_dict) == "true")
+
+
 def GetOemProperty(name, oem_props, oem_dict, info_dict):
   if oem_props is not None and name in oem_props:
     return oem_dict[name]
@@ -316,57 +321,93 @@ def GetImage(which, tmpdir):
   return sparse_img.SparseImage(path, mappath, clobbered_blocks)
 
 
-def AddCompatibilityArchive(target_zip, output_zip, system_included=True,
-                            vendor_included=True):
-  """Adds compatibility info from target files into the output zip.
+def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip,
+                                           target_info_dict,
+                                           source_info_dict=None):
+  """Adds compatibility info into the output zip if it's Treble-enabled target.
 
   Metadata used for on-device compatibility verification is retrieved from
   target_zip then added to compatibility.zip which is added to the output_zip
   archive.
 
-  Compatibility archive should only be included for devices with a vendor
-  partition as checking provides value when system and vendor are independently
-  versioned.
+  Compatibility archive should only be included for devices that have enabled
+  Treble support.
 
   Args:
     target_zip: Zip file containing the source files to be included for OTA.
     output_zip: Zip file that will be sent for OTA.
-    system_included: If True, the system image will be updated and therefore
-        its metadata should be included.
-    vendor_included: If True, the vendor image will be updated and therefore
-        its metadata should be included.
+    target_info_dict: The dict that holds the target build info.
+    source_info_dict: The dict that holds the source build info, if generating
+        an incremental OTA; None otherwise.
   """
 
-  # Determine what metadata we need. Files are names relative to META/.
-  compatibility_files = []
-  vendor_metadata = ("vendor_manifest.xml", "vendor_matrix.xml")
-  system_metadata = ("system_manifest.xml", "system_matrix.xml")
-  if vendor_included:
-    compatibility_files += vendor_metadata
-  if system_included:
-    compatibility_files += system_metadata
+  def AddCompatibilityArchive(system_updated, vendor_updated):
+    """Adds compatibility info based on system/vendor update status.
 
-  # Create new archive.
-  compatibility_archive = tempfile.NamedTemporaryFile()
-  compatibility_archive_zip = zipfile.ZipFile(compatibility_archive, "w",
-      compression=zipfile.ZIP_DEFLATED)
+    Args:
+      system_updated: If True, the system image will be updated and therefore
+          its metadata should be included.
+      vendor_updated: If True, the vendor image will be updated and therefore
+          its metadata should be included.
+    """
+    # Determine what metadata we need. Files are names relative to META/.
+    compatibility_files = []
+    vendor_metadata = ("vendor_manifest.xml", "vendor_matrix.xml")
+    system_metadata = ("system_manifest.xml", "system_matrix.xml")
+    if vendor_updated:
+      compatibility_files += vendor_metadata
+    if system_updated:
+      compatibility_files += system_metadata
 
-  # Add metadata.
-  for file_name in compatibility_files:
-    target_file_name = "META/" + file_name
+    # Create new archive.
+    compatibility_archive = tempfile.NamedTemporaryFile()
+    compatibility_archive_zip = zipfile.ZipFile(compatibility_archive, "w",
+        compression=zipfile.ZIP_DEFLATED)
 
-    if target_file_name in target_zip.namelist():
-      data = target_zip.read(target_file_name)
-      common.ZipWriteStr(compatibility_archive_zip, file_name, data)
+    # Add metadata.
+    for file_name in compatibility_files:
+      target_file_name = "META/" + file_name
 
-  # Ensure files are written before we copy into output_zip.
-  compatibility_archive_zip.close()
+      if target_file_name in target_zip.namelist():
+        data = target_zip.read(target_file_name)
+        common.ZipWriteStr(compatibility_archive_zip, file_name, data)
 
-  # Only add the archive if we have any compatibility info.
-  if compatibility_archive_zip.namelist():
-    common.ZipWrite(output_zip, compatibility_archive.name,
-                    arcname="compatibility.zip",
-                    compress_type=zipfile.ZIP_STORED)
+    # Ensure files are written before we copy into output_zip.
+    compatibility_archive_zip.close()
+
+    # Only add the archive if we have any compatibility info.
+    if compatibility_archive_zip.namelist():
+      common.ZipWrite(output_zip, compatibility_archive.name,
+                      arcname="compatibility.zip",
+                      compress_type=zipfile.ZIP_STORED)
+
+  # Will only proceed if the target has enabled the Treble support (as well as
+  # having a /vendor partition).
+  if not HasTrebleEnabled(target_zip, target_info_dict):
+    return
+
+  # We don't support OEM thumbprint in Treble world (which calculates
+  # fingerprints in a different way as shown in CalculateFingerprint()).
+  assert not target_info_dict.get("oem_fingerprint_properties")
+
+  # Full OTA carries the info for system/vendor both.
+  if source_info_dict is None:
+    AddCompatibilityArchive(True, True)
+    return
+
+  assert not source_info_dict.get("oem_fingerprint_properties")
+
+  source_fp = GetBuildProp("ro.build.fingerprint", source_info_dict)
+  target_fp = GetBuildProp("ro.build.fingerprint", target_info_dict)
+  system_updated = source_fp != target_fp
+
+  source_fp_vendor = GetVendorBuildProp("ro.vendor.build.fingerprint",
+                                        source_info_dict)
+  target_fp_vendor = GetVendorBuildProp("ro.vendor.build.fingerprint",
+                                        target_info_dict)
+  vendor_updated = source_fp_vendor != target_fp_vendor
+
+  AddCompatibilityArchive(system_updated, vendor_updated)
 
 
 def WriteFullOTAPackage(input_zip, output_zip):
@@ -494,6 +535,9 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     vendor_diff = common.BlockDifference("vendor", vendor_tgt)
     vendor_diff.WriteScript(script, output_zip)
 
+  AddCompatibilityArchiveIfTrebleEnabled(input_zip, output_zip,
+                                         OPTIONS.info_dict)
+
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
 
@@ -542,11 +586,20 @@ def WriteMetadata(metadata, output_zip):
 
 
 def GetBuildProp(prop, info_dict):
-  """Return the fingerprint of the build of a given target-files info_dict."""
+  """Returns the inquired build property from a given info_dict."""
   try:
     return info_dict.get("build.prop", {})[prop]
   except KeyError:
     raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
+
+
+def GetVendorBuildProp(prop, info_dict):
+  """Returns the inquired vendor build property from a given info_dict."""
+  try:
+    return info_dict.get("vendor.build.prop", {})[prop]
+  except KeyError:
+    raise common.ExternalError(
+        "couldn't find %s in vendor.build.prop" % (prop,))
 
 
 def HandleDowngradeMetadata(metadata):
@@ -678,6 +731,10 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
                                          disable_imgdiff=disable_imgdiff)
   else:
     vendor_diff = None
+
+  AddCompatibilityArchiveIfTrebleEnabled(
+      target_zip, output_zip, OPTIONS.target_info_dict,
+      OPTIONS.source_info_dict)
 
   AppendAssertions(script, OPTIONS.target_info_dict, oem_dicts)
   device_specific.IncrementalOTA_Assertions()
@@ -1169,32 +1226,13 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
     else:
       print("Warning: cannot find care map file in target_file package")
 
-  if HasVendorPartition(target_zip):
-    update_vendor = True
-    update_system = True
+  # OPTIONS.source_info_dict must be None for incrementals.
+  if source_file is None:
+    assert OPTIONS.source_info_dict is None
 
-    # If incremental then figure out what is being updated so metadata only for
-    # the updated image is included.
-    if source_file is not None:
-      input_tmp, input_zip = common.UnzipTemp(
-          target_file, UNZIP_PATTERN)
-      source_tmp, source_zip = common.UnzipTemp(
-          source_file, UNZIP_PATTERN)
+  AddCompatibilityArchiveIfTrebleEnabled(
+      target_zip, output_zip, OPTIONS.info_dict, OPTIONS.source_info_dict)
 
-      vendor_src = GetImage("vendor", source_tmp)
-      vendor_tgt = GetImage("vendor", input_tmp)
-      system_src = GetImage("system", source_tmp)
-      system_tgt = GetImage("system", input_tmp)
-
-      update_system = system_src.TotalSha1() != system_tgt.TotalSha1()
-      update_vendor = vendor_src.TotalSha1() != vendor_tgt.TotalSha1()
-
-      input_zip.close()
-      source_zip.close()
-
-    target_zip = zipfile.ZipFile(target_file, "r")
-    AddCompatibilityArchive(target_zip, output_zip, update_system,
-                            update_vendor)
   common.ZipClose(target_zip)
 
   # Write the current metadata entry with placeholders.
