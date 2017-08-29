@@ -94,7 +94,7 @@ LIBART_TARGET_BOOT_ART_EXTRA_FILES += boot.oat boot.vdex
 my_use_profile_for_boot_image := $(PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE)
 ifeq (,$(my_use_profile_for_boot_image))
 # If not set, use the default.
-my_use_profile_for_boot_image := false
+my_use_profile_for_boot_image := true
 endif
 
 ifeq (true,$(my_use_profile_for_boot_image))
