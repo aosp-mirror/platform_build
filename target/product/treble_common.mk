@@ -54,6 +54,13 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     netutils-wrapper-1.0
 
+# A workaround solution for some projects which require
+# TimeZoneRulesManagerService by overlaying resource property
+# "config_enableUpdateableTimeZoneRules"
+PRODUCT_PACKAGES += \
+    TimeZoneUpdater \
+    TimeZoneData \
+
 # Android Verified Boot (AVB):
 #   Builds a special vbmeta.img that disables AVB verification.
 #   Otherwise, AVB will prevent the device from booting the generic system.img.
