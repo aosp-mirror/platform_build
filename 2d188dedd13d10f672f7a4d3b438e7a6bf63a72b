@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c9d09cb_5c8dda44",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-29T00:48:09Z",
+      "side": 1,
+      "message": "What is this line for?  This change hasn\u0027t been previously merged anywhere?",
+      "revId": "2d188dedd13d10f672f7a4d3b438e7a6bf63a72b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "17779f24_cf4e8311",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-29T00:48:09Z",
+      "side": 1,
+      "message": "I think this can be removed",
+      "revId": "2d188dedd13d10f672f7a4d3b438e7a6bf63a72b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbfbe5f7_c76554cd",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-29T00:48:09Z",
+      "side": 1,
+      "message": "And this too",
+      "revId": "2d188dedd13d10f672f7a4d3b438e7a6bf63a72b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
