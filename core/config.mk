@@ -762,8 +762,14 @@ endif
 
 ifeq ($(strip $(PRODUCT_COMPATIBILITY_MATRIX_LEVEL)),legacy)
   FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.legacy.xml
-else ifeq ($(call math_gt_or_eq,$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL),27),)
+else ifeq ($(call math_gt_or_eq,$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL),26),)
+  # All PRODUCT_FULL_TREBLE devices with shipping API levels < 26 get the level 26 manifest
+  # as that is the first.
   FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.26.xml
+else ifeq ($(call math_gt_or_eq,$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL),28),)
+  # All shipping API levels with released compatibility matrices get the corresponding matrix.
+  FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
+      hardware/interfaces/compatibility_matrix.$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL).xml
 else
   FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.current.xml
 endif
