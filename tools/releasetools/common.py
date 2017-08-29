@@ -251,15 +251,16 @@ def LoadInfoDict(input_file, input_dir=None):
   else:
     d["fstab"] = None
 
-  d["build.prop"] = LoadBuildProp(read_helper)
+  d["build.prop"] = LoadBuildProp(read_helper, 'SYSTEM/build.prop')
+  d["vendor.build.prop"] = LoadBuildProp(read_helper, 'VENDOR/build.prop')
   return d
 
 
-def LoadBuildProp(read_helper):
+def LoadBuildProp(read_helper, prop_file):
   try:
-    data = read_helper("SYSTEM/build.prop")
+    data = read_helper(prop_file)
   except KeyError:
-    print("Warning: could not find SYSTEM/build.prop in %s" % (zip,))
+    print("Warning: could not read %s" % (prop_file,))
     data = ""
   return LoadDictionaryFromLines(data.split("\n"))
 
