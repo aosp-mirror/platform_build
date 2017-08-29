@@ -22,6 +22,30 @@
       "revId": "bcd1d161e8c9868dc01c9ad336086a2c8fb0693e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a548376a_ad2fc8d1",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-08-29T19:11:55Z",
+      "side": 1,
+      "message": "They look like general functions that we might reuse for other purpose (at least for GetVendorBuildProp()). I\u0027ll keep them as in this CL for now.",
+      "parentUuid": "f1492d96_32c74209",
+      "range": {
+        "startLine": 278,
+        "startChar": 4,
+        "endLine": 278,
+        "endChar": 20
+      },
+      "revId": "bcd1d161e8c9868dc01c9ad336086a2c8fb0693e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
