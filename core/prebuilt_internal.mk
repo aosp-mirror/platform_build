@@ -283,6 +283,8 @@ my_extracted_apk :=
 my_extract_apk :=
 endif
 
+dex_preopt_profile_src_file := $(my_prebuilt_src_file)
+
 rs_compatibility_jni_libs :=
 include $(BUILD_SYSTEM)/install_jni_libs.mk
 

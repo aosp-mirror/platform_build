@@ -327,9 +327,11 @@ endif
 
 include $(BUILD_SYSTEM)/android_manifest.mk
 
+called_from_package_internal := true
 #################################
 include $(BUILD_SYSTEM)/java.mk
 #################################
+called_from_package_internal :=
 
 LOCAL_SDK_RES_VERSION:=$(strip $(LOCAL_SDK_RES_VERSION))
 ifeq ($(LOCAL_SDK_RES_VERSION),)
