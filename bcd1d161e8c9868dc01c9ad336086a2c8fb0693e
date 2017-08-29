@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f1492d96_32c74209",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1126544
+      },
+      "writtenOn": "2017-08-29T15:34:37Z",
+      "side": 1,
+      "message": "nit: For consistency, scope this and GetVendorBuildProp to AddCompatibilityArchiveIfTrebleEnabled if possible?",
+      "range": {
+        "startLine": 278,
+        "startChar": 4,
+        "endLine": 278,
+        "endChar": 20
+      },
+      "revId": "bcd1d161e8c9868dc01c9ad336086a2c8fb0693e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
