@@ -30,10 +30,10 @@ install-on-system-other = $(filter-out $(PRODUCT_DEXPREOPT_SPEED_APPS) $(PRODUCT
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
   WITH_DEXPREOPT ?= true
-# For an eng build only pre-opt the boot image. This gives reasonable performance and still
-# allows a simple workflow: building in frameworks/base and syncing.
+# For an eng build only pre-opt the boot image and system server. This gives reasonable performance
+# and still allows a simple workflow: building in frameworks/base and syncing.
   ifeq (eng,$(TARGET_BUILD_VARIANT))
-    WITH_DEXPREOPT_BOOT_IMG_ONLY ?= true
+    WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= true
   endif
 # Add mini-debug-info to the boot classpath unless explicitly asked not to.
   ifneq (false,$(WITH_DEXPREOPT_DEBUG_INFO))
