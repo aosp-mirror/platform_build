@@ -131,12 +131,17 @@ FRAMEWORK_VBMETA_VERSION := 0.0
 endif
 
 # All kernel versions that the system image works with.
-$(GEN): test/vts-testcase/kernel/config/data/android-3.18/android-base.cfg
-$(GEN): test/vts-testcase/kernel/config/data/android-4.4/android-base.cfg
-$(GEN): test/vts-testcase/kernel/config/data/android-4.9/android-base.cfg
-$(GEN): PRIVATE_FLAGS += --kernel=3.18:test/vts-testcase/kernel/config/data/android-3.18/android-base.cfg
-$(GEN): PRIVATE_FLAGS += --kernel=4.4:test/vts-testcase/kernel/config/data/android-4.4/android-base.cfg
-$(GEN): PRIVATE_FLAGS += --kernel=4.9:test/vts-testcase/kernel/config/data/android-4.9/android-base.cfg
+KERNEL_VERSIONS := 3.18 4.4 4.9
+KERNEL_CONFIG_DATA := test/vts-testcase/kernel/config/data
+
+$(GEN): $(foreach version,$(KERNEL_VERSIONS),\
+	$(wildcard $(KERNEL_CONFIG_DATA)/android-$(version)/android-base*.cfg))
+$(GEN): PRIVATE_FLAGS += $(foreach version,$(KERNEL_VERSIONS),\
+	--kernel=$(version):$(call normalize-path-list,\
+		$(wildcard $(KERNEL_CONFIG_DATA)/android-$(version)/android-base*.cfg)))
+
+KERNEL_VERSIONS :=
+KERNEL_CONFIG_DATA :=
 
 $(GEN): $(FRAMEWORK_COMPATIBILITY_MATRIX_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
 	# TODO(b/37405869) (b/37715375) inject avb versions as well for devices that have avb enabled.
