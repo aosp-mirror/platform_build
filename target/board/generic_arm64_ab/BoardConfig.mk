@@ -26,8 +26,7 @@ TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv7-a-neon
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
-# TODO(jiyong) can we set krait here?
-TARGET_2ND_CPU_VARIANT := cortex-a15
+TARGET_2ND_CPU_VARIANT := generic
 
 # Enable A/B update
 TARGET_NO_RECOVERY := true
