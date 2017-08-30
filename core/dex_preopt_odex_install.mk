@@ -33,9 +33,12 @@ endif
 ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file))) # contains no java code
 LOCAL_DEX_PREOPT :=
 endif
-# if WITH_DEXPREOPT_BOOT_IMG_ONLY=true and module is not in boot class path skip
-ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_ONLY))
-ifeq ($(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE)),)
+# if WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY=true and module is not in boot class path skip
+# Also preopt system server jars since selinux prevents system server from loading anything from
+# /data. If we don't do this they will need to be extracted which is not favorable for RAM usage
+# or performance.
+ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
+ifeq ($(filter $(PRODUCT_SYSTEM_SERVER_JARS) $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE)),)
 LOCAL_DEX_PREOPT :=
 endif
 endif
@@ -142,16 +145,19 @@ ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
 ifndef LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING
 $(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING))
 endif
+ifeq (,$(dex_preopt_profile_src_file))
+$(call pretty-error, Internal error: dex_preopt_profile_src_file must be set)
+endif
 my_built_profile := $(dir $(LOCAL_BUILT_MODULE))/profile.prof
 my_dex_location := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
 $(built_odex): $(my_built_profile)
 $(built_odex): PRIVATE_PROFILE_PREOPT_FLAGS := --profile-file=$(my_built_profile)
-$(my_built_profile): PRIVATE_BUILT_MODULE := $(LOCAL_BUILT_MODULE)
+$(my_built_profile): PRIVATE_BUILT_MODULE := $(dex_preopt_profile_src_file)
 $(my_built_profile): PRIVATE_DEX_LOCATION := $(my_dex_location)
 $(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 $(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 $(my_built_profile): $(PROFMAN)
-$(my_built_profile): $(LOCAL_BUILT_MODULE)
+$(my_built_profile): $(dex_preopt_profile_src_file)
 $(my_built_profile):
 	$(hide) mkdir -p $(dir $@)
 	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
@@ -159,6 +165,7 @@ $(my_built_profile):
 		--apk=$(PRIVATE_BUILT_MODULE) \
 		--dex-location=$(PRIVATE_DEX_LOCATION) \
 		--reference-profile-file=$@
+dex_preopt_profile_src_file:=
 my_installed_profile := $(LOCAL_INSTALLED_MODULE).prof
 $(eval $(call copy-one-file,$(my_built_profile),$(my_installed_profile)))
 build_installed_profile:=$(my_built_profile):$(my_installed_profile)
