@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c8f1942c_2028477e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2210,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-08-30T01:24:57Z",
+      "side": 1,
+      "message": "Removed this function.",
+      "parentUuid": "4348f331_a4ee84b3",
+      "revId": "b279ec51f0331e23ecaa3430caf27c3bf8a63f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8328e9e4_56d19959",
         "filename": "core/definitions.mk",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "178a8a27_8f151edd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2220,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-08-30T01:24:57Z",
+      "side": 1,
+      "message": "Removed this function.",
+      "parentUuid": "8328e9e4_56d19959",
+      "revId": "b279ec51f0331e23ecaa3430caf27c3bf8a63f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ad3ac8a6_55956adf",
         "filename": "core/definitions.mk",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2017-08-21T22:25:36Z",
       "side": 1,
       "message": "It seems worthwhile to me to extract this line into a function.\n\nHmm it looks like you just moved these lines from elsewhere so I guess if you don\u0027t feel like doing that then I guess that\u0027s probably ok too",
+      "revId": "b279ec51f0331e23ecaa3430caf27c3bf8a63f70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f2bfee94_9aaa5b3c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2222,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-08-30T01:24:57Z",
+      "side": 1,
+      "message": "Removed this function.",
+      "parentUuid": "ad3ac8a6_55956adf",
       "revId": "b279ec51f0331e23ecaa3430caf27c3bf8a63f70",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
