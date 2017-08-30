@@ -22,6 +22,30 @@
       "revId": "554fb10aefd2cc045c7b36c32d547126f0beb79c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eff7dd52_676a4f67",
+        "filename": "target/product/sdk_phone_arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-08-30T23:58:54Z",
+      "side": 1,
+      "message": "thanks Dan\n\nfixed",
+      "parentUuid": "ce6df35a_1f520bae",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 64
+      },
+      "revId": "554fb10aefd2cc045c7b36c32d547126f0beb79c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
