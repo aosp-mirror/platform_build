@@ -84,6 +84,30 @@
     },
     {
       "key": {
+        "uuid": "71eda10a_12002af0",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2300,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-30T22:06:26Z",
+      "side": 1,
+      "message": "Where are they coming from?  I just submitted a change earlier today that rearranged the flags so they come from soong now, so if it gets any of them it should be getting all of them.",
+      "parentUuid": "701a22e6_9ad83442",
+      "range": {
+        "startLine": 2300,
+        "startChar": 38,
+        "endLine": 2300,
+        "endChar": 53
+      },
+      "revId": "dbaf85ba2faea0a0e789a5cceecad74ea999c9a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2fb1685b_919d526b",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 5
