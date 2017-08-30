@@ -177,6 +177,7 @@ $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_
 endif  # LOCAL_USE_AAPT2
 
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
+$(java_source_list_file): $(R_file_stamp)
 ifdef LOCAL_JACK_ENABLED
 $(noshrob_classes_jack): $(R_file_stamp)
 $(full_classes_jack): $(R_file_stamp)
