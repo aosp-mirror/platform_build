@@ -455,6 +455,7 @@ ifdef LOCAL_IS_HOST_MODULE
 # for host java libraries deps should be in the common dir, so we make a copy in
 # the common dir.
 common_classes_jar := $(intermediates.COMMON)/classes.jar
+common_header_jar := $(intermediates.COMMON)/classes-header.jar
 
 $(common_classes_jar): PRIVATE_MODULE := $(LOCAL_MODULE)
 $(common_classes_jar): PRIVATE_PREFIX := $(my_prefix)
@@ -462,10 +463,14 @@ $(common_classes_jar): PRIVATE_PREFIX := $(my_prefix)
 $(common_classes_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)
 
+$(common_header_jar) : $(my_src_jar)
+	$(transform-prebuilt-to-target)
+
 else # !LOCAL_IS_HOST_MODULE
 # for target java libraries, the LOCAL_BUILT_MODULE is in a product-specific dir,
 # while the deps should be in the common dir, so we make a copy in the common dir.
 common_classes_jar := $(intermediates.COMMON)/classes.jar
+common_header_jar := $(intermediates.COMMON)/classes-header.jar
 common_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
 common_javalib_jar := $(intermediates.COMMON)/javalib.jar
 
@@ -510,13 +515,14 @@ endif
 $(common_classes_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)
 
+$(common_header_jar) : $(my_src_jar)
+	$(transform-prebuilt-to-target)
+
 $(common_classes_pre_proguard_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)
 
 $(common_javalib_jar) : $(common_classes_jar)
 	$(transform-prebuilt-to-target)
-
-$(call define-jar-to-toc-rule, $(common_classes_jar))
 
 ifdef LOCAL_USE_AAPT2
 ifneq ($(my_src_aar),)
