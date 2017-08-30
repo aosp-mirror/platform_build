@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c44972b9_f3a34dec",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2238,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-30T17:05:20Z",
+      "side": 1,
+      "message": "Did you mean to bring this comment back?",
+      "revId": "dbaf85ba2faea0a0e789a5cceecad74ea999c9a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "345ecc2c_c8038024",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2300,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-30T17:05:20Z",
+      "side": 1,
+      "message": "Do we also need the rest of $COMMON_JDK_FLAGS, from build/soong/java/config/config.go?",
+      "range": {
+        "startLine": 2300,
+        "startChar": 38,
+        "endLine": 2300,
+        "endChar": 53
+      },
+      "revId": "dbaf85ba2faea0a0e789a5cceecad74ea999c9a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2fb1685b_919d526b",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-30T17:05:20Z",
+      "side": 1,
+      "message": "Doesn\u0027t have to be in this patch, but we might want to enable turbine here too.",
+      "revId": "dbaf85ba2faea0a0e789a5cceecad74ea999c9a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
