@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "46844896_5713fd70",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-08-30T21:06:38Z",
+      "side": 1,
+      "message": "so the function name acts as a concise comment that applies until the endef",
+      "parentUuid": "1ca7774b_f3ea7fd5",
+      "revId": "9557cae873956c2b87dc82987b24fbb61dbdf610",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "69ea41e8_32063476",
         "filename": "core/main.mk",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2017-08-30T20:51:40Z",
       "side": 1,
       "message": "What happens if there are host and target modules with the same name?  I think this will fail the build.",
+      "revId": "9557cae873956c2b87dc82987b24fbb61dbdf610",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee9469de_8e5956ad",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-08-30T21:06:38Z",
+      "side": 1,
+      "message": "When I tested with a host and target module of the same name matching a value in *.TARGET_REQUIRED, it built the target module and ignored the host module (unless the target module didn\u0027t exist, in which case it executed the $(error) below.\n\nWhat do you recommend?",
+      "parentUuid": "69ea41e8_32063476",
       "revId": "9557cae873956c2b87dc82987b24fbb61dbdf610",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
