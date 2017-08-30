@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9b99e810_daf0aa97",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2238,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-08-30T21:50:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c44972b9_f3a34dec",
+      "revId": "dbaf85ba2faea0a0e789a5cceecad74ea999c9a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "345ecc2c_c8038024",
         "filename": "core/definitions.mk",
         "patchSetId": 5
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "701a22e6_9ad83442",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2300,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-08-30T21:50:56Z",
+      "side": 1,
+      "message": "It seems that most flags are included in PRIVATE_JAVACFLAGS except for -Xmaxerrs",
+      "parentUuid": "345ecc2c_c8038024",
+      "range": {
+        "startLine": 2300,
+        "startChar": 38,
+        "endLine": 2300,
+        "endChar": 53
+      },
+      "revId": "dbaf85ba2faea0a0e789a5cceecad74ea999c9a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2fb1685b_919d526b",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 5
@@ -56,6 +98,24 @@
       "revId": "dbaf85ba2faea0a0e789a5cceecad74ea999c9a1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "074b53f3_3b4c3991",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-08-30T21:50:56Z",
+      "side": 1,
+      "message": "As per-offline discussion, we don\u0027t need use IJar for pre-built.",
+      "parentUuid": "2fb1685b_919d526b",
+      "revId": "dbaf85ba2faea0a0e789a5cceecad74ea999c9a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
