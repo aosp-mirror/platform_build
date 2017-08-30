@@ -69,6 +69,24 @@
       "revId": "9557cae873956c2b87dc82987b24fbb61dbdf610",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1c56981_6e32d352",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-30T21:10:45Z",
+      "side": 1,
+      "message": "Oh, I missed the extra comma, this makes sense if it errors if there are no target files.",
+      "parentUuid": "ee9469de_8e5956ad",
+      "revId": "9557cae873956c2b87dc82987b24fbb61dbdf610",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
