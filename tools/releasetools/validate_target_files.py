@@ -71,8 +71,20 @@ def ValidateFileConsistency(input_zip, input_tmp):
       file_size = len(file_data)
       file_size_rounded_up = RoundUpTo4K(file_size)
       file_data += '\0' * (file_size_rounded_up - file_size)
-      file_sha1 = common.File(entry, file_data).sha1
+      unpacked_file = common.File(entry, file_data)
+      file_size = unpacked_file.size
 
+      # block.map may contain less blocks, because mke2fs may skip allocating
+      # blocks if they contain all zeros. We can't reconstruct such a file from
+      # its block list. (Bug: 65213616)
+      if file_size > ranges.size() * 4096:
+        logging.warning(
+            'Skipping %s that has less blocks: file size %d-byte,'
+            ' ranges %s (%d-byte)', entry, file_size, ranges,
+            ranges.size() * 4096)
+        continue
+
+      file_sha1 = unpacked_file.sha1
       assert blocks_sha1 == file_sha1, \
           'file: %s, range: %s, blocks_sha1: %s, file_sha1: %s' % (
               entry, ranges, blocks_sha1, file_sha1)
