@@ -510,9 +510,10 @@ endif  # TARGET_TRANSLATE_2ND_ARCH
 # If a module is for a cross host os, the required modules must be for
 # that OS too.
 # If a module is built for 32-bit, the required modules must be 32-bit too;
-# Otherwise if the module is an exectuable or shared library,
+# Otherwise if the module is an executable or shared library,
 #   the required modules must be 64-bit;
 #   otherwise we require both 64-bit and 32-bit variant, if one exists.
+define select-bitness-of-required-modules
 $(foreach m,$(ALL_MODULES),\
   $(eval r := $(ALL_MODULES.$(m).REQUIRED))\
   $(if $(r),\
@@ -528,6 +529,8 @@ $(foreach m,$(ALL_MODULES),\
      $(eval ALL_MODULES.$(m).REQUIRED := $(strip $(r_r)))\
   )\
 )
+endef
+$(call select-bitness-of-required-modules)
 r_r :=
 
 define add-required-deps
@@ -542,24 +545,68 @@ define add-required-host-so-deps
 $(1): $(2)
 endef
 
+# Sets up dependencies such that whenever a host module is installed,
+# any other host modules listed in $(ALL_MODULES.$(m).REQUIRED) will also be installed
+define add-all-host-to-host-required-modules-deps
+$(foreach m,$(ALL_MODULES), \
+  $(eval r := $(ALL_MODULES.$(m).REQUIRED)) \
+  $(if $(r), \
+    $(eval r := $(call module-installed-files,$(r))) \
+    $(eval h_m := $(filter $(HOST_OUT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
+    $(eval hc_m := $(filter $(HOST_CROSS_OUT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
+    $(eval h_r := $(filter $(HOST_OUT)/%, $(r))) \
+    $(eval hc_r := $(filter $(HOST_CROSS_OUT)/%, $(r))) \
+    $(eval h_m := $(filter-out $(h_r), $(h_m))) \
+    $(eval hc_m := $(filter-out $(hc_r), $(hc_m))) \
+    $(if $(h_m), $(eval $(call add-required-deps, $(h_m),$(h_r)))) \
+    $(if $(hc_m), $(eval $(call add-required-deps, $(hc_m),$(hc_r)))) \
+  ) \
+)
+endef
+$(call add-all-host-to-host-required-modules-deps)
+
+# Sets up dependencies such that whenever a target module is installed,
+# any other target modules listed in $(ALL_MODULES.$(m).REQUIRED) will also be installed
+define add-all-target-to-target-required-modules-deps
 $(foreach m,$(ALL_MODULES), \
   $(eval r := $(ALL_MODULES.$(m).REQUIRED)) \
   $(if $(r), \
     $(eval r := $(call module-installed-files,$(r))) \
     $(eval t_m := $(filter $(TARGET_OUT_ROOT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
-    $(eval h_m := $(filter $(HOST_OUT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
-    $(eval hc_m := $(filter $(HOST_CROSS_OUT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
     $(eval t_r := $(filter $(TARGET_OUT_ROOT)/%, $(r))) \
-    $(eval h_r := $(filter $(HOST_OUT)/%, $(r))) \
-    $(eval hc_r := $(filter $(HOST_CROSS_OUT)/%, $(r))) \
     $(eval t_m := $(filter-out $(t_r), $(t_m))) \
-    $(eval h_m := $(filter-out $(h_r), $(h_m))) \
-    $(eval hc_m := $(filter-out $(hc_r), $(hc_m))) \
     $(if $(t_m), $(eval $(call add-required-deps, $(t_m),$(t_r)))) \
-    $(if $(h_m), $(eval $(call add-required-deps, $(h_m),$(h_r)))) \
-    $(if $(hc_m), $(eval $(call add-required-deps, $(hc_m),$(hc_r)))) \
-   ) \
- )
+  ) \
+)
+endef
+$(call add-all-target-to-target-required-modules-deps)
+
+# Sets up dependencies such that whenever a host module is installed,
+# any target modules listed in $(ALL_MODULES.$(m).TARGET_REQUIRED) will also be installed
+define add-all-host-to-target-required-modules-deps
+$(foreach m,$(ALL_MODULES), \
+  $(eval req_mods := $(ALL_MODULES.$(m).TARGET_REQUIRED))\
+  $(if $(req_mods), \
+    $(eval req_files := )\
+    $(foreach req_mod,$(req_mods), \
+      $(eval req_file := $(filter $(TARGET_OUT_ROOT)/%, $(call module-installed-files,$(req_mod)))) \
+      $(if $(strip $(req_file)),\
+        ,\
+        $(error $(m).LOCAL_TARGET_REQUIRED_MODULES : illegal value $(req_mod) : not a device module. If you want to specify host modules to be required to be installed along with your host module, add those module names to LOCAL_REQUIRED_MODULES instead)\
+      )\
+      $(eval req_files := $(req_files)$(space)$(req_file))\
+    )\
+    $(eval req_files := $(strip $(req_files)))\
+    $(eval mod_files := $(filter $(HOST_OUT)/%, $(call module-installed-files,$(m)))) \
+    $(eval mod_files := $(filter-out $(req_files),$(mod_files)))\
+    $(if $(mod_files),\
+      $(eval $(call add-required-deps, $(mod_files),$(req_files))) \
+    )\
+  )\
+)
+endef
+$(call add-all-host-to-target-required-modules-deps)
+
 
 t_m :=
 h_m :=
@@ -568,7 +615,7 @@ t_r :=
 h_r :=
 hc_r :=
 
-# Establish the dependecies on the shared libraries.
+# Establish the dependencies on the shared libraries.
 # It also adds the shared library module names to ALL_MODULES.$(m).REQUIRED,
 # so they can be expanded to product_MODULES later.
 # $(1): TARGET_ or HOST_ or HOST_CROSS_.
