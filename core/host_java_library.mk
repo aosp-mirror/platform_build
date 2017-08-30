@@ -34,10 +34,12 @@ endif
 full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_jar := $(intermediates.COMMON)/classes.jar
+java_source_list_file := $(intermediates.COMMON)/java-source-list
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
     $(full_classes_jarjar_jar) \
+    $(java_source_list_file)
 
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
@@ -58,23 +60,30 @@ ifeq ($(RUN_ERROR_PRONE),true)
 LOCAL_JAVACFLAGS += $(LOCAL_ERROR_PRONE_FLAGS)
 endif
 
+# List of dependencies for anything that needs all java sources in place
+java_sources_deps := \
+    $(java_sources) \
+    $(java_resource_sources) \
+    $(proto_java_sources_file_stamp) \
+    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+
+$(java_source_list_file): $(java_sources_deps)
+	$(write-java-source-list)
+
 $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
 $(full_classes_compiled_jar): \
-        $(java_sources) \
-        $(java_resource_sources) \
-        $(full_java_lib_deps) \
-        $(jar_manifest_file) \
-        $(proto_java_sources_file_stamp) \
-        $(annotation_processor_deps) \
-        $(NORMALIZE_PATH) \
-        $(JAR_ARGS) \
-        $(ZIPTIME) \
-        $(LOCAL_ADDITIONAL_DEPENDENCIES) \
-        | $(SOONG_JAVAC_WRAPPER)
+    $(java_source_list_file) \
+    $(java_sources_deps) \
+    $(full_java_lib_deps) \
+    $(jar_manifest_file) \
+    $(annotation_processor_deps) \
+    $(NORMALIZE_PATH) \
+    $(ZIPTIME) \
+    | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-package)
 	$(remove-timestamps-from-package)
 
