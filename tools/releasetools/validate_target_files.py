@@ -44,8 +44,8 @@ def _GetImage(which, tmpdir):
   return sparse_img.SparseImage(path, mappath, clobbered_blocks)
 
 
-def _CalculateFileSha1(file_name, unpacked_name, round_up=False):
-  """Calculate the SHA-1 for a given file. Round up its size to 4K if needed."""
+def _ReadFile(file_name, unpacked_name, round_up=False):
+  """Constructs and returns a File object. Rounds up its size if needed."""
 
   def RoundUpTo4K(value):
     rounded_up = value + 4095
@@ -58,7 +58,7 @@ def _CalculateFileSha1(file_name, unpacked_name, round_up=False):
   if round_up:
     file_size_rounded_up = RoundUpTo4K(file_size)
     file_data += '\0' * (file_size_rounded_up - file_size)
-  return common.File(file_name, file_data).sha1
+  return common.File(file_name, file_data)
 
 
 def ValidateFileAgainstSha1(input_tmp, file_name, file_path, expected_sha1):
@@ -67,7 +67,7 @@ def ValidateFileAgainstSha1(input_tmp, file_name, file_path, expected_sha1):
   logging.info('Validating the SHA-1 of {}'.format(file_name))
   unpacked_name = os.path.join(input_tmp, file_path)
   assert os.path.exists(unpacked_name)
-  actual_sha1 = _CalculateFileSha1(file_name, unpacked_name, False)
+  actual_sha1 = _ReadFile(file_name, unpacked_name, False).sha1
   assert actual_sha1 == expected_sha1, \
       'SHA-1 mismatches for {}. actual {}, expected {}'.format(
       file_name, actual_sha1, expected_sha1)
@@ -92,8 +92,20 @@ def ValidateFileConsistency(input_zip, input_tmp):
       # The filename under unpacked directory, such as SYSTEM/bin/sh.
       unpacked_name = os.path.join(
           input_tmp, which.upper(), entry[(len(prefix) + 1):])
-      file_sha1 = _CalculateFileSha1(entry, unpacked_name, True)
+      unpacked_file = _ReadFile(entry, unpacked_name, True)
+      file_size = unpacked_file.size
 
+      # block.map may contain less blocks, because mke2fs may skip allocating
+      # blocks if they contain all zeros. We can't reconstruct such a file from
+      # its block list. (Bug: 65213616)
+      if file_size > ranges.size() * 4096:
+        logging.warning(
+            'Skipping %s that has less blocks: file size %d-byte,'
+            ' ranges %s (%d-byte)', entry, file_size, ranges,
+            ranges.size() * 4096)
+        continue
+
+      file_sha1 = unpacked_file.sha1
       assert blocks_sha1 == file_sha1, \
           'file: %s, range: %s, blocks_sha1: %s, file_sha1: %s' % (
               entry, ranges, blocks_sha1, file_sha1)
