@@ -427,8 +427,16 @@ TARGET_OUT_COMMON_GEN := $(TARGET_COMMON_OUT_ROOT)/gen
 TARGET_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_SYSTEM)
 ifneq ($(filter address,$(SANITIZE_TARGET)),)
 target_out_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/system
+ifeq ($(SANITIZE_LITE),true)
+# When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
+# work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
+target_out_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/system
+else
+target_out_app_base := $(TARGET_OUT)
+endif
 else
 target_out_shared_libraries_base := $(TARGET_OUT)
+target_out_app_base := $(TARGET_OUT)
 endif
 
 TARGET_OUT_EXECUTABLES := $(TARGET_OUT)/bin
@@ -442,8 +450,8 @@ TARGET_OUT_SHARED_LIBRARIES := $(target_out_shared_libraries_base)/lib
 endif
 TARGET_OUT_RENDERSCRIPT_BITCODE := $(TARGET_OUT_SHARED_LIBRARIES)
 TARGET_OUT_JAVA_LIBRARIES := $(TARGET_OUT)/framework
-TARGET_OUT_APPS := $(TARGET_OUT)/app
-TARGET_OUT_APPS_PRIVILEGED := $(TARGET_OUT)/priv-app
+TARGET_OUT_APPS := $(target_out_app_base)/app
+TARGET_OUT_APPS_PRIVILEGED := $(target_out_app_base)/priv-app
 TARGET_OUT_KEYLAYOUT := $(TARGET_OUT)/usr/keylayout
 TARGET_OUT_KEYCHARS := $(TARGET_OUT)/usr/keychars
 TARGET_OUT_ETC := $(TARGET_OUT)/etc
@@ -451,7 +459,13 @@ TARGET_OUT_NOTICE_FILES := $(TARGET_OUT_INTERMEDIATES)/NOTICE_FILES
 TARGET_OUT_FAKE := $(PRODUCT_OUT)/fake_packages
 TARGET_OUT_TESTCASES := $(PRODUCT_OUT)/testcases
 
+ifeq ($(SANITIZE_LITE),true)
+# When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
+# work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
+TARGET_OUT_SYSTEM_OTHER := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_SYSTEM_OTHER)
+else
 TARGET_OUT_SYSTEM_OTHER := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_SYSTEM_OTHER)
+endif
 
 # Out for TARGET_2ND_ARCH
 TARGET_2ND_ARCH_VAR_PREFIX := $(HOST_2ND_ARCH_VAR_PREFIX)
@@ -520,8 +534,16 @@ TARGET_OUT_CACHE := $(PRODUCT_OUT)/cache
 TARGET_OUT_VENDOR := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)
 ifneq ($(filter address,$(SANITIZE_TARGET)),)
 target_out_vendor_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/vendor
+ifeq ($(SANITIZE_LITE),true)
+# When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
+# work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
+target_out_vendor_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/vendor
+else
+target_out_vendor_app_base := $(TARGET_OUT_VENDOR)
+endif
 else
 target_out_vendor_shared_libraries_base := $(TARGET_OUT_VENDOR)
+target_out_vendor_app_base := $(TARGET_OUT_VENDOR)
 endif
 
 TARGET_OUT_VENDOR_EXECUTABLES := $(TARGET_OUT_VENDOR)/bin
@@ -533,8 +555,8 @@ TARGET_OUT_VENDOR_SHARED_LIBRARIES := $(target_out_vendor_shared_libraries_base)
 endif
 TARGET_OUT_VENDOR_RENDERSCRIPT_BITCODE := $(TARGET_OUT_VENDOR_SHARED_LIBRARIES)
 TARGET_OUT_VENDOR_JAVA_LIBRARIES := $(TARGET_OUT_VENDOR)/framework
-TARGET_OUT_VENDOR_APPS := $(TARGET_OUT_VENDOR)/app
-TARGET_OUT_VENDOR_APPS_PRIVILEGED := $(TARGET_OUT_VENDOR)/priv-app
+TARGET_OUT_VENDOR_APPS := $(target_out_vendor_app_base)/app
+TARGET_OUT_VENDOR_APPS_PRIVILEGED := $(target_out_vendor_app_base)/priv-app
 TARGET_OUT_VENDOR_ETC := $(TARGET_OUT_VENDOR)/etc
 
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_VENDOR_EXECUTABLES := $(TARGET_OUT_VENDOR_EXECUTABLES)
