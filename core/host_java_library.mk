@@ -35,7 +35,6 @@ full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 java_source_list_file := $(intermediates.COMMON)/java-source-list
-full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
@@ -72,7 +71,7 @@ $(java_source_list_file): $(java_sources_deps)
 	$(write-java-source-list)
 
 $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
-$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
+$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
@@ -84,7 +83,6 @@ $(full_classes_compiled_jar): \
     $(annotation_processor_deps) \
     $(NORMALIZE_PATH) \
     $(ZIPTIME) \
-    $(JAR_ARGS) \
     | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-package)
 	$(remove-timestamps-from-package)
@@ -112,4 +110,3 @@ include $(BUILD_SYSTEM)/jacoco.mk
 $(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(LOCAL_BUILT_MODULE)))
 $(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(full_classes_jar)))
 
-$(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(full_classes_header_jar)))

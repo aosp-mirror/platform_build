@@ -171,13 +171,7 @@ full_static_java_libs := \
       $(call intermediates-dir-for, \
         JAVA_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),COMMON)/classes.jar)
 
-full_static_java_header_libs := \
-    $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
-      $(call intermediates-dir-for, \
-        JAVA_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),COMMON)/classes-header.jar)
-
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_LIBRARIES := $(full_static_java_libs)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_HEADER_LIBRARIES := $(full_static_java_header_libs)
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASSET_DIR := $(LOCAL_ASSET_DIR)
@@ -204,18 +198,18 @@ ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 # No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
 my_bootclasspath := ""
 else  # LOCAL_NO_STANDARD_LIBRARIES
-my_bootclasspath := $(call java-lib-header-files,core-oj):$(call java-lib-header-files,core-libart)
+my_bootclasspath := $(call java-lib-files,core-oj):$(call java-lib-files,core-libart)
 endif  # LOCAL_NO_STANDARD_LIBRARIES
 else
 ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
 # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
-my_bootclasspath := $(call java-lib-header-files,android_stubs_current)
+my_bootclasspath := $(call java-lib-files,android_stubs_current)
 else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
-my_bootclasspath := $(call java-lib-header-files,android_system_stubs_current)
+my_bootclasspath := $(call java-lib-files,android_system_stubs_current)
 else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
-my_bootclasspath := $(call java-lib-header-files,android_test_stubs_current)
+my_bootclasspath := $(call java-lib-files,android_test_stubs_current)
 else
-my_bootclasspath := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
+my_bootclasspath := $(call java-lib-files,sdk_v$(LOCAL_SDK_VERSION))
 endif # current, system_current, or test_current
 endif # LOCAL_SDK_VERSION
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
@@ -233,7 +227,6 @@ endif
 endif
 
 full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
-full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
 full_java_lib_deps := $(addsuffix .toc, $(full_java_lib_deps))
 
@@ -243,12 +236,11 @@ ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
 ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 my_bootclasspath := ""
 else
-my_bootclasspath := $(call normalize-path-list,$(call java-lib-header-files,core-oj-hostdex core-libart-hostdex,true))
+my_bootclasspath := $(call normalize-path-list,$(call java-lib-files,core-oj-hostdex core-libart-hostdex,true))
 endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
 
 full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),true)
-full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),true)
 full_java_lib_deps := $(full_shared_java_libs)
 else # !USE_CORE_LIB_BOOTCLASSPATH
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH :=
@@ -259,10 +251,7 @@ full_java_lib_deps := $(full_shared_java_libs)
 endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
 
-# Only host java libraries use LOCAL_CLASSPATH.
 full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
-full_java_header_libs := $(full_shared_java_header_libs) $(full_static_java_header_libs)
-
 full_java_lib_deps := $(full_java_lib_deps) $(full_static_java_libs) $(LOCAL_CLASSPATH)
 
 ifndef LOCAL_IS_HOST_MODULE
@@ -278,7 +267,6 @@ ifneq ($(apk_libraries),)
   # link against the jar with full original names (before proguard processing).
   full_shared_java_libs += $(link_apk_libraries)
   full_java_libs += $(link_apk_libraries)
-  full_java_header_libs += $(link_apk_libraries)
   full_java_lib_deps += $(link_apk_libraries)
 endif
 
@@ -297,7 +285,6 @@ ifdef LOCAL_INSTRUMENTATION_FOR
   # link against the jar with full original names (before proguard processing).
   link_instr_classes_jar := $(link_instr_intermediates_dir.COMMON)/classes-pre-proguard.jar
   full_java_libs += $(link_instr_classes_jar)
-  full_java_header_libs += $(link_instr_classes_jar)
   full_java_lib_deps += $(link_instr_classes_jar)
 endif  # LOCAL_INSTRUMENTATION_FOR
 endif  # LOCAL_IS_HOST_MODULE
@@ -346,7 +333,6 @@ endif
 endif  # !LOCAL_IS_HOST_MODULE
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ALL_JAVA_LIBRARIES := $(full_java_libs)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ALL_JAVA_HEADER_LIBRARIES := $(full_java_header_libs)
 
 ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
     $(ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR) $(LOCAL_INTERMEDIATE_SOURCE_DIR)
