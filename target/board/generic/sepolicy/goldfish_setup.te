@@ -1,29 +1,12 @@
 # goldfish-setup service: runs init.goldfish.sh script
 type goldfish_setup, domain;
-type goldfish_setup_exec, exec_type, file_type;
+type goldfish_setup_exec, vendor_file_type, exec_type, file_type;
 
 init_daemon_domain(goldfish_setup)
 
-# Inherit open file to shell (interpreter) for script.
-allow goldfish_setup shell_exec:file rx_file_perms;
-
-# Run ifconfig, route commands to configure interfaces and routes.
-allow goldfish_setup system_file:file execute_no_trans;
-allow goldfish_setup toolbox_exec:file rx_file_perms;
 allow goldfish_setup self:capability { net_admin net_raw };
-allow goldfish_setup self:udp_socket create_socket_perms;
+allow goldfish_setup self:udp_socket { create ioctl };
+allow goldfish_setup vendor_toolbox_exec:file execute_no_trans;
 allowxperm goldfish_setup self:udp_socket ioctl priv_sock_ioctls;
-
-wakelock_use(goldfish_setup)
-net_domain(goldfish_setup)
-
-# Set net.eth0.dns*, debug.sf.nobootanimation
-set_prop(goldfish_setup, system_prop)
-set_prop(goldfish_setup, debug_prop)
-
-# Set ro.radio.noril
-set_prop(goldfish_setup, radio_noril_prop)
-
-# Stop ril-daemon service (by setting ctl.stop to ril-daemon, which
-# transforms to a permission check on ctl.ril-daemon).
-set_prop(goldfish_setup, ctl_rildaemon_prop)
+wakelock_use(goldfish_setup);
+allow goldfish_setup vendor_shell_exec:file { rx_file_perms };

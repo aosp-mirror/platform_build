@@ -62,6 +62,7 @@ ifeq ($(HOST_OS),linux)
 endif
 
 TARGET_USES_HWC2 := true
+NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # Build OpenGLES emulation guest and host libraries
 BUILD_EMULATOR_OPENGL := true
@@ -74,10 +75,16 @@ USE_OPENGL_RENDERER := true
 TARGET_USERIMAGES_USE_EXT4 := true
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1879048192  # 1.75 GB
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 1610612736  # 1.5 GB, lots of space for running tests
+TARGET_COPY_OUT_VENDOR := vendor
+# ~100 MB vendor image. Please adjust system image / vendor image sizes
+# when finalizing them.
+BOARD_VENDORIMAGE_PARTITION_SIZE := 100000000
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_CACHEIMAGE_PARTITION_SIZE := 69206016
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 
 BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
 
