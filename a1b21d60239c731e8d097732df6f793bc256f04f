@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "435c3dc5_26f193fc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2017-08-31T09:45:48Z",
+      "side": 1,
+      "message": "(cherry-picked from 74b2da9db67f5da2195c9b07dab22c868934e396)\n\nor use git cherry-pick with -x flag to have git generate this line for you.\n\n/also move to to L17/",
+      "revId": "a1b21d60239c731e8d097732df6f793bc256f04f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
