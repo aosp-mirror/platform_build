@@ -85,16 +85,13 @@ $(common_javalib.jar) : $(built_dex) $(java_resource_sources) | $(ZIPTIME)
 ifdef LOCAL_JACK_ENABLED
 	$(create-empty-package)
 else
-	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@.tmp)
+	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
 endif
-	$(call add-dex-to-package-arg,$@.tmp)
+	$(add-dex-to-package)
 ifdef LOCAL_JACK_ENABLED
 	$(add-carried-jack-resources)
 endif
-	$(hide) $(ZIPTIME) $@.tmp
-	$(call commit-change-for-toc,$@)
-
-.KATI_RESTAT: $(common_javalib.jar)
+	$(remove-timestamps-from-package)
 
 ifdef LOCAL_DEX_PREOPT
 ifneq ($(dexpreopt_boot_jar_module),) # boot jar

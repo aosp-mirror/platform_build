@@ -184,7 +184,6 @@ $(full_classes_jack): $(R_file_stamp)
 $(jack_check_timestamp): $(R_file_stamp)
 endif # LOCAL_JACK_ENABLED
 $(full_classes_compiled_jar): $(R_file_stamp)
-$(full_classes_turbine_jar): $(R_file_stamp)
 
 
 # if we have custom proguarding done use the proguarded classes jar instead of the normal classes jar
