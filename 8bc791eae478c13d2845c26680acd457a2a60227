@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d0a44e9f_c6162254",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-08-31T03:30:18Z",
+      "side": 1,
+      "message": "Add:\n\n Merged-In: I3898bc53cad264529f126e6bf0af9c6ca1736877",
+      "revId": "8bc791eae478c13d2845c26680acd457a2a60227",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
