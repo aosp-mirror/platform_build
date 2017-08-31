@@ -1783,8 +1783,11 @@ endef
 
 # We just build this directly to the install location.
 INSTALLED_SYSTEMOTHERIMAGE_TARGET := $(BUILT_SYSTEMOTHERIMAGE_TARGET)
+ifneq (true,$(SANITIZE_LITE))
+# Only create system_other when not building the second stage of a SANITIZE_LITE build.
 $(INSTALLED_SYSTEMOTHERIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEMOTHERIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEMOTHER)
 	$(build-systemotherimage-target)
+endif
 
 .PHONY: systemotherimage-nodeps
 systemotherimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
