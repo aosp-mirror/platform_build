@@ -125,6 +125,7 @@ PRODUCT_PACKAGES += \
 	ip \
 	ipv6proxy \
 	iw \
+	wificond \
 	wpa_supplicant \
 
 PRODUCT_COPY_FILES += \
@@ -139,8 +140,9 @@ PRODUCT_COPY_FILES += \
     device/generic/goldfish/manifest.xml:$(TARGET_COPY_OUT_VENDOR)/manifest.xml \
     device/generic/goldfish/data/etc/permissions/privapp-permissions-goldfish.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/privapp-permissions-goldfish.xml \
     device/generic/goldfish/data/etc/config.ini:config.ini \
-    device/generic/goldfish/wifi/simulated_hostapd.conf:system/etc/simulated_hostapd.conf \
-    device/generic/goldfish/wifi/wpa_supplicant.conf:data/misc/wifi/wpa_supplicant.conf \
+    device/generic/goldfish/wifi/simulated_hostapd.conf:$(TARGET_COPY_OUT_VENDOR)/etc/simulated_hostapd.conf \
+    device/generic/goldfish/wifi/wpa_supplicant.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant.conf \
+    device/generic/goldfish/wifi/WifiConfigStore.xml:data/misc/wifi/WifiConfigStore.xml \
     frameworks/native/data/etc/android.hardware.wifi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.wifi.xml
 
 PRODUCT_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
