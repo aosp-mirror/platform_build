@@ -113,6 +113,9 @@ ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
 LOCAL_PROGUARD_ENABLED :=
 endif
 
+full_classes_turbine_jar := $(intermediates.COMMON)/classes-turbine.jar
+full_classes_header_jarjar := $(intermediates.COMMON)/classes-header-jarjar.jar
+full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
 full_classes_processed_jar := $(intermediates.COMMON)/classes-processed.jar
 full_classes_desugar_jar := $(intermediates.COMMON)/classes-desugar.jar
@@ -139,6 +142,7 @@ noshrob_classes_jack := $(intermediates.COMMON)/classes.noshrob.jack
 jack_check_timestamp := $(intermediates.COMMON)/jack.check.timestamp
 
 LOCAL_INTERMEDIATE_TARGETS += \
+    $(full_classes_turbine_jar) \
     $(full_classes_compiled_jar) \
     $(full_classes_desugar_jar) \
     $(full_classes_jarjar_jar) \
@@ -151,7 +155,6 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(built_dex) \
     $(full_classes_stubs_jar) \
     $(java_source_list_file)
-
 
 LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 
@@ -448,7 +451,7 @@ java_sources_deps := \
 $(java_source_list_file): $(java_sources_deps)
 	$(write-java-source-list)
 
-$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
+$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES := $(LOCAL_JAR_EXCLUDE_PACKAGES)
@@ -457,13 +460,43 @@ $(full_classes_compiled_jar): PRIVATE_JAVA_SOURCE_LIST := $(java_source_list_fil
 $(full_classes_compiled_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
-    $(full_java_lib_deps) \
+    $(full_java_header_libs) \
+    $(full_static_java_libs) \
     $(jar_manifest_file) \
     $(layers_file) \
     $(annotation_processor_deps) \
     $(NORMALIZE_PATH) \
+    $(JAR_ARGS) \
     | $(SOONG_JAVAC_WRAPPER)
 	$(transform-java-to-classes.jar)
+
+$(full_classes_turbine_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
+$(full_classes_turbine_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
+$(full_classes_turbine_jar): \
+    $(java_source_list_file) \
+    $(java_sources_deps) \
+    $(full_java_header_libs) \
+    $(jar_manifest_file) \
+    $(layers_file) \
+    $(NORMALIZE_PATH) \
+    $(JAR_ARGS) \
+    $(ZIPTIME) \
+    | $(TURBINE)
+	$(transform-java-to-header.jar)
+
+.KATI_RESTAT: $(full_classes_turbine_jar)
+
+# Run jarjar before generate classes-header.jar if necessary.
+ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
+$(full_classes_header_jarjar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
+$(full_classes_header_jarjar): $(full_classes_turbine_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
+	@echo Header JarJar: $@
+	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+else
+full_classes_header_jarjar := $(full_classes_turbine_jar)
+endif
+
+$(eval $(call copy-one-file,$(full_classes_header_jarjar),$(full_classes_header_jar)))
 
 javac-check : $(full_classes_compiled_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
@@ -499,7 +532,7 @@ ifndef LOCAL_JACK_ENABLED
 ifndef LOCAL_IS_STATIC_JAVA_LIBRARY
 my_desugaring := true
 $(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-$(full_classes_desugar_jar): $(full_classes_processed_jar) $(DESUGAR)
+$(full_classes_desugar_jar): $(full_classes_processed_jar) $(full_java_header_libs) $(DESUGAR)
 	$(desugar-classes-jar)
 endif
 endif
@@ -548,19 +581,22 @@ ifneq (,$(filter android-support-%,$(LOCAL_STATIC_JAVA_LIBRARIES)))
 ifdef LOCAL_SDK_VERSION
 ifdef TARGET_BUILD_APPS
 ifeq (,$(filter current system_current test_current, $(LOCAL_SDK_VERSION)))
-  my_support_library_sdk_raise := $(call java-lib-files, sdk_vcurrent)
+  my_support_library_sdk_raise := $(call java-lib-header-files, sdk_vcurrent)
 endif
 else
   # For platform build, we can't just raise to the "current" SDK,
   # that would break apps that use APIs removed from the current SDK.
-  my_support_library_sdk_raise := $(call java-lib-files,$(TARGET_DEFAULT_JAVA_LIBRARIES))
+  my_support_library_sdk_raise := $(call java-lib-header-files,$(TARGET_DEFAULT_JAVA_LIBRARIES))
 endif
 endif
 endif
 
 # jack already has the libraries in its classpath and doesn't support jars
 legacy_proguard_flags := $(addprefix -libraryjars ,$(my_support_library_sdk_raise) \
-  $(filter-out $(my_support_library_sdk_raise),$(full_shared_java_libs)))
+  $(filter-out $(my_support_library_sdk_raise),$(full_shared_java_header_libs)))
+
+legacy_proguard_lib_deps := $(my_support_library_sdk_raise) \
+  $(filter-out $(my_support_library_sdk_raise),$(full_shared_java_header_libs))
 
 legacy_proguard_flags += -printmapping $(proguard_dictionary)
 jack_proguard_flags := -printmapping $(jack_dictionary)
@@ -605,6 +641,7 @@ ifeq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
 # link_instr_classes_jar is defined in base_rule.mk
 # jack already has this library in its classpath and doesn't support jars
 legacy_proguard_flags += -libraryjars $(link_instr_classes_jar)
+legacy_proguard_lib_deps += $(link_instr_classes_jar)
 else # obfuscation
 # If obfuscation is enabled, the main app must be obfuscated too.
 # We need to run obfuscation using the main app's dictionary,
@@ -658,7 +695,7 @@ endif
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
 $(full_classes_proguard_jar): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
-$(full_classes_proguard_jar) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) | $(PROGUARD)
+$(full_classes_proguard_jar) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) | $(PROGUARD)
 	$(call transform-jar-to-proguard)
 
 else  # LOCAL_PROGUARD_ENABLED not defined
@@ -666,8 +703,6 @@ full_classes_proguard_jar := $(full_classes_pre_proguard_jar)
 endif # LOCAL_PROGUARD_ENABLED defined
 
 $(eval $(call copy-one-file,$(full_classes_proguard_jar),$(full_classes_jar)))
-
-$(call define-jar-to-toc-rule, $(full_classes_jar))
 
 ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 ifndef LOCAL_JACK_ENABLED
