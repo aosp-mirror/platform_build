@@ -49,6 +49,7 @@ full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_jack := $(intermediates.COMMON)/classes.jack
 jack_check_timestamp := $(intermediates.COMMON)/jack.check.timestamp
 built_dex := $(intermediates.COMMON)/classes.dex
+java_source_list_file := $(intermediates.COMMON)/java-source-list
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
@@ -57,7 +58,8 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_jack) \
     $(full_classes_jar) \
     $(jack_check_timestamp) \
-    $(built_dex)
+    $(built_dex) \
+    $(java_source_list_file)
 
 # See comment in java.mk
 ifndef LOCAL_CHECKED_MODULE
@@ -83,6 +85,16 @@ include $(BUILD_SYSTEM)/java_common.mk
 
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 
+# List of dependencies for anything that needs all java sources in place
+java_sources_deps := \
+    $(java_sources) \
+    $(java_resource_sources) \
+    $(proto_java_sources_file_stamp) \
+    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+
+$(java_source_list_file): $(java_sources_deps)
+	$(write-java-source-list)
+
 ifndef LOCAL_JACK_ENABLED
 
 $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
@@ -91,16 +103,13 @@ $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
 $(full_classes_compiled_jar): \
-        $(java_sources) \
-        $(java_resource_sources) \
-        $(full_java_lib_deps) \
-        $(jar_manifest_file) \
-        $(proto_java_sources_file_stamp) \
-        $(annotation_processor_deps) \
-        $(NORMALIZE_PATH) \
-        $(JAR_ARGS) \
-        $(LOCAL_ADDITIONAL_DEPENDENCIES) \
-        | $(SOONG_JAVAC_WRAPPER)
+    $(java_source_list_file) \
+    $(java_sources_deps) \
+    $(full_java_lib_deps) \
+    $(jar_manifest_file) \
+    $(annotation_processor_deps) \
+    $(NORMALIZE_PATH) \
+    | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-package)
 
 my_desugaring :=
@@ -173,9 +182,14 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_MIN_SDK_VERSION := $(PLATFORM_JACK_MIN_SDK_VERSION)
 
-jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
-        $(jar_manifest_file) $(proto_java_sources_file_stamp) \
-        $(LOCAL_ADDITIONAL_DEPENDENCIES) $(NORMALIZE_PATH) $(JACK_DEFAULT_ARGS) $(JACK)
+jack_all_deps := \
+    $(java_source_list_file) \
+    $(java_sources_deps) \
+    $(full_jack_deps) \
+    $(jar_manifest_file) \
+    $(NORMALIZE_PATH) \
+    $(JACK_DEFAULT_ARGS) \
+    $(JACK)
 
 ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(built_dex): PRIVATE_CLASSES_JACK := $(full_classes_jack)
