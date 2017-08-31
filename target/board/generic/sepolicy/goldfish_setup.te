@@ -16,10 +16,23 @@ allow goldfish_setup vendor_shell_exec:file { rx_file_perms };
 set_prop(goldfish_setup, ctl_default_prop);
 
 # Set up WiFi
-allow goldfish_setup self:netlink_route_socket nlmsg_write;
-allow goldfish_setup self:netlink_socket create_socket_perms;
+allow goldfish_setup self:netlink_route_socket { create nlmsg_write setopt bind getattr read write nlmsg_read };
+allow goldfish_setup self:netlink_socket create_socket_perms_no_ioctl;
 allow goldfish_setup self:capability { sys_module sys_admin };
 allow goldfish_setup varrun_file:dir { mounton open read write add_name search remove_name };
 allow goldfish_setup varrun_file:file { mounton getattr create read write open unlink };
 allow goldfish_setup execns_exec:file rx_file_perms;
-allow goldfish_setup proc_net:file w_file_perms;
+allow goldfish_setup proc_net:file rw_file_perms;
+allow goldfish_setup proc:file r_file_perms;
+set_prop(goldfish_setup, ctl_default_prop);
+allow goldfish_setup system_data_file:dir getattr;
+allow goldfish_setup kernel:system module_request;
+# Allow goldfish_setup to run /system/bin/ip and /system/bin/iw
+allow goldfish_setup system_file:file execute_no_trans;
+# Allow goldfish_setup to run init.wifi.sh
+allow goldfish_setup goldfish_setup_exec:file execute_no_trans;
+# iw
+allow goldfish_setup sysfs:file { read open };
+# iptables
+allow goldfish_setup system_file:file lock;
+allow goldfish_setup self:rawip_socket { create getopt setopt };

@@ -1,6 +1,6 @@
 # IPv6 proxying
-type ipv6proxy, domain, domain_deprecated;
-type ipv6proxy_exec, exec_type, file_type;
+type ipv6proxy, domain;
+type ipv6proxy_exec, exec_type, vendor_file_type, file_type;
 
 init_daemon_domain(ipv6proxy)
 net_domain(ipv6proxy)
@@ -13,3 +13,4 @@ allow ipv6proxy self:capability { sys_admin sys_module net_admin net_raw };
 allow ipv6proxy self:packet_socket { bind create read };
 allow ipv6proxy self:netlink_route_socket nlmsg_write;
 allow ipv6proxy varrun_file:dir search;
+allowxperm ipv6proxy self:udp_socket ioctl { SIOCSIFFLAGS SIOCGIFHWADDR };
