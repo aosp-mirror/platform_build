@@ -650,6 +650,7 @@ JACK_DEFAULT_ARGS := $(BUILD_SYSTEM)/jack-default.args
 DEFAULT_JACK_EXTRA_ARGS := @$(JACK_DEFAULT_ARGS)
 endif
 
+TURBINE := $(HOST_OUT_JAVA_LIBRARIES)/turbine$(COMMON_JAVA_PACKAGE_SUFFIX)
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/tools/java-event-log-tags.py
 MERGETAGS := build/tools/merge-event-log-tags.py
