@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b43625bd_c7a750c3",
+        "filename": "tools/releasetools/check_ota_package_signature.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-09-01T21:34:33Z",
+      "side": 1,
+      "message": "Done\n\nAlso realized I forgot to call common.Cleanup() to clean up other temps. Fixed in PS3 (added to the end of the file).",
+      "parentUuid": "0e7211dd_b9256102",
+      "range": {
+        "startLine": 196,
+        "startChar": 29,
+        "endLine": 196,
+        "endChar": 36
+      },
+      "revId": "7e1f2e0f7dc4673755e2c98ad6c4323756e8c8ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "35759d82_1a59b8d1",
         "filename": "tools/releasetools/check_ota_package_signature.py",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "546c8985_cc294ce8",
+        "filename": "tools/releasetools/check_ota_package_signature.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-09-01T21:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "35759d82_1a59b8d1",
+      "range": {
+        "startLine": 197,
+        "startChar": 40,
+        "endLine": 197,
+        "endChar": 41
+      },
+      "revId": "7e1f2e0f7dc4673755e2c98ad6c4323756e8c8ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fe1e0568_d1eae143",
         "filename": "tools/releasetools/check_ota_package_signature.py",
         "patchSetId": 2
@@ -59,6 +107,30 @@
       "writtenOn": "2017-09-01T20:00:52Z",
       "side": 1,
       "message": "payload_hash_file?",
+      "range": {
+        "startLine": 201,
+        "startChar": 2,
+        "endLine": 201,
+        "endChar": 18
+      },
+      "revId": "7e1f2e0f7dc4673755e2c98ad6c4323756e8c8ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6f67f939_f89fd997",
+        "filename": "tools/releasetools/check_ota_package_signature.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-09-01T21:34:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fe1e0568_d1eae143",
       "range": {
         "startLine": 201,
         "startChar": 2,
