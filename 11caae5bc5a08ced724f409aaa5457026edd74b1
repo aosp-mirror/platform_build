@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "83ef57c7_c3ab8eb5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-09-01T08:13:10Z",
+      "side": 1,
+      "message": "Test: build and flash a device having odm partition. \n    Successfully switch between regular and recovery modes",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 10
+      },
+      "revId": "11caae5bc5a08ced724f409aaa5457026edd74b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
