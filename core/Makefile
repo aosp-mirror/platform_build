@@ -2158,6 +2158,7 @@ OTATOOLS_DEPS := \
   system/extras/verity/build_verity_metadata.py \
   system/extras/ext4_utils/mke2fs.conf \
   external/avb/test/data/testkey_rsa4096.pem \
+  $(shell find system/update_engine/scripts -name \*.pyc -prune -o -type f -print | sort) \
   $(shell find build/target/product/security -type f -name \*.x509.pem -o -name \*.pk8 -o \
       -name verity_key | sort) \
   $(shell find device vendor -type f -name \*.pk8 -o -name verifiedboot\* -o \
