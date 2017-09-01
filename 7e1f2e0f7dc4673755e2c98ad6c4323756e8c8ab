@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e7211dd_b9256102",
+        "filename": "tools/releasetools/check_ota_package_signature.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 1079733
+      },
+      "writtenOn": "2017-09-01T20:00:52Z",
+      "side": 1,
+      "message": "Will this file get cleaned up?",
+      "range": {
+        "startLine": 196,
+        "startChar": 29,
+        "endLine": 196,
+        "endChar": 36
+      },
+      "revId": "7e1f2e0f7dc4673755e2c98ad6c4323756e8c8ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "35759d82_1a59b8d1",
+        "filename": "tools/releasetools/check_ota_package_signature.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1079733
+      },
+      "writtenOn": "2017-09-01T20:00:52Z",
+      "side": 1,
+      "message": "rb",
+      "range": {
+        "startLine": 197,
+        "startChar": 40,
+        "endLine": 197,
+        "endChar": 41
+      },
+      "revId": "7e1f2e0f7dc4673755e2c98ad6c4323756e8c8ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fe1e0568_d1eae143",
+        "filename": "tools/releasetools/check_ota_package_signature.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1079733
+      },
+      "writtenOn": "2017-09-01T20:00:52Z",
+      "side": 1,
+      "message": "payload_hash_file?",
+      "range": {
+        "startLine": 201,
+        "startChar": 2,
+        "endLine": 201,
+        "endChar": 18
+      },
+      "revId": "7e1f2e0f7dc4673755e2c98ad6c4323756e8c8ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
