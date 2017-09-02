@@ -2656,12 +2656,17 @@ endef
 # Add resources carried by static Jack libraries.
 #
 define add-carried-jack-resources
+$(call add-carried-jack-resources-to,$@)
+endef
+
+# $(1) the target jar.
+define add-carried-jack-resources-to
  $(hide) if [ -d $(PRIVATE_JACK_INTERMEDIATES_DIR) ] ; then \
     find $(PRIVATE_JACK_INTERMEDIATES_DIR) -type f | sort \
         | sed -e "s?^$(PRIVATE_JACK_INTERMEDIATES_DIR)/? -C \"$(PRIVATE_JACK_INTERMEDIATES_DIR)\" \"?" -e "s/$$/\"/" \
-        > $(dir $@)jack_res_jar_flags; \
-    if [ -s $(dir $@)jack_res_jar_flags ] ; then \
-        $(JAR) uf $@ @$(dir $@)jack_res_jar_flags; \
+        > $(dir $(1))jack_res_jar_flags; \
+    if [ -s $(dir $(1))jack_res_jar_flags ] ; then \
+        $(JAR) uf $(1) @$(dir $(1))jack_res_jar_flags; \
     fi; \
 fi
 endef
