@@ -105,7 +105,7 @@ ifeq (true,$(my_use_profile_for_boot_image))
 my_boot_image_profile_location := $(PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION)
 ifeq (,$(my_boot_image_profile_location))
 # If not set, use the default.
-my_boot_image_profile_location := frameworks/base/boot-image-profile.txt
+my_boot_image_profile_location := frameworks/base/config/boot-image-profile.txt
 endif
 
 # Code to create the boot image profile, not in dex_preopt_libart_boot.mk since the profile is the same for all archs.

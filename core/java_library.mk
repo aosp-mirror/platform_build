@@ -84,15 +84,18 @@ $(common_javalib.jar): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_D
 $(common_javalib.jar) : $(built_dex) $(java_resource_sources) | $(ZIPTIME)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
 ifdef LOCAL_JACK_ENABLED
-	$(create-empty-package)
+	$(call create-empty-package-at,$@.tmp)
 else
-	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
+	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@.tmp)
 endif
-	$(add-dex-to-package)
+	$(call add-dex-to-package-arg,$@.tmp)
 ifdef LOCAL_JACK_ENABLED
-	$(add-carried-jack-resources)
+	$(call add-carried-jack-resources-to,$@.tmp)
 endif
-	$(remove-timestamps-from-package)
+	$(hide) $(ZIPTIME) $@.tmp
+	$(call commit-change-for-toc,$@)
+
+.KATI_RESTAT: $(common_javalib.jar)
 
 ifdef LOCAL_DEX_PREOPT
 ifneq ($(dexpreopt_boot_jar_module),) # boot jar
