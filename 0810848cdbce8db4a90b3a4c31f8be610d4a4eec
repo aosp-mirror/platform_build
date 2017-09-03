@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6888c92d_cdfa2022",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-03T05:22:12Z",
+      "side": 1,
+      "message": "add-dependency already exists in definitions.mk",
+      "range": {
+        "startLine": 67,
+        "startChar": 45,
+        "endLine": 67,
+        "endChar": 63
+      },
+      "revId": "0810848cdbce8db4a90b3a4c31f8be610d4a4eec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
