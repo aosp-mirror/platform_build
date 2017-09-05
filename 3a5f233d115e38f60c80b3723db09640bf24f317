@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d263ac69_f369ed34",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-09-05T22:34:11Z",
+      "side": 1,
+      "message": "So we are actually have less blocks in vendor.img. But somehow we add back the zero blocks when reading the files on a device?",
+      "range": {
+        "startLine": 9,
+        "startChar": 46,
+        "endLine": 9,
+        "endChar": 61
+      },
+      "revId": "3a5f233d115e38f60c80b3723db09640bf24f317",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
