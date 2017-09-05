@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d522996e_00cda530",
+        "filename": "target/board/generic_arm64_a/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2017-09-05T09:02:10Z",
+      "side": 1,
+      "message": "Going forward (post-O), this should be \"armv8-a\".",
+      "range": {
+        "startLine": 57,
+        "startChar": 27,
+        "endLine": 57,
+        "endChar": 39
+      },
+      "revId": "1186a544f976b178ca51a4ad3dc39177d6c56e5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "70a1e26d_f9efd6bf",
+        "filename": "target/board/generic_arm64_a/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2017-09-05T09:02:10Z",
+      "side": 1,
+      "message": "If TARGET_2ND_ARCH_VARIANT is set to armv8-a, generic as TARGET_2ND_CPU_VARIANT is more correct and has all the features/performance of cortex-a15, which is not technically correct for arm64 devices.",
+      "range": {
+        "startLine": 60,
+        "startChar": 26,
+        "endLine": 60,
+        "endChar": 36
+      },
+      "revId": "1186a544f976b178ca51a4ad3dc39177d6c56e5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
