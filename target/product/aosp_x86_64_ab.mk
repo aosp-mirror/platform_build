@@ -27,8 +27,6 @@ PRODUCT_PACKAGES += \
     update_engine \
     update_verifier
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
-
 PRODUCT_NAME := aosp_x86_64_ab
 PRODUCT_DEVICE := generic_x86_64_ab
 PRODUCT_BRAND := Android
