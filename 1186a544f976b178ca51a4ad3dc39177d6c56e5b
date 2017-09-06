@@ -45,6 +45,30 @@
       "revId": "1186a544f976b178ca51a4ad3dc39177d6c56e5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e34ac6fe_ab4daeee",
+        "filename": "target/board/generic_arm64_a/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1015615
+      },
+      "writtenOn": "2017-09-06T12:44:01Z",
+      "side": 1,
+      "message": "Yes, if/when TARGET_2ND_ARCH_VARIANT is set to armv8-a, TARGET_2ND_CPU_VARIANT should be set to generic. Until then, I would much prefer if the image used primarily for compatibility testing is not using a setting which gives artificially low performance causing unnecessary test failures. The performance difference of e.g. memmove is quite significant.",
+      "parentUuid": "70a1e26d_f9efd6bf",
+      "range": {
+        "startLine": 60,
+        "startChar": 26,
+        "endLine": 60,
+        "endChar": 36
+      },
+      "revId": "1186a544f976b178ca51a4ad3dc39177d6c56e5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
