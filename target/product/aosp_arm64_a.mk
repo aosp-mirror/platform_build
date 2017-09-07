@@ -21,8 +21,6 @@
 
 include build/make/target/product/treble_common_64.mk
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
-
 PRODUCT_NAME := aosp_arm64_a
 PRODUCT_DEVICE := generic_arm64_a
 PRODUCT_BRAND := Android

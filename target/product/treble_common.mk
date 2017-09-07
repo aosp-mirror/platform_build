@@ -19,6 +19,10 @@
 # on the generic system image, place them in build/make/target/board/
 # treble_system.prop.
 
+# Generic system image inherits from AOSP with telephony
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
+
 # Split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
