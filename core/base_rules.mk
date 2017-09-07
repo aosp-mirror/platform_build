@@ -256,6 +256,15 @@ ifneq ($(LOCAL_OVERRIDES_MODULES),)
 endif
 
 ###########################################################
+# Ensure privileged applications always have LOCAL_PRIVILEGED_MODULE
+###########################################################
+ifndef LOCAL_PRIVILEGED_MODULE
+  ifneq (,$(filter $(TARGET_OUT_APPS_PRIVILEGED)/% $(TARGET_OUT_VENDOR_APPS_PRIVILEGED)/%,$(my_module_path)))
+    LOCAL_PRIVILEGED_MODULE := true
+  endif
+endif
+
+###########################################################
 # Pick a name for the intermediate and final targets
 ###########################################################
 include $(BUILD_SYSTEM)/configure_module_stem.mk

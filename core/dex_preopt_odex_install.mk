@@ -51,6 +51,15 @@ endif
 endif
 endif
 
+# Special case privileged apps (b/30972906) to always keep the dex file. For some configurations,
+# we could strip it (if there's enough space on /system), but it's simpler for now to assume
+# we always need it.
+ifeq ($(LOCAL_DEX_PREOPT),true)
+ifeq ($(LOCAL_PRIVILEGED_MODULE),true)
+LOCAL_DEX_PREOPT := nostripping
+endif
+endif
+
 built_odex :=
 built_vdex :=
 built_art :=
