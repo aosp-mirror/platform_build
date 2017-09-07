@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c924ef9a_e55c935e",
+        "filename": "target/board/generic_arm64_a/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-07T20:47:06Z",
+      "side": 1,
+      "message": "This branch is post-O, why aren\u0027t we changing it now?",
+      "parentUuid": "d522996e_00cda530",
+      "range": {
+        "startLine": 57,
+        "startChar": 27,
+        "endLine": 57,
+        "endChar": 39
+      },
+      "revId": "1186a544f976b178ca51a4ad3dc39177d6c56e5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "70a1e26d_f9efd6bf",
         "filename": "target/board/generic_arm64_a/BoardConfig.mk",
         "patchSetId": 1
