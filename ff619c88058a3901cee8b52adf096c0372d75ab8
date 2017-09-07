@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f00efb05_c2046c00",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-07T22:59:33Z",
+      "side": 1,
+      "message": "Can\u0027t this be simplified to:\n\n  static_only_resource_overlays :\u003d $(filter $(addsuffix %,$(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS)),$(package_resource_overlays))",
+      "range": {
+        "startLine": 127,
+        "startChar": 4,
+        "endLine": 129,
+        "endChar": 71
+      },
+      "revId": "ff619c88058a3901cee8b52adf096c0372d75ab8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f17a8de_bf966a15",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-07T22:59:33Z",
+      "side": 1,
+      "message": "Can\u0027t this just be package_resource_overlays with the static versions removed:\n\n  package_resource_overlays :\u003d $(filter-out $(static_only_resource_overlays),$(package_resource_overlays))",
+      "range": {
+        "startLine": 131,
+        "startChar": 6,
+        "endLine": 132,
+        "endChar": 87
+      },
+      "revId": "ff619c88058a3901cee8b52adf096c0372d75ab8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28eecfd4_acb7f5c5",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-07T22:59:33Z",
+      "side": 1,
+      "message": "Then this can be:\n\n  LOCAL_RESOURCE_DIR :\u003d $(static_only_resource_overlays) $(LOCAL_RESOURCE_DIR)\n  ifeq ($(package_resource_overlays),)\n    enforce_rro_enabled :\u003d\n  endif",
+      "range": {
+        "startLine": 133,
+        "startChar": 6,
+        "endLine": 139,
+        "endChar": 11
+      },
+      "revId": "ff619c88058a3901cee8b52adf096c0372d75ab8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
