@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e939a66b_a9949897",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-07T20:38:14Z",
+      "side": 1,
+      "message": "check for LOCAL_MODULE_MAKEFILE \u003d\u003d $(SOONG_ANDROID_MK) and error out",
+      "revId": "776525d3799080be00d6aa315042f15b82a7d040",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da3a3b9d_ef260595",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-07T20:38:14Z",
+      "side": 1,
+      "message": "$(call pretty-error,",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 25
+      },
+      "revId": "776525d3799080be00d6aa315042f15b82a7d040",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dcbb866d_e3371b15",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-07T20:38:14Z",
+      "side": 1,
+      "message": "remove this",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 18
+      },
+      "revId": "776525d3799080be00d6aa315042f15b82a7d040",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
