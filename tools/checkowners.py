@@ -34,8 +34,8 @@ def find_address(address):
                + urllib.quote(address))
     echo('Checking email address: ' + address)
     result = urllib2.urlopen(request).read()
-    expected = '"email": "' + address + '"'
-    checked_addresses[address] = (result.find(expected) >= 0)
+    checked_addresses[address] = (
+        result.find('"email":') >= 0 and result.find('"_account_id":') >= 0)
   return checked_addresses[address]
 
 
