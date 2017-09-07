@@ -2,7 +2,6 @@
 # no longer has these directories. They are specific to QCOM.
 
 # /
-/bt_firmware(/.*)?      u:object_r:bt_firmware_file:s0
 /tombstones             u:object_r:rootfs:s0
 /dsp                    u:object_r:rootfs:s0
 
