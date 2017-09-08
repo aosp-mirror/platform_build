@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8c297e31_fd5a595d",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 129,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2017-09-08T00:59:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f00efb05_c2046c00",
+      "range": {
+        "startLine": 127,
+        "startChar": 4,
+        "endLine": 129,
+        "endChar": 71
+      },
+      "revId": "ff619c88058a3901cee8b52adf096c0372d75ab8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4f17a8de_bf966a15",
         "filename": "core/package_internal.mk",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "134f1a72_88ca3714",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2017-09-08T00:59:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4f17a8de_bf966a15",
+      "range": {
+        "startLine": 131,
+        "startChar": 6,
+        "endLine": 132,
+        "endChar": 87
+      },
+      "revId": "ff619c88058a3901cee8b52adf096c0372d75ab8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "28eecfd4_acb7f5c5",
         "filename": "core/package_internal.mk",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2017-09-07T22:59:33Z",
       "side": 1,
       "message": "Then this can be:\n\n  LOCAL_RESOURCE_DIR :\u003d $(static_only_resource_overlays) $(LOCAL_RESOURCE_DIR)\n  ifeq ($(package_resource_overlays),)\n    enforce_rro_enabled :\u003d\n  endif",
+      "range": {
+        "startLine": 133,
+        "startChar": 6,
+        "endLine": 139,
+        "endChar": 11
+      },
+      "revId": "ff619c88058a3901cee8b52adf096c0372d75ab8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ec5282f_95650df8",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2017-09-08T00:59:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "28eecfd4_acb7f5c5",
       "range": {
         "startLine": 133,
         "startChar": 6,
