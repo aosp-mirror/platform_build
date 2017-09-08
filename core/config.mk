@@ -675,7 +675,14 @@ FINDBUGS := $(FINDBUGS_DIR)/findbugs
 JACOCO_CLI_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jacoco-cli$(COMMON_JAVA_PACKAGE_SUFFIX)
 
 # Tool to merge AndroidManifest.xmls
-ANDROID_MANIFEST_MERGER := $(JAVA) -classpath prebuilts/devtools/tools/lib/manifest-merger.jar com.android.manifmerger.Main merge
+ANDROID_MANIFEST_MERGER_CLASSPATH := \
+    prebuilts/gradle-plugin/com/android/tools/build/manifest-merger/25.3.1/manifest-merger-25.3.1.jar \
+    prebuilts/gradle-plugin/com/android/tools/sdk-common/25.3.1/sdk-common-25.3.1.jar \
+    prebuilts/gradle-plugin/com/android/tools/common/25.3.1/common-25.3.1.jar \
+    prebuilts/misc/common/guava/guava-18.0.jar
+ANDROID_MANIFEST_MERGER := $(JAVA) \
+    -classpath $(subst $(space),:,$(strip $(ANDROID_MANIFEST_MERGER_CLASSPATH))) \
+    com.android.manifmerger.Merger
 
 COLUMN:= column
 
