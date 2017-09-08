@@ -99,9 +99,6 @@ $(HOST_COMMON_OUT_ROOT)/% : $(_pdk_fusion_intermediates)/host/common/% $(_pdk_fu
 ifeq (true,$(TARGET_BUILD_PDK_JAVA_PLATFORM))
 
 PDK_FUSION_OUT_DIR := $(OUT_DIR)
-ifeq (debug,$(TARGET_BUILD_TYPE))
-PDK_FUSION_OUT_DIR := $(DEBUG_OUT_DIR)
-endif
 
 define JAVA_dependency_template
 $(call add-dependency,$(PDK_FUSION_OUT_DIR)/$(strip $(1)),\
