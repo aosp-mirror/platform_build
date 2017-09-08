@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "88b62a08_564bcd3a",
+        "filename": "target/board/generic_arm64_a/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2017-09-08T03:05:17Z",
+      "side": 1,
+      "message": "\u003e This branch is post-O, why aren\u0027t we changing it now?\n\nBuild system support for armv8-a is in aosp and internal master now, but not included in oc-mr1 (yet/ever?) Besides, armv8-a related optimization in bionic is for specific armv8-a cores like cortex-a53, cortex-a73, kryo, etc., not for generic armv8-a yet.",
+      "parentUuid": "c924ef9a_e55c935e",
+      "range": {
+        "startLine": 57,
+        "startChar": 27,
+        "endLine": 57,
+        "endChar": 39
+      },
+      "revId": "1186a544f976b178ca51a4ad3dc39177d6c56e5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "70a1e26d_f9efd6bf",
         "filename": "target/board/generic_arm64_a/BoardConfig.mk",
         "patchSetId": 1
