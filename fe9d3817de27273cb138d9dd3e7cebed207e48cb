@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9612428d_2697587c",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-08T01:00:16Z",
+      "side": 1,
+      "message": "some debugging to remove",
+      "range": {
+        "startLine": 136,
+        "startChar": 0,
+        "endLine": 137,
+        "endChar": 40
+      },
+      "revId": "fe9d3817de27273cb138d9dd3e7cebed207e48cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
