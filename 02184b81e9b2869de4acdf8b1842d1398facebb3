@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7eed79bc_b1e9dd40",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-08T20:36:47Z",
+      "side": 1,
+      "message": "Have you checked to see if the merged manifests look reasonable? I\u0027m assuming this checkbuild was done on a tree that actually merged some manifests too (I\u0027m not sure AOSP does)",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 21
+      },
+      "revId": "02184b81e9b2869de4acdf8b1842d1398facebb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
