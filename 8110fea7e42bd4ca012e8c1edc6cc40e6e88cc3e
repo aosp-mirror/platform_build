@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5c6edf1f_93ac816c",
+        "filename": "tapasHelp.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-09T00:33:21Z",
+      "side": 1,
+      "message": "This isn\u0027t really correct, tapas builds against prebuilts/sdk, which contains both public and internal APIs.",
+      "range": {
+        "startLine": 18,
+        "startChar": 11,
+        "endLine": 19,
+        "endChar": 76
+      },
+      "revId": "8110fea7e42bd4ca012e8c1edc6cc40e6e88cc3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fba8d373_449eab04",
+        "filename": "tapasHelp.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-09T00:33:21Z",
+      "side": 1,
+      "message": "with tapas.  You can build against the SDK in a platform build that preopts dex files.",
+      "range": {
+        "startLine": 20,
+        "startChar": 13,
+        "endLine": 20,
+        "endChar": 28
+      },
+      "revId": "8110fea7e42bd4ca012e8c1edc6cc40e6e88cc3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
