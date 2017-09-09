@@ -1,0 +1,31 @@
+//
+// Copyright 2008 The Android Open Source Project
+//
+// Zip alignment tool
+//
+
+cc_binary_host {
+    name: "zipalign",
+
+    srcs: [
+        "ZipAlign.cpp",
+        "ZipEntry.cpp",
+        "ZipFile.cpp",
+    ],
+
+    static_libs: [
+        "libandroidfw",
+        "libutils",
+        "libcutils",
+        "liblog",
+        "libzopfli",
+        "libz",
+    ],
+
+    target: {
+        windows: {
+            host_ldlibs: ["-lpthread"],
+            enabled: true,
+        },
+    },
+}
