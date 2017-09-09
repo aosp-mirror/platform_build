@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d3210947_f608251a",
+        "filename": "tapasHelp.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-09T02:26:08Z",
+      "side": 1,
+      "message": "This whole section isn\u0027t really correct.  tapas is somewhat orthogonal to building against the SDK.  tapas tells the build system that you are building a portable app, and not building images for a device.  In most cases that also means compiling against the SDK, but there are unbundled apps that compile against system APIs too.  The subset of projects is mostly a convenience for shorter sync and build times.",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 75
+      },
+      "revId": "bbaefbd50161840b93df92329093f922b2ca72de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
