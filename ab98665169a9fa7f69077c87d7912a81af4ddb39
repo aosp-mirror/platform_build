@@ -45,6 +45,54 @@
       "revId": "ab98665169a9fa7f69077c87d7912a81af4ddb39",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcddb884_099e08c4",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-09-09T01:00:42Z",
+      "side": 1,
+      "message": "Explicitly say verbose\u003dFalse when adjusting verity size; and leave the others as Options.verbose",
+      "parentUuid": "3db32edd_50c2b1bc",
+      "range": {
+        "startLine": 61,
+        "startChar": 22,
+        "endLine": 61,
+        "endChar": 32
+      },
+      "revId": "ab98665169a9fa7f69077c87d7912a81af4ddb39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "75827b11_db5e5a1c",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-09-09T01:00:42Z",
+      "side": 1,
+      "message": "Explicitly say verbose\u003dFalse when adjusting verity size; and leave the others as Options.verbose.",
+      "parentUuid": "3db32edd_50c2b1bc",
+      "range": {
+        "startLine": 61,
+        "startChar": 22,
+        "endLine": 61,
+        "endChar": 32
+      },
+      "revId": "ab98665169a9fa7f69077c87d7912a81af4ddb39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
