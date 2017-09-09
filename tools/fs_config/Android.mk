@@ -14,15 +14,6 @@
 
 LOCAL_PATH := $(call my-dir)
 
-include $(CLEAR_VARS)
-
-LOCAL_SRC_FILES := fs_config.c
-LOCAL_MODULE := fs_config
-LOCAL_SHARED_LIBRARIES := libcutils libselinux
-LOCAL_CFLAGS := -Werror
-
-include $(BUILD_HOST_EXECUTABLE)
-
 # One can override the default android_filesystem_config.h file in one of two ways:
 #
 # 1. The old way:
@@ -306,36 +297,3 @@ my_fs_config_h :=
 fs_config_generate_bin :=
 my_gen_oem_aid :=
 fs_config_generate_extra_partition_list :=
-
-# -----------------------------------------------------------------------------
-# Unit tests.
-# -----------------------------------------------------------------------------
-
-test_c_flags := \
-    -fstack-protector-all \
-    -g \
-    -Wall \
-    -Wextra \
-    -Werror \
-    -fno-builtin \
-    -DANDROID_FILESYSTEM_CONFIG='"android_filesystem_config_test_data.h"'
-
-##################################
-# test executable
-include $(CLEAR_VARS)
-LOCAL_MODULE := fs_config_generate_test
-LOCAL_SRC_FILES := fs_config_generate.c
-LOCAL_SHARED_LIBRARIES := libcutils
-LOCAL_CFLAGS := $(test_c_flags)
-LOCAL_MODULE_RELATIVE_PATH := fs_config-unit-tests
-LOCAL_GTEST := false
-include $(BUILD_HOST_NATIVE_TEST)
-
-##################################
-# gTest tool
-include $(CLEAR_VARS)
-LOCAL_MODULE := fs_config-unit-tests
-LOCAL_CFLAGS += $(test_c_flags) -DHOST
-LOCAL_SHARED_LIBRARIES := liblog libcutils libbase
-LOCAL_SRC_FILES := fs_config_test.cpp
-include $(BUILD_HOST_NATIVE_TEST)
