@@ -19,6 +19,10 @@
 # on the generic system image, place them in build/make/target/board/
 # treble_system.prop.
 
+# Generic system image inherits from AOSP with telephony
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
+
 # Split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
@@ -53,13 +57,6 @@ PRODUCT_PACKAGES += \
 #   Android O.
 PRODUCT_PACKAGES += \
     netutils-wrapper-1.0
-
-# A workaround solution for some projects which require
-# TimeZoneRulesManagerService by overlaying resource property
-# "config_enableUpdateableTimeZoneRules"
-PRODUCT_PACKAGES += \
-    TimeZoneUpdater \
-    TimeZoneData \
 
 # Android Verified Boot (AVB):
 #   Builds a special vbmeta.img that disables AVB verification.

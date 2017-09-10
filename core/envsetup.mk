@@ -315,29 +315,17 @@ endif
 
 SOONG_OUT_DIR := $(OUT_DIR)/soong
 
-DEBUG_OUT_DIR := $(OUT_DIR)/debug
+TARGET_OUT_ROOT := $(OUT_DIR)/target
 
-# Move the host or target under the debug/ directory
-# if necessary.
-TARGET_OUT_ROOT_release := $(OUT_DIR)/target
-TARGET_OUT_ROOT_debug := $(DEBUG_OUT_DIR)/target
-TARGET_OUT_ROOT := $(TARGET_OUT_ROOT_$(TARGET_BUILD_TYPE))
-
-HOST_OUT_ROOT_release := $(OUT_DIR)/host
-HOST_OUT_ROOT_debug := $(DEBUG_OUT_DIR)/host
-HOST_OUT_ROOT := $(HOST_OUT_ROOT_$(HOST_BUILD_TYPE))
+HOST_OUT_ROOT := $(OUT_DIR)/host
 
 # We want to avoid two host bin directories in multilib build.
-HOST_OUT_release := $(HOST_OUT_ROOT_release)/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
-HOST_OUT_debug := $(HOST_OUT_ROOT_debug)/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
-HOST_OUT := $(HOST_OUT_$(HOST_BUILD_TYPE))
+HOST_OUT := $(HOST_OUT_ROOT)/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
 SOONG_HOST_OUT := $(SOONG_OUT_DIR)/host/$(HOST_OS)-$(HOST_PREBUILT_ARCH)
 # TODO: remove
 BUILD_OUT := $(HOST_OUT)
 
-HOST_CROSS_OUT_release := $(HOST_OUT_ROOT_release)/windows-$(HOST_PREBUILT_ARCH)
-HOST_CROSS_OUT_debug := $(HOST_OUT_ROOT_debug)/windows-$(HOST_PREBUILT_ARCH)
-HOST_CROSS_OUT := $(HOST_CROSS_OUT_$(HOST_BUILD_TYPE))
+HOST_CROSS_OUT := $(HOST_OUT_ROOT)/windows-$(HOST_PREBUILT_ARCH)
 
 TARGET_PRODUCT_OUT_ROOT := $(TARGET_OUT_ROOT)/product
 
