@@ -22,6 +22,30 @@
       "revId": "bbaefbd50161840b93df92329093f922b2ca72de",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8de3881_8be5ae74",
+        "filename": "tapasHelp.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-09-11T22:04:09Z",
+      "side": 1,
+      "message": "thanks",
+      "parentUuid": "d3210947_f608251a",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 75
+      },
+      "revId": "bbaefbd50161840b93df92329093f922b2ca72de",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
