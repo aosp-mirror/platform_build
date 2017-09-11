@@ -36,30 +36,36 @@ OPTIONS = common.OPTIONS
 FIXED_SALT = "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
 BLOCK_SIZE = 4096
 
-def RunCommand(cmd):
+def RunCommand(cmd, verbose=None):
   """Echo and run the given command.
 
   Args:
     cmd: the command represented as a list of strings.
+    verbose: show commands being executed.
   Returns:
     A tuple of the output and the exit code.
   """
-  print "Running: ", " ".join(cmd)
+  if verbose is None:
+    verbose = OPTIONS.verbose
+  if verbose:
+    print("Running: " + " ".join(cmd))
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   output, _ = p.communicate()
-  print "%s" % (output.rstrip(),)
+
+  if verbose:
+    print(output.rstrip())
   return (output, p.returncode)
 
 def GetVerityFECSize(partition_size):
   cmd = ["fec", "-s", str(partition_size)]
-  output, exit_code = RunCommand(cmd)
+  output, exit_code = RunCommand(cmd, False)
   if exit_code != 0:
     return False, 0
   return True, int(output)
 
 def GetVerityTreeSize(partition_size):
   cmd = ["build_verity_tree", "-s", str(partition_size)]
-  output, exit_code = RunCommand(cmd)
+  output, exit_code = RunCommand(cmd, False)
   if exit_code != 0:
     return False, 0
   return True, int(output)
@@ -67,7 +73,7 @@ def GetVerityTreeSize(partition_size):
 def GetVerityMetadataSize(partition_size):
   cmd = ["system/extras/verity/build_verity_metadata.py", "size",
          str(partition_size)]
-  output, exit_code = RunCommand(cmd)
+  output, exit_code = RunCommand(cmd, False)
   if exit_code != 0:
     return False, 0
   return True, int(output)
@@ -186,6 +192,8 @@ def AdjustPartitionSizeForVerity(partition_size, fec_supported):
     else:
       hi = i
 
+  print("Adjusted partition size for verity, partition_size: {},"
+        " verity_size: {}".format(result, verity_size))
   AdjustPartitionSizeForVerity.results[key] = (result, verity_size)
   return (result, verity_size)
 
@@ -513,9 +521,9 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
   try:
     if fs_type.startswith("ext4"):
-      (ext4fs_output, exit_code) = RunCommand(build_command)
+      (ext4fs_output, exit_code) = RunCommand(build_command, True)
     else:
-      (_, exit_code) = RunCommand(build_command)
+      (_, exit_code) = RunCommand(build_command, True)
   finally:
     if in_dir != origin_in:
       # Clean up temporary directories and files.
