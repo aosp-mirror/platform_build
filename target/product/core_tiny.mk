@@ -103,7 +103,6 @@ PRODUCT_BOOT_JARS := \
     voip-common \
     ims-common \
     nullwebview \
-    org.apache.http.legacy.boot \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java
 
