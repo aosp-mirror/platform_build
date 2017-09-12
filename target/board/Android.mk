@@ -132,7 +132,7 @@ endif
 
 # All kernel versions that the system image works with.
 KERNEL_VERSIONS := 3.18 4.4 4.9
-KERNEL_CONFIG_DATA := test/vts-testcase/kernel/config/data
+KERNEL_CONFIG_DATA := kernel/configs
 
 $(GEN): $(foreach version,$(KERNEL_VERSIONS),\
 	$(wildcard $(KERNEL_CONFIG_DATA)/android-$(version)/android-base*.cfg))
