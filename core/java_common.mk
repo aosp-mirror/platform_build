@@ -156,7 +156,7 @@ annotation_processor_flags :=
 annotation_processor_deps :=
 
 ifdef LOCAL_ANNOTATION_PROCESSORS
-  annotation_processor_jars := $(call java-lib-deps,$(LOCAL_ANNOTATION_PROCESSORS),true)
+  annotation_processor_jars := $(call java-lib-files,$(LOCAL_ANNOTATION_PROCESSORS),true)
   annotation_processor_flags += -processorpath $(call normalize-path-list,$(annotation_processor_jars))
   annotation_processor_deps += $(annotation_processor_jars)
 
@@ -195,9 +195,6 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 
 # full_java_libs: The list of files that should be used as the classpath.
 #                 Using this list as a dependency list WILL NOT WORK.
-# full_java_lib_deps: Should be specified as a prerequisite of this module
-#                 to guarantee that the files in full_java_libs will
-#                 be up-to-date.
 ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_SDK_VERSION),)
 ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
@@ -234,8 +231,6 @@ endif
 
 full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
 full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
-full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
-full_java_lib_deps := $(addsuffix .toc, $(full_java_lib_deps))
 
 else # LOCAL_IS_HOST_MODULE
 
@@ -249,21 +244,16 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_boot
 
 full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),true)
 full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),true)
-full_java_lib_deps := $(full_shared_java_libs)
 else # !USE_CORE_LIB_BOOTCLASSPATH
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH :=
 
 full_shared_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
     $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
-full_java_lib_deps := $(full_shared_java_libs)
 endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
 
-# Only host java libraries use LOCAL_CLASSPATH.
 full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
 full_java_header_libs := $(full_shared_java_header_libs) $(full_static_java_header_libs)
-
-full_java_lib_deps := $(full_java_lib_deps) $(full_static_java_libs) $(LOCAL_CLASSPATH)
 
 ifndef LOCAL_IS_HOST_MODULE
 # This is set by packages that are linking to other packages that export
@@ -274,12 +264,15 @@ ifneq ($(apk_libraries),)
       $(foreach lib,$(apk_libraries), \
         $(call intermediates-dir-for, \
               APPS,$(lib),,COMMON)/classes-pre-proguard.jar)
+  link_apk_header_libs := \
+      $(foreach lib,$(apk_libraries), \
+        $(call intermediates-dir-for, \
+              APPS,$(lib),,COMMON)/classes-header.jar)
 
   # link against the jar with full original names (before proguard processing).
   full_shared_java_libs += $(link_apk_libraries)
   full_java_libs += $(link_apk_libraries)
-  full_java_header_libs += $(link_apk_libraries)
-  full_java_lib_deps += $(link_apk_libraries)
+  full_java_header_libs += $(link_apk_header_libs)
 endif
 
 # This is set by packages that contain instrumentation, allowing them to
@@ -296,9 +289,9 @@ ifdef LOCAL_INSTRUMENTATION_FOR
       APPS,$(LOCAL_INSTRUMENTATION_FOR),,COMMON)
   # link against the jar with full original names (before proguard processing).
   link_instr_classes_jar := $(link_instr_intermediates_dir.COMMON)/classes-pre-proguard.jar
+  link_instr_classes_header_jar := $(link_instr_intermediates_dir.COMMON)/classes-header.jar
   full_java_libs += $(link_instr_classes_jar)
-  full_java_header_libs += $(link_instr_classes_jar)
-  full_java_lib_deps += $(link_instr_classes_jar)
+  full_java_header_libs += $(link_instr_classes_header_jar)
 endif  # LOCAL_INSTRUMENTATION_FOR
 endif  # LOCAL_IS_HOST_MODULE
 

@@ -36,11 +36,13 @@ full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 java_source_list_file := $(intermediates.COMMON)/java-source-list
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
+full_classes_combined_jar := $(intermediates.COMMON)/classes-combined.jar
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_compiled_jar) \
     $(full_classes_jarjar_jar) \
-    $(java_source_list_file)
+    $(java_source_list_file) \
+    $(full_classes_combined_jar)
 
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
@@ -79,7 +81,7 @@ $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
 $(full_classes_compiled_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
-    $(full_java_lib_deps) \
+    $(full_java_libs) \
     $(jar_manifest_file) \
     $(annotation_processor_deps) \
     $(NORMALIZE_PATH) \
@@ -92,14 +94,18 @@ $(full_classes_compiled_jar): \
 javac-check : $(full_classes_compiled_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
 
+$(full_classes_combined_jar): $(full_classes_compiled_jar) \
+                              $(full_static_java_libs) | $(MERGE_ZIPS)
+	$(MERGE_ZIPS) -j -stripDir META-INF -zipToNotStrip $< $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
+
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
+$(full_classes_jarjar_jar): $(full_classes_combined_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
 	@echo JarJar: $@
 	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
-full_classes_jarjar_jar := $(full_classes_compiled_jar)
+full_classes_jarjar_jar := $(full_classes_combined_jar)
 endif
 
 
