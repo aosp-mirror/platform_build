@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79bcd3d1_397a8ac7",
+        "filename": "core/host_dalvik_java_library.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-13T23:40:36Z",
+      "side": 1,
+      "message": "I think this should stay as full_classes_jar, users of static libraries should get the non-desugared classes, and they will get desugared at the end.",
+      "revId": "355b6e41dc8fe39219272d32fc8b2d3a0554e4e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
