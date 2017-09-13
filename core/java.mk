@@ -527,31 +527,33 @@ else
 full_classes_processed_jar := $(full_classes_compiled_jar)
 endif
 
+# Run jarjar if necessary
+ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
+$(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
+$(full_classes_jarjar_jar): $(full_classes_processed_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
+	@echo JarJar: $@
+	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+else
+full_classes_jarjar_jar := $(full_classes_processed_jar)
+endif
+
+$(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
+
 my_desugaring :=
 ifndef LOCAL_JACK_ENABLED
 ifndef LOCAL_IS_STATIC_JAVA_LIBRARY
 my_desugaring := true
 $(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-$(full_classes_desugar_jar): $(full_classes_processed_jar) $(full_java_header_libs) $(DESUGAR)
+$(full_classes_desugar_jar): $(full_classes_jar) $(full_java_header_libs) $(DESUGAR)
 	$(desugar-classes-jar)
 endif
 endif
 
 ifndef my_desugaring
-full_classes_desugar_jar := $(full_classes_processed_jar)
+full_classes_desugar_jar := $(full_classes_jar)
 endif
 
-# Run jarjar if necessary
-ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
-$(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_desugar_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
-	@echo JarJar: $@
-	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
-else
-full_classes_jarjar_jar := $(full_classes_desugar_jar)
-endif
-
-LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_jarjar_jar)
+LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_desugar_jar)
 
 #######################################
 include $(BUILD_SYSTEM)/jacoco.mk
@@ -702,8 +704,6 @@ else  # LOCAL_PROGUARD_ENABLED not defined
 full_classes_proguard_jar := $(full_classes_pre_proguard_jar)
 endif # LOCAL_PROGUARD_ENABLED defined
 
-$(eval $(call copy-one-file,$(full_classes_proguard_jar),$(full_classes_jar)))
-
 ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 ifndef LOCAL_JACK_ENABLED
 $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
@@ -716,7 +716,7 @@ $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 $(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
 endif
-$(built_dex_intermediate): $(full_classes_jar) $(DX)
+$(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
 	$(transform-classes.jar-to-dex)
 endif # LOCAL_JACK_ENABLED is disabled
 
