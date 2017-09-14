@@ -200,6 +200,14 @@ TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
 # Set up minimal BOOTCLASSPATH list of jars to build/execute
 # java code with dalvikvm/art.
 TARGET_CORE_JARS := core-oj core-libart conscrypt okhttp bouncycastle apache-xml
+ifeq ($(EMMA_INSTRUMENT),true)
+  ifneq ($(EMMA_INSTRUMENT_STATIC),true)
+    # For instrumented build, if Jacoco is not being included statically
+    # in instrumented packages then include Jacoco classes into the
+    # bootclasspath.
+    TARGET_CORE_JARS += jacocoagent
+  endif # EMMA_INSTRUMENT_STATIC
+endif # EMMA_INSTRUMENT
 HOST_CORE_JARS := $(addsuffix -hostdex,$(TARGET_CORE_JARS))
 #################################################################
 
