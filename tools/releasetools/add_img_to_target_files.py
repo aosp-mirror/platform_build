@@ -505,7 +505,13 @@ def AddImagesToTargetFiles(filename):
       print("target_files appears to already contain images.")
       sys.exit(1)
 
-  has_vendor = os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR"))
+  # vendor.img is unlike system.img or system_other.img. Because it could be
+  # built from source, or dropped into target_files.zip as a prebuilt blob. We
+  # consider either of them as vendor.img being available, which could be used
+  # when generating vbmeta.img for AVB.
+  has_vendor = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR")) or
+                os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
+                                            "vendor.img")))
   has_system_other = os.path.isdir(os.path.join(OPTIONS.input_tmp,
                                                 "SYSTEM_OTHER"))
 
