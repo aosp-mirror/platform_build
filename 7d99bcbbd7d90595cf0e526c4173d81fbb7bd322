@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a31b3c5d_c529199b",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1136,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-09-14T06:12:09Z",
+      "side": 1,
+      "message": "or we can pass the list as a function parameter.",
+      "range": {
+        "startLine": 1136,
+        "startChar": 4,
+        "endLine": 1136,
+        "endChar": 19
+      },
+      "revId": "7d99bcbbd7d90595cf0e526c4173d81fbb7bd322",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "694ba37d_79442753",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1335,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-09-14T06:12:09Z",
+      "side": 1,
+      "message": "I also tried to change the generator of _getRangeData into iterators so that we don\u0027t need the lock here and also make the whole addTransfer function parallel. But I found that doesn\u0027t give much benefit since the majority of time are spent on waiting for imgdiff. Plus we need to open the target_zip multiple times to get round the fseek.",
+      "range": {
+        "startLine": 1335,
+        "startChar": 6,
+        "endLine": 1335,
+        "endChar": 27
+      },
+      "revId": "7d99bcbbd7d90595cf0e526c4173d81fbb7bd322",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
