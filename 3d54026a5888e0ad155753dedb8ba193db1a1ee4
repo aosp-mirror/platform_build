@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9fca1214_0bdb9a59",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-09-15T21:35:06Z",
+      "side": 1,
+      "message": "same comment as other file about LOCAL_EMMA_INSTRUMENT",
+      "range": {
+        "startLine": 203,
+        "startChar": 0,
+        "endLine": 204,
+        "endChar": 39
+      },
+      "revId": "3d54026a5888e0ad155753dedb8ba193db1a1ee4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "601502d5_8b1a240a",
+        "filename": "core/java.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-09-15T21:35:06Z",
+      "side": 1,
+      "message": "My understanding is that LOCAL_EMMA_INSTRUMENT is supposed to indicate whether the current module is supposed to be instrumented. Now that this is getting moved out of core-libart and into a common spot, how do we feel about  using\n\nifeq ($(LOCAL_EMMA_INSTRUMENT),true)\n\n(and updating the value of LOCAL_EMMA_INSTRUMENT if need be)?",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 49
+      },
+      "revId": "3d54026a5888e0ad155753dedb8ba193db1a1ee4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
