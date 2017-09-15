@@ -93,6 +93,30 @@
       "revId": "3d54026a5888e0ad155753dedb8ba193db1a1ee4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "866910b3_58368f10",
+        "filename": "core/java.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-09-15T22:13:00Z",
+      "side": 1,
+      "message": "Do we know (probably a question for allenhair@) whether `make -j EMMA_INSTRUMENT_STATIC\u003dtrue` and `make -j EMMA_INSTRUMENT\u003dtrue` are both use cases that happen nowadays and whether their callers expect different results?\n\nMy limited understanding of their meanings comes from https://googleplex-android-review.git.corp.google.com/c/platform/build/+/219555 , which seems to me to say that EMMA_INSTRUMENT_STATIC changes the list of modules to instrument and also merges the jacoco jar into each jacoco-enabled jar.\n\nIf we don\u0027t have both use cases, then it seems to me that removing references to one variable or the other would make the code easier to understand and to use.\n\nIf we do want to keep both references, then it seems to me that it\u0027d be nice to change the comment on line 25 to something more like \"If instrumentation is enabled and jacoco isn\u0027t being copied into module\u0027s artifact, then add jacoco to the classpath\"\n\nIt seems to me that it\u0027d be easier to read if we sorted the ifs such that the globals were all on the outside (or all on the inside), that is, moving line 21 below line 23\n\nI\u0027ve looked around a bunch for an explanation of LOCAL_NO_STANDARD_LIBRARIES but I haven\u0027t found one. Could you elaborate on what it\u0027s for?",
+      "parentUuid": "b328a54a_9d5e0faf",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 49
+      },
+      "revId": "3d54026a5888e0ad155753dedb8ba193db1a1ee4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
