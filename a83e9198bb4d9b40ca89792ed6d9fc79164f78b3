@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e74926e7_26bea102",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-09-15T16:10:03Z",
+      "side": 1,
+      "message": "But why? Would you mind adding a sentence or two describing why this is useful or what this enables or avoids?",
+      "revId": "a83e9198bb4d9b40ca89792ed6d9fc79164f78b3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "490f80b3_ae0c5ce1",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2723,
+      "author": {
+        "id": 1018773
+      },
+      "writtenOn": "2017-09-15T16:10:03Z",
+      "side": 1,
+      "message": "Nit: Might be safer to use \u0027*.dex\u0027 instead of *.dex. dwillemsen@ should be able to confirm whether this makes a difference. (same comment for unzip below)",
+      "revId": "a83e9198bb4d9b40ca89792ed6d9fc79164f78b3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
