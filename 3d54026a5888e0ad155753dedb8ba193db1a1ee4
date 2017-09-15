@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5575d9b8_179bea49",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-15T21:39:28Z",
+      "side": 1,
+      "message": "This is global configuration, not per-module.",
+      "parentUuid": "9fca1214_0bdb9a59",
+      "range": {
+        "startLine": 203,
+        "startChar": 0,
+        "endLine": 204,
+        "endChar": 39
+      },
+      "revId": "3d54026a5888e0ad155753dedb8ba193db1a1ee4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "601502d5_8b1a240a",
         "filename": "core/java.mk",
         "patchSetId": 4
