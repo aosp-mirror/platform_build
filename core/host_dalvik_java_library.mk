@@ -145,29 +145,29 @@ endif
 
 $(eval $(call copy-one-file,$(full_classes_header_jarjar),$(full_classes_header_jar)))
 
+# Run jarjar if necessary, otherwise just copy the file.
+ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
+$(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
+$(full_classes_jarjar_jar): $(full_classes_compiled_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
+	@echo JarJar: $@
+	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+else
+full_classes_jarjar_jar := $(full_classes_compiled_jar)
+endif
+
+$(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
+
 my_desugaring :=
 ifeq ($(LOCAL_JAVA_LANGUAGE_VERSION),1.8)
 my_desugaring := true
 $(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-$(full_classes_desugar_jar): $(full_classes_compiled_jar) $(full_java_header_libs) $(DESUGAR)
+$(full_classes_desugar_jar): $(full_classes_jar) $(full_java_header_libs) $(DESUGAR)
 	$(desugar-classes-jar)
 endif
 
 ifndef my_desugaring
-full_classes_desugar_jar := $(full_classes_compiled_jar)
+full_classes_desugar_jar := $(full_classes_jar)
 endif
-
-# Run jarjar if necessary, otherwise just copy the file.
-ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
-$(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_desugar_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
-	@echo JarJar: $@
-	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
-else
-full_classes_jarjar_jar := $(full_classes_desugar_jar)
-endif
-
-$(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 # No dex; all we want are the .class files with resources.
@@ -179,7 +179,7 @@ $(LOCAL_BUILT_MODULE) : $(full_classes_jar)
 else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 $(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
 $(built_dex): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-$(built_dex): $(full_classes_jar) $(DX)
+$(built_dex): $(full_classes_desugar_jar) $(DX)
 	$(transform-classes.jar-to-dex)
 
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
