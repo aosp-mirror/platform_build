@@ -16,6 +16,24 @@
       "revId": "729a221a16fef9141b379354474f7a02061fe802",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "823b15de_ef3f1b68",
+        "filename": "core/java_common.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-09-15T23:42:30Z",
+      "side": 0,
+      "message": "full_java_lib_deps will always be set in line 266",
+      "parentUuid": "bb1d548d_f90f79b7",
+      "revId": "729a221a16fef9141b379354474f7a02061fe802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
