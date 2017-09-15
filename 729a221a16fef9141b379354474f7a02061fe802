@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bb1d548d_f90f79b7",
+        "filename": "core/java_common.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-15T21:22:27Z",
+      "side": 0,
+      "message": "This will leave full_java_lib_deps unset in some paths, which will reuse the value from the last module.",
+      "revId": "729a221a16fef9141b379354474f7a02061fe802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
