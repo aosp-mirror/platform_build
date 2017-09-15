@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3e0c2646_48c2532e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2017-09-15T20:51:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e74926e7_26bea102",
+      "revId": "a83e9198bb4d9b40ca89792ed6d9fc79164f78b3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "490f80b3_ae0c5ce1",
         "filename": "core/definitions.mk",
         "patchSetId": 3
@@ -48,6 +66,24 @@
       "side": 1,
       "message": "Good catch. It should be quoted here and on 2725. (Otherwise it\u0027ll do something different if you have any *.dex files at the top of your source tree)",
       "parentUuid": "490f80b3_ae0c5ce1",
+      "revId": "a83e9198bb4d9b40ca89792ed6d9fc79164f78b3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d94c2b55_6ee41cfd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2723,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2017-09-15T20:51:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "73dcbbf2_7b788529",
       "revId": "a83e9198bb4d9b40ca89792ed6d9fc79164f78b3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
