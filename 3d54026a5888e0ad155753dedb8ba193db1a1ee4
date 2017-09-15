@@ -45,6 +45,30 @@
       "revId": "3d54026a5888e0ad155753dedb8ba193db1a1ee4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b328a54a_9d5e0faf",
+        "filename": "core/java.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-15T21:39:02Z",
+      "side": 1,
+      "message": "This isn\u0027t whether the library is being instrumented, it is whether jacocoagent is in the classpath.  It may be necessary to have jacocoagent even if a module is not instrumented if its dependencies are instrumented.",
+      "parentUuid": "601502d5_8b1a240a",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 49
+      },
+      "revId": "3d54026a5888e0ad155753dedb8ba193db1a1ee4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
