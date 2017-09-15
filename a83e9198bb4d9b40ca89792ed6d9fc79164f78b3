@@ -33,6 +33,24 @@
       "revId": "a83e9198bb4d9b40ca89792ed6d9fc79164f78b3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "73dcbbf2_7b788529",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2723,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-15T19:34:38Z",
+      "side": 1,
+      "message": "Good catch. It should be quoted here and on 2725. (Otherwise it\u0027ll do something different if you have any *.dex files at the top of your source tree)",
+      "parentUuid": "490f80b3_ae0c5ce1",
+      "revId": "a83e9198bb4d9b40ca89792ed6d9fc79164f78b3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
