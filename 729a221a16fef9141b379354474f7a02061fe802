@@ -34,6 +34,24 @@
       "revId": "729a221a16fef9141b379354474f7a02061fe802",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b32633d9_071fc6ca",
+        "filename": "core/java_common.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-09-15T23:44:54Z",
+      "side": 0,
+      "message": "you are right, I think I can remove full_java_lib_deps since host java is only usecase.",
+      "parentUuid": "823b15de_ef3f1b68",
+      "revId": "729a221a16fef9141b379354474f7a02061fe802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
