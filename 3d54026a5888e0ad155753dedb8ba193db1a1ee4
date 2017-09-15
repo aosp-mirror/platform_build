@@ -117,6 +117,30 @@
       "revId": "3d54026a5888e0ad155753dedb8ba193db1a1ee4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e438f4bd_e9d6a0f8",
+        "filename": "core/java.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-15T22:25:48Z",
+      "side": 1,
+      "message": "I checked with allenhair, both are used.\n\nLOCAL_NO_STANDARD_LIBRARIES means don\u0027t link against the normal default libraries.  For java, that means have an empty classpath and bootclasspath, instead of automatically using core-libart, core-oj, etc.",
+      "parentUuid": "866910b3_58368f10",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 49
+      },
+      "revId": "3d54026a5888e0ad155753dedb8ba193db1a1ee4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
