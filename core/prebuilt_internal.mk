@@ -269,6 +269,11 @@ $(my_extracted_apk): $(my_prebuilt_src_file)
 my_prebuilt_src_file := $(my_extracted_apk)
 my_extracted_apk :=
 my_extract_apk :=
+ifeq ($(PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK),true)
+# If the product property is set, always preopt for extracted modules to prevent executing out of
+# the APK.
+my_preopt_for_extracted_apk := true
+endif
 endif
 
 rs_compatibility_jni_libs :=
@@ -602,3 +607,4 @@ endif # JAVA_LIBRARIES
 $(built_module) : $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 my_prebuilt_src_file :=
+my_preopt_for_extracted_apk :=
