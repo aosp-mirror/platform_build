@@ -16,6 +16,24 @@
       "revId": "cce6645388b1170cf724394d9b6ef79e93e5907e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "91f5c1ed_8419bbf4",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2304,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-16T00:23:41Z",
+      "side": 1,
+      "message": "This is inside a rule, you can\u0027t use :\u003d assignments, it has to be bash, which gets really ugly.",
+      "parentUuid": "e9fdec21_4b2a4ea2",
+      "revId": "cce6645388b1170cf724394d9b6ef79e93e5907e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
