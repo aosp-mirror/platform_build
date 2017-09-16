@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9fdec21_4b2a4ea2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2304,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-09-16T00:19:44Z",
+      "side": 1,
+      "message": "How would you feel about deduplicating the configuration via something like this (but probably with more backslashes)\n\n\nZIPS_TO_MERGE :\u003d $(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES)\nif [ -s $@.premerged ] ; then \\\n  ZIPS_TO_MERGE :\u003d $@.premerged $(ZIPS_TO_MERGE) \nfi\n$(MERGE_ZIPS) -j -strip META-INF/TRANSITIVE $@.tmp $(ZIPS_TO_MERGE)",
+      "revId": "cce6645388b1170cf724394d9b6ef79e93e5907e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
