@@ -22,6 +22,30 @@
       "revId": "7ab2357552db7eaa12b1570741c446b0cc618abd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "765e81c3_f4cc91e5",
+        "filename": "core/host_dalvik_java_library.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-09-18T23:38:34Z",
+      "side": 1,
+      "message": "Oh. I thought user may add some other independent dirs to be stripped in the future.",
+      "parentUuid": "0290e610_7e5afe86",
+      "range": {
+        "startLine": 154,
+        "startChar": 50,
+        "endLine": 154,
+        "endChar": 79
+      },
+      "revId": "7ab2357552db7eaa12b1570741c446b0cc618abd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
