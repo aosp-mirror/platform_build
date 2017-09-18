@@ -281,6 +281,11 @@ $(my_extracted_apk): $(my_prebuilt_src_file)
 my_prebuilt_src_file := $(my_extracted_apk)
 my_extracted_apk :=
 my_extract_apk :=
+ifeq ($(PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK),true)
+# If the product property is set, always preopt for extracted modules to prevent executing out of
+# the APK.
+my_preopt_for_extracted_apk := true
+endif
 endif
 
 dex_preopt_profile_src_file := $(my_prebuilt_src_file)
@@ -641,3 +646,4 @@ endif # JAVA_LIBRARIES
 $(built_module) : $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 my_prebuilt_src_file :=
+my_preopt_for_extracted_apk :=
