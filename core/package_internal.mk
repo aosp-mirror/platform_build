@@ -606,6 +606,10 @@ ifneq ($(BUILD_PLATFORM_ZIP),)
 	@# Keep a copy of apk with classes.dex unstripped
 	$(hide) cp -f $@ $(dir $@)package.dex.apk
 endif  # BUILD_PLATFORM_ZIP
+ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
+	@# No need to align, sign-package below will do it.
+	$(uncompress-dexs)
+endif  # LOCAL_PRIVILEGED_MODULE
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
