@@ -83,4 +83,5 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     pm.dexopt.install=quicken \
     pm.dexopt.bg-dexopt=speed-profile \
     pm.dexopt.ab-ota=speed-profile \
-    pm.dexopt.inactive=verify
+    pm.dexopt.inactive=verify \
+    pm.dexopt.shared=speed
