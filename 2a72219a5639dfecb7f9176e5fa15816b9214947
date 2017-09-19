@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "03f5f779_301af9af",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2727,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2017-09-19T12:01:41Z",
+      "side": 1,
+      "message": "Seems needed for MacOS.",
+      "range": {
+        "startLine": 2727,
+        "startChar": 41,
+        "endLine": 2727,
+        "endChar": 42
+      },
+      "revId": "2a72219a5639dfecb7f9176e5fa15816b9214947",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
