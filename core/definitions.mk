@@ -2599,6 +2599,14 @@ $(2): $(1)
 	$$(copy-file-to-target)
 endef
 
+define copy-and-uncompress-dexs
+$(2): $(1) $(ZIPALIGN)
+	@echo "Uncompress dexs in: $$@"
+	$$(copy-file-to-target)
+	$$(uncompress-dexs)
+	$$(align-package)
+endef
+
 # Copies many files.
 # $(1): The files to copy.  Each entry is a ':' separated src:dst pair
 # Evaluates to the list of the dst files (ie suitable for a dependency list)
