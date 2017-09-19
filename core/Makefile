@@ -40,7 +40,9 @@ $(foreach cf,$(unique_product_copy_files_pairs), \
         $(eval _fulldest := $(call append-path,$(PRODUCT_OUT),$(_dest))) \
         $(if $(filter %.xml,$(_dest)),\
             $(eval $(call copy-xml-file-checked,$(_src),$(_fulldest))),\
-            $(eval $(call copy-one-file,$(_src),$(_fulldest)))) \
+            $(if $(filter $(basename $(notdir $(_dest))), $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES)),\
+                $(eval $(call copy-and-uncompress-dexs,$(_src),$(_fulldest))), \
+                $(eval $(call copy-one-file,$(_src),$(_fulldest))))) \
         $(eval ALL_DEFAULT_INSTALLED_MODULES += $(_fulldest)) \
         $(eval unique_product_copy_files_destinations += $(_dest))))
 unique_product_copy_files_pairs :=
