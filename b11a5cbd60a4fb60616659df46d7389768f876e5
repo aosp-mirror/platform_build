@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8cdeda66_1a2f862f",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-19T19:51:35Z",
+      "side": 1,
+      "message": "Why would dex files be installed via PRODUCT_COPY_FILES? We forbid apk files on line 25 above, should we expand that to jars, due to this extra logic required? (And so that they can be pre-opted if required)",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 70
+      },
+      "revId": "b11a5cbd60a4fb60616659df46d7389768f876e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9650644_aeb42aec",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-19T19:51:35Z",
+      "side": 1,
+      "message": "Seems like this should be an `else ifneq` for the LOCAL_PRIVILEGED_MODULE check",
+      "range": {
+        "startLine": 349,
+        "startChar": 0,
+        "endLine": 349,
+        "endChar": 5
+      },
+      "revId": "b11a5cbd60a4fb60616659df46d7389768f876e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
