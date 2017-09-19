@@ -643,6 +643,9 @@ ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
 endif
+ifneq (,$(filter $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES), $(LOCAL_MODULE)))
+	$(uncompress-dexs)
+endif  # PRODUCT_LOADED_BY_PRIVILEGED_MODULES
 	$(sign-package)
 ifdef LOCAL_COMPRESSED_MODULE
 	$(compress-package)

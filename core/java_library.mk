@@ -92,7 +92,15 @@ endif
 ifdef LOCAL_JACK_ENABLED
 	$(add-carried-jack-resources)
 endif
+	$(hide) $(ZIPTIME) $@.tmp
+	$(call commit-change-for-toc,$@)
+ifneq (,$(filter $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES), $(LOCAL_MODULE)))
+	$(uncompress-dexs)
+	$(align-package)
+endif  # PRODUCT_LOADED_BY_PRIVILEGED_MODULES
 	$(remove-timestamps-from-package)
+
+.KATI_RESTAT: $(common_javalib.jar)
 
 ifdef LOCAL_DEX_PREOPT
 ifneq ($(dexpreopt_boot_jar_module),) # boot jar
