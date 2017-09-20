@@ -57,7 +57,6 @@ ifeq ($(LOCAL_IS_HOST_MODULE),true)
 $(full_target): PRIVATE_BOOTCLASSPATH :=
 full_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
   $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
-full_java_lib_deps := $(full_java_libs)
 
 else
 
@@ -83,7 +82,6 @@ endif  # LOCAL_SDK_VERSION
 LOCAL_JAVA_LIBRARIES := $(sort $(LOCAL_JAVA_LIBRARIES))
 
 full_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES)) $(LOCAL_CLASSPATH)
-full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES)) $(LOCAL_CLASSPATH)
 endif # !LOCAL_IS_HOST_MODULE
 
 $(full_target): PRIVATE_CLASSPATH := $(call normalize-path-list,$(full_java_libs))
@@ -174,7 +172,7 @@ $(full_target): \
         $(droiddoc_templates) \
         $(droiddoc) \
         $(html_dir_files) \
-        $(full_java_lib_deps) \
+        $(full_java_libs) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	@echo Docs droiddoc: $(PRIVATE_OUT_DIR)
 	$(hide) mkdir -p $(dir $@)
@@ -226,7 +224,7 @@ else
 $(full_target): PRIVATE_BOOTCLASSPATH_ARG := $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH))
 endif
 
-$(full_target): $(full_src_files) $(full_java_lib_deps)
+$(full_target): $(full_src_files) $(full_java_libs)
 	@echo Docs javadoc: $(PRIVATE_OUT_DIR)
 	@mkdir -p $(dir $@)
 	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
