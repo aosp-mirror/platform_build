@@ -135,6 +135,7 @@ full_classes_desugar_jar := $(intermediates.COMMON)/classes-desugar.jar
 jarjar_leaf := classes-jarjar.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/$(jarjar_leaf)
 full_classes_proguard_jar := $(intermediates.COMMON)/classes-proguard.jar
+full_classes_combined_jar := $(intermediates.COMMON)/classes-combined.jar
 built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)/classes.dex
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 java_source_list_file := $(intermediates.COMMON)/java-source-list
@@ -160,6 +161,7 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_desugar_jar) \
     $(full_classes_jarjar_jar) \
     $(full_classes_jar) \
+    $(full_classes_combined_jar) \
     $(full_classes_proguard_jar) \
     $(built_dex_intermediate) \
     $(full_classes_jack) \
@@ -487,7 +489,6 @@ $(full_classes_compiled_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
     $(full_java_header_libs) \
-    $(full_static_java_libs) \
     $(jar_manifest_file) \
     $(layers_file) \
     $(annotation_processor_deps) \
@@ -507,7 +508,8 @@ $(full_classes_turbine_jar): \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
     $(ZIPTIME) \
-    | $(TURBINE)
+    | $(TURBINE) \
+    $(MERGE_ZIPS)
 	$(transform-java-to-header.jar)
 
 .KATI_RESTAT: $(full_classes_turbine_jar)
@@ -527,12 +529,19 @@ $(eval $(call copy-one-file,$(full_classes_header_jarjar),$(full_classes_header_
 javac-check : $(full_classes_compiled_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
 
+$(full_classes_combined_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
+$(full_classes_combined_jar): $(full_classes_compiled_jar) \
+                              $(full_static_java_libs) | $(MERGE_ZIPS)
+	$(MERGE_ZIPS) -j \
+        $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
+        $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
+
 ifdef LOCAL_JAR_PROCESSOR
 # LOCAL_JAR_PROCESSOR_ARGS must be evaluated here to set up the rule-local
 # PRIVATE_JAR_PROCESSOR_ARGS variable, but $< and $@ are not available yet.
 # Set ${in} and ${out} so they can be referenced by LOCAL_JAR_PROCESSOR_ARGS
 # using deferred evaluation (LOCAL_JAR_PROCESSOR_ARGS = instead of :=).
-in := $(full_classes_compiled_jar)
+in := $(full_classes_combined_jar)
 out := $(full_classes_processed_jar).tmp
 my_jar_processor := $(HOST_OUT_JAVA_LIBRARIES)/$(LOCAL_JAR_PROCESSOR).jar
 
@@ -542,7 +551,7 @@ $(full_classes_processed_jar): PRIVATE_TMP_OUT := $(out)
 in :=
 out :=
 
-$(full_classes_processed_jar): $(full_classes_compiled_jar) $(my_jar_processor)
+$(full_classes_processed_jar): $(full_classes_combined_jar) $(my_jar_processor)
 	@echo Processing $@ with $(PRIVATE_JAR_PROCESSOR)
 	$(hide) rm -f $@ $(PRIVATE_TMP_OUT)
 	$(hide) $(JAVA) -jar $(PRIVATE_JAR_PROCESSOR) $(PRIVATE_JAR_PROCESSOR_ARGS)
@@ -550,7 +559,7 @@ $(full_classes_processed_jar): $(full_classes_compiled_jar) $(my_jar_processor)
 
 my_jar_processor :=
 else
-full_classes_processed_jar := $(full_classes_compiled_jar)
+full_classes_processed_jar := $(full_classes_combined_jar)
 endif
 
 # Run jarjar if necessary
