@@ -660,6 +660,15 @@ endif
 endif
 
 ###########################################################
+# Ensure privileged applications always have LOCAL_PRIVILEGED_MODULE
+###########################################################
+ifndef LOCAL_PRIVILEGED_MODULE
+  ifneq (,$(filter $(TARGET_OUT_APPS_PRIVILEGED)/% $(TARGET_OUT_VENDOR_APPS_PRIVILEGED)/%,$(my_module_path)))
+    LOCAL_PRIVILEGED_MODULE := true
+  endif
+endif
+
+###########################################################
 ## NOTICE files
 ###########################################################
 

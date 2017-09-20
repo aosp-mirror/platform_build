@@ -2717,6 +2717,18 @@ define remove-timestamps-from-package
 $(hide) $(ZIPTIME) $@
 endef
 
+# Uncompress dex files embedded in an apk.
+#
+define uncompress-dexs
+$(hide) if (zipinfo $@ '*.dex' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
+  rm -rf $(dir $@)uncompresseddexs && mkdir $(dir $@)uncompresseddexs; \
+  unzip $@ '*.dex' -d $(dir $@)uncompresseddexs && \
+  zip -d $@ '*.dex' && \
+  ( cd $(dir $@)uncompresseddexs && find . -type f | sort | zip -D -X -0 ../$(notdir $@) -@ ) && \
+  rm -rf $(dir $@)uncompresseddexs; \
+  fi
+endef
+
 # Uncompress shared libraries embedded in an apk.
 #
 define uncompress-shared-libs
