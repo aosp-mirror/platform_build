@@ -489,7 +489,6 @@ $(full_classes_compiled_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
     $(full_java_header_libs) \
-    $(jar_manifest_file) \
     $(layers_file) \
     $(annotation_processor_deps) \
     $(NORMALIZE_PATH) \
@@ -503,8 +502,6 @@ $(full_classes_turbine_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
     $(full_java_header_libs) \
-    $(jar_manifest_file) \
-    $(layers_file) \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
     $(ZIPTIME) \
@@ -531,10 +528,13 @@ javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
 
 $(full_classes_combined_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_combined_jar): $(full_classes_compiled_jar) \
+                              $(jar_manifest_file) \
                               $(full_static_java_libs) | $(MERGE_ZIPS)
-	$(MERGE_ZIPS) -j \
-        $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
-        $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
+	$(if $(PRIVATE_JAR_MANIFEST), $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
+            $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf)
+	$(MERGE_ZIPS) -j $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
+            $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
+            $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
 
 ifdef LOCAL_JAR_PROCESSOR
 # LOCAL_JAR_PROCESSOR_ARGS must be evaluated here to set up the rule-local
