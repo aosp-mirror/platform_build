@@ -112,7 +112,6 @@ $(full_classes_compiled_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
     $(full_java_header_libs) \
-    $(jar_manifest_file) \
     $(annotation_processor_deps) \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
@@ -125,7 +124,6 @@ $(full_classes_turbine_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
     $(full_java_header_libs) \
-    $(jar_manifest_file) \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
     $(ZIPTIME) \
@@ -149,10 +147,13 @@ $(eval $(call copy-one-file,$(full_classes_header_jarjar),$(full_classes_header_
 
 $(full_classes_combined_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_combined_jar): $(full_classes_compiled_jar) \
+                              $(jar_manifest_file) \
                               $(full_static_java_libs)  | $(MERGE_ZIPS)
-	$(MERGE_ZIPS) -j \
-        $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
-        $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
+	$(if $(PRIVATE_JAR_MANIFEST), $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
+            $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf)
+	$(MERGE_ZIPS) -j $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
+            $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
+            $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
 
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
