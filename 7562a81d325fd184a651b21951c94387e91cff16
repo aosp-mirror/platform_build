@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a10e2f3_ee34ffb4",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-22T02:24:38Z",
+      "side": 1,
+      "message": "call pretty-error?",
+      "range": {
+        "startLine": 117,
+        "startChar": 42,
+        "endLine": 117,
+        "endChar": 73
+      },
+      "revId": "7562a81d325fd184a651b21951c94387e91cff16",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9cea77e1_01a4d82a",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-22T02:24:38Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 120,
+        "startChar": 0,
+        "endLine": 121,
+        "endChar": 82
+      },
+      "revId": "7562a81d325fd184a651b21951c94387e91cff16",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
