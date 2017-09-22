@@ -529,20 +529,25 @@ ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
   else
     DX := $(HOST_OUT_EXECUTABLES)/dx
   endif
-  DX_COMMAND := $(DX) -JXms16M -JXmx2048M
 
 else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   AIDL := $(prebuilt_sdk_tools_bin)/aidl
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
   AAPT2 := $(prebuilt_sdk_tools_bin)/aapt2
-  DX := $(prebuilt_sdk_tools)/dx
-  DX_COMMAND := $(DX) -JXms16M -JXmx2048M
   DESUGAR := $(prebuilt_build_tools_jars)/desugar.jar
   MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
-  ZIPALIGN := $(prebuilt_sdk_tools_bin)/zipalign
   SIGNAPK_JAR := $(prebuilt_sdk_tools)/lib/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(prebuilt_sdk_tools)/$(HOST_OS)/lib64
+  ZIPALIGN := $(prebuilt_sdk_tools_bin)/zipalign
+
+  ifeq ($(USE_D8),true)
+    DX := $(prebuilt_build_tools_wrappers)/d8
+  else
+    DX := $(prebuilt_build_tools_wrappers)/dx
+  endif
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
+
+DX_COMMAND := $(DX) -JXms16M -JXmx2048M
 
 ifeq (,$(TARGET_BUILD_APPS))
   # Use RenderScript prebuilts for unbundled builds but not PDK builds
