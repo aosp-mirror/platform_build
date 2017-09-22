@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "60b6f39c_267acc81",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-22T20:42:06Z",
+      "side": 1,
+      "message": "Use the method from binary.mk of stripping $OUT_DIR before checking for absolute paths",
+      "revId": "d166a23e5c9249933b1d03a8c80106e0d1757a5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
