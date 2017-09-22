@@ -105,12 +105,20 @@ ifneq ($(LOCAL_JAVA_RESOURCE_DIRS),)
   java_resource_file_groups := $(filter-out %:,$(java_resource_file_groups))
 endif # LOCAL_JAVA_RESOURCE_DIRS
 
-LOCAL_JAVA_RESOURCE_FILES := $(strip $(LOCAL_JAVA_RESOURCE_FILES))
 ifneq ($(LOCAL_JAVA_RESOURCE_FILES),)
-  java_resource_file_groups += \
-    $(foreach f,$(LOCAL_JAVA_RESOURCE_FILES), \
-	$(patsubst %/,%,$(dir $(f)))::$(notdir $(f)) \
-     )
+  # Converts LOCAL_JAVA_RESOURCE_FILES := <file> to $(dir $(file))::$(notdir $(file))
+  # and LOCAL_JAVA_RESOURCE_FILES := <dir>:<file> to <dir>::<file>
+  java_resource_file_groups += $(strip $(foreach res,$(LOCAL_JAVA_RESOURCE_FILES), \
+    $(eval _file := $(call word-colon,2,$(res))) \
+    $(if $(_file), \
+      $(eval _base := $(call word-colon,1,$(res))), \
+      $(eval _base := $(dir $(res))) \
+        $(eval _file := $(notdir $(res)))) \
+    $(if $(filter /%, \
+      $(filter-out $(OUT_DIR)/%,$(_base) $(_file))), \
+        $(call pretty-error,LOCAL_JAVA_RESOURCE_FILES may not include absolute paths: $(_base) $(_file))) \
+    $(patsubst %/,%,$(_base))::$(_file)))
+
 endif # LOCAL_JAVA_RESOURCE_FILES
 
 ifdef java_resource_file_groups
