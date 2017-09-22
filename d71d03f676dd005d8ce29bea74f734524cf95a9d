@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "958c8888_11df235f",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2295,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-09-22T21:34:42Z",
+      "side": 1,
+      "message": "If you\u0027d like to keep newlines in the output then you can do\n\n\u0026\u0026 cat $(PRIVATE_JAVA_SOURCE_LIST)",
+      "range": {
+        "startLine": 2295,
+        "startChar": 61,
+        "endLine": 2295,
+        "endChar": 91
+      },
+      "revId": "d71d03f676dd005d8ce29bea74f734524cf95a9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5df3cfec_f2bcba27",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-09-22T21:34:42Z",
+      "side": 1,
+      "message": "I\u0027d negate the variable something and call it something like ENABLE_TURBINE\n\npartially so it\u0027s one less inversion to think about (if we ever have to negate it, we wouldn\u0027t write \"if not disabled\" but instead \"if enabled\")\n\nand partially because it seems to me that if something is not disabled, I\u0027m still not sure that it\u0027s active (perhaps it\u0027s enabled but not relevant) whereas if the variable is called either \"use\" or \"enable\" then the variable can be named accordingly so it describes whether there\u0027s more logic left to compute (in the case of \"enable\") before deciding whether to use the variable, or whether this is the definitive variable (in the case of \"use\") telling whether the tool will be used",
+      "revId": "d71d03f676dd005d8ce29bea74f734524cf95a9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c98e409_50ff0bc5",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 611,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-09-22T21:34:42Z",
+      "side": 1,
+      "message": "You could also shorten the code by moving this turbine check inside java-lib-header-files",
+      "range": {
+        "startLine": 611,
+        "startChar": 43,
+        "endLine": 611,
+        "endChar": 64
+      },
+      "revId": "d71d03f676dd005d8ce29bea74f734524cf95a9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
