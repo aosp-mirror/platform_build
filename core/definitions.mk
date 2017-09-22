@@ -2243,7 +2243,6 @@ $(hide) rm -f $@
 $(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(dir $@)
 $(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR)
-$(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_LIBRARIES),$(PRIVATE_CLASS_INTERMEDIATES_DIR))
 $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
     $(SOONG_JAVAC_WRAPPER) $(1) -encoding UTF-8 \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
@@ -2270,12 +2269,7 @@ $(if $(PRIVATE_JAR_PACKAGES), \
 $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
     $(foreach pkg, $(PRIVATE_JAR_EXCLUDE_PACKAGES), \
         $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))))
-$(if $(PRIVATE_JAR_MANIFEST), \
-    $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
-            $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf && \
-        $(JAR) -cfm $@ $(dir $@)/manifest.mf, \
-    $(hide) $(JAR) -cf $@) \
-        $(call jar-args-sorted-files-in-directory,$(PRIVATE_CLASS_INTERMEDIATES_DIR))
+$(hide) $(JAR) -cf $@ $(call jar-args-sorted-files-in-directory,$(PRIVATE_CLASS_INTERMEDIATES_DIR))
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 endef
 
@@ -2291,19 +2285,16 @@ define transform-java-to-header.jar
 @mkdir $(dir $@)/classes-turbine
 $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
     $(JAVA) -jar $(TURBINE) \
-    --output $@.tmp --temp_dir $(dir $@)/classes-turbine -$(PRIVATE_BOOTCLASSPATH) \
+    --output $@.premerged --temp_dir $(dir $@)/classes-turbine -$(PRIVATE_BOOTCLASSPATH) \
     --sources \@$(PRIVATE_JAVA_SOURCE_LIST) \
     --javacopts $(PRIVATE_JAVACFLAGS) $(COMMON_JDK_FLAGS) \
     $(addprefix --classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES)))) \
-    || ( rm -rf $(dir $@)/classes-turbine ; exit 41 ) \
+    || ( rm -rf $(dir $@)/classes-turbine ; exit 41 ) && \
+    $(MERGE_ZIPS) -j -stripDir META-INF $@.tmp $@.premerged $(call reverse-list,$(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES)) ; \
+else \
+    $(MERGE_ZIPS) -j -stripDir META-INF $@.tmp $(call reverse-list,$(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES)) ; \
 fi
-$(hide) $(call unzip-jar-files,$(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES),$(dir $@)/classes-turbine)
-$(hide) if [ -s $@.tmp ] ; then \
-    unzip -qo $@.tmp -d $(dir $@)/classes-turbine; rm -f $(dir $@)/classes-turbine/module-info.class; \
-fi
-$(hide) $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,$(hide) rm -rf $(dir $@)/classes-turbine/META-INF)
-$(hide) $(JAR) -cf $@.tmp $(call jar-args-sorted-files-in-directory,$(dir $@)/classes-turbine)
 $(hide) $(ZIPTIME) $@.tmp
 $(hide) $(call commit-change-for-toc,$@)
 endef
@@ -2724,6 +2715,18 @@ endef
 #
 define remove-timestamps-from-package
 $(hide) $(ZIPTIME) $@
+endef
+
+# Uncompress dex files embedded in an apk.
+#
+define uncompress-dexs
+$(hide) if (zipinfo $@ '*.dex' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
+  rm -rf $(dir $@)uncompresseddexs && mkdir $(dir $@)uncompresseddexs; \
+  unzip $@ '*.dex' -d $(dir $@)uncompresseddexs && \
+  zip -d $@ '*.dex' && \
+  ( cd $(dir $@)uncompresseddexs && find . -type f | sort | zip -D -X -0 ../$(notdir $@) -@ ) && \
+  rm -rf $(dir $@)uncompresseddexs; \
+  fi
 endef
 
 # Uncompress shared libraries embedded in an apk.

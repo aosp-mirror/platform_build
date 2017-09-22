@@ -514,13 +514,13 @@ ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
   SIGNAPK_JNI_LIBRARY_PATH := $(HOST_OUT_SHARED_LIBRARIES)
   ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign
 
-  ifndef DX_ALT_JAR
-    DX := $(HOST_OUT_EXECUTABLES)/dx
-    DX_COMMAND := $(DX) -JXms16M -JXmx2048M
+  ifeq ($(USE_D8),true)
+    DX := $(HOST_OUT_EXECUTABLES)/d8
   else
-    DX := $(DX_ALT_JAR)
-    DX_COMMAND := $(JAVA) -Xms16M -Xmx2048M -jar $(DX)
+    DX := $(HOST_OUT_EXECUTABLES)/dx
   endif
+  DX_COMMAND := $(DX) -JXms16M -JXmx2048M
+
 else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   AIDL := $(prebuilt_sdk_tools_bin)/aidl
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
@@ -561,6 +561,7 @@ IJAR := $(prebuilt_build_tools_bin)/ijar
 MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
 SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
+MERGE_ZIPS := $(SOONG_HOST_OUT_EXECUTABLES)/merge_zips
 ZIP2ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/zip2zip
 ZIPTIME := $(prebuilt_build_tools_bin)/ziptime
 

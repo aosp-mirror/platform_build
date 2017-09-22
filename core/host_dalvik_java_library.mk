@@ -46,6 +46,7 @@ full_classes_turbine_jar := $(intermediates.COMMON)/classes-turbine.jar
 full_classes_header_jarjar := $(intermediates.COMMON)/classes-header-jarjar.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
+full_classes_combined_jar := $(intermediates.COMMON)/classes-combined.jar
 full_classes_desugar_jar := $(intermediates.COMMON)/desugar.classes.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_jar := $(intermediates.COMMON)/classes.jar
@@ -57,6 +58,7 @@ java_source_list_file := $(intermediates.COMMON)/java-source-list
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_turbine_jar) \
     $(full_classes_compiled_jar) \
+    $(full_classes_combined_jar) \
     $(full_classes_desugar_jar) \
     $(full_classes_jarjar_jar) \
     $(full_classes_jack) \
@@ -110,8 +112,6 @@ $(full_classes_compiled_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
     $(full_java_header_libs) \
-    $(full_static_java_libs) \
-    $(jar_manifest_file) \
     $(annotation_processor_deps) \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
@@ -124,11 +124,11 @@ $(full_classes_turbine_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
     $(full_java_header_libs) \
-    $(jar_manifest_file) \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
     $(ZIPTIME) \
-    | $(TURBINE)
+    | $(TURBINE) \
+    $(MERGE_ZIPS)
 	$(transform-java-to-header.jar)
 
 .KATI_RESTAT: $(full_classes_turbine_jar)
@@ -145,14 +145,24 @@ endif
 
 $(eval $(call copy-one-file,$(full_classes_header_jarjar),$(full_classes_header_jar)))
 
+$(full_classes_combined_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
+$(full_classes_combined_jar): $(full_classes_compiled_jar) \
+                              $(jar_manifest_file) \
+                              $(full_static_java_libs)  | $(MERGE_ZIPS)
+	$(if $(PRIVATE_JAR_MANIFEST), $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
+            $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf)
+	$(MERGE_ZIPS) -j $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
+            $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
+            $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
+
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
+$(full_classes_jarjar_jar): $(full_classes_combined_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
 	@echo JarJar: $@
 	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
-full_classes_jarjar_jar := $(full_classes_compiled_jar)
+full_classes_jarjar_jar := $(full_classes_combined_jar)
 endif
 
 $(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
