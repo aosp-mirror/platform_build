@@ -499,6 +499,16 @@ endif
 prebuilt_sdk_tools := prebuilts/sdk/tools
 prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
 
+# Always use prebuilts for ckati and makeparallel
+prebuilt_build_tools := prebuilts/build-tools
+prebuilt_build_tools_wrappers := prebuilts/build-tools/common/bin
+prebuilt_build_tools_jars := prebuilts/build-tools/common/framework
+ifeq ($(filter address,$(SANITIZE_HOST)),)
+prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/bin
+else
+prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/asan/bin
+endif
+
 USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
 #
@@ -508,6 +518,7 @@ ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
   AIDL := $(HOST_OUT_EXECUTABLES)/aidl
   AAPT := $(HOST_OUT_EXECUTABLES)/aapt
   AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
+  DESUGAR := $(HOST_OUT_JAVA_LIBRARIES)/desugar.jar
   MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
   SIGNAPK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(HOST_OUT_SHARED_LIBRARIES)
@@ -526,6 +537,7 @@ else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   AAPT2 := $(prebuilt_sdk_tools_bin)/aapt2
   DX := $(prebuilt_sdk_tools)/dx
   DX_COMMAND := $(DX) -JXms16M -JXmx2048M
+  DESUGAR := $(prebuilt_build_tools_jars)/desugar.jar
   MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
   ZIPALIGN := $(prebuilt_sdk_tools_bin)/zipalign
   SIGNAPK_JAR := $(prebuilt_sdk_tools)/lib/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
@@ -543,14 +555,6 @@ endif # TARGET_BUILD_PDK
 
 prebuilt_sdk_tools :=
 prebuilt_sdk_tools_bin :=
-
-# Always use prebuilts for ckati and makeparallel
-prebuilt_build_tools := prebuilts/build-tools
-ifeq ($(filter address,$(SANITIZE_HOST)),)
-prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/bin
-else
-prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/asan/bin
-endif
 
 ACP := $(prebuilt_build_tools_bin)/acp
 CKATI := $(prebuilt_build_tools_bin)/ckati
@@ -632,7 +636,6 @@ E2FSCK := $(HOST_OUT_EXECUTABLES)/e2fsck$(HOST_EXECUTABLE_SUFFIX)
 MKTARBALL := build/tools/mktarball.sh
 TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
-DESUGAR := $(HOST_OUT_JAVA_LIBRARIES)/desugar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/tools/fat16copy.py
 CHECK_LINK_TYPE := build/tools/check_link_type.py
