@@ -557,7 +557,6 @@ ACP := $(prebuilt_build_tools_bin)/acp
 CKATI := $(prebuilt_build_tools_bin)/ckati
 DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
 FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
-IJAR := $(prebuilt_build_tools_bin)/ijar
 MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
 SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
@@ -870,12 +869,6 @@ endif
 
 RS_PREBUILT_CLCORE := prebuilts/sdk/renderscript/lib/$(TARGET_ARCH)/librsrt_$(TARGET_ARCH).bc
 RS_PREBUILT_COMPILER_RT := prebuilts/sdk/renderscript/lib/$(TARGET_ARCH)/libcompiler_rt.a
-ifeq (true,$(TARGET_IS_64_BIT))
-RS_PREBUILT_LIBPATH := -L prebuilts/ndk/r10/platforms/android-21/arch-$(TARGET_ARCH)/usr/lib64 \
-                       -L prebuilts/ndk/r10/platforms/android-21/arch-$(TARGET_ARCH)/usr/lib
-else
-RS_PREBUILT_LIBPATH := -L prebuilts/ndk/r10/platforms/android-9/arch-$(TARGET_ARCH)/usr/lib
-endif
 
 # API Level lists for Renderscript Compat lib.
 RSCOMPAT_32BIT_ONLY_API_LEVELS := 8 9 10 11 12 13 14 15 16 17 18 19 20
