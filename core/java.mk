@@ -299,13 +299,21 @@ rs_support_io_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libRSSupportIO.so
 LOCAL_JNI_SHARED_LIBRARIES += libRSSupportIO
 endif
 
+my_arch := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+ifneq (,$(filter arm64 mips64 x86_64,$(my_arch)))
+  my_min_sdk_version := 21
+else
+  my_min_sdk_version := $(MIN_SUPPORTED_SDK_VERSION)
+endif
 
 $(rs_compatibility_jni_libs): $(RenderScript_file_stamp) $(RS_PREBUILT_CLCORE) \
     $(rs_support_lib) $(rs_support_io_lib) $(rs_jni_lib) $(rs_compiler_rt)
 $(rs_compatibility_jni_libs): $(BCC_COMPAT)
 $(rs_compatibility_jni_libs): PRIVATE_CXX := $(CXX_WRAPPER) $(TARGET_CXX)
+$(rs_compatibility_jni_libs): PRIVATE_SDK_VERSION := $(my_min_sdk_version)
 $(rs_compatibility_jni_libs): $(renderscript_intermediate)/librs.%.so: \
-    $(renderscript_intermediate.bc_folder)%.bc
+    $(renderscript_intermediate.bc_folder)%.bc \
+    $(SOONG_OUT_DIR)/ndk.timestamp
 	$(transform-bc-to-so)
 
 endif
