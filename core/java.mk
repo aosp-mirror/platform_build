@@ -31,45 +31,52 @@ ifneq ($(LOCAL_MODULE),jacocoagent)
   endif # !LOCAL_NO_STANDARD_LIBRARIES
 endif # LOCAL_MODULE == jacocoagent
 
-ifneq ($(LOCAL_SDK_VERSION),)
-  ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-    $(error $(LOCAL_PATH): Must not define both LOCAL_NO_STANDARD_LIBRARIES and LOCAL_SDK_VERSION)
-  else
-    ifeq ($(strip $(filter $(LOCAL_SDK_VERSION),$(TARGET_AVAILABLE_SDK_VERSIONS))),)
-      $(error $(LOCAL_PATH): Invalid LOCAL_SDK_VERSION '$(LOCAL_SDK_VERSION)' \
-             Choices are: $(TARGET_AVAILABLE_SDK_VERSIONS))
+# This duplicates the bootclasspath logic in java_common.mk because jack doesn't use
+# bootclasspath.
+ifdef LOCAL_JACK_ENABLED
+  ifneq ($(LOCAL_SDK_VERSION),)
+    ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+      $(error $(LOCAL_PATH): Must not define both LOCAL_NO_STANDARD_LIBRARIES and LOCAL_SDK_VERSION)
     else
-      ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
-        # Use android_stubs_current if LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
-        LOCAL_JAVA_LIBRARIES := android_stubs_current $(LOCAL_JAVA_LIBRARIES)
-      else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
-        LOCAL_JAVA_LIBRARIES := android_system_stubs_current $(LOCAL_JAVA_LIBRARIES)
-      else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
-        LOCAL_JAVA_LIBRARIES := android_test_stubs_current $(LOCAL_JAVA_LIBRARIES)
+      ifeq ($(strip $(filter $(LOCAL_SDK_VERSION),$(TARGET_AVAILABLE_SDK_VERSIONS))),)
+        $(error $(LOCAL_PATH): Invalid LOCAL_SDK_VERSION '$(LOCAL_SDK_VERSION)' \
+               Choices are: $(TARGET_AVAILABLE_SDK_VERSIONS))
       else
-        LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
-      endif
+        ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
+          # Use android_stubs_current if LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
+          LOCAL_JAVA_LIBRARIES := android_stubs_current $(LOCAL_JAVA_LIBRARIES)
+        else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
+          LOCAL_JAVA_LIBRARIES := android_system_stubs_current $(LOCAL_JAVA_LIBRARIES)
+        else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
+          LOCAL_JAVA_LIBRARIES := android_test_stubs_current $(LOCAL_JAVA_LIBRARIES)
+        else
+          LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
+        endif
 
-      ifeq ($(LOCAL_SDK_VERSION),current)
-        my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-      else ifeq ($(LOCAL_SDK_VERSION),system_current)
-        my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-      else ifeq ($(LOCAL_SDK_VERSION),test_current)
-        my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-      else
-        my_jack_min_sdk_version := $(LOCAL_SDK_VERSION)
+        ifeq ($(LOCAL_SDK_VERSION),current)
+          my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
+        else ifeq ($(LOCAL_SDK_VERSION),system_current)
+          my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
+        else ifeq ($(LOCAL_SDK_VERSION),test_current)
+          my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
+        else
+          my_jack_min_sdk_version := $(LOCAL_SDK_VERSION)
+        endif
       endif
     endif
+  else
+    my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
   endif
-else
-  my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-    LOCAL_JAVA_LIBRARIES := $(TARGET_DEFAULT_JAVA_LIBRARIES) $(LOCAL_JAVA_LIBRARIES)
+
+  ifneq (,$(strip $(LOCAL_MIN_SDK_VERSION)))
+    my_jack_min_sdk_version := $(LOCAL_MIN_SDK_VERSION)
   endif
 endif
 
-ifneq (,$(strip $(LOCAL_MIN_SDK_VERSION)))
-  my_jack_min_sdk_version := $(LOCAL_MIN_SDK_VERSION)
+ifndef LOCAL_SDK_VERSION
+  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+    LOCAL_JAVA_LIBRARIES := $(TARGET_DEFAULT_JAVA_LIBRARIES) $(LOCAL_JAVA_LIBRARIES)
+  endif
 endif
 
 proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
@@ -620,14 +627,16 @@ endif
 else
   # For platform build, we can't just raise to the "current" SDK,
   # that would break apps that use APIs removed from the current SDK.
-  my_support_library_sdk_raise := $(call java-lib-header-files,$(TARGET_DEFAULT_JAVA_LIBRARIES))
+  my_support_library_sdk_raise := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
 endif
 endif
 endif
 
 # jack already has the libraries in its classpath and doesn't support jars
 legacy_proguard_flags := $(addprefix -libraryjars ,$(my_support_library_sdk_raise) \
-  $(filter-out $(my_support_library_sdk_raise),$(full_shared_java_header_libs)))
+  $(filter-out $(my_support_library_sdk_raise), \
+    $(full_java_bootclasspath_libs) \
+    $(full_shared_java_header_libs)))
 
 legacy_proguard_lib_deps := $(my_support_library_sdk_raise) \
   $(filter-out $(my_support_library_sdk_raise),$(full_shared_java_header_libs))
