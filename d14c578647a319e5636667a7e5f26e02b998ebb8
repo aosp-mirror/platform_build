@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0d0cf544_1bfe599c",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-25T22:15:06Z",
+      "side": 1,
+      "message": "We should be able to remove this, but that can be a separate change.",
+      "range": {
+        "startLine": 560,
+        "startChar": 0,
+        "endLine": 560,
+        "endChar": 42
+      },
+      "revId": "d14c578647a319e5636667a7e5f26e02b998ebb8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9248baca_82b1f023",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-25T22:15:06Z",
+      "side": 1,
+      "message": "Same with this. main.mk hardcodes this, since we don\u0027t load this config before loading soong_ui.",
+      "range": {
+        "startLine": 563,
+        "startChar": 0,
+        "endLine": 563,
+        "endChar": 56
+      },
+      "revId": "d14c578647a319e5636667a7e5f26e02b998ebb8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
