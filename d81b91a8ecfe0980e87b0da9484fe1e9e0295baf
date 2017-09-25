@@ -22,6 +22,30 @@
       "revId": "d81b91a8ecfe0980e87b0da9484fe1e9e0295baf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf1c4de9_39a2fec6",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 546,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-25T23:59:13Z",
+      "side": 1,
+      "message": "It looks like https://android-review.googlesource.com/c/platform/cts/+/493690 is probably the only user of $(DX) that needed to be switched to $(DX_COMMAND), so we could add the actual jars here and use $(firstword $(DX)) below",
+      "parentUuid": "07575e2c_03df44c0",
+      "range": {
+        "startLine": 544,
+        "startChar": 0,
+        "endLine": 546,
+        "endChar": 45
+      },
+      "revId": "d81b91a8ecfe0980e87b0da9484fe1e9e0295baf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
