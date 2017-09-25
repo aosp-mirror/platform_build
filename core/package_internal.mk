@@ -425,6 +425,11 @@ my_full_asset_paths := $(all_assets)
 
 # Add AAPT2 link specific flags.
 $(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
+
+# Enables the new runtime format available on API 26 and up that encodes
+# resources a bit more densely when the application's minSdkVersion >= 26
+# or for resources versioned with v26 qualifier or higher.
+$(my_res_package): PRIVATE_AAPT_FLAGS += --enable-sparse-encoding
 ifndef LOCAL_AAPT_NAMESPACES
   $(my_res_package): PRIVATE_AAPT_FLAGS += --no-static-lib-packages
 endif
