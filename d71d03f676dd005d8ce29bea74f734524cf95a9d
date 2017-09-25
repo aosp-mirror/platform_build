@@ -62,6 +62,23 @@
       "revId": "d71d03f676dd005d8ce29bea74f734524cf95a9d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e5a3182_13eccd41",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-25T23:33:27Z",
+      "side": 1,
+      "message": "If turbine is being globally disabled you can modify the java-lib-header-files to return the same thing as java-lib-files and this file won\u0027t need any changes.",
+      "revId": "d71d03f676dd005d8ce29bea74f734524cf95a9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
