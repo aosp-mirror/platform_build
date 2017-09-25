@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07575e2c_03df44c0",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 546,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-25T22:18:09Z",
+      "side": 1,
+      "message": "This doesn\u0027t quite work properly. We use $(DX) to add a dependency so that we re-run rules when dx/d8 is updated. For local builds, we guarantee that the timestamp of the wrapper is updated when the underlying jar is updated, but we can\u0027t guarantee that for checked in prebuilts (unless we put a version number or similar in the wrapper).",
+      "range": {
+        "startLine": 544,
+        "startChar": 0,
+        "endLine": 546,
+        "endChar": 45
+      },
+      "revId": "d81b91a8ecfe0980e87b0da9484fe1e9e0295baf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
