@@ -384,12 +384,14 @@ full_static_jack_libs := \
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JACK_LIBRARIES := $(full_static_jack_libs)
 
 full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-  my_jack_bootclasspath := $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES)
-  ifdef LOCAL_IS_HOST_MODULE
-    my_jack_bootclasspath := $(addsuffix -hostdex,$(my_jack_bootclasspath))
+ifndef LOCAL_SDK_VERSION
+  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+    my_jack_bootclasspath := $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES)
+    ifdef LOCAL_IS_HOST_MODULE
+      my_jack_bootclasspath := $(addsuffix -hostdex,$(my_jack_bootclasspath))
+    endif
+    full_shared_jack_libs := $(call jack-lib-files,$(my_jack_bootclasspath),$(LOCAL_IS_HOST_MODULE)) $(full_shared_jack_libs)
   endif
-  full_shared_jack_libs := $(call jack-lib-files,$(my_jack_bootclasspath),$(LOCAL_IS_HOST_MODULE)) $(full_shared_jack_libs)
 endif
 full_jack_deps := $(full_shared_jack_libs)
 
