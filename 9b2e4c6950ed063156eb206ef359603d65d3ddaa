@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41cff3ae_51aa8ac2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 713,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-09-26T23:37:35Z",
+      "side": 1,
+      "message": "Since above two functions are almost same except the \"classes.jar\" vs. \"classes-header.jar\", do we need keep just one function, and pass classes.jar/classes-header.jar to the function as one parameter?",
+      "revId": "9b2e4c6950ed063156eb206ef359603d65d3ddaa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
