@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8283b56e_646bc274",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1194,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-09-26T04:12:34Z",
+      "side": 1,
+      "message": "this is to remove the unneeded init*.rc file copied from $(TARGET_ROOT_OUT) above (line 1188).",
+      "range": {
+        "startLine": 1194,
+        "startChar": 40,
+        "endLine": 1194,
+        "endChar": 48
+      },
+      "revId": "b5b3bc6d5cba8ceb8ceceef5bc25d6d6a3d8e974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cf8737d8_c55d29ac",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1197,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-09-26T04:12:34Z",
+      "side": 1,
+      "message": "This still works for old projects that copies init.recovery.*.rc to $(TARGET_ROOT_OUT)",
+      "range": {
+        "startLine": 1197,
+        "startChar": 0,
+        "endLine": 1197,
+        "endChar": 79
+      },
+      "revId": "b5b3bc6d5cba8ceb8ceceef5bc25d6d6a3d8e974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
