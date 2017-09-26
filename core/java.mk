@@ -497,6 +497,7 @@ $(full_classes_compiled_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
     $(full_java_header_libs) \
+    $(full_java_bootclasspath_libs) \
     $(layers_file) \
     $(annotation_processor_deps) \
     $(NORMALIZE_PATH) \
@@ -510,6 +511,7 @@ $(full_classes_turbine_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
     $(full_java_header_libs) \
+    $(full_java_bootclasspath_libs) \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
     $(ZIPTIME) \
