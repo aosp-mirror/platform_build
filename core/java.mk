@@ -748,7 +748,9 @@ endif
 endif
 endif
 
-$(full_classes_proguard_jar): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+ifneq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
+  $(full_classes_proguard_jar): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+endif
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
 $(full_classes_proguard_jar): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
