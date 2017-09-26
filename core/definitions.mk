@@ -683,9 +683,15 @@ endef
 # Java libraries that you want to link against.
 # $(1): library name list
 # $(2): Non-empty if IS_HOST_MODULE
+ifneq ($(TURBINE_ENABLED),false)
 define java-lib-header-files
 $(foreach lib,$(1),$(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),$(2),COMMON)/classes-header.jar)
 endef
+else
+define java-lib-header-files
+$(call java-lib-files,$(1),$(2))
+endef
+endif
 
 # Get the dependency files (you can put on the right side of "|" of a build rule)
 # of the Java libraries.
@@ -709,9 +715,15 @@ endef
 # Get the header jar files (you can pass to "javac -classpath") of static or shared
 # APK libraries that you want to link against.
 # $(1): library name list
+ifneq ($(TURBINE_ENABLED),false)
 define app-lib-header-files
 $(foreach lib,$(1),$(call intermediates-dir-for,APPS,$(lib),,COMMON)/classes-header.jar)
 endef
+else
+define app-lib-header-files
+$(call app-lib-files,$(1))
+endef
+endif
 
 ###########################################################
 ## Convert "core ext framework" to "out/.../classes.jack ..."

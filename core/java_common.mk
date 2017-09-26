@@ -300,7 +300,11 @@ ifdef LOCAL_INSTRUMENTATION_FOR
       APPS,$(LOCAL_INSTRUMENTATION_FOR),,COMMON)
   # link against the jar with full original names (before proguard processing).
   link_instr_classes_jar := $(link_instr_intermediates_dir.COMMON)/classes-pre-proguard.jar
-  link_instr_classes_header_jar := $(link_instr_intermediates_dir.COMMON)/classes-header.jar
+  ifneq ($(TURBINE_ENABLED),false)
+    link_instr_classes_header_jar := $(link_instr_intermediates_dir.COMMON)/classes-header.jar
+  else
+    link_instr_classes_header_jar := $(link_instr_intermediates_dir.COMMON)/classes.jar
+  endif
   full_java_libs += $(link_instr_classes_jar)
   full_java_header_libs += $(link_instr_classes_header_jar)
 endif  # LOCAL_INSTRUMENTATION_FOR
