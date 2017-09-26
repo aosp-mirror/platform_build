@@ -16,6 +16,24 @@
       "revId": "ffa6caefd710e7dfba6b4794f8219d97e3d0ccee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f488597_3857dba5",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 727,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-26T19:43:16Z",
+      "side": 1,
+      "message": "I mentioned that in the commit message. Jack would use $(jack_dictionary) instead, but I figured I\u0027d just disable the output for now, since you\u0027re so close to removing jack ;)",
+      "parentUuid": "bc3108fd_82d9067f",
+      "revId": "ffa6caefd710e7dfba6b4794f8219d97e3d0ccee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
