@@ -212,9 +212,16 @@ ifndef LOCAL_IS_HOST_MODULE
       # No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
       empty_bootclasspath := ""
     else  # LOCAL_NO_STANDARD_LIBRARIES
-      full_java_bootclasspath_libs := $(call java-lib-header-files,core-oj core-libart)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES))
     endif  # LOCAL_NO_STANDARD_LIBRARIES
   else
+    ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+      $(call pretty-error,Must not define both LOCAL_NO_STANDARD_LIBRARIES and LOCAL_SDK_VERSION)
+    endif
+    ifeq ($(strip $(filter $(LOCAL_SDK_VERSION),$(TARGET_AVAILABLE_SDK_VERSIONS))),)
+      $(call pretty-error,Invalid LOCAL_SDK_VERSION '$(LOCAL_SDK_VERSION)' \
+             Choices are: $(TARGET_AVAILABLE_SDK_VERSIONS))
+    endif
     ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
       # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
       full_java_bootclasspath_libs := $(call java-lib-header-files,android_stubs_current)
@@ -248,7 +255,7 @@ else # LOCAL_IS_HOST_MODULE
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
       empty_bootclasspath := ""
     else
-      full_java_bootclasspath_libs := $(call java-lib-header-files,core-oj-hostdex core-libart-hostdex,true)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,$(addsuffix -hostdex,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES)),true)
     endif
 
     full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),true)
@@ -266,7 +273,8 @@ ifdef empty_bootclasspath
   endif
 endif
 
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := $(empty_bootclasspath)$(full_java_bootclasspath_libs)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := $(full_java_bootclasspath_libs)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_EMPTY_BOOTCLASSPATH := $(empty_bootclasspath)
 
 full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
 full_java_header_libs := $(full_shared_java_header_libs) $(full_static_java_header_libs)
@@ -376,6 +384,13 @@ full_static_jack_libs := \
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JACK_LIBRARIES := $(full_static_jack_libs)
 
 full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+  my_jack_bootclasspath := $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES)
+  ifdef LOCAL_IS_HOST_MODULE
+    my_jack_bootclasspath := $(addsuffix -hostdex,$(my_jack_bootclasspath))
+  endif
+  full_shared_jack_libs := $(call jack-lib-files,$(my_jack_bootclasspath),$(LOCAL_IS_HOST_MODULE)) $(full_shared_jack_libs)
+endif
 full_jack_deps := $(full_shared_jack_libs)
 
 ifndef LOCAL_IS_HOST_MODULE
