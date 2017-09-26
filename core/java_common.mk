@@ -204,60 +204,60 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 # full_java_libs: The list of files that should be used as the classpath.
 #                 Using this list as a dependency list WILL NOT WORK.
 ifndef LOCAL_IS_HOST_MODULE
-ifeq ($(LOCAL_SDK_VERSION),)
-ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-# No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
-my_bootclasspath := ""
-else  # LOCAL_NO_STANDARD_LIBRARIES
-my_bootclasspath := $(call java-lib-header-files,core-oj):$(call java-lib-header-files,core-libart)
-endif  # LOCAL_NO_STANDARD_LIBRARIES
-else
-ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
-# LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
-my_bootclasspath := $(call java-lib-header-files,android_stubs_current)
-else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
-my_bootclasspath := $(call java-lib-header-files,android_system_stubs_current)
-else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
-my_bootclasspath := $(call java-lib-header-files,android_test_stubs_current)
-else
-my_bootclasspath := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
-endif # current, system_current, or test_current
-endif # LOCAL_SDK_VERSION
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
+  ifeq ($(LOCAL_SDK_VERSION),)
+    ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+      # No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
+      my_bootclasspath := ""
+    else  # LOCAL_NO_STANDARD_LIBRARIES
+      my_bootclasspath := $(call java-lib-header-files,core-oj):$(call java-lib-header-files,core-libart)
+    endif  # LOCAL_NO_STANDARD_LIBRARIES
+  else
+    ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
+      # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
+      my_bootclasspath := $(call java-lib-header-files,android_stubs_current)
+    else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
+      my_bootclasspath := $(call java-lib-header-files,android_system_stubs_current)
+    else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
+      my_bootclasspath := $(call java-lib-header-files,android_test_stubs_current)
+    else
+      my_bootclasspath := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
+    endif # current, system_current, or test_current
+  endif # LOCAL_SDK_VERSION
+  $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
 
-# In order to compile lambda code javac requires various invokedynamic-
-# related classes to be present. This change adds stubs needed for
-# javac to compile lambdas.
-my_additional_javac_libs :=
-ifndef TARGET_BUILD_APPS
-# TODO: support to build lamdbas using javac in unbundled build.
-# We may need to check in a prebuilt core-lambda-stubs to prebuilts/sdk.
-ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-my_additional_javac_libs := core-lambda-stubs
-endif
-endif
+  # In order to compile lambda code javac requires various invokedynamic-
+  # related classes to be present. This change adds stubs needed for
+  # javac to compile lambdas.
+  my_additional_javac_libs :=
+  ifndef TARGET_BUILD_APPS
+    # TODO: support to build lamdbas using javac in unbundled build.
+    # We may need to check in a prebuilt core-lambda-stubs to prebuilts/sdk.
+    ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+      my_additional_javac_libs := core-lambda-stubs
+    endif
+  endif
 
-full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
-full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
+  full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
+  full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
 
 else # LOCAL_IS_HOST_MODULE
 
-ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
-ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-my_bootclasspath := ""
-else
-my_bootclasspath := $(call normalize-path-list,$(call java-lib-header-files,core-oj-hostdex core-libart-hostdex,true))
-endif
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
+  ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
+    ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+      my_bootclasspath := ""
+    else
+      my_bootclasspath := $(call normalize-path-list,$(call java-lib-header-files,core-oj-hostdex core-libart-hostdex,true))
+    endif
+    $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
 
-full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),true)
-full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),true)
-else # !USE_CORE_LIB_BOOTCLASSPATH
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH :=
+    full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),true)
+    full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),true)
+  else # !USE_CORE_LIB_BOOTCLASSPATH
+    $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH :=
 
-full_shared_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
-    $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
-endif # USE_CORE_LIB_BOOTCLASSPATH
+    full_shared_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
+      $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
+  endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
 
 full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
