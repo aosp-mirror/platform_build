@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bc3108fd_82d9067f",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 727,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-26T19:38:31Z",
+      "side": 1,
+      "message": "Why check for LOCAL_JACK_ENABLED here?  If the rule is present we should have the implicit outputs",
+      "revId": "ffa6caefd710e7dfba6b4794f8219d97e3d0ccee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
