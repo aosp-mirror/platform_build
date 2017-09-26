@@ -16,6 +16,24 @@
       "revId": "9b2e4c6950ed063156eb206ef359603d65d3ddaa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1b4044e_6c85aa63",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 713,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-26T23:40:15Z",
+      "side": 1,
+      "message": "Doesn\u0027t seem worth it to me, it just makes it harder to look at the function and see what it returns",
+      "parentUuid": "41cff3ae_51aa8ac2",
+      "revId": "9b2e4c6950ed063156eb206ef359603d65d3ddaa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
