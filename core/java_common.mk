@@ -201,29 +201,31 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAVA_SOURCE_LIST := $(java_source_list_fi
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 
+full_java_bootclasspath_libs :=
+empty_bootclasspath :=
+
 # full_java_libs: The list of files that should be used as the classpath.
 #                 Using this list as a dependency list WILL NOT WORK.
 ifndef LOCAL_IS_HOST_MODULE
   ifeq ($(LOCAL_SDK_VERSION),)
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
       # No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
-      my_bootclasspath := ""
+      empty_bootclasspath := ""
     else  # LOCAL_NO_STANDARD_LIBRARIES
-      my_bootclasspath := $(call java-lib-header-files,core-oj):$(call java-lib-header-files,core-libart)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,core-oj core-libart)
     endif  # LOCAL_NO_STANDARD_LIBRARIES
   else
     ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
       # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
-      my_bootclasspath := $(call java-lib-header-files,android_stubs_current)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,android_stubs_current)
     else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
-      my_bootclasspath := $(call java-lib-header-files,android_system_stubs_current)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,android_system_stubs_current)
     else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
-      my_bootclasspath := $(call java-lib-header-files,android_test_stubs_current)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,android_test_stubs_current)
     else
-      my_bootclasspath := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
+      full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
     endif # current, system_current, or test_current
   endif # LOCAL_SDK_VERSION
-  $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
 
   # In order to compile lambda code javac requires various invokedynamic-
   # related classes to be present. This change adds stubs needed for
@@ -244,21 +246,27 @@ else # LOCAL_IS_HOST_MODULE
 
   ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-      my_bootclasspath := ""
+      empty_bootclasspath := ""
     else
-      my_bootclasspath := $(call normalize-path-list,$(call java-lib-header-files,core-oj-hostdex core-libart-hostdex,true))
+      full_java_bootclasspath_libs := $(call java-lib-header-files,core-oj-hostdex core-libart-hostdex,true)
     endif
-    $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
 
     full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),true)
     full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),true)
   else # !USE_CORE_LIB_BOOTCLASSPATH
-    $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH :=
 
     full_shared_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
       $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
   endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
+
+ifdef empty_bootclasspath
+  ifdef full_java_bootclasspath_libs
+    $(call pretty-error,internal error: empty_bootclasspath and full_java_bootclasspath_libs should not both be set)
+  endif
+endif
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := $(empty_bootclasspath)$(full_java_bootclasspath_libs)
 
 full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
 full_java_header_libs := $(full_shared_java_header_libs) $(full_static_java_header_libs)

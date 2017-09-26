@@ -2247,7 +2247,8 @@ $(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES
 $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
     $(SOONG_JAVAC_WRAPPER) $(1) -encoding UTF-8 \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
-    $(2) \
+    $(addprefix -bootclasspath ,$(strip \
+        $(call normalize-path-list,$(2)))) \
     $(addprefix -classpath ,$(strip \
         $(call normalize-path-list,$(3)))) \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
@@ -2286,9 +2287,11 @@ define transform-java-to-header.jar
 @mkdir $(dir $@)/classes-turbine
 $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
     $(JAVA) -jar $(TURBINE) \
-    --output $@.premerged --temp_dir $(dir $@)/classes-turbine -$(PRIVATE_BOOTCLASSPATH) \
+    --output $@.premerged --temp_dir $(dir $@)/classes-turbine \
     --sources \@$(PRIVATE_JAVA_SOURCE_LIST) \
     --javacopts $(PRIVATE_JAVACFLAGS) $(COMMON_JDK_FLAGS) \
+    $(addprefix --bootclasspath, $(strip \
+         $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH)))) \
     $(addprefix --classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES)))) \
     || ( rm -rf $(dir $@)/classes-turbine ; exit 41 ) && \
