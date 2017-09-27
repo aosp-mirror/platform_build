@@ -26,11 +26,13 @@ include $(BUILD_SYSTEM)/jacoco.mk
 
 $(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(full_classes_jar)))
 
+ifneq ($(TURBINE_DISABLED),false)
 ifdef LOCAL_SOONG_HEADER_JAR
 $(eval $(call copy-one-file,$(LOCAL_SOONG_HEADER_JAR),$(full_classes_header_jar)))
 else
 $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
 endif
+endif # TURBINE_DISABLED != false
 
 ifdef LOCAL_SOONG_DEX_JAR
 $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
