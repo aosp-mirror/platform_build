@@ -174,15 +174,8 @@ ifdef LOCAL_ANNOTATION_PROCESSORS
   annotation_processor_jars :=
 endif
 
-full_static_java_libs := \
-    $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
-      $(call intermediates-dir-for, \
-        JAVA_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),COMMON)/classes.jar)
-
-full_static_java_header_libs := \
-    $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
-      $(call intermediates-dir-for, \
-        JAVA_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),COMMON)/classes-header.jar)
+full_static_java_libs := $(call java-lib-files,$(LOCAL_STATIC_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_static_java_header_libs := $(call java-lib-header-files,$(LOCAL_STATIC_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_LIBRARIES := $(full_static_java_libs)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_HEADER_LIBRARIES := $(full_static_java_header_libs)
@@ -237,17 +230,16 @@ ifndef LOCAL_IS_HOST_MODULE
   # In order to compile lambda code javac requires various invokedynamic-
   # related classes to be present. This change adds stubs needed for
   # javac to compile lambdas.
-  my_additional_javac_libs :=
-  ifndef TARGET_BUILD_APPS
-    # TODO: support to build lamdbas using javac in unbundled build.
-    # We may need to check in a prebuilt core-lambda-stubs to prebuilts/sdk.
-    ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-      my_additional_javac_libs := core-lambda-stubs
+  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+    ifdef TARGET_BUILD_APPS
+      full_java_bootclasspath_libs += $(call java-lib-header-files,sdk-core-lambda-stubs)
+    else
+      full_java_bootclasspath_libs += $(call java-lib-header-files,core-lambda-stubs)
     endif
   endif
 
-  full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
-  full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
+  full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+  full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 
 else # LOCAL_IS_HOST_MODULE
 
@@ -284,14 +276,8 @@ ifndef LOCAL_IS_HOST_MODULE
 # shared libraries, allowing them to make use of the code in the linked apk.
 apk_libraries := $(sort $(LOCAL_APK_LIBRARIES) $(LOCAL_RES_LIBRARIES))
 ifneq ($(apk_libraries),)
-  link_apk_libraries := \
-      $(foreach lib,$(apk_libraries), \
-        $(call intermediates-dir-for, \
-              APPS,$(lib),,COMMON)/classes-pre-proguard.jar)
-  link_apk_header_libs := \
-      $(foreach lib,$(apk_libraries), \
-        $(call intermediates-dir-for, \
-              APPS,$(lib),,COMMON)/classes-header.jar)
+  link_apk_libraries := $(call app-lib-files,$(apk_libraries))
+  link_apk_header_libs := $(call app-lib-header-files,$(apk_libraries))
 
   # link against the jar with full original names (before proguard processing).
   full_shared_java_libs += $(link_apk_libraries)
@@ -313,7 +299,11 @@ ifdef LOCAL_INSTRUMENTATION_FOR
       APPS,$(LOCAL_INSTRUMENTATION_FOR),,COMMON)
   # link against the jar with full original names (before proguard processing).
   link_instr_classes_jar := $(link_instr_intermediates_dir.COMMON)/classes-pre-proguard.jar
-  link_instr_classes_header_jar := $(link_instr_intermediates_dir.COMMON)/classes-header.jar
+  ifneq ($(TURBINE_ENABLED),false)
+    link_instr_classes_header_jar := $(link_instr_intermediates_dir.COMMON)/classes-header.jar
+  else
+    link_instr_classes_header_jar := $(link_instr_intermediates_dir.COMMON)/classes.jar
+  endif
   full_java_libs += $(link_instr_classes_jar)
   full_java_header_libs += $(link_instr_classes_header_jar)
 endif  # LOCAL_INSTRUMENTATION_FOR
@@ -384,12 +374,14 @@ full_static_jack_libs := \
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JACK_LIBRARIES := $(full_static_jack_libs)
 
 full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-  my_jack_bootclasspath := $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES)
-  ifdef LOCAL_IS_HOST_MODULE
-    my_jack_bootclasspath := $(addsuffix -hostdex,$(my_jack_bootclasspath))
+ifndef LOCAL_SDK_VERSION
+  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+    my_jack_bootclasspath := $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES)
+    ifdef LOCAL_IS_HOST_MODULE
+      my_jack_bootclasspath := $(addsuffix -hostdex,$(my_jack_bootclasspath))
+    endif
+    full_shared_jack_libs := $(call jack-lib-files,$(my_jack_bootclasspath),$(LOCAL_IS_HOST_MODULE)) $(full_shared_jack_libs)
   endif
-  full_shared_jack_libs := $(call jack-lib-files,$(my_jack_bootclasspath),$(LOCAL_IS_HOST_MODULE)) $(full_shared_jack_libs)
 endif
 full_jack_deps := $(full_shared_jack_libs)
 

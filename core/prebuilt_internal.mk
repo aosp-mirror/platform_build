@@ -513,8 +513,10 @@ $(common_classes_jar): PRIVATE_PREFIX := $(my_prefix)
 $(common_classes_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)
 
+ifneq ($(TURBINE_ENABLED),false)
 $(common_header_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)
+endif
 
 else # !LOCAL_IS_HOST_MODULE
 # for target java libraries, the LOCAL_BUILT_MODULE is in a product-specific dir,
@@ -565,8 +567,10 @@ endif
 $(common_classes_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)
 
+ifneq ($(TURBINE_ENABLED),false)
 $(common_header_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)
+endif
 
 $(common_classes_pre_proguard_jar) : $(my_src_jar)
 	$(transform-prebuilt-to-target)

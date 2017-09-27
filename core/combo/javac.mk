@@ -13,13 +13,14 @@ ifndef ANDROID_COMPILE_WITH_JACK
     ifdef PRODUCT_COMPILE_WITH_JACK
         ANDROID_COMPILE_WITH_JACK := $(PRODUCT_COMPILE_WITH_JACK)
     else
-        # TODO(b/62038127): remove TARGET_BUILD_APPS check
-        ifdef TARGET_BUILD_APPS
-            ANDROID_COMPILE_WITH_JACK := true
-        else
-            ANDROID_COMPILE_WITH_JACK := false
-        endif
+        ANDROID_COMPILE_WITH_JACK := false
     endif
+endif
+
+ifdef TARGET_BUILD_APPS
+  ifndef TURBINE_ENABLED
+    TURBINE_ENABLED := false
+  endif
 endif
 
 ifeq ($(OVERRIDE_ANDROID_JAVA_HOME),)

@@ -475,6 +475,12 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       build_command.extend(["-e", prop_dict["flash_erase_block_size"]])
     if "flash_logical_block_size" in prop_dict:
       build_command.extend(["-o", prop_dict["flash_logical_block_size"]])
+    # Specify UUID and hash_seed if using mke2fs.
+    if prop_dict["ext_mkuserimg"] == "mkuserimg_mke2fs.sh":
+      if "uuid" in prop_dict:
+        build_command.extend(["-U", prop_dict["uuid"]])
+      if "hash_seed" in prop_dict:
+        build_command.extend(["-S", prop_dict["hash_seed"]])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("squash"):
