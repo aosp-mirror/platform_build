@@ -2686,14 +2686,13 @@ $(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE)
 	fi
 
 ifeq (true,$(EMMA_INSTRUMENT))
-  #------------------------------------------------------------------
-  # An archive of classes for use in generating code-coverage reports
-  # These are the uninstrumented versions of any classes that were
-  # to be instrumented.
-  # Any dependencies are set up later in build/core/main.mk.
+#------------------------------------------------------------------
+# An archive of classes for use in generating code-coverage reports
+# These are the uninstrumented versions of any classes that were
+# to be instrumented.
+# Any dependencies are set up later in build/core/main.mk.
 
-  ifeq ($(ANDROID_COMPILE_WITH_JACK),false)
-    JACOCO_REPORT_CLASSES_ALL := $(PRODUCT_OUT)/jacoco-report-classes-all.jar
+JACOCO_REPORT_CLASSES_ALL := $(PRODUCT_OUT)/jacoco-report-classes-all.jar
 $(JACOCO_REPORT_CLASSES_ALL) :
 	@echo "Collecting uninstrumented classes"
 	$(hide) find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "jacoco-report-classes.jar" | \
@@ -2703,14 +2702,6 @@ $(JACOCO_REPORT_CLASSES_ALL) :
 # -0 don't do any compression
 # -q supress most output
 # -X skip storing extended file attributes
-
-  else
-    EMMA_META_ZIP := $(PRODUCT_OUT)/emma_meta.zip
-$(EMMA_META_ZIP) :
-	@echo "Collecting Emma coverage meta files."
-	$(hide) find $(TARGET_COMMON_OUT_ROOT) $(HOST_COMMON_OUT_ROOT) -name "coverage.em" | \
-		zip -@ -qX $@
-endif
 
 endif # EMMA_INSTRUMENT=true
 
@@ -2724,7 +2715,7 @@ PROGUARD_DICT_ZIP := $(PRODUCT_OUT)/$(TARGET_PRODUCT)-proguard-dict-$(FILE_NAME_
 # the dependency will be set up later in build/core/main.mk.
 $(PROGUARD_DICT_ZIP) :
 	@echo "Packaging Proguard obfuscation dictionary files."
-	$(hide) dict_files=`find $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS -name proguard_dictionary -o -name jack_dictionary`; \
+	$(hide) dict_files=`find $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS -name proguard_dictionary`; \
 		if [ -n "$$dict_files" ]; then \
 		  unobfuscated_jars=$${dict_files//proguard_dictionary/classes.jar}; \
 		  zip -qX $@ $$dict_files $$unobfuscated_jars; \
@@ -2907,7 +2898,6 @@ $(INTERNAL_SDK_TARGET): $(deps)
 			-v "TARGET_CPU_ABI=$(TARGET_CPU_ABI)" \
 			-v "DLL_EXTENSION=$(HOST_SHLIB_SUFFIX)" \
 			-v "FONT_OUT=$(SDK_FONT_TEMP)" \
-			-v "JACK_SDKTOOL_VERSION=$(JACK_SDKTOOL_VERSION)" \
 			-o $(PRIVATE_DIR) && \
 		cp -f $(target_notice_file_txt) \
 				$(PRIVATE_DIR)/system-images/android-$(PLATFORM_VERSION)/$(TARGET_CPU_ABI)/NOTICE.txt && \

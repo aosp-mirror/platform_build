@@ -84,23 +84,12 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 -include tools/tradefederation/build/suites/general-tests/config.mk
 
 # Clean rules
-.PHONY: clean-jack-files
-clean-jack-files: clean-dex-files
-	$(hide) find $(OUT_DIR) -name "*.jack" | xargs rm -f
-	$(hide) find $(OUT_DIR) -type d -name "jack" | xargs rm -rf
-	@echo "All jack files have been removed."
-
 .PHONY: clean-dex-files
 clean-dex-files:
-	$(hide) find $(OUT_DIR) -name "*.dex" ! -path "*/jack-incremental/*" | xargs rm -f
+	$(hide) find $(OUT_DIR) -name "*.dex" | xargs rm -f
 	$(hide) for i in `find $(OUT_DIR) -name "*.jar" -o -name "*.apk"` ; do ((unzip -l $$i 2> /dev/null | \
 				grep -q "\.dex$$" && rm -f $$i) || continue ) ; done
 	@echo "All dex files and archives containing dex files have been removed."
-
-.PHONY: clean-jack-incremental
-clean-jack-incremental:
-	$(hide) find $(OUT_DIR) -name "jack-incremental" -type d | xargs rm -rf
-	@echo "All jack incremental dirs have been removed."
 
 # Include the google-specific config
 -include vendor/google/build/config.mk
@@ -185,22 +174,6 @@ TARGET_BUILD_JAVA_SUPPORT_LEVEL := platform
 # -----------------------------------------------------------------
 # The pdk (Platform Development Kit) build
 include build/core/pdk_config.mk
-
-#
-# -----------------------------------------------------------------
-# Jack version configuration
--include $(TOPDIR)prebuilts/sdk/tools/jack_versions.mk
--include $(TOPDIR)prebuilts/sdk/tools/jack_for_module.mk
-
-#
-# -----------------------------------------------------------------
-# Install and start Jack server
--include $(TOPDIR)prebuilts/sdk/tools/jack_server_setup.mk
-
-#
-# -----------------------------------------------------------------
-# Jacoco package name for Jack
--include $(TOPDIR)external/jacoco/config.mk
 
 #
 # -----------------------------------------------------------------
@@ -1095,13 +1068,8 @@ ifneq ($(TARGET_BUILD_APPS),)
   $(call dist-for-goals,apps_only, $(apps_only_dist_built_files))
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    ifeq ($(ANDROID_COMPILE_WITH_JACK),false)
-      $(JACOCO_REPORT_CLASSES_ALL) : $(apps_only_installed_files)
-      $(call dist-for-goals,apps_only, $(JACOCO_REPORT_CLASSES_ALL))
-    else
-      $(EMMA_META_ZIP) : $(apps_only_installed_files)
-      $(call dist-for-goals,apps_only, $(EMMA_META_ZIP))
-    endif
+    $(JACOCO_REPORT_CLASSES_ALL) : $(apps_only_installed_files)
+    $(call dist-for-goals,apps_only, $(JACOCO_REPORT_CLASSES_ALL))
   endif
 
   $(PROGUARD_DICT_ZIP) : $(apps_only_installed_files)
@@ -1158,13 +1126,8 @@ else # TARGET_BUILD_APPS
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    ifeq ($(ANDROID_COMPILE_WITH_JACK),false)
-      $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE)
-      $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
-    else
-      $(EMMA_META_ZIP) : $(INSTALLED_SYSTEMIMAGE)
-      $(call dist-for-goals, dist_files, $(EMMA_META_ZIP))
-    endif
+    $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE)
+    $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
   endif
 
 # Building a full system-- the default is to build droidcore
@@ -1200,7 +1163,7 @@ target-java-tests : java-target-tests
 target-native-tests : native-target-tests
 tests : host-tests target-tests
 
-# Phony target to run all java compilations that use javac instead of jack.
+# Phony target to run all java compilations that use javac
 .PHONY: javac-check
 
 ifneq (,$(filter samplecode, $(MAKECMDGOALS)))
