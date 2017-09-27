@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "3bc7fd24_298a140b",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-27T02:37:46Z",
+      "side": 1,
+      "message": "Unfortunately it appears to be rather widespread, so this would likely end up being a cleanup. Can we at least restrict this to %.jar files?",
+      "parentUuid": "44002de9_9c133d5b",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 70
+      },
+      "revId": "b11a5cbd60a4fb60616659df46d7389768f876e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a9650644_aeb42aec",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 2
