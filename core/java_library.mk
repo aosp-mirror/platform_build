@@ -92,10 +92,6 @@ endif
 ifdef LOCAL_JACK_ENABLED
 	$(add-carried-jack-resources)
 endif
-ifneq (,$(filter $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES), $(LOCAL_MODULE)))
-	$(uncompress-dexs)
-	$(align-package)
-endif  # PRODUCT_LOADED_BY_PRIVILEGED_MODULES
 	$(remove-timestamps-from-package)
 
 ifdef LOCAL_DEX_PREOPT
