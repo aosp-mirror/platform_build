@@ -217,7 +217,6 @@ ifneq ($(my_sanitize),)
   ifdef LOCAL_IS_HOST_MODULE
     my_cflags += -fno-sanitize-recover=all
     my_ldflags += -fsanitize=$(fsanitize_arg)
-    my_ldlibs += -lrt -ldl
   else
     my_cflags += -fsanitize-trap=all
     my_cflags += -ftrap-function=abort
@@ -249,7 +248,6 @@ ifneq ($(filter address,$(my_global_sanitize) $(my_sanitize)),)
   ifdef LOCAL_IS_HOST_MODULE
     # -nodefaultlibs (provided with libc++) prevents the driver from linking
     # libraries needed with -fsanitize=address. http://b/18650275 (WAI)
-    my_ldlibs += -lm -lpthread
     my_ldflags += -Wl,--no-as-needed
   else
     # Add asan libraries unless LOCAL_MODULE is the asan library.
