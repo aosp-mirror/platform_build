@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e189679c_a776155d",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-27T00:00:40Z",
+      "side": 1,
+      "message": "?\u003d is actually a bit weird, it will only set the variable if it hasn\u0027t been set before. So if it was set to an empty variable, ?\u003d won\u0027t change it. In most cases we use ifndef / ifeq (which are both based on whether the variable is empty)",
+      "revId": "cf476e26264c08237013504a83c697bcb29f3981",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
