@@ -24,19 +24,9 @@ $(call record-module-type,HOST_DALVIK_JAVA_LIBRARY)
 ifeq ($(HOST_OS),linux)
 USE_CORE_LIB_BOOTCLASSPATH := true
 
-#################################
-include $(BUILD_SYSTEM)/configure_local_jack.mk
-#################################
-
 #######################################
 include $(BUILD_SYSTEM)/host_java_library_common.mk
 #######################################
-ifdef LOCAL_JACK_ENABLED
-ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
-  # For static library, $(LOCAL_BUILT_MODULE) is $(full_classes_jack).
-  LOCAL_BUILT_MODULE_STEM := classes.jack
-endif
-endif
 
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
   LOCAL_JAVA_LIBRARIES :=  core-oj-hostdex core-libart-hostdex $(LOCAL_JAVA_LIBRARIES)
@@ -50,8 +40,6 @@ full_classes_combined_jar := $(intermediates.COMMON)/classes-combined.jar
 full_classes_desugar_jar := $(intermediates.COMMON)/desugar.classes.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_jar := $(intermediates.COMMON)/classes.jar
-full_classes_jack := $(intermediates.COMMON)/classes.jack
-jack_check_timestamp := $(intermediates.COMMON)/jack.check.timestamp
 built_dex := $(intermediates.COMMON)/classes.dex
 java_source_list_file := $(intermediates.COMMON)/java-source-list
 
@@ -61,22 +49,16 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_combined_jar) \
     $(full_classes_desugar_jar) \
     $(full_classes_jarjar_jar) \
-    $(full_classes_jack) \
     $(full_classes_jar) \
-    $(jack_check_timestamp) \
     $(built_dex) \
     $(java_source_list_file)
 
 # See comment in java.mk
 ifndef LOCAL_CHECKED_MODULE
-ifdef LOCAL_JACK_ENABLED
-LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
-else
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
 else
 LOCAL_CHECKED_MODULE := $(built_dex)
-endif
 endif
 endif
 
@@ -100,8 +82,6 @@ java_sources_deps := \
 
 $(java_source_list_file): $(java_sources_deps)
 	$(write-java-source-list)
-
-ifndef LOCAL_JACK_ENABLED
 
 $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
@@ -225,65 +205,6 @@ endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_DEFAULT_APP_TARGET_SDK := $(my_default_app_target_sdk)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SDK_VERSION := $(my_sdk_version)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MIN_SDK_VERSION := $(my_min_sdk_version)
-
-else # LOCAL_JACK_ENABLED
-$(LOCAL_INTERMEDIATE_TARGETS): \
-  PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
-
-ifeq ($(LOCAL_JACK_ENABLED),incremental)
-$(LOCAL_INTERMEDIATE_TARGETS): \
-  PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-incremental
-else
-$(LOCAL_INTERMEDIATE_TARGETS): \
-  PRIVATE_JACK_INCREMENTAL_DIR :=
-endif
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := -g $(LOCAL_JACK_FLAGS)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_MIN_SDK_VERSION := $(PLATFORM_JACK_MIN_SDK_VERSION)
-
-jack_all_deps := \
-    $(java_source_list_file) \
-    $(java_sources_deps) \
-    $(full_jack_deps) \
-    $(jar_manifest_file) \
-    $(NORMALIZE_PATH) \
-    $(JACK_DEFAULT_ARGS) \
-    $(JACK)
-
-ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
-$(built_dex): PRIVATE_CLASSES_JACK := $(full_classes_jack)
-$(built_dex): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
-$(built_dex): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)
-$(built_dex): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
-	@echo Building with Jack: $@
-	$(jack-java-to-dex)
-
-# $(full_classes_jack) is just by-product of $(built_dex).
-# The dummy command was added because, without it, make misses the fact the $(built_dex) also
-# change $(full_classes_jack).
-$(full_classes_jack): $(built_dex)
-	$(hide) touch $@
-
-$(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
-$(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
-	@echo "Host Jar: $(PRIVATE_MODULE) ($@)"
-	$(create-empty-package)
-	$(add-dex-to-package)
-	$(add-carried-jack-resources)
-
-else  # LOCAL_IS_STATIC_JAVA_LIBRARY
-$(full_classes_jack): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
-$(full_classes_jack): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)
-$(full_classes_jack): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
-	@echo Building with Jack: $@
-	$(java-to-jack)
-
-endif  # LOCAL_IS_STATIC_JAVA_LIBRARY
-
-$(jack_check_timestamp): $(jack_all_deps) | setup-jack-server
-	@echo Checking build with Jack: $@
-	$(jack-check-java)
-endif # LOCAL_JACK_ENABLED
 
 USE_CORE_LIB_BOOTCLASSPATH :=
 
