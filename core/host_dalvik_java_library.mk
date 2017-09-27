@@ -119,6 +119,8 @@ $(full_classes_compiled_jar): \
     | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-dalvik-package)
 
+ifneq ($(TURBINE_ENABLED),false)
+
 $(full_classes_turbine_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_turbine_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_turbine_jar): \
@@ -146,6 +148,8 @@ full_classes_header_jarjar := $(full_classes_turbine_jar)
 endif
 
 $(eval $(call copy-one-file,$(full_classes_header_jarjar),$(full_classes_header_jar)))
+
+endif # TURBINE_ENABLED != false
 
 $(full_classes_combined_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_combined_jar): $(full_classes_compiled_jar) \
