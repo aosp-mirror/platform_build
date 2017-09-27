@@ -8,14 +8,7 @@
 #   ANDROID_JAVA_TOOLCHAIN -- Directory that contains javac and other java tools
 #
 
-ifndef ANDROID_COMPILE_WITH_JACK
-    # TODO(b/64113890, b/35788202): remove PRODUCT_COMPILE_WITH_JACK
-    ifdef PRODUCT_COMPILE_WITH_JACK
-        ANDROID_COMPILE_WITH_JACK := $(PRODUCT_COMPILE_WITH_JACK)
-    else
-        ANDROID_COMPILE_WITH_JACK := false
-    endif
-endif
+ANDROID_COMPILE_WITH_JACK := false
 
 ifdef TARGET_BUILD_APPS
   ifndef TURBINE_ENABLED
