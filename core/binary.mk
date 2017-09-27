@@ -1717,16 +1717,18 @@ my_ldlibs := $(filter -l%,$(my_ldlib_flags))
 my_ldflags := $(filter-out -l%,$(my_ldlib_flags))
 
 # One last verification check for ldlibs
-ifndef LOCAL_IS_HOST_MODULE
 my_allowed_ldlibs :=
-ifneq ($(LOCAL_SDK_VERSION),)
-  my_allowed_ldlibs := $(addprefix -l,$(NDK_PREBUILT_SHARED_LIBRARIES))
+ifndef LOCAL_IS_HOST_MODULE
+  ifneq ($(LOCAL_SDK_VERSION),)
+    my_allowed_ldlibs := $(addprefix -l,$(NDK_PREBUILT_SHARED_LIBRARIES))
+  endif
+else
+  my_allowed_ldlibs := $($(my_prefix)AVAILABLE_LIBRARIES)
 endif
 
 my_bad_ldlibs := $(filter-out $(my_allowed_ldlibs),$(my_ldlibs))
 ifneq ($(my_bad_ldlibs),)
   $(error $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Bad LOCAL_LDLIBS entries: $(my_bad_ldlibs))
-endif
 endif
 
 # my_cxx_ldlibs may contain linker flags need to wrap certain libraries
