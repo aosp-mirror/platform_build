@@ -23,34 +23,32 @@ my_include_filter :=
 my_exclude_filter :=
 
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-  ifeq ($(ANDROID_COMPILE_WITH_JACK),false)
-    # determine Jacoco include/exclude filters
-    DEFAULT_JACOCO_EXCLUDE_FILTER := org/junit/*,org/jacoco/*,org/mockito/*
-    # copy filters from Jack but also skip some known java packages
-    my_include_filter := $(strip $(LOCAL_JACK_COVERAGE_INCLUDE_FILTER))
-    my_exclude_filter := $(strip $(DEFAULT_JACOCO_EXCLUDE_FILTER),$(LOCAL_JACK_COVERAGE_EXCLUDE_FILTER))
+  # determine Jacoco include/exclude filters
+  DEFAULT_JACOCO_EXCLUDE_FILTER := org/junit/*,org/jacoco/*,org/mockito/*
+  # copy filters from Jack but also skip some known java packages
+  my_include_filter := $(strip $(LOCAL_JACK_COVERAGE_INCLUDE_FILTER))
+  my_exclude_filter := $(strip $(DEFAULT_JACOCO_EXCLUDE_FILTER),$(LOCAL_JACK_COVERAGE_EXCLUDE_FILTER))
 
-    # replace '.' with '/' and ',' with ' ', and quote each arg
-    ifneq ($(strip $(my_include_filter)),)
-      my_include_args := $(strip $(my_include_filter))
+  # replace '.' with '/' and ',' with ' ', and quote each arg
+  ifneq ($(strip $(my_include_filter)),)
+    my_include_args := $(strip $(my_include_filter))
 
-      my_include_args := $(subst .,/,$(my_include_args))
-      my_include_args := '$(subst $(comma),' ',$(my_include_args))'
-    else
-      my_include_args :=
-    endif
+    my_include_args := $(subst .,/,$(my_include_args))
+    my_include_args := '$(subst $(comma),' ',$(my_include_args))'
+  else
+    my_include_args :=
+  endif
 
-    # replace '.' with '/' and ',' with ' ', and quote each arg
-    ifneq ($(strip $(my_exclude_filter)),)
-      my_exclude_args := $(my_exclude_filter)
+  # replace '.' with '/' and ',' with ' ', and quote each arg
+  ifneq ($(strip $(my_exclude_filter)),)
+    my_exclude_args := $(my_exclude_filter)
 
-      my_exclude_args := $(subst .,/,$(my_exclude_args))
-      my_exclude_args := $(subst $(comma)$(comma),$(comma),$(my_exclude_args))
-      my_exclude_args := '$(subst $(comma),' ', $(my_exclude_args))'
-    else
-      my_exclude_args :=
-    endif
-  endif # ANDROID_COMPILE_WITH_JACK==false
+    my_exclude_args := $(subst .,/,$(my_exclude_args))
+    my_exclude_args := $(subst $(comma)$(comma),$(comma),$(my_exclude_args))
+    my_exclude_args := '$(subst $(comma),' ', $(my_exclude_args))'
+  else
+    my_exclude_args :=
+  endif
 endif # LOCAL_EMMA_INSTRUMENT == true
 
 # determine whether to run the instrumenter based on whether there is any work
