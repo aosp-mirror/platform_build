@@ -16,6 +16,24 @@
       "revId": "cf476e26264c08237013504a83c697bcb29f3981",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ace38bd_e4be38b4",
+        "filename": "core/combo/javac.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-27T00:39:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e189679c_a776155d",
+      "revId": "cf476e26264c08237013504a83c697bcb29f3981",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
