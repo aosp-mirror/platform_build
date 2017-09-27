@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "7be72d33_8ede9e18",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2017-09-27T07:58:48Z",
+      "side": 1,
+      "message": "jar and apks maybe?\n\nThough it\u0027s already limited by PRODUCT_LOADED_BY_PRIVILEGED_MODULES, are you expecting that list to sometimes contain bogus names?",
+      "parentUuid": "3bc7fd24_298a140b",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 70
+      },
+      "revId": "b11a5cbd60a4fb60616659df46d7389768f876e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a9650644_aeb42aec",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 2
