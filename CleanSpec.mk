@@ -432,6 +432,10 @@ $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/*/*/jack*)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/sbin/adbd)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/symbols/sbin/adbd)
 
+# Soong linux -> linux_glibc rename
+$(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -name 'linux_x86*' | xargs rm -rf)
+$(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -name 'linux_common*' | xargs rm -rf)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
