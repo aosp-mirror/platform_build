@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7d4d4ebc_5414ebf9",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 2
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-09-28T21:39:38Z",
+      "side": 1,
+      "message": "edify_generator.py would only be needed as a library, and it doesn\u0027t have a \"main\" function",
+      "range": {
+        "startLine": 158,
+        "startChar": 4,
+        "endLine": 158,
+        "endChar": 31
+      },
+      "revId": "5f9bb6f294f4840379804310074cafdd9c488e50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65ae0f6f_ccd0f37a",
+        "filename": "tools/releasetools/Android.bp",
+        "patchSetId": 2
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-09-28T21:39:38Z",
+      "side": 1,
+      "message": "Same for this. It would only serve as a lib",
+      "range": {
+        "startLine": 237,
+        "startChar": 4,
+        "endLine": 237,
+        "endChar": 26
+      },
+      "revId": "5f9bb6f294f4840379804310074cafdd9c488e50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
