@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a8833f5_f19a0aa8",
+        "filename": "target/product/treble_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-29T03:51:49Z",
+      "side": 1,
+      "message": "Leaving this one is intentional?",
+      "revId": "e5c62213c52d4e54fa8f80fa143e4736da0cd3ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
