@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "54c8086a_a6715587",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-29T22:30:58Z",
+      "side": 1,
+      "message": "To answer my own question (which I think you told me before), javac with -source 1.9 requires the java.lang classes to appear either in the runtime image passed with --system or as source files, and not in the classpath.",
+      "parentUuid": "3942f304_a622115c",
+      "revId": "9082b62e5a3cd7158230b954b9acc2e8068980db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9b8e4f30_d58e6ed8",
         "filename": "core/java_system_image.mk",
         "patchSetId": 2
