@@ -18,9 +18,4 @@ cc_binary_host {
         "makeparallel.cpp",
     ],
     cflags: ["-Wall", "-Werror"],
-    target: {
-        linux: {
-            host_ldlibs: ["-lrt", "-lpthread"],
-        },
-    },
 }
