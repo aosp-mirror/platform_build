@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9b8e4f30_d58e6ed8",
+        "filename": "core/java_system_image.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-29T21:46:05Z",
+      "side": 1,
+      "message": "This should be merged into list-jar-packages.sh",
+      "revId": "9082b62e5a3cd7158230b954b9acc2e8068980db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ade8a67_6f4832cb",
+        "filename": "tools/list-jar-packages.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-29T21:46:05Z",
+      "side": 1,
+      "message": "This seems overly restrictive, class names can be pretty much any unicode character.  I think all you should check is that it ends with .class, and then strip everything between the last / and .class.",
+      "range": {
+        "startLine": 24,
+        "startChar": 21,
+        "endLine": 24,
+        "endChar": 35
+      },
+      "revId": "9082b62e5a3cd7158230b954b9acc2e8068980db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d713e603_fe2c587a",
+        "filename": "tools/list-jar-packages.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-29T21:46:05Z",
+      "side": 1,
+      "message": "This seems like an incorrect escape.\n\nIIRC, sed by default uses \"basic regular expressions\" which don\u0027t support +, and darwin sed and linux sed use different arguments to enable \"extended regular expressions\", -E for darwin and -r for linux.",
+      "range": {
+        "startLine": 25,
+        "startChar": 35,
+        "endLine": 25,
+        "endChar": 36
+      },
+      "revId": "9082b62e5a3cd7158230b954b9acc2e8068980db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
