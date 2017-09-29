@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "af4a4c30_ee40463a",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 1
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2017-09-29T18:12:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c69a1133_d30eda8e",
+      "range": {
+        "startLine": 122,
+        "startChar": 0,
+        "endLine": 122,
+        "endChar": 106
+      },
+      "revId": "d8ec3d6fc6567da4f08012508668c40566a8d765",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6444c27d_88c7d750",
         "filename": "tools/fs_config/README",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "75af0840_871ba8fe",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 1
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2017-09-29T18:12:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6444c27d_88c7d750",
+      "range": {
+        "startLine": 125,
+        "startChar": 5,
+        "endLine": 125,
+        "endChar": 8
+      },
+      "revId": "d8ec3d6fc6567da4f08012508668c40566a8d765",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f2eb10d5_1413fffb",
         "filename": "tools/fs_config/README",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2017-09-29T16:40:42Z",
       "side": 1,
       "message": "or the friendly names of either user foo or user AID_FOO (?)",
+      "range": {
+        "startLine": 128,
+        "startChar": 61,
+        "endLine": 128,
+        "endChar": 70
+      },
+      "revId": "d8ec3d6fc6567da4f08012508668c40566a8d765",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04408918_d5c7d0ed",
+        "filename": "tools/fs_config/README",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1013433
+      },
+      "writtenOn": "2017-09-29T18:12:56Z",
+      "side": 1,
+      "message": "No I don\u0027t think that would work. AID_FOO would be for liboemaids.\n\nSince we haven\u0027t merged the bionic support, you either need the raw numerics or oem_5005. This is the crux, we generate passwd/group files that sit, unused... As more and more OEMs email me asking how to use friendly names... people want/expect that to just work.",
+      "parentUuid": "f2eb10d5_1413fffb",
       "range": {
         "startLine": 128,
         "startChar": 61,
