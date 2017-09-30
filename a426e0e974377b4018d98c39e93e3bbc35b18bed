@@ -16,6 +16,24 @@
       "revId": "a426e0e974377b4018d98c39e93e3bbc35b18bed",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ee65429_a123c086",
+        "filename": "core/aapt2.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-09-30T03:44:00Z",
+      "side": 0,
+      "message": "It\u0027s fine in this rule, but yeah, I\u0027m not sure it\u0027s safe in all the other users. Since it\u0027s simple and fast, I just combined them.\n\nI also moved the proguard_options_file into the main rule",
+      "parentUuid": "84937c33_c6e878e7",
+      "revId": "a426e0e974377b4018d98c39e93e3bbc35b18bed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
