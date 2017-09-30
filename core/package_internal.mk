@@ -419,7 +419,7 @@ $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	@rm -rf $@ && mkdir -p $(dir $@)
 	$(create-resource-java-files)
-	$(call find-generated-R.java)
+	$(call find-generated-R.java,$@)
 
 $(proguard_options_file): $(R_file_stamp)
 

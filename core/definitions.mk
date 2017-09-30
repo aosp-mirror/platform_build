@@ -2060,7 +2060,7 @@ $(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
     --skip-symbols-without-default-localization
 endef
 
-# Search for generated R.java/Manifest.java, copy the found R.java as $@.
+# Search for generated R.java/Manifest.java, copy the found R.java as $1.
 # Also copy them to a central 'R' directory to make it easier to add the files to an IDE.
 define find-generated-R.java
 $(hide) for GENERATED_MANIFEST_FILE in `find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) \
@@ -2075,11 +2075,11 @@ $(hide) for GENERATED_R_FILE in `find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) \
     mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
     $(ACP) -fp $$GENERATED_R_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir \
       || exit 31; \
-    $(ACP) -fp $$GENERATED_R_FILE $@ || exit 32; \
+    $(ACP) -fp $$GENERATED_R_FILE $1 || exit 32; \
   done;
 @# Ensure that the target file is always created, i.e. also in case we did not
 @# enter the GENERATED_R_FILE-loop above. This avoids unnecessary rebuilding.
-$(hide) touch $@
+$(hide) touch $1
 endef
 
 ###########################################################
