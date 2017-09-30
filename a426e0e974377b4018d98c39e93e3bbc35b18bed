@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "84937c33_c6e878e7",
+        "filename": "core/aapt2.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-09-30T03:18:04Z",
+      "side": 0,
+      "message": "This means that package-export.apk is no longer guaranteed to be built before R.stamp, is that OK?  The package is just another copy of my_res_package, should it be created by the my_res_package rule?",
+      "revId": "a426e0e974377b4018d98c39e93e3bbc35b18bed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
