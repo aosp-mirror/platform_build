@@ -26,6 +26,11 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
 # Split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
+# The Messaging app:
+#   Needed for android.telecom.cts.ExtendedInCallServiceTest#testOnCannedTextResponsesLoaded
+PRODUCT_PACKAGES += \
+    messaging
+
 # All VNDK libraries (HAL interfaces, VNDK, VNDK-SP, LL-NDK)
 PRODUCT_PACKAGES += vndk_package
 
