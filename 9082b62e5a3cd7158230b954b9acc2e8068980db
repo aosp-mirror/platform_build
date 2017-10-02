@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "726d7ea7_77ee4c71",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 223,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-02T10:23:07Z",
+      "side": 1,
+      "message": "Yes, that s what I observed when I tried exactly this, ages ago. Specifically, javac errors with:\n\n\"Fatal Error: Unable to find package java.lang in classpath or bootclasspath\"\n\nbut the error message is wrong/incorrect because it occurs even if there is actually a jar on the classpath that contains java.lang (along with the other core libraries).\n\nMore details in my work log:\nhttps://docs.google.com/document/d/1-aENK5WGdkKmf5yo8KSqTj291l6LmZwbVKrv896anDY/edit#bookmark\u003did.lvmat1n9alft",
+      "parentUuid": "54c8086a_a6715587",
+      "revId": "9082b62e5a3cd7158230b954b9acc2e8068980db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9b8e4f30_d58e6ed8",
         "filename": "core/java_system_image.mk",
         "patchSetId": 2
@@ -48,6 +66,24 @@
       "writtenOn": "2017-09-29T21:46:05Z",
       "side": 1,
       "message": "This should be merged into list-jar-packages.sh",
+      "revId": "9082b62e5a3cd7158230b954b9acc2e8068980db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22e0c72f_8c28995f",
+        "filename": "core/java_system_image.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-02T10:23:07Z",
+      "side": 1,
+      "message": "The reason I did it this way is that I wanted to build reusable components that focus on one responsibility.\n\nSpecifically, \"list the packages occuring in a jar\" seemed like an operation that could be more generally useful. \"Print a module-info.java that exports all packages for a given jar\" is much more specific to this particular use case / less generally useful.\n\n(In revision 1 of this CL I had a script tools/print-exporting-java-module-descriptor.py that did both on one go, but it seemed overly specialized, which is why I switched to this approach instead).\n\n[1] https://android-review.googlesource.com/c/platform/build/+/497290",
+      "parentUuid": "9b8e4f30_d58e6ed8",
       "revId": "9082b62e5a3cd7158230b954b9acc2e8068980db",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -77,6 +113,30 @@
     },
     {
       "key": {
+        "uuid": "9a2c8921_39cf23c5",
+        "filename": "tools/list-jar-packages.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-02T10:23:07Z",
+      "side": 1,
+      "message": "Ah, you\u0027re right. JLS 3.8 says that the set of legal identifier characters \"includes\" a-zA-Z_$0-9 and I misread that as saying that it comprises *exactly* that set of characters.\n\nShould probably be something like:\n\n| grep -E \u0027\\.class$\u0027 |\n| sed \u0027s/\\/[^\\/]+\\.class$//g\u0027\n\nI\u0027ll fix it in a future patch set after I\u0027ve tested it, or feel free to do it in your soong port.",
+      "parentUuid": "5ade8a67_6f4832cb",
+      "range": {
+        "startLine": 24,
+        "startChar": 21,
+        "endLine": 24,
+        "endChar": 35
+      },
+      "revId": "9082b62e5a3cd7158230b954b9acc2e8068980db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d713e603_fe2c587a",
         "filename": "tools/list-jar-packages.sh",
         "patchSetId": 2
@@ -88,6 +148,30 @@
       "writtenOn": "2017-09-29T21:46:05Z",
       "side": 1,
       "message": "This seems like an incorrect escape.\n\nIIRC, sed by default uses \"basic regular expressions\" which don\u0027t support +, and darwin sed and linux sed use different arguments to enable \"extended regular expressions\", -E for darwin and -r for linux.",
+      "range": {
+        "startLine": 25,
+        "startChar": 35,
+        "endLine": 25,
+        "endChar": 36
+      },
+      "revId": "9082b62e5a3cd7158230b954b9acc2e8068980db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ba1bf53_335f7c17",
+        "filename": "tools/list-jar-packages.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-02T10:23:07Z",
+      "side": 1,
+      "message": "Ah, thanks. I had been wondering why the \\+ was required here but not in line 24. In practice, I think I observed it working as intended with the \\+ but I don\u0027t know why. It\u0027s annoying that sed use different parameter names on darwin vs. linux, I didn\u0027t know that.",
+      "parentUuid": "d713e603_fe2c587a",
       "range": {
         "startLine": 25,
         "startChar": 35,
