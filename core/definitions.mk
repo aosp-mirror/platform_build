@@ -2058,6 +2058,8 @@ $(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
     $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
     $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
     --skip-symbols-without-default-localization
+# So that we re-run aapt when the list of input files change
+$(hide) echo $(PRIVATE_RESOURCE_LIST) >/dev/null
 endef
 
 # Search for generated R.java/Manifest.java, copy the found R.java as $1.
@@ -2602,6 +2604,8 @@ $(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
     --skip-symbols-without-default-localization \
     -F $@
+# So that we re-run aapt when the list of input files change
+$(hide) echo $(PRIVATE_RESOURCE_LIST) >/dev/null
 endef
 
 # We need the extra blank line, so that the command will be on a separate line.

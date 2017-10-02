@@ -170,6 +170,7 @@ endif  # renderscript_target_api is set
 include $(BUILD_SYSTEM)/aapt2.mk
 $(my_res_package) : $(framework_res_package_export_deps)
 else
+$(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_resources)
 $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export_deps)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	$(create-resource-java-files)
