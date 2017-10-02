@@ -413,6 +413,7 @@ else  # LOCAL_USE_AAPT2
 $(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := \
 			$(intermediates.COMMON)/public_resources.xml
 $(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
+$(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_res_assets)
 $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT) | $(ACP)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	@rm -rf $@ && mkdir -p $(dir $@)
@@ -433,6 +434,7 @@ $(R_file_stamp): $(resource_export_package)
 # can't know anything about PRODUCT.  Clear it out just for this target.
 $(resource_export_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
 $(resource_export_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
+$(resource_export_package): PRIVATE_RESOURCE_LIST := $(all_res_assets)
 $(resource_export_package): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT)
 	@echo "target Export Resources: $(PRIVATE_MODULE) ($@)"
 	$(create-empty-package)
@@ -567,6 +569,7 @@ ifdef LOCAL_USE_AAPT2
 $(LOCAL_BUILT_MODULE): PRIVATE_RES_PACKAGE := $(my_res_package)
 $(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2) | $(ACP)
 else
+$(LOCAL_BUILT_MODULE): PRIVATE_RESOURCE_LIST := $(all_res_assets)
 $(LOCAL_BUILT_MODULE) : $(all_res_assets) $(full_android_manifest) $(AAPT)
 endif
 ifdef LOCAL_COMPRESSED_MODULE
