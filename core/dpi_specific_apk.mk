@@ -17,6 +17,7 @@ $(built_dpi_apk): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
 $(built_dpi_apk): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
 $(built_dpi_apk): PRIVATE_ASSET_DIR := $(LOCAL_ASSET_DIR)
 $(built_dpi_apk): PRIVATE_AAPT_INCLUDES := $(all_library_res_package_exports)
+$(built_dpi_apk): PRIVATE_RESOURCE_LIST := $(all_res_assets)
 ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
 $(built_dpi_apk): PRIVATE_DEFAULT_APP_TARGET_SDK := $(LOCAL_SDK_VERSION)
 else
