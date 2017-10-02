@@ -574,7 +574,6 @@ ZIPTIME := $(prebuilt_build_tools_bin)/ziptime
 
 # ---------------------------------------------------------------
 # Generic tools.
-JACK := $(HOST_OUT_EXECUTABLES)/jack
 
 LEX := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/flex/flex-2.5.39
 # The default PKGDATADIR built in the prebuilt bison is a relative path
@@ -644,19 +643,6 @@ JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/tools/fat16copy.py
 CHECK_LINK_TYPE := build/tools/check_link_type.py
-
-ifeq ($(ANDROID_COMPILE_WITH_JACK),true)
-DEFAULT_JACK_ENABLED:=full
-else
-DEFAULT_JACK_ENABLED:=
-endif
-ifneq ($(ANDROID_JACK_EXTRA_ARGS),)
-JACK_DEFAULT_ARGS :=
-DEFAULT_JACK_EXTRA_ARGS := $(ANDROID_JACK_EXTRA_ARGS)
-else
-JACK_DEFAULT_ARGS := $(BUILD_SYSTEM)/jack-default.args
-DEFAULT_JACK_EXTRA_ARGS := @$(JACK_DEFAULT_ARGS)
-endif
 
 TURBINE := $(HOST_OUT_JAVA_LIBRARIES)/turbine$(COMMON_JAVA_PACKAGE_SUFFIX)
 PROGUARD := external/proguard/bin/proguard.sh

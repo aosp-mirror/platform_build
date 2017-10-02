@@ -726,18 +726,6 @@ endef
 endif
 
 ###########################################################
-## Convert "core ext framework" to "out/.../classes.jack ..."
-## $(1): library list
-## $(2): Non-empty if IS_HOST_MODULE
-###########################################################
-
-# $(1): library name list
-# $(2): Non-empty if IS_HOST_MODULE
-define jack-lib-files
-$(foreach lib,$(1),$(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),$(2),COMMON)/classes.jack)
-endef
-
-###########################################################
 ## Returns true if $(1) and $(2) are equal.  Returns
 ## the empty string if they are not equal.
 ###########################################################
@@ -2204,12 +2192,6 @@ define unzip-jar-files
   $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,$(hide) rm -rf $(2)/META-INF)
 endef
 
-# Call jack
-#
-define call-jack
- JACK_VERSION=$(PRIVATE_JACK_VERSION) $(JACK) $(DEFAULT_JACK_EXTRA_ARGS)
-endef
-
 # Return jar arguments to compress files in a given directory
 # $(1): directory
 #
@@ -2310,106 +2292,6 @@ $(hide) $(ZIPTIME) $@.tmp
 $(hide) $(call commit-change-for-toc,$@)
 endef
 
-# Invoke Jack to compile java from source to dex and jack files.
-define jack-java-to-dex
-$(hide) rm -f $@
-$(hide) rm -f $(PRIVATE_CLASSES_JACK)
-$(hide) rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR)
-$(hide) mkdir -p $(dir $@)
-$(hide) mkdir -p $(dir $(PRIVATE_CLASSES_JACK))
-$(hide) mkdir -p $(PRIVATE_JACK_INTERMEDIATES_DIR)
-$(if $(PRIVATE_JACK_INCREMENTAL_DIR),$(hide) mkdir -p $(PRIVATE_JACK_INCREMENTAL_DIR))
-$(if $(PRIVATE_JACK_PROGUARD_FLAGS), \
-    $(hide) echo -basedirectory $(CURDIR) > $@.flags; \
-    echo $(PRIVATE_JACK_PROGUARD_FLAGS) >> $@.flags; \
-)
-$(if $(PRIVATE_EXTRA_JAR_ARGS),
-    $(hide) mkdir -p $@.res.tmp
-    $(hide) $(call create-empty-package-at,$@.res.tmp.zip)
-    $(hide) $(call add-java-resources-to,$@.res.tmp.zip)
-    $(hide) unzip -qo $@.res.tmp.zip -d $@.res.tmp
-    $(hide) rm $@.res.tmp.zip)
-$(if $(PRIVATE_JACK_IMPORT_JAR),
-    $(hide) mkdir -p $@.tmpjill.res
-    $(hide) unzip -qo $(PRIVATE_JACK_IMPORT_JAR) -d $@.tmpjill.res
-    $(hide) find $@.tmpjill.res -iname "*.class" -delete)
-$(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
-    export tmpEcjArg="@$(PRIVATE_JAVA_SOURCE_LIST)"; \
-else \
-    export tmpEcjArg=""; \
-fi; \
-$(call call-jack) \
-    $(strip $(PRIVATE_JACK_FLAGS)) \
-    $(strip $(PRIVATE_JACK_COVERAGE_OPTIONS)) \
-    $(if $(NO_OPTIMIZE_DX), \
-        -D jack.dex.optimize="false") \
-    $(if $(PRIVATE_RMTYPEDEFS), \
-        -D jack.android.remove-typedef="true") \
-    $(if $(PRIVATE_JACK_IMPORT_JAR), \
-        --import $(PRIVATE_JACK_IMPORT_JAR) --import-resource $@.tmpjill.res) \
-    $(addprefix --classpath ,$(strip \
-        $(call normalize-path-list,$(PRIVATE_JACK_SHARED_LIBRARIES)))) \
-    $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
-    $(addprefix --pluginpath ,$(strip \
-         $(call normalize-path-list,$(PRIVATE_JACK_PLUGIN_PATH)))) \
-    $(if $(PRIVATE_JACK_PLUGIN),--plugin $(call normalize-comma-list,$(PRIVATE_JACK_PLUGIN))) \
-    $(if $(PRIVATE_EXTRA_JAR_ARGS),--import-resource $@.res.tmp) \
-    -D jack.android.min-api-level=$(PRIVATE_JACK_MIN_SDK_VERSION) \
-    -D jack.import.resource.policy=keep-first \
-    -D jack.import.type.policy=keep-first \
-    --output-jack $(PRIVATE_CLASSES_JACK) \
-    $(if $(PRIVATE_JACK_INCREMENTAL_DIR),--incremental-folder $(PRIVATE_JACK_INCREMENTAL_DIR)) \
-    --output-dex $(PRIVATE_JACK_INTERMEDIATES_DIR) \
-    $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
-    $(if $(PRIVATE_JACK_PROGUARD_FLAGS),--config-proguard $@.flags) \
-    $$tmpEcjArg \
-    || ( rm -rf $(PRIVATE_CLASSES_JACK); exit 41 )
-$(hide) mv $(PRIVATE_JACK_INTERMEDIATES_DIR)/classes*.dex $(dir $@)
-$(if $(PRIVATE_EXTRA_JAR_ARGS),$(hide) rm -rf $@.res.tmp)
-$(if $(PRIVATE_JAR_PACKAGES), $(hide) echo unsupported options PRIVATE_JAR_PACKAGES in $@; exit 53)
-$(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) echo unsupported options JAR_EXCLUDE_PACKAGES in $@; exit 53)
-$(if $(PRIVATE_JAR_MANIFEST), $(hide) echo unsupported options JAR_MANIFEST in $@; exit 53)
-endef
-
-# Invoke Jack to compile java source just to check it compiles correctly.
-define jack-check-java
-$(hide) rm -f $@
-$(hide) mkdir -p $(dir $@)
-$(if $(PRIVATE_JACK_INCREMENTAL_DIR),$(hide) mkdir -p $(PRIVATE_JACK_INCREMENTAL_DIR))
-$(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
-	$(call call-jack,$(PRIVATE_JACK_EXTRA_ARGS)) \
-	    $(strip $(PRIVATE_JACK_FLAGS)) \
-	    $(strip $(PRIVATE_JACK_DEBUG_FLAGS)) \
-	    $(addprefix --classpath ,$(strip \
-	        $(call normalize-path-list,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES)) $(PRIVATE_JACK_SHARED_LIBRARIES)))) \
-	    -D jack.import.resource.policy=keep-first \
-	    -D jack.android.min-api-level=$(PRIVATE_JACK_MIN_SDK_VERSION) \
-	    -D jack.import.type.policy=keep-first \
-	    $(if $(PRIVATE_JACK_INCREMENTAL_DIR),--incremental-folder $(PRIVATE_JACK_INCREMENTAL_DIR)) \
-	    @$(PRIVATE_JAVA_SOURCE_LIST); \
-fi
-touch $@
-endef
-
-define transform-jar-to-jack
-	$(hide) mkdir -p $(dir $@)
-	$(hide) mkdir -p $@.tmpjill.res
-	$(hide) unzip -qo $< -d $@.tmpjill.res
-	$(hide) find $@.tmpjill.res -iname "*.class" -delete
-	$(hide) $(call call-jack) \
-	    $(PRIVATE_JACK_FLAGS) \
-	    $(addprefix --pluginpath ,$(strip \
-                $(call normalize-path-list,$(PRIVATE_JACK_PLUGIN_PATH)))) \
-	    $(if $(PRIVATE_JACK_PLUGIN),--plugin $(call normalize-comma-list,$(PRIVATE_JACK_PLUGIN))) \
-        -D jack.import.resource.policy=keep-first \
-        -D jack.import.type.policy=keep-first \
-        -D jack.android.min-api-level=$(PRIVATE_JACK_MIN_SDK_VERSION) \
-	    --import $< \
-	    --import-resource $@.tmpjill.res \
-	    --output-jack $@
-	$(hide) rm -rf $@.tmpjill.res
-endef
-
 # Moves $1.tmp to $1 if necessary. This is designed to be used with
 # .KATI_RESTAT. For kati, this function doesn't update the timestamp
 # of $1 when $1.tmp is identical to $1 so that ninja won't rebuild
@@ -2450,54 +2332,6 @@ endef
 
 endif  # TARGET_BUILD_APPS
 
-
-# Invoke Jack to compile java from source to jack files without shrink or obfuscation.
-define java-to-jack
-$(hide) rm -f $@
-$(hide) rm -rf $(PRIVATE_JACK_INTERMEDIATES_DIR)
-$(hide) mkdir -p $(dir $@)
-$(hide) mkdir -p $(PRIVATE_JACK_INTERMEDIATES_DIR)
-$(if $(PRIVATE_JACK_INCREMENTAL_DIR),$(hide) mkdir -p $(PRIVATE_JACK_INCREMENTAL_DIR))
-$(if $(PRIVATE_JACK_PROGUARD_FLAGS), \
-    $(hide) echo -basedirectory $(CURDIR) > $@.flags; \
-    echo $(PRIVATE_JACK_PROGUARD_FLAGS) >> $@.flags; \
-)
-$(if $(PRIVATE_EXTRA_JAR_ARGS),
-	$(hide) mkdir -p $@.res.tmp
-	$(hide) $(call create-empty-package-at,$@.res.tmp.zip)
-	$(hide) $(call add-java-resources-to,$@.res.tmp.zip)
-	$(hide) unzip -qo $@.res.tmp.zip -d $@.res.tmp
-	$(hide) rm $@.res.tmp.zip)
-$(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
-    export tmpEcjArg="@$(PRIVATE_JAVA_SOURCE_LIST)"; \
-else \
-    export tmpEcjArg=""; \
-fi; \
-$(call call-jack) \
-    $(strip $(PRIVATE_JACK_FLAGS)) \
-    $(if $(NO_OPTIMIZE_DX), \
-        -D jack.dex.optimize="false") \
-    $(addprefix --classpath ,$(strip \
-        $(call normalize-path-list,$(PRIVATE_JACK_SHARED_LIBRARIES)))) \
-    $(addprefix --import ,$(call reverse-list,$(PRIVATE_STATIC_JACK_LIBRARIES))) \
-    $(addprefix --pluginpath ,$(strip \
-        $(call normalize-path-list,$(PRIVATE_JACK_PLUGIN_PATH)))) \
-    $(if $(PRIVATE_JACK_PLUGIN),--plugin $(call normalize-comma-list,$(PRIVATE_JACK_PLUGIN))) \
-    $(if $(PRIVATE_EXTRA_JAR_ARGS),--import-resource $@.res.tmp) \
-    -D jack.import.resource.policy=keep-first \
-    -D jack.import.type.policy=keep-first \
-    -D jack.android.min-api-level=$(PRIVATE_JACK_MIN_SDK_VERSION) \
-    $(if $(PRIVATE_JACK_INCREMENTAL_DIR),--incremental-folder $(PRIVATE_JACK_INCREMENTAL_DIR)) \
-    --output-jack $@ \
-    $(addprefix --config-jarjar ,$(strip $(PRIVATE_JARJAR_RULES))) \
-    $(if $(PRIVATE_JACK_PROGUARD_FLAGS),--config-proguard $@.flags) \
-    $$tmpEcjArg \
-    || ( rm -f $@ ; exit 41 )
-$(if $(PRIVATE_EXTRA_JAR_ARGS),$(hide) rm -rf $@.res.tmp)
-$(if $(PRIVATE_JAR_PACKAGES), $(hide) echo unsupported options PRIVATE_JAR_PACKAGES in $@; exit 53)
-$(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) echo unsupported options JAR_EXCLUDE_PACKAGES in $@; exit 53)
-$(if $(PRIVATE_JAR_MANIFEST), $(hide) echo unsupported options JAR_MANIFEST in $@; exit 53)
-endef
 
 # Takes an sdk version that might be PLATFORM_VERSION_CODENAME (for example P),
 # returns a number greater than the highest existing sdk version if it is, or
@@ -2649,24 +2483,6 @@ define add-java-resources-to
 $(call dump-words-to-file, $(PRIVATE_EXTRA_JAR_ARGS), $(1).jar-arg-list)
 $(hide) $(JAR) uf $(1) @$(1).jar-arg-list
 @rm -f $(1).jar-arg-list
-endef
-
-# Add resources carried by static Jack libraries.
-#
-define add-carried-jack-resources
-$(call add-carried-jack-resources-to,$@)
-endef
-
-# $(1) the target jar.
-define add-carried-jack-resources-to
- $(hide) if [ -d $(PRIVATE_JACK_INTERMEDIATES_DIR) ] ; then \
-    find $(PRIVATE_JACK_INTERMEDIATES_DIR) -type f | sort \
-        | sed -e "s?^$(PRIVATE_JACK_INTERMEDIATES_DIR)/? -C \"$(PRIVATE_JACK_INTERMEDIATES_DIR)\" \"?" -e "s/$$/\"/" \
-        > $(dir $(1))jack_res_jar_flags; \
-    if [ -s $(dir $(1))jack_res_jar_flags ] ; then \
-        $(JAR) uf $(1) @$(dir $(1))jack_res_jar_flags; \
-    fi; \
-fi
 endef
 
 # Add resources (non .class files) from a jar to a package
