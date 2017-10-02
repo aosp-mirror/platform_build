@@ -306,7 +306,7 @@ LOCAL_AIDL_INCLUDES += $(FRAMEWORKS_BASE_JAVA_SRC_DIRS)
 endif # LOCAL_SDK_VERSION
 
 $(foreach s,$(aidl_sources),\
-    $(eval $(call define-aidl-java-rule,$(s),$(intermediates.COMMON),aidl_java_sources)))
+    $(eval $(call define-aidl-java-rule,$(s),$(intermediates.COMMON)/aidl,aidl_java_sources)))
 $(foreach java,$(aidl_java_sources), \
     $(call include-depfile,$(java:%.java=%.P),$(java)))
 
@@ -338,11 +338,11 @@ include $(BUILD_SYSTEM)/base_rules.mk
 ###########################################################
 ifneq ($(strip $(logtags_sources)),)
 
-logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/src/, $(logtags_sources)))
+logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/logtags/, $(logtags_sources)))
 logtags_sources := $(addprefix $(LOCAL_PATH)/, $(logtags_sources))
 
 $(logtags_java_sources): PRIVATE_MERGED_TAG := $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
-$(logtags_java_sources): $(intermediates.COMMON)/src/%.java: $(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt $(JAVATAGS) build/tools/event_log_tags.py
+$(logtags_java_sources): $(intermediates.COMMON)/logtags/%.java: $(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt $(JAVATAGS) build/tools/event_log_tags.py
 	$(transform-logtags-to-java)
 
 else
