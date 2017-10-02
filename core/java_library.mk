@@ -25,21 +25,8 @@ endif
 
 LOCAL_BUILT_MODULE_STEM := javalib.jar
 
-#################################
-include $(BUILD_SYSTEM)/configure_local_jack.mk
-#################################
-
-ifdef LOCAL_JACK_ENABLED
-ifdef LOCAL_IS_STATIC_JAVA_LIBRARY
-LOCAL_BUILT_MODULE_STEM := classes.jack
-endif
-endif
-
-# For non-static java libraries, other modules should depend on
-# out/target/common/obj/JAVA_LIBRARIES/.../javalib.jar (for jack)
-# or out/target/common/obj/JAVA_LIBRARIES/.../classes.jar (for javac).
-# For static java libraries, other modules should depend on
-# out/target/common/obj/JAVA_LIBRARIES/.../classes.jar
+# For java libraries, other modules should depend on
+# out/target/common/obj/JAVA_LIBRARIES/.../classes.jar.
 # There are some dependencies outside the build system that assume static
 # java libraries produce javalib.jar, so we will copy classes.jar there too.
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
@@ -69,11 +56,7 @@ ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 # is available as javalib.jar so copy it there too.
 $(eval $(call copy-one-file,$(full_classes_proguard_jar),$(common_javalib.jar)))
 
-ifdef LOCAL_JACK_ENABLED
-$(eval $(call copy-one-file,$(full_classes_jack),$(LOCAL_BUILT_MODULE)))
-else
 $(eval $(call copy-one-file,$(full_classes_proguard_jar),$(LOCAL_BUILT_MODULE)))
-endif
 
 else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
@@ -82,15 +65,8 @@ $(common_javalib.jar): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar
 $(common_javalib.jar): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
 $(common_javalib.jar) : $(built_dex) $(java_resource_sources) | $(ZIPTIME)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
-ifdef LOCAL_JACK_ENABLED
-	$(call create-empty-package-at,$@.tmp)
-else
 	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@.tmp)
-endif
 	$(call add-dex-to-package-arg,$@.tmp)
-ifdef LOCAL_JACK_ENABLED
-	$(call add-carried-jack-resources-to,$@.tmp)
-endif
 	$(hide) $(ZIPTIME) $@.tmp
 	$(call commit-change-for-toc,$@)
 

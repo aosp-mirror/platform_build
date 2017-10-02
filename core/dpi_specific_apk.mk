@@ -34,12 +34,8 @@ $(built_dpi_apk): PRIVATE_ADDITIONAL_CERTIFICATES := $(additional_certificates)
 $(built_dpi_apk): PRIVATE_SOURCE_ARCHIVE :=
 ifneq ($(full_classes_jar),)
 $(built_dpi_apk): PRIVATE_DEX_FILE := $(built_dex)
-ifndef LOCAL_JACK_ENABLED
 # Use the jarjar processed arhive as the initial package file.
 $(built_dpi_apk): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar)
-else
-$(built_dpi_apk): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
-endif # LOCAL_JACK_ENABLED
 $(built_dpi_apk): $(built_dex)
 else
 $(built_dpi_apk): PRIVATE_DEX_FILE :=
@@ -64,9 +60,6 @@ ifeq ($(full_classes_jar),)
 	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 else
 	$(add-dex-to-package)
-ifdef LOCAL_JACK_ENABLED
-	$(add-carried-jack-resources)
-endif
 endif
 	$(sign-package)
 
