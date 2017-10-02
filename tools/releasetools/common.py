@@ -353,6 +353,10 @@ def AppendAVBSigningArgs(cmd, partition):
   algorithm = OPTIONS.info_dict.get("avb_" + partition + "_algorithm")
   if key_path and algorithm:
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
+  avb_salt = OPTIONS.info_dict.get("avb_salt")
+  # make_vbmeta_image doesn't like "--salt" (and it's not needed).
+  if avb_salt and partition != "vbmeta":
+    cmd.extend(["--salt", avb_salt])
 
 
 def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
