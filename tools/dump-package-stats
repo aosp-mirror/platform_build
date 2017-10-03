@@ -77,7 +77,7 @@ do
     then
         fail "$file doesn't exist or isn't a file"
     fi
-    unzip -lv "$file" | awk '
+    unzip -lvq "$file" | awk '
         BEGIN {
           total_compressed = 0;
           total_uncompressed = 0;
@@ -88,16 +88,6 @@ do
         # Make sure the output of unzip -lv looks like something we expect.
         #
         NR == "1" {
-            if ($1 != "Archive:") {
-                print "'$PROGNAME': ERROR: Unexpected zip listing format" > \
-                        "/dev/stderr";
-                print "'$PROGNAME': ERROR: Line 1 is \"" $0 "\"" > \
-                        "/dev/stderr";
-                failed = 1;
-                exit 1;
-            }
-        }
-        NR == "2" {
             if (NF != "8" ||
                 $1 != "Length" ||
                 $2 != "Method" ||
