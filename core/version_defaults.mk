@@ -113,15 +113,6 @@ ifndef PLATFORM_SDK_VERSION
   PLATFORM_SDK_VERSION := 26
 endif
 
-ifndef PLATFORM_JACK_MIN_SDK_VERSION
-  # This is definition of the min SDK version given to Jack for the current
-  # platform. For released version it should be the same as
-  # PLATFORM_SDK_VERSION. During development, this number may be incremented
-  # before PLATFORM_SDK_VERSION if the platform starts to add new java
-  # language supports.
-  PLATFORM_JACK_MIN_SDK_VERSION := o-b1
-endif
-
 ifndef PLATFORM_VERSION_CODENAME
   PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
   ifndef PLATFORM_VERSION_CODENAME

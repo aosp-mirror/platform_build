@@ -31,55 +31,6 @@ ifneq ($(LOCAL_MODULE),jacocoagent)
   endif # !LOCAL_NO_STANDARD_LIBRARIES
 endif # LOCAL_MODULE == jacocoagent
 
-# This duplicates the bootclasspath logic in java_common.mk because jack doesn't use
-# bootclasspath.
-ifdef LOCAL_JACK_ENABLED
-  ifneq ($(LOCAL_SDK_VERSION),)
-    ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-      $(error $(LOCAL_PATH): Must not define both LOCAL_NO_STANDARD_LIBRARIES and LOCAL_SDK_VERSION)
-    else
-      ifeq ($(strip $(filter $(LOCAL_SDK_VERSION),$(TARGET_AVAILABLE_SDK_VERSIONS))),)
-        $(error $(LOCAL_PATH): Invalid LOCAL_SDK_VERSION '$(LOCAL_SDK_VERSION)' \
-               Choices are: $(TARGET_AVAILABLE_SDK_VERSIONS))
-      else
-        ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
-          # Use android_stubs_current if LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
-          LOCAL_JAVA_LIBRARIES := android_stubs_current $(LOCAL_JAVA_LIBRARIES)
-        else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
-          LOCAL_JAVA_LIBRARIES := android_system_stubs_current $(LOCAL_JAVA_LIBRARIES)
-        else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
-          LOCAL_JAVA_LIBRARIES := android_test_stubs_current $(LOCAL_JAVA_LIBRARIES)
-        else
-          LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
-        endif
-
-        ifeq ($(LOCAL_SDK_VERSION),current)
-          my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-        else ifeq ($(LOCAL_SDK_VERSION),system_current)
-          my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-        else ifeq ($(LOCAL_SDK_VERSION),test_current)
-          my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-        else
-          my_jack_min_sdk_version := $(LOCAL_SDK_VERSION)
-        endif
-      endif
-    endif
-  else
-    my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-  endif
-
-  ifneq (,$(strip $(LOCAL_MIN_SDK_VERSION)))
-    my_jack_min_sdk_version := $(LOCAL_MIN_SDK_VERSION)
-  endif
-endif
-
-ifdef LOCAL_MIN_SDK_VERSION
-  my_min_sdk_version := $(LOCAL_MIN_SDK_VERSION)
-else
-  my_min_sdk_version := $(call codename-or-sdk-to-sdk,\
-    $(PRIVATE_DEFAULT_APP_TARGET_SDK))
-endif
-
 ifndef LOCAL_SDK_VERSION
   ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
     LOCAL_JAVA_LIBRARIES := $(TARGET_DEFAULT_JAVA_LIBRARIES) $(LOCAL_JAVA_LIBRARIES)
@@ -163,11 +114,6 @@ else
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 built_dex := $(intermediates.COMMON)/classes.dex
 endif
-# final Jack library, shrinked and obfuscated if it must be
-full_classes_jack := $(intermediates.COMMON)/classes.jack
-# intermediate Jack library without shrink and obfuscation
-noshrob_classes_jack := $(intermediates.COMMON)/classes.noshrob.jack
-jack_check_timestamp := $(intermediates.COMMON)/jack.check.timestamp
 
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_turbine_jar) \
@@ -178,9 +124,6 @@ LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_combined_jar) \
     $(full_classes_proguard_jar) \
     $(built_dex_intermediate) \
-    $(full_classes_jack) \
-    $(noshrob_classes_jack) \
-    $(jack_check_timestamp) \
     $(built_dex) \
     $(full_classes_stubs_jar) \
     $(java_source_list_file)
@@ -382,15 +325,7 @@ endif
 # command line.
 ifndef LOCAL_CHECKED_MODULE
 ifdef full_classes_jar
-ifdef LOCAL_JACK_ENABLED
-ifeq ($(LOCAL_JACK_ENABLED),javac_frontend)
 LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
-else
-LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
-endif
-else
-LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
-endif
 endif
 endif
 
@@ -436,9 +371,6 @@ $(error $(LOCAL_PATH): Target java module does not define any source or resource
 endif
 endif
 
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_MIN_SDK_VERSION := $(my_jack_min_sdk_version)
-my_jack_min_sdk_version :=
-
 # Since we're using intermediates.COMMON, make sure that it gets cleaned
 # properly.
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
@@ -473,7 +405,6 @@ endif
 ifneq (,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO))
 ifneq (,$(filter userdebug user,$(TARGET_BUILD_VARIANT)))
 LOCAL_JAVACFLAGS+= -g:source,lines
-LOCAL_JACK_FLAGS+= -D jack.dex.debug.vars=false -D jack.dex.debug.vars.synthetic=false
 endif
 endif
 
@@ -590,13 +521,11 @@ endif
 $(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
 my_desugaring :=
-ifndef LOCAL_JACK_ENABLED
 ifndef LOCAL_IS_STATIC_JAVA_LIBRARY
 my_desugaring := true
 $(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 $(full_classes_desugar_jar): $(full_classes_jar) $(full_java_header_libs) $(DESUGAR)
 	$(desugar-classes-jar)
-endif
 endif
 
 ifndef my_desugaring
@@ -621,7 +550,6 @@ ifneq ($(filter-out full custom nosystem obfuscation optimization shrinktests,$(
     $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
 endif
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
-jack_dictionary := $(intermediates.COMMON)/jack_dictionary
 
 # Hack: see b/20667396
 # When an app's LOCAL_SDK_VERSION is lower than the support library's LOCAL_SDK_VERSION,
@@ -643,7 +571,6 @@ endif
 endif
 endif
 
-# jack already has the libraries in its classpath and doesn't support jars
 legacy_proguard_flags := $(addprefix -libraryjars ,$(my_support_library_sdk_raise) \
   $(filter-out $(my_support_library_sdk_raise), \
     $(full_java_bootclasspath_libs) \
@@ -653,7 +580,6 @@ legacy_proguard_lib_deps := $(my_support_library_sdk_raise) \
   $(filter-out $(my_support_library_sdk_raise),$(full_shared_java_header_libs))
 
 legacy_proguard_flags += -printmapping $(proguard_dictionary)
-jack_proguard_flags := -printmapping $(jack_dictionary)
 
 common_proguard_flags := -forceprocessing
 
@@ -661,11 +587,7 @@ common_proguard_flag_files :=
 ifeq ($(filter nosystem,$(LOCAL_PROGUARD_ENABLED)),)
 common_proguard_flag_files += $(BUILD_SYSTEM)/proguard.flags
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-ifdef LOCAL_JACK_ENABLED
-common_proguard_flag_files += $(BUILD_SYSTEM)/proguard.jacoco.flags
-else
 common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.emma.flags
-endif # LOCAL_JACK_ENABLED
 endif
 # If this is a test package, add proguard keep flags for tests.
 ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
@@ -693,7 +615,6 @@ ifdef LOCAL_INSTRUMENTATION_FOR
 ifeq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
 # If no obfuscation, link in the instrmented package's classes.jar as a library.
 # link_instr_classes_jar is defined in base_rule.mk
-# jack already has this library in its classpath and doesn't support jars
 legacy_proguard_flags += -libraryjars $(link_instr_classes_jar)
 legacy_proguard_lib_deps += $(link_instr_classes_jar)
 else # obfuscation
@@ -706,10 +627,6 @@ legacy_proguard_flags := -injars  $(link_instr_classes_jar) \
     -applymapping $(link_instr_intermediates_dir.COMMON)/proguard_dictionary \
     -verbose \
     $(legacy_proguard_flags)
-ifdef LOCAL_JACK_ENABLED
-jack_proguard_flags += -applymapping $(link_instr_intermediates_dir.COMMON)/jack_dictionary
-full_jack_deps += $(link_instr_intermediates_dir.COMMON)/jack_dictionary
-endif
 
 # Sometimes (test + main app) uses different keep rules from the main app -
 # apply the main app's dictionary anyway.
@@ -731,18 +648,16 @@ else
 extra_input_jar :=
 endif
 
-# If not using jack and building against the current SDK version then filter
-# out the junit, android.test and c.a.i.u.Predicate classes that are to be
-# removed from the Android API as part of b/30188076 but which are still
-# present in the Android API. This is to allow changes to be made to the
-# build to statically include those classes into the application without
+# If building against the current SDK version then filter out the junit,
+# android.test and c.a.i.u.Predicate classes that are to be removed from
+# the Android API as part of b/30188076 but which are still present in
+# the Android API. This is to allow changes to be made to the build to
+# statically include those classes into the application without
 # simultaneously removing those classes from the API.
 proguard_injar_filters :=
-ifndef LOCAL_JACK_ENABLED
 ifdef LOCAL_SDK_VERSION
 ifeq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
 proguard_injar_filters := (!junit/framework/**,!junit/runner/**,!junit/textui/**,!android/test/**,!com/android/internal/util/*)
-endif
 endif
 endif
 
@@ -760,7 +675,6 @@ full_classes_proguard_jar := $(full_classes_pre_proguard_jar)
 endif # LOCAL_PROGUARD_ENABLED defined
 
 ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
-ifndef LOCAL_JACK_ENABLED
 $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 # If you instrument class files that have local variable debug information in
 # them emma does not correctly maintain the local variable table.
@@ -773,7 +687,6 @@ $(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
 endif
 $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
 	$(transform-classes.jar-to-dex)
-endif # LOCAL_JACK_ENABLED is disabled
 
 $(built_dex): $(built_dex_intermediate)
 	@echo Copying: $@
@@ -819,7 +732,6 @@ else
   my_sdk_version := $(PLATFORM_SDK_VERSION)
 endif
 
-
 ifdef LOCAL_MIN_SDK_VERSION
   my_min_sdk_version := $(LOCAL_MIN_SDK_VERSION)
 else
@@ -829,135 +741,3 @@ endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_DEFAULT_APP_TARGET_SDK := $(my_default_app_target_sdk)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SDK_VERSION := $(my_sdk_version)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MIN_SDK_VERSION := $(my_min_sdk_version)
-
-ifdef LOCAL_JACK_ENABLED
-$(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
-ifeq ($(LOCAL_JACK_ENABLED),incremental)
-$(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-incremental
-$(noshrob_classes_jack): PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-noshrob-incremental
-$(jack_check_timestamp): PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-check-incremental
-else
-$(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_JACK_INCREMENTAL_DIR :=
-$(noshrob_classes_jack): PRIVATE_JACK_INCREMENTAL_DIR :=
-$(jack_check_timestamp): PRIVATE_JACK_INCREMENTAL_DIR :=
-endif
-
-ifdef full_classes_jar
-ifdef LOCAL_PROGUARD_ENABLED
-
-ifndef LOCAL_JACK_PROGUARD_FLAGS
-    LOCAL_JACK_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS)
-endif
-LOCAL_JACK_PROGUARD_FLAGS += $(addprefix -include , $(proguard_flag_files))
-ifdef LOCAL_TEST_MODULE_TO_PROGUARD_WITH
-    $(error $(LOCAL_MODULE): Build with jack when LOCAL_TEST_MODULE_TO_PROGUARD_WITH is defined is not yet implemented)
-endif
-
-# $(jack_dictionary) is just by-product of $(built_dex_intermediate).
-# The dummy command was added because, without it, make misses the fact the $(built_dex) also
-# change $(jack_dictionary).
-$(jack_dictionary): $(full_classes_jack)
-	$(hide) touch $@
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_PROGUARD_FLAGS := $(common_proguard_flags) $(jack_proguard_flags) $(LOCAL_JACK_PROGUARD_FLAGS)
-else  # LOCAL_PROGUARD_ENABLED not defined
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_PROGUARD_FLAGS :=
-endif # LOCAL_PROGUARD_ENABLED defined
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := -g $(LOCAL_JACK_FLAGS) $(annotation_processor_flags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
-
-jack_all_deps := \
-    $(java_source_list_file) \
-    $(java_sources_deps) \
-    $(full_jack_deps) \
-    $(jar_manifest_file) \
-    $(layers_file) \
-    $(common_proguard_flag_files) \
-    $(proguard_flag_files) \
-    $(annotation_processor_deps) \
-    $(LOCAL_JARJAR_RULES) \
-    $(NORMALIZE_PATH) \
-    $(JACK_DEFAULT_ARGS) \
-    $(JACK)
-
-$(jack_check_timestamp): $(jack_all_deps) | setup-jack-server
-	@echo Checking build with Jack: $@
-	$(jack-check-java)
-
-ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
-$(full_classes_jack): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
-$(full_classes_jack): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)
-$(full_classes_jack): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
-	@echo Building with Jack: $@
-	$(java-to-jack)
-
-# Update timestamps of .toc files for static java libraries so
-# dependents will be always rebuilt.
-$(built_dex).toc: $(full_classes_jack)
-	touch $@
-
-else #LOCAL_IS_STATIC_JAVA_LIBRARY
-$(built_dex_intermediate): PRIVATE_CLASSES_JACK := $(full_classes_jack)
-
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-LOCAL_JACK_PLUGIN_PATH += $(HOST_OUT_JAVA_LIBRARIES)/jack-coverage-plugin.jar
-LOCAL_JACK_PLUGIN += com.android.jack.coverage.CodeCoverage
-$(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS := \
-    -D jack.coverage=true \
-    -D jack.coverage.metadata.file=$(intermediates.COMMON)/coverage.em \
-    -D jack.coverage.jacoco.package=$(JACOCO_PACKAGE_NAME) \
-    $(addprefix -D jack.coverage.jacoco.include=,$(LOCAL_JACK_COVERAGE_INCLUDE_FILTER)) \
-    $(addprefix -D jack.coverage.jacoco.exclude=,$(LOCAL_JACK_COVERAGE_EXCLUDE_FILTER))
-else
-$(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS :=
-endif
-
-# Compiling with javac to jar, then converting jar to dex with jack
-ifeq ($(LOCAL_JACK_ENABLED),javac_frontend)
-
-# PRIVATE_EXTRA_JAR_ARGS and source files were already handled during javac
-$(built_dex_intermediate): PRIVATE_EXTRA_JAR_ARGS :=
-$(built_dex_intermediate): PRIVATE_JAVA_SOURCES :=
-$(built_dex_intermediate): PRIVATE_SOURCE_INTERMEDIATES_DIR :=
-$(built_dex_intermediate): PRIVATE_HAS_PROTO_SOURCES :=
-$(built_dex_intermediate): PRIVATE_HAS_RS_SOURCES :=
-
-# Incremental compilation is not supported when mixing javac and jack
-$(built_dex_intermediate): PRIVATE_JACK_INCREMENTAL_DIR :=
-
-# Pass output of javac to jack
-$(built_dex_intermediate): PRIVATE_JACK_IMPORT_JAR := $(full_classes_compiled_jar)
-$(built_dex_intermediate): $(full_classes_compiled_jar)
-else # LOCAL_JACK_ENABLED != javac_frontend
-$(built_dex_intermediate): PRIVATE_JACK_IMPORT_JAR :=
-endif # LOCAL_JACK_ENABLED != javac_frontend
-
-$(built_dex_intermediate): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
-$(built_dex_intermediate): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)
-$(built_dex_intermediate): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
-	@echo Building with Jack: $@
-	$(jack-java-to-dex)
-
-# $(full_classes_jack) is just by-product of $(built_dex_intermediate).
-# The dummy command was added because, without it, make misses the fact the $(built_dex) also
-# change $(full_classes_jack).
-$(full_classes_jack): $(built_dex_intermediate)
-	$(hide) touch $@
-
-$(call define-dex-to-toc-rule, $(intermediates.COMMON))
-
-endif #LOCAL_IS_STATIC_JAVA_LIBRARY
-
-$(noshrob_classes_jack): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
-$(noshrob_classes_jack): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)
-$(noshrob_classes_jack): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-noshrob-rsc
-$(noshrob_classes_jack): PRIVATE_JACK_PROGUARD_FLAGS :=
-$(noshrob_classes_jack): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
-	@echo Building with Jack: $@
-	$(java-to-jack)
-endif  # full_classes_jar is defined
-endif # LOCAL_JACK_ENABLED
