@@ -86,7 +86,6 @@ status_t ZipEntry::initAndRewriteFromCDE(FILE* fp)
  */
 status_t ZipEntry::LocalFileHeader::rewrite(FILE* fp)
 {
-    status_t result = 0;
     uint8_t buf[kLFHLen];
 
     if (fread(buf, 1, kLFHLen, fp) != kLFHLen)
@@ -124,7 +123,6 @@ status_t ZipEntry::LocalFileHeader::rewrite(FILE* fp)
  */
 status_t ZipEntry::CentralDirEntry::rewrite(FILE* fp)
 {
-    status_t result = 0;
     uint8_t buf[kCDELen];
     uint16_t fileNameLength, extraFieldLength, fileCommentLength;
 
