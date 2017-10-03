@@ -13,6 +13,8 @@ cc_binary_host {
         "ZipFile.cpp",
     ],
 
+    cflags: ["-Wall", "-Werror"],
+
     static_libs: [
         "libandroidfw",
         "libutils",

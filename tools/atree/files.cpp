@@ -425,8 +425,6 @@ list_dir(const string& path, const FileRecord& rec,
                 const vector<string>& excludes,
                 vector<FileRecord>* more)
 {
-    int err;
-
     string full = path_append(rec.sourceBase, rec.sourceName);
     full = path_append(full, path);
 
