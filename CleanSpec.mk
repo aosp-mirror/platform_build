@@ -436,6 +436,12 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/symbols/sbin/adbd)
 $(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -name 'linux_x86*' | xargs rm -rf)
 $(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -name 'linux_common*' | xargs rm -rf)
 
+# Remove old aidl/logtags files that may be in the generated source directory
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/*/*_intermediates/src)
+$(call add-clean-step, rm -f $(OUT_DIR)/target/common/obj/*/*_intermediates/java-source-list)
+$(call add-clean-step, rm -rf $(OUT_DIR)/host/common/obj/*/*_intermediates/src)
+$(call add-clean-step, rm -f $(OUT_DIR)/host/common/obj/*/*_intermediates/java-source-list)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
