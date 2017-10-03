@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "98bf7b08_ef8092cf",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 534,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-03T23:06:33Z",
+      "side": 1,
+      "message": "PREBUILT",
+      "range": {
+        "startLine": 534,
+        "startChar": 19,
+        "endLine": 534,
+        "endChar": 27
+      },
+      "revId": "887b3587d4a846e178b71643a30d2dd6ac1f0ae8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
