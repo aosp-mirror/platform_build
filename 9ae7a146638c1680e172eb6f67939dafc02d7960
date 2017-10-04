@@ -22,6 +22,30 @@
       "revId": "9ae7a146638c1680e172eb6f67939dafc02d7960",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "487df30f_99014201",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1306,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-10-04T07:16:09Z",
+      "side": 1,
+      "message": "ok I will. :)",
+      "parentUuid": "2382ec52_21991cff",
+      "range": {
+        "startLine": 1306,
+        "startChar": 2,
+        "endLine": 1306,
+        "endChar": 6
+      },
+      "revId": "9ae7a146638c1680e172eb6f67939dafc02d7960",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
