@@ -70,25 +70,6 @@ $(gen): frameworks/base/docs/docs-redirect-index.html
 	@cp -f $< $@
 endif
 
-ndk_doxygen_out := $(OUT_NDK_DOCS)
-ndk_headers := $(SOONG_OUT_DIR)/ndk/sysroot/usr/include
-ndk_docs_src_dir := frameworks/native/docs
-ndk_doxyfile := $(ndk_docs_src_dir)/Doxyfile
-ndk_docs_srcs := $(addprefix $(ndk_docs_src_dir)/,\
-    $(call find-files-in-subdirs,$(ndk_docs_src_dir),"*",.))
-$(ndk_doxygen_out)/index.html: $(ndk_docs_srcs) $(SOONG_OUT_DIR)/ndk.timestamp
-	@mkdir -p $(ndk_doxygen_out)
-	@echo "Generating NDK docs to $(ndk_doxygen_out)"
-	@( cat $(ndk_doxyfile); \
-		echo "INPUT=$(ndk_headers)"; \
-		echo "HTML_OUTPUT=$(ndk_doxygen_out)" \
-	) | doxygen -
-
-# Note: Not a part of the docs target because we don't have doxygen available.
-# You can run this target locally if you have doxygen installed.
-ndk-docs: $(ndk_doxygen_out)/index.html
-.PHONY: ndk-docs
-
 # -----------------------------------------------------------------
 # property_overrides_split_enabled
 property_overrides_split_enabled :=
