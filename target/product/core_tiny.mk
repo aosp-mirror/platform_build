@@ -75,7 +75,6 @@ PRODUCT_PACKAGES += \
     e2fsck \
     resize2fs \
     tune2fs \
-    nullwebview \
     screencap \
     sensorservice \
     uiautomator \
@@ -102,7 +101,6 @@ PRODUCT_BOOT_JARS := \
     telephony-common \
     voip-common \
     ims-common \
-    nullwebview \
     org.apache.http.legacy.boot \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java
