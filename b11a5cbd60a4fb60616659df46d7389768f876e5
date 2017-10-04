@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "0906b628_345bddc1",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-04T17:02:12Z",
+      "side": 1,
+      "message": "Just jars (apks are already banned in this list). I\u0027m worried that this is a completely different namespace than the module namespace, in which you\u0027re filtering out a lot of information (everything but the base filename), so you could get duplicate matches.\n\nIf there was both a system/framework/foo.jar and a system/etc/foo.txt, we\u0027d attempt to uncompress the text file.",
+      "parentUuid": "7be72d33_8ede9e18",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 70
+      },
+      "revId": "b11a5cbd60a4fb60616659df46d7389768f876e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a9650644_aeb42aec",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 2
