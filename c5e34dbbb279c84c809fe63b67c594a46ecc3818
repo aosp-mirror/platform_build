@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "393bcbe2_8bf32ace",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2017-10-04T16:15:03Z",
+      "side": 1,
+      "message": "Yes, one example is embmslibrary.jar. I think most of those jars will come from vendor code.",
+      "parentUuid": "1cd2852a_f0628fc7",
+      "revId": "c5e34dbbb279c84c809fe63b67c594a46ecc3818",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "30b97aff_5297ff97",
         "filename": "core/package_internal.mk",
         "patchSetId": 5
