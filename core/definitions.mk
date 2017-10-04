@@ -2754,39 +2754,16 @@ ifndef get-file-size
 $(error HOST_OS must define get-file-size)
 endif
 
-# Convert a partition data size (eg, as reported in /proc/mtd) to the
-# size of the image used to flash that partition (which includes a
-# spare area for each page).
-# $(1): the partition data size
-define image-size-from-data-size
-$(strip $(eval _isfds_value := $$(shell echo $$$$(($(1) / $(BOARD_NAND_PAGE_SIZE) * \
-  ($(BOARD_NAND_PAGE_SIZE)+$(BOARD_NAND_SPARE_SIZE))))))\
-$(if $(filter 0, $(_isfds_value)),$(shell echo $$(($(BOARD_NAND_PAGE_SIZE)+$(BOARD_NAND_SPARE_SIZE)))),$(_isfds_value))\
-$(eval _isfds_value :=))
-endef
-
 # $(1): The file(s) to check (often $@)
-# $(2): The maximum total image size, in decimal bytes.
-#    Make sure to take into account any reserved space needed for the FS.
-#
-# If $(2) is empty, evaluates to "true"
-#
-# Reserve bad blocks.  Make sure that MAX(1% of partition size, 2 blocks)
-# is left over after the image has been flashed.  Round the 1% up to the
-# next whole flash block size.
-define assert-max-file-size
+# $(2): The partition size.
+define assert-max-image-size
 $(if $(2), \
   size=$$(for i in $(1); do $(call get-file-size,$$i); echo +; done; echo 0); \
   total=$$(( $$( echo "$$size" ) )); \
   printname=$$(echo -n "$(1)" | tr " " +); \
-  img_blocksize=$(call image-size-from-data-size,$(BOARD_FLASH_BLOCK_SIZE)); \
-  twoblocks=$$((img_blocksize * 2)); \
-  onepct=$$((((($(2) / 100) - 1) / img_blocksize + 1) * img_blocksize)); \
-  reserve=$$((twoblocks > onepct ? twoblocks : onepct)); \
-  maxsize=$$(($(2) - reserve)); \
-  echo "$$printname maxsize=$$maxsize blocksize=$$img_blocksize total=$$total reserve=$$reserve"; \
+  maxsize=$(2); \
   if [ "$$total" -gt "$$maxsize" ]; then \
-    echo "error: $$printname too large ($$total > [$(2) - $$reserve])"; \
+    echo "error: $$printname too large ($$total > $$maxsize)"; \
     false; \
   elif [ "$$total" -gt $$((maxsize - 32768)) ]; then \
     echo "WARNING: $$printname approaching size limit ($$total now; limit $$maxsize)"; \
@@ -2794,17 +2771,6 @@ $(if $(2), \
  , \
   true \
  )
-endef
-
-# Like assert-max-file-size, but the second argument is a partition
-# size, which we'll convert to a max image size before checking it
-# against the files.
-#
-# $(1): The file(s) to check (often $@)
-# $(2): The partition size.
-define assert-max-image-size
-$(if $(2), \
-  $(call assert-max-file-size,$(1),$(call image-size-from-data-size,$(2))))
 endef
 
 
