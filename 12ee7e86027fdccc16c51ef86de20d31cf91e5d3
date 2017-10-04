@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fb564deb_eddf0559",
+        "filename": "core/math.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-04T18:06:48Z",
+      "side": 1,
+      "message": "We\u0027ve already got a lot of these functions (written slightly different) above -- why do we need duplicates?",
+      "revId": "12ee7e86027fdccc16c51ef86de20d31cf91e5d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
