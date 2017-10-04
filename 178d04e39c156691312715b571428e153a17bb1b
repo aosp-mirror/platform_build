@@ -22,6 +22,30 @@
       "revId": "178d04e39c156691312715b571428e153a17bb1b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30b89bec_c77c742d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1054468
+      },
+      "writtenOn": "2017-10-04T23:33:30Z",
+      "side": 1,
+      "message": "ro. properties are set-once. So once it\u0027s set it remains.",
+      "parentUuid": "1f374826_5290357d",
+      "range": {
+        "startLine": 10,
+        "startChar": 34,
+        "endLine": 10,
+        "endChar": 47
+      },
+      "revId": "178d04e39c156691312715b571428e153a17bb1b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
