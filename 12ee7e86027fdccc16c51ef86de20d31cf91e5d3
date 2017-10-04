@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "7ec86ec2_d4d36676",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-04T18:24:17Z",
+      "side": 1,
+      "message": "This is the number of sources per shard, right? It seems to me that it\u0027d be good to have the variable name specify that - something like LOCAL_JAVAC_SHARD_SIZE (or perhaps LOCAL_JAVAC_NUM_SOURCES_PER_SHARD)",
+      "revId": "12ee7e86027fdccc16c51ef86de20d31cf91e5d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3e6dc2f_ef4b9538",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-04T18:24:17Z",
+      "side": 1,
+      "message": "Probably want to mention the names of the config variables that requested this behavior too; maybe a suffix like \"Cannot set both LOCAL_JAVA_INPUT_SOURCES_NUM and LOCAL_JAR_PROCESSOR.\"",
+      "revId": "12ee7e86027fdccc16c51ef86de20d31cf91e5d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fb564deb_eddf0559",
         "filename": "core/math.mk",
         "patchSetId": 1
