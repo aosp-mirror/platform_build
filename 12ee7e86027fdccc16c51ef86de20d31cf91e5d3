@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "34b31dd2_4558dd49",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-04T21:25:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7ec86ec2_d4d36676",
+      "revId": "12ee7e86027fdccc16c51ef86de20d31cf91e5d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b3e6dc2f_ef4b9538",
         "filename": "core/java.mk",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "f655f429_cc0e2d37",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 362,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-04T21:25:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b3e6dc2f_ef4b9538",
+      "revId": "12ee7e86027fdccc16c51ef86de20d31cf91e5d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fb564deb_eddf0559",
         "filename": "core/math.mk",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2017-10-04T18:06:48Z",
       "side": 1,
       "message": "We\u0027ve already got a lot of these functions (written slightly different) above -- why do we need duplicates?",
+      "revId": "12ee7e86027fdccc16c51ef86de20d31cf91e5d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "adb68739_1bbe2314",
+        "filename": "core/math.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-04T21:25:44Z",
+      "side": 1,
+      "message": "Thanks Dan. The original functions(math_gt_or_eq,math_max,math_is_number) all use _math_check_valid to check the number is less than 100. But our sharding divisor and dividend can be way greater than 100.(currently I set the limit to 8000). So I added the these compare functions to check if our sharding number is valid.",
+      "parentUuid": "fb564deb_eddf0559",
       "revId": "12ee7e86027fdccc16c51ef86de20d31cf91e5d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
