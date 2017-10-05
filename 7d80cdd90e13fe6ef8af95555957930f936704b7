@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd94e1a2_b38a9ebd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 2211,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-05T23:39:54Z",
+      "side": 1,
+      "message": "In practice, what file paths exist that get excluded by the \"-and -not -name \u0027.*\u0027 \" matcher?",
+      "range": {
+        "startLine": 2211,
+        "startChar": 60,
+        "endLine": 2211,
+        "endChar": 80
+      },
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c265445_31ec343e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 2234,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-05T23:39:54Z",
+      "side": 1,
+      "message": "It seems to me that it\u0027d be nice to add the word \"save\" here somewhere, whether it\u0027s in the function name or in a comment describing what the function does\n\nsince we talked in person and you described that this is primarily doing the saving rather than the computation of which files go in the shard",
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
