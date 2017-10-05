@@ -511,6 +511,12 @@ endif
 
 USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
+# USE_D8_BY_DEFAULT is the default behavior, use USE_D8 to override.
+USE_D8_BY_DEFAULT := false
+ifndef USE_D8
+  USE_D8 := $(USE_D8_BY_DEFAULT)
+endif
+
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
