@@ -51,6 +51,24 @@
       "revId": "c5e34dbbb279c84c809fe63b67c594a46ecc3818",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "906865b1_f124d19a",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 620,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2017-10-05T12:07:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "30b97aff_5297ff97",
+      "revId": "c5e34dbbb279c84c809fe63b67c594a46ecc3818",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
