@@ -54,8 +54,6 @@ TARGET_USES_HWC2 := true
 # Set emulator framebuffer display device buffer count to 3
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
-# TODO(b/35790399): remove when b/35790399 is fixed.
-BOARD_NAND_SPARE_SIZE := 0
 BOARD_FLASH_BLOCK_SIZE := 512
 
 # b/64700195: add minimum support for odm.img
