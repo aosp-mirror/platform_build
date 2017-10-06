@@ -30,7 +30,7 @@ endif
 ifdef LOCAL_UNINSTALLABLE_MODULE
 LOCAL_DEX_PREOPT :=
 endif
-ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file))) # contains no java code
+ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR))) # contains no java code
 LOCAL_DEX_PREOPT :=
 endif
 # if WITH_DEXPREOPT_BOOT_IMG_ONLY=true and module is not in boot class path skip
