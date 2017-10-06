@@ -2714,6 +2714,26 @@ $(3): | $(1)
 	$(hide) ln -sf $(2) $$@
 endef
 
+# Copy an apk to a target location while removing classes*.dex
+# $(1): source file
+# $(2): destination file
+# $(3): LOCAL_DEX_PREOPT, if nostripping then leave classes*.dex
+define dexpreopt-copy-jar
+$(2): $(1)
+	@echo $(if $(filter nostripping,$(3)),"Copy: $$@","Copy without dex: $$@")
+	$$(copy-file-to-target)
+	$(if $(filter nostripping,$(3)),,$$(call dexpreopt-remove-classes.dex,$$@))
+endef
+
+# $(1): the .jar or .apk to remove classes.dex
+define dexpreopt-remove-classes.dex
+$(hide) zip --quiet --delete $(1) classes.dex; \
+dex_index=2; \
+while zip --quiet --delete $(1) classes$${dex_index}.dex > /dev/null; do \
+  let dex_index=dex_index+1; \
+done
+endef
+
 ###########################################################
 ## Commands to call Proguard
 ###########################################################
