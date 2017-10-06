@@ -137,6 +137,30 @@
     },
     {
       "key": {
+        "uuid": "5606683e_cb6870ed",
+        "filename": "tools/list-jar-packages.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-06T16:37:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a2c8921_39cf23c5",
+      "range": {
+        "startLine": 24,
+        "startChar": 21,
+        "endLine": 24,
+        "endChar": 35
+      },
+      "revId": "9082b62e5a3cd7158230b954b9acc2e8068980db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d713e603_fe2c587a",
         "filename": "tools/list-jar-packages.sh",
         "patchSetId": 2
@@ -172,6 +196,30 @@
       "side": 1,
       "message": "Ah, thanks. I had been wondering why the \\+ was required here but not in line 24. In practice, I think I observed it working as intended with the \\+ but I don\u0027t know why. It\u0027s annoying that sed use different parameter names on darwin vs. linux, I didn\u0027t know that.",
       "parentUuid": "d713e603_fe2c587a",
+      "range": {
+        "startLine": 25,
+        "startChar": 35,
+        "endLine": 25,
+        "endChar": 36
+      },
+      "revId": "9082b62e5a3cd7158230b954b9acc2e8068980db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d29248b3_4b7c7d8d",
+        "filename": "tools/list-jar-packages.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-06T16:37:33Z",
+      "side": 1,
+      "message": "Done. My bash skills are very poor so I only managed to do this by duplicating the whole command.",
+      "parentUuid": "8ba1bf53_335f7c17",
       "range": {
         "startLine": 25,
         "startChar": 35,
