@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d2348aca_230bb559",
+        "filename": "core/definitions.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 2211,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T19:45:27Z",
+      "side": 1,
+      "message": "This is moved from below.\n\nEditors might write lock files or backup files, I think emacs sometimes creates .#file.java",
+      "parentUuid": "bd94e1a2_b38a9ebd",
+      "range": {
+        "startLine": 2211,
+        "startChar": 60,
+        "endLine": 2211,
+        "endChar": 80
+      },
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5c265445_31ec343e",
         "filename": "core/definitions.mk",
         "patchSetId": 6
@@ -36,6 +60,143 @@
       "writtenOn": "2017-10-05T23:39:54Z",
       "side": 1,
       "message": "It seems to me that it\u0027d be nice to add the word \"save\" here somewhere, whether it\u0027s in the function name or in a comment describing what the function does\n\nsince we talked in person and you described that this is primarily doing the saving rather than the computation of which files go in the shard",
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51ae3c4b_b9a97405",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T19:45:27Z",
+      "side": 1,
+      "message": "This file gets parsed on every java module and doesn\u0027t need to parse math.mk every time.  math.mk is already included from config.mk",
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13149ba0_26defa07",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T19:45:27Z",
+      "side": 1,
+      "message": "$(call pretty-error,",
+      "range": {
+        "startLine": 363,
+        "startChar": 0,
+        "endLine": 363,
+        "endChar": 7
+      },
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "80574829_f657d5de",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T19:45:27Z",
+      "side": 1,
+      "message": "shard_words?  And maybe a comment explaining that this is an x for every shard",
+      "range": {
+        "startLine": 370,
+        "startChar": 0,
+        "endLine": 370,
+        "endChar": 6
+      },
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31bf5c8f_8515ba66",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T19:45:27Z",
+      "side": 1,
+      "message": "Set a variable above if sharding is enabled so you don\u0027t have to do all the checks again",
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71add5db_b0995528",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T19:45:27Z",
+      "side": 1,
+      "message": "Can we use $(call create-classes-full-debug.jar) here?",
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51ce0b28_89795381",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 517,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T19:45:27Z",
+      "side": 1,
+      "message": "We shouldn\u0027t have to duplicate the !sharding rule",
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1dfd4404_dbd914b0",
+        "filename": "core/math.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T19:45:27Z",
+      "side": 1,
+      "message": "Generate this once and reuse it",
+      "range": {
+        "startLine": 89,
+        "startChar": 18,
+        "endLine": 90,
+        "endChar": 78
+      },
       "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
