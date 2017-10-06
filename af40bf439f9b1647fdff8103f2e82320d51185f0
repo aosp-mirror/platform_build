@@ -22,6 +22,30 @@
       "revId": "af40bf439f9b1647fdff8103f2e82320d51185f0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fccf582_5eaa7a0d",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T19:50:46Z",
+      "side": 1,
+      "message": "This is copied from java_library.mk  I expect it ends up as part of the rule created from $(call copy-one-file)?",
+      "parentUuid": "66cb0dde_d0195156",
+      "range": {
+        "startLine": 59,
+        "startChar": 15,
+        "endLine": 59,
+        "endChar": 43
+      },
+      "revId": "af40bf439f9b1647fdff8103f2e82320d51185f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
