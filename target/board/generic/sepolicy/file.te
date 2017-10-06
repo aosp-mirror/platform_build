@@ -1,1 +1,0 @@
-type sysfs_writable, fs_type, sysfs_type, mlstrustedobject;
