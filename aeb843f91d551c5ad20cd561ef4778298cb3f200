@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "02fecfdd_5f34c2fe",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2017-10-06T00:36:17Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 8
+      },
+      "revId": "aeb843f91d551c5ad20cd561ef4778298cb3f200",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86e9de40_ecaf36b6",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2017-10-06T00:36:17Z",
+      "side": 1,
+      "message": "does this apply for boot image jars? I thought it\u0027s only for apps.",
+      "range": {
+        "startLine": 43,
+        "startChar": 8,
+        "endLine": 43,
+        "endChar": 24
+      },
+      "revId": "aeb843f91d551c5ad20cd561ef4778298cb3f200",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7de4ce1a_7d7c371b",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2017-10-06T00:36:17Z",
+      "side": 1,
+      "message": "intended tabs?",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 1
+      },
+      "revId": "aeb843f91d551c5ad20cd561ef4778298cb3f200",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
