@@ -35,11 +35,34 @@ endif
 endif # TURBINE_DISABLED != false
 
 ifdef LOCAL_SOONG_DEX_JAR
-$(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
-$(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(LOCAL_BUILT_MODULE)))
-java-dex : $(LOCAL_BUILT_MODULE)
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
+
+  # defines built_odex along with rule to install odex
+  include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+
+  ifdef LOCAL_DEX_PREOPT
+    ifneq ($(dexpreopt_boot_jar_module),) # boot jar
+      # boot jar's rules are defined in dex_preopt.mk
+      dexpreopted_boot_jar := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(dexpreopt_boot_jar_module)_nodex.jar
+      $(eval $(call copy-one-file,$(dexpreopted_boot_jar),$(LOCAL_BUILT_MODULE)))
+
+      # For libart boot jars, we don't have .odex files.
+    else # ! boot jar
+      $(built_odex): PRIVATE_MODULE := $(LOCAL_MODULE)
+      # Use pattern rule - we may have multiple built odex files.
+$(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(common_javalib.jar)
+	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
+	$(call dexpreopt-one-file,$<,$@)
+
+     $(eval $(call dexpreopt-copy-jar,$(common_javalib.jar),$(LOCAL_BUILT_MODULE),$(LOCAL_DEX_PREOPT)))
+    endif # ! boot jar
+  else # LOCAL_DEX_PREOPT
+    $(eval $(call copy-one-file,$(common_javalib.jar),$(LOCAL_BUILT_MODULE)))
+  endif # LOCAL_DEX_PREOPT
+
+  java-dex : $(LOCAL_BUILT_MODULE)
 else
-$(eval $(call copy-one-file,$(full_classes_jar),$(LOCAL_BUILT_MODULE)))
+  $(eval $(call copy-one-file,$(full_classes_jar),$(LOCAL_BUILT_MODULE)))
 endif
 
 javac-check : $(full_classes_jar)
