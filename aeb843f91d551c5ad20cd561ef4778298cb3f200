@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "32a649c6_4df7fa62",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T00:39:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "02fecfdd_5f34c2fe",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 8
+      },
+      "revId": "aeb843f91d551c5ad20cd561ef4778298cb3f200",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "86e9de40_ecaf36b6",
         "filename": "core/soong_java_prebuilt.mk",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "18a0c084_bc2af8cc",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T00:39:47Z",
+      "side": 1,
+      "message": "Copied from java_library.mk",
+      "parentUuid": "86e9de40_ecaf36b6",
+      "range": {
+        "startLine": 43,
+        "startChar": 8,
+        "endLine": 43,
+        "endChar": 24
+      },
+      "revId": "aeb843f91d551c5ad20cd561ef4778298cb3f200",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7de4ce1a_7d7c371b",
         "filename": "core/soong_java_prebuilt.mk",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2017-10-06T00:36:17Z",
       "side": 1,
       "message": "intended tabs?",
+      "range": {
+        "startLine": 54,
+        "startChar": 0,
+        "endLine": 54,
+        "endChar": 1
+      },
+      "revId": "aeb843f91d551c5ad20cd561ef4778298cb3f200",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a17d4cb2_fede91bb",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-06T00:39:47Z",
+      "side": 1,
+      "message": "Yes, this is a recipe, it has to have tabs",
+      "parentUuid": "7de4ce1a_7d7c371b",
       "range": {
         "startLine": 54,
         "startChar": 0,
