@@ -475,11 +475,7 @@ $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(my_prebuilt_src_file)
 	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
 	$(call dexpreopt-one-file,$<,$@)
 
-$(built_module) : $(my_prebuilt_src_file)
-	$(call copy-file-to-target)
-ifneq (nostripping,$(LOCAL_DEX_PREOPT))
-	$(call dexpreopt-remove-classes.dex,$@)
-endif
+$(eval $(call dexpreopt-copy-jar,$(my_prebuilt_src_file),$(built_module),$(LOCAL_DEX_PREOPT)))
 endif # boot jar
 else # ! LOCAL_DEX_PREOPT
 $(built_module) : $(my_prebuilt_src_file)
