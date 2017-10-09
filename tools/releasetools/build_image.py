@@ -120,7 +120,7 @@ def AVBCalcMaxImageSize(avbtool, footer_type, partition_size, additional_args):
     return int(output)
 
 def AVBAddFooter(image_path, avbtool, footer_type, partition_size,
-                 partition_name, key_path, algorithm,
+                 partition_name, key_path, algorithm, salt,
                  additional_args):
   """Adds dm-verity hashtree and AVB metadata to an image.
 
@@ -132,6 +132,7 @@ def AVBAddFooter(image_path, avbtool, footer_type, partition_size,
     partition_name: The name of the partition - will be embedded in metadata.
     key_path: Path to key to use or None.
     algorithm: Name of algorithm to use or None.
+    salt: The salt to use (a hexadecimal string) or None.
     additional_args: Additional arguments to pass to 'avbtool
       add_hashtree_image'.
   Returns:
@@ -144,6 +145,8 @@ def AVBAddFooter(image_path, avbtool, footer_type, partition_size,
 
   if key_path and algorithm:
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
+  if salt:
+    cmd.extend(["--salt", salt])
 
   cmd.extend(shlex.split(additional_args))
 
@@ -590,10 +593,11 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     # key_path and algorithm are only available when chain partition is used.
     key_path = prop_dict.get("avb_key_path")
     algorithm = prop_dict.get("avb_algorithm")
+    salt = prop_dict.get("avb_salt")
     # avb_add_hash_footer_args or avb_add_hashtree_footer_args
     additional_args = prop_dict["avb_add_" + avb_footer_type + "_footer_args"]
     if not AVBAddFooter(out_file, avbtool, avb_footer_type, original_partition_size,
-                        partition_name, key_path, algorithm, additional_args):
+                        partition_name, key_path, algorithm, salt, additional_args):
       return False
 
   if run_fsck and prop_dict.get("skip_fsck") != "true":
@@ -639,8 +643,9 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "verity_signer_cmd",
       "verity_fec",
       "avb_enable",
-      "avb_avbtool"
-      )
+      "avb_avbtool",
+      "avb_salt",
+  )
   for p in common_props:
     copy_prop(p, p)
 
