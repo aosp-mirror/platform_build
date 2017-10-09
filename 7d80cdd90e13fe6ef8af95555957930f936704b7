@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "be104823_0f8396ca",
+        "filename": "core/definitions.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 2211,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-09T18:12:45Z",
+      "side": 1,
+      "message": "I think they don\u0027t want include any hidden files..",
+      "parentUuid": "d2348aca_230bb559",
+      "range": {
+        "startLine": 2211,
+        "startChar": 60,
+        "endLine": 2211,
+        "endChar": 80
+      },
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5c265445_31ec343e",
         "filename": "core/definitions.mk",
         "patchSetId": 6
@@ -66,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "4453337e_9f523b2c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 2234,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-09T18:12:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5c265445_31ec343e",
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "51ae3c4b_b9a97405",
         "filename": "core/java.mk",
         "patchSetId": 6
@@ -80,6 +122,24 @@
       "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "db4f81da_876e05c6",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-09T18:12:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "51ae3c4b_b9a97405",
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -106,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "07ff604e_2656b8cd",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-09T18:12:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "13149ba0_26defa07",
+      "range": {
+        "startLine": 363,
+        "startChar": 0,
+        "endLine": 363,
+        "endChar": 7
+      },
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "80574829_f657d5de",
         "filename": "core/java.mk",
         "patchSetId": 6
@@ -129,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "6b2f62d6_584fedfd",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-09T18:12:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80574829_f657d5de",
+      "range": {
+        "startLine": 370,
+        "startChar": 0,
+        "endLine": 370,
+        "endChar": 6
+      },
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "31bf5c8f_8515ba66",
         "filename": "core/java.mk",
         "patchSetId": 6
@@ -143,6 +251,24 @@
       "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f802cf8_58120b10",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-09T18:12:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "31bf5c8f_8515ba66",
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +289,24 @@
     },
     {
       "key": {
+        "uuid": "752dc911_a9ea3faa",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 498,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-09T18:12:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "71add5db_b0995528",
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "51ce0b28_89795381",
         "filename": "core/java.mk",
         "patchSetId": 6
@@ -177,6 +321,24 @@
       "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9d81b1f_f214a3f1",
+        "filename": "core/java.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 517,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-09T18:12:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "51ce0b28_89795381",
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -200,6 +362,30 @@
       "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63b04126_242af711",
+        "filename": "core/math.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-09T18:12:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1dfd4404_dbd914b0",
+      "range": {
+        "startLine": 89,
+        "startChar": 18,
+        "endLine": 90,
+        "endChar": 78
+      },
+      "revId": "7d80cdd90e13fe6ef8af95555957930f936704b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
