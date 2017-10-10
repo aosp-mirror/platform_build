@@ -34,6 +34,24 @@
       "revId": "c6465f5d1724ec568f9ccee4962e5192e69382d1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a07d4fcc_d85ee91c",
+        "filename": "core/java.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-10T23:06:00Z",
+      "side": 0,
+      "message": "After talking with Dan offline, Added it back.",
+      "parentUuid": "35a9d2eb_1feb9fb7",
+      "revId": "c6465f5d1724ec568f9ccee4962e5192e69382d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
