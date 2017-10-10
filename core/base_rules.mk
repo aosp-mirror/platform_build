@@ -622,7 +622,7 @@ ALL_MODULE_TAGS := $(sort $(ALL_MODULE_TAGS) $(my_module_tags))
 
 # Add this module name to the tag list of each specified tag.
 $(foreach tag,$(my_module_tags),\
-    $(eval ALL_MODULE_NAME_TAGS.$(tag) += $(my_register_name)))
+    $(eval ALL_MODULE_NAME_TAGS.$(tag) := $$(ALL_MODULE_NAME_TAGS.$(tag)) $(my_register_name)))
 
 ###########################################################
 ## umbrella targets used to verify builds
