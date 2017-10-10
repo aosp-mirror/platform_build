@@ -2962,7 +2962,7 @@ STATS.MODULE_TYPE := \
   base_rules \
   HEADER_LIBRARY
 
-$(foreach $(s),$(STATS.MODULE_TYPE),$(eval STATS.MODULE_TYPE.$(s) :=))
+$(foreach s,$(STATS.MODULE_TYPE),$(eval STATS.MODULE_TYPE.$(s) :=))
 define record-module-type
 $(strip $(if $(LOCAL_RECORDED_MODULE_TYPE),,
   $(if $(filter-out $(SOONG_ANDROID_MK),$(LOCAL_MODULE_MAKEFILE)),
