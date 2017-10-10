@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8f03c6c4_d3425d8e",
+        "filename": "core/java.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-10T00:37:44Z",
+      "side": 1,
+      "message": "How expensive would it be to always store numbers instead of word lists outside math.mk?",
+      "revId": "d89e9eef84ab8f41660bfe364779e50bdfa76c90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e367faad_bb32cab2",
+        "filename": "core/java.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 384,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-10T00:37:44Z",
+      "side": 1,
+      "message": "Put this above where you use __MATH_NUMBERS",
+      "revId": "d89e9eef84ab8f41660bfe364779e50bdfa76c90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a1b781b_45a9ba9e",
+        "filename": "core/java.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-10T00:37:44Z",
+      "side": 1,
+      "message": "ifdef enable_sharding",
+      "revId": "d89e9eef84ab8f41660bfe364779e50bdfa76c90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd2f2d6b_34e130ea",
+        "filename": "core/math.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-10T00:37:44Z",
+      "side": 1,
+      "message": "_INT_MAX_WORDS, and then _INT_MAX :\u003d $(words $(_INT_MAX_WORDS)), and then use $(_INT_MAX) when you print errors in int_check_valid?",
+      "revId": "d89e9eef84ab8f41660bfe364779e50bdfa76c90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
