@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "69511c40_852b0815",
+        "filename": "core/java.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-10T15:26:22Z",
+      "side": 0,
+      "message": "I thought there was some reason we needed these dependencies directly on the source files, but I don\u0027t remember what it was.  Dan?",
+      "revId": "c6465f5d1724ec568f9ccee4962e5192e69382d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1ba27936_ead57da5",
+        "filename": "core/java.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-10T15:26:22Z",
+      "side": 1,
+      "message": "I was suggesting that the $(words) and $(call int_encode) calls be implicit in $(call int_devide), so this file doesn\u0027t have to know at all that the math is implemented with lists.",
+      "revId": "d572978ec378b3966af434709b0b65a30948fe8f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
