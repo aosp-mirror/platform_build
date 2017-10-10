@@ -16,6 +16,24 @@
       "revId": "c6465f5d1724ec568f9ccee4962e5192e69382d1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "35a9d2eb_1feb9fb7",
+        "filename": "core/java.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-10T20:59:30Z",
+      "side": 0,
+      "message": "I thought since java_source_list_file depends on java_source_deps already so we don\u0027t need it again as one of deps for compiling jar.",
+      "parentUuid": "69511c40_852b0815",
+      "revId": "c6465f5d1724ec568f9ccee4962e5192e69382d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
