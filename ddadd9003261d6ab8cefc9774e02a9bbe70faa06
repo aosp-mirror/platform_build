@@ -34,6 +34,24 @@
       "revId": "ddadd9003261d6ab8cefc9774e02a9bbe70faa06",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f8591a4_d972bfb1",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-11T18:29:23Z",
+      "side": 1,
+      "message": "I\u0027d suggest the global flags in build/soong/java/config/config.go",
+      "parentUuid": "459950d2_90fbb939",
+      "revId": "ddadd9003261d6ab8cefc9774e02a9bbe70faa06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
