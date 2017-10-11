@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "afd311d5_c946508b",
+        "filename": "core/java.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-11T20:11:03Z",
+      "side": 1,
+      "message": "In order to get the shard index list, we have to do $(wordlist s,e,$(_MATH_NUMBERS)). The _MATH_NUMBERS was a hard-coded 1-100 list. So that\u0027s why we have to use $(call _math_check_valid) to verify if the num_shards falls into 1-100. And we can extend the _MATH_NUMERS list by hard-code more numbers if more granularity-sharding will be needed. The two check functions serve different purpose. The _math_check_valid invoked before we want to sub-list of _MATH_NUMBERS. And int_check_valid was invoked before we call any int_plus/multiply/divde/subtract functions to valid the input number is valid.",
+      "parentUuid": "0deae6c3_902d908d",
+      "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8e6418bc_3ec808cd",
         "filename": "core/java.mk",
         "patchSetId": 17
@@ -33,6 +51,24 @@
       "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1f3300cb_2fcc649d",
+        "filename": "core/java.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-11T20:11:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8e6418bc_3ec808cd",
+      "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "48799259_23b1236f",
+        "filename": "core/java.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 462,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-11T20:11:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8cfb5ac5_40eb8228",
+      "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2858b8aa_7c29a026",
         "filename": "core/java.mk",
         "patchSetId": 17
@@ -64,6 +118,24 @@
       "writtenOn": "2017-10-11T19:26:35Z",
       "side": 1,
       "message": "Is there an advantage in putting the build process of the resource files into a shard as opposed to putting it in a separate named rule?\n\nIt seems to me that it\u0027d be easier to recognize what\u0027s going on if the resources were part of their own named rule and the final zipping rule (line 497) were to depend on the java shards and also the resource jar (which would also make it easier to refactor how the resources jar gets built if that process ever becomes different from building the java code)",
+      "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dcc9602a_3d26b5d3",
+        "filename": "core/java.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-11T20:11:03Z",
+      "side": 1,
+      "message": "The additional files are all generated .java source files which \"find\" command is needed during ninja runtime. I think it is  cleaner that we put these additional files into a separate java-source-list file so that Javac can directly consume it and \"compile-java\" function also can be re-used.",
+      "parentUuid": "2858b8aa_7c29a026",
       "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
