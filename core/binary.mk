@@ -1415,9 +1415,22 @@ my_link_type := native:ndk
 my_warn_types :=
 my_allowed_types := native:ndk
 else ifdef LOCAL_USE_VNDK
-my_link_type := native:vendor
-my_warn_types :=
-my_allowed_types := native:vendor
+    _name := $(patsubst %.vendor,%,$(LOCAL_MODULE))
+    ifneq ($(filter $(_name),$(VNDK_CORE_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES) $(LLNDK_LIBRARIES)),)
+        ifeq ($(filter $(_name),$(VNDK_PRIVATE_LIBRARIES)),)
+            my_link_type := native:vndk
+        else
+            my_link_type := native:vndk_private
+        endif
+        my_warn_types :=
+        my_allowed_types := native:vndk native:vndk_private
+    else
+        # Modules installed to /vendor cannot directly depend on modules marked
+        # with vendor_available: false
+        my_link_type := native:vendor
+        my_warn_types :=
+        my_allowed_types := native:vendor native:vndk
+    endif
 else
 my_link_type := native:platform
 my_warn_types :=
