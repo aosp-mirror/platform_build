@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "34fbf0cb_ca9f965b",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1084983
+      },
+      "writtenOn": "2017-10-11T17:15:01Z",
+      "side": 1,
+      "message": "All versions of javac accept the flag (it doesn\u0027t do anything before 9), so the if check is optional.",
+      "revId": "ddadd9003261d6ab8cefc9774e02a9bbe70faa06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
