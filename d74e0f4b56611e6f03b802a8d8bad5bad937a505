@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9d64b7b1_fac69352",
+        "filename": "core/math.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-11T00:02:19Z",
+      "side": 1,
+      "message": "What prevents this from being $(words $(_INT_MAX_WORDS))?  Could you use join like int_subtract to make it $(words $(_INT_MAX_WORDS))-1?",
+      "revId": "d74e0f4b56611e6f03b802a8d8bad5bad937a505",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
