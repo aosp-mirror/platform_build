@@ -135,6 +135,7 @@ $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_i
 	    echo "verity_block_device=$(PRIVATE_VERITY_BLOCK_DEVICE)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt)
 	$(if $(PRIVATE_SUPPORT_VERITY_FEC),\
 	  $(hide) echo "verity_fec=$(PRIVATE_SUPPORT_VERITY_FEC)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt)
+	$(if $(filter eng, $(TARGET_BUILD_VARIANT)),$(hide) echo "verity_disable=true" >> $(PRIVATE_INTERMEDIATES)/image_info.txt)
 	$(hide) echo "avb_avbtool=$(PRIVATE_AVB_AVBTOOL)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt
 	$(if $(PRIVATE_AVB_KEY_PATH),\
 	  $(hide) echo "avb_key_path=$(PRIVATE_AVB_KEY_PATH)" >> $(PRIVATE_INTERMEDIATES)/image_info.txt;\
