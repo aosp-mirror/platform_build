@@ -116,7 +116,7 @@ my_allowed_types := native:ndk
 else
 my_link_type := app:platform
 my_warn_types :=
-my_allowed_types := native:ndk native:platform native:vendor
+my_allowed_types := native:ndk native:platform native:vendor native:vndk native:vndk_private
 endif
 
 my_link_deps := $(addprefix SHARED_LIBRARIES:,$(LOCAL_JNI_SHARED_LIBRARIES))
