@@ -257,6 +257,24 @@
       "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "327141cb_f626717b",
+        "filename": "core/math.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-11T22:40:35Z",
+      "side": 1,
+      "message": "You could increase the limit by one and do something like:\n\n_INT_ALL_WORDS_EXCEPT_ONE :\u003d $(foreach a,x x,$(foreach b,x x x x x x x x x x x x x x x x,\\\n  $(foreach c,x x x x x x x x x x x x x x x x,x x x x x x x x x x x x x x x x)))\n\n_INT_ALL_WORDS :\u003d $(INT_ALL_WORDS_EXCEPT_ONE) x # analogous to the current _INT_MAX_WORDS\n\n_INT_NUM_WORDS_MINUS_ONE :\u003d $(words $(_INT_ALL_WORDS_EXCEPT_ONE))\n\nwhich would enable using $(_INT_NUM_WORDS_MINUS_ONE) within _int_encode\n\nalthough since you mentioned offline that Colin would like to have this happen in Soong soon then I guess it seems like not a big deal to me",
+      "parentUuid": "383cd2ad_b54c110a",
+      "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
