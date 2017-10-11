@@ -16,6 +16,24 @@
       "revId": "ddadd9003261d6ab8cefc9774e02a9bbe70faa06",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "459950d2_90fbb939",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-11T17:47:03Z",
+      "side": 1,
+      "message": "Ah, thanks. Colin, any preference whether or not I move this flag unconditionally into line 34?",
+      "parentUuid": "34fbf0cb_ca9f965b",
+      "revId": "ddadd9003261d6ab8cefc9774e02a9bbe70faa06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
