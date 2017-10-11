@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "948af215_c49b319c",
+        "filename": "core/java.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-11T21:59:50Z",
+      "side": 1,
+      "message": "I wrapped these checks into a separate function in math.mk",
+      "parentUuid": "a32c76e6_2163d720",
+      "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "34a77584_04cea4e8",
         "filename": "core/java.mk",
         "patchSetId": 17
@@ -75,6 +93,30 @@
       "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c5cd674_23e9d437",
+        "filename": "core/java.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-11T21:59:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "34a77584_04cea4e8",
+      "range": {
+        "startLine": 383,
+        "startChar": 2,
+        "endLine": 383,
+        "endChar": 89
+      },
+      "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -197,6 +239,24 @@
       "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "383cd2ad_b54c110a",
+        "filename": "core/math.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-11T21:59:50Z",
+      "side": 1,
+      "message": "if we put int_check_valid inside int_plus/subtract/multiply/divide, it might cause dead loop recursive call. Since int_check_valid need int_subtract to get _int_limit without any hard-coding the limit number.",
+      "parentUuid": "d1b37420_5e2aa5a7",
+      "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
