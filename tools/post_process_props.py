@@ -64,7 +64,7 @@ def validate(prop):
   buildprops = prop.to_dict()
   for key, value in buildprops.iteritems():
     # Check build properties' length.
-    if len(value) > PROP_VALUE_MAX:
+    if len(value) > PROP_VALUE_MAX and not key.startswith("ro."):
       check_pass = False
       sys.stderr.write("error: %s cannot exceed %d bytes: " %
                        (key, PROP_VALUE_MAX))
