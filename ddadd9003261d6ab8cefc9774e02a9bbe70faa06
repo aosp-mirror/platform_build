@@ -52,6 +52,24 @@
       "revId": "ddadd9003261d6ab8cefc9774e02a9bbe70faa06",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "05ee9984_09f2c211",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-12T17:33:45Z",
+      "side": 1,
+      "message": "Because of http://b/65004097#comment21 this should only need to be as a short-term patchwork to unblock our continued work on OpenJDK 9 related stuff, so I don\u0027t see a need to ever expose it to the OpenJDK 8 based build system (with potential side effects that we hadn\u0027t thought of). So I think it should be fine to submit this CL as is, but I\u0027ll hold off until Colin either tells me to or submits his own CL, in which case I\u0027ll abandon this one.",
+      "parentUuid": "4f8591a4_d972bfb1",
+      "revId": "ddadd9003261d6ab8cefc9774e02a9bbe70faa06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
