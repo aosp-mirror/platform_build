@@ -639,7 +639,7 @@ ifeq (,$(strip $(DIST_DIR)))
   DIST_DIR := $(OUT_DIR)/dist
 endif
 
-ifndef KATI
+ifeq ($(CALLED_FROM_SETUP),true)
 PRINT_BUILD_CONFIG ?= true
 endif
 
