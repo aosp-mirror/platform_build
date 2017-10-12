@@ -72,6 +72,10 @@ define math_gt_or_eq
 $(if $(filter $(1),$(call math_max,$(1),$(2))),true)
 endef
 
+define math_lt
+$(if $(call math_gt_or_eq,$(1),$(2)),,true)
+endef
+
 #$(warning $(call math_gt_or_eq, 2, 1))
 #$(warning $(call math_gt_or_eq, 1, 1))
 #$(warning $(if $(call math_gt_or_eq, 1, 2),false,true))
@@ -79,6 +83,15 @@ endef
 # $1 is the variable name to increment
 define inc_and_print
 $(strip $(eval $(1) := $($(1)) .)$(words $($(1))))
+endef
+
+# Returns the words in $2 that are numbers and are less than $1
+define numbers_less_than
+$(strip \
+  $(foreach n,$2, \
+    $(if $(call math_is_number,$(n)), \
+      $(if $(call math_lt,$(n),$(1)), \
+        $(n)))))
 endef
 
 _INT_LIMIT_WORDS := $(foreach a,x x,$(foreach b,x x x x x x x x x x x x x x x x,\
