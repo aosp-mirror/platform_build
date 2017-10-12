@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be9d5eff_d9aca44a",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-12T21:49:37Z",
+      "side": 1,
+      "message": "If you want to move this to the top level (where we haven\u0027t ruled out 1.8 yet), wanna rename this to something like _with_max_supported_java_version_18?\n\nAPI versions 1..23 will also not support 1.9 so the name makes less sense now (previously this value was scoped within a block where we had already excluded 1.8).",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 60
+      },
+      "revId": "0e702e99ea489a8f39e22cf85616575327075352",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aae508b9_bf163e44",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-12T21:49:37Z",
+      "side": 1,
+      "message": "This will mean that we give folks more stuff on the system modules than they previously had on the classpath, which seems a little dodgy.\n\nIn my CL http://aosp/497290 , which this one here is based on, I\u0027m locally working on deriving the correct system modules from the set of full_java_bootclasspath_libs. Wouldn\u0027t that be better, to avoid introducing unrelated changes as part of this CL?\n\nAs discussed earlier, I think there are 10 possible values that the bootclasspath currently can have, across our build targets:\n\n1.) empty (\"--system\u003dnone\")\n2.) default (no \"--system\" argument; for some host tools).\n3.) core-all (only used for building core-oj and core-libart)\n4.) core-libart:core-oj (or just core-oj, but that\u0027s an anomaly that should be fixed per http://b/67297434)\n5.) core-lambda-stubs:core-libart:core-oj\n6.) core-libart-hostdex:core-oj-hostdex\n7.) android_stubs_current:core-lambda-stubs\n8.) android_system_stubs_current:core-lambda-stubs\n9.) android_test_stubs_current:core-lambda-stubs\n10.) core-lambda-stubs\n\nIt is a lot of cases, but at least we could keep the step of changing the bootclasspath/system modules libraries separate from the step of supporting OpenJDK 9.\n\nYou mentioned that you\u0027re getting rid of 6.), and that sounds fine.\n\nFor 10.), the tl;dr is that this might not actually be used:\nI think I saw it for two build targets that explicitly set a LOCAL_JAVA_LANGUAGE_VERSION of 1.6 and target (from memory) SDKv4 and v14, respectively. My logic for calculation LOCAL_JAVAC_BOOTCLASSPATH_ARG_SUPPORTED didn\u0027t account for 1.6 / was wrong, so that may have caused it. I\u0027ve locally fixed it to:\n\nifeq (,$(filter 1.6 1.7 1.8,$(LOCAL_JAVA_LANGUAGE_VERSION)))\nLOCAL_JAVAC_BOOTCLASSPATH_ARG_SUPPORTED :\u003d\nelse\nLOCAL_JAVAC_BOOTCLASSPATH_ARG_SUPPORTED :\u003d true\nendif",
+      "range": {
+        "startLine": 210,
+        "startChar": 5,
+        "endLine": 213,
+        "endChar": 52
+      },
+      "revId": "0e702e99ea489a8f39e22cf85616575327075352",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
