@@ -33,9 +33,12 @@ endif
 ifeq (,$(strip $(built_dex)$(my_prebuilt_src_file)$(LOCAL_SOONG_DEX_JAR))) # contains no java code
 LOCAL_DEX_PREOPT :=
 endif
-# if WITH_DEXPREOPT_BOOT_IMG_ONLY=true and module is not in boot class path skip
-ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_ONLY))
-ifeq ($(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE)),)
+# if WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY=true and module is not in boot class path skip
+# Also preopt system server jars since selinux prevents system server from loading anything from
+# /data. If we don't do this they will need to be extracted which is not favorable for RAM usage
+# or performance.
+ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
+ifeq ($(filter $(PRODUCT_SYSTEM_SERVER_JARS) $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE)),)
 LOCAL_DEX_PREOPT :=
 endif
 endif
