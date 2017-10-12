@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f70fbeb1_77e5c1ed",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-10-12T00:39:00Z",
+      "side": 1,
+      "message": "nit: \"vboot\" mostly refers to the one used on ryu (i.e. PRODUCT_SUPPORTS_VBOOT) in build/make/core/Makefile. Maybe just use \"verified boot\"?",
+      "range": {
+        "startLine": 7,
+        "startChar": 7,
+        "endLine": 7,
+        "endChar": 12
+      },
+      "revId": "1100ddf7885ac5a9e81076f60848006c83926f48",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb752471_2e2dbb44",
+        "filename": "target/product/verity.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-10-12T00:39:00Z",
+      "side": 1,
+      "message": "Also update the comment?",
+      "range": {
+        "startLine": 17,
+        "startChar": 52,
+        "endLine": 18,
+        "endChar": 19
+      },
+      "revId": "1100ddf7885ac5a9e81076f60848006c83926f48",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
