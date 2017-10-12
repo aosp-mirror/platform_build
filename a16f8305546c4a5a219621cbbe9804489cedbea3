@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1f611dd6_ad87f64a",
+        "filename": "core/math.mk",
+        "patchSetId": 23
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-12T19:45:14Z",
+      "side": 1,
+      "message": "Could also be nice to consolidate _INT_LIMIT_WORDS and _INT_MAX_WORDS or to rename (since they sound similar) via something like one of:\n\n1. replace \"integer greater than $(words $(_INT_LIMIT_WORDS))\" with \"integer greater than or equal to $(words $(_INT_MAX_WORDS))\", and replace the implementation of _INT_MAX_WORDS with the current implementation of _INT_LIMIT_WORDS, and replace the usage of line 93 of _INT_LIMIT_WORDS with _INT_MAX_WORDS, and then remove _INT_LIMIT_WORDS since it would be no longer needed\n\nor\n\n2. rename \"_INT_MAX_WORDS\" to \"_INT_MAX_WORDS_PLUS_ONE\" and \"_INT_LIMIT_WORDS\" to \"_INT_MAX_WORDS\" and \"_INT_MAX\" to \"_INT_MAX_PLUS_ONE\"",
+      "revId": "a16f8305546c4a5a219621cbbe9804489cedbea3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0d68793_e3840fb8",
+        "filename": "core/math.mk",
+        "patchSetId": 23
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-12T19:45:14Z",
+      "side": 1,
+      "message": "I wonder if we want to check for overflow here too",
+      "revId": "a16f8305546c4a5a219621cbbe9804489cedbea3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f85a3fb3_193e040f",
+        "filename": "core/math.mk",
+        "patchSetId": 23
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-12T19:45:14Z",
+      "side": 1,
+      "message": "I wonder if we want to check for overflow here too",
+      "revId": "a16f8305546c4a5a219621cbbe9804489cedbea3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
