@@ -275,6 +275,24 @@
       "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "653331d5_f877900a",
+        "filename": "core/math.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-12T01:15:21Z",
+      "side": 1,
+      "message": "I forgot to mention that int_divide is actually a func which recursively calls int_subtract. eg. int_divide(500,500), after calling int_subtract once, dividend become 0. If we put int_check_valid(0\u003cint\u003c\u003d8192) within int_divide, it will report error instead of real number for this case. So I changed int_check_valid to allow int \u003e\u003d 0 to loose the limitation so that we can use int_check_valid within int_divide func.",
+      "parentUuid": "327141cb_f626717b",
+      "revId": "7763e9d9c267f3cde3d57a8676ce29713f8e1bf0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
