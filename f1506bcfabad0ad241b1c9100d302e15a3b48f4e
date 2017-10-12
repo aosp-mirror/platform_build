@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08898d4b_70a42207",
+        "filename": "core/math.mk",
+        "patchSetId": 22
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-12T01:52:00Z",
+      "side": 1,
+      "message": "After discussing with Jeff offline, I think I can remove this function, and only add checks in int_encode by $(1) !\u003d $(words $(_INT_MAX_WORDS))",
+      "revId": "f1506bcfabad0ad241b1c9100d302e15a3b48f4e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
