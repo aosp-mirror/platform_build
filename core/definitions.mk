@@ -2205,6 +2205,17 @@ define jar-args-sorted-files-in-directory
     @<(find $(1) -type f | sort | $(JAR_ARGS) $(1); echo "-C $(EMPTY_DIRECTORY) .")
 endef
 
+# append additional Java sources(resources/Proto sources, and etc) to $(1).
+define fetch-additional-java-source
+$(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
+    find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $(1); \
+fi
+$(if $(PRIVATE_HAS_PROTO_SOURCES), \
+    $(hide) find $(PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $(1))
+$(if $(PRIVATE_HAS_RS_SOURCES), \
+    $(hide) find $(PRIVATE_RS_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $(1))
+endef
+
 # Some historical notes:
 # - below we write the list of java files to java-source-list to avoid argument
 #   list length problems with Cygwin
@@ -2214,14 +2225,18 @@ define write-java-source-list
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Java source list: $(PRIVATE_MODULE)"
 $(hide) rm -f $@
 $(call dump-words-to-file,$(sort $(PRIVATE_JAVA_SOURCES)),$@.tmp)
-$(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
-    find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $@.tmp; \
-fi
-$(if $(PRIVATE_HAS_PROTO_SOURCES), \
-    $(hide) find $(PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $@.tmp)
-$(if $(PRIVATE_HAS_RS_SOURCES), \
-    $(hide) find $(PRIVATE_RS_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $@.tmp)
+$(call fetch-additional-java-source,$@.tmp)
 $(hide) tr ' ' '\n' < $@.tmp | $(NORMALIZE_PATH) | sort -u > $@
+endef
+
+# $(1): sharding number.
+# $(2): Java source files paths.
+define save-sharded-java-source-list
+$(java_source_list_file).shard.$(1): $(2) $$(NORMALIZE_PATH)
+	@echo "shard java source list: $$@"
+	rm -f $$@
+	$$(call dump-words-to-file,$(2),$$@.tmp)
+	$(hide) tr ' ' '\n' < $$@.tmp | $$(NORMALIZE_PATH) | sort -u > $$@
 endef
 
 # Common definition to invoke javac on the host and target.
@@ -2265,9 +2280,33 @@ $(hide) $(JAR) -cf $@ $(call jar-args-sorted-files-in-directory,$(PRIVATE_CLASS_
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 endef
 
-define transform-java-to-classes.jar
-@echo "$($(PRIVATE_PREFIX)DISPLAY) Java: $(PRIVATE_MODULE) ($(PRIVATE_CLASS_INTERMEDIATES_DIR))"
-$(call compile-java,$(TARGET_JAVAC),$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))
+# $(1): Javac output jar name.
+# $(2): Java source list file.
+# $(3): Java header libs.
+# $(4): Javac sharding number.
+# $(5): Javac sources deps (the arg may neeed $$ in case of containing '#')
+define create-classes-full-debug.jar
+$(1): PRIVATE_JAVACFLAGS := $$(LOCAL_JAVACFLAGS) $$(annotation_processor_flags)
+$(1): PRIVATE_JAR_EXCLUDE_FILES := $$(LOCAL_JAR_EXCLUDE_FILES)
+$(1): PRIVATE_JAR_PACKAGES := $$(LOCAL_JAR_PACKAGES)
+$(1): PRIVATE_JAR_EXCLUDE_PACKAGES := $$(LOCAL_JAR_EXCLUDE_PACKAGES)
+$(1): PRIVATE_DONT_DELETE_JAR_META_INF := $$(LOCAL_DONT_DELETE_JAR_META_INF)
+$(1): PRIVATE_JAVA_SOURCE_LIST := $(2)
+$(1): PRIVATE_ALL_JAVA_HEADER_LIBRARIES := $(3)
+$(1): PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes$(4)
+$(1): PRIVATE_ANNO_INTERMEDIATES_DIR := $(intermediates.COMMON)/anno$(4)
+$(1): \
+    $(2) \
+    $(3) \
+    $(5) \
+    $$(full_java_bootclasspath_libs) \
+    $$(layers_file) \
+    $$(annotation_processor_deps) \
+    $$(NORMALIZE_PATH) \
+    $$(JAR_ARGS) \
+    | $$(SOONG_JAVAC_WRAPPER)
+	@echo "Target Java: $$@ ($$(PRIVATE_CLASS_INTERMEDIATES_DIR))"
+	$$(call compile-java,$$(TARGET_JAVAC),$$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))
 endef
 
 define transform-java-to-header.jar
