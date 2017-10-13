@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "184a6dbe_3e90484f",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-13T04:11:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7a19887_7ad1e235",
+      "revId": "f4176b9f2acfd0bf646856a6d2d91f4980dc4209",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c068a920_86f55381",
         "filename": "core/soong_config.mk",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2017-10-13T03:58:54Z",
       "side": 1,
       "message": "subst operates on text, not words, so it preserves whitespace.  This could be:\n\n  _contents :\u003d $(subst $(comma)__SV__END,,$(_contents)__SV_END)",
+      "range": {
+        "startLine": 110,
+        "startChar": 0,
+        "endLine": 112,
+        "endChar": 79
+      },
+      "revId": "f4176b9f2acfd0bf646856a6d2d91f4980dc4209",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d46cb6f3_bc791719",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-13T04:11:24Z",
+      "side": 1,
+      "message": "Good point, done",
+      "parentUuid": "c068a920_86f55381",
       "range": {
         "startLine": 110,
         "startChar": 0,
