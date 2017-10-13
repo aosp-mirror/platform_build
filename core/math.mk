@@ -42,6 +42,11 @@ define _math_check_valid
 $(if $(call math_is_number,$(1)),,$(error Only positive integers <= 100 are supported (not $(1))))
 endef
 
+# return a list containing integers ranging from [$(1),$(2)]
+define int_range_list
+$(call _math_check_valid,$(1))$(call _math_check_valid,$(2))$(wordlist $(1),$(2),$(__MATH_NUMBERS))
+endef
+
 #$(call _math_check_valid,0)
 #$(call _math_check_valid,1)
 #$(call _math_check_valid,100)
@@ -74,4 +79,61 @@ endef
 # $1 is the variable name to increment
 define inc_and_print
 $(strip $(eval $(1) := $($(1)) .)$(words $($(1))))
+endef
+
+_INT_LIMIT_WORDS := $(foreach a,x x,$(foreach b,x x x x x x x x x x x x x x x x,\
+  $(foreach c,x x x x x x x x x x x x x x x x,x x x x x x x x x x x x x x x x)))
+
+define _int_encode
+$(if $(filter $(words x $(_INT_LIMIT_WORDS)),$(words $(wordlist 1,$(1),x $(_INT_LIMIT_WORDS)))),\
+  $(call pretty-error,integer greater than $(words $(_INT_LIMIT_WORDS)) is not supported!),\
+    $(wordlist 1,$(1),$(_INT_LIMIT_WORDS)))
+endef
+
+# _int_max returns the maximum of the two arguments
+# input: two (x) lists; output: one (x) list
+# integer cannot be passed in directly. It has to be converted using _int_encode.
+define _int_max
+$(subst xx,x,$(join $(1),$(2)))
+endef
+
+# first argument is greater than second argument
+# output: non-empty if true
+# integer cannot be passed in directly. It has to be converted using _int_encode.
+define _int_greater-than
+$(filter-out $(words $(2)),$(words $(call _int_max,$(1),$(2))))
+endef
+
+# first argument equals to second argument
+# output: non-empty if true
+# integer cannot be passed in directly. It has to be converted using _int_encode.
+define _int_equal
+$(filter $(words $(1)),$(words $(2)))
+endef
+
+# first argument is greater than or equal to second argument
+# output: non-empty if true
+# integer cannot be passed in directly. It has to be converted using _int_encode.
+define _int_greater-or-equal
+$(call _int_greater-than,$(1),$(2))$(call _int_equal,$(1),$(2))
+endef
+
+define int_plus
+$(words $(call _int_encode,$(1)) $(call _int_encode,$(2)))
+endef
+
+define int_subtract
+$(if $(call _int_greater-or-equal,$(call _int_encode,$(1)),$(call _int_encode,$(2))),\
+  $(words $(filter-out xx,$(join $(call _int_encode,$(1)),$(call _int_encode,$(2))))),\
+    $(call pretty-error,$(1) subtract underflow $(2)))
+endef
+
+define int_multiply
+$(words $(foreach a,$(call _int_encode,$(1)),$(call _int_encode,$(2))))
+endef
+
+define int_divide
+$(if $(filter 0,$(2)),$(call pretty-error,division by zero is not allowed!),$(strip \
+  $(if $(call _int_greater-or-equal,$(call _int_encode,$(1)),$(call _int_encode,$(2))), \
+    $(call int_plus,$(call int_divide,$(call int_subtract,$(1),$(2)),$(2)),1),0)))
 endef
