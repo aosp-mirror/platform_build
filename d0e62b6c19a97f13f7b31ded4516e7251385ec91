@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4712f548_2cfc74ed",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-13T01:36:45Z",
+      "side": 1,
+      "message": "Strip the last comma instead?",
+      "range": {
+        "startLine": 108,
+        "startChar": 89,
+        "endLine": 108,
+        "endChar": 98
+      },
+      "revId": "d0e62b6c19a97f13f7b31ded4516e7251385ec91",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
