@@ -33,6 +33,24 @@
       "revId": "2f43e90f166514cbcb97657dc977724dde2b6368",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d207cb90_cbe504d7",
+        "filename": "core/math.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-13T19:28:13Z",
+      "side": 1,
+      "message": "I think the \"math_is_number\" here is so that non-numbers (such as the string \"current\") are ignored instead of causing errors",
+      "parentUuid": "8f333695_21f60a4b",
+      "revId": "2f43e90f166514cbcb97657dc977724dde2b6368",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
