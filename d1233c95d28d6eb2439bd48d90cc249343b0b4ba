@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5dedfbe1_d0f9ef44",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 538,
+      "author": {
+        "id": 1080224
+      },
+      "writtenOn": "2017-10-13T19:59:44Z",
+      "side": 1,
+      "message": "Yohann started calling d8 d8-compat-dx in the other CL. May be we should follow and distingish between R8 and Compat Proguard?",
+      "range": {
+        "startLine": 538,
+        "startChar": 32,
+        "endLine": 538,
+        "endChar": 34
+      },
+      "revId": "d1233c95d28d6eb2439bd48d90cc249343b0b4ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6873d9b4_6a161480",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 716,
+      "author": {
+        "id": 1080224
+      },
+      "writtenOn": "2017-10-13T19:59:44Z",
+      "side": 1,
+      "message": "May be endif # !USE_R8",
+      "revId": "d1233c95d28d6eb2439bd48d90cc249343b0b4ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
