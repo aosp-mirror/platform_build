@@ -22,6 +22,30 @@
       "revId": "d0e62b6c19a97f13f7b31ded4516e7251385ec91",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "364c2590_a50e7195",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-13T02:23:26Z",
+      "side": 1,
+      "message": "How? there\u0027s not really a good make function to do that, and I\u0027d rather not do it in the shell.",
+      "parentUuid": "4712f548_2cfc74ed",
+      "range": {
+        "startLine": 108,
+        "startChar": 89,
+        "endLine": 108,
+        "endChar": 98
+      },
+      "revId": "d0e62b6c19a97f13f7b31ded4516e7251385ec91",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
