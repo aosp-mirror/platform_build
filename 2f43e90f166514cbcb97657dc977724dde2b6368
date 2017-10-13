@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f66bc3c3_4c47a622",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-13T19:29:10Z",
+      "side": 1,
+      "message": "Empty means no --system argument at all, which causes javac to fall back to the one that it shipped with.  That is correct for host modules, but not for device modules that are themselves implementing the system modules classes.  They need --system\u003dnone to make javac use nothing.",
+      "parentUuid": "f6fa37ed_449aeaa6",
+      "revId": "2f43e90f166514cbcb97657dc977724dde2b6368",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8f333695_21f60a4b",
         "filename": "core/math.mk",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2017-10-13T19:28:13Z",
       "side": 1,
       "message": "I think the \"math_is_number\" here is so that non-numbers (such as the string \"current\") are ignored instead of causing errors",
+      "parentUuid": "8f333695_21f60a4b",
+      "revId": "2f43e90f166514cbcb97657dc977724dde2b6368",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f0c5f68_6252f554",
+        "filename": "core/math.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-13T19:29:10Z",
+      "side": 1,
+      "message": "This is used on lists that might not be numbers, for example \"current\".  math_check_valid prints an error if used on a non-number.",
       "parentUuid": "8f333695_21f60a4b",
       "revId": "2f43e90f166514cbcb97657dc977724dde2b6368",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
