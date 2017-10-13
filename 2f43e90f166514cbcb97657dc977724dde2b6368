@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f6fa37ed_449aeaa6",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-13T19:18:58Z",
+      "side": 1,
+      "message": "Why sometime $(DEFAULT_SYSTEM_MODULES) need be set to none explicitly instead of empty?",
+      "revId": "2f43e90f166514cbcb97657dc977724dde2b6368",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f333695_21f60a4b",
+        "filename": "core/math.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-13T19:18:58Z",
+      "side": 1,
+      "message": "I think we don\u0027t need call math_is_number here since math_lt below calls math_gt_or_eq -\u003e math_max -\u003e _math_check_valid which has math_is_number invocation for checking both $(n) and $(1).",
+      "revId": "2f43e90f166514cbcb97657dc977724dde2b6368",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
