@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d015a64d_97580eb5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-15T23:47:52Z",
+      "side": 1,
+      "message": "The default for RS and ORS are newlines, not spaces.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 49
+      },
+      "revId": "aae828a05cef44ce6206e9e5bad798665ae96155",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b0751b4_0bdad758",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-15T23:47:52Z",
+      "side": 1,
+      "message": "Can you test to ensure that dash arguments are still split out? Like:\n\n mmma external/curl -j\n mmma -j external/curl",
+      "revId": "aae828a05cef44ce6206e9e5bad798665ae96155",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
