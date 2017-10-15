@@ -225,12 +225,15 @@ def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
   return True
 
 def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
-                        block_device, signer_path, key, signer_args):
+                        block_device, signer_path, key, signer_args,
+                        verity_disable):
   cmd = ["system/extras/verity/build_verity_metadata.py", "build",
          str(image_size), verity_metadata_path, root_hash, salt, block_device,
          signer_path, key]
   if signer_args:
     cmd.append("--signer_args=\"%s\"" % (' '.join(signer_args),))
+  if verity_disable:
+    cmd.append("--verity_disable")
   output, exit_code = RunCommand(cmd)
   if exit_code != 0:
     print "Could not build verity metadata! Error: %s" % output
@@ -334,8 +337,10 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
   # build the metadata blocks
   root_hash = prop_dict["verity_root_hash"]
   salt = prop_dict["verity_salt"]
+  verity_disable = "verity_disable" in prop_dict
   if not BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
-                             block_dev, signer_path, signer_key, signer_args):
+                             block_dev, signer_path, signer_key, signer_args,
+                             verity_disable):
     shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
 
@@ -644,6 +649,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "verity_key",
       "verity_signer_cmd",
       "verity_fec",
+      "verity_disable",
       "avb_enable",
       "avb_avbtool",
       "avb_salt",
