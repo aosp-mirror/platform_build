@@ -14,20 +14,16 @@
 # limitations under the License.
 #
 
-# Provides dependencies necessary for verified boot (only for user and
-# userdebug builds)
+# Provides dependencies necessary for verified boot.
 
-user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
-ifneq (,$(user_variant))
-    PRODUCT_SUPPORTS_BOOT_SIGNER := true
-    PRODUCT_SUPPORTS_VERITY := true
-    PRODUCT_SUPPORTS_VERITY_FEC := true
+PRODUCT_SUPPORTS_BOOT_SIGNER := true
+PRODUCT_SUPPORTS_VERITY := true
+PRODUCT_SUPPORTS_VERITY_FEC := true
 
-    # The dev key is used to sign boot and recovery images, and the verity
-    # metadata table. Actual product deliverables will be re-signed by hand.
-    # We expect this file to exist with the suffixes ".x509.pem" and ".pk8".
-    PRODUCT_VERITY_SIGNING_KEY := build/target/product/security/verity
+# The dev key is used to sign boot and recovery images, and the verity
+# metadata table. Actual product deliverables will be re-signed by hand.
+# We expect this file to exist with the suffixes ".x509.pem" and ".pk8".
+PRODUCT_VERITY_SIGNING_KEY := build/target/product/security/verity
 
-    PRODUCT_PACKAGES += \
-            verity_key
-endif
+PRODUCT_PACKAGES += \
+        verity_key

@@ -70,6 +70,27 @@ $(gen): frameworks/base/docs/docs-redirect-index.html
 	@cp -f $< $@
 endif
 
+ndk_doxygen_out := $(OUT_NDK_DOCS)
+ndk_headers := $(SOONG_OUT_DIR)/ndk/sysroot/usr/include
+ndk_docs_src_dir := frameworks/native/docs
+ndk_doxyfile := $(ndk_docs_src_dir)/Doxyfile
+ifneq ($(wildcard $(ndk_docs_src_dir)),)
+ndk_docs_srcs := $(addprefix $(ndk_docs_src_dir)/,\
+    $(call find-files-in-subdirs,$(ndk_docs_src_dir),"*",.))
+$(ndk_doxygen_out)/index.html: $(ndk_docs_srcs) $(SOONG_OUT_DIR)/ndk.timestamp
+	@mkdir -p $(ndk_doxygen_out)
+	@echo "Generating NDK docs to $(ndk_doxygen_out)"
+	@( cat $(ndk_doxyfile); \
+	    echo "INPUT=$(ndk_headers)"; \
+	    echo "HTML_OUTPUT=$(ndk_doxygen_out)" \
+	) | doxygen -
+
+# Note: Not a part of the docs target because we don't have doxygen available.
+# You can run this target locally if you have doxygen installed.
+ndk-docs: $(ndk_doxygen_out)/index.html
+.PHONY: ndk-docs
+endif
+
 # -----------------------------------------------------------------
 # property_overrides_split_enabled
 property_overrides_split_enabled :=
@@ -1012,6 +1033,7 @@ $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY),$(hide) echo "verit
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY),$(hide) echo "verity_key=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VERITY_SIGNING_KEY)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY),$(hide) echo "verity_signer_cmd=$(notdir $(VERITY_SIGNER))" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY_FEC),$(hide) echo "verity_fec=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY_FEC)" >> $(1))
+$(if $(filter eng, $(TARGET_BUILD_VARIANT)),$(hide) echo "verity_disable=true" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_VERITY_PARTITION),$(hide) echo "system_verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_VERITY_PARTITION)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_VERITY_PARTITION),$(hide) echo "vendor_verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_VERITY_PARTITION)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT)" >> $(1))
