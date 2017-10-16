@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b5d748c1_27df4605",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 538,
+      "author": {
+        "id": 1121678
+      },
+      "writtenOn": "2017-10-16T09:44:04Z",
+      "side": 1,
+      "message": "Yes, we should do that. However it seems to be easter to do that when moving to prebuilts.",
+      "parentUuid": "5dedfbe1_d0f9ef44",
+      "range": {
+        "startLine": 538,
+        "startChar": 32,
+        "endLine": 538,
+        "endChar": 34
+      },
+      "revId": "d1233c95d28d6eb2439bd48d90cc249343b0b4ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6873d9b4_6a161480",
         "filename": "core/java.mk",
         "patchSetId": 2
@@ -36,6 +60,24 @@
       "writtenOn": "2017-10-13T19:59:44Z",
       "side": 1,
       "message": "May be endif # !USE_R8",
+      "revId": "d1233c95d28d6eb2439bd48d90cc249343b0b4ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "32a543f0_c0b79a96",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 716,
+      "author": {
+        "id": 1121678
+      },
+      "writtenOn": "2017-10-16T09:44:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6873d9b4_6a161480",
       "revId": "d1233c95d28d6eb2439bd48d90cc249343b0b4ba",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
