@@ -17,3 +17,5 @@
 # Inherit common Android Go defaults.
 $(call inherit-product, build/target/product/go_defaults_common.mk)
 
+# Insert 512MB specific properties here.
+
