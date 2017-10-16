@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77c38b64_2a1f7756",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-16T20:23:44Z",
+      "side": 1,
+      "message": "After your CL topic, DEFAULT_JAVA_LANGUAGE_VERSION will be 1.9 if EXPERIMENTAL_USE_OPENJDK9\u003dtrue, or 1.8 otherwise. Correct?\n\nIf so, it might be worth putting a comment\n\n# may be 1.9 if EXPERIMENTAL_USE_OPENJDK9\u003dtrue\n\n(That comment is subject to becoming outdated, but at that point we\u0027d have to go throw current usages of \n\"EXPERIMENTAL_USE_OPENJDK9\" anyway to ensure they\u0027re up to date).",
+      "range": {
+        "startLine": 26,
+        "startChar": 37,
+        "endLine": 26,
+        "endChar": 66
+      },
+      "revId": "62cb77dda76cca3eac278d0124fb0ed6c5b8060b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "07c13750_f43f05b0",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-10-16T20:23:44Z",
+      "side": 1,
+      "message": "no action required:\n\nhaha, you did this on purpose, didn\u0027t you :)\n\n(My draft CLs carried a flag for whether javac supports the -classpath parameter, which has the opposite semantics).",
+      "range": {
+        "startLine": 279,
+        "startChar": 33,
+        "endLine": 279,
+        "endChar": 59
+      },
+      "revId": "62cb77dda76cca3eac278d0124fb0ed6c5b8060b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
