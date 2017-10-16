@@ -81,6 +81,10 @@ ifeq ($(LOCAL_SDK_VERSION),system_current)
 my_link_type := java:system
 my_warn_types := java:platform
 my_allowed_types := java:sdk java:system
+else ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
+my_link_type := java:system
+my_warn_types := java:platform
+my_allowed_types := java:sdk java:system
 else ifneq ($(LOCAL_SDK_VERSION),)
 my_link_type := java:sdk
 my_warn_types := java:system java:platform

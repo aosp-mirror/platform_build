@@ -3386,3 +3386,22 @@ $(foreach source,$(ENFORCE_RRO_SOURCES), \
   $(eval ALL_MODULES.$(enforce_rro_source_module).REQUIRED += $(enforce_rro_module)) \
 )
 endef
+
+###########################################################
+## Find system_$(VER) in LOCAL_SDK_VERSION
+##
+## $(1): LOCAL_SDK_VERSION
+###########################################################
+define has-system-sdk-version
+$(filter system_%,$(1))
+endef
+
+###########################################################
+## Get numerical version in LOCAL_SDK_VERSION
+##
+## $(1): LOCAL_SDK_VERSION
+###########################################################
+define get-numeric-sdk-version
+$(filter-out current,\
+  $(if $(call has-system-sdk-version,$(1)),$(patsubst system_%,%,$(1)),$(1)))
+endef

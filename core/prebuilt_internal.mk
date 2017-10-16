@@ -500,6 +500,8 @@ $(common_classes_jar) $(common_classes_pre_proguard_jar) $(common_javalib_jar): 
 
 ifeq ($(LOCAL_SDK_VERSION),system_current)
 my_link_type := java:system
+else ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
+my_link_type := java:system
 else ifneq ($(LOCAL_SDK_VERSION),)
 my_link_type := java:sdk
 else
