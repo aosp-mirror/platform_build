@@ -2249,7 +2249,7 @@ $(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_D
 $(hide) mkdir -p $(dir $@)
 $(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR)
 $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
-    $(SOONG_JAVAC_WRAPPER) $(1) -encoding UTF-8 \
+    $(SOONG_JAVAC_WRAPPER) $(JAVAC_WRAPPER) $(1) -encoding UTF-8 \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
     $(addprefix -bootclasspath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH)) \
