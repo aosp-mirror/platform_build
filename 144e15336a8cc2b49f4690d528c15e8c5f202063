@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26d2d7dd_fbe20c13",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-17T21:20:01Z",
+      "side": 1,
+      "message": "Is USE_R8_BY_DEFAULT actually necessary?  What\u0027s wrong with $(get_build_var USE_R8) to check if R8 is enabled, which will respect if USE_R8 is set in the environment?  Or if you really want to know if it is enabled by default, $(unset USE_R8; get_build_var USE_R8)?",
+      "revId": "144e15336a8cc2b49f4690d528c15e8c5f202063",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f246779f_a47c93cd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2754,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-17T21:20:01Z",
+      "side": 1,
+      "message": "We\u0027ve had trouble with other app-targeted tools in the platform with PRIVATE_MIN_SDK_VERSION.  Is this going to cause r8 to desugar platform-supported features like default interface methods?",
+      "range": {
+        "startLine": 2754,
+        "startChar": 16,
+        "endLine": 2754,
+        "endChar": 39
+      },
+      "revId": "144e15336a8cc2b49f4690d528c15e8c5f202063",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2908064_d8397479",
+        "filename": "core/java.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 683,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-17T21:20:01Z",
+      "side": 1,
+      "message": "Put this in an else, and get rid of my_proguard?",
+      "revId": "144e15336a8cc2b49f4690d528c15e8c5f202063",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a52642f4_02fd732f",
+        "filename": "core/java.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-17T21:20:01Z",
+      "side": 1,
+      "message": "Try to avoid duplicating the dx rule here.  Maybe set my_r8 :\u003d true if LOCAL_PROGUARD_ENABLED is set and USE_R8 is true.\n\nIs the expectation that d8 will be used for dexing if proguard is disabled, or should we just always use r8 but turn off the proguard-like features?",
+      "revId": "144e15336a8cc2b49f4690d528c15e8c5f202063",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
