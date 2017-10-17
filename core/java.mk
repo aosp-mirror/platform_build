@@ -499,6 +499,7 @@ $(full_classes_turbine_jar): \
     $(java_sources_deps) \
     $(full_java_header_libs) \
     $(full_java_bootclasspath_libs) \
+    $(full_java_system_modules_deps) \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
     $(ZIPTIME) \
