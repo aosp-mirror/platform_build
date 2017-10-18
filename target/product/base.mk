@@ -150,7 +150,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES_DEBUG := \
     logpersist.start \
     perfprofd \
-    sqlite3
+    sqlite3 \
+    strace
 
 PRODUCT_COPY_FILES := $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
