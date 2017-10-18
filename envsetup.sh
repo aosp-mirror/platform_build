@@ -51,20 +51,18 @@ function build_build_var_cache()
     cached_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
     cached_abs_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_abs_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
     # Call the build system to dump the "<val>=<value>" pairs as a shell script.
-    build_dicts_script=`\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
-                        command make --no-print-directory -f build/core/config.mk \
-                        dump-many-vars \
-                        DUMP_MANY_VARS="$cached_vars" \
-                        DUMP_MANY_ABS_VARS="$cached_abs_vars" \
-                        DUMP_VAR_PREFIX="var_cache_" \
-                        DUMP_ABS_VAR_PREFIX="abs_var_cache_"`
+    build_dicts_script=`\cd $T; build/soong/soong_ui.bash --dumpvars-mode \
+                        --vars="$cached_vars" \
+                        --abs-vars="$cached_abs_vars" \
+                        --var-prefix=var_cache_ \
+                        --abs-var-prefix=abs_var_cache_`
     local ret=$?
     if [ $ret -ne 0 ]
     then
         unset build_dicts_script
         return $ret
     fi
-    # Excute the script to store the "<val>=<value>" pairs as shell variables.
+    # Execute the script to store the "<val>=<value>" pairs as shell variables.
     eval "$build_dicts_script"
     ret=$?
     unset build_dicts_script
@@ -105,8 +103,7 @@ function get_abs_build_var()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
-      command make --no-print-directory -f build/core/config.mk dumpvar-abs-$1)
+    (\cd $T; build/soong/soong_ui.bash --dumpvar-mode --abs $1)
 }
 
 # Get the exact value of a build variable.
@@ -123,8 +120,7 @@ function get_build_var()
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
-      command make --no-print-directory -f build/core/config.mk dumpvar-$1)
+    (\cd $T; build/soong/soong_ui.bash --dumpvar-mode $1)
 }
 
 # check to see if the supplied product is one we can build
