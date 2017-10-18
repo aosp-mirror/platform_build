@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "88505a43_adb897eb",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2758,
+      "author": {
+        "id": 1121678
+      },
+      "writtenOn": "2017-10-18T10:41:13Z",
+      "side": 1,
+      "message": "Intentionally added this to make sure we handle any relevant dx options in r8.",
+      "range": {
+        "startLine": 2758,
+        "startChar": 4,
+        "endLine": 2758,
+        "endChar": 23
+      },
+      "revId": "8380eb7892a7616c1566755902fb673a80a31c70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

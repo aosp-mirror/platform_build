@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "6fb09a1e_f63df9f0",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1121678
+      },
+      "writtenOn": "2017-10-18T10:41:13Z",
+      "side": 1,
+      "message": "For now we don\u0027t need it. Let\u0027s get back to this when everything is working with r8 and we want to make the switch.",
+      "parentUuid": "26d2d7dd_fbe20c13",
+      "revId": "144e15336a8cc2b49f4690d528c15e8c5f202063",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f246779f_a47c93cd",
         "filename": "core/definitions.mk",
         "patchSetId": 4
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "027943ee_8ef03bf4",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2754,
+      "author": {
+        "id": 1121678
+      },
+      "writtenOn": "2017-10-18T10:41:13Z",
+      "side": 1,
+      "message": "I used to, but have now forced it off in the Android Platform specific R8 command (as it is for the Android Platform specific D8 command), https://r8-review.googlesource.com/c/r8/+/9161. When removing desugar we can turn that back on.\n\n--min-api still controls features like multi-dex.",
+      "parentUuid": "f246779f_a47c93cd",
+      "range": {
+        "startLine": 2754,
+        "startChar": 16,
+        "endLine": 2754,
+        "endChar": 39
+      },
+      "revId": "144e15336a8cc2b49f4690d528c15e8c5f202063",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c2908064_d8397479",
         "filename": "core/java.mk",
         "patchSetId": 4
@@ -59,6 +101,24 @@
     },
     {
       "key": {
+        "uuid": "a397e481_e64ae47f",
+        "filename": "core/java.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 683,
+      "author": {
+        "id": 1121678
+      },
+      "writtenOn": "2017-10-18T10:41:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c2908064_d8397479",
+      "revId": "144e15336a8cc2b49f4690d528c15e8c5f202063",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a52642f4_02fd732f",
         "filename": "core/java.mk",
         "patchSetId": 4
@@ -73,6 +133,24 @@
       "revId": "144e15336a8cc2b49f4690d528c15e8c5f202063",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69749298_85f8ca45",
+        "filename": "core/java.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 1121678
+      },
+      "writtenOn": "2017-10-18T10:41:13Z",
+      "side": 1,
+      "message": "Done\n\nWhen r8 replaced Proguard it will do the dexing as well as the whole-program-optimizations. So d8 will do the dexing for targets without a Proguard configuration and r8 will do the dexing for targets with a Proguard configuration. When separate desugar is disabled both d8 and r8 will perform desugar.",
+      "parentUuid": "a52642f4_02fd732f",
+      "revId": "144e15336a8cc2b49f4690d528c15e8c5f202063",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
