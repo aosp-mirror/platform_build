@@ -21,5 +21,5 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := signtos
 LOCAL_SRC_FILES := SignTos.java
 LOCAL_JAR_MANIFEST := SignTos.mf
-LOCAL_STATIC_JAVA_LIBRARIES := bouncycastle-host bouncycastle-bcpkix-host
+LOCAL_STATIC_JAVA_LIBRARIES := bouncycastle bouncycastle-bcpkix
 include $(BUILD_HOST_JAVA_LIBRARY)
