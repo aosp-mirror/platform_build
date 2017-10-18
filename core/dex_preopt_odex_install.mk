@@ -36,12 +36,16 @@ endif
 # if WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY=true and module is not in boot class path skip
 # Also preopt system server jars since selinux prevents system server from loading anything from
 # /data. If we don't do this they will need to be extracted which is not favorable for RAM usage
-# or performance.
+# or performance. If my_preopt_for_extracted_apk is true, we ignore the only preopt boot image
+# options.
+ifneq (true,$(my_preopt_for_extracted_apk))
 ifeq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
 ifeq ($(filter $(PRODUCT_SYSTEM_SERVER_JARS) $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE)),)
 LOCAL_DEX_PREOPT :=
 endif
 endif
+endif
+
 # if installing into system, and odex are being installed into system_other, don't strip
 ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
 ifeq ($(LOCAL_DEX_PREOPT),true)
