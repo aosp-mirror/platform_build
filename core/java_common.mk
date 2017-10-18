@@ -15,20 +15,17 @@
 # Modules can override this logic by specifying
 # LOCAL_JAVA_LANGUAGE_VERSION explicitly.
 ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
-  private_sdk_versions_without_any_java_18_support := 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
-  ifneq (,$(filter $(LOCAL_SDK_VERSION), $(private_sdk_versions_without_any_java_18_support)))
+  ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT)))
     LOCAL_JAVA_LANGUAGE_VERSION := 1.7
+  else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT)))
+    LOCAL_JAVA_LANGUAGE_VERSION := 1.8
+  else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS))
+    # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
+    LOCAL_JAVA_LANGUAGE_VERSION := 1.8
   else
-    ifneq ($(EXPERIMENTAL_USE_OPENJDK9),true)
-      LOCAL_JAVA_LANGUAGE_VERSION := 1.8
-    else
-      private_sdk_versions_without_any_java_19_support := 24 25 26
-      ifneq (,$(filter $(LOCAL_SDK_VERSION), $(private_sdk_versions_without_any_java_19_support)))
-        LOCAL_JAVA_LANGUAGE_VERSION := 1.8
-      else
-        LOCAL_JAVA_LANGUAGE_VERSION := 1.9
-      endif
-    endif
+    # DEFAULT_JAVA_LANGUAGE_VERSION is 1.8 unless EXPERIMENTAL_USE_OPENJDK9=true
+    # in which case it is 1.9
+    LOCAL_JAVA_LANGUAGE_VERSION := $(DEFAULT_JAVA_LANGUAGE_VERSION)
   endif
 endif
 LOCAL_JAVACFLAGS += -source $(LOCAL_JAVA_LANGUAGE_VERSION) -target $(LOCAL_JAVA_LANGUAGE_VERSION)
@@ -201,6 +198,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 
 full_java_bootclasspath_libs :=
 empty_bootclasspath :=
+my_system_modules :=
 
 # full_java_libs: The list of files that should be used as the classpath.
 #                 Using this list as a dependency list WILL NOT WORK.
@@ -209,8 +207,13 @@ ifndef LOCAL_IS_HOST_MODULE
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
       # No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
       empty_bootclasspath := ""
+      # Most users of LOCAL_NO_STANDARD_LIBRARIES really mean no framework libs,
+      # and manually add back the core libs.  The ones that don't are in soong
+      # now, so just always assume that they want the default system modules
+      my_system_modules := $(DEFAULT_SYSTEM_MODULES)
     else  # LOCAL_NO_STANDARD_LIBRARIES
       full_java_bootclasspath_libs := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES))
+      my_system_modules := $(DEFAULT_SYSTEM_MODULES)
     endif  # LOCAL_NO_STANDARD_LIBRARIES
   else
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
@@ -255,6 +258,7 @@ else # LOCAL_IS_HOST_MODULE
       full_java_bootclasspath_libs := $(call java-lib-header-files,$(addsuffix -hostdex,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES)),true)
     endif
 
+    my_system_modules := $(DEFAULT_SYSTEM_MODULES)
     full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),true)
     full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),true)
   else # !USE_CORE_LIB_BOOTCLASSPATH
@@ -270,8 +274,25 @@ ifdef empty_bootclasspath
   endif
 endif
 
+full_java_system_modules_deps :=
+my_system_modules_dir :=
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_USE_SYSTEM_MODULES :=
+ifeq ($(LOCAL_JAVA_LANGUAGE_VERSION),1.9)
+  $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_USE_SYSTEM_MODULES := true
+  ifdef my_system_modules
+    ifneq ($(my_system_modules),none)
+      ifndef SOONG_SYSTEM_MODULES_$(my_system_modules)
+        $(call pretty-error, Invalid system modules $(my_system_modules))
+      endif
+      full_java_system_modules_deps := $(SOONG_SYSTEM_MODULES_$(my_system_modules))
+      my_system_modules_dir := $(patsubst %/lib/modules,%,$(SOONG_SYSTEM_MODULES_$(my_system_modules)))
+    endif
+  endif
+endif
+
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := $(full_java_bootclasspath_libs)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_EMPTY_BOOTCLASSPATH := $(empty_bootclasspath)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SYSTEM_MODULES := $(my_system_modules_dir)
 
 full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
 full_java_header_libs := $(full_shared_java_header_libs) $(full_static_java_header_libs)
