@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9071394b_7fc4de33",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-10-18T23:38:01Z",
+      "side": 1,
+      "message": "Yeah no idea why emacs swapped those out for tabs. Fixing.",
+      "parentUuid": "7f2b89f5_50d3d4cb",
+      "range": {
+        "startLine": 246,
+        "startChar": 0,
+        "endLine": 246,
+        "endChar": 1
+      },
+      "revId": "cce0aeafc1ffb7d96b3c0972618adebce5672dc0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1a406ad7_2925e6da",
         "filename": "core/config_sanitizers.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-10-18T23:08:21Z",
       "side": 1,
       "message": "Quotes are unnecessary here -- they\u0027ll show up in the command line, since they don\u0027t mean anything to make.\n\nWe\u0027ll also need to add a dependency to build/soong/cc/config/cfi_exports.map.\n\nWhat happens if there\u0027s already a version script for the executable?",
+      "range": {
+        "startLine": 250,
+        "startChar": 15,
+        "endLine": 250,
+        "endChar": 16
+      },
+      "revId": "cce0aeafc1ffb7d96b3c0972618adebce5672dc0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f8bcbcb_692905f8",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-10-18T23:38:01Z",
+      "side": 1,
+      "message": "Ack - I\u0027ll remove the quotes.\n\nI\u0027m not sure how to add a dependency in Make (I\u0027ve added this for the Soong side). Can you point me to an existing example?\n\nI\u0027ve tested this and multiple version scripts get along fine (they\u0027re additive as best I can tell)",
+      "parentUuid": "1a406ad7_2925e6da",
       "range": {
         "startLine": 250,
         "startChar": 15,
