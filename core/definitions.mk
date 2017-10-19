@@ -2680,7 +2680,7 @@ endef
 define copy-file-to-target
 @mkdir -p $(dir $@)
 $(hide) rm -f $@
-$(hide) cp $< $@
+$(hide) cp "$<" "$@"
 endef
 
 # The same as copy-file-to-target, but use the local
@@ -2688,7 +2688,7 @@ endef
 define copy-file-to-target-with-cp
 @mkdir -p $(dir $@)
 $(hide) rm -f $@
-$(hide) cp -p $< $@
+$(hide) cp -p "$<" "$@"
 endef
 
 # The same as copy-file-to-target, but strip out "# comment"-style
