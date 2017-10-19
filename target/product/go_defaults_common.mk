@@ -55,3 +55,5 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += dalvik.vm.heapgrowthlimit=128m
 PRODUCT_PROPERTY_OVERRIDES += dalvik.vm.heapsize=256m
 
+# Do not generate libartd.
+PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
