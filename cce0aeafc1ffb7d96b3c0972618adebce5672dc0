@@ -93,6 +93,30 @@
       "revId": "cce0aeafc1ffb7d96b3c0972618adebce5672dc0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b2eb507_77e99af3",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-19T00:14:17Z",
+      "side": 1,
+      "message": "Add it to LOCAL_ADDITIONAL_DEPENDENCIES\n\n\u003e I\u0027ve tested this and multiple version scripts get along fine (they\u0027re additive as best I can tell)\n\nCool!",
+      "parentUuid": "2f8bcbcb_692905f8",
+      "range": {
+        "startLine": 250,
+        "startChar": 15,
+        "endLine": 250,
+        "endChar": 16
+      },
+      "revId": "cce0aeafc1ffb7d96b3c0972618adebce5672dc0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
