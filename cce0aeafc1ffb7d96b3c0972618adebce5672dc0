@@ -117,6 +117,30 @@
       "revId": "cce0aeafc1ffb7d96b3c0972618adebce5672dc0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e23aa0a6_3526c764",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-10-19T00:23:45Z",
+      "side": 1,
+      "message": "I\u0027ve added it, but I wasn\u0027t sure if I could rely on LOCAL_ADDITIONAL_DEPENDENCIES not being overwritten by a :\u003d assignment. Let me know if this looks ok.",
+      "parentUuid": "7b2eb507_77e99af3",
+      "range": {
+        "startLine": 250,
+        "startChar": 15,
+        "endLine": 250,
+        "endChar": 16
+      },
+      "revId": "cce0aeafc1ffb7d96b3c0972618adebce5672dc0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
