@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58621572_549aa3db",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-20T18:33:08Z",
+      "side": 1,
+      "message": "Why this and not $(vndk_major_vers).$(vndk_minor_vers)?  Do you expect them to be lists?",
+      "revId": "a4b048b201c4dd09e77336ad4bce874620764da1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
