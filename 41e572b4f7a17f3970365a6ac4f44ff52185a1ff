@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f1836a48_17c8edf9",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-10-20T06:28:39Z",
+      "side": 1,
+      "message": "nit: b/",
+      "range": {
+        "startLine": 10,
+        "startChar": 6,
+        "endLine": 10,
+        "endChar": 12
+      },
+      "revId": "41e572b4f7a17f3970365a6ac4f44ff52185a1ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e2cc78f_2f3d2f4f",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-10-20T06:28:39Z",
+      "side": 1,
+      "message": "these are already set above?",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 24
+      },
+      "revId": "41e572b4f7a17f3970365a6ac4f44ff52185a1ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bb1dff5f_4bc3030c",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-10-20T06:28:39Z",
+      "side": 1,
+      "message": "am I missing something? Is there not a matching \u0027)\u0027?",
+      "range": {
+        "startLine": 50,
+        "startChar": 5,
+        "endLine": 50,
+        "endChar": 6
+      },
+      "revId": "41e572b4f7a17f3970365a6ac4f44ff52185a1ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "694f36e2_e510a579",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-10-20T06:28:39Z",
+      "side": 1,
+      "message": "nit: space before This, same below",
+      "range": {
+        "startLine": 60,
+        "startChar": 31,
+        "endLine": 60,
+        "endChar": 32
+      },
+      "revId": "41e572b4f7a17f3970365a6ac4f44ff52185a1ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
