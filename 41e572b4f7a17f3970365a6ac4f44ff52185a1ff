@@ -235,6 +235,30 @@
       "revId": "41e572b4f7a17f3970365a6ac4f44ff52185a1ff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e51cfca_81c5bf0c",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-10-20T06:49:10Z",
+      "side": 1,
+      "message": "otherwise, \n\nlist :\u003d a b c\nlist +\u003d d e f\n\nwill give a b cd e f",
+      "parentUuid": "d0ce76f7_278f0466",
+      "range": {
+        "startLine": 60,
+        "startChar": 31,
+        "endLine": 60,
+        "endChar": 32
+      },
+      "revId": "41e572b4f7a17f3970365a6ac4f44ff52185a1ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
