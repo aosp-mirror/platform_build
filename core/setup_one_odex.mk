@@ -32,6 +32,10 @@ $(my_built_odex) : $($(my_2nd_arch_prefix)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BO
     $(DEXPREOPT_ONE_FILE_DEPENDENCY_TOOLS) \
     $(my_dex_preopt_image_filename)
 
+# Pass special class loader context to skip the classpath and collision check.
+# Should modify build system to pass used libraries properly later.
+$(my_built_odex): PRIVATE_DEX2OAT_CLASS_LOADER_CONTEXT := \&
+
 my_installed_odex := $(call get-odex-installed-file-path,$($(my_2nd_arch_prefix)DEX2OAT_TARGET_ARCH),$(LOCAL_INSTALLED_MODULE))
 
 my_built_vdex := $(patsubst %.odex,%.vdex,$(my_built_odex))
