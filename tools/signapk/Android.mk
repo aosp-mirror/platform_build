@@ -23,9 +23,9 @@ LOCAL_SRC_FILES := $(call all-java-files-under, src)
 LOCAL_JAR_MANIFEST := SignApk.mf
 LOCAL_STATIC_JAVA_LIBRARIES := \
     apksig \
-    bouncycastle-host \
-    bouncycastle-bcpkix-host \
-    conscrypt-host
+    bouncycastle \
+    bouncycastle-bcpkix \
+    conscrypt
 LOCAL_REQUIRED_MODULES := libconscrypt_openjdk_jni
 include $(BUILD_HOST_JAVA_LIBRARY)
 

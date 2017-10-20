@@ -60,7 +60,6 @@ PRODUCT_PACKAGES += \
     iptables \
     gatekeeperd \
     keystore \
-    keystore.default \
     ld.config.txt \
     ld.mc \
     libaaudio \
