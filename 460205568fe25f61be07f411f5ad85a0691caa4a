@@ -70,6 +70,24 @@
       "revId": "460205568fe25f61be07f411f5ad85a0691caa4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b32b1ef7_3b871434",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-20T21:09:56Z",
+      "side": 1,
+      "message": "then is it better that we do:\n$(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar)))\n$(eval $(call add-dependency,$(full_classes_jar),$(full_classes_header_jar))) in a linear dependency order that matches the Java build chain order, eg.(header.jar -\u003e implementation.jar -\u003e dex.jar), so that both $(common_javalib.jar) and $(full_classes_jar) can trigger $(full_classes_header_jar) to be re-built when the header_jar is missing. Since now it is a little confused that javalib.jar can trigger header.jar to be rebuilt, but full_classes.jar doesn\u0027t.",
+      "parentUuid": "5c4b4bc2_166de1c7",
+      "revId": "460205568fe25f61be07f411f5ad85a0691caa4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
