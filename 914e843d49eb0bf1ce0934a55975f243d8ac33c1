@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "992d0e98_b414c050",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3189,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-20T19:47:04Z",
+      "side": 1,
+      "message": "Wrong build/core",
+      "revId": "914e843d49eb0bf1ce0934a55975f243d8ac33c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
