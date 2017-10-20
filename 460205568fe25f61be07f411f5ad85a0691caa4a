@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "138da007_4291643c",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-10-20T20:05:21Z",
+      "side": 1,
+      "message": "Do we need let $(full_classes_jar) depends on $(full_classes_header_jar) if they are different?",
+      "revId": "460205568fe25f61be07f411f5ad85a0691caa4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
