@@ -34,7 +34,7 @@ define all-products-inner
 endef
 
 
-this_makefile := build/core/product-graph.mk
+this_makefile := build/make/core/product-graph.mk
 
 products_svg := $(OUT_DIR)/products.svg
 products_pdf := $(OUT_DIR)/products.pdf

@@ -691,7 +691,7 @@ function tapas()
 
 function gettop
 {
-    local TOPFILE=build/core/envsetup.mk
+    local TOPFILE=build/make/core/envsetup.mk
     if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
         # The following circumlocution ensures we remove symlinks from TOP.
         (cd $TOP; PWD= /bin/pwd)
@@ -725,7 +725,7 @@ function getdriver()
         # Use scan-build to collect all static analyzer reports into directory
         # /tmp/scan-build-yyyy-mm-dd-hhmmss-*
         # The clang compiler passed by --use-analyzer here is not important.
-        # build/core/binary.mk will set CLANG_CXX and CLANG before calling
+        # build/make/core/binary.mk will set CLANG_CXX and CLANG before calling
         # c++-analyzer and ccc-analyzer.
         local CLANG_VERSION=$(get_build_var LLVM_PREBUILTS_VERSION)
         local BUILD_OS=$(get_build_var BUILD_OS)
@@ -751,7 +751,7 @@ function m()
 
 function findmakefile()
 {
-    local TOPFILE=build/core/envsetup.mk
+    local TOPFILE=build/make/core/envsetup.mk
     local HERE=$PWD
     local T=
     while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
@@ -961,7 +961,7 @@ function croot()
 
 function cproj()
 {
-    local TOPFILE=build/core/envsetup.mk
+    local TOPFILE=build/make/core/envsetup.mk
     local HERE=$PWD
     local T=
     while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do

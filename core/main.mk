@@ -34,7 +34,7 @@ PWD := $(shell pwd)
 TOP := .
 TOPDIR :=
 
-BUILD_SYSTEM := $(TOPDIR)build/core
+BUILD_SYSTEM := $(TOPDIR)build/make/core
 
 # This is the default target.  It must be the first declared target.
 .PHONY: droid
@@ -173,7 +173,7 @@ TARGET_BUILD_JAVA_SUPPORT_LEVEL := platform
 
 # -----------------------------------------------------------------
 # The pdk (Platform Development Kit) build
-include build/core/pdk_config.mk
+include build/make/core/pdk_config.mk
 
 #
 # -----------------------------------------------------------------
@@ -936,7 +936,7 @@ ifdef is_sdk_build
       $(warning $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
 endif
 
-# build/core/Makefile contains extra stuff that we don't want to pollute this
+# build/make/core/Makefile contains extra stuff that we don't want to pollute this
 # top-level makefile with.  It expects that ALL_DEFAULT_INSTALLED_MODULES
 # contains everything that's built during the current make, but it also further
 # extends ALL_DEFAULT_INSTALLED_MODULES.

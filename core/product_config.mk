@@ -336,7 +336,7 @@ endif
 # The file at the source path should be copied to the destination path
 # when building  this product.  <destination path> is relative to
 # $(PRODUCT_OUT), so it should look like, e.g., "system/etc/file.xml".
-# The rules for these copy steps are defined in build/core/Makefile.
+# The rules for these copy steps are defined in build/make/core/Makefile.
 # The optional :<owner> is used to indicate the owner of a vendor file.
 PRODUCT_COPY_FILES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COPY_FILES))
