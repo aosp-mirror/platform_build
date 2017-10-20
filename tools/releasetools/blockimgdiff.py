@@ -717,6 +717,7 @@ class BlockImageDiff(object):
       diff_total = len(diff_queue)
       patches = [None] * diff_total
       error_messages = []
+      warning_messages = []
       if sys.stdout.isatty():
         global diff_done
         diff_done = 0
@@ -750,16 +751,34 @@ class BlockImageDiff(object):
             with open(tgt_file, "wb") as fd:
               self.tgt.WriteRangeDataToFd(tgt_ranges, fd)
 
+          message = []
           try:
             patch = compute_patch(src_file, tgt_file, imgdiff)
           except ValueError as e:
+            message.append(
+                "Failed to generate %s for %s: tgt=%s, src=%s:\n%s" % (
+                "imgdiff" if imgdiff else "bsdiff",
+                xf.tgt_name if xf.tgt_name == xf.src_name else
+                    xf.tgt_name + " (from " + xf.src_name + ")",
+                xf.tgt_ranges, xf.src_ranges, e.message))
+            # TODO(b/68016761): Better handle the holes in mke2fs created images.
+            if imgdiff:
+              try:
+                patch = compute_patch(src_file, tgt_file, imgdiff=False)
+                message.append(
+                    "Fell back and generated with bsdiff instead for %s" % (
+                    xf.tgt_name,))
+                with lock:
+                  warning_messages.extend(message)
+                del message[:]
+              except ValueError as e:
+                message.append(
+                    "Also failed to generate with bsdiff for %s:\n%s" % (
+                    xf.tgt_name, e.message))
+
+          if message:
             with lock:
-              error_messages.append(
-                  "Failed to generate %s for %s: tgt=%s, src=%s:\n%s" % (
-                      "imgdiff" if imgdiff else "bsdiff",
-                      xf.tgt_name if xf.tgt_name == xf.src_name else
-                          xf.tgt_name + " (from " + xf.src_name + ")",
-                      xf.tgt_ranges, xf.src_ranges, e.message))
+              error_messages.extend(message)
 
           with lock:
             patches[patch_index] = (xf_index, patch)
@@ -781,8 +800,15 @@ class BlockImageDiff(object):
       if sys.stdout.isatty():
         print('\n')
 
+      if warning_messages:
+        print('WARNING:')
+        print('\n'.join(warning_messages))
+        print('\n\n\n')
+
       if error_messages:
+        print('ERROR:')
         print('\n'.join(error_messages))
+        print('\n\n\n')
         sys.exit(1)
     else:
       patches = []
