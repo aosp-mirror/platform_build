@@ -52,6 +52,24 @@
       "revId": "460205568fe25f61be07f411f5ad85a0691caa4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c4b4bc2_166de1c7",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-20T20:54:04Z",
+      "side": 1,
+      "message": "Yeah, I was questioning whether that was necessary.  I think $(my_all_targets) needs to depend on $(full_classes_header_jar) for both soong and make, so that m modulename builds the header jar.  This accomplishes that indirectly.",
+      "parentUuid": "6ced930d_6e24a211",
+      "revId": "460205568fe25f61be07f411f5ad85a0691caa4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
