@@ -511,12 +511,6 @@ endif
 
 USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
-# USE_D8_BY_DEFAULT is the default behavior, use USE_D8 to override.
-USE_D8_BY_DEFAULT := false
-ifndef USE_D8
-  USE_D8 := $(USE_D8_BY_DEFAULT)
-endif
-
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
@@ -530,12 +524,6 @@ ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
   SIGNAPK_JNI_LIBRARY_PATH := $(HOST_OUT_SHARED_LIBRARIES)
   ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign
 
-  ifeq ($(USE_D8),true)
-    DX := $(HOST_OUT_EXECUTABLES)/d8
-  else
-    DX := $(HOST_OUT_EXECUTABLES)/dx
-  endif
-
 else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   AIDL := $(prebuilt_sdk_tools_bin)/aidl
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
@@ -546,14 +534,7 @@ else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   SIGNAPK_JNI_LIBRARY_PATH := $(prebuilt_sdk_tools)/$(HOST_OS)/lib64
   ZIPALIGN := $(prebuilt_sdk_tools_bin)/zipalign
 
-  ifeq ($(USE_D8),true)
-    DX := $(prebuilt_build_tools_wrappers)/d8
-  else
-    DX := $(prebuilt_build_tools_wrappers)/dx
-  endif
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
-
-DX_COMMAND := $(DX) -JXms16M -JXmx2048M
 
 ifeq (,$(TARGET_BUILD_APPS))
   # Use RenderScript prebuilts for unbundled builds but not PDK builds
