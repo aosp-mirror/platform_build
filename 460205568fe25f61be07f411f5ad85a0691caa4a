@@ -88,6 +88,24 @@
       "revId": "460205568fe25f61be07f411f5ad85a0691caa4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62780b46_d96e756f",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-20T21:14:05Z",
+      "side": 1,
+      "message": "In make the implementation jar shouldn\u0027t depend on the header jar, except when sharding is enabled.",
+      "parentUuid": "b32b1ef7_3b871434",
+      "revId": "460205568fe25f61be07f411f5ad85a0691caa4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
