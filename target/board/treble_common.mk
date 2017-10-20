@@ -30,7 +30,10 @@ TARGET_NO_BOOTLOADER := true
 TARGET_NO_KERNEL := true
 
 # system.img is always ext4 with sparse option
+# GSI also includes make_f2fs to support userdata parition in f2fs
+# for some devices
 TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
 TARGET_USES_MKE2FS := true
 
