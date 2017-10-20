@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d4af69db_bd328e8f",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-10-20T06:43:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f1836a48_17c8edf9",
+      "range": {
+        "startLine": 10,
+        "startChar": 6,
+        "endLine": 10,
+        "endChar": 12
+      },
+      "revId": "41e572b4f7a17f3970365a6ac4f44ff52185a1ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2e2cc78f_2f3d2f4f",
         "filename": "target/product/vndk/Android.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-10-20T06:28:39Z",
       "side": 1,
       "message": "these are already set above?",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 24
+      },
+      "revId": "41e572b4f7a17f3970365a6ac4f44ff52185a1ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8bd849cc_9b482026",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-10-20T06:43:02Z",
+      "side": 1,
+      "message": "No, this is to force set version to 10000.0 when in dev branch. Version numbers in 7-8 would be set to a certain value when VNDK becomes stable.",
+      "parentUuid": "2e2cc78f_2f3d2f4f",
       "range": {
         "startLine": 16,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "a4aa72f5_88f3138c",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-10-20T06:43:02Z",
+      "side": 1,
+      "message": "stupid mistake... fixed.",
+      "parentUuid": "bb1dff5f_4bc3030c",
+      "range": {
+        "startLine": 50,
+        "startChar": 5,
+        "endLine": 50,
+        "endChar": 6
+      },
+      "revId": "41e572b4f7a17f3970365a6ac4f44ff52185a1ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "694f36e2_e510a579",
         "filename": "target/product/vndk/Android.mk",
         "patchSetId": 1
@@ -82,6 +154,30 @@
       "writtenOn": "2017-10-20T06:28:39Z",
       "side": 1,
       "message": "nit: space before This, same below",
+      "range": {
+        "startLine": 60,
+        "startChar": 31,
+        "endLine": 60,
+        "endChar": 32
+      },
+      "revId": "41e572b4f7a17f3970365a6ac4f44ff52185a1ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d6c11589_d9210f4e",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-10-20T06:43:02Z",
+      "side": 1,
+      "message": "space is automatically added when doing \"+\u003d\". If we add space there, it will be double-space.",
+      "parentUuid": "694f36e2_e510a579",
       "range": {
         "startLine": 60,
         "startChar": 31,
