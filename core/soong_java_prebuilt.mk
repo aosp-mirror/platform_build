@@ -37,6 +37,7 @@ endif # TURBINE_DISABLED != false
 ifdef LOCAL_SOONG_DEX_JAR
   ifndef LOCAL_IS_HOST_MODULE
     $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
+    $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar) $(full_classes_header_jar)))
 
     # defines built_odex along with rule to install odex
     include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
@@ -62,6 +63,7 @@ $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(common_javalib.jar)
     endif # LOCAL_DEX_PREOPT
   else # LOCAL_IS_HOST_MODULE
     $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(LOCAL_BUILT_MODULE)))
+    $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(full_classes_jar) $(full_classes_header_jar)))
   endif
 
   java-dex : $(LOCAL_BUILT_MODULE)
