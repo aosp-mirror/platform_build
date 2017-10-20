@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f2017dc6_3af279e0",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-10-20T05:33:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "709e86b9_6ca73187",
+      "revId": "fe872e40c1210b2e5bd7d67a2e56f4f803d85cef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3a418bad_c772b4e9",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -30,6 +48,30 @@
       "writtenOn": "2017-10-19T20:53:41Z",
       "side": 1,
       "message": "This should go above PRODUCT_DEFAULT_PROPERTY_OVERRIDES, so that it can\u0027t be overridden.",
+      "range": {
+        "startLine": 141,
+        "startChar": 0,
+        "endLine": 144,
+        "endChar": 5
+      },
+      "revId": "fe872e40c1210b2e5bd7d67a2e56f4f803d85cef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d7367fe_d07c9267",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-10-20T05:33:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a418bad_c772b4e9",
       "range": {
         "startLine": 141,
         "startChar": 0,
