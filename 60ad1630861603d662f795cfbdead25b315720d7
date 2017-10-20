@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f02e66f4_dce9281e",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2017-10-20T20:56:52Z",
+      "side": 1,
+      "message": "I think the new toolchain has static ubsan runtime libraries, so diagnostic can still work (but needs to link a static, not shared library).",
+      "revId": "60ad1630861603d662f795cfbdead25b315720d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
