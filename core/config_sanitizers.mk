@@ -137,6 +137,8 @@ ifneq ($(filter thread,$(my_sanitize)),)
     else
         $(error $(LOCAL_PATH): $(LOCAL_MODULE): TSAN cannot be used for 32-bit modules.)
     endif
+  else
+    my_shared_libraries += $(TSAN_RUNTIME_LIBRARY)
   endif
 endif
 
