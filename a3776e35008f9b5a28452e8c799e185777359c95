@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "40fea98a_1ca6ffb3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-10-20T23:21:53Z",
+      "side": 1,
+      "message": "try \nlunch aosp_x86-user\nmake -j100\nemulator \n\n:)",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 5
+      },
+      "revId": "a3776e35008f9b5a28452e8c799e185777359c95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b25aa3c3_e76b2554",
         "filename": "target/board/generic/sepolicy/file_contexts",
         "patchSetId": 1
