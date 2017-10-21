@@ -632,7 +632,6 @@ DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/tools/fat16copy.py
 CHECK_LINK_TYPE := build/tools/check_link_type.py
 
-TURBINE := $(HOST_OUT_JAVA_LIBRARIES)/turbine$(COMMON_JAVA_PACKAGE_SUFFIX)
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/tools/java-event-log-tags.py
 MERGETAGS := build/tools/merge-event-log-tags.py
