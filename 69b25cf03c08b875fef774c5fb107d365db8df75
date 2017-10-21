@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f7d183ff_aa507508",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-21T00:14:17Z",
+      "side": 1,
+      "message": "Can you re-align this?",
+      "range": {
+        "startLine": 88,
+        "startChar": 57,
+        "endLine": 88,
+        "endChar": 58
+      },
+      "revId": "69b25cf03c08b875fef774c5fb107d365db8df75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
