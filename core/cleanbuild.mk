@@ -21,7 +21,7 @@ PWD := $(shell pwd)
 TOP := .
 TOPDIR :=
 
-BUILD_SYSTEM := $(TOPDIR)build/core
+BUILD_SYSTEM := $(TOPDIR)build/make/core
 
 # Set up various standard variables based on configuration
 # and host information.
@@ -48,7 +48,7 @@ INTERNAL_CLEAN_STEPS :=
 #
 # $(1): shell command to run
 # $(2): indicate to not use makefile path as part of step id if not empty.
-#       $(2) should only be used in build/core/cleanspec.mk: just for compatibility.
+#       $(2) should only be used in build/make/core/cleanspec.mk: just for compatibility.
 define _add-clean-step
   $(if $(strip $(INTERNAL_CLEAN_BUILD_VERSION)),, \
       $(error INTERNAL_CLEAN_BUILD_VERSION not set))
@@ -67,7 +67,7 @@ define _add-clean-step
   $(eval _acs_makefile_prefix :=)
 endef
 define add-clean-step
-$(eval # for build/core/cleanspec.mk, dont use makefile path as part of step id) \
+$(eval # for build/make/core/cleanspec.mk, dont use makefile path as part of step id) \
 $(if $(filter %/cleanspec.mk,$(lastword $(MAKEFILE_LIST))),\
     $(eval $(call _add-clean-step,$(1),true)),\
     $(eval $(call _add-clean-step,$(1))))
