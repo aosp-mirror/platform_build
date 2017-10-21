@@ -2,7 +2,7 @@
 # 'x86-atom' arch variant. This is an extension of the 'x86' base variant
 # that adds Atom-specific features.
 #
-# See build/core/combo/arch/x86/x86.mk for differences.
+# See build/make/core/combo/arch/x86/x86.mk for differences.
 #
 ARCH_X86_HAVE_SSSE3 := true
 ARCH_X86_HAVE_MOVBE := true
