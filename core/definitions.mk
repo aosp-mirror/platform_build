@@ -2385,7 +2385,6 @@ $(if $(filter $(1),$(PLATFORM_VERSION_CODENAME)),10000,$(1))
 endef
 
 # --add-opens is required because desugar reflects via java.lang.invoke.MethodHandles.Lookup
-# --desugar_try_with_resources_if_needed=false is needed due to b/63180735, b/63901645, b/63900665
 define desugar-classes-jar
 @echo Desugar: $@
 @mkdir -p $(dir $@)
@@ -2398,8 +2397,7 @@ $(hide) $(JAVA) \
     -jar $(DESUGAR) \
     $(addprefix --bootclasspath_entry ,$(PRIVATE_BOOTCLASSPATH)) \
     $(addprefix --classpath_entry ,$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES)) \
-    --min_sdk_version $(call codename-or-sdk-to-sdk,$(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
-    --desugar_try_with_resources_if_needed=false \
+    --min_sdk_version $(call codename-or-sdk-to-sdk,$(PRIVATE_MIN_SDK_VERSION)) \
     --allow_empty_bootclasspath \
     $(if $(filter --core-library,$(PRIVATE_DX_FLAGS)),--core_library) \
     -i $< -o $@.tmp
