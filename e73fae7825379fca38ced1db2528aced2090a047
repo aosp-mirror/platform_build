@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e888812_a362f5d8",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2017-10-23T04:01:34Z",
+      "side": 1,
+      "message": "We need to add ro.vendor.product.first_api_level here as well. If not, ro.vendor.product.first_api_level isn\u0027t set for non full-treble devices.",
+      "revId": "e73fae7825379fca38ced1db2528aced2090a047",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
