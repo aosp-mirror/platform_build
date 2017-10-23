@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d4e808f0_9e783fc7",
+        "filename": "target/product/sdk_base.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2017-10-23T09:22:05Z",
+      "side": 1,
+      "message": "Restored back to system.",
+      "parentUuid": "911763d6_cdb4a0c6",
+      "range": {
+        "startLine": 88,
+        "startChar": 1,
+        "endLine": 89,
+        "endChar": 86
+      },
+      "revId": "6c00ba012c9c97ef0b5b1543b49a2583093c81ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c5058a31_0bbf7f2a",
         "filename": "target/product/sdk_base.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-10-20T13:19:26Z",
       "side": 1,
       "message": "this need name change",
+      "range": {
+        "startLine": 94,
+        "startChar": 81,
+        "endLine": 94,
+        "endChar": 96
+      },
+      "revId": "6c00ba012c9c97ef0b5b1543b49a2583093c81ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d6139262_f30815ec",
+        "filename": "target/product/sdk_base.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2017-10-23T09:22:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c5058a31_0bbf7f2a",
       "range": {
         "startLine": 94,
         "startChar": 81,
