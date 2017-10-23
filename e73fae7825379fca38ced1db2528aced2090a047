@@ -16,6 +16,24 @@
       "revId": "e73fae7825379fca38ced1db2528aced2090a047",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5139b6f2_2d9170ef",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 309,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-10-23T04:08:45Z",
+      "side": 1,
+      "message": "are you sure? the code I have below is independent of property_overrides_split_enabled",
+      "parentUuid": "9e888812_a362f5d8",
+      "revId": "e73fae7825379fca38ced1db2528aced2090a047",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
