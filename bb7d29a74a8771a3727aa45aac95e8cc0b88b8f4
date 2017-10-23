@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c3dc70d7_d08d643e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-23T19:38:33Z",
+      "side": 1,
+      "message": "This isn\u0027t true, since we expect some levels of ABI stability for a single source revision, between products. We build a single VTS image per architecture and expect it to work on all devices of that architecture. My understanding is that this breaks this assumption, which means VTS will be failing on whichever devices have this set.\n\n(CTS too, but I\u0027m hoping that CTS won\u0027t be affected by this ABI change)\n\nThe current precedent for how to do this is to support the old ABI (and a new one) until all prebuilts have been moved to the new ABI, then remove the old one. This can take quite a while, sometimes until a device is removed from the tree.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 8
+      },
+      "revId": "bb7d29a74a8771a3727aa45aac95e8cc0b88b8f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
