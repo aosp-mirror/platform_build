@@ -694,6 +694,9 @@ endif # LOCAL_INSTRUMENTATION_FOR
 endif  # LOCAL_PROGUARD_ENABLED is not nosystem
 
 proguard_flag_files := $(addprefix $(LOCAL_PATH)/, $(LOCAL_PROGUARD_FLAG_FILES))
+ifeq ($(USE_R8),true)
+proguard_flag_files += $(addprefix $(LOCAL_PATH)/, $(LOCAL_R8_FLAG_FILES))
+endif # USE_R8
 LOCAL_PROGUARD_FLAGS += $(addprefix -include , $(proguard_flag_files))
 
 ifdef LOCAL_TEST_MODULE_TO_PROGUARD_WITH
@@ -718,11 +721,20 @@ endif
 ifneq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
   $(full_classes_proguard_jar): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
 endif
+
+# If R8 is not enabled run Proguard.
+ifneq ($(USE_R8),true)
+# Changes to these dependencies need to be replicated below when using R8
+# instead of Proguard + dx.
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
 $(full_classes_proguard_jar): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
 $(full_classes_proguard_jar) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) | $(PROGUARD)
 	$(call transform-jar-to-proguard)
+else # !USE_R8
+# Running R8 instead of Proguard, proguarded jar is actually the pre-Proguarded jar.
+full_classes_proguard_jar := $(full_classes_pre_proguard_jar)
+endif # !USE_R8
 
 else  # LOCAL_PROGUARD_ENABLED not defined
 full_classes_proguard_jar := $(full_classes_pre_proguard_jar)
@@ -739,8 +751,26 @@ $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
 $(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
 endif
+
+my_r8 :=
+ifdef LOCAL_PROGUARD_ENABLED
+ifeq ($(USE_R8),true)
+# These are the dependencies for the proguarded jar when running
+# Proguard + dx. They are used for the generated dex when using R8, as
+# R8 does Proguard + dx
+my_r8 := true
+$(built_dex_intermediate): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
+$(built_dex_intermediate): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
+$(built_dex_intermediate): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
+$(built_dex_intermediate) : $(full_classes_proguard_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8)
+	$(transform-jar-to-dex-r8)
+endif # USE_R8
+endif # LOCAL_PROGUARD_ENABLED
+
+ifndef my_r8
 $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
 	$(transform-classes.jar-to-dex)
+endif
 
 $(built_dex): $(built_dex_intermediate)
 	@echo Copying: $@
