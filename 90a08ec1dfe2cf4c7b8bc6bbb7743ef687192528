@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "842ce613_d11e53da",
+        "filename": "core/java.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 608,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-24T20:04:55Z",
+      "side": 1,
+      "message": "Do we still consider this a hack?",
+      "revId": "90a08ec1dfe2cf4c7b8bc6bbb7743ef687192528",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
