@@ -16,6 +16,24 @@
       "revId": "60ad1630861603d662f795cfbdead25b315720d7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c05bc7bd_ed77de84",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-10-24T23:45:49Z",
+      "side": 1,
+      "message": "Good point. I have CLs ready that will work with clang-4393122 but the current default doesn\u0027t have the static versions available yet. So for now I\u0027ll just go with disabling it for static executables.",
+      "parentUuid": "f02e66f4_dce9281e",
+      "revId": "60ad1630861603d662f795cfbdead25b315720d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
