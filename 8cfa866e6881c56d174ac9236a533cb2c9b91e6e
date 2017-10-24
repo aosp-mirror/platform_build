@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3df842af_1b565fd2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 817,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-24T23:47:27Z",
+      "side": 1,
+      "message": "Isn\u0027t this redundant with the strip?",
+      "range": {
+        "startLine": 817,
+        "startChar": 8,
+        "endLine": 817,
+        "endChar": 31
+      },
+      "revId": "8cfa866e6881c56d174ac9236a533cb2c9b91e6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aeaafd13_616567ac",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 821,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-24T23:47:27Z",
+      "side": 1,
+      "message": "It\u0027s valid to include .. as long as there\u0027s other text in the directory name too",
+      "range": {
+        "startLine": 821,
+        "startChar": 12,
+        "endLine": 821,
+        "endChar": 39
+      },
+      "revId": "8cfa866e6881c56d174ac9236a533cb2c9b91e6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
