@@ -22,6 +22,30 @@
       "revId": "0f04367536e821552a2b803aba44820dc17c9af4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "229f55e9_3707c680",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-24T23:16:25Z",
+      "side": 1,
+      "message": "Thanks. I\u0027ve now uploaded some more patches in this stack to validate the arguments",
+      "parentUuid": "8ec61395_0770a246",
+      "range": {
+        "startLine": 75,
+        "startChar": 33,
+        "endLine": 75,
+        "endChar": 63
+      },
+      "revId": "0f04367536e821552a2b803aba44820dc17c9af4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
