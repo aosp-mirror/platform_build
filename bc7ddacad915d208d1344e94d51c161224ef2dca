@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0eb630c9_8d00f0c9",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-24T23:30:20Z",
+      "side": 1,
+      "message": "This is no longer correct.",
+      "revId": "bc7ddacad915d208d1344e94d51c161224ef2dca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00600ed9_2bb0de5f",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-24T23:30:20Z",
+      "side": 1,
+      "message": "Where does this path come from?  Was jack excluding it?",
+      "range": {
+        "startLine": 62,
+        "startChar": 34,
+        "endLine": 62,
+        "endChar": 49
+      },
+      "revId": "bc7ddacad915d208d1344e94d51c161224ef2dca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
