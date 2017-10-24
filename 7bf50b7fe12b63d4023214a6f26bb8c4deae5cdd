@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "910a06ef_4d3ee66d",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-24T22:58:53Z",
+      "side": 1,
+      "message": "This leaves it unset for PDK builds, is that what you want?",
+      "revId": "7bf50b7fe12b63d4023214a6f26bb8c4deae5cdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
