@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "cff5d728_40ccb496",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-24T19:35:18Z",
+      "side": 1,
+      "message": "We shouldn\u0027t be depending directly on installed files, but using $(VNDK_CORE_LIBRARIES)/etc to find the intermediate paths for the libraries.",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 5
+      },
+      "revId": "7b935a91a9352b2df0ea789605d71ae1972db219",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "65c4be22_b7f0e7f0",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 3
@@ -36,6 +59,24 @@
       "writtenOn": "2017-10-24T19:32:34Z",
       "side": 1,
       "message": "We make some effort to have outputs be reproducible across builds if nothing has changed.  soong_zip would handle this for you if you used a zip file, but tar is not going to.  If you need a tar.bz2, can you do something to strip usernames and timestamps from the resulting file, and make sure the files end up in a consistent order (sorted alphabetically, not by the order they are in the fileystem)?",
+      "revId": "7b935a91a9352b2df0ea789605d71ae1972db219",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be37cb89_0bad9e4b",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-24T19:35:18Z",
+      "side": 1,
+      "message": "We should just be using .zip files with soong_zip here",
+      "parentUuid": "7d2797ad_e8f37d97",
       "revId": "7b935a91a9352b2df0ea789605d71ae1972db219",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
