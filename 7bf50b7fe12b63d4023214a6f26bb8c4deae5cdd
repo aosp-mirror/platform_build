@@ -16,6 +16,24 @@
       "revId": "7bf50b7fe12b63d4023214a6f26bb8c4deae5cdd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e4a698c_933fca20",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2017-10-24T23:01:06Z",
+      "side": 1,
+      "message": "It should work either way.",
+      "parentUuid": "910a06ef_4d3ee66d",
+      "revId": "7bf50b7fe12b63d4023214a6f26bb8c4deae5cdd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
