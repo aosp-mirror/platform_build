@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a062213c_5408dd8a",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-24T23:10:59Z",
+      "side": 1,
+      "message": "This line still takes effect.\n\nIt seems slightly cleaner to me like this because the things in here aren\u0027t necessarily classes.\n\nWould you move this into DEFAULT_JACOCO_EXCLUDE_FILTER anyway?",
+      "range": {
+        "startLine": 62,
+        "startChar": 2,
+        "endLine": 62,
+        "endChar": 49
+      },
+      "revId": "5f9d08cc8b4f3470f721b24896d9a52341852be8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0faeecb7_a221b56b",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-24T23:10:59Z",
+      "side": 1,
+      "message": "This isn\u0027t used at the moment any more, though.",
+      "range": {
+        "startLine": 63,
+        "startChar": 62,
+        "endLine": 63,
+        "endChar": 91
+      },
+      "revId": "5f9d08cc8b4f3470f721b24896d9a52341852be8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
