@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "65c4be22_b7f0e7f0",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-24T19:32:34Z",
+      "side": 1,
+      "message": "Files should not depend on phony targets or they will be rebuilt every time.",
+      "range": {
+        "startLine": 29,
+        "startChar": 28,
+        "endLine": 29,
+        "endChar": 40
+      },
+      "revId": "7b935a91a9352b2df0ea789605d71ae1972db219",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d2797ad_e8f37d97",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-24T19:32:34Z",
+      "side": 1,
+      "message": "We make some effort to have outputs be reproducible across builds if nothing has changed.  soong_zip would handle this for you if you used a zip file, but tar is not going to.  If you need a tar.bz2, can you do something to strip usernames and timestamps from the resulting file, and make sure the files end up in a consistent order (sorted alphabetically, not by the order they are in the fileystem)?",
+      "revId": "7b935a91a9352b2df0ea789605d71ae1972db219",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
