@@ -91,8 +91,11 @@ LIBART_TARGET_BOOT_ART_EXTRA_FILES += boot.oat boot.vdex
 # If we use a boot image profile.
 my_use_profile_for_boot_image := $(PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE)
 ifeq (,$(my_use_profile_for_boot_image))
-# If not set, use the default.
+# If not set, set the default to true if we are not a PDK build. PDK builds
+# can't build the profile since they don't have frameworks/base.
+ifneq (true,$(TARGET_BUILD_PDK))
 my_use_profile_for_boot_image := true
+endif
 endif
 
 ifeq (true,$(my_use_profile_for_boot_image))

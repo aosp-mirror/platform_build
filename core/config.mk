@@ -524,6 +524,7 @@ ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
   SIGNAPK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(HOST_OUT_SHARED_LIBRARIES)
   ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign
+  R8 := $(HOST_OUT_EXECUTABLES)/r8
 
 else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   AIDL := $(prebuilt_sdk_tools_bin)/aidl
@@ -534,7 +535,7 @@ else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   SIGNAPK_JAR := $(prebuilt_sdk_tools)/lib/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(prebuilt_sdk_tools)/$(HOST_OS)/lib64
   ZIPALIGN := $(prebuilt_sdk_tools_bin)/zipalign
-
+  R8 := $(prebuilt_build_tools_wrappers)/r8
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
 
 ifeq (,$(TARGET_BUILD_APPS))
