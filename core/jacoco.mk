@@ -72,7 +72,7 @@ $(my_unzipped_timestamp_path): $(LOCAL_FULL_CLASSES_PRE_JACOCO_JAR)
 	unzip -q $(PRIVATE_FULL_CLASSES_PRE_JACOCO_JAR) \
 	  -d $(PRIVATE_UNZIPPED_PATH) \
 	  $(PRIVATE_INCLUDE_ARGS)
-	rm -rf $(PRIVATE_EXCLUDE_ARGS)
+	(cd $(PRIVATE_UNZIPPED_PATH) && rm -rf $(PRIVATE_EXCLUDE_ARGS))
 	touch $(PRIVATE_UNZIPPED_TIMESTAMP_PATH)
 # Unfortunately in the previous task above,
 # 'rm -rf $(PRIVATE_EXCLUDE_ARGS)' needs to be a separate
