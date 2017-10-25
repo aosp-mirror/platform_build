@@ -605,33 +605,33 @@ ifneq ($(filter-out full custom nosystem obfuscation optimization shrinktests,$(
 endif
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
 
-# Hack: see b/20667396
-# When an app's LOCAL_SDK_VERSION is lower than the support library's LOCAL_SDK_VERSION,
-# we artifically raises the "SDK version" "linked" by ProGuard, to
+# When an app contains references to APIs that are not in the SDK specified by
+# its LOCAL_SDK_VERSION for example added by support library or by runtime 
+# classes added by desugar, we artifically raise the "SDK version" "linked" by
+# ProGuard, to
 # - suppress ProGuard warnings of referencing symbols unknown to the lower SDK version.
 # - prevent ProGuard stripping subclass in the support library that extends class added in the higher SDK version.
-my_support_library_sdk_raise :=
-ifneq (,$(filter android-support-%,$(LOCAL_STATIC_JAVA_LIBRARIES)))
+# See b/20667396
+my_proguard_sdk_raise :=
 ifdef LOCAL_SDK_VERSION
 ifdef TARGET_BUILD_APPS
 ifeq (,$(filter current system_current test_current, $(LOCAL_SDK_VERSION)))
-  my_support_library_sdk_raise := $(call java-lib-header-files, sdk_vcurrent)
+  my_proguard_sdk_raise := $(call java-lib-header-files, sdk_vcurrent)
 endif
 else
   # For platform build, we can't just raise to the "current" SDK,
   # that would break apps that use APIs removed from the current SDK.
-  my_support_library_sdk_raise := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
-endif
+  my_proguard_sdk_raise := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
 endif
 endif
 
-legacy_proguard_flags := $(addprefix -libraryjars ,$(my_support_library_sdk_raise) \
-  $(filter-out $(my_support_library_sdk_raise), \
+legacy_proguard_flags := $(addprefix -libraryjars ,$(my_proguard_sdk_raise) \
+  $(filter-out $(my_proguard_sdk_raise), \
     $(full_java_bootclasspath_libs) \
     $(full_shared_java_header_libs)))
 
-legacy_proguard_lib_deps := $(my_support_library_sdk_raise) \
-  $(filter-out $(my_support_library_sdk_raise),$(full_shared_java_header_libs))
+legacy_proguard_lib_deps := $(my_proguard_sdk_raise) \
+  $(filter-out $(my_proguard_sdk_raise),$(full_shared_java_header_libs))
 
 legacy_proguard_flags += -printmapping $(proguard_dictionary)
 
@@ -729,7 +729,7 @@ ifneq ($(USE_R8),true)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
 $(full_classes_proguard_jar): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
-$(full_classes_proguard_jar) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) | $(PROGUARD)
+$(full_classes_proguard_jar) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) | $(PROGUARD)
 	$(call transform-jar-to-proguard)
 else # !USE_R8
 # Running R8 instead of Proguard, proguarded jar is actually the pre-Proguarded jar.
