@@ -39,13 +39,13 @@ ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
     my_include_args :=
   endif
 
-  # replace '.' with '/' and ',' with ' ', and quote each arg
+  # replace '.' with '/' and ',' with ' '
   ifneq ($(strip $(my_exclude_filter)),)
     my_exclude_args := $(my_exclude_filter)
 
     my_exclude_args := $(subst .,/,$(my_exclude_args))
     my_exclude_args := $(subst $(comma)$(comma),$(comma),$(my_exclude_args))
-    my_exclude_args := '$(subst $(comma),' ', $(my_exclude_args))'
+    my_exclude_args := $(subst $(comma), ,$(my_exclude_args))
   else
     my_exclude_args :=
   endif
