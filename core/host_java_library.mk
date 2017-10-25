@@ -122,6 +122,6 @@ include $(BUILD_SYSTEM)/jacoco.mk
 $(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(LOCAL_BUILT_MODULE)))
 $(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(full_classes_jar)))
 
-ifneq ($(TURBINE_DISABLED),false)
+ifeq ($(TURBINE_ENABLED),false)
 $(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(full_classes_header_jar)))
 endif
