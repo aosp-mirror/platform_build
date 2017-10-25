@@ -555,6 +555,10 @@ endif
 
 $(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
+ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+LOCAL_DX_FLAGS := $(filter-out --multi-dex,$(LOCAL_DX_FLAGS)) --multi-dex
+endif
+
 my_desugaring :=
 ifndef LOCAL_IS_STATIC_JAVA_LIBRARY
 my_desugaring := true
