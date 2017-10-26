@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "091b1e06_b97405a4",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 3213,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-26T07:04:53Z",
+      "side": 1,
+      "message": "Use this, which will handle LOCAL_MODULE_MAKEFILE \u0026 LOCAL_MODULE for you:\n\n $(call pretty-error,",
+      "range": {
+        "startLine": 3213,
+        "startChar": 4,
+        "endLine": 3213,
+        "endChar": 9
+      },
+      "revId": "b12712d229c699906898ea1c89d4fa8286d05a7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb2c4f23_fcfdfe9e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 3231,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-26T07:04:53Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 3231,
+        "startChar": 6,
+        "endLine": 3231,
+        "endChar": 11
+      },
+      "revId": "b12712d229c699906898ea1c89d4fa8286d05a7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
