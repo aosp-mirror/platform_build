@@ -49,11 +49,6 @@ ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
   else
     my_exclude_args :=
   endif
-endif # LOCAL_EMMA_INSTRUMENT == true
-
-# determine whether to run the instrumenter based on whether there is any work
-# for it to do
-ifneq ($(my_include_filter),)
 
   my_files := $(intermediates.COMMON)/jacoco
 
@@ -72,7 +67,8 @@ $(my_unzipped_timestamp_path): $(LOCAL_FULL_CLASSES_PRE_JACOCO_JAR)
 	unzip -q $(PRIVATE_FULL_CLASSES_PRE_JACOCO_JAR) \
 	  -d $(PRIVATE_UNZIPPED_PATH) \
 	  $(PRIVATE_INCLUDE_ARGS)
-	rm -rf $(PRIVATE_EXCLUDE_ARGS)
+	(cd $(PRIVATE_UNZIPPED_PATH) && rm -rf $(PRIVATE_EXCLUDE_ARGS))
+	(cd $(PRIVATE_UNZIPPED_PATH) && find -not -name "*.class" -type f | xargs --no-run-if-empty rm)
 	touch $(PRIVATE_UNZIPPED_TIMESTAMP_PATH)
 # Unfortunately in the previous task above,
 # 'rm -rf $(PRIVATE_EXCLUDE_ARGS)' needs to be a separate
@@ -132,8 +128,8 @@ $(LOCAL_FULL_CLASSES_JACOCO_JAR): $(my_instrumented_timestamp_path) $(LOCAL_FULL
   # dependency.
 $(LOCAL_FULL_CLASSES_JACOCO_JAR): $(my_classes_to_report_on_path)
 
-else # my_include_filter == ''
+else # LOCAL_EMMA_INSTRUMENT != true
   LOCAL_FULL_CLASSES_JACOCO_JAR := $(LOCAL_FULL_CLASSES_PRE_JACOCO_JAR)
-endif # my_include_filter != ''
+endif # LOCAL_EMMA_INSTRUMENT == true
 
 LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_FULL_CLASSES_JACOCO_JAR)
