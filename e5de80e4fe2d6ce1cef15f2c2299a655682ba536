@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f3a102f_bb89b585",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2400,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-26T18:03:28Z",
+      "side": 1,
+      "message": "This didn\u0027t work at all, TARGET_DEFAULT_JAVA_LIBRARIES is a list of modules and PRIVATE_SHARED_JAVA_HEADER_LIBRARIES is a list of paths.  I\u0027ll try moving frameworks.jar and friends to the bootclasspath.",
+      "range": {
+        "startLine": 2400,
+        "startChar": 50,
+        "endLine": 2400,
+        "endChar": 79
+      },
+      "revId": "e5de80e4fe2d6ce1cef15f2c2299a655682ba536",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
