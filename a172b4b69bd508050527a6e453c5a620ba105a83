@@ -46,6 +46,30 @@
       "revId": "a172b4b69bd508050527a6e453c5a620ba105a83",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64910a05_ca60f9e4",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1247,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2017-10-26T18:03:51Z",
+      "side": 1,
+      "message": "No, It\u0027s because I have to rewrite a lot of the surrounding (completely untested) code to stop using FILE* + fread/fseek/ftell :-/",
+      "parentUuid": "51b542d6_23b81834",
+      "range": {
+        "startLine": 1247,
+        "startChar": 4,
+        "endLine": 1247,
+        "endChar": 11
+      },
+      "revId": "a172b4b69bd508050527a6e453c5a620ba105a83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
