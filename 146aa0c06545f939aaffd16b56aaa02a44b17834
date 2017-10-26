@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c1ae6bf3_a96af8e8",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-26T06:23:53Z",
+      "side": 1,
+      "message": "Yes, some do:\n\nhttps://android.googlesource.com/platform/bionic/+/master/tests/Android.mk#69\n\nIn practice, we support this in most cases -- the only places where we put anything at the end of LOCAL_ADDITIONAL_DEPENDENCIES right now is the java aidl and source list rules, and the ndk.timestamp for native code.\n\nI\u0027d support a follow up set of changes to restrict this after cleaning up the users, but I\u0027d like to get this one in so that we don\u0027t get any regressions.",
+      "parentUuid": "dcebd390_728b3adc",
+      "range": {
+        "startLine": 99,
+        "startChar": 50,
+        "endLine": 99,
+        "endChar": 54
+      },
+      "revId": "146aa0c06545f939aaffd16b56aaa02a44b17834",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "03db576b_2ba07546",
         "filename": "core/base_rules.mk",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "146aa0c06545f939aaffd16b56aaa02a44b17834",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b65af1d4_ff8ca2c2",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-10-26T06:23:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "03db576b_2ba07546",
+      "range": {
+        "startLine": 103,
+        "startChar": 61,
+        "endLine": 103,
+        "endChar": 69
+      },
+      "revId": "146aa0c06545f939aaffd16b56aaa02a44b17834",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
