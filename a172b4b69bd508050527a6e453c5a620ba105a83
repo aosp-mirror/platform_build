@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "41ddd824_a8fb48d0",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1247,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2017-10-26T17:57:12Z",
+      "side": 1,
+      "message": "sucks.. maybe i should change the API to take a non-const Reader reference.",
+      "range": {
+        "startLine": 1247,
+        "startChar": 4,
+        "endLine": 1247,
+        "endChar": 11
+      },
+      "revId": "a172b4b69bd508050527a6e453c5a620ba105a83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
