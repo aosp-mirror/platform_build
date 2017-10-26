@@ -719,7 +719,11 @@ endif
 endif
 
 ifneq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
+ifneq ($(USE_R8),true)
   $(full_classes_proguard_jar): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+else
+  $(built_dex_intermediate): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+endif
 endif
 
 # If R8 is not enabled run Proguard.
