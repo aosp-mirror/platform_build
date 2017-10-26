@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dcebd390_728b3adc",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-26T05:54:26Z",
+      "side": 1,
+      "message": "Do LOCAL_ADDITIONAL_DEPENDENCIES really contain these?  Because if so, they are converting a bunch of our internal dependencies into order-only dependencies.",
+      "range": {
+        "startLine": 99,
+        "startChar": 50,
+        "endLine": 99,
+        "endChar": 54
+      },
+      "revId": "146aa0c06545f939aaffd16b56aaa02a44b17834",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03db576b_2ba07546",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-26T05:54:26Z",
+      "side": 1,
+      "message": "contain",
+      "range": {
+        "startLine": 103,
+        "startChar": 61,
+        "endLine": 103,
+        "endChar": 69
+      },
+      "revId": "146aa0c06545f939aaffd16b56aaa02a44b17834",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
