@@ -70,6 +70,30 @@
       "revId": "a172b4b69bd508050527a6e453c5a620ba105a83",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8555f8c1_ee681b24",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1247,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-10-26T21:25:25Z",
+      "side": 1,
+      "message": "does this code actually gain from the extra buffering of stdio? seems like the seeks imply \"no\"?",
+      "parentUuid": "64910a05_ca60f9e4",
+      "range": {
+        "startLine": 1247,
+        "startChar": 4,
+        "endLine": 1247,
+        "endChar": 11
+      },
+      "revId": "a172b4b69bd508050527a6e453c5a620ba105a83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
