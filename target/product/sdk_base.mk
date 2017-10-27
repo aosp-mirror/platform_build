@@ -24,11 +24,10 @@ PRODUCT_PACKAGES := \
 	Development \
 	Dialer \
 	EmulatorSmokeTests \
-	Fallback \
 	Gallery2 \
 	GestureBuilder \
 	Launcher3 \
-	LegacyCamera \
+	Camera2 \
 	librs_jni \
 	libwnndict \
 	libWnnEngDic \
@@ -102,6 +101,7 @@ PRODUCT_COPY_FILES := \
 	frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
 	frameworks/native/data/etc/android.hardware.camera.xml:system/etc/permissions/android.hardware.camera.xml \
 	frameworks/native/data/etc/android.hardware.fingerprint.xml:system/etc/permissions/android.hardware.fingerprint.xml \
+	frameworks/native/data/etc/android.software.autofill.xml:system/etc/permissions/android.software.autofill.xml \
 	frameworks/av/media/libeffects/data/audio_effects.conf:system/etc/audio_effects.conf \
 	device/generic/goldfish/audio_policy.conf:system/etc/audio_policy.conf
 

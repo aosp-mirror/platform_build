@@ -1,3 +1,2 @@
-unix_socket_connect(system_server, qemud, qemud)
 get_prop(system_server, opengles_prop)
 get_prop(system_server, radio_noril_prop)

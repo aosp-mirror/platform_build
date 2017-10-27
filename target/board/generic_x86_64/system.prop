@@ -2,5 +2,4 @@
 # system.prop for generic sdk
 #
 
-rild.libpath=/system/lib64/libreference-ril.so
-rild.libargs=-d /dev/ttyS0
+rild.libpath=/vendor/lib64/libreference-ril.so
