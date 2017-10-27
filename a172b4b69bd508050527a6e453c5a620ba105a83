@@ -94,6 +94,30 @@
       "revId": "a172b4b69bd508050527a6e453c5a620ba105a83",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dbae14c3_42ae80ad",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1247,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2017-10-27T08:14:06Z",
+      "side": 1,
+      "message": "Some of the other code in this class does - especially the bits where they process central directory and file headers and read names and paths using fgetc and the like. \n\nAll of that code can be rewritten to not be so juvenile, but it\u0027s unclear whether that\u0027s a good use of time. I\u0027m not even sure some of the features in this tool are actively being used (and it\u0027s hard to tell because it\u0027s a part of the public SDK).",
+      "parentUuid": "8555f8c1_ee681b24",
+      "range": {
+        "startLine": 1247,
+        "startChar": 4,
+        "endLine": 1247,
+        "endChar": 11
+      },
+      "revId": "a172b4b69bd508050527a6e453c5a620ba105a83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
