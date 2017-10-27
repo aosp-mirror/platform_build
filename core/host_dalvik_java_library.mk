@@ -28,10 +28,6 @@ USE_CORE_LIB_BOOTCLASSPATH := true
 include $(BUILD_SYSTEM)/host_java_library_common.mk
 #######################################
 
-ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-  LOCAL_JAVA_LIBRARIES :=  core-oj-hostdex core-libart-hostdex $(LOCAL_JAVA_LIBRARIES)
-endif
-
 full_classes_turbine_jar := $(intermediates.COMMON)/classes-turbine.jar
 full_classes_header_jarjar := $(intermediates.COMMON)/classes-header-jarjar.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
