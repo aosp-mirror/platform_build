@@ -118,6 +118,29 @@
       "revId": "a172b4b69bd508050527a6e453c5a620ba105a83",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30f3d289_188e2a9d",
+        "filename": "tools/zipalign/ZipFile.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 1295,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-10-27T15:56:22Z",
+      "side": 1,
+      "message": "change Inflate to allow this to be nullptr?",
+      "range": {
+        "startLine": 1295,
+        "startChar": 67,
+        "endLine": 1295,
+        "endChar": 80
+      },
+      "revId": "a172b4b69bd508050527a6e453c5a620ba105a83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
