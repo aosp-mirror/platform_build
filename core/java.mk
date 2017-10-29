@@ -18,25 +18,6 @@ endif #PDK
 LOCAL_NO_STANDARD_LIBRARIES:=$(strip $(LOCAL_NO_STANDARD_LIBRARIES))
 LOCAL_SDK_VERSION:=$(strip $(LOCAL_SDK_VERSION))
 
-ifneq ($(LOCAL_MODULE),jacocoagent)
-  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-    ifeq ($(EMMA_INSTRUMENT),true)
-      ifneq ($(EMMA_INSTRUMENT_STATIC),true)
-        # For instrumented build, if Jacoco is not being included statically
-        # in instrumented packages then include Jacoco classes into the
-        # bootclasspath.
-        LOCAL_JAVA_LIBRARIES := jacocoagent $(LOCAL_JAVA_LIBRARIES)
-      endif # EMMA_INSTRUMENT_STATIC
-    endif # EMMA_INSTRUMENT
-  endif # !LOCAL_NO_STANDARD_LIBRARIES
-endif # LOCAL_MODULE == jacocoagent
-
-ifndef LOCAL_SDK_VERSION
-  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-    LOCAL_JAVA_LIBRARIES := $(TARGET_DEFAULT_JAVA_LIBRARIES) $(LOCAL_JAVA_LIBRARIES)
-  endif
-endif
-
 proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
 ifneq ($(proto_sources),)
 ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
@@ -732,7 +713,11 @@ endif
 endif
 
 ifneq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
+ifneq ($(USE_R8),true)
   $(full_classes_proguard_jar): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+else
+  $(built_dex_intermediate): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+endif
 endif
 
 # If R8 is not enabled run Proguard.

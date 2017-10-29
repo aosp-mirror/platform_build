@@ -200,8 +200,6 @@ full_java_bootclasspath_libs :=
 empty_bootclasspath :=
 my_system_modules :=
 
-# full_java_libs: The list of files that should be used as the classpath.
-#                 Using this list as a dependency list WILL NOT WORK.
 ifndef LOCAL_IS_HOST_MODULE
   ifeq ($(LOCAL_SDK_VERSION),)
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
@@ -212,8 +210,19 @@ ifndef LOCAL_IS_HOST_MODULE
       # now, so just always assume that they want the default system modules
       my_system_modules := $(DEFAULT_SYSTEM_MODULES)
     else  # LOCAL_NO_STANDARD_LIBRARIES
-      full_java_bootclasspath_libs := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES))
+      full_java_bootclasspath_libs := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
+      LOCAL_JAVA_LIBRARIES := $(filter-out $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES),$(LOCAL_JAVA_LIBRARIES))
       my_system_modules := $(DEFAULT_SYSTEM_MODULES)
+      ifneq ($(LOCAL_MODULE),jacocoagent)
+        ifeq ($(EMMA_INSTRUMENT),true)
+          ifneq ($(EMMA_INSTRUMENT_STATIC),true)
+            # For instrumented build, if Jacoco is not being included statically
+            # in instrumented packages then include Jacoco classes into the
+            # bootclasspath.
+            full_java_bootclasspath_libs += $(call java-lib-header-files,jacocoagent)
+          endif # EMMA_INSTRUMENT_STATIC
+        endif # EMMA_INSTRUMENT
+      endif # LOCAL_MODULE == jacocoagent
     endif  # LOCAL_NO_STANDARD_LIBRARIES
   else
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
@@ -265,6 +274,7 @@ else # LOCAL_IS_HOST_MODULE
 
     full_shared_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
       $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
+    full_shared_java_header_libs := $(full_shared_java_libs)
   endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
 
@@ -294,9 +304,6 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := $(full_java_bootclasspat
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_EMPTY_BOOTCLASSPATH := $(empty_bootclasspath)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SYSTEM_MODULES := $(my_system_modules_dir)
 
-full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
-full_java_header_libs := $(full_shared_java_header_libs) $(full_static_java_header_libs)
-
 ifndef LOCAL_IS_HOST_MODULE
 # This is set by packages that are linking to other packages that export
 # shared libraries, allowing them to make use of the code in the linked apk.
@@ -307,8 +314,7 @@ ifneq ($(apk_libraries),)
 
   # link against the jar with full original names (before proguard processing).
   full_shared_java_libs += $(link_apk_libraries)
-  full_java_libs += $(link_apk_libraries)
-  full_java_header_libs += $(link_apk_header_libs)
+  full_shared_java_header_libs += $(link_apk_header_libs)
 endif
 
 # This is set by packages that contain instrumentation, allowing them to
@@ -330,8 +336,8 @@ ifdef LOCAL_INSTRUMENTATION_FOR
   else
     link_instr_classes_header_jar := $(link_instr_intermediates_dir.COMMON)/classes.jar
   endif
-  full_java_libs += $(link_instr_classes_jar)
-  full_java_header_libs += $(link_instr_classes_header_jar)
+  full_shared_java_libs += $(link_instr_classes_jar)
+  full_shared_java_header_libs += $(link_instr_classes_header_jar)
 endif  # LOCAL_INSTRUMENTATION_FOR
 endif  # LOCAL_IS_HOST_MODULE
 
@@ -378,8 +384,12 @@ ALL_MODULES.$(my_register_name).RS_FILES := $(renderscript_sources_fullpath)
 endif
 endif  # !LOCAL_IS_HOST_MODULE
 
+full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
+full_java_header_libs := $(full_shared_java_header_libs) $(full_static_java_header_libs)
+
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ALL_JAVA_LIBRARIES := $(full_java_libs)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ALL_JAVA_HEADER_LIBRARIES := $(full_java_header_libs)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SHARED_JAVA_HEADER_LIBRARIES := $(full_shared_java_header_libs)
 
 ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
     $(ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR) $(LOCAL_INTERMEDIATE_SOURCE_DIR)
