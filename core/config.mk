@@ -860,22 +860,14 @@ else
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
 endif
 
-ifeq ($(JAVA_NOT_REQUIRED),true)
-# Remove java and tools from our path so that we make sure nobody uses them.
-unexport ANDROID_JAVA_HOME
-unexport JAVA_HOME
-export ANDROID_BUILD_PATHS:=$(abspath $(BUILD_SYSTEM)/no_java_path):$(ANDROID_BUILD_PATHS)
-export PATH:=$(abspath $(BUILD_SYSTEM)/no_java_path):$(PATH)
-else
-  # Put java first on the path
-  # TODO(ccross): remove this once tools run during the build no longer depend on
-  # finding java in the path
-  ifeq (,$(strip $(CALLED_FROM_SETUP)))
-    ifneq ($(shell which java),$(abspath $(ANDROID_JAVA_TOOLCHAIN)/java))
-      $(warning Found incorrect java $(shell which java) in $$PATH)
-      $(warning Adding $(abspath $(ANDROID_JAVA_TOOLCHAIN)) to $$PATH)
-      export PATH:=$(abspath $(ANDROID_JAVA_TOOLCHAIN)):$(PATH)
-    endif
+# Put java first on the path
+# TODO(ccross): remove this once tools run during the build no longer depend on
+# finding java in the path
+ifeq (,$(strip $(CALLED_FROM_SETUP)))
+  ifneq ($(shell which java),$(abspath $(ANDROID_JAVA_TOOLCHAIN)/java))
+    $(warning Found incorrect java $(shell which java) in $$PATH)
+    $(warning Adding $(abspath $(ANDROID_JAVA_TOOLCHAIN)) to $$PATH)
+    export PATH:=$(abspath $(ANDROID_JAVA_TOOLCHAIN)):$(PATH)
   endif
 endif
 
