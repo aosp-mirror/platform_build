@@ -442,6 +442,8 @@ $(call add-clean-step, rm -f $(OUT_DIR)/target/common/obj/*/*_intermediates/java
 $(call add-clean-step, rm -rf $(OUT_DIR)/host/common/obj/*/*_intermediates/src)
 $(call add-clean-step, rm -f $(OUT_DIR)/host/common/obj/*/*_intermediates/java-source-list)
 
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*/flat-res)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
