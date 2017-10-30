@@ -295,15 +295,6 @@ PRODUCT_AAPT_CONFIG_SP := $(PRODUCT_AAPT_CONFIG)
 PRODUCT_AAPT_CONFIG := \
     $(subst $(space),$(comma),$(strip $(PRODUCT_AAPT_CONFIG)))
 
-# product-scoped aapt flags
-PRODUCT_AAPT_FLAGS :=
-PRODUCT_AAPT2_CFLAGS :=
-ifneq ($(filter en_XA ar_XB,$(PRODUCT_LOCALES)),)
-  # Force generating resources for pseudo-locales.
-  PRODUCT_AAPT2_CFLAGS += --pseudo-localize
-  PRODUCT_AAPT_FLAGS += --pseudo-localize
-endif
-
 PRODUCT_BRAND := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BRAND))
 
 PRODUCT_MODEL := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_MODEL))

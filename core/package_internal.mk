@@ -353,7 +353,7 @@ installed_apk_splits := $(foreach s,$(my_split_suffixes),$(my_module_path)/$(LOC
 endif
 
 ifdef LOCAL_USE_AAPT2
-my_compiled_res_base_dir := $(intermediates)/flat-res
+my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res
 renderscript_target_api :=
 ifneq (,$(LOCAL_RENDERSCRIPT_TARGET_API))
 renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
