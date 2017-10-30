@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7614b872_c9e9b86a",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-30T23:59:03Z",
+      "side": 1,
+      "message": "jacocoagent is missing here.",
+      "revId": "aae593f2ba29703e6acd04dbf34dc05858e44147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
