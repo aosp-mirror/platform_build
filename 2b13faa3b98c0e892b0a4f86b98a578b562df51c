@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "20fa2723_1597f3a6",
+        "filename": "core/pdk_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-30T23:49:36Z",
+      "side": 1,
+      "message": "This puts the intermediates of hwbinder.jar into the PDK, which allows modules defined in make to build against it even though the sources are not present.",
+      "revId": "2b13faa3b98c0e892b0a4f86b98a578b562df51c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
