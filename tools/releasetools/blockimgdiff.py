@@ -768,6 +768,7 @@ class BlockImageDiff(object):
                 message.append(
                     "Fell back and generated with bsdiff instead for %s" % (
                     xf.tgt_name,))
+                xf.style = "bsdiff"
                 with lock:
                   warning_messages.extend(message)
                 del message[:]
