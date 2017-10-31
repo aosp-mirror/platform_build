@@ -107,31 +107,7 @@ PRODUCT_PACKAGES += \
 # need this for gles libraries to load properly
 # after moving to /vendor/lib/
 PRODUCT_PACKAGES += \
-    android.hardware.renderscript@1.0.vndk-sp\
-    android.hardware.graphics.allocator@2.0.vndk-sp\
-    android.hardware.graphics.mapper@2.0.vndk-sp\
-    android.hardware.graphics.common@1.0.vndk-sp\
-    libhwbinder.vndk-sp\
-    libbase.vndk-sp\
-    libcutils.vndk-sp\
-    libhardware.vndk-sp\
-    libhidlbase.vndk-sp\
-    libhidltransport.vndk-sp\
-    libutils.vndk-sp\
-    libc++.vndk-sp\
-    libRS_internal.vndk-sp\
-    libRSDriver.vndk-sp\
-    libRSCpuRef.vndk-sp\
-    libbcinfo.vndk-sp\
-    libblas.vndk-sp\
-    libft2.vndk-sp\
-    libpng.vndk-sp\
-    libcompiler_rt.vndk-sp\
-    libbacktrace.vndk-sp\
-    libunwind.vndk-sp\
-    liblzma.vndk-sp\
-    libz.vndk-sp\
-
+    vndk-sp
 
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/init.ranchu-core.sh:vendor/bin/init.ranchu-core.sh \
