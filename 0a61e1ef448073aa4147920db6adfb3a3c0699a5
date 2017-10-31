@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "20c5e070_dfcb2b94",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-10-31T19:16:59Z",
+      "side": 1,
+      "message": "See also https://android-review.googlesource.com/c/platform/build/+/524095/1/core/java.mk#605\n\nI\u0027m still trying to figure out the details but I have found that this makes the build not fail",
+      "revId": "0a61e1ef448073aa4147920db6adfb3a3c0699a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
