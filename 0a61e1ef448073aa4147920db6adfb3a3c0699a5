@@ -16,6 +16,24 @@
       "revId": "0a61e1ef448073aa4147920db6adfb3a3c0699a5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "777b2483_cc182043",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-10-31T19:35:10Z",
+      "side": 1,
+      "message": "This should be conditional on the logic that is used to add jacocoagent to the classpath in java_common.mk, preferably without repeating all the conditionals",
+      "parentUuid": "20c5e070_dfcb2b94",
+      "revId": "0a61e1ef448073aa4147920db6adfb3a3c0699a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
