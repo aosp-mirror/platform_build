@@ -235,26 +235,12 @@ ifneq ($(filter cfi,$(my_sanitize)),)
   # entire module.
   LOCAL_ARM_MODE := thumb
   my_cflags += $(CFI_EXTRA_CFLAGS)
-  # Only append the default visibility flag if -fvisibility has not already been
-  # set to hidden.
-  ifeq ($(filter -fvisibility=hidden,$(LOCAL_CFLAGS)),)
-    my_cflags += -fvisibility=default
-  endif
   my_ldflags += $(CFI_EXTRA_LDFLAGS)
   my_arflags += --plugin $(LLVM_PREBUILTS_PATH)/../lib64/LLVMgold.so
   # Workaround for b/33678192. CFI jumptables need Thumb2 codegen.  Revert when
   # Clang is updated past r290384.
   ifneq ($(filter arm,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
     my_ldflags += -march=armv7-a
-  endif
-
-  ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
-        my_ldflags := $(filter-out -fsanitize-cfi-cross-dso,$(my_ldflags))
-        my_cflags := $(filter-out -fsanitize-cfi-cross-dso,$(my_cflags))
-  else
-        # Apply the version script to non-static executables
-        my_ldflags += -Wl,--version-script,build/soong/cc/config/cfi_exports.map
-        LOCAL_ADDITIONAL_DEPENDENCIES += build/soong/cc/config/cfi_exports.map
   endif
 endif
 
@@ -307,16 +293,11 @@ ifneq ($(strip $(LOCAL_SANITIZE_RECOVER)),)
 endif
 
 ifneq ($(my_sanitize_diag),)
-  # TODO(vishwath): Add diagnostic support for static executables once
-  # we switch to clang-4393122 (which adds the static ubsan runtime
-  # that this depends on)
-  ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
-    notrap_arg := $(subst $(space),$(comma),$(my_sanitize_diag)),
-    my_cflags += -fno-sanitize-trap=$(notrap_arg)
-    # Diagnostic requires a runtime library, unless ASan or TSan are also enabled.
-    ifeq ($(filter address thread,$(my_sanitize)),)
-      # Does not have to be the first DT_NEEDED unlike ASan.
-      my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY)
-    endif
+  notrap_arg := $(subst $(space),$(comma),$(my_sanitize_diag)),
+  my_cflags += -fno-sanitize-trap=$(notrap_arg)
+  # Diagnostic requires a runtime library, unless ASan or TSan are also enabled.
+  ifeq ($(filter address thread,$(my_sanitize)),)
+    # Does not have to be the first DT_NEEDED unlike ASan.
+    my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY)
   endif
 endif
