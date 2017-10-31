@@ -1082,14 +1082,15 @@ class SignApk {
                     ByteBuffer[] outputChunks = new ByteBuffer[] {v1SignedApk};
 
                     ZipSections zipSections = findMainZipSections(v1SignedApk);
-                    ApkSignerEngine.OutputApkSigningBlockRequest addV2SignatureRequest =
-                            apkSigner.outputZipSections(
+                    ApkSignerEngine.OutputApkSigningBlockRequest2 addV2SignatureRequest =
+                            apkSigner.outputZipSections2(
                                     DataSources.asDataSource(zipSections.beforeCentralDir),
                                     DataSources.asDataSource(zipSections.centralDir),
                                     DataSources.asDataSource(zipSections.eocd));
                     if (addV2SignatureRequest != null) {
                         // Need to insert the returned APK Signing Block before ZIP Central
                         // Directory.
+                        int padding = addV2SignatureRequest.getPaddingSizeBeforeApkSigningBlock();
                         byte[] apkSigningBlock = addV2SignatureRequest.getApkSigningBlock();
                         // Because the APK Signing Block is inserted before the Central Directory,
                         // we need to adjust accordingly the offset of Central Directory inside the
@@ -1100,10 +1101,12 @@ class SignApk {
                         modifiedEocd.order(ByteOrder.LITTLE_ENDIAN);
                         ApkUtils.setZipEocdCentralDirectoryOffset(
                                 modifiedEocd,
-                                zipSections.beforeCentralDir.remaining() + apkSigningBlock.length);
+                                zipSections.beforeCentralDir.remaining() + padding +
+                                apkSigningBlock.length);
                         outputChunks =
                                 new ByteBuffer[] {
                                         zipSections.beforeCentralDir,
+                                        ByteBuffer.allocate(padding),
                                         ByteBuffer.wrap(apkSigningBlock),
                                         zipSections.centralDir,
                                         modifiedEocd};
