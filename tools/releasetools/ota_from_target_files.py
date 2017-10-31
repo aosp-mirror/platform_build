@@ -46,9 +46,9 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Similar to --full_radio. When generating an incremental OTA, always
       include a full copy of bootloader image.
 
-  -v  (--verify)
-      Remount and verify the checksums of the files written to the
-      system and vendor (if used) partitions.  Incremental builds only.
+  --verify
+      Remount and verify the checksums of the files written to the system and
+      vendor (if used) partitions. Non-A/B incremental OTAs only.
 
   -o  (--oem_settings)  <main_file[,additional_files...]>
       Comma seperated list of files used to specify the expected OEM-specific
