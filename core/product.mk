@@ -146,8 +146,8 @@ _product_var_list := \
     PRODUCT_MINIMIZE_JAVA_DEBUG_INFO \
     PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS \
     PRODUCT_ADB_KEYS \
-
-
+    PRODUCT_CFI_INCLUDE_PATHS \
+    PRODUCT_CFI_EXCLUDE_PATHS \
 
 define dump-product
 $(info ==== $(1) ====)\
