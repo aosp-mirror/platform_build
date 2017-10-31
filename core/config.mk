@@ -61,18 +61,6 @@ backslash := $(patsubst %a,%,$(backslash))
 # If a rule fails, delete $@.
 .DELETE_ON_ERROR:
 
-# Check for broken versions of make.
-ifndef KATI
-ifneq (1,$(strip $(shell expr $(MAKE_VERSION) \>= 3.81)))
-$(warning ********************************************************************************)
-$(warning *  You are using version $(MAKE_VERSION) of make.)
-$(warning *  Android can only be built by versions 3.81 and higher.)
-$(warning *  see https://source.android.com/source/download.html)
-$(warning ********************************************************************************)
-$(error stopping)
-endif
-endif
-
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
 FORCE:
