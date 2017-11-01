@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b65ea1b8_4aa94f0b",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-01T00:27:07Z",
+      "side": 1,
+      "message": "This seems like a confusing name, because most library jars used by proguard come through full_java_bootclasspath_libs and full_shared_java_header_libs.",
+      "range": {
+        "startLine": 589,
+        "startChar": 0,
+        "endLine": 589,
+        "endChar": 23
+      },
+      "revId": "02f46d0f1511d9a2e36b97f0af0fcdf878412126",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c202702_9d09aed9",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 603,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-01T00:27:07Z",
+      "side": 1,
+      "message": "This doesn\u0027t seem relevant.  Maybe \"For modules built against the platform we can\u0027t just raise to the \"current\" SDK, that would break apps that use APIs removed from the current SDK\".\n\nPart of the reason this is confusing is because the logic isn\u0027t really correct.  There is no reason an app built with TARGET_BUILD_APPS couldn\u0027t reference a removed API not present in sdk_vcurrent, but if it did there is nothing we could do about it because frameworks.jar isn\u0027t present.",
+      "range": {
+        "startLine": 603,
+        "startChar": 4,
+        "endLine": 603,
+        "endChar": 72
+      },
+      "revId": "02f46d0f1511d9a2e36b97f0af0fcdf878412126",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eddba3c2_9538ada0",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-01T00:27:07Z",
+      "side": 1,
+      "message": "Instead we insert the platform jars (which contain all the APIs including APIs annotated with @removed) at the front of the classpath for proguard.",
+      "range": {
+        "startLine": 606,
+        "startChar": 4,
+        "endLine": 606,
+        "endChar": 42
+      },
+      "revId": "02f46d0f1511d9a2e36b97f0af0fcdf878412126",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
