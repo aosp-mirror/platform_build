@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b6474d5f_e6962f90",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2261,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-01T17:18:27Z",
+      "side": 1,
+      "message": "TARGET_DEFAULT_JAVA_LIBRARIES is \"ext framework okhttp\", wouldn\u0027t you want $(filter) instead of $(filter-out)?",
+      "range": {
+        "startLine": 2261,
+        "startChar": 42,
+        "endLine": 2261,
+        "endChar": 113
+      },
+      "revId": "73f3c025f2f4ac991659683515195f60722a3d04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
