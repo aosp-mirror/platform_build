@@ -16,6 +16,24 @@
       "revId": "6d4536023b002f6377ca6a74a93604c9a38c0670",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dd0bab21_9f10d04e",
+        "filename": "target/product/full_base.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-01T23:17:53Z",
+      "side": 1,
+      "message": "platform/vendor/aosp/... is checked out into vendor/..., so it just works on mirror-aosp-master-with-vendor",
+      "parentUuid": "7223f056_6c7d11a2",
+      "revId": "6d4536023b002f6377ca6a74a93604c9a38c0670",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
