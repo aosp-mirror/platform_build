@@ -24,6 +24,7 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
   target/common/obj/JAVA_LIBRARIES/legacy-android-test_intermediates \
   target/common/obj/JAVA_LIBRARIES/ext_intermediates \
   target/common/obj/JAVA_LIBRARIES/framework_intermediates \
+  target/common/obj/JAVA_LIBRARIES/hwbinder_intermediates \
   target/common/obj/JAVA_LIBRARIES/ims-common_intermediates \
   target/common/obj/JAVA_LIBRARIES/okhttp_intermediates \
   target/common/obj/JAVA_LIBRARIES/telephony-common_intermediates \
