@@ -9,6 +9,23 @@ else
 SHELL := /bin/bash
 endif
 
+ifndef KATI
+
+host_prebuilts := linux-x86
+ifeq ($(shell uname),Darwin)
+host_prebuilts := darwin-x86
+endif
+
+.PHONY: run_soong_ui
+run_soong_ui:
+	+@prebuilts/build-tools/$(host_prebuilts)/bin/makeparallel --ninja build/soong/soong_ui.bash --make-mode $(MAKECMDGOALS)
+
+.PHONY: $(MAKECMDGOALS)
+$(sort $(MAKECMDGOALS)) : run_soong_ui
+	@#empty
+
+else # KATI
+
 # Absolute path of the present working direcotry.
 # This overrides the shell variable $PWD, which does not necessarily points to
 # the top of the source tree, for example when "make -C" is used in m/mm/mmm.
@@ -17,7 +34,7 @@ PWD := $(shell pwd)
 TOP := .
 TOPDIR :=
 
-BUILD_SYSTEM := $(TOPDIR)build/core
+BUILD_SYSTEM := $(TOPDIR)build/make/core
 
 # This is the default target.  It must be the first declared target.
 .PHONY: droid
@@ -27,22 +44,9 @@ $(DEFAULT_GOAL): droid_targets
 .PHONY: droid_targets
 droid_targets:
 
-# Targets that provide quick help on the build system.
-include $(BUILD_SYSTEM)/help.mk
-
 # Set up various standard variables based on configuration
 # and host information.
 include $(BUILD_SYSTEM)/config.mk
-
-ifndef KATI
-ifdef USE_NINJA
-$(warning USE_NINJA is ignored. Ninja is always used.)
-endif
-
-# Mark this is a ninja build.
-$(shell mkdir -p $(OUT_DIR) && touch $(OUT_DIR)/ninja_build)
-include build/core/ninja.mk
-else # KATI
 
 ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
 dont_bother := true
@@ -66,169 +70,70 @@ else
 DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
 endif
 
+# Make an empty directory, which can be used to make empty jars
+EMPTY_DIRECTORY := $(OUT_DIR)/empty
+$(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
+
 # CTS-specific config.
 -include cts/build/config.mk
 # VTS-specific config.
 -include test/vts/tools/vts-tradefed/build/config.mk
+# device-tests-specific-config.
+-include tools/tradefederation/build/suites/device-tests/config.mk
+# general-tests-specific-config.
+-include tools/tradefederation/build/suites/general-tests/config.mk
 
-# This allows us to force a clean build - included after the config.mk
-# environment setup is done, but before we generate any dependencies.  This
-# file does the rm -rf inline so the deps which are all done below will
-# be generated correctly
-include $(BUILD_SYSTEM)/cleanbuild.mk
+# Clean rules
+.PHONY: clean-dex-files
+clean-dex-files:
+	$(hide) find $(OUT_DIR) -name "*.dex" | xargs rm -f
+	$(hide) for i in `find $(OUT_DIR) -name "*.jar" -o -name "*.apk"` ; do ((unzip -l $$i 2> /dev/null | \
+				grep -q "\.dex$$" && rm -f $$i) || continue ) ; done
+	@echo "All dex files and archives containing dex files have been removed."
 
 # Include the google-specific config
 -include vendor/google/build/config.mk
 
-VERSION_CHECK_SEQUENCE_NUMBER := 6
-JAVA_NOT_REQUIRED_CHECKED :=
--include $(OUT_DIR)/versions_checked.mk
-ifneq ($(VERSION_CHECK_SEQUENCE_NUMBER)$(JAVA_NOT_REQUIRED),$(VERSIONS_CHECKED)$(JAVA_NOT_REQUIRED_CHECKED))
-
-$(info Checking build tools versions...)
-
-# check for a case sensitive file system
-ifneq (a,$(shell mkdir -p $(OUT_DIR) ; \
-                echo a > $(OUT_DIR)/casecheck.txt; \
-                    echo B > $(OUT_DIR)/CaseCheck.txt; \
-                cat $(OUT_DIR)/casecheck.txt))
-$(warning ************************************************************)
-$(warning You are building on a case-insensitive filesystem.)
-$(warning Please move your source tree to a case-sensitive filesystem.)
-$(warning ************************************************************)
-$(error Case-insensitive filesystems not supported)
-endif
-
-# Make sure that there are no spaces in the absolute path; the
-# build system can't deal with them.
-ifneq ($(words $(shell pwd)),1)
-$(warning ************************************************************)
-$(warning You are building in a directory whose absolute path contains)
-$(warning a space character:)
-$(warning $(space))
-$(warning "$(shell pwd)")
-$(warning $(space))
-$(warning Please move your source tree to a path that does not contain)
-$(warning any spaces.)
-$(warning ************************************************************)
-$(error Directory names containing spaces not supported)
-endif
-
-ifneq ($(JAVA_NOT_REQUIRED),true)
-java_version_str := $(shell unset _JAVA_OPTIONS && java -version 2>&1)
-javac_version_str := $(shell unset _JAVA_OPTIONS && javac -version 2>&1)
-
-# Check for the correct version of java, should be 1.8 by
-# default and only 1.7 if LEGACY_USE_JAVA7 is set.
-ifeq ($(LEGACY_USE_JAVA7),) # if LEGACY_USE_JAVA7 == ''
-required_version := "1.8.x"
-required_javac_version := "1.8"
-java_version := $(shell echo '$(java_version_str)' | grep '[ "]1\.8[\. "$$]')
-javac_version := $(shell echo '$(javac_version_str)' | grep '[ "]1\.8[\. "$$]')
-else
-required_version := "1.7.x"
-required_javac_version := "1.7"
-java_version := $(shell echo '$(java_version_str)' | grep '^java .*[ "]1\.7[\. "$$]')
-javac_version := $(shell echo '$(javac_version_str)' | grep '[ "]1\.7[\. "$$]')
-endif # if LEGACY_USE_JAVA7 == ''
-
-ifeq ($(strip $(java_version)),)
-$(info ************************************************************)
-$(info You are attempting to build with the incorrect version)
-$(info of java.)
-$(info $(space))
-$(info Your version is: $(java_version_str).)
-$(info The required version is: $(required_version))
-$(info $(space))
-$(info Please follow the machine setup instructions at)
-$(info $(space)$(space)$(space)$(space)https://source.android.com/source/initializing.html)
-$(info ************************************************************)
-$(error stop)
-endif
-
-# Check for the current JDK.
-#
-# For Java 1.7/1.8, we require OpenJDK on linux and Oracle JDK on Mac OS.
-requires_openjdk := false
-ifeq ($(BUILD_OS),linux)
-requires_openjdk := true
-endif
-
-
-# Check for the current jdk
-ifeq ($(requires_openjdk), true)
-# The user asked for openjdk, so check that the host
-# java version is really openjdk and not some other JDK.
-ifeq ($(shell echo '$(java_version_str)' | grep -i openjdk),)
-$(info ************************************************************)
-$(info You asked for an OpenJDK based build but your version is)
-$(info $(java_version_str).)
-$(info ************************************************************)
-$(error stop)
-endif # java version is not OpenJdk
-else # if requires_openjdk
-ifneq ($(shell echo '$(java_version_str)' | grep -i openjdk),)
-$(info ************************************************************)
-$(info You are attempting to build with an unsupported JDK.)
-$(info $(space))
-$(info You use OpenJDK but only Sun/Oracle JDK is supported.)
-$(info Please follow the machine setup instructions at)
-$(info $(space)$(space)$(space)$(space)https://source.android.com/source/download.html)
-$(info ************************************************************)
-$(error stop)
-endif # java version is not Sun Oracle JDK
-endif # if requires_openjdk
-
-KNOWN_INCOMPATIBLE_JAVAC_VERSIONS := google
-incompat_javac := $(foreach v,$(KNOWN_INCOMPATIBLE_JAVAC_VERSIONS),$(findstring $(v),$(javac_version_str)))
-ifneq ($(incompat_javac),)
-javac_version :=
-endif
-
-# Check for the correct version of javac
-ifeq ($(strip $(javac_version)),)
-$(info ************************************************************)
-$(info You are attempting to build with the incorrect version)
-$(info of javac.)
-$(info $(space))
-$(info Your version is: $(javac_version_str).)
-ifneq ($(incompat_javac),)
-$(info This '$(incompat_javac)' version is not supported for Android platform builds.)
-$(info Use a publicly available JDK and make sure you have run envsetup.sh / lunch.)
-else
-$(info The required version is: $(required_javac_version))
-endif
-$(info $(space))
-$(info Please follow the machine setup instructions at)
-$(info $(space)$(space)$(space)$(space)https://source.android.com/source/download.html)
-$(info ************************************************************)
-$(error stop)
-endif
-
-endif # if JAVA_NOT_REQUIRED
-
-ifndef BUILD_EMULATOR
-  # Emulator binaries are now provided under prebuilts/android-emulator/
-  BUILD_EMULATOR := false
-endif
-
-$(shell echo 'VERSIONS_CHECKED := $(VERSION_CHECK_SEQUENCE_NUMBER)' \
-        > $(OUT_DIR)/versions_checked.mk)
-$(shell echo 'BUILD_EMULATOR ?= $(BUILD_EMULATOR)' \
-        >> $(OUT_DIR)/versions_checked.mk)
-$(shell echo 'JAVA_NOT_REQUIRED_CHECKED := $(JAVA_NOT_REQUIRED)' \
-        >> $(OUT_DIR)/versions_checked.mk)
-endif
-
 # These are the modifier targets that don't do anything themselves, but
 # change the behavior of the build.
 # (must be defined before including definitions.make)
-INTERNAL_MODIFIER_TARGETS := showcommands all
+INTERNAL_MODIFIER_TARGETS := all
 
 # EMMA_INSTRUMENT_STATIC merges the static emma library to each emma-enabled module.
 ifeq (true,$(EMMA_INSTRUMENT_STATIC))
 EMMA_INSTRUMENT := true
 endif
+
+#
+# -----------------------------------------------------------------
+# Validate ADDITIONAL_DEFAULT_PROPERTIES.
+ifneq ($(ADDITIONAL_DEFAULT_PROPERTIES),)
+$(error ADDITIONAL_DEFAULT_PROPERTIES must not be set before here: $(ADDITIONAL_DEFAULT_PROPERTIES))
+endif
+
+#
+# -----------------------------------------------------------------
+# Validate ADDITIONAL_BUILD_PROPERTIES.
+ifneq ($(ADDITIONAL_BUILD_PROPERTIES),)
+$(error ADDITIONAL_BUILD_PROPERTIES must not be set before here: $(ADDITIONAL_BUILD_PROPERTIES))
+endif
+
+#
+# -----------------------------------------------------------------
+# Add the product-defined properties to the build properties.
+ifdef PRODUCT_SHIPPING_API_LEVEL
+ADDITIONAL_BUILD_PROPERTIES += \
+  ro.product.first_api_level=$(PRODUCT_SHIPPING_API_LEVEL)
+endif
+
+ifneq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
+  ADDITIONAL_BUILD_PROPERTIES += $(PRODUCT_PROPERTY_OVERRIDES)
+else
+  ifndef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+    ADDITIONAL_BUILD_PROPERTIES += $(PRODUCT_PROPERTY_OVERRIDES)
+  endif
+endif
+
 
 # Bring in standard build system definitions.
 include $(BUILD_SYSTEM)/definitions.mk
@@ -268,31 +173,22 @@ TARGET_BUILD_JAVA_SUPPORT_LEVEL := platform
 
 # -----------------------------------------------------------------
 # The pdk (Platform Development Kit) build
-include build/core/pdk_config.mk
+include build/make/core/pdk_config.mk
 
 #
 # -----------------------------------------------------------------
-# Jack version configuration
--include $(TOPDIR)prebuilts/sdk/tools/jack_versions.mk
--include $(TOPDIR)prebuilts/sdk/tools/jack_for_module.mk
-
-#
-# -----------------------------------------------------------------
-# Install and start Jack server
--include $(TOPDIR)prebuilts/sdk/tools/jack_server_setup.mk
-
-#
-# -----------------------------------------------------------------
-# Jacoco package name for Jack
--include $(TOPDIR)external/jacoco/config.mk
-
-#
-# -----------------------------------------------------------------
-# Enable dynamic linker developer warnings for all builds except
-# final release.
+# Enable dynamic linker developer warnings for userdebug, eng
+# and non-REL builds
+ifneq ($(TARGET_BUILD_VARIANT),user)
+  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
+else
+# Enable it for user builds as long as they are not final.
 ifneq ($(PLATFORM_VERSION_CODENAME),REL)
   ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
 endif
+endif
+
+ADDITIONAL_BUILD_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
 
 # -----------------------------------------------------------------
 ###
@@ -319,6 +215,11 @@ ifdef TARGET_2ND_ARCH
   ifneq ($($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES),)
     ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.isa.$(TARGET_2ND_ARCH).features=$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES)
   endif
+endif
+
+# Add the system server compiler filter if they are specified for the product.
+ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
+ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.systemservercompilerfilter=$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER)
 endif
 
 ## user/userdebug ##
@@ -410,8 +311,8 @@ BUILD_WITHOUT_PV := true
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
 
-# enable vm tracing in files for now to help track
-# the cause of ANRs in the content process
+# Sets the location that the runtime dumps stack traces to when signalled
+# with SIGQUIT. Stack trace dumping is turned on for all android builds.
 ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.stack-trace-file=/data/anr/traces.txt
 
 # ------------------------------------------------------------
@@ -433,7 +334,7 @@ endef
 endif
 
 
-# If they only used the modifier goals (showcommands, etc), we'll actually
+# If they only used the modifier goals (all, etc), we'll actually
 # build the default target.
 ifeq ($(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS)),)
 .PHONY: $(INTERNAL_MODIFIER_TARGETS)
@@ -447,8 +348,16 @@ endif
 FULL_BUILD := true
 
 # Before we go and include all of the module makefiles, mark the PRODUCT_*
-# values readonly so that they won't be modified.
+# and ADDITIONAL*PROPERTIES values readonly so that they won't be modified.
 $(call readonly-product-vars)
+ADDITIONAL_DEFAULT_PROPERTIES := $(strip $(ADDITIONAL_DEFAULT_PROPERTIES))
+.KATI_READONLY := ADDITIONAL_DEFAULT_PROPERTIES
+ADDITIONAL_BUILD_PROPERTIES := $(strip $(ADDITIONAL_BUILD_PROPERTIES))
+.KATI_READONLY := ADDITIONAL_BUILD_PROPERTIES
+
+ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
+ENFORCE_RRO_SOURCES :=
+endif
 
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
@@ -497,14 +406,18 @@ ifneq ($(dont_bother),true)
 # Include all of the makefiles in the system
 #
 
-subdir_makefiles := $(SOONG_ANDROID_MK) $(call first-makefiles-under,$(TOP))
+subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)/.module_paths/Android.mk.list)
+subdir_makefiles_total := $(words $(subdir_makefiles))
+.KATI_READONLY := subdir_makefiles_total
 
-$(foreach mk,$(subdir_makefiles),$(info including $(mk) ...)$(eval include $(mk)))
+$(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
 
 ifdef PDK_FUSION_PLATFORM_ZIP
 # Bring in the PDK platform.zip modules.
 include $(BUILD_SYSTEM)/pdk_fusion_modules.mk
 endif # PDK_FUSION_PLATFORM_ZIP
+
+droid_targets : blueprint_tools
 
 endif # dont_bother
 
@@ -514,6 +427,13 @@ endif # ONE_SHOT_MAKEFILE
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
 
+# -------------------------------------------------------------------
+# Enforce to generate all RRO packages for modules having resource
+# overlays.
+# -------------------------------------------------------------------
+ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
+$(call generate_all_enforce_rro_packages)
+endif
 
 # -------------------------------------------------------------------
 # Fix up CUSTOM_MODULES to refer to installed files rather than
@@ -568,9 +488,10 @@ endif  # TARGET_TRANSLATE_2ND_ARCH
 # If a module is for a cross host os, the required modules must be for
 # that OS too.
 # If a module is built for 32-bit, the required modules must be 32-bit too;
-# Otherwise if the module is an exectuable or shared library,
+# Otherwise if the module is an executable or shared library,
 #   the required modules must be 64-bit;
 #   otherwise we require both 64-bit and 32-bit variant, if one exists.
+define select-bitness-of-required-modules
 $(foreach m,$(ALL_MODULES),\
   $(eval r := $(ALL_MODULES.$(m).REQUIRED))\
   $(if $(r),\
@@ -586,6 +507,8 @@ $(foreach m,$(ALL_MODULES),\
      $(eval ALL_MODULES.$(m).REQUIRED := $(strip $(r_r)))\
   )\
 )
+endef
+$(call select-bitness-of-required-modules)
 r_r :=
 
 define add-required-deps
@@ -600,24 +523,68 @@ define add-required-host-so-deps
 $(1): $(2)
 endef
 
+# Sets up dependencies such that whenever a host module is installed,
+# any other host modules listed in $(ALL_MODULES.$(m).REQUIRED) will also be installed
+define add-all-host-to-host-required-modules-deps
+$(foreach m,$(ALL_MODULES), \
+  $(eval r := $(ALL_MODULES.$(m).REQUIRED)) \
+  $(if $(r), \
+    $(eval r := $(call module-installed-files,$(r))) \
+    $(eval h_m := $(filter $(HOST_OUT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
+    $(eval hc_m := $(filter $(HOST_CROSS_OUT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
+    $(eval h_r := $(filter $(HOST_OUT)/%, $(r))) \
+    $(eval hc_r := $(filter $(HOST_CROSS_OUT)/%, $(r))) \
+    $(eval h_m := $(filter-out $(h_r), $(h_m))) \
+    $(eval hc_m := $(filter-out $(hc_r), $(hc_m))) \
+    $(if $(h_m), $(eval $(call add-required-deps, $(h_m),$(h_r)))) \
+    $(if $(hc_m), $(eval $(call add-required-deps, $(hc_m),$(hc_r)))) \
+  ) \
+)
+endef
+$(call add-all-host-to-host-required-modules-deps)
+
+# Sets up dependencies such that whenever a target module is installed,
+# any other target modules listed in $(ALL_MODULES.$(m).REQUIRED) will also be installed
+define add-all-target-to-target-required-modules-deps
 $(foreach m,$(ALL_MODULES), \
   $(eval r := $(ALL_MODULES.$(m).REQUIRED)) \
   $(if $(r), \
     $(eval r := $(call module-installed-files,$(r))) \
     $(eval t_m := $(filter $(TARGET_OUT_ROOT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
-    $(eval h_m := $(filter $(HOST_OUT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
-    $(eval hc_m := $(filter $(HOST_CROSS_OUT)/%, $(ALL_MODULES.$(m).INSTALLED))) \
     $(eval t_r := $(filter $(TARGET_OUT_ROOT)/%, $(r))) \
-    $(eval h_r := $(filter $(HOST_OUT)/%, $(r))) \
-    $(eval hc_r := $(filter $(HOST_CROSS_OUT)/%, $(r))) \
     $(eval t_m := $(filter-out $(t_r), $(t_m))) \
-    $(eval h_m := $(filter-out $(h_r), $(h_m))) \
-    $(eval hc_m := $(filter-out $(hc_r), $(hc_m))) \
     $(if $(t_m), $(eval $(call add-required-deps, $(t_m),$(t_r)))) \
-    $(if $(h_m), $(eval $(call add-required-deps, $(h_m),$(h_r)))) \
-    $(if $(hc_m), $(eval $(call add-required-deps, $(hc_m),$(hc_r)))) \
-   ) \
- )
+  ) \
+)
+endef
+$(call add-all-target-to-target-required-modules-deps)
+
+# Sets up dependencies such that whenever a host module is installed,
+# any target modules listed in $(ALL_MODULES.$(m).TARGET_REQUIRED) will also be installed
+define add-all-host-to-target-required-modules-deps
+$(foreach m,$(ALL_MODULES), \
+  $(eval req_mods := $(ALL_MODULES.$(m).TARGET_REQUIRED))\
+  $(if $(req_mods), \
+    $(eval req_files := )\
+    $(foreach req_mod,$(req_mods), \
+      $(eval req_file := $(filter $(TARGET_OUT_ROOT)/%, $(call module-installed-files,$(req_mod)))) \
+      $(if $(strip $(req_file)),\
+        ,\
+        $(error $(m).LOCAL_TARGET_REQUIRED_MODULES : illegal value $(req_mod) : not a device module. If you want to specify host modules to be required to be installed along with your host module, add those module names to LOCAL_REQUIRED_MODULES instead)\
+      )\
+      $(eval req_files := $(req_files)$(space)$(req_file))\
+    )\
+    $(eval req_files := $(strip $(req_files)))\
+    $(eval mod_files := $(filter $(HOST_OUT)/%, $(call module-installed-files,$(m)))) \
+    $(eval mod_files := $(filter-out $(req_files),$(mod_files)))\
+    $(if $(mod_files),\
+      $(eval $(call add-required-deps, $(mod_files),$(req_files))) \
+    )\
+  )\
+)
+endef
+$(call add-all-host-to-target-required-modules-deps)
+
 
 t_m :=
 h_m :=
@@ -626,7 +593,7 @@ t_r :=
 h_r :=
 hc_r :=
 
-# Establish the dependecies on the shared libraries.
+# Establish the dependencies on the shared libraries.
 # It also adds the shared library module names to ALL_MODULES.$(m).REQUIRED,
 # so they can be expanded to product_MODULES later.
 # $(1): TARGET_ or HOST_ or HOST_CROSS_.
@@ -666,6 +633,178 @@ p :=
 deps :=
 add-required-deps :=
 
+################################################################################
+# Link type checking
+#
+# ALL_LINK_TYPES contains a list of all link type prefixes (generally one per
+# module, but APKs can "link" to both java and native code). The link type
+# prefix consists of all the information needed by intermediates-dir-for:
+#
+#  LINK_TYPE:TARGET:_:2ND:STATIC_LIBRARIES:libfoo
+#
+#   1: LINK_TYPE literal
+#   2: prefix
+#     - TARGET
+#     - HOST
+#     - HOST_CROSS
+#     - AUX-<variant-name>
+#   3: Whether to use the common intermediates directory or not
+#     - _
+#     - COMMON
+#   4: Whether it's the second arch or not
+#     - _
+#     - 2ND_
+#   5: Module Class
+#     - STATIC_LIBRARIES
+#     - SHARED_LIBRARIES
+#     - ...
+#   6: Module Name
+#
+# Then fields under that are separated by a period and the field name:
+#   - TYPE: the link types for this module
+#   - MAKEFILE: Where this module was defined
+#   - BUILT: The built module location
+#   - DEPS: the link type prefixes for the module's dependencies
+#   - ALLOWED: the link types to allow in this module's dependencies
+#   - WARN: the link types to warn about in this module's dependencies
+#
+# All of the dependency link types not listed in ALLOWED or WARN will become
+# errors.
+################################################################################
+
+link_type_error :=
+
+define link-type-prefix-base
+$(word 2,$(subst :,$(space),$(1)))
+endef
+define link-type-prefix
+$(if $(filter AUX-%,$(link-type-prefix-base)),$(patsubst AUX-%,AUX,$(link-type-prefix-base)),$(link-type-prefix-base))
+endef
+define link-type-aux-variant
+$(if $(filter AUX-%,$(link-type-prefix-base)),$(patsubst AUX-%,%,$(link-type-prefix-base)))
+endef
+define link-type-common
+$(patsubst _,,$(word 3,$(subst :,$(space),$(1))))
+endef
+define link-type-2ndarchprefix
+$(patsubst _,,$(word 4,$(subst :,$(space),$(1))))
+endef
+define link-type-class
+$(word 5,$(subst :,$(space),$(1)))
+endef
+define link-type-name
+$(word 6,$(subst :,$(space),$(1)))
+endef
+define link-type-os
+$(strip $(eval _p := $(link-type-prefix))\
+  $(if $(filter HOST HOST_CROSS,$(_p)),\
+    $($(_p)_OS),\
+    $(if $(filter AUX,$(_p)),AUX,android)))
+endef
+define link-type-arch
+$($(link-type-prefix)_$(link-type-2ndarchprefix)ARCH)
+endef
+define link-type-name-variant
+$(link-type-name) ($(link-type-class) $(link-type-os)-$(link-type-arch))
+endef
+
+# $(1): the prefix of the module doing the linking
+# $(2): the prefix of the linked module
+define link-type-warning
+$(shell $(call echo-warning,$($(1).MAKEFILE),"$(call link-type-name,$(1)) ($($(1).TYPE)) should not link against $(call link-type-name,$(2)) ($(3))"))
+endef
+
+# $(1): the prefix of the module doing the linking
+# $(2): the prefix of the linked module
+define link-type-error
+$(shell $(call echo-error,$($(1).MAKEFILE),"$(call link-type-name,$(1)) ($($(1).TYPE)) can not link against $(call link-type-name,$(2)) ($(3))"))\
+$(eval link_type_error := true)
+endef
+
+link-type-missing :=
+ifneq ($(ALLOW_MISSING_DEPENDENCIES),true)
+  # Print an error message if the linked-to module is missing
+  # $(1): the prefix of the module doing the linking
+  # $(2): the prefix of the missing module
+  define link-type-missing
+    $(shell $(call echo-error,$($(1).MAKEFILE),"$(call link-type-name-variant,$(1)) missing $(call link-type-name-variant,$(2))"))\
+    $(eval available_variants := $(filter %:$(call link-type-name,$(2)),$(ALL_LINK_TYPES)))\
+    $(if $(available_variants),\
+      $(info Available variants:)\
+      $(foreach v,$(available_variants),$(info $(space)$(space)$(call link-type-name-variant,$(v)))))\
+    $(info You can set ALLOW_MISSING_DEPENDENCIES=true in your environment if this is intentional, but that may defer real problems until later in the build.)\
+    $(eval link_type_error := true)
+  endef
+else
+  define link-type-missing
+    $(eval $$(1).MISSING := true)
+  endef
+endif
+
+# Verify that $(1) can link against $(2)
+# Both $(1) and $(2) are the link type prefix defined above
+define verify-link-type
+$(foreach t,$($(2).TYPE),\
+  $(if $(filter-out $($(1).ALLOWED),$(t)),\
+    $(if $(filter $(t),$($(1).WARN)),\
+      $(call link-type-warning,$(1),$(2),$(t)),\
+      $(call link-type-error,$(1),$(2),$(t)))))
+endef
+
+# TODO: Verify all branches/configs have reasonable warnings/errors, and remove
+# these overrides
+link-type-missing = $(eval $$(1).MISSING := true)
+verify-link-type = $(eval $$(1).MISSING := true)
+
+$(foreach lt,$(ALL_LINK_TYPES),\
+  $(foreach d,$($(lt).DEPS),\
+    $(if $($(d).TYPE),\
+      $(call verify-link-type,$(lt),$(d)),\
+      $(call link-type-missing,$(lt),$(d)))))
+
+ifdef link_type_error
+  $(error exiting from previous errors)
+endif
+
+# The intermediate filename for link type rules
+#
+# APPS are special -- they have up to three different rules:
+#  1. The COMMON rule for Java libraries
+#  2. The jni_link_type rule for embedded native code
+#  3. The 2ND_jni_link_type for the second architecture native code
+define link-type-file
+$(eval _ltf_aux_variant:=$(link-type-aux-variant))\
+$(if $(_ltf_aux_variant),$(call aux-variant-load-env,$(_ltf_aux_variant)))\
+$(call intermediates-dir-for,$(link-type-class),$(link-type-name),$(filter AUX HOST HOST_CROSS,$(link-type-prefix)),$(link-type-common),$(link-type-2ndarchprefix),$(filter HOST_CROSS,$(link-type-prefix)))/$(if $(filter APPS,$(link-type-class)),$(if $(link-type-common),,$(link-type-2ndarchprefix)jni_))link_type\
+$(if $(_ltf_aux_variant),$(call aux-variant-load-env,none))\
+$(eval _ltf_aux_variant:=)
+endef
+
+# Write out the file-based link_type rules for the ALLOW_MISSING_DEPENDENCIES
+# case. We always need to write the file for mm to work, but only need to
+# check it if we weren't able to check it when reading the Android.mk files.
+define link-type-file-rule
+my_link_type_deps := $(foreach l,$($(1).DEPS),$(call link-type-file,$(l)))
+my_link_type_file := $(call link-type-file,$(1))
+$($(1).BUILT): | $$(my_link_type_file)
+$$(my_link_type_file): PRIVATE_DEPS := $$(my_link_type_deps)
+ifeq ($($(1).MISSING),true)
+$$(my_link_type_file): $(CHECK_LINK_TYPE)
+endif
+$$(my_link_type_file): $$(my_link_type_deps)
+	@echo Check module type: $$@
+	$$(hide) mkdir -p $$(dir $$@) && rm -f $$@
+ifeq ($($(1).MISSING),true)
+	$$(hide) $(CHECK_LINK_TYPE) --makefile $($(1).MAKEFILE) --module $(link-type-name) \
+	  --type "$($(1).TYPE)" $(addprefix --allowed ,$($(1).ALLOWED)) \
+	  $(addprefix --warn ,$($(1).WARN)) $$(PRIVATE_DEPS)
+endif
+	$$(hide) echo "$($(1).TYPE)" >$$@
+endef
+
+$(foreach lt,$(ALL_LINK_TYPES),\
+  $(eval $(call link-type-file-rule,$(lt))))
+
 # -------------------------------------------------------------------
 # Figure out our module sets.
 #
@@ -694,6 +833,9 @@ ifdef FULL_BUILD
   # Filter out the overridden packages before doing expansion
   product_MODULES := $(filter-out $(foreach p, $(product_MODULES), \
       $(PACKAGES.$(p).OVERRIDES)), $(product_MODULES))
+  # Filter out executables as well
+  product_MODULES := $(filter-out $(foreach m, $(product_MODULES), \
+      $(EXECUTABLES.$(m).OVERRIDES)), $(product_MODULES))
 
   # Resolve the :32 :64 module name
   modules_32 := $(patsubst %:32,%,$(filter %:32, $(product_MODULES)))
@@ -751,7 +893,7 @@ overridden_packages := $(call get-package-overrides,$(modules_to_install))
 ifdef overridden_packages
 #  old_modules_to_install := $(modules_to_install)
   modules_to_install := \
-      $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk %/$(p).odex), \
+      $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk %/$(p).odex %/$(p).vdex), \
           $(modules_to_install))
 endif
 #$(error filtered out
@@ -773,6 +915,8 @@ ifdef is_sdk_build
                       $(TARGET_OUT_DATA)/%, \
                               $(sort $(call get-tagged-modules,gnu)))
   target_gnu_MODULES := $(filter-out $(TARGET_OUT_EXECUTABLES)/%,$(target_gnu_MODULES))
+  target_gnu_MODULES := $(filter-out %/libopenjdkjvmti.so,$(target_gnu_MODULES))
+  target_gnu_MODULES := $(filter-out %/libopenjdkjvmtid.so,$(target_gnu_MODULES))
   $(info Removing from sdk:)$(foreach d,$(target_gnu_MODULES),$(info : $(d)))
   modules_to_install := \
               $(filter-out $(target_gnu_MODULES),$(modules_to_install))
@@ -797,7 +941,7 @@ ifdef is_sdk_build
       $(warning $(ALL_MODULES.$(m).MAKEFILE): Module '$(m)' in PRODUCT_PACKAGES_TESTS has nothing to install!)))
 endif
 
-# build/core/Makefile contains extra stuff that we don't want to pollute this
+# build/make/core/Makefile contains extra stuff that we don't want to pollute this
 # top-level makefile with.  It expects that ALL_DEFAULT_INSTALLED_MODULES
 # contains everything that's built during the current make, but it also further
 # extends ALL_DEFAULT_INSTALLED_MODULES.
@@ -929,9 +1073,8 @@ ifneq ($(TARGET_BUILD_APPS),)
   $(call dist-for-goals,apps_only, $(apps_only_dist_built_files))
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    $(EMMA_META_ZIP) : $(apps_only_installed_files)
-
-    $(call dist-for-goals,apps_only, $(EMMA_META_ZIP))
+    $(JACOCO_REPORT_CLASSES_ALL) : $(apps_only_installed_files)
+    $(call dist-for-goals,apps_only, $(JACOCO_REPORT_CLASSES_ALL))
   endif
 
   $(PROGUARD_DICT_ZIP) : $(apps_only_installed_files)
@@ -949,9 +1092,9 @@ apps_only: $(unbundled_build_modules)
 droid_targets: apps_only
 
 # Combine the NOTICE files for a apps_only build
-$(eval $(call combine-notice-files, \
+$(eval $(call combine-notice-files, html, \
     $(target_notice_file_txt), \
-    $(target_notice_file_html), \
+    $(target_notice_file_html_or_xml), \
     "Notices for files for apps:", \
     $(TARGET_OUT_NOTICE_FILES), \
     $(apps_only_installed_files)))
@@ -988,9 +1131,8 @@ else # TARGET_BUILD_APPS
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    $(EMMA_META_ZIP) : $(INSTALLED_SYSTEMIMAGE)
-
-    $(call dist-for-goals, dist_files, $(EMMA_META_ZIP))
+    $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE)
+    $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
   endif
 
 # Building a full system-- the default is to build droidcore
@@ -1014,7 +1156,7 @@ $(call dist-for-goals,sdk win_sdk, \
 # umbrella targets to assit engineers in verifying builds
 .PHONY: java native target host java-host java-target native-host native-target \
         java-host-tests java-target-tests native-host-tests native-target-tests \
-        java-tests native-tests host-tests target-tests tests
+        java-tests native-tests host-tests target-tests tests java-dex
 # some synonyms
 .PHONY: host-java target-java host-native target-native \
         target-java-tests target-native-tests
@@ -1026,17 +1168,8 @@ target-java-tests : java-target-tests
 target-native-tests : native-target-tests
 tests : host-tests target-tests
 
-# Phony target to run all java compilations that use javac instead of jack.
+# Phony target to run all java compilations that use javac
 .PHONY: javac-check
-
-# To catch more build breakage, check build tests modules in eng and userdebug builds.
-ifneq ($(ANDROID_NO_TEST_CHECK),true)
-ifneq ($(TARGET_BUILD_PDK),true)
-ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
-droidcore : target-tests host-tests
-endif
-endif
-endif
 
 ifneq (,$(filter samplecode, $(MAKECMDGOALS)))
 .PHONY: samplecode
@@ -1057,26 +1190,12 @@ endif  # samplecode in $(MAKECMDGOALS)
 .PHONY: findbugs
 findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
-.PHONY: clean
-clean:
-	@rm -rf $(OUT_DIR)/*
-	@echo "Entire build directory removed."
-
-.PHONY: clobber
-clobber: clean
-
-# The rules for dataclean and installclean are defined in cleanbuild.mk.
-
 #xxx scrape this from ALL_MODULE_NAME_TAGS
 .PHONY: modules
 modules:
 	@echo "Available sub-modules:"
 	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
 	      tr -s ' ' '\n' | sort -u | $(COLUMN)
-
-.PHONY: showcommands
-showcommands:
-	@echo >/dev/null
 
 .PHONY: nothing
 nothing:
@@ -1088,8 +1207,5 @@ tidy_only:
 
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
-
-.PHONY: all_link_types
-all_link_types:
 
 endif # KATI

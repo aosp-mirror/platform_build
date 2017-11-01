@@ -23,10 +23,12 @@ PRODUCT_PACKAGES += \
     appops \
     am \
     android.policy \
+    android.test.mock \
     android.test.runner \
     app_process \
     applypatch \
     audioserver \
+    bit \
     blkid \
     bmgr \
     bugreport \
@@ -36,9 +38,13 @@ PRODUCT_PACKAGES += \
     dnsmasq \
     dpm \
     framework \
+    framework-sysconfig.xml \
     fsck_msdos \
     hid \
     ime \
+    incidentd \
+    incident \
+    incident_report \
     input \
     javax.obex \
     libandroid \
@@ -54,6 +60,7 @@ PRODUCT_PACKAGES += \
     libcamera2ndk \
     libdl \
     libdrmclearkeyplugin \
+    libclearkeycasplugin \
     libeffectproxy \
     libeffects \
     libinput \
@@ -98,11 +105,12 @@ PRODUCT_PACKAGES += \
     libmediandk \
     libvulkan \
     libwifi-service \
+    locksettings \
     media \
     media_cmd \
     mediadrmserver \
     mediaserver \
-    mediacodec \
+    mediametrics \
     mediaextractor \
     monkey \
     mtpd \
@@ -111,6 +119,7 @@ PRODUCT_PACKAGES += \
     ping \
     ping6 \
     platform.xml \
+    privapp-permissions-platform.xml \
     pppd \
     pm \
     racoon \
@@ -129,17 +138,32 @@ PRODUCT_PACKAGES += \
     vold \
     wm
 
+# Essential HAL modules
+PRODUCT_PACKAGES += \
+    android.hardware.media.omx@1.0-service
+
+# XML schema files
+PRODUCT_PACKAGES += \
+    media_profiles_V1_0.dtd
+
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
-    perfprofd
+    logpersist.start \
+    perfprofd \
+    sqlite3 \
+    strace
 
 PRODUCT_COPY_FILES := $(call add-to-product-copy-files-if-exists,\
-    frameworks/base/preloaded-classes:system/etc/preloaded-classes)
+    frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
 
 # Note: it is acceptable to not have a compiled-classes file. In that case, all boot classpath
 #       classes will be compiled.
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
-    frameworks/base/compiled-classes:system/etc/compiled-classes)
+    frameworks/base/config/compiled-classes:system/etc/compiled-classes)
 
+# Note: it is acceptable to not have a dirty-image-objects file. In that case, the special bin
+#       for known dirty objects in the image will be empty.
+PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
+    frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/embedded.mk)

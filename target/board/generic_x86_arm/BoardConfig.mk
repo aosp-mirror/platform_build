@@ -39,9 +39,12 @@ USE_CAMERA_STUB := true
 ifeq ($(HOST_OS),linux)
   ifeq ($(WITH_DEXPREOPT),)
     WITH_DEXPREOPT := true
-    WITH_DEXPREOPT_BOOT_IMG_ONLY := false
+    WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := false
   endif
 endif
+
+TARGET_USES_HWC2 := true
+NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # Build OpenGLES emulation host and guest libraries
 BUILD_EMULATOR_OPENGL := true

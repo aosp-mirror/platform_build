@@ -25,7 +25,6 @@ import os.path
 import re
 import subprocess
 import sys
-import commands
 import common
 import shlex
 import shutil
@@ -37,44 +36,45 @@ OPTIONS = common.OPTIONS
 FIXED_SALT = "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
 BLOCK_SIZE = 4096
 
-def RunCommand(cmd):
+def RunCommand(cmd, verbose=None):
   """Echo and run the given command.
 
   Args:
     cmd: the command represented as a list of strings.
+    verbose: show commands being executed.
   Returns:
     A tuple of the output and the exit code.
   """
-  print "Running: ", " ".join(cmd)
+  if verbose is None:
+    verbose = OPTIONS.verbose
+  if verbose:
+    print("Running: " + " ".join(cmd))
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   output, _ = p.communicate()
-  print "%s" % (output.rstrip(),)
+
+  if verbose:
+    print(output.rstrip())
   return (output, p.returncode)
 
 def GetVerityFECSize(partition_size):
-  cmd = "fec -s %d" % partition_size
-  status, output = commands.getstatusoutput(cmd)
-  if status:
-    print output
+  cmd = ["fec", "-s", str(partition_size)]
+  output, exit_code = RunCommand(cmd, False)
+  if exit_code != 0:
     return False, 0
   return True, int(output)
 
 def GetVerityTreeSize(partition_size):
-  cmd = "build_verity_tree -s %d"
-  cmd %= partition_size
-  status, output = commands.getstatusoutput(cmd)
-  if status:
-    print output
+  cmd = ["build_verity_tree", "-s", str(partition_size)]
+  output, exit_code = RunCommand(cmd, False)
+  if exit_code != 0:
     return False, 0
   return True, int(output)
 
 def GetVerityMetadataSize(partition_size):
-  cmd = "system/extras/verity/build_verity_metadata.py size %d"
-  cmd %= partition_size
-
-  status, output = commands.getstatusoutput(cmd)
-  if status:
-    print output
+  cmd = ["system/extras/verity/build_verity_metadata.py", "size",
+         str(partition_size)]
+  output, exit_code = RunCommand(cmd, False)
+  if exit_code != 0:
     return False, 0
   return True, int(output)
 
@@ -103,49 +103,60 @@ def ZeroPadSimg(image_file, pad_size):
   simg = sparse_img.SparseImage(image_file, mode="r+b", build_map=False)
   simg.AppendFillChunk(0, blocks)
 
-def AVBCalcMaxImageSize(avbtool, partition_size, additional_args):
+def AVBCalcMaxImageSize(avbtool, footer_type, partition_size, additional_args):
   """Calculates max image size for a given partition size.
 
   Args:
     avbtool: String with path to avbtool.
+    footer_type: 'hash' or 'hashtree' for generating footer.
     partition_size: The size of the partition in question.
     additional_args: Additional arguments to pass to 'avbtool
       add_hashtree_image'.
   Returns:
     The maximum image size or 0 if an error occurred.
   """
-  cmdline = "%s add_hashtree_footer " % avbtool
-  cmdline += "--partition_size %d " % partition_size
-  cmdline += "--calc_max_image_size "
-  cmdline += additional_args
-  (output, exit_code) = RunCommand(shlex.split(cmdline))
+  cmd =[avbtool, "add_%s_footer" % footer_type,
+        "--partition_size", partition_size, "--calc_max_image_size"]
+  cmd.extend(shlex.split(additional_args))
+
+  (output, exit_code) = RunCommand(cmd)
   if exit_code != 0:
     return 0
   else:
     return int(output)
 
-def AVBAddHashtree(image_path, avbtool, partition_size, partition_name,
-                   signing_args, additional_args):
+def AVBAddFooter(image_path, avbtool, footer_type, partition_size,
+                 partition_name, key_path, algorithm, salt,
+                 additional_args):
   """Adds dm-verity hashtree and AVB metadata to an image.
 
   Args:
     image_path: Path to image to modify.
     avbtool: String with path to avbtool.
+    footer_type: 'hash' or 'hashtree' for generating footer.
     partition_size: The size of the partition in question.
     partition_name: The name of the partition - will be embedded in metadata.
-    signing_args: Arguments for signing the image.
+    key_path: Path to key to use or None.
+    algorithm: Name of algorithm to use or None.
+    salt: The salt to use (a hexadecimal string) or None.
     additional_args: Additional arguments to pass to 'avbtool
       add_hashtree_image'.
   Returns:
     True if the operation succeeded.
   """
-  cmdline = "%s add_hashtree_footer " % avbtool
-  cmdline += "--partition_size %d " % partition_size
-  cmdline += "--partition_name %s " % partition_name
-  cmdline += "--image %s " % image_path
-  cmdline += signing_args + " "
-  cmdline += additional_args
-  (_, exit_code) = RunCommand(shlex.split(cmdline))
+  cmd =[avbtool, "add_%s_footer" % footer_type,
+        "--partition_size", partition_size,
+        "--partition_name", partition_name,
+        "--image", image_path]
+
+  if key_path and algorithm:
+    cmd.extend(["--key", key_path, "--algorithm", algorithm])
+  if salt:
+    cmd.extend(["--salt", salt])
+
+  cmd.extend(shlex.split(additional_args))
+
+  (_, exit_code) = RunCommand(cmd)
   return exit_code == 0
 
 def AdjustPartitionSizeForVerity(partition_size, fec_supported):
@@ -184,6 +195,8 @@ def AdjustPartitionSizeForVerity(partition_size, fec_supported):
     else:
       hi = i
 
+  print("Adjusted partition size for verity, partition_size: {},"
+        " verity_size: {}".format(result, verity_size))
   AdjustPartitionSizeForVerity.results[key] = (result, verity_size)
   return (result, verity_size)
 
@@ -191,21 +204,19 @@ AdjustPartitionSizeForVerity.results = {}
 
 def BuildVerityFEC(sparse_image_path, verity_path, verity_fec_path,
                    padding_size):
-  cmd = "fec -e -p %d %s %s %s" % (padding_size, sparse_image_path,
-                                   verity_path, verity_fec_path)
-  print cmd
-  status, output = commands.getstatusoutput(cmd)
-  if status:
+  cmd = ["fec", "-e", "-p", str(padding_size), sparse_image_path,
+         verity_path, verity_fec_path]
+  output, exit_code = RunCommand(cmd)
+  if exit_code != 0:
     print "Could not build FEC data! Error: %s" % output
     return False
   return True
 
 def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
-  cmd = "build_verity_tree -A %s %s %s" % (
-      FIXED_SALT, sparse_image_path, verity_image_path)
-  print cmd
-  status, output = commands.getstatusoutput(cmd)
-  if status:
+  cmd = ["build_verity_tree", "-A", FIXED_SALT, sparse_image_path,
+         verity_image_path]
+  output, exit_code = RunCommand(cmd)
+  if exit_code != 0:
     print "Could not build verity tree! Error: %s" % output
     return False
   root, salt = output.split()
@@ -214,17 +225,17 @@ def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
   return True
 
 def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
-                        block_device, signer_path, key, signer_args):
-  cmd_template = (
-      "system/extras/verity/build_verity_metadata.py build " +
-      "%s %s %s %s %s %s %s")
-  cmd = cmd_template % (image_size, verity_metadata_path, root_hash, salt,
-                        block_device, signer_path, key)
+                        block_device, signer_path, key, signer_args,
+                        verity_disable):
+  cmd = ["system/extras/verity/build_verity_metadata.py", "build",
+         str(image_size), verity_metadata_path, root_hash, salt, block_device,
+         signer_path, key]
   if signer_args:
-    cmd += " --signer_args=\"%s\"" % (' '.join(signer_args),)
-  print cmd
-  status, output = commands.getstatusoutput(cmd)
-  if status:
+    cmd.append("--signer_args=\"%s\"" % (' '.join(signer_args),))
+  if verity_disable:
+    cmd.append("--verity_disable")
+  output, exit_code = RunCommand(cmd)
+  if exit_code != 0:
     print "Could not build verity metadata! Error: %s" % output
     return False
   return True
@@ -238,22 +249,19 @@ def Append2Simg(sparse_image_path, unsparse_image_path, error_message):
   Returns:
     True on success, False on failure.
   """
-  cmd = "append2simg %s %s"
-  cmd %= (sparse_image_path, unsparse_image_path)
-  print cmd
-  status, output = commands.getstatusoutput(cmd)
-  if status:
+  cmd = ["append2simg", sparse_image_path, unsparse_image_path]
+  output, exit_code = RunCommand(cmd)
+  if exit_code != 0:
     print "%s: %s" % (error_message, output)
     return False
   return True
 
 def Append(target, file_to_append, error_message):
-  cmd = 'cat %s >> %s' % (file_to_append, target)
-  print cmd
-  status, output = commands.getstatusoutput(cmd)
-  if status:
-    print "%s: %s" % (error_message, output)
-    return False
+  print "appending %s to %s" % (file_to_append, target)
+  with open(target, "a") as out_file:
+    with open(file_to_append, "r") as input_file:
+      for line in input_file:
+        out_file.write(line)
   return True
 
 def BuildVerifiedImage(data_image_path, verity_image_path,
@@ -329,8 +337,10 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
   # build the metadata blocks
   root_hash = prop_dict["verity_root_hash"]
   salt = prop_dict["verity_salt"]
+  verity_disable = "verity_disable" in prop_dict
   if not BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
-                             block_dev, signer_path, signer_key, signer_args):
+                             block_dev, signer_path, signer_key, signer_args,
+                             verity_disable):
     shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
 
@@ -424,17 +434,24 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     prop_dict["original_partition_size"] = str(partition_size)
     prop_dict["verity_size"] = str(verity_size)
 
-  # Adjust partition size for AVB.
-  if prop_dict.get("avb_enable") == "true":
-    avbtool = prop_dict.get("avb_avbtool")
-    partition_size = int(prop_dict.get("partition_size"))
-    additional_args = prop_dict["avb_add_hashtree_footer_args"]
-    max_image_size = AVBCalcMaxImageSize(avbtool, partition_size,
+  # Adjust partition size for AVB hash footer or AVB hashtree footer.
+  avb_footer_type = ''
+  if prop_dict.get("avb_hash_enable") == "true":
+    avb_footer_type = 'hash'
+  elif prop_dict.get("avb_hashtree_enable") == "true":
+    avb_footer_type = 'hashtree'
+
+  if avb_footer_type:
+    avbtool = prop_dict["avb_avbtool"]
+    partition_size = prop_dict["partition_size"]
+    # avb_add_hash_footer_args or avb_add_hashtree_footer_args.
+    additional_args = prop_dict["avb_add_" + avb_footer_type + "_footer_args"]
+    max_image_size = AVBCalcMaxImageSize(avbtool, avb_footer_type, partition_size,
                                          additional_args)
     if max_image_size == 0:
       return False
     prop_dict["partition_size"] = str(max_image_size)
-    prop_dict["original_partition_size"] = str(partition_size)
+    prop_dict["original_partition_size"] = partition_size
 
   if fs_type.startswith("ext"):
     build_command = [prop_dict["ext_mkuserimg"]]
@@ -462,6 +479,16 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     build_command.extend(["-L", prop_dict["mount_point"]])
     if "extfs_inode_count" in prop_dict:
       build_command.extend(["-i", prop_dict["extfs_inode_count"]])
+    if "flash_erase_block_size" in prop_dict:
+      build_command.extend(["-e", prop_dict["flash_erase_block_size"]])
+    if "flash_logical_block_size" in prop_dict:
+      build_command.extend(["-o", prop_dict["flash_logical_block_size"]])
+    # Specify UUID and hash_seed if using mke2fs.
+    if prop_dict["ext_mkuserimg"] == "mkuserimg_mke2fs.sh":
+      if "uuid" in prop_dict:
+        build_command.extend(["-U", prop_dict["uuid"]])
+      if "hash_seed" in prop_dict:
+        build_command.extend(["-S", prop_dict["hash_seed"]])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("squash"):
@@ -503,14 +530,14 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     shutil.rmtree(staging_system, ignore_errors=True)
     shutil.copytree(origin_in, staging_system, symlinks=True)
 
-  reserved_blocks = prop_dict.get("has_ext4_reserved_blocks") == "true"
+  has_reserved_blocks = prop_dict.get("has_ext4_reserved_blocks") == "true"
   ext4fs_output = None
 
   try:
-    if reserved_blocks and fs_type.startswith("ext4"):
-      (ext4fs_output, exit_code) = RunCommand(build_command)
+    if fs_type.startswith("ext4"):
+      (ext4fs_output, exit_code) = RunCommand(build_command, True)
     else:
-      (_, exit_code) = RunCommand(build_command)
+      (_, exit_code) = RunCommand(build_command, True)
   finally:
     if in_dir != origin_in:
       # Clean up temporary directories and files.
@@ -528,7 +555,9 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   # not writable even with root privilege. It only affects devices using
   # file-based OTA and a kernel version of 3.10 or greater (currently just
   # sprout).
-  if reserved_blocks and fs_type.startswith("ext4"):
+  # Separately, check if there's enough headroom space available. This is useful for
+  # devices with low disk space that have system image variation between builds.
+  if (has_reserved_blocks or "partition_headroom" in prop_dict) and fs_type.startswith("ext4"):
     assert ext4fs_output is not None
     ext4fs_stats = re.compile(
         r'Created filesystem with .* (?P<used_blocks>[0-9]+)/'
@@ -536,14 +565,21 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     m = ext4fs_stats.match(ext4fs_output.strip().split('\n')[-1])
     used_blocks = int(m.groupdict().get('used_blocks'))
     total_blocks = int(m.groupdict().get('total_blocks'))
-    reserved_blocks = min(4096, int(total_blocks * 0.02))
-    adjusted_blocks = total_blocks - reserved_blocks
+    reserved_blocks = 0
+    headroom_blocks = 0
+    adjusted_blocks = total_blocks
+    if has_reserved_blocks:
+      reserved_blocks = min(4096, int(total_blocks * 0.02))
+      adjusted_blocks -= reserved_blocks
+    if "partition_headroom" in prop_dict:
+      headroom_blocks = int(prop_dict.get('partition_headroom')) / BLOCK_SIZE
+      adjusted_blocks -= headroom_blocks
     if used_blocks > adjusted_blocks:
       mount_point = prop_dict.get("mount_point")
       print("Error: Not enough room on %s (total: %d blocks, used: %d blocks, "
-            "reserved: %d blocks, available: %d blocks)" % (
+            "reserved: %d blocks, headroom: %d blocks, available: %d blocks)" % (
                 mount_point, total_blocks, used_blocks, reserved_blocks,
-                adjusted_blocks))
+                headroom_blocks, adjusted_blocks))
       return False
 
   if not fs_spans_partition:
@@ -562,15 +598,19 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     if not MakeVerityEnabledImage(out_file, verity_fec_supported, prop_dict):
       return False
 
-  # Add AVB hashtree and metadata.
-  if "avb_enable" in prop_dict:
-    avbtool = prop_dict.get("avb_avbtool")
-    original_partition_size = int(prop_dict.get("original_partition_size"))
+  # Add AVB HASH or HASHTREE footer (metadata).
+  if avb_footer_type:
+    avbtool = prop_dict["avb_avbtool"]
+    original_partition_size = prop_dict["original_partition_size"]
     partition_name = prop_dict["partition_name"]
-    signing_args = prop_dict["avb_signing_args"]
-    additional_args = prop_dict["avb_add_hashtree_footer_args"]
-    if not AVBAddHashtree(out_file, avbtool, original_partition_size,
-                          partition_name, signing_args, additional_args):
+    # key_path and algorithm are only available when chain partition is used.
+    key_path = prop_dict.get("avb_key_path")
+    algorithm = prop_dict.get("avb_algorithm")
+    salt = prop_dict.get("avb_salt")
+    # avb_add_hash_footer_args or avb_add_hashtree_footer_args
+    additional_args = prop_dict["avb_add_" + avb_footer_type + "_footer_args"]
+    if not AVBAddFooter(out_file, avbtool, avb_footer_type, original_partition_size,
+                        partition_name, key_path, algorithm, salt, additional_args):
       return False
 
   if run_fsck and prop_dict.get("skip_fsck") != "true":
@@ -615,18 +655,26 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "verity_key",
       "verity_signer_cmd",
       "verity_fec",
-      "avb_signing_args",
-      "avb_avbtool"
-      )
+      "verity_disable",
+      "avb_enable",
+      "avb_avbtool",
+      "avb_salt",
+  )
   for p in common_props:
     copy_prop(p, p)
 
   d["mount_point"] = mount_point
   if mount_point == "system":
+    copy_prop("avb_system_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_system_add_hashtree_footer_args",
+              "avb_add_hashtree_footer_args")
+    copy_prop("avb_system_key_path", "avb_key_path")
+    copy_prop("avb_system_algorithm", "avb_algorithm")
     copy_prop("fs_type", "fs_type")
-    # Copy the generic sysetem fs type first, override with specific one if
+    # Copy the generic system fs type first, override with specific one if
     # available.
     copy_prop("system_fs_type", "fs_type")
+    copy_prop("system_headroom", "partition_headroom")
     copy_prop("system_size", "partition_size")
     copy_prop("system_journal_size", "journal_size")
     copy_prop("system_verity_block_device", "verity_block_device")
@@ -639,13 +687,15 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
     copy_prop("system_squashfs_disable_4k_align", "squashfs_disable_4k_align")
     copy_prop("system_base_fs_file", "base_fs_file")
-    copy_prop("system_avb_enable", "avb_enable")
-    copy_prop("system_avb_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
     copy_prop("system_extfs_inode_count", "extfs_inode_count")
   elif mount_point == "system_other":
     # We inherit the selinux policies of /system since we contain some of its files.
     d["mount_point"] = "system"
+    copy_prop("avb_system_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_system_add_hashtree_footer_args",
+              "avb_add_hashtree_footer_args")
+    copy_prop("avb_system_key_path", "avb_key_path")
+    copy_prop("avb_system_algorithm", "avb_algorithm")
     copy_prop("fs_type", "fs_type")
     copy_prop("system_fs_type", "fs_type")
     copy_prop("system_size", "partition_size")
@@ -656,19 +706,23 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
     copy_prop("system_base_fs_file", "base_fs_file")
-    copy_prop("system_avb_enable", "avb_enable")
-    copy_prop("system_avb_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
     copy_prop("system_extfs_inode_count", "extfs_inode_count")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
     copy_prop("userdata_fs_type", "fs_type")
     copy_prop("userdata_size", "partition_size")
+    copy_prop("flash_logical_block_size","flash_logical_block_size")
+    copy_prop("flash_erase_block_size", "flash_erase_block_size")
   elif mount_point == "cache":
     copy_prop("cache_fs_type", "fs_type")
     copy_prop("cache_size", "partition_size")
   elif mount_point == "vendor":
+    copy_prop("avb_vendor_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_vendor_add_hashtree_footer_args",
+              "avb_add_hashtree_footer_args")
+    copy_prop("avb_vendor_key_path", "avb_key_path")
+    copy_prop("avb_vendor_algorithm", "avb_algorithm")
     copy_prop("vendor_fs_type", "fs_type")
     copy_prop("vendor_size", "partition_size")
     copy_prop("vendor_journal_size", "journal_size")
@@ -679,9 +733,6 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("vendor_squashfs_block_size", "squashfs_block_size")
     copy_prop("vendor_squashfs_disable_4k_align", "squashfs_disable_4k_align")
     copy_prop("vendor_base_fs_file", "base_fs_file")
-    copy_prop("vendor_avb_enable", "avb_enable")
-    copy_prop("vendor_avb_add_hashtree_footer_args",
-              "avb_add_hashtree_footer_args")
     copy_prop("vendor_extfs_inode_count", "extfs_inode_count")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")

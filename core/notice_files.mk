@@ -14,6 +14,14 @@ ifeq ($(LOCAL_MODULE_CLASS),GYP)
   notice_file :=
 endif
 
+# Soong generates stub libraries that don't need NOTICE files
+ifdef LOCAL_NO_NOTICE_FILE
+  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    $(call pretty-error,LOCAL_NO_NOTICE_FILE should not be used by Android.mk files)
+  endif
+  notice_file :=
+endif
+
 ifeq ($(LOCAL_MODULE_CLASS),NOTICE_FILES)
 # If this is a NOTICE-only module, we don't include base_rule.mk,
 # so my_prefix is not set at this point.
@@ -36,7 +44,7 @@ ifdef LOCAL_INSTALLED_MODULE
   module_installed_filename := $(patsubst $(PRODUCT_OUT)/%,%,$(LOCAL_INSTALLED_MODULE))
 else
   # This module isn't installable
-  ifeq ($(LOCAL_MODULE_CLASS),STATIC_LIBRARIES)
+  ifneq ($(filter STATIC_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
     # Stick the static libraries with the dynamic libraries.
     # We can't use xxx_OUT_STATIC_LIBRARIES because it points into
     # device-obj or host-obj.
@@ -49,7 +57,7 @@ else
       # javalib.jar is the default name for the build module (and isn't meaningful)
       # If that's what we have, substitute the module name instead.  These files
       # aren't included on the device, so this name is synthetic anyway.
-      ifneq ($(filter javalib.jar classes.jack,$(module_leaf)),)
+      ifneq ($(filter javalib.jar,$(module_leaf)),)
         module_leaf := $(LOCAL_MODULE).jar
       endif
       module_installed_filename := \

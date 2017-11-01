@@ -18,47 +18,6 @@ endif #PDK
 LOCAL_NO_STANDARD_LIBRARIES:=$(strip $(LOCAL_NO_STANDARD_LIBRARIES))
 LOCAL_SDK_VERSION:=$(strip $(LOCAL_SDK_VERSION))
 
-ifneq ($(LOCAL_SDK_VERSION),)
-  ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-    $(error $(LOCAL_PATH): Must not define both LOCAL_NO_STANDARD_LIBRARIES and LOCAL_SDK_VERSION)
-  else
-    ifeq ($(strip $(filter $(LOCAL_SDK_VERSION),$(TARGET_AVAILABLE_SDK_VERSIONS))),)
-      $(error $(LOCAL_PATH): Invalid LOCAL_SDK_VERSION '$(LOCAL_SDK_VERSION)' \
-             Choices are: $(TARGET_AVAILABLE_SDK_VERSIONS))
-    else
-      ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
-        # Use android_stubs_current if LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
-        LOCAL_JAVA_LIBRARIES := android_stubs_current $(LOCAL_JAVA_LIBRARIES)
-      else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
-        LOCAL_JAVA_LIBRARIES := android_system_stubs_current $(LOCAL_JAVA_LIBRARIES)
-      else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
-        LOCAL_JAVA_LIBRARIES := android_test_stubs_current $(LOCAL_JAVA_LIBRARIES)
-      else
-        LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
-      endif
-
-      ifeq ($(LOCAL_SDK_VERSION),current)
-        my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-      else ifeq ($(LOCAL_SDK_VERSION),system_current)
-        my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-      else ifeq ($(LOCAL_SDK_VERSION),test_current)
-        my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-      else
-        my_jack_min_sdk_version := $(LOCAL_SDK_VERSION)
-      endif
-    endif
-  endif
-else
-  my_jack_min_sdk_version := $(PLATFORM_JACK_MIN_SDK_VERSION)
-  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-    LOCAL_JAVA_LIBRARIES := $(TARGET_DEFAULT_JAVA_LIBRARIES) $(LOCAL_JAVA_LIBRARIES)
-  endif
-endif
-
-ifneq (,$(strip $(LOCAL_MIN_SDK_VERSION)))
-  my_jack_min_sdk_version := $(LOCAL_MIN_SDK_VERSION)
-endif
-
 proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
 ifneq ($(proto_sources),)
 ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
@@ -67,7 +26,11 @@ else
   ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nano)
     LOCAL_STATIC_JAVA_LIBRARIES += libprotobuf-java-nano
   else
-    LOCAL_STATIC_JAVA_LIBRARIES += libprotobuf-java-lite
+    ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),stream)
+      # No library for stream protobufs
+    else
+      LOCAL_STATIC_JAVA_LIBRARIES += libprotobuf-java-lite
+    endif
   endif
 endif
 endif
@@ -96,15 +59,33 @@ endif
 intermediates := $(call local-intermediates-dir)
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
+# Choose leaf name for the compiled jar file.
+ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
+full_classes_compiled_jar_leaf := classes-no-debug-var.jar
+built_dex_intermediate_leaf := no-local
+else
+full_classes_compiled_jar_leaf := classes-full-debug.jar
+built_dex_intermediate_leaf := with-local
+endif
+
 ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
 LOCAL_PROGUARD_ENABLED :=
 endif
 
-full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
-full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
-full_classes_proguard_jar := $(intermediates.COMMON)/proguard.classes.jar
-built_dex_intermediate := $(intermediates.COMMON)/dex-dir/classes.dex
+full_classes_turbine_jar := $(intermediates.COMMON)/classes-turbine.jar
+full_classes_header_jarjar := $(intermediates.COMMON)/classes-header-jarjar.jar
+full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
+full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
+full_classes_processed_jar := $(intermediates.COMMON)/classes-processed.jar
+full_classes_desugar_jar := $(intermediates.COMMON)/classes-desugar.jar
+jarjar_leaf := classes-jarjar.jar
+full_classes_jarjar_jar := $(intermediates.COMMON)/$(jarjar_leaf)
+full_classes_proguard_jar := $(intermediates.COMMON)/classes-proguard.jar
+full_classes_combined_jar := $(intermediates.COMMON)/classes-combined.jar
+built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)/classes.dex
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
+java_source_list_file := $(intermediates.COMMON)/java-source-list
+
 
 ifeq ($(LOCAL_MODULE_CLASS)$(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),APPS)
 # If this is an apk without any Java code (e.g. framework-res), we should skip compiling Java.
@@ -114,24 +95,19 @@ else
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 built_dex := $(intermediates.COMMON)/classes.dex
 endif
-# final Jack library, shrinked and obfuscated if it must be
-full_classes_jack := $(intermediates.COMMON)/classes.jack
-# intermediate Jack library without shrink and obfuscation
-noshrob_classes_jack := $(intermediates.COMMON)/classes.noshrob.jack
-jack_check_timestamp := $(intermediates.COMMON)/jack.check.timestamp
 
 LOCAL_INTERMEDIATE_TARGETS += \
+    $(full_classes_turbine_jar) \
     $(full_classes_compiled_jar) \
+    $(full_classes_desugar_jar) \
     $(full_classes_jarjar_jar) \
     $(full_classes_jar) \
+    $(full_classes_combined_jar) \
     $(full_classes_proguard_jar) \
     $(built_dex_intermediate) \
-    $(full_classes_jack) \
-    $(noshrob_classes_jack) \
-    $(jack_check_timestamp) \
     $(built_dex) \
-    $(full_classes_stubs_jar)
-
+    $(full_classes_stubs_jar) \
+    $(java_source_list_file)
 
 LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 
@@ -261,13 +237,21 @@ rs_support_io_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libRSSupportIO.so
 LOCAL_JNI_SHARED_LIBRARIES += libRSSupportIO
 endif
 
+my_arch := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+ifneq (,$(filter arm64 mips64 x86_64,$(my_arch)))
+  my_min_sdk_version := 21
+else
+  my_min_sdk_version := $(MIN_SUPPORTED_SDK_VERSION)
+endif
 
 $(rs_compatibility_jni_libs): $(RenderScript_file_stamp) $(RS_PREBUILT_CLCORE) \
     $(rs_support_lib) $(rs_support_io_lib) $(rs_jni_lib) $(rs_compiler_rt)
 $(rs_compatibility_jni_libs): $(BCC_COMPAT)
 $(rs_compatibility_jni_libs): PRIVATE_CXX := $(CXX_WRAPPER) $(TARGET_CXX)
+$(rs_compatibility_jni_libs): PRIVATE_SDK_VERSION := $(my_min_sdk_version)
 $(rs_compatibility_jni_libs): $(renderscript_intermediate)/librs.%.so: \
-    $(renderscript_intermediate.bc_folder)%.bc
+    $(renderscript_intermediate.bc_folder)%.bc \
+    $(SOONG_OUT_DIR)/ndk.timestamp
 	$(transform-bc-to-so)
 
 endif
@@ -303,7 +287,7 @@ LOCAL_AIDL_INCLUDES += $(FRAMEWORKS_BASE_JAVA_SRC_DIRS)
 endif # LOCAL_SDK_VERSION
 
 $(foreach s,$(aidl_sources),\
-    $(eval $(call define-aidl-java-rule,$(s),$(intermediates.COMMON),aidl_java_sources)))
+    $(eval $(call define-aidl-java-rule,$(s),$(intermediates.COMMON)/aidl,aidl_java_sources)))
 $(foreach java,$(aidl_java_sources), \
     $(call include-depfile,$(java:%.java=%.P),$(java)))
 
@@ -322,7 +306,7 @@ endif
 # command line.
 ifndef LOCAL_CHECKED_MODULE
 ifdef full_classes_jar
-LOCAL_CHECKED_MODULE := $(jack_check_timestamp)
+LOCAL_CHECKED_MODULE := $(full_classes_compiled_jar)
 endif
 endif
 
@@ -335,11 +319,11 @@ include $(BUILD_SYSTEM)/base_rules.mk
 ###########################################################
 ifneq ($(strip $(logtags_sources)),)
 
-logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/src/, $(logtags_sources)))
+logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.COMMON)/logtags/, $(logtags_sources)))
 logtags_sources := $(addprefix $(LOCAL_PATH)/, $(logtags_sources))
 
 $(logtags_java_sources): PRIVATE_MERGED_TAG := $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
-$(logtags_java_sources): $(intermediates.COMMON)/src/%.java: $(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt $(JAVATAGS) build/tools/event_log_tags.py
+$(logtags_java_sources): $(intermediates.COMMON)/logtags/%.java: $(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt $(JAVATAGS) build/tools/event_log_tags.py
 	$(transform-logtags-to-java)
 
 else
@@ -349,7 +333,36 @@ endif
 ##########################################
 java_sources := $(addprefix $(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES))) $(aidl_java_sources) $(logtags_java_sources) \
                 $(filter %.java,$(LOCAL_GENERATED_SOURCES))
-all_java_sources := $(java_sources) $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/, $(filter %.java,$(LOCAL_INTERMEDIATE_SOURCES)))
+java_intermediate_sources := $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/, $(filter %.java,$(LOCAL_INTERMEDIATE_SOURCES)))
+all_java_sources := $(java_sources) $(java_intermediate_sources)
+
+enable_sharding :=
+ifneq ($(TURBINE_ENABLED),false)
+ifneq ($(LOCAL_JAVAC_SHARD_SIZE),)
+ifneq ($(LOCAL_JAR_PROCESSOR),)
+$(call pretty-error,Cannot set both LOCAL_JAVAC_SHARD_SIZE and LOCAL_JAR_PROCESSOR!)
+endif # LOCAL_JAR_PROCESSOR is not empty
+enable_sharding := true
+
+num_shards := $(call int_divide,$(words $(java_sources)),$(LOCAL_JAVAC_SHARD_SIZE))
+ifneq ($(words $(java_sources)),$(call int_multiply,$(LOCAL_JAVAC_SHARD_SIZE),$(num_shards)))
+# increment number of shards by 1.
+num_shards := $(call int_plus,$(num_shards),1)
+endif
+
+shard_idx_list := $(call int_range_list,1,$(num_shards))
+sharded_java_source_list_files += $(foreach x,$(shard_idx_list),$(java_source_list_file).shard.$(x))
+sharded_jar_list += $(foreach x,$(shard_idx_list),$(full_classes_compiled_jar).shard.$(x))
+
+# always put dynamically-located .java files (generated by Proto/resource, etc) in a new final shard.
+# increment number of shards by 1.
+num_shards := $(call int_plus,$(num_shards),1)
+sharded_java_source_list_files += $(java_source_list_file).shard.$(num_shards)
+sharded_jar_list += $(full_classes_compiled_jar).shard.$(num_shards)
+LOCAL_INTERMEDIATE_TARGETS += $(sharded_java_source_list_files)
+LOCAL_INTERMEDIATE_TARGETS += $(sharded_jar_list)
+endif # LOCAL_JAVAC_SHARD_SIZE is not empty
+endif # TURBINE_ENABLED != false
 
 include $(BUILD_SYSTEM)/java_common.mk
 
@@ -368,9 +381,6 @@ $(error $(LOCAL_PATH): Target java module does not define any source or resource
 endif
 endif
 
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_MIN_SDK_VERSION := $(my_jack_min_sdk_version)
-my_jack_min_sdk_version :=
-
 # Since we're using intermediates.COMMON, make sure that it gets cleaned
 # properly.
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
@@ -380,15 +390,7 @@ ifdef full_classes_jar
 # Droiddoc isn't currently able to generate stubs for modules, so we're just
 # allowing it to use the classes.jar as the "stubs" that would be use to link
 # against, for the cases where someone needs the jar to link against.
-# - Use the classes.jar instead of the handful of other intermediates that
-#   we have, because it's the most processed, but still hasn't had dex run on
-#   it, so it's closest to what's on the device.
-# - This extra copy, with the dependency on LOCAL_BUILT_MODULE allows the
-#   PRIVATE_ vars to be preserved.
-$(full_classes_stubs_jar): PRIVATE_SOURCE_FILE := $(full_classes_jar)
-$(full_classes_stubs_jar) : $(full_classes_jar) | $(ACP)
-	@echo Copying $(PRIVATE_SOURCE_FILE)
-	$(hide) $(ACP) -fp $(PRIVATE_SOURCE_FILE) $@
+$(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_stubs_jar)))
 ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
 
 # The layers file allows you to enforce a layering between java packages.
@@ -401,79 +403,218 @@ $(full_classes_compiled_jar): PRIVATE_WARNINGS_ENABLE := $(LOCAL_WARNINGS_ENABLE
 # This intentionally depends on java_sources, not all_java_sources.
 # Deps for generated source files must be handled separately,
 # via deps on the target that generates the sources.
-$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JAVACFLAGS)
-$(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
-$(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
-$(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES := $(LOCAL_JAR_EXCLUDE_PACKAGES)
-$(full_classes_compiled_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
-$(full_classes_compiled_jar): \
-        $(java_sources) \
-        $(java_resource_sources) \
-        $(full_java_lib_deps) \
-        $(jar_manifest_file) \
-        $(layers_file) \
-        $(RenderScript_file_stamp) \
-        $(proto_java_sources_file_stamp) \
-        $(NORMALIZE_PATH) \
-        $(LOCAL_ADDITIONAL_DEPENDENCIES)
-	$(transform-java-to-classes.jar)
+
+# If error prone is enabled then add LOCAL_ERROR_PRONE_FLAGS to LOCAL_JAVACFLAGS
+ifeq ($(RUN_ERROR_PRONE),true)
+LOCAL_JAVACFLAGS += $(LOCAL_ERROR_PRONE_FLAGS)
+endif
+
+# For user / userdebug builds, strip the local variable table and the local variable
+# type table. This has no bearing on stack traces, but will leave less information
+# available via JDWP.
+ifneq (,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO))
+ifneq (,$(filter userdebug user,$(TARGET_BUILD_VARIANT)))
+LOCAL_JAVACFLAGS+= -g:source,lines
+endif
+endif
+
+# List of dependencies for anything that needs all java sources in place
+java_sources_deps := \
+    $(java_sources) \
+    $(java_resource_sources) \
+    $(RenderScript_file_stamp) \
+    $(proto_java_sources_file_stamp) \
+    $(LOCAL_ADDITIONAL_DEPENDENCIES)
+
+$(java_source_list_file): $(java_sources_deps)
+	$(write-java-source-list)
+
+ifdef enable_sharding
+$(foreach x,$(shard_idx_list),\
+  $(eval $(call save-sharded-java-source-list,$(x),\
+    $(wordlist $(call int_plus,1,$(call int_multiply,$(LOCAL_JAVAC_SHARD_SIZE),$(call int_subtract,$(x),1))),\
+      $(call int_multiply,$(LOCAL_JAVAC_SHARD_SIZE),$(x)),$(sort $(java_sources))))))
+
+# always put dynamically-located .java files (generated by Proto/resource, etc) in a new final shard.
+$(java_source_list_file).shard.$(num_shards): PRIVATE_JAVA_INTERMEDIATE_SOURCES := $(java_intermediate_sources)
+$(java_source_list_file).shard.$(num_shards): $(java_resource_sources) \
+    $(RenderScript_file_stamp) \
+    $(proto_java_sources_file_stamp) \
+    $(LOCAL_ADDITIONAL_DEPENDENCIES) \
+    $(NORMALIZE_PATH)
+	$(hide) rm -f $@
+	$(call dump-words-to-file,$(PRIVATE_JAVA_INTERMEDIATE_SOURCES),$@.tmp)
+	$(call fetch-additional-java-source,$@.tmp)
+	$(hide) tr ' ' '\n' < $@.tmp | $(NORMALIZE_PATH) | sort -u > $@
+
+# Javac sharding with header libs including its own header jar as one of dependency.
+$(foreach x,$(shard_idx_list),\
+  $(eval $(call create-classes-full-debug.jar,$(full_classes_compiled_jar).shard.$(x),\
+    $(java_source_list_file).shard.$(x),\
+      $(full_java_header_libs) $(full_classes_header_jar),$(x),\
+        $(wordlist $(call int_plus,1,$(call int_multiply,$(LOCAL_JAVAC_SHARD_SIZE),$(call int_subtract,$(x),1))),\
+          $(call int_multiply,$(LOCAL_JAVAC_SHARD_SIZE),$(x)),$(sort $(java_sources))))))
+
+# Javac sharding for last shard with additional Java dependencies.
+$(eval $(call create-classes-full-debug.jar,$(full_classes_compiled_jar).shard.$(num_shards),\
+  $(java_source_list_file).shard.$(num_shards),$(full_java_header_libs) $(full_classes_header_jar),$(strip \
+    $(num_shards)),$$(java_resource_sources) $$(RenderScript_file_stamp) \
+      $$(proto_java_sources_file_stamp) $$(LOCAL_ADDITIONAL_DEPENDENCIES)))
+
+$(full_classes_compiled_jar): PRIVATE_SHARDED_JAR_LIST := $(sharded_jar_list)
+$(full_classes_compiled_jar): $(sharded_jar_list) | $(MERGE_ZIPS)
+	$(MERGE_ZIPS) -j $@ $(PRIVATE_SHARDED_JAR_LIST)
+else
+# we can't use single $ for java_sources_deps since it may contain hash '#' sign.
+$(eval $(call create-classes-full-debug.jar,$(full_classes_compiled_jar),\
+  $(java_source_list_file),$(full_java_header_libs),,$$(java_sources_deps)))
+
+endif # ifdef enable_sharding
+
+ifneq ($(TURBINE_ENABLED),false)
+
+$(full_classes_turbine_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
+$(full_classes_turbine_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
+$(full_classes_turbine_jar): \
+    $(java_source_list_file) \
+    $(java_sources_deps) \
+    $(full_java_header_libs) \
+    $(full_java_bootclasspath_libs) \
+    $(full_java_system_modules_deps) \
+    $(NORMALIZE_PATH) \
+    $(JAR_ARGS) \
+    $(ZIPTIME) \
+    | $(TURBINE) \
+    $(MERGE_ZIPS)
+	$(transform-java-to-header.jar)
+
+.KATI_RESTAT: $(full_classes_turbine_jar)
+
+# Run jarjar before generate classes-header.jar if necessary.
+ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
+$(full_classes_header_jarjar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
+$(full_classes_header_jarjar): $(full_classes_turbine_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
+	@echo Header JarJar: $@
+	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+else
+full_classes_header_jarjar := $(full_classes_turbine_jar)
+endif
+
+$(eval $(call copy-one-file,$(full_classes_header_jarjar),$(full_classes_header_jar)))
+
+endif # TURBINE_ENABLED != false
 
 javac-check : $(full_classes_compiled_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
 
-# Run jarjar if necessary, otherwise just copy the file.
-ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
-$(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
-	@echo JarJar: $@
-	$(hide) java -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+$(full_classes_combined_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
+$(full_classes_combined_jar): $(full_classes_compiled_jar) \
+                              $(jar_manifest_file) \
+                              $(full_static_java_libs) | $(MERGE_ZIPS)
+	$(if $(PRIVATE_JAR_MANIFEST), $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
+            $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf)
+	$(MERGE_ZIPS) -j $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
+            $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
+            $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
+
+ifdef LOCAL_JAR_PROCESSOR
+# LOCAL_JAR_PROCESSOR_ARGS must be evaluated here to set up the rule-local
+# PRIVATE_JAR_PROCESSOR_ARGS variable, but $< and $@ are not available yet.
+# Set ${in} and ${out} so they can be referenced by LOCAL_JAR_PROCESSOR_ARGS
+# using deferred evaluation (LOCAL_JAR_PROCESSOR_ARGS = instead of :=).
+in := $(full_classes_combined_jar)
+out := $(full_classes_processed_jar).tmp
+my_jar_processor := $(HOST_OUT_JAVA_LIBRARIES)/$(LOCAL_JAR_PROCESSOR).jar
+
+$(full_classes_processed_jar): PRIVATE_JAR_PROCESSOR_ARGS := $(LOCAL_JAR_PROCESSOR_ARGS)
+$(full_classes_processed_jar): PRIVATE_JAR_PROCESSOR := $(my_jar_processor)
+$(full_classes_processed_jar): PRIVATE_TMP_OUT := $(out)
+in :=
+out :=
+
+$(full_classes_processed_jar): $(full_classes_combined_jar) $(my_jar_processor)
+	@echo Processing $@ with $(PRIVATE_JAR_PROCESSOR)
+	$(hide) rm -f $@ $(PRIVATE_TMP_OUT)
+	$(hide) $(JAVA) -jar $(PRIVATE_JAR_PROCESSOR) $(PRIVATE_JAR_PROCESSOR_ARGS)
+	$(hide) mv $(PRIVATE_TMP_OUT) $@
+
+my_jar_processor :=
 else
-$(full_classes_jarjar_jar): $(full_classes_compiled_jar) | $(ACP)
-	@echo Copying: $@
-	$(hide) $(ACP) -fp $< $@
+full_classes_processed_jar := $(full_classes_combined_jar)
 endif
 
+# Run jarjar if necessary
+ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
+$(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
+$(full_classes_jarjar_jar): $(full_classes_processed_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
+	@echo JarJar: $@
+	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
+else
+full_classes_jarjar_jar := $(full_classes_processed_jar)
+endif
+
+$(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
+
+my_desugaring :=
+ifndef LOCAL_IS_STATIC_JAVA_LIBRARY
+my_desugaring := true
+$(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
+$(full_classes_desugar_jar): $(full_classes_jar) $(full_java_header_libs) $(DESUGAR)
+	$(desugar-classes-jar)
+endif
+
+ifndef my_desugaring
+full_classes_desugar_jar := $(full_classes_jar)
+endif
+
+LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_desugar_jar)
+
+#######################################
+include $(BUILD_SYSTEM)/jacoco.mk
+#######################################
+
+full_classes_pre_proguard_jar := $(LOCAL_FULL_CLASSES_JACOCO_JAR)
+
 # Keep a copy of the jar just before proguard processing.
-$(full_classes_jar): $(full_classes_jarjar_jar) | $(ACP)
-	@echo Copying: $@
-	$(hide) $(ACP) -fp $< $@
+$(eval $(call copy-one-file,$(full_classes_pre_proguard_jar),$(intermediates.COMMON)/classes-pre-proguard.jar))
 
-$(call define-jar-to-toc-rule, $(full_classes_jar))
-
-# Run proguard if necessary, otherwise just copy the file.
+# Run proguard if necessary
 ifdef LOCAL_PROGUARD_ENABLED
 ifneq ($(filter-out full custom nosystem obfuscation optimization shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
     $(warning while processing: $(LOCAL_MODULE))
     $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
 endif
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
-jack_dictionary := $(intermediates.COMMON)/jack_dictionary
 
-# Hack: see b/20667396
-# When an app's LOCAL_SDK_VERSION is lower than the support library's LOCAL_SDK_VERSION,
-# we artifically raises the "SDK version" "linked" by ProGuard, to
+# When an app contains references to APIs that are not in the SDK specified by
+# its LOCAL_SDK_VERSION for example added by support library or by runtime 
+# classes added by desugar, we artifically raise the "SDK version" "linked" by
+# ProGuard, to
 # - suppress ProGuard warnings of referencing symbols unknown to the lower SDK version.
 # - prevent ProGuard stripping subclass in the support library that extends class added in the higher SDK version.
-my_support_library_sdk_raise :=
-ifneq (,$(filter android-support-%,$(LOCAL_STATIC_JAVA_LIBRARIES)))
+# See b/20667396
+my_proguard_sdk_raise :=
 ifdef LOCAL_SDK_VERSION
 ifdef TARGET_BUILD_APPS
 ifeq (,$(filter current system_current test_current, $(LOCAL_SDK_VERSION)))
-  my_support_library_sdk_raise := $(call java-lib-files, sdk_vcurrent)
+  my_proguard_sdk_raise := $(call java-lib-header-files, sdk_vcurrent)
 endif
 else
   # For platform build, we can't just raise to the "current" SDK,
   # that would break apps that use APIs removed from the current SDK.
-  my_support_library_sdk_raise := $(call java-lib-files,$(TARGET_DEFAULT_JAVA_LIBRARIES))
-endif
+  my_proguard_sdk_raise := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
 endif
 endif
 
-# jack already has the libraries in its classpath and doesn't support jars
-legacy_proguard_flags := $(addprefix -libraryjars ,$(my_support_library_sdk_raise) $(full_shared_java_libs))
+legacy_proguard_flags := $(addprefix -libraryjars ,$(my_proguard_sdk_raise) \
+  $(filter-out $(my_proguard_sdk_raise), \
+    $(full_java_bootclasspath_libs) \
+    $(full_shared_java_header_libs)))
+
+legacy_proguard_lib_deps := $(my_proguard_sdk_raise) \
+  $(filter-out $(my_proguard_sdk_raise),$(full_shared_java_header_libs))
 
 legacy_proguard_flags += -printmapping $(proguard_dictionary)
-jack_proguard_flags := -printmapping $(jack_dictionary)
 
 common_proguard_flags := -forceprocessing
 
@@ -481,7 +622,7 @@ common_proguard_flag_files :=
 ifeq ($(filter nosystem,$(LOCAL_PROGUARD_ENABLED)),)
 common_proguard_flag_files += $(BUILD_SYSTEM)/proguard.flags
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-common_proguard_flag_files += $(BUILD_SYSTEM)/proguard.jacoco.flags
+common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.emma.flags
 endif
 # If this is a test package, add proguard keep flags for tests.
 ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
@@ -509,8 +650,8 @@ ifdef LOCAL_INSTRUMENTATION_FOR
 ifeq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
 # If no obfuscation, link in the instrmented package's classes.jar as a library.
 # link_instr_classes_jar is defined in base_rule.mk
-# jack already has this library in its classpath and doesn't support jars
 legacy_proguard_flags += -libraryjars $(link_instr_classes_jar)
+legacy_proguard_lib_deps += $(link_instr_classes_jar)
 else # obfuscation
 # If obfuscation is enabled, the main app must be obfuscated too.
 # We need to run obfuscation using the main app's dictionary,
@@ -521,9 +662,6 @@ legacy_proguard_flags := -injars  $(link_instr_classes_jar) \
     -applymapping $(link_instr_intermediates_dir.COMMON)/proguard_dictionary \
     -verbose \
     $(legacy_proguard_flags)
-
-jack_proguard_flags += -applymapping $(link_instr_intermediates_dir.COMMON)/jack_dictionary
-full_jack_deps += $(link_instr_intermediates_dir.COMMON)/jack_dictionary
 
 # Sometimes (test + main app) uses different keep rules from the main app -
 # apply the main app's dictionary anyway.
@@ -537,6 +675,9 @@ endif # LOCAL_INSTRUMENTATION_FOR
 endif  # LOCAL_PROGUARD_ENABLED is not nosystem
 
 proguard_flag_files := $(addprefix $(LOCAL_PATH)/, $(LOCAL_PROGUARD_FLAG_FILES))
+ifeq ($(USE_R8),true)
+proguard_flag_files += $(addprefix $(LOCAL_PATH)/, $(LOCAL_R8_FLAG_FILES))
+endif # USE_R8
 LOCAL_PROGUARD_FLAGS += $(addprefix -include , $(proguard_flag_files))
 
 ifdef LOCAL_TEST_MODULE_TO_PROGUARD_WITH
@@ -544,29 +685,93 @@ extra_input_jar := $(call intermediates-dir-for,APPS,$(LOCAL_TEST_MODULE_TO_PROG
 else
 extra_input_jar :=
 endif
+
+# If building against the current SDK version then filter out the junit,
+# android.test and c.a.i.u.Predicate classes that are to be removed from
+# the Android API as part of b/30188076 but which are still present in
+# the Android API. This is to allow changes to be made to the build to
+# statically include those classes into the application without
+# simultaneously removing those classes from the API.
+proguard_injar_filters :=
+ifdef LOCAL_SDK_VERSION
+ifeq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
+proguard_injar_filters := (!junit/framework/**,!junit/runner/**,!junit/textui/**,!android/test/**,!com/android/internal/util/*)
+endif
+endif
+
+ifneq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
+ifneq ($(USE_R8),true)
+  $(full_classes_proguard_jar): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+else
+  $(built_dex_intermediate): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+endif
+endif
+
+# If R8 is not enabled run Proguard.
+ifneq ($(USE_R8),true)
+# Changes to these dependencies need to be replicated below when using R8
+# instead of Proguard + dx.
+$(full_classes_proguard_jar): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
 $(full_classes_proguard_jar): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
-$(full_classes_proguard_jar) : $(full_classes_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) | $(PROGUARD)
+$(full_classes_proguard_jar) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) | $(PROGUARD)
 	$(call transform-jar-to-proguard)
+else # !USE_R8
+# Running R8 instead of Proguard, proguarded jar is actually the pre-Proguarded jar.
+full_classes_proguard_jar := $(full_classes_pre_proguard_jar)
+endif # !USE_R8
 
 else  # LOCAL_PROGUARD_ENABLED not defined
-$(full_classes_proguard_jar) : $(full_classes_jar) | $(ACP)
-	@echo Copying: $@
-	$(hide) $(ACP) -fp $< $@
-
+full_classes_proguard_jar := $(full_classes_pre_proguard_jar)
 endif # LOCAL_PROGUARD_ENABLED defined
 
-$(built_dex): $(built_dex_intermediate) | $(ACP)
+ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
+$(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
+# If you instrument class files that have local variable debug information in
+# them emma does not correctly maintain the local variable table.
+# This will cause an error when you try to convert the class files for Android.
+# The workaround here is to build different dex file here based on emma switch
+# then later copy into classes.dex. When emma is on, dx is run with --no-locals
+# option to remove local variable information
+ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
+$(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
+endif
+
+my_r8 :=
+ifdef LOCAL_PROGUARD_ENABLED
+ifeq ($(USE_R8),true)
+# These are the dependencies for the proguarded jar when running
+# Proguard + dx. They are used for the generated dex when using R8, as
+# R8 does Proguard + dx
+my_r8 := true
+$(built_dex_intermediate): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
+$(built_dex_intermediate): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
+$(built_dex_intermediate): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
+$(built_dex_intermediate) : $(full_classes_proguard_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8)
+	$(transform-jar-to-dex-r8)
+endif # USE_R8
+endif # LOCAL_PROGUARD_ENABLED
+
+ifndef my_r8
+$(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
+	$(transform-classes.jar-to-dex)
+endif
+
+$(built_dex): $(built_dex_intermediate)
 	@echo Copying: $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $(dir $@)/classes*.dex
-	$(hide) $(ACP) -fp $(dir $<)/classes*.dex $(dir $@)
+	$(hide) cp -fp $(dir $<)/classes*.dex $(dir $@)
+
+java-dex: $(built_dex)
+
+endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
 findbugs_xml := $(intermediates.COMMON)/findbugs.xml
 $(findbugs_xml): PRIVATE_AUXCLASSPATH := $(addprefix -auxclasspath ,$(strip \
     $(call normalize-path-list,$(filter %.jar,$(full_java_libs)))))
 $(findbugs_xml): PRIVATE_FINDBUGS_FLAGS := $(LOCAL_FINDBUGS_FLAGS)
-$(findbugs_xml) : $(full_classes_jar) $(filter %.xml, $(LOCAL_FINDBUGS_FLAGS))
+$(findbugs_xml) : $(full_classes_pre_proguard_jar) $(filter %.xml, $(LOCAL_FINDBUGS_FLAGS))
 	@echo Findbugs: $@
 	$(hide) $(FINDBUGS) -textui -effort:min -xml:withMessages \
 		$(PRIVATE_AUXCLASSPATH) $(PRIVATE_FINDBUGS_FLAGS) \
@@ -588,104 +793,20 @@ $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 
 endif  # full_classes_jar is defined
 
-$(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-rsc
-ifeq ($(LOCAL_JACK_ENABLED),incremental)
-$(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-incremental
-$(noshrob_classes_jack): PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-noshrob-incremental
-$(jack_check_timestamp): PRIVATE_JACK_INCREMENTAL_DIR := $(intermediates.COMMON)/jack-check-incremental
+ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
+  my_default_app_target_sdk := $(LOCAL_SDK_VERSION)
+  my_sdk_version := $(LOCAL_SDK_VERSION)
 else
-$(LOCAL_INTERMEDIATE_TARGETS): \
-	PRIVATE_JACK_INCREMENTAL_DIR :=
-$(noshrob_classes_jack): PRIVATE_JACK_INCREMENTAL_DIR :=
-$(jack_check_timestamp): PRIVATE_JACK_INCREMENTAL_DIR :=
+  my_default_app_target_sdk := $(DEFAULT_APP_TARGET_SDK)
+  my_sdk_version := $(PLATFORM_SDK_VERSION)
 endif
 
-ifdef full_classes_jar
-ifdef LOCAL_PROGUARD_ENABLED
-
-ifndef LOCAL_JACK_PROGUARD_FLAGS
-    LOCAL_JACK_PROGUARD_FLAGS := $(LOCAL_PROGUARD_FLAGS)
-endif
-LOCAL_JACK_PROGUARD_FLAGS += $(addprefix -include , $(proguard_flag_files))
-ifdef LOCAL_TEST_MODULE_TO_PROGUARD_WITH
-    $(error $(LOCAL_MODULE): Build with jack when LOCAL_TEST_MODULE_TO_PROGUARD_WITH is defined is not yet implemented)
-endif
-
-# $(jack_dictionary) is just by-product of $(built_dex_intermediate).
-# The dummy command was added because, without it, make misses the fact the $(built_dex) also
-# change $(jack_dictionary).
-$(jack_dictionary): $(full_classes_jack)
-	$(hide) touch $@
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_PROGUARD_FLAGS := $(common_proguard_flags) $(jack_proguard_flags) $(LOCAL_JACK_PROGUARD_FLAGS)
-else  # LOCAL_PROGUARD_ENABLED not defined
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_PROGUARD_FLAGS :=
-endif # LOCAL_PROGUARD_ENABLED defined
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_FLAGS := $(GLOBAL_JAVAC_DEBUG_FLAGS) $(LOCAL_JACK_FLAGS)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_VERSION := $(LOCAL_JACK_VERSION)
-
-jack_all_deps := $(java_sources) $(java_resource_sources) $(full_jack_deps) \
-        $(jar_manifest_file) $(layers_file) $(RenderScript_file_stamp) \
-        $(common_proguard_flag_files) $(proguard_flag_files) \
-        $(proto_java_sources_file_stamp) $(LOCAL_ADDITIONAL_DEPENDENCIES) $(LOCAL_JARJAR_RULES) \
-        $(NORMALIZE_PATH) $(JACK_DEFAULT_ARGS) $(JACK)
-
-$(jack_check_timestamp): $(jack_all_deps) | setup-jack-server
-	@echo Checking build with Jack: $@
-	$(jack-check-java)
-
-ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
-$(full_classes_jack): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
-$(full_classes_jack): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)
-$(full_classes_jack): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
-	@echo Building with Jack: $@
-	$(java-to-jack)
-
-# Update timestamps of .toc files for static java libraries so
-# dependents will be always rebuilt.
-$(built_dex).toc: $(full_classes_jack)
-	touch $@
-
-else #LOCAL_IS_STATIC_JAVA_LIBRARY
-$(built_dex_intermediate): PRIVATE_CLASSES_JACK := $(full_classes_jack)
-
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-LOCAL_JACK_PLUGIN_PATH += $(HOST_OUT_JAVA_LIBRARIES)/jack-coverage-plugin.jar
-LOCAL_JACK_PLUGIN += com.android.jack.coverage.CodeCoverage
-$(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS := \
-    -D jack.coverage=true \
-    -D jack.coverage.metadata.file=$(intermediates.COMMON)/coverage.em \
-    -D jack.coverage.jacoco.package=$(JACOCO_PACKAGE_NAME) \
-    $(addprefix -D jack.coverage.jacoco.include=,$(LOCAL_JACK_COVERAGE_INCLUDE_FILTER)) \
-    $(addprefix -D jack.coverage.jacoco.exclude=,$(LOCAL_JACK_COVERAGE_EXCLUDE_FILTER))
+ifdef LOCAL_MIN_SDK_VERSION
+  my_min_sdk_version := $(LOCAL_MIN_SDK_VERSION)
 else
-$(built_dex_intermediate): PRIVATE_JACK_COVERAGE_OPTIONS :=
+  my_min_sdk_version := $(call codename-or-sdk-to-sdk,$(my_default_app_target_sdk))
 endif
 
-$(built_dex_intermediate): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
-$(built_dex_intermediate): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)
-$(built_dex_intermediate): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
-	@echo Building with Jack: $@
-	$(jack-java-to-dex)
-
-# $(full_classes_jack) is just by-product of $(built_dex_intermediate).
-# The dummy command was added because, without it, make misses the fact the $(built_dex) also
-# change $(full_classes_jack).
-$(full_classes_jack): $(built_dex_intermediate)
-	$(hide) touch $@
-
-$(call define-dex-to-toc-rule, $(intermediates.COMMON))
-
-endif #LOCAL_IS_STATIC_JAVA_LIBRARY
-
-$(noshrob_classes_jack): PRIVATE_JACK_PLUGIN_PATH := $(LOCAL_JACK_PLUGIN_PATH)
-$(noshrob_classes_jack): PRIVATE_JACK_PLUGIN := $(LOCAL_JACK_PLUGIN)
-$(noshrob_classes_jack): PRIVATE_JACK_INTERMEDIATES_DIR := $(intermediates.COMMON)/jack-noshrob-rsc
-$(noshrob_classes_jack): PRIVATE_JACK_PROGUARD_FLAGS :=
-$(noshrob_classes_jack): $(jack_all_deps) $(LOCAL_JACK_PLUGIN_PATH) | setup-jack-server
-	@echo Building with Jack: $@
-	$(java-to-jack)
-endif  # full_classes_jar is defined
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_DEFAULT_APP_TARGET_SDK := $(my_default_app_target_sdk)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SDK_VERSION := $(my_sdk_version)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MIN_SDK_VERSION := $(my_min_sdk_version)

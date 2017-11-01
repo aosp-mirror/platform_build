@@ -1,44 +1,35 @@
 # Selects a Java compiler.
 #
 # Inputs:
-#	CUSTOM_JAVA_COMPILER -- "eclipse", "openjdk". or nothing for the system
-#                           default
-#	ALTERNATE_JAVAC -- the alternate java compiler to use
+#   OVERRIDE_ANDROID_JAVA_HOME -- alternate location to use for jdk
 #
 # Outputs:
-#   COMMON_JAVAC -- Java compiler command with common arguments
+#   ANDROID_JAVA_HOME -- Directory that contains JDK
+#   ANDROID_JAVA_TOOLCHAIN -- Directory that contains javac and other java tools
 #
 
-common_jdk_flags := -Xmaxerrs 9999999
+ANDROID_COMPILE_WITH_JACK := false
 
-# Use the indexer wrapper to index the codebase instead of the javac compiler
-ifeq ($(ALTERNATE_JAVAC),)
-JAVACC := javac
-else
-JAVACC := $(ALTERNATE_JAVAC)
+ifdef TARGET_BUILD_APPS
+  ifndef TURBINE_ENABLED
+    TURBINE_ENABLED := false
+  endif
 endif
 
-# The actual compiler can be wrapped by setting the JAVAC_WRAPPER var.
-ifdef JAVAC_WRAPPER
-    ifneq ($(JAVAC_WRAPPER),$(firstword $(JAVACC)))
-        JAVACC := $(JAVAC_WRAPPER) $(JAVACC)
-    endif
+ifneq ($(OVERRIDE_ANDROID_JAVA_HOME),)
+  # Use this build toolchain instead of the bundled one.
+  ANDROID_JAVA_HOME := $(OVERRIDE_ANDROID_JAVA_HOME)
+else # !OVERRIDE_ANDROID_JAVA_HOME
+  ifneq ($(EXPERIMENTAL_USE_OPENJDK9),)
+    ANDROID_JAVA_HOME := prebuilts/jdk/jdk9/$(HOST_PREBUILT_TAG)
+  else
+    ANDROID_JAVA_HOME := prebuilts/jdk/jdk8/$(HOST_PREBUILT_TAG)
+  endif
 endif
 
-# Whatever compiler is on this system.
-COMMON_JAVAC := $(JAVACC) -J-Xmx1024M $(common_jdk_flags)
+ANDROID_JAVA_TOOLCHAIN := $(ANDROID_JAVA_HOME)/bin
+export JAVA_HOME := $(abspath $(ANDROID_JAVA_HOME))
 
-# Eclipse.
-ifeq ($(CUSTOM_JAVA_COMPILER), eclipse)
-    COMMON_JAVAC := java -Xmx256m -jar prebuilt/common/ecj/ecj.jar -5 \
-        -maxProblems 9999999 -nowarn
-    $(info CUSTOM_JAVA_COMPILER=eclipse)
-endif
-
-GLOBAL_JAVAC_DEBUG_FLAGS := -g
-
-HOST_JAVAC ?= $(COMMON_JAVAC)
-TARGET_JAVAC ?= $(COMMON_JAVAC)
-
-#$(info HOST_JAVAC=$(HOST_JAVAC))
-#$(info TARGET_JAVAC=$(TARGET_JAVAC))
+# TODO(ccross): remove this, it is needed for now because it is used by
+# config.mk before makevars from soong are loaded
+JAVA := $(ANDROID_JAVA_TOOLCHAIN)/java

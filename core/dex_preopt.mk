@@ -23,14 +23,22 @@ DEX_PREOPT_DEFAULT ?= true
 # being used). To bundle everything one should set this to '%'
 SYSTEM_OTHER_ODEX_FILTER ?= app/% priv-app/%
 
+# Method returning whether the install path $(1) should be for system_other.
+# Under SANITIZE_LITE, we do not want system_other. Just put things under /data/asan.
+ifeq ($(SANITIZE_LITE),true)
+install-on-system-other =
+else
+install-on-system-other = $(filter-out $(PRODUCT_DEXPREOPT_SPEED_APPS) $(PRODUCT_SYSTEM_SERVER_APPS),$(basename $(notdir $(filter $(foreach f,$(SYSTEM_OTHER_ODEX_FILTER),$(TARGET_OUT)/$(f)),$(1)))))
+endif
+
 # The default values for pre-opting: always preopt PIC.
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
   WITH_DEXPREOPT ?= true
-# For an eng build only pre-opt the boot image. This gives reasonable performance and still
-# allows a simple workflow: building in frameworks/base and syncing.
+# For an eng build only pre-opt the boot image and system server. This gives reasonable performance
+# and still allows a simple workflow: building in frameworks/base and syncing.
   ifeq (eng,$(TARGET_BUILD_VARIANT))
-    WITH_DEXPREOPT_BOOT_IMG_ONLY ?= true
+    WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY ?= true
   endif
 # Add mini-debug-info to the boot classpath unless explicitly asked not to.
   ifneq (false,$(WITH_DEXPREOPT_DEBUG_INFO))
@@ -40,15 +48,6 @@ endif
 
 GLOBAL_DEXPREOPT_FLAGS :=
 
-# $(1): the .jar or .apk to remove classes.dex
-define dexpreopt-remove-classes.dex
-$(hide) zip --quiet --delete $(1) classes.dex; \
-dex_index=2; \
-while zip --quiet --delete $(1) classes$${dex_index}.dex > /dev/null; do \
-  let dex_index=dex_index+1; \
-done
-endef
-
 # Special rules for building stripped boot jars that override java_library.mk rules
 
 # $(1): boot jar module name
@@ -56,11 +55,7 @@ define _dexpreopt-boot-jar-remove-classes.dex
 _dbj_jar_no_dex := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(1)_nodex.jar
 _dbj_src_jar := $(call intermediates-dir-for,JAVA_LIBRARIES,$(1),,COMMON)/javalib.jar
 
-$$(_dbj_jar_no_dex) : $$(_dbj_src_jar)
-	$$(call copy-file-to-target)
-ifneq ($(DEX_PREOPT_DEFAULT),nostripping)
-	$$(call dexpreopt-remove-classes.dex,$$@)
-endif
+$(call dexpreopt-copy-jar,$$(_dbj_src_jar),$$(_dbj_jar_no_dex),$(DEX_PREOPT_DEFAULT))
 
 _dbj_jar_no_dex :=
 _dbj_src_jar :=

@@ -54,7 +54,8 @@ ifneq ($(my_jni_shared_libraries),)
 # The jni libaries will be installed to the system.img.
 my_jni_filenames := $(notdir $(my_jni_shared_libraries))
 # Make sure the JNI libraries get installed
-my_shared_library_path := $($(my_2nd_arch_prefix)TARGET_OUT$(partition_tag)_SHARED_LIBRARIES)
+my_shared_library_path := $(call get_non_asan_path,\
+  $($(my_2nd_arch_prefix)TARGET_OUT$(partition_tag)_SHARED_LIBRARIES))
 # Do not use order-only dependency, because we want to rebuild the image if an jni is updated.
 $(LOCAL_INSTALLED_MODULE) : $(addprefix $(my_shared_library_path)/, $(my_jni_filenames))
 
@@ -108,30 +109,18 @@ endif  # outer my_prebuilt_jni_libs
 
 # Verify that all included libraries are built against the NDK
 ifneq ($(strip $(LOCAL_JNI_SHARED_LIBRARIES)),)
-my_link_type := $(call intermediates-dir-for,APPS,$(LOCAL_MODULE))/$(my_2nd_arch_prefix)jni_link_type
-all_link_types: $(my_link_type)
-my_link_type_deps := $(strip \
-  $(foreach l,$(LOCAL_JNI_SHARED_LIBRARIES),\
-    $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),,,$(my_2nd_arch_prefix))/link_type))
 ifneq ($(LOCAL_SDK_VERSION),)
-$(my_link_type): PRIVATE_LINK_TYPE := app:sdk
-$(my_link_type): PRIVATE_WARN_TYPES := native:platform
-$(my_link_type): PRIVATE_ALLOWED_TYPES := native:ndk
+my_link_type := app:sdk
+my_warn_types := native:platform
+my_allowed_types := native:ndk
 else
-$(my_link_type): PRIVATE_LINK_TYPE := app:platform
-$(my_link_type): PRIVATE_WARN_TYPES :=
-$(my_link_type): PRIVATE_ALLOWED_TYPES := native:ndk native:platform
+my_link_type := app:platform
+my_warn_types :=
+my_allowed_types := native:ndk native:platform native:vendor native:vndk native:vndk_private
 endif
-$(eval $(call link-type-partitions,$(my_link_type)))
-$(my_link_type): PRIVATE_DEPS := $(my_link_type_deps)
-$(my_link_type): PRIVATE_MODULE := $(LOCAL_MODULE)
-$(my_link_type): PRIVATE_MAKEFILE := $(LOCAL_MODULE_MAKEFILE)
-$(my_link_type): $(my_link_type_deps) $(CHECK_LINK_TYPE)
-	@echo Check JNI module types: $@
-	$(check-link-type)
 
-$(LOCAL_BUILT_MODULE): | $(my_link_type)
+my_link_deps := $(addprefix SHARED_LIBRARIES:,$(LOCAL_JNI_SHARED_LIBRARIES))
 
-my_link_type :=
-my_link_type_deps :=
+my_common :=
+include $(BUILD_SYSTEM)/link_type.mk
 endif

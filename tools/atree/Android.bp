@@ -1,0 +1,14 @@
+// Copyright 2007 The Android Open Source Project
+//
+// Copies files into the directory structure described by a manifest
+
+cc_binary_host {
+    name: "atree",
+    srcs: [
+        "atree.cpp",
+        "files.cpp",
+        "fs.cpp",
+    ],
+    cflags: ["-Wall", "-Werror"],
+    static_libs: ["libhost"],
+}

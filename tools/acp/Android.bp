@@ -5,6 +5,7 @@
 cc_binary_host {
 
     srcs: ["acp.c"],
+    cflags: ["-Wall", "-Werror"],
 
     static_libs: ["libhost"],
     name: "acp",

@@ -29,6 +29,11 @@ java\.security\.spec
 java\.sql
 java\.text
 java\.text\.spi
+java\.time
+java\.time\.chrono
+java\.time\.format
+java\.time\.temporal
+java\.time\.zone
 java\.util
 java\.util\.concurrent
 java\.util\.concurrent\.atomic
@@ -197,12 +202,6 @@ javax\.microedition\.khronos\.egl
 
 android
 
-
-###################################################
-# telephony-common.jar
-com\.google\..*
-
-
 ###################################################
 # apache-xml.jar
 org\.apache\.xml\.res
@@ -233,3 +232,8 @@ org\.apache\.xalan\.extensions
 org\.apache\.xalan\.processor
 org\.apache\.xalan\.transformer
 org\.apache\.xalan\.xslt
+
+###################################################
+# Packages in the google namespace across all bootclasspath jars.
+com\.google\.android\..*
+com\.google\.vr\.platform.*

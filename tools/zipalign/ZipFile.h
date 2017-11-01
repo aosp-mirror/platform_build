@@ -86,21 +86,7 @@ public:
         int compressionMethod, ZipEntry** ppEntry)
     {
         return addCommon(fileName, NULL, 0, storageName,
-                         ZipEntry::kCompressStored,
                          compressionMethod, ppEntry);
-    }
-
-    /*
-     * Add a file that is already compressed with gzip.
-     *
-     * If "ppEntry" is non-NULL, a pointer to the new entry will be returned.
-     */
-    status_t addGzip(const char* fileName, const char* storageName,
-        ZipEntry** ppEntry)
-    {
-        return addCommon(fileName, NULL, 0, storageName,
-                         ZipEntry::kCompressDeflated,
-                         ZipEntry::kCompressDeflated, ppEntry);
     }
 
     /*
@@ -112,7 +98,6 @@ public:
         int compressionMethod, ZipEntry** ppEntry)
     {
         return addCommon(NULL, data, size, storageName,
-                         ZipEntry::kCompressStored,
                          compressionMethod, ppEntry);
     }
 
@@ -231,8 +216,7 @@ private:
 
     /* common handler for all "add" functions */
     status_t addCommon(const char* fileName, const void* data, size_t size,
-        const char* storageName, int sourceType, int compressionMethod,
-        ZipEntry** ppEntry);
+        const char* storageName, int compressionMethod, ZipEntry** ppEntry);
 
     /* copy all of "srcFp" into "dstFp" */
     status_t copyFpToFp(FILE* dstFp, FILE* srcFp, uint32_t* pCRC32);

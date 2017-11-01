@@ -17,16 +17,8 @@
 # When specifying "dist", the user has asked that we copy the important
 # files from this build into DIST_DIR.
 
-.PHONY: dist
-dist: ;
-
 dist_goal := $(strip $(filter dist,$(MAKECMDGOALS)))
 MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
-ifeq (,$(strip $(filter-out $(INTERNAL_MODIFIER_TARGETS),$(MAKECMDGOALS))))
-# The commandline was something like "make dist" or "make dist showcommands".
-# Add a dependency on a real target.
-dist: $(DEFAULT_GOAL)
-endif
 
 ifdef dist_goal
 

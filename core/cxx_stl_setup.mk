@@ -89,7 +89,6 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
     ifdef LOCAL_IS_HOST_MODULE
         my_cppflags += -nostdinc++
         my_ldflags += -nodefaultlibs
-        my_ldlibs += -lpthread -lm
         my_cxx_ldlibs += $($($(my_prefix)OS)_$(my_link_type)_gcclibs)
     else
         ifeq (arm,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
@@ -99,8 +98,6 @@ ifneq ($(filter $(my_cxx_stl),libc++ libc++_static),)
 
         ifeq ($(my_link_type),static)
             my_static_libraries += libm libc libdl
-        else
-            my_shared_libraries += libdl
         endif
     endif
 else ifeq ($(my_cxx_stl),ndk)

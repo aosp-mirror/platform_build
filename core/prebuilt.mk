@@ -15,7 +15,7 @@ else
 
   ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
     # Only support prebuilt shared and static libraries for translated arch
-    ifeq ($(filter SHARED_LIBRARIES STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
+    ifeq ($(filter SHARED_LIBRARIES STATIC_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
       LOCAL_MULTILIB := first
     endif
   endif

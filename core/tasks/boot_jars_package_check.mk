@@ -24,8 +24,8 @@ intermediates := $(call intermediates-dir-for, PACKAGING, boot-jars-package-chec
 stamp := $(intermediates)/stamp
 built_boot_jars := $(foreach j, $(PRODUCT_BOOT_JARS), \
   $(call intermediates-dir-for, JAVA_LIBRARIES, $(j),,COMMON)/classes.jar)
-script := build/core/tasks/check_boot_jars/check_boot_jars.py
-whitelist_file := build/core/tasks/check_boot_jars/package_whitelist.txt
+script := build/make/core/tasks/check_boot_jars/check_boot_jars.py
+whitelist_file := build/make/core/tasks/check_boot_jars/package_whitelist.txt
 
 $(stamp): PRIVATE_BOOT_JARS := $(built_boot_jars)
 $(stamp): PRIVATE_SCRIPT := $(script)

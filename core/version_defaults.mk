@@ -34,19 +34,66 @@
 # if the file exists.
 #
 INTERNAL_BUILD_ID_MAKEFILE := $(wildcard $(BUILD_SYSTEM)/build_id.mk)
-ifneq "" "$(INTERNAL_BUILD_ID_MAKEFILE)"
+ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-ifeq "" "$(PLATFORM_VERSION)"
-  # This is the canonical definition of the platform version,
-  # which is the version that we reveal to the end user.
-  # Update this value when the platform version changes (rather
-  # than overriding it somewhere else).  Can be an arbitrary string.
-  PLATFORM_VERSION := 7.1.1
+DEFAULT_PLATFORM_VERSION := PPR1
+MIN_PLATFORM_VERSION := PPR1
+MAX_PLATFORM_VERSION := PPR1
+
+ALLOWED_VERSIONS := $(call allowed-platform-versions,\
+  $(MIN_PLATFORM_VERSION),\
+  $(MAX_PLATFORM_VERSION),\
+  $(DEFAULT_PLATFORM_VERSION))
+
+ifndef TARGET_PLATFORM_VERSION
+  TARGET_PLATFORM_VERSION := $(DEFAULT_PLATFORM_VERSION)
+else ifeq ($(TARGET_PLATFORM_VERSION),OPR1)
+  # HACK: lunch currently sets TARGET_PLATFORM_VERSION to
+  # DEFAULT_PLATFORM_VERSION, which causes unnecessary pain
+  # when the old DEFAULT_PLATFORM_VERSION becomes invalid.
+  # For now, silently upgrade OPR1 to the current default.
+  TARGET_PLATFORM_VERSION := $(DEFAULT_PLATFORM_VERSION)
 endif
 
-ifeq "" "$(PLATFORM_SDK_VERSION)"
+ifeq (,$(filter $(ALLOWED_VERSIONS), $(TARGET_PLATFORM_VERSION)))
+  $(warning Invalid TARGET_PLATFORM_VERSION '$(TARGET_PLATFORM_VERSION)', must be one of)
+  $(error $(ALLOWED_VERSIONS))
+endif
+
+# Default versions for each TARGET_PLATFORM_VERSION
+# TODO: PLATFORM_VERSION, PLATFORM_SDK_VERSION, etc. should be conditional
+# on this
+
+# This is the canonical definition of the platform version,
+# which is the version that we reveal to the end user.
+# Update this value when the platform version changes (rather
+# than overriding it somewhere else).  Can be an arbitrary string.
+
+# When you add a new PLATFORM_VERSION which will result in a new
+# PLATFORM_SDK_VERSION please ensure you add a corresponding isAtLeast*
+# method in the following java file:
+# frameworks/support/compat/gingerbread/android/support/v4/os/BuildCompat.java
+
+# When you change PLATFORM_VERSION for a given PLATFORM_SDK_VERSION
+# please add that PLATFORM_VERSION to the following text file:
+# cts/tests/tests/os/assets/platform_versions.txt
+PLATFORM_VERSION.PPR1 := P
+
+# These are the current development codenames, if the build is not a final
+# release build.  If this is a final release build, it is simply "REL".
+PLATFORM_VERSION_CODENAME.PPR1 := P
+
+ifndef PLATFORM_VERSION
+  PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
+  ifndef PLATFORM_VERSION
+    # PLATFORM_VERSION falls back to TARGET_PLATFORM_VERSION
+    PLATFORM_VERSION := $(TARGET_PLATFORM_VERSION)
+  endif
+endif
+
+ifndef PLATFORM_SDK_VERSION
   # This is the canonical definition of the SDK version, which defines
   # the set of APIs and functionality available in the platform.  It
   # is a single integer that increases monotonically as updates to
@@ -55,33 +102,66 @@ ifeq "" "$(PLATFORM_SDK_VERSION)"
   # intermediate builds).  During development, this number remains at the
   # SDK version the branch is based on and PLATFORM_VERSION_CODENAME holds
   # the code-name of the new development work.
-  PLATFORM_SDK_VERSION := 25
+
+  # When you change PLATFORM_SDK_VERSION please ensure you also update the
+  # corresponding methods for isAtLeast* in the following java file:
+  # frameworks/support/compat/gingerbread/android/support/v4/os/BuildCompat.java
+
+  # When you increment the PLATFORM_SDK_VERSION please ensure you also
+  # clear out the following text file of all older PLATFORM_VERSION's:
+  # cts/tests/tests/os/assets/platform_versions.txt
+  PLATFORM_SDK_VERSION := 26
 endif
 
-ifeq "" "$(PLATFORM_JACK_MIN_SDK_VERSION)"
-  # This is definition of the min SDK version given to Jack for the current
-  # platform. For released version it should be the same as
-  # PLATFORM_SDK_VERSION. During development, this number may be incremented
-  # before PLATFORM_SDK_VERSION if the plateform starts to add new java
-  # language supports.
-  PLATFORM_JACK_MIN_SDK_VERSION := o-b1
+ifndef PLATFORM_VERSION_CODENAME
+  PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
+  ifndef PLATFORM_VERSION_CODENAME
+    # PLATFORM_VERSION_CODENAME falls back to TARGET_PLATFORM_VERSION
+    PLATFORM_VERSION_CODENAME := $(TARGET_PLATFORM_VERSION)
+  endif
+
+  # This is all of the *active* development codenames. There are future
+  # codenames not included in this list. This confusing name is needed because
+  # all_codenames has been baked into build.prop for ages.
+  #
+  # Should be either the same as PLATFORM_VERSION_CODENAME or a comma-separated
+  # list of additional codenames after PLATFORM_VERSION_CODENAME.
+  PLATFORM_VERSION_ALL_CODENAMES :=
+
+  # Build a list of all active code names. Avoid duplicates, and stop when we
+  # reach a codename that matches PLATFORM_VERSION_CODENAME (anything beyond
+  # that is not included in our build).
+  _versions_in_target := \
+    $(call find_and_earlier,$(ALL_VERSIONS),$(TARGET_PLATFORM_VERSION))
+  $(foreach version,$(_versions_in_target),\
+    $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
+    $(if $(filter $(_codename),$(PLATFORM_VERSION_ALL_CODENAMES)),,\
+      $(eval PLATFORM_VERSION_ALL_CODENAMES += $(_codename))))
+
+  # This is all of the inactive development codenames. Available to be targeted
+  # in this branch but in the future relative to our current target.
+  PLATFORM_VERSION_FUTURE_CODENAMES :=
+
+  # Build a list of all untargeted code names. Avoid duplicates.
+  _versions_not_in_target := \
+    $(filter-out $(PLATFORM_VERSION_ALL_CODENAMES),$(ALL_VERSIONS))
+  $(foreach version,$(_versions_not_in_target),\
+    $(eval _codename := $(PLATFORM_VERSION_CODENAME.$(version)))\
+    $(if $(filter $(_codename),$(PLATFORM_VERSION_FUTURE_CODENAMES)),,\
+      $(eval PLATFORM_VERSION_FUTURE_CODENAMES += $(_codename))))
+
+  # And convert from space separated to comma separated.
+  PLATFORM_VERSION_ALL_CODENAMES := \
+    $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_ALL_CODENAMES)))
+  PLATFORM_VERSION_FUTURE_CODENAMES := \
+    $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_FUTURE_CODENAMES)))
+
 endif
 
-ifeq "" "$(PLATFORM_VERSION_CODENAME)"
-  # This is the current development code-name, if the build is not a final
-  # release build.  If this is a final release build, it is simply "REL".
-  PLATFORM_VERSION_CODENAME := REL
-
-  # This is all of the development codenames that are active.  Should be either
-  # the same as PLATFORM_VERSION_CODENAME or a comma-separated list of additional
-  # codenames after PLATFORM_VERSION_CODENAME.
-  PLATFORM_VERSION_ALL_CODENAMES := $(PLATFORM_VERSION_CODENAME)
-endif
-
-ifeq "REL" "$(PLATFORM_VERSION_CODENAME)"
+ifeq (REL,$(PLATFORM_VERSION_CODENAME))
   PLATFORM_PREVIEW_SDK_VERSION := 0
 else
-  ifeq "" "$(PLATFORM_PREVIEW_SDK_VERSION)"
+  ifndef PLATFORM_PREVIEW_SDK_VERSION
     # This is the definition of a preview SDK version over and above the current
     # platform SDK version. Unlike the platform SDK version, a higher value
     # for preview SDK version does NOT mean that all prior preview APIs are
@@ -91,33 +171,33 @@ else
     # assuming the device can only support APIs as of the previous official
     # public release.
     # This value will always be 0 for release builds.
-    PLATFORM_PREVIEW_SDK_VERSION := 0
+    PLATFORM_PREVIEW_SDK_VERSION := 1
   endif
 endif
 
-ifeq "" "$(DEFAULT_APP_TARGET_SDK)"
+ifndef DEFAULT_APP_TARGET_SDK
   # This is the default minSdkVersion and targetSdkVersion to use for
   # all .apks created by the build system.  It can be overridden by explicitly
   # setting these in the .apk's AndroidManifest.xml.  It is either the code
   # name of the development build or, if this is a release build, the official
   # SDK version of this release.
-  ifeq "REL" "$(PLATFORM_VERSION_CODENAME)"
+  ifeq (REL,$(PLATFORM_VERSION_CODENAME))
     DEFAULT_APP_TARGET_SDK := $(PLATFORM_SDK_VERSION)
   else
     DEFAULT_APP_TARGET_SDK := $(PLATFORM_VERSION_CODENAME)
   endif
 endif
 
-ifeq "" "$(PLATFORM_SECURITY_PATCH)"
+ifndef PLATFORM_SECURITY_PATCH
     #  Used to indicate the security patch that has been applied to the device.
     #  It must signify that the build includes all security patches issued up through the designated Android Public Security Bulletin.
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-      PLATFORM_SECURITY_PATCH := 2016-11-05
+      PLATFORM_SECURITY_PATCH := 2017-10-05
 endif
 
-ifeq "" "$(PLATFORM_BASE_OS)"
+ifndef PLATFORM_BASE_OS
   # Used to indicate the base os applied to the device.
   # Can be an arbitrary string, but must be a single word.
   #
@@ -125,7 +205,7 @@ ifeq "" "$(PLATFORM_BASE_OS)"
   PLATFORM_BASE_OS :=
 endif
 
-ifeq "" "$(BUILD_ID)"
+ifndef BUILD_ID
   # Used to signify special builds.  E.g., branches and/or releases,
   # like "M5-RC7".  Can be an arbitrary string, but must be a single
   # word and a valid file name.
@@ -134,19 +214,19 @@ ifeq "" "$(BUILD_ID)"
   BUILD_ID := UNKNOWN
 endif
 
-ifeq "" "$(BUILD_DATETIME)"
+ifndef BUILD_DATETIME
   # Used to reproduce builds by setting the same time. Must be the number
   # of seconds since the Epoch.
   BUILD_DATETIME := $(shell date +%s)
 endif
 
-ifneq (,$(findstring Darwin,$(shell uname -sm)))
+ifneq (,$(findstring Darwin,$(UNAME)))
 DATE := date -r $(BUILD_DATETIME)
 else
 DATE := date -d @$(BUILD_DATETIME)
 endif
 
-ifeq "" "$(BUILD_NUMBER)"
+ifndef BUILD_NUMBER
   # BUILD_NUMBER should be set to the source control value that
   # represents the current state of the source code.  E.g., a
   # perforce changelist number or a git hash.  Can be an arbitrary string

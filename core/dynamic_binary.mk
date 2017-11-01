@@ -23,7 +23,7 @@ intermediates := $(call local-intermediates-dir,,$(LOCAL_2ND_ARCH_VAR_PREFIX))
 # The basename of this target must be the same as the final output
 # binary name, because it's used to set the "soname" in the binary.
 # The includer of this file will define a rule to build this target.
-linked_module := $(intermediates)/LINKED/$(my_built_module_stem)
+linked_module := $(intermediates)/LINKED/$(notdir $(my_installed_module_stem))
 
 ALL_ORIGINAL_DYNAMIC_BINARIES += $(linked_module)
 
@@ -99,10 +99,15 @@ ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
 my_breakpad_path := $(TARGET_OUT_BREAKPAD)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
 breakpad_input := $(relocation_packer_output)
 breakpad_output := $(my_breakpad_path)/$(my_installed_module_stem).sym
-$(breakpad_output) : $(breakpad_input) | $(BREAKPAD_DUMP_SYMS)
+$(breakpad_output) : $(breakpad_input) | $(BREAKPAD_DUMP_SYMS) $(PRIVATE_READELF)
 	@echo "target breakpad: $(PRIVATE_MODULE) ($@)"
 	@mkdir -p $(dir $@)
-	$(hide) $(BREAKPAD_DUMP_SYMS) -c $< > $@
+	$(hide) if $(PRIVATE_READELF) -S $< > /dev/null 2>&1 ; then \
+	  $(BREAKPAD_DUMP_SYMS) -c $< > $@ ; \
+	else \
+	  echo "skipped for non-elf file."; \
+	  touch $@; \
+	fi
 $(LOCAL_BUILT_MODULE) : $(breakpad_output)
 endif
 

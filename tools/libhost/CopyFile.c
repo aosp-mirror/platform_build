@@ -323,8 +323,11 @@ static int copyRegular(const char* src, const char* dst, const struct stat* pSrc
                 (void) close(dstFd);
             }
 
-            if (copyResult != 0)
+            if (copyResult != 0) {
+                free(srcRsrcName);
+                free(dstRsrcName);
                 return -1;
+            }
         }
 
         free(srcRsrcName);

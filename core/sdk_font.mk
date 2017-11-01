@@ -8,7 +8,7 @@
 
 
 # The script that renames the font.
-sdk_font_rename_script := frameworks/base/tools/layoutlib/rename_font/build_font_single.py
+sdk_font_rename_script := frameworks/layoutlib/rename_font/build_font_single.py
 
 # Location of the fonttools library that the above script depends on.
 fonttools_lib := external/fonttools/Lib

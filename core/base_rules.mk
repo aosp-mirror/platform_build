@@ -65,6 +65,16 @@ else
   my_host_cross :=
 endif
 
+ifndef LOCAL_PROPRIETARY_MODULE
+  LOCAL_PROPRIETARY_MODULE := $(LOCAL_VENDOR_MODULE)
+endif
+ifndef LOCAL_VENDOR_MODULE
+  LOCAL_VENDOR_MODULE := $(LOCAL_PROPRIETARY_MODULE)
+endif
+ifneq ($(filter-out $(LOCAL_PROPRIETARY_MODULE),$(LOCAL_VENDOR_MODULE))$(filter-out $(LOCAL_VENDOR_MODULE),$(LOCAL_PROPRIETARY_MODULE)),)
+$(call pretty-error,Only one of LOCAL_PROPRIETARY_MODULE[$(LOCAL_PROPRIETARY_MODULE)] and LOCAL_VENDOR_MODULE[$(LOCAL_VENDOR_MODULE)] may be set, or they must be equal)
+endif
+
 include $(BUILD_SYSTEM)/local_vndk.mk
 
 my_module_tags := $(LOCAL_MODULE_TAGS)
@@ -85,6 +95,13 @@ endif
 # a .mk file, because a few users of LOCAL_ADDITIONAL_DEPENDENCIES don't include
 # base_rules.mk, but it will fix the most common ones.
 LOCAL_ADDITIONAL_DEPENDENCIES := $(filter-out %.mk,$(LOCAL_ADDITIONAL_DEPENDENCIES))
+
+my_bad_deps := $(strip $(foreach dep,$(filter-out | ||,$(LOCAL_ADDITIONAL_DEPENDENCIES)),\
+                 $(if $(findstring /,$(dep)),,$(dep))))
+ifneq ($(my_bad_deps),)
+$(call pretty-warning,"Bad LOCAL_ADDITIONAL_DEPENDENCIES: $(my_bad_deps)")
+$(call pretty-error,"LOCAL_ADDITIONAL_DEPENDENCIES must only contain paths (not module names)")
+endif
 
 ###########################################################
 ## Validate and define fallbacks for input LOCAL_* variables.
@@ -121,7 +138,7 @@ endif
 # makefiles. Anything else is either a typo or a source of unexpected
 # behaviors.
 ifneq ($(filter-out debug eng tests optional samples,$(my_module_tags)),)
-$(warning unusual tags $(my_module_tags) on $(LOCAL_MODULE) at $(LOCAL_PATH))
+$(call pretty-warning,unusual tags $(my_module_tags))
 endif
 
 # Add implicit tags.
@@ -163,24 +180,24 @@ my_module_path := $(strip $(LOCAL_MODULE_PATH))
 endif
 my_module_path := $(patsubst %/,%,$(my_module_path))
 my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
+ifdef LOCAL_IS_HOST_MODULE
+  partition_tag :=
+else
+ifeq (true,$(LOCAL_VENDOR_MODULE))
+  partition_tag := _VENDOR
+else ifeq (true,$(LOCAL_OEM_MODULE))
+  partition_tag := _OEM
+else ifeq (true,$(LOCAL_ODM_MODULE))
+  partition_tag := _ODM
+else ifeq (NATIVE_TESTS,$(LOCAL_MODULE_CLASS))
+  partition_tag := _DATA
+else
+  # The definition of should-install-to-system will be different depending
+  # on which goal (e.g., sdk or just droid) is being built.
+  partition_tag := $(if $(call should-install-to-system,$(my_module_tags)),,_DATA)
+endif
+endif
 ifeq ($(my_module_path),)
-  ifdef LOCAL_IS_HOST_MODULE
-    partition_tag :=
-  else
-  ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
-    partition_tag := _VENDOR
-  else ifeq (true,$(LOCAL_OEM_MODULE))
-    partition_tag := _OEM
-  else ifeq (true,$(LOCAL_ODM_MODULE))
-    partition_tag := _ODM
-  else ifeq (NATIVE_TESTS,$(LOCAL_MODULE_CLASS))
-    partition_tag := _DATA
-  else
-    # The definition of should-install-to-system will be different depending
-    # on which goal (e.g., sdk or just droid) is being built.
-    partition_tag := $(if $(call should-install-to-system,$(my_module_tags)),,_DATA)
-  endif
-  endif
   install_path_var := $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT$(partition_tag)_$(LOCAL_MODULE_CLASS)
   ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
     install_path_var := $(install_path_var)_PRIVILEGED
@@ -233,10 +250,24 @@ intermediates := $(call local-intermediates-dir,,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 generated_sources_dir := $(call local-generated-sources-dir)
 
+ifneq ($(LOCAL_OVERRIDES_MODULES),)
+  ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+    ifndef LOCAL_IS_HOST_MODULE
+      EXECUTABLES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_MODULES))
+    else
+      $(call pretty-error,host modules cannot use LOCAL_OVERRIDES_MODULES)
+    endif
+  else
+      $(call pretty-error,LOCAL_MODULE_CLASS := $(LOCAL_MODULE_CLASS) cannot use LOCAL_OVERRIDES_MODULES)
+  endif
+endif
+
 ###########################################################
 # Pick a name for the intermediate and final targets
 ###########################################################
 include $(BUILD_SYSTEM)/configure_module_stem.mk
+
+LOCAL_BUILT_MODULE := $(intermediates)/$(my_built_module_stem)
 
 # OVERRIDE_BUILT_MODULE_PATH is only allowed to be used by the
 # internal SHARED_LIBRARIES build files.
@@ -245,11 +276,8 @@ ifdef OVERRIDE_BUILT_MODULE_PATH
   ifneq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
     $(error $(LOCAL_PATH): Illegal use of OVERRIDE_BUILT_MODULE_PATH)
   endif
-  built_module_path := $(OVERRIDE_BUILT_MODULE_PATH)
-else
-  built_module_path := $(intermediates)
+  $(eval $(call copy-one-file,$(LOCAL_BUILT_MODULE),$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem)))
 endif
-LOCAL_BUILT_MODULE := $(built_module_path)/$(my_built_module_stem)
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   # Apk and its attachments reside in its own subdir.
@@ -285,6 +313,11 @@ $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
 .KATI_RESTAT: $(LOCAL_BUILT_MODULE).toc
 # Build .toc file when using mm, mma, or make $(my_register_name)
 $(my_all_targets): $(LOCAL_BUILT_MODULE).toc
+
+ifdef OVERRIDE_BUILT_MODULE_PATH
+$(eval $(call copy-one-file,$(LOCAL_BUILT_MODULE).toc,$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem).toc))
+$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem).toc: $(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem)
+endif
 endif
 
 ###########################################################
@@ -417,47 +450,69 @@ endif
 endif
 
 ###########################################################
-## Compatibiliy suite files.
+## Compatibility suite files.
 ###########################################################
 ifdef LOCAL_COMPATIBILITY_SUITE
-ifneq ($(words $(LOCAL_COMPATIBILITY_SUITE)),1)
-$(error $(LOCAL_PATH):$(LOCAL_MODULE) LOCAL_COMPATIBILITY_SUITE can be only one name)
+
+# If we are building a native test or benchmark and its stem variants are not defined,
+# separate the multiple architectures into subdirectories of the testcase folder.
+arch_dir :=
+is_native :=
+ifeq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
+  is_native := true
+endif
+ifeq ($(LOCAL_MODULE_CLASS),NATIVE_BENCHMARK)
+  is_native := true
+endif
+ifdef LOCAL_MULTILIB
+  is_native := true
+endif
+ifdef is_native
+  arch_dir := /$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+  is_native :=
 endif
 
 # The module itself.
-my_compat_dist := \
-  $(LOCAL_BUILT_MODULE):$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(my_installed_module_stem)
+$(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
+    $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem))))
 
 # Make sure we only add the files once for multilib modules.
 ifndef $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
 $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files := true
 
 # LOCAL_COMPATIBILITY_SUPPORT_FILES is a list of <src>[:<dest>].
-my_compat_dist += $(foreach f, $(LOCAL_COMPATIBILITY_SUPPORT_FILES),\
-  $(eval p := $(subst :,$(space),$(f)))\
-  $(eval s := $(word 1,$(p)))\
-  $(eval d := $(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(or $(word 2,$(p)),$(notdir $(word 1,$(p)))))\
-  $(s):$(d))
+$(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(eval my_compat_dist_$(suite) += $(foreach f, $(LOCAL_COMPATIBILITY_SUPPORT_FILES), \
+    $(eval p := $(subst :,$(space),$(f))) \
+    $(eval s := $(word 1,$(p))) \
+    $(eval n := $(or $(word 2,$(p)),$(notdir $(word 1, $(p))))) \
+    $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+      $(s):$(dir)/$(n)))))
+
 
 ifneq (,$(wildcard $(LOCAL_PATH)/AndroidTest.xml))
-my_compat_dist += \
-  $(LOCAL_PATH)/AndroidTest.xml:$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE).config
+$(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+    $(LOCAL_PATH)/AndroidTest.xml:$(dir)/$(LOCAL_MODULE).config)))
 endif
 
 ifneq (,$(wildcard $(LOCAL_PATH)/DynamicConfig.xml))
-my_compat_dist += \
-  $(LOCAL_PATH)/DynamicConfig.xml:$(COMPATIBILITY_TESTCASES_OUT_$(LOCAL_COMPATIBILITY_SUITE))/$(LOCAL_MODULE).dynamic
+$(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+    $(LOCAL_PATH)/DynamicConfig.xml:$(dir)/$(LOCAL_MODULE).dynamic)))
+endif
+
+ifneq (,$(wildcard $(LOCAL_PATH)/$(LOCAL_MODULE)_*.config))
+$(foreach extra_config, $(wildcard $(LOCAL_PATH)/$(LOCAL_MODULE)_*.config), \
+  $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+    $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+      $(extra_config):$(dir)/$(notdir $(extra_config))))))
 endif
 endif # $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
 
-my_compat_files := $(call copy-many-files, $(my_compat_dist))
+$(call create-suite-dependencies)
 
-COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES := \
-  $(COMPATIBILITY.$(LOCAL_COMPATIBILITY_SUITE).FILES) \
-  $(my_compat_files)
-
-# Copy over the compatibility files when user runs mm/mmm.
-$(my_all_targets) : $(my_compat_files)
 endif  # LOCAL_COMPATIBILITY_SUITE
 
 ###########################################################
@@ -528,6 +583,12 @@ my_required_modules += $(LOCAL_REQUIRED_MODULES_$($(my_prefix)OS))
 endif
 ALL_MODULES.$(my_register_name).REQUIRED := \
     $(strip $(ALL_MODULES.$(my_register_name).REQUIRED) $(my_required_modules))
+ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED := \
+    $(strip $(ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED)\
+        $(my_required_modules))
+ALL_MODULES.$(my_register_name).TARGET_REQUIRED := \
+    $(strip $(ALL_MODULES.$(my_register_name).TARGET_REQUIRED)\
+        $(LOCAL_TARGET_REQUIRED_MODULES))
 ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS := \
     $(ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS) $(event_log_tags)
 ALL_MODULES.$(my_register_name).MAKEFILE := \
@@ -552,6 +613,7 @@ ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(LOCAL_STATIC_LIBRARIES) \
   $(LOCAL_WHOLE_STATIC_LIBRARIES) \
   $(LOCAL_SHARED_LIBRARIES) \
+  $(LOCAL_HEADER_LIBRARIES) \
   $(LOCAL_STATIC_JAVA_LIBRARIES) \
   $(LOCAL_JAVA_LIBRARIES)\
   $(LOCAL_JNI_SHARED_LIBRARIES))
@@ -567,13 +629,13 @@ ALL_MODULE_TAGS := $(sort $(ALL_MODULE_TAGS) $(my_module_tags))
 
 # Add this module name to the tag list of each specified tag.
 $(foreach tag,$(my_module_tags),\
-    $(eval ALL_MODULE_NAME_TAGS.$(tag) += $(my_register_name)))
+    $(eval ALL_MODULE_NAME_TAGS.$(tag) := $$(ALL_MODULE_NAME_TAGS.$(tag)) $(my_register_name)))
 
 ###########################################################
 ## umbrella targets used to verify builds
 ###########################################################
 j_or_n :=
-ifneq (,$(filter EXECUTABLES SHARED_LIBRARIES STATIC_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)))
+ifneq (,$(filter EXECUTABLES SHARED_LIBRARIES STATIC_LIBRARIES HEADER_LIBRARIES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)))
 j_or_n := native
 else
 ifneq (,$(filter JAVA_LIBRARIES APPS,$(LOCAL_MODULE_CLASS)))
@@ -602,6 +664,15 @@ $(LOCAL_MODULE)-$(h_or_hc_or_t) : $(my_all_targets)
 ifeq ($(j_or_n),native)
 $(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix) : $(my_all_targets)
 endif
+endif
+
+###########################################################
+# Ensure privileged applications always have LOCAL_PRIVILEGED_MODULE
+###########################################################
+ifndef LOCAL_PRIVILEGED_MODULE
+  ifneq (,$(filter $(TARGET_OUT_APPS_PRIVILEGED)/% $(TARGET_OUT_VENDOR_APPS_PRIVILEGED)/%,$(my_module_path)))
+    LOCAL_PRIVILEGED_MODULE := true
+  endif
 endif
 
 ###########################################################

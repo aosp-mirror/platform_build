@@ -1,7 +1,13 @@
 function hmm() {
 cat <<EOF
+
+Run "m help" for help with the build system itself.
+
 Invoke ". build/envsetup.sh" from your shell to add the following functions to your environment:
 - lunch:     lunch <product_name>-<build_variant>
+             Selects <product_name> as the product to build, and <build_variant> as the variant to
+             build, and stores those selections in the environment to be read by subsequent
+             invocations of 'm' etc.
 - tapas:     tapas [<App1> <App2> ...] [arm|x86|mips|armv5|arm64|x86_64|mips64] [eng|userdebug|user]
 - croot:     Changes directory to the top of the tree.
 - m:         Makes from the top of the tree.
@@ -28,9 +34,9 @@ Environment options:
 
 Look at the source to view more functions. The complete list is:
 EOF
-    T=$(gettop)
-    local A
-    A=""
+    local T=$(gettop)
+    local A=""
+    local i
     for i in `cat $T/build/envsetup.sh | sed -n "/^[[:blank:]]*function /s/function \([a-z_]*\).*/\1/p" | sort | uniq`; do
       A="$A $i"
     done
@@ -40,25 +46,23 @@ EOF
 # Get all the build variables needed by this script in a single call to the build system.
 function build_build_var_cache()
 {
-    T=$(gettop)
+    local T=$(gettop)
     # Grep out the variable names from the script.
     cached_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
     cached_abs_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_abs_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
     # Call the build system to dump the "<val>=<value>" pairs as a shell script.
-    build_dicts_script=`\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
-                        command make --no-print-directory -f build/core/config.mk \
-                        dump-many-vars \
-                        DUMP_MANY_VARS="$cached_vars" \
-                        DUMP_MANY_ABS_VARS="$cached_abs_vars" \
-                        DUMP_VAR_PREFIX="var_cache_" \
-                        DUMP_ABS_VAR_PREFIX="abs_var_cache_"`
+    build_dicts_script=`\cd $T; build/soong/soong_ui.bash --dumpvars-mode \
+                        --vars="$cached_vars" \
+                        --abs-vars="$cached_abs_vars" \
+                        --var-prefix=var_cache_ \
+                        --abs-var-prefix=abs_var_cache_`
     local ret=$?
     if [ $ret -ne 0 ]
     then
         unset build_dicts_script
         return $ret
     fi
-    # Excute the script to store the "<val>=<value>" pairs as shell variables.
+    # Execute the script to store the "<val>=<value>" pairs as shell variables.
     eval "$build_dicts_script"
     ret=$?
     unset build_dicts_script
@@ -74,6 +78,7 @@ function build_build_var_cache()
 function destroy_build_var_cache()
 {
     unset BUILD_VAR_CACHE_READY
+    local v
     for v in $cached_vars; do
       unset var_cache_$v
     done
@@ -93,13 +98,12 @@ function get_abs_build_var()
     return
     fi
 
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
-      command make --no-print-directory -f build/core/config.mk dumpvar-abs-$1)
+    (\cd $T; build/soong/soong_ui.bash --dumpvar-mode --abs $1)
 }
 
 # Get the exact value of a build variable.
@@ -111,19 +115,18 @@ function get_build_var()
     return
     fi
 
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
     fi
-    (\cd $T; CALLED_FROM_SETUP=true BUILD_SYSTEM=build/core \
-      command make --no-print-directory -f build/core/config.mk dumpvar-$1)
+    (\cd $T; build/soong/soong_ui.bash --dumpvar-mode $1)
 }
 
 # check to see if the supplied product is one we can build
 function check_product()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
@@ -141,6 +144,7 @@ VARIANT_CHOICES=(user userdebug eng)
 # check to see if the supplied variant is valid
 function check_variant()
 {
+    local v
     for v in ${VARIANT_CHOICES[@]}
     do
         if [ "$v" = "$1" ]
@@ -153,7 +157,7 @@ function check_variant()
 
 function setpaths()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return
@@ -184,18 +188,19 @@ function setpaths()
     fi
 
     # and in with the new
-    prebuiltdir=$(getprebuilt)
-    gccprebuiltdir=$(get_abs_build_var ANDROID_GCC_PREBUILTS)
+    local prebuiltdir=$(getprebuilt)
+    local gccprebuiltdir=$(get_abs_build_var ANDROID_GCC_PREBUILTS)
 
     # defined in core/config.mk
-    targetgccversion=$(get_build_var TARGET_GCC_VERSION)
-    targetgccversion2=$(get_build_var 2ND_TARGET_GCC_VERSION)
+    local targetgccversion=$(get_build_var TARGET_GCC_VERSION)
+    local targetgccversion2=$(get_build_var 2ND_TARGET_GCC_VERSION)
     export TARGET_GCC_VERSION=$targetgccversion
 
     # The gcc toolchain does not exists for windows/cygwin. In this case, do not reference it.
     export ANDROID_TOOLCHAIN=
     export ANDROID_TOOLCHAIN_2ND_ARCH=
     local ARCH=$(get_build_var TARGET_ARCH)
+    local toolchaindir toolchaindir2=
     case $ARCH in
         x86) toolchaindir=x86/x86_64-linux-android-$targetgccversion/bin
             ;;
@@ -217,12 +222,27 @@ function setpaths()
         export ANDROID_TOOLCHAIN=$gccprebuiltdir/$toolchaindir
     fi
 
-    if [ -d "$gccprebuiltdir/$toolchaindir2" ]; then
+    if [ "$toolchaindir2" -a -d "$gccprebuiltdir/$toolchaindir2" ]; then
         export ANDROID_TOOLCHAIN_2ND_ARCH=$gccprebuiltdir/$toolchaindir2
     fi
 
     export ANDROID_DEV_SCRIPTS=$T/development/scripts:$T/prebuilts/devtools/tools:$T/external/selinux/prebuilts/bin
-    export ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_TOOLCHAIN:$ANDROID_TOOLCHAIN_2ND_ARCH:$ANDROID_DEV_SCRIPTS:
+
+    # add kernel specific binaries
+    case $(uname -s) in
+        Linux)
+            export ANDROID_DEV_SCRIPTS=$ANDROID_DEV_SCRIPTS:$T/prebuilts/misc/linux-x86/dtc:$T/prebuilts/misc/linux-x86/libufdt
+            ;;
+        *)
+            ;;
+    esac
+
+    ANDROID_BUILD_PATHS=$(get_build_var ANDROID_BUILD_PATHS):$ANDROID_TOOLCHAIN
+    if [ -n "$ANDROID_TOOLCHAIN_2ND_ARCH" ]; then
+        ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_TOOLCHAIN_2ND_ARCH
+    fi
+    ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ANDROID_DEV_SCRIPTS:
+    export ANDROID_BUILD_PATHS
 
     # If prebuilts/android-emulator/<system>/ exists, prepend it to our PATH
     # to ensure that the corresponding 'emulator' binaries are used.
@@ -245,13 +265,11 @@ function setpaths()
     export PATH=$ANDROID_BUILD_PATHS$PATH
     export PYTHONPATH=$T/development/python-packages:$PYTHONPATH
 
-    unset ANDROID_JAVA_TOOLCHAIN
-    unset ANDROID_PRE_BUILD_PATHS
-    if [ -n "$JAVA_HOME" ]; then
-        export ANDROID_JAVA_TOOLCHAIN=$JAVA_HOME/bin
-        export ANDROID_PRE_BUILD_PATHS=$ANDROID_JAVA_TOOLCHAIN:
-        export PATH=$ANDROID_PRE_BUILD_PATHS$PATH
-    fi
+    export ANDROID_JAVA_HOME=$(get_abs_build_var ANDROID_JAVA_HOME)
+    export JAVA_HOME=$ANDROID_JAVA_HOME
+    export ANDROID_JAVA_TOOLCHAIN=$(get_abs_build_var ANDROID_JAVA_TOOLCHAIN)
+    export ANDROID_PRE_BUILD_PATHS=$ANDROID_JAVA_TOOLCHAIN:
+    export PATH=$ANDROID_PRE_BUILD_PATHS$PATH
 
     unset ANDROID_PRODUCT_OUT
     export ANDROID_PRODUCT_OUT=$(get_abs_build_var PRODUCT_OUT)
@@ -260,6 +278,12 @@ function setpaths()
     unset ANDROID_HOST_OUT
     export ANDROID_HOST_OUT=$(get_abs_build_var HOST_OUT)
 
+    unset ANDROID_HOST_OUT_TESTCASES
+    export ANDROID_HOST_OUT_TESTCASES=$(get_abs_build_var HOST_OUT_TESTCASES)
+
+    unset ANDROID_TARGET_OUT_TESTCASES
+    export ANDROID_TARGET_OUT_TESTCASES=$(get_abs_build_var TARGET_OUT_TESTCASES)
+
     # needed for building linux on MacOS
     # TODO: fix the path
     #export HOST_EXTRACFLAGS="-I "$T/system/kernel_headers/host_include
@@ -267,7 +291,7 @@ function setpaths()
 
 function printconfig()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
@@ -278,7 +302,6 @@ function printconfig()
 function set_stuff_for_environment()
 {
     settitle
-    set_java_home
     setpaths
     set_sequence_number
 
@@ -290,7 +313,7 @@ function set_stuff_for_environment()
 
 function set_sequence_number()
 {
-    export BUILD_ENV_SEQUENCE_NUMBER=12
+    export BUILD_ENV_SEQUENCE_NUMBER=13
 }
 
 function settitle()
@@ -329,6 +352,8 @@ function addcompletions()
             . $f
         done
     fi
+
+    complete -C "bit --tab" bit
 }
 
 function choosetype()
@@ -393,6 +418,7 @@ function choosetype()
 #
 function chooseproduct()
 {
+    local default_value
     if [ "x$TARGET_PRODUCT" != x ] ; then
         default_value=$TARGET_PRODUCT
     else
@@ -563,50 +589,46 @@ function lunch()
         then
             selection=${LUNCH_MENU_CHOICES[$(($answer-1))]}
         fi
-    elif (echo -n $answer | grep -q -e "^[^\-][^\-]*-[^\-][^\-]*$")
-    then
+    else
         selection=$answer
-    fi
-
-    if [ -z "$selection" ]
-    then
-        echo
-        echo "Invalid lunch combo: $answer"
-        return 1
     fi
 
     export TARGET_BUILD_APPS=
 
-    local variant=$(echo -n $selection | sed -e "s/^[^\-]*-//")
-    check_variant $variant
-    if [ $? -ne 0 ]
-    then
-        echo
-        echo "** Invalid variant: '$variant'"
-        echo "** Must be one of ${VARIANT_CHOICES[@]}"
-        variant=
+    local product variant_and_version variant version
+
+    product=${selection%%-*} # Trim everything after first dash
+    variant_and_version=${selection#*-} # Trim everything up to first dash
+    if [ "$variant_and_version" != "$selection" ]; then
+        variant=${variant_and_version%%-*}
+        if [ "$variant" != "$variant_and_version" ]; then
+            version=${variant_and_version#*-}
+        fi
     fi
 
-    local product=$(echo -n $selection | sed -e "s/-.*$//")
-    TARGET_PRODUCT=$product \
-    TARGET_BUILD_VARIANT=$variant \
-    build_build_var_cache
-    if [ $? -ne 0 ]
+    if [ -z "$product" ]
     then
         echo
-        echo "** Don't have a product spec for: '$product'"
-        echo "** Do you have the right repo manifest?"
-        product=
-    fi
-
-    if [ -z "$product" -o -z "$variant" ]
-    then
-        echo
+        echo "Invalid lunch combo: $selection"
         return 1
     fi
 
-    export TARGET_PRODUCT=$product
-    export TARGET_BUILD_VARIANT=$variant
+    TARGET_PRODUCT=$product \
+    TARGET_BUILD_VARIANT=$variant \
+    TARGET_PLATFORM_VERSION=$version \
+    build_build_var_cache
+    if [ $? -ne 0 ]
+    then
+        return 1
+    fi
+
+    export TARGET_PRODUCT=$(get_build_var TARGET_PRODUCT)
+    export TARGET_BUILD_VARIANT=$(get_build_var TARGET_BUILD_VARIANT)
+    if [ -n "$version" ]; then
+      export TARGET_PLATFORM_VERSION=$(get_build_var TARGET_PLATFORM_VERSION)
+    else
+      unset TARGET_PLATFORM_VERSION
+    fi
     export TARGET_BUILD_TYPE=release
 
     echo
@@ -633,10 +655,16 @@ complete -F _lunch lunch
 # Run tapas with one or more app names (from LOCAL_PACKAGE_NAME)
 function tapas()
 {
+    local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
     local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|mips|armv5|arm64|x86_64|mips64)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
     local density="$(echo $* | xargs -n 1 echo | \grep -E '^(ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
     local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|mips|armv5|arm64|x86_64|mips64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
+
+    if [ "$showHelp" != "" ]; then
+      $(gettop)/build/make/tapasHelp.sh
+      return
+    fi
 
     if [ $(echo $arch | wc -w) -gt 1 ]; then
         echo "tapas: Error: Multiple build archs supplied: $arch"
@@ -684,7 +712,7 @@ function tapas()
 
 function gettop
 {
-    local TOPFILE=build/core/envsetup.mk
+    local TOPFILE=build/make/core/envsetup.mk
     if [ -n "$TOP" -a -f "$TOP/$TOPFILE" ] ; then
         # The following circumlocution ensures we remove symlinks from TOP.
         (cd $TOP; PWD= /bin/pwd)
@@ -696,7 +724,7 @@ function gettop
             PWD= /bin/pwd
         else
             local HERE=$PWD
-            T=
+            local T=
             while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
                 \cd ..
                 T=`PWD= /bin/pwd -P`
@@ -718,7 +746,7 @@ function getdriver()
         # Use scan-build to collect all static analyzer reports into directory
         # /tmp/scan-build-yyyy-mm-dd-hhmmss-*
         # The clang compiler passed by --use-analyzer here is not important.
-        # build/core/binary.mk will set CLANG_CXX and CLANG before calling
+        # build/make/core/binary.mk will set CLANG_CXX and CLANG before calling
         # c++-analyzer and ccc-analyzer.
         local CLANG_VERSION=$(get_build_var LLVM_PREBUILTS_VERSION)
         local BUILD_OS=$(get_build_var BUILD_OS)
@@ -735,7 +763,7 @@ function m()
     local T=$(gettop)
     local DRV=$(getdriver $T)
     if [ "$T" ]; then
-        $DRV make -C $T -f build/core/main.mk $@
+        _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return 1
@@ -744,9 +772,9 @@ function m()
 
 function findmakefile()
 {
-    TOPFILE=build/core/envsetup.mk
+    local TOPFILE=build/make/core/envsetup.mk
     local HERE=$PWD
-    T=
+    local T=
     while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
         T=`PWD= /bin/pwd`
         if [ -f "$T/Android.mk" -o -f "$T/Android.bp" ]; then
@@ -764,9 +792,9 @@ function mm()
     local T=$(gettop)
     local DRV=$(getdriver $T)
     # If we're sitting in the root of the build tree, just do a
-    # normal make.
-    if [ -f build/core/envsetup.mk -a -f Makefile ]; then
-        $DRV make $@
+    # normal build.
+    if [ -f build/soong/soong_ui.bash ]; then
+        _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
     else
         # Find the closest Android.mk file.
         local M=$(findmakefile)
@@ -782,6 +810,7 @@ function mm()
             echo "Couldn't locate a makefile from the current directory."
             return 1
         else
+            local ARG
             for ARG in $@; do
                 case $ARG in
                   GET-INSTALL-PATH) GET_INSTALL_PATH=$ARG;;
@@ -800,7 +829,7 @@ function mm()
             if [ "1" = "${WITH_TIDY_ONLY}" -o "true" = "${WITH_TIDY_ONLY}" ]; then
               MODULES=tidy_only
             fi
-            ONE_SHOT_MAKEFILE=$M $DRV make -C $T -f build/core/main.mk $MODULES $ARGS
+            ONE_SHOT_MAKEFILE=$M _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $MODULES $ARGS
         fi
     fi
 }
@@ -868,7 +897,7 @@ function mmm()
         fi
         # Convert "/" to "-".
         MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-        ONE_SHOT_MAKEFILE="$MAKEFILE" $DRV make -C $T -f build/core/main.mk $DASH_ARGS $MODULES $MODULES_IN_PATHS $ARGS
+        ONE_SHOT_MAKEFILE="$MAKEFILE" _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $MODULES $MODULES_IN_PATHS $ARGS
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return 1
@@ -879,8 +908,8 @@ function mma()
 {
   local T=$(gettop)
   local DRV=$(getdriver $T)
-  if [ -f build/core/envsetup.mk -a -f Makefile ]; then
-    $DRV make $@
+  if [ -f build/soong/soong_ui.bash ]; then
+    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
   else
     if [ ! "$T" ]; then
       echo "Couldn't locate the top of the tree.  Try setting TOP."
@@ -892,7 +921,7 @@ function mma()
     local MODULES_IN_PATHS=MODULES-IN-$(dirname ${M})
     # Convert "/" to "-".
     MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-    $DRV make -C $T -f build/core/main.mk $@ $MODULES_IN_PATHS
+    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@ $MODULES_IN_PATHS
   fi
 }
 
@@ -930,7 +959,7 @@ function mmma()
     done
     # Convert "/" to "-".
     MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-    $DRV make -C $T -f build/core/main.mk $DASH_ARGS $ARGS $MODULES_IN_PATHS
+    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $ARGS $MODULES_IN_PATHS
   else
     echo "Couldn't locate the top of the tree.  Try setting TOP."
     return 1
@@ -939,7 +968,7 @@ function mmma()
 
 function croot()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ "$T" ]; then
         if [ "$1" ]; then
             \cd $(gettop)/$1
@@ -953,9 +982,9 @@ function croot()
 
 function cproj()
 {
-    TOPFILE=build/core/envsetup.mk
+    local TOPFILE=build/make/core/envsetup.mk
     local HERE=$PWD
-    T=
+    local T=
     while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
         T=$PWD
         if [ -f "$T/Android.mk" ]; then
@@ -1142,8 +1171,7 @@ function stacks()
             adb shell cat $TMP
         else
             # Dump stacks of native process
-            local USE64BIT="$(is64bit $PID)"
-            adb shell debuggerd$USE64BIT -b $PID
+            adb shell debuggerd -b $PID
         fi
     fi
 }
@@ -1207,6 +1235,7 @@ function cgrep()
 
 function resgrep()
 {
+    local dir
     for dir in `find . -name .repo -prune -o -name .git -prune -o -name out -prune -o -name res -type d`; do
         find $dir -type f -name '*\.xml' -exec grep --color -n "$@" {} +
     done
@@ -1234,7 +1263,7 @@ case `uname -s` in
     Darwin)
         function mgrep()
         {
-            find -E . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -type f -iregex '.*/(Makefile|Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' \
+            find -E . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -iregex '.*/(Makefile|Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regex '(.*/)?soong/[^/]*.go' \) -type f \
                 -exec grep --color -n "$@" {} +
         }
 
@@ -1248,7 +1277,7 @@ case `uname -s` in
     *)
         function mgrep()
         {
-            find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o -regextype posix-egrep -iregex '(.*\/Makefile|.*\/Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -type f \
+            find . -name .repo -prune -o -name .git -prune -o -path ./out -prune -o \( -regextype posix-egrep -iregex '(.*\/Makefile|.*\/Makefile\..*|.*\.make|.*\.mak|.*\.mk|.*\.bp)' -o -regextype posix-extended -regex '(.*/)?soong/[^/]*.go' \) -type f \
                 -exec grep --color -n "$@" {} +
         }
 
@@ -1268,7 +1297,7 @@ function getprebuilt
 
 function tracedmdump()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return
@@ -1445,7 +1474,7 @@ function smoketest()
         echo "Couldn't locate output files.  Try running 'lunch' first." >&2
         return
     fi
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
@@ -1462,7 +1491,7 @@ function smoketest()
 # simple shortcut to the runtest command
 function runtest()
 {
-    T=$(gettop)
+    local T=$(gettop)
     if [ ! "$T" ]; then
         echo "Couldn't locate the top of the tree.  Try setting TOP." >&2
         return
@@ -1475,7 +1504,8 @@ function godir () {
         echo "Usage: godir <regex>"
         return
     fi
-    T=$(gettop)
+    local T=$(gettop)
+    local FILELIST
     if [ ! "$OUT_DIR" = "" ]; then
         mkdir -p $OUT_DIR
         FILELIST=$OUT_DIR/filelist
@@ -1520,46 +1550,6 @@ function godir () {
     \cd $T/$pathname
 }
 
-# Force JAVA_HOME to point to java 1.7/1.8 if it isn't already set.
-function set_java_home() {
-    # Clear the existing JAVA_HOME value if we set it ourselves, so that
-    # we can reset it later, depending on the version of java the build
-    # system needs.
-    #
-    # If we don't do this, the JAVA_HOME value set by the first call to
-    # build/envsetup.sh will persist forever.
-    if [ -n "$ANDROID_SET_JAVA_HOME" ]; then
-      export JAVA_HOME=""
-    fi
-
-    if [ ! "$JAVA_HOME" ]; then
-      if [ -n "$LEGACY_USE_JAVA7" ]; then
-        echo Warning: Support for JDK 7 will be dropped. Switch to JDK 8.
-        case `uname -s` in
-            Darwin)
-                export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
-                ;;
-            *)
-                export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64
-                ;;
-        esac
-      else
-        case `uname -s` in
-            Darwin)
-                export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
-                ;;
-            *)
-                export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-                ;;
-        esac
-      fi
-
-      # Keep track of the fact that we set JAVA_HOME ourselves, so that
-      # we can change it on the next envsetup.sh, if required.
-      export ANDROID_SET_JAVA_HOME=true
-    fi
-}
-
 # Print colored exit condition
 function pez {
     "$@"
@@ -1575,13 +1565,25 @@ function pez {
 
 function get_make_command()
 {
-  echo command make
+    # If we're in the top of an Android tree, use soong_ui.bash instead of make
+    if [ -f build/soong/soong_ui.bash ]; then
+        # Always use the real make if -C is passed in
+        for arg in "$@"; do
+            if [[ $arg == -C* ]]; then
+                echo command make
+                return
+            fi
+        done
+        echo build/soong/soong_ui.bash --make-mode
+    else
+        echo command make
+    fi
 }
 
-function make()
+function _wrap_build()
 {
     local start_time=$(date +"%s")
-    $(get_make_command) "$@"
+    "$@"
     local ret=$?
     local end_time=$(date +"%s")
     local tdiff=$(($end_time-$start_time))
@@ -1600,9 +1602,9 @@ function make()
     fi
     echo
     if [ $ret -eq 0 ] ; then
-        echo -n "${color_success}#### make completed successfully "
+        echo -n "${color_success}#### build completed successfully "
     else
-        echo -n "${color_failed}#### make failed to build some targets "
+        echo -n "${color_failed}#### failed to build some targets "
     fi
     if [ $hours -gt 0 ] ; then
         printf "(%02g:%02g:%02g (hh:mm:ss))" $hours $mins $secs
@@ -1614,6 +1616,11 @@ function make()
     echo " ####${color_reset}"
     echo
     return $ret
+}
+
+function make()
+{
+    _wrap_build $(get_make_command "$@") "$@"
 }
 
 function provision()
@@ -1643,6 +1650,14 @@ function provision()
         fi
     fi
     "$ANDROID_PRODUCT_OUT/provision-device" "$@"
+}
+
+function atest()
+{
+    # TODO (sbasi): Replace this to be a destination in the build out when & if
+    # atest is built by the build system. (This will be necessary if it ever
+    # depends on external pip projects).
+    "$(gettop)"/tools/tradefederation/core/atest/atest.py "$@"
 }
 
 if [ "x$SHELL" != "x/bin/bash" ]; then
