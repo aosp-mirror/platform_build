@@ -20,13 +20,12 @@
 
 #define LOG_TAG "zip"
 
-#include <androidfw/ZipUtils.h>
 #include <utils/Log.h>
+#include <ziparchive/zip_archive.h>
 
 #include "ZipFile.h"
 
 #include <zlib.h>
-#define DEF_MEM_LEVEL 8                // normally in zutil.h?
 
 #include "zopfli/deflate.h"
 
@@ -135,7 +134,7 @@ status_t ZipFile::open(const char* zipFileName, int flags)
 /*
  * Return the Nth entry in the archive.
  */
-ZipEntry* ZipFile::getEntryByIndex(int idx) const
+android::ZipEntry* ZipFile::getEntryByIndex(int idx) const
 {
     if (idx < 0 || idx >= (int) mEntries.size())
         return NULL;
@@ -146,7 +145,7 @@ ZipEntry* ZipFile::getEntryByIndex(int idx) const
 /*
  * Find an entry by name.
  */
-ZipEntry* ZipFile::getEntryByName(const char* fileName) const
+android::ZipEntry* ZipFile::getEntryByName(const char* fileName) const
 {
     /*
      * Do a stupid linear string-compare search.
@@ -1196,6 +1195,58 @@ bool ZipFile::uncompress(const ZipEntry* pEntry, void* buf) const
 }
 #endif
 
+class BufferWriter : public zip_archive::Writer {
+  public:
+    BufferWriter(void* buf, size_t size) : Writer(),
+        buf_(reinterpret_cast<uint8_t*>(buf)), size_(size), bytes_written_(0) {}
+
+    bool Append(uint8_t* buf, size_t buf_size) override {
+        if (bytes_written_ + buf_size > size_) {
+            return false;
+        }
+
+        memcpy(buf_ + bytes_written_, buf, buf_size);
+        bytes_written_ += buf_size;
+        return true;
+    }
+
+  private:
+    uint8_t* const buf_;
+    const size_t size_;
+    size_t bytes_written_;
+};
+
+class FileReader : public zip_archive::Reader {
+  public:
+    FileReader(FILE* fp) : Reader(), fp_(fp), current_offset_(0) {
+    }
+
+    bool ReadAtOffset(uint8_t* buf, size_t len, uint32_t offset) const {
+        // Data is usually requested sequentially, so this helps avoid pointless
+        // fseeks every time we perform a read. There's an impedence mismatch
+        // here because the original API was designed around pread and pwrite.
+        if (offset != current_offset_) {
+            if (fseek(fp_, offset, SEEK_SET) != 0) {
+                return false;
+            }
+
+            current_offset_ = offset;
+        }
+
+        size_t read = fread(buf, 1, len, fp_);
+        if (read != len) {
+            return false;
+        }
+
+        current_offset_ += read;
+        return true;
+    }
+
+  private:
+    FILE* fp_;
+    mutable uint32_t current_offset_;
+};
+
 // free the memory when you're done
 void* ZipFile::uncompress(const ZipEntry* entry) const
 {
@@ -1238,11 +1289,13 @@ void* ZipFile::uncompress(const ZipEntry* entry) const
             }
             break;
         case ZipEntry::kCompressDeflated: {
-            if (!ZipUtils::inflateToBuffer(mZipFp, buf, unlen, clen)) {
+            const FileReader reader(mZipFp);
+            BufferWriter writer(buf, unlen);
+            if (zip_archive::Inflate(reader, clen, unlen, &writer, nullptr) != 0) {
                 goto bail;
             }
-            }
             break;
+        }
         default:
             goto bail;
     }
