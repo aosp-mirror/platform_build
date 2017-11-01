@@ -34,6 +34,24 @@
       "revId": "6d4536023b002f6377ca6a74a93604c9a38c0670",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "db6fe4f3_8ddcf0d7",
+        "filename": "target/product/full_base.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1014491
+      },
+      "writtenOn": "2017-11-01T23:20:22Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "dd0bab21_9f10d04e",
+      "revId": "6d4536023b002f6377ca6a74a93604c9a38c0670",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
