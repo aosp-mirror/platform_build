@@ -16,6 +16,24 @@
       "revId": "f58a1087d6df34f4b8278794ae022470bef39f69",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c6b1fa2_6682d5ca",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1051712
+      },
+      "writtenOn": "2017-11-01T23:39:06Z",
+      "side": 1,
+      "message": "I meant always using mk2fs so that I can remove make_ext4fs code. Updated commit message.",
+      "parentUuid": "4ea63e68_0b553c3d",
+      "revId": "f58a1087d6df34f4b8278794ae022470bef39f69",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
