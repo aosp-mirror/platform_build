@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7223f056_6c7d11a2",
+        "filename": "target/product/full_base.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1014491
+      },
+      "writtenOn": "2017-11-01T23:09:50Z",
+      "side": 1,
+      "message": "What about the keys in vendor/aosp/... for internal mirror-aosp-with-vendor branch? Are those to be added in a different place?",
+      "revId": "6d4536023b002f6377ca6a74a93604c9a38c0670",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
