@@ -14,12 +14,14 @@
 # limitations under the License.
 #
 import os
+import shutil
 import tempfile
 import time
 import unittest
 import zipfile
 
 import common
+import validate_target_files
 
 
 def random_string_with_holes(size, block_size, step_size):
@@ -295,3 +297,55 @@ class CommonZipTest(unittest.TestCase):
                    expected_mode=0o400)
     finally:
       os.remove(zip_file_name)
+
+class InstallRecoveryScriptFormatTest(unittest.TestCase):
+  """Check the format of install-recovery.sh
+
+  Its format should match between common.py and validate_target_files.py."""
+
+  def setUp(self):
+    self._tempdir = tempfile.mkdtemp()
+    # Create a dummy dict that contains the fstab info for boot&recovery.
+    self._info = {"fstab" : {}}
+    dummy_fstab = \
+        ["/dev/soc.0/by-name/boot /boot emmc defaults defaults",
+         "/dev/soc.0/by-name/recovery /recovery emmc defaults defaults"]
+    self._info["fstab"] = common.LoadRecoveryFSTab(lambda x : "\n".join(x),
+                                                   2, dummy_fstab)
+
+  def _out_tmp_sink(self, name, data, prefix="SYSTEM"):
+    loc = os.path.join(self._tempdir, prefix, name)
+    if not os.path.exists(os.path.dirname(loc)):
+      os.makedirs(os.path.dirname(loc))
+    with open(loc, "w+") as f:
+      f.write(data)
+
+  def test_full_recovery(self):
+    recovery_image = common.File("recovery.img", "recovery");
+    boot_image = common.File("boot.img", "boot");
+    self._info["full_recovery_image"] = "true"
+
+    common.MakeRecoveryPatch(self._tempdir, self._out_tmp_sink,
+                             recovery_image, boot_image, self._info)
+    validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
+                                                        self._info)
+
+  def test_recovery_from_boot(self):
+    recovery_image = common.File("recovery.img", "recovery");
+    self._out_tmp_sink("recovery.img", recovery_image.data, "IMAGES")
+    boot_image = common.File("boot.img", "boot");
+    self._out_tmp_sink("boot.img", boot_image.data, "IMAGES")
+
+    common.MakeRecoveryPatch(self._tempdir, self._out_tmp_sink,
+                             recovery_image, boot_image, self._info)
+    validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
+                                                        self._info)
+    # Validate 'recovery-from-boot' with bonus argument.
+    self._out_tmp_sink("etc/recovery-resource.dat", "bonus", "SYSTEM")
+    common.MakeRecoveryPatch(self._tempdir, self._out_tmp_sink,
+                             recovery_image, boot_image, self._info)
+    validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
+                                                        self._info)
+
+  def tearDown(self):
+    shutil.rmtree(self._tempdir)

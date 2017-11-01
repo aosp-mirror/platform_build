@@ -395,6 +395,55 @@ $(call add-clean-step, rm -rf $(TARGET_OUT_INTERMEDIATES)/APPS/*/package-res.apk
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/*_intermediates/src)
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/*_intermediates/src)
 
+$(call add-clean-step, rm -rf $(HOST_OUT_TESTCASES))
+$(call add-clean-step, rm -rf $(TARGET_OUT_TESTCASES))
+
+$(call add-clean-step, rm -rf $(TARGET_OUT_ETC)/init)
+
+# Libraries are moved from {system|vendor}/lib to ./lib/framework, ./lib/vndk, etc.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/lib*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/lib*)
+
+# Revert that move
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/lib*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/lib*)
+
+# Sanitized libraries now live in a different location.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/lib*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/data/vendor/lib*)
+
+# Soong module variant change, remove obsolete intermediates
+$(call add-clean-step, rm -rf $(OUT_DIR)/soong/.intermediates)
+
+# Version checking moving to Soong
+$(call add-clean-step, rm -rf $(OUT_DIR)/versions_checked.mk)
+
+# Vendor tests were being installed into /vendor/bin accidentally
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/nativetest*)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/nativetest*)
+
+# Jack is no longer the default compiler, remove the intermediates
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/*/*/classes*.jack)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/*/*/jack*)
+
+# Move adbd from $(PRODUCT_OUT)/root/sbin to $(PRODUCT_OUT)/system/bin
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/root/sbin/adbd)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/symbols/sbin/adbd)
+
+# Soong linux -> linux_glibc rename
+$(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -name 'linux_x86*' | xargs rm -rf)
+$(call add-clean-step, find $(SOONG_OUT_DIR)/.intermediates -name 'linux_common*' | xargs rm -rf)
+
+# Remove old aidl/logtags files that may be in the generated source directory
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/*/*_intermediates/src)
+$(call add-clean-step, rm -f $(OUT_DIR)/target/common/obj/*/*_intermediates/java-source-list)
+$(call add-clean-step, rm -rf $(OUT_DIR)/host/common/obj/*/*_intermediates/src)
+$(call add-clean-step, rm -f $(OUT_DIR)/host/common/obj/*/*_intermediates/java-source-list)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*/flat-res)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

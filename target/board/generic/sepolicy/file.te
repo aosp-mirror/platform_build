@@ -1,2 +1,1 @@
-type qemud_socket, file_type;
 type sysfs_writable, fs_type, sysfs_type, mlstrustedobject;

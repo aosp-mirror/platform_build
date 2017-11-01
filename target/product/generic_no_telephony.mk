@@ -24,9 +24,11 @@ PRODUCT_PACKAGES := \
     Gallery2 \
     Music \
     MusicFX \
+    NfcNci \
     OneTimeInitializer \
     Provision \
     SystemUI \
+    SysuiDarkThemeOverlay \
     EasterEgg \
     WallpaperCropper
 
@@ -46,7 +48,6 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     audio.primary.default \
-    audio_policy.default \
     local_time.default \
     vibrator.default \
     power.default
@@ -63,7 +64,6 @@ $(call inherit-product-if-exists, external/google-fonts/carrois-gothic-sc/fonts.
 $(call inherit-product-if-exists, external/google-fonts/coming-soon/fonts.mk)
 $(call inherit-product-if-exists, external/google-fonts/cutive-mono/fonts.mk)
 $(call inherit-product-if-exists, external/noto-fonts/fonts.mk)
-$(call inherit-product-if-exists, external/naver-fonts/fonts.mk)
 $(call inherit-product-if-exists, external/roboto-fonts/fonts.mk)
 $(call inherit-product-if-exists, external/hyphenation-patterns/patterns.mk)
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)

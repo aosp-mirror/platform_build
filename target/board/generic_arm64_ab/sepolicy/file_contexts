@@ -1,0 +1,13 @@
+# TODO(b/36764215): remove this file when the generic system image
+# no longer has these directories. They are specific to QCOM.
+
+# /
+/bt_firmware(/.*)?      u:object_r:bt_firmware_file:s0
+/tombstones             u:object_r:rootfs:s0
+/dsp                    u:object_r:rootfs:s0
+
+# /persist
+/persist(/.*)?          u:object_r:persist_file:s0
+
+# files in firmware
+/firmware(/.*)?         u:object_r:firmware_file:s0

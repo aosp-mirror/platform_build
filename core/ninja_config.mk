@@ -7,18 +7,14 @@ endif
 KATI_OUTPUT_PATTERNS := $(OUT_DIR)/build%.ninja $(OUT_DIR)/ninja%.sh
 
 # Modifier goals we don't need to pass to Ninja.
-NINJA_EXCLUDE_GOALS := showcommands all dist
-.PHONY : $(NINJA_EXCLUDE_GOALS)
+NINJA_EXCLUDE_GOALS := all dist APP-% PRODUCT-%
 
 # A list of goals which affect parsing of makefiles and we need to pass to Kati.
 PARSE_TIME_MAKE_GOALS := \
 	$(PARSE_TIME_MAKE_GOALS) \
 	$(dont_bother_goals) \
 	all \
-	APP-% \
-	DUMP_% \
 	ECLIPSE-% \
-	PRODUCT-% \
 	AUX-% \
 	boottarball-nodeps \
 	brillo_tests \
@@ -67,5 +63,8 @@ ANDROID_GOALS := $(filter-out $(KATI_OUTPUT_PATTERNS) $(CKATI) $(MAKEPARALLEL),\
     $(sort $(ORIGINAL_MAKECMDGOALS) $(MAKECMDGOALS)))
 # Goals we need to pass to Ninja.
 NINJA_GOALS := $(filter-out $(NINJA_EXCLUDE_GOALS), $(ANDROID_GOALS))
+ifndef NINJA_GOALS
+  NINJA_GOALS := droid
+endif
 # Goals we need to pass to Kati.
-KATI_GOALS := $(filter $(PARSE_TIME_MAKE_GOALS),  $(ANDROID_GOALS))
+KATI_GOALS := $(filter $(PARSE_TIME_MAKE_GOALS), $(ANDROID_GOALS))

@@ -18,7 +18,7 @@
 # and set up progdir to be the fully-qualified pathname of its directory.
 #
 # The classpath and other java options used in apicheck are specified in
-# build/core/tasks/apicheck.mk.
+# build/make/core/tasks/apicheck.mk.
 
 prog="$0"
 while [ -h "${prog}" ]; do

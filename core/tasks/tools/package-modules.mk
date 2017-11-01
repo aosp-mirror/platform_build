@@ -4,26 +4,44 @@
 # Input variables:
 #   my_modules: a list of module names
 #   my_package_name: the name of the output zip file.
+#   my_copy_pairs: a list of extra files to install (in src:dest format)
 # Output variables:
 #   my_package_zip: the path to the output zip file.
 #
 #
 
+my_makefile := $(lastword $(filter-out $(lastword $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
 my_staging_dir := $(call intermediates-dir-for,PACKAGING,$(my_package_name))
-my_built_modules :=
-my_copy_pairs :=
+my_built_modules := $(foreach p,$(my_copy_pairs),$(call word-colon,1,$(p)))
+my_copy_pairs := $(foreach p,$(my_copy_pairs),$(call word-colon,1,$(p)):$(my_staging_dir)/$(call word-colon,2,$(p)))
 my_pickup_files :=
+
+# Iterate over the modules and include their direct dependencies stated in the
+# LOCAL_REQUIRED_MODULES.
+my_modules_and_deps := $(my_modules)
+$(foreach m,$(my_modules),\
+  $(eval _explicitly_required := \
+    $(strip $(ALL_MODULES.$(m).EXPLICITLY_REQUIRED)\
+    $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).EXPLICITLY_REQUIRED)))\
+  $(eval my_modules_and_deps += $(_explicitly_required))\
+)
+
+# Ignore unknown installed files on partial builds
+my_missing_files :=
+ifneq ($(ALLOW_MISSING_DEPENDENCIES),true)
+my_missing_files = $(shell $(call echo-warning,$(my_makefile),$(my_package_name): Unknown installed file for module '$(1)'))
+endif
 
 # Iterate over modules' built files and installed files;
 # Calculate the dest files in the output zip file.
 
-$(foreach m,$(my_modules),\
+$(foreach m,$(my_modules_and_deps),\
   $(eval _pickup_files := $(strip $(ALL_MODULES.$(m).PICKUP_FILES)\
     $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).PICKUP_FILES)))\
   $(eval _built_files := $(strip $(ALL_MODULES.$(m).BUILT_INSTALLED)\
     $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).BUILT_INSTALLED)))\
   $(if $(_pickup_files)$(_built_files),,\
-    $(warning Unknown installed file for module '$(m)'))\
+    $(call my_missing_files,$(m)))\
   $(eval my_pickup_files += $(_pickup_files))\
   $(foreach i, $(_built_files),\
     $(eval bui_ins := $(subst :,$(space),$(i)))\
@@ -37,26 +55,25 @@ $(foreach m,$(my_modules),\
       $(eval my_copy_pairs += $(bui):$(my_staging_dir)/$(my_copy_dest)))\
   ))
 
-define copy-tests-in-batch
-$(hide) $(foreach p, $(1),\
-  $(eval pair := $(subst :,$(space),$(p)))\
-  mkdir -p $(dir $(word 2,$(pair)));\
-  cp -Rf $(word 1,$(pair)) $(word 2,$(pair));)
-endef
-
 my_package_zip := $(my_staging_dir)/$(my_package_name).zip
 $(my_package_zip): PRIVATE_COPY_PAIRS := $(my_copy_pairs)
 $(my_package_zip): PRIVATE_PICKUP_FILES := $(my_pickup_files)
 $(my_package_zip) : $(my_built_modules)
 	@echo "Package $@"
 	@rm -rf $(dir $@) && mkdir -p $(dir $@)
-	$(call copy-tests-in-batch,$(wordlist 1,200,$(PRIVATE_COPY_PAIRS)))
-	$(call copy-tests-in-batch,$(wordlist 201,400,$(PRIVATE_COPY_PAIRS)))
-	$(call copy-tests-in-batch,$(wordlist 401,600,$(PRIVATE_COPY_PAIRS)))
-	$(call copy-tests-in-batch,$(wordlist 601,800,$(PRIVATE_COPY_PAIRS)))
-	$(call copy-tests-in-batch,$(wordlist 801,1000,$(PRIVATE_COPY_PAIRS)))
-	$(call copy-tests-in-batch,$(wordlist 1001,1200,$(PRIVATE_COPY_PAIRS)))
-	$(call copy-tests-in-batch,$(wordlist 1201,9999,$(PRIVATE_COPY_PAIRS)))
+	$(foreach p, $(PRIVATE_COPY_PAIRS),\
+	  $(eval pair := $(subst :,$(space),$(p)))\
+	  mkdir -p $(dir $(word 2,$(pair))) && \
+	  cp -Rf $(word 1,$(pair)) $(word 2,$(pair)) && ) true
 	$(hide) $(foreach f, $(PRIVATE_PICKUP_FILES),\
-	  cp -RfL $(f) $(dir $@);)
+	  cp -RfL $(f) $(dir $@) && ) true
 	$(hide) cd $(dir $@) && zip -rqX $(notdir $@) *
+
+my_makefile :=
+my_staging_dir :=
+my_built_modules :=
+my_copy_dest :=
+my_copy_pairs :=
+my_pickup_files :=
+my_missing_files :=
+my_modules_and_deps :=

@@ -15,16 +15,17 @@
 # Modules can override this logic by specifying
 # LOCAL_JAVA_LANGUAGE_VERSION explicitly.
 ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
-  private_sdk_versions_without_any_java_18_support := 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
-  ifneq (,$(filter $(LOCAL_SDK_VERSION), $(private_sdk_versions_without_any_java_18_support)))
+  ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT)))
     LOCAL_JAVA_LANGUAGE_VERSION := 1.7
+  else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT)))
+    LOCAL_JAVA_LANGUAGE_VERSION := 1.8
+  else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS))
+    # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
+    LOCAL_JAVA_LANGUAGE_VERSION := 1.8
   else
-    # This retains 1.7 for ART build bots only. http://b/27583810
-    ifeq (,$(LEGACY_USE_JAVA7))
-      LOCAL_JAVA_LANGUAGE_VERSION := 1.8
-    else
-      LOCAL_JAVA_LANGUAGE_VERSION := 1.7
-    endif
+    # DEFAULT_JAVA_LANGUAGE_VERSION is 1.8 unless EXPERIMENTAL_USE_OPENJDK9=true
+    # in which case it is 1.9
+    LOCAL_JAVA_LANGUAGE_VERSION := $(DEFAULT_JAVA_LANGUAGE_VERSION)
   endif
 endif
 LOCAL_JAVACFLAGS += -source $(LOCAL_JAVA_LANGUAGE_VERSION) -target $(LOCAL_JAVA_LANGUAGE_VERSION)
@@ -52,7 +53,12 @@ else
   ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nano)
 $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javanano_out
   else
+    ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),stream)
+$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javastream_out
+$(proto_java_sources_file_stamp): $(HOST_OUT_EXECUTABLES)/protoc-gen-javastream
+    else
 $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --java_out
+    endif
   endif
 endif
 $(proto_java_sources_file_stamp): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS)
@@ -101,12 +107,20 @@ ifneq ($(LOCAL_JAVA_RESOURCE_DIRS),)
   java_resource_file_groups := $(filter-out %:,$(java_resource_file_groups))
 endif # LOCAL_JAVA_RESOURCE_DIRS
 
-LOCAL_JAVA_RESOURCE_FILES := $(strip $(LOCAL_JAVA_RESOURCE_FILES))
 ifneq ($(LOCAL_JAVA_RESOURCE_FILES),)
-  java_resource_file_groups += \
-    $(foreach f,$(LOCAL_JAVA_RESOURCE_FILES), \
-	$(patsubst %/,%,$(dir $(f)))::$(notdir $(f)) \
-     )
+  # Converts LOCAL_JAVA_RESOURCE_FILES := <file> to $(dir $(file))::$(notdir $(file))
+  # and LOCAL_JAVA_RESOURCE_FILES := <dir>:<file> to <dir>::<file>
+  java_resource_file_groups += $(strip $(foreach res,$(LOCAL_JAVA_RESOURCE_FILES), \
+    $(eval _file := $(call word-colon,2,$(res))) \
+    $(if $(_file), \
+      $(eval _base := $(call word-colon,1,$(res))), \
+      $(eval _base := $(dir $(res))) \
+        $(eval _file := $(notdir $(res)))) \
+    $(if $(filter /%, \
+      $(filter-out $(OUT_DIR)/%,$(_base) $(_file))), \
+        $(call pretty-error,LOCAL_JAVA_RESOURCE_FILES may not include absolute paths: $(_base) $(_file))) \
+    $(patsubst %/,%,$(_base))::$(_file)))
+
 endif # LOCAL_JAVA_RESOURCE_FILES
 
 ifdef java_resource_file_groups
@@ -148,106 +162,162 @@ endif
 need_compile_java := $(strip $(all_java_sources)$(all_res_assets)$(java_resource_sources))$(LOCAL_STATIC_JAVA_LIBRARIES)$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED))
 ifdef need_compile_java
 
-full_static_java_libs := \
-    $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
-      $(call intermediates-dir-for, \
-        JAVA_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),COMMON)/javalib.jar)
+annotation_processor_flags :=
+annotation_processor_deps :=
+
+ifdef LOCAL_ANNOTATION_PROCESSORS
+  annotation_processor_jars := $(call java-lib-files,$(LOCAL_ANNOTATION_PROCESSORS),true)
+  annotation_processor_flags += -processorpath $(call normalize-path-list,$(annotation_processor_jars))
+  annotation_processor_deps += $(annotation_processor_jars)
+
+  # b/25860419: annotation processors must be explicitly specified for grok
+  annotation_processor_flags += $(foreach class,$(LOCAL_ANNOTATION_PROCESSOR_CLASSES),-processor $(class))
+
+  annotation_processor_jars :=
+endif
+
+full_static_java_libs := $(call java-lib-files,$(LOCAL_STATIC_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+full_static_java_header_libs := $(call java-lib-header-files,$(LOCAL_STATIC_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_LIBRARIES := $(full_static_java_libs)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JAVA_HEADER_LIBRARIES := $(full_static_java_header_libs)
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASSET_DIR := $(LOCAL_ASSET_DIR)
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ANNO_INTERMEDIATES_DIR := $(intermediates.COMMON)/anno
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/src
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HAS_PROTO_SOURCES := $(if $(proto_sources),true)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/proto
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HAS_RS_SOURCES :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAVA_SOURCES := $(all_java_sources)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAVA_SOURCE_LIST := $(java_source_list_file)
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RMTYPEDEFS := $(LOCAL_RMTYPEDEFS)
 
-# full_java_libs: The list of files that should be used as the classpath.
-#                 Using this list as a dependency list WILL NOT WORK.
-# full_java_lib_deps: Should be specified as a prerequisite of this module
-#                 to guarantee that the files in full_java_libs will
-#                 be up-to-date.
+full_java_bootclasspath_libs :=
+empty_bootclasspath :=
+my_system_modules :=
+
 ifndef LOCAL_IS_HOST_MODULE
-ifeq ($(LOCAL_SDK_VERSION),)
-ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-# No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
-my_bootclasspath := ""
-else  # LOCAL_NO_STANDARD_LIBRARIES
-my_bootclasspath := $(call java-lib-files,core-oj):$(call java-lib-files,core-libart)
-endif  # LOCAL_NO_STANDARD_LIBRARIES
-else
-ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
-# LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
-my_bootclasspath := $(call java-lib-files,android_stubs_current)
-else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
-my_bootclasspath := $(call java-lib-files,android_system_stubs_current)
-else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
-my_bootclasspath := $(call java-lib-files,android_test_stubs_current)
-else
-my_bootclasspath := $(call java-lib-files,sdk_v$(LOCAL_SDK_VERSION))
-endif # current, system_current, or test_current
-endif # LOCAL_SDK_VERSION
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
+  ifeq ($(LOCAL_SDK_VERSION),)
+    ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+      # No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
+      empty_bootclasspath := ""
+      # Most users of LOCAL_NO_STANDARD_LIBRARIES really mean no framework libs,
+      # and manually add back the core libs.  The ones that don't are in soong
+      # now, so just always assume that they want the default system modules
+      my_system_modules := $(DEFAULT_SYSTEM_MODULES)
+    else  # LOCAL_NO_STANDARD_LIBRARIES
+      full_java_bootclasspath_libs := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
+      LOCAL_JAVA_LIBRARIES := $(filter-out $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES),$(LOCAL_JAVA_LIBRARIES))
+      my_system_modules := $(DEFAULT_SYSTEM_MODULES)
+    endif  # LOCAL_NO_STANDARD_LIBRARIES
+  else
+    ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+      $(call pretty-error,Must not define both LOCAL_NO_STANDARD_LIBRARIES and LOCAL_SDK_VERSION)
+    endif
+    ifeq ($(strip $(filter $(LOCAL_SDK_VERSION),$(TARGET_AVAILABLE_SDK_VERSIONS))),)
+      $(call pretty-error,Invalid LOCAL_SDK_VERSION '$(LOCAL_SDK_VERSION)' \
+             Choices are: $(TARGET_AVAILABLE_SDK_VERSIONS))
+    endif
+    ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
+      # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
+      full_java_bootclasspath_libs := $(call java-lib-header-files,android_stubs_current)
+    else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,android_system_stubs_current)
+    else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,android_test_stubs_current)
+    else
+      full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
+    endif # current, system_current, or test_current
+  endif # LOCAL_SDK_VERSION
 
-# In order to compile lambda code javac requires various invokedynamic-
-# related classes to be present. This change adds stubs needed for
-# javac to compile lambdas.
-my_additional_javac_libs :=
-ifndef TARGET_BUILD_APPS
-# TODO: support to build lamdbas using javac in unbundled build.
-# We may need to check in a prebuilt core-lambda-stubs to prebuilts/sdk.
-ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-my_additional_javac_libs := core-lambda-stubs
-endif
-endif
+  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+    ifneq ($(LOCAL_MODULE),jacocoagent)
+      ifeq ($(EMMA_INSTRUMENT),true)
+        ifneq ($(EMMA_INSTRUMENT_STATIC),true)
+          # For instrumented build, if Jacoco is not being included statically
+          # in instrumented packages then include Jacoco classes into the
+          # bootclasspath.
+          full_java_bootclasspath_libs += $(call java-lib-header-files,jacocoagent)
+        endif # EMMA_INSTRUMENT_STATIC
+      endif # EMMA_INSTRUMENT
+    endif # LOCAL_MODULE == jacocoagent
+  endif # LOCAL_NO_STANDARD_LIBRARIES
 
-full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
-full_java_lib_deps := $(call java-lib-deps,$(LOCAL_JAVA_LIBRARIES) $(my_additional_javac_libs),$(LOCAL_IS_HOST_MODULE))
-full_java_lib_deps := $(addsuffix .toc, $(full_java_lib_deps))
+  # In order to compile lambda code javac requires various invokedynamic-
+  # related classes to be present. This change adds stubs needed for
+  # javac to compile lambdas.
+  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+    ifdef TARGET_BUILD_APPS
+      full_java_bootclasspath_libs += $(call java-lib-header-files,sdk-core-lambda-stubs)
+    else
+      full_java_bootclasspath_libs += $(call java-lib-header-files,core-lambda-stubs)
+    endif
+  endif
+
+  full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
+  full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
 
 else # LOCAL_IS_HOST_MODULE
 
-ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
-ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-my_bootclasspath := ""
-else
-my_bootclasspath := $(call normalize-path-list,$(call host-dex-java-lib-files,core-oj-hostdex core-libart-hostdex))
-endif
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := -bootclasspath $(my_bootclasspath)
+  ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
+    ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+      empty_bootclasspath := ""
+    else
+      full_java_bootclasspath_libs := $(call java-lib-header-files,$(addsuffix -hostdex,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES)),true)
+    endif
 
-full_shared_java_libs := $(call host-dex-java-lib-files,$(LOCAL_JAVA_LIBRARIES))
-full_java_lib_deps := $(full_shared_java_libs)
-else # !USE_CORE_LIB_BOOTCLASSPATH
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH :=
+    my_system_modules := $(DEFAULT_SYSTEM_MODULES)
+    full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),true)
+    full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),true)
+  else # !USE_CORE_LIB_BOOTCLASSPATH
 
-full_shared_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
-    $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
-full_java_lib_deps := $(full_shared_java_libs)
-endif # USE_CORE_LIB_BOOTCLASSPATH
+    full_shared_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
+      $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
+    full_shared_java_header_libs := $(full_shared_java_libs)
+  endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
 
-full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
-full_java_lib_deps := $(full_java_lib_deps) $(full_static_java_libs) $(LOCAL_CLASSPATH)
+ifdef empty_bootclasspath
+  ifdef full_java_bootclasspath_libs
+    $(call pretty-error,internal error: empty_bootclasspath and full_java_bootclasspath_libs should not both be set)
+  endif
+endif
+
+full_java_system_modules_deps :=
+my_system_modules_dir :=
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_USE_SYSTEM_MODULES :=
+ifeq ($(LOCAL_JAVA_LANGUAGE_VERSION),1.9)
+  $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_USE_SYSTEM_MODULES := true
+  ifdef my_system_modules
+    ifneq ($(my_system_modules),none)
+      ifndef SOONG_SYSTEM_MODULES_$(my_system_modules)
+        $(call pretty-error, Invalid system modules $(my_system_modules))
+      endif
+      full_java_system_modules_deps := $(SOONG_SYSTEM_MODULES_$(my_system_modules))
+      my_system_modules_dir := $(patsubst %/lib/modules,%,$(SOONG_SYSTEM_MODULES_$(my_system_modules)))
+    endif
+  endif
+endif
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := $(full_java_bootclasspath_libs)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_EMPTY_BOOTCLASSPATH := $(empty_bootclasspath)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SYSTEM_MODULES := $(my_system_modules_dir)
 
 ifndef LOCAL_IS_HOST_MODULE
 # This is set by packages that are linking to other packages that export
 # shared libraries, allowing them to make use of the code in the linked apk.
 apk_libraries := $(sort $(LOCAL_APK_LIBRARIES) $(LOCAL_RES_LIBRARIES))
 ifneq ($(apk_libraries),)
-  link_apk_libraries := \
-      $(foreach lib,$(apk_libraries), \
-        $(call intermediates-dir-for, \
-              APPS,$(lib),,COMMON)/classes.jar)
+  link_apk_libraries := $(call app-lib-files,$(apk_libraries))
+  link_apk_header_libs := $(call app-lib-header-files,$(apk_libraries))
 
   # link against the jar with full original names (before proguard processing).
   full_shared_java_libs += $(link_apk_libraries)
-  full_java_libs += $(link_apk_libraries)
-  full_java_lib_deps += $(link_apk_libraries)
+  full_shared_java_header_libs += $(link_apk_header_libs)
 endif
 
 # This is set by packages that contain instrumentation, allowing them to
@@ -263,9 +333,14 @@ ifdef LOCAL_INSTRUMENTATION_FOR
   link_instr_intermediates_dir.COMMON := $(call intermediates-dir-for, \
       APPS,$(LOCAL_INSTRUMENTATION_FOR),,COMMON)
   # link against the jar with full original names (before proguard processing).
-  link_instr_classes_jar := $(link_instr_intermediates_dir.COMMON)/classes.jar
-  full_java_libs += $(link_instr_classes_jar)
-  full_java_lib_deps += $(link_instr_classes_jar)
+  link_instr_classes_jar := $(link_instr_intermediates_dir.COMMON)/classes-pre-proguard.jar
+  ifneq ($(TURBINE_ENABLED),false)
+    link_instr_classes_header_jar := $(link_instr_intermediates_dir.COMMON)/classes-header.jar
+  else
+    link_instr_classes_header_jar := $(link_instr_intermediates_dir.COMMON)/classes.jar
+  endif
+  full_shared_java_libs += $(link_instr_classes_jar)
+  full_shared_java_header_libs += $(link_instr_classes_header_jar)
 endif  # LOCAL_INSTRUMENTATION_FOR
 endif  # LOCAL_IS_HOST_MODULE
 
@@ -312,102 +387,38 @@ ALL_MODULES.$(my_register_name).RS_FILES := $(renderscript_sources_fullpath)
 endif
 endif  # !LOCAL_IS_HOST_MODULE
 
+full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
+full_java_header_libs := $(full_shared_java_header_libs) $(full_static_java_header_libs)
+
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ALL_JAVA_LIBRARIES := $(full_java_libs)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ALL_JAVA_HEADER_LIBRARIES := $(full_java_header_libs)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SHARED_JAVA_HEADER_LIBRARIES := $(full_shared_java_header_libs)
 
 ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
     $(ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR) $(LOCAL_INTERMEDIATE_SOURCE_DIR)
 
 ###########################################################
-# JACK
-###########################################################
-ifdef need_compile_java
-
-LOCAL_JACK_FLAGS += -D jack.java.source.version=$(LOCAL_JAVA_LANGUAGE_VERSION)
-
-full_static_jack_libs := \
-    $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
-      $(call intermediates-dir-for, \
-        JAVA_LIBRARIES,$(lib),$(LOCAL_IS_HOST_MODULE),COMMON)/classes.jack)
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_STATIC_JACK_LIBRARIES := $(full_static_jack_libs)
-
-full_shared_jack_libs := $(call jack-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-full_jack_deps := $(full_shared_jack_libs)
-
-ifndef LOCAL_IS_HOST_MODULE
-# Turn off .toc optimization for apps build as we cannot build dexdump.
-ifeq (,$(TARGET_BUILD_APPS))
-full_jack_deps := $(patsubst %.jack, %.dex.toc, $(full_jack_deps))
-endif
-endif # !LOCAL_IS_HOST_MODULE
-full_shared_jack_libs += $(LOCAL_JACK_CLASSPATH)
-full_jack_deps += $(full_static_jack_libs) $(LOCAL_JACK_CLASSPATH)
-
-ifndef LOCAL_IS_HOST_MODULE
-# This is set by packages that are linking to other packages that export
-# shared libraries, allowing them to make use of the code in the linked apk.
-ifneq ($(apk_libraries),)
-  link_apk_jack_libraries := \
-      $(foreach lib,$(apk_libraries), \
-        $(call intermediates-dir-for, \
-              APPS,$(lib),,COMMON)/classes.jack)
-
-  # link against the jar with full original names (before proguard processing).
-  full_shared_jack_libs += $(link_apk_jack_libraries)
-  full_jack_deps += $(link_apk_jack_libraries)
-endif
-
-# This is set by packages that contain instrumentation, allowing them to
-# link against the package they are instrumenting.  Currently only one such
-# package is allowed.
-ifdef LOCAL_INSTRUMENTATION_FOR
-   # link against the jar with full original names (before proguard processing).
-   link_instr_classes_jack := $(link_instr_intermediates_dir.COMMON)/classes.noshrob.jack
-   full_shared_jack_libs += $(link_instr_classes_jack)
-   full_jack_deps += $(link_instr_classes_jack)
-endif  # LOCAL_INSTRUMENTATION_FOR
-endif  # !LOCAL_IS_HOST_MODULE
-
-# Propagate local configuration options to this target.
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JACK_SHARED_LIBRARIES:= $(full_shared_jack_libs)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-
-endif  # need_compile_java
-
-
-###########################################################
 # Verify that all libraries are safe to use
 ###########################################################
 ifndef LOCAL_IS_HOST_MODULE
-my_link_type := $(intermediates.COMMON)/link_type
-all_link_types: $(my_link_type)
-my_link_type_deps := $(strip \
-  $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES),\
-    $(call intermediates-dir-for, \
-      JAVA_LIBRARIES,$(lib),,COMMON)/link_type) \
-  $(foreach lib,$(apk_libraries), \
-    $(call intermediates-dir-for, \
-      APPS,$(lib),,COMMON)/link_type))
 ifeq ($(LOCAL_SDK_VERSION),system_current)
-$(my_link_type): PRIVATE_LINK_TYPE := java:system
-$(my_link_type): PRIVATE_WARN_TYPES := java:platform
-$(my_link_type): PRIVATE_ALLOWED_TYPES := java:sdk java:system
+my_link_type := java:system
+my_warn_types := java:platform
+my_allowed_types := java:sdk java:system
 else ifneq ($(LOCAL_SDK_VERSION),)
-$(my_link_type): PRIVATE_LINK_TYPE := java:sdk
-$(my_link_type): PRIVATE_WARN_TYPES := java:system java:platform
-$(my_link_type): PRIVATE_ALLOWED_TYPES := java:sdk
+my_link_type := java:sdk
+my_warn_types := java:system java:platform
+my_allowed_types := java:sdk
 else
-$(my_link_type): PRIVATE_LINK_TYPE := java:platform
-$(my_link_type): PRIVATE_WARN_TYPES :=
-$(my_link_type): PRIVATE_ALLOWED_TYPES := java:sdk java:system java:platform
+my_link_type := java:platform
+my_warn_types :=
+my_allowed_types := java:sdk java:system java:platform
 endif
-$(eval $(call link-type-partitions,$(my_link_type)))
-$(my_link_type): PRIVATE_DEPS := $(my_link_type_deps)
-$(my_link_type): PRIVATE_MODULE := $(LOCAL_MODULE)
-$(my_link_type): PRIVATE_MAKEFILE := $(LOCAL_MODULE_MAKEFILE)
-$(my_link_type): $(my_link_type_deps) $(CHECK_LINK_TYPE)
-	@echo Check Java library module types: $@
-	$(check-link-type)
 
-$(LOCAL_BUILT_MODULE): $(my_link_type)
+my_link_deps := $(addprefix JAVA_LIBRARIES:,$(LOCAL_STATIC_JAVA_LIBRARIES))
+my_link_deps += $(addprefix APPS:,$(apk_libraries))
+
+my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
+my_common := COMMON
+include $(BUILD_SYSTEM)/link_type.mk
 endif  # !LOCAL_IS_HOST_MODULE

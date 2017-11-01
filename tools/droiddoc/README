@@ -1,0 +1,5 @@
+If you're looking for the templates-sdk/ files, they've moved
+to external/doclava/res/assets/.
+
+The remaining template files here should also be eventually removed
+so that we can unify the structure and style of all DocLava builds.

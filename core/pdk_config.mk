@@ -20,6 +20,7 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
   target/common/obj/JAVA_LIBRARIES/legacy-test_intermediates \
   target/common/obj/JAVA_LIBRARIES/ext_intermediates \
   target/common/obj/JAVA_LIBRARIES/framework_intermediates \
+  target/common/obj/JAVA_LIBRARIES/hwbinder_intermediates \
   target/common/obj/JAVA_LIBRARIES/ims-common_intermediates \
   target/common/obj/JAVA_LIBRARIES/okhttp_intermediates \
   target/common/obj/JAVA_LIBRARIES/telephony-common_intermediates \
@@ -36,7 +37,7 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR := \
 	$(PDK_PLATFORM_JAVA_ZIP_JAVA_HOST_LIB_DIR)
 
 PDK_PLATFORM_JAVA_ZIP_CONTENTS += $(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_LIB_DIR),\
-    $(lib_dir)/classes.jack $(lib_dir)/classes.jar $(lib_dir)/classes.jar.toc \
+    $(lib_dir)/classes.jar $(lib_dir)/classes.jar.toc \
     $(lib_dir)/javalib.jar  $(lib_dir)/classes*.dex \
     $(lib_dir)/classes.dex.toc )
 
@@ -99,9 +100,6 @@ $(HOST_COMMON_OUT_ROOT)/% : $(_pdk_fusion_intermediates)/host/common/% $(_pdk_fu
 ifeq (true,$(TARGET_BUILD_PDK_JAVA_PLATFORM))
 
 PDK_FUSION_OUT_DIR := $(OUT_DIR)
-ifeq (debug,$(TARGET_BUILD_TYPE))
-PDK_FUSION_OUT_DIR := $(DEBUG_OUT_DIR)
-endif
 
 define JAVA_dependency_template
 $(call add-dependency,$(PDK_FUSION_OUT_DIR)/$(strip $(1)),\
@@ -117,14 +115,6 @@ target/common/obj/APPS/framework-res_intermediates/package-export.apk))
 $(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR),\
 $(eval $(call JAVA_dependency_template,$(lib_dir)/javalib.jar,\
 $(lib_dir)/classes.jar)))
-
-# pull .jack and .dex files
-$(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR),\
-  $(eval $(call JAVA_dependency_template,$(lib_dir)/classes.jar.toc,\
-    $(lib_dir)/classes.jar $(lib_dir)/classes.jack)))
-$(foreach lib_dir,$(PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR),\
-  $(eval $(call JAVA_dependency_template,$(lib_dir)/classes.dex.toc,\
-    $(lib_dir)/classes.jar $(lib_dir)/classes.jack $(lib_dir)/classes%.dex)))
 
 # implicit rules for all other target files
 $(TARGET_COMMON_OUT_ROOT)/% : $(_pdk_fusion_intermediates)/target/common/% $(_pdk_fusion_stamp)

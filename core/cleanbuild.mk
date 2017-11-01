@@ -13,8 +13,32 @@
 # limitations under the License.
 #
 
-# Don't bother with the cleanspecs if you are running mm/mmm
-ifeq ($(ONE_SHOT_MAKEFILE)$(dont_bother),)
+# Absolute path of the present working direcotry.
+# This overrides the shell variable $PWD, which does not necessarily points to
+# the top of the source tree, for example when "make -C" is used in m/mm/mmm.
+PWD := $(shell pwd)
+
+TOP := .
+TOPDIR :=
+
+BUILD_SYSTEM := $(TOPDIR)build/make/core
+
+# Set up various standard variables based on configuration
+# and host information.
+include $(BUILD_SYSTEM)/config.mk
+
+include $(SOONG_MAKEVARS_MK)
+
+include $(BUILD_SYSTEM)/clang/config.mk
+
+# CTS-specific config.
+-include cts/build/config.mk
+# VTS-specific config.
+-include test/vts/tools/vts-tradefed/build/config.mk
+# device-tests-specific-config.
+-include tools/tradefederation/build/suites/device-tests/config.mk
+# general-tests-specific-config.
+-include tools/tradefederation/build/suites/general-tests/config.mk
 
 INTERNAL_CLEAN_STEPS :=
 
@@ -24,7 +48,7 @@ INTERNAL_CLEAN_STEPS :=
 #
 # $(1): shell command to run
 # $(2): indicate to not use makefile path as part of step id if not empty.
-#       $(2) should only be used in build/core/cleanspec.mk: just for compatibility.
+#       $(2) should only be used in build/make/core/cleanspec.mk: just for compatibility.
 define _add-clean-step
   $(if $(strip $(INTERNAL_CLEAN_BUILD_VERSION)),, \
       $(error INTERNAL_CLEAN_BUILD_VERSION not set))
@@ -43,7 +67,7 @@ define _add-clean-step
   $(eval _acs_makefile_prefix :=)
 endef
 define add-clean-step
-$(eval # for build/core/cleanspec.mk, dont use makefile path as part of step id) \
+$(eval # for build/make/core/cleanspec.mk, dont use makefile path as part of step id) \
 $(if $(filter %/cleanspec.mk,$(lastword $(MAKEFILE_LIST))),\
     $(eval $(call _add-clean-step,$(1),true)),\
     $(eval $(call _add-clean-step,$(1))))
@@ -58,7 +82,7 @@ INTERNAL_CLEAN_STEPS := $(strip $(INTERNAL_CLEAN_STEPS))
 
 # If the clean_steps.mk file is missing (usually after a clean build)
 # then we won't do anything.
-CURRENT_CLEAN_BUILD_VERSION := $(INTERNAL_CLEAN_BUILD_VERSION)
+CURRENT_CLEAN_BUILD_VERSION := MISSING
 CURRENT_CLEAN_STEPS := $(INTERNAL_CLEAN_STEPS)
 
 # Read the current state from the file, if present.
@@ -67,7 +91,9 @@ CURRENT_CLEAN_STEPS := $(INTERNAL_CLEAN_STEPS)
 clean_steps_file := $(PRODUCT_OUT)/clean_steps.mk
 -include $(clean_steps_file)
 
-ifneq ($(CURRENT_CLEAN_BUILD_VERSION),$(INTERNAL_CLEAN_BUILD_VERSION))
+ifeq ($(CURRENT_CLEAN_BUILD_VERSION),MISSING)
+  # Do nothing
+else ifneq ($(CURRENT_CLEAN_BUILD_VERSION),$(INTERNAL_CLEAN_BUILD_VERSION))
   # The major clean version is out-of-date.  Do a full clean, and
   # don't even bother with the clean steps.
   $(info *** A clean build is required because of a recent change.)
@@ -109,175 +135,18 @@ endif
 
 # Write the new state to the file.
 #
-rewrite_clean_steps_file :=
 ifneq ($(CURRENT_CLEAN_BUILD_VERSION)-$(CURRENT_CLEAN_STEPS),$(INTERNAL_CLEAN_BUILD_VERSION)-$(INTERNAL_CLEAN_STEPS))
-rewrite_clean_steps_file := true
-endif
-ifeq ($(wildcard $(clean_steps_file)),)
-# This is the first build.
-rewrite_clean_steps_file := true
-endif
-ifeq ($(rewrite_clean_steps_file),true)
-$(shell \
-  mkdir -p $(dir $(clean_steps_file)) && \
-  echo "CURRENT_CLEAN_BUILD_VERSION := $(INTERNAL_CLEAN_BUILD_VERSION)" > \
-      $(clean_steps_file) ;\
-  echo "CURRENT_CLEAN_STEPS := $(wordlist 1,500,$(INTERNAL_CLEAN_STEPS))" >> $(clean_steps_file) \
- )
-define -cs-write-clean-steps-if-arg1-not-empty
-$(if $(1),$(shell echo "CURRENT_CLEAN_STEPS += $(1)" >> $(clean_steps_file)))
-endef
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 501,1000,$(INTERNAL_CLEAN_STEPS)))
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 1001,1500,$(INTERNAL_CLEAN_STEPS)))
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 1501,2000,$(INTERNAL_CLEAN_STEPS)))
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 2001,2500,$(INTERNAL_CLEAN_STEPS)))
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 2501,3000,$(INTERNAL_CLEAN_STEPS)))
-$(call -cs-write-clean-steps-if-arg1-not-empty,$(wordlist 3001,99999,$(INTERNAL_CLEAN_STEPS)))
+$(shell mkdir -p $(dir $(clean_steps_file)))
+$(file >$(clean_steps_file).tmp,CURRENT_CLEAN_BUILD_VERSION := $(INTERNAL_CLEAN_BUILD_VERSION)$(newline)CURRENT_CLEAN_STEPS := $(INTERNAL_CLEAN_STEPS)$(newline))
+$(shell if ! cmp -s $(clean_steps_file).tmp $(clean_steps_file); then \
+          mv $(clean_steps_file).tmp $(clean_steps_file); \
+        else \
+          rm $(clean_steps_file).tmp; \
+        fi)
 endif
 
 CURRENT_CLEAN_BUILD_VERSION :=
 CURRENT_CLEAN_STEPS :=
 clean_steps_file :=
-rewrite_clean_steps_file :=
 INTERNAL_CLEAN_STEPS :=
 INTERNAL_CLEAN_BUILD_VERSION :=
-
-endif  # if not ONE_SHOT_MAKEFILE dont_bother
-
-# Since products and build variants (unfortunately) share the same
-# PRODUCT_OUT staging directory, things can get out of sync if different
-# build configurations are built in the same tree.  The following logic
-# will notice when the configuration has changed and remove the files
-# necessary to keep things consistent.
-
-previous_build_config_file := $(PRODUCT_OUT)/previous_build_config.mk
-current_build_config_file := $(PRODUCT_OUT)/current_build_config.mk
-
-current_build_config := \
-    $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)
-force_installclean := false
-
-# Read the current state from the file, if present.
-# Will set PREVIOUS_BUILD_CONFIG.
-#
-PREVIOUS_BUILD_CONFIG :=
--include $(previous_build_config_file)
-PREVIOUS_BUILD_CONFIG := $(strip $(PREVIOUS_BUILD_CONFIG))
-
-ifdef PREVIOUS_BUILD_CONFIG
-  ifneq "$(current_build_config)" "$(PREVIOUS_BUILD_CONFIG)"
-    $(info *** Build configuration changed: "$(PREVIOUS_BUILD_CONFIG)" -> "$(current_build_config)")
-    ifneq ($(DISABLE_AUTO_INSTALLCLEAN),true)
-      force_installclean := true
-    else
-      $(info DISABLE_AUTO_INSTALLCLEAN is set; skipping auto-clean. Your tree may be in an inconsistent state.)
-    endif
-  endif
-endif  # else, this is the first build, so no need to clean.
-
-# Write the new state to the file.
-#
-$(shell \
-  mkdir -p $(dir $(current_build_config_file)) && \
-  echo "PREVIOUS_BUILD_CONFIG := $(current_build_config)" > \
-      $(current_build_config_file) \
- )
-$(shell cmp $(current_build_config_file) $(previous_build_config_file) > /dev/null 2>&1 || \
-  mv -f $(current_build_config_file) $(previous_build_config_file))
-
-PREVIOUS_BUILD_CONFIG :=
-previous_build_config_file :=
-current_build_config_file :=
-current_build_config :=
-
-#
-# installclean logic
-#
-
-# The files/dirs to delete during an installclean.  This includes the
-# non-common APPS directory, which may contain the wrong resources.
-#
-# Deletes all of the files that change between different build types,
-# like "make user" vs. "make sdk".  This lets you work with different
-# build types without having to do a full clean each time.  E.g.:
-#
-#     $ make -j8 all
-#     $ make installclean
-#     $ make -j8 user
-#     $ make installclean
-#     $ make -j8 sdk
-#
-installclean_files := \
-	$(HOST_OUT)/obj/NOTICE_FILES \
-	$(HOST_OUT)/sdk \
-	$(PRODUCT_OUT)/*.img \
-	$(PRODUCT_OUT)/*.ini \
-	$(PRODUCT_OUT)/*.txt \
-	$(PRODUCT_OUT)/*.xlb \
-	$(PRODUCT_OUT)/*.zip \
-	$(PRODUCT_OUT)/kernel \
-	$(PRODUCT_OUT)/data \
-	$(PRODUCT_OUT)/skin \
-	$(PRODUCT_OUT)/obj/NOTICE_FILES \
-	$(PRODUCT_OUT)/obj/PACKAGING \
-	$(PRODUCT_OUT)/recovery \
-	$(PRODUCT_OUT)/root \
-	$(PRODUCT_OUT)/system \
-	$(PRODUCT_OUT)/system_other \
-	$(PRODUCT_OUT)/vendor \
-	$(PRODUCT_OUT)/oem \
-	$(PRODUCT_OUT)/obj/FAKE
-
-# The files/dirs to delete during a dataclean, which removes any files
-# in the staging and emulator data partitions.
-dataclean_files := \
-	$(PRODUCT_OUT)/data/* \
-	$(PRODUCT_OUT)/data-qemu/* \
-	$(PRODUCT_OUT)/userdata-qemu.img
-
-# make sure *_OUT is set so that we won't result in deleting random parts
-# of the filesystem.
-ifneq (2,$(words $(HOST_OUT) $(PRODUCT_OUT)))
-  $(error both HOST_OUT and PRODUCT_OUT should be set at this point.)
-endif
-
-# Define the rules for commandline invocation.
-.PHONY: dataclean
-dataclean: FILES := $(dataclean_files)
-dataclean:
-	$(hide) rm -rf $(FILES)
-	@echo "Deleted emulator userdata images."
-
-.PHONY: installclean
-installclean: FILES := $(installclean_files)
-installclean: dataclean
-	$(hide) rm -rf $(FILES)
-	@echo "Deleted images and staging directories."
-
-ifeq "$(force_installclean)" "true"
-  $(info *** Forcing "make installclean"...)
-  $(info *** rm -rf $(dataclean_files) $(installclean_files))
-  $(shell rm -rf $(dataclean_files) $(installclean_files))
-  $(info *** Done with the cleaning, now starting the real build.)
-endif
-force_installclean :=
-
-###########################################################
-
-.PHONY: clean-jack-files
-clean-jack-files: clean-dex-files
-	$(hide) find $(OUT_DIR) -name "*.jack" | xargs rm -f
-	$(hide) find $(OUT_DIR) -type d -name "jack" | xargs rm -rf
-	@echo "All jack files have been removed."
-
-.PHONY: clean-dex-files
-clean-dex-files:
-	$(hide) find $(OUT_DIR) -name "*.dex" ! -path "*/jack-incremental/*" | xargs rm -f
-	$(hide) for i in `find $(OUT_DIR) -name "*.jar" -o -name "*.apk"` ; do ((unzip -l $$i 2> /dev/null | \
-				grep -q "\.dex$$" && rm -f $$i) || continue ) ; done
-	@echo "All dex files and archives containing dex files have been removed."
-
-.PHONY: clean-jack-incremental
-clean-jack-incremental:
-	$(hide) find $(OUT_DIR) -name "jack-incremental" -type d | xargs rm -rf
-	@echo "All jack incremental dirs have been removed."

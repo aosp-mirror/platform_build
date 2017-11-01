@@ -78,6 +78,16 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
   --replace_verity_keyid <path_to_X509_PEM_cert_file>
       Replace the veritykeyid in BOOT/cmdline of input_target_file_zip
       with keyid of the cert pointed by <path_to_X509_PEM_cert_file>.
+
+  --avb_{boot,system,vendor,dtbo,vbmeta}_algorithm <algorithm>
+  --avb_{boot,system,vendor,dtbo,vbmeta}_key <key>
+      Use the specified algorithm (e.g. SHA256_RSA4096) and the key to AVB-sign
+      the specified image. Otherwise it uses the existing values in info dict.
+
+  --avb_{boot,system,vendor,dtbo,vbmeta}_extra_args <args>
+      Specify any additional args that are needed to AVB-sign the image
+      (e.g. "--signing_helper /path/to/helper"). The args will be appended to
+      the existing ones in info dict.
 """
 
 import sys
@@ -92,7 +102,7 @@ import copy
 import errno
 import os
 import re
-import shutil
+import stat
 import subprocess
 import tempfile
 import zipfile
@@ -104,11 +114,15 @@ OPTIONS = common.OPTIONS
 
 OPTIONS.extra_apks = {}
 OPTIONS.key_map = {}
+OPTIONS.rebuild_recovery = False
 OPTIONS.replace_ota_keys = False
 OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
 OPTIONS.replace_verity_keyid = False
 OPTIONS.tag_changes = ("-test-keys", "-dev-keys", "+release-keys")
+OPTIONS.avb_keys = {}
+OPTIONS.avb_algorithms = {}
+OPTIONS.avb_extra_args = {}
 
 def GetApkCerts(tf_zip):
   certmap = common.ReadApkCerts(tf_zip)
@@ -186,26 +200,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
   maxsize = max([len(os.path.basename(i.filename))
                  for i in input_tf_zip.infolist()
                  if i.filename.endswith('.apk')])
-  rebuild_recovery = False
   system_root_image = misc_info.get("system_root_image") == "true"
-
-  # tmpdir will only be used to regenerate the recovery-from-boot patch.
-  tmpdir = tempfile.mkdtemp()
-  def write_to_temp(fn, attr, data):
-    fn = os.path.join(tmpdir, fn)
-    if fn.endswith("/"):
-      fn = os.path.join(tmpdir, fn)
-      os.mkdir(fn)
-    else:
-      d = os.path.dirname(fn)
-      if d and not os.path.exists(d):
-        os.makedirs(d)
-
-      if attr >> 16 == 0xa1ff:
-        os.symlink(data, fn)
-      else:
-        with open(fn, "wb") as f:
-          f.write(data)
 
   for info in input_tf_zip.infolist():
     if info.filename.startswith("IMAGES/"):
@@ -231,27 +226,29 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # System properties.
     elif info.filename in ("SYSTEM/build.prop",
                            "VENDOR/build.prop",
-                           "BOOT/RAMDISK/default.prop",
-                           "ROOT/default.prop",
-                           "RECOVERY/RAMDISK/default.prop"):
+                           "SYSTEM/etc/prop.default",
+                           "BOOT/RAMDISK/prop.default",
+                           "BOOT/RAMDISK/default.prop",  # legacy
+                           "ROOT/default.prop",  # legacy
+                           "RECOVERY/RAMDISK/prop.default",
+                           "RECOVERY/RAMDISK/default.prop"):  # legacy
       print "rewriting %s:" % (info.filename,)
-      new_data = RewriteProps(data, misc_info)
+      if stat.S_ISLNK(info.external_attr >> 16):
+        new_data = data
+      else:
+        new_data = RewriteProps(data, misc_info)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
-      if info.filename in ("BOOT/RAMDISK/default.prop",
-                           "ROOT/default.prop",
-                           "RECOVERY/RAMDISK/default.prop"):
-        write_to_temp(info.filename, info.external_attr, new_data)
 
     elif info.filename.endswith("mac_permissions.xml"):
       print "rewriting %s with new keys." % (info.filename,)
       new_data = ReplaceCerts(data)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
 
-    # Trigger a rebuild of the recovery patch if needed.
+    # Ask add_img_to_target_files to rebuild the recovery patch if needed.
     elif info.filename in ("SYSTEM/recovery-from-boot.p",
                            "SYSTEM/etc/recovery.img",
                            "SYSTEM/bin/install-recovery.sh"):
-      rebuild_recovery = True
+      OPTIONS.rebuild_recovery = True
 
     # Don't copy OTA keys if we're replacing them.
     elif (OPTIONS.replace_ota_keys and
@@ -263,9 +260,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
               "SYSTEM/etc/update_engine/update-payload-key.pub.pem")):
       pass
 
-    # Skip META/misc_info.txt if we will replace the verity private key later.
-    elif (OPTIONS.replace_verity_private_key and
-          info.filename == "META/misc_info.txt"):
+    # Skip META/misc_info.txt since we will write back the new values later.
+    elif info.filename == "META/misc_info.txt":
       pass
 
     # Skip verity public key if we will replace it.
@@ -283,36 +279,16 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif info.filename == "META/care_map.txt":
       pass
 
-    # Copy BOOT/, RECOVERY/, META/, ROOT/ to rebuild recovery patch. This case
-    # must come AFTER other matching rules.
-    elif (info.filename.startswith("BOOT/") or
-          info.filename.startswith("RECOVERY/") or
-          info.filename.startswith("META/") or
-          info.filename.startswith("ROOT/") or
-          info.filename == "SYSTEM/etc/recovery-resource.dat"):
-      write_to_temp(info.filename, info.external_attr, data)
-      common.ZipWriteStr(output_tf_zip, out_info, data)
-
     # A non-APK file; copy it verbatim.
     else:
       common.ZipWriteStr(output_tf_zip, out_info, data)
 
   if OPTIONS.replace_ota_keys:
-    new_recovery_keys = ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
-    if new_recovery_keys:
-      if system_root_image:
-        recovery_keys_location = "BOOT/RAMDISK/res/keys"
-      else:
-        recovery_keys_location = "RECOVERY/RAMDISK/res/keys"
-      # The "new_recovery_keys" has been already written into the output_tf_zip
-      # while calling ReplaceOtaKeys(). We're just putting the same copy to
-      # tmpdir in case we need to regenerate the recovery-from-boot patch.
-      write_to_temp(recovery_keys_location, 0o755 << 16, new_recovery_keys)
+    ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
 
-  # Replace the keyid string in META/misc_info.txt.
+  # Replace the keyid string in misc_info dict.
   if OPTIONS.replace_verity_private_key:
-    ReplaceVerityPrivateKey(input_tf_zip, output_tf_zip, misc_info,
-                            OPTIONS.replace_verity_private_key[1])
+    ReplaceVerityPrivateKey(misc_info, OPTIONS.replace_verity_private_key[1])
 
   if OPTIONS.replace_verity_public_key:
     if system_root_image:
@@ -321,33 +297,19 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       dest = "BOOT/RAMDISK/verity_key"
     # We are replacing the one in boot image only, since the one under
     # recovery won't ever be needed.
-    new_data = ReplaceVerityPublicKey(
+    ReplaceVerityPublicKey(
         output_tf_zip, dest, OPTIONS.replace_verity_public_key[1])
-    write_to_temp(dest, 0o755 << 16, new_data)
 
   # Replace the keyid string in BOOT/cmdline.
   if OPTIONS.replace_verity_keyid:
-    new_cmdline = ReplaceVerityKeyId(input_tf_zip, output_tf_zip,
-      OPTIONS.replace_verity_keyid[1])
-    # Writing the new cmdline to tmpdir is redundant as the bootimage
-    # gets build in the add_image_to_target_files and rebuild_recovery
-    # is not exercised while building the boot image for the A/B
-    # path
-    write_to_temp("BOOT/cmdline", 0o755 << 16, new_cmdline)
+    ReplaceVerityKeyId(input_tf_zip, output_tf_zip,
+                       OPTIONS.replace_verity_keyid[1])
 
-  if rebuild_recovery:
-    recovery_img = common.GetBootableImage(
-        "recovery.img", "recovery.img", tmpdir, "RECOVERY", info_dict=misc_info)
-    boot_img = common.GetBootableImage(
-        "boot.img", "boot.img", tmpdir, "BOOT", info_dict=misc_info)
+  # Replace the AVB signing keys, if any.
+  ReplaceAvbSigningKeys(misc_info)
 
-    def output_sink(fn, data):
-      common.ZipWriteStr(output_tf_zip, "SYSTEM/" + fn, data)
-
-    common.MakeRecoveryPatch(tmpdir, output_sink, recovery_img, boot_img,
-                             info_dict=misc_info)
-
-  shutil.rmtree(tmpdir)
+  # Write back misc_info with the latest values.
+  ReplaceMiscInfoTxt(input_tf_zip, output_tf_zip, misc_info)
 
 
 def ReplaceCerts(data):
@@ -526,20 +488,12 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
 
 
 def ReplaceVerityPublicKey(targetfile_zip, filename, key_path):
-  print "Replacing verity public key with %s" % key_path
-  with open(key_path) as f:
-    data = f.read()
-  common.ZipWriteStr(targetfile_zip, filename, data)
-  return data
+  print "Replacing verity public key with %s" % (key_path,)
+  common.ZipWrite(targetfile_zip, key_path, arcname=filename)
 
 
-def ReplaceVerityPrivateKey(targetfile_input_zip, targetfile_output_zip,
-                            misc_info, key_path):
-  print "Replacing verity private key with %s" % key_path
-  current_key = misc_info["verity_key"]
-  original_misc_info = targetfile_input_zip.read("META/misc_info.txt")
-  new_misc_info = original_misc_info.replace(current_key, key_path)
-  common.ZipWriteStr(targetfile_output_zip, "META/misc_info.txt", new_misc_info)
+def ReplaceVerityPrivateKey(misc_info, key_path):
+  print "Replacing verity private key with %s" % (key_path,)
   misc_info["verity_key"] = key_path
 
 
@@ -568,7 +522,56 @@ def ReplaceVerityKeyId(targetfile_input_zip, targetfile_output_zip, keypath):
   out_cmdline = out_cmdline.strip()
   print "out_cmdline %s" % (out_cmdline)
   common.ZipWriteStr(targetfile_output_zip, "BOOT/cmdline", out_cmdline)
-  return out_cmdline
+
+
+def ReplaceMiscInfoTxt(input_zip, output_zip, misc_info):
+  """Replaces META/misc_info.txt.
+
+  Only writes back the ones in the original META/misc_info.txt. Because the
+  current in-memory dict contains additional items computed at runtime.
+  """
+  misc_info_old = common.LoadDictionaryFromLines(
+      input_zip.read('META/misc_info.txt').split('\n'))
+  items = []
+  for key in sorted(misc_info):
+    if key in misc_info_old:
+      items.append('%s=%s' % (key, misc_info[key]))
+  common.ZipWriteStr(output_zip, "META/misc_info.txt", '\n'.join(items))
+
+
+def ReplaceAvbSigningKeys(misc_info):
+  """Replaces the AVB signing keys."""
+
+  AVB_FOOTER_ARGS_BY_PARTITION = {
+    'boot' : 'avb_boot_add_hash_footer_args',
+    'dtbo' : 'avb_dtbo_add_hash_footer_args',
+    'system' : 'avb_system_add_hashtree_footer_args',
+    'vendor' : 'avb_vendor_add_hashtree_footer_args',
+    'vbmeta' : 'avb_vbmeta_args',
+  }
+
+  def ReplaceAvbPartitionSigningKey(partition):
+    key = OPTIONS.avb_keys.get(partition)
+    if not key:
+      return
+
+    algorithm = OPTIONS.avb_algorithms.get(partition)
+    assert algorithm, 'Missing AVB signing algorithm for %s' % (partition,)
+
+    print 'Replacing AVB signing key for %s with "%s" (%s)' % (
+        partition, key, algorithm)
+    misc_info['avb_' + partition + '_algorithm'] = algorithm
+    misc_info['avb_' + partition + '_key_path'] = key
+
+    extra_args = OPTIONS.avb_extra_args.get(partition)
+    if extra_args:
+      print 'Setting extra AVB signing args for %s to "%s"' % (
+          partition, extra_args)
+      args_key = AVB_FOOTER_ARGS_BY_PARTITION[partition]
+      misc_info[args_key] = (misc_info.get(args_key, '') + ' ' + extra_args)
+
+  for partition in AVB_FOOTER_ARGS_BY_PARTITION:
+    ReplaceAvbPartitionSigningKey(partition)
 
 
 def BuildKeyMap(misc_info, key_mapping_options):
@@ -668,28 +671,78 @@ def main(argv):
       OPTIONS.replace_verity_private_key = (True, a)
     elif o == "--replace_verity_keyid":
       OPTIONS.replace_verity_keyid = (True, a)
+    elif o == "--avb_vbmeta_key":
+      OPTIONS.avb_keys['vbmeta'] = a
+    elif o == "--avb_vbmeta_algorithm":
+      OPTIONS.avb_algorithms['vbmeta'] = a
+    elif o == "--avb_vbmeta_extra_args":
+      OPTIONS.avb_extra_args['vbmeta'] = a
+    elif o == "--avb_boot_key":
+      OPTIONS.avb_keys['boot'] = a
+    elif o == "--avb_boot_algorithm":
+      OPTIONS.avb_algorithms['boot'] = a
+    elif o == "--avb_boot_extra_args":
+      OPTIONS.avb_extra_args['boot'] = a
+    elif o == "--avb_dtbo_key":
+      OPTIONS.avb_keys['dtbo'] = a
+    elif o == "--avb_dtbo_algorithm":
+      OPTIONS.avb_algorithms['dtbo'] = a
+    elif o == "--avb_dtbo_extra_args":
+      OPTIONS.avb_extra_args['dtbo'] = a
+    elif o == "--avb_system_key":
+      OPTIONS.avb_keys['system'] = a
+    elif o == "--avb_system_algorithm":
+      OPTIONS.avb_algorithms['system'] = a
+    elif o == "--avb_system_extra_args":
+      OPTIONS.avb_extra_args['system'] = a
+    elif o == "--avb_vendor_key":
+      OPTIONS.avb_keys['vendor'] = a
+    elif o == "--avb_vendor_algorithm":
+      OPTIONS.avb_algorithms['vendor'] = a
+    elif o == "--avb_vendor_extra_args":
+      OPTIONS.avb_extra_args['vendor'] = a
     else:
       return False
     return True
 
-  args = common.ParseOptions(argv, __doc__,
-                             extra_opts="e:d:k:ot:",
-                             extra_long_opts=["extra_apks=",
-                                              "default_key_mappings=",
-                                              "key_mapping=",
-                                              "replace_ota_keys",
-                                              "tag_changes=",
-                                              "replace_verity_public_key=",
-                                              "replace_verity_private_key=",
-                                              "replace_verity_keyid="],
-                             extra_option_handler=option_handler)
+  args = common.ParseOptions(
+      argv, __doc__,
+      extra_opts="e:d:k:ot:",
+      extra_long_opts=[
+        "extra_apks=",
+        "default_key_mappings=",
+        "key_mapping=",
+        "replace_ota_keys",
+        "tag_changes=",
+        "replace_verity_public_key=",
+        "replace_verity_private_key=",
+        "replace_verity_keyid=",
+        "avb_vbmeta_algorithm=",
+        "avb_vbmeta_key=",
+        "avb_vbmeta_extra_args=",
+        "avb_boot_algorithm=",
+        "avb_boot_key=",
+        "avb_boot_extra_args=",
+        "avb_dtbo_algorithm=",
+        "avb_dtbo_key=",
+        "avb_dtbo_extra_args=",
+        "avb_system_algorithm=",
+        "avb_system_key=",
+        "avb_system_extra_args=",
+        "avb_vendor_algorithm=",
+        "avb_vendor_key=",
+        "avb_vendor_extra_args=",
+      ],
+      extra_option_handler=option_handler)
 
   if len(args) != 2:
     common.Usage(__doc__)
     sys.exit(1)
 
   input_zip = zipfile.ZipFile(args[0], "r")
-  output_zip = zipfile.ZipFile(args[1], "w")
+  output_zip = zipfile.ZipFile(args[1], "w",
+                               compression=zipfile.ZIP_DEFLATED,
+                               allowZip64=True)
 
   misc_info = common.LoadInfoDict(input_zip)
 
@@ -711,7 +764,12 @@ def main(argv):
   common.ZipClose(output_zip)
 
   # Skip building userdata.img and cache.img when signing the target files.
-  new_args = ["--is_signing", args[1]]
+  new_args = ["--is_signing"]
+  # add_img_to_target_files builds the system image from scratch, so the
+  # recovery patch is guaranteed to be regenerated there.
+  if OPTIONS.rebuild_recovery:
+    new_args.append("--rebuild_recovery")
+  new_args.append(args[1])
   add_img_to_target_files.main(new_args)
 
   print "done."
@@ -725,3 +783,5 @@ if __name__ == '__main__':
     print "   ERROR: %s" % (e,)
     print
     sys.exit(1)
+  finally:
+    common.Cleanup()

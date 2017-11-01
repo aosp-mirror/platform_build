@@ -14,15 +14,6 @@
 
 LOCAL_PATH := $(call my-dir)
 
-include $(CLEAR_VARS)
-
-LOCAL_SRC_FILES := fs_config.c
-LOCAL_MODULE := fs_config
-LOCAL_SHARED_LIBRARIES := libcutils libselinux
-LOCAL_CFLAGS := -Werror
-
-include $(BUILD_HOST_EXECUTABLE)
-
 # One can override the default android_filesystem_config.h file in one of two ways:
 #
 # 1. The old way:
@@ -113,6 +104,11 @@ LOCAL_C_INCLUDES := $(dir $(my_fs_config_h)) $(dir $(my_gen_oem_aid))
 
 include $(BUILD_HOST_EXECUTABLE)
 fs_config_generate_bin := $(LOCAL_INSTALLED_MODULE)
+# List of all supported vendor, oem and odm Partitions
+fs_config_generate_extra_partition_list := $(strip \
+  $(if $(BOARD_USES_VENDORIMAGE)$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),vendor) \
+  $(if $(BOARD_USES_OEMIMAGE)$(BOARD_OEMIMAGE_FILE_SYSTEM_TYPE),oem) \
+  $(if $(BOARD_USES_ODMIMAGE)$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),odm))
 
 ##################################
 # Generate the system/etc/fs_config_dirs binary file for the target
@@ -121,10 +117,13 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs
 LOCAL_MODULE_CLASS := ETC
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
 include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
-	$< -D -o $@
+	$< -D $(if $(fs_config_generate_extra_partition_list), \
+	   -P '$(subst $(space),$(comma),$(addprefix -,$(fs_config_generate_extra_partition_list)))') \
+	   -o $@
 
 ##################################
 # Generate the system/etc/fs_config_files binary file for the target
@@ -133,10 +132,112 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_files
 LOCAL_MODULE_CLASS := ETC
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
 include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
-	$< -F -o $@
+	$< -F $(if $(fs_config_generate_extra_partition_list), \
+	   -P '$(subst $(space),$(comma),$(addprefix -,$(fs_config_generate_extra_partition_list)))') \
+	   -o $@
+
+ifneq ($(filter vendor,$(fs_config_generate_extra_partition_list)),)
+##################################
+# Generate the vendor/etc/fs_config_dirs binary file for the target
+# Add fs_config_dirs or fs_config_dirs_vendor to PRODUCT_PACKAGES in
+# the device make file to enable.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_dirs_vendor
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
+LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
+	@mkdir -p $(dir $@)
+	$< -D -P vendor -o $@
+
+##################################
+# Generate the vendor/etc/fs_config_files binary file for the target
+# Add fs_config_files or fs_config_files_vendor to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_files_vendor
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_files
+LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
+	@mkdir -p $(dir $@)
+	$< -F -P vendor -o $@
+
+endif
+
+ifneq ($(filter oem,$(fs_config_generate_extra_partition_list)),)
+##################################
+# Generate the oem/etc/fs_config_dirs binary file for the target
+# Add fs_config_dirs or fs_config_dirs_oem to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_dirs_oem
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
+LOCAL_MODULE_PATH := $(TARGET_OUT_OEM)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
+	@mkdir -p $(dir $@)
+	$< -D -P oem -o $@
+
+##################################
+# Generate the oem/etc/fs_config_files binary file for the target
+# Add fs_config_files or fs_config_files_oem to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_files_oem
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_files
+LOCAL_MODULE_PATH := $(TARGET_OUT_OEM)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
+	@mkdir -p $(dir $@)
+	$< -F -P oem -o $@
+
+endif
+
+ifneq ($(filter odm,$(fs_config_generate_extra_partition_list)),)
+##################################
+# Generate the odm/etc/fs_config_dirs binary file for the target
+# Add fs_config_dirs or fs_config_dirs_odm to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_dirs_odm
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
+LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
+	@mkdir -p $(dir $@)
+	$< -D -P odm -o $@
+
+##################################
+# Generate the odm/etc/fs_config_files binary file for the target
+# Add fs_config_files of fs_config_files_odm to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_files_odm
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_files
+LOCAL_MODULE_PATH := $(TARGET_OUT_ODM)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
+	@mkdir -p $(dir $@)
+	$< -F -P odm -o $@
+
+endif
 
 # The newer passwd/group targets are only generated if you
 # use the new TARGET_FS_CONFIG_GEN method.
@@ -195,3 +296,4 @@ ANDROID_FS_CONFIG_H :=
 my_fs_config_h :=
 fs_config_generate_bin :=
 my_gen_oem_aid :=
+fs_config_generate_extra_partition_list :=

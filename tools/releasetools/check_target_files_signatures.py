@@ -235,7 +235,7 @@ class TargetFiles(object):
     self.certmap = None
 
   def LoadZipFile(self, filename):
-    d, z = common.UnzipTemp(filename, '*.apk')
+    d, z = common.UnzipTemp(filename, ['*.apk'])
     try:
       self.apks = {}
       self.apks_by_basename = {}

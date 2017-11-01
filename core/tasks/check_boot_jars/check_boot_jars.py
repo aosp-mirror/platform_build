@@ -55,7 +55,7 @@ def CheckJar(jar):
       package_name = package_name.replace('/', '.')
       # Skip class without a package name
       if package_name and not whitelist_re.match(package_name):
-        print >> sys.stderr, ('Error: %s: unknown package name of class file %s'
+        print >> sys.stderr, ('Error: %s contains class file %s, which is not in the whitelist'
                               % (jar, f))
         return False
   return True

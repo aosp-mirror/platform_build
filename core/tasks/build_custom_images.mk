@@ -36,7 +36,17 @@
 #     image. <dest> is relativ to the root of the image.
 #   - CUSTOM_IMAGE_SELINUX, set to "true" if the image supports selinux.
 #   - CUSTOM_IMAGE_SUPPORT_VERITY, set to "true" if the product supports verity.
+#   - CUSTOM_IMAGE_SUPPORT_VERITY_FEC, set to "true" if the product supports
+#     verity FEC (forward error correction).
 #   - CUSTOM_IMAGE_VERITY_BLOCK_DEVICE
+#   - CUSTOM_IMAGE_AVB_HASH_ENABLE, set to "true" to add AVB HASH footer.
+#   - CUSTOM_IMAGE_AVB_ADD_HASH_FOOTER_ARGS, additional args of AVB HASH footer.
+#   - CUSTOM_IMAGE_AVB_HASHTREE_ENABLE, set to "true" to add AVB HASHTREE
+#     footer.
+#   - CUSTOM_IMAGE_AVB_ADD_HASHTREE_FOOTER_ARGS, additional args of AVB
+#     HASHTREE footer.
+#   - CUSTOM_IMAGE_AVB_KEY_PATH, custom AVB signing key.
+#   - CUSTOM_IMAGE_AVB_ALGORITHM, custom AVB signing algorithm.
 #
 # To build all those images, run "make custom_images".
 
@@ -53,7 +63,14 @@ custom_image_parameter_variables := \
   CUSTOM_IMAGE_COPY_FILES \
   CUSTOM_IMAGE_SELINUX \
   CUSTOM_IMAGE_SUPPORT_VERITY \
+  CUSTOM_IMAGE_SUPPORT_VERITY_FEC \
   CUSTOM_IMAGE_VERITY_BLOCK_DEVICE \
+  CUSTOM_IMAGE_AVB_HASH_ENABLE \
+  CUSTOM_IMAGE_AVB_ADD_HASH_FOOTER_ARGS \
+  CUSTOM_IMAGE_AVB_HASHTREE_ENABLE \
+  CUSTOM_IMAGE_AVB_ADD_HASHTREE_FOOTER_ARGS \
+  CUSTOM_IMAGE_AVB_KEY_PATH \
+  CUSTOM_IMAGE_AVB_ALGORITHM \
 
 # We don't expect product makefile to inherit/override PRODUCT_CUSTOM_IMAGE_MAKEFILES,
 # so we don't put it in the _product_var_list.

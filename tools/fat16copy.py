@@ -234,11 +234,16 @@ class fat_dir(object):
     data.seek(0)
     data_file.write(data.read())
 
-  def new_subdirectory(self, name):
+  def open_subdirectory(self, name):
     """
-    Create a new subdirectory of this directory with the given name.
+    Open a subdirectory of this directory with the given name. If the
+    subdirectory doesn't exist, a new one is created instead.
     Returns a fat_dir().
     """
+    for dent in self.dentries:
+      if dent.longname == name:
+        return dent.open_directory()
+
     chunk = self.backing.fs.allocate(1)
     (shortname, ext) = self.make_short_name(name)
     new_dentry = self.add_dentry(ATTRIBUTE_SUBDIRECTORY, shortname,
@@ -751,7 +756,7 @@ def add_item(directory, item):
     base = os.path.basename(item)
     if len(base) == 0:
       base = os.path.basename(item[:-1])
-    sub = directory.new_subdirectory(base)
+    sub = directory.open_subdirectory(base)
     for next_item in sorted(os.listdir(item)):
       add_item(sub, os.path.join(item, next_item))
   else:

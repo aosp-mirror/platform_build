@@ -42,7 +42,6 @@ that Make can detect are listed in parenthesis after the module:
   dotdot_incs: LOCAL_C_INCLUDES contains paths include '..'
   srcs_dotarm: LOCAL_SRC_FILES contains source files like <...>.c.arm
   aidl: LOCAL_SRC_FILES contains .aidl sources
-  dbus: LOCAL_SRC_FILES contains .dbus-xml sources
   objc: LOCAL_SRC_FILES contains Objective-C sources
   proto: LOCAL_SRC_FILES contains .proto sources
   rs: LOCAL_SRC_FILES contains renderscript sources

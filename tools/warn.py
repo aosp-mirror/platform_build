@@ -73,14 +73,9 @@ Use option --gencsv to output warning counts in CSV format.
 # New dynamic HTML related function to emit data:
 #   escape_string, strip_escape_string, emit_warning_arrays
 #   emit_js_data():
-#
-# To emit csv files of warning message counts:
-#   flag --gencsv
-#   description_for_csv, string_for_csv:
-#   count_severity(sev, kind):
-#   dump_csv():
 
 import argparse
+import csv
 import multiprocessing
 import os
 import re
@@ -88,6 +83,9 @@ import signal
 import sys
 
 parser = argparse.ArgumentParser(description='Convert a build log into HTML')
+parser.add_argument('--csvpath',
+                    help='Save CSV warning file to the passed absolute path',
+                    default=None)
 parser.add_argument('--gencsv',
                     help='Generate a CSV file with number of various warnings',
                     action='store_true',
@@ -139,6 +137,24 @@ class Severity(object):
   colors = [a[0] for a in attributes]
   column_headers = [a[1] for a in attributes]
   headers = [a[2] for a in attributes]
+
+
+def tidy_warn_pattern(description, pattern):
+  return {
+      'category': 'C/C++',
+      'severity': Severity.TIDY,
+      'description': 'clang-tidy ' + description,
+      'patterns': [r'.*: .+\[' + pattern + r'\]$']
+  }
+
+
+def simple_tidy_warn_pattern(description):
+  return tidy_warn_pattern(description, description)
+
+
+def group_tidy_warn_pattern(description):
+  return tidy_warn_pattern(description, description + r'-.+')
+
 
 warn_patterns = [
     # pylint:disable=line-too-long,g-inconsistent-quotes
@@ -225,6 +241,7 @@ warn_patterns = [
      'description': 'Unused function, variable or label',
      'patterns': [r".*: warning: '.+' defined but not used",
                   r".*: warning: unused function '.+'",
+                  r".*: warning: lambda capture .* is not used",
                   r".*: warning: private field '.+' is not used",
                   r".*: warning: unused variable '.+'"]},
     {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wunused-value',
@@ -259,6 +276,9 @@ warn_patterns = [
     {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wformat-extra-args',
      'description': 'Too many arguments for format string',
      'patterns': [r".*: warning: too many arguments for format"]},
+    {'category': 'C/C++', 'severity': Severity.MEDIUM,
+     'description': 'Too many arguments in call',
+     'patterns': [r".*: warning: too many arguments in call to "]},
     {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wformat-invalid-specifier',
      'description': 'Invalid format specifier',
      'patterns': [r".*: warning: invalid .+ specifier '.+'.+format-invalid-specifier"]},
@@ -438,6 +458,9 @@ warn_patterns = [
     {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wswitch-enum',
      'description': 'Enum value not handled in switch',
      'patterns': [r".*: warning: .*enumeration value.* not handled in switch.+Wswitch"]},
+    {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wuser-defined-warnings',
+     'description': 'User defined warnings',
+     'patterns': [r".*: warning: .* \[-Wuser-defined-warnings\]$"]},
     {'category': 'java', 'severity': Severity.MEDIUM, 'option': '-encoding',
      'description': 'Java: Non-ascii characters used, but ascii encoding specified',
      'patterns': [r".*: warning: unmappable character for encoding ascii"]},
@@ -453,6 +476,9 @@ warn_patterns = [
     {'category': 'java', 'severity': Severity.MEDIUM,
      'description': '_ used as an identifier',
      'patterns': [r".*: warning: '_' used as an identifier"]},
+    {'category': 'java', 'severity': Severity.HIGH,
+     'description': 'Use of internal proprietary API',
+     'patterns': [r".*: warning: .* is internal proprietary API and may be removed"]},
 
     # Warnings from Javac
     {'category': 'java',
@@ -1384,6 +1410,9 @@ warn_patterns = [
      'description': 'Taking address of temporary',
      'patterns': [r".*: warning: taking address of temporary"]},
     {'category': 'C/C++', 'severity': Severity.MEDIUM,
+     'description': 'Taking address of packed member',
+     'patterns': [r".*: warning: taking address of packed member"]},
+    {'category': 'C/C++', 'severity': Severity.MEDIUM,
      'description': 'Possible broken line continuation',
      'patterns': [r".*: warning: backslash and newline separated by space"]},
     {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wundefined-var-template',
@@ -1527,6 +1556,9 @@ warn_patterns = [
     {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wconversion-null',
      'description': 'Converting to non-pointer type from NULL',
      'patterns': [r".*: warning: converting to non-pointer type '.+' from NULL"]},
+    {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wsign-conversion',
+     'description': 'Implicit sign conversion',
+     'patterns': [r".*: warning: implicit conversion changes signedness"]},
     {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wnull-conversion',
      'description': 'Converting NULL to non-pointer type',
      'patterns': [r".*: warning: implicit conversion of NULL constant to '.+'"]},
@@ -1656,6 +1688,9 @@ warn_patterns = [
     {'category': 'C/C++', 'severity': Severity.LOW, 'option': '-Winvalid-pp-token',
      'description': 'Invalid pp token',
      'patterns': [r".*: warning: missing .+Winvalid-pp-token"]},
+    {'category': 'link', 'severity': Severity.LOW,
+     'description': 'need glibc to link',
+     'patterns': [r".*: warning: .* requires at runtime .* glibc .* for linking"]},
 
     {'category': 'C/C++', 'severity': Severity.MEDIUM,
      'description': 'Operator new returns NULL',
@@ -1750,6 +1785,15 @@ warn_patterns = [
      'description': 'Mismatched class vs struct tags',
      'patterns': [r".*: warning: '.+' defined as a .+ here but previously declared as a .+mismatched-tags",
                   r".*: warning: .+ was previously declared as a .+mismatched-tags"]},
+    {'category': 'FindEmulator', 'severity': Severity.HARMLESS,
+     'description': 'FindEmulator: No such file or directory',
+     'patterns': [r".*: warning: FindEmulator: .* No such file or directory"]},
+    {'category': 'google_tests', 'severity': Severity.HARMLESS,
+     'description': 'google_tests: unknown installed file',
+     'patterns': [r".*: warning: .*_tests: Unknown installed file for module"]},
+    {'category': 'make', 'severity': Severity.HARMLESS,
+     'description': 'unusual tags debug eng',
+     'patterns': [r".*: warning: .*: unusual tags debug eng"]},
 
     # these next ones are to deal with formatting problems resulting from the log being mixed up by 'make -j'
     {'category': 'C/C++', 'severity': Severity.SKIP,
@@ -1763,60 +1807,46 @@ warn_patterns = [
      'patterns': [r".*: warning: In file included from .+,"]},
 
     # warnings from clang-tidy
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy readability',
-     'patterns': [r".*: .+\[readability-.+\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy c++ core guidelines',
-     'patterns': [r".*: .+\[cppcoreguidelines-.+\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy google-default-arguments',
-     'patterns': [r".*: .+\[google-default-arguments\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy google-runtime-int',
-     'patterns': [r".*: .+\[google-runtime-int\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy google-runtime-operator',
-     'patterns': [r".*: .+\[google-runtime-operator\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy google-runtime-references',
-     'patterns': [r".*: .+\[google-runtime-references\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy google-build',
-     'patterns': [r".*: .+\[google-build-.+\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy google-explicit',
-     'patterns': [r".*: .+\[google-explicit-.+\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy google-readability',
-     'patterns': [r".*: .+\[google-readability-.+\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy google-global',
-     'patterns': [r".*: .+\[google-global-.+\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy google- other',
-     'patterns': [r".*: .+\[google-.+\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy modernize',
-     'patterns': [r".*: .+\[modernize-.+\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy misc',
-     'patterns': [r".*: .+\[misc-.+\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy performance-faster-string-find',
-     'patterns': [r".*: .+\[performance-faster-string-find\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy performance-for-range-copy',
-     'patterns': [r".*: .+\[performance-for-range-copy\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy performance-implicit-cast-in-loop',
-     'patterns': [r".*: .+\[performance-implicit-cast-in-loop\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy performance-unnecessary-copy-initialization',
-     'patterns': [r".*: .+\[performance-unnecessary-copy-initialization\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy performance-unnecessary-value-param',
-     'patterns': [r".*: .+\[performance-unnecessary-value-param\]$"]},
+    group_tidy_warn_pattern('cert'),
+    group_tidy_warn_pattern('clang-diagnostic'),
+    group_tidy_warn_pattern('cppcoreguidelines'),
+    group_tidy_warn_pattern('llvm'),
+    simple_tidy_warn_pattern('google-default-arguments'),
+    simple_tidy_warn_pattern('google-runtime-int'),
+    simple_tidy_warn_pattern('google-runtime-operator'),
+    simple_tidy_warn_pattern('google-runtime-references'),
+    group_tidy_warn_pattern('google-build'),
+    group_tidy_warn_pattern('google-explicit'),
+    group_tidy_warn_pattern('google-redability'),
+    group_tidy_warn_pattern('google-global'),
+    group_tidy_warn_pattern('google-redability'),
+    group_tidy_warn_pattern('google-redability'),
+    group_tidy_warn_pattern('google'),
+    simple_tidy_warn_pattern('hicpp-explicit-conversions'),
+    simple_tidy_warn_pattern('hicpp-function-size'),
+    simple_tidy_warn_pattern('hicpp-invalid-access-moved'),
+    simple_tidy_warn_pattern('hicpp-member-init'),
+    simple_tidy_warn_pattern('hicpp-delete-operators'),
+    simple_tidy_warn_pattern('hicpp-special-member-functions'),
+    simple_tidy_warn_pattern('hicpp-use-equals-default'),
+    simple_tidy_warn_pattern('hicpp-use-equals-delete'),
+    simple_tidy_warn_pattern('hicpp-no-assembler'),
+    simple_tidy_warn_pattern('hicpp-noexcept-move'),
+    simple_tidy_warn_pattern('hicpp-use-override'),
+    group_tidy_warn_pattern('hicpp'),
+    group_tidy_warn_pattern('modernize'),
+    group_tidy_warn_pattern('misc'),
+    simple_tidy_warn_pattern('performance-faster-string-find'),
+    simple_tidy_warn_pattern('performance-for-range-copy'),
+    simple_tidy_warn_pattern('performance-implicit-cast-in-loop'),
+    simple_tidy_warn_pattern('performance-inefficient-string-concatenation'),
+    simple_tidy_warn_pattern('performance-type-promotion-in-math-fn'),
+    simple_tidy_warn_pattern('performance-unnecessary-copy-initialization'),
+    simple_tidy_warn_pattern('performance-unnecessary-value-param'),
+    group_tidy_warn_pattern('performance'),
+    group_tidy_warn_pattern('readability'),
+
+    # warnings from clang-tidy's clang-analyzer checks
     {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer Unreachable code',
      'patterns': [r".*: warning: This statement is never executed.*UnreachableCode"]},
@@ -1857,18 +1887,12 @@ warn_patterns = [
      'description': 'clang-analyzer call path problems',
      'patterns': [r".*: warning: Call Path : .+"]},
     {'category': 'C/C++', 'severity': Severity.ANALYZER,
+     'description': 'clang-analyzer excessive padding',
+     'patterns': [r".*: warning: Excessive padding in '.*'"]},
+    {'category': 'C/C++', 'severity': Severity.ANALYZER,
      'description': 'clang-analyzer other',
      'patterns': [r".*: .+\[clang-analyzer-.+\]$",
                   r".*: Call Path : .+$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy CERT',
-     'patterns': [r".*: .+\[cert-.+\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-tidy llvm',
-     'patterns': [r".*: .+\[llvm-.+\]$"]},
-    {'category': 'C/C++', 'severity': Severity.TIDY,
-     'description': 'clang-diagnostic',
-     'patterns': [r".*: .+\[clang-diagnostic-.+\]$"]},
 
     # catch-all for warnings this script doesn't know about yet
     {'category': 'C/C++', 'severity': Severity.UNKNOWN,
@@ -2387,7 +2411,8 @@ def normalize_warning_line(line):
 
 
 def parse_input_file(infile):
-  """Parse input file, match warning lines."""
+  """Parse input file, collect parameters and warning lines."""
+  global android_root
   global platform_version
   global target_product
   global target_variant
@@ -2402,7 +2427,7 @@ def parse_input_file(infile):
     if warning_pattern.match(line):
       line = normalize_warning_line(line)
       warning_lines.add(line)
-    elif line_counter < 50:
+    elif line_counter < 100:
       # save a little bit of time by only doing this for the first few lines
       line_counter += 1
       m = re.search('(?<=^PLATFORM_VERSION=).*', line)
@@ -2414,6 +2439,9 @@ def parse_input_file(infile):
       m = re.search('(?<=^TARGET_BUILD_VARIANT=).*', line)
       if m is not None:
         target_variant = m.group(0)
+      m = re.search('.* TOP=([^ ]*) .*', line)
+      if m is not None:
+        android_root = m.group(1)
   return warning_lines
 
 
@@ -2465,10 +2493,11 @@ scripts_for_warning_groups = """
     if (FlagURL == "") return line;
     if (FlagSeparator == "") {
       return line.replace(ParseLinePattern,
-        "<a href='" + FlagURL + "/$1'>$1</a>:$2:$3");
+        "<a target='_blank' href='" + FlagURL + "/$1'>$1</a>:$2:$3");
     }
     return line.replace(ParseLinePattern,
-      "<a href='" + FlagURL + "/$1" + FlagSeparator + "$2'>$1:$2</a>:$3");
+      "<a target='_blank' href='" + FlagURL + "/$1" + FlagSeparator +
+        "$2'>$1:$2</a>:$3");
   }
   function createArrayOfDictionaries(n) {
     var result = [];
@@ -2672,48 +2701,46 @@ def description_for_csv(category):
   return category['description']
 
 
-def string_for_csv(s):
-  # Only some Java warning desciptions have used quotation marks.
-  # TODO(chh): if s has double quote character, s should be quoted.
-  if ',' in s:
-    # TODO(chh): replace a double quote with two double quotes in s.
-    return '"{}"'.format(s)
-  return s
-
-
-def count_severity(sev, kind):
+def count_severity(writer, sev, kind):
   """Count warnings of given severity."""
   total = 0
   for i in warn_patterns:
     if i['severity'] == sev and i['members']:
       n = len(i['members'])
       total += n
-      warning = string_for_csv(kind + ': ' + description_for_csv(i))
-      print '{},,{}'.format(n, warning)
+      warning = kind + ': ' + description_for_csv(i)
+      writer.writerow([n, '', warning])
       # print number of warnings for each project, ordered by project name.
       projects = i['projects'].keys()
       projects.sort()
       for p in projects:
-        print '{},{},{}'.format(i['projects'][p], p, warning)
-  print '{},,{}'.format(total, kind + ' warnings')
+        writer.writerow([i['projects'][p], p, warning])
+  writer.writerow([total, '', kind + ' warnings'])
+
   return total
 
 
 # dump number of warnings in csv format to stdout
-def dump_csv():
+def dump_csv(writer):
   """Dump number of warnings in csv format to stdout."""
   sort_warnings()
   total = 0
   for s in Severity.range:
-    total += count_severity(s, Severity.column_headers[s])
-  print '{},,{}'.format(total, 'All warnings')
+    total += count_severity(writer, s, Severity.column_headers[s])
+  writer.writerow([total, '', 'All warnings'])
 
 
 def main():
   warning_lines = parse_input_file(open(args.buildlog, 'r'))
   parallel_classify_warnings(warning_lines)
+  # If a user pases a csv path, save the fileoutput to the path
+  # If the user also passed gencsv write the output to stdout
+  # If the user did not pass gencsv flag dump the html report to stdout.
+  if args.csvpath:
+    with open(args.csvpath, 'w') as f:
+      dump_csv(csv.writer(f, lineterminator='\n'))
   if args.gencsv:
-    dump_csv()
+    dump_csv(csv.writer(sys.stdout, lineterminator='\n'))
   else:
     dump_html()
 

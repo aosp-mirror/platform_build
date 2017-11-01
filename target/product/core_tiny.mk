@@ -31,7 +31,6 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     audio.primary.default \
-    audio_policy.default \
     local_time.default \
     power.default
 
@@ -45,6 +44,8 @@ PRODUCT_PACKAGES += \
     SettingsProvider \
     Shell \
     WallpaperBackup \
+    android.hidl.base-V1.0-java \
+    android.hidl.manager-V1.0-java \
     bcc \
     bu \
     com.android.location.provider \
@@ -58,8 +59,8 @@ PRODUCT_PACKAGES += \
     iptables \
     gatekeeperd \
     keystore \
-    keystore.default \
     ld.mc \
+    libaaudio \
     libOpenMAXAL \
     libOpenSLES \
     libdownmix \
@@ -81,29 +82,44 @@ PRODUCT_PACKAGES += \
     telephony-common \
     voip-common \
     logd \
-    wifi-service
+
+# Wifi modules
+PRODUCT_PACKAGES += \
+    wifi-service \
+    wificond \
+
+ifeq ($(TARGET_CORE_JARS),)
+$(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
+endif
 
 # The order matters
 PRODUCT_BOOT_JARS := \
-    core-oj \
-    core-libart \
-    conscrypt \
-    okhttp \
+    $(TARGET_CORE_JARS) \
     legacy-test \
-    bouncycastle \
     ext \
     framework \
     telephony-common \
     voip-common \
     ims-common \
-    apache-xml \
     nullwebview \
-    org.apache.http.legacy.boot
+    org.apache.http.legacy.boot \
+    android.hidl.base-V1.0-java \
+    android.hidl.manager-V1.0-java
 
 # The order of PRODUCT_SYSTEM_SERVER_JARS matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     wifi-service
+
+# The set of packages whose code can be loaded by the system server.
+PRODUCT_SYSTEM_SERVER_APPS += \
+    FusedLocation \
+    InputDevices \
+    SettingsProvider \
+    WallpaperBackup \
+
+# The set of packages we want to force 'speed' compilation on.
+PRODUCT_DEXPREOPT_SPEED_APPS := \
 
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.zygote=zygote32
@@ -112,26 +128,6 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown
-
-# Different dexopt types for different package update/install times.
-# On eng builds, make "boot" reasons do pure JIT for faster turnaround.
-ifeq (eng,$(TARGET_BUILD_VARIANT))
-    PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-        pm.dexopt.first-boot=verify-at-runtime \
-        pm.dexopt.boot=verify-at-runtime
-else
-    PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-        pm.dexopt.first-boot=interpret-only \
-        pm.dexopt.boot=verify-profile
-endif
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    pm.dexopt.install=interpret-only \
-    pm.dexopt.bg-dexopt=speed-profile \
-    pm.dexopt.ab-ota=speed-profile \
-    pm.dexopt.nsys-library=speed \
-    pm.dexopt.shared-apk=speed \
-    pm.dexopt.forced-dexopt=speed \
-    pm.dexopt.core-app=speed
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)

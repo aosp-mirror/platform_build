@@ -16,4 +16,8 @@
 
 LOCAL_PATH := $(call my-dir)
 
+# Only if this Android.mk was included not by a symlink should it be used.
+# This facilitates the transition away from symlinks: b/64397960
+ifeq ($(LOCAL_PATH),build/make/tools)
 include $(call all-makefiles-under,$(LOCAL_PATH))
+endif

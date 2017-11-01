@@ -35,7 +35,7 @@ endef
 define stub-addon-jar
 $(call stub-addon-jar-file,$(1)): $(1) | mkstubs
 	$(info Stubbing addon jar using $(PRODUCT_SDK_ADDON_STUB_DEFS))
-	$(hide) java -jar $(call module-installed-files,mkstubs) $(if $(hide),,--v) \
+	$(hide) $(JAVA) -jar $(call module-installed-files,mkstubs) $(if $(hide),,--v) \
 		"$$<" "$$@" @$(PRODUCT_SDK_ADDON_STUB_DEFS)
 endef
 
@@ -63,7 +63,8 @@ endif
 
 # Files copied in the system-image directory
 files_to_copy += \
-	$(addon_dir_img):$(BUILT_SYSTEMIMAGE):images/$(TARGET_CPU_ABI)/system.img \
+	$(addon_dir_img):$(INSTALLED_QEMU_SYSTEMIMAGE):images/$(TARGET_CPU_ABI)/system.img \
+	$(addon_dir_img):$(INSTALLED_QEMU_VENDORIMAGE):images/$(TARGET_CPU_ABI)/vendor.img \
 	$(addon_dir_img):$(BUILT_USERDATAIMAGE_TARGET):images/$(TARGET_CPU_ABI)/userdata.img \
 	$(addon_dir_img):$(BUILT_RAMDISK_TARGET):images/$(TARGET_CPU_ABI)/ramdisk.img \
 	$(addon_dir_img):$(PRODUCT_OUT)/system/build.prop:images/$(TARGET_CPU_ABI)/build.prop \
@@ -104,20 +105,21 @@ $(full_target): PRIVATE_DOCS_DIRS := $(addprefix $(OUT_DOCS)/, $(doc_modules))
 
 $(full_target): PRIVATE_STAGING_DIR := $(call append-path,$(staging),$(addon_dir_leaf))
 
-$(full_target): $(sdk_addon_deps) | $(ACP)
+$(full_target): $(sdk_addon_deps) | $(ACP) $(SOONG_ZIP)
 	@echo Packaging SDK Addon: $@
 	$(hide) mkdir -p $(PRIVATE_STAGING_DIR)/docs
 	$(hide) for d in $(PRIVATE_DOCS_DIRS); do \
 	    $(ACP) -r $$d $(PRIVATE_STAGING_DIR)/docs ;\
 	  done
 	$(hide) mkdir -p $(dir $@)
-	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_STAGING_DIR)/.. && zip -rqX $$F $(notdir $(PRIVATE_STAGING_DIR)) )
+	$(hide) $(SOONG_ZIP) -o $@ -C $(dir $(PRIVATE_STAGING_DIR)) -D $(PRIVATE_STAGING_DIR)
 
 $(full_target_img): PRIVATE_STAGING_DIR := $(call append-path,$(staging),$(addon_dir_img))/images/$(TARGET_CPU_ABI)
-$(full_target_img): $(full_target) $(addon_img_source_prop)
+$(full_target_img): $(full_target) $(addon_img_source_prop) | $(SOONG_ZIP)
 	@echo Packaging SDK Addon System-Image: $@
 	$(hide) mkdir -p $(dir $@)
-	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_STAGING_DIR)/.. && zip -rqX $$F $(notdir $(PRIVATE_STAGING_DIR)) )
+	$(ACP) -r $(PRODUCT_OUT)/data $(PRIVATE_STAGING_DIR)/data
+	$(hide) $(SOONG_ZIP) -o $@ -C $(dir $(PRIVATE_STAGING_DIR)) -D $(PRIVATE_STAGING_DIR)
 
 
 .PHONY: sdk_addon

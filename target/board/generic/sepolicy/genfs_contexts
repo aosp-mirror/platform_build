@@ -1,0 +1,4 @@
+# On the emulator, device tree dir is configured to be
+# /sys/bus/platform/devices/ANDR0001:00/properties/android/ which is a symlink to
+# /sys/devices/platform/ANDR0001:00/properties/android/
+genfscon sysfs /devices/platform/ANDR0001:00/properties/android u:object_r:sysfs_dt_firmware_android:s0
