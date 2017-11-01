@@ -213,16 +213,6 @@ ifndef LOCAL_IS_HOST_MODULE
       full_java_bootclasspath_libs := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
       LOCAL_JAVA_LIBRARIES := $(filter-out $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES),$(LOCAL_JAVA_LIBRARIES))
       my_system_modules := $(DEFAULT_SYSTEM_MODULES)
-      ifneq ($(LOCAL_MODULE),jacocoagent)
-        ifeq ($(EMMA_INSTRUMENT),true)
-          ifneq ($(EMMA_INSTRUMENT_STATIC),true)
-            # For instrumented build, if Jacoco is not being included statically
-            # in instrumented packages then include Jacoco classes into the
-            # bootclasspath.
-            full_java_bootclasspath_libs += $(call java-lib-header-files,jacocoagent)
-          endif # EMMA_INSTRUMENT_STATIC
-        endif # EMMA_INSTRUMENT
-      endif # LOCAL_MODULE == jacocoagent
     endif  # LOCAL_NO_STANDARD_LIBRARIES
   else
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
@@ -243,6 +233,19 @@ ifndef LOCAL_IS_HOST_MODULE
       full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
     endif # current, system_current, or test_current
   endif # LOCAL_SDK_VERSION
+
+  ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+    ifneq ($(LOCAL_MODULE),jacocoagent)
+      ifeq ($(EMMA_INSTRUMENT),true)
+        ifneq ($(EMMA_INSTRUMENT_STATIC),true)
+          # For instrumented build, if Jacoco is not being included statically
+          # in instrumented packages then include Jacoco classes into the
+          # bootclasspath.
+          full_java_bootclasspath_libs += $(call java-lib-header-files,jacocoagent)
+        endif # EMMA_INSTRUMENT_STATIC
+      endif # EMMA_INSTRUMENT
+    endif # LOCAL_MODULE == jacocoagent
+  endif # LOCAL_NO_STANDARD_LIBRARIES
 
   # In order to compile lambda code javac requires various invokedynamic-
   # related classes to be present. This change adds stubs needed for
