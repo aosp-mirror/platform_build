@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f008331f_8f1fe2ec",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 629,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-01T23:35:36Z",
+      "side": 0,
+      "message": "If you want to enable it by default as opposed to removing it, change this to:\n\n ifneq ($(TARGET_USES_MKE2FS),false)",
+      "revId": "bc29d906bce64e21f2d2f614f6b01a2574bd9db5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
