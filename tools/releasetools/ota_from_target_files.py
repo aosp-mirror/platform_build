@@ -21,9 +21,6 @@ a full OTA is produced.
 
 Usage:  ota_from_target_files [flags] input_target_files output_ota_package
 
-  --board_config  <file>
-      Deprecated.
-
   -k (--package_key) <key> Key to use to sign the package (default is
       the value of default_system_dev_certificate from the input
       target-files's META/misc_info.txt, or
@@ -46,9 +43,9 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Similar to --full_radio. When generating an incremental OTA, always
       include a full copy of bootloader image.
 
-  -v  (--verify)
-      Remount and verify the checksums of the files written to the
-      system and vendor (if used) partitions.  Incremental builds only.
+  --verify
+      Remount and verify the checksums of the files written to the system and
+      vendor (if used) partitions. Non-A/B incremental OTAs only.
 
   -o  (--oem_settings)  <main_file[,additional_files...]>
       Comma seperated list of files used to specify the expected OEM-specific
@@ -1295,9 +1292,7 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
 def main(argv):
 
   def option_handler(o, a):
-    if o == "--board_config":
-      pass   # deprecated
-    elif o in ("-k", "--package_key"):
+    if o in ("-k", "--package_key"):
       OPTIONS.package_key = a
     elif o in ("-i", "--incremental_from"):
       OPTIONS.incremental_source = a
@@ -1359,7 +1354,6 @@ def main(argv):
   args = common.ParseOptions(argv, __doc__,
                              extra_opts="b:k:i:d:we:t:2o:",
                              extra_long_opts=[
-                                 "board_config=",
                                  "package_key=",
                                  "incremental_from=",
                                  "full_radio",

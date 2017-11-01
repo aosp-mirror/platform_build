@@ -151,6 +151,13 @@ ifdef unbundled_goals
 endif # unbundled_goals
 endif
 
+# Now that we've parsed APP-* and PRODUCT-*, mark these as readonly
+TARGET_BUILD_APPS ?=
+.KATI_READONLY := \
+  TARGET_PRODUCT \
+  TARGET_BUILD_VARIANT \
+  TARGET_BUILD_APPS
+
 # Default to building dalvikvm on hosts that support it...
 ifeq ($(HOST_OS),linux)
 # ... or if the if the option is already set

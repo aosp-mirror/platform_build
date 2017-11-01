@@ -61,18 +61,6 @@ backslash := $(patsubst %a,%,$(backslash))
 # If a rule fails, delete $@.
 .DELETE_ON_ERROR:
 
-# Check for broken versions of make.
-ifndef KATI
-ifneq (1,$(strip $(shell expr $(MAKE_VERSION) \>= 3.81)))
-$(warning ********************************************************************************)
-$(warning *  You are using version $(MAKE_VERSION) of make.)
-$(warning *  Android can only be built by versions 3.81 and higher.)
-$(warning *  see https://source.android.com/source/download.html)
-$(warning ********************************************************************************)
-$(error stopping)
-endif
-endif
-
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
 FORCE:
@@ -882,6 +870,17 @@ RS_PREBUILT_COMPILER_RT := prebuilts/sdk/renderscript/lib/$(TARGET_ARCH)/libcomp
 # API Level lists for Renderscript Compat lib.
 RSCOMPAT_32BIT_ONLY_API_LEVELS := 8 9 10 11 12 13 14 15 16 17 18 19 20
 RSCOMPAT_NO_USAGEIO_API_LEVELS := 8 9 10 11 12 13
+
+# Add BUILD_NUMBER to apps default version name if it's unbundled build.
+ifdef TARGET_BUILD_APPS
+TARGET_BUILD_WITH_APPS_VERSION_NAME := true
+endif
+
+ifdef TARGET_BUILD_WITH_APPS_VERSION_NAME
+APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)
+else
+APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
+endif
 
 ifeq ($(JAVA_NOT_REQUIRED),true)
 # Remove java and tools from our path so that we make sure nobody uses them.
