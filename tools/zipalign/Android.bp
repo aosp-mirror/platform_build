@@ -16,12 +16,16 @@ cc_binary_host {
     cflags: ["-Wall", "-Werror"],
 
     static_libs: [
-        "libandroidfw",
         "libutils",
         "libcutils",
         "liblog",
         "libzopfli",
-        "libz",
+    ],
+
+    shared_libs: [
+      "libbase",
+      "libz",
+      "libziparchive"
     ],
 
     target: {
