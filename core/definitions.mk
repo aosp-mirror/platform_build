@@ -2774,6 +2774,12 @@ endef
 ###########################################################
 ## Commands to call Proguard
 ###########################################################
+ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+define transform-jar-to-proguard
+@echo Skipping Proguard: $<$(PRIVATE_PROGUARD_INJAR_FILTERS) $@
+$(hide) cp '$<' $@
+endef
+else
 define transform-jar-to-proguard
 @echo Proguard: $@
 $(hide) $(PROGUARD) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
@@ -2781,6 +2787,8 @@ $(hide) $(PROGUARD) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
     $(PRIVATE_PROGUARD_FLAGS) \
     $(addprefix -injars , $(PRIVATE_EXTRA_INPUT_JAR))
 endef
+endif
+
 
 ###########################################################
 ## Commands to call R8
