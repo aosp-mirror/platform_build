@@ -71,7 +71,7 @@ PRODUCT_PACKAGES += \
     libwilhelm \
     libdrmframework_jni \
     libdrmframework \
-    make_ext4fs \
+    mke2fs \
     e2fsck \
     resize2fs \
     tune2fs \
