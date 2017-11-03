@@ -133,6 +133,7 @@ _product_var_list := \
     PRODUCT_ART_USE_READ_BARRIER \
     PRODUCT_IOT \
     PRODUCT_SYSTEM_HEADROOM \
+    PRODUCT_ADB_KEYS \
 
 
 
