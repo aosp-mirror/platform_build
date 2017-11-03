@@ -98,6 +98,11 @@ PRODUCT_PACKAGES += \
     fs_config_files \
     fs_config_dirs
 
+# If there are product-specific adb keys defined, install them on debuggable
+# builds.
+PRODUCT_PACKAGES_DEBUG += \
+    adb_keys
+
 # Ensure that this property is always defined so that bionic_systrace.cpp
 # can rely on it being initially set by init.
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
