@@ -87,3 +87,7 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     pm.dexopt.ab-ota=speed-profile \
     pm.dexopt.inactive=verify \
     pm.dexopt.shared=speed
+
+# Enable minidebuginfo generation unless overridden.
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    dalvik.vm.dex2oat-minidebuginfo=true
