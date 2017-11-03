@@ -517,6 +517,12 @@ endif
 
 USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
+# Work around for b/68406220
+# This should match the soong version.
+ifndef USE_D8
+  USE_D8 := true
+endif
+
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
