@@ -738,6 +738,9 @@ else
   FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.current.xml
 endif
 
+BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
+BUILD_DATETIME_FROM_FILE := $$(cat $(OUT_DIR)/build_date.txt)
+
 # ###############################################################
 # Set up final options.
 # ###############################################################
