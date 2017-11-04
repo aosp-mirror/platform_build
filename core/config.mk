@@ -5,18 +5,15 @@
 
 ifndef KATI
 $(warning Directly using config.mk from make is no longer supported.)
-$(info )
-# Repeat the warning so that it's in both the stdout and stderr streams
-$(info Directly using config.mk from make is no longer supported.)
-$(info )
-$(info If you are just attempting to build, you probably need to re-source envsetup.sh:)
-$(info )
-$(info $$ source build/envsetup.sh)
-$(info )
-$(info If you are attempting to emulate get_build_var, use one of the following:)
-$(info $$ build/soong/soong_ui.bash --dumpvar-mode)
-$(info $$ build/soong/soong_ui.bash --dumpvars-mode)
-$(info )
+$(warning )
+$(warning If you are just attempting to build, you probably need to re-source envsetup.sh:)
+$(warning )
+$(warning $$ source build/envsetup.sh)
+$(warning )
+$(warning If you are attempting to emulate get_build_var, use one of the following:)
+$(warning $$ build/soong/soong_ui.bash --dumpvar-mode)
+$(warning $$ build/soong/soong_ui.bash --dumpvars-mode)
+$(warning )
 $(error done)
 endif
 
