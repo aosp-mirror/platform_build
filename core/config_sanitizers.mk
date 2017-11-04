@@ -242,11 +242,6 @@ ifneq ($(filter cfi,$(my_sanitize)),)
   endif
   my_ldflags += $(CFI_EXTRA_LDFLAGS)
   my_arflags += --plugin $(LLVM_PREBUILTS_PATH)/../lib64/LLVMgold.so
-  # Workaround for b/33678192. CFI jumptables need Thumb2 codegen.  Revert when
-  # Clang is updated past r290384.
-  ifneq ($(filter arm,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
-    my_ldflags += -march=armv7-a
-  endif
 
   ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
         my_ldflags := $(filter-out -fsanitize-cfi-cross-dso,$(my_ldflags))
