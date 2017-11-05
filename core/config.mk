@@ -5,18 +5,15 @@
 
 ifndef KATI
 $(warning Directly using config.mk from make is no longer supported.)
-$(info )
-# Repeat the warning so that it's in both the stdout and stderr streams
-$(info Directly using config.mk from make is no longer supported.)
-$(info )
-$(info If you are just attempting to build, you probably need to re-source envsetup.sh:)
-$(info )
-$(info $$ source build/envsetup.sh)
-$(info )
-$(info If you are attempting to emulate get_build_var, use one of the following:)
-$(info $$ build/soong/soong_ui.bash --dumpvar-mode)
-$(info $$ build/soong/soong_ui.bash --dumpvars-mode)
-$(info )
+$(warning )
+$(warning If you are just attempting to build, you probably need to re-source envsetup.sh:)
+$(warning )
+$(warning $$ source build/envsetup.sh)
+$(warning )
+$(warning If you are attempting to emulate get_build_var, use one of the following:)
+$(warning $$ build/soong/soong_ui.bash --dumpvar-mode)
+$(warning $$ build/soong/soong_ui.bash --dumpvars-mode)
+$(warning )
 $(error done)
 endif
 
@@ -517,6 +514,12 @@ endif
 
 USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
+# Work around for b/68406220
+# This should match the soong version.
+ifndef USE_D8
+  USE_D8 := true
+endif
+
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
@@ -614,15 +617,9 @@ AVBTOOL := $(BOARD_CUSTOM_AVBTOOL)
 endif
 APICHECK := $(HOST_OUT_EXECUTABLES)/apicheck$(HOST_EXECUTABLE_SUFFIX)
 FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
-ifeq ($(TARGET_USES_MKE2FS),true)
 MAKE_EXT4FS := $(HOST_OUT_EXECUTABLES)/mke2fs$(HOST_EXECUTABLE_SUFFIX)
 MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs.sh
 MKE2FS_CONF := system/extras/ext4_utils/mke2fs.conf
-else
-MAKE_EXT4FS := $(HOST_OUT_EXECUTABLES)/make_ext4fs$(HOST_EXECUTABLE_SUFFIX)
-MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg.sh
-MKE2FS_CONF :=
-endif
 BLK_ALLOC_TO_BASE_FS := $(HOST_OUT_EXECUTABLES)/blk_alloc_to_base_fs$(HOST_EXECUTABLE_SUFFIX)
 MAKE_SQUASHFS := $(HOST_OUT_EXECUTABLES)/mksquashfs$(HOST_EXECUTABLE_SUFFIX)
 MKSQUASHFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh
@@ -762,6 +759,9 @@ else ifeq ($(call math_gt_or_eq,$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL),28),)
 else
   FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.current.xml
 endif
+
+BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
+BUILD_DATETIME_FROM_FILE := $$(cat $(OUT_DIR)/build_date.txt)
 
 # ###############################################################
 # Set up final options.
