@@ -3191,6 +3191,98 @@ ifeq ($(TEST_MAKE_clean_path),true)
 endif
 
 ###########################################################
+## Given a filepath, returns nonempty if the path cannot be
+## validated to be contained in the current directory
+## This is, this function checks for '/' and '..'
+##
+## $(1): path to validate
+define try-validate-path-is-subdir
+$(strip 
+    $(if $(filter /%,$(1)),
+        $(1) starts with a slash
+    )
+    $(if $(filter ../%,$(call clean-path,$(1))),
+        $(1) escapes its parent using '..'
+    )
+    $(if $(strip $(1)),
+    ,
+        '$(1)' is empty
+    )
+)
+endef
+
+define validate-path-is-subdir
+$(if $(call try-validate-path-is-subdir,$(1)),
+  $(call pretty-error, Illegal path: $(call try-validate-path-is-subdir,$(1)))
+)
+endef
+
+###########################################################
+## Given a space-delimited list of filepaths, returns
+## nonempty if any cannot be validated to be contained in
+## the current directory
+##
+## $(1): path list to validate
+define try-validate-paths-are-subdirs
+$(strip \
+  $(foreach my_path,$(1),\
+    $(call try-validate-path-is-subdir,$(my_path))\
+  )
+)
+endef
+
+define validate-paths-are-subdirs
+$(if $(call try-validate-paths-are-subdirs,$(1)),
+    $(call pretty-error,Illegal paths:\'$(call try-validate-paths-are-subdirs,$(1))\')
+)
+endef
+
+###########################################################
+## Tests of try-validate-path-is-subdir
+##     and  try-validate-paths-are-subdirs
+define test-validate-paths-are-subdirs
+$(eval my_error := $(call try-validate-path-is-subdir,/tmp)) \
+$(if $(call streq,$(my_error),/tmp starts with a slash),
+,
+  $(error incorrect error message for path /tmp. Got '$(my_error)')
+) \
+$(eval my_error := $(call try-validate-path-is-subdir,../sibling)) \
+$(if $(call streq,$(my_error),../sibling escapes its parent using '..'),
+,
+  $(error incorrect error message for path ../sibling. Got '$(my_error)')
+) \
+$(eval my_error := $(call try-validate-path-is-subdir,child/../../sibling)) \
+$(if $(call streq,$(my_error),child/../../sibling escapes its parent using '..'),
+,
+  $(error incorrect error message for path child/../../sibling. Got '$(my_error)')
+) \
+$(eval my_error := $(call try-validate-path-is-subdir,)) \
+$(if $(call streq,$(my_error),'' is empty),
+,
+  $(error incorrect error message for empty path ''. Got '$(my_error)')
+) \
+$(eval my_error := $(call try-validate-path-is-subdir,subdir/subsubdir)) \
+$(if $(call streq,$(my_error),),
+,
+  $(error rejected valid path 'subdir/subsubdir'. Got '$(my_error)')
+)
+
+$(eval my_error := $(call try-validate-paths-are-subdirs,a/b /c/d e/f))
+$(if $(call streq,$(my_error),/c/d starts with a slash),
+,
+  $(error incorrect error message for path list 'a/b /c/d e/f'. Got '$(my_error)')
+)
+$(eval my_error := $(call try-validate-paths-are-subdirs,a/b c/d))
+$(if $(call streq,$(my_error),),
+,
+  $(error rejected valid path list 'a/b c/d'. Got '$(my_error)')
+)
+endef
+# run test
+$(strip $(call test-validate-paths-are-subdirs))
+
+
+###########################################################
 ## Other includes
 ###########################################################
 
