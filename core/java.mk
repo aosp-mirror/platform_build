@@ -726,6 +726,7 @@ full_classes_proguard_jar := $(full_classes_pre_proguard_jar)
 endif # !USE_R8
 
 else  # LOCAL_PROGUARD_ENABLED not defined
+proguard_flag_files :=
 full_classes_proguard_jar := $(full_classes_pre_proguard_jar)
 endif # LOCAL_PROGUARD_ENABLED defined
 
