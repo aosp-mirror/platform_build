@@ -312,6 +312,17 @@ class InstallRecoveryScriptFormatTest(unittest.TestCase):
          "/dev/soc.0/by-name/recovery /recovery emmc defaults defaults"]
     self._info["fstab"] = common.LoadRecoveryFSTab(lambda x : "\n".join(x),
                                                    2, dummy_fstab)
+    # Construct the gzipped recovery.img and boot.img
+    self.recovery_data = bytearray([
+        0x1f, 0x8b, 0x08, 0x00, 0x81, 0x11, 0x02, 0x5a, 0x00, 0x03, 0x2b, 0x4a,
+        0x4d, 0xce, 0x2f, 0x4b, 0x2d, 0xaa, 0x04, 0x00, 0xc9, 0x93, 0x43, 0xf3,
+        0x08, 0x00, 0x00, 0x00
+    ])
+    # echo -n "boot" | gzip -f | hd
+    self.boot_data = bytearray([
+        0x1f, 0x8b, 0x08, 0x00, 0x8c, 0x12, 0x02, 0x5a, 0x00, 0x03, 0x4b, 0xca,
+        0xcf, 0x2f, 0x01, 0x00, 0xc4, 0xae, 0xed, 0x46, 0x04, 0x00, 0x00, 0x00
+    ])
 
   def _out_tmp_sink(self, name, data, prefix="SYSTEM"):
     loc = os.path.join(self._tempdir, prefix, name)
@@ -321,8 +332,8 @@ class InstallRecoveryScriptFormatTest(unittest.TestCase):
       f.write(data)
 
   def test_full_recovery(self):
-    recovery_image = common.File("recovery.img", "recovery");
-    boot_image = common.File("boot.img", "boot");
+    recovery_image = common.File("recovery.img", self.recovery_data);
+    boot_image = common.File("boot.img", self.boot_data);
     self._info["full_recovery_image"] = "true"
 
     common.MakeRecoveryPatch(self._tempdir, self._out_tmp_sink,
@@ -331,9 +342,9 @@ class InstallRecoveryScriptFormatTest(unittest.TestCase):
                                                         self._info)
 
   def test_recovery_from_boot(self):
-    recovery_image = common.File("recovery.img", "recovery");
+    recovery_image = common.File("recovery.img", self.recovery_data);
     self._out_tmp_sink("recovery.img", recovery_image.data, "IMAGES")
-    boot_image = common.File("boot.img", "boot");
+    boot_image = common.File("boot.img", self.boot_data);
     self._out_tmp_sink("boot.img", boot_image.data, "IMAGES")
 
     common.MakeRecoveryPatch(self._tempdir, self._out_tmp_sink,
