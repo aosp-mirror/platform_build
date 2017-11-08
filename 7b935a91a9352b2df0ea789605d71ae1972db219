@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "abc98982_f0e0970f",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-08T15:37:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cff5d728_40ccb496",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 5
+      },
+      "revId": "7b935a91a9352b2df0ea789605d71ae1972db219",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "65c4be22_b7f0e7f0",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 3
@@ -96,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "341a66a9_adcbc2a3",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-08T15:37:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "352c6317_42ad441d",
+      "range": {
+        "startLine": 29,
+        "startChar": 28,
+        "endLine": 29,
+        "endChar": 40
+      },
+      "revId": "7b935a91a9352b2df0ea789605d71ae1972db219",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7d2797ad_e8f37d97",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 3
@@ -128,6 +176,24 @@
       "revId": "7b935a91a9352b2df0ea789605d71ae1972db219",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f8daff5_07fd966c",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-08T15:37:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be37cb89_0bad9e4b",
+      "revId": "7b935a91a9352b2df0ea789605d71ae1972db219",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
