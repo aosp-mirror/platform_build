@@ -26,7 +26,9 @@ DIRTY_IMAGE_OBJECTS := $(call word-colon,1,$(firstword \
     $(filter %system/etc/dirty-image-objects,$(PRODUCT_COPY_FILES))))
 
 define get-product-default-property
-$(strip $(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))))
+$(strip \
+  $(eval _prop := $(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))))\
+  $(if $(_prop),$(_prop),$(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_SYSTEM_DEFAULT_PROPERTIES)))))
 endef
 
 DEX2OAT_IMAGE_XMS := $(call get-product-default-property,dalvik.vm.image-dex2oat-Xms)
