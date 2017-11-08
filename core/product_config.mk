@@ -462,3 +462,13 @@ PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := \
 # Whether any paths are excluded from sanitization when SANITIZE_TARGET=integer_overflow
 PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
+
+# ADB keys for debuggable builds
+PRODUCT_ADB_KEYS :=
+ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
+  PRODUCT_ADB_KEYS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ADB_KEYS))
+endif
+ifneq ($(filter-out 0 1,$(words $(PRODUCT_ADB_KEYS))),)
+  $(error Only one file may be in PRODUCT_ADB_KEYS: $(PRODUCT_ADB_KEYS))
+endif
+.KATI_READONLY := PRODUCT_ADB_KEYS
