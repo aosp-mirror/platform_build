@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46fda36f_4418ef40",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-08T19:21:13Z",
+      "side": 1,
+      "message": "$(call intermediates-dir-for,PACKAGING,vndk-snapshot)",
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0fb6b5c_81a57a8b",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-08T19:21:13Z",
+      "side": 1,
+      "message": "ifdef $(TARGET_2ND_ARCH)",
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1db6aba1_05b29bce",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-08T19:21:13Z",
+      "side": 1,
+      "message": "rm -rf $(vndk_snapshot_out)\nmkdir -p $(vndk_snapshot_out)",
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd8187d7_50d1f9ce",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-08T19:21:13Z",
+      "side": 1,
+      "message": "ifdef $(TARGET_2ND_ARCH)",
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65c9083f_de2ade81",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-08T19:21:13Z",
+      "side": 1,
+      "message": "This probably doesn\u0027t need to be deleted, it makes it harder to debug when things go wrong.",
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
