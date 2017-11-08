@@ -58,6 +58,9 @@ backslash := $(patsubst %a,%,$(backslash))
 # If a rule fails, delete $@.
 .DELETE_ON_ERROR:
 
+# Mark variables deprecated/obsolete
+$(KATI_deprecated_var PATH,Do not use PATH directly)
+
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
 FORCE:
@@ -879,25 +882,6 @@ ifdef TARGET_BUILD_WITH_APPS_VERSION_NAME
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)
 else
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
-endif
-
-ifeq ($(JAVA_NOT_REQUIRED),true)
-# Remove java and tools from our path so that we make sure nobody uses them.
-unexport ANDROID_JAVA_HOME
-unexport JAVA_HOME
-export ANDROID_BUILD_PATHS:=$(abspath $(BUILD_SYSTEM)/no_java_path):$(ANDROID_BUILD_PATHS)
-export PATH:=$(abspath $(BUILD_SYSTEM)/no_java_path):$(PATH)
-else
-  # Put java first on the path
-  # TODO(ccross): remove this once tools run during the build no longer depend on
-  # finding java in the path
-  ifeq (,$(strip $(CALLED_FROM_SETUP)))
-    ifneq ($(shell which java),$(abspath $(ANDROID_JAVA_TOOLCHAIN)/java))
-      $(warning Found incorrect java $(shell which java) in $$PATH)
-      $(warning Adding $(abspath $(ANDROID_JAVA_TOOLCHAIN)) to $$PATH)
-      export PATH:=$(abspath $(ANDROID_JAVA_TOOLCHAIN)):$(PATH)
-    endif
-  endif
 endif
 
 # Projects clean of compiler warnings should be compiled with -Werror.
