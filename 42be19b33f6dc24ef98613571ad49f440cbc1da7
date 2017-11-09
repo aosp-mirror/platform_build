@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "64f38bd3_d8df8f75",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2017-11-09T00:44:36Z",
+      "side": 1,
+      "message": "BOARD_VNDK_VERSION must be \"current\" when building a VNDK snapshot.",
+      "range": {
+        "startLine": 17,
+        "startChar": 7,
+        "endLine": 17,
+        "endChar": 25
+      },
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "46fda36f_4418ef40",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 4
