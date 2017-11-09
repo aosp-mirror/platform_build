@@ -402,7 +402,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   except KeyError:
     raise common.ExternalError("can't read META/otakeys.txt from input")
 
-  extra_recovery_keys = misc_info.get("extra_recovery_keys", None)
+  extra_recovery_keys = misc_info.get("extra_recovery_keys")
   if extra_recovery_keys:
     extra_recovery_keys = [OPTIONS.key_map.get(k, k) + ".x509.pem"
                            for k in extra_recovery_keys.split()]
@@ -426,8 +426,10 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   else:
     devkey = misc_info.get("default_system_dev_certificate",
                            "build/target/product/security/testkey")
-    mapped_keys.append(
-        OPTIONS.key_map.get(devkey, devkey) + ".x509.pem")
+    mapped_devkey = OPTIONS.key_map.get(devkey, devkey)
+    if mapped_devkey != devkey:
+      misc_info["default_system_dev_certificate"] = mapped_devkey
+    mapped_keys.append(mapped_devkey + ".x509.pem")
     print("META/otakeys.txt has no keys; using %s for OTA package"
           " verification." % (mapped_keys[0],))
 
