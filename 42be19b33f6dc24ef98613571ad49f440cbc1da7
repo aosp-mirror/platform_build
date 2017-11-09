@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5b18f0b1_aa73842b",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-09T09:39:24Z",
+      "side": 1,
+      "message": "Ack, added conditional to raise error if BOARD_VNDK_VERSION is not set to \u0027current\u0027.",
+      "parentUuid": "64f38bd3_d8df8f75",
+      "range": {
+        "startLine": 17,
+        "startChar": 7,
+        "endLine": 17,
+        "endChar": 25
+      },
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "46fda36f_4418ef40",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 4
@@ -42,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "e1ef7ded_d836e481",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-09T09:39:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "46fda36f_4418ef40",
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "62b16b3b_33882017",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 4
@@ -53,6 +95,30 @@
       "writtenOn": "2017-11-09T09:06:27Z",
       "side": 1,
       "message": "why do you have separate lists? VNDK-SP and VNDK-core can be treated as the same in this context.",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 66
+      },
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "53a18706_d9ae1411",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-09T09:39:24Z",
+      "side": 1,
+      "message": "VNDK-sp and VNDK-core libraries need to be copied to different directories: .../vndk-sp/ and .../vndk-core/ respectively. I do acknowledge parts of this file can be factored further but even so I believe those two lists need to be defined separately.",
+      "parentUuid": "62b16b3b_33882017",
       "range": {
         "startLine": 25,
         "startChar": 0,
@@ -82,6 +148,24 @@
     },
     {
       "key": {
+        "uuid": "a8c324a8_3a62d9a5",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-09T09:39:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d0fb6b5c_81a57a8b",
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1db6aba1_05b29bce",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 4
@@ -96,6 +180,24 @@
       "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da19585b_87fc8800",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-09T09:39:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1db6aba1_05b29bce",
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -116,6 +218,24 @@
     },
     {
       "key": {
+        "uuid": "c489a044_2345d8aa",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-09T09:39:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cd8187d7_50d1f9ce",
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "65c9083f_de2ade81",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 4
@@ -130,6 +250,24 @@
       "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "365c6cf7_293b4912",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-09T09:39:24Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "65c9083f_de2ade81",
+      "revId": "42be19b33f6dc24ef98613571ad49f440cbc1da7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
