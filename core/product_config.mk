@@ -472,3 +472,11 @@ ifneq ($(filter-out 0 1,$(words $(PRODUCT_ADB_KEYS))),)
   $(error Only one file may be in PRODUCT_ADB_KEYS: $(PRODUCT_ADB_KEYS))
 endif
 .KATI_READONLY := PRODUCT_ADB_KEYS
+
+# Whether any paths are excluded from sanitization when SANITIZE_TARGET=cfi
+PRODUCT_CFI_EXCLUDE_PATHS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CFI_EXCLUDE_PATHS))
+
+# Whether any paths should have CFI enabled for components
+PRODUCT_CFI_INCLUDE_PATHS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CFI_INCLUDE_PATHS))

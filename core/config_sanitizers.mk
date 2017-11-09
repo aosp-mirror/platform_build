@@ -34,6 +34,18 @@ ifneq ($(filter integer_overflow, $(my_global_sanitize)),)
   endif
 endif
 
+# Disable global CFI in excluded paths
+ifneq ($(filter cfi, $(my_global_sanitize)),)
+  combined_exclude_paths := $(CFI_EXCLUDE_PATHS) \
+                            $(PRODUCT_CFI_EXCLUDE_PATHS)
+
+  ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_exclude_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
+    my_global_sanitize := $(filter-out cfi,$(my_global_sanitize))
+    my_global_sanitize_diag := $(filter-out cfi,$(my_global_sanitize_diag))
+  endif
+endif
+
 ifneq ($(my_global_sanitize),)
   my_sanitize := $(my_global_sanitize) $(my_sanitize)
 endif
@@ -82,6 +94,18 @@ endif
 ifeq ($(LOCAL_SANITIZE),never)
   my_sanitize :=
   my_sanitize_diag :=
+endif
+
+# Enable CFI in included paths.
+ifeq ($(filter cfi, $(my_sanitize)),)
+  combined_include_paths := $(CFI_INCLUDE_PATHS) \
+                            $(PRODUCT_CFI_INCLUDE_PATHS)
+
+  ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
+    my_sanitize := cfi $(my_sanitize)
+    my_sanitize_diag := cfi $(my_sanitize_diag)
+  endif
 endif
 
 # If CFI is disabled globally, remove it from my_sanitize.
