@@ -1530,11 +1530,11 @@ class BlockDifference(object):
     #   decompression_time: 15s  | 25s                | 25s
 
     if not self.src:
-      bro_cmd = ['bro', '--quality', '6',
-                 '--input', '{}.new.dat'.format(self.path),
-                 '--output', '{}.new.dat.br'.format(self.path)]
+      brotli_cmd = ['brotli', '--quality=6',
+                    '--output={}.new.dat.br'.format(self.path),
+                    '{}.new.dat'.format(self.path)]
       print("Compressing {}.new.dat with brotli".format(self.partition))
-      p = Run(bro_cmd, stdout=subprocess.PIPE)
+      p = Run(brotli_cmd, stdout=subprocess.PIPE)
       p.communicate()
       assert p.returncode == 0,\
           'compression of {}.new.dat failed'.format(self.partition)
