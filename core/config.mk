@@ -58,6 +58,9 @@ backslash := $(patsubst %a,%,$(backslash))
 # If a rule fails, delete $@.
 .DELETE_ON_ERROR:
 
+# Mark variables deprecated/obsolete
+$(KATI_deprecated_var PATH,Do not use PATH directly)
+
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
 FORCE:
@@ -532,7 +535,6 @@ ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
   SIGNAPK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(HOST_OUT_SHARED_LIBRARIES)
   ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign
-  R8 := $(HOST_OUT_EXECUTABLES)/r8
 
 else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   AIDL := $(prebuilt_sdk_tools_bin)/aidl
@@ -543,8 +545,9 @@ else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   SIGNAPK_JAR := $(prebuilt_sdk_tools)/lib/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(prebuilt_sdk_tools)/$(HOST_OS)/lib64
   ZIPALIGN := $(prebuilt_sdk_tools_bin)/zipalign
-  R8 := $(prebuilt_build_tools_wrappers)/r8
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
+
+R8_COMPAT_PROGUARD_JAR := prebuilts/r8/compatproguard-master.jar
 
 ifeq (,$(TARGET_BUILD_APPS))
   # Use RenderScript prebuilts for unbundled builds but not PDK builds
@@ -880,25 +883,6 @@ ifdef TARGET_BUILD_WITH_APPS_VERSION_NAME
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)
 else
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
-endif
-
-ifeq ($(JAVA_NOT_REQUIRED),true)
-# Remove java and tools from our path so that we make sure nobody uses them.
-unexport ANDROID_JAVA_HOME
-unexport JAVA_HOME
-export ANDROID_BUILD_PATHS:=$(abspath $(BUILD_SYSTEM)/no_java_path):$(ANDROID_BUILD_PATHS)
-export PATH:=$(abspath $(BUILD_SYSTEM)/no_java_path):$(PATH)
-else
-  # Put java first on the path
-  # TODO(ccross): remove this once tools run during the build no longer depend on
-  # finding java in the path
-  ifeq (,$(strip $(CALLED_FROM_SETUP)))
-    ifneq ($(shell which java),$(abspath $(ANDROID_JAVA_TOOLCHAIN)/java))
-      $(warning Found incorrect java $(shell which java) in $$PATH)
-      $(warning Adding $(abspath $(ANDROID_JAVA_TOOLCHAIN)) to $$PATH)
-      export PATH:=$(abspath $(ANDROID_JAVA_TOOLCHAIN)):$(PATH)
-    endif
-  endif
 endif
 
 # Projects clean of compiler warnings should be compiled with -Werror.
