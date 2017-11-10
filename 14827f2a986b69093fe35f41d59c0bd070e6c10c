@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "86ecf56c_c5fc85f9",
+        "filename": "core/executable_internal.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-10T19:07:40Z",
+      "side": 1,
+      "message": "FYI this file is target-only",
+      "range": {
+        "startLine": 94,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 4
+      },
+      "revId": "14827f2a986b69093fe35f41d59c0bd070e6c10c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
