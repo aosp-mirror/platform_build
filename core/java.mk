@@ -619,7 +619,12 @@ else
 endif
 endif
 
-legacy_proguard_flags := $(addprefix -libraryjars ,$(my_proguard_sdk_raise) \
+ifeq ($(USE_R8),true)
+proguard_jars_prefix := -libraryjars
+else
+proguard_jars_prefix := -systemjars
+endif
+legacy_proguard_flags := $(addprefix $(proguard_jars_prefix) ,$(my_proguard_sdk_raise) \
   $(filter-out $(my_proguard_sdk_raise), \
     $(full_java_bootclasspath_libs) \
     $(full_shared_java_header_libs)))
