@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6b21d118_c3470690",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-10T09:58:41Z",
+      "side": 1,
+      "message": "Chose warning instead of error to make \u0027checkbuild\u0027 not fail for targets that do not have BOARD_VNDK_VERSION set to current.",
+      "revId": "62c1b2d6f9143f47e8dcc6d596b47b82955a7110",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
