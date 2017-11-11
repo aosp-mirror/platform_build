@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifneq ($(TARGET_BUILD_PDK),true)
 LOCAL_PATH := $(call my-dir)
 
 # the hat script
@@ -26,4 +25,3 @@ LOCAL_REQUIRED_MODULES := doclava
 include $(BUILD_PREBUILT)
 
 # Apicheck is now part of Doclava -- See external/doclava.
-endif

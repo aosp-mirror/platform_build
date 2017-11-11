@@ -5,18 +5,15 @@
 
 ifndef KATI
 $(warning Directly using config.mk from make is no longer supported.)
-$(info )
-# Repeat the warning so that it's in both the stdout and stderr streams
-$(info Directly using config.mk from make is no longer supported.)
-$(info )
-$(info If you are just attempting to build, you probably need to re-source envsetup.sh:)
-$(info )
-$(info $$ source build/envsetup.sh)
-$(info )
-$(info If you are attempting to emulate get_build_var, use one of the following:)
-$(info $$ build/soong/soong_ui.bash --dumpvar-mode)
-$(info $$ build/soong/soong_ui.bash --dumpvars-mode)
-$(info )
+$(warning )
+$(warning If you are just attempting to build, you probably need to re-source envsetup.sh:)
+$(warning )
+$(warning $$ source build/envsetup.sh)
+$(warning )
+$(warning If you are attempting to emulate get_build_var, use one of the following:)
+$(warning $$ build/soong/soong_ui.bash --dumpvar-mode)
+$(warning $$ build/soong/soong_ui.bash --dumpvars-mode)
+$(warning )
 $(error done)
 endif
 
@@ -60,6 +57,9 @@ backslash := $(patsubst %a,%,$(backslash))
 
 # If a rule fails, delete $@.
 .DELETE_ON_ERROR:
+
+# Mark variables deprecated/obsolete
+$(KATI_deprecated_var PATH,Do not use PATH directly)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -516,6 +516,12 @@ endif
 
 USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
+# Work around for b/68406220
+# This should match the soong version.
+ifndef USE_D8
+  USE_D8 := true
+endif
+
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
@@ -528,7 +534,6 @@ ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
   SIGNAPK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(HOST_OUT_SHARED_LIBRARIES)
   ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign
-  R8 := $(HOST_OUT_EXECUTABLES)/r8
 
 else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   AIDL := $(prebuilt_sdk_tools_bin)/aidl
@@ -539,8 +544,9 @@ else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   SIGNAPK_JAR := $(prebuilt_sdk_tools)/lib/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(prebuilt_sdk_tools)/$(HOST_OS)/lib64
   ZIPALIGN := $(prebuilt_sdk_tools_bin)/zipalign
-  R8 := $(prebuilt_build_tools_wrappers)/r8
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
+
+R8_COMPAT_PROGUARD_JAR := prebuilts/r8/compatproguard-master.jar
 
 ifeq (,$(TARGET_BUILD_APPS))
   # Use RenderScript prebuilts for unbundled builds but not PDK builds
@@ -613,15 +619,9 @@ AVBTOOL := $(BOARD_CUSTOM_AVBTOOL)
 endif
 APICHECK := $(HOST_OUT_EXECUTABLES)/apicheck$(HOST_EXECUTABLE_SUFFIX)
 FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
-ifeq ($(TARGET_USES_MKE2FS),true)
 MAKE_EXT4FS := $(HOST_OUT_EXECUTABLES)/mke2fs$(HOST_EXECUTABLE_SUFFIX)
 MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs.sh
 MKE2FS_CONF := system/extras/ext4_utils/mke2fs.conf
-else
-MAKE_EXT4FS := $(HOST_OUT_EXECUTABLES)/make_ext4fs$(HOST_EXECUTABLE_SUFFIX)
-MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg.sh
-MKE2FS_CONF :=
-endif
 BLK_ALLOC_TO_BASE_FS := $(HOST_OUT_EXECUTABLES)/blk_alloc_to_base_fs$(HOST_EXECUTABLE_SUFFIX)
 MAKE_SQUASHFS := $(HOST_OUT_EXECUTABLES)/mksquashfs$(HOST_EXECUTABLE_SUFFIX)
 MKSQUASHFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh
@@ -741,6 +741,9 @@ else
   FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.current.xml
 endif
 
+BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
+BUILD_DATETIME_FROM_FILE := $$(cat $(OUT_DIR)/build_date.txt)
+
 # ###############################################################
 # Set up final options.
 # ###############################################################
@@ -858,25 +861,6 @@ ifdef TARGET_BUILD_WITH_APPS_VERSION_NAME
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)-$(BUILD_NUMBER_FROM_FILE)
 else
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
-endif
-
-ifeq ($(JAVA_NOT_REQUIRED),true)
-# Remove java and tools from our path so that we make sure nobody uses them.
-unexport ANDROID_JAVA_HOME
-unexport JAVA_HOME
-export ANDROID_BUILD_PATHS:=$(abspath $(BUILD_SYSTEM)/no_java_path):$(ANDROID_BUILD_PATHS)
-export PATH:=$(abspath $(BUILD_SYSTEM)/no_java_path):$(PATH)
-else
-  # Put java first on the path
-  # TODO(ccross): remove this once tools run during the build no longer depend on
-  # finding java in the path
-  ifeq (,$(strip $(CALLED_FROM_SETUP)))
-    ifneq ($(shell which java),$(abspath $(ANDROID_JAVA_TOOLCHAIN)/java))
-      $(warning Found incorrect java $(shell which java) in $$PATH)
-      $(warning Adding $(abspath $(ANDROID_JAVA_TOOLCHAIN)) to $$PATH)
-      export PATH:=$(abspath $(ANDROID_JAVA_TOOLCHAIN)):$(PATH)
-    endif
-  endif
 endif
 
 # Projects clean of compiler warnings should be compiled with -Werror.
