@@ -1556,7 +1556,7 @@ $(hide) ldir=$(PRIVATE_INTERMEDIATES_DIR)/WHOLE/$(basename $(notdir $(1)))_objs;
         filelist="$$filelist $$ldir/$$ext$$f"; \
     done ; \
     $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_AR) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)TARGET_GLOBAL_ARFLAGS) \
-        $(2) $$filelist
+        $(PRIVATE_ARFLAGS) $(2) $$filelist
 
 endef
 
@@ -2774,6 +2774,12 @@ endef
 ###########################################################
 ## Commands to call Proguard
 ###########################################################
+ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+define transform-jar-to-proguard
+@echo Skipping Proguard: $<$(PRIVATE_PROGUARD_INJAR_FILTERS) $@
+$(hide) cp '$<' $@
+endef
+else
 define transform-jar-to-proguard
 @echo Proguard: $@
 $(hide) $(PROGUARD) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
@@ -2781,13 +2787,15 @@ $(hide) $(PROGUARD) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
     $(PRIVATE_PROGUARD_FLAGS) \
     $(addprefix -injars , $(PRIVATE_EXTRA_INPUT_JAR))
 endef
+endif
+
 
 ###########################################################
 ## Commands to call R8
 ###########################################################
 define transform-jar-to-dex-r8
 @echo R8: $@
-$(hide) $(R8) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
+$(hide) $(JAVA) -jar $(R8_COMPAT_PROGUARD_JAR) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --force-proguard-compatibility --output $(subst classes.dex,,$@) \
     $(PRIVATE_PROGUARD_FLAGS) \
@@ -3181,6 +3189,98 @@ ifeq ($(TEST_MAKE_clean_path),true)
     $(error failed clean-path test)
   endif
 endif
+
+###########################################################
+## Given a filepath, returns nonempty if the path cannot be
+## validated to be contained in the current directory
+## This is, this function checks for '/' and '..'
+##
+## $(1): path to validate
+define try-validate-path-is-subdir
+$(strip 
+    $(if $(filter /%,$(1)),
+        $(1) starts with a slash
+    )
+    $(if $(filter ../%,$(call clean-path,$(1))),
+        $(1) escapes its parent using '..'
+    )
+    $(if $(strip $(1)),
+    ,
+        '$(1)' is empty
+    )
+)
+endef
+
+define validate-path-is-subdir
+$(if $(call try-validate-path-is-subdir,$(1)),
+  $(call pretty-error, Illegal path: $(call try-validate-path-is-subdir,$(1)))
+)
+endef
+
+###########################################################
+## Given a space-delimited list of filepaths, returns
+## nonempty if any cannot be validated to be contained in
+## the current directory
+##
+## $(1): path list to validate
+define try-validate-paths-are-subdirs
+$(strip \
+  $(foreach my_path,$(1),\
+    $(call try-validate-path-is-subdir,$(my_path))\
+  )
+)
+endef
+
+define validate-paths-are-subdirs
+$(if $(call try-validate-paths-are-subdirs,$(1)),
+    $(call pretty-error,Illegal paths:\'$(call try-validate-paths-are-subdirs,$(1))\')
+)
+endef
+
+###########################################################
+## Tests of try-validate-path-is-subdir
+##     and  try-validate-paths-are-subdirs
+define test-validate-paths-are-subdirs
+$(eval my_error := $(call try-validate-path-is-subdir,/tmp)) \
+$(if $(call streq,$(my_error),/tmp starts with a slash),
+,
+  $(error incorrect error message for path /tmp. Got '$(my_error)')
+) \
+$(eval my_error := $(call try-validate-path-is-subdir,../sibling)) \
+$(if $(call streq,$(my_error),../sibling escapes its parent using '..'),
+,
+  $(error incorrect error message for path ../sibling. Got '$(my_error)')
+) \
+$(eval my_error := $(call try-validate-path-is-subdir,child/../../sibling)) \
+$(if $(call streq,$(my_error),child/../../sibling escapes its parent using '..'),
+,
+  $(error incorrect error message for path child/../../sibling. Got '$(my_error)')
+) \
+$(eval my_error := $(call try-validate-path-is-subdir,)) \
+$(if $(call streq,$(my_error),'' is empty),
+,
+  $(error incorrect error message for empty path ''. Got '$(my_error)')
+) \
+$(eval my_error := $(call try-validate-path-is-subdir,subdir/subsubdir)) \
+$(if $(call streq,$(my_error),),
+,
+  $(error rejected valid path 'subdir/subsubdir'. Got '$(my_error)')
+)
+
+$(eval my_error := $(call try-validate-paths-are-subdirs,a/b /c/d e/f))
+$(if $(call streq,$(my_error),/c/d starts with a slash),
+,
+  $(error incorrect error message for path list 'a/b /c/d e/f'. Got '$(my_error)')
+)
+$(eval my_error := $(call try-validate-paths-are-subdirs,a/b c/d))
+$(if $(call streq,$(my_error),),
+,
+  $(error rejected valid path list 'a/b c/d'. Got '$(my_error)')
+)
+endef
+# run test
+$(strip $(call test-validate-paths-are-subdirs))
+
 
 ###########################################################
 ## Other includes

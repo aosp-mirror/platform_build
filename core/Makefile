@@ -110,7 +110,8 @@ INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_ROOT_OUT)/default.prop
 endif
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_DEFAULT_PROP_TARGET)
 FINAL_DEFAULT_PROPERTIES := \
-    $(call collapse-pairs, $(ADDITIONAL_DEFAULT_PROPERTIES))
+    $(call collapse-pairs, $(ADDITIONAL_DEFAULT_PROPERTIES)) \
+    $(call collapse-pairs, $(PRODUCT_SYSTEM_DEFAULT_PROPERTIES))
 ifndef property_overrides_split_enabled
   FINAL_DEFAULT_PROPERTIES += \
       $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
@@ -2087,6 +2088,7 @@ endif
 ifeq ($(build_ota_package),true)
 OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/aapt \
+  $(HOST_OUT_EXECUTABLES)/checkvintf \
   $(HOST_OUT_EXECUTABLES)/mkbootfs \
   $(HOST_OUT_EXECUTABLES)/mkbootimg \
   $(HOST_OUT_EXECUTABLES)/fs_config \
@@ -2097,8 +2099,6 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/VeritySigner.jar \
-  $(HOST_OUT_EXECUTABLES)/make_ext4fs \
-  $(HOST_OUT_EXECUTABLES)/mkuserimg.sh \
   $(HOST_OUT_EXECUTABLES)/mke2fs \
   $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs.sh \
   $(HOST_OUT_EXECUTABLES)/e2fsdroid \

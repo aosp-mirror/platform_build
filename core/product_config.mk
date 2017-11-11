@@ -358,6 +358,13 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
 .KATI_READONLY := PRODUCT_DEFAULT_PROPERTY_OVERRIDES
 
+# A list of property assignments, like "key = value", with zero or more
+# whitespace characters on either side of the '='.
+# used for adding properties to default.prop of system partition
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_DEFAULT_PROPERTIES))
+.KATI_READONLY := PRODUCT_SYSTEM_DEFAULT_PROPERTIES
+
 # Should we use the default resources or add any product specific overlays
 PRODUCT_PACKAGE_OVERLAYS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGE_OVERLAYS))
@@ -455,3 +462,21 @@ PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := \
 # Whether any paths are excluded from sanitization when SANITIZE_TARGET=integer_overflow
 PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
+
+# ADB keys for debuggable builds
+PRODUCT_ADB_KEYS :=
+ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
+  PRODUCT_ADB_KEYS := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ADB_KEYS))
+endif
+ifneq ($(filter-out 0 1,$(words $(PRODUCT_ADB_KEYS))),)
+  $(error Only one file may be in PRODUCT_ADB_KEYS: $(PRODUCT_ADB_KEYS))
+endif
+.KATI_READONLY := PRODUCT_ADB_KEYS
+
+# Whether any paths are excluded from sanitization when SANITIZE_TARGET=cfi
+PRODUCT_CFI_EXCLUDE_PATHS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CFI_EXCLUDE_PATHS))
+
+# Whether any paths should have CFI enabled for components
+PRODUCT_CFI_INCLUDE_PATHS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CFI_INCLUDE_PATHS))

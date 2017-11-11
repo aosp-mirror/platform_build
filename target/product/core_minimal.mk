@@ -75,7 +75,7 @@ PRODUCT_PACKAGES += \
     libwebviewchromium_plat_support \
     libwilhelm \
     logd \
-    make_ext4fs \
+    mke2fs \
     e2fsck \
     resize2fs \
     tune2fs \
@@ -133,7 +133,7 @@ PRODUCT_SYSTEM_SERVER_APPS += \
 # Adoptable external storage supports both ext4 and f2fs
 PRODUCT_PACKAGES += \
     e2fsck \
-    make_ext4fs \
+    mke2fs \
     fsck.f2fs \
     make_f2fs \
 

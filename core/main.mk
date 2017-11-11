@@ -62,8 +62,6 @@ include $(BUILD_SYSTEM)/clang/config.mk
 $(shell mkdir -p $(OUT_DIR) && \
     echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt && \
     echo -n $(BUILD_DATETIME) > $(OUT_DIR)/build_date.txt)
-BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
-BUILD_DATETIME_FROM_FILE := $$(cat $(OUT_DIR)/build_date.txt)
 ifeq ($(HOST_OS),darwin)
 DATE_FROM_FILE := date -r $(BUILD_DATETIME_FROM_FILE)
 else
@@ -752,8 +750,7 @@ $(foreach t,$($(2).TYPE),\
 endef
 
 # TODO: Verify all branches/configs have reasonable warnings/errors, and remove
-# these overrides
-link-type-missing = $(eval $$(1).MISSING := true)
+# this override
 verify-link-type = $(eval $$(1).MISSING := true)
 
 $(foreach lt,$(ALL_LINK_TYPES),\
