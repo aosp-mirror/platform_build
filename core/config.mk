@@ -708,6 +708,25 @@ else ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),26),)
   PRODUCT_FULL_TREBLE := true
 endif
 
+requirements := \
+    PRODUCT_TREBLE_LINKER_NAMESPACES \
+    PRODUCT_SEPOLICY_SPLIT \
+    PRODUCT_ENFORCE_VINTF_MANIFEST \
+
+# If it is overriden, then the requirement override is taken, otherwise it's
+# PRODUCT_FULL_TREBLE
+$(foreach req,$(requirements),$(eval \
+    $(req) := $(if $($(req)_OVERRIDE),$($(req)_OVERRIDE),$(PRODUCT_FULL_TREBLE))))
+# If the requirement is false for any reason, then it's not PRODUCT_FULL_TREBLE
+$(foreach req,$(requirements),$(eval \
+    PRODUCT_FULL_TREBLE := $(if $(filter false,$($(req))),false,$(PRODUCT_FULL_TREBLE))))
+
+.KATI_READONLY := \
+    $(requirements) \
+    PRODUCT_FULL_TREBLE
+
+requirements :=
+
 ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),27),)
     ifneq ($(TARGET_USES_MKE2FS),true)
