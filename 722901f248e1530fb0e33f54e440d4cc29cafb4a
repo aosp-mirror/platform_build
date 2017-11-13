@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f2d313a7_b18cfc15",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 729,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-13T18:01:10Z",
+      "side": 1,
+      "message": "This isn\u0027t part of this change",
+      "range": {
+        "startLine": 722,
+        "startChar": 0,
+        "endLine": 729,
+        "endChar": 0
+      },
+      "revId": "722901f248e1530fb0e33f54e440d4cc29cafb4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
