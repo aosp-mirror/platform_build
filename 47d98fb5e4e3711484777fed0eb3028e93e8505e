@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "53d9fff7_0556b196",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-13T20:28:12Z",
+      "side": 1,
+      "message": "LOCAL_PATH :\u003d $(call my-dir)",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 48
+      },
+      "revId": "47d98fb5e4e3711484777fed0eb3028e93e8505e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4fe64e01_9738afed",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-13T20:28:12Z",
+      "side": 1,
+      "message": "You aren\u0027t using a BUILD_* include, this isn\u0027t necessary",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 21
+      },
+      "revId": "47d98fb5e4e3711484777fed0eb3028e93e8505e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f9a0612_1a06aefc",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-13T20:28:12Z",
+      "side": 1,
+      "message": "This shouldn\u0027t be used in this context, since it\u0027s not a target-specific variable, but a global that could be reset by someone after you (but before this is evaluated). We normally fix this by using PRIVATE_* variables that are attached to a specific target.\n\nTry clearing all variables that you set at the end of this file, that should catch instances of this.",
+      "range": {
+        "startLine": 84,
+        "startChar": 11,
+        "endLine": 84,
+        "endChar": 28
+      },
+      "revId": "47d98fb5e4e3711484777fed0eb3028e93e8505e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e1011ef_219634ec",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-13T20:28:12Z",
+      "side": 1,
+      "message": "This should just be duplicated inside the conditional above, with an else case that defines the target and prints the error.",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 37
+      },
+      "revId": "47d98fb5e4e3711484777fed0eb3028e93e8505e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
