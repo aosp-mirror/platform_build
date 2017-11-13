@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e622cd17_76a17a16",
+        "filename": "core/binary.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 1677,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-13T20:27:30Z",
+      "side": 1,
+      "message": "Do not add more warnings to the beginning of the build, there are already too many that we can\u0027t get rid of until we fix a bunch of users, and we don\u0027t want to hide important ones with even more.",
+      "revId": "579ec5776436b27dcac497a4b3a3013d478e9b81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
