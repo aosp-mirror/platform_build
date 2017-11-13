@@ -212,6 +212,30 @@
       "revId": "c50b7532a14f553f33b370074cc7913f700c5309",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f33c7f9_9a3e0cd8",
+        "filename": "core/test_config_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-11-13T22:52:26Z",
+      "side": 1,
+      "message": "Got it. I checked the usage of LOCAL_COMPATIBILITY_SUITE, all for loops are done against LOCAL_COMPATIBILITY_SUITE directly without deduping.\n\nI will add the check here for now to avoid duplicated general-tests.",
+      "parentUuid": "aa3022fb_3051bdc4",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 42
+      },
+      "revId": "c50b7532a14f553f33b370074cc7913f700c5309",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
