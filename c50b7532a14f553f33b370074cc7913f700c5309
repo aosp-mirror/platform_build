@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9685067f_0b13406c",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-11-13T21:56:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "70035d2e_282ea01d",
+      "range": {
+        "startLine": 385,
+        "startChar": 36,
+        "endLine": 385,
+        "endChar": 46
+      },
+      "revId": "c50b7532a14f553f33b370074cc7913f700c5309",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c8978fd8_6cad1913",
         "filename": "core/envsetup.mk",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "7aea2b0a_a64b6a2d",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 462,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-11-13T21:56:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c8978fd8_6cad1913",
+      "range": {
+        "startLine": 462,
+        "startChar": 41,
+        "endLine": 462,
+        "endChar": 51
+      },
+      "revId": "c50b7532a14f553f33b370074cc7913f700c5309",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2c0c690b_4a9f0f85",
         "filename": "core/test_config_common.mk",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2017-11-13T21:47:56Z",
       "side": 1,
       "message": "Any issues if they already had general-tests in their L_C_S variable?",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 42
+      },
+      "revId": "c50b7532a14f553f33b370074cc7913f700c5309",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68209691_50a11cca",
+        "filename": "core/test_config_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-11-13T21:56:24Z",
+      "side": 1,
+      "message": "No. If there are suite duplications, the output will just be overwritten. The same build output will be produced.",
+      "parentUuid": "2c0c690b_4a9f0f85",
       "range": {
         "startLine": 19,
         "startChar": 0,
