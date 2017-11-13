@@ -188,6 +188,30 @@
       "revId": "c50b7532a14f553f33b370074cc7913f700c5309",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa3022fb_3051bdc4",
+        "filename": "core/test_config_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-13T22:07:27Z",
+      "side": 1,
+      "message": "Agreed that this should be fixed at the site where it\u0027s used, I was pointing out that that wasn\u0027t the case today. $(foreach) will trigger twice. You\u0027d need to use $(sort) or something more complicated to de-duplicate the inputs.",
+      "parentUuid": "7c10fb7b_ade32027",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 42
+      },
+      "revId": "c50b7532a14f553f33b370074cc7913f700c5309",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
