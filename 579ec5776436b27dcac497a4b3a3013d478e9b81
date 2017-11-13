@@ -16,6 +16,24 @@
       "revId": "579ec5776436b27dcac497a4b3a3013d478e9b81",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94605be0_526f09b8",
+        "filename": "core/binary.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 1677,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-11-13T22:09:41Z",
+      "side": 1,
+      "message": "I comment out these warnings for now.\nWe should fix all such warnings, or at least show them under some verbose mode. So owners of modules can easily find and fix them.",
+      "parentUuid": "e622cd17_76a17a16",
+      "revId": "579ec5776436b27dcac497a4b3a3013d478e9b81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
