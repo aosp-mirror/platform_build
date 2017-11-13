@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d2640c87_7ae97212",
+        "filename": "core/binary.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 1677,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-13T23:05:36Z",
+      "side": 1,
+      "message": "You could collect these into variables:\n\n $(eval MODULES_USING_WNO_ERROR :\u003d $(MODULES_USING_WNO_ERROR) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))\n\nThen in build/core/Makefile near the soong_to_convert stuff:\n\n WALL_WERROR :\u003d $(PRODUCT_OUT)/wall_werror.txt\n $(WALL_WERROR):\n        @rm -f $@\n        ( \\\n          echo \"Modules using -Wno-error\" \u0026\u0026\n          for i in $(MODULES_USING_WNO_ERROR); do \\\n            echo $i \u003e\u003e $@ \\\n          fi \\\n        ) \u003e $@\n \n $(call dist-for-goals,droidcore,$(WALL_WERROR)\n\nAnd similarly for the other warnings.",
+      "revId": "350e825a133e0250ca3c2c0f2463a0c861691d14",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
