@@ -164,6 +164,30 @@
       "revId": "c50b7532a14f553f33b370074cc7913f700c5309",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c10fb7b_ade32027",
+        "filename": "core/test_config_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-11-13T22:05:06Z",
+      "side": 1,
+      "message": "I think the fix should be that when LOCAL_COMPATIBILITY_SUITE value is used, the for loop should remove any dupes.\n\nOr do you prefer to have code to check LOCAL_COMPATIBILITY_SUITE here before adding general-tests?",
+      "parentUuid": "e204ea70_26a22eb7",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 42
+      },
+      "revId": "c50b7532a14f553f33b370074cc7913f700c5309",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
