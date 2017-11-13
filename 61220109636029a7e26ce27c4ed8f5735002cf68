@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2e6a2daf_48f60221",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 702,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-13T22:59:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5d19f245_bd78d73c",
+      "range": {
+        "startLine": 702,
+        "startChar": 64,
+        "endLine": 702,
+        "endChar": 65
+      },
+      "revId": "61220109636029a7e26ce27c4ed8f5735002cf68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "123f04bb_74bcf52a",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2017-11-13T22:19:52Z",
       "side": 1,
       "message": "nit: missing space\n\nalso the actual return value is a list, not a tuple",
+      "range": {
+        "startLine": 1326,
+        "startChar": 6,
+        "endLine": 1326,
+        "endChar": 8
+      },
+      "revId": "61220109636029a7e26ce27c4ed8f5735002cf68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5354c864_f4d6fcfd",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1326,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-13T22:59:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "123f04bb_74bcf52a",
       "range": {
         "startLine": 1326,
         "startChar": 6,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "dc9ad607_8ffa60a6",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1419,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-13T22:59:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b6243543_5a7b193f",
+      "range": {
+        "startLine": 1419,
+        "startChar": 73,
+        "endLine": 1419,
+        "endChar": 74
+      },
+      "revId": "61220109636029a7e26ce27c4ed8f5735002cf68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2d02c456_89a08652",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 5
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "e4092e62_721d72d4",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1439,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-13T22:59:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2d02c456_89a08652",
+      "range": {
+        "startLine": 1439,
+        "startChar": 4,
+        "endLine": 1439,
+        "endChar": 36
+      },
+      "revId": "61220109636029a7e26ce27c4ed8f5735002cf68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fbf4d2a3_88ccc4d7",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 5
@@ -105,6 +201,30 @@
       "writtenOn": "2017-11-13T22:19:52Z",
       "side": 1,
       "message": "nit: align \u0027for\u0027 with \u0027threading\u0027",
+      "range": {
+        "startLine": 1489,
+        "startChar": 15,
+        "endLine": 1489,
+        "endChar": 20
+      },
+      "revId": "61220109636029a7e26ce27c4ed8f5735002cf68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4cbfa070_1deedccc",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1489,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-13T22:59:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fbf4d2a3_88ccc4d7",
       "range": {
         "startLine": 1489,
         "startChar": 15,
