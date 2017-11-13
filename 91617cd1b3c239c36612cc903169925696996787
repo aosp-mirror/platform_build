@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "aaa2d26f_25fa2cd9",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1146,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-13T06:13:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cd82234d_86011e27",
+      "range": {
+        "startLine": 1140,
+        "startChar": 4,
+        "endLine": 1146,
+        "endChar": 53
+      },
+      "revId": "91617cd1b3c239c36612cc903169925696996787",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c4a91818_2e3b9502",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 3
@@ -42,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "13aea386_91275e58",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1295,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-13T06:13:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4a91818_2e3b9502",
+      "revId": "91617cd1b3c239c36612cc903169925696996787",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ae226fb6_fa6ed3b4",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 3
@@ -53,6 +95,30 @@
       "writtenOn": "2017-11-10T08:04:08Z",
       "side": 1,
       "message": "Are you trying to make a copy? If so, use copy.deepcopy()?",
+      "range": {
+        "startLine": 1301,
+        "startChar": 19,
+        "endLine": 1301,
+        "endChar": 57
+      },
+      "revId": "91617cd1b3c239c36612cc903169925696996787",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d7d9ebf_09916fd5",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1301,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-13T06:13:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ae226fb6_fa6ed3b4",
       "range": {
         "startLine": 1301,
         "startChar": 19,
@@ -88,6 +154,30 @@
     },
     {
       "key": {
+        "uuid": "e05bef4e_3606ee7e",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1302,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-13T06:13:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4e4a9a03_76502a19",
+      "range": {
+        "startLine": 1302,
+        "startChar": 18,
+        "endLine": 1302,
+        "endChar": 20
+      },
+      "revId": "91617cd1b3c239c36612cc903169925696996787",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bb94b14c_72259781",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 3
@@ -111,6 +201,30 @@
     },
     {
       "key": {
+        "uuid": "13c5976a_9a43d089",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1314,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-13T06:13:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb94b14c_72259781",
+      "range": {
+        "startLine": 1314,
+        "startChar": 10,
+        "endLine": 1314,
+        "endChar": 17
+      },
+      "revId": "91617cd1b3c239c36612cc903169925696996787",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4f85ee4d_99433220",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 3
@@ -122,6 +236,30 @@
       "writtenOn": "2017-11-10T08:04:08Z",
       "side": 1,
       "message": "indices",
+      "range": {
+        "startLine": 1316,
+        "startChar": 18,
+        "endLine": 1316,
+        "endChar": 23
+      },
+      "revId": "91617cd1b3c239c36612cc903169925696996787",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4d30f272_0adb8abe",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1316,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-13T06:13:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4f85ee4d_99433220",
       "range": {
         "startLine": 1316,
         "startChar": 18,
