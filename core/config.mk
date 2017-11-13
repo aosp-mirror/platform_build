@@ -135,6 +135,8 @@ BUILD_NOTICE_FILE := $(BUILD_SYSTEM)/notice_files.mk
 BUILD_HOST_DALVIK_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_java_library.mk
 BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
 
+BUILD_HOST_TEST_CONFIG:= $(BUILD_SYSTEM)/host_test_config.mk
+BUILD_TARGET_TEST_CONFIG:= $(BUILD_SYSTEM)/target_test_config.mk
 
 # ###############################################################
 # Parse out any modifier targets.
