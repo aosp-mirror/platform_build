@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d59b5996_5edd0dc7",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-14T21:37:35Z",
+      "side": 1,
+      "message": "maybe assert the tgt in AVB_PARTITIONS?",
+      "range": {
+        "startLine": 766,
+        "startChar": 43,
+        "endLine": 766,
+        "endChar": 47
+      },
+      "revId": "1b1e83765c7412c696e47e087306256dc633dc07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
