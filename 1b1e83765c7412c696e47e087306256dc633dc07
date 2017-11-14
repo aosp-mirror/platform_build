@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ed75eab_5f5668f3",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 544,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-14T21:48:10Z",
+      "side": 0,
+      "message": "We were checking the return value of GetBootableImage here, which could return None. Looks better to fail earlier than calling WriteToDir. Same for recovery image.",
+      "range": {
+        "startLine": 544,
+        "startChar": 7,
+        "endLine": 544,
+        "endChar": 17
+      },
+      "revId": "1b1e83765c7412c696e47e087306256dc633dc07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
