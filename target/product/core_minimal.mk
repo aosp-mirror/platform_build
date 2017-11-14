@@ -159,5 +159,9 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     tombstoned.max_tombstone_count=50
 endif
 
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    ro.logd.size.stats=64K \
+    log.tag.stats_log=I
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
