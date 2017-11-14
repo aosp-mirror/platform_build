@@ -104,6 +104,9 @@ endif
 # prop.default
 ifdef property_overrides_split_enabled
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_OUT)/etc/prop.default
+INSTALLED_DEFAULT_PROP_OLD_TARGET := $(TARGET_ROOT_OUT)/default.prop
+ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_DEFAULT_PROP_OLD_TARGET)
+$(INSTALLED_DEFAULT_PROP_OLD_TARGET): $(INSTALLED_DEFAULT_PROP_TARGET)
 else
 # legacy path
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_ROOT_OUT)/default.prop
@@ -139,7 +142,7 @@ $(INSTALLED_DEFAULT_PROP_TARGET): $(intermediate_system_build_prop)
 	$(hide) build/tools/post_process_props.py $@
 ifdef property_overrides_split_enabled
 	$(hide) mkdir -p $(TARGET_ROOT_OUT)
-	$(hide) ln -sf system/etc/prop.default $(TARGET_ROOT_OUT)/default.prop
+	$(hide) ln -sf system/etc/prop.default $(INSTALLED_DEFAULT_PROP_OLD_TARGET)
 endif
 
 # -----------------------------------------------------------------
@@ -445,8 +448,10 @@ package-stats: $(PACKAGE_STATS_FILE)
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
-define _apkcerts_echo_with_newline
-$(hide) echo $(1)
+define _apkcerts_write_line
+$(hide) echo -n 'name="$(1).apk" certificate="$2" private_key="$3"' >> $5
+$(if $(4), $(hide) echo -n ' compressed="$4"' >> $5)
+$(hide) echo '' >> $5
 
 endef
 
@@ -466,12 +471,8 @@ $(APKCERTS_FILE):
 	@rm -f $@
 	$(foreach p,$(PACKAGES),\
 	  $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
-	    $(call _apkcerts_echo_with_newline,\
-	      'name="$(p).apk" certificate="EXTERNAL" \
-	      private_key=""' >> $@),\
-	    $(call _apkcerts_echo_with_newline,\
-	      'name="$(p).apk" certificate="$(PACKAGES.$(p).CERTIFICATE)" \
-	      private_key="$(PACKAGES.$(p).PRIVATE_KEY)"' >> $@)))
+	    $(call _apkcerts_write_line,$(p),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$@),\
+	    $(call _apkcerts_write_line,$(p),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$@)))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
 
@@ -2048,6 +2049,14 @@ $(INSTALLED_VBMETAIMAGE_TARGET): $(AVBTOOL) $(INSTALLED_BOOTIMAGE_TARGET) $(INST
 vbmetaimage-nodeps:
 	$(build-vbmetaimage-target)
 
+else ifeq (true,$(BOARD_BUILD_DISABLED_VBMETAIMAGE))
+BUILT_DISABLED_VBMETAIMAGE := $(PRODUCT_OUT)/vbmeta.img
+
+INSTALLED_VBMETAIMAGE_TARGET := $(BUILT_DISABLED_VBMETAIMAGE)
+$(INSTALLED_VBMETAIMAGE_TARGET): $(AVBTOOL)
+	$(hide) $(AVBTOOL) make_vbmeta_image \
+	  --flag 2 --padding_size 4096 --output $@
+
 endif # BOARD_AVB_ENABLE
 
 # -----------------------------------------------------------------
@@ -2293,6 +2302,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_CACHEIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
+		$(INSTALLED_VBMETAIMAGE_TARGET) \
 		$(INSTALLED_DTBOIMAGE_TARGET) \
 		$(INTERNAL_SYSTEMOTHERIMAGE_FILES) \
 		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
@@ -2512,6 +2522,14 @@ endif
 ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
 	@# If breakpad symbols have been generated, add them to the zip.
 	$(hide) $(ACP) -r $(TARGET_OUT_BREAKPAD) $(zip_root)/BREAKPAD
+endif
+# BOARD_BUILD_DISABLED_VBMETAIMAGE is used to build a special vbmeta.img
+# that disables AVB verification. The content is fixed and we can just copy
+# it to $(zip_root)/IMAGES without passing some info into misc_info.txt for
+# regeneration.
+ifeq (true,$(BOARD_BUILD_DISABLED_VBMETAIMAGE))
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_VBMETAIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
 ifdef BOARD_PREBUILT_VENDORIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES

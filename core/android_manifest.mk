@@ -34,10 +34,12 @@ ifdef my_full_libs_manifest_files
 main_android_manifest := $(full_android_manifest)
 full_android_manifest := $(intermediates.COMMON)/AndroidManifest.xml
 $(full_android_manifest): PRIVATE_LIBS_MANIFESTS := $(my_full_libs_manifest_files)
+$(full_android_manifest): $(ANDROID_MANIFEST_MERGER_CLASSPATH)
 $(full_android_manifest) : $(main_android_manifest) $(my_full_libs_manifest_deps)
 	@echo "Merge android manifest files: $@ <-- $< $(PRIVATE_LIBS_MANIFESTS)"
 	@mkdir -p $(dir $@)
-	$(hide) $(ANDROID_MANIFEST_MERGER) --main $< --libs $(PRIVATE_LIBS_MANIFESTS) \
+	$(hide) $(ANDROID_MANIFEST_MERGER) --main $< \
+	    --libs $(call normalize-path-list,$(PRIVATE_LIBS_MANIFESTS)) \
 	    --out $@
 
 endif

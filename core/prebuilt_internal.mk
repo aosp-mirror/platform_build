@@ -105,11 +105,32 @@ else
   prebuilt_module_is_dex_javalib :=
 endif
 
-ifeq ($(LOCAL_MODULE_CLASS),APPS)
-LOCAL_BUILT_MODULE_STEM := package.apk
-ifndef LOCAL_INSTALLED_MODULE_STEM
-LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
+ifdef LOCAL_COMPRESSED_MODULE
+ifneq (true,$(LOCAL_COMPRESSED_MODULE))
+$(call pretty-error, Unknown value for LOCAL_COMPRESSED_MODULE $(LOCAL_COMPRESSED_MODULE))
 endif
+endif
+
+ifeq ($(LOCAL_MODULE_CLASS),APPS)
+ifdef LOCAL_COMPRESSED_MODULE
+LOCAL_BUILT_MODULE_STEM := package.apk.gz
+else
+LOCAL_BUILT_MODULE_STEM := package.apk
+endif  # LOCAL_COMPRESSED_MODULE
+
+ifndef LOCAL_INSTALLED_MODULE_STEM
+ifdef LOCAL_COMPRESSED_MODULE
+PACKAGES.$(LOCAL_MODULE).COMPRESSED := gz
+LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk.gz
+else
+LOCAL_INSTALLED_MODULE_STEM := $(LOCAL_MODULE).apk
+endif  # LOCAL_COMPRESSED_MODULE
+endif  # LOCAL_INSTALLED_MODULE_STEM
+
+else  # $(LOCAL_MODULE_CLASS) != APPS)
+ifdef LOCAL_COMPRESSED_MODULE
+$(error $(LOCAL_MODULE) : LOCAL_COMPRESSED_MODULE can only be defined for module class APPS)
+endif  # LOCAL_COMPRESSED_MODULE
 endif
 
 ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module) $(my_pack_module_relocations)),)
@@ -276,6 +297,8 @@ my_preopt_for_extracted_apk := true
 endif
 endif
 
+dex_preopt_profile_src_file := $(my_prebuilt_src_file)
+
 rs_compatibility_jni_libs :=
 include $(BUILD_SYSTEM)/install_jni_libs.mk
 
@@ -328,6 +351,12 @@ LOCAL_DEX_PREOPT := false
 endif
 endif
 
+# If the module is a compressed module, we don't pre-opt it because its final
+# installation location will be the data partition.
+ifdef LOCAL_COMPRESSED_MODULE
+LOCAL_DEX_PREOPT := false
+endif
+
 #######################################
 # defines built_odex along with rule to install odex
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
@@ -351,6 +380,10 @@ ifndef embedded_prebuilt_jni_libs
 embedded_prebuilt_jni_libs := 'lib/*.so'
 endif
 $(built_module): PRIVATE_EMBEDDED_JNI_LIBS := $(embedded_prebuilt_jni_libs)
+
+ifdef LOCAL_COMPRESSED_MODULE
+$(built_module) : $(MINIGZIP)
+endif
 
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
@@ -382,6 +415,9 @@ endif  # LOCAL_DEX_PREOPT
 else  # LOCAL_CERTIFICATE == PRESIGNED
 	$(align-package)
 endif  # LOCAL_CERTIFICATE
+ifdef LOCAL_COMPRESSED_MODULE
+	$(compress-package)
+endif  # LOCAL_COMPRESSED_MODULE
 endif  # ! LOCAL_REPLACE_PREBUILT_APK_INSTALLED
 
 ###############################
@@ -394,6 +430,10 @@ endif
 ###############################
 ## Install split apks.
 ifdef LOCAL_PACKAGE_SPLITS
+ifdef LOCAL_COMPRESSED_MODULE
+$(error $(LOCAL_MODULE): LOCAL_COMPRESSED_MODULE is not currently supported for split installs)
+endif  # LOCAL_COMPRESSED_MODULE
+
 # LOCAL_PACKAGE_SPLITS is a list of apks to be installed.
 built_apk_splits := $(addprefix $(intermediates)/,$(notdir $(LOCAL_PACKAGE_SPLITS)))
 installed_apk_splits := $(addprefix $(my_module_path)/,$(notdir $(LOCAL_PACKAGE_SPLITS)))

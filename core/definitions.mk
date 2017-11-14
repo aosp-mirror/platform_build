@@ -2558,6 +2558,15 @@ $(hide) if ! $(ZIPALIGN) -c $(ZIPALIGN_PAGE_ALIGN_FLAGS) 4 $@ >/dev/null ; then 
   fi
 endef
 
+# Compress a package using the standard gzip algorithm.
+define compress-package
+$(hide) \
+  mv $@ $@.uncompressed; \
+  $(MINIGZIP) -c $@.uncompressed > $@.compressed; \
+  rm -f $@.uncompressed; \
+  mv $@.compressed $@;
+endef
+
 # Remove dynamic timestamps from packages
 #
 define remove-timestamps-from-package

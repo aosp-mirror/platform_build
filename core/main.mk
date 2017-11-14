@@ -311,7 +311,7 @@ ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
 
 # Sets the location that the runtime dumps stack traces to when signalled
 # with SIGQUIT. Stack trace dumping is turned on for all android builds.
-ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.stack-trace-file=/data/anr/traces.txt
+ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.stack-trace-dir=/data/anr
 
 # ------------------------------------------------------------
 # Define a function that, given a list of module tags, returns

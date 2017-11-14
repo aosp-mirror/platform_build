@@ -369,6 +369,19 @@ include $(BUILD_SYSTEM)/java_common.mk
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HAS_RS_SOURCES := $(if $(renderscript_sources),true)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RS_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/renderscript
 
+# Set the profile source so that the odex / profile code included from java.mk
+# can find it.
+#
+# TODO: b/64896089, this is broken when called from package_internal.mk, since the file
+# we preopt from is a temporary file. This will be addressed in a follow up, possibly
+# by disabling stripping for profile guided preopt (which may be desirable for other
+# reasons anyway).
+#
+# Note that we set this only when called from package_internal.mk and not in other cases.
+ifneq (,$(called_from_package_internal)
+dex_preopt_profile_src_file := $(LOCAL_BUILT_MODULE)
+endif
+
 #######################################
 # defines built_odex along with rule to install odex
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
