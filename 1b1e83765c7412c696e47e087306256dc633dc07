@@ -22,6 +22,30 @@
       "revId": "1b1e83765c7412c696e47e087306256dc633dc07",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4951fe41_4fa1bfc0",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 766,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-11-14T23:44:29Z",
+      "side": 1,
+      "message": "This function also gets called when creating \u0027userdata\u0027 or \u0027cache\u0027 images. They should be considered as non-AVB images, so can\u0027t make assertion here. PS2 added a comment here.",
+      "parentUuid": "d59b5996_5edd0dc7",
+      "range": {
+        "startLine": 766,
+        "startChar": 43,
+        "endLine": 766,
+        "endChar": 47
+      },
+      "revId": "1b1e83765c7412c696e47e087306256dc633dc07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
