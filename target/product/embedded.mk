@@ -105,7 +105,7 @@ PRODUCT_PACKAGES_DEBUG += \
 
 # Ensure that this property is always defined so that bionic_systrace.cpp
 # can rely on it being initially set by init.
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     debug.atrace.tags.enableflags=0
 
 PRODUCT_COPY_FILES += \
