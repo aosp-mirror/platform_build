@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c8599f28_03068c1f",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2017-11-14T04:21:05Z",
+      "side": 1,
+      "message": "Elliott, could you please take a look at this part as an approver of https://android-review.googlesource.com/#/c/106470 which added these lines?",
+      "range": {
+        "startLine": 109,
+        "startChar": 4,
+        "endLine": 109,
+        "endChar": 35
+      },
+      "revId": "0f05284692cd0af6e2cb62080da4048b38feb600",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
