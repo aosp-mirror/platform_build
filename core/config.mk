@@ -978,6 +978,13 @@ $(error Should not define BOARD_VENDORIMAGE_PARTITION_SIZE and \
 endif
 endif
 
+ifneq ($(BOARD_ODMIMAGE_PARTITION_SIZE),)
+ifneq ($(BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE),)
+$(error Should not define BOARD_ODMIMAGE_PARTITION_SIZE and \
+    BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE together)
+endif
+endif
+
 ifneq ($(BOARD_PRODUCTIMAGE_PARTITION_SIZE),)
 ifneq ($(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE),)
 $(error Should not define BOARD_PRODUCTIMAGE_PARTITION_SIZE and \
@@ -1177,6 +1184,7 @@ dont_bother_goals := out \
     vnod vendorimage-nodeps \
     pnod productimage-nodeps \
     psnod productservicesimage-nodeps \
+    onod odmimage-nodeps \
     systemotherimage-nodeps \
     ramdisk-nodeps \
     bootimage-nodeps \
