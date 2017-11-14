@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d6c8639f_f3050075",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-14T09:10:17Z",
+      "side": 1,
+      "message": "The my-dir function call doesn\u0027t seem to work here because this file matches the pattern $(BUILD_SYSTEM)/%.\n\n\"error: my-dir must be called before including any other makefile..\"",
+      "parentUuid": "53d9fff7_0556b196",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 48
+      },
+      "revId": "47d98fb5e4e3711484777fed0eb3028e93e8505e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4fe64e01_9738afed",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 8
@@ -45,6 +69,30 @@
       "revId": "47d98fb5e4e3711484777fed0eb3028e93e8505e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fac63861_1d08bf8c",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-14T09:10:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4fe64e01_9738afed",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 21
+      },
+      "revId": "47d98fb5e4e3711484777fed0eb3028e93e8505e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "cf1120aa_0d0d52a4",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-14T09:10:17Z",
+      "side": 1,
+      "message": "I see, thank you for the explanation. I declared new PRIVATE_* variables in the next patch.",
+      "parentUuid": "9f9a0612_1a06aefc",
+      "range": {
+        "startLine": 84,
+        "startChar": 11,
+        "endLine": 84,
+        "endChar": 28
+      },
+      "revId": "47d98fb5e4e3711484777fed0eb3028e93e8505e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e1011ef_219634ec",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 8
@@ -91,6 +163,30 @@
       "revId": "47d98fb5e4e3711484777fed0eb3028e93e8505e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b0f6946_1a6ed6d7",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-14T09:10:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8e1011ef_219634ec",
+      "range": {
+        "startLine": 97,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 37
+      },
+      "revId": "47d98fb5e4e3711484777fed0eb3028e93e8505e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
