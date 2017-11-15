@@ -253,15 +253,12 @@ def main(argv):
 
     filesets = [sorted(files_with_same_hash[md5]) for md5 in sorted(files_with_same_hash.keys())]
 
-    print "Combining NOTICE files into text"
     combine_notice_files_text(filesets, input_dir, txt_output_file, file_title)
 
     if html_output_file is not None:
-        print "Combining NOTICE files into HTML"
         combine_notice_files_html(filesets, input_dir, html_output_file)
 
     if xml_output_file is not None:
-        print "Combining NOTICE files into XML"
         combine_notice_files_xml(files_with_same_hash, input_dir, xml_output_file)
 
 if __name__ == "__main__":
