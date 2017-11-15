@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a88cf4d8_db361cb3",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-15T22:27:05Z",
+      "side": 1,
+      "message": "ifdef USE_OPENJDK9",
+      "revId": "1d4d22ba7c902fe30ce2cb57f7b33fa7c8c94feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a45e7e87_f6d1a6bc",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2777,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-15T22:27:05Z",
+      "side": 1,
+      "message": "ifdef TARGET_OPENJDK9",
+      "revId": "1d4d22ba7c902fe30ce2cb57f7b33fa7c8c94feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15b5299e_9eaa347e",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-15T22:27:05Z",
+      "side": 1,
+      "message": "ifdef USE_OPENJDK9",
+      "revId": "1d4d22ba7c902fe30ce2cb57f7b33fa7c8c94feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "342ce168_6b71bf42",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-15T22:27:05Z",
+      "side": 1,
+      "message": "ifdef TARGET_OPENJDK9",
+      "revId": "1d4d22ba7c902fe30ce2cb57f7b33fa7c8c94feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
