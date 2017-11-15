@@ -75,6 +75,11 @@ OPTIONS = Options()
 # Values for "certificate" in apkcerts that mean special things.
 SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 
+
+# The partitions allowed to be signed by AVB (Android verified boot 2.0).
+AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'dtbo')
+
+
 class ErrorCode(object):
   """Define error_codes for failures that happen during the actual
   update package installation.
@@ -727,10 +732,18 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
 
 
 def CheckSize(data, target, info_dict):
-  """Check the data string passed against the max size limit, if
-  any, for the given target.  Raise exception if the data is too big.
-  Print a warning if the data is nearing the maximum size."""
+  """Checks the data string passed against the max size limit.
 
+  For non-AVB images, raise exception if the data is too big. Print a warning
+  if the data is nearing the maximum size.
+
+  For AVB images, the actual image size should be identical to the limit.
+
+  Args:
+    data: A string that contains all the data for the partition.
+    target: The partition name. The ".img" suffix is optional.
+    info_dict: The dict to be looked up for relevant info.
+  """
   if target.endswith(".img"):
     target = target[:-4]
   mount_point = "/" + target
@@ -750,14 +763,22 @@ def CheckSize(data, target, info_dict):
     return
 
   size = len(data)
-  pct = float(size) * 100.0 / limit
-  msg = "%s size (%d) is %.2f%% of limit (%d)" % (target, size, pct, limit)
-  if pct >= 99.0:
-    raise ExternalError(msg)
-  elif pct >= 95.0:
-    print("\n  WARNING: %s\n" % (msg,))
-  elif OPTIONS.verbose:
-    print("  ", msg)
+  # target could be 'userdata' or 'cache'. They should follow the non-AVB image
+  # path.
+  if info_dict.get("avb_enable") == "true" and target in AVB_PARTITIONS:
+    if size != limit:
+      raise ExternalError(
+          "Mismatching image size for %s: expected %d actual %d" % (
+              target, limit, size))
+  else:
+    pct = float(size) * 100.0 / limit
+    msg = "%s size (%d) is %.2f%% of limit (%d)" % (target, size, pct, limit)
+    if pct >= 99.0:
+      raise ExternalError(msg)
+    elif pct >= 95.0:
+      print("\n  WARNING: %s\n" % (msg,))
+    elif OPTIONS.verbose:
+      print("  ", msg)
 
 
 def ReadApkCerts(tf_zip):
