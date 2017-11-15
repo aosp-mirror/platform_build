@@ -22,6 +22,30 @@
       "revId": "1b1e83765c7412c696e47e087306256dc633dc07",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2bb7ecc2_abc7314b",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 544,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-11-15T01:09:26Z",
+      "side": 0,
+      "message": "The current TreeHugger failure also showed me why we\u0027re checking the return value before. Because some targets may not have boot.img (e.g. aosp_arm64). PS5 changed this part back to check boot_image.\n\nAnd for the recovery cases, I\u0027ve added two assertions. Because if \"has_recovery\" is True, I expect common.GetBootableImage() to give actual images.",
+      "parentUuid": "5ed75eab_5f5668f3",
+      "range": {
+        "startLine": 544,
+        "startChar": 7,
+        "endLine": 544,
+        "endChar": 17
+      },
+      "revId": "1b1e83765c7412c696e47e087306256dc633dc07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
