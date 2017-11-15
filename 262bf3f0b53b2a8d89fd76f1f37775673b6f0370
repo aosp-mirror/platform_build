@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e920aa24_252cb7aa",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 538,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-11-15T05:06:49Z",
+      "side": 1,
+      "message": "Oh, please ignore \"rebuild message\" on the left.\nLooks like this function will output the msg, too.",
+      "range": {
+        "startLine": 538,
+        "startChar": 22,
+        "endLine": 538,
+        "endChar": 38
+      },
+      "revId": "262bf3f0b53b2a8d89fd76f1f37775673b6f0370",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}

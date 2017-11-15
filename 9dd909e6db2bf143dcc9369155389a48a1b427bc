@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "405cebc7_5882a4bc",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 536,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-11-15T05:06:49Z",
+      "side": 0,
+      "message": "Should we still print the message?",
+      "range": {
+        "startLine": 536,
+        "startChar": 3,
+        "endLine": 536,
+        "endChar": 70
+      },
+      "revId": "9dd909e6db2bf143dcc9369155389a48a1b427bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
