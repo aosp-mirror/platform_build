@@ -23,8 +23,7 @@ ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
     # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
     LOCAL_JAVA_LANGUAGE_VERSION := 1.8
   else
-    # DEFAULT_JAVA_LANGUAGE_VERSION is 1.8 unless EXPERIMENTAL_USE_OPENJDK9=true
-    # in which case it is 1.9
+    # DEFAULT_JAVA_LANGUAGE_VERSION is 1.8, unless TARGET_OPENJDK9 in which case it is 1.9
     LOCAL_JAVA_LANGUAGE_VERSION := $(DEFAULT_JAVA_LANGUAGE_VERSION)
   endif
 endif

@@ -555,7 +555,7 @@ endif
 
 $(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
-ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+ifdef TARGET_OPENJDK9
 LOCAL_DX_FLAGS := $(filter-out --multi-dex,$(LOCAL_DX_FLAGS)) --multi-dex
 endif
 
