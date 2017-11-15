@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "db928363_1b616b8c",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 687,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-11-15T23:13:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a88cf4d8_db361cb3",
+      "revId": "1d4d22ba7c902fe30ce2cb57f7b33fa7c8c94feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a45e7e87_f6d1a6bc",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "1d4d22ba7c902fe30ce2cb57f7b33fa7c8c94feb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba8ff1a8_dbdeddcd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2777,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-11-15T23:13:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a45e7e87_f6d1a6bc",
+      "revId": "1d4d22ba7c902fe30ce2cb57f7b33fa7c8c94feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "6efff1a7_b25743b5",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-11-15T23:13:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "15b5299e_9eaa347e",
+      "revId": "1d4d22ba7c902fe30ce2cb57f7b33fa7c8c94feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "342ce168_6b71bf42",
         "filename": "core/java.mk",
         "patchSetId": 1
@@ -67,6 +121,24 @@
       "revId": "1d4d22ba7c902fe30ce2cb57f7b33fa7c8c94feb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f563f458_4fd7090e",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-11-15T23:13:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "342ce168_6b71bf42",
+      "revId": "1d4d22ba7c902fe30ce2cb57f7b33fa7c8c94feb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
