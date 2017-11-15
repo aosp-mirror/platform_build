@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "554f677d_ac458dc3",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-15T20:26:27Z",
+      "side": 1,
+      "message": "The \u0027\u003e\u0027 overwrites, \u0027\u003e\u003e\u0027 would append",
+      "parentUuid": "a61c00f9_19c42d3a",
+      "revId": "403b98aa25b2f81106b0fdca8a38ce6b3b62548b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "83e58a4b_a2681fe7",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2017-11-15T19:23:05Z",
       "side": 1,
       "message": "Use dist-for-goals",
+      "revId": "403b98aa25b2f81106b0fdca8a38ce6b3b62548b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "639c06cf_22e44b20",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-15T20:26:27Z",
+      "side": 1,
+      "message": "I can\u0027t do that unless the first one is a rule too, otherwise your missing output file detection would catch it.",
+      "parentUuid": "83e58a4b_a2681fe7",
       "revId": "403b98aa25b2f81106b0fdca8a38ce6b3b62548b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
