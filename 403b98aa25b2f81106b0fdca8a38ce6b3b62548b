@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a61c00f9_19c42d3a",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-15T19:23:05Z",
+      "side": 1,
+      "message": "This is going to continually grow this file.  Either clear it at the beginning of the build, or collect it in a variable and write it with a rule.",
+      "revId": "403b98aa25b2f81106b0fdca8a38ce6b3b62548b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83e58a4b_a2681fe7",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-15T19:23:05Z",
+      "side": 1,
+      "message": "Use dist-for-goals",
+      "revId": "403b98aa25b2f81106b0fdca8a38ce6b3b62548b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
