@@ -17,7 +17,7 @@
 include build/make/target/board/treble_common_32.mk
 
 # Overwrite the setting in treble_common_32.mk for non-A/B arm GSI
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 805306368 # 768MB
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 943718400 # 900MB
 
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
