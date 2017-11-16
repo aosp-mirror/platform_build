@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a9b86076_484f0b7e",
+        "filename": "core/Makefile",
+        "patchSetId": 16
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-11-16T00:01:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9362bbd_ab2df1d5",
+      "range": {
+        "startLine": 516,
+        "startChar": 19,
+        "endLine": 516,
+        "endChar": 21
+      },
+      "revId": "2b04defb74f91f8e1e8c933f993ba3f8fbbe3ff3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "802e4ce8_d9334198",
         "filename": "core/binary.mk",
         "patchSetId": 16
@@ -36,6 +60,24 @@
       "writtenOn": "2017-11-15T23:44:49Z",
       "side": 1,
       "message": "Should we also log if -Wno-error\u003d% is used?",
+      "revId": "2b04defb74f91f8e1e8c933f993ba3f8fbbe3ff3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23f79cd3_76756262",
+        "filename": "core/binary.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 1675,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-11-16T00:01:57Z",
+      "side": 1,
+      "message": "There are too many -Wno-error\u003d now.\nI would rather turn -Wno-error into warnings first, remove them, and then reduce -Wno-error\u003d.",
+      "parentUuid": "802e4ce8_d9334198",
       "revId": "2b04defb74f91f8e1e8c933f993ba3f8fbbe3ff3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
