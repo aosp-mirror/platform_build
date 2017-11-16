@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6be79f10_1b39b6b8",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-16T18:32:33Z",
+      "side": 0,
+      "message": "Update LOCAL_VENDOR_MODULE / LOCAL_OEM_MODULE / LOCAL_ODM_MODULE based on the LOCAL_MODULE_PATH instead, so that all of the other rules work.",
+      "range": {
+        "startLine": 186,
+        "startChar": 13,
+        "endLine": 186,
+        "endChar": 32
+      },
+      "revId": "8a89848373b20aad2c49d1e963551da7b8eb8752",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
