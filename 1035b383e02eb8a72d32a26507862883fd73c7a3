@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "14827c90_5811193f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-16T18:30:48Z",
+      "side": 1,
+      "message": "So all vndk libraries can be double loaded? Or are there two different types of libraries (NDK build vs VNDK built) in /vendor/lib?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 38
+      },
+      "revId": "1035b383e02eb8a72d32a26507862883fd73c7a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
