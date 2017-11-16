@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8c9654d3_0d432439",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-16T23:23:48Z",
+      "side": 1,
+      "message": "This hasn\u0027t been set here",
+      "range": {
+        "startLine": 118,
+        "startChar": 6,
+        "endLine": 118,
+        "endChar": 26
+      },
+      "revId": "f69f89b01305a496ef4277faced2d21421bab6e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
