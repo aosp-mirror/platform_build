@@ -1330,6 +1330,22 @@ $(call track-src-file-obj,$(asm_sources_asm),$(asm_objects_asm))
 asm_objects += $(asm_objects_asm)
 endif
 
+###################################################################
+## When compiling a CFI enabled target, use the .cfi variant of any
+## static dependencies (where they exist).
+##################################################################
+define use_soong_cfi_static_libraries
+  $(foreach l,$(1),$(if $(filter $(l),$(SOONG_CFI_STATIC_LIBRARIES)),\
+      $(l).cfi,$(l)))
+endef
+
+ifneq ($(filter cfi,$(my_sanitize)),)
+  my_whole_static_libraries := $(call use_soong_cfi_static_libraries,\
+    $(my_whole_static_libraries))
+  my_static_libraries := $(call use_soong_cfi_static_libraries,\
+    $(my_static_libraries))
+endif
+
 ###########################################################
 ## When compiling against the VNDK, use LL-NDK libraries
 ###########################################################
