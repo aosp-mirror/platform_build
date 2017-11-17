@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2937a81a_5f4ab675",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 729,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-17T18:57:33Z",
+      "side": 1,
+      "message": "This should be before the .KATI_READONLY, then you don\u0027t need the eval for the first line",
+      "range": {
+        "startLine": 728,
+        "startChar": 0,
+        "endLine": 729,
+        "endChar": 63
+      },
+      "revId": "7f66e640077f35f3085bbbd7effadaf618e4d917",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
