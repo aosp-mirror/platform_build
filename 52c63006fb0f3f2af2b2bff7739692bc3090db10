@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "168f8e01_dcdd55b0",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-11-17T10:23:27Z",
+      "side": 1,
+      "message": "$(space) instead?",
+      "range": {
+        "startLine": 289,
+        "startChar": 31,
+        "endLine": 289,
+        "endChar": 32
+      },
+      "revId": "52c63006fb0f3f2af2b2bff7739692bc3090db10",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d73a7f9d_ed214155",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-11-17T10:23:27Z",
+      "side": 1,
+      "message": "$(call pretty-error, ...)?",
+      "range": {
+        "startLine": 292,
+        "startChar": 35,
+        "endLine": 292,
+        "endChar": 42
+      },
+      "revId": "52c63006fb0f3f2af2b2bff7739692bc3090db10",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
