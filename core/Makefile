@@ -58,6 +58,19 @@ unique_product_copy_files_pairs :=
 unique_product_copy_files_destinations :=
 
 # -----------------------------------------------------------------
+# Returns the max allowed size for an image suitable for hash verification
+# (e.g., boot.img, recovery.img, etc).
+# The value 69632 derives from MAX_VBMETA_SIZE + MAX_FOOTER_SIZE in $(AVBTOOL).
+# $(1): partition size to flash the image
+define get-hash-image-max-size
+$(if $(1), \
+  $(if $(filter true,$(BOARD_AVB_ENABLE)), \
+    $(eval _hash_meta_size := 69632), \
+    $(eval _hash_meta_size := 0)) \
+  $(1)-$(_hash_meta_size))
+endef
+
+# -----------------------------------------------------------------
 # Define rules to copy headers defined in copy_headers.mk
 # If more than one makefile declared a header, print a warning,
 # then copy the last one defined. This matches the previous make
@@ -671,7 +684,7 @@ else ifeq (true,$(BOARD_AVB_ENABLE)) # TARGET_BOOTIMAGE_USE_EXT2 != true
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH)
 	$(call pretty,"Target boot image: $@")
 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
-	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	$(hide) $(call assert-max-image-size,$@,$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
 	$(hide) $(AVBTOOL) add_hash_footer \
 	  --image $@ \
 	  --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
@@ -682,9 +695,9 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILE
 bootimage-nodeps: $(MKBOOTIMG) $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
 	@echo "make $@: ignoring dependencies"
 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
-	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
 	$(hide) $(AVBTOOL) add_hash_footer \
-	  --image $@ \
+	  --image $(INSTALLED_BOOTIMAGE_TARGET) \
 	  --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
 	  --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
 	  $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
@@ -1273,15 +1286,15 @@ define build-recoveryimage-target
   )
   $(if $(filter true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT)), \
     $(VBOOT_SIGNER) $(FUTILITY) $(1).unsigned $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbpubk $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbprivk $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_SUBKEY).vbprivk $(1).keyblock $(1))
+  $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)), \
+    $(hide) $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE))), \
+    $(hide) $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))))
   $(if $(and $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),$(filter true,$(BOARD_AVB_ENABLE))), \
       $(hide) $(AVBTOOL) add_hash_footer \
         --image $(1) \
         --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
         --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
         $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS))
-  $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)), \
-    $(hide) $(call assert-max-image-size,$(1),$(BOARD_BOOTIMAGE_PARTITION_SIZE)), \
-    $(hide) $(call assert-max-image-size,$(1),$(BOARD_RECOVERYIMAGE_PARTITION_SIZE)))
 endef
 
 ADBD := $(TARGET_OUT_EXECUTABLES)/adbd
