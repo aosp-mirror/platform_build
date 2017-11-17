@@ -236,7 +236,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif info.filename in ("SYSTEM/build.prop",
                            "VENDOR/build.prop",
                            "SYSTEM/etc/prop.default",
-                           "BOOT/RAMDISK/prop.default",
                            "BOOT/RAMDISK/default.prop",  # legacy
                            "ROOT/default.prop",  # legacy
                            "RECOVERY/RAMDISK/prop.default",
@@ -247,8 +246,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       else:
         new_data = RewriteProps(data, misc_info)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
-      if info.filename in ("BOOT/RAMDISK/prop.default",
-                           "BOOT/RAMDISK/default.prop",  # legacy
+      if info.filename in ("BOOT/RAMDISK/default.prop",  # legacy
                            "ROOT/default.prop",  # legacy
                            "RECOVERY/RAMDISK/prop.default",
                            "RECOVERY/RAMDISK/default.prop"):  # legacy
