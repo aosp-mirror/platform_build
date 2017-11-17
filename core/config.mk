@@ -546,7 +546,7 @@ else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   ZIPALIGN := $(prebuilt_sdk_tools_bin)/zipalign
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
 
-R8_COMPAT_PROGUARD_JAR := prebuilts/r8/compatproguard-master.jar
+R8_COMPAT_PROGUARD := $(HOST_OUT_EXECUTABLES)/r8-compat-proguard
 
 ifeq (,$(TARGET_BUILD_APPS))
   # Use RenderScript prebuilts for unbundled builds but not PDK builds
