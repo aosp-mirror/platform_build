@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "68f88768_1d1ae5e4",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-17T00:52:10Z",
+      "side": 0,
+      "message": "R8_COMPAT_PROGUARD :\u003d $(HOST_OUT_EXECUTABLES)/r8-compat-proguard?",
+      "revId": "70964e80240fb44f73c99b8f6b423e9a170aea74",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
