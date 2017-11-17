@@ -213,7 +213,7 @@ else
 ##
 ##
 
-ifneq ($(EXPERIMENTAL_USE_OPENJDK9),)
+ifdef USE_OPENJDK9
 # For OpenJDK 9 we use --patch-module to define the core libraries code.
 # TODO(tobiast): Reorganize this when adding proper support for OpenJDK 9
 # modules. Here we treat all code in core libraries as being in java.base

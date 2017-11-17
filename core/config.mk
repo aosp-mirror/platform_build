@@ -665,14 +665,28 @@ ANDROID_MANIFEST_MERGER := $(JAVA) -classpath prebuilts/devtools/tools/lib/manif
 
 COLUMN:= column
 
-# Path to tools.jar, or empty if EXPERIMENTAL_USE_OPENJDK9 is set
+ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+USE_OPENJDK9 :=
+TARGET_OPENJDK9 :=
+else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),false)
+USE_OPENJDK9 :=
+TARGET_OPENJDK9 :=
+else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),1.8)
+USE_OPENJDK9 := true
+TARGET_OPENJDK9 :=
+else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+USE_OPENJDK9 := true
+TARGET_OPENJDK9 := true
+endif
+
+# Path to tools.jar, or empty if USE_OPENJDK9 is unset
 HOST_JDK_TOOLS_JAR :=
 # TODO: Remove HOST_JDK_TOOLS_JAR and all references to it once OpenJDK 8
-# toolchains are no longer supported (i.e. when what is now
-# EXPERIMENTAL_USE_OPENJDK9 becomes the standard). http://b/38418220
-ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+# toolchains are no longer supported (i.e. when USE_OPENJDK9 is enforced).
+# http://b/38418220
+ifndef USE_OPENJDK9
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA_TOOLCHAIN)/../lib/tools.jar
-endif # ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+endif # ifdef USE_OPENJDK9
 
 # It's called md5 on Mac OS and md5sum on Linux
 ifeq ($(HOST_OS),darwin)
