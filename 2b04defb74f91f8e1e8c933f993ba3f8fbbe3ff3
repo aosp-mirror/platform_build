@@ -81,6 +81,24 @@
       "revId": "2b04defb74f91f8e1e8c933f993ba3f8fbbe3ff3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "309b8e9b_64a5699e",
+        "filename": "core/binary.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 1675,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-17T00:19:17Z",
+      "side": 1,
+      "message": "Logging them into a file on the build servers is a good way to keep track of them, and it doesn\u0027t matter that there are a lot.",
+      "parentUuid": "23f79cd3_76756262",
+      "revId": "2b04defb74f91f8e1e8c933f993ba3f8fbbe3ff3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
