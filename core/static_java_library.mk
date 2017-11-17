@@ -118,6 +118,13 @@ framework_res_package_export_deps := \
 endif
 endif
 
+ifdef LOCAL_USE_AAPT2
+$(intermediates.COMMON)/export_proguard_flags: $(addprefix $(LOCAL_PATH)/,$(LOCAL_EXPORT_PROGUARD_FLAG_FILES))
+	@echo "Export proguard flags: $@"
+	rm -f $@
+	cat $+ >$@
+endif
+
 # add --non-constant-id to prevent inlining constants.
 # AAR needs text symbol file R.txt.
 ifdef LOCAL_USE_AAPT2

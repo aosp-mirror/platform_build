@@ -644,6 +644,12 @@ ifeq ($(filter shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
 common_proguard_flags += -dontshrink # don't shrink tests by default
 endif # shrinktests
 endif # test package
+ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
+  ifdef LOCAL_USE_AAPT2
+    common_proguard_flag_files += $(foreach l,$(LOCAL_STATIC_ANDROID_LIBRARIES),\
+        $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/export_proguard_flags)
+  endif
+endif
 ifneq ($(common_proguard_flag_files),)
 common_proguard_flags += $(addprefix -include , $(common_proguard_flag_files))
 # This is included from $(BUILD_SYSTEM)/proguard.flags
