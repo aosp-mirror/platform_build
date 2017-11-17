@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c7291b30_4f5e346d",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-17T19:10:25Z",
+      "side": 1,
+      "message": "This would need to happen above line 68",
+      "range": {
+        "startLine": 185,
+        "startChar": 0,
+        "endLine": 185,
+        "endChar": 27
+      },
+      "revId": "b2eb0c31141eee7a72ca29a59d8b43572536ca42",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
