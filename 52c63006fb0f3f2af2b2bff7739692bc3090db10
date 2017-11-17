@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "2658b265_b192663e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-17T17:03:26Z",
+      "side": 1,
+      "message": "But we don\u0027t support building against prebuilt vndk versions. This should probably disable building against the vndk (or disable vendor components entirely)",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 26
+      },
+      "revId": "52c63006fb0f3f2af2b2bff7739692bc3090db10",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "168f8e01_dcdd55b0",
         "filename": "core/envsetup.mk",
         "patchSetId": 2
@@ -36,6 +59,30 @@
       "writtenOn": "2017-11-17T10:23:27Z",
       "side": 1,
       "message": "$(call pretty-error, ...)?",
+      "range": {
+        "startLine": 292,
+        "startChar": 35,
+        "endLine": 292,
+        "endChar": 42
+      },
+      "revId": "52c63006fb0f3f2af2b2bff7739692bc3090db10",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1ea63771_f9c8d740",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-17T17:03:26Z",
+      "side": 1,
+      "message": "pretty-error won\u0027t work properly in this context (it\u0027s only for when you\u0027re calling from Android.mk files)",
+      "parentUuid": "d73a7f9d_ed214155",
       "range": {
         "startLine": 292,
         "startChar": 35,
