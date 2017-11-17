@@ -1807,6 +1807,7 @@ warn_patterns = [
      'patterns': [r".*: warning: In file included from .+,"]},
 
     # warnings from clang-tidy
+    group_tidy_warn_pattern('android'),
     group_tidy_warn_pattern('cert'),
     group_tidy_warn_pattern('clang-diagnostic'),
     group_tidy_warn_pattern('cppcoreguidelines'),
