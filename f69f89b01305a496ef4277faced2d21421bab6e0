@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "4a33c977_e9105106",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-17T07:29:46Z",
+      "side": 1,
+      "message": "libclang_rt.asan* libs are now LLNDK: https://android-review.googlesource.com/c/platform/prebuilts/clang/host/linux-x86/+/498510",
+      "revId": "f69f89b01305a496ef4277faced2d21421bab6e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8c9654d3_0d432439",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 10
@@ -22,6 +39,30 @@
       "revId": "f69f89b01305a496ef4277faced2d21421bab6e0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33ffc8ca_ed775bb6",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-17T07:29:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c9654d3_0d432439",
+      "range": {
+        "startLine": 118,
+        "startChar": 6,
+        "endLine": 118,
+        "endChar": 26
+      },
+      "revId": "f69f89b01305a496ef4277faced2d21421bab6e0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
