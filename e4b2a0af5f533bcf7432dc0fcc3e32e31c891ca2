@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3893812b_7cb2c1d8",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 689,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-11-17T09:11:19Z",
+      "side": 1,
+      "message": "Nit: ndef?",
+      "range": {
+        "startLine": 689,
+        "startChar": 8,
+        "endLine": 689,
+        "endChar": 13
+      },
+      "revId": "e4b2a0af5f533bcf7432dc0fcc3e32e31c891ca2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ec8002f0_53fd22e2",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2017-11-17T09:11:19Z",
+      "side": 1,
+      "message": "Comment about pre-existing code:\n\nIsn\u0027t this likely to be temporary? It not going to be clear to a reader why TARGET_OPENJDK9 would also mean \"use multidex\". My understanding of the reason is \"proguard doesn\u0027t work with v53 class files so we switch it off for target 1.9 until it does and assume .dex files will be bigger\". \n\nComment / bug reference should be here otherwise it\u0027ll become the default behavior and nobody will understand why.",
+      "range": {
+        "startLine": 558,
+        "startChar": 0,
+        "endLine": 558,
+        "endChar": 5
+      },
+      "revId": "e4b2a0af5f533bcf7432dc0fcc3e32e31c891ca2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
