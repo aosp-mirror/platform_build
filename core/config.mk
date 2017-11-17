@@ -686,7 +686,7 @@ HOST_JDK_TOOLS_JAR :=
 # http://b/38418220
 ifndef USE_OPENJDK9
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA_TOOLCHAIN)/../lib/tools.jar
-endif # ifdef USE_OPENJDK9
+endif # ifndef USE_OPENJDK9
 
 # It's called md5 on Mac OS and md5sum on Linux
 ifeq ($(HOST_OS),darwin)
