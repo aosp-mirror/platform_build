@@ -22,6 +22,30 @@
       "revId": "1035b383e02eb8a72d32a26507862883fd73c7a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "088f7856_a6370b8b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-11-17T00:54:14Z",
+      "side": 1,
+      "message": "\u003e So all vndk libraries can be double loaded?\n\nVendor libs loaded via System.loadLibrary() are allowed to link NDK, VNDK-SP, and LLNDK libs. That\u0027s enforced at runtime by libnativeloader.so. So, no, VNDK libraries are not double loaded. And yes, it would be nicer if we can enforce that even at build-time, but that\u0027s different issue.\n\nHowever, you reminded me that these vendor libs must be labeled as \u0027same_process_hal_file\u0027 in order to be loaded into app process. (Yeah, I admit that the name is slightly misleading.)\n\nLabeling is doable of course, but I doubt whether the effort is worth. By keeping the JNI libs embedded in APK, we don\u0027t need to label them, at the cost of using more storage space by not sharing libs among apks.\n\nHow do you think?",
+      "parentUuid": "14827c90_5811193f",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 38
+      },
+      "revId": "1035b383e02eb8a72d32a26507862883fd73c7a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
