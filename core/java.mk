@@ -555,6 +555,8 @@ endif
 
 $(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
+# Temporarily enable --multi-dex until proguard supports v53 class files
+# ( http://b/67673860 ) or we move away from proguard altogether.
 ifdef TARGET_OPENJDK9
 LOCAL_DX_FLAGS := $(filter-out --multi-dex,$(LOCAL_DX_FLAGS)) --multi-dex
 endif
