@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ee045c57_6ad4b2a0",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2798,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-17T01:21:11Z",
+      "side": 1,
+      "message": "$(R8_COMPAT_PROGUARD)",
+      "range": {
+        "startLine": 2798,
+        "startChar": 8,
+        "endLine": 2798,
+        "endChar": 50
+      },
+      "revId": "5a12d35aa8a55b66e6cf8bab781b6aa2156881fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
