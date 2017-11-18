@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "98721e67_e8a8c93b",
+        "filename": "tools/abi_diff_processing.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-18T00:37:18Z",
+      "side": 1,
+      "message": "Why not make dist \u0026\u0026 build/make/tools/abi_diff_processing.sh?",
+      "revId": "ee484e19d73561b9df9607d2912df5d752e7cd03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
