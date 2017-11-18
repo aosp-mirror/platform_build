@@ -146,6 +146,10 @@ ifneq ($(all_assets),)
 need_compile_asset := true
 endif
 
+ifdef LOCAL_AAPT2_ONLY
+LOCAL_USE_AAPT2 := true
+endif
+
 my_res_package :=
 ifdef LOCAL_USE_AAPT2
 # In aapt2 the last takes precedence.
