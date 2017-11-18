@@ -16,6 +16,24 @@
       "revId": "ee484e19d73561b9df9607d2912df5d752e7cd03",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4cf26511_34ad7c99",
+        "filename": "tools/abi_diff_processing.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-11-18T01:00:34Z",
+      "side": 1,
+      "message": "I was following the same approach earlier, but Dan correctly pointed out that that would not work when the build fails.",
+      "parentUuid": "98721e67_e8a8c93b",
+      "revId": "ee484e19d73561b9df9607d2912df5d752e7cd03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
