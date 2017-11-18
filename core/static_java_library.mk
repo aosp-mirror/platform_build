@@ -28,6 +28,10 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
 my_res_package :=
 
+ifdef LOCAL_AAPT2_ONLY
+LOCAL_USE_AAPT2 := true
+endif
+
 # Hack to build static Java library with Android resource
 # See bug 5714516
 all_resources :=
