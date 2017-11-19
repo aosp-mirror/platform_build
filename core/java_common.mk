@@ -23,8 +23,7 @@ ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
     # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
     LOCAL_JAVA_LANGUAGE_VERSION := 1.8
   else
-    # DEFAULT_JAVA_LANGUAGE_VERSION is 1.8 unless EXPERIMENTAL_USE_OPENJDK9=true
-    # in which case it is 1.9
+    # DEFAULT_JAVA_LANGUAGE_VERSION is 1.8, unless TARGET_OPENJDK9 in which case it is 1.9
     LOCAL_JAVA_LANGUAGE_VERSION := $(DEFAULT_JAVA_LANGUAGE_VERSION)
   endif
 endif
@@ -415,7 +414,14 @@ my_warn_types :=
 my_allowed_types := java:sdk java:system java:platform
 endif
 
-my_link_deps := $(addprefix JAVA_LIBRARIES:,$(LOCAL_STATIC_JAVA_LIBRARIES))
+ifdef LOCAL_AAPT2_ONLY
+my_link_type += aapt2_only
+endif
+ifdef LOCAL_USE_AAPT2
+my_allowed_types += aapt2_only
+endif
+
+my_link_deps := $(addprefix JAVA_LIBRARIES:,$(LOCAL_STATIC_JAVA_LIBRARIES) $(LOCAL_JAVA_LIBRARIES))
 my_link_deps += $(addprefix APPS:,$(apk_libraries))
 
 my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)

@@ -2381,7 +2381,7 @@ $(hide) rm -f $@ $@.tmp
 @rm -rf $(dir $@)/desugar_dumped_classes
 @mkdir $(dir $@)/desugar_dumped_classes
 $(hide) $(JAVA) \
-    $(if $(EXPERIMENTAL_USE_OPENJDK9),--add-opens java.base/java.lang.invoke=ALL-UNNAMED,) \
+    $(if $(USE_OPENJDK9),--add-opens java.base/java.lang.invoke=ALL-UNNAMED,) \
     -Djdk.internal.lambda.dumpProxyClasses=$(abspath $(dir $@))/desugar_dumped_classes \
     -jar $(DESUGAR) \
     $(addprefix --bootclasspath_entry ,$(PRIVATE_BOOTCLASSPATH)) \
@@ -2783,7 +2783,7 @@ endef
 ###########################################################
 ## Commands to call Proguard
 ###########################################################
-ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+ifdef TARGET_OPENJDK9
 define transform-jar-to-proguard
 @echo Skipping Proguard: $<$(PRIVATE_PROGUARD_INJAR_FILTERS) $@
 $(hide) cp '$<' $@
@@ -2804,7 +2804,7 @@ endif
 ###########################################################
 define transform-jar-to-dex-r8
 @echo R8: $@
-$(hide) $(JAVA) -jar $(R8_COMPAT_PROGUARD_JAR) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
+$(hide) $(R8_COMPAT_PROGUARD) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --force-proguard-compatibility --output $(subst classes.dex,,$@) \
     $(PRIVATE_PROGUARD_FLAGS) \

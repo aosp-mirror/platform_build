@@ -568,7 +568,9 @@ endif
 
 $(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
-ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+# Temporarily enable --multi-dex until proguard supports v53 class files
+# ( http://b/67673860 ) or we move away from proguard altogether.
+ifdef TARGET_OPENJDK9
 LOCAL_DX_FLAGS := $(filter-out --multi-dex,$(LOCAL_DX_FLAGS)) --multi-dex
 endif
 
@@ -765,7 +767,7 @@ my_r8 := true
 $(built_dex_intermediate): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
 $(built_dex_intermediate): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(built_dex_intermediate): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
-$(built_dex_intermediate) : $(full_classes_proguard_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD_JAR)
+$(built_dex_intermediate) : $(full_classes_proguard_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD)
 	$(transform-jar-to-dex-r8)
 endif # USE_R8
 endif # LOCAL_PROGUARD_ENABLED

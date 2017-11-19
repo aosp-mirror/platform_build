@@ -537,17 +537,17 @@ ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
   ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign
 
 else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
-  AIDL := $(prebuilt_sdk_tools_bin)/aidl
+  AIDL := $(prebuilt_build_tools_bin)/aidl
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
   AAPT2 := $(prebuilt_sdk_tools_bin)/aapt2
   DESUGAR := $(prebuilt_build_tools_jars)/desugar.jar
   MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
   SIGNAPK_JAR := $(prebuilt_sdk_tools)/lib/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(prebuilt_sdk_tools)/$(HOST_OS)/lib64
-  ZIPALIGN := $(prebuilt_sdk_tools_bin)/zipalign
+  ZIPALIGN := $(prebuilt_build_tools_bin)/zipalign
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
 
-R8_COMPAT_PROGUARD_JAR := prebuilts/r8/compatproguard-master.jar
+R8_COMPAT_PROGUARD := $(HOST_OUT_EXECUTABLES)/r8-compat-proguard
 
 ifeq (,$(TARGET_BUILD_APPS))
   # Use RenderScript prebuilts for unbundled builds but not PDK builds
@@ -673,14 +673,28 @@ ANDROID_MANIFEST_MERGER := $(JAVA) \
 
 COLUMN:= column
 
-# Path to tools.jar, or empty if EXPERIMENTAL_USE_OPENJDK9 is set
+ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+USE_OPENJDK9 :=
+TARGET_OPENJDK9 :=
+else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),false)
+USE_OPENJDK9 :=
+TARGET_OPENJDK9 :=
+else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),1.8)
+USE_OPENJDK9 := true
+TARGET_OPENJDK9 :=
+else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+USE_OPENJDK9 := true
+TARGET_OPENJDK9 := true
+endif
+
+# Path to tools.jar, or empty if USE_OPENJDK9 is unset
 HOST_JDK_TOOLS_JAR :=
 # TODO: Remove HOST_JDK_TOOLS_JAR and all references to it once OpenJDK 8
-# toolchains are no longer supported (i.e. when what is now
-# EXPERIMENTAL_USE_OPENJDK9 becomes the standard). http://b/38418220
-ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+# toolchains are no longer supported (i.e. when USE_OPENJDK9 is enforced).
+# http://b/38418220
+ifndef USE_OPENJDK9
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA_TOOLCHAIN)/../lib/tools.jar
-endif # ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+endif # ifndef USE_OPENJDK9
 
 # It's called md5 on Mac OS and md5sum on Linux
 ifeq ($(HOST_OS),darwin)
