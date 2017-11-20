@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "efbf2da1_08ba98d3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2017-11-20T02:48:25Z",
+      "side": 1,
+      "message": "Then, in current stage with BOARD_VNDK_VERSION\u003d\u003cversion\u003e, we may build system and vendor images differently. The former will install the vndk-snapshots to system image, and the latter will build the vendor image against \"current\" vndk modules and will set ro.vndk.version to \u003cversion\u003e.",
+      "parentUuid": "2658b265_b192663e",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 26
+      },
+      "revId": "52c63006fb0f3f2af2b2bff7739692bc3090db10",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "168f8e01_dcdd55b0",
         "filename": "core/envsetup.mk",
         "patchSetId": 2
