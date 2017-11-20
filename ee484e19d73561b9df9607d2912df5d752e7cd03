@@ -34,6 +34,29 @@
       "revId": "ee484e19d73561b9df9607d2912df5d752e7cd03",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7c7661d_dfcf03a6",
+        "filename": "tools/abi_diff_processing.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-11-20T02:29:48Z",
+      "side": 1,
+      "message": "why not just \u0027exit 1\u0027? \n\nIf this script is executed like `make blahblah || abi_diff_processing.sh some args` then it is guaranteed to be called only when the build fails.\n\nFurthermore, I don\u0027t think this script is actually needed.\n\nmake || (find ./out -name \"*.abidiff\" -exec cp {} $dist_dir \\; \u0026\u0026 bash -c \u0027exit 1\u0027)\n\nthis will execute the find script only when make fails and then the exit code will always be 1 regardless of whether the find was successful or not.",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 2
+      },
+      "revId": "ee484e19d73561b9df9607d2912df5d752e7cd03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
