@@ -46,6 +46,30 @@
       "revId": "1035b383e02eb8a72d32a26507862883fd73c7a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b7dc713_ab72158f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-20T21:18:40Z",
+      "side": 1,
+      "message": "I think it\u0027s rather trivial to enforce this at build time -- in fact we already prohibit apps built against the SDK to build against vndk/vendor libraries (the bottom of install_jni_libs_internal.mk). We\u0027ll want to revisit those rules with all the new changes.\n\nI was somewhat more worried by the runtime problems, but your reply takes care of my concerns.",
+      "parentUuid": "088f7856_a6370b8b",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 38
+      },
+      "revId": "1035b383e02eb8a72d32a26507862883fd73c7a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
