@@ -237,7 +237,7 @@ ifneq (,$(strip $(LOCAL_PREBUILT_COVERAGE_ARCHIVE)))
     else
       my_coverage_path := $(TARGET_OUT_COVERAGE)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
     endif
-    my_coverage_path := $(my_coverage_path)/$(basename $(my_installed_module_stem)).gcnodir
+    my_coverage_path := $(my_coverage_path)/$(patsubst %.so,%,$(my_installed_module_stem)).gcnodir
     $(eval $(call copy-one-file,$(LOCAL_PREBUILT_COVERAGE_ARCHIVE),$(my_coverage_path)))
     $(LOCAL_BUILT_MODULE): $(my_coverage_path)
   endif
