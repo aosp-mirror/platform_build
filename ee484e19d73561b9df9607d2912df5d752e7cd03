@@ -57,6 +57,30 @@
       "revId": "ee484e19d73561b9df9607d2912df5d752e7cd03",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c84358d_fff4f5fb",
+        "filename": "tools/abi_diff_processing.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2017-11-20T16:12:13Z",
+      "side": 1,
+      "message": "The problem with this is that we assume that make\u0027s failure code / find\u0027s failure code will always be 1. What if something wants to use make / find\u0027s failure code on the build server? We could definitely do without this script, its just that the command for build_cmd becomes too long, which might not be desirable.",
+      "parentUuid": "e7c7661d_dfcf03a6",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 2
+      },
+      "revId": "ee484e19d73561b9df9607d2912df5d752e7cd03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
