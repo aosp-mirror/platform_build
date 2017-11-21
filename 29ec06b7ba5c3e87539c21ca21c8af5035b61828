@@ -22,6 +22,30 @@
       "revId": "29ec06b7ba5c3e87539c21ca21c8af5035b61828",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9166525b_b18e5945",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1170,
+      "author": {
+        "id": 1135107
+      },
+      "writtenOn": "2017-11-21T22:13:46Z",
+      "side": 0,
+      "message": "One was added by dougz@, the other one dates back to initial commit \"auto import from //depot/cupcake/@135843\".",
+      "parentUuid": "45062f39_41c42b05",
+      "range": {
+        "startLine": 1170,
+        "startChar": 0,
+        "endLine": 1170,
+        "endChar": 34
+      },
+      "revId": "29ec06b7ba5c3e87539c21ca21c8af5035b61828",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
