@@ -65,6 +65,16 @@ else
   my_host_cross :=
 endif
 
+_path := $(LOCAL_MODULE_PATH) $(LOCAL_MODULE_PATH_32) $(LOCAL_MODULE_PATH_64)
+ifneq ($(filter $(TARGET_OUT_VENDOR)%,$(_path)),)
+LOCAL_VENDOR_MODULE := true
+else ifneq ($(filter $(TARGET_OUT_OEM)/%,$(_path)),)
+LOCAL_OEM_MODULE := true
+else ifneq ($(filter $(TARGET_OUT_ODM)/%,$(_path)),)
+LOCAL_ODM_MODULE := true
+endif
+_path :=
+
 ifndef LOCAL_PROPRIETARY_MODULE
   LOCAL_PROPRIETARY_MODULE := $(LOCAL_VENDOR_MODULE)
 endif
