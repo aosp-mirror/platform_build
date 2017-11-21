@@ -833,7 +833,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
                                      allow_shared_blocks)
   system_tgt.ResetFileMap()
   system_diff = common.BlockDifference("system", system_tgt, src=None)
-  system_diff.WriteScript(script, output_zip)
+  system_diff.WriteScript(script, output_zip,
+                          write_verify_script=OPTIONS.verify)
 
   boot_img = common.GetBootableImage(
       "boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
@@ -845,7 +846,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
                                        allow_shared_blocks)
     vendor_tgt.ResetFileMap()
     vendor_diff = common.BlockDifference("vendor", vendor_tgt)
-    vendor_diff.WriteScript(script, output_zip)
+    vendor_diff.WriteScript(script, output_zip,
+                            write_verify_script=OPTIONS.verify)
 
   AddCompatibilityArchiveIfTrebleEnabled(input_zip, output_zip, target_info)
 
@@ -1565,10 +1567,12 @@ else
   device_specific.IncrementalOTA_InstallBegin()
 
   system_diff.WriteScript(script, output_zip,
-                          progress=0.8 if vendor_diff else 0.9)
+                          progress=0.8 if vendor_diff else 0.9,
+                          write_verify_script=OPTIONS.verify)
 
   if vendor_diff:
-    vendor_diff.WriteScript(script, output_zip, progress=0.1)
+    vendor_diff.WriteScript(script, output_zip, progress=0.1,
+                            write_verify_script=OPTIONS.verify)
 
   if OPTIONS.two_step:
     common.ZipWriteStr(output_zip, "boot.img", target_boot.data)
