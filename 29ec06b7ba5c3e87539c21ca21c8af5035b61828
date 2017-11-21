@@ -46,6 +46,30 @@
       "revId": "29ec06b7ba5c3e87539c21ca21c8af5035b61828",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "706d3bd0_64990a44",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1170,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-11-21T22:37:27Z",
+      "side": 0,
+      "message": "Should be good to just remove these two info lines. The first one has become less useful since we have generic recovery resource files (in bootable/recovery/res*). The logic behind the second one could be improved (since technically we can still generate OTAs even without recovery/recovery_fstab), but removing the info line is fine.",
+      "parentUuid": "9166525b_b18e5945",
+      "range": {
+        "startLine": 1170,
+        "startChar": 0,
+        "endLine": 1170,
+        "endChar": 34
+      },
+      "revId": "29ec06b7ba5c3e87539c21ca21c8af5035b61828",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
