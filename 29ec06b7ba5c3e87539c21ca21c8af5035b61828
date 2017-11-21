@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45062f39_41c42b05",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1170,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-21T21:43:04Z",
+      "side": 0,
+      "message": "I suspect just removing these isn\u0027t the right thing to do here, but I don\u0027t know enough of the background.",
+      "range": {
+        "startLine": 1170,
+        "startChar": 0,
+        "endLine": 1170,
+        "endChar": 34
+      },
+      "revId": "29ec06b7ba5c3e87539c21ca21c8af5035b61828",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
