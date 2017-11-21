@@ -481,6 +481,17 @@ def ReplaceUpdatedFiles(zip_filename, files_list):
 
 
 def AddImagesToTargetFiles(filename):
+  """Creates and adds images (boot/recovery/system/...) to a target_files.zip.
+
+  It works with either a zip file (zip mode), or a directory that contains the
+  files to be packed into a target_files.zip (dir mode). The latter is used when
+  being called from build/make/core/Makefile.
+
+  The images will be created under IMAGES/ in the input target_files.zip.
+
+  Args:
+      filename: the target_files.zip, or the zip root directory.
+  """
   if os.path.isdir(filename):
     OPTIONS.input_tmp = os.path.abspath(filename)
     input_zip = None
@@ -512,10 +523,13 @@ def AddImagesToTargetFiles(filename):
   else:
     OPTIONS.info_dict = common.LoadInfoDict(filename, filename)
     output_zip = None
-    images_dir = os.path.join(OPTIONS.input_tmp, "IMAGES")
-    if not os.path.isdir(images_dir):
-      os.makedirs(images_dir)
-    images_dir = None
+
+  # Always make input_tmp/IMAGES available, since we may stage boot / recovery
+  # images there even under zip mode. The directory will be cleaned up as part
+  # of OPTIONS.input_tmp.
+  images_dir = os.path.join(OPTIONS.input_tmp, "IMAGES")
+  if not os.path.isdir(images_dir):
+    os.makedirs(images_dir)
 
   has_recovery = (OPTIONS.info_dict.get("no_recovery") != "true")
 
