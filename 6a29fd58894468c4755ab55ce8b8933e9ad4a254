@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9712b85c_358260b0",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1337,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-11-21T22:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "030778d7_bb519344",
+      "range": {
+        "startLine": 1337,
+        "startChar": 7,
+        "endLine": 1337,
+        "endChar": 26
+      },
+      "revId": "6a29fd58894468c4755ab55ce8b8933e9ad4a254",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "46c71e77_06aeb79e",
         "filename": "core/binary.mk",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2017-11-21T21:03:28Z",
       "side": 1,
       "message": "Put this inside the helper function",
+      "range": {
+        "startLine": 1343,
+        "startChar": 31,
+        "endLine": 1343,
+        "endChar": 43
+      },
+      "revId": "6a29fd58894468c4755ab55ce8b8933e9ad4a254",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "932dbcd2_f3b87ff7",
+        "filename": "core/binary.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1343,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2017-11-21T22:09:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "46c71e77_06aeb79e",
       "range": {
         "startLine": 1343,
         "startChar": 31,
