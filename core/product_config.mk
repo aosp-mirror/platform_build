@@ -480,3 +480,7 @@ PRODUCT_CFI_EXCLUDE_PATHS := \
 # Whether any paths should have CFI enabled for components
 PRODUCT_CFI_INCLUDE_PATHS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CFI_INCLUDE_PATHS))
+
+# which Soong namespaces to export to Make
+PRODUCT_SOONG_NAMESPACES :=
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SOONG_NAMESPACES))
