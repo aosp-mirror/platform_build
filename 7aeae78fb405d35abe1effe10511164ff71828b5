@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6e2295f8_867702ee",
+        "filename": "core/jacoco.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-11-21T23:25:42Z",
+      "side": 1,
+      "message": "Is this supposed to eventually result in \n\nrm -rf \"org/junit/*\"\n\nI think we want to remove the quotes to get Bash to evaluate the asterisks",
+      "revId": "7aeae78fb405d35abe1effe10511164ff71828b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
