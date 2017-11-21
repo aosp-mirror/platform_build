@@ -22,7 +22,10 @@ from __future__ import print_function
 
 import argparse
 import common
+import os
+import os.path
 import re
+import site
 import subprocess
 import sys
 import tempfile
@@ -32,7 +35,12 @@ from hashlib import sha1
 from hashlib import sha256
 
 # 'update_payload' package is under 'system/update_engine/scripts/', which
-# should to be included in PYTHONPATH.
+# should be included in PYTHONPATH. Try to set it up automatically if
+# if ANDROID_BUILD_TOP is available.
+top = os.getenv('ANDROID_BUILD_TOP')
+if top:
+  site.addsitedir(os.path.join(top, 'system', 'update_engine', 'scripts'))
+
 from update_payload.payload import Payload
 from update_payload.update_metadata_pb2 import Signatures
 
