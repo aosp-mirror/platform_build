@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c27f7da0_f086dc69",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1210,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-22T07:39:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d52f98ff_47640102",
+      "range": {
+        "startLine": 1210,
+        "startChar": 8,
+        "endLine": 1210,
+        "endChar": 32
+      },
+      "revId": "19b44714503e43217779d2c63e6256ff6e0393a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0e0629ef_86e3c209",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2017-11-22T07:15:44Z",
       "side": 1,
       "message": "\u0027continue\u0027? We shouldn\u0027t lose a worker thread.",
+      "range": {
+        "startLine": 1417,
+        "startChar": 10,
+        "endLine": 1417,
+        "endChar": 16
+      },
+      "revId": "19b44714503e43217779d2c63e6256ff6e0393a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1cd4c678_b48745fa",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1417,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2017-11-22T07:39:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0e0629ef_86e3c209",
       "range": {
         "startLine": 1417,
         "startChar": 10,
