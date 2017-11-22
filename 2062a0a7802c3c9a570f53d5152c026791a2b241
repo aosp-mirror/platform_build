@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43cd46b3_3d0578c4",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-11-22T00:10:26Z",
+      "side": 1,
+      "message": "I\u0027m not sure if this change is important enough to warrant updating BUILD_ENV_SEQUENCE_NUMBER.\n\nMy inclination would be to not update BUILD_ENV_SEQUENCE_NUMBER for a backwards-compatible change like this but I\u0027m not sure.\n\nAlso of note is that if a user pulls this patch and immediately does `mmm hardware/interfaces/broadcastradio/1.1/vts`, then mmm itself fails before the BUILD_ENV_SEQUENCE_NUMBER even gets checked in the first place; the user has to invoke a different build first to trigger it.",
+      "revId": "2062a0a7802c3c9a570f53d5152c026791a2b241",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
