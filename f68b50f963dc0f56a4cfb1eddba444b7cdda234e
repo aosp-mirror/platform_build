@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1401937a_4982ac30",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1224,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-11-22T17:14:44Z",
+      "side": 1,
+      "message": "I still find it a bit hard to tell the logic between this function (FindZipAndSplitTransfers) and the other (AddSplitTransfers). Also the comment here mainly covers the code in AddSplitTransfers().\n\nHow about renaming AddSplitTransfers() to something like AddSplitTransfersWithFixedSizeChunks(), moving the comment over, and renaming this function to AddSplitTransfers()? The comment should be updated to explain the logic: AddSplitTransfers() would try to split large files. For large APKs, it would try to split them with imgdiff for optimal patch size. For all other files, it splits them into fixed size chunks with potential patch size penalty. In case of imgdiff failures, it would also fall back to split the failed APKs into fixed size chunks.",
+      "range": {
+        "startLine": 1220,
+        "startChar": 6,
+        "endLine": 1224,
+        "endChar": 67
+      },
+      "revId": "f68b50f963dc0f56a4cfb1eddba444b7cdda234e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
