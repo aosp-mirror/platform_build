@@ -3281,6 +3281,30 @@ endef
 # run test
 $(strip $(call test-validate-paths-are-subdirs))
 
+###########################################################
+## Validate jacoco class filters and convert them to
+## file arguments
+## Jacoco class filters are comma-separated lists of class
+## files (android.app.Application), and may have '*' as the
+## last character to match all classes in a package
+## including subpackages.
+define jacoco-class-filter-to-file-args
+$(strip $(call jacoco-validate-file-args,\
+  $(subst $(comma),$(space),\
+    $(subst .,/,\
+      $(strip $(1))))))
+endef
+
+define jacoco-validate-file-args
+$(strip $(1)\
+  $(call validate-paths-are-subdirs,$(1))
+  $(foreach arg,$(1),\
+    $(if $(findstring ?,$(arg)),$(call pretty-error,\
+      '?' filters are not supported in LOCAL_JACK_COVERAGE_INCLUDE_FILTER or LOCAL_JACK_COVERAGE_EXCLUDE_FILTER))\
+    $(if $(findstring *,$(patsubst %*,%,$(arg))),$(call pretty-error,\
+      '*' is only supported at the end of a filter in LOCAL_JACK_COVERAGE_INCLUDE_FILTER or LOCAL_JACK_COVERAGE_EXCLUDE_FILTER))\
+  ))
+endef
 
 ###########################################################
 ## Other includes
