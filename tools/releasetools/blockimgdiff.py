@@ -1178,42 +1178,10 @@ class BlockImageDiff(object):
   def FindTransfers(self):
     """Parse the file_map to generate all the transfers."""
 
-    def AddSplitTransfers(tgt_name, src_name, tgt_ranges, src_ranges,
-                          style, by_id):
-      """Add one or multiple Transfer()s by splitting large files.
-
-      For BBOTA v3, we need to stash source blocks for resumable feature.
-      However, with the growth of file size and the shrink of the cache
-      partition source blocks are too large to be stashed. If a file occupies
-      too many blocks, we split it into smaller pieces by getting multiple
-      Transfer()s.
-
-      The downside is that after splitting, we may increase the package size
-      since the split pieces don't align well. According to our experiments,
-      1/8 of the cache size as the per-piece limit appears to be optimal.
-      Compared to the fixed 1024-block limit, it reduces the overall package
-      size by 30% for volantis, and 20% for angler and bullhead."""
-
-      assert style == "diff"
-      # Possibly split large files into smaller chunks.
+    def AddSplitTransfers(tgt_name, src_name, tgt_ranges, src_ranges, style,
+                          by_id):
+      """Add one or multiple Transfer()s by splitting large files."""
       pieces = 0
-
-      # Change nothing for small files.
-      if (tgt_ranges.size() <= max_blocks_per_transfer and
-          src_ranges.size() <= max_blocks_per_transfer):
-        Transfer(tgt_name, src_name, tgt_ranges, src_ranges,
-                 self.tgt.RangeSha1(tgt_ranges), self.src.RangeSha1(src_ranges),
-                 style, by_id)
-        return
-
-      if tgt_name.split(".")[-1].lower() in ("apk", "jar", "zip"):
-        split_enable = (not self.disable_imgdiff and src_ranges.monotonic and
-                        tgt_ranges.monotonic)
-        if split_enable and (self.tgt.RangeSha1(tgt_ranges) !=
-                             self.src.RangeSha1(src_ranges)):
-          large_apks.append((tgt_name, src_name, tgt_ranges, src_ranges))
-          return
-
       while (tgt_ranges.size() > max_blocks_per_transfer and
              src_ranges.size() > max_blocks_per_transfer):
         tgt_split_name = "%s-%d" % (tgt_name, pieces)
@@ -1238,6 +1206,43 @@ class BlockImageDiff(object):
         Transfer(tgt_split_name, src_split_name, tgt_ranges, src_ranges,
                  self.tgt.RangeSha1(tgt_ranges), self.src.RangeSha1(src_ranges),
                  style, by_id)
+
+    def FindZipsAndAddSplitTransfers(tgt_name, src_name, tgt_ranges,
+                                     src_ranges, style, by_id):
+      """Find all the zip archives and add split transfers for the other files.
+
+      For BBOTA v3, we need to stash source blocks for resumable feature.
+      However, with the growth of file size and the shrink of the cache
+      partition source blocks are too large to be stashed. If a file occupies
+      too many blocks, we split it into smaller pieces by getting multiple
+      Transfer()s.
+
+      The downside is that after splitting, we may increase the package size
+      since the split pieces don't align well. According to our experiments,
+      1/8 of the cache size as the per-piece limit appears to be optimal.
+      Compared to the fixed 1024-block limit, it reduces the overall package
+      size by 30% for volantis, and 20% for angler and bullhead."""
+
+      assert style == "diff"
+
+      # Change nothing for small files.
+      if (tgt_ranges.size() <= max_blocks_per_transfer and
+          src_ranges.size() <= max_blocks_per_transfer):
+        Transfer(tgt_name, src_name, tgt_ranges, src_ranges,
+                 self.tgt.RangeSha1(tgt_ranges), self.src.RangeSha1(src_ranges),
+                 style, by_id)
+        return
+
+      if tgt_name.split(".")[-1].lower() in ("apk", "jar", "zip"):
+        split_enable = (not self.disable_imgdiff and src_ranges.monotonic and
+                        tgt_ranges.monotonic)
+        if split_enable and (self.tgt.RangeSha1(tgt_ranges) !=
+                             self.src.RangeSha1(src_ranges)):
+          large_apks.append((tgt_name, src_name, tgt_ranges, src_ranges))
+          return
+
+      AddSplitTransfers(tgt_name, src_name, tgt_ranges, src_ranges,
+                        style, by_id)
 
     def AddTransfer(tgt_name, src_name, tgt_ranges, src_ranges, style, by_id,
                     split=False):
@@ -1287,7 +1292,7 @@ class BlockImageDiff(object):
           assert tgt_changed + tgt_skipped.size() == tgt_size
           print('%10d %10d (%6.2f%%) %s' % (tgt_skipped.size(), tgt_size,
                 tgt_skipped.size() * 100.0 / tgt_size, tgt_name))
-          AddSplitTransfers(
+          FindZipsAndAddSplitTransfers(
               "%s-skipped" % (tgt_name,),
               "%s-skipped" % (src_name,),
               tgt_skipped, src_skipped, style, by_id)
@@ -1304,7 +1309,7 @@ class BlockImageDiff(object):
             return
 
       # Add the transfer(s).
-      AddSplitTransfers(
+      FindZipsAndAddSplitTransfers(
           tgt_name, src_name, tgt_ranges, src_ranges, style, by_id)
 
     def ParseAndValidateSplitInfo(patch_size, tgt_ranges, src_ranges,
@@ -1403,10 +1408,13 @@ class BlockImageDiff(object):
                src_file, tgt_file, patch_file]
         p = common.Run(cmd, stdout=subprocess.PIPE)
         p.communicate()
-        # TODO(xunchang) fall back to the normal split if imgdiff fails.
         if p.returncode != 0:
-          raise ValueError("Failed to create patch between {} and {}".format(
-              src_name, tgt_name))
+          print("Failed to create patch between {} and {},"
+                " falling back to bsdiff".format(src_name, tgt_name))
+          with transfer_lock:
+            AddSplitTransfers(tgt_name, src_name, tgt_ranges, src_ranges,
+                              "diff", self.transfers)
+          continue
 
         with open(patch_info_file) as patch_info:
           lines = patch_info.readlines()
