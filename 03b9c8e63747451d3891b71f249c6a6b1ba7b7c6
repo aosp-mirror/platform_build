@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85bbed13_99941505",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 700,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-11-22T10:00:57Z",
+      "side": 1,
+      "message": "Also fix a build error here.",
+      "range": {
+        "startLine": 700,
+        "startChar": 13,
+        "endLine": 700,
+        "endChar": 39
+      },
+      "revId": "03b9c8e63747451d3891b71f249c6a6b1ba7b7c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
