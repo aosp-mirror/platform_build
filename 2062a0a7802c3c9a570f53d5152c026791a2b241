@@ -16,6 +16,24 @@
       "revId": "2062a0a7802c3c9a570f53d5152c026791a2b241",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5dfb82f_c112ba56",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-22T00:30:02Z",
+      "side": 1,
+      "message": "This doesn\u0027t seem important enough to change this number. There\u0027s no changing interactions between this code and the rest of the system that needs to be in sync.\n\n(As a related note -- if we want to make these somewhat simpler to understand/change/test/use, I\u0027d be in support of moving these functions into soong_ui as a --mm-mode or similar. We\u0027d likely want to update this version in that case)",
+      "parentUuid": "43cd46b3_3d0578c4",
+      "revId": "2062a0a7802c3c9a570f53d5152c026791a2b241",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
