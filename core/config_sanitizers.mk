@@ -132,6 +132,12 @@ ifneq ($(filter mips mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
 
+# Disable CFI for host targets
+ifdef LOCAL_IS_HOST_MODULE
+  my_sanitize := $(filter-out cfi,$(my_sanitize))
+  my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
+endif
+
 # Support for local sanitize blacklist paths.
 ifneq ($(my_sanitize)$(my_global_sanitize),)
   ifneq ($(LOCAL_SANITIZE_BLACKLIST),)
