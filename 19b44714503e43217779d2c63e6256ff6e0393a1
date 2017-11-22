@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d52f98ff_47640102",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1210,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-11-22T07:15:44Z",
+      "side": 1,
+      "message": "Use more meaningful names. It\u0027s hard to tell the relation and difference between a function and its wrapper.\n\n(Similarly please don\u0027t simply rename the other to -Internal, which looks equally bad...)",
+      "range": {
+        "startLine": 1210,
+        "startChar": 8,
+        "endLine": 1210,
+        "endChar": 32
+      },
+      "revId": "19b44714503e43217779d2c63e6256ff6e0393a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e0629ef_86e3c209",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 1417,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-11-22T07:15:44Z",
+      "side": 1,
+      "message": "\u0027continue\u0027? We shouldn\u0027t lose a worker thread.",
+      "range": {
+        "startLine": 1417,
+        "startChar": 10,
+        "endLine": 1417,
+        "endChar": 16
+      },
+      "revId": "19b44714503e43217779d2c63e6256ff6e0393a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
