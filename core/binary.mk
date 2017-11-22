@@ -1330,6 +1330,22 @@ $(call track-src-file-obj,$(asm_sources_asm),$(asm_objects_asm))
 asm_objects += $(asm_objects_asm)
 endif
 
+###################################################################
+## When compiling a CFI enabled target, use the .cfi variant of any
+## static dependencies (where they exist).
+##################################################################
+define use_soong_cfi_static_libraries
+  $(foreach l,$(1),$(if $(filter $(l),$(SOONG_CFI_STATIC_LIBRARIES)),\
+      $(l).cfi,$(l)))
+endef
+
+ifneq ($(filter cfi,$(my_sanitize)),)
+  my_whole_static_libraries := $(call use_soong_cfi_static_libraries,\
+    $(my_whole_static_libraries))
+  my_static_libraries := $(call use_soong_cfi_static_libraries,\
+    $(my_static_libraries))
+endif
+
 ###########################################################
 ## When compiling against the VNDK, use LL-NDK libraries
 ###########################################################
@@ -1664,13 +1680,31 @@ ifeq ($(my_strict),true)
     my_cflags += -DANDROID_STRICT
 endif
 
-# Add -Werror if LOCAL_PATH is in the WARNING_DISALLOWED project list,
-# or not in the WARNING_ALLOWED project list.
-ifneq (,$(strip $(call find_warning_disallowed_projects,$(LOCAL_PATH))))
-  my_cflags_no_override += -Werror
-else
-  ifeq (,$(strip $(call find_warning_allowed_projects,$(LOCAL_PATH))))
-    my_cflags_no_override += -Werror
+# Check if -Werror or -Wno-error is used in C compiler flags.
+# Modules defined in $(SOONG_ANDROID_MK) are checked in soong's cc.go.
+ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+  # Header libraries do not need cflags.
+  ifneq (HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS))
+    # Prebuilt modules do not need cflags.
+    ifeq (,$(LOCAL_PREBUILT_MODULE_FILE))
+      my_all_cflags := $(my_cflags) $(my_cppflags) $(my_cflags_no_override)
+      # Issue warning if -Wno-error is used.
+      ifneq (,$(filter -Wno-error,$(my_all_cflags)))
+        $(eval MODULES_USING_WNO_ERROR := $(MODULES_USING_WNO_ERROR) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
+      else
+        # Issue warning if -Werror is not used. Add it.
+        ifeq (,$(filter -Werror,$(my_all_cflags)))
+          # Add -Wall -Werror unless the project is in the WARNING_ALLOWED project list.
+          ifeq (,$(strip $(call find_warning_allowed_projects,$(LOCAL_PATH))))
+            $(eval MODULES_ADDED_WERROR := $(MODULES_ADDED_WERROR) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
+            my_cflags := -Wall -Werror $(my_cflags)
+          else
+            $(eval MODULES_ADDED_WALL := $(MODULES_ADDED_WALL) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
+            my_cflags := -Wall $(my_cflags)
+          endif
+        endif
+      endif
+    endif
   endif
 endif
 

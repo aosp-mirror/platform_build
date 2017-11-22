@@ -518,6 +518,20 @@ $(SOONG_TO_CONVERT): $(SOONG_CONV_DATA) $(SOONG_TO_CONVERT_SCRIPT)
 $(call dist-for-goals,droidcore,$(SOONG_TO_CONVERT))
 
 # -----------------------------------------------------------------
+# Modules use -Wno-error, or added default -Wall -Werror
+WALL_WERROR := $(PRODUCT_OUT)/wall_werror.txt
+$(WALL_WERROR):
+	@rm -f $@
+	echo "# Modules using -Wno-error" >> $@
+	for m in $(sort $(SOONG_MODULES_USING_WNO_ERROR) $(MODULES_USING_WNO_ERROR)); do echo $$m >> $@; done
+	echo "# Modules added default -Wall -Werror" >> $@
+	for m in $(sort $(SOONG_MODULES_ADDED_WERROR) $(MODULES_ADDED_WERROR)); do echo $$m >> $@; done
+	echo "# Modules added default -Wall" >> $@
+	for m in $(sort $(SOONG_MODULES_ADDED_WALL) $(MODULES_ADDED_WALL)); do echo $$m >> $@; done
+
+$(call dist-for-goals,droidcore,$(WALL_WERROR))
+
+# -----------------------------------------------------------------
 # The dev key is used to sign this package, and as the key required
 # for future OTA packages installed by this system.  Actual product
 # deliverables will be re-signed by hand.  We expect this file to
@@ -1183,14 +1197,6 @@ ifeq (,$(filter true, $(BOARD_USES_FULL_RECOVERY_IMAGE) $(BOARD_USES_RECOVERY_AS
 RECOVERY_RESOURCE_ZIP := $(TARGET_OUT)/etc/recovery-resource.dat
 else
 RECOVERY_RESOURCE_ZIP :=
-endif
-
-ifeq ($(TARGET_PRIVATE_RES_DIRS),)
-  $(info No private recovery resources for TARGET_DEVICE $(TARGET_DEVICE))
-endif
-
-ifeq ($(recovery_fstab),)
-  $(info No recovery.fstab for TARGET_DEVICE $(TARGET_DEVICE))
 endif
 
 INTERNAL_RECOVERYIMAGE_ARGS := \
@@ -2196,7 +2202,7 @@ OTATOOLS_DEPS := \
   $(shell find system/update_engine/scripts -name \*.pyc -prune -o -type f -print | sort) \
   $(shell find build/target/product/security -type f -name \*.x509.pem -o -name \*.pk8 -o \
       -name verity_key | sort) \
-  $(shell find device vendor -type f -name \*.pk8 -o -name verifiedboot\* -o \
+  $(shell find device $(wildcard vendor) -type f -name \*.pk8 -o -name verifiedboot\* -o \
       -name \*.x509.pem -o -name oem\*.prop | sort)
 
 OTATOOLS_RELEASETOOLS := \
