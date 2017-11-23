@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8e767312_17398370",
+        "filename": "core/test_config_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-11-23T00:15:26Z",
+      "side": 1,
+      "message": "Do we think that every time we build any AndroidTest.xml we\u0027ll want to build every AndroidTest.xml?\n\nIf so, then you could make a giant list every AndroidTest.xmk file (by adding the name into a list here) and have the final .tar file depend on each file in the list, which would remove the need to do some sort of a custom find later, and would also make it easy for the tarring process to be parallelized with the rest of the build.",
+      "revId": "26efd3a8d18bd5d12b82f361da5042b7c1a059a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
