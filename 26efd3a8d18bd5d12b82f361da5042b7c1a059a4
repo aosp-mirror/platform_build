@@ -70,6 +70,24 @@
       "revId": "26efd3a8d18bd5d12b82f361da5042b7c1a059a4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49b2b200_cc16fb07",
+        "filename": "core/test_config_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-11-23T00:49:11Z",
+      "side": 1,
+      "message": "Yeah, my thought had been that it would be a list of whichever files otherwise would\u0027ve been the result of the `find`, so yeah, out/target/.../testcases or something like that.\n\nIf it\u0027s inconvenient to always generate all the AndroidTest.xml files during the same build then it\u0027s probably fine to think of something different. Although if a user were to ask to build CTS and VTS during the same build, would they want one .tar file containing every AndroidTest.xml that is a part of either test suite? Or would they want one .tar for CTS and another for VTS? Or something else? (If they want one .tar for CTS and one .tar for VTS then maybe we want to always build all CTS AndroidTest.xml files at once, and always build all VTS AndroidTest.xml files at once, etc)",
+      "parentUuid": "d948f0f3_2e917553",
+      "revId": "26efd3a8d18bd5d12b82f361da5042b7c1a059a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
