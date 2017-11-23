@@ -52,6 +52,24 @@
       "revId": "26efd3a8d18bd5d12b82f361da5042b7c1a059a4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d948f0f3_2e917553",
+        "filename": "core/test_config_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-11-23T00:23:32Z",
+      "side": 1,
+      "message": "That seems to be a promising approach. Will the list containing xml files in out/target/.../testcases/ or the AndroidTest.xml in source code?\n\nThe latter might not be sufficient as some generated test xml files is based on existing AndroidTest.xml. If the source AndroidTest.xml is not changed, but the `test_config_options` is changed, such dependency won\u0027t trigger rebuilding the tar.\n\nSo I guess the giant list should be for the test xml files in build output? And for this to work, I will need to add any test xml file created in testcases to that list?\n\n\nI\u0027m still newbie in build system, so wording here could be confusing, please bear with me.",
+      "parentUuid": "8e767312_17398370",
+      "revId": "26efd3a8d18bd5d12b82f361da5042b7c1a059a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
