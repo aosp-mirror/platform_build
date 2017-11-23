@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6eb1c96e_47453abc",
+        "filename": "Changes.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-11-23T01:10:42Z",
+      "side": 1,
+      "message": "(if we don\u0027t end up clearing out old sections of this, we might want to put some version information in here, like \"New In P\" or something like that)",
+      "revId": "02efef1d06612faf5a22a044eb5698bfd034ab7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d6c57ba_7a925042",
+        "filename": "README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-11-23T01:10:42Z",
+      "side": 1,
+      "message": "Maybe emphasize that the fact that they look similar is a coincidence? Like \"Our Android.mk files coincidentally look similar to, but are actually different from\"?",
+      "revId": "02efef1d06612faf5a22a044eb5698bfd034ab7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a17b656_57328bae",
+        "filename": "README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-11-23T01:10:42Z",
+      "side": 1,
+      "message": "I think this second space is accidental",
+      "range": {
+        "startLine": 12,
+        "startChar": 39,
+        "endLine": 12,
+        "endChar": 40
+      },
+      "revId": "02efef1d06612faf5a22a044eb5698bfd034ab7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "14ce3230_a6434ba2",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-11-23T01:10:42Z",
+      "side": 1,
+      "message": "Is Changes.md going to have obsolete entries removed eventually?\n\nI\u0027m thinking it\u0027d be nice to have the error message also mention the filepath of changes.md to make it extra obvious that the canonical version is in source control and that the link is intended as a pretty rendering of it",
+      "revId": "02efef1d06612faf5a22a044eb5698bfd034ab7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d5d9f2f_c9ac2f1c",
+        "filename": "navbar.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-11-23T01:10:42Z",
+      "side": 1,
+      "message": "I\u0027m trying to think of a wording that would disambiguate from \"Contributing\" and from \"Differences between Soong and Kati\".\n\nI sort of like \"Changelog\" although I\u0027m not sure if that implies more granularity than you\u0027re planning on adding. \"Recent changes\" or \"High-level change history\" also seem nice to me. If we\u0027re ok with updating this every version, then \"New in P\" is probably my favorite.",
+      "range": {
+        "startLine": 3,
+        "startChar": 3,
+        "endLine": 3,
+        "endChar": 10
+      },
+      "revId": "02efef1d06612faf5a22a044eb5698bfd034ab7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
