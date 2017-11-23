@@ -16,6 +16,24 @@
       "revId": "26efd3a8d18bd5d12b82f361da5042b7c1a059a4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d7fe6ea_e876b680",
+        "filename": "core/test_config_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-11-23T00:18:21Z",
+      "side": 1,
+      "message": "Not true.\n\nAndroidTest.xml can belong to CTS, VTS, STS, PTS, some of those, or just one of those. No guarantee we want to build all.",
+      "parentUuid": "8e767312_17398370",
+      "revId": "26efd3a8d18bd5d12b82f361da5042b7c1a059a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
