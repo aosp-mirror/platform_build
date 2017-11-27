@@ -75,7 +75,7 @@ OPTIONS.is_signing = False
 
 
 # Partitions that should have their care_map added to META/care_map.txt.
-PARTITIONS_WITH_CARE_MAP = ('system', 'vendor')
+PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product')
 
 
 class OutputFile(object):
@@ -168,6 +168,20 @@ def AddVendor(output_zip, prefix="IMAGES/"):
 
   block_list = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "vendor.map")
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "vendor", img,
+              block_list=block_list)
+  return img.name
+
+
+def AddProduct(output_zip, prefix="IMAGES/"):
+  """Turn the contents of PRODUCT into a product image and store it in output_zip."""
+
+  img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "product.img")
+  if os.path.exists(img.input_name):
+    print("product.img already exists in %s, no need to rebuild..." % (prefix,))
+    return img.input_name
+
+  block_list = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "product.map")
+  CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "product", img,
               block_list=block_list)
   return img.name
 
@@ -621,13 +635,16 @@ def AddImagesToTargetFiles(filename):
       print("target_files appears to already contain images.")
       sys.exit(1)
 
-  # vendor.img is unlike system.img or system_other.img. Because it could be
-  # built from source, or dropped into target_files.zip as a prebuilt blob. We
-  # consider either of them as vendor.img being available, which could be used
-  # when generating vbmeta.img for AVB.
+  # {vendor,product}.img is unlike system.img or system_other.img. Because it could
+  # be built from source, or dropped into target_files.zip as a prebuilt blob.
+  # We consider either of them as {vendor,product}.img being available, which could
+  # be used when generating vbmeta.img for AVB.
   has_vendor = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR")) or
                 os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
                                             "vendor.img")))
+  has_product = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "PRODUCT")) or
+                 os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
+                                             "product.img")))
   has_system_other = os.path.isdir(os.path.join(OPTIONS.input_tmp,
                                                 "SYSTEM_OTHER"))
 
@@ -714,6 +731,10 @@ def AddImagesToTargetFiles(filename):
   if has_vendor:
     banner("vendor")
     partitions['vendor'] = AddVendor(output_zip)
+
+  if has_product:
+    banner("product")
+    partitions['product'] = AddProduct(output_zip)
 
   if has_system_other:
     banner("system_other")

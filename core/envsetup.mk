@@ -179,6 +179,7 @@ TARGET_COPY_OUT_DATA := data
 TARGET_COPY_OUT_ASAN := $(TARGET_COPY_OUT_DATA)/asan
 TARGET_COPY_OUT_OEM := oem
 TARGET_COPY_OUT_ODM := odm
+TARGET_COPY_OUT_PRODUCT := product
 TARGET_COPY_OUT_ROOT := root
 TARGET_COPY_OUT_RECOVERY := recovery
 
@@ -196,6 +197,17 @@ endef
 # We'll substitute with the real value after loading BoardConfig.mk.
 _vendor_path_placeholder := ||VENDOR-PATH-PH||
 TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
+###########################################
+
+###########################################
+# Define TARGET_COPY_OUT_PRODUCT to a placeholder, for at this point
+# we don't know if the device wants to build a separate product.img
+# or just build product stuff into system.img.
+# A device can set up TARGET_COPY_OUT_PRODUCT to "product" in its
+# BoardConfig.mk.
+# We'll substitute with the real value after loading BoardConfig.mk.
+_product_path_placeholder := ||PRODUCT-PATH-PH||
+TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
 ###########################################
 
 #################################################################
@@ -273,6 +285,29 @@ BOARD_USES_VENDORIMAGE := true
 else ifdef BOARD_USES_VENDORIMAGE
 $(error TARGET_COPY_OUT_VENDOR must be set to 'vendor' to use a vendor image)
 endif
+
+###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_PRODUCT
+ifeq ($(TARGET_COPY_OUT_PRODUCT),$(_product_path_placeholder))
+TARGET_COPY_OUT_PRODUCT := system/product
+else ifeq ($(filter product system/product,$(TARGET_COPY_OUT_PRODUCT)),)
+$(error TARGET_COPY_OUT_PRODUCT must be either 'product' or 'system/product', seeing '$(TARGET_COPY_OUT_PRODUCT)'.)
+endif
+PRODUCT_COPY_FILES := $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),$(PRODUCT_COPY_FILES))
+
+BOARD_USES_PRODUCTIMAGE :=
+ifdef BOARD_PREBUILT_PRODUCTIMAGE
+BOARD_USES_PRODUCTIMAGE := true
+endif
+ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+BOARD_USES_PRODUCTIMAGE := true
+endif
+ifeq ($(TARGET_COPY_OUT_PRODUCT),product)
+BOARD_USES_PRODUCTIMAGE := true
+else ifdef BOARD_USES_PRODUCTIMAGE
+$(error TARGET_COPY_OUT_PRODUCT must be set to 'product' to use a product image)
+endif
+
 ###########################################
 # Ensure that only TARGET_RECOVERY_UPDATER_LIBS *or* AB_OTA_UPDATER is set.
 TARGET_RECOVERY_UPDATER_LIBS ?=
@@ -624,6 +659,39 @@ else
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_SHARED_LIBRARIES := $(TARGET_OUT_ODM)/lib
 endif
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_APPS := $(TARGET_OUT_ODM_APPS)
+
+TARGET_OUT_PRODUCT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT)
+ifneq ($(filter address,$(SANITIZE_TARGET)),)
+target_out_product_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/system
+ifeq ($(SANITIZE_LITE),true)
+# When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
+# work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
+target_out_product_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/product
+else
+target_out_product_app_base := $(TARGET_OUT_PRODUCT)
+endif
+else
+target_out_product_shared_libraries_base := $(TARGET_OUT)
+target_out_product_app_base := $(TARGET_OUT_PRODUCT)
+endif
+
+ifeq ($(TARGET_IS_64_BIT),true)
+TARGET_OUT_PRODUCT_SHARED_LIBRARIES := $(target_out_product_shared_libraries_base)/lib64
+else
+TARGET_OUT_PRODUCT_SHARED_LIBRARIES := $(target_out_product_shared_libraries_base)/lib
+endif
+TARGET_OUT_PRODUCT_JAVA_LIBRARIES:= $(TARGET_OUT_PRODUCT)/framework
+TARGET_OUT_PRODUCT_APPS := $(target_out_product_app_base)/app
+TARGET_OUT_PRODUCT_APPS_PRIVILEGED := $(target_out_product_app_base)/priv-app
+TARGET_OUT_PRODUCT_ETC := $(TARGET_OUT_PRODUCT)/etc
+
+ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SHARED_LIBRARIES := $(target_out_product_shared_libraries_base)/lib/$(TARGET_2ND_ARCH)
+else
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SHARED_LIBRARIES := $(target_out_product_shared_libraries_base)/lib
+endif
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS := $(TARGET_OUT_PRODUCT_APPS)
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS_PRIVILEGED := $(TARGET_OUT_PRODUCT_APPS_PRIVILEGED)
 
 TARGET_OUT_BREAKPAD := $(PRODUCT_OUT)/breakpad
 
