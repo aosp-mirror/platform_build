@@ -26,6 +26,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     egl.cfg \
     gralloc.goldfish \
+    gralloc.goldfish.default \
     gralloc.ranchu \
     libGLESv1_CM_emulation \
     lib_renderControl_enc \
@@ -35,6 +36,9 @@ PRODUCT_PACKAGES += \
     libOpenglSystemCommon \
     libGLESv2_emulation \
     libGLESv1_enc \
+    libEGL_swiftshader \
+    libGLESv1_CM_swiftshader \
+    libGLESv2_swiftshader \
     qemu-props \
     camera.goldfish \
     camera.goldfish.jpeg \
