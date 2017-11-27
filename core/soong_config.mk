@@ -118,6 +118,7 @@ $(call add_json_str,  VendorPath,                        $(TARGET_COPY_OUT_VENDO
 $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO)))
 
 $(call add_json_bool, UseGoma,                           $(filter-out false,$(USE_GOMA)))
+$(call add_json_bool, Arc,                               $(filter true,$(TARGET_ARC)))
 
 $(call add_json_str,  DistDir,                           $(if $(dist_goal), $(DIST_DIR)))
 
