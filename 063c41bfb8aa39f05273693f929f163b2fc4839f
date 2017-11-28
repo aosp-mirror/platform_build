@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "68b49a98_ecd521eb",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-28T18:12:54Z",
+      "side": 1,
+      "message": "Use:\n\n $(call add_json_str,  DistDir,                           $(if $(dist_goal),$(DIST_DIR))",
+      "revId": "063c41bfb8aa39f05273693f929f163b2fc4839f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
