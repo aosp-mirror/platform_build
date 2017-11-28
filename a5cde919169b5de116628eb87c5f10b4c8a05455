@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2cbec1f6_4e71bf58",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-11-28T12:15:28Z",
+      "side": 1,
+      "message": "remove or keep with proper comment?",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 7
+      },
+      "revId": "a5cde919169b5de116628eb87c5f10b4c8a05455",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc114576_00ad9d63",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-11-28T12:15:28Z",
+      "side": 1,
+      "message": "b/xxxxx seems to be more appropriate",
+      "range": {
+        "startLine": 91,
+        "startChar": 7,
+        "endLine": 91,
+        "endChar": 14
+      },
+      "revId": "a5cde919169b5de116628eb87c5f10b4c8a05455",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c6bd4c6_f1c474c0",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-11-28T12:15:28Z",
+      "side": 1,
+      "message": "change to $(PRIVATE_VNDK_CORE_INTERMEDIATES) $(PRIVATE_VNDK_SP_INTERMEDIATES) $(PRIVATE_TEXT_FILES_INTERMEDIATES) ?",
+      "range": {
+        "startLine": 114,
+        "startChar": 22,
+        "endLine": 114,
+        "endChar": 66
+      },
+      "revId": "a5cde919169b5de116628eb87c5f10b4c8a05455",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
