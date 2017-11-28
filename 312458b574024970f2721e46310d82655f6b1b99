@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac5ef634_e4e6c057",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-28T18:58:17Z",
+      "side": 1,
+      "message": "This shouldn\u0027t be here, but I see why it is necessary.  Maybe just check MAKECMDGOALS directly:\n\n $(if $(filter dist,$(MAKECMDGOALS)),$(DIST_DIR))",
+      "revId": "312458b574024970f2721e46310d82655f6b1b99",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
