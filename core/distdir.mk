@@ -17,9 +17,6 @@
 # When specifying "dist", the user has asked that we copy the important
 # files from this build into DIST_DIR.
 
-dist_goal := $(strip $(filter dist,$(MAKECMDGOALS)))
-MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
-
 ifdef dist_goal
 
 # $(1): source file
