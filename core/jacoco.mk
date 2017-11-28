@@ -21,7 +21,6 @@
 
 # determine Jacoco include/exclude filters even when coverage is not enabled
 # to get syntax checking on LOCAL_JACK_COVERAGE_(INCLUDE|EXCLUDE)_FILTER
-DEFAULT_JACOCO_EXCLUDE_FILTER := org/junit/*,org/jacoco/*,org/mockito/*
 # copy filters from Jack but also skip some known java packages
 my_include_filter := $(strip $(LOCAL_JACK_COVERAGE_INCLUDE_FILTER))
 my_exclude_filter := $(strip $(DEFAULT_JACOCO_EXCLUDE_FILTER),$(LOCAL_JACK_COVERAGE_EXCLUDE_FILTER))
