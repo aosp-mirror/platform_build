@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 The Android Open-Source Project
+# Copyright (C) 2017 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,17 +14,15 @@
 # limitations under the License.
 #
 
-include build/make/target/board/treble_common_32.mk
+# Inherit common Android Go defaults.
+$(call inherit-product, build/target/product/go_defaults_common.mk)
 
-# Overwrite the setting in treble_common_32.mk for non-A/B arm GSI
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 805306368 # 768MB
+# 512MB specific properties.
 
-TARGET_ARCH := arm
-TARGET_ARCH_VARIANT := armv7-a-neon
-TARGET_CPU_ABI := armeabi-v7a
-TARGET_CPU_ABI2 := armeabi
-TARGET_CPU_VARIANT := generic
+# lmkd can kill more now.
+PRODUCT_PROPERTY_OVERRIDES += \
+     ro.lmk.medium=700 \
 
-# Enable A/B update
-TARGET_NO_RECOVERY := true
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+# madvise random in ART to reduce page cache thrashing.
+PRODUCT_PROPERTY_OVERRIDES += \
+     dalvik.vm.madvise-random=true

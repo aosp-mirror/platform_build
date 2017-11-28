@@ -53,11 +53,13 @@ if sys.hexversion < 0x02070000:
 
 import datetime
 import errno
+import hashlib
 import os
 import shlex
 import shutil
 import subprocess
 import tempfile
+import uuid
 import zipfile
 
 import build_image
@@ -256,6 +258,19 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
     image_props["fs_config"] = fs_config
   if block_list:
     image_props["block_list"] = block_list.name
+
+  # Use repeatable ext4 FS UUID and hash_seed UUID (based on partition name and
+  # build fingerprint).
+  uuid_seed = what + "-"
+  if "build.prop" in info_dict:
+    build_prop = info_dict["build.prop"]
+    if "ro.build.fingerprint" in build_prop:
+      uuid_seed += build_prop["ro.build.fingerprint"]
+    elif "ro.build.thumbprint" in build_prop:
+      uuid_seed += build_prop["ro.build.thumbprint"]
+  image_props["uuid"] = str(uuid.uuid5(uuid.NAMESPACE_URL, uuid_seed))
+  hash_seed = "hash_seed-" + uuid_seed
+  image_props["hash_seed"] = str(uuid.uuid5(uuid.NAMESPACE_URL, hash_seed))
 
   succ = build_image.BuildImage(os.path.join(temp_dir, what),
                                 image_props, output_file.name)
@@ -505,7 +520,13 @@ def AddImagesToTargetFiles(filename):
       print("target_files appears to already contain images.")
       sys.exit(1)
 
-  has_vendor = os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR"))
+  # vendor.img is unlike system.img or system_other.img. Because it could be
+  # built from source, or dropped into target_files.zip as a prebuilt blob. We
+  # consider either of them as vendor.img being available, which could be used
+  # when generating vbmeta.img for AVB.
+  has_vendor = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR")) or
+                os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
+                                            "vendor.img")))
   has_system_other = os.path.isdir(os.path.join(OPTIONS.input_tmp,
                                                 "SYSTEM_OTHER"))
 
@@ -525,6 +546,17 @@ def AddImagesToTargetFiles(filename):
     images_dir = None
 
   has_recovery = (OPTIONS.info_dict.get("no_recovery") != "true")
+
+  if OPTIONS.info_dict.get("avb_enable") == "true":
+    fp = None
+    if "build.prop" in OPTIONS.info_dict:
+      build_prop = OPTIONS.info_dict["build.prop"]
+      if "ro.build.fingerprint" in build_prop:
+        fp = build_prop["ro.build.fingerprint"]
+      elif "ro.build.thumbprint" in build_prop:
+        fp = build_prop["ro.build.thumbprint"]
+    if fp:
+      OPTIONS.info_dict["avb_salt"] = hashlib.sha256(fp).hexdigest()
 
   def banner(s):
     print("\n\n++++ " + s + " ++++\n\n")

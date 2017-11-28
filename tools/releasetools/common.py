@@ -353,6 +353,10 @@ def AppendAVBSigningArgs(cmd, partition):
   algorithm = OPTIONS.info_dict.get("avb_" + partition + "_algorithm")
   if key_path and algorithm:
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
+  avb_salt = OPTIONS.info_dict.get("avb_salt")
+  # make_vbmeta_image doesn't like "--salt" (and it's not needed).
+  if avb_salt and partition != "vbmeta":
+    cmd.extend(["--salt", avb_salt])
 
 
 def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
@@ -772,6 +776,14 @@ def ReadApkCerts(tf_zip):
   certmap = {}
   compressed_extension = None
 
+  # META/apkcerts.txt contains the info for _all_ the packages known at build
+  # time. Filter out the ones that are not installed.
+  installed_files = set()
+  for name in tf_zip.namelist():
+    basename = os.path.basename(name)
+    if basename:
+      installed_files.add(basename)
+
   for line in tf_zip.read("META/apkcerts.txt").split("\n"):
     line = line.strip()
     if not line:
@@ -796,6 +808,10 @@ def ReadApkCerts(tf_zip):
       else:
         raise ValueError("failed to parse line from apkcerts.txt:\n" + line)
       if this_compressed_extension:
+        # Only count the installed files.
+        filename = name + '.' + this_compressed_extension
+        if filename not in installed_files:
+          continue
         # Make sure that all the values in the compression map have the same
         # extension. We don't support multiple compression methods in the same
         # system image.
