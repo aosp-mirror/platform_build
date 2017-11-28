@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "14026df6_05681dc2",
+        "filename": "Changes.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-28T22:24:23Z",
+      "side": 1,
+      "message": "I hope that this eventually turns into a newest-first list for the most part, at least until make is removed. I don\u0027t particularly want to attempt to figure out what was released when, including cherry-picks, so I\u0027m planning to ignore this now, but we could go back and fill that in later. Until then, you can always look at the differences to this file between the release version and the next version.",
+      "parentUuid": "6eb1c96e_47453abc",
+      "revId": "02efef1d06612faf5a22a044eb5698bfd034ab7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7d6c57ba_7a925042",
         "filename": "README.md",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2017-11-23T01:10:42Z",
       "side": 1,
       "message": "Maybe emphasize that the fact that they look similar is a coincidence? Like \"Our Android.mk files coincidentally look similar to, but are actually different from\"?",
+      "revId": "02efef1d06612faf5a22a044eb5698bfd034ab7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ff4f58e_261b037b",
+        "filename": "README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-28T22:24:23Z",
+      "side": 1,
+      "message": "I updated this paragraph a bit. As a future cleanup, we could mark a lot of the NDK-style variables as obsolete, which would be better than silently ignoring them like we do today.",
+      "parentUuid": "7d6c57ba_7a925042",
       "revId": "02efef1d06612faf5a22a044eb5698bfd034ab7f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
@@ -59,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "c4d265dc_9ffcfa60",
+        "filename": "README.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-28T22:24:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0a17b656_57328bae",
+      "range": {
+        "startLine": 12,
+        "startChar": 39,
+        "endLine": 12,
+        "endChar": 40
+      },
+      "revId": "02efef1d06612faf5a22a044eb5698bfd034ab7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "14ce3230_a6434ba2",
         "filename": "core/config.mk",
         "patchSetId": 3
@@ -76,6 +136,24 @@
     },
     {
       "key": {
+        "uuid": "2dd56ef2_e807edf4",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-28T22:24:23Z",
+      "side": 1,
+      "message": "I don\u0027t expect to remove obsolete entries -- if we do, we can at least keep a pointer to the old version at the same url (that\u0027s why I provided stable # tags in the markdown).\n\nThere\u0027s a few advantages of a real url:\n* it\u0027s far more likely that your terminal can open up the page when you click the link\n* we can update the wording if it turns out not to be clear enough (too many questions, etc)\n\nThough it does mean that if we change the recommended new behavior, we either need to make sure it works on older versions, or provide multiple sets of instructions.",
+      "parentUuid": "14ce3230_a6434ba2",
+      "revId": "02efef1d06612faf5a22a044eb5698bfd034ab7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8d5d9f2f_c9ac2f1c",
         "filename": "navbar.md",
         "patchSetId": 3
@@ -87,6 +165,30 @@
       "writtenOn": "2017-11-23T01:10:42Z",
       "side": 1,
       "message": "I\u0027m trying to think of a wording that would disambiguate from \"Contributing\" and from \"Differences between Soong and Kati\".\n\nI sort of like \"Changelog\" although I\u0027m not sure if that implies more granularity than you\u0027re planning on adding. \"Recent changes\" or \"High-level change history\" also seem nice to me. If we\u0027re ok with updating this every version, then \"New in P\" is probably my favorite.",
+      "range": {
+        "startLine": 3,
+        "startChar": 3,
+        "endLine": 3,
+        "endChar": 10
+      },
+      "revId": "02efef1d06612faf5a22a044eb5698bfd034ab7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54ac56b9_f8ad9737",
+        "filename": "navbar.md",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-11-28T22:24:23Z",
+      "side": 1,
+      "message": "I labelled this as \"Behavioral Changes for Android.mk Writers\" in the README.md, but I didn\u0027t really want anything too long here. It\u0027s unlikely to be used very much anyway, so something simple works here.",
+      "parentUuid": "8d5d9f2f_c9ac2f1c",
       "range": {
         "startLine": 3,
         "startChar": 3,
