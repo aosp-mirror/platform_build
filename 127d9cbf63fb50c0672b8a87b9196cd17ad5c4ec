@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "333b0757_5f38eaca",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1954,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-11-28T12:30:17Z",
+      "side": 1,
+      "message": "why? platform.zip does not have files from oem partition.",
+      "range": {
+        "startLine": 1954,
+        "startChar": 0,
+        "endLine": 1954,
+        "endChar": 54
+      },
+      "revId": "127d9cbf63fb50c0672b8a87b9196cd17ad5c4ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
