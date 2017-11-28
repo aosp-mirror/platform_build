@@ -22,6 +22,30 @@
       "revId": "127d9cbf63fb50c0672b8a87b9196cd17ad5c4ec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a92cf768_f641bd49",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1954,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2017-11-28T23:43:39Z",
+      "side": 1,
+      "message": "At line 1634, contents of oem are zipped into platform.zip; I just coped the logic from one for vendor.",
+      "parentUuid": "333b0757_5f38eaca",
+      "range": {
+        "startLine": 1954,
+        "startChar": 0,
+        "endLine": 1954,
+        "endChar": 54
+      },
+      "revId": "127d9cbf63fb50c0672b8a87b9196cd17ad5c4ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
