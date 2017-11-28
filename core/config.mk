@@ -67,6 +67,9 @@ FORCE:
 
 ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
 
+dist_goal := $(strip $(filter dist,$(MAKECMDGOALS)))
+MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
+
 # Tell python not to spam the source tree with .pyc files.  This
 # only has an effect on python 2.6 and above.
 export PYTHONDONTWRITEBYTECODE := 1
