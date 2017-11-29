@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67f8d64a_6f198a50",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-29T12:06:27Z",
+      "side": 1,
+      "message": "These are needed later by the script that will auto-generate the Android.bp file, at the time of installing the VNDK snapshot build artifact to prebuilts/vndk.",
+      "range": {
+        "startLine": 102,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 30
+      },
+      "revId": "bdedd3b6d546274de87c141b139109d34a560fc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
