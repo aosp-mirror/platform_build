@@ -15,7 +15,7 @@ lunch [<product>-<variant>] # Choose the device to target.
 m -j [<goals>]              # Execute the configured build.
 
 Usage of "m" imitates usage of the program "make".
-See '"${SCRIPT_DIR}"'/README.txt for more info about build usage and concepts.
+See '"${SCRIPT_DIR}"'/Usage.txt for more info about build usage and concepts.
 
 Common goals are:
 
