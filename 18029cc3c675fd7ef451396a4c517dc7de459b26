@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7a72ab7_7274922a",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-11-29T00:43:30Z",
+      "side": 1,
+      "message": "Dan to comment on the name. On second though, it might make more sense to do \"PRODUCT_VENDOR_SYSTEM_SPLIT\" or similar because the notices should be split when the images are.",
+      "range": {
+        "startLine": 721,
+        "startChar": 4,
+        "endLine": 721,
+        "endChar": 24
+      },
+      "revId": "18029cc3c675fd7ef451396a4c517dc7de459b26",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
