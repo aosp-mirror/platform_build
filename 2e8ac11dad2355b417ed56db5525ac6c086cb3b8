@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e5df57b_be7ee598",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2571,
+      "author": {
+        "id": 1126544
+      },
+      "writtenOn": "2017-11-29T23:07:47Z",
+      "side": 1,
+      "message": "Can this be false and PRODUCT_FULL_TREBLE true?",
+      "range": {
+        "startLine": 2571,
+        "startChar": 8,
+        "endLine": 2571,
+        "endChar": 38
+      },
+      "revId": "2e8ac11dad2355b417ed56db5525ac6c086cb3b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
