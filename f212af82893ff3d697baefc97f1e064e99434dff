@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a344b5a2_52f206fb",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-29T21:09:27Z",
+      "side": 1,
+      "message": "I\u0027d prefer to just put false here, and change it to true to enable it.",
+      "range": {
+        "startLine": 548,
+        "startChar": 12,
+        "endLine": 548,
+        "endChar": 32
+      },
+      "revId": "f212af82893ff3d697baefc97f1e064e99434dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
