@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "18fab56e_b4bbd627",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-11-29T21:08:16Z",
+      "side": 1,
+      "message": "Why are you removing the indentation?",
+      "revId": "bdedd3b6d546274de87c141b139109d34a560fc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "67f8d64a_6f198a50",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 8
