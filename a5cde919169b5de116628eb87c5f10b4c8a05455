@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "82d3f39d_60e35d2f",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-29T11:48:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2cbec1f6_4e71bf58",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 72,
+        "endChar": 7
+      },
+      "revId": "a5cde919169b5de116628eb87c5f10b4c8a05455",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc114576_00ad9d63",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 5
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "8c2e78c9_b3f5fb29",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-29T11:48:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc114576_00ad9d63",
+      "range": {
+        "startLine": 91,
+        "startChar": 7,
+        "endLine": 91,
+        "endChar": 14
+      },
+      "revId": "a5cde919169b5de116628eb87c5f10b4c8a05455",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5c6bd4c6_f1c474c0",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 5
@@ -59,6 +107,30 @@
       "writtenOn": "2017-11-28T12:15:28Z",
       "side": 1,
       "message": "change to $(PRIVATE_VNDK_CORE_INTERMEDIATES) $(PRIVATE_VNDK_SP_INTERMEDIATES) $(PRIVATE_TEXT_FILES_INTERMEDIATES) ?",
+      "range": {
+        "startLine": 114,
+        "startChar": 22,
+        "endLine": 114,
+        "endChar": 66
+      },
+      "revId": "a5cde919169b5de116628eb87c5f10b4c8a05455",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcd7a007_2a93d445",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-29T11:48:19Z",
+      "side": 1,
+      "message": "Some libraries in $(vndk_core_libs) are only built for 32-bit but is still included in the SOONG_VNDK_CORE_LIBRARIES variable when TARGET_ARCH is 64-bit. Thus $(PRIVATE_VNDK_CORE_INTERMEDIATES) includes some libraries with no build rule and therefore cannot be used as a dependency. (These non-existent intermediates are later filtered out by $(private-copy-vndk-intermediates).)",
+      "parentUuid": "5c6bd4c6_f1c474c0",
       "range": {
         "startLine": 114,
         "startChar": 22,
