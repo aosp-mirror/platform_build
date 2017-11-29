@@ -2,6 +2,7 @@
 # Extra inputs:
 # LOCAL_SOONG_HEADER_JAR
 # LOCAL_SOONG_DEX_JAR
+# LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
 
 ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   $(call pretty-error,soong_java_prebuilt.mk may only be used from Soong)
@@ -18,13 +19,12 @@ full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 common_javalib.jar := $(intermediates.COMMON)/javalib.jar
 
-LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(LOCAL_PREBUILT_MODULE_FILE)
+$(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_jar)))
 
-#######################################
-include $(BUILD_SYSTEM)/jacoco.mk
-#######################################
-
-$(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(full_classes_jar)))
+ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
+    $(intermediates.COMMON)/jacoco-report-classes.jar))
+endif
 
 ifneq ($(TURBINE_DISABLED),false)
 ifdef LOCAL_SOONG_HEADER_JAR
@@ -94,7 +94,3 @@ my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
 my_common := COMMON
 include $(BUILD_SYSTEM)/link_type.mk
 endif # !LOCAL_IS_HOST_MODULE
-
-# Built in equivalent to include $(CLEAR_VARS)
-LOCAL_SOONG_HEADER_JAR :=
-LOCAL_SOONG_DEX_JAR :=

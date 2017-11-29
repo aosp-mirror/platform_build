@@ -67,6 +67,9 @@ FORCE:
 
 ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
 
+dist_goal := $(strip $(filter dist,$(MAKECMDGOALS)))
+MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
+
 # Tell python not to spam the source tree with .pyc files.  This
 # only has an effect on python 2.6 and above.
 export PYTHONDONTWRITEBYTECODE := 1
@@ -659,7 +662,6 @@ RELOCATION_PACKER := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/relocation
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
-JACOCO_CLI_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jacoco-cli$(COMMON_JAVA_PACKAGE_SUFFIX)
 
 # Tool to merge AndroidManifest.xmls
 ANDROID_MANIFEST_MERGER_CLASSPATH := \
