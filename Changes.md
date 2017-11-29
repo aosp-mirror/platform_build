@@ -1,6 +1,6 @@
 # Build System Changes for Android.mk Writers
 
-## Deprecating envsetup.sh variables in Makefiles
+## Deprecating / obsoleting envsetup.sh variables in Makefiles
 
 It is not required to source envsetup.sh before running a build. Many scripts,
 including a majority of our automated build systems, do not do so. Make will
@@ -14,8 +14,9 @@ you move the source tree.
 
 To fix this, we're marking the variables that are set in envsetup.sh as
 deprecated in the makefiles. This will trigger a warning every time one is read
-(or written) inside Kati. Once all the warnings have been removed, we'll switch
-this to obsolete, and any references will become errors.
+(or written) inside Kati. Once all the warnings have been removed for a
+particular variable, we'll switch it to obsolete, and any references will become
+errors.
 
 ### envsetup.sh variables with make equivalents
 
