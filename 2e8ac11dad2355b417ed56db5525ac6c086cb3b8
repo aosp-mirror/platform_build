@@ -22,6 +22,30 @@
       "revId": "2e8ac11dad2355b417ed56db5525ac6c086cb3b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50a77c96_be8f3235",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2571,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-11-29T23:31:49Z",
+      "side": 1,
+      "message": "Until we revert https://android-review.googlesource.com/c/platform/build/+/537036, it can be.",
+      "parentUuid": "0e5df57b_be7ee598",
+      "range": {
+        "startLine": 2571,
+        "startChar": 8,
+        "endLine": 2571,
+        "endChar": 38
+      },
+      "revId": "2e8ac11dad2355b417ed56db5525ac6c086cb3b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
