@@ -387,9 +387,9 @@ endif
 # clang is enabled by default for host builds
 # enable it unless we've specifically disabled clang above
 ifdef LOCAL_IS_HOST_MODULE
-    ifeq ($($(my_prefix)OS),windows)
+    ifneq ($($(my_prefix)CLANG_SUPPORTED),true)
         ifeq ($(my_clang),true)
-            $(error $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Clang is not yet supported for windows binaries)
+            $(call pretty-error,Clang is not yet supported for $($(my_prefix)OS) binaries)
         endif
         my_clang := false
     else

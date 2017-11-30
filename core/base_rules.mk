@@ -668,7 +668,7 @@ endif
 
 
 ifdef j_or_n
-$(j_or_n) $(h_or_t) $(j_or_n)-$(h_or_t) : $(my_checked_module)
+$(j_or_n) $(h_or_t) $(j_or_n)-$(h_or_hc_or_t) : $(my_checked_module)
 ifneq (,$(filter $(my_module_tags),tests))
 $(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(my_checked_module)
 endif
