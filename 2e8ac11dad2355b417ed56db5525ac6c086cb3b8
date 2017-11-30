@@ -94,6 +94,30 @@
       "revId": "2e8ac11dad2355b417ed56db5525ac6c086cb3b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2103128_90a68304",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2571,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-11-30T21:13:00Z",
+      "side": 1,
+      "message": "How about the opposite case, i.e. with PRODUCT_ENFORCE_VINTF_MANIFEST\u003dtrue \u0026\u0026 PRODUCT_FULL_TREBLE\u003dfalse? The current OTA package generation script (https://android.googlesource.com/platform/build/+/2e8ac11dad2355b417ed56db5525ac6c086cb3b8/tools/releasetools/ota_from_target_files.py#383) checks both of the existence of the XMLs and ro.build.trebled\u003d\u003d\"true\". So it won\u0027t put these XMLs into the OTA packages and thus no check at OTA time. Is that the expected behavior?",
+      "parentUuid": "33f3a84d_bb870502",
+      "range": {
+        "startLine": 2571,
+        "startChar": 8,
+        "endLine": 2571,
+        "endChar": 38
+      },
+      "revId": "2e8ac11dad2355b417ed56db5525ac6c086cb3b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
