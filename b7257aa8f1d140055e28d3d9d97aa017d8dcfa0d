@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5650d296_e981e6a6",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1211,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-11-30T21:28:56Z",
+      "side": 1,
+      "message": "What\u0027s the best place to include this?",
+      "revId": "b7257aa8f1d140055e28d3d9d97aa017d8dcfa0d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f3a1ba8_fa76da7d",
+        "filename": "core/test_mapping.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-11-30T21:28:56Z",
+      "side": 1,
+      "message": "Somehow \"m dist test_mapping\" didn\u0027t trigger this call to deploy the bz2 file in out/dist. Is there anything missing here? Please advise.",
+      "revId": "b7257aa8f1d140055e28d3d9d97aa017d8dcfa0d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
