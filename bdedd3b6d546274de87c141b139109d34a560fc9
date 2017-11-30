@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1777cfc8_31d25797",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-30T04:37:04Z",
+      "side": 1,
+      "message": "I removed the indentation because I noticed the spaces/newlines in this multi-line variable definition is preserved...it is true that these extra spaces/newlines do not affect the functionality of this make file due to how the other make constructs later process the output.\n\nI\u0027m not sure what would be preferred: shorter code with benign spaces/newlines VS. longer code with extraneous whitespaces here and there.",
+      "parentUuid": "18fab56e_b4bbd627",
+      "revId": "bdedd3b6d546274de87c141b139109d34a560fc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "67f8d64a_6f198a50",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 8
