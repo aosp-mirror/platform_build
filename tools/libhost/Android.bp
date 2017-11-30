@@ -10,6 +10,7 @@ cc_library_host_static {
     name: "libhost",
     target: {
         windows: {
+            cflags: ["-Wno-unused-parameter"],
             enabled: true,
         },
     },
