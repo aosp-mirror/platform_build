@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "ede220e4_6288cc82",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-11-30T04:38:21Z",
+      "side": 1,
+      "message": "oops, I mean longer code with no extraneous whitespaces.",
+      "parentUuid": "1777cfc8_31d25797",
+      "revId": "bdedd3b6d546274de87c141b139109d34a560fc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "67f8d64a_6f198a50",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 8
