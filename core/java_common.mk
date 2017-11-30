@@ -229,8 +229,12 @@ ifndef LOCAL_IS_HOST_MODULE
     else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
       full_java_bootclasspath_libs := $(call java-lib-header-files,android_test_stubs_current)
     else
-      full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
-    endif # current, system_current, or test_current
+      ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
+        full_java_bootclasspath_libs := $(call java-lib-header-files,system_sdk_v$(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)))
+      else
+        full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
+      endif
+    endif # current, system_current, system_${VER} or test_current
   endif # LOCAL_SDK_VERSION
 
   ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
@@ -401,6 +405,10 @@ ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
 ###########################################################
 ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_SDK_VERSION),system_current)
+my_link_type := java:system
+my_warn_types := java:platform
+my_allowed_types := java:sdk java:system
+else ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
 my_link_type := java:system
 my_warn_types := java:platform
 my_allowed_types := java:sdk java:system
