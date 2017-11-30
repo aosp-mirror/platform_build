@@ -121,6 +121,8 @@ $(call add_json_bool, UseGoma,                           $(filter-out false,$(US
 
 $(call add_json_str,  DistDir,                           $(if $(dist_goal), $(DIST_DIR)))
 
+$(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPACES))
+
 _contents := $(subst $(comma)$(newline)__SV_END,$(newline)}$(newline),$(_contents)__SV_END)
 
 $(file >$(SOONG_VARIABLES).tmp,$(_contents))
