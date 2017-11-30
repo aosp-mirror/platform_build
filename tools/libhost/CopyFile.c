@@ -352,7 +352,12 @@ static int copyRegular(const char* src, const char* dst, const struct stat* pSrc
  * need to trash it so we can create one.
  */
 #if defined(_WIN32)
-extern int copySymlink(const char* src, const char* dst, const struct stat* pSrcStat, unsigned int options) __attribute__((error("no symlinks on Windows")));
+extern int copySymlink(const char* src, const char* dst, const struct stat* pSrcStat, unsigned int options)
+#ifdef __clang__
+  __attribute__((unavailable("no symlinks on Windows")));
+#else
+  __attribute__((error("no symlinks on Windows")));
+#endif
 #else
 static int copySymlink(const char* src, const char* dst, const struct stat* pSrcStat, unsigned int options)
 {
@@ -574,8 +579,10 @@ static int copyFileRecursive(const char* src, const char* dst, bool isCmdLine, u
         } else {
             retVal = copyDirectory(src, dst, &srcStat, options);
         }
+#if !defined(_WIN32)
     } else if (S_ISLNK(srcStat.st_mode)) {
         retVal = copySymlink(src, dst, &srcStat, options);
+#endif
     } else if (S_ISREG(srcStat.st_mode)) {
         retVal = copyRegular(src, dst, &srcStat, options);
     } else {
