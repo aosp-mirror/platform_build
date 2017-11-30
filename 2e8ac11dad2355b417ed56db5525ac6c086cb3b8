@@ -70,6 +70,30 @@
       "revId": "2e8ac11dad2355b417ed56db5525ac6c086cb3b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bddc9f22_3a4d9ca4",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2571,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-11-30T21:10:10Z",
+      "side": 1,
+      "message": "Yes, but that CL will be reverted.",
+      "parentUuid": "33f3a84d_bb870502",
+      "range": {
+        "startLine": 2571,
+        "startChar": 8,
+        "endLine": 2571,
+        "endChar": 38
+      },
+      "revId": "2e8ac11dad2355b417ed56db5525ac6c086cb3b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
