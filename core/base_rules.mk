@@ -86,6 +86,7 @@ $(call pretty-error,Only one of LOCAL_PROPRIETARY_MODULE[$(LOCAL_PROPRIETARY_MOD
 endif
 
 include $(BUILD_SYSTEM)/local_vndk.mk
+include $(BUILD_SYSTEM)/local_vsdk.mk
 
 my_module_tags := $(LOCAL_MODULE_TAGS)
 ifeq ($(my_host_cross),true)
@@ -611,6 +612,7 @@ ifdef LOCAL_2ND_ARCH_VAR_PREFIX
 ALL_MODULES.$(my_register_name).FOR_2ND_ARCH := true
 endif
 ALL_MODULES.$(my_register_name).FOR_HOST_CROSS := $(my_host_cross)
+ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES := $(LOCAL_COMPATIBILITY_SUITE)
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 
