@@ -94,7 +94,7 @@ endif
 # The order matters
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    legacy-test \
+    android.test.base \
     ext \
     framework \
     telephony-common \

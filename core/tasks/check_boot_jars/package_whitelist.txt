@@ -121,7 +121,7 @@ com\.android\..*
 
 
 ###################################################
-# legacy-test.jar
+# android.test.base.jar
 junit\.extensions
 junit\.framework
 android\.test
