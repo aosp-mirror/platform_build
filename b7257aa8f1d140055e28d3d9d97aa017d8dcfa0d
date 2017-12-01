@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "a21c0941_b5d3f7b5",
+        "filename": "core/test_mapping.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-01T18:35:42Z",
+      "side": 1,
+      "message": "Done\n\nI tested in git_master, somehow that works in git_master, not aosp.",
+      "parentUuid": "530262ac_db4e08af",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 43
+      },
+      "revId": "b7257aa8f1d140055e28d3d9d97aa017d8dcfa0d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7f3a1ba8_fa76da7d",
         "filename": "core/test_mapping.mk",
         "patchSetId": 1
@@ -74,6 +98,24 @@
       "revId": "b7257aa8f1d140055e28d3d9d97aa017d8dcfa0d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "efaf97d6_5fa6bfd2",
+        "filename": "core/test_mapping.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-01T18:35:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d687a566_b611b871",
+      "revId": "b7257aa8f1d140055e28d3d9d97aa017d8dcfa0d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
