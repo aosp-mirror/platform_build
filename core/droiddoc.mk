@@ -72,8 +72,13 @@ ifneq ($(LOCAL_SDK_VERSION),)
     LOCAL_JAVA_LIBRARIES := android_test_stubs_current $(LOCAL_JAVA_LIBRARIES)
     $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, android_test_stubs_current)
   else
-    LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
-    $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, sdk_v$(LOCAL_SDK_VERSION))
+    ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
+      LOCAL_JAVA_LIBRARIES := system_sdk_v$(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)) $(LOCAL_JAVA_LIBRARIES)
+      $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, system_sdk_v$(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)))
+    else
+      LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
+      $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, sdk_v$(LOCAL_SDK_VERSION))
+    endif
   endif
 else
   LOCAL_JAVA_LIBRARIES := core-oj core-libart ext framework $(LOCAL_JAVA_LIBRARIES)
