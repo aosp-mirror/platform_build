@@ -19,6 +19,29 @@
     },
     {
       "key": {
+        "uuid": "530262ac_db4e08af",
+        "filename": "core/test_mapping.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-01T02:30:44Z",
+      "side": 1,
+      "message": "It turns out that when I try this, I get an error:.\n\nninja: error: \u0027out/target/product/generic/obj/PACKAGING/test_mapping_intermediates\u0027, needed by \u0027out/target/product/generic/obj/PACKAGING/test_mapping_intermediates/test_mappings.tar.bz2\u0027, missing and no known rule to make it\n\nI think you want to depend on the files instead:\n\n\n\ninput_file_list :\u003d $(file \u003c$(OUT_DIR)/.module_paths/TEST_MAPPING.list)\n$(test_mappings_tarball) : PRIVATE_test_mapping_list :\u003d $(input_file_list)\n \n$(test_mappings_tarball) : $(input_file_list)",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 43
+      },
+      "revId": "b7257aa8f1d140055e28d3d9d97aa017d8dcfa0d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7f3a1ba8_fa76da7d",
         "filename": "core/test_mapping.mk",
         "patchSetId": 1
@@ -30,6 +53,24 @@
       "writtenOn": "2017-11-30T21:28:56Z",
       "side": 1,
       "message": "Somehow \"m dist test_mapping\" didn\u0027t trigger this call to deploy the bz2 file in out/dist. Is there anything missing here? Please advise.",
+      "revId": "b7257aa8f1d140055e28d3d9d97aa017d8dcfa0d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d687a566_b611b871",
+        "filename": "core/test_mapping.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-01T02:30:44Z",
+      "side": 1,
+      "message": "Based on some investigation into distdir.mk, it looks to me like what dist-for-goals does is to make it such that copying the second argument into the dist dir becomes a dependency of building the first argument. I think that running `m dist test_mapping` overrides the default goal and makes the goal be \"test_mapping\", which doesn\u0027t trigger the dist-ing.\n\nI do find that if I run either of:\n\n`m -j dist dist_files test_mapping`\nor\n`m -j dist`\n\nthen that generates out/dist/test_mappings.tar.bz2 .\n\n\nI also find that replacing\n\n\"$(call dist-for-goals, dist_files, $(test_mappings_tarball))\"\nwith\n\"$(call dist-for-goals, dist_files test_mapping, $(test_mappings_tarball))\"\n\ncauses `m -j dist test_mapping` to work. I\u0027m not sure if there\u0027s a better way to do it",
+      "parentUuid": "7f3a1ba8_fa76da7d",
       "revId": "b7257aa8f1d140055e28d3d9d97aa017d8dcfa0d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
