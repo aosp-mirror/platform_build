@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "00a6f35c_150da635",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2017-12-01T04:35:03Z",
+      "side": 1,
+      "message": "FYI, for now we are using exclusive rules with PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS, and by default all the overlays are targets of RRO if PRODUCT_ENFORCE_RRO_TARGETS is set.",
+      "range": {
+        "startLine": 233,
+        "startChar": 0,
+        "endLine": 233,
+        "endChar": 20
+      },
+      "revId": "8c5ef24107201624b89e24ae929dee5d73512f80",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
