@@ -2411,6 +2411,19 @@ $(hide) $(DX_COMMAND) \
     $<
 endef
 
+
+define transform-classes-d8.jar-to-dex
+@echo "target Dex: $(PRIVATE_MODULE)"
+@mkdir -p $(dir $@)
+$(hide) rm -f $(dir $@)classes*.dex
+$(hide) $(DX_COMMAND) \
+    --output $(dir $@) \
+    --min-api $(PRIVATE_MIN_SDK_VERSION) \
+    $(subst --no-locals, --release, \
+        $(filter-out --core-library --multi-dex,$(PRIVATE_DX_FLAGS))) \
+    $<
+endef
+
 # Create a mostly-empty .jar file that we'll add to later.
 # The MacOS jar tool doesn't like creating empty jar files,
 # so we need to give it something.
