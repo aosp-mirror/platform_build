@@ -64,5 +64,11 @@ my_common := COMMON
 include $(BUILD_SYSTEM)/link_type.mk
 endif # !LOCAL_IS_HOST_MODULE
 
-# Built in equivalent to include $(CLEAR_VARS)
-LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE :=
+ifdef LOCAL_SOONG_RRO_DIRS
+  $(call append_enforce_rro_sources, \
+      $(my_register_name), \
+      false, \
+      $(LOCAL_FULL_MANIFEST_FILE), \
+      $(LOCAL_EXPORT_PACKAGE_RESOURCES), \
+      $(LOCAL_SOONG_RRO_DIRS))
+endif
