@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4e33db72_8a8b69ff",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-01T19:30:58Z",
+      "side": 1,
+      "message": "This should at least go within the endif. Though you could just move it into build/make/core/tasks/... and it\u0027ll be included automatically.",
+      "revId": "041e00c399aada1901b181d7e5c2c85724d9c22b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "650ead3c_698a84fe",
+        "filename": "core/test_mapping.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-01T19:30:58Z",
+      "side": 1,
+      "message": "Can you use a zip file with SOONG_ZIP instead? That\u0027s better optimized for our builds.",
+      "range": {
+        "startLine": 20,
+        "startChar": 56,
+        "endLine": 20,
+        "endChar": 63
+      },
+      "revId": "041e00c399aada1901b181d7e5c2c85724d9c22b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7f2a2b59_9829f111",
+        "filename": "core/test_mapping.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-01T19:30:58Z",
+      "side": 1,
+      "message": "I think this can just be replaced with:\n\n  rm -rf $@\n  $(SOONG_ZIP) -o $@ -C . -l $\u003c\n\n(be sure to depend on $(SOONG_ZIP) after $(test_mapping_list))",
+      "range": {
+        "startLine": 25,
+        "startChar": 1,
+        "endLine": 33,
+        "endChar": 73
+      },
+      "revId": "041e00c399aada1901b181d7e5c2c85724d9c22b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
