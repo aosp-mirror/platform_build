@@ -230,7 +230,11 @@ ifndef LOCAL_IS_HOST_MODULE
       full_java_bootclasspath_libs := $(call java-lib-header-files,android_test_stubs_current)
     else
       ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
-        full_java_bootclasspath_libs := $(call java-lib-header-files,system_sdk_v$(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)))
+        ifeq (,$(TARGET_BUILD_APPS))
+          full_java_bootclasspath_libs := $(call java-lib-header-files,system_sdk_v$(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)))
+        else
+          full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
+        endif
       else
         full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
       endif
