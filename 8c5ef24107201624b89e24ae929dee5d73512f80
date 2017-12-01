@@ -22,6 +22,30 @@
       "revId": "8c5ef24107201624b89e24ae929dee5d73512f80",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97fa391f_a4dcc599",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2017-12-01T04:39:57Z",
+      "side": 1,
+      "message": "Never mind. I just saw https://android-review.googlesource.com/#/c/553622, and understood this correctly.",
+      "parentUuid": "00a6f35c_150da635",
+      "range": {
+        "startLine": 233,
+        "startChar": 0,
+        "endLine": 233,
+        "endChar": 20
+      },
+      "revId": "8c5ef24107201624b89e24ae929dee5d73512f80",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
