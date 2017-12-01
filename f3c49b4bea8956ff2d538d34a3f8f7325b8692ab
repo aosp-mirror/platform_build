@@ -22,6 +22,30 @@
       "revId": "f3c49b4bea8956ff2d538d34a3f8f7325b8692ab",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a0070c7e_0689411c",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-01T22:34:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0231780d_da43fd5a",
+      "range": {
+        "startLine": 27,
+        "startChar": 30,
+        "endLine": 27,
+        "endChar": 47
+      },
+      "revId": "f3c49b4bea8956ff2d538d34a3f8f7325b8692ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
