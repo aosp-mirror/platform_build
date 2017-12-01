@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a3bd8201_cbaa57fc",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1312,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-12-01T23:40:01Z",
+      "side": 1,
+      "message": "nit: To me it looks cleaner to separate BOARD_AVB_ENABLE to a top-level condition between this line and L1306, something like:\n\n$(if $(filter true,$(BOARD_AVB_ENABLE))), \\\n  $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)), \\\n    add_hash_footer with INTERNAL_AVB_BOOT_SIGNING_ARGS, \\\n    add_hash_footer with INTERNAL_AVB_RECOVERY_SIGNING_ARGS)))",
+      "range": {
+        "startLine": 1312,
+        "startChar": 2,
+        "endLine": 1312,
+        "endChar": 95
+      },
+      "revId": "002790b095640d366f93883d42531a19635637bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ba52c28_51ac842d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2098,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-12-01T23:40:01Z",
+      "side": 1,
+      "message": "nit: Reformat into multiple lines?\n\n$(INSTALLED_VBMETAIMAGE_TARGET): \\\n\u003ctab\u003e\u003ctab\u003e$(...) \\\n...",
+      "range": {
+        "startLine": 2098,
+        "startChar": 0,
+        "endLine": 2098,
+        "endChar": 216
+      },
+      "revId": "002790b095640d366f93883d42531a19635637bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
