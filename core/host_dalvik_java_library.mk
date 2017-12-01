@@ -186,8 +186,8 @@ $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
 ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-  my_default_app_target_sdk := $(LOCAL_SDK_VERSION)
-  my_sdk_version := $(LOCAL_SDK_VERSION)
+  my_default_app_target_sdk := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
+  my_sdk_version := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
 else
   my_default_app_target_sdk := $(DEFAULT_APP_TARGET_SDK)
   my_sdk_version := $(PLATFORM_SDK_VERSION)
