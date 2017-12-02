@@ -22,6 +22,30 @@
       "revId": "d062ce5edeb6baa878f5610f9ded441010080e02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a365b3db_0ed0c1eb",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-02T07:38:58Z",
+      "side": 1,
+      "message": "test_mapping_list is added as a dependency so test_mappings_zip can be rebuilt when new TEST_MAPPING is added or old one is removed. Without that dependency, my earlier experiment shows that test_mappings_zip won\u0027t be rebuilt when TEST_MAPPING is added/removed.\n\nThat means an empty rule is the only choice here?",
+      "parentUuid": "940950e2_0ad15f00",
+      "range": {
+        "startLine": 25,
+        "startChar": 40,
+        "endLine": 25,
+        "endChar": 60
+      },
+      "revId": "d062ce5edeb6baa878f5610f9ded441010080e02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
