@@ -44,7 +44,7 @@ def _ReadFile(file_name, unpacked_name, round_up=False):
   """Constructs and returns a File object. Rounds up its size if needed."""
 
   assert os.path.exists(unpacked_name)
-  with open(unpacked_name, 'r') as f:
+  with open(unpacked_name, 'rb') as f:
     file_data = f.read()
   file_size = len(file_data)
   if round_up:
