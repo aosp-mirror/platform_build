@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "940950e2_0ad15f00",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-02T07:00:49Z",
+      "side": 1,
+      "message": "The dangling dependency detector doesn\u0027t like that ninja has no rule to make this file in the out directory but there is a dependency on it.  In this case it is fine, because soong_ui will always have created the file.\n\nOne option is to put an empty rule to generate the file like you suggested.  The other is to not depend on $(test_mapping_list), and instead do echo $(PRIVATE_test_mappings) \u003e $@.list and use that as the -l argument to soong_zip.",
+      "range": {
+        "startLine": 25,
+        "startChar": 40,
+        "endLine": 25,
+        "endChar": 60
+      },
+      "revId": "d062ce5edeb6baa878f5610f9ded441010080e02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
