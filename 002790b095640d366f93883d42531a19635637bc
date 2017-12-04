@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "1b4593cf_57d73c80",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1312,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2017-12-04T17:04:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3bd8201_cbaa57fc",
+      "range": {
+        "startLine": 1312,
+        "startChar": 2,
+        "endLine": 1312,
+        "endChar": 95
+      },
+      "revId": "002790b095640d366f93883d42531a19635637bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7ba52c28_51ac842d",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -59,6 +83,30 @@
       "writtenOn": "2017-12-01T23:40:01Z",
       "side": 1,
       "message": "nit: Reformat into multiple lines?\n\n$(INSTALLED_VBMETAIMAGE_TARGET): \\\n\u003ctab\u003e\u003ctab\u003e$(...) \\\n...",
+      "range": {
+        "startLine": 2098,
+        "startChar": 0,
+        "endLine": 2098,
+        "endChar": 216
+      },
+      "revId": "002790b095640d366f93883d42531a19635637bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d124738_39b7053e",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2098,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2017-12-04T17:04:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7ba52c28_51ac842d",
       "range": {
         "startLine": 2098,
         "startChar": 0,
