@@ -16,6 +16,23 @@
       "revId": "a6bc5a8dd87b03e42e94758697a3207b962ff232",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "14064a2b_580ea8c1",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-04T18:42:42Z",
+      "side": 1,
+      "message": "I\u0027d be surprised if this does anything, I\u0027d expect the semicolon to be on the next line after a tab for this to be considered a rule.\n\nIf you are going to do this (as opposed to just not using $(test_mapping_list) except in the $(file) function), put a comment explaining why this is necessary:\n\nm checkbuild does a check for dependencies on files in $(OUT_DIR) that do not have a rule to write them.  This file is written by soong_ui, so is always present when ninja runs.  Add a dummy rule that pretends to write the file so that it doesn\u0027t trip the dangling dependencies check.",
+      "revId": "a6bc5a8dd87b03e42e94758697a3207b962ff232",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
