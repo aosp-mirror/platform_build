@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7bd56cd7_73e54301",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-04T02:51:06Z",
+      "side": 1,
+      "message": "I think we\u0027d better to have a boolean flag such as BOARD_ENFORCE_SYSTEM_SDK.",
+      "range": {
+        "startLine": 411,
+        "startChar": 7,
+        "endLine": 411,
+        "endChar": 31
+      },
+      "revId": "8ac6ac286ff951ac10b526847aa1c6d14fc66139",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cae141d3_e8b309b7",
+        "filename": "core/link_type.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-04T02:51:06Z",
+      "side": 1,
+      "message": "Can we keep this (and #32-35 as well) regardless of BOARD_SYSTEM_SDK_VERSION is set or not? I think we can keep the mechanism part the same and have different policies depending on whether we enforce the link rule more strictly or not.",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 5
+      },
+      "revId": "8ac6ac286ff951ac10b526847aa1c6d14fc66139",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "107bca2a_f74c98b0",
+        "filename": "core/local_vsdk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-04T02:51:06Z",
+      "side": 1,
+      "message": "rename the file to local_systemsdk.mk or so.",
+      "revId": "8ac6ac286ff951ac10b526847aa1c6d14fc66139",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ace1661d_e6593051",
+        "filename": "core/local_vsdk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-04T02:51:06Z",
+      "side": 1,
+      "message": "_app is misleading. We treat both app and java library the same here.",
+      "range": {
+        "startLine": 4,
+        "startChar": 21,
+        "endLine": 4,
+        "endChar": 25
+      },
+      "revId": "8ac6ac286ff951ac10b526847aa1c6d14fc66139",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a946bfea_078de287",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 762,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-04T02:51:06Z",
+      "side": 1,
+      "message": "please remove this conditional?",
+      "range": {
+        "startLine": 762,
+        "startChar": 0,
+        "endLine": 762,
+        "endChar": 30
+      },
+      "revId": "8ac6ac286ff951ac10b526847aa1c6d14fc66139",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
