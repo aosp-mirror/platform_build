@@ -22,6 +22,30 @@
       "revId": "0f984044873c8fec2242936c793428139721f7dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3a97e4ee_24d1e4b1",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-04T22:44:57Z",
+      "side": 1,
+      "message": "PRIVATE_test_mappings is a multiple line string, this echo command can\u0027t handle that.\n\nIs there a way to fix that? Guess using a for loop to echo each line to the list will be very inefficient.",
+      "parentUuid": "91a9c9ac_73707d5f",
+      "range": {
+        "startLine": 28,
+        "startChar": 28,
+        "endLine": 28,
+        "endChar": 56
+      },
+      "revId": "0f984044873c8fec2242936c793428139721f7dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
