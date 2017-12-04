@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "163e2ea3_797f70d4",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-04T18:40:23Z",
+      "side": 1,
+      "message": "empty build rule for TEST_MAPPING.list is added.",
+      "revId": "a6bc5a8dd87b03e42e94758697a3207b962ff232",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
