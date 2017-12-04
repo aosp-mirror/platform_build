@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9188a29_91c054ba",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-04T07:00:44Z",
+      "side": 1,
+      "message": "No need? Please see #625",
+      "range": {
+        "startLine": 567,
+        "startChar": 0,
+        "endLine": 567,
+        "endChar": 54
+      },
+      "revId": "2ba250f2a35d131c806bc6ae826ec5d4134099bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
