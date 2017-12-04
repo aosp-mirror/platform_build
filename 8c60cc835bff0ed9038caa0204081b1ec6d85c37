@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d98a1774_16c34d89",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-04T06:19:31Z",
+      "side": 1,
+      "message": "I think you need to have two rules depending on whether BOARD_ENFORCE_SYSTEM_SDK is true or not.",
+      "revId": "8c60cc835bff0ed9038caa0204081b1ec6d85c37",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4bc9bde9_c49f5d07",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-04T06:19:31Z",
+      "side": 1,
+      "message": "LOCAL_IS_STATIC_JAVA_LIBRARY is true only when a lib is built via BUILD_STATIC_JAVA_LIBRARY. However, it is possible to statically link to a lib built with BUILD_JAVA_LIBRARY.",
+      "range": {
+        "startLine": 417,
+        "startChar": 7,
+        "endLine": 417,
+        "endChar": 35
+      },
+      "revId": "8c60cc835bff0ed9038caa0204081b1ec6d85c37",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "587dca5d_57edfbc8",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-04T06:19:31Z",
+      "side": 1,
+      "message": "why is this empty? A static lib has been able to dynamically link to other libs at least when BOARD_ENFORCE_SYSTEM_SDK is false.",
+      "range": {
+        "startLine": 425,
+        "startChar": 0,
+        "endLine": 425,
+        "endChar": 19
+      },
+      "revId": "8c60cc835bff0ed9038caa0204081b1ec6d85c37",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4395313_76525129",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-04T06:19:31Z",
+      "side": 1,
+      "message": "here as well",
+      "range": {
+        "startLine": 437,
+        "startChar": 0,
+        "endLine": 437,
+        "endChar": 19
+      },
+      "revId": "8c60cc835bff0ed9038caa0204081b1ec6d85c37",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
