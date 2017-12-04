@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "9c8b237c_11a6c3d2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-12-04T09:52:37Z",
+      "side": 1,
+      "message": "Just FYI, non-A/B will still exists in P.\nBut we\u0027ll mandate \"system-as-root\" in P (go/android-system-as-root).",
+      "range": {
+        "startLine": 9,
+        "startChar": 8,
+        "endLine": 9,
+        "endChar": 22
+      },
+      "revId": "002790b095640d366f93883d42531a19635637bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a3bd8201_cbaa57fc",
         "filename": "core/Makefile",
         "patchSetId": 2
