@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91a9c9ac_73707d5f",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-04T21:55:26Z",
+      "side": 1,
+      "message": "This won\u0027t work, if the list of files changes then kati will rerun and update this rule to have the new dependencies, but if the timestamps of those new dependencies are older than the last time this rule was built, the rule will not rerun to pick up the new files.  If you put the list of files into the rule then ninja will see that the command line changed and rerun it.\n\n  echo $(PRIVATE_test_mappings) \u003e $@.list\n  $(SOONG_ZIP) -o $@ -C . -l $@.list",
+      "range": {
+        "startLine": 28,
+        "startChar": 28,
+        "endLine": 28,
+        "endChar": 56
+      },
+      "revId": "0f984044873c8fec2242936c793428139721f7dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
