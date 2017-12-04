@@ -22,6 +22,30 @@
       "revId": "48999ef83ea353e429892e3e70698097fde2c3b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6c5067b_5da72c01",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1309,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2017-12-04T18:55:15Z",
+      "side": 1,
+      "message": "Sorry about that. Fixed!",
+      "parentUuid": "c08b8d15_bf7dee5e",
+      "range": {
+        "startLine": 1309,
+        "startChar": 0,
+        "endLine": 1309,
+        "endChar": 3
+      },
+      "revId": "48999ef83ea353e429892e3e70698097fde2c3b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
