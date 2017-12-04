@@ -33,6 +33,24 @@
       "revId": "a6bc5a8dd87b03e42e94758697a3207b962ff232",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4f36878_b36b2a73",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-04T19:23:01Z",
+      "side": 1,
+      "message": "I think my test earlier is faulty. The list file actually doesn\u0027t need to be in the dependency list. If that file is changed, soong will find $(test_mappings) value is changed and will rebuilt the artifact.\n\nI removed the dummy build rule and dependency.",
+      "parentUuid": "14064a2b_580ea8c1",
+      "revId": "a6bc5a8dd87b03e42e94758697a3207b962ff232",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
