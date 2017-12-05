@@ -22,6 +22,30 @@
       "revId": "bb3f1add3d3fc01bacf78b35ede7481d46627b27",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97dd8320_1d8dd286",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 1176763
+      },
+      "writtenOn": "2017-12-05T18:51:31Z",
+      "side": 1,
+      "message": "Ah, just in case, can I add verbose flag during the build instead of this?",
+      "parentUuid": "cf6a9d7f_702cd09f",
+      "range": {
+        "startLine": 552,
+        "startChar": 49,
+        "endLine": 552,
+        "endChar": 53
+      },
+      "revId": "bb3f1add3d3fc01bacf78b35ede7481d46627b27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
