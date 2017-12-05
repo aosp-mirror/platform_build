@@ -94,6 +94,30 @@
       "revId": "0d9536b689ea70ddedc3ac682314504bcc8f9583",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a8826ea_f1df3e81",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-05T23:58:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9508c7ef_54a2773e",
+      "range": {
+        "startLine": 27,
+        "startChar": 35,
+        "endLine": 27,
+        "endChar": 37
+      },
+      "revId": "0d9536b689ea70ddedc3ac682314504bcc8f9583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
