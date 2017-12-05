@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f1a3ed4f_34fdf0f6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-12-05T18:26:51Z",
+      "side": 1,
+      "message": "duplicate. or did you mean \"BOARD_AVB_OEM_ROLLBACK_INDEX\"?",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 25
+      },
+      "revId": "a921e1264a922811f51b39d24703f21e21b00f81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6655fa6_3155389b",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-12-05T18:26:51Z",
+      "side": 1,
+      "message": "This would fail the assertion at L100.\n\nAlso a similar check is enforced in bootable/recovery/update_verifier:\nhttps://android.googlesource.com/platform/bootable/recovery/+/master/update_verifier/update_verifier.cpp#77",
+      "range": {
+        "startLine": 677,
+        "startChar": 8,
+        "endLine": 677,
+        "endChar": 56
+      },
+      "revId": "a921e1264a922811f51b39d24703f21e21b00f81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
