@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7418fa3a_6cccadd4",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 411,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-05T09:13:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d98a1774_16c34d89",
+      "revId": "8c60cc835bff0ed9038caa0204081b1ec6d85c37",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4bc9bde9_c49f5d07",
         "filename": "core/java_common.mk",
         "patchSetId": 2
@@ -39,6 +57,30 @@
       "revId": "8c60cc835bff0ed9038caa0204081b1ec6d85c37",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3aad1fca_11096440",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-05T09:13:36Z",
+      "side": 1,
+      "message": "Removed.",
+      "parentUuid": "4bc9bde9_c49f5d07",
+      "range": {
+        "startLine": 417,
+        "startChar": 7,
+        "endLine": 417,
+        "endChar": 35
+      },
+      "revId": "8c60cc835bff0ed9038caa0204081b1ec6d85c37",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "770f5b69_96c67d45",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 425,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-05T09:13:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "587dca5d_57edfbc8",
+      "range": {
+        "startLine": 425,
+        "startChar": 0,
+        "endLine": 425,
+        "endChar": 19
+      },
+      "revId": "8c60cc835bff0ed9038caa0204081b1ec6d85c37",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c4395313_76525129",
         "filename": "core/java_common.mk",
         "patchSetId": 2
@@ -85,6 +151,30 @@
       "revId": "8c60cc835bff0ed9038caa0204081b1ec6d85c37",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6e20eef_bc7dfc31",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-05T09:13:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4395313_76525129",
+      "range": {
+        "startLine": 437,
+        "startChar": 0,
+        "endLine": 437,
+        "endChar": 19
+      },
+      "revId": "8c60cc835bff0ed9038caa0204081b1ec6d85c37",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
