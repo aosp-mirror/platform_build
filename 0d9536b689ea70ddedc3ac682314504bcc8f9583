@@ -46,6 +46,30 @@
       "revId": "0d9536b689ea70ddedc3ac682314504bcc8f9583",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6cacbb31_b4a715bc",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-05T21:35:22Z",
+      "side": 1,
+      "message": "yeah, that will work. I was think if we can reference the second build target, this code can be cleaner and I don\u0027t have use $(device-tests-list-zip) in line 30.",
+      "parentUuid": "5cf824fa_d849584b",
+      "range": {
+        "startLine": 27,
+        "startChar": 35,
+        "endLine": 27,
+        "endChar": 37
+      },
+      "revId": "0d9536b689ea70ddedc3ac682314504bcc8f9583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
