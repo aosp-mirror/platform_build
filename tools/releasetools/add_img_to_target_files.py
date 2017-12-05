@@ -45,18 +45,13 @@ Usage:  add_img_to_target_files [flag] target_files
 
 from __future__ import print_function
 
-import sys
-
-if sys.hexversion < 0x02070000:
-  print("Python 2.7 or newer is required.", file=sys.stderr)
-  sys.exit(1)
-
 import datetime
 import hashlib
 import os
 import shlex
 import shutil
 import subprocess
+import sys
 import tempfile
 import uuid
 import zipfile
@@ -65,6 +60,10 @@ import build_image
 import common
 import rangelib
 import sparse_img
+
+if sys.hexversion < 0x02070000:
+  print("Python 2.7 or newer is required.", file=sys.stderr)
+  sys.exit(1)
 
 OPTIONS = common.OPTIONS
 
@@ -388,9 +387,9 @@ def AddVBMeta(output_zip, partitions, prefix="IMAGES/"):
         if os.path.exists(image_path):
           continue
         found = False
-        for dir in ['IMAGES', 'RADIO', 'VENDOR_IMAGES', 'PREBUILT_IMAGES']:
+        for dir_name in ['IMAGES', 'RADIO', 'VENDOR_IMAGES', 'PREBUILT_IMAGES']:
           alt_path = os.path.join(
-              OPTIONS.input_tmp, dir, os.path.basename(image_path))
+              OPTIONS.input_tmp, dir_name, os.path.basename(image_path))
           if os.path.exists(alt_path):
             split_args[index + 1] = alt_path
             found = True
@@ -657,8 +656,6 @@ def AddImagesToTargetFiles(filename):
         continue
 
       img_radio_path = os.path.join(OPTIONS.input_tmp, "RADIO", img_name)
-      img_vendor_dir = os.path.join(
-        OPTIONS.input_tmp, "VENDOR_IMAGES")
       if os.path.exists(img_radio_path):
         if output_zip:
           common.ZipWrite(output_zip, img_radio_path,
@@ -666,11 +663,12 @@ def AddImagesToTargetFiles(filename):
         else:
           shutil.copy(img_radio_path, prebuilt_path)
       else:
+        img_vendor_dir = os.path.join(OPTIONS.input_tmp, "VENDOR_IMAGES")
         for root, _, files in os.walk(img_vendor_dir):
           if img_name in files:
             if output_zip:
               common.ZipWrite(output_zip, os.path.join(root, img_name),
-                os.path.join("IMAGES", img_name))
+                              os.path.join("IMAGES", img_name))
             else:
               shutil.copy(os.path.join(root, img_name), prebuilt_path)
             break
