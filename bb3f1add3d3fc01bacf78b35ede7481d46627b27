@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf6a9d7f_702cd09f",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-12-05T18:42:26Z",
+      "side": 1,
+      "message": "go/android-silent-build has been trying to reduce the unnecessary outputs. This verbose\u003dTrue flag can be removed (so it defaults to OPTIONS.verbose).",
+      "range": {
+        "startLine": 552,
+        "startChar": 49,
+        "endLine": 552,
+        "endChar": 53
+      },
+      "revId": "bb3f1add3d3fc01bacf78b35ede7481d46627b27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
