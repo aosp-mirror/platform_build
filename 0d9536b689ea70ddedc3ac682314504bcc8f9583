@@ -70,6 +70,30 @@
       "revId": "0d9536b689ea70ddedc3ac682314504bcc8f9583",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9508c7ef_54a2773e",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-05T23:36:21Z",
+      "side": 1,
+      "message": "I think that even if it were possible to reference the second build target using a syntax like for example \"$2\", that that would be more confusing+brittle than a named variable anyway, because using a positional expression would mean that prepending another target to the output list would change the value of that expression.",
+      "parentUuid": "6cacbb31_b4a715bc",
+      "range": {
+        "startLine": 27,
+        "startChar": 35,
+        "endLine": 27,
+        "endChar": 37
+      },
+      "revId": "0d9536b689ea70ddedc3ac682314504bcc8f9583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
