@@ -537,8 +537,6 @@ $(WALL_WERROR):
 	@rm -f $@
 	echo "# Modules using -Wno-error" >> $@
 	for m in $(sort $(SOONG_MODULES_USING_WNO_ERROR) $(MODULES_USING_WNO_ERROR)); do echo $$m >> $@; done
-	echo "# Modules added default -Wall -Werror" >> $@
-	for m in $(sort $(SOONG_MODULES_ADDED_WERROR) $(MODULES_ADDED_WERROR)); do echo $$m >> $@; done
 	echo "# Modules added default -Wall" >> $@
 	for m in $(sort $(SOONG_MODULES_ADDED_WALL) $(MODULES_ADDED_WALL)); do echo $$m >> $@; done
 
@@ -2607,8 +2605,6 @@ endif
 ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_OTHER,system/) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
-
-ifeq ($(PRODUCT_FULL_TREBLE),true)
 	@# Metadata for compatibility verification.
 	$(hide) cp $(BUILT_SYSTEM_MANIFEST) $(zip_root)/META/system_manifest.xml
 	$(hide) cp $(BUILT_SYSTEM_COMPATIBILITY_MATRIX) $(zip_root)/META/system_matrix.xml
@@ -2617,7 +2613,6 @@ ifdef BUILT_VENDOR_MANIFEST
 endif
 ifdef BUILT_VENDOR_MATRIX
 	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
-endif
 endif
 
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \

@@ -112,6 +112,7 @@ $(call add_json_list, DeviceKernelHeaders,               $(TARGET_PROJECT_SYSTEM
 $(call add_json_bool, DevicePrefer32BitExecutables,      $(filter true,$(TARGET_PREFER_32_BIT_EXECUTABLES)))
 $(call add_json_val,  DeviceUsesClang,                   $(if $(USE_CLANG_PLATFORM_BUILD),$(USE_CLANG_PLATFORM_BUILD),false))
 $(call add_json_str,  DeviceVndkVersion,                 $(BOARD_VNDK_VERSION))
+$(call add_json_list, ExtraVndkVersions,                 $(PRODUCT_EXTRA_VNDK_VERSIONS))
 $(call add_json_bool, Malloc_not_svelte,                 $(call invert_bool,$(filter true,$(MALLOC_SVELTE))))
 $(call add_json_str,  Override_rs_driver,                $(OVERRIDE_RS_DRIVER))
 $(call add_json_bool, Treble,                            $(filter true,$(PRODUCT_FULL_TREBLE)))
