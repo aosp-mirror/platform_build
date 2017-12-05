@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "84f25707_bd218d65",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-05T19:30:29Z",
+      "side": 1,
+      "message": "is there a way to reference the second build target? I checked how automatic variables is used, can\u0027t find any way to do that.",
+      "range": {
+        "startLine": 27,
+        "startChar": 35,
+        "endLine": 27,
+        "endChar": 37
+      },
+      "revId": "0d9536b689ea70ddedc3ac682314504bcc8f9583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
