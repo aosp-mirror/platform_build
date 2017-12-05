@@ -4,6 +4,7 @@ type goldfish_setup_exec, vendor_file_type, exec_type, file_type;
 
 init_daemon_domain(goldfish_setup)
 
+set_prop(goldfish_setup, debug_prop);
 allow goldfish_setup self:capability { net_admin net_raw };
 allow goldfish_setup self:udp_socket { create ioctl };
 allow goldfish_setup vendor_toolbox_exec:file execute_no_trans;
