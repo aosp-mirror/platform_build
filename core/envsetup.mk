@@ -285,14 +285,23 @@ ifeq ($(AB_OTA_UPDATER),true)
 endif
 
 # Check BOARD_VNDK_VERSION
+define check_vndk_version
+  $(eval vndk_path := prebuilts/vndk/v$(1)) \
+  $(if $(wildcard $(vndk_path)/Android.bp),,$(error VNDK version $(1) not found))
+endef
+
 ifdef BOARD_VNDK_VERSION
   ifneq ($(BOARD_VNDK_VERSION),current)
-    $(error BOARD_VNDK_VERSION: Only "current" is implemented)
+    $(call check_vndk_version,$(BOARD_VNDK_VERSION))
   endif
 
   TARGET_VENDOR_TEST_SUFFIX := /vendor
 else
   TARGET_VENDOR_TEST_SUFFIX :=
+endif
+
+ifdef PRODUCT_EXTRA_VNDK_VERSIONS
+  $(foreach v,$(PRODUCT_EXTRA_VNDK_VERSIONS),$(call check_vndk_version,$(v)))
 endif
 
 # ---------------------------------------------------------------
