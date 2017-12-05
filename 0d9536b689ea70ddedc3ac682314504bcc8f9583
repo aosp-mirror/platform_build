@@ -22,6 +22,30 @@
       "revId": "0d9536b689ea70ddedc3ac682314504bcc8f9583",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5cf824fa_d849584b",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-05T20:29:20Z",
+      "side": 1,
+      "message": "You should be able to pass it as a rule-private variable by adding this line above the rule declaration:\n\n$(device-tests-zip): PRIVATE_DEVICE_TESTS_LIST :\u003d $(device-tests-list-zip)\n\nand then using it within the rule as $(PRIVATE_DEVICE_TESTS_LIST)",
+      "parentUuid": "84f25707_bd218d65",
+      "range": {
+        "startLine": 27,
+        "startChar": 35,
+        "endLine": 27,
+        "endChar": 37
+      },
+      "revId": "0d9536b689ea70ddedc3ac682314504bcc8f9583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
