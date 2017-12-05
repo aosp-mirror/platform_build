@@ -233,3 +233,10 @@ ifndef BUILD_NUMBER
   # anyone trying to parse it as an integer will probably get "0".
   BUILD_NUMBER := eng.$(shell echo $${USER:0:6}).$(shell $(DATE) +%Y%m%d.%H%M%S)
 endif
+
+ifndef PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION
+  # Used to set minimum supported target sdk version. Apps targeting sdk
+  # version lower than the set value will fail to install and run on android
+  # device.
+  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 0
+endif
