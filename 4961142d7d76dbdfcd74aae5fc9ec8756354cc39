@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a304fd1_ccae7c8e",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-06T10:04:09Z",
+      "side": 1,
+      "message": "add `# BOARD_ENFORCE_SYSTEM_SDK is true` to make it more clear?",
+      "range": {
+        "startLine": 426,
+        "startChar": 0,
+        "endLine": 426,
+        "endChar": 4
+      },
+      "revId": "4961142d7d76dbdfcd74aae5fc9ec8756354cc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "acb6b8a4_6f6c075d",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-06T10:04:09Z",
+      "side": 1,
+      "message": "add java:vendor here as well?",
+      "range": {
+        "startLine": 431,
+        "startChar": 27,
+        "endLine": 431,
+        "endChar": 47
+      },
+      "revId": "4961142d7d76dbdfcd74aae5fc9ec8756354cc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20f8ba94_d49ce646",
+        "filename": "core/soong_app_prebuilt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-06T10:04:09Z",
+      "side": 1,
+      "message": "add java:vendor?",
+      "range": {
+        "startLine": 67,
+        "startChar": 27,
+        "endLine": 67,
+        "endChar": 47
+      },
+      "revId": "4961142d7d76dbdfcd74aae5fc9ec8756354cc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "803f9e8e_bbfc2af6",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-06T10:04:09Z",
+      "side": 1,
+      "message": "again",
+      "range": {
+        "startLine": 100,
+        "startChar": 27,
+        "endLine": 100,
+        "endChar": 47
+      },
+      "revId": "4961142d7d76dbdfcd74aae5fc9ec8756354cc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
