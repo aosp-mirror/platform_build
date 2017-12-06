@@ -212,6 +212,30 @@
       "revId": "c580b78618156d83af575b005c2eb286a44d55f5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e50ae212_c789779a",
+        "filename": "core/tasks/tradefed-tests-list.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-06T23:19:48Z",
+      "side": 1,
+      "message": "sorry, I didn\u0027t make it clear. res/config may not be the top folder under $(dir). A TF repo may have multiple java projects, each has its own res/config, e.g.,\ntools/tradefederation/core/res/config\ntools/tradefederation/core/prod-tests/res/config\ntools/tradefederation/core/tests/res/config\n\nThat\u0027s why I need a path filter there.",
+      "parentUuid": "cba5f264_909fbc39",
+      "range": {
+        "startLine": 19,
+        "startChar": 69,
+        "endLine": 19,
+        "endChar": 94
+      },
+      "revId": "c580b78618156d83af575b005c2eb286a44d55f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
