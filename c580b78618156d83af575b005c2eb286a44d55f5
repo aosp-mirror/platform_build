@@ -188,6 +188,30 @@
       "revId": "c580b78618156d83af575b005c2eb286a44d55f5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cba5f264_909fbc39",
+        "filename": "core/tasks/tradefed-tests-list.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T23:11:24Z",
+      "side": 1,
+      "message": "Ok cool. In that case, would it also work to replace:\n\n  $(shell find $(dir) -type f -name \"*.xml\" -path \u0027*\\/res\\/config\\/*\u0027)\n\nwith\n\n  $(shell find $(dir)/res/config -type f -name \"*.xml\")\n\n?",
+      "parentUuid": "e23d589f_909d0fdc",
+      "range": {
+        "startLine": 19,
+        "startChar": 69,
+        "endLine": 19,
+        "endChar": 94
+      },
+      "revId": "c580b78618156d83af575b005c2eb286a44d55f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
