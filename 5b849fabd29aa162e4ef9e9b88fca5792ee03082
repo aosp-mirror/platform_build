@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f6cf281_d3c5decb",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T00:55:25Z",
+      "side": 1,
+      "message": "Unrelated to this patch, it seems to me that it would be helpful to rename \"_base\" to \"_dest_base\" if you happen to be using/testing this code already.",
+      "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b0d0fa04_c73588d6",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T00:55:25Z",
+      "side": 1,
+      "message": "Might be nice to swap the order to make my_test_data_file_pairs mirror my_test_data_pairs. That is:\n\n $(eval my_test_data_file_pairs :\u003d $(my_test_data_file_pairs) $(_file):$(call append-path,$(_base),$(_file)))",
+      "range": {
+        "startLine": 483,
+        "startChar": 4,
+        "endLine": 483,
+        "endChar": 112
+      },
+      "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f4f2fb6_4252a111",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T00:55:25Z",
+      "side": 1,
+      "message": "Would it be better to move this up near line 484 to avoid having to make the my_test_data_file_pairs list and re-parse the variables?",
+      "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6211ed8_6f7d5616",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 562,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T00:55:25Z",
+      "side": 1,
+      "message": "Is this saying that the contents of $(dir)/$(file) will get copied to the location $(src_path)? \n\nWould it be more appropriate to call the variable \"dest_path\"?",
+      "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
