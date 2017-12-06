@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e995dff6_d4f4af29",
+        "filename": "core/local_vndk.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2017-12-06T02:08:25Z",
+      "side": 1,
+      "message": "This is different than \n\nhttps://android-review.googlesource.com/#/c/platform/build/+/531455/1/core/local_vndk.mk\n\nSo I only updated the comment at line 2.\nThis is ok to me as current setting is newer.",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 44
+      },
+      "revId": "ae2fa3d35f0d4994f2f0fbfff88d5c6de2ee5709",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
