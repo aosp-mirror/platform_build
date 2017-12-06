@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5e2582e7_d2ac031c",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-12-06T21:09:57Z",
+      "side": 1,
+      "message": "might be also helpful to print this out (and the one at L541) on errors?",
+      "range": {
+        "startLine": 539,
+        "startChar": 7,
+        "endLine": 539,
+        "endChar": 20
+      },
+      "revId": "73ff57f48a7ac18f52980b0c6bf0f2bbd19423f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
