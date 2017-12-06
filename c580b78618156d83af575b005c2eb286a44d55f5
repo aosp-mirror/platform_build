@@ -140,6 +140,30 @@
       "revId": "c580b78618156d83af575b005c2eb286a44d55f5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f0693bf_817d32d5",
+        "filename": "core/tasks/tradefed-tests-list.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T22:56:14Z",
+      "side": 1,
+      "message": "What I wonder is whether people would misunderstand this: perhaps they would observe that there is some autodetection going on given that $(dir)/res/config/file.xml and $(dir)/subdir/res/config/sub2/file.xml both work, and not realize that this expression is actually `find -type f -name \"*.xml\"` (and don\u0027t realize that there is a \"-path\" argument too) and would then create a new directory, maybe /res/moretests/config and be surprised that it doesn\u0027t get included.\n\nYou\u0027re probably more familiar with who/what is going to be generating these files (the ones that are discovered by the find), so if this is what\u0027s most convenient for them then that\u0027s fine.\n\nI just want to double-check that this is actually the approach that\u0027s most convenient to use (as opposed to, for example, only checking $(dir)/res/config/**/*.xml)",
+      "parentUuid": "9086644e_2de0604c",
+      "range": {
+        "startLine": 19,
+        "startChar": 69,
+        "endLine": 19,
+        "endChar": 94
+      },
+      "revId": "c580b78618156d83af575b005c2eb286a44d55f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
