@@ -162,7 +162,7 @@ $(vndk_snapshot_zip): $(vndk_snapshot_dependencies) $(SOONG_ZIP)
 	$(call private-copy-vndk-intermediates, \
 		$(PRIVATE_VNDK_CORE_OUT),$(PRIVATE_VNDK_CORE_INTERMEDIATES))
 	$(call private-copy-vndk-intermediates, \
-	 	$(PRIVATE_VNDK_SP_OUT),$(PRIVATE_VNDK_SP_INTERMEDIATES))
+		$(PRIVATE_VNDK_SP_OUT),$(PRIVATE_VNDK_SP_INTERMEDIATES))
 	$(call private-copy-vndk-intermediates, \
 		$(PRIVATE_CONFIGS_OUT),$(PRIVATE_CONFIGS_INTERMEDIATES))
 # TODO(b/69834489): Package additional arch variants
@@ -172,8 +172,7 @@ $(vndk_snapshot_zip): $(vndk_snapshot_dependencies) $(SOONG_ZIP)
 # 	$(call private-copy-vndk-intermediates, \
 # 		$(PRIVATE_VNDK_SP_OUT_2ND),$(PRIVATE_VNDK_SP_INTERMEDIATES_2ND))
 # endif
-	$(hide) $(SOONG_ZIP) -o $@ -P android-vndk-snapshot -C $(PRIVATE_VNDK_SNAPSHOT_OUT) \
-	-D $(PRIVATE_VNDK_SNAPSHOT_OUT)
+	$(hide) $(SOONG_ZIP) -o $@ -C $(PRIVATE_VNDK_SNAPSHOT_OUT) -D $(PRIVATE_VNDK_SNAPSHOT_OUT)
 
 .PHONY: vndk
 vndk: $(vndk_snapshot_zip)
