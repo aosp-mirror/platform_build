@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b0161c05_62a0d7c9",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-06T12:21:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a304fd1_ccae7c8e",
+      "range": {
+        "startLine": 426,
+        "startChar": 0,
+        "endLine": 426,
+        "endChar": 4
+      },
+      "revId": "4961142d7d76dbdfcd74aae5fc9ec8756354cc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "acb6b8a4_6f6c075d",
         "filename": "core/java_common.mk",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "4961142d7d76dbdfcd74aae5fc9ec8756354cc39",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8512c20_6a2a76f1",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-06T12:21:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "acb6b8a4_6f6c075d",
+      "range": {
+        "startLine": 431,
+        "startChar": 27,
+        "endLine": 431,
+        "endChar": 47
+      },
+      "revId": "4961142d7d76dbdfcd74aae5fc9ec8756354cc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "7ff5d377_a181e4df",
+        "filename": "core/soong_app_prebuilt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-06T12:21:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "20f8ba94_d49ce646",
+      "range": {
+        "startLine": 67,
+        "startChar": 27,
+        "endLine": 67,
+        "endChar": 47
+      },
+      "revId": "4961142d7d76dbdfcd74aae5fc9ec8756354cc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "803f9e8e_bbfc2af6",
         "filename": "core/soong_java_prebuilt.mk",
         "patchSetId": 5
@@ -91,6 +163,30 @@
       "revId": "4961142d7d76dbdfcd74aae5fc9ec8756354cc39",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b0c0a1ef_9d558761",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-06T12:21:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "803f9e8e_bbfc2af6",
+      "range": {
+        "startLine": 100,
+        "startChar": 27,
+        "endLine": 100,
+        "endChar": 47
+      },
+      "revId": "4961142d7d76dbdfcd74aae5fc9ec8756354cc39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
