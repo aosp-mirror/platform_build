@@ -76,8 +76,10 @@ def process(reader):
     problems = dict()
     deps = dict()
     reverse_deps = dict()
+    module_types = dict()
 
-    for (module, problem, dependencies) in reader:
+    for (module, module_type, problem, dependencies) in reader:
+        module_types[module] = module_type
         problems[module] = problem
         deps[module] = [d for d in dependencies.strip().split(' ') if d != ""]
         for dep in deps[module]:
@@ -94,16 +96,19 @@ def process(reader):
         extra = ""
         if len(problems[module]) > 0:
             extra = " ({})".format(problems[module])
-        results.append((count_deps(reverse_deps, module, []), module + extra))
+        results.append((count_deps(reverse_deps, module, []), module + extra, module_types[module]))
 
     return sorted(results, key=lambda result: (-result[0], result[1]))
+
+def filter(results, module_type):
+    return [x for x in results if x[2] == module_type]
 
 def display(results):
     """Displays the results"""
     count_header = "# Blocked on"
     count_width = len(count_header)
     print("{} Module (potential problems)".format(count_header))
-    for (count, module) in results:
+    for (count, module, module_type) in results:
         print("{:>{}} {}".format(count, count_width, module))
 
 def main(filename):
@@ -111,7 +116,15 @@ def main(filename):
     with open(filename, 'rb') as csvfile:
         results = process(csv.reader(csvfile))
 
-    display(results)
+    native_results = filter(results, "native")
+    java_results = filter(results, "java")
+
+    print("native modules ready to convert")
+    display(native_results)
+
+    print("")
+    print("java modules ready to convert")
+    display(java_results)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
