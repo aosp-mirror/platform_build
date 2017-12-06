@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "530525af_b03edc30",
+        "filename": "core/tasks/tradefed-tests-list.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T20:39:43Z",
+      "side": 1,
+      "message": "extra \"ls \" (though it looks like this was copied from some other .mk files)",
+      "range": {
+        "startLine": 9,
+        "startChar": 39,
+        "endLine": 9,
+        "endChar": 48
+      },
+      "revId": "c580b78618156d83af575b005c2eb286a44d55f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b60a00b2_ec483f7d",
+        "filename": "core/tasks/tradefed-tests-list.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T20:39:43Z",
+      "side": 1,
+      "message": "Just to double-check: will test writers expect the build system to autodetect file paths of $(dir)/**/res/config/**/*.xml (as opposed to, for example, only checking $(dir)/res/config/**/*.xml)?",
+      "range": {
+        "startLine": 19,
+        "startChar": 69,
+        "endLine": 19,
+        "endChar": 94
+      },
+      "revId": "c580b78618156d83af575b005c2eb286a44d55f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40abaedc_8a5f9aa6",
+        "filename": "core/tasks/tradefed-tests-list.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T20:39:43Z",
+      "side": 1,
+      "message": "Is this variable expected to be empty before this +\u003d? If so, then (due to the fact that +\u003d of a previously undefined variable means lazy evaluation in Make) it\u0027d be good to initialize it to empty right above the loop",
+      "range": {
+        "startLine": 19,
+        "startChar": 9,
+        "endLine": 19,
+        "endChar": 23
+      },
+      "revId": "c580b78618156d83af575b005c2eb286a44d55f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
