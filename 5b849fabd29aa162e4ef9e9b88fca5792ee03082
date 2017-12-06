@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "7a8bb869_a9dcd479",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-12-06T03:07:31Z",
+      "side": 1,
+      "message": "I don\u0027t seem to get why mirror? Can you elaborate? I did it to align with my_test_data_pairs.\n\nRight now its source path : relative dest path.",
+      "parentUuid": "b0d0fa04_c73588d6",
+      "range": {
+        "startLine": 483,
+        "startChar": 4,
+        "endLine": 483,
+        "endChar": 112
+      },
+      "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5f4f2fb6_4252a111",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
@@ -59,6 +83,24 @@
     },
     {
       "key": {
+        "uuid": "57e0b676_de4d1d7c",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-12-06T03:07:31Z",
+      "side": 1,
+      "message": "I could but all the rest of the LOCAL_COMPATIBILITY_SUITE logic is in this block so it seemed to make more sense to me to keep it here in case this code gets re-written/refactored or something in the future.\n\nBut I\u0027ll defer the decision to you guys on the build team.\n\nWorse cast I\u0027ll leave a comment here saying don\u0027t forget about test data.\n\n\nNOTE: I need the arch_dir variable on the next line so in that case I\u0027d move the code I moved up back down.",
+      "parentUuid": "5f4f2fb6_4252a111",
+      "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e6211ed8_6f7d5616",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
@@ -70,6 +112,24 @@
       "writtenOn": "2017-12-06T00:55:25Z",
       "side": 1,
       "message": "Is this saying that the contents of $(dir)/$(file) will get copied to the location $(src_path)? \n\nWould it be more appropriate to call the variable \"dest_path\"?",
+      "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1d2d12d_aa52b267",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 562,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-12-06T03:07:31Z",
+      "side": 1,
+      "message": "No src_path is where it\u0027s coming from it in the source and the right side of the colon is the destination.",
+      "parentUuid": "e6211ed8_6f7d5616",
       "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
