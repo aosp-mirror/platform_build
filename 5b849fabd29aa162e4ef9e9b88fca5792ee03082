@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a868003e_fc1402fd",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T03:51:39Z",
+      "side": 1,
+      "message": "hmm it looks like \"_dest_base\" would actually be wrong and that \"_src_base\" would be more accurate",
+      "parentUuid": "3f6cf281_d3c5decb",
+      "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b0d0fa04_c73588d6",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
@@ -66,6 +84,30 @@
     },
     {
       "key": {
+        "uuid": "7140ebae_2a259dc6",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T03:51:39Z",
+      "side": 1,
+      "message": "Oops nevermind - yeah you\u0027re right",
+      "parentUuid": "7a8bb869_a9dcd479",
+      "range": {
+        "startLine": 483,
+        "startChar": 4,
+        "endLine": 483,
+        "endChar": 112
+      },
+      "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5f4f2fb6_4252a111",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
@@ -98,6 +140,24 @@
       "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09009148_450db5a2",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 560,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-06T03:51:39Z",
+      "side": 1,
+      "message": "If you like it better here then that seems ok to me too",
+      "parentUuid": "57e0b676_de4d1d7c",
+      "revId": "5b849fabd29aa162e4ef9e9b88fca5792ee03082",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
