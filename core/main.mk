@@ -78,6 +78,8 @@ endif
 -include tools/tradefederation/build/suites/device-tests/config.mk
 # general-tests-specific-config.
 -include tools/tradefederation/build/suites/general-tests/config.mk
+# STS-specific config.
+-include test/sts/tools/sts-tradefed/build/config.mk
 
 # This allows us to force a clean build - included after the config.mk
 # environment setup is done, but before we generate any dependencies.  This
