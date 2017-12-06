@@ -65,17 +65,10 @@ built_installed_odex :=
 built_installed_vdex :=
 built_installed_art :=
 
-ifdef LOCAL_DEX_PREOPT
-
 ifeq (false,$(WITH_DEX_PREOPT_GENERATE_PROFILE))
 LOCAL_DEX_PREOPT_GENERATE_PROFILE := false
 endif
 
-ifdef LOCAL_VENDOR_MODULE
-ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
-$(error profiles are not supported for vendor modules)
-endif
-else
 ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
 # If LOCAL_DEX_PREOPT_GENERATE_PROFILE is not defined, default it based on the existence of the
 # profile class listing. TODO: Use product specific directory here.
@@ -83,13 +76,53 @@ my_classes_directory := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)
 LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING := $(my_classes_directory)/$(LOCAL_MODULE).prof.txt
 ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)))
 # Profile listing exists, use it to generate the profile.
-ifeq ($(LOCAL_DEX_PREOPT_APP_IMAGE),)
-LOCAL_DEX_PREOPT_APP_IMAGE := true
-endif
 LOCAL_DEX_PREOPT_GENERATE_PROFILE := true
 endif
 endif
+
+ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+
+ifdef LOCAL_VENDOR_MODULE
+$(call pretty-error, Internal error: profiles are not supported for vendor modules)
+else
+LOCAL_DEX_PREOPT_APP_IMAGE := true
 endif
+
+ifndef LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING
+$(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING))
+endif
+ifeq (,$(dex_preopt_profile_src_file))
+$(call pretty-error, Internal error: dex_preopt_profile_src_file must be set)
+endif
+my_built_profile := $(dir $(LOCAL_BUILT_MODULE))/profile.prof
+my_dex_location := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
+# Remove compressed APK extension.
+my_dex_location := $(patsubst %.gz,%,$(my_dex_location))
+$(my_built_profile): PRIVATE_BUILT_MODULE := $(dex_preopt_profile_src_file)
+$(my_built_profile): PRIVATE_DEX_LOCATION := $(my_dex_location)
+$(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
+$(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
+$(my_built_profile): $(PROFMAN)
+$(my_built_profile): $(dex_preopt_profile_src_file)
+$(my_built_profile):
+	$(hide) mkdir -p $(dir $@)
+	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
+		--create-profile-from=$(PRIVATE_SOURCE_CLASSES) \
+		--apk=$(PRIVATE_BUILT_MODULE) \
+		--dex-location=$(PRIVATE_DEX_LOCATION) \
+		--reference-profile-file=$@
+dex_preopt_profile_src_file:=
+# Remove compressed APK  extension.
+my_installed_profile := $(patsubst %.gz,%,$(LOCAL_INSTALLED_MODULE)).prof
+# my_installed_profile := $(LOCAL_INSTALLED_MODULE).prof
+$(eval $(call copy-one-file,$(my_built_profile),$(my_installed_profile)))
+build_installed_profile:=$(my_built_profile):$(my_installed_profile)
+else
+build_installed_profile:=
+my_installed_profile :=
+endif
+
+ifdef LOCAL_DEX_PREOPT
 
 dexpreopt_boot_jar_module := $(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE))
 ifdef dexpreopt_boot_jar_module
@@ -146,32 +179,9 @@ installed_art := $(strip $(installed_art))
 
 ifdef built_odex
 ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
-ifndef LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING
-$(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING))
-endif
-my_built_profile := $(dir $(LOCAL_BUILT_MODULE))/profile.prof
-my_dex_location := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
 $(built_odex): $(my_built_profile)
 $(built_odex): PRIVATE_PROFILE_PREOPT_FLAGS := --profile-file=$(my_built_profile)
-$(my_built_profile): PRIVATE_BUILT_MODULE := $(LOCAL_BUILT_MODULE)
-$(my_built_profile): PRIVATE_DEX_LOCATION := $(my_dex_location)
-$(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
-$(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
-$(my_built_profile): $(PROFMAN)
-$(my_built_profile): $(LOCAL_BUILT_MODULE)
-$(my_built_profile):
-	$(hide) mkdir -p $(dir $@)
-	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
-		--create-profile-from=$(PRIVATE_SOURCE_CLASSES) \
-		--apk=$(PRIVATE_BUILT_MODULE) \
-		--dex-location=$(PRIVATE_DEX_LOCATION) \
-		--reference-profile-file=$@
-my_installed_profile := $(LOCAL_INSTALLED_MODULE).prof
-$(eval $(call copy-one-file,$(my_built_profile),$(my_installed_profile)))
-build_installed_profile:=$(my_built_profile):$(my_installed_profile)
 else
-build_installed_profile:=
-my_installed_profile :=
 $(built_odex): PRIVATE_PROFILE_PREOPT_FLAGS :=
 endif
 
@@ -232,11 +242,10 @@ endif
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_vdex)
 ALL_MODULES.$(my_register_name).INSTALLED += $(installed_art)
-ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed_profile)
+
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_odex)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_vdex)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_art)
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(build_installed_profile)
 
 # Record dex-preopt config.
 DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -252,6 +261,12 @@ DEXPREOPT.MODULES.$(LOCAL_MODULE_CLASS) := $(sort \
 
 
 # Make sure to install the .odex and .vdex when you run "make <module_name>"
-$(my_all_targets): $(installed_odex) $(installed_vdex) $(installed_art) $(my_installed_profile)
+$(my_all_targets): $(installed_odex) $(installed_vdex) $(installed_art)
 
 endif # LOCAL_DEX_PREOPT
+
+# Profile doesn't depend on LOCAL_DEX_PREOPT.
+ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed_profile)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(build_installed_profile)
+
+$(my_all_targets): $(my_installed_profile)

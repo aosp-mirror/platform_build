@@ -21,7 +21,7 @@
 
 include build/make/target/product/treble_common_32.mk
 
-PRODUCT_NAME := aosp_arm_a
-PRODUCT_DEVICE := generic_arm_a
+PRODUCT_NAME := aosp_x86_a
+PRODUCT_DEVICE := generic_x86_a
 PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on ARM32
+PRODUCT_MODEL := AOSP on x86

@@ -19,9 +19,19 @@
 # on the generic system image, place them in build/make/target/board/
 # treble_system.prop.
 
-include build/make/target/product/treble_common_32.mk
+include build/make/target/product/treble_common.mk
 
-PRODUCT_NAME := aosp_arm_a
-PRODUCT_DEVICE := generic_arm_a
-PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on ARM32
+# For now this will allow 64-bit apps, but still compile all apps with JNI
+# for 32-bit only.
+
+# Copy different zygote settings for vendor.img to select by setting property
+# ro.zygote=zygote64_32 or ro.zygote=zygote32_64:
+#   1. 64-bit primary, 32-bit secondary OR
+#   2. 32-bit primary, 64-bit secondary
+#   3. 64-bit only is currently forbidden (b/64280459#comment6)
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/init.zygote64_32.rc:root/init.zygote64_32.rc \
+    system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc
+
+TARGET_SUPPORTS_32_BIT_APPS := true
+TARGET_SUPPORTS_64_BIT_APPS := true

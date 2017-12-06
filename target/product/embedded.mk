@@ -20,7 +20,7 @@
 PRODUCT_PACKAGES += \
     adb \
     adbd \
-    android.hardware.configstore@1.1-service \
+    android.hardware.configstore@1.0-service \
     android.hidl.allocator@1.0-service \
     android.hidl.memory@1.0-impl \
     atrace \
@@ -76,6 +76,7 @@ PRODUCT_PACKAGES += \
     shell_and_utilities \
     storaged \
     surfaceflinger \
+    thermalserviced \
     tombstoned \
     tzdatacheck \
     vndservice \

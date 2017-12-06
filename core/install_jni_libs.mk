@@ -22,6 +22,11 @@ ifeq ($(filter $(TARGET_OUT)/% $(TARGET_OUT_VENDOR)/% $(TARGET_OUT_OEM)/%, $(my_
 # If this app isn't to be installed to system partitions.
 my_embed_jni := true
 endif
+# If we're installing this APP as a compressed module, we include all JNI libraries
+# in the compressed artifact, rather than as separate files on the partition in question.
+ifdef LOCAL_COMPRESSED_MODULE
+my_embed_jni := true
+endif
 
 jni_shared_libraries :=
 jni_shared_libraries_abis :=

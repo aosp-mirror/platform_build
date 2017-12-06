@@ -14,14 +14,16 @@
 # limitations under the License.
 #
 
-# PRODUCT_PROPERTY_OVERRIDES cannot be used here because sysprops will be at
-# /vendor/[build|default].prop when build split is on. In order to have sysprops
-# on the generic system image, place them in build/make/target/board/
-# treble_system.prop.
+include build/make/target/board/treble_common_64.mk
 
-include build/make/target/product/treble_common_32.mk
+TARGET_CPU_ABI := x86_64
+TARGET_ARCH := x86_64
+TARGET_ARCH_VARIANT := x86_64
 
-PRODUCT_NAME := aosp_arm_a
-PRODUCT_DEVICE := generic_arm_a
-PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on ARM32
+TARGET_2ND_CPU_ABI := x86
+TARGET_2ND_ARCH := x86
+TARGET_2ND_ARCH_VARIANT := x86_64
+
+# Enable A/B update
+TARGET_NO_RECOVERY := true
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := true

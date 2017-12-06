@@ -235,12 +235,40 @@ class TargetFiles(object):
     self.certmap = None
 
   def LoadZipFile(self, filename):
-    d, z = common.UnzipTemp(filename, ['*.apk'])
+    # First read the APK certs file to figure out whether there are compressed
+    # APKs in the archive. If we do have compressed APKs in the archive, then we
+    # must decompress them individually before we perform any analysis.
+
+    # This is the list of wildcards of files we extract from |filename|.
+    apk_extensions = ['*.apk']
+
+    self.certmap, compressed_extension = common.ReadApkCerts(zipfile.ZipFile(filename, "r"))
+    if compressed_extension:
+      apk_extensions.append("*.apk" + compressed_extension)
+
+    d, z = common.UnzipTemp(filename, apk_extensions)
     try:
       self.apks = {}
       self.apks_by_basename = {}
       for dirpath, _, filenames in os.walk(d):
         for fn in filenames:
+          # Decompress compressed APKs before we begin processing them.
+          if compressed_extension and fn.endswith(compressed_extension):
+            # First strip the compressed extension from the file.
+            uncompressed_fn = fn[:-len(compressed_extension)]
+
+            # Decompress the compressed file to the output file.
+            common.Gunzip(os.path.join(dirpath, fn),
+                          os.path.join(dirpath, uncompressed_fn))
+
+            # Finally, delete the compressed file and use the uncompressed file
+            # for further processing. Note that the deletion is not strictly required,
+            # but is done here to ensure that we're not using too much space in
+            # the temporary directory.
+            os.remove(os.path.join(dirpath, fn))
+            fn = uncompressed_fn
+
+
           if fn.endswith(".apk"):
             fullname = os.path.join(dirpath, fn)
             displayname = fullname[len(d)+1:]
@@ -253,7 +281,6 @@ class TargetFiles(object):
     finally:
       shutil.rmtree(d)
 
-    self.certmap = common.ReadApkCerts(z)
     z.close()
 
   def CheckSharedUids(self):

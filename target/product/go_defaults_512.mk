@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 The Android Open-Source Project
+# Copyright (C) 2017 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
 # limitations under the License.
 #
 
-# PRODUCT_PROPERTY_OVERRIDES cannot be used here because sysprops will be at
-# /vendor/[build|default].prop when build split is on. In order to have sysprops
-# on the generic system image, place them in build/make/target/board/
-# treble_system.prop.
+# Inherit common Android Go defaults.
+$(call inherit-product, build/target/product/go_defaults_common.mk)
 
-include build/make/target/product/treble_common_32.mk
+# 512MB specific properties.
 
-PRODUCT_NAME := aosp_arm_a
-PRODUCT_DEVICE := generic_arm_a
-PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on ARM32
+# lmkd can kill more now.
+PRODUCT_PROPERTY_OVERRIDES += \
+     ro.lmk.medium=700 \
+
+# madvise random in ART to reduce page cache thrashing.
+PRODUCT_PROPERTY_OVERRIDES += \
+     dalvik.vm.madvise-random=true
