@@ -547,6 +547,7 @@ def ReplaceAvbSigningKeys(misc_info):
   AVB_FOOTER_ARGS_BY_PARTITION = {
     'boot' : 'avb_boot_add_hash_footer_args',
     'dtbo' : 'avb_dtbo_add_hash_footer_args',
+    'recovery' : 'avb_recovery_add_hash_footer_args',
     'system' : 'avb_system_add_hashtree_footer_args',
     'vendor' : 'avb_vendor_add_hashtree_footer_args',
     'vbmeta' : 'avb_vbmeta_args',
