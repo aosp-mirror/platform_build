@@ -31,6 +31,7 @@ LOCAL_BUILT_MODULE_STEM := javalib.jar
 # java libraries produce javalib.jar, so we will copy classes.jar there too.
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 common_javalib.jar := $(intermediates.COMMON)/javalib.jar
+dex_preopt_profile_src_file := $(common_javalib.jar)
 LOCAL_INTERMEDIATE_TARGETS += $(common_javalib.jar)
 
 ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)

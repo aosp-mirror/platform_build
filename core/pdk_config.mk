@@ -1,7 +1,10 @@
 # This file defines the rule to fuse the platform.zip into the current PDK build.
 PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR :=
 PDK_PLATFORM_JAVA_ZIP_JAVA_HOST_LIB_DIR := \
-	host/common/obj/JAVA_LIBRARIES/bouncycastle-host_intermediates
+	host/common/obj/JAVA_LIBRARIES/bouncycastle-host_intermediates \
+	host/common/obj/JAVA_LIBRARIES/compatibility-host-util_intermediates \
+	host/common/obj/JAVA_LIBRARIES/cts-tradefed-harness_intermediates \
+	host/common/obj/JAVA_LIBRARIES/hosttestlib_intermediates
 PDK_PLATFORM_JAVA_ZIP_CONTENTS :=
 
 ifneq (,$(filter platform-java, $(MAKECMDGOALS))$(PDK_FUSION_PLATFORM_ZIP))
@@ -21,6 +24,7 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
   target/common/obj/JAVA_LIBRARIES/core-oj_intermediates \
   target/common/obj/JAVA_LIBRARIES/core-libart_intermediates \
   target/common/obj/JAVA_LIBRARIES/legacy-test_intermediates \
+  target/common/obj/JAVA_LIBRARIES/legacy-android-test_intermediates \
   target/common/obj/JAVA_LIBRARIES/ext_intermediates \
   target/common/obj/JAVA_LIBRARIES/framework_intermediates \
   target/common/obj/JAVA_LIBRARIES/hwbinder_intermediates \

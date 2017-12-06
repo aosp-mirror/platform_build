@@ -18,6 +18,7 @@ import copy
 import errno
 import getopt
 import getpass
+import gzip
 import imp
 import os
 import platform
@@ -565,6 +566,13 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
   return None
 
 
+def Gunzip(in_filename, out_filename):
+  """Gunzip the given gzip compressed file to a given output file.
+  """
+  with gzip.open(in_filename, "rb") as in_file, open(out_filename, "wb") as out_file:
+    shutil.copyfileobj(in_file, out_file)
+
+
 def UnzipTemp(filename, pattern=None):
   """Unzip the given archive into a temporary directory and return the name.
 
@@ -786,16 +794,34 @@ def CheckSize(data, target, info_dict):
 
 def ReadApkCerts(tf_zip):
   """Given a target_files ZipFile, parse the META/apkcerts.txt file
-  and return a {package: cert} dict."""
+  and return a tuple with the following elements: (1) a dictionary that maps
+  packages to certs (based on the "certificate" and "private_key" attributes
+  in the file. (2) A string representing the extension of compressed APKs in
+  the target files (e.g ".gz" ".bro")."""
   certmap = {}
+  compressed_extension = None
+
+  # META/apkcerts.txt contains the info for _all_ the packages known at build
+  # time. Filter out the ones that are not installed.
+  installed_files = set()
+  for name in tf_zip.namelist():
+    basename = os.path.basename(name)
+    if basename:
+      installed_files.add(basename)
+
   for line in tf_zip.read("META/apkcerts.txt").split("\n"):
     line = line.strip()
     if not line:
       continue
-    m = re.match(r'^name="(.*)"\s+certificate="(.*)"\s+'
-                 r'private_key="(.*)"$', line)
+    m = re.match(r'^name="(?P<NAME>.*)"\s+certificate="(?P<CERT>.*)"\s+'
+                 r'private_key="(?P<PRIVKEY>.*?)"(\s+compressed="(?P<COMPRESSED>.*)")?$',
+                 line)
     if m:
-      name, cert, privkey = m.groups()
+      matches = m.groupdict()
+      cert = matches["CERT"]
+      privkey = matches["PRIVKEY"]
+      name = matches["NAME"]
+      this_compressed_extension = matches["COMPRESSED"]
       public_key_suffix_len = len(OPTIONS.public_key_suffix)
       private_key_suffix_len = len(OPTIONS.private_key_suffix)
       if cert in SPECIAL_CERT_STRINGS and not privkey:
@@ -806,7 +832,22 @@ def ReadApkCerts(tf_zip):
         certmap[name] = cert[:-public_key_suffix_len]
       else:
         raise ValueError("failed to parse line from apkcerts.txt:\n" + line)
-  return certmap
+      if this_compressed_extension:
+        # Only count the installed files.
+        filename = name + '.' + this_compressed_extension
+        if filename not in installed_files:
+          continue
+        # Make sure that all the values in the compression map have the same
+        # extension. We don't support multiple compression methods in the same
+        # system image.
+        if compressed_extension:
+          if this_compressed_extension != compressed_extension:
+            raise ValueError("multiple compressed extensions : %s vs %s",
+                             (compressed_extension, this_compressed_extension))
+        else:
+          compressed_extension = this_compressed_extension
+
+  return (certmap, ("." + compressed_extension) if compressed_extension else None)
 
 
 COMMON_DOCSTRING = """
