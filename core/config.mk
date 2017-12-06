@@ -690,11 +690,7 @@ ANDROID_MANIFEST_MERGER := $(JAVA) -classpath prebuilts/devtools/tools/lib/manif
 COLUMN:= column
 
 ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
-ifeq ($(RUN_ERROR_PRONE),true)
 USE_OPENJDK9 :=
-else
-USE_OPENJDK9 := true
-endif
 TARGET_OPENJDK9 :=
 else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),false)
 USE_OPENJDK9 :=
