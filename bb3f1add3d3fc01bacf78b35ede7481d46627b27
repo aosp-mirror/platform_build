@@ -70,6 +70,30 @@
       "revId": "bb3f1add3d3fc01bacf78b35ede7481d46627b27",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6477599_a18867cc",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 1176763
+      },
+      "writtenOn": "2017-12-06T18:17:36Z",
+      "side": 1,
+      "message": "I see. I removed verbose\u003dtrue here, so please check the new version out. Thanks.",
+      "parentUuid": "e9352e0a_c74be062",
+      "range": {
+        "startLine": 552,
+        "startChar": 49,
+        "endLine": 552,
+        "endChar": 53
+      },
+      "revId": "bb3f1add3d3fc01bacf78b35ede7481d46627b27",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
