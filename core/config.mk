@@ -709,6 +709,9 @@ requirements := \
 # PRODUCT_FULL_TREBLE
 $(foreach req,$(requirements),$(eval \
     $(req) := $(if $($(req)_OVERRIDE),$($(req)_OVERRIDE),$(PRODUCT_FULL_TREBLE))))
+# If the requirement is false for any reason, then it's not PRODUCT_FULL_TREBLE
+$(foreach req,$(requirements),$(eval \
+    PRODUCT_FULL_TREBLE := $(if $(filter false,$($(req))),false,$(PRODUCT_FULL_TREBLE))))
 
 .KATI_READONLY := \
     $(requirements) \
