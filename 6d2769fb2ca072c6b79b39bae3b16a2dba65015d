@@ -22,6 +22,30 @@
       "revId": "6d2769fb2ca072c6b79b39bae3b16a2dba65015d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd184386_5fe961cb",
+        "filename": "core/main.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 832,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-07T09:32:22Z",
+      "side": 1,
+      "message": "Changed to $(addprefix --static_deps,$$(PRIVATE_STATIC_DEPS))",
+      "parentUuid": "95355ab9_a6631d2f",
+      "range": {
+        "startLine": 832,
+        "startChar": 3,
+        "endLine": 832,
+        "endChar": 26
+      },
+      "revId": "6d2769fb2ca072c6b79b39bae3b16a2dba65015d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
