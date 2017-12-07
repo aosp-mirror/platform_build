@@ -26,6 +26,8 @@ $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_pre_pro
 ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
     $(intermediates.COMMON)/jacoco-report-classes.jar))
+  $(call add-dependency,$(common_javalib.jar),\
+    $(intermediates.COMMON)/jacoco-report-classes.jar)
 endif
 
 ifneq ($(TURBINE_DISABLED),false)
