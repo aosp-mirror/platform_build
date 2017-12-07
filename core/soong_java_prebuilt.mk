@@ -41,8 +41,12 @@ ifdef LOCAL_SOONG_DEX_JAR
     $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
     $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar) $(full_classes_header_jar)))
 
+    dex_preopt_profile_src_file := $(common_javalib.jar)
+
     # defines built_odex along with rule to install odex
     include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+
+    dex_preopt_profile_src_file :=
 
     ifdef LOCAL_DEX_PREOPT
       ifneq ($(dexpreopt_boot_jar_module),) # boot jar
