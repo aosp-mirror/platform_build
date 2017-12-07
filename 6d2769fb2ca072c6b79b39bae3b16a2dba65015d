@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "95355ab9_a6631d2f",
+        "filename": "core/main.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 832,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-07T06:31:48Z",
+      "side": 1,
+      "message": "why didn\u0027t you $(addprefix --static_deps,$$(PRIVATE_STATIC_DEPS)) ?",
+      "range": {
+        "startLine": 832,
+        "startChar": 3,
+        "endLine": 832,
+        "endChar": 26
+      },
+      "revId": "6d2769fb2ca072c6b79b39bae3b16a2dba65015d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
