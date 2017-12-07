@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "05b94d5e_2acdda02",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 875,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-07T22:01:06Z",
+      "side": 1,
+      "message": "If $DIR/Android.mk doesn\u0027t exist doesn\u0027t this end up setting ONE_SHOT_MAKEFILE to point to a path that doesn\u0027t exist?\n\nI think you want to walk up the directories until you find an Android.mk or Android.bp and then build there.",
+      "revId": "e2ec7490e6824340cc8d0607e4781cba0ee6ff00",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
