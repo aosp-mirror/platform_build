@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a65eb97a_06b26ec1",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2017-12-07T01:06:41Z",
+      "side": 1,
+      "message": "Is \"..\" feature eligible to have ? Do we allow the local src path go out/above of current local dir after resolving the \"..\"?",
+      "revId": "3277ba34ae1f9ea3fc574e33f8f4260897728590",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
