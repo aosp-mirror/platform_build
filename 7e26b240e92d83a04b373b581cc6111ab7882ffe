@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "1e119ead_1fa45608",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-07T00:36:12Z",
+      "side": 1,
+      "message": "We\u0027ve got .KATI_IMPLICIT_OUTPUTS that supports writing multiple files: https://github.com/google/kati/commit/b78d16f5c3f5cb2c5eb859ed4e14b54bbb02b7fc\n\nBut splitting it works too",
+      "parentUuid": "1f8ec8a3_bf7b673c",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 19
+      },
+      "revId": "7e26b240e92d83a04b373b581cc6111ab7882ffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f27a4682_54165437",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 3
