@@ -318,7 +318,12 @@ function set_sequence_number()
 
 function settitle()
 {
-    if [ "$STAY_OFF_MY_LAWN" = "" ]; then
+    # This used to be opt-out with STAY_OFF_MY_LAWN, but this breaks folks
+    # actually using PROMPT_COMMAND (https://issuetracker.google.com/38402256),
+    # and the attempt to set the title doesn't do anything for the default
+    # window manager in debian right now, so switch it to opt-in for anyone
+    # who actually wants this.
+    if [ "$ANDROID_BUILD_SET_WINDOW_TITLE" = "true" ]; then
         local arch=$(gettargetarch)
         local product=$TARGET_PRODUCT
         local variant=$TARGET_BUILD_VARIANT
