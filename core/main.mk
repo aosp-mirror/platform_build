@@ -80,6 +80,8 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 -include tools/tradefederation/build/suites/device-tests/config.mk
 # general-tests-specific-config.
 -include tools/tradefederation/build/suites/general-tests/config.mk
+# STS-specific config.
+-include test/sts/tools/sts-tradefed/build/config.mk
 
 # Clean rules
 .PHONY: clean-dex-files
@@ -97,9 +99,19 @@ clean-dex-files:
 # (must be defined before including definitions.make)
 INTERNAL_MODIFIER_TARGETS := all
 
-# EMMA_INSTRUMENT_STATIC merges the static emma library to each emma-enabled module.
+# EMMA_INSTRUMENT_STATIC merges the static jacoco library to each
+# jacoco-enabled module.
 ifeq (true,$(EMMA_INSTRUMENT_STATIC))
 EMMA_INSTRUMENT := true
+endif
+
+ifeq (true,$(EMMA_INSTRUMENT))
+# Adding the jacoco library can cause the inclusion of
+# some typically banned classes
+# So if the user didn't specify SKIP_BOOT_JARS_CHECK, enable it here
+ifndef SKIP_BOOT_JARS_CHECK
+SKIP_BOOT_JARS_CHECK := true
+endif
 endif
 
 #
