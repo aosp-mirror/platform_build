@@ -93,6 +93,30 @@
       "revId": "a921e1264a922811f51b39d24703f21e21b00f81",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e8676fd_aa8d41b7",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 677,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-12-07T00:36:05Z",
+      "side": 1,
+      "message": "Ack. Added a note to b/63974895.",
+      "parentUuid": "97478c80_d8c3de85",
+      "range": {
+        "startLine": 677,
+        "startChar": 8,
+        "endLine": 677,
+        "endChar": 56
+      },
+      "revId": "a921e1264a922811f51b39d24703f21e21b00f81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
