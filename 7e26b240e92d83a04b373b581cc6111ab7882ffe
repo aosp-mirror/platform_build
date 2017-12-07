@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d99fd68a_ca4c8e12",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-07T00:13:51Z",
+      "side": 1,
+      "message": "According to https://www.gnu.org/software/make/manual/html_node/Multiple-Targets.html , writing a rule with multiple targets is equivalent to writing the same rule for each target (but with variables like \"$@\" potentially expanded differently). Technically we don\u0027t use GNU Make but I did some testing and it seems true in our case too.\n\nAs a result, this creates two rules, each of which puts content into $(PRIVATE_device_tests_list) . (One way to test for the duplication is to comment out line 31 (\"rm -f ...\") and then run `m -j out/target/product/generic/device-tests.zip out/target/product/generic/device-tests-list.zip; sort out/target/product/generic/device-tests-list | uniq -c` and notice that there are two copies of everything)\n\nYou\u0027d at least have to use separate file names for the two copies (for example, \"$@.list\") so that if the two rules run in parallel that they don\u0027t overwrite each other\u0027s files.\n\nEven better, it\u0027d probably be clearer to extract the finding and listing into its own rule, and for the two zips to depend on that rule",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 19
+      },
+      "revId": "7e26b240e92d83a04b373b581cc6111ab7882ffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f27a4682_54165437",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1137668
+      },
+      "writtenOn": "2017-12-07T00:13:51Z",
+      "side": 1,
+      "message": "I think that we either want to rm $(PRIVATE_device_tests_list) first, or turn this \"\u003e\u003e\" into \"\u003e\"",
+      "range": {
+        "startLine": 28,
+        "startChar": 69,
+        "endLine": 28,
+        "endChar": 71
+      },
+      "revId": "7e26b240e92d83a04b373b581cc6111ab7882ffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
