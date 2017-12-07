@@ -34,6 +34,24 @@
       "revId": "e2ec7490e6824340cc8d0607e4781cba0ee6ff00",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d72cafc1_f2a5e949",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 875,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-07T22:22:20Z",
+      "side": 1,
+      "message": "This only works for the filed bug because hardware/interfaces/broadcastradio/1.1/vts contains Android.bp files, which are always parsed by mmm.  If you try the equivalent in a subdirectory that only has Android.mk files it won\u0027t work.",
+      "parentUuid": "14407697_a0fce858",
+      "revId": "e2ec7490e6824340cc8d0607e4781cba0ee6ff00",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
