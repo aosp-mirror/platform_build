@@ -22,6 +22,30 @@
       "revId": "73ff57f48a7ac18f52980b0c6bf0f2bbd19423f1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbdbebe9_e075f7cf",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 539,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-12-07T21:45:33Z",
+      "side": 1,
+      "message": "that looked hard without accidentally breaking things --- there\u0027s `assert ext4fs_output is not None` on L563.",
+      "parentUuid": "5e2582e7_d2ac031c",
+      "range": {
+        "startLine": 539,
+        "startChar": 7,
+        "endLine": 539,
+        "endChar": 20
+      },
+      "revId": "73ff57f48a7ac18f52980b0c6bf0f2bbd19423f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
