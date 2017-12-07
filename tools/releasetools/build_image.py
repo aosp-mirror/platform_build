@@ -548,6 +548,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     if base_fs_file is not None:
       os.remove(base_fs_file)
   if exit_code != 0:
+    print("Error: '%s' failed with exit code %d" % (build_command, exit_code))
     return False
 
   # Bug: 21522719, 22023465
@@ -625,7 +626,11 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
     os.remove(unsparse_image)
 
-  return exit_code == 0
+    if exit_code != 0:
+      print("Error: '%s' failed with exit code %d" % (e2fsck_command, exit_code))
+      return False
+
+  return True
 
 
 def ImagePropFromGlobalDict(glob_dict, mount_point):
