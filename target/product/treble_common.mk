@@ -26,6 +26,10 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
 # Split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
+# vintf utility:
+PRODUCT_PACKAGES += \
+    vintf
+
 # The Messaging app:
 #   Needed for android.telecom.cts.ExtendedInCallServiceTest#testOnCannedTextResponsesLoaded
 PRODUCT_PACKAGES += \
