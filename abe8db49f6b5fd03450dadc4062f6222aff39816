@@ -16,6 +16,24 @@
       "revId": "abe8db49f6b5fd03450dadc4062f6222aff39816",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd58b761_213ffae8",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-08T01:13:02Z",
+      "side": 1,
+      "message": "right, I should read the code. Adding deps to LOCAL_BUILT_MODULE is able to create the config. Thanks!",
+      "parentUuid": "c4b1e119_41fa4825",
+      "revId": "abe8db49f6b5fd03450dadc4062f6222aff39816",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
