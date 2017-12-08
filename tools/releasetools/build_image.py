@@ -517,6 +517,17 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   elif fs_type.startswith("f2fs"):
     build_command = ["mkf2fsuserimg.sh"]
     build_command.extend([out_file, prop_dict["partition_size"]])
+    if fs_config:
+      build_command.extend(["-C", fs_config])
+    build_command.extend(["-f", in_dir])
+    if target_out:
+      build_command.extend(["-D", target_out])
+    if "selinux_fc" in prop_dict:
+      build_command.extend(["-s", prop_dict["selinux_fc"]])
+    build_command.extend(["-t", prop_dict["mount_point"]])
+    if "timestamp" in prop_dict:
+      build_command.extend(["-T", str(prop_dict["timestamp"])])
+    build_command.extend(["-L", prop_dict["mount_point"]])
   else:
     print("Error: unknown filesystem type '%s'" % (fs_type))
     return False
