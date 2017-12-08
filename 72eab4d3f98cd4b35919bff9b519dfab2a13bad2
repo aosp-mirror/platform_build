@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "70f2c030_0152ed4a",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2017-12-08T01:06:54Z",
+      "side": 1,
+      "message": "How about defining this to $(PLATFORM_VERSION_CODENAME)?\nIf we define this current, the VNDK directory name will be changed to \"/system/lib[64]/vndk-28\" from \"/system/lib[64]/vndk\" in release branch. That may cause some link error for some modules that did not handle the suffix in the directory name as we have a bug here, http://b/69984421.",
+      "range": {
+        "startLine": 200,
+        "startChar": 29,
+        "endLine": 200,
+        "endChar": 36
+      },
+      "revId": "72eab4d3f98cd4b35919bff9b519dfab2a13bad2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
