@@ -1889,6 +1889,7 @@ SOONG_CONV.$(LOCAL_MODULE).DEPS := \
         $(my_whole_static_libraries) \
         $(my_shared_libraries) \
         $(my_system_shared_libraries))
+SOONG_CONV.$(LOCAL_MODULE).TYPE := native
 SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
 endif
 
