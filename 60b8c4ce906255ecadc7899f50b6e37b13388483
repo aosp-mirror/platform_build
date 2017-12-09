@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "49fccc65_56656f0d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2407,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-09T04:23:37Z",
+      "side": 1,
+      "message": "Unnecessary changes, if you are going to fix the whitespace remove the tabs.",
+      "revId": "60b8c4ce906255ecadc7899f50b6e37b13388483",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
