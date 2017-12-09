@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "441e59b6_e08ef747",
+        "filename": "core/java_common.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-09T03:55:46Z",
+      "side": 1,
+      "message": "Having devices act this differently based on a BoardConfig.mk flag is going to cause breakages.  Can we enable this for all devices?",
+      "revId": "4b08b81587faa634344c469f84a7cb36c752c03c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41379e9e_66fc363c",
+        "filename": "core/java_common.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-09T03:55:46Z",
+      "side": 1,
+      "message": "Can you indent these to make them more readable?\n\nThis looks like a lot of duplication, is there any way to remove the common parts?",
+      "revId": "4b08b81587faa634344c469f84a7cb36c752c03c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
