@@ -1,5 +1,11 @@
 # Common to host and target Java modules.
 
+my_soong_problems :=
+
+ifneq ($(filter ../%,$(LOCAL_SRC_FILES)),)
+my_soong_problems += dotdot_srcs
+endif
+
 ###########################################################
 ## Java version
 ###########################################################
@@ -440,3 +446,17 @@ my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
 my_common := COMMON
 include $(BUILD_SYSTEM)/link_type.mk
 endif  # !LOCAL_IS_HOST_MODULE
+
+ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+
+SOONG_CONV.$(LOCAL_MODULE).PROBLEMS := \
+    $(SOONG_CONV.$(LOCAL_MODULE).PROBLEMS) $(my_soong_problems)
+SOONG_CONV.$(LOCAL_MODULE).DEPS := \
+    $(SOONG_CONV.$(LOCAL_MODULE).DEPS) \
+    $(LOCAL_STATIC_JAVA_LIBRARIES) \
+    $(LOCAL_JAVA_LIBRARIES) \
+    $(LOCAL_JNI_SHARED_LIBRARIES)
+SOONG_CONV.$(LOCAL_MODULE).TYPE := java
+SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
+
+endif
