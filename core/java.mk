@@ -724,7 +724,7 @@ endif
 proguard_injar_filters :=
 ifdef LOCAL_SDK_VERSION
 ifeq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-proguard_injar_filters := (!junit/framework/**,!junit/runner/**,!junit/textui/**,!android/test/**,!com/android/internal/util/*)
+proguard_injar_filters := (!junit/framework/**,!junit/runner/**,!junit/textui/**)
 endif
 endif
 
