@@ -19,6 +19,93 @@
     },
     {
       "key": {
+        "uuid": "af5461a1_6396d5e0",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-11T23:59:20Z",
+      "side": 1,
+      "message": "Yes. use errors, not warnings. We\u0027ve also got $(call pretty_warning,...) $(call pretty_error,...) that includes information about the current Android.mk file and LOCAL_MODULE.",
+      "parentUuid": "c515a80b_e33f585e",
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3c9a8dd_9a1eda3b",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-11T23:59:20Z",
+      "side": 1,
+      "message": "Please don\u0027t use $(shell) -- they get particularly expensive since we don\u0027t know when we can safely cache their output, so we have to run them every time you start a build, even if nothing changed.\n\nPut the logic in a rule that\u0027s only executed when you\u0027re actually building the file.",
+      "range": {
+        "startLine": 24,
+        "startChar": 23,
+        "endLine": 24,
+        "endChar": 81
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "486b3d4b_6eab0b56",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-11T23:59:20Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 29,
+        "startChar": 55,
+        "endLine": 29,
+        "endChar": 64
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2a0cbfa_692ab4df",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-11T23:59:20Z",
+      "side": 1,
+      "message": "And these two.",
+      "range": {
+        "startLine": 32,
+        "startChar": 12,
+        "endLine": 32,
+        "endChar": 19
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9401327d_87147c18",
         "filename": "core/base_rules.mk",
         "patchSetId": 6
