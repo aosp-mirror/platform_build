@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "bef5d89a_169bb663",
+        "filename": "core/java_common.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-11T11:05:53Z",
+      "side": 1,
+      "message": "Since we have many vendor apps that are built with the platform, turning this on triggers a lot of build errors. This can only be turned on selected devices which are ready at least for now.",
+      "parentUuid": "93d86f4d_a2da5cf5",
+      "revId": "4b08b81587faa634344c469f84a7cb36c752c03c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "41379e9e_66fc363c",
         "filename": "core/java_common.mk",
         "patchSetId": 8
