@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "052bfd21_559c7830",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-11T23:37:22Z",
+      "side": 1,
+      "message": "We need an attribute for the module to indicate test config will be auto generated during build. That way atest won\u0027t fail due to missing AndroidTest.xml.\n\nDoes this have to be a list or we can just add the boolean as value?",
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
