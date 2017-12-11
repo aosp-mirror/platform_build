@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "93d86f4d_a2da5cf5",
+        "filename": "core/java_common.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-11T05:09:17Z",
+      "side": 1,
+      "message": "Changed to \"ifndef BOARD_ENFORCE_SYSTEM_SDK\"\nNo, we can enable this only for devices since Android P.",
+      "parentUuid": "441e59b6_e08ef747",
+      "revId": "4b08b81587faa634344c469f84a7cb36c752c03c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "41379e9e_66fc363c",
         "filename": "core/java_common.mk",
         "patchSetId": 8
@@ -33,6 +51,24 @@
       "revId": "4b08b81587faa634344c469f84a7cb36c752c03c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4625b26b_37a04539",
+        "filename": "core/java_common.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 433,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-11T05:09:17Z",
+      "side": 1,
+      "message": "I changed to my_vendor_module similar to LOCAL_VENDOR_MODULE.\nIt is for dividing the section according to BOARD_ENFORCE_SYSTEM_SDK, even if there are duplicates.",
+      "parentUuid": "41379e9e_66fc363c",
+      "revId": "4b08b81587faa634344c469f84a7cb36c752c03c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
