@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0c88e64e_aabf90f7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-11T21:19:40Z",
+      "side": 1,
+      "message": "This would need to be in the title to do anything. But that also allows approval, since this description isn\u0027t correct unless all downstream branches don\u0027t need this.",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 21
+      },
+      "revId": "7efc19f23fb9a8e1643d478543b278c4138cc01b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
