@@ -19,7 +19,6 @@
 
 # VNDK
 BOARD_VNDK_VERSION := current
-BOARD_VNDK_RUNTIME_DISABLE := true
 
 # Properties
 TARGET_SYSTEM_PROP := build/make/target/board/treble_system.prop
