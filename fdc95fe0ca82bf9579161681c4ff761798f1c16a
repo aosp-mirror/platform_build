@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "58dc8e08_b2b23715",
+        "filename": "core/tasks/tradefed-tests-list.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-12T21:46:45Z",
+      "side": 1,
+      "message": "Change to _ to avoid regex collision with the actual tests zip, e.g., marlin-tests-P4498998.zip\ndevice-tests and general-tests are following the same naming convention.",
+      "revId": "fdc95fe0ca82bf9579161681c4ff761798f1c16a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
