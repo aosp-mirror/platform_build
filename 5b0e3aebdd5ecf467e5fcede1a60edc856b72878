@@ -281,6 +281,30 @@
     },
     {
       "key": {
+        "uuid": "892ac764_0cf9bc6a",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-12T18:37:06Z",
+      "side": 1,
+      "message": "We will use an empty config file, so both issues (warning and failed to build targets) are addressed.",
+      "parentUuid": "a070a86e_097f6bf4",
+      "range": {
+        "startLine": 24,
+        "startChar": 23,
+        "endLine": 24,
+        "endChar": 81
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "486b3d4b_6eab0b56",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 6
