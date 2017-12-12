@@ -574,12 +574,16 @@ ifdef TARGET_OPENJDK9
 LOCAL_DX_FLAGS := $(filter-out --multi-dex,$(LOCAL_DX_FLAGS)) --multi-dex
 endif
 
+ifneq ($(USE_D8_DESUGAR),true)
 my_desugaring :=
 ifndef LOCAL_IS_STATIC_JAVA_LIBRARY
 my_desugaring := true
 $(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 $(full_classes_desugar_jar): $(full_classes_jar) $(full_java_header_libs) $(DESUGAR)
 	$(desugar-classes-jar)
+endif
+else
+my_desugaring :=
 endif
 
 ifndef my_desugaring
@@ -774,7 +778,11 @@ endif # LOCAL_PROGUARD_ENABLED
 
 ifndef my_r8
 $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
+ifneq ($(USE_D8_DESUGAR),true)
 	$(transform-classes.jar-to-dex)
+else
+	$(transform-classes-d8.jar-to-dex)
+endif
 endif
 
 $(built_dex): $(built_dex_intermediate)
