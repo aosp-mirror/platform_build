@@ -233,6 +233,30 @@
     },
     {
       "key": {
+        "uuid": "8b773cd6_b86b8854",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-12-12T17:47:11Z",
+      "side": 1,
+      "message": "No those module\u0027s have the L_C_S label so they get packaged and are available for when the hostside tests run, so you won\u0027t be able to do that... \n\nMaybe we need an alternative check then...",
+      "parentUuid": "131ebff1_ffafaccd",
+      "range": {
+        "startLine": 24,
+        "startChar": 23,
+        "endLine": 24,
+        "endChar": 81
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "486b3d4b_6eab0b56",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 6
