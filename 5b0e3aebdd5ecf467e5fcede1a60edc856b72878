@@ -257,6 +257,30 @@
     },
     {
       "key": {
+        "uuid": "a070a86e_097f6bf4",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-12-12T17:50:17Z",
+      "side": 1,
+      "message": "What if you do this logic in the build rule and if you don\u0027t get the info you need, you drop an empty config file instead?",
+      "parentUuid": "8b773cd6_b86b8854",
+      "range": {
+        "startLine": 24,
+        "startChar": 23,
+        "endLine": 24,
+        "endChar": 81
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "486b3d4b_6eab0b56",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 6
