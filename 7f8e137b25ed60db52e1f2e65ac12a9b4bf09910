@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4747736a_f7dd7638",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-12T09:42:06Z",
+      "side": 1,
+      "message": "This is \u003e\u003d 27. What we want is \u003e27 (\u003e\u003d28 can\u0027t be used according to Dan). However, we don\u0027t have math_gt so, I guess you will have to use math_lt and negate.",
+      "range": {
+        "startLine": 779,
+        "startChar": 18,
+        "endLine": 779,
+        "endChar": 34
+      },
+      "revId": "7f8e137b25ed60db52e1f2e65ac12a9b4bf09910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd53e561_08caf92b",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 790,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-12T09:42:06Z",
+      "side": 1,
+      "message": "Then how can one override BOARD_VNDK_VERSION?",
+      "range": {
+        "startLine": 790,
+        "startChar": 0,
+        "endLine": 790,
+        "endChar": 21
+      },
+      "revId": "7f8e137b25ed60db52e1f2e65ac12a9b4bf09910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
