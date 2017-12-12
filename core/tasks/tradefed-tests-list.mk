@@ -19,12 +19,12 @@ tradefed_tests :=
 $(foreach dir, $(COMPATIBILITY.tradefed_tests_dir), \
   $(eval tradefed_tests += $(shell find $(dir) -type f -name "*.xml")))
 tradefed_tests_list_intermediates := $(call intermediates-dir-for,PACKAGING,tradefed_tests_list,HOST,COMMON)
-tradefed_tests_list_zip := $(tradefed_tests_list_intermediates)/tradefed-tests-list.zip
+tradefed_tests_list_zip := $(tradefed_tests_list_intermediates)/tradefed-tests_list.zip
 all_tests :=
 $(foreach test, $(tradefed_tests), \
   $(eval all_tests += $(word 2,$(subst /res/config/,$(space),$(test)))))
 $(tradefed_tests_list_zip) : PRIVATE_tradefed_tests := $(subst .xml,,$(subst $(space),\n,$(sort $(all_tests))))
-$(tradefed_tests_list_zip) : PRIVATE_tradefed_tests_list := $(tradefed_tests_list_intermediates)/tradefed-tests-list
+$(tradefed_tests_list_zip) : PRIVATE_tradefed_tests_list := $(tradefed_tests_list_intermediates)/tradefed-tests_list
 
 $(tradefed_tests_list_zip) : $(tradefed_tests) $(SOONG_ZIP)
 	@echo "Package: $@"
@@ -34,3 +34,5 @@ $(tradefed_tests_list_zip) : $(tradefed_tests) $(SOONG_ZIP)
 
 tradefed-tests-list : $(tradefed_tests_list_zip)
 $(call dist-for-goals, tradefed-tests-list, $(tradefed_tests_list_zip))
+
+tests: tradefed-tests-list
