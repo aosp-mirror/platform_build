@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2515c110_07a6b24d",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 750,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-12T07:49:37Z",
+      "side": 1,
+      "message": "why don\u0027t you add PRODUCT_USE_VNDK here so that this can be overridden by PRODUCT_USE_VNDK_OVERRIDE?",
+      "revId": "3b8d01fb973e994e3f527d6f06fa7a0db1d697a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7d29827_b518cfa6",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-12T07:49:37Z",
+      "side": 1,
+      "message": "I would like to rewrite this so that we can specify the first API level that a req becomes true by default.\n\nrequirements :\u003d \\\n    PRODUCT_XXX:27 \\\n    PRODUCT_YYY:28 \\\n    PRODUCT_ZZZ:27 \\\n    \n$(foreach pair,$(requirements),\\\n    $(eval _name :\u003d $(firstword $(subst :,$(space),$(pair)))) \\\n    $(eval _ver :\u003d $(lastword $(subst :,$(space),$(pair)))) \\\n    $(eval _default :\u003d $$(if $$(call math_gt_or_eq,$(...API_LEVEL),$$(_ver)),true,false)) \\\n    $(eval $$(_name) :\u003d $$(if $($$(_name)_OVERRIDE),$($$(_name)_OVERRIDE),$$(_default))) \\\n\n(maybe I missed a few $ or (..) pair. Don\u0027t trust this code)",
+      "range": {
+        "startLine": 755,
+        "startChar": 0,
+        "endLine": 758,
+        "endChar": 82
+      },
+      "revId": "3b8d01fb973e994e3f527d6f06fa7a0db1d697a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "33dd7d85_e934642c",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 778,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-12T07:49:37Z",
+      "side": 1,
+      "message": "This is weird as you are using BOARD_VNDK_VERSION_OVERRIDE as boolean and a version number.",
+      "range": {
+        "startLine": 775,
+        "startChar": 0,
+        "endLine": 778,
+        "endChar": 54
+      },
+      "revId": "3b8d01fb973e994e3f527d6f06fa7a0db1d697a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
