@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "daadf94e_c35f3456",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2418,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-12T22:45:26Z",
+      "side": 1,
+      "message": "rm -rf if you are adding a directory to it",
+      "range": {
+        "startLine": 2418,
+        "startChar": 11,
+        "endLine": 2418,
+        "endChar": 13
+      },
+      "revId": "95e39b8746279f91a9351019ffe97e9d3936c005",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15923e44_51fc419b",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2425,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-12T22:45:26Z",
+      "side": 1,
+      "message": "This can result in the order of the class files changing between builds, which could cause the resulting dex to change.  Use $$(find $(dir $@)d8_input -name \"*.class\" | sort)",
+      "revId": "95e39b8746279f91a9351019ffe97e9d3936c005",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
