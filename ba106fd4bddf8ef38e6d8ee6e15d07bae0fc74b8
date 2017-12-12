@@ -16,6 +16,24 @@
       "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "591deaa7_27d0e223",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-12T04:12:59Z",
+      "side": 1,
+      "message": "Part of the problem is that we recently \"fixed\" these to unify static and shared libraries, so while the installed \"shared\" version of a library may have problems using LOCAL_JAVA_LIBRARIES to system-installed libraries, the non-installed \"static\" version would be fine, since a later step could merge that dependency in statically.",
+      "parentUuid": "5e306a96_290a918a",
+      "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
