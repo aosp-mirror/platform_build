@@ -785,44 +785,7 @@ else
 endif
 
 FRAMEWORK_MANIFEST_FILE := system/libhidl/manifest.xml
-
-# Compatibility matrix versioning:
-# MATRIX_LEVEL_OVERRIDE defined: MATRIX_LEVEL = MATRIX_LEVEL_OVERRIDE
-# MATRIX_LEVEL_OVERRIDE undefined:
-#   FULL_TREBLE != true: MATRIX_LEVEL = legacy
-#   FULL_TREBLE == true:
-#     SHIPPING_API_LEVEL defined: MATRIX_LEVEL = SHIPPING_API_LEVEL
-#     SHIPPING_API_LEVEL undefined: MATRIX_LEVEL = PLATFORM_SDK_VERSION
-# MATRIX_LEVEL == legacy => legacy.xml
-# MATRIX_LEVEL <= 26 => 26.xml
-# MATRIX_LEVEL == 27 => 27.xml # define when 27 releases
-# MATRIX_LEVEL == 28 => 28.xml # define when 28 releases
-# ...
-# otherwise => current.xml
-
-ifneq ($(PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE),)
-  PRODUCT_COMPATIBILITY_MATRIX_LEVEL := $(PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE)
-else ifneq ($(PRODUCT_FULL_TREBLE),true)
-  PRODUCT_COMPATIBILITY_MATRIX_LEVEL := legacy
-else ifneq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  PRODUCT_COMPATIBILITY_MATRIX_LEVEL := $(PRODUCT_SHIPPING_API_LEVEL)
-else
-  PRODUCT_COMPATIBILITY_MATRIX_LEVEL := $(PLATFORM_SDK_VERSION)
-endif
-
-ifeq ($(strip $(PRODUCT_COMPATIBILITY_MATRIX_LEVEL)),legacy)
-  FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.legacy.xml
-else ifeq ($(call math_gt_or_eq,$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL),26),)
-  # All PRODUCT_FULL_TREBLE devices with shipping API levels < 26 get the level 26 manifest
-  # as that is the first.
-  FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.26.xml
-else ifeq ($(call math_gt_or_eq,$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL),28),)
-  # All shipping API levels with released compatibility matrices get the corresponding matrix.
-  FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
-      hardware/interfaces/compatibility_matrix.$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL).xml
-else
-  FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.current.xml
-endif
+FRAMEWORK_COMPATIBILITY_MATRIX_FILES := $(wildcard hardware/interfaces/compatibility_matrix.*.xml)
 
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(OUT_DIR)/build_date.txt)
