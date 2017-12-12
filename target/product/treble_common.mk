@@ -26,6 +26,10 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
 # Split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
+# vintf utility:
+PRODUCT_PACKAGES += \
+    vintf
+
 # The Messaging app:
 #   Needed for android.telecom.cts.ExtendedInCallServiceTest#testOnCannedTextResponsesLoaded
 PRODUCT_PACKAGES += \
@@ -62,6 +66,11 @@ PRODUCT_PACKAGES += \
 #   Android O.
 PRODUCT_PACKAGES += \
     netutils-wrapper-1.0
+
+# Telephony:
+#   Provide a default APN configuration
+PRODUCT_COPY_FILES += \
+    device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml
 
 # Android Verified Boot (AVB):
 #   Builds a special vbmeta.img that disables AVB verification.
