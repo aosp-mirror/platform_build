@@ -19,40 +19,21 @@
 # (at the time of authorship, it is included by java.mk and
 # java_host_library.mk)
 
-my_include_filter :=
-my_exclude_filter :=
+# determine Jacoco include/exclude filters even when coverage is not enabled
+# to get syntax checking on LOCAL_JACK_COVERAGE_(INCLUDE|EXCLUDE)_FILTER
+# copy filters from Jack but also skip some known java packages
+my_include_filter := $(strip $(LOCAL_JACK_COVERAGE_INCLUDE_FILTER))
+my_exclude_filter := $(strip $(DEFAULT_JACOCO_EXCLUDE_FILTER),$(LOCAL_JACK_COVERAGE_EXCLUDE_FILTER))
+
+my_include_args := $(call jacoco-class-filter-to-file-args, $(my_include_filter))
+my_exclude_args := $(call jacoco-class-filter-to-file-args, $(my_exclude_filter))
+
+# single-quote each arg of the include args so the '*' gets evaluated by zip
+# don't quote the exclude args they need to be evaluated by bash for rm -rf
+my_include_args := $(foreach arg,$(my_include_args),'$(arg)')
 
 ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-  # determine Jacoco include/exclude filters
-  DEFAULT_JACOCO_EXCLUDE_FILTER := org/junit/*,org/jacoco/*,org/mockito/*
-  # copy filters from Jack but also skip some known java packages
-  my_include_filter := $(strip $(LOCAL_JACK_COVERAGE_INCLUDE_FILTER))
-  my_exclude_filter := $(strip $(DEFAULT_JACOCO_EXCLUDE_FILTER),$(LOCAL_JACK_COVERAGE_EXCLUDE_FILTER))
-
-  # replace '.' with '/' and ',' with ' ', and quote each arg
-  ifneq ($(strip $(my_include_filter)),)
-    my_include_args := $(strip $(my_include_filter))
-
-    my_include_args := $(subst .,/,$(my_include_args))
-    my_include_args := '$(subst $(comma),' ',$(my_include_args))'
-  else
-    my_include_args :=
-  endif
-
-  # replace '.' with '/' and ',' with ' '
-  ifneq ($(strip $(my_exclude_filter)),)
-    my_exclude_args := $(my_exclude_filter)
-
-    my_exclude_args := $(subst .,/,$(my_exclude_args))
-    my_exclude_args := $(subst $(comma)$(comma),$(comma),$(my_exclude_args))
-    my_exclude_args := $(subst $(comma), ,$(my_exclude_args))
-  else
-    my_exclude_args :=
-  endif
-
   my_files := $(intermediates.COMMON)/jacoco
-
-  $(call validate-paths-are-subdirs,$(my_exclude_args))
 
   # make a task that unzips the classes that we want to instrument from the
   # input jar

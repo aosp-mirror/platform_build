@@ -48,8 +48,6 @@ BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 # when finalizing them.
 BOARD_VENDORIMAGE_PARTITION_SIZE := 100000000
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_CACHEIMAGE_PARTITION_SIZE := 69206016
-BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
@@ -57,3 +55,9 @@ DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 BOARD_SEPOLICY_DIRS += \
         build/target/board/generic/sepolicy \
         build/target/board/generic_x86/sepolicy
+
+BOARD_VNDK_VERSION := current
+
+# Enable A/B update
+TARGET_NO_RECOVERY := true
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := true

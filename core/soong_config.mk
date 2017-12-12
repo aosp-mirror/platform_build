@@ -81,6 +81,8 @@ $(call add_json_list, AAPTConfig,                        $(PRODUCT_AAPT_CONFIG))
 $(call add_json_str,  AAPTPreferredConfig,               $(PRODUCT_AAPT_PREF_CONFIG))
 $(call add_json_list, AAPTPrebuiltDPI,                   $(PRODUCT_AAPT_PREBUILT_DPI))
 
+$(call add_json_str,  DefaultAppCertificate,             $(PRODUCT_DEFAULT_DEV_CERTIFICATE))
+
 $(call add_json_str,  AppsDefaultVersionName,            $(APPS_DEFAULT_VERSION_NAME))
 
 $(call add_json_list, SanitizeHost,                      $(SANITIZE_HOST))
@@ -110,6 +112,7 @@ $(call add_json_list, DeviceKernelHeaders,               $(TARGET_PROJECT_SYSTEM
 $(call add_json_bool, DevicePrefer32BitExecutables,      $(filter true,$(TARGET_PREFER_32_BIT_EXECUTABLES)))
 $(call add_json_val,  DeviceUsesClang,                   $(if $(USE_CLANG_PLATFORM_BUILD),$(USE_CLANG_PLATFORM_BUILD),false))
 $(call add_json_str,  DeviceVndkVersion,                 $(BOARD_VNDK_VERSION))
+$(call add_json_list, ExtraVndkVersions,                 $(PRODUCT_EXTRA_VNDK_VERSIONS))
 $(call add_json_bool, Malloc_not_svelte,                 $(call invert_bool,$(filter true,$(MALLOC_SVELTE))))
 $(call add_json_str,  Override_rs_driver,                $(OVERRIDE_RS_DRIVER))
 $(call add_json_bool, Treble,                            $(filter true,$(PRODUCT_FULL_TREBLE)))
@@ -118,6 +121,10 @@ $(call add_json_str,  VendorPath,                        $(TARGET_COPY_OUT_VENDO
 $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO)))
 
 $(call add_json_bool, UseGoma,                           $(filter-out false,$(USE_GOMA)))
+
+$(call add_json_str,  DistDir,                           $(if $(dist_goal), $(DIST_DIR)))
+
+$(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPACES))
 
 _contents := $(subst $(comma)$(newline)__SV_END,$(newline)}$(newline),$(_contents)__SV_END)
 

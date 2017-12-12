@@ -285,14 +285,23 @@ ifeq ($(AB_OTA_UPDATER),true)
 endif
 
 # Check BOARD_VNDK_VERSION
+define check_vndk_version
+  $(eval vndk_path := prebuilts/vndk/v$(1)) \
+  $(if $(wildcard $(vndk_path)/Android.bp),,$(error VNDK version $(1) not found))
+endef
+
 ifdef BOARD_VNDK_VERSION
   ifneq ($(BOARD_VNDK_VERSION),current)
-    $(error BOARD_VNDK_VERSION: Only "current" is implemented)
+    $(call check_vndk_version,$(BOARD_VNDK_VERSION))
   endif
 
   TARGET_VENDOR_TEST_SUFFIX := /vendor
 else
   TARGET_VENDOR_TEST_SUFFIX :=
+endif
+
+ifdef PRODUCT_EXTRA_VNDK_VERSIONS
+  $(foreach v,$(PRODUCT_EXTRA_VNDK_VERSIONS),$(call check_vndk_version,$(v)))
 endif
 
 # ---------------------------------------------------------------
@@ -382,6 +391,8 @@ HOST_OUT_COMMON_GEN := $(HOST_COMMON_OUT_ROOT)/gen
 
 HOST_CROSS_OUT_GEN := $(HOST_CROSS_OUT)/gen
 
+HOST_OUT_TEST_CONFIG := $(HOST_OUT)/test_config
+
 # Out for HOST_2ND_ARCH
 HOST_2ND_ARCH_VAR_PREFIX := 2ND_
 HOST_2ND_ARCH_MODULE_SUFFIX := _32
@@ -457,6 +468,7 @@ TARGET_OUT_ETC := $(TARGET_OUT)/etc
 TARGET_OUT_NOTICE_FILES := $(TARGET_OUT_INTERMEDIATES)/NOTICE_FILES
 TARGET_OUT_FAKE := $(PRODUCT_OUT)/fake_packages
 TARGET_OUT_TESTCASES := $(PRODUCT_OUT)/testcases
+TARGET_OUT_TEST_CONFIG := $(PRODUCT_OUT)/test_config
 
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not

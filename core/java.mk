@@ -135,7 +135,7 @@ else
   ifneq (,$(LOCAL_SDK_VERSION))
     # Set target-api for LOCAL_SDK_VERSIONs other than current.
     ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-      renderscript_target_api := $(LOCAL_SDK_VERSION)
+      renderscript_target_api := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
     endif
   endif  # LOCAL_SDK_VERSION is set
 endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
@@ -369,6 +369,19 @@ include $(BUILD_SYSTEM)/java_common.mk
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HAS_RS_SOURCES := $(if $(renderscript_sources),true)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RS_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/renderscript
 
+# Set the profile source so that the odex / profile code included from java.mk
+# can find it.
+#
+# TODO: b/64896089, this is broken when called from package_internal.mk, since the file
+# we preopt from is a temporary file. This will be addressed in a follow up, possibly
+# by disabling stripping for profile guided preopt (which may be desirable for other
+# reasons anyway).
+#
+# Note that we set this only when called from package_internal.mk and not in other cases.
+ifneq (,$(called_from_package_internal)
+dex_preopt_profile_src_file := $(LOCAL_BUILT_MODULE)
+endif
+
 #######################################
 # defines built_odex along with rule to install odex
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
@@ -555,16 +568,22 @@ endif
 
 $(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
-ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+# Temporarily enable --multi-dex until proguard supports v53 class files
+# ( http://b/67673860 ) or we move away from proguard altogether.
+ifdef TARGET_OPENJDK9
 LOCAL_DX_FLAGS := $(filter-out --multi-dex,$(LOCAL_DX_FLAGS)) --multi-dex
 endif
 
+ifneq ($(USE_D8_DESUGAR),true)
 my_desugaring :=
 ifndef LOCAL_IS_STATIC_JAVA_LIBRARY
 my_desugaring := true
 $(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 $(full_classes_desugar_jar): $(full_classes_jar) $(full_java_header_libs) $(DESUGAR)
 	$(desugar-classes-jar)
+endif
+else
+my_desugaring :=
 endif
 
 ifndef my_desugaring
@@ -752,14 +771,18 @@ my_r8 := true
 $(built_dex_intermediate): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
 $(built_dex_intermediate): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(built_dex_intermediate): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
-$(built_dex_intermediate) : $(full_classes_proguard_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD_JAR)
+$(built_dex_intermediate) : $(full_classes_proguard_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD)
 	$(transform-jar-to-dex-r8)
 endif # USE_R8
 endif # LOCAL_PROGUARD_ENABLED
 
 ifndef my_r8
 $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
+ifneq ($(USE_D8_DESUGAR),true)
 	$(transform-classes.jar-to-dex)
+else
+	$(transform-classes-d8.jar-to-dex)
+endif
 endif
 
 $(built_dex): $(built_dex_intermediate)
@@ -799,8 +822,8 @@ $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 endif  # full_classes_jar is defined
 
 ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-  my_default_app_target_sdk := $(LOCAL_SDK_VERSION)
-  my_sdk_version := $(LOCAL_SDK_VERSION)
+  my_default_app_target_sdk := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
+  my_sdk_version := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
 else
   my_default_app_target_sdk := $(DEFAULT_APP_TARGET_SDK)
   my_sdk_version := $(PLATFORM_SDK_VERSION)

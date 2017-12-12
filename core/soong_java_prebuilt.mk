@@ -2,6 +2,7 @@
 # Extra inputs:
 # LOCAL_SOONG_HEADER_JAR
 # LOCAL_SOONG_DEX_JAR
+# LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
 
 ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   $(call pretty-error,soong_java_prebuilt.mk may only be used from Soong)
@@ -15,16 +16,19 @@ include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
 
 full_classes_jar := $(intermediates.COMMON)/classes.jar
+full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 common_javalib.jar := $(intermediates.COMMON)/javalib.jar
 
-LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(LOCAL_PREBUILT_MODULE_FILE)
+$(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_jar)))
+$(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_pre_proguard_jar)))
 
-#######################################
-include $(BUILD_SYSTEM)/jacoco.mk
-#######################################
-
-$(eval $(call copy-one-file,$(LOCAL_FULL_CLASSES_JACOCO_JAR),$(full_classes_jar)))
+ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
+    $(intermediates.COMMON)/jacoco-report-classes.jar))
+  $(call add-dependency,$(common_javalib.jar),\
+    $(intermediates.COMMON)/jacoco-report-classes.jar)
+endif
 
 ifneq ($(TURBINE_DISABLED),false)
 ifdef LOCAL_SOONG_HEADER_JAR
@@ -39,8 +43,12 @@ ifdef LOCAL_SOONG_DEX_JAR
     $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
     $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar) $(full_classes_header_jar)))
 
+    dex_preopt_profile_src_file := $(common_javalib.jar)
+
     # defines built_odex along with rule to install odex
     include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+
+    dex_preopt_profile_src_file :=
 
     ifdef LOCAL_DEX_PREOPT
       ifneq ($(dexpreopt_boot_jar_module),) # boot jar
@@ -79,6 +87,10 @@ ifeq ($(LOCAL_SDK_VERSION),system_current)
 my_link_type := java:system
 my_warn_types := java:platform
 my_allowed_types := java:sdk java:system
+else ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
+my_link_type := java:system
+my_warn_types := java:platform
+my_allowed_types := java:sdk java:system
 else ifneq ($(LOCAL_SDK_VERSION),)
 my_link_type := java:sdk
 my_warn_types := java:system java:platform
@@ -94,7 +106,3 @@ my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
 my_common := COMMON
 include $(BUILD_SYSTEM)/link_type.mk
 endif # !LOCAL_IS_HOST_MODULE
-
-# Built in equivalent to include $(CLEAR_VARS)
-LOCAL_SOONG_HEADER_JAR :=
-LOCAL_SOONG_DEX_JAR :=

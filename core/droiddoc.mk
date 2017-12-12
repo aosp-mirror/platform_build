@@ -72,8 +72,18 @@ ifneq ($(LOCAL_SDK_VERSION),)
     LOCAL_JAVA_LIBRARIES := android_test_stubs_current $(LOCAL_JAVA_LIBRARIES)
     $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, android_test_stubs_current)
   else
-    LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
-    $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, sdk_v$(LOCAL_SDK_VERSION))
+    ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
+      ifeq (,$(TARGET_BUILD_APPS))
+        LOCAL_JAVA_LIBRARIES := system_sdk_v$(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)) $(LOCAL_JAVA_LIBRARIES)
+        $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, system_sdk_v$(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)))
+      else
+        LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
+        $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, sdk_v$(LOCAL_SDK_VERSION))
+      endif
+    else
+      LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
+      $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, sdk_v$(LOCAL_SDK_VERSION))
+    endif
   endif
 else
   LOCAL_JAVA_LIBRARIES := core-oj core-libart ext framework $(LOCAL_JAVA_LIBRARIES)
@@ -91,8 +101,12 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 $(full_target): PRIVATE_SOURCE_PATH := $(call normalize-path-list,$(LOCAL_DROIDDOC_SOURCE_PATH))
 $(full_target): PRIVATE_JAVA_FILES := $(filter %.java,$(full_src_files))
 $(full_target): PRIVATE_JAVA_FILES += $(addprefix $($(my_prefix)OUT_COMMON_INTERMEDIATES)/, $(filter %.java,$(LOCAL_INTERMEDIATE_SOURCES)))
+$(full_target): PRIVATE_JAVA_FILES += $(filter %.java,$(LOCAL_GENERATED_SOURCES))
+$(full_target): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
 $(full_target): PRIVATE_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/src
+$(full_target): PRIVATE_SRCJAR_INTERMEDIATES_DIR := $(intermediates.COMMON)/srcjars
 $(full_target): PRIVATE_SRC_LIST_FILE := $(intermediates.COMMON)/droiddoc-src-list
+$(full_target): PRIVATE_SRCJAR_LIST_FILE := $(intermediates.COMMON)/droiddoc-srcjar-list
 
 ifneq ($(strip $(LOCAL_ADDITIONAL_JAVA_DIR)),)
 $(full_target): PRIVATE_ADDITIONAL_JAVA_DIR := $(LOCAL_ADDITIONAL_JAVA_DIR)
@@ -169,21 +183,26 @@ $(full_target): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
 # keep -bootclasspath here since it works in combination with -source 1.8.
 $(full_target): \
         $(full_src_files) \
+        $(LOCAL_GENERATED_SOURCES) \
         $(droiddoc_templates) \
         $(droiddoc) \
         $(html_dir_files) \
         $(full_java_libs) \
+        $(EXTRACT_SRCJARS) \
+        $(LOCAL_SRCJARS) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	@echo Docs droiddoc: $(PRIVATE_OUT_DIR)
 	$(hide) mkdir -p $(dir $@)
-	$(addprefix $(hide) rm -rf ,$(PRIVATE_STUB_OUT_DIR))
+	$(hide) rm -rf $(PRIVATE_STUB_OUT_DIR) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR)
 	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
+	$(EXTRACT_SRCJARS) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) $(PRIVATE_SRCJAR_LIST_FILE) $(PRIVATE_SRCJARS)
 	$(hide) ( \
 		$(JAVADOC) \
                 -encoding UTF-8 \
                 -source 1.8 \
                 \@$(PRIVATE_SRC_LIST_FILE) \
+                \@$(PRIVATE_SRCJAR_LIST_FILE) \
                 -J-Xmx1600m \
                 -J-XX:-OmitStackTraceInFastThrow \
                 -XDignore.symbol.file \
@@ -213,7 +232,7 @@ else
 ##
 ##
 
-ifneq ($(EXPERIMENTAL_USE_OPENJDK9),)
+ifdef USE_OPENJDK9
 # For OpenJDK 9 we use --patch-module to define the core libraries code.
 # TODO(tobiast): Reorganize this when adding proper support for OpenJDK 9
 # modules. Here we treat all code in core libraries as being in java.base
@@ -223,17 +242,19 @@ else
 # For OpenJDK 8 we can use -bootclasspath to define the core libraries code.
 $(full_target): PRIVATE_BOOTCLASSPATH_ARG := $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH))
 endif
-
-$(full_target): $(full_src_files) $(full_java_libs)
+$(full_target): $(full_src_files) $(LOCAL_GENERATED_SOURCES) $(full_java_libs) $(EXTRACT_SRCJARS) $(LOCAL_SRCJARS) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	@echo Docs javadoc: $(PRIVATE_OUT_DIR)
 	@mkdir -p $(dir $@)
+	rm -rf $(PRIVATE_SRCJAR_INTERMEDIATES_DIR)
 	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
+	$(EXTRACT_SRCJARS) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) $(PRIVATE_SRCJAR_LIST_FILE) $(PRIVATE_SRCJARS)
 	$(hide) ( \
 		$(JAVADOC) \
                 -encoding UTF-8 \
                 $(PRIVATE_DROIDDOC_OPTIONS) \
                 \@$(PRIVATE_SRC_LIST_FILE) \
+                \@$(PRIVATE_SRCJAR_LIST_FILE) \
                 -J-Xmx1024m \
                 -XDignore.symbol.file \
                 -Xdoclint:none \

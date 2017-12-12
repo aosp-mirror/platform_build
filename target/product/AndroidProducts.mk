@@ -52,8 +52,11 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/generic_mips.mk \
     $(LOCAL_DIR)/aosp_arm.mk \
     $(LOCAL_DIR)/aosp_arm_a.mk \
+    $(LOCAL_DIR)/aosp_arm_ab.mk \
     $(LOCAL_DIR)/full.mk \
     $(LOCAL_DIR)/aosp_x86.mk \
+    $(LOCAL_DIR)/aosp_x86_a.mk \
+    $(LOCAL_DIR)/aosp_x86_ab.mk \
     $(LOCAL_DIR)/aosp_x86_arm.mk \
     $(LOCAL_DIR)/full_x86.mk \
     $(LOCAL_DIR)/aosp_mips.mk \
@@ -63,6 +66,8 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/aosp_arm64_ab.mk \
     $(LOCAL_DIR)/aosp_mips64.mk \
     $(LOCAL_DIR)/aosp_x86_64.mk \
+    $(LOCAL_DIR)/aosp_x86_64_a.mk \
+    $(LOCAL_DIR)/aosp_x86_64_ab.mk \
     $(LOCAL_DIR)/sdk_phone_armv7.mk \
     $(LOCAL_DIR)/sdk_phone_x86.mk \
     $(LOCAL_DIR)/sdk_phone_mips.mk \

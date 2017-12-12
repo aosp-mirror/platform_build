@@ -108,3 +108,13 @@ ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
 
 	cp $@ $(PRIVATE_RESOURCE_EXPORT_PACKAGE)
 endif
+
+# Clear inputs only used in this file, so that they're not re-used during the next build
+my_res_resources :=
+my_overlay_resources :=
+my_compiled_res_base_dir :=
+my_asset_dirs :=
+my_full_asset_paths :=
+my_apk_split_configs :=
+my_generated_res_dirs :=
+my_generated_res_dirs_deps :=

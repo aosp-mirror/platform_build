@@ -195,8 +195,9 @@ def AdjustPartitionSizeForVerity(partition_size, fec_supported):
     else:
       hi = i
 
-  print("Adjusted partition size for verity, partition_size: {},"
-        " verity_size: {}".format(result, verity_size))
+  if OPTIONS.verbose:
+    print("Adjusted partition size for verity, partition_size: {},"
+          " verity_size: {}".format(result, verity_size))
   AdjustPartitionSizeForVerity.results[key] = (result, verity_size)
   return (result, verity_size)
 
@@ -257,7 +258,7 @@ def Append2Simg(sparse_image_path, unsparse_image_path, error_message):
   return True
 
 def Append(target, file_to_append, error_message):
-  print "appending %s to %s" % (file_to_append, target)
+  # appending file_to_append to target
   with open(target, "a") as out_file:
     with open(file_to_append, "r") as input_file:
       for line in input_file:
@@ -516,6 +517,17 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   elif fs_type.startswith("f2fs"):
     build_command = ["mkf2fsuserimg.sh"]
     build_command.extend([out_file, prop_dict["partition_size"]])
+    if fs_config:
+      build_command.extend(["-C", fs_config])
+    build_command.extend(["-f", in_dir])
+    if target_out:
+      build_command.extend(["-D", target_out])
+    if "selinux_fc" in prop_dict:
+      build_command.extend(["-s", prop_dict["selinux_fc"]])
+    build_command.extend(["-t", prop_dict["mount_point"]])
+    if "timestamp" in prop_dict:
+      build_command.extend(["-T", str(prop_dict["timestamp"])])
+    build_command.extend(["-L", prop_dict["mount_point"]])
   else:
     print("Error: unknown filesystem type '%s'" % (fs_type))
     return False
@@ -535,9 +547,9 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
   try:
     if fs_type.startswith("ext4"):
-      (ext4fs_output, exit_code) = RunCommand(build_command, True)
+      (ext4fs_output, exit_code) = RunCommand(build_command)
     else:
-      (_, exit_code) = RunCommand(build_command, True)
+      (_, exit_code) = RunCommand(build_command)
   finally:
     if in_dir != origin_in:
       # Clean up temporary directories and files.
@@ -547,6 +559,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     if base_fs_file is not None:
       os.remove(base_fs_file)
   if exit_code != 0:
+    print("Error: '%s' failed with exit code %d" % (build_command, exit_code))
     return False
 
   # Bug: 21522719, 22023465
@@ -624,7 +637,11 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
     os.remove(unsparse_image)
 
-  return exit_code == 0
+    if exit_code != 0:
+      print("Error: '%s' failed with exit code %d" % (e2fsck_command, exit_code))
+      return False
+
+  return True
 
 
 def ImagePropFromGlobalDict(glob_dict, mount_point):

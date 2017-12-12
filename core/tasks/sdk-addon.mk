@@ -115,7 +115,7 @@ $(full_target): $(sdk_addon_deps) | $(ACP) $(SOONG_ZIP)
 	$(hide) $(SOONG_ZIP) -o $@ -C $(dir $(PRIVATE_STAGING_DIR)) -D $(PRIVATE_STAGING_DIR)
 
 $(full_target_img): PRIVATE_STAGING_DIR := $(call append-path,$(staging),$(addon_dir_img))/images/$(TARGET_CPU_ABI)
-$(full_target_img): $(full_target) $(addon_img_source_prop) | $(SOONG_ZIP)
+$(full_target_img): $(full_target) $(addon_img_source_prop) | $(ACP) $(SOONG_ZIP)
 	@echo Packaging SDK Addon System-Image: $@
 	$(hide) mkdir -p $(dir $@)
 	$(ACP) -r $(PRODUCT_OUT)/data $(PRIVATE_STAGING_DIR)/data
