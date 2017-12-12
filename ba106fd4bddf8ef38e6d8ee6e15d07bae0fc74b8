@@ -34,6 +34,24 @@
       "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b5989a0_5fd6d5cf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-12T05:37:22Z",
+      "side": 1,
+      "message": "\u003e LOCAL_JAVA_LIBRARIES does not necessarily imply a runtime dependency on a specific java library, it\u0027s just saying that something presenting the same API will exist at some point in the future (either via a library in the bootclasspath, or later integrated into another java package with LOCAL_STATIC_JAVA_LIBRARIES).\n\nI already know that. I think it is not problem of this CL. This CL is to prevent the vendor module from using system \u0027shared\u0027 java library except android_system.jar which is consist of public API and system API. And we allow that vendor module can use \u0027static\u0027 java library which is built with public SDK or system SDK and does not depend on other java libraries dynamically. You can see more detail in Jiyong\u0027s comment.\n\n\u003e While we do need to protect against java:system -\u003e java:platform linking, I\u0027m not sure the build system is ready to say much about vendor -\u003e system usage outside of that. I wish it was, but I don\u0027t think we\u0027ve modeled the necessary relationships.\n\nWe decided that the vendor can use system-api (go/systemsdk-design). For this, I merged the CLs for versioning system-api (http://ag/q/topic:vendor_api+status:merged). And This CL is for checking link type.",
+      "parentUuid": "591deaa7_27d0e223",
+      "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
