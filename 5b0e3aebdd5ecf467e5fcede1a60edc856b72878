@@ -102,6 +102,24 @@
     },
     {
       "key": {
+        "uuid": "d1b034c6_308fb41d",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-12T08:50:43Z",
+      "side": 1,
+      "message": "Just adding warnings means that even fewer people look at new warnings. Errors work, warnings don\u0027t -- either clean it up and make it an error, or don\u0027t print anything.",
+      "parentUuid": "0a0d4958_eab1c0b5",
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e3c9a8dd_9a1eda3b",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 6
@@ -137,6 +155,30 @@
       "side": 1,
       "message": "I see. The problem here is that I need to grep the AndroidManifest file to determine if or not to auto generate the test config file.\n\nIf I move this code to build rule, how can I fail the build rule so other build step won\u0027t try to read the config file?",
       "parentUuid": "e3c9a8dd_9a1eda3b",
+      "range": {
+        "startLine": 24,
+        "startChar": 23,
+        "endLine": 24,
+        "endChar": 81
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eebda0d2_6f715cf0",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-12T08:50:43Z",
+      "side": 1,
+      "message": "We generally say we can\u0027t read files during the build definition due to these issues. All of the information needed by the build logic should be in the Android.bp / Android.mk files, either move the information to there, or duplicate it in both places and add verification to the rule to ensure that it matches.",
+      "parentUuid": "9a61676f_b9b68b50",
       "range": {
         "startLine": 24,
         "startChar": 23,
