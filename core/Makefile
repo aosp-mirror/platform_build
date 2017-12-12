@@ -31,12 +31,13 @@ $(foreach cf,$(PRODUCT_COPY_FILES), \
     $(if $(filter $(unique_product_copy_files_pairs),$(cf)),,\
         $(eval unique_product_copy_files_pairs += $(cf))))
 unique_product_copy_files_destinations :=
+product_copy_files_ignored :=
 $(foreach cf,$(unique_product_copy_files_pairs), \
     $(eval _src := $(call word-colon,1,$(cf))) \
     $(eval _dest := $(call word-colon,2,$(cf))) \
     $(call check-product-copy-files,$(cf)) \
     $(if $(filter $(unique_product_copy_files_destinations),$(_dest)), \
-        $(info PRODUCT_COPY_FILES $(cf) ignored.), \
+        $(eval product_copy_files_ignored += $(cf)), \
         $(eval _fulldest := $(call append-path,$(PRODUCT_OUT),$(_dest))) \
         $(if $(filter %.xml,$(_dest)),\
             $(eval $(call copy-xml-file-checked,$(_src),$(_fulldest))),\
@@ -45,8 +46,29 @@ $(foreach cf,$(unique_product_copy_files_pairs), \
                 $(eval $(call copy-one-file,$(_src),$(_fulldest))))) \
         $(eval ALL_DEFAULT_INSTALLED_MODULES += $(_fulldest)) \
         $(eval unique_product_copy_files_destinations += $(_dest))))
+
+# Dump a list of overriden (and ignored PRODUCT_COPY_FILES entries)
+$(file >$(PRODUCT_OUT)/product_copy_files_ignored.txt,$(subst $(space),$(newline),$(strip $(product_copy_files_ignored))))
+ifdef dist_goal
+$(file >$(DIST_DIR)/logs/product_copy_files_ignored.txt,$(subst $(space),$(newline),$(strip $(product_copy_files_ignored))))
+endif
+
+product_copy_files_ignored :=
 unique_product_copy_files_pairs :=
 unique_product_copy_files_destinations :=
+
+# -----------------------------------------------------------------
+# Returns the max allowed size for an image suitable for hash verification
+# (e.g., boot.img, recovery.img, etc).
+# The value 69632 derives from MAX_VBMETA_SIZE + MAX_FOOTER_SIZE in $(AVBTOOL).
+# $(1): partition size to flash the image
+define get-hash-image-max-size
+$(if $(1), \
+  $(if $(filter true,$(BOARD_AVB_ENABLE)), \
+    $(eval _hash_meta_size := 69632), \
+    $(eval _hash_meta_size := 0)) \
+  $(1)-$(_hash_meta_size))
+endef
 
 # -----------------------------------------------------------------
 # Define rules to copy headers defined in copy_headers.mk
@@ -104,6 +126,9 @@ endif
 # prop.default
 ifdef property_overrides_split_enabled
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_OUT)/etc/prop.default
+INSTALLED_DEFAULT_PROP_OLD_TARGET := $(TARGET_ROOT_OUT)/default.prop
+ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_DEFAULT_PROP_OLD_TARGET)
+$(INSTALLED_DEFAULT_PROP_OLD_TARGET): $(INSTALLED_DEFAULT_PROP_TARGET)
 else
 # legacy path
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_ROOT_OUT)/default.prop
@@ -139,7 +164,7 @@ $(INSTALLED_DEFAULT_PROP_TARGET): $(intermediate_system_build_prop)
 	$(hide) build/tools/post_process_props.py $@
 ifdef property_overrides_split_enabled
 	$(hide) mkdir -p $(TARGET_ROOT_OUT)
-	$(hide) ln -sf system/etc/prop.default $(TARGET_ROOT_OUT)/default.prop
+	$(hide) ln -sf system/etc/prop.default $(INSTALLED_DEFAULT_PROP_OLD_TARGET)
 endif
 
 # -----------------------------------------------------------------
@@ -445,8 +470,10 @@ package-stats: $(PACKAGE_STATS_FILE)
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
 # Use a macro to add newline to each echo command
-define _apkcerts_echo_with_newline
-$(hide) echo $(1)
+define _apkcerts_write_line
+$(hide) echo -n 'name="$(1).apk" certificate="$2" private_key="$3"' >> $5
+$(if $(4), $(hide) echo -n ' compressed="$4"' >> $5)
+$(hide) echo '' >> $5
 
 endef
 
@@ -466,12 +493,8 @@ $(APKCERTS_FILE):
 	@rm -f $@
 	$(foreach p,$(PACKAGES),\
 	  $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
-	    $(call _apkcerts_echo_with_newline,\
-	      'name="$(p).apk" certificate="EXTERNAL" \
-	      private_key=""' >> $@),\
-	    $(call _apkcerts_echo_with_newline,\
-	      'name="$(p).apk" certificate="$(PACKAGES.$(p).CERTIFICATE)" \
-	      private_key="$(PACKAGES.$(p).PRIVATE_KEY)"' >> $@)))
+	    $(call _apkcerts_write_line,$(p),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$@),\
+	    $(call _apkcerts_write_line,$(p),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$@)))
 	# In case value of PACKAGES is empty.
 	$(hide) touch $@
 
@@ -498,7 +521,7 @@ SOONG_CONV := $(sort $(SOONG_CONV))
 SOONG_CONV_DATA := $(call intermediates-dir-for,PACKAGING,soong_conversion)/soong_conv_data
 $(SOONG_CONV_DATA):
 	@rm -f $@
-	@$(foreach s,$(SOONG_CONV),echo "$(s),$(sort $(SOONG_CONV.$(s).PROBLEMS)),$(sort $(filter-out $(SOONG_ALREADY_CONV),$(SOONG_CONV.$(s).DEPS)))" >>$@;)
+	@$(foreach s,$(SOONG_CONV),echo "$(s),$(SOONG_CONV.$(s).TYPE),$(sort $(SOONG_CONV.$(s).PROBLEMS)),$(sort $(filter-out $(SOONG_ALREADY_CONV),$(SOONG_CONV.$(s).DEPS)))" >>$@;)
 
 SOONG_TO_CONVERT_SCRIPT := build/tools/soong_to_convert.py
 SOONG_TO_CONVERT := $(PRODUCT_OUT)/soong_to_convert.txt
@@ -506,6 +529,18 @@ $(SOONG_TO_CONVERT): $(SOONG_CONV_DATA) $(SOONG_TO_CONVERT_SCRIPT)
 	@rm -f $@
 	$(hide) $(SOONG_TO_CONVERT_SCRIPT) $< >$@
 $(call dist-for-goals,droidcore,$(SOONG_TO_CONVERT))
+
+# -----------------------------------------------------------------
+# Modules use -Wno-error, or added default -Wall -Werror
+WALL_WERROR := $(PRODUCT_OUT)/wall_werror.txt
+$(WALL_WERROR):
+	@rm -f $@
+	echo "# Modules using -Wno-error" >> $@
+	for m in $(sort $(SOONG_MODULES_USING_WNO_ERROR) $(MODULES_USING_WNO_ERROR)); do echo $$m >> $@; done
+	echo "# Modules added default -Wall" >> $@
+	for m in $(sort $(SOONG_MODULES_ADDED_WALL) $(MODULES_ADDED_WALL)); do echo $$m >> $@; done
+
+$(call dist-for-goals,droidcore,$(WALL_WERROR))
 
 # -----------------------------------------------------------------
 # The dev key is used to sign this package, and as the key required
@@ -605,6 +640,8 @@ ramdisk-nodeps: $(MKBOOTFS) | $(MINIGZIP)
 	@echo "make $@: ignoring dependencies"
 	$(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_ROOT_OUT) | $(MINIGZIP) > $(INSTALLED_RAMDISK_TARGET)
 
+INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
+
 ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 
 # -----------------------------------------------------------------
@@ -643,8 +680,6 @@ INTERNAL_MKBOOTIMG_VERSION_ARGS := \
     --os_version $(PLATFORM_VERSION) \
     --os_patch_level $(PLATFORM_SECURITY_PATCH)
 
-INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
-
 # BOARD_USES_RECOVERY_AS_BOOT = true must have BOARD_BUILD_SYSTEM_ROOT_IMAGE = true.
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
 ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
@@ -662,7 +697,7 @@ else ifeq (true,$(BOARD_AVB_ENABLE)) # TARGET_BOOTIMAGE_USE_EXT2 != true
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILES) $(BOARD_AVB_BOOT_KEY_PATH)
 	$(call pretty,"Target boot image: $@")
 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
-	$(hide) $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	$(hide) $(call assert-max-image-size,$@,$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
 	$(hide) $(AVBTOOL) add_hash_footer \
 	  --image $@ \
 	  --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
@@ -673,9 +708,9 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(AVBTOOL) $(INTERNAL_BOOTIMAGE_FILE
 bootimage-nodeps: $(MKBOOTIMG) $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
 	@echo "make $@: ignoring dependencies"
 	$(hide) $(MKBOOTIMG) $(INTERNAL_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_BOOTIMAGE_TARGET)
-	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
 	$(hide) $(AVBTOOL) add_hash_footer \
-	  --image $@ \
+	  --image $(INSTALLED_BOOTIMAGE_TARGET) \
 	  --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
 	  --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
 	  $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS)
@@ -727,6 +762,13 @@ endif # TARGET_BOOTIMAGE_USE_EXT2
 endif # BOARD_USES_RECOVERY_AS_BOOT
 
 else	# TARGET_NO_KERNEL
+ifdef BOARD_PREBUILT_BOOTIMAGE
+ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+# Remove when b/63676296 is resolved.
+$(error Prebuilt bootimage is only supported for AB targets)
+endif
+$(eval $(call copy-one-file,$(BOARD_PREBUILT_BOOTIMAGE),$(INSTALLED_BOOTIMAGE_TARGET)))
+else
 INTERNAL_KERNEL_CMDLINE := $(strip $(BOARD_KERNEL_CMDLINE))
 # HACK: The top-level targets depend on the bootimage.  Not all targets
 # can produce a bootimage, though, and emulator targets need the ramdisk
@@ -734,6 +776,7 @@ INTERNAL_KERNEL_CMDLINE := $(strip $(BOARD_KERNEL_CMDLINE))
 # TODO: make the emulator use bootimages, and make mkbootimg accept
 #       kernel-less inputs.
 INSTALLED_BOOTIMAGE_TARGET := $(INSTALLED_RAMDISK_TARGET)
+endif
 endif
 
 # -----------------------------------------------------------------
@@ -1167,14 +1210,6 @@ else
 RECOVERY_RESOURCE_ZIP :=
 endif
 
-ifeq ($(TARGET_PRIVATE_RES_DIRS),)
-  $(info No private recovery resources for TARGET_DEVICE $(TARGET_DEVICE))
-endif
-
-ifeq ($(recovery_fstab),)
-  $(info No recovery.fstab for TARGET_DEVICE $(TARGET_DEVICE))
-endif
-
 INTERNAL_RECOVERYIMAGE_ARGS := \
 	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
 	--kernel $(recovery_kernel) \
@@ -1213,15 +1248,15 @@ RECOVERYIMAGE_ID_FILE := $(PRODUCT_OUT)/recovery.id
 
 # $(1): output file
 define build-recoveryimage-target
-  @echo ----- Making recovery image ------
+  # Making recovery image
   $(hide) mkdir -p $(TARGET_RECOVERY_OUT)
   $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/etc $(TARGET_RECOVERY_ROOT_OUT)/sdcard $(TARGET_RECOVERY_ROOT_OUT)/tmp
-  @echo Copying baseline ramdisk...
+  # Copying baseline ramdisk...
   # Use rsync because "cp -Rf" fails to overwrite broken symlinks on Mac.
   $(hide) rsync -a --exclude=etc --exclude=sdcard $(IGNORE_RECOVERY_SEPOLICY) $(IGNORE_CACHE_LINK) $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
   # Copy adbd from system/bin to recovery/root/sbin
   $(hide) cp -f $(TARGET_OUT_EXECUTABLES)/adbd $(TARGET_RECOVERY_ROOT_OUT)/sbin/adbd
-  @echo Modifying ramdisk contents...
+  # Modifying ramdisk contents...
   $(if $(BOARD_RECOVERY_KERNEL_MODULES), \
     $(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery)))
   # Removes $(TARGET_RECOVERY_ROOT_OUT)/init*.rc EXCEPT init.recovery*.rc.
@@ -1264,16 +1299,13 @@ define build-recoveryimage-target
   )
   $(if $(filter true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT)), \
     $(VBOOT_SIGNER) $(FUTILITY) $(1).unsigned $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbpubk $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY).vbprivk $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_SUBKEY).vbprivk $(1).keyblock $(1))
-  $(if $(and $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),$(filter true,$(BOARD_AVB_ENABLE))), \
-      $(hide) $(AVBTOOL) add_hash_footer \
-        --image $(1) \
-        --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
-        --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) \
-        $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS))
   $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)), \
-    $(hide) $(call assert-max-image-size,$(1),$(BOARD_BOOTIMAGE_PARTITION_SIZE)), \
-    $(hide) $(call assert-max-image-size,$(1),$(BOARD_RECOVERYIMAGE_PARTITION_SIZE)))
-  @echo ----- Made recovery image: $(1) --------
+    $(hide) $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE))), \
+    $(hide) $(call assert-max-image-size,$(1),$(call get-hash-image-max-size,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))))
+  $(if $(filter true,$(BOARD_AVB_ENABLE)), \
+    $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)), \
+      $(hide) $(AVBTOOL) add_hash_footer --image $(1) --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) --partition_name boot $(INTERNAL_AVB_BOOT_SIGNING_ARGS) $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS),\
+      $(hide) $(AVBTOOL) add_hash_footer --image $(1) --partition_size $(BOARD_RECOVERYIMAGE_PARTITION_SIZE) --partition_name recovery $(INTERNAL_AVB_RECOVERY_SIGNING_ARGS) $(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)))
 endef
 
 ADBD := $(TARGET_OUT_EXECUTABLES)/adbd
@@ -1927,6 +1959,7 @@ BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
 DTBO_FOOTER_ARGS := BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS
 SYSTEM_FOOTER_ARGS := BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS
 VENDOR_FOOTER_ARGS := BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS
+RECOVERY_FOOTER_ARGS := BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS
 
 # Check and set required build variables for a chain partition.
 # $(1): the partition to enable AVB chain, e.g., BOOT or SYSTEM.
@@ -1988,6 +2021,15 @@ INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
 endif
 endif
 
+ifdef INSTALLED_RECOVERYIMAGE_TARGET
+ifdef BOARD_AVB_RECOVERY_KEY_PATH
+$(eval $(call check-and-set-avb-chain-args,RECOVERY))
+else
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
+    --include_descriptors_from_image $(INSTALLED_RECOVERYIMAGE_TARGET)
+endif
+endif
+
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096
 
 # Add kernel cmdline descriptor for kernel to mount system.img as root with
@@ -2026,6 +2068,9 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_AVB_DTBO_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_DTBO_KEY_PATH) \
       --output $(1)/dtbo.avbpubkey)
+  $(if $(BOARD_AVB_RECOVERY_KEY_PATH),\
+    $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_RECOVERY_KEY_PATH) \
+      --output $(1)/recovery.avbpubkey)
 endef
 
 define build-vbmetaimage-target
@@ -2041,12 +2086,27 @@ define build-vbmetaimage-target
 endef
 
 INSTALLED_VBMETAIMAGE_TARGET := $(BUILT_VBMETAIMAGE_TARGET)
-$(INSTALLED_VBMETAIMAGE_TARGET): $(AVBTOOL) $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_SYSTEMIMAGE) $(INSTALLED_VENDORIMAGE_TARGET) $(INSTALLED_DTBOIMAGE_TARGET) $(BOARD_AVB_KEY_PATH)
+$(INSTALLED_VBMETAIMAGE_TARGET): \
+		$(AVBTOOL) \
+		$(INSTALLED_BOOTIMAGE_TARGET) \
+		$(INSTALLED_SYSTEMIMAGE) \
+		$(INSTALLED_VENDORIMAGE_TARGET) \
+		$(INSTALLED_DTBOIMAGE_TARGET) \
+		$(INSTALLED_RECOVERYIMAGE_TARGET) \
+		$(BOARD_AVB_KEY_PATH)
 	$(build-vbmetaimage-target)
 
 .PHONY: vbmetaimage-nodeps
 vbmetaimage-nodeps:
 	$(build-vbmetaimage-target)
+
+else ifeq (true,$(BOARD_BUILD_DISABLED_VBMETAIMAGE))
+BUILT_DISABLED_VBMETAIMAGE := $(PRODUCT_OUT)/vbmeta.img
+
+INSTALLED_VBMETAIMAGE_TARGET := $(BUILT_DISABLED_VBMETAIMAGE)
+$(INSTALLED_VBMETAIMAGE_TARGET): $(AVBTOOL)
+	$(hide) $(AVBTOOL) make_vbmeta_image \
+	  --flag 2 --padding_size 4096 --output $@
 
 endif # BOARD_AVB_ENABLE
 
@@ -2106,6 +2166,7 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/mksquashfs \
   $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh \
   $(HOST_OUT_EXECUTABLES)/make_f2fs \
+  $(HOST_OUT_EXECUTABLES)/sload_f2fs \
   $(HOST_OUT_EXECUTABLES)/simg2img \
   $(HOST_OUT_EXECUTABLES)/e2fsck \
   $(HOST_OUT_EXECUTABLES)/build_verity_tree \
@@ -2120,7 +2181,7 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/delta_generator \
   $(AVBTOOL) \
   $(BLK_ALLOC_TO_BASE_FS) \
-  $(BRO)
+  $(BROTLI)
 
 ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT))
 OTATOOLS += \
@@ -2171,7 +2232,7 @@ OTATOOLS_DEPS := \
   $(shell find system/update_engine/scripts -name \*.pyc -prune -o -type f -print | sort) \
   $(shell find build/target/product/security -type f -name \*.x509.pem -o -name \*.pk8 -o \
       -name verity_key | sort) \
-  $(shell find device vendor -type f -name \*.pk8 -o -name verifiedboot\* -o \
+  $(shell find device $(wildcard vendor) -type f -name \*.pk8 -o -name verifiedboot\* -o \
       -name \*.x509.pem -o -name oem\*.prop | sort)
 
 OTATOOLS_RELEASETOOLS := \
@@ -2293,6 +2354,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_CACHEIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
+		$(INSTALLED_VBMETAIMAGE_TARGET) \
 		$(INSTALLED_DTBOIMAGE_TARGET) \
 		$(INTERNAL_SYSTEMOTHERIMAGE_FILES) \
 		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
@@ -2408,9 +2470,6 @@ endif
 ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
 	$(hide) echo "boot_size=$(BOARD_BOOTIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
 endif
-ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),)
-	$(hide) echo "recovery_as_boot=$(BOARD_USES_RECOVERY_AS_BOOT)" >> $(zip_root)/META/misc_info.txt
-endif
 ifeq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) echo "no_recovery=true" >> $(zip_root)/META/misc_info.txt
 endif
@@ -2465,6 +2524,12 @@ ifdef BOARD_AVB_BOOT_KEY_PATH
 	$(hide) echo "avb_boot_algorithm=$(BOARD_AVB_BOOT_ALGORITHM)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "avb_boot_rollback_index_location=$(BOARD_AVB_BOOT_ROLLBACK_INDEX_LOCATION)" >> $(zip_root)/META/misc_info.txt
 endif # BOARD_AVB_BOOT_KEY_PATH
+	$(hide) echo "avb_recovery_add_hash_footer_args=$(BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS)" >> $(zip_root)/META/misc_info.txt
+ifdef BOARD_AVB_RECOVERY_KEY_PATH
+	$(hide) echo "avb_recovery_key_path=$(BOARD_AVB_RECOVERY_KEY_PATH)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "avb_recovery_algorithm=$(BOARD_AVB_RECOVERY_ALGORITHM)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "avb_recovery_rollback_index_location=$(BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION)" >> $(zip_root)/META/misc_info.txt
+endif # BOARD_AVB_RECOVERY_KEY_PATH
 endif # BOARD_AVB_ENABLE
 ifdef BOARD_BPT_INPUT_FILES
 	$(hide) echo "board_bpt_enable=true" >> $(zip_root)/META/misc_info.txt
@@ -2513,9 +2578,21 @@ ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
 	@# If breakpad symbols have been generated, add them to the zip.
 	$(hide) $(ACP) -r $(TARGET_OUT_BREAKPAD) $(zip_root)/BREAKPAD
 endif
+# BOARD_BUILD_DISABLED_VBMETAIMAGE is used to build a special vbmeta.img
+# that disables AVB verification. The content is fixed and we can just copy
+# it to $(zip_root)/IMAGES without passing some info into misc_info.txt for
+# regeneration.
+ifeq (true,$(BOARD_BUILD_DISABLED_VBMETAIMAGE))
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_VBMETAIMAGE_TARGET) $(zip_root)/IMAGES/
+endif
 ifdef BOARD_PREBUILT_VENDORIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_VENDORIMAGE_TARGET) $(zip_root)/IMAGES/
+endif
+ifdef BOARD_PREBUILT_BOOTIMAGE
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_BOOTIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
 ifdef BOARD_PREBUILT_DTBOIMAGE
 	$(hide) mkdir -p $(zip_root)/PREBUILT_IMAGES
@@ -2553,8 +2630,6 @@ endif
 ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_OTHER,system/) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
-
-ifeq ($(PRODUCT_FULL_TREBLE),true)
 	@# Metadata for compatibility verification.
 	$(hide) cp $(BUILT_SYSTEM_MANIFEST) $(zip_root)/META/system_manifest.xml
 	$(hide) cp $(BUILT_SYSTEM_COMPATIBILITY_MATRIX) $(zip_root)/META/system_matrix.xml
@@ -2563,7 +2638,6 @@ ifdef BUILT_VENDOR_MANIFEST
 endif
 ifdef BUILT_VENDOR_MATRIX
 	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
-endif
 endif
 
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
@@ -2607,7 +2681,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
 ifeq ($(AB_OTA_UPDATER),true)
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BRILLO_UPDATE_PAYLOAD)
 else
-$(INTERNAL_OTA_PACKAGE_TARGET): $(BRO)
+$(INTERNAL_OTA_PACKAGE_TARGET): $(BROTLI)
 endif
 
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \

@@ -15,7 +15,6 @@
 /dev/qemu_.*                 u:object_r:qemu_device:s0
 /dev/ttyGF[0-9]*             u:object_r:serial_device:s0
 /dev/ttyS2                   u:object_r:console_device:s0
-/sys/qemu_trace(/.*)?        u:object_r:sysfs_writable:s0
 /vendor/bin/init\.ranchu-core\.sh u:object_r:goldfish_setup_exec:s0
 /vendor/bin/init\.ranchu-net\.sh u:object_r:goldfish_setup_exec:s0
 /vendor/bin/qemu-props       u:object_r:qemu_props_exec:s0
@@ -23,6 +22,7 @@
 /vendor/bin/hw/android\.hardware\.drm@1\.0-service\.widevine          u:object_r:hal_drm_widevine_exec:s0
 
 /vendor/lib(64)?/hw/gralloc\.ranchu\.so   u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/hw/gralloc\.goldfish\.default\.so   u:object_r:same_process_hal_file:s0
 /vendor/lib(64)?/libEGL_emulation\.so          u:object_r:same_process_hal_file:s0
 /vendor/lib(64)?/libGLESv1_CM_emulation\.so    u:object_r:same_process_hal_file:s0
 /vendor/lib(64)?/libGLESv2_emulation\.so       u:object_r:same_process_hal_file:s0

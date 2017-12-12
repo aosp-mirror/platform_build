@@ -1,5 +1,11 @@
 # Common to host and target Java modules.
 
+my_soong_problems :=
+
+ifneq ($(filter ../%,$(LOCAL_SRC_FILES)),)
+my_soong_problems += dotdot_srcs
+endif
+
 ###########################################################
 ## Java version
 ###########################################################
@@ -23,8 +29,7 @@ ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
     # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
     LOCAL_JAVA_LANGUAGE_VERSION := 1.8
   else
-    # DEFAULT_JAVA_LANGUAGE_VERSION is 1.8 unless EXPERIMENTAL_USE_OPENJDK9=true
-    # in which case it is 1.9
+    # DEFAULT_JAVA_LANGUAGE_VERSION is 1.8, unless TARGET_OPENJDK9 in which case it is 1.9
     LOCAL_JAVA_LANGUAGE_VERSION := $(DEFAULT_JAVA_LANGUAGE_VERSION)
   endif
 endif
@@ -230,8 +235,16 @@ ifndef LOCAL_IS_HOST_MODULE
     else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
       full_java_bootclasspath_libs := $(call java-lib-header-files,android_test_stubs_current)
     else
-      full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
-    endif # current, system_current, or test_current
+      ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
+        ifeq (,$(TARGET_BUILD_APPS))
+          full_java_bootclasspath_libs := $(call java-lib-header-files,system_sdk_v$(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)))
+        else
+          full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
+        endif
+      else
+        full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
+      endif
+    endif # current, system_current, system_${VER} or test_current
   endif # LOCAL_SDK_VERSION
 
   ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
@@ -405,6 +418,10 @@ ifeq ($(LOCAL_SDK_VERSION),system_current)
 my_link_type := java:system
 my_warn_types := java:platform
 my_allowed_types := java:sdk java:system
+else ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
+my_link_type := java:system
+my_warn_types := java:platform
+my_allowed_types := java:sdk java:system
 else ifneq ($(LOCAL_SDK_VERSION),)
 my_link_type := java:sdk
 my_warn_types := java:system java:platform
@@ -415,10 +432,31 @@ my_warn_types :=
 my_allowed_types := java:sdk java:system java:platform
 endif
 
-my_link_deps := $(addprefix JAVA_LIBRARIES:,$(LOCAL_STATIC_JAVA_LIBRARIES))
+ifdef LOCAL_AAPT2_ONLY
+my_link_type += aapt2_only
+endif
+ifdef LOCAL_USE_AAPT2
+my_allowed_types += aapt2_only
+endif
+
+my_link_deps := $(addprefix JAVA_LIBRARIES:,$(LOCAL_STATIC_JAVA_LIBRARIES) $(LOCAL_JAVA_LIBRARIES))
 my_link_deps += $(addprefix APPS:,$(apk_libraries))
 
 my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
 my_common := COMMON
 include $(BUILD_SYSTEM)/link_type.mk
 endif  # !LOCAL_IS_HOST_MODULE
+
+ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+
+SOONG_CONV.$(LOCAL_MODULE).PROBLEMS := \
+    $(SOONG_CONV.$(LOCAL_MODULE).PROBLEMS) $(my_soong_problems)
+SOONG_CONV.$(LOCAL_MODULE).DEPS := \
+    $(SOONG_CONV.$(LOCAL_MODULE).DEPS) \
+    $(LOCAL_STATIC_JAVA_LIBRARIES) \
+    $(LOCAL_JAVA_LIBRARIES) \
+    $(LOCAL_JNI_SHARED_LIBRARIES)
+SOONG_CONV.$(LOCAL_MODULE).TYPE := java
+SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
+
+endif

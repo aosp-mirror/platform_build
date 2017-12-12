@@ -100,8 +100,10 @@ import base64
 import cStringIO
 import copy
 import errno
+import gzip
 import os
 import re
+import shutil
 import stat
 import subprocess
 import tempfile
@@ -124,9 +126,7 @@ OPTIONS.avb_keys = {}
 OPTIONS.avb_algorithms = {}
 OPTIONS.avb_extra_args = {}
 
-def GetApkCerts(tf_zip):
-  certmap = common.ReadApkCerts(tf_zip)
-
+def GetApkCerts(certmap):
   # apply the key remapping to the contents of the file
   for apk, cert in certmap.iteritems():
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
@@ -140,13 +140,19 @@ def GetApkCerts(tf_zip):
   return certmap
 
 
-def CheckAllApksSigned(input_tf_zip, apk_key_map):
+def CheckAllApksSigned(input_tf_zip, apk_key_map, compressed_extension):
   """Check that all the APKs we want to sign have keys specified, and
   error out if they don't."""
   unknown_apks = []
+  compressed_apk_extension = None
+  if compressed_extension:
+    compressed_apk_extension = ".apk" + compressed_extension
   for info in input_tf_zip.infolist():
-    if info.filename.endswith(".apk"):
+    if (info.filename.endswith(".apk") or
+        (compressed_apk_extension and info.filename.endswith(compressed_apk_extension))):
       name = os.path.basename(info.filename)
+      if compressed_apk_extension and name.endswith(compressed_apk_extension):
+        name = name[:-len(compressed_extension)]
       if name not in apk_key_map:
         unknown_apks.append(name)
   if unknown_apks:
@@ -157,10 +163,24 @@ def CheckAllApksSigned(input_tf_zip, apk_key_map):
     sys.exit(1)
 
 
-def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map):
+def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
+            is_compressed):
   unsigned = tempfile.NamedTemporaryFile()
   unsigned.write(data)
   unsigned.flush()
+
+  if is_compressed:
+    uncompressed = tempfile.NamedTemporaryFile()
+    with gzip.open(unsigned.name, "rb") as in_file, open(uncompressed.name, "wb") as out_file:
+      shutil.copyfileobj(in_file, out_file)
+
+    # Finally, close the "unsigned" file (which is gzip compressed), and then
+    # replace it with the uncompressed version.
+    #
+    # TODO(narayan): All this nastiness can be avoided if python 3.2 is in use,
+    # we could just gzip / gunzip in-memory buffers instead.
+    unsigned.close()
+    unsigned = uncompressed
 
   signed = tempfile.NamedTemporaryFile()
 
@@ -186,7 +206,18 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map):
       min_api_level=min_api_level,
       codename_to_api_level_map=codename_to_api_level_map)
 
-  data = signed.read()
+  data = None;
+  if is_compressed:
+    # Recompress the file after it has been signed.
+    compressed = tempfile.NamedTemporaryFile()
+    with open(signed.name, "rb") as in_file, gzip.open(compressed.name, "wb") as out_file:
+      shutil.copyfileobj(in_file, out_file)
+
+    data = compressed.read()
+    compressed.close()
+  else:
+    data = signed.read()
+
   unsigned.close()
   signed.close()
 
@@ -195,11 +226,17 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map):
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
                        apk_key_map, key_passwords, platform_api_level,
-                       codename_to_api_level_map):
+                       codename_to_api_level_map,
+                       compressed_extension):
+
+  compressed_apk_extension = None
+  if compressed_extension:
+    compressed_apk_extension = ".apk" + compressed_extension
 
   maxsize = max([len(os.path.basename(i.filename))
                  for i in input_tf_zip.infolist()
-                 if i.filename.endswith('.apk')])
+                 if i.filename.endswith('.apk') or
+                 (compressed_apk_extension and i.filename.endswith(compressed_apk_extension))])
   system_root_image = misc_info.get("system_root_image") == "true"
 
   for info in input_tf_zip.infolist():
@@ -210,13 +247,18 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     out_info = copy.copy(info)
 
     # Sign APKs.
-    if info.filename.endswith(".apk"):
+    if (info.filename.endswith(".apk") or
+        (compressed_apk_extension and info.filename.endswith(compressed_apk_extension))):
+      is_compressed = compressed_extension and info.filename.endswith(compressed_apk_extension)
       name = os.path.basename(info.filename)
+      if is_compressed:
+        name = name[:-len(compressed_extension)]
+
       key = apk_key_map[name]
       if key not in common.SPECIAL_CERT_STRINGS:
         print "    signing: %-*s (%s)" % (maxsize, name, key)
         signed_data = SignApk(data, key, key_passwords[key], platform_api_level,
-            codename_to_api_level_map)
+            codename_to_api_level_map, is_compressed)
         common.ZipWriteStr(output_tf_zip, out_info, signed_data)
       else:
         # an APK we're not supposed to sign.
@@ -547,6 +589,7 @@ def ReplaceAvbSigningKeys(misc_info):
   AVB_FOOTER_ARGS_BY_PARTITION = {
     'boot' : 'avb_boot_add_hash_footer_args',
     'dtbo' : 'avb_dtbo_add_hash_footer_args',
+    'recovery' : 'avb_recovery_add_hash_footer_args',
     'system' : 'avb_system_add_hashtree_footer_args',
     'vendor' : 'avb_vendor_add_hashtree_footer_args',
     'vbmeta' : 'avb_vbmeta_args',
@@ -750,8 +793,9 @@ def main(argv):
 
   BuildKeyMap(misc_info, key_mapping_options)
 
-  apk_key_map = GetApkCerts(input_zip)
-  CheckAllApksSigned(input_zip, apk_key_map)
+  certmap, compressed_extension = common.ReadApkCerts(input_zip)
+  apk_key_map = GetApkCerts(certmap)
+  CheckAllApksSigned(input_zip, apk_key_map, compressed_extension)
 
   key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
   platform_api_level, _ = GetApiLevelAndCodename(input_zip)
@@ -760,7 +804,8 @@ def main(argv):
   ProcessTargetFiles(input_zip, output_zip, misc_info,
                      apk_key_map, key_passwords,
                      platform_api_level,
-                     codename_to_api_level_map)
+                     codename_to_api_level_map,
+                     compressed_extension)
 
   common.ZipClose(input_zip)
   common.ZipClose(output_zip)

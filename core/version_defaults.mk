@@ -49,12 +49,6 @@ ALLOWED_VERSIONS := $(call allowed-platform-versions,\
 
 ifndef TARGET_PLATFORM_VERSION
   TARGET_PLATFORM_VERSION := $(DEFAULT_PLATFORM_VERSION)
-else ifeq ($(TARGET_PLATFORM_VERSION),OPR1)
-  # HACK: lunch currently sets TARGET_PLATFORM_VERSION to
-  # DEFAULT_PLATFORM_VERSION, which causes unnecessary pain
-  # when the old DEFAULT_PLATFORM_VERSION becomes invalid.
-  # For now, silently upgrade OPR1 to the current default.
-  TARGET_PLATFORM_VERSION := $(DEFAULT_PLATFORM_VERSION)
 endif
 
 ifeq (,$(filter $(ALLOWED_VERSIONS), $(TARGET_PLATFORM_VERSION)))
@@ -77,7 +71,8 @@ endif
 # frameworks/support/compat/gingerbread/android/support/v4/os/BuildCompat.java
 
 # When you change PLATFORM_VERSION for a given PLATFORM_SDK_VERSION
-# please add that PLATFORM_VERSION to the following text file:
+# please add that PLATFORM_VERSION as well as clean up obsolete PLATFORM_VERSION's
+# in the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
 PLATFORM_VERSION.PPR1 := P
 
@@ -110,7 +105,7 @@ ifndef PLATFORM_SDK_VERSION
   # When you increment the PLATFORM_SDK_VERSION please ensure you also
   # clear out the following text file of all older PLATFORM_VERSION's:
   # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 26
+  PLATFORM_SDK_VERSION := 27
 endif
 
 ifndef PLATFORM_VERSION_CODENAME
@@ -171,7 +166,7 @@ else
     # assuming the device can only support APIs as of the previous official
     # public release.
     # This value will always be 0 for release builds.
-    PLATFORM_PREVIEW_SDK_VERSION := 1
+    PLATFORM_PREVIEW_SDK_VERSION := 0
   endif
 endif
 
@@ -194,7 +189,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-      PLATFORM_SECURITY_PATCH := 2017-10-05
+      PLATFORM_SECURITY_PATCH := 2017-12-01
 endif
 
 ifndef PLATFORM_BASE_OS

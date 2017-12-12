@@ -96,11 +96,26 @@ endif
 	@chmod a+x $@
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := vndk_package
+LOCAL_MODULE := vndk_current
 LOCAL_REQUIRED_MODULES := \
     $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES)) \
     $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES)) \
-    $(LLNDK_LIBRARIES)
+    $(LLNDK_LIBRARIES) \
+    llndk.libraries.txt \
+    vndksp.libraries.txt
 
+include $(BUILD_PHONY_PACKAGE)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := vndk_package
+ifeq (current,$(BOARD_VNDK_VERSION))
+LOCAL_REQUIRED_MODULES := \
+    vndk_current
+else
+LOCAL_REQUIRED_MODULES := \
+    vndk_v$(BOARD_VNDK_VERSION)
+endif
+LOCAL_REQUIRED_MODULES += \
+    $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),vndk_v$(vndk_ver))
 include $(BUILD_PHONY_PACKAGE)
 endif # BOARD_VNDK_VERSION is set

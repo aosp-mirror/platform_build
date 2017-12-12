@@ -20,7 +20,7 @@
 PRODUCT_PACKAGES += \
     adb \
     adbd \
-    android.hardware.configstore@1.1-service \
+    android.hardware.configstore@1.0-service \
     android.hidl.allocator@1.0-service \
     android.hidl.memory@1.0-impl \
     atrace \
@@ -76,6 +76,7 @@ PRODUCT_PACKAGES += \
     shell_and_utilities \
     storaged \
     surfaceflinger \
+    thermalserviced \
     tombstoned \
     tzdatacheck \
     vndservice \
@@ -105,7 +106,7 @@ PRODUCT_PACKAGES_DEBUG += \
 
 # Ensure that this property is always defined so that bionic_systrace.cpp
 # can rely on it being initially set by init.
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     debug.atrace.tags.enableflags=0
 
 PRODUCT_COPY_FILES += \

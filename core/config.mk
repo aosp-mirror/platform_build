@@ -59,13 +59,33 @@ backslash := $(patsubst %a,%,$(backslash))
 .DELETE_ON_ERROR:
 
 # Mark variables deprecated/obsolete
-$(KATI_deprecated_var PATH,Do not use PATH directly)
+CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
+$(KATI_deprecated_var PATH,Do not use PATH directly. See $(CHANGES_URL)#PATH)
+$(KATI_obsolete_var PYTHONPATH,Do not use PYTHONPATH directly. See $(CHANGES_URL)#PYTHONPATH)
+$(KATI_obsolete_var OUT,Use OUT_DIR instead. See $(CHANGES_URL)#OUT)
+$(KATI_obsolete_var ANDROID_HOST_OUT,Use HOST_OUT instead. See $(CHANGES_URL)#ANDROID_HOST_OUT)
+$(KATI_deprecated_var ANDROID_PRODUCT_OUT,Use PRODUCT_OUT instead. See $(CHANGES_URL)#ANDROID_PRODUCT_OUT)
+$(KATI_obsolete_var ANDROID_HOST_OUT_TESTCASES,Use HOST_OUT_TESTCASES instead. See $(CHANGES_URL)#ANDROID_HOST_OUT_TESTCASES)
+$(KATI_obsolete_var ANDROID_TARGET_OUT_TESTCASES,Use TARGET_OUT_TESTCASES instead. See $(CHANGES_URL)#ANDROID_TARGET_OUT_TESTCASES)
+$(KATI_deprecated_var ANDROID_BUILD_TOP,Use '.' instead. See $(CHANGES_URL)#ANDROID_BUILD_TOP)
+$(KATI_obsolete_var \
+  ANDROID_TOOLCHAIN \
+  ANDROID_TOOLCHAIN_2ND_ARCH \
+  ANDROID_DEV_SCRIPTS \
+  ANDROID_EMULATOR_PREBUILTS \
+  ANDROID_PRE_BUILD_PATHS \
+  ,See $(CHANGES_URL)#other_envsetup_variables)
+
+CHANGES_URL :=
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
 FORCE:
 
 ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
+
+dist_goal := $(strip $(filter dist,$(MAKECMDGOALS)))
+MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
 
 # Tell python not to spam the source tree with .pyc files.  This
 # only has an effect on python 2.6 and above.
@@ -135,6 +155,8 @@ BUILD_NOTICE_FILE := $(BUILD_SYSTEM)/notice_files.mk
 BUILD_HOST_DALVIK_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_java_library.mk
 BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
 
+BUILD_HOST_TEST_CONFIG:= $(BUILD_SYSTEM)/host_test_config.mk
+BUILD_TARGET_TEST_CONFIG:= $(BUILD_SYSTEM)/target_test_config.mk
 
 # ###############################################################
 # Parse out any modifier targets.
@@ -522,6 +544,11 @@ ifndef USE_D8
   USE_D8 := true
 endif
 
+# Default R8 behavior when USE_R8 is not specified.
+ifndef USE_R8
+  USE_R8 := false
+endif
+
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
@@ -536,17 +563,17 @@ ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
   ZIPALIGN := $(HOST_OUT_EXECUTABLES)/zipalign
 
 else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
-  AIDL := $(prebuilt_sdk_tools_bin)/aidl
+  AIDL := $(prebuilt_build_tools_bin)/aidl
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
   AAPT2 := $(prebuilt_sdk_tools_bin)/aapt2
   DESUGAR := $(prebuilt_build_tools_jars)/desugar.jar
   MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
   SIGNAPK_JAR := $(prebuilt_sdk_tools)/lib/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(prebuilt_sdk_tools)/$(HOST_OS)/lib64
-  ZIPALIGN := $(prebuilt_sdk_tools_bin)/zipalign
+  ZIPALIGN := $(prebuilt_build_tools_bin)/zipalign
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
 
-R8_COMPAT_PROGUARD_JAR := prebuilts/r8/compatproguard-master.jar
+R8_COMPAT_PROGUARD := $(HOST_OUT_EXECUTABLES)/r8-compat-proguard
 
 ifeq (,$(TARGET_BUILD_APPS))
   # Use RenderScript prebuilts for unbundled builds but not PDK builds
@@ -601,7 +628,7 @@ NANOPB_SRCS := external/nanopb-c/generator/protoc-gen-nanopb \
 VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
-BRO := $(HOST_OUT_EXECUTABLES)/bro$(HOST_EXECUTABLE_SUFFIX)
+BROTLI := $(HOST_OUT_EXECUTABLES)/brotli$(HOST_EXECUTABLE_SUFFIX)
 ifeq (,$(strip $(BOARD_CUSTOM_MKBOOTIMG)))
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 else
@@ -658,21 +685,41 @@ RELOCATION_PACKER := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/relocation
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
-JACOCO_CLI_JAR := $(HOST_OUT_JAVA_LIBRARIES)/jacoco-cli$(COMMON_JAVA_PACKAGE_SUFFIX)
 
 # Tool to merge AndroidManifest.xmls
-ANDROID_MANIFEST_MERGER := $(JAVA) -classpath prebuilts/devtools/tools/lib/manifest-merger.jar com.android.manifmerger.Main merge
+ANDROID_MANIFEST_MERGER_CLASSPATH := \
+    prebuilts/gradle-plugin/com/android/tools/build/manifest-merger/26.0.0-beta2/manifest-merger-26.0.0-beta2.jar \
+    prebuilts/gradle-plugin/com/android/tools/sdk-common/26.0.0-beta2/sdk-common-26.0.0-beta2.jar \
+    prebuilts/gradle-plugin/com/android/tools/common/26.0.0-beta2/common-26.0.0-beta2.jar \
+    prebuilts/misc/common/guava/guava-21.0.jar
+ANDROID_MANIFEST_MERGER := $(JAVA) \
+    -classpath $(subst $(space),:,$(strip $(ANDROID_MANIFEST_MERGER_CLASSPATH))) \
+    com.android.manifmerger.Merger
 
 COLUMN:= column
 
-# Path to tools.jar, or empty if EXPERIMENTAL_USE_OPENJDK9 is set
+ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+USE_OPENJDK9 :=
+TARGET_OPENJDK9 :=
+else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),false)
+USE_OPENJDK9 :=
+TARGET_OPENJDK9 :=
+else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),1.8)
+USE_OPENJDK9 := true
+TARGET_OPENJDK9 :=
+else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+USE_OPENJDK9 := true
+TARGET_OPENJDK9 := true
+endif
+
+# Path to tools.jar, or empty if USE_OPENJDK9 is unset
 HOST_JDK_TOOLS_JAR :=
 # TODO: Remove HOST_JDK_TOOLS_JAR and all references to it once OpenJDK 8
-# toolchains are no longer supported (i.e. when what is now
-# EXPERIMENTAL_USE_OPENJDK9 becomes the standard). http://b/38418220
-ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+# toolchains are no longer supported (i.e. when USE_OPENJDK9 is enforced).
+# http://b/38418220
+ifndef USE_OPENJDK9
 HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA_TOOLCHAIN)/../lib/tools.jar
-endif # ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+endif # ifndef USE_OPENJDK9
 
 # It's called md5 on Mac OS and md5sum on Linux
 ifeq ($(HOST_OS),darwin)
@@ -698,6 +745,35 @@ else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
   #$(warning no product shipping level defined)
 else ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),26),)
   PRODUCT_FULL_TREBLE := true
+endif
+
+requirements := \
+    PRODUCT_TREBLE_LINKER_NAMESPACES \
+    PRODUCT_SEPOLICY_SPLIT \
+    PRODUCT_ENFORCE_VINTF_MANIFEST \
+
+# If it is overriden, then the requirement override is taken, otherwise it's
+# PRODUCT_FULL_TREBLE
+$(foreach req,$(requirements),$(eval \
+    $(req) := $(if $($(req)_OVERRIDE),$($(req)_OVERRIDE),$(PRODUCT_FULL_TREBLE))))
+
+PRODUCT_FULL_TREBLE_OVERRIDE ?=
+$(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
+
+.KATI_READONLY := \
+    PRODUCT_FULL_TREBLE_OVERRIDE \
+    $(foreach req,$(requirements),$(req)_OVERRIDE) \
+    $(requirements) \
+    PRODUCT_FULL_TREBLE \
+
+requirements :=
+
+ifdef PRODUCT_SHIPPING_API_LEVEL
+  ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),27),)
+    ifneq ($(TARGET_USES_MKE2FS),true)
+      $(error When PRODUCT_SHIPPING_API_LEVEL >= 27, TARGET_USES_MKE2FS must be true)
+    endif
+  endif
 endif
 
 # The default key if not set as LOCAL_CERTIFICATE
@@ -735,8 +811,14 @@ endif
 
 ifeq ($(strip $(PRODUCT_COMPATIBILITY_MATRIX_LEVEL)),legacy)
   FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.legacy.xml
-else ifeq ($(call math_gt_or_eq,$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL),27),)
+else ifeq ($(call math_gt_or_eq,$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL),26),)
+  # All PRODUCT_FULL_TREBLE devices with shipping API levels < 26 get the level 26 manifest
+  # as that is the first.
   FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.26.xml
+else ifeq ($(call math_gt_or_eq,$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL),28),)
+  # All shipping API levels with released compatibility matrices get the corresponding matrix.
+  FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
+      hardware/interfaces/compatibility_matrix.$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL).xml
 else
   FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.current.xml
 endif
@@ -821,6 +903,11 @@ TARGET_AVAILABLE_SDK_VERSIONS := $(call numerically_sort,\
     $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android.jar,%, \
     $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android.jar)))
 
+TARGET_AVAILABLE_SDK_VERSIONS := $(addprefix system_,$(call numerically_sort,\
+    $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android_system.jar,%, \
+    $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android_system.jar)))) \
+    $(TARGET_AVAILABLE_SDK_VERSIONS)
+
 # We don't have prebuilt test_current SDK yet.
 TARGET_AVAILABLE_SDK_VERSIONS := test_current $(TARGET_AVAILABLE_SDK_VERSIONS)
 
@@ -863,38 +950,7 @@ else
 APPS_DEFAULT_VERSION_NAME := $(PLATFORM_VERSION)
 endif
 
-# Projects clean of compiler warnings should be compiled with -Werror.
-# If most modules in a directory such as external/ have warnings,
-# the directory should be in ANDROID_WARNING_ALLOWED_PROJECTS list.
-# When some of its subdirectories are cleaned up, the subdirectories
-# can be added into ANDROID_WARNING_DISALLOWED_PROJECTS list, e.g.
-# external/fio/.
-ANDROID_WARNING_DISALLOWED_PROJECTS := \
-    art/% \
-    bionic/% \
-    external/fio/% \
-    hardware/interfaces/% \
-
-define find_warning_disallowed_projects
-    $(filter $(ANDROID_WARNING_DISALLOWED_PROJECTS),$(1)/)
-endef
-
-# Projects with compiler warnings are compiled without -Werror.
-ANDROID_WARNING_ALLOWED_PROJECTS := \
-    bootable/% \
-    cts/% \
-    dalvik/% \
-    development/% \
-    device/% \
-    external/% \
-    frameworks/% \
-    hardware/% \
-    packages/% \
-    system/% \
-    test/vts/% \
-    tools/adt/idea/android/ultimate/get_modification_time/jni/% \
-    vendor/% \
-
+# ANDROID_WARNING_ALLOWED_PROJECTS is generated by build/soong.
 define find_warning_allowed_projects
     $(filter $(ANDROID_WARNING_ALLOWED_PROJECTS),$(1)/)
 endef

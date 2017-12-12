@@ -28,6 +28,10 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
 my_res_package :=
 
+ifdef LOCAL_AAPT2_ONLY
+LOCAL_USE_AAPT2 := true
+endif
+
 # Hack to build static Java library with Android resource
 # See bug 5714516
 all_resources :=
@@ -146,7 +150,7 @@ else
 ifneq (,$(LOCAL_SDK_VERSION))
 # Set target-api for LOCAL_SDK_VERSIONs other than current.
 ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-renderscript_target_api := $(LOCAL_SDK_VERSION)
+renderscript_target_api := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
 endif
 endif  # LOCAL_SDK_VERSION is set
 endif  # LOCAL_RENDERSCRIPT_TARGET_API is set

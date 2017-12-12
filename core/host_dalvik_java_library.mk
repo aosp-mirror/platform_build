@@ -173,7 +173,11 @@ else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 $(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
 $(built_dex): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 $(built_dex): $(full_classes_desugar_jar) $(DX)
+ifneq ($(USE_D8_DESUGAR),true)
 	$(transform-classes.jar-to-dex)
+else
+	$(transform-classes-d8.jar-to-dex)
+endif
 
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
 $(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
@@ -186,8 +190,8 @@ $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
 ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-  my_default_app_target_sdk := $(LOCAL_SDK_VERSION)
-  my_sdk_version := $(LOCAL_SDK_VERSION)
+  my_default_app_target_sdk := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
+  my_sdk_version := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
 else
   my_default_app_target_sdk := $(DEFAULT_APP_TARGET_SDK)
   my_sdk_version := $(PLATFORM_SDK_VERSION)

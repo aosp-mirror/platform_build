@@ -18,19 +18,14 @@ endif
 ifneq ($(filter tests samples, $(LOCAL_MODULE_TAGS)),)
 my_embed_jni := true
 endif
-ifeq ($(PRODUCT_FULL_TREBLE),true)
-  ifeq ($(filter $(TARGET_OUT)/%, $(my_module_path)),)
-    # If this app isn't to be installed to the system partition, and the device
-    # is fully treble-ized then jni libs are embedded, Otherwise, access to the
-    # directory where the lib is installed to (usually /vendor/lib) needs to be
-    # allowed for system processes, which is a Treble violation.
-    my_embed_jni := true
-  endif
-else
-  ifeq ($(filter $(TARGET_OUT)/% $(TARGET_OUT_VENDOR)/% $(TARGET_OUT_OEM)/%, $(my_module_path)),)
-    # If this app isn't to be installed to system, vendor, or oem partitions.
-    my_embed_jni := true
-  endif
+ifeq ($(filter $(TARGET_OUT)/% $(TARGET_OUT_VENDOR)/% $(TARGET_OUT_OEM)/%, $(my_module_path)),)
+# If this app isn't to be installed to system partitions.
+my_embed_jni := true
+endif
+# If we're installing this APP as a compressed module, we include all JNI libraries
+# in the compressed artifact, rather than as separate files on the partition in question.
+ifdef LOCAL_COMPRESSED_MODULE
+my_embed_jni := true
 endif
 
 jni_shared_libraries :=

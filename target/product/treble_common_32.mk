@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2014 The Android Open Source Project
+# Copyright (C) 2017 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,13 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-LOCAL_PATH := $(call my-dir)
 
-# the signtos tool - signs Trusty images
-# ============================================================
-include $(CLEAR_VARS)
-LOCAL_MODULE := signtos
-LOCAL_SRC_FILES := SignTos.java
-LOCAL_JAR_MANIFEST := SignTos.mf
-LOCAL_STATIC_JAVA_LIBRARIES := bouncycastle bouncycastle-bcpkix
-include $(BUILD_HOST_JAVA_LIBRARY)
+# PRODUCT_PROPERTY_OVERRIDES cannot be used here because sysprops will be at
+# /vendor/[build|default].prop when build split is on. In order to have sysprops
+# on the generic system image, place them in build/make/target/board/
+# treble_system.prop.
+
+include build/make/target/product/treble_common.mk
