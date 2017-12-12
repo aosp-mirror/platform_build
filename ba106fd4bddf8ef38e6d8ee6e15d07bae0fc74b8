@@ -52,6 +52,24 @@
       "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68922cf4_45ac875e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-12T08:42:19Z",
+      "side": 1,
+      "message": "LOCAL_JAVA_LIBRARIES does not imply that you\u0027re going to use the libraries dynamically or not, it\u0027s completely correct (and expected) to use LOCAL_JAVA_LIBRARIES to build java libraries that are later used statically, while statically including their dependencies:\n\n  fooapk (BUILD_PACKAGE)\n    LOCAL_STATIC_JAVA_LIBRARIES :\u003d libfoo libbar\n    LOCAL_JAVA_LIBRARIES :\u003d libbaz\n    LOCAL_VENDOR_MODULE :\u003d true\n\n  libfoo (BUILD_STATIC_JAVA_LIBRARY)\n    LOCAL_JAVA_LIBRARIES :\u003d libbar\n\n  libbar (BUILD_STATIC_JAVA_LIBRARY)\n\n  libbaz (BUILD_JAVA_LIBRARY)\n    LOCAL_JAVA_LIBRARIES :\u003d libqux\n    LOCAL_VENDOR_MODULE :\u003d true\n\n  libqux (BUILD_JAVA_LIBRARY)\n    LOCAL_VENDOR_MODULE :\u003d true\n\nThe only checks that actually matter for the vendor-\u003esystem dependencies are:\n\n  fooapk -\u003e libbaz\n  libbaz -\u003e libqux\n\nThe libfoo -\u003e libbar dependency doesn\u0027t matter, since we\u0027re later embedding libbar into the same apk/jar. It would only matter if we were installing libfoo as a standalone library.\n\nWe might be able to get this behavior by checking LOCAL_UNINSTALLABLE_MODULE/Installable (which is set by default with BUILD_STATIC_JAVA_LIBRARY / java_library_static), but currently a java library is a superset of what\u0027s possible with a static java library -- a java library can just be used with LOCAL_STATIC_JAVA_LIBRARIES now.",
+      "parentUuid": "2b5989a0_5fd6d5cf",
+      "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
