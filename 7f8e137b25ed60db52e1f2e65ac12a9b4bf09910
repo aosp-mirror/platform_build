@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "dea8f517_91722df0",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 779,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2017-12-12T23:37:18Z",
+      "side": 1,
+      "message": "No, this is !(27 \u003e\u003d API_LEVEL), that is the same with 27 \u003c API_LEVEL.",
+      "parentUuid": "4747736a_f7dd7638",
+      "range": {
+        "startLine": 779,
+        "startChar": 18,
+        "endLine": 779,
+        "endChar": 34
+      },
+      "revId": "7f8e137b25ed60db52e1f2e65ac12a9b4bf09910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bd53e561_08caf92b",
         "filename": "core/config.mk",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2017-12-12T09:42:06Z",
       "side": 1,
       "message": "Then how can one override BOARD_VNDK_VERSION?",
+      "range": {
+        "startLine": 790,
+        "startChar": 0,
+        "endLine": 790,
+        "endChar": 21
+      },
+      "revId": "7f8e137b25ed60db52e1f2e65ac12a9b4bf09910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8125e88b_ef61f5ce",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 790,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2017-12-12T23:37:18Z",
+      "side": 1,
+      "message": "As you commented here: https://b.corp.google.com/issues/69817516#comment2, we may define it with \"?\u003d\" at the first place. This does not block overriding the value from the command.",
+      "parentUuid": "bd53e561_08caf92b",
       "range": {
         "startLine": 790,
         "startChar": 0,
