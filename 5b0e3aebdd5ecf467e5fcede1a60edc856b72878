@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "19bc3d28_b42d0ef6",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-12T08:41:54Z",
+      "side": 1,
+      "message": "In this case there is no other test config file, so we don\u0027t need to use sub config folder? When we add more function to auto-generate both the main test config and sub-config, we will need to change the logic in test_config_common.mk so the sub config module can have a deps on LOCAL_AUTOGEN_TEST_CONFIG_FILE.",
+      "parentUuid": "5b8e4149_b916ca2c",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 84
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c515a80b_e33f585e",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 6
@@ -60,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "0a0d4958_eab1c0b5",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-12T08:41:54Z",
+      "side": 1,
+      "message": "There are quote a lot of existing modules have this warning. We will have to clean them up first or tot will error out.\n\nCan we use pretty_warning here for now? Hopefully the project owners will fix the issue (remove LOCAL_COMPATIBILITY_SUITE setting) when they see the warnings.",
+      "parentUuid": "af5461a1_6396d5e0",
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e3c9a8dd_9a1eda3b",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 6
@@ -71,6 +113,30 @@
       "writtenOn": "2017-12-11T23:59:20Z",
       "side": 1,
       "message": "Please don\u0027t use $(shell) -- they get particularly expensive since we don\u0027t know when we can safely cache their output, so we have to run them every time you start a build, even if nothing changed.\n\nPut the logic in a rule that\u0027s only executed when you\u0027re actually building the file.",
+      "range": {
+        "startLine": 24,
+        "startChar": 23,
+        "endLine": 24,
+        "endChar": 81
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a61676f_b9b68b50",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-12T08:41:54Z",
+      "side": 1,
+      "message": "I see. The problem here is that I need to grep the AndroidManifest file to determine if or not to auto generate the test config file.\n\nIf I move this code to build rule, how can I fail the build rule so other build step won\u0027t try to read the config file?",
+      "parentUuid": "e3c9a8dd_9a1eda3b",
       "range": {
         "startLine": 24,
         "startChar": 23,
@@ -163,6 +229,30 @@
       "writtenOn": "2017-12-11T23:55:24Z",
       "side": 1,
       "message": "Why do you unset these?\n\nNote my CL in presubmit now uses arch dir in the lower lines so you\u0027ll have to rebase.\n\nhttps://android-review.googlesource.com/c/platform/build/+/555203",
+      "range": {
+        "startLine": 513,
+        "startChar": 0,
+        "endLine": 515,
+        "endChar": 12
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "274f31f0_437d947b",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-12T08:41:54Z",
+      "side": 1,
+      "message": "is_native was unset in line 483. I need to use these two in 505 and 506, so move the unset here. Will rebase.",
+      "parentUuid": "9401327d_87147c18",
       "range": {
         "startLine": 513,
         "startChar": 0,
