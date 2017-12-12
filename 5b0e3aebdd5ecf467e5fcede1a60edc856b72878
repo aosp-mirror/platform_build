@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "5b8e4149_b916ca2c",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-12-12T00:01:17Z",
+      "side": 1,
+      "message": "I am okay with this location but just curious if we should use the sub config folder for these as well?",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 84
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c515a80b_e33f585e",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 6
@@ -99,6 +122,29 @@
         "startChar": 12,
         "endLine": 32,
         "endChar": 19
+      },
+      "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b892dd11_68c7a25f",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-12-12T00:01:17Z",
+      "side": 1,
+      "message": "Add a comment explaining the commands and the options.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 86
       },
       "revId": "5b0e3aebdd5ecf467e5fcede1a60edc856b72878",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
