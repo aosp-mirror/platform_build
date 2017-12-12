@@ -70,6 +70,24 @@
       "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d9d296ec_9bd1c8bb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-12T09:24:06Z",
+      "side": 1,
+      "message": "What if LOCAL_SDK_VERSION is not set for libbar, which means libbar may have used platform internal APIs?  Then fooapk is essentially using the internal APIs as libbar will be part of fooapk and thus fooapk will fail to run when the platform is upgraded and the internal APIs are removed/renamed... even though fooapk itself doesn\u0027t use any of internal APIs.",
+      "parentUuid": "68922cf4_45ac875e",
+      "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
