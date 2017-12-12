@@ -237,3 +237,7 @@ org\.apache\.xalan\.xslt
 # Packages in the google namespace across all bootclasspath jars.
 com\.google\.android\..*
 com\.google\.vr\.platform.*
+
+###################################################
+# Packages used for Android in Chrome OS
+org\.chromium\.arc
