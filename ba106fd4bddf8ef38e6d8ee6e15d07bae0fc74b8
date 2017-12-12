@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5e306a96_290a918a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-12T04:08:51Z",
+      "side": 1,
+      "message": "It seems like this may be conflating where things are installed vs which APIs they\u0027re built against.\n\nLOCAL_JAVA_LIBRARIES does not necessarily imply a runtime dependency on a specific java library, it\u0027s just saying that something presenting the same API will exist at some point in the future (either via a library in the bootclasspath, or later integrated into another java package with LOCAL_STATIC_JAVA_LIBRARIES).\n\nWhile we do need to protect against java:system -\u003e java:platform linking, I\u0027m not sure the build system is ready to say much about vendor -\u003e system usage outside of that. I wish it was, but I don\u0027t think we\u0027ve modeled the necessary relationships.\n\nThe current static vs shared java library linkages are significantly misused currently --\n multiple copies of the same library (or multiple versions of the same library 😮) can be embedded into the same end apk/jar/dex. We\u0027ll only have one of the same class, hopefully we pick well enough...",
+      "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
