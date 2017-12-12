@@ -461,6 +461,36 @@ endif
 endif
 
 ###########################################################
+## Test Data
+###########################################################
+my_test_data_pairs :=
+my_installed_test_data :=
+# Source to relative dst file paths for reuse in LOCAL_COMPATIBILITY_SUITE.
+my_test_data_file_pairs :=
+
+ifneq ($(filter NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+ifneq ($(strip $(LOCAL_TEST_DATA)),)
+ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+
+my_test_data_pairs := $(strip $(foreach td,$(LOCAL_TEST_DATA), \
+    $(eval _file := $(call word-colon,2,$(td))) \
+    $(if $(_file), \
+      $(eval _src_base := $(call word-colon,1,$(td))), \
+      $(eval _src_base := $(LOCAL_PATH)) \
+        $(eval _file := $(call word-colon,1,$(td)))) \
+    $(if $(findstring ..,$(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include '..': $(_file))) \
+    $(if $(filter /%,$(_src_base) $(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include absolute paths: $(_src_base) $(_file))) \
+    $(eval my_test_data_file_pairs := $(my_test_data_file_pairs) $(call append-path,$(_src_base),$(_file)):$(_file)) \
+    $(call append-path,$(_src_base),$(_file)):$(call append-path,$(my_module_path),$(_file))))
+
+my_installed_test_data := $(call copy-many-files,$(my_test_data_pairs))
+$(LOCAL_INSTALLED_MODULE): $(my_installed_test_data)
+
+endif
+endif
+endif
+
+###########################################################
 ## Compatibility suite files.
 ###########################################################
 ifdef LOCAL_COMPATIBILITY_SUITE
@@ -522,36 +552,19 @@ $(foreach extra_config, $(wildcard $(LOCAL_PATH)/$(LOCAL_MODULE)_*.config), \
 endif
 endif # $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
 
+ifneq ($(my_test_data_file_pairs),)
+$(foreach pair, $(my_test_data_file_pairs), \
+  $(eval parts := $(subst :,$(space),$(pair))) \
+  $(eval src_path := $(word 1,$(parts))) \
+  $(eval file := $(word 2,$(parts))) \
+  $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+    $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
+      $(src_path):$(call append-path,$(dir),$(file))))))
+endif
+
 $(call create-suite-dependencies)
 
 endif  # LOCAL_COMPATIBILITY_SUITE
-
-###########################################################
-## Test Data
-###########################################################
-my_test_data_pairs :=
-my_installed_test_data :=
-
-ifneq ($(filter NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-ifneq ($(strip $(LOCAL_TEST_DATA)),)
-ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
-
-my_test_data_pairs := $(strip $(foreach td,$(LOCAL_TEST_DATA), \
-    $(eval _file := $(call word-colon,2,$(td))) \
-    $(if $(_file), \
-      $(eval _base := $(call word-colon,1,$(td))), \
-      $(eval _base := $(LOCAL_PATH)) \
-        $(eval _file := $(call word-colon,1,$(td)))) \
-    $(if $(findstring ..,$(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include '..': $(_file))) \
-    $(if $(filter /%,$(_base) $(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include absolute paths: $(_base) $(_file))) \
-    $(call append-path,$(_base),$(_file)):$(call append-path,$(my_module_path),$(_file))))
-
-my_installed_test_data := $(call copy-many-files,$(my_test_data_pairs))
-$(LOCAL_INSTALLED_MODULE): $(my_installed_test_data)
-
-endif
-endif
-endif
 
 ###########################################################
 ## Register with ALL_MODULES
