@@ -84,6 +84,30 @@
     },
     {
       "key": {
+        "uuid": "2140d947_b04cde24",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-12T08:45:01Z",
+      "side": 1,
+      "message": "That looks overly complicated for what\u0027s needed here. And yes, we\u0027d need to use \u003e, not \u003e\u003d, since P doesn\u0027t have a number until the API is locked.",
+      "parentUuid": "5eb4679c_b8ac97d8",
+      "range": {
+        "startLine": 755,
+        "startChar": 0,
+        "endLine": 758,
+        "endChar": 82
+      },
+      "revId": "3b8d01fb973e994e3f527d6f06fa7a0db1d697a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "33dd7d85_e934642c",
         "filename": "core/config.mk",
         "patchSetId": 2
