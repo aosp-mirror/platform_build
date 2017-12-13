@@ -106,6 +106,24 @@
       "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b8eb64e_a9f81989",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-13T00:56:51Z",
+      "side": 1,
+      "message": "Yes, we\u0027ve found many of them while doing this and I think we eventually have to fix them. And this is why we\u0027ve added BOARD_ENFORCE_SYSTEM_SDK [1] to be able to switch in between the current rules and the added (and more strict) rules.\n\nRight now, I don\u0027t intend to fix every such cases that you just mentioned, but only the ones that vendor apks are using. For example, I want to allow a java lib X built with sdk to use another java lib Y built with platform, as long as X is not used by any vendor module (or any module that is embedded into a vendor module).\n\n[1] https://android-review.googlesource.com/c/platform/build/+/553839/9/core/java_common.mk#417",
+      "parentUuid": "7a5cf6e7_08b2300c",
+      "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
