@@ -35,7 +35,7 @@ $(INSTALLED_OEMIMAGE_TARGET) : $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_OEMIMAGE_F
 	@mkdir -p $(oemimage_intermediates) && rm -rf $(oemimage_intermediates)/oem_image_info.txt
 	$(call generate-userimage-prop-dictionary, $(oemimage_intermediates)/oem_image_info.txt, skip_fsck=true)
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
-	  ./build/tools/releasetools/build_image.py \
+	  build/make/tools/releasetools/build_image.py \
 	  $(TARGET_OUT_OEM) $(oemimage_intermediates)/oem_image_info.txt $@ $(TARGET_OUT)
 	$(hide) $(call assert-max-image-size,$@,$(BOARD_OEMIMAGE_PARTITION_SIZE))
 
