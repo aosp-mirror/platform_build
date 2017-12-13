@@ -104,7 +104,7 @@ SRC_SYSTEM_API_DIR := $(TOPDIR)prebuilts/sdk/system-api
 SRC_TEST_API_DIR := $(TOPDIR)prebuilts/sdk/test-api
 
 # Some specific paths to tools
-SRC_DROIDDOC_DIR := $(TOPDIR)build/tools/droiddoc
+SRC_DROIDDOC_DIR := $(TOPDIR)build/make/tools/droiddoc
 
 # Set up efficient math functions which are used in make.
 # Here since this file is included by envsetup as well as during build.
@@ -168,7 +168,7 @@ hide := @
 ################################################################
 # Tools needed in product configuration makefiles.
 ################################################################
-NORMALIZE_PATH := build/tools/normalize_path.py
+NORMALIZE_PATH := build/make/tools/normalize_path.py
 
 # $(1): the paths to be normalized
 define normalize-paths
@@ -658,17 +658,17 @@ MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh
 SIMG2IMG := $(HOST_OUT_EXECUTABLES)/simg2img$(HOST_EXECUTABLE_SUFFIX)
 IMG2SIMG := $(HOST_OUT_EXECUTABLES)/img2simg$(HOST_EXECUTABLE_SUFFIX)
 E2FSCK := $(HOST_OUT_EXECUTABLES)/e2fsck$(HOST_EXECUTABLE_SUFFIX)
-MKTARBALL := build/tools/mktarball.sh
+MKTARBALL := build/make/tools/mktarball.sh
 TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
-FAT16COPY := build/tools/fat16copy.py
-CHECK_LINK_TYPE := build/tools/check_link_type.py
+FAT16COPY := build/make/tools/fat16copy.py
+CHECK_LINK_TYPE := build/make/tools/check_link_type.py
 
 PROGUARD := external/proguard/bin/proguard.sh
-JAVATAGS := build/tools/java-event-log-tags.py
-MERGETAGS := build/tools/merge-event-log-tags.py
-BUILD_IMAGE_SRCS := $(wildcard build/tools/releasetools/*.py)
+JAVATAGS := build/make/tools/java-event-log-tags.py
+MERGETAGS := build/make/tools/merge-event-log-tags.py
+BUILD_IMAGE_SRCS := $(wildcard build/make/tools/releasetools/*.py)
 APPEND2SIMG := $(HOST_OUT_EXECUTABLES)/append2simg
 VERITY_SIGNER := $(HOST_OUT_EXECUTABLES)/verity_signer
 BUILD_VERITY_TREE := $(HOST_OUT_EXECUTABLES)/build_verity_tree

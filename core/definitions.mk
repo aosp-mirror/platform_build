@@ -167,7 +167,7 @@ endef
 # $(1): directory to search under
 # Ignores $(1)/Android.mk
 define first-makefiles-under
-$(shell build/tools/findleaves.py $(FIND_LEAVES_EXCLUDES) \
+$(shell build/make/tools/findleaves.py $(FIND_LEAVES_EXCLUDES) \
         --mindepth=2 $(addprefix --dir=,$(1)) Android.mk)
 endef
 
@@ -2253,7 +2253,7 @@ $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
     \@$(PRIVATE_JAVA_SOURCE_LIST) \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 ) \
 fi
-$(if $(PRIVATE_JAVA_LAYERS_FILE), $(hide) build/tools/java-layers.py \
+$(if $(PRIVATE_JAVA_LAYERS_FILE), $(hide) build/make/tools/java-layers.py \
     $(PRIVATE_JAVA_LAYERS_FILE) @$(PRIVATE_JAVA_SOURCE_LIST),)
 $(if $(PRIVATE_JAR_EXCLUDE_FILES), $(hide) find $(PRIVATE_CLASS_INTERMEDIATES_DIR) \
     -name $(word 1, $(PRIVATE_JAR_EXCLUDE_FILES)) \
@@ -2415,13 +2415,15 @@ endef
 define transform-classes-d8.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
-$(hide) rm -f $(dir $@)classes*.dex
+$(hide) rm -rf $(dir $@)classes*.dex $(dir $@)*.class $(dir $@)d8_input
+$(hide) unzip -qq -d $(dir $@)d8_input $< "*.class"
 $(hide) $(DX_COMMAND) \
     --output $(dir $@) \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     $(subst --no-locals, --release, \
         $(filter-out --core-library --multi-dex,$(PRIVATE_DX_FLAGS))) \
-    $<
+    $$(find $(dir $@)d8_input -name *.class | sort)
+$(hide) rm -fr $(dir $@)d8_input
 endef
 
 # Create a mostly-empty .jar file that we'll add to later.
