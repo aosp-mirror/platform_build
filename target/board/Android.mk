@@ -20,7 +20,7 @@ ifndef board_info_txt
 board_info_txt := $(wildcard $(TARGET_DEVICE_DIR)/board-info.txt)
 endif
 $(INSTALLED_ANDROID_INFO_TXT_TARGET): $(board_info_txt)
-	$(hide) build/tools/check_radio_versions.py $< $(BOARD_INFO_CHECK)
+	$(hide) build/make/tools/check_radio_versions.py $< $(BOARD_INFO_CHECK)
 	$(call pretty,"Generated: ($@)")
 ifdef board_info_txt
 	$(hide) grep -v '#' $< > $@

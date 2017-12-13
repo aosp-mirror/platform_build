@@ -77,7 +77,7 @@ $(products_graph): $(this_makefile)
 	  $(foreach d,$(PRODUCTS.$(strip $(p)).INHERITS_FROM), echo \"$(d)\" -\> \"$(p)\" >> $@.in;))
 	$(foreach p,$(PRIVATE_PRODUCTS),$(call emit-product-node-props,$(p),$@.in))
 	$(hide) echo '}' >> $@.in
-	$(hide) ./build/tools/filter-product-graph.py $(PRIVATE_PRODUCTS_FILTER) < $@.in > $@
+	$(hide) build/make/tools/filter-product-graph.py $(PRIVATE_PRODUCTS_FILTER) < $@.in > $@
 
 # Evaluates to the name of the product file
 # $(1) product file
@@ -121,11 +121,11 @@ $(OUT_DIR)/products/$(strip $(1)).txt: $(this_makefile)
 
 $(call product-debug-filename, $(p)): \
 			$(OUT_DIR)/products/$(strip $(1)).txt \
-			build/tools/product_debug.py \
+			build/make/tools/product_debug.py \
 			$(this_makefile)
 	@echo Product debug html file: $$@
 	$(hide) mkdir -p $$(dir $$@)
-	$(hide) cat $$< | build/tools/product_debug.py > $$@
+	$(hide) cat $$< | build/make/tools/product_debug.py > $$@
 endef
 
 product_debug_files:=
