@@ -444,6 +444,12 @@ $(call add-clean-step, rm -f $(OUT_DIR)/host/common/obj/*/*_intermediates/java-s
 
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*/flat-res)
 
+# Remove old VNDK directories without version
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib/vndk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib/vndk-sp)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib64/vndk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib64/vndk-sp)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
