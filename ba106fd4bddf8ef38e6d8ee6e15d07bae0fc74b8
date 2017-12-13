@@ -88,6 +88,24 @@
       "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a5cf6e7_08b2300c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 9
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-13T00:44:45Z",
+      "side": 1,
+      "message": "Yes, we\u0027ll need to protect against using platform libraries, but using LOCAL_STATIC_JAVA_LIBRARIES vs LOCAL_JAVA_LIBRARIES doesn\u0027t work.\n\nMany java libraries aren\u0027t well marked right now either, which is why they\u0027re only warnings. Many prebuilts aren\u0027t marked as using a sdk, since it hasn\u0027t been strictly necessary. There are also other cases like support library that intentionally handle the compatibility layer themselves, and other libraries that don\u0027t compile against a SDK at all, but against a normal JVM, being careful to only use what\u0027s available on android when running on android.",
+      "parentUuid": "d9d296ec_9bd1c8bb",
+      "revId": "ba106fd4bddf8ef38e6d8ee6e15d07bae0fc74b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
