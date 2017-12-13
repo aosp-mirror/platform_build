@@ -55,7 +55,7 @@ all_java_sources := $(java_sources)
 include $(BUILD_SYSTEM)/java_common.mk
 
 # The layers file allows you to enforce a layering between java packages.
-# Run build/tools/java-layers.py for more details.
+# Run build/make/tools/java-layers.py for more details.
 layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
 
 # If error prone is enabled then add LOCAL_ERROR_PRONE_FLAGS to LOCAL_JAVACFLAGS
