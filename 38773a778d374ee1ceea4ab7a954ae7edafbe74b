@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7e4d4ae6_623ee8e2",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-12-13T22:52:49Z",
+      "side": 1,
+      "message": "Yes, it should be on /vendor as well. It serves a similar purpose as recovery-from-boot.p, to install the new recovery.img. The difference is whether we have the full image or just the patch.",
+      "parentUuid": "8774e56f_a6635129",
+      "range": {
+        "startLine": 264,
+        "startChar": 11,
+        "endLine": 264,
+        "endChar": 34
+      },
+      "revId": "38773a778d374ee1ceea4ab7a954ae7edafbe74b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "db23b688_81605f2f",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2017-12-06T10:15:43Z",
       "side": 1,
       "message": "Assuming install-recovery.sh is quite stable.\n\nIt seems ok to keep it in /system and we can add some changes there when needed (together with a system-only OTA).",
+      "range": {
+        "startLine": 250,
+        "startChar": 28,
+        "endLine": 250,
+        "endChar": 58
+      },
+      "revId": "38773a778d374ee1ceea4ab7a954ae7edafbe74b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d78dddfe_fff0f7b0",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2017-12-13T22:52:49Z",
+      "side": 1,
+      "message": "The contents of this script changes between each build, as long as boot.img or recovery.img changes. Because it contains the checksum of the two images, it should be updated along with boot/recovery images.",
+      "parentUuid": "db23b688_81605f2f",
       "range": {
         "startLine": 250,
         "startChar": 28,
