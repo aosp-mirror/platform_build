@@ -2371,7 +2371,7 @@ def find_android_root(path):
   for idx in reversed(range(2, len(parts))):
     root_path = '/'.join(parts[:idx])
     # Android root directory should contain this script.
-    if os.path.exists(root_path + '/build/tools/warn.py'):
+    if os.path.exists(root_path + '/build/make/tools/warn.py'):
       android_root = root_path
       return root_path
   return ''
