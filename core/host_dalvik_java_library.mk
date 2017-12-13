@@ -150,12 +150,16 @@ endif
 
 $(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
+ifneq ($(USE_D8_DESUGAR),true)
 my_desugaring :=
 ifeq ($(LOCAL_JAVA_LANGUAGE_VERSION),1.8)
 my_desugaring := true
 $(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 $(full_classes_desugar_jar): $(full_classes_jar) $(full_java_header_libs) $(DESUGAR)
 	$(desugar-classes-jar)
+endif
+else
+my_desugaring :=
 endif
 
 ifndef my_desugaring
