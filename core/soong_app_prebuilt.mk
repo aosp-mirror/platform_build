@@ -43,6 +43,12 @@ $(built_odex): $(LOCAL_SOONG_DEX_JAR)
 	$(call dexpreopt-one-file,$<,$@)
 endif
 
+PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
+ifdef LOCAL_CERTIFICATE
+  PACKAGES.$(LOCAL_MODULE).PRIVATE_KEY := $(LOCAL_CERTIFICATE)
+  PACKAGES.$(LOCAL_MODULE).CERTIFICATE := $(patsubst %.x509.pem,%.pk8,$(LOCAL_CERTIFICATE))
+endif
+
 ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_SDK_VERSION),system_current)
 my_link_type := java:system
