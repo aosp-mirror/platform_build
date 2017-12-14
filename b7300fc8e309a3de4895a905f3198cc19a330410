@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9260ebe3_b8cb26cb",
+        "filename": "core/ninja_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-14T21:14:00Z",
+      "side": 1,
+      "message": "This isn\u0027t necessary, you\u0027re not changing any makefiles based on check_emu_boot being in MAKECMDGOALS",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 17
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d16c099f_28c4e4fa",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-14T21:14:00Z",
+      "side": 1,
+      "message": "This is just \".\", please don\u0027t expand it in the ninja file. If you need an absolute path, do it during the rule itself. I added comments with the appropriate changes below, but it seems like the shell script doesn\u0027t actually need absolute paths, since it\u0027s already assuming that the current directory is the top of the source tree.",
+      "range": {
+        "startLine": 2,
+        "startChar": 24,
+        "endLine": 2,
+        "endChar": 36
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9910496f_7c2a7461",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-14T21:14:00Z",
+      "side": 1,
+      "message": "This is incorrect. The output directory may not be under the current directory, it could be an absolute path.",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 58
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfccb1d9_bc294c9c",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-14T21:14:00Z",
+      "side": 1,
+      "message": "This needs to depend on every file the emulator is going to use, so that it\u0027s rebuilt during incremental builds. I see you\u0027re adding a few below, but they should be on this line. And the script itself seems to be missing, along with any binaries that it calls.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 34
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3469db13_47ffd6fb",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-14T21:14:00Z",
+      "side": 1,
+      "message": "$$(cd $(PRODUCT_OUT); pwd)",
+      "range": {
+        "startLine": 12,
+        "startChar": 29,
+        "endLine": 12,
+        "endChar": 48
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "477c7245_1dc97966",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-14T21:14:00Z",
+      "side": 1,
+      "message": "$$(pwd)",
+      "range": {
+        "startLine": 13,
+        "startChar": 27,
+        "endLine": 13,
+        "endChar": 50
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5b8cae4_93f9a35a",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-14T21:14:00Z",
+      "side": 1,
+      "message": "This should be using a PRIVATE_* variable",
+      "range": {
+        "startLine": 14,
+        "startChar": 4,
+        "endLine": 14,
+        "endChar": 25
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9f26bf7_5c195b81",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-14T21:14:00Z",
+      "side": 1,
+      "message": "This needs to be a private variable (along with EMULATOR_BOOT_TEST_RESULT_FILE, SUCCESS_FILE, FAIL_FILE)",
+      "range": {
+        "startLine": 18,
+        "startChar": 15,
+        "endLine": 18,
+        "endChar": 33
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
