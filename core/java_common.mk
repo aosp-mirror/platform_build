@@ -38,6 +38,9 @@ LOCAL_JAVACFLAGS += -source $(LOCAL_JAVA_LANGUAGE_VERSION) -target $(LOCAL_JAVA_
 ###########################################################
 ## .proto files: Compile proto files to .java
 ###########################################################
+ifeq ($(strip $(LOCAL_PROTOC_OPTIMIZE_TYPE)),)
+  LOCAL_PROTOC_OPTIMIZE_TYPE := lite
+endif
 proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
 # Because names of the .java files compiled from .proto files are unknown until the
 # .proto files are compiled, we use a timestamp file as depedency.
@@ -67,7 +70,7 @@ $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --java_out
   endif
 endif
 $(proto_java_sources_file_stamp): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS)
-$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_PARAMS := $(LOCAL_PROTO_JAVA_OUTPUT_PARAMS)
+$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_PARAMS := $(if $(filter lite,$(LOCAL_PROTOC_OPTIMIZE_TYPE)),lite$(if $(LOCAL_PROTO_JAVA_OUTPUT_PARAMS),:,),)$(LOCAL_PROTO_JAVA_OUTPUT_PARAMS)
 $(proto_java_sources_file_stamp) : $(proto_sources_fullpath) $(PROTOC)
 	$(call transform-proto-to-java)
 
