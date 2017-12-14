@@ -58,7 +58,7 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       very rarely used, since it's expected to have a dedicated OEM partition
       for OEM-specific properties. Only meaningful when -o is specified.
 
-  -w  (--wipe_user_data)
+  --wipe_user_data
       Generate an OTA package that will wipe the user data partition
       when installed.
 
@@ -1300,7 +1300,7 @@ def main(argv):
       OPTIONS.full_radio = True
     elif o == "--full_bootloader":
       OPTIONS.full_bootloader = True
-    elif o in ("-w", "--wipe_user_data"):
+    elif o == "--wipe_user_data":
       OPTIONS.wipe_user_data = True
     elif o == "--downgrade":
       OPTIONS.downgrade = True
@@ -1352,7 +1352,7 @@ def main(argv):
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:we:t:2o:",
+                             extra_opts="b:k:i:d:e:t:2o:",
                              extra_long_opts=[
                                  "package_key=",
                                  "incremental_from=",
