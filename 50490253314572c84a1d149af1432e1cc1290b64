@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ed978a5_f657858b",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2017-12-14T16:52:16Z",
+      "side": 1,
+      "message": "i\u0027ll +2 a fix for the PROMPT_COMMAND setting, but i have no interest in making this feature opt-out again... opt-in is better.",
+      "revId": "50490253314572c84a1d149af1432e1cc1290b64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
