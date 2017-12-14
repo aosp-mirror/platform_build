@@ -16,6 +16,23 @@
       "revId": "50490253314572c84a1d149af1432e1cc1290b64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0996ff28_5148efa2",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-14T17:17:06Z",
+      "side": 1,
+      "message": "If you run lunch multiple times, this will just continue to grow PROMPT_COMMAND, which probably isn\u0027t what we want. Is it possible to only add this once, and delay some of the logic so we never have to update it?",
+      "revId": "50490253314572c84a1d149af1432e1cc1290b64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
