@@ -284,5 +284,5 @@ ifndef PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION
   # Used to set minimum supported target sdk version. Apps targeting sdk
   # version lower than the set value will fail to install and run on android
   # device.
-  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 0
+  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 17
 endif
