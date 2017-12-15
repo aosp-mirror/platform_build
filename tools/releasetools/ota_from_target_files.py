@@ -109,9 +109,6 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Specifies the threshold that will be used to compute the maximum
       allowed stash size (defaults to 0.8).
 
-  --gen_verify
-      Generate an OTA package that verifies the partitions.
-
   --log_diff <file>
       Generate a log file that shows the differences in the source and target
       builds for an incremental package. This option is only meaningful when
@@ -172,7 +169,6 @@ OPTIONS.full_bootloader = False
 # Stash size cannot exceed cache_size * threshold.
 OPTIONS.cache_size = None
 OPTIONS.stash_threshold = 0.8
-OPTIONS.gen_verify = False
 OPTIONS.log_diff = None
 OPTIONS.payload_signer = None
 OPTIONS.payload_signer_args = []
@@ -936,78 +932,6 @@ endif;
   WriteMetadata(metadata, output_zip)
 
 
-def WriteVerifyPackage(input_zip, output_zip):
-  script = edify_generator.EdifyGenerator(3, OPTIONS.info_dict)
-
-  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
-  recovery_mount_options = OPTIONS.info_dict.get(
-      "recovery_mount_options")
-  oem_dicts = None
-  if oem_props:
-    oem_dicts = _LoadOemDicts(script, recovery_mount_options)
-
-  target_fp = CalculateFingerprint(oem_props, oem_dicts and oem_dicts[0],
-                                   OPTIONS.info_dict)
-  metadata = {
-      "post-build": target_fp,
-      "pre-device": GetOemProperty("ro.product.device", oem_props,
-                                   oem_dicts and oem_dicts[0],
-                                   OPTIONS.info_dict),
-      "post-timestamp": GetBuildProp("ro.build.date.utc", OPTIONS.info_dict),
-  }
-
-  device_specific = common.DeviceSpecificParams(
-      input_zip=input_zip,
-      input_version=OPTIONS.info_dict["recovery_api_version"],
-      output_zip=output_zip,
-      script=script,
-      input_tmp=OPTIONS.input_tmp,
-      metadata=metadata,
-      info_dict=OPTIONS.info_dict)
-
-  AppendAssertions(script, OPTIONS.info_dict, oem_dicts)
-
-  script.Print("Verifying device images against %s..." % target_fp)
-  script.AppendExtra("")
-
-  script.Print("Verifying boot...")
-  boot_img = common.GetBootableImage(
-      "boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
-  boot_type, boot_device = common.GetTypeAndDevice(
-      "/boot", OPTIONS.info_dict)
-  script.Verify("%s:%s:%d:%s" % (
-      boot_type, boot_device, boot_img.size, boot_img.sha1))
-  script.AppendExtra("")
-
-  script.Print("Verifying recovery...")
-  recovery_img = common.GetBootableImage(
-      "recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
-  recovery_type, recovery_device = common.GetTypeAndDevice(
-      "/recovery", OPTIONS.info_dict)
-  script.Verify("%s:%s:%d:%s" % (
-      recovery_type, recovery_device, recovery_img.size, recovery_img.sha1))
-  script.AppendExtra("")
-
-  system_tgt = GetImage("system", OPTIONS.input_tmp)
-  system_tgt.ResetFileMap()
-  system_diff = common.BlockDifference("system", system_tgt, src=None)
-  system_diff.WriteStrictVerifyScript(script)
-
-  if HasVendorPartition(input_zip):
-    vendor_tgt = GetImage("vendor", OPTIONS.input_tmp)
-    vendor_tgt.ResetFileMap()
-    vendor_diff = common.BlockDifference("vendor", vendor_tgt, src=None)
-    vendor_diff.WriteStrictVerifyScript(script)
-
-  # Device specific partitions, such as radio, bootloader and etc.
-  device_specific.VerifyOTA_Assertions()
-
-  script.SetProgress(1.0)
-  script.AddToZip(input_zip, output_zip, input_path=OPTIONS.updater_binary)
-  metadata["ota-required-cache"] = str(script.required_cache)
-  WriteMetadata(metadata, output_zip)
-
-
 def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                                       source_file=None):
   """Generate an Android OTA package that has A/B update payload."""
@@ -1325,8 +1249,6 @@ def main(argv):
       except ValueError:
         raise ValueError("Cannot parse value %r for option %r - expecting "
                          "a float" % (a, o))
-    elif o == "--gen_verify":
-      OPTIONS.gen_verify = True
     elif o == "--log_diff":
       OPTIONS.log_diff = a
     elif o == "--payload_signer":
@@ -1360,7 +1282,6 @@ def main(argv):
                                  "verify",
                                  "no_fallback_to_full",
                                  "stash_threshold=",
-                                 "gen_verify",
                                  "log_diff=",
                                  "payload_signer=",
                                  "payload_signer_args=",
@@ -1489,12 +1410,8 @@ def main(argv):
     print("--- can't determine the cache partition size ---")
   OPTIONS.cache_size = cache_size
 
-  # Generate a verify package.
-  if OPTIONS.gen_verify:
-    WriteVerifyPackage(input_zip, output_zip)
-
   # Generate a full OTA.
-  elif OPTIONS.incremental_source is None:
+  if OPTIONS.incremental_source is None:
     WriteFullOTAPackage(input_zip, output_zip)
 
   # Generate an incremental OTA. It will fall back to generate a full OTA on
