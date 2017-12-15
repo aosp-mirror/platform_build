@@ -747,10 +747,17 @@ else ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),26),)
   PRODUCT_FULL_TREBLE := true
 endif
 
+# TODO(b/69865032): Make PRODUCT_NOTICE_SPLIT the default behavior and remove
+#    references to it here and below.
+ifdef PRODUCT_NOTICE_SPLIT_OVERRIDE
+   $(error PRODUCT_NOTICE_SPLIT_OVERRIDE cannot be set.)
+endif
+
 requirements := \
     PRODUCT_TREBLE_LINKER_NAMESPACES \
     PRODUCT_SEPOLICY_SPLIT \
     PRODUCT_ENFORCE_VINTF_MANIFEST \
+    PRODUCT_NOTICE_SPLIT
 
 # If it is overriden, then the requirement override is taken, otherwise it's
 # PRODUCT_FULL_TREBLE
