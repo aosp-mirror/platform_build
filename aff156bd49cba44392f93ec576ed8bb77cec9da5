@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b5dc464a_390e164d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2425,
+      "author": {
+        "id": 1080224
+      },
+      "writtenOn": "2017-12-15T06:00:51Z",
+      "side": 1,
+      "message": "This hits the max argument of bash depending on the user\u0027s settings.\n\nDo you think should we up the ulimit -s or should we just jar it again?",
+      "range": {
+        "startLine": 2425,
+        "startChar": 4,
+        "endLine": 2425,
+        "endChar": 51
+      },
+      "revId": "aff156bd49cba44392f93ec576ed8bb77cec9da5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
