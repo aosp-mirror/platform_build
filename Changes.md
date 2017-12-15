@@ -86,6 +86,11 @@ path:
 $(TARGET): myscript.py $(sort $(shell find my/python/lib -name '*.py'))
 	PYTHONPATH=my/python/lib:$$PYTHONPATH myscript.py -o $@
 ```
+### Stop using PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE directly {#PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE}
+
+Specify Framework Compatibility Matrix Version in device manifest by adding a `target-level`
+attribute to the root element `<manifest>`. If `PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE`
+is 26 or 27, you can add `"target-level"="1"` to your device manifest instead.
 
 ### Other envsetup.sh variables  {#other_envsetup_variables}
 
