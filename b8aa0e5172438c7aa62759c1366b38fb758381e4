@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "405125a1_03b0f1e1",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-12-15T22:28:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d1cf3d7_20c02c43",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 8
+      },
+      "revId": "b8aa0e5172438c7aa62759c1366b38fb758381e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0d3d82a8_4022de5f",
         "filename": "core/tasks/check_emu_boot.mk",
         "patchSetId": 3
@@ -92,6 +116,30 @@
       "revId": "b8aa0e5172438c7aa62759c1366b38fb758381e4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc80e39d_7b7c8b5c",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-12-15T22:28:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "636c7c51_514612dc",
+      "range": {
+        "startLine": 18,
+        "startChar": 26,
+        "endLine": 18,
+        "endChar": 28
+      },
+      "revId": "b8aa0e5172438c7aa62759c1366b38fb758381e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
