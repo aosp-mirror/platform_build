@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "09396701_8bc4da60",
+        "filename": "core/ninja_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-12-15T16:01:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9260ebe3_b8cb26cb",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 17
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d16c099f_28c4e4fa",
         "filename": "core/tasks/check_emu_boot.mk",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b1df181_f793a02c",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-12-15T16:01:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d16c099f_28c4e4fa",
+      "range": {
+        "startLine": 2,
+        "startChar": 24,
+        "endLine": 2,
+        "endChar": 36
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "6e4bc581_742b584e",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-12-15T16:01:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9910496f_7c2a7461",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 58
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dfccb1d9_bc294c9c",
         "filename": "core/tasks/check_emu_boot.mk",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb3c8212_38edaaff",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-12-15T16:01:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dfccb1d9_bc294c9c",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 34
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "a41d972a_3c6a8bca",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-12-15T16:01:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3469db13_47ffd6fb",
+      "range": {
+        "startLine": 12,
+        "startChar": 29,
+        "endLine": 12,
+        "endChar": 48
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "477c7245_1dc97966",
         "filename": "core/tasks/check_emu_boot.mk",
         "patchSetId": 1
@@ -137,6 +257,30 @@
       "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef7df39f_fdd8fb05",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-12-15T16:01:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "477c7245_1dc97966",
+      "range": {
+        "startLine": 13,
+        "startChar": 27,
+        "endLine": 13,
+        "endChar": 50
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "b33a1e44_d00df08f",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-12-15T16:01:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b5b8cae4_93f9a35a",
+      "range": {
+        "startLine": 14,
+        "startChar": 4,
+        "endLine": 14,
+        "endChar": 25
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a9f26bf7_5c195b81",
         "filename": "core/tasks/check_emu_boot.mk",
         "patchSetId": 1
@@ -183,6 +351,30 @@
       "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8fe532f_4108a01d",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-12-15T16:01:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a9f26bf7_5c195b81",
+      "range": {
+        "startLine": 18,
+        "startChar": 15,
+        "endLine": 18,
+        "endChar": 33
+      },
+      "revId": "b7300fc8e309a3de4895a905f3198cc19a330410",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
