@@ -187,7 +187,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
   endif
   LOCAL_NDK_STL_VARIANT := $(strip $(LOCAL_NDK_STL_VARIANT))
   ifeq (,$(LOCAL_NDK_STL_VARIANT))
-    LOCAL_NDK_STL_VARIANT := c++_shared
+    LOCAL_NDK_STL_VARIANT := system
   endif
   ifneq (1,$(words $(filter none system stlport_static stlport_shared c++_static c++_shared gnustl_static, $(LOCAL_NDK_STL_VARIANT))))
     $(error $(LOCAL_PATH): Unknown LOCAL_NDK_STL_VARIANT $(LOCAL_NDK_STL_VARIANT))
