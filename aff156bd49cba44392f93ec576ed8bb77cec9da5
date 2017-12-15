@@ -22,6 +22,30 @@
       "revId": "aff156bd49cba44392f93ec576ed8bb77cec9da5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a0ce3ea8_0b716610",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2425,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-15T06:10:20Z",
+      "side": 1,
+      "message": "Can d8 take @files as input?\n\n find $(dir $@)d8_input -name *.class | sort \u003e $(dir $@)d8_file_list.txt\n $(DX_COMMAND) --output $(dir $@) \\@$(dir $@)d8_file_list.txt\n\nIf not, soong_zip can jar a file list for you:\n\n soong_zip -jar -o $(dir $@)d8_input.jar -C $(dir $@)d8_input -l $(dir $@)d8_file_list.txt",
+      "parentUuid": "b5dc464a_390e164d",
+      "range": {
+        "startLine": 2425,
+        "startChar": 4,
+        "endLine": 2425,
+        "endChar": 51
+      },
+      "revId": "aff156bd49cba44392f93ec576ed8bb77cec9da5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
