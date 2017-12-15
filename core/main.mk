@@ -126,6 +126,8 @@ ifneq ($(ADDITIONAL_BUILD_PROPERTIES),)
 $(error ADDITIONAL_BUILD_PROPERTIES must not be set before here: $(ADDITIONAL_BUILD_PROPERTIES))
 endif
 
+ADDITIONAL_BUILD_PROPERTIES :=
+
 #
 # -----------------------------------------------------------------
 # Add the product-defined properties to the build properties.
@@ -197,6 +199,11 @@ endif
 endif
 
 ADDITIONAL_BUILD_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
+
+$(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
+	Code should be written to work regardless of a device being Treble or \
+	variables like PRODUCT_SEPOLICY_SPLIT should be used until that is \
+	possible.)
 
 # -----------------------------------------------------------------
 ###
