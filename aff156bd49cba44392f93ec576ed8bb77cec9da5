@@ -46,6 +46,30 @@
       "revId": "aff156bd49cba44392f93ec576ed8bb77cec9da5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "be8fee77_822c686b",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2425,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-15T06:13:13Z",
+      "side": 1,
+      "message": "Actually, even better zip2zip can go directly jar-to-jar filtering out only class files:\n\n $(ZIP2ZIP) -j -i $\u003c -o $(dir $@)d8_input.jar \"**/*.class\"",
+      "parentUuid": "a0ce3ea8_0b716610",
+      "range": {
+        "startLine": 2425,
+        "startChar": 4,
+        "endLine": 2425,
+        "endChar": 51
+      },
+      "revId": "aff156bd49cba44392f93ec576ed8bb77cec9da5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
