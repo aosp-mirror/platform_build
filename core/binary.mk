@@ -870,6 +870,9 @@ endif
 ###########################################################
 ## Compile the .proto files to .cc (or .c) and then to .o
 ###########################################################
+ifeq ($(strip $(LOCAL_PROTOC_OPTIMIZE_TYPE)),)
+  LOCAL_PROTOC_OPTIMIZE_TYPE := lite
+endif
 proto_sources := $(filter %.proto,$(my_src_files))
 ifneq ($(proto_sources),)
 proto_gen_dir := $(generated_sources_dir)/proto
@@ -891,7 +894,7 @@ my_rename_cpp_ext := true
 endif
 my_proto_c_includes := external/protobuf/src
 my_cflags += -DGOOGLE_PROTOBUF_NO_RTTI
-my_protoc_flags := --cpp_out=$(proto_gen_dir)
+my_protoc_flags := --cpp_out=$(if $(filter lite lite-static,$(LOCAL_PROTOC_OPTIMIZE_TYPE)),lite:,)$(proto_gen_dir)
 my_protoc_deps :=
 endif
 my_proto_c_includes += $(proto_gen_dir)
