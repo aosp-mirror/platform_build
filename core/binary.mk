@@ -1736,15 +1736,14 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
     ifneq ($(LOCAL_TIDY_CHECKS),)
       my_tidy_checks := $(my_tidy_checks),$(LOCAL_TIDY_CHECKS)
     endif
-    # Set up global default clang-tidy flags, which is none.
-    my_tidy_flags := $(WITH_TIDY_FLAGS)
-    # Use local clang-tidy flags if specified.
-    ifneq ($(LOCAL_TIDY_FLAGS),)
-      my_tidy_flags := $(LOCAL_TIDY_FLAGS)
-    endif
+    my_tidy_flags += $(WITH_TIDY_FLAGS) $(LOCAL_TIDY_FLAGS)
     # If tidy flags are not specified, default to check all header files.
     ifeq ($(my_tidy_flags),)
       my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
+    endif
+    # If clang-tidy is not enabled globally, add the -quiet flag.
+    ifeq (,$(filter 1 true,$(WITH_TIDY)))
+      my_tidy_flags += -quiet
     endif
 
     # We might be using the static analyzer through clang-tidy.
