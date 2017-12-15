@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8d1cf3d7_20c02c43",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-15T18:02:35Z",
+      "side": 1,
+      "message": "Sorry, I should have been clearer -- these need to actually be rule-private variables:\n\n  check_emu_boot: PRIVATE_EMULATOR_BOOT_TEST_SH :\u003d device/generic/goldfish/tools/emulator_boot_test.sh",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 8
+      },
+      "revId": "b8aa0e5172438c7aa62759c1366b38fb758381e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d3d82a8_4022de5f",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-15T18:02:35Z",
+      "side": 1,
+      "message": "We don\u0027t want to run this on every build -- we only want to run it if one of the dependencies changes (the emulator, images / files it uses, etc).",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 55
+      },
+      "revId": "b8aa0e5172438c7aa62759c1366b38fb758381e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "636c7c51_514612dc",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-15T18:02:35Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 18,
+        "startChar": 26,
+        "endLine": 18,
+        "endChar": 28
+      },
+      "revId": "b8aa0e5172438c7aa62759c1366b38fb758381e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
