@@ -137,7 +137,6 @@ if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
   sys.exit(1)
 
-import copy
 import multiprocessing
 import os.path
 import subprocess
@@ -1239,44 +1238,33 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   common.ZipClose(output_zip)
 
   # SignOutput(), which in turn calls signapk.jar, will possibly reorder the
-  # zip entries, as well as padding the entry headers. We do a preliminary
+  # ZIP entries, as well as padding the entry headers. We do a preliminary
   # signing (with an incomplete metadata entry) to allow that to happen. Then
-  # compute the zip entry offsets, write back the final metadata and do the
+  # compute the ZIP entry offsets, write back the final metadata and do the
   # final signing.
-  prelim_signing = tempfile.NamedTemporaryFile()
-  SignOutput(temp_zip_file.name, prelim_signing.name)
+  prelim_signing = common.MakeTempFile(suffix='.zip')
+  SignOutput(temp_zip_file.name, prelim_signing)
   common.ZipClose(temp_zip_file)
 
   # Open the signed zip. Compute the final metadata that's needed for streaming.
-  prelim_zip = zipfile.ZipFile(prelim_signing, "r",
-                               compression=zipfile.ZIP_DEFLATED)
+  prelim_signing_zip = zipfile.ZipFile(prelim_signing, 'r')
   expected_length = len(metadata['ota-streaming-property-files'])
   metadata['ota-streaming-property-files'] = ComputeStreamingMetadata(
-      prelim_zip, reserve_space=False, expected_length=expected_length)
+      prelim_signing_zip, reserve_space=False, expected_length=expected_length)
+  common.ZipClose(prelim_signing_zip)
 
-  # Copy the zip entries, as we cannot update / delete entries with zipfile.
-  final_signing = tempfile.NamedTemporaryFile()
-  output_zip = zipfile.ZipFile(final_signing, "w",
+  # Replace the METADATA entry.
+  common.ZipDelete(prelim_signing, METADATA_NAME)
+  output_zip = zipfile.ZipFile(prelim_signing, 'a',
                                compression=zipfile.ZIP_DEFLATED)
-  for item in prelim_zip.infolist():
-    if item.filename == METADATA_NAME:
-      continue
-
-    data = prelim_zip.read(item.filename)
-    out_info = copy.copy(item)
-    common.ZipWriteStr(output_zip, out_info, data)
-
-  # Now write the final metadata entry.
   WriteMetadata(metadata, output_zip)
-  common.ZipClose(prelim_zip)
   common.ZipClose(output_zip)
 
   # Re-sign the package after updating the metadata entry.
-  SignOutput(final_signing.name, output_file)
-  final_signing.close()
+  SignOutput(prelim_signing, output_file)
 
   # Reopen the final signed zip to double check the streaming metadata.
-  output_zip = zipfile.ZipFile(output_file, "r")
+  output_zip = zipfile.ZipFile(output_file, 'r')
   actual = metadata['ota-streaming-property-files'].strip()
   expected = ComputeStreamingMetadata(output_zip)
   assert actual == expected, \

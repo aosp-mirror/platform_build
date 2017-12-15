@@ -309,6 +309,51 @@ class CommonZipTest(unittest.TestCase):
     finally:
       os.remove(zip_file_name)
 
+  def test_ZipDelete(self):
+    zip_file = tempfile.NamedTemporaryFile(delete=False, suffix='.zip')
+    output_zip = zipfile.ZipFile(zip_file.name, 'w',
+                                 compression=zipfile.ZIP_DEFLATED)
+    with tempfile.NamedTemporaryFile() as entry_file:
+      entry_file.write(os.urandom(1024))
+      common.ZipWrite(output_zip, entry_file.name, arcname='Test1')
+      common.ZipWrite(output_zip, entry_file.name, arcname='Test2')
+      common.ZipWrite(output_zip, entry_file.name, arcname='Test3')
+      common.ZipClose(output_zip)
+    zip_file.close()
+
+    try:
+      common.ZipDelete(zip_file.name, 'Test2')
+      with zipfile.ZipFile(zip_file.name, 'r') as check_zip:
+        entries = check_zip.namelist()
+        self.assertTrue('Test1' in entries)
+        self.assertFalse('Test2' in entries)
+        self.assertTrue('Test3' in entries)
+
+      self.assertRaises(AssertionError, common.ZipDelete, zip_file.name,
+                        'Test2')
+      with zipfile.ZipFile(zip_file.name, 'r') as check_zip:
+        entries = check_zip.namelist()
+        self.assertTrue('Test1' in entries)
+        self.assertFalse('Test2' in entries)
+        self.assertTrue('Test3' in entries)
+
+      common.ZipDelete(zip_file.name, ['Test3'])
+      with zipfile.ZipFile(zip_file.name, 'r') as check_zip:
+        entries = check_zip.namelist()
+        self.assertTrue('Test1' in entries)
+        self.assertFalse('Test2' in entries)
+        self.assertFalse('Test3' in entries)
+
+      common.ZipDelete(zip_file.name, ['Test1', 'Test2'])
+      with zipfile.ZipFile(zip_file.name, 'r') as check_zip:
+        entries = check_zip.namelist()
+        self.assertFalse('Test1' in entries)
+        self.assertFalse('Test2' in entries)
+        self.assertFalse('Test3' in entries)
+    finally:
+      os.remove(zip_file.name)
+
+
 class InstallRecoveryScriptFormatTest(unittest.TestCase):
   """Check the format of install-recovery.sh
 
