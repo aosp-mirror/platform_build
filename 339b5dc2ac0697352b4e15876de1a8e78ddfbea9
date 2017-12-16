@@ -220,6 +220,23 @@
     },
     {
       "key": {
+        "uuid": "061061c5_f6ecaa39",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-16T00:08:40Z",
+      "side": 1,
+      "message": "This seems complicated enough to be moved to its own bash or python script.",
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e6732197_b2d035dc",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 11
@@ -283,6 +300,23 @@
         "endLine": 51,
         "endChar": 17
       },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ff3a109_6e4bcbbf",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-16T00:08:40Z",
+      "side": 1,
+      "message": "Use sed -i to modify the file in place so you don\u0027t have to manually flip-flop between .temp1 and .temp2.",
       "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
