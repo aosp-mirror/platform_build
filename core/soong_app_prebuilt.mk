@@ -16,7 +16,25 @@ include $(BUILD_SYSTEM)/base_rules.mk
 ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
     $(intermediates.COMMON)/jacoco-report-classes.jar))
+  $(call add-dependency,$(common_javalib.jar),\
+    $(intermediates.COMMON)/jacoco-report-classes.jar)
 endif
+
+full_classes_jar := $(intermediates.COMMON)/classes.jar
+full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
+full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
+
+$(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_jar)))
+$(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_pre_proguard_jar)))
+
+ifneq ($(TURBINE_DISABLED),false)
+ifdef LOCAL_SOONG_HEADER_JAR
+$(eval $(call copy-one-file,$(LOCAL_SOONG_HEADER_JAR),$(full_classes_header_jar)))
+else
+$(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
+endif
+endif # TURBINE_DISABLED != false
+
 
 $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
 
