@@ -88,7 +88,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
   endif
 
   # Make sure we've built the NDK.
-  my_additional_dependencies += $(SOONG_OUT_DIR)/ndk.timestamp
+  my_additional_dependencies += $(SOONG_OUT_DIR)/ndk_base.timestamp
 
   # mips32r6 is not supported by the NDK. No released NDK contains these
   # libraries, but the r10 in prebuilts/ndk had a local hack to add them :(
