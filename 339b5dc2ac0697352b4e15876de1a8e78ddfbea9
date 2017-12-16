@@ -1,0 +1,446 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e58e449c_9ff56016",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "Can you add a comment with the list of expected inputs and outputs? That just makes it easier to reason about in the future.",
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00e30622_dac37d04",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "is_native talks more about whether we\u0027re likely to be building more than one test (arch-specific) rather than whether it\u0027s a native or java test. Perhaps this would be better chosen based on binary.mk vs java*.mk? and prebuilt_internal, which only occasionally goes through those :(",
+      "range": {
+        "startLine": 18,
+        "startChar": 13,
+        "endLine": 18,
+        "endChar": 22
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74f60d6c_3090ce73",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "This needs to depend on $(NATIVE_TEST_CONFIG_TEMPLATE)",
+      "range": {
+        "startLine": 20,
+        "startChar": 33,
+        "endLine": 20,
+        "endChar": 35
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed5a6921_3d796d0e",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "The canonical way to identify the manifest file is at the top of android_manifest.mk",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 25
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4f6b0690_58c8eb89",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "This needs to depend on $(EMPTY_TEST_CONFIG) and $(INSTRUMENTATION_TEST_CONFIG_TEMPLATE)",
+      "range": {
+        "startLine": 33,
+        "startChar": 34,
+        "endLine": 33,
+        "endChar": 36
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "697a9596_551b222c",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "Remove $@ before writing to it:\n\n @rm -f $@",
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e093ee13_a4fa3a93",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "-P cannot be used, since it isn\u0027t supported by Mac (which uses bsd grep)",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 38
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96db1ad3_63509436",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "This also does something different on mac (gzip decompression)",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 50
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72ab5937_17e88510",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "This doesn\u0027t do anything?",
+      "range": {
+        "startLine": 45,
+        "startChar": 1,
+        "endLine": 45,
+        "endChar": 10
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7ce124a_2ea84e0b",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "Use $$( instead of $(shell so that this is evaluated by bash",
+      "range": {
+        "startLine": 45,
+        "startChar": 26,
+        "endLine": 45,
+        "endChar": 33
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6732197_b2d035dc",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "$$(",
+      "range": {
+        "startLine": 49,
+        "startChar": 11,
+        "endLine": 49,
+        "endChar": 18
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65276121_b85ae73e",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "$$(",
+      "range": {
+        "startLine": 50,
+        "startChar": 9,
+        "endLine": 50,
+        "endChar": 16
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "609b3d90_5be9c361",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "$$(",
+      "range": {
+        "startLine": 51,
+        "startChar": 10,
+        "endLine": 51,
+        "endChar": 17
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d354909_0999b840",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "This is very error prone, what if LOCAL_MODULE contains the substring \"host\"?\n\nWhat are you actually trying to understand here? Would LOCAL_IS_HOST_MODULE be better used?",
+      "range": {
+        "startLine": 537,
+        "startChar": 15,
+        "endLine": 537,
+        "endChar": 32
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7316ed99_71b3adb7",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "We usually reserve LOCAL_* variables for user inputs, this is just a variable being output by the other makefile.",
+      "range": {
+        "startLine": 548,
+        "startChar": 23,
+        "endLine": 548,
+        "endChar": 53
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c35a22e_ea06bd59",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "This needs to be cleared outside of the _compat_files if check",
+      "range": {
+        "startLine": 554,
+        "startChar": 0,
+        "endLine": 554,
+        "endChar": 12
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9eb3c9cf_d4d177a4",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 562,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "clear test_config?",
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f68b50ba_ab27d9fe",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "Like I said in the other comment, this shouldn\u0027t be a LOCAL_* variable, and doesn\u0027t need to be set here.",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 30
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4783eb5_b4c0a66e",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "This isn\u0027t used?",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 30
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e84592bb_fe67e0f6",
+        "filename": "core/config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:04:39Z",
+      "side": 1,
+      "message": "This shouldn\u0027t be used outside of the build system, so just directly refer to it instead of setting this.",
+      "range": {
+        "startLine": 161,
+        "startChar": 0,
+        "endLine": 161,
+        "endChar": 25
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
