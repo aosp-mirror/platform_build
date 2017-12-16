@@ -237,6 +237,24 @@
     },
     {
       "key": {
+        "uuid": "14836cdc_5b121cbf",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:11:19Z",
+      "side": 1,
+      "message": "Or go :)",
+      "parentUuid": "061061c5_f6ecaa39",
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e6732197_b2d035dc",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 11
@@ -317,6 +335,24 @@
       "writtenOn": "2017-12-16T00:08:40Z",
       "side": 1,
       "message": "Use sed -i to modify the file in place so you don\u0027t have to manually flip-flop between .temp1 and .temp2.",
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2049fa83_9807ec04",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-16T00:11:19Z",
+      "side": 1,
+      "message": "But be careful, because Mac requires an argument to -i",
+      "parentUuid": "3ff3a109_6e4bcbbf",
       "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
