@@ -58,7 +58,7 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       very rarely used, since it's expected to have a dedicated OEM partition
       for OEM-specific properties. Only meaningful when -o is specified.
 
-  -w  (--wipe_user_data)
+  --wipe_user_data
       Generate an OTA package that will wipe the user data partition
       when installed.
 
@@ -109,9 +109,6 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       Specifies the threshold that will be used to compute the maximum
       allowed stash size (defaults to 0.8).
 
-  --gen_verify
-      Generate an OTA package that verifies the partitions.
-
   --log_diff <file>
       Generate a log file that shows the differences in the source and target
       builds for an incremental package. This option is only meaningful when
@@ -137,7 +134,6 @@ if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
   sys.exit(1)
 
-import copy
 import multiprocessing
 import os.path
 import subprocess
@@ -173,7 +169,6 @@ OPTIONS.full_bootloader = False
 # Stash size cannot exceed cache_size * threshold.
 OPTIONS.cache_size = None
 OPTIONS.stash_threshold = 0.8
-OPTIONS.gen_verify = False
 OPTIONS.log_diff = None
 OPTIONS.payload_signer = None
 OPTIONS.payload_signer_args = []
@@ -937,78 +932,6 @@ endif;
   WriteMetadata(metadata, output_zip)
 
 
-def WriteVerifyPackage(input_zip, output_zip):
-  script = edify_generator.EdifyGenerator(3, OPTIONS.info_dict)
-
-  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
-  recovery_mount_options = OPTIONS.info_dict.get(
-      "recovery_mount_options")
-  oem_dicts = None
-  if oem_props:
-    oem_dicts = _LoadOemDicts(script, recovery_mount_options)
-
-  target_fp = CalculateFingerprint(oem_props, oem_dicts and oem_dicts[0],
-                                   OPTIONS.info_dict)
-  metadata = {
-      "post-build": target_fp,
-      "pre-device": GetOemProperty("ro.product.device", oem_props,
-                                   oem_dicts and oem_dicts[0],
-                                   OPTIONS.info_dict),
-      "post-timestamp": GetBuildProp("ro.build.date.utc", OPTIONS.info_dict),
-  }
-
-  device_specific = common.DeviceSpecificParams(
-      input_zip=input_zip,
-      input_version=OPTIONS.info_dict["recovery_api_version"],
-      output_zip=output_zip,
-      script=script,
-      input_tmp=OPTIONS.input_tmp,
-      metadata=metadata,
-      info_dict=OPTIONS.info_dict)
-
-  AppendAssertions(script, OPTIONS.info_dict, oem_dicts)
-
-  script.Print("Verifying device images against %s..." % target_fp)
-  script.AppendExtra("")
-
-  script.Print("Verifying boot...")
-  boot_img = common.GetBootableImage(
-      "boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
-  boot_type, boot_device = common.GetTypeAndDevice(
-      "/boot", OPTIONS.info_dict)
-  script.Verify("%s:%s:%d:%s" % (
-      boot_type, boot_device, boot_img.size, boot_img.sha1))
-  script.AppendExtra("")
-
-  script.Print("Verifying recovery...")
-  recovery_img = common.GetBootableImage(
-      "recovery.img", "recovery.img", OPTIONS.input_tmp, "RECOVERY")
-  recovery_type, recovery_device = common.GetTypeAndDevice(
-      "/recovery", OPTIONS.info_dict)
-  script.Verify("%s:%s:%d:%s" % (
-      recovery_type, recovery_device, recovery_img.size, recovery_img.sha1))
-  script.AppendExtra("")
-
-  system_tgt = GetImage("system", OPTIONS.input_tmp)
-  system_tgt.ResetFileMap()
-  system_diff = common.BlockDifference("system", system_tgt, src=None)
-  system_diff.WriteStrictVerifyScript(script)
-
-  if HasVendorPartition(input_zip):
-    vendor_tgt = GetImage("vendor", OPTIONS.input_tmp)
-    vendor_tgt.ResetFileMap()
-    vendor_diff = common.BlockDifference("vendor", vendor_tgt, src=None)
-    vendor_diff.WriteStrictVerifyScript(script)
-
-  # Device specific partitions, such as radio, bootloader and etc.
-  device_specific.VerifyOTA_Assertions()
-
-  script.SetProgress(1.0)
-  script.AddToZip(input_zip, output_zip, input_path=OPTIONS.updater_binary)
-  metadata["ota-required-cache"] = str(script.required_cache)
-  WriteMetadata(metadata, output_zip)
-
-
 def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                                       source_file=None):
   """Generate an Android OTA package that has A/B update payload."""
@@ -1244,44 +1167,33 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   common.ZipClose(output_zip)
 
   # SignOutput(), which in turn calls signapk.jar, will possibly reorder the
-  # zip entries, as well as padding the entry headers. We do a preliminary
+  # ZIP entries, as well as padding the entry headers. We do a preliminary
   # signing (with an incomplete metadata entry) to allow that to happen. Then
-  # compute the zip entry offsets, write back the final metadata and do the
+  # compute the ZIP entry offsets, write back the final metadata and do the
   # final signing.
-  prelim_signing = tempfile.NamedTemporaryFile()
-  SignOutput(temp_zip_file.name, prelim_signing.name)
+  prelim_signing = common.MakeTempFile(suffix='.zip')
+  SignOutput(temp_zip_file.name, prelim_signing)
   common.ZipClose(temp_zip_file)
 
   # Open the signed zip. Compute the final metadata that's needed for streaming.
-  prelim_zip = zipfile.ZipFile(prelim_signing, "r",
-                               compression=zipfile.ZIP_DEFLATED)
+  prelim_signing_zip = zipfile.ZipFile(prelim_signing, 'r')
   expected_length = len(metadata['ota-streaming-property-files'])
   metadata['ota-streaming-property-files'] = ComputeStreamingMetadata(
-      prelim_zip, reserve_space=False, expected_length=expected_length)
+      prelim_signing_zip, reserve_space=False, expected_length=expected_length)
+  common.ZipClose(prelim_signing_zip)
 
-  # Copy the zip entries, as we cannot update / delete entries with zipfile.
-  final_signing = tempfile.NamedTemporaryFile()
-  output_zip = zipfile.ZipFile(final_signing, "w",
+  # Replace the METADATA entry.
+  common.ZipDelete(prelim_signing, METADATA_NAME)
+  output_zip = zipfile.ZipFile(prelim_signing, 'a',
                                compression=zipfile.ZIP_DEFLATED)
-  for item in prelim_zip.infolist():
-    if item.filename == METADATA_NAME:
-      continue
-
-    data = prelim_zip.read(item.filename)
-    out_info = copy.copy(item)
-    common.ZipWriteStr(output_zip, out_info, data)
-
-  # Now write the final metadata entry.
   WriteMetadata(metadata, output_zip)
-  common.ZipClose(prelim_zip)
   common.ZipClose(output_zip)
 
   # Re-sign the package after updating the metadata entry.
-  SignOutput(final_signing.name, output_file)
-  final_signing.close()
+  SignOutput(prelim_signing, output_file)
 
   # Reopen the final signed zip to double check the streaming metadata.
-  output_zip = zipfile.ZipFile(output_file, "r")
+  output_zip = zipfile.ZipFile(output_file, 'r')
   actual = metadata['ota-streaming-property-files'].strip()
   expected = ComputeStreamingMetadata(output_zip)
   assert actual == expected, \
@@ -1300,7 +1212,7 @@ def main(argv):
       OPTIONS.full_radio = True
     elif o == "--full_bootloader":
       OPTIONS.full_bootloader = True
-    elif o in ("-w", "--wipe_user_data"):
+    elif o == "--wipe_user_data":
       OPTIONS.wipe_user_data = True
     elif o == "--downgrade":
       OPTIONS.downgrade = True
@@ -1337,8 +1249,6 @@ def main(argv):
       except ValueError:
         raise ValueError("Cannot parse value %r for option %r - expecting "
                          "a float" % (a, o))
-    elif o == "--gen_verify":
-      OPTIONS.gen_verify = True
     elif o == "--log_diff":
       OPTIONS.log_diff = a
     elif o == "--payload_signer":
@@ -1352,7 +1262,7 @@ def main(argv):
     return True
 
   args = common.ParseOptions(argv, __doc__,
-                             extra_opts="b:k:i:d:we:t:2o:",
+                             extra_opts="b:k:i:d:e:t:2o:",
                              extra_long_opts=[
                                  "package_key=",
                                  "incremental_from=",
@@ -1372,7 +1282,6 @@ def main(argv):
                                  "verify",
                                  "no_fallback_to_full",
                                  "stash_threshold=",
-                                 "gen_verify",
                                  "log_diff=",
                                  "payload_signer=",
                                  "payload_signer_args=",
@@ -1501,12 +1410,8 @@ def main(argv):
     print("--- can't determine the cache partition size ---")
   OPTIONS.cache_size = cache_size
 
-  # Generate a verify package.
-  if OPTIONS.gen_verify:
-    WriteVerifyPackage(input_zip, output_zip)
-
   # Generate a full OTA.
-  elif OPTIONS.incremental_source is None:
+  if OPTIONS.incremental_source is None:
     WriteFullOTAPackage(input_zip, output_zip)
 
   # Generate an incremental OTA. It will fall back to generate a full OTA on

@@ -467,16 +467,12 @@ def AddCache(output_zip, prefix="IMAGES/"):
 
 
 def ReplaceUpdatedFiles(zip_filename, files_list):
-  """Update all the zip entries listed in the files_list.
+  """Updates all the ZIP entries listed in files_list.
 
   For now the list includes META/care_map.txt, and the related files under
   SYSTEM/ after rebuilding recovery.
   """
-
-  cmd = ["zip", "-d", zip_filename] + files_list
-  p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-  p.communicate()
-
+  common.ZipDelete(zip_filename, files_list)
   output_zip = zipfile.ZipFile(zip_filename, "a",
                                compression=zipfile.ZIP_DEFLATED,
                                allowZip64=True)

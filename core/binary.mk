@@ -88,7 +88,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
   endif
 
   # Make sure we've built the NDK.
-  my_additional_dependencies += $(SOONG_OUT_DIR)/ndk.timestamp
+  my_additional_dependencies += $(SOONG_OUT_DIR)/ndk_base.timestamp
 
   # mips32r6 is not supported by the NDK. No released NDK contains these
   # libraries, but the r10 in prebuilts/ndk had a local hack to add them :(
@@ -207,51 +207,26 @@ ifneq ($(LOCAL_SDK_VERSION),)
     endif
   else # LOCAL_NDK_STL_VARIANT is not stlport_* either
   ifneq (,$(filter c++_%, $(LOCAL_NDK_STL_VARIANT)))
-    # Pre-r11 NDKs used libgabi++ for libc++'s C++ ABI, but r11 and later use
-    # libc++abi.
-    #
-    # r13 no longer has the inner directory as a side effect of just using
-    # external/libcxx.
-    ifeq (r10,$(LOCAL_NDK_VERSION))
-      my_ndk_stl_include_path := \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++/libcxx/include
-      my_ndk_stl_include_path += \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++/gabi++/include
-    else ifeq (r11,$(LOCAL_NDK_VERSION))
-      my_ndk_stl_include_path := \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++/libcxx/include
-      my_ndk_stl_include_path += \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++abi/libcxxabi/include
-    else
-      my_ndk_stl_include_path := \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++/include
-      my_ndk_stl_include_path += \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++abi/include
-    endif
+    my_ndk_stl_include_path := \
+      $(my_ndk_source_root)/cxx-stl/llvm-libc++/include
+    my_ndk_stl_include_path += \
+      $(my_ndk_source_root)/cxx-stl/llvm-libc++abi/include
     my_ndk_stl_include_path += $(my_ndk_source_root)/android/support/include
 
     my_libcxx_libdir := \
       $(my_ndk_source_root)/cxx-stl/llvm-libc++/libs/$(my_cpu_variant)
 
-    ifneq (,$(filter r10 r11,$(LOCAL_NDK_VERSION)))
-      ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
-        my_ndk_stl_static_lib := $(my_libcxx_libdir)/libc++_static.a
-      else
-        my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
-      endif
+    ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
+      my_ndk_stl_static_lib := \
+        $(my_libcxx_libdir)/libc++_static.a \
+        $(my_libcxx_libdir)/libc++abi.a
     else
-      ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
-        my_ndk_stl_static_lib := \
-          $(my_libcxx_libdir)/libc++_static.a \
-          $(my_libcxx_libdir)/libc++abi.a
-      else
-        my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
-      endif
+      my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
+    endif
 
-      my_ndk_stl_static_lib += $(my_libcxx_libdir)/libandroid_support.a
-      ifneq (,$(filter armeabi armeabi-v7a,$(my_cpu_variant)))
-        my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
-      endif
+    my_ndk_stl_static_lib += $(my_libcxx_libdir)/libandroid_support.a
+    ifneq (,$(filter armeabi armeabi-v7a,$(my_cpu_variant)))
+      my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
     endif
 
     my_ldlibs += -ldl
@@ -1739,15 +1714,14 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
     ifneq ($(LOCAL_TIDY_CHECKS),)
       my_tidy_checks := $(my_tidy_checks),$(LOCAL_TIDY_CHECKS)
     endif
-    # Set up global default clang-tidy flags, which is none.
-    my_tidy_flags := $(WITH_TIDY_FLAGS)
-    # Use local clang-tidy flags if specified.
-    ifneq ($(LOCAL_TIDY_FLAGS),)
-      my_tidy_flags := $(LOCAL_TIDY_FLAGS)
-    endif
+    my_tidy_flags += $(WITH_TIDY_FLAGS) $(LOCAL_TIDY_FLAGS)
     # If tidy flags are not specified, default to check all header files.
     ifeq ($(my_tidy_flags),)
       my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
+    endif
+    # If clang-tidy is not enabled globally, add the -quiet flag.
+    ifeq (,$(filter 1 true,$(WITH_TIDY)))
+      my_tidy_flags += -quiet
     endif
 
     # We might be using the static analyzer through clang-tidy.

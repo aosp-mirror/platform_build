@@ -34,7 +34,8 @@ endif
 ifdef DEVICE_MANIFEST_FILE
 # $(DEVICE_MANIFEST_FILE) can be a list of files
 include $(CLEAR_VARS)
-LOCAL_MODULE        := manifest.xml
+LOCAL_MODULE        := device_manifest.xml
+LOCAL_MODULE_STEM   := manifest.xml
 LOCAL_MODULE_CLASS  := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)
 
@@ -55,7 +56,8 @@ endif
 # Device Compatibility Matrix
 ifdef DEVICE_MATRIX_FILE
 include $(CLEAR_VARS)
-LOCAL_MODULE        := compatibility_matrix.xml
+LOCAL_MODULE        := device_compatibility_matrix.xml
+LOCAL_MODULE_STEM   := compatibility_matrix.xml
 LOCAL_MODULE_CLASS  := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)
 
@@ -71,7 +73,7 @@ endif
 
 # Framework Manifest
 include $(CLEAR_VARS)
-LOCAL_MODULE        := system_manifest.xml
+LOCAL_MODULE        := framework_manifest.xml
 LOCAL_MODULE_STEM   := manifest.xml
 LOCAL_MODULE_CLASS  := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT)
@@ -96,7 +98,7 @@ BUILT_SYSTEM_MANIFEST := $(LOCAL_BUILT_MODULE)
 
 # Framework Compatibility Matrix
 include $(CLEAR_VARS)
-LOCAL_MODULE        := system_compatibility_matrix.xml
+LOCAL_MODULE        := framework_compatibility_matrix.xml
 LOCAL_MODULE_STEM   := compatibility_matrix.xml
 LOCAL_MODULE_CLASS  := ETC
 LOCAL_MODULE_PATH   := $(TARGET_OUT)

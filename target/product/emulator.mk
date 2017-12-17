@@ -136,3 +136,10 @@ PRODUCT_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
 PRODUCT_CHARACTERISTICS := emulator
 
 PRODUCT_FULL_TREBLE_OVERRIDE := true
+
+#watchdog tiggers reboot because location service is not
+#responding, disble it for now.
+#still keep it on internal master as it is still working
+#once it is fixed in aosp, remove this block of comment.
+#PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+#config.disable_location=true
