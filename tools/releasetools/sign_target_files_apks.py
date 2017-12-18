@@ -278,7 +278,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if stat.S_ISLNK(info.external_attr >> 16):
         new_data = data
       else:
-        new_data = RewriteProps(data, misc_info)
+        new_data = RewriteProps(data)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
 
     elif info.filename.endswith("mac_permissions.xml"):
@@ -385,8 +385,14 @@ def ReplaceCerts(data):
 
 
 def EditTags(tags):
-  """Given a string containing comma-separated tags, apply the edits
-  specified in OPTIONS.tag_changes and return the updated string."""
+  """Applies the edits to the tag string as specified in OPTIONS.tag_changes.
+
+  Args:
+    tags: The input string that contains comma-separated tags.
+
+  Returns:
+    The updated tags (comma-separated and sorted).
+  """
   tags = set(tags.split(","))
   for ch in OPTIONS.tag_changes:
     if ch[0] == "-":
@@ -396,20 +402,27 @@ def EditTags(tags):
   return ",".join(sorted(tags))
 
 
-def RewriteProps(data, misc_info):
+def RewriteProps(data):
+  """Rewrites the system properties in the given string.
+
+  Each property is expected in 'key=value' format. The properties that contain
+  build tags (i.e. test-keys, dev-keys) will be updated accordingly by calling
+  EditTags().
+
+  Args:
+    data: Input string, separated by newlines.
+
+  Returns:
+    The string with modified properties.
+  """
   output = []
   for line in data.split("\n"):
     line = line.strip()
     original_line = line
     if line and line[0] != '#' and "=" in line:
       key, value = line.split("=", 1)
-      if (key in ("ro.build.fingerprint", "ro.vendor.build.fingerprint")
-          and misc_info.get("oem_fingerprint_properties") is None):
-        pieces = value.split("/")
-        pieces[-1] = EditTags(pieces[-1])
-        value = "/".join(pieces)
-      elif (key in ("ro.build.thumbprint", "ro.vendor.build.thumbprint")
-            and misc_info.get("oem_fingerprint_properties") is not None):
+      if key in ("ro.build.fingerprint", "ro.build.thumbprint",
+                 "ro.vendor.build.fingerprint", "ro.vendor.build.thumbprint"):
         pieces = value.split("/")
         pieces[-1] = EditTags(pieces[-1])
         value = "/".join(pieces)
