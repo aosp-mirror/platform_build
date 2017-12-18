@@ -2176,6 +2176,7 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/simg2img \
   $(HOST_OUT_EXECUTABLES)/e2fsck \
   $(HOST_OUT_EXECUTABLES)/build_verity_tree \
+  $(HOST_OUT_EXECUTABLES)/generate_verity_key \
   $(HOST_OUT_EXECUTABLES)/verity_signer \
   $(HOST_OUT_EXECUTABLES)/verity_verifier \
   $(HOST_OUT_EXECUTABLES)/append2simg \
@@ -2201,6 +2202,7 @@ OTATOOLS += \
   $(HOST_LIBRARY_PATH)/liblog$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libcutils$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libselinux$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libcrypto_utils$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libcrypto-host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libext2fs-host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libext2_blkid-host$(HOST_SHLIB_SUFFIX) \
