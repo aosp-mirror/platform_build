@@ -255,6 +255,24 @@
     },
     {
       "key": {
+        "uuid": "a20737c3_754eccc0",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-18T17:37:44Z",
+      "side": 1,
+      "message": "Comment removed by: Dan Shi",
+      "parentUuid": "14836cdc_5b121cbf",
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e6732197_b2d035dc",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 11
