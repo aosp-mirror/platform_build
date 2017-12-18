@@ -825,8 +825,6 @@ ifdef DEVICE_FRAMEWORK_MANIFEST_FILE
 endif
 $(.KATI_obsolete_var DEVICE_FRAMEWORK_MANIFEST_FILE,No one should ever need to use this.)
 
-FRAMEWORK_COMPATIBILITY_MATRIX_FILES := $(wildcard hardware/interfaces/compatibility_matrix.*.xml)
-
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(OUT_DIR)/build_date.txt)
 
