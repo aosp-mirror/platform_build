@@ -1044,7 +1044,6 @@ $(if $(BOARD_SYSTEMIMAGE_PARTITION_SIZE),$(hide) echo "system_size=$(BOARD_SYSTE
 $(if $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "system_fs_type=$(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
 $(if $(BOARD_SYSTEMIMAGE_EXTFS_INODE_COUNT),$(hide) echo "system_extfs_inode_count=$(BOARD_SYSTEMIMAGE_EXTFS_INODE_COUNT)" >> $(1))
 $(if $(BOARD_SYSTEMIMAGE_JOURNAL_SIZE),$(hide) echo "system_journal_size=$(BOARD_SYSTEMIMAGE_JOURNAL_SIZE)" >> $(1))
-$(if $(BOARD_HAS_EXT4_RESERVED_BLOCKS),$(hide) echo "has_ext4_reserved_blocks=$(BOARD_HAS_EXT4_RESERVED_BLOCKS)" >> $(1))
 $(if $(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "system_squashfs_compressor=$(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
 $(if $(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "system_squashfs_compressor_opt=$(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
 $(if $(BOARD_SYSTEMIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "system_squashfs_block_size=$(BOARD_SYSTEMIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
@@ -1457,9 +1456,6 @@ define build-systemimage-target
            du -sm $(TARGET_OUT) 1>&2;\
            if [ "$(INTERNAL_USERIMAGES_EXT_VARIANT)" == "ext4" ]; then \
                maxsize=$(BOARD_SYSTEMIMAGE_PARTITION_SIZE); \
-               if [ "$(BOARD_HAS_EXT4_RESERVED_BLOCKS)" == "true" ]; then \
-                   maxsize=$$((maxsize - 4096 * 4096)); \
-               fi; \
                echo "The max is $$(( maxsize / 1048576 )) MB." 1>&2 ;\
            else \
                echo "The max is $$(( $(BOARD_SYSTEMIMAGE_PARTITION_SIZE) / 1048576 )) MB." 1>&2 ;\
@@ -2482,9 +2478,6 @@ ifeq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 endif
 ifdef BOARD_RECOVERYIMAGE_PARTITION_SIZE
 	$(hide) echo "recovery_size=$(BOARD_RECOVERYIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
-endif
-ifdef BOARD_HAS_EXT4_RESERVED_BLOCKS
-	$(hide) echo "has_ext4_reserved_blocks=$(BOARD_HAS_EXT4_RESERVED_BLOCKS)" >> $(zip_root)/META/misc_info.txt
 endif
 ifdef TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS
 	@# TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS can be empty to indicate that nothing but defaults should be used.
