@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "676d2e4f_8f3d72b9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2419,
+      "author": {
+        "id": 1080224
+      },
+      "writtenOn": "2017-12-19T07:55:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "94150ec6_99a40338",
+      "revId": "42c2bf71f20aeec434e8468b0405af9d624ab527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ef76fe7d_5dcbf024",
         "filename": "core/host_dalvik_java_library.mk",
         "patchSetId": 3
@@ -33,6 +51,24 @@
       "revId": "42c2bf71f20aeec434e8468b0405af9d624ab527",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f71f89e1_b43d18fc",
+        "filename": "core/host_dalvik_java_library.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1080224
+      },
+      "writtenOn": "2017-12-19T07:55:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef76fe7d_5dcbf024",
+      "revId": "42c2bf71f20aeec434e8468b0405af9d624ab527",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
