@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "2f11521b_2a580cc9",
+        "filename": "target/product/aosp_x86_64.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2017-12-19T04:55:17Z",
+      "side": 1,
+      "message": "treble_common_64mk defines only the system part, emulator makefiles need to define the vendor part \n,ex. PRODUCT_DEFAULT_PROPERTY_OVERRIDES",
+      "parentUuid": "54864f11_91fc85d4",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 68
+      },
+      "revId": "d556e31f8fffe95350929e3ba614aa8d84714130",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6115df7b_4bf6aecc",
         "filename": "target/product/aosp_x86_64.mk",
         "patchSetId": 4
