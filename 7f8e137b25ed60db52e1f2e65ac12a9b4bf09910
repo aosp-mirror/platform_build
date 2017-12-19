@@ -93,6 +93,30 @@
       "revId": "7f8e137b25ed60db52e1f2e65ac12a9b4bf09910",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92f0cc8a_ad4e9b15",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 790,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2017-12-19T07:32:10Z",
+      "side": 1,
+      "message": "This variable is already added to READONLY list by soong.\nThis must be removed here, otherwise build error reported on the devices that does not define BOARD_VNDK_VERSION. If BOARD_VNDK_VERSION is not defined, soong tries to define this value to empty, and reported build error because it is included as \"readonly\" here.",
+      "parentUuid": "8125e88b_ef61f5ce",
+      "range": {
+        "startLine": 790,
+        "startChar": 0,
+        "endLine": 790,
+        "endChar": 21
+      },
+      "revId": "7f8e137b25ed60db52e1f2e65ac12a9b4bf09910",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
