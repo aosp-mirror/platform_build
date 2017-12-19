@@ -686,11 +686,32 @@ ifdef LOCAL_PICKUP_FILES
 ALL_MODULES.$(my_register_name).PICKUP_FILES := \
     $(ALL_MODULES.$(my_register_name).PICKUP_FILES) $(LOCAL_PICKUP_FILES)
 endif
+
 my_required_modules := $(LOCAL_REQUIRED_MODULES) \
     $(LOCAL_REQUIRED_MODULES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
 ifdef LOCAL_IS_HOST_MODULE
 my_required_modules += $(LOCAL_REQUIRED_MODULES_$($(my_prefix)OS))
 endif
+
+###############################################################################
+## When compiling against the VNDK, add the .vendor suffix to required modules.
+###############################################################################
+ifneq ($(LOCAL_USE_VNDK),)
+  ####################################################
+  ## Soong modules may be built twice, once for /system
+  ## and once for /vendor. If we're using the VNDK,
+  ## switch all soong libraries over to the /vendor
+  ## variant.
+  ####################################################
+  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    # We don't do this renaming for soong-defined modules since they already
+    # have correct names (with .vendor suffix when necessary) in their
+    # LOCAL_*_LIBRARIES.
+    my_required_modules := $(foreach l,$(my_required_modules),\
+      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  endif
+endif
+
 ALL_MODULES.$(my_register_name).REQUIRED := \
     $(strip $(ALL_MODULES.$(my_register_name).REQUIRED) $(my_required_modules))
 ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED := \
