@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ce8a72c_b7da31ba",
+        "filename": "core/config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 797,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-12-19T21:39:47Z",
+      "side": 1,
+      "message": "use .KATI_obsolete so people can\u0027t even reference it after this",
+      "range": {
+        "startLine": 797,
+        "startChar": 0,
+        "endLine": 797,
+        "endChar": 25
+      },
+      "revId": "12f79e739ae9108a58c8e96a6bce84d354713a25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
