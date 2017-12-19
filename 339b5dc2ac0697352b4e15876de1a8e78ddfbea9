@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "d74bfcdb_703a55a3",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e58e449c_9ff56016",
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "00e30622_dac37d04",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 11
@@ -30,6 +48,30 @@
       "writtenOn": "2017-12-16T00:04:39Z",
       "side": 1,
       "message": "is_native talks more about whether we\u0027re likely to be building more than one test (arch-specific) rather than whether it\u0027s a native or java test. Perhaps this would be better chosen based on binary.mk vs java*.mk? and prebuilt_internal, which only occasionally goes through those :(",
+      "range": {
+        "startLine": 18,
+        "startChar": 13,
+        "endLine": 18,
+        "endChar": 22
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4dc0ca5c_999e1156",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "is_native is set in base_rules.mk:\nhttps://cs.corp.google.com/android/build/make/core/base_rules.mk?rcl\u003dc1b50508ba5f60b31f285586adf690522696b62e\u0026l\u003d501\n\nThat logic is used to determine if a test is a native test. Do you think there is a flaw there?",
+      "parentUuid": "00e30622_dac37d04",
       "range": {
         "startLine": 18,
         "startChar": 13,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "66737687_256d0762",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "74f60d6c_3090ce73",
+      "range": {
+        "startLine": 20,
+        "startChar": 33,
+        "endLine": 20,
+        "endChar": 35
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ed5a6921_3d796d0e",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 11
@@ -85,6 +151,30 @@
       "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c06c3a34_72bf375b",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ed5a6921_3d796d0e",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 25
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -111,6 +201,30 @@
     },
     {
       "key": {
+        "uuid": "9f09d2f8_dae784e2",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4f6b0690_58c8eb89",
+      "range": {
+        "startLine": 33,
+        "startChar": 34,
+        "endLine": 33,
+        "endChar": 36
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "697a9596_551b222c",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 11
@@ -128,6 +242,24 @@
     },
     {
       "key": {
+        "uuid": "ee5aeb3d_3b97b872",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "697a9596_551b222c",
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e093ee13_a4fa3a93",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 11
@@ -139,6 +271,30 @@
       "writtenOn": "2017-12-16T00:04:39Z",
       "side": 1,
       "message": "-P cannot be used, since it isn\u0027t supported by Mac (which uses bsd grep)",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 38
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "442a314a_e0b6a7e1",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "I will rewrite this build rule to call a python script to create the test config.",
+      "parentUuid": "e093ee13_a4fa3a93",
       "range": {
         "startLine": 39,
         "startChar": 0,
@@ -171,6 +327,30 @@
       "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ece72a7_23f22a04",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "96db1ad3_63509436",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 50
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -270,6 +450,24 @@
       "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6b73771_0bbbd976",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a20737c3_754eccc0",
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -400,6 +598,30 @@
     },
     {
       "key": {
+        "uuid": "0223a405_ff7d1829",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 537,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done\n\nLOCAL_IS_HOST_MODULE should work.",
+      "parentUuid": "1d354909_0999b840",
+      "range": {
+        "startLine": 537,
+        "startChar": 15,
+        "endLine": 537,
+        "endChar": 32
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7316ed99_71b3adb7",
         "filename": "core/base_rules.mk",
         "patchSetId": 11
@@ -420,6 +642,30 @@
       "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "51f63fad_cd287a2f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7316ed99_71b3adb7",
+      "range": {
+        "startLine": 548,
+        "startChar": 23,
+        "endLine": 548,
+        "endChar": 53
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -446,6 +692,30 @@
     },
     {
       "key": {
+        "uuid": "ea59ae4b_0d8f85aa",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c35a22e_ea06bd59",
+      "range": {
+        "startLine": 554,
+        "startChar": 0,
+        "endLine": 554,
+        "endChar": 12
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9eb3c9cf_d4d177a4",
         "filename": "core/base_rules.mk",
         "patchSetId": 11
@@ -460,6 +730,24 @@
       "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13b9c562_3dd66f27",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 562,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9eb3c9cf_d4d177a4",
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -486,6 +774,30 @@
     },
     {
       "key": {
+        "uuid": "9f057d89_4f71777c",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f68b50ba_ab27d9fe",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 30
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e4783eb5_b4c0a66e",
         "filename": "core/clear_vars.mk",
         "patchSetId": 11
@@ -509,6 +821,30 @@
     },
     {
       "key": {
+        "uuid": "fb7f7243_09ae1d7c",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e4783eb5_b4c0a66e",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 30
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e84592bb_fe67e0f6",
         "filename": "core/config.mk",
         "patchSetId": 11
@@ -529,6 +865,30 @@
       "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1208c25_d9e1136a",
+        "filename": "core/config.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-19T20:50:20Z",
+      "side": 1,
+      "message": "Done\n\nDoes that mean if the mk file is only used once, we don\u0027t need to define a const here?",
+      "parentUuid": "e84592bb_fe67e0f6",
+      "range": {
+        "startLine": 161,
+        "startChar": 0,
+        "endLine": 161,
+        "endChar": 25
+      },
+      "revId": "339b5dc2ac0697352b4e15876de1a8e78ddfbea9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
