@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8928b4b5_bddad46e",
+        "filename": "target/product/aosp_x86_64.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-19T03:39:12Z",
+      "side": 1,
+      "message": "This is because we take the first instance of a property (uniq-pairs-by-first-component). You shouldn\u0027t need this if you use core_64_bit / core_minimal as everyone else does.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 68
+      },
+      "revId": "d556e31f8fffe95350929e3ba614aa8d84714130",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6115df7b_4bf6aecc",
+        "filename": "target/product/aosp_x86_64.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-19T03:39:12Z",
+      "side": 1,
+      "message": "Why include instead of inherit?",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 53
+      },
+      "revId": "d556e31f8fffe95350929e3ba614aa8d84714130",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8401872f_9f05f47b",
+        "filename": "target/product/aosp_x86_64.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-19T03:39:12Z",
+      "side": 1,
+      "message": "This is not a superset of aosp_base_telephony used below",
+      "range": {
+        "startLine": 23,
+        "startChar": 34,
+        "endLine": 23,
+        "endChar": 53
+      },
+      "revId": "d556e31f8fffe95350929e3ba614aa8d84714130",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad55ac55_f807ba25",
+        "filename": "target/product/treble_common.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-19T03:39:12Z",
+      "side": 1,
+      "message": "This should be in the BoardConfig, not the product makefile",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 25
+      },
+      "revId": "d556e31f8fffe95350929e3ba614aa8d84714130",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69756df9_5aa45239",
+        "filename": "target/product/treble_common.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-19T03:39:12Z",
+      "side": 1,
+      "message": "This is a BoardConfig variable, not a product variable",
+      "range": {
+        "startLine": 80,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 40
+      },
+      "revId": "d556e31f8fffe95350929e3ba614aa8d84714130",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6d895f66_6753fb93",
+        "filename": "target/product/treble_common_64.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-19T03:39:12Z",
+      "side": 1,
+      "message": "This shouldn\u0027t exist, 64-bit products should be inheriting from core_64_bit first to pick this up:\n\n  $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 35
+      },
+      "revId": "d556e31f8fffe95350929e3ba614aa8d84714130",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
