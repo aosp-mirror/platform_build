@@ -119,7 +119,6 @@ $(call add_json_str,  Override_rs_driver,                $(OVERRIDE_RS_DRIVER))
 
 $(call add_json_bool, Treble,                            $(filter true,$(PRODUCT_FULL_TREBLE)))
 $(call add_json_bool, Treble_linker_namespaces,          $(filter true,$(PRODUCT_TREBLE_LINKER_NAMESPACES)))
-$(call add_json_bool, Sepolicy_split,                    $(filter true,$(PRODUCT_SEPOLICY_SPLIT)))
 $(call add_json_bool, Enforce_vintf_manifest,            $(filter true,$(PRODUCT_ENFORCE_VINTF_MANIFEST)))
 
 $(call add_json_bool, Uml,                               $(filter true,$(TARGET_USER_MODE_LINUX)))
