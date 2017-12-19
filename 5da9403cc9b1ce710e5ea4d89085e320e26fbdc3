@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5473ff5f_387e06f8",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2017-12-19T02:06:17Z",
+      "side": 1,
+      "message": "See corresponding change CL:571549",
+      "range": {
+        "startLine": 104,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 64
+      },
+      "revId": "5da9403cc9b1ce710e5ea4d89085e320e26fbdc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
