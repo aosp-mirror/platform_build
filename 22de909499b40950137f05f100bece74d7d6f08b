@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "011b2439_78363e5f",
+        "filename": "target/product/vndk/init.gsi.rc",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-19T13:04:32Z",
+      "side": 1,
+      "message": "sweet!",
+      "range": {
+        "startLine": 2,
+        "startChar": 50,
+        "endLine": 2,
+        "endChar": 52
+      },
+      "revId": "22de909499b40950137f05f100bece74d7d6f08b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
