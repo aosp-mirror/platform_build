@@ -842,7 +842,8 @@ installed_notice_html_or_xml_gz := $(TARGET_OUT)/etc/NOTICE.html.gz
 tools_notice_file_txt := $(HOST_OUT_INTERMEDIATES)/NOTICE.txt
 tools_notice_file_html := $(HOST_OUT_INTERMEDIATES)/NOTICE.html
 
-ifeq ($(PRODUCT_FULL_TREBLE),true)
+# TODO(b/69865032): Make PRODUCT_NOTICE_SPLIT the default behavior.
+ifeq ($(PRODUCT_NOTICE_SPLIT),true)
 target_notice_file_html_or_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml
 target_notice_file_html_or_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml.gz
 installed_notice_html_or_xml_gz := $(TARGET_OUT)/etc/NOTICE.xml.gz
@@ -1044,7 +1045,6 @@ $(if $(BOARD_SYSTEMIMAGE_PARTITION_SIZE),$(hide) echo "system_size=$(BOARD_SYSTE
 $(if $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "system_fs_type=$(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
 $(if $(BOARD_SYSTEMIMAGE_EXTFS_INODE_COUNT),$(hide) echo "system_extfs_inode_count=$(BOARD_SYSTEMIMAGE_EXTFS_INODE_COUNT)" >> $(1))
 $(if $(BOARD_SYSTEMIMAGE_JOURNAL_SIZE),$(hide) echo "system_journal_size=$(BOARD_SYSTEMIMAGE_JOURNAL_SIZE)" >> $(1))
-$(if $(BOARD_HAS_EXT4_RESERVED_BLOCKS),$(hide) echo "has_ext4_reserved_blocks=$(BOARD_HAS_EXT4_RESERVED_BLOCKS)" >> $(1))
 $(if $(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "system_squashfs_compressor=$(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
 $(if $(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "system_squashfs_compressor_opt=$(BOARD_SYSTEMIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
 $(if $(BOARD_SYSTEMIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "system_squashfs_block_size=$(BOARD_SYSTEMIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
@@ -1457,9 +1457,6 @@ define build-systemimage-target
            du -sm $(TARGET_OUT) 1>&2;\
            if [ "$(INTERNAL_USERIMAGES_EXT_VARIANT)" == "ext4" ]; then \
                maxsize=$(BOARD_SYSTEMIMAGE_PARTITION_SIZE); \
-               if [ "$(BOARD_HAS_EXT4_RESERVED_BLOCKS)" == "true" ]; then \
-                   maxsize=$$((maxsize - 4096 * 4096)); \
-               fi; \
                echo "The max is $$(( maxsize / 1048576 )) MB." 1>&2 ;\
            else \
                echo "The max is $$(( $(BOARD_SYSTEMIMAGE_PARTITION_SIZE) / 1048576 )) MB." 1>&2 ;\
@@ -2175,6 +2172,7 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/simg2img \
   $(HOST_OUT_EXECUTABLES)/e2fsck \
   $(HOST_OUT_EXECUTABLES)/build_verity_tree \
+  $(HOST_OUT_EXECUTABLES)/generate_verity_key \
   $(HOST_OUT_EXECUTABLES)/verity_signer \
   $(HOST_OUT_EXECUTABLES)/verity_verifier \
   $(HOST_OUT_EXECUTABLES)/append2simg \
@@ -2200,6 +2198,7 @@ OTATOOLS += \
   $(HOST_LIBRARY_PATH)/liblog$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libcutils$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libselinux$(HOST_SHLIB_SUFFIX) \
+  $(HOST_LIBRARY_PATH)/libcrypto_utils$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libcrypto-host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libext2fs-host$(HOST_SHLIB_SUFFIX) \
   $(HOST_LIBRARY_PATH)/libext2_blkid-host$(HOST_SHLIB_SUFFIX) \
@@ -2480,9 +2479,6 @@ ifeq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 endif
 ifdef BOARD_RECOVERYIMAGE_PARTITION_SIZE
 	$(hide) echo "recovery_size=$(BOARD_RECOVERYIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
-endif
-ifdef BOARD_HAS_EXT4_RESERVED_BLOCKS
-	$(hide) echo "has_ext4_reserved_blocks=$(BOARD_HAS_EXT4_RESERVED_BLOCKS)" >> $(zip_root)/META/misc_info.txt
 endif
 ifdef TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS
 	@# TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS can be empty to indicate that nothing but defaults should be used.
