@@ -1404,10 +1404,12 @@ endif
 ## other NDK-built libraries
 ####################################################
 
+include $(BUILD_SYSTEM)/allowed_ndk_types.mk
+
 ifdef LOCAL_SDK_VERSION
-my_link_type := native:ndk
-my_warn_types :=
-my_allowed_types := native:ndk
+my_link_type := native:ndk:$(my_ndk_stl_family)
+my_warn_types := $(my_warn_ndk_types)
+my_allowed_types := $(my_allowed_ndk_types)
 else ifdef LOCAL_USE_VNDK
     _name := $(patsubst %.vendor,%,$(LOCAL_MODULE))
     ifneq ($(filter $(_name),$(VNDK_CORE_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES) $(LLNDK_LIBRARIES)),)
@@ -1427,8 +1429,8 @@ else ifdef LOCAL_USE_VNDK
     endif
 else
 my_link_type := native:platform
-my_warn_types :=
-my_allowed_types := native:ndk native:platform
+my_warn_types := $(my_warn_ndk_types)
+my_allowed_types := $(my_allowed_ndk_types) native:platform
 endif
 
 my_link_deps := $(addprefix STATIC_LIBRARIES:,$(my_whole_static_libraries) $(my_static_libraries))
