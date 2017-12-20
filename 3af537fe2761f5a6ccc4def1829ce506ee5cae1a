@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "01ad8e8a_3c9a40e0",
+        "filename": "tools/auto_gen_test_config.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-20T22:58:36Z",
+      "side": 1,
+      "message": "Will this be missing a trailing \\n?",
+      "revId": "3af537fe2761f5a6ccc4def1829ce506ee5cae1a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ade6c2e_849ac725",
+        "filename": "tools/auto_gen_test_config.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-20T22:58:36Z",
+      "side": 1,
+      "message": "This doesn\u0027t return an error.  If it is not an error it should be silent.",
+      "revId": "3af537fe2761f5a6ccc4def1829ce506ee5cae1a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
