@@ -81,3 +81,9 @@ ifeq ($(BOARD_AVB_ENABLE),true)
 $(error BOARD_AVB_ENABLE cannot be set for Treble GSI)
 endif
 BOARD_BUILD_DISABLED_VBMETAIMAGE := true
+
+#GSI support for the devices that disable VNDK enforcing
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/etc/ld.config.txt:system/etc/ld.config.noenforce.txt \
+    build/make/target/product/vndk/init.gsi.rc:system/etc/init/init.gsi.rc \
+    build/make/target/product/vndk/init.noenforce.rc:system/etc/init/gsi/init.noenforce.rc

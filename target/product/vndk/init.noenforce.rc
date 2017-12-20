@@ -1,0 +1,3 @@
+on early-init
+    # If ro.vndk.version is not set, use ld.config.nonenforce.txt
+    export LD_CONFIG_FILE /system/etc/ld.config.noenforce.txt
