@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "12ac2b4b_fcedf558",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2017-12-20T21:46:34Z",
+      "side": 1,
+      "message": "Could you add $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)-\nas prefix to the output file names, including the BOOT-*.txt file names?\n\nThen we can have multiple product builds share the same DIST_DIR.",
+      "range": {
+        "startLine": 1,
+        "startChar": 31,
+        "endLine": 1,
+        "endChar": 60
+      },
+      "revId": "3735cebecb8f55cef66c7a1cd55ef0777dc40b02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
