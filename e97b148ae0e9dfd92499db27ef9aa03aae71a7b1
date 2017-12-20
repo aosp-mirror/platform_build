@@ -22,6 +22,30 @@
       "revId": "e97b148ae0e9dfd92499db27ef9aa03aae71a7b1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a3cf546_c6b20f7e",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 797,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2017-12-20T23:01:25Z",
+      "side": 1,
+      "message": "This was noted in the commit message, and I kind of want to keep it this way for consistency. It corresponds to the framework manifest file of which there is exactly one installed.",
+      "parentUuid": "8c6b09f1_9e91bc0c",
+      "range": {
+        "startLine": 797,
+        "startChar": 0,
+        "endLine": 797,
+        "endChar": 23
+      },
+      "revId": "e97b148ae0e9dfd92499db27ef9aa03aae71a7b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
