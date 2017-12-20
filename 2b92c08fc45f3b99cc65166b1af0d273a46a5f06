@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ffd98de6_c84f1741",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2794,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-20T23:33:07Z",
+      "side": 1,
+      "message": "I\u0027m a little worried about this.  We don\u0027t have any control over the zipinfo tool, it\u0027s whatever is installed on the host.  This is assuming that zipinfo will never print any other lines other than the classes.dex info.\n\nBuild dexpreopting and art have become way too intertwined, especially as the complexity of dexpreopting decisions has increased.  I\u0027d like to move to a model where we provide the APK and some configuration values to ART as a build step, and it produces an APK that is modified however it needs to be.  I don\u0027t know how to deal with all the extra files that ART needs to create though (odex, vdex, etc.).  Maybe those could be stored uncompressed in the APK?",
+      "revId": "2b92c08fc45f3b99cc65166b1af0d273a46a5f06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
