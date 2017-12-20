@@ -2415,15 +2415,16 @@ endef
 define transform-classes-d8.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
-$(hide) rm -rf $(dir $@)classes*.dex $(dir $@)*.class $(dir $@)d8_input
-$(hide) unzip -qq -d $(dir $@)d8_input $< "*.class"
+$(hide) rm -f $(dir $@)classes*.dex $(dir $@)d8_input.jar
+$(hide) $(ZIP2ZIP) -j -i $< -o $(dir $@)d8_input.jar "**/*.class"
 $(hide) $(DX_COMMAND) \
     --output $(dir $@) \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
+    $(subst --main-dex-list=, --main-dex-list , \
     $(subst --no-locals, --release, \
-        $(filter-out --core-library --multi-dex,$(PRIVATE_DX_FLAGS))) \
-    $$(find $(dir $@)d8_input -name *.class | sort)
-$(hide) rm -fr $(dir $@)d8_input
+        $(filter-out --core-library --multi-dex --minimal-main-dex,$(PRIVATE_DX_FLAGS)))) \
+    $(dir $@)d8_input.jar
+$(hide) rm -f $(dir $@)d8_input.jar
 endef
 
 # Create a mostly-empty .jar file that we'll add to later.
