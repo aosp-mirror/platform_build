@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8c6b09f1_9e91bc0c",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 797,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-20T23:00:24Z",
+      "side": 1,
+      "message": "FRAMEWORK_MANIFEST_FILES?",
+      "range": {
+        "startLine": 797,
+        "startChar": 0,
+        "endLine": 797,
+        "endChar": 23
+      },
+      "revId": "e97b148ae0e9dfd92499db27ef9aa03aae71a7b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
