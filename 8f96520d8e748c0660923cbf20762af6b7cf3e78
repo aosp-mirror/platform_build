@@ -34,6 +34,24 @@
       "revId": "8f96520d8e748c0660923cbf20762af6b7cf3e78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "229114dd_a9a7f6dd",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-12-20T22:48:47Z",
+      "side": 1,
+      "message": "Did this now; made ANDROID_JAVA8_HOME available to config.mk via ui/build/config.go as discussed; this required a build/soong CL which I\u0027ve added to this CL in a topic.\n\nFiltering HOST_JDK_TOOLS_JAR out of the classpath is a little hacky, but it\u0027s vaguely temporary (can be dropped when we drop OpenJDK 8 prebuilts),\n\nHow does this look?",
+      "parentUuid": "632e73e0_dc2f91c4",
+      "revId": "8f96520d8e748c0660923cbf20762af6b7cf3e78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
