@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f47a7acc_ed8abb7a",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-12-20T19:12:49Z",
+      "side": 1,
+      "message": "FYI I\u0027m not sure if this is the correct/complete set of jars to pass, but \"make checkbuild\" seems to pass on AOSP (I haven\u0027t tried a clean build yet but am guessing that that is not required).",
+      "range": {
+        "startLine": 305,
+        "startChar": 8,
+        "endLine": 307,
+        "endChar": 75
+      },
+      "revId": "e1fee7be02c2034c622dd7193b7f045905905b0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
