@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "69c68738_cb673de3",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-20T19:34:17Z",
+      "side": 1,
+      "message": "$(",
+      "range": {
+        "startLine": 305,
+        "startChar": 40,
+        "endLine": 305,
+        "endChar": 42
+      },
+      "revId": "e1fee7be02c2034c622dd7193b7f045905905b0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f47a7acc_ed8abb7a",
         "filename": "core/java_common.mk",
         "patchSetId": 1
@@ -13,6 +36,30 @@
       "writtenOn": "2017-12-20T19:12:49Z",
       "side": 1,
       "message": "FYI I\u0027m not sure if this is the correct/complete set of jars to pass, but \"make checkbuild\" seems to pass on AOSP (I haven\u0027t tried a clean build yet but am guessing that that is not required).",
+      "range": {
+        "startLine": 305,
+        "startChar": 8,
+        "endLine": 307,
+        "endChar": 75
+      },
+      "revId": "e1fee7be02c2034c622dd7193b7f045905905b0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7a879bb_24d8f9a1",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-20T19:34:17Z",
+      "side": 1,
+      "message": "Having lib/tools.jar here would also obsolete all the places we currently manually pass tools.jar.",
+      "parentUuid": "f47a7acc_ed8abb7a",
       "range": {
         "startLine": 305,
         "startChar": 8,
