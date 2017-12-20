@@ -16,6 +16,24 @@
       "revId": "8f96520d8e748c0660923cbf20762af6b7cf3e78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "632e73e0_dc2f91c4",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-12-20T22:19:21Z",
+      "side": 1,
+      "message": ":(\n\nI could set HOST_JDK_TOOLS_JAR to a nonempty value unconditionally in config.mk, but then filter it out in java_common.mk. But to do that, config.mk would need access to ANDROID_JAVA8_HOME, which I think means that that would have to be set by build/envsetup.sh, which you previously opposed.\n\n(I assume that envsetup.sh is why config.sh apparently has access to ANDROID_JAVA_TOOLCHAIN, probably via ANDROID_JAVA_HOME).\n\nAny better idea?",
+      "parentUuid": "1a199fc9_5cf8e360",
+      "revId": "8f96520d8e748c0660923cbf20762af6b7cf3e78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
