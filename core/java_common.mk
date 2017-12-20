@@ -36,6 +36,27 @@ endif
 LOCAL_JAVACFLAGS += -source $(LOCAL_JAVA_LANGUAGE_VERSION) -target $(LOCAL_JAVA_LANGUAGE_VERSION)
 
 ###########################################################
+
+# OpenJDK versions up to 8 shipped with bootstrap and tools jars
+# (rt.jar, jce.jar, tools.jar etc.). These are no longer part of
+# OpenJDK 9, but we still make them available for host tools that
+# are targeting older versions.
+USE_HOST_BOOTSTRAP_JARS := true
+ifeq (,$(filter $(LOCAL_JAVA_LANGUAGE_VERSION), 1.6 1.7 1.8))
+USE_HOST_BOOTSTRAP_JARS := false
+endif
+
+###########################################################
+
+# Drop HOST_JDK_TOOLS_JAR from classpath when targeting versions > 9 (which don't have it).
+# TODO: Remove HOST_JDK_TOOLS_JAR and all references to it once host
+# bootstrap jars are no longer supported (ie. when USE_HOST_BOOTSTRAP_JARS
+# is always false). http://b/38418220
+ifneq ($(USE_HOST_BOOTSTRAP_JARS),true)
+LOCAL_CLASSPATH := $(filter-out $(HOST_JDK_TOOLS_JAR),$(LOCAL_CLASSPATH))
+endif
+
+###########################################################
 ## .proto files: Compile proto files to .java
 ###########################################################
 ifeq ($(strip $(LOCAL_PROTOC_OPTIMIZE_TYPE)),)
@@ -290,7 +311,23 @@ else # LOCAL_IS_HOST_MODULE
     full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),true)
     full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),true)
   else # !USE_CORE_LIB_BOOTCLASSPATH
-
+    # Give host-side tools a version of OpenJDK's standard libraries
+    # close to what they're targeting. As of Dec 2017, AOSP is only
+    # bundling OpenJDK 8 and 9, so nothing < 8 is available.
+    #
+    # When building with OpenJDK 8, the following should have no
+    # effect since those jars would be available by default.
+    #
+    # When building with OpenJDK 9 but targeting a version < 1.8,
+    # putting them on the bootclasspath means that:
+    # a) code can't (accidentally) refer to OpenJDK 9 specific APIs
+    # b) references to existing APIs are not reinterpreted in an
+    #    OpenJDK 9-specific way, eg. calls to subclasses of
+    #    java.nio.Buffer as in http://b/70862583
+    ifeq ($(USE_HOST_BOOTSTRAP_JARS),true)
+      full_java_bootclasspath_libs += $(ANDROID_JAVA8_HOME)/jre/lib/jce.jar
+      full_java_bootclasspath_libs += $(ANDROID_JAVA8_HOME)/jre/lib/rt.jar
+    endif
     full_shared_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
       $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
     full_shared_java_header_libs := $(full_shared_java_libs)
