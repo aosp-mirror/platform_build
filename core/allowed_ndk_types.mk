@@ -28,9 +28,6 @@ ifdef LOCAL_SDK_VERSION
     else ifeq ($(LOCAL_NDK_STL_VARIANT),c++_static)
         my_ndk_stl_family := libc++
         my_ndk_stl_link_type := static
-    else ifeq ($(LOCAL_NDK_STL_VARIANT),gnustl_static)
-        my_ndk_stl_family := gnustl
-        my_ndk_stl_link_type := static
     else ifeq ($(LOCAL_NDK_STL_VARIANT),stlport_shared)
         my_ndk_stl_family := stlport
         my_ndk_stl_link_type := shared
@@ -69,7 +66,6 @@ ifdef LOCAL_SDK_VERSION
         # already been checked for consistency, and if they don't they'll be
         # kept isolated by RTLD_LOCAL anyway.
         my_allowed_ndk_types += \
-            native:ndk:gnustl:static \
             native:ndk:libc++:shared native:ndk:libc++:static \
             native:ndk:stlport:shared native:ndk:stlport:static \
 
