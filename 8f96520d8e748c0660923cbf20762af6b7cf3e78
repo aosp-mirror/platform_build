@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a199fc9_5cf8e360",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-20T21:38:39Z",
+      "side": 1,
+      "message": "I don\u0027t think this will work, $(HOST_JDK_TOOLS_JAR) is used by modules before they include $(BUILD_*) which is what ends up here.  Each module is going to see the HOST_JDK_TOOLS_JAR value from the LOCAL_JAVA_LANGUAGE_VERSION of the module that was parsed before it.",
+      "revId": "8f96520d8e748c0660923cbf20762af6b7cf3e78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
