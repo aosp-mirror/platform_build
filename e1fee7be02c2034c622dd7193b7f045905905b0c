@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "105d11a3_9f508248",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-12-20T21:29:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "69c68738_cb673de3",
+      "range": {
+        "startLine": 305,
+        "startChar": 40,
+        "endLine": 305,
+        "endChar": 42
+      },
+      "revId": "e1fee7be02c2034c622dd7193b7f045905905b0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f47a7acc_ed8abb7a",
         "filename": "core/java_common.mk",
         "patchSetId": 1
@@ -60,6 +84,30 @@
       "side": 1,
       "message": "Having lib/tools.jar here would also obsolete all the places we currently manually pass tools.jar.",
       "parentUuid": "f47a7acc_ed8abb7a",
+      "range": {
+        "startLine": 305,
+        "startChar": 8,
+        "endLine": 307,
+        "endChar": 75
+      },
+      "revId": "e1fee7be02c2034c622dd7193b7f045905905b0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f38ef3d8_7ad89c27",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2017-12-20T21:29:06Z",
+      "side": 1,
+      "message": "They were already becoming obsolete because TARGET_OPENJDK9 was empty when USE_OPENJDK9. But I agree that it is iffy to suddenly pass tools.jar unconditionally to host targets, even the ones that don\u0027t ask for it.\n\nI\u0027ve now changed TARGET_OPENJDK9 to be empty when *targeting* version 9 in the specific make target, as opposed to *using* version 9 in general (regardless of -target version for the particular build target). Since this relied on $(ANDROID_JAVA8_HOME) which is exported by makevars.go, I had to move the HOST_JDK_TOOLS_JAR logic from config.mk into java_common.mk.\n\nThis allowed me to rewrite this logic and drop the reference to tools.jar here; this means that tools.jar is now only passed to the make targets that ask for it, and it will be on the classpath rather than the bootclasspath.",
+      "parentUuid": "d7a879bb_24d8f9a1",
       "range": {
         "startLine": 305,
         "startChar": 8,
