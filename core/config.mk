@@ -779,6 +779,28 @@ $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
 
 requirements :=
 
+# If PRODUCT_USE_VNDK is true and BOARD_VNDK_VERSION is not defined yet,
+# BOARD_VNDK_VERSION will be set to "current" as default.
+# PRODUCT_USE_VNDK will be true in Android-P or later launching devices.
+PRODUCT_USE_VNDK := false
+ifneq ($(PRODUCT_USE_VNDK_OVERRIDE),)
+  PRODUCT_USE_VNDK := $(PRODUCT_USE_VNDK_OVERRIDE)
+else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
+  # No shipping level defined
+else ifeq ($(call math_gt_or_eq,27,$(PRODUCT_SHIPPING_API_LEVEL)),)
+  PRODUCT_USE_VNDK := $(PRODUCT_FULL_TREBLE)
+endif
+
+ifeq ($(PRODUCT_USE_VNDK),true)
+  ifndef BOARD_VNDK_VERSION
+    BOARD_VNDK_VERSION := current
+  endif
+endif
+
+$(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use PRODUCT_USE_VNDK instead)
+.KATI_READONLY := \
+    PRODUCT_USE_VNDK
+
 ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),27),)
     ifneq ($(TARGET_USES_MKE2FS),true)
