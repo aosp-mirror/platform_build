@@ -777,7 +777,7 @@ endif # USE_R8
 endif # LOCAL_PROGUARD_ENABLED
 
 ifndef my_r8
-$(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
+$(built_dex_intermediate): $(full_classes_proguard_jar) $(DX) $(ZIP2ZIP)
 ifneq ($(USE_D8_DESUGAR),true)
 	$(transform-classes.jar-to-dex)
 else
