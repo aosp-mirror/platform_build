@@ -450,6 +450,12 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib/vndk-sp)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib64/vndk)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib64/vndk-sp)
 
+# Remove old dex output directories
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/with-local/)
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/no-local/)
+$(call add-clean-step, rm -rf $(HOST_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/with-local/)
+$(call add-clean-step, rm -rf $(HOST_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/no-local/)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
