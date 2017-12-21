@@ -46,6 +46,22 @@ $(strip \
 )
 endef
 
+# Returns paths of notice files under $(TARGET_OUT_NOTICE_FILES)
+#
+# Args:
+#   $(1): list of lib names (e.g., libfoo.vendor)
+#   $(2): vndk lib type, one of 'vndk' or 'vndk-sp'
+define paths-of-notice-files
+$(strip \
+  $(eval lib_dir := lib$(if $(TARGET_IS_64BIT),64,)) \
+  $(eval vndk_dir := $(2)-$(PLATFORM_VNDK_VERSION)) \
+  $(foreach lib,$(1), \
+    $(eval notice_file_name := $(patsubst %.vendor,%.so.txt,$(lib))) \
+    $(TARGET_OUT_NOTICE_FILES)/src/system/$(lib_dir)/$(vndk_dir)/$(notice_file_name) \
+  ) \
+)
+endef
+
 # If in the future libclang_rt.ubsan* is removed from the VNDK-core list,
 # need to update the related logic in this file.
 ifeq (,$(filter libclang_rt.ubsan%,$(VNDK_CORE_LIBRARIES)))
@@ -101,9 +117,21 @@ $(vndkprivate.libraries.txt): $(vndk_private_libs)
 	$(hide) $(foreach lib,$^,echo $(patsubst %.vendor,%,$(lib)).so >> $@;)
 
 
+#######################################
+# module_paths.txt
+module_paths.txt := $(vndk_snapshot_configs_out)/module_paths.txt
+$(module_paths.txt): $(vndk_snapshot_libs)
+	@echo 'Generating: $@'
+	@rm -f $@
+	@mkdir -p $(dir $@)
+	$(hide) echo -n > $@
+	$(hide) $(foreach lib,$^,echo $(patsubst %.vendor,%,$(lib)).so $(ALL_MODULES.$(lib).PATH) >> $@;)
+
+
 vndk_snapshot_configs := \
   $(vndkcore.libraries.txt) \
-  $(vndkprivate.libraries.txt)
+  $(vndkprivate.libraries.txt) \
+  $(module_paths.txt)
 
 #######################################
 # vndk_snapshot_zip
@@ -124,6 +152,11 @@ $(vndk_snapshot_zip): PRIVATE_CONFIGS_OUT := $(vndk_snapshot_arch)/configs
 $(vndk_snapshot_zip): PRIVATE_CONFIGS_INTERMEDIATES := \
   $(call paths-of-intermediates,$(vndk_prebuilt_txts),ETC) \
   $(vndk_snapshot_configs)
+
+$(vndk_snapshot_zip): PRIVATE_NOTICE_FILES_OUT := $(vndk_snapshot_arch)/NOTICE_FILES
+$(vndk_snapshot_zip): PRIVATE_NOTICE_FILES_INTERMEDIATES := \
+  $(call paths-of-notice-files,$(vndk_core_libs),vndk) \
+  $(call paths-of-notice-files,$(vndk_sp_libs),vndk-sp)
 
 # TODO(b/69834489): Package additional arch variants
 # ifdef TARGET_2ND_ARCH
@@ -165,6 +198,8 @@ $(vndk_snapshot_zip): $(vndk_snapshot_dependencies) $(SOONG_ZIP)
 		$(PRIVATE_VNDK_SP_OUT),$(PRIVATE_VNDK_SP_INTERMEDIATES))
 	$(call private-copy-vndk-intermediates, \
 		$(PRIVATE_CONFIGS_OUT),$(PRIVATE_CONFIGS_INTERMEDIATES))
+	$(call private-copy-vndk-intermediates, \
+		$(PRIVATE_NOTICE_FILES_OUT),$(PRIVATE_NOTICE_FILES_INTERMEDIATES))
 # TODO(b/69834489): Package additional arch variants
 # ifdef TARGET_2ND_ARCH
 # 	$(call private-copy-vndk-intermediates, \
@@ -182,6 +217,7 @@ $(call dist-for-goals, vndk, $(vndk_snapshot_zip))
 # clear global vars
 clang-ubsan-vndk-core :=
 paths-of-intermediates :=
+paths-of-notice-files :=
 vndk_core_libs :=
 vndk_sp_libs :=
 vndk_snapshot_libs :=
