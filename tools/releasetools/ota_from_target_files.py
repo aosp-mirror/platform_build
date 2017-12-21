@@ -682,11 +682,10 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   system_src = GetImage("system", OPTIONS.source_tmp)
   system_tgt = GetImage("system", OPTIONS.target_tmp)
 
-  blockimgdiff_version = 1
-  if OPTIONS.info_dict:
-    blockimgdiff_version = max(
-        int(i) for i in
-        OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+  blockimgdiff_version = max(
+      int(i) for i in
+      OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+  assert blockimgdiff_version >= 3
 
   # Check the first block of the source system partition for remount R/W only
   # if the filesystem is ext4.
@@ -784,32 +783,20 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
 
   device_specific.IncrementalOTA_VerifyBegin()
 
-  # When blockimgdiff version is less than 3 (non-resumable block-based OTA),
-  # patching on a device that's already on the target build will damage the
-  # system. Because operations like move don't check the block state, they
-  # always apply the changes unconditionally.
-  if blockimgdiff_version <= 2:
-    if source_oem_props is None:
-      script.AssertSomeFingerprint(source_fp)
-    else:
-      script.AssertSomeThumbprint(
-          GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
-
-  else: # blockimgdiff_version > 2
-    if source_oem_props is None and target_oem_props is None:
-      script.AssertSomeFingerprint(source_fp, target_fp)
-    elif source_oem_props is not None and target_oem_props is not None:
-      script.AssertSomeThumbprint(
-          GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict),
-          GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
-    elif source_oem_props is None and target_oem_props is not None:
-      script.AssertFingerprintOrThumbprint(
-          source_fp,
-          GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict))
-    else:
-      script.AssertFingerprintOrThumbprint(
-          target_fp,
-          GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
+  if source_oem_props is None and target_oem_props is None:
+    script.AssertSomeFingerprint(source_fp, target_fp)
+  elif source_oem_props is not None and target_oem_props is not None:
+    script.AssertSomeThumbprint(
+        GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict),
+        GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
+  elif source_oem_props is None and target_oem_props is not None:
+    script.AssertFingerprintOrThumbprint(
+        source_fp,
+        GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict))
+  else:
+    script.AssertFingerprintOrThumbprint(
+        target_fp,
+        GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
 
   # Check the required cache size (i.e. stashed blocks).
   size = []
