@@ -176,7 +176,7 @@ $(LOCAL_BUILT_MODULE) : $(full_classes_jar)
 else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 $(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
 $(built_dex): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-$(built_dex): $(full_classes_desugar_jar) $(DX)
+$(built_dex): $(full_classes_desugar_jar) $(DX) $(ZIP2ZIP)
 ifneq ($(USE_D8_DESUGAR),true)
 	$(transform-classes.jar-to-dex)
 else
