@@ -1431,11 +1431,9 @@ class BlockDifference(object):
     self.disable_imgdiff = disable_imgdiff
 
     if version is None:
-      version = 1
-      if OPTIONS.info_dict:
-        version = max(
-            int(i) for i in
-            OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+      version = max(
+          int(i) for i in
+          OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
     assert version >= 3
     self.version = version
 
