@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45a6b813_f71ffb21",
+        "filename": "core/main.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 864,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-21T10:39:07Z",
+      "side": 1,
+      "message": "why don\u0027t you do any check for installable modules? $(lt) and $(d) should be in the same partition.",
+      "range": {
+        "startLine": 863,
+        "startChar": 0,
+        "endLine": 864,
+        "endChar": 63
+      },
+      "revId": "079e0783d0eb5311d4624aad7806215d54a5060d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
