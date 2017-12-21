@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "22c3f213_c6f8a6fa",
+        "filename": "core/allowed_ndk_types.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2017-12-21T03:26:11Z",
+      "side": 1,
+      "message": "This will give a better error message:\n\n  $(call pretty-error,invalid ...)\n\n(It\u0027ll include LOCAL_MODULE_MAKEFILE too)",
+      "range": {
+        "startLine": 34,
+        "startChar": 8,
+        "endLine": 34,
+        "endChar": 33
+      },
+      "revId": "8a7ab3ab231ac6026bfe1aba247dc5e8b2031a15",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
