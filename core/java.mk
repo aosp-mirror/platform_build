@@ -751,15 +751,6 @@ endif # LOCAL_PROGUARD_ENABLED defined
 
 ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-# If you instrument class files that have local variable debug information in
-# them emma does not correctly maintain the local variable table.
-# This will cause an error when you try to convert the class files for Android.
-# The workaround here is to build different dex file here based on emma switch
-# then later copy into classes.dex. When emma is on, dx is run with --no-locals
-# option to remove local variable information
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-$(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
-endif
 
 my_r8 :=
 ifdef LOCAL_PROGUARD_ENABLED
