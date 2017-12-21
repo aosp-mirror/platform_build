@@ -49,8 +49,10 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
 
   -o  (--oem_settings)  <main_file[,additional_files...]>
       Comma seperated list of files used to specify the expected OEM-specific
-      properties on the OEM partition of the intended device.
-      Multiple expected values can be used by providing multiple files.
+      properties on the OEM partition of the intended device. Multiple expected
+      values can be used by providing multiple files. Only the first dict will
+      be used to compute fingerprint, while the rest will be used to assert
+      OEM-specific properties.
 
   --oem_no_mount
       For devices with OEM-specific properties but without an OEM partition,
@@ -128,22 +130,22 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
 
 from __future__ import print_function
 
-import sys
-
-if sys.hexversion < 0x02070000:
-  print("Python 2.7 or newer is required.", file=sys.stderr)
-  sys.exit(1)
-
 import multiprocessing
 import os.path
-import subprocess
 import shlex
+import subprocess
+import sys
 import tempfile
 import zipfile
 
 import common
 import edify_generator
 import sparse_img
+
+if sys.hexversion < 0x02070000:
+  print("Python 2.7 or newer is required.", file=sys.stderr)
+  sys.exit(1)
+
 
 OPTIONS = common.OPTIONS
 OPTIONS.package_key = None
@@ -179,6 +181,136 @@ METADATA_NAME = 'META-INF/com/android/metadata'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*']
 
 
+class BuildInfo(object):
+  """A class that holds the information for a given build.
+
+  This class wraps up the property querying for a given source or target build.
+  It abstracts away the logic of handling OEM-specific properties, and caches
+  the commonly used properties such as fingerprint.
+
+  There are two types of info dicts: a) build-time info dict, which is generated
+  at build time (i.e. included in a target_files zip); b) OEM info dict that is
+  specified at package generation time (via command line argument
+  '--oem_settings'). If a build doesn't use OEM-specific properties (i.e. not
+  having "oem_fingerprint_properties" in build-time info dict), all the queries
+  would be answered based on build-time info dict only. Otherwise if using
+  OEM-specific properties, some of them will be calculated from two info dicts.
+
+  Users can query properties similarly as using a dict() (e.g. info['fstab']),
+  or to query build properties via GetBuildProp() or GetVendorBuildProp().
+
+  Attributes:
+    info_dict: The build-time info dict.
+    is_ab: Whether it's a build that uses A/B OTA.
+    oem_dicts: A list of OEM dicts.
+    oem_props: A list of OEM properties that should be read from OEM dicts; None
+        if the build doesn't use any OEM-specific property.
+    fingerprint: The fingerprint of the build, which would be calculated based
+        on OEM properties if applicable.
+    device: The device name, which could come from OEM dicts if applicable.
+  """
+
+  def __init__(self, info_dict, oem_dicts):
+    """Initializes a BuildInfo instance with the given dicts.
+
+    Arguments:
+      info_dict: The build-time info dict.
+      oem_dicts: A list of OEM dicts (which is parsed from --oem_settings). Note
+          that it always uses the first dict to calculate the fingerprint or the
+          device name. The rest would be used for asserting OEM properties only
+          (e.g.  one package can be installed on one of these devices).
+    """
+    self.info_dict = info_dict
+    self.oem_dicts = oem_dicts
+
+    self._is_ab = info_dict.get("ab_update") == "true"
+    self._oem_props = info_dict.get("oem_fingerprint_properties")
+
+    if self._oem_props:
+      assert oem_dicts, "OEM source required for this build"
+
+    # These two should be computed only after setting self._oem_props.
+    self._device = self.GetOemProperty("ro.product.device")
+    self._fingerprint = self.CalculateFingerprint()
+
+  @property
+  def is_ab(self):
+    return self._is_ab
+
+  @property
+  def device(self):
+    return self._device
+
+  @property
+  def fingerprint(self):
+    return self._fingerprint
+
+  @property
+  def oem_props(self):
+    return self._oem_props
+
+  def __getitem__(self, key):
+    return self.info_dict[key]
+
+  def get(self, key, default=None):
+    return self.info_dict.get(key, default)
+
+  def GetBuildProp(self, prop):
+    """Returns the inquired build property."""
+    try:
+      return self.info_dict.get("build.prop", {})[prop]
+    except KeyError:
+      raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
+
+  def GetVendorBuildProp(self, prop):
+    """Returns the inquired vendor build property."""
+    try:
+      return self.info_dict.get("vendor.build.prop", {})[prop]
+    except KeyError:
+      raise common.ExternalError(
+          "couldn't find %s in vendor.build.prop" % (prop,))
+
+  def GetOemProperty(self, key):
+    if self.oem_props is not None and key in self.oem_props:
+      return self.oem_dicts[0][key]
+    return self.GetBuildProp(key)
+
+  def CalculateFingerprint(self):
+    if self.oem_props is None:
+      return self.GetBuildProp("ro.build.fingerprint")
+    return "%s/%s/%s:%s" % (
+        self.GetOemProperty("ro.product.brand"),
+        self.GetOemProperty("ro.product.name"),
+        self.GetOemProperty("ro.product.device"),
+        self.GetBuildProp("ro.build.thumbprint"))
+
+  def WriteMountOemScript(self, script):
+    assert self.oem_props is not None
+    recovery_mount_options = self.info_dict.get("recovery_mount_options")
+    script.Mount("/oem", recovery_mount_options)
+
+  def WriteDeviceAssertions(self, script, oem_no_mount):
+    # Read the property directly if not using OEM properties.
+    if not self.oem_props:
+      script.AssertDevice(self.device)
+      return
+
+    # Otherwise assert OEM properties.
+    if not self.oem_dicts:
+      raise common.ExternalError(
+          "No OEM file provided to answer expected assertions")
+
+    for prop in self.oem_props.split():
+      values = []
+      for oem_dict in self.oem_dicts:
+        if prop in oem_dict:
+          values.append(oem_dict[prop])
+      if not values:
+        raise common.ExternalError(
+            "The OEM file is missing the property %s" % (prop,))
+      script.AssertOemProperty(prop, values, oem_no_mount)
+
+
 def SignOutput(temp_zip_name, output_zip_name):
   pw = OPTIONS.key_passwords[OPTIONS.package_key]
 
@@ -186,37 +318,15 @@ def SignOutput(temp_zip_name, output_zip_name):
                   whole_file=True)
 
 
-def AppendAssertions(script, info_dict, oem_dicts=None):
-  oem_props = info_dict.get("oem_fingerprint_properties")
-  if not oem_props:
-    device = GetBuildProp("ro.product.device", info_dict)
-    script.AssertDevice(device)
-  else:
-    if not oem_dicts:
-      raise common.ExternalError(
-          "No OEM file provided to answer expected assertions")
-    for prop in oem_props.split():
-      values = []
-      for oem_dict in oem_dicts:
-        if oem_dict.get(prop):
-          values.append(oem_dict[prop])
-      if not values:
-        raise common.ExternalError(
-            "The OEM file is missing the property %s" % prop)
-      script.AssertOemProperty(prop, values)
-
-
-def _LoadOemDicts(script, recovery_mount_options=None):
+def _LoadOemDicts(oem_source):
   """Returns the list of loaded OEM properties dict."""
-  oem_dicts = None
-  if OPTIONS.oem_source is None:
-    raise common.ExternalError("OEM source required for this build")
-  if not OPTIONS.oem_no_mount and script:
-    script.Mount("/oem", recovery_mount_options)
+  if not oem_source:
+    return None
+
   oem_dicts = []
-  for oem_file in OPTIONS.oem_source:
-    oem_dicts.append(common.LoadDictionaryFromLines(
-        open(oem_file).readlines()))
+  for oem_file in oem_source:
+    with open(oem_file) as fp:
+      oem_dicts.append(common.LoadDictionaryFromLines(fp.readlines()))
   return oem_dicts
 
 
@@ -267,25 +377,30 @@ def HasVendorPartition(target_files_zip):
     return False
 
 
-def HasTrebleEnabled(target_files_zip, info_dict):
+def HasTrebleEnabled(target_files_zip, target_info):
   return (HasVendorPartition(target_files_zip) and
-          GetBuildProp("ro.treble.enabled", info_dict) == "true")
+          target_info.GetBuildProp("ro.treble.enabled") == "true")
 
 
-def GetOemProperty(name, oem_props, oem_dict, info_dict):
-  if oem_props is not None and name in oem_props:
-    return oem_dict[name]
-  return GetBuildProp(name, info_dict)
+def WriteFingerprintAssertion(script, target_info, source_info):
+  source_oem_props = source_info.oem_props
+  target_oem_props = target_info.oem_props
 
-
-def CalculateFingerprint(oem_props, oem_dict, info_dict):
-  if oem_props is None:
-    return GetBuildProp("ro.build.fingerprint", info_dict)
-  return "%s/%s/%s:%s" % (
-      GetOemProperty("ro.product.brand", oem_props, oem_dict, info_dict),
-      GetOemProperty("ro.product.name", oem_props, oem_dict, info_dict),
-      GetOemProperty("ro.product.device", oem_props, oem_dict, info_dict),
-      GetBuildProp("ro.build.thumbprint", info_dict))
+  if source_oem_props is None and target_oem_props is None:
+    script.AssertSomeFingerprint(
+        source_info.fingerprint, target_info.fingerprint)
+  elif source_oem_props is not None and target_oem_props is not None:
+    script.AssertSomeThumbprint(
+        target_info.GetBuildProp("ro.build.thumbprint"),
+        source_info.GetBuildProp("ro.build.thumbprint"))
+  elif source_oem_props is None and target_oem_props is not None:
+    script.AssertFingerprintOrThumbprint(
+        source_info.fingerprint,
+        target_info.GetBuildProp("ro.build.thumbprint"))
+  else:
+    script.AssertFingerprintOrThumbprint(
+        target_info.fingerprint,
+        source_info.GetBuildProp("ro.build.thumbprint"))
 
 
 def GetImage(which, tmpdir):
@@ -313,9 +428,8 @@ def GetImage(which, tmpdir):
   return sparse_img.SparseImage(path, mappath, clobbered_blocks)
 
 
-def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip,
-                                           target_info_dict,
-                                           source_info_dict=None):
+def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
+                                           source_info=None):
   """Adds compatibility info into the output zip if it's Treble-enabled target.
 
   Metadata used for on-device compatibility verification is retrieved from
@@ -328,9 +442,9 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip,
   Args:
     target_zip: Zip file containing the source files to be included for OTA.
     output_zip: Zip file that will be sent for OTA.
-    target_info_dict: The dict that holds the target build info.
-    source_info_dict: The dict that holds the source build info, if generating
-        an incremental OTA; None otherwise.
+    target_info: The BuildInfo instance that holds the target build info.
+    source_info: The BuildInfo instance that holds the source build info, if
+        generating an incremental OTA; None otherwise.
   """
 
   def AddCompatibilityArchive(system_updated, vendor_updated):
@@ -353,8 +467,8 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip,
 
     # Create new archive.
     compatibility_archive = tempfile.NamedTemporaryFile()
-    compatibility_archive_zip = zipfile.ZipFile(compatibility_archive, "w",
-        compression=zipfile.ZIP_DEFLATED)
+    compatibility_archive_zip = zipfile.ZipFile(
+        compatibility_archive, "w", compression=zipfile.ZIP_DEFLATED)
 
     # Add metadata.
     for file_name in compatibility_files:
@@ -375,59 +489,55 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip,
 
   # Will only proceed if the target has enabled the Treble support (as well as
   # having a /vendor partition).
-  if not HasTrebleEnabled(target_zip, target_info_dict):
+  if not HasTrebleEnabled(target_zip, target_info):
     return
 
   # We don't support OEM thumbprint in Treble world (which calculates
   # fingerprints in a different way as shown in CalculateFingerprint()).
-  assert not target_info_dict.get("oem_fingerprint_properties")
+  assert not target_info.oem_props
 
   # Full OTA carries the info for system/vendor both.
-  if source_info_dict is None:
+  if source_info is None:
     AddCompatibilityArchive(True, True)
     return
 
-  assert not source_info_dict.get("oem_fingerprint_properties")
+  assert not source_info.oem_props
 
-  source_fp = GetBuildProp("ro.build.fingerprint", source_info_dict)
-  target_fp = GetBuildProp("ro.build.fingerprint", target_info_dict)
+  source_fp = source_info.fingerprint
+  target_fp = target_info.fingerprint
   system_updated = source_fp != target_fp
 
-  source_fp_vendor = GetVendorBuildProp("ro.vendor.build.fingerprint",
-                                        source_info_dict)
-  target_fp_vendor = GetVendorBuildProp("ro.vendor.build.fingerprint",
-                                        target_info_dict)
+  source_fp_vendor = source_info.GetVendorBuildProp(
+      "ro.vendor.build.fingerprint")
+  target_fp_vendor = target_info.GetVendorBuildProp(
+      "ro.vendor.build.fingerprint")
   vendor_updated = source_fp_vendor != target_fp_vendor
 
   AddCompatibilityArchive(system_updated, vendor_updated)
 
 
 def WriteFullOTAPackage(input_zip, output_zip):
-  # TODO: how to determine this?  We don't know what version it will
-  # be installed on top of. For now, we expect the API just won't
-  # change very often. Similarly for fstab, it might have changed
-  # in the target build.
-  script = edify_generator.EdifyGenerator(3, OPTIONS.info_dict)
+  target_info = BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
 
-  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
-  oem_dicts = None
-  if oem_props:
-    recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
-    oem_dicts = _LoadOemDicts(script, recovery_mount_options)
+  # We don't know what version it will be installed on top of. We expect the API
+  # just won't change very often. Similarly for fstab, it might have changed in
+  # the target build.
+  target_api_version = target_info["recovery_api_version"]
+  script = edify_generator.EdifyGenerator(target_api_version, target_info)
 
-  target_fp = CalculateFingerprint(oem_props, oem_dicts and oem_dicts[0],
-                                   OPTIONS.info_dict)
+  if target_info.oem_props and not OPTIONS.oem_no_mount:
+    target_info.WriteMountOemScript(script)
+
   metadata = {
-      "post-build": target_fp,
-      "pre-device": GetOemProperty("ro.product.device", oem_props,
-                                   oem_dicts and oem_dicts[0],
-                                   OPTIONS.info_dict),
-      "post-timestamp": GetBuildProp("ro.build.date.utc", OPTIONS.info_dict),
+      "post-build": target_info.fingerprint,
+      "pre-device": target_info.device,
+      "post-timestamp": target_info.GetBuildProp("ro.build.date.utc"),
+      "ota-type" : "BLOCK",
   }
 
   device_specific = common.DeviceSpecificParams(
       input_zip=input_zip,
-      input_version=OPTIONS.info_dict["recovery_api_version"],
+      input_version=target_api_version,
       output_zip=output_zip,
       script=script,
       input_tmp=OPTIONS.input_tmp,
@@ -436,13 +546,12 @@ def WriteFullOTAPackage(input_zip, output_zip):
 
   assert HasRecoveryPatch(input_zip)
 
-  metadata["ota-type"] = "BLOCK"
-
-  ts = GetBuildProp("ro.build.date.utc", OPTIONS.info_dict)
-  ts_text = GetBuildProp("ro.build.date", OPTIONS.info_dict)
+  # Assertions (e.g. downgrade check, device properties check).
+  ts = target_info.GetBuildProp("ro.build.date.utc")
+  ts_text = target_info.GetBuildProp("ro.build.date")
   script.AssertOlderBuild(ts, ts_text)
 
-  AppendAssertions(script, OPTIONS.info_dict, oem_dicts)
+  target_info.WriteDeviceAssertions(script, OPTIONS.oem_no_mount)
   device_specific.FullOTA_Assertions()
 
   # Two-step package strategy (in chronological order, which is *not*
@@ -468,9 +577,9 @@ def WriteFullOTAPackage(input_zip, output_zip):
   recovery_img = common.GetBootableImage("recovery.img", "recovery.img",
                                          OPTIONS.input_tmp, "RECOVERY")
   if OPTIONS.two_step:
-    if not OPTIONS.info_dict.get("multistage_support", None):
+    if not target_info.get("multistage_support"):
       assert False, "two-step packages not supported by this build"
-    fs = OPTIONS.info_dict["fstab"]["/misc"]
+    fs = target_info["fstab"]["/misc"]
     assert fs.fs_type.upper() == "EMMC", \
         "two-step packages only supported on devices with EMMC /misc partitions"
     bcb_dev = {"bcb_dev": fs.device}
@@ -492,7 +601,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     script.Comment("Stage 3/3")
 
   # Dump fingerprints
-  script.Print("Target: %s" % target_fp)
+  script.Print("Target: {}".format(target_info.fingerprint))
 
   device_specific.FullOTA_InstallBegin()
 
@@ -525,10 +634,9 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     vendor_diff = common.BlockDifference("vendor", vendor_tgt)
     vendor_diff.WriteScript(script, output_zip)
 
-  AddCompatibilityArchiveIfTrebleEnabled(input_zip, output_zip,
-                                         OPTIONS.info_dict)
+  AddCompatibilityArchiveIfTrebleEnabled(input_zip, output_zip, target_info)
 
-  common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
+  common.CheckSize(boot_img.data, "boot.img", target_info)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
 
   script.ShowProgress(0.05, 5)
@@ -592,12 +700,12 @@ def GetVendorBuildProp(prop, info_dict):
         "couldn't find %s in vendor.build.prop" % (prop,))
 
 
-def HandleDowngradeMetadata(metadata):
+def HandleDowngradeMetadata(metadata, target_info, source_info):
   # Only incremental OTAs are allowed to reach here.
   assert OPTIONS.incremental_source is not None
 
-  post_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.target_info_dict)
-  pre_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.source_info_dict)
+  post_timestamp = target_info.GetBuildProp("ro.build.date.utc")
+  pre_timestamp = source_info.GetBuildProp("ro.build.date.utc")
   is_downgrade = long(post_timestamp) < long(pre_timestamp)
 
   if OPTIONS.downgrade:
@@ -607,72 +715,65 @@ def HandleDowngradeMetadata(metadata):
     metadata["ota-downgrade"] = "yes"
   elif OPTIONS.timestamp:
     if not is_downgrade:
-      raise RuntimeError("--timestamp specified but no timestamp hack needed: "
-                         "pre: %s, post: %s" % (pre_timestamp, post_timestamp))
+      raise RuntimeError("--override_timestamp specified but no timestamp hack "
+                         "needed: pre: %s, post: %s" % (pre_timestamp,
+                                                        post_timestamp))
     metadata["post-timestamp"] = str(long(pre_timestamp) + 1)
   else:
     if is_downgrade:
       raise RuntimeError("Downgrade detected based on timestamp check: "
-                         "pre: %s, post: %s. Need to specify --timestamp OR "
-                         "--downgrade to allow building the incremental." % (
-                             pre_timestamp, post_timestamp))
+                         "pre: %s, post: %s. Need to specify "
+                         "--override_timestamp OR --downgrade to allow "
+                         "building the incremental." % (pre_timestamp,
+                                                        post_timestamp))
     metadata["post-timestamp"] = post_timestamp
 
 
 def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
-  source_version = OPTIONS.source_info_dict["recovery_api_version"]
-  target_version = OPTIONS.target_info_dict["recovery_api_version"]
+  target_info = BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
+  source_info = BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
 
-  if source_version == 0:
+  target_api_version = target_info["recovery_api_version"]
+  source_api_version = source_info["recovery_api_version"]
+  if source_api_version == 0:
     print("WARNING: generating edify script for a source that "
           "can't install it.")
-  script = edify_generator.EdifyGenerator(
-      source_version, OPTIONS.target_info_dict,
-      fstab=OPTIONS.source_info_dict["fstab"])
 
-  source_oem_props = OPTIONS.source_info_dict.get("oem_fingerprint_properties")
-  target_oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
-  oem_dicts = None
-  if source_oem_props or target_oem_props:
-    recovery_mount_options = OPTIONS.source_info_dict.get(
-        "recovery_mount_options")
-    oem_dicts = _LoadOemDicts(script, recovery_mount_options)
+  script = edify_generator.EdifyGenerator(
+      source_api_version, target_info, fstab=source_info["fstab"])
+
+  if target_info.oem_props or source_info.oem_props:
+    if not OPTIONS.oem_no_mount:
+      source_info.WriteMountOemScript(script)
 
   metadata = {
-      "pre-device": GetOemProperty("ro.product.device", source_oem_props,
-                                   oem_dicts and oem_dicts[0],
-                                   OPTIONS.source_info_dict),
+      "pre-device": source_info.device,
       "ota-type": "BLOCK",
   }
 
-  HandleDowngradeMetadata(metadata)
+  HandleDowngradeMetadata(metadata, target_info, source_info)
 
   device_specific = common.DeviceSpecificParams(
       source_zip=source_zip,
-      source_version=source_version,
+      source_version=source_api_version,
       target_zip=target_zip,
-      target_version=target_version,
+      target_version=target_api_version,
       output_zip=output_zip,
       script=script,
       metadata=metadata,
-      info_dict=OPTIONS.source_info_dict)
+      info_dict=source_info)
 
-  source_fp = CalculateFingerprint(source_oem_props, oem_dicts and oem_dicts[0],
-                                   OPTIONS.source_info_dict)
-  target_fp = CalculateFingerprint(target_oem_props, oem_dicts and oem_dicts[0],
-                                   OPTIONS.target_info_dict)
-  metadata["pre-build"] = source_fp
-  metadata["post-build"] = target_fp
-  metadata["pre-build-incremental"] = GetBuildProp(
-      "ro.build.version.incremental", OPTIONS.source_info_dict)
-  metadata["post-build-incremental"] = GetBuildProp(
-      "ro.build.version.incremental", OPTIONS.target_info_dict)
+  metadata["pre-build"] = source_info.fingerprint
+  metadata["post-build"] = target_info.fingerprint
+  metadata["pre-build-incremental"] = source_info.GetBuildProp(
+      "ro.build.version.incremental")
+  metadata["post-build-incremental"] = target_info.GetBuildProp(
+      "ro.build.version.incremental")
 
   source_boot = common.GetBootableImage(
-      "/tmp/boot.img", "boot.img", OPTIONS.source_tmp, "BOOT",
-      OPTIONS.source_info_dict)
+      "/tmp/boot.img", "boot.img", OPTIONS.source_tmp, "BOOT", source_info)
   target_boot = common.GetBootableImage(
-      "/tmp/boot.img", "boot.img", OPTIONS.target_tmp, "BOOT")
+      "/tmp/boot.img", "boot.img", OPTIONS.target_tmp, "BOOT", target_info)
   updating_boot = (not OPTIONS.two_step and
                    (source_boot.data != target_boot.data))
 
@@ -683,19 +784,18 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   system_tgt = GetImage("system", OPTIONS.target_tmp)
 
   blockimgdiff_version = max(
-      int(i) for i in
-      OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+      int(i) for i in target_info.get("blockimgdiff_versions", "1").split(","))
   assert blockimgdiff_version >= 3
 
   # Check the first block of the source system partition for remount R/W only
   # if the filesystem is ext4.
-  system_src_partition = OPTIONS.source_info_dict["fstab"]["/system"]
+  system_src_partition = source_info["fstab"]["/system"]
   check_first_block = system_src_partition.fs_type == "ext4"
   # Disable using imgdiff for squashfs. 'imgdiff -z' expects input files to be
   # in zip formats. However with squashfs, a) all files are compressed in LZ4;
   # b) the blocks listed in block map may not contain all the bytes for a given
   # file (because they're rounded to be 4K-aligned).
-  system_tgt_partition = OPTIONS.target_info_dict["fstab"]["/system"]
+  system_tgt_partition = target_info["fstab"]["/system"]
   disable_imgdiff = (system_src_partition.fs_type == "squashfs" or
                      system_tgt_partition.fs_type == "squashfs")
   system_diff = common.BlockDifference("system", system_tgt, system_src,
@@ -711,7 +811,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
 
     # Check first block of vendor partition for remount R/W only if
     # disk type is ext4
-    vendor_partition = OPTIONS.source_info_dict["fstab"]["/vendor"]
+    vendor_partition = source_info["fstab"]["/vendor"]
     check_first_block = vendor_partition.fs_type == "ext4"
     disable_imgdiff = vendor_partition.fs_type == "squashfs"
     vendor_diff = common.BlockDifference("vendor", vendor_tgt, vendor_src,
@@ -722,10 +822,10 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
     vendor_diff = None
 
   AddCompatibilityArchiveIfTrebleEnabled(
-      target_zip, output_zip, OPTIONS.target_info_dict,
-      OPTIONS.source_info_dict)
+      target_zip, output_zip, target_info, source_info)
 
-  AppendAssertions(script, OPTIONS.target_info_dict, oem_dicts)
+  # Assertions (e.g. device properties check).
+  target_info.WriteDeviceAssertions(script, OPTIONS.oem_no_mount)
   device_specific.IncrementalOTA_Assertions()
 
   # Two-step incremental package strategy (in chronological order,
@@ -751,12 +851,12 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   #    (allow recovery to mark itself finished and reboot)
 
   if OPTIONS.two_step:
-    if not OPTIONS.source_info_dict.get("multistage_support", None):
+    if not source_info.get("multistage_support"):
       assert False, "two-step packages not supported by this build"
     fs = OPTIONS.source_info_dict["fstab"]["/misc"]
     assert fs.fs_type.upper() == "EMMC", \
         "two-step packages only supported on devices with EMMC /misc partitions"
-    bcb_dev = {"bcb_dev": fs.device}
+    bcb_dev = {"bcb_dev" : fs.device}
     common.ZipWriteStr(output_zip, "recovery.img", target_recovery.data)
     script.AppendExtra("""
 if get_stage("%(bcb_dev)s") == "2/3" then
@@ -776,27 +876,14 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
     script.Comment("Stage 1/3")
 
   # Dump fingerprints
-  script.Print("Source: %s" % (source_fp,))
-  script.Print("Target: %s" % (target_fp,))
+  script.Print("Source: {}".format(source_info.fingerprint))
+  script.Print("Target: {}".format(target_info.fingerprint))
 
   script.Print("Verifying current system...")
 
   device_specific.IncrementalOTA_VerifyBegin()
 
-  if source_oem_props is None and target_oem_props is None:
-    script.AssertSomeFingerprint(source_fp, target_fp)
-  elif source_oem_props is not None and target_oem_props is not None:
-    script.AssertSomeThumbprint(
-        GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict),
-        GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
-  elif source_oem_props is None and target_oem_props is not None:
-    script.AssertFingerprintOrThumbprint(
-        source_fp,
-        GetBuildProp("ro.build.thumbprint", OPTIONS.target_info_dict))
-  else:
-    script.AssertFingerprintOrThumbprint(
-        target_fp,
-        GetBuildProp("ro.build.thumbprint", OPTIONS.source_info_dict))
+  WriteFingerprintAssertion(script, target_info, source_info)
 
   # Check the required cache size (i.e. stashed blocks).
   size = []
@@ -806,8 +893,7 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
     size.append(vendor_diff.required_cache)
 
   if updating_boot:
-    boot_type, boot_device = common.GetTypeAndDevice(
-        "/boot", OPTIONS.source_info_dict)
+    boot_type, boot_device = common.GetTypeAndDevice("/boot", source_info)
     d = common.Difference(target_boot, source_boot)
     _, _, d = d.ComputePatch()
     if d is None:
@@ -984,7 +1070,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
     cmd.extend(["-passin", "pass:" + pw] if pw else ["-nocrypt"])
     rsa_key = common.MakeTempFile(prefix="key-", suffix=".key")
     cmd.extend(["-out", rsa_key])
-    p1 = common.Run(cmd, verbose=False, stdout=log_file, stderr=subprocess.STDOUT)
+    p1 = common.Run(cmd, verbose=False, stdout=log_file,
+                    stderr=subprocess.STDOUT)
     p1.communicate()
     assert p1.returncode == 0, "openssl pkcs8 failed"
 
@@ -993,35 +1080,32 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   output_zip = zipfile.ZipFile(temp_zip_file, "w",
                                compression=zipfile.ZIP_DEFLATED)
 
-  # Metadata to comply with Android OTA package format.
-  oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties", None)
-  oem_dicts = None
-  if oem_props:
-    oem_dicts = _LoadOemDicts(None)
+  if source_file is not None:
+    target_info = BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
+    source_info = BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
+  else:
+    target_info = BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
+    source_info = None
 
+  # Metadata to comply with Android OTA package format.
   metadata = {
-      "post-build": CalculateFingerprint(oem_props, oem_dicts and oem_dicts[0],
-                                         OPTIONS.info_dict),
-      "post-build-incremental" : GetBuildProp("ro.build.version.incremental",
-                                              OPTIONS.info_dict),
-      "pre-device": GetOemProperty("ro.product.device", oem_props,
-                                   oem_dicts and oem_dicts[0],
-                                   OPTIONS.info_dict),
-      "ota-required-cache": "0",
-      "ota-type": "AB",
+      "post-build" : target_info.fingerprint,
+      "post-build-incremental" : target_info.GetBuildProp(
+          "ro.build.version.incremental"),
+      "ota-required-cache" : "0",
+      "ota-type" : "AB",
   }
 
   if source_file is not None:
-    metadata["pre-build"] = CalculateFingerprint(oem_props,
-                                                 oem_dicts and oem_dicts[0],
-                                                 OPTIONS.source_info_dict)
-    metadata["pre-build-incremental"] = GetBuildProp(
-        "ro.build.version.incremental", OPTIONS.source_info_dict)
+    metadata["pre-device"] = source_info.device
+    metadata["pre-build"] = source_info.fingerprint
+    metadata["pre-build-incremental"] = source_info.GetBuildProp(
+        "ro.build.version.incremental")
 
-    HandleDowngradeMetadata(metadata)
+    HandleDowngradeMetadata(metadata, target_info, source_info)
   else:
-    metadata["post-timestamp"] = GetBuildProp(
-        "ro.build.date.utc", OPTIONS.info_dict)
+    metadata["pre-device"] = target_info.device
+    metadata["post-timestamp"] = target_info.GetBuildProp("ro.build.date.utc")
 
   # 1. Generate payload.
   payload_file = common.MakeTempFile(prefix="payload-", suffix=".bin")
@@ -1120,23 +1204,23 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
   target_zip = zipfile.ZipFile(target_file, "r")
-  if (OPTIONS.info_dict.get("verity") == "true" or
-      OPTIONS.info_dict.get("avb_enable") == "true"):
+  if (target_info.get("verity") == "true" or
+      target_info.get("avb_enable") == "true"):
     care_map_path = "META/care_map.txt"
     namelist = target_zip.namelist()
     if care_map_path in namelist:
       care_map_data = target_zip.read(care_map_path)
       common.ZipWriteStr(output_zip, "care_map.txt", care_map_data,
-          compress_type=zipfile.ZIP_STORED)
+                         compress_type=zipfile.ZIP_STORED)
     else:
       print("Warning: cannot find care map file in target_file package")
 
-  # OPTIONS.source_info_dict must be None for incrementals.
+  # source_info must be None for full OTAs.
   if source_file is None:
-    assert OPTIONS.source_info_dict is None
+    assert source_info is None
 
   AddCompatibilityArchiveIfTrebleEnabled(
-      target_zip, output_zip, OPTIONS.info_dict, OPTIONS.source_info_dict)
+      target_zip, output_zip, target_info, source_info)
 
   common.ZipClose(target_zip)
 
@@ -1289,11 +1373,14 @@ def main(argv):
   # Load the dict file from the zip directly to have a peek at the OTA type.
   # For packages using A/B update, unzipping is not needed.
   if OPTIONS.extracted_input is not None:
-    OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.extracted_input, OPTIONS.extracted_input)
+    OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.extracted_input,
+                                            OPTIONS.extracted_input)
   else:
     input_zip = zipfile.ZipFile(args[0], "r")
     OPTIONS.info_dict = common.LoadInfoDict(input_zip)
     common.ZipClose(input_zip)
+
+  OPTIONS.oem_dicts = _LoadOemDicts(OPTIONS.oem_source)
 
   ab_update = OPTIONS.info_dict.get("ab_update") == "true"
 
@@ -1337,7 +1424,8 @@ def main(argv):
   if OPTIONS.extracted_input is not None:
     OPTIONS.input_tmp = OPTIONS.extracted_input
     OPTIONS.target_tmp = OPTIONS.input_tmp
-    OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.input_tmp, OPTIONS.input_tmp)
+    OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.input_tmp,
+                                            OPTIONS.input_tmp)
     input_zip = zipfile.ZipFile(args[0], "r")
   else:
     print("unzipping target target-files...")
