@@ -22,6 +22,30 @@
       "revId": "3735cebecb8f55cef66c7a1cd55ef0777dc40b02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "77b0ce90_7aa53785",
+        "filename": "core/tasks/check_emu_boot.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2017-12-21T05:34:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "12ac2b4b_fcedf558",
+      "range": {
+        "startLine": 1,
+        "startChar": 31,
+        "endLine": 1,
+        "endChar": 60
+      },
+      "revId": "3735cebecb8f55cef66c7a1cd55ef0777dc40b02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
