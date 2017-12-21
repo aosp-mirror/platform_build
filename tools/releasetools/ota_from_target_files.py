@@ -409,10 +409,10 @@ def WriteFullOTAPackage(input_zip, output_zip):
   # in the target build.
   script = edify_generator.EdifyGenerator(3, OPTIONS.info_dict)
 
-  recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
   oem_props = OPTIONS.info_dict.get("oem_fingerprint_properties")
   oem_dicts = None
   if oem_props:
+    recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
     oem_dicts = _LoadOemDicts(script, recovery_mount_options)
 
   target_fp = CalculateFingerprint(oem_props, oem_dicts and oem_dicts[0],
@@ -502,8 +502,6 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
     system_progress -= 0.1
   if HasVendorPartition(input_zip):
     system_progress -= 0.1
-
-  recovery_mount_options = OPTIONS.info_dict.get("recovery_mount_options")
 
   script.ShowProgress(system_progress, 0)
 
@@ -632,12 +630,12 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       source_version, OPTIONS.target_info_dict,
       fstab=OPTIONS.source_info_dict["fstab"])
 
-  recovery_mount_options = OPTIONS.source_info_dict.get(
-      "recovery_mount_options")
   source_oem_props = OPTIONS.source_info_dict.get("oem_fingerprint_properties")
   target_oem_props = OPTIONS.target_info_dict.get("oem_fingerprint_properties")
   oem_dicts = None
-  if source_oem_props and target_oem_props:
+  if source_oem_props or target_oem_props:
+    recovery_mount_options = OPTIONS.source_info_dict.get(
+        "recovery_mount_options")
     oem_dicts = _LoadOemDicts(script, recovery_mount_options)
 
   metadata = {
