@@ -22,6 +22,30 @@
       "revId": "079e0783d0eb5311d4624aad7806215d54a5060d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dd6a9ea9_4422c399",
+        "filename": "core/main.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 864,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2017-12-21T16:23:54Z",
+      "side": 1,
+      "message": "Link type of java:vendor is set when the java module is in vendor partition. And the allowed type of java:vendor is only java:vendor. It means that java:vendor is only allowed the same partition. And this check is in link-type-file-rule as bellow. So, if I added the check that $(lt) and $(d) are same partition, it will duplicate. So I don\u0027t add check of same partition.",
+      "parentUuid": "45a6b813_f71ffb21",
+      "range": {
+        "startLine": 863,
+        "startChar": 0,
+        "endLine": 864,
+        "endChar": 63
+      },
+      "revId": "079e0783d0eb5311d4624aad7806215d54a5060d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
