@@ -713,14 +713,8 @@ USE_OPENJDK9 := true
 TARGET_OPENJDK9 := true
 endif
 
-# Path to tools.jar, or empty if USE_OPENJDK9 is unset
-HOST_JDK_TOOLS_JAR :=
-# TODO: Remove HOST_JDK_TOOLS_JAR and all references to it once OpenJDK 8
-# toolchains are no longer supported (i.e. when USE_OPENJDK9 is enforced).
-# http://b/38418220
-ifndef USE_OPENJDK9
-HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA_TOOLCHAIN)/../lib/tools.jar
-endif # ifndef USE_OPENJDK9
+# Path to tools.jar
+HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
 
 # It's called md5 on Mac OS and md5sum on Linux
 ifeq ($(HOST_OS),darwin)
