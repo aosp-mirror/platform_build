@@ -510,7 +510,6 @@ ifdef LOCAL_MULTILIB
 endif
 ifdef is_native
   arch_dir := /$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-  is_native :=
 endif
 
 # The module itself.
@@ -531,12 +530,34 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
       $(s):$(dir)/$(n)))))
 
+test_config := $(wildcard $(LOCAL_PATH)/AndroidTest.xml)
+ifeq (,$(test_config))
+  ifneq (true,$(is_native))
+    is_instrumentation_test := true
+    ifeq (true, $(LOCAL_IS_HOST_MODULE))
+      is_instrumentation_test := false
+    endif
+  endif
+  # CTS modules can be used for test data, so test config files must be
+  # explicitly created using AndroidTest.xml
+  ifeq (,$(filter cts, $(LOCAL_COMPATIBILITY_SUITE)))
+    ifeq (true, $(filter true,$(is_native) $(is_instrumentation_test)))
+      include $(BUILD_SYSTEM)/autogen_test_config.mk
+      test_config := $(autogen_test_config_file)
+      autogen_test_config_file :=
+    endif
+  endif
+endif
 
-ifneq (,$(wildcard $(LOCAL_PATH)/AndroidTest.xml))
+is_instrumentation_test :=
+
+ifneq (,$(test_config))
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
-    $(LOCAL_PATH)/AndroidTest.xml:$(dir)/$(LOCAL_MODULE).config)))
+    $(test_config):$(dir)/$(LOCAL_MODULE).config)))
 endif
+
+test_config :=
 
 ifneq (,$(wildcard $(LOCAL_PATH)/DynamicConfig.xml))
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
@@ -551,6 +572,9 @@ $(foreach extra_config, $(wildcard $(LOCAL_PATH)/$(LOCAL_MODULE)_*.config), \
       $(extra_config):$(dir)/$(notdir $(extra_config))))))
 endif
 endif # $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
+
+arch_dir :=
+is_native :=
 
 ifneq ($(my_test_data_file_pairs),)
 $(foreach pair, $(my_test_data_file_pairs), \
