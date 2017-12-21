@@ -167,6 +167,30 @@
     },
     {
       "key": {
+        "uuid": "ca145b55_bb504d3b",
+        "filename": "target/product/aosp_x86_64.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2017-12-21T10:49:15Z",
+      "side": 1,
+      "message": "For more details about the differences between aosp_*_ab (GSI) and aosp_* with these CLs, see #2 in b/70772101.",
+      "parentUuid": "6a15e227_353ebeb7",
+      "range": {
+        "startLine": 23,
+        "startChar": 34,
+        "endLine": 23,
+        "endChar": 53
+      },
+      "revId": "d556e31f8fffe95350929e3ba614aa8d84714130",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ad55ac55_f807ba25",
         "filename": "target/product/treble_common.mk",
         "patchSetId": 4
