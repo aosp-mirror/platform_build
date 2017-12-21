@@ -118,8 +118,8 @@ PRODUCT_PACKAGES += \
     vndk-sp
 
 PRODUCT_COPY_FILES += \
-    device/generic/goldfish/init.ranchu-core.sh:vendor/bin/init.ranchu-core.sh \
-    device/generic/goldfish/init.ranchu-net.sh:vendor/bin/init.ranchu-net.sh \
+    device/generic/goldfish/init.ranchu-core.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-core.sh \
+    device/generic/goldfish/init.ranchu-net.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-net.sh \
     device/generic/goldfish/init.ranchu.rc:root/init.ranchu.rc \
     device/generic/goldfish/fstab.ranchu:root/fstab.ranchu \
     device/generic/goldfish/fstab.ranchu.early:root/fstab.ranchu.early \
