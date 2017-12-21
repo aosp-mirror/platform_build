@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "527f07ff_0967e1d6",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-21T21:10:11Z",
+      "side": 1,
+      "message": "These .txt files are in a separate list, can you move this to a separate function so you don\u0027t have to reconstruct which files need renaming?  Or do the substitution before calling paths-of-intermediates?",
+      "revId": "02e7c04fedbc62464aa9f52b2c1b344717158aef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
