@@ -16,6 +16,24 @@
       "revId": "02e7c04fedbc62464aa9f52b2c1b344717158aef",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7885b8a0_b0cd565b",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2017-12-22T02:45:51Z",
+      "side": 1,
+      "message": "Refactored the function in a new CL: https://android-review.googlesource.com/c/platform/build/+/575962\nfor clean cherry-picking to O-MR1.",
+      "parentUuid": "527f07ff_0967e1d6",
+      "revId": "02e7c04fedbc62464aa9f52b2c1b344717158aef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
