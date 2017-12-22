@@ -16,6 +16,24 @@
       "revId": "2b92c08fc45f3b99cc65166b1af0d273a46a5f06",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "592713f4_2e2b73dc",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2794,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2017-12-22T16:44:57Z",
+      "side": 1,
+      "message": "We\u0027d still want the build system to let us know where to generate the vdex/odex. Its destination varies (for example system_b or next to the APK).\n\nBut doing the stripping in ART/dex2oat is a great suggestion. We can probably pass a flag --strip to dex2oat which wouldn\u0027t apply to this new case this CL is for.\n\nLet me try that.",
+      "parentUuid": "ffd98de6_c84f1741",
+      "revId": "2b92c08fc45f3b99cc65166b1af0d273a46a5f06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
