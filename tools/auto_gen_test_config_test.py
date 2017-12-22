@@ -31,7 +31,8 @@ MANIFEST_INVALID = """<?xml version="1.0" encoding="utf-8"?>
 """
 
 MANIFEST_JUNIT_TEST = """<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.android.my.tests.x">
     <instrumentation
         android:name="android.support.test.runner.AndroidJUnitRunner"
         android:targetPackage="com.android.my.tests" />
@@ -39,7 +40,8 @@ MANIFEST_JUNIT_TEST = """<?xml version="1.0" encoding="utf-8"?>
 """
 
 MANIFEST_INSTRUMENTATION_TEST = """<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.android.my.tests.x">
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="com.android.my.tests"
@@ -69,7 +71,7 @@ EXPECTED_JUNIT_TEST_CONFIG = """<?xml version="1.0" encoding="utf-8"?>
     </target_preparer>
 
     <test class="com.android.tradefed.testtype.AndroidJUnitTest" >
-        <option name="package" value="com.android.my.tests" />
+        <option name="package" value="com.android.my.tests.x" />
         <option name="runner" value="android.support.test.runner.AndroidJUnitRunner" />
     </test>
 </configuration>
@@ -97,16 +99,17 @@ EXPECTED_INSTRUMENTATION_TEST_CONFIG = """<?xml version="1.0" encoding="utf-8"?>
     </target_preparer>
 
     <test class="com.android.tradefed.testtype.InstrumentationTest" >
-        <option name="package" value="com.android.my.tests" />
+        <option name="package" value="com.android.my.tests.x" />
         <option name="runner" value="android.test.InstrumentationTestRunner" />
     </test>
 </configuration>
 """
 
-MAKE_ROOT = os.path.dirname(os.path.dirname(__file__))
-EMPTY_TEST_CONFIG = os.path.join(MAKE_ROOT, 'core', 'empty_test_config.xml')
+TOOLS_DIR = os.path.dirname(os.path.dirname(__file__))
+EMPTY_TEST_CONFIG = os.path.join(
+    TOOLS_DIR, '..', 'core', 'empty_test_config.xml')
 INSTRUMENTATION_TEST_CONFIG_TEMPLATE = os.path.join(
-    MAKE_ROOT, 'core', 'instrumentation_test_config_template.xml')
+    TOOLS_DIR, '..', 'core', 'instrumentation_test_config_template.xml')
 
 
 class AutoGenTestConfigUnittests(unittest.TestCase):
