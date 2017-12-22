@@ -24,7 +24,7 @@ from xml.dom.minidom import parse
 
 ATTRIBUTE_LABEL = 'android:label'
 ATTRIBUTE_RUNNER = 'android:name'
-ATTRIBUTE_TARGET_PACKAGE = 'android:targetPackage'
+ATTRIBUTE_PACKAGE = 'package'
 
 PLACEHOLDER_LABEL = '{LABEL}'
 PLACEHOLDER_MODULE = '{MODULE}'
@@ -54,20 +54,22 @@ def main(argv):
 
   manifest = parse(android_manifest)
   instrumentation_elements = manifest.getElementsByTagName('instrumentation')
-  if len(instrumentation_elements) != 1:
-    # Failed to locate instrumentation element in AndroidManifest file.
-    # Empty test config file will be created.
+  manifest_elements = manifest.getElementsByTagName('manifest')
+  if len(instrumentation_elements) != 1 or len(manifest_elements) != 1:
+    # Failed to locate instrumentation or manifest element in AndroidManifest.
+    # file. Empty test config file will be created.
     shutil.copyfile(empty_config, target_config)
     return 0
 
   module = os.path.splitext(os.path.basename(target_config))[0]
   instrumentation = instrumentation_elements[0]
+  manifest = manifest_elements[0]
   if instrumentation.attributes.has_key(ATTRIBUTE_LABEL):
     label = instrumentation.attributes[ATTRIBUTE_LABEL].value
   else:
     label = module
   runner = instrumentation.attributes[ATTRIBUTE_RUNNER].value
-  package = instrumentation.attributes[ATTRIBUTE_TARGET_PACKAGE].value
+  package = manifest.attributes[ATTRIBUTE_PACKAGE].value
   test_type = ('AndroidJUnitTest' if runner.endswith('.AndroidJUnitRunner')
                else 'InstrumentationTest')
 
