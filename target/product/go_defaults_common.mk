@@ -20,7 +20,9 @@
 PRODUCT_PROPERTY_OVERRIDES += \
      ro.config.low_ram=true \
      ro.lmk.critical_upgrade=true \
-     ro.lmk.upgrade_pressure=40
+     ro.lmk.upgrade_pressure=40 \
+     ro.lmk.downgrade_pressure=60 \
+     ro.lmk.kill_heaviest_task=false
 
 # set threshold to filter unused apps
 PRODUCT_PROPERTY_OVERRIDES += \
