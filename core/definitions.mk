@@ -2421,8 +2421,7 @@ $(hide) $(DX_COMMAND) \
     --output $(dir $@) \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     $(subst --main-dex-list=, --main-dex-list , \
-    $(subst --no-locals, --release, \
-        $(filter-out --core-library --multi-dex --minimal-main-dex,$(PRIVATE_DX_FLAGS)))) \
+        $(filter-out --core-library --multi-dex --minimal-main-dex,$(PRIVATE_DX_FLAGS))) \
     $(dir $@)d8_input.jar
 $(hide) rm -f $(dir $@)d8_input.jar
 endef
