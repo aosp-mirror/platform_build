@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "eaee8014_531f9251",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-23T05:05:59Z",
+      "side": 1,
+      "message": "Use:\n\n$(autogen_test_config_file): PRIVATE_AUTOGEN_TEST_CONFIG_SCRIPT :\u003d $(AUTOGEN_TEST_CONFIG_SCRIPT)\n$(autogen_test_config_file): PRIVATE_ANDROID_MANIFEST :\u003d $(my_android_manifest)\n$(autogen_test_config_file): PRIVATE_EMPTY_TEST_CONFIG :\u003d $(EMPTY_TEST_CONFIG)\n$(autogen_test_config_file): PRIVATE_TEMPLATE :\u003d $(INSTRUMENTATION_TEST_CONFIG_TEMPLATE)\n$(autogen_test_config_file): $(my_android_manifest) $(EMPTY_TEST_CONFIG) $(INSTRUMENTATION_TEST_CONFIG_TEMPLATE) $(AUTOGEN_TEST_CONFIG_SCRIPT)\n\t$(PRIVATE_AUTOGEN_TEST_CONFIG_SCRIPT) $@ $(PRIVATE_ANDROID_MANIFEST) $(PRIVATE_EMPTY_TEST_CONFIG) $(PRIVATE_TEMPLATE)",
+      "revId": "f6403c0ce74135c8b7dc17100cfdf65343ab33ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d4d3d73d_59e9bb02",
         "filename": "tools/auto_gen_test_config.py",
         "patchSetId": 1
@@ -31,6 +48,24 @@
       "side": 1,
       "message": "I added the python script as the last one of the automatic variables. So the command line will get the extra arg (path to itself).\n\nI can change the build rule to make the python call like\n$(word $4,$^) $@ $(word $1,$^) $(word $2,$^) $(word $3,$^)\nbut figure it\u0027s easier just to ignore the extra arg here.",
       "parentUuid": "d4d3d73d_59e9bb02",
+      "revId": "f6403c0ce74135c8b7dc17100cfdf65343ab33ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c1f421c_b2b8b39f",
+        "filename": "tools/auto_gen_test_config.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-23T05:05:59Z",
+      "side": 1,
+      "message": "Oh, I see.  The right thing to do is split the dependencies and the command line.",
+      "parentUuid": "6774be95_80eebe23",
       "revId": "f6403c0ce74135c8b7dc17100cfdf65343ab33ce",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
