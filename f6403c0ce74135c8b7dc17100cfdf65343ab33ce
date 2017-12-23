@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "12afa9dd_bda333fc",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2017-12-23T05:51:43Z",
+      "side": 1,
+      "message": "Done\n\nSo automatic variable is not recommended in case we need to pick a particular one to use in the rule?",
+      "parentUuid": "eaee8014_531f9251",
+      "revId": "f6403c0ce74135c8b7dc17100cfdf65343ab33ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d4d3d73d_59e9bb02",
         "filename": "tools/auto_gen_test_config.py",
         "patchSetId": 1
