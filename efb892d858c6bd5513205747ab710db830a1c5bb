@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5c3e903a_6b1b87b2",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2017-12-23T00:28:32Z",
+      "side": 1,
+      "message": "You need a dependency on $(AUTOGEN_TEST_CONFIG_SCRIPT) so that updates to the script will cause the config to regenerate on a following make command.",
+      "revId": "efb892d858c6bd5513205747ab710db830a1c5bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
