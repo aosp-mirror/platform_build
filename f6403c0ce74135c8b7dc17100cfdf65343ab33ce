@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "77de7919_ab3b9ba6",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-23T06:10:36Z",
+      "side": 1,
+      "message": "It\u0027s fine if you really want to depend on a list of inputs, like source files for compiling, but if you want to do anything more complicated it gets confusing and error-prone.",
+      "parentUuid": "12afa9dd_bda333fc",
+      "revId": "f6403c0ce74135c8b7dc17100cfdf65343ab33ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d4d3d73d_59e9bb02",
         "filename": "tools/auto_gen_test_config.py",
         "patchSetId": 1
