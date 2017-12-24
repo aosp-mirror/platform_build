@@ -59,15 +59,6 @@ endif
 intermediates := $(call local-intermediates-dir)
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
-# Choose leaf name for the compiled jar file.
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-full_classes_compiled_jar_leaf := classes-no-debug-var.jar
-built_dex_intermediate_leaf := no-local
-else
-full_classes_compiled_jar_leaf := classes-full-debug.jar
-built_dex_intermediate_leaf := with-local
-endif
-
 ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
 LOCAL_PROGUARD_ENABLED :=
 endif
@@ -75,14 +66,13 @@ endif
 full_classes_turbine_jar := $(intermediates.COMMON)/classes-turbine.jar
 full_classes_header_jarjar := $(intermediates.COMMON)/classes-header-jarjar.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
-full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
+full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
 full_classes_processed_jar := $(intermediates.COMMON)/classes-processed.jar
 full_classes_desugar_jar := $(intermediates.COMMON)/classes-desugar.jar
-jarjar_leaf := classes-jarjar.jar
-full_classes_jarjar_jar := $(intermediates.COMMON)/$(jarjar_leaf)
+full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_proguard_jar := $(intermediates.COMMON)/classes-proguard.jar
 full_classes_combined_jar := $(intermediates.COMMON)/classes-combined.jar
-built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)/classes.dex
+built_dex_intermediate := $(intermediates.COMMON)/dex/classes.dex
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 java_source_list_file := $(intermediates.COMMON)/java-source-list
 
@@ -757,15 +747,6 @@ endif # LOCAL_PROGUARD_ENABLED defined
 
 ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-# If you instrument class files that have local variable debug information in
-# them emma does not correctly maintain the local variable table.
-# This will cause an error when you try to convert the class files for Android.
-# The workaround here is to build different dex file here based on emma switch
-# then later copy into classes.dex. When emma is on, dx is run with --no-locals
-# option to remove local variable information
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-$(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
-endif
 
 my_r8 :=
 ifdef LOCAL_PROGUARD_ENABLED
@@ -783,7 +764,7 @@ endif # USE_R8
 endif # LOCAL_PROGUARD_ENABLED
 
 ifndef my_r8
-$(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
+$(built_dex_intermediate): $(full_classes_proguard_jar) $(DX) $(ZIP2ZIP)
 ifneq ($(USE_D8_DESUGAR),true)
 	$(transform-classes.jar-to-dex)
 else

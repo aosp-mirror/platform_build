@@ -157,8 +157,15 @@ BUILD_NOTICE_FILE := $(BUILD_SYSTEM)/notice_files.mk
 BUILD_HOST_DALVIK_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_java_library.mk
 BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
 
-BUILD_HOST_TEST_CONFIG:= $(BUILD_SYSTEM)/host_test_config.mk
-BUILD_TARGET_TEST_CONFIG:= $(BUILD_SYSTEM)/target_test_config.mk
+BUILD_HOST_TEST_CONFIG := $(BUILD_SYSTEM)/host_test_config.mk
+BUILD_TARGET_TEST_CONFIG := $(BUILD_SYSTEM)/target_test_config.mk
+
+INSTRUMENTATION_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/instrumentation_test_config_template.xml
+NATIVE_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/native_test_config_template.xml
+EMPTY_TEST_CONFIG := $(BUILD_SYSTEM)/empty_test_config.xml
+
+# Tool to generate TradeFed test config file automatically.
+AUTOGEN_TEST_CONFIG_SCRIPT := build/make/tools/auto_gen_test_config.py
 
 # ###############################################################
 # Parse out any modifier targets.
@@ -714,14 +721,8 @@ USE_OPENJDK9 := true
 TARGET_OPENJDK9 := true
 endif
 
-# Path to tools.jar, or empty if USE_OPENJDK9 is unset
-HOST_JDK_TOOLS_JAR :=
-# TODO: Remove HOST_JDK_TOOLS_JAR and all references to it once OpenJDK 8
-# toolchains are no longer supported (i.e. when USE_OPENJDK9 is enforced).
-# http://b/38418220
-ifndef USE_OPENJDK9
-HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA_TOOLCHAIN)/../lib/tools.jar
-endif # ifndef USE_OPENJDK9
+# Path to tools.jar
+HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
 
 # It's called md5 on Mac OS and md5sum on Linux
 ifeq ($(HOST_OS),darwin)
@@ -780,6 +781,28 @@ $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
 
 requirements :=
 
+# If PRODUCT_USE_VNDK is true and BOARD_VNDK_VERSION is not defined yet,
+# BOARD_VNDK_VERSION will be set to "current" as default.
+# PRODUCT_USE_VNDK will be true in Android-P or later launching devices.
+PRODUCT_USE_VNDK := false
+ifneq ($(PRODUCT_USE_VNDK_OVERRIDE),)
+  PRODUCT_USE_VNDK := $(PRODUCT_USE_VNDK_OVERRIDE)
+else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
+  # No shipping level defined
+else ifeq ($(call math_gt_or_eq,27,$(PRODUCT_SHIPPING_API_LEVEL)),)
+  PRODUCT_USE_VNDK := $(PRODUCT_FULL_TREBLE)
+endif
+
+ifeq ($(PRODUCT_USE_VNDK),true)
+  ifndef BOARD_VNDK_VERSION
+    BOARD_VNDK_VERSION := current
+  endif
+endif
+
+$(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use PRODUCT_USE_VNDK instead)
+.KATI_READONLY := \
+    PRODUCT_USE_VNDK
+
 ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),27),)
     ifneq ($(TARGET_USES_MKE2FS),true)
@@ -795,7 +818,12 @@ else
   DEFAULT_SYSTEM_DEV_CERTIFICATE := build/target/product/security/testkey
 endif
 
-FRAMEWORK_MANIFEST_FILE := system/libhidl/manifest.xml
+FRAMEWORK_MANIFEST_INPUT_FILES := system/libhidl/manifest.xml
+ifdef DEVICE_FRAMEWORK_MANIFEST_FILE
+  FRAMEWORK_MANIFEST_INPUT_FILES += $(DEVICE_FRAMEWORK_MANIFEST_FILE)
+endif
+$(.KATI_obsolete_var DEVICE_FRAMEWORK_MANIFEST_FILE,No one should ever need to use this.)
+
 FRAMEWORK_COMPATIBILITY_MATRIX_FILES := $(wildcard hardware/interfaces/compatibility_matrix.*.xml)
 
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
