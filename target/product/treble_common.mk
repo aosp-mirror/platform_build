@@ -42,8 +42,6 @@ PRODUCT_PACKAGES += vndk_package
 PRODUCT_PACKAGES += \
     libvulkan \
 
-# Audio:
-USE_XML_AUDIO_POLICY_CONF := 1
 # The following policy XML files are used as fallback for
 # vendors/devices not using XML to configure audio policy.
 PRODUCT_COPY_FILES += \
@@ -71,16 +69,6 @@ PRODUCT_PACKAGES += \
 #   Provide a default APN configuration
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml
-
-# Android Verified Boot (AVB):
-#   Builds a special vbmeta.img that disables AVB verification.
-#   Otherwise, AVB will prevent the device from booting the generic system.img.
-#   Also checks that BOARD_AVB_ENABLE is not set, to prevent adding verity
-#   metadata into system.img.
-ifeq ($(BOARD_AVB_ENABLE),true)
-$(error BOARD_AVB_ENABLE cannot be set for Treble GSI)
-endif
-BOARD_BUILD_DISABLED_VBMETAIMAGE := true
 
 #GSI support for the devices that disable VNDK enforcing
 PRODUCT_COPY_FILES += \
