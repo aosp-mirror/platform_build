@@ -33,6 +33,24 @@
       "revId": "50490253314572c84a1d149af1432e1cc1290b64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c08a524_70624ebd",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 327,
+      "author": {
+        "id": 1259164
+      },
+      "writtenOn": "2017-12-26T03:16:20Z",
+      "side": 1,
+      "message": "It makes sense. So i made some changes and uploaded patchset3. But there is side-effct, if someone change PROMPT_COMMAND after lunch, and lunch it again, it will be overwritten.\nHowever, I made this feature opt-in again. So i think it\u0027s OK",
+      "parentUuid": "0996ff28_5148efa2",
+      "revId": "50490253314572c84a1d149af1432e1cc1290b64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
