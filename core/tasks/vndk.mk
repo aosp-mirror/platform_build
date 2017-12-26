@@ -17,6 +17,9 @@ current_makefile := $(lastword $(MAKEFILE_LIST))
 # BOARD_VNDK_VERSION must be set to 'current' in order to generate a VNDK snapshot.
 ifeq ($(BOARD_VNDK_VERSION),current)
 
+# PLATFORM_VNDK_VERSION must be set.
+ifneq (,$(PLATFORM_VNDK_VERSION))
+
 # Returns arch-specific libclang_rt.ubsan* library name.
 # Because VNDK_CORE_LIBRARIES includes all arch variants for libclang_rt.ubsan*
 # libs, the arch-specific libs are selected separately.
@@ -232,6 +235,15 @@ vndk_snapshot_dependencies :=
 # ifdef TARGET_2ND_ARCH
 # vndk_snapshot_arch_2ND :=
 # endif
+
+else # PLATFORM_VNDK_VERSION is NOT set
+
+.PHONY: vndk
+vndk:
+	$(call echo-error,$(current_makefile),CANNOT generate VNDK snapshot. PLATFORM_VNDK_VERSION must be set.)
+	exit 1
+
+endif # PLATFORM_VNDK_VERSION
 
 else # BOARD_VNDK_VERSION is NOT set to 'current'
 
