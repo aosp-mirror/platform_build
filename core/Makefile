@@ -2313,9 +2313,7 @@ $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSIONS := $(tool_extensions)
 $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_TOOL_EXTENSION := $(tool_extension)
 
 ifeq ($(AB_OTA_UPDATER),true)
-# Build zlib fingerprint if using the AB Updater.
-updater_dep := $(TARGET_OUT_COMMON_GEN)/zlib_fingerprint
-updater_dep += system/update_engine/update_engine.conf
+updater_dep := system/update_engine/update_engine.conf
 else
 # Build OTA tools if not using the AB Updater.
 updater_dep := $(built_ota_tools)
@@ -2548,7 +2546,6 @@ endif
 ifeq ($(AB_OTA_UPDATER),true)
 	@# When using the A/B updater, include the updater config files in the zip.
 	$(hide) cp $(TOPDIR)system/update_engine/update_engine.conf $(zip_root)/META/update_engine_config.txt
-	$(hide) cp $(TARGET_OUT_COMMON_GEN)/zlib_fingerprint $(zip_root)/META/zlib_fingerprint.txt
 	$(hide) for part in $(AB_OTA_PARTITIONS); do \
 	  echo "$${part}" >> $(zip_root)/META/ab_partitions.txt; \
 	done
