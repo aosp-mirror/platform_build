@@ -566,12 +566,16 @@ my_src_aar := $(filter %.aar, $(my_prebuilt_src_file))
 ifneq ($(my_src_aar),)
 # This is .aar file, archive of classes.jar and Android resources.
 my_src_jar := $(intermediates.COMMON)/aar/classes.jar
+my_src_proguard_options := $(intermediates.COMMON)/aar/proguard.txt
 
+$(my_src_jar) : .KATI_IMPLICIT_OUTPUTS := $(my_src_proguard_options)
 $(my_src_jar) : $(my_src_aar)
 	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@) $(dir $@)/res
 	$(hide) unzip -qo -d $(dir $@) $<
 	# Make sure the extracted classes.jar has a new timestamp.
 	$(hide) touch $@
+	# Make sure the proguard file exists and has a new timestamp.
+	$(hide) touch $(dir $@)/proguard.txt
 
 endif
 
@@ -595,6 +599,10 @@ endif
 
 ifdef LOCAL_USE_AAPT2
 ifneq ($(my_src_aar),)
+
+$(intermediates.COMMON)/export_proguard_flags : $(my_src_proguard_options)
+	$(transform-prebuilt-to-target)
+
 LOCAL_SDK_RES_VERSION:=$(strip $(LOCAL_SDK_RES_VERSION))
 ifeq ($(LOCAL_SDK_RES_VERSION),)
   LOCAL_SDK_RES_VERSION:=$(LOCAL_SDK_VERSION)
