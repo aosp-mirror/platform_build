@@ -22,6 +22,30 @@
       "revId": "e990b37c9f471f20ea282046e1568af73c52b451",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50c6b9aa_a6536dc2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2017-12-28T02:29:32Z",
+      "side": 1,
+      "message": "Yeah, but it\u0027s just a single class for compatibility with some emma APIs for dumping, which I don\u0027t think is relevant to us anyways.\n\nI looked at proguard.jacoco.flags, for some reason it is only used in unbundled builds, although it seems like it should be  relevant in any EMMA_INSTRUMENT_STATIC build.",
+      "parentUuid": "60177c17_e18c9cf6",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 11
+      },
+      "revId": "e990b37c9f471f20ea282046e1568af73c52b451",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
