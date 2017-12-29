@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6b78ece_f82f3080",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2017-12-29T09:26:41Z",
+      "side": 1,
+      "message": "TARGET_ARCH here?\n\nSee https://android-review.googlesource.com/c/platform/development/+/578303/4/vndk/snapshot/utils.py#73 for more thoughts.",
+      "range": {
+        "startLine": 140,
+        "startChar": 46,
+        "endLine": 140,
+        "endChar": 63
+      },
+      "revId": "169ed1ff905705e5d96c63c9c9b3d4d7a60b25b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
