@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "077d84a4_d44412f0",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-01-01T08:51:23Z",
+      "side": 1,
+      "message": "This is odd, for some reason, PRIVATE_ANDROID_MANIFEST here has value:\nout/target/common/obj/APPS/DtsSampleAndroidActivityLifecycleApplication_intermediates/AndroidManifest.xml\n\nhowever, if I echo $^ in the build rule, $(my_android_manifest) is indeed\nvendor/google/dts/dts-tests/hostsidetests/appcompat/app/AndroidManifest.xml\n\nI can\u0027t find any code path that will overwrite \n$(autogen_test_config_file): PRIVATE_ANDROID_MANIFEST\nwith value out/target/common/obj/APPS/DtsSampleAndroidActivityLifecycleApplication_intermediates/AndroidManifest.xml\n\nMaybe this module has some odd dependency. Where can I check the details of its build order?",
+      "range": {
+        "startLine": 50,
+        "startChar": 51,
+        "endLine": 50,
+        "endChar": 76
+      },
+      "revId": "636955d5eba92a8d805f351756a20de46dc9c2dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
