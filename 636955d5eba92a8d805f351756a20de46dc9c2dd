@@ -22,6 +22,29 @@
       "revId": "636955d5eba92a8d805f351756a20de46dc9c2dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a0a85dce_fdaf1267",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-01-01T18:31:26Z",
+      "side": 1,
+      "message": "This is probably overwriting your PRIVATE_ANDROID_MANIFEST value, use a different name for your variable or use the path to the merged manifest produced by android_manifest.mk in $(full_android_manifest).",
+      "range": {
+        "startLine": 332,
+        "startChar": 0,
+        "endLine": 334,
+        "endChar": 0
+      },
+      "revId": "636955d5eba92a8d805f351756a20de46dc9c2dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
