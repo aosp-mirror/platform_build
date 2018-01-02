@@ -574,17 +574,15 @@ def Gunzip(in_filename, out_filename):
 
 
 def UnzipTemp(filename, pattern=None):
-  """Unzip the given archive into a temporary directory and return the name.
+  """Unzips the given archive into a temporary directory and returns the name.
 
-  If filename is of the form "foo.zip+bar.zip", unzip foo.zip into a
-  temp dir, then unzip bar.zip into that_dir/BOOTABLE_IMAGES.
+  If filename is of the form "foo.zip+bar.zip", unzip foo.zip into a temp dir,
+  then unzip bar.zip into that_dir/BOOTABLE_IMAGES.
 
-  Returns (tempdir, zipobj) where zipobj is a zipfile.ZipFile (of the
-  main file), open for reading.
+  Returns:
+    (tempdir, zipobj): tempdir is the name of the temprary directory; zipobj is
+        a zipfile.ZipFile (of the main file), open for reading.
   """
-
-  tmp = tempfile.mkdtemp(prefix="targetfiles-")
-  OPTIONS.tempfiles.append(tmp)
 
   def unzip_to_dir(filename, dirname):
     cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
@@ -596,6 +594,7 @@ def UnzipTemp(filename, pattern=None):
       raise ExternalError("failed to unzip input target-files \"%s\"" %
                           (filename,))
 
+  tmp = MakeTempDir(prefix="targetfiles-")
   m = re.match(r"^(.*[.]zip)\+(.*[.]zip)$", filename, re.IGNORECASE)
   if m:
     unzip_to_dir(m.group(1), tmp)
@@ -955,12 +954,24 @@ def MakeTempFile(prefix='tmp', suffix=''):
   return fn
 
 
+def MakeTempDir(prefix='tmp', suffix=''):
+  """Makes a temporary dir that will be cleaned up with a call to Cleanup().
+
+  Returns:
+    The absolute pathname of the new directory.
+  """
+  dir_name = tempfile.mkdtemp(suffix=suffix, prefix=prefix)
+  OPTIONS.tempfiles.append(dir_name)
+  return dir_name
+
+
 def Cleanup():
   for i in OPTIONS.tempfiles:
     if os.path.isdir(i):
-      shutil.rmtree(i)
+      shutil.rmtree(i, ignore_errors=True)
     else:
       os.remove(i)
+  del OPTIONS.tempfiles[:]
 
 
 class PasswordManager(object):

@@ -323,7 +323,7 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
   signer_args = OPTIONS.verity_signer_args
 
   # make a tempdir
-  tempdir_name = tempfile.mkdtemp(suffix="_verity_images")
+  tempdir_name = common.MakeTempDir(suffix="_verity_images")
 
   # get partial image paths
   verity_image_path = os.path.join(tempdir_name, "verity.img")
@@ -332,7 +332,6 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
 
   # build the verity tree and get the root hash and salt
   if not BuildVerityTree(out_file, verity_image_path, prop_dict):
-    shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
 
   # build the metadata blocks
@@ -342,7 +341,6 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
   if not BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
                              block_dev, signer_path, signer_key, signer_args,
                              verity_disable):
-    shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
 
   # build the full verified image
@@ -358,21 +356,16 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
                             verity_fec_path,
                             padding_size,
                             fec_supported):
-    shutil.rmtree(tempdir_name, ignore_errors=True)
     return False
 
-  shutil.rmtree(tempdir_name, ignore_errors=True)
   return True
 
 def ConvertBlockMapToBaseFs(block_map_file):
-  fd, base_fs_file = tempfile.mkstemp(prefix="script_gen_",
-                                      suffix=".base_fs")
-  os.close(fd)
+  base_fs_file = common.MakeTempFile(prefix="script_gen_", suffix=".base_fs")
 
   convert_command = ["blk_alloc_to_base_fs", block_map_file, base_fs_file]
   (_, exit_code) = RunCommand(convert_command)
   if exit_code != 0:
-    os.remove(base_fs_file)
     return None
   return base_fs_file
 
@@ -426,17 +419,15 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   # /system and the ramdisk, and can be mounted at the root of the file system.
   origin_in = in_dir
   fs_config = prop_dict.get("fs_config")
-  base_fs_file = None
   if (prop_dict.get("system_root_image") == "true"
       and prop_dict["mount_point"] == "system"):
-    in_dir = tempfile.mkdtemp()
+    in_dir = common.MakeTempDir()
     # Change the mount point to "/"
     prop_dict["mount_point"] = "/"
     if fs_config:
       # We need to merge the fs_config files of system and ramdisk.
-      fd, merged_fs_config = tempfile.mkstemp(prefix="root_fs_config",
-                                              suffix=".txt")
-      os.close(fd)
+      merged_fs_config = common.MakeTempFile(prefix="root_fs_config",
+                                             suffix=".txt")
       with open(merged_fs_config, "w") as fw:
         if "ramdisk_fs_config" in prop_dict:
           with open(prop_dict["ramdisk_fs_config"]) as fr:
@@ -577,19 +568,10 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     shutil.copytree(origin_in, staging_system, symlinks=True)
 
   ext4fs_output = None
-  try:
-    if fs_type.startswith("ext4"):
-      (ext4fs_output, exit_code) = RunCommand(build_command)
-    else:
-      (_, exit_code) = RunCommand(build_command)
-  finally:
-    if in_dir != origin_in:
-      # Clean up temporary directories and files.
-      shutil.rmtree(in_dir, ignore_errors=True)
-      if fs_config:
-        os.remove(fs_config)
-    if base_fs_file is not None:
-      os.remove(base_fs_file)
+  if fs_type.startswith("ext4"):
+    (ext4fs_output, exit_code) = RunCommand(build_command)
+  else:
+    (_, exit_code) = RunCommand(build_command)
   if exit_code != 0:
     print("Error: '%s' failed with exit code %d" % (build_command, exit_code))
     return False
@@ -808,15 +790,18 @@ def main(argv):
       mount_point = "oem"
     else:
       print >> sys.stderr, "error: unknown image file name ", image_filename
-      exit(1)
+      sys.exit(1)
 
     image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
 
   if not BuildImage(in_dir, image_properties, out_file, target_out):
     print >> sys.stderr, "error: failed to build %s from %s" % (out_file,
                                                                 in_dir)
-    exit(1)
+    sys.exit(1)
 
 
 if __name__ == '__main__':
-  main(sys.argv[1:])
+  try:
+    main(sys.argv[1:])
+  finally:
+    common.Cleanup()
