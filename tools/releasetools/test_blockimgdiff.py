@@ -16,11 +16,42 @@
 
 from __future__ import print_function
 
-import common
 import unittest
 
-from blockimgdiff import BlockImageDiff, EmptyImage, Transfer
+import common
+from blockimgdiff import BlockImageDiff, EmptyImage, HeapItem, Transfer
 from rangelib import RangeSet
+
+
+class HealpItemTest(unittest.TestCase):
+
+  class Item(object):
+    def __init__(self, score):
+      self.score = score
+
+  def test_init(self):
+    item1 = HeapItem(self.Item(15))
+    item2 = HeapItem(self.Item(20))
+    item3 = HeapItem(self.Item(15))
+    self.assertTrue(item1)
+    self.assertTrue(item2)
+    self.assertTrue(item3)
+
+    self.assertNotEqual(item1, item2)
+    self.assertEqual(item1, item3)
+    # HeapItem uses negated scores.
+    self.assertGreater(item1, item2)
+    self.assertLessEqual(item1, item3)
+    self.assertTrue(item1 <= item3)
+    self.assertFalse(item2 >= item1)
+
+  def test_clear(self):
+    item = HeapItem(self.Item(15))
+    self.assertTrue(item)
+
+    item.clear()
+    self.assertFalse(item)
+
 
 class BlockImageDiffTest(unittest.TestCase):
 
