@@ -307,8 +307,7 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
   if OPTIONS.info_dict.get("userdata_img_with_data") == "true":
     user_dir = os.path.join(OPTIONS.input_tmp, "DATA")
   else:
-    user_dir = tempfile.mkdtemp()
-    OPTIONS.tempfiles.append(user_dir)
+    user_dir = common.MakeTempDir()
 
   fstab = OPTIONS.info_dict["fstab"]
   if fstab:
@@ -363,9 +362,7 @@ def AddVBMeta(output_zip, partitions, prefix="IMAGES/"):
   cmd = [avbtool, "make_vbmeta_image", "--output", img.name]
   common.AppendAVBSigningArgs(cmd, "vbmeta")
 
-  public_key_dir = tempfile.mkdtemp(prefix="avbpubkey-")
-  OPTIONS.tempfiles.append(public_key_dir)
-
+  public_key_dir = common.MakeTempDir(prefix="avbpubkey-")
   for partition, path in partitions.items():
     assert partition in common.AVB_PARTITIONS, 'Unknown partition: %s' % (
         partition,)
@@ -453,8 +450,7 @@ def AddCache(output_zip, prefix="IMAGES/"):
   timestamp = (datetime.datetime(2009, 1, 1) - epoch).total_seconds()
   image_props["timestamp"] = int(timestamp)
 
-  user_dir = tempfile.mkdtemp()
-  OPTIONS.tempfiles.append(user_dir)
+  user_dir = common.MakeTempDir()
 
   fstab = OPTIONS.info_dict["fstab"]
   if fstab:
