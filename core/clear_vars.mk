@@ -194,7 +194,7 @@ LOCAL_PREBUILT_OBJ_FILES:=
 LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES:=
 LOCAL_PREBUILT_STRIP_COMMENTS:=
 LOCAL_PRIVILEGED_MODULE:=
-# '',full,custom,nosystem,disabled,obfuscation,optimization
+# '',full,custom,disabled,obfuscation,optimization
 LOCAL_PROGUARD_ENABLED:=
 LOCAL_PROGUARD_FLAG_FILES:=
 LOCAL_PROGUARD_FLAGS:=
