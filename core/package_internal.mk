@@ -275,6 +275,8 @@ ifeq (true,$(EMMA_INSTRUMENT_STATIC))
 ifneq ($(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),)
 # Only add jacocoagent if the package contains some java code
 LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
+# Exclude jacoco classes from proguard
+LOCAL_PROGUARD_FLAGS += -include $(BUILD_SYSTEM)/proguard.jacoco.flags
 endif # Contains java code
 else
 ifdef LOCAL_SDK_VERSION
