@@ -14,12 +14,10 @@
 # limitations under the License.
 #
 import os
-import shutil
 import tempfile
 import time
 import unittest
 import zipfile
-
 from hashlib import sha1
 
 import common
@@ -28,6 +26,7 @@ import validate_target_files
 KiB = 1024
 MiB = 1024 * KiB
 GiB = 1024 * MiB
+
 
 def get_2gb_string():
   size = int(2 * GiB + 1)
@@ -355,17 +354,18 @@ class CommonZipTest(unittest.TestCase):
 
 
 class InstallRecoveryScriptFormatTest(unittest.TestCase):
-  """Check the format of install-recovery.sh
+  """Checks the format of install-recovery.sh.
 
-  Its format should match between common.py and validate_target_files.py."""
+  Its format should match between common.py and validate_target_files.py.
+  """
 
   def setUp(self):
-    self._tempdir = tempfile.mkdtemp()
+    self._tempdir = common.MakeTempDir()
     # Create a dummy dict that contains the fstab info for boot&recovery.
     self._info = {"fstab" : {}}
-    dummy_fstab = \
-        ["/dev/soc.0/by-name/boot /boot emmc defaults defaults",
-         "/dev/soc.0/by-name/recovery /recovery emmc defaults defaults"]
+    dummy_fstab = [
+        "/dev/soc.0/by-name/boot /boot emmc defaults defaults",
+        "/dev/soc.0/by-name/recovery /recovery emmc defaults defaults"]
     self._info["fstab"] = common.LoadRecoveryFSTab("\n".join, 2, dummy_fstab)
     # Construct the gzipped recovery.img and boot.img
     self.recovery_data = bytearray([
@@ -414,4 +414,4 @@ class InstallRecoveryScriptFormatTest(unittest.TestCase):
                                                         self._info)
 
   def tearDown(self):
-    shutil.rmtree(self._tempdir)
+    common.Cleanup()
