@@ -363,6 +363,8 @@ $(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(data_binding_stamp)
 $(full_classes_compiled_jar): $(data_binding_stamp)
 endif  # LOCAL_DATA_BINDING
 
+resource_export_package :=
+
 ifeq ($(need_compile_res),true)
 
 ###############################
@@ -429,7 +431,6 @@ $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_
 
 $(proguard_options_file): $(R_file_stamp)
 
-resource_export_package :=
 ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
 # Put this module's resources into a PRODUCT-agnositc package that
 # other packages can use to build their own PRODUCT-agnostic R.java (etc.)
