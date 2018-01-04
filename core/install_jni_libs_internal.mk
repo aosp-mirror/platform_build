@@ -108,15 +108,16 @@ endif  # inner my_prebuilt_jni_libs
 endif  # outer my_prebuilt_jni_libs
 
 # Verify that all included libraries are built against the NDK
+include $(BUILD_SYSTEM)/allowed_ndk_types.mk
 ifneq ($(strip $(LOCAL_JNI_SHARED_LIBRARIES)),)
 ifneq ($(LOCAL_SDK_VERSION),)
 my_link_type := app:sdk
-my_warn_types := native:platform
-my_allowed_types := native:ndk
+my_warn_types := native:platform $(my_warn_ndk_types)
+my_allowed_types := $(my_allowed_ndk_types)
 else
 my_link_type := app:platform
-my_warn_types :=
-my_allowed_types := native:ndk native:platform native:vendor native:vndk native:vndk_private
+my_warn_types := $(my_warn_ndk_types)
+my_allowed_types := $(my_allowed_ndk_types) native:platform native:vendor native:vndk native:vndk_private
 endif
 
 my_link_deps := $(addprefix SHARED_LIBRARIES:,$(LOCAL_JNI_SHARED_LIBRARIES))
