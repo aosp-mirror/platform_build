@@ -46,6 +46,30 @@
       "revId": "e6495d2f2440b0221a29e486055e6c7cd1f7b4bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a2f8352_797f8086",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-04T23:20:22Z",
+      "side": 1,
+      "message": "The only reason we can start using this for a different purpose is if we remove the current users, so that needs to happen first. Previously I\u0027ve been told that there aren\u0027t really any current users, but I\u0027m not sure that actually caught everyone.",
+      "parentUuid": "bdb53ec3_e1f823f8",
+      "range": {
+        "startLine": 297,
+        "startChar": 0,
+        "endLine": 297,
+        "endChar": 26
+      },
+      "revId": "e6495d2f2440b0221a29e486055e6c7cd1f7b4bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
