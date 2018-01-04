@@ -14,52 +14,81 @@
 # limitations under the License.
 #
 
-import shutil
-import tempfile
 import unittest
 
+import common
 from build_image import CheckHeadroom, RunCommand
 
 
 class BuildImageTest(unittest.TestCase):
 
+  # Available: 1000 blocks.
+  EXT4FS_OUTPUT = (
+      "Created filesystem with 2777/129024 inodes and 515099/516099 blocks")
+
   def test_CheckHeadroom_SizeUnderLimit(self):
-    ext4fs_output = ("Created filesystem with 2777/129024 inodes and "
-                     "508140/516099 blocks")
+    # Required headroom: 1000 blocks.
     prop_dict = {
-        'partition_headroom' : '4194304',
+        'fs_type' : 'ext4',
+        'partition_headroom' : '4096000',
         'mount_point' : 'system',
     }
-    self.assertTrue(CheckHeadroom(ext4fs_output, prop_dict))
+    self.assertTrue(CheckHeadroom(self.EXT4FS_OUTPUT, prop_dict))
 
   def test_CheckHeadroom_InsufficientHeadroom(self):
-    ext4fs_output = ("Created filesystem with 2777/129024 inodes and "
-                     "515099/516099 blocks")
+    # Required headroom: 1001 blocks.
     prop_dict = {
+        'fs_type' : 'ext4',
         'partition_headroom' : '4100096',
         'mount_point' : 'system',
     }
-    self.assertFalse(CheckHeadroom(ext4fs_output, prop_dict))
+    self.assertFalse(CheckHeadroom(self.EXT4FS_OUTPUT, prop_dict))
+
+  def test_CheckHeadroom_WrongFsType(self):
+    prop_dict = {
+        'fs_type' : 'f2fs',
+        'partition_headroom' : '4100096',
+        'mount_point' : 'system',
+    }
+    self.assertRaises(
+        AssertionError, CheckHeadroom, self.EXT4FS_OUTPUT, prop_dict)
+
+  def test_CheckHeadroom_MissingProperties(self):
+    prop_dict = {
+        'fs_type' : 'ext4',
+        'partition_headroom' : '4100096',
+    }
+    self.assertRaises(
+        AssertionError, CheckHeadroom, self.EXT4FS_OUTPUT, prop_dict)
+
+    prop_dict = {
+        'fs_type' : 'ext4',
+        'mount_point' : 'system',
+    }
+    self.assertRaises(
+        AssertionError, CheckHeadroom, self.EXT4FS_OUTPUT, prop_dict)
 
   def test_CheckHeadroom_WithMke2fsOutput(self):
     """Tests the result parsing from actual call to mke2fs."""
-    input_dir = tempfile.mkdtemp()
-    output_image = tempfile.NamedTemporaryFile(suffix='.img')
-    command = ['mkuserimg_mke2fs.sh', input_dir, output_image.name, 'ext4',
+    input_dir = common.MakeTempDir()
+    output_image = common.MakeTempFile(suffix='.img')
+    command = ['mkuserimg_mke2fs.sh', input_dir, output_image, 'ext4',
                '/system', '409600', '-j', '0']
     ext4fs_output, exit_code = RunCommand(command)
     self.assertEqual(0, exit_code)
 
     prop_dict = {
+        'fs_type' : 'ext4',
         'partition_headroom' : '40960',
         'mount_point' : 'system',
     }
     self.assertTrue(CheckHeadroom(ext4fs_output, prop_dict))
 
     prop_dict = {
+        'fs_type' : 'ext4',
         'partition_headroom' : '413696',
         'mount_point' : 'system',
     }
     self.assertFalse(CheckHeadroom(ext4fs_output, prop_dict))
 
-    shutil.rmtree(input_dir)
+    common.Cleanup()
