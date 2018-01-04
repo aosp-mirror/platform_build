@@ -581,8 +581,6 @@ else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   ZIPALIGN := $(prebuilt_build_tools_bin)/zipalign
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
 
-R8_COMPAT_PROGUARD := $(HOST_OUT_EXECUTABLES)/r8-compat-proguard
-
 ifeq (,$(TARGET_BUILD_APPS))
   # Use RenderScript prebuilts for unbundled builds but not PDK builds
   LLVM_RS_CC := $(HOST_OUT_EXECUTABLES)/llvm-rs-cc
