@@ -384,17 +384,25 @@ def CheckHeadroom(ext4fs_output, prop_dict):
 
   Returns:
     The check result.
+
+  Raises:
+    AssertionError: On invalid input.
   """
+  assert ext4fs_output is not None
+  assert prop_dict.get('fs_type', '').startswith('ext4')
+  assert 'partition_headroom' in prop_dict
+  assert 'mount_point' in prop_dict
+
   ext4fs_stats = re.compile(
       r'Created filesystem with .* (?P<used_blocks>[0-9]+)/'
       r'(?P<total_blocks>[0-9]+) blocks')
   m = ext4fs_stats.match(ext4fs_output.strip().split('\n')[-1])
   used_blocks = int(m.groupdict().get('used_blocks'))
   total_blocks = int(m.groupdict().get('total_blocks'))
-  headroom_blocks = int(prop_dict.get('partition_headroom')) / BLOCK_SIZE
+  headroom_blocks = int(prop_dict['partition_headroom']) / BLOCK_SIZE
   adjusted_blocks = total_blocks - headroom_blocks
   if used_blocks > adjusted_blocks:
-    mount_point = prop_dict.get("mount_point")
+    mount_point = prop_dict["mount_point"]
     print("Error: Not enough room on %s (total: %d blocks, used: %d blocks, "
           "headroom: %d blocks, available: %d blocks)" % (
               mount_point, total_blocks, used_blocks, headroom_blocks,
@@ -578,7 +586,6 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
   # Check if there's enough headroom space available for ext4 image.
   if "partition_headroom" in prop_dict and fs_type.startswith("ext4"):
-    assert ext4fs_output is not None
     if not CheckHeadroom(ext4fs_output, prop_dict):
       return False
 
