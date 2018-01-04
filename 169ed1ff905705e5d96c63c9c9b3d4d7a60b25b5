@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "49268add_5831528a",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2018-01-04T01:27:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6b78ece_f82f3080",
+      "range": {
+        "startLine": 140,
+        "startChar": 46,
+        "endLine": 140,
+        "endChar": 63
+      },
+      "revId": "169ed1ff905705e5d96c63c9c9b3d4d7a60b25b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "deeee1f1_e21f7233",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2017-12-29T16:14:04Z",
       "side": 1,
       "message": "use lower case for consistency",
+      "range": {
+        "startLine": 142,
+        "startChar": 14,
+        "endLine": 142,
+        "endChar": 16
+      },
+      "revId": "169ed1ff905705e5d96c63c9c9b3d4d7a60b25b5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4573d3a1_1701c0ea",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2018-01-04T01:27:27Z",
+      "side": 1,
+      "message": "good catch, fixed.",
+      "parentUuid": "deeee1f1_e21f7233",
       "range": {
         "startLine": 142,
         "startChar": 14,
