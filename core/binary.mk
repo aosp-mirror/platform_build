@@ -189,24 +189,14 @@ ifneq ($(LOCAL_SDK_VERSION),)
   ifeq (,$(LOCAL_NDK_STL_VARIANT))
     LOCAL_NDK_STL_VARIANT := system
   endif
-  ifneq (1,$(words $(filter none system stlport_static stlport_shared c++_static c++_shared, $(LOCAL_NDK_STL_VARIANT))))
+  ifneq (1,$(words $(filter none system c++_static c++_shared, $(LOCAL_NDK_STL_VARIANT))))
     $(error $(LOCAL_PATH): Unknown LOCAL_NDK_STL_VARIANT $(LOCAL_NDK_STL_VARIANT))
   endif
+
   ifeq (system,$(LOCAL_NDK_STL_VARIANT))
     my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/system/include
     my_system_shared_libraries += libstdc++
-  else # LOCAL_NDK_STL_VARIANT is not system
-  ifneq (,$(filter stlport_%, $(LOCAL_NDK_STL_VARIANT)))
-    my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/stlport/stlport
-    my_system_shared_libraries += libstdc++
-    ifeq (stlport_static,$(LOCAL_NDK_STL_VARIANT))
-      my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/stlport/libs/$(my_cpu_variant)/libstlport_static.a
-      my_ldlibs += -ldl
-    else
-      my_ndk_stl_shared_lib_fullpath := $(my_ndk_source_root)/cxx-stl/stlport/libs/$(my_cpu_variant)/libstlport_shared.so
-    endif
-  else # LOCAL_NDK_STL_VARIANT is not stlport_* either
-  ifneq (,$(filter c++_%, $(LOCAL_NDK_STL_VARIANT)))
+  else ifneq (,$(filter c++_%, $(LOCAL_NDK_STL_VARIANT)))
     my_ndk_stl_include_path := \
       $(my_ndk_source_root)/cxx-stl/llvm-libc++/include
     my_ndk_stl_include_path += \
@@ -234,8 +224,6 @@ ifneq ($(LOCAL_SDK_VERSION),)
     my_ndk_cpp_std_version := c++11
   else # LOCAL_NDK_STL_VARIANT must be none
     # Do nothing.
-  endif
-  endif
   endif
 endif
 
