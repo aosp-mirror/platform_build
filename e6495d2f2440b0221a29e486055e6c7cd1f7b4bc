@@ -22,6 +22,30 @@
       "revId": "e6495d2f2440b0221a29e486055e6c7cd1f7b4bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bdb53ec3_e1f823f8",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-01-04T23:11:09Z",
+      "side": 1,
+      "message": "This CL doesn\u0027t break the current usage, which allows users of the legacy oem image to keep their current way.\n\nMoreover removing all the usages of the legacy oem image needs communication with all the related product owners because that would change how to build their products.\n\nSo could you please let me leave removing the legacy oem image support as TODO for now?",
+      "parentUuid": "68475142_6e3628e5",
+      "range": {
+        "startLine": 297,
+        "startChar": 0,
+        "endLine": 297,
+        "endChar": 26
+      },
+      "revId": "e6495d2f2440b0221a29e486055e6c7cd1f7b4bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
