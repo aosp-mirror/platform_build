@@ -577,31 +577,39 @@ def ReplaceVerityPrivateKey(misc_info, key_path):
   misc_info["verity_key"] = key_path
 
 
-def ReplaceVerityKeyId(targetfile_input_zip, targetfile_output_zip, key_path):
-  in_cmdline = targetfile_input_zip.read("BOOT/cmdline")
-  # copy in_cmdline to output_zip if veritykeyid is not present in in_cmdline
+def ReplaceVerityKeyId(input_zip, output_zip, key_path):
+  """Replaces the veritykeyid parameter in BOOT/cmdline.
+
+  Args:
+    input_zip: The input target_files zip, which should be already open.
+    output_zip: The output target_files zip, which should be already open and
+        writable.
+    key_path: The path to the PEM encoded X.509 certificate.
+  """
+  in_cmdline = input_zip.read("BOOT/cmdline")
+  # Copy in_cmdline to output_zip if veritykeyid is not present.
   if "veritykeyid" not in in_cmdline:
-    common.ZipWriteStr(targetfile_output_zip, "BOOT/cmdline", in_cmdline)
-    return in_cmdline
+    common.ZipWriteStr(output_zip, "BOOT/cmdline", in_cmdline)
+    return
+
   out_buffer = []
   for param in in_cmdline.split():
-    if "veritykeyid" in param:
-      # extract keyid using openssl command
-      p = common.Run(
-          ["openssl", "x509", "-in", key_path, "-text"],
-          stdout=subprocess.PIPE)
-      keyid, stderr = p.communicate()
-      keyid = re.search(
-          r'keyid:([0-9a-fA-F:]*)', keyid).group(1).replace(':', '').lower()
-      print("Replacing verity keyid with %s error=%s" % (keyid, stderr))
-      out_buffer.append("veritykeyid=id:%s" % (keyid,))
-    else:
+    if "veritykeyid" not in param:
       out_buffer.append(param)
+      continue
 
-  out_cmdline = ' '.join(out_buffer)
-  out_cmdline = out_cmdline.strip()
-  print("out_cmdline %s" % (out_cmdline))
-  common.ZipWriteStr(targetfile_output_zip, "BOOT/cmdline", out_cmdline)
+    # Extract keyid using openssl command.
+    p = common.Run(["openssl", "x509", "-in", key_path, "-text"],
+                   stdout=subprocess.PIPE)
+    keyid, stderr = p.communicate()
+    assert p.returncode == 0, "Failed to dump certificate: {}".format(stderr)
+    keyid = re.search(
+        r'keyid:([0-9a-fA-F:]*)', keyid).group(1).replace(':', '').lower()
+    print("Replacing verity keyid with {}".format(keyid))
+    out_buffer.append("veritykeyid=id:%s" % (keyid,))
+
+  out_cmdline = ' '.join(out_buffer).strip() + '\n'
+  common.ZipWriteStr(output_zip, "BOOT/cmdline", out_cmdline)
 
 
 def ReplaceMiscInfoTxt(input_zip, output_zip, misc_info):

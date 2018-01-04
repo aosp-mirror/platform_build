@@ -84,8 +84,8 @@ $(my_instrumented_timestamp_path): $(my_unzipped_timestamp_path) $(JACOCO_CLI_JA
 	mkdir -p $(PRIVATE_INSTRUMENTED_PATH)
 	java -jar $(JACOCO_CLI_JAR) \
 	  instrument \
-	  -quiet \
-	  -dest '$(PRIVATE_INSTRUMENTED_PATH)' \
+	  --quiet \
+	  --dest '$(PRIVATE_INSTRUMENTED_PATH)' \
 	  $(PRIVATE_UNZIPPED_PATH)
 	touch $(PRIVATE_INSTRUMENTED_TIMESTAMP_PATH)
 
