@@ -36,15 +36,17 @@ endef
 # Returns list of file paths of the intermediate objs
 #
 # Args:
-#   $(1): list of obj names (e.g., libfoo.vendor, ld.config.txt, ...)
+#   $(1): list of module and filename pairs (e.g., ld.config.txt:ld.config.27.txt ...)
 #   $(2): target class (e.g., SHARED_LIBRARIES, STATIC_LIBRARIES, ETC)
 #   $(3): if not empty, evaluates for TARGET_2ND_ARCH
 define paths-of-intermediates
 $(strip \
-  $(foreach obj,$(1), \
-    $(eval file_name := $(if $(filter SHARED_LIBRARIES,$(2)),$(patsubst %.so,%,$(obj)).so,$(obj))) \
-    $(eval dir := $(call intermediates-dir-for,$(2),$(obj),,,$(3))) \
-    $(call append-path,$(dir),$(file_name)) \
+  $(foreach pair,$(1), \
+    $(eval split_pair := $(subst :,$(space),$(pair))) \
+    $(eval module := $(word 1,$(split_pair))) \
+    $(eval filename := $(word 2,$(split_pair))) \
+    $(eval dir := $(call intermediates-dir-for,$(2),$(module),,,$(3))) \
+    $(call append-path,$(dir),$(filename)) \
   ) \
 )
 endef
@@ -145,15 +147,16 @@ $(vndk_snapshot_zip): PRIVATE_VNDK_SNAPSHOT_OUT := $(vndk_snapshot_out)
 
 $(vndk_snapshot_zip): PRIVATE_VNDK_CORE_OUT := $(vndk_snapshot_arch)/shared/vndk-core
 $(vndk_snapshot_zip): PRIVATE_VNDK_CORE_INTERMEDIATES := \
-  $(call paths-of-intermediates,$(vndk_core_libs),SHARED_LIBRARIES)
+  $(call paths-of-intermediates,$(foreach lib,$(vndk_core_libs),$(lib):$(lib).so),SHARED_LIBRARIES)
 
 $(vndk_snapshot_zip): PRIVATE_VNDK_SP_OUT := $(vndk_snapshot_arch)/shared/vndk-sp
 $(vndk_snapshot_zip): PRIVATE_VNDK_SP_INTERMEDIATES := \
-  $(call paths-of-intermediates,$(vndk_sp_libs),SHARED_LIBRARIES)
+  $(call paths-of-intermediates,$(foreach lib,$(vndk_sp_libs),$(lib):$(lib).so),SHARED_LIBRARIES)
 
 $(vndk_snapshot_zip): PRIVATE_CONFIGS_OUT := $(vndk_snapshot_arch)/configs
 $(vndk_snapshot_zip): PRIVATE_CONFIGS_INTERMEDIATES := \
-  $(call paths-of-intermediates,$(vndk_prebuilt_txts),ETC) \
+  $(call paths-of-intermediates,$(foreach txt,$(vndk_prebuilt_txts), \
+    $(txt):$(patsubst %.txt,%.$(PLATFORM_VNDK_VERSION).txt,$(txt))),ETC) \
   $(vndk_snapshot_configs)
 
 $(vndk_snapshot_zip): PRIVATE_NOTICE_FILES_OUT := $(vndk_snapshot_arch)/NOTICE_FILES
@@ -166,10 +169,10 @@ $(vndk_snapshot_zip): PRIVATE_NOTICE_FILES_INTERMEDIATES := \
 # vndk_snapshot_arch_2ND := $(vndk_snapshot_out)/arch-$(TARGET_2ND_ARCH)-$(TARGET_2ND_ARCH_VARIANT)
 # $(vndk_snapshot_zip): PRIVATE_VNDK_CORE_OUT_2ND := $(vndk_snapshot_arch_2ND)/shared/vndk-core
 # $(vndk_snapshot_zip): PRIVATE_VNDK_CORE_INTERMEDIATES_2ND := \
-#   $(call paths-of-intermediates,$(vndk_core_libs),SHARED_LIBRARIES,true)
+#   $(call paths-of-intermediates,$(foreach lib,$(vndk_core_libs),$(lib):$(lib).so),SHARED_LIBRARIES,true)
 # $(vndk_snapshot_zip): PRIVATE_VNDK_SP_OUT_2ND := $(vndk_snapshot_arch_2ND)/shared/vndk-sp
 # $(vndk_snapshot_zip): PRIVATE_VNDK_SP_INTERMEDIATES_2ND := \
-#   $(call paths-of-intermediates,$(vndk_sp_libs),SHARED_LIBRARIES,true)
+#   $(call paths-of-intermediates,$(foreach lib,$(vndk_sp_libs),$(lib):$(lib).so),SHARED_LIBRARIES,true)
 # endif
 
 # Args
