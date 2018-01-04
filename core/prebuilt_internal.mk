@@ -173,8 +173,10 @@ else
 endif
 export_cflags :=
 
+include $(BUILD_SYSTEM)/allowed_ndk_types.mk
+
 ifdef LOCAL_SDK_VERSION
-my_link_type := native:ndk
+my_link_type := native:ndk:$(my_ndk_stl_family)
 else ifdef LOCAL_USE_VNDK
     _name := $(patsubst %.vendor,%,$(LOCAL_MODULE))
     ifneq ($(filter $(_name),$(VNDK_CORE_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES) $(LLNDK_LIBRARIES)),)
