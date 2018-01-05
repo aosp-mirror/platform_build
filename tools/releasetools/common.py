@@ -1385,7 +1385,7 @@ class Difference(object):
           p.kill()
           th.join()
 
-      if err or p.returncode != 0:
+      if p.returncode != 0:
         print("WARNING: failure running %s:\n%s\n" % (
             diff_program, "".join(err)))
         self.patch = None
