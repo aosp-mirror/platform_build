@@ -189,7 +189,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
   ifeq (,$(LOCAL_NDK_STL_VARIANT))
     LOCAL_NDK_STL_VARIANT := system
   endif
-  ifneq (1,$(words $(filter none system stlport_static stlport_shared c++_static c++_shared gnustl_static, $(LOCAL_NDK_STL_VARIANT))))
+  ifneq (1,$(words $(filter none system stlport_static stlport_shared c++_static c++_shared, $(LOCAL_NDK_STL_VARIANT))))
     $(error $(LOCAL_PATH): Unknown LOCAL_NDK_STL_VARIANT $(LOCAL_NDK_STL_VARIANT))
   endif
   ifeq (system,$(LOCAL_NDK_STL_VARIANT))
@@ -232,14 +232,8 @@ ifneq ($(LOCAL_SDK_VERSION),)
     my_ldlibs += -ldl
 
     my_ndk_cpp_std_version := c++11
-  else # LOCAL_NDK_STL_VARIANT is not c++_* either
-  ifneq (,$(filter gnustl_%, $(LOCAL_NDK_STL_VARIANT)))
-    my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/$($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_GCC_VERSION)/libs/$(my_cpu_variant)/include \
-                               $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/$($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_GCC_VERSION)/include
-    my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/$($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_GCC_VERSION)/libs/$(my_cpu_variant)/libgnustl_static.a
   else # LOCAL_NDK_STL_VARIANT must be none
     # Do nothing.
-  endif
   endif
   endif
   endif
