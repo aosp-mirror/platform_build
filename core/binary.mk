@@ -1407,7 +1407,7 @@ endif
 include $(BUILD_SYSTEM)/allowed_ndk_types.mk
 
 ifdef LOCAL_SDK_VERSION
-my_link_type := native:ndk:$(my_ndk_stl_family)
+my_link_type := native:ndk:$(my_ndk_stl_family):$(my_ndk_stl_link_type)
 my_warn_types := $(my_warn_ndk_types)
 my_allowed_types := $(my_allowed_ndk_types)
 else ifdef LOCAL_USE_VNDK
