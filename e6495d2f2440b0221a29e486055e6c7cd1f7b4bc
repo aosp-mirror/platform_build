@@ -94,6 +94,30 @@
       "revId": "e6495d2f2440b0221a29e486055e6c7cd1f7b4bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "77349ac2_49ea6c7d",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-01-05T02:59:59Z",
+      "side": 1,
+      "message": "As I analyzed in codesearch, 10+ products have BOARD_OEMIMAGE_PARTITION_SIZE, which means that they might use \"oem_image\" (the legacy oem image support) to build an oem image additionally.\n\nEspecially, \"oem_image\" is being used for building iot products in Android build server; https://cs.corp.google.com/piper///depot/google3/configs/wireless/android/busytown/platform/git_master/git_master.gcl?type\u003dcs\u0026q\u003doem_image+case:yes\u0026sq\u003dpackage:%5Epiper$+-file:experimental+file:%5E//depot/google3/\u0026l\u003d662 .\n\nSo I don\u0027t think that removing the legacy oem image support together with merging this CL is feasible because I can\u0027t update google3/configs/wireless/android/busytown/platform/git_master/git_master.gcl without this CL.",
+      "parentUuid": "12864336_598237da",
+      "range": {
+        "startLine": 297,
+        "startChar": 0,
+        "endLine": 297,
+        "endChar": 26
+      },
+      "revId": "e6495d2f2440b0221a29e486055e6c7cd1f7b4bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
