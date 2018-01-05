@@ -85,6 +85,7 @@ PRODUCT_PACKAGES += \
     telephony-common \
     uiautomator \
     uncrypt \
+    vndk_snapshot_package \
     voip-common \
     webview \
     webview_zygote \
