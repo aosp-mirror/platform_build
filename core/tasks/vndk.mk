@@ -20,6 +20,9 @@ ifeq ($(BOARD_VNDK_VERSION),current)
 # PLATFORM_VNDK_VERSION must be set.
 ifneq (,$(PLATFORM_VNDK_VERSION))
 
+# BOARD_VNDK_RUNTIME_DISABLE must not be set to 'true'.
+ifneq ($(BOARD_VNDK_RUNTIME_DISABLE),true)
+
 # Returns arch-specific libclang_rt.ubsan* library name.
 # Because VNDK_CORE_LIBRARIES includes all arch variants for libclang_rt.ubsan*
 # libs, the arch-specific libs are selected separately.
@@ -239,20 +242,23 @@ vndk_snapshot_dependencies :=
 # vndk_snapshot_arch_2ND :=
 # endif
 
+else # BOARD_VNDK_RUNTIME_DISABLE is set to 'true'
+error_msg := "CANNOT generate VNDK snapshot. BOARD_VNDK_RUNTIME_DISABLE must not be set to 'true'."
+endif # BOARD_VNDK_RUNTIME_DISABLE
+
 else # PLATFORM_VNDK_VERSION is NOT set
-
-.PHONY: vndk
-vndk:
-	$(call echo-error,$(current_makefile),CANNOT generate VNDK snapshot. PLATFORM_VNDK_VERSION must be set.)
-	exit 1
-
+error_msg := "CANNOT generate VNDK snapshot. PLATFORM_VNDK_VERSION must be set."
 endif # PLATFORM_VNDK_VERSION
 
 else # BOARD_VNDK_VERSION is NOT set to 'current'
+error_msg := "CANNOT generate VNDK snapshot. BOARD_VNDK_VERSION must be set to 'current'."
+endif # BOARD_VNDK_VERSION
+
+ifneq (,$(error_msg))
 
 .PHONY: vndk
 vndk:
-	$(call echo-error,$(current_makefile),CANNOT generate VNDK snapshot. BOARD_VNDK_VERSION must be set to 'current'.)
+	$(call echo-error,$(current_makefile),$(error_msg))
 	exit 1
 
-endif # BOARD_VNDK_VERSION
+endif
