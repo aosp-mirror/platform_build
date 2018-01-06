@@ -353,6 +353,128 @@ class CommonZipTest(unittest.TestCase):
       os.remove(zip_file.name)
 
 
+class CommonApkUtilsTest(unittest.TestCase):
+  """Tests the APK utils related functions."""
+
+  APKCERTS_TXT1 = (
+      'name="RecoveryLocalizer.apk" certificate="certs/devkey.x509.pem"'
+      ' private_key="certs/devkey.pk8"\n'
+      'name="Settings.apk"'
+      ' certificate="build/target/product/security/platform.x509.pem"'
+      ' private_key="build/target/product/security/platform.pk8"\n'
+      'name="TV.apk" certificate="PRESIGNED" private_key=""\n'
+  )
+
+  APKCERTS_CERTMAP1 = {
+      'RecoveryLocalizer.apk' : 'certs/devkey',
+      'Settings.apk' : 'build/target/product/security/platform',
+      'TV.apk' : 'PRESIGNED',
+  }
+
+  APKCERTS_TXT2 = (
+      'name="Compressed1.apk" certificate="certs/compressed1.x509.pem"'
+      ' private_key="certs/compressed1.pk8" compressed="gz"\n'
+      'name="Compressed2a.apk" certificate="certs/compressed2.x509.pem"'
+      ' private_key="certs/compressed2.pk8" compressed="gz"\n'
+      'name="Compressed2b.apk" certificate="certs/compressed2.x509.pem"'
+      ' private_key="certs/compressed2.pk8" compressed="gz"\n'
+      'name="Compressed3.apk" certificate="certs/compressed3.x509.pem"'
+      ' private_key="certs/compressed3.pk8" compressed="gz"\n'
+  )
+
+  APKCERTS_CERTMAP2 = {
+      'Compressed1.apk' : 'certs/compressed1',
+      'Compressed2a.apk' : 'certs/compressed2',
+      'Compressed2b.apk' : 'certs/compressed2',
+      'Compressed3.apk' : 'certs/compressed3',
+  }
+
+  APKCERTS_TXT3 = (
+      'name="Compressed4.apk" certificate="certs/compressed4.x509.pem"'
+      ' private_key="certs/compressed4.pk8" compressed="xz"\n'
+  )
+
+  APKCERTS_CERTMAP3 = {
+      'Compressed4.apk' : 'certs/compressed4',
+  }
+
+  def tearDown(self):
+    common.Cleanup()
+
+  @staticmethod
+  def _write_apkcerts_txt(apkcerts_txt, additional=None):
+    if additional is None:
+      additional = []
+    target_files = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.writestr('META/apkcerts.txt', apkcerts_txt)
+      for entry in additional:
+        target_files_zip.writestr(entry, '')
+    return target_files
+
+  def test_ReadApkCerts_NoncompressedApks(self):
+    target_files = self._write_apkcerts_txt(self.APKCERTS_TXT1)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      certmap, ext = common.ReadApkCerts(input_zip)
+
+    self.assertDictEqual(self.APKCERTS_CERTMAP1, certmap)
+    self.assertIsNone(ext)
+
+  def test_ReadApkCerts_CompressedApks(self):
+    # We have "installed" Compressed1.apk.gz only. Note that Compressed3.apk is
+    # not stored in '.gz' format, so it shouldn't be considered as installed.
+    target_files = self._write_apkcerts_txt(
+        self.APKCERTS_TXT2,
+        ['Compressed1.apk.gz', 'Compressed3.apk'])
+
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      certmap, ext = common.ReadApkCerts(input_zip)
+
+    self.assertDictEqual(self.APKCERTS_CERTMAP2, certmap)
+    self.assertEqual('.gz', ext)
+
+    # Alternative case with '.xz'.
+    target_files = self._write_apkcerts_txt(
+        self.APKCERTS_TXT3, ['Compressed4.apk.xz'])
+
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      certmap, ext = common.ReadApkCerts(input_zip)
+
+    self.assertDictEqual(self.APKCERTS_CERTMAP3, certmap)
+    self.assertEqual('.xz', ext)
+
+  def test_ReadApkCerts_CompressedAndNoncompressedApks(self):
+    target_files = self._write_apkcerts_txt(
+        self.APKCERTS_TXT1 + self.APKCERTS_TXT2,
+        ['Compressed1.apk.gz', 'Compressed3.apk'])
+
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      certmap, ext = common.ReadApkCerts(input_zip)
+
+    certmap_merged = self.APKCERTS_CERTMAP1.copy()
+    certmap_merged.update(self.APKCERTS_CERTMAP2)
+    self.assertDictEqual(certmap_merged, certmap)
+    self.assertEqual('.gz', ext)
+
+  def test_ReadApkCerts_MultipleCompressionMethods(self):
+    target_files = self._write_apkcerts_txt(
+        self.APKCERTS_TXT2 + self.APKCERTS_TXT3,
+        ['Compressed1.apk.gz', 'Compressed4.apk.xz'])
+
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      self.assertRaises(ValueError, common.ReadApkCerts, input_zip)
+
+  def test_ReadApkCerts_MismatchingKeys(self):
+    malformed_apkcerts_txt = (
+        'name="App1.apk" certificate="certs/cert1.x509.pem"'
+        ' private_key="certs/cert2.pk8"\n'
+    )
+    target_files = self._write_apkcerts_txt(malformed_apkcerts_txt)
+
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      self.assertRaises(ValueError, common.ReadApkCerts, input_zip)
+
+
 class InstallRecoveryScriptFormatTest(unittest.TestCase):
   """Checks the format of install-recovery.sh.
 
