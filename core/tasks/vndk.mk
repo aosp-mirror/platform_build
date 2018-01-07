@@ -20,6 +20,9 @@ ifeq ($(BOARD_VNDK_VERSION),current)
 # PLATFORM_VNDK_VERSION must be set.
 ifneq (,$(PLATFORM_VNDK_VERSION))
 
+# BOARD_VNDK_RUNTIME_DISABLE must not be set to 'true'.
+ifneq ($(BOARD_VNDK_RUNTIME_DISABLE),true)
+
 # Returns arch-specific libclang_rt.ubsan* library name.
 # Because VNDK_CORE_LIBRARIES includes all arch variants for libclang_rt.ubsan*
 # libs, the arch-specific libs are selected separately.
@@ -36,15 +39,17 @@ endef
 # Returns list of file paths of the intermediate objs
 #
 # Args:
-#   $(1): list of obj names (e.g., libfoo.vendor, ld.config.txt, ...)
+#   $(1): list of module and filename pairs (e.g., ld.config.txt:ld.config.27.txt ...)
 #   $(2): target class (e.g., SHARED_LIBRARIES, STATIC_LIBRARIES, ETC)
 #   $(3): if not empty, evaluates for TARGET_2ND_ARCH
 define paths-of-intermediates
 $(strip \
-  $(foreach obj,$(1), \
-    $(eval file_name := $(if $(filter SHARED_LIBRARIES,$(2)),$(patsubst %.so,%,$(obj)).so,$(obj))) \
-    $(eval dir := $(call intermediates-dir-for,$(2),$(obj),,,$(3))) \
-    $(call append-path,$(dir),$(file_name)) \
+  $(foreach pair,$(1), \
+    $(eval split_pair := $(subst :,$(space),$(pair))) \
+    $(eval module := $(word 1,$(split_pair))) \
+    $(eval filename := $(word 2,$(split_pair))) \
+    $(eval dir := $(call intermediates-dir-for,$(2),$(module),,,$(3))) \
+    $(call append-path,$(dir),$(filename)) \
   ) \
 )
 endef
@@ -73,13 +78,10 @@ ifeq (,$(filter libclang_rt.ubsan%,$(VNDK_CORE_LIBRARIES)))
 else
   vndk_core_libs := $(addsuffix .vendor,$(filter-out libclang_rt.ubsan%,$(VNDK_CORE_LIBRARIES)))
 
-  # for TARGET_ARCH
   vndk_core_libs += $(call clang-ubsan-vndk-core)
-
-  # TODO(b/69834489): Package additional arch variants
-  # ifdef TARGET_2ND_ARCH
-  #   vndk_core_libs += $(call clang-ubsan-vndk-core,true)
-  # endif
+  ifdef TARGET_2ND_ARCH
+    vndk_core_libs += $(call clang-ubsan-vndk-core,true)
+  endif
 endif
 
 vndk_sp_libs := $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES))
@@ -138,39 +140,41 @@ vndk_snapshot_configs := \
 
 #######################################
 # vndk_snapshot_zip
-vndk_snapshot_arch := $(vndk_snapshot_out)/arch-$(TARGET_ARCH)-$(TARGET_ARCH_VARIANT)
+vndk_snapshot_variant := $(vndk_snapshot_out)/$(TARGET_ARCH)
+vndk_lib_dir := $(vndk_snapshot_variant)/arch-$(TARGET_ARCH)-$(TARGET_ARCH_VARIANT)
+vndk_lib_dir_2nd := $(vndk_snapshot_variant)/arch-$(TARGET_2ND_ARCH)-$(TARGET_2ND_ARCH_VARIANT)
 vndk_snapshot_zip := $(PRODUCT_OUT)/android-vndk-$(TARGET_ARCH).zip
 
 $(vndk_snapshot_zip): PRIVATE_VNDK_SNAPSHOT_OUT := $(vndk_snapshot_out)
 
-$(vndk_snapshot_zip): PRIVATE_VNDK_CORE_OUT := $(vndk_snapshot_arch)/shared/vndk-core
+$(vndk_snapshot_zip): PRIVATE_VNDK_CORE_OUT := $(vndk_lib_dir)/shared/vndk-core
 $(vndk_snapshot_zip): PRIVATE_VNDK_CORE_INTERMEDIATES := \
-  $(call paths-of-intermediates,$(vndk_core_libs),SHARED_LIBRARIES)
+  $(call paths-of-intermediates,$(foreach lib,$(vndk_core_libs),$(lib):$(lib).so),SHARED_LIBRARIES)
 
-$(vndk_snapshot_zip): PRIVATE_VNDK_SP_OUT := $(vndk_snapshot_arch)/shared/vndk-sp
+$(vndk_snapshot_zip): PRIVATE_VNDK_SP_OUT := $(vndk_lib_dir)/shared/vndk-sp
 $(vndk_snapshot_zip): PRIVATE_VNDK_SP_INTERMEDIATES := \
-  $(call paths-of-intermediates,$(vndk_sp_libs),SHARED_LIBRARIES)
+  $(call paths-of-intermediates,$(foreach lib,$(vndk_sp_libs),$(lib):$(lib).so),SHARED_LIBRARIES)
 
-$(vndk_snapshot_zip): PRIVATE_CONFIGS_OUT := $(vndk_snapshot_arch)/configs
+$(vndk_snapshot_zip): PRIVATE_CONFIGS_OUT := $(vndk_snapshot_variant)/configs
 $(vndk_snapshot_zip): PRIVATE_CONFIGS_INTERMEDIATES := \
-  $(call paths-of-intermediates,$(vndk_prebuilt_txts),ETC) \
+  $(call paths-of-intermediates,$(foreach txt,$(vndk_prebuilt_txts), \
+    $(txt):$(patsubst %.txt,%.$(PLATFORM_VNDK_VERSION).txt,$(txt))),ETC) \
   $(vndk_snapshot_configs)
 
-$(vndk_snapshot_zip): PRIVATE_NOTICE_FILES_OUT := $(vndk_snapshot_arch)/NOTICE_FILES
+$(vndk_snapshot_zip): PRIVATE_NOTICE_FILES_OUT := $(vndk_snapshot_variant)/NOTICE_FILES
 $(vndk_snapshot_zip): PRIVATE_NOTICE_FILES_INTERMEDIATES := \
   $(call paths-of-notice-files,$(vndk_core_libs),vndk) \
   $(call paths-of-notice-files,$(vndk_sp_libs),vndk-sp)
 
-# TODO(b/69834489): Package additional arch variants
-# ifdef TARGET_2ND_ARCH
-# vndk_snapshot_arch_2ND := $(vndk_snapshot_out)/arch-$(TARGET_2ND_ARCH)-$(TARGET_2ND_ARCH_VARIANT)
-# $(vndk_snapshot_zip): PRIVATE_VNDK_CORE_OUT_2ND := $(vndk_snapshot_arch_2ND)/shared/vndk-core
-# $(vndk_snapshot_zip): PRIVATE_VNDK_CORE_INTERMEDIATES_2ND := \
-#   $(call paths-of-intermediates,$(vndk_core_libs),SHARED_LIBRARIES,true)
-# $(vndk_snapshot_zip): PRIVATE_VNDK_SP_OUT_2ND := $(vndk_snapshot_arch_2ND)/shared/vndk-sp
-# $(vndk_snapshot_zip): PRIVATE_VNDK_SP_INTERMEDIATES_2ND := \
-#   $(call paths-of-intermediates,$(vndk_sp_libs),SHARED_LIBRARIES,true)
-# endif
+ifdef TARGET_2ND_ARCH
+$(vndk_snapshot_zip): PRIVATE_VNDK_CORE_OUT_2ND := $(vndk_lib_dir_2nd)/shared/vndk-core
+$(vndk_snapshot_zip): PRIVATE_VNDK_CORE_INTERMEDIATES_2ND := \
+  $(call paths-of-intermediates,$(foreach lib,$(vndk_core_libs),$(lib):$(lib).so),SHARED_LIBRARIES,true)
+
+$(vndk_snapshot_zip): PRIVATE_VNDK_SP_OUT_2ND := $(vndk_lib_dir_2nd)/shared/vndk-sp
+$(vndk_snapshot_zip): PRIVATE_VNDK_SP_INTERMEDIATES_2ND := \
+  $(call paths-of-intermediates,$(foreach lib,$(vndk_sp_libs),$(lib):$(lib).so),SHARED_LIBRARIES,true)
+endif
 
 # Args
 #   $(1): destination directory
@@ -203,13 +207,12 @@ $(vndk_snapshot_zip): $(vndk_snapshot_dependencies) $(SOONG_ZIP)
 		$(PRIVATE_CONFIGS_OUT),$(PRIVATE_CONFIGS_INTERMEDIATES))
 	$(call private-copy-vndk-intermediates, \
 		$(PRIVATE_NOTICE_FILES_OUT),$(PRIVATE_NOTICE_FILES_INTERMEDIATES))
-# TODO(b/69834489): Package additional arch variants
-# ifdef TARGET_2ND_ARCH
-# 	$(call private-copy-vndk-intermediates, \
-# 		$(PRIVATE_VNDK_CORE_OUT_2ND),$(PRIVATE_VNDK_CORE_INTERMEDIATES_2ND))
-# 	$(call private-copy-vndk-intermediates, \
-# 		$(PRIVATE_VNDK_SP_OUT_2ND),$(PRIVATE_VNDK_SP_INTERMEDIATES_2ND))
-# endif
+ifdef TARGET_2ND_ARCH
+	$(call private-copy-vndk-intermediates, \
+		$(PRIVATE_VNDK_CORE_OUT_2ND),$(PRIVATE_VNDK_CORE_INTERMEDIATES_2ND))
+	$(call private-copy-vndk-intermediates, \
+		$(PRIVATE_VNDK_SP_OUT_2ND),$(PRIVATE_VNDK_SP_INTERMEDIATES_2ND))
+endif
 	$(hide) $(SOONG_ZIP) -o $@ -C $(PRIVATE_VNDK_SNAPSHOT_OUT) -D $(PRIVATE_VNDK_SNAPSHOT_OUT)
 
 .PHONY: vndk
@@ -229,27 +232,28 @@ vndk_snapshot_configs :=
 vndk_snapshot_top :=
 vndk_snapshot_out :=
 vndk_snapshot_configs_out :=
-vndk_snapshot_arch :=
+vndk_snapshot_variant :=
+vndk_lib_dir :=
+vndk_lib_dir_2nd :=
 vndk_snapshot_dependencies :=
-# TODO(b/69834489): Package additional arch variants
-# ifdef TARGET_2ND_ARCH
-# vndk_snapshot_arch_2ND :=
-# endif
+
+else # BOARD_VNDK_RUNTIME_DISABLE is set to 'true'
+error_msg := "CANNOT generate VNDK snapshot. BOARD_VNDK_RUNTIME_DISABLE must not be set to 'true'."
+endif # BOARD_VNDK_RUNTIME_DISABLE
 
 else # PLATFORM_VNDK_VERSION is NOT set
-
-.PHONY: vndk
-vndk:
-	$(call echo-error,$(current_makefile),CANNOT generate VNDK snapshot. PLATFORM_VNDK_VERSION must be set.)
-	exit 1
-
+error_msg := "CANNOT generate VNDK snapshot. PLATFORM_VNDK_VERSION must be set."
 endif # PLATFORM_VNDK_VERSION
 
 else # BOARD_VNDK_VERSION is NOT set to 'current'
+error_msg := "CANNOT generate VNDK snapshot. BOARD_VNDK_VERSION must be set to 'current'."
+endif # BOARD_VNDK_VERSION
+
+ifneq (,$(error_msg))
 
 .PHONY: vndk
 vndk:
-	$(call echo-error,$(current_makefile),CANNOT generate VNDK snapshot. BOARD_VNDK_VERSION must be set to 'current'.)
+	$(call echo-error,$(current_makefile),$(error_msg))
 	exit 1
 
-endif # BOARD_VNDK_VERSION
+endif

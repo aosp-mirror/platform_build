@@ -32,7 +32,7 @@ endif
 
 # setup AUX globals
 AUX_SHLIB_SUFFIX := .so
-AUX_GLOBAL_ARFLAGS := crsPD
+AUX_GLOBAL_ARFLAGS := cqsD
 AUX_STATIC_LIB_SUFFIX := .a
 
 # Load ever-lasting "indexed" version of AUX variant environment; it is treated as READ-ONLY from this

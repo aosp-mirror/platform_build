@@ -20,9 +20,10 @@
 PRODUCT_PACKAGES += \
     adb \
     adbd \
-    android.hardware.configstore@1.1-service \
+    android.hardware.configstore@1.0-service \
     android.hidl.allocator@1.0-service \
     android.hidl.memory@1.0-impl \
+    android.hidl.memory@1.0-impl.vendor \
     atrace \
     bootanimation \
     bootstat \

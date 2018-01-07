@@ -275,6 +275,8 @@ ifeq (true,$(EMMA_INSTRUMENT_STATIC))
 ifneq ($(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),)
 # Only add jacocoagent if the package contains some java code
 LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
+# Exclude jacoco classes from proguard
+LOCAL_PROGUARD_FLAGS += -include $(BUILD_SYSTEM)/proguard.jacoco.flags
 endif # Contains java code
 else
 ifdef LOCAL_SDK_VERSION
@@ -361,6 +363,8 @@ $(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(data_binding_stamp)
 $(full_classes_compiled_jar): $(data_binding_stamp)
 endif  # LOCAL_DATA_BINDING
 
+resource_export_package :=
+
 ifeq ($(need_compile_res),true)
 
 ###############################
@@ -432,7 +436,6 @@ $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_
 
 $(proguard_options_file): $(R_file_stamp)
 
-resource_export_package :=
 ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
 # Put this module's resources into a PRODUCT-agnositc package that
 # other packages can use to build their own PRODUCT-agnostic R.java (etc.)

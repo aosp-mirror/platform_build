@@ -12,8 +12,6 @@ ifeq ($(LOCAL_GTEST),true)
         my_ndk_gtest_suffix := _c++
     else ifneq ($(filter stlport_,$(LOCAL_NDK_STL_VARIANT)),)
         my_ndk_gtest_suffix := _stlport
-    else ifneq ($(filter gnustl_,$(LOCAL_NDK_STL_VARIANT)),)
-        my_ndk_gtest_suffix := _gnustl
     else # system STL, use stlport
         my_ndk_gtest_suffix := _stlport
     endif
