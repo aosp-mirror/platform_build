@@ -52,6 +52,24 @@
       "revId": "7a9c2b1101977b480f04498ecca1fdd7c7ecf8af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ab3cdb8_b1586632",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 543,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-08T22:58:02Z",
+      "side": 1,
+      "message": "I don\u0027t think that this is the right logic anyway -- why would we forbid auto-generated configs for our major test suites?\n\nBash isn\u0027t an option, though we could filter-out %tests before/after this filter.",
+      "parentUuid": "1d04d5b1_5e663e22",
+      "revId": "7a9c2b1101977b480f04498ecca1fdd7c7ecf8af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
