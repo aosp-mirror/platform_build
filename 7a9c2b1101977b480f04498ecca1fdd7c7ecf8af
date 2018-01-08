@@ -70,6 +70,24 @@
       "revId": "7a9c2b1101977b480f04498ecca1fdd7c7ecf8af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b634f5d4_a83e15fb",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 543,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-01-08T23:40:43Z",
+      "side": 1,
+      "message": "The original problem for CTS is that there are many auxiliary modules in CTS that are not test, but included in the suite so they can be part of device-tests.zip. Also, individual CTS test has some special options, so auto-generating won\u0027t help much anyway.\n\nIn this case, we just found another ?ts suite has the similar issue.\n\nFilter out %tests can be a workaround for now. I think we don\u0027t have other suite name ends with *ts/tests",
+      "parentUuid": "5ab3cdb8_b1586632",
+      "revId": "7a9c2b1101977b480f04498ecca1fdd7c7ecf8af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
