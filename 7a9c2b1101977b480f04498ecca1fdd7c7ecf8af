@@ -34,6 +34,24 @@
       "revId": "7a9c2b1101977b480f04498ecca1fdd7c7ecf8af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d04d5b1_5e663e22",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 543,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-01-08T22:53:41Z",
+      "side": 1,
+      "message": "So far the only workaround I found is to use bash, mk text operation doesn\u0027t even have length function.",
+      "parentUuid": "c077769d_46d4dc49",
+      "revId": "7a9c2b1101977b480f04498ecca1fdd7c7ecf8af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
