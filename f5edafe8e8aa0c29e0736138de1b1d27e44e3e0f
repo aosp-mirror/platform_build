@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ceb708d3_979d0155",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2018-01-08T13:06:54Z",
+      "side": 1,
+      "message": "I think this can be combined with the paths-of-notice-files function above by modifying the input parameters a bit.",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 0
+      },
+      "revId": "f5edafe8e8aa0c29e0736138de1b1d27e44e3e0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "854937ee_e7627789",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2018-01-08T13:06:54Z",
+      "side": 1,
+      "message": "Since the same rule is used three times for vndkcore.libraries.txt, vndkprivate.libraries.txt, vendor.libraries.txt, I think it is a good time to factor this out.",
+      "range": {
+        "startLine": 143,
+        "startChar": 0,
+        "endLine": 148,
+        "endChar": 71
+      },
+      "revId": "f5edafe8e8aa0c29e0736138de1b1d27e44e3e0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
