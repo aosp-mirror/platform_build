@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bbd2c82b_2794ad84",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 543,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-01-08T22:20:27Z",
+      "side": 1,
+      "message": "this matches one more more characters, not just a single character. I\u0027m wondering if there is pattern to match single character? So far I haven\u0027t found a way to do that. (guess there can be a more complicated way to do the matching).",
+      "revId": "7a9c2b1101977b480f04498ecca1fdd7c7ecf8af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
