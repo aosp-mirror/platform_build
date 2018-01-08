@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b2c5642_3ca9e117",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 517,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-08T20:49:42Z",
+      "side": 1,
+      "message": "clear multi_arch here",
+      "revId": "ecdd5a5477d0a9083e5faafa81c0f88ad035ad1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
