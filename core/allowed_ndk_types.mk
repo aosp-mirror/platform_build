@@ -79,7 +79,11 @@ ifdef LOCAL_SDK_VERSION
     # Else we are a non-static library that uses a static STL, and are
     # incompatible with all other shared libraries that use an STL.
 else
-    my_allowed_ndk_types := native:ndk:none:none native:ndk:system:shared
+    my_allowed_ndk_types := \
+        native:ndk:none:none \
+        native:ndk:system:none \
+        native:ndk:system:shared \
+
     ifeq ($(LOCAL_MODULE_CLASS),APPS)
         # CTS is bad and it should feel bad: http://b/13249737
         my_warn_ndk_types += native:ndk:libc++:static
