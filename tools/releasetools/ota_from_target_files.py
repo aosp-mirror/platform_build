@@ -165,7 +165,6 @@ OPTIONS.block_based = True
 OPTIONS.updater_binary = None
 OPTIONS.oem_source = None
 OPTIONS.oem_no_mount = False
-OPTIONS.fallback_to_full = True
 OPTIONS.full_radio = False
 OPTIONS.full_bootloader = False
 # Stash size cannot exceed cache_size * threshold.
@@ -1305,8 +1304,6 @@ def main(argv):
       OPTIONS.block_based = True
     elif o in ("-b", "--binary"):
       OPTIONS.updater_binary = a
-    elif o in ("--no_fallback_to_full",):
-      OPTIONS.fallback_to_full = False
     elif o == "--stash_threshold":
       try:
         OPTIONS.stash_threshold = float(a)
@@ -1344,7 +1341,6 @@ def main(argv):
                                  "oem_settings=",
                                  "oem_no_mount",
                                  "verify",
-                                 "no_fallback_to_full",
                                  "stash_threshold=",
                                  "log_diff=",
                                  "payload_signer=",
@@ -1482,8 +1478,7 @@ def main(argv):
   if OPTIONS.incremental_source is None:
     WriteFullOTAPackage(input_zip, output_zip)
 
-  # Generate an incremental OTA. It will fall back to generate a full OTA on
-  # failure unless no_fallback_to_full is specified.
+  # Generate an incremental OTA.
   else:
     print("unzipping source target-files...")
     OPTIONS.source_tmp, source_zip = common.UnzipTemp(
@@ -1495,22 +1490,14 @@ def main(argv):
     if OPTIONS.verbose:
       print("--- source info ---")
       common.DumpInfoDict(OPTIONS.source_info_dict)
-    try:
-      WriteBlockIncrementalOTAPackage(input_zip, source_zip, output_zip)
-      if OPTIONS.log_diff:
-        out_file = open(OPTIONS.log_diff, 'w')
+
+    WriteBlockIncrementalOTAPackage(input_zip, source_zip, output_zip)
+
+    if OPTIONS.log_diff:
+      with open(OPTIONS.log_diff, 'w') as out_file:
         import target_files_diff
-        target_files_diff.recursiveDiff('',
-                                        OPTIONS.source_tmp,
-                                        OPTIONS.input_tmp,
-                                        out_file)
-        out_file.close()
-    except ValueError:
-      if not OPTIONS.fallback_to_full:
-        raise
-      print("--- failed to build incremental; falling back to full ---")
-      OPTIONS.incremental_source = None
-      WriteFullOTAPackage(input_zip, output_zip)
+        target_files_diff.recursiveDiff(
+            '', OPTIONS.source_tmp, OPTIONS.input_tmp, out_file)
 
   common.ZipClose(output_zip)
 
