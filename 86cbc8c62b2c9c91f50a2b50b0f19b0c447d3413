@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1db5a43a_b694fbf4",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 1092,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-09T23:10:30Z",
+      "side": 1,
+      "message": "(not a real change here. only added a no-op space before the \u0027:\u0027 separator...)",
+      "parentUuid": "fcccfed5_6d01a870",
+      "range": {
+        "startLine": 1092,
+        "startChar": 5,
+        "endLine": 1092,
+        "endChar": 20
+      },
+      "revId": "86cbc8c62b2c9c91f50a2b50b0f19b0c447d3413",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "35e29ada_4f93603e",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 9
@@ -45,6 +69,30 @@
       "revId": "86cbc8c62b2c9c91f50a2b50b0f19b0c447d3413",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d6a6590_c75a0d86",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 1218,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-09T23:10:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "35e29ada_4f93603e",
+      "range": {
+        "startLine": 1218,
+        "startChar": 33,
+        "endLine": 1218,
+        "endChar": 46
+      },
+      "revId": "86cbc8c62b2c9c91f50a2b50b0f19b0c447d3413",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
