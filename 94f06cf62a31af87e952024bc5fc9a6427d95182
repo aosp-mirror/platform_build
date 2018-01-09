@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf9574c6_f815410a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-09T01:32:19Z",
+      "side": 1,
+      "message": "You\u0027ll want a Merged-In line that\u0027s the same as the Change-Id",
+      "revId": "94f06cf62a31af87e952024bc5fc9a6427d95182",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
