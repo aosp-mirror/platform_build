@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39fa9f21_a44380fc",
+        "filename": "target/board/treble_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-09T10:56:01Z",
+      "side": 0,
+      "message": "This is the effective change -- DEX_PREOPT_DEFAULT normally defaults to true.\n\n(WITH_DEXPREOPT defaults to true, and WITH_DEXPREOPT_PIC is obsolete)",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 9
+      },
+      "revId": "e3692095a1f201071fc50f5940094388bac81846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
