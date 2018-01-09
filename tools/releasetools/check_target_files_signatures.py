@@ -248,7 +248,7 @@ class TargetFiles(object):
     if compressed_extension:
       apk_extensions.append("*.apk" + compressed_extension)
 
-    d, z = common.UnzipTemp(filename, apk_extensions)
+    d = common.UnzipTemp(filename, apk_extensions)
     try:
       self.apks = {}
       self.apks_by_basename = {}
@@ -282,8 +282,6 @@ class TargetFiles(object):
             self.max_fn_len = max(self.max_fn_len, len(apk.filename))
     finally:
       shutil.rmtree(d)
-
-    z.close()
 
   def CheckSharedUids(self):
     """Look for any instances where packages signed with different
