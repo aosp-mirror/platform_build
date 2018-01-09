@@ -36,18 +36,6 @@ TARGET_USES_MKE2FS := true
 # Generic AOSP image always requires separate vendor.img
 TARGET_COPY_OUT_VENDOR := vendor
 
-# Enable dex pre-opt to speed up initial boot
-ifeq ($(HOST_OS),linux)
-  ifeq ($(WITH_DEXPREOPT),)
-    WITH_DEXPREOPT := true
-    WITH_DEXPREOPT_PIC := true
-    ifneq ($(TARGET_BUILD_VARIANT),user)
-      # Retain classes.dex in APK's for non-user builds
-      DEX_PREOPT_DEFAULT := nostripping
-    endif
-  endif
-endif
-
 # Generic AOSP image does NOT support HWC1
 TARGET_USES_HWC2 := true
 # Set emulator framebuffer display device buffer count to 3
