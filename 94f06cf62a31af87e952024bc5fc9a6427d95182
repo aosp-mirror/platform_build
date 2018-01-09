@@ -16,6 +16,24 @@
       "revId": "94f06cf62a31af87e952024bc5fc9a6427d95182",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9a17d74e_98bf67bf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1109308
+      },
+      "writtenOn": "2018-01-09T01:36:30Z",
+      "side": 1,
+      "message": "Ah... Didn\u0027t realize that I could do this. Thanks.\n\nDone",
+      "parentUuid": "cf9574c6_f815410a",
+      "revId": "94f06cf62a31af87e952024bc5fc9a6427d95182",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
