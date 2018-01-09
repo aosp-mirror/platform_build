@@ -1,6 +1,20 @@
 # dexpreopt_odex_install.mk is used to define odex creation rules for JARs and APKs
 # This file depends on variables set in base_rules.mk
-# Output variables: LOCAL_DEX_PREOPT, built_odex, dexpreopt_boot_jar_module
+# Output variables: LOCAL_DEX_PREOPT, LOCAL_UNCOMPRESS_DEX, built_odex,
+#                   dexpreopt_boot_jar_module
+
+# We explicitly uncompress APKs of privileged apps, and used by
+# privileged apps
+LOCAL_UNCOMPRESS_DEX := false
+ifneq (true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))
+ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
+  LOCAL_UNCOMPRESS_DEX := true
+else
+  ifneq (,$(filter $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES), $(LOCAL_MODULE)))
+    LOCAL_UNCOMPRESS_DEX := true
+  endif  # PRODUCT_LOADED_BY_PRIVILEGED_MODULES
+endif  # LOCAL_PRIVILEGED_MODULE
+endif  # DONT_UNCOMPRESS_PRIV_APPS_DEXS
 
 # Setting LOCAL_DEX_PREOPT based on WITH_DEXPREOPT, LOCAL_DEX_PREOPT, etc
 LOCAL_DEX_PREOPT := $(strip $(LOCAL_DEX_PREOPT))
@@ -46,14 +60,27 @@ endif
 endif
 endif
 
-# if installing into system, and odex are being installed into system_other, don't strip
-ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
 ifeq ($(LOCAL_DEX_PREOPT),true)
+
+# Don't strip with dexes we explicitly uncompress (dexopt will not store the dex code).
+ifeq ($(LOCAL_UNCOMPRESS_DEX),true)
+LOCAL_DEX_PREOPT := nostripping
+endif  # LOCAL_UNCOMPRESS_DEX
+
+# system_other isn't there for an OTA, so don't strip
+# if module is on system, and odex is on system_other.
+ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
 ifneq ($(call install-on-system-other, $(my_module_path)),)
 LOCAL_DEX_PREOPT := nostripping
-endif
-endif
-endif
+endif  # install-on-system-other
+endif  # BOARD_USES_SYSTEM_OTHER_ODEX
+
+# We also don't strip if all dexs are uncompressed (dexopt will not store the dex code),
+# but that requires to inspect the source file, which is too early at this point (as we
+# don't know if the source file will actually be used).
+# See dexpreopt-remove-classes.dex.
+
+endif  # LOCAL_DEX_PREOPT
 
 built_odex :=
 built_vdex :=
