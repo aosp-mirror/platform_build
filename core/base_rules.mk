@@ -499,18 +499,22 @@ ifdef LOCAL_COMPATIBILITY_SUITE
 # separate the multiple architectures into subdirectories of the testcase folder.
 arch_dir :=
 is_native :=
+multi_arch :=
 ifeq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
   is_native := true
+  multi_arch := true
 endif
 ifeq ($(LOCAL_MODULE_CLASS),NATIVE_BENCHMARK)
   is_native := true
+  multi_arch := true
 endif
 ifdef LOCAL_MULTILIB
-  is_native := true
+  multi_arch := true
 endif
-ifdef is_native
+ifdef multi_arch
   arch_dir := /$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
 endif
+multi_arch :=
 
 # The module itself.
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
