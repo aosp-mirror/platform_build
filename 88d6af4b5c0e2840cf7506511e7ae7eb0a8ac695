@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a7824854_f8bb0909",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 547,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-01-10T00:00:47Z",
+      "side": 1,
+      "message": "Dan, is this approach cleaner?",
+      "revId": "88d6af4b5c0e2840cf7506511e7ae7eb0a8ac695",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
