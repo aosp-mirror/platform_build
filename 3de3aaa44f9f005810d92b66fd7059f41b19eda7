@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "187b4d47_5d7eff16",
+        "filename": "core/Makefile",
+        "patchSetId": 16
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-01-10T23:46:42Z",
+      "side": 1,
+      "message": "/vendor partition has had such properties even though it was updated together with /system at first. So I thought that those are fundamental information for a partition.",
+      "parentUuid": "57b18e0f_a86c4b2d",
+      "range": {
+        "startLine": 436,
+        "startChar": 0,
+        "endLine": 437,
+        "endChar": 67
+      },
+      "revId": "3de3aaa44f9f005810d92b66fd7059f41b19eda7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3ce15060_eccd38cd",
         "filename": "core/Makefile",
         "patchSetId": 16
@@ -36,6 +60,30 @@
       "writtenOn": "2018-01-10T14:25:30Z",
       "side": 1,
       "message": "I think ro.product.* properties should be moved from the system partition to here when there is /product partition. The existence of /product partition means that /system is product-neutral.",
+      "range": {
+        "startLine": 438,
+        "startChar": 0,
+        "endLine": 438,
+        "endChar": 79
+      },
+      "revId": "3de3aaa44f9f005810d92b66fd7059f41b19eda7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f33ba156_4ddcecc0",
+        "filename": "core/Makefile",
+        "patchSetId": 16
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-01-10T23:46:42Z",
+      "side": 1,
+      "message": "I will do that later as one of features of /product partition. Actually there are many things to actually enable reading system properties from /product partition.",
+      "parentUuid": "3ce15060_eccd38cd",
       "range": {
         "startLine": 438,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "8a510a51_e00b2072",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-01-10T23:46:42Z",
+      "side": 1,
+      "message": "Sorry, I just coped lines from oem. I will remove them.",
+      "parentUuid": "3dde52c8_8ee28c3a",
+      "range": {
+        "startLine": 657,
+        "startChar": 0,
+        "endLine": 662,
+        "endChar": 5
+      },
+      "revId": "3de3aaa44f9f005810d92b66fd7059f41b19eda7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "96822492_02444f82",
         "filename": "core/local_vndk.mk",
         "patchSetId": 16
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "11c8dc9e_a1959efc",
+        "filename": "core/local_vndk.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-01-10T23:46:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "96822492_02444f82",
+      "range": {
+        "startLine": 6,
+        "startChar": 117,
+        "endLine": 6,
+        "endChar": 137
+      },
+      "revId": "3de3aaa44f9f005810d92b66fd7059f41b19eda7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f8480bd4_c4aa5982",
         "filename": "core/local_vsdk.mk",
         "patchSetId": 16
@@ -105,6 +201,30 @@
       "writtenOn": "2018-01-10T14:25:30Z",
       "side": 1,
       "message": "same here. should be removed.",
+      "range": {
+        "startLine": 5,
+        "startChar": 117,
+        "endLine": 5,
+        "endChar": 137
+      },
+      "revId": "3de3aaa44f9f005810d92b66fd7059f41b19eda7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9c054339_53ac6f07",
+        "filename": "core/local_vsdk.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-01-10T23:46:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f8480bd4_c4aa5982",
       "range": {
         "startLine": 5,
         "startChar": 117,
