@@ -16,6 +16,24 @@
       "revId": "95d1f5dd1350d3eed0071154f746d62fe8f46d19",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0ffaca51_a64e04f9",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-01-10T02:31:46Z",
+      "side": 1,
+      "message": "This is an unrelated change. Will add it back.",
+      "parentUuid": "73f1ca89_d59b4f5e",
+      "revId": "95d1f5dd1350d3eed0071154f746d62fe8f46d19",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
