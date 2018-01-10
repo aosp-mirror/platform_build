@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "57b18e0f_a86c4b2d",
+        "filename": "core/Makefile",
+        "patchSetId": 16
+      },
+      "lineNbr": 437,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-10T14:25:30Z",
+      "side": 1,
+      "message": "why do we have these info separately in product? /product and /system will be updated at the same time. They are not like system/vendor or system/oem.",
+      "range": {
+        "startLine": 436,
+        "startChar": 0,
+        "endLine": 437,
+        "endChar": 67
+      },
+      "revId": "3de3aaa44f9f005810d92b66fd7059f41b19eda7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ce15060_eccd38cd",
+        "filename": "core/Makefile",
+        "patchSetId": 16
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-10T14:25:30Z",
+      "side": 1,
+      "message": "I think ro.product.* properties should be moved from the system partition to here when there is /product partition. The existence of /product partition means that /system is product-neutral.",
+      "range": {
+        "startLine": 438,
+        "startChar": 0,
+        "endLine": 438,
+        "endChar": 79
+      },
+      "revId": "3de3aaa44f9f005810d92b66fd7059f41b19eda7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3dde52c8_8ee28c3a",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-10T14:25:30Z",
+      "side": 1,
+      "message": "will we have these in /product partition? IIRC, that wasn\u0027t the plan.",
+      "range": {
+        "startLine": 657,
+        "startChar": 0,
+        "endLine": 662,
+        "endChar": 5
+      },
+      "revId": "3de3aaa44f9f005810d92b66fd7059f41b19eda7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96822492_02444f82",
+        "filename": "core/local_vndk.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-10T14:25:30Z",
+      "side": 1,
+      "message": "This should be removed. /product is another /system. So it shouldn\u0027t be building with VNDK, but with platform libs directly. LOCAL_USE_VNDK must not be set for modules on /product partition.",
+      "range": {
+        "startLine": 6,
+        "startChar": 117,
+        "endLine": 6,
+        "endChar": 137
+      },
+      "revId": "3de3aaa44f9f005810d92b66fd7059f41b19eda7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8480bd4_c4aa5982",
+        "filename": "core/local_vsdk.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-10T14:25:30Z",
+      "side": 1,
+      "message": "same here. should be removed.",
+      "range": {
+        "startLine": 5,
+        "startChar": 117,
+        "endLine": 5,
+        "endChar": 137
+      },
+      "revId": "3de3aaa44f9f005810d92b66fd7059f41b19eda7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
