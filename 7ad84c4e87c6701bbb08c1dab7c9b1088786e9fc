@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "708be4c9_1c03f638",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2018-01-10T04:43:08Z",
+      "side": 1,
+      "message": "not needed",
+      "range": {
+        "startLine": 121,
+        "startChar": 74,
+        "endLine": 121,
+        "endChar": 95
+      },
+      "revId": "7ad84c4e87c6701bbb08c1dab7c9b1088786e9fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
