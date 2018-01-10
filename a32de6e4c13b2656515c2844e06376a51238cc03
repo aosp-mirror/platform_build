@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d9bc1ed_1fb3dc97",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1388,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-10T19:31:07Z",
+      "side": 1,
+      "message": "This name should be updated. It no longer does any work to add Transfers.",
+      "range": {
+        "startLine": 1388,
+        "startChar": 8,
+        "endLine": 1388,
+        "endChar": 36
+      },
+      "revId": "a32de6e4c13b2656515c2844e06376a51238cc03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee7c0f95_2564a4a7",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1455,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-10T19:31:07Z",
+      "side": 1,
+      "message": "Without calling RangeSha1(), this lock won\u0027t be needed?",
+      "range": {
+        "startLine": 1455,
+        "startChar": 10,
+        "endLine": 1455,
+        "endChar": 29
+      },
+      "revId": "a32de6e4c13b2656515c2844e06376a51238cc03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "06016846_0ba1b7c7",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1465,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-10T19:31:07Z",
+      "side": 1,
+      "message": "just split_large_apks?",
+      "range": {
+        "startLine": 1465,
+        "startChar": 4,
+        "endLine": 1465,
+        "endChar": 27
+      },
+      "revId": "a32de6e4c13b2656515c2844e06376a51238cc03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
