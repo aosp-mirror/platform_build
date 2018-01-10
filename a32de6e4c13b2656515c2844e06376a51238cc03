@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f8b74c07_75f81679",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1388,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-01-10T20:26:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1d9bc1ed_1fb3dc97",
+      "range": {
+        "startLine": 1388,
+        "startChar": 8,
+        "endLine": 1388,
+        "endChar": 36
+      },
+      "revId": "a32de6e4c13b2656515c2844e06376a51238cc03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ee7c0f95_2564a4a7",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-01-10T19:31:07Z",
       "side": 1,
       "message": "Without calling RangeSha1(), this lock won\u0027t be needed?",
+      "range": {
+        "startLine": 1455,
+        "startChar": 10,
+        "endLine": 1455,
+        "endChar": 29
+      },
+      "revId": "a32de6e4c13b2656515c2844e06376a51238cc03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "468dd621_7661255a",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1455,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-01-10T20:26:19Z",
+      "side": 1,
+      "message": "removed",
+      "parentUuid": "ee7c0f95_2564a4a7",
       "range": {
         "startLine": 1455,
         "startChar": 10,
@@ -68,6 +116,30 @@
       "revId": "a32de6e4c13b2656515c2844e06376a51238cc03",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a285c430_cb0cafac",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1465,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-01-10T20:26:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06016846_0ba1b7c7",
+      "range": {
+        "startLine": 1465,
+        "startChar": 4,
+        "endLine": 1465,
+        "endChar": 27
+      },
+      "revId": "a32de6e4c13b2656515c2844e06376a51238cc03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
