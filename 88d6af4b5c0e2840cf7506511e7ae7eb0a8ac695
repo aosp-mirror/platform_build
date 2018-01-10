@@ -16,6 +16,24 @@
       "revId": "88d6af4b5c0e2840cf7506511e7ae7eb0a8ac695",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2eeef956_4240d61f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 547,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-01-10T00:04:35Z",
+      "side": 1,
+      "message": "No this won\u0027t work a lot of these extra modules could easily be included into general-tests. I would say if the L_C_S is only device-tests or general-tests then auto-gen the config.",
+      "parentUuid": "a7824854_f8bb0909",
+      "revId": "88d6af4b5c0e2840cf7506511e7ae7eb0a8ac695",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
