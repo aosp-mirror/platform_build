@@ -24,16 +24,11 @@ my_embedded_prebuilt_jni_libs :=
 ifdef my_embed_jni
 # App explicitly requires the prebuilt NDK stl shared libraies.
 # The NDK stl shared libraries should never go to the system image.
-ifneq ($(filter $(LOCAL_NDK_STL_VARIANT), stlport_shared c++_shared),)
+ifeq ($(LOCAL_NDK_STL_VARIANT),c++_shared)
 ifndef LOCAL_SDK_VERSION
 $(error LOCAL_SDK_VERSION must be defined with LOCAL_NDK_STL_VARIANT, \
     LOCAL_PACKAGE_NAME=$(LOCAL_PACKAGE_NAME))
 endif
-endif
-ifeq (stlport_shared,$(LOCAL_NDK_STL_VARIANT))
-my_jni_shared_libraries += \
-    $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources/cxx-stl/stlport/libs/$(TARGET_$(my_2nd_arch_prefix)CPU_ABI)/libstlport_shared.so
-else ifeq (c++_shared,$(LOCAL_NDK_STL_VARIANT))
 my_jni_shared_libraries += \
     $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources/cxx-stl/llvm-libc++/libs/$(TARGET_$(my_2nd_arch_prefix)CPU_ABI)/libc++_shared.so
 endif

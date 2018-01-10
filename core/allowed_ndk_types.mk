@@ -28,12 +28,6 @@ ifdef LOCAL_SDK_VERSION
     else ifeq ($(LOCAL_NDK_STL_VARIANT),c++_static)
         my_ndk_stl_family := libc++
         my_ndk_stl_link_type := static
-    else ifeq ($(LOCAL_NDK_STL_VARIANT),stlport_shared)
-        my_ndk_stl_family := stlport
-        my_ndk_stl_link_type := shared
-    else ifeq ($(LOCAL_NDK_STL_VARIANT),stlport_static)
-        my_ndk_stl_family := stlport
-        my_ndk_stl_link_type := static
     else ifeq ($(LOCAL_NDK_STL_VARIANT),none)
         my_ndk_stl_family := none
         my_ndk_stl_link_type := none
@@ -66,8 +60,7 @@ ifdef LOCAL_SDK_VERSION
         # already been checked for consistency, and if they don't they'll be
         # kept isolated by RTLD_LOCAL anyway.
         my_allowed_ndk_types += \
-            native:ndk:libc++:shared native:ndk:libc++:static \
-            native:ndk:stlport:shared native:ndk:stlport:static \
+            native:ndk:libc++:shared native:ndk:libc++:static
 
         # The "none" link type that used by static libraries is intentionally
         # omitted here. We should only be dealing with shared libraries in
