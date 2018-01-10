@@ -609,13 +609,13 @@ ZIPTIME := $(prebuilt_build_tools_bin)/ziptime
 
 LEX := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/flex/flex-2.5.39
 # The default PKGDATADIR built in the prebuilt bison is a relative path
-# external/bison/data.
+# prebuilts/build-tools/common/bison.
 # To run bison from elsewhere you need to set up enviromental variable
 # BISON_PKGDATADIR.
-BISON_PKGDATADIR := $(PWD)/external/bison/data
-BISON := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/bison/bison
+BISON_PKGDATADIR := $(PWD)/prebuilts/build-tools/common/bison
+BISON := prebuilts/build-tools/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/bin/bison
 YACC := $(BISON) -d
-BISON_DATA := $(wildcard external/bison/data/* external/bison/data/*/*)
+BISON_DATA := $(wildcard $(BISON_PKGDATADIR)/* $(BISON_PKGDATADIR)/*/*)
 
 YASM := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/yasm/yasm
 
