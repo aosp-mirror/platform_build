@@ -19,7 +19,7 @@ import unittest
 
 import common
 from ota_from_target_files import (
-    _LoadOemDicts, BuildInfo, WriteFingerprintAssertion)
+    _LoadOemDicts, BuildInfo, GetPackageMetadata, WriteFingerprintAssertion)
 
 
 class MockScriptWriter(object):
@@ -300,3 +300,179 @@ class LoadOemDictsTest(unittest.TestCase):
       self.assertEqual('foo', oem_dict['xyz'])
       self.assertEqual('bar', oem_dict['a.b.c'])
       self.assertEqual('{}'.format(i), oem_dict['ro.build.index'])
+
+
+class OtaFromTargetFilesTest(unittest.TestCase):
+
+  TEST_TARGET_INFO_DICT = {
+      'build.prop' : {
+          'ro.product.device' : 'product-device',
+          'ro.build.fingerprint' : 'build-fingerprint-target',
+          'ro.build.version.incremental' : 'build-version-incremental-target',
+          'ro.build.date.utc' : '1500000000',
+      },
+  }
+
+  TEST_SOURCE_INFO_DICT = {
+      'build.prop' : {
+          'ro.product.device' : 'product-device',
+          'ro.build.fingerprint' : 'build-fingerprint-source',
+          'ro.build.version.incremental' : 'build-version-incremental-source',
+          'ro.build.date.utc' : '1400000000',
+      },
+  }
+
+  def setUp(self):
+    # Reset the global options as in ota_from_target_files.py.
+    common.OPTIONS.incremental_source = None
+    common.OPTIONS.downgrade = False
+    common.OPTIONS.timestamp = False
+    common.OPTIONS.wipe_user_data = False
+
+  def test_GetPackageMetadata_abOta_full(self):
+    target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
+    target_info_dict['ab_update'] = 'true'
+    target_info = BuildInfo(target_info_dict, None)
+    metadata = GetPackageMetadata(target_info)
+    self.assertDictEqual(
+        {
+            'ota-type' : 'AB',
+            'ota-required-cache' : '0',
+            'post-build' : 'build-fingerprint-target',
+            'post-build-incremental' : 'build-version-incremental-target',
+            'post-timestamp' : '1500000000',
+            'pre-device' : 'product-device',
+        },
+        metadata)
+
+  def test_GetPackageMetadata_abOta_incremental(self):
+    target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
+    target_info_dict['ab_update'] = 'true'
+    target_info = BuildInfo(target_info_dict, None)
+    source_info = BuildInfo(self.TEST_SOURCE_INFO_DICT, None)
+    common.OPTIONS.incremental_source = ''
+    metadata = GetPackageMetadata(target_info, source_info)
+    self.assertDictEqual(
+        {
+            'ota-type' : 'AB',
+            'ota-required-cache' : '0',
+            'post-build' : 'build-fingerprint-target',
+            'post-build-incremental' : 'build-version-incremental-target',
+            'post-timestamp' : '1500000000',
+            'pre-device' : 'product-device',
+            'pre-build' : 'build-fingerprint-source',
+            'pre-build-incremental' : 'build-version-incremental-source',
+        },
+        metadata)
+
+  def test_GetPackageMetadata_nonAbOta_full(self):
+    target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
+    metadata = GetPackageMetadata(target_info)
+    self.assertDictEqual(
+        {
+            'ota-type' : 'BLOCK',
+            'post-build' : 'build-fingerprint-target',
+            'post-build-incremental' : 'build-version-incremental-target',
+            'post-timestamp' : '1500000000',
+            'pre-device' : 'product-device',
+        },
+        metadata)
+
+  def test_GetPackageMetadata_nonAbOta_incremental(self):
+    target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
+    source_info = BuildInfo(self.TEST_SOURCE_INFO_DICT, None)
+    common.OPTIONS.incremental_source = ''
+    metadata = GetPackageMetadata(target_info, source_info)
+    self.assertDictEqual(
+        {
+            'ota-type' : 'BLOCK',
+            'post-build' : 'build-fingerprint-target',
+            'post-build-incremental' : 'build-version-incremental-target',
+            'post-timestamp' : '1500000000',
+            'pre-device' : 'product-device',
+            'pre-build' : 'build-fingerprint-source',
+            'pre-build-incremental' : 'build-version-incremental-source',
+        },
+        metadata)
+
+  def test_GetPackageMetadata_wipe(self):
+    target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
+    common.OPTIONS.wipe_user_data = True
+    metadata = GetPackageMetadata(target_info)
+    self.assertDictEqual(
+        {
+            'ota-type' : 'BLOCK',
+            'ota-wipe' : 'yes',
+            'post-build' : 'build-fingerprint-target',
+            'post-build-incremental' : 'build-version-incremental-target',
+            'post-timestamp' : '1500000000',
+            'pre-device' : 'product-device',
+        },
+        metadata)
+
+  @staticmethod
+  def _test_GetPackageMetadata_swapBuildTimestamps(target_info, source_info):
+    (target_info['build.prop']['ro.build.date.utc'],
+     source_info['build.prop']['ro.build.date.utc']) = (
+         source_info['build.prop']['ro.build.date.utc'],
+         target_info['build.prop']['ro.build.date.utc'])
+
+  def test_GetPackageMetadata_unintentionalDowngradeDetected(self):
+    target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
+    source_info_dict = copy.deepcopy(self.TEST_SOURCE_INFO_DICT)
+    self._test_GetPackageMetadata_swapBuildTimestamps(
+        target_info_dict, source_info_dict)
+
+    target_info = BuildInfo(target_info_dict, None)
+    source_info = BuildInfo(source_info_dict, None)
+    common.OPTIONS.incremental_source = ''
+    self.assertRaises(RuntimeError, GetPackageMetadata, target_info,
+                      source_info)
+
+  def test_GetPackageMetadata_downgrade(self):
+    target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
+    source_info_dict = copy.deepcopy(self.TEST_SOURCE_INFO_DICT)
+    self._test_GetPackageMetadata_swapBuildTimestamps(
+        target_info_dict, source_info_dict)
+
+    target_info = BuildInfo(target_info_dict, None)
+    source_info = BuildInfo(source_info_dict, None)
+    common.OPTIONS.incremental_source = ''
+    common.OPTIONS.downgrade = True
+    common.OPTIONS.wipe_user_data = True
+    metadata = GetPackageMetadata(target_info, source_info)
+    self.assertDictEqual(
+        {
+            'ota-downgrade' : 'yes',
+            'ota-type' : 'BLOCK',
+            'ota-wipe' : 'yes',
+            'post-build' : 'build-fingerprint-target',
+            'post-build-incremental' : 'build-version-incremental-target',
+            'pre-device' : 'product-device',
+            'pre-build' : 'build-fingerprint-source',
+            'pre-build-incremental' : 'build-version-incremental-source',
+        },
+        metadata)
+
+  def test_GetPackageMetadata_overrideTimestamp(self):
+    target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
+    source_info_dict = copy.deepcopy(self.TEST_SOURCE_INFO_DICT)
+    self._test_GetPackageMetadata_swapBuildTimestamps(
+        target_info_dict, source_info_dict)
+
+    target_info = BuildInfo(target_info_dict, None)
+    source_info = BuildInfo(source_info_dict, None)
+    common.OPTIONS.incremental_source = ''
+    common.OPTIONS.timestamp = True
+    metadata = GetPackageMetadata(target_info, source_info)
+    self.assertDictEqual(
+        {
+            'ota-type' : 'BLOCK',
+            'post-build' : 'build-fingerprint-target',
+            'post-build-incremental' : 'build-version-incremental-target',
+            'post-timestamp' : '1500000001',
+            'pre-device' : 'product-device',
+            'pre-build' : 'build-fingerprint-source',
+            'pre-build-incremental' : 'build-version-incremental-source',
+        },
+        metadata)
