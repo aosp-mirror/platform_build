@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08273c35_21266093",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 460,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2018-01-11T16:30:54Z",
+      "side": 1,
+      "message": "I think you coped to vendor/etc/init/hw/init.ranchu.rc",
+      "revId": "4e556a9d6ec3ae822bc39c3eb251630f1b3c5eb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9aa264e0_0638e4d1",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2018-01-11T16:30:54Z",
+      "side": 1,
+      "message": "even for user build ?",
+      "range": {
+        "startLine": 143,
+        "startChar": 0,
+        "endLine": 143,
+        "endChar": 33
+      },
+      "revId": "4e556a9d6ec3ae822bc39c3eb251630f1b3c5eb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
