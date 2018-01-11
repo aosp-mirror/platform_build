@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "638163f3_4261a7a7",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 667,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-11T21:32:59Z",
+      "side": 0,
+      "message": "We should either leave in this check to ensure that it was always set to true, so that it\u0027s more obvious that this is gone. Or remove all the current places where we set it to true, then mark the variable as KATI_obsolete, which will produce an error anytime someone tries to read or write the value.",
+      "revId": "38228f2156f4863e77e0ccd67efb41ed59836fc4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
