@@ -92,6 +92,11 @@ Specify Framework Compatibility Matrix Version in device manifest by adding a `t
 attribute to the root element `<manifest>`. If `PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE`
 is 26 or 27, you can add `"target-level"="1"` to your device manifest instead.
 
+### Stop using USE_CLANG_PLATFORM_BUILD {#USE_CLANG_PLATFORM_BUILD}
+
+Clang is the default and only supported Android compiler, so there is no reason
+for this option to exist.
+
 ### Other envsetup.sh variables  {#other_envsetup_variables}
 
 * ANDROID_TOOLCHAIN
