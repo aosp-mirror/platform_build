@@ -16,6 +16,24 @@
       "revId": "38228f2156f4863e77e0ccd67efb41ed59836fc4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aab5ce56_fb8234a3",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 667,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2018-01-11T22:31:49Z",
+      "side": 0,
+      "message": "I switched it to KATI_obsolete_var, since we would prefer that everyone cleans up their code related to this.",
+      "parentUuid": "638163f3_4261a7a7",
+      "revId": "38228f2156f4863e77e0ccd67efb41ed59836fc4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
