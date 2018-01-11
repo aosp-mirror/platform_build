@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c863013b_5191b435",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 540,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-01-11T19:25:15Z",
+      "side": 1,
+      "message": "Can we ever have an instrumentation test that is not LOCAL_MODULE_CLASS apps?",
+      "range": {
+        "startLine": 540,
+        "startChar": 0,
+        "endLine": 540,
+        "endChar": 35
+      },
+      "revId": "2035abfb8df290346c17ced0e513cec8dcf15404",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
