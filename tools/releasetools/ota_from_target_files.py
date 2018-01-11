@@ -683,23 +683,6 @@ def WriteMetadata(metadata, output_zip):
                      compress_type=zipfile.ZIP_STORED)
 
 
-def GetBuildProp(prop, info_dict):
-  """Returns the inquired build property from a given info_dict."""
-  try:
-    return info_dict.get("build.prop", {})[prop]
-  except KeyError:
-    raise common.ExternalError("couldn't find %s in build.prop" % (prop,))
-
-
-def GetVendorBuildProp(prop, info_dict):
-  """Returns the inquired vendor build property from a given info_dict."""
-  try:
-    return info_dict.get("vendor.build.prop", {})[prop]
-  except KeyError:
-    raise common.ExternalError(
-        "couldn't find %s in vendor.build.prop" % (prop,))
-
-
 def HandleDowngradeMetadata(metadata, target_info, source_info):
   # Only incremental OTAs are allowed to reach here.
   assert OPTIONS.incremental_source is not None
