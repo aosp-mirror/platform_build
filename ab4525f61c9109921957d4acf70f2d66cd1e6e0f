@@ -116,6 +116,30 @@
       "revId": "ab4525f61c9109921957d4acf70f2d66cd1e6e0f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40b3e939_bd156479",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2018-01-12T02:56:33Z",
+      "side": 1,
+      "message": "I meant if BOARD_VNDK_VERSION is a version value, say \u002727\u0027, PROVIDED_VNDK_VERSIONS will not have PLATFORM_VNDK_VERSION. It must have BOARD_VNDK_VERSION and PRODUCT_EXTRA_VNDK_VERSIONS if defined.\nPLATFORM_VNDK_VERSION will not be empty regardless of BOARD_VNDK_VERSION definition. PLATFORM_VNDK_VERSION shows the version that we can build with current aosp source code.\nBOARD_VNDK_VERSION shows which VNDK version that the vendor modules required to build. That why we are using PLATFORM_VNDK_VERSION when BOARD_VNDK_VERSION is current.",
+      "parentUuid": "147feb33_4ee7299c",
+      "range": {
+        "startLine": 102,
+        "startChar": 18,
+        "endLine": 102,
+        "endChar": 39
+      },
+      "revId": "ab4525f61c9109921957d4acf70f2d66cd1e6e0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
