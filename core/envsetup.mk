@@ -657,13 +657,3 @@ endif
 ifeq ($(CALLED_FROM_SETUP),true)
 PRINT_BUILD_CONFIG ?= true
 endif
-
-ifeq ($(USE_CLANG_PLATFORM_BUILD),)
-USE_CLANG_PLATFORM_BUILD := true
-endif
-
-ifneq ($(USE_CLANG_PLATFORM_BUILD),true)
-ifneq ($(USE_CLANG_PLATFORM_BUILD),false)
-$(error USE_CLANG_PLATFORM_BUILD must be true or false)
-endif
-endif
