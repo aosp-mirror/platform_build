@@ -39,6 +39,30 @@
       "revId": "4e556a9d6ec3ae822bc39c3eb251630f1b3c5eb3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1690a1da_d582e0b8",
+        "filename": "target/product/emulator.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-01-12T06:53:02Z",
+      "side": 1,
+      "message": "GSI removed all dex preopt relative settings, and uses the default settings now.\n\nSuggest just remove this.",
+      "parentUuid": "9aa264e0_0638e4d1",
+      "range": {
+        "startLine": 143,
+        "startChar": 0,
+        "endLine": 143,
+        "endChar": 33
+      },
+      "revId": "4e556a9d6ec3ae822bc39c3eb251630f1b3c5eb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
