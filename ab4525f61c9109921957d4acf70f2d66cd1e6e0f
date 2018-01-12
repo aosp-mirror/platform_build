@@ -92,6 +92,30 @@
       "revId": "ab4525f61c9109921957d4acf70f2d66cd1e6e0f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "147feb33_4ee7299c",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-01-12T02:39:21Z",
+      "side": 1,
+      "message": "Do you mean if BOARD_VNDK_VERSION is not defined, PLATFORM_VNDK_VERSION will also be not defined?\n\nIn that case, both device matrix (REQUIRED_VNDK_VERSION\u003d\"\"; see line 73) and framework manifest (PROVIDED_VNDK_VERSIONS\u003d\"\") declare no VNDK versions at all. When device matrix does not specify any VNDK version, the check will be skipped. See \ncheck: https://android-review.googlesource.com/c/platform/system/libvintf/+/586190/3/HalManifest.cpp#219\ntest: https://android-review.googlesource.com/c/platform/system/libvintf/+/586190/3/test/AssembleVintfTest.cpp#324 .",
+      "parentUuid": "2c143b9f_0a47fd03",
+      "range": {
+        "startLine": 102,
+        "startChar": 18,
+        "endLine": 102,
+        "endChar": 39
+      },
+      "revId": "ab4525f61c9109921957d4acf70f2d66cd1e6e0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
