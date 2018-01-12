@@ -140,6 +140,30 @@
       "revId": "ab4525f61c9109921957d4acf70f2d66cd1e6e0f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "425b3eba_d1de4b6e",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-01-12T03:12:52Z",
+      "side": 1,
+      "message": "\u003e PROVIDED_VNDK_VERSIONS will not have PLATFORM_VNDK_VERSION. It must have BOARD_VNDK_VERSION and PRODUCT_EXTRA_VNDK_VERSIONS if defined.\n\nThat doesn\u0027t make sense to me. As you say, \"PLATFORM_VNDK_VERSION shows the version that we can build with current aosp source code.\" Hence, PROVIDED_VNDK_VERSIONS (the provided VNDK versions by the FRAMEWORK) should contain PLATFORM_* variables, not BOARD_* variables. So PROVIDED_VNDK_VERSIONS should be PLATFORM_VNDK_VERSION + PRODUCT_EXTRA_VNDK_VERSIONS , not BOARD_VNDK_VERSION + PRODUCT_EXTRA_VNDK_VERSIONS (as it is now).",
+      "parentUuid": "40b3e939_bd156479",
+      "range": {
+        "startLine": 102,
+        "startChar": 18,
+        "endLine": 102,
+        "endChar": 39
+      },
+      "revId": "ab4525f61c9109921957d4acf70f2d66cd1e6e0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
