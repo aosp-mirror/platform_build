@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ec759edc_4207025a",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-12T18:04:31Z",
+      "side": 1,
+      "message": "so, howard, I think you\u0027re question is about this line.\n\nIt should actually be:\nPROVIDED_VNDK_VERSIONS\u003d\"$(PRIVATE_VNDK_VERSION) $(PRODUCT_EXTRA_VNDK_VERSIONS)\"\n\nThere is no guarantee that PLATFORM_VNDK_VERSION will actually be needed by the vendor code (in the case of an old vendor image).",
+      "range": {
+        "startLine": 102,
+        "startChar": 25,
+        "endLine": 102,
+        "endChar": 80
+      },
+      "revId": "fb573d14297bc54f1035d14f594108281ce69b95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
