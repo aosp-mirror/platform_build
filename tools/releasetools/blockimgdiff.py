@@ -1467,7 +1467,7 @@ class BlockImageDiff(object):
     max_blocks_per_transfer = int(cache_size * split_threshold /
                                   self.tgt.blocksize)
     empty = RangeSet()
-    for tgt_fn, tgt_ranges in self.tgt.file_map.items():
+    for tgt_fn, tgt_ranges in sorted(self.tgt.file_map.items()):
       if tgt_fn == "__ZERO":
         # the special "__ZERO" domain is all the blocks not contained
         # in any file and that are filled with zeros.  We have a
