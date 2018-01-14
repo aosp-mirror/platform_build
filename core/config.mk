@@ -76,6 +76,7 @@ $(KATI_obsolete_var \
   ANDROID_PRE_BUILD_PATHS \
   ,See $(CHANGES_URL)#other_envsetup_variables)
 $(KATI_obsolete_var PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE,Set FCM Version in device manifest instead. See $(CHANGES_URL)#PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE)
+$(KATI_obsolete_var USE_CLANG_PLATFORM_BUILD,Clang is the only supported Android compiler. See $(CHANGES_URL)#USE_CLANG_PLATFORM_BUILD)
 
 CHANGES_URL :=
 
@@ -825,8 +826,6 @@ ifdef DEVICE_FRAMEWORK_MANIFEST_FILE
   FRAMEWORK_MANIFEST_INPUT_FILES += $(DEVICE_FRAMEWORK_MANIFEST_FILE)
 endif
 $(.KATI_obsolete_var DEVICE_FRAMEWORK_MANIFEST_FILE,No one should ever need to use this.)
-
-FRAMEWORK_COMPATIBILITY_MATRIX_FILES := $(wildcard hardware/interfaces/compatibility_matrix.*.xml)
 
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(OUT_DIR)/build_date.txt)

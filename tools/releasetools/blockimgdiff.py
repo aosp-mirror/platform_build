@@ -1385,8 +1385,8 @@ class BlockImageDiff(object):
       assert patch_start == patch_size
       return split_info_list
 
-    def AddSplitTransferForLargeApks():
-      """Create split transfers for large apk files.
+    def SplitLargeApks():
+      """Split the large apks files.
 
       Example: Chrome.apk will be split into
         src-0: Chrome.apk-0, tgt-0: Chrome.apk-0
@@ -1452,22 +1452,22 @@ class BlockImageDiff(object):
 
           split_src_name = "{}-{}".format(src_name, index)
           split_tgt_name = "{}-{}".format(tgt_name, index)
-          transfer_split = Transfer(split_tgt_name, split_src_name,
-                                    split_tgt_ranges, split_src_ranges,
-                                    self.tgt.RangeSha1(split_tgt_ranges),
-                                    self.src.RangeSha1(split_src_ranges),
-                                    "diff", self.transfers)
-          transfer_split.patch = patch_content
+          split_large_apks.append((split_tgt_name,
+                                   split_src_name,
+                                   split_tgt_ranges,
+                                   split_src_ranges,
+                                   patch_content))
 
     print("Finding transfers...")
 
     large_apks = []
+    split_large_apks = []
     cache_size = common.OPTIONS.cache_size
     split_threshold = 0.125
     max_blocks_per_transfer = int(cache_size * split_threshold /
                                   self.tgt.blocksize)
     empty = RangeSet()
-    for tgt_fn, tgt_ranges in self.tgt.file_map.items():
+    for tgt_fn, tgt_ranges in sorted(self.tgt.file_map.items()):
       if tgt_fn == "__ZERO":
         # the special "__ZERO" domain is all the blocks not contained
         # in any file and that are filled with zeros.  We have a
@@ -1511,12 +1511,22 @@ class BlockImageDiff(object):
       AddTransfer(tgt_fn, None, tgt_ranges, empty, "new", self.transfers)
 
     transfer_lock = threading.Lock()
-    threads = [threading.Thread(target=AddSplitTransferForLargeApks)
+    threads = [threading.Thread(target=SplitLargeApks)
                for _ in range(self.threads)]
     for th in threads:
       th.start()
     while threads:
       threads.pop().join()
+
+    # Sort the split transfers for large apks to generate a determinate package.
+    split_large_apks.sort()
+    for (tgt_name, src_name, tgt_ranges, src_ranges,
+         patch) in split_large_apks:
+      transfer_split = Transfer(tgt_name, src_name, tgt_ranges, src_ranges,
+                                self.tgt.RangeSha1(tgt_ranges),
+                                self.src.RangeSha1(src_ranges),
+                                "diff", self.transfers)
+      transfer_split.patch = patch
 
   def AbbreviateSourceNames(self):
     for k in self.src.file_map.keys():

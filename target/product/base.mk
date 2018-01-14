@@ -103,6 +103,7 @@ PRODUCT_PACKAGES += \
     libvorbisidec \
     libmediandk \
     libvulkan \
+    libwifi-service \
     locksettings \
     media \
     media_cmd \

@@ -354,11 +354,6 @@ ifdef LOCAL_IS_HOST_MODULE
             my_clang := true
         endif
     endif
-# Add option to make gcc the default for device build
-else ifeq ($(USE_CLANG_PLATFORM_BUILD),false)
-    ifeq ($(my_clang),)
-        my_clang := false
-    endif
 else ifeq ($(my_clang),)
     my_clang := true
 endif
