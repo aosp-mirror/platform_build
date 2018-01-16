@@ -743,6 +743,19 @@ APICHECK_CLASSPATH := $(subst $(space),:,$(strip $(APICHECK_CLASSPATH_ENTRIES)))
 
 APICHECK_COMMAND := $(APICHECK) -JXmx1024m -J"classpath $(APICHECK_CLASSPATH)"
 
+# Boolean variable determining if the whitelist for compatible properties is enabled
+PRODUCT_COMPATIBLE_PROPERTY := false
+ifneq ($(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE),)
+  PRODUCT_COMPATIBLE_PROPERTY := $(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE)
+else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
+  #$(warning no product shipping level defined)
+else ifneq ($(call math_lt,27,$(PRODUCT_SHIPPING_API_LEVEL)),)
+  PRODUCT_COMPATIBLE_PROPERTY := true
+endif
+
+.KATI_READONLY := \
+    PRODUCT_COMPATIBLE_PROPERTY
+
 # Boolean variable determining if Treble is fully enabled
 PRODUCT_FULL_TREBLE := false
 ifneq ($(PRODUCT_FULL_TREBLE_OVERRIDE),)
