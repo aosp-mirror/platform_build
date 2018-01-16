@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "44730d51_6a1459f8",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-16T18:57:43Z",
+      "side": 1,
+      "message": "I would prefer name parity. Either \"vendorndk\" here or \"ssdk\" below.",
+      "range": {
+        "startLine": 88,
+        "startChar": 30,
+        "endLine": 88,
+        "endChar": 34
+      },
+      "revId": "4edaf855f7d6eb95f2249cdaf736ecc0a5f96985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee321ecc_421e2b92",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-16T18:57:43Z",
+      "side": 1,
+      "message": "BOARD_SYSTEMSDK_VERSIONS",
+      "range": {
+        "startLine": 310,
+        "startChar": 70,
+        "endLine": 310,
+        "endChar": 89
+      },
+      "revId": "4edaf855f7d6eb95f2249cdaf736ecc0a5f96985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9fab7fb8_78c2f196",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-16T18:57:43Z",
+      "side": 1,
+      "message": "LOCAL_VENDOR_MODULE and LOCAL_PROPRIETARY_MODULE should both set USE_VNDK \u003d true, right?\n\nLOCAL_ODM_MODULE should also get USE_VNDK true, but I\u0027m not sure if it does. Can we reduce this filter true to just a comparison?",
+      "range": {
+        "startLine": 20,
+        "startChar": 26,
+        "endLine": 20,
+        "endChar": 45
+      },
+      "revId": "4edaf855f7d6eb95f2249cdaf736ecc0a5f96985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe650ec5_6c5bf6e4",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-16T18:57:43Z",
+      "side": 1,
+      "message": "not directly related to this CL, but I don\u0027t understand the pattern. When to choose camel case and when to choose snake case?",
+      "revId": "4edaf855f7d6eb95f2249cdaf736ecc0a5f96985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4f6f9db_be5f5266",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-16T18:57:43Z",
+      "side": 1,
+      "message": "shouldn\u0027t the minimum still be 28?",
+      "range": {
+        "startLine": 211,
+        "startChar": 4,
+        "endLine": 212,
+        "endChar": 33
+      },
+      "revId": "4edaf855f7d6eb95f2249cdaf736ecc0a5f96985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
