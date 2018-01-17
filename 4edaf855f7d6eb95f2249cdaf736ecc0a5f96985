@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4fed72a6_20223445",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-17T06:24:04Z",
+      "side": 1,
+      "message": "We have never used the terms vendorndk and ssdk. I also like having the parity, but in this case, it would only cause naming inconsistency between vendorndk \u003c-\u003e vndk or systemsdk \u003c-\u003e ssdk.",
+      "parentUuid": "44730d51_6a1459f8",
+      "range": {
+        "startLine": 88,
+        "startChar": 30,
+        "endLine": 88,
+        "endChar": 34
+      },
+      "revId": "4edaf855f7d6eb95f2249cdaf736ecc0a5f96985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ee321ecc_421e2b92",
         "filename": "core/envsetup.mk",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "98cc1265_1bc480ed",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-17T06:24:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ee321ecc_421e2b92",
+      "range": {
+        "startLine": 310,
+        "startChar": 70,
+        "endLine": 310,
+        "endChar": 89
+      },
+      "revId": "4edaf855f7d6eb95f2249cdaf736ecc0a5f96985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9fab7fb8_78c2f196",
         "filename": "core/local_systemsdk.mk",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2018-01-16T18:57:43Z",
       "side": 1,
       "message": "LOCAL_VENDOR_MODULE and LOCAL_PROPRIETARY_MODULE should both set USE_VNDK \u003d true, right?\n\nLOCAL_ODM_MODULE should also get USE_VNDK true, but I\u0027m not sure if it does. Can we reduce this filter true to just a comparison?",
+      "range": {
+        "startLine": 20,
+        "startChar": 26,
+        "endLine": 20,
+        "endChar": 45
+      },
+      "revId": "4edaf855f7d6eb95f2249cdaf736ecc0a5f96985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a33a406_fb2ca9be",
+        "filename": "core/local_systemsdk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-17T06:24:04Z",
+      "side": 1,
+      "message": "\u003e LOCAL_VENDOR_MODULE and LOCAL_PROPRIETARY_MODULE should both set USE_VNDK \u003d true, right?\n\nRight\n\n\u003e LOCAL_ODM_MODULE should also get USE_VNDK true, but I\u0027m not sure if it does.\n\nYes, that\u0027s done in local_vndk.mk\n\n\u003e Can we reduce this filter true to just a comparison?\n\nwhy? this is a common way of implementing OR in make.",
+      "parentUuid": "9fab7fb8_78c2f196",
       "range": {
         "startLine": 20,
         "startChar": 26,
@@ -88,6 +160,24 @@
     },
     {
       "key": {
+        "uuid": "c16dbb37_5b5ac5ce",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-17T06:24:04Z",
+      "side": 1,
+      "message": "I don\u0027t know. I just shamelessly copied the pattern for VNDK. dwillemsen@ or ccross@ to answer.",
+      "parentUuid": "fe650ec5_6c5bf6e4",
+      "revId": "4edaf855f7d6eb95f2249cdaf736ecc0a5f96985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c4f6f9db_be5f5266",
         "filename": "core/version_defaults.mk",
         "patchSetId": 1
@@ -99,6 +189,30 @@
       "writtenOn": "2018-01-16T18:57:43Z",
       "side": 1,
       "message": "shouldn\u0027t the minimum still be 28?",
+      "range": {
+        "startLine": 211,
+        "startChar": 4,
+        "endLine": 212,
+        "endChar": 33
+      },
+      "revId": "4edaf855f7d6eb95f2249cdaf736ecc0a5f96985",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ebdf426_71d34452",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-17T06:24:04Z",
+      "side": 1,
+      "message": "Yes, since the current API level is always included, we don\u0027t need to set the min version when we support only one API level.",
+      "parentUuid": "c4f6f9db_be5f5266",
       "range": {
         "startLine": 211,
         "startChar": 4,
