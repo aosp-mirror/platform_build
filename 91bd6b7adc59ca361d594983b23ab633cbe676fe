@@ -69,6 +69,30 @@
       "revId": "91bd6b7adc59ca361d594983b23ab633cbe676fe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b13d0d3b_fd82fe7a",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1249526
+      },
+      "writtenOn": "2018-01-17T23:20:36Z",
+      "side": 1,
+      "message": "The patchoat code doesn\u0027t need an absolute path. I don\u0027t see why the rule was done with an absolute path. I removed the abspath call and it seems to just work. Just to confirm though, is the code generated and run from the same directory? If not, where is it generated/run from?",
+      "parentUuid": "10c8de84_1c83c71e",
+      "range": {
+        "startLine": 106,
+        "startChar": 31,
+        "endLine": 106,
+        "endChar": 40
+      },
+      "revId": "91bd6b7adc59ca361d594983b23ab633cbe676fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
