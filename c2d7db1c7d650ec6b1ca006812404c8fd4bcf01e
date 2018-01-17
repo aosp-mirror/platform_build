@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d89409d_58387a8f",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 663,
+      "author": {
+        "id": 1054468
+      },
+      "writtenOn": "2018-01-17T05:27:36Z",
+      "side": 1,
+      "message": "packages/ ?",
+      "range": {
+        "startLine": 663,
+        "startChar": 34,
+        "endLine": 663,
+        "endChar": 44
+      },
+      "revId": "c2d7db1c7d650ec6b1ca006812404c8fd4bcf01e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
