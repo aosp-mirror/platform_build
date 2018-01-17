@@ -22,6 +22,29 @@
       "revId": "91bd6b7adc59ca361d594983b23ab633cbe676fe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "10c8de84_1c83c71e",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-17T21:51:01Z",
+      "side": 1,
+      "message": "We\u0027d prefer if absolute paths don\u0027t end up in our ninja file. Is there a reason this needs to be absolute? If so, it\u0027s possible to do this when we run this command using embedded commands:\n\n  --input-image-location\u003d$$(cd $(dir $(PRIVATE_IMAGE_LOCATION)); pwd)/$(notdir $(PRIVATE_IMAGE_LOCATION))",
+      "range": {
+        "startLine": 106,
+        "startChar": 31,
+        "endLine": 106,
+        "endChar": 40
+      },
+      "revId": "91bd6b7adc59ca361d594983b23ab633cbe676fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
