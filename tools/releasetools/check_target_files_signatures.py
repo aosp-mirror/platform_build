@@ -53,11 +53,13 @@ import zipfile
 
 import common
 
-# Work around a bug in python's zipfile module that prevents opening
-# of zipfiles if any entry has an extra field of between 1 and 3 bytes
-# (which is common with zipaligned APKs).  This overrides the
-# ZipInfo._decodeExtra() method (which contains the bug) with an empty
-# version (since we don't need to decode the extra field anyway).
+# Work around a bug in Python's zipfile module that prevents opening of zipfiles
+# if any entry has an extra field of between 1 and 3 bytes (which is common with
+# zipaligned APKs). This overrides the ZipInfo._decodeExtra() method (which
+# contains the bug) with an empty version (since we don't need to decode the
+# extra field anyway).
+# Issue #14315: https://bugs.python.org/issue14315, fixed in Python 2.7.8 and
+# Python 3.5.0 alpha 1.
 class MyZipInfo(zipfile.ZipInfo):
   def _decodeExtra(self):
     pass
