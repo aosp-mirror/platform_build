@@ -22,6 +22,30 @@
       "revId": "f9a2449559189808474513791809c79dfac71e11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8fcc9f5_c22864d3",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-18T20:44:32Z",
+      "side": 1,
+      "message": "In practice no, since only Windows would give a backslash-separated path (which would go against zip spec if used as zip entry name) and we\u0027re not running this script on Windows. But because of copy/paste, similar code could end up elsewhere.\n\n...with that said, I did a search in this file and found another two occurrences (L486 and L497). Fixed in PS5.",
+      "parentUuid": "234a357f_54ad5501",
+      "range": {
+        "startLine": 573,
+        "startChar": 50,
+        "endLine": 573,
+        "endChar": 70
+      },
+      "revId": "f9a2449559189808474513791809c79dfac71e11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
