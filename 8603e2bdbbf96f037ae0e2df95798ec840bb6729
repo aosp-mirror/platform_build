@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "548686a6_1412978e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2018-01-18T17:27:37Z",
+      "side": 1,
+      "message": "So, module can compile against @hide APIs in core-oj an core-libart - isn\u0027t it then a problem if a java:sdk module links against a java:core module ? (it would have been nice if we had public API stubs only for core-oj / core-libart but we don\u0027t yet)",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 31
+      },
+      "revId": "8603e2bdbbf96f037ae0e2df95798ec840bb6729",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
