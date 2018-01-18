@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "234a357f_54ad5501",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 573,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-01-18T20:07:14Z",
+      "side": 1,
+      "message": "just curious, will the old code generate a different value?",
+      "range": {
+        "startLine": 573,
+        "startChar": 50,
+        "endLine": 573,
+        "endChar": 70
+      },
+      "revId": "f9a2449559189808474513791809c79dfac71e11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
