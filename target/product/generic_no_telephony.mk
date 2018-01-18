@@ -29,6 +29,7 @@ PRODUCT_PACKAGES := \
     Provision \
     SystemUI \
     SysuiDarkThemeOverlay \
+    DisplayCutoutEmulationOverlay \
     EasterEgg \
     WallpaperCropper
 
