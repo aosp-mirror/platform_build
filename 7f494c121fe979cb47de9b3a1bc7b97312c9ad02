@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07f386e8_0f272226",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2018-01-18T13:16:31Z",
+      "side": 1,
+      "message": "FYI I didn\u0027t immediately realize that this referred to commits in error-prone\u0027s github repository rather than in Android, so it took me a few minutes to find those commits.\n\nFor reference, these commits are at:\nhttps://github.com/google/error-prone/commit/20a8664\nhttps://github.com/google/error-prone/commit/1f6dc3dc",
+      "range": {
+        "startLine": 9,
+        "startChar": 21,
+        "endLine": 11,
+        "endChar": 23
+      },
+      "revId": "7f494c121fe979cb47de9b3a1bc7b97312c9ad02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
