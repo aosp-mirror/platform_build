@@ -1366,16 +1366,34 @@ def main(argv):
   assert not (OPTIONS.downgrade and OPTIONS.timestamp), \
       "Cannot have --downgrade AND --override_timestamp both"
 
-  # Load the dict file from the zip directly to have a peek at the OTA type.
-  # For packages using A/B update, unzipping is not needed.
+  # Load the build info dicts from the zip directly or the extracted input
+  # directory. We don't need to unzip the entire target-files zips, because they
+  # won't be needed for A/B OTAs (brillo_update_payload does that on its own).
+  # When loading the info dicts, we don't need to provide the second parameter
+  # to common.LoadInfoDict(). Specifying the second parameter allows replacing
+  # some properties with their actual paths, such as 'selinux_fc',
+  # 'ramdisk_dir', which won't be used during OTA generation.
   if OPTIONS.extracted_input is not None:
-    OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.extracted_input,
-                                            OPTIONS.extracted_input)
+    OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.extracted_input)
   else:
-    input_zip = zipfile.ZipFile(args[0], "r")
-    OPTIONS.info_dict = common.LoadInfoDict(input_zip)
-    common.ZipClose(input_zip)
+    with zipfile.ZipFile(args[0], 'r') as input_zip:
+      OPTIONS.info_dict = common.LoadInfoDict(input_zip)
 
+  if OPTIONS.verbose:
+    print("--- target info ---")
+    common.DumpInfoDict(OPTIONS.info_dict)
+
+  # Load the source build dict if applicable.
+  if OPTIONS.incremental_source is not None:
+    OPTIONS.target_info_dict = OPTIONS.info_dict
+    with zipfile.ZipFile(OPTIONS.incremental_source, 'r') as source_zip:
+      OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
+
+    if OPTIONS.verbose:
+      print("--- source info ---")
+      common.DumpInfoDict(OPTIONS.source_info_dict)
+
+  # Load OEM dicts if provided.
   OPTIONS.oem_dicts = _LoadOemDicts(OPTIONS.oem_source)
 
   ab_update = OPTIONS.info_dict.get("ab_update") == "true"
@@ -1392,20 +1410,6 @@ def main(argv):
     OPTIONS.key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
 
   if ab_update:
-    if OPTIONS.incremental_source is not None:
-      OPTIONS.target_info_dict = OPTIONS.info_dict
-      source_zip = zipfile.ZipFile(OPTIONS.incremental_source, "r")
-      OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
-      common.ZipClose(source_zip)
-
-    if OPTIONS.verbose:
-      print("--- target info ---")
-      common.DumpInfoDict(OPTIONS.info_dict)
-
-      if OPTIONS.incremental_source is not None:
-        print("--- source info ---")
-        common.DumpInfoDict(OPTIONS.source_info_dict)
-
     WriteABOTAPackageWithBrilloScript(
         target_file=args[0],
         output_file=args[1],
@@ -1414,48 +1418,44 @@ def main(argv):
     print("done.")
     return
 
+  # Sanity check the loaded info dicts first.
+  if OPTIONS.info_dict.get("no_recovery") == "true":
+    raise common.ExternalError(
+        "--- target build has specified no recovery ---")
+
+  # Non-A/B OTAs rely on /cache partition to store temporary files.
+  cache_size = OPTIONS.info_dict.get("cache_size")
+  if cache_size is None:
+    print("--- can't determine the cache partition size ---")
+  OPTIONS.cache_size = cache_size
+
   if OPTIONS.extra_script is not None:
     OPTIONS.extra_script = open(OPTIONS.extra_script).read()
 
   if OPTIONS.extracted_input is not None:
     OPTIONS.input_tmp = OPTIONS.extracted_input
-    OPTIONS.target_tmp = OPTIONS.input_tmp
-    OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.input_tmp,
-                                            OPTIONS.input_tmp)
     input_zip = zipfile.ZipFile(args[0], "r")
   else:
     print("unzipping target target-files...")
     OPTIONS.input_tmp, input_zip = common.UnzipTemp(
         args[0], UNZIP_PATTERN)
+  OPTIONS.target_tmp = OPTIONS.input_tmp
 
-    OPTIONS.target_tmp = OPTIONS.input_tmp
-    OPTIONS.info_dict = common.LoadInfoDict(input_zip, OPTIONS.target_tmp)
-
-  if OPTIONS.verbose:
-    print("--- target info ---")
-    common.DumpInfoDict(OPTIONS.info_dict)
-
-  # If the caller explicitly specified the device-specific extensions
-  # path via -s/--device_specific, use that.  Otherwise, use
-  # META/releasetools.py if it is present in the target target_files.
-  # Otherwise, take the path of the file from 'tool_extensions' in the
-  # info dict and look for that in the local filesystem, relative to
-  # the current directory.
-
+  # If the caller explicitly specified the device-specific extensions path via
+  # -s / --device_specific, use that. Otherwise, use META/releasetools.py if it
+  # is present in the target target_files. Otherwise, take the path of the file
+  # from 'tool_extensions' in the info dict and look for that in the local
+  # filesystem, relative to the current directory.
   if OPTIONS.device_specific is None:
     from_input = os.path.join(OPTIONS.input_tmp, "META", "releasetools.py")
     if os.path.exists(from_input):
       print("(using device-specific extensions from target_files)")
       OPTIONS.device_specific = from_input
     else:
-      OPTIONS.device_specific = OPTIONS.info_dict.get("tool_extensions", None)
+      OPTIONS.device_specific = OPTIONS.info_dict.get("tool_extensions")
 
   if OPTIONS.device_specific is not None:
     OPTIONS.device_specific = os.path.abspath(OPTIONS.device_specific)
-
-  if OPTIONS.info_dict.get("no_recovery") == "true":
-    raise common.ExternalError(
-        "--- target build has specified no recovery ---")
 
   # Set up the output zip. Create a temporary zip file if signing is needed.
   if OPTIONS.no_signing:
@@ -1468,12 +1468,6 @@ def main(argv):
     output_zip = zipfile.ZipFile(temp_zip_file, "w",
                                  compression=zipfile.ZIP_DEFLATED)
 
-  # Non A/B OTAs rely on /cache partition to store temporary files.
-  cache_size = OPTIONS.info_dict.get("cache_size", None)
-  if cache_size is None:
-    print("--- can't determine the cache partition size ---")
-  OPTIONS.cache_size = cache_size
-
   # Generate a full OTA.
   if OPTIONS.incremental_source is None:
     WriteFullOTAPackage(input_zip, output_zip)
@@ -1484,12 +1478,6 @@ def main(argv):
     OPTIONS.source_tmp, source_zip = common.UnzipTemp(
         OPTIONS.incremental_source,
         UNZIP_PATTERN)
-    OPTIONS.target_info_dict = OPTIONS.info_dict
-    OPTIONS.source_info_dict = common.LoadInfoDict(source_zip,
-                                                   OPTIONS.source_tmp)
-    if OPTIONS.verbose:
-      print("--- source info ---")
-      common.DumpInfoDict(OPTIONS.source_info_dict)
 
     WriteBlockIncrementalOTAPackage(input_zip, source_zip, output_zip)
 
@@ -1499,6 +1487,7 @@ def main(argv):
         target_files_diff.recursiveDiff(
             '', OPTIONS.source_tmp, OPTIONS.input_tmp, out_file)
 
+  common.ZipClose(input_zip)
   common.ZipClose(output_zip)
 
   # Sign the generated zip package unless no_signing is specified.
