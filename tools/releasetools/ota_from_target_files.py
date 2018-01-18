@@ -527,12 +527,7 @@ def WriteFullOTAPackage(input_zip, output_zip):
   if target_info.oem_props and not OPTIONS.oem_no_mount:
     target_info.WriteMountOemScript(script)
 
-  metadata = {
-      "post-build": target_info.fingerprint,
-      "pre-device": target_info.device,
-      "post-timestamp": target_info.GetBuildProp("ro.build.date.utc"),
-      "ota-type" : "BLOCK",
-  }
+  metadata = GetPackageMetadata(target_info)
 
   device_specific = common.DeviceSpecificParams(
       input_zip=input_zip,
@@ -711,6 +706,57 @@ def HandleDowngradeMetadata(metadata, target_info, source_info):
     metadata["post-timestamp"] = post_timestamp
 
 
+def GetPackageMetadata(target_info, source_info=None):
+  """Generates and returns the metadata dict.
+
+  It generates a dict() that contains the info to be written into an OTA
+  package (META-INF/com/android/metadata). It also handles the detection of
+  downgrade / timestamp override / data wipe based on the global options.
+
+  Args:
+    target_info: The BuildInfo instance that holds the target build info.
+    source_info: The BuildInfo instance that holds the source build info, or
+        None if generating full OTA.
+
+  Returns:
+    A dict to be written into package metadata entry.
+  """
+  assert isinstance(target_info, BuildInfo)
+  assert source_info is None or isinstance(source_info, BuildInfo)
+
+  metadata = {
+      'post-build' : target_info.fingerprint,
+      'post-build-incremental' : target_info.GetBuildProp(
+          'ro.build.version.incremental'),
+  }
+
+  if target_info.is_ab:
+    metadata['ota-type'] = 'AB'
+    metadata['ota-required-cache'] = '0'
+  else:
+    metadata['ota-type'] = 'BLOCK'
+
+  if OPTIONS.wipe_user_data:
+    metadata['ota-wipe'] = 'yes'
+
+  is_incremental = source_info is not None
+  if is_incremental:
+    metadata['pre-build'] = source_info.fingerprint
+    metadata['pre-build-incremental'] = source_info.GetBuildProp(
+        'ro.build.version.incremental')
+    metadata['pre-device'] = source_info.device
+  else:
+    metadata['pre-device'] = target_info.device
+
+  # Detect downgrades, or fill in the post-timestamp.
+  if is_incremental:
+    HandleDowngradeMetadata(metadata, target_info, source_info)
+  else:
+    metadata['post-timestamp'] = target_info.GetBuildProp('ro.build.date.utc')
+
+  return metadata
+
+
 def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   target_info = BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
   source_info = BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
@@ -728,12 +774,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
     if not OPTIONS.oem_no_mount:
       source_info.WriteMountOemScript(script)
 
-  metadata = {
-      "pre-device": source_info.device,
-      "ota-type": "BLOCK",
-  }
-
-  HandleDowngradeMetadata(metadata, target_info, source_info)
+  metadata = GetPackageMetadata(target_info, source_info)
 
   device_specific = common.DeviceSpecificParams(
       source_zip=source_zip,
@@ -744,13 +785,6 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       script=script,
       metadata=metadata,
       info_dict=source_info)
-
-  metadata["pre-build"] = source_info.fingerprint
-  metadata["post-build"] = target_info.fingerprint
-  metadata["pre-build-incremental"] = source_info.GetBuildProp(
-      "ro.build.version.incremental")
-  metadata["post-build-incremental"] = target_info.GetBuildProp(
-      "ro.build.version.incremental")
 
   source_boot = common.GetBootableImage(
       "/tmp/boot.img", "boot.img", OPTIONS.source_tmp, "BOOT", source_info)
@@ -1070,24 +1104,7 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
     source_info = None
 
   # Metadata to comply with Android OTA package format.
-  metadata = {
-      "post-build" : target_info.fingerprint,
-      "post-build-incremental" : target_info.GetBuildProp(
-          "ro.build.version.incremental"),
-      "ota-required-cache" : "0",
-      "ota-type" : "AB",
-  }
-
-  if source_file is not None:
-    metadata["pre-device"] = source_info.device
-    metadata["pre-build"] = source_info.fingerprint
-    metadata["pre-build-incremental"] = source_info.GetBuildProp(
-        "ro.build.version.incremental")
-
-    HandleDowngradeMetadata(metadata, target_info, source_info)
-  else:
-    metadata["pre-device"] = target_info.device
-    metadata["post-timestamp"] = target_info.GetBuildProp("ro.build.date.utc")
+  metadata = GetPackageMetadata(target_info, source_info)
 
   # 1. Generate payload.
   payload_file = common.MakeTempFile(prefix="payload-", suffix=".bin")
