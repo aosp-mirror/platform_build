@@ -22,6 +22,30 @@
       "revId": "b00a97613ba1ca2e51b907198722052227ffa519",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bdda8e42_e75dd094",
+        "filename": "target/product/core_minimal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2018-01-18T06:02:40Z",
+      "side": 1,
+      "message": "Yes, we may add vndk_package here and add the current VNDK libs to the vndk_package only if BOARD_VNDK_VERSION \u003d\u003d \"current\".\n\nBut I want to split BOARD_VNDK_VERSION from PRODUCT_EXTRA_VNDK_VERSIONS.\nBOARD_VNDK_VERSION is for *building* the vendor image against VNDK libs; while PRODUCT_EXTRA_VNDK_VERSIONS is for *installing* the VNDK snapshots regardless of vendor image.\n\nWe may optionally, not by default, include the vndk_package in device.mk if we want to add \u0027all\u0027 the current VNDK libs.",
+      "parentUuid": "0e204fd7_58630903",
+      "range": {
+        "startLine": 88,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 27
+      },
+      "revId": "b00a97613ba1ca2e51b907198722052227ffa519",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
