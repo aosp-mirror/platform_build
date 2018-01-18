@@ -22,6 +22,30 @@
       "revId": "7f494c121fe979cb47de9b3a1bc7b97312c9ad02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d05f360d_b773caef",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2018-01-18T16:39:09Z",
+      "side": 1,
+      "message": "It seemed the more relevant message to point out the underlying changes, but I agree that I should have marked it better.",
+      "parentUuid": "07f386e8_0f272226",
+      "range": {
+        "startLine": 9,
+        "startChar": 21,
+        "endLine": 11,
+        "endChar": 23
+      },
+      "revId": "7f494c121fe979cb47de9b3a1bc7b97312c9ad02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
