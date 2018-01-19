@@ -16,6 +16,24 @@
       "revId": "4646b1010eb19a6b3d1d344c898759d29e0d638b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7511b069_d4a2d62d",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2018-01-19T00:46:42Z",
+      "side": 1,
+      "message": "Well, the comments just below contradict you... :-)",
+      "parentUuid": "44843a2b_f2e31922",
+      "revId": "4646b1010eb19a6b3d1d344c898759d29e0d638b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
