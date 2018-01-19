@@ -70,6 +70,30 @@
       "revId": "8603e2bdbbf96f037ae0e2df95798ec840bb6729",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "30ff2c62_b26df56c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-19T07:23:28Z",
+      "side": 1,
+      "message": "No. As we talked on the chat... let\u0027s consider this case.\n\n/vendor/app/Awesome.apk(java:sdk) ---(dynamic)---\u003e /system/framework/foo.jar(java:core)\n                                      ^^^^^^^\n\nfoo.jar can use @hide APIs from core-oj and core-libart. However, that does not break the app even when the @hide APIs are altered or removed. It\u0027s still hidden inside foo.jar which should be updated along with the hide APIs. As long as API of foo.jar is stable, the app is okay.\n\n/vendor/app/Awesome.apk(java:sdk) ---(static)---\u003e foo.jar(java:core)\n                                      ^^^^^^\n\nHowever, in static linking case, this makes the app be dependent on the @hide APIs as foo.jar is embedded into the app. This should be prevented but we temporarily have to allow this until we can distinguish dynamic and static linkages in link_type check.\n\nAnother case that you may have concern is\n\n/vendor/app/Awesome.apk(java:sdk) ---(dynamic)---\u003e /vendor/framework/bar.jar(java:core)\n                                                    ^^^^^^\n\nHowever, this case cannot happen since we force bar.jar to be built with LOCAL_SDK_VERSION set; build system ensures that vendor jar/apks to have LOCAL_SDK_VERSION.",
+      "parentUuid": "1f0fa399_14df0d5b",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 31
+      },
+      "revId": "8603e2bdbbf96f037ae0e2df95798ec840bb6729",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
