@@ -34,6 +34,26 @@ ifneq ($(filter integer_overflow, $(my_global_sanitize)),)
   endif
 endif
 
+# Enable integer overflow sanitizer in included paths.
+# (includes override excludes)
+ifeq ($(my_clang),true)
+  ifndef LOCAL_IS_HOST_MODULE
+    ifeq ($(filter integer_overflow, $(my_sanitize)),)
+      combined_include_paths := $(DEFAULT_INTEGER_OVERFLOW_PATHS) \
+                            $(INTEGER_OVERFLOW_INCLUDE_PATHS) \
+                            $(PRODUCT_INTEGER_OVERFLOW_INCLUDE_PATHS)
+      ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
+             $(filter $(dir)%,$(LOCAL_PATH)))),)
+        my_global_sanitize := integer_overflow $(my_sanitize)
+        # Ensure default paths do not run in diagnostics unless SANITIZE_TARGET_DIAG
+        ifneq ($(filter integer_overflow, $(SANITIZE_TARGET_DIAG)),)
+          my_global_sanitize_diag := integer_overflow $(my_sanitize_diag)
+        endif
+      endif
+    endif
+  endif
+endif
+
 # Disable global CFI in excluded paths
 ifneq ($(filter cfi, $(my_global_sanitize)),)
   combined_exclude_paths := $(CFI_EXCLUDE_PATHS) \
@@ -211,6 +231,19 @@ ifneq ($(filter coverage,$(my_sanitize)),)
   my_sanitize := $(filter-out coverage,$(my_sanitize))
 endif
 
+# Use minimal diagnostics when integer overflow is enabled on userdebug and eng
+# and full diagnostics not enabled.
+ifneq ($(findstring integer,$(my_sanitize)),)
+  ifeq ($(findstring integer,$(my_sanitize_diag)),)
+    ifeq ($(filter address,$(my_sanitize)),)
+      # TODO(ivanlozano): uncomment after switch to clang-4536805
+      ifneq ($(filter $(TARGET_BUILD_VARIANT),userdebug eng),)
+        # my_cflags += -fsanitize-minimal-runtime
+      endif
+    endif
+  endif
+endif
+
 ifneq ($(filter integer_overflow,$(my_sanitize)),)
   ifneq ($(filter SHARED_LIBRARIES EXECUTABLES,$(LOCAL_MODULE_CLASS)),)
     ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
@@ -226,7 +259,7 @@ ifneq ($(filter integer_overflow,$(my_sanitize)),)
       my_cflags += -ftrap-function=abort
       my_cflags += $(INTEGER_OVERFLOW_EXTRA_CFLAGS)
 
-      # Check for diagnostics mode (on by default).
+      # Check for diagnostics mode.
       ifneq ($(filter integer_overflow,$(my_sanitize_diag)),)
         my_cflags += -fno-sanitize-trap=signed-integer-overflow,unsigned-integer-overflow
         my_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY) $(my_shared_libraries)
