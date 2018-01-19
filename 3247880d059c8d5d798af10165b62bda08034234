@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "455a4715_416e2f2e",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 459,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-01-19T18:54:21Z",
+      "side": 1,
+      "message": "s/fules/rules/g",
+      "revId": "3247880d059c8d5d798af10165b62bda08034234",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
