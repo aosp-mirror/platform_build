@@ -94,6 +94,30 @@
       "revId": "8603e2bdbbf96f037ae0e2df95798ec840bb6729",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "52053646_4286291b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2018-01-19T10:14:39Z",
+      "side": 1,
+      "message": "Well, as things stand it\u0027s still not safe in the STATIC libraries case (which was my main concern).\n\nIf this is temporary, it should clearly be spelled out in the commit message (with a bug to track future work to disallow this). Please also update the commit message to spell out why it\u0027s safe (basically the same thing you\u0027ve said in the comment here).",
+      "parentUuid": "30ff2c62_b26df56c",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 31
+      },
+      "revId": "8603e2bdbbf96f037ae0e2df95798ec840bb6729",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
