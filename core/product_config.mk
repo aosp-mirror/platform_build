@@ -463,6 +463,11 @@ PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := \
 PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
 
+# Paths that should have integer overflow sanitization applied by default
+# (overrides excludes)
+PRODUCT_INTEGER_OVERFLOW_INCLUDE_PATHS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_INTEGER_OVERFLOW_INCLUDE_PATHS))
+
 # ADB keys for debuggable builds
 PRODUCT_ADB_KEYS :=
 ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
