@@ -325,8 +325,10 @@ def UnsparseImage(sparse_image_path, replace=True):
     else:
       return True, unsparse_image_path
   inflate_command = ["simg2img", sparse_image_path, unsparse_image_path]
-  (_, exit_code) = RunCommand(inflate_command)
+  (inflate_output, exit_code) = RunCommand(inflate_command)
   if exit_code != 0:
+    print("Error: '%s' failed with exit code %d:\n%s" % (
+        inflate_command, exit_code, inflate_output))
     os.remove(unsparse_image_path)
     return False, None
   return True, unsparse_image_path
@@ -607,7 +609,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
   (mkfs_output, exit_code) = RunCommand(build_command)
   if exit_code != 0:
-    print("Error: '%s' failed with exit code %d" % (build_command, exit_code))
+    print("Error: '%s' failed with exit code %d:\n%s" % (
+        build_command, exit_code, mkfs_output))
     return False
 
   # Check if there's enough headroom space available for ext4 image.
@@ -654,13 +657,13 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
     # Run e2fsck on the inflated image file
     e2fsck_command = ["e2fsck", "-f", "-n", unsparse_image]
-    (_, exit_code) = RunCommand(e2fsck_command)
+    (e2fsck_output, exit_code) = RunCommand(e2fsck_command)
 
     os.remove(unsparse_image)
 
     if exit_code != 0:
-      print("Error: '%s' failed with exit code %d" % (e2fsck_command,
-                                                      exit_code))
+      print("Error: '%s' failed with exit code %d:\n%s" % (
+          e2fsck_command, exit_code, e2fsck_output))
       return False
 
   return True
