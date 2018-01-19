@@ -7,8 +7,10 @@
 # Set USE_DEX2OAT_DEBUG to false for only building non-debug versions.
 ifeq ($(USE_DEX2OAT_DEBUG),false)
 DEX2OAT := $(HOST_OUT_EXECUTABLES)/dex2oat$(HOST_EXECUTABLE_SUFFIX)
+PATCHOAT := $(HOST_OUT_EXECUTABLES)/patchoat$(HOST_EXECUTABLE_SUFFIX)
 else
 DEX2OAT := $(HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
+PATCHOAT := $(HOST_OUT_EXECUTABLES)/patchoatd$(HOST_EXECUTABLE_SUFFIX)
 endif
 
 DEX2OAT_DEPENDENCY += $(DEX2OAT)
@@ -87,8 +89,8 @@ LIBART_TARGET_BOOT_DEX_FILES := $(foreach jar,$(LIBART_TARGET_BOOT_JARS),$(call 
 # is converted into to boot.art (to match the legacy assumption that boot.art
 # exists), and the rest are converted to boot-<name>.art.
 # In addition, each .art file has an associated .oat file.
-LIBART_TARGET_BOOT_ART_EXTRA_FILES := $(foreach jar,$(wordlist 2,999,$(LIBART_TARGET_BOOT_JARS)),boot-$(jar).art boot-$(jar).oat boot-$(jar).vdex)
-LIBART_TARGET_BOOT_ART_EXTRA_FILES += boot.oat boot.vdex
+LIBART_TARGET_BOOT_ART_EXTRA_FILES := $(foreach jar,$(wordlist 2,999,$(LIBART_TARGET_BOOT_JARS)),boot-$(jar).art boot-$(jar).art.rel boot-$(jar).oat boot-$(jar).vdex)
+LIBART_TARGET_BOOT_ART_EXTRA_FILES += boot.art.rel boot.oat boot.vdex
 
 # If we use a boot image profile.
 my_use_profile_for_boot_image := $(PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE)
