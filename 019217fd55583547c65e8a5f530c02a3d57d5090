@@ -22,6 +22,30 @@
       "revId": "019217fd55583547c65e8a5f530c02a3d57d5090",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0959e52d_a9668ec7",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 466,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-19T17:15:49Z",
+      "side": 1,
+      "message": "You\u0027re right. Updated the docstring in PS7.\n\nSeems we may also factor this piece out when there\u0027s a need (e.g. if there\u0027re more A/B-specific sanity checks), since it does a bit more than the name suggests (e.g. it asserts _all_ the listed images to be available other than radios).",
+      "parentUuid": "deee956b_2b2f7daa",
+      "range": {
+        "startLine": 466,
+        "startChar": 0,
+        "endLine": 466,
+        "endChar": 66
+      },
+      "revId": "019217fd55583547c65e8a5f530c02a3d57d5090",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
