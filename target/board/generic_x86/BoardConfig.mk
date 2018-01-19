@@ -11,6 +11,10 @@ TARGET_ARCH := x86
 TARGET_ARCH_VARIANT := x86
 TARGET_PRELINK_MODULE := false
 
+#emulator now uses 64bit kernel to run 32bit x86 image
+#
+TARGET_USES_64_BIT_BINDER := true
+
 # The IA emulator (qemu) uses the Goldfish devices
 HAVE_HTC_AUDIO_DRIVER := true
 BOARD_USES_GENERIC_AUDIO := true
