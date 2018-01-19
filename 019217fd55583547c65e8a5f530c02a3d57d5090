@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "deee956b_2b2f7daa",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 466,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-01-19T06:12:42Z",
+      "side": 1,
+      "message": "in addition to copying radio image, this loop also seems to check the existence of other images?",
+      "range": {
+        "startLine": 466,
+        "startChar": 0,
+        "endLine": 466,
+        "endChar": 66
+      },
+      "revId": "019217fd55583547c65e8a5f530c02a3d57d5090",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
