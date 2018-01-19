@@ -205,6 +205,14 @@ $(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
 	variables like PRODUCT_SEPOLICY_SPLIT should be used until that is \
 	possible.)
 
+# Sets ro.actionable_compatible_property.enabled to know on runtime whether the whitelist
+# of actionable compatible properties is enabled or not.
+ifeq ($(PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE),true)
+ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=false
+else
+ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
+endif
+
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
