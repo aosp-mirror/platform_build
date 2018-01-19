@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b35e1bb5_fde76574",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-19T01:32:02Z",
+      "side": 1,
+      "message": "Done. Thanks.",
+      "parentUuid": "db347296_44301e1b",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 30
+      },
+      "revId": "d8d3eabf0e309718af1b967ee5bcec8a1af1ab40",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7c1fe9ad_e0fad186",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2018-01-19T01:26:29Z",
       "side": 1,
       "message": "Shouldn\u0027t we always be verifying that LOCAL_SDK_VERSION is within PLATFORM_SYSTEMSDK_VERSIONS? I suspect that\u0027s somewhat implicit because we don\u0027t have definitions otherwise, but that should be explicit going forward.",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 68
+      },
+      "revId": "d8d3eabf0e309718af1b967ee5bcec8a1af1ab40",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20df25ff_72503861",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-19T01:32:02Z",
+      "side": 1,
+      "message": "That\u0027s indirectly verified by ensuring that BOARD_SYSTEMSDK_VERSIONS are all within PLATFORM_SYSTEMSDK_VERSIONS. (in core/envsetup.mk)",
+      "parentUuid": "7c1fe9ad_e0fad186",
       "range": {
         "startLine": 31,
         "startChar": 0,
@@ -68,6 +116,30 @@
       "revId": "d8d3eabf0e309718af1b967ee5bcec8a1af1ab40",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3afc0ea3_e4802d8d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-19T01:32:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5500673a_a3e6cb17",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 58
+      },
+      "revId": "d8d3eabf0e309718af1b967ee5bcec8a1af1ab40",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
