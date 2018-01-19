@@ -52,7 +52,6 @@ import shlex
 import shutil
 import subprocess
 import sys
-import tempfile
 import uuid
 import zipfile
 
@@ -75,6 +74,10 @@ OPTIONS.replace_verity_private_key = False
 OPTIONS.is_signing = False
 
 
+# Partitions that should have their care_map added to META/care_map.txt.
+PARTITIONS_WITH_CARE_MAP = ('system', 'vendor')
+
+
 class OutputFile(object):
   def __init__(self, output_zip, input_dir, prefix, name):
     self._output_zip = output_zip
@@ -94,13 +97,10 @@ class OutputFile(object):
 
 
 def GetCareMap(which, imgname):
-  """Generate care_map of system (or vendor) partition"""
-
-  assert which in ("system", "vendor")
+  """Generates the care_map for the given partition."""
+  assert which in PARTITIONS_WITH_CARE_MAP
 
   simg = sparse_img.SparseImage(imgname)
-  care_map_list = [which]
-
   care_map_ranges = simg.care_map
   key = which + "_adjusted_partition_size"
   adjusted_blocks = OPTIONS.info_dict.get(key)
@@ -109,8 +109,7 @@ def GetCareMap(which, imgname):
     care_map_ranges = care_map_ranges.intersect(rangelib.RangeSet(
         "0-%d" % (adjusted_blocks,)))
 
-  care_map_list.append(care_map_ranges.to_string_raw())
-  return care_map_list
+  return [which, care_map_ranges.to_string_raw()]
 
 
 def AddSystem(output_zip, prefix="IMAGES/", recovery_img=None, boot_img=None):
@@ -490,21 +489,23 @@ def AddRadioImagesForAbOta(output_zip, ab_partitions):
     img_radio_path = os.path.join(OPTIONS.input_tmp, "RADIO", img_name)
     if os.path.exists(img_radio_path):
       if output_zip:
-        common.ZipWrite(output_zip, img_radio_path,
-                        os.path.join("IMAGES", img_name))
+        common.ZipWrite(output_zip, img_radio_path, "IMAGES/" + img_name)
       else:
         shutil.copy(img_radio_path, prebuilt_path)
-    else:
-      img_vendor_dir = os.path.join(OPTIONS.input_tmp, "VENDOR_IMAGES")
-      for root, _, files in os.walk(img_vendor_dir):
-        if img_name in files:
-          if output_zip:
-            common.ZipWrite(output_zip, os.path.join(root, img_name),
-                            os.path.join("IMAGES", img_name))
-          else:
-            shutil.copy(os.path.join(root, img_name), prebuilt_path)
-          break
+      continue
 
+    # Walk through VENDOR_IMAGES/ since files could be under subdirs.
+    img_vendor_dir = os.path.join(OPTIONS.input_tmp, "VENDOR_IMAGES")
+    for root, _, files in os.walk(img_vendor_dir):
+      if img_name in files:
+        if output_zip:
+          common.ZipWrite(output_zip, os.path.join(root, img_name),
+                          "IMAGES/" + img_name)
+        else:
+          shutil.copy(os.path.join(root, img_name), prebuilt_path)
+        break
+
+    # Assert that the image is present under IMAGES/ now.
     if output_zip:
       # Zip spec says: All slashes MUST be forward slashes.
       img_path = 'IMAGES/' + img_name
@@ -526,18 +527,16 @@ def AddCareMapTxtForAbOta(output_zip, ab_partitions, image_paths):
   care_map_list = []
   for partition in ab_partitions:
     partition = partition.strip()
-    if (partition == "system" and
-        ("system_verity_block_device" in OPTIONS.info_dict or
-         OPTIONS.info_dict.get("avb_system_hashtree_enable") == "true")):
-      system_img_path = image_paths[partition]
-      assert os.path.exists(system_img_path)
-      care_map_list += GetCareMap("system", system_img_path)
-    if (partition == "vendor" and
-        ("vendor_verity_block_device" in OPTIONS.info_dict or
-         OPTIONS.info_dict.get("avb_vendor_hashtree_enable") == "true")):
-      vendor_img_path = image_paths[partition]
-      assert os.path.exists(vendor_img_path)
-      care_map_list += GetCareMap("vendor", vendor_img_path)
+    if partition not in PARTITIONS_WITH_CARE_MAP:
+      continue
+
+    verity_block_device = "{}_verity_block_device".format(partition)
+    avb_hashtree_enable = "avb_{}_hashtree_enable".format(partition)
+    if (verity_block_device in OPTIONS.info_dict or
+        OPTIONS.info_dict.get(avb_hashtree_enable) == "true"):
+      image_path = image_paths[partition]
+      assert os.path.exists(image_path)
+      care_map_list += GetCareMap(partition, image_path)
 
   if care_map_list:
     care_map_path = "META/care_map.txt"
@@ -566,6 +565,7 @@ def AddPackRadioImages(output_zip, images):
     _, ext = os.path.splitext(img_name)
     if not ext:
       img_name += ".img"
+
     prebuilt_path = os.path.join(OPTIONS.input_tmp, "IMAGES", img_name)
     if os.path.exists(prebuilt_path):
       print("%s already exists, no need to overwrite..." % (img_name,))
@@ -574,9 +574,9 @@ def AddPackRadioImages(output_zip, images):
     img_radio_path = os.path.join(OPTIONS.input_tmp, "RADIO", img_name)
     assert os.path.exists(img_radio_path), \
         "Failed to find %s at %s" % (img_name, img_radio_path)
+
     if output_zip:
-      common.ZipWrite(output_zip, img_radio_path,
-                      os.path.join("IMAGES", img_name))
+      common.ZipWrite(output_zip, img_radio_path, "IMAGES/" + img_name)
     else:
       shutil.copy(img_radio_path, prebuilt_path)
 
