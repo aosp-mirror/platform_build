@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db347296_44301e1b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-19T01:22:08Z",
+      "side": 1,
+      "message": "PLATFORM_SYSTEMSDK_VERSIONS",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 30
+      },
+      "revId": "d8d3eabf0e309718af1b967ee5bcec8a1af1ab40",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
