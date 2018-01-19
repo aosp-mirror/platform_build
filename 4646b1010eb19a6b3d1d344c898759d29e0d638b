@@ -34,6 +34,24 @@
       "revId": "4646b1010eb19a6b3d1d344c898759d29e0d638b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a72695ee_d6c845d0",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-19T00:54:57Z",
+      "side": 1,
+      "message": "It\u0027s still nicer if they are :) We\u0027re not exactly consistent in make formatting :(",
+      "parentUuid": "7511b069_d4a2d62d",
+      "revId": "4646b1010eb19a6b3d1d344c898759d29e0d638b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
