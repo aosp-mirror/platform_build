@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "499dc6a1_51a11157",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 495,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-01-19T05:53:46Z",
+      "side": 1,
+      "message": "just noticed this is archive name as well",
+      "range": {
+        "startLine": 495,
+        "startChar": 38,
+        "endLine": 495,
+        "endChar": 66
+      },
+      "revId": "6328f214e7cae36423fd19c36fd5447fbf488bef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
