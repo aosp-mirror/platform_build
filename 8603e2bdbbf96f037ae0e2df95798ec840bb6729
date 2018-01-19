@@ -118,6 +118,30 @@
       "revId": "8603e2bdbbf96f037ae0e2df95798ec840bb6729",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf3204b0_82632618",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-19T10:38:38Z",
+      "side": 1,
+      "message": "Done. Comment edited. Todo (b/72204005) added in java_common.mk",
+      "parentUuid": "52053646_4286291b",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 31
+      },
+      "revId": "8603e2bdbbf96f037ae0e2df95798ec840bb6729",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
