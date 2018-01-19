@@ -456,6 +456,13 @@ $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/*/*_intermediat
 $(call add-clean-step, rm -rf $(HOST_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/with-local/)
 $(call add-clean-step, rm -rf $(HOST_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/no-local/)
 
+# Remove legacy VINTF metadata files
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/manifest.xml)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/manifest.xml)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/manifest.xml)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/compatibility_matrix.xml)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/compatibility_matrix.xml)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

@@ -37,7 +37,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE        := device_manifest.xml
 LOCAL_MODULE_STEM   := manifest.xml
 LOCAL_MODULE_CLASS  := ETC
-LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)
+LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)/etc/vintf
 
 GEN := $(local-generated-sources-dir)/manifest.xml
 $(GEN): PRIVATE_DEVICE_MANIFEST_FILE := $(DEVICE_MANIFEST_FILE)
@@ -59,7 +59,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE        := device_compatibility_matrix.xml
 LOCAL_MODULE_STEM   := compatibility_matrix.xml
 LOCAL_MODULE_CLASS  := ETC
-LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)
+LOCAL_MODULE_PATH   := $(TARGET_OUT_VENDOR)/etc/vintf
 
 GEN := $(local-generated-sources-dir)/compatibility_matrix.xml
 $(GEN): $(DEVICE_MATRIX_FILE) $(HOST_OUT_EXECUTABLES)/assemble_vintf
@@ -76,7 +76,7 @@ include $(CLEAR_VARS)
 LOCAL_MODULE        := framework_manifest.xml
 LOCAL_MODULE_STEM   := manifest.xml
 LOCAL_MODULE_CLASS  := ETC
-LOCAL_MODULE_PATH   := $(TARGET_OUT)
+LOCAL_MODULE_PATH   := $(TARGET_OUT)/etc/vintf
 
 GEN := $(local-generated-sources-dir)/manifest.xml
 
