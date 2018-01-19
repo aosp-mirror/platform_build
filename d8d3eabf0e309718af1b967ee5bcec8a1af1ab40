@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "8710abb6_6bbdabae",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-19T01:59:36Z",
+      "side": 1,
+      "message": "Right. Modified local_systemsdk.mk to ensure that LOCAL_SDK_VERSION is always valid.",
+      "parentUuid": "5fc0986f_242eac3a",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 68
+      },
+      "revId": "d8d3eabf0e309718af1b967ee5bcec8a1af1ab40",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5500673a_a3e6cb17",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
