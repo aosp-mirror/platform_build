@@ -657,3 +657,8 @@ endif
 ifeq ($(CALLED_FROM_SETUP),true)
 PRINT_BUILD_CONFIG ?= true
 endif
+
+# Set default integer overflow sanitization paths.
+# Separate from INTEGER_OVERFLOW_INCLUDE_PATHS to ensure this is not overridden.
+DEFAULT_INTEGER_OVERFLOW_PATHS := frameworks/ \
+                                  system/
