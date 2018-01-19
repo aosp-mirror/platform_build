@@ -22,6 +22,30 @@
       "revId": "6328f214e7cae36423fd19c36fd5447fbf488bef",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae0e81f5_81c6df30",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 495,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-19T06:16:42Z",
+      "side": 1,
+      "message": "I guess you were thinking about common.ZipWriteStr()... The second parameter for common.ZipWrite() is the filename, which should be os.path.join()\u0027d.",
+      "parentUuid": "499dc6a1_51a11157",
+      "range": {
+        "startLine": 495,
+        "startChar": 38,
+        "endLine": 495,
+        "endChar": 66
+      },
+      "revId": "6328f214e7cae36423fd19c36fd5447fbf488bef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
