@@ -22,6 +22,30 @@
       "revId": "8603e2bdbbf96f037ae0e2df95798ec840bb6729",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b67065af_064a7397",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-19T01:25:54Z",
+      "side": 1,
+      "message": "In case of A(java:sdk) -\u003e B(java:core), this is safe if -\u003e is LOCAL_JAVA_LIBRARIES, but not safe if it is LOCAL_STATIC_JAVA_LIBRARIES. However, current link-type check does not distinguish them, which I would like to amend after these are all cleaned up.",
+      "parentUuid": "548686a6_1412978e",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 31
+      },
+      "revId": "8603e2bdbbf96f037ae0e2df95798ec840bb6729",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
