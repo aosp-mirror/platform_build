@@ -46,6 +46,30 @@
       "revId": "8603e2bdbbf96f037ae0e2df95798ec840bb6729",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1f0fa399_14df0d5b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-19T04:42:38Z",
+      "side": 1,
+      "message": "No it isn\u0027t -- Narayan is right. core-* contain @hide entries that won\u0027t be part of the stable sdk surface.\n\nTo model this correctly, we\u0027d need to have a core-* stubs file",
+      "parentUuid": "b67065af_064a7397",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 31
+      },
+      "revId": "8603e2bdbbf96f037ae0e2df95798ec840bb6729",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
