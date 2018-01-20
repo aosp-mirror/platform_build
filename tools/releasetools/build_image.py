@@ -571,12 +571,12 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       build_command.extend(["-c", prop_dict["selinux_fc"]])
     if "block_list" in prop_dict:
       build_command.extend(["-B", prop_dict["block_list"]])
+    if "squashfs_block_size" in prop_dict:
+      build_command.extend(["-b", prop_dict["squashfs_block_size"]])
     if "squashfs_compressor" in prop_dict:
       build_command.extend(["-z", prop_dict["squashfs_compressor"]])
     if "squashfs_compressor_opt" in prop_dict:
       build_command.extend(["-zo", prop_dict["squashfs_compressor_opt"]])
-    if "squashfs_block_size" in prop_dict:
-      build_command.extend(["-b", prop_dict["squashfs_block_size"]])
     if prop_dict.get("squashfs_disable_4k_align") == "true":
       build_command.extend(["-a"])
   elif fs_type.startswith("f2fs"):
