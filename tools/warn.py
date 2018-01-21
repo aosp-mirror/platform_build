@@ -1010,12 +1010,7 @@ warn_patterns = [
      'severity': Severity.HIGH,
      'description':
          'Java: Checks for unguarded accesses to fields and methods with @GuardedBy annotations',
-     'patterns': [r".*: warning: \[GuardedByChecker\] .+"]},
-    {'category': 'java',
-     'severity': Severity.HIGH,
-     'description':
-         'Java: Invalid @GuardedBy expression',
-     'patterns': [r".*: warning: \[GuardedByValidator\] .+"]},
+     'patterns': [r".*: warning: \[GuardedBy\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
