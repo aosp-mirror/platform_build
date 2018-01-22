@@ -585,7 +585,7 @@ $(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2) | $(ACP)
 else
 $(LOCAL_BUILT_MODULE): PRIVATE_RESOURCE_LIST := $(all_res_assets)
 $(LOCAL_BUILT_MODULE) : $(all_res_assets) $(full_android_manifest) $(AAPT) $(ZIPALIGN)
-endif
+endif  # LOCAL_USE_AAPT2
 ifdef LOCAL_COMPRESSED_MODULE
 $(LOCAL_BUILT_MODULE) : $(MINIGZIP)
 endif
@@ -610,24 +610,19 @@ ifdef LOCAL_USE_AAPT2
 	$(call add-jar-resources-to-package,$@,$(PRIVATE_FULL_CLASSES_JAR),$(PRIVATE_RESOURCE_INTERMEDIATES_DIR))
 endif
 endif  # full_classes_jar
+ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
+	@# No need to align, sign-package below will do it.
+	$(uncompress-dexs)
+endif
 ifdef LOCAL_DEX_PREOPT
 ifneq ($(BUILD_PLATFORM_ZIP),)
 	@# Keep a copy of apk with classes.dex unstripped
 	$(hide) cp -f $@ $(dir $@)package.dex.apk
 endif  # BUILD_PLATFORM_ZIP
-ifneq (true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))
-ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
-	@# No need to align, sign-package below will do it.
-	$(uncompress-dexs)
-endif  # LOCAL_PRIVILEGED_MODULE
-endif  # DONT_UNCOMPRESS_PRIV_APPS_DEXS
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
-endif
-ifneq (,$(filter $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES), $(LOCAL_MODULE)))
-	$(uncompress-dexs)
-endif  # PRODUCT_LOADED_BY_PRIVILEGED_MODULES
+endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 ifdef LOCAL_COMPRESSED_MODULE
 	$(compress-package)
@@ -651,6 +646,10 @@ $(built_odex): PRIVATE_DEX_FILE := $(built_dex)
 $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(built_dex)
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 	$(add-dex-to-package)
+ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
+	$(uncompress-dexs)
+	$(align-package)
+endif
 	$(hide) mv $@ $@.input
 	$(call dexpreopt-one-file,$@.input,$@)
 	$(hide) rm $@.input
