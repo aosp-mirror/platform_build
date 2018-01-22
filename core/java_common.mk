@@ -359,6 +359,7 @@ endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_BOOTCLASSPATH := $(full_java_bootclasspath_libs)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_EMPTY_BOOTCLASSPATH := $(empty_bootclasspath)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SYSTEM_MODULES := $(my_system_modules_dir)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PATCH_MODULE := $(LOCAL_PATCH_MODULE)
 
 ifndef LOCAL_IS_HOST_MODULE
 # This is set by packages that are linking to other packages that export

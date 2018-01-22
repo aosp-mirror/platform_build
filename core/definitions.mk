@@ -2245,6 +2245,9 @@ $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
       $(addprefix -bootclasspath ,$(strip \
           $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH)) \
           $(PRIVATE_EMPTY_BOOTCLASSPATH)))) \
+    $(if $(PRIVATE_USE_SYSTEM_MODULES), \
+      $(if $(PRIVATE_PATCH_MODULE), \
+        --patch-module=$(PRIVATE_PATCH_MODULE)=$(call normalize-path-list,. $(2)))) \
     $(addprefix -classpath ,$(strip \
         $(call normalize-path-list,$(2)))) \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
