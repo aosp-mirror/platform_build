@@ -1152,7 +1152,7 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   if source_file is not None:
     cmd.extend(["--source_image", source_file])
   if OPTIONS.downgrade:
-    max_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.source_info_dict)
+    max_timestamp = source_info.GetBuildProp("ro.build.date.utc")
   else:
     max_timestamp = metadata["post-timestamp"]
   cmd.extend(["--max_timestamp", max_timestamp])
