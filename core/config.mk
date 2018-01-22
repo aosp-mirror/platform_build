@@ -817,6 +817,13 @@ ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq ($(call numbers_less_than,$(PRODUCT_SHIPPING_API_LEVEL),$(BOARD_SYSTEMSDK_VERSIONS)),)
     $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to PRODUCT_SHIPPING_API_LEVEL ($(PRODUCT_SHIPPING_API_LEVEL)))
   endif
+  ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),28),)
+    ifneq ($(TARGET_IS_64_BIT), true)
+      ifneq ($(TARGET_USES_64_BIT_BINDER), true)
+        $(error When PRODUCT_SHIPPING_API_LEVEL >= 28, TARGET_USES_64_BIT_BINDER must be true)
+      endif
+    endif
+  endif
 endif
 
 # The default key if not set as LOCAL_CERTIFICATE
