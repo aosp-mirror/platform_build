@@ -72,10 +72,10 @@ $(common_javalib.jar) : $(built_dex) $(java_resource_sources) | $(ZIPTIME) $(ZIP
 	$(call add-dex-to-package-arg,$@.tmp)
 	$(hide) $(ZIPTIME) $@.tmp
 	$(call commit-change-for-toc,$@)
-ifneq (,$(filter $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES), $(LOCAL_MODULE)))
+ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 	$(uncompress-dexs)
 	$(align-package)
-endif  # PRODUCT_LOADED_BY_PRIVILEGED_MODULES
+endif  # LOCAL_UNCOMPRESS_DEX
 
 .KATI_RESTAT: $(common_javalib.jar)
 
