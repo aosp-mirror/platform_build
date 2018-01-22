@@ -22,6 +22,30 @@
       "revId": "5ff1f0a38ac4abd68bffd132fc4eae36866f91b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6574fd9c_d4b78ae9",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-01-22T23:21:06Z",
+      "side": 1,
+      "message": "I think there is no need to capture the variable since there is no build-rule-wise dependency. Dan?",
+      "parentUuid": "47c7312c_ed27b9d6",
+      "range": {
+        "startLine": 103,
+        "startChar": 8,
+        "endLine": 103,
+        "endChar": 46
+      },
+      "revId": "5ff1f0a38ac4abd68bffd132fc4eae36866f91b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
