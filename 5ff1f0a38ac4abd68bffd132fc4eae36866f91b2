@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47c7312c_ed27b9d6",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-22T23:15:18Z",
+      "side": 1,
+      "message": "use private variable, same above",
+      "range": {
+        "startLine": 103,
+        "startChar": 8,
+        "endLine": 103,
+        "endChar": 46
+      },
+      "revId": "5ff1f0a38ac4abd68bffd132fc4eae36866f91b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
