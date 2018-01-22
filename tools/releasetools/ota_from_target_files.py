@@ -310,6 +310,56 @@ class BuildInfo(object):
       script.AssertOemProperty(prop, values, oem_no_mount)
 
 
+class PayloadSigner(object):
+  """A class that wraps the payload signing works.
+
+  When generating a Payload, hashes of the payload and metadata files will be
+  signed with the device key, either by calling an external payload signer or
+  by calling openssl with the package key. This class provides a unified
+  interface, so that callers can just call PayloadSigner.Sign().
+
+  If an external payload signer has been specified (OPTIONS.payload_signer), it
+  calls the signer with the provided args (OPTIONS.payload_signer_args). Note
+  that the signing key should be provided as part of the payload_signer_args.
+  Otherwise without an external signer, it uses the package key
+  (OPTIONS.package_key) and calls openssl for the signing works.
+  """
+
+  def __init__(self):
+    if OPTIONS.payload_signer is None:
+      # Prepare the payload signing key.
+      private_key = OPTIONS.package_key + OPTIONS.private_key_suffix
+      pw = OPTIONS.key_passwords[OPTIONS.package_key]
+
+      cmd = ["openssl", "pkcs8", "-in", private_key, "-inform", "DER"]
+      cmd.extend(["-passin", "pass:" + pw] if pw else ["-nocrypt"])
+      signing_key = common.MakeTempFile(prefix="key-", suffix=".key")
+      cmd.extend(["-out", signing_key])
+
+      get_signing_key = common.Run(cmd, verbose=False, stdout=subprocess.PIPE,
+                                   stderr=subprocess.STDOUT)
+      stdoutdata, _ = get_signing_key.communicate()
+      assert get_signing_key.returncode == 0, \
+          "Failed to get signing key: {}".format(stdoutdata)
+
+      self.signer = "openssl"
+      self.signer_args = ["pkeyutl", "-sign", "-inkey", signing_key,
+                          "-pkeyopt", "digest:sha256"]
+    else:
+      self.signer = OPTIONS.payload_signer
+      self.signer_args = OPTIONS.payload_signer_args
+
+  def Sign(self, in_file):
+    """Signs the given input file. Returns the output filename."""
+    out_file = common.MakeTempFile(prefix="signed-", suffix=".bin")
+    cmd = [self.signer] + self.signer_args + ['-in', in_file, '-out', out_file]
+    signing = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdoutdata, _ = signing.communicate()
+    assert signing.returncode == 0, \
+        "Failed to sign the input file: {}".format(stdoutdata)
+    return out_file
+
+
 def SignOutput(temp_zip_name, output_zip_name):
   pw = OPTIONS.key_passwords[OPTIONS.package_key]
 
@@ -1076,20 +1126,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # The place where the output from the subprocess should go.
   log_file = sys.stdout if OPTIONS.verbose else subprocess.PIPE
 
-  # A/B updater expects a signing key in RSA format. Gets the key ready for
-  # later use in step 3, unless a payload_signer has been specified.
-  if OPTIONS.payload_signer is None:
-    cmd = ["openssl", "pkcs8",
-           "-in", OPTIONS.package_key + OPTIONS.private_key_suffix,
-           "-inform", "DER"]
-    pw = OPTIONS.key_passwords[OPTIONS.package_key]
-    cmd.extend(["-passin", "pass:" + pw] if pw else ["-nocrypt"])
-    rsa_key = common.MakeTempFile(prefix="key-", suffix=".key")
-    cmd.extend(["-out", rsa_key])
-    p1 = common.Run(cmd, verbose=False, stdout=log_file,
-                    stderr=subprocess.STDOUT)
-    p1.communicate()
-    assert p1.returncode == 0, "openssl pkcs8 failed"
+  # Get the PayloadSigner to be used in step 3.
+  payload_signer = PayloadSigner()
 
   # Stage the output zip package for package signing.
   temp_zip_file = tempfile.NamedTemporaryFile()
@@ -1130,37 +1168,11 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   assert p1.returncode == 0, "brillo_update_payload hash failed"
 
   # 3. Sign the hashes and insert them back into the payload file.
-  signed_payload_sig_file = common.MakeTempFile(prefix="signed-sig-",
-                                                suffix=".bin")
-  signed_metadata_sig_file = common.MakeTempFile(prefix="signed-sig-",
-                                                 suffix=".bin")
   # 3a. Sign the payload hash.
-  if OPTIONS.payload_signer is not None:
-    cmd = [OPTIONS.payload_signer]
-    cmd.extend(OPTIONS.payload_signer_args)
-  else:
-    cmd = ["openssl", "pkeyutl", "-sign",
-           "-inkey", rsa_key,
-           "-pkeyopt", "digest:sha256"]
-  cmd.extend(["-in", payload_sig_file,
-              "-out", signed_payload_sig_file])
-  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
-  p1.communicate()
-  assert p1.returncode == 0, "openssl sign payload failed"
+  signed_payload_sig_file = payload_signer.Sign(payload_sig_file)
 
   # 3b. Sign the metadata hash.
-  if OPTIONS.payload_signer is not None:
-    cmd = [OPTIONS.payload_signer]
-    cmd.extend(OPTIONS.payload_signer_args)
-  else:
-    cmd = ["openssl", "pkeyutl", "-sign",
-           "-inkey", rsa_key,
-           "-pkeyopt", "digest:sha256"]
-  cmd.extend(["-in", metadata_sig_file,
-              "-out", signed_metadata_sig_file])
-  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
-  p1.communicate()
-  assert p1.returncode == 0, "openssl sign metadata failed"
+  signed_metadata_sig_file = payload_signer.Sign(metadata_sig_file)
 
   # 3c. Insert the signatures back into the payload file.
   signed_payload_file = common.MakeTempFile(prefix="signed-payload-",
