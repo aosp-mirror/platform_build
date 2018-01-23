@@ -86,7 +86,7 @@ $(call pretty-error,Only one of LOCAL_PROPRIETARY_MODULE[$(LOCAL_PROPRIETARY_MOD
 endif
 
 include $(BUILD_SYSTEM)/local_vndk.mk
-include $(BUILD_SYSTEM)/local_vsdk.mk
+include $(BUILD_SYSTEM)/local_systemsdk.mk
 
 my_module_tags := $(LOCAL_MODULE_TAGS)
 ifeq ($(my_host_cross),true)
