@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0c858bb7_23c7f0c8",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1390,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-01-23T00:49:22Z",
+      "side": 1,
+      "message": "This may cause some confusion by out appending the src/tgt/patch files; but since these files are temporarily here, it make sense not to print them.",
+      "range": {
+        "startLine": 1390,
+        "startChar": 12,
+        "endLine": 1390,
+        "endChar": 24
+      },
+      "revId": "908c4db5c3015bf01f336c35277b7ce8466156e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
