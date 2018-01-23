@@ -70,12 +70,15 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml
 
-#GSI support for the devices that disable VNDK enforcing
+# Support for the devices with no VNDK enforcing
 PRODUCT_COPY_FILES += \
-    system/core/rootdir/etc/ld.config.txt:system/etc/ld.config.noenforce.txt \
     build/make/target/product/vndk/init.gsi.rc:system/etc/init/init.gsi.rc \
     build/make/target/product/vndk/init.noenforce.rc:system/etc/init/gsi/init.noenforce.rc
 
-#Set current VNDK version for GSI
+# Name space configuration file for non-enforcing VNDK
+PRODUCT_PACKAGES += \
+    ld.config.noenforce.txt
+
+# Set current VNDK version for GSI
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.gsi.vndk.version=$(PLATFORM_VNDK_VERSION)
