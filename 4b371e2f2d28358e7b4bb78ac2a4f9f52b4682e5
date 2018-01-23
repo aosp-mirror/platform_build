@@ -22,6 +22,29 @@
       "revId": "4b371e2f2d28358e7b4bb78ac2a4f9f52b4682e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ecc886b0_b8e29dcc",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2636,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-01-23T19:05:06Z",
+      "side": 1,
+      "message": "AFAIK this file will go through the OTA server and eventually received by android.os.VintfObject.verify, which cannot distinguish a device manifest from vendor and from ODM. Maybe we need a tag for ODM manifests (type\u003d\"odm\"?). Tao, what is this file for?",
+      "range": {
+        "startLine": 2634,
+        "startChar": 0,
+        "endLine": 2636,
+        "endChar": 5
+      },
+      "revId": "4b371e2f2d28358e7b4bb78ac2a4f9f52b4682e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
