@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9c168c9_5d1eccca",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2634,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-23T00:38:42Z",
+      "side": 1,
+      "message": "This needs a dependency",
+      "revId": "07d646c080f8a134604f7342d8f2249036c7538c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
