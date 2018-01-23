@@ -27,6 +27,7 @@
 #     BUILD_DATETIME
 #     PLATFORM_SECURITY_PATCH
 #     PLATFORM_VNDK_VERSION
+#     PLATFORM_SYSTEMSDK_VERSIONS
 #
 
 # Look for an optional file containing overrides of the defaults,
@@ -201,6 +202,32 @@ ifndef PLATFORM_VNDK_VERSION
     PLATFORM_VNDK_VERSION := $(PLATFORM_VERSION_CODENAME)
   endif
 endif
+
+ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
+  # This is the oldest version of system SDK that the platform supports. Contrary
+  # to the public SDK where platform essentially supports all previous SDK versions,
+  # platform supports only a few number of recent system SDK versions as some of
+  # old system APIs are gradually deprecated, removed and then deleted.
+  # However, currently in P, we only support the single latest version since there
+  # is no old system SDK versions. Therefore, this is set to empty for now. This
+  # should later (in post P) be set to a number, like 28.
+  PLATFORM_SYSTEMSDK_MIN_VERSION :=
+endif
+
+# This is the list of system SDK versions that the current platform supports.
+PLATFORM_SYSTEMSDK_VERSIONS :=
+ifneq (,$(PLATFORM_SYSTEMSDK_MIN_VERSION))
+  $(if $(call math_is_number,$(PLATFORM_SYSTEMSDK_MIN_VERSION)),,\
+    $(error PLATFORM_SYSTEMSDK_MIN_VERSION must be a number, but was $(PLATFORM_SYSTEMSDK_MIN_VERSION)))
+  PLATFORM_SYSTEMSDK_VERSIONS := $(call int_range_list,$(PLATFORM_SYSTEMSDK_MIN_VERSION),$(PLATFORM_SDK_VERSION))
+endif
+# Platform always supports the current version
+ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+  PLATFORM_SYSTEMSDK_VERSIONS += $(PLATFORM_SDK_VERSION)
+else
+  PLATFORM_SYSTEMSDK_VERSIONS += $(PLATFORM_VERSION_CODENAME)
+endif
+PLATFORM_SYSTEMSDK_VERSIONS := $(strip $(sort $(PLATFORM_SYSTEMSDK_VERSIONS)))
 
 ifndef PLATFORM_SECURITY_PATCH
     #  Used to indicate the security patch that has been applied to the device.

@@ -304,6 +304,13 @@ ifdef PRODUCT_EXTRA_VNDK_VERSIONS
   $(foreach v,$(PRODUCT_EXTRA_VNDK_VERSIONS),$(call check_vndk_version,$(v)))
 endif
 
+# Ensure that BOARD_SYSTEMSDK_VERSIONS are all within PLATFORM_SYSTEMSDK_VERSIONS
+_unsupported_systemsdk_versions := $(filter-out $(PLATFORM_SYSTEMSDK_VERSIONS),$(BOARD_SYSTEMSDK_VERSIONS))
+ifneq (,$(_unsupported_systemsdk_versions))
+  $(error System SDK versions '$(_unsupported_systemsdk_versions)' in BOARD_SYSTEMSDK_VERSIONS are not supported.\
+          Supported versions are $(PLATFORM_SYSTEMSDK_VERSIONS))
+endif
+
 # ---------------------------------------------------------------
 # Set up configuration for target machine.
 # The following must be set:
