@@ -2245,6 +2245,9 @@ $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
       $(addprefix -bootclasspath ,$(strip \
           $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH)) \
           $(PRIVATE_EMPTY_BOOTCLASSPATH)))) \
+    $(if $(PRIVATE_USE_SYSTEM_MODULES), \
+      $(if $(PRIVATE_PATCH_MODULE), \
+        --patch-module=$(PRIVATE_PATCH_MODULE)=$(call normalize-path-list,. $(2)))) \
     $(addprefix -classpath ,$(strip \
         $(call normalize-path-list,$(2)))) \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
@@ -2781,18 +2784,22 @@ endef
 # $(3): LOCAL_DEX_PREOPT, if nostripping then leave classes*.dex
 define dexpreopt-copy-jar
 $(2): $(1)
-	@echo $(if $(filter nostripping,$(3)),"Copy: $$@","Copy without dex: $$@")
+	@echo "Copy: $$@"
 	$$(copy-file-to-target)
 	$(if $(filter nostripping,$(3)),,$$(call dexpreopt-remove-classes.dex,$$@))
 endef
 
-# $(1): the .jar or .apk to remove classes.dex
+# $(1): the .jar or .apk to remove classes.dex. Note that if all dex files
+# are uncompressed in the archive, then dexopt will not do a copy of the dex
+# files and we should not strip.
 define dexpreopt-remove-classes.dex
-$(hide) zip --quiet --delete $(1) classes.dex; \
+$(hide) if (zipinfo $1 '*.dex' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
+zip --quiet --delete $(1) classes.dex; \
 dex_index=2; \
 while zip --quiet --delete $(1) classes$${dex_index}.dex > /dev/null; do \
   let dex_index=dex_index+1; \
-done
+done \
+fi
 endef
 
 ###########################################################
