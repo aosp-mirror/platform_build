@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "71e153e3_054a74c1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-23T01:27:50Z",
+      "side": 1,
+      "message": "nit: did you mean \"So\"?",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 2
+      },
+      "revId": "908c4db5c3015bf01f336c35277b7ce8466156e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0c858bb7_23c7f0c8",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 2
@@ -22,6 +45,30 @@
       "revId": "908c4db5c3015bf01f336c35277b7ce8466156e6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed4a616e_150bbf47",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1390,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-23T01:27:50Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "0c858bb7_23c7f0c8",
+      "range": {
+        "startLine": 1390,
+        "startChar": 12,
+        "endLine": 1390,
+        "endChar": 24
+      },
+      "revId": "908c4db5c3015bf01f336c35277b7ce8466156e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
