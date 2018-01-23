@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "495be167_224802be",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2373,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-23T00:54:36Z",
+      "side": 1,
+      "message": "would have added one but didn\u0027t consider that the other dependencies were also broken :)",
+      "range": {
+        "startLine": 2373,
+        "startChar": 4,
+        "endLine": 2373,
+        "endChar": 25
+      },
+      "revId": "4b371e2f2d28358e7b4bb78ac2a4f9f52b4682e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
