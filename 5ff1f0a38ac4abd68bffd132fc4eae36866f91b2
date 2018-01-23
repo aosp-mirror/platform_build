@@ -46,6 +46,30 @@
       "revId": "5ff1f0a38ac4abd68bffd132fc4eae36866f91b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9bfa056_154ab2f1",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-23T00:35:34Z",
+      "side": 1,
+      "message": "We expect these to be readonly global variables, so it\u0027s fine to use in this context.",
+      "parentUuid": "6574fd9c_d4b78ae9",
+      "range": {
+        "startLine": 103,
+        "startChar": 8,
+        "endLine": 103,
+        "endChar": 46
+      },
+      "revId": "5ff1f0a38ac4abd68bffd132fc4eae36866f91b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
