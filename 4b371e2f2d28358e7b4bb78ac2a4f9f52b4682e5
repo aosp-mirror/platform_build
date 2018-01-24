@@ -69,6 +69,30 @@
       "revId": "4b371e2f2d28358e7b4bb78ac2a4f9f52b4682e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3d9674f3_3e26a8be",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2636,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-24T15:11:07Z",
+      "side": 1,
+      "message": "\u003e Tao, what is this file for?\n\nDoes \"this file\" mean the \"target-files.zip\" these lines are writing to? If so, this \"target-files.zip\" is the \"input file\" to the OTA generation script. One \"target-files.zip\" corresponds to a build.\n\nThat being said, this CL alone will only pack this odm_manifest.xml into target-files.zip. It won\u0027t show up in an OTA package, or be used in the call to android.os.VintfObject.verify, unless we make matching changes to OTA generation script (build/make/tools/releasetools).\n\nWith the current implementation (https://cs.corp.google.com/android/frameworks/base/core/java/android/os/RecoverySystem.java?q\u003dRecoverySystem.verifyPackage\u0026sq\u003dpackage:android\u0026l\u003d373), the filenames will be lost when calling android.os.VintfObject.verify. We\u0027re passing the file contents.\n\n\u003e OTA servers should and could then use libvintf directly to check these files.\n\nNot sure if the idea is to generate the files based on the runtime info reported from a device. Currently OTA packages are generated offline. The script does some trivial work by packaging these XMLs into an OTA package, without considering any device runtime info. It\u0027s fine to pack additional stuff or to change the files that go into \"target-files.zip\", as long as we have matching changes to the releasetools script, or a host tool to assemble these files together to get the compatibility.zip entry at OTA generation time.\n\nIf the goal is to generate OTA packages dynamically based on device runtime info, there would be quite a few blockers to reach there. For example there\u0027re package signing issues, or device identification issue (we still use a single fingerprint to identify a device and to deliver an OTA) and etc.",
+      "parentUuid": "61d03aeb_6664bacc",
+      "range": {
+        "startLine": 2634,
+        "startChar": 0,
+        "endLine": 2636,
+        "endChar": 5
+      },
+      "revId": "4b371e2f2d28358e7b4bb78ac2a4f9f52b4682e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
