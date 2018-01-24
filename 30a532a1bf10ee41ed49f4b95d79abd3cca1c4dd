@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aab217b_0e16b95c",
+        "filename": "target/board/generic/sepolicy/healthd.te",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1124693
+      },
+      "writtenOn": "2018-01-24T19:16:39Z",
+      "side": 1,
+      "message": "Need this because aosp and internal healthd sepolicy are out of sync.",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 36
+      },
+      "revId": "30a532a1bf10ee41ed49f4b95d79abd3cca1c4dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
