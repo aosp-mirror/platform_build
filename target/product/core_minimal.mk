@@ -110,7 +110,6 @@ endif
 # The order of PRODUCT_BOOT_JARS matters.
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    android.test.base \
     ext \
     framework \
     telephony-common \
@@ -123,6 +122,12 @@ ifeq ($(REMOVE_OAHL_FROM_BCP),true)
 PRODUCT_BOOT_JARS += framework-oahl-backward-compatibility
 else
 PRODUCT_BOOT_JARS += org.apache.http.legacy.boot
+endif
+
+ifeq ($(REMOVE_ATB_FROM_BCP),true)
+PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
+else
+PRODUCT_BOOT_JARS += android.test.base
 endif
 
 # The order of PRODUCT_SYSTEM_SERVER_JARS matters.
