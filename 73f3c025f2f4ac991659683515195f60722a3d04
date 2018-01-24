@@ -22,6 +22,30 @@
       "revId": "73f3c025f2f4ac991659683515195f60722a3d04",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "943d1c16_ecbbd5e6",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2261,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2018-01-24T15:54:44Z",
+      "side": 1,
+      "message": "I was trying to filter out the bootclasspath libraries that were already in the system modules; the set of libraries that make up PRIVATE_SYSTEM_MODULES is sadly not easy to reconstruct - got any idea? But since everything uses core-system-modules which consists of core-oj, core-libart, core-lambda-stubs, I\u0027ve now hard-coded core-oj core-libart core-lambda-stubs here; where would I define a constant with that list if I wanted to share it between here and the core-system-modules rule in JavaLibray.bp?\n\n(Exception: There is also core-all-system-modules, but that\u0027s only used when building core-oj, core-libart and core-lambda-stubs themselves, which do not depend on each other so the filter-out should have no effect / be harmless there).\n\nSuggestions for improving this?",
+      "parentUuid": "b6474d5f_e6962f90",
+      "range": {
+        "startLine": 2261,
+        "startChar": 42,
+        "endLine": 2261,
+        "endChar": 113
+      },
+      "revId": "73f3c025f2f4ac991659683515195f60722a3d04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
