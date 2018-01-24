@@ -555,6 +555,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
         build_command.extend(["-U", prop_dict["uuid"]])
       if "hash_seed" in prop_dict:
         build_command.extend(["-S", prop_dict["hash_seed"]])
+    if "ext4_share_dup_blocks" in prop_dict:
+      build_command.append("-c")
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("squash"):
@@ -723,6 +725,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_root_image", "system_root_image")
     copy_prop("ramdisk_dir", "ramdisk_dir")
     copy_prop("ramdisk_fs_config", "ramdisk_fs_config")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
@@ -768,6 +771,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("vendor_size", "partition_size")
     copy_prop("vendor_journal_size", "journal_size")
     copy_prop("vendor_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("vendor_squashfs_compressor", "squashfs_compressor")
     copy_prop("vendor_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("vendor_squashfs_block_size", "squashfs_block_size")
