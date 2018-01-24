@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be842a71_4837ef33",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 827,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-24T00:43:32Z",
+      "side": 1,
+      "message": "This is always false",
+      "range": {
+        "startLine": 827,
+        "startChar": 0,
+        "endLine": 827,
+        "endChar": 58
+      },
+      "revId": "eb1db68c35053119a8f2517c24128ee5744c71ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8246af8a_e6321fd0",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 832,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-24T00:43:32Z",
+      "side": 1,
+      "message": "This is unnecessary -- numbers_less_than can handle an empty second argument",
+      "range": {
+        "startLine": 832,
+        "startChar": 0,
+        "endLine": 832,
+        "endChar": 32
+      },
+      "revId": "eb1db68c35053119a8f2517c24128ee5744c71ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
