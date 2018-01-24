@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "074e45ec_196ee686",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 827,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-24T00:48:52Z",
+      "side": 1,
+      "message": "I know, until we support BOARD_VNDK_VERSION :\u003d \u003cnumber\u003e",
+      "parentUuid": "be842a71_4837ef33",
+      "range": {
+        "startLine": 827,
+        "startChar": 0,
+        "endLine": 827,
+        "endChar": 58
+      },
+      "revId": "eb1db68c35053119a8f2517c24128ee5744c71ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8246af8a_e6321fd0",
         "filename": "core/config.mk",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "eb1db68c35053119a8f2517c24128ee5744c71ec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b046477_8e05b64d",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 832,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-01-24T00:48:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8246af8a_e6321fd0",
+      "range": {
+        "startLine": 832,
+        "startChar": 0,
+        "endLine": 832,
+        "endChar": 32
+      },
+      "revId": "eb1db68c35053119a8f2517c24128ee5744c71ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
