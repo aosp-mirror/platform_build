@@ -100,9 +100,14 @@ PRODUCT_BOOT_JARS := \
     telephony-common \
     voip-common \
     ims-common \
-    org.apache.http.legacy.boot \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java
+
+ifeq ($(REMOVE_OAHL_FROM_BCP),true)
+PRODUCT_BOOT_JARS += framework-oahl-backward-compatibility
+else
+PRODUCT_BOOT_JARS += org.apache.http.legacy.boot
+endif
 
 # The order of PRODUCT_SYSTEM_SERVER_JARS matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
