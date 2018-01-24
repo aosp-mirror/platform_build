@@ -141,6 +141,12 @@ PRODUCT_PACKAGES += \
     vold \
     wm
 
+# Add the compatibility library that is needed when org.apache.http.legacy
+# is removed from the bootclasspath.
+ifeq ($(REMOVE_OAHL_FROM_BCP),true)
+PRODUCT_PACKAGES += framework-oahl-backward-compatibility
+endif
+
 # Essential HAL modules
 PRODUCT_PACKAGES += \
     android.hardware.cas@1.0-service \
