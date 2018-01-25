@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a6f835a_8cd0a68f",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 871,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-25T06:46:43Z",
+      "side": 1,
+      "message": "It would be helpful to document the reason for this assertion - The SparseImage._GetRangeData() called by SparseImage.RangeSha1() is prone to race conditions.\n\nAnd when writing the above comments, I realize we should additionally add synchronization locks to guard the calls to _GetRangeData(). Otherwise WriteRangeDataToFd() and RangeSha1() could still compete against each other (potentially), which eventually corrupts the package in a similar way.",
+      "range": {
+        "startLine": 871,
+        "startChar": 6,
+        "endLine": 871,
+        "endChar": 20
+      },
+      "revId": "58af75bb5eda748bfd01100197d8c92ab44b8e84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
