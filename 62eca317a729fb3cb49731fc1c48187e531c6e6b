@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9dfa9c27_4a3c7e66",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2018-01-25T14:09:22Z",
+      "side": 1,
+      "message": "Test: ? The Test line is mandatory for all changes.",
+      "revId": "62eca317a729fb3cb49731fc1c48187e531c6e6b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
