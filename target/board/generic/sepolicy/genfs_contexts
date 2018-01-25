@@ -2,3 +2,7 @@
 # /sys/bus/platform/devices/ANDR0001:00/properties/android/ which is a symlink to
 # /sys/devices/platform/ANDR0001:00/properties/android/
 genfscon sysfs /devices/platform/ANDR0001:00/properties/android u:object_r:sysfs_dt_firmware_android:s0
+
+# We expect /sys/class/power_supply/* and everything it links to to be labeled
+# as sysfs_batteryinfo.
+genfscon sysfs /devices/platform/GFSH0001:00/power_supply u:object_r:sysfs_batteryinfo:s0
