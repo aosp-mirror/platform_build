@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a151107_781e25e7",
+        "filename": "target/product/core.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-25T03:23:57Z",
+      "side": 1,
+      "message": "Technically it isn\u0027t all like your commit message says, but I suspect this is still the right place...",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 45
+      },
+      "revId": "521f61f4fc4684844c49f7376ad4f01ac49837d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
