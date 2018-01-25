@@ -365,6 +365,13 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_DEFAULT_PROPERTIES))
 .KATI_READONLY := PRODUCT_SYSTEM_DEFAULT_PROPERTIES
 
+# A list of property assignments, like "key = value", with zero or more
+# whitespace characters on either side of the '='.
+# used for adding properties to build.prop of product partition
+PRODUCT_PRODUCT_PROPERTIES := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_PROPERTIES))
+.KATI_READONLY := PRODUCT_PRODUCT_PROPERTIES
+
 # Should we use the default resources or add any product specific overlays
 PRODUCT_PACKAGE_OVERLAYS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGE_OVERLAYS))
@@ -482,7 +489,7 @@ PRODUCT_CFI_INCLUDE_PATHS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CFI_INCLUDE_PATHS))
 
 # which Soong namespaces to export to Make
-PRODUCT_SOONG_NAMESPACES :=
+PRODUCT_SOONG_NAMESPACES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SOONG_NAMESPACES))
 
 # A flag to override PRODUCT_COMPATIBLE_PROPERTY
