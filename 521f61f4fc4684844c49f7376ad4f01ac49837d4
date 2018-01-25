@@ -22,6 +22,30 @@
       "revId": "521f61f4fc4684844c49f7376ad4f01ac49837d4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ce6f57a_62a11622",
+        "filename": "target/product/core.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1170070
+      },
+      "writtenOn": "2018-01-25T19:11:59Z",
+      "side": 1,
+      "message": "Ha, thanks for the catch. Updated the commit message slightly. I agree this is probably still the right place and I can always move it later if someone on one of the other type devices wants this.\n\nUpdate: I am so disappointed that the commit message update took my review away.",
+      "parentUuid": "9a151107_781e25e7",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 45
+      },
+      "revId": "521f61f4fc4684844c49f7376ad4f01ac49837d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
