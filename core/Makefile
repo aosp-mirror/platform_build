@@ -2503,8 +2503,8 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(HOST_OUT_EXECUTABLES)/imgdiff \
 		$(HOST_OUT_EXECUTABLES)/bsdiff \
 		$(BUILD_IMAGE_SRCS) \
-		$(INSTALLED_VENDOR_MANIFEST) \
-		$(INSTALLED_VENDOR_MATRIX) \
+		$(BUILT_VENDOR_MANIFEST) \
+		$(BUILT_VENDOR_MATRIX) \
 		| $(ACP)
 	@echo "Package target files: $@"
 	$(call create-system-vendor-symlink)
