@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b5396256_173c7ea0",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2645,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-01-25T00:35:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "236af6b2_205e2440",
+      "range": {
+        "startLine": 2642,
+        "startChar": 0,
+        "endLine": 2645,
+        "endChar": 5
+      },
+      "revId": "b78da86066fe8b78ab6c5d4e4c1f424c9e751c55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "65e3236b_c4c523ac",
         "filename": "core/config.mk",
         "patchSetId": 1
@@ -95,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "8ca662fb_bdba0028",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-01-25T00:35:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e5d131b8_db216b48",
+      "range": {
+        "startLine": 176,
+        "startChar": 26,
+        "endLine": 176,
+        "endChar": 33
+      },
+      "revId": "b78da86066fe8b78ab6c5d4e4c1f424c9e751c55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "924080b1_2d7b3432",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 1
@@ -106,6 +154,30 @@
       "writtenOn": "2018-01-25T00:04:24Z",
       "side": 1,
       "message": "nit: indentation",
+      "range": {
+        "startLine": 646,
+        "startChar": 13,
+        "endLine": 646,
+        "endChar": 15
+      },
+      "revId": "b78da86066fe8b78ab6c5d4e4c1f424c9e751c55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e092a09_f8d12206",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 646,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-01-25T00:35:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "924080b1_2d7b3432",
       "range": {
         "startLine": 646,
         "startChar": 13,
