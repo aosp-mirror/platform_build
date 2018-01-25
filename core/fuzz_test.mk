@@ -22,7 +22,7 @@ ifeq ($(my_fuzzer),libFuzzer)
 LOCAL_STATIC_LIBRARIES += libFuzzer
 else ifeq ($(my_fuzzer),honggfuzz)
 LOCAL_STATIC_LIBRARIES += honggfuzz_libhfuzz
-
+LOCAL_REQUIRED_MODULES += honggfuzz
 LOCAL_LDFLAGS += \
         "-Wl,--wrap=strcmp" \
         "-Wl,--wrap=strcasecmp" \
@@ -72,6 +72,10 @@ ifndef LOCAL_MULTILIB
 ifndef LOCAL_32_BIT_ONLY
 LOCAL_MULTILIB := both
 endif
+endif
+
+ifndef LOCAL_STRIP_MODULE
+LOCAL_STRIP_MODULE := keep_symbols
 endif
 
 include $(BUILD_EXECUTABLE)
