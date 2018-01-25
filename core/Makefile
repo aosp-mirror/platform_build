@@ -423,6 +423,32 @@ ifdef property_overrides_split_enabled
 	$(hide) build/make/tools/post_process_props.py $@
 endif  # property_overrides_split_enabled
 
+# -----------------------------------------------------------------
+# product build.prop
+INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/build.prop
+ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_PRODUCT_BUILD_PROP_TARGET)
+
+FINAL_PRODUCT_PROPERTIES += \
+    $(call collapse-pairs, $(PRODUCT_PRODUCT_PROPERTIES))
+FINAL_PRODUCT_PROPERTIES := $(call uniq-pairs-by-first-component, \
+    $(FINAL_PRODUCT_PROPERTIES),=)
+
+$(INSTALLED_PRODUCT_BUILD_PROP_TARGET):
+	@echo Target product buildinfo: $@
+	@mkdir -p $(dir $@)
+	$(hide) echo > $@
+ifdef BOARD_USES_PRODUCTIMAGE
+	$(hide) echo ro.product.build.date=`$(DATE_FROM_FILE)`>>$@
+	$(hide) echo ro.product.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
+	$(hide) echo ro.product.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
+endif  # BOARD_USES_PRODUCTIMAGE
+	$(hide) echo "#" >> $@; \
+	        echo "# ADDITIONAL PRODUCT PROPERTIES" >> $@; \
+	        echo "#" >> $@;
+	$(hide) $(foreach line,$(FINAL_PRODUCT_PROPERTIES), \
+		echo "$(line)" >> $@;)
+	$(hide) build/make/tools/post_process_props.py $@
+
 # ----------------------------------------------------------------
 
 # -----------------------------------------------------------------
@@ -1013,7 +1039,7 @@ endif
 ifneq (true,$(TARGET_USERIMAGES_SPARSE_SQUASHFS_DISABLED))
   INTERNAL_USERIMAGES_SPARSE_SQUASHFS_FLAG := -s
 endif
-ifneq ($(filter $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE) $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),squashfs),)
+ifneq ($(filter $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE) $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE) $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),squashfs),)
 INTERNAL_USERIMAGES_DEPS += $(MAKE_SQUASHFS) $(MKSQUASHFSUSERIMG) $(IMG2SIMG)
 endif
 
@@ -1066,6 +1092,15 @@ $(if $(BOARD_VENDORIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "vendor_squashfs_
 $(if $(BOARD_VENDORIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "vendor_squashfs_block_size=$(BOARD_VENDORIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
 $(if $(BOARD_VENDORIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "vendor_squashfs_disable_4k_align=$(BOARD_VENDORIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH),$(hide) echo "vendor_base_fs_file=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH)" >> $(1))
+$(if $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "product_fs_type=$(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
+$(if $(BOARD_PRODUCTIMAGE_EXTFS_INODE_COUNT),$(hide) echo "product_extfs_inode_count=$(BOARD_PRODUCTIMAGE_EXTFS_INODE_COUNT)" >> $(1))
+$(if $(BOARD_PRODUCTIMAGE_PARTITION_SIZE),$(hide) echo "product_size=$(BOARD_PRODUCTIMAGE_PARTITION_SIZE)" >> $(1))
+$(if $(BOARD_PRODUCTIMAGE_JOURNAL_SIZE),$(hide) echo "product_journal_size=$(BOARD_PRODUCTIMAGE_JOURNAL_SIZE)" >> $(1))
+$(if $(BOARD_PRODUCTIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "product_squashfs_compressor=$(BOARD_PRODUCTIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
+$(if $(BOARD_PRODUCTIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "product_squashfs_compressor_opt=$(BOARD_PRODUCTIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
+$(if $(BOARD_PRODUCTIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "product_squashfs_block_size=$(BOARD_PRODUCTIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
+$(if $(BOARD_PRODUCTIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "product_squashfs_disable_4k_align=$(BOARD_PRODUCTIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
+$(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH),$(hide) echo "product_base_fs_file=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH)" >> $(1))
 $(if $(BOARD_OEMIMAGE_PARTITION_SIZE),$(hide) echo "oem_size=$(BOARD_OEMIMAGE_PARTITION_SIZE)" >> $(1))
 $(if $(BOARD_OEMIMAGE_JOURNAL_SIZE),$(hide) echo "oem_journal_size=$(BOARD_OEMIMAGE_JOURNAL_SIZE)" >> $(1))
 $(if $(BOARD_OEMIMAGE_EXTFS_INODE_COUNT),$(hide) echo "oem_extfs_inode_count=$(BOARD_OEMIMAGE_EXTFS_INODE_COUNT)" >> $(1))
@@ -1080,6 +1115,7 @@ $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY_FEC),$(hide) echo "v
 $(if $(filter eng, $(TARGET_BUILD_VARIANT)),$(hide) echo "verity_disable=true" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_VERITY_PARTITION),$(hide) echo "system_verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_VERITY_PARTITION)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_VERITY_PARTITION),$(hide) echo "vendor_verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_VERITY_PARTITION)" >> $(1))
+$(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_VERITY_PARTITION),$(hide) echo "product_verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_VERITY_PARTITION)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_key=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_subkey=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_SUBKEY)" >> $(1))
@@ -1100,6 +1136,13 @@ $(if $(BOARD_AVB_ENABLE),\
         $(hide) echo "avb_vendor_key_path=$(BOARD_AVB_VENDOR_KEY_PATH)" >> $(1)
         $(hide) echo "avb_vendor_algorithm=$(BOARD_AVB_VENDOR_ALGORITHM)" >> $(1)
         $(hide) echo "avb_vendor_rollback_index_location=$(BOARD_AVB_VENDOR_ROLLBACK_INDEX_LOCATION)" >> $(1)))
+$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_product_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
+$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_product_add_hashtree_footer_args=$(BOARD_AVB_PRODUCT_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
+$(if $(BOARD_AVB_ENABLE),\
+    $(if $(BOARD_AVB_PRODUCT_KEY_PATH),\
+        $(hide) echo "avb_product_key_path=$(BOARD_AVB_PRODUCT_KEY_PATH)" >> $(1)
+        $(hide) echo "avb_product_algorithm=$(BOARD_AVB_PRODUCT_ALGORITHM)" >> $(1)
+        $(hide) echo "avb_product_rollback_index_location=$(BOARD_AVB_PRODUCT_ROLLBACK_INDEX_LOCATION)" >> $(1)))
 $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(hide) echo "recovery_as_boot=true" >> $(1))
 $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
@@ -1150,6 +1193,9 @@ recovery_ramdisk := $(PRODUCT_OUT)/ramdisk-recovery.img
 recovery_build_props := $(intermediate_system_build_prop)
 ifdef property_overrides_split_enabled
 recovery_build_props += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
+endif
+ifdef BOARD_USES_PRODUCTIMAGE
+recovery_build_props += $(INSTALLED_PRODUCT_BUILD_PROP_TARGET)
 endif
 recovery_resources_common := $(call include-path-for, recovery)/res
 
@@ -1443,10 +1489,26 @@ define create-system-vendor-symlink
 endef
 endif
 
+# Create symlink /system/product to /product if necessary.
+ifdef BOARD_USES_PRODUCTIMAGE
+define create-system-product-symlink
+$(hide) if [ -d $(TARGET_OUT)/product ] && [ ! -h $(TARGET_OUT)/product ]; then \
+  echo 'Non-symlink $(TARGET_OUT)/product detected!' 1>&2; \
+  echo 'You cannot install files to $(TARGET_OUT)/product while building a separate product.img!' 1>&2; \
+  exit 1; \
+fi
+$(hide) ln -sf /product $(TARGET_OUT)/product
+endef
+else
+define create-system-product-symlink
+endef
+endif
+
 # $(1): output file
 define build-systemimage-target
   @echo "Target system fs image: $(1)"
   $(call create-system-vendor-symlink)
+  $(call create-system-product-symlink)
   @mkdir -p $(dir $(1)) $(systemimage_intermediates) && rm -rf $(systemimage_intermediates)/system_image_info.txt
   $(call generate-userimage-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt, \
       skip_fsck=true)
@@ -1521,6 +1583,7 @@ sync: $(INTERNAL_SYSTEMIMAGE_FILES)
 define build-systemtarball-target
   $(call pretty,"Target system fs tarball: $(INSTALLED_SYSTEMTARBALL_TARGET)")
   $(call create-system-vendor-symlink)
+  $(call create-system-product-symlink)
   $(MKTARBALL) $(FS_GET_STATS) \
     $(PRODUCT_OUT) system $(PRIVATE_SYSTEM_TAR) \
     $(INSTALLED_SYSTEMTARBALL_TARGET) $(TARGET_OUT)
@@ -1600,6 +1663,10 @@ $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES) $(pdk_odex_config_mk)
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
 		$(TARGET_COPY_OUT_VENDOR)
+endif
+ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
+		$(TARGET_COPY_OUT_PRODUCT)
 endif
 ifneq ($(PDK_PLATFORM_JAVA_ZIP_CONTENTS),)
 	$(hide) cd $(OUT_DIR) && zip -qryX $(patsubst $(OUT_DIR)/%,%,$@) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
@@ -1909,6 +1976,55 @@ $(eval $(call copy-one-file,$(BOARD_PREBUILT_VENDORIMAGE),$(INSTALLED_VENDORIMAG
 endif
 
 # -----------------------------------------------------------------
+# product partition image
+ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+INTERNAL_PRODUCTIMAGE_FILES := \
+    $(filter $(TARGET_OUT_PRODUCT)/%,\
+      $(ALL_DEFAULT_INSTALLED_MODULES)\
+      $(ALL_PDK_FUSION_FILES))
+
+# platform.zip depends on $(INTERNAL_PRODUCTIMAGE_FILES).
+$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_PRODUCTIMAGE_FILES)
+
+INSTALLED_FILES_FILE_PRODUCT := $(PRODUCT_OUT)/installed-files-product.txt
+$(INSTALLED_FILES_FILE_PRODUCT) : $(INTERNAL_PRODUCTIMAGE_FILES) $(FILESLIST)
+	@echo Installed file list: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(hide) $(FILESLIST) $(TARGET_OUT_PRODUCT) > $(@:.txt=.json)
+	$(hide) build/tools/fileslist_util.py -c $(@:.txt=.json) > $@
+
+productimage_intermediates := \
+    $(call intermediates-dir-for,PACKAGING,product)
+BUILT_PRODUCTIMAGE_TARGET := $(PRODUCT_OUT)/product.img
+define build-productimage-target
+  $(call pretty,"Target product fs image: $(INSTALLED_PRODUCTIMAGE_TARGET)")
+  @mkdir -p $(TARGET_OUT_PRODUCT)
+  @mkdir -p $(productimage_intermediates) && rm -rf $(productimage_intermediates)/product_image_info.txt
+  $(call generate-userimage-prop-dictionary, $(productimage_intermediates)/product_image_info.txt, skip_fsck=true)
+  $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
+      ./build/tools/releasetools/build_image.py \
+      $(TARGET_OUT_PRODUCT) $(productimage_intermediates)/product_image_info.txt $(INSTALLED_PRODUCTIMAGE_TARGET) $(TARGET_OUT)
+  $(hide) $(call assert-max-image-size,$(INSTALLED_PRODUCTIMAGE_TARGET),$(BOARD_PRODUCTIMAGE_PARTITION_SIZE))
+endef
+
+# We just build this directly to the install location.
+INSTALLED_PRODUCTIMAGE_TARGET := $(BUILT_PRODUCTIMAGE_TARGET)
+$(INSTALLED_PRODUCTIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_PRODUCTIMAGE_FILES) $(INSTALLED_FILES_FILE_PRODUCT) $(BUILD_IMAGE_SRCS)
+	$(build-productimage-target)
+
+.PHONY: productimage-nodeps pnod
+productimage-nodeps pnod: | $(INTERNAL_USERIMAGES_DEPS)
+	$(build-productimage-target)
+
+sync: $(INTERNAL_PRODUCTIMAGE_FILES)
+
+else ifdef BOARD_PREBUILT_PRODUCTIMAGE
+INSTALLED_PRODUCTIMAGE_TARGET := $(PRODUCT_OUT)/product.img
+$(eval $(call copy-one-file,$(BOARD_PREBUILT_PRODUCTIMAGE),$(INSTALLED_PRODUCTIMAGE_TARGET)))
+endif
+
+# -----------------------------------------------------------------
 # dtbo image
 ifdef BOARD_PREBUILT_DTBOIMAGE
 INSTALLED_DTBOIMAGE_TARGET := $(PRODUCT_OUT)/dtbo.img
@@ -1962,6 +2078,7 @@ DTBO_FOOTER_ARGS := BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS
 SYSTEM_FOOTER_ARGS := BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS
 VENDOR_FOOTER_ARGS := BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS
 RECOVERY_FOOTER_ARGS := BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS
+PRODUCT_FOOTER_ARGS := BOARD_AVB_PRODUCT_ADD_HASHTREE_FOOTER_ARGS
 
 # Check and set required build variables for a chain partition.
 # $(1): the partition to enable AVB chain, e.g., BOOT or SYSTEM.
@@ -2011,6 +2128,15 @@ $(eval $(call check-and-set-avb-chain-args,VENDOR))
 else
 INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
     --include_descriptors_from_image $(INSTALLED_VENDORIMAGE_TARGET)
+endif
+endif
+
+ifdef INSTALLED_PRODUCTIMAGE_TARGET
+ifdef BOARD_AVB_PRODUCT_KEY_PATH
+$(eval $(call check-and-set-avb-chain-args,PRODUCT))
+else
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
+    --include_descriptors_from_image $(INSTALLED_PRODUCTIMAGE_TARGET)
 endif
 endif
 
@@ -2067,6 +2193,9 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_AVB_VENDOR_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VENDOR_KEY_PATH) \
       --output $(1)/vendor.avbpubkey)
+  $(if $(BOARD_AVB_PRODUCT_KEY_PATH),\
+    $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_PRODUCT_KEY_PATH) \
+      --output $(1)/product.avbpubkey)
   $(if $(BOARD_AVB_DTBO_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_DTBO_KEY_PATH) \
       --output $(1)/dtbo.avbpubkey)
@@ -2093,6 +2222,7 @@ $(INSTALLED_VBMETAIMAGE_TARGET): \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_SYSTEMIMAGE) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
+		$(INSTALLED_PRODUCTIMAGE_TARGET) \
 		$(INSTALLED_DTBOIMAGE_TARGET) \
 		$(INSTALLED_RECOVERYIMAGE_TARGET) \
 		$(BOARD_AVB_KEY_PATH)
@@ -2356,6 +2486,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_CACHEIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
+		$(INSTALLED_PRODUCTIMAGE_TARGET) \
 		$(INSTALLED_VBMETAIMAGE_TARGET) \
 		$(INSTALLED_DTBOIMAGE_TARGET) \
 		$(INTERNAL_SYSTEMOTHERIMAGE_FILES) \
@@ -2364,6 +2495,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_2NDBOOTLOADER_TARGET) \
 		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_BASE_FS_PATH) \
 		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH) \
+		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH) \
 		$(SELINUX_FC) \
 		$(APKCERTS_FILE) \
 		$(SOONG_ZIP) \
@@ -2376,6 +2508,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		| $(ACP)
 	@echo "Package target files: $@"
 	$(call create-system-vendor-symlink)
+	$(call create-system-product-symlink)
 	$(hide) rm -rf $@ $@.list $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
 ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
@@ -2441,6 +2574,11 @@ ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 	$(hide) $(call package_files-copy-root, \
 		$(TARGET_OUT_VENDOR),$(zip_root)/VENDOR)
 endif
+ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+	@# Contents of the product image
+	$(hide) $(call package_files-copy-root, \
+		$(TARGET_OUT_PRODUCT),$(zip_root)/PRODUCT)
+endif
 ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 	@# Contents of the system_other image
 	$(hide) $(call package_files-copy-root, \
@@ -2504,6 +2642,10 @@ endif
 ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH),)
 	$(hide) cp $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH) \
 	  $(zip_root)/META/$(notdir $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH))
+endif
+ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH),)
+	$(hide) cp $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH) \
+	  $(zip_root)/META/$(notdir $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH))
 endif
 ifneq ($(strip $(SANITIZE_TARGET)),)
 	# We need to create userdata.img with real data because the instrumented libraries are in userdata.img.
@@ -2588,6 +2730,10 @@ ifdef BOARD_PREBUILT_VENDORIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_VENDORIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
+ifdef BOARD_PREBUILT_PRODUCTIMAGE
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_PRODUCTIMAGE_TARGET) $(zip_root)/IMAGES/
+endif
 ifdef BOARD_PREBUILT_BOOTIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_BOOTIMAGE_TARGET) $(zip_root)/IMAGES/
@@ -2617,6 +2763,9 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM,system/) > $(zip_root)/META/filesystem_config.txt
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 	$(hide) $(call fs_config,$(zip_root)/VENDOR,vendor/) > $(zip_root)/META/vendor_filesystem_config.txt
+endif
+ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+	$(hide) $(call fs_config,$(zip_root)/PRODUCT,product/) > $(zip_root)/META/product_filesystem_config.txt
 endif
 ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 	$(hide) $(call fs_config,$(zip_root)/ROOT,) > $(zip_root)/META/root_filesystem_config.txt
@@ -2735,6 +2884,7 @@ $(SYMBOLS_ZIP): $(INSTALLED_SYSTEMIMAGE) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
+		$(INSTALLED_PRODUCTIMAGE_TARGET) \
 		$(updater_dep)
 endif
 $(SYMBOLS_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,symbols)/filelist
@@ -2757,7 +2907,8 @@ ifndef TARGET_BUILD_APPS
 $(COVERAGE_ZIP): $(INSTALLED_SYSTEMIMAGE) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
-		$(INSTALLED_VENDORIMAGE_TARGET)
+		$(INSTALLED_VENDORIMAGE_TARGET) \
+		$(INSTALLED_PRODUCTIMAGE_TARGET)
 endif
 $(COVERAGE_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,coverage)/filelist
 $(COVERAGE_ZIP): $(SOONG_ZIP)
@@ -2856,6 +3007,15 @@ $(INSTALLED_QEMU_VENDORIMAGE): $(INSTALLED_VENDORIMAGE_TARGET) $(MK_QEMU_IMAGE_S
 
 vendorimage: $(INSTALLED_QEMU_VENDORIMAGE)
 droidcore: $(INSTALLED_QEMU_VENDORIMAGE)
+endif
+ifeq ($(BOARD_USES_PRODUCTIMAGE),true)
+INSTALLED_QEMU_PRODUCTIMAGE := $(PRODUCT_OUT)/product-qemu.img
+$(INSTALLED_QEMU_PRODUCTIMAGE): $(INSTALLED_PRODUCTIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST)
+	@echo Create product-qemu.img
+	(export SGDISK=$(SGDISK_HOST); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/product.img)
+
+productimage: $(INSTALLED_QEMU_PRODUCTIMAGE)
+droidcore: $(INSTALLED_QEMU_PRODUCTIMAGE)
 endif
 endif
 # -----------------------------------------------------------------

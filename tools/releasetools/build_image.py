@@ -778,6 +778,22 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("vendor_squashfs_disable_4k_align", "squashfs_disable_4k_align")
     copy_prop("vendor_base_fs_file", "base_fs_file")
     copy_prop("vendor_extfs_inode_count", "extfs_inode_count")
+  elif mount_point == "product":
+    copy_prop("avb_product_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_product_add_hashtree_footer_args",
+              "avb_add_hashtree_footer_args")
+    copy_prop("avb_product_key_path", "avb_key_path")
+    copy_prop("avb_product_algorithm", "avb_algorithm")
+    copy_prop("product_fs_type", "fs_type")
+    copy_prop("product_size", "partition_size")
+    copy_prop("product_journal_size", "journal_size")
+    copy_prop("product_verity_block_device", "verity_block_device")
+    copy_prop("product_squashfs_compressor", "squashfs_compressor")
+    copy_prop("product_squashfs_compressor_opt", "squashfs_compressor_opt")
+    copy_prop("product_squashfs_block_size", "squashfs_block_size")
+    copy_prop("product_squashfs_disable_4k_align", "squashfs_disable_4k_align")
+    copy_prop("product_base_fs_file", "base_fs_file")
+    copy_prop("product_extfs_inode_count", "extfs_inode_count")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
@@ -831,6 +847,8 @@ def main(argv):
       mount_point = "vendor"
     elif image_filename == "oem.img":
       mount_point = "oem"
+    elif image_filename == "product.img":
+      mount_point = "product"
     else:
       print("error: unknown image file name ", image_filename, file=sys.stderr)
       sys.exit(1)
