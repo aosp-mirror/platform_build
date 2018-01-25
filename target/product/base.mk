@@ -114,6 +114,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
+    perfetto \
     ping \
     ping6 \
     platform.xml \
@@ -132,6 +133,8 @@ PRODUCT_PACKAGES += \
     svc \
     tc \
     telecom \
+    traced \
+    traced_probes \
     vdc \
     vold \
     wm
