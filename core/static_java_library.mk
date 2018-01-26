@@ -88,7 +88,7 @@ my_res_package := $(intermediates.COMMON)/package-res.apk
 
 LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
 endif  # LOCAL_USE_AAPT2
-endif  # LOCAL_RESOURCE_DIR
+endif  # need_compile_res
 
 all_res_assets := $(all_resources)
 
