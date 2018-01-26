@@ -2802,37 +2802,6 @@ done \
 fi
 endef
 
-define hiddenapi-copy-dex-files
-$(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
-      $(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
-	@rm -rf $(dir $(2))
-	@mkdir -p $(dir $(2))
-	find $(dir $(1)) -maxdepth 1 -name "classes*.dex" | sort | \
-		xargs -I{} cp -f {} $(dir $(2))
-	find $(dir $(2)) -name "classes*.dex" | sort | sed 's/^/--dex=/' | \
-		xargs $(HIDDENAPI) --light-greylist=$(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
-		                   --dark-greylist=$(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) \
-		                   --blacklist=$(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
-endef
-
-define hiddenapi-copy-soong-jar
-$(2): PRIVATE_FOLDER := $(dir $(2))dex-hiddenapi
-$(2): $(1) $(HIDDENAPI) $(SOONG_ZIP) $(MERGE_ZIPS) $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
-      $(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
-	@echo "Hidden API: $$@"
-	$$(copy-file-to-target)
-	@rm -rf $${PRIVATE_FOLDER}
-	@mkdir -p $${PRIVATE_FOLDER}
-	unzip -q $(2) 'classes*.dex' -d $${PRIVATE_FOLDER}
-	find $${PRIVATE_FOLDER} -name "classes*.dex" | sort | sed 's/^/--dex=/' | \
-		xargs $(HIDDENAPI) --light-greylist=$(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
-		                   --dark-greylist=$(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) \
-		                   --blacklist=$(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
-	$(SOONG_ZIP) -o $${PRIVATE_FOLDER}/classes.dex.jar -C $${PRIVATE_FOLDER} -D $${PRIVATE_FOLDER}
-	$(MERGE_ZIPS) -D -zipToNotStrip $${PRIVATE_FOLDER}/classes.dex.jar -stripFile "classes*.dex" \
-		$(2) $${PRIVATE_FOLDER}/classes.dex.jar $(1)
-endef
-
 ###########################################################
 ## Commands to call Proguard
 ###########################################################
