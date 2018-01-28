@@ -776,15 +776,13 @@ class BlockImageDiff(object):
             src_ranges = xf.src_ranges
             tgt_ranges = xf.tgt_ranges
 
-            # Needs lock since WriteRangeDataToFd() is stateful (calling seek).
-            with lock:
-              src_file = common.MakeTempFile(prefix="src-")
-              with open(src_file, "wb") as fd:
-                self.src.WriteRangeDataToFd(src_ranges, fd)
+            src_file = common.MakeTempFile(prefix="src-")
+            with open(src_file, "wb") as fd:
+              self.src.WriteRangeDataToFd(src_ranges, fd)
 
-              tgt_file = common.MakeTempFile(prefix="tgt-")
-              with open(tgt_file, "wb") as fd:
-                self.tgt.WriteRangeDataToFd(tgt_ranges, fd)
+            tgt_file = common.MakeTempFile(prefix="tgt-")
+            with open(tgt_file, "wb") as fd:
+              self.tgt.WriteRangeDataToFd(tgt_ranges, fd)
 
             message = []
             try:
@@ -1430,11 +1428,10 @@ class BlockImageDiff(object):
 
         src_file = common.MakeTempFile(prefix="src-")
         tgt_file = common.MakeTempFile(prefix="tgt-")
-        with transfer_lock:
-          with open(src_file, "wb") as src_fd:
-            self.src.WriteRangeDataToFd(src_ranges, src_fd)
-          with open(tgt_file, "wb") as tgt_fd:
-            self.tgt.WriteRangeDataToFd(tgt_ranges, tgt_fd)
+        with open(src_file, "wb") as src_fd:
+          self.src.WriteRangeDataToFd(src_ranges, src_fd)
+        with open(tgt_file, "wb") as tgt_fd:
+          self.tgt.WriteRangeDataToFd(tgt_ranges, tgt_fd)
 
         patch_file = common.MakeTempFile(prefix="patch-")
         patch_info_file = common.MakeTempFile(prefix="split_info-")
