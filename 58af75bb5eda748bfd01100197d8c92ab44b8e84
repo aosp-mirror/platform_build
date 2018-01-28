@@ -22,6 +22,30 @@
       "revId": "58af75bb5eda748bfd01100197d8c92ab44b8e84",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb9d2ab9_0fecd8a0",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 871,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-01-28T01:54:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0a6f835a_8cd0a68f",
+      "range": {
+        "startLine": 871,
+        "startChar": 6,
+        "endLine": 871,
+        "endChar": 20
+      },
+      "revId": "58af75bb5eda748bfd01100197d8c92ab44b8e84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
