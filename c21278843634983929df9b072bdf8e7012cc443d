@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "29459e89_a9a58999",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1447,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-01-28T01:56:44Z",
+      "side": 1,
+      "message": "I just realized this\u0027s a edge case to generate nondeterministic packages. Will address separately...",
+      "range": {
+        "startLine": 1447,
+        "startChar": 10,
+        "endLine": 1447,
+        "endChar": 46
+      },
+      "revId": "c21278843634983929df9b072bdf8e7012cc443d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
