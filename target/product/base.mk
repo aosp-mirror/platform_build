@@ -115,6 +115,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
+    perfetto \
     ping \
     ping6 \
     platform.xml \
@@ -134,9 +135,17 @@ PRODUCT_PACKAGES += \
     svc \
     tc \
     telecom \
+    traced \
+    traced_probes \
     vdc \
     vold \
     wm
+
+# Add the compatibility library that is needed when org.apache.http.legacy
+# is removed from the bootclasspath.
+ifeq ($(REMOVE_OAHL_FROM_BCP),true)
+PRODUCT_PACKAGES += framework-oahl-backward-compatibility
+endif
 
 # Essential HAL modules
 PRODUCT_PACKAGES += \
