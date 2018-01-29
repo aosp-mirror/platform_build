@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d5624a00_631e232a",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1450,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-01-29T19:35:02Z",
+      "side": 0,
+      "message": "Seems we need the lock here to guard the call to Transfer(), which uses len(by_id) (i.e. len(self.transfers)).",
+      "range": {
+        "startLine": 1450,
+        "startChar": 10,
+        "endLine": 1450,
+        "endChar": 28
+      },
+      "revId": "e1ad2a9c6fd03f20e9b511333c5521b491be2461",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
