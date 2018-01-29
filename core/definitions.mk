@@ -2241,15 +2241,17 @@ $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
     $(SOONG_JAVAC_WRAPPER) $(JAVAC_WRAPPER) $(1) -encoding UTF-8 \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
     $(if $(PRIVATE_USE_SYSTEM_MODULES), \
-      $(addprefix --system=,$(PRIVATE_SYSTEM_MODULES)), \
+      $(addprefix --system=,$(PRIVATE_SYSTEM_MODULES_DIR)), \
       $(addprefix -bootclasspath ,$(strip \
           $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH)) \
           $(PRIVATE_EMPTY_BOOTCLASSPATH)))) \
     $(if $(PRIVATE_USE_SYSTEM_MODULES), \
       $(if $(PRIVATE_PATCH_MODULE), \
         --patch-module=$(PRIVATE_PATCH_MODULE)=$(call normalize-path-list,. $(2)))) \
-    $(addprefix -classpath ,$(strip \
-        $(call normalize-path-list,$(2)))) \
+    $(addprefix -classpath ,$(call normalize-path-list,$(strip \
+      $(if $(PRIVATE_USE_SYSTEM_MODULES), \
+        $(filter-out $(PRIVATE_SYSTEM_MODULES_LIBS),$(PRIVATE_BOOTCLASSPATH))) \
+      $(2)))) \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
     -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) -s $(PRIVATE_ANNO_INTERMEDIATES_DIR) \
     $(PRIVATE_JAVACFLAGS) \
