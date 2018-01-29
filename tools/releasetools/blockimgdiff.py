@@ -362,6 +362,7 @@ class BlockImageDiff(object):
 
     # Double-check our work.
     self.AssertSequenceGood()
+    self.AssertSha1Good()
 
     self.ComputePatches(prefix)
     self.WriteTransfers(prefix)
@@ -866,6 +867,21 @@ class BlockImageDiff(object):
                 xf.tgt_name if xf.tgt_name == xf.src_name else (
                     xf.tgt_name + " (from " + xf.src_name + ")"),
                 xf.tgt_ranges, xf.src_ranges))
+
+  def AssertSha1Good(self):
+    """Check the SHA-1 of the src & tgt blocks in the transfer list.
+
+    Double check the SHA-1 value to avoid the issue in b/71908713, where
+    SparseImage.RangeSha1() messed up with the hash calculation in multi-thread
+    environment. That specific problem has been fixed by protecting the
+    underlying generator function 'SparseImage._GetRangeData()' with lock.
+    """
+    for xf in self.transfers:
+      tgt_sha1 = self.tgt.RangeSha1(xf.tgt_ranges)
+      assert xf.tgt_sha1 == tgt_sha1
+      if xf.style == "diff":
+        src_sha1 = self.src.RangeSha1(xf.src_ranges)
+        assert xf.src_sha1 == src_sha1
 
   def AssertSequenceGood(self):
     # Simulate the sequences of transfers we will output, and check that:
