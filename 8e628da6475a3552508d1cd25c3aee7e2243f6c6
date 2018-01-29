@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2bb3450d_5881fb92",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-29T21:53:13Z",
+      "side": 1,
+      "message": "Ninja uses stat() instead of lstat(), so this rule never creates what it claims to create (we don\u0027t support symlinks in the build graph). This would either need to happen as a side-effect of the primary architecture, without symlinks, or with dummy real files that have a side-effect.",
+      "revId": "8e628da6475a3552508d1cd25c3aee7e2243f6c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
