@@ -12,7 +12,9 @@ ifeq ($(strip $(LOCAL_MODULE_SUFFIX)),)
 LOCAL_MODULE_SUFFIX := $(TARGET_EXECUTABLE_SUFFIX)
 endif
 
+ifdef target-executable-hook
 $(call target-executable-hook)
+endif
 
 skip_build_from_source :=
 ifdef LOCAL_PREBUILT_MODULE_FILE
