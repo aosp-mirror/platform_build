@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "ad328aeb_0530d9ab",
+        "filename": "core/aux_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-30T02:40:41Z",
+      "side": 1,
+      "message": "Though looking at this, all of this is disabled unless NANOHUB_TOOLCHAIN is defined, and that\u0027s not defined anywhere.",
+      "parentUuid": "35333ead_eadd5afd",
+      "range": {
+        "startLine": 142,
+        "startChar": 7,
+        "endLine": 142,
+        "endChar": 15
+      },
+      "revId": "893bebc44b16421a1f6b7d4c65e9e3a6a9059ddd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "af82f998_a895ac2c",
         "filename": "core/definitions.mk",
         "patchSetId": 1
