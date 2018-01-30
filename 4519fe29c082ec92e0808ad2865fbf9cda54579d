@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3578bfaf_459567df",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-30T22:48:13Z",
+      "side": 1,
+      "message": "use:\n$(.KATI_obsolete_var BOARD_VNDK_RUNTIME_DISABLE,Use ... instead)",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 26
+      },
+      "revId": "4519fe29c082ec92e0808ad2865fbf9cda54579d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2da8adf_c6fa867f",
+        "filename": "target/product/aosp_x86_64.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-30T22:48:13Z",
+      "side": 1,
+      "message": "nit: spaces for consistency",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 1
+      },
+      "revId": "4519fe29c082ec92e0808ad2865fbf9cda54579d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
