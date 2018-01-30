@@ -258,6 +258,8 @@ ifndef LOCAL_IS_HOST_MODULE
       full_java_bootclasspath_libs := $(call java-lib-header-files,android_system_stubs_current)
     else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
       full_java_bootclasspath_libs := $(call java-lib-header-files,android_test_stubs_current)
+    else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),core_current)
+      full_java_bootclasspath_libs := $(call java-lib-header-files,core.current.stubs)
     else
       ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
         ifeq (,$(TARGET_BUILD_APPS))
@@ -266,9 +268,13 @@ ifndef LOCAL_IS_HOST_MODULE
           full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
         endif
       else
-        full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
+        # core_<ver> is subset of <ver>. Instead of defining a prebuilt lib for core_<ver>,
+        # use the stub for <ver> when building for apps.
+        _version := $(patsubst core_%,%,$(LOCAL_SDK_VERSION))
+        full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(_version))
+        _version :=
       endif
-    endif # current, system_current, system_${VER} or test_current
+    endif # current, system_current, system_${VER}, test_current or core_current
   endif # LOCAL_SDK_VERSION
 
   ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
@@ -460,19 +466,23 @@ ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_SDK_VERSION),system_current)
 my_link_type := java:system
 my_warn_types := java:platform
-my_allowed_types := java:sdk java:system
+my_allowed_types := java:sdk java:system java:core
 else ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
 my_link_type := java:system
 my_warn_types := java:platform
-my_allowed_types := java:sdk java:system
+my_allowed_types := java:sdk java:system java:core
+else ifeq ($(LOCAL_SDK_VERSION),core_current)
+my_link_type := java:core
+my_warn_types :=
+my_allowed_types := java:core
 else ifneq ($(LOCAL_SDK_VERSION),)
 my_link_type := java:sdk
 my_warn_types := java:system java:platform
-my_allowed_types := java:sdk
+my_allowed_types := java:sdk java:core
 else
 my_link_type := java:platform
 my_warn_types :=
-my_allowed_types := java:sdk java:system java:platform
+my_allowed_types := java:sdk java:system java:platform java:core
 endif
 
 ifdef LOCAL_AAPT2_ONLY
