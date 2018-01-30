@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1fd31b58_d6d506d0",
+        "filename": "core/aux_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-30T02:02:45Z",
+      "side": 1,
+      "message": "I\u0027m worried about this causing some errors now. Can you run multiproduct_kati with this on master?",
+      "range": {
+        "startLine": 142,
+        "startChar": 7,
+        "endLine": 142,
+        "endChar": 15
+      },
+      "revId": "893bebc44b16421a1f6b7d4c65e9e3a6a9059ddd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af82f998_a895ac2c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1727,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-01-30T02:02:45Z",
+      "side": 1,
+      "message": ":\u003d ? right? does it matter?",
+      "range": {
+        "startLine": 1727,
+        "startChar": 26,
+        "endLine": 1727,
+        "endChar": 27
+      },
+      "revId": "893bebc44b16421a1f6b7d4c65e9e3a6a9059ddd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
