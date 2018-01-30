@@ -189,14 +189,16 @@ include build/make/core/pdk_config.mk
 
 #
 # -----------------------------------------------------------------
-# Enable dynamic linker developer warnings for userdebug, eng
-# and non-REL builds
+# Enable dynamic linker and hidden API developer warnings for
+# userdebug, eng and non-REL builds
 ifneq ($(TARGET_BUILD_VARIANT),user)
-  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1 \
+                                 ro.art.hiddenapi.warning=1
 else
 # Enable it for user builds as long as they are not final.
 ifneq ($(PLATFORM_VERSION_CODENAME),REL)
-  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1 \
+                                 ro.art.hiddenapi.warning=1
 endif
 endif
 
