@@ -15,6 +15,7 @@
 import bisect
 import os
 import struct
+import threading
 from hashlib import sha1
 
 import rangelib
@@ -111,6 +112,8 @@ class SparseImage(object):
         raise ValueError("Unknown chunk type 0x%04X not supported" %
                          (chunk_type,))
 
+    self.generator_lock = threading.Lock()
+
     self.care_map = rangelib.RangeSet(care_data)
     self.offset_index = [i[0] for i in offset_map]
 
@@ -173,38 +176,38 @@ class SparseImage(object):
     particular is not necessarily equal to the number of ranges in
     'ranges'.
 
-    This generator is stateful -- it depends on the open file object
-    contained in this SparseImage, so you should not try to run two
+    Use a lock to protect the generator so that we will not run two
     instances of this generator on the same object simultaneously."""
 
     f = self.simg_f
-    for s, e in ranges:
-      to_read = e-s
-      idx = bisect.bisect_right(self.offset_index, s) - 1
-      chunk_start, chunk_len, filepos, fill_data = self.offset_map[idx]
-
-      # for the first chunk we may be starting partway through it.
-      remain = chunk_len - (s - chunk_start)
-      this_read = min(remain, to_read)
-      if filepos is not None:
-        p = filepos + ((s - chunk_start) * self.blocksize)
-        f.seek(p, os.SEEK_SET)
-        yield f.read(this_read * self.blocksize)
-      else:
-        yield fill_data * (this_read * (self.blocksize >> 2))
-      to_read -= this_read
-
-      while to_read > 0:
-        # continue with following chunks if this range spans multiple chunks.
-        idx += 1
+    with self.generator_lock:
+      for s, e in ranges:
+        to_read = e-s
+        idx = bisect.bisect_right(self.offset_index, s) - 1
         chunk_start, chunk_len, filepos, fill_data = self.offset_map[idx]
-        this_read = min(chunk_len, to_read)
+
+        # for the first chunk we may be starting partway through it.
+        remain = chunk_len - (s - chunk_start)
+        this_read = min(remain, to_read)
         if filepos is not None:
-          f.seek(filepos, os.SEEK_SET)
+          p = filepos + ((s - chunk_start) * self.blocksize)
+          f.seek(p, os.SEEK_SET)
           yield f.read(this_read * self.blocksize)
         else:
           yield fill_data * (this_read * (self.blocksize >> 2))
         to_read -= this_read
+
+        while to_read > 0:
+          # continue with following chunks if this range spans multiple chunks.
+          idx += 1
+          chunk_start, chunk_len, filepos, fill_data = self.offset_map[idx]
+          this_read = min(chunk_len, to_read)
+          if filepos is not None:
+            f.seek(filepos, os.SEEK_SET)
+            yield f.read(this_read * self.blocksize)
+          else:
+            yield fill_data * (this_read * (self.blocksize >> 2))
+          to_read -= this_read
 
   def LoadFileBlockMap(self, fn, clobbered_blocks):
     remaining = self.care_map
