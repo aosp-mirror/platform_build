@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "35333ead_eadd5afd",
+        "filename": "core/aux_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-30T02:39:06Z",
+      "side": 1,
+      "message": "https://android-build.googleplex.com/builds/view-workplan?viewType\u003dTable\u0026workplanId\u003dL47100000139362272\u0026nodeType\u003dTrybot",
+      "parentUuid": "1fd31b58_d6d506d0",
+      "range": {
+        "startLine": 142,
+        "startChar": 7,
+        "endLine": 142,
+        "endChar": 15
+      },
+      "revId": "893bebc44b16421a1f6b7d4c65e9e3a6a9059ddd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "af82f998_a895ac2c",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-01-30T02:02:45Z",
       "side": 1,
       "message": ":\u003d ? right? does it matter?",
+      "range": {
+        "startLine": 1727,
+        "startChar": 26,
+        "endLine": 1727,
+        "endChar": 27
+      },
+      "revId": "893bebc44b16421a1f6b7d4c65e9e3a6a9059ddd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "970bf622_7cdbb098",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1727,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-30T02:39:06Z",
+      "side": 1,
+      "message": "\u003d is slightly more correct (it doesn\u0027t make a lot of sense to call a static function), but since it\u0027s empty, it really doesn\u0027t matter much either way",
+      "parentUuid": "af82f998_a895ac2c",
       "range": {
         "startLine": 1727,
         "startChar": 26,
