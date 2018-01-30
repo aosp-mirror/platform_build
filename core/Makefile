@@ -574,6 +574,16 @@ $(WALL_WERROR):
 $(call dist-for-goals,droidcore,$(WALL_WERROR))
 
 # -----------------------------------------------------------------
+# Modules missing profile files
+PGO_PROFILE_MISSING := $(PRODUCT_OUT)/pgo_profile_file_missing.txt
+$(PGO_PROFILE_MISSING):
+	@rm -f $@
+	echo "# Modules missing PGO profile files" >> $@
+	for m in $(SOONG_MODULES_MISSING_PGO_PROFILE_FILE); do echo $$m >> $@; done
+
+$(call dist-for-goals,droidcore,$(PGO_PROFILE_MISSING))
+
+# -----------------------------------------------------------------
 # The dev key is used to sign this package, and as the key required
 # for future OTA packages installed by this system.  Actual product
 # deliverables will be re-signed by hand.  We expect this file to
