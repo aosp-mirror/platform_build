@@ -20,7 +20,9 @@ ifneq ($(strip $(LOCAL_MODULE_STEM)$(LOCAL_BUILT_MODULE_STEM)$(LOCAL_MODULE_STEM
 $(error $(LOCAL_PATH): Cannot set module stem for a library)
 endif
 
+ifdef target-shared-library-hook
 $(call target-shared-library-hook)
+endif
 
 skip_build_from_source :=
 ifdef LOCAL_PREBUILT_MODULE_FILE
