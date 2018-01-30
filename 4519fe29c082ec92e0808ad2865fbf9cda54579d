@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a9407a65_225647c8",
+        "filename": "target/board/generic_x86_64/BoardConfig.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-30T23:03:42Z",
+      "side": 1,
+      "message": "No \".\" in KATI_obsolete_var",
+      "parentUuid": "3578bfaf_459567df",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 26
+      },
+      "revId": "4519fe29c082ec92e0808ad2865fbf9cda54579d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b2da8adf_c6fa867f",
         "filename": "target/product/aosp_x86_64.mk",
         "patchSetId": 11
