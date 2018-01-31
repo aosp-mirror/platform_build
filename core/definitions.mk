@@ -1723,6 +1723,10 @@ define delete-dummy.o-if-no-objs
 $(if $(PRIVATE_ALL_OBJECTS),,$(hide) $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)AR) d $(1) $(dir $(1))dummy.o \
   && rm -f $(dir $(1))dummy.o)
 endef
+else
+create-dummy.o-if-no-objs =
+get-dummy.o-if-no-objs =
+delete-dummy.o-if-no-objs =
 endif  # HOST_OS is darwin
 
 # Explicitly delete the archive first so that ar doesn't
