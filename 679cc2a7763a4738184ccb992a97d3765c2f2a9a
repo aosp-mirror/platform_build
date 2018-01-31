@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "600fa682_32c6c297",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-01-31T00:18:05Z",
+      "side": 1,
+      "message": "Dan and Colin,\n\nI need to check the content of files in $@.list, to make sure there is no specific word \"presubmit\" exists. As the files are in different folders, I can\u0027t just do a single grep call. Is there another way you can think of to enforce the check on file content? Thanks!",
+      "revId": "679cc2a7763a4738184ccb992a97d3765c2f2a9a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
