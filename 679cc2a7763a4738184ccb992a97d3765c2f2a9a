@@ -16,6 +16,24 @@
       "revId": "679cc2a7763a4738184ccb992a97d3765c2f2a9a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "966d8f71_2f50b8f2",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-01-31T00:27:38Z",
+      "side": 1,
+      "message": "`cat $@.list | xargs grep`, or with a for loop and $$(cat $@.list)",
+      "parentUuid": "600fa682_32c6c297",
+      "revId": "679cc2a7763a4738184ccb992a97d3765c2f2a9a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
