@@ -29,35 +29,17 @@ import re
 import sys
 
 import common
-import sparse_img
-
-
-def _GetImage(which, tmpdir):
-  assert which in ('system', 'vendor')
-
-  path = os.path.join(tmpdir, 'IMAGES', which + '.img')
-  mappath = os.path.join(tmpdir, 'IMAGES', which + '.map')
-
-  # Map file must exist (allowed to be empty).
-  assert os.path.exists(path) and os.path.exists(mappath)
-
-  clobbered_blocks = '0'
-  return sparse_img.SparseImage(path, mappath, clobbered_blocks)
 
 
 def _ReadFile(file_name, unpacked_name, round_up=False):
   """Constructs and returns a File object. Rounds up its size if needed."""
-
-  def RoundUpTo4K(value):
-    rounded_up = value + 4095
-    return rounded_up - (rounded_up % 4096)
 
   assert os.path.exists(unpacked_name)
   with open(unpacked_name, 'r') as f:
     file_data = f.read()
   file_size = len(file_data)
   if round_up:
-    file_size_rounded_up = RoundUpTo4K(file_size)
+    file_size_rounded_up = common.RoundUpTo4K(file_size)
     file_data += '\0' * (file_size_rounded_up - file_size)
   return common.File(file_name, file_data)
 
@@ -79,33 +61,28 @@ def ValidateFileConsistency(input_zip, input_tmp):
 
   def CheckAllFiles(which):
     logging.info('Checking %s image.', which)
-    image = _GetImage(which, input_tmp)
+    image = common.GetSparseImage(which, input_tmp, input_zip)
     prefix = '/' + which
     for entry in image.file_map:
+      # Skip entries like '__NONZERO-0'.
       if not entry.startswith(prefix):
         continue
 
       # Read the blocks that the file resides. Note that it will contain the
       # bytes past the file length, which is expected to be padded with '\0's.
       ranges = image.file_map[entry]
+
+      incomplete = ranges.extra.get('incomplete', False)
+      if incomplete:
+        logging.warning('Skipping %s that has incomplete block list', entry)
+        continue
+
       blocks_sha1 = image.RangeSha1(ranges)
 
       # The filename under unpacked directory, such as SYSTEM/bin/sh.
       unpacked_name = os.path.join(
           input_tmp, which.upper(), entry[(len(prefix) + 1):])
       unpacked_file = _ReadFile(entry, unpacked_name, True)
-      file_size = unpacked_file.size
-
-      # block.map may contain less blocks, because mke2fs may skip allocating
-      # blocks if they contain all zeros. We can't reconstruct such a file from
-      # its block list. (Bug: 65213616)
-      if file_size > ranges.size() * 4096:
-        logging.warning(
-            'Skipping %s that has less blocks: file size %d-byte,'
-            ' ranges %s (%d-byte)', entry, file_size, ranges,
-            ranges.size() * 4096)
-        continue
-
       file_sha1 = unpacked_file.sha1
       assert blocks_sha1 == file_sha1, \
           'file: %s, range: %s, blocks_sha1: %s, file_sha1: %s' % (
