@@ -31,11 +31,9 @@ import tempfile
 import threading
 import time
 import zipfile
+from hashlib import sha1, sha256
 
 import blockimgdiff
-
-from hashlib import sha1 as sha1
-
 
 class Options(object):
   def __init__(self):
@@ -259,6 +257,20 @@ def LoadInfoDict(input_file, input_dir=None):
 
   d["build.prop"] = LoadBuildProp(read_helper, 'SYSTEM/build.prop')
   d["vendor.build.prop"] = LoadBuildProp(read_helper, 'VENDOR/build.prop')
+
+  # Set up the salt (based on fingerprint or thumbprint) that will be used when
+  # adding AVB footer.
+  if d.get("avb_enable") == "true":
+    fp = None
+    if "build.prop" in d:
+      build_prop = d["build.prop"]
+      if "ro.build.fingerprint" in build_prop:
+        fp = build_prop["ro.build.fingerprint"]
+      elif "ro.build.thumbprint" in build_prop:
+        fp = build_prop["ro.build.thumbprint"]
+    if fp:
+      d["avb_salt"] = sha256(fp).hexdigest()
+
   return d
 
 
