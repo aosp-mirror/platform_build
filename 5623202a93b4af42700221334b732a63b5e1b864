@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "47e47307_20960532",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2018-02-01T01:29:48Z",
+      "side": 1,
+      "message": "We need to consider LOCAL_SDK_VERSION: \u003d core_current and $ (TARGET_BUILD_APPS): \u003d apps case.\nIn this case, sdk_vcore_current is added to JAVA_LIBRARIES, which causes a build error.",
+      "range": {
+        "startLine": 77,
+        "startChar": 2,
+        "endLine": 77,
+        "endChar": 6
+      },
+      "revId": "5623202a93b4af42700221334b732a63b5e1b864",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
