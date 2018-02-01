@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e37fc1ec_7f0e6020",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 781,
+      "author": {
+        "id": 1060166
+      },
+      "writtenOn": "2018-02-01T22:21:35Z",
+      "side": 1,
+      "message": "I think it\u0027s better to be more verbose, let\u0027s say \"sdk-level\" and \"security-patch-level\"?",
+      "range": {
+        "startLine": 781,
+        "startChar": 7,
+        "endLine": 781,
+        "endChar": 15
+      },
+      "revId": "43f2c605699952b9da8d4025c9fe18d0aa874d7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
