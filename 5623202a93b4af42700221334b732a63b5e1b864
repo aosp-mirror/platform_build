@@ -22,6 +22,30 @@
       "revId": "5623202a93b4af42700221334b732a63b5e1b864",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04d5e3cf_9d880447",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-02-01T07:15:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47e47307_20960532",
+      "range": {
+        "startLine": 77,
+        "startChar": 2,
+        "endLine": 77,
+        "endChar": 6
+      },
+      "revId": "5623202a93b4af42700221334b732a63b5e1b864",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
