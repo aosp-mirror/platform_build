@@ -22,6 +22,30 @@
       "revId": "43f2c605699952b9da8d4025c9fe18d0aa874d7f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe8fd2a4_a8ba7e97",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 781,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-02-01T23:20:58Z",
+      "side": 1,
+      "message": "I can make that change. (Was thinking about aligning with the property name in build.prop, but that seems not true even prior to this CL, e.g. \"post-build-incremental\".)\n\nAlso to confirm, did you mean \"post-sdk-level\"? That looks more consistent with other pre-/post- prefixes.",
+      "parentUuid": "e37fc1ec_7f0e6020",
+      "range": {
+        "startLine": 781,
+        "startChar": 7,
+        "endLine": 781,
+        "endChar": 15
+      },
+      "revId": "43f2c605699952b9da8d4025c9fe18d0aa874d7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
