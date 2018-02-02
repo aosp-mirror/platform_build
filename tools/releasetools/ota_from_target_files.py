@@ -919,7 +919,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if OPTIONS.two_step:
     if not source_info.get("multistage_support"):
       assert False, "two-step packages not supported by this build"
-    fs = OPTIONS.source_info_dict["fstab"]["/misc"]
+    fs = source_info["fstab"]["/misc"]
     assert fs.fs_type.upper() == "EMMC", \
         "two-step packages only supported on devices with EMMC /misc partitions"
     bcb_dev = {"bcb_dev" : fs.device}
@@ -1049,7 +1049,6 @@ else
   if OPTIONS.wipe_user_data:
     script.Print("Erasing user data...")
     script.FormatPartition("/data")
-    metadata["ota-wipe"] = "yes"
 
   if OPTIONS.two_step:
     script.AppendExtra("""
@@ -1200,7 +1199,6 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   if OPTIONS.wipe_user_data:
     with open(properties_file, "a") as f:
       f.write("POWERWASH=1\n")
-    metadata["ota-wipe"] = "yes"
 
   # Add the signed payload file and properties into the zip. In order to
   # support streaming, we pack payload.bin, payload_properties.txt and
