@@ -654,6 +654,9 @@ ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED := \
 ALL_MODULES.$(my_register_name).TARGET_REQUIRED := \
     $(strip $(ALL_MODULES.$(my_register_name).TARGET_REQUIRED)\
         $(LOCAL_TARGET_REQUIRED_MODULES))
+ALL_MODULES.$(my_register_name).HOST_REQUIRED := \
+    $(strip $(ALL_MODULES.$(my_register_name).HOST_REQUIRED)\
+        $(LOCAL_HOST_REQUIRED_MODULES))
 ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS := \
     $(ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS) $(event_log_tags)
 ALL_MODULES.$(my_register_name).MAKEFILE := \
