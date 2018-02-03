@@ -25,6 +25,7 @@ class RangeSet(object):
 
   def __init__(self, data=None):
     self.monotonic = False
+    self._extra = {}
     if isinstance(data, str):
       self._parse_internal(data)
     elif data:
@@ -55,6 +56,10 @@ class RangeSet(object):
 
   def __repr__(self):
     return '<RangeSet("' + self.to_string() + '")>'
+
+  @property
+  def extra(self):
+    return self._extra
 
   @classmethod
   def parse(cls, text):
