@@ -140,7 +140,6 @@ import zipfile
 
 import common
 import edify_generator
-import sparse_img
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -568,31 +567,6 @@ def WriteFingerprintAssertion(script, target_info, source_info):
         source_info.GetBuildProp("ro.build.thumbprint"))
 
 
-def GetImage(which, tmpdir):
-  """Returns an image object suitable for passing to BlockImageDiff.
-
-  'which' partition must be "system" or "vendor". A prebuilt image and file
-  map must already exist in tmpdir.
-  """
-
-  assert which in ("system", "vendor")
-
-  path = os.path.join(tmpdir, "IMAGES", which + ".img")
-  mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
-
-  # The image and map files must have been created prior to calling
-  # ota_from_target_files.py (since LMP).
-  assert os.path.exists(path) and os.path.exists(mappath)
-
-  # Bug: http://b/20939131
-  # In ext4 filesystems, block 0 might be changed even being mounted
-  # R/O. We add it to clobbered_blocks so that it will be written to the
-  # target unconditionally. Note that they are still part of care_map.
-  clobbered_blocks = "0"
-
-  return sparse_img.SparseImage(path, mappath, clobbered_blocks)
-
-
 def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
                                            source_info=None):
   """Adds compatibility info into the output zip if it's Treble-enabled target.
@@ -778,7 +752,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   # has the effect of writing new data from the package to the entire
   # partition, but lets us reuse the updater code that writes incrementals to
   # do it.
-  system_tgt = GetImage("system", OPTIONS.input_tmp)
+  system_tgt = common.GetSparseImage("system", OPTIONS.input_tmp, input_zip)
   system_tgt.ResetFileMap()
   system_diff = common.BlockDifference("system", system_tgt, src=None)
   system_diff.WriteScript(script, output_zip)
@@ -789,7 +763,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   if HasVendorPartition(input_zip):
     script.ShowProgress(0.1, 0)
 
-    vendor_tgt = GetImage("vendor", OPTIONS.input_tmp)
+    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.input_tmp, input_zip)
     vendor_tgt.ResetFileMap()
     vendor_diff = common.BlockDifference("vendor", vendor_tgt)
     vendor_diff.WriteScript(script, output_zip)
@@ -962,8 +936,8 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   target_recovery = common.GetBootableImage(
       "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
 
-  system_src = GetImage("system", OPTIONS.source_tmp)
-  system_tgt = GetImage("system", OPTIONS.target_tmp)
+  system_src = common.GetSparseImage("system", OPTIONS.source_tmp, source_zip)
+  system_tgt = common.GetSparseImage("system", OPTIONS.target_tmp, target_zip)
 
   blockimgdiff_version = max(
       int(i) for i in target_info.get("blockimgdiff_versions", "1").split(","))
@@ -988,8 +962,8 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if HasVendorPartition(target_zip):
     if not HasVendorPartition(source_zip):
       raise RuntimeError("can't generate incremental that adds /vendor")
-    vendor_src = GetImage("vendor", OPTIONS.source_tmp)
-    vendor_tgt = GetImage("vendor", OPTIONS.target_tmp)
+    vendor_src = common.GetSparseImage("vendor", OPTIONS.source_tmp, source_zip)
+    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.target_tmp, target_zip)
 
     # Check first block of vendor partition for remount R/W only if
     # disk type is ext4
