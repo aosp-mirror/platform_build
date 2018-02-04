@@ -154,15 +154,11 @@ def VerifyAbOtaPayload(cert, package):
   print('Verifying A/B OTA payload signatures...')
 
   # Dump pubkey from the certificate.
-  pubkey = common.MakeTempFile(prefix="key-", suffix=".key")
-  cmd = ['openssl', 'x509', '-pubkey', '-noout', '-in', cert, '-out', pubkey]
-  proc = common.Run(cmd, stdout=subprocess.PIPE)
-  stdoutdata, _ = proc.communicate()
-  assert proc.returncode == 0, \
-      'Failed to dump public key from certificate: %s\n%s' % (cert, stdoutdata)
+  pubkey = common.MakeTempFile(prefix="key-", suffix=".pem")
+  with open(pubkey, 'wb') as pubkey_fp:
+    pubkey_fp.write(common.ExtractPublicKey(cert))
 
-  package_dir = tempfile.mkdtemp(prefix='package-')
-  common.OPTIONS.tempfiles.append(package_dir)
+  package_dir = common.MakeTempDir(prefix='package-')
 
   # Signature verification with delta_generator.
   payload_file = package_zip.extract('payload.bin', package_dir)

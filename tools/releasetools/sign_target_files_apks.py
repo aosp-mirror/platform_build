@@ -538,10 +538,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
             " as payload verification key.\n\n")
 
     print("Using %s for payload verification." % (mapped_keys[0],))
-    cmd = common.Run(
-        ["openssl", "x509", "-pubkey", "-noout", "-in", mapped_keys[0]],
-        stdout=subprocess.PIPE)
-    pubkey, _ = cmd.communicate()
+    pubkey = common.ExtractPublicKey(mapped_keys[0])
     common.ZipWriteStr(
         output_tf_zip,
         "SYSTEM/etc/update_engine/update-payload-key.pub.pem",

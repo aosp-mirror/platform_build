@@ -21,16 +21,10 @@ import unittest
 import zipfile
 
 import common
+import test_utils
 from ota_from_target_files import (
     _LoadOemDicts, BuildInfo, GetPackageMetadata, Payload, PayloadSigner,
     WriteFingerprintAssertion)
-
-
-def get_testdata_dir():
-  """Returns the testdata dir, in relative to the script dir."""
-  # The script dir is the one we want, which could be different from pwd.
-  current_dir = os.path.dirname(os.path.realpath(__file__))
-  return os.path.join(current_dir, 'testdata')
 
 
 class MockScriptWriter(object):
@@ -495,7 +489,7 @@ class PayloadSignerTest(unittest.TestCase):
   SIGNED_SIGFILE = 'signed-sigfile.bin'
 
   def setUp(self):
-    self.testdata_dir = get_testdata_dir()
+    self.testdata_dir = test_utils.get_testdata_dir()
     self.assertTrue(os.path.exists(self.testdata_dir))
 
     common.OPTIONS.payload_signer = None
@@ -571,7 +565,7 @@ class PayloadSignerTest(unittest.TestCase):
 class PayloadTest(unittest.TestCase):
 
   def setUp(self):
-    self.testdata_dir = get_testdata_dir()
+    self.testdata_dir = test_utils.get_testdata_dir()
     self.assertTrue(os.path.exists(self.testdata_dir))
 
     common.OPTIONS.wipe_user_data = False
