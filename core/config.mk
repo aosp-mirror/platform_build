@@ -872,6 +872,11 @@ PLATFORM_SEPOLICY_VERSION := $(join $(addsuffix .,$(sepolicy_major_vers)), $(sep
 sepolicy_major_vers :=
 sepolicy_minor_vers :=
 
+# A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
+PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
+    26.0 \
+    27.0
+
 # ###############################################################
 # Set up final options.
 # ###############################################################
