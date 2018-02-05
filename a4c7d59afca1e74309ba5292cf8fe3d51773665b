@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9dfefc64_f8a7190a",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 844,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-05T19:49:05Z",
+      "side": 0,
+      "message": "This would now allow most of the tree to use this variable, is that actually what you want?",
+      "range": {
+        "startLine": 844,
+        "startChar": 0,
+        "endLine": 844,
+        "endChar": 88
+      },
+      "revId": "a4c7d59afca1e74309ba5292cf8fe3d51773665b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
