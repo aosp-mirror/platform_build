@@ -16,6 +16,24 @@
       "revId": "9bd5d73b6e19cdbb63213ae59d7718e06cadfd8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "804bbd7f_9df2a3f7",
+        "filename": "target/product/core_pure_64_bit.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2018-02-05T17:21:50Z",
+      "side": 1,
+      "message": "i\u0027ve used both terms, but \"only\" seems more intention-revealing than \"pure\".\n\nsee also the comment on L18.",
+      "parentUuid": "e1a30376_d12bc5aa",
+      "revId": "9bd5d73b6e19cdbb63213ae59d7718e06cadfd8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
