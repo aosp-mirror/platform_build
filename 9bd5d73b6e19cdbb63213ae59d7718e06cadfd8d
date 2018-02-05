@@ -52,6 +52,24 @@
       "revId": "9bd5d73b6e19cdbb63213ae59d7718e06cadfd8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "110bc25f_21aed7e4",
+        "filename": "target/product/core_pure_64_bit.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-02-05T18:11:53Z",
+      "side": 1,
+      "message": "yeah, I was weighing between the two. Renamed to core_64_bit_only now. I\u0027ll try to use the same naming scheme for the products.",
+      "parentUuid": "bc2cdca3_e325eb00",
+      "revId": "9bd5d73b6e19cdbb63213ae59d7718e06cadfd8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
