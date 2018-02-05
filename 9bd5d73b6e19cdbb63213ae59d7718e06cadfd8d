@@ -34,6 +34,24 @@
       "revId": "9bd5d73b6e19cdbb63213ae59d7718e06cadfd8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bc2cdca3_e325eb00",
+        "filename": "target/product/core_pure_64_bit.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2018-02-05T17:27:59Z",
+      "side": 1,
+      "message": "heh, yeah - I think that\u0027s just a symptom of anton\u0027s indecision given that it isn\u0027t copy-pasta :)",
+      "parentUuid": "804bbd7f_9df2a3f7",
+      "revId": "9bd5d73b6e19cdbb63213ae59d7718e06cadfd8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
