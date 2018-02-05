@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e1a30376_d12bc5aa",
+        "filename": "target/product/core_pure_64_bit.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2018-02-05T13:27:03Z",
+      "side": 1,
+      "message": "i wonder whether core_64_bit_only.mk would be a better name ? enh@, what do you think ?",
+      "revId": "9bd5d73b6e19cdbb63213ae59d7718e06cadfd8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
