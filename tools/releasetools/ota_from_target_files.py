@@ -140,7 +140,6 @@ import zipfile
 
 import common
 import edify_generator
-import sparse_img
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -360,6 +359,122 @@ class PayloadSigner(object):
     return out_file
 
 
+class Payload(object):
+  """Manages the creation and the signing of an A/B OTA Payload."""
+
+  PAYLOAD_BIN = 'payload.bin'
+  PAYLOAD_PROPERTIES_TXT = 'payload_properties.txt'
+
+  def __init__(self):
+    # The place where the output from the subprocess should go.
+    self._log_file = sys.stdout if OPTIONS.verbose else subprocess.PIPE
+    self.payload_file = None
+    self.payload_properties = None
+
+  def Generate(self, target_file, source_file=None, additional_args=None):
+    """Generates a payload from the given target-files zip(s).
+
+    Args:
+      target_file: The filename of the target build target-files zip.
+      source_file: The filename of the source build target-files zip; or None if
+          generating a full OTA.
+      additional_args: A list of additional args that should be passed to
+          brillo_update_payload script; or None.
+    """
+    if additional_args is None:
+      additional_args = []
+
+    payload_file = common.MakeTempFile(prefix="payload-", suffix=".bin")
+    cmd = ["brillo_update_payload", "generate",
+           "--payload", payload_file,
+           "--target_image", target_file]
+    if source_file is not None:
+      cmd.extend(["--source_image", source_file])
+    cmd.extend(additional_args)
+    p = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
+    stdoutdata, _ = p.communicate()
+    assert p.returncode == 0, \
+        "brillo_update_payload generate failed: {}".format(stdoutdata)
+
+    self.payload_file = payload_file
+    self.payload_properties = None
+
+  def Sign(self, payload_signer):
+    """Generates and signs the hashes of the payload and metadata.
+
+    Args:
+      payload_signer: A PayloadSigner() instance that serves the signing work.
+
+    Raises:
+      AssertionError: On any failure when calling brillo_update_payload script.
+    """
+    assert isinstance(payload_signer, PayloadSigner)
+
+    # 1. Generate hashes of the payload and metadata files.
+    payload_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
+    metadata_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
+    cmd = ["brillo_update_payload", "hash",
+           "--unsigned_payload", self.payload_file,
+           "--signature_size", "256",
+           "--metadata_hash_file", metadata_sig_file,
+           "--payload_hash_file", payload_sig_file]
+    p1 = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
+    p1.communicate()
+    assert p1.returncode == 0, "brillo_update_payload hash failed"
+
+    # 2. Sign the hashes.
+    signed_payload_sig_file = payload_signer.Sign(payload_sig_file)
+    signed_metadata_sig_file = payload_signer.Sign(metadata_sig_file)
+
+    # 3. Insert the signatures back into the payload file.
+    signed_payload_file = common.MakeTempFile(prefix="signed-payload-",
+                                              suffix=".bin")
+    cmd = ["brillo_update_payload", "sign",
+           "--unsigned_payload", self.payload_file,
+           "--payload", signed_payload_file,
+           "--signature_size", "256",
+           "--metadata_signature_file", signed_metadata_sig_file,
+           "--payload_signature_file", signed_payload_sig_file]
+    p1 = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
+    p1.communicate()
+    assert p1.returncode == 0, "brillo_update_payload sign failed"
+
+    # 4. Dump the signed payload properties.
+    properties_file = common.MakeTempFile(prefix="payload-properties-",
+                                          suffix=".txt")
+    cmd = ["brillo_update_payload", "properties",
+           "--payload", signed_payload_file,
+           "--properties_file", properties_file]
+    p1 = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
+    p1.communicate()
+    assert p1.returncode == 0, "brillo_update_payload properties failed"
+
+    if OPTIONS.wipe_user_data:
+      with open(properties_file, "a") as f:
+        f.write("POWERWASH=1\n")
+
+    self.payload_file = signed_payload_file
+    self.payload_properties = properties_file
+
+  def WriteToZip(self, output_zip):
+    """Writes the payload to the given zip.
+
+    Args:
+      output_zip: The output ZipFile instance.
+    """
+    assert self.payload_file is not None
+    assert self.payload_properties is not None
+
+    # Add the signed payload file and properties into the zip. In order to
+    # support streaming, we pack them as ZIP_STORED. So these entries can be
+    # read directly with the offset and length pairs.
+    common.ZipWrite(output_zip, self.payload_file, arcname=Payload.PAYLOAD_BIN,
+                    compress_type=zipfile.ZIP_STORED)
+    common.ZipWrite(output_zip, self.payload_properties,
+                    arcname=Payload.PAYLOAD_PROPERTIES_TXT,
+                    compress_type=zipfile.ZIP_STORED)
+
+
 def SignOutput(temp_zip_name, output_zip_name):
   pw = OPTIONS.key_passwords[OPTIONS.package_key]
 
@@ -450,31 +565,6 @@ def WriteFingerprintAssertion(script, target_info, source_info):
     script.AssertFingerprintOrThumbprint(
         target_info.fingerprint,
         source_info.GetBuildProp("ro.build.thumbprint"))
-
-
-def GetImage(which, tmpdir):
-  """Returns an image object suitable for passing to BlockImageDiff.
-
-  'which' partition must be "system" or "vendor". A prebuilt image and file
-  map must already exist in tmpdir.
-  """
-
-  assert which in ("system", "vendor")
-
-  path = os.path.join(tmpdir, "IMAGES", which + ".img")
-  mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
-
-  # The image and map files must have been created prior to calling
-  # ota_from_target_files.py (since LMP).
-  assert os.path.exists(path) and os.path.exists(mappath)
-
-  # Bug: http://b/20939131
-  # In ext4 filesystems, block 0 might be changed even being mounted
-  # R/O. We add it to clobbered_blocks so that it will be written to the
-  # target unconditionally. Note that they are still part of care_map.
-  clobbered_blocks = "0"
-
-  return sparse_img.SparseImage(path, mappath, clobbered_blocks)
 
 
 def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
@@ -662,7 +752,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   # has the effect of writing new data from the package to the entire
   # partition, but lets us reuse the updater code that writes incrementals to
   # do it.
-  system_tgt = GetImage("system", OPTIONS.input_tmp)
+  system_tgt = common.GetSparseImage("system", OPTIONS.input_tmp, input_zip)
   system_tgt.ResetFileMap()
   system_diff = common.BlockDifference("system", system_tgt, src=None)
   system_diff.WriteScript(script, output_zip)
@@ -673,7 +763,7 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   if HasVendorPartition(input_zip):
     script.ShowProgress(0.1, 0)
 
-    vendor_tgt = GetImage("vendor", OPTIONS.input_tmp)
+    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.input_tmp, input_zip)
     vendor_tgt.ResetFileMap()
     vendor_diff = common.BlockDifference("vendor", vendor_tgt)
     vendor_diff.WriteScript(script, output_zip)
@@ -846,8 +936,8 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   target_recovery = common.GetBootableImage(
       "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
 
-  system_src = GetImage("system", OPTIONS.source_tmp)
-  system_tgt = GetImage("system", OPTIONS.target_tmp)
+  system_src = common.GetSparseImage("system", OPTIONS.source_tmp, source_zip)
+  system_tgt = common.GetSparseImage("system", OPTIONS.target_tmp, target_zip)
 
   blockimgdiff_version = max(
       int(i) for i in target_info.get("blockimgdiff_versions", "1").split(","))
@@ -872,8 +962,8 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if HasVendorPartition(target_zip):
     if not HasVendorPartition(source_zip):
       raise RuntimeError("can't generate incremental that adds /vendor")
-    vendor_src = GetImage("vendor", OPTIONS.source_tmp)
-    vendor_tgt = GetImage("vendor", OPTIONS.target_tmp)
+    vendor_src = common.GetSparseImage("vendor", OPTIONS.source_tmp, source_zip)
+    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.target_tmp, target_zip)
 
     # Check first block of vendor partition for remount R/W only if
     # disk type is ext4
@@ -919,7 +1009,7 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if OPTIONS.two_step:
     if not source_info.get("multistage_support"):
       assert False, "two-step packages not supported by this build"
-    fs = OPTIONS.source_info_dict["fstab"]["/misc"]
+    fs = source_info["fstab"]["/misc"]
     assert fs.fs_type.upper() == "EMMC", \
         "two-step packages only supported on devices with EMMC /misc partitions"
     bcb_dev = {"bcb_dev" : fs.device}
@@ -1049,7 +1139,6 @@ else
   if OPTIONS.wipe_user_data:
     script.Print("Erasing user data...")
     script.FormatPartition("/data")
-    metadata["ota-wipe"] = "yes"
 
   if OPTIONS.two_step:
     script.AppendExtra("""
@@ -1123,12 +1212,6 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
       value += ' ' * (expected_length - len(value))
     return value
 
-  # The place where the output from the subprocess should go.
-  log_file = sys.stdout if OPTIONS.verbose else subprocess.PIPE
-
-  # Get the PayloadSigner to be used in step 3.
-  payload_signer = PayloadSigner()
-
   # Stage the output zip package for package signing.
   temp_zip_file = tempfile.NamedTemporaryFile()
   output_zip = zipfile.ZipFile(temp_zip_file, "w",
@@ -1144,78 +1227,23 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
 
-  # 1. Generate payload.
-  payload_file = common.MakeTempFile(prefix="payload-", suffix=".bin")
-  cmd = ["brillo_update_payload", "generate",
-         "--payload", payload_file,
-         "--target_image", target_file]
-  if source_file is not None:
-    cmd.extend(["--source_image", source_file])
+  # Generate payload.
+  payload = Payload()
+
+  # Enforce a max timestamp this payload can be applied on top of.
   if OPTIONS.downgrade:
     max_timestamp = source_info.GetBuildProp("ro.build.date.utc")
   else:
     max_timestamp = metadata["post-timestamp"]
-  cmd.extend(["--max_timestamp", max_timestamp])
-  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
-  p1.communicate()
-  assert p1.returncode == 0, "brillo_update_payload generate failed"
+  additional_args = ["--max_timestamp", max_timestamp]
 
-  # 2. Generate hashes of the payload and metadata files.
-  payload_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
-  metadata_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
-  cmd = ["brillo_update_payload", "hash",
-         "--unsigned_payload", payload_file,
-         "--signature_size", "256",
-         "--metadata_hash_file", metadata_sig_file,
-         "--payload_hash_file", payload_sig_file]
-  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
-  p1.communicate()
-  assert p1.returncode == 0, "brillo_update_payload hash failed"
+  payload.Generate(target_file, source_file, additional_args)
 
-  # 3. Sign the hashes and insert them back into the payload file.
-  # 3a. Sign the payload hash.
-  signed_payload_sig_file = payload_signer.Sign(payload_sig_file)
+  # Sign the payload.
+  payload.Sign(PayloadSigner())
 
-  # 3b. Sign the metadata hash.
-  signed_metadata_sig_file = payload_signer.Sign(metadata_sig_file)
-
-  # 3c. Insert the signatures back into the payload file.
-  signed_payload_file = common.MakeTempFile(prefix="signed-payload-",
-                                            suffix=".bin")
-  cmd = ["brillo_update_payload", "sign",
-         "--unsigned_payload", payload_file,
-         "--payload", signed_payload_file,
-         "--signature_size", "256",
-         "--metadata_signature_file", signed_metadata_sig_file,
-         "--payload_signature_file", signed_payload_sig_file]
-  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
-  p1.communicate()
-  assert p1.returncode == 0, "brillo_update_payload sign failed"
-
-  # 4. Dump the signed payload properties.
-  properties_file = common.MakeTempFile(prefix="payload-properties-",
-                                        suffix=".txt")
-  cmd = ["brillo_update_payload", "properties",
-         "--payload", signed_payload_file,
-         "--properties_file", properties_file]
-  p1 = common.Run(cmd, stdout=log_file, stderr=subprocess.STDOUT)
-  p1.communicate()
-  assert p1.returncode == 0, "brillo_update_payload properties failed"
-
-  if OPTIONS.wipe_user_data:
-    with open(properties_file, "a") as f:
-      f.write("POWERWASH=1\n")
-    metadata["ota-wipe"] = "yes"
-
-  # Add the signed payload file and properties into the zip. In order to
-  # support streaming, we pack payload.bin, payload_properties.txt and
-  # care_map.txt as ZIP_STORED. So these entries can be read directly with
-  # the offset and length pairs.
-  common.ZipWrite(output_zip, signed_payload_file, arcname="payload.bin",
-                  compress_type=zipfile.ZIP_STORED)
-  common.ZipWrite(output_zip, properties_file,
-                  arcname="payload_properties.txt",
-                  compress_type=zipfile.ZIP_STORED)
+  # Write the payload into output zip.
+  payload.WriteToZip(output_zip)
 
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
@@ -1226,6 +1254,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
     namelist = target_zip.namelist()
     if care_map_path in namelist:
       care_map_data = target_zip.read(care_map_path)
+      # In order to support streaming, care_map.txt needs to be packed as
+      # ZIP_STORED.
       common.ZipWriteStr(output_zip, "care_map.txt", care_map_data,
                          compress_type=zipfile.ZIP_STORED)
     else:

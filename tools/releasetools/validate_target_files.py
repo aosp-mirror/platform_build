@@ -23,40 +23,23 @@ It performs checks to ensure the integrity of the input zip.
    same check also applies to the vendor image if present.
 """
 
-import common
 import logging
 import os.path
 import re
-import sparse_img
 import sys
 
-
-def _GetImage(which, tmpdir):
-  assert which in ('system', 'vendor')
-
-  path = os.path.join(tmpdir, 'IMAGES', which + '.img')
-  mappath = os.path.join(tmpdir, 'IMAGES', which + '.map')
-
-  # Map file must exist (allowed to be empty).
-  assert os.path.exists(path) and os.path.exists(mappath)
-
-  clobbered_blocks = '0'
-  return sparse_img.SparseImage(path, mappath, clobbered_blocks)
+import common
 
 
 def _ReadFile(file_name, unpacked_name, round_up=False):
   """Constructs and returns a File object. Rounds up its size if needed."""
-
-  def RoundUpTo4K(value):
-    rounded_up = value + 4095
-    return rounded_up - (rounded_up % 4096)
 
   assert os.path.exists(unpacked_name)
   with open(unpacked_name, 'r') as f:
     file_data = f.read()
   file_size = len(file_data)
   if round_up:
-    file_size_rounded_up = RoundUpTo4K(file_size)
+    file_size_rounded_up = common.RoundUpTo4K(file_size)
     file_data += '\0' * (file_size_rounded_up - file_size)
   return common.File(file_name, file_data)
 
@@ -64,13 +47,13 @@ def _ReadFile(file_name, unpacked_name, round_up=False):
 def ValidateFileAgainstSha1(input_tmp, file_name, file_path, expected_sha1):
   """Check if the file has the expected SHA-1."""
 
-  logging.info('Validating the SHA-1 of {}'.format(file_name))
+  logging.info('Validating the SHA-1 of %s', file_name)
   unpacked_name = os.path.join(input_tmp, file_path)
   assert os.path.exists(unpacked_name)
   actual_sha1 = _ReadFile(file_name, unpacked_name, False).sha1
   assert actual_sha1 == expected_sha1, \
       'SHA-1 mismatches for {}. actual {}, expected {}'.format(
-      file_name, actual_sha1, expected_sha1)
+          file_name, actual_sha1, expected_sha1)
 
 
 def ValidateFileConsistency(input_zip, input_tmp):
@@ -78,33 +61,28 @@ def ValidateFileConsistency(input_zip, input_tmp):
 
   def CheckAllFiles(which):
     logging.info('Checking %s image.', which)
-    image = _GetImage(which, input_tmp)
+    image = common.GetSparseImage(which, input_tmp, input_zip)
     prefix = '/' + which
     for entry in image.file_map:
+      # Skip entries like '__NONZERO-0'.
       if not entry.startswith(prefix):
         continue
 
       # Read the blocks that the file resides. Note that it will contain the
       # bytes past the file length, which is expected to be padded with '\0's.
       ranges = image.file_map[entry]
+
+      incomplete = ranges.extra.get('incomplete', False)
+      if incomplete:
+        logging.warning('Skipping %s that has incomplete block list', entry)
+        continue
+
       blocks_sha1 = image.RangeSha1(ranges)
 
       # The filename under unpacked directory, such as SYSTEM/bin/sh.
       unpacked_name = os.path.join(
           input_tmp, which.upper(), entry[(len(prefix) + 1):])
       unpacked_file = _ReadFile(entry, unpacked_name, True)
-      file_size = unpacked_file.size
-
-      # block.map may contain less blocks, because mke2fs may skip allocating
-      # blocks if they contain all zeros. We can't reconstruct such a file from
-      # its block list. (Bug: 65213616)
-      if file_size > ranges.size() * 4096:
-        logging.warning(
-            'Skipping %s that has less blocks: file size %d-byte,'
-            ' ranges %s (%d-byte)', entry, file_size, ranges,
-            ranges.size() * 4096)
-        continue
-
       file_sha1 = unpacked_file.sha1
       assert blocks_sha1 == file_sha1, \
           'file: %s, range: %s, blocks_sha1: %s, file_sha1: %s' % (
@@ -147,10 +125,10 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
 
   script_path = 'SYSTEM/bin/install-recovery.sh'
   if not os.path.exists(os.path.join(input_tmp, script_path)):
-    logging.info('{} does not exist in input_tmp'.format(script_path))
+    logging.info('%s does not exist in input_tmp', script_path)
     return
 
-  logging.info('Checking {}'.format(script_path))
+  logging.info('Checking %s', script_path)
   with open(os.path.join(input_tmp, script_path), 'r') as script:
     lines = script.read().strip().split('\n')
   assert len(lines) >= 6
@@ -168,7 +146,7 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
     expected_recovery_sha1 = applypatch_argv[3].strip()
     assert expected_recovery_check_sha1 == expected_recovery_sha1
     ValidateFileAgainstSha1(input_tmp, 'recovery.img',
-        'SYSTEM/etc/recovery.img', expected_recovery_sha1)
+                            'SYSTEM/etc/recovery.img', expected_recovery_sha1)
   else:
     # We're patching boot.img to get recovery.img where bonus_args is optional
     if applypatch_argv[1] == "-b":
@@ -182,16 +160,17 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
     boot_info = applypatch_argv[boot_info_index].strip().split(':')
     assert len(boot_info) == 4
     ValidateFileAgainstSha1(input_tmp, file_name='boot.img',
-        file_path='IMAGES/boot.img', expected_sha1=boot_info[3])
+                            file_path='IMAGES/boot.img',
+                            expected_sha1=boot_info[3])
 
     recovery_sha1_index = boot_info_index + 2
     expected_recovery_sha1 = applypatch_argv[recovery_sha1_index]
     assert expected_recovery_check_sha1 == expected_recovery_sha1
     ValidateFileAgainstSha1(input_tmp, file_name='recovery.img',
-        file_path='IMAGES/recovery.img',
-        expected_sha1=expected_recovery_sha1)
+                            file_path='IMAGES/recovery.img',
+                            expected_sha1=expected_recovery_sha1)
 
-  logging.info('Done checking {}'.format(script_path))
+  logging.info('Done checking %s', script_path)
 
 
 def main(argv):

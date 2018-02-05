@@ -73,6 +73,7 @@ full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_proguard_jar := $(intermediates.COMMON)/classes-proguard.jar
 full_classes_combined_jar := $(intermediates.COMMON)/classes-combined.jar
 built_dex_intermediate := $(intermediates.COMMON)/dex/classes.dex
+built_dex_hiddenapi := $(intermediates.COMMON)/dex-hiddenapi/classes.dex
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 java_source_list_file := $(intermediates.COMMON)/java-source-list
 
@@ -752,7 +753,14 @@ else
 endif
 endif
 
-$(built_dex): $(built_dex_intermediate)
+ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),) # is_boot_jar
+  $(eval $(call hiddenapi-copy-dex-files,$(built_dex_intermediate),$(built_dex_hiddenapi)))
+  built_dex_copy_from := $(built_dex_hiddenapi)
+else # !is_boot_jar
+  built_dex_copy_from := $(built_dex_intermediate)
+endif # is_boot_jar
+
+$(built_dex): $(built_dex_copy_from)
 	@echo Copying: $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $(dir $@)/classes*.dex
