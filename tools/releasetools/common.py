@@ -1804,6 +1804,31 @@ def ParseCertificate(data):
   cert = "".join(cert).decode('base64')
   return cert
 
+
+def ExtractPublicKey(cert):
+  """Extracts the public key (PEM-encoded) from the given certificate file.
+
+  Args:
+    cert: The certificate filename.
+
+  Returns:
+    The public key string.
+
+  Raises:
+    AssertionError: On non-zero return from 'openssl'.
+  """
+  # The behavior with '-out' is different between openssl 1.1 and openssl 1.0.
+  # While openssl 1.1 writes the key into the given filename followed by '-out',
+  # openssl 1.0 (both of 1.0.1 and 1.0.2) doesn't. So we collect the output from
+  # stdout instead.
+  cmd = ['openssl', 'x509', '-pubkey', '-noout', '-in', cert]
+  proc = Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  pubkey, stderrdata = proc.communicate()
+  assert proc.returncode == 0, \
+      'Failed to dump public key from certificate: %s\n%s' % (cert, stderrdata)
+  return pubkey
+
+
 def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
                       info_dict=None):
   """Generate a binary patch that creates the recovery image starting
