@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ea1af7a_5e0da49a",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-02-06T23:20:00Z",
+      "side": 1,
+      "message": "I think soong_ui should take over updating these files and then tell soong where they are, which will be necessary for soong-only builds.",
+      "revId": "fb32d1fc49e4532a5bf02da836e5e2f4e6cd6e36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9515e919_85141f2d",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-02-06T23:20:00Z",
+      "side": 1,
+      "message": "You\u0027ll need a dependency on the files in $(OUT_DOCS) to cause them to get copied.",
+      "revId": "fb32d1fc49e4532a5bf02da836e5e2f4e6cd6e36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
