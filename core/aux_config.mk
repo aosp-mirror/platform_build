@@ -154,7 +154,7 @@ os_sfx :=_aux_os_config.mk
 config_roots := $(wildcard device vendor)
 all_configs :=
 ifdef config_roots
-all_configs := $(shell find $(config_roots) -maxdepth 4 -name '*$(variant_sfx)' -o -name '*$(os_sfx)' | sort)
+all_configs := $(sort $(shell find $(config_roots) -maxdepth 4 -name '*$(variant_sfx)' -o -name '*$(os_sfx)'))
 endif
 all_os_configs := $(filter %$(os_sfx),$(all_configs))
 all_variant_configs := $(filter %$(variant_sfx),$(all_configs))
