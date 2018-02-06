@@ -838,12 +838,6 @@ else
   DEFAULT_SYSTEM_DEV_CERTIFICATE := build/target/product/security/testkey
 endif
 
-FRAMEWORK_MANIFEST_INPUT_FILES := system/libhidl/manifest.xml
-ifdef DEVICE_FRAMEWORK_MANIFEST_FILE
-  FRAMEWORK_MANIFEST_INPUT_FILES += $(DEVICE_FRAMEWORK_MANIFEST_FILE)
-endif
-$(KATI_obsolete_var DEVICE_FRAMEWORK_MANIFEST_FILE,No one should ever need to use this.)
-
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(OUT_DIR)/build_date.txt)
 
