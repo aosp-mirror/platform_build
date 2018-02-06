@@ -22,6 +22,30 @@
       "revId": "f7140c0f8ca2b3c171ee10bcbc2bb1b9b9bc0576",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a6c5600c_46e7a7a6",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1227,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-02-06T20:54:36Z",
+      "side": 1,
+      "message": "Yes, I have put some comments at L1203.",
+      "parentUuid": "c848350c_c2db2799",
+      "range": {
+        "startLine": 1227,
+        "startChar": 44,
+        "endLine": 1227,
+        "endChar": 56
+      },
+      "revId": "f7140c0f8ca2b3c171ee10bcbc2bb1b9b9bc0576",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
