@@ -21,16 +21,10 @@ import unittest
 import zipfile
 
 import common
+import test_utils
 from ota_from_target_files import (
     _LoadOemDicts, BuildInfo, GetPackageMetadata, Payload, PayloadSigner,
     WriteFingerprintAssertion)
-
-
-def get_testdata_dir():
-  """Returns the testdata dir, in relative to the script dir."""
-  # The script dir is the one we want, which could be different from pwd.
-  current_dir = os.path.dirname(os.path.realpath(__file__))
-  return os.path.join(current_dir, 'testdata')
 
 
 class MockScriptWriter(object):
@@ -320,6 +314,8 @@ class OtaFromTargetFilesTest(unittest.TestCase):
           'ro.product.device' : 'product-device',
           'ro.build.fingerprint' : 'build-fingerprint-target',
           'ro.build.version.incremental' : 'build-version-incremental-target',
+          'ro.build.version.sdk' : '27',
+          'ro.build.version.security_patch' : '2017-12-01',
           'ro.build.date.utc' : '1500000000',
       },
   }
@@ -329,6 +325,8 @@ class OtaFromTargetFilesTest(unittest.TestCase):
           'ro.product.device' : 'product-device',
           'ro.build.fingerprint' : 'build-fingerprint-source',
           'ro.build.version.incremental' : 'build-version-incremental-source',
+          'ro.build.version.sdk' : '25',
+          'ro.build.version.security_patch' : '2016-12-01',
           'ro.build.date.utc' : '1400000000',
       },
   }
@@ -351,6 +349,8 @@ class OtaFromTargetFilesTest(unittest.TestCase):
             'ota-required-cache' : '0',
             'post-build' : 'build-fingerprint-target',
             'post-build-incremental' : 'build-version-incremental-target',
+            'post-sdk-level' : '27',
+            'post-security-patch-level' : '2017-12-01',
             'post-timestamp' : '1500000000',
             'pre-device' : 'product-device',
         },
@@ -369,6 +369,8 @@ class OtaFromTargetFilesTest(unittest.TestCase):
             'ota-required-cache' : '0',
             'post-build' : 'build-fingerprint-target',
             'post-build-incremental' : 'build-version-incremental-target',
+            'post-sdk-level' : '27',
+            'post-security-patch-level' : '2017-12-01',
             'post-timestamp' : '1500000000',
             'pre-device' : 'product-device',
             'pre-build' : 'build-fingerprint-source',
@@ -384,6 +386,8 @@ class OtaFromTargetFilesTest(unittest.TestCase):
             'ota-type' : 'BLOCK',
             'post-build' : 'build-fingerprint-target',
             'post-build-incremental' : 'build-version-incremental-target',
+            'post-sdk-level' : '27',
+            'post-security-patch-level' : '2017-12-01',
             'post-timestamp' : '1500000000',
             'pre-device' : 'product-device',
         },
@@ -399,6 +403,8 @@ class OtaFromTargetFilesTest(unittest.TestCase):
             'ota-type' : 'BLOCK',
             'post-build' : 'build-fingerprint-target',
             'post-build-incremental' : 'build-version-incremental-target',
+            'post-sdk-level' : '27',
+            'post-security-patch-level' : '2017-12-01',
             'post-timestamp' : '1500000000',
             'pre-device' : 'product-device',
             'pre-build' : 'build-fingerprint-source',
@@ -416,6 +422,8 @@ class OtaFromTargetFilesTest(unittest.TestCase):
             'ota-wipe' : 'yes',
             'post-build' : 'build-fingerprint-target',
             'post-build-incremental' : 'build-version-incremental-target',
+            'post-sdk-level' : '27',
+            'post-security-patch-level' : '2017-12-01',
             'post-timestamp' : '1500000000',
             'pre-device' : 'product-device',
         },
@@ -459,6 +467,8 @@ class OtaFromTargetFilesTest(unittest.TestCase):
             'ota-wipe' : 'yes',
             'post-build' : 'build-fingerprint-target',
             'post-build-incremental' : 'build-version-incremental-target',
+            'post-sdk-level' : '27',
+            'post-security-patch-level' : '2017-12-01',
             'pre-device' : 'product-device',
             'pre-build' : 'build-fingerprint-source',
             'pre-build-incremental' : 'build-version-incremental-source',
@@ -481,6 +491,8 @@ class OtaFromTargetFilesTest(unittest.TestCase):
             'ota-type' : 'BLOCK',
             'post-build' : 'build-fingerprint-target',
             'post-build-incremental' : 'build-version-incremental-target',
+            'post-sdk-level' : '27',
+            'post-security-patch-level' : '2017-12-01',
             'post-timestamp' : '1500000001',
             'pre-device' : 'product-device',
             'pre-build' : 'build-fingerprint-source',
@@ -495,7 +507,7 @@ class PayloadSignerTest(unittest.TestCase):
   SIGNED_SIGFILE = 'signed-sigfile.bin'
 
   def setUp(self):
-    self.testdata_dir = get_testdata_dir()
+    self.testdata_dir = test_utils.get_testdata_dir()
     self.assertTrue(os.path.exists(self.testdata_dir))
 
     common.OPTIONS.payload_signer = None
@@ -571,7 +583,7 @@ class PayloadSignerTest(unittest.TestCase):
 class PayloadTest(unittest.TestCase):
 
   def setUp(self):
-    self.testdata_dir = get_testdata_dir()
+    self.testdata_dir = test_utils.get_testdata_dir()
     self.assertTrue(os.path.exists(self.testdata_dir))
 
     common.OPTIONS.wipe_user_data = False

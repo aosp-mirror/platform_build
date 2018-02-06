@@ -21,7 +21,9 @@ import zipfile
 from hashlib import sha1
 
 import common
+import test_utils
 import validate_target_files
+
 
 KiB = 1024
 MiB = 1024 * KiB
@@ -473,6 +475,18 @@ class CommonApkUtilsTest(unittest.TestCase):
 
     with zipfile.ZipFile(target_files, 'r') as input_zip:
       self.assertRaises(ValueError, common.ReadApkCerts, input_zip)
+
+  def test_ExtractPublicKey(self):
+    testdata_dir = test_utils.get_testdata_dir()
+    cert = os.path.join(testdata_dir, 'testkey.x509.pem')
+    pubkey = os.path.join(testdata_dir, 'testkey.pubkey.pem')
+    with open(pubkey, 'rb') as pubkey_fp:
+      self.assertEqual(pubkey_fp.read(), common.ExtractPublicKey(cert))
+
+  def test_ExtractPublicKey_invalidInput(self):
+    testdata_dir = test_utils.get_testdata_dir()
+    wrong_input = os.path.join(testdata_dir, 'testkey.pk8')
+    self.assertRaises(AssertionError, common.ExtractPublicKey, wrong_input)
 
 
 class InstallRecoveryScriptFormatTest(unittest.TestCase):
