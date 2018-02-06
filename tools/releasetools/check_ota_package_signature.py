@@ -165,7 +165,7 @@ def VerifyAbOtaPayload(cert, package):
   cmd = ['delta_generator',
          '--in_file=' + payload_file,
          '--public_key=' + pubkey]
-  proc = common.Run(cmd, stdout=subprocess.PIPE)
+  proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
   stdoutdata, _ = proc.communicate()
   assert proc.returncode == 0, \
       'Failed to verify payload with delta_generator: %s\n%s' % (package,
