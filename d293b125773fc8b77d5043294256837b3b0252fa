@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b77572b_56a5e149",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-06T01:04:41Z",
+      "side": 1,
+      "message": "This should be sorted alphabetically",
+      "range": {
+        "startLine": 252,
+        "startChar": 0,
+        "endLine": 252,
+        "endChar": 29
+      },
+      "revId": "d293b125773fc8b77d5043294256837b3b0252fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f4dc53e_6ab8eba0",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 614,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-06T01:04:41Z",
+      "side": 1,
+      "message": "HOST",
+      "range": {
+        "startLine": 614,
+        "startChar": 48,
+        "endLine": 614,
+        "endChar": 54
+      },
+      "revId": "d293b125773fc8b77d5043294256837b3b0252fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "346b4966_76ed9ffd",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-06T01:04:41Z",
+      "side": 1,
+      "message": "HOST_OUT would be more appropriate (we don\u0027t need to pull in the windows versions of the host tools)",
+      "range": {
+        "startLine": 621,
+        "startChar": 36,
+        "endLine": 621,
+        "endChar": 49
+      },
+      "revId": "d293b125773fc8b77d5043294256837b3b0252fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
