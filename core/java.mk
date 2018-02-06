@@ -125,7 +125,7 @@ ifneq (,$(LOCAL_RENDERSCRIPT_TARGET_API))
 else
   ifneq (,$(LOCAL_SDK_VERSION))
     # Set target-api for LOCAL_SDK_VERSIONs other than current.
-    ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
+    ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
       renderscript_target_api := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
     endif
   endif  # LOCAL_SDK_VERSION is set
@@ -150,7 +150,7 @@ renderscript_flags := -Wall -Werror
 renderscript_flags += $(LOCAL_RENDERSCRIPT_FLAGS)
 
 # prepend the RenderScript system include path
-ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_VERSION))),)
+ifneq ($(filter-out current system_current test_current core_current,$(LOCAL_SDK_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_VERSION))),)
 # if a numeric LOCAL_SDK_VERSION, or current LOCAL_SDK_VERSION with TARGET_BUILD_APPS
 LOCAL_RENDERSCRIPT_INCLUDES := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/renderscript/clang-include \
@@ -266,7 +266,7 @@ ifneq ($(strip $(aidl_sources)),)
 
 aidl_preprocess_import :=
 ifdef LOCAL_SDK_VERSION
-ifneq ($(filter current system_current test_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS)),)
+ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS)),)
   # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS
   aidl_preprocess_import := $(TARGET_OUT_COMMON_INTERMEDIATES)/framework.aidl
 else
@@ -610,7 +610,7 @@ proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
 my_proguard_sdk_raise :=
 ifdef LOCAL_SDK_VERSION
 ifdef TARGET_BUILD_APPS
-ifeq (,$(filter current system_current test_current, $(LOCAL_SDK_VERSION)))
+ifeq (,$(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
   my_proguard_sdk_raise := $(call java-lib-header-files, sdk_vcurrent)
 endif
 else
@@ -806,7 +806,7 @@ $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 
 endif  # full_classes_jar is defined
 
-ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
+ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
   my_default_app_target_sdk := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
   my_sdk_version := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
 else

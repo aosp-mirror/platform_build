@@ -922,8 +922,8 @@ TARGET_AVAILABLE_SDK_VERSIONS := $(addprefix system_,$(call numerically_sort,\
     $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android_system.jar)))) \
     $(TARGET_AVAILABLE_SDK_VERSIONS)
 
-# We don't have prebuilt test_current SDK yet.
-TARGET_AVAILABLE_SDK_VERSIONS := test_current $(TARGET_AVAILABLE_SDK_VERSIONS)
+# We don't have prebuilt test_current and core_current SDK yet.
+TARGET_AVAILABLE_SDK_VERSIONS := test_current core_current $(TARGET_AVAILABLE_SDK_VERSIONS)
 
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,27,$(TARGET_AVAILABLE_SDK_VERSIONS))
