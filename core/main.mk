@@ -612,6 +612,31 @@ $(foreach m,$(ALL_MODULES), \
 endef
 $(call add-all-host-to-target-required-modules-deps)
 
+# Sets up dependencies such that whenever a target module is installed,
+# any host modules listed in $(ALL_MODULES.$(m).HOST_REQUIRED) will also be installed
+define add-all-target-to-host-required-modules-deps
+$(foreach m,$(ALL_MODULES), \
+  $(eval req_mods := $(ALL_MODULES.$(m).HOST_REQUIRED))\
+  $(if $(req_mods), \
+    $(eval req_files := )\
+    $(foreach req_mod,$(req_mods), \
+      $(eval req_file := $(filter $(HOST_OUT)/%, $(call module-installed-files,$(req_mod)))) \
+      $(if $(strip $(req_file)),\
+        ,\
+        $(error $(m).LOCAL_HOST_REQUIRED_MODULES : illegal value $(req_mod) : not a host module. If you want to specify target modules to be required to be installed along with your target module, add those module names to LOCAL_REQUIRED_MODULES instead)\
+      )\
+      $(eval req_files := $(req_files)$(space)$(req_file))\
+    )\
+    $(eval req_files := $(strip $(req_files)))\
+    $(eval mod_files := $(filter $(TARGET_OUT_ROOT)/%, $(call module-installed-files,$(m))))\
+    $(eval mod_files := $(filter-out $(req_files),$(mod_files)))\
+    $(if $(mod_files),\
+      $(eval $(call add-required-deps, $(mod_files),$(req_files))) \
+    )\
+  )\
+)
+endef
+$(call add-all-target-to-host-required-modules-deps)
 
 t_m :=
 h_m :=
