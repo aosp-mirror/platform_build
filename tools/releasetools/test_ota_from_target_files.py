@@ -23,8 +23,36 @@ import zipfile
 import common
 import test_utils
 from ota_from_target_files import (
-    _LoadOemDicts, BuildInfo, GetPackageMetadata, Payload, PayloadSigner,
+    _LoadOemDicts, BuildInfo, GetPackageMetadata,
+    GetTargetFilesZipForSecondaryImages, Payload, PayloadSigner,
     WriteFingerprintAssertion)
+
+
+def construct_target_files(secondary=False):
+  """Returns a target-files.zip file for generating OTA packages."""
+  target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+  with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+    # META/update_engine_config.txt
+    target_files_zip.writestr(
+        'META/update_engine_config.txt',
+        "PAYLOAD_MAJOR_VERSION=2\nPAYLOAD_MINOR_VERSION=4\n")
+
+    # META/ab_partitions.txt
+    ab_partitions = ['boot', 'system', 'vendor']
+    target_files_zip.writestr(
+        'META/ab_partitions.txt',
+        '\n'.join(ab_partitions))
+
+    # Create dummy images for each of them.
+    for partition in ab_partitions:
+      target_files_zip.writestr('IMAGES/' + partition + '.img',
+                                os.urandom(len(partition)))
+
+    if secondary:
+      target_files_zip.writestr('IMAGES/system_other.img',
+                                os.urandom(len("system_other")))
+
+  return target_files
 
 
 class MockScriptWriter(object):
@@ -500,6 +528,21 @@ class OtaFromTargetFilesTest(unittest.TestCase):
         },
         metadata)
 
+  def test_GetTargetFilesZipForSecondaryImages(self):
+    input_file = construct_target_files(secondary=True)
+    target_file = GetTargetFilesZipForSecondaryImages(input_file)
+
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertIn('IMAGES/boot.img', namelist)
+    self.assertIn('IMAGES/system.img', namelist)
+    self.assertIn('IMAGES/vendor.img', namelist)
+
+    self.assertNotIn('IMAGES/system_other.img', namelist)
+    self.assertNotIn('IMAGES/system.map', namelist)
+
 
 class PayloadSignerTest(unittest.TestCase):
 
@@ -598,36 +641,16 @@ class PayloadTest(unittest.TestCase):
     common.Cleanup()
 
   @staticmethod
-  def _construct_target_files():
-    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
-    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
-      # META/update_engine_config.txt
-      target_files_zip.writestr(
-          'META/update_engine_config.txt',
-          "PAYLOAD_MAJOR_VERSION=2\nPAYLOAD_MINOR_VERSION=4\n")
-
-      # META/ab_partitions.txt
-      ab_partitions = ['boot', 'system', 'vendor']
-      target_files_zip.writestr(
-          'META/ab_partitions.txt',
-          '\n'.join(ab_partitions))
-
-      # Create dummy images for each of them.
-      for partition in ab_partitions:
-        target_files_zip.writestr('IMAGES/' + partition + '.img',
-                                  os.urandom(len(partition)))
-
-    return target_files
-
-  def _create_payload_full(self):
-    target_file = self._construct_target_files()
+  def _create_payload_full(secondary=False):
+    target_file = construct_target_files(secondary)
     payload = Payload()
     payload.Generate(target_file)
     return payload
 
-  def _create_payload_incremental(self):
-    target_file = self._construct_target_files()
-    source_file = self._construct_target_files()
+  @staticmethod
+  def _create_payload_incremental():
+    target_file = construct_target_files()
+    source_file = construct_target_files()
     payload = Payload()
     payload.Generate(target_file, source_file)
     return payload
@@ -641,8 +664,8 @@ class PayloadTest(unittest.TestCase):
     self.assertTrue(os.path.exists(payload.payload_file))
 
   def test_Generate_additionalArgs(self):
-    target_file = self._construct_target_files()
-    source_file = self._construct_target_files()
+    target_file = construct_target_files()
+    source_file = construct_target_files()
     payload = Payload()
     # This should work the same as calling payload.Generate(target_file,
     # source_file).
@@ -651,7 +674,7 @@ class PayloadTest(unittest.TestCase):
     self.assertTrue(os.path.exists(payload.payload_file))
 
   def test_Generate_invalidInput(self):
-    target_file = self._construct_target_files()
+    target_file = construct_target_files()
     common.ZipDelete(target_file, 'IMAGES/vendor.img')
     payload = Payload()
     self.assertRaises(AssertionError, payload.Generate, target_file)
@@ -732,3 +755,25 @@ class PayloadTest(unittest.TestCase):
     output_file = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(output_file, 'w') as output_zip:
       self.assertRaises(AssertionError, payload.WriteToZip, output_zip)
+
+  def test_WriteToZip_secondary(self):
+    payload = self._create_payload_full(secondary=True)
+    payload.Sign(PayloadSigner())
+
+    output_file = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(output_file, 'w') as output_zip:
+      payload.WriteToZip(output_zip, secondary=True)
+
+    with zipfile.ZipFile(output_file) as verify_zip:
+      # First make sure we have the essential entries.
+      namelist = verify_zip.namelist()
+      self.assertIn(Payload.SECONDARY_PAYLOAD_BIN, namelist)
+      self.assertIn(Payload.SECONDARY_PAYLOAD_PROPERTIES_TXT, namelist)
+
+      # Then assert these entries are stored.
+      for entry_info in verify_zip.infolist():
+        if entry_info.filename not in (
+            Payload.SECONDARY_PAYLOAD_BIN,
+            Payload.SECONDARY_PAYLOAD_PROPERTIES_TXT):
+          continue
+        self.assertEqual(zipfile.ZIP_STORED, entry_info.compress_type)
