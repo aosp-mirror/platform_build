@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6ea3b006_50260762",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1066743
+      },
+      "writtenOn": "2018-02-07T18:23:12Z",
+      "side": 1,
+      "message": "Yes, only after I made mksquashfs rake into account the root inode: https://b.corp.google.com/issues/72983582, and that change was reverted.\n\nWith both this and the mksquashfs change in the same topic, I no longer see the issue mentioned in the bug.",
+      "parentUuid": "3acbd87e_cf8a0f6c",
+      "range": {
+        "startLine": 14,
+        "startChar": 6,
+        "endLine": 14,
+        "endChar": 18
+      },
+      "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bb46e176_2df3d354",
         "filename": "tools/fs_config/fs_config.c",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92a7ebe0_f7efa56a",
+        "filename": "tools/fs_config/fs_config.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1066743
+      },
+      "writtenOn": "2018-02-07T18:23:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb46e176_2df3d354",
+      "range": {
+        "startLine": 107,
+        "startChar": 4,
+        "endLine": 107,
+        "endChar": 6
+      },
+      "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "eb264343_735f7825",
+        "filename": "tools/fs_config/fs_config.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1066743
+      },
+      "writtenOn": "2018-02-07T18:23:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8992e203_0825a246",
+      "range": {
+        "startLine": 108,
+        "startChar": 4,
+        "endLine": 108,
+        "endChar": 6
+      },
+      "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "903843a3_4193cbbe",
         "filename": "tools/fs_config/fs_config.c",
         "patchSetId": 1
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "62e5c7ea_3535dfce",
+        "filename": "tools/fs_config/fs_config.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1066743
+      },
+      "writtenOn": "2018-02-07T18:23:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "903843a3_4193cbbe",
+      "range": {
+        "startLine": 138,
+        "startChar": 7,
+        "endLine": 138,
+        "endChar": 8
+      },
+      "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "93172905_ae9d6a04",
         "filename": "tools/fs_config/fs_config.c",
         "patchSetId": 1
@@ -114,6 +210,30 @@
       "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "723831fe_be3ea4ad",
+        "filename": "tools/fs_config/fs_config.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1066743
+      },
+      "writtenOn": "2018-02-07T18:23:12Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "93172905_ae9d6a04",
+      "range": {
+        "startLine": 139,
+        "startChar": 6,
+        "endLine": 139,
+        "endChar": 25
+      },
+      "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
