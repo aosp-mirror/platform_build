@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3acbd87e_cf8a0f6c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-02-07T18:14:15Z",
+      "side": 1,
+      "message": "did you get an error before? or is there more work required and a file you need to inspect?",
+      "range": {
+        "startLine": 14,
+        "startChar": 6,
+        "endLine": 14,
+        "endChar": 18
+      },
+      "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb46e176_2df3d354",
+        "filename": "tools/fs_config/fs_config.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-02-07T18:14:15Z",
+      "side": 1,
+      "message": "C file must use /* */ comments.",
+      "range": {
+        "startLine": 107,
+        "startChar": 4,
+        "endLine": 107,
+        "endChar": 6
+      },
+      "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8992e203_0825a246",
+        "filename": "tools/fs_config/fs_config.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-02-07T18:14:15Z",
+      "side": 1,
+      "message": "while (root_len \u0026\u0026 root_path[--root_len] \u003d\u003d \u0027/\u0027) {\n    root_path[root_len] \u003d \u0027\\0\u0027;\n}\n\nto handle multiple trailing slashes?",
+      "range": {
+        "startLine": 108,
+        "startChar": 4,
+        "endLine": 108,
+        "endChar": 6
+      },
+      "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "903843a3_4193cbbe",
+        "filename": "tools/fs_config/fs_config.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-02-07T18:14:15Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 138,
+        "startChar": 7,
+        "endLine": 138,
+        "endChar": 8
+      },
+      "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93172905_ae9d6a04",
+        "filename": "tools/fs_config/fs_config.c",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-02-07T18:14:15Z",
+      "side": 1,
+      "message": "IGNORE ME (comment to myself) I am fine with this for maintenance and clarity.\n\nThe embedded \u0027C\u0027 guy in me (and a style of assigning \u0027\\0\u0027 in other areas of this patch) has me wondering why this did not match style and be:\n\nbuffer[0] \u003d \u0027\\0\u0027;\n\nDO NOTHING.",
+      "range": {
+        "startLine": 139,
+        "startChar": 6,
+        "endLine": 139,
+        "endChar": 25
+      },
+      "revId": "a4a120adc7a943cd1fd7112de02f1ecc9946f5ac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
