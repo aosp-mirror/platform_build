@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db11d7f1_9394f679",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-02-07T23:00:43Z",
+      "side": 1,
+      "message": "It feels weird to me to have this duplicated.\n\nWhy not:\n\nifdef BVV\n    ifeq BVV current\n        FINAL_VENDOR_DEFAULT_PROPERTIES :\u003d ...\n    else\n        FINAL_VENDOR_DEFAULT_PROPERTIES :\u003d ...\n    endif\nelse\n    ifdef FINAL_VENDOR_DEFAULT_PROPERTIES\n         error\n    endif\n    FINAL_VENDOR_DEFAULT_PROPERTIES :\u003d ...\nendif\n\nifdef property_overrides_split_enabled\n    X +\u003d FINAL_VENDOR_DEFAULT_PROPERTIES\nelse\n    Y +\u003d FINAL_VENDOR_DEFAULT_PROPERTIES\nendif\n\nThis way we only have the logic in one place",
+      "range": {
+        "startLine": 185,
+        "startChar": 2,
+        "endLine": 189,
+        "endChar": 7
+      },
+      "revId": "89be9e81195175157fe3dd5b1d007c2099da51d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
