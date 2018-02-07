@@ -16,10 +16,6 @@
 
 include build/make/target/board/treble_common.mk
 
-# Enable both 32 and 64 bits APP support
-TARGET_SUPPORTS_32_BIT_APPS := true
-TARGET_SUPPORTS_64_BIT_APPS := true
-
 # Enable 64-bits binder
 TARGET_USES_64_BIT_BINDER := true
 
