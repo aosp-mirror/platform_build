@@ -546,6 +546,8 @@ ifeq ($(LOCAL_SDK_VERSION),system_current)
 my_link_type := java:system
 else ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
 my_link_type := java:system
+else ifeq ($(LOCAL_SDK_VERSION),core_current)
+my_link_type := java:core
 else ifneq ($(LOCAL_SDK_VERSION),)
 my_link_type := java:sdk
 else
