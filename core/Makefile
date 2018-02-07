@@ -123,6 +123,24 @@ ifeq ($(BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED), true)
 endif
 
 # -----------------------------------------------------------------
+# FINAL_VENDOR_DEFAULT_PROPERTIES will be installed in vendor/default.prop if
+# property_overrides_split_enabled is true. Otherwise it will be installed in
+# ROOT/default.prop.
+ifdef BOARD_VNDK_VERSION
+  ifeq ($(BOARD_VNDK_VERSION),current)
+    FINAL_VENDOR_DEFAULT_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
+  else
+    FINAL_VENDOR_DEFAULT_PROPERTIES := ro.vndk.version=$(BOARD_VNDK_VERSION)
+  endif
+else
+  FINAL_VENDOR_DEFAULT_PROPERTIES :=
+endif
+FINAL_VENDOR_DEFAULT_PROPERTIES += \
+    $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
+FINAL_VENDOR_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
+    $(FINAL_VENDOR_DEFAULT_PROPERTIES),=)
+
+# -----------------------------------------------------------------
 # prop.default
 ifdef property_overrides_split_enabled
 INSTALLED_DEFAULT_PROP_TARGET := $(TARGET_OUT)/etc/prop.default
@@ -139,7 +157,7 @@ FINAL_DEFAULT_PROPERTIES := \
     $(call collapse-pairs, $(PRODUCT_SYSTEM_DEFAULT_PROPERTIES))
 ifndef property_overrides_split_enabled
   FINAL_DEFAULT_PROPERTIES += \
-      $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
+      $(call collapse-pairs, $(FINAL_VENDOR_DEFAULT_PROPERTIES))
 endif
 FINAL_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_DEFAULT_PROPERTIES),=)
@@ -173,20 +191,6 @@ INSTALLED_VENDOR_DEFAULT_PROP_TARGET :=
 ifdef property_overrides_split_enabled
 INSTALLED_VENDOR_DEFAULT_PROP_TARGET := $(TARGET_OUT_VENDOR)/default.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET)
-
-ifdef BOARD_VNDK_VERSION
-  ifeq ($(BOARD_VNDK_VERSION),current)
-    FINAL_VENDOR_DEFAULT_PROPERTIES := ro.vndk.version=$(PLATFORM_VNDK_VERSION)
-  else
-    FINAL_VENDOR_DEFAULT_PROPERTIES := ro.vndk.version=$(BOARD_VNDK_VERSION)
-  endif
-else
-  FINAL_VENDOR_DEFAULT_PROPERTIES :=
-endif
-FINAL_VENDOR_DEFAULT_PROPERTIES += \
-    $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
-FINAL_VENDOR_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
-    $(FINAL_VENDOR_DEFAULT_PROPERTIES),=)
 
 $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET): $(INSTALLED_DEFAULT_PROP_TARGET)
 	@echo Target buildinfo: $@
