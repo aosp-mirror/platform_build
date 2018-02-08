@@ -13,15 +13,22 @@
 # limitations under the License.
 
 from __future__ import print_function
+
 import heapq
 import itertools
 
+
 __all__ = ["RangeSet"]
 
+
 class RangeSet(object):
-  """A RangeSet represents a set of nonoverlapping ranges on the
-  integers (ie, a set of integers, but efficient when the set contains
-  lots of runs."""
+  """A RangeSet represents a set of non-overlapping ranges on integers.
+
+  Attributes:
+    monotonic: Whether the input has all its integers in increasing order.
+    extra: A dict that can be used by the caller, e.g. to store info that's
+        only meaningful to caller.
+  """
 
   def __init__(self, data=None):
     self.monotonic = False
@@ -63,16 +70,18 @@ class RangeSet(object):
 
   @classmethod
   def parse(cls, text):
-    """Parse a text string consisting of a space-separated list of
-    blocks and ranges, eg "10-20 30 35-40".  Ranges are interpreted to
-    include both their ends (so the above example represents 18
-    individual blocks.  Returns a RangeSet object.
+    """Parses a text string into a RangeSet.
 
-    If the input has all its blocks in increasing order, then returned
-    RangeSet will have an extra attribute 'monotonic' that is set to
-    True.  For example the input "10-20 30" is monotonic, but the input
-    "15-20 30 10-14" is not, even though they represent the same set
-    of blocks (and the two RangeSets will compare equal with ==).
+    The input text string consists of a space-separated list of blocks and
+    ranges, e.g. "10-20 30 35-40". Ranges are interpreted to include both their
+    ends (so the above example represents 18 individual blocks). Returns a
+    RangeSet object.
+
+    If the input has all its blocks in increasing order, then the 'monotonic'
+    attribute of the returned RangeSet will be set to True. For example the
+    input "10-20 30" is monotonic, but the input "15-20 30 10-14" is not, even
+    though they represent the same set of blocks (and the two RangeSets will
+    compare equal with ==).
     """
     return cls(text)
 
