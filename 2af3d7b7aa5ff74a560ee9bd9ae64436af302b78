@@ -22,6 +22,30 @@
       "revId": "2af3d7b7aa5ff74a560ee9bd9ae64436af302b78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e49961c_39a9ff74",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-02-08T02:51:26Z",
+      "side": 1,
+      "message": "Oh, I should have deleted these.",
+      "parentUuid": "6a3dd6cc_81c6253d",
+      "range": {
+        "startLine": 163,
+        "startChar": 33,
+        "endLine": 163,
+        "endChar": 48
+      },
+      "revId": "2af3d7b7aa5ff74a560ee9bd9ae64436af302b78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
