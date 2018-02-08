@@ -261,19 +261,11 @@ ifndef LOCAL_IS_HOST_MODULE
     else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),core_current)
       full_java_bootclasspath_libs := $(call java-lib-header-files,core.current.stubs)
     else
-      ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
-        ifeq (,$(TARGET_BUILD_APPS))
-          full_java_bootclasspath_libs := $(call java-lib-header-files,system_sdk_v$(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)))
-        else
-          full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(LOCAL_SDK_VERSION))
-        endif
-      else
-        # core_<ver> is subset of <ver>. Instead of defining a prebuilt lib for core_<ver>,
-        # use the stub for <ver> when building for apps.
-        _version := $(patsubst core_%,%,$(LOCAL_SDK_VERSION))
-        full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(_version))
-        _version :=
-      endif
+      # core_<ver> is subset of <ver>. Instead of defining a prebuilt lib for core_<ver>,
+      # use the stub for <ver> when building for apps.
+      _version := $(patsubst core_%,%,$(LOCAL_SDK_VERSION))
+      full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(_version))
+      _version :=
     endif # current, system_current, system_${VER}, test_current or core_current
   endif # LOCAL_SDK_VERSION
 
