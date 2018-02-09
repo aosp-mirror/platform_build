@@ -31,6 +31,7 @@ PRODUCT_PACKAGES += \
     bit \
     blkid \
     bmgr \
+    bpfloader \
     bugreport \
     bugreportz \
     cameraserver \
