@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46877bf3_14692835",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-02-09T19:49:09Z",
+      "side": 1,
+      "message": "maybe move self.disable_imgdiff here, or it can also be a staticmethod",
+      "range": {
+        "startLine": 339,
+        "startChar": 0,
+        "endLine": 340,
+        "endChar": 20
+      },
+      "revId": "3f2fe83e01a7e697d7beffd9d1f018282d3a9e1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "22af131f_60875747",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1289,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-02-09T19:49:09Z",
+      "side": 1,
+      "message": "we can just replace this with CanUseImgdiff(tgt_name, tgt_ranges, src_ranges)...",
+      "range": {
+        "startLine": 1289,
+        "startChar": 43,
+        "endLine": 1289,
+        "endChar": 79
+      },
+      "revId": "3f2fe83e01a7e697d7beffd9d1f018282d3a9e1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
