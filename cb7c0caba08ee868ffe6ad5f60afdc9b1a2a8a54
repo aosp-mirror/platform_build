@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f64fa4db_63227230",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-02-09T22:22:35Z",
+      "side": 1,
+      "message": "if imgdiff is enabled",
+      "revId": "cb7c0caba08ee868ffe6ad5f60afdc9b1a2a8a54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "af2e4593_851869aa",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 401,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-02-09T22:22:35Z",
+      "side": 1,
+      "message": "would better also comments the side effect of imgdiff_stats update here; because we actually haven\u0027t run imgdiff yet. Are we removing the fallback later? Then we\u0027ll use imgdiff in all cases if this check pass.",
+      "range": {
+        "startLine": 401,
+        "startChar": 6,
+        "endLine": 401,
+        "endChar": 19
+      },
+      "revId": "cb7c0caba08ee868ffe6ad5f60afdc9b1a2a8a54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f03dc9e5_ab26ee79",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-02-09T22:22:35Z",
+      "side": 1,
+      "message": "just curious, do we disable_imgdiff for squashfs? then maybe it worth a warning",
+      "range": {
+        "startLine": 432,
+        "startChar": 48,
+        "endLine": 432,
+        "endChar": 68
+      },
+      "revId": "cb7c0caba08ee868ffe6ad5f60afdc9b1a2a8a54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
