@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b8921624_6a2139c3",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 340,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-02-09T20:50:21Z",
+      "side": 1,
+      "message": "Moved the check for self.disable_imgdiff here.\n\n(The self also looks useful for the later CL in https://android-review.googlesource.com/c/platform/build/+/614221, so it can access imgdiff_stats directly.)",
+      "parentUuid": "46877bf3_14692835",
+      "range": {
+        "startLine": 339,
+        "startChar": 0,
+        "endLine": 340,
+        "endChar": 20
+      },
+      "revId": "3f2fe83e01a7e697d7beffd9d1f018282d3a9e1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "22af131f_60875747",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 5
@@ -36,6 +60,30 @@
       "writtenOn": "2018-02-09T19:49:09Z",
       "side": 1,
       "message": "we can just replace this with CanUseImgdiff(tgt_name, tgt_ranges, src_ranges)...",
+      "range": {
+        "startLine": 1289,
+        "startChar": 43,
+        "endLine": 1289,
+        "endChar": 79
+      },
+      "revId": "3f2fe83e01a7e697d7beffd9d1f018282d3a9e1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fd7db3bb_f092aa98",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1289,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-02-09T20:50:21Z",
+      "side": 1,
+      "message": "That way unchanged apps would be unintentionally reported after landing https://android-review.googlesource.com/c/platform/build/+/614221). I\u0027m trying to avoid that by checking RangeSha1()s first, which in turn requires checking the supported filetype to avoid costly computation...",
+      "parentUuid": "22af131f_60875747",
       "range": {
         "startLine": 1289,
         "startChar": 43,
