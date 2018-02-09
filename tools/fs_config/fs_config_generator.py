@@ -146,17 +146,26 @@ class AID(object):
             found (str): The file found in, not required to be specified.
 
         Raises:
+            ValueError: if the friendly name is longer than 31 characters as
+                that is bionic's internal buffer size for name.
             ValueError: if value is not a valid string number as processed by
                 int(x, 0)
         """
         self.identifier = identifier
         self.value = value
         self.found = found
-        self.normalized_value = str(int(value, 0))
+        try:
+            self.normalized_value = str(int(value, 0))
+        except ValueException:
+            raise ValueError('Invalid "value", not aid number, got: \"%s\"' % value)
 
         # Where we calculate the friendly name
         friendly = identifier[len(AID.PREFIX):].lower()
         self.friendly = AID._fixup_friendly(friendly)
+
+        if len(self.friendly) > 31:
+            raise ValueError('AID names must be under 32 characters "%s"' % self.friendly)
+
 
     def __eq__(self, other):
 
@@ -639,10 +648,8 @@ class FSConfigFileParser(object):
 
         try:
             aid = AID(section_name, value, file_name)
-        except ValueError:
-            sys.exit(
-                error_message('Invalid "value", not aid number, got: \"%s\"' %
-                              value))
+        except ValueError as exception:
+            sys.exit(error_message(exception))
 
         # Values must be within OEM range
         if not Utils.in_any_range(int(aid.value, 0), self._oem_ranges):
