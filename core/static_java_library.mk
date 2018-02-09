@@ -119,13 +119,10 @@ endif
 endif
 
 ifdef LOCAL_USE_AAPT2
-import_proguard_flag_files := $(strip $(foreach l,$(LOCAL_STATIC_ANDROID_LIBRARIES),\
-    $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/export_proguard_flags))
-$(intermediates.COMMON)/export_proguard_flags: $(import_proguard_flag_files) $(addprefix $(LOCAL_PATH)/,$(LOCAL_EXPORT_PROGUARD_FLAG_FILES))
+$(intermediates.COMMON)/export_proguard_flags: $(addprefix $(LOCAL_PATH)/,$(LOCAL_EXPORT_PROGUARD_FLAG_FILES))
 	@echo "Export proguard flags: $@"
 	rm -f $@
 	cat $+ >$@
-import_proguard_flag_files :=
 endif
 
 # add --non-constant-id to prevent inlining constants.
