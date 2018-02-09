@@ -2601,11 +2601,12 @@ endef
 #
 define uncompress-dexs
 $(hide) if (zipinfo $@ '*.dex' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
-  rm -rf $(dir $@)uncompresseddexs && mkdir $(dir $@)uncompresseddexs; \
-  unzip -q $@ '*.dex' -d $(dir $@)uncompresseddexs && \
+  tmpdir=$@.tmpdir; \
+  rm -rf $$tmpdir && mkdir $$tmpdir; \
+  unzip -q $@ '*.dex' -d $$tmpdir && \
   zip -qd $@ '*.dex' && \
-  ( cd $(dir $@)uncompresseddexs && find . -type f | sort | zip -qD -X -0 ../$(notdir $@) -@ ) && \
-  rm -rf $(dir $@)uncompresseddexs; \
+  ( cd $$tmpdir && find . -type f | sort | zip -qD -X -0 ../$(notdir $@) -@ ) && \
+  rm -rf $$tmpdir; \
   fi
 endef
 
