@@ -172,3 +172,54 @@ class BlockImageDiffTest(unittest.TestCase):
     # Insufficient cache to stash 15 blocks (size * 0.8 < 15).
     common.OPTIONS.cache_size = 15 * 4096
     self.assertEqual(15, block_image_diff.ReviseStashSize())
+
+  def test_FileTypeSupportedByImgdiff(self):
+    self.assertTrue(
+        BlockImageDiff.FileTypeSupportedByImgdiff(
+            "/system/priv-app/Settings/Settings.apk"))
+    self.assertTrue(
+        BlockImageDiff.FileTypeSupportedByImgdiff(
+            "/system/framework/am.jar"))
+    self.assertTrue(
+        BlockImageDiff.FileTypeSupportedByImgdiff(
+            "/system/etc/security/otacerts.zip"))
+
+    self.assertFalse(
+        BlockImageDiff.FileTypeSupportedByImgdiff(
+            "/system/framework/arm/boot.oat"))
+    self.assertFalse(
+        BlockImageDiff.FileTypeSupportedByImgdiff(
+            "/system/priv-app/notanapk"))
+
+  def test_CanUseImgdiff(self):
+    block_image_diff = BlockImageDiff(EmptyImage(), EmptyImage())
+    self.assertTrue(
+        block_image_diff.CanUseImgdiff(
+            "/system/app/app1.apk", RangeSet("10-15"), RangeSet("0-5")))
+
+  def test_CanUseImgdiff_ineligible(self):
+    # Disabled by caller.
+    block_image_diff = BlockImageDiff(EmptyImage(), EmptyImage(),
+                                      disable_imgdiff=True)
+    self.assertFalse(
+        block_image_diff.CanUseImgdiff(
+            "/system/app/app1.apk", RangeSet("10-15"), RangeSet("0-5")))
+
+    # Unsupported file type.
+    block_image_diff = BlockImageDiff(EmptyImage(), EmptyImage())
+    self.assertFalse(
+        block_image_diff.CanUseImgdiff(
+            "/system/bin/gzip", RangeSet("10-15"), RangeSet("0-5")))
+
+    # At least one of the ranges is in non-monotonic order.
+    self.assertFalse(
+        block_image_diff.CanUseImgdiff(
+            "/system/app/app2.apk", RangeSet("10-15"),
+            RangeSet("15-20 30 10-14")))
+
+    # At least one of the ranges has been modified.
+    src_ranges = RangeSet("0-5")
+    src_ranges.extra['trimmed'] = True
+    self.assertFalse(
+        block_image_diff.CanUseImgdiff(
+            "/vendor/app/app3.apk", RangeSet("10-15"), src_ranges))
