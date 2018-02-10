@@ -643,7 +643,7 @@ class PayloadTest(unittest.TestCase):
   @staticmethod
   def _create_payload_full(secondary=False):
     target_file = construct_target_files(secondary)
-    payload = Payload()
+    payload = Payload(secondary)
     payload.Generate(target_file)
     return payload
 
@@ -713,6 +713,13 @@ class PayloadTest(unittest.TestCase):
     with open(payload.payload_properties) as properties_fp:
       self.assertIn("POWERWASH=1", properties_fp.read())
 
+  def test_Sign_secondary(self):
+    payload = self._create_payload_full(secondary=True)
+    payload.Sign(PayloadSigner())
+
+    with open(payload.payload_properties) as properties_fp:
+      self.assertIn("SWITCH_SLOT_ON_REBOOT=0", properties_fp.read())
+
   def test_Sign_badSigner(self):
     """Tests that signing failure can be captured."""
     payload = self._create_payload_full()
@@ -762,7 +769,7 @@ class PayloadTest(unittest.TestCase):
 
     output_file = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(output_file, 'w') as output_zip:
-      payload.WriteToZip(output_zip, secondary=True)
+      payload.WriteToZip(output_zip)
 
     with zipfile.ZipFile(output_file) as verify_zip:
       # First make sure we have the essential entries.
