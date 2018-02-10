@@ -191,7 +191,6 @@ class Transfer(object):
     self.tgt_sha1 = tgt_sha1
     self.src_sha1 = src_sha1
     self.style = style
-    self.intact = tgt_ranges.monotonic and src_ranges.monotonic
 
     # We use OrderedDict rather than dict so that the output is repeatable;
     # otherwise it would depend on the hash values of the Transfer objects.
@@ -332,6 +331,45 @@ class BlockImageDiff(object):
   @property
   def max_stashed_size(self):
     return self._max_stashed_size
+
+  @staticmethod
+  def FileTypeSupportedByImgdiff(filename):
+    """Returns whether the file type is supported by imgdiff."""
+    return filename.lower().endswith(('.apk', '.jar', '.zip'))
+
+  def CanUseImgdiff(self, name, tgt_ranges, src_ranges):
+    """Checks whether we can apply imgdiff for the given RangeSets.
+
+    For files in ZIP format (e.g., APKs, JARs, etc.) we would like to use
+    'imgdiff -z' if possible. Because it usually produces significantly smaller
+    patches than bsdiff.
+
+    This is permissible if all of the following conditions hold.
+      - The imgdiff hasn't been disabled by the caller (e.g. squashfs);
+      - The file type is supported by imgdiff;
+      - The source and target blocks are monotonic (i.e. the data is stored with
+        blocks in increasing order);
+      - We haven't removed any blocks from the source set.
+
+    If all these conditions are satisfied, concatenating all the blocks in the
+    RangeSet in order will produce a valid ZIP file (plus possibly extra zeros
+    in the last block). imgdiff is fine with extra zeros at the end of the file.
+
+    Args:
+      name: The filename to be diff'd.
+      tgt_ranges: The target RangeSet.
+      src_ranges: The source RangeSet.
+
+    Returns:
+      A boolean result.
+    """
+    return (
+        not self.disable_imgdiff and
+        self.FileTypeSupportedByImgdiff(name) and
+        tgt_ranges.monotonic and
+        src_ranges.monotonic and
+        not tgt_ranges.extra.get('trimmed') and
+        not src_ranges.extra.get('trimmed'))
 
   def Compute(self, prefix):
     # When looking for a source file to use as the diff input for a
@@ -711,28 +749,13 @@ class BlockImageDiff(object):
               # transfer is intact.
               assert not self.disable_imgdiff
               imgdiff = True
-              if not xf.intact:
+              if (xf.src_ranges.extra.get('trimmed') or
+                  xf.tgt_ranges.extra.get('trimmed')):
                 imgdiff = False
                 xf.patch = None
             else:
-              # For files in zip format (eg, APKs, JARs, etc.) we would
-              # like to use imgdiff -z if possible (because it usually
-              # produces significantly smaller patches than bsdiff).
-              # This is permissible if:
-              #
-              #  - imgdiff is not disabled, and
-              #  - the source and target files are monotonic (ie, the
-              #    data is stored with blocks in increasing order), and
-              #  - we haven't removed any blocks from the source set.
-              #
-              # If these conditions are satisfied then appending all the
-              # blocks in the set together in order will produce a valid
-              # zip file (plus possibly extra zeros in the last block),
-              # which is what imgdiff needs to operate.  (imgdiff is
-              # fine with extra zeros at the end of the file.)
-              imgdiff = (not self.disable_imgdiff and xf.intact and
-                         xf.tgt_name.split(".")[-1].lower()
-                         in ("apk", "jar", "zip"))
+              imgdiff = self.CanUseImgdiff(
+                  xf.tgt_name, xf.tgt_ranges, xf.src_ranges)
             xf.style = "imgdiff" if imgdiff else "bsdiff"
             diff_queue.append((index, imgdiff, patch_num))
             patch_num += 1
@@ -977,7 +1000,7 @@ class BlockImageDiff(object):
           out_of_order += 1
           assert xf.src_ranges.overlaps(u.tgt_ranges)
           xf.src_ranges = xf.src_ranges.subtract(u.tgt_ranges)
-          xf.intact = False
+          xf.src_ranges.extra['trimmed'] = True
 
       if xf.style == "diff" and not xf.src_ranges:
         # nothing left to diff from; treat as new data
@@ -1261,11 +1284,12 @@ class BlockImageDiff(object):
                  style, by_id)
         return
 
-      if tgt_name.split(".")[-1].lower() in ("apk", "jar", "zip"):
-        split_enable = (not self.disable_imgdiff and src_ranges.monotonic and
-                        tgt_ranges.monotonic)
-        if split_enable and (self.tgt.RangeSha1(tgt_ranges) !=
-                             self.src.RangeSha1(src_ranges)):
+      # Split large APKs with imgdiff, if possible. We're intentionally checking
+      # file types one more time (CanUseImgdiff() checks that as well), before
+      # calling the costly RangeSha1()s.
+      if (self.FileTypeSupportedByImgdiff(tgt_name) and
+          self.tgt.RangeSha1(tgt_ranges) != self.src.RangeSha1(src_ranges)):
+        if self.CanUseImgdiff(tgt_name, tgt_ranges, src_ranges):
           large_apks.append((tgt_name, src_name, tgt_ranges, src_ranges))
           return
 
