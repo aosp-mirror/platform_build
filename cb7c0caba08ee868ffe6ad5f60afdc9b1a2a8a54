@@ -128,6 +128,30 @@
       "revId": "cb7c0caba08ee868ffe6ad5f60afdc9b1a2a8a54",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "80e422dd_14b0aae1",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 432,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-02-11T21:57:39Z",
+      "side": 1,
+      "message": "Actually I mean, since we already disable imgdiff on squashfs, we can be notified if the range isn\u0027t monotonic. Not so important because it\u0027s already in the status report.",
+      "parentUuid": "bcb77804_52601083",
+      "range": {
+        "startLine": 432,
+        "startChar": 48,
+        "endLine": 432,
+        "endChar": 68
+      },
+      "revId": "cb7c0caba08ee868ffe6ad5f60afdc9b1a2a8a54",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
