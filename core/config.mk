@@ -820,14 +820,6 @@ $(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use PRODUCT_USE_VNDK instead)
 .KATI_READONLY := \
     PRODUCT_USE_VNDK
 
-# PRODUCT_TREBLE_LINKER_NAMESPACES must be true to define BOARD_VNDK_VERSION.
-ifdef BOARD_VNDK_VERSION
-  ifneq ($(PRODUCT_TREBLE_LINKER_NAMESPACES),true)
-    $(error PRODUCT_TREBLE_LINKER_NAMESPACES must be true \
-            if BOARD_VNDK_VERSION is defined)
-  endif
-endif
-
 ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),27),)
     ifneq ($(TARGET_USES_MKE2FS),true)
