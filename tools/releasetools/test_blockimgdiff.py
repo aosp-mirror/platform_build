@@ -19,7 +19,8 @@ from __future__ import print_function
 import unittest
 
 import common
-from blockimgdiff import BlockImageDiff, EmptyImage, HeapItem, Transfer
+from blockimgdiff import (BlockImageDiff, EmptyImage, HeapItem, ImgdiffStats,
+                          Transfer)
 from rangelib import RangeSet
 
 
@@ -196,6 +197,17 @@ class BlockImageDiffTest(unittest.TestCase):
     self.assertTrue(
         block_image_diff.CanUseImgdiff(
             "/system/app/app1.apk", RangeSet("10-15"), RangeSet("0-5")))
+    self.assertTrue(
+        block_image_diff.CanUseImgdiff(
+            "/vendor/app/app2.apk", RangeSet("20 25"), RangeSet("30-31"), True))
+
+    self.assertDictEqual(
+        {
+            ImgdiffStats.USED_IMGDIFF : {"/system/app/app1.apk"},
+            ImgdiffStats.USED_IMGDIFF_LARGE_APK : {"/vendor/app/app2.apk"},
+        },
+        block_image_diff.imgdiff_stats.stats)
+
 
   def test_CanUseImgdiff_ineligible(self):
     # Disabled by caller.
@@ -223,3 +235,32 @@ class BlockImageDiffTest(unittest.TestCase):
     self.assertFalse(
         block_image_diff.CanUseImgdiff(
             "/vendor/app/app3.apk", RangeSet("10-15"), src_ranges))
+
+    # The stats are correctly logged.
+    self.assertDictEqual(
+        {
+            ImgdiffStats.SKIPPED_NONMONOTONIC : {'/system/app/app2.apk'},
+            ImgdiffStats.SKIPPED_TRIMMED : {'/vendor/app/app3.apk'},
+        },
+        block_image_diff.imgdiff_stats.stats)
+
+
+class ImgdiffStatsTest(unittest.TestCase):
+
+  def test_Log(self):
+    imgdiff_stats = ImgdiffStats()
+    imgdiff_stats.Log("/system/app/app2.apk", ImgdiffStats.USED_IMGDIFF)
+    self.assertDictEqual(
+        {
+            ImgdiffStats.USED_IMGDIFF: {'/system/app/app2.apk'},
+        },
+        imgdiff_stats.stats)
+
+  def test_Log_invalidInputs(self):
+    imgdiff_stats = ImgdiffStats()
+
+    self.assertRaises(AssertionError, imgdiff_stats.Log, "/system/bin/gzip",
+                      ImgdiffStats.USED_IMGDIFF)
+
+    self.assertRaises(AssertionError, imgdiff_stats.Log, "/system/app/app1.apk",
+                      "invalid reason")
