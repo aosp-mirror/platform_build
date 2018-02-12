@@ -256,6 +256,71 @@ class HeapItem(object):
     return self.score <= other.score
 
 
+class ImgdiffStats(object):
+  """A class that collects imgdiff stats.
+
+  It keeps track of the files that will be applied imgdiff while generating
+  BlockImageDiff. It also logs the ones that cannot use imgdiff, with specific
+  reasons. The stats is only meaningful when imgdiff not being disabled by the
+  caller of BlockImageDiff. In addition, only files with supported types
+  (BlockImageDiff.FileTypeSupportedByImgdiff()) are allowed to be logged.
+
+  TODO: The info could be inaccurate due to the unconditional fallback from
+  imgdiff to bsdiff on errors. The fallbacks will be removed.
+  """
+
+  USED_IMGDIFF = "APK files diff'd with imgdiff"
+  USED_IMGDIFF_LARGE_APK = "Large APK files split and diff'd with imgdiff"
+
+  # Reasons for not applying imgdiff on APKs.
+  SKIPPED_TRIMMED = "Not used imgdiff due to trimmed RangeSet"
+  SKIPPED_NONMONOTONIC = "Not used imgdiff due to having non-monotonic ranges"
+
+  # The list of valid reasons, which will also be the dumped order in a report.
+  REASONS = (
+      USED_IMGDIFF,
+      USED_IMGDIFF_LARGE_APK,
+      SKIPPED_TRIMMED,
+      SKIPPED_NONMONOTONIC,
+  )
+
+  def  __init__(self):
+    self.stats = {}
+
+  def Log(self, filename, reason):
+    """Logs why imgdiff can or cannot be applied to the given filename.
+
+    Args:
+      filename: The filename string.
+      reason: One of the reason constants listed in REASONS.
+
+    Raises:
+      AssertionError: On unsupported filetypes or invalid reason.
+    """
+    assert BlockImageDiff.FileTypeSupportedByImgdiff(filename)
+    assert reason in self.REASONS
+
+    if reason not in self.stats:
+      self.stats[reason] = set()
+    self.stats[reason].add(filename)
+
+  def Report(self):
+    """Prints a report of the collected imgdiff stats."""
+
+    def print_header(header, separator):
+      print(header)
+      print(separator * len(header) + '\n')
+
+    print_header('  Imgdiff Stats Report  ', '=')
+    for key in self.REASONS:
+      if key not in self.stats:
+        continue
+      values = self.stats[key]
+      section_header = ' {} (count: {}) '.format(key, len(values))
+      print_header(section_header, '-')
+      print(''.join(['  {}\n'.format(name) for name in values]))
+
+
 # BlockImageDiff works on two image objects.  An image object is
 # anything that provides the following attributes:
 #
@@ -311,6 +376,7 @@ class BlockImageDiff(object):
     self.touched_src_ranges = RangeSet()
     self.touched_src_sha1 = None
     self.disable_imgdiff = disable_imgdiff
+    self.imgdiff_stats = ImgdiffStats() if not disable_imgdiff else None
 
     assert version in (3, 4)
 
@@ -337,7 +403,7 @@ class BlockImageDiff(object):
     """Returns whether the file type is supported by imgdiff."""
     return filename.lower().endswith(('.apk', '.jar', '.zip'))
 
-  def CanUseImgdiff(self, name, tgt_ranges, src_ranges):
+  def CanUseImgdiff(self, name, tgt_ranges, src_ranges, large_apk=False):
     """Checks whether we can apply imgdiff for the given RangeSets.
 
     For files in ZIP format (e.g., APKs, JARs, etc.) we would like to use
@@ -359,17 +425,26 @@ class BlockImageDiff(object):
       name: The filename to be diff'd.
       tgt_ranges: The target RangeSet.
       src_ranges: The source RangeSet.
+      large_apk: Whether this is to split a large APK.
 
     Returns:
       A boolean result.
     """
-    return (
-        not self.disable_imgdiff and
-        self.FileTypeSupportedByImgdiff(name) and
-        tgt_ranges.monotonic and
-        src_ranges.monotonic and
-        not tgt_ranges.extra.get('trimmed') and
-        not src_ranges.extra.get('trimmed'))
+    if (self.disable_imgdiff or not self.FileTypeSupportedByImgdiff(name)):
+      return False
+
+    if not tgt_ranges.monotonic or not src_ranges.monotonic:
+      self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_NONMONOTONIC)
+      return False
+
+    if tgt_ranges.extra.get('trimmed') or src_ranges.extra.get('trimmed'):
+      self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_TRIMMED)
+      return False
+
+    reason = (ImgdiffStats.USED_IMGDIFF_LARGE_APK if large_apk
+              else ImgdiffStats.USED_IMGDIFF)
+    self.imgdiff_stats.Log(name, reason)
+    return True
 
   def Compute(self, prefix):
     # When looking for a source file to use as the diff input for a
@@ -403,6 +478,10 @@ class BlockImageDiff(object):
 
     self.ComputePatches(prefix)
     self.WriteTransfers(prefix)
+
+    # Report the imgdiff stats.
+    if common.OPTIONS.verbose and not self.disable_imgdiff:
+      self.imgdiff_stats.Report()
 
   def WriteTransfers(self, prefix):
     def WriteSplitTransfers(out, style, target_blocks):
@@ -1289,7 +1368,7 @@ class BlockImageDiff(object):
       # calling the costly RangeSha1()s.
       if (self.FileTypeSupportedByImgdiff(tgt_name) and
           self.tgt.RangeSha1(tgt_ranges) != self.src.RangeSha1(src_ranges)):
-        if self.CanUseImgdiff(tgt_name, tgt_ranges, src_ranges):
+        if self.CanUseImgdiff(tgt_name, tgt_ranges, src_ranges, True):
           large_apks.append((tgt_name, src_name, tgt_ranges, src_ranges))
           return
 
