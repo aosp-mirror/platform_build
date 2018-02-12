@@ -852,9 +852,6 @@ class BlockImageDiff(object):
       patches = [None] * diff_total
       error_messages = []
       warning_messages = []
-      if sys.stdout.isatty():
-        global diff_done
-        diff_done = 0
 
       # Using multiprocessing doesn't give additional benefits, due to the
       # pattern of the code. The diffing work is done by subprocess.call, which
@@ -870,8 +867,15 @@ class BlockImageDiff(object):
             if not diff_queue:
               return
             xf_index, imgdiff, patch_index = diff_queue.pop()
+            xf = self.transfers[xf_index]
 
-          xf = self.transfers[xf_index]
+            if sys.stdout.isatty():
+              diff_left = len(diff_queue)
+              progress = (diff_total - diff_left) * 100 / diff_total
+              # '\033[K' is to clear to EOL.
+              print(' [%3d%%] %s\033[K' % (progress, xf.tgt_name), end='\r')
+              sys.stdout.flush()
+
           patch = xf.patch
           if not patch:
             src_ranges = xf.src_ranges
@@ -918,13 +922,6 @@ class BlockImageDiff(object):
 
           with lock:
             patches[patch_index] = (xf_index, patch)
-            if sys.stdout.isatty():
-              global diff_done
-              diff_done += 1
-              progress = diff_done * 100 / diff_total
-              # '\033[K' is to clear to EOL.
-              print(' [%d%%] %s\033[K' % (progress, xf.tgt_name), end='\r')
-              sys.stdout.flush()
 
       threads = [threading.Thread(target=diff_worker)
                  for _ in range(self.threads)]
