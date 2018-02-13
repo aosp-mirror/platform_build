@@ -15,7 +15,6 @@
 from __future__ import print_function
 
 import array
-import common
 import copy
 import functools
 import heapq
@@ -27,9 +26,10 @@ import re
 import subprocess
 import sys
 import threading
-
 from collections import deque, OrderedDict
 from hashlib import sha1
+
+import common
 from rangelib import RangeSet
 
 
@@ -430,7 +430,7 @@ class BlockImageDiff(object):
     Returns:
       A boolean result.
     """
-    if (self.disable_imgdiff or not self.FileTypeSupportedByImgdiff(name)):
+    if self.disable_imgdiff or not self.FileTypeSupportedByImgdiff(name):
       return False
 
     if not tgt_ranges.monotonic or not src_ranges.monotonic:
@@ -535,7 +535,7 @@ class BlockImageDiff(object):
       #   <# blocks> - <stash refs...>
 
       size = xf.src_ranges.size()
-      src_str = [str(size)]
+      src_str_buffer = [str(size)]
 
       unstashed_src_ranges = xf.src_ranges
       mapped_stashes = []
@@ -545,7 +545,7 @@ class BlockImageDiff(object):
         sr = xf.src_ranges.map_within(sr)
         mapped_stashes.append(sr)
         assert sh in stashes
-        src_str.append("%s:%s" % (sh, sr.to_string_raw()))
+        src_str_buffer.append("%s:%s" % (sh, sr.to_string_raw()))
         stashes[sh] -= 1
         if stashes[sh] == 0:
           free_string.append("free %s\n" % (sh,))
@@ -553,17 +553,17 @@ class BlockImageDiff(object):
           stashes.pop(sh)
 
       if unstashed_src_ranges:
-        src_str.insert(1, unstashed_src_ranges.to_string_raw())
+        src_str_buffer.insert(1, unstashed_src_ranges.to_string_raw())
         if xf.use_stash:
           mapped_unstashed = xf.src_ranges.map_within(unstashed_src_ranges)
-          src_str.insert(2, mapped_unstashed.to_string_raw())
+          src_str_buffer.insert(2, mapped_unstashed.to_string_raw())
           mapped_stashes.append(mapped_unstashed)
           self.AssertPartition(RangeSet(data=(0, size)), mapped_stashes)
       else:
-        src_str.insert(1, "-")
+        src_str_buffer.insert(1, "-")
         self.AssertPartition(RangeSet(data=(0, size)), mapped_stashes)
 
-      src_str = " ".join(src_str)
+      src_str = " ".join(src_str_buffer)
 
       # version 3+:
       #   zero <rangeset>
@@ -684,11 +684,11 @@ class BlockImageDiff(object):
       max_allowed = OPTIONS.cache_size * OPTIONS.stash_threshold
       print("max stashed blocks: %d  (%d bytes), "
             "limit: %d bytes (%.2f%%)\n" % (
-            max_stashed_blocks, self._max_stashed_size, max_allowed,
-            self._max_stashed_size * 100.0 / max_allowed))
+                max_stashed_blocks, self._max_stashed_size, max_allowed,
+                self._max_stashed_size * 100.0 / max_allowed))
     else:
       print("max stashed blocks: %d  (%d bytes), limit: <unknown>\n" % (
-            max_stashed_blocks, self._max_stashed_size))
+          max_stashed_blocks, self._max_stashed_size))
 
   def ReviseStashSize(self):
     print("Revising stash size...")
@@ -852,9 +852,6 @@ class BlockImageDiff(object):
       patches = [None] * diff_total
       error_messages = []
       warning_messages = []
-      if sys.stdout.isatty():
-        global diff_done
-        diff_done = 0
 
       # Using multiprocessing doesn't give additional benefits, due to the
       # pattern of the code. The diffing work is done by subprocess.call, which
@@ -870,8 +867,15 @@ class BlockImageDiff(object):
             if not diff_queue:
               return
             xf_index, imgdiff, patch_index = diff_queue.pop()
+            xf = self.transfers[xf_index]
 
-          xf = self.transfers[xf_index]
+            if sys.stdout.isatty():
+              diff_left = len(diff_queue)
+              progress = (diff_total - diff_left) * 100 / diff_total
+              # '\033[K' is to clear to EOL.
+              print(' [%3d%%] %s\033[K' % (progress, xf.tgt_name), end='\r')
+              sys.stdout.flush()
+
           patch = xf.patch
           if not patch:
             src_ranges = xf.src_ranges
@@ -891,10 +895,10 @@ class BlockImageDiff(object):
             except ValueError as e:
               message.append(
                   "Failed to generate %s for %s: tgt=%s, src=%s:\n%s" % (
-                  "imgdiff" if imgdiff else "bsdiff",
-                  xf.tgt_name if xf.tgt_name == xf.src_name else
+                      "imgdiff" if imgdiff else "bsdiff",
+                      xf.tgt_name if xf.tgt_name == xf.src_name else
                       xf.tgt_name + " (from " + xf.src_name + ")",
-                  xf.tgt_ranges, xf.src_ranges, e.message))
+                      xf.tgt_ranges, xf.src_ranges, e.message))
               # TODO(b/68016761): Better handle the holes in mke2fs created
               # images.
               if imgdiff:
@@ -902,7 +906,7 @@ class BlockImageDiff(object):
                   patch = compute_patch(src_file, tgt_file, imgdiff=False)
                   message.append(
                       "Fell back and generated with bsdiff instead for %s" % (
-                      xf.tgt_name,))
+                          xf.tgt_name,))
                   xf.style = "bsdiff"
                   with lock:
                     warning_messages.extend(message)
@@ -910,7 +914,7 @@ class BlockImageDiff(object):
                 except ValueError as e:
                   message.append(
                       "Also failed to generate with bsdiff for %s:\n%s" % (
-                      xf.tgt_name, e.message))
+                          xf.tgt_name, e.message))
 
             if message:
               with lock:
@@ -918,13 +922,6 @@ class BlockImageDiff(object):
 
           with lock:
             patches[patch_index] = (xf_index, patch)
-            if sys.stdout.isatty():
-              global diff_done
-              diff_done += 1
-              progress = diff_done * 100 / diff_total
-              # '\033[K' is to clear to EOL.
-              print(' [%d%%] %s\033[K' % (progress, xf.tgt_name), end='\r')
-              sys.stdout.flush()
 
       threads = [threading.Thread(target=diff_worker)
                  for _ in range(self.threads)]
@@ -961,11 +958,11 @@ class BlockImageDiff(object):
         if common.OPTIONS.verbose:
           tgt_size = xf.tgt_ranges.size() * self.tgt.blocksize
           print("%10d %10d (%6.2f%%) %7s %s %s %s" % (
-                xf.patch_len, tgt_size, xf.patch_len * 100.0 / tgt_size,
-                xf.style,
-                xf.tgt_name if xf.tgt_name == xf.src_name else (
-                    xf.tgt_name + " (from " + xf.src_name + ")"),
-                xf.tgt_ranges, xf.src_ranges))
+              xf.patch_len, tgt_size, xf.patch_len * 100.0 / tgt_size,
+              xf.style,
+              xf.tgt_name if xf.tgt_name == xf.src_name else (
+                  xf.tgt_name + " (from " + xf.src_name + ")"),
+              xf.tgt_ranges, xf.src_ranges))
 
   def AssertSha1Good(self):
     """Check the SHA-1 of the src & tgt blocks in the transfer list.
@@ -1198,7 +1195,8 @@ class BlockImageDiff(object):
       while sinks:
         new_sinks = OrderedDict()
         for u in sinks:
-          if u not in G: continue
+          if u not in G:
+            continue
           s2.appendleft(u)
           del G[u]
           for iu in u.incoming:
@@ -1211,7 +1209,8 @@ class BlockImageDiff(object):
       while sources:
         new_sources = OrderedDict()
         for u in sources:
-          if u not in G: continue
+          if u not in G:
+            continue
           s1.append(u)
           del G[u]
           for iu in u.outgoing:
@@ -1220,7 +1219,8 @@ class BlockImageDiff(object):
               new_sources[iu] = None
         sources = new_sources
 
-      if not G: break
+      if not G:
+        break
 
       # Find the "best" vertex to put next.  "Best" is the one that
       # maximizes the net difference in source blocks saved we get by
@@ -1277,14 +1277,16 @@ class BlockImageDiff(object):
       intersections = OrderedDict()
       for s, e in a.tgt_ranges:
         for i in range(s, e):
-          if i >= len(source_ranges): break
+          if i >= len(source_ranges):
+            break
           # Add all the Transfers in source_ranges[i] to the (ordered) set.
           if source_ranges[i] is not None:
             for j in source_ranges[i]:
               intersections[j] = None
 
       for b in intersections:
-        if a is b: continue
+        if a is b:
+          continue
 
         # If the blocks written by A are read by B, then B needs to go before A.
         i = a.tgt_ranges.intersect(b.src_ranges)
@@ -1421,8 +1423,9 @@ class BlockImageDiff(object):
 
         if tgt_changed < tgt_size * crop_threshold:
           assert tgt_changed + tgt_skipped.size() == tgt_size
-          print('%10d %10d (%6.2f%%) %s' % (tgt_skipped.size(), tgt_size,
-                tgt_skipped.size() * 100.0 / tgt_size, tgt_name))
+          print('%10d %10d (%6.2f%%) %s' % (
+              tgt_skipped.size(), tgt_size,
+              tgt_skipped.size() * 100.0 / tgt_size, tgt_name))
           AddSplitTransfers(
               "%s-skipped" % (tgt_name,),
               "%s-skipped" % (src_name,),
@@ -1560,7 +1563,7 @@ class BlockImageDiff(object):
                                                     tgt_ranges, src_ranges,
                                                     lines)
         for index, (patch_start, patch_length, split_tgt_ranges,
-            split_src_ranges) in enumerate(split_info_list):
+                    split_src_ranges) in enumerate(split_info_list):
           with open(patch_file) as f:
             f.seek(patch_start)
             patch_content = f.read(patch_length)
