@@ -264,9 +264,6 @@ class ImgdiffStats(object):
   reasons. The stats is only meaningful when imgdiff not being disabled by the
   caller of BlockImageDiff. In addition, only files with supported types
   (BlockImageDiff.FileTypeSupportedByImgdiff()) are allowed to be logged.
-
-  TODO: The info could be inaccurate due to the unconditional fallback from
-  imgdiff to bsdiff on errors. The fallbacks will be removed.
   """
 
   USED_IMGDIFF = "APK files diff'd with imgdiff"
@@ -275,6 +272,7 @@ class ImgdiffStats(object):
   # Reasons for not applying imgdiff on APKs.
   SKIPPED_TRIMMED = "Not used imgdiff due to trimmed RangeSet"
   SKIPPED_NONMONOTONIC = "Not used imgdiff due to having non-monotonic ranges"
+  SKIPPED_INCOMPLETE = "Not used imgdiff due to incomplete RangeSet"
 
   # The list of valid reasons, which will also be the dumped order in a report.
   REASONS = (
@@ -282,6 +280,7 @@ class ImgdiffStats(object):
       USED_IMGDIFF_LARGE_APK,
       SKIPPED_TRIMMED,
       SKIPPED_NONMONOTONIC,
+      SKIPPED_INCOMPLETE,
   )
 
   def  __init__(self):
@@ -415,6 +414,7 @@ class BlockImageDiff(object):
       - The file type is supported by imgdiff;
       - The source and target blocks are monotonic (i.e. the data is stored with
         blocks in increasing order);
+      - Both files have complete lists of blocks;
       - We haven't removed any blocks from the source set.
 
     If all these conditions are satisfied, concatenating all the blocks in the
@@ -435,6 +435,10 @@ class BlockImageDiff(object):
 
     if not tgt_ranges.monotonic or not src_ranges.monotonic:
       self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_NONMONOTONIC)
+      return False
+
+    if tgt_ranges.extra.get('incomplete') or src_ranges.extra.get('incomplete'):
+      self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_INCOMPLETE)
       return False
 
     if tgt_ranges.extra.get('trimmed') or src_ranges.extra.get('trimmed'):
@@ -851,7 +855,6 @@ class BlockImageDiff(object):
       diff_total = len(diff_queue)
       patches = [None] * diff_total
       error_messages = []
-      warning_messages = []
 
       # Using multiprocessing doesn't give additional benefits, due to the
       # pattern of the code. The diffing work is done by subprocess.call, which
@@ -899,23 +902,6 @@ class BlockImageDiff(object):
                       xf.tgt_name if xf.tgt_name == xf.src_name else
                       xf.tgt_name + " (from " + xf.src_name + ")",
                       xf.tgt_ranges, xf.src_ranges, e.message))
-              # TODO(b/68016761): Better handle the holes in mke2fs created
-              # images.
-              if imgdiff:
-                try:
-                  patch = compute_patch(src_file, tgt_file, imgdiff=False)
-                  message.append(
-                      "Fell back and generated with bsdiff instead for %s" % (
-                          xf.tgt_name,))
-                  xf.style = "bsdiff"
-                  with lock:
-                    warning_messages.extend(message)
-                  del message[:]
-                except ValueError as e:
-                  message.append(
-                      "Also failed to generate with bsdiff for %s:\n%s" % (
-                          xf.tgt_name, e.message))
-
             if message:
               with lock:
                 error_messages.extend(message)
@@ -932,11 +918,6 @@ class BlockImageDiff(object):
 
       if sys.stdout.isatty():
         print('\n')
-
-      if warning_messages:
-        print('WARNING:')
-        print('\n'.join(warning_messages))
-        print('\n\n\n')
 
       if error_messages:
         print('ERROR:')
@@ -1518,11 +1499,6 @@ class BlockImageDiff(object):
       be valid because the block ranges of src-X & tgt-X will always stay the
       same afterwards; but there's a chance we don't use the patch if we
       convert the "diff" command into "new" or "move" later.
-
-      The split will be attempted by calling imgdiff, which expects the input
-      files to be valid zip archives. If imgdiff fails for some reason (i.e.
-      holes in the APK file), we will fall back to split the failed APKs into
-      fixed size chunks.
       """
 
       while True:
@@ -1544,16 +1520,11 @@ class BlockImageDiff(object):
                "--block-limit={}".format(max_blocks_per_transfer),
                "--split-info=" + patch_info_file,
                src_file, tgt_file, patch_file]
-        p = common.Run(cmd, stdout=subprocess.PIPE)
-        p.communicate()
-        if p.returncode != 0:
-          print("Failed to create patch between {} and {},"
-                " falling back to bsdiff".format(src_name, tgt_name))
-          with transfer_lock:
-            AddSplitTransfersWithFixedSizeChunks(tgt_name, src_name,
-                                                 tgt_ranges, src_ranges,
-                                                 "diff", self.transfers)
-          continue
+        p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        imgdiff_output, _ = p.communicate()
+        assert p.returncode == 0, \
+            "Failed to create imgdiff patch between {} and {}:\n{}".format(
+                src_name, tgt_name, imgdiff_output)
 
         with open(patch_info_file) as patch_info:
           lines = patch_info.readlines()
