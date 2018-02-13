@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "debd614a_910ef6d3",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-13T00:43:35Z",
+      "side": 1,
+      "message": "Replace this with:\n\n  @rm -f $@\n  $(hide) cp \"$(dir $\u003c)$(notdir $@)\" \"$@\"\n\nAnd remove $(ACP) from the dependency list. we\u0027re trying to remove acp.",
+      "range": {
+        "startLine": 156,
+        "startChar": 1,
+        "endLine": 156,
+        "endChar": 44
+      },
+      "revId": "3eaf4ece5aaedc2d4c4510c71834beaf7662a8d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7703529c_3b23a4c8",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-13T00:43:35Z",
+      "side": 1,
+      "message": "$(my_2nd_arch_prefix)?",
+      "range": {
+        "startLine": 50,
+        "startChar": 203,
+        "endLine": 50,
+        "endChar": 206
+      },
+      "revId": "3eaf4ece5aaedc2d4c4510c71834beaf7662a8d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
