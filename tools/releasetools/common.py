@@ -625,7 +625,7 @@ def UnzipTemp(filename, pattern=None):
   return tmp, zipfile.ZipFile(filename, "r")
 
 
-def GetSparseImage(which, tmpdir, input_zip):
+def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks):
   """Returns a SparseImage object suitable for passing to BlockImageDiff.
 
   This function loads the specified sparse image from the given path, and
@@ -637,6 +637,7 @@ def GetSparseImage(which, tmpdir, input_zip):
     which: The partition name, which must be "system" or "vendor".
     tmpdir: The directory that contains the prebuilt image and block map file.
     input_zip: The target-files ZIP archive.
+    allow_shared_blocks: Whether having shared blocks is allowed.
 
   Returns:
     A SparseImage object, with file_map info loaded.
@@ -655,7 +656,8 @@ def GetSparseImage(which, tmpdir, input_zip):
   # unconditionally. Note that they are still part of care_map. (Bug: 20939131)
   clobbered_blocks = "0"
 
-  image = sparse_img.SparseImage(path, mappath, clobbered_blocks)
+  image = sparse_img.SparseImage(path, mappath, clobbered_blocks,
+                                 allow_shared_blocks=allow_shared_blocks)
 
   # block.map may contain less blocks, because mke2fs may skip allocating blocks
   # if they contain all zeros. We can't reconstruct such a file from its block
@@ -669,6 +671,13 @@ def GetSparseImage(which, tmpdir, input_zip):
 
     info = input_zip.getinfo(arcname)
     ranges = image.file_map[entry]
+
+    # If a RangeSet has been tagged as using shared blocks while loading the
+    # image, its block list must be already incomplete due to that reason. Don't
+    # give it 'incomplete' tag to avoid messing up the imgdiff stats.
+    if ranges.extra.get('uses_shared_blocks'):
+      continue
+
     if RoundUpTo4K(info.file_size) > ranges.size() * 4096:
       ranges.extra['incomplete'] = True
 

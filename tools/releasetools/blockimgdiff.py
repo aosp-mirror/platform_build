@@ -272,6 +272,7 @@ class ImgdiffStats(object):
   # Reasons for not applying imgdiff on APKs.
   SKIPPED_TRIMMED = "Not used imgdiff due to trimmed RangeSet"
   SKIPPED_NONMONOTONIC = "Not used imgdiff due to having non-monotonic ranges"
+  SKIPPED_SHARED_BLOCKS = "Not used imgdiff due to using shared blocks"
   SKIPPED_INCOMPLETE = "Not used imgdiff due to incomplete RangeSet"
 
   # The list of valid reasons, which will also be the dumped order in a report.
@@ -280,6 +281,7 @@ class ImgdiffStats(object):
       USED_IMGDIFF_LARGE_APK,
       SKIPPED_TRIMMED,
       SKIPPED_NONMONOTONIC,
+      SKIPPED_SHARED_BLOCKS,
       SKIPPED_INCOMPLETE,
   )
 
@@ -414,6 +416,7 @@ class BlockImageDiff(object):
       - The file type is supported by imgdiff;
       - The source and target blocks are monotonic (i.e. the data is stored with
         blocks in increasing order);
+      - Both files don't contain shared blocks;
       - Both files have complete lists of blocks;
       - We haven't removed any blocks from the source set.
 
@@ -435,6 +438,11 @@ class BlockImageDiff(object):
 
     if not tgt_ranges.monotonic or not src_ranges.monotonic:
       self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_NONMONOTONIC)
+      return False
+
+    if (tgt_ranges.extra.get('uses_shared_blocks') or
+        src_ranges.extra.get('uses_shared_blocks')):
+      self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_SHARED_BLOCKS)
       return False
 
     if tgt_ranges.extra.get('incomplete') or src_ranges.extra.get('incomplete'):
