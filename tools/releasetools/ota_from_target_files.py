@@ -786,11 +786,15 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   script.ShowProgress(system_progress, 0)
 
+  # See the notes in WriteBlockIncrementalOTAPackage().
+  allow_shared_blocks = target_info.get('ext4_share_dup_blocks') == "true"
+
   # Full OTA is done as an "incremental" against an empty source image. This
   # has the effect of writing new data from the package to the entire
   # partition, but lets us reuse the updater code that writes incrementals to
   # do it.
-  system_tgt = common.GetSparseImage("system", OPTIONS.input_tmp, input_zip)
+  system_tgt = common.GetSparseImage("system", OPTIONS.input_tmp, input_zip,
+                                     allow_shared_blocks)
   system_tgt.ResetFileMap()
   system_diff = common.BlockDifference("system", system_tgt, src=None)
   system_diff.WriteScript(script, output_zip)
@@ -801,7 +805,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   if HasVendorPartition(input_zip):
     script.ShowProgress(0.1, 0)
 
-    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.input_tmp, input_zip)
+    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.input_tmp, input_zip,
+                                       allow_shared_blocks)
     vendor_tgt.ResetFileMap()
     vendor_diff = common.BlockDifference("vendor", vendor_tgt)
     vendor_diff.WriteScript(script, output_zip)
@@ -978,8 +983,16 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   target_recovery = common.GetBootableImage(
       "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
 
-  system_src = common.GetSparseImage("system", OPTIONS.source_tmp, source_zip)
-  system_tgt = common.GetSparseImage("system", OPTIONS.target_tmp, target_zip)
+  # When target uses 'BOARD_EXT4_SHARE_DUP_BLOCKS := true', images may contain
+  # shared blocks (i.e. some blocks will show up in multiple files' block
+  # list). We can only allocate such shared blocks to the first "owner", and
+  # disable imgdiff for all later occurrences.
+  allow_shared_blocks = (source_info.get('ext4_share_dup_blocks') == "true" or
+                         target_info.get('ext4_share_dup_blocks') == "true")
+  system_src = common.GetSparseImage("system", OPTIONS.source_tmp, source_zip,
+                                     allow_shared_blocks)
+  system_tgt = common.GetSparseImage("system", OPTIONS.target_tmp, target_zip,
+                                     allow_shared_blocks)
 
   blockimgdiff_version = max(
       int(i) for i in target_info.get("blockimgdiff_versions", "1").split(","))
@@ -1004,8 +1017,10 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if HasVendorPartition(target_zip):
     if not HasVendorPartition(source_zip):
       raise RuntimeError("can't generate incremental that adds /vendor")
-    vendor_src = common.GetSparseImage("vendor", OPTIONS.source_tmp, source_zip)
-    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.target_tmp, target_zip)
+    vendor_src = common.GetSparseImage("vendor", OPTIONS.source_tmp, source_zip,
+                                       allow_shared_blocks)
+    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.target_tmp, target_zip,
+                                       allow_shared_blocks)
 
     # Check first block of vendor partition for remount R/W only if
     # disk type is ext4
