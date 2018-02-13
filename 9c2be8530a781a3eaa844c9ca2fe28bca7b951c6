@@ -22,6 +22,30 @@
       "revId": "9c2be8530a781a3eaa844c9ca2fe28bca7b951c6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ffee670b_c3e2c529",
+        "filename": "target/product/aosp_base_telephony.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1138358
+      },
+      "writtenOn": "2018-02-13T23:19:52Z",
+      "side": 1,
+      "message": "We intend to use device/sample/etc/apns-full-conf.xml as the AOSP canonical APN data. Maybe I should remove the goldfish version?",
+      "parentUuid": "6519aad7_7e289849",
+      "range": {
+        "startLine": 16,
+        "startChar": 50,
+        "endLine": 16,
+        "endChar": 72
+      },
+      "revId": "9c2be8530a781a3eaa844c9ca2fe28bca7b951c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
