@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6519aad7_7e289849",
+        "filename": "target/product/aosp_base_telephony.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-13T23:14:35Z",
+      "side": 1,
+      "message": "apns-conf.xml is already installed (from goldfish) in full_base_telphony.mk",
+      "range": {
+        "startLine": 16,
+        "startChar": 50,
+        "endLine": 16,
+        "endChar": 72
+      },
+      "revId": "9c2be8530a781a3eaa844c9ca2fe28bca7b951c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
