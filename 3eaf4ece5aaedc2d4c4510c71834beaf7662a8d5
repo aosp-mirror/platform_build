@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "aa0f800f_d8a55597",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-02-13T00:50:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "debd614a_910ef6d3",
+      "range": {
+        "startLine": 156,
+        "startChar": 1,
+        "endLine": 156,
+        "endChar": 44
+      },
+      "revId": "3eaf4ece5aaedc2d4c4510c71834beaf7662a8d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7703529c_3b23a4c8",
         "filename": "core/dex_preopt_libart_boot.mk",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "3eaf4ece5aaedc2d4c4510c71834beaf7662a8d5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72a270dc_dbf0ea71",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-02-13T00:50:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7703529c_3b23a4c8",
+      "range": {
+        "startLine": 50,
+        "startChar": 203,
+        "endLine": 50,
+        "endChar": 206
+      },
+      "revId": "3eaf4ece5aaedc2d4c4510c71834beaf7662a8d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
