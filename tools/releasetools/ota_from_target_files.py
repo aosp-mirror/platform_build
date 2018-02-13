@@ -386,11 +386,17 @@ class Payload(object):
   SECONDARY_PAYLOAD_BIN = 'secondary/payload.bin'
   SECONDARY_PAYLOAD_PROPERTIES_TXT = 'secondary/payload_properties.txt'
 
-  def __init__(self):
+  def __init__(self, secondary=False):
+    """Initializes a Payload instance.
+
+    Args:
+      secondary: Whether it's generating a secondary payload (default: False).
+    """
     # The place where the output from the subprocess should go.
     self._log_file = sys.stdout if OPTIONS.verbose else subprocess.PIPE
     self.payload_file = None
     self.payload_properties = None
+    self.secondary = secondary
 
   def Generate(self, target_file, source_file=None, additional_args=None):
     """Generates a payload from the given target-files zip(s).
@@ -470,6 +476,10 @@ class Payload(object):
     p1.communicate()
     assert p1.returncode == 0, "brillo_update_payload properties failed"
 
+    if self.secondary:
+      with open(properties_file, "a") as f:
+        f.write("SWITCH_SLOT_ON_REBOOT=0\n")
+
     if OPTIONS.wipe_user_data:
       with open(properties_file, "a") as f:
         f.write("POWERWASH=1\n")
@@ -477,18 +487,16 @@ class Payload(object):
     self.payload_file = signed_payload_file
     self.payload_properties = properties_file
 
-  def WriteToZip(self, output_zip, secondary=False):
+  def WriteToZip(self, output_zip):
     """Writes the payload to the given zip.
 
     Args:
       output_zip: The output ZipFile instance.
-      secondary: Whether the payload should be packed as secondary payload
-          (default: False).
     """
     assert self.payload_file is not None
     assert self.payload_properties is not None
 
-    if secondary:
+    if self.secondary:
       payload_arcname = Payload.SECONDARY_PAYLOAD_BIN
       payload_properties_arcname = Payload.SECONDARY_PAYLOAD_PROPERTIES_TXT
     else:
@@ -1327,10 +1335,10 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
     # We always include a full payload for the secondary slot, even when
     # building an incremental OTA. See the comments for "--include_secondary".
     secondary_target_file = GetTargetFilesZipForSecondaryImages(target_file)
-    secondary_payload = Payload()
+    secondary_payload = Payload(secondary=True)
     secondary_payload.Generate(secondary_target_file)
     secondary_payload.Sign(payload_signer)
-    secondary_payload.WriteToZip(output_zip, secondary=True)
+    secondary_payload.WriteToZip(output_zip)
 
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.
