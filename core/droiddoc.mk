@@ -83,7 +83,11 @@ ifneq ($(LOCAL_SDK_VERSION),)
     _version :=
   endif
 else
-  LOCAL_JAVA_LIBRARIES := core-oj core-libart ext framework $(LOCAL_JAVA_LIBRARIES)
+  ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+    LOCAL_JAVA_LIBRARIES := core-oj core-libart
+  else
+    LOCAL_JAVA_LIBRARIES := core-oj core-libart ext framework $(LOCAL_JAVA_LIBRARIES)
+  endif
   $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, core-oj):$(call java-lib-files, core-libart)
 endif  # LOCAL_SDK_VERSION
 LOCAL_JAVA_LIBRARIES := $(sort $(LOCAL_JAVA_LIBRARIES))
