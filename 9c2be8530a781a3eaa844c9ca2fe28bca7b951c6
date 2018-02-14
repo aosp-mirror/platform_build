@@ -70,6 +70,30 @@
       "revId": "9c2be8530a781a3eaa844c9ca2fe28bca7b951c6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b89f48c_6ffb59fc",
+        "filename": "target/product/aosp_base_telephony.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1138358
+      },
+      "writtenOn": "2018-02-14T20:04:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2fd7ce3e_14553c17",
+      "range": {
+        "startLine": 16,
+        "startChar": 50,
+        "endLine": 16,
+        "endChar": 72
+      },
+      "revId": "9c2be8530a781a3eaa844c9ca2fe28bca7b951c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
