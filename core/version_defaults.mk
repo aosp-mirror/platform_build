@@ -24,7 +24,6 @@
 #     DEFAULT_APP_TARGET_SDK
 #     BUILD_ID
 #     BUILD_NUMBER
-#     BUILD_DATETIME
 #     PLATFORM_SECURITY_PATCH
 #     PLATFORM_VNDK_VERSION
 #     PLATFORM_SYSTEMSDK_VERSIONS
@@ -255,16 +254,10 @@ ifndef BUILD_ID
   BUILD_ID := UNKNOWN
 endif
 
-ifndef BUILD_DATETIME
-  # Used to reproduce builds by setting the same time. Must be the number
-  # of seconds since the Epoch.
-  BUILD_DATETIME := $(shell date +%s)
-endif
-
 ifneq (,$(findstring Darwin,$(UNAME)))
-DATE := date -r $(BUILD_DATETIME)
+DATE := date -r $(shell cat $(BUILD_DATETIME_FILE))
 else
-DATE := date -d @$(BUILD_DATETIME)
+DATE := date -d @$(shell cat $(BUILD_DATETIME_FILE))
 endif
 
 ifndef BUILD_NUMBER
