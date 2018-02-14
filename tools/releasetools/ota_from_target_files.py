@@ -386,11 +386,17 @@ class Payload(object):
   SECONDARY_PAYLOAD_BIN = 'secondary/payload.bin'
   SECONDARY_PAYLOAD_PROPERTIES_TXT = 'secondary/payload_properties.txt'
 
-  def __init__(self):
+  def __init__(self, secondary=False):
+    """Initializes a Payload instance.
+
+    Args:
+      secondary: Whether it's generating a secondary payload (default: False).
+    """
     # The place where the output from the subprocess should go.
     self._log_file = sys.stdout if OPTIONS.verbose else subprocess.PIPE
     self.payload_file = None
     self.payload_properties = None
+    self.secondary = secondary
 
   def Generate(self, target_file, source_file=None, additional_args=None):
     """Generates a payload from the given target-files zip(s).
@@ -470,6 +476,10 @@ class Payload(object):
     p1.communicate()
     assert p1.returncode == 0, "brillo_update_payload properties failed"
 
+    if self.secondary:
+      with open(properties_file, "a") as f:
+        f.write("SWITCH_SLOT_ON_REBOOT=0\n")
+
     if OPTIONS.wipe_user_data:
       with open(properties_file, "a") as f:
         f.write("POWERWASH=1\n")
@@ -477,18 +487,16 @@ class Payload(object):
     self.payload_file = signed_payload_file
     self.payload_properties = properties_file
 
-  def WriteToZip(self, output_zip, secondary=False):
+  def WriteToZip(self, output_zip):
     """Writes the payload to the given zip.
 
     Args:
       output_zip: The output ZipFile instance.
-      secondary: Whether the payload should be packed as secondary payload
-          (default: False).
     """
     assert self.payload_file is not None
     assert self.payload_properties is not None
 
-    if secondary:
+    if self.secondary:
       payload_arcname = Payload.SECONDARY_PAYLOAD_BIN
       payload_properties_arcname = Payload.SECONDARY_PAYLOAD_PROPERTIES_TXT
     else:
@@ -778,11 +786,15 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   script.ShowProgress(system_progress, 0)
 
+  # See the notes in WriteBlockIncrementalOTAPackage().
+  allow_shared_blocks = target_info.get('ext4_share_dup_blocks') == "true"
+
   # Full OTA is done as an "incremental" against an empty source image. This
   # has the effect of writing new data from the package to the entire
   # partition, but lets us reuse the updater code that writes incrementals to
   # do it.
-  system_tgt = common.GetSparseImage("system", OPTIONS.input_tmp, input_zip)
+  system_tgt = common.GetSparseImage("system", OPTIONS.input_tmp, input_zip,
+                                     allow_shared_blocks)
   system_tgt.ResetFileMap()
   system_diff = common.BlockDifference("system", system_tgt, src=None)
   system_diff.WriteScript(script, output_zip)
@@ -793,7 +805,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   if HasVendorPartition(input_zip):
     script.ShowProgress(0.1, 0)
 
-    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.input_tmp, input_zip)
+    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.input_tmp, input_zip,
+                                       allow_shared_blocks)
     vendor_tgt.ResetFileMap()
     vendor_diff = common.BlockDifference("vendor", vendor_tgt)
     vendor_diff.WriteScript(script, output_zip)
@@ -970,8 +983,16 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   target_recovery = common.GetBootableImage(
       "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
 
-  system_src = common.GetSparseImage("system", OPTIONS.source_tmp, source_zip)
-  system_tgt = common.GetSparseImage("system", OPTIONS.target_tmp, target_zip)
+  # When target uses 'BOARD_EXT4_SHARE_DUP_BLOCKS := true', images may contain
+  # shared blocks (i.e. some blocks will show up in multiple files' block
+  # list). We can only allocate such shared blocks to the first "owner", and
+  # disable imgdiff for all later occurrences.
+  allow_shared_blocks = (source_info.get('ext4_share_dup_blocks') == "true" or
+                         target_info.get('ext4_share_dup_blocks') == "true")
+  system_src = common.GetSparseImage("system", OPTIONS.source_tmp, source_zip,
+                                     allow_shared_blocks)
+  system_tgt = common.GetSparseImage("system", OPTIONS.target_tmp, target_zip,
+                                     allow_shared_blocks)
 
   blockimgdiff_version = max(
       int(i) for i in target_info.get("blockimgdiff_versions", "1").split(","))
@@ -996,8 +1017,10 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
   if HasVendorPartition(target_zip):
     if not HasVendorPartition(source_zip):
       raise RuntimeError("can't generate incremental that adds /vendor")
-    vendor_src = common.GetSparseImage("vendor", OPTIONS.source_tmp, source_zip)
-    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.target_tmp, target_zip)
+    vendor_src = common.GetSparseImage("vendor", OPTIONS.source_tmp, source_zip,
+                                       allow_shared_blocks)
+    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.target_tmp, target_zip,
+                                       allow_shared_blocks)
 
     # Check first block of vendor partition for remount R/W only if
     # disk type is ext4
@@ -1327,10 +1350,11 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
     # We always include a full payload for the secondary slot, even when
     # building an incremental OTA. See the comments for "--include_secondary".
     secondary_target_file = GetTargetFilesZipForSecondaryImages(target_file)
-    secondary_payload = Payload()
-    secondary_payload.Generate(secondary_target_file)
+    secondary_payload = Payload(secondary=True)
+    secondary_payload.Generate(secondary_target_file,
+                               additional_args=additional_args)
     secondary_payload.Sign(payload_signer)
-    secondary_payload.WriteToZip(output_zip, secondary=True)
+    secondary_payload.WriteToZip(output_zip)
 
   # If dm-verity is supported for the device, copy contents of care_map
   # into A/B OTA package.

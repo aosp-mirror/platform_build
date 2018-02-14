@@ -15,7 +15,6 @@
 from __future__ import print_function
 
 import array
-import common
 import copy
 import functools
 import heapq
@@ -27,9 +26,10 @@ import re
 import subprocess
 import sys
 import threading
-
 from collections import deque, OrderedDict
 from hashlib import sha1
+
+import common
 from rangelib import RangeSet
 
 
@@ -264,9 +264,6 @@ class ImgdiffStats(object):
   reasons. The stats is only meaningful when imgdiff not being disabled by the
   caller of BlockImageDiff. In addition, only files with supported types
   (BlockImageDiff.FileTypeSupportedByImgdiff()) are allowed to be logged.
-
-  TODO: The info could be inaccurate due to the unconditional fallback from
-  imgdiff to bsdiff on errors. The fallbacks will be removed.
   """
 
   USED_IMGDIFF = "APK files diff'd with imgdiff"
@@ -275,6 +272,8 @@ class ImgdiffStats(object):
   # Reasons for not applying imgdiff on APKs.
   SKIPPED_TRIMMED = "Not used imgdiff due to trimmed RangeSet"
   SKIPPED_NONMONOTONIC = "Not used imgdiff due to having non-monotonic ranges"
+  SKIPPED_SHARED_BLOCKS = "Not used imgdiff due to using shared blocks"
+  SKIPPED_INCOMPLETE = "Not used imgdiff due to incomplete RangeSet"
 
   # The list of valid reasons, which will also be the dumped order in a report.
   REASONS = (
@@ -282,6 +281,8 @@ class ImgdiffStats(object):
       USED_IMGDIFF_LARGE_APK,
       SKIPPED_TRIMMED,
       SKIPPED_NONMONOTONIC,
+      SKIPPED_SHARED_BLOCKS,
+      SKIPPED_INCOMPLETE,
   )
 
   def  __init__(self):
@@ -415,6 +416,8 @@ class BlockImageDiff(object):
       - The file type is supported by imgdiff;
       - The source and target blocks are monotonic (i.e. the data is stored with
         blocks in increasing order);
+      - Both files don't contain shared blocks;
+      - Both files have complete lists of blocks;
       - We haven't removed any blocks from the source set.
 
     If all these conditions are satisfied, concatenating all the blocks in the
@@ -430,11 +433,20 @@ class BlockImageDiff(object):
     Returns:
       A boolean result.
     """
-    if (self.disable_imgdiff or not self.FileTypeSupportedByImgdiff(name)):
+    if self.disable_imgdiff or not self.FileTypeSupportedByImgdiff(name):
       return False
 
     if not tgt_ranges.monotonic or not src_ranges.monotonic:
       self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_NONMONOTONIC)
+      return False
+
+    if (tgt_ranges.extra.get('uses_shared_blocks') or
+        src_ranges.extra.get('uses_shared_blocks')):
+      self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_SHARED_BLOCKS)
+      return False
+
+    if tgt_ranges.extra.get('incomplete') or src_ranges.extra.get('incomplete'):
+      self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_INCOMPLETE)
       return False
 
     if tgt_ranges.extra.get('trimmed') or src_ranges.extra.get('trimmed'):
@@ -535,7 +547,7 @@ class BlockImageDiff(object):
       #   <# blocks> - <stash refs...>
 
       size = xf.src_ranges.size()
-      src_str = [str(size)]
+      src_str_buffer = [str(size)]
 
       unstashed_src_ranges = xf.src_ranges
       mapped_stashes = []
@@ -545,7 +557,7 @@ class BlockImageDiff(object):
         sr = xf.src_ranges.map_within(sr)
         mapped_stashes.append(sr)
         assert sh in stashes
-        src_str.append("%s:%s" % (sh, sr.to_string_raw()))
+        src_str_buffer.append("%s:%s" % (sh, sr.to_string_raw()))
         stashes[sh] -= 1
         if stashes[sh] == 0:
           free_string.append("free %s\n" % (sh,))
@@ -553,17 +565,17 @@ class BlockImageDiff(object):
           stashes.pop(sh)
 
       if unstashed_src_ranges:
-        src_str.insert(1, unstashed_src_ranges.to_string_raw())
+        src_str_buffer.insert(1, unstashed_src_ranges.to_string_raw())
         if xf.use_stash:
           mapped_unstashed = xf.src_ranges.map_within(unstashed_src_ranges)
-          src_str.insert(2, mapped_unstashed.to_string_raw())
+          src_str_buffer.insert(2, mapped_unstashed.to_string_raw())
           mapped_stashes.append(mapped_unstashed)
           self.AssertPartition(RangeSet(data=(0, size)), mapped_stashes)
       else:
-        src_str.insert(1, "-")
+        src_str_buffer.insert(1, "-")
         self.AssertPartition(RangeSet(data=(0, size)), mapped_stashes)
 
-      src_str = " ".join(src_str)
+      src_str = " ".join(src_str_buffer)
 
       # version 3+:
       #   zero <rangeset>
@@ -684,11 +696,11 @@ class BlockImageDiff(object):
       max_allowed = OPTIONS.cache_size * OPTIONS.stash_threshold
       print("max stashed blocks: %d  (%d bytes), "
             "limit: %d bytes (%.2f%%)\n" % (
-            max_stashed_blocks, self._max_stashed_size, max_allowed,
-            self._max_stashed_size * 100.0 / max_allowed))
+                max_stashed_blocks, self._max_stashed_size, max_allowed,
+                self._max_stashed_size * 100.0 / max_allowed))
     else:
       print("max stashed blocks: %d  (%d bytes), limit: <unknown>\n" % (
-            max_stashed_blocks, self._max_stashed_size))
+          max_stashed_blocks, self._max_stashed_size))
 
   def ReviseStashSize(self):
     print("Revising stash size...")
@@ -851,10 +863,6 @@ class BlockImageDiff(object):
       diff_total = len(diff_queue)
       patches = [None] * diff_total
       error_messages = []
-      warning_messages = []
-      if sys.stdout.isatty():
-        global diff_done
-        diff_done = 0
 
       # Using multiprocessing doesn't give additional benefits, due to the
       # pattern of the code. The diffing work is done by subprocess.call, which
@@ -870,8 +878,15 @@ class BlockImageDiff(object):
             if not diff_queue:
               return
             xf_index, imgdiff, patch_index = diff_queue.pop()
+            xf = self.transfers[xf_index]
 
-          xf = self.transfers[xf_index]
+            if sys.stdout.isatty():
+              diff_left = len(diff_queue)
+              progress = (diff_total - diff_left) * 100 / diff_total
+              # '\033[K' is to clear to EOL.
+              print(' [%3d%%] %s\033[K' % (progress, xf.tgt_name), end='\r')
+              sys.stdout.flush()
+
           patch = xf.patch
           if not patch:
             src_ranges = xf.src_ranges
@@ -891,40 +906,16 @@ class BlockImageDiff(object):
             except ValueError as e:
               message.append(
                   "Failed to generate %s for %s: tgt=%s, src=%s:\n%s" % (
-                  "imgdiff" if imgdiff else "bsdiff",
-                  xf.tgt_name if xf.tgt_name == xf.src_name else
+                      "imgdiff" if imgdiff else "bsdiff",
+                      xf.tgt_name if xf.tgt_name == xf.src_name else
                       xf.tgt_name + " (from " + xf.src_name + ")",
-                  xf.tgt_ranges, xf.src_ranges, e.message))
-              # TODO(b/68016761): Better handle the holes in mke2fs created
-              # images.
-              if imgdiff:
-                try:
-                  patch = compute_patch(src_file, tgt_file, imgdiff=False)
-                  message.append(
-                      "Fell back and generated with bsdiff instead for %s" % (
-                      xf.tgt_name,))
-                  xf.style = "bsdiff"
-                  with lock:
-                    warning_messages.extend(message)
-                  del message[:]
-                except ValueError as e:
-                  message.append(
-                      "Also failed to generate with bsdiff for %s:\n%s" % (
-                      xf.tgt_name, e.message))
-
+                      xf.tgt_ranges, xf.src_ranges, e.message))
             if message:
               with lock:
                 error_messages.extend(message)
 
           with lock:
             patches[patch_index] = (xf_index, patch)
-            if sys.stdout.isatty():
-              global diff_done
-              diff_done += 1
-              progress = diff_done * 100 / diff_total
-              # '\033[K' is to clear to EOL.
-              print(' [%d%%] %s\033[K' % (progress, xf.tgt_name), end='\r')
-              sys.stdout.flush()
 
       threads = [threading.Thread(target=diff_worker)
                  for _ in range(self.threads)]
@@ -935,11 +926,6 @@ class BlockImageDiff(object):
 
       if sys.stdout.isatty():
         print('\n')
-
-      if warning_messages:
-        print('WARNING:')
-        print('\n'.join(warning_messages))
-        print('\n\n\n')
 
       if error_messages:
         print('ERROR:')
@@ -961,11 +947,11 @@ class BlockImageDiff(object):
         if common.OPTIONS.verbose:
           tgt_size = xf.tgt_ranges.size() * self.tgt.blocksize
           print("%10d %10d (%6.2f%%) %7s %s %s %s" % (
-                xf.patch_len, tgt_size, xf.patch_len * 100.0 / tgt_size,
-                xf.style,
-                xf.tgt_name if xf.tgt_name == xf.src_name else (
-                    xf.tgt_name + " (from " + xf.src_name + ")"),
-                xf.tgt_ranges, xf.src_ranges))
+              xf.patch_len, tgt_size, xf.patch_len * 100.0 / tgt_size,
+              xf.style,
+              xf.tgt_name if xf.tgt_name == xf.src_name else (
+                  xf.tgt_name + " (from " + xf.src_name + ")"),
+              xf.tgt_ranges, xf.src_ranges))
 
   def AssertSha1Good(self):
     """Check the SHA-1 of the src & tgt blocks in the transfer list.
@@ -1198,7 +1184,8 @@ class BlockImageDiff(object):
       while sinks:
         new_sinks = OrderedDict()
         for u in sinks:
-          if u not in G: continue
+          if u not in G:
+            continue
           s2.appendleft(u)
           del G[u]
           for iu in u.incoming:
@@ -1211,7 +1198,8 @@ class BlockImageDiff(object):
       while sources:
         new_sources = OrderedDict()
         for u in sources:
-          if u not in G: continue
+          if u not in G:
+            continue
           s1.append(u)
           del G[u]
           for iu in u.outgoing:
@@ -1220,7 +1208,8 @@ class BlockImageDiff(object):
               new_sources[iu] = None
         sources = new_sources
 
-      if not G: break
+      if not G:
+        break
 
       # Find the "best" vertex to put next.  "Best" is the one that
       # maximizes the net difference in source blocks saved we get by
@@ -1277,14 +1266,16 @@ class BlockImageDiff(object):
       intersections = OrderedDict()
       for s, e in a.tgt_ranges:
         for i in range(s, e):
-          if i >= len(source_ranges): break
+          if i >= len(source_ranges):
+            break
           # Add all the Transfers in source_ranges[i] to the (ordered) set.
           if source_ranges[i] is not None:
             for j in source_ranges[i]:
               intersections[j] = None
 
       for b in intersections:
-        if a is b: continue
+        if a is b:
+          continue
 
         # If the blocks written by A are read by B, then B needs to go before A.
         i = a.tgt_ranges.intersect(b.src_ranges)
@@ -1421,8 +1412,9 @@ class BlockImageDiff(object):
 
         if tgt_changed < tgt_size * crop_threshold:
           assert tgt_changed + tgt_skipped.size() == tgt_size
-          print('%10d %10d (%6.2f%%) %s' % (tgt_skipped.size(), tgt_size,
-                tgt_skipped.size() * 100.0 / tgt_size, tgt_name))
+          print('%10d %10d (%6.2f%%) %s' % (
+              tgt_skipped.size(), tgt_size,
+              tgt_skipped.size() * 100.0 / tgt_size, tgt_name))
           AddSplitTransfers(
               "%s-skipped" % (tgt_name,),
               "%s-skipped" % (src_name,),
@@ -1515,11 +1507,6 @@ class BlockImageDiff(object):
       be valid because the block ranges of src-X & tgt-X will always stay the
       same afterwards; but there's a chance we don't use the patch if we
       convert the "diff" command into "new" or "move" later.
-
-      The split will be attempted by calling imgdiff, which expects the input
-      files to be valid zip archives. If imgdiff fails for some reason (i.e.
-      holes in the APK file), we will fall back to split the failed APKs into
-      fixed size chunks.
       """
 
       while True:
@@ -1541,16 +1528,11 @@ class BlockImageDiff(object):
                "--block-limit={}".format(max_blocks_per_transfer),
                "--split-info=" + patch_info_file,
                src_file, tgt_file, patch_file]
-        p = common.Run(cmd, stdout=subprocess.PIPE)
-        p.communicate()
-        if p.returncode != 0:
-          print("Failed to create patch between {} and {},"
-                " falling back to bsdiff".format(src_name, tgt_name))
-          with transfer_lock:
-            AddSplitTransfersWithFixedSizeChunks(tgt_name, src_name,
-                                                 tgt_ranges, src_ranges,
-                                                 "diff", self.transfers)
-          continue
+        p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        imgdiff_output, _ = p.communicate()
+        assert p.returncode == 0, \
+            "Failed to create imgdiff patch between {} and {}:\n{}".format(
+                src_name, tgt_name, imgdiff_output)
 
         with open(patch_info_file) as patch_info:
           lines = patch_info.readlines()
@@ -1560,7 +1542,7 @@ class BlockImageDiff(object):
                                                     tgt_ranges, src_ranges,
                                                     lines)
         for index, (patch_start, patch_length, split_tgt_ranges,
-            split_src_ranges) in enumerate(split_info_list):
+                    split_src_ranges) in enumerate(split_info_list):
           with open(patch_file) as f:
             f.seek(patch_start)
             patch_content = f.read(patch_length)

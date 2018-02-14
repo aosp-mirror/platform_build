@@ -33,7 +33,7 @@ class SparseImage(object):
   """
 
   def __init__(self, simg_fn, file_map_fn=None, clobbered_blocks=None,
-               mode="rb", build_map=True):
+               mode="rb", build_map=True, allow_shared_blocks=False):
     self.simg_f = f = open(simg_fn, mode)
 
     header_bin = f.read(28)
@@ -129,7 +129,8 @@ class SparseImage(object):
     self.extended = extended
 
     if file_map_fn:
-      self.LoadFileBlockMap(file_map_fn, self.clobbered_blocks)
+      self.LoadFileBlockMap(file_map_fn, self.clobbered_blocks,
+                            allow_shared_blocks)
     else:
       self.file_map = {"__DATA": self.care_map}
 
@@ -209,7 +210,14 @@ class SparseImage(object):
             yield fill_data * (this_read * (self.blocksize >> 2))
           to_read -= this_read
 
-  def LoadFileBlockMap(self, fn, clobbered_blocks):
+  def LoadFileBlockMap(self, fn, clobbered_blocks, allow_shared_blocks):
+    """Loads the given block map file.
+
+    Args:
+      fn: The filename of the block map file.
+      clobbered_blocks: A RangeSet instance for the clobbered blocks.
+      allow_shared_blocks: Whether having shared blocks is allowed.
+    """
     remaining = self.care_map
     self.file_map = out = {}
 
@@ -217,6 +225,18 @@ class SparseImage(object):
       for line in f:
         fn, ranges = line.split(None, 1)
         ranges = rangelib.RangeSet.parse(ranges)
+
+        if allow_shared_blocks:
+          # Find the shared blocks that have been claimed by others.
+          shared_blocks = ranges.subtract(remaining)
+          if shared_blocks:
+            ranges = ranges.subtract(shared_blocks)
+            if not ranges:
+              continue
+
+            # Tag the entry so that we can skip applying imgdiff on this file.
+            ranges.extra['uses_shared_blocks'] = True
+
         out[fn] = ranges
         assert ranges.size() == ranges.intersect(remaining).size()
 

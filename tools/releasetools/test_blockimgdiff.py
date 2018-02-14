@@ -236,11 +236,19 @@ class BlockImageDiffTest(unittest.TestCase):
         block_image_diff.CanUseImgdiff(
             "/vendor/app/app3.apk", RangeSet("10-15"), src_ranges))
 
+    # At least one of the ranges is incomplete.
+    src_ranges = RangeSet("0-5")
+    src_ranges.extra['incomplete'] = True
+    self.assertFalse(
+        block_image_diff.CanUseImgdiff(
+            "/vendor/app/app4.apk", RangeSet("10-15"), src_ranges))
+
     # The stats are correctly logged.
     self.assertDictEqual(
         {
             ImgdiffStats.SKIPPED_NONMONOTONIC : {'/system/app/app2.apk'},
             ImgdiffStats.SKIPPED_TRIMMED : {'/vendor/app/app3.apk'},
+            ImgdiffStats.SKIPPED_INCOMPLETE: {'/vendor/app/app4.apk'},
         },
         block_image_diff.imgdiff_stats.stats)
 
