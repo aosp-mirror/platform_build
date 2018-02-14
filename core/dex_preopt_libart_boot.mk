@@ -30,6 +30,8 @@ $(my_2nd_arch_prefix)LIBART_TARGET_BOOT_OAT_UNSTRIPPED := $(TARGET_OUT_UNSTRIPPE
 $(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE := $(PRODUCT_OUT)$($(my_2nd_arch_prefix)LIBART_BOOT_IMAGE_FILENAME)
 $(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES := $(addprefix $(dir $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)),\
     $(LIBART_TARGET_BOOT_ART_EXTRA_FILES))
+$(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_VDEX_INSTALLED_FILES := $(addprefix $(dir $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)),\
+    $(LIBART_TARGET_BOOT_ART_VDEX_FILES))
 
 # If we have a compiled-classes file, create a parameter.
 COMPILED_CLASSES_FLAGS :=
@@ -45,7 +47,7 @@ endif
 
 # The rule to install boot.art
 # Depends on installed boot.oat, boot-*.art, boot-*.oat
-$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE) : $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) | $(ACP) $($(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES)
+$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE) : $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) | $(ACP) $($(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES) $($(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_VDEX_INSTALLED_SHARED_FILES)
 	@echo "Install: $@"
 	$(copy-file-to-target)
 
