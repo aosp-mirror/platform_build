@@ -798,6 +798,14 @@ $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
 
 requirements :=
 
+# BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED can be true only if early-mount of
+# partitions is supported. But the early-mount must be supported for full
+# treble products, and so BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED should be set
+# by default for full treble products.
+ifeq ($(PRODUCT_FULL_TREBLE),true)
+  BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED ?= true
+endif
+
 # If PRODUCT_USE_VNDK is true and BOARD_VNDK_VERSION is not defined yet,
 # BOARD_VNDK_VERSION will be set to "current" as default.
 # PRODUCT_USE_VNDK will be true in Android-P or later launching devices.
