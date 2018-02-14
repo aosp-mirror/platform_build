@@ -51,6 +51,7 @@ PRODUCT_PACKAGES += \
     libbinder \
     libc \
     libc_malloc_debug \
+    libc_malloc_hooks \
     libcutils \
     libdl \
     libgui \
