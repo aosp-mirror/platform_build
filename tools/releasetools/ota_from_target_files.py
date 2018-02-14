@@ -1351,7 +1351,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
     # building an incremental OTA. See the comments for "--include_secondary".
     secondary_target_file = GetTargetFilesZipForSecondaryImages(target_file)
     secondary_payload = Payload(secondary=True)
-    secondary_payload.Generate(secondary_target_file)
+    secondary_payload.Generate(secondary_target_file,
+                               additional_args=additional_args)
     secondary_payload.Sign(payload_signer)
     secondary_payload.WriteToZip(output_zip)
 
