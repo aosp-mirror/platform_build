@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f15579dc_80f4bc32",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-02-15T23:58:40Z",
+      "side": 1,
+      "message": "\"host build\" makes me think building for the host.  Maybe \"produced during the build, as opposed to compiled on the device.\"",
+      "range": {
+        "startLine": 264,
+        "startChar": 6,
+        "endLine": 264,
+        "endChar": 16
+      },
+      "revId": "abdcd2f9947d8007027e7317ca66e49345e64e0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
