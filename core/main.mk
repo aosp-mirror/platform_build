@@ -60,8 +60,7 @@ include $(BUILD_SYSTEM)/clang/config.mk
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
 $(shell mkdir -p $(OUT_DIR) && \
-    echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt && \
-    echo -n $(BUILD_DATETIME) > $(OUT_DIR)/build_date.txt)
+    echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt)
 ifeq ($(HOST_OS),darwin)
 DATE_FROM_FILE := date -r $(BUILD_DATETIME_FROM_FILE)
 else
