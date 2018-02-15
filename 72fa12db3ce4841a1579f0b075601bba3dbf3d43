@@ -22,6 +22,30 @@
       "revId": "72fa12db3ce4841a1579f0b075601bba3dbf3d43",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a457ddb4_cabae44e",
+        "filename": "target/board/generic/sepolicy/hal_fingerprint_default.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2018-02-15T03:46:56Z",
+      "side": 1,
+      "message": "jeffrey, I just copy pasted from marlin;\nwill remove it;\n\nthe line 3 seems needed, otherwise, compiler will error out",
+      "parentUuid": "147a745e_7ed831e9",
+      "range": {
+        "startLine": 1,
+        "startChar": 7,
+        "endLine": 1,
+        "endChar": 17
+      },
+      "revId": "72fa12db3ce4841a1579f0b075601bba3dbf3d43",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
