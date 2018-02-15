@@ -115,6 +115,9 @@ include $(BUILD_SYSTEM)/math.mk
 # Various mappings to avoid hard-coding paths all over the place
 include $(BUILD_SYSTEM)/pathmap.mk
 
+# Allow projects to define their own globally-available variables
+include $(BUILD_SYSTEM)/project_definitions.mk
+
 # ###############################################################
 # Build system internal files
 # ###############################################################
