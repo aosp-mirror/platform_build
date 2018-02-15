@@ -70,6 +70,30 @@
       "revId": "72fa12db3ce4841a1579f0b075601bba3dbf3d43",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6fc51556_c0a7f13f",
+        "filename": "target/board/generic/sepolicy/hal_fingerprint_default.te",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2018-02-15T06:53:03Z",
+      "side": 1,
+      "message": "not sure why, but fingerprintd keeps writing data to the old place\n\n\n[   17.683734] type\u003d1400 audit(1518677124.660:7): avc: denied { write } for pid\u003d1551 comm\u003d\"fingerprint@2.1\" name\u003d\"fpdata\" dev\u003d\"dm-0\" ino\u003d41115 scontext\u003du:r:hal_fingerprint_default:s0 tcontext\u003du:object_r:fingerprintd_data_file:s0 tclass\u003ddir permissive\u003d0",
+      "parentUuid": "c870b01f_e8c0d6e4",
+      "range": {
+        "startLine": 1,
+        "startChar": 7,
+        "endLine": 1,
+        "endChar": 17
+      },
+      "revId": "72fa12db3ce4841a1579f0b075601bba3dbf3d43",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
