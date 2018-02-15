@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17853be6_63549199",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-02-15T21:38:11Z",
+      "side": 1,
+      "message": "prebuilt seems like a strange name for this, since it\u0027s not prebuilt from the build system\u0027s perspective.  Can you add a comment explaining what prebuilt means in this case?",
+      "range": {
+        "startLine": 263,
+        "startChar": 47,
+        "endLine": 263,
+        "endChar": 55
+      },
+      "revId": "fdfaa57756444e28a6ef32d632d2a63e01689213",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
