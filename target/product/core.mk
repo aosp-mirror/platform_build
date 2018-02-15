@@ -54,6 +54,7 @@ PRODUCT_PACKAGES += \
     Settings \
     SettingsIntelligence \
     SharedStorageBackup \
+    SimAppDialog \
     StorageManager \
     Telecom \
     TeleService \
