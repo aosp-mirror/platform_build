@@ -741,33 +741,11 @@ function gettop
     fi
 }
 
-# Return driver for "make", if any (eg. static analyzer)
-function getdriver()
-{
-    local T="$1"
-    test "$WITH_STATIC_ANALYZER" = "0" && unset WITH_STATIC_ANALYZER
-    if [ -n "$WITH_STATIC_ANALYZER" ]; then
-        # Use scan-build to collect all static analyzer reports into directory
-        # /tmp/scan-build-yyyy-mm-dd-hhmmss-*
-        # The clang compiler passed by --use-analyzer here is not important.
-        # build/make/core/binary.mk will set CLANG_CXX and CLANG before calling
-        # c++-analyzer and ccc-analyzer.
-        local CLANG_VERSION=$(get_build_var LLVM_PREBUILTS_VERSION)
-        local BUILD_OS=$(get_build_var BUILD_OS)
-        local CLANG_DIR="$T/prebuilts/clang/host/${BUILD_OS}-x86/${CLANG_VERSION}"
-        echo "\
-${CLANG_DIR}/tools/scan-build/bin/scan-build \
---use-analyzer ${CLANG_DIR}/bin/clang \
---status-bugs"
-    fi
-}
-
 function m()
 {
     local T=$(gettop)
-    local DRV=$(getdriver $T)
     if [ "$T" ]; then
-        _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
+        _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return 1
@@ -794,11 +772,10 @@ function findmakefile()
 function mm()
 {
     local T=$(gettop)
-    local DRV=$(getdriver $T)
     # If we're sitting in the root of the build tree, just do a
     # normal build.
     if [ -f build/soong/soong_ui.bash ]; then
-        _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
+        _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
     else
         # Find the closest Android.mk file.
         local M=$(findmakefile)
@@ -833,7 +810,7 @@ function mm()
             if [ "1" = "${WITH_TIDY_ONLY}" -o "true" = "${WITH_TIDY_ONLY}" ]; then
               MODULES=tidy_only
             fi
-            ONE_SHOT_MAKEFILE=$M _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $MODULES $ARGS
+            ONE_SHOT_MAKEFILE=$M _wrap_build $T/build/soong/soong_ui.bash --make-mode $MODULES $ARGS
         fi
     fi
 }
@@ -841,7 +818,6 @@ function mm()
 function mmm()
 {
     local T=$(gettop)
-    local DRV=$(getdriver $T)
     if [ "$T" ]; then
         local MAKEFILE=
         local MODULES=
@@ -901,7 +877,7 @@ function mmm()
         fi
         # Convert "/" to "-".
         MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-        ONE_SHOT_MAKEFILE="$MAKEFILE" _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $MODULES $MODULES_IN_PATHS $ARGS
+        ONE_SHOT_MAKEFILE="$MAKEFILE" _wrap_build $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $MODULES $MODULES_IN_PATHS $ARGS
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return 1
@@ -911,9 +887,8 @@ function mmm()
 function mma()
 {
   local T=$(gettop)
-  local DRV=$(getdriver $T)
   if [ -f build/soong/soong_ui.bash ]; then
-    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
+    _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
   else
     if [ ! "$T" ]; then
       echo "Couldn't locate the top of the tree.  Try setting TOP."
@@ -925,14 +900,13 @@ function mma()
     local MODULES_IN_PATHS=MODULES-IN-$(dirname ${M})
     # Convert "/" to "-".
     MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@ $MODULES_IN_PATHS
+    _wrap_build $T/build/soong/soong_ui.bash --make-mode $@ $MODULES_IN_PATHS
   fi
 }
 
 function mmma()
 {
   local T=$(gettop)
-  local DRV=$(getdriver $T)
   if [ "$T" ]; then
     local DASH_ARGS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^-.*$/')
     local DIRS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^[^-].*$/')
@@ -963,7 +937,7 @@ function mmma()
     done
     # Convert "/" to "-".
     MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $ARGS $MODULES_IN_PATHS
+    _wrap_build $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $ARGS $MODULES_IN_PATHS
   else
     echo "Couldn't locate the top of the tree.  Try setting TOP."
     return 1
