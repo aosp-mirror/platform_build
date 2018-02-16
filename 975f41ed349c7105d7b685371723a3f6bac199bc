@@ -70,6 +70,30 @@
       "revId": "975f41ed349c7105d7b685371723a3f6bac199bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a476424c_7bf5eddd",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-02-16T16:29:13Z",
+      "side": 1,
+      "message": "We could revert just this file if DATE is only used for fingerprint",
+      "parentUuid": "f46e665a_0a9edc1c",
+      "range": {
+        "startLine": 258,
+        "startChar": 16,
+        "endLine": 258,
+        "endChar": 51
+      },
+      "revId": "975f41ed349c7105d7b685371723a3f6bac199bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
