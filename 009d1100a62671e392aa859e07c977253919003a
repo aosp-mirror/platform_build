@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eb1f8f72_3c0add9a",
+        "filename": "tools/docker/README.md",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-16T01:46:26Z",
+      "side": 1,
+      "message": "Technically Lollipop was 12.04, but we had been successfully building at least newer versions with 14.04, so I suspect this should just work. I\u0027ll be testing that once my Marshmallow build finishes.",
+      "range": {
+        "startLine": 2,
+        "startChar": 34,
+        "endLine": 2,
+        "endChar": 42
+      },
+      "revId": "009d1100a62671e392aa859e07c977253919003a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
