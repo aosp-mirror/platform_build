@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dde2d0fd_807af149",
+        "filename": "tools/docker/README.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-02-16T20:48:06Z",
+      "side": 1,
+      "message": "This is a little unfortunate, could we mount the user\u0027s home directory somewhere and copy .gitconfig for them in the entrypoint?",
+      "revId": "6dc4621afcd137f7356221dd04b66b7ac78c0437",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24ffe8c4_55a6cd03",
+        "filename": "tools/docker/README.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-02-16T20:48:06Z",
+      "side": 1,
+      "message": "It would be nice to script this a little more",
+      "revId": "6dc4621afcd137f7356221dd04b66b7ac78c0437",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3dab8e5f_636a2f53",
+        "filename": "tools/docker/README.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-02-16T20:48:06Z",
+      "side": 1,
+      "message": "And this too",
+      "revId": "6dc4621afcd137f7356221dd04b66b7ac78c0437",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
