@@ -61,6 +61,7 @@ PRODUCT_PACKAGES += \
     keystore \
     ld.mc \
     libaaudio \
+    libamidi \
     libOpenMAXAL \
     libOpenSLES \
     libdownmix \
