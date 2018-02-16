@@ -266,6 +266,10 @@ ifeq (true, $(my_system_server_debug_info))
   endif
 endif
 
+# Set the compiler reason to 'prebuilt' to identify the oat files produced
+# during the build, as opposed to compiled on the device.
+LOCAL_DEX_PREOPT_FLAGS += --compilation-reason=prebuilt
+
 $(built_odex): PRIVATE_DEX_PREOPT_FLAGS := $(LOCAL_DEX_PREOPT_FLAGS)
 $(built_vdex): $(built_odex)
 $(built_art): $(built_odex)
