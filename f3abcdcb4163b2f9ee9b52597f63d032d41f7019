@@ -39,6 +39,48 @@
       "revId": "f3abcdcb4163b2f9ee9b52597f63d032d41f7019",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "420c46c6_2c5e105e",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-02-16T23:30:04Z",
+      "side": 1,
+      "message": "Is this something we want? The cleanest solution is to just make dex2oat do it then.",
+      "parentUuid": "041d3106_c68bb2db",
+      "range": {
+        "startLine": 277,
+        "startChar": 0,
+        "endLine": 277,
+        "endChar": 65
+      },
+      "revId": "f3abcdcb4163b2f9ee9b52597f63d032d41f7019",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cfd3a18e_04c30cfe",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-02-16T23:30:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0870e049_acdd0911",
+      "revId": "f3abcdcb4163b2f9ee9b52597f63d032d41f7019",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
