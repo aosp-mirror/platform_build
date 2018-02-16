@@ -48,3 +48,8 @@ endif
 
 LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 LOCAL_JAVA_LIBRARIES := $(sort $(LOCAL_JAVA_LIBRARIES))
+
+# If error prone is enabled then add LOCAL_ERROR_PRONE_FLAGS to LOCAL_JAVACFLAGS
+ifeq ($(RUN_ERROR_PRONE),true)
+LOCAL_JAVACFLAGS += $(LOCAL_ERROR_PRONE_FLAGS)
+endif
