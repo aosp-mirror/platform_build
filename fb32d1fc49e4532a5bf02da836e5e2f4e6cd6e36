@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "6df87128_fb84e820",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-02-16T00:11:56Z",
+      "side": 1,
+      "message": "build_date.txt has been handled already by Soong. I will create another patch later to resolve build_number.txt.",
+      "parentUuid": "4ea1af7a_5e0da49a",
+      "revId": "fb32d1fc49e4532a5bf02da836e5e2f4e6cd6e36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9515e919_85141f2d",
         "filename": "core/soong_java_prebuilt.mk",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2018-02-06T23:20:00Z",
       "side": 1,
       "message": "You\u0027ll need a dependency on the files in $(OUT_DOCS) to cause them to get copied.",
+      "revId": "fb32d1fc49e4532a5bf02da836e5e2f4e6cd6e36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7bb714aa_7740c61d",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-02-16T00:11:56Z",
+      "side": 1,
+      "message": "it seems no real user downstream depends on libcore-timestamp for an actual use. there\u0027s phony target called docs that depends on all the droiddoc generation. So I added the docs target below. When I convert frameworks, I will add other dependency on the $(OUT_DOCS)/$(LOCAL_MODULE)-stubs.jar for the stub generation.",
+      "parentUuid": "9515e919_85141f2d",
       "revId": "fb32d1fc49e4532a5bf02da836e5e2f4e6cd6e36",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
