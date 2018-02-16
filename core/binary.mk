@@ -617,6 +617,9 @@ ifeq ($(strip $(my_cc)),)
   my_cc := $(my_cc_wrapper) $(my_cc)
 endif
 
+SYNTAX_TOOLS_PREFIX := \
+    $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/libexec
+
 ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
   my_cc := CCC_CC=$(CLANG) CLANG=$(CLANG) \
            $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer
