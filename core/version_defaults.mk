@@ -254,11 +254,22 @@ ifndef BUILD_ID
   BUILD_ID := UNKNOWN
 endif
 
-ifneq (,$(findstring Darwin,$(UNAME)))
-DATE := date -r $(shell cat $(BUILD_DATETIME_FILE))
-else
-DATE := date -d @$(shell cat $(BUILD_DATETIME_FILE))
+ifndef BUILD_DATETIME
+  # Used to reproduce builds by setting the same time. Must be the number
+  # of seconds since the Epoch.
+  BUILD_DATETIME := $(shell date +%s)
 endif
+
+ifneq (,$(findstring Darwin,$(UNAME)))
+DATE := date -r $(BUILD_DATETIME)
+else
+DATE := date -d @$(BUILD_DATETIME)
+endif
+
+# Everything should be using BUILD_DATETIME_FROM_FILE instead.
+# BUILD_DATETIME and DATE can be removed once BUILD_NUMBER moves
+# to soong_ui.
+BUILD_DATETIME :=
 
 ifndef BUILD_NUMBER
   # BUILD_NUMBER should be set to the source control value that
