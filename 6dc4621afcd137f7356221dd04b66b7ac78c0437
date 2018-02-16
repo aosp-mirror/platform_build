@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3d3961ba_3284cfd8",
+        "filename": "tools/docker/README.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-16T20:54:12Z",
+      "side": 1,
+      "message": "Not really -- for internal users you need to strip down your git config, since the internal configs won\u0027t work without the internal certs and the google extensions. My main goal was to make it so that `git commit` at least produced the same user information, whether or not you could actually sync/push properly.",
+      "parentUuid": "dde2d0fd_807af149",
+      "revId": "6dc4621afcd137f7356221dd04b66b7ac78c0437",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "24ffe8c4_55a6cd03",
         "filename": "tools/docker/README.md",
         "patchSetId": 2
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "575d5f5c_3cffa973",
+        "filename": "tools/docker/README.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-16T20:54:12Z",
+      "side": 1,
+      "message": "I wanted to make this as self-contained as possible, since you may not have a master tree checked out if you\u0027re in this situation. This way you only need to copy/paste a single file and this one command once.",
+      "parentUuid": "24ffe8c4_55a6cd03",
+      "revId": "6dc4621afcd137f7356221dd04b66b7ac78c0437",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3dab8e5f_636a2f53",
         "filename": "tools/docker/README.md",
         "patchSetId": 2
@@ -47,6 +83,24 @@
       "writtenOn": "2018-02-16T20:48:06Z",
       "side": 1,
       "message": "And this too",
+      "revId": "6dc4621afcd137f7356221dd04b66b7ac78c0437",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "10e0a61e_f8937a09",
+        "filename": "tools/docker/README.md",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-16T20:54:12Z",
+      "side": 1,
+      "message": "This is something that you\u0027d want to setup yourself anyways, since you wouldn\u0027t be in a tree that has this script.",
+      "parentUuid": "3dab8e5f_636a2f53",
       "revId": "6dc4621afcd137f7356221dd04b66b7ac78c0437",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
