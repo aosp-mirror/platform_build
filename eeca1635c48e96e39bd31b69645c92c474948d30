@@ -16,6 +16,24 @@
       "revId": "eeca1635c48e96e39bd31b69645c92c474948d30",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "965431e1_d8e661a6",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 816,
+      "author": {
+        "id": 1013030
+      },
+      "writtenOn": "2018-02-16T08:58:12Z",
+      "side": 1,
+      "message": "Both servicemanager and libbinder check the protocol version when opening /dev/binder and log errors if it doesn\u0027t match, so as long as adb comes up I think it should be easy to spot. Let me try the reverse quickly and see what happens.",
+      "parentUuid": "ab14e3d5_d0485c20",
+      "revId": "eeca1635c48e96e39bd31b69645c92c474948d30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
