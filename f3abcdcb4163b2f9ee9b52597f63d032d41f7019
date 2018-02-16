@@ -16,6 +16,29 @@
       "revId": "f3abcdcb4163b2f9ee9b52597f63d032d41f7019",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "041d3106_c68bb2db",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2018-02-16T23:14:50Z",
+      "side": 1,
+      "message": "Could you add an art script that generates a .dm file based on the output of dex2oat?",
+      "range": {
+        "startLine": 277,
+        "startChar": 0,
+        "endLine": 277,
+        "endChar": 65
+      },
+      "revId": "f3abcdcb4163b2f9ee9b52597f63d032d41f7019",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
