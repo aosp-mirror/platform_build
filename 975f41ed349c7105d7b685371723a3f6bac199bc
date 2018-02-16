@@ -22,6 +22,30 @@
       "revId": "975f41ed349c7105d7b685371723a3f6bac199bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b6b7538_cf2157c8",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-16T06:18:56Z",
+      "side": 1,
+      "message": "Oh, I thought this was deferred. We\u0027ve got no way to skip the regenerate check (intentionally). I\u0027d like to remove the date exemption at some point. \n\nWhy do we need this at all? Can\u0027t we always defer this?\n\nFor a quick workaround, we could just have soong_ui pass in the date, then we\u0027d only regenerate once a day.",
+      "parentUuid": "026b11a8_58e61fb5",
+      "range": {
+        "startLine": 258,
+        "startChar": 16,
+        "endLine": 258,
+        "endChar": 51
+      },
+      "revId": "975f41ed349c7105d7b685371723a3f6bac199bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
