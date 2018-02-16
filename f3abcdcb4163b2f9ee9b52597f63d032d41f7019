@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0870e049_acdd0911",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-16T22:59:42Z",
+      "side": 1,
+      "message": "You\u0027ll want to run $(ZIPTIME) on this to remove timestamps from the zip file.",
+      "revId": "f3abcdcb4163b2f9ee9b52597f63d032d41f7019",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
