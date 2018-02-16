@@ -46,6 +46,30 @@
       "revId": "975f41ed349c7105d7b685371723a3f6bac199bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f46e665a_0a9edc1c",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-16T07:09:39Z",
+      "side": 1,
+      "message": "Nevermind, this is used for H:M:S too, so the once-a-day doesn\u0027t work. As far as I can tell it\u0027s really only used for the build number though, so when we move that out we could drop it completely.",
+      "parentUuid": "4b6b7538_cf2157c8",
+      "range": {
+        "startLine": 258,
+        "startChar": 16,
+        "endLine": 258,
+        "endChar": 51
+      },
+      "revId": "975f41ed349c7105d7b685371723a3f6bac199bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
