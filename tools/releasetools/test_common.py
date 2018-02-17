@@ -13,7 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 import os
+import subprocess
 import tempfile
 import time
 import unittest
@@ -400,6 +402,9 @@ class CommonApkUtilsTest(unittest.TestCase):
       'Compressed4.apk' : 'certs/compressed4',
   }
 
+  def setUp(self):
+    self.testdata_dir = test_utils.get_testdata_dir()
+
   def tearDown(self):
     common.Cleanup()
 
@@ -477,16 +482,26 @@ class CommonApkUtilsTest(unittest.TestCase):
       self.assertRaises(ValueError, common.ReadApkCerts, input_zip)
 
   def test_ExtractPublicKey(self):
-    testdata_dir = test_utils.get_testdata_dir()
-    cert = os.path.join(testdata_dir, 'testkey.x509.pem')
-    pubkey = os.path.join(testdata_dir, 'testkey.pubkey.pem')
+    cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
+    pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
     with open(pubkey, 'rb') as pubkey_fp:
       self.assertEqual(pubkey_fp.read(), common.ExtractPublicKey(cert))
 
   def test_ExtractPublicKey_invalidInput(self):
-    testdata_dir = test_utils.get_testdata_dir()
-    wrong_input = os.path.join(testdata_dir, 'testkey.pk8')
+    wrong_input = os.path.join(self.testdata_dir, 'testkey.pk8')
     self.assertRaises(AssertionError, common.ExtractPublicKey, wrong_input)
+
+  def test_ParseCertificate(self):
+    cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
+
+    cmd = ['openssl', 'x509', '-in', cert, '-outform', 'DER']
+    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    expected, _ = proc.communicate()
+    self.assertEqual(0, proc.returncode)
+
+    with open(cert) as cert_fp:
+      actual = common.ParseCertificate(cert_fp.read())
+    self.assertEqual(expected, actual)
 
 
 class InstallRecoveryScriptFormatTest(unittest.TestCase):
