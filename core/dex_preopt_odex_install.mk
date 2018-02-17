@@ -230,6 +230,12 @@ ifeq (,$(my_system_server_compiler_filter))
 my_system_server_compiler_filter := speed
 endif
 
+my_default_compiler_filter := $(PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER)
+ifeq (,$(my_default_compiler_filter))
+# If no default compiler filter is specified, default to 'quicken' to save on storage.
+my_default_compiler_filter := quicken
+endif
+
 ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
   ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
     # Jars of system server, use the product option if it is set, speed otherwise.
@@ -244,8 +250,7 @@ ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
         # For non system server jars, use speed-profile when we have a profile.
         LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed-profile
       else
-        # If no compiler filter is specified, default to 'quicken' to save on storage.
-        LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=quicken
+         LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=$(my_default_compiler_filter)
       endif
     endif
   endif
