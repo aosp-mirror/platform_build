@@ -115,6 +115,9 @@ include $(BUILD_SYSTEM)/math.mk
 # Various mappings to avoid hard-coding paths all over the place
 include $(BUILD_SYSTEM)/pathmap.mk
 
+# Allow projects to define their own globally-available variables
+include $(BUILD_SYSTEM)/project_definitions.mk
+
 # ###############################################################
 # Build system internal files
 # ###############################################################
@@ -414,31 +417,9 @@ ifeq ($(strip $(WITH_STATIC_ANALYZER)),0)
   WITH_STATIC_ANALYZER :=
 endif
 
-# define clang/llvm versions and base directory.
-include $(BUILD_SYSTEM)/clang/versions.mk
-
 # Unset WITH_TIDY_ONLY if global WITH_TIDY_ONLY is not true nor 1.
 ifeq (,$(filter 1 true,$(WITH_TIDY_ONLY)))
   WITH_TIDY_ONLY :=
-endif
-
-PATH_TO_CLANG_TIDY := \
-    $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/bin/clang-tidy
-ifeq ($(wildcard $(PATH_TO_CLANG_TIDY)),)
-  ifneq (,$(filter 1 true,$(WITH_TIDY)))
-    $(warning *** Disable WITH_TIDY because $(PATH_TO_CLANG_TIDY) does not exist)
-  endif
-  PATH_TO_CLANG_TIDY :=
-endif
-
-# Disable WITH_STATIC_ANALYZER if tool can't be found
-SYNTAX_TOOLS_PREFIX := \
-    $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/tools/scan-build/libexec
-ifneq ($(strip $(WITH_STATIC_ANALYZER)),)
-  ifeq ($(wildcard $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer),)
-    $(warning *** Disable WITH_STATIC_ANALYZER because $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer does not exist)
-    WITH_STATIC_ANALYZER :=
-  endif
 endif
 
 # Pick a Java compiler.
@@ -847,7 +828,7 @@ else
 endif
 
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
-BUILD_DATETIME_FROM_FILE := $$(cat $(OUT_DIR)/build_date.txt)
+BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 
 # SEPolicy versions
 
