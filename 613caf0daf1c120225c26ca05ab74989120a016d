@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ea05893_03cb2e67",
+        "filename": "target/product/base.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2018-02-19T15:58:28Z",
+      "side": 1,
+      "message": "should this be in runtime_libart.mk ?",
+      "range": {
+        "startLine": 45,
+        "startChar": 4,
+        "endLine": 45,
+        "endChar": 29
+      },
+      "revId": "613caf0daf1c120225c26ca05ab74989120a016d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
