@@ -180,7 +180,6 @@ ifneq ($(LOCAL_SDK_VERSION),)
   my_ndk_stl_include_path :=
   my_ndk_stl_shared_lib_fullpath :=
   my_ndk_stl_static_lib :=
-  my_ndk_cpp_std_version :=
   my_cpu_variant := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)
   ifeq (mips32r6,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH_VARIANT))
     my_cpu_variant := mips32r6
@@ -220,8 +219,6 @@ ifneq ($(LOCAL_SDK_VERSION),)
     endif
 
     my_ldlibs += -ldl
-
-    my_ndk_cpp_std_version := c++11
   else # LOCAL_NDK_STL_VARIANT must be none
     # Do nothing.
   endif
@@ -379,11 +376,6 @@ ifneq ($(my_clang),true)
     # __cxa_throw_bad_array_length, which is not a valid C++ RT ABI).
     # http://b/25022512
     my_cpp_std_version := $(DEFAULT_GCC_CPP_STD_VERSION)
-endif
-
-ifdef LOCAL_SDK_VERSION
-    # The NDK handles this itself.
-    my_cpp_std_version := $(my_ndk_cpp_std_version)
 endif
 
 ifdef LOCAL_IS_HOST_MODULE
