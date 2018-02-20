@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ddb86151_c2486f7f",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2018-02-20T13:51:36Z",
+      "side": 1,
+      "message": "nit: unless you explain what this is, I\u0027d drop it (the xml file name says the same thing).",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 30
+      },
+      "revId": "fb65e5a5a821d4c1ce2747b803f0b1caba5a1dd7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
