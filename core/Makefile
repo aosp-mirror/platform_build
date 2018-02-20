@@ -2371,18 +2371,18 @@ OTATOOLS_DEPS := \
   system/extras/verity/build_verity_metadata.py \
   system/extras/ext4_utils/mke2fs.conf \
   external/avb/test/data/testkey_rsa4096.pem \
-  $(shell find system/update_engine/scripts -name \*.pyc -prune -o -type f -print | sort) \
-  $(shell find build/target/product/security -type f -name \*.x509.pem -o -name \*.pk8 -o \
-      -name verity_key | sort) \
-  $(shell find device $(wildcard vendor) -type f -name \*.pk8 -o -name verifiedboot\* -o \
-      -name \*.x509.pem -o -name oem\*.prop | sort)
+  $(sort $(shell find system/update_engine/scripts -name \*.pyc -prune -o -type f -print)) \
+  $(sort $(shell find build/target/product/security -type f -name \*.x509.pem -o -name \*.pk8 -o \
+      -name verity_key)) \
+  $(sort $(shell find device $(wildcard vendor) -type f -name \*.pk8 -o -name verifiedboot\* -o \
+      -name \*.x509.pem -o -name oem\*.prop))
 
 OTATOOLS_RELEASETOOLS := \
-  $(shell find build/make/tools/releasetools -name \*.pyc -prune -o -type f | sort)
+  $(sort $(shell find build/make/tools/releasetools -name \*.pyc -prune -o -type f))
 
 ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT))
 OTATOOLS_DEPS += \
-  $(shell find external/vboot_reference/tests/devkeys -type f | sort)
+  $(sort $(shell find external/vboot_reference/tests/devkeys -type f))
 endif
 
 $(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) $(OTATOOLS_DEPS) $(OTATOOLS_RELEASETOOLS) | $(ACP)
