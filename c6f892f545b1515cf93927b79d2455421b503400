@@ -2,6 +2,46 @@
   "comments": [
     {
       "key": {
+        "uuid": "3935cae7_cd3a8345",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-02-20T17:43:43Z",
+      "side": 1,
+      "message": "This isn\u0027t really accurate, and we wouldn\u0027t want people to be depending on this to detect local builds.  How about HAS_BUILD_NUMBER or AUTO_BUILD_NUMBER?",
+      "range": {
+        "startLine": 8,
+        "startChar": 16,
+        "endLine": 8,
+        "endChar": 30
+      },
+      "revId": "c6f892f545b1515cf93927b79d2455421b503400",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04ea5e0b_c5f1547a",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-02-20T17:43:43Z",
+      "side": 1,
+      "message": "We should probably pull FILE_NAME_TAG out too",
+      "revId": "c6f892f545b1515cf93927b79d2455421b503400",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2ecc58b3_ee5255f0",
         "filename": "core/Makefile",
         "patchSetId": 1
