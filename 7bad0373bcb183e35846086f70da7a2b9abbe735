@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a09603b_150a78df",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2018-02-20T12:52:45Z",
+      "side": 1,
+      "message": "Could we call this \"package\"-whitelist, to not confuse it with a field/method/class whitelist (I know package is also confusing... but IMO a bit less so).",
+      "range": {
+        "startLine": 61,
+        "startChar": 13,
+        "endLine": 61,
+        "endChar": 14
+      },
+      "revId": "7bad0373bcb183e35846086f70da7a2b9abbe735",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
