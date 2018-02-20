@@ -46,6 +46,30 @@
       "revId": "613caf0daf1c120225c26ca05ab74989120a016d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cd203bcd_3b00f288",
+        "filename": "target/product/base.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-02-20T11:07:50Z",
+      "side": 1,
+      "message": "Ok, it seems not; it complains about writing to readonly vars if I move this to where the file lives.\n\nMoved to runtime_libart.mk",
+      "parentUuid": "ecf26420_3a84febb",
+      "range": {
+        "startLine": 45,
+        "startChar": 4,
+        "endLine": 45,
+        "endChar": 29
+      },
+      "revId": "613caf0daf1c120225c26ca05ab74989120a016d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
