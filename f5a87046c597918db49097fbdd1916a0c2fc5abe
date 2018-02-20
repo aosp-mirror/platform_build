@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e035ed29_0450ac5e",
+        "filename": "core/version_defaults.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-20T17:18:58Z",
+      "side": 0,
+      "message": "We should preserve this comment somewhere, either in this file as informational, or move it to soong_ui",
+      "range": {
+        "startLine": 275,
+        "startChar": 0,
+        "endLine": 283,
+        "endChar": 66
+      },
+      "revId": "f5a87046c597918db49097fbdd1916a0c2fc5abe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

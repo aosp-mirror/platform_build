@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "354bf429_37ca58f6",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-20T17:18:58Z",
+      "side": 1,
+      "message": "Can you mark BUILD_DATETIME and BUILD_NUMBER as obsolete?",
+      "revId": "c6f892f545b1515cf93927b79d2455421b503400",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
