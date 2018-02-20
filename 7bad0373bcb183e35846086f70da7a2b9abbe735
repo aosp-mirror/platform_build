@@ -22,6 +22,30 @@
       "revId": "7bad0373bcb183e35846086f70da7a2b9abbe735",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bcfa0a61_152e101c",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2018-02-20T12:55:28Z",
+      "side": 1,
+      "message": "hiddenapi-module-whitelist maybe ? \"module\" seems less confusing than \"package\" even though it\u0027s also a java language thing now (fuuuuu Java 9...)",
+      "parentUuid": "6a09603b_150a78df",
+      "range": {
+        "startLine": 61,
+        "startChar": 13,
+        "endLine": 61,
+        "endChar": 14
+      },
+      "revId": "7bad0373bcb183e35846086f70da7a2b9abbe735",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
