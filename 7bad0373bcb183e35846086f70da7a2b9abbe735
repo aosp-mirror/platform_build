@@ -46,6 +46,30 @@
       "revId": "7bad0373bcb183e35846086f70da7a2b9abbe735",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cbedb80b_a06b75b0",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-02-20T13:12:51Z",
+      "side": 1,
+      "message": "SGTM. Or \"app\"? (though I guess they\u0027re not all strictly apps either...)",
+      "parentUuid": "bcfa0a61_152e101c",
+      "range": {
+        "startLine": 61,
+        "startChar": 13,
+        "endLine": 61,
+        "endChar": 14
+      },
+      "revId": "7bad0373bcb183e35846086f70da7a2b9abbe735",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
