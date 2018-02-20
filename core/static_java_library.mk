@@ -106,18 +106,14 @@ ifeq ($(LOCAL_SDK_RES_VERSION),)
 endif
 
 framework_res_package_export :=
-framework_res_package_export_deps :=
 # Please refer to package.mk
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
 framework_res_package_export := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
-framework_res_package_export_deps := $(framework_res_package_export)
 else
 framework_res_package_export := \
     $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
-framework_res_package_export_deps := \
-    $(dir $(framework_res_package_export))src/R.stamp
 endif
 endif
 
@@ -183,10 +179,10 @@ my_generated_res_dirs_deps := $(RenderScript_file_stamp)
 endif  # renderscript_target_api < 21
 endif  # renderscript_target_api is set
 include $(BUILD_SYSTEM)/aapt2.mk
-$(my_res_package) : $(framework_res_package_export_deps)
+$(my_res_package) : $(framework_res_package_export)
 else
 $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_resources)
-$(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export_deps)
+$(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	$(create-resource-java-files)
 	$(hide) find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name R.java | xargs cat > $@
