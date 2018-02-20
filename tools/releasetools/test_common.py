@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 import os
 import tempfile
 import time
@@ -23,6 +24,7 @@ from hashlib import sha1
 import common
 import test_utils
 import validate_target_files
+from rangelib import RangeSet
 
 
 KiB = 1024
@@ -487,6 +489,147 @@ class CommonApkUtilsTest(unittest.TestCase):
     testdata_dir = test_utils.get_testdata_dir()
     wrong_input = os.path.join(testdata_dir, 'testkey.pk8')
     self.assertRaises(AssertionError, common.ExtractPublicKey, wrong_input)
+
+
+class CommonUtilsTest(unittest.TestCase):
+
+  def tearDown(self):
+    common.Cleanup()
+
+  def test_GetSparseImage_emptyBlockMapFile(self):
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.write(
+          test_utils.construct_sparse_image([
+              (0xCAC1, 6),
+              (0xCAC3, 3),
+              (0xCAC1, 4)]),
+          arcname='IMAGES/system.img')
+      target_files_zip.writestr('IMAGES/system.map', '')
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 8))
+      target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
+
+    tempdir, input_zip = common.UnzipTemp(target_files)
+    sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
+    input_zip.close()
+
+    self.assertDictEqual(
+        {
+            '__COPY': RangeSet("0"),
+            '__NONZERO-0': RangeSet("1-5 9-12"),
+        },
+        sparse_image.file_map)
+
+  def test_GetSparseImage_invalidImageName(self):
+    self.assertRaises(
+        AssertionError, common.GetSparseImage, 'system2', None, None, False)
+    self.assertRaises(
+        AssertionError, common.GetSparseImage, 'unknown', None, None, False)
+
+  def test_GetSparseImage_missingBlockMapFile(self):
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.write(
+          test_utils.construct_sparse_image([
+              (0xCAC1, 6),
+              (0xCAC3, 3),
+              (0xCAC1, 4)]),
+          arcname='IMAGES/system.img')
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 8))
+      target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
+
+    tempdir, input_zip = common.UnzipTemp(target_files)
+    self.assertRaises(
+        AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
+        False)
+    input_zip.close()
+
+  def test_GetSparseImage_sharedBlocks_notAllowed(self):
+    """Tests the case of having overlapping blocks but disallowed."""
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.write(
+          test_utils.construct_sparse_image([(0xCAC2, 16)]),
+          arcname='IMAGES/system.img')
+      # Block 10 is shared between two files.
+      target_files_zip.writestr(
+          'IMAGES/system.map',
+          '\n'.join([
+              '/system/file1 1-5 9-10',
+              '/system/file2 10-12']))
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 7))
+      target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
+
+    tempdir, input_zip = common.UnzipTemp(target_files)
+    self.assertRaises(
+        AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
+        False)
+    input_zip.close()
+
+  def test_GetSparseImage_sharedBlocks_allowed(self):
+    """Tests the case for target using BOARD_EXT4_SHARE_DUP_BLOCKS := true."""
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      # Construct an image with a care_map of "0-5 9-12".
+      target_files_zip.write(
+          test_utils.construct_sparse_image([(0xCAC2, 16)]),
+          arcname='IMAGES/system.img')
+      # Block 10 is shared between two files.
+      target_files_zip.writestr(
+          'IMAGES/system.map',
+          '\n'.join([
+              '/system/file1 1-5 9-10',
+              '/system/file2 10-12']))
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 7))
+      target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
+
+    tempdir, input_zip = common.UnzipTemp(target_files)
+    sparse_image = common.GetSparseImage('system', tempdir, input_zip, True)
+    input_zip.close()
+
+    self.assertDictEqual(
+        {
+            '__COPY': RangeSet("0"),
+            '__NONZERO-0': RangeSet("6-8 13-15"),
+            '/system/file1': RangeSet("1-5 9-10"),
+            '/system/file2': RangeSet("11-12"),
+        },
+        sparse_image.file_map)
+
+    # '/system/file2' should be marked with 'uses_shared_blocks', but not with
+    # 'incomplete'.
+    self.assertTrue(
+        sparse_image.file_map['/system/file2'].extra['uses_shared_blocks'])
+    self.assertNotIn(
+        'incomplete', sparse_image.file_map['/system/file2'].extra)
+
+    # All other entries should look normal without any tags.
+    self.assertFalse(sparse_image.file_map['__COPY'].extra)
+    self.assertFalse(sparse_image.file_map['__NONZERO-0'].extra)
+    self.assertFalse(sparse_image.file_map['/system/file1'].extra)
+
+  def test_GetSparseImage_incompleteRanges(self):
+    """Tests the case of ext4 images with holes."""
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.write(
+          test_utils.construct_sparse_image([(0xCAC2, 16)]),
+          arcname='IMAGES/system.img')
+      target_files_zip.writestr(
+          'IMAGES/system.map',
+          '\n'.join([
+              '/system/file1 1-5 9-10',
+              '/system/file2 11-12']))
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 7))
+      # '/system/file2' has less blocks listed (2) than actual (3).
+      target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
+
+    tempdir, input_zip = common.UnzipTemp(target_files)
+    sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
+    input_zip.close()
+
+    self.assertFalse(sparse_image.file_map['/system/file1'].extra)
+    self.assertTrue(sparse_image.file_map['/system/file2'].extra['incomplete'])
 
 
 class InstallRecoveryScriptFormatTest(unittest.TestCase):
