@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5574b4fa_5a6a4003",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-02-21T15:33:35Z",
+      "side": 1,
+      "message": "A comes before I. I will fix...",
+      "revId": "58a05893920e3dc3fb43f1cdbb0a225be3fa87ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
