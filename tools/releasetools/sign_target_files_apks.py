@@ -597,7 +597,7 @@ def ReplaceVerityKeyId(input_zip, output_zip, key_path):
 
     # Extract keyid using openssl command.
     p = common.Run(["openssl", "x509", "-in", key_path, "-text"],
-                   stdout=subprocess.PIPE)
+                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     keyid, stderr = p.communicate()
     assert p.returncode == 0, "Failed to dump certificate: {}".format(stderr)
     keyid = re.search(
