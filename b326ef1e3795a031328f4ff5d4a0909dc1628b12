@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "560c432a_1d4f5523",
+        "filename": "core/Makefile",
+        "patchSetId": 8
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-21T18:58:57Z",
+      "side": 1,
+      "message": "To prevent accidents, can we unset BF_BUILD_NUMBER and BUILD_FINGERPRINT here?",
+      "revId": "b326ef1e3795a031328f4ff5d4a0909dc1628b12",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d88fbe4e_f9bca4c4",
+        "filename": "core/Makefile",
+        "patchSetId": 8
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-21T18:58:57Z",
+      "side": 1,
+      "message": "And unset BUILD_THUMBPRINT here.",
+      "revId": "b326ef1e3795a031328f4ff5d4a0909dc1628b12",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
