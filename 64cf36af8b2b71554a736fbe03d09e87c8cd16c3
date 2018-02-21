@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ef9c3c48_cebd1240",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-21T01:44:34Z",
+      "side": 1,
+      "message": "I don\u0027t see this getting set anywhere...",
+      "range": {
+        "startLine": 77,
+        "startChar": 29,
+        "endLine": 77,
+        "endChar": 46
+      },
+      "revId": "64cf36af8b2b71554a736fbe03d09e87c8cd16c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
