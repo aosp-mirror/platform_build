@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e1286c85_d8c07169",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-21T21:32:28Z",
+      "side": 1,
+      "message": "This needs to be a PRIVATE_ variable like the input vdex. Though isn\u0027t this just $@ (which is already specified?)",
+      "range": {
+        "startLine": 277,
+        "startChar": 31,
+        "endLine": 277,
+        "endChar": 42
+      },
+      "revId": "523359227248d5706adcba618a5dcb04a882683b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "940fb5d8_76d50a9e",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-21T21:32:28Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 278,
+        "startChar": 14,
+        "endLine": 278,
+        "endChar": 25
+      },
+      "revId": "523359227248d5706adcba618a5dcb04a882683b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
