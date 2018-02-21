@@ -705,7 +705,7 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
   AddCompatibilityArchive(system_updated, vendor_updated)
 
 
-def WriteFullOTAPackage(input_zip, output_zip):
+def WriteFullOTAPackage(input_zip, output_file):
   target_info = BuildInfo(OPTIONS.info_dict, OPTIONS.oem_dicts)
 
   # We don't know what version it will be installed on top of. We expect the API
@@ -718,6 +718,14 @@ def WriteFullOTAPackage(input_zip, output_zip):
     target_info.WriteMountOemScript(script)
 
   metadata = GetPackageMetadata(target_info)
+
+  if not OPTIONS.no_signing:
+    staging_file = common.MakeTempFile(suffix='.zip')
+  else:
+    staging_file = output_file
+
+  output_zip = zipfile.ZipFile(
+      staging_file, "w", compression=zipfile.ZIP_DEFLATED)
 
   device_specific = common.DeviceSpecificParams(
       input_zip=input_zip,
@@ -863,7 +871,15 @@ endif;
   script.SetProgress(1)
   script.AddToZip(input_zip, output_zip, input_path=OPTIONS.updater_binary)
   metadata["ota-required-cache"] = str(script.required_cache)
-  WriteMetadata(metadata, output_zip)
+
+  # We haven't written the metadata entry, which will be done in
+  # FinalizeMetadata.
+  common.ZipClose(output_zip)
+
+  needed_property_files = (
+      NonAbOtaPropertyFiles(),
+  )
+  FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
 
 
 def WriteMetadata(metadata, output_zip):
@@ -1203,6 +1219,19 @@ class AbOtaPropertyFiles(StreamingPropertyFiles):
     return (payload_offset, metadata_total)
 
 
+class NonAbOtaPropertyFiles(PropertyFiles):
+  """The property-files for non-A/B OTA.
+
+  For non-A/B OTA, the property-files string contains the info for METADATA
+  entry, with which a system updater can be fetched the package metadata prior
+  to downloading the entire package.
+  """
+
+  def __init__(self):
+    super(NonAbOtaPropertyFiles, self).__init__()
+    self.name = 'ota-property-files'
+
+
 def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
   """Finalizes the metadata and signs an A/B OTA package.
 
@@ -1237,8 +1266,11 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
   # signing (with an incomplete metadata entry) to allow that to happen. Then
   # compute the ZIP entry offsets, write back the final metadata and do the
   # final signing.
-  prelim_signing = common.MakeTempFile(suffix='.zip')
-  SignOutput(input_file, prelim_signing)
+  if OPTIONS.no_signing:
+    prelim_signing = input_file
+  else:
+    prelim_signing = common.MakeTempFile(suffix='.zip')
+    SignOutput(input_file, prelim_signing)
 
   # Open the signed zip. Compute the final metadata that's needed for streaming.
   with zipfile.ZipFile(prelim_signing, 'r') as prelim_signing_zip:
@@ -1254,7 +1286,10 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
   common.ZipClose(output_zip)
 
   # Re-sign the package after updating the metadata entry.
-  SignOutput(prelim_signing, output_file)
+  if OPTIONS.no_signing:
+    output_file = prelim_signing
+  else:
+    SignOutput(prelim_signing, output_file)
 
   # Reopen the final signed zip to double check the streaming metadata.
   with zipfile.ZipFile(output_file, 'r') as output_zip:
@@ -1262,7 +1297,7 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
       property_files.Verify(output_zip, metadata[property_files.name].strip())
 
 
-def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
+def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
   target_info = BuildInfo(OPTIONS.target_info_dict, OPTIONS.oem_dicts)
   source_info = BuildInfo(OPTIONS.source_info_dict, OPTIONS.oem_dicts)
 
@@ -1280,6 +1315,14 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
       source_info.WriteMountOemScript(script)
 
   metadata = GetPackageMetadata(target_info, source_info)
+
+  if not OPTIONS.no_signing:
+    staging_file = common.MakeTempFile(suffix='.zip')
+  else:
+    staging_file = output_file
+
+  output_zip = zipfile.ZipFile(
+      staging_file, "w", compression=zipfile.ZIP_DEFLATED)
 
   device_specific = common.DeviceSpecificParams(
       source_zip=source_zip,
@@ -1530,7 +1573,16 @@ endif;
   else:
     script.AddToZip(target_zip, output_zip, input_path=OPTIONS.updater_binary)
   metadata["ota-required-cache"] = str(script.required_cache)
-  WriteMetadata(metadata, output_zip)
+
+  # We haven't written the metadata entry yet, which will be handled in
+  # FinalizeMetadata().
+  common.ZipClose(output_zip)
+
+  # Sign the generated zip package unless no_signing is specified.
+  needed_property_files = (
+      NonAbOtaPropertyFiles(),
+  )
+  FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
 
 
 def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
@@ -1610,7 +1662,10 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                                       source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
   # Stage the output zip package for package signing.
-  staging_file = common.MakeTempFile(suffix='.zip')
+  if not OPTIONS.no_signing:
+    staging_file = common.MakeTempFile(suffix='.zip')
+  else:
+    staging_file = output_file
   output_zip = zipfile.ZipFile(staging_file, "w",
                                compression=zipfile.ZIP_DEFLATED)
 
@@ -1883,21 +1938,12 @@ def main(argv):
   if OPTIONS.device_specific is not None:
     OPTIONS.device_specific = os.path.abspath(OPTIONS.device_specific)
 
-  # Set up the output zip. Create a temporary zip file if signing is needed.
-  if OPTIONS.no_signing:
-    if os.path.exists(args[1]):
-      os.unlink(args[1])
-    output_zip = zipfile.ZipFile(args[1], "w",
-                                 compression=zipfile.ZIP_DEFLATED)
-  else:
-    temp_zip_file = tempfile.NamedTemporaryFile()
-    output_zip = zipfile.ZipFile(temp_zip_file, "w",
-                                 compression=zipfile.ZIP_DEFLATED)
-
   # Generate a full OTA.
   if OPTIONS.incremental_source is None:
     with zipfile.ZipFile(args[0], 'r') as input_zip:
-      WriteFullOTAPackage(input_zip, output_zip)
+      WriteFullOTAPackage(
+          input_zip,
+          output_file=args[1])
 
   # Generate an incremental OTA.
   else:
@@ -1906,20 +1952,16 @@ def main(argv):
         OPTIONS.incremental_source, UNZIP_PATTERN)
     with zipfile.ZipFile(args[0], 'r') as input_zip, \
         zipfile.ZipFile(OPTIONS.incremental_source, 'r') as source_zip:
-      WriteBlockIncrementalOTAPackage(input_zip, source_zip, output_zip)
+      WriteBlockIncrementalOTAPackage(
+          input_zip,
+          source_zip,
+          output_file=args[1])
 
     if OPTIONS.log_diff:
       with open(OPTIONS.log_diff, 'w') as out_file:
         import target_files_diff
         target_files_diff.recursiveDiff(
             '', OPTIONS.source_tmp, OPTIONS.input_tmp, out_file)
-
-  common.ZipClose(output_zip)
-
-  # Sign the generated zip package unless no_signing is specified.
-  if not OPTIONS.no_signing:
-    SignOutput(temp_zip_file.name, args[1])
-    temp_zip_file.close()
 
   print("done.")
 
