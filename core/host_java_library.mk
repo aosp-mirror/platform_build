@@ -97,10 +97,16 @@ $(full_classes_combined_jar): $(full_classes_compiled_jar) \
 	$(MERGE_ZIPS) -j --ignore-duplicates $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
             -stripDir META-INF -zipToNotStrip $< $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
 
+#######################################
+LOCAL_JETIFIER_INPUT_FILE := $(full_classes_combined_jar)
+
+include $(BUILD_SYSTEM)/jetifier.mk
+#######################################
+
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
 $(full_classes_jarjar_jar): PRIVATE_JARJAR_RULES := $(LOCAL_JARJAR_RULES)
-$(full_classes_jarjar_jar): $(full_classes_combined_jar) $(LOCAL_JARJAR_RULES) | $(JARJAR)
+$(full_classes_jarjar_jar): $(LOCAL_JETIFIER_OUTPUT_FILE) $(LOCAL_JARJAR_RULES) | $(JARJAR)
 	@echo JarJar: $@
 	$(hide) $(JAVA) -jar $(JARJAR) process $(PRIVATE_JARJAR_RULES) $< $@
 else
@@ -108,9 +114,9 @@ full_classes_jarjar_jar := $(full_classes_combined_jar)
 endif
 
 
+#######################################
 LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_jarjar_jar)
 
-#######################################
 include $(BUILD_SYSTEM)/jacoco.mk
 #######################################
 

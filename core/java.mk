@@ -557,11 +557,17 @@ else
 full_classes_jarjar_jar := $(full_classes_processed_jar)
 endif
 
-$(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
+#######################################
+LOCAL_JETIFIER_INPUT_FILE := $(full_classes_jarjar_jar)
 
-LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_jar)
+include $(BUILD_SYSTEM)/jetifier.mk
+#######################################
+
+$(eval $(call copy-one-file,$(LOCAL_JETIFIER_OUTPUT_FILE),$(full_classes_jar)))
 
 #######################################
+LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_jar)
+
 include $(BUILD_SYSTEM)/jacoco.mk
 #######################################
 

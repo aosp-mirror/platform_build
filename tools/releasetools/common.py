@@ -1800,17 +1800,23 @@ def GetTypeAndDevice(mount_point, info):
 
 
 def ParseCertificate(data):
-  """Parse a PEM-format certificate."""
-  cert = []
+  """Parses and converts a PEM-encoded certificate into DER-encoded.
+
+  This gives the same result as `openssl x509 -in <filename> -outform DER`.
+
+  Returns:
+    The decoded certificate string.
+  """
+  cert_buffer = []
   save = False
   for line in data.split("\n"):
     if "--END CERTIFICATE--" in line:
       break
     if save:
-      cert.append(line)
+      cert_buffer.append(line)
     if "--BEGIN CERTIFICATE--" in line:
       save = True
-  cert = "".join(cert).decode('base64')
+  cert = "".join(cert_buffer).decode('base64')
   return cert
 
 
