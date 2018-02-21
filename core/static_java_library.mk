@@ -32,6 +32,9 @@ ifdef LOCAL_AAPT2_ONLY
 LOCAL_USE_AAPT2 := true
 endif
 
+# Process Support Library dependencies.
+include $(BUILD_SYSTEM)/support_libraries.mk
+
 # Hack to build static Java library with Android resource
 # See bug 5714516
 all_resources :=
