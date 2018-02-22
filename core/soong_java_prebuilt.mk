@@ -23,6 +23,15 @@ common_javalib.jar := $(intermediates.COMMON)/javalib.jar
 $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_jar)))
 $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_pre_proguard_jar)))
 
+ifdef LOCAL_DROIDDOC_STUBS_JAR
+$(eval $(call copy-one-file,$(LOCAL_DROIDDOC_STUBS_JAR),$(OUT_DOCS)/$(LOCAL_MODULE)-stubs.jar))
+ALL_DOCS += $(OUT_DOCS)/$(LOCAL_MODULE)-stubs.jar
+endif
+
+ifdef LOCAL_DROIDDOC_DOC_ZIP
+$(eval $(call copy-one-file,$(LOCAL_DROIDDOC_DOC_ZIP),$(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip))
+endif
+
 ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
     $(intermediates.COMMON)/jacoco-report-classes.jar))
