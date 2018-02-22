@@ -39,7 +39,7 @@ def LoadWhitelist(filename):
   return True
 
 
-def CheckJar(jar):
+def CheckJar(whitelist_path, jar):
   """Check a jar file.
   """
   # Get the list of files inside the jar file.
@@ -55,8 +55,9 @@ def CheckJar(jar):
       package_name = package_name.replace('/', '.')
       # Skip class without a package name
       if package_name and not whitelist_re.match(package_name):
-        print >> sys.stderr, ('Error: %s contains class file %s, which is not in the whitelist'
-                              % (jar, f))
+        print >> sys.stderr, ('Error: %s contains class file %s, whose package name %s is not '
+                              'in the whitelist %s of packages allowed on the bootclasspath.'
+                              % (jar, f, package_name, whitelist_path))
         return False
   return True
 
@@ -65,13 +66,14 @@ def main(argv):
   if len(argv) < 2:
     print __doc__
     return 1
+  whitelist_path = argv[0]
 
-  if not LoadWhitelist(argv[0]):
+  if not LoadWhitelist(whitelist_path):
     return 1
 
   passed = True
   for jar in argv[1:]:
-    if not CheckJar(jar):
+    if not CheckJar(whitelist_path, jar):
       passed = False
   if not passed:
     return 1
