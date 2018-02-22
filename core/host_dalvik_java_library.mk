@@ -67,6 +67,8 @@ all_java_sources := $(java_sources)
 
 include $(BUILD_SYSTEM)/java_common.mk
 
+include $(BUILD_SYSTEM)/sdk_check.mk
+
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 
 # List of dependencies for anything that needs all java sources in place
