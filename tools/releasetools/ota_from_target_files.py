@@ -1212,6 +1212,11 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
          "--target_image", target_file]
   if source_file is not None:
     cmd.extend(["--source_image", source_file])
+  if OPTIONS.downgrade:
+    max_timestamp = GetBuildProp("ro.build.date.utc", OPTIONS.source_info_dict)
+  else:
+    max_timestamp = metadata["post-timestamp"]
+  cmd.extend(["--max_timestamp", max_timestamp])
   p1 = common.Run(cmd, stdout=subprocess.PIPE)
   p1.wait()
   assert p1.returncode == 0, "brillo_update_payload generate failed"
