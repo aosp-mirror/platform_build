@@ -271,6 +271,7 @@ endif
 # to soong_ui.
 BUILD_DATETIME :=
 
+HAS_BUILD_NUMBER := true
 ifndef BUILD_NUMBER
   # BUILD_NUMBER should be set to the source control value that
   # represents the current state of the source code.  E.g., a
@@ -282,4 +283,5 @@ ifndef BUILD_NUMBER
   # from this date/time" value.  Make it start with a non-digit so that
   # anyone trying to parse it as an integer will probably get "0".
   BUILD_NUMBER := eng.$(shell echo $${USER:0:6}).$(shell $(DATE) +%Y%m%d.%H%M%S)
+  HAS_BUILD_NUMBER := false
 endif
