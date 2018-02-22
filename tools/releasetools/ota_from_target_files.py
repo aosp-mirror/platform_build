@@ -144,6 +144,13 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
 
   --payload_signer_args <args>
       Specify the arguments needed for payload signer.
+
+  --skip_postinstall
+      Skip the postinstall hooks when generating an A/B OTA package (default:
+      False). Note that this discards ALL the hooks, including non-optional
+      ones. Should only be used if caller knows it's safe to do so (e.g. all the
+      postinstall work is to dexopt apps and a data wipe will happen immediately
+      after). Only meaningful when generating A/B OTAs.
 """
 
 from __future__ import print_function
@@ -151,6 +158,7 @@ from __future__ import print_function
 import multiprocessing
 import os.path
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -193,8 +201,11 @@ OPTIONS.payload_signer = None
 OPTIONS.payload_signer_args = []
 OPTIONS.extracted_input = None
 OPTIONS.key_passwords = []
+OPTIONS.skip_postinstall = False
+
 
 METADATA_NAME = 'META-INF/com/android/metadata'
+POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*']
 
 
@@ -1215,7 +1226,7 @@ endif;
   WriteMetadata(metadata, output_zip)
 
 
-def GetTargetFilesZipForSecondaryImages(input_file):
+def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
   """Returns a target-files.zip file for generating secondary payload.
 
   Although the original target-files.zip already contains secondary slot
@@ -1229,6 +1240,7 @@ def GetTargetFilesZipForSecondaryImages(input_file):
 
   Args:
     input_file: The input target-files.zip file.
+    skip_postinstall: Whether to skip copying the postinstall config file.
 
   Returns:
     The filename of the target-files.zip for generating secondary payload.
@@ -1247,12 +1259,41 @@ def GetTargetFilesZipForSecondaryImages(input_file):
                            'IMAGES/system.map'):
       pass
 
+    # Skip copying the postinstall config if requested.
+    elif skip_postinstall and info.filename == POSTINSTALL_CONFIG:
+      pass
+
     elif info.filename.startswith(('META/', 'IMAGES/')):
       common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
 
   common.ZipClose(input_zip)
   common.ZipClose(target_zip)
 
+  return target_file
+
+
+def GetTargetFilesZipWithoutPostinstallConfig(input_file):
+  """Returns a target-files.zip that's not containing postinstall_config.txt.
+
+  This allows brillo_update_payload script to skip writing all the postinstall
+  hooks in the generated payload. The input target-files.zip file will be
+  duplicated, with 'META/postinstall_config.txt' skipped. If input_file doesn't
+  contain the postinstall_config.txt entry, the input file will be returned.
+
+  Args:
+    input_file: The input target-files.zip filename.
+
+  Returns:
+    The filename of target-files.zip that doesn't contain postinstall config.
+  """
+  # We should only make a copy if postinstall_config entry exists.
+  with zipfile.ZipFile(input_file, 'r') as input_zip:
+    if POSTINSTALL_CONFIG not in input_zip.namelist():
+      return input_file
+
+  target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
+  shutil.copyfile(input_file, target_file)
+  common.ZipDelete(target_file, POSTINSTALL_CONFIG)
   return target_file
 
 
@@ -1325,6 +1366,9 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
 
+  if OPTIONS.skip_postinstall:
+    target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
+
   # Generate payload.
   payload = Payload()
   payload.Generate(target_file, source_file)
@@ -1341,7 +1385,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   if OPTIONS.include_secondary:
     # We always include a full payload for the secondary slot, even when
     # building an incremental OTA. See the comments for "--include_secondary".
-    secondary_target_file = GetTargetFilesZipForSecondaryImages(target_file)
+    secondary_target_file = GetTargetFilesZipForSecondaryImages(
+        target_file, OPTIONS.skip_postinstall)
     secondary_payload = Payload(secondary=True)
     secondary_payload.Generate(secondary_target_file)
     secondary_payload.Sign(payload_signer)
@@ -1469,6 +1514,8 @@ def main(argv):
       OPTIONS.payload_signer_args = shlex.split(a)
     elif o == "--extracted_input_target_files":
       OPTIONS.extracted_input = a
+    elif o == "--skip_postinstall":
+      OPTIONS.skip_postinstall = True
     else:
       return False
     return True
@@ -1498,6 +1545,7 @@ def main(argv):
                                  "payload_signer=",
                                  "payload_signer_args=",
                                  "extracted_input_target_files=",
+                                 "skip_postinstall",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
