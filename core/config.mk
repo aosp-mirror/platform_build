@@ -202,11 +202,6 @@ else
 JAVA_TMPDIR_ARG :=
 endif
 
-# Default to remove the org.apache.http.legacy from bootclasspath
-ifeq ($(REMOVE_OAHL_FROM_BCP),)
-REMOVE_OAHL_FROM_BCP := true
-endif
-
 # ###############################################################
 # Include sub-configuration files
 # ###############################################################
