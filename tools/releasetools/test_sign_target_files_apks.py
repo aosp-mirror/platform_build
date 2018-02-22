@@ -16,16 +16,24 @@
 
 from __future__ import print_function
 
+import base64
 import os.path
 import unittest
 import zipfile
 
 import common
 import test_utils
-from sign_target_files_apks import EditTags, ReplaceVerityKeyId, RewriteProps
+from sign_target_files_apks import (
+    EditTags, ReplaceCerts, ReplaceVerityKeyId, RewriteProps)
 
 
 class SignTargetFilesApksTest(unittest.TestCase):
+
+  MAC_PERMISSIONS_XML = """<?xml version="1.0" encoding="iso-8859-1"?>
+<policy>
+  <signer signature="{}"><seinfo value="platform"/></signer>
+  <signer signature="{}"><seinfo value="media"/></signer>
+</policy>"""
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
@@ -133,3 +141,73 @@ class SignTargetFilesApksTest(unittest.TestCase):
 
     with zipfile.ZipFile(output_file) as output_zip:
       self.assertEqual(BOOT_CMDLINE, output_zip.read('BOOT/cmdline'))
+
+  def test_ReplaceCerts(self):
+    cert1_path = os.path.join(self.testdata_dir, 'platform.x509.pem')
+    with open(cert1_path) as cert1_fp:
+      cert1 = cert1_fp.read()
+    cert2_path = os.path.join(self.testdata_dir, 'media.x509.pem')
+    with open(cert2_path) as cert2_fp:
+      cert2 = cert2_fp.read()
+    cert3_path = os.path.join(self.testdata_dir, 'testkey.x509.pem')
+    with open(cert3_path) as cert3_fp:
+      cert3 = cert3_fp.read()
+
+    # Replace cert1 with cert3.
+    input_xml = self.MAC_PERMISSIONS_XML.format(
+        base64.b16encode(common.ParseCertificate(cert1)).lower(),
+        base64.b16encode(common.ParseCertificate(cert2)).lower())
+
+    output_xml = self.MAC_PERMISSIONS_XML.format(
+        base64.b16encode(common.ParseCertificate(cert3)).lower(),
+        base64.b16encode(common.ParseCertificate(cert2)).lower())
+
+    common.OPTIONS.key_map = {
+        cert1_path[:-9] : cert3_path[:-9],
+    }
+
+    self.assertEqual(output_xml, ReplaceCerts(input_xml))
+
+  def test_ReplaceCerts_duplicateEntries(self):
+    cert1_path = os.path.join(self.testdata_dir, 'platform.x509.pem')
+    with open(cert1_path) as cert1_fp:
+      cert1 = cert1_fp.read()
+    cert2_path = os.path.join(self.testdata_dir, 'media.x509.pem')
+    with open(cert2_path) as cert2_fp:
+      cert2 = cert2_fp.read()
+
+    # Replace cert1 with cert2, which leads to duplicate entries.
+    input_xml = self.MAC_PERMISSIONS_XML.format(
+        base64.b16encode(common.ParseCertificate(cert1)).lower(),
+        base64.b16encode(common.ParseCertificate(cert2)).lower())
+
+    common.OPTIONS.key_map = {
+        cert1_path[:-9] : cert2_path[:-9],
+    }
+    self.assertRaises(AssertionError, ReplaceCerts, input_xml)
+
+  def test_ReplaceCerts_skipNonExistentCerts(self):
+    cert1_path = os.path.join(self.testdata_dir, 'platform.x509.pem')
+    with open(cert1_path) as cert1_fp:
+      cert1 = cert1_fp.read()
+    cert2_path = os.path.join(self.testdata_dir, 'media.x509.pem')
+    with open(cert2_path) as cert2_fp:
+      cert2 = cert2_fp.read()
+    cert3_path = os.path.join(self.testdata_dir, 'testkey.x509.pem')
+    with open(cert3_path) as cert3_fp:
+      cert3 = cert3_fp.read()
+
+    input_xml = self.MAC_PERMISSIONS_XML.format(
+        base64.b16encode(common.ParseCertificate(cert1)).lower(),
+        base64.b16encode(common.ParseCertificate(cert2)).lower())
+
+    output_xml = self.MAC_PERMISSIONS_XML.format(
+        base64.b16encode(common.ParseCertificate(cert3)).lower(),
+        base64.b16encode(common.ParseCertificate(cert2)).lower())
+
+    common.OPTIONS.key_map = {
+        cert1_path[:-9] : cert3_path[:-9],
+        'non-existent' : cert3_path[:-9],
+        cert2_path[:-9] : 'non-existent',
+    }
+    self.assertEqual(output_xml, ReplaceCerts(input_xml))
