@@ -139,8 +139,10 @@ $(my_built_profile):
 		--dex-location=$(PRIVATE_DEX_LOCATION) \
 		--reference-profile-file=$@
 dex_preopt_profile_src_file:=
-# Remove compressed APK  extension.
+
+# Remove compressed APK extension.
 my_installed_profile := $(patsubst %.gz,%,$(LOCAL_INSTALLED_MODULE)).prof
+
 # my_installed_profile := $(LOCAL_INSTALLED_MODULE).prof
 $(eval $(call copy-one-file,$(my_built_profile),$(my_installed_profile)))
 build_installed_profile:=$(my_built_profile):$(my_installed_profile)
@@ -244,10 +246,37 @@ ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
         # For non system server jars, use speed-profile when we have a profile.
         LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed-profile
       else
-         LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=$(my_default_compiler_filter)
+        LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=$(my_default_compiler_filter)
       endif
     endif
   endif
+endif
+
+my_generate_dm := $(PRODUCT_DEX_PREOPT_GENERATE_DM_FILES)
+ifeq (,$(filter $(LOCAL_DEX_PREOPT_FLAGS),--compiler-filter=verify))
+# Generating DM files only makes sense for verify, avoid doing for non verify compiler filter APKs.
+my_generate_dm := false
+endif
+
+# No reason to use a dm file if the dex is already uncompressed.
+ifeq ($(LOCAL_UNCOMPRESS_DEX),true)
+my_generate_dm := false
+endif
+
+ifeq (true,$(my_generate_dm))
+LOCAL_DEX_PREOPT_FLAGS += --copy-dex-files=false
+LOCAL_DEX_PREOPT := nostripping
+my_built_dm := $(dir $(LOCAL_BUILT_MODULE))generated.dm
+my_installed_dm := $(patsubst %.apk,%,$(LOCAL_INSTALLED_MODULE)).dm
+my_copied_vdex := $(dir $(LOCAL_BUILT_MODULE))primary.vdex
+$(eval $(call copy-one-file,$(built_vdex),$(my_copied_vdex)))
+$(my_built_dm): PRIVATE_INPUT_VDEX := $(my_copied_vdex)
+$(my_built_dm): $(my_copied_vdex) $(ZIPTIME)
+	$(hide) mkdir -p $(dir $@)
+	$(hide) rm -f $@
+	$(hide) zip -qD -j -X -9 $@ $(PRIVATE_INPUT_VDEX)
+	$(ZIPTIME) $@
+$(eval $(call copy-one-file,$(my_built_dm),$(my_installed_dm)))
 endif
 
 # PRODUCT_SYSTEM_SERVER_DEBUG_INFO overrides WITH_DEXPREOPT_DEBUG_INFO.
@@ -274,14 +303,26 @@ $(built_vdex): $(built_odex)
 $(built_art): $(built_odex)
 endif
 
-# Add the installed_odex to the list of installed files for this module.
-ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
-ALL_MODULES.$(my_register_name).INSTALLED += $(installed_vdex)
-ALL_MODULES.$(my_register_name).INSTALLED += $(installed_art)
+ifneq (true,$(my_generate_dm))
+  # Add the installed_odex to the list of installed files for this module if we aren't generating a
+  # dm file.
+  ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
+  ALL_MODULES.$(my_register_name).INSTALLED += $(installed_vdex)
+  ALL_MODULES.$(my_register_name).INSTALLED += $(installed_art)
 
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_odex)
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_vdex)
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_art)
+  ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_odex)
+  ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_vdex)
+  ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_art)
+
+  # Make sure to install the .odex and .vdex when you run "make <module_name>"
+  $(my_all_targets): $(installed_odex) $(installed_vdex) $(installed_art)
+else
+  ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed_dm)
+  ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_dm) $(my_installed_dm)
+
+  # Make sure to install the .dm when you run "make <module_name>"
+  $(my_all_targets): $(installed_dm)
+endif
 
 # Record dex-preopt config.
 DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -294,10 +335,6 @@ DEXPREOPT.$(LOCAL_MODULE).INSTALLED := $(installed_odex)
 DEXPREOPT.$(LOCAL_MODULE).INSTALLED_STRIPPED := $(LOCAL_INSTALLED_MODULE)
 DEXPREOPT.MODULES.$(LOCAL_MODULE_CLASS) := $(sort \
   $(DEXPREOPT.MODULES.$(LOCAL_MODULE_CLASS)) $(LOCAL_MODULE))
-
-
-# Make sure to install the .odex and .vdex when you run "make <module_name>"
-$(my_all_targets): $(installed_odex) $(installed_vdex) $(installed_art)
 
 endif # LOCAL_DEX_PREOPT
 
