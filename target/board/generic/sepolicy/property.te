@@ -1,4 +1,3 @@
 type qemu_prop, property_type;
 type qemu_cmdline, property_type;
 type radio_noril_prop, property_type;
-type opengles_prop, property_type;
