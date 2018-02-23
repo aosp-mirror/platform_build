@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2557fdcd_48c52518",
+        "filename": "target/board/generic_arm64_ab/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2018-02-23T03:02:21Z",
+      "side": 0,
+      "message": "I think it\u0027s better to copy these lines to generic_arm_ab/BoardConfig.mk as these only affect arm/ab GSI. treble_common.mk is also referenced by x86 and non-ab platforms.",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 0
+      },
+      "revId": "5d7ec6bdf80b343dc121b3a87dc2a15a49552876",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
