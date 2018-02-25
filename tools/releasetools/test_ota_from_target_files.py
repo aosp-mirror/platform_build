@@ -24,7 +24,9 @@ import common
 import test_utils
 from ota_from_target_files import (
     _LoadOemDicts, BuildInfo, GetPackageMetadata,
-    GetTargetFilesZipForSecondaryImages, Payload, PayloadSigner,
+    GetTargetFilesZipForSecondaryImages,
+    GetTargetFilesZipWithoutPostinstallConfig,
+    Payload, PayloadSigner, POSTINSTALL_CONFIG,
     WriteFingerprintAssertion)
 
 
@@ -36,6 +38,16 @@ def construct_target_files(secondary=False):
     target_files_zip.writestr(
         'META/update_engine_config.txt',
         "PAYLOAD_MAJOR_VERSION=2\nPAYLOAD_MINOR_VERSION=4\n")
+
+    # META/postinstall_config.txt
+    target_files_zip.writestr(
+        POSTINSTALL_CONFIG,
+        '\n'.join([
+            "RUN_POSTINSTALL_system=true",
+            "POSTINSTALL_PATH_system=system/bin/otapreopt_script",
+            "FILESYSTEM_TYPE_system=ext4",
+            "POSTINSTALL_OPTIONAL_system=true",
+        ]))
 
     # META/ab_partitions.txt
     ab_partitions = ['boot', 'system', 'vendor']
@@ -539,9 +551,40 @@ class OtaFromTargetFilesTest(unittest.TestCase):
     self.assertIn('IMAGES/boot.img', namelist)
     self.assertIn('IMAGES/system.img', namelist)
     self.assertIn('IMAGES/vendor.img', namelist)
+    self.assertIn(POSTINSTALL_CONFIG, namelist)
 
     self.assertNotIn('IMAGES/system_other.img', namelist)
     self.assertNotIn('IMAGES/system.map', namelist)
+
+  def test_GetTargetFilesZipForSecondaryImages_skipPostinstall(self):
+    input_file = construct_target_files(secondary=True)
+    target_file = GetTargetFilesZipForSecondaryImages(
+        input_file, skip_postinstall=True)
+
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertIn('IMAGES/boot.img', namelist)
+    self.assertIn('IMAGES/system.img', namelist)
+    self.assertIn('IMAGES/vendor.img', namelist)
+
+    self.assertNotIn('IMAGES/system_other.img', namelist)
+    self.assertNotIn('IMAGES/system.map', namelist)
+    self.assertNotIn(POSTINSTALL_CONFIG, namelist)
+
+  def test_GetTargetFilesZipWithoutPostinstallConfig(self):
+    input_file = construct_target_files()
+    target_file = GetTargetFilesZipWithoutPostinstallConfig(input_file)
+    with zipfile.ZipFile(target_file) as verify_zip:
+      self.assertNotIn(POSTINSTALL_CONFIG, verify_zip.namelist())
+
+  def test_GetTargetFilesZipWithoutPostinstallConfig_missingEntry(self):
+    input_file = construct_target_files()
+    common.ZipDelete(input_file, POSTINSTALL_CONFIG)
+    target_file = GetTargetFilesZipWithoutPostinstallConfig(input_file)
+    with zipfile.ZipFile(target_file) as verify_zip:
+      self.assertNotIn(POSTINSTALL_CONFIG, verify_zip.namelist())
 
 
 class PayloadSignerTest(unittest.TestCase):

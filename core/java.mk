@@ -357,6 +357,8 @@ endif # TURBINE_ENABLED != false
 
 include $(BUILD_SYSTEM)/java_common.mk
 
+include $(BUILD_SYSTEM)/sdk_check.mk
+
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HAS_RS_SOURCES := $(if $(renderscript_sources),true)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RS_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/renderscript
 

@@ -3,4 +3,3 @@ qemu.cmdline            u:object_r:qemu_cmdline:s0
 ro.emu.                 u:object_r:qemu_prop:s0
 ro.emulator.            u:object_r:qemu_prop:s0
 ro.radio.noril          u:object_r:radio_noril_prop:s0
-ro.opengles.            u:object_r:opengles_prop:s0

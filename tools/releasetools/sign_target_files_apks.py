@@ -104,6 +104,7 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+from xml.etree import ElementTree
 
 import add_img_to_target_files
 import common
@@ -290,6 +291,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         new_data = RewriteProps(data)
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
 
+    # Replace the certs in *mac_permissions.xml (there could be multiple, such
+    # as {system,vendor}/etc/selinux/{plat,nonplat}_mac_permissions.xml).
     elif info.filename.endswith("mac_permissions.xml"):
       print("Rewriting %s with new keys." % (info.filename,))
       new_data = ReplaceCerts(data)
@@ -361,31 +364,54 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
 
 def ReplaceCerts(data):
-  """Given a string of data, replace all occurences of a set
-  of X509 certs with a newer set of X509 certs and return
-  the updated data string."""
-  for old, new in OPTIONS.key_map.iteritems():
-    try:
-      if OPTIONS.verbose:
-        print("    Replacing %s.x509.pem with %s.x509.pem" % (old, new))
-      f = open(old + ".x509.pem")
-      old_cert16 = base64.b16encode(common.ParseCertificate(f.read())).lower()
-      f.close()
-      f = open(new + ".x509.pem")
-      new_cert16 = base64.b16encode(common.ParseCertificate(f.read())).lower()
-      f.close()
-      # Only match entire certs.
-      pattern = "\\b" + old_cert16 + "\\b"
-      (data, num) = re.subn(pattern, new_cert16, data, flags=re.IGNORECASE)
-      if OPTIONS.verbose:
-        print("    Replaced %d occurence(s) of %s.x509.pem with "
-              "%s.x509.pem" % (num, old, new))
-    except IOError as e:
-      if e.errno == errno.ENOENT and not OPTIONS.verbose:
-        continue
+  """Replaces all the occurences of X.509 certs with the new ones.
 
-      print("    Error accessing %s. %s. Skip replacing %s.x509.pem with "
-            "%s.x509.pem." % (e.filename, e.strerror, old, new))
+  The mapping info is read from OPTIONS.key_map. Non-existent certificate will
+  be skipped. After the replacement, it additionally checks for duplicate
+  entries, which would otherwise fail the policy loading code in
+  frameworks/base/services/core/java/com/android/server/pm/SELinuxMMAC.java.
+
+  Args:
+    data: Input string that contains a set of X.509 certs.
+
+  Returns:
+    A string after the replacement.
+
+  Raises:
+    AssertionError: On finding duplicate entries.
+  """
+  for old, new in OPTIONS.key_map.iteritems():
+    if OPTIONS.verbose:
+      print("    Replacing %s.x509.pem with %s.x509.pem" % (old, new))
+
+    try:
+      with open(old + ".x509.pem") as old_fp:
+        old_cert16 = base64.b16encode(
+            common.ParseCertificate(old_fp.read())).lower()
+      with open(new + ".x509.pem") as new_fp:
+        new_cert16 = base64.b16encode(
+            common.ParseCertificate(new_fp.read())).lower()
+    except IOError as e:
+      if OPTIONS.verbose or e.errno != errno.ENOENT:
+        print("    Error accessing %s: %s.\nSkip replacing %s.x509.pem with "
+              "%s.x509.pem." % (e.filename, e.strerror, old, new))
+      continue
+
+    # Only match entire certs.
+    pattern = "\\b" + old_cert16 + "\\b"
+    (data, num) = re.subn(pattern, new_cert16, data, flags=re.IGNORECASE)
+
+    if OPTIONS.verbose:
+      print("    Replaced %d occurence(s) of %s.x509.pem with %s.x509.pem" % (
+          num, old, new))
+
+  # Verify that there're no duplicate entries after the replacement. Note that
+  # it's only checking entries with global seinfo at the moment (i.e. ignoring
+  # the ones with inner packages). (Bug: 69479366)
+  root = ElementTree.fromstring(data)
+  signatures = [signer.attrib['signature'] for signer in root.findall('signer')]
+  assert len(signatures) == len(set(signatures)), \
+      "Found duplicate entries after cert replacement: {}".format(data)
 
   return data
 
