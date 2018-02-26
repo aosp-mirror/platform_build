@@ -96,7 +96,16 @@ class OutputFile(object):
 
 
 def GetCareMap(which, imgname):
-  """Generates the care_map for the given partition."""
+  """Returns the care_map string for the given partition.
+
+  Args:
+    which: The partition name, must be listed in PARTITIONS_WITH_CARE_MAP.
+    imgname: The filename of the image.
+
+  Returns:
+    (which, care_map_ranges): care_map_ranges is the raw string of the care_map
+    RangeSet.
+  """
   assert which in PARTITIONS_WITH_CARE_MAP
 
   simg = sparse_img.SparseImage(imgname)
