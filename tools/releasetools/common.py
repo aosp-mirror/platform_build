@@ -221,21 +221,6 @@ def LoadInfoDict(input_file, input_dir=None):
             vendor_base_fs_file,))
         del d["vendor_base_fs_file"]
 
-  try:
-    data = read_helper("META/imagesizes.txt")
-    for line in data.split("\n"):
-      if not line:
-        continue
-      name, value = line.split(" ", 1)
-      if not value:
-        continue
-      if name == "blocksize":
-        d[name] = value
-      else:
-        d[name + "_size"] = value
-  except KeyError:
-    pass
-
   def makeint(key):
     if key in d:
       d[key] = int(d[key], 0)
