@@ -155,7 +155,7 @@ class AutoGenTestConfigUnittests(unittest.TestCase):
       self.assertEqual(config_file.read(), EXPECTED_JUNIT_TEST_CONFIG)
 
   def testCreateInstrumentationTestConfig(self):
-    """Test creating test config for AndroidJUnitTest.
+    """Test creating test config for InstrumentationTest.
     """
     with open(self.manifest_file, 'w') as f:
       f.write(MANIFEST_INSTRUMENTATION_TEST)
