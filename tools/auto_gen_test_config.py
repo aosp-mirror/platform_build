@@ -70,8 +70,9 @@ def main(argv):
     label = module
   runner = instrumentation.attributes[ATTRIBUTE_RUNNER].value
   package = manifest.attributes[ATTRIBUTE_PACKAGE].value
-  test_type = ('AndroidJUnitTest' if runner.endswith('.AndroidJUnitRunner')
-               else 'InstrumentationTest')
+  test_type = ('InstrumentationTest'
+               if runner.endswith('.InstrumentationTestRunner')
+               else 'AndroidJUnitTest')
 
   with open(instrumentation_test_config_template) as template:
     config = template.read()
