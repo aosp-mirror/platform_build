@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d625cf66_113b6276",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2018-02-26T19:42:13Z",
+      "side": 1,
+      "message": "would it make sense to to further break this down to $(TARGET_2ND_ARCH) and $(TARGET_CPU_VARIANT) ? The generation script could parse the paths easily to break them down on its own, that\u0027s why I haven\u0027t done that right now. Otherwise we could make different SOONG-\u003emake variables to facilitate this.",
+      "range": {
+        "startLine": 332,
+        "startChar": 39,
+        "endLine": 332,
+        "endChar": 53
+      },
+      "revId": "cad2b7ed96b651a0392d12942d6caa7ca59936ee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
