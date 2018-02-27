@@ -28,3 +28,11 @@ TARGET_CPU_VARIANT := generic
 # Enable A/B update
 TARGET_NO_RECOVERY := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+
+# TODO(jiyong) These might be SoC specific.
+BOARD_ROOT_EXTRA_FOLDERS += firmware firmware/radio persist
+BOARD_ROOT_EXTRA_SYMLINKS := /vendor/lib/dsp:/dsp
+
+# TODO(b/36764215): remove this setting when the generic system image
+# no longer has QCOM-specific directories under /.
+BOARD_SEPOLICY_DIRS += build/target/board/generic_arm64_ab/sepolicy

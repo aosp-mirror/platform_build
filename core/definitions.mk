@@ -2686,9 +2686,9 @@ endef
 # $(1): source file
 # $(2): destination file, must end with .xml.
 define copy-xml-file-checked
-$(2): $(1)
+$(2): $(1) $(XMLLINT)
 	@echo "Copy xml: $$@"
-	$(hide) xmllint $$< >/dev/null  # Don't print the xml file to stdout.
+	$(hide) $(XMLLINT) $$< >/dev/null  # Don't print the xml file to stdout.
 	$$(copy-file-to-target)
 endef
 
