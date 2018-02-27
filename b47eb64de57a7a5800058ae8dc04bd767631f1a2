@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "31298e36_ef7ce9a7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2689,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-27T01:24:00Z",
+      "side": 1,
+      "message": "This unexports LD_LIBRARY_PATH for the entire build, not just for this target. Not that that\u0027s a particularly bad thing, but clearing it in soong_ui is better at that point:\n\nhttps://android.googlesource.com/platform/build/soong/+/d2092dbc0dde66212a57bc62d9b5ea7cfd623e0a/ui/build/config.go#81",
+      "range": {
+        "startLine": 2689,
+        "startChar": 0,
+        "endLine": 2689,
+        "endChar": 24
+      },
+      "revId": "b47eb64de57a7a5800058ae8dc04bd767631f1a2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
