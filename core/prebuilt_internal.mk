@@ -20,19 +20,19 @@ my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)IS_64_BIT)
 
 ifdef LOCAL_PREBUILT_MODULE_FILE
   my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
-else ifdef LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-  my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
-  LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) :=
-else ifdef LOCAL_SRC_FILES_$(my_32_64_bit_suffix)
-  my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$(my_32_64_bit_suffix))
-  LOCAL_SRC_FILES_$(my_32_64_bit_suffix) :=
-else ifdef LOCAL_SRC_FILES
-  my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
-  LOCAL_SRC_FILES :=
-else ifdef LOCAL_REPLACE_PREBUILT_APK_INSTALLED
-  # This is handled specially below
 else
-  $(call pretty-error,No source files specified)
+  ifdef LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+    my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+    LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) :=
+  else
+    ifdef LOCAL_SRC_FILES_$(my_32_64_bit_suffix)
+      my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$(my_32_64_bit_suffix))
+      LOCAL_SRC_FILES_$(my_32_64_bit_suffix) :=
+    else
+      my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
+      LOCAL_SRC_FILES :=
+    endif
+  endif
 endif
 
 LOCAL_CHECKED_MODULE := $(my_prebuilt_src_file)
