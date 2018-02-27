@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c5aa0e79_39f8e306",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2018-02-27T22:50:25Z",
+      "side": 1,
+      "message": "I tried to follow what soong does for make_vars, but TARGET_DEVICE works well as well. Done.",
+      "parentUuid": "a09afe9a_f6e879ea",
+      "range": {
+        "startLine": 332,
+        "startChar": 41,
+        "endLine": 332,
+        "endChar": 55
+      },
+      "revId": "6f3583456a2b4d931b9f888359fe1a199f6db14d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3fa37108_eedc0684",
         "filename": "core/base_rules.mk",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "ea277a78_07395ea2",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2018-02-27T22:50:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3fa37108_eedc0684",
+      "range": {
+        "startLine": 332,
+        "startChar": 0,
+        "endLine": 333,
+        "endChar": 32
+      },
+      "revId": "6f3583456a2b4d931b9f888359fe1a199f6db14d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b4cb8f9b_91c63bac",
         "filename": "core/base_rules.mk",
         "patchSetId": 3
@@ -59,6 +107,30 @@
       "writtenOn": "2018-02-27T04:32:42Z",
       "side": 1,
       "message": "why does every single module need to trigger this to be built?",
+      "range": {
+        "startLine": 336,
+        "startChar": 0,
+        "endLine": 336,
+        "endChar": 33
+      },
+      "revId": "6f3583456a2b4d931b9f888359fe1a199f6db14d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97cdf2a0_d2e08d6a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2018-02-27T22:50:25Z",
+      "side": 1,
+      "message": "I created a separate target. Initially thought of making each vndk library depend on this but that would cause some false dependencies. For eg: libA.vendor -\u003e lsdump_paths_file -\u003e each lsdump file path, this could cause libB.vendor.so (an lsdump depends on the corresponding .so ) to be compiled and linked even if we do m -j libA.vendor. This will still happen with m -j findlsdumps, but atleast other people doing m -j \u003clibname\u003e will not get affected.",
+      "parentUuid": "b4cb8f9b_91c63bac",
       "range": {
         "startLine": 336,
         "startChar": 0,
