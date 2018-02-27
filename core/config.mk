@@ -89,15 +89,6 @@ ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
 dist_goal := $(strip $(filter dist,$(MAKECMDGOALS)))
 MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
 
-# Tell python not to spam the source tree with .pyc files.  This
-# only has an effect on python 2.6 and above.
-export PYTHONDONTWRITEBYTECODE := 1
-
-ifneq ($(filter --color=always, $(GREP_OPTIONS)),)
-$(warning The build system needs unmodified output of grep.)
-$(error Please remove --color=always from your  $$GREP_OPTIONS)
-endif
-
 UNAME := $(shell uname -sm)
 
 SRC_TARGET_DIR := $(TOPDIR)build/target
@@ -893,12 +884,6 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH := $(TARGET_2ND_ARCH)
 $(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT := $(call first_non_empty_of_three,$(TARGET_2ND_CPU_VARIANT),$(TARGET_2ND_ARCH_VARIANT),default)
 $(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
 endif
-
-# These will come from Soong, drop the environment versions
-unexport CLANG
-unexport CLANG_CXX
-unexport CCC_CC
-unexport CCC_CXX
 
 # ###############################################################
 # Collect a list of the SDK versions that we could compile against
