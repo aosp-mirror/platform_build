@@ -288,6 +288,14 @@ $(foreach var,$(vars), \
 
 .KATI_READONLY := $(vars)
 
+CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
+
+# "" is equivalent to true currently.
+ifeq ($(BUILD_BROKEN_ANDROIDMK_EXPORTS),false)
+$(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
+endif
+
+CHANGES_URL :=
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR
