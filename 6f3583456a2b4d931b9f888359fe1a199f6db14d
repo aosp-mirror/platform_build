@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a09afe9a_f6e879ea",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 332,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-27T04:32:42Z",
+      "side": 1,
+      "message": "Why TARGET_PRODUCT? Most things use the device -- out/target/product/\u003cTARGET_DEVICE\u003e",
+      "range": {
+        "startLine": 332,
+        "startChar": 41,
+        "endLine": 332,
+        "endChar": 55
+      },
+      "revId": "6f3583456a2b4d931b9f888359fe1a199f6db14d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3fa37108_eedc0684",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 333,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-27T04:32:42Z",
+      "side": 1,
+      "message": "This is going to cause tons of warnings about duplicate rules -- this file is included once for every module. I assume you\u0027re looking for core/Makefile",
+      "range": {
+        "startLine": 332,
+        "startChar": 0,
+        "endLine": 333,
+        "endChar": 32
+      },
+      "revId": "6f3583456a2b4d931b9f888359fe1a199f6db14d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b4cb8f9b_91c63bac",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-27T04:32:42Z",
+      "side": 1,
+      "message": "why does every single module need to trigger this to be built?",
+      "range": {
+        "startLine": 336,
+        "startChar": 0,
+        "endLine": 336,
+        "endChar": 33
+      },
+      "revId": "6f3583456a2b4d931b9f888359fe1a199f6db14d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
