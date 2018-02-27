@@ -67,23 +67,27 @@ static struct selabel_handle* get_sehnd(const char* context_file) {
 }
 
 static void usage() {
-  fprintf(stderr, "Usage: fs_config [-D product_out_path] [-S context_file] [-C]\n");
+  fprintf(stderr, "Usage: fs_config [-D product_out_path] [-S context_file] [-R root] [-C]\n");
 }
 
 int main(int argc, char** argv) {
   char buffer[1024];
   const char* context_file = NULL;
   const char* product_out_path = NULL;
+  char* root_path = NULL;
   struct selabel_handle* sehnd = NULL;
   int print_capabilities = 0;
   int opt;
-  while((opt = getopt(argc, argv, "CS:D:")) != -1) {
+  while((opt = getopt(argc, argv, "CS:R:D:")) != -1) {
     switch(opt) {
     case 'C':
       print_capabilities = 1;
       break;
     case 'S':
       context_file = optarg;
+      break;
+    case 'R':
+      root_path = optarg;
       break;
     case 'D':
       product_out_path = optarg;
@@ -96,6 +100,14 @@ int main(int argc, char** argv) {
 
   if (context_file != NULL) {
     sehnd = get_sehnd(context_file);
+  }
+
+  if (root_path != NULL) {
+    size_t root_len = strlen(root_path);
+    /* Trim any trailing slashes from the root path. */
+    while (root_len && root_path[--root_len] == '/') {
+      root_path[root_len] = '\0';
+    }
   }
 
   while (fgets(buffer, 1023, stdin) != NULL) {
@@ -122,6 +134,10 @@ int main(int argc, char** argv) {
     unsigned uid = 0, gid = 0, mode = 0;
     uint64_t capabilities;
     fs_config(buffer, is_dir, product_out_path, &uid, &gid, &mode, &capabilities);
+    if (root_path != NULL && strcmp(buffer, root_path) == 0) {
+      /* The root of the filesystem needs to be an empty string. */
+      strcpy(buffer, "");
+    }
     printf("%s %d %d %o", buffer, uid, gid, mode);
 
     if (sehnd != NULL) {
