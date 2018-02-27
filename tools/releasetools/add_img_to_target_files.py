@@ -120,13 +120,13 @@ def GetCareMap(which, imgname):
   return [which, care_map_ranges.to_string_raw()]
 
 
-def AddSystem(output_zip, prefix="IMAGES/", recovery_img=None, boot_img=None):
+def AddSystem(output_zip, recovery_img=None, boot_img=None):
   """Turn the contents of SYSTEM into a system image and store it in
   output_zip. Returns the name of the system image file."""
 
-  img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "system.img")
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system.img")
   if os.path.exists(img.input_name):
-    print("system.img already exists in %s, no need to rebuild..." % (prefix,))
+    print("system.img already exists; no need to rebuild...")
     return img.input_name
 
   def output_sink(fn, data):
@@ -145,65 +145,66 @@ def AddSystem(output_zip, prefix="IMAGES/", recovery_img=None, boot_img=None):
     common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink, recovery_img,
                              boot_img, info_dict=OPTIONS.info_dict)
 
-  block_list = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "system.map")
+  block_list = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system.map")
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "system", img,
               block_list=block_list)
 
   return img.name
 
 
-def AddSystemOther(output_zip, prefix="IMAGES/"):
+def AddSystemOther(output_zip):
   """Turn the contents of SYSTEM_OTHER into a system_other image
   and store it in output_zip."""
 
-  img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "system_other.img")
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system_other.img")
   if os.path.exists(img.input_name):
-    print("system_other.img already exists in %s, no need to rebuild..." % (
-        prefix,))
+    print("system_other.img already exists; no need to rebuild...")
     return
 
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "system_other", img)
 
 
-def AddVendor(output_zip, prefix="IMAGES/"):
+def AddVendor(output_zip):
   """Turn the contents of VENDOR into a vendor image and store in it
   output_zip."""
 
-  img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "vendor.img")
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vendor.img")
   if os.path.exists(img.input_name):
-    print("vendor.img already exists in %s, no need to rebuild..." % (prefix,))
+    print("vendor.img already exists; no need to rebuild...")
     return img.input_name
 
-  block_list = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "vendor.map")
+  block_list = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vendor.map")
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "vendor", img,
               block_list=block_list)
   return img.name
 
 
-def AddProduct(output_zip, prefix="IMAGES/"):
-  """Turn the contents of PRODUCT into a product image and store it in output_zip."""
+def AddProduct(output_zip):
+  """Turn the contents of PRODUCT into a product image and store it in
+  output_zip."""
 
-  img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "product.img")
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "product.img")
   if os.path.exists(img.input_name):
-    print("product.img already exists in %s, no need to rebuild..." % (prefix,))
+    print("product.img already exists; no need to rebuild...")
     return img.input_name
 
-  block_list = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "product.map")
-  CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "product", img,
-              block_list=block_list)
+  block_list = OutputFile(
+      output_zip, OPTIONS.input_tmp, "IMAGES", "product.map")
+  CreateImage(
+      OPTIONS.input_tmp, OPTIONS.info_dict, "product", img,
+      block_list=block_list)
   return img.name
 
 
-def AddDtbo(output_zip, prefix="IMAGES/"):
+def AddDtbo(output_zip):
   """Adds the DTBO image.
 
-  Uses the image under prefix if it already exists. Otherwise looks for the
+  Uses the image under IMAGES/ if it already exists. Otherwise looks for the
   image under PREBUILT_IMAGES/, signs it as needed, and returns the image name.
   """
-
-  img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "dtbo.img")
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "dtbo.img")
   if os.path.exists(img.input_name):
-    print("dtbo.img already exists in %s, no need to rebuild..." % (prefix,))
+    print("dtbo.img already exists; no need to rebuild...")
     return img.input_name
 
   dtbo_prebuilt_path = os.path.join(
@@ -297,7 +298,7 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
       info_dict[adjusted_blocks_key] = int(adjusted_blocks_value)/4096 - 1
 
 
-def AddUserdata(output_zip, prefix="IMAGES/"):
+def AddUserdata(output_zip):
   """Create a userdata image and store it in output_zip.
 
   In most case we just create and store an empty userdata.img;
@@ -306,10 +307,9 @@ def AddUserdata(output_zip, prefix="IMAGES/"):
   in OPTIONS.info_dict.
   """
 
-  img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "userdata.img")
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "userdata.img")
   if os.path.exists(img.input_name):
-    print("userdata.img already exists in %s, no need to rebuild..." % (
-        prefix,))
+    print("userdata.img already exists; no need to rebuild...")
     return
 
   # Skip userdata.img if no size.
@@ -365,7 +365,7 @@ def AppendVBMetaArgsForPartition(cmd, partition, img_path, public_key_dir):
     cmd.extend(["--include_descriptors_from_image", img_path])
 
 
-def AddVBMeta(output_zip, partitions, prefix="IMAGES/"):
+def AddVBMeta(output_zip, partitions):
   """Creates a VBMeta image and store it in output_zip.
 
   Args:
@@ -374,9 +374,9 @@ def AddVBMeta(output_zip, partitions, prefix="IMAGES/"):
         values. Only valid partition names are accepted, which include 'boot',
         'recovery', 'system', 'vendor', 'dtbo'.
   """
-  img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "vbmeta.img")
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vbmeta.img")
   if os.path.exists(img.input_name):
-    print("vbmeta.img already exists in %s; not rebuilding..." % (prefix,))
+    print("vbmeta.img already exists; not rebuilding...")
     return img.input_name
 
   avbtool = os.getenv('AVBTOOL') or OPTIONS.info_dict["avb_avbtool"]
@@ -421,11 +421,13 @@ def AddVBMeta(output_zip, partitions, prefix="IMAGES/"):
   img.Write()
 
 
-def AddPartitionTable(output_zip, prefix="IMAGES/"):
+def AddPartitionTable(output_zip):
   """Create a partition table image and store it in output_zip."""
 
-  img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "partition-table.img")
-  bpt = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "partition-table.bpt")
+  img = OutputFile(
+      output_zip, OPTIONS.input_tmp, "IMAGES", "partition-table.img")
+  bpt = OutputFile(
+      output_zip, OPTIONS.input_tmp, "IMAGES", "partition-table.bpt")
 
   # use BPTTOOL from environ, or "bpttool" if empty or not set.
   bpttool = os.getenv("BPTTOOL") or "bpttool"
@@ -450,12 +452,12 @@ def AddPartitionTable(output_zip, prefix="IMAGES/"):
   bpt.Write()
 
 
-def AddCache(output_zip, prefix="IMAGES/"):
+def AddCache(output_zip):
   """Create an empty cache image and store it in output_zip."""
 
-  img = OutputFile(output_zip, OPTIONS.input_tmp, prefix, "cache.img")
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "cache.img")
   if os.path.exists(img.input_name):
-    print("cache.img already exists in %s, no need to rebuild..." % (prefix,))
+    print("cache.img already exists; no need to rebuild...")
     return
 
   image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict, "cache")
