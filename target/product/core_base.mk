@@ -62,9 +62,4 @@ PRODUCT_PACKAGES += \
     mdnsd \
     requestsync \
 
-# Wifi modules
-PRODUCT_PACKAGES += \
-    wifi-service \
-    wificond \
-
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_minimal.mk)
