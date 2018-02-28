@@ -81,6 +81,15 @@ else
 DEX2OAT_BOOT_IMAGE_LOG_TAGS := ANDROID_LOG_TAGS="*:v"
 endif
 
+# An additional message to print on dex2oat failure.
+DEX2OAT_FAILURE_MESSAGE := ERROR: Dex2oat failed to compile a boot image.
+DEX2OAT_FAILURE_MESSAGE += It is likely that the boot classpath is inconsistent.
+ifeq ($(ONE_SHOT_MAKEFILE),)
+  DEX2OAT_FAILURE_MESSAGE += Rebuild with ART_BOOT_IMAGE_EXTRA_ARGS="--runtime-arg -verbose:verifier" to see verification errors.
+else
+  DEX2OAT_FAILURE_MESSAGE += Build with m, mma, or mmma instead of mm or mmm to remedy the situation.
+endif
+
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_BOOT_IMAGE_FLAGS := $(my_boot_image_flags)
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_2ND_ARCH_VAR_PREFIX := $(my_2nd_arch_prefix)
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_IMAGE_LOCATION := $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
@@ -111,7 +120,8 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--multi-image --no-inline-from=core-oj.jar \
 		--abort-on-hard-verifier-error \
 		--abort-on-soft-verifier-error \
-		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS) && \
+		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS) \
+		|| ( echo "$(DEX2OAT_FAILURE_MESSAGE)" ; false ) && \
 	$(DEX2OAT_BOOT_IMAGE_LOG_TAGS) ANDROID_ROOT=$(PRODUCT_OUT)/system ANDROID_DATA=$(dir $@) $(PATCHOAT) \
 		--input-image-location=$(PRIVATE_IMAGE_LOCATION) \
 		--output-image-relocation-directory=$(dir $@) \
