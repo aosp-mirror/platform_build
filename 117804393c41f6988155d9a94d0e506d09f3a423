@@ -16,6 +16,24 @@
       "revId": "117804393c41f6988155d9a94d0e506d09f3a423",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a1f683c_e7aa079a",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2018-02-28T13:37:52Z",
+      "side": 1,
+      "message": "+1 (though we already have another way of asking for some logs, so we shouldn\u0027t need ART_DEBUG_VERIFIER_ERRORS)",
+      "parentUuid": "eafb280d_8fa64abf",
+      "revId": "117804393c41f6988155d9a94d0e506d09f3a423",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
