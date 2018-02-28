@@ -104,10 +104,10 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--abort-on-hard-verifier-error \
 		--abort-on-soft-verifier-error \
 		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS) && \
-	ANDROID_ROOT=$(PRODUCT_OUT)/system ANDROID_DATA=$(dir $@) $(PATCHOAT) \
-        --input-image-location=$(PRIVATE_IMAGE_LOCATION) \
-        --output-image-relocation-directory=$(dir $@) \
-        --instruction-set=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH) \
-        --base-offset-delta=0x10000000
+	ANDROID_LOG_TAGS="*:e" ANDROID_ROOT=$(PRODUCT_OUT)/system ANDROID_DATA=$(dir $@) $(PATCHOAT) \
+		--input-image-location=$(PRIVATE_IMAGE_LOCATION) \
+		--output-image-relocation-directory=$(dir $@) \
+		--instruction-set=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH) \
+		--base-offset-delta=0x10000000
 
 endif
