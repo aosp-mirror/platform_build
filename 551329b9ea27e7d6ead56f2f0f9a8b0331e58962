@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0db0e470_2994545a",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-28T18:23:29Z",
+      "side": 1,
+      "message": "What types of modules will be added to this whitelist internally? ones that are not / will not be in AOSP? If that\u0027s the case, the module list can\u0027t be specified here, we\u0027d need to find a non-aosp location that could extend the list.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 0
+      },
+      "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e3097f4_104d220f",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-28T18:23:29Z",
+      "side": 1,
+      "message": "With pretty-error, the module location and name will be in the error message prefix (instead of putting the blame on this file)",
+      "range": {
+        "startLine": 14,
+        "startChar": 22,
+        "endLine": 14,
+        "endChar": 37
+      },
+      "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1bfdb092_4ac8cc09",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-28T18:23:29Z",
+      "side": 1,
+      "message": "$(call pretty-error,$(my_message))",
+      "range": {
+        "startLine": 16,
+        "startChar": 8,
+        "endLine": 16,
+        "endChar": 13
+      },
+      "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0fd375ac_f0431677",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-28T18:23:29Z",
+      "side": 1,
+      "message": "Generally we\u0027re getting rid of warnings, since persistent warnings just leads to warning blindness. But as long as this is a debugging opt-in tool only, this is fine.\n\n$(call pretty-warning,$(my_message))",
+      "range": {
+        "startLine": 19,
+        "startChar": 6,
+        "endLine": 19,
+        "endChar": 30
+      },
+      "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eda42a9e_4be0662b",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-02-28T18:23:29Z",
+      "side": 1,
+      "message": "$(call pretty-error,$(my_message))",
+      "range": {
+        "startLine": 28,
+        "startChar": 4,
+        "endLine": 28,
+        "endChar": 26
+      },
+      "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
