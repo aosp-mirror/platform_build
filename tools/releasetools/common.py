@@ -1535,9 +1535,7 @@ class BlockDifference(object):
     b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
                                     version=self.version,
                                     disable_imgdiff=self.disable_imgdiff)
-    tmpdir = tempfile.mkdtemp()
-    OPTIONS.tempfiles.append(tmpdir)
-    self.path = os.path.join(tmpdir, partition)
+    self.path = os.path.join(MakeTempDir(), partition)
     b.Compute(self.path)
     self._required_cache = b.max_stashed_size
     self.touched_src_ranges = b.touched_src_ranges
