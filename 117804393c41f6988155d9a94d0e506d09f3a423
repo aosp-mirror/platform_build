@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eafb280d_8fa64abf",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-02-28T06:37:13Z",
+      "side": 1,
+      "message": "I\u0027ve had to debug verifier issues for reasons besides mm before, although it\u0027s probably pretty rare.  A flag to turn on verifier errors (which requires ANDROID_LOG_TAGS\u003d\"*:v\" as well as the --runtime-arg) would be helpful.  You can also detect the use of mm/mmm.  I\u0027d suggest something like this:\n\nDEX2OAT_FAILURE_MESSAGE :\u003d ERROR: Dex2oat failed to compile a boot image.\nDEX2OAT_FAILURE_MESSAGE +\u003d It is likely that the boot classpath is inconsistent.\nifeq ($(ONE_SHOT_MAKEFILE),)\n  DEX2OAT_FAILURE_MESSAGE +\u003d Rebuild with ART_DEBUG_VERIFIER_ERRORS\u003dtrue to see verification errors\nelse\n  DEX2OAT_FAILURE_MESSAGE +\u003d Build with m, mma, or mmma instead of mm or mmm to remedy the situation.\nendif",
+      "revId": "117804393c41f6988155d9a94d0e506d09f3a423",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
