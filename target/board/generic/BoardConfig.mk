@@ -25,6 +25,7 @@ TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 HAVE_HTC_AUDIO_DRIVER := true
 BOARD_USES_GENERIC_AUDIO := true
+TARGET_BOOTLOADER_BOARD_NAME := goldfish_$(TARGET_ARCH)
 
 # no hardware camera
 USE_CAMERA_STUB := true
