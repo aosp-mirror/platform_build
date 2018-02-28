@@ -383,7 +383,7 @@ include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 # Make sure there's something to build.
 ifdef full_classes_jar
 ifndef need_compile_java
-$(error $(LOCAL_PATH): Target java module does not define any source or resource files)
+$(call pretty-error,Target java module does not define any source or resource files)
 endif
 endif
 
