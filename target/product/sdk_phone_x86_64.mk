@@ -25,7 +25,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_COPY_FILES += \
     development/sys-img/advancedFeatures.ini:advancedFeatures.ini \
     device/generic/goldfish/data/etc/encryptionkey.img:encryptionkey.img \
-    prebuilts/qemu-kernel/x86_64/3.18/kernel-qemu2:kernel-ranchu
+    prebuilts/qemu-kernel/x86_64/4.4/kernel-qemu2:kernel-ranchu
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_base.mk)
