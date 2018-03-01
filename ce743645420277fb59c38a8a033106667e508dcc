@@ -22,6 +22,30 @@
       "revId": "ce743645420277fb59c38a8a033106667e508dcc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a110cd8c_6f27e637",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3236,
+      "author": {
+        "id": 1121338
+      },
+      "writtenOn": "2018-03-01T00:32:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a82e8a5b_31414805",
+      "range": {
+        "startLine": 3236,
+        "startChar": 21,
+        "endLine": 3236,
+        "endChar": 62
+      },
+      "revId": "ce743645420277fb59c38a8a033106667e508dcc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
