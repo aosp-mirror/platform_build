@@ -584,8 +584,7 @@ def UnzipTemp(filename, pattern=None):
   then unzip bar.zip into that_dir/BOOTABLE_IMAGES.
 
   Returns:
-    (tempdir, zipobj): tempdir is the name of the temprary directory; zipobj is
-        a zipfile.ZipFile (of the main file), open for reading.
+    The name of the temporary directory.
   """
 
   def unzip_to_dir(filename, dirname):
@@ -607,7 +606,7 @@ def UnzipTemp(filename, pattern=None):
   else:
     unzip_to_dir(filename, tmp)
 
-  return tmp, zipfile.ZipFile(filename, "r")
+  return tmp
 
 
 def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks):
