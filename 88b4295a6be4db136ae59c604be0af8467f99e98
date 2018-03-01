@@ -16,6 +16,24 @@
       "revId": "88b4295a6be4db136ae59c604be0af8467f99e98",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65674f03_0fe7e5ba",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2018-03-01T16:34:29Z",
+      "side": 1,
+      "message": "That implies you have it set in your environment. By default the minimum severity is INFO (see logging.cpp).\n\nI was contemplating forcing it. Since you think I should, I will...",
+      "parentUuid": "c8b7ff58_9e76b8cb",
+      "revId": "88b4295a6be4db136ae59c604be0af8467f99e98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
