@@ -10,6 +10,7 @@ TARGET_CPU_ABI := x86
 TARGET_ARCH := x86
 TARGET_ARCH_VARIANT := x86
 TARGET_PRELINK_MODULE := false
+TARGET_BOOTLOADER_BOARD_NAME := goldfish_$(TARGET_ARCH)
 
 #emulator now uses 64bit kernel to run 32bit x86 image
 #
