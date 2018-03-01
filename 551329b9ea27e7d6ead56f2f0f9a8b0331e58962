@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f00f9129_26412ae7",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-03-01T14:31:48Z",
+      "side": 1,
+      "message": "Good point. I was thinking the whitelist would just be temporary, but I guess that doesn\u0027t matter as the additions and removals would show up in the history anyway. Is there a good example I could follow here?\n\nFor this change, I\u0027ll leave this as is and I won\u0027t add any internal stuff before reworking where the list lives.",
+      "parentUuid": "0db0e470_2994545a",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 0
+      },
+      "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0e3097f4_104d220f",
         "filename": "core/sdk_check.mk",
         "patchSetId": 3
@@ -45,6 +69,30 @@
       "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "205d502c_e528a36d",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-03-01T14:31:48Z",
+      "side": 1,
+      "message": "ah, nice.",
+      "parentUuid": "0e3097f4_104d220f",
+      "range": {
+        "startLine": 14,
+        "startChar": 22,
+        "endLine": 14,
+        "endChar": 37
+      },
+      "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "0e88dc13_4ce47341",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-03-01T14:31:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1bfdb092_4ac8cc09",
+      "range": {
+        "startLine": 16,
+        "startChar": 8,
+        "endLine": 16,
+        "endChar": 13
+      },
+      "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0fd375ac_f0431677",
         "filename": "core/sdk_check.mk",
         "patchSetId": 3
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "cced28f0_6a652406",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-03-01T14:31:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0fd375ac_f0431677",
+      "range": {
+        "startLine": 19,
+        "startChar": 6,
+        "endLine": 19,
+        "endChar": 30
+      },
+      "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eda42a9e_4be0662b",
         "filename": "core/sdk_check.mk",
         "patchSetId": 3
@@ -114,6 +210,30 @@
       "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2def63b5_488cbe6c",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-03-01T14:31:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eda42a9e_4be0662b",
+      "range": {
+        "startLine": 28,
+        "startChar": 4,
+        "endLine": 28,
+        "endChar": 26
+      },
+      "revId": "551329b9ea27e7d6ead56f2f0f9a8b0331e58962",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
