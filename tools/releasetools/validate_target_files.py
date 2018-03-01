@@ -192,9 +192,10 @@ def main(argv):
                       datefmt=date_format)
 
   logging.info("Unzipping the input target_files.zip: %s", args[0])
-  input_tmp, input_zip = common.UnzipTemp(args[0])
+  input_tmp = common.UnzipTemp(args[0])
 
-  ValidateFileConsistency(input_zip, input_tmp)
+  with zipfile.ZipFile(args[0], 'r') as input_zip:
+    ValidateFileConsistency(input_zip, input_tmp)
 
   info_dict = common.LoadInfoDict(input_tmp)
   ValidateInstallRecoveryScript(input_tmp, info_dict)
