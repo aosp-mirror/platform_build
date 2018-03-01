@@ -73,6 +73,14 @@ ifneq (addresstrue,$(SANITIZE_TARGET)$(SANITIZE_LITE))
 # Note: this is technically incorrect. Compiled code contains stack checks which may depend
 #       on ASAN settings.
 
+# Use ANDROID_LOG_TAGS to suppress most logging by default...
+ifeq (,$(ART_BOOT_IMAGE_EXTRA_ARGS))
+DEX2OAT_BOOT_IMAGE_LOG_TAGS := ANDROID_LOG_TAGS="*:e"
+else
+# ...unless the boot image is generated specifically for testing, then allow all logging.
+DEX2OAT_BOOT_IMAGE_LOG_TAGS := ANDROID_LOG_TAGS="*:v"
+endif
+
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_BOOT_IMAGE_FLAGS := $(my_boot_image_flags)
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_2ND_ARCH_VAR_PREFIX := $(my_2nd_arch_prefix)
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_IMAGE_LOCATION := $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
@@ -85,7 +93,7 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.art
 	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.oat
 	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.art.rel
-	$(hide) ANDROID_LOG_TAGS="*:e" $(DEX2OAT) --runtime-arg -Xms$(DEX2OAT_IMAGE_XMS) \
+	$(hide) $(DEX2OAT_BOOT_IMAGE_LOG_TAGS) $(DEX2OAT) --runtime-arg -Xms$(DEX2OAT_IMAGE_XMS) \
 		--runtime-arg -Xmx$(DEX2OAT_IMAGE_XMX) \
 		$(PRIVATE_BOOT_IMAGE_FLAGS) \
 		$(addprefix --dex-file=,$(LIBART_TARGET_BOOT_DEX_FILES)) \
@@ -104,7 +112,7 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--abort-on-hard-verifier-error \
 		--abort-on-soft-verifier-error \
 		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS) && \
-	ANDROID_LOG_TAGS="*:e" ANDROID_ROOT=$(PRODUCT_OUT)/system ANDROID_DATA=$(dir $@) $(PATCHOAT) \
+	$(DEX2OAT_BOOT_IMAGE_LOG_TAGS) ANDROID_ROOT=$(PRODUCT_OUT)/system ANDROID_DATA=$(dir $@) $(PATCHOAT) \
 		--input-image-location=$(PRIVATE_IMAGE_LOCATION) \
 		--output-image-relocation-directory=$(dir $@) \
 		--instruction-set=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH) \
