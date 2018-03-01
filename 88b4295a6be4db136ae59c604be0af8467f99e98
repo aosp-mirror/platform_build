@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c8b7ff58_9e76b8cb",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-03-01T16:29:01Z",
+      "side": 1,
+      "message": "I\u0027m pretty sure removing ANDROID_LOG_TAGS isn\u0027t enough, I thought I had to use *:v.",
+      "revId": "88b4295a6be4db136ae59c604be0af8467f99e98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
