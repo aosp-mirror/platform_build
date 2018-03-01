@@ -1248,8 +1248,11 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   target_zip = zipfile.ZipFile(target_file, 'w', allowZip64=True)
 
-  input_tmp, input_zip = common.UnzipTemp(input_file, UNZIP_PATTERN)
-  for info in input_zip.infolist():
+  input_tmp = common.UnzipTemp(input_file, UNZIP_PATTERN)
+  with zipfile.ZipFile(input_file, 'r') as input_zip:
+    infolist = input_zip.infolist()
+
+  for info in infolist:
     unzipped_file = os.path.join(input_tmp, *info.filename.split('/'))
     if info.filename == 'IMAGES/system_other.img':
       common.ZipWrite(target_zip, unzipped_file, arcname='IMAGES/system.img')
@@ -1266,7 +1269,6 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
     elif info.filename.startswith(('META/', 'IMAGES/')):
       common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
 
-  common.ZipClose(input_zip)
   common.ZipClose(target_zip)
 
   return target_file
@@ -1643,11 +1645,9 @@ def main(argv):
 
   if OPTIONS.extracted_input is not None:
     OPTIONS.input_tmp = OPTIONS.extracted_input
-    input_zip = zipfile.ZipFile(args[0], "r")
   else:
     print("unzipping target target-files...")
-    OPTIONS.input_tmp, input_zip = common.UnzipTemp(
-        args[0], UNZIP_PATTERN)
+    OPTIONS.input_tmp = common.UnzipTemp(args[0], UNZIP_PATTERN)
   OPTIONS.target_tmp = OPTIONS.input_tmp
 
   # If the caller explicitly specified the device-specific extensions path via
@@ -1679,16 +1679,17 @@ def main(argv):
 
   # Generate a full OTA.
   if OPTIONS.incremental_source is None:
-    WriteFullOTAPackage(input_zip, output_zip)
+    with zipfile.ZipFile(args[0], 'r') as input_zip:
+      WriteFullOTAPackage(input_zip, output_zip)
 
   # Generate an incremental OTA.
   else:
     print("unzipping source target-files...")
-    OPTIONS.source_tmp, source_zip = common.UnzipTemp(
-        OPTIONS.incremental_source,
-        UNZIP_PATTERN)
-
-    WriteBlockIncrementalOTAPackage(input_zip, source_zip, output_zip)
+    OPTIONS.source_tmp = common.UnzipTemp(
+        OPTIONS.incremental_source, UNZIP_PATTERN)
+    with zipfile.ZipFile(args[0], 'r') as input_zip, \
+        zipfile.ZipFile(OPTIONS.incremental_source, 'r') as source_zip:
+      WriteBlockIncrementalOTAPackage(input_zip, source_zip, output_zip)
 
     if OPTIONS.log_diff:
       with open(OPTIONS.log_diff, 'w') as out_file:
@@ -1696,7 +1697,6 @@ def main(argv):
         target_files_diff.recursiveDiff(
             '', OPTIONS.source_tmp, OPTIONS.input_tmp, out_file)
 
-  common.ZipClose(input_zip)
   common.ZipClose(output_zip)
 
   # Sign the generated zip package unless no_signing is specified.
