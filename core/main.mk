@@ -1258,6 +1258,9 @@ endif  # samplecode in $(MAKECMDGOALS)
 .PHONY: findbugs
 findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
+.PHONY: findlsdumps
+findlsdumps: $(FIND_LSDUMPS_FILE)
+
 #xxx scrape this from ALL_MODULE_NAME_TAGS
 .PHONY: modules
 modules:
