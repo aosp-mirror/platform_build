@@ -23,10 +23,10 @@ import zipfile
 import common
 import test_utils
 from ota_from_target_files import (
-    _LoadOemDicts, BuildInfo, ComputeStreamingMetadata, GetPackageMetadata,
+    _LoadOemDicts, BuildInfo, GetPackageMetadata,
     GetTargetFilesZipForSecondaryImages,
     GetTargetFilesZipWithoutPostinstallConfig,
-    Payload, PayloadSigner, POSTINSTALL_CONFIG,
+    Payload, PayloadSigner, POSTINSTALL_CONFIG, StreamingPropertyFiles,
     WriteFingerprintAssertion)
 
 
@@ -589,6 +589,12 @@ class OtaFromTargetFilesTest(unittest.TestCase):
     with zipfile.ZipFile(target_file) as verify_zip:
       self.assertNotIn(POSTINSTALL_CONFIG, verify_zip.namelist())
 
+
+class StreamingPropertyFilesTest(unittest.TestCase):
+
+  def tearDown(self):
+    common.Cleanup()
+
   @staticmethod
   def _construct_zip_package(entries):
     zip_file = common.MakeTempFile(suffix='.zip')
@@ -619,20 +625,21 @@ class OtaFromTargetFilesTest(unittest.TestCase):
           expected = entry.replace('.', '-').upper().encode()
         self.assertEqual(expected, input_fp.read(size))
 
-  def test_ComputeStreamingMetadata_reserveSpace(self):
+  def test_Compute(self):
     entries = (
         'payload.bin',
         'payload_properties.txt',
     )
     zip_file = self._construct_zip_package(entries)
+    property_files = StreamingPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
-      streaming_metadata = ComputeStreamingMetadata(zip_fp, reserve_space=True)
-    tokens = self._parse_streaming_metadata_string(streaming_metadata)
+      streaming_metadata = property_files.Compute(zip_fp)
 
+    tokens = self._parse_streaming_metadata_string(streaming_metadata)
     self.assertEqual(3, len(tokens))
     self._verify_entries(zip_file, tokens, entries)
 
-  def test_ComputeStreamingMetadata_reserveSpace_withCareMapTxtAndCompatibilityZip(self):
+  def test_Compute_withCareMapTxtAndCompatibilityZip(self):
     entries = (
         'payload.bin',
         'payload_properties.txt',
@@ -640,22 +647,26 @@ class OtaFromTargetFilesTest(unittest.TestCase):
         'compatibility.zip',
     )
     zip_file = self._construct_zip_package(entries)
+    property_files = StreamingPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
-      streaming_metadata = ComputeStreamingMetadata(zip_fp, reserve_space=True)
-    tokens = self._parse_streaming_metadata_string(streaming_metadata)
+      streaming_metadata = property_files.Compute(zip_fp)
 
+    tokens = self._parse_streaming_metadata_string(streaming_metadata)
     self.assertEqual(5, len(tokens))
     self._verify_entries(zip_file, tokens, entries)
 
-  def test_ComputeStreamingMetadata(self):
+  def test_Finalize(self):
     entries = [
         'payload.bin',
         'payload_properties.txt',
         'META-INF/com/android/metadata',
     ]
     zip_file = self._construct_zip_package(entries)
+    property_files = StreamingPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
-      streaming_metadata = ComputeStreamingMetadata(zip_fp, reserve_space=False)
+      raw_metadata = property_files._GetPropertyFilesString(
+          zip_fp, reserve_space=False)
+      streaming_metadata = property_files.Finalize(zip_fp, len(raw_metadata))
     tokens = self._parse_streaming_metadata_string(streaming_metadata)
 
     self.assertEqual(3, len(tokens))
@@ -664,7 +675,7 @@ class OtaFromTargetFilesTest(unittest.TestCase):
     entries[2] = 'metadata'
     self._verify_entries(zip_file, tokens, entries)
 
-  def test_ComputeStreamingMetadata_withExpectedLength(self):
+  def test_Finalize_assertReservedLength(self):
     entries = (
         'payload.bin',
         'payload_properties.txt',
@@ -672,35 +683,51 @@ class OtaFromTargetFilesTest(unittest.TestCase):
         'META-INF/com/android/metadata',
     )
     zip_file = self._construct_zip_package(entries)
+    property_files = StreamingPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
-      raw_metadata = ComputeStreamingMetadata(
-          zip_fp,
-          reserve_space=False)
+      raw_metadata = property_files._GetPropertyFilesString(
+          zip_fp, reserve_space=False)
       raw_length = len(raw_metadata)
 
       # Now pass in the exact expected length.
-      streaming_metadata = ComputeStreamingMetadata(
-          zip_fp,
-          reserve_space=False,
-          expected_length=raw_length)
+      streaming_metadata = property_files.Finalize(zip_fp, raw_length)
       self.assertEqual(raw_length, len(streaming_metadata))
 
       # Or pass in insufficient length.
       self.assertRaises(
           AssertionError,
-          ComputeStreamingMetadata,
+          property_files.Finalize,
           zip_fp,
-          reserve_space=False,
-          expected_length=raw_length - 1)
+          raw_length - 1)
 
       # Or pass in a much larger size.
-      streaming_metadata = ComputeStreamingMetadata(
+      streaming_metadata = property_files.Finalize(
           zip_fp,
-          reserve_space=False,
-          expected_length=raw_length + 20)
+          raw_length + 20)
       self.assertEqual(raw_length + 20, len(streaming_metadata))
       self.assertEqual(' ' * 20, streaming_metadata[raw_length:])
+
+  def test_Verify(self):
+    entries = (
+        'payload.bin',
+        'payload_properties.txt',
+        'care_map.txt',
+        'META-INF/com/android/metadata',
+    )
+    zip_file = self._construct_zip_package(entries)
+    property_files = StreamingPropertyFiles()
+    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+      # First get the raw metadata string (i.e. without padding space).
+      raw_metadata = property_files._GetPropertyFilesString(
+          zip_fp, reserve_space=False)
+
+      # Should pass the test if verification passes.
+      property_files.Verify(zip_fp, raw_metadata)
+
+      # Or raise on verification failure.
+      self.assertRaises(
+          AssertionError, property_files.Verify, zip_fp, raw_metadata + 'x')
 
 
 class PayloadSignerTest(unittest.TestCase):
