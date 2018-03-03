@@ -1354,8 +1354,8 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
     return value
 
   # Stage the output zip package for package signing.
-  temp_zip_file = tempfile.NamedTemporaryFile()
-  output_zip = zipfile.ZipFile(temp_zip_file, "w",
+  staging_file = common.MakeTempFile(suffix='.zip')
+  output_zip = zipfile.ZipFile(staging_file, "w",
                                compression=zipfile.ZIP_DEFLATED)
 
   if source_file is not None:
@@ -1419,10 +1419,6 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
     else:
       print("Warning: cannot find care map file in target_file package")
 
-  # source_info must be None for full OTAs.
-  if source_file is None:
-    assert source_info is None
-
   AddCompatibilityArchiveIfTrebleEnabled(
       target_zip, output_zip, target_info, source_info)
 
@@ -1440,8 +1436,7 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # compute the ZIP entry offsets, write back the final metadata and do the
   # final signing.
   prelim_signing = common.MakeTempFile(suffix='.zip')
-  SignOutput(temp_zip_file.name, prelim_signing)
-  common.ZipClose(temp_zip_file)
+  SignOutput(staging_file, prelim_signing)
 
   # Open the signed zip. Compute the final metadata that's needed for streaming.
   prelim_signing_zip = zipfile.ZipFile(prelim_signing, 'r')
