@@ -523,9 +523,9 @@ class CommonUtilsTest(unittest.TestCase):
       target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 8))
       target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
 
-    tempdir, input_zip = common.UnzipTemp(target_files)
-    sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
-    input_zip.close()
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
 
     self.assertDictEqual(
         {
@@ -552,11 +552,11 @@ class CommonUtilsTest(unittest.TestCase):
       target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 8))
       target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
 
-    tempdir, input_zip = common.UnzipTemp(target_files)
-    self.assertRaises(
-        AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
-        False)
-    input_zip.close()
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      self.assertRaises(
+          AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
+          False)
 
   def test_GetSparseImage_sharedBlocks_notAllowed(self):
     """Tests the case of having overlapping blocks but disallowed."""
@@ -574,11 +574,11 @@ class CommonUtilsTest(unittest.TestCase):
       target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 7))
       target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
 
-    tempdir, input_zip = common.UnzipTemp(target_files)
-    self.assertRaises(
-        AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
-        False)
-    input_zip.close()
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      self.assertRaises(
+          AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
+          False)
 
   def test_GetSparseImage_sharedBlocks_allowed(self):
     """Tests the case for target using BOARD_EXT4_SHARE_DUP_BLOCKS := true."""
@@ -597,9 +597,9 @@ class CommonUtilsTest(unittest.TestCase):
       target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 7))
       target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
 
-    tempdir, input_zip = common.UnzipTemp(target_files)
-    sparse_image = common.GetSparseImage('system', tempdir, input_zip, True)
-    input_zip.close()
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      sparse_image = common.GetSparseImage('system', tempdir, input_zip, True)
 
     self.assertDictEqual(
         {
@@ -638,9 +638,9 @@ class CommonUtilsTest(unittest.TestCase):
       # '/system/file2' has less blocks listed (2) than actual (3).
       target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
 
-    tempdir, input_zip = common.UnzipTemp(target_files)
-    sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
-    input_zip.close()
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
 
     self.assertFalse(sparse_image.file_map['/system/file1'].extra)
     self.assertTrue(sparse_image.file_map['/system/file2'].extra['incomplete'])
