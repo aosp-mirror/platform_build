@@ -20,11 +20,11 @@
 ifeq ($(strip $(LOCAL_JETIFIER_ENABLED)),true)
   my_jetifier_input_path := $(LOCAL_JETIFIER_INPUT_FILE)
   my_files := $(intermediates.COMMON)/jetifier
-  my_jetifier_output_path := $(my_files)/classes-jetifier.jar
+  my_jetifier_output_path := $(my_files)/jetified-$(notdir $(my_jetifier_input_path))
 
 $(my_jetifier_output_path) : $(my_jetifier_input_path) $(JETIFIER)
 	rm -rf $@
-	$(JETIFIER) -outputfile $@ -i $<
+	$(JETIFIER) -l error -outputfile $@ -i $<
 
   LOCAL_JETIFIER_OUTPUT_FILE := $(my_jetifier_output_path)
   LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_JETIFIER_OUTPUT_FILE)
