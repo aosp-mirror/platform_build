@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b9b3a76d_e8b816d6",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 330,
+      "author": {
+        "id": 1115178
+      },
+      "writtenOn": "2018-03-06T21:28:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9498c94b_c08282b6",
+      "range": {
+        "startLine": 330,
+        "startChar": 9,
+        "endLine": 330,
+        "endChar": 82
+      },
+      "revId": "ed2de3bd068ef895cd89437aa92014a6c4ab785d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e6d6acc7_061e4b40",
         "filename": "core/config_sanitizers.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2018-03-05T19:09:25Z",
       "side": 1,
       "message": "I assume this is looking for signed-integer-overflow or unsigned-integer-overflow, can this be $(filter signed-integer-overflow unsigned-integer-overflow) instead?",
+      "range": {
+        "startLine": 335,
+        "startChar": 22,
+        "endLine": 335,
+        "endChar": 29
+      },
+      "revId": "ed2de3bd068ef895cd89437aa92014a6c4ab785d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "efaeab86_2de35916",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 335,
+      "author": {
+        "id": 1115178
+      },
+      "writtenOn": "2018-03-06T21:28:31Z",
+      "side": 1,
+      "message": "This is also looking for the \"integer\" flag, which includes additional checks. It has been enabled like this in a few places and I wanted this to catch those instances as well.\n\nhttps://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html#available-checks\n\nI\u0027ve updated this to use filter.",
+      "parentUuid": "e6d6acc7_061e4b40",
       "range": {
         "startLine": 335,
         "startChar": 22,
