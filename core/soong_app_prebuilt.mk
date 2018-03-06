@@ -34,13 +34,13 @@ ifdef LOCAL_SOONG_PROGUARD_DICT
     $(intermediates.COMMON)/proguard_dictionary)
 endif
 
-ifneq ($(TURBINE_DISABLED),false)
+ifneq ($(TURBINE_ENABLED),false)
 ifdef LOCAL_SOONG_HEADER_JAR
 $(eval $(call copy-one-file,$(LOCAL_SOONG_HEADER_JAR),$(full_classes_header_jar)))
 else
 $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
 endif
-endif # TURBINE_DISABLED != false
+endif # TURBINE_ENABLED != false
 
 
 $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
