@@ -52,6 +52,24 @@
       "revId": "eeca1635c48e96e39bd31b69645c92c474948d30",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "651cf662_c662ff90",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 816,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-03-07T17:46:46Z",
+      "side": 1,
+      "message": "I\u0027d prefer to imply and make it obviously debuggable, but if that\u0027s not reasonable this is fine.",
+      "parentUuid": "9f7c1cb6_23dcd83c",
+      "revId": "eeca1635c48e96e39bd31b69645c92c474948d30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
