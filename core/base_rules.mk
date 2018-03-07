@@ -494,12 +494,15 @@ endif
 endif
 endif
 
-# For modules tagged as tests but lacking a suite tag, set null-suite as the default.
+# For test modules that lack a suite tag, set null-suite as the default.
 # We only support adding a default suite to native tests, native benchmarks, and instrumentation tests.
 # This is because they are the only tests we currently auto-generate test configs for.
-ifneq ($(filter $(my_module_tags),tests),)
 ifndef LOCAL_COMPATIBILITY_SUITE
-ifneq ($(filter NATIVE_TESTS NATIVE_BENCHMARK APPS, $(LOCAL_MODULE_CLASS)),)
+ifneq ($(filter NATIVE_TESTS NATIVE_BENCHMARK, $(LOCAL_MODULE_CLASS)),)
+LOCAL_COMPATIBILITY_SUITE := null-suite
+endif
+ifneq ($(filter APPS, $(LOCAL_MODULE_CLASS)),)
+ifneq ($(filter $(my_module_tags),tests),)
 LOCAL_COMPATIBILITY_SUITE := null-suite
 endif
 endif
