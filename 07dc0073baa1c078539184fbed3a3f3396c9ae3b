@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "747f32cc_80f30ccc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-03-07T22:20:37Z",
+      "side": 1,
+      "message": "You need a Merged-In: ...",
+      "revId": "07dc0073baa1c078539184fbed3a3f3396c9ae3b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
