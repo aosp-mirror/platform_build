@@ -188,7 +188,7 @@ endif
 # LOCAL_SOURCE_FILES_ALL_GENERATED is set only if the module does not have static source files,
 # but generated source files in its LOCAL_INTERMEDIATE_SOURCE_DIR.
 # You have to set up the dependency in some other way.
-need_compile_java := $(strip $(all_java_sources)$(all_res_assets)$(java_resource_sources))$(LOCAL_STATIC_JAVA_LIBRARIES)$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED))
+need_compile_java := $(strip $(all_java_sources)$(LOCAL_SRCJARS)$(all_res_assets)$(java_resource_sources))$(LOCAL_STATIC_JAVA_LIBRARIES)$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED))
 ifdef need_compile_java
 
 annotation_processor_flags :=
