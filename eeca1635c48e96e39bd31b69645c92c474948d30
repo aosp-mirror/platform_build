@@ -34,6 +34,24 @@
       "revId": "eeca1635c48e96e39bd31b69645c92c474948d30",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f7c1cb6_23dcd83c",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 816,
+      "author": {
+        "id": 1013030
+      },
+      "writtenOn": "2018-03-07T09:03:15Z",
+      "side": 1,
+      "message": "Sorry for the delay, it\u0027s not very obvious because the device doesn\u0027t get up far enough to start adbd - boots into recovery instead because the critical daemons actually crash on protocol version mismatch.\n\nDo you still prefer to imply?",
+      "parentUuid": "965431e1_d8e661a6",
+      "revId": "eeca1635c48e96e39bd31b69645c92c474948d30",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
