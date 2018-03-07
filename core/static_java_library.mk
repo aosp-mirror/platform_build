@@ -187,7 +187,6 @@ endif  # LOCAL_USE_AAPT2
 
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
 $(java_source_list_file): $(R_file_stamp)
-$(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(R_file_stamp)))
 $(full_classes_compiled_jar): $(R_file_stamp)
 $(full_classes_turbine_jar): $(R_file_stamp)
 
