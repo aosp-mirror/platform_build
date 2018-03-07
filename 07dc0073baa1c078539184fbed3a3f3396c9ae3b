@@ -34,6 +34,24 @@
       "revId": "07dc0073baa1c078539184fbed3a3f3396c9ae3b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99e8410d_61d57bfe",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-03-07T22:23:56Z",
+      "side": 1,
+      "message": "Change-Id isn\u0027t used as a default for Merged-In. This should be:\n\n Change-Id: I4ab3afed95a5baf77d0cd089dafaa18bcc1913e5\n Merged-In: I4ab3afed95a5baf77d0cd089dafaa18bcc1913e5\n\nThen treehugger wouldn\u0027t have tested on internal master, and it won\u0027t accidentally add this block twice.",
+      "parentUuid": "e5eada86_e34a61c7",
+      "revId": "07dc0073baa1c078539184fbed3a3f3396c9ae3b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
