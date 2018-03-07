@@ -55,6 +55,7 @@ $(resource_export_package): $(LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE)
 	@echo "Copy: $$@"
 	$(copy-file-to-target)
 	touch $(PRIVATE_STAMP)
+$(call add-dependency,$(LOCAL_BUILT_MODULE),$(resource_export_package))
 
 endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 

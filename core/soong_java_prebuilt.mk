@@ -39,6 +39,24 @@ ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
     $(intermediates.COMMON)/jacoco-report-classes.jar)
 endif
 
+ifdef LOCAL_SOONG_EXPORT_PROGUARD_FLAGS
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_EXPORT_PROGUARD_FLAGS),\
+    $(intermediates.COMMON)/export_proguard_flags))
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),\
+    $(intermediates.COMMON)/export_proguard_flags)
+endif
+
+ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
+my_res_package := $(intermediates.COMMON)/package-res.apk
+
+$(my_res_package): $(LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE)
+	@echo "Copy: $$@"
+	$(copy-file-to-target)
+
+$(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_res_package))
+
+endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
+
 ifneq ($(TURBINE_ENABLED),false)
 ifdef LOCAL_SOONG_HEADER_JAR
 $(eval $(call copy-one-file,$(LOCAL_SOONG_HEADER_JAR),$(full_classes_header_jar)))
