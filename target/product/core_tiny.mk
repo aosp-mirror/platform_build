@@ -59,6 +59,7 @@ PRODUCT_PACKAGES += \
     iptables \
     gatekeeperd \
     keystore \
+    ld.config.txt \
     ld.mc \
     libaaudio \
     libOpenMAXAL \
