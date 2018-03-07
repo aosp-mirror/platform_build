@@ -367,6 +367,8 @@ endif  # LOCAL_DATA_BINDING
 
 resource_export_package :=
 
+include $(BUILD_SYSTEM)/aapt_flags.mk
+
 ifeq ($(need_compile_res),true)
 
 ###############################
