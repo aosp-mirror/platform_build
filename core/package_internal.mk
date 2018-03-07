@@ -364,7 +364,6 @@ $(data_binding_stamp) : $(all_res_assets) $(full_android_manifest) \
 # Make sure the data-binding process happens before javac and generation of R.java.
 $(R_file_stamp): $(data_binding_stamp)
 $(java_source_list_file): $(data_binding_stamp)
-$(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(data_binding_stamp)))
 $(full_classes_compiled_jar): $(data_binding_stamp)
 endif  # LOCAL_DATA_BINDING
 
@@ -470,7 +469,6 @@ $(LOCAL_BUILT_MODULE): $(R_file_stamp)
 # The R.java file must exist by the time the java source
 # list is generated
 $(java_source_list_file): $(R_file_stamp)
-$(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(R_file_stamp)))
 
 endif  # need_compile_res
 

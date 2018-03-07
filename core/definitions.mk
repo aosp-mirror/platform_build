@@ -2222,16 +2222,6 @@ $(call fetch-additional-java-source,$@.tmp)
 $(hide) tr ' ' '\n' < $@.tmp | $(NORMALIZE_PATH) | sort -u > $@
 endef
 
-# $(1): sharding number.
-# $(2): Java source files paths.
-define save-sharded-java-source-list
-$(java_source_list_file).shard.$(1): $(2) $$(NORMALIZE_PATH)
-	@echo "shard java source list: $$@"
-	rm -f $$@
-	$$(call dump-words-to-file,$(2),$$@.tmp)
-	$(hide) tr ' ' '\n' < $$@.tmp | $$(NORMALIZE_PATH) | sort -u > $$@
-endef
-
 # Common definition to invoke javac on the host and target.
 #
 # $(1): javac
@@ -2278,36 +2268,6 @@ $(if $(PRIVATE_JAR_EXCLUDE_PACKAGES), $(hide) rm -rf \
         $(PRIVATE_CLASS_INTERMEDIATES_DIR)/$(subst .,/,$(pkg))))
 $(hide) $(JAR) -cf $@ $(call jar-args-sorted-files-in-directory,$(PRIVATE_CLASS_INTERMEDIATES_DIR))
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
-endef
-
-# $(1): Javac output jar name.
-# $(2): Java source list file.
-# $(3): Java header libs.
-# $(4): Javac sharding number.
-# $(5): Javac sources deps (the arg may neeed $$ in case of containing '#')
-define create-classes-full-debug.jar
-$(1): PRIVATE_JAVACFLAGS := $$(LOCAL_JAVACFLAGS) $$(annotation_processor_flags)
-$(1): PRIVATE_JAR_EXCLUDE_FILES := $$(LOCAL_JAR_EXCLUDE_FILES)
-$(1): PRIVATE_JAR_PACKAGES := $$(LOCAL_JAR_PACKAGES)
-$(1): PRIVATE_JAR_EXCLUDE_PACKAGES := $$(LOCAL_JAR_EXCLUDE_PACKAGES)
-$(1): PRIVATE_DONT_DELETE_JAR_META_INF := $$(LOCAL_DONT_DELETE_JAR_META_INF)
-$(1): PRIVATE_JAVA_SOURCE_LIST := $(2)
-$(1): PRIVATE_ALL_JAVA_HEADER_LIBRARIES := $(3)
-$(1): PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes$(4)
-$(1): PRIVATE_ANNO_INTERMEDIATES_DIR := $(intermediates.COMMON)/anno$(4)
-$(1): \
-    $(2) \
-    $(3) \
-    $(5) \
-    $$(full_java_bootclasspath_libs) \
-    $$(full_java_system_modules_deps) \
-    $$(layers_file) \
-    $$(annotation_processor_deps) \
-    $$(NORMALIZE_PATH) \
-    $$(JAR_ARGS) \
-    | $$(SOONG_JAVAC_WRAPPER)
-	@echo "Target Java: $$@ ($$(PRIVATE_CLASS_INTERMEDIATES_DIR))"
-	$$(call compile-java,$$(TARGET_JAVAC),$$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))
 endef
 
 define transform-java-to-header.jar
