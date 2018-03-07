@@ -16,6 +16,24 @@
       "revId": "07dc0073baa1c078539184fbed3a3f3396c9ae3b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5eada86_e34a61c7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-03-07T22:22:03Z",
+      "side": 1,
+      "message": "The change Id is the same, should I change it?",
+      "parentUuid": "747f32cc_80f30ccc",
+      "revId": "07dc0073baa1c078539184fbed3a3f3396c9ae3b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
