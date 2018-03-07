@@ -92,7 +92,7 @@ endif  # need_compile_res
 
 all_res_assets := $(all_resources)
 
-include $(BUILD_SYSTEM)/java_library.mk
+include $(BUILD_SYSTEM)/java_renderscript.mk
 
 ifeq (true,$(need_compile_res))
 include $(BUILD_SYSTEM)/android_manifest.mk
@@ -130,6 +130,14 @@ endif
 
 include $(BUILD_SYSTEM)/aapt_flags.mk
 
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_AAPT_CHARACTERISTICS)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_PACKAGE_NAME := $(LOCAL_MANIFEST_PACKAGE_NAME)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_MANIFEST_INSTRUMENTATION_FOR)
+
+# LOCAL_INTERMEDIATE_SOURCE_DIR is set later by java.mk, but we need it for AAPT
+LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
+
 # add --non-constant-id to prevent inlining constants.
 # AAR needs text symbol file R.txt.
 ifdef LOCAL_USE_AAPT2
@@ -156,22 +164,28 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_PACKAGE_NAME :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_INSTRUMENTATION_FOR :=
 
 ifdef LOCAL_USE_AAPT2
-# One more level with name res so we can zip up the flat resources that can be linked by apps.
-my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res/res
-ifneq (,$(renderscript_target_api))
-ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
-my_generated_res_zips := $(rs_generated_res_zip)
-endif  # renderscript_target_api < 21
-endif  # renderscript_target_api is set
-include $(BUILD_SYSTEM)/aapt2.mk
-$(my_res_package) : $(framework_res_package_export)
+  # One more level with name res so we can zip up the flat resources that can be linked by apps.
+  my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res/res
+  ifneq (,$(renderscript_target_api))
+    ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
+      my_generated_res_zips := $(rs_generated_res_zip)
+    endif  # renderscript_target_api < 21
+  endif  # renderscript_target_api is set
+  include $(BUILD_SYSTEM)/aapt2.mk
+  $(my_res_package) : $(framework_res_package_export)
 else
-$(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_resources)
-$(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export) $(rs_generated_res_zip)
+  $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_resources)
+  $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export) $(rs_generated_res_zip)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	$(create-resource-java-files)
 	$(hide) find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name R.java | xargs cat > $@
 endif  # LOCAL_USE_AAPT2
+
+endif # need_compile_res
+
+include $(BUILD_SYSTEM)/java_library.mk
+
+ifeq (true,$(need_compile_res))
 
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
 $(java_source_list_file): $(R_file_stamp)

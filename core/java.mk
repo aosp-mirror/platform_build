@@ -106,11 +106,6 @@ LOCAL_INTERMEDIATE_TARGETS += \
 
 LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 
-###############################################################
-## .rs files: RenderScript sources to .java files and .bc files
-###############################################################
-include $(BUILD_SYSTEM)/java_renderscript.mk
-
 ###########################################################
 ## AIDL: Compile .aidl files to .java
 ###########################################################
