@@ -46,16 +46,6 @@ ifeq ($(HOST_OS),linux)
   ifneq (false,$(WITH_DEXPREOPT_DEBUG_INFO))
     PRODUCT_DEX_PREOPT_BOOT_FLAGS += --generate-mini-debug-info
   endif
-
-  # Non eng linux builds must have preopt enabled so that system server doesn't run as interpreter
-  # only. b/74209329
-  ifeq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
-    ifneq (true,$(WITH_DEXPREOPT))
-      ifneq (true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY))
-        $(call pretty-error, DEXPREOPT must be enabled for user and userdebug builds)
-      endif
-    endif
-  endif
 endif
 
 GLOBAL_DEXPREOPT_FLAGS :=
