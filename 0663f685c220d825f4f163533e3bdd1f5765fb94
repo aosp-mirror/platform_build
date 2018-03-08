@@ -16,6 +16,24 @@
       "revId": "0663f685c220d825f4f163533e3bdd1f5765fb94",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ded08c5_c096b5ea",
+        "filename": "core/pdk_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-03-08T23:43:38Z",
+      "side": 1,
+      "message": "Yes, we remove all of obj/PACKAGING during installclean: https://android.googlesource.com/platform/build/soong/+/master/ui/build/cleanbuild.go#104",
+      "parentUuid": "161202d4_86ee6fd6",
+      "revId": "0663f685c220d825f4f163533e3bdd1f5765fb94",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
