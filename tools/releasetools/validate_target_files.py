@@ -27,6 +27,7 @@ import logging
 import os.path
 import re
 import sys
+import zipfile
 
 import common
 
@@ -61,7 +62,10 @@ def ValidateFileConsistency(input_zip, input_tmp):
 
   def CheckAllFiles(which):
     logging.info('Checking %s image.', which)
-    image = common.GetSparseImage(which, input_tmp, input_zip)
+    # Allow having shared blocks when loading the sparse image, because allowing
+    # that doesn't affect the checks below (we will have all the blocks on file,
+    # unless it's skipped due to the holes).
+    image = common.GetSparseImage(which, input_tmp, input_zip, True)
     prefix = '/' + which
     for entry in image.file_map:
       # Skip entries like '__NONZERO-0'.
