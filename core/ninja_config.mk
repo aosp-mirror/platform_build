@@ -19,7 +19,9 @@ PARSE_TIME_MAKE_GOALS := \
 	boottarball-nodeps \
 	brillo_tests \
 	btnod \
+	build-art% \
 	build_kernel-nodeps \
+	clean-oat% \
 	continuous_instrumentation_tests \
 	continuous_native_tests \
 	cts \
@@ -45,9 +47,11 @@ PARSE_TIME_MAKE_GOALS := \
 	systemimage-nodeps \
 	systemtarball-nodeps \
 	target-files-package \
+	test-art% \
 	user \
 	userdataimage \
 	userdebug \
+	valgrind-test-art% \
 	vts \
 	win_sdk \
 	winsdk-tools
