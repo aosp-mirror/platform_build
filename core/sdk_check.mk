@@ -3,11 +3,6 @@
 # set correctly.
 # Should be included by java targets that allow specifying LOCAL_SDK_VERSION.
 
-
-ifeq (,$(JAVA_SDK_ENFORCEMENT_ERROR))
-  JAVA_SDK_ENFORCEMENT_ERROR := APPS
-endif
-
 ifeq ($(LOCAL_SDK_VERSION)$(LOCAL_PRIVATE_PLATFORM_APIS),)
 ifneq ($(JAVA_SDK_ENFORCEMENT_WARNING),)
 $(warning Java modules must specify LOCAL_SDK_VERSION or LOCAL_PRIVATE_PLATFORM_APIS, but $(LOCAL_MODULE) specifies neither.)
