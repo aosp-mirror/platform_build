@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "161202d4_86ee6fd6",
+        "filename": "core/pdk_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-03-08T23:35:34Z",
+      "side": 1,
+      "message": "Will this rerun after make installclean?",
+      "revId": "0663f685c220d825f4f163533e3bdd1f5765fb94",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
