@@ -77,17 +77,15 @@ endif
 ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_SDK_VERSION),system_current)
 my_link_type := java:system
-my_warn_types := java:platform
-my_allowed_types := java:sdk java:system java:core
 else ifneq ($(LOCAL_SDK_VERSION),)
 my_link_type := java:sdk
-my_warn_types := java:system java:platform
-my_allowed_types := java:sdk java:core
 else
 my_link_type := java:platform
-my_warn_types :=
-my_allowed_types := java:sdk java:system java:platform java:core
 endif
+# warn/allowed types are both empty because Soong modules can't depend on
+# make-defined modules.
+my_warn_types :=
+my_allowed_types :=
 
 my_link_deps :=
 my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
