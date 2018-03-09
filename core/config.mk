@@ -439,9 +439,9 @@ pdk fusion: $(DEFAULT_GOAL)
 
 # What to build:
 # pdk fusion if:
-# 1) PDK_FUSION_PLATFORM_ZIP is passed in from the environment
+# 1) PDK_FUSION_PLATFORM_ZIP / PDK_FUSION_PLATFORM_DIR is passed in from the environment
 # or
-# 2) the platform.zip exists in the default location
+# 2) the platform.zip / pdk.mk exists in the default location
 # or
 # 3) fusion is a command line build goal,
 #    PDK_FUSION_PLATFORM_ZIP is needed anyway, then do we need the 'fusion' goal?
@@ -450,27 +450,44 @@ pdk fusion: $(DEFAULT_GOAL)
 # or
 # 2) TARGET_BUILD_PDK is passed in from the environment
 
-# if PDK_FUSION_PLATFORM_ZIP is specified, do not override.
-ifndef PDK_FUSION_PLATFORM_ZIP
-# Most PDK project paths should be using vendor/pdk/TARGET_DEVICE
-# but some legacy ones (e.g. mini_armv7a_neon generic PDK) were setup
-# with vendor/pdk/TARGET_PRODUCT.
-_pdk_fusion_default_platform_zip = $(strip \
-  $(wildcard vendor/pdk/$(TARGET_DEVICE)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip) \
-  $(wildcard vendor/pdk/$(TARGET_DEVICE)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip) \
-  $(wildcard vendor/pdk/$(TARGET_PRODUCT)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip) \
-  $(wildcard vendor/pdk/$(TARGET_PRODUCT)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip))
-ifneq (,$(_pdk_fusion_default_platform_zip))
-PDK_FUSION_PLATFORM_ZIP := $(word 1, $(_pdk_fusion_default_platform_zip))
-TARGET_BUILD_PDK := true
-endif # _pdk_fusion_default_platform_zip
-endif # !PDK_FUSION_PLATFORM_ZIP
+# if PDK_FUSION_PLATFORM_ZIP or PDK_FUSION_PLATFORM_DIR is specified, do not override.
+ifeq (,$(strip $(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR)))
+  # Most PDK project paths should be using vendor/pdk/TARGET_DEVICE
+  # but some legacy ones (e.g. mini_armv7a_neon generic PDK) were setup
+  # with vendor/pdk/TARGET_PRODUCT.
+  # Others are set up with vendor/pdk/TARGET_DEVICE/TARGET_DEVICE-userdebug
+  _pdk_fusion_search_paths := \
+    vendor/pdk/$(TARGET_DEVICE)/$(TARGET_DEVICE)-$(TARGET_BUILD_VARIANT)/platform \
+    vendor/pdk/$(TARGET_DEVICE)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform \
+    vendor/pdk/$(TARGET_DEVICE)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform \
+    vendor/pdk/$(TARGET_PRODUCT)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform \
+    vendor/pdk/$(TARGET_PRODUCT)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform
+
+  _pdk_fusion_default_platform_zip := $(strip $(foreach p,$(_pdk_fusion_search_paths),$(wildcard $(p)/platform.zip)))
+  ifneq (,$(_pdk_fusion_default_platform_zip))
+    PDK_FUSION_PLATFORM_ZIP := $(word 1, $(_pdk_fusion_default_platform_zip))
+    _pdk_fusion_default_platform_zip :=
+  else
+    _pdk_fusion_default_platform_mk := $(strip $(foreach p,$(_pdk_fusion_search_paths),$(wildcard $(p)/pdk.mk)))
+    ifneq (,$(_pdk_fusion_default_platform_mk))
+      PDK_FUSION_PLATFORM_DIR := $(dir $(word 1,$(_pdk_fusion_default_platform_mk)))
+      _pdk_fusion_default_platform_mk :=
+    endif
+  endif # _pdk_fusion_default_platform_zip
+  _pdk_fusion_search_paths :=
+endif # !PDK_FUSION_PLATFORM_ZIP && !PDK_FUSION_PLATFORM_DIR
+
+ifneq (,$(PDK_FUSION_PLATFORM_ZIP))
+  ifneq (,$(PDK_FUSION_PLATFORM_DIR))
+    $(error Only one of PDK_FUSION_PLATFORM_ZIP or PDK_FUSION_PLATFORM_DIR may be specified)
+  endif
+endif
 
 ifneq (,$(filter pdk fusion, $(MAKECMDGOALS)))
 TARGET_BUILD_PDK := true
 ifneq (,$(filter fusion, $(MAKECMDGOALS)))
-ifndef PDK_FUSION_PLATFORM_ZIP
-  $(error Specify PDK_FUSION_PLATFORM_ZIP to do a PDK fusion.)
+ifeq (,$(strip $(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR)))
+  $(error Specify PDK_FUSION_PLATFORM_ZIP or PDK_FUSION_PLATFORM_DIR to do a PDK fusion.)
 endif
 endif  # fusion
 endif  # pdk or fusion
@@ -478,7 +495,19 @@ endif  # pdk or fusion
 ifdef PDK_FUSION_PLATFORM_ZIP
 TARGET_BUILD_PDK := true
 ifeq (,$(wildcard $(PDK_FUSION_PLATFORM_ZIP)))
-  $(error Cannot find file $(PDK_FUSION_PLATFORM_ZIP).)
+  ifneq (,$(wildcard $(dir $(PDK_FUSION_PLATFORM_ZIP))/pdk.mk))
+    PDK_FUSION_PLATFORM_DIR := $(dir $(PDK_FUSION_PLATFORM_ZIP))
+    PDK_FUSION_PLATFORM_ZIP :=
+  else
+    $(error Cannot find file $(PDK_FUSION_PLATFORM_ZIP).)
+  endif
+endif
+endif
+
+ifdef PDK_FUSION_PLATFORM_DIR
+TARGET_BUILD_PDK := true
+ifeq (,$(wildcard $(PDK_FUSION_PLATFORM_DIR)/pdk.mk))
+  $(error Cannot find file $(PDK_FUSION_PLATFORM_DIR)/pdk.mk.)
 endif
 endif
 
