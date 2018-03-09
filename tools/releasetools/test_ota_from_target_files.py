@@ -26,8 +26,8 @@ from ota_from_target_files import (
     _LoadOemDicts, BuildInfo, GetPackageMetadata,
     GetTargetFilesZipForSecondaryImages,
     GetTargetFilesZipWithoutPostinstallConfig,
-    Payload, PayloadSigner, POSTINSTALL_CONFIG, StreamingPropertyFiles,
-    WriteFingerprintAssertion)
+    Payload, PayloadSigner, POSTINSTALL_CONFIG, PropertyFiles,
+    StreamingPropertyFiles, WriteFingerprintAssertion)
 
 
 def construct_target_files(secondary=False):
@@ -590,7 +590,23 @@ class OtaFromTargetFilesTest(unittest.TestCase):
       self.assertNotIn(POSTINSTALL_CONFIG, verify_zip.namelist())
 
 
-class StreamingPropertyFilesTest(unittest.TestCase):
+class TestPropertyFiles(PropertyFiles):
+  """A class that extends PropertyFiles for testing purpose."""
+
+  def __init__(self):
+    super(TestPropertyFiles, self).__init__()
+    self.name = 'ota-test-property-files'
+    self.required = (
+        'required-entry1',
+        'required-entry2',
+    )
+    self.optional = (
+        'optional-entry1',
+        'optional-entry2',
+    )
+
+
+class PropertyFilesTest(unittest.TestCase):
 
   def tearDown(self):
     common.Cleanup()
@@ -607,7 +623,7 @@ class StreamingPropertyFilesTest(unittest.TestCase):
     return zip_file
 
   @staticmethod
-  def _parse_streaming_metadata_string(data):
+  def _parse_property_files_string(data):
     result = {}
     for token in data.split(','):
       name, info = token.split(':', 1)
@@ -627,47 +643,57 @@ class StreamingPropertyFilesTest(unittest.TestCase):
 
   def test_Compute(self):
     entries = (
-        'payload.bin',
-        'payload_properties.txt',
+        'required-entry1',
+        'required-entry2',
     )
     zip_file = self._construct_zip_package(entries)
-    property_files = StreamingPropertyFiles()
+    property_files = TestPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
-      streaming_metadata = property_files.Compute(zip_fp)
+      property_files_string = property_files.Compute(zip_fp)
 
-    tokens = self._parse_streaming_metadata_string(streaming_metadata)
+    tokens = self._parse_property_files_string(property_files_string)
     self.assertEqual(3, len(tokens))
     self._verify_entries(zip_file, tokens, entries)
 
-  def test_Compute_withCareMapTxtAndCompatibilityZip(self):
+  def test_Compute_withOptionalEntries(self):
     entries = (
-        'payload.bin',
-        'payload_properties.txt',
-        'care_map.txt',
-        'compatibility.zip',
+        'required-entry1',
+        'required-entry2',
+        'optional-entry1',
+        'optional-entry2',
     )
     zip_file = self._construct_zip_package(entries)
-    property_files = StreamingPropertyFiles()
+    property_files = TestPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
-      streaming_metadata = property_files.Compute(zip_fp)
+      property_files_string = property_files.Compute(zip_fp)
 
-    tokens = self._parse_streaming_metadata_string(streaming_metadata)
+    tokens = self._parse_property_files_string(property_files_string)
     self.assertEqual(5, len(tokens))
     self._verify_entries(zip_file, tokens, entries)
 
+  def test_Compute_missingRequiredEntry(self):
+    entries = (
+        'required-entry2',
+    )
+    zip_file = self._construct_zip_package(entries)
+    property_files = TestPropertyFiles()
+    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+      self.assertRaises(KeyError, property_files.Compute, zip_fp)
+
   def test_Finalize(self):
     entries = [
-        'payload.bin',
-        'payload_properties.txt',
+        'required-entry1',
+        'required-entry2',
         'META-INF/com/android/metadata',
     ]
     zip_file = self._construct_zip_package(entries)
-    property_files = StreamingPropertyFiles()
+    property_files = TestPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+      # pylint: disable=protected-access
       raw_metadata = property_files._GetPropertyFilesString(
           zip_fp, reserve_space=False)
       streaming_metadata = property_files.Finalize(zip_fp, len(raw_metadata))
-    tokens = self._parse_streaming_metadata_string(streaming_metadata)
+    tokens = self._parse_property_files_string(streaming_metadata)
 
     self.assertEqual(3, len(tokens))
     # 'META-INF/com/android/metadata' will be key'd as 'metadata' in the
@@ -677,15 +703,17 @@ class StreamingPropertyFilesTest(unittest.TestCase):
 
   def test_Finalize_assertReservedLength(self):
     entries = (
-        'payload.bin',
-        'payload_properties.txt',
-        'care_map.txt',
+        'required-entry1',
+        'required-entry2',
+        'optional-entry1',
+        'optional-entry2',
         'META-INF/com/android/metadata',
     )
     zip_file = self._construct_zip_package(entries)
-    property_files = StreamingPropertyFiles()
+    property_files = TestPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
+      # pylint: disable=protected-access
       raw_metadata = property_files._GetPropertyFilesString(
           zip_fp, reserve_space=False)
       raw_length = len(raw_metadata)
@@ -710,15 +738,99 @@ class StreamingPropertyFilesTest(unittest.TestCase):
 
   def test_Verify(self):
     entries = (
+        'required-entry1',
+        'required-entry2',
+        'optional-entry1',
+        'optional-entry2',
+        'META-INF/com/android/metadata',
+    )
+    zip_file = self._construct_zip_package(entries)
+    property_files = TestPropertyFiles()
+    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+      # First get the raw metadata string (i.e. without padding space).
+      # pylint: disable=protected-access
+      raw_metadata = property_files._GetPropertyFilesString(
+          zip_fp, reserve_space=False)
+
+      # Should pass the test if verification passes.
+      property_files.Verify(zip_fp, raw_metadata)
+
+      # Or raise on verification failure.
+      self.assertRaises(
+          AssertionError, property_files.Verify, zip_fp, raw_metadata + 'x')
+
+
+class StreamingPropertyFilesTest(PropertyFilesTest):
+  """Additional sanity checks specialized for StreamingPropertyFiles."""
+
+  def test_init(self):
+    property_files = StreamingPropertyFiles()
+    self.assertEqual('ota-streaming-property-files', property_files.name)
+    self.assertEqual(
+        (
+            'payload.bin',
+            'payload_properties.txt',
+        ),
+        property_files.required)
+    self.assertEqual(
+        (
+            'care_map.txt',
+            'compatibility.zip',
+        ),
+        property_files.optional)
+
+  def test_Compute(self):
+    entries = (
         'payload.bin',
         'payload_properties.txt',
         'care_map.txt',
+        'compatibility.zip',
+    )
+    zip_file = self._construct_zip_package(entries)
+    property_files = StreamingPropertyFiles()
+    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+      property_files_string = property_files.Compute(zip_fp)
+
+    tokens = self._parse_property_files_string(property_files_string)
+    self.assertEqual(5, len(tokens))
+    self._verify_entries(zip_file, tokens, entries)
+
+  def test_Finalize(self):
+    entries = [
+        'payload.bin',
+        'payload_properties.txt',
+        'care_map.txt',
+        'compatibility.zip',
+        'META-INF/com/android/metadata',
+    ]
+    zip_file = self._construct_zip_package(entries)
+    property_files = StreamingPropertyFiles()
+    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+      # pylint: disable=protected-access
+      raw_metadata = property_files._GetPropertyFilesString(
+          zip_fp, reserve_space=False)
+      streaming_metadata = property_files.Finalize(zip_fp, len(raw_metadata))
+    tokens = self._parse_property_files_string(streaming_metadata)
+
+    self.assertEqual(5, len(tokens))
+    # 'META-INF/com/android/metadata' will be key'd as 'metadata' in the
+    # streaming metadata.
+    entries[4] = 'metadata'
+    self._verify_entries(zip_file, tokens, entries)
+
+  def test_Verify(self):
+    entries = (
+        'payload.bin',
+        'payload_properties.txt',
+        'care_map.txt',
+        'compatibility.zip',
         'META-INF/com/android/metadata',
     )
     zip_file = self._construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
+      # pylint: disable=protected-access
       raw_metadata = property_files._GetPropertyFilesString(
           zip_fp, reserve_space=False)
 
