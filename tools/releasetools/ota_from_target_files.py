@@ -159,6 +159,7 @@ import multiprocessing
 import os.path
 import shlex
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
@@ -1063,6 +1064,7 @@ class PropertyFiles(object):
       return '%s:%d:%d' % (os.path.basename(name), offset, size)
 
     tokens = []
+    tokens.extend(self._GetPrecomputed(zip_file))
     for entry in self.required:
       tokens.append(ComputeEntryOffsetSize(entry))
     for entry in self.optional:
@@ -1080,6 +1082,23 @@ class PropertyFiles(object):
       tokens.append(ComputeEntryOffsetSize(METADATA_NAME))
 
     return ','.join(tokens)
+
+  def _GetPrecomputed(self, input_zip):
+    """Computes the additional tokens to be included into the property-files.
+
+    This applies to tokens without actual ZIP entries, such as
+    payload_metadadata.bin. We want to expose the offset/size to updaters, so
+    that they can download the payload metadata directly with the info.
+
+    Args:
+      input_zip: The input zip file.
+
+    Returns:
+      A list of strings (tokens) to be added to the property-files string.
+    """
+    # pylint: disable=no-self-use
+    # pylint: disable=unused-argument
+    return []
 
 
 class StreamingPropertyFiles(PropertyFiles):
@@ -1099,6 +1118,89 @@ class StreamingPropertyFiles(PropertyFiles):
         # compatibility.zip is available only if target supports Treble.
         'compatibility.zip',
     )
+
+
+class AbOtaPropertyFiles(StreamingPropertyFiles):
+  """The property-files for A/B OTA that includes payload_metadata.bin info.
+
+  Since P, we expose one more token (aka property-file), in addition to the ones
+  for streaming A/B OTA, for a virtual entry of 'payload_metadata.bin'.
+  'payload_metadata.bin' is the header part of a payload ('payload.bin'), which
+  doesn't exist as a separate ZIP entry, but can be used to verify if the
+  payload can be applied on the given device.
+
+  For backward compatibility, we keep both of the 'ota-streaming-property-files'
+  and the newly added 'ota-property-files' in P. The new token will only be
+  available in 'ota-property-files'.
+  """
+
+  def __init__(self):
+    super(AbOtaPropertyFiles, self).__init__()
+    self.name = 'ota-property-files'
+
+  def _GetPrecomputed(self, input_zip):
+    offset, size = self._GetPayloadMetadataOffsetAndSize(input_zip)
+    return ['payload_metadata.bin:{}:{}'.format(offset, size)]
+
+  @staticmethod
+  def _GetPayloadMetadataOffsetAndSize(input_zip):
+    """Computes the offset and size of the payload metadata for a given package.
+
+    (From system/update_engine/update_metadata.proto)
+    A delta update file contains all the deltas needed to update a system from
+    one specific version to another specific version. The update format is
+    represented by this struct pseudocode:
+
+    struct delta_update_file {
+      char magic[4] = "CrAU";
+      uint64 file_format_version;
+      uint64 manifest_size;  // Size of protobuf DeltaArchiveManifest
+
+      // Only present if format_version > 1:
+      uint32 metadata_signature_size;
+
+      // The Bzip2 compressed DeltaArchiveManifest
+      char manifest[metadata_signature_size];
+
+      // The signature of the metadata (from the beginning of the payload up to
+      // this location, not including the signature itself). This is a
+      // serialized Signatures message.
+      char medatada_signature_message[metadata_signature_size];
+
+      // Data blobs for files, no specific format. The specific offset
+      // and length of each data blob is recorded in the DeltaArchiveManifest.
+      struct {
+        char data[];
+      } blobs[];
+
+      // These two are not signed:
+      uint64 payload_signatures_message_size;
+      char payload_signatures_message[];
+    };
+
+    'payload-metadata.bin' contains all the bytes from the beginning of the
+    payload, till the end of 'medatada_signature_message'.
+    """
+    payload_info = input_zip.getinfo('payload.bin')
+    payload_offset = payload_info.header_offset + len(payload_info.FileHeader())
+    payload_size = payload_info.file_size
+
+    with input_zip.open('payload.bin', 'r') as payload_fp:
+      header_bin = payload_fp.read(24)
+
+    # network byte order (big-endian)
+    header = struct.unpack("!IQQL", header_bin)
+
+    # 'CrAU'
+    magic = header[0]
+    assert magic == 0x43724155, "Invalid magic: {:x}".format(magic)
+
+    manifest_size = header[2]
+    metadata_signature_size = header[3]
+    metadata_total = 24 + manifest_size + metadata_signature_size
+    assert metadata_total < payload_size
+
+    return (payload_offset, metadata_total)
 
 
 def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
@@ -1582,7 +1684,12 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # FinalizeMetadata().
   common.ZipClose(output_zip)
 
+  # AbOtaPropertyFiles intends to replace StreamingPropertyFiles, as it covers
+  # all the info of the latter. However, system updaters and OTA servers need to
+  # take time to switch to the new flag. We keep both of the flags for
+  # P-timeframe, and will remove StreamingPropertyFiles in later release.
   needed_property_files = (
+      AbOtaPropertyFiles(),
       StreamingPropertyFiles(),
   )
   FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
