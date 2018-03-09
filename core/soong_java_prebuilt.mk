@@ -23,8 +23,8 @@ common_javalib.jar := $(intermediates.COMMON)/javalib.jar
 $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_jar)))
 $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_pre_proguard_jar)))
 
-ifdef LOCAL_DROIDDOC_STUBS_JAR
-$(eval $(call copy-one-file,$(LOCAL_DROIDDOC_STUBS_JAR),$(OUT_DOCS)/$(LOCAL_MODULE)-stubs.srcjar))
+ifdef LOCAL_DROIDDOC_STUBS_SRCJAR
+$(eval $(call copy-one-file,$(LOCAL_DROIDDOC_STUBS_SRCJAR),$(OUT_DOCS)/$(LOCAL_MODULE)-stubs.srcjar))
 ALL_DOCS += $(OUT_DOCS)/$(LOCAL_MODULE)-stubs.srcjar
 endif
 
