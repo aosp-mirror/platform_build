@@ -373,6 +373,11 @@ ifdef LOCAL_USE_AAPT2
   include $(BUILD_SYSTEM)/aapt2.mk
 else  # LOCAL_USE_AAPT2
 
+  my_srcjar := $(intermediates.COMMON)/aapt.srcjar
+  LOCAL_SRCJARS += $(my_srcjar)
+  $(R_file_stamp): PRIVATE_SRCJAR := $(my_srcjar)
+  $(R_file_stamp): PRIVATE_JAVA_GEN_DIR := $(intermediates.COMMON)/aapt
+  $(R_file_stamp): .KATI_IMPLICIT_OUTPUTS := $(my_srcjar)
   # Since we don't know where the real R.java file is going to end up,
   # we need to use another file to stand in its place.  We'll just
   # copy the generated file to src/R.stamp, which means it will
@@ -386,11 +391,11 @@ else  # LOCAL_USE_AAPT2
 			$(intermediates.COMMON)/public_resources.xml
   $(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
   $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_res_assets)
-  $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(rs_generated_res_zip) $(AAPT) | $(ACP)
+  $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(rs_generated_res_zip) $(AAPT) $(SOONG_ZIP) | $(ACP)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	@rm -rf $@ && mkdir -p $(dir $@)
 	$(create-resource-java-files)
-	$(call find-generated-R.java,$@)
+	$(call find-generated-R.java,$(PRIVATE_JAVA_GEN_DIR),$@)
 
   $(proguard_options_file): $(R_file_stamp)
 

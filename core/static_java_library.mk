@@ -135,9 +135,6 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_A
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_PACKAGE_NAME := $(LOCAL_MANIFEST_PACKAGE_NAME)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_MANIFEST_INSTRUMENTATION_FOR)
 
-# LOCAL_INTERMEDIATE_SOURCE_DIR is set later by java.mk, but we need it for AAPT
-LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
-
 # add --non-constant-id to prevent inlining constants.
 # AAR needs text symbol file R.txt.
 ifdef LOCAL_USE_AAPT2
@@ -150,9 +147,14 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_AAPT_CHARACTERISTICS :=
 else
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --non-constant-id --output-text-symbols $(intermediates.COMMON)
+
+my_srcjar := $(intermediates.COMMON)/aapt.srcjar
+LOCAL_SRCJARS += $(my_srcjar)
+$(R_file_stamp): PRIVATE_SRCJAR := $(my_srcjar)
+$(R_file_stamp): PRIVATE_JAVA_GEN_DIR := $(intermediates.COMMON)/aapt
+$(R_file_stamp): .KATI_IMPLICIT_OUTPUTS := $(intermediates.COMMON)/R.txt) $(my_srcjar)
 endif
 
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SOURCE_INTERMEDIATES_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_PUBLICS_OUTPUT := $(intermediates.COMMON)/public_resources.xml
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
@@ -175,12 +177,13 @@ ifdef LOCAL_USE_AAPT2
   $(my_res_package) : $(framework_res_package_export)
   $(my_res_package): .KATI_IMPLICIT_OUTPUTS += $(intermediates.COMMON)/R.txt
 else
-  $(R_file_stamp): .KATI_IMPLICIT_OUTPUTS := $(intermediates.COMMON)/R.txt
+  $(R_file_stamp): .KATI_IMPLICIT_OUTPUTS += $(intermediates.COMMON)/R.txt
   $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_resources)
-  $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export) $(rs_generated_res_zip)
+  $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(SOONG_ZIP) \
+    $(framework_res_package_export) $(rs_generated_res_zip)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	$(create-resource-java-files)
-	$(hide) find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name R.java | xargs cat > $@
+	$(hide) find $(PRIVATE_JAVA_GEN_DIR) -name R.java | xargs cat > $@
 endif  # LOCAL_USE_AAPT2
 
 endif # need_compile_res
