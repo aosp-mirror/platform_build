@@ -1853,7 +1853,7 @@ if $(PRIVATE_STRIP) --strip-all -R .comment $< -o $@; then \
   $(PRIVATE_OBJCOPY) -S --remove-section .gdb_index --remove-section .comment --keep-symbols=$@.keep_symbols $@.mini_debuginfo && \
   $(PRIVATE_OBJCOPY) --rename-section saved_debug_frame=.debug_frame $@.mini_debuginfo && \
   rm -f $@.mini_debuginfo.xz && \
-  xz $@.mini_debuginfo && \
+  $(XZ) $@.mini_debuginfo && \
   $(PRIVATE_OBJCOPY) --add-section .gnu_debugdata=$@.mini_debuginfo.xz $@; \
 else \
   cp -f $< $@; \
