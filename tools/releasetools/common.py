@@ -1828,35 +1828,47 @@ def ExtractPublicKey(cert):
 
 def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
                       info_dict=None):
-  """Generate a binary patch that creates the recovery image starting
-  with the boot image.  (Most of the space in these images is just the
-  kernel, which is identical for the two, so the resulting patch
-  should be efficient.)  Add it to the output zip, along with a shell
-  script that is run from init.rc on first boot to actually do the
-  patching and install the new recovery image.
+  """Generates the recovery-from-boot patch and writes the script to output.
 
-  recovery_img and boot_img should be File objects for the
-  corresponding images.  info should be the dictionary returned by
-  common.LoadInfoDict() on the input target_files.
+  Most of the space in the boot and recovery images is just the kernel, which is
+  identical for the two, so the resulting patch should be efficient. Add it to
+  the output zip, along with a shell script that is run from init.rc on first
+  boot to actually do the patching and install the new recovery image.
+
+  Args:
+    input_dir: The top-level input directory of the target-files.zip.
+    output_sink: The callback function that writes the result.
+    recovery_img: File object for the recovery image.
+    boot_img: File objects for the boot image.
+    info_dict: A dict returned by common.LoadInfoDict() on the input
+        target_files. Will use OPTIONS.info_dict if None has been given.
   """
-
   if info_dict is None:
     info_dict = OPTIONS.info_dict
 
-  full_recovery_image = info_dict.get("full_recovery_image", None) == "true"
+  full_recovery_image = info_dict.get("full_recovery_image") == "true"
 
   if full_recovery_image:
     output_sink("etc/recovery.img", recovery_img.data)
 
   else:
-    diff_program = ["imgdiff"]
+    system_root_image = info_dict.get("system_root_image") == "true"
     path = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
-    if os.path.exists(path):
-      diff_program.append("-b")
-      diff_program.append(path)
-      bonus_args = "-b /system/etc/recovery-resource.dat"
-    else:
+    # With system-root-image, boot and recovery images will have mismatching
+    # entries (only recovery has the ramdisk entry) (Bug: 72731506). Use bsdiff
+    # to handle such a case.
+    if system_root_image:
+      diff_program = ["bsdiff"]
       bonus_args = ""
+      assert not os.path.exists(path)
+    else:
+      diff_program = ["imgdiff"]
+      if os.path.exists(path):
+        diff_program.append("-b")
+        diff_program.append(path)
+        bonus_args = "-b /system/etc/recovery-resource.dat"
+      else:
+        bonus_args = ""
 
     d = Difference(recovery_img, boot_img, diff_program=diff_program)
     _, _, patch = d.ComputePatch()
