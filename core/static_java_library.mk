@@ -141,7 +141,7 @@ LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 # add --non-constant-id to prevent inlining constants.
 # AAR needs text symbol file R.txt.
 ifdef LOCAL_USE_AAPT2
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --static-lib
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --static-lib --output-text-symbols $(intermediates.COMMON)/R.txt
 ifndef LOCAL_AAPT_NAMESPACES
   $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS += --no-static-lib-packages
 endif
@@ -149,7 +149,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PRODUCT_AAPT_CONFIG :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_AAPT_CHARACTERISTICS :=
 else
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --non-constant-id --output-text-symbols $(LOCAL_INTERMEDIATE_SOURCE_DIR)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --non-constant-id --output-text-symbols $(intermediates.COMMON)
 endif
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SOURCE_INTERMEDIATES_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)
@@ -173,7 +173,9 @@ ifdef LOCAL_USE_AAPT2
   endif  # renderscript_target_api is set
   include $(BUILD_SYSTEM)/aapt2.mk
   $(my_res_package) : $(framework_res_package_export)
+  $(my_res_package): .KATI_IMPLICIT_OUTPUTS += $(intermediates.COMMON)/R.txt
 else
+  $(R_file_stamp): .KATI_IMPLICIT_OUTPUTS := $(intermediates.COMMON)/R.txt
   $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_resources)
   $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export) $(rs_generated_res_zip)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
@@ -206,9 +208,9 @@ $(built_aar): PRIVATE_MODULE := $(LOCAL_MODULE)
 $(built_aar): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
 $(built_aar): PRIVATE_CLASSES_JAR := $(aar_classes_jar)
 $(built_aar): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
-$(built_aar): PRIVATE_R_TXT := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/R.txt
+$(built_aar): PRIVATE_R_TXT := $(intermediates.COMMON)/R.txt
 $(built_aar): $(JAR_ARGS)
-$(built_aar) : $(aar_classes_jar) $(full_android_manifest)
+$(built_aar) : $(aar_classes_jar) $(full_android_manifest) $(intermediates.COMMON)/R.txt
 	@echo "target AAR:  $(PRIVATE_MODULE) ($@)"
 	$(hide) rm -rf $(dir $@)aar && mkdir -p $(dir $@)aar/res
 	$(hide) cp $(PRIVATE_ANDROID_MANIFEST) $(dir $@)aar/AndroidManifest.xml
