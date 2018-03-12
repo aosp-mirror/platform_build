@@ -449,10 +449,10 @@ subdir_makefiles_total := $(words $(subdir_makefiles))
 
 $(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
 
-ifdef PDK_FUSION_PLATFORM_ZIP
+ifneq (,$(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR))
 # Bring in the PDK platform.zip modules.
 include $(BUILD_SYSTEM)/pdk_fusion_modules.mk
-endif # PDK_FUSION_PLATFORM_ZIP
+endif # PDK_FUSION_PLATFORM_ZIP || PDK_FUSION_PLATFORM_DIR
 
 droid_targets : blueprint_tools
 

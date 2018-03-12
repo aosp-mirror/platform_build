@@ -2,10 +2,16 @@
 # We use these rules to rebuild .odex files of the .jar/.apk inside the platform.zip.
 #
 
+ifdef PDK_FUSION_PLATFORM_ZIP
 pdk_dexpreopt_config_mk := $(TARGET_OUT_INTERMEDIATES)/pdk_dexpreopt_config.mk
 
 $(shell rm -f $(pdk_dexpreopt_config_mk) && mkdir -p $(dir $(pdk_dexpreopt_config_mk)) && \
         unzip -qo $(PDK_FUSION_PLATFORM_ZIP) -d $(dir $(pdk_dexpreopt_config_mk)) pdk_dexpreopt_config.mk 2>/dev/null)
+endif
+
+ifdef PDK_FUSION_PLATFORM_DIR
+pdk_dexpreopt_config_mk := $(PDK_FUSION_PLATFORM_DIR)/pdk_dexpreopt_config.mk
+endif
 
 -include $(pdk_dexpreopt_config_mk)
 
