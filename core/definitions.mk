@@ -1036,9 +1036,9 @@ $(hide) $(RS_CC_ASAN_OPTIONS) $(PRIVATE_RS_CC) \
   $(PRIVATE_RS_FLAGS) \
   $(foreach inc,$(PRIVATE_RS_INCLUDES),$(addprefix -I , $(inc))) \
   $(PRIVATE_RS_SOURCE_FILES)
+$(SOONG_ZIP) -o $@ -C $(PRIVATE_RS_OUTPUT_DIR)/src -D $(PRIVATE_RS_OUTPUT_DIR)/src
+$(SOONG_ZIP) -o $(PRIVATE_RS_OUTPUT_RES_ZIP) -C $(PRIVATE_RS_OUTPUT_DIR)/res -D $(PRIVATE_RS_OUTPUT_DIR)/res
 $(call _merge-renderscript-d,$(PRIVATE_DEP_FILES),$@.d)
-$(hide) mkdir -p $(dir $@)
-$(hide) touch $@
 endef
 
 define transform-bc-to-so
@@ -2212,8 +2212,6 @@ $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
 fi
 $(if $(PRIVATE_HAS_PROTO_SOURCES), \
     $(hide) find $(PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $(1))
-$(if $(PRIVATE_HAS_RS_SOURCES), \
-    $(hide) find $(PRIVATE_RS_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $(1))
 endef
 
 # Some historical notes:
