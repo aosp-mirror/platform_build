@@ -104,9 +104,8 @@ LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 
 ###############################################################
 ## .rs files: RenderScript sources to .java files and .bc files
-## .fs files: Filterscript sources to .java files and .bc files
 ###############################################################
-renderscript_sources := $(filter %.rs %.fs,$(LOCAL_SRC_FILES))
+renderscript_sources := $(filter %.rs,$(LOCAL_SRC_FILES))
 # Because names of the java files from RenderScript are unknown until the
 # .rs file(s) are compiled, we have to depend on a timestamp file.
 RenderScript_file_stamp :=
@@ -167,7 +166,7 @@ ifneq ($(LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE),)
 LOCAL_RENDERSCRIPT_INCLUDES := $(LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE)
 endif
 
-bc_files := $(patsubst %.fs,%.bc, $(patsubst %.rs,%.bc, $(notdir $(renderscript_sources))))
+bc_files := $(patsubst %.rs,%.bc, $(notdir $(renderscript_sources)))
 bc_dep_files := $(addprefix $(renderscript_intermediate.COMMON)/,$(patsubst %.bc,%.d,$(bc_files)))
 
 $(RenderScript_file_stamp): PRIVATE_RS_INCLUDES := $(LOCAL_RENDERSCRIPT_INCLUDES)
