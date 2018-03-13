@@ -411,14 +411,6 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAR_MANIFEST :=
 endif
 
 ##########################################################
-ifndef LOCAL_IS_HOST_MODULE
-ifdef aidl_sources
-ALL_MODULES.$(my_register_name).AIDL_FILES := $(aidl_sources)
-endif
-ifdef renderscript_sources
-ALL_MODULES.$(my_register_name).RS_FILES := $(renderscript_sources_fullpath)
-endif
-endif  # !LOCAL_IS_HOST_MODULE
 
 full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
 full_java_header_libs := $(full_shared_java_header_libs) $(full_static_java_header_libs)
