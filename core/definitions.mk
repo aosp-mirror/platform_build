@@ -2079,6 +2079,15 @@ $(hide) $(AAPT2) compile -o $@ $(addprefix --dir ,$(PRIVATE_SOURCE_RES_DIRS)) \
   $(PRIVATE_AAPT2_CFLAGS) --legacy
 endef
 
+# TODO(b/74574557): use aapt2 compile --zip if it gets implemented
+define aapt2-compile-resource-zips
+@mkdir -p $(dir $@)
+rm -rf $@.contents
+mkdir -p $@.contents
+$(EXTRACT_SRCJARS) $@.contents $@.list $(PRIVATE_SOURCE_RES_ZIPS)
+$(hide) $(AAPT2) compile -o $@ --dir $@.tmp $(PRIVATE_AAPT2_CFLAGS) --legacy
+endef
+
 # Set up rule to compile one resource file with aapt2.
 # Must be called with $(eval).
 # $(1): the source file
