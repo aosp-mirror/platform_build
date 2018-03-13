@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5620e289_8c5303d1",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1580,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-03-13T03:52:47Z",
+      "side": 1,
+      "message": "This needs to use a PRIVATE_ rule local variable.",
+      "range": {
+        "startLine": 1580,
+        "startChar": 5,
+        "endLine": 1580,
+        "endChar": 17
+      },
+      "revId": "2ded1766bc511935ebf4c1a33fb26ab8372e424a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
