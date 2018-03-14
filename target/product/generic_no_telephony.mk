@@ -29,7 +29,7 @@ PRODUCT_PACKAGES := \
     Provision \
     SystemUI \
     SysuiDarkThemeOverlay \
-    DisplayCutoutEmulationWideOverlay \
+    DisplayCutoutEmulationDoubleOverlay \
     DisplayCutoutEmulationNarrowOverlay \
     DisplayCutoutEmulationTallOverlay \
     EasterEgg \
