@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c10e18d7_42d226b6",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-03-14T20:08:51Z",
+      "side": 1,
+      "message": "Can you leave this in Android.mk, and add INTERNAL_PLATFORM_*_API_FILE to java/makevars.go?",
+      "revId": "bb02a831b94372ada6c2675730a33ef2f743479e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
