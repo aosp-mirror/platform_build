@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "31cb7185_eb1d3222",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-03-14T21:18:42Z",
+      "side": 1,
+      "message": "making this global is of course blocked on marlin and a couple of devices.",
+      "range": {
+        "startLine": 748,
+        "startChar": 0,
+        "endLine": 748,
+        "endChar": 44
+      },
+      "revId": "3de391ae38bf7ad0d05f1702d81e54c6b2bf197a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b9242db_2179f7a6",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 750,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-03-14T21:18:42Z",
+      "side": 1,
+      "message": "no one is taking advantage of this currently",
+      "range": {
+        "startLine": 750,
+        "startChar": 42,
+        "endLine": 750,
+        "endChar": 43
+      },
+      "revId": "3de391ae38bf7ad0d05f1702d81e54c6b2bf197a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
