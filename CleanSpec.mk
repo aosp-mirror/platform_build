@@ -463,6 +463,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/manifest.xml)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/compatibility_matrix.xml)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/compatibility_matrix.xml)
 
+# Remove DisplayCutoutEmulationWide overlay
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/overlay/DisplayCutoutEmulationWide)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
