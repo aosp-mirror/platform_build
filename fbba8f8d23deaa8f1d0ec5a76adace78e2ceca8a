@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "52cf3afa_bd91b799",
+        "filename": "core/java.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-03-14T21:20:09Z",
+      "side": 1,
+      "message": "Will this cause problems if we\u0027re doing multilib package builds?",
+      "range": {
+        "startLine": 118,
+        "startChar": 0,
+        "endLine": 118,
+        "endChar": 13
+      },
+      "revId": "fbba8f8d23deaa8f1d0ec5a76adace78e2ceca8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
