@@ -407,8 +407,13 @@ endif  # renderscript_target_api < 21
 endif  # renderscript_target_api is set
 my_asset_dirs := $(LOCAL_ASSET_DIR)
 my_full_asset_paths := $(all_assets)
+
 # Add AAPT2 link specific flags.
-$(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --no-static-lib-packages
+$(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
+ifndef LOCAL_AAPT_NAMESPACES
+  $(my_res_package): PRIVATE_AAPT_FLAGS += --no-static-lib-packages
+endif
+
 include $(BUILD_SYSTEM)/aapt2.mk
 else  # LOCAL_USE_AAPT2
 
