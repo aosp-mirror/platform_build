@@ -16,6 +16,24 @@
       "revId": "f7fd5646ca47510fc194ddfe0881c4ed124f5063",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2ea7d0d_2631f059",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1042276
+      },
+      "writtenOn": "2018-03-14T19:17:00Z",
+      "side": 1,
+      "message": "Moved to aosp/640599",
+      "parentUuid": "e3b61b41_23d64b41",
+      "revId": "f7fd5646ca47510fc194ddfe0881c4ed124f5063",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
