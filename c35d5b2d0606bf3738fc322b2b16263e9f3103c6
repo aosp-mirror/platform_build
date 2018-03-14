@@ -22,6 +22,30 @@
       "revId": "c35d5b2d0606bf3738fc322b2b16263e9f3103c6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e2936d7_63fe93ca",
+        "filename": "core/aapt2.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-03-14T21:14:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bba33550_b302defc",
+      "range": {
+        "startLine": 53,
+        "startChar": 0,
+        "endLine": 53,
+        "endChar": 70
+      },
+      "revId": "c35d5b2d0606bf3738fc322b2b16263e9f3103c6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
