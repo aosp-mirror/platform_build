@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d8c2ddc8_ed2585d1",
+        "filename": "core/java_renderscript.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-03-14T21:21:54Z",
+      "side": 1,
+      "message": "This may cause problems with multilib builds",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 15
+      },
+      "revId": "077773ed97cd3c305cf47a488a4428d30414e995",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
