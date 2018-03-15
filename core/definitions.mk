@@ -2242,7 +2242,7 @@ $(hide) mkdir -p $(dir $@)
 $(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR) $(if $(PRIVATE_SRCJARS),$(PRIVATE_SRCJAR_INTERMEDIATES_DIR))
 $(if $(PRIVATE_SRCJARS),\
     $(EXTRACT_SRCJARS) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) $(PRIVATE_SRCJAR_LIST_FILE) $(PRIVATE_SRCJARS))
-$(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
+$(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) $(if $(PRIVATE_SRCJARS),-o -s $(PRIVATE_SRCJAR_LIST_FILE) )] ; then \
     $(SOONG_JAVAC_WRAPPER) $(JAVAC_WRAPPER) $(1) -encoding UTF-8 \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
     $(if $(PRIVATE_USE_SYSTEM_MODULES), \
@@ -2287,7 +2287,7 @@ define transform-java-to-header.jar
 @mkdir -p $(dir $@)
 @rm -rf $(dir $@)/classes-turbine
 @mkdir $(dir $@)/classes-turbine
-$(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
+$(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) -o -n "$(PRIVATE_SRCJARS)" ] ; then \
     $(JAVA) -jar $(TURBINE) \
     --output $@.premerged --temp_dir $(dir $@)/classes-turbine \
     --sources \@$(PRIVATE_JAVA_SOURCE_LIST) --source_jars $(PRIVATE_SRCJARS) \
