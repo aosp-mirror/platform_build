@@ -99,7 +99,7 @@ $(full_classes_compiled_jar): \
     $(annotation_processor_deps) \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
-    $(EXTRACT_SRCJARS) \
+    $(ZIPSYNC) \
     | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-dalvik-package)
 
