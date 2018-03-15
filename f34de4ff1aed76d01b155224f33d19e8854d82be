@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "802f5d7e_f7897a64",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1086,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-03-15T21:49:01Z",
+      "side": 1,
+      "message": "do we consider to convert this to a abstractmethod since we don\u0027t create instance of propertyfiles",
+      "range": {
+        "startLine": 1086,
+        "startChar": 6,
+        "endLine": 1086,
+        "endChar": 21
+      },
+      "revId": "f34de4ff1aed76d01b155224f33d19e8854d82be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "289943b2_9f334490",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1680,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-03-15T21:49:01Z",
+      "side": 1,
+      "message": "So.. we still have users of ota-streaming-property-files",
+      "range": {
+        "startLine": 1680,
+        "startChar": 6,
+        "endLine": 1680,
+        "endChar": 28
+      },
+      "revId": "f34de4ff1aed76d01b155224f33d19e8854d82be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
