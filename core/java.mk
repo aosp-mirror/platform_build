@@ -461,7 +461,7 @@ $(full_classes_compiled_jar): \
     $(annotation_processor_deps) \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
-    $(EXTRACT_SRCJARS) \
+    $(ZIPSYNC) \
     | $(SOONG_JAVAC_WRAPPER)
 	@echo "Target Java: $@
 	$(call compile-java,$(TARGET_JAVAC),$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))

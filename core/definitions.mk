@@ -2082,9 +2082,7 @@ endef
 # TODO(b/74574557): use aapt2 compile --zip if it gets implemented
 define aapt2-compile-resource-zips
 @mkdir -p $(dir $@)
-rm -rf $@.contents
-mkdir -p $@.contents
-$(EXTRACT_SRCJARS) $@.contents $@.list $(PRIVATE_SOURCE_RES_ZIPS)
+$(ZIPSYNC) -d $@.contents -l $@.list $(PRIVATE_SOURCE_RES_ZIPS)
 $(hide) $(AAPT2) compile -o $@ --dir $@.tmp $(PRIVATE_AAPT2_CFLAGS) --legacy
 endef
 
@@ -2237,11 +2235,11 @@ endef
 # $(2): classpath_libs
 define compile-java
 $(hide) rm -f $@
-$(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR) $(if $(PRIVATE_SRCJARS),$(PRIVATE_SRCJAR_INTERMEDIATES_DIR))
+$(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR)
 $(hide) mkdir -p $(dir $@)
-$(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR) $(if $(PRIVATE_SRCJARS),$(PRIVATE_SRCJAR_INTERMEDIATES_DIR))
+$(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR)
 $(if $(PRIVATE_SRCJARS),\
-    $(EXTRACT_SRCJARS) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) $(PRIVATE_SRCJAR_LIST_FILE) $(PRIVATE_SRCJARS))
+    $(ZIPSYNC) -d $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) -l $(PRIVATE_SRCJAR_LIST_FILE) -f "*.java" $(PRIVATE_SRCJARS))
 $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) $(if $(PRIVATE_SRCJARS),-o -s $(PRIVATE_SRCJAR_LIST_FILE) )] ; then \
     $(SOONG_JAVAC_WRAPPER) $(JAVAC_WRAPPER) $(1) -encoding UTF-8 \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
