@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "12bbac82_5fbe6d9f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1086,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-03-15T22:17:33Z",
+      "side": 1,
+      "message": "Python is flexible enough that would allow instantiating this class even with a \u0027raise NotImplementedError\u0027 in this function, as long as the function is not executed. From the semantic of this function, returning an empty list as the default implementation seems to make sense (I\u0027m thinking of this one as an optional hook).",
+      "parentUuid": "802f5d7e_f7897a64",
+      "range": {
+        "startLine": 1086,
+        "startChar": 6,
+        "endLine": 1086,
+        "endChar": 21
+      },
+      "revId": "f34de4ff1aed76d01b155224f33d19e8854d82be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "289943b2_9f334490",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "f34de4ff1aed76d01b155224f33d19e8854d82be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c9f69b4a_cb884e75",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1680,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-03-15T22:17:33Z",
+      "side": 1,
+      "message": "yeah, because updaters (including GmsCore) and OTA server need to adopt the new change, otherwise streaming would be broken. So we\u0027ll keep them both at least in P (but only the new flag will have the extra stuff of payload-metadata.bin info).\n\nAdded a comment here in the new PS.",
+      "parentUuid": "289943b2_9f334490",
+      "range": {
+        "startLine": 1680,
+        "startChar": 6,
+        "endLine": 1680,
+        "endChar": 28
+      },
+      "revId": "f34de4ff1aed76d01b155224f33d19e8854d82be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
