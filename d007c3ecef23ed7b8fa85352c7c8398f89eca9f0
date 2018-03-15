@@ -22,6 +22,30 @@
       "revId": "d007c3ecef23ed7b8fa85352c7c8398f89eca9f0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "441270ec_fd3c5a7b",
+        "filename": "tools/device_buildinfo.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-03-15T01:27:54Z",
+      "side": 1,
+      "message": "Chatted offline, from Jaekyun (sorry for my previous typo):\n\n- ro.product.vendor. is right for platform properties having vendor information.\n\n- ro.vendor should be used for vendor own properties.",
+      "parentUuid": "2cea0057_2e9b2c5c",
+      "range": {
+        "startLine": 21,
+        "startChar": 6,
+        "endLine": 21,
+        "endChar": 29
+      },
+      "revId": "d007c3ecef23ed7b8fa85352c7c8398f89eca9f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
