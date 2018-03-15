@@ -46,6 +46,30 @@
       "revId": "d007c3ecef23ed7b8fa85352c7c8398f89eca9f0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e81363a1_586ab3b2",
+        "filename": "tools/device_buildinfo.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-03-15T01:37:12Z",
+      "side": 1,
+      "message": "Additionally, ro.product.odm.* should be whitelisted as ro.product.vendor.* are to allow SoC vendor to access the values.",
+      "parentUuid": "441270ec_fd3c5a7b",
+      "range": {
+        "startLine": 21,
+        "startChar": 6,
+        "endLine": 21,
+        "endChar": 29
+      },
+      "revId": "d007c3ecef23ed7b8fa85352c7c8398f89eca9f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
