@@ -70,6 +70,30 @@
       "revId": "d007c3ecef23ed7b8fa85352c7c8398f89eca9f0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "530cf195_6e6600ac",
+        "filename": "tools/device_buildinfo.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-03-15T08:15:56Z",
+      "side": 1,
+      "message": "Got it, uploading go/oag/640883!",
+      "parentUuid": "e81363a1_586ab3b2",
+      "range": {
+        "startLine": 21,
+        "startChar": 6,
+        "endLine": 21,
+        "endChar": 29
+      },
+      "revId": "d007c3ecef23ed7b8fa85352c7c8398f89eca9f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
