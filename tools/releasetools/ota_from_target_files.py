@@ -955,8 +955,15 @@ def GetPackageMetadata(target_info, source_info=None):
   return metadata
 
 
-class StreamingPropertyFiles(object):
-  """Computes the ota-streaming-property-files string for streaming A/B OTA.
+class PropertyFiles(object):
+  """A class that computes the property-files string for an OTA package.
+
+  A property-files string is a comma-separated string that contains the
+  offset/size info for an OTA package. The entries, which must be ZIP_STORED,
+  can be fetched directly with the package URL along with the offset/size info.
+  These strings can be used for streaming A/B OTAs, or allowing an updater to
+  download package metadata entry directly, without paying the cost of
+  downloading entire package.
 
   Computing the final property-files string requires two passes. Because doing
   the whole package signing (with signapk.jar) will possibly reorder the ZIP
@@ -966,7 +973,7 @@ class StreamingPropertyFiles(object):
   This class provides functions to be called for each pass. The general flow is
   as follows.
 
-    property_files = StreamingPropertyFiles()
+    property_files = PropertyFiles()
     # The first pass, which writes placeholders before doing initial signing.
     property_files.Compute()
     SignOutput()
@@ -981,17 +988,9 @@ class StreamingPropertyFiles(object):
   """
 
   def __init__(self):
-    self.required = (
-        # payload.bin and payload_properties.txt must exist.
-        'payload.bin',
-        'payload_properties.txt',
-    )
-    self.optional = (
-        # care_map.txt is available only if dm-verity is enabled.
-        'care_map.txt',
-        # compatibility.zip is available only if target supports Treble.
-        'compatibility.zip',
-    )
+    self.name = None
+    self.required = ()
+    self.optional = ()
 
   def Compute(self, input_zip):
     """Computes and returns a property-files string with placeholders.
@@ -1083,7 +1082,26 @@ class StreamingPropertyFiles(object):
     return ','.join(tokens)
 
 
-def FinalizeMetadata(metadata, input_file, output_file):
+class StreamingPropertyFiles(PropertyFiles):
+  """A subclass for computing the property-files for streaming A/B OTAs."""
+
+  def __init__(self):
+    super(StreamingPropertyFiles, self).__init__()
+    self.name = 'ota-streaming-property-files'
+    self.required = (
+        # payload.bin and payload_properties.txt must exist.
+        'payload.bin',
+        'payload_properties.txt',
+    )
+    self.optional = (
+        # care_map.txt is available only if dm-verity is enabled.
+        'care_map.txt',
+        # compatibility.zip is available only if target supports Treble.
+        'compatibility.zip',
+    )
+
+
+def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
   """Finalizes the metadata and signs an A/B OTA package.
 
   In order to stream an A/B OTA package, we need 'ota-streaming-property-files'
@@ -1101,14 +1119,14 @@ def FinalizeMetadata(metadata, input_file, output_file):
     input_file: The input ZIP filename that doesn't contain the package METADATA
         entry yet.
     output_file: The final output ZIP filename.
+    needed_property_files: The list of PropertyFiles' to be generated.
   """
   output_zip = zipfile.ZipFile(
       input_file, 'a', compression=zipfile.ZIP_DEFLATED)
 
-  property_files = StreamingPropertyFiles()
-
   # Write the current metadata entry with placeholders.
-  metadata['ota-streaming-property-files'] = property_files.Compute(output_zip)
+  for property_files in needed_property_files:
+    metadata[property_files.name] = property_files.Compute(output_zip)
   WriteMetadata(metadata, output_zip)
   common.ZipClose(output_zip)
 
@@ -1122,14 +1140,14 @@ def FinalizeMetadata(metadata, input_file, output_file):
 
   # Open the signed zip. Compute the final metadata that's needed for streaming.
   with zipfile.ZipFile(prelim_signing, 'r') as prelim_signing_zip:
-    expected_length = len(metadata['ota-streaming-property-files'])
-    metadata['ota-streaming-property-files'] = property_files.Finalize(
-        prelim_signing_zip, expected_length)
+    for property_files in needed_property_files:
+      metadata[property_files.name] = property_files.Finalize(
+          prelim_signing_zip, len(metadata[property_files.name]))
 
   # Replace the METADATA entry.
   common.ZipDelete(prelim_signing, METADATA_NAME)
-  output_zip = zipfile.ZipFile(prelim_signing, 'a',
-                               compression=zipfile.ZIP_DEFLATED)
+  output_zip = zipfile.ZipFile(
+      prelim_signing, 'a', compression=zipfile.ZIP_DEFLATED)
   WriteMetadata(metadata, output_zip)
   common.ZipClose(output_zip)
 
@@ -1138,8 +1156,8 @@ def FinalizeMetadata(metadata, input_file, output_file):
 
   # Reopen the final signed zip to double check the streaming metadata.
   with zipfile.ZipFile(output_file, 'r') as output_zip:
-    property_files.Verify(
-        output_zip, metadata['ota-streaming-property-files'].strip())
+    for property_files in needed_property_files:
+      property_files.Verify(output_zip, metadata[property_files.name].strip())
 
 
 def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_zip):
@@ -1555,7 +1573,10 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # FinalizeMetadata().
   common.ZipClose(output_zip)
 
-  FinalizeMetadata(metadata, staging_file, output_file)
+  needed_property_files = (
+      StreamingPropertyFiles(),
+  )
+  FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
 
 
 def main(argv):
