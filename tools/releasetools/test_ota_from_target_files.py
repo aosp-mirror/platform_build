@@ -24,8 +24,8 @@ import zipfile
 import common
 import test_utils
 from ota_from_target_files import (
-    _LoadOemDicts, AbOtaPropertyFiles, BuildInfo, GetPackageMetadata,
-    GetTargetFilesZipForSecondaryImages,
+    _LoadOemDicts, AbOtaPropertyFiles, BuildInfo, FinalizeMetadata,
+    GetPackageMetadata, GetTargetFilesZipForSecondaryImages,
     GetTargetFilesZipWithoutPostinstallConfig, NonAbOtaPropertyFiles,
     Payload, PayloadSigner, POSTINSTALL_CONFIG, PropertyFiles,
     StreamingPropertyFiles, WriteFingerprintAssertion)
@@ -373,11 +373,22 @@ class OtaFromTargetFilesTest(unittest.TestCase):
   }
 
   def setUp(self):
+    self.testdata_dir = test_utils.get_testdata_dir()
+    self.assertTrue(os.path.exists(self.testdata_dir))
+
     # Reset the global options as in ota_from_target_files.py.
     common.OPTIONS.incremental_source = None
     common.OPTIONS.downgrade = False
     common.OPTIONS.timestamp = False
     common.OPTIONS.wipe_user_data = False
+    common.OPTIONS.no_signing = False
+    common.OPTIONS.package_key = os.path.join(self.testdata_dir, 'testkey')
+    common.OPTIONS.key_passwords = {
+        common.OPTIONS.package_key : None,
+    }
+
+    common.OPTIONS.search_path = test_utils.get_search_path()
+    self.assertIsNotNone(common.OPTIONS.search_path)
 
   def tearDown(self):
     common.Cleanup()
@@ -590,6 +601,68 @@ class OtaFromTargetFilesTest(unittest.TestCase):
     with zipfile.ZipFile(target_file) as verify_zip:
       self.assertNotIn(POSTINSTALL_CONFIG, verify_zip.namelist())
 
+  def _test_FinalizeMetadata(self, large_entry=False):
+    entries = [
+        'required-entry1',
+        'required-entry2',
+    ]
+    zip_file = PropertyFilesTest.construct_zip_package(entries)
+    # Add a large entry of 1 GiB if requested.
+    if large_entry:
+      with zipfile.ZipFile(zip_file, 'a') as zip_fp:
+        zip_fp.writestr(
+            # Using 'zoo' so that the entry stays behind others after signing.
+            'zoo',
+            'A' * 1024 * 1024 * 1024,
+            zipfile.ZIP_STORED)
+
+    metadata = {}
+    output_file = common.MakeTempFile(suffix='.zip')
+    needed_property_files = (
+        TestPropertyFiles(),
+    )
+    FinalizeMetadata(metadata, zip_file, output_file, needed_property_files)
+    self.assertIn('ota-test-property-files', metadata)
+
+  def test_FinalizeMetadata(self):
+    self._test_FinalizeMetadata()
+
+  def test_FinalizeMetadata_withNoSigning(self):
+    common.OPTIONS.no_signing = True
+    self._test_FinalizeMetadata()
+
+  def test_FinalizeMetadata_largeEntry(self):
+    self._test_FinalizeMetadata(large_entry=True)
+
+  def test_FinalizeMetadata_largeEntry_withNoSigning(self):
+    common.OPTIONS.no_signing = True
+    self._test_FinalizeMetadata(large_entry=True)
+
+  def test_FinalizeMetadata_insufficientSpace(self):
+    entries = [
+        'required-entry1',
+        'required-entry2',
+        'optional-entry1',
+        'optional-entry2',
+    ]
+    zip_file = PropertyFilesTest.construct_zip_package(entries)
+    with zipfile.ZipFile(zip_file, 'a') as zip_fp:
+      zip_fp.writestr(
+          # 'foo-entry1' will appear ahead of all other entries (in alphabetical
+          # order) after the signing, which will in turn trigger the
+          # InsufficientSpaceException and an automatic retry.
+          'foo-entry1',
+          'A' * 1024 * 1024,
+          zipfile.ZIP_STORED)
+
+    metadata = {}
+    needed_property_files = (
+        TestPropertyFiles(),
+    )
+    output_file = common.MakeTempFile(suffix='.zip')
+    FinalizeMetadata(metadata, zip_file, output_file, needed_property_files)
+    self.assertIn('ota-test-property-files', metadata)
+
 
 class TestPropertyFiles(PropertyFiles):
   """A class that extends PropertyFiles for testing purpose."""
@@ -609,11 +682,14 @@ class TestPropertyFiles(PropertyFiles):
 
 class PropertyFilesTest(unittest.TestCase):
 
+  def setUp(self):
+    common.OPTIONS.no_signing = False
+
   def tearDown(self):
     common.Cleanup()
 
   @staticmethod
-  def _construct_zip_package(entries):
+  def construct_zip_package(entries):
     zip_file = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(zip_file, 'w') as zip_fp:
       for entry in entries:
@@ -647,7 +723,7 @@ class PropertyFilesTest(unittest.TestCase):
         'required-entry1',
         'required-entry2',
     )
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
@@ -663,7 +739,7 @@ class PropertyFilesTest(unittest.TestCase):
         'optional-entry1',
         'optional-entry2',
     )
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
@@ -676,7 +752,7 @@ class PropertyFilesTest(unittest.TestCase):
     entries = (
         'required-entry2',
     )
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       self.assertRaises(KeyError, property_files.Compute, zip_fp)
@@ -687,7 +763,7 @@ class PropertyFilesTest(unittest.TestCase):
         'required-entry2',
         'META-INF/com/android/metadata',
     ]
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       # pylint: disable=protected-access
@@ -710,7 +786,7 @@ class PropertyFilesTest(unittest.TestCase):
         'optional-entry2',
         'META-INF/com/android/metadata',
     )
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
@@ -725,7 +801,7 @@ class PropertyFilesTest(unittest.TestCase):
 
       # Or pass in insufficient length.
       self.assertRaises(
-          AssertionError,
+          PropertyFiles.InsufficientSpaceException,
           property_files.Finalize,
           zip_fp,
           raw_length - 1)
@@ -745,7 +821,7 @@ class PropertyFilesTest(unittest.TestCase):
         'optional-entry2',
         'META-INF/com/android/metadata',
     )
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = TestPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
@@ -787,7 +863,7 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
         'care_map.txt',
         'compatibility.zip',
     )
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
@@ -804,7 +880,7 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
         'compatibility.zip',
         'META-INF/com/android/metadata',
     ]
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       # pylint: disable=protected-access
@@ -827,7 +903,7 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
         'compatibility.zip',
         'META-INF/com/android/metadata',
     )
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = StreamingPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       # First get the raw metadata string (i.e. without padding space).
@@ -923,8 +999,8 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
       self.assertEqual(verify_fp.read(), metadata_signature)
 
   @staticmethod
-  def _construct_zip_package_withValidPayload(with_metadata=False):
-    # Cannot use _construct_zip_package() since we need a "valid" payload.bin.
+  def construct_zip_package_withValidPayload(with_metadata=False):
+    # Cannot use construct_zip_package() since we need a "valid" payload.bin.
     target_file = construct_target_files()
     payload = Payload()
     payload.Generate(target_file)
@@ -951,7 +1027,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
     return zip_file
 
   def test_Compute(self):
-    zip_file = self._construct_zip_package_withValidPayload()
+    zip_file = self.construct_zip_package_withValidPayload()
     property_files = AbOtaPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
@@ -964,7 +1040,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
         zip_file, tokens, ('care_map.txt', 'compatibility.zip'))
 
   def test_Finalize(self):
-    zip_file = self._construct_zip_package_withValidPayload(with_metadata=True)
+    zip_file = self.construct_zip_package_withValidPayload(with_metadata=True)
     property_files = AbOtaPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       # pylint: disable=protected-access
@@ -980,7 +1056,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
         zip_file, tokens, ('care_map.txt', 'compatibility.zip'))
 
   def test_Verify(self):
-    zip_file = self._construct_zip_package_withValidPayload(with_metadata=True)
+    zip_file = self.construct_zip_package_withValidPayload(with_metadata=True)
     property_files = AbOtaPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       # pylint: disable=protected-access
@@ -1001,7 +1077,7 @@ class NonAbOtaPropertyFilesTest(PropertyFilesTest):
 
   def test_Compute(self):
     entries = ()
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = NonAbOtaPropertyFiles()
     with zipfile.ZipFile(zip_file) as zip_fp:
       property_files_string = property_files.Compute(zip_fp)
@@ -1014,7 +1090,7 @@ class NonAbOtaPropertyFilesTest(PropertyFilesTest):
     entries = [
         'META-INF/com/android/metadata',
     ]
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = NonAbOtaPropertyFiles()
     with zipfile.ZipFile(zip_file) as zip_fp:
       # pylint: disable=protected-access
@@ -1032,7 +1108,7 @@ class NonAbOtaPropertyFilesTest(PropertyFilesTest):
     entries = (
         'META-INF/com/android/metadata',
     )
-    zip_file = self._construct_zip_package(entries)
+    zip_file = self.construct_zip_package(entries)
     property_files = NonAbOtaPropertyFiles()
     with zipfile.ZipFile(zip_file) as zip_fp:
       # pylint: disable=protected-access
