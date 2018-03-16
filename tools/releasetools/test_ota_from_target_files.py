@@ -17,13 +17,14 @@
 import copy
 import os
 import os.path
+import subprocess
 import unittest
 import zipfile
 
 import common
 import test_utils
 from ota_from_target_files import (
-    _LoadOemDicts, BuildInfo, GetPackageMetadata,
+    _LoadOemDicts, AbOtaPropertyFiles, BuildInfo, GetPackageMetadata,
     GetTargetFilesZipForSecondaryImages,
     GetTargetFilesZipWithoutPostinstallConfig,
     Payload, PayloadSigner, POSTINSTALL_CONFIG, PropertyFiles,
@@ -840,6 +841,153 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
       # Or raise on verification failure.
       self.assertRaises(
           AssertionError, property_files.Verify, zip_fp, raw_metadata + 'x')
+
+
+class AbOtaPropertyFilesTest(PropertyFilesTest):
+  """Additional sanity checks specialized for AbOtaPropertyFiles."""
+
+  # The size for payload and metadata signature size.
+  SIGNATURE_SIZE = 256
+
+  def setUp(self):
+    self.testdata_dir = test_utils.get_testdata_dir()
+    self.assertTrue(os.path.exists(self.testdata_dir))
+
+    common.OPTIONS.wipe_user_data = False
+    common.OPTIONS.payload_signer = None
+    common.OPTIONS.payload_signer_args = None
+    common.OPTIONS.package_key = os.path.join(self.testdata_dir, 'testkey')
+    common.OPTIONS.key_passwords = {
+        common.OPTIONS.package_key : None,
+    }
+
+  def test_init(self):
+    property_files = AbOtaPropertyFiles()
+    self.assertEqual('ota-property-files', property_files.name)
+    self.assertEqual(
+        (
+            'payload.bin',
+            'payload_properties.txt',
+        ),
+        property_files.required)
+    self.assertEqual(
+        (
+            'care_map.txt',
+            'compatibility.zip',
+        ),
+        property_files.optional)
+
+  def test_GetPayloadMetadataOffsetAndSize(self):
+    target_file = construct_target_files()
+    payload = Payload()
+    payload.Generate(target_file)
+
+    payload_signer = PayloadSigner()
+    payload.Sign(payload_signer)
+
+    output_file = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(output_file, 'w') as output_zip:
+      payload.WriteToZip(output_zip)
+
+    # Find out the payload metadata offset and size.
+    property_files = AbOtaPropertyFiles()
+    with zipfile.ZipFile(output_file) as input_zip:
+      # pylint: disable=protected-access
+      payload_offset, metadata_total = (
+          property_files._GetPayloadMetadataOffsetAndSize(input_zip))
+
+    # Read in the metadata signature directly.
+    with open(output_file, 'rb') as verify_fp:
+      verify_fp.seek(payload_offset + metadata_total - self.SIGNATURE_SIZE)
+      metadata_signature = verify_fp.read(self.SIGNATURE_SIZE)
+
+    # Now we extract the metadata hash via brillo_update_payload script, which
+    # will serve as the oracle result.
+    payload_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
+    metadata_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
+    cmd = ['brillo_update_payload', 'hash',
+           '--unsigned_payload', payload.payload_file,
+           '--signature_size', str(self.SIGNATURE_SIZE),
+           '--metadata_hash_file', metadata_sig_file,
+           '--payload_hash_file', payload_sig_file]
+    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdoutdata, _ = proc.communicate()
+    self.assertEqual(
+        0, proc.returncode,
+        'Failed to run brillo_update_payload: {}'.format(stdoutdata))
+
+    signed_metadata_sig_file = payload_signer.Sign(metadata_sig_file)
+
+    # Finally we can compare the two signatures.
+    with open(signed_metadata_sig_file, 'rb') as verify_fp:
+      self.assertEqual(verify_fp.read(), metadata_signature)
+
+  @staticmethod
+  def _construct_zip_package_withValidPayload(with_metadata=False):
+    # Cannot use _construct_zip_package() since we need a "valid" payload.bin.
+    target_file = construct_target_files()
+    payload = Payload()
+    payload.Generate(target_file)
+
+    payload_signer = PayloadSigner()
+    payload.Sign(payload_signer)
+
+    zip_file = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(zip_file, 'w') as zip_fp:
+      # 'payload.bin',
+      payload.WriteToZip(zip_fp)
+
+      # Other entries.
+      entries = ['care_map.txt', 'compatibility.zip']
+
+      # Put META-INF/com/android/metadata if needed.
+      if with_metadata:
+        entries.append('META-INF/com/android/metadata')
+
+      for entry in entries:
+        zip_fp.writestr(
+            entry, entry.replace('.', '-').upper(), zipfile.ZIP_STORED)
+
+    return zip_file
+
+  def test_Compute(self):
+    zip_file = self._construct_zip_package_withValidPayload()
+    property_files = AbOtaPropertyFiles()
+    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+      property_files_string = property_files.Compute(zip_fp)
+
+    tokens = self._parse_property_files_string(property_files_string)
+    # "6" indcludes the four entries above, one metadata entry, and one entry
+    # for payload-metadata.bin.
+    self.assertEqual(6, len(tokens))
+    self._verify_entries(
+        zip_file, tokens, ('care_map.txt', 'compatibility.zip'))
+
+  def test_Finalize(self):
+    zip_file = self._construct_zip_package_withValidPayload(with_metadata=True)
+    property_files = AbOtaPropertyFiles()
+    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+      # pylint: disable=protected-access
+      raw_metadata = property_files._GetPropertyFilesString(
+          zip_fp, reserve_space=False)
+      property_files_string = property_files.Finalize(zip_fp, len(raw_metadata))
+
+    tokens = self._parse_property_files_string(property_files_string)
+    # "6" indcludes the four entries above, one metadata entry, and one entry
+    # for payload-metadata.bin.
+    self.assertEqual(6, len(tokens))
+    self._verify_entries(
+        zip_file, tokens, ('care_map.txt', 'compatibility.zip'))
+
+  def test_Verify(self):
+    zip_file = self._construct_zip_package_withValidPayload(with_metadata=True)
+    property_files = AbOtaPropertyFiles()
+    with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+      # pylint: disable=protected-access
+      raw_metadata = property_files._GetPropertyFilesString(
+          zip_fp, reserve_space=False)
+
+      property_files.Verify(zip_fp, raw_metadata)
 
 
 class PayloadSignerTest(unittest.TestCase):
