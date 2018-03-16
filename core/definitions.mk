@@ -2079,6 +2079,15 @@ $(hide) $(AAPT2) compile -o $@ $(addprefix --dir ,$(PRIVATE_SOURCE_RES_DIRS)) \
   $(PRIVATE_AAPT2_CFLAGS) --legacy
 endef
 
+# TODO(b/74574557): use aapt2 compile --zip if it gets implemented
+define aapt2-compile-resource-zips
+@mkdir -p $(dir $@)
+rm -rf $@.contents
+mkdir -p $@.contents
+$(EXTRACT_SRCJARS) $@.contents $@.list $(PRIVATE_SOURCE_RES_ZIPS)
+$(hide) $(AAPT2) compile -o $@ --dir $@.tmp $(PRIVATE_AAPT2_CFLAGS) --legacy
+endef
+
 # Set up rule to compile one resource file with aapt2.
 # Must be called with $(eval).
 # $(1): the source file
@@ -2222,26 +2231,18 @@ $(call fetch-additional-java-source,$@.tmp)
 $(hide) tr ' ' '\n' < $@.tmp | $(NORMALIZE_PATH) | sort -u > $@
 endef
 
-# $(1): sharding number.
-# $(2): Java source files paths.
-define save-sharded-java-source-list
-$(java_source_list_file).shard.$(1): $(2) $$(NORMALIZE_PATH)
-	@echo "shard java source list: $$@"
-	rm -f $$@
-	$$(call dump-words-to-file,$(2),$$@.tmp)
-	$(hide) tr ' ' '\n' < $$@.tmp | $$(NORMALIZE_PATH) | sort -u > $$@
-endef
-
 # Common definition to invoke javac on the host and target.
 #
 # $(1): javac
 # $(2): classpath_libs
 define compile-java
 $(hide) rm -f $@
-$(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR)
+$(hide) rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR) $(if $(PRIVATE_SRCJARS),$(PRIVATE_SRCJAR_INTERMEDIATES_DIR))
 $(hide) mkdir -p $(dir $@)
-$(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR)
-$(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
+$(hide) mkdir -p $(PRIVATE_CLASS_INTERMEDIATES_DIR) $(PRIVATE_ANNO_INTERMEDIATES_DIR) $(if $(PRIVATE_SRCJARS),$(PRIVATE_SRCJAR_INTERMEDIATES_DIR))
+$(if $(PRIVATE_SRCJARS),\
+    $(EXTRACT_SRCJARS) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) $(PRIVATE_SRCJAR_LIST_FILE) $(PRIVATE_SRCJARS))
+$(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) $(if $(PRIVATE_SRCJARS),-o -s $(PRIVATE_SRCJAR_LIST_FILE) )] ; then \
     $(SOONG_JAVAC_WRAPPER) $(JAVAC_WRAPPER) $(1) -encoding UTF-8 \
     $(if $(findstring true,$(PRIVATE_WARNINGS_ENABLE)),$(xlint_unchecked),) \
     $(if $(PRIVATE_USE_SYSTEM_MODULES), \
@@ -2260,6 +2261,7 @@ $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
     -d $(PRIVATE_CLASS_INTERMEDIATES_DIR) -s $(PRIVATE_ANNO_INTERMEDIATES_DIR) \
     $(PRIVATE_JAVACFLAGS) \
     \@$(PRIVATE_JAVA_SOURCE_LIST) \
+    $(if $(PRIVATE_SRCJARS),\@$(PRIVATE_SRCJAR_LIST_FILE)) \
     || ( rm -rf $(PRIVATE_CLASS_INTERMEDIATES_DIR) ; exit 41 ) \
 fi
 $(if $(PRIVATE_JAVA_LAYERS_FILE), $(hide) build/make/tools/java-layers.py \
@@ -2280,51 +2282,18 @@ $(hide) $(JAR) -cf $@ $(call jar-args-sorted-files-in-directory,$(PRIVATE_CLASS_
 $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 endef
 
-# $(1): Javac output jar name.
-# $(2): Java source list file.
-# $(3): Java header libs.
-# $(4): Javac sharding number.
-# $(5): Javac sources deps (the arg may neeed $$ in case of containing '#')
-define create-classes-full-debug.jar
-$(1): PRIVATE_JAVACFLAGS := $$(LOCAL_JAVACFLAGS) $$(annotation_processor_flags)
-$(1): PRIVATE_JAR_EXCLUDE_FILES := $$(LOCAL_JAR_EXCLUDE_FILES)
-$(1): PRIVATE_JAR_PACKAGES := $$(LOCAL_JAR_PACKAGES)
-$(1): PRIVATE_JAR_EXCLUDE_PACKAGES := $$(LOCAL_JAR_EXCLUDE_PACKAGES)
-$(1): PRIVATE_DONT_DELETE_JAR_META_INF := $$(LOCAL_DONT_DELETE_JAR_META_INF)
-$(1): PRIVATE_JAVA_SOURCE_LIST := $(2)
-$(1): PRIVATE_ALL_JAVA_HEADER_LIBRARIES := $(3)
-$(1): PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes$(4)
-$(1): PRIVATE_ANNO_INTERMEDIATES_DIR := $(intermediates.COMMON)/anno$(4)
-$(1): \
-    $(2) \
-    $(3) \
-    $(5) \
-    $$(full_java_bootclasspath_libs) \
-    $$(full_java_system_modules_deps) \
-    $$(layers_file) \
-    $$(annotation_processor_deps) \
-    $$(NORMALIZE_PATH) \
-    $$(JAR_ARGS) \
-    | $$(SOONG_JAVAC_WRAPPER)
-	@echo "Target Java: $$@ ($$(PRIVATE_CLASS_INTERMEDIATES_DIR))"
-	$$(call compile-java,$$(TARGET_JAVAC),$$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))
-endef
-
 define transform-java-to-header.jar
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Turbine: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
 @rm -rf $(dir $@)/classes-turbine
 @mkdir $(dir $@)/classes-turbine
-$(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) ] ; then \
+$(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) -o -n "$(PRIVATE_SRCJARS)" ] ; then \
     $(JAVA) -jar $(TURBINE) \
     --output $@.premerged --temp_dir $(dir $@)/classes-turbine \
-    --sources \@$(PRIVATE_JAVA_SOURCE_LIST) \
-    --javacopts $(PRIVATE_JAVACFLAGS) $(COMMON_JDK_FLAGS) \
-    $(addprefix --bootclasspath ,$(strip \
-         $(call normalize-path-list,$(PRIVATE_BOOTCLASSPATH)) \
-         $(PRIVATE_EMPTY_BOOTCLASSPATH))) \
-    $(addprefix --classpath ,$(strip \
-        $(call normalize-path-list,$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES)))) \
+    --sources \@$(PRIVATE_JAVA_SOURCE_LIST) --source_jars $(PRIVATE_SRCJARS) \
+    --javacopts $(PRIVATE_JAVACFLAGS) $(COMMON_JDK_FLAGS) -- \
+    $(addprefix --bootclasspath ,$(strip $(PRIVATE_BOOTCLASSPATH))) \
+    $(addprefix --classpath ,$(strip $(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))) \
     || ( rm -rf $(dir $@)/classes-turbine ; exit 41 ) && \
     $(MERGE_ZIPS) -j --ignore-duplicates -stripDir META-INF $@.tmp $@.premerged $(call reverse-list,$(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES)) ; \
 else \

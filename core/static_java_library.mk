@@ -131,6 +131,8 @@ $(intermediates.COMMON)/export_proguard_flags: $(import_proguard_flag_files) $(a
 import_proguard_flag_files :=
 endif
 
+include $(BUILD_SYSTEM)/aapt_flags.mk
+
 # add --non-constant-id to prevent inlining constants.
 # AAR needs text symbol file R.txt.
 ifdef LOCAL_USE_AAPT2
@@ -188,7 +190,6 @@ endif  # LOCAL_USE_AAPT2
 
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
 $(java_source_list_file): $(R_file_stamp)
-$(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(R_file_stamp)))
 $(full_classes_compiled_jar): $(R_file_stamp)
 $(full_classes_turbine_jar): $(R_file_stamp)
 
