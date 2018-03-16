@@ -99,3 +99,5 @@ BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
 # Enable A/B update
 TARGET_NO_RECOVERY := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+
+BOARD_VNDK_VERSION := current
