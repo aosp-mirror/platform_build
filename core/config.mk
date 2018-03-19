@@ -553,7 +553,7 @@ endif
 
 # Default R8 behavior when USE_R8 is not specified.
 ifndef USE_R8
-  USE_R8 := false
+  USE_R8 := true
 endif
 
 #
