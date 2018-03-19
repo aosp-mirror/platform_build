@@ -22,6 +22,30 @@
       "revId": "b3a698e6c39092ee0a4622673c83df6e2caa15b4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66a841b7_b5c69e27",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1576,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-03-19T18:30:17Z",
+      "side": 1,
+      "message": "Yeah, you\u0027d need to use a separate variable that feeds into the dependency list and PRIVATE_ variable.",
+      "parentUuid": "f75c0705_18fdb65d",
+      "range": {
+        "startLine": 1576,
+        "startChar": 2,
+        "endLine": 1576,
+        "endChar": 22
+      },
+      "revId": "b3a698e6c39092ee0a4622673c83df6e2caa15b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
