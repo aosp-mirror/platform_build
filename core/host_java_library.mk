@@ -86,7 +86,7 @@ $(full_classes_compiled_jar): \
     $(NORMALIZE_PATH) \
     $(ZIPTIME) \
     $(JAR_ARGS) \
-    $(EXTRACT_SRCJARS) \
+    $(ZIPSYNC) \
     | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-package)
 	$(remove-timestamps-from-package)
