@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f75c0705_18fdb65d",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1576,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-03-19T17:55:58Z",
+      "side": 1,
+      "message": "Found using target-specific variable doesn\u0027t trigger a dependency on the var.\n\nPS6 updated this part to explicitly depend on both of imgdiff and bsdiff tools (as it was before this CL).\n\n(Otherwise it seems we need to use non-PRIVATE variable.)",
+      "range": {
+        "startLine": 1576,
+        "startChar": 2,
+        "endLine": 1576,
+        "endChar": 22
+      },
+      "revId": "b3a698e6c39092ee0a4622673c83df6e2caa15b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
