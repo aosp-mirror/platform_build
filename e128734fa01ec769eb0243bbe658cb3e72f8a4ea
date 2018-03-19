@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9379c3b6_8e15296d",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 15
+      },
+      "lineNbr": 1889,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-03-19T15:42:47Z",
+      "side": 0,
+      "message": "This is no-op, since ZipFile with \u0027w\u0027 will truncate the file.",
+      "range": {
+        "startLine": 1888,
+        "startChar": 4,
+        "endLine": 1889,
+        "endChar": 24
+      },
+      "revId": "e128734fa01ec769eb0243bbe658cb3e72f8a4ea",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
