@@ -39,13 +39,13 @@ ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
     $(intermediates.COMMON)/jacoco-report-classes.jar)
 endif
 
-ifneq ($(TURBINE_DISABLED),false)
+ifneq ($(TURBINE_ENABLED),false)
 ifdef LOCAL_SOONG_HEADER_JAR
 $(eval $(call copy-one-file,$(LOCAL_SOONG_HEADER_JAR),$(full_classes_header_jar)))
 else
 $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
 endif
-endif # TURBINE_DISABLED != false
+endif # TURBINE_ENABLED != false
 
 ifdef LOCAL_SOONG_DEX_JAR
   ifndef LOCAL_IS_HOST_MODULE
