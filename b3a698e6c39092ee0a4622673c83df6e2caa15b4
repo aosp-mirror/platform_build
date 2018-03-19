@@ -70,6 +70,30 @@
       "revId": "b3a698e6c39092ee0a4622673c83df6e2caa15b4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "91a28f98_a14bed21",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1576,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-03-19T19:48:43Z",
+      "side": 1,
+      "message": "$(diff_tool) inside the rule is evaluated much later, there\u0027s a chance that someone else could overwrite that global variable before it\u0027s evaluated. PRIVATE_*-type variables fix that problem, keeping a local copy of it.",
+      "parentUuid": "9fa1c07a_5bb7cea0",
+      "range": {
+        "startLine": 1576,
+        "startChar": 2,
+        "endLine": 1576,
+        "endChar": 22
+      },
+      "revId": "b3a698e6c39092ee0a4622673c83df6e2caa15b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
