@@ -279,19 +279,39 @@ $(my_built_dm): $(my_copied_vdex) $(ZIPTIME)
 $(eval $(call copy-one-file,$(my_built_dm),$(my_installed_dm)))
 endif
 
-# PRODUCT_SYSTEM_SERVER_DEBUG_INFO overrides WITH_DEXPREOPT_DEBUG_INFO.
-my_system_server_debug_info := $(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)
-ifeq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
-# Only enable for non-eng builds.
-ifeq (,$(my_system_server_debug_info))
-my_system_server_debug_info := true
-endif
+# By default, emit debug info.
+my_dexpreopt_debug_info := true
+# If the global setting suppresses mini-debug-info, disable it.
+ifeq (false,$(WITH_DEXPREOPT_DEBUG_INFO))
+  my_dexpreopt_debug_info := false
 endif
 
-ifeq (true, $(my_system_server_debug_info))
-  ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
-    LOCAL_DEX_PREOPT_FLAGS += --generate-mini-debug-info
+# PRODUCT_SYSTEM_SERVER_DEBUG_INFO overrides WITH_DEXPREOPT_DEBUG_INFO.
+# PRODUCT_OTHER_JAVA_DEBUG_INFO overrides WITH_DEXPREOPT_DEBUG_INFO.
+ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
+  ifeq (true,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO))
+    my_dexpreopt_debug_info := true
+  else ifeq (false,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO))
+    my_dexpreopt_debug_info := false
   endif
+else
+  ifeq (true,$(PRODUCT_OTHER_JAVA_DEBUG_INFO))
+    my_dexpreopt_debug_info := true
+  else ifeq (false,$(PRODUCT_OTHER_JAVA_DEBUG_INFO))
+    my_dexpreopt_debug_info := false
+  endif
+endif
+
+# Never enable on eng.
+ifeq (eng,$(filter eng, $(TARGET_BUILD_VARIANT)))
+my_dexpreopt_debug_info := false
+endif
+
+# Add dex2oat flag for debug-info/no-debug-info.
+ifeq (true,$(my_dexpreopt_debug_info))
+  LOCAL_DEX_PREOPT_FLAGS += --generate-mini-debug-info
+else ifeq (false,$(my_dexpreopt_debug_info))
+  LOCAL_DEX_PREOPT_FLAGS += --no-generate-mini-debug-info
 endif
 
 # Set the compiler reason to 'prebuilt' to identify the oat files produced
