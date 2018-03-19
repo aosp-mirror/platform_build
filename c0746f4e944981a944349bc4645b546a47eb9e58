@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a4ff257_2eb56588",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1053,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-03-19T18:43:03Z",
+      "side": 0,
+      "message": "the msg is no longer printed after the change.",
+      "range": {
+        "startLine": 1053,
+        "startChar": 8,
+        "endLine": 1053,
+        "endChar": 40
+      },
+      "revId": "c0746f4e944981a944349bc4645b546a47eb9e58",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
