@@ -46,6 +46,30 @@
       "revId": "b3a698e6c39092ee0a4622673c83df6e2caa15b4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9fa1c07a_5bb7cea0",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1576,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-03-19T18:46:04Z",
+      "side": 1,
+      "message": "In that case it seems I don\u0027t need the PRIVATE_ var, but by using the variable directly (which is essentially PS4)? Or is there additional benefit with another PRIVATE_ var?\n\nifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)\ndiff_tool :\u003d $(HOST_OUT_EXECUTABLES)/bsdiff\nelse\ndiff_tool :\u003d $(HOST_OUT_EXECUTABLES)/imgdiff\nendif\n$(RECOVERY_FROM_BOOT_PATCH): \\\n\u003ctab\u003e\u003ctab\u003e... \\\n\u003ctab\u003e\u003ctab\u003e$(diff_tool)\n    $(diff_tool) $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_RECOVERYIMAGE_TARGET) $@",
+      "parentUuid": "66a841b7_b5c69e27",
+      "range": {
+        "startLine": 1576,
+        "startChar": 2,
+        "endLine": 1576,
+        "endChar": 22
+      },
+      "revId": "b3a698e6c39092ee0a4622673c83df6e2caa15b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
