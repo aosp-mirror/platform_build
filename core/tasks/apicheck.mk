@@ -54,7 +54,7 @@ $(eval $(call check-api, \
     -error 16 -error 17 -error 18 , \
     cat $(BUILD_SYSTEM)/apicheck_msg_last.txt, \
     check-public-api, \
-    $(call doc-timestamp-for,api-stubs) \
+    $(OUT_DOCS)/api-stubs-docs-stubs.srcjar \
     ))
 
 # Check that the API we're building hasn't changed from the not-yet-released
@@ -71,7 +71,7 @@ $(eval $(call check-api, \
     -error 25 -error 26 -error 27, \
     cat $(BUILD_SYSTEM)/apicheck_msg_current.txt, \
     check-public-api, \
-    $(call doc-timestamp-for,api-stubs) \
+    $(OUT_DOCS)/api-stubs-docs-stubs.srcjar \
     ))
 
 .PHONY: update-public-api
@@ -100,7 +100,7 @@ $(eval $(call check-api, \
     -error 16 -error 17 -error 18 , \
     cat $(BUILD_SYSTEM)/apicheck_msg_last.txt, \
     check-system-api, \
-    $(call doc-timestamp-for,system-api-stubs) \
+    $(OUT_DOCS)/system-api-stubs-docs-stubs.srcjar \
     ))
 
 # Check that the System API we're building hasn't changed from the not-yet-released
@@ -117,7 +117,7 @@ $(eval $(call check-api, \
     -error 25 -error 26 -error 27, \
     cat $(BUILD_SYSTEM)/apicheck_msg_current.txt, \
     check-system-api, \
-    $(call doc-timestamp-for,system-api-stubs) \
+    $(OUT_DOCS)/system-api-stubs-docs-stubs.srcjar \
     ))
 
 .PHONY: update-system-api
@@ -149,7 +149,7 @@ $(eval $(call check-api, \
     -error 25 -error 26 -error 27, \
     cat $(BUILD_SYSTEM)/apicheck_msg_current.txt, \
     check-test-api, \
-    $(call doc-timestamp-for,test-api-stubs) \
+    $(OUT_DOCS)/test-api-stubs-docs-stubs.srcjar \
     ))
 
 .PHONY: update-test-api
