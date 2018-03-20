@@ -402,8 +402,7 @@ endif  # LOCAL_SDK_VERSION is set
 endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
 ifneq (,$(renderscript_target_api))
 ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
-my_generated_res_dirs := $(rs_generated_res_dir)
-my_generated_res_dirs_deps := $(RenderScript_file_stamp)
+my_generated_res_zips := $(rs_generated_res_zip)
 endif  # renderscript_target_api < 21
 endif  # renderscript_target_api is set
 my_asset_dirs := $(LOCAL_ASSET_DIR)
@@ -431,7 +430,7 @@ $(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := \
 			$(intermediates.COMMON)/public_resources.xml
 $(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
 $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_res_assets)
-$(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT) | $(ACP)
+$(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(rs_generated_res_zip) $(AAPT) | $(ACP)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	@rm -rf $@ && mkdir -p $(dir $@)
 	$(create-resource-java-files)

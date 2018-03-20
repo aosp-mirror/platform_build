@@ -171,15 +171,14 @@ endif  # LOCAL_SDK_VERSION is set
 endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
 ifneq (,$(renderscript_target_api))
 ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
-my_generated_res_dirs := $(rs_generated_res_dir)
-my_generated_res_dirs_deps := $(RenderScript_file_stamp)
+my_generated_res_zips := $(rs_generated_res_zip)
 endif  # renderscript_target_api < 21
 endif  # renderscript_target_api is set
 include $(BUILD_SYSTEM)/aapt2.mk
 $(my_res_package) : $(framework_res_package_export)
 else
 $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_resources)
-$(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export)
+$(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export) $(rs_generated_res_zip)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	$(create-resource-java-files)
 	$(hide) find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name R.java | xargs cat > $@
