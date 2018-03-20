@@ -63,6 +63,7 @@ PRODUCT_PACKAGES += \
     ld.config.txt \
     ld.mc \
     libaaudio \
+    libamidi \
     libOpenMAXAL \
     libOpenSLES \
     libdownmix \
