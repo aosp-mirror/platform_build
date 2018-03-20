@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf23161e_6d7c55d4",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2018-03-20T18:05:47Z",
+      "side": 1,
+      "message": "Could consider wrapping all of this (and below) into a\n\n ifeq(,$(filter --no-generate-minidebug-info,$(LOCAL_DEXPREOPT_FLAGS)))",
+      "range": {
+        "startLine": 282,
+        "startChar": 0,
+        "endLine": 284,
+        "endChar": 54
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
