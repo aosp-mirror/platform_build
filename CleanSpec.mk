@@ -475,6 +475,11 @@ $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/*_intermed
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/*_intermediates/java-source-list)
 $(call add-clean-step, rm -rf $(OUT_DOCS)/*-timestamp)
 
+$(call add-clean-step, rm -rf $(TARGET_COMMON_OUT_ROOT)/obj_asan/APPS/*_intermediates/src)
+$(call add-clean-step, rm -rf $(TARGET_COMMON_OUT_ROOT)/obj_asan/JAVA_LIBRARIES/*_intermediates/src)
+$(call add-clean-step, rm -rf $(TARGET_COMMON_OUT_ROOT)/obj_asan/APPS/*_intermediates/java-source-list)
+$(call add-clean-step, rm -rf $(TARGET_COMMON_OUT_ROOT)/obj_asan/JAVA_LIBRARIES/*_intermediates/java-source-list)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
