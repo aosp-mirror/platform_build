@@ -78,12 +78,17 @@ ifneq ($(my_apk_split_configs),)
 $(my_res_package): PRIVATE_AAPT_FLAGS += $(addprefix --split ,$(join $(built_apk_splits),$(addprefix :,$(my_apk_split_configs))))
 endif
 
+my_srcjar := $(intermediates.COMMON)/aapt2.srcjar
+LOCAL_SRCJARS += $(my_srcjar)
+
 $(my_res_package): PRIVATE_RES_FLAT := $(my_res_resources_flat)
 $(my_res_package): PRIVATE_OVERLAY_FLAT := $(my_static_library_resources) $(my_resources_flata) $(my_overlay_resources_flat)
 $(my_res_package): PRIVATE_SHARED_ANDROID_LIBRARIES := $(my_shared_library_resources)
 $(my_res_package): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
 $(my_res_package): PRIVATE_ASSET_DIRS := $(my_asset_dirs)
-$(my_res_package): .KATI_IMPLICIT_OUTPUTS :=
+$(my_res_package): PRIVATE_JAVA_GEN_DIR := $(intermediates.COMMON)/aapt2
+$(my_res_package): PRIVATE_SRCJAR := $(my_srcjar)
+$(my_res_package): .KATI_IMPLICIT_OUTPUTS := $(my_srcjar)
 
 ifdef R_file_stamp
 $(my_res_package): PRIVATE_R_FILE_STAMP := $(R_file_stamp)
@@ -108,12 +113,12 @@ $(my_res_package): $(full_android_manifest) $(my_static_library_resources) $(my_
 $(my_res_package): $(my_full_asset_paths)
 $(my_res_package): $(my_res_resources_flat) $(my_overlay_resources_flat) \
   $(my_resources_flata) $(my_static_library_resources) \
-  $(AAPT2)
+  $(AAPT2) $(SOONG_ZIP)
 	@echo "AAPT2 link $@"
 	$(call aapt2-link)
 ifdef R_file_stamp
 	@rm -f $(PRIVATE_R_FILE_STAMP)
-	$(call find-generated-R.java,$(PRIVATE_R_FILE_STAMP))
+	$(call find-generated-R.java,$(PRIVATE_JAVA_GEN_DIR),$(PRIVATE_R_FILE_STAMP))
 endif
 ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
 	@rm -f $(PRIVATE_RESOURCE_EXPORT_PACKAGE)
