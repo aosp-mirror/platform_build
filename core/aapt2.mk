@@ -52,7 +52,7 @@ endif
 ifneq ($(my_generated_res_zips),)
 my_zipped_resources_flata := $(my_compiled_res_base_dir)/zip_res.flata
 $(my_zipped_resources_flata): PRIVATE_SOURCE_RES_ZIPS := $(my_generated_res_zips)
-$(my_zipped_resources_flata) : $(my_generated_res_deps) $(AAPT2) $(EXTRACT_SRCJARS)
+$(my_zipped_resources_flata) : $(my_generated_res_deps) $(AAPT2) $(ZIPSYNC)
 	@echo "AAPT2 compile $@ <- $(PRIVATE_SOURCE_RES_ZIPS)"
 	$(call aapt2-compile-resource-zips)
 
