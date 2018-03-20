@@ -26,7 +26,7 @@ import test_utils
 from ota_from_target_files import (
     _LoadOemDicts, AbOtaPropertyFiles, BuildInfo, GetPackageMetadata,
     GetTargetFilesZipForSecondaryImages,
-    GetTargetFilesZipWithoutPostinstallConfig,
+    GetTargetFilesZipWithoutPostinstallConfig, NonAbOtaPropertyFiles,
     Payload, PayloadSigner, POSTINSTALL_CONFIG, PropertyFiles,
     StreamingPropertyFiles, WriteFingerprintAssertion)
 
@@ -983,6 +983,58 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
     zip_file = self._construct_zip_package_withValidPayload(with_metadata=True)
     property_files = AbOtaPropertyFiles()
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
+      # pylint: disable=protected-access
+      raw_metadata = property_files._GetPropertyFilesString(
+          zip_fp, reserve_space=False)
+
+      property_files.Verify(zip_fp, raw_metadata)
+
+
+class NonAbOtaPropertyFilesTest(PropertyFilesTest):
+  """Additional sanity checks specialized for NonAbOtaPropertyFiles."""
+
+  def test_init(self):
+    property_files = NonAbOtaPropertyFiles()
+    self.assertEqual('ota-property-files', property_files.name)
+    self.assertEqual((), property_files.required)
+    self.assertEqual((), property_files.optional)
+
+  def test_Compute(self):
+    entries = ()
+    zip_file = self._construct_zip_package(entries)
+    property_files = NonAbOtaPropertyFiles()
+    with zipfile.ZipFile(zip_file) as zip_fp:
+      property_files_string = property_files.Compute(zip_fp)
+
+    tokens = self._parse_property_files_string(property_files_string)
+    self.assertEqual(1, len(tokens))
+    self._verify_entries(zip_file, tokens, entries)
+
+  def test_Finalize(self):
+    entries = [
+        'META-INF/com/android/metadata',
+    ]
+    zip_file = self._construct_zip_package(entries)
+    property_files = NonAbOtaPropertyFiles()
+    with zipfile.ZipFile(zip_file) as zip_fp:
+      # pylint: disable=protected-access
+      raw_metadata = property_files._GetPropertyFilesString(
+          zip_fp, reserve_space=False)
+      property_files_string = property_files.Finalize(zip_fp, len(raw_metadata))
+    tokens = self._parse_property_files_string(property_files_string)
+
+    self.assertEqual(1, len(tokens))
+    # 'META-INF/com/android/metadata' will be key'd as 'metadata'.
+    entries[0] = 'metadata'
+    self._verify_entries(zip_file, tokens, entries)
+
+  def test_Verify(self):
+    entries = (
+        'META-INF/com/android/metadata',
+    )
+    zip_file = self._construct_zip_package(entries)
+    property_files = NonAbOtaPropertyFiles()
+    with zipfile.ZipFile(zip_file) as zip_fp:
       # pylint: disable=protected-access
       raw_metadata = property_files._GetPropertyFilesString(
           zip_fp, reserve_space=False)
