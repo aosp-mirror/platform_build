@@ -32,6 +32,22 @@ def get_testdata_dir():
   return os.path.join(current_dir, 'testdata')
 
 
+def get_search_path():
+  """Returns the search path that has 'framework/signapk.jar' under."""
+  current_dir = os.path.dirname(os.path.realpath(__file__))
+  for path in (
+      # In relative to 'build/make/tools/releasetools' in the Android source.
+      ['..'] * 4 + ['out', 'host', 'linux-x86'],
+      # Or running the script unpacked from otatools.zip.
+      ['..']):
+    full_path = os.path.realpath(os.path.join(current_dir, *path))
+    signapk_path = os.path.realpath(
+        os.path.join(full_path, 'framework', 'signapk.jar'))
+    if os.path.exists(signapk_path):
+      return full_path
+  return None
+
+
 def construct_sparse_image(chunks):
   """Returns a sparse image file constructed from the given chunks.
 
