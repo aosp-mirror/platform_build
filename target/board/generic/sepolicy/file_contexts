@@ -33,3 +33,7 @@
 /vendor/lib(64)?/lib_renderControl_enc\.so       u:object_r:same_process_hal_file:s0
 /vendor/lib(64)?/libGLESv1_enc\.so       u:object_r:same_process_hal_file:s0
 /vendor/lib(64)?/libGLESv2_enc\.so       u:object_r:same_process_hal_file:s0
+
+# data
+/data/vendor/mediadrm(/.*)?            u:object_r:mediadrm_vendor_data_file:s0
+
