@@ -67,6 +67,14 @@ ifneq ($(HOST_OS),linux)
   my_pack_module_relocations := false
 endif
 
+# Disable relocation_packer and migrate to SHT_RELR sections.
+#
+# Proposal for adding SHT_RELR sections in generic-abi is at
+# https://groups.google.com/forum/#!topic/generic-abi/bX460iggiKg
+#
+# TODO: Remove relocation_packer and associated build logic.
+my_pack_module_relocations := false
+
 ifeq (true,$(my_pack_module_relocations))
 # Pack relocations
 $(relocation_packer_output): $(relocation_packer_input)
