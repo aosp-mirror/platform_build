@@ -274,7 +274,7 @@ endif # EMMA_INSTRUMENT is true
 
 ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
 ifeq (true,$(EMMA_INSTRUMENT_STATIC))
-ifneq ($(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),)
+ifneq ($(LOCAL_SRC_FILES)$(LOCAL_SRCJARS)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),)
 # Only add jacocoagent if the package contains some java code
 LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
 # Exclude jacoco classes from proguard
@@ -364,11 +364,12 @@ $(data_binding_stamp) : $(all_res_assets) $(full_android_manifest) \
 # Make sure the data-binding process happens before javac and generation of R.java.
 $(R_file_stamp): $(data_binding_stamp)
 $(java_source_list_file): $(data_binding_stamp)
-$(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(data_binding_stamp)))
 $(full_classes_compiled_jar): $(data_binding_stamp)
 endif  # LOCAL_DATA_BINDING
 
 resource_export_package :=
+
+include $(BUILD_SYSTEM)/aapt_flags.mk
 
 ifeq ($(need_compile_res),true)
 
@@ -468,12 +469,10 @@ $(LOCAL_BUILT_MODULE): $(R_file_stamp)
 # The R.java file must exist by the time the java source
 # list is generated
 $(java_source_list_file): $(R_file_stamp)
-$(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(R_file_stamp)))
 
 endif  # need_compile_res
 
 framework_res_package_export :=
-framework_res_package_export_deps :=
 
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 # Most packages should link against the resources defined by framework-res.
@@ -485,15 +484,9 @@ else ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VER
 # for released sdk versions, the platform resources were built into android.jar.
 framework_res_package_export := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
-framework_res_package_export_deps := $(framework_res_package_export)
 else # LOCAL_SDK_RES_VERSION
 framework_res_package_export := \
     $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
-# We can't depend directly on the export.apk file; it won't get its
-# PRIVATE_ vars set up correctly if we do.  Instead, depend on the
-# corresponding R.stamp file, which lists the export.apk as a dependency.
-framework_res_package_export_deps := \
-    $(dir $(framework_res_package_export))src/R.stamp
 endif # LOCAL_SDK_RES_VERSION
 endif # LOCAL_NO_STANDARD_LIBRARIES
 
@@ -503,7 +496,7 @@ all_library_res_package_exports := \
         $(call intermediates-dir-for,APPS,$(lib),,COMMON)/package-export.apk)
 
 all_library_res_package_export_deps := \
-    $(framework_res_package_export_deps) \
+    $(framework_res_package_export) \
     $(foreach lib,$(LOCAL_RES_LIBRARIES),\
         $(call intermediates-dir-for,APPS,$(lib),,COMMON)/src/R.stamp)
 $(resource_export_package) $(R_file_stamp) $(LOCAL_BUILT_MODULE): $(all_library_res_package_export_deps)

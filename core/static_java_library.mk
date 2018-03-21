@@ -106,18 +106,14 @@ ifeq ($(LOCAL_SDK_RES_VERSION),)
 endif
 
 framework_res_package_export :=
-framework_res_package_export_deps :=
 # Please refer to package.mk
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
 framework_res_package_export := \
     $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
-framework_res_package_export_deps := $(framework_res_package_export)
 else
 framework_res_package_export := \
     $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
-framework_res_package_export_deps := \
-    $(dir $(framework_res_package_export))src/R.stamp
 endif
 endif
 
@@ -134,6 +130,8 @@ $(intermediates.COMMON)/export_proguard_flags: $(import_proguard_flag_files) $(a
 	done
 import_proguard_flag_files :=
 endif
+
+include $(BUILD_SYSTEM)/aapt_flags.mk
 
 # add --non-constant-id to prevent inlining constants.
 # AAR needs text symbol file R.txt.
@@ -181,10 +179,10 @@ my_generated_res_dirs_deps := $(RenderScript_file_stamp)
 endif  # renderscript_target_api < 21
 endif  # renderscript_target_api is set
 include $(BUILD_SYSTEM)/aapt2.mk
-$(my_res_package) : $(framework_res_package_export_deps)
+$(my_res_package) : $(framework_res_package_export)
 else
 $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_resources)
-$(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export_deps)
+$(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	$(create-resource-java-files)
 	$(hide) find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name R.java | xargs cat > $@
@@ -192,7 +190,6 @@ endif  # LOCAL_USE_AAPT2
 
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
 $(java_source_list_file): $(R_file_stamp)
-$(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(R_file_stamp)))
 $(full_classes_compiled_jar): $(R_file_stamp)
 $(full_classes_turbine_jar): $(R_file_stamp)
 

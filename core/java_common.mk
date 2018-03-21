@@ -177,7 +177,7 @@ endif # java_resource_file_groups
 #####################################
 ## Warn if there is unrecognized file in LOCAL_SRC_FILES.
 my_unknown_src_files := $(filter-out \
-  %.java %.aidl %.proto %.logtags %.fs %.rs, \
+  %.java %.aidl %.proto %.logtags %.rs, \
   $(LOCAL_SRC_FILES) $(LOCAL_INTERMEDIATE_SOURCES) $(LOCAL_GENERATED_SOURCES))
 ifneq ($(my_unknown_src_files),)
 $(warning $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Unused source files: $(my_unknown_src_files))
@@ -188,7 +188,7 @@ endif
 # LOCAL_SOURCE_FILES_ALL_GENERATED is set only if the module does not have static source files,
 # but generated source files in its LOCAL_INTERMEDIATE_SOURCE_DIR.
 # You have to set up the dependency in some other way.
-need_compile_java := $(strip $(all_java_sources)$(all_res_assets)$(java_resource_sources))$(LOCAL_STATIC_JAVA_LIBRARIES)$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED))
+need_compile_java := $(strip $(all_java_sources)$(LOCAL_SRCJARS)$(all_res_assets)$(java_resource_sources))$(LOCAL_STATIC_JAVA_LIBRARIES)$(filter true,$(LOCAL_SOURCE_FILES_ALL_GENERATED))
 ifdef need_compile_java
 
 annotation_processor_flags :=
@@ -411,35 +411,6 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAR_MANIFEST :=
 endif
 
 ##########################################################
-ifndef LOCAL_IS_HOST_MODULE
-## AAPT Flags
-# aapt doesn't accept multiple --extra-packages flags.
-# We have to collapse them into a single --extra-packages flag here.
-LOCAL_AAPT_FLAGS := $(strip $(LOCAL_AAPT_FLAGS))
-ifdef LOCAL_AAPT_FLAGS
-ifeq ($(filter 0 1,$(words $(filter --extra-packages,$(LOCAL_AAPT_FLAGS)))),)
-aapt_flags := $(subst --extra-packages$(space),--extra-packages@,$(LOCAL_AAPT_FLAGS))
-aapt_flags_extra_packages := $(patsubst --extra-packages@%,%,$(filter --extra-packages@%,$(aapt_flags)))
-aapt_flags_extra_packages := $(sort $(subst :,$(space),$(aapt_flags_extra_packages)))
-LOCAL_AAPT_FLAGS := $(filter-out --extra-packages@%,$(aapt_flags)) \
-    --extra-packages $(subst $(space),:,$(aapt_flags_extra_packages))
-aapt_flags_extra_packages :=
-aapt_flags :=
-endif
-endif
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) $(PRODUCT_AAPT_FLAGS)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_AAPT_CHARACTERISTICS)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_PACKAGE_NAME := $(LOCAL_MANIFEST_PACKAGE_NAME)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_MANIFEST_INSTRUMENTATION_FOR)
-
-ifdef aidl_sources
-ALL_MODULES.$(my_register_name).AIDL_FILES := $(aidl_sources)
-endif
-ifdef renderscript_sources
-ALL_MODULES.$(my_register_name).RS_FILES := $(renderscript_sources_fullpath)
-endif
-endif  # !LOCAL_IS_HOST_MODULE
 
 full_java_libs := $(full_shared_java_libs) $(full_static_java_libs) $(LOCAL_CLASSPATH)
 full_java_header_libs := $(full_shared_java_header_libs) $(full_static_java_header_libs)

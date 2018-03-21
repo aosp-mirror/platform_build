@@ -63,6 +63,7 @@ java_sources_deps := \
     $(java_sources) \
     $(java_resource_sources) \
     $(proto_java_sources_file_stamp) \
+    $(LOCAL_SRCJARS) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 $(java_source_list_file): $(java_sources_deps)
@@ -73,6 +74,9 @@ $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annota
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
+$(full_classes_compiled_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
+$(full_classes_compiled_jar): PRIVATE_SRCJAR_LIST_FILE := $(intermediates.COMMON)/srcjar-list
+$(full_classes_compiled_jar): PRIVATE_SRCJAR_INTERMEDIATES_DIR := $(intermediates.COMMON)/srcjars
 $(full_classes_compiled_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
@@ -82,6 +86,7 @@ $(full_classes_compiled_jar): \
     $(NORMALIZE_PATH) \
     $(ZIPTIME) \
     $(JAR_ARGS) \
+    $(ZIPSYNC) \
     | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-package)
 	$(remove-timestamps-from-package)
