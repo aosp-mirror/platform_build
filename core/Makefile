@@ -1273,11 +1273,15 @@ endif
 #      (BOARD_USES_RECOVERY_AS_BOOT = true);
 #   c) We build the root into system image - not needing the resource file as we do bsdiff
 #      (BOARD_BUILD_SYSTEM_ROOT_IMAGE = true).
+#   d) We include the recovery DTBO image within recovery - not needing the resource file as we
+#      do bsdiff because boot and recovery will contain different number of entries
+#      (BOARD_INCLUDE_RECOVERY_DTBO = true).
 # Note that condition b) implies condition c), because of the earlier check in this file:
 # "BOARD_USES_RECOVERY_AS_BOOT = true must have BOARD_BUILD_SYSTEM_ROOT_IMAGE = true" (not vice
 # versa though).
 
-ifeq (,$(filter true, $(BOARD_USES_FULL_RECOVERY_IMAGE) $(BOARD_BUILD_SYSTEM_ROOT_IMAGE)))
+ifeq (,$(filter true, $(BOARD_USES_FULL_RECOVERY_IMAGE) $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) \
+  $(BOARD_INCLUDE_RECOVERY_DTBO)))
 # Named '.dat' so we don't attempt to use imgdiff for patching it.
 RECOVERY_RESOURCE_ZIP := $(TARGET_OUT)/etc/recovery-resource.dat
 else
@@ -1298,6 +1302,9 @@ ifdef BOARD_KERNEL_BASE
 endif
 ifdef BOARD_KERNEL_PAGESIZE
   INTERNAL_RECOVERYIMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
+endif
+ifdef BOARD_INCLUDE_RECOVERY_DTBO
+  INTERNAL_RECOVERYIMAGE_ARGS += --recovery_dtbo $(BOARD_PREBUILT_DTBOIMAGE)
 endif
 
 # Keys authorized to sign OTA packages this build will accept.  The
@@ -1564,7 +1571,7 @@ SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
 # image size check calculation.
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 ifneq ($(BOARD_USES_FULL_RECOVERY_IMAGE),true)
-ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+ifneq (,$(filter true, $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) $(BOARD_INCLUDE_RECOVERY_DTBO)))
 diff_tool := $(HOST_OUT_EXECUTABLES)/bsdiff
 else
 diff_tool := $(HOST_OUT_EXECUTABLES)/imgdiff
@@ -2545,6 +2552,9 @@ endif
 ifdef INSTALLED_2NDBOOTLOADER_TARGET
 	$(hide) cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/second
 endif
+ifdef BOARD_INCLUDE_RECOVERY_DTBO
+	$(hide) cp $(INSTALLED_DTBOIMAGE_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_dtbo
+endif
 ifdef INTERNAL_KERNEL_CMDLINE
 	$(hide) echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/cmdline
 endif
@@ -2635,6 +2645,9 @@ ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
 endif
 ifeq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) echo "no_recovery=true" >> $(zip_root)/META/misc_info.txt
+endif
+ifdef BOARD_INCLUDE_RECOVERY_DTBO
+	$(hide) echo "include_recovery_dtbo=true" >> $(zip_root)/META/misc_info.txt
 endif
 ifdef BOARD_RECOVERYIMAGE_PARTITION_SIZE
 	$(hide) echo "recovery_size=$(BOARD_RECOVERYIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
