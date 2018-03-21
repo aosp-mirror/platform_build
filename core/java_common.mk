@@ -177,7 +177,7 @@ endif # java_resource_file_groups
 #####################################
 ## Warn if there is unrecognized file in LOCAL_SRC_FILES.
 my_unknown_src_files := $(filter-out \
-  %.java %.aidl %.proto %.logtags %.rs, \
+  %.java %.aidl %.proto %.logtags, \
   $(LOCAL_SRC_FILES) $(LOCAL_INTERMEDIATE_SOURCES) $(LOCAL_GENERATED_SOURCES))
 ifneq ($(my_unknown_src_files),)
 $(warning $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): Unused source files: $(my_unknown_src_files))
