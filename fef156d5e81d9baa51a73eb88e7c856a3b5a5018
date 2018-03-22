@@ -22,6 +22,52 @@
       "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a46a933_dba068c0",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2018-03-22T21:50:30Z",
+      "side": 1,
+      "message": "Should this be an else? Otherwise you can be passing twice the flag, or worse passing both the --generate and --no-generate?",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 5
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "90c6f7c6_27597832",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2018-03-22T21:50:30Z",
+      "side": 1,
+      "message": "Why?",
+      "range": {
+        "startLine": 292,
+        "startChar": 0,
+        "endLine": 292,
+        "endChar": 22
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
