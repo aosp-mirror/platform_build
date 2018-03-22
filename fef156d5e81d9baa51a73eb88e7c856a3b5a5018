@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "39683775_7bdeb293",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2018-03-22T22:47:11Z",
+      "side": 1,
+      "message": "Or maybe handle it more like WITH_DEXPREOPT, having the WITH be global and final.\n\n  my_..._info :\u003d true\n\n  if (is-system-server-jar)\n    ifeq (false,$(PRODUCT_SYSTEM_SERVER...))\n      my_..._info :\u003d false\n    endif\n  else\n    ...\n  endif\n\n  ifeq (false,$(WITH_..._INFO))\n    my_..._info :\u003d false\n  endif\n\n  ifeq (true,my_..._info)\n    LOCAL_DEX_PREOPT_FLAGS +\u003d \"--generate...\"\n  else\n    LOCAL_DEX_PREOPT_FLAGS +\u003d \"--no-generate...\"\n  endif",
+      "parentUuid": "cfe6dbe5_e6b226d3",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 5
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "90c6f7c6_27597832",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 1
@@ -203,6 +227,30 @@
       "side": 1,
       "message": "Why did we not enable it on eng before?",
       "parentUuid": "9148c8cc_7b87de12",
+      "range": {
+        "startLine": 292,
+        "startChar": 0,
+        "endLine": 292,
+        "endChar": 22
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "efea9074_6b533244",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2018-03-22T22:47:11Z",
+      "side": 1,
+      "message": "Don\u0027t remember. Possibly compile-time implications.",
+      "parentUuid": "36cbb473_b5bb2c6e",
       "range": {
         "startLine": 292,
         "startChar": 0,
