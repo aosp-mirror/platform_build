@@ -2299,9 +2299,9 @@ $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) -o -n "$(PRIVATE_SRCJARS)" ] ; then 
     $(addprefix --classpath ,$(strip \
         $(call normalize-path-list,$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES)))) \
     || ( rm -rf $(dir $@)/classes-turbine ; exit 41 ) && \
-    $(MERGE_ZIPS) -j -stripDir META-INF $@.tmp $@.premerged $(call reverse-list,$(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES)) ; \
+    $(MERGE_ZIPS) -j --ignore-duplicates -stripDir META-INF $@.tmp $@.premerged $(call reverse-list,$(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES)) ; \
 else \
-    $(MERGE_ZIPS) -j -stripDir META-INF $@.tmp $(call reverse-list,$(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES)) ; \
+    $(MERGE_ZIPS) -j --ignore-duplicates -stripDir META-INF $@.tmp $(call reverse-list,$(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES)) ; \
 fi
 $(hide) $(ZIPTIME) $@.tmp
 $(hide) $(call commit-change-for-toc,$@)
