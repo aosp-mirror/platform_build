@@ -35,16 +35,15 @@ support_java_deps :=
 # its output in the variables support_android_deps and support_java_deps.
 include $(RESOLVE_SUPPORT_LIBRARIES)
 
-# Store the expanded dependencies in the appropriate variables. Libraries
-# should NEVER statically include Support Library modules with resources.
+# Everything is static, which simplifies resource handling. Don't write to any
+# vars unless we actually have data, since even an empty ANDROID_LIBRARIES var
+# requires an AndroidManifest.xml file!
 ifdef support_android_deps
-    ifdef LOCAL_IS_STATIC_JAVA_LIBRARY
-        LOCAL_SHARED_ANDROID_LIBRARIES += $(support_android_deps)
-    else
-        LOCAL_STATIC_ANDROID_LIBRARIES += $(support_android_deps)
-    endif # LOCAL_IS_STATIC_JAVA_LIBRARY
+    LOCAL_STATIC_ANDROID_LIBRARIES += $(support_android_deps)
 endif #support_android_deps
-LOCAL_STATIC_JAVA_LIBRARIES += $(support_java_deps)
+ifdef support_java_deps
+    LOCAL_STATIC_JAVA_LIBRARIES += $(support_java_deps)
+endif #support_java_deps
 
 # We have consumed these values. Clean them up.
 support_android_deps :=

@@ -19,6 +19,6 @@
 #
 
 #
-# Include definitions for Support Library modules, if present.
+# Include definitions for prebuilt SDK, if present.
 #
--include prebuilts/sdk/current/support/definitions.mk
+-include prebuilts/sdk/current/definitions.mk
