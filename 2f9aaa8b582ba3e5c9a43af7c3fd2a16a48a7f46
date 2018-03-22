@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7cad61e9_e526c21c",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-03-22T20:14:05Z",
+      "side": 1,
+      "message": "When do you expect these warnings to occur?  Can they be an error instead?\n\nUse $(call pretty-warning,Make cannot apply integer overflow diagnostics to static binary) and it will insert $(LOCAL_MODULE) and the makefile path for you, and colorize it too.",
+      "revId": "2f9aaa8b582ba3e5c9a43af7c3fd2a16a48a7f46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
