@@ -120,6 +120,54 @@
     },
     {
       "key": {
+        "uuid": "409f6bff_99c06053",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1065473
+      },
+      "writtenOn": "2018-03-22T22:58:21Z",
+      "side": 1,
+      "message": "With the second snippet WITH_DEXPREOPT\u003dfalse takes precedence over everything.",
+      "parentUuid": "39683775_7bdeb293",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 5
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3a36295b_f722dc2c",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1065473
+      },
+      "writtenOn": "2018-03-22T22:58:21Z",
+      "side": 1,
+      "message": "I don\u0027t think the first snippet works:\nWITH_DEXPREOPT\u003dtrue \u0026\u0026 PRODUCT_SYSTEM_SERVER\u003dfalse still results in SYSTEM_SERVER being on.",
+      "parentUuid": "cfe6dbe5_e6b226d3",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 5
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "90c6f7c6_27597832",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 1
@@ -251,6 +299,30 @@
       "side": 1,
       "message": "Don\u0027t remember. Possibly compile-time implications.",
       "parentUuid": "36cbb473_b5bb2c6e",
+      "range": {
+        "startLine": 292,
+        "startChar": 0,
+        "endLine": 292,
+        "endChar": 22
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "86c40d82_3a5c8027",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1065473
+      },
+      "writtenOn": "2018-03-22T22:58:21Z",
+      "side": 1,
+      "message": "Did we disable it in eng though?\nWith PRODUCT_SYSTEM_SERVER_DEBUG_INFO\u003dtrue, the old code would honor it.  The new code just disables end no matter what the config is.",
+      "parentUuid": "efea9074_6b533244",
       "range": {
         "startLine": 292,
         "startChar": 0,
