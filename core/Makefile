@@ -1063,7 +1063,7 @@ endif
 INTERNAL_USERIMAGES_BINARY_PATHS := $(sort $(dir $(INTERNAL_USERIMAGES_DEPS)))
 
 ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY))
-INTERNAL_USERIMAGES_DEPS += $(BUILD_VERITY_TREE) $(APPEND2SIMG) $(VERITY_SIGNER)
+INTERNAL_USERIMAGES_DEPS += $(BUILD_VERITY_METADATA) $(BUILD_VERITY_TREE) $(APPEND2SIMG) $(VERITY_SIGNER)
 ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY_FEC))
 INTERNAL_USERIMAGES_DEPS += $(FEC)
 endif
@@ -2329,7 +2329,6 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/sload_f2fs \
   $(HOST_OUT_EXECUTABLES)/simg2img \
   $(HOST_OUT_EXECUTABLES)/e2fsck \
-  $(HOST_OUT_EXECUTABLES)/build_verity_tree \
   $(HOST_OUT_EXECUTABLES)/generate_verity_key \
   $(HOST_OUT_EXECUTABLES)/verity_signer \
   $(HOST_OUT_EXECUTABLES)/verity_verifier \
@@ -2342,7 +2341,9 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/delta_generator \
   $(AVBTOOL) \
   $(BLK_ALLOC_TO_BASE_FS) \
-  $(BROTLI)
+  $(BROTLI) \
+  $(BUILD_VERITY_METADATA) \
+  $(BUILD_VERITY_TREE)
 
 ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT))
 OTATOOLS += \
@@ -2388,7 +2389,6 @@ BUILT_OTATOOLS_PACKAGE := $(PRODUCT_OUT)/otatools.zip
 $(BUILT_OTATOOLS_PACKAGE): zip_root := $(call intermediates-dir-for,PACKAGING,otatools)/otatools
 
 OTATOOLS_DEPS := \
-  system/extras/verity/build_verity_metadata.py \
   system/extras/ext4_utils/mke2fs.conf \
   external/avb/test/data/testkey_rsa4096.pem \
   $(sort $(shell find system/update_engine/scripts -name \*.pyc -prune -o -type f -print)) \

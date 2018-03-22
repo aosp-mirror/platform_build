@@ -80,8 +80,7 @@ def GetVerityTreeSize(partition_size):
 
 
 def GetVerityMetadataSize(partition_size):
-  cmd = ["system/extras/verity/build_verity_metadata.py", "size",
-         str(partition_size)]
+  cmd = ["build_verity_metadata.py", "size", str(partition_size)]
   output, exit_code = RunCommand(cmd, False)
   if exit_code != 0:
     return False, 0
@@ -250,9 +249,8 @@ def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
 def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
                         block_device, signer_path, key, signer_args,
                         verity_disable):
-  cmd = ["system/extras/verity/build_verity_metadata.py", "build",
-         str(image_size), verity_metadata_path, root_hash, salt, block_device,
-         signer_path, key]
+  cmd = ["build_verity_metadata.py", "build", str(image_size),
+         verity_metadata_path, root_hash, salt, block_device, signer_path, key]
   if signer_args:
     cmd.append("--signer_args=\"%s\"" % (' '.join(signer_args),))
   if verity_disable:

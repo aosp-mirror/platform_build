@@ -14,21 +14,7 @@
 # limitations under the License.
 #
 
-"""Unittests for validate_target_files.py.
-
-Note: This file calls functions in build_image.py that hard-code the path in
-relative to ANDROID_BUILD_TOP (e.g.
-system/extras/verity/build_verity_metadata.py). So the test needs to be
-triggered under ANDROID_BUILD_TOP or the top-level OTA tools directory (i.e.
-the one after unzipping otatools.zip).
-
-  (from ANDROID_BUILD_TOP)
-  $ PYTHONPATH=build/make/tools/releasetools python -m unittest \\
-      test_validate_target_files
-
-  (from OTA tools directory)
-  $ PYTHONPATH=releasetools python -m unittest test_validate_target_files
-"""
+"""Unittests for validate_target_files.py."""
 
 from __future__ import print_function
 
