@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "31b71ba8_5d6e7d39",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1065473
+      },
+      "writtenOn": "2018-03-22T22:09:14Z",
+      "side": 1,
+      "message": "I think \"else\" would change behavior if the PRODUCT flags are supposed to override the DEBUG_INFO.  Assuming later flags overwrite the value, I think it is correct as is.\n\nHaving said that, it should be possible to avoid the double flags.\n\nMaybe something like:\nmy_dexpreopt_debug_info :\u003d $(WITH_DEXPREOPT_DEBUG_INFO)\nifneq (false,$(WITH_DEXPREOPT_DEBUG_INFO))\n  # If not set, default to true\n  my_dexpreopt_debug_info :\u003d true\nendif\n\nmy_system_server_debug_info :\u003d $(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)\nifneq (false,$my_system_server_debug_info)\n  # If not set, default to my_dexpreopt_debug_info\n  my_system_server_debug_info :\u003d my_dexpreopt_debug_info\nendif\n\n...",
+      "parentUuid": "5a46a933_dba068c0",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 5
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "90c6f7c6_27597832",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 1
@@ -83,6 +107,30 @@
       "side": 1,
       "message": "So the old was \"if unspecified, default to true for non-eng\".\nBut the new is \"always disable on non-eng no matter what\".\nIs that right and intentional?  I don\u0027t speak .mk very well.",
       "parentUuid": "90c6f7c6_27597832",
+      "range": {
+        "startLine": 292,
+        "startChar": 0,
+        "endLine": 292,
+        "endChar": 22
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2533d494_5b34c767",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1065473
+      },
+      "writtenOn": "2018-03-22T22:09:14Z",
+      "side": 1,
+      "message": "* Sorry, obviously meant \"always disable on eng\".",
+      "parentUuid": "8e687e2a_d2e64753",
       "range": {
         "startLine": 292,
         "startChar": 0,
