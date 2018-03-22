@@ -1024,6 +1024,9 @@ class PropertyFiles(object):
     """
     return self._GetPropertyFilesString(input_zip, reserve_space=True)
 
+  class InsufficientSpaceException(Exception):
+    pass
+
   def Finalize(self, input_zip, reserved_length):
     """Finalizes a property-files string with actual METADATA offset/size info.
 
@@ -1045,13 +1048,15 @@ class PropertyFiles(object):
       "payload.bin:679:343,payload_properties.txt:378:45,metadata:69:379  ".
 
     Raises:
-      AssertionError: If the reserved length is insufficient to hold the final
-          string.
+      InsufficientSpaceException: If the reserved length is insufficient to hold
+          the final string.
     """
     result = self._GetPropertyFilesString(input_zip, reserve_space=False)
-    assert len(result) <= reserved_length, \
-        'Insufficient reserved space: reserved={}, actual={}'.format(
-            reserved_length, len(result))
+    if len(result) > reserved_length:
+      raise self.InsufficientSpaceException(
+          'Insufficient reserved space: reserved={}, actual={}'.format(
+              reserved_length, len(result)))
+
     result += ' ' * (reserved_length - len(result))
     return result
 
@@ -1089,11 +1094,12 @@ class PropertyFiles(object):
 
     # 'META-INF/com/android/metadata' is required. We don't know its actual
     # offset and length (as well as the values for other entries). So we reserve
-    # 10-byte as a placeholder, which is to cover the space for metadata entry
-    # ('xx:xxx', since it's ZIP_STORED which should appear at the beginning of
-    # the zip), as well as the possible value changes in other entries.
+    # 15-byte as a placeholder ('offset:length'), which is sufficient to cover
+    # the space for metadata entry. Because 'offset' allows a max of 10-digit
+    # (i.e. ~9 GiB), with a max of 4-digit for the length. Note that all the
+    # reserved space serves the metadata entry only.
     if reserve_space:
-      tokens.append('metadata:' + ' ' * 10)
+      tokens.append('metadata:' + ' ' * 15)
     else:
       tokens.append(ComputeEntryOffsetSize(METADATA_NAME))
 
@@ -1252,36 +1258,54 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
     output_file: The final output ZIP filename.
     needed_property_files: The list of PropertyFiles' to be generated.
   """
-  output_zip = zipfile.ZipFile(
-      input_file, 'a', compression=zipfile.ZIP_DEFLATED)
 
-  # Write the current metadata entry with placeholders.
-  for property_files in needed_property_files:
-    metadata[property_files.name] = property_files.Compute(output_zip)
-  WriteMetadata(metadata, output_zip)
-  common.ZipClose(output_zip)
+  def ComputeAllPropertyFiles(input_file, needed_property_files):
+    # Write the current metadata entry with placeholders.
+    with zipfile.ZipFile(input_file) as input_zip:
+      for property_files in needed_property_files:
+        metadata[property_files.name] = property_files.Compute(input_zip)
+      namelist = input_zip.namelist()
 
-  # SignOutput(), which in turn calls signapk.jar, will possibly reorder the
-  # ZIP entries, as well as padding the entry headers. We do a preliminary
-  # signing (with an incomplete metadata entry) to allow that to happen. Then
-  # compute the ZIP entry offsets, write back the final metadata and do the
-  # final signing.
-  if OPTIONS.no_signing:
-    prelim_signing = input_file
-  else:
+    if METADATA_NAME in namelist:
+      common.ZipDelete(input_file, METADATA_NAME)
+    output_zip = zipfile.ZipFile(input_file, 'a')
+    WriteMetadata(metadata, output_zip)
+    common.ZipClose(output_zip)
+
+    if OPTIONS.no_signing:
+      return input_file
+
     prelim_signing = common.MakeTempFile(suffix='.zip')
     SignOutput(input_file, prelim_signing)
+    return prelim_signing
 
-  # Open the signed zip. Compute the final metadata that's needed for streaming.
-  with zipfile.ZipFile(prelim_signing, 'r') as prelim_signing_zip:
-    for property_files in needed_property_files:
-      metadata[property_files.name] = property_files.Finalize(
-          prelim_signing_zip, len(metadata[property_files.name]))
+  def FinalizeAllPropertyFiles(prelim_signing, needed_property_files):
+    with zipfile.ZipFile(prelim_signing) as prelim_signing_zip:
+      for property_files in needed_property_files:
+        metadata[property_files.name] = property_files.Finalize(
+            prelim_signing_zip, len(metadata[property_files.name]))
+
+  # SignOutput(), which in turn calls signapk.jar, will possibly reorder the ZIP
+  # entries, as well as padding the entry headers. We do a preliminary signing
+  # (with an incomplete metadata entry) to allow that to happen. Then compute
+  # the ZIP entry offsets, write back the final metadata and do the final
+  # signing.
+  prelim_signing = ComputeAllPropertyFiles(input_file, needed_property_files)
+  try:
+    FinalizeAllPropertyFiles(prelim_signing, needed_property_files)
+  except PropertyFiles.InsufficientSpaceException:
+    # Even with the preliminary signing, the entry orders may change
+    # dramatically, which leads to insufficiently reserved space during the
+    # first call to ComputeAllPropertyFiles(). In that case, we redo all the
+    # preliminary signing works, based on the already ordered ZIP entries, to
+    # address the issue.
+    prelim_signing = ComputeAllPropertyFiles(
+        prelim_signing, needed_property_files)
+    FinalizeAllPropertyFiles(prelim_signing, needed_property_files)
 
   # Replace the METADATA entry.
   common.ZipDelete(prelim_signing, METADATA_NAME)
-  output_zip = zipfile.ZipFile(
-      prelim_signing, 'a', compression=zipfile.ZIP_DEFLATED)
+  output_zip = zipfile.ZipFile(prelim_signing, 'a')
   WriteMetadata(metadata, output_zip)
   common.ZipClose(output_zip)
 
@@ -1292,7 +1316,7 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
     SignOutput(prelim_signing, output_file)
 
   # Reopen the final signed zip to double check the streaming metadata.
-  with zipfile.ZipFile(output_file, 'r') as output_zip:
+  with zipfile.ZipFile(output_file) as output_zip:
     for property_files in needed_property_files:
       property_files.Verify(output_zip, metadata[property_files.name].strip())
 

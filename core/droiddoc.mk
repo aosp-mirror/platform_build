@@ -189,15 +189,15 @@ $(full_target): \
         $(droiddoc) \
         $(html_dir_files) \
         $(full_java_libs) \
-        $(EXTRACT_SRCJARS) \
+        $(ZIPSYNC) \
         $(LOCAL_SRCJARS) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	@echo Docs droiddoc: $(PRIVATE_OUT_DIR)
 	$(hide) mkdir -p $(dir $@)
-	$(hide) rm -rf $(PRIVATE_STUB_OUT_DIR) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR)
+	$(hide) rm -rf $(PRIVATE_STUB_OUT_DIR)
 	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
-	$(EXTRACT_SRCJARS) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) $(PRIVATE_SRCJAR_LIST_FILE) $(PRIVATE_SRCJARS)
+	$(ZIPSYNC) -d $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) -l $(PRIVATE_SRCJAR_LIST_FILE) -f "*.java" $(PRIVATE_SRCJARS)
 	$(hide) ( \
 		$(JAVADOC) \
                 -encoding UTF-8 \
@@ -243,13 +243,12 @@ else
 # For OpenJDK 8 we can use -bootclasspath to define the core libraries code.
 $(full_target): PRIVATE_BOOTCLASSPATH_ARG := $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH))
 endif
-$(full_target): $(full_src_files) $(LOCAL_GENERATED_SOURCES) $(full_java_libs) $(EXTRACT_SRCJARS) $(LOCAL_SRCJARS) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(full_target): $(full_src_files) $(LOCAL_GENERATED_SOURCES) $(full_java_libs) $(ZIPSYNC) $(LOCAL_SRCJARS) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	@echo Docs javadoc: $(PRIVATE_OUT_DIR)
 	@mkdir -p $(dir $@)
-	rm -rf $(PRIVATE_SRCJAR_INTERMEDIATES_DIR)
 	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
-	$(EXTRACT_SRCJARS) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) $(PRIVATE_SRCJAR_LIST_FILE) $(PRIVATE_SRCJARS)
+	$(ZIPSYNC) -d $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) -l $(PRIVATE_SRCJAR_LIST_FILE) -f "*.java" $(PRIVATE_SRCJARS)
 	$(hide) ( \
 		$(JAVADOC) \
                 -encoding UTF-8 \

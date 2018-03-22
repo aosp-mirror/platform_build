@@ -76,6 +76,7 @@ java_sources_deps := \
     $(java_sources) \
     $(java_resource_sources) \
     $(proto_java_sources_file_stamp) \
+    $(LOCAL_SRCJARS) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 $(java_source_list_file): $(java_sources_deps)
@@ -86,6 +87,9 @@ $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annota
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
+$(full_classes_compiled_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
+$(full_classes_compiled_jar): PRIVATE_SRCJAR_LIST_FILE := $(intermediates.COMMON)/srcjar-list
+$(full_classes_compiled_jar): PRIVATE_SRCJAR_INTERMEDIATES_DIR := $(intermediates.COMMON)/srcjars
 $(full_classes_compiled_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
@@ -95,6 +99,7 @@ $(full_classes_compiled_jar): \
     $(annotation_processor_deps) \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
+    $(ZIPSYNC) \
     | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-dalvik-package)
 
@@ -102,6 +107,7 @@ ifneq ($(TURBINE_ENABLED),false)
 
 $(full_classes_turbine_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_turbine_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
+$(full_classes_turbine_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
 $(full_classes_turbine_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
