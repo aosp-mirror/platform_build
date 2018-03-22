@@ -188,6 +188,30 @@
       "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36cbb473_b5bb2c6e",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2018-03-22T22:44:32Z",
+      "side": 1,
+      "message": "Why did we not enable it on eng before?",
+      "parentUuid": "9148c8cc_7b87de12",
+      "range": {
+        "startLine": 292,
+        "startChar": 0,
+        "endLine": 292,
+        "endChar": 22
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
