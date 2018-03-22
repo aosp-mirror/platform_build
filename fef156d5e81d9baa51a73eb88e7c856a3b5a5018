@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "cfe6dbe5_e6b226d3",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2018-03-22T22:42:27Z",
+      "side": 1,
+      "message": "Yeah, the \"later overwrites earlier\" was the intent here, to avoid chaining with a Makefile flag.\n\nIf I wanted the flag, I would not copy it into my_system_server_debug_info, honestly, but use my_dexpreopt_debug_info (and remove \"unknown \u003d depend on dex2oat defaults\" state).\n\n  my_..._info :\u003d true\n  ifeq (false,$(WITH...))\n    my_..._info :\u003d true\n  endif\n\n  if (is-system-server-jar)\n    ifeq (true,$(PRODUCT_SYSTEM_SERVER...INFO))\n      my_..._info :\u003d true\n    else\n  else\n  endif\n\n  if (is-eng)\n    my_..._info :\u003d false\n  endif \n\n  ifeq (true,my_..._info)\n    LOCAL_DEX_PREOPT_FLAGS +\u003d \"--generate...\"\n  else\n    LOCAL_DEX_PREOPT_FLAGS +\u003d \"--no-generate...\"\n  endif\n\nOpinions?",
+      "parentUuid": "31b71ba8_5d6e7d39",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 5
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "90c6f7c6_27597832",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 1
@@ -131,6 +155,30 @@
       "side": 1,
       "message": "* Sorry, obviously meant \"always disable on eng\".",
       "parentUuid": "8e687e2a_d2e64753",
+      "range": {
+        "startLine": 292,
+        "startChar": 0,
+        "endLine": 292,
+        "endChar": 22
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9148c8cc_7b87de12",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2018-03-22T22:42:27Z",
+      "side": 1,
+      "message": "This is equivalent (unless we change dex2oat defaults). So this makes things more explicit with the \"let\u0027s default to true.\" We can reconsider adding minidebuginfo to the boot image in eng in a follow-up.",
+      "parentUuid": "2533d494_5b34c767",
       "range": {
         "startLine": 292,
         "startChar": 0,
