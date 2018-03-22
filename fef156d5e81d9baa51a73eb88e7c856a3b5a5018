@@ -168,6 +168,30 @@
     },
     {
       "key": {
+        "uuid": "1b7efe89_4994097c",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2018-03-22T23:17:50Z",
+      "side": 1,
+      "message": "\u003e I don\u0027t think the first snippet works:\n\nI assume you see the \"else\" there sketching the else branch setting it to false?\n\n\u003e With the second snippet WITH_DEXPREOPT\u003dfalse takes precedence over everything.\n\nWas this not explanatory enough:\n\n\u003e\u003e Or maybe handle it more like WITH_DEXPREOPT, having the WITH be global and final.",
+      "parentUuid": "409f6bff_99c06053",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 285,
+        "endChar": 5
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "90c6f7c6_27597832",
         "filename": "core/dex_preopt_odex_install.mk",
         "patchSetId": 1
@@ -323,6 +347,30 @@
       "side": 1,
       "message": "Did we disable it in eng though?\nWith PRODUCT_SYSTEM_SERVER_DEBUG_INFO\u003dtrue, the old code would honor it.  The new code just disables end no matter what the config is.",
       "parentUuid": "efea9074_6b533244",
+      "range": {
+        "startLine": 292,
+        "startChar": 0,
+        "endLine": 292,
+        "endChar": 22
+      },
+      "revId": "fef156d5e81d9baa51a73eb88e7c856a3b5a5018",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "024f486b_d7a88692",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2018-03-22T23:17:50Z",
+      "side": 1,
+      "message": "The original intent was to turn it off. If we want to change that, this CL can be structured to make that easy, but I am not going to touch the original intent.\n\n(Nobody sets PRODUCT_SYSTEM_SERVER_DEBUG_INFO explicitly at the moment.)",
+      "parentUuid": "86c40d82_3a5c8027",
       "range": {
         "startLine": 292,
         "startChar": 0,
