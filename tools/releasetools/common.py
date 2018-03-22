@@ -718,18 +718,31 @@ def GetKeyPasswords(keylist):
 
 
 def GetMinSdkVersion(apk_name):
-  """Get the minSdkVersion delared in the APK. This can be both a decimal number
-  (API Level) or a codename.
+  """Gets the minSdkVersion declared in the APK.
+
+  It calls 'aapt' to query the embedded minSdkVersion from the given APK file.
+  This can be both a decimal number (API Level) or a codename.
+
+  Args:
+    apk_name: The APK filename.
+
+  Returns:
+    The parsed SDK version string.
+
+  Raises:
+    ExternalError: On failing to obtain the min SDK version.
   """
+  proc = Run(
+      ["aapt", "dump", "badging", apk_name], stdout=subprocess.PIPE,
+      stderr=subprocess.PIPE)
+  stdoutdata, stderrdata = proc.communicate()
+  if proc.returncode != 0:
+    raise ExternalError(
+        "Failed to obtain minSdkVersion: aapt return code {}:\n{}\n{}".format(
+            proc.returncode, stdoutdata, stderrdata))
 
-  p = Run(["aapt", "dump", "badging", apk_name], stdout=subprocess.PIPE)
-  output, err = p.communicate()
-  if err:
-    raise ExternalError("Failed to obtain minSdkVersion: aapt return code %s"
-        % (p.returncode,))
-
-  for line in output.split("\n"):
-    # Looking for lines such as sdkVersion:'23' or sdkVersion:'M'
+  for line in stdoutdata.split("\n"):
+    # Looking for lines such as sdkVersion:'23' or sdkVersion:'M'.
     m = re.match(r'sdkVersion:\'([^\']*)\'', line)
     if m:
       return m.group(1)
@@ -737,11 +750,20 @@ def GetMinSdkVersion(apk_name):
 
 
 def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
-  """Get the minSdkVersion declared in the APK as a number (API Level). If
-  minSdkVersion is set to a codename, it is translated to a number using the
-  provided map.
-  """
+  """Returns the minSdkVersion declared in the APK as a number (API Level).
 
+  If minSdkVersion is set to a codename, it is translated to a number using the
+  provided map.
+
+  Args:
+    apk_name: The APK filename.
+
+  Returns:
+    The parsed SDK version number.
+
+  Raises:
+    ExternalError: On failing to get the min SDK version number.
+  """
   version = GetMinSdkVersion(apk_name)
   try:
     return int(version)
@@ -750,8 +772,9 @@ def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
     if version in codename_to_api_level_map:
       return codename_to_api_level_map[version]
     else:
-      raise ExternalError("Unknown minSdkVersion: '%s'. Known codenames: %s"
-                          % (version, codename_to_api_level_map))
+      raise ExternalError(
+          "Unknown minSdkVersion: '{}'. Known codenames: {}".format(
+              version, codename_to_api_level_map))
 
 
 def SignFile(input_name, output_name, key, password, min_api_level=None,
