@@ -16,6 +16,24 @@
       "revId": "2f9aaa8b582ba3e5c9a43af7c3fd2a16a48a7f46",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09f77916_b72924bb",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 1115178
+      },
+      "writtenOn": "2018-03-22T22:20:36Z",
+      "side": 1,
+      "message": "This should only pop up if someone attempts to apply diagnostics to a static module, so only during debugging. Error is probably more appropriate; using pretty-error now.",
+      "parentUuid": "7cad61e9_e526c21c",
+      "revId": "2f9aaa8b582ba3e5c9a43af7c3fd2a16a48a7f46",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
