@@ -11,3 +11,15 @@ allow goldfish_setup vendor_toolbox_exec:file execute_no_trans;
 allowxperm goldfish_setup self:udp_socket ioctl priv_sock_ioctls;
 wakelock_use(goldfish_setup);
 allow goldfish_setup vendor_shell_exec:file { rx_file_perms };
+
+# Set system properties to start services
+set_prop(goldfish_setup, ctl_default_prop);
+
+# Set up WiFi
+allow goldfish_setup self:netlink_route_socket nlmsg_write;
+allow goldfish_setup self:netlink_socket create_socket_perms;
+allow goldfish_setup self:capability { sys_module sys_admin };
+allow goldfish_setup varrun_file:dir { mounton write add_name search remove_name };
+allow goldfish_setup varrun_file:file { mounton getattr create read write open unlink };
+allow goldfish_setup execns_exec:file rx_file_perms;
+allow goldfish_setup proc_net:file w_file_perms;

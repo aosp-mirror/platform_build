@@ -1,0 +1,20 @@
+# Network namespace transitions
+type execns, domain, domain_deprecated;
+type execns_exec, exec_type, file_type;
+
+init_daemon_domain(execns)
+
+allow execns varrun_file:dir search;
+allow execns self:capability sys_admin;
+
+#Allow execns itself to be run by init in its own domain
+domain_auto_trans(init, execns_exec, execns);
+
+# Allow hostapd to be run by execns in its own domain
+domain_auto_trans(execns, hostapd_exec, hostapd);
+allow hostapd execns:fd use;
+
+# Allow dnsmasq to be run by execns in its own domain
+domain_auto_trans(execns, dnsmasq_exec, dnsmasq);
+allow dnsmasq execns:fd use;
+

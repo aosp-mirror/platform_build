@@ -18,6 +18,8 @@
 /vendor/bin/init\.ranchu-core\.sh u:object_r:goldfish_setup_exec:s0
 /vendor/bin/init\.ranchu-net\.sh u:object_r:goldfish_setup_exec:s0
 /vendor/bin/qemu-props       u:object_r:qemu_props_exec:s0
+/system/bin/execns           u:object_r:execns_exec:s0
+/system/bin/ipv6proxy        u:object_r:ipv6proxy_exec:s0
 
 /vendor/bin/hw/android\.hardware\.drm@1\.0-service\.widevine          u:object_r:hal_drm_widevine_exec:s0
 
@@ -36,4 +38,5 @@
 
 # data
 /data/vendor/mediadrm(/.*)?            u:object_r:mediadrm_vendor_data_file:s0
+/data/var/run(/.*)?                    u:object_r:varrun_file:s0
 
