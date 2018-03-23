@@ -118,6 +118,8 @@ PRODUCT_PACKAGES += \
 
 # WiFi
 PRODUCT_PACKAGES += \
+	dhcpclient \
+	dhcpserver \
 	execns \
 	hostapd \
 	ip \

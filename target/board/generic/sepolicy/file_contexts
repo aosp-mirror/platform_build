@@ -20,6 +20,8 @@
 /vendor/bin/qemu-props       u:object_r:qemu_props_exec:s0
 /system/bin/execns           u:object_r:execns_exec:s0
 /system/bin/ipv6proxy        u:object_r:ipv6proxy_exec:s0
+/system/bin/dhcpclient       u:object_r:dhcpclient_exec:s0
+/system/bin/dhcpserver       u:object_r:dhcpserver_exec:s0
 
 /vendor/bin/hw/android\.hardware\.drm@1\.0-service\.widevine          u:object_r:hal_drm_widevine_exec:s0
 

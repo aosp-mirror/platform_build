@@ -1,0 +1,16 @@
+# DHCP client
+type dhcpclient, domain, domain_deprecated;
+type dhcpclient_exec, exec_type, file_type;
+
+init_daemon_domain(dhcpclient)
+net_domain(dhcpclient)
+
+allow dhcpclient execns:fd use;
+
+set_prop(dhcpclient, net_eth0_prop);
+allow dhcpclient self:capability { net_admin net_raw };
+allow dhcpclient self:packet_socket { create bind ioctl read write };
+allow dhcpclient self:udp_socket { ioctl create };
+allow dhcpclient self:netlink_route_socket { write nlmsg_write };
+allow dhcpclient varrun_file:dir search;
+
