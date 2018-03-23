@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7ec285eb_b5cfcb32",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1065473
+      },
+      "writtenOn": "2018-03-23T17:16:01Z",
+      "side": 1,
+      "message": "Have there been set or did you meant to use the PRODUCT_* variables?",
+      "range": {
+        "startLine": 292,
+        "startChar": 15,
+        "endLine": 292,
+        "endChar": 42
+      },
+      "revId": "f8159c09dc7b12b19d8102f189f9e4584dc7f120",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
