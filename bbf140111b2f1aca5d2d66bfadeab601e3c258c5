@@ -22,6 +22,30 @@
       "revId": "bbf140111b2f1aca5d2d66bfadeab601e3c258c5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3a445b33_3197ce4b",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1361,
+      "author": {
+        "id": 1120612
+      },
+      "writtenOn": "2018-03-23T17:13:46Z",
+      "side": 1,
+      "message": "Just had a discussion with Tao! I created a separate BOARD_RECOVERYIMAGE_ARGS flag since boot.img does not need to contain the recovery_dtbo. Non-A/B devices that need to contain the recovery_dtbo within recovery.img can specify the --recovery_dtbo\u0027 argument using this flag. I will upload another CL to pass this flag to \u0027m dist\u0027.",
+      "parentUuid": "6306c953_45bfd39f",
+      "range": {
+        "startLine": 1361,
+        "startChar": 117,
+        "endLine": 1361,
+        "endChar": 141
+      },
+      "revId": "bbf140111b2f1aca5d2d66bfadeab601e3c258c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
