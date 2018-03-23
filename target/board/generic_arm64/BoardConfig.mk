@@ -97,7 +97,7 @@ BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
 
 # Wifi.
-BOARD_WLAN_DEVICE           := wlan0
+BOARD_WLAN_DEVICE           := emulator
 BOARD_HOSTAPD_DRIVER        := NL80211
 BOARD_WPA_SUPPLICANT_DRIVER := NL80211
 BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_simulated
