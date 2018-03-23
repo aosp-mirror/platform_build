@@ -55,6 +55,7 @@ PRODUCT_PACKAGES += \
     audio.primary.goldfish \
     audio.primary.goldfish_legacy \
     android.hardware.audio@2.0-service \
+    android.hardware.wifi@1.0-service \
     vibrator.goldfish \
     power.goldfish \
     power.ranchu \
@@ -116,9 +117,23 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     vndk-sp
 
+# WiFi
+PRODUCT_PACKAGES += \
+	createns \
+	dhcpclient \
+	dhcpserver \
+	execns \
+	hostapd \
+	ip \
+	ipv6proxy \
+	iw \
+	wificond \
+	wpa_supplicant \
+
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/init.ranchu-core.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-core.sh \
     device/generic/goldfish/init.ranchu-net.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-net.sh \
+    device/generic/goldfish/wifi/init.wifi.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.wifi.sh \
     device/generic/goldfish/init.ranchu.rc:root/init.ranchu.rc \
     device/generic/goldfish/fstab.ranchu:root/fstab.ranchu \
     device/generic/goldfish/fstab.ranchu.early:root/fstab.ranchu.early \
@@ -127,6 +142,9 @@ PRODUCT_COPY_FILES += \
     device/generic/goldfish/manifest.xml:$(TARGET_COPY_OUT_VENDOR)/manifest.xml \
     device/generic/goldfish/data/etc/permissions/privapp-permissions-goldfish.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/privapp-permissions-goldfish.xml \
     device/generic/goldfish/data/etc/config.ini:config.ini \
+    device/generic/goldfish/wifi/simulated_hostapd.conf:$(TARGET_COPY_OUT_VENDOR)/etc/simulated_hostapd.conf \
+    device/generic/goldfish/wifi/wpa_supplicant.conf:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/wpa_supplicant.conf \
+    device/generic/goldfish/wifi/WifiConfigStore.xml:data/misc/wifi/WifiConfigStore.xml \
     frameworks/native/data/etc/android.hardware.wifi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.wifi.xml
 
 PRODUCT_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
