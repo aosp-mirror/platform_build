@@ -119,6 +119,7 @@ PRODUCT_PACKAGES += \
 
 # WiFi
 PRODUCT_PACKAGES += \
+	createns \
 	dhcpclient \
 	dhcpserver \
 	execns \
