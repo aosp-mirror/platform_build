@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6306c953_45bfd39f",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1361,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-03-23T16:23:22Z",
+      "side": 1,
+      "message": "Shall we consider this flag as part of BOARD_MKBOOTIMG_ARGS? Otherwise we need to pass this BOARD_RECOVERYIMAGE_ARGS flag the same way as BOARD_MKBOOTIMG_ARGS, so that `m dist` can produce the same image.",
+      "range": {
+        "startLine": 1361,
+        "startChar": 117,
+        "endLine": 1361,
+        "endChar": 141
+      },
+      "revId": "bbf140111b2f1aca5d2d66bfadeab601e3c258c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
