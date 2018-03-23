@@ -19,6 +19,7 @@
 /vendor/bin/init\.ranchu-net\.sh u:object_r:goldfish_setup_exec:s0
 /vendor/bin/init\.wifi\.sh   u:object_r:goldfish_setup_exec:s0
 /vendor/bin/qemu-props       u:object_r:qemu_props_exec:s0
+/vendor/bin/createns         u:object_r:createns_exec:s0
 /vendor/bin/execns           u:object_r:execns_exec:s0
 /vendor/bin/ipv6proxy        u:object_r:ipv6proxy_exec:s0
 /vendor/bin/dhcpclient       u:object_r:dhcpclient_exec:s0
@@ -41,5 +42,5 @@
 
 # data
 /data/vendor/mediadrm(/.*)?            u:object_r:mediadrm_vendor_data_file:s0
-/data/var/run(/.*)?                    u:object_r:varrun_file:s0
+/data/vendor/var/run(/.*)?             u:object_r:varrun_file:s0
 
