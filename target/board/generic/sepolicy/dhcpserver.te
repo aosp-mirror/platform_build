@@ -1,6 +1,6 @@
 # DHCP server
-type dhcpserver, domain, domain_deprecated;
-type dhcpserver_exec, exec_type, file_type;
+type dhcpserver, domain;
+type dhcpserver_exec, exec_type, vendor_file_type, file_type;
 
 init_daemon_domain(dhcpserver)
 net_domain(dhcpserver)
