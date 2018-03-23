@@ -65,6 +65,17 @@ DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 
+# Wifi.
+BOARD_WLAN_DEVICE           := wlan0
+BOARD_HOSTAPD_DRIVER        := NL80211
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_simulated
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_simulated
+WPA_SUPPLICANT_VERSION      := VER_0_8_X
+WIFI_DRIVER_FW_PATH_PARAM   := "/dev/null"
+WIFI_DRIVER_FW_PATH_STA     := "/dev/null"
+WIFI_DRIVER_FW_PATH_AP      := "/dev/null"
+
 # Enable A/B update
 TARGET_NO_RECOVERY := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true

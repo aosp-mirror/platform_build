@@ -19,7 +19,7 @@ set_prop(goldfish_setup, ctl_default_prop);
 allow goldfish_setup self:netlink_route_socket nlmsg_write;
 allow goldfish_setup self:netlink_socket create_socket_perms;
 allow goldfish_setup self:capability { sys_module sys_admin };
-allow goldfish_setup varrun_file:dir { mounton write add_name search remove_name };
+allow goldfish_setup varrun_file:dir { mounton open read write add_name search remove_name };
 allow goldfish_setup varrun_file:file { mounton getattr create read write open unlink };
 allow goldfish_setup execns_exec:file rx_file_perms;
 allow goldfish_setup proc_net:file w_file_perms;
