@@ -34,6 +34,7 @@ PRODUCT_PACKAGES += \
   liblog_arm \
   libm_arm \
   libmediandk_arm \
+  libamidi_arm \
   libOpenMAXAL_arm \
   libstdc++_arm \
   libOpenSLES_arm \
