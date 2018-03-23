@@ -109,6 +109,7 @@ class ErrorCode(object):
   TUNE_PARTITION_FAILURE = 3007
   APPLY_PATCH_FAILURE = 3008
 
+
 class ExternalError(RuntimeError):
   pass
 
@@ -591,11 +592,12 @@ def UnzipTemp(filename, pattern=None):
     cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
     if pattern is not None:
       cmd.extend(pattern)
-    p = Run(cmd, stdout=subprocess.PIPE)
-    p.communicate()
+    p = Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdoutdata, _ = p.communicate()
     if p.returncode != 0:
-      raise ExternalError("failed to unzip input target-files \"%s\"" %
-                          (filename,))
+      raise ExternalError(
+          "Failed to unzip input target-files \"{}\":\n{}".format(
+              filename, stdoutdata))
 
   tmp = MakeTempDir(prefix="targetfiles-")
   m = re.match(r"^(.*[.]zip)\+(.*[.]zip)$", filename, re.IGNORECASE)
@@ -795,12 +797,15 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
               key + OPTIONS.private_key_suffix,
               input_name, output_name])
 
-  p = Run(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+  p = Run(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+          stderr=subprocess.STDOUT)
   if password is not None:
     password += "\n"
-  p.communicate(password)
+  stdoutdata, _ = p.communicate(password)
   if p.returncode != 0:
-    raise ExternalError("signapk.jar failed: return code %s" % (p.returncode,))
+    raise ExternalError(
+        "Failed to run signapk.jar: return code {}:\n{}".format(
+            p.returncode, stdoutdata))
 
 
 def CheckSize(data, target, info_dict):
@@ -1711,10 +1716,11 @@ class BlockDifference(object):
                     '--output={}.new.dat.br'.format(self.path),
                     '{}.new.dat'.format(self.path)]
       print("Compressing {}.new.dat with brotli".format(self.partition))
-      p = Run(brotli_cmd, stdout=subprocess.PIPE)
-      p.communicate()
-      assert p.returncode == 0,\
-          'compression of {}.new.dat failed'.format(self.partition)
+      p = Run(brotli_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      stdoutdata, _ = p.communicate()
+      assert p.returncode == 0, \
+          'Failed to compress {}.new.dat with brotli:\n{}'.format(
+              self.partition, stdoutdata)
 
       new_data_name = '{}.new.dat.br'.format(self.partition)
       ZipWrite(output_zip,
