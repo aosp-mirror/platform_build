@@ -163,12 +163,26 @@ my_2nd_arch_prefix :=
 
 # $(1): the input .jar or .apk file
 # $(2): the output .odex file
+# In the case where LOCAL_ENFORCE_USES_LIBRARIES is true, PRIVATE_DEX2OAT_CLASS_LOADER_CONTEXT
+# contains the normalized path list of the libraries. This makes it easier to conditionally prepend
+# org.apache.http.legacy.boot based on the SDK level if required.
 define dex2oat-one-file
 $(hide) rm -f $(2)
 $(hide) mkdir -p $(dir $(2))
-$(hide) ANDROID_LOG_TAGS="*:e" $(DEX2OAT) \
+stored_class_loader_context_libs=$(PRIVATE_DEX2OAT_STORED_CLASS_LOADER_CONTEXT_LIBS) && \
+class_loader_context_arg=--class-loader-context=$(PRIVATE_DEX2OAT_CLASS_LOADER_CONTEXT) && \
+class_loader_context=$(PRIVATE_DEX2OAT_CLASS_LOADER_CONTEXT) && \
+stored_class_loader_context_arg="" && \
+uses_library_names="$(PRIVATE_USES_LIBRARY_NAMES)" && \
+optional_uses_library_names="$(PRIVATE_OPTIONAL_USES_LIBRARY_NAMES)" && \
+$(if $(PRIVATE_ENFORCE_USES_LIBRARIES), \
+source build/make/core/verify_uses_libraries.sh "$(1)" && \
+source build/make/core/construct_context.sh "$(PRIVATE_CONDITIONAL_USES_LIBRARIES_HOST)" "$(PRIVATE_CONDITIONAL_USES_LIBRARIES_TARGET)" && \
+,) \
+ANDROID_LOG_TAGS="*:e" $(DEX2OAT) \
 	--runtime-arg -Xms$(DEX2OAT_XMS) --runtime-arg -Xmx$(DEX2OAT_XMX) \
-	--class-loader-context=$(PRIVATE_DEX2OAT_CLASS_LOADER_CONTEXT) \
+	$${class_loader_context_arg} \
+	$${stored_class_loader_context_arg} \
 	--boot-image=$(PRIVATE_DEX_PREOPT_IMAGE_LOCATION) \
 	--dex-file=$(1) \
 	--dex-location=$(PRIVATE_DEX_LOCATION) \
