@@ -504,6 +504,23 @@ class CommonApkUtilsTest(unittest.TestCase):
       actual = common.ParseCertificate(cert_fp.read())
     self.assertEqual(expected, actual)
 
+  def test_GetMinSdkVersion(self):
+    test_app = os.path.join(self.testdata_dir, 'TestApp.apk')
+    self.assertEqual('24', common.GetMinSdkVersion(test_app))
+
+  def test_GetMinSdkVersion_invalidInput(self):
+    self.assertRaises(
+        common.ExternalError, common.GetMinSdkVersion, 'does-not-exist.apk')
+
+  def test_GetMinSdkVersionInt(self):
+    test_app = os.path.join(self.testdata_dir, 'TestApp.apk')
+    self.assertEqual(24, common.GetMinSdkVersionInt(test_app, {}))
+
+  def test_GetMinSdkVersionInt_invalidInput(self):
+    self.assertRaises(
+        common.ExternalError, common.GetMinSdkVersionInt, 'does-not-exist.apk',
+        {})
+
 
 class CommonUtilsTest(unittest.TestCase):
 
