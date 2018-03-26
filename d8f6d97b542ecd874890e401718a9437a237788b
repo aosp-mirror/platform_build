@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "453284b8_bdd4ee4f",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1286,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-03-26T22:18:43Z",
+      "side": 1,
+      "message": "Can you add \"d)\" to L1280 for BOARD_INCLUDE_RECOVERY_DTBO?",
+      "revId": "d8f6d97b542ecd874890e401718a9437a237788b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7ba09446_b8b343be",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2557,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-03-26T22:18:43Z",
+      "side": 1,
+      "message": "vaguely remember Dan once mentioned that preferring not inserting blank lines within the rules.",
+      "revId": "d8f6d97b542ecd874890e401718a9437a237788b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e712f1d8_ddca5519",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-03-26T22:18:43Z",
+      "side": 1,
+      "message": "There\u0027s another flag (--recovery_dtbo_offset) in your the other CL: https://android-review.googlesource.com/c/platform/system/core/+/646643/4/mkbootimg/mkbootimg#148\n\nDo we ever need to include that?",
+      "range": {
+        "startLine": 467,
+        "startChar": 4,
+        "endLine": 467,
+        "endChar": 39
+      },
+      "revId": "d8f6d97b542ecd874890e401718a9437a237788b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
