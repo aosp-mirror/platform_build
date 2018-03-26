@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a66e6364_149505c7",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1286,
+      "author": {
+        "id": 1120612
+      },
+      "writtenOn": "2018-03-26T22:47:11Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "453284b8_bdd4ee4f",
+      "revId": "d8f6d97b542ecd874890e401718a9437a237788b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7ba09446_b8b343be",
         "filename": "core/Makefile",
         "patchSetId": 5
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "2b92a7d7_8574f638",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2557,
+      "author": {
+        "id": 1120612
+      },
+      "writtenOn": "2018-03-26T22:47:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7ba09446_b8b343be",
+      "revId": "d8f6d97b542ecd874890e401718a9437a237788b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e712f1d8_ddca5519",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 5
@@ -47,6 +83,30 @@
       "writtenOn": "2018-03-26T22:18:43Z",
       "side": 1,
       "message": "There\u0027s another flag (--recovery_dtbo_offset) in your the other CL: https://android-review.googlesource.com/c/platform/system/core/+/646643/4/mkbootimg/mkbootimg#148\n\nDo we ever need to include that?",
+      "range": {
+        "startLine": 467,
+        "startChar": 4,
+        "endLine": 467,
+        "endChar": 39
+      },
+      "revId": "d8f6d97b542ecd874890e401718a9437a237788b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9c1a7729_19800be4",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 1120612
+      },
+      "writtenOn": "2018-03-26T22:47:11Z",
+      "side": 1,
+      "message": "Actually, it would be specified in the device\u0027s BoardConfig.mk  as part of BOARD_MKBOOTIMG_ARGS along with the other _offset arguments(kernel_offset, ramdisk_offset etc).",
+      "parentUuid": "e712f1d8_ddca5519",
       "range": {
         "startLine": 467,
         "startChar": 4,
