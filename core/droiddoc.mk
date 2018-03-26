@@ -222,7 +222,7 @@ $(full_target): \
                 $(PRIVATE_DROIDDOC_OPTIONS) \
                 $(addprefix -stubs ,$(PRIVATE_STUB_OUT_DIR)) \
         && touch -f $@ \
-    ) || (rm -rf $(PRIVATE_OUT_DIR) $(PRIVATE_SRC_LIST_FILE); exit 45)
+    ) || (cat $(PRIVATE_SRC_LIST_FILE) $(PRIVATE_SRCJAR_LIST_FILE) && rm -rf $(PRIVATE_OUT_DIR) $(PRIVATE_SRC_LIST_FILE); exit 45)
 
 
 
