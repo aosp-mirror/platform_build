@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af12a49d_255d460d",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 846,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-03-26T15:19:37Z",
+      "side": 1,
+      "message": "Sorry, this should only apply to FULL_TREBLE devices.\n\nhttps://cs.corp.google.com/android/build/make/core/config.mk?type\u003dcs\u0026q\u003dPRODUCT_SHIPPING_API_LEVEL+p:android\u0026l\u003d772",
+      "range": {
+        "startLine": 846,
+        "startChar": 13,
+        "endLine": 846,
+        "endChar": 42
+      },
+      "revId": "adc06943af6079bbff9a1769d164a38fbe287b65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
