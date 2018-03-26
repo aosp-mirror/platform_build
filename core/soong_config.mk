@@ -124,6 +124,7 @@ $(call add_json_bool, Treble_linker_namespaces,          $(filter true,$(PRODUCT
 $(call add_json_bool, Enforce_vintf_manifest,            $(filter true,$(PRODUCT_ENFORCE_VINTF_MANIFEST)))
 
 $(call add_json_bool, Uml,                               $(filter true,$(TARGET_USER_MODE_LINUX)))
+$(call add_json_bool, Use_lmkd_stats_log,                $(filter true,$(TARGET_LMKD_STATS_LOG)))
 $(call add_json_str,  VendorPath,                        $(TARGET_COPY_OUT_VENDOR))
 $(call add_json_str,  OdmPath,                           $(TARGET_COPY_OUT_ODM))
 $(call add_json_str,  ProductPath,                       $(TARGET_COPY_OUT_PRODUCT))
