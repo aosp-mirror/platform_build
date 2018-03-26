@@ -16,6 +16,24 @@
       "revId": "954d75d7d6604be85c2cca2f43768a0cf63371d7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f107987e_73396e0a",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 1120612
+      },
+      "writtenOn": "2018-03-26T21:33:21Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "14e9b192_0b7aaa29",
+      "revId": "954d75d7d6604be85c2cca2f43768a0cf63371d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
