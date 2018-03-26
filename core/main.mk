@@ -319,6 +319,15 @@ ifndef is_sdk_build
 endif
 endif
 
+## asan ##
+
+# Install some additional tools on ASAN builds IFF we are also installing debug tools
+ifneq ($(filter address,$(SANITIZE_TARGET)),)
+ifneq (,$(filter debug,$(tags_to_install)))
+  tags_to_install += asan
+endif
+endif
+
 ## sdk ##
 
 ifdef is_sdk_build
@@ -935,6 +944,9 @@ debug_MODULES := $(sort \
 tests_MODULES := $(sort \
         $(call get-tagged-modules,tests) \
         $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS)) \
+    )
+asan_MODULES := $(sort \
+        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG_ASAN)) \
     )
 
 # TODO: Remove the 3 places in the tree that use ALL_DEFAULT_INSTALLED_MODULES
