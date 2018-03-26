@@ -116,6 +116,30 @@
       "revId": "d8f6d97b542ecd874890e401718a9437a237788b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "683bc42e_624307c8",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 467,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-03-26T22:53:13Z",
+      "side": 1,
+      "message": "That makes sense. Thanks!",
+      "parentUuid": "9c1a7729_19800be4",
+      "range": {
+        "startLine": 467,
+        "startChar": 4,
+        "endLine": 467,
+        "endChar": 39
+      },
+      "revId": "d8f6d97b542ecd874890e401718a9437a237788b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
