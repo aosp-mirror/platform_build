@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77cc71e8_3d19754a",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 891,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-03-27T23:55:18Z",
+      "side": 1,
+      "message": "Since you\u0027re here, do you want to mark all of these variables as read-only?\n\n .KATI_READONLY :\u003d TOT_SEPOLICY_VERSION PLATFORM_SEPOLICY_VERSION PLATFORM_SEPOLICY_COMPAT_VERSIONS",
+      "revId": "fdc08e4e568fab99ff70d6ef9c09728fcc8f41b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
