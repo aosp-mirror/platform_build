@@ -879,11 +879,13 @@ sepolicy_minor_vers := 0
 ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
 $(error sepolicy_major_version does not match PLATFORM_SDK_VERSION, please update.)
 endif
+
+TOT_SEPOLICY_VERSION := 10000.0
 ifneq (REL,$(PLATFORM_VERSION_CODENAME))
-    sepolicy_major_vers := 10000
-    sepolicy_minor_vers := 0
+    PLATFORM_SEPOLICY_VERSION := $(TOT_SEPOLICY_VERSION)
+else
+    PLATFORM_SEPOLICY_VERSION := $(join $(addsuffix .,$(sepolicy_major_vers)), $(sepolicy_minor_vers))
 endif
-PLATFORM_SEPOLICY_VERSION := $(join $(addsuffix .,$(sepolicy_major_vers)), $(sepolicy_minor_vers))
 sepolicy_major_vers :=
 sepolicy_minor_vers :=
 
@@ -891,6 +893,11 @@ sepolicy_minor_vers :=
 PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     26.0 \
     27.0
+
+.KATI_READONLY := \
+    PLATFORM_SEPOLICY_COMPAT_VERSIONS \
+    PLATFORM_SEPOLICY_VERSION \
+    TOT_SEPOLICY_VERSION \
 
 # ###############################################################
 # Set up final options.
