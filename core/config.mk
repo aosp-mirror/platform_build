@@ -854,6 +854,11 @@ ifdef PRODUCT_SHIPPING_API_LEVEL
         $(error When PRODUCT_SHIPPING_API_LEVEL >= 28, TARGET_USES_64_BIT_BINDER must be true)
       endif
     endif
+    ifeq ($(PRODUCT_FULL_TREBLE),true)
+      ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE), true)
+        $(error When PRODUCT_SHIPPING_API_LEVEL >= 28, BOARD_BUILD_SYSTEM_ROOT_IMAGE must be true)
+      endif
+    endif
   endif
 endif
 
