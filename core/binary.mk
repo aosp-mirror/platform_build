@@ -225,7 +225,15 @@ ifneq ($(LOCAL_SDK_VERSION),)
 endif
 
 ifneq ($(LOCAL_USE_VNDK),)
-  my_cflags += -D__ANDROID_API__=__ANDROID_API_FUTURE__ -D__ANDROID_VNDK__
+  # Required VNDK version for vendor modules is BOARD_VNDK_VERSION.
+  my_vndk_version := $(BOARD_VNDK_VERSION)
+  ifeq ($(my_vndk_version),current)
+    # Build with current PLATFORM_VNDK_VERSION.
+    # If PLATFORM_VNDK_VERSION has a CODENAME, it will return
+    # __ANDROID_API_FUTURE__.
+    my_vndk_version := $(call codename-or-sdk-to-sdk,$(PLATFORM_VNDK_VERSION))
+  endif
+  my_cflags += -D__ANDROID_API__=$(my_vndk_version) -D__ANDROID_VNDK__
 endif
 
 ifndef LOCAL_IS_HOST_MODULE
