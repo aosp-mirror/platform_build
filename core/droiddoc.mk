@@ -216,7 +216,7 @@ $(full_target): \
                 $(PRIVATE_ADDITIONAL_HTML_DIR) \
                 $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH)) \
                 $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
-                -sourcepath $(PRIVATE_SOURCE_PATH)$(addprefix :,$(PRIVATE_CLASSPATH)) \
+                -sourcepath $(PRIVATE_SOURCE_PATH) \
                 -d $(PRIVATE_OUT_DIR) \
                 $(PRIVATE_CURRENT_BUILD) $(PRIVATE_CURRENT_TIME) \
                 $(PRIVATE_DROIDDOC_OPTIONS) \
@@ -261,7 +261,7 @@ $(full_target): $(full_src_files) $(LOCAL_GENERATED_SOURCES) $(full_java_libs) $
                 $(PRIVATE_PROFILING_OPTIONS) \
                 $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
                 $(PRIVATE_BOOTCLASSPATH_ARG) \
-                -sourcepath $(PRIVATE_SOURCE_PATH)$(addprefix :,$(PRIVATE_CLASSPATH)) \
+                -sourcepath $(PRIVATE_SOURCE_PATH) \
                 -d $(PRIVATE_OUT_DIR) \
                 -quiet \
         && touch -f $@ \
