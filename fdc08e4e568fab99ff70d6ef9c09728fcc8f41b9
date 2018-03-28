@@ -16,6 +16,24 @@
       "revId": "fdc08e4e568fab99ff70d6ef9c09728fcc8f41b9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88f0746f_0524f10b",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 891,
+      "author": {
+        "id": 1124693
+      },
+      "writtenOn": "2018-03-28T00:12:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "77cc71e8_3d19754a",
+      "revId": "fdc08e4e568fab99ff70d6ef9c09728fcc8f41b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
