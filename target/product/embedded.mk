@@ -121,3 +121,27 @@ PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.configfs.rc:root/init.usb.configfs.rc \
     system/core/rootdir/ueventd.rc:root/ueventd.rc \
     system/core/rootdir/etc/hosts:system/etc/hosts
+
+# This is a set of common components to enable CFI for (across
+# compatible product configs)
+PRODUCT_CFI_INCLUDE_PATHS :=  \
+    device/google/cuttlefish_common/guest/libs/wpa_supplicant_8_lib \
+    device/google/wahoo/wifi_offload \
+    external/tinyxml2 \
+    external/wpa_supplicant_8 \
+    frameworks/av/camera \
+    frameworks/av/media \
+    frameworks/av/services \
+    frameworks/minikin \
+    hardware/broadcom/wlan/bcmdhd/wpa_supplicant_8_lib \
+    hardware/interfaces/nfc \
+    hardware/qcom/wlan/qcwcn/wpa_supplicant_8_lib \
+    harware/interfaces/keymaster \
+    system/bt \
+    system/chre \
+    system/core/libnetutils \
+    system/core/libziparchive \
+    system/gatekeeper \
+    system/keymaster \
+    system/nfc \
+    system/security \
