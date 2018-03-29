@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e1d30a78_9caf68d3",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2018-03-29T20:08:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "23ef66cf_add71fe8",
+      "revId": "5752f8f915361876e9d94cd998d73ad9e4b6581d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "36fa2089_d1a11c29",
         "filename": "target/product/embedded.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2018-03-29T18:21:39Z",
       "side": 1,
       "message": "This shouldn\u0027t be in AOSP",
+      "revId": "5752f8f915361876e9d94cd998d73ad9e4b6581d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a68fca51_575470af",
+        "filename": "target/product/embedded.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 1068404
+      },
+      "writtenOn": "2018-03-29T20:08:06Z",
+      "side": 1,
+      "message": "My bad - I totally forgot to remove those. Fixed.",
+      "parentUuid": "36fa2089_d1a11c29",
       "revId": "5752f8f915361876e9d94cd998d73ad9e4b6581d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
