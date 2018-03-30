@@ -98,17 +98,13 @@ endif
 
 # Enable CFI in included paths.
 ifeq ($(filter cfi, $(my_sanitize)),)
-# Do not rely on include paths for anything other than ARM64.
-# TODO: Relax this constraint for 2019.
-  ifneq ($(filter arm64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
-    combined_include_paths := $(CFI_INCLUDE_PATHS) \
-                              $(PRODUCT_CFI_INCLUDE_PATHS)
+  combined_include_paths := $(CFI_INCLUDE_PATHS) \
+                            $(PRODUCT_CFI_INCLUDE_PATHS)
 
-    ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
-           $(filter $(dir)%,$(LOCAL_PATH)))),)
-      my_sanitize := cfi $(my_sanitize)
-      my_sanitize_diag := cfi $(my_sanitize_diag)
-    endif
+  ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
+         $(filter $(dir)%,$(LOCAL_PATH)))),)
+    my_sanitize := cfi $(my_sanitize)
+    my_sanitize_diag := cfi $(my_sanitize_diag)
   endif
 endif
 
