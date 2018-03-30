@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b8519269_0a503528",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-03-30T03:19:53Z",
+      "side": 1,
+      "message": "Maybe mention about these settings are from \n\nbuild/make/target/product/treble_common.mk",
+      "revId": "c9169a1bed4b9f5090b8b48143e485dfe77bfa1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6aa6fb0_c1575347",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-03-30T03:19:53Z",
+      "side": 1,
+      "message": "Why don\u0027t you also include aosp_arm(64) into this CL?",
+      "range": {
+        "startLine": 14,
+        "startChar": 13,
+        "endLine": 14,
+        "endChar": 25
+      },
+      "revId": "c9169a1bed4b9f5090b8b48143e485dfe77bfa1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00fdcfbe_b91994ca",
+        "filename": "target/product/aosp_base_telephony.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-03-30T03:19:53Z",
+      "side": 1,
+      "message": "Okay to put the setting here at this time.\nLet\u0027s discuss a solution by another bug/CL.",
+      "range": {
+        "startLine": 20,
+        "startChar": 62,
+        "endLine": 20,
+        "endChar": 75
+      },
+      "revId": "c9169a1bed4b9f5090b8b48143e485dfe77bfa1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
