@@ -47,11 +47,6 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 # Audio
 USE_XML_AUDIO_POLICY_CONF := 1
 
-# b/64700195: add minimum support for odm.img
-# Currently odm.img can only be built by `make custom_images`.
-# Adding /odm mount point under root directory.
-BOARD_ROOT_EXTRA_FOLDERS += odm
-
 # Android Verified Boot (AVB):
 #   Builds a special vbmeta.img that disables AVB verification.
 #   Otherwise, AVB will prevent the device from booting the generic system.img.
