@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3123472a_1b77762d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2018-03-30T08:24:17Z",
+      "side": 1,
+      "message": "OK, will add this information when I submit this CL to pi-dev.",
+      "parentUuid": "b8519269_0a503528",
+      "revId": "c9169a1bed4b9f5090b8b48143e485dfe77bfa1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a6aa6fb0_c1575347",
         "filename": "/COMMIT_MSG",
         "patchSetId": 2
@@ -30,6 +48,30 @@
       "writtenOn": "2018-03-30T03:19:53Z",
       "side": 1,
       "message": "Why don\u0027t you also include aosp_arm(64) into this CL?",
+      "range": {
+        "startLine": 14,
+        "startChar": 13,
+        "endLine": 14,
+        "endChar": 25
+      },
+      "revId": "c9169a1bed4b9f5090b8b48143e485dfe77bfa1e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92f986c7_f6da0dd1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2018-03-30T08:24:17Z",
+      "side": 1,
+      "message": "It takes much longer to run on arm(64) emulator, and last time I checked aosp_arm(64) didn\u0027t boot to home screen successfully/reliably.",
+      "parentUuid": "a6aa6fb0_c1575347",
       "range": {
         "startLine": 14,
         "startChar": 13,
