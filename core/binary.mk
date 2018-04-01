@@ -1330,6 +1330,15 @@ ifneq ($(LOCAL_USE_VNDK),)
   endif
 endif
 
+# Platform can use vendor public libraries. If a required shared lib is one of
+# the vendor public libraries, the lib is switched to the stub version of the lib.
+ifeq ($(LOCAL_USE_VNDK),)
+  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+      $(if $(filter $(l),$(VENDOR_PUBLIC_LIBRARIES)),$(l).vendorpublic,$(l)))
+  endif
+endif
+
 ##########################################################
 ## Set up installed module dependency
 ## We cannot compute the full path of the LOCAL_SHARED_LIBRARIES for
