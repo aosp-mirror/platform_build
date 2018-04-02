@@ -156,6 +156,9 @@ PRODUCT_PACKAGES_DEBUG := \
     sqlite3 \
     strace
 
+# Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
+PRODUCT_PACKAGES_DEBUG_ASAN :=
+
 PRODUCT_COPY_FILES := $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
 
