@@ -319,6 +319,7 @@ PRODUCT_PACKAGES_DEBUG := \
     showmap \
     sqlite3 \
     strace \
+    sanitizer-status \
     unwind_info \
     unwind_reg_info \
     unwind_symbols \
