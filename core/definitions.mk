@@ -471,8 +471,8 @@ endef
 ###########################################################
 ## Find test data in a form required by LOCAL_TEST_DATA
 ## $(1): the base dir, relative to the root of the source tree.
-## $(3): the file name pattern to be passed to find as "-name"
-## $(2): a list of subdirs of the base dir
+## $(2): the file name pattern to be passed to find as "-name"
+## $(3): a list of subdirs of the base dir
 ###########################################################
 
 define find-test-data-in-subdirs
