@@ -350,13 +350,12 @@ function addcompletions()
         return
     fi
 
-    dir="sdk/bash_completion"
-    if [ -d ${dir} ]; then
-        for f in `/bin/ls ${dir}/[a-z]*.bash 2> /dev/null`; do
+    for f in system/core/adb/adb.bash system/core/fastboot/fastboot.bash; do
+        if [ -f $f ]; then
             echo "including $f"
             . $f
-        done
-    fi
+        fi
+    done
 
     complete -C "bit --tab" bit
 }
