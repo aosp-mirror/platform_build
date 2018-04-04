@@ -79,3 +79,11 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/sdk_arm64.mk \
     $(LOCAL_DIR)/sdk_x86_64.mk
 endif
+
+COMMON_LUNCH_CHOICES := \
+    aosp_arm-eng \
+    aosp_arm64-eng \
+    aosp_mips-eng \
+    aosp_mips64-eng \
+    aosp_x86-eng \
+    aosp_x86_64-eng
