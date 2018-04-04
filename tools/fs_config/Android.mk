@@ -244,14 +244,14 @@ endif
 ifneq ($(TARGET_FS_CONFIG_GEN),)
 
 ##################################
-# Build the oemaid library when fs config files are present.
-# Intentionally break build if you require generated AIDS
+# Build the oemaid header library when fs config files are present.
+# Intentionally break build if you require generated AIDs
 # header file, but are not using any fs config files.
 include $(CLEAR_VARS)
-LOCAL_MODULE := liboemaids
+LOCAL_MODULE := oemaids_headers
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(dir $(my_gen_oem_aid))
 LOCAL_EXPORT_C_INCLUDE_DEPS := $(my_gen_oem_aid)
-include $(BUILD_STATIC_LIBRARY)
+include $(BUILD_HEADER_LIBRARY)
 
 ##################################
 # Generate the system/etc/passwd text file for the target
