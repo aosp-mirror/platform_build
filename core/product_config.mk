@@ -195,18 +195,13 @@ all_named_products :=
 current_product_makefile :=
 all_product_makefiles :=
 $(foreach f, $(all_product_configs),\
-    $(eval _cpm_words := $(subst :,$(space),$(f)))\
+    $(eval _cpm_words := $(call _decode-product-name,$(f)))\
     $(eval _cpm_word1 := $(word 1,$(_cpm_words)))\
     $(eval _cpm_word2 := $(word 2,$(_cpm_words)))\
-    $(if $(_cpm_word2),\
-        $(eval all_product_makefiles += $(_cpm_word2))\
-        $(eval all_named_products += $(_cpm_word1))\
-        $(if $(filter $(TARGET_PRODUCT),$(_cpm_word1)),\
-            $(eval current_product_makefile += $(_cpm_word2)),),\
-        $(eval all_product_makefiles += $(f))\
-        $(eval all_named_products += $(basename $(notdir $(f))))\
-        $(if $(filter $(TARGET_PRODUCT),$(basename $(notdir $(f)))),\
-            $(eval current_product_makefile += $(f)),)))
+    $(eval all_product_makefiles += $(_cpm_word2))\
+    $(eval all_named_products += $(_cpm_word1))\
+    $(if $(filter $(TARGET_PRODUCT),$(_cpm_word1)),\
+        $(eval current_product_makefile += $(_cpm_word2)),))
 _cpm_words :=
 _cpm_word1 :=
 _cpm_word2 :=
