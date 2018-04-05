@@ -99,6 +99,9 @@ HOST_CROSS_DISPLAY := host cross
 # All installed initrc files
 ALL_INIT_RC_INSTALLED_PAIRS :=
 
+# All installed vintf manifest fragments for a partition at
+ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
+
 ###########################################################
 ## Debugging; prints a variable list to stdout
 ###########################################################
@@ -2661,6 +2664,28 @@ $(2): $(1) $(XMLLINT)
 	@echo "Copy xml: $$@"
 	$(hide) $(XMLLINT) $$< >/dev/null  # Don't print the xml file to stdout.
 	$$(copy-file-to-target)
+endef
+
+# Copy the file only if it is a well-formed manifest file. For use viea $(eval)
+# $(1): source file
+# $(2): destination file
+define copy-vintf-manifest-checked
+$(2): $(1) $(HOST_OUT_EXECUTABLES)/assemble_vintf
+	@echo "Copy xml: $$@"
+	$(hide) $(HOST_OUT_EXECUTABLES)/assemble_vintf -i $$< >/dev/null  # Don't print the xml file to stdout.
+	$$(copy-file-to-target)
+endef
+
+# Copies many vintf manifest files checked.
+# $(1): The files to copy.  Each entry is a ':' separated src:dst pair
+# Evaluates to the list of the dst files (ie suitable for a dependency list)
+define copy-many-vintf-manifest-files-checked
+$(foreach f, $(1), $(strip \
+    $(eval _cmf_tuple := $(subst :, ,$(f))) \
+    $(eval _cmf_src := $(word 1,$(_cmf_tuple))) \
+    $(eval _cmf_dest := $(word 2,$(_cmf_tuple))) \
+    $(eval $(call copy-vintf-manifest-checked,$(_cmf_src),$(_cmf_dest))) \
+    $(_cmf_dest)))
 endef
 
 # The -t option to acp and the -p option to cp is
