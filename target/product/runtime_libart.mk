@@ -84,8 +84,11 @@ else
         pm.dexopt.boot=verify
 endif
 
+# The install filter is speed-profile in order to enable the use of
+# profiles from the dex metadata files. Note that if a profile is not provided
+# or if it is empty speed-profile is equivalent to (quicken + empty app image).
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    pm.dexopt.install=quicken \
+    pm.dexopt.install=speed-profile \
     pm.dexopt.bg-dexopt=speed-profile \
     pm.dexopt.ab-ota=speed-profile \
     pm.dexopt.inactive=verify \
