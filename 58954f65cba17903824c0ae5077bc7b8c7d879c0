@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b3d56eba_78c3cd9c",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2836,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-04-05T03:26:31Z",
+      "side": 1,
+      "message": "Dan, maybe you can suggest something cleaner?",
+      "range": {
+        "startLine": 2836,
+        "startChar": 5,
+        "endLine": 2836,
+        "endChar": 6
+      },
+      "revId": "58954f65cba17903824c0ae5077bc7b8c7d879c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
