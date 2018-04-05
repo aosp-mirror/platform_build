@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e960c2cc_d8c04b1d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2546,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-04-05T03:36:01Z",
+      "side": 1,
+      "message": "also, btw, w/ w/o my change, this isn\u0027t re-entrant (it creates an $ANDROID_PRODUCT_OUT/system/vendor-\u003e/vendor symlink for some reason)",
+      "range": {
+        "startLine": 2546,
+        "startChar": 8,
+        "endLine": 2546,
+        "endChar": 14
+      },
+      "revId": "84fd28ebc99ae53ad2b3dad5fe578526590b640a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
