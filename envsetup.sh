@@ -350,13 +350,12 @@ function addcompletions()
         return
     fi
 
-    dir="sdk/bash_completion"
-    if [ -d ${dir} ]; then
-        for f in `/bin/ls ${dir}/[a-z]*.bash 2> /dev/null`; do
+    for f in system/core/adb/adb.bash system/core/fastboot/fastboot.bash; do
+        if [ -f $f ]; then
             echo "including $f"
             . $f
-        done
-    fi
+        fi
+    done
 
     complete -C "bit --tab" bit
 }
@@ -544,14 +543,6 @@ function add_lunch_combo()
     LUNCH_MENU_CHOICES=(${LUNCH_MENU_CHOICES[@]} $new_combo)
 }
 
-# add the default one here
-add_lunch_combo aosp_arm-eng
-add_lunch_combo aosp_arm64-eng
-add_lunch_combo aosp_mips-eng
-add_lunch_combo aosp_mips64-eng
-add_lunch_combo aosp_x86-eng
-add_lunch_combo aosp_x86_64-eng
-
 function print_lunch_menu()
 {
     local uname=$(uname)
@@ -562,7 +553,7 @@ function print_lunch_menu()
 
     local i=1
     local choice
-    for choice in ${LUNCH_MENU_CHOICES[@]}
+    for choice in $(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES)
     do
         echo "     $i. $choice"
         i=$(($i+1))
@@ -590,9 +581,10 @@ function lunch()
         selection=aosp_arm-eng
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
-        if [ $answer -le ${#LUNCH_MENU_CHOICES[@]} ]
+        local choices=($(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES))
+        if [ $answer -le ${#choices[@]} ]
         then
-            selection=${LUNCH_MENU_CHOICES[$(($answer-1))]}
+            selection=${choices[$(($answer-1))]}
         fi
     else
         selection=$answer
@@ -643,6 +635,7 @@ function lunch()
     destroy_build_var_cache
 }
 
+unset COMMON_LUNCH_CHOICES_CACHE
 # Tab completion for lunch.
 function _lunch()
 {
@@ -651,7 +644,11 @@ function _lunch()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    COMPREPLY=( $(compgen -W "${LUNCH_MENU_CHOICES[*]}" -- ${cur}) )
+    if [ -z "$COMMON_LUNCH_CHOICES_CACHE" ]; then
+        COMMON_LUNCH_CHOICES_CACHE=$(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES)
+    fi
+
+    COMPREPLY=( $(compgen -W "${COMMON_LUNCH_CHOICES_CACHE}" -- ${cur}) )
     return 0
 }
 complete -F _lunch lunch

@@ -154,12 +154,6 @@ endif
 ifdef LOCAL_DEX_PREOPT
 
 dexpreopt_boot_jar_module := $(filter $(DEXPREOPT_BOOT_JARS_MODULES),$(LOCAL_MODULE))
-
-# Filter org.apache.http.legacy.boot.
-ifeq ($(dexpreopt_boot_jar_module),org.apache.http.legacy.boot)
-dexpreopt_boot_jar_module :=
-endif
-
 ifdef dexpreopt_boot_jar_module
 # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
 # We use this installed_odex trick to get boot.art installed.

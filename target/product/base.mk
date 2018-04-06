@@ -169,7 +169,8 @@ PRODUCT_PACKAGES_DEBUG := \
     logpersist.start \
     perfprofd \
     sqlite3 \
-    strace
+    strace \
+    sanitizer-status
 
 # Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
 PRODUCT_PACKAGES_DEBUG_ASAN :=

@@ -110,7 +110,7 @@ else
 PRODUCT_BOOT_JARS += org.apache.http.legacy.boot
 endif
 
-ifeq ($(REMOVE_OAHL_FROM_BCP),true)
+ifeq ($(REMOVE_ATB_FROM_BCP),true)
 PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
 else
 PRODUCT_BOOT_JARS += android.test.base
