@@ -199,6 +199,12 @@ REMOVE_OAHL_FROM_BCP := true
 endif
 
 # ###############################################################
+# Broken build defaults
+# ###############################################################
+# Assume that all boards have duplicate rules right now.
+BUILD_BROKEN_DUP_RULES := true
+
+# ###############################################################
 # Include sub-configuration files
 # ###############################################################
 
