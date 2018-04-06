@@ -14,6 +14,21 @@
 # limitations under the License.
 #
 
+# We no longer provide a ccache prebuilt.
+#
+# Ours was old, and had a number of issues that triggered non-reproducible
+# results and other failures. Newer ccache versions may fix some of those
+# issues, but at the large scale of our build servers, we weren't seeing
+# significant performance gains from using ccache -- you end up needing very
+# good locality and/or very large caches if you're building many different
+# configurations.
+#
+# Local no-change full rebuilds were showing better results, but why not just
+# use incremental builds at that point?
+#
+# So if you still want to use ccache, continue setting USE_CCACHE, but also set
+# the CCACHE_EXEC environment variable to the path to your ccache executable.
+ifneq ($(CCACHE_EXEC),)
 ifneq ($(filter-out false,$(USE_CCACHE)),)
   # The default check uses size and modification time, causing false misses
   # since the mtime depends when the repo was checked out
@@ -36,17 +51,11 @@ ifneq ($(filter-out false,$(USE_CCACHE)),)
   # See http://petereisentraut.blogspot.com/2011/09/ccache-and-clang-part-2.html
   export CCACHE_CPP2 := true
 
-  CCACHE_HOST_TAG := $(HOST_PREBUILT_TAG)
-  ccache := prebuilts/misc/$(CCACHE_HOST_TAG)/ccache/ccache
-  # Check that the executable is here.
-  ccache := $(strip $(wildcard $(ccache)))
-  ifdef ccache
-    ifndef CC_WRAPPER
-      CC_WRAPPER := $(ccache)
-    endif
-    ifndef CXX_WRAPPER
-      CXX_WRAPPER := $(ccache)
-    endif
-    ccache =
+  ifndef CC_WRAPPER
+    CC_WRAPPER := $(CCACHE_EXEC)
   endif
+  ifndef CXX_WRAPPER
+    CXX_WRAPPER := $(CCACHE_EXEC)
+  endif
+endif
 endif
