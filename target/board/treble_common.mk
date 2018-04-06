@@ -58,5 +58,3 @@ ifeq ($(BOARD_AVB_ENABLE),true)
 $(error BOARD_AVB_ENABLE cannot be set for Treble GSI)
 endif
 BOARD_BUILD_DISABLED_VBMETAIMAGE := true
-
-BUILD_BROKEN_DUP_RULES := false
