@@ -76,3 +76,5 @@ WIFI_DRIVER_FW_PATH_AP      := "/dev/null"
 # Enable A/B update
 TARGET_NO_RECOVERY := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+
+BUILD_BROKEN_DUP_RULES := false
