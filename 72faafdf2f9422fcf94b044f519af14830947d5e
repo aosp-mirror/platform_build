@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "de13c30b_b1b00993",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-04-09T22:31:36Z",
+      "side": 1,
+      "message": "directly $(full_target): core-system-modules ?",
+      "revId": "72faafdf2f9422fcf94b044f519af14830947d5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc8cf6b1_16b21d4a",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-04-09T22:31:36Z",
+      "side": 1,
+      "message": "go/oag/649819 needs to be updated to include -source for the standard doclet.",
+      "revId": "72faafdf2f9422fcf94b044f519af14830947d5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
