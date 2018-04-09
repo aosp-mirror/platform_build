@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9b934429_66ab8e78",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-09T22:03:22Z",
+      "side": 1,
+      "message": "This Change-Id should have stayed the same as the internal version, otherwise there\u0027s no link to the existing review.",
+      "revId": "8993cda9a7fbf188413d0933fcd7f8e4b7a4975f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
