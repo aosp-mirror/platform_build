@@ -75,12 +75,11 @@ ifneq ($(LOCAL_SDK_VERSION),)
     LOCAL_JAVA_LIBRARIES := core.current.stubs $(LOCAL_JAVA_LIBRARIES)
     $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, core.current.stubs)
   else
-    # core_<ver> is subset of <ver>. Instead of defining a prebuilt lib for core_<ver>,
-    # use the stub for <ver> when building for apps.
-    _version := $(patsubst core_%,%,$(LOCAL_SDK_VERSION))
-    LOCAL_JAVA_LIBRARIES := sdk_v$(_version) $(LOCAL_JAVA_LIBRARIES)
-    $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, sdk_v$(_version))
-    _version :=
+    # TARGET_BUILD_APPS is set. Use the modules defined in prebuilts/sdk/Android.mk.
+    _module_name := $(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION))
+    LOCAL_JAVA_LIBRARIES := $(_module_name) $(LOCAL_JAVA_LIBRARIES)
+    $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, $(_module_name))
+    _module_name :=
   endif
 else
   ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
