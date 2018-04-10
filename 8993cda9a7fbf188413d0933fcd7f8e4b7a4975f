@@ -16,6 +16,24 @@
       "revId": "8993cda9a7fbf188413d0933fcd7f8e4b7a4975f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c7d07f4_44ff4db6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1130394
+      },
+      "writtenOn": "2018-04-10T07:40:25Z",
+      "side": 1,
+      "message": "I\u0027ve created a new CL over at https://android-review.googlesource.com/c/platform/build/+/661421. Making the change IDs match is not something I\u0027ve seen generally enforced for other bits of code moved between AOSP and internal master. Is there some automatic linking between the two gerrit instances that I\u0027ve missed?",
+      "parentUuid": "9b934429_66ab8e78",
+      "revId": "8993cda9a7fbf188413d0933fcd7f8e4b7a4975f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
