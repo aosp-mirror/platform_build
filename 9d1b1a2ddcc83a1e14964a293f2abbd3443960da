@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f0807a7_b9b02843",
+        "filename": "core/combo/arch/x86/skylake.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2018-04-10T15:16:09Z",
+      "side": 1,
+      "message": "at this point, does it make sense to default all these to `true` and then just have the older architectures set `false` where necessary? that should reduce the amount of boilerplate for new/future architectures.",
+      "revId": "9d1b1a2ddcc83a1e14964a293f2abbd3443960da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
