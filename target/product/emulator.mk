@@ -44,8 +44,6 @@ PRODUCT_PACKAGES += \
     camera.goldfish.jpeg \
     camera.ranchu \
     camera.ranchu.jpeg \
-    keystore.goldfish \
-    keystore.ranchu \
     gatekeeper.ranchu \
     lights.goldfish \
     gps.goldfish \
