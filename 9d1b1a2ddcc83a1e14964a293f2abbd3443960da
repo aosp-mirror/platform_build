@@ -52,6 +52,24 @@
       "revId": "9d1b1a2ddcc83a1e14964a293f2abbd3443960da",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2f5181e_5be55898",
+        "filename": "core/combo/arch/x86/skylake.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-11T01:58:50Z",
+      "side": 1,
+      "message": "Or perhaps it\u0027s time to deprecate them -- for all ARCH_X86_HAVE_*, the only one actively used is ARCH_X86_HAVE_SSE4_1, and that\u0027s only used in one project (mesa3d). With the obsolete variable support, we can make reading it an error, so it won\u0027t silently revert to false if other codebases are still using it.\n\nARCH_ARM_HAVE_* is used slightly more widely, but only to check for neon, and it\u0027s likely about time to enforce that to true (unbundled apps have been the only holdout).",
+      "parentUuid": "799421ff_56705e29",
+      "revId": "9d1b1a2ddcc83a1e14964a293f2abbd3443960da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
