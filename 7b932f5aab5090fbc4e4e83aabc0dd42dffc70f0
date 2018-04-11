@@ -16,6 +16,24 @@
       "revId": "7b932f5aab5090fbc4e4e83aabc0dd42dffc70f0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e3a9b08_fe58af60",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-04-11T22:22:13Z",
+      "side": 1,
+      "message": "If we can do this in Soong, let\u0027s do it there.\n\nHowever for which to default to: my guess is eventually we will want to do continuous runs of these tests in the lab infrastructure, correct? For those runs we use device-tests (built on device target builders) and general-tests (build on test_suites_* ABI-based builders).\n\nThe main reason I created null-suite is so atest could support many of the older unittests without manually updating their mks/bps to a device-test or general-test suite. My first PS for that CL I used general-tests and it exploded in size so I decided against packaging everything on the builders.\n\nSince this is a new test/build type I would be more supportive of defaulting these to general-tests. But I am okay with sticking to null_suite as long as we support overriding it in the bp files.\n\n\nAlso I commented on the bug, we\u0027ll likely eventually want 2 auto-generated configs for target/host but for now we should default to which one is higher priority. Let\u0027s discuss this point on the bug.",
+      "parentUuid": "37d18da5_6356c7b5",
+      "revId": "7b932f5aab5090fbc4e4e83aabc0dd42dffc70f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
