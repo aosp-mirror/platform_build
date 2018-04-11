@@ -406,7 +406,7 @@ endif
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
 
 # When an app contains references to APIs that are not in the SDK specified by
-# its LOCAL_SDK_VERSION for example added by support library or by runtime 
+# its LOCAL_SDK_VERSION for example added by support library or by runtime
 # classes added by desugar, we artifically raise the "SDK version" "linked" by
 # ProGuard, to
 # - suppress ProGuard warnings of referencing symbols unknown to the lower SDK version.
@@ -416,7 +416,7 @@ my_proguard_sdk_raise :=
 ifdef LOCAL_SDK_VERSION
 ifdef TARGET_BUILD_APPS
 ifeq (,$(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
-  my_proguard_sdk_raise := $(call java-lib-header-files, sdk_vcurrent)
+  my_proguard_sdk_raise := $(call java-lib-header-files, $(call resolve-prebuilt-sdk-module,current))
 endif
 else
   # For platform build, we can't just raise to the "current" SDK,
