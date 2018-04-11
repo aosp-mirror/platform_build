@@ -82,7 +82,7 @@ endif
 # generate the range of allowed SDK versions, so it must have an entry for every
 # unreleased API level targetable by this branch, not just those that are valid
 # lunch targets for this branch.
-PLATFORM_VERSION.PPR1 := P
+PLATFORM_VERSION.PPR1 := 9
 PLATFORM_VERSION.QPR1 := Q
 
 # These are the current development codenames, if the build is not a final
@@ -115,7 +115,7 @@ ifndef PLATFORM_SDK_VERSION
   # When you increment the PLATFORM_SDK_VERSION please ensure you also
   # clear out the following text file of all older PLATFORM_VERSION's:
   # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 27
+  PLATFORM_SDK_VERSION := 28
 endif
 
 ifndef PLATFORM_VERSION_CODENAME
