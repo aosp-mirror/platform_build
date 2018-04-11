@@ -16,6 +16,24 @@
       "revId": "dc493e3c03789532172b03f33bc196fbb50145a5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70f20089_8ca4ee82",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2018-04-11T07:36:13Z",
+      "side": 1,
+      "message": "Thank you for your comment.\nI updated this and removed the error message that informed build root.",
+      "parentUuid": "e6baacf7_b7527d83",
+      "revId": "dc493e3c03789532172b03f33bc196fbb50145a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
