@@ -70,6 +70,24 @@
       "revId": "9d1b1a2ddcc83a1e14964a293f2abbd3443960da",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "385d1b4f_c35a7240",
+        "filename": "core/combo/arch/x86/skylake.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1013846
+      },
+      "writtenOn": "2018-04-11T05:19:34Z",
+      "side": 1,
+      "message": "We are happy if Google can deprecate these flags as they are redundant with these in Soong and seems not be used in other projects expect mesa3d as you mentioned. We are willing to offer any help if needed from Intel side.",
+      "parentUuid": "d2f5181e_5be55898",
+      "revId": "9d1b1a2ddcc83a1e14964a293f2abbd3443960da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
