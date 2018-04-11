@@ -22,6 +22,30 @@
       "revId": "16968546cb5950a44796dee3f1c4c92ed5597341",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7affb7b1_6515916b",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2018-04-11T06:14:43Z",
+      "side": 1,
+      "message": "Restored. Instead change the error message to explain that the command must be run in the build root directory.",
+      "parentUuid": "4c315f82_6499c345",
+      "range": {
+        "startLine": 65,
+        "startChar": 33,
+        "endLine": 65,
+        "endChar": 53
+      },
+      "revId": "16968546cb5950a44796dee3f1c4c92ed5597341",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
