@@ -261,11 +261,10 @@ ifndef LOCAL_IS_HOST_MODULE
     else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),core_current)
       full_java_bootclasspath_libs := $(call java-lib-header-files,core.current.stubs)
     else
-      # core_<ver> is subset of <ver>. Instead of defining a prebuilt lib for core_<ver>,
-      # use the stub for <ver> when building for apps.
-      _version := $(patsubst core_%,%,$(LOCAL_SDK_VERSION))
-      full_java_bootclasspath_libs := $(call java-lib-header-files,sdk_v$(_version))
-      _version :=
+      # TARGET_BUILD_APPS is set. Use the modules defined in prebuilts/sdk/Android.mk.
+      _module_name := $(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION))
+      full_java_bootclasspath_libs := $(call java-lib-header-files,$(_module_name))
+      _module_name :=
     endif # current, system_current, system_${VER}, test_current or core_current
   endif # LOCAL_SDK_VERSION
 
