@@ -16,6 +16,24 @@
       "revId": "9d1b1a2ddcc83a1e14964a293f2abbd3443960da",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a888f92c_8699a6ff",
+        "filename": "core/combo/arch/x86/skylake.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1013846
+      },
+      "writtenOn": "2018-04-11T01:45:01Z",
+      "side": 1,
+      "message": "hello, we may have new feature/arch in future. So I\u0027m sure whether it can reduce the effort. Maybe we can try it another way, that is to inherit the basic features from older arch and add new features below. What do you think?",
+      "parentUuid": "9f0807a7_b9b02843",
+      "revId": "9d1b1a2ddcc83a1e14964a293f2abbd3443960da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
