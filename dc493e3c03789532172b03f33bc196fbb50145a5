@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e6baacf7_b7527d83",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-11T06:20:47Z",
+      "side": 1,
+      "message": "Add something like: (bonus would be to check to see if the env variable exists first)\n\n  echo \u0027cd $$(ANDROID_BUILD_TOP)\u0027 \u003e\u003e $@; \\",
+      "revId": "dc493e3c03789532172b03f33bc196fbb50145a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
