@@ -155,7 +155,7 @@ my_srcjar := $(intermediates.COMMON)/aapt.srcjar
 LOCAL_SRCJARS += $(my_srcjar)
 $(R_file_stamp): PRIVATE_SRCJAR := $(my_srcjar)
 $(R_file_stamp): PRIVATE_JAVA_GEN_DIR := $(intermediates.COMMON)/aapt
-$(R_file_stamp): .KATI_IMPLICIT_OUTPUTS := $(intermediates.COMMON)/R.txt) $(my_srcjar)
+$(R_file_stamp): .KATI_IMPLICIT_OUTPUTS := $(my_srcjar)
 endif
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
