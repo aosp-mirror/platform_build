@@ -970,6 +970,15 @@ else
 SUPPORT_LIBRARY_ROOT := frameworks/support
 endif
 
+# Resolve LOCAL_SDK_VERSION to prebuilt module name, e.g.:
+# 23 -> sdk_v23
+# system_current -> sdk_vsystem_current
+# Note: this also replaces core_X with X (to be removed as there are prebuilts for core now).
+# $(1): An sdk version (LOCAL_SDK_VERSION)
+define resolve-prebuilt-sdk-module
+  sdk_v$(patsubst core_%,%,$(1))
+endef
+
 # Historical SDK version N is stored in $(HISTORICAL_SDK_VERSIONS_ROOT)/N.
 # The 'current' version is whatever this source tree is.
 #
