@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dd31cd20_dfa1c792",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-11T05:36:46Z",
+      "side": 1,
+      "message": "now",
+      "range": {
+        "startLine": 10,
+        "startChar": 26,
+        "endLine": 10,
+        "endChar": 28
+      },
+      "revId": "77e6594207dd2868e0acde117536a1fb2818d282",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68899b15_9489fddf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-11T05:36:46Z",
+      "side": 1,
+      "message": "Bug: 77883700",
+      "revId": "77e6594207dd2868e0acde117536a1fb2818d282",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78dfc3b5_8e591c48",
+        "filename": "core/tasks/tools/package-modules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-11T05:36:46Z",
+      "side": 1,
+      "message": "are too noisy, disable",
+      "range": {
+        "startLine": 31,
+        "startChar": 17,
+        "endLine": 31,
+        "endChar": 39
+      },
+      "revId": "77e6594207dd2868e0acde117536a1fb2818d282",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
