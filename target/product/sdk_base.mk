@@ -22,7 +22,6 @@ PRODUCT_PACKAGES := \
 	CustomLocale \
 	Development \
 	Dialer \
-	EmulatorSmokeTests \
 	Gallery2 \
 	Launcher3 \
 	Camera2 \
