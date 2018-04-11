@@ -34,6 +34,24 @@
       "revId": "9d1b1a2ddcc83a1e14964a293f2abbd3443960da",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "799421ff_56705e29",
+        "filename": "core/combo/arch/x86/skylake.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-11T01:51:44Z",
+      "side": 1,
+      "message": "Ideally these would be exported from Soong, but I never got around to it.\n\nIt\u0027s unlikely to actually cause issues in practice, but in Soong these are all per-bitness (x86 vs x86_64), while here there\u0027s one value that\u0027s hopefully the same across both. That can cause issues in stranger situations -- like if we\u0027re building unbundled apps and have different expected minimum capabilities between the architectures.",
+      "parentUuid": "a888f92c_8699a6ff",
+      "revId": "9d1b1a2ddcc83a1e14964a293f2abbd3443960da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
