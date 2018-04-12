@@ -70,6 +70,24 @@
       "revId": "57fdba09a9d7308988a05afe2666b972183bc8fe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd91c35f_183c5bca",
+        "filename": "target/product/vndk/current.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2018-04-12T05:06:49Z",
+      "side": 0,
+      "message": "You\u0027re right, Dan. Soong must know the list even though they will not be installed. I uploaded this as a result of my test, but there were some mistake for the test.\nNow I could see that libvixl libs are shown even for the x86 build.",
+      "parentUuid": "69886fee_a19347b2",
+      "revId": "57fdba09a9d7308988a05afe2666b972183bc8fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
