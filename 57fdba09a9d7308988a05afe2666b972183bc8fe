@@ -16,6 +16,24 @@
       "revId": "57fdba09a9d7308988a05afe2666b972183bc8fe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5057d9ef_58013ca7",
+        "filename": "target/product/vndk/current.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2018-04-12T04:51:58Z",
+      "side": 0,
+      "message": "I uploaded aosp/663362 for this.\nIt is not built with x86 architecture.\nAlso no vendor modules are using this module.",
+      "parentUuid": "4e7279e6_c1829ea2",
+      "revId": "57fdba09a9d7308988a05afe2666b972183bc8fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
