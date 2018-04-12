@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "72f8c2ed_e6f7c02a",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-12T17:52:45Z",
+      "side": 1,
+      "message": "The LOCAL_USED_LIBRARIES vs. \u003cuses-library\u003e mismatch is a little unfortunate.  Maybe LOCAL_USES_LIBRARIES?  LOCAL_USES_LIBRARY would match the XML best, but would be confusing next to LOCAL_SHARED_LIBRARIES.",
+      "revId": "320a59cb2ed91be1544d04b88de9f3964e1ccbcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "557a5831_9c4e7bc3",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-12T17:52:45Z",
+      "side": 1,
+      "message": "Update this comment since this change makes the build system pass used libraries properly?  I assume this will get removed once we enforce that LOCAL_USED_LIBRARIES matches the manifest?",
+      "revId": "320a59cb2ed91be1544d04b88de9f3964e1ccbcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
