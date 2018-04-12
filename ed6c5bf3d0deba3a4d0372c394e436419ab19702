@@ -16,6 +16,24 @@
       "revId": "ed6c5bf3d0deba3a4d0372c394e436419ab19702",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8b9c28d_3d04b2e4",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2018-04-12T18:44:16Z",
+      "side": 1,
+      "message": "Yes, we will need them one way or another. (it would be easier if you can get them here)\n\nI also missed that from the dex2oat CL where I think you don\u0027t parse and verify with checksum.",
+      "parentUuid": "0163bdcd_2102f603",
+      "revId": "ed6c5bf3d0deba3a4d0372c394e436419ab19702",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }

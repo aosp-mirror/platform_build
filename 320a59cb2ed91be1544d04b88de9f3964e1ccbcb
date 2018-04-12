@@ -102,6 +102,24 @@
     },
     {
       "key": {
+        "uuid": "2dd18c44_264842a5",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2018-04-12T18:44:16Z",
+      "side": 1,
+      "message": "What\u0027s the plan for org appache library? that\u0027s added at runtime by default for app targeting sdk \u003c 27 or 26. We need to auto-add it somewhere here as well.",
+      "parentUuid": "708724e7_6167f1f2",
+      "revId": "320a59cb2ed91be1544d04b88de9f3964e1ccbcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "557a5831_9c4e7bc3",
         "filename": "core/setup_one_odex.mk",
         "patchSetId": 1
@@ -134,6 +152,29 @@
       "revId": "320a59cb2ed91be1544d04b88de9f3964e1ccbcb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "459f22d1_fd9e7ff2",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2018-04-12T18:44:16Z",
+      "side": 1,
+      "message": "reusue my_dex_preopt_class_loader_context",
+      "range": {
+        "startLine": 42,
+        "startChar": 75,
+        "endLine": 42,
+        "endChar": 139
+      },
+      "revId": "320a59cb2ed91be1544d04b88de9f3964e1ccbcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
