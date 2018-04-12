@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4e7279e6_c1829ea2",
+        "filename": "target/product/vndk/current.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-12T04:47:46Z",
+      "side": 0,
+      "message": "I don\u0027t see these being exempted in the other change, nor should they be",
+      "revId": "57fdba09a9d7308988a05afe2666b972183bc8fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
