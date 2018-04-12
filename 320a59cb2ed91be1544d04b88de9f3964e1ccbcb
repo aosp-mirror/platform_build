@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "708724e7_6167f1f2",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-12T18:18:09Z",
+      "side": 1,
+      "message": "(a goal of the java_sdk_library work is also to make the \u003cuses-library\u003e declaration invisible to developers, so the inconsistency is hidden)",
+      "parentUuid": "2aa55691_d35ebae9",
+      "revId": "320a59cb2ed91be1544d04b88de9f3964e1ccbcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "557a5831_9c4e7bc3",
         "filename": "core/setup_one_odex.mk",
         "patchSetId": 1
