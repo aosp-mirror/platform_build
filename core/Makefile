@@ -427,8 +427,8 @@ ifdef property_overrides_split_enabled
 	        echo "#" >> $@;
 	$(hide) $(foreach line,$(FINAL_VENDOR_BUILD_PROPERTIES), \
 		echo "$(line)" >> $@;)
-	$(hide) build/make/tools/post_process_props.py $@
 endif  # property_overrides_split_enabled
+	$(hide) build/make/tools/post_process_props.py $@ $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_PROPERTY_BLACKLIST)
 
 # -----------------------------------------------------------------
 # product build.prop
