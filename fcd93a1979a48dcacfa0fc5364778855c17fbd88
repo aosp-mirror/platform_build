@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be296ca8_834f9202",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-12T17:19:01Z",
+      "side": 1,
+      "message": "alphabetically this would go above R8",
+      "revId": "fcd93a1979a48dcacfa0fc5364778855c17fbd88",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
