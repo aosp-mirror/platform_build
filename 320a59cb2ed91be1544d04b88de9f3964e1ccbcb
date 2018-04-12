@@ -19,6 +19,29 @@
     },
     {
       "key": {
+        "uuid": "d1bb9cbe_3adc302d",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-12T18:09:53Z",
+      "side": 1,
+      "message": "we\u0027re adding a LOCAL_SDK_LIBRARIES, which is how we intend for these \u003cuses-library\u003e libs be depended on instead of putting them in LOCAL_JAVA_LIBRARIES. You should be able to use that instead of introducing a separate variable.\n\nI have a pending change, let me upload it.",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 20
+      },
+      "revId": "320a59cb2ed91be1544d04b88de9f3964e1ccbcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "557a5831_9c4e7bc3",
         "filename": "core/setup_one_odex.mk",
         "patchSetId": 1
