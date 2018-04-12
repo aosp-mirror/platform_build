@@ -120,6 +120,48 @@
     },
     {
       "key": {
+        "uuid": "ca8f02f3_25f8f1d1",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-04-12T23:11:19Z",
+      "side": 1,
+      "message": "I am going to add logic for that in a follow up CL.",
+      "parentUuid": "2dd18c44_264842a5",
+      "revId": "320a59cb2ed91be1544d04b88de9f3964e1ccbcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5cefb659_4fb76589",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-04-12T23:11:19Z",
+      "side": 1,
+      "message": "Thanks, I should be able to just use the LOCAL_SDK_LIBRARIES variable instead of LOCAL_USES_LIBRARIES right?",
+      "parentUuid": "0abe93a7_81036256",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 20
+      },
+      "revId": "320a59cb2ed91be1544d04b88de9f3964e1ccbcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "557a5831_9c4e7bc3",
         "filename": "core/setup_one_odex.mk",
         "patchSetId": 1
@@ -166,6 +208,30 @@
       "writtenOn": "2018-04-12T18:44:16Z",
       "side": 1,
       "message": "reusue my_dex_preopt_class_loader_context",
+      "range": {
+        "startLine": 42,
+        "startChar": 75,
+        "endLine": 42,
+        "endChar": 139
+      },
+      "revId": "320a59cb2ed91be1544d04b88de9f3964e1ccbcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5025ef2_876694ba",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-04-12T23:11:19Z",
+      "side": 1,
+      "message": "Value doesn\u0027t match, what do you mean by reuse?",
+      "parentUuid": "459f22d1_fd9e7ff2",
       "range": {
         "startLine": 42,
         "startChar": 75,
