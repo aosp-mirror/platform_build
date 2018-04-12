@@ -52,6 +52,24 @@
       "revId": "57fdba09a9d7308988a05afe2666b972183bc8fe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69886fee_a19347b2",
+        "filename": "target/product/vndk/current.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-12T05:01:32Z",
+      "side": 0,
+      "message": "They are used by ART to generate ARM opcodes, which is generally not necessary on x86.",
+      "parentUuid": "dbb1e327_ac45fac0",
+      "revId": "57fdba09a9d7308988a05afe2666b972183bc8fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
