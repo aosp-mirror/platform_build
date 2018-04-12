@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0163bdcd_2102f603",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-04-12T18:28:47Z",
+      "side": 1,
+      "message": "Calin, do I need to calculate the checksums too? I think those are verified on device, correct?",
+      "revId": "ed6c5bf3d0deba3a4d0372c394e436419ab19702",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
