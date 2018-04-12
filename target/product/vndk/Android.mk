@@ -8,11 +8,11 @@ $(INTERNAL_VNDK_LIB_LIST):
 	@echo "Generate: $@"
 	@mkdir -p $(dir $@)
 	$(hide) echo -n > $@
-	$(hide) $(foreach lib, $(LLNDK_LIBRARIES), \
+	$(hide) $(foreach lib, $(filter-out libclang_rt.%,$(LLNDK_LIBRARIES)), \
 	  echo LLNDK: $(lib).so >> $@;)
 	$(hide) $(foreach lib, $(VNDK_SAMEPROCESS_LIBRARIES), \
 	  echo VNDK-SP: $(lib).so >> $@;)
-	$(hide) $(foreach lib, $(VNDK_CORE_LIBRARIES), \
+	$(hide) $(foreach lib, $(filter-out libclang_rt.%,$(VNDK_CORE_LIBRARIES)), \
 	  echo VNDK-core: $(lib).so >> $@;)
 	$(hide) $(foreach lib, $(VNDK_PRIVATE_LIBRARIES), \
 	  echo VNDK-private: $(lib).so >> $@;)
