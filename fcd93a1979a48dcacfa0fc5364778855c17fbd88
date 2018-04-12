@@ -16,6 +16,24 @@
       "revId": "fcd93a1979a48dcacfa0fc5364778855c17fbd88",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad88a51b_0debe651",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-04-12T18:09:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "be296ca8_834f9202",
+      "revId": "fcd93a1979a48dcacfa0fc5364778855c17fbd88",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
