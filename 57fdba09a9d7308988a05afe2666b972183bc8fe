@@ -34,6 +34,24 @@
       "revId": "57fdba09a9d7308988a05afe2666b972183bc8fe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbb1e327_ac45fac0",
+        "filename": "target/product/vndk/current.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-12T04:57:59Z",
+      "side": 0,
+      "message": "That\u0027s a bug, they should have been built since they were in the VNDK. They build just fine on an x86 target.",
+      "parentUuid": "5057d9ef_58013ca7",
+      "revId": "57fdba09a9d7308988a05afe2666b972183bc8fe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
