@@ -5,8 +5,6 @@ LLNDK: libGLESv3.so
 LLNDK: libRS.so
 LLNDK: libandroid_net.so
 LLNDK: libc.so
-LLNDK: libclang_rt.asan-aarch64-android.so
-LLNDK: libclang_rt.asan-arm-android.so
 LLNDK: libdl.so
 LLNDK: libft2.so
 LLNDK: liblog.so
@@ -131,8 +129,6 @@ VNDK-core: libaudioutils.so
 VNDK-core: libbinder.so
 VNDK-core: libcamera_metadata.so
 VNDK-core: libcap.so
-VNDK-core: libclang_rt.ubsan_standalone-aarch64-android.so
-VNDK-core: libclang_rt.ubsan_standalone-arm-android.so
 VNDK-core: libcn-cbor.so
 VNDK-core: libcrypto.so
 VNDK-core: libcrypto_utils.so
