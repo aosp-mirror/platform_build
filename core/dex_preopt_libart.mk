@@ -20,10 +20,6 @@ PATCHOAT_DEPENDENCY += $(PATCHOAT)
 PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
     $(filter %system/etc/preloaded-classes,$(PRODUCT_COPY_FILES))))
 
-# Use the first compiled-classes file in PRODUCT_COPY_FILES.
-COMPILED_CLASSES := $(call word-colon,1,$(firstword \
-    $(filter %system/etc/compiled-classes,$(PRODUCT_COPY_FILES))))
-
 # Use the first dirty-image-objects file in PRODUCT_COPY_FILES.
 DIRTY_IMAGE_OBJECTS := $(call word-colon,1,$(firstword \
     $(filter %system/etc/dirty-image-objects,$(PRODUCT_COPY_FILES))))
