@@ -162,6 +162,30 @@
     },
     {
       "key": {
+        "uuid": "a96bb221_ce97d20a",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-13T13:21:30Z",
+      "side": 1,
+      "message": "I\u0027m not sure what value you want. Looks like the file name, with the \u0027.jar\u0027 suffix stripped? Looks like you\u0027re stripping paths and stuff from it atm, you shouldn\u0027t have to do that from LOCAL_SDK_LIBRARIES.\n\nExample:\nLOCAL_SDK_LIBRARIES :\u003d java.obex android.test.base uiautomator\n\nNote that libs can have different filenames in the tree and on-device (hopefully we can get those fixed..).",
+      "parentUuid": "5cefb659_4fb76589",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 20
+      },
+      "revId": "320a59cb2ed91be1544d04b88de9f3964e1ccbcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "557a5831_9c4e7bc3",
         "filename": "core/setup_one_odex.mk",
         "patchSetId": 1
