@@ -89,12 +89,10 @@ MAX_PLATFORM_VERSION :=
 # generate the range of allowed SDK versions, so it must have an entry for every
 # unreleased API level targetable by this branch, not just those that are valid
 # lunch targets for this branch.
-PLATFORM_VERSION.PPR1 := 9
 PLATFORM_VERSION.QPR1 := Q
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.PPR1 := P
 PLATFORM_VERSION_CODENAME.QPR1 := Q
 
 ifndef PLATFORM_VERSION
