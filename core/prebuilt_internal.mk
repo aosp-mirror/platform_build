@@ -6,6 +6,8 @@
 ##
 ###########################################################
 
+include $(BUILD_SYSTEM)/use_lld_setup.mk
+
 ifneq ($(LOCAL_PREBUILT_LIBS),)
 $(error dont use LOCAL_PREBUILT_LIBS anymore LOCAL_PATH=$(LOCAL_PATH))
 endif
@@ -68,6 +70,12 @@ ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   endif
 
   ifeq ($(DISABLE_RELOCATION_PACKER),true)
+    my_pack_module_relocations := false
+  endif
+
+  # Relocation packer does not work with LLD yet.
+  # my_use_clang_lld might be used befor set up in binary.mk
+  ifeq ($(my_use_clang_lld),true)
     my_pack_module_relocations := false
   endif
 endif

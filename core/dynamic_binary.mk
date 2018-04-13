@@ -67,6 +67,11 @@ ifneq ($(HOST_OS),linux)
   my_pack_module_relocations := false
 endif
 
+# Relocation packer does not work with LLD yet.
+ifeq ($(my_use_clang_lld),true)
+  my_pack_module_relocations := false
+endif
+
 ifeq (true,$(my_pack_module_relocations))
 # Pack relocations
 $(relocation_packer_output): $(relocation_packer_input)
