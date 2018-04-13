@@ -95,6 +95,7 @@ VNDK-core: android.hardware.graphics.allocator@2.0.so
 VNDK-core: android.hardware.graphics.bufferqueue@1.0.so
 VNDK-core: android.hardware.graphics.composer@2.1.so
 VNDK-core: android.hardware.graphics.composer@2.2.so
+VNDK-core: android.hardware.graphics.composer@2.3.so
 VNDK-core: android.hardware.health@1.0.so
 VNDK-core: android.hardware.health@2.0.so
 VNDK-core: android.hardware.ir@1.0.so
