@@ -11,6 +11,7 @@ LLNDK: liblog.so
 LLNDK: libm.so
 LLNDK: libmediandk.so
 LLNDK: libnativewindow.so
+LLNDK: libneuralnetworks.so
 LLNDK: libsync.so
 LLNDK: libvndksupport.so
 LLNDK: libvulkan.so
