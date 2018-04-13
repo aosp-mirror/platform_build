@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "34c1b65e_41043fc6",
+        "filename": "core/native_metric_test_config_template.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-04-13T00:04:20Z",
+      "side": 1,
+      "message": "Augh don\u0027t hate me but this is a starter bug for the Tainan team....",
+      "revId": "abd3d911538a78dc853e60cfacda192744bb607c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
