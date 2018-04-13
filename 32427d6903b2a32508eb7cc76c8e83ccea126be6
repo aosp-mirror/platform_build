@@ -22,6 +22,30 @@
       "revId": "32427d6903b2a32508eb7cc76c8e83ccea126be6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25788b15_1bce934b",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-04-13T20:15:17Z",
+      "side": 1,
+      "message": "fixed in a follow up CL.",
+      "parentUuid": "49689046_c2b12699",
+      "range": {
+        "startLine": 77,
+        "startChar": 35,
+        "endLine": 77,
+        "endChar": 40
+      },
+      "revId": "32427d6903b2a32508eb7cc76c8e83ccea126be6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
