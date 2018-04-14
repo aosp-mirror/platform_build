@@ -74,7 +74,7 @@ ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   endif
 
   # Relocation packer does not work with LLD yet.
-  # my_use_clang_lld might be used befor set up in binary.mk
+  # my_use_clang_lld might be used before being set up in binary.mk
   ifeq ($(my_use_clang_lld),true)
     my_pack_module_relocations := false
   endif
