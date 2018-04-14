@@ -51,6 +51,7 @@ PRODUCT_PACKAGES += \
     PrintRecommendationService \
     ProxyHandler \
     QuickSearchBox \
+    SecureElement \
     Settings \
     SettingsIntelligence \
     SharedStorageBackup \
