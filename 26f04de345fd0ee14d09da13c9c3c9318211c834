@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ed1793d_65bff0b8",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 521,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-14T03:51:03Z",
+      "side": 1,
+      "message": "Can you add proguard_configuration here too so that the rule knows it is an output?",
+      "revId": "26f04de345fd0ee14d09da13c9c3c9318211c834",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c54d6ea5_a2071ab0",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 523,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-14T03:51:03Z",
+      "side": 1,
+      "message": "And here too",
+      "revId": "26f04de345fd0ee14d09da13c9c3c9318211c834",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
