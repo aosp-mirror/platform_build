@@ -415,9 +415,10 @@ def AddVBMeta(output_zip, partitions):
         assert found, 'failed to find %s' % (image_path,)
     cmd.extend(split_args)
 
-  p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  p.communicate()
-  assert p.returncode == 0, "avbtool make_vbmeta_image failed"
+  p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  stdoutdata, _ = p.communicate()
+  assert p.returncode == 0, \
+      "avbtool make_vbmeta_image failed:\n{}".format(stdoutdata)
   img.Write()
 
 
@@ -444,9 +445,10 @@ def AddPartitionTable(output_zip):
   if args:
     cmd.extend(shlex.split(args))
 
-  p = common.Run(cmd, stdout=subprocess.PIPE)
-  p.communicate()
-  assert p.returncode == 0, "bpttool make_table failed"
+  p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  stdoutdata, _ = p.communicate()
+  assert p.returncode == 0, \
+      "bpttool make_table failed:\n{}".format(stdoutdata)
 
   img.Write()
   bpt.Write()
