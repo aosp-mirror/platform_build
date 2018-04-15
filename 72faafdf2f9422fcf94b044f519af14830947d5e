@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fe489254_92f38c4f",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2018-04-15T18:35:36Z",
+      "side": 1,
+      "message": "$(system_modules) is also used in line 145.\n\nI only introduced system_modules to avoid the repetition of \"core-system-modules\" across two places. Do you prefer if I duplicate instead of introducing the helper variable?",
+      "parentUuid": "de13c30b_b1b00993",
+      "revId": "72faafdf2f9422fcf94b044f519af14830947d5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fc8cf6b1_16b21d4a",
         "filename": "core/droiddoc.mk",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2018-04-09T22:31:36Z",
       "side": 1,
       "message": "go/oag/649819 needs to be updated to include -source for the standard doclet.",
+      "revId": "72faafdf2f9422fcf94b044f519af14830947d5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7005f004_83d6666a",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2018-04-15T18:35:36Z",
+      "side": 1,
+      "message": "Are you saying that that CL (*) needs to export LOCAL_JAVA_LANGUAGE_VERSION as a make flag?\n\nI agree (I thought it did already, but now I think it doesn\u0027t you\u0027re right). Can you please help with / handle the soong logic for java_version 1.9 support in droiddoc? I am not familiar in this area, so I\u0027m guessing that you could do it much more effectively than I, does that sound right?\n\n(*) http://r.android.com/649819 may be a better way to write that URL since that one is publicly accessible.",
+      "parentUuid": "fc8cf6b1_16b21d4a",
       "revId": "72faafdf2f9422fcf94b044f519af14830947d5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
