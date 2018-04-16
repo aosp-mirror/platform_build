@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "3342e8df_9bbe3e1f",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2351,
+      "author": {
+        "id": 1178083
+      },
+      "writtenOn": "2018-04-16T23:19:29Z",
+      "side": 1,
+      "message": "Filed b/78137118 to get the bpt repo all fixed up.",
+      "parentUuid": "f6f4188d_19b6a858",
+      "revId": "aad3d22a9d036745570712a9806179cd1e609554",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "570ba1c5_bfb66093",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 1
