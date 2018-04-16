@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "570ba1c5_bfb66093",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-04-16T18:23:10Z",
+      "side": 1,
+      "message": "Since we don\u0027t need to work around existing target-files.zip in master, it looks cleaner to pack these files into target-files zip via Makefile",
+      "range": {
+        "startLine": 253,
+        "startChar": 33,
+        "endLine": 253,
+        "endChar": 52
+      },
+      "revId": "aad3d22a9d036745570712a9806179cd1e609554",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
