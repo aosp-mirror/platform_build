@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "baca96a4_6a0d428e",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-04-16T23:29:42Z",
+      "side": 1,
+      "message": "If I do \"ALL_DISABLED_PRESUBMIT_TESTS +\u003d $(LOCAL_MODULE)\" without eval, somehow the value is not added.\n\nmaybe this is related to that the variable is not initialized? Where will be the best place to initialize this? I guess main.mk can be the one, but is there a better place?",
+      "parentUuid": "fbcf738b_c2f1ef39",
+      "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "01ec6df2_deb581e2",
         "filename": "core/tasks/test_mapping.mk",
         "patchSetId": 3
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "4b26a39f_cccd09d3",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-04-16T23:29:42Z",
+      "side": 1,
+      "message": "This is for the file to be in a fixed and simple path (out/disabled-presubmit-tests) in zip file. soong_zip seems don\u0027t support adding file to an eixsting zip. So all files to be zipped are included in a list file (line 34).",
+      "parentUuid": "01ec6df2_deb581e2",
+      "range": {
+        "startLine": 27,
+        "startChar": 64,
+        "endLine": 27,
+        "endChar": 99
+      },
+      "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dc767c35_b52eb558",
         "filename": "core/tasks/test_mapping.mk",
         "patchSetId": 3
@@ -53,6 +95,24 @@
       "writtenOn": "2018-04-16T23:10:50Z",
       "side": 1,
       "message": "You\u0027re appending it here right? Why not just create a new file and include it in the zip?\n\nOR can you respond with a \"fake\" version of this file so I have an idea what it looks like?",
+      "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9bd1902b_85b93dea",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-04-16T23:29:42Z",
+      "side": 1,
+      "message": "seems soong_zip can\u0027t add more files to existing zip.",
+      "parentUuid": "dc767c35_b52eb558",
       "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
