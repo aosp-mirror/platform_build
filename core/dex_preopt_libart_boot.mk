@@ -33,12 +33,6 @@ $(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES := $(addprefix
 $(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_VDEX_INSTALLED_FILES := $(addprefix $(dir $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)),\
     $(LIBART_TARGET_BOOT_ART_VDEX_FILES))
 
-# If we have a compiled-classes file, create a parameter.
-COMPILED_CLASSES_FLAGS :=
-ifneq ($(COMPILED_CLASSES),)
-  COMPILED_CLASSES_FLAGS := --compiled-classes=$(COMPILED_CLASSES)
-endif
-
 # If we have a dirty-image-objects file, create a parameter.
 DIRTY_IMAGE_OBJECTS_FLAGS :=
 ifneq ($(DIRTY_IMAGE_OBJECTS),)
@@ -59,8 +53,7 @@ $($(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES) : $($(my_2n
 	$(hide) $(ACP) -fp $(dir $<)$(notdir $@) $@
 
 ifeq (,$(my_out_boot_image_profile_location))
-my_boot_image_flags := $(COMPILED_CLASSES_FLAGS)
-my_boot_image_flags += --image-classes=$(PRELOADED_CLASSES)
+my_boot_image_flags := --image-classes=$(PRELOADED_CLASSES)
 my_boot_image_flags += $(DIRTY_IMAGE_OBJECTS_FLAGS)
 else
 my_boot_image_flags := --compiler-filter=speed-profile
@@ -94,7 +87,7 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_BOOT_IM
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_2ND_ARCH_VAR_PREFIX := $(my_2nd_arch_prefix)
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_IMAGE_LOCATION := $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
 # Use dex2oat debug version for better error reporting
-$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGET_BOOT_DEX_FILES) $(PRELOADED_CLASSES) $(COMPILED_CLASSES) $(DIRTY_IMAGE_OBJECTS) $(DEX2OAT_DEPENDENCY) $(PATCHOAT_DEPENDENCY) $(my_out_boot_image_profile_location)
+$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGET_BOOT_DEX_FILES) $(PRELOADED_CLASSES) $(DIRTY_IMAGE_OBJECTS) $(DEX2OAT_DEPENDENCY) $(PATCHOAT_DEPENDENCY) $(my_out_boot_image_profile_location)
 	@echo "target dex2oat: $@"
 	@mkdir -p $(dir $@)
 	@mkdir -p $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))
