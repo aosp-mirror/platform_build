@@ -183,6 +183,7 @@ VNDK-core: liblz4.so
 VNDK-core: libmedia_helper.so
 VNDK-core: libmedia_omx.so
 VNDK-core: libmemtrack.so
+VNDK-core: libminijail.so
 VNDK-core: libmkbootimg_abi_check.so
 VNDK-core: libnetutils.so
 VNDK-core: libnl.so
