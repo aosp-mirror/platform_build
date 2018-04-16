@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f6f4188d_19b6a858",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2351,
+      "author": {
+        "id": 1178083
+      },
+      "writtenOn": "2018-04-16T23:11:28Z",
+      "side": 1,
+      "message": "Looks like bpttool is in AOSP, it\u0027s just not in the manifest. It\u0027s also out of date because we\u0027re treating it like an iot_project so the automerger goes backwards, nyc-iot-dev -\u003e oc-mr1-iot-dev -\u003e (internal) master. Will need to merge internal to AOSP master.",
+      "parentUuid": "9e5c23c0_3b0fd3cc",
+      "revId": "aad3d22a9d036745570712a9806179cd1e609554",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "570ba1c5_bfb66093",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 1
