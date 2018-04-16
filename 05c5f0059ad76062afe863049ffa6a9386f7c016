@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b1a9f1fb_4e189a48",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2399,
+      "author": {
+        "id": 1018026
+      },
+      "writtenOn": "2018-04-16T21:28:50Z",
+      "side": 1,
+      "message": "otatools is supposed to be very generic.\n\nWhat are the downsides of product/device/board specific entries here",
+      "range": {
+        "startLine": 2399,
+        "startChar": 4,
+        "endLine": 2399,
+        "endChar": 29
+      },
+      "revId": "05c5f0059ad76062afe863049ffa6a9386f7c016",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
