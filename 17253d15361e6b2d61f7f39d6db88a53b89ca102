@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "00541e12_a5e6919d",
+        "filename": "core/tasks/disabled_presubmit_tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-04-16T18:58:40Z",
+      "side": 1,
+      "message": "Questions:\n\n1) Why does this need to build a zip if you\u0027re just uploading a single file?\n2) Since this is for test mapping, why not just add the new file into the test mapping zip you already create?\n\nI.E. I\u0027m trying to suggest instead of creating a new object to upload and adding logic to download it, just package it with the other artifacts you use to decide which tests to run?\n\nUnless this is used at a different time?",
+      "revId": "17253d15361e6b2d61f7f39d6db88a53b89ca102",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
