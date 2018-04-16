@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "f535aa58_7794b219",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-16T23:36:25Z",
+      "side": 1,
+      "message": "It should work (at least without the quotes, which are just extra characters). That\u0027s exactly what line 659 is doing below.",
+      "parentUuid": "baca96a4_6a0d428e",
+      "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "01ec6df2_deb581e2",
         "filename": "core/tasks/test_mapping.mk",
         "patchSetId": 3
