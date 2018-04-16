@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "9e5c23c0_3b0fd3cc",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2351,
+      "author": {
+        "id": 1178083
+      },
+      "writtenOn": "2018-04-16T22:22:12Z",
+      "side": 1,
+      "message": "This is going to have a similar problem as was raised on go/oag/665564.\n\nsystem/tools/bpt (bpttool) is not in AOSP currently even though add_img_to_target_files uses it because Android Things is not in AOSP. It seems other usages of $(BPTTOOL) in aosp/master are currently guarded by \"ifdef BOARD_BPT_INPUT_FILES\" (which is essentially \"ifdef IS_ANDROID_THINGS\"). http://cs/aosp-master/build/make/core/Makefile?l\u003d1869\n\nIf otatools.zip is not meant to be board-specific then do we have to shift bpttool into AOSP? Is there an alternative?",
+      "revId": "aad3d22a9d036745570712a9806179cd1e609554",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "570ba1c5_bfb66093",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 1
