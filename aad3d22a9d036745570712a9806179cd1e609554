@@ -70,6 +70,30 @@
       "revId": "aad3d22a9d036745570712a9806179cd1e609554",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e1b7fe08_b655fd12",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1178083
+      },
+      "writtenOn": "2018-04-16T20:15:28Z",
+      "side": 1,
+      "message": "Nope, it doesn\u0027t need to be regenerated. Let me make a separate change (so I can cherry-pick it back easily) to put the file directly in META/partition-table.bpt instead and delete this chunk.",
+      "parentUuid": "a1784188_efdb9754",
+      "range": {
+        "startLine": 253,
+        "startChar": 33,
+        "endLine": 253,
+        "endChar": 52
+      },
+      "revId": "aad3d22a9d036745570712a9806179cd1e609554",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
