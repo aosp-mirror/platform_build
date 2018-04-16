@@ -16,6 +16,24 @@
       "revId": "17253d15361e6b2d61f7f39d6db88a53b89ca102",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "722df256_18bb9b69",
+        "filename": "core/tasks/disabled_presubmit_tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-04-16T19:10:05Z",
+      "side": 1,
+      "message": "sure, include the file in test-mappings.zip is reasonable. We don\u0027t have to have a new build artifact for that.",
+      "parentUuid": "00541e12_a5e6919d",
+      "revId": "17253d15361e6b2d61f7f39d6db88a53b89ca102",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
