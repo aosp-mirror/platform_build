@@ -177,11 +177,6 @@ PRODUCT_PACKAGES_DEBUG_ASAN :=
 PRODUCT_COPY_FILES := $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
 
-# Note: it is acceptable to not have a compiled-classes file. In that case, all boot classpath
-#       classes will be compiled.
-PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
-    frameworks/base/config/compiled-classes:system/etc/compiled-classes)
-
 # Note: it is acceptable to not have a dirty-image-objects file. In that case, the special bin
 #       for known dirty objects in the image will be empty.
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
