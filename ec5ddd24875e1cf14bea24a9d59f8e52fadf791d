@@ -109,6 +109,24 @@
     },
     {
       "key": {
+        "uuid": "44fe08e8_ef3fd013",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-04-17T19:14:06Z",
+      "side": 1,
+      "message": "Where can I see the copies of LOCAL_MODULE.xxx in compiled script? It\u0027s not in soong/Android-aosp_arm.mk\nIt\u0027s hard to debug in such case.",
+      "parentUuid": "163d0c36_c6f16a25",
+      "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "01ec6df2_deb581e2",
         "filename": "core/tasks/test_mapping.mk",
         "patchSetId": 3
