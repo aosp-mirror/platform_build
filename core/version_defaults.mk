@@ -56,6 +56,13 @@ ifeq (,$(filter $(ALLOWED_VERSIONS), $(TARGET_PLATFORM_VERSION)))
   $(warning Invalid TARGET_PLATFORM_VERSION '$(TARGET_PLATFORM_VERSION)', must be one of)
   $(error $(ALLOWED_VERSIONS))
 endif
+ALLOWED_VERSIONS :=
+MIN_PLATFORM_VERSION :=
+MAX_PLATFORM_VERSION :=
+
+.KATI_READONLY := \
+  DEFAULT_PLATFORM_VERSION \
+  TARGET_PLATFORM_VERSION
 
 # Default versions for each TARGET_PLATFORM_VERSION
 # TODO: PLATFORM_VERSION, PLATFORM_SDK_VERSION, etc. should be conditional
@@ -88,6 +95,7 @@ ifndef PLATFORM_VERSION
     PLATFORM_VERSION := $(TARGET_PLATFORM_VERSION)
   endif
 endif
+.KATI_READONLY := PLATFORM_VERSION
 
 ifndef PLATFORM_SDK_VERSION
   # This is the canonical definition of the SDK version, which defines
@@ -108,6 +116,7 @@ ifndef PLATFORM_SDK_VERSION
   # cts/tests/tests/os/assets/platform_versions.txt
   PLATFORM_SDK_VERSION := 27
 endif
+.KATI_READONLY := PLATFORM_SDK_VERSION
 
 ifndef PLATFORM_VERSION_CODENAME
   PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
@@ -153,6 +162,10 @@ ifndef PLATFORM_VERSION_CODENAME
     $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_FUTURE_CODENAMES)))
 
 endif
+.KATI_READONLY := \
+  PLATFORM_VERSION_CODENAME \
+  PLATFORM_VERSION_ALL_CODENAMES \
+  PLATFORM_VERSION_FUTURE_CODENAMES
 
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
   PLATFORM_PREVIEW_SDK_VERSION := 0
@@ -170,6 +183,7 @@ else
     PLATFORM_PREVIEW_SDK_VERSION := 0
   endif
 endif
+.KATI_READONLY := PLATFORM_PREVIEW_SDK_VERSION
 
 ifndef DEFAULT_APP_TARGET_SDK
   # This is the default minSdkVersion and targetSdkVersion to use for
@@ -183,6 +197,7 @@ ifndef DEFAULT_APP_TARGET_SDK
     DEFAULT_APP_TARGET_SDK := $(PLATFORM_VERSION_CODENAME)
   endif
 endif
+.KATI_READONLY := DEFAULT_APP_TARGET_SDK
 
 ifndef PLATFORM_VNDK_VERSION
   # This is the definition of the VNDK version for the current VNDK libraries.
@@ -201,6 +216,7 @@ ifndef PLATFORM_VNDK_VERSION
     PLATFORM_VNDK_VERSION := $(PLATFORM_VERSION_CODENAME)
   endif
 endif
+.KATI_READONLY := PLATFORM_VNDK_VERSION
 
 ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
   # This is the oldest version of system SDK that the platform supports. Contrary
@@ -212,6 +228,7 @@ ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
   # should later (in post P) be set to a number, like 28.
   PLATFORM_SYSTEMSDK_MIN_VERSION :=
 endif
+.KATI_READONLY := PLATFORM_SYSTEMSDK_MIN_VERSION
 
 # This is the list of system SDK versions that the current platform supports.
 PLATFORM_SYSTEMSDK_VERSIONS :=
@@ -227,6 +244,7 @@ else
   PLATFORM_SYSTEMSDK_VERSIONS += $(PLATFORM_VERSION_CODENAME)
 endif
 PLATFORM_SYSTEMSDK_VERSIONS := $(strip $(sort $(PLATFORM_SYSTEMSDK_VERSIONS)))
+.KATI_READONLY := PLATFORM_SYSTEMSDK_VERSIONS
 
 ifndef PLATFORM_SECURITY_PATCH
     #  Used to indicate the security patch that has been applied to the device.
@@ -236,6 +254,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
       PLATFORM_SECURITY_PATCH := 2017-12-01
 endif
+.KATI_READONLY := PLATFORM_SECURITY_PATCH
 
 ifndef PLATFORM_BASE_OS
   # Used to indicate the base os applied to the device.
@@ -244,6 +263,7 @@ ifndef PLATFORM_BASE_OS
   # If there is no $PLATFORM_BASE_OS set, keep it empty.
   PLATFORM_BASE_OS :=
 endif
+.KATI_READONLY := PLATFORM_BASE_OS
 
 ifndef BUILD_ID
   # Used to signify special builds.  E.g., branches and/or releases,
@@ -253,6 +273,7 @@ ifndef BUILD_ID
   # If there is no BUILD_ID set, make it obvious.
   BUILD_ID := UNKNOWN
 endif
+.KATI_READONLY := BUILD_ID
 
 ifndef BUILD_DATETIME
   # Used to reproduce builds by setting the same time. Must be the number
@@ -265,11 +286,12 @@ DATE := date -r $(BUILD_DATETIME)
 else
 DATE := date -d @$(BUILD_DATETIME)
 endif
+.KATI_READONLY := DATE
 
 # Everything should be using BUILD_DATETIME_FROM_FILE instead.
 # BUILD_DATETIME and DATE can be removed once BUILD_NUMBER moves
 # to soong_ui.
-BUILD_DATETIME :=
+$(KATI_obsolete_var BUILD_DATETIME,Use BUILD_DATETIME_FROM_FILE)
 
 HAS_BUILD_NUMBER := true
 ifndef BUILD_NUMBER
@@ -285,3 +307,4 @@ ifndef BUILD_NUMBER
   BUILD_NUMBER := eng.$(shell echo $${USER:0:6}).$(shell $(DATE) +%Y%m%d.%H%M%S)
   HAS_BUILD_NUMBER := false
 endif
+.KATI_READONLY := BUILD_NUMBER HAS_BUILD_NUMBER
