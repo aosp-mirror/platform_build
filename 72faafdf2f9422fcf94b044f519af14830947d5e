@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "dcf8f16d_da5107d2",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-04-17T01:18:51Z",
+      "side": 1,
+      "message": "I didn\u0027t noticed that. thanks for pointing it out.",
+      "parentUuid": "fe489254_92f38c4f",
+      "revId": "72faafdf2f9422fcf94b044f519af14830947d5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fc8cf6b1_16b21d4a",
         "filename": "core/droiddoc.mk",
         "patchSetId": 2
@@ -66,6 +84,24 @@
       "side": 1,
       "message": "Are you saying that that CL (*) needs to export LOCAL_JAVA_LANGUAGE_VERSION as a make flag?\n\nI agree (I thought it did already, but now I think it doesn\u0027t you\u0027re right). Can you please help with / handle the soong logic for java_version 1.9 support in droiddoc? I am not familiar in this area, so I\u0027m guessing that you could do it much more effectively than I, does that sound right?\n\n(*) http://r.android.com/649819 may be a better way to write that URL since that one is publicly accessible.",
       "parentUuid": "fc8cf6b1_16b21d4a",
+      "revId": "72faafdf2f9422fcf94b044f519af14830947d5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1800dd99_2a8e4be9",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-04-17T01:18:51Z",
+      "side": 1,
+      "message": "Thanks, Tobias. I have put more comments on that CL. Let me know if you have any confusions. Would you update and submit http://r.android.com/649819 first? So that I can migrate logic of this CL to Soong on top of http://r.android.com/649819.",
+      "parentUuid": "7005f004_83d6666a",
       "revId": "72faafdf2f9422fcf94b044f519af14830947d5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
