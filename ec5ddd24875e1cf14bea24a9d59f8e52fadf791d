@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "dce3644e_9ce4f3ff",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-04-17T17:58:56Z",
+      "side": 1,
+      "message": "After I init ALL_DISABLED_PRESUBMIT_TESTS in config.mk, it\u0027s working as expected now.",
+      "parentUuid": "138aaf28_01625d1e",
+      "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "01ec6df2_deb581e2",
         "filename": "core/tasks/test_mapping.mk",
         "patchSetId": 3
@@ -144,6 +162,30 @@
     },
     {
       "key": {
+        "uuid": "f9d149d9_f1a4b1b9",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-04-17T17:58:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93150043_0bf2a157",
+      "range": {
+        "startLine": 27,
+        "startChar": 64,
+        "endLine": 27,
+        "endChar": 99
+      },
+      "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dc767c35_b52eb558",
         "filename": "core/tasks/test_mapping.mk",
         "patchSetId": 3
@@ -176,6 +218,24 @@
       "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "317a358f_b67c0815",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-04-17T17:58:56Z",
+      "side": 1,
+      "message": "Done\n\nfixed based on DanW\u0027s comment.",
+      "parentUuid": "9bd1902b_85b93dea",
+      "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

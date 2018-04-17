@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "602645f9_6b443e86",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1062,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-04-17T17:58:56Z",
+      "side": 1,
+      "message": "Is there a better place to init this variable?",
+      "revId": "1e5fc53007f97fa5d58805cf0bd30bb916be3e3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
