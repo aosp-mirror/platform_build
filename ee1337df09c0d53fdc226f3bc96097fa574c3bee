@@ -16,6 +16,24 @@
       "revId": "ee1337df09c0d53fdc226f3bc96097fa574c3bee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8ee55f2_461d006a",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1103203
+      },
+      "writtenOn": "2018-04-17T22:32:16Z",
+      "side": 1,
+      "message": "\u003e In the old world, you treat all code in core libs as being in java.base to work around the \n\u003e OpenJDK 9 module system. By:\n\u003e $(full_target): PRIVATE_BOOTCLASSPATH_ARG :\u003d --patch-module\u003djava.base\u003d$(PRIVATE_BOOTCLASSPATH)\n\u003e\n\u003e In the new world, you treat all the libs in bootclasspath as being in --system By\n\u003e PRIVATE_BOOTCLASSPATH_ARG :\u003d $(if $(PRIVATE_BOOTCLASSPATH),$(addprefix --system \n\u003e ,$(PRIVATE_SYSTEM_MODULES_DIR)) --patch-module java.base\u003d.)\n\nHuh. I didn\u0027t know or had forgotten that I had changed that part. I don\u0027t think the old version was ever correct? Since the old version used --patch-module without using --system, it will have started with OpenJDK 9\u0027s java.base and then patched that module with the sources that we\u0027re currently compiling. I\u0027m surprised that this hasn\u0027t led to visible issues because OpenJDK 9\u0027s java.base is different from AOSP\u0027s (AOSP\u0027s contains everything from the core-all build target, which includes packages such as android.system or android.icu).\n\nI think it\u0027s correct that we always use --system when we use --patch-module: We first need to set the --system modules to be Android\u0027s (ie. use Android\u0027s java.base), and then we need to --patch-module to make javadoc not complain about encountering packages that are already in java.base.\n\n\u003e Do you need to check that more than one system module that current module links against to? \n\u003e Since in Soong(java/builder.go) we check that:\n\u003e https://cs.corp.google.com/aosp-master/build/soong/java/builder.go?rcl\u003d556752d3d45ce9a09885382a98b813199b7417be\u0026l\u003d410\n\nWhen I started this work, I think the only system modules (other than OpenJDK\u0027s default ones) that the build system knew about was core-system-modules. I think Colin has recently introduced some new system modules built from various stubs. We probably need to duplicate or reuse some logic from java.go / java_common.mk here so we use (--system, and --patch-module) the same system modules in javadoc that we\u0027d be using in javac.\n\n\nRegarding\n--patch-module\u003djava.base\u003d.\nvs.\n--patch-module java.base\u003d.\n\nI think the two have exactly the same effect, although I\u0027ve generally been using the version with the extra \u0027\u003d\u0027, so for consistency, line 145 should probably read:\n\n  $(full_target): PRIVATE_BOOTCLASSPATH_ARG :\u003d $(if $(PRIVATE_BOOTCLASSPATH),$(addprefix --system ,$(PRIVATE_SYSTEM_MODULES_DIR)) --patch-module\u003djava.base\u003d.)\n\n(Sorry, I\u0027m currently half-sick and WFH, so I\u0027m slow to make progress).",
+      "parentUuid": "2cdd6b3e_b1524bc1",
+      "revId": "ee1337df09c0d53fdc226f3bc96097fa574c3bee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
