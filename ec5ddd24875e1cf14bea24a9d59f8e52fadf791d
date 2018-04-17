@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "163d0c36_c6f16a25",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-17T18:07:57Z",
+      "side": 1,
+      "message": "Ah, good point, if this is a recursive variable (not initialized), the value will just be tons of copies of the last LOCAL_MODULE.",
+      "parentUuid": "dce3644e_9ce4f3ff",
+      "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "01ec6df2_deb581e2",
         "filename": "core/tasks/test_mapping.mk",
         "patchSetId": 3

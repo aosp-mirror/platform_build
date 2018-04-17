@@ -16,6 +16,24 @@
       "revId": "1e5fc53007f97fa5d58805cf0bd30bb916be3e3e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ada3d57_f7471108",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1062,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-17T18:07:57Z",
+      "side": 1,
+      "message": "Probably at the top of definitions.mk with the rest of the similar variables?",
+      "parentUuid": "602645f9_6b443e86",
+      "revId": "1e5fc53007f97fa5d58805cf0bd30bb916be3e3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
