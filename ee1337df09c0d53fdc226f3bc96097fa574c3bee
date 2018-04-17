@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2cdd6b3e_b1524bc1",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-04-17T21:58:09Z",
+      "side": 1,
+      "message": "Hi Tobias, for -source 1.9, \n\nIn the old world, you treat all code in core libs as being in java.base to work around the OpenJDK 9 module system. By:\n$(full_target): PRIVATE_BOOTCLASSPATH_ARG :\u003d --patch-module\u003djava.base\u003d$(PRIVATE_BOOTCLASSPATH)\n\nIn the new world, you treat all the libs in bootclasspath as being in --system By\nPRIVATE_BOOTCLASSPATH_ARG :\u003d $(if $(PRIVATE_BOOTCLASSPATH),$(addprefix --system ,$(PRIVATE_SYSTEM_MODULES_DIR)) --patch-module java.base\u003d.)\n\nDo you need to check that more than one system module that current module links against to? Since in Soong(java/builder.go) we check that:\nhttps://cs.corp.google.com/aosp-master/build/soong/java/builder.go?rcl\u003d556752d3d45ce9a09885382a98b813199b7417be\u0026l\u003d410\n\nI noticed that you put the argument: \"--patch-module java.base\u003d.\" after the \"--system\" arg. Do you know what this is used for? (do we miss a \"\u003d\" between \"module\" and \"java\" here?). In Soong(java/builder.go), we don\u0027t have this argument after \"--system\".",
+      "revId": "ee1337df09c0d53fdc226f3bc96097fa574c3bee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
