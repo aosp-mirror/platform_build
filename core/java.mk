@@ -404,6 +404,7 @@ ifneq ($(filter-out full custom obfuscation optimization,$(LOCAL_PROGUARD_ENABLE
     $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
 endif
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
+proguard_configuration := $(intermediates.COMMON)/proguard_configuration
 
 # When an app contains references to APIs that are not in the SDK specified by
 # its LOCAL_SDK_VERSION for example added by support library or by runtime
@@ -439,6 +440,7 @@ legacy_proguard_lib_deps := $(my_proguard_sdk_raise) \
   $(filter-out $(my_proguard_sdk_raise),$(full_shared_java_header_libs))
 
 legacy_proguard_flags += -printmapping $(proguard_dictionary)
+legacy_proguard_flags += -printconfiguration $(proguard_configuration)
 
 common_proguard_flags := -forceprocessing
 
@@ -508,9 +510,9 @@ endif
 
 ifneq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
 ifneq ($(LOCAL_USE_R8),true)
-  $(full_classes_proguard_jar): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+  $(full_classes_proguard_jar): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary) $(proguard_configuration)
 else
-  $(built_dex_intermediate): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+  $(built_dex_intermediate): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary) $(proguard_configuration)
 endif
 endif
 
