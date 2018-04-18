@@ -2493,10 +2493,6 @@ $(BUILT_TARGET_FILES_PACKAGE): PRIVATE_RECOVERY_OUT := RECOVERY
 endif
 
 ifeq ($(AB_OTA_UPDATER),true)
-  ifdef BRILLO_VENDOR_PARTITIONS
-    $(BUILT_TARGET_FILES_PACKAGE): $(foreach p,$(BRILLO_VENDOR_PARTITIONS),\
-                                     $(call word-colon,1,$(p))/$(call word-colon,2,$(p)))
-  endif
   ifdef OSRELEASED_DIRECTORY
     $(BUILT_TARGET_FILES_PACKAGE): $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_id
     $(BUILT_TARGET_FILES_PACKAGE): $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_version
@@ -2739,17 +2735,6 @@ ifeq ($(AB_OTA_UPDATER),true)
 	@# Include the build type in META/misc_info.txt so the server can easily differentiate production builds.
 	$(hide) echo "build_type=$(TARGET_BUILD_VARIANT)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "ab_update=true" >> $(zip_root)/META/misc_info.txt
-ifdef BRILLO_VENDOR_PARTITIONS
-	$(hide) mkdir -p $(zip_root)/VENDOR_IMAGES
-	$(hide) for f in $(BRILLO_VENDOR_PARTITIONS); do \
-	  pair1="$$(echo $$f | awk -F':' '{print $$1}')"; \
-	  pair2="$$(echo $$f | awk -F':' '{print $$2}')"; \
-	  src=$${pair1}/$${pair2}; \
-	  dest=$(zip_root)/VENDOR_IMAGES/$${pair2}; \
-	  mkdir -p $$(dirname "$${dest}"); \
-	  cp $${src} $${dest}; \
-	done;
-endif
 ifdef OSRELEASED_DIRECTORY
 	$(hide) cp $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_id $(zip_root)/META/product_id.txt
 	$(hide) cp $(TARGET_OUT_OEM)/$(OSRELEASED_DIRECTORY)/product_version $(zip_root)/META/product_version.txt
