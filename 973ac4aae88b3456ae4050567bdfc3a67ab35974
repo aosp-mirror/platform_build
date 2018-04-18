@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "62ae7d98_c571976a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-04-18T18:20:40Z",
+      "side": 1,
+      "message": "If you put this patch set in your pi checkout does \"atest \u003cbenchmark name\u003e\" work?",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 37
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09ff71bc_e3d5b8d5",
+        "filename": "core/cc_benchmark_test_config_template.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-04-18T18:20:40Z",
+      "side": 1,
+      "message": "2018",
+      "range": {
+        "startLine": 2,
+        "startChar": 19,
+        "endLine": 2,
+        "endChar": 23
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b7d7936_ce641e16",
+        "filename": "core/cc_benchmark_test_config_template.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-04-18T18:20:40Z",
+      "side": 1,
+      "message": "Hmm what happens if this directory doesn\u0027t exist?\n\nBackup options is to use /data/local/tmp/",
+      "range": {
+        "startLine": 20,
+        "startChar": 45,
+        "endLine": 20,
+        "endChar": 65
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe7493da_d627e680",
+        "filename": "core/cc_benchmark_test_config_template.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-04-18T18:20:40Z",
+      "side": 1,
+      "message": "Can you add on another line:\n\u003coption name\u003d\"test-suite-tag\" value\u003d\"apct-native-metric\" /",
+      "range": {
+        "startLine": 22,
+        "startChar": 4,
+        "endLine": 22,
+        "endChar": 49
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
