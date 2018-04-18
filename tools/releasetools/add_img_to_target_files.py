@@ -405,7 +405,7 @@ def AddVBMeta(output_zip, partitions):
         if os.path.exists(image_path):
           continue
         found = False
-        for dir_name in ['IMAGES', 'RADIO', 'VENDOR_IMAGES', 'PREBUILT_IMAGES']:
+        for dir_name in ['IMAGES', 'RADIO', 'PREBUILT_IMAGES']:
           alt_path = os.path.join(
               OPTIONS.input_tmp, dir_name, os.path.basename(image_path))
           if os.path.exists(alt_path):
@@ -488,9 +488,8 @@ def AddCache(output_zip):
 def AddRadioImagesForAbOta(output_zip, ab_partitions):
   """Adds the radio images needed for A/B OTA to the output file.
 
-  It parses the list of A/B partitions, looks for the missing ones from RADIO/
-  or VENDOR_IMAGES/ dirs, and copies them to IMAGES/ of the output file (or
-  dir).
+  It parses the list of A/B partitions, looks for the missing ones from RADIO/,
+  and copies them to IMAGES/ of the output file (or dir).
 
   It also ensures that on returning from the function all the listed A/B
   partitions must have their images available under IMAGES/.
@@ -517,17 +516,6 @@ def AddRadioImagesForAbOta(output_zip, ab_partitions):
       else:
         shutil.copy(img_radio_path, prebuilt_path)
       continue
-
-    # Walk through VENDOR_IMAGES/ since files could be under subdirs.
-    img_vendor_dir = os.path.join(OPTIONS.input_tmp, "VENDOR_IMAGES")
-    for root, _, files in os.walk(img_vendor_dir):
-      if img_name in files:
-        if output_zip:
-          common.ZipWrite(output_zip, os.path.join(root, img_name),
-                          "IMAGES/" + img_name)
-        else:
-          shutil.copy(os.path.join(root, img_name), prebuilt_path)
-        break
 
     # Assert that the image is present under IMAGES/ now.
     if output_zip:
@@ -763,9 +751,9 @@ def AddImagesToTargetFiles(filename):
     with open(ab_partitions_txt, 'r') as f:
       ab_partitions = f.readlines()
 
-    # For devices using A/B update, copy over images from RADIO/ and/or
-    # VENDOR_IMAGES/ to IMAGES/ and make sure we have all the needed
-    # images ready under IMAGES/. All images should have '.img' as extension.
+    # For devices using A/B update, copy over images from RADIO/ to IMAGES/ and
+    # make sure we have all the needed images ready under IMAGES/. All images
+    # should have '.img' as extension.
     AddRadioImagesForAbOta(output_zip, ab_partitions)
 
     # Generate care_map.txt for system and vendor partitions (if present), then

@@ -85,30 +85,6 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
       for image in images:
         self.assertIn('IMAGES/' + image + '.img', verify_zip.namelist())
 
-  def test_AddRadioImagesForAbOta_copyFromVendorImages(self):
-    """Tests the case that copies images from VENDOR_IMAGES/."""
-    vendor_images_path = os.path.join(OPTIONS.input_tmp, 'VENDOR_IMAGES')
-    os.mkdir(vendor_images_path)
-
-    partitions = ['aboot', 'xbl']
-    for index, partition in enumerate(partitions):
-      subdir = os.path.join(vendor_images_path, 'subdir-{}'.format(index))
-      os.mkdir(subdir)
-
-      partition_image_path = os.path.join(subdir, partition + '.img')
-      with open(partition_image_path, 'wb') as partition_fp:
-        partition_fp.write(partition.encode())
-
-    # Set up the output dir.
-    images_path = os.path.join(OPTIONS.input_tmp, 'IMAGES')
-    os.mkdir(images_path)
-
-    AddRadioImagesForAbOta(None, partitions)
-
-    for partition in partitions:
-      self.assertTrue(
-          os.path.exists(os.path.join(images_path, partition + '.img')))
-
   def test_AddRadioImagesForAbOta_missingImages(self):
     images, _ = self._create_images(['aboot', 'xbl'], 'RADIO')
     self.assertRaises(AssertionError, AddRadioImagesForAbOta, None,
