@@ -140,7 +140,15 @@ $(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPA
 
 $(call add_json_list, PgoAdditionalProfileDirs,          $(PGO_ADDITIONAL_PROFILE_DIRS))
 
-_contents := $(subst $(comma)$(newline)__SV_END,$(newline)}$(newline),$(_contents)__SV_END)
+_contents := $(_contents)    "VendorVars": {$(newline)
+$(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
+  $(eval _contents := $$(_contents)        "$(namespace)": {$$(newline)) \
+  $(foreach key,$(SOONG_CONFIG_$(namespace)),\
+    $(eval _contents := $$(_contents)            "$(key)": "$(SOONG_CONFIG_$(namespace)_$(key))",$$(newline)))\
+  $(eval _contents := $$(_contents)$(if $(strip $(SOONG_CONFIG_$(namespace))),__SV_END)        },$$(newline)))
+_contents := $(_contents)$(if $(strip $(SOONG_CONFIG_NAMESPACES)),__SV_END)    },$(newline)
+
+_contents := $(subst $(comma)$(newline)__SV_END,$(newline),$(_contents)__SV_END}$(newline))
 
 $(file >$(SOONG_VARIABLES).tmp,$(_contents))
 
