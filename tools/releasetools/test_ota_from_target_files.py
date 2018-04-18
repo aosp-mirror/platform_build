@@ -50,17 +50,25 @@ def construct_target_files(secondary=False):
             "POSTINSTALL_OPTIONAL_system=true",
         ]))
 
+    ab_partitions = [
+        ('IMAGES', 'boot'),
+        ('IMAGES', 'system'),
+        ('IMAGES', 'vendor'),
+        ('RADIO', 'bootloader'),
+        ('RADIO', 'modem'),
+    ]
     # META/ab_partitions.txt
-    ab_partitions = ['boot', 'system', 'vendor']
     target_files_zip.writestr(
         'META/ab_partitions.txt',
-        '\n'.join(ab_partitions))
+        '\n'.join([partition[1] for partition in ab_partitions]))
 
     # Create dummy images for each of them.
-    for partition in ab_partitions:
-      target_files_zip.writestr('IMAGES/' + partition + '.img',
-                                os.urandom(len(partition)))
+    for path, partition in ab_partitions:
+      target_files_zip.writestr(
+          '{}/{}.img'.format(path, partition),
+          os.urandom(len(partition)))
 
+    # system_other shouldn't appear in META/ab_partitions.txt.
     if secondary:
       target_files_zip.writestr('IMAGES/system_other.img',
                                 os.urandom(len("system_other")))
