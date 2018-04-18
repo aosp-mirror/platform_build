@@ -25,6 +25,53 @@
     },
     {
       "key": {
+        "uuid": "67758106_544a0105",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-18T20:12:39Z",
+      "side": 1,
+      "message": "Can you test non-benchmarks too? It looks like everything is marked as a benchmark right now because LOCAL_NATIVE_BENCHMARK isn\u0027t cleared (clear_vars.mk should be updated)",
+      "parentUuid": "62ae7d98_c571976a",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 37
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c62592c2_15d4f61e",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-18T20:12:39Z",
+      "side": 1,
+      "message": "Share the rule, and just put $(CC_BENCHMARK_TEST_CONFIG_TEMPLATE) / $(NATIVE_TEST_CONFIG_TEMPLATE) in a variable.",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 53
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "09ff71bc_e3d5b8d5",
         "filename": "core/cc_benchmark_test_config_template.xml",
         "patchSetId": 1
