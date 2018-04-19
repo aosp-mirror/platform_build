@@ -155,8 +155,6 @@ VNDK-core: libadf.so
 VNDK-core: libaudioroute.so
 VNDK-core: libaudioutils.so
 VNDK-core: libbinder.so
-VNDK-core: libbufferhub.so
-VNDK-core: libbufferhubqueue.so
 VNDK-core: libcamera_metadata.so
 VNDK-core: libcap.so
 VNDK-core: libcn-cbor.so
@@ -190,7 +188,6 @@ VNDK-core: libnl.so
 VNDK-core: libopus.so
 VNDK-core: libpagemap.so
 VNDK-core: libpcre2.so
-VNDK-core: libpdx_default_transport.so
 VNDK-core: libpiex.so
 VNDK-core: libpng.so
 VNDK-core: libpower.so
@@ -248,10 +245,7 @@ VNDK-core: libyuv.so
 VNDK-core: libziparchive.so
 VNDK-private: libbacktrace.so
 VNDK-private: libblas.so
-VNDK-private: libbufferhub.so
-VNDK-private: libbufferhubqueue.so
 VNDK-private: libcompiler_rt.so
 VNDK-private: libft2.so
 VNDK-private: libgui.so
-VNDK-private: libpdx_default_transport.so
 VNDK-private: libunwind.so
