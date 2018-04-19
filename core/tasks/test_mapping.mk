@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Create an artifact to include TEST_MAPPING files in source tree.
+# Create an artifact to include TEST_MAPPING files in source tree. Also include
+# a file (out/disabled-presubmit-tests) containing the tests that should be
+# skipped in presubmit check.
 
 .PHONY: test_mapping
 
@@ -21,13 +23,15 @@ test_mappings_zip := $(intermediates)/test_mappings.zip
 test_mapping_list := $(OUT_DIR)/.module_paths/TEST_MAPPING.list
 test_mappings := $(file <$(test_mapping_list))
 $(test_mappings_zip) : PRIVATE_test_mappings := $(subst $(newline),\n,$(test_mappings))
+$(test_mappings_zip) : PRIVATE_all_disabled_presubmit_tests := $(ALL_DISABLED_PRESUBMIT_TESTS)
 
 $(test_mappings_zip) : $(test_mappings) $(SOONG_ZIP)
-	@echo "Building artifact to include TEST_MAPPING files."
-	rm -rf $@
+	@echo "Building artifact to include TEST_MAPPING files and tests to skip in presubmit check."
+	rm -rf $@ $(dir $@)/disabled-presubmit-tests
+	echo $(sort $(PRIVATE_all_disabled_presubmit_tests)) | tr " " "\n" > $(dir $@)/disabled-presubmit-tests
 	echo -e "$(PRIVATE_test_mappings)" > $@.list
-	$(SOONG_ZIP) -o $@ -C . -l $@.list
-	rm -f $@.list
+	$(SOONG_ZIP) -o $@ -C . -l $@.list -C $(dir $@) -f $(dir $@)/disabled-presubmit-tests
+	rm -f $@.list $(dir $@)/disabled-presubmit-tests
 
 test_mapping : $(test_mappings_zip)
 
