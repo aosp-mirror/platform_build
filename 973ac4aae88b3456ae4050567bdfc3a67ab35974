@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "4a452bab_f66a6020",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-04-19T09:00:08Z",
+      "side": 1,
+      "message": "Hi Simran,\n   I just tested it in pi and make sure it worked well, thanks. \nHi Dan,\n   Thanks, you are right and I just fixed it.",
+      "parentUuid": "67758106_544a0105",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 37
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c62592c2_15d4f61e",
         "filename": "core/autogen_test_config.mk",
         "patchSetId": 1
@@ -60,6 +84,30 @@
       "writtenOn": "2018-04-18T20:12:39Z",
       "side": 1,
       "message": "Share the rule, and just put $(CC_BENCHMARK_TEST_CONFIG_TEMPLATE) / $(NATIVE_TEST_CONFIG_TEMPLATE) in a variable.",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 31,
+        "endChar": 53
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c469fa59_d76a828b",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-04-19T09:00:08Z",
+      "side": 1,
+      "message": "Thanks, I just fixed it.",
+      "parentUuid": "c62592c2_15d4f61e",
       "range": {
         "startLine": 29,
         "startChar": 0,
@@ -89,6 +137,24 @@
     },
     {
       "key": {
+        "uuid": "0321fd50_afc6e7d2",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-04-19T09:00:08Z",
+      "side": 1,
+      "message": "Thanks, I just fixed it.",
+      "parentUuid": "53701978_0bfbc2b9",
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b8dd3fa2_ad0584a8",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
@@ -100,6 +166,24 @@
       "writtenOn": "2018-04-19T02:23:23Z",
       "side": 1,
       "message": "we don\u0027t need is_native and multi_arch here, as it\u0027s covered in NATIVE_TESTS check. \nAs Colin suggested, we can move this if check to autogen_test_config.mk, as it\u0027s only used there.",
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "406e097d_6eab3fdd",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-04-19T09:00:08Z",
+      "side": 1,
+      "message": "Thanks, I just fixed it.",
+      "parentUuid": "b8dd3fa2_ad0584a8",
       "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
@@ -129,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "b623ad2f_cd6e5443",
+        "filename": "core/cc_benchmark_test_config_template.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-04-19T09:00:08Z",
+      "side": 1,
+      "message": "Thanks, I just fixed it.",
+      "parentUuid": "09ff71bc_e3d5b8d5",
+      "range": {
+        "startLine": 2,
+        "startChar": 19,
+        "endLine": 2,
+        "endChar": 23
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8b7d7936_ce641e16",
         "filename": "core/cc_benchmark_test_config_template.xml",
         "patchSetId": 1
@@ -140,6 +248,30 @@
       "writtenOn": "2018-04-18T18:20:40Z",
       "side": 1,
       "message": "Hmm what happens if this directory doesn\u0027t exist?\n\nBackup options is to use /data/local/tmp/",
+      "range": {
+        "startLine": 20,
+        "startChar": 45,
+        "endLine": 20,
+        "endChar": 65
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "176ff79f_bd93de5b",
+        "filename": "core/cc_benchmark_test_config_template.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-04-19T09:00:08Z",
+      "side": 1,
+      "message": "Thanks, I just changed it to /data/local/tmp/",
+      "parentUuid": "8b7d7936_ce641e16",
       "range": {
         "startLine": 20,
         "startChar": 45,
@@ -199,6 +331,30 @@
     },
     {
       "key": {
+        "uuid": "1f4c9632_d3c15fe2",
+        "filename": "core/cc_benchmark_test_config_template.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-04-19T09:00:08Z",
+      "side": 1,
+      "message": "Thanks, I just added it and moved them to the top.",
+      "parentUuid": "4ce81de2_c69394c6",
+      "range": {
+        "startLine": 22,
+        "startChar": 4,
+        "endLine": 22,
+        "endChar": 49
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ee08aa56_6c9fdc4c",
         "filename": "core/config.mk",
         "patchSetId": 1
@@ -210,6 +366,30 @@
       "writtenOn": "2018-04-18T20:15:04Z",
       "side": 1,
       "message": "NATIVE for consistency",
+      "range": {
+        "startLine": 154,
+        "startChar": 0,
+        "endLine": 154,
+        "endChar": 2
+      },
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2578961e_72c1da3f",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-04-19T09:00:08Z",
+      "side": 1,
+      "message": "Thanks, I just changed it to NATIVE_BENCHMARK_TEST_CONFIG_TEMPLATE",
+      "parentUuid": "ee08aa56_6c9fdc4c",
       "range": {
         "startLine": 154,
         "startChar": 0,
