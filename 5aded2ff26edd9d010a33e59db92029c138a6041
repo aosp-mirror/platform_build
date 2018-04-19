@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7f95b4e8_72e497ec",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-19T16:44:24Z",
+      "side": 1,
+      "message": "Do you not want it in a topic with that change so they get tested/submitted together?",
+      "revId": "5aded2ff26edd9d010a33e59db92029c138a6041",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
