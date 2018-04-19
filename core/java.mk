@@ -120,7 +120,7 @@ ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VE
   # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS
   aidl_preprocess_import := $(TARGET_OUT_COMMON_INTERMEDIATES)/framework.aidl
 else
-  aidl_preprocess_import := $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/framework.aidl
+  aidl_preprocess_import := $(call resolve-prebuilt-aidl-path,$(LOCAL_SDK_VERSION))
 endif # not current or system_current
 else
 # build against the platform.

@@ -960,12 +960,19 @@ SUPPORT_LIBRARY_ROOT := frameworks/support
 endif
 
 # Resolve LOCAL_SDK_VERSION to prebuilt module name, e.g.:
-# 23 -> sdk_v23
-# system_current -> sdk_vsystem_current
-# Note: this also replaces core_X with X (to be removed as there are prebuilts for core now).
+# 23 -> sdk_public_23_android
+# system_current -> sdk_system_current_android
 # $(1): An sdk version (LOCAL_SDK_VERSION)
 define resolve-prebuilt-sdk-module
-  sdk_v$(patsubst core_%,%,$(1))
+$(if $(findstring _,$(1)),\
+  sdk_$(1)_android,\
+  sdk_public_$(1)_android)
+endef
+
+# Resolve LOCAL_SDK_VERSION to prebuilt framework.aidl
+# $(1): An sdk version (LOCAL_SDK_VERSION)
+define resolve-prebuilt-aidl-path
+$(HISTORICAL_SDK_VERSIONS_ROOT)/$(subst core_,,$(subst system_,,$(subst test_,,$(1))))/public/framework.aidl
 endef
 
 # Historical SDK version N is stored in $(HISTORICAL_SDK_VERSIONS_ROOT)/N.
@@ -984,17 +991,16 @@ $(shell function sgrax() { \
     ( sgrax $(1) | sort -g ) )
 endef
 
-TARGET_AVAILABLE_SDK_VERSIONS := $(call numerically_sort,\
-    $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android.jar,%, \
-    $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android.jar)))
-
-TARGET_AVAILABLE_SDK_VERSIONS := $(addprefix system_,$(call numerically_sort,\
-    $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android_system.jar,%, \
-    $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android_system.jar)))) \
-    $(TARGET_AVAILABLE_SDK_VERSIONS)
-
-# We don't have prebuilt test_current and core_current SDK yet.
-TARGET_AVAILABLE_SDK_VERSIONS := test_current core_current $(TARGET_AVAILABLE_SDK_VERSIONS)
+# This produces a list like "current/core current/public current/system 4/public"
+TARGET_AVAILABLE_SDK_VERSIONS := $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/*/android.jar)
+TARGET_AVAILABLE_SDK_VERSIONS := $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android.jar,%,$(TARGET_AVAILABLE_SDK_VERSIONS))
+# Strips and reorganizes the "public", "core" and "system" subdirs.
+TARGET_AVAILABLE_SDK_VERSIONS := $(subst /public,,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_AVAILABLE_SDK_VERSIONS := $(patsubst %/core,core_%,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_AVAILABLE_SDK_VERSIONS := $(patsubst %/system,system_%,$(TARGET_AVAILABLE_SDK_VERSIONS))
+# No prebuilt for test_current.
+TARGET_AVAILABLE_SDK_VERSIONS += test_current
+TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,27,$(TARGET_AVAILABLE_SDK_VERSIONS))
