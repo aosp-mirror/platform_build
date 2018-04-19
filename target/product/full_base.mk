@@ -37,6 +37,20 @@ PRODUCT_PACKAGES += \
     PhaseBeam \
     PhotoTable
 
+# Bluetooth:
+#   audio.a2dp.default is a system module. Generic system image includes
+#   audio.a2dp.default to support A2DP if board has the capability.
+PRODUCT_PACKAGES += \
+    audio.a2dp.default
+
+# Net:
+#   Vendors can use the platform-provided network configuration utilities (ip,
+#   iptable, etc.) to configure the Linux networking stack, but these utilities
+#   do not yet include a HIDL interface wrapper. This is a solution on
+#   Android O.
+PRODUCT_PACKAGES += \
+    netutils-wrapper-1.0
+
 # Additional settings used in all AOSP builds
 PRODUCT_PROPERTY_OVERRIDES := \
     ro.config.ringtone=Ring_Synth_04.ogg \
