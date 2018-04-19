@@ -127,6 +127,24 @@
     },
     {
       "key": {
+        "uuid": "3645898e_b5abe1f9",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 652,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-04-19T20:20:05Z",
+      "side": 1,
+      "message": "I\u0027m not exactly sure what you want, but I\u0027m fairly sure it doesn\u0027t exist. You can use $(info ...) / $(warning ...) / $(error ...) for some level of printf debugging.\n\nThe generated ninja commands are in out/build-*.ninja (where * usually is $TARGET_PRODUCT, but it can vary depending on the request)",
+      "parentUuid": "44fe08e8_ef3fd013",
+      "revId": "ec5ddd24875e1cf14bea24a9d59f8e52fadf791d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "01ec6df2_deb581e2",
         "filename": "core/tasks/test_mapping.mk",
         "patchSetId": 3
