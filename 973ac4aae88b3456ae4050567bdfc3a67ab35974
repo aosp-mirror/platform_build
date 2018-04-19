@@ -89,6 +89,23 @@
     },
     {
       "key": {
+        "uuid": "b8dd3fa2_ad0584a8",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-04-19T02:23:23Z",
+      "side": 1,
+      "message": "we don\u0027t need is_native and multi_arch here, as it\u0027s covered in NATIVE_TESTS check. \nAs Colin suggested, we can move this if check to autogen_test_config.mk, as it\u0027s only used there.",
+      "revId": "973ac4aae88b3456ae4050567bdfc3a67ab35974",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "09ff71bc_e3d5b8d5",
         "filename": "core/cc_benchmark_test_config_template.xml",
         "patchSetId": 1
