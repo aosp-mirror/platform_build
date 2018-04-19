@@ -646,6 +646,13 @@ $(call create-suite-dependencies)
 endif  # LOCAL_COMPATIBILITY_SUITE
 
 ###########################################################
+## Add test module to ALL_DISABLED_PRESUBMIT_TESTS if LOCAL_PRESUBMIT_DISABLED is set to true.
+###########################################################
+ifeq ($(LOCAL_PRESUBMIT_DISABLED),true)
+  ALL_DISABLED_PRESUBMIT_TESTS += $(LOCAL_MODULE)
+endif  # LOCAL_PRESUBMIT_DISABLED
+
+###########################################################
 ## Register with ALL_MODULES
 ###########################################################
 
