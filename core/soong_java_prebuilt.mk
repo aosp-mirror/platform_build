@@ -50,7 +50,7 @@ ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 my_res_package := $(intermediates.COMMON)/package-res.apk
 
 $(my_res_package): $(LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE)
-	@echo "Copy: $$@"
+	@echo "Copy: $@"
 	$(copy-file-to-target)
 
 $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_res_package))
