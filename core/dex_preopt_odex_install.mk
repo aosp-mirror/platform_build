@@ -91,6 +91,8 @@ installed_art :=
 built_installed_odex :=
 built_installed_vdex :=
 built_installed_art :=
+my_process_profile :=
+my_profile_is_text_listing :=
 
 ifeq (false,$(WITH_DEX_PREOPT_GENERATE_PROFILE))
 LOCAL_DEX_PREOPT_GENERATE_PROFILE := false
@@ -100,14 +102,18 @@ ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
 # If LOCAL_DEX_PREOPT_GENERATE_PROFILE is not defined, default it based on the existence of the
 # profile class listing. TODO: Use product specific directory here.
 my_classes_directory := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)
-LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING := $(my_classes_directory)/$(LOCAL_MODULE).prof.txt
-ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)))
-# Profile listing exists, use it to generate the profile.
-LOCAL_DEX_PREOPT_GENERATE_PROFILE := true
+LOCAL_DEX_PREOPT_PROFILE := $(my_classes_directory)/$(LOCAL_MODULE).prof
+ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE)))
+my_process_profile := true
+my_profile_is_text_listing := false
 endif
+else
+my_process_profile := $(LOCAL_DEX_PREOPT_GENERATE_PROFILE)
+my_profile_is_text_listing := true
+LOCAL_DEX_PREOPT_PROFILE := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 endif
 
-ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+ifeq (true,$(my_process_profile))
 
 ifdef LOCAL_VENDOR_MODULE
 $(call pretty-error, Internal error: profiles are not supported for vendor modules)
@@ -115,8 +121,8 @@ else
 LOCAL_DEX_PREOPT_APP_IMAGE := true
 endif
 
-ifndef LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING
-$(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING))
+ifndef LOCAL_DEX_PREOPT_PROFILE
+$(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE))
 endif
 ifeq (,$(dex_preopt_profile_src_file))
 $(call pretty-error, Internal error: dex_preopt_profile_src_file must be set)
@@ -127,18 +133,36 @@ my_dex_location := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
 my_dex_location := $(patsubst %.gz,%,$(my_dex_location))
 $(my_built_profile): PRIVATE_BUILT_MODULE := $(dex_preopt_profile_src_file)
 $(my_built_profile): PRIVATE_DEX_LOCATION := $(my_dex_location)
-$(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
-$(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
+$(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE)
+$(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE)
 $(my_built_profile): $(PROFMAN)
 $(my_built_profile): $(dex_preopt_profile_src_file)
-$(my_built_profile):
+ifeq (true,$(my_profile_is_text_listing))
+# The profile is a test listing of classes (used for framework jars).
+# We need to generate the actual binary profile before being able to compile.
 	$(hide) mkdir -p $(dir $@)
 	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
 		--create-profile-from=$(PRIVATE_SOURCE_CLASSES) \
 		--apk=$(PRIVATE_BUILT_MODULE) \
 		--dex-location=$(PRIVATE_DEX_LOCATION) \
 		--reference-profile-file=$@
-dex_preopt_profile_src_file:=
+else
+# The profile is binary profile (used for apps). Run it through profman to
+# ensure the profile keys match the apk.
+$(my_built_profile):
+	$(hide) mkdir -p $(dir $@)
+	touch $@
+	ANDROID_LOG_TAGS="*:i" $(PROFMAN) \
+	  --copy-and-update-profile-key \
+		--profile-file=$(PRIVATE_SOURCE_CLASSES) \
+		--apk=$(PRIVATE_BUILT_MODULE) \
+		--reference-profile-file=$@ \
+	|| echo "Profile out of date for $(PRIVATE_BUILT_MODULE)"
+endif
+
+my_process_profile :=
+my_profile_is_text_listing :=
+dex_preopt_profile_src_file :=
 
 # Remove compressed APK extension.
 my_installed_profile := $(patsubst %.gz,%,$(LOCAL_INSTALLED_MODULE)).prof
