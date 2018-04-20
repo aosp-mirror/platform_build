@@ -230,6 +230,7 @@ empty_bootclasspath :=
 my_system_modules :=
 
 ifndef LOCAL_IS_HOST_MODULE
+  sdk_libs :=
   ifeq ($(LOCAL_SDK_VERSION),)
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
       # No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
@@ -261,9 +262,10 @@ ifndef LOCAL_IS_HOST_MODULE
     else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),core_current)
       full_java_bootclasspath_libs := $(call java-lib-header-files,core.current.stubs)
     else
-      # TARGET_BUILD_APPS is set. Use the modules defined in prebuilts/sdk/Android.mk.
+      # TARGET_BUILD_APPS or numbered SDK. Use the modules defined in prebuilts/sdk/Android.mk.
       _module_name := $(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION))
       full_java_bootclasspath_libs := $(call java-lib-header-files,$(_module_name))
+      sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION),$(lib_name)))
       _module_name :=
     endif # current, system_current, system_${VER}, test_current or core_current
   endif # LOCAL_SDK_VERSION
@@ -291,10 +293,9 @@ ifndef LOCAL_IS_HOST_MODULE
       full_java_bootclasspath_libs += $(call java-lib-header-files,core-lambda-stubs)
     endif
   endif
-
-  full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-  full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES),$(LOCAL_IS_HOST_MODULE))
-
+  full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES) $(sdk_libs),$(LOCAL_IS_HOST_MODULE))
+  full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES) $(sdk_libs),$(LOCAL_IS_HOST_MODULE))
+  sdk_libs :=
 else # LOCAL_IS_HOST_MODULE
 
   ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)

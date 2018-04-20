@@ -963,10 +963,11 @@ endif
 # 23 -> sdk_public_23_android
 # system_current -> sdk_system_current_android
 # $(1): An sdk version (LOCAL_SDK_VERSION)
+# $(2): optional library name (default: android)
 define resolve-prebuilt-sdk-module
 $(if $(findstring _,$(1)),\
-  sdk_$(1)_android,\
-  sdk_public_$(1)_android)
+  sdk_$(1)_$(or $(2),android),\
+  sdk_public_$(1)_$(or $(2),android))
 endef
 
 # Resolve LOCAL_SDK_VERSION to prebuilt framework.aidl
