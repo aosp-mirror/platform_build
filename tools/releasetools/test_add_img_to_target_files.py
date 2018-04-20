@@ -22,8 +22,7 @@ import zipfile
 import common
 import test_utils
 from add_img_to_target_files import (
-    AddCareMapTxtForAbOta, AddPackRadioImages, AddRadioImagesForAbOta,
-    GetCareMap)
+    AddCareMapTxtForAbOta, AddPackRadioImages, CheckAbOtaImages, GetCareMap)
 from rangelib import RangeSet
 
 
@@ -55,49 +54,25 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
       os.mkdir(images_path)
     return images, images_path
 
-  def test_AddRadioImagesForAbOta_imageExists(self):
+  def test_CheckAbOtaImages_imageExistsUnderImages(self):
     """Tests the case with existing images under IMAGES/."""
-    images, images_path = self._create_images(['aboot', 'xbl'], 'IMAGES')
-    AddRadioImagesForAbOta(None, images)
+    images, _ = self._create_images(['aboot', 'xbl'], 'IMAGES')
+    CheckAbOtaImages(None, images)
 
-    for image in images:
-      self.assertTrue(
-          os.path.exists(os.path.join(images_path, image + '.img')))
+  def test_CheckAbOtaImages_imageExistsUnderRadio(self):
+    """Tests the case with some image under RADIO/."""
+    images, _ = self._create_images(['system', 'vendor'], 'IMAGES')
+    radio_path = os.path.join(OPTIONS.input_tmp, 'RADIO')
+    if not os.path.exists(radio_path):
+      os.mkdir(radio_path)
+    with open(os.path.join(radio_path, 'modem.img'), 'wb') as image_fp:
+      image_fp.write('modem'.encode())
+    CheckAbOtaImages(None, images + ['modem'])
 
-  def test_AddRadioImagesForAbOta_copyFromRadio(self):
-    """Tests the case that copies images from RADIO/."""
-    images, images_path = self._create_images(['aboot', 'xbl'], 'RADIO')
-    AddRadioImagesForAbOta(None, images)
-
-    for image in images:
-      self.assertTrue(
-          os.path.exists(os.path.join(images_path, image + '.img')))
-
-  def test_AddRadioImagesForAbOta_copyFromRadio_zipOutput(self):
+  def test_CheckAbOtaImages_missingImages(self):
     images, _ = self._create_images(['aboot', 'xbl'], 'RADIO')
-
-    # Set up the output zip.
-    output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
-      AddRadioImagesForAbOta(output_zip, images)
-
-    with zipfile.ZipFile(output_file, 'r') as verify_zip:
-      for image in images:
-        self.assertIn('IMAGES/' + image + '.img', verify_zip.namelist())
-
-  def test_AddRadioImagesForAbOta_missingImages(self):
-    images, _ = self._create_images(['aboot', 'xbl'], 'RADIO')
-    self.assertRaises(AssertionError, AddRadioImagesForAbOta, None,
-                      images + ['baz'])
-
-  def test_AddRadioImagesForAbOta_missingImages_zipOutput(self):
-    images, _ = self._create_images(['aboot', 'xbl'], 'RADIO')
-
-    # Set up the output zip.
-    output_file = common.MakeTempFile(suffix='.zip')
-    with zipfile.ZipFile(output_file, 'w') as output_zip:
-      self.assertRaises(AssertionError, AddRadioImagesForAbOta, output_zip,
-                        images + ['baz'])
+    self.assertRaises(
+        AssertionError, CheckAbOtaImages, None, images + ['baz'])
 
   def test_AddPackRadioImages(self):
     images, images_path = self._create_images(['foo', 'bar'], 'RADIO')

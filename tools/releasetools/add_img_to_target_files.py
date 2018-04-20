@@ -485,18 +485,15 @@ def AddCache(output_zip):
   img.Write()
 
 
-def AddRadioImagesForAbOta(output_zip, ab_partitions):
-  """Adds the radio images needed for A/B OTA to the output file.
+def CheckAbOtaImages(output_zip, ab_partitions):
+  """Checks that all the listed A/B partitions have their images available.
 
-  It parses the list of A/B partitions, looks for the missing ones from RADIO/,
-  and copies them to IMAGES/ of the output file (or dir).
-
-  It also ensures that on returning from the function all the listed A/B
-  partitions must have their images available under IMAGES/.
+  The images need to be available under IMAGES/ or RADIO/, with the former takes
+  a priority.
 
   Args:
     output_zip: The output zip file (needs to be already open), or None to
-        write images to OPTIONS.input_tmp/.
+        find images in OPTIONS.input_tmp/.
     ab_partitions: The list of A/B partitions.
 
   Raises:
@@ -504,27 +501,20 @@ def AddRadioImagesForAbOta(output_zip, ab_partitions):
   """
   for partition in ab_partitions:
     img_name = partition.strip() + ".img"
-    prebuilt_path = os.path.join(OPTIONS.input_tmp, "IMAGES", img_name)
-    if os.path.exists(prebuilt_path):
-      print("%s already exists, no need to overwrite..." % (img_name,))
-      continue
-
-    img_radio_path = os.path.join(OPTIONS.input_tmp, "RADIO", img_name)
-    if os.path.exists(img_radio_path):
-      if output_zip:
-        common.ZipWrite(output_zip, img_radio_path, "IMAGES/" + img_name)
-      else:
-        shutil.copy(img_radio_path, prebuilt_path)
-      continue
 
     # Assert that the image is present under IMAGES/ now.
     if output_zip:
       # Zip spec says: All slashes MUST be forward slashes.
-      img_path = 'IMAGES/' + img_name
-      assert img_path in output_zip.namelist(), "cannot find " + img_name
+      images_path = "IMAGES/" + img_name
+      radio_path = "RADIO/" + img_name
+      available = (images_path in output_zip.namelist() or
+                   radio_path in output_zip.namelist())
     else:
-      img_path = os.path.join(OPTIONS.input_tmp, "IMAGES", img_name)
-      assert os.path.exists(img_path), "cannot find " + img_name
+      images_path = os.path.join(OPTIONS.input_tmp, "IMAGES", img_name)
+      radio_path = os.path.join(OPTIONS.input_tmp, "RADIO", img_name)
+      available = os.path.exists(images_path) or os.path.exists(radio_path)
+
+    assert available, "Failed to find " + img_name
 
 
 def AddCareMapTxtForAbOta(output_zip, ab_partitions, image_paths):
@@ -751,10 +741,9 @@ def AddImagesToTargetFiles(filename):
     with open(ab_partitions_txt, 'r') as f:
       ab_partitions = f.readlines()
 
-    # For devices using A/B update, copy over images from RADIO/ to IMAGES/ and
-    # make sure we have all the needed images ready under IMAGES/. All images
-    # should have '.img' as extension.
-    AddRadioImagesForAbOta(output_zip, ab_partitions)
+    # For devices using A/B update, make sure we have all the needed images
+    # ready under IMAGES/ or RADIO/.
+    CheckAbOtaImages(output_zip, ab_partitions)
 
     # Generate care_map.txt for system and vendor partitions (if present), then
     # write this file to target_files package.
