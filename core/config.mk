@@ -152,6 +152,7 @@ BUILD_HOST_TEST_CONFIG := $(BUILD_SYSTEM)/host_test_config.mk
 BUILD_TARGET_TEST_CONFIG := $(BUILD_SYSTEM)/target_test_config.mk
 
 INSTRUMENTATION_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/instrumentation_test_config_template.xml
+NATIVE_BENCHMARK_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/native_benchmark_test_config_template.xml
 NATIVE_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/native_test_config_template.xml
 EMPTY_TEST_CONFIG := $(BUILD_SYSTEM)/empty_test_config.xml
 
