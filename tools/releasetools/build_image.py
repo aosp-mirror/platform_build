@@ -730,7 +730,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_fs_type", "fs_type")
     copy_prop("system_headroom", "partition_headroom")
     copy_prop("system_size", "partition_size")
-    copy_prop("system_journal_size", "journal_size")
+    if not copy_prop("system_journal_size", "journal_size"):
+      d["journal_size"] = "0"
     copy_prop("system_verity_block_device", "verity_block_device")
     copy_prop("system_root_image", "system_root_image")
     copy_prop("ramdisk_dir", "ramdisk_dir")
@@ -756,7 +757,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("fs_type", "fs_type")
     copy_prop("system_fs_type", "fs_type")
     copy_prop("system_size", "partition_size")
-    copy_prop("system_journal_size", "journal_size")
+    if not copy_prop("system_journal_size", "journal_size"):
+      d["journal_size"] = "0"
     copy_prop("system_verity_block_device", "verity_block_device")
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
@@ -783,7 +785,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("avb_vendor_algorithm", "avb_algorithm")
     copy_prop("vendor_fs_type", "fs_type")
     copy_prop("vendor_size", "partition_size")
-    copy_prop("vendor_journal_size", "journal_size")
+    if not copy_prop("vendor_journal_size", "journal_size"):
+      d["journal_size"] = "0"
     copy_prop("vendor_verity_block_device", "verity_block_device")
     copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("vendor_squashfs_compressor", "squashfs_compressor")
@@ -802,7 +805,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("avb_product_algorithm", "avb_algorithm")
     copy_prop("product_fs_type", "fs_type")
     copy_prop("product_size", "partition_size")
-    copy_prop("product_journal_size", "journal_size")
+    if not copy_prop("product_journal_size", "journal_size"):
+      d["journal_size"] = "0"
     copy_prop("product_verity_block_device", "verity_block_device")
     copy_prop("product_squashfs_compressor", "squashfs_compressor")
     copy_prop("product_squashfs_compressor_opt", "squashfs_compressor_opt")
@@ -815,7 +819,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
-    copy_prop("oem_journal_size", "journal_size")
+    if not copy_prop("oem_journal_size", "journal_size"):
+      d["journal_size"] = "0"
     copy_prop("oem_extfs_inode_count", "extfs_inode_count")
     if not copy_prop("oem_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
