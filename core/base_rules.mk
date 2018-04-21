@@ -546,10 +546,6 @@ ifeq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
   is_native := true
   multi_arch := true
 endif
-ifeq ($(LOCAL_MODULE_CLASS),NATIVE_BENCHMARK)
-  is_native := true
-  multi_arch := true
-endif
 ifdef LOCAL_MULTILIB
   multi_arch := true
 endif
