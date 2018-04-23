@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9d74a2_256150ec",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-23T19:56:28Z",
+      "side": 1,
+      "message": "Use git cherry-pick -x to get (cherry-picked from commit...)",
+      "revId": "ae249929fc4c4956fc899c7d6be159d2dc1d9132",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
