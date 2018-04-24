@@ -15,39 +15,80 @@
 # limitations under the License.
 
 """
-Given a target-files zipfile, produces an OTA package that installs
-that build.  An incremental OTA is produced if -i is given, otherwise
-a full OTA is produced.
+Given a target-files zipfile, produces an OTA package that installs that build.
+An incremental OTA is produced if -i is given, otherwise a full OTA is produced.
 
-Usage:  ota_from_target_files [flags] input_target_files output_ota_package
+Usage:  ota_from_target_files [options] input_target_files output_ota_package
 
-  -k (--package_key) <key> Key to use to sign the package (default is
-      the value of default_system_dev_certificate from the input
-      target-files's META/misc_info.txt, or
-      "build/target/product/security/testkey" if that value is not
-      specified).
+Common options that apply to both of non-A/B and A/B OTAs
+
+  --downgrade
+      Intentionally generate an incremental OTA that updates from a newer build
+      to an older one (based on timestamp comparison). "post-timestamp" will be
+      replaced by "ota-downgrade=yes" in the metadata file. A data wipe will
+      always be enforced, so "ota-wipe=yes" will also be included in the
+      metadata file. The update-binary in the source build will be used in the
+      OTA package, unless --binary flag is specified. Please also check the doc
+      for --override_timestamp below.
+
+  -i  (--incremental_from) <file>
+      Generate an incremental OTA using the given target-files zip as the
+      starting build.
+
+  -k  (--package_key) <key>
+      Key to use to sign the package (default is the value of
+      default_system_dev_certificate from the input target-files's
+      META/misc_info.txt, or "build/target/product/security/testkey" if that
+      value is not specified).
 
       For incremental OTAs, the default value is based on the source
       target-file, not the target build.
 
-  -i  (--incremental_from)  <file>
-      Generate an incremental OTA using the given target-files zip as
-      the starting build.
+  --override_timestamp
+      Intentionally generate an incremental OTA that updates from a newer build
+      to an older one (based on timestamp comparison), by overriding the
+      timestamp in package metadata. This differs from --downgrade flag: we know
+      for sure this is NOT an actual downgrade case, but two builds are cut in a
+      reverse order. A legit use case is that we cut a new build C (after having
+      A and B), but want to enfore an update path of A -> C -> B.  Specifying
+      --downgrade may not help since that would enforce a data wipe for C -> B
+      update. The value of "post-timestamp" will be set to the newer timestamp
+      plus one, so that the package can be pushed and applied.
 
-  --full_radio
-      When generating an incremental OTA, always include a full copy of
-      radio image. This option is only meaningful when -i is specified,
-      because a full radio is always included in a full OTA if applicable.
+  --wipe_user_data
+      Generate an OTA package that will wipe the user data partition when
+      installed.
+
+Non-A/B OTA specific options
+
+  -b  (--binary) <file>
+      Use the given binary as the update-binary in the output package, instead
+      of the binary in the build's target_files. Use for development only.
+
+  --block
+      Generate a block-based OTA for non-A/B device. We have deprecated the
+      support for file-based OTA since O. Block-based OTA will be used by
+      default for all non-A/B devices. Keeping this flag here to not break
+      existing callers.
+
+  -e  (--extra_script) <file>
+      Insert the contents of file at the end of the update script.
 
   --full_bootloader
       Similar to --full_radio. When generating an incremental OTA, always
       include a full copy of bootloader image.
 
-  --verify
-      Remount and verify the checksums of the files written to the system and
-      vendor (if used) partitions. Non-A/B incremental OTAs only.
+  --full_radio
+      When generating an incremental OTA, always include a full copy of radio
+      image. This option is only meaningful when -i is specified, because a full
+      radio is always included in a full OTA if applicable.
 
-  -o  (--oem_settings)  <main_file[,additional_files...]>
+  --log_diff <file>
+      Generate a log file that shows the differences in the source and target
+      builds for an incremental package. This option is only meaningful when -i
+      is specified.
+
+  -o  (--oem_settings) <main_file[,additional_files...]>
       Comma seperated list of files used to specify the expected OEM-specific
       properties on the OEM partition of the intended device. Multiple expected
       values can be used by providing multiple files. Only the first dict will
@@ -55,42 +96,29 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
       OEM-specific properties.
 
   --oem_no_mount
-      For devices with OEM-specific properties but without an OEM partition,
-      do not mount the OEM partition in the updater-script. This should be
-      very rarely used, since it's expected to have a dedicated OEM partition
-      for OEM-specific properties. Only meaningful when -o is specified.
+      For devices with OEM-specific properties but without an OEM partition, do
+      not mount the OEM partition in the updater-script. This should be very
+      rarely used, since it's expected to have a dedicated OEM partition for
+      OEM-specific properties. Only meaningful when -o is specified.
 
-  --wipe_user_data
-      Generate an OTA package that will wipe the user data partition
-      when installed.
+  --stash_threshold <float>
+      Specify the threshold that will be used to compute the maximum allowed
+      stash size (defaults to 0.8).
 
-  --downgrade
-      Intentionally generate an incremental OTA that updates from a newer
-      build to an older one (based on timestamp comparison). "post-timestamp"
-      will be replaced by "ota-downgrade=yes" in the metadata file. A data
-      wipe will always be enforced, so "ota-wipe=yes" will also be included in
-      the metadata file. The update-binary in the source build will be used in
-      the OTA package, unless --binary flag is specified. Please also check the
-      doc for --override_timestamp below.
+  -t  (--worker_threads) <int>
+      Specify the number of worker-threads that will be used when generating
+      patches for incremental updates (defaults to 3).
 
-  --override_timestamp
-      Intentionally generate an incremental OTA that updates from a newer
-      build to an older one (based on timestamp comparison), by overriding the
-      timestamp in package metadata. This differs from --downgrade flag: we
-      know for sure this is NOT an actual downgrade case, but two builds are
-      cut in a reverse order. A legit use case is that we cut a new build C
-      (after having A and B), but want to enfore an update path of A -> C -> B.
-      Specifying --downgrade may not help since that would enforce a data wipe
-      for C -> B update. The value of "post-timestamp" will be set to the newer
-      timestamp plus one, so that the package can be pushed and applied.
-
-  -e  (--extra_script)  <file>
-      Insert the contents of file at the end of the update script.
+  --verify
+      Verify the checksums of the updated system and vendor (if any) partitions.
+      Non-A/B incremental OTAs only.
 
   -2  (--two_step)
-      Generate a 'two-step' OTA package, where recovery is updated
-      first, so that any changes made to the system partition are done
-      using the new recovery (new kernel, etc.).
+      Generate a 'two-step' OTA package, where recovery is updated first, so
+      that any changes made to the system partition are done using the new
+      recovery (new kernel, etc.).
+
+A/B OTA specific options
 
   --include_secondary
       Additionally include the payload for secondary slot images (default:
@@ -109,30 +137,6 @@ Usage:  ota_from_target_files [flags] input_target_files output_ota_package
 
       Due to the special install procedure, the secondary payload will be always
       generated as a full payload.
-
-  --block
-      Generate a block-based OTA for non-A/B device. We have deprecated the
-      support for file-based OTA since O. Block-based OTA will be used by
-      default for all non-A/B devices. Keeping this flag here to not break
-      existing callers.
-
-  -b  (--binary)  <file>
-      Use the given binary as the update-binary in the output package,
-      instead of the binary in the build's target_files.  Use for
-      development only.
-
-  -t  (--worker_threads) <int>
-      Specifies the number of worker-threads that will be used when
-      generating patches for incremental updates (defaults to 3).
-
-  --stash_threshold <float>
-      Specifies the threshold that will be used to compute the maximum
-      allowed stash size (defaults to 0.8).
-
-  --log_diff <file>
-      Generate a log file that shows the differences in the source and target
-      builds for an incremental package. This option is only meaningful when
-      -i is specified.
 
   --payload_signer <signer>
       Specify the signer when signing the payload and metadata for A/B OTAs.
