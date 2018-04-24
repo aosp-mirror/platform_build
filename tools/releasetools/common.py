@@ -966,17 +966,18 @@ def ReadApkCerts(tf_zip):
 
 
 COMMON_DOCSTRING = """
-  -p  (--path)  <dir>
-      Prepend <dir>/bin to the list of places to search for binaries
-      run by this script, and expect to find jars in <dir>/framework.
+Global options
+
+  -p  (--path) <dir>
+      Prepend <dir>/bin to the list of places to search for binaries run by this
+      script, and expect to find jars in <dir>/framework.
 
   -s  (--device_specific) <file>
-      Path to the python module containing device-specific
-      releasetools code.
+      Path to the Python module containing device-specific releasetools code.
 
-  -x  (--extra)  <key=value>
-      Add a key/value pair to the 'extras' dict, which device-specific
-      extension code may look at.
+  -x  (--extra) <key=value>
+      Add a key/value pair to the 'extras' dict, which device-specific extension
+      code may look at.
 
   -v  (--verbose)
       Show command lines being executed.
