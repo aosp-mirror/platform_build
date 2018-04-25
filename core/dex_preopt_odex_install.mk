@@ -99,10 +99,13 @@ LOCAL_DEX_PREOPT_GENERATE_PROFILE := false
 endif
 
 ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
+
+
 # If LOCAL_DEX_PREOPT_GENERATE_PROFILE is not defined, default it based on the existence of the
 # profile class listing. TODO: Use product specific directory here.
 my_classes_directory := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)
 LOCAL_DEX_PREOPT_PROFILE := $(my_classes_directory)/$(LOCAL_MODULE).prof
+
 ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE)))
 my_process_profile := true
 my_profile_is_text_listing := false
@@ -160,7 +163,6 @@ $(my_built_profile):
 	|| echo "Profile out of date for $(PRIVATE_BUILT_MODULE)"
 endif
 
-my_process_profile :=
 my_profile_is_text_listing :=
 dex_preopt_profile_src_file :=
 
@@ -237,7 +239,7 @@ installed_vdex := $(strip $(installed_vdex))
 installed_art := $(strip $(installed_art))
 
 ifdef built_odex
-ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+ifeq (true,$(my_process_profile))
 $(built_odex): $(my_built_profile)
 $(built_odex): PRIVATE_PROFILE_PREOPT_FLAGS := --profile-file=$(my_built_profile)
 else
@@ -272,7 +274,7 @@ ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
       # 'speed' compiler filter.
       LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed
     else
-      ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+      ifeq (true,$(my_process_profile))
         # For non system server jars, use speed-profile when we have a profile.
         LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed-profile
       else
@@ -391,5 +393,7 @@ endif # LOCAL_DEX_PREOPT
 # Profile doesn't depend on LOCAL_DEX_PREOPT.
 ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed_profile)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(build_installed_profile)
+
+my_process_profile :=
 
 $(my_all_targets): $(my_installed_profile)
