@@ -215,6 +215,30 @@
     },
     {
       "key": {
+        "uuid": "e30a6d93_cf27011b",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-25T15:13:43Z",
+      "side": 1,
+      "message": "all right, done. I think the new structure is clearer.. wdyt?",
+      "parentUuid": "1231c162_28a04092",
+      "range": {
+        "startLine": 263,
+        "startChar": 0,
+        "endLine": 263,
+        "endChar": 119
+      },
+      "revId": "aa9103a8ac88d22a5293030deeb89e598ff82a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6422ed53_27ff77bd",
         "filename": "core/java_common.mk",
         "patchSetId": 3
