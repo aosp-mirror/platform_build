@@ -22,6 +22,30 @@
       "revId": "42ca744bc24e2cb9f3f4a3ebab6727d6c286f391",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5a4067d_aafbe36b",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-25T15:39:23Z",
+      "side": 1,
+      "message": "yeah, not the most obvious construct, but it works pretty well here :)",
+      "parentUuid": "5746b7a6_9d1c5fd5",
+      "range": {
+        "startLine": 270,
+        "startChar": 23,
+        "endLine": 270,
+        "endChar": 25
+      },
+      "revId": "42ca744bc24e2cb9f3f4a3ebab6727d6c286f391",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
