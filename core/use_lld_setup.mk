@@ -12,3 +12,11 @@ ifeq (,$(filter 0 false,$(LOCAL_USE_CLANG_LLD)))
     my_use_clang_lld := true
   endif
 endif
+
+# Do not use LLD for Darwin host executables or shared libraries.
+# See https://lld.llvm.org/AtomLLD.html for status of lld for Mach-O.
+ifeq ($(LOCAL_IS_HOST_MODULE),true)
+  ifeq ($(HOST_OS),darwin)
+    my_use_clang_lld := false
+  endif
+endif
