@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45728e4b_9f5a59a0",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-04-25T12:41:57Z",
+      "side": 1,
+      "message": "build/soong/java/sdk_library.go",
+      "range": {
+        "startLine": 234,
+        "startChar": 46,
+        "endLine": 234,
+        "endChar": 65
+      },
+      "revId": "aa9103a8ac88d22a5293030deeb89e598ff82a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6aed95b3_3c6d70de",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-04-25T12:41:57Z",
+      "side": 1,
+      "message": "This is slightly different. \n\nIf LOCAL_SDK_VERSION is current or a number, *.stubs must be used.\nIf LOCAL_SDK_VERSION is system_*, *.stubs.system must be used.\nOtherwise (\u003dLOCAL_PRIVATE_PLATFORM_API), *.stubs.system is used. \n\nThe last part might be controversial, but anyway that\u0027s how java_sdk_library is written currently.",
+      "range": {
+        "startLine": 235,
+        "startChar": 0,
+        "endLine": 237,
+        "endChar": 91
+      },
+      "revId": "aa9103a8ac88d22a5293030deeb89e598ff82a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9714465d_c8a8a50a",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-04-25T12:41:57Z",
+      "side": 1,
+      "message": "why don\u0027t we do this once outside of the if block?",
+      "range": {
+        "startLine": 263,
+        "startChar": 0,
+        "endLine": 263,
+        "endChar": 119
+      },
+      "revId": "aa9103a8ac88d22a5293030deeb89e598ff82a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6422ed53_27ff77bd",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-04-25T12:41:57Z",
+      "side": 1,
+      "message": "why the conversion is not done here?",
+      "range": {
+        "startLine": 277,
+        "startChar": 0,
+        "endLine": 277,
+        "endChar": 129
+      },
+      "revId": "aa9103a8ac88d22a5293030deeb89e598ff82a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
