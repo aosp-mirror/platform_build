@@ -191,6 +191,30 @@
     },
     {
       "key": {
+        "uuid": "1231c162_28a04092",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-25T14:32:48Z",
+      "side": 1,
+      "message": "The problem is the existing structure, which precludes deduplication (the bootclasspath suffers the same problem). I\u0027ll re-write it, hang on",
+      "parentUuid": "9fbfb9d1_333a2fdf",
+      "range": {
+        "startLine": 263,
+        "startChar": 0,
+        "endLine": 263,
+        "endChar": 119
+      },
+      "revId": "aa9103a8ac88d22a5293030deeb89e598ff82a23",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6422ed53_27ff77bd",
         "filename": "core/java_common.mk",
         "patchSetId": 3
