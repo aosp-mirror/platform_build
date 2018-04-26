@@ -428,7 +428,7 @@ def AddPartitionTable(output_zip):
   img = OutputFile(
       output_zip, OPTIONS.input_tmp, "IMAGES", "partition-table.img")
   bpt = OutputFile(
-      output_zip, OPTIONS.input_tmp, "IMAGES", "partition-table.bpt")
+      output_zip, OPTIONS.input_tmp, "META", "partition-table.bpt")
 
   # use BPTTOOL from environ, or "bpttool" if empty or not set.
   bpttool = os.getenv("BPTTOOL") or "bpttool"

@@ -248,15 +248,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
   system_root_image = misc_info.get("system_root_image") == "true"
 
   for info in input_tf_zip.infolist():
-    # If it exists, copy bpt partition table definition into META/ to use when
-    # recreating partition table.
-    if (info.filename == "IMAGES/partition-table.bpt"):
-      data = input_tf_zip.read(info.filename)
-      out_info = copy.copy(info)
-      out_info.filename = "META/partition-table.bpt"
-      common.ZipWriteStr(output_tf_zip, out_info, data)
-
-    # Skip all other files in IMAGES/
     if info.filename.startswith("IMAGES/"):
       continue
 
