@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "493c1cb6_a6cb9cda",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-04-26T12:56:46Z",
+      "side": 1,
+      "message": "perhaps this might be too broad. possible conflict with partner-defined module names like sdk_acme? maybe I am too concerned.",
+      "range": {
+        "startLine": 232,
+        "startChar": 29,
+        "endLine": 232,
+        "endChar": 34
+      },
+      "revId": "af57e47ce0f5662b2157b4759ba9066d77c26235",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
