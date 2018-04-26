@@ -22,6 +22,30 @@
       "revId": "af57e47ce0f5662b2157b4759ba9066d77c26235",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4791c65c_66525334",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-26T13:00:57Z",
+      "side": 1,
+      "message": "sounds like a legit concern.. I\u0027m not sure how to make it more narrow except by coming up with a more complicated patetrn for these modules that are unlikely to be duplicated elsewhere. I guess we can do that if we run into problems.",
+      "parentUuid": "493c1cb6_a6cb9cda",
+      "range": {
+        "startLine": 232,
+        "startChar": 29,
+        "endLine": 232,
+        "endChar": 34
+      },
+      "revId": "af57e47ce0f5662b2157b4759ba9066d77c26235",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
