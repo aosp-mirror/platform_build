@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "f65e1ccf_04b93638",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2351,
+      "author": {
+        "id": 1178083
+      },
+      "writtenOn": "2018-04-26T19:46:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3342e8df_9bbe3e1f",
+      "revId": "aad3d22a9d036745570712a9806179cd1e609554",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "570ba1c5_bfb66093",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 1
@@ -147,6 +165,30 @@
       "revId": "aad3d22a9d036745570712a9806179cd1e609554",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9aacfb1_4c0e9bdb",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1178083
+      },
+      "writtenOn": "2018-04-26T19:46:48Z",
+      "side": 1,
+      "message": "Done, separate change is go/oag/673510 so that I can delay or skip cherry-picking to oc-mr1-iot-dev.",
+      "parentUuid": "e1b7fe08_b655fd12",
+      "range": {
+        "startLine": 253,
+        "startChar": 33,
+        "endLine": 253,
+        "endChar": 52
+      },
+      "revId": "aad3d22a9d036745570712a9806179cd1e609554",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
