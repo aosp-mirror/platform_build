@@ -70,6 +70,30 @@
       "revId": "af57e47ce0f5662b2157b4759ba9066d77c26235",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4e8311e1_8477cba2",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-27T14:54:04Z",
+      "side": 1,
+      "message": "Can you use the JAVA_SDK_LIBRARIES variable from Soong, plus the list of valid android.jar modules?",
+      "parentUuid": "22d8931b_f2a75b79",
+      "range": {
+        "startLine": 232,
+        "startChar": 29,
+        "endLine": 232,
+        "endChar": 34
+      },
+      "revId": "af57e47ce0f5662b2157b4759ba9066d77c26235",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
