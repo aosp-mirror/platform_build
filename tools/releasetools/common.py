@@ -222,15 +222,6 @@ def LoadInfoDict(input_file, input_dir=None):
             vendor_base_fs_file,))
         del d["vendor_base_fs_file"]
 
-    # If board_bpt_input_files property is defined then bpttool is being used to
-    # generate the partition table. When signing target-files, the combined
-    # partition table definition is copied into META/partition-table.bpt since
-    # the original input files aren't available.
-    if "board_bpt_input_files" in d:
-      board_bpt_input_files = os.path.join(input_dir, "META", "partition-table.bpt")
-      if os.path.exists(board_bpt_input_files):
-        d["board_bpt_input_files"] = board_bpt_input_files
-
   def makeint(key):
     if key in d:
       d[key] = int(d[key], 0)
