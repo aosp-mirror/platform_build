@@ -2352,6 +2352,7 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/delta_generator \
   $(AVBTOOL) \
   $(BLK_ALLOC_TO_BASE_FS) \
+  $(BPTTOOL) \
   $(BROTLI) \
   $(BUILD_VERITY_METADATA) \
   $(BUILD_VERITY_TREE)
@@ -2401,6 +2402,8 @@ $(BUILT_OTATOOLS_PACKAGE): zip_root := $(call intermediates-dir-for,PACKAGING,ot
 
 OTATOOLS_DEPS := \
   system/extras/ext4_utils/mke2fs.conf \
+  external/avb/test/data/atx_metadata.bin \
+  external/avb/test/data/testkey_atx_psk.pem \
   external/avb/test/data/testkey_rsa4096.pem \
   $(sort $(shell find system/update_engine/scripts -name \*.pyc -prune -o -type f -print)) \
   $(sort $(shell find build/target/product/security -type f -name \*.x509.pem -o -name \*.pk8 -o \
