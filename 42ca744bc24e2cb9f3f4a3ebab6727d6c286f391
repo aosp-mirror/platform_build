@@ -46,6 +46,23 @@
       "revId": "42ca744bc24e2cb9f3f4a3ebab6727d6c286f391",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "186d5664_863a5cec",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-27T15:45:09Z",
+      "side": 1,
+      "message": "You may want to clear sdk_lib_suffix at the top of this block so that it doesn\u0027t end up with an old value.  I don\u0027t think it can happen in this version, but it could easily creep in after future modifications.",
+      "revId": "42ca744bc24e2cb9f3f4a3ebab6727d6c286f391",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
