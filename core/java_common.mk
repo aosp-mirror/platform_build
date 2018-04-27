@@ -269,7 +269,7 @@ ifndef LOCAL_IS_HOST_MODULE
         sdk_lib_suffix := .stubs.system
       else ifeq (test_current,$(LOCAL_SDK_VERSION))
         sdk_module := android_test_stubs_current
-        sdk_lib_suffix = $(call pretty-error,LOCAL_SDK_LIBRARIES not supported for LOCAL_SDK_VERSION = test_current)
+        sdk_lib_suffix := .stubs.test
       else ifeq (core_current,$(LOCAL_SDK_VERSION))
         sdk_module := core.current.stubs
         sdk_lib_suffix = $(call pretty-error,LOCAL_SDK_LIBRARIES not supported for LOCAL_SDK_VERSION = core_current)
