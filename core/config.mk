@@ -960,6 +960,10 @@ else
 SUPPORT_LIBRARY_ROOT := frameworks/support
 endif
 
+get-sdk-version = $(if $(findstring _,$(1)),$(subst core_,,$(subst system_,,$(subst test_,,$(1)))),$(1))
+get-sdk-api = $(if $(findstring _,$(1)),$(patsubst %_$(call get-sdk-version,$(1)),%,$(1)),public)
+get-prebuilt-sdk-dir = $(HISTORICAL_SDK_VERSIONS_ROOT)/$(call get-sdk-version,$(1))/$(call get-sdk-api,$(1))
+
 # Resolve LOCAL_SDK_VERSION to prebuilt module name, e.g.:
 # 23 -> sdk_public_23_android
 # system_current -> sdk_system_current_android
@@ -971,11 +975,13 @@ $(if $(findstring _,$(1)),\
   sdk_public_$(1)_$(or $(2),android))
 endef
 
+# Resolve LOCAL_SDK_VERSION to prebuilt android.jar
+# $(1): LOCAL_SDK_VERSION
+resolve-prebuilt-sdk-jar-path = $(call get-prebuilt-sdk-dir,$(1))/android.jar
+
 # Resolve LOCAL_SDK_VERSION to prebuilt framework.aidl
 # $(1): An sdk version (LOCAL_SDK_VERSION)
-define resolve-prebuilt-aidl-path
-$(HISTORICAL_SDK_VERSIONS_ROOT)/$(subst core_,,$(subst system_,,$(subst test_,,$(1))))/public/framework.aidl
-endef
+resolve-prebuilt-sdk-aidl-path = $(call get-prebuilt-sdk-dir,$(call get-sdk-version,$(1)))/framework.aidl
 
 # Historical SDK version N is stored in $(HISTORICAL_SDK_VERSIONS_ROOT)/N.
 # The 'current' version is whatever this source tree is.
