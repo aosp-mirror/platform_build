@@ -94,6 +94,30 @@
       "revId": "af57e47ce0f5662b2157b4759ba9066d77c26235",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97d9cc00_80b5008e",
+        "filename": "core/java_common.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-27T14:56:57Z",
+      "side": 1,
+      "message": "yeah, that should work. I could probably generate a list based on TARGET_AVAILABLE_SDK_VERSIONS. I\u0027ll give that a go.",
+      "parentUuid": "4e8311e1_8477cba2",
+      "range": {
+        "startLine": 232,
+        "startChar": 29,
+        "endLine": 232,
+        "endChar": 34
+      },
+      "revId": "af57e47ce0f5662b2157b4759ba9066d77c26235",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
