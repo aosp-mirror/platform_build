@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f9387173_b0b98a31",
+        "filename": "core/java_common.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-27T15:37:05Z",
+      "side": 1,
+      "message": "Doesn\u0027t have to be part of this CL, but it would be better to show the list of bad deps.  Maybe:\n\nbad_deps :\u003d $(filter $(disallowed_deps),$(LOCAL_JAVA_LIBRARIES) $(LOCAL_STATIC_JAVA_LIBRARIES))\nifneq (,$(bad_deps))\n  $(call pretty-error,SDK modules should not be depended on directly. Please use LOCAL_SDK_VERSION for $(bad_deps))\nendif",
+      "range": {
+        "startLine": 233,
+        "startChar": 0,
+        "endLine": 239,
+        "endChar": 0
+      },
+      "revId": "87e2f7f9794ef16f346d459fa1f9409daed5f5a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
