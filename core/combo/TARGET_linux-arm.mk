@@ -33,7 +33,7 @@ ifeq ($(strip $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT)),)
 TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT := generic
 endif
 
-KNOWN_ARMv8_CORES := cortex-a53 cortex-a53.a57 cortex-a73
+KNOWN_ARMv8_CORES := cortex-a53 cortex-a53.a57 cortex-a55 cortex-a73 cortex-a75
 KNOWN_ARMv8_CORES += kryo denver64 exynos-m1 exynos-m2
 
 # Many devices (incorrectly) use armv7-a-neon as the 2nd architecture variant
