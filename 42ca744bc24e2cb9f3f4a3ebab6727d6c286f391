@@ -63,6 +63,24 @@
       "revId": "42ca744bc24e2cb9f3f4a3ebab6727d6c286f391",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ffd5169_0bede099",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-27T15:53:54Z",
+      "side": 1,
+      "message": "It would cause problems if it was left unset, so I initialize it to an error value now. Not sure how intuitive this delayed evaluation stuff is...",
+      "parentUuid": "186d5664_863a5cec",
+      "revId": "42ca744bc24e2cb9f3f4a3ebab6727d6c286f391",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
