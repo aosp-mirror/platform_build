@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0df869ed_86c98855",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 980,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-27T15:40:03Z",
+      "side": 1,
+      "message": "sounds good, done.\n\nChanged get-sdk-dir to get-prebuilt-sdk-dir as its also used in other projects",
+      "parentUuid": "27b97ae8_f18d6a4b",
+      "range": {
+        "startLine": 980,
+        "startChar": 0,
+        "endLine": 980,
+        "endChar": 29
+      },
+      "revId": "873eb2a8b6c70f300bdccb5a66011af657bd86df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0de2bcff_e786b6b7",
         "filename": "core/config.mk",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "873eb2a8b6c70f300bdccb5a66011af657bd86df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac77ece1_5e87e46e",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 984,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-27T15:40:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0de2bcff_e786b6b7",
+      "range": {
+        "startLine": 984,
+        "startChar": 0,
+        "endLine": 984,
+        "endChar": 26
+      },
+      "revId": "873eb2a8b6c70f300bdccb5a66011af657bd86df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "e2ccb559_9b57bd20",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-27T15:40:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8330057e_efb474ac",
+      "range": {
+        "startLine": 630,
+        "startChar": 43,
+        "endLine": 630,
+        "endChar": 60
+      },
+      "revId": "873eb2a8b6c70f300bdccb5a66011af657bd86df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4cf70342_14f7bd5b",
         "filename": "core/static_java_library.mk",
         "patchSetId": 4
@@ -91,6 +163,30 @@
       "revId": "873eb2a8b6c70f300bdccb5a66011af657bd86df",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "960a733e_528f72cc",
+        "filename": "core/static_java_library.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-27T15:40:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4cf70342_14f7bd5b",
+      "range": {
+        "startLine": 110,
+        "startChar": 43,
+        "endLine": 110,
+        "endChar": 60
+      },
+      "revId": "873eb2a8b6c70f300bdccb5a66011af657bd86df",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
