@@ -161,6 +161,7 @@ $(my_built_profile):
 	  --copy-and-update-profile-key \
 		--profile-file=$(PRIVATE_SOURCE_CLASSES) \
 		--apk=$(PRIVATE_BUILT_MODULE) \
+		--dex-location=$(PRIVATE_DEX_LOCATION) \
 		--reference-profile-file=$@ \
 	|| echo "Profile out of date for $(PRIVATE_BUILT_MODULE)"
 endif
