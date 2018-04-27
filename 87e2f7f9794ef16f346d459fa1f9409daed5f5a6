@@ -22,6 +22,30 @@
       "revId": "87e2f7f9794ef16f346d459fa1f9409daed5f5a6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d39c862_ce237830",
+        "filename": "core/java_common.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-27T15:48:11Z",
+      "side": 1,
+      "message": "ah yeah that\u0027s much better. blindly replaced from patsubst :) done",
+      "parentUuid": "f9387173_b0b98a31",
+      "range": {
+        "startLine": 233,
+        "startChar": 0,
+        "endLine": 239,
+        "endChar": 0
+      },
+      "revId": "87e2f7f9794ef16f346d459fa1f9409daed5f5a6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
