@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "33b22820_52be9a40",
+        "filename": "core/java_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-04-28T00:12:19Z",
+      "side": 1,
+      "message": "I think you need to add \n\nsdk_module :\u003d\nsdk_lib_suffix :\u003d\n\nhere because the if blocks below do not cover all cases. (the final \u0027else\u0027 case is missing) I know that the final else case is never executed because of the conditionals at 257, but I think , as Colin said, it is generally a good practice to initialize a var to the default value when \u0027if\u0027 blocks are not exhaustive like in this case.",
+      "revId": "42ca744bc24e2cb9f3f4a3ebab6727d6c286f391",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5746b7a6_9d1c5fd5",
         "filename": "core/java_common.mk",
         "patchSetId": 5
