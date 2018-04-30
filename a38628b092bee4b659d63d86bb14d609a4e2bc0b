@@ -52,6 +52,24 @@
       "revId": "a38628b092bee4b659d63d86bb14d609a4e2bc0b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e65e253_720b735b",
+        "filename": "core/java_common.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-30T22:00:07Z",
+      "side": 1,
+      "message": "hmm, that would be false if TARGET_BUILD_APPS is set. But I think the and I had was redundant, so removed that.",
+      "parentUuid": "5962cacf_36fe5669",
+      "revId": "a38628b092bee4b659d63d86bb14d609a4e2bc0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
