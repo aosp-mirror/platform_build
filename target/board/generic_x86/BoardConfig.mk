@@ -62,6 +62,11 @@ BOARD_SEPOLICY_DIRS += \
         build/target/board/generic/sepolicy \
         build/target/board/generic_x86/sepolicy
 
+ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+# GSI is always userdebug and needs a couple of properties taking precedence
+# over those set by the vendor.
+TARGET_SYSTEM_PROP := build/make/target/board/gsi_system.prop
+endif
 BOARD_VNDK_VERSION := current
 
 BUILD_BROKEN_DUP_RULES := false
