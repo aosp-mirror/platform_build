@@ -34,6 +34,24 @@
       "revId": "a38628b092bee4b659d63d86bb14d609a4e2bc0b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5962cacf_36fe5669",
+        "filename": "core/java_common.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-04-30T21:44:49Z",
+      "side": 1,
+      "message": "We would normally do that with:\nifeq (,$(TARGET_BUILD_APPS)$(filter %current,$(LOCAL_SDK_VERSION)))",
+      "parentUuid": "74663f85_d5c75c66",
+      "revId": "a38628b092bee4b659d63d86bb14d609a4e2bc0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
