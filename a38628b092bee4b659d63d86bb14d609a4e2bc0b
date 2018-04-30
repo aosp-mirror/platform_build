@@ -16,6 +16,24 @@
       "revId": "a38628b092bee4b659d63d86bb14d609a4e2bc0b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74663f85_d5c75c66",
+        "filename": "core/java_common.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-30T21:32:15Z",
+      "side": 1,
+      "message": "I think it is right (albeit obscure). We want to use prebuilts if a) TARGET_BUILD_APPS is set, or if b) LOCAL_SDK_VERSION is a number\n\n- if $(TARGET_BUILD_APPS) is non-empty, the \"or\" will short circuit to its value, and not be equal to current\n- otherwise, it will evaluate the \"and\", which will only be \"current\" if the SDK VERSION contains current. In every other case, it\u0027s a number (because it\u0027s otherwise an invalid LOCAL_SDK_VERSION, per the above check)\n\nI could be wrong, so readability improvements welcome :)",
+      "parentUuid": "0268b16a_280df46f",
+      "revId": "a38628b092bee4b659d63d86bb14d609a4e2bc0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
