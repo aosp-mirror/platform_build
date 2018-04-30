@@ -70,6 +70,24 @@
       "revId": "a38628b092bee4b659d63d86bb14d609a4e2bc0b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9bee692a_f4e8c242",
+        "filename": "core/java_common.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-04-30T22:05:29Z",
+      "side": 1,
+      "message": "oh, I could just invert what you had:\nifneq (,$(TARGET_BUILD_APPS)$(filter-out %current,$(LOCAL_SDK_VERSION)))\n\nthis is probably the most self descriptive..",
+      "parentUuid": "9e65e253_720b735b",
+      "revId": "a38628b092bee4b659d63d86bb14d609a4e2bc0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
