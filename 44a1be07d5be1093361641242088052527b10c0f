@@ -16,6 +16,24 @@
       "revId": "44a1be07d5be1093361641242088052527b10c0f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5c853cee_b9040180",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2605,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-05-01T20:44:48Z",
+      "side": 1,
+      "message": "Yeah, I need to add the matrix as well. These dependencies were just wrong in the first place. They are transitive, but I\u0027ll update this now.",
+      "parentUuid": "fd57231a_06d99db5",
+      "revId": "44a1be07d5be1093361641242088052527b10c0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
