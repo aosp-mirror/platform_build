@@ -231,6 +231,12 @@ my_system_modules :=
 
 ifndef LOCAL_IS_HOST_MODULE
   sdk_libs :=
+
+  # When an sdk lib name is listed in LOCAL_JAVA_LIBRARIES, move it to LOCAL_SDK_LIBRARIES, so that
+  # it is correctly redirected to the stubs library.
+  LOCAL_SDK_LIBRARIES += $(filter $(JAVA_SDK_LIBRARIES),$(LOCAL_JAVA_LIBRARIES))
+  LOCAL_JAVA_LIBRARIES := $(filter-out $(JAVA_SDK_LIBRARIES),$(LOCAL_JAVA_LIBRARIES))
+
   ifeq ($(LOCAL_SDK_VERSION),)
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
       # No bootclasspath. But we still need "" to prevent javac from using default host bootclasspath.
@@ -244,6 +250,9 @@ ifndef LOCAL_IS_HOST_MODULE
       LOCAL_JAVA_LIBRARIES := $(filter-out $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES),$(LOCAL_JAVA_LIBRARIES))
       my_system_modules := $(DEFAULT_SYSTEM_MODULES)
     endif  # LOCAL_NO_STANDARD_LIBRARIES
+    # When SDK libraries are referenced from modules built without SDK, provide the system stub to them
+    # because it has the largest API surface.
+    sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(lib_name).stubs.system)
   else
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
       $(call pretty-error,Must not define both LOCAL_NO_STANDARD_LIBRARIES and LOCAL_SDK_VERSION)
@@ -252,22 +261,30 @@ ifndef LOCAL_IS_HOST_MODULE
       $(call pretty-error,Invalid LOCAL_SDK_VERSION '$(LOCAL_SDK_VERSION)' \
              Choices are: $(TARGET_AVAILABLE_SDK_VERSIONS))
     endif
-    ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),current)
-      # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS.
-      full_java_bootclasspath_libs := $(call java-lib-header-files,android_stubs_current)
-    else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),system_current)
-      full_java_bootclasspath_libs := $(call java-lib-header-files,android_system_stubs_current)
-    else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
-      full_java_bootclasspath_libs := $(call java-lib-header-files,android_test_stubs_current)
-    else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),core_current)
-      full_java_bootclasspath_libs := $(call java-lib-header-files,core.current.stubs)
-    else
-      # TARGET_BUILD_APPS or numbered SDK. Use the modules defined in prebuilts/sdk/Android.mk.
-      _module_name := $(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION))
-      full_java_bootclasspath_libs := $(call java-lib-header-files,$(_module_name))
+
+    ifneq (,$(TARGET_BUILD_APPS)$(filter-out %current,$(LOCAL_SDK_VERSION)))
+      # TARGET_BUILD_APPS mode or numbered SDK. Use prebuilt modules.
+      sdk_module := $(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION))
       sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION),$(lib_name)))
-      _module_name :=
-    endif # current, system_current, system_${VER}, test_current or core_current
+    else
+      # Note: the lib naming scheme must be kept in sync with build/soong/java/sdk_library.go.
+      sdk_lib_suffix = $(call pretty-error,sdk_lib_suffix was not set correctly)
+      ifeq (current,$(LOCAL_SDK_VERSION))
+        sdk_module := android_stubs_current
+        sdk_lib_suffix := .stubs
+      else ifeq (system_current,$(LOCAL_SDK_VERSION))
+        sdk_module := android_system_stubs_current
+        sdk_lib_suffix := .stubs.system
+      else ifeq (test_current,$(LOCAL_SDK_VERSION))
+        sdk_module := android_test_stubs_current
+        sdk_lib_suffix := .stubs.test
+      else ifeq (core_current,$(LOCAL_SDK_VERSION))
+        sdk_module := core.current.stubs
+        sdk_lib_suffix = $(call pretty-error,LOCAL_SDK_LIBRARIES not supported for LOCAL_SDK_VERSION = core_current)
+      endif
+      sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(lib_name)$(sdk_lib_suffix))
+    endif
+    full_java_bootclasspath_libs := $(call java-lib-header-files,$(sdk_module))
   endif # LOCAL_SDK_VERSION
 
   ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
