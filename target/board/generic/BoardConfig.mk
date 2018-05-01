@@ -62,7 +62,7 @@ BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 # GSI is always userdebug and needs a couple of properties taking precedence
 # over those set by the vendor.
-TARGET_SYSTEM_PROP := build/make/target/board/treble_system.prop
+TARGET_SYSTEM_PROP := build/make/target/board/gsi_system.prop
 endif
 BOARD_VNDK_VERSION := current
 
