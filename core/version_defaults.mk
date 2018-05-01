@@ -79,7 +79,7 @@ PLATFORM_VERSION.PPR1 := 9
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.PPR1 := P
+PLATFORM_VERSION_CODENAME.PPR1 := REL
 
 ifndef PLATFORM_VERSION
   PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
