@@ -22,6 +22,30 @@
       "revId": "ddb3d32927fd66ea704b4d887390a79af41a1545",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5cb2bf2f_f57e39be",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-05-01T19:04:02Z",
+      "side": 1,
+      "message": "mm is incorrect anyway. Where should I place it to be correct for apps builds?",
+      "parentUuid": "d9f3cf10_77b32806",
+      "range": {
+        "startLine": 47,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 36
+      },
+      "revId": "ddb3d32927fd66ea704b4d887390a79af41a1545",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
