@@ -1,0 +1,5 @@
+# GSI always generate dex pre-opt in system image
+ro.cp_system_other_odex=0
+
+# GSI always disables adb authentication
+ro.adb.secure=0
