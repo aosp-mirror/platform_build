@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd57231a_06d99db5",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2605,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-05-01T19:54:44Z",
+      "side": 1,
+      "message": "Where does \"VENDOR_MATRIX\" go?\n\nAnd why doesn\u0027t it have SYSTEM_MATRIX before?",
+      "revId": "44a1be07d5be1093361641242088052527b10c0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
