@@ -2817,7 +2817,7 @@ ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_OTHER,system/) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
 	@# Metadata for compatibility verification.
-	$(hide) cp $(BUILT_SYSTEM_COMPATIBILITY_MATRIX) $(zip_root)/META/system_matrix.xml
+	$(hide) cp $(BUILT_SYSTEM_MATRIX) $(zip_root)/META/system_matrix.xml
 	$(hide) $(HOST_OUT_EXECUTABLES)/assemble_vintf \
 		-i $(BUILT_SYSTEM_MANIFEST) $$(find $(zip_root)/SYSTEM/etc/vintf/manifest -type f -name "*.xml" | \
 			sed "s/^/-i /" | tr '\n' ' ') \
