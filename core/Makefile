@@ -2406,14 +2406,14 @@ OTATOOLS_DEPS := \
   external/avb/test/data/atx_metadata.bin \
   external/avb/test/data/testkey_atx_psk.pem \
   external/avb/test/data/testkey_rsa4096.pem \
-  $(sort $(shell find system/update_engine/scripts -name \*.pyc -prune -o -type f -print)) \
-  $(sort $(shell find build/target/product/security -type f -name \*.x509.pem -o -name \*.pk8 -o \
+  $(sort $(shell find system/update_engine/scripts -name "*.pyc" -prune -o -type f -print)) \
+  $(sort $(shell find build/target/product/security -type f -name "*.x509.pem" -o -name "*.pk8" -o \
       -name verity_key)) \
-  $(sort $(shell find device $(wildcard vendor) -type f -name \*.pk8 -o -name verifiedboot\* -o \
-      -name \*.x509.pem -o -name oem\*.prop))
+  $(sort $(shell find device $(wildcard vendor) -type f -name "*.pk8" -o -name "verifiedboot*" -o \
+      -name "*.x509.pem" -o -name "oem*.prop"))
 
 OTATOOLS_RELEASETOOLS := \
-  $(sort $(shell find build/make/tools/releasetools -name \*.pyc -prune -o -type f))
+  $(sort $(shell find build/make/tools/releasetools -name "*.pyc" -prune -o -type f))
 
 ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT))
 OTATOOLS_DEPS += \
