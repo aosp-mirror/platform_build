@@ -60,6 +60,9 @@ ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 
   $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_proguard_flags))
 
+  my_static_library_extra_packages := $(intermediates.COMMON)/extra_packages
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_STATIC_LIBRARY_EXTRA_PACKAGES),$(my_static_library_extra_packages)))
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_static_library_extra_packages))
 endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 
 ifneq ($(TURBINE_ENABLED),false)
