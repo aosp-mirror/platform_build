@@ -22,6 +22,30 @@
       "revId": "627debe1d760f5f799aab5afae4091e1e734060a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "294307e7_612df744",
+        "filename": "core/Makefile",
+        "patchSetId": 12
+      },
+      "lineNbr": 2872,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-02T22:42:07Z",
+      "side": 1,
+      "message": "\"ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE\" is how to tell if we\u0027re building a vendor image from source. We could be using a prebuilt vendor image with BOARD_PREBUILT_VENDORIMAGE though.",
+      "parentUuid": "6b2891ed_cf9ba44d",
+      "range": {
+        "startLine": 2872,
+        "startChar": 6,
+        "endLine": 2872,
+        "endChar": 37
+      },
+      "revId": "627debe1d760f5f799aab5afae4091e1e734060a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
