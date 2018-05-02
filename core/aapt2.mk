@@ -66,6 +66,8 @@ $(my_res_resources_flat) $(my_overlay_resources_flat) $(my_resources_flata): \
 
 my_static_library_resources := $(foreach l, $(call reverse-list,$(LOCAL_STATIC_ANDROID_LIBRARIES)),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/package-res.apk)
+my_static_library_extra_packages := $(foreach l, $(call reverse-list,$(LOCAL_STATIC_ANDROID_LIBRARIES)),\
+  $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/extra_packages)
 my_shared_library_resources := $(foreach l, $(LOCAL_SHARED_ANDROID_LIBRARIES),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/package-res.apk)
 
@@ -81,6 +83,8 @@ endif
 my_srcjar := $(intermediates.COMMON)/aapt2.srcjar
 LOCAL_SRCJARS += $(my_srcjar)
 
+aapt_extra_packages := $(intermediates.COMMON)/extra_packages
+
 $(my_res_package): PRIVATE_RES_FLAT := $(my_res_resources_flat)
 $(my_res_package): PRIVATE_OVERLAY_FLAT := $(my_static_library_resources) $(my_resources_flata) $(my_overlay_resources_flat)
 $(my_res_package): PRIVATE_SHARED_ANDROID_LIBRARIES := $(my_shared_library_resources)
@@ -88,7 +92,9 @@ $(my_res_package): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
 $(my_res_package): PRIVATE_ASSET_DIRS := $(my_asset_dirs)
 $(my_res_package): PRIVATE_JAVA_GEN_DIR := $(intermediates.COMMON)/aapt2
 $(my_res_package): PRIVATE_SRCJAR := $(my_srcjar)
-$(my_res_package): .KATI_IMPLICIT_OUTPUTS := $(my_srcjar)
+$(my_res_package): PRIVATE_STATIC_LIBRARY_EXTRA_PACKAGES := $(my_static_library_extra_packages)
+$(my_res_package): PRIVATE_AAPT_EXTRA_PACKAGES := $(aapt_extra_packages)
+$(my_res_package): .KATI_IMPLICIT_OUTPUTS := $(my_srcjar) $(aapt_extra_packages)
 
 ifdef R_file_stamp
 $(my_res_package): PRIVATE_R_FILE_STAMP := $(R_file_stamp)
@@ -112,8 +118,8 @@ endif
 $(my_res_package): $(full_android_manifest) $(my_static_library_resources) $(my_shared_library_resources)
 $(my_res_package): $(my_full_asset_paths)
 $(my_res_package): $(my_res_resources_flat) $(my_overlay_resources_flat) \
-  $(my_resources_flata) $(my_static_library_resources) \
-  $(AAPT2) $(SOONG_ZIP)
+  $(my_resources_flata) $(my_static_library_resources) $(my_static_library_extra_packages) \
+  $(AAPT2) $(SOONG_ZIP) $(EXTRACT_JAR_PACKAGES)
 	@echo "AAPT2 link $@"
 	$(call aapt2-link)
 ifdef R_file_stamp
