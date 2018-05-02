@@ -70,6 +70,30 @@
       "revId": "627debe1d760f5f799aab5afae4091e1e734060a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7781a089_ce4399e8",
+        "filename": "core/Makefile",
+        "patchSetId": 12
+      },
+      "lineNbr": 2872,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-02T22:53:16Z",
+      "side": 1,
+      "message": "Yeah, there\u0027s a small chance that we\u0027d put something in $(PRODUCT_OUT)/vendor even if we\u0027re not building an image, but we won\u0027t actually do anything with it then.\n\nYou may need to worry about the configurations that aren\u0027t using any of the above and putting vendor code at $PRODUCT_OUT/system/vendor -- so not using a separate vendor partition at all.",
+      "parentUuid": "0d6ad4f6_8718d346",
+      "range": {
+        "startLine": 2872,
+        "startChar": 6,
+        "endLine": 2872,
+        "endChar": 37
+      },
+      "revId": "627debe1d760f5f799aab5afae4091e1e734060a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
