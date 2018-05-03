@@ -25,11 +25,14 @@ ifeq (,$(filter true, $(WITHOUT_CHECK_API) $(TARGET_BUILD_PDK)))
 # Run the checkapi rules by default.
 droidcore: checkapi
 
-last_released_sdk_version := $(lastword $(call numerically_sort, \
-            $(filter-out current, \
-                $(patsubst $(SRC_API_DIR)/%.txt,%, $(wildcard $(SRC_API_DIR)/*.txt)) \
-             )\
-        ))
+last_released_sdk_version := \
+    $(lastword $(call numerically_sort, \
+        $(patsubst \
+            $(HISTORICAL_SDK_VERSIONS_ROOT)/%/public/api/android.txt,\
+            %,\
+            $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/public/api/android.txt)\
+        ) \
+    ))
 
 .PHONY: check-public-api
 checkapi : check-public-api
@@ -45,7 +48,7 @@ checkapi : check-public-api
 # SDK version.
 $(eval $(call check-api, \
     checkpublicapi-last, \
-    $(SRC_API_DIR)/$(last_released_sdk_version).txt, \
+    $(HISTORICAL_SDK_VERSIONS_ROOT)/$(last_released_sdk_version)/public/api/android.txt, \
     $(INTERNAL_PLATFORM_API_FILE), \
     frameworks/base/api/removed.txt, \
     $(INTERNAL_PLATFORM_REMOVED_API_FILE), \
@@ -91,7 +94,7 @@ checkapi : check-system-api
 # SDK version.
 $(eval $(call check-api, \
     checksystemapi-last, \
-    $(SRC_SYSTEM_API_DIR)/$(last_released_sdk_version).txt, \
+    $(HISTORICAL_SDK_VERSIONS_ROOT)/$(last_released_sdk_version)/system/api/android.txt, \
     $(INTERNAL_PLATFORM_SYSTEM_API_FILE), \
     frameworks/base/api/system-removed.txt, \
     $(INTERNAL_PLATFORM_SYSTEM_REMOVED_API_FILE), \
