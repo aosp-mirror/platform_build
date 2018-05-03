@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e170b7d8_b9dc4df2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2675,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-05-03T15:19:03Z",
+      "side": 1,
+      "message": "Done, thx.",
+      "parentUuid": "9a2b501f_f9910e78",
+      "range": {
+        "startLine": 2675,
+        "startChar": 0,
+        "endLine": 2675,
+        "endChar": 74
+      },
+      "revId": "53d40a667fb0a0ac7272449f34a085e985162c50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "facd9ab8_9b6abf1a",
         "filename": "core/definitions.mk",
         "patchSetId": 2
@@ -36,6 +60,24 @@
       "writtenOn": "2018-05-03T14:50:51Z",
       "side": 1,
       "message": "please add . in the end of sentence.",
+      "revId": "53d40a667fb0a0ac7272449f34a085e985162c50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49250c31_f9c7c67e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2676,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-05-03T15:19:03Z",
+      "side": 1,
+      "message": "Done, thx.",
+      "parentUuid": "facd9ab8_9b6abf1a",
       "revId": "53d40a667fb0a0ac7272449f34a085e985162c50",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
