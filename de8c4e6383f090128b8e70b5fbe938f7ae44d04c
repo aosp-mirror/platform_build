@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "151d7f15_099c0bb1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-05-03T16:24:33Z",
+      "side": 1,
+      "message": "Let\u0027s update the commit message with what the CL is actually doing.\n\nSomething like \"module-info.mk: Output FOR_2ND_ARCH value\"",
+      "revId": "de8c4e6383f090128b8e70b5fbe938f7ae44d04c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
