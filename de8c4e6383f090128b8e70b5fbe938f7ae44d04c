@@ -16,6 +16,24 @@
       "revId": "de8c4e6383f090128b8e70b5fbe938f7ae44d04c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7153c86_31228eed",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-03T21:44:43Z",
+      "side": 1,
+      "message": "Also include why you need this change and how you\u0027re using this information.",
+      "parentUuid": "151d7f15_099c0bb1",
+      "revId": "de8c4e6383f090128b8e70b5fbe938f7ae44d04c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
