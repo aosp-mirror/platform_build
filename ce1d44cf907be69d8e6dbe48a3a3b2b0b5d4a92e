@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d79ad125_e66fde49",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 3132,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-05-03T16:52:37Z",
+      "side": 1,
+      "message": "Can you update this doc string with what you are doing in regards to the my_compat_dist_config_$(suite)?",
+      "revId": "ce1d44cf907be69d8e6dbe48a3a3b2b0b5d4a92e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de2cdeff_9032172a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 3142,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-05-03T16:52:37Z",
+      "side": 1,
+      "message": "Indent this appropriately. I.e. $(call should indent 1 level and $(sort should indent 2 levels.",
+      "range": {
+        "startLine": 3141,
+        "startChar": 2,
+        "endLine": 3142,
+        "endChar": 23
+      },
+      "revId": "ce1d44cf907be69d8e6dbe48a3a3b2b0b5d4a92e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "499f978a_929f33d0",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 706,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-05-03T16:52:37Z",
+      "side": 1,
+      "message": "I feel like clearing this variable should go somewhere else, like the end of the base_rules.mk section for LOCAL_COMPATIBILITY_SUITE, but I\u0027m not sure.",
+      "revId": "ce1d44cf907be69d8e6dbe48a3a3b2b0b5d4a92e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
