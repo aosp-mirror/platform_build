@@ -331,7 +331,6 @@ function addcompletions()
 
     for f in system/core/adb/adb.bash system/core/fastboot/fastboot.bash; do
         if [ -f $f ]; then
-            echo "including $f"
             . $f
         fi
     done
