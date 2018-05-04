@@ -12,9 +12,11 @@ LOCAL_PATH := $(BUILD_SYSTEM)
 # The filter part means "only eval the copy-one-file rule if this
 # src:dest pair is the first one to match the same dest"
 #$(1): the src:dest pair
+#$(2): the dest
 define check-product-copy-files
-$(if $(filter %.apk, $(call word-colon, 2, $(1))),$(error \
-    Prebuilt apk found in PRODUCT_COPY_FILES: $(1), use BUILD_PREBUILT instead!))
+$(if $(filter-out $(TARGET_COPY_OUT_SYSTEM_OTHER)/%,$(2)), \
+  $(if $(filter %.apk, $(2)),$(error \
+     Prebuilt apk found in PRODUCT_COPY_FILES: $(1), use BUILD_PREBUILT instead!)))
 endef
 # filter out the duplicate <source file>:<dest file> pairs.
 unique_product_copy_files_pairs :=
@@ -26,7 +28,7 @@ product_copy_files_ignored :=
 $(foreach cf,$(unique_product_copy_files_pairs), \
     $(eval _src := $(call word-colon,1,$(cf))) \
     $(eval _dest := $(call word-colon,2,$(cf))) \
-    $(call check-product-copy-files,$(cf)) \
+    $(call check-product-copy-files,$(cf),$(_dest)) \
     $(if $(filter $(unique_product_copy_files_destinations),$(_dest)), \
         $(eval product_copy_files_ignored += $(cf)), \
         $(eval _fulldest := $(call append-path,$(PRODUCT_OUT),$(_dest))) \
@@ -1494,6 +1496,25 @@ ifneq (,$(SANITIZE_TARGET))
 endif
 
 # -----------------------------------------------------------------
+# Final System VINTF manifest including fragments. This is not assembled
+# on the device because it depends on everything in a given device
+# image which defines a vintf_fragment.
+
+BUILT_ASSEMBLED_SYSTEM_MANIFEST := $(PRODUCT_OUT)/verified_assembled_system_manifest.xml
+$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(HOST_OUT_EXECUTABLES)/assemble_vintf
+$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(BUILT_VENDOR_MATRIX)
+$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(BUILT_SYSTEM_MANIFEST)
+$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(FULL_SYSTEMIMAGE_DEPS)
+	@echo "Verifying system VINTF manifest."
+	PRODUCT_ENFORCE_VINTF_MANIFEST=$(PRODUCT_ENFORCE_VINTF_MANIFEST) \
+	$(HOST_OUT_EXECUTABLES)/assemble_vintf \
+		-c $(BUILT_VENDOR_MATRIX) \
+		-i $(BUILT_SYSTEM_MANIFEST) \
+		$$([ -d $(TARGET_OUT)/etc/vintf/manifest ] && \
+			find $(TARGET_OUT)/etc/vintf/manifest -type f -name "*.xml" | \
+			sed "s/^/-i /" | tr '\n' ' ') -o $@
+
+# -----------------------------------------------------------------
 # installed file list
 # Depending on anything that $(BUILT_SYSTEMIMAGE) depends on.
 # We put installed-files.txt ahead of image itself in the dependency graph
@@ -1569,6 +1590,7 @@ define build-systemimage-target
            exit 1 )
 endef
 
+$(BUILT_SYSTEMIMAGE): $(BUILT_ASSEMBLED_SYSTEM_MANIFEST)
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(BUILD_IMAGE_SRCS)
 	$(call build-systemimage-target,$@)
 
@@ -1983,6 +2005,32 @@ INTERNAL_VENDORIMAGE_FILES := \
       $(ALL_PDK_FUSION_FILES)) \
     $(PDK_FUSION_SYMLINK_STAMP)
 
+# Final Vendor VINTF manifest including fragments. This is not assembled
+# on the device because it depends on everything in a given device
+# image which defines a vintf_fragment.
+ifdef BUILT_VENDOR_MANIFEST
+BUILT_ASSEMBLED_VENDOR_MANIFEST := $(PRODUCT_OUT)/verified_assembled_vendor_manifest.xml
+ifeq (true,$(strip $(PRODUCT_ENFORCE_VINTF_MANIFEST)))
+ifdef DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE
+# TODO(b/65028233): turn this on globally
+$(BUILT_ASSEMBLED_VENDOR_MANIFEST): PRIVATE_SYSTEM_ASSEMBLE_VINTF_ENV_VARS := VINTF_ENFORCE_NO_UNUSED_HALS=true
+endif # DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE
+endif # PRODUCT_ENFORCE_VINTF_MANIFEST
+$(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(HOST_OUT_EXECUTABLES)/assemble_vintf
+$(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(BUILT_SYSTEM_MATRIX)
+$(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(BUILT_VENDOR_MANIFEST)
+$(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(INTERNAL_VENDORIMAGE_FILES)
+	@echo "Verifying vendor VINTF manifest."
+	PRODUCT_ENFORCE_VINTF_MANIFEST=$(PRODUCT_ENFORCE_VINTF_MANIFEST) \
+	$(PRIVATE_SYSTEM_ASSEMBLE_VINTF_ENV_VARS) \
+	$(HOST_OUT_EXECUTABLES)/assemble_vintf \
+		-c $(BUILT_SYSTEM_MATRIX) \
+		-i $(BUILT_VENDOR_MANIFEST) \
+		$$([ -d $(TARGET_OUT_VENDOR)/etc/vintf/manifest ] && \
+			find $(TARGET_OUT_VENDOR)/etc/vintf/manifest -type f -name "*.xml" | \
+			sed "s/^/-i /" | tr '\n' ' ') -o $@
+endif # BUILT_VENDOR_MANIFEST
+
 # platform.zip depends on $(INTERNAL_VENDORIMAGE_FILES).
 $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_VENDORIMAGE_FILES)
 
@@ -2012,6 +2060,9 @@ endef
 
 # We just build this directly to the install location.
 INSTALLED_VENDORIMAGE_TARGET := $(BUILT_VENDORIMAGE_TARGET)
+ifdef BUILT_VENDOR_MANIFEST
+$(INSTALLED_VENDORIMAGE_TARGET): $(BUILT_ASSEMBLED_VENDOR_MANIFEST)
+endif
 $(INSTALLED_VENDORIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_VENDORIMAGE_FILES) $(INSTALLED_FILES_FILE_VENDOR) $(BUILD_IMAGE_SRCS) $(DEPMOD) $(BOARD_VENDOR_KERNEL_MODULES)
 	$(build-vendorimage-target)
 
@@ -2406,14 +2457,14 @@ OTATOOLS_DEPS := \
   external/avb/test/data/atx_metadata.bin \
   external/avb/test/data/testkey_atx_psk.pem \
   external/avb/test/data/testkey_rsa4096.pem \
-  $(sort $(shell find system/update_engine/scripts -name \*.pyc -prune -o -type f -print)) \
-  $(sort $(shell find build/target/product/security -type f -name \*.x509.pem -o -name \*.pk8 -o \
+  $(sort $(shell find system/update_engine/scripts -name "*.pyc" -prune -o -type f -print)) \
+  $(sort $(shell find build/target/product/security -type f -name "*.x509.pem" -o -name "*.pk8" -o \
       -name verity_key)) \
-  $(sort $(shell find device $(wildcard vendor) -type f -name \*.pk8 -o -name verifiedboot\* -o \
-      -name \*.x509.pem -o -name oem\*.prop))
+  $(sort $(shell find device $(wildcard vendor) -type f -name "*.pk8" -o -name "verifiedboot*" -o \
+      -name "*.x509.pem" -o -name "oem*.prop"))
 
 OTATOOLS_RELEASETOOLS := \
-  $(sort $(shell find build/make/tools/releasetools -name \*.pyc -prune -o -type f))
+  $(sort $(shell find build/make/tools/releasetools -name "*.pyc" -prune -o -type f))
 
 ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT))
 OTATOOLS_DEPS += \
@@ -2542,8 +2593,9 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(HOST_OUT_EXECUTABLES)/imgdiff \
 		$(HOST_OUT_EXECUTABLES)/bsdiff \
 		$(BUILD_IMAGE_SRCS) \
-		$(HOST_OUT_EXECUTABLES)/assemble_vintf \
-		$(BUILT_VENDOR_MANIFEST) \
+		$(BUILT_ASSEMBLED_SYSTEM_MANIFEST) \
+		$(BUILT_ASSEMBLED_VENDOR_MANIFEST) \
+		$(BUILT_SYSTEM_MATRIX) \
 		$(BUILT_VENDOR_MATRIX) \
 		| $(ACP)
 	@echo "Package target files: $@"
@@ -2819,16 +2871,10 @@ ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_OTHER,system/) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
 	@# Metadata for compatibility verification.
-	$(hide) cp $(BUILT_SYSTEM_COMPATIBILITY_MATRIX) $(zip_root)/META/system_matrix.xml
-	$(hide) $(HOST_OUT_EXECUTABLES)/assemble_vintf \
-		-i $(BUILT_SYSTEM_MANIFEST) $$(find $(zip_root)/SYSTEM/etc/vintf/manifest -type f -name "*.xml" | \
-			sed "s/^/-i /" | tr '\n' ' ') \
-		-o $(zip_root)/META/system_manifest.xml
-ifdef BUILT_VENDOR_MANIFEST
-	$(hide) $(HOST_OUT_EXECUTABLES)/assemble_vintf \
-		-i $(BUILT_VENDOR_MANIFEST) $$(find $(zip_root)/VENDOR/etc/vintf/manifest -type f -name "*.xml" | \
-			sed "s/^/-i /" | tr '\n' ' ') \
-		-o $(zip_root)/META/vendor_manifest.xml
+	$(hide) cp $(BUILT_SYSTEM_MATRIX) $(zip_root)/META/system_matrix.xml
+	$(hide) cp $(BUILT_ASSEMBLED_SYSTEM_MANIFEST) $(zip_root)/META/system_manifest.xml
+ifdef BUILT_ASSEMBLED_VENDOR_MANIFEST
+	$(hide) cp $(BUILT_ASSEMBLED_VENDOR_MANIFEST) $(zip_root)/META/vendor_manifest.xml
 endif
 ifdef BUILT_VENDOR_MATRIX
 	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml

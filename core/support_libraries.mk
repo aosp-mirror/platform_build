@@ -27,27 +27,27 @@
 # Some projects don't work correctly yet. Allow them to skip resolution.
 ifndef LOCAL_DISABLE_RESOLVE_SUPPORT_LIBRARIES
 
-# Clear these out so we don't accidentally get old values.
-support_android_deps :=
-support_java_deps :=
+# Aggregate all requested Support Library modules.
+requested_support_libs := $(filter $(SUPPORT_LIBRARIES_JARS) $(SUPPORT_LIBRARIES_AARS), \
+    $(LOCAL_JAVA_LIBRARIES) $(LOCAL_STATIC_JAVA_LIBRARIES) \
+    $(LOCAL_SHARED_ANDROID_LIBRARIES) $(LOCAL_STATIC_ANDROID_LIBRARIES))
 
-# Delegate dependency expansion to the Support Library's rules. This will store
-# its output in the variables support_android_deps and support_java_deps.
-include $(RESOLVE_SUPPORT_LIBRARIES)
+# Filter the Support Library modules out of the library variables. We don't
+# trust developers to get these right, so they will be added back by the
+# build system based on the output of this file and the type of build.
+LOCAL_JAVA_LIBRARIES := $(filter-out $(requested_support_libs), \
+    $(LOCAL_JAVA_LIBRARIES))
+LOCAL_STATIC_JAVA_LIBRARIES := $(filter-out $(requested_support_libs), \
+    $(LOCAL_STATIC_JAVA_LIBRARIES))
+LOCAL_SHARED_ANDROID_LIBRARIES := $(filter-out $(requested_support_libs), \
+    $(LOCAL_SHARED_ANDROID_LIBRARIES))
+LOCAL_STATIC_ANDROID_LIBRARIES := $(filter-out $(requested_support_libs), \
+    $(LOCAL_STATIC_ANDROID_LIBRARIES))
 
-# Everything is static, which simplifies resource handling. Don't write to any
-# vars unless we actually have data, since even an empty ANDROID_LIBRARIES var
-# requires an AndroidManifest.xml file!
-ifdef support_android_deps
-    LOCAL_STATIC_ANDROID_LIBRARIES += $(support_android_deps)
-endif #support_android_deps
-ifdef support_java_deps
-    LOCAL_STATIC_JAVA_LIBRARIES += $(support_java_deps)
-endif #support_java_deps
-
-# We have consumed these values. Clean them up.
-support_android_deps :=
-support_java_deps :=
+LOCAL_STATIC_ANDROID_LIBRARIES := $(strip $(LOCAL_STATIC_ANDROID_LIBRARIES) \
+    $(filter $(SUPPORT_LIBRARIES_AARS),$(requested_support_libs)))
+LOCAL_STATIC_JAVA_LIBRARIES := $(strip $(LOCAL_STATIC_JAVA_LIBRARIES) \
+    $(filter $(SUPPORT_LIBRARIES_JARS),$(requested_support_libs)))
 
 endif #LOCAL_DISABLE_RESOLVE_SUPPORT_LIBRARIES
 LOCAL_DISABLE_RESOLVE_SUPPORT_LIBRARIES :=
