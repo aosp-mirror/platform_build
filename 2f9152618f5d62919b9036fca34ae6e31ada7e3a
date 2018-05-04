@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c8a52203_dbbb99bd",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-04T23:09:38Z",
+      "side": 1,
+      "message": "This turns it off for ZSH (I think there\u0027s a compat plugin that makes it work, but I haven\u0027t made the effort on that yet)",
+      "range": {
+        "startLine": 322,
+        "startChar": 0,
+        "endLine": 325,
+        "endChar": 6
+      },
+      "revId": "2f9152618f5d62919b9036fca34ae6e31ada7e3a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
