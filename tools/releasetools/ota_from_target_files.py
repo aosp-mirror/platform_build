@@ -1026,7 +1026,7 @@ class PropertyFiles(object):
       A string with placeholders for the metadata offset/size info, e.g.
       "payload.bin:679:343,payload_properties.txt:378:45,metadata:        ".
     """
-    return self._GetPropertyFilesString(input_zip, reserve_space=True)
+    return self.GetPropertyFilesString(input_zip, reserve_space=True)
 
   class InsufficientSpaceException(Exception):
     pass
@@ -1055,7 +1055,7 @@ class PropertyFiles(object):
       InsufficientSpaceException: If the reserved length is insufficient to hold
           the final string.
     """
-    result = self._GetPropertyFilesString(input_zip, reserve_space=False)
+    result = self.GetPropertyFilesString(input_zip, reserve_space=False)
     if len(result) > reserved_length:
       raise self.InsufficientSpaceException(
           'Insufficient reserved space: reserved={}, actual={}'.format(
@@ -1074,12 +1074,22 @@ class PropertyFiles(object):
     Raises:
       AssertionError: On finding a mismatch.
     """
-    actual = self._GetPropertyFilesString(input_zip)
+    actual = self.GetPropertyFilesString(input_zip)
     assert actual == expected, \
         "Mismatching streaming metadata: {} vs {}.".format(actual, expected)
 
-  def _GetPropertyFilesString(self, zip_file, reserve_space=False):
-    """Constructs the property-files string per request."""
+  def GetPropertyFilesString(self, zip_file, reserve_space=False):
+    """
+    Constructs the property-files string per request.
+
+    Args:
+      zip_file: The input ZIP file.
+      reserved_length: The reserved length of the property-files string.
+
+    Returns:
+      A property-files string including the metadata offset/size info, e.g.
+      "payload.bin:679:343,payload_properties.txt:378:45,metadata:     ".
+    """
 
     def ComputeEntryOffsetSize(name):
       """Computes the zip entry offset and size."""
