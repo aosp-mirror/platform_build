@@ -663,7 +663,7 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_APPS := $(TARGET_OUT_ODM_APPS)
 
 TARGET_OUT_PRODUCT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT)
 ifneq ($(filter address,$(SANITIZE_TARGET)),)
-target_out_product_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/system
+target_out_product_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/product
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
 # work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
@@ -672,7 +672,7 @@ else
 target_out_product_app_base := $(TARGET_OUT_PRODUCT)
 endif
 else
-target_out_product_shared_libraries_base := $(TARGET_OUT)
+target_out_product_shared_libraries_base := $(TARGET_OUT_PRODUCT)
 target_out_product_app_base := $(TARGET_OUT_PRODUCT)
 endif
 
