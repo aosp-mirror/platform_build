@@ -187,7 +187,7 @@ else
     # assuming the device can only support APIs as of the previous official
     # public release.
     # This value will always be 0 for release builds.
-    PLATFORM_PREVIEW_SDK_VERSION := 2
+    PLATFORM_PREVIEW_SDK_VERSION := 0
   endif
 endif
 .KATI_READONLY := PLATFORM_PREVIEW_SDK_VERSION
