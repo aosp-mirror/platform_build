@@ -167,6 +167,7 @@ PRODUCT_PACKAGES += \
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
+    iotop \
     logpersist.start \
     perfprofd \
     sqlite3 \
