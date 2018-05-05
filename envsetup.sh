@@ -301,7 +301,6 @@ function printconfig()
 
 function set_stuff_for_environment()
 {
-    settitle
     setpaths
     set_sequence_number
 
@@ -314,26 +313,6 @@ function set_stuff_for_environment()
 function set_sequence_number()
 {
     export BUILD_ENV_SEQUENCE_NUMBER=13
-}
-
-function settitle()
-{
-    # This used to be opt-out with STAY_OFF_MY_LAWN, but this breaks folks
-    # actually using PROMPT_COMMAND (https://issuetracker.google.com/38402256),
-    # and the attempt to set the title doesn't do anything for the default
-    # window manager in debian right now, so switch it to opt-in for anyone
-    # who actually wants this.
-    if [ "$ANDROID_BUILD_SET_WINDOW_TITLE" = "true" ]; then
-        local arch=$(gettargetarch)
-        local product=$TARGET_PRODUCT
-        local variant=$TARGET_BUILD_VARIANT
-        local apps=$TARGET_BUILD_APPS
-        if [ -z "$apps" ]; then
-            export PROMPT_COMMAND="echo -ne \"\033]0;[${arch}-${product}-${variant}] ${USER}@${HOSTNAME}: ${PWD}\007\""
-        else
-            export PROMPT_COMMAND="echo -ne \"\033]0;[$arch $apps $variant] ${USER}@${HOSTNAME}: ${PWD}\007\""
-        fi
-    fi
 }
 
 function addcompletions()
@@ -352,7 +331,6 @@ function addcompletions()
 
     for f in system/core/adb/adb.bash system/core/fastboot/fastboot.bash; do
         if [ -f $f ]; then
-            echo "including $f"
             . $f
         fi
     done
