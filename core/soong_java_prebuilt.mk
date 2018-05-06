@@ -39,6 +39,32 @@ ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
     $(intermediates.COMMON)/jacoco-report-classes.jar)
 endif
 
+ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
+  my_res_package := $(intermediates.COMMON)/package-res.apk
+
+  $(my_res_package): $(LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE)
+	@echo "Copy: $@"
+	$(copy-file-to-target)
+
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_res_package))
+
+  my_proguard_flags := $(intermediates.COMMON)/export_proguard_flags
+  $(my_proguard_flags): $(LOCAL_SOONG_EXPORT_PROGUARD_FLAGS)
+	@echo "Export proguard flags: $@"
+	rm -f $@
+	touch $@
+	for f in $+; do \
+		echo -e "\n# including $$f" >>$@; \
+		cat $$f >>$@; \
+	done
+
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_proguard_flags))
+
+  my_static_library_extra_packages := $(intermediates.COMMON)/extra_packages
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_STATIC_LIBRARY_EXTRA_PACKAGES),$(my_static_library_extra_packages)))
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_static_library_extra_packages))
+endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
+
 ifneq ($(TURBINE_ENABLED),false)
 ifdef LOCAL_SOONG_HEADER_JAR
 $(eval $(call copy-one-file,$(LOCAL_SOONG_HEADER_JAR),$(full_classes_header_jar)))
