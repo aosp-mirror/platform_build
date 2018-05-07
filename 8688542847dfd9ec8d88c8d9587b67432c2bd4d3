@@ -16,6 +16,24 @@
       "revId": "8688542847dfd9ec8d88c8d9587b67432c2bd4d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b980009e_39cb5302",
+        "filename": "core/definitions.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 3134,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-05-07T08:02:07Z",
+      "side": 1,
+      "message": "Hi Bill,\n   It describes the necessary items for this function. It\u0027s not related to the comments above it. So, I think we don\u0027t need the indent. thanks.",
+      "parentUuid": "a5517c67_dcf825e8",
+      "revId": "8688542847dfd9ec8d88c8d9587b67432c2bd4d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
