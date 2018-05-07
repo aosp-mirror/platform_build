@@ -23,6 +23,9 @@ PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION := build/target/product/empty-pro
 PRODUCT_DEX_PREOPT_BOOT_FLAGS := --count-hotness-in-compiled-code
 DEX_PREOPT_DEFAULT := nostripping
 
+# Disable uncompressing priv apps so that there is enough space to build the system partition.
+DONT_UNCOMPRESS_PRIV_APPS_DEXS := true
+
 # Use an empty preloaded-classes list.
 PRODUCT_COPY_FILES += \
     build/target/product/empty-preloaded-classes:system/etc/preloaded-classes
@@ -36,3 +39,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     dalvik.vm.extra-opts=-Xps-profile-boot-class-path \
     dalvik.vm.profilesystemserver=true \
     dalvik.vm.profilebootimage=true
+
+# Use speed compiler filter since system server doesn't have JIT.
+PRODUCT_DEX_PREOPT_BOOT_FLAGS += --compiler-filter=speed
