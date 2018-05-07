@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db029753_024a8d89",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-05-07T18:08:27Z",
+      "side": 1,
+      "message": "Remove one of these \"Build System:\" titles. Bill pointed it out as a CL comment but I think you missed it.",
+      "range": {
+        "startLine": 7,
+        "startChar": 13,
+        "endLine": 7,
+        "endChar": 27
+      },
+      "revId": "16e8e37506d2136ffcdd4bc3291b5f74395da1a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
