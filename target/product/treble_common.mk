@@ -84,3 +84,7 @@ PRODUCT_PACKAGES += \
 # Set current VNDK version for GSI
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.gsi.vndk.version=$(PLATFORM_VNDK_VERSION)
+
+# TODO(b/78308559): includes vr_hwc into GSI before vr_hwc move to vendor
+PRODUCT_PACKAGES += \
+    vr_hwc
