@@ -70,6 +70,30 @@
       "revId": "b1bc41a3dc341f1f6de9e239cc694313180ab090",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "031a9bb1_625aa605",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-05-08T20:02:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b607b39e_3eedcb23",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 5
+      },
+      "revId": "b1bc41a3dc341f1f6de9e239cc694313180ab090",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
