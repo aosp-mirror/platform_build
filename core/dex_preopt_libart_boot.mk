@@ -54,11 +54,11 @@ $($(my_2nd_arch_prefix)LIBART_TARGET_BOOT_ART_EXTRA_INSTALLED_FILES) : $($(my_2n
 
 ifeq (,$(my_out_boot_image_profile_location))
 my_boot_image_flags := --image-classes=$(PRELOADED_CLASSES)
-my_boot_image_flags += $(DIRTY_IMAGE_OBJECTS_FLAGS)
 else
 my_boot_image_flags := --compiler-filter=speed-profile
 my_boot_image_flags += --profile-file=$(my_out_boot_image_profile_location)
 endif
+my_boot_image_flags += $(DIRTY_IMAGE_OBJECTS_FLAGS)
 
 ifneq (addresstrue,$(SANITIZE_TARGET)$(SANITIZE_LITE))
 # Skip recompiling the boot image for the second sanitization phase. We'll get separate paths
