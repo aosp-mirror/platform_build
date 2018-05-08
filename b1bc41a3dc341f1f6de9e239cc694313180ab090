@@ -22,6 +22,30 @@
       "revId": "b1bc41a3dc341f1f6de9e239cc694313180ab090",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c3db2e45_89f9da6e",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-05-08T00:05:08Z",
+      "side": 1,
+      "message": "Colin mentioned the 3 options (#5) in the https://b.corp.google.com/issues/78034256. This is the third option to export the Phony modules to Make. I think I chose the third one because I was not sure line36 can be copied to Android-\u003ctarget\u003e.mk",
+      "parentUuid": "c40639b6_107e4def",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 5
+      },
+      "revId": "b1bc41a3dc341f1f6de9e239cc694313180ab090",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
