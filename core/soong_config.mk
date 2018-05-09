@@ -45,6 +45,7 @@ $(call add_json_str,  Make_suffix, -$(TARGET_PRODUCT))
 $(call add_json_str,  BuildId,                           $(BUILD_ID))
 $(call add_json_str,  BuildNumberFromFile,               $$$(BUILD_NUMBER_FROM_FILE))
 
+$(call add_json_str,  Platform_version_name,             $(PLATFORM_VERSION))
 $(call add_json_val,  Platform_sdk_version,              $(PLATFORM_SDK_VERSION))
 $(call add_json_str,  Platform_sdk_codename,             $(PLATFORM_VERSION_CODENAME))
 $(call add_json_bool, Platform_sdk_final,                $(filter REL,$(PLATFORM_VERSION_CODENAME)))
