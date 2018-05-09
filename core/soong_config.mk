@@ -142,6 +142,11 @@ $(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPA
 
 $(call add_json_list, PgoAdditionalProfileDirs,          $(PGO_ADDITIONAL_PROFILE_DIRS))
 
+$(call add_json_list, BoardVendorSepolicyDirs,           $(BOARD_SEPOLICY_DIRS))
+$(call add_json_list, BoardOdmSepolicyDirs,              $(BOARD_ODM_SEPOLICY_DIRS))
+$(call add_json_str,  BoardPlatPublicSepolicyDir,        $(BOARD_PLAT_PUBLIC_SEPOLICY_DIR))
+$(call add_json_str,  BoardPlatPrivateSepolicyDir,       $(BOARD_PLAT_PRIVATE_SEPOLICY_DIR))
+
 _contents := $(_contents)    "VendorVars": {$(newline)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
   $(eval _contents := $$(_contents)        "$(namespace)": {$$(newline)) \
