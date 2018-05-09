@@ -57,6 +57,11 @@ TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 
+# Set this to create /cache mount point for non-A/B devices that mounts /cache.
+# The partition size doesn't matter, just to make build pass.
+BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216
+
 BOARD_SEPOLICY_DIRS += \
         device/generic/goldfish/sepolicy/common \
         device/generic/goldfish/sepolicy/x86
