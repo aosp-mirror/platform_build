@@ -444,7 +444,7 @@ ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
 common_proguard_flags += -dontshrink # don't shrink tests by default
 endif # test package
 ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
-  ifdef LOCAL_USE_AAPT2
+  ifeq ($(LOCAL_USE_AAPT2),true)
     common_proguard_flag_files += $(foreach l,$(LOCAL_STATIC_ANDROID_LIBRARIES),\
         $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/export_proguard_flags)
   endif
