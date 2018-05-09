@@ -15,15 +15,16 @@
 #
 
 ###########################################################
-# Basic math functions for positive integers <= 100
+# Basic math functions for non-negative integers <= 100
 #
 # (SDK versions for example)
 ###########################################################
-__MATH_NUMBERS :=  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 \
-                  21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 \
-                  41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 \
-                  61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 \
-                  81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100
+__MATH_POS_NUMBERS :=  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 \
+                      21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 \
+                      41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 \
+                      61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 \
+                      81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100
+__MATH_NUMBERS := 0 $(__MATH_POS_NUMBERS)
 
 math-error = $(call pretty-error,$(1))
 math-expect :=
@@ -59,8 +60,7 @@ ifdef RUN_MATH_TESTS
   endef
 endif
 
-
-# Returns true if $(1) is a positive integer <= 100, otherwise returns nothing.
+# Returns true if $(1) is a non-negative integer <= 100, otherwise returns nothing.
 define math_is_number
 $(strip \
   $(if $(1),,$(call math-error,Argument missing)) \
@@ -68,33 +68,50 @@ $(strip \
   $(if $(filter $(1),$(__MATH_NUMBERS)),true))
 endef
 
+define math_is_zero
+$(strip \
+  $(if $(word 2,$(1)),$(call math-error,Multiple words in a single argument: $(1))) \
+  $(if $(filter 0,$(1)),true))
+endef
 
+$(call math-expect-true,(call math_is_number,0))
 $(call math-expect-true,(call math_is_number,2))
 $(call math-expect-false,(call math_is_number,foo))
 $(call math-expect-false,(call math_is_number,-1))
 $(call math-expect-error,(call math_is_number,1 2),Multiple words in a single argument: 1 2)
 $(call math-expect-error,(call math_is_number,no 2),Multiple words in a single argument: no 2)
 
+$(call math-expect-true,(call math_is_zero,0))
+$(call math-expect-false,(call math_is_zero,1))
+$(call math-expect-false,(call math_is_zero,foo))
+$(call math-expect-error,(call math_is_zero,1 2),Multiple words in a single argument: 1 2)
+$(call math-expect-error,(call math_is_zero,no 2),Multiple words in a single argument: no 2)
+
 define _math_check_valid
-$(if $(call math_is_number,$(1)),,$(call math-error,Only positive integers <= 100 are supported (not $(1))))
+$(if $(call math_is_number,$(1)),,$(call math-error,Only non-negative integers <= 100 are supported (not $(1))))
 endef
 
+$(call math-expect,(call _math_check_valid,0))
 $(call math-expect,(call _math_check_valid,1))
 $(call math-expect,(call _math_check_valid,100))
-$(call math-expect-error,(call _math_check_valid,-1),Only positive integers <= 100 are supported (not -1))
-$(call math-expect-error,(call _math_check_valid,101),Only positive integers <= 100 are supported (not 101))
+$(call math-expect-error,(call _math_check_valid,-1),Only non-negative integers <= 100 are supported (not -1))
+$(call math-expect-error,(call _math_check_valid,101),Only non-negative integers <= 100 are supported (not 101))
 $(call math-expect-error,(call _math_check_valid,),Argument missing)
 $(call math-expect-error,(call _math_check_valid,1 2),Multiple words in a single argument: 1 2)
 
 # return a list containing integers ranging from [$(1),$(2)]
 define int_range_list
-$(strip $(call _math_check_valid,$(1))$(call _math_check_valid,$(2))$(wordlist $(1),$(2),$(__MATH_NUMBERS)))
+$(strip \
+  $(call _math_check_valid,$(1))$(call _math_check_valid,$(2)) \
+  $(if $(call math_is_zero,$(1)),0)\
+  $(wordlist $(if $(call math_is_zero,$(1)),1,$(1)),$(2),$(__MATH_POS_NUMBERS)))
 endef
 
+$(call math-expect,(call int_range_list,0,1),0 1)
 $(call math-expect,(call int_range_list,1,1),1)
 $(call math-expect,(call int_range_list,1,2),1 2)
 $(call math-expect,(call int_range_list,2,1),)
-$(call math-expect-error,(call int_range_list,1,101),Only positive integers <= 100 are supported (not 101))
+$(call math-expect-error,(call int_range_list,1,101),Only non-negative integers <= 100 are supported (not 101))
 
 
 # Returns the greater of $1 or $2.
@@ -107,6 +124,8 @@ endef
 $(call math-expect-error,(call math_max),Argument missing)
 $(call math-expect-error,(call math_max,1),Argument missing)
 $(call math-expect-error,(call math_max,1 2,3),Multiple words in a single argument: 1 2)
+$(call math-expect,(call math_max,0,1),1)
+$(call math-expect,(call math_max,1,0),1)
 $(call math-expect,(call math_max,1,1),1)
 $(call math-expect,(call math_max,5,42),42)
 $(call math-expect,(call math_max,42,5),42)
@@ -145,11 +164,12 @@ $(strip \
         $(n)))))
 endef
 
-$(call math-expect,(call numbers_less_than,1,2 1 3),)
-$(call math-expect,(call numbers_less_than,2,2 1 3),1)
-$(call math-expect,(call numbers_less_than,3,2 1 3),2 1)
-$(call math-expect,(call numbers_less_than,4,2 1 3),2 1 3)
-$(call math-expect,(call numbers_less_than,3,2 1 3 2),2 1 2)
+$(call math-expect,(call numbers_less_than,0,0 1 2 3),)
+$(call math-expect,(call numbers_less_than,1,0 2 1 3),0)
+$(call math-expect,(call numbers_less_than,2,0 2 1 3),0 1)
+$(call math-expect,(call numbers_less_than,3,0 2 1 3),0 2 1)
+$(call math-expect,(call numbers_less_than,4,0 2 1 3),0 2 1 3)
+$(call math-expect,(call numbers_less_than,3,0 2 1 3 2),0 2 1 2)
 
 _INT_LIMIT_WORDS := $(foreach a,x x,$(foreach b,x x x x x x x x x x x x x x x x,\
   $(foreach c,x x x x x x x x x x x x x x x x,x x x x x x x x x x x x x x x x)))
