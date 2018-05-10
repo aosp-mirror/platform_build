@@ -1024,6 +1024,10 @@ INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST := $(TARGET_OUT_COMMON_INTERMEDIATES)
 INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-dark-greylist.txt
 INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-blacklist.txt
 
+# Missing optional uses-libraries so that the platform doesn't create build rules that depend on
+# them. See setup_one_odex.mk.
+INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := com.google.android.ble com.google.android.wearable
+
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
 TARGET_PREBUILT_TAG := android-$(TARGET_ARCH)
