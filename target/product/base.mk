@@ -153,6 +153,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES_DEBUG := \
     iotop \
     logpersist.start \
+    micro_bench \
     perfprofd \
     sqlite3 \
     strace
