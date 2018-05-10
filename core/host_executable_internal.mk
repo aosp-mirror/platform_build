@@ -33,7 +33,7 @@ $(LOCAL_BUILT_MODULE): PRIVATE_HOST_LIBPROFILE_RT := $(my_host_libprofile_rt)
 
 my_libdir := $(notdir $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_SHARED_LIBRARIES))
 ifeq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
-$(LOCAL_BUILT_MODULE): PRIVATE_RPATHS := ../../$(my_libdir)
+$(LOCAL_BUILT_MODULE): PRIVATE_RPATHS := ../../$(my_libdir) ../../../$(my_libdir)
 else
 $(LOCAL_BUILT_MODULE): PRIVATE_RPATHS := ../$(my_libdir) $(my_libdir)
 endif
