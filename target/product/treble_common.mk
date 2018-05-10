@@ -31,13 +31,6 @@ PRODUCT_FULL_TREBLE_OVERRIDE := true
 PRODUCT_PACKAGES += \
     messaging
 
-# All VNDK libraries (HAL interfaces, VNDK, VNDK-SP, LL-NDK)
-PRODUCT_PACKAGES += vndk_package
-
-# SP-NDK:
-PRODUCT_PACKAGES += \
-    libvulkan \
-
 # The following policy XML files are used as fallback for
 # vendors/devices not using XML to configure audio policy.
 PRODUCT_COPY_FILES += \
@@ -46,20 +39,6 @@ PRODUCT_COPY_FILES += \
     frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:system/etc/r_submix_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/audio_policy_volumes.xml:system/etc/audio_policy_volumes.xml \
     frameworks/av/services/audiopolicy/config/default_volume_tables.xml:system/etc/default_volume_tables.xml \
-
-# Bluetooth:
-#   audio.a2dp.default is a system module. Generic system image includes
-#   audio.a2dp.default to support A2DP if board has the capability.
-PRODUCT_PACKAGES += \
-    audio.a2dp.default
-
-# Net:
-#   Vendors can use the platform-provided network configuration utilities (ip,
-#   iptable, etc.) to configure the Linux networking stack, but these utilities
-#   do not yet include a HIDL interface wrapper. This is a solution on
-#   Android O.
-PRODUCT_PACKAGES += \
-    netutils-wrapper-1.0
 
 # Telephony:
 #   Provide a default APN configuration
