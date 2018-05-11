@@ -70,7 +70,7 @@ else
 
   # Calculate system build dependencies based on the filtered libraries.
   my_intermediate_libs := $(foreach lib_name, $(my_lib_names) $(my_filtered_optional_uses_libraries), \
-    $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib_name),,COMMON)/javalib.jar)
+    $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib_name),,)/javalib.jar)
   my_dex_preopt_system_dependencies := $(my_intermediate_libs)
   my_dex_preopt_class_loader_context := $(call normalize-path-list,$(my_intermediate_libs))
 
@@ -82,7 +82,7 @@ else
   my_lib_names := $(patsubst org.apache.http.legacy.boot,org.apache.http.legacy,$(my_lib_names))
   my_optional_lib_names := $(patsubst org.apache.http.legacy.boot,org.apache.http.legacy,$(my_optional_lib_names))
   ifeq (,$(filter org.apache.http.legacy,$(my_lib_names) $(my_optional_lib_names)))
-    my_conditional_uses_libraries_host := $(call intermediates-dir-for,JAVA_LIBRARIES,org.apache.http.legacy.boot,,COMMON)/javalib.jar
+    my_conditional_uses_libraries_host := $(call intermediates-dir-for,JAVA_LIBRARIES,org.apache.http.legacy.boot,,)/javalib.jar
     my_conditional_uses_libraries_target := /system/framework/org.apache.http.legacy.boot.jar
   endif
 endif
