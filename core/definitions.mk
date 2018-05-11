@@ -2092,7 +2092,7 @@ endef
 define aapt2-compile-resource-zips
 @mkdir -p $(dir $@)
 $(ZIPSYNC) -d $@.contents -l $@.list $(PRIVATE_SOURCE_RES_ZIPS)
-$(hide) $(AAPT2) compile -o $@ --dir $@.tmp $(PRIVATE_AAPT2_CFLAGS) --legacy
+$(hide) $(AAPT2) compile -o $@ --dir $@.contents $(PRIVATE_AAPT2_CFLAGS) --legacy
 endef
 
 # Set up rule to compile one resource file with aapt2.

@@ -45,6 +45,7 @@ $(call add_json_str,  Make_suffix, -$(TARGET_PRODUCT))
 $(call add_json_str,  BuildId,                           $(BUILD_ID))
 $(call add_json_str,  BuildNumberFromFile,               $$$(BUILD_NUMBER_FROM_FILE))
 
+$(call add_json_str,  Platform_version_name,             $(PLATFORM_VERSION))
 $(call add_json_val,  Platform_sdk_version,              $(PLATFORM_SDK_VERSION))
 $(call add_json_str,  Platform_sdk_codename,             $(PLATFORM_VERSION_CODENAME))
 $(call add_json_bool, Platform_sdk_final,                $(filter REL,$(PLATFORM_VERSION_CODENAME)))
@@ -101,7 +102,7 @@ $(call add_json_list, CFIExcludePaths,                   $(CFI_EXCLUDE_PATHS) $(
 $(call add_json_list, CFIIncludePaths,                   $(CFI_INCLUDE_PATHS) $(PRODUCT_CFI_INCLUDE_PATHS))
 $(call add_json_list, IntegerOverflowExcludePaths,       $(INTEGER_OVERFLOW_EXCLUDE_PATHS) $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
 
-$(call add_json_bool, UseClangLld,                       $(call invert_bool,$(filter 0 false,$(USE_CLANG_LLD))))
+$(call add_json_bool, UseClangLld,                       $(filter 1 true,$(USE_CLANG_LLD)))
 $(call add_json_bool, ClangTidy,                         $(filter 1 true,$(WITH_TIDY)))
 $(call add_json_str,  TidyChecks,                        $(WITH_TIDY_CHECKS))
 
@@ -141,6 +142,11 @@ $(call add_json_str,  DistDir,                           $(if $(dist_goal), $(DI
 $(call add_json_list, NamespacesToExport,                $(PRODUCT_SOONG_NAMESPACES))
 
 $(call add_json_list, PgoAdditionalProfileDirs,          $(PGO_ADDITIONAL_PROFILE_DIRS))
+
+$(call add_json_list, BoardVendorSepolicyDirs,           $(BOARD_SEPOLICY_DIRS))
+$(call add_json_list, BoardOdmSepolicyDirs,              $(BOARD_ODM_SEPOLICY_DIRS))
+$(call add_json_str,  BoardPlatPublicSepolicyDir,        $(BOARD_PLAT_PUBLIC_SEPOLICY_DIR))
+$(call add_json_str,  BoardPlatPrivateSepolicyDir,       $(BOARD_PLAT_PRIVATE_SEPOLICY_DIR))
 
 _contents := $(_contents)    "VendorVars": {$(newline)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
