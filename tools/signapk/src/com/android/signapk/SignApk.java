@@ -36,6 +36,7 @@ import org.conscrypt.OpenSSLProvider;
 
 import com.android.apksig.ApkSignerEngine;
 import com.android.apksig.DefaultApkSignerEngine;
+import com.android.apksig.Hints;
 import com.android.apksig.apk.ApkUtils;
 import com.android.apksig.apk.MinSdkVersionException;
 import com.android.apksig.util.DataSink;
@@ -73,6 +74,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -80,6 +82,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
 
 import javax.crypto.Cipher;
 import javax.crypto.EncryptedPrivateKeyInfo;
@@ -372,10 +375,15 @@ class SignApk {
             Pattern ignoredFilenamePattern,
             ApkSignerEngine apkSigner,
             JarOutputStream out,
+            CountingOutputStream outCounter,
             long timestamp,
             int defaultAlignment) throws IOException {
         byte[] buffer = new byte[4096];
         int num;
+
+        List<Pattern> pinPatterns = extractPinPatterns(in);
+        ArrayList<Hints.ByteRange> pinByteRanges = pinPatterns == null ? null : new ArrayList<>();
+        HashSet<String> namesToPin = new HashSet<>();
 
         ArrayList<String> names = new ArrayList<String>();
         for (Enumeration<JarEntry> e = in.entries(); e.hasMoreElements();) {
@@ -387,6 +395,16 @@ class SignApk {
             if ((ignoredFilenamePattern != null)
                     && (ignoredFilenamePattern.matcher(entryName).matches())) {
                 continue;
+            }
+            if (Hints.PIN_BYTE_RANGE_ZIP_ENTRY_NAME.equals(entryName)) {
+                continue;  // We regenerate it below.
+            }
+            if (pinPatterns != null) {
+                for (Pattern pinPattern : pinPatterns) {
+                    if (pinPattern.matcher(entryName).matches()) {
+                        namesToPin.add(entryName);
+                    }
+                }
             }
             names.add(entryName);
         }
@@ -460,6 +478,7 @@ class SignApk {
             outEntry.setExtra(extra);
             offset += extra.length;
 
+            long entryHeaderStart = outCounter.getWrittenBytes();
             out.putNextEntry(outEntry);
             ApkSignerEngine.InspectJarEntryRequest inspectEntryRequest =
                     (apkSigner != null) ? apkSigner.outputJarEntry(name) : null;
@@ -475,9 +494,17 @@ class SignApk {
                     offset += num;
                 }
             }
+            out.closeEntry();
             out.flush();
             if (inspectEntryRequest != null) {
                 inspectEntryRequest.done();
+            }
+
+            if (namesToPin.contains(name)) {
+                pinByteRanges.add(
+                    new Hints.ByteRange(
+                        entryHeaderStart,
+                        outCounter.getWrittenBytes()));
             }
         }
 
@@ -494,6 +521,7 @@ class SignApk {
             // Create a new entry so that the compressed len is recomputed.
             JarEntry outEntry = new JarEntry(name);
             outEntry.setTime(timestamp);
+            long entryHeaderStart = outCounter.getWrittenBytes();
             out.putNextEntry(outEntry);
             ApkSignerEngine.InspectJarEntryRequest inspectEntryRequest =
                     (apkSigner != null) ? apkSigner.outputJarEntry(name) : null;
@@ -507,11 +535,47 @@ class SignApk {
                     entryDataSink.consume(buffer, 0, num);
                 }
             }
+            out.closeEntry();
             out.flush();
             if (inspectEntryRequest != null) {
                 inspectEntryRequest.done();
             }
+
+            if (namesToPin.contains(name)) {
+                pinByteRanges.add(
+                    new Hints.ByteRange(
+                        entryHeaderStart,
+                        outCounter.getWrittenBytes()));
+            }
         }
+
+        if (pinByteRanges != null) {
+            // Cover central directory
+            pinByteRanges.add(
+                new Hints.ByteRange(outCounter.getWrittenBytes(),
+                                    Long.MAX_VALUE));
+            addPinByteRanges(out, pinByteRanges, timestamp);
+        }
+    }
+
+    private static List<Pattern> extractPinPatterns(JarFile in) throws IOException {
+        ZipEntry pinMetaEntry = in.getEntry(Hints.PIN_HINT_ASSET_ZIP_ENTRY_NAME);
+        if (pinMetaEntry == null) {
+            return null;
+        }
+        InputStream pinMetaStream = in.getInputStream(pinMetaEntry);
+        byte[] patternBlob = new byte[(int) pinMetaEntry.getSize()];
+        pinMetaStream.read(patternBlob);
+        return Hints.parsePinPatterns(patternBlob);
+    }
+
+    private static void addPinByteRanges(JarOutputStream outputJar,
+                                         ArrayList<Hints.ByteRange> pinByteRanges,
+                                         long timestamp) throws IOException {
+        JarEntry je = new JarEntry(Hints.PIN_BYTE_RANGE_ZIP_ENTRY_NAME);
+        je.setTime(timestamp);
+        outputJar.putNextEntry(je);
+        outputJar.write(Hints.encodeByteRangeList(pinByteRanges));
     }
 
     private static boolean shouldOutputApkEntry(
@@ -679,9 +743,11 @@ class SignApk {
         public void write(OutputStream out) throws IOException {
             try {
                 signer = new WholeFileSignerOutputStream(out, outputStream);
-                JarOutputStream outputJar = new JarOutputStream(signer);
+                CountingOutputStream outputJarCounter = new CountingOutputStream(signer);
+                JarOutputStream outputJar = new JarOutputStream(outputJarCounter);
 
-                copyFiles(inputJar, STRIP_PATTERN, null, outputJar, timestamp, 0);
+                copyFiles(inputJar, STRIP_PATTERN, null, outputJar,
+                          outputJarCounter, timestamp, 0);
                 addOtacert(outputJar, publicKeyFile, timestamp);
 
                 signer.notifyClosing();
@@ -1065,11 +1131,14 @@ class SignApk {
                     // Build the output APK in memory, by copying input APK's ZIP entries across
                     // and then signing the output APK.
                     ByteArrayOutputStream v1SignedApkBuf = new ByteArrayOutputStream();
-                    JarOutputStream outputJar = new JarOutputStream(v1SignedApkBuf);
+                    CountingOutputStream outputJarCounter =
+                            new CountingOutputStream(v1SignedApkBuf);
+                    JarOutputStream outputJar = new JarOutputStream(outputJarCounter);
                     // Use maximum compression for compressed entries because the APK lives forever
                     // on the system partition.
                     outputJar.setLevel(9);
-                    copyFiles(inputJar, null, apkSigner, outputJar, timestamp, alignment);
+                    copyFiles(inputJar, null, apkSigner, outputJar,
+                              outputJarCounter, timestamp, alignment);
                     ApkSignerEngine.OutputJarSignatureRequest addV1SignatureRequest =
                             apkSigner.outputJarEntries();
                     if (addV1SignatureRequest != null) {
