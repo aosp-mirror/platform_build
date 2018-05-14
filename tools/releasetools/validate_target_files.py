@@ -66,7 +66,7 @@ def ValidateFileAgainstSha1(input_tmp, file_name, file_path, expected_sha1):
           file_name, actual_sha1, expected_sha1)
 
 
-def ValidateFileConsistency(input_zip, input_tmp):
+def ValidateFileConsistency(input_zip, input_tmp, info_dict):
   """Compare the files from image files and unpacked folders."""
 
   def CheckAllFiles(which):
@@ -102,6 +102,11 @@ def ValidateFileConsistency(input_zip, input_tmp):
               entry, ranges, blocks_sha1, file_sha1)
 
   logging.info('Validating file consistency.')
+
+  # TODO(b/79617342): Validate non-sparse images.
+  if info_dict.get('extfs_sparse_flag') != '-s':
+    logging.warning('Skipped due to target using non-sparse images')
+    return
 
   # Verify IMAGES/system.img.
   CheckAllFiles('system')
@@ -324,10 +329,10 @@ def main():
   logging.info("Unzipping the input target_files.zip: %s", args.target_files)
   input_tmp = common.UnzipTemp(args.target_files)
 
-  with zipfile.ZipFile(args.target_files, 'r') as input_zip:
-    ValidateFileConsistency(input_zip, input_tmp)
-
   info_dict = common.LoadInfoDict(input_tmp)
+  with zipfile.ZipFile(args.target_files, 'r') as input_zip:
+    ValidateFileConsistency(input_zip, input_tmp, info_dict)
+
   ValidateInstallRecoveryScript(input_tmp, info_dict)
 
   ValidateVerifiedBootImages(input_tmp, info_dict, options)
