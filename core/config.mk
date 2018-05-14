@@ -92,8 +92,6 @@ MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
 UNAME := $(shell uname -sm)
 
 SRC_TARGET_DIR := $(TOPDIR)build/target
-SRC_SYSTEM_API_DIR := $(TOPDIR)prebuilts/sdk/system-api
-SRC_TEST_API_DIR := $(TOPDIR)prebuilts/sdk/test-api
 
 # Some specific paths to tools
 SRC_DROIDDOC_DIR := $(TOPDIR)build/make/tools/droiddoc
