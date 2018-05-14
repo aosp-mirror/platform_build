@@ -16,6 +16,24 @@
       "revId": "116790dae85e6ae51d586819e973d441b9aba85c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2dc87d17_8737299e",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-05-14T17:34:07Z",
+      "side": 1,
+      "message": "There should already be one in setup_one_odex:\n$(my_built_odex): $(AAPT)",
+      "parentUuid": "e266c195_07fe124b",
+      "revId": "116790dae85e6ae51d586819e973d441b9aba85c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
