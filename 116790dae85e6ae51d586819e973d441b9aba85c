@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e266c195_07fe124b",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-14T17:31:05Z",
+      "side": 1,
+      "message": "You also need to add a dependency on $(AAPT) in the rules where this is used",
+      "revId": "116790dae85e6ae51d586819e973d441b9aba85c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
