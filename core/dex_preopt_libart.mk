@@ -175,6 +175,7 @@ class_loader_context=$(PRIVATE_DEX2OAT_CLASS_LOADER_CONTEXT) && \
 stored_class_loader_context_arg="" && \
 uses_library_names="$(PRIVATE_USES_LIBRARY_NAMES)" && \
 optional_uses_library_names="$(PRIVATE_OPTIONAL_USES_LIBRARY_NAMES)" && \
+aapt_binary="$(AAPT)" && \
 $(if $(filter true,$(PRIVATE_ENFORCE_USES_LIBRARIES)), \
 source build/make/core/verify_uses_libraries.sh "$(1)" && \
 source build/make/core/construct_context.sh "$(PRIVATE_CONDITIONAL_USES_LIBRARIES_HOST)" "$(PRIVATE_CONDITIONAL_USES_LIBRARIES_TARGET)" && \

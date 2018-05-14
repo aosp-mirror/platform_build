@@ -15,11 +15,13 @@
 # limitations under the License.
 
 
+# apt_binary is $(AAPT) in the build.
+
 # Parse sdk, targetSdk, and uses librares in the APK, then cross reference against build specified ones.
 
 set -e
 local_apk=$1
-badging=$(aapt dump badging "${local_apk}")
+badging=$(${aapt_binary} dump badging "${local_apk}")
 export sdk_version=$(echo "${badging}" | grep "sdkVersion" | sed -n "s/sdkVersion:'\(.*\)'/\1/p")
 # Export target_sdk_version to the caller.
 export target_sdk_version=$(echo "${badging}" | grep "targetSdkVersion" | sed -n "s/targetSdkVersion:'\(.*\)'/\1/p")
