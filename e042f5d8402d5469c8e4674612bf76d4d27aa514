@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d10fa361_cf7dac53",
+        "filename": "tools/apicheck/Android.bp",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-05-14T01:12:24Z",
+      "side": 1,
+      "message": "This does not work because there is no source code for apicheck and thus the dependency to doclava and jsilver is not triggered. Several build targets are failing due to this. https://android-build.googleplex.com/builds/where-is-my-cl/android-review/684242?revision\u003d1\u0026workplanId\u003dL04600000172519865\n\nI\u0027ve switched this to \u0027required\u0027 to make sure that the two libs are correctly installed. Please refer to aosp/684242",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 18,
+        "endChar": 8
+      },
+      "revId": "e042f5d8402d5469c8e4674612bf76d4d27aa514",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
