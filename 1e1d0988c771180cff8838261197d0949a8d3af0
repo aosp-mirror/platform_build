@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aaaa43a1_36a5050a",
+        "filename": "core/droiddoc.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-14T22:35:40Z",
+      "side": 1,
+      "message": "uses spaces here instead of tabs, this isn\u0027t part of the recipe",
+      "revId": "1e1d0988c771180cff8838261197d0949a8d3af0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
