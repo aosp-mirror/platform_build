@@ -41,3 +41,5 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Use speed compiler filter since system server doesn't have JIT.
 PRODUCT_DEX_PREOPT_BOOT_FLAGS += --compiler-filter=speed
+
+PRODUCT_DIST_BOOT_AND_SYSTEM_JARS := true
