@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ce3b6110_c09b1263",
+        "filename": "tools/apicheck/Android.bp",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-14T23:01:56Z",
+      "side": 1,
+      "message": "I think this would be better as static_libs and not have to deal with the classpath.",
+      "revId": "1a32fba81538be359debb7f4ba8e24703cb4cf18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
