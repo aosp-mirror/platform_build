@@ -34,6 +34,24 @@
       "revId": "1a32fba81538be359debb7f4ba8e24703cb4cf18",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d298c75b_a3639465",
+        "filename": "tools/apicheck/Android.bp",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-05-15T02:40:04Z",
+      "side": 1,
+      "message": "switched to static_libs. I think it\u0027s better.",
+      "parentUuid": "c90fbf41_7f11e006",
+      "revId": "1a32fba81538be359debb7f4ba8e24703cb4cf18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
