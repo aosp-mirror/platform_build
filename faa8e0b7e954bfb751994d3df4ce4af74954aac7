@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7df0a202_e69a1c26",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1286860
+      },
+      "writtenOn": "2018-05-15T02:45:06Z",
+      "side": 1,
+      "message": "override_downgrade_wipe seems more appropriate ? Not sure if there is a reason to keep this name.",
+      "range": {
+        "startLine": 47,
+        "startChar": 4,
+        "endLine": 47,
+        "endChar": 22
+      },
+      "revId": "faa8e0b7e954bfb751994d3df4ce4af74954aac7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
