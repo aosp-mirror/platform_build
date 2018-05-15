@@ -87,6 +87,8 @@ else
   LOCAL_RESOURCE_DIR := $(foreach d,$(LOCAL_RESOURCE_DIR),$(call clean-path,$(d)))
 endif
 
+include $(BUILD_SYSTEM)/force_aapt2.mk
+
 package_resource_overlays := $(strip \
     $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \
       $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
@@ -153,7 +155,7 @@ LOCAL_USE_AAPT2 := true
 endif
 
 my_res_package :=
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 # In aapt2 the last takes precedence.
 my_resource_dirs := $(call reverse-list,$(LOCAL_RESOURCE_DIR))
 my_res_dir :=
@@ -357,7 +359,7 @@ $(R_file_stamp) $(my_res_package): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOC
 ###############################
 ## AAPT/AAPT2
 
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
   my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res
   ifneq (,$(renderscript_target_api))
     ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
@@ -509,7 +511,7 @@ $(resource_export_package) $(R_file_stamp) $(LOCAL_BUILT_MODULE): $(all_library_
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_AAPT_INCLUDES := $(all_library_res_package_exports)
 
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 $(my_res_package) : $(all_library_res_package_export_deps)
 endif
 
@@ -593,7 +595,7 @@ $(LOCAL_BUILT_MODULE): PRIVATE_RESOURCE_INTERMEDIATES_DIR := $(intermediates.COM
 $(LOCAL_BUILT_MODULE): PRIVATE_FULL_CLASSES_JAR := $(full_classes_jar)
 $(LOCAL_BUILT_MODULE) : $(jni_shared_libraries)
 $(LOCAL_BUILT_MODULE) : $(JAR_ARGS)
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 $(LOCAL_BUILT_MODULE): PRIVATE_RES_PACKAGE := $(my_res_package)
 $(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2) | $(ACP)
 else
@@ -604,7 +606,7 @@ ifdef LOCAL_COMPRESSED_MODULE
 $(LOCAL_BUILT_MODULE) : $(MINIGZIP)
 endif
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 	$(call copy-file-to-new-target)
 else  # ! LOCAL_USE_AAPT2
 	$(if $(PRIVATE_SOURCE_ARCHIVE),\
@@ -620,7 +622,7 @@ ifeq ($(full_classes_jar),)
 	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 else  # full_classes_jar
 	$(add-dex-to-package)
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 	$(call add-jar-resources-to-package,$@,$(PRIVATE_FULL_CLASSES_JAR),$(PRIVATE_RESOURCE_INTERMEDIATES_DIR))
 endif
 endif  # full_classes_jar
