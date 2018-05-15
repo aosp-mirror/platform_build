@@ -2147,6 +2147,17 @@ $(SOONG_ZIP) -o $(PRIVATE_SRCJAR) -C $(PRIVATE_JAVA_GEN_DIR) -D $(PRIVATE_JAVA_G
 $(EXTRACT_JAR_PACKAGES) -i $(PRIVATE_SRCJAR) -o $(PRIVATE_AAPT_EXTRA_PACKAGES) --prefix '--extra-packages '
 endef
 
+define _create-default-manifest-file
+$(1):
+	rm -f $1
+	echo '<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="missing.manifest"></manifest>' > $1
+endef
+
+define create-default-manifest-file
+  $(eval $(call _create-default-manifest-file,$(1)))
+endef
+
+
 ###########################################################
 xlint_unchecked := -Xlint:unchecked
 

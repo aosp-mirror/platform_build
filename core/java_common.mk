@@ -477,7 +477,7 @@ endif
 ifdef LOCAL_AAPT2_ONLY
 my_link_type += aapt2_only
 endif
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 my_allowed_types += aapt2_only
 endif
 

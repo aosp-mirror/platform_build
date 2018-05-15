@@ -607,11 +607,13 @@ $(common_classes_pre_proguard_jar) : $(my_src_jar)
 $(common_javalib_jar) : $(common_classes_jar)
 	$(transform-prebuilt-to-target)
 
+include $(BUILD_SYSTEM)/force_aapt2.mk
+
 ifdef LOCAL_AAPT2_ONLY
 LOCAL_USE_AAPT2 := true
 endif
 
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 ifneq ($(my_src_aar),)
 
 $(intermediates.COMMON)/export_proguard_flags : $(my_src_proguard_options)
