@@ -254,7 +254,7 @@ LOCAL_EXPORT_C_INCLUDE_DEPS := $(my_gen_oem_aid)
 include $(BUILD_HEADER_LIBRARY)
 
 ##################################
-# Generate the system/etc/passwd text file for the target
+# Generate the vendor/etc/passwd text file for the target
 # This file may be empty if no AIDs are defined in
 # TARGET_FS_CONFIG_GEN files.
 include $(CLEAR_VARS)
@@ -270,10 +270,10 @@ $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
 $(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
 $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config)
 	@mkdir -p $(dir $@)
-	$(hide) $< passwd --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
+	$(hide) $< passwd --required-prefix=vendor_ --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
 
 ##################################
-# Generate the system/etc/group text file for the target
+# Generate the vendor/etc/group text file for the target
 # This file may be empty if no AIDs are defined in
 # TARGET_FS_CONFIG_GEN files.
 include $(CLEAR_VARS)
@@ -289,7 +289,7 @@ $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
 $(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
 $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config)
 	@mkdir -p $(dir $@)
-	$(hide) $< group --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
+	$(hide) $< group --required-prefix=vendor_ --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
 
 system_android_filesystem_config :=
 endif
