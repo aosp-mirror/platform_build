@@ -361,7 +361,7 @@ $(R_file_stamp) $(my_res_package): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOC
 
 ifeq ($(LOCAL_USE_AAPT2),true)
   my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res
-  ifneq (,$(renderscript_target_api))
+  ifneq (,$(filter-out current,$(renderscript_target_api)))
     ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
       my_generated_res_zips := $(rs_generated_res_zip)
     endif  # renderscript_target_api < 21
