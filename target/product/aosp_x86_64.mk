@@ -45,6 +45,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86_64/device.mk)
 
 include $(SRC_TARGET_DIR)/product/emulator.mk
 
+# Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
+PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
+
 ifdef NET_ETH0_STARTONBOOT
   PRODUCT_PROPERTY_OVERRIDES += net.eth0.startonboot=1
 endif
