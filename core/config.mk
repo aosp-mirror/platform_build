@@ -92,8 +92,6 @@ MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
 UNAME := $(shell uname -sm)
 
 SRC_TARGET_DIR := $(TOPDIR)build/target
-SRC_SYSTEM_API_DIR := $(TOPDIR)prebuilts/sdk/system-api
-SRC_TEST_API_DIR := $(TOPDIR)prebuilts/sdk/test-api
 
 # Some specific paths to tools
 SRC_DROIDDOC_DIR := $(TOPDIR)build/make/tools/droiddoc
@@ -761,8 +759,7 @@ MD5SUM:=md5sum
 endif
 
 APICHECK_CLASSPATH_ENTRIES := \
-    $(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX) \
-    $(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX) \
+    $(HOST_OUT_JAVA_LIBRARIES)/apicheck$(COMMON_JAVA_PACKAGE_SUFFIX) \
     $(HOST_JDK_TOOLS_JAR) \
     )
 APICHECK_CLASSPATH := $(subst $(space),:,$(strip $(APICHECK_CLASSPATH_ENTRIES)))
