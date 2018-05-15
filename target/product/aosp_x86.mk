@@ -32,4 +32,7 @@ PRODUCT_PACKAGES += \
 
 include $(SRC_TARGET_DIR)/product/full_x86.mk
 
+# Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
+PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
+
 PRODUCT_NAME := aosp_x86
