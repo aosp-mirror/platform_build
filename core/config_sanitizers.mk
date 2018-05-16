@@ -330,6 +330,7 @@ ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
   ifeq ($(filter STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
     ifndef LOCAL_SDK_VERSION
       my_static_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_MINIMAL_RUNTIME_LIBRARY)
+      my_ldflags += -Wl,--exclude-libs,$($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_MINIMAL_RUNTIME_LIBRARY).a
     endif
   endif
   ifneq ($(filter unsigned-integer-overflow signed-integer-overflow integer,$(my_sanitize)),)
