@@ -15,8 +15,8 @@
 test_suite_name := cts
 test_suite_tradefed := cts-tradefed
 # TODO: Fix the following two lines after harness is moved to its own repo
-test_suite_dynamic_config := cts/harness/tools/cts-tradefed/DynamicConfig.xml
-test_suite_readme := cts/harness/tools/cts-tradefed/README
+test_suite_dynamic_config := test/suite_harness/tools/cts-tradefed/DynamicConfig.xml
+test_suite_readme := test/suite_harness/tools/cts-tradefed/README
 
 include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 
