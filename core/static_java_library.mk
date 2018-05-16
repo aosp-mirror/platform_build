@@ -173,7 +173,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_INSTRUMENTATION_FOR :=
 ifeq ($(LOCAL_USE_AAPT2),true)
   # One more level with name res so we can zip up the flat resources that can be linked by apps.
   my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res/res
-  ifneq (,$(renderscript_target_api))
+  ifneq (,$(filter-out current,$(renderscript_target_api)))
     ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
       my_generated_res_zips := $(rs_generated_res_zip)
     endif  # renderscript_target_api < 21
