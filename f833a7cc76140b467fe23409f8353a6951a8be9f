@@ -16,6 +16,24 @@
       "revId": "f833a7cc76140b467fe23409f8353a6951a8be9f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69a077bf_8c938e90",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 1019198
+      },
+      "writtenOn": "2018-05-16T03:28:39Z",
+      "side": 1,
+      "message": "I see. I\u0027ve uploaded https://android-review.googlesource.com/c/platform/build/soong/+/687383. Please review it.",
+      "parentUuid": "7222d5d3_1d8dccda",
+      "revId": "f833a7cc76140b467fe23409f8353a6951a8be9f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
