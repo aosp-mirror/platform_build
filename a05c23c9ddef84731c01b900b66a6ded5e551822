@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ca587ab_823f2c45",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-16T00:51:28Z",
+      "side": 1,
+      "message": "This comment is duplicated now",
+      "revId": "a05c23c9ddef84731c01b900b66a6ded5e551822",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
