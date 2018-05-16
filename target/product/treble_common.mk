@@ -51,18 +51,17 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/generic/common/nfc/libnfc-nci.conf:system/etc/libnfc-nci.conf
 
-# Support for the devices with no VNDK enforcing
+# Support for the O-MR1 devices
 PRODUCT_COPY_FILES += \
     build/make/target/product/vndk/init.gsi.rc:system/etc/init/init.gsi.rc \
-    build/make/target/product/vndk/init.noenforce.rc:system/etc/init/gsi/init.noenforce.rc
+    build/make/target/product/vndk/init.vndk-27.rc:system/etc/init/gsi/init.vndk-27.rc
 
 # Name space configuration file for non-enforcing VNDK
 PRODUCT_PACKAGES += \
-    ld.config.noenforce.txt
+    ld.config.vndk_lite.txt
 
-# Set current VNDK version for GSI
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    ro.gsi.vndk.version=$(PLATFORM_VNDK_VERSION)
+# Support addtional O-MR1 vendor interface
+PRODUCT_EXTRA_VNDK_VERSIONS := 27
 
 # TODO(b/78308559): includes vr_hwc into GSI before vr_hwc move to vendor
 PRODUCT_PACKAGES += \
