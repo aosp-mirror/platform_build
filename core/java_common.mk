@@ -259,9 +259,14 @@ ifndef LOCAL_IS_HOST_MODULE
       LOCAL_JAVA_LIBRARIES := $(filter-out $(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES),$(LOCAL_JAVA_LIBRARIES))
       my_system_modules := $(DEFAULT_SYSTEM_MODULES)
     endif  # LOCAL_NO_STANDARD_LIBRARIES
-    # When SDK libraries are referenced from modules built without SDK, provide the system stub to them
-    # because it has the largest API surface.
-    sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(lib_name).stubs.system)
+
+    ifneq (,$(TARGET_BUILD_APPS))
+      sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,system_current,$(lib_name)))
+    else
+      # When SDK libraries are referenced from modules built without SDK, provide the system stub to them
+      # because it has the largest API surface.
+      sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(lib_name).stubs.system)
+    endif
   else
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
       $(call pretty-error,Must not define both LOCAL_NO_STANDARD_LIBRARIES and LOCAL_SDK_VERSION)
