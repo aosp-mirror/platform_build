@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7222d5d3_1d8dccda",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-16T03:02:59Z",
+      "side": 1,
+      "message": "While this should probably be depending on build/make/tools/post_process_props.py, it shouldn\u0027t be depending on the system\u0027s build.prop intermediate.\n\nWhat\u0027s really missing here is the product folder from build/soong/ui/build/cleanbuild.go in the productOut portion of the list",
+      "revId": "f833a7cc76140b467fe23409f8353a6951a8be9f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
