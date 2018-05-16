@@ -18,7 +18,7 @@
 # rewriting some properties to convert standard AAPT usage to AAPT2.
 
 ifeq ($(FORCE_AAPT2),true)
-  ifneq ($(LOCAL_USE_AAPT2),true)
+  ifeq ($(LOCAL_USE_AAPT2),)
     # Force AAPT2 on
     LOCAL_USE_AAPT2 := true
     # Move LOCAL_STATIC_JAVA_AAR_LIBRARIES to LOCAL_STATIC_ANDROID_LIBRARIES
