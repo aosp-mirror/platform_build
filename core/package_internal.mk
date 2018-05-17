@@ -414,7 +414,7 @@ else  # LOCAL_USE_AAPT2
     $(resource_export_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
     $(resource_export_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
     $(resource_export_package): PRIVATE_RESOURCE_LIST := $(all_res_assets)
-    $(resource_export_package): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT)
+    $(resource_export_package): $(all_res_assets) $(full_android_manifest) $(rs_generated_res_zip) $(AAPT)
 	@echo "target Export Resources: $(PRIVATE_MODULE) ($@)"
 	$(create-empty-package)
 	$(add-assets-to-package)
