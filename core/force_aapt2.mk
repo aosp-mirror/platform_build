@@ -30,12 +30,16 @@ ifeq ($(FORCE_AAPT2),true)
       frameworks/support/%,\
         $(LOCAL_RESOURCE_DIR))
     # Filter out unnecessary aapt flags
-    LOCAL_AAPT_FLAGS := $(subst --extra-packages=,--extra-packages$(space), \
-      $(filter-out \
-        --extra-packages=android.support.% \
-        --extra-packages=androidx.% \
-        --auto-add-overlay,\
-          $(subst --extra-packages$(space),--extra-packages=,$(LOCAL_AAPT_FLAGS))))
+    ifneq (,$(filter --extra-packages,$(LOCAL_AAPT_FLAGS)))
+      LOCAL_AAPT_FLAGS := $(subst --extra-packages=,--extra-packages$(space), \
+        $(filter-out \
+          --extra-packages=android.support.% \
+          --extra-packages=androidx.%, \
+            $(subst --extra-packages$(space),--extra-packages=,$(LOCAL_AAPT_FLAGS))))
+        ifeq (,$(filter --extra-packages,$(LOCAL_AAPT_FLAGS)))
+          LOCAL_AAPT_FLAGS := $(filter-out --auto-add-overlay,$(LOCAL_AAPT_FLAGS))
+        endif
+    endif
 
     # AAPT2 is pickier about missing resources.  Support library may have references to resources
     # added in current, so always treat LOCAL_SDK_VERSION as LOCAL_SDK_RES_VERSION := current.
