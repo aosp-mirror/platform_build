@@ -89,6 +89,9 @@ endif
 
 include $(BUILD_SYSTEM)/force_aapt2.mk
 
+# Process Support Library dependencies.
+include $(BUILD_SYSTEM)/support_libraries.mk
+
 package_resource_overlays := $(strip \
     $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \
       $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
@@ -315,9 +318,6 @@ LOCAL_RESOURCE_DIR := $(data_binding_res_out)
 
 LOCAL_AAPT_FLAGS += --auto-add-overlay --extra-packages com.android.databinding.library
 endif  # LOCAL_DATA_BINDING
-
-# Process Support Library dependencies.
-include $(BUILD_SYSTEM)/support_libraries.mk
 
 # If the module is a compressed module, we don't pre-opt it because its final
 # installation location will be the data partition.
