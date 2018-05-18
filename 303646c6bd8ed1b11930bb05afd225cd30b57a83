@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "01b2723f_493b0e83",
+        "filename": "core/java_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-05-18T04:20:22Z",
+      "side": 1,
+      "message": "please update the comment to reflect below",
+      "range": {
+        "startLine": 266,
+        "startChar": 6,
+        "endLine": 267,
+        "endChar": 47
+      },
+      "revId": "303646c6bd8ed1b11930bb05afd225cd30b57a83",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
