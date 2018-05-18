@@ -89,6 +89,9 @@ endif
 
 include $(BUILD_SYSTEM)/force_aapt2.mk
 
+# Process Support Library dependencies.
+include $(BUILD_SYSTEM)/support_libraries.mk
+
 package_resource_overlays := $(strip \
     $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \
       $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
@@ -316,9 +319,6 @@ LOCAL_RESOURCE_DIR := $(data_binding_res_out)
 LOCAL_AAPT_FLAGS += --auto-add-overlay --extra-packages com.android.databinding.library
 endif  # LOCAL_DATA_BINDING
 
-# Process Support Library dependencies.
-include $(BUILD_SYSTEM)/support_libraries.mk
-
 # If the module is a compressed module, we don't pre-opt it because its final
 # installation location will be the data partition.
 ifdef LOCAL_COMPRESSED_MODULE
@@ -361,7 +361,7 @@ $(R_file_stamp) $(my_res_package): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOC
 
 ifeq ($(LOCAL_USE_AAPT2),true)
   my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res
-  ifneq (,$(renderscript_target_api))
+  ifneq (,$(filter-out current,$(renderscript_target_api)))
     ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
       my_generated_res_zips := $(rs_generated_res_zip)
     endif  # renderscript_target_api < 21
@@ -416,7 +416,7 @@ else  # LOCAL_USE_AAPT2
     $(resource_export_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
     $(resource_export_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
     $(resource_export_package): PRIVATE_RESOURCE_LIST := $(all_res_assets)
-    $(resource_export_package): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT)
+    $(resource_export_package): $(all_res_assets) $(full_android_manifest) $(rs_generated_res_zip) $(AAPT)
 	@echo "target Export Resources: $(PRIVATE_MODULE) ($@)"
 	$(create-empty-package)
 	$(add-assets-to-package)

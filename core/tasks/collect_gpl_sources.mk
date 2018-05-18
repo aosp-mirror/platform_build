@@ -22,7 +22,7 @@ gpl_source_tgz := $(DIST_DIR)/gpl_source.tgz
 # FORCE since we can't know whether any of the sources changed
 $(gpl_source_tgz): PRIVATE_PATHS := $(sort $(patsubst %/, %, $(dir $(ALL_GPL_MODULE_LICENSE_FILES))))
 $(gpl_source_tgz) : $(ALL_GPL_MODULE_LICENSE_FILES)
-	@echo Package gpl sources: $@
+	@echo Package GPL sources: $@
 	$(hide) tar cfz $@ --exclude ".git*" $(PRIVATE_PATHS)
 
 # Dist the tgz only if we are doing a full build

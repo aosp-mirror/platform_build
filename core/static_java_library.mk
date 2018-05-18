@@ -28,14 +28,14 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
 my_res_package :=
 
+# Process Support Library dependencies.
+include $(BUILD_SYSTEM)/support_libraries.mk
+
 include $(BUILD_SYSTEM)/force_aapt2.mk
 
 ifdef LOCAL_AAPT2_ONLY
 LOCAL_USE_AAPT2 := true
 endif
-
-# Process Support Library dependencies.
-include $(BUILD_SYSTEM)/support_libraries.mk
 
 # Hack to build static Java library with Android resource
 # See bug 5714516
@@ -173,7 +173,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_INSTRUMENTATION_FOR :=
 ifeq ($(LOCAL_USE_AAPT2),true)
   # One more level with name res so we can zip up the flat resources that can be linked by apps.
   my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res/res
-  ifneq (,$(renderscript_target_api))
+  ifneq (,$(filter-out current,$(renderscript_target_api)))
     ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
       my_generated_res_zips := $(rs_generated_res_zip)
     endif  # renderscript_target_api < 21

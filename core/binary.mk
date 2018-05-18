@@ -804,7 +804,7 @@ $(RenderScript_file_stamp): PRIVATE_RS_CC := $(LOCAL_RENDERSCRIPT_CC)
 $(RenderScript_file_stamp): PRIVATE_RS_FLAGS := $(renderscript_flags)
 $(RenderScript_file_stamp): PRIVATE_RS_SOURCE_FILES := $(renderscript_sources_fullpath)
 $(RenderScript_file_stamp): PRIVATE_RS_OUTPUT_DIR := $(renderscript_intermediate)
-$(RenderScript_file_stamp): PRIVATE_RS_TARGET_API := $(renderscript_target_api)
+$(RenderScript_file_stamp): PRIVATE_RS_TARGET_API := $(patsubst current,0,$(renderscript_target_api))
 $(RenderScript_file_stamp): PRIVATE_DEP_FILES := $(bc_dep_files)
 $(RenderScript_file_stamp): $(renderscript_sources_fullpath) $(LOCAL_RENDERSCRIPT_CC)
 	$(transform-renderscripts-to-cpp-and-bc)
@@ -1724,10 +1724,19 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
       my_tidy_flags += -quiet -extra-arg-before=-fno-caret-diagnostics
     endif
 
-    # We might be using the static analyzer through clang-tidy.
-    # https://bugs.llvm.org/show_bug.cgi?id=32914
     ifneq ($(my_tidy_checks),)
+      # We might be using the static analyzer through clang-tidy.
+      # https://bugs.llvm.org/show_bug.cgi?id=32914
       my_tidy_flags += -extra-arg-before=-D__clang_analyzer__
+
+      # A recent change in clang-tidy (r328258) enabled destructor inlining,
+      # which appears to cause a number of false positives. Until that's
+      # resolved, this turns off the effects of r328258.
+      # https://bugs.llvm.org/show_bug.cgi?id=37459
+      my_tidy_flags += -extra-arg-before=-Xclang
+      my_tidy_flags += -extra-arg-before=-analyzer-config
+      my_tidy_flags += -extra-arg-before=-Xclang
+      my_tidy_flags += -extra-arg-before=c++-temp-dtor-inlining=false
     endif
   endif
 endif
