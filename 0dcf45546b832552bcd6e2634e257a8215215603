@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "92778b6d_1c152c81",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-05-18T11:11:35Z",
+      "side": 1,
+      "message": "I think this is always true in this block (either LOCAL_SDK_VERSION is set of LOCAL_PRIVATE_PLATFORM_APIS is true, which makes the \"else\" block dead code.\n\nI find this whole block a bit strange -- do we need to use LOCAL_SDK_LIBRARIES for modules that don\u0027t use the SDK? They could just reference the impl directly",
+      "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
