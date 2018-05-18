@@ -87,6 +87,13 @@ def ValidateFileConsistency(input_zip, input_tmp):
       # Read the blocks that the file resides. Note that it will contain the
       # bytes past the file length, which is expected to be padded with '\0's.
       ranges = image.file_map[entry]
+
+      # TODO(b/79951650): Handle files with non-monotonic ranges.
+      if not ranges.monotonic:
+        logging.warning(
+            'Skipping %s that has non-monotonic ranges: %s', entry, ranges)
+        continue
+
       blocks_sha1 = image.RangeSha1(ranges)
 
       # The filename under unpacked directory, such as SYSTEM/bin/sh.
