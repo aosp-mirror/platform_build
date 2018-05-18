@@ -90,6 +90,12 @@ def ValidateFileConsistency(input_zip, input_tmp, info_dict):
         logging.warning('Skipping %s that has incomplete block list', entry)
         continue
 
+      # TODO(b/79951650): Handle files with non-monotonic ranges.
+      if not ranges.monotonic:
+        logging.warning(
+            'Skipping %s that has non-monotonic ranges: %s', entry, ranges)
+        continue
+
       blocks_sha1 = image.RangeSha1(ranges)
 
       # The filename under unpacked directory, such as SYSTEM/bin/sh.
