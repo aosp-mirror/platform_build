@@ -913,6 +913,15 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     PLATFORM_SEPOLICY_VERSION \
     TOT_SEPOLICY_VERSION \
 
+ifndef USE_LOGICAL_PARTITIONS
+  USE_LOGICAL_PARTITIONS := $(PRODUCT_USE_LOGICAL_PARTITIONS)
+endif
+.KATI_READONLY := USE_LOGICAL_PARTITIONS
+
+ifeq ($(USE_LOGICAL_PARTITIONS),true)
+  BOARD_KERNEL_CMDLINE += androidboot.lrap=1
+endif
+
 # ###############################################################
 # Set up final options.
 # ###############################################################
