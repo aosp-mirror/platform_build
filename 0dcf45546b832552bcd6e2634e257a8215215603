@@ -34,6 +34,24 @@
       "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1bb10875_1f88cb39",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-05-21T16:55:52Z",
+      "side": 1,
+      "message": "\u003e \u003e I think this is always true in this block (either LOCAL_SDK_VERSION is set of LOCAL_PRIVATE_PLATFORM_APIS is true, which makes the \"else\" block dead code.\n\u003e \n\u003e I think it is always true only if LOCAL_MODULE_CLASS is APPS. So I think \"else\" block is not dead code.\n\nLOCAL_PRIVATE_PLATFORM_APIS is only relevant for apps, and the only thing it does is to silence an error if you\u0027re building an app and not setting LOCAL_SDK_VERSION.\n\nIn this block, LOCAL_SDK_VERSION is unset, so we are building against the platform\u0027s bootclasspath. This means building against the impl of all the libs, not the stubs. This CL makes sense from that perspective (though it\u0027s still not clear why you\u0027d want to use LOCAL_SDK_LIBRARIES in this case, since you\u0027re not building against the SDK). However I don\u0027t think the \u0027else\u0027 case here makes sense. If you haven\u0027t set LOCAL_SDK_VERSION, you shouldn\u0027t get different behavior depending on whether LOCAL_PRIVATE_PLATFORM_APIS is set - that variable is just something you need to set if you don\u0027t have a LOCAL_SDK_VERSION (to silence the error).\n\n\u003e \n\u003e \u003e I find this whole block a bit strange -- do we need to use LOCAL_SDK_LIBRARIES for modules that don\u0027t use the SDK? They could just reference the impl directly\n\u003e \n\u003e In this case, I think that we need to set the LOCAL_NO_STANDARD_LIBRARIES is true and link the impl directly.",
+      "parentUuid": "9f4afb71_458c83c5",
+      "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
