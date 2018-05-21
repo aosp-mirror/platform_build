@@ -23,6 +23,16 @@ common_javalib.jar := $(intermediates.COMMON)/javalib.jar
 $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_jar)))
 $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_pre_proguard_jar)))
 
+ifdef LOCAL_DROIDDOC_STUBS_SRCJAR
+$(eval $(call copy-one-file,$(LOCAL_DROIDDOC_STUBS_SRCJAR),$(OUT_DOCS)/$(LOCAL_MODULE)-stubs.srcjar))
+ALL_DOCS += $(OUT_DOCS)/$(LOCAL_MODULE)-stubs.srcjar
+endif
+
+ifdef LOCAL_DROIDDOC_DOC_ZIP
+$(eval $(call copy-one-file,$(LOCAL_DROIDDOC_DOC_ZIP),$(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip))
+$(call dist-for-goals,docs,$(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip)
+endif
+
 ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
     $(intermediates.COMMON)/jacoco-report-classes.jar))
@@ -30,17 +40,47 @@ ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
     $(intermediates.COMMON)/jacoco-report-classes.jar)
 endif
 
-ifneq ($(TURBINE_DISABLED),false)
+ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
+  my_res_package := $(intermediates.COMMON)/package-res.apk
+
+  $(my_res_package): $(LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE)
+	@echo "Copy: $@"
+	$(copy-file-to-target)
+
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_res_package))
+
+  my_proguard_flags := $(intermediates.COMMON)/export_proguard_flags
+  $(my_proguard_flags): $(LOCAL_SOONG_EXPORT_PROGUARD_FLAGS)
+	@echo "Export proguard flags: $@"
+	rm -f $@
+	touch $@
+	for f in $+; do \
+		echo -e "\n# including $$f" >>$@; \
+		cat $$f >>$@; \
+	done
+
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_proguard_flags))
+
+  my_static_library_extra_packages := $(intermediates.COMMON)/extra_packages
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_STATIC_LIBRARY_EXTRA_PACKAGES),$(my_static_library_extra_packages)))
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_static_library_extra_packages))
+endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
+
+ifneq ($(TURBINE_ENABLED),false)
 ifdef LOCAL_SOONG_HEADER_JAR
 $(eval $(call copy-one-file,$(LOCAL_SOONG_HEADER_JAR),$(full_classes_header_jar)))
 else
 $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
 endif
-endif # TURBINE_DISABLED != false
+endif # TURBINE_ENABLED != false
 
 ifdef LOCAL_SOONG_DEX_JAR
   ifndef LOCAL_IS_HOST_MODULE
-    $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
+    ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)  # is_boot_jar
+      $(eval $(call hiddenapi-copy-soong-jar,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
+    else # !is_boot_jar
+      $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
+    endif # is_boot_jar
     $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar) $(full_classes_header_jar)))
 
     dex_preopt_profile_src_file := $(common_javalib.jar)
@@ -85,21 +125,19 @@ javac-check-$(LOCAL_MODULE) : $(full_classes_jar)
 ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_SDK_VERSION),system_current)
 my_link_type := java:system
-my_warn_types := java:platform
-my_allowed_types := java:sdk java:system
 else ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
 my_link_type := java:system
-my_warn_types := java:platform
-my_allowed_types := java:sdk java:system
+else ifeq ($(LOCAL_SDK_VERSION),core_current)
+my_link_type := java:core
 else ifneq ($(LOCAL_SDK_VERSION),)
 my_link_type := java:sdk
-my_warn_types := java:system java:platform
-my_allowed_types := java:sdk
 else
 my_link_type := java:platform
-my_warn_types :=
-my_allowed_types := java:sdk java:system java:platform
 endif
+# warn/allowed types are both empty because Soong modules can't depend on
+# make-defined modules.
+my_warn_types :=
+my_allowed_types :=
 
 my_link_deps :=
 my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)

@@ -72,6 +72,8 @@ else ifneq ($(filter $(TARGET_OUT_OEM)/%,$(_path)),)
 LOCAL_OEM_MODULE := true
 else ifneq ($(filter $(TARGET_OUT_ODM)/%,$(_path)),)
 LOCAL_ODM_MODULE := true
+else ifneq ($(filter $(TARGET_OUT_PRODUCT)/%,$(_path)),)
+LOCAL_PRODUCT_MODULE := true
 endif
 _path :=
 
@@ -86,7 +88,7 @@ $(call pretty-error,Only one of LOCAL_PROPRIETARY_MODULE[$(LOCAL_PROPRIETARY_MOD
 endif
 
 include $(BUILD_SYSTEM)/local_vndk.mk
-include $(BUILD_SYSTEM)/local_vsdk.mk
+include $(BUILD_SYSTEM)/local_systemsdk.mk
 
 my_module_tags := $(LOCAL_MODULE_TAGS)
 ifeq ($(my_host_cross),true)
@@ -200,6 +202,8 @@ else ifeq (true,$(LOCAL_OEM_MODULE))
   partition_tag := _OEM
 else ifeq (true,$(LOCAL_ODM_MODULE))
   partition_tag := _ODM
+else ifeq (true,$(LOCAL_PRODUCT_MODULE))
+  partition_tag := _PRODUCT
 else ifeq (NATIVE_TESTS,$(LOCAL_MODULE_CLASS))
   partition_tag := _DATA
 else
@@ -436,6 +440,30 @@ $(my_all_targets) : | $(my_installed_symlinks)
 endif # !LOCAL_UNINSTALLABLE_MODULE
 
 ###########################################################
+## VINTF manifest fragment goals
+###########################################################
+
+my_vintf_installed:=
+my_vintf_pairs:=
+ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+ifndef LOCAL_IS_HOST_MODULE
+ifneq ($(strip $(LOCAL_VINTF_FRAGMENTS)),)
+
+my_vintf_pairs := $(foreach xml,$(LOCAL_VINTF_FRAGMENTS),$(LOCAL_PATH)/$(xml):$(TARGET_OUT$(partition_tag)_ETC)/vintf/manifest/$(notdir $(xml)))
+my_vintf_installed := $(foreach xml,$(my_vintf_pairs),$(call word-colon,2,$(xml)))
+
+# Only set up copy rules once, even if another arch variant shares it
+my_vintf_new_pairs := $(filter-out $(ALL_VINTF_MANIFEST_FRAGMENTS_LIST),$(my_vintf_pairs))
+my_vintf_new_installed := $(call copy-many-vintf-manifest-files-checked,$(my_vintf_pairs))
+
+ALL_VINTF_MANIFEST_FRAGMENTS_LIST += $(my_vintf_new_pairs)
+
+$(my_all_targets) : $(my_vintf_installed)
+endif # LOCAL_VINTF_FRAGMENTS
+endif # !LOCAL_IS_HOST_MODULE
+endif # !LOCAL_UNINSTALLABLE_MODULE
+
+###########################################################
 ## CHECK_BUILD goals
 ###########################################################
 my_checked_module :=
@@ -490,6 +518,20 @@ endif
 endif
 endif
 
+# For test modules that lack a suite tag, set null-suite as the default.
+# We only support adding a default suite to native tests, native benchmarks, and instrumentation tests.
+# This is because they are the only tests we currently auto-generate test configs for.
+ifndef LOCAL_COMPATIBILITY_SUITE
+ifneq ($(filter NATIVE_TESTS NATIVE_BENCHMARK, $(LOCAL_MODULE_CLASS)),)
+LOCAL_COMPATIBILITY_SUITE := null-suite
+endif
+ifneq ($(filter APPS, $(LOCAL_MODULE_CLASS)),)
+ifneq ($(filter $(my_module_tags),tests),)
+LOCAL_COMPATIBILITY_SUITE := null-suite
+endif
+endif
+endif
+
 ###########################################################
 ## Compatibility suite files.
 ###########################################################
@@ -499,19 +541,18 @@ ifdef LOCAL_COMPATIBILITY_SUITE
 # separate the multiple architectures into subdirectories of the testcase folder.
 arch_dir :=
 is_native :=
+multi_arch :=
 ifeq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
   is_native := true
-endif
-ifeq ($(LOCAL_MODULE_CLASS),NATIVE_BENCHMARK)
-  is_native := true
+  multi_arch := true
 endif
 ifdef LOCAL_MULTILIB
-  is_native := true
+  multi_arch := true
 endif
-ifdef is_native
+ifdef multi_arch
   arch_dir := /$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-  is_native :=
 endif
+multi_arch :=
 
 # The module itself.
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
@@ -531,12 +572,43 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
       $(s):$(dir)/$(n)))))
 
+test_config := $(wildcard $(LOCAL_PATH)/AndroidTest.xml)
+ifeq (,$(test_config))
+  ifneq (true,$(is_native))
+    is_instrumentation_test := true
+    ifeq (true, $(LOCAL_IS_HOST_MODULE))
+      is_instrumentation_test := false
+    endif
+    # If LOCAL_MODULE_CLASS is not APPS, it's certainly not an instrumentation
+    # test. However, some packages for test data also have LOCAL_MODULE_CLASS
+    # set to APPS. These will require flag LOCAL_DISABLE_AUTO_GENERATE_TEST_CONFIG
+    # to disable auto-generating test config file.
+    ifneq (APPS, $(LOCAL_MODULE_CLASS))
+      is_instrumentation_test := false
+    endif
+  endif
+  # CTS modules can be used for test data, so test config files must be
+  # explicitly created using AndroidTest.xml
+  ifeq (,$(filter cts, $(LOCAL_COMPATIBILITY_SUITE)))
+    ifneq (true, $(LOCAL_DISABLE_AUTO_GENERATE_TEST_CONFIG))
+      ifeq (true, $(filter true,$(is_native) $(is_instrumentation_test)))
+        include $(BUILD_SYSTEM)/autogen_test_config.mk
+        test_config := $(autogen_test_config_file)
+        autogen_test_config_file :=
+      endif
+    endif
+  endif
+endif
 
-ifneq (,$(wildcard $(LOCAL_PATH)/AndroidTest.xml))
+is_instrumentation_test :=
+
+ifneq (,$(test_config))
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
-    $(LOCAL_PATH)/AndroidTest.xml:$(dir)/$(LOCAL_MODULE).config)))
+    $(test_config):$(dir)/$(LOCAL_MODULE).config)))
 endif
+
+test_config :=
 
 ifneq (,$(wildcard $(LOCAL_PATH)/DynamicConfig.xml))
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
@@ -562,9 +634,19 @@ $(foreach pair, $(my_test_data_file_pairs), \
       $(src_path):$(call append-path,$(dir),$(file))))))
 endif
 
+arch_dir :=
+is_native :=
+
 $(call create-suite-dependencies)
 
 endif  # LOCAL_COMPATIBILITY_SUITE
+
+###########################################################
+## Add test module to ALL_DISABLED_PRESUBMIT_TESTS if LOCAL_PRESUBMIT_DISABLED is set to true.
+###########################################################
+ifeq ($(LOCAL_PRESUBMIT_DISABLED),true)
+  ALL_DISABLED_PRESUBMIT_TESTS += $(LOCAL_MODULE)
+endif  # LOCAL_PRESUBMIT_DISABLED
 
 ###########################################################
 ## Register with ALL_MODULES
@@ -588,11 +670,11 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) \
     $(LOCAL_INSTALLED_MODULE) $(my_init_rc_installed) $(my_installed_symlinks) \
-    $(my_installed_test_data))
+    $(my_installed_test_data) $(my_vintf_installed))
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).BUILT_INSTALLED) \
     $(LOCAL_BUILT_MODULE):$(LOCAL_INSTALLED_MODULE) \
-    $(my_init_rc_pairs) $(my_test_data_pairs))
+    $(my_init_rc_pairs) $(my_test_data_pairs) $(my_vintf_pairs))
 endif
 ifdef LOCAL_PICKUP_FILES
 # Files or directories ready to pick up by the build system
@@ -600,11 +682,32 @@ ifdef LOCAL_PICKUP_FILES
 ALL_MODULES.$(my_register_name).PICKUP_FILES := \
     $(ALL_MODULES.$(my_register_name).PICKUP_FILES) $(LOCAL_PICKUP_FILES)
 endif
+
 my_required_modules := $(LOCAL_REQUIRED_MODULES) \
     $(LOCAL_REQUIRED_MODULES_$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
 ifdef LOCAL_IS_HOST_MODULE
 my_required_modules += $(LOCAL_REQUIRED_MODULES_$($(my_prefix)OS))
 endif
+
+###############################################################################
+## When compiling against the VNDK, add the .vendor suffix to required modules.
+###############################################################################
+ifneq ($(LOCAL_USE_VNDK),)
+  ####################################################
+  ## Soong modules may be built twice, once for /system
+  ## and once for /vendor. If we're using the VNDK,
+  ## switch all soong libraries over to the /vendor
+  ## variant.
+  ####################################################
+  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    # We don't do this renaming for soong-defined modules since they already
+    # have correct names (with .vendor suffix when necessary) in their
+    # LOCAL_*_LIBRARIES.
+    my_required_modules := $(foreach l,$(my_required_modules),\
+      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  endif
+endif
+
 ALL_MODULES.$(my_register_name).REQUIRED := \
     $(strip $(ALL_MODULES.$(my_register_name).REQUIRED) $(my_required_modules))
 ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED := \
@@ -613,6 +716,9 @@ ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED := \
 ALL_MODULES.$(my_register_name).TARGET_REQUIRED := \
     $(strip $(ALL_MODULES.$(my_register_name).TARGET_REQUIRED)\
         $(LOCAL_TARGET_REQUIRED_MODULES))
+ALL_MODULES.$(my_register_name).HOST_REQUIRED := \
+    $(strip $(ALL_MODULES.$(my_register_name).HOST_REQUIRED)\
+        $(LOCAL_HOST_REQUIRED_MODULES))
 ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS := \
     $(ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS) $(event_log_tags)
 ALL_MODULES.$(my_register_name).MAKEFILE := \

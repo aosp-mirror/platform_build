@@ -16,11 +16,43 @@
 
 from __future__ import print_function
 
-import common
 import unittest
 
-from blockimgdiff import BlockImageDiff, EmptyImage, Transfer
+import common
+from blockimgdiff import (BlockImageDiff, EmptyImage, HeapItem, ImgdiffStats,
+                          Transfer)
 from rangelib import RangeSet
+
+
+class HealpItemTest(unittest.TestCase):
+
+  class Item(object):
+    def __init__(self, score):
+      self.score = score
+
+  def test_init(self):
+    item1 = HeapItem(self.Item(15))
+    item2 = HeapItem(self.Item(20))
+    item3 = HeapItem(self.Item(15))
+    self.assertTrue(item1)
+    self.assertTrue(item2)
+    self.assertTrue(item3)
+
+    self.assertNotEqual(item1, item2)
+    self.assertEqual(item1, item3)
+    # HeapItem uses negated scores.
+    self.assertGreater(item1, item2)
+    self.assertLessEqual(item1, item3)
+    self.assertTrue(item1 <= item3)
+    self.assertFalse(item2 >= item1)
+
+  def test_clear(self):
+    item = HeapItem(self.Item(15))
+    self.assertTrue(item)
+
+    item.clear()
+    self.assertFalse(item)
+
 
 class BlockImageDiffTest(unittest.TestCase):
 
@@ -141,3 +173,102 @@ class BlockImageDiffTest(unittest.TestCase):
     # Insufficient cache to stash 15 blocks (size * 0.8 < 15).
     common.OPTIONS.cache_size = 15 * 4096
     self.assertEqual(15, block_image_diff.ReviseStashSize())
+
+  def test_FileTypeSupportedByImgdiff(self):
+    self.assertTrue(
+        BlockImageDiff.FileTypeSupportedByImgdiff(
+            "/system/priv-app/Settings/Settings.apk"))
+    self.assertTrue(
+        BlockImageDiff.FileTypeSupportedByImgdiff(
+            "/system/framework/am.jar"))
+    self.assertTrue(
+        BlockImageDiff.FileTypeSupportedByImgdiff(
+            "/system/etc/security/otacerts.zip"))
+
+    self.assertFalse(
+        BlockImageDiff.FileTypeSupportedByImgdiff(
+            "/system/framework/arm/boot.oat"))
+    self.assertFalse(
+        BlockImageDiff.FileTypeSupportedByImgdiff(
+            "/system/priv-app/notanapk"))
+
+  def test_CanUseImgdiff(self):
+    block_image_diff = BlockImageDiff(EmptyImage(), EmptyImage())
+    self.assertTrue(
+        block_image_diff.CanUseImgdiff(
+            "/system/app/app1.apk", RangeSet("10-15"), RangeSet("0-5")))
+    self.assertTrue(
+        block_image_diff.CanUseImgdiff(
+            "/vendor/app/app2.apk", RangeSet("20 25"), RangeSet("30-31"), True))
+
+    self.assertDictEqual(
+        {
+            ImgdiffStats.USED_IMGDIFF : {"/system/app/app1.apk"},
+            ImgdiffStats.USED_IMGDIFF_LARGE_APK : {"/vendor/app/app2.apk"},
+        },
+        block_image_diff.imgdiff_stats.stats)
+
+
+  def test_CanUseImgdiff_ineligible(self):
+    # Disabled by caller.
+    block_image_diff = BlockImageDiff(EmptyImage(), EmptyImage(),
+                                      disable_imgdiff=True)
+    self.assertFalse(
+        block_image_diff.CanUseImgdiff(
+            "/system/app/app1.apk", RangeSet("10-15"), RangeSet("0-5")))
+
+    # Unsupported file type.
+    block_image_diff = BlockImageDiff(EmptyImage(), EmptyImage())
+    self.assertFalse(
+        block_image_diff.CanUseImgdiff(
+            "/system/bin/gzip", RangeSet("10-15"), RangeSet("0-5")))
+
+    # At least one of the ranges is in non-monotonic order.
+    self.assertFalse(
+        block_image_diff.CanUseImgdiff(
+            "/system/app/app2.apk", RangeSet("10-15"),
+            RangeSet("15-20 30 10-14")))
+
+    # At least one of the ranges has been modified.
+    src_ranges = RangeSet("0-5")
+    src_ranges.extra['trimmed'] = True
+    self.assertFalse(
+        block_image_diff.CanUseImgdiff(
+            "/vendor/app/app3.apk", RangeSet("10-15"), src_ranges))
+
+    # At least one of the ranges is incomplete.
+    src_ranges = RangeSet("0-5")
+    src_ranges.extra['incomplete'] = True
+    self.assertFalse(
+        block_image_diff.CanUseImgdiff(
+            "/vendor/app/app4.apk", RangeSet("10-15"), src_ranges))
+
+    # The stats are correctly logged.
+    self.assertDictEqual(
+        {
+            ImgdiffStats.SKIPPED_NONMONOTONIC : {'/system/app/app2.apk'},
+            ImgdiffStats.SKIPPED_TRIMMED : {'/vendor/app/app3.apk'},
+            ImgdiffStats.SKIPPED_INCOMPLETE: {'/vendor/app/app4.apk'},
+        },
+        block_image_diff.imgdiff_stats.stats)
+
+
+class ImgdiffStatsTest(unittest.TestCase):
+
+  def test_Log(self):
+    imgdiff_stats = ImgdiffStats()
+    imgdiff_stats.Log("/system/app/app2.apk", ImgdiffStats.USED_IMGDIFF)
+    self.assertDictEqual(
+        {
+            ImgdiffStats.USED_IMGDIFF: {'/system/app/app2.apk'},
+        },
+        imgdiff_stats.stats)
+
+  def test_Log_invalidInputs(self):
+    imgdiff_stats = ImgdiffStats()
+
+    self.assertRaises(AssertionError, imgdiff_stats.Log, "/system/bin/gzip",
+                      ImgdiffStats.USED_IMGDIFF)
+
+    self.assertRaises(AssertionError, imgdiff_stats.Log, "/system/app/app1.apk",
+                      "invalid reason")

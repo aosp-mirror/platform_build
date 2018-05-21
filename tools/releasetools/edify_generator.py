@@ -77,14 +77,14 @@ class EdifyGenerator(object):
     with temporary=True) to this one."""
     self.script.extend(other.script)
 
-  def AssertOemProperty(self, name, values):
+  def AssertOemProperty(self, name, values, oem_no_mount):
     """Assert that a property on the OEM paritition matches allowed values."""
     if not name:
       raise ValueError("must specify an OEM property")
     if not values:
       raise ValueError("must specify the OEM value")
-    get_prop_command = None
-    if common.OPTIONS.oem_no_mount:
+
+    if oem_no_mount:
       get_prop_command = 'getprop("%s")' % name
     else:
       get_prop_command = 'file_getprop("/oem/oem.prop", "%s")' % name

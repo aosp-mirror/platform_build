@@ -71,22 +71,22 @@ ifneq ($(LOCAL_SDK_VERSION),)
   else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),test_current)
     LOCAL_JAVA_LIBRARIES := android_test_stubs_current $(LOCAL_JAVA_LIBRARIES)
     $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, android_test_stubs_current)
+  else ifeq ($(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS),core_current)
+    LOCAL_JAVA_LIBRARIES := core.current.stubs $(LOCAL_JAVA_LIBRARIES)
+    $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, core.current.stubs)
   else
-    ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
-      ifeq (,$(TARGET_BUILD_APPS))
-        LOCAL_JAVA_LIBRARIES := system_sdk_v$(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)) $(LOCAL_JAVA_LIBRARIES)
-        $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, system_sdk_v$(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)))
-      else
-        LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
-        $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, sdk_v$(LOCAL_SDK_VERSION))
-      endif
-    else
-      LOCAL_JAVA_LIBRARIES := sdk_v$(LOCAL_SDK_VERSION) $(LOCAL_JAVA_LIBRARIES)
-      $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, sdk_v$(LOCAL_SDK_VERSION))
-    endif
+    # TARGET_BUILD_APPS is set. Use the modules defined in prebuilts/sdk/Android.mk.
+    _module_name := $(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION))
+    LOCAL_JAVA_LIBRARIES := $(_module_name) $(LOCAL_JAVA_LIBRARIES)
+    $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, $(_module_name))
+    _module_name :=
   endif
 else
-  LOCAL_JAVA_LIBRARIES := core-oj core-libart ext framework $(LOCAL_JAVA_LIBRARIES)
+  ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
+    LOCAL_JAVA_LIBRARIES := core-oj core-libart
+  else
+    LOCAL_JAVA_LIBRARIES := core-oj core-libart ext framework $(LOCAL_JAVA_LIBRARIES)
+  endif
   $(full_target): PRIVATE_BOOTCLASSPATH := $(call java-lib-files, core-oj):$(call java-lib-files, core-libart)
 endif  # LOCAL_SDK_VERSION
 LOCAL_JAVA_LIBRARIES := $(sort $(LOCAL_JAVA_LIBRARIES))
@@ -188,15 +188,15 @@ $(full_target): \
         $(droiddoc) \
         $(html_dir_files) \
         $(full_java_libs) \
-        $(EXTRACT_SRCJARS) \
+        $(ZIPSYNC) \
         $(LOCAL_SRCJARS) \
         $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	@echo Docs droiddoc: $(PRIVATE_OUT_DIR)
 	$(hide) mkdir -p $(dir $@)
-	$(hide) rm -rf $(PRIVATE_STUB_OUT_DIR) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR)
+	$(hide) rm -rf $(PRIVATE_STUB_OUT_DIR)
 	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
-	$(EXTRACT_SRCJARS) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) $(PRIVATE_SRCJAR_LIST_FILE) $(PRIVATE_SRCJARS)
+	$(ZIPSYNC) -d $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) -l $(PRIVATE_SRCJAR_LIST_FILE) -f "*.java" $(PRIVATE_SRCJARS)
 	$(hide) ( \
 		$(JAVADOC) \
                 -encoding UTF-8 \
@@ -215,7 +215,7 @@ $(full_target): \
                 $(PRIVATE_ADDITIONAL_HTML_DIR) \
                 $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH)) \
                 $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
-                -sourcepath $(PRIVATE_SOURCE_PATH)$(addprefix :,$(PRIVATE_CLASSPATH)) \
+                -sourcepath $(PRIVATE_SOURCE_PATH) \
                 -d $(PRIVATE_OUT_DIR) \
                 $(PRIVATE_CURRENT_BUILD) $(PRIVATE_CURRENT_TIME) \
                 $(PRIVATE_DROIDDOC_OPTIONS) \
@@ -242,13 +242,12 @@ else
 # For OpenJDK 8 we can use -bootclasspath to define the core libraries code.
 $(full_target): PRIVATE_BOOTCLASSPATH_ARG := $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH))
 endif
-$(full_target): $(full_src_files) $(LOCAL_GENERATED_SOURCES) $(full_java_libs) $(EXTRACT_SRCJARS) $(LOCAL_SRCJARS) $(LOCAL_ADDITIONAL_DEPENDENCIES)
+$(full_target): $(full_src_files) $(LOCAL_GENERATED_SOURCES) $(full_java_libs) $(ZIPSYNC) $(LOCAL_SRCJARS) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	@echo Docs javadoc: $(PRIVATE_OUT_DIR)
 	@mkdir -p $(dir $@)
-	rm -rf $(PRIVATE_SRCJAR_INTERMEDIATES_DIR)
 	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
-	$(EXTRACT_SRCJARS) $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) $(PRIVATE_SRCJAR_LIST_FILE) $(PRIVATE_SRCJARS)
+	$(ZIPSYNC) -d $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) -l $(PRIVATE_SRCJAR_LIST_FILE) -f "*.java" $(PRIVATE_SRCJARS)
 	$(hide) ( \
 		$(JAVADOC) \
                 -encoding UTF-8 \
@@ -261,7 +260,7 @@ $(full_target): $(full_src_files) $(LOCAL_GENERATED_SOURCES) $(full_java_libs) $
                 $(PRIVATE_PROFILING_OPTIONS) \
                 $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
                 $(PRIVATE_BOOTCLASSPATH_ARG) \
-                -sourcepath $(PRIVATE_SOURCE_PATH)$(addprefix :,$(PRIVATE_CLASSPATH)) \
+                -sourcepath $(PRIVATE_SOURCE_PATH) \
                 -d $(PRIVATE_OUT_DIR) \
                 -quiet \
         && touch -f $@ \

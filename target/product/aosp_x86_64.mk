@@ -25,7 +25,15 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_COPY_FILES += \
     development/sys-img/advancedFeatures.ini:advancedFeatures.ini \
     device/generic/goldfish/data/etc/encryptionkey.img:encryptionkey.img \
-    prebuilts/qemu-kernel/x86_64/3.18/kernel-qemu2:kernel-ranchu
+    prebuilts/qemu-kernel/x86_64/4.4/kernel-qemu2:kernel-ranchu
+
+# Copy different zygote settings for vendor.img to select by setting property
+# ro.zygote=zygote64_32 or ro.zygote=zygote32_64:
+#   1. 64-bit primary, 32-bit secondary OR
+#   2. 32-bit primary, 64-bit secondary
+# init.zygote64_32.rc is in the core_64_bit.mk below
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)

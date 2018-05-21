@@ -23,7 +23,7 @@ my_full_libs_manifest_files += $(foreach lib, $(LOCAL_STATIC_JAVA_AAR_LIBRARIES)
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/aar/AndroidManifest.xml)
 
 # With aapt2, we'll link in the built resource from the AAR.
-ifndef LOCAL_USE_AAPT2
+ifneq ($(LOCAL_USE_AAPT2),true)
 LOCAL_RESOURCE_DIR += $(foreach lib, $(LOCAL_STATIC_JAVA_AAR_LIBRARIES),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/aar/res)
 endif  # LOCAL_USE_AAPT2

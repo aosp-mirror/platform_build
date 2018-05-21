@@ -25,17 +25,17 @@ import platform
 import re
 import shlex
 import shutil
+import string
 import subprocess
 import sys
 import tempfile
 import threading
 import time
 import zipfile
+from hashlib import sha1, sha256
 
 import blockimgdiff
-
-from hashlib import sha1 as sha1
-
+import sparse_img
 
 class Options(object):
   def __init__(self):
@@ -78,7 +78,7 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 
 
 # The partitions allowed to be signed by AVB (Android verified boot 2.0).
-AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'dtbo')
+AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'product', 'dtbo')
 
 
 class ErrorCode(object):
@@ -109,6 +109,7 @@ class ErrorCode(object):
   TUNE_PARTITION_FAILURE = 3007
   APPLY_PATCH_FAILURE = 3008
 
+
 class ExternalError(RuntimeError):
   pass
 
@@ -124,6 +125,11 @@ def Run(args, verbose=None, **kwargs):
   if verbose:
     print("  running: ", " ".join(args))
   return subprocess.Popen(args, **kwargs)
+
+
+def RoundUpTo4K(value):
+  rounded_up = value + 4095
+  return rounded_up - (rounded_up % 4096)
 
 
 def CloseInheritedPipes():
@@ -216,21 +222,6 @@ def LoadInfoDict(input_file, input_dir=None):
             vendor_base_fs_file,))
         del d["vendor_base_fs_file"]
 
-  try:
-    data = read_helper("META/imagesizes.txt")
-    for line in data.split("\n"):
-      if not line:
-        continue
-      name, value = line.split(" ", 1)
-      if not value:
-        continue
-      if name == "blocksize":
-        d[name] = value
-      else:
-        d[name + "_size"] = value
-  except KeyError:
-    pass
-
   def makeint(key):
     if key in d:
       d[key] = int(d[key], 0)
@@ -259,6 +250,20 @@ def LoadInfoDict(input_file, input_dir=None):
 
   d["build.prop"] = LoadBuildProp(read_helper, 'SYSTEM/build.prop')
   d["vendor.build.prop"] = LoadBuildProp(read_helper, 'VENDOR/build.prop')
+
+  # Set up the salt (based on fingerprint or thumbprint) that will be used when
+  # adding AVB footer.
+  if d.get("avb_enable") == "true":
+    fp = None
+    if "build.prop" in d:
+      build_prop = d["build.prop"]
+      if "ro.build.fingerprint" in build_prop:
+        fp = build_prop["ro.build.fingerprint"]
+      elif "ro.build.thumbprint" in build_prop:
+        fp = build_prop["ro.build.thumbprint"]
+    if fp:
+      d["avb_salt"] = sha256(fp).hexdigest()
+
   return d
 
 
@@ -456,6 +461,11 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   # "boot" or "recovery", without extension.
   partition_name = os.path.basename(sourcedir).lower()
 
+  if (partition_name == "recovery" and
+      info_dict.get("include_recovery_dtbo") == "true"):
+    fn = os.path.join(sourcedir, "recovery_dtbo")
+    cmd.extend(["--recovery_dtbo", fn])
+
   p = Run(cmd, stdout=subprocess.PIPE)
   p.communicate()
   assert p.returncode == 0, "mkbootimg of %s image failed" % (partition_name,)
@@ -574,28 +584,27 @@ def Gunzip(in_filename, out_filename):
 
 
 def UnzipTemp(filename, pattern=None):
-  """Unzip the given archive into a temporary directory and return the name.
+  """Unzips the given archive into a temporary directory and returns the name.
 
-  If filename is of the form "foo.zip+bar.zip", unzip foo.zip into a
-  temp dir, then unzip bar.zip into that_dir/BOOTABLE_IMAGES.
+  If filename is of the form "foo.zip+bar.zip", unzip foo.zip into a temp dir,
+  then unzip bar.zip into that_dir/BOOTABLE_IMAGES.
 
-  Returns (tempdir, zipobj) where zipobj is a zipfile.ZipFile (of the
-  main file), open for reading.
+  Returns:
+    The name of the temporary directory.
   """
-
-  tmp = tempfile.mkdtemp(prefix="targetfiles-")
-  OPTIONS.tempfiles.append(tmp)
 
   def unzip_to_dir(filename, dirname):
     cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
     if pattern is not None:
       cmd.extend(pattern)
-    p = Run(cmd, stdout=subprocess.PIPE)
-    p.communicate()
+    p = Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdoutdata, _ = p.communicate()
     if p.returncode != 0:
-      raise ExternalError("failed to unzip input target-files \"%s\"" %
-                          (filename,))
+      raise ExternalError(
+          "Failed to unzip input target-files \"{}\":\n{}".format(
+              filename, stdoutdata))
 
+  tmp = MakeTempDir(prefix="targetfiles-")
   m = re.match(r"^(.*[.]zip)\+(.*[.]zip)$", filename, re.IGNORECASE)
   if m:
     unzip_to_dir(m.group(1), tmp)
@@ -604,7 +613,66 @@ def UnzipTemp(filename, pattern=None):
   else:
     unzip_to_dir(filename, tmp)
 
-  return tmp, zipfile.ZipFile(filename, "r")
+  return tmp
+
+
+def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks):
+  """Returns a SparseImage object suitable for passing to BlockImageDiff.
+
+  This function loads the specified sparse image from the given path, and
+  performs additional processing for OTA purpose. For example, it always adds
+  block 0 to clobbered blocks list. It also detects files that cannot be
+  reconstructed from the block list, for whom we should avoid applying imgdiff.
+
+  Args:
+    which: The partition name, which must be "system" or "vendor".
+    tmpdir: The directory that contains the prebuilt image and block map file.
+    input_zip: The target-files ZIP archive.
+    allow_shared_blocks: Whether having shared blocks is allowed.
+
+  Returns:
+    A SparseImage object, with file_map info loaded.
+  """
+  assert which in ("system", "vendor")
+
+  path = os.path.join(tmpdir, "IMAGES", which + ".img")
+  mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
+
+  # The image and map files must have been created prior to calling
+  # ota_from_target_files.py (since LMP).
+  assert os.path.exists(path) and os.path.exists(mappath)
+
+  # In ext4 filesystems, block 0 might be changed even being mounted R/O. We add
+  # it to clobbered_blocks so that it will be written to the target
+  # unconditionally. Note that they are still part of care_map. (Bug: 20939131)
+  clobbered_blocks = "0"
+
+  image = sparse_img.SparseImage(path, mappath, clobbered_blocks,
+                                 allow_shared_blocks=allow_shared_blocks)
+
+  # block.map may contain less blocks, because mke2fs may skip allocating blocks
+  # if they contain all zeros. We can't reconstruct such a file from its block
+  # list. Tag such entries accordingly. (Bug: 65213616)
+  for entry in image.file_map:
+    # "/system/framework/am.jar" => "SYSTEM/framework/am.jar".
+    arcname = string.replace(entry, which, which.upper(), 1)[1:]
+    # Skip artificial names, such as "__ZERO", "__NONZERO-1".
+    if arcname not in input_zip.namelist():
+      continue
+
+    info = input_zip.getinfo(arcname)
+    ranges = image.file_map[entry]
+
+    # If a RangeSet has been tagged as using shared blocks while loading the
+    # image, its block list must be already incomplete due to that reason. Don't
+    # give it 'incomplete' tag to avoid messing up the imgdiff stats.
+    if ranges.extra.get('uses_shared_blocks'):
+      continue
+
+    if RoundUpTo4K(info.file_size) > ranges.size() * 4096:
+      ranges.extra['incomplete'] = True
+
+  return image
 
 
 def GetKeyPasswords(keylist):
@@ -657,18 +725,31 @@ def GetKeyPasswords(keylist):
 
 
 def GetMinSdkVersion(apk_name):
-  """Get the minSdkVersion delared in the APK. This can be both a decimal number
-  (API Level) or a codename.
+  """Gets the minSdkVersion declared in the APK.
+
+  It calls 'aapt' to query the embedded minSdkVersion from the given APK file.
+  This can be both a decimal number (API Level) or a codename.
+
+  Args:
+    apk_name: The APK filename.
+
+  Returns:
+    The parsed SDK version string.
+
+  Raises:
+    ExternalError: On failing to obtain the min SDK version.
   """
+  proc = Run(
+      ["aapt", "dump", "badging", apk_name], stdout=subprocess.PIPE,
+      stderr=subprocess.PIPE)
+  stdoutdata, stderrdata = proc.communicate()
+  if proc.returncode != 0:
+    raise ExternalError(
+        "Failed to obtain minSdkVersion: aapt return code {}:\n{}\n{}".format(
+            proc.returncode, stdoutdata, stderrdata))
 
-  p = Run(["aapt", "dump", "badging", apk_name], stdout=subprocess.PIPE)
-  output, err = p.communicate()
-  if err:
-    raise ExternalError("Failed to obtain minSdkVersion: aapt return code %s"
-        % (p.returncode,))
-
-  for line in output.split("\n"):
-    # Looking for lines such as sdkVersion:'23' or sdkVersion:'M'
+  for line in stdoutdata.split("\n"):
+    # Looking for lines such as sdkVersion:'23' or sdkVersion:'M'.
     m = re.match(r'sdkVersion:\'([^\']*)\'', line)
     if m:
       return m.group(1)
@@ -676,11 +757,20 @@ def GetMinSdkVersion(apk_name):
 
 
 def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
-  """Get the minSdkVersion declared in the APK as a number (API Level). If
-  minSdkVersion is set to a codename, it is translated to a number using the
-  provided map.
-  """
+  """Returns the minSdkVersion declared in the APK as a number (API Level).
 
+  If minSdkVersion is set to a codename, it is translated to a number using the
+  provided map.
+
+  Args:
+    apk_name: The APK filename.
+
+  Returns:
+    The parsed SDK version number.
+
+  Raises:
+    ExternalError: On failing to get the min SDK version number.
+  """
   version = GetMinSdkVersion(apk_name)
   try:
     return int(version)
@@ -689,8 +779,9 @@ def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
     if version in codename_to_api_level_map:
       return codename_to_api_level_map[version]
     else:
-      raise ExternalError("Unknown minSdkVersion: '%s'. Known codenames: %s"
-                          % (version, codename_to_api_level_map))
+      raise ExternalError(
+          "Unknown minSdkVersion: '{}'. Known codenames: {}".format(
+              version, codename_to_api_level_map))
 
 
 def SignFile(input_name, output_name, key, password, min_api_level=None,
@@ -734,12 +825,15 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
               key + OPTIONS.private_key_suffix,
               input_name, output_name])
 
-  p = Run(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+  p = Run(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+          stderr=subprocess.STDOUT)
   if password is not None:
     password += "\n"
-  p.communicate(password)
+  stdoutdata, _ = p.communicate(password)
   if p.returncode != 0:
-    raise ExternalError("signapk.jar failed: return code %s" % (p.returncode,))
+    raise ExternalError(
+        "Failed to run signapk.jar: return code {}:\n{}".format(
+            p.returncode, stdoutdata))
 
 
 def CheckSize(data, target, info_dict):
@@ -793,11 +887,22 @@ def CheckSize(data, target, info_dict):
 
 
 def ReadApkCerts(tf_zip):
-  """Given a target_files ZipFile, parse the META/apkcerts.txt file
-  and return a tuple with the following elements: (1) a dictionary that maps
-  packages to certs (based on the "certificate" and "private_key" attributes
-  in the file. (2) A string representing the extension of compressed APKs in
-  the target files (e.g ".gz" ".bro")."""
+  """Parses the APK certs info from a given target-files zip.
+
+  Given a target-files ZipFile, parses the META/apkcerts.txt entry and returns a
+  tuple with the following elements: (1) a dictionary that maps packages to
+  certs (based on the "certificate" and "private_key" attributes in the file;
+  (2) a string representing the extension of compressed APKs in the target files
+  (e.g ".gz", ".bro").
+
+  Args:
+    tf_zip: The input target_files ZipFile (already open).
+
+  Returns:
+    (certmap, ext): certmap is a dictionary that maps packages to certs; ext is
+        the extension string of compressed APKs (e.g. ".gz"), or None if there's
+        no compressed APKs.
+  """
   certmap = {}
   compressed_extension = None
 
@@ -813,55 +918,66 @@ def ReadApkCerts(tf_zip):
     line = line.strip()
     if not line:
       continue
-    m = re.match(r'^name="(?P<NAME>.*)"\s+certificate="(?P<CERT>.*)"\s+'
-                 r'private_key="(?P<PRIVKEY>.*?)"(\s+compressed="(?P<COMPRESSED>.*)")?$',
-                 line)
-    if m:
-      matches = m.groupdict()
-      cert = matches["CERT"]
-      privkey = matches["PRIVKEY"]
-      name = matches["NAME"]
-      this_compressed_extension = matches["COMPRESSED"]
-      public_key_suffix_len = len(OPTIONS.public_key_suffix)
-      private_key_suffix_len = len(OPTIONS.private_key_suffix)
-      if cert in SPECIAL_CERT_STRINGS and not privkey:
-        certmap[name] = cert
-      elif (cert.endswith(OPTIONS.public_key_suffix) and
-            privkey.endswith(OPTIONS.private_key_suffix) and
-            cert[:-public_key_suffix_len] == privkey[:-private_key_suffix_len]):
-        certmap[name] = cert[:-public_key_suffix_len]
-      else:
-        raise ValueError("failed to parse line from apkcerts.txt:\n" + line)
-      if this_compressed_extension:
-        # Only count the installed files.
-        filename = name + '.' + this_compressed_extension
-        if filename not in installed_files:
-          continue
-        # Make sure that all the values in the compression map have the same
-        # extension. We don't support multiple compression methods in the same
-        # system image.
-        if compressed_extension:
-          if this_compressed_extension != compressed_extension:
-            raise ValueError("multiple compressed extensions : %s vs %s",
-                             (compressed_extension, this_compressed_extension))
-        else:
-          compressed_extension = this_compressed_extension
+    m = re.match(
+        r'^name="(?P<NAME>.*)"\s+certificate="(?P<CERT>.*)"\s+'
+        r'private_key="(?P<PRIVKEY>.*?)"(\s+compressed="(?P<COMPRESSED>.*)")?$',
+        line)
+    if not m:
+      continue
 
-  return (certmap, ("." + compressed_extension) if compressed_extension else None)
+    matches = m.groupdict()
+    cert = matches["CERT"]
+    privkey = matches["PRIVKEY"]
+    name = matches["NAME"]
+    this_compressed_extension = matches["COMPRESSED"]
+
+    public_key_suffix_len = len(OPTIONS.public_key_suffix)
+    private_key_suffix_len = len(OPTIONS.private_key_suffix)
+    if cert in SPECIAL_CERT_STRINGS and not privkey:
+      certmap[name] = cert
+    elif (cert.endswith(OPTIONS.public_key_suffix) and
+          privkey.endswith(OPTIONS.private_key_suffix) and
+          cert[:-public_key_suffix_len] == privkey[:-private_key_suffix_len]):
+      certmap[name] = cert[:-public_key_suffix_len]
+    else:
+      raise ValueError("Failed to parse line from apkcerts.txt:\n" + line)
+
+    if not this_compressed_extension:
+      continue
+
+    # Only count the installed files.
+    filename = name + '.' + this_compressed_extension
+    if filename not in installed_files:
+      continue
+
+    # Make sure that all the values in the compression map have the same
+    # extension. We don't support multiple compression methods in the same
+    # system image.
+    if compressed_extension:
+      if this_compressed_extension != compressed_extension:
+        raise ValueError(
+            "Multiple compressed extensions: {} vs {}".format(
+                compressed_extension, this_compressed_extension))
+    else:
+      compressed_extension = this_compressed_extension
+
+  return (certmap,
+          ("." + compressed_extension) if compressed_extension else None)
 
 
 COMMON_DOCSTRING = """
-  -p  (--path)  <dir>
-      Prepend <dir>/bin to the list of places to search for binaries
-      run by this script, and expect to find jars in <dir>/framework.
+Global options
+
+  -p  (--path) <dir>
+      Prepend <dir>/bin to the list of places to search for binaries run by this
+      script, and expect to find jars in <dir>/framework.
 
   -s  (--device_specific) <file>
-      Path to the python module containing device-specific
-      releasetools code.
+      Path to the Python module containing device-specific releasetools code.
 
-  -x  (--extra)  <key=value>
-      Add a key/value pair to the 'extras' dict, which device-specific
-      extension code may look at.
+  -x  (--extra) <key=value>
+      Add a key/value pair to the 'extras' dict, which device-specific extension
+      code may look at.
 
   -v  (--verbose)
       Show command lines being executed.
@@ -955,12 +1071,24 @@ def MakeTempFile(prefix='tmp', suffix=''):
   return fn
 
 
+def MakeTempDir(prefix='tmp', suffix=''):
+  """Makes a temporary dir that will be cleaned up with a call to Cleanup().
+
+  Returns:
+    The absolute pathname of the new directory.
+  """
+  dir_name = tempfile.mkdtemp(suffix=suffix, prefix=prefix)
+  OPTIONS.tempfiles.append(dir_name)
+  return dir_name
+
+
 def Cleanup():
   for i in OPTIONS.tempfiles:
     if os.path.isdir(i):
-      shutil.rmtree(i)
+      shutil.rmtree(i, ignore_errors=True)
     else:
       os.remove(i)
+  del OPTIONS.tempfiles[:]
 
 
 class PasswordManager(object):
@@ -1147,6 +1275,28 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
   zipfile.ZIP64_LIMIT = saved_zip64_limit
 
 
+def ZipDelete(zip_filename, entries):
+  """Deletes entries from a ZIP file.
+
+  Since deleting entries from a ZIP file is not supported, it shells out to
+  'zip -d'.
+
+  Args:
+    zip_filename: The name of the ZIP file.
+    entries: The name of the entry, or the list of names to be deleted.
+
+  Raises:
+    AssertionError: In case of non-zero return from 'zip'.
+  """
+  if isinstance(entries, basestring):
+    entries = [entries]
+  cmd = ["zip", "-d", zip_filename] + entries
+  proc = Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  stdoutdata, _ = proc.communicate()
+  assert proc.returncode == 0, "Failed to delete %s:\n%s" % (entries,
+                                                             stdoutdata)
+
+
 def ZipClose(zip_file):
   # http://b/18015246
   # zipfile also refers to ZIP64_LIMIT during close() when it writes out the
@@ -1331,7 +1481,7 @@ class Difference(object):
           p.kill()
           th.join()
 
-      if err or p.returncode != 0:
+      if p.returncode != 0:
         print("WARNING: failure running %s:\n%s\n" % (
             diff_program, "".join(err)))
         self.patch = None
@@ -1409,20 +1559,16 @@ class BlockDifference(object):
     self.disable_imgdiff = disable_imgdiff
 
     if version is None:
-      version = 1
-      if OPTIONS.info_dict:
-        version = max(
-            int(i) for i in
-            OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
+      version = max(
+          int(i) for i in
+          OPTIONS.info_dict.get("blockimgdiff_versions", "1").split(","))
     assert version >= 3
     self.version = version
 
     b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
                                     version=self.version,
                                     disable_imgdiff=self.disable_imgdiff)
-    tmpdir = tempfile.mkdtemp()
-    OPTIONS.tempfiles.append(tmpdir)
-    self.path = os.path.join(tmpdir, partition)
+    self.path = os.path.join(MakeTempDir(), partition)
     b.Compute(self.path)
     self._required_cache = b.max_stashed_size
     self.touched_src_ranges = b.touched_src_ranges
@@ -1599,10 +1745,11 @@ class BlockDifference(object):
                     '--output={}.new.dat.br'.format(self.path),
                     '{}.new.dat'.format(self.path)]
       print("Compressing {}.new.dat with brotli".format(self.partition))
-      p = Run(brotli_cmd, stdout=subprocess.PIPE)
-      p.communicate()
-      assert p.returncode == 0,\
-          'compression of {}.new.dat failed'.format(self.partition)
+      p = Run(brotli_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      stdoutdata, _ = p.communicate()
+      assert p.returncode == 0, \
+          'Failed to compress {}.new.dat with brotli:\n{}'.format(
+              self.partition, stdoutdata)
 
       new_data_name = '{}.new.dat.br'.format(self.partition)
       ZipWrite(output_zip,
@@ -1670,50 +1817,93 @@ def GetTypeAndDevice(mount_point, info):
 
 
 def ParseCertificate(data):
-  """Parse a PEM-format certificate."""
-  cert = []
+  """Parses and converts a PEM-encoded certificate into DER-encoded.
+
+  This gives the same result as `openssl x509 -in <filename> -outform DER`.
+
+  Returns:
+    The decoded certificate string.
+  """
+  cert_buffer = []
   save = False
   for line in data.split("\n"):
     if "--END CERTIFICATE--" in line:
       break
     if save:
-      cert.append(line)
+      cert_buffer.append(line)
     if "--BEGIN CERTIFICATE--" in line:
       save = True
-  cert = "".join(cert).decode('base64')
+  cert = "".join(cert_buffer).decode('base64')
   return cert
+
+
+def ExtractPublicKey(cert):
+  """Extracts the public key (PEM-encoded) from the given certificate file.
+
+  Args:
+    cert: The certificate filename.
+
+  Returns:
+    The public key string.
+
+  Raises:
+    AssertionError: On non-zero return from 'openssl'.
+  """
+  # The behavior with '-out' is different between openssl 1.1 and openssl 1.0.
+  # While openssl 1.1 writes the key into the given filename followed by '-out',
+  # openssl 1.0 (both of 1.0.1 and 1.0.2) doesn't. So we collect the output from
+  # stdout instead.
+  cmd = ['openssl', 'x509', '-pubkey', '-noout', '-in', cert]
+  proc = Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  pubkey, stderrdata = proc.communicate()
+  assert proc.returncode == 0, \
+      'Failed to dump public key from certificate: %s\n%s' % (cert, stderrdata)
+  return pubkey
+
 
 def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
                       info_dict=None):
-  """Generate a binary patch that creates the recovery image starting
-  with the boot image.  (Most of the space in these images is just the
-  kernel, which is identical for the two, so the resulting patch
-  should be efficient.)  Add it to the output zip, along with a shell
-  script that is run from init.rc on first boot to actually do the
-  patching and install the new recovery image.
+  """Generates the recovery-from-boot patch and writes the script to output.
 
-  recovery_img and boot_img should be File objects for the
-  corresponding images.  info should be the dictionary returned by
-  common.LoadInfoDict() on the input target_files.
+  Most of the space in the boot and recovery images is just the kernel, which is
+  identical for the two, so the resulting patch should be efficient. Add it to
+  the output zip, along with a shell script that is run from init.rc on first
+  boot to actually do the patching and install the new recovery image.
+
+  Args:
+    input_dir: The top-level input directory of the target-files.zip.
+    output_sink: The callback function that writes the result.
+    recovery_img: File object for the recovery image.
+    boot_img: File objects for the boot image.
+    info_dict: A dict returned by common.LoadInfoDict() on the input
+        target_files. Will use OPTIONS.info_dict if None has been given.
   """
-
   if info_dict is None:
     info_dict = OPTIONS.info_dict
 
-  full_recovery_image = info_dict.get("full_recovery_image", None) == "true"
+  full_recovery_image = info_dict.get("full_recovery_image") == "true"
 
   if full_recovery_image:
     output_sink("etc/recovery.img", recovery_img.data)
 
   else:
-    diff_program = ["imgdiff"]
+    system_root_image = info_dict.get("system_root_image") == "true"
     path = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
-    if os.path.exists(path):
-      diff_program.append("-b")
-      diff_program.append(path)
-      bonus_args = "-b /system/etc/recovery-resource.dat"
-    else:
+    # With system-root-image, boot and recovery images will have mismatching
+    # entries (only recovery has the ramdisk entry) (Bug: 72731506). Use bsdiff
+    # to handle such a case.
+    if system_root_image:
+      diff_program = ["bsdiff"]
       bonus_args = ""
+      assert not os.path.exists(path)
+    else:
+      diff_program = ["imgdiff"]
+      if os.path.exists(path):
+        diff_program.append("-b")
+        diff_program.append(path)
+        bonus_args = "-b /system/etc/recovery-resource.dat"
+      else:
+        bonus_args = ""
 
     d = Difference(recovery_img, boot_img, diff_program=diff_program)
     _, _, patch = d.ComputePatch()

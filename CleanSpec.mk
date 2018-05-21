@@ -444,6 +444,38 @@ $(call add-clean-step, rm -f $(OUT_DIR)/host/common/obj/*/*_intermediates/java-s
 
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/obj/APPS/*/flat-res)
 
+# Remove old VNDK directories without version
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib/vndk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib/vndk-sp)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib64/vndk)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib64/vndk-sp)
+
+# Remove old dex output directories
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/with-local/)
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/no-local/)
+$(call add-clean-step, rm -rf $(HOST_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/with-local/)
+$(call add-clean-step, rm -rf $(HOST_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/no-local/)
+
+# Remove legacy VINTF metadata files
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/manifest.xml)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/manifest.xml)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/manifest.xml)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/compatibility_matrix.xml)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/compatibility_matrix.xml)
+
+# Remove obsolete intermedates src files
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/src/RenderScript.stamp*)
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/*_intermediates/src)
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/*_intermediates/src)
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/*_intermediates/java-source-list)
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/JAVA_LIBRARIES/*_intermediates/java-source-list)
+$(call add-clean-step, rm -rf $(OUT_DOCS)/*-timestamp)
+
+$(call add-clean-step, rm -rf $(TARGET_COMMON_OUT_ROOT)/obj_asan/APPS/*_intermediates/src)
+$(call add-clean-step, rm -rf $(TARGET_COMMON_OUT_ROOT)/obj_asan/JAVA_LIBRARIES/*_intermediates/src)
+$(call add-clean-step, rm -rf $(TARGET_COMMON_OUT_ROOT)/obj_asan/APPS/*_intermediates/java-source-list)
+$(call add-clean-step, rm -rf $(TARGET_COMMON_OUT_ROOT)/obj_asan/JAVA_LIBRARIES/*_intermediates/java-source-list)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

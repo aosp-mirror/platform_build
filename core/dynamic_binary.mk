@@ -67,6 +67,11 @@ ifneq ($(HOST_OS),linux)
   my_pack_module_relocations := false
 endif
 
+# Relocation packer does not work with LLD yet.
+ifeq ($(my_use_clang_lld),true)
+  my_pack_module_relocations := false
+endif
+
 ifeq (true,$(my_pack_module_relocations))
 # Pack relocations
 $(relocation_packer_output): $(relocation_packer_input)
@@ -145,15 +150,15 @@ endif
 
 ifeq ($(my_strip_module),mini-debug-info)
 # Strip the binary, but keep debug frames and symbol table in a compressed .gnu_debugdata section.
-$(strip_output): $(strip_input) | $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NM)
+$(strip_output): $(strip_input) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NM) $(XZ)
 	$(transform-to-stripped-keep-mini-debug-info)
 else ifneq ($(filter true no_debuglink,$(my_strip_module)),)
 # Strip the binary
-$(strip_output): $(strip_input) | $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
+$(strip_output): $(strip_input) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
 	$(transform-to-stripped)
 else ifeq ($(my_strip_module),keep_symbols)
 # Strip only the debug frames, but leave the symbol table.
-$(strip_output): $(strip_input) | $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
+$(strip_output): $(strip_input) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
 	$(transform-to-stripped-keep-symbols)
 
 # A product may be configured to strip everything in some build variants.

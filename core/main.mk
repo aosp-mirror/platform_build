@@ -52,6 +52,10 @@ ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
 dont_bother := true
 endif
 
+.KATI_READONLY := SOONG_CONFIG_NAMESPACES
+.KATI_READONLY := $(foreach n,$(SOONG_CONFIG_NAMESPACES),SOONG_CONFIG_$(n))
+.KATI_READONLY := $(foreach n,$(SOONG_CONFIG_NAMESPACES),$(foreach k,$(SOONG_CONFIG_$(n)),SOONG_CONFIG_$(n)_$(k)))
+
 include $(SOONG_MAKEVARS_MK)
 
 include $(BUILD_SYSTEM)/clang/config.mk
@@ -60,12 +64,22 @@ include $(BUILD_SYSTEM)/clang/config.mk
 # without changing the command line every time.  Avoids rebuilds
 # when using ninja.
 $(shell mkdir -p $(OUT_DIR) && \
-    echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt && \
-    echo -n $(BUILD_DATETIME) > $(OUT_DIR)/build_date.txt)
+    echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt)
+BUILD_NUMBER_FILE := $(OUT_DIR)/build_number.txt
+
 ifeq ($(HOST_OS),darwin)
 DATE_FROM_FILE := date -r $(BUILD_DATETIME_FROM_FILE)
 else
 DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
+endif
+
+# Pick a reasonable string to use to identify files.
+ifeq ($(strip $(HAS_BUILD_NUMBER)),false)
+  # BUILD_NUMBER has a timestamp in it, which means that
+  # it will change every time.  Pick a stable value.
+  FILE_NAME_TAG := eng.$(USER)
+else
+  FILE_NAME_TAG := $(file <$(BUILD_NUMBER_FILE))
 endif
 
 # Make an empty directory, which can be used to make empty jars
@@ -126,6 +140,8 @@ ifneq ($(ADDITIONAL_BUILD_PROPERTIES),)
 $(error ADDITIONAL_BUILD_PROPERTIES must not be set before here: $(ADDITIONAL_BUILD_PROPERTIES))
 endif
 
+ADDITIONAL_BUILD_PROPERTIES :=
+
 #
 # -----------------------------------------------------------------
 # Add the product-defined properties to the build properties.
@@ -185,18 +201,33 @@ include build/make/core/pdk_config.mk
 
 #
 # -----------------------------------------------------------------
-# Enable dynamic linker developer warnings for userdebug, eng
-# and non-REL builds
+# Enable dynamic linker and hidden API developer warnings for
+# userdebug, eng and non-REL builds
 ifneq ($(TARGET_BUILD_VARIANT),user)
-  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1 \
+                                 ro.art.hiddenapi.warning=1
 else
 # Enable it for user builds as long as they are not final.
 ifneq ($(PLATFORM_VERSION_CODENAME),REL)
-  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1 \
+                                 ro.art.hiddenapi.warning=1
 endif
 endif
 
 ADDITIONAL_BUILD_PROPERTIES += ro.treble.enabled=${PRODUCT_FULL_TREBLE}
+
+$(KATI_obsolete_var PRODUCT_FULL_TREBLE,\
+	Code should be written to work regardless of a device being Treble or \
+	variables like PRODUCT_SEPOLICY_SPLIT should be used until that is \
+	possible.)
+
+# Sets ro.actionable_compatible_property.enabled to know on runtime whether the whitelist
+# of actionable compatible properties is enabled or not.
+ifeq ($(PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE),true)
+ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=false
+else
+ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
+endif
 
 # -----------------------------------------------------------------
 ###
@@ -292,6 +323,15 @@ ifndef is_sdk_build
 endif
 endif
 
+## asan ##
+
+# Install some additional tools on ASAN builds IFF we are also installing debug tools
+ifneq ($(filter address,$(SANITIZE_TARGET)),)
+ifneq (,$(filter debug,$(tags_to_install)))
+  tags_to_install += asan
+endif
+endif
+
 ## sdk ##
 
 ifdef is_sdk_build
@@ -318,10 +358,6 @@ endif
 BUILD_WITHOUT_PV := true
 
 ADDITIONAL_BUILD_PROPERTIES += net.bt.name=Android
-
-# Sets the location that the runtime dumps stack traces to when signalled
-# with SIGQUIT. Stack trace dumping is turned on for all android builds.
-ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.stack-trace-dir=/data/anr
 
 # ------------------------------------------------------------
 # Define a function that, given a list of module tags, returns
@@ -420,10 +456,10 @@ subdir_makefiles_total := $(words $(subdir_makefiles))
 
 $(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
 
-ifdef PDK_FUSION_PLATFORM_ZIP
+ifneq (,$(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR))
 # Bring in the PDK platform.zip modules.
 include $(BUILD_SYSTEM)/pdk_fusion_modules.mk
-endif # PDK_FUSION_PLATFORM_ZIP
+endif # PDK_FUSION_PLATFORM_ZIP || PDK_FUSION_PLATFORM_DIR
 
 droid_targets : blueprint_tools
 
@@ -593,6 +629,31 @@ $(foreach m,$(ALL_MODULES), \
 endef
 $(call add-all-host-to-target-required-modules-deps)
 
+# Sets up dependencies such that whenever a target module is installed,
+# any host modules listed in $(ALL_MODULES.$(m).HOST_REQUIRED) will also be installed
+define add-all-target-to-host-required-modules-deps
+$(foreach m,$(ALL_MODULES), \
+  $(eval req_mods := $(ALL_MODULES.$(m).HOST_REQUIRED))\
+  $(if $(req_mods), \
+    $(eval req_files := )\
+    $(foreach req_mod,$(req_mods), \
+      $(eval req_file := $(filter $(HOST_OUT)/%, $(call module-installed-files,$(req_mod)))) \
+      $(if $(strip $(req_file)),\
+        ,\
+        $(error $(m).LOCAL_HOST_REQUIRED_MODULES : illegal value $(req_mod) : not a host module. If you want to specify target modules to be required to be installed along with your target module, add those module names to LOCAL_REQUIRED_MODULES instead)\
+      )\
+      $(eval req_files := $(req_files)$(space)$(req_file))\
+    )\
+    $(eval req_files := $(strip $(req_files)))\
+    $(eval mod_files := $(filter $(TARGET_OUT_ROOT)/%, $(call module-installed-files,$(m))))\
+    $(eval mod_files := $(filter-out $(req_files),$(mod_files)))\
+    $(if $(mod_files),\
+      $(eval $(call add-required-deps, $(mod_files),$(req_files))) \
+    )\
+  )\
+)
+endef
+$(call add-all-target-to-host-required-modules-deps)
 
 t_m :=
 h_m :=
@@ -837,6 +898,9 @@ ifdef FULL_BUILD
   # by the appropriate product definition file, which was included
   # by product_config.mk.
   product_MODULES := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
+ifdef BOARD_VNDK_VERSION
+  product_MODULES += vndk_package
+endif
   # Filter out the overridden packages before doing expansion
   product_MODULES := $(filter-out $(foreach p, $(product_MODULES), \
       $(PACKAGES.$(p).OVERRIDES)), $(product_MODULES))
@@ -883,6 +947,9 @@ debug_MODULES := $(sort \
 tests_MODULES := $(sort \
         $(call get-tagged-modules,tests) \
         $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS)) \
+    )
+asan_MODULES := $(sort \
+        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG_ASAN)) \
     )
 
 # TODO: Remove the 3 places in the tree that use ALL_DEFAULT_INSTALLED_MODULES
@@ -1026,6 +1093,9 @@ bptimage: $(INSTALLED_BPTIMAGE_TARGET)
 .PHONY: vendorimage
 vendorimage: $(INSTALLED_VENDORIMAGE_TARGET)
 
+.PHONY: productimage
+productimage: $(INSTALLED_PRODUCTIMAGE_TARGET)
+
 .PHONY: systemotherimage
 systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 
@@ -1049,10 +1119,13 @@ droidcore: files \
 	$(INSTALLED_CACHEIMAGE_TARGET) \
 	$(INSTALLED_BPTIMAGE_TARGET) \
 	$(INSTALLED_VENDORIMAGE_TARGET) \
+	$(INSTALLED_PRODUCTIMAGE_TARGET) \
 	$(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
 	$(INSTALLED_FILES_FILE) \
 	$(INSTALLED_FILES_FILE_VENDOR) \
-	$(INSTALLED_FILES_FILE_SYSTEMOTHER)
+	$(INSTALLED_FILES_FILE_PRODUCT) \
+	$(INSTALLED_FILES_FILE_SYSTEMOTHER) \
+	soong_docs
 
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
@@ -1116,6 +1189,7 @@ else # TARGET_BUILD_APPS
     $(COVERAGE_ZIP) \
     $(INSTALLED_FILES_FILE) \
     $(INSTALLED_FILES_FILE_VENDOR) \
+    $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
     $(INSTALLED_BUILD_PROP_TARGET) \
     $(BUILT_TARGET_FILES_PACKAGE) \
@@ -1196,6 +1270,9 @@ endif  # samplecode in $(MAKECMDGOALS)
 
 .PHONY: findbugs
 findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
+
+.PHONY: findlsdumps
+findlsdumps: $(FIND_LSDUMPS_FILE)
 
 #xxx scrape this from ALL_MODULE_NAME_TAGS
 .PHONY: modules

@@ -8,7 +8,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
              Selects <product_name> as the product to build, and <build_variant> as the variant to
              build, and stores those selections in the environment to be read by subsequent
              invocations of 'm' etc.
-- tapas:     tapas [<App1> <App2> ...] [arm|x86|mips|armv5|arm64|x86_64|mips64] [eng|userdebug|user]
+- tapas:     tapas [<App1> <App2> ...] [arm|x86|mips|arm64|x86_64|mips64] [eng|userdebug|user]
 - croot:     Changes directory to the top of the tree.
 - m:         Makes from the top of the tree.
 - mm:        Builds all of the modules in the current directory, but not their dependencies.
@@ -51,7 +51,7 @@ function build_build_var_cache()
     cached_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
     cached_abs_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_abs_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
     # Call the build system to dump the "<val>=<value>" pairs as a shell script.
-    build_dicts_script=`\cd $T; build/soong/soong_ui.bash --dumpvars-mode \
+    build_dicts_script=`\builtin cd $T; build/soong/soong_ui.bash --dumpvars-mode \
                         --vars="$cached_vars" \
                         --abs-vars="$cached_abs_vars" \
                         --var-prefix=var_cache_ \
@@ -301,7 +301,6 @@ function printconfig()
 
 function set_stuff_for_environment()
 {
-    settitle
     setpaths
     set_sequence_number
 
@@ -314,26 +313,6 @@ function set_stuff_for_environment()
 function set_sequence_number()
 {
     export BUILD_ENV_SEQUENCE_NUMBER=13
-}
-
-function settitle()
-{
-    # This used to be opt-out with STAY_OFF_MY_LAWN, but this breaks folks
-    # actually using PROMPT_COMMAND (https://issuetracker.google.com/38402256),
-    # and the attempt to set the title doesn't do anything for the default
-    # window manager in debian right now, so switch it to opt-in for anyone
-    # who actually wants this.
-    if [ "$ANDROID_BUILD_SET_WINDOW_TITLE" = "true" ]; then
-        local arch=$(gettargetarch)
-        local product=$TARGET_PRODUCT
-        local variant=$TARGET_BUILD_VARIANT
-        local apps=$TARGET_BUILD_APPS
-        if [ -z "$apps" ]; then
-            export PROMPT_COMMAND="echo -ne \"\033]0;[${arch}-${product}-${variant}] ${USER}@${HOSTNAME}: ${PWD}\007\""
-        else
-            export PROMPT_COMMAND="echo -ne \"\033]0;[$arch $apps $variant] ${USER}@${HOSTNAME}: ${PWD}\007\""
-        fi
-    fi
 }
 
 function addcompletions()
@@ -350,13 +329,11 @@ function addcompletions()
         return
     fi
 
-    dir="sdk/bash_completion"
-    if [ -d ${dir} ]; then
-        for f in `/bin/ls ${dir}/[a-z]*.bash 2> /dev/null`; do
-            echo "including $f"
+    for f in system/core/adb/adb.bash system/core/fastboot/fastboot.bash; do
+        if [ -f $f ]; then
             . $f
-        done
-    fi
+        fi
+    done
 
     complete -C "bit --tab" bit
 }
@@ -544,14 +521,6 @@ function add_lunch_combo()
     LUNCH_MENU_CHOICES=(${LUNCH_MENU_CHOICES[@]} $new_combo)
 }
 
-# add the default one here
-add_lunch_combo aosp_arm-eng
-add_lunch_combo aosp_arm64-eng
-add_lunch_combo aosp_mips-eng
-add_lunch_combo aosp_mips64-eng
-add_lunch_combo aosp_x86-eng
-add_lunch_combo aosp_x86_64-eng
-
 function print_lunch_menu()
 {
     local uname=$(uname)
@@ -562,7 +531,7 @@ function print_lunch_menu()
 
     local i=1
     local choice
-    for choice in ${LUNCH_MENU_CHOICES[@]}
+    for choice in $(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES)
     do
         echo "     $i. $choice"
         i=$(($i+1))
@@ -590,9 +559,10 @@ function lunch()
         selection=aosp_arm-eng
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
-        if [ $answer -le ${#LUNCH_MENU_CHOICES[@]} ]
+        local choices=($(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES))
+        if [ $answer -le ${#choices[@]} ]
         then
-            selection=${LUNCH_MENU_CHOICES[$(($answer-1))]}
+            selection=${choices[$(($answer-1))]}
         fi
     else
         selection=$answer
@@ -643,6 +613,7 @@ function lunch()
     destroy_build_var_cache
 }
 
+unset COMMON_LUNCH_CHOICES_CACHE
 # Tab completion for lunch.
 function _lunch()
 {
@@ -651,7 +622,11 @@ function _lunch()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    COMPREPLY=( $(compgen -W "${LUNCH_MENU_CHOICES[*]}" -- ${cur}) )
+    if [ -z "$COMMON_LUNCH_CHOICES_CACHE" ]; then
+        COMMON_LUNCH_CHOICES_CACHE=$(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES)
+    fi
+
+    COMPREPLY=( $(compgen -W "${COMMON_LUNCH_CHOICES_CACHE}" -- ${cur}) )
     return 0
 }
 complete -F _lunch lunch
@@ -661,10 +636,10 @@ complete -F _lunch lunch
 function tapas()
 {
     local showHelp="$(echo $* | xargs -n 1 echo | \grep -E '^(help)$' | xargs)"
-    local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|mips|armv5|arm64|x86_64|mips64)$' | xargs)"
+    local arch="$(echo $* | xargs -n 1 echo | \grep -E '^(arm|x86|mips|arm64|x86_64|mips64)$' | xargs)"
     local variant="$(echo $* | xargs -n 1 echo | \grep -E '^(user|userdebug|eng)$' | xargs)"
     local density="$(echo $* | xargs -n 1 echo | \grep -E '^(ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
-    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|mips|armv5|arm64|x86_64|mips64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
+    local apps="$(echo $* | xargs -n 1 echo | \grep -E -v '^(user|userdebug|eng|arm|x86|mips|arm64|x86_64|mips64|ldpi|mdpi|tvdpi|hdpi|xhdpi|xxhdpi|xxxhdpi|alldpi)$' | xargs)"
 
     if [ "$showHelp" != "" ]; then
       $(gettop)/build/make/tapasHelp.sh
@@ -688,7 +663,6 @@ function tapas()
     case $arch in
       x86)    product=aosp_x86;;
       mips)   product=aosp_mips;;
-      armv5)  product=generic_armv5;;
       arm64)  product=aosp_arm64;;
       x86_64) product=aosp_x86_64;;
       mips64)  product=aosp_mips64;;
@@ -742,33 +716,11 @@ function gettop
     fi
 }
 
-# Return driver for "make", if any (eg. static analyzer)
-function getdriver()
-{
-    local T="$1"
-    test "$WITH_STATIC_ANALYZER" = "0" && unset WITH_STATIC_ANALYZER
-    if [ -n "$WITH_STATIC_ANALYZER" ]; then
-        # Use scan-build to collect all static analyzer reports into directory
-        # /tmp/scan-build-yyyy-mm-dd-hhmmss-*
-        # The clang compiler passed by --use-analyzer here is not important.
-        # build/make/core/binary.mk will set CLANG_CXX and CLANG before calling
-        # c++-analyzer and ccc-analyzer.
-        local CLANG_VERSION=$(get_build_var LLVM_PREBUILTS_VERSION)
-        local BUILD_OS=$(get_build_var BUILD_OS)
-        local CLANG_DIR="$T/prebuilts/clang/host/${BUILD_OS}-x86/${CLANG_VERSION}"
-        echo "\
-${CLANG_DIR}/tools/scan-build/bin/scan-build \
---use-analyzer ${CLANG_DIR}/bin/clang \
---status-bugs"
-    fi
-}
-
 function m()
 {
     local T=$(gettop)
-    local DRV=$(getdriver $T)
     if [ "$T" ]; then
-        _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
+        _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return 1
@@ -795,11 +747,10 @@ function findmakefile()
 function mm()
 {
     local T=$(gettop)
-    local DRV=$(getdriver $T)
     # If we're sitting in the root of the build tree, just do a
     # normal build.
     if [ -f build/soong/soong_ui.bash ]; then
-        _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
+        _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
     else
         # Find the closest Android.mk file.
         local M=$(findmakefile)
@@ -834,7 +785,7 @@ function mm()
             if [ "1" = "${WITH_TIDY_ONLY}" -o "true" = "${WITH_TIDY_ONLY}" ]; then
               MODULES=tidy_only
             fi
-            ONE_SHOT_MAKEFILE=$M _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $MODULES $ARGS
+            ONE_SHOT_MAKEFILE=$M _wrap_build $T/build/soong/soong_ui.bash --make-mode $MODULES $ARGS
         fi
     fi
 }
@@ -842,7 +793,6 @@ function mm()
 function mmm()
 {
     local T=$(gettop)
-    local DRV=$(getdriver $T)
     if [ "$T" ]; then
         local MAKEFILE=
         local MODULES=
@@ -902,7 +852,7 @@ function mmm()
         fi
         # Convert "/" to "-".
         MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-        ONE_SHOT_MAKEFILE="$MAKEFILE" _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $MODULES $MODULES_IN_PATHS $ARGS
+        ONE_SHOT_MAKEFILE="$MAKEFILE" _wrap_build $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $MODULES $MODULES_IN_PATHS $ARGS
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
         return 1
@@ -912,9 +862,8 @@ function mmm()
 function mma()
 {
   local T=$(gettop)
-  local DRV=$(getdriver $T)
   if [ -f build/soong/soong_ui.bash ]; then
-    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@
+    _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
   else
     if [ ! "$T" ]; then
       echo "Couldn't locate the top of the tree.  Try setting TOP."
@@ -926,14 +875,13 @@ function mma()
     local MODULES_IN_PATHS=MODULES-IN-$(dirname ${M})
     # Convert "/" to "-".
     MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $@ $MODULES_IN_PATHS
+    _wrap_build $T/build/soong/soong_ui.bash --make-mode $@ $MODULES_IN_PATHS
   fi
 }
 
 function mmma()
 {
   local T=$(gettop)
-  local DRV=$(getdriver $T)
   if [ "$T" ]; then
     local DASH_ARGS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^-.*$/')
     local DIRS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^[^-].*$/')
@@ -964,7 +912,7 @@ function mmma()
     done
     # Convert "/" to "-".
     MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-    _wrap_build $DRV $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $ARGS $MODULES_IN_PATHS
+    _wrap_build $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $ARGS $MODULES_IN_PATHS
   else
     echo "Couldn't locate the top of the tree.  Try setting TOP."
     return 1

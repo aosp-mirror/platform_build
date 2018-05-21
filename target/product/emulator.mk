@@ -116,10 +116,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/init.ranchu-core.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-core.sh \
     device/generic/goldfish/init.ranchu-net.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-net.sh \
-    device/generic/goldfish/init.ranchu.rc:root/init.ranchu.rc \
-    device/generic/goldfish/fstab.ranchu:root/fstab.ranchu \
-    device/generic/goldfish/fstab.ranchu.early:root/fstab.ranchu.early \
-    device/generic/goldfish/ueventd.ranchu.rc:root/ueventd.ranchu.rc \
+    device/generic/goldfish/init.ranchu.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.ranchu.rc \
+    device/generic/goldfish/fstab.ranchu:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.ranchu \
+    device/generic/goldfish/ueventd.ranchu.rc:$(TARGET_COPY_OUT_VENDOR)/ueventd.rc \
     device/generic/goldfish/input/goldfish_rotary.idc:$(TARGET_COPY_OUT_VENDOR)/usr/idc/goldfish_rotary.idc \
     device/generic/goldfish/manifest.xml:$(TARGET_COPY_OUT_VENDOR)/manifest.xml \
     device/generic/goldfish/data/etc/permissions/privapp-permissions-goldfish.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/privapp-permissions-goldfish.xml \
@@ -131,3 +130,9 @@ PRODUCT_PACKAGE_OVERLAYS := device/generic/goldfish/overlay
 PRODUCT_CHARACTERISTICS := emulator
 
 PRODUCT_FULL_TREBLE_OVERRIDE := true
+
+
+#watchdog tiggers reboot because location service is not
+#responding, disble it for now
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+config.disable_location=true

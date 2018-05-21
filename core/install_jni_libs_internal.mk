@@ -24,16 +24,11 @@ my_embedded_prebuilt_jni_libs :=
 ifdef my_embed_jni
 # App explicitly requires the prebuilt NDK stl shared libraies.
 # The NDK stl shared libraries should never go to the system image.
-ifneq ($(filter $(LOCAL_NDK_STL_VARIANT), stlport_shared c++_shared),)
+ifeq ($(LOCAL_NDK_STL_VARIANT),c++_shared)
 ifndef LOCAL_SDK_VERSION
 $(error LOCAL_SDK_VERSION must be defined with LOCAL_NDK_STL_VARIANT, \
     LOCAL_PACKAGE_NAME=$(LOCAL_PACKAGE_NAME))
 endif
-endif
-ifeq (stlport_shared,$(LOCAL_NDK_STL_VARIANT))
-my_jni_shared_libraries += \
-    $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources/cxx-stl/stlport/libs/$(TARGET_$(my_2nd_arch_prefix)CPU_ABI)/libstlport_shared.so
-else ifeq (c++_shared,$(LOCAL_NDK_STL_VARIANT))
 my_jni_shared_libraries += \
     $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources/cxx-stl/llvm-libc++/libs/$(TARGET_$(my_2nd_arch_prefix)CPU_ABI)/libc++_shared.so
 endif
@@ -108,15 +103,19 @@ endif  # inner my_prebuilt_jni_libs
 endif  # outer my_prebuilt_jni_libs
 
 # Verify that all included libraries are built against the NDK
+include $(BUILD_SYSTEM)/allowed_ndk_types.mk
 ifneq ($(strip $(LOCAL_JNI_SHARED_LIBRARIES)),)
 ifneq ($(LOCAL_SDK_VERSION),)
 my_link_type := app:sdk
-my_warn_types := native:platform
-my_allowed_types := native:ndk
+my_warn_types := native:platform $(my_warn_ndk_types)
+my_allowed_types := $(my_allowed_ndk_types)
+    ifneq (,$(filter true,$(LOCAL_VENDOR_MODULE) $(LOCAL_ODM_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
+        my_allowed_types += native:vendor native:vndk
+    endif
 else
 my_link_type := app:platform
-my_warn_types :=
-my_allowed_types := native:ndk native:platform native:vendor native:vndk native:vndk_private
+my_warn_types := $(my_warn_ndk_types)
+my_allowed_types := $(my_allowed_ndk_types) native:platform native:vendor native:vndk native:vndk_private
 endif
 
 my_link_deps := $(addprefix SHARED_LIBRARIES:,$(LOCAL_JNI_SHARED_LIBRARIES))

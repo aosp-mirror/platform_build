@@ -179,6 +179,7 @@ TARGET_COPY_OUT_DATA := data
 TARGET_COPY_OUT_ASAN := $(TARGET_COPY_OUT_DATA)/asan
 TARGET_COPY_OUT_OEM := oem
 TARGET_COPY_OUT_ODM := odm
+TARGET_COPY_OUT_PRODUCT := product
 TARGET_COPY_OUT_ROOT := root
 TARGET_COPY_OUT_RECOVERY := recovery
 
@@ -196,6 +197,17 @@ endef
 # We'll substitute with the real value after loading BoardConfig.mk.
 _vendor_path_placeholder := ||VENDOR-PATH-PH||
 TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
+###########################################
+
+###########################################
+# Define TARGET_COPY_OUT_PRODUCT to a placeholder, for at this point
+# we don't know if the device wants to build a separate product.img
+# or just build product stuff into system.img.
+# A device can set up TARGET_COPY_OUT_PRODUCT to "product" in its
+# BoardConfig.mk.
+# We'll substitute with the real value after loading BoardConfig.mk.
+_product_path_placeholder := ||PRODUCT-PATH-PH||
+TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
 ###########################################
 
 #################################################################
@@ -229,17 +241,26 @@ SDK_HOST_ARCH := x86
 # or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
 # make sure only one exists.
 # Real boards should always be associated with an OEM vendor.
-board_config_mk := \
-	$(strip $(sort $(wildcard \
-		$(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)/BoardConfig.mk \
-		$(shell test -d device && find -L device -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
-		$(shell test -d vendor && find -L vendor -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
-	)))
-ifeq ($(board_config_mk),)
-  $(error No config file found for TARGET_DEVICE $(TARGET_DEVICE))
-endif
-ifneq ($(words $(board_config_mk)),1)
-  $(error Multiple board config files for TARGET_DEVICE $(TARGET_DEVICE): $(board_config_mk))
+ifdef TARGET_DEVICE_DIR
+  ifneq ($(origin TARGET_DEVICE_DIR),command line)
+    $(error TARGET_DEVICE_DIR may not be set manually)
+  endif
+  board_config_mk := $(TARGET_DEVICE_DIR)/BoardConfig.mk
+else
+  board_config_mk := \
+    $(strip $(sort $(wildcard \
+      $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)/BoardConfig.mk \
+      $(shell test -d device && find -L device -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
+      $(shell test -d vendor && find -L vendor -maxdepth 4 -path '*/$(TARGET_DEVICE)/BoardConfig.mk') \
+    )))
+  ifeq ($(board_config_mk),)
+    $(error No config file found for TARGET_DEVICE $(TARGET_DEVICE))
+  endif
+  ifneq ($(words $(board_config_mk)),1)
+    $(error Multiple board config files for TARGET_DEVICE $(TARGET_DEVICE): $(board_config_mk))
+  endif
+  TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
+  .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 include $(board_config_mk)
 ifeq ($(TARGET_ARCH),)
@@ -249,7 +270,6 @@ ifneq ($(MALLOC_IMPL),)
   $(warning *** Unsupported option MALLOC_IMPL defined by board config: $(board_config_mk).)
   $(error Use `MALLOC_SVELTE := true` to configure jemalloc for low-memory)
 endif
-TARGET_DEVICE_DIR := $(patsubst %/,%,$(dir $(board_config_mk)))
 board_config_mk :=
 
 ###########################################
@@ -273,6 +293,29 @@ BOARD_USES_VENDORIMAGE := true
 else ifdef BOARD_USES_VENDORIMAGE
 $(error TARGET_COPY_OUT_VENDOR must be set to 'vendor' to use a vendor image)
 endif
+
+###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_PRODUCT
+ifeq ($(TARGET_COPY_OUT_PRODUCT),$(_product_path_placeholder))
+TARGET_COPY_OUT_PRODUCT := system/product
+else ifeq ($(filter product system/product,$(TARGET_COPY_OUT_PRODUCT)),)
+$(error TARGET_COPY_OUT_PRODUCT must be either 'product' or 'system/product', seeing '$(TARGET_COPY_OUT_PRODUCT)'.)
+endif
+PRODUCT_COPY_FILES := $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),$(PRODUCT_COPY_FILES))
+
+BOARD_USES_PRODUCTIMAGE :=
+ifdef BOARD_PREBUILT_PRODUCTIMAGE
+BOARD_USES_PRODUCTIMAGE := true
+endif
+ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+BOARD_USES_PRODUCTIMAGE := true
+endif
+ifeq ($(TARGET_COPY_OUT_PRODUCT),product)
+BOARD_USES_PRODUCTIMAGE := true
+else ifdef BOARD_USES_PRODUCTIMAGE
+$(error TARGET_COPY_OUT_PRODUCT must be set to 'product' to use a product image)
+endif
+
 ###########################################
 # Ensure that only TARGET_RECOVERY_UPDATER_LIBS *or* AB_OTA_UPDATER is set.
 TARGET_RECOVERY_UPDATER_LIBS ?=
@@ -287,12 +330,12 @@ endif
 # Check BOARD_VNDK_VERSION
 define check_vndk_version
   $(eval vndk_path := prebuilts/vndk/v$(1)) \
-  $(if $(wildcard $(vndk_path)/Android.bp),,$(error VNDK version $(1) not found))
+  $(if $(wildcard $(vndk_path)/*/Android.bp),,$(error VNDK version $(1) not found))
 endef
 
 ifdef BOARD_VNDK_VERSION
   ifneq ($(BOARD_VNDK_VERSION),current)
-    $(call check_vndk_version,$(BOARD_VNDK_VERSION))
+    $(error BOARD_VNDK_VERSION: Only "current" is implemented)
   endif
 
   TARGET_VENDOR_TEST_SUFFIX := /vendor
@@ -302,6 +345,13 @@ endif
 
 ifdef PRODUCT_EXTRA_VNDK_VERSIONS
   $(foreach v,$(PRODUCT_EXTRA_VNDK_VERSIONS),$(call check_vndk_version,$(v)))
+endif
+
+# Ensure that BOARD_SYSTEMSDK_VERSIONS are all within PLATFORM_SYSTEMSDK_VERSIONS
+_unsupported_systemsdk_versions := $(filter-out $(PLATFORM_SYSTEMSDK_VERSIONS),$(BOARD_SYSTEMSDK_VERSIONS))
+ifneq (,$(_unsupported_systemsdk_versions))
+  $(error System SDK versions '$(_unsupported_systemsdk_versions)' in BOARD_SYSTEMSDK_VERSIONS are not supported.\
+          Supported versions are $(PLATFORM_SYSTEMSDK_VERSIONS))
 endif
 
 # ---------------------------------------------------------------
@@ -366,12 +416,13 @@ HOST_OUT_JAVA_LIBRARIES := $(HOST_OUT)/framework
 HOST_OUT_SDK_ADDON := $(HOST_OUT)/sdk_addon
 HOST_OUT_NATIVE_TESTS := $(HOST_OUT)/nativetest64
 HOST_OUT_COVERAGE := $(HOST_OUT)/coverage
+HOST_OUT_TESTCASES := $(HOST_OUT)/testcases
 
 HOST_CROSS_OUT_EXECUTABLES := $(HOST_CROSS_OUT)/bin
 HOST_CROSS_OUT_SHARED_LIBRARIES := $(HOST_CROSS_OUT)/lib
 HOST_CROSS_OUT_NATIVE_TESTS := $(HOST_CROSS_OUT)/nativetest
 HOST_CROSS_OUT_COVERAGE := $(HOST_CROSS_OUT)/coverage
-HOST_OUT_TESTCASES := $(HOST_OUT)/testcases
+HOST_CROSS_OUT_TESTCASES := $(HOST_CROSS_OUT)/testcases
 
 HOST_OUT_INTERMEDIATES := $(HOST_OUT)/obj
 HOST_OUT_INTERMEDIATE_LIBRARIES := $(HOST_OUT_INTERMEDIATES)/lib
@@ -618,6 +669,39 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_SHARED_LIBRARIES := $(TARGET_OUT_ODM
 endif
 $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_ODM_APPS := $(TARGET_OUT_ODM_APPS)
 
+TARGET_OUT_PRODUCT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT)
+ifneq ($(filter address,$(SANITIZE_TARGET)),)
+target_out_product_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/system
+ifeq ($(SANITIZE_LITE),true)
+# When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
+# work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
+target_out_product_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/product
+else
+target_out_product_app_base := $(TARGET_OUT_PRODUCT)
+endif
+else
+target_out_product_shared_libraries_base := $(TARGET_OUT)
+target_out_product_app_base := $(TARGET_OUT_PRODUCT)
+endif
+
+ifeq ($(TARGET_IS_64_BIT),true)
+TARGET_OUT_PRODUCT_SHARED_LIBRARIES := $(target_out_product_shared_libraries_base)/lib64
+else
+TARGET_OUT_PRODUCT_SHARED_LIBRARIES := $(target_out_product_shared_libraries_base)/lib
+endif
+TARGET_OUT_PRODUCT_JAVA_LIBRARIES:= $(TARGET_OUT_PRODUCT)/framework
+TARGET_OUT_PRODUCT_APPS := $(target_out_product_app_base)/app
+TARGET_OUT_PRODUCT_APPS_PRIVILEGED := $(target_out_product_app_base)/priv-app
+TARGET_OUT_PRODUCT_ETC := $(TARGET_OUT_PRODUCT)/etc
+
+ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SHARED_LIBRARIES := $(target_out_product_shared_libraries_base)/lib/$(TARGET_2ND_ARCH)
+else
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SHARED_LIBRARIES := $(target_out_product_shared_libraries_base)/lib
+endif
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS := $(TARGET_OUT_PRODUCT_APPS)
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS_PRIVILEGED := $(TARGET_OUT_PRODUCT_APPS_PRIVILEGED)
+
 TARGET_OUT_BREAKPAD := $(PRODUCT_OUT)/breakpad
 
 TARGET_OUT_UNSTRIPPED := $(PRODUCT_OUT)/symbols
@@ -656,14 +740,4 @@ endif
 
 ifeq ($(CALLED_FROM_SETUP),true)
 PRINT_BUILD_CONFIG ?= true
-endif
-
-ifeq ($(USE_CLANG_PLATFORM_BUILD),)
-USE_CLANG_PLATFORM_BUILD := true
-endif
-
-ifneq ($(USE_CLANG_PLATFORM_BUILD),true)
-ifneq ($(USE_CLANG_PLATFORM_BUILD),false)
-$(error USE_CLANG_PLATFORM_BUILD must be true or false)
-endif
 endif

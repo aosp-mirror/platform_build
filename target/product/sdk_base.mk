@@ -17,7 +17,6 @@
 PRODUCT_PROPERTY_OVERRIDES :=
 
 PRODUCT_PACKAGES := \
-	ApiDemos \
 	CellBroadcastReceiver \
 	CubeLiveWallpapers \
 	CustomLocale \
@@ -25,7 +24,6 @@ PRODUCT_PACKAGES := \
 	Dialer \
 	EmulatorSmokeTests \
 	Gallery2 \
-	GestureBuilder \
 	Launcher3 \
 	Camera2 \
 	librs_jni \
@@ -40,8 +38,6 @@ PRODUCT_PACKAGES := \
 	rild \
 	screenrecord \
 	SdkSetup \
-	SmokeTest \
-	SmokeTestApp \
 	SoftKeyboard \
 	sqlite3 \
 	SystemUI \

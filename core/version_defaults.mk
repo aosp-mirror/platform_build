@@ -24,8 +24,9 @@
 #     DEFAULT_APP_TARGET_SDK
 #     BUILD_ID
 #     BUILD_NUMBER
-#     BUILD_DATETIME
 #     PLATFORM_SECURITY_PATCH
+#     PLATFORM_VNDK_VERSION
+#     PLATFORM_SYSTEMSDK_VERSIONS
 #
 
 # Look for an optional file containing overrides of the defaults,
@@ -38,9 +39,9 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-DEFAULT_PLATFORM_VERSION := PPR1
-MIN_PLATFORM_VERSION := PPR1
-MAX_PLATFORM_VERSION := PPR1
+DEFAULT_PLATFORM_VERSION := QPR1
+MIN_PLATFORM_VERSION := QPR1
+MAX_PLATFORM_VERSION := QPR1
 
 ALLOWED_VERSIONS := $(call allowed-platform-versions,\
   $(MIN_PLATFORM_VERSION),\
@@ -55,6 +56,13 @@ ifeq (,$(filter $(ALLOWED_VERSIONS), $(TARGET_PLATFORM_VERSION)))
   $(warning Invalid TARGET_PLATFORM_VERSION '$(TARGET_PLATFORM_VERSION)', must be one of)
   $(error $(ALLOWED_VERSIONS))
 endif
+ALLOWED_VERSIONS :=
+MIN_PLATFORM_VERSION :=
+MAX_PLATFORM_VERSION :=
+
+.KATI_READONLY := \
+  DEFAULT_PLATFORM_VERSION \
+  TARGET_PLATFORM_VERSION
 
 # Default versions for each TARGET_PLATFORM_VERSION
 # TODO: PLATFORM_VERSION, PLATFORM_SDK_VERSION, etc. should be conditional
@@ -75,10 +83,12 @@ endif
 # in the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
 PLATFORM_VERSION.PPR1 := P
+PLATFORM_VERSION.QPR1 := Q
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
 PLATFORM_VERSION_CODENAME.PPR1 := P
+PLATFORM_VERSION_CODENAME.QPR1 := Q
 
 ifndef PLATFORM_VERSION
   PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
@@ -87,6 +97,7 @@ ifndef PLATFORM_VERSION
     PLATFORM_VERSION := $(TARGET_PLATFORM_VERSION)
   endif
 endif
+.KATI_READONLY := PLATFORM_VERSION
 
 ifndef PLATFORM_SDK_VERSION
   # This is the canonical definition of the SDK version, which defines
@@ -107,6 +118,7 @@ ifndef PLATFORM_SDK_VERSION
   # cts/tests/tests/os/assets/platform_versions.txt
   PLATFORM_SDK_VERSION := 27
 endif
+.KATI_READONLY := PLATFORM_SDK_VERSION
 
 ifndef PLATFORM_VERSION_CODENAME
   PLATFORM_VERSION_CODENAME := $(PLATFORM_VERSION_CODENAME.$(TARGET_PLATFORM_VERSION))
@@ -152,6 +164,10 @@ ifndef PLATFORM_VERSION_CODENAME
     $(subst $(space),$(comma),$(strip $(PLATFORM_VERSION_FUTURE_CODENAMES)))
 
 endif
+.KATI_READONLY := \
+  PLATFORM_VERSION_CODENAME \
+  PLATFORM_VERSION_ALL_CODENAMES \
+  PLATFORM_VERSION_FUTURE_CODENAMES
 
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
   PLATFORM_PREVIEW_SDK_VERSION := 0
@@ -169,6 +185,7 @@ else
     PLATFORM_PREVIEW_SDK_VERSION := 0
   endif
 endif
+.KATI_READONLY := PLATFORM_PREVIEW_SDK_VERSION
 
 ifndef DEFAULT_APP_TARGET_SDK
   # This is the default minSdkVersion and targetSdkVersion to use for
@@ -182,6 +199,54 @@ ifndef DEFAULT_APP_TARGET_SDK
     DEFAULT_APP_TARGET_SDK := $(PLATFORM_VERSION_CODENAME)
   endif
 endif
+.KATI_READONLY := DEFAULT_APP_TARGET_SDK
+
+ifndef PLATFORM_VNDK_VERSION
+  # This is the definition of the VNDK version for the current VNDK libraries.
+  # The version is only available when PLATFORM_VERSION_CODENAME == REL.
+  # Otherwise, it will be set to a CODENAME version. The ABI is allowed to be
+  # changed only before the Android version is released. Once
+  # PLATFORM_VNDK_VERSION is set to actual version, the ABI for this version
+  # will be frozon and emit build errors if any ABI for the VNDK libs are
+  # changed.
+  # After that the snapshot of the VNDK with this version will be generated.
+  #
+  # The VNDK version follows PLATFORM_SDK_VERSION.
+  ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+    PLATFORM_VNDK_VERSION := $(PLATFORM_SDK_VERSION)
+  else
+    PLATFORM_VNDK_VERSION := $(PLATFORM_VERSION_CODENAME)
+  endif
+endif
+.KATI_READONLY := PLATFORM_VNDK_VERSION
+
+ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
+  # This is the oldest version of system SDK that the platform supports. Contrary
+  # to the public SDK where platform essentially supports all previous SDK versions,
+  # platform supports only a few number of recent system SDK versions as some of
+  # old system APIs are gradually deprecated, removed and then deleted.
+  # However, currently in P, we only support the single latest version since there
+  # is no old system SDK versions. Therefore, this is set to empty for now. This
+  # should later (in post P) be set to a number, like 28.
+  PLATFORM_SYSTEMSDK_MIN_VERSION :=
+endif
+.KATI_READONLY := PLATFORM_SYSTEMSDK_MIN_VERSION
+
+# This is the list of system SDK versions that the current platform supports.
+PLATFORM_SYSTEMSDK_VERSIONS :=
+ifneq (,$(PLATFORM_SYSTEMSDK_MIN_VERSION))
+  $(if $(call math_is_number,$(PLATFORM_SYSTEMSDK_MIN_VERSION)),,\
+    $(error PLATFORM_SYSTEMSDK_MIN_VERSION must be a number, but was $(PLATFORM_SYSTEMSDK_MIN_VERSION)))
+  PLATFORM_SYSTEMSDK_VERSIONS := $(call int_range_list,$(PLATFORM_SYSTEMSDK_MIN_VERSION),$(PLATFORM_SDK_VERSION))
+endif
+# Platform always supports the current version
+ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+  PLATFORM_SYSTEMSDK_VERSIONS += $(PLATFORM_SDK_VERSION)
+else
+  PLATFORM_SYSTEMSDK_VERSIONS += $(PLATFORM_VERSION_CODENAME)
+endif
+PLATFORM_SYSTEMSDK_VERSIONS := $(strip $(sort $(PLATFORM_SYSTEMSDK_VERSIONS)))
+.KATI_READONLY := PLATFORM_SYSTEMSDK_VERSIONS
 
 ifndef PLATFORM_SECURITY_PATCH
     #  Used to indicate the security patch that has been applied to the device.
@@ -191,6 +256,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
       PLATFORM_SECURITY_PATCH := 2017-12-01
 endif
+.KATI_READONLY := PLATFORM_SECURITY_PATCH
 
 ifndef PLATFORM_BASE_OS
   # Used to indicate the base os applied to the device.
@@ -199,6 +265,7 @@ ifndef PLATFORM_BASE_OS
   # If there is no $PLATFORM_BASE_OS set, keep it empty.
   PLATFORM_BASE_OS :=
 endif
+.KATI_READONLY := PLATFORM_BASE_OS
 
 ifndef BUILD_ID
   # Used to signify special builds.  E.g., branches and/or releases,
@@ -208,6 +275,7 @@ ifndef BUILD_ID
   # If there is no BUILD_ID set, make it obvious.
   BUILD_ID := UNKNOWN
 endif
+.KATI_READONLY := BUILD_ID
 
 ifndef BUILD_DATETIME
   # Used to reproduce builds by setting the same time. Must be the number
@@ -220,7 +288,14 @@ DATE := date -r $(BUILD_DATETIME)
 else
 DATE := date -d @$(BUILD_DATETIME)
 endif
+.KATI_READONLY := DATE
 
+# Everything should be using BUILD_DATETIME_FROM_FILE instead.
+# BUILD_DATETIME and DATE can be removed once BUILD_NUMBER moves
+# to soong_ui.
+$(KATI_obsolete_var BUILD_DATETIME,Use BUILD_DATETIME_FROM_FILE)
+
+HAS_BUILD_NUMBER := true
 ifndef BUILD_NUMBER
   # BUILD_NUMBER should be set to the source control value that
   # represents the current state of the source code.  E.g., a
@@ -232,4 +307,6 @@ ifndef BUILD_NUMBER
   # from this date/time" value.  Make it start with a non-digit so that
   # anyone trying to parse it as an integer will probably get "0".
   BUILD_NUMBER := eng.$(shell echo $${USER:0:6}).$(shell $(DATE) +%Y%m%d.%H%M%S)
+  HAS_BUILD_NUMBER := false
 endif
+.KATI_READONLY := BUILD_NUMBER HAS_BUILD_NUMBER

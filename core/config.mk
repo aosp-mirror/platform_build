@@ -60,14 +60,14 @@ backslash := $(patsubst %a,%,$(backslash))
 
 # Mark variables deprecated/obsolete
 CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
-$(KATI_deprecated_var PATH,Do not use PATH directly. See $(CHANGES_URL)#PATH)
+$(KATI_obsolete_var PATH,Do not use PATH directly. See $(CHANGES_URL)#PATH)
 $(KATI_obsolete_var PYTHONPATH,Do not use PYTHONPATH directly. See $(CHANGES_URL)#PYTHONPATH)
 $(KATI_obsolete_var OUT,Use OUT_DIR instead. See $(CHANGES_URL)#OUT)
 $(KATI_obsolete_var ANDROID_HOST_OUT,Use HOST_OUT instead. See $(CHANGES_URL)#ANDROID_HOST_OUT)
-$(KATI_deprecated_var ANDROID_PRODUCT_OUT,Use PRODUCT_OUT instead. See $(CHANGES_URL)#ANDROID_PRODUCT_OUT)
+$(KATI_obsolete_var ANDROID_PRODUCT_OUT,Use PRODUCT_OUT instead. See $(CHANGES_URL)#ANDROID_PRODUCT_OUT)
 $(KATI_obsolete_var ANDROID_HOST_OUT_TESTCASES,Use HOST_OUT_TESTCASES instead. See $(CHANGES_URL)#ANDROID_HOST_OUT_TESTCASES)
 $(KATI_obsolete_var ANDROID_TARGET_OUT_TESTCASES,Use TARGET_OUT_TESTCASES instead. See $(CHANGES_URL)#ANDROID_TARGET_OUT_TESTCASES)
-$(KATI_deprecated_var ANDROID_BUILD_TOP,Use '.' instead. See $(CHANGES_URL)#ANDROID_BUILD_TOP)
+$(KATI_obsolete_var ANDROID_BUILD_TOP,Use '.' instead. See $(CHANGES_URL)#ANDROID_BUILD_TOP)
 $(KATI_obsolete_var \
   ANDROID_TOOLCHAIN \
   ANDROID_TOOLCHAIN_2ND_ARCH \
@@ -75,6 +75,8 @@ $(KATI_obsolete_var \
   ANDROID_EMULATOR_PREBUILTS \
   ANDROID_PRE_BUILD_PATHS \
   ,See $(CHANGES_URL)#other_envsetup_variables)
+$(KATI_obsolete_var PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE,Set FCM Version in device manifest instead. See $(CHANGES_URL)#PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE)
+$(KATI_obsolete_var USE_CLANG_PLATFORM_BUILD,Clang is the only supported Android compiler. See $(CHANGES_URL)#USE_CLANG_PLATFORM_BUILD)
 
 CHANGES_URL :=
 
@@ -87,24 +89,17 @@ ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
 dist_goal := $(strip $(filter dist,$(MAKECMDGOALS)))
 MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
 
-# Tell python not to spam the source tree with .pyc files.  This
-# only has an effect on python 2.6 and above.
-export PYTHONDONTWRITEBYTECODE := 1
-
-ifneq ($(filter --color=always, $(GREP_OPTIONS)),)
-$(warning The build system needs unmodified output of grep.)
-$(error Please remove --color=always from your  $$GREP_OPTIONS)
-endif
-
 UNAME := $(shell uname -sm)
 
 SRC_TARGET_DIR := $(TOPDIR)build/target
-SRC_API_DIR := $(TOPDIR)prebuilts/sdk/api
-SRC_SYSTEM_API_DIR := $(TOPDIR)prebuilts/sdk/system-api
-SRC_TEST_API_DIR := $(TOPDIR)prebuilts/sdk/test-api
 
 # Some specific paths to tools
-SRC_DROIDDOC_DIR := $(TOPDIR)build/tools/droiddoc
+SRC_DROIDDOC_DIR := $(TOPDIR)build/make/tools/droiddoc
+
+# Mark some inputs as readonly
+ifdef TARGET_DEVICE_DIR
+  .KATI_READONLY := TARGET_DEVICE_DIR
+endif
 
 # Set up efficient math functions which are used in make.
 # Here since this file is included by envsetup as well as during build.
@@ -112,6 +107,9 @@ include $(BUILD_SYSTEM)/math.mk
 
 # Various mappings to avoid hard-coding paths all over the place
 include $(BUILD_SYSTEM)/pathmap.mk
+
+# Allow projects to define their own globally-available variables
+include $(BUILD_SYSTEM)/project_definitions.mk
 
 # ###############################################################
 # Build system internal files
@@ -155,8 +153,16 @@ BUILD_NOTICE_FILE := $(BUILD_SYSTEM)/notice_files.mk
 BUILD_HOST_DALVIK_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_java_library.mk
 BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
 
-BUILD_HOST_TEST_CONFIG:= $(BUILD_SYSTEM)/host_test_config.mk
-BUILD_TARGET_TEST_CONFIG:= $(BUILD_SYSTEM)/target_test_config.mk
+BUILD_HOST_TEST_CONFIG := $(BUILD_SYSTEM)/host_test_config.mk
+BUILD_TARGET_TEST_CONFIG := $(BUILD_SYSTEM)/target_test_config.mk
+
+INSTRUMENTATION_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/instrumentation_test_config_template.xml
+NATIVE_BENCHMARK_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/native_benchmark_test_config_template.xml
+NATIVE_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/native_test_config_template.xml
+EMPTY_TEST_CONFIG := $(BUILD_SYSTEM)/empty_test_config.xml
+
+# Tool to generate TradeFed test config file automatically.
+AUTOGEN_TEST_CONFIG_SCRIPT := build/make/tools/auto_gen_test_config.py
 
 # ###############################################################
 # Parse out any modifier targets.
@@ -167,7 +173,7 @@ hide := @
 ################################################################
 # Tools needed in product configuration makefiles.
 ################################################################
-NORMALIZE_PATH := build/tools/normalize_path.py
+NORMALIZE_PATH := build/make/tools/normalize_path.py
 
 # $(1): the paths to be normalized
 define normalize-paths
@@ -177,6 +183,9 @@ endef
 # ###############################################################
 # Set common values
 # ###############################################################
+
+# Initialize SOONG_CONFIG_NAMESPACES so that it isn't recursive.
+SOONG_CONFIG_NAMESPACES :=
 
 # Set the extensions used for various packages
 COMMON_PACKAGE_SUFFIX := .zip
@@ -188,6 +197,12 @@ JAVA_TMPDIR_ARG := -Djava.io.tmpdir=$(TMPDIR)
 else
 JAVA_TMPDIR_ARG :=
 endif
+
+# ###############################################################
+# Broken build defaults
+# ###############################################################
+# Assume that all boards have duplicate rules right now.
+BUILD_BROKEN_DUP_RULES := true
 
 # ###############################################################
 # Include sub-configuration files
@@ -404,31 +419,9 @@ ifeq ($(strip $(WITH_STATIC_ANALYZER)),0)
   WITH_STATIC_ANALYZER :=
 endif
 
-# define clang/llvm versions and base directory.
-include $(BUILD_SYSTEM)/clang/versions.mk
-
 # Unset WITH_TIDY_ONLY if global WITH_TIDY_ONLY is not true nor 1.
 ifeq (,$(filter 1 true,$(WITH_TIDY_ONLY)))
   WITH_TIDY_ONLY :=
-endif
-
-PATH_TO_CLANG_TIDY := \
-    $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/bin/clang-tidy
-ifeq ($(wildcard $(PATH_TO_CLANG_TIDY)),)
-  ifneq (,$(filter 1 true,$(WITH_TIDY)))
-    $(warning *** Disable WITH_TIDY because $(PATH_TO_CLANG_TIDY) does not exist)
-  endif
-  PATH_TO_CLANG_TIDY :=
-endif
-
-# Disable WITH_STATIC_ANALYZER if tool can't be found
-SYNTAX_TOOLS_PREFIX := \
-    $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/tools/scan-build/libexec
-ifneq ($(strip $(WITH_STATIC_ANALYZER)),)
-  ifeq ($(wildcard $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer),)
-    $(warning *** Disable WITH_STATIC_ANALYZER because $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer does not exist)
-    WITH_STATIC_ANALYZER :=
-  endif
 endif
 
 # Pick a Java compiler.
@@ -461,9 +454,9 @@ pdk fusion: $(DEFAULT_GOAL)
 
 # What to build:
 # pdk fusion if:
-# 1) PDK_FUSION_PLATFORM_ZIP is passed in from the environment
+# 1) PDK_FUSION_PLATFORM_ZIP / PDK_FUSION_PLATFORM_DIR is passed in from the environment
 # or
-# 2) the platform.zip exists in the default location
+# 2) the platform.zip / pdk.mk exists in the default location
 # or
 # 3) fusion is a command line build goal,
 #    PDK_FUSION_PLATFORM_ZIP is needed anyway, then do we need the 'fusion' goal?
@@ -472,27 +465,44 @@ pdk fusion: $(DEFAULT_GOAL)
 # or
 # 2) TARGET_BUILD_PDK is passed in from the environment
 
-# if PDK_FUSION_PLATFORM_ZIP is specified, do not override.
-ifndef PDK_FUSION_PLATFORM_ZIP
-# Most PDK project paths should be using vendor/pdk/TARGET_DEVICE
-# but some legacy ones (e.g. mini_armv7a_neon generic PDK) were setup
-# with vendor/pdk/TARGET_PRODUCT.
-_pdk_fusion_default_platform_zip = $(strip \
-  $(wildcard vendor/pdk/$(TARGET_DEVICE)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip) \
-  $(wildcard vendor/pdk/$(TARGET_DEVICE)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip) \
-  $(wildcard vendor/pdk/$(TARGET_PRODUCT)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform/platform.zip) \
-  $(wildcard vendor/pdk/$(TARGET_PRODUCT)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform/platform.zip))
-ifneq (,$(_pdk_fusion_default_platform_zip))
-PDK_FUSION_PLATFORM_ZIP := $(word 1, $(_pdk_fusion_default_platform_zip))
-TARGET_BUILD_PDK := true
-endif # _pdk_fusion_default_platform_zip
-endif # !PDK_FUSION_PLATFORM_ZIP
+# if PDK_FUSION_PLATFORM_ZIP or PDK_FUSION_PLATFORM_DIR is specified, do not override.
+ifeq (,$(strip $(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR)))
+  # Most PDK project paths should be using vendor/pdk/TARGET_DEVICE
+  # but some legacy ones (e.g. mini_armv7a_neon generic PDK) were setup
+  # with vendor/pdk/TARGET_PRODUCT.
+  # Others are set up with vendor/pdk/TARGET_DEVICE/TARGET_DEVICE-userdebug
+  _pdk_fusion_search_paths := \
+    vendor/pdk/$(TARGET_DEVICE)/$(TARGET_DEVICE)-$(TARGET_BUILD_VARIANT)/platform \
+    vendor/pdk/$(TARGET_DEVICE)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform \
+    vendor/pdk/$(TARGET_DEVICE)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform \
+    vendor/pdk/$(TARGET_PRODUCT)/$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)/platform \
+    vendor/pdk/$(TARGET_PRODUCT)/$(patsubst aosp_%,full_%,$(TARGET_PRODUCT))-$(TARGET_BUILD_VARIANT)/platform
+
+  _pdk_fusion_default_platform_zip := $(strip $(foreach p,$(_pdk_fusion_search_paths),$(wildcard $(p)/platform.zip)))
+  ifneq (,$(_pdk_fusion_default_platform_zip))
+    PDK_FUSION_PLATFORM_ZIP := $(word 1, $(_pdk_fusion_default_platform_zip))
+    _pdk_fusion_default_platform_zip :=
+  else
+    _pdk_fusion_default_platform_mk := $(strip $(foreach p,$(_pdk_fusion_search_paths),$(wildcard $(p)/pdk.mk)))
+    ifneq (,$(_pdk_fusion_default_platform_mk))
+      PDK_FUSION_PLATFORM_DIR := $(dir $(word 1,$(_pdk_fusion_default_platform_mk)))
+      _pdk_fusion_default_platform_mk :=
+    endif
+  endif # _pdk_fusion_default_platform_zip
+  _pdk_fusion_search_paths :=
+endif # !PDK_FUSION_PLATFORM_ZIP && !PDK_FUSION_PLATFORM_DIR
+
+ifneq (,$(PDK_FUSION_PLATFORM_ZIP))
+  ifneq (,$(PDK_FUSION_PLATFORM_DIR))
+    $(error Only one of PDK_FUSION_PLATFORM_ZIP or PDK_FUSION_PLATFORM_DIR may be specified)
+  endif
+endif
 
 ifneq (,$(filter pdk fusion, $(MAKECMDGOALS)))
 TARGET_BUILD_PDK := true
 ifneq (,$(filter fusion, $(MAKECMDGOALS)))
-ifndef PDK_FUSION_PLATFORM_ZIP
-  $(error Specify PDK_FUSION_PLATFORM_ZIP to do a PDK fusion.)
+ifeq (,$(strip $(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR)))
+  $(error Specify PDK_FUSION_PLATFORM_ZIP or PDK_FUSION_PLATFORM_DIR to do a PDK fusion.)
 endif
 endif  # fusion
 endif  # pdk or fusion
@@ -500,7 +510,19 @@ endif  # pdk or fusion
 ifdef PDK_FUSION_PLATFORM_ZIP
 TARGET_BUILD_PDK := true
 ifeq (,$(wildcard $(PDK_FUSION_PLATFORM_ZIP)))
-  $(error Cannot find file $(PDK_FUSION_PLATFORM_ZIP).)
+  ifneq (,$(wildcard $(dir $(PDK_FUSION_PLATFORM_ZIP))/pdk.mk))
+    PDK_FUSION_PLATFORM_DIR := $(dir $(PDK_FUSION_PLATFORM_ZIP))
+    PDK_FUSION_PLATFORM_ZIP :=
+  else
+    $(error Cannot find file $(PDK_FUSION_PLATFORM_ZIP).)
+  endif
+endif
+endif
+
+ifdef PDK_FUSION_PLATFORM_DIR
+TARGET_BUILD_PDK := true
+ifeq (,$(wildcard $(PDK_FUSION_PLATFORM_DIR)/pdk.mk))
+  $(error Cannot find file $(PDK_FUSION_PLATFORM_DIR)/pdk.mk.)
 endif
 endif
 
@@ -546,7 +568,7 @@ endif
 
 # Default R8 behavior when USE_R8 is not specified.
 ifndef USE_R8
-  USE_R8 := false
+  USE_R8 := true
 endif
 
 #
@@ -573,8 +595,6 @@ else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   ZIPALIGN := $(prebuilt_build_tools_bin)/zipalign
 endif # TARGET_BUILD_APPS || TARGET_BUILD_PDK
 
-R8_COMPAT_PROGUARD := $(HOST_OUT_EXECUTABLES)/r8-compat-proguard
-
 ifeq (,$(TARGET_BUILD_APPS))
   # Use RenderScript prebuilts for unbundled builds but not PDK builds
   LLVM_RS_CC := $(HOST_OUT_EXECUTABLES)/llvm-rs-cc
@@ -595,6 +615,8 @@ MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
 SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
 MERGE_ZIPS := $(SOONG_HOST_OUT_EXECUTABLES)/merge_zips
+XMLLINT := $(SOONG_HOST_OUT_EXECUTABLES)/xmllint
+XZ := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/bin/xz
 ZIP2ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/zip2zip
 ZIPTIME := $(prebuilt_build_tools_bin)/ziptime
 
@@ -603,13 +625,13 @@ ZIPTIME := $(prebuilt_build_tools_bin)/ziptime
 
 LEX := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/flex/flex-2.5.39
 # The default PKGDATADIR built in the prebuilt bison is a relative path
-# external/bison/data.
+# prebuilts/build-tools/common/bison.
 # To run bison from elsewhere you need to set up enviromental variable
 # BISON_PKGDATADIR.
-BISON_PKGDATADIR := $(PWD)/external/bison/data
-BISON := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/bison/bison
+BISON_PKGDATADIR := $(PWD)/prebuilts/build-tools/common/bison
+BISON := prebuilts/build-tools/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/bin/bison
 YACC := $(BISON) -d
-BISON_DATA := $(wildcard external/bison/data/* external/bison/data/*/*)
+BISON_DATA := $(wildcard $(BISON_PKGDATADIR)/* $(BISON_PKGDATADIR)/*/*)
 
 YASM := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/yasm/yasm
 
@@ -657,19 +679,20 @@ MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh
 SIMG2IMG := $(HOST_OUT_EXECUTABLES)/simg2img$(HOST_EXECUTABLE_SUFFIX)
 IMG2SIMG := $(HOST_OUT_EXECUTABLES)/img2simg$(HOST_EXECUTABLE_SUFFIX)
 E2FSCK := $(HOST_OUT_EXECUTABLES)/e2fsck$(HOST_EXECUTABLE_SUFFIX)
-MKTARBALL := build/tools/mktarball.sh
+MKTARBALL := build/make/tools/mktarball.sh
 TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
-FAT16COPY := build/tools/fat16copy.py
-CHECK_LINK_TYPE := build/tools/check_link_type.py
+FAT16COPY := build/make/tools/fat16copy.py
+CHECK_LINK_TYPE := build/make/tools/check_link_type.py
 
 PROGUARD := external/proguard/bin/proguard.sh
-JAVATAGS := build/tools/java-event-log-tags.py
-MERGETAGS := build/tools/merge-event-log-tags.py
-BUILD_IMAGE_SRCS := $(wildcard build/tools/releasetools/*.py)
+JAVATAGS := build/make/tools/java-event-log-tags.py
+MERGETAGS := build/make/tools/merge-event-log-tags.py
+BUILD_IMAGE_SRCS := $(wildcard build/make/tools/releasetools/*.py)
 APPEND2SIMG := $(HOST_OUT_EXECUTABLES)/append2simg
 VERITY_SIGNER := $(HOST_OUT_EXECUTABLES)/verity_signer
+BUILD_VERITY_METADATA := $(HOST_OUT_EXECUTABLES)/build_verity_metadata.py
 BUILD_VERITY_TREE := $(HOST_OUT_EXECUTABLES)/build_verity_tree
 BOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/boot_signer
 FUTILITY := $(HOST_OUT_EXECUTABLES)/futility-host
@@ -679,6 +702,7 @@ BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump2$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
+HIDDENAPI := $(HOST_OUT_EXECUTABLES)/hiddenapi
 
 # relocation packer
 RELOCATION_PACKER := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/relocation_packer/relocation_packer
@@ -699,7 +723,11 @@ ANDROID_MANIFEST_MERGER := $(JAVA) \
 COLUMN:= column
 
 ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+ifeq ($(RUN_ERROR_PRONE),true)
 USE_OPENJDK9 :=
+else
+USE_OPENJDK9 := true
+endif
 TARGET_OPENJDK9 :=
 else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),false)
 USE_OPENJDK9 :=
@@ -712,14 +740,8 @@ USE_OPENJDK9 := true
 TARGET_OPENJDK9 := true
 endif
 
-# Path to tools.jar, or empty if USE_OPENJDK9 is unset
-HOST_JDK_TOOLS_JAR :=
-# TODO: Remove HOST_JDK_TOOLS_JAR and all references to it once OpenJDK 8
-# toolchains are no longer supported (i.e. when USE_OPENJDK9 is enforced).
-# http://b/38418220
-ifndef USE_OPENJDK9
-HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA_TOOLCHAIN)/../lib/tools.jar
-endif # ifndef USE_OPENJDK9
+# Path to tools.jar
+HOST_JDK_TOOLS_JAR := $(ANDROID_JAVA8_HOME)/lib/tools.jar
 
 # It's called md5 on Mac OS and md5sum on Linux
 ifeq ($(HOST_OS),darwin)
@@ -729,13 +751,25 @@ MD5SUM:=md5sum
 endif
 
 APICHECK_CLASSPATH_ENTRIES := \
-    $(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX) \
-    $(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX) \
+    $(HOST_OUT_JAVA_LIBRARIES)/apicheck$(COMMON_JAVA_PACKAGE_SUFFIX) \
     $(HOST_JDK_TOOLS_JAR) \
     )
 APICHECK_CLASSPATH := $(subst $(space),:,$(strip $(APICHECK_CLASSPATH_ENTRIES)))
 
 APICHECK_COMMAND := $(APICHECK) -JXmx1024m -J"classpath $(APICHECK_CLASSPATH)"
+
+# Boolean variable determining if the whitelist for compatible properties is enabled
+PRODUCT_COMPATIBLE_PROPERTY := false
+ifneq ($(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE),)
+  PRODUCT_COMPATIBLE_PROPERTY := $(PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE)
+else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
+  #$(warning no product shipping level defined)
+else ifneq ($(call math_lt,27,$(PRODUCT_SHIPPING_API_LEVEL)),)
+  PRODUCT_COMPATIBLE_PROPERTY := true
+endif
+
+.KATI_READONLY := \
+    PRODUCT_COMPATIBLE_PROPERTY
 
 # Boolean variable determining if Treble is fully enabled
 PRODUCT_FULL_TREBLE := false
@@ -747,15 +781,25 @@ else ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),26),)
   PRODUCT_FULL_TREBLE := true
 endif
 
+# TODO(b/69865032): Make PRODUCT_NOTICE_SPLIT the default behavior and remove
+#    references to it here and below.
+ifdef PRODUCT_NOTICE_SPLIT_OVERRIDE
+   $(error PRODUCT_NOTICE_SPLIT_OVERRIDE cannot be set.)
+endif
+
 requirements := \
     PRODUCT_TREBLE_LINKER_NAMESPACES \
     PRODUCT_SEPOLICY_SPLIT \
     PRODUCT_ENFORCE_VINTF_MANIFEST \
+    PRODUCT_NOTICE_SPLIT
 
 # If it is overriden, then the requirement override is taken, otherwise it's
 # PRODUCT_FULL_TREBLE
 $(foreach req,$(requirements),$(eval \
     $(req) := $(if $($(req)_OVERRIDE),$($(req)_OVERRIDE),$(PRODUCT_FULL_TREBLE))))
+# If the requirement is false for any reason, then it's not PRODUCT_FULL_TREBLE
+$(foreach req,$(requirements),$(eval \
+    PRODUCT_FULL_TREBLE := $(if $(filter false,$($(req))),false,$(PRODUCT_FULL_TREBLE))))
 
 PRODUCT_FULL_TREBLE_OVERRIDE ?=
 $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
@@ -768,10 +812,55 @@ $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
 
 requirements :=
 
+# BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED can be true only if early-mount of
+# partitions is supported. But the early-mount must be supported for full
+# treble products, and so BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED should be set
+# by default for full treble products.
+ifeq ($(PRODUCT_FULL_TREBLE),true)
+  BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED ?= true
+endif
+
+# If PRODUCT_USE_VNDK is true and BOARD_VNDK_VERSION is not defined yet,
+# BOARD_VNDK_VERSION will be set to "current" as default.
+# PRODUCT_USE_VNDK will be true in Android-P or later launching devices.
+PRODUCT_USE_VNDK := false
+ifneq ($(PRODUCT_USE_VNDK_OVERRIDE),)
+  PRODUCT_USE_VNDK := $(PRODUCT_USE_VNDK_OVERRIDE)
+else ifeq ($(PRODUCT_SHIPPING_API_LEVEL),)
+  # No shipping level defined
+else ifeq ($(call math_gt_or_eq,27,$(PRODUCT_SHIPPING_API_LEVEL)),)
+  PRODUCT_USE_VNDK := $(PRODUCT_FULL_TREBLE)
+endif
+
+ifeq ($(PRODUCT_USE_VNDK),true)
+  ifndef BOARD_VNDK_VERSION
+    BOARD_VNDK_VERSION := current
+  endif
+endif
+
+$(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use PRODUCT_USE_VNDK instead)
+.KATI_READONLY := \
+    PRODUCT_USE_VNDK
+
 ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),27),)
     ifneq ($(TARGET_USES_MKE2FS),true)
       $(error When PRODUCT_SHIPPING_API_LEVEL >= 27, TARGET_USES_MKE2FS must be true)
+    endif
+  endif
+  ifneq ($(call numbers_less_than,$(PRODUCT_SHIPPING_API_LEVEL),$(BOARD_SYSTEMSDK_VERSIONS)),)
+    $(error BOARD_SYSTEMSDK_VERSIONS ($(BOARD_SYSTEMSDK_VERSIONS)) must all be greater than or equal to PRODUCT_SHIPPING_API_LEVEL ($(PRODUCT_SHIPPING_API_LEVEL)))
+  endif
+  ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),28),)
+    ifneq ($(TARGET_IS_64_BIT), true)
+      ifneq ($(TARGET_USES_64_BIT_BINDER), true)
+        $(error When PRODUCT_SHIPPING_API_LEVEL >= 28, TARGET_USES_64_BIT_BINDER must be true)
+      endif
+    endif
+    ifeq ($(PRODUCT_FULL_TREBLE),true)
+      ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE), true)
+        $(error When PRODUCT_SHIPPING_API_LEVEL >= 28, BOARD_BUILD_SYSTEM_ROOT_IMAGE must be true)
+      endif
     endif
   endif
 endif
@@ -783,48 +872,46 @@ else
   DEFAULT_SYSTEM_DEV_CERTIFICATE := build/target/product/security/testkey
 endif
 
-FRAMEWORK_MANIFEST_FILE := system/libhidl/manifest.xml
-
-# Compatibility matrix versioning:
-# MATRIX_LEVEL_OVERRIDE defined: MATRIX_LEVEL = MATRIX_LEVEL_OVERRIDE
-# MATRIX_LEVEL_OVERRIDE undefined:
-#   FULL_TREBLE != true: MATRIX_LEVEL = legacy
-#   FULL_TREBLE == true:
-#     SHIPPING_API_LEVEL defined: MATRIX_LEVEL = SHIPPING_API_LEVEL
-#     SHIPPING_API_LEVEL undefined: MATRIX_LEVEL = PLATFORM_SDK_VERSION
-# MATRIX_LEVEL == legacy => legacy.xml
-# MATRIX_LEVEL <= 26 => 26.xml
-# MATRIX_LEVEL == 27 => 27.xml # define when 27 releases
-# MATRIX_LEVEL == 28 => 28.xml # define when 28 releases
-# ...
-# otherwise => current.xml
-
-ifneq ($(PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE),)
-  PRODUCT_COMPATIBILITY_MATRIX_LEVEL := $(PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE)
-else ifneq ($(PRODUCT_FULL_TREBLE),true)
-  PRODUCT_COMPATIBILITY_MATRIX_LEVEL := legacy
-else ifneq ($(PRODUCT_SHIPPING_API_LEVEL),)
-  PRODUCT_COMPATIBILITY_MATRIX_LEVEL := $(PRODUCT_SHIPPING_API_LEVEL)
-else
-  PRODUCT_COMPATIBILITY_MATRIX_LEVEL := $(PLATFORM_SDK_VERSION)
-endif
-
-ifeq ($(strip $(PRODUCT_COMPATIBILITY_MATRIX_LEVEL)),legacy)
-  FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.legacy.xml
-else ifeq ($(call math_gt_or_eq,$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL),26),)
-  # All PRODUCT_FULL_TREBLE devices with shipping API levels < 26 get the level 26 manifest
-  # as that is the first.
-  FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.26.xml
-else ifeq ($(call math_gt_or_eq,$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL),28),)
-  # All shipping API levels with released compatibility matrices get the corresponding matrix.
-  FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
-      hardware/interfaces/compatibility_matrix.$(PRODUCT_COMPATIBILITY_MATRIX_LEVEL).xml
-else
-  FRAMEWORK_COMPATIBILITY_MATRIX_FILE := hardware/interfaces/compatibility_matrix.current.xml
-endif
-
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
-BUILD_DATETIME_FROM_FILE := $$(cat $(OUT_DIR)/build_date.txt)
+BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
+
+# SEPolicy versions
+
+# PLATFORM_SEPOLICY_VERSION is a number of the form "NN.m" with "NN" mapping to
+# PLATFORM_SDK_VERSION and "m" as a minor number which allows for SELinux
+# changes independent of PLATFORM_SDK_VERSION.  This value will be set to
+# 10000.0 to represent tip-of-tree development that is inherently unstable and
+# thus designed not to work with any shipping vendor policy.  This is similar in
+# spirit to how DEFAULT_APP_TARGET_SDK is set.
+# The minor version ('m' component) must be updated every time a platform release
+# is made which breaks compatibility with the previous platform sepolicy version,
+# not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
+# be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
+sepolicy_major_vers := 27
+sepolicy_minor_vers := 0
+
+ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
+$(error sepolicy_major_version does not match PLATFORM_SDK_VERSION, please update.)
+endif
+
+TOT_SEPOLICY_VERSION := 10000.0
+ifneq (REL,$(PLATFORM_VERSION_CODENAME))
+    PLATFORM_SEPOLICY_VERSION := $(TOT_SEPOLICY_VERSION)
+else
+    PLATFORM_SEPOLICY_VERSION := $(join $(addsuffix .,$(sepolicy_major_vers)), $(sepolicy_minor_vers))
+endif
+sepolicy_major_vers :=
+sepolicy_minor_vers :=
+
+# A list of SEPolicy versions, besides PLATFORM_SEPOLICY_VERSION, that the framework supports.
+PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
+    26.0 \
+    27.0
+
+.KATI_READONLY := \
+    PLATFORM_SEPOLICY_COMPAT_VERSIONS \
+    PLATFORM_SEPOLICY_VERSION \
+    TOT_SEPOLICY_VERSION \
 
 # ###############################################################
 # Set up final options.
@@ -862,12 +949,6 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT := $(call first_non_empt
 $(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
 endif
 
-# These will come from Soong, drop the environment versions
-unexport CLANG
-unexport CLANG_CXX
-unexport CCC_CC
-unexport CCC_CXX
-
 # ###############################################################
 # Collect a list of the SDK versions that we could compile against
 # For use with the LOCAL_SDK_VERSION variable for include $(BUILD_PACKAGE)
@@ -882,6 +963,29 @@ SUPPORT_LIBRARY_ROOT := $(HISTORICAL_SDK_VERSIONS_ROOT)/current/support
 else
 SUPPORT_LIBRARY_ROOT := frameworks/support
 endif
+
+get-sdk-version = $(if $(findstring _,$(1)),$(subst core_,,$(subst system_,,$(subst test_,,$(1)))),$(1))
+get-sdk-api = $(if $(findstring _,$(1)),$(patsubst %_$(call get-sdk-version,$(1)),%,$(1)),public)
+get-prebuilt-sdk-dir = $(HISTORICAL_SDK_VERSIONS_ROOT)/$(call get-sdk-version,$(1))/$(call get-sdk-api,$(1))
+
+# Resolve LOCAL_SDK_VERSION to prebuilt module name, e.g.:
+# 23 -> sdk_public_23_android
+# system_current -> sdk_system_current_android
+# $(1): An sdk version (LOCAL_SDK_VERSION)
+# $(2): optional library name (default: android)
+define resolve-prebuilt-sdk-module
+$(if $(findstring _,$(1)),\
+  sdk_$(1)_$(or $(2),android),\
+  sdk_public_$(1)_$(or $(2),android))
+endef
+
+# Resolve LOCAL_SDK_VERSION to prebuilt android.jar
+# $(1): LOCAL_SDK_VERSION
+resolve-prebuilt-sdk-jar-path = $(call get-prebuilt-sdk-dir,$(1))/android.jar
+
+# Resolve LOCAL_SDK_VERSION to prebuilt framework.aidl
+# $(1): An sdk version (LOCAL_SDK_VERSION)
+resolve-prebuilt-sdk-aidl-path = $(call get-prebuilt-sdk-dir,$(call get-sdk-version,$(1)))/framework.aidl
 
 # Historical SDK version N is stored in $(HISTORICAL_SDK_VERSIONS_ROOT)/N.
 # The 'current' version is whatever this source tree is.
@@ -899,29 +1003,27 @@ $(shell function sgrax() { \
     ( sgrax $(1) | sort -g ) )
 endef
 
-TARGET_AVAILABLE_SDK_VERSIONS := $(call numerically_sort,\
-    $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android.jar,%, \
-    $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android.jar)))
-
-TARGET_AVAILABLE_SDK_VERSIONS := $(addprefix system_,$(call numerically_sort,\
-    $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android_system.jar,%, \
-    $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/android_system.jar)))) \
-    $(TARGET_AVAILABLE_SDK_VERSIONS)
-
-# We don't have prebuilt test_current SDK yet.
-TARGET_AVAILABLE_SDK_VERSIONS := test_current $(TARGET_AVAILABLE_SDK_VERSIONS)
+# This produces a list like "current/core current/public current/system 4/public"
+TARGET_AVAILABLE_SDK_VERSIONS := $(wildcard $(HISTORICAL_SDK_VERSIONS_ROOT)/*/*/android.jar)
+TARGET_AVAILABLE_SDK_VERSIONS := $(patsubst $(HISTORICAL_SDK_VERSIONS_ROOT)/%/android.jar,%,$(TARGET_AVAILABLE_SDK_VERSIONS))
+# Strips and reorganizes the "public", "core" and "system" subdirs.
+TARGET_AVAILABLE_SDK_VERSIONS := $(subst /public,,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_AVAILABLE_SDK_VERSIONS := $(patsubst %/core,core_%,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_AVAILABLE_SDK_VERSIONS := $(patsubst %/system,system_%,$(TARGET_AVAILABLE_SDK_VERSIONS))
+# No prebuilt for test_current.
+TARGET_AVAILABLE_SDK_VERSIONS += test_current
+TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,27,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
-INTERNAL_PLATFORM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/public_api.txt
-INTERNAL_PLATFORM_REMOVED_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/removed.txt
-INTERNAL_PLATFORM_SYSTEM_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-api.txt
-INTERNAL_PLATFORM_SYSTEM_REMOVED_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-removed.txt
-INTERNAL_PLATFORM_SYSTEM_EXACT_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-exact.txt
-INTERNAL_PLATFORM_TEST_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/test-api.txt
-INTERNAL_PLATFORM_TEST_REMOVED_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/test-removed.txt
-INTERNAL_PLATFORM_TEST_EXACT_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/test-exact.txt
+INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-light-greylist.txt
+INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-dark-greylist.txt
+INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-blacklist.txt
+
+# Missing optional uses-libraries so that the platform doesn't create build rules that depend on
+# them. See setup_one_odex.mk.
+INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := com.google.android.ble com.google.android.wearable
 
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
@@ -964,6 +1066,7 @@ dont_bother_goals := out \
     cacheimage-nodeps \
     bptimage-nodeps \
     vnod vendorimage-nodeps \
+    pnod productimage-nodeps \
     systemotherimage-nodeps \
     ramdisk-nodeps \
     bootimage-nodeps \

@@ -21,11 +21,7 @@ Verify a given OTA package with the specifed certificate.
 from __future__ import print_function
 
 import argparse
-import common
-import os
-import os.path
 import re
-import site
 import subprocess
 import sys
 import tempfile
@@ -34,15 +30,7 @@ import zipfile
 from hashlib import sha1
 from hashlib import sha256
 
-# 'update_payload' package is under 'system/update_engine/scripts/', which
-# should be included in PYTHONPATH. Try to set it up automatically if
-# if ANDROID_BUILD_TOP is available.
-top = os.getenv('ANDROID_BUILD_TOP')
-if top:
-  site.addsitedir(os.path.join(top, 'system', 'update_engine', 'scripts'))
-
-from update_payload.payload import Payload
-from update_payload.update_metadata_pb2 import Signatures
+import common
 
 
 def CertUsesSha256(cert):
@@ -108,10 +96,7 @@ def VerifyPackage(cert, package):
   use_sha256 = CertUsesSha256(cert)
   print('Use SHA-256: %s' % (use_sha256,))
 
-  if use_sha256:
-    h = sha256()
-  else:
-    h = sha1()
+  h = sha256() if use_sha256 else sha1()
   h.update(package_bytes[:signed_len])
   package_digest = h.hexdigest().lower()
 
@@ -161,40 +146,6 @@ def VerifyPackage(cert, package):
 
 def VerifyAbOtaPayload(cert, package):
   """Verifies the payload and metadata signatures in an A/B OTA payload."""
-
-  def VerifySignatureBlob(hash_file, blob):
-    """Verifies the input hash_file against the signature blob."""
-    signatures = Signatures()
-    signatures.ParseFromString(blob)
-
-    extracted_sig_file = common.MakeTempFile(
-        prefix='extracted-sig-', suffix='.bin')
-    # In Android, we only expect one signature.
-    assert len(signatures.signatures) == 1, \
-        'Invalid number of signatures: %d' % len(signatures.signatures)
-    signature = signatures.signatures[0]
-    length = len(signature.data)
-    assert length == 256, 'Invalid signature length %d' % (length,)
-    with open(extracted_sig_file, 'w') as f:
-      f.write(signature.data)
-
-    # Verify the signature file extracted from the payload, by reversing the
-    # signing operation. Alternatively, this can be done by calling 'openssl
-    # rsautl -verify -certin -inkey <cert.pem> -in <extracted_sig_file> -out
-    # <output>', then to assert that
-    # <output> == SHA-256 DigestInfo prefix || <hash_file>.
-    cmd = ['openssl', 'pkeyutl', '-verify', '-certin', '-inkey', cert,
-           '-pkeyopt', 'digest:sha256', '-in', hash_file,
-           '-sigfile', extracted_sig_file]
-    p = common.Run(cmd, stdout=subprocess.PIPE)
-    result, _ = p.communicate()
-
-    # https://github.com/openssl/openssl/pull/3213
-    # 'openssl pkeyutl -verify' (prior to 1.1.0) returns non-zero return code,
-    # even on successful verification. To avoid the false alarm with older
-    # openssl, check the output directly.
-    assert result.strip() == 'Signature Verified Successfully', result.strip()
-
   package_zip = zipfile.ZipFile(package, 'r')
   if 'payload.bin' not in package_zip.namelist():
     common.ZipClose(package_zip)
@@ -202,37 +153,23 @@ def VerifyAbOtaPayload(cert, package):
 
   print('Verifying A/B OTA payload signatures...')
 
-  package_dir = tempfile.mkdtemp(prefix='package-')
-  common.OPTIONS.tempfiles.append(package_dir)
+  # Dump pubkey from the certificate.
+  pubkey = common.MakeTempFile(prefix="key-", suffix=".pem")
+  with open(pubkey, 'wb') as pubkey_fp:
+    pubkey_fp.write(common.ExtractPublicKey(cert))
 
+  package_dir = common.MakeTempDir(prefix='package-')
+
+  # Signature verification with delta_generator.
   payload_file = package_zip.extract('payload.bin', package_dir)
-  payload = Payload(open(payload_file, 'rb'))
-  payload.Init()
-
-  # Extract the payload hash and metadata hash from the payload.bin.
-  payload_hash_file = common.MakeTempFile(prefix='hash-', suffix='.bin')
-  metadata_hash_file = common.MakeTempFile(prefix='hash-', suffix='.bin')
-  cmd = ['brillo_update_payload', 'hash',
-         '--unsigned_payload', payload_file,
-         '--signature_size', '256',
-         '--metadata_hash_file', metadata_hash_file,
-         '--payload_hash_file', payload_hash_file]
-  p = common.Run(cmd, stdout=subprocess.PIPE)
-  p.communicate()
-  assert p.returncode == 0, 'brillo_update_payload hash failed'
-
-  # Payload signature verification.
-  assert payload.manifest.HasField('signatures_offset')
-  payload_signature = payload.ReadDataBlob(
-      payload.manifest.signatures_offset, payload.manifest.signatures_size)
-  VerifySignatureBlob(payload_hash_file, payload_signature)
-
-  # Metadata signature verification.
-  metadata_signature = payload.ReadDataBlob(
-      -payload.header.metadata_signature_len,
-      payload.header.metadata_signature_len)
-  VerifySignatureBlob(metadata_hash_file, metadata_signature)
-
+  cmd = ['delta_generator',
+         '--in_file=' + payload_file,
+         '--public_key=' + pubkey]
+  proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  stdoutdata, _ = proc.communicate()
+  assert proc.returncode == 0, \
+      'Failed to verify payload with delta_generator: %s\n%s' % (package,
+                                                                 stdoutdata)
   common.ZipClose(package_zip)
 
   # Verified successfully upon reaching here.

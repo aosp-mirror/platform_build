@@ -13,21 +13,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 import os
-import shutil
+import subprocess
 import tempfile
 import time
 import unittest
 import zipfile
-
 from hashlib import sha1
 
 import common
+import test_utils
 import validate_target_files
+from rangelib import RangeSet
+
 
 KiB = 1024
 MiB = 1024 * KiB
 GiB = 1024 * MiB
+
 
 def get_2gb_string():
   size = int(2 * GiB + 1)
@@ -309,18 +313,369 @@ class CommonZipTest(unittest.TestCase):
     finally:
       os.remove(zip_file_name)
 
-class InstallRecoveryScriptFormatTest(unittest.TestCase):
-  """Check the format of install-recovery.sh
+  def test_ZipDelete(self):
+    zip_file = tempfile.NamedTemporaryFile(delete=False, suffix='.zip')
+    output_zip = zipfile.ZipFile(zip_file.name, 'w',
+                                 compression=zipfile.ZIP_DEFLATED)
+    with tempfile.NamedTemporaryFile() as entry_file:
+      entry_file.write(os.urandom(1024))
+      common.ZipWrite(output_zip, entry_file.name, arcname='Test1')
+      common.ZipWrite(output_zip, entry_file.name, arcname='Test2')
+      common.ZipWrite(output_zip, entry_file.name, arcname='Test3')
+      common.ZipClose(output_zip)
+    zip_file.close()
 
-  Its format should match between common.py and validate_target_files.py."""
+    try:
+      common.ZipDelete(zip_file.name, 'Test2')
+      with zipfile.ZipFile(zip_file.name, 'r') as check_zip:
+        entries = check_zip.namelist()
+        self.assertTrue('Test1' in entries)
+        self.assertFalse('Test2' in entries)
+        self.assertTrue('Test3' in entries)
+
+      self.assertRaises(AssertionError, common.ZipDelete, zip_file.name,
+                        'Test2')
+      with zipfile.ZipFile(zip_file.name, 'r') as check_zip:
+        entries = check_zip.namelist()
+        self.assertTrue('Test1' in entries)
+        self.assertFalse('Test2' in entries)
+        self.assertTrue('Test3' in entries)
+
+      common.ZipDelete(zip_file.name, ['Test3'])
+      with zipfile.ZipFile(zip_file.name, 'r') as check_zip:
+        entries = check_zip.namelist()
+        self.assertTrue('Test1' in entries)
+        self.assertFalse('Test2' in entries)
+        self.assertFalse('Test3' in entries)
+
+      common.ZipDelete(zip_file.name, ['Test1', 'Test2'])
+      with zipfile.ZipFile(zip_file.name, 'r') as check_zip:
+        entries = check_zip.namelist()
+        self.assertFalse('Test1' in entries)
+        self.assertFalse('Test2' in entries)
+        self.assertFalse('Test3' in entries)
+    finally:
+      os.remove(zip_file.name)
+
+
+class CommonApkUtilsTest(unittest.TestCase):
+  """Tests the APK utils related functions."""
+
+  APKCERTS_TXT1 = (
+      'name="RecoveryLocalizer.apk" certificate="certs/devkey.x509.pem"'
+      ' private_key="certs/devkey.pk8"\n'
+      'name="Settings.apk"'
+      ' certificate="build/target/product/security/platform.x509.pem"'
+      ' private_key="build/target/product/security/platform.pk8"\n'
+      'name="TV.apk" certificate="PRESIGNED" private_key=""\n'
+  )
+
+  APKCERTS_CERTMAP1 = {
+      'RecoveryLocalizer.apk' : 'certs/devkey',
+      'Settings.apk' : 'build/target/product/security/platform',
+      'TV.apk' : 'PRESIGNED',
+  }
+
+  APKCERTS_TXT2 = (
+      'name="Compressed1.apk" certificate="certs/compressed1.x509.pem"'
+      ' private_key="certs/compressed1.pk8" compressed="gz"\n'
+      'name="Compressed2a.apk" certificate="certs/compressed2.x509.pem"'
+      ' private_key="certs/compressed2.pk8" compressed="gz"\n'
+      'name="Compressed2b.apk" certificate="certs/compressed2.x509.pem"'
+      ' private_key="certs/compressed2.pk8" compressed="gz"\n'
+      'name="Compressed3.apk" certificate="certs/compressed3.x509.pem"'
+      ' private_key="certs/compressed3.pk8" compressed="gz"\n'
+  )
+
+  APKCERTS_CERTMAP2 = {
+      'Compressed1.apk' : 'certs/compressed1',
+      'Compressed2a.apk' : 'certs/compressed2',
+      'Compressed2b.apk' : 'certs/compressed2',
+      'Compressed3.apk' : 'certs/compressed3',
+  }
+
+  APKCERTS_TXT3 = (
+      'name="Compressed4.apk" certificate="certs/compressed4.x509.pem"'
+      ' private_key="certs/compressed4.pk8" compressed="xz"\n'
+  )
+
+  APKCERTS_CERTMAP3 = {
+      'Compressed4.apk' : 'certs/compressed4',
+  }
 
   def setUp(self):
-    self._tempdir = tempfile.mkdtemp()
+    self.testdata_dir = test_utils.get_testdata_dir()
+
+  def tearDown(self):
+    common.Cleanup()
+
+  @staticmethod
+  def _write_apkcerts_txt(apkcerts_txt, additional=None):
+    if additional is None:
+      additional = []
+    target_files = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.writestr('META/apkcerts.txt', apkcerts_txt)
+      for entry in additional:
+        target_files_zip.writestr(entry, '')
+    return target_files
+
+  def test_ReadApkCerts_NoncompressedApks(self):
+    target_files = self._write_apkcerts_txt(self.APKCERTS_TXT1)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      certmap, ext = common.ReadApkCerts(input_zip)
+
+    self.assertDictEqual(self.APKCERTS_CERTMAP1, certmap)
+    self.assertIsNone(ext)
+
+  def test_ReadApkCerts_CompressedApks(self):
+    # We have "installed" Compressed1.apk.gz only. Note that Compressed3.apk is
+    # not stored in '.gz' format, so it shouldn't be considered as installed.
+    target_files = self._write_apkcerts_txt(
+        self.APKCERTS_TXT2,
+        ['Compressed1.apk.gz', 'Compressed3.apk'])
+
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      certmap, ext = common.ReadApkCerts(input_zip)
+
+    self.assertDictEqual(self.APKCERTS_CERTMAP2, certmap)
+    self.assertEqual('.gz', ext)
+
+    # Alternative case with '.xz'.
+    target_files = self._write_apkcerts_txt(
+        self.APKCERTS_TXT3, ['Compressed4.apk.xz'])
+
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      certmap, ext = common.ReadApkCerts(input_zip)
+
+    self.assertDictEqual(self.APKCERTS_CERTMAP3, certmap)
+    self.assertEqual('.xz', ext)
+
+  def test_ReadApkCerts_CompressedAndNoncompressedApks(self):
+    target_files = self._write_apkcerts_txt(
+        self.APKCERTS_TXT1 + self.APKCERTS_TXT2,
+        ['Compressed1.apk.gz', 'Compressed3.apk'])
+
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      certmap, ext = common.ReadApkCerts(input_zip)
+
+    certmap_merged = self.APKCERTS_CERTMAP1.copy()
+    certmap_merged.update(self.APKCERTS_CERTMAP2)
+    self.assertDictEqual(certmap_merged, certmap)
+    self.assertEqual('.gz', ext)
+
+  def test_ReadApkCerts_MultipleCompressionMethods(self):
+    target_files = self._write_apkcerts_txt(
+        self.APKCERTS_TXT2 + self.APKCERTS_TXT3,
+        ['Compressed1.apk.gz', 'Compressed4.apk.xz'])
+
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      self.assertRaises(ValueError, common.ReadApkCerts, input_zip)
+
+  def test_ReadApkCerts_MismatchingKeys(self):
+    malformed_apkcerts_txt = (
+        'name="App1.apk" certificate="certs/cert1.x509.pem"'
+        ' private_key="certs/cert2.pk8"\n'
+    )
+    target_files = self._write_apkcerts_txt(malformed_apkcerts_txt)
+
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      self.assertRaises(ValueError, common.ReadApkCerts, input_zip)
+
+  def test_ExtractPublicKey(self):
+    cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
+    pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
+    with open(pubkey, 'rb') as pubkey_fp:
+      self.assertEqual(pubkey_fp.read(), common.ExtractPublicKey(cert))
+
+  def test_ExtractPublicKey_invalidInput(self):
+    wrong_input = os.path.join(self.testdata_dir, 'testkey.pk8')
+    self.assertRaises(AssertionError, common.ExtractPublicKey, wrong_input)
+
+  def test_ParseCertificate(self):
+    cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
+
+    cmd = ['openssl', 'x509', '-in', cert, '-outform', 'DER']
+    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    expected, _ = proc.communicate()
+    self.assertEqual(0, proc.returncode)
+
+    with open(cert) as cert_fp:
+      actual = common.ParseCertificate(cert_fp.read())
+    self.assertEqual(expected, actual)
+
+  def test_GetMinSdkVersion(self):
+    test_app = os.path.join(self.testdata_dir, 'TestApp.apk')
+    self.assertEqual('24', common.GetMinSdkVersion(test_app))
+
+  def test_GetMinSdkVersion_invalidInput(self):
+    self.assertRaises(
+        common.ExternalError, common.GetMinSdkVersion, 'does-not-exist.apk')
+
+  def test_GetMinSdkVersionInt(self):
+    test_app = os.path.join(self.testdata_dir, 'TestApp.apk')
+    self.assertEqual(24, common.GetMinSdkVersionInt(test_app, {}))
+
+  def test_GetMinSdkVersionInt_invalidInput(self):
+    self.assertRaises(
+        common.ExternalError, common.GetMinSdkVersionInt, 'does-not-exist.apk',
+        {})
+
+
+class CommonUtilsTest(unittest.TestCase):
+
+  def tearDown(self):
+    common.Cleanup()
+
+  def test_GetSparseImage_emptyBlockMapFile(self):
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.write(
+          test_utils.construct_sparse_image([
+              (0xCAC1, 6),
+              (0xCAC3, 3),
+              (0xCAC1, 4)]),
+          arcname='IMAGES/system.img')
+      target_files_zip.writestr('IMAGES/system.map', '')
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 8))
+      target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
+
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
+
+    self.assertDictEqual(
+        {
+            '__COPY': RangeSet("0"),
+            '__NONZERO-0': RangeSet("1-5 9-12"),
+        },
+        sparse_image.file_map)
+
+  def test_GetSparseImage_invalidImageName(self):
+    self.assertRaises(
+        AssertionError, common.GetSparseImage, 'system2', None, None, False)
+    self.assertRaises(
+        AssertionError, common.GetSparseImage, 'unknown', None, None, False)
+
+  def test_GetSparseImage_missingBlockMapFile(self):
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.write(
+          test_utils.construct_sparse_image([
+              (0xCAC1, 6),
+              (0xCAC3, 3),
+              (0xCAC1, 4)]),
+          arcname='IMAGES/system.img')
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 8))
+      target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
+
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      self.assertRaises(
+          AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
+          False)
+
+  def test_GetSparseImage_sharedBlocks_notAllowed(self):
+    """Tests the case of having overlapping blocks but disallowed."""
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.write(
+          test_utils.construct_sparse_image([(0xCAC2, 16)]),
+          arcname='IMAGES/system.img')
+      # Block 10 is shared between two files.
+      target_files_zip.writestr(
+          'IMAGES/system.map',
+          '\n'.join([
+              '/system/file1 1-5 9-10',
+              '/system/file2 10-12']))
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 7))
+      target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
+
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      self.assertRaises(
+          AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
+          False)
+
+  def test_GetSparseImage_sharedBlocks_allowed(self):
+    """Tests the case for target using BOARD_EXT4_SHARE_DUP_BLOCKS := true."""
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      # Construct an image with a care_map of "0-5 9-12".
+      target_files_zip.write(
+          test_utils.construct_sparse_image([(0xCAC2, 16)]),
+          arcname='IMAGES/system.img')
+      # Block 10 is shared between two files.
+      target_files_zip.writestr(
+          'IMAGES/system.map',
+          '\n'.join([
+              '/system/file1 1-5 9-10',
+              '/system/file2 10-12']))
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 7))
+      target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
+
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      sparse_image = common.GetSparseImage('system', tempdir, input_zip, True)
+
+    self.assertDictEqual(
+        {
+            '__COPY': RangeSet("0"),
+            '__NONZERO-0': RangeSet("6-8 13-15"),
+            '/system/file1': RangeSet("1-5 9-10"),
+            '/system/file2': RangeSet("11-12"),
+        },
+        sparse_image.file_map)
+
+    # '/system/file2' should be marked with 'uses_shared_blocks', but not with
+    # 'incomplete'.
+    self.assertTrue(
+        sparse_image.file_map['/system/file2'].extra['uses_shared_blocks'])
+    self.assertNotIn(
+        'incomplete', sparse_image.file_map['/system/file2'].extra)
+
+    # All other entries should look normal without any tags.
+    self.assertFalse(sparse_image.file_map['__COPY'].extra)
+    self.assertFalse(sparse_image.file_map['__NONZERO-0'].extra)
+    self.assertFalse(sparse_image.file_map['/system/file1'].extra)
+
+  def test_GetSparseImage_incompleteRanges(self):
+    """Tests the case of ext4 images with holes."""
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.write(
+          test_utils.construct_sparse_image([(0xCAC2, 16)]),
+          arcname='IMAGES/system.img')
+      target_files_zip.writestr(
+          'IMAGES/system.map',
+          '\n'.join([
+              '/system/file1 1-5 9-10',
+              '/system/file2 11-12']))
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 7))
+      # '/system/file2' has less blocks listed (2) than actual (3).
+      target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
+
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
+
+    self.assertFalse(sparse_image.file_map['/system/file1'].extra)
+    self.assertTrue(sparse_image.file_map['/system/file2'].extra['incomplete'])
+
+
+class InstallRecoveryScriptFormatTest(unittest.TestCase):
+  """Checks the format of install-recovery.sh.
+
+  Its format should match between common.py and validate_target_files.py.
+  """
+
+  def setUp(self):
+    self._tempdir = common.MakeTempDir()
     # Create a dummy dict that contains the fstab info for boot&recovery.
     self._info = {"fstab" : {}}
-    dummy_fstab = \
-        ["/dev/soc.0/by-name/boot /boot emmc defaults defaults",
-         "/dev/soc.0/by-name/recovery /recovery emmc defaults defaults"]
+    dummy_fstab = [
+        "/dev/soc.0/by-name/boot /boot emmc defaults defaults",
+        "/dev/soc.0/by-name/recovery /recovery emmc defaults defaults"]
     self._info["fstab"] = common.LoadRecoveryFSTab("\n".join, 2, dummy_fstab)
     # Construct the gzipped recovery.img and boot.img
     self.recovery_data = bytearray([
@@ -369,4 +724,4 @@ class InstallRecoveryScriptFormatTest(unittest.TestCase):
                                                         self._info)
 
   def tearDown(self):
-    shutil.rmtree(self._tempdir)
+    common.Cleanup()

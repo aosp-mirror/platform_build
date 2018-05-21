@@ -1,5 +1,32 @@
 # Build System Changes for Android.mk Writers
 
+## PATH Tools {#PATH_Tools}
+
+The build has started restricting the external host tools usable inside the
+build. This will help ensure that build results are reproducible across
+different machines, and catch mistakes before they become larger issues.
+
+To start with, this includes replacing the $PATH with our own directory of
+tools, mirroring that of the host PATH.  The only difference so far is the
+removal of the host GCC tools. Anything that is not explicitly in the
+configuration as allowed will continue functioning, but will generate a log
+message. This is expected to become more restrictive over time.
+
+The configuration is located in build/soong/ui/build/paths/config.go, and
+contains all the common tools in use in many builds. Anything not in that list
+will currently print a warning in the `$OUT_DIR/soong.log` file, including the
+command and arguments used, and the process tree in order to help locate the
+usage.
+
+In order to fix any issues brought up by these checks, the best way to fix them
+is to use tools checked into the tree -- either as prebuilts, or building them
+as host tools during the build.
+
+As a temporary measure, you can set `TEMPORARY_DISABLE_PATH_RESTRICTIONS=true`
+in your environment to temporarily turn off the error checks and allow any tool
+to be used (with logging). Beware that GCC didn't work well with the interposer
+used for logging, so this may not help in all cases.
+
 ## Deprecating / obsoleting envsetup.sh variables in Makefiles
 
 It is not required to source envsetup.sh before running a build. Many scripts,
@@ -86,6 +113,16 @@ path:
 $(TARGET): myscript.py $(sort $(shell find my/python/lib -name '*.py'))
 	PYTHONPATH=my/python/lib:$$PYTHONPATH myscript.py -o $@
 ```
+### Stop using PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE directly {#PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE}
+
+Specify Framework Compatibility Matrix Version in device manifest by adding a `target-level`
+attribute to the root element `<manifest>`. If `PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE`
+is 26 or 27, you can add `"target-level"="1"` to your device manifest instead.
+
+### Stop using USE_CLANG_PLATFORM_BUILD {#USE_CLANG_PLATFORM_BUILD}
+
+Clang is the default and only supported Android compiler, so there is no reason
+for this option to exist.
 
 ### Other envsetup.sh variables  {#other_envsetup_variables}
 

@@ -30,12 +30,11 @@ def echo(msg):
 
 def find_address(address):
   if address not in checked_addresses:
-    request = (gerrit_server + '/accounts/?n=1&o=ALL_EMAILS&q=email:'
+    request = (gerrit_server + '/accounts/?n=1&q=email:'
                + urllib.quote(address))
     echo('Checking email address: ' + address)
     result = urllib2.urlopen(request).read()
-    checked_addresses[address] = (
-        result.find('"email":') >= 0 and result.find('"_account_id":') >= 0)
+    checked_addresses[address] = result.find('"_account_id":') >= 0
   return checked_addresses[address]
 
 
