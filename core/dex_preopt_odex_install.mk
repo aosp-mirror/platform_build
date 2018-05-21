@@ -1,6 +1,20 @@
 # dexpreopt_odex_install.mk is used to define odex creation rules for JARs and APKs
 # This file depends on variables set in base_rules.mk
-# Output variables: LOCAL_DEX_PREOPT, built_odex, dexpreopt_boot_jar_module
+# Output variables: LOCAL_DEX_PREOPT, LOCAL_UNCOMPRESS_DEX, built_odex,
+#                   dexpreopt_boot_jar_module
+
+# We explicitly uncompress APKs of privileged apps, and used by
+# privileged apps
+LOCAL_UNCOMPRESS_DEX := false
+ifneq (true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))
+ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
+  LOCAL_UNCOMPRESS_DEX := true
+else
+  ifneq (,$(filter $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES), $(LOCAL_MODULE)))
+    LOCAL_UNCOMPRESS_DEX := true
+  endif  # PRODUCT_LOADED_BY_PRIVILEGED_MODULES
+endif  # LOCAL_PRIVILEGED_MODULE
+endif  # DONT_UNCOMPRESS_PRIV_APPS_DEXS
 
 # Setting LOCAL_DEX_PREOPT based on WITH_DEXPREOPT, LOCAL_DEX_PREOPT, etc
 LOCAL_DEX_PREOPT := $(strip $(LOCAL_DEX_PREOPT))
@@ -46,14 +60,27 @@ endif
 endif
 endif
 
-# if installing into system, and odex are being installed into system_other, don't strip
-ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
 ifeq ($(LOCAL_DEX_PREOPT),true)
+
+# Don't strip with dexes we explicitly uncompress (dexopt will not store the dex code).
+ifeq ($(LOCAL_UNCOMPRESS_DEX),true)
+LOCAL_DEX_PREOPT := nostripping
+endif  # LOCAL_UNCOMPRESS_DEX
+
+# system_other isn't there for an OTA, so don't strip
+# if module is on system, and odex is on system_other.
+ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
 ifneq ($(call install-on-system-other, $(my_module_path)),)
 LOCAL_DEX_PREOPT := nostripping
-endif
-endif
-endif
+endif  # install-on-system-other
+endif  # BOARD_USES_SYSTEM_OTHER_ODEX
+
+# We also don't strip if all dexs are uncompressed (dexopt will not store the dex code),
+# but that requires to inspect the source file, which is too early at this point (as we
+# don't know if the source file will actually be used).
+# See dexpreopt-remove-classes.dex.
+
+endif  # LOCAL_DEX_PREOPT
 
 built_odex :=
 built_vdex :=
@@ -64,32 +91,43 @@ installed_art :=
 built_installed_odex :=
 built_installed_vdex :=
 built_installed_art :=
+my_process_profile :=
+my_profile_is_text_listing :=
 
 ifeq (false,$(WITH_DEX_PREOPT_GENERATE_PROFILE))
 LOCAL_DEX_PREOPT_GENERATE_PROFILE := false
 endif
 
 ifndef LOCAL_DEX_PREOPT_GENERATE_PROFILE
+
+
 # If LOCAL_DEX_PREOPT_GENERATE_PROFILE is not defined, default it based on the existence of the
 # profile class listing. TODO: Use product specific directory here.
 my_classes_directory := $(PRODUCT_DEX_PREOPT_PROFILE_DIR)
-LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING := $(my_classes_directory)/$(LOCAL_MODULE).prof.txt
-ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)))
-# Profile listing exists, use it to generate the profile.
-LOCAL_DEX_PREOPT_GENERATE_PROFILE := true
+LOCAL_DEX_PREOPT_PROFILE := $(my_classes_directory)/$(LOCAL_MODULE).prof
+
+ifneq (,$(wildcard $(LOCAL_DEX_PREOPT_PROFILE)))
+my_process_profile := true
+my_profile_is_text_listing := false
 endif
+else
+my_process_profile := $(LOCAL_DEX_PREOPT_GENERATE_PROFILE)
+my_profile_is_text_listing := true
+LOCAL_DEX_PREOPT_PROFILE := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
 endif
 
-ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+ifeq (true,$(my_process_profile))
 
 ifdef LOCAL_VENDOR_MODULE
 $(call pretty-error, Internal error: profiles are not supported for vendor modules)
 else
+ifeq (,$(LOCAL_DEX_PREOPT_APP_IMAGE))
 LOCAL_DEX_PREOPT_APP_IMAGE := true
 endif
+endif
 
-ifndef LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING
-$(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING))
+ifndef LOCAL_DEX_PREOPT_PROFILE
+$(call pretty-error,Must have specified class listing (LOCAL_DEX_PREOPT_PROFILE))
 endif
 ifeq (,$(dex_preopt_profile_src_file))
 $(call pretty-error, Internal error: dex_preopt_profile_src_file must be set)
@@ -100,20 +138,40 @@ my_dex_location := $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE))
 my_dex_location := $(patsubst %.gz,%,$(my_dex_location))
 $(my_built_profile): PRIVATE_BUILT_MODULE := $(dex_preopt_profile_src_file)
 $(my_built_profile): PRIVATE_DEX_LOCATION := $(my_dex_location)
-$(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
-$(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE_CLASS_LISTING)
+$(my_built_profile): PRIVATE_SOURCE_CLASSES := $(LOCAL_DEX_PREOPT_PROFILE)
+$(my_built_profile): $(LOCAL_DEX_PREOPT_PROFILE)
 $(my_built_profile): $(PROFMAN)
 $(my_built_profile): $(dex_preopt_profile_src_file)
-$(my_built_profile):
+ifeq (true,$(my_profile_is_text_listing))
+# The profile is a test listing of classes (used for framework jars).
+# We need to generate the actual binary profile before being able to compile.
 	$(hide) mkdir -p $(dir $@)
 	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
 		--create-profile-from=$(PRIVATE_SOURCE_CLASSES) \
 		--apk=$(PRIVATE_BUILT_MODULE) \
 		--dex-location=$(PRIVATE_DEX_LOCATION) \
 		--reference-profile-file=$@
-dex_preopt_profile_src_file:=
-# Remove compressed APK  extension.
+else
+# The profile is binary profile (used for apps). Run it through profman to
+# ensure the profile keys match the apk.
+$(my_built_profile):
+	$(hide) mkdir -p $(dir $@)
+	touch $@
+	ANDROID_LOG_TAGS="*:i" $(PROFMAN) \
+	  --copy-and-update-profile-key \
+		--profile-file=$(PRIVATE_SOURCE_CLASSES) \
+		--apk=$(PRIVATE_BUILT_MODULE) \
+		--dex-location=$(PRIVATE_DEX_LOCATION) \
+		--reference-profile-file=$@ \
+	|| echo "Profile out of date for $(PRIVATE_BUILT_MODULE)"
+endif
+
+my_profile_is_text_listing :=
+dex_preopt_profile_src_file :=
+
+# Remove compressed APK extension.
 my_installed_profile := $(patsubst %.gz,%,$(LOCAL_INSTALLED_MODULE)).prof
+
 # my_installed_profile := $(LOCAL_INSTALLED_MODULE).prof
 $(eval $(call copy-one-file,$(my_built_profile),$(my_installed_profile)))
 build_installed_profile:=$(my_built_profile):$(my_installed_profile)
@@ -178,7 +236,7 @@ installed_vdex := $(strip $(installed_vdex))
 installed_art := $(strip $(installed_art))
 
 ifdef built_odex
-ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+ifeq (true,$(my_process_profile))
 $(built_odex): $(my_built_profile)
 $(built_odex): PRIVATE_PROFILE_PREOPT_FLAGS := --profile-file=$(my_built_profile)
 else
@@ -197,6 +255,12 @@ ifeq (,$(my_system_server_compiler_filter))
 my_system_server_compiler_filter := speed
 endif
 
+my_default_compiler_filter := $(PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER)
+ifeq (,$(my_default_compiler_filter))
+# If no default compiler filter is specified, default to 'quicken' to save on storage.
+my_default_compiler_filter := quicken
+endif
+
 ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
   ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
     # Jars of system server, use the product option if it is set, speed otherwise.
@@ -207,45 +271,107 @@ ifeq (,$(filter --compiler-filter=%, $(LOCAL_DEX_PREOPT_FLAGS)))
       # 'speed' compiler filter.
       LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed
     else
-      ifeq (true,$(LOCAL_DEX_PREOPT_GENERATE_PROFILE))
+      ifeq (true,$(my_process_profile))
         # For non system server jars, use speed-profile when we have a profile.
         LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=speed-profile
       else
-        # If no compiler filter is specified, default to 'quicken' to save on storage.
-        LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=quicken
+        LOCAL_DEX_PREOPT_FLAGS += --compiler-filter=$(my_default_compiler_filter)
       endif
     endif
   endif
 endif
 
-# PRODUCT_SYSTEM_SERVER_DEBUG_INFO overrides WITH_DEXPREOPT_DEBUG_INFO.
-my_system_server_debug_info := $(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)
-ifeq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
-# Only enable for non-eng builds.
-ifeq (,$(my_system_server_debug_info))
-my_system_server_debug_info := true
-endif
+my_generate_dm := $(PRODUCT_DEX_PREOPT_GENERATE_DM_FILES)
+ifeq (,$(filter $(LOCAL_DEX_PREOPT_FLAGS),--compiler-filter=verify))
+# Generating DM files only makes sense for verify, avoid doing for non verify compiler filter APKs.
+my_generate_dm := false
 endif
 
-ifeq (true, $(my_system_server_debug_info))
-  ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
-    LOCAL_DEX_PREOPT_FLAGS += --generate-mini-debug-info
+# No reason to use a dm file if the dex is already uncompressed.
+ifeq ($(LOCAL_UNCOMPRESS_DEX),true)
+my_generate_dm := false
+endif
+
+ifeq (true,$(my_generate_dm))
+LOCAL_DEX_PREOPT_FLAGS += --copy-dex-files=false
+LOCAL_DEX_PREOPT := nostripping
+my_built_dm := $(dir $(LOCAL_BUILT_MODULE))generated.dm
+my_installed_dm := $(patsubst %.apk,%,$(LOCAL_INSTALLED_MODULE)).dm
+my_copied_vdex := $(dir $(LOCAL_BUILT_MODULE))primary.vdex
+$(eval $(call copy-one-file,$(built_vdex),$(my_copied_vdex)))
+$(my_built_dm): PRIVATE_INPUT_VDEX := $(my_copied_vdex)
+$(my_built_dm): $(my_copied_vdex) $(ZIPTIME)
+	$(hide) mkdir -p $(dir $@)
+	$(hide) rm -f $@
+	$(hide) zip -qD -j -X -9 $@ $(PRIVATE_INPUT_VDEX)
+	$(ZIPTIME) $@
+$(eval $(call copy-one-file,$(my_built_dm),$(my_installed_dm)))
+endif
+
+# By default, emit debug info.
+my_dexpreopt_debug_info := true
+# If the global setting suppresses mini-debug-info, disable it.
+ifeq (false,$(WITH_DEXPREOPT_DEBUG_INFO))
+  my_dexpreopt_debug_info := false
+endif
+
+# PRODUCT_SYSTEM_SERVER_DEBUG_INFO overrides WITH_DEXPREOPT_DEBUG_INFO.
+# PRODUCT_OTHER_JAVA_DEBUG_INFO overrides WITH_DEXPREOPT_DEBUG_INFO.
+ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
+  ifeq (true,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO))
+    my_dexpreopt_debug_info := true
+  else ifeq (false,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO))
+    my_dexpreopt_debug_info := false
+  endif
+else
+  ifeq (true,$(PRODUCT_OTHER_JAVA_DEBUG_INFO))
+    my_dexpreopt_debug_info := true
+  else ifeq (false,$(PRODUCT_OTHER_JAVA_DEBUG_INFO))
+    my_dexpreopt_debug_info := false
   endif
 endif
+
+# Never enable on eng.
+ifeq (eng,$(filter eng, $(TARGET_BUILD_VARIANT)))
+my_dexpreopt_debug_info := false
+endif
+
+# Add dex2oat flag for debug-info/no-debug-info.
+ifeq (true,$(my_dexpreopt_debug_info))
+  LOCAL_DEX_PREOPT_FLAGS += --generate-mini-debug-info
+else ifeq (false,$(my_dexpreopt_debug_info))
+  LOCAL_DEX_PREOPT_FLAGS += --no-generate-mini-debug-info
+endif
+
+# Set the compiler reason to 'prebuilt' to identify the oat files produced
+# during the build, as opposed to compiled on the device.
+LOCAL_DEX_PREOPT_FLAGS += --compilation-reason=prebuilt
 
 $(built_odex): PRIVATE_DEX_PREOPT_FLAGS := $(LOCAL_DEX_PREOPT_FLAGS)
 $(built_vdex): $(built_odex)
 $(built_art): $(built_odex)
 endif
 
-# Add the installed_odex to the list of installed files for this module.
-ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
-ALL_MODULES.$(my_register_name).INSTALLED += $(installed_vdex)
-ALL_MODULES.$(my_register_name).INSTALLED += $(installed_art)
+ifneq (true,$(my_generate_dm))
+  # Add the installed_odex to the list of installed files for this module if we aren't generating a
+  # dm file.
+  ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
+  ALL_MODULES.$(my_register_name).INSTALLED += $(installed_vdex)
+  ALL_MODULES.$(my_register_name).INSTALLED += $(installed_art)
 
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_odex)
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_vdex)
-ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_art)
+  ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_odex)
+  ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_vdex)
+  ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(built_installed_art)
+
+  # Make sure to install the .odex and .vdex when you run "make <module_name>"
+  $(my_all_targets): $(installed_odex) $(installed_vdex) $(installed_art)
+else
+  ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed_dm)
+  ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_dm) $(my_installed_dm)
+
+  # Make sure to install the .dm when you run "make <module_name>"
+  $(my_all_targets): $(installed_dm)
+endif
 
 # Record dex-preopt config.
 DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
@@ -259,14 +385,12 @@ DEXPREOPT.$(LOCAL_MODULE).INSTALLED_STRIPPED := $(LOCAL_INSTALLED_MODULE)
 DEXPREOPT.MODULES.$(LOCAL_MODULE_CLASS) := $(sort \
   $(DEXPREOPT.MODULES.$(LOCAL_MODULE_CLASS)) $(LOCAL_MODULE))
 
-
-# Make sure to install the .odex and .vdex when you run "make <module_name>"
-$(my_all_targets): $(installed_odex) $(installed_vdex) $(installed_art)
-
 endif # LOCAL_DEX_PREOPT
 
 # Profile doesn't depend on LOCAL_DEX_PREOPT.
 ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed_profile)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(build_installed_profile)
+
+my_process_profile :=
 
 $(my_all_targets): $(my_installed_profile)

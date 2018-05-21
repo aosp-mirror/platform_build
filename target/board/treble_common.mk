@@ -36,26 +36,27 @@ TARGET_USES_MKE2FS := true
 # Generic AOSP image always requires separate vendor.img
 TARGET_COPY_OUT_VENDOR := vendor
 
-# Enable dex pre-opt to speed up initial boot
-ifeq ($(HOST_OS),linux)
-  ifeq ($(WITH_DEXPREOPT),)
-    WITH_DEXPREOPT := true
-    WITH_DEXPREOPT_PIC := true
-    ifneq ($(TARGET_BUILD_VARIANT),user)
-      # Retain classes.dex in APK's for non-user builds
-      DEX_PREOPT_DEFAULT := nostripping
-    endif
-  endif
-endif
-
 # Generic AOSP image does NOT support HWC1
 TARGET_USES_HWC2 := true
 # Set emulator framebuffer display device buffer count to 3
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
-BOARD_FLASH_BLOCK_SIZE := 512
+# Audio
+USE_XML_AUDIO_POLICY_CONF := 1
 
 # b/64700195: add minimum support for odm.img
 # Currently odm.img can only be built by `make custom_images`.
 # Adding /odm mount point under root directory.
 BOARD_ROOT_EXTRA_FOLDERS += odm
+
+# Android Verified Boot (AVB):
+#   Builds a special vbmeta.img that disables AVB verification.
+#   Otherwise, AVB will prevent the device from booting the generic system.img.
+#   Also checks that BOARD_AVB_ENABLE is not set, to prevent adding verity
+#   metadata into system.img.
+ifeq ($(BOARD_AVB_ENABLE),true)
+$(error BOARD_AVB_ENABLE cannot be set for Treble GSI)
+endif
+BOARD_BUILD_DISABLED_VBMETAIMAGE := true
+
+BUILD_BROKEN_DUP_RULES := false

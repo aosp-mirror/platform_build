@@ -6,6 +6,8 @@
 ##
 ###########################################################
 
+include $(BUILD_SYSTEM)/use_lld_setup.mk
+
 ifneq ($(LOCAL_PREBUILT_LIBS),)
 $(error dont use LOCAL_PREBUILT_LIBS anymore LOCAL_PATH=$(LOCAL_PATH))
 endif
@@ -20,19 +22,19 @@ my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)IS_64_BIT)
 
 ifdef LOCAL_PREBUILT_MODULE_FILE
   my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
+else ifdef LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+  my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+  LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) :=
+else ifdef LOCAL_SRC_FILES_$(my_32_64_bit_suffix)
+  my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$(my_32_64_bit_suffix))
+  LOCAL_SRC_FILES_$(my_32_64_bit_suffix) :=
+else ifdef LOCAL_SRC_FILES
+  my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
+  LOCAL_SRC_FILES :=
+else ifdef LOCAL_REPLACE_PREBUILT_APK_INSTALLED
+  # This is handled specially below
 else
-  ifdef LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-    my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
-    LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) :=
-  else
-    ifdef LOCAL_SRC_FILES_$(my_32_64_bit_suffix)
-      my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$(my_32_64_bit_suffix))
-      LOCAL_SRC_FILES_$(my_32_64_bit_suffix) :=
-    else
-      my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
-      LOCAL_SRC_FILES :=
-    endif
-  endif
+  $(call pretty-error,No source files specified)
 endif
 
 LOCAL_CHECKED_MODULE := $(my_prebuilt_src_file)
@@ -68,6 +70,12 @@ ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   endif
 
   ifeq ($(DISABLE_RELOCATION_PACKER),true)
+    my_pack_module_relocations := false
+  endif
+
+  # Relocation packer does not work with LLD yet.
+  # my_use_clang_lld might be used before being set up in binary.mk
+  ifeq ($(my_use_clang_lld),true)
     my_pack_module_relocations := false
   endif
 endif
@@ -173,8 +181,10 @@ else
 endif
 export_cflags :=
 
+include $(BUILD_SYSTEM)/allowed_ndk_types.mk
+
 ifdef LOCAL_SDK_VERSION
-my_link_type := native:ndk
+my_link_type := native:ndk:$(my_ndk_stl_family):$(my_ndk_stl_link_type)
 else ifdef LOCAL_USE_VNDK
     _name := $(patsubst %.vendor,%,$(LOCAL_MODULE))
     ifneq ($(filter $(_name),$(VNDK_CORE_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES) $(LLNDK_LIBRARIES)),)
@@ -388,15 +398,9 @@ endif
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
 	$(uncompress-shared-libs)
-ifneq (true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))
-ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
+ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 	$(uncompress-dexs)
-else
-  ifneq (,$(filter $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES), $(LOCAL_MODULE)))
-	  $(uncompress-dexs)
-  endif  # PRODUCT_LOADED_BY_PRIVILEGED_MODULES
-endif  # LOCAL_PRIVILEGED_MODULE
-endif  # DONT_UNCOMPRESS_PRIV_APPS_DEXS
+endif  # LOCAL_UNCOMPRESS_DEX
 ifdef LOCAL_DEX_PREOPT
 ifneq ($(BUILD_PLATFORM_ZIP),)
 	@# Keep a copy of apk with classes.dex unstripped
@@ -421,10 +425,18 @@ endif  # LOCAL_COMPRESSED_MODULE
 endif  # ! LOCAL_REPLACE_PREBUILT_APK_INSTALLED
 
 ###############################
-## Rule to build the odex file
+## Rule to build the odex file.
+# In case we don't strip the built module, use it, as dexpreopt
+# can do optimizations based on whether the built module only
+# contains uncompressed dex code.
 ifdef LOCAL_DEX_PREOPT
+ifeq (nostripping,$(LOCAL_DEX_PREOPT))
+$(built_odex) : $(built_module)
+	$(call dexpreopt-one-file,$<,$@)
+else
 $(built_odex) : $(my_prebuilt_src_file)
 	$(call dexpreopt-one-file,$<,$@)
+endif
 endif
 
 ###############################
@@ -542,6 +554,8 @@ ifeq ($(LOCAL_SDK_VERSION),system_current)
 my_link_type := java:system
 else ifneq (,$(call has-system-sdk-version,$(LOCAL_SDK_VERSION)))
 my_link_type := java:system
+else ifeq ($(LOCAL_SDK_VERSION),core_current)
+my_link_type := java:core
 else ifneq ($(LOCAL_SDK_VERSION),)
 my_link_type := java:sdk
 else
@@ -566,12 +580,16 @@ my_src_aar := $(filter %.aar, $(my_prebuilt_src_file))
 ifneq ($(my_src_aar),)
 # This is .aar file, archive of classes.jar and Android resources.
 my_src_jar := $(intermediates.COMMON)/aar/classes.jar
+my_src_proguard_options := $(intermediates.COMMON)/aar/proguard.txt
 
+$(my_src_jar) : .KATI_IMPLICIT_OUTPUTS := $(my_src_proguard_options)
 $(my_src_jar) : $(my_src_aar)
 	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@) $(dir $@)/res
 	$(hide) unzip -qo -d $(dir $@) $<
 	# Make sure the extracted classes.jar has a new timestamp.
 	$(hide) touch $@
+	# Make sure the proguard file exists and has a new timestamp.
+	$(hide) touch $(dir $@)/proguard.txt
 
 endif
 
@@ -589,30 +607,32 @@ $(common_classes_pre_proguard_jar) : $(my_src_jar)
 $(common_javalib_jar) : $(common_classes_jar)
 	$(transform-prebuilt-to-target)
 
+include $(BUILD_SYSTEM)/force_aapt2.mk
+
 ifdef LOCAL_AAPT2_ONLY
 LOCAL_USE_AAPT2 := true
 endif
 
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 ifneq ($(my_src_aar),)
+
+$(intermediates.COMMON)/export_proguard_flags : $(my_src_proguard_options)
+	$(transform-prebuilt-to-target)
+
 LOCAL_SDK_RES_VERSION:=$(strip $(LOCAL_SDK_RES_VERSION))
 ifeq ($(LOCAL_SDK_RES_VERSION),)
   LOCAL_SDK_RES_VERSION:=$(LOCAL_SDK_VERSION)
 endif
 
 framework_res_package_export :=
-framework_res_package_export_deps :=
 # Please refer to package.mk
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
 framework_res_package_export := \
-    $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
-framework_res_package_export_deps := $(framework_res_package_export)
+    $(call resolve-prebuilt-sdk-jar-path,$(LOCAL_SDK_RES_VERSION))
 else
 framework_res_package_export := \
     $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
-framework_res_package_export_deps := \
-    $(dir $(framework_res_package_export))src/R.stamp
 endif
 endif
 
@@ -630,7 +650,7 @@ $(my_res_package): PRIVATE_DEFAULT_APP_TARGET_SDK :=
 $(my_res_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
 $(my_res_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 $(my_res_package): PRIVATE_TARGET_AAPT_CHARACTERISTICS :=
-$(my_res_package) : $(framework_res_package_export_deps)
+$(my_res_package) : $(framework_res_package_export)
 
 full_android_manifest :=
 my_res_resources :=

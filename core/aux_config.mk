@@ -32,7 +32,7 @@ endif
 
 # setup AUX globals
 AUX_SHLIB_SUFFIX := .so
-AUX_GLOBAL_ARFLAGS := crsPD
+AUX_GLOBAL_ARFLAGS := cqsD
 AUX_STATIC_LIB_SUFFIX := .a
 
 # Load ever-lasting "indexed" version of AUX variant environment; it is treated as READ-ONLY from this
@@ -102,10 +102,10 @@ $(eval include $(_path)/$(_name)$(2)) \
 $(eval AUX_OS_VARIANT_LIST_$(AUX_OS_$(1)):=) \
 $(call aux-variant-setup-paths,$(_name)) \
 $(eval AUX_ALL_VARIANTS += $(_name)) \
-$(eval AUX_ALL_OSES := $(filterout $(AUX_OS_$(_name)),$(AUX_ALL_OSES)) $(AUX_OS_$(_name))) \
-$(eval AUX_ALL_CPUS := $(filterout $(AUX_CPU_$(_name)),$(AUX_ALL_CPUS)) $(AUX_CPU_$(_name))) \
-$(eval AUX_ALL_ARCHS := $(filterout $(AUX_ARCH_$(_name)),$(AUX_ALL_ARCHS)) $(AUX_ARCH_$(_name))) \
-$(eval AUX_ALL_SUBARCHS := $(filterout $(AUX_SUBARCH_$(_name)),$(AUX_ALL_SUBARCHS)) $(AUX_SUBARCH_$(_name)))
+$(eval AUX_ALL_OSES := $(filter-out $(AUX_OS_$(_name)),$(AUX_ALL_OSES)) $(AUX_OS_$(_name))) \
+$(eval AUX_ALL_CPUS := $(filter-out $(AUX_CPU_$(_name)),$(AUX_ALL_CPUS)) $(AUX_CPU_$(_name))) \
+$(eval AUX_ALL_ARCHS := $(filter-out $(AUX_ARCH_$(_name)),$(AUX_ALL_ARCHS)) $(AUX_ARCH_$(_name))) \
+$(eval AUX_ALL_SUBARCHS := $(filter-out $(AUX_SUBARCH_$(_name)),$(AUX_ALL_SUBARCHS)) $(AUX_SUBARCH_$(_name)))
 endef
 
 # Load system configuration referenced by AUX variant config;
@@ -138,7 +138,7 @@ define aux-variant-validate
 $(eval _all:=) \
 $(eval _req:=$(addsuffix _$(1),$(aux_env))) \
 $(foreach var,$(_req),$(eval _all += $(var))) \
-$(eval _missing := $(filterout $(_all),$(_req))) \
+$(eval _missing := $(filter-out $(_all),$(_req))) \
 $(if $(_missing),$(error AUX variant $(1) must define vars: $(_missing)))
 endef
 
@@ -154,7 +154,7 @@ os_sfx :=_aux_os_config.mk
 config_roots := $(wildcard device vendor)
 all_configs :=
 ifdef config_roots
-all_configs := $(shell find $(config_roots) -maxdepth 4 -name '*$(variant_sfx)' -o -name '*$(os_sfx)' | sort)
+all_configs := $(sort $(shell find $(config_roots) -maxdepth 4 -name '*$(variant_sfx)' -o -name '*$(os_sfx)'))
 endif
 all_os_configs := $(filter %$(os_sfx),$(all_configs))
 all_variant_configs := $(filter %$(variant_sfx),$(all_configs))

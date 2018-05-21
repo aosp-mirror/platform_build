@@ -34,6 +34,16 @@ ifneq ($(filter integer_overflow, $(my_global_sanitize)),)
   endif
 endif
 
+# Global integer sanitization doesn't support static modules.
+ifeq ($(filter SHARED_LIBRARIES EXECUTABLES,$(LOCAL_MODULE_CLASS)),)
+  my_global_sanitize := $(filter-out integer_overflow,$(my_global_sanitize))
+  my_global_sanitize_diag := $(filter-out integer_overflow,$(my_global_sanitize_diag))
+endif
+ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+  my_global_sanitize := $(filter-out integer_overflow,$(my_global_sanitize))
+  my_global_sanitize_diag := $(filter-out integer_overflow,$(my_global_sanitize_diag))
+endif
+
 # Disable global CFI in excluded paths
 ifneq ($(filter cfi, $(my_global_sanitize)),)
   combined_exclude_paths := $(CFI_EXCLUDE_PATHS) \
@@ -132,10 +142,12 @@ ifneq ($(filter mips mips64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
 endif
 
-# Disable CFI for host targets
+# Disable sanitizers which need the UBSan runtime for host targets.
 ifdef LOCAL_IS_HOST_MODULE
   my_sanitize := $(filter-out cfi,$(my_sanitize))
   my_sanitize_diag := $(filter-out cfi,$(my_sanitize_diag))
+  my_sanitize := $(filter-out signed-integer-overflow unsigned-integer-overflow integer_overflow,$(my_sanitize))
+  my_sanitize_diag := $(filter-out signed-integer-overflow unsigned-integer-overflow integer_overflow,$(my_sanitize_diag))
 endif
 
 # Support for local sanitize blacklist paths.
@@ -212,25 +224,26 @@ ifneq ($(filter coverage,$(my_sanitize)),)
 endif
 
 ifneq ($(filter integer_overflow,$(my_sanitize)),)
-  ifneq ($(filter SHARED_LIBRARIES EXECUTABLES,$(LOCAL_MODULE_CLASS)),)
-    ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+  # Respect LOCAL_NOSANITIZE for integer-overflow flags.
+  ifeq ($(filter signed-integer-overflow, $(strip $(LOCAL_NOSANITIZE))),)
+    my_sanitize += signed-integer-overflow
+  endif
+  ifeq ($(filter unsigned-integer-overflow, $(strip $(LOCAL_NOSANITIZE))),)
+    my_sanitize += unsigned-integer-overflow
+  endif
+  my_cflags += $(INTEGER_OVERFLOW_EXTRA_CFLAGS)
 
-      # Respect LOCAL_NOSANITIZE for integer-overflow flags.
-      ifeq ($(filter signed-integer-overflow, $(strip $(LOCAL_NOSANITIZE))),)
-        my_cflags += -fsanitize=signed-integer-overflow
+  # Check for diagnostics mode.
+  ifneq ($(filter integer_overflow,$(my_sanitize_diag)),)
+    ifneq ($(filter SHARED_LIBRARIES EXECUTABLES,$(LOCAL_MODULE_CLASS)),)
+      ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+        my_sanitize_diag += signed-integer-overflow
+        my_sanitize_diag += unsigned-integer-overflow
+      else
+        $(call pretty-error,Make cannot apply integer overflow diagnostics to static binary.)
       endif
-      ifeq ($(filter unsigned-integer-overflow, $(strip $(LOCAL_NOSANITIZE))),)
-        my_cflags += -fsanitize=unsigned-integer-overflow
-      endif
-      my_cflags += -fsanitize-trap=all
-      my_cflags += -ftrap-function=abort
-      my_cflags += $(INTEGER_OVERFLOW_EXTRA_CFLAGS)
-
-      # Check for diagnostics mode (on by default).
-      ifneq ($(filter integer_overflow,$(my_sanitize_diag)),)
-        my_cflags += -fno-sanitize-trap=signed-integer-overflow,unsigned-integer-overflow
-        my_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY) $(my_shared_libraries)
-      endif
+    else
+      $(call pretty-error,Make cannot apply integer overflow diagnostics to static library.)
     endif
   endif
   my_sanitize := $(filter-out integer_overflow,$(my_sanitize))
@@ -323,6 +336,28 @@ ifneq ($(filter address,$(my_sanitize)),)
   my_cflags += $(ADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
   ifndef LOCAL_IS_HOST_MODULE
     my_cflags += -mllvm -asan-globals=0
+  endif
+endif
+
+# Use minimal diagnostics when integer overflow is enabled; never do it for HOST or AUX modules
+ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
+  # Pre-emptively add UBSAN minimal runtime incase a static library dependency requires it
+  ifeq ($(filter STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
+    ifndef LOCAL_SDK_VERSION
+      my_static_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_MINIMAL_RUNTIME_LIBRARY)
+      my_ldflags += -Wl,--exclude-libs,$($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_MINIMAL_RUNTIME_LIBRARY).a
+    endif
+  endif
+  ifneq ($(filter unsigned-integer-overflow signed-integer-overflow integer,$(my_sanitize)),)
+    ifeq ($(filter unsigned-integer-overflow signed-integer overflow integer,$(my_sanitize_diag)),)
+      ifeq ($(filter cfi,$(my_sanitize_diag)),)
+        ifeq ($(filter address,$(my_sanitize)),)
+          my_cflags += -fsanitize-minimal-runtime
+          my_cflags += -fno-sanitize-trap=integer
+          my_cflags += -fno-sanitize-recover=integer
+        endif
+      endif
+    endif
   endif
 endif
 

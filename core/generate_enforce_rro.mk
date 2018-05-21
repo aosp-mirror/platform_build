@@ -7,12 +7,12 @@ rro_android_manifest_file := $(intermediates)/AndroidManifest.xml
 
 ifeq (true,$(enforce_rro_source_is_manifest_package_name))
 $(rro_android_manifest_file): PRIVATE_PACKAGE_NAME := $(enforce_rro_source_manifest_package_info)
-$(rro_android_manifest_file): build/tools/generate-enforce-rro-android-manifest.py
-	$(hide) build/tools/generate-enforce-rro-android-manifest.py -u -p $(PRIVATE_PACKAGE_NAME) -o $@
+$(rro_android_manifest_file): build/make/tools/generate-enforce-rro-android-manifest.py
+	$(hide) build/make/tools/generate-enforce-rro-android-manifest.py -u -p $(PRIVATE_PACKAGE_NAME) -o $@
 else
 $(rro_android_manifest_file): PRIVATE_SOURCE_MANIFEST_FILE := $(enforce_rro_source_manifest_package_info)
-$(rro_android_manifest_file): $(enforce_rro_source_manifest_package_info) build/tools/generate-enforce-rro-android-manifest.py
-	$(hide) build/tools/generate-enforce-rro-android-manifest.py -p $(PRIVATE_SOURCE_MANIFEST_FILE) -o $@
+$(rro_android_manifest_file): $(enforce_rro_source_manifest_package_info) build/make/tools/generate-enforce-rro-android-manifest.py
+	$(hide) build/make/tools/generate-enforce-rro-android-manifest.py -p $(PRIVATE_SOURCE_MANIFEST_FILE) -o $@
 endif
 
 LOCAL_PATH:= $(intermediates)

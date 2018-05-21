@@ -65,7 +65,7 @@ function compare_builds
         inputs="$inputs $TEST_BUILD_DIR/dist-$1/installed-files.txt"
         shift
     done
-    build/tools/compare_fileslist.py $inputs > $TEST_BUILD_DIR/sizes.html
+    build/make/tools/compare_fileslist.py $inputs > $TEST_BUILD_DIR/sizes.html
 }
 
 function check_builds
@@ -87,6 +87,6 @@ function diff_builds
         fi
         shift
     done
-    build/tools/compare_fileslist.py $inputs > $TEST_BUILD_DIR/sizes.html
+    build/make/tools/compare_fileslist.py $inputs > $TEST_BUILD_DIR/sizes.html
 }
 

@@ -20,6 +20,7 @@ TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_VARIANT := generic
 TARGET_CPU_ABI := arm64-v8a
+TARGET_BOOTLOADER_BOARD_NAME := goldfish_$(TARGET_ARCH)
 
 TARGET_2ND_ARCH := arm
 TARGET_2ND_CPU_ABI := armeabi-v7a
@@ -60,15 +61,6 @@ TARGET_USES_64_BIT_BINDER := true
 # no hardware camera
 USE_CAMERA_STUB := true
 
-# Enable dex-preoptimization to speed up the first boot sequence
-# of an SDK AVD. Note that this operation only works on Linux for now
-ifeq ($(HOST_OS),linux)
-  ifeq ($(WITH_DEXPREOPT),)
-    WITH_DEXPREOPT := true
-    WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY := false
-  endif
-endif
-
 TARGET_USES_HWC2 := true
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
@@ -81,7 +73,8 @@ BUILD_QEMU_IMAGES := true
 USE_OPENGL_RENDERER := true
 
 TARGET_USERIMAGES_USE_EXT4 := true
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2684354560  # 2.5 GB
+# Partition size is default 1.5GB (1536MB) for 64 bits projects
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1610612736
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 TARGET_COPY_OUT_VENDOR := vendor
 # ~100 MB vendor image. Please adjust system image / vendor image sizes
@@ -95,6 +88,28 @@ DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
 
+ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
+# GSI is always userdebug and needs a couple of properties taking precedence
+# over those set by the vendor.
+TARGET_SYSTEM_PROP := build/make/target/board/treble_system.prop
+endif
+BOARD_VNDK_VERSION := current
+
+# Emulator system image is going to be used as GSI and some vendor still hasn't
+# cleaned up all device specific directories under root!
+
+# TODO(jiyong) These might be SoC specific.
+BOARD_ROOT_EXTRA_FOLDERS += firmware firmware/radio persist
+BOARD_ROOT_EXTRA_SYMLINKS := /vendor/lib/dsp:/dsp
+
+# TODO(b/36764215): remove this setting when the generic system image
+# no longer has QCOM-specific directories under /.
+BOARD_SEPOLICY_DIRS += build/target/board/generic_arm64_ab/sepolicy
+
 # Enable A/B update
 TARGET_NO_RECOVERY := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+
+BOARD_VNDK_VERSION := current
+
+BUILD_BROKEN_DUP_RULES := false

@@ -15,6 +15,10 @@ endif
 endif # !PDK_JAVA
 endif #PDK
 
+ifndef LOCAL_USE_R8
+LOCAL_USE_R8 := $(USE_R8)
+endif
+
 LOCAL_NO_STANDARD_LIBRARIES:=$(strip $(LOCAL_NO_STANDARD_LIBRARIES))
 LOCAL_SDK_VERSION:=$(strip $(LOCAL_SDK_VERSION))
 
@@ -59,15 +63,6 @@ endif
 intermediates := $(call local-intermediates-dir)
 intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
-# Choose leaf name for the compiled jar file.
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-full_classes_compiled_jar_leaf := classes-no-debug-var.jar
-built_dex_intermediate_leaf := no-local
-else
-full_classes_compiled_jar_leaf := classes-full-debug.jar
-built_dex_intermediate_leaf := with-local
-endif
-
 ifeq ($(LOCAL_PROGUARD_ENABLED),disabled)
 LOCAL_PROGUARD_ENABLED :=
 endif
@@ -75,14 +70,14 @@ endif
 full_classes_turbine_jar := $(intermediates.COMMON)/classes-turbine.jar
 full_classes_header_jarjar := $(intermediates.COMMON)/classes-header-jarjar.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
-full_classes_compiled_jar := $(intermediates.COMMON)/$(full_classes_compiled_jar_leaf)
+full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
 full_classes_processed_jar := $(intermediates.COMMON)/classes-processed.jar
 full_classes_desugar_jar := $(intermediates.COMMON)/classes-desugar.jar
-jarjar_leaf := classes-jarjar.jar
-full_classes_jarjar_jar := $(intermediates.COMMON)/$(jarjar_leaf)
+full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_proguard_jar := $(intermediates.COMMON)/classes-proguard.jar
 full_classes_combined_jar := $(intermediates.COMMON)/classes-combined.jar
-built_dex_intermediate := $(intermediates.COMMON)/$(built_dex_intermediate_leaf)/classes.dex
+built_dex_intermediate := $(intermediates.COMMON)/dex/classes.dex
+built_dex_hiddenapi := $(intermediates.COMMON)/dex-hiddenapi/classes.dex
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 java_source_list_file := $(intermediates.COMMON)/java-source-list
 
@@ -111,160 +106,6 @@ LOCAL_INTERMEDIATE_TARGETS += \
 
 LOCAL_INTERMEDIATE_SOURCE_DIR := $(intermediates.COMMON)/src
 
-###############################################################
-## .rs files: RenderScript sources to .java files and .bc files
-## .fs files: Filterscript sources to .java files and .bc files
-###############################################################
-renderscript_sources := $(filter %.rs %.fs,$(LOCAL_SRC_FILES))
-# Because names of the java files from RenderScript are unknown until the
-# .rs file(s) are compiled, we have to depend on a timestamp file.
-RenderScript_file_stamp :=
-rs_generated_res_dir :=
-rs_compatibility_jni_libs :=
-ifneq ($(renderscript_sources),)
-renderscript_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(renderscript_sources))
-RenderScript_file_stamp := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/RenderScript.stamp
-renderscript_intermediate.COMMON := $(intermediates.COMMON)/renderscript
-
-# Defaulting to an empty string uses the latest available platform SDK.
-renderscript_target_api :=
-
-ifneq (,$(LOCAL_RENDERSCRIPT_TARGET_API))
-  renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
-else
-  ifneq (,$(LOCAL_SDK_VERSION))
-    # Set target-api for LOCAL_SDK_VERSIONs other than current.
-    ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-      renderscript_target_api := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
-    endif
-  endif  # LOCAL_SDK_VERSION is set
-endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
-
-# For 64-bit, we always have to upgrade to at least 21 for compat build.
-ifneq ($(LOCAL_RENDERSCRIPT_COMPATIBILITY),)
-  ifeq ($(TARGET_IS_64_BIT),true)
-    ifneq ($(filter $(RSCOMPAT_32BIT_ONLY_API_LEVELS),$(renderscript_target_api)),)
-      renderscript_target_api := 21
-    endif
-  endif
-endif
-
-ifeq ($(LOCAL_RENDERSCRIPT_CC),)
-LOCAL_RENDERSCRIPT_CC := $(LLVM_RS_CC)
-endif
-
-# Turn on all warnings and warnings as errors for RS compiles.
-# This can be disabled with LOCAL_RENDERSCRIPT_FLAGS := -Wno-error
-renderscript_flags := -Wall -Werror
-renderscript_flags += $(LOCAL_RENDERSCRIPT_FLAGS)
-
-# prepend the RenderScript system include path
-ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_VERSION))),)
-# if a numeric LOCAL_SDK_VERSION, or current LOCAL_SDK_VERSION with TARGET_BUILD_APPS
-LOCAL_RENDERSCRIPT_INCLUDES := \
-    $(HISTORICAL_SDK_VERSIONS_ROOT)/renderscript/clang-include \
-    $(HISTORICAL_SDK_VERSIONS_ROOT)/renderscript/include \
-    $(LOCAL_RENDERSCRIPT_INCLUDES)
-else
-LOCAL_RENDERSCRIPT_INCLUDES := \
-    $(TOPDIR)external/clang/lib/Headers \
-    $(TOPDIR)frameworks/rs/script_api/include \
-    $(LOCAL_RENDERSCRIPT_INCLUDES)
-endif
-
-ifneq ($(LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE),)
-LOCAL_RENDERSCRIPT_INCLUDES := $(LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE)
-endif
-
-bc_files := $(patsubst %.fs,%.bc, $(patsubst %.rs,%.bc, $(notdir $(renderscript_sources))))
-bc_dep_files := $(addprefix $(renderscript_intermediate.COMMON)/,$(patsubst %.bc,%.d,$(bc_files)))
-
-$(RenderScript_file_stamp): PRIVATE_RS_INCLUDES := $(LOCAL_RENDERSCRIPT_INCLUDES)
-$(RenderScript_file_stamp): PRIVATE_RS_CC := $(LOCAL_RENDERSCRIPT_CC)
-$(RenderScript_file_stamp): PRIVATE_RS_FLAGS := $(renderscript_flags)
-$(RenderScript_file_stamp): PRIVATE_RS_SOURCE_FILES := $(renderscript_sources_fullpath)
-# By putting the generated java files into $(LOCAL_INTERMEDIATE_SOURCE_DIR), they will be
-# automatically found by the java compiling function transform-java-to-classes.jar.
-$(RenderScript_file_stamp): PRIVATE_RS_OUTPUT_DIR := $(renderscript_intermediate.COMMON)
-$(RenderScript_file_stamp): PRIVATE_RS_TARGET_API := $(renderscript_target_api)
-$(RenderScript_file_stamp): PRIVATE_DEP_FILES := $(bc_dep_files)
-$(RenderScript_file_stamp): $(renderscript_sources_fullpath) $(LOCAL_RENDERSCRIPT_CC)
-	$(transform-renderscripts-to-java-and-bc)
-
-# include the dependency files (.d/.P) generated by llvm-rs-cc.
-$(call include-depfile,$(RenderScript_file_stamp).P,$(RenderScript_file_stamp))
-
-ifneq ($(LOCAL_RENDERSCRIPT_COMPATIBILITY),)
-
-
-ifeq ($(filter $(RSCOMPAT_32BIT_ONLY_API_LEVELS),$(renderscript_target_api)),)
-ifeq ($(TARGET_IS_64_BIT),true)
-renderscript_intermediate.bc_folder := $(renderscript_intermediate.COMMON)/res/raw/bc64/
-else
-renderscript_intermediate.bc_folder := $(renderscript_intermediate.COMMON)/res/raw/bc32/
-endif
-else
-renderscript_intermediate.bc_folder := $(renderscript_intermediate.COMMON)/res/raw/
-endif
-
-rs_generated_bc := $(addprefix \
-    $(renderscript_intermediate.bc_folder), $(bc_files))
-
-renderscript_intermediate := $(intermediates)/renderscript
-
-# We don't need the .so files in bundled branches
-# Prevent these from showing up on the device
-# One exception is librsjni.so, which is needed for
-# both native path and compat path.
-rs_jni_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/librsjni.so
-LOCAL_JNI_SHARED_LIBRARIES += librsjni
-
-ifneq (,$(TARGET_BUILD_APPS)$(FORCE_BUILD_RS_COMPAT))
-
-rs_compatibility_jni_libs := $(addprefix \
-    $(renderscript_intermediate)/librs., \
-    $(patsubst %.bc,%.so, $(bc_files)))
-
-$(rs_generated_bc) : $(RenderScript_file_stamp)
-
-rs_support_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libRSSupport.so
-LOCAL_JNI_SHARED_LIBRARIES += libRSSupport
-
-rs_support_io_lib :=
-# check if the target api level support USAGE_IO
-ifeq ($(filter $(RSCOMPAT_NO_USAGEIO_API_LEVELS),$(renderscript_target_api)),)
-rs_support_io_lib := $(TARGET_OUT_INTERMEDIATE_LIBRARIES)/libRSSupportIO.so
-LOCAL_JNI_SHARED_LIBRARIES += libRSSupportIO
-endif
-
-my_arch := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-ifneq (,$(filter arm64 mips64 x86_64,$(my_arch)))
-  my_min_sdk_version := 21
-else
-  my_min_sdk_version := $(MIN_SUPPORTED_SDK_VERSION)
-endif
-
-$(rs_compatibility_jni_libs): $(RenderScript_file_stamp) $(RS_PREBUILT_CLCORE) \
-    $(rs_support_lib) $(rs_support_io_lib) $(rs_jni_lib) $(rs_compiler_rt)
-$(rs_compatibility_jni_libs): $(BCC_COMPAT)
-$(rs_compatibility_jni_libs): PRIVATE_CXX := $(CXX_WRAPPER) $(TARGET_CXX)
-$(rs_compatibility_jni_libs): PRIVATE_SDK_VERSION := $(my_min_sdk_version)
-$(rs_compatibility_jni_libs): $(renderscript_intermediate)/librs.%.so: \
-    $(renderscript_intermediate.bc_folder)%.bc \
-    $(SOONG_OUT_DIR)/ndk.timestamp
-	$(transform-bc-to-so)
-
-endif
-
-endif
-
-LOCAL_INTERMEDIATE_TARGETS += $(RenderScript_file_stamp)
-# Make sure the generated resource will be added to the apk.
-rs_generated_res_dir := $(renderscript_intermediate.COMMON)/res
-LOCAL_RESOURCE_DIR := $(rs_generated_res_dir) $(LOCAL_RESOURCE_DIR)
-endif
-
-
 ###########################################################
 ## AIDL: Compile .aidl files to .java
 ###########################################################
@@ -275,11 +116,11 @@ ifneq ($(strip $(aidl_sources)),)
 
 aidl_preprocess_import :=
 ifdef LOCAL_SDK_VERSION
-ifneq ($(filter current system_current test_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS)),)
+ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS)),)
   # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS
   aidl_preprocess_import := $(TARGET_OUT_COMMON_INTERMEDIATES)/framework.aidl
 else
-  aidl_preprocess_import := $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_VERSION)/framework.aidl
+  aidl_preprocess_import := $(call resolve-prebuilt-sdk-aidl-path,$(LOCAL_SDK_VERSION))
 endif # not current or system_current
 else
 # build against the platform.
@@ -323,7 +164,7 @@ logtags_java_sources := $(patsubst %.logtags,%.java,$(addprefix $(intermediates.
 logtags_sources := $(addprefix $(LOCAL_PATH)/, $(logtags_sources))
 
 $(logtags_java_sources): PRIVATE_MERGED_TAG := $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt
-$(logtags_java_sources): $(intermediates.COMMON)/logtags/%.java: $(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt $(JAVATAGS) build/tools/event_log_tags.py
+$(logtags_java_sources): $(intermediates.COMMON)/logtags/%.java: $(LOCAL_PATH)/%.logtags $(TARGET_OUT_COMMON_INTERMEDIATES)/all-event-log-tags.txt $(JAVATAGS) build/make/tools/event_log_tags.py
 	$(transform-logtags-to-java)
 
 else
@@ -336,38 +177,9 @@ java_sources := $(addprefix $(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES)))
 java_intermediate_sources := $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/, $(filter %.java,$(LOCAL_INTERMEDIATE_SOURCES)))
 all_java_sources := $(java_sources) $(java_intermediate_sources)
 
-enable_sharding :=
-ifneq ($(TURBINE_ENABLED),false)
-ifneq ($(LOCAL_JAVAC_SHARD_SIZE),)
-ifneq ($(LOCAL_JAR_PROCESSOR),)
-$(call pretty-error,Cannot set both LOCAL_JAVAC_SHARD_SIZE and LOCAL_JAR_PROCESSOR!)
-endif # LOCAL_JAR_PROCESSOR is not empty
-enable_sharding := true
-
-num_shards := $(call int_divide,$(words $(java_sources)),$(LOCAL_JAVAC_SHARD_SIZE))
-ifneq ($(words $(java_sources)),$(call int_multiply,$(LOCAL_JAVAC_SHARD_SIZE),$(num_shards)))
-# increment number of shards by 1.
-num_shards := $(call int_plus,$(num_shards),1)
-endif
-
-shard_idx_list := $(call int_range_list,1,$(num_shards))
-sharded_java_source_list_files += $(foreach x,$(shard_idx_list),$(java_source_list_file).shard.$(x))
-sharded_jar_list += $(foreach x,$(shard_idx_list),$(full_classes_compiled_jar).shard.$(x))
-
-# always put dynamically-located .java files (generated by Proto/resource, etc) in a new final shard.
-# increment number of shards by 1.
-num_shards := $(call int_plus,$(num_shards),1)
-sharded_java_source_list_files += $(java_source_list_file).shard.$(num_shards)
-sharded_jar_list += $(full_classes_compiled_jar).shard.$(num_shards)
-LOCAL_INTERMEDIATE_TARGETS += $(sharded_java_source_list_files)
-LOCAL_INTERMEDIATE_TARGETS += $(sharded_jar_list)
-endif # LOCAL_JAVAC_SHARD_SIZE is not empty
-endif # TURBINE_ENABLED != false
-
 include $(BUILD_SYSTEM)/java_common.mk
 
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HAS_RS_SOURCES := $(if $(renderscript_sources),true)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RS_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/renderscript
+include $(BUILD_SYSTEM)/sdk_check.mk
 
 # Set the profile source so that the odex / profile code included from java.mk
 # can find it.
@@ -390,7 +202,7 @@ include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 # Make sure there's something to build.
 ifdef full_classes_jar
 ifndef need_compile_java
-$(error $(LOCAL_PATH): Target java module does not define any source or resource files)
+$(call pretty-error,Target java module does not define any source or resource files)
 endif
 endif
 
@@ -407,7 +219,7 @@ $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_stubs_jar)))
 ALL_MODULES.$(LOCAL_MODULE).STUBS := $(full_classes_stubs_jar)
 
 # The layers file allows you to enforce a layering between java packages.
-# Run build/tools/java-layers.py for more details.
+# Run build/make/tools/java-layers.py for more details.
 layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
 $(full_classes_compiled_jar): PRIVATE_JAVA_LAYERS_FILE := $(layers_file)
 $(full_classes_compiled_jar): PRIVATE_WARNINGS_ENABLE := $(LOCAL_WARNINGS_ENABLE)
@@ -435,58 +247,17 @@ endif
 java_sources_deps := \
     $(java_sources) \
     $(java_resource_sources) \
-    $(RenderScript_file_stamp) \
     $(proto_java_sources_file_stamp) \
+    $(LOCAL_SRCJARS) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 $(java_source_list_file): $(java_sources_deps)
 	$(write-java-source-list)
 
-ifdef enable_sharding
-$(foreach x,$(shard_idx_list),\
-  $(eval $(call save-sharded-java-source-list,$(x),\
-    $(wordlist $(call int_plus,1,$(call int_multiply,$(LOCAL_JAVAC_SHARD_SIZE),$(call int_subtract,$(x),1))),\
-      $(call int_multiply,$(LOCAL_JAVAC_SHARD_SIZE),$(x)),$(sort $(java_sources))))))
-
-# always put dynamically-located .java files (generated by Proto/resource, etc) in a new final shard.
-$(java_source_list_file).shard.$(num_shards): PRIVATE_JAVA_INTERMEDIATE_SOURCES := $(java_intermediate_sources)
-$(java_source_list_file).shard.$(num_shards): $(java_resource_sources) \
-    $(RenderScript_file_stamp) \
-    $(proto_java_sources_file_stamp) \
-    $(LOCAL_ADDITIONAL_DEPENDENCIES) \
-    $(NORMALIZE_PATH)
-	$(hide) rm -f $@
-	$(call dump-words-to-file,$(PRIVATE_JAVA_INTERMEDIATE_SOURCES),$@.tmp)
-	$(call fetch-additional-java-source,$@.tmp)
-	$(hide) tr ' ' '\n' < $@.tmp | $(NORMALIZE_PATH) | sort -u > $@
-
-# Javac sharding with header libs including its own header jar as one of dependency.
-$(foreach x,$(shard_idx_list),\
-  $(eval $(call create-classes-full-debug.jar,$(full_classes_compiled_jar).shard.$(x),\
-    $(java_source_list_file).shard.$(x),\
-      $(full_java_header_libs) $(full_classes_header_jar),$(x),\
-        $(wordlist $(call int_plus,1,$(call int_multiply,$(LOCAL_JAVAC_SHARD_SIZE),$(call int_subtract,$(x),1))),\
-          $(call int_multiply,$(LOCAL_JAVAC_SHARD_SIZE),$(x)),$(sort $(java_sources))))))
-
-# Javac sharding for last shard with additional Java dependencies.
-$(eval $(call create-classes-full-debug.jar,$(full_classes_compiled_jar).shard.$(num_shards),\
-  $(java_source_list_file).shard.$(num_shards),$(full_java_header_libs) $(full_classes_header_jar),$(strip \
-    $(num_shards)),$$(java_resource_sources) $$(RenderScript_file_stamp) \
-      $$(proto_java_sources_file_stamp) $$(LOCAL_ADDITIONAL_DEPENDENCIES)))
-
-$(full_classes_compiled_jar): PRIVATE_SHARDED_JAR_LIST := $(sharded_jar_list)
-$(full_classes_compiled_jar): $(sharded_jar_list) | $(MERGE_ZIPS)
-	$(MERGE_ZIPS) -j $@ $(PRIVATE_SHARDED_JAR_LIST)
-else
-# we can't use single $ for java_sources_deps since it may contain hash '#' sign.
-$(eval $(call create-classes-full-debug.jar,$(full_classes_compiled_jar),\
-  $(java_source_list_file),$(full_java_header_libs),,$$(java_sources_deps)))
-
-endif # ifdef enable_sharding
-
 ifneq ($(TURBINE_ENABLED),false)
 
 $(full_classes_turbine_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
+$(full_classes_turbine_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
 $(full_classes_turbine_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_turbine_jar): \
     $(java_source_list_file) \
@@ -517,6 +288,31 @@ $(eval $(call copy-one-file,$(full_classes_header_jarjar),$(full_classes_header_
 
 endif # TURBINE_ENABLED != false
 
+$(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
+$(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
+$(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
+$(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES := $(LOCAL_JAR_EXCLUDE_PACKAGES)
+$(full_classes_compiled_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
+$(full_classes_compiled_jar): PRIVATE_JAVA_SOURCE_LIST := $(java_source_list_file)
+$(full_classes_compiled_jar): PRIVATE_ALL_JAVA_HEADER_LIBRARIES := $(full_java_header_libs)
+$(full_classes_compiled_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
+$(full_classes_compiled_jar): PRIVATE_SRCJAR_LIST_FILE := $(intermediates.COMMON)/srcjar-list
+$(full_classes_compiled_jar): PRIVATE_SRCJAR_INTERMEDIATES_DIR := $(intermediates.COMMON)/srcjars
+$(full_classes_compiled_jar): \
+    $(java_source_list_file) \
+    $(full_java_header_libs) \
+    $(java_sources_deps) \
+    $(full_java_bootclasspath_libs) \
+    $(full_java_system_modules_deps) \
+    $(layers_file) \
+    $(annotation_processor_deps) \
+    $(NORMALIZE_PATH) \
+    $(JAR_ARGS) \
+    $(ZIPSYNC) \
+    | $(SOONG_JAVAC_WRAPPER)
+	@echo "Target Java: $@
+	$(call compile-java,$(TARGET_JAVAC),$(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))
+
 javac-check : $(full_classes_compiled_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
 
@@ -526,7 +322,7 @@ $(full_classes_combined_jar): $(full_classes_compiled_jar) \
                               $(full_static_java_libs) | $(MERGE_ZIPS)
 	$(if $(PRIVATE_JAR_MANIFEST), $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
             $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf)
-	$(MERGE_ZIPS) -j $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
+	$(MERGE_ZIPS) -j --ignore-duplicates $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
             $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
             $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
 
@@ -568,6 +364,12 @@ endif
 
 $(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
+LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_jar)
+
+#######################################
+include $(BUILD_SYSTEM)/jacoco.mk
+#######################################
+
 # Temporarily enable --multi-dex until proguard supports v53 class files
 # ( http://b/67673860 ) or we move away from proguard altogether.
 ifdef TARGET_OPENJDK9
@@ -579,7 +381,7 @@ my_desugaring :=
 ifndef LOCAL_IS_STATIC_JAVA_LIBRARY
 my_desugaring := true
 $(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-$(full_classes_desugar_jar): $(full_classes_jar) $(full_java_header_libs) $(DESUGAR)
+$(full_classes_desugar_jar): $(LOCAL_FULL_CLASSES_JACOCO_JAR) $(full_java_header_libs) $(DESUGAR)
 	$(desugar-classes-jar)
 endif
 else
@@ -587,30 +389,25 @@ my_desugaring :=
 endif
 
 ifndef my_desugaring
-full_classes_desugar_jar := $(full_classes_jar)
+full_classes_desugar_jar := $(LOCAL_FULL_CLASSES_JACOCO_JAR)
 endif
 
-LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_desugar_jar)
-
-#######################################
-include $(BUILD_SYSTEM)/jacoco.mk
-#######################################
-
-full_classes_pre_proguard_jar := $(LOCAL_FULL_CLASSES_JACOCO_JAR)
+full_classes_pre_proguard_jar := $(full_classes_desugar_jar)
 
 # Keep a copy of the jar just before proguard processing.
 $(eval $(call copy-one-file,$(full_classes_pre_proguard_jar),$(intermediates.COMMON)/classes-pre-proguard.jar))
 
 # Run proguard if necessary
 ifdef LOCAL_PROGUARD_ENABLED
-ifneq ($(filter-out full custom nosystem obfuscation optimization shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
+ifneq ($(filter-out full custom obfuscation optimization,$(LOCAL_PROGUARD_ENABLED)),)
     $(warning while processing: $(LOCAL_MODULE))
     $(error invalid value for LOCAL_PROGUARD_ENABLED: $(LOCAL_PROGUARD_ENABLED))
 endif
 proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
+proguard_configuration := $(intermediates.COMMON)/proguard_configuration
 
 # When an app contains references to APIs that are not in the SDK specified by
-# its LOCAL_SDK_VERSION for example added by support library or by runtime 
+# its LOCAL_SDK_VERSION for example added by support library or by runtime
 # classes added by desugar, we artifically raise the "SDK version" "linked" by
 # ProGuard, to
 # - suppress ProGuard warnings of referencing symbols unknown to the lower SDK version.
@@ -619,8 +416,8 @@ proguard_dictionary := $(intermediates.COMMON)/proguard_dictionary
 my_proguard_sdk_raise :=
 ifdef LOCAL_SDK_VERSION
 ifdef TARGET_BUILD_APPS
-ifeq (,$(filter current system_current test_current, $(LOCAL_SDK_VERSION)))
-  my_proguard_sdk_raise := $(call java-lib-header-files, sdk_vcurrent)
+ifeq (,$(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
+  my_proguard_sdk_raise := $(call java-lib-header-files, $(call resolve-prebuilt-sdk-module,current))
 endif
 else
   # For platform build, we can't just raise to the "current" SDK,
@@ -638,22 +435,20 @@ legacy_proguard_lib_deps := $(my_proguard_sdk_raise) \
   $(filter-out $(my_proguard_sdk_raise),$(full_shared_java_header_libs))
 
 legacy_proguard_flags += -printmapping $(proguard_dictionary)
+legacy_proguard_flags += -printconfiguration $(proguard_configuration)
 
 common_proguard_flags := -forceprocessing
 
-common_proguard_flag_files :=
-ifeq ($(filter nosystem,$(LOCAL_PROGUARD_ENABLED)),)
-common_proguard_flag_files += $(BUILD_SYSTEM)/proguard.flags
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-common_proguard_flags += -include $(BUILD_SYSTEM)/proguard.emma.flags
-endif
-# If this is a test package, add proguard keep flags for tests.
+common_proguard_flag_files := $(BUILD_SYSTEM)/proguard.flags
 ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
-common_proguard_flag_files += $(BUILD_SYSTEM)/proguard_tests.flags
-ifeq ($(filter shrinktests,$(LOCAL_PROGUARD_ENABLED)),)
 common_proguard_flags += -dontshrink # don't shrink tests by default
-endif # shrinktests
 endif # test package
+ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
+  ifeq ($(LOCAL_USE_AAPT2),true)
+    common_proguard_flag_files += $(foreach l,$(LOCAL_STATIC_ANDROID_LIBRARIES),\
+        $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/export_proguard_flags)
+  endif
+endif
 ifneq ($(common_proguard_flag_files),)
 common_proguard_flags += $(addprefix -include , $(common_proguard_flag_files))
 # This is included from $(BUILD_SYSTEM)/proguard.flags
@@ -695,12 +490,11 @@ $(full_classes_proguard_jar) : $(link_instr_intermediates_dir.COMMON)/proguard.c
 
 endif # no obfuscation
 endif # LOCAL_INSTRUMENTATION_FOR
-endif  # LOCAL_PROGUARD_ENABLED is not nosystem
 
 proguard_flag_files := $(addprefix $(LOCAL_PATH)/, $(LOCAL_PROGUARD_FLAG_FILES))
-ifeq ($(USE_R8),true)
+ifeq ($(LOCAL_USE_R8),true)
 proguard_flag_files += $(addprefix $(LOCAL_PATH)/, $(LOCAL_R8_FLAG_FILES))
-endif # USE_R8
+endif # LOCAL_USE_R8
 LOCAL_PROGUARD_FLAGS += $(addprefix -include , $(proguard_flag_files))
 
 ifdef LOCAL_TEST_MODULE_TO_PROGUARD_WITH
@@ -723,15 +517,15 @@ endif
 endif
 
 ifneq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
-ifneq ($(USE_R8),true)
-  $(full_classes_proguard_jar): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+ifneq ($(LOCAL_USE_R8),true)
+  $(full_classes_proguard_jar): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary) $(proguard_configuration)
 else
-  $(built_dex_intermediate): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary)
+  $(built_dex_intermediate): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary) $(proguard_configuration)
 endif
 endif
 
 # If R8 is not enabled run Proguard.
-ifneq ($(USE_R8),true)
+ifneq ($(LOCAL_USE_R8),true)
 # Changes to these dependencies need to be replicated below when using R8
 # instead of Proguard + dx.
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
@@ -739,10 +533,10 @@ $(full_classes_proguard_jar): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
 $(full_classes_proguard_jar) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) | $(PROGUARD)
 	$(call transform-jar-to-proguard)
-else # !USE_R8
+else # !LOCAL_USE_R8
 # Running R8 instead of Proguard, proguarded jar is actually the pre-Proguarded jar.
 full_classes_proguard_jar := $(full_classes_pre_proguard_jar)
-endif # !USE_R8
+endif # !LOCAL_USE_R8
 
 else  # LOCAL_PROGUARD_ENABLED not defined
 proguard_flag_files :=
@@ -751,19 +545,10 @@ endif # LOCAL_PROGUARD_ENABLED defined
 
 ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-# If you instrument class files that have local variable debug information in
-# them emma does not correctly maintain the local variable table.
-# This will cause an error when you try to convert the class files for Android.
-# The workaround here is to build different dex file here based on emma switch
-# then later copy into classes.dex. When emma is on, dx is run with --no-locals
-# option to remove local variable information
-ifeq ($(LOCAL_EMMA_INSTRUMENT),true)
-$(built_dex_intermediate): PRIVATE_DX_FLAGS += --no-locals
-endif
 
 my_r8 :=
 ifdef LOCAL_PROGUARD_ENABLED
-ifeq ($(USE_R8),true)
+ifeq ($(LOCAL_USE_R8),true)
 # These are the dependencies for the proguarded jar when running
 # Proguard + dx. They are used for the generated dex when using R8, as
 # R8 does Proguard + dx
@@ -771,13 +556,13 @@ my_r8 := true
 $(built_dex_intermediate): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
 $(built_dex_intermediate): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(built_dex_intermediate): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
-$(built_dex_intermediate) : $(full_classes_proguard_jar) $(extra_input_jar) $(my_support_library_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD)
+$(built_dex_intermediate) : $(full_classes_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD)
 	$(transform-jar-to-dex-r8)
-endif # USE_R8
+endif # LOCAL_USE_R8
 endif # LOCAL_PROGUARD_ENABLED
 
 ifndef my_r8
-$(built_dex_intermediate): $(full_classes_proguard_jar) $(DX)
+$(built_dex_intermediate): $(full_classes_proguard_jar) $(DX) $(ZIP2ZIP)
 ifneq ($(USE_D8_DESUGAR),true)
 	$(transform-classes.jar-to-dex)
 else
@@ -785,7 +570,14 @@ else
 endif
 endif
 
-$(built_dex): $(built_dex_intermediate)
+ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),) # is_boot_jar
+  $(eval $(call hiddenapi-copy-dex-files,$(built_dex_intermediate),$(built_dex_hiddenapi)))
+  built_dex_copy_from := $(built_dex_hiddenapi)
+else # !is_boot_jar
+  built_dex_copy_from := $(built_dex_intermediate)
+endif # is_boot_jar
+
+$(built_dex): $(built_dex_copy_from)
 	@echo Copying: $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $(dir $@)/classes*.dex
@@ -821,7 +613,7 @@ $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 
 endif  # full_classes_jar is defined
 
-ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
+ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
   my_default_app_target_sdk := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
   my_sdk_version := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
 else

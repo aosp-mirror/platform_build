@@ -1,4 +1,0 @@
-# Keep everything for the emma classes
--keep class com.vladium.** {
-  *;
-}

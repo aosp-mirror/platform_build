@@ -87,6 +87,11 @@ else
   LOCAL_RESOURCE_DIR := $(foreach d,$(LOCAL_RESOURCE_DIR),$(call clean-path,$(d)))
 endif
 
+include $(BUILD_SYSTEM)/force_aapt2.mk
+
+# Process Support Library dependencies.
+include $(BUILD_SYSTEM)/support_libraries.mk
+
 package_resource_overlays := $(strip \
     $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \
       $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
@@ -110,6 +115,8 @@ ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
       else ifeq (true,$(LOCAL_OEM_MODULE))
         enforce_rro_enabled :=
       else ifeq (true,$(LOCAL_ODM_MODULE))
+        enforce_rro_enabled :=
+      else ifeq (true,$(LOCAL_PRODUCT_MODULE))
         enforce_rro_enabled :=
       endif
     else ifeq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
@@ -151,7 +158,7 @@ LOCAL_USE_AAPT2 := true
 endif
 
 my_res_package :=
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 # In aapt2 the last takes precedence.
 my_resource_dirs := $(call reverse-list,$(LOCAL_RESOURCE_DIR))
 my_res_dir :=
@@ -272,9 +279,11 @@ endif # EMMA_INSTRUMENT is true
 
 ifeq (true,$(LOCAL_EMMA_INSTRUMENT))
 ifeq (true,$(EMMA_INSTRUMENT_STATIC))
-ifneq ($(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),)
+ifneq ($(LOCAL_SRC_FILES)$(LOCAL_SRCJARS)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),)
 # Only add jacocoagent if the package contains some java code
 LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
+# Exclude jacoco classes from proguard
+LOCAL_PROGUARD_FLAGS += -include $(BUILD_SYSTEM)/proguard.jacoco.flags
 endif # Contains java code
 else
 ifdef LOCAL_SDK_VERSION
@@ -318,11 +327,122 @@ endif
 
 include $(BUILD_SYSTEM)/android_manifest.mk
 
+resource_export_package :=
+
+include $(BUILD_SYSTEM)/java_renderscript.mk
+
+include $(BUILD_SYSTEM)/aapt_flags.mk
+
+ifeq ($(need_compile_res),true)
+
+###############################
+## APK splits
+built_apk_splits :=
+installed_apk_splits :=
+my_apk_split_configs :=
+
+ifdef LOCAL_PACKAGE_SPLITS
+ifdef LOCAL_COMPRESSED_MODULE
+$(error $(LOCAL_MODULE): LOCAL_COMPRESSED_MODULE is not currently supported for split installs)
+endif  # LOCAL_COMPRESSED_MODULE
+
+my_apk_split_configs := $(LOCAL_PACKAGE_SPLITS)
+my_split_suffixes := $(subst $(comma),_,$(my_apk_split_configs))
+built_apk_splits := $(foreach s,$(my_split_suffixes),$(intermediates)/package_$(s).apk)
+endif
+
+$(R_file_stamp) $(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
+$(R_file_stamp) $(my_res_package): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_AAPT_CHARACTERISTICS)
+$(R_file_stamp) $(my_res_package): PRIVATE_MANIFEST_PACKAGE_NAME := $(LOCAL_MANIFEST_PACKAGE_NAME)
+$(R_file_stamp) $(my_res_package): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_MANIFEST_INSTRUMENTATION_FOR)
+
+###############################
+## AAPT/AAPT2
+
+ifeq ($(LOCAL_USE_AAPT2),true)
+  my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res
+  ifneq (,$(filter-out current,$(renderscript_target_api)))
+    ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
+      my_generated_res_zips := $(rs_generated_res_zip)
+    endif  # renderscript_target_api < 21
+  endif  # renderscript_target_api is set
+  my_asset_dirs := $(LOCAL_ASSET_DIR)
+  my_full_asset_paths := $(all_assets)
+
+  # Add AAPT2 link specific flags.
+  $(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
+  ifndef LOCAL_AAPT_NAMESPACES
+    $(my_res_package): PRIVATE_AAPT_FLAGS += --no-static-lib-packages
+  endif
+
+  include $(BUILD_SYSTEM)/aapt2.mk
+else  # LOCAL_USE_AAPT2
+
+  my_srcjar := $(intermediates.COMMON)/aapt.srcjar
+  LOCAL_SRCJARS += $(my_srcjar)
+  $(R_file_stamp): PRIVATE_SRCJAR := $(my_srcjar)
+  $(R_file_stamp): PRIVATE_JAVA_GEN_DIR := $(intermediates.COMMON)/aapt
+  $(R_file_stamp): .KATI_IMPLICIT_OUTPUTS := $(my_srcjar)
+  # Since we don't know where the real R.java file is going to end up,
+  # we need to use another file to stand in its place.  We'll just
+  # copy the generated file to src/R.stamp, which means it will
+  # have the same contents and timestamp as the actual file.
+  #
+  # At the same time, this will copy the R.java file to a central
+  # 'R' directory to make it easier to add the files to an IDE.
+  #
+
+  $(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := \
+			$(intermediates.COMMON)/public_resources.xml
+  $(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
+  $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_res_assets)
+  $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(rs_generated_res_zip) $(AAPT) $(SOONG_ZIP) | $(ACP)
+	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
+	@rm -rf $@ && mkdir -p $(dir $@)
+	$(create-resource-java-files)
+	$(call find-generated-R.java,$(PRIVATE_JAVA_GEN_DIR),$@)
+
+  $(proguard_options_file): $(R_file_stamp)
+
+  ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
+    # Put this module's resources into a PRODUCT-agnositc package that
+    # other packages can use to build their own PRODUCT-agnostic R.java (etc.)
+    # files.
+    resource_export_package := $(intermediates.COMMON)/package-export.apk
+    $(R_file_stamp): $(resource_export_package)
+
+    # add-assets-to-package looks at PRODUCT_AAPT_CONFIG, but this target
+    # can't know anything about PRODUCT.  Clear it out just for this target.
+    $(resource_export_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
+    $(resource_export_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
+    $(resource_export_package): PRIVATE_RESOURCE_LIST := $(all_res_assets)
+    $(resource_export_package): $(all_res_assets) $(full_android_manifest) $(rs_generated_res_zip) $(AAPT)
+	@echo "target Export Resources: $(PRIVATE_MODULE) ($@)"
+	$(create-empty-package)
+	$(add-assets-to-package)
+  endif
+
+endif  # LOCAL_USE_AAPT2
+
+endif  # need_compile_res
+
 called_from_package_internal := true
 #################################
 include $(BUILD_SYSTEM)/java.mk
 #################################
 called_from_package_internal :=
+
+ifeq ($(need_compile_res),true)
+
+# Other modules should depend on the BUILT module if
+# they want to use this module's R.java file.
+$(LOCAL_BUILT_MODULE): $(R_file_stamp)
+
+# The R.java file must exist by the time the java source
+# list is generated
+$(java_source_list_file): $(R_file_stamp)
+
+endif # need_compile_res
 
 LOCAL_SDK_RES_VERSION:=$(strip $(LOCAL_SDK_RES_VERSION))
 ifeq ($(LOCAL_SDK_RES_VERSION),)
@@ -357,147 +477,51 @@ $(data_binding_stamp) : $(all_res_assets) $(full_android_manifest) \
 # Make sure the data-binding process happens before javac and generation of R.java.
 $(R_file_stamp): $(data_binding_stamp)
 $(java_source_list_file): $(data_binding_stamp)
-$(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(data_binding_stamp)))
 $(full_classes_compiled_jar): $(data_binding_stamp)
 endif  # LOCAL_DATA_BINDING
 
-ifeq ($(need_compile_res),true)
+framework_res_package_export :=
 
-###############################
-## APK splits
-built_apk_splits :=
-installed_apk_splits :=
-my_apk_split_configs :=
-
-ifdef LOCAL_PACKAGE_SPLITS
-ifdef LOCAL_COMPRESSED_MODULE
-$(error $(LOCAL_MODULE): LOCAL_COMPRESSED_MODULE is not currently supported for split installs)
-endif  # LOCAL_COMPRESSED_MODULE
-
-my_apk_split_configs := $(LOCAL_PACKAGE_SPLITS)
-my_split_suffixes := $(subst $(comma),_,$(my_apk_split_configs))
-built_apk_splits := $(foreach s,$(my_split_suffixes),$(intermediates)/package_$(s).apk)
-installed_apk_splits := $(foreach s,$(my_split_suffixes),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
-endif
-
-ifdef LOCAL_USE_AAPT2
-my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res
-renderscript_target_api :=
-ifneq (,$(LOCAL_RENDERSCRIPT_TARGET_API))
-renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
-else
-ifneq (,$(LOCAL_SDK_VERSION))
-# Set target-api for LOCAL_SDK_VERSIONs other than current.
-ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-renderscript_target_api := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
-endif
-endif  # LOCAL_SDK_VERSION is set
-endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
-ifneq (,$(renderscript_target_api))
-ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
-my_generated_res_dirs := $(rs_generated_res_dir)
-my_generated_res_dirs_deps := $(RenderScript_file_stamp)
-endif  # renderscript_target_api < 21
-endif  # renderscript_target_api is set
-my_asset_dirs := $(LOCAL_ASSET_DIR)
-my_full_asset_paths := $(all_assets)
-# Add AAPT2 link specific flags.
-$(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --no-static-lib-packages
-include $(BUILD_SYSTEM)/aapt2.mk
-else  # LOCAL_USE_AAPT2
-
-# Since we don't know where the real R.java file is going to end up,
-# we need to use another file to stand in its place.  We'll just
-# copy the generated file to src/R.stamp, which means it will
-# have the same contents and timestamp as the actual file.
-#
-# At the same time, this will copy the R.java file to a central
-# 'R' directory to make it easier to add the files to an IDE.
-#
-
-$(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := \
-			$(intermediates.COMMON)/public_resources.xml
-$(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
-$(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_res_assets)
-$(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT) | $(ACP)
-	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
-	@rm -rf $@ && mkdir -p $(dir $@)
-	$(create-resource-java-files)
-	$(call find-generated-R.java,$@)
-
-$(proguard_options_file): $(R_file_stamp)
-
-resource_export_package :=
-ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
-# Put this module's resources into a PRODUCT-agnositc package that
-# other packages can use to build their own PRODUCT-agnostic R.java (etc.)
-# files.
-resource_export_package := $(intermediates.COMMON)/package-export.apk
-$(R_file_stamp): $(resource_export_package)
-
-# add-assets-to-package looks at PRODUCT_AAPT_CONFIG, but this target
-# can't know anything about PRODUCT.  Clear it out just for this target.
-$(resource_export_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
-$(resource_export_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
-$(resource_export_package): PRIVATE_RESOURCE_LIST := $(all_res_assets)
-$(resource_export_package): $(all_res_assets) $(full_android_manifest) $(RenderScript_file_stamp) $(AAPT)
-	@echo "target Export Resources: $(PRIVATE_MODULE) ($@)"
-	$(create-empty-package)
-	$(add-assets-to-package)
-endif
-
-endif  # LOCAL_USE_AAPT2
-
-# Other modules should depend on the BUILT module if
-# they want to use this module's R.java file.
-$(LOCAL_BUILT_MODULE): $(R_file_stamp)
-
-# The R.java file must exist by the time the java source
-# list is generated
-$(java_source_list_file): $(R_file_stamp)
-$(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(R_file_stamp)))
-
-endif  # need_compile_res
-
-ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-# We need to explicitly clear this var so that we don't
-# inherit the value from whomever caused us to be built.
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_INCLUDES :=
-else
+ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 # Most packages should link against the resources defined by framework-res.
 # Even if they don't have their own resources, they may use framework
 # resources.
-ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
+ifeq ($(LOCAL_SDK_RES_VERSION),core_current)
+# core_current doesn't contain any framework resources.
+else ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
 # for released sdk versions, the platform resources were built into android.jar.
 framework_res_package_export := \
-    $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
-framework_res_package_export_deps := $(framework_res_package_export)
+    $(call resolve-prebuilt-sdk-jar-path,$(LOCAL_SDK_RES_VERSION))
 else # LOCAL_SDK_RES_VERSION
 framework_res_package_export := \
     $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
-# We can't depend directly on the export.apk file; it won't get its
-# PRIVATE_ vars set up correctly if we do.  Instead, depend on the
-# corresponding R.stamp file, which lists the export.apk as a dependency.
-framework_res_package_export_deps := \
-    $(dir $(framework_res_package_export))src/R.stamp
 endif # LOCAL_SDK_RES_VERSION
+endif # LOCAL_NO_STANDARD_LIBRARIES
+
 all_library_res_package_exports := \
     $(framework_res_package_export) \
     $(foreach lib,$(LOCAL_RES_LIBRARIES),\
         $(call intermediates-dir-for,APPS,$(lib),,COMMON)/package-export.apk)
 
 all_library_res_package_export_deps := \
-    $(framework_res_package_export_deps) \
+    $(framework_res_package_export) \
     $(foreach lib,$(LOCAL_RES_LIBRARIES),\
         $(call intermediates-dir-for,APPS,$(lib),,COMMON)/src/R.stamp)
 $(resource_export_package) $(R_file_stamp) $(LOCAL_BUILT_MODULE): $(all_library_res_package_export_deps)
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_AAPT_INCLUDES := $(all_library_res_package_exports)
 
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 $(my_res_package) : $(all_library_res_package_export_deps)
 endif
-endif # LOCAL_NO_STANDARD_LIBRARIES
+
+# These four are set above for $(R_stamp_file) and $(my_res_package), but
+# $(LOCAL_BUILT_MODULE) is not set before java.mk, so they have to be set again
+# here.
+$(LOCAL_BUILT_MODULE): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_AAPT_CHARACTERISTICS)
+$(LOCAL_BUILT_MODULE): PRIVATE_MANIFEST_PACKAGE_NAME := $(LOCAL_MANIFEST_PACKAGE_NAME)
+$(LOCAL_BUILT_MODULE): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_MANIFEST_INSTRUMENTATION_FOR)
 
 ifneq ($(full_classes_jar),)
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
@@ -571,18 +595,18 @@ $(LOCAL_BUILT_MODULE): PRIVATE_RESOURCE_INTERMEDIATES_DIR := $(intermediates.COM
 $(LOCAL_BUILT_MODULE): PRIVATE_FULL_CLASSES_JAR := $(full_classes_jar)
 $(LOCAL_BUILT_MODULE) : $(jni_shared_libraries)
 $(LOCAL_BUILT_MODULE) : $(JAR_ARGS)
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 $(LOCAL_BUILT_MODULE): PRIVATE_RES_PACKAGE := $(my_res_package)
 $(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2) | $(ACP)
 else
 $(LOCAL_BUILT_MODULE): PRIVATE_RESOURCE_LIST := $(all_res_assets)
 $(LOCAL_BUILT_MODULE) : $(all_res_assets) $(full_android_manifest) $(AAPT) $(ZIPALIGN)
-endif
+endif  # LOCAL_USE_AAPT2
 ifdef LOCAL_COMPRESSED_MODULE
 $(LOCAL_BUILT_MODULE) : $(MINIGZIP)
 endif
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 	$(call copy-file-to-new-target)
 else  # ! LOCAL_USE_AAPT2
 	$(if $(PRIVATE_SOURCE_ARCHIVE),\
@@ -598,28 +622,23 @@ ifeq ($(full_classes_jar),)
 	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 else  # full_classes_jar
 	$(add-dex-to-package)
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 	$(call add-jar-resources-to-package,$@,$(PRIVATE_FULL_CLASSES_JAR),$(PRIVATE_RESOURCE_INTERMEDIATES_DIR))
 endif
 endif  # full_classes_jar
+ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
+	@# No need to align, sign-package below will do it.
+	$(uncompress-dexs)
+endif
 ifdef LOCAL_DEX_PREOPT
 ifneq ($(BUILD_PLATFORM_ZIP),)
 	@# Keep a copy of apk with classes.dex unstripped
 	$(hide) cp -f $@ $(dir $@)package.dex.apk
 endif  # BUILD_PLATFORM_ZIP
-ifneq (true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))
-ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
-	@# No need to align, sign-package below will do it.
-	$(uncompress-dexs)
-endif  # LOCAL_PRIVILEGED_MODULE
-endif  # DONT_UNCOMPRESS_PRIV_APPS_DEXS
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
-endif
-ifneq (,$(filter $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES), $(LOCAL_MODULE)))
-	$(uncompress-dexs)
-endif  # PRODUCT_LOADED_BY_PRIVILEGED_MODULES
+endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 ifdef LOCAL_COMPRESSED_MODULE
 	$(compress-package)
@@ -643,6 +662,10 @@ $(built_odex): PRIVATE_DEX_FILE := $(built_dex)
 $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(built_dex)
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 	$(add-dex-to-package)
+ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
+	$(uncompress-dexs)
+	$(align-package)
+endif
 	$(hide) mv $@ $@.input
 	$(call dexpreopt-one-file,$@.input,$@)
 	$(hide) rm $@.input
@@ -666,6 +689,7 @@ $(built_apk_splits) : $(intermediates)/%.apk : $(LOCAL_BUILT_MODULE)
 	$(sign-package)
 
 # Rules to install the splits
+installed_apk_splits := $(foreach s,$(my_split_suffixes),$(my_module_path)/$(LOCAL_MODULE)_$(s).apk)
 $(installed_apk_splits) : $(my_module_path)/$(LOCAL_MODULE)_%.apk : $(intermediates)/package_%.apk
 	@echo "Install: $@"
 	$(copy-file-to-new-target)

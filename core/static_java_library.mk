@@ -28,6 +28,11 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
 my_res_package :=
 
+# Process Support Library dependencies.
+include $(BUILD_SYSTEM)/support_libraries.mk
+
+include $(BUILD_SYSTEM)/force_aapt2.mk
+
 ifdef LOCAL_AAPT2_ONLY
 LOCAL_USE_AAPT2 := true
 endif
@@ -41,7 +46,7 @@ ifdef LOCAL_RESOURCE_DIR
 need_compile_res := true
 LOCAL_RESOURCE_DIR := $(foreach d,$(LOCAL_RESOURCE_DIR),$(call clean-path,$(d)))
 endif
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 ifneq ($(LOCAL_STATIC_ANDROID_LIBRARIES),)
 need_compile_res := true
 endif
@@ -79,7 +84,7 @@ LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_
 R_file_stamp := $(intermediates.COMMON)/src/R.stamp
 LOCAL_INTERMEDIATE_TARGETS += $(R_file_stamp)
 
-ifdef LOCAL_USE_AAPT2
+ifeq ($(LOCAL_USE_AAPT2),true)
 # For library we treat all the resource equal with no overlay.
 my_res_resources := $(all_resources)
 my_overlay_resources :=
@@ -88,11 +93,11 @@ my_res_package := $(intermediates.COMMON)/package-res.apk
 
 LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
 endif  # LOCAL_USE_AAPT2
-endif  # LOCAL_RESOURCE_DIR
+endif  # need_compile_res
 
 all_res_assets := $(all_resources)
 
-include $(BUILD_SYSTEM)/java_library.mk
+include $(BUILD_SYSTEM)/java_renderscript.mk
 
 ifeq (true,$(need_compile_res))
 include $(BUILD_SYSTEM)/android_manifest.mk
@@ -103,33 +108,58 @@ ifeq ($(LOCAL_SDK_RES_VERSION),)
 endif
 
 framework_res_package_export :=
-framework_res_package_export_deps :=
 # Please refer to package.mk
 ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
 ifneq ($(filter-out current system_current test_current,$(LOCAL_SDK_RES_VERSION))$(if $(TARGET_BUILD_APPS),$(filter current system_current test_current,$(LOCAL_SDK_RES_VERSION))),)
 framework_res_package_export := \
-    $(HISTORICAL_SDK_VERSIONS_ROOT)/$(LOCAL_SDK_RES_VERSION)/android.jar
-framework_res_package_export_deps := $(framework_res_package_export)
+    $(call resolve-prebuilt-sdk-jar-path,$(LOCAL_SDK_RES_VERSION))
 else
 framework_res_package_export := \
     $(call intermediates-dir-for,APPS,framework-res,,COMMON)/package-export.apk
-framework_res_package_export_deps := \
-    $(dir $(framework_res_package_export))src/R.stamp
 endif
 endif
 
+ifeq ($(LOCAL_USE_AAPT2),true)
+import_proguard_flag_files := $(strip $(foreach l,$(LOCAL_STATIC_ANDROID_LIBRARIES),\
+    $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/export_proguard_flags))
+$(intermediates.COMMON)/export_proguard_flags: $(import_proguard_flag_files) $(addprefix $(LOCAL_PATH)/,$(LOCAL_EXPORT_PROGUARD_FLAG_FILES))
+	@echo "Export proguard flags: $@"
+	rm -f $@
+	touch $@
+	for f in $+; do \
+		echo -e "\n# including $$f" >>$@; \
+		cat $$f >>$@; \
+	done
+import_proguard_flag_files :=
+endif
+
+include $(BUILD_SYSTEM)/aapt_flags.mk
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_AAPT_CHARACTERISTICS)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_PACKAGE_NAME := $(LOCAL_MANIFEST_PACKAGE_NAME)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_MANIFEST_INSTRUMENTATION_FOR)
+
 # add --non-constant-id to prevent inlining constants.
 # AAR needs text symbol file R.txt.
-ifdef LOCAL_USE_AAPT2
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --static-lib --no-static-lib-packages
+ifeq ($(LOCAL_USE_AAPT2),true)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --static-lib --output-text-symbols $(intermediates.COMMON)/R.txt
+ifndef LOCAL_AAPT_NAMESPACES
+  $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS += --no-static-lib-packages
+endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PRODUCT_AAPT_CONFIG :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_AAPT_CHARACTERISTICS :=
 else
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --non-constant-id --output-text-symbols $(LOCAL_INTERMEDIATE_SOURCE_DIR)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS) --non-constant-id --output-text-symbols $(intermediates.COMMON)
+
+my_srcjar := $(intermediates.COMMON)/aapt.srcjar
+LOCAL_SRCJARS += $(my_srcjar)
+$(R_file_stamp): PRIVATE_SRCJAR := $(my_srcjar)
+$(R_file_stamp): PRIVATE_JAVA_GEN_DIR := $(intermediates.COMMON)/aapt
+$(R_file_stamp): .KATI_IMPLICIT_OUTPUTS := $(my_srcjar)
 endif
 
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SOURCE_INTERMEDIATES_DIR := $(LOCAL_INTERMEDIATE_SOURCE_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_PUBLICS_OUTPUT := $(intermediates.COMMON)/public_resources.xml
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
@@ -140,39 +170,35 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_optio
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_PACKAGE_NAME :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MANIFEST_INSTRUMENTATION_FOR :=
 
-ifdef LOCAL_USE_AAPT2
-# One more level with name res so we can zip up the flat resources that can be linked by apps.
-my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res/res
-renderscript_target_api :=
-ifneq (,$(LOCAL_RENDERSCRIPT_TARGET_API))
-renderscript_target_api := $(LOCAL_RENDERSCRIPT_TARGET_API)
+ifeq ($(LOCAL_USE_AAPT2),true)
+  # One more level with name res so we can zip up the flat resources that can be linked by apps.
+  my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res/res
+  ifneq (,$(filter-out current,$(renderscript_target_api)))
+    ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
+      my_generated_res_zips := $(rs_generated_res_zip)
+    endif  # renderscript_target_api < 21
+  endif  # renderscript_target_api is set
+  include $(BUILD_SYSTEM)/aapt2.mk
+  $(my_res_package) : $(framework_res_package_export)
+  $(my_res_package): .KATI_IMPLICIT_OUTPUTS += $(intermediates.COMMON)/R.txt
 else
-ifneq (,$(LOCAL_SDK_VERSION))
-# Set target-api for LOCAL_SDK_VERSIONs other than current.
-ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-renderscript_target_api := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
-endif
-endif  # LOCAL_SDK_VERSION is set
-endif  # LOCAL_RENDERSCRIPT_TARGET_API is set
-ifneq (,$(renderscript_target_api))
-ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
-my_generated_res_dirs := $(rs_generated_res_dir)
-my_generated_res_dirs_deps := $(RenderScript_file_stamp)
-endif  # renderscript_target_api < 21
-endif  # renderscript_target_api is set
-include $(BUILD_SYSTEM)/aapt2.mk
-$(my_res_package) : $(framework_res_package_export_deps)
-else
-$(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_resources)
-$(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(framework_res_package_export_deps)
+  $(R_file_stamp): .KATI_IMPLICIT_OUTPUTS += $(intermediates.COMMON)/R.txt
+  $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_resources)
+  $(R_file_stamp) : $(all_resources) $(full_android_manifest) $(AAPT) $(SOONG_ZIP) \
+    $(framework_res_package_export) $(rs_generated_res_zip)
 	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
 	$(create-resource-java-files)
-	$(hide) find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name R.java | xargs cat > $@
+	$(hide) find $(PRIVATE_JAVA_GEN_DIR) -name R.java | xargs cat > $@
 endif  # LOCAL_USE_AAPT2
+
+endif # need_compile_res
+
+include $(BUILD_SYSTEM)/java_library.mk
+
+ifeq (true,$(need_compile_res))
 
 $(LOCAL_BUILT_MODULE): $(R_file_stamp)
 $(java_source_list_file): $(R_file_stamp)
-$(foreach x,$(sharded_java_source_list_files),$(eval $(x): $(R_file_stamp)))
 $(full_classes_compiled_jar): $(R_file_stamp)
 $(full_classes_turbine_jar): $(R_file_stamp)
 
@@ -190,9 +216,9 @@ $(built_aar): PRIVATE_MODULE := $(LOCAL_MODULE)
 $(built_aar): PRIVATE_ANDROID_MANIFEST := $(full_android_manifest)
 $(built_aar): PRIVATE_CLASSES_JAR := $(aar_classes_jar)
 $(built_aar): PRIVATE_RESOURCE_DIR := $(LOCAL_RESOURCE_DIR)
-$(built_aar): PRIVATE_R_TXT := $(LOCAL_INTERMEDIATE_SOURCE_DIR)/R.txt
+$(built_aar): PRIVATE_R_TXT := $(intermediates.COMMON)/R.txt
 $(built_aar): $(JAR_ARGS)
-$(built_aar) : $(aar_classes_jar) $(full_android_manifest)
+$(built_aar) : $(aar_classes_jar) $(full_android_manifest) $(intermediates.COMMON)/R.txt
 	@echo "target AAR:  $(PRIVATE_MODULE) ($@)"
 	$(hide) rm -rf $(dir $@)aar && mkdir -p $(dir $@)aar/res
 	$(hide) cp $(PRIVATE_ANDROID_MANIFEST) $(dir $@)aar/AndroidManifest.xml

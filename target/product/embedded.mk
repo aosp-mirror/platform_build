@@ -20,10 +20,13 @@
 PRODUCT_PACKAGES += \
     adb \
     adbd \
+    usbd \
     android.hardware.configstore@1.0-service \
     android.hidl.allocator@1.0-service \
     android.hidl.memory@1.0-impl \
+    android.hidl.memory@1.0-impl.vendor \
     atrace \
+    blank_screen \
     bootanimation \
     bootstat \
     charger \
@@ -48,6 +51,7 @@ PRODUCT_PACKAGES += \
     libbinder \
     libc \
     libc_malloc_debug \
+    libc_malloc_hooks \
     libcutils \
     libdl \
     libgui \
@@ -68,7 +72,6 @@ PRODUCT_PACKAGES += \
     linker \
     lmkd \
     logcat \
-    logwrapper \
     lshal \
     recovery \
     service \
@@ -81,10 +84,13 @@ PRODUCT_PACKAGES += \
     tzdatacheck \
     vndservice \
     vndservicemanager \
-    compatibility_matrix.xml \
-    manifest.xml \
-    system_manifest.xml \
-    system_compatibility_matrix.xml \
+
+# VINTF data
+PRODUCT_PACKAGES += \
+    device_compatibility_matrix.xml \
+    device_manifest.xml \
+    framework_manifest.xml \
+    framework_compatibility_matrix.xml \
 
 # SELinux packages are added as dependencies of the selinux_policy
 # phony package.

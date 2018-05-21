@@ -31,6 +31,7 @@ PRODUCT_PACKAGES += \
     bit \
     blkid \
     bmgr \
+    bpfloader \
     bugreport \
     bugreportz \
     cameraserver \
@@ -114,6 +115,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
+    perfetto \
     ping \
     ping6 \
     platform.xml \
@@ -132,6 +134,8 @@ PRODUCT_PACKAGES += \
     svc \
     tc \
     telecom \
+    traced \
+    traced_probes \
     vdc \
     vold \
     wm
@@ -147,18 +151,18 @@ PRODUCT_PACKAGES += \
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
+    iotop \
     logpersist.start \
+    micro_bench \
     perfprofd \
     sqlite3 \
     strace
 
+# Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
+PRODUCT_PACKAGES_DEBUG_ASAN :=
+
 PRODUCT_COPY_FILES := $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
-
-# Note: it is acceptable to not have a compiled-classes file. In that case, all boot classpath
-#       classes will be compiled.
-PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
-    frameworks/base/config/compiled-classes:system/etc/compiled-classes)
 
 # Note: it is acceptable to not have a dirty-image-objects file. In that case, the special bin
 #       for known dirty objects in the image will be empty.

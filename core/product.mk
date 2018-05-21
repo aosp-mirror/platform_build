@@ -23,22 +23,50 @@
 # and the .mk suffix) of the product makefile, "<product_name>:" can be
 # omitted.
 
-# Search for AndroidProducts.mks in the given dir.
-# $(1): the path to the dir
-define _search-android-products-files-in-dir
-$(sort $(shell test -d $(1) && find -L $(1) \
-  -maxdepth 6 \
-  -name .git -prune \
-  -o -name AndroidProducts.mk -print))
-endef
-
 #
 # Returns the list of all AndroidProducts.mk files.
 # $(call ) isn't necessary.
 #
 define _find-android-products-files
-$(foreach d, device vendor product,$(call _search-android-products-files-in-dir,$(d))) \
+$(file <$(OUT_DIR)/.module_paths/AndroidProducts.mk.list) \
   $(SRC_TARGET_DIR)/product/AndroidProducts.mk
+endef
+
+#
+# For entries returned by get-product-makefiles, decode an entry to a short
+# product name. These either may be in the form of <name>:path/to/file.mk or
+# path/to/<name>.mk
+# $(1): The entry to decode
+#
+# Returns two words:
+#   <name> <file>
+#
+define _decode-product-name
+$(strip \
+  $(eval _cpm_words := $(subst :,$(space),$(1))) \
+  $(if $(word 2,$(_cpm_words)), \
+    $(wordlist 1,2,$(_cpm_words)), \
+    $(basename $(notdir $(1))) $(1)))
+endef
+
+#
+# Validates the new common lunch choices -- ensures that they're in an
+# appropriate form, and are paired with definitions of their products.
+# $(1): The new list of COMMON_LUNCH_CHOICES
+# $(2): The new list of PRODUCT_MAKEFILES
+#
+define _validate-common-lunch-choices
+$(strip $(foreach choice,$(1),\
+  $(eval _parts := $(subst -,$(space),$(choice))) \
+  $(if $(call math_lt,$(words $(_parts)),2), \
+    $(error $(LOCAL_DIR): $(choice): Invalid lunch choice)) \
+  $(if $(call math_gt_or_eq,$(words $(_parts)),4), \
+    $(error $(LOCAL_DIR): $(choice): Invalid lunch choice)) \
+  $(if $(filter-out eng userdebug user,$(word 2,$(_parts))), \
+    $(error $(LOCAL_DIR): $(choice): Invalid variant: $(word 2,$(_parts)))) \
+  $(if $(filter-out $(foreach p,$(2),$(call _decode-product-name,$(p))),$(word 1,$(_parts))), \
+    $(error $(LOCAL_DIR): $(word 1,$(_parts)): Product not defined in this file)) \
+  ))
 endef
 
 #
@@ -46,16 +74,26 @@ endef
 # variables set in the given AndroidProducts.mk files.
 # $(1): the list of AndroidProducts.mk files.
 #
+# As a side-effect, COMMON_LUNCH_CHOICES will be set to a
+# union of all of the COMMON_LUNCH_CHOICES definitions within
+# each AndroidProducts.mk file.
+#
 define get-product-makefiles
 $(sort \
+  $(eval _COMMON_LUNCH_CHOICES :=) \
   $(foreach f,$(1), \
     $(eval PRODUCT_MAKEFILES :=) \
+    $(eval COMMON_LUNCH_CHOICES :=) \
     $(eval LOCAL_DIR := $(patsubst %/,%,$(dir $(f)))) \
     $(eval include $(f)) \
+    $(call _validate-common-lunch-choices,$(COMMON_LUNCH_CHOICES),$(PRODUCT_MAKEFILES)) \
+    $(eval _COMMON_LUNCH_CHOICES += $(COMMON_LUNCH_CHOICES)) \
     $(PRODUCT_MAKEFILES) \
    ) \
   $(eval PRODUCT_MAKEFILES :=) \
   $(eval LOCAL_DIR :=) \
+  $(eval COMMON_LUNCH_CHOICES := $(sort $(_COMMON_LUNCH_CHOICES) $(LUNCH_MENU_CHOICES))) \
+  $(eval _COMMON_LUNCH_CHOICES :=) \
  )
 endef
 
@@ -81,6 +119,7 @@ _product_var_list := \
     PRODUCT_AAPT_PREBUILT_DPI \
     PRODUCT_PACKAGES \
     PRODUCT_PACKAGES_DEBUG \
+    PRODUCT_PACKAGES_DEBUG_ASAN \
     PRODUCT_PACKAGES_ENG \
     PRODUCT_PACKAGES_TESTS \
     PRODUCT_DEVICE \
@@ -88,6 +127,7 @@ _product_var_list := \
     PRODUCT_BRAND \
     PRODUCT_PROPERTY_OVERRIDES \
     PRODUCT_DEFAULT_PROPERTY_OVERRIDES \
+    PRODUCT_PRODUCT_PROPERTIES \
     PRODUCT_CHARACTERISTICS \
     PRODUCT_COPY_FILES \
     PRODUCT_OTA_PUBLIC_KEYS \
@@ -115,6 +155,7 @@ _product_var_list := \
     PRODUCT_OEM_PROPERTIES \
     PRODUCT_SYSTEM_DEFAULT_PROPERTIES \
     PRODUCT_SYSTEM_PROPERTY_BLACKLIST \
+    PRODUCT_VENDOR_PROPERTY_BLACKLIST \
     PRODUCT_SYSTEM_SERVER_APPS \
     PRODUCT_SYSTEM_SERVER_JARS \
     PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK \
@@ -125,17 +166,22 @@ _product_var_list := \
     PRODUCT_VERITY_SIGNING_KEY \
     PRODUCT_SYSTEM_VERITY_PARTITION \
     PRODUCT_VENDOR_VERITY_PARTITION \
+    PRODUCT_PRODUCT_VERITY_PARTITION \
     PRODUCT_SYSTEM_SERVER_DEBUG_INFO \
+    PRODUCT_OTHER_JAVA_DEBUG_INFO \
     PRODUCT_DEX_PREOPT_MODULE_CONFIGS \
+    PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER \
     PRODUCT_DEX_PREOPT_DEFAULT_FLAGS \
     PRODUCT_DEX_PREOPT_BOOT_FLAGS \
     PRODUCT_DEX_PREOPT_PROFILE_DIR \
     PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
+    PRODUCT_DEX_PREOPT_GENERATE_DM_FILES \
     PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE \
     PRODUCT_SYSTEM_SERVER_COMPILER_FILTER \
     PRODUCT_SANITIZER_MODULE_CONFIGS \
     PRODUCT_SYSTEM_BASE_FS_PATH \
     PRODUCT_VENDOR_BASE_FS_PATH \
+    PRODUCT_PRODUCT_BASE_FS_PATH \
     PRODUCT_SHIPPING_API_LEVEL \
     VENDOR_PRODUCT_RESTRICT_VENDOR_FILES \
     VENDOR_EXCEPTION_MODULES \
@@ -149,6 +195,8 @@ _product_var_list := \
     PRODUCT_ADB_KEYS \
     PRODUCT_CFI_INCLUDE_PATHS \
     PRODUCT_CFI_EXCLUDE_PATHS \
+    PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE \
+    PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE \
 
 define dump-product
 $(info ==== $(1) ====)\
@@ -302,14 +350,15 @@ _product_stash_var_list += \
 	BOARD_FLASH_BLOCK_SIZE \
 	BOARD_VENDORIMAGE_PARTITION_SIZE \
 	BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE \
+	BOARD_PRODUCTIMAGE_PARTITION_SIZE \
+	BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE \
 	BOARD_INSTALLER_CMDLINE \
 
 
 _product_stash_var_list += \
 	DEFAULT_SYSTEM_DEV_CERTIFICATE \
 	WITH_DEXPREOPT \
-	WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY \
-	WITH_DEXPREOPT_APP_IMAGE
+	WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY
 
 #
 # Mark the variables in _product_stash_var_list as readonly

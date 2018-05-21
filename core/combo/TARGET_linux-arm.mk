@@ -33,7 +33,7 @@ ifeq ($(strip $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT)),)
 TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT := generic
 endif
 
-KNOWN_ARMv8_CORES := cortex-a53 cortex-a53.a57 cortex-a73
+KNOWN_ARMv8_CORES := cortex-a53 cortex-a53.a57 cortex-a55 cortex-a73 cortex-a75
 KNOWN_ARMv8_CORES += kryo denver64 exynos-m1 exynos-m2
 
 # Many devices (incorrectly) use armv7-a-neon as the 2nd architecture variant
@@ -50,7 +50,7 @@ ifneq (,$(filter $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT), $(KNOWN_ARMv8_CO
 endif
 
 ifeq ($(strip $(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT)),)
-TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT := armv5te
+$(error TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT must be set)
 endif
 
 TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_$(combo_2nd_arch_prefix)ARCH)/$(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT).mk

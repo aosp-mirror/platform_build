@@ -195,18 +195,13 @@ all_named_products :=
 current_product_makefile :=
 all_product_makefiles :=
 $(foreach f, $(all_product_configs),\
-    $(eval _cpm_words := $(subst :,$(space),$(f)))\
+    $(eval _cpm_words := $(call _decode-product-name,$(f)))\
     $(eval _cpm_word1 := $(word 1,$(_cpm_words)))\
     $(eval _cpm_word2 := $(word 2,$(_cpm_words)))\
-    $(if $(_cpm_word2),\
-        $(eval all_product_makefiles += $(_cpm_word2))\
-        $(eval all_named_products += $(_cpm_word1))\
-        $(if $(filter $(TARGET_PRODUCT),$(_cpm_word1)),\
-            $(eval current_product_makefile += $(_cpm_word2)),),\
-        $(eval all_product_makefiles += $(f))\
-        $(eval all_named_products += $(basename $(notdir $(f))))\
-        $(if $(filter $(TARGET_PRODUCT),$(basename $(notdir $(f)))),\
-            $(eval current_product_makefile += $(f)),)))
+    $(eval all_product_makefiles += $(_cpm_word2))\
+    $(eval all_named_products += $(_cpm_word1))\
+    $(if $(filter $(TARGET_PRODUCT),$(_cpm_word1)),\
+        $(eval current_product_makefile += $(_cpm_word2)),))
 _cpm_words :=
 _cpm_word1 :=
 _cpm_word2 :=
@@ -365,6 +360,13 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_DEFAULT_PROPERTIES))
 .KATI_READONLY := PRODUCT_SYSTEM_DEFAULT_PROPERTIES
 
+# A list of property assignments, like "key = value", with zero or more
+# whitespace characters on either side of the '='.
+# used for adding properties to build.prop of product partition
+PRODUCT_PRODUCT_PROPERTIES := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_PROPERTIES))
+.KATI_READONLY := PRODUCT_PRODUCT_PROPERTIES
+
 # Should we use the default resources or add any product specific overlays
 PRODUCT_PACKAGE_OVERLAYS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGE_OVERLAYS))
@@ -385,8 +387,12 @@ PRODUCT_OTA_PUBLIC_KEYS := $(sort \
 PRODUCT_EXTRA_RECOVERY_KEYS := $(sort \
     $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_EXTRA_RECOVERY_KEYS))
 
+PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER))
 PRODUCT_DEX_PREOPT_DEFAULT_FLAGS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEX_PREOPT_DEFAULT_FLAGS))
+PRODUCT_DEX_PREOPT_GENERATE_DM_FILES := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEX_PREOPT_GENERATE_DM_FILES))
 PRODUCT_DEX_PREOPT_BOOT_FLAGS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEX_PREOPT_BOOT_FLAGS))
 PRODUCT_DEX_PREOPT_PROFILE_DIR := \
@@ -402,6 +408,8 @@ PRODUCT_SYSTEM_SERVER_COMPILER_FILTER := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
 PRODUCT_SYSTEM_SERVER_DEBUG_INFO := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_SERVER_DEBUG_INFO))
+PRODUCT_OTHER_JAVA_DEBUG_INFO := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OTHER_JAVA_DEBUG_INFO))
 
 # Resolve and setup per-module dex-preopt configs.
 PRODUCT_DEX_PREOPT_MODULE_CONFIGS := \
@@ -482,5 +490,13 @@ PRODUCT_CFI_INCLUDE_PATHS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CFI_INCLUDE_PATHS))
 
 # which Soong namespaces to export to Make
-PRODUCT_SOONG_NAMESPACES :=
+PRODUCT_SOONG_NAMESPACES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SOONG_NAMESPACES))
+
+# A flag to override PRODUCT_COMPATIBLE_PROPERTY
+PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE))
+
+# Whether the whitelist of actionable compatible properties should be disabled or not
+PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE))

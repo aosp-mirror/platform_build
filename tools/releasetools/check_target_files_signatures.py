@@ -39,25 +39,26 @@ Usage:  check_target_file_signatures [flags] target_files
 
 """
 
+import os
+import re
+import subprocess
 import sys
+import zipfile
+
+import common
 
 if sys.hexversion < 0x02070000:
   print >> sys.stderr, "Python 2.7 or newer is required."
   sys.exit(1)
 
-import os
-import re
-import shutil
-import subprocess
-import zipfile
 
-import common
-
-# Work around a bug in python's zipfile module that prevents opening
-# of zipfiles if any entry has an extra field of between 1 and 3 bytes
-# (which is common with zipaligned APKs).  This overrides the
-# ZipInfo._decodeExtra() method (which contains the bug) with an empty
-# version (since we don't need to decode the extra field anyway).
+# Work around a bug in Python's zipfile module that prevents opening of zipfiles
+# if any entry has an extra field of between 1 and 3 bytes (which is common with
+# zipaligned APKs). This overrides the ZipInfo._decodeExtra() method (which
+# contains the bug) with an empty version (since we don't need to decode the
+# extra field anyway).
+# Issue #14315: https://bugs.python.org/issue14315, fixed in Python 2.7.8 and
+# Python 3.5.0 alpha 1.
 class MyZipInfo(zipfile.ZipInfo):
   def _decodeExtra(self):
     pass
@@ -242,46 +243,41 @@ class TargetFiles(object):
     # This is the list of wildcards of files we extract from |filename|.
     apk_extensions = ['*.apk']
 
-    self.certmap, compressed_extension = common.ReadApkCerts(zipfile.ZipFile(filename, "r"))
+    self.certmap, compressed_extension = common.ReadApkCerts(
+        zipfile.ZipFile(filename, "r"))
     if compressed_extension:
       apk_extensions.append("*.apk" + compressed_extension)
 
-    d, z = common.UnzipTemp(filename, apk_extensions)
-    try:
-      self.apks = {}
-      self.apks_by_basename = {}
-      for dirpath, _, filenames in os.walk(d):
-        for fn in filenames:
-          # Decompress compressed APKs before we begin processing them.
-          if compressed_extension and fn.endswith(compressed_extension):
-            # First strip the compressed extension from the file.
-            uncompressed_fn = fn[:-len(compressed_extension)]
+    d = common.UnzipTemp(filename, apk_extensions)
+    self.apks = {}
+    self.apks_by_basename = {}
+    for dirpath, _, filenames in os.walk(d):
+      for fn in filenames:
+        # Decompress compressed APKs before we begin processing them.
+        if compressed_extension and fn.endswith(compressed_extension):
+          # First strip the compressed extension from the file.
+          uncompressed_fn = fn[:-len(compressed_extension)]
 
-            # Decompress the compressed file to the output file.
-            common.Gunzip(os.path.join(dirpath, fn),
-                          os.path.join(dirpath, uncompressed_fn))
+          # Decompress the compressed file to the output file.
+          common.Gunzip(os.path.join(dirpath, fn),
+                        os.path.join(dirpath, uncompressed_fn))
 
-            # Finally, delete the compressed file and use the uncompressed file
-            # for further processing. Note that the deletion is not strictly required,
-            # but is done here to ensure that we're not using too much space in
-            # the temporary directory.
-            os.remove(os.path.join(dirpath, fn))
-            fn = uncompressed_fn
+          # Finally, delete the compressed file and use the uncompressed file
+          # for further processing. Note that the deletion is not strictly
+          # required, but is done here to ensure that we're not using too much
+          # space in the temporary directory.
+          os.remove(os.path.join(dirpath, fn))
+          fn = uncompressed_fn
 
+        if fn.endswith(".apk"):
+          fullname = os.path.join(dirpath, fn)
+          displayname = fullname[len(d)+1:]
+          apk = APK(fullname, displayname)
+          self.apks[apk.filename] = apk
+          self.apks_by_basename[os.path.basename(apk.filename)] = apk
 
-          if fn.endswith(".apk"):
-            fullname = os.path.join(dirpath, fn)
-            displayname = fullname[len(d)+1:]
-            apk = APK(fullname, displayname)
-            self.apks[apk.filename] = apk
-            self.apks_by_basename[os.path.basename(apk.filename)] = apk
-
-            self.max_pkg_len = max(self.max_pkg_len, len(apk.package))
-            self.max_fn_len = max(self.max_fn_len, len(apk.filename))
-    finally:
-      shutil.rmtree(d)
-
-    z.close()
+          self.max_pkg_len = max(self.max_pkg_len, len(apk.package))
+          self.max_fn_len = max(self.max_fn_len, len(apk.filename))
 
   def CheckSharedUids(self):
     """Look for any instances where packages signed with different
@@ -291,7 +287,7 @@ class TargetFiles(object):
       if apk.shared_uid:
         apks_by_uid.setdefault(apk.shared_uid, []).append(apk)
 
-    for uid in sorted(apks_by_uid.keys()):
+    for uid in sorted(apks_by_uid):
       apks = apks_by_uid[uid]
       for apk in apks[1:]:
         if apk.certs != apks[0].certs:
@@ -466,3 +462,5 @@ if __name__ == '__main__':
     print "   ERROR: %s" % (e,)
     print
     sys.exit(1)
+  finally:
+    common.Cleanup()

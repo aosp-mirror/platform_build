@@ -42,8 +42,6 @@ PRODUCT_PACKAGES += vndk_package
 PRODUCT_PACKAGES += \
     libvulkan \
 
-# Audio:
-USE_XML_AUDIO_POLICY_CONF := 1
 # The following policy XML files are used as fallback for
 # vendors/devices not using XML to configure audio policy.
 PRODUCT_COPY_FILES += \
@@ -72,12 +70,21 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml
 
-# Android Verified Boot (AVB):
-#   Builds a special vbmeta.img that disables AVB verification.
-#   Otherwise, AVB will prevent the device from booting the generic system.img.
-#   Also checks that BOARD_AVB_ENABLE is not set, to prevent adding verity
-#   metadata into system.img.
-ifeq ($(BOARD_AVB_ENABLE),true)
-$(error BOARD_AVB_ENABLE cannot be set for Treble GSI)
-endif
-BOARD_BUILD_DISABLED_VBMETAIMAGE := true
+# NFC:
+#   Provide default libnfc-nci.conf file for devices that does not have one in
+#   vendor/etc
+PRODUCT_COPY_FILES += \
+    device/generic/common/nfc/libnfc-nci.conf:system/etc/libnfc-nci.conf
+
+# Support for the devices with no VNDK enforcing
+PRODUCT_COPY_FILES += \
+    build/make/target/product/vndk/init.gsi.rc:system/etc/init/init.gsi.rc \
+    build/make/target/product/vndk/init.noenforce.rc:system/etc/init/gsi/init.noenforce.rc
+
+# Name space configuration file for non-enforcing VNDK
+PRODUCT_PACKAGES += \
+    ld.config.noenforce.txt
+
+# Set current VNDK version for GSI
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    ro.gsi.vndk.version=$(PLATFORM_VNDK_VERSION)

@@ -762,6 +762,19 @@ does this.</p>
 Dialer, Contacts, etc.  This will probably change or go away when we switch
 to an ant-based build system for the apps.</p>
 
+<h4>LOCAL_PATCH_MODULE (experimental option)</h4>
+<p>As of January 2018, you almost certainly don't need this option, so please
+ask and only use it if you understand what you're doing. This feature is
+experimental and may go away in future.</p>
+<p>
+When compiling language level 9+ .java code in packages that are part of a
+a system module, <code>LOCAL_PATCH_MODULE</code> names the module that your
+sources and dependencies should be patched into. The Android runtime currently
+(Jan 2018) doesn't implement the JEP 261 module system so this option is only
+supported at compile time. It should only be needed to compile tests in packages
+that exist in libcore and which are inconvenient to move elsewhere.
+</p>
+
 <h4>LOCAL_PATH</h4>
 <p>The directory your Android.mk file is in. You can set it by putting the
 following as the first line in your Android.mk:</p>

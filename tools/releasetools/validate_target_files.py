@@ -17,46 +17,39 @@
 """
 Validate a given (signed) target_files.zip.
 
-It performs checks to ensure the integrity of the input zip.
+It performs the following checks to assert the integrity of the input zip.
+
  - It verifies the file consistency between the ones in IMAGES/system.img (read
    via IMAGES/system.map) and the ones under unpacked folder of SYSTEM/. The
    same check also applies to the vendor image if present.
+
+ - It verifies the install-recovery script consistency, by comparing the
+   checksums in the script against the ones of IMAGES/{boot,recovery}.img.
+
+ - It verifies the signed Verified Boot related images, for both of Verified
+   Boot 1.0 and 2.0 (aka AVB).
 """
 
-import common
+import argparse
+import filecmp
 import logging
 import os.path
 import re
-import sparse_img
-import sys
+import subprocess
+import zipfile
 
-
-def _GetImage(which, tmpdir):
-  assert which in ('system', 'vendor')
-
-  path = os.path.join(tmpdir, 'IMAGES', which + '.img')
-  mappath = os.path.join(tmpdir, 'IMAGES', which + '.map')
-
-  # Map file must exist (allowed to be empty).
-  assert os.path.exists(path) and os.path.exists(mappath)
-
-  clobbered_blocks = '0'
-  return sparse_img.SparseImage(path, mappath, clobbered_blocks)
+import common
 
 
 def _ReadFile(file_name, unpacked_name, round_up=False):
   """Constructs and returns a File object. Rounds up its size if needed."""
-
-  def RoundUpTo4K(value):
-    rounded_up = value + 4095
-    return rounded_up - (rounded_up % 4096)
 
   assert os.path.exists(unpacked_name)
   with open(unpacked_name, 'r') as f:
     file_data = f.read()
   file_size = len(file_data)
   if round_up:
-    file_size_rounded_up = RoundUpTo4K(file_size)
+    file_size_rounded_up = common.RoundUpTo4K(file_size)
     file_data += '\0' * (file_size_rounded_up - file_size)
   return common.File(file_name, file_data)
 
@@ -64,53 +57,62 @@ def _ReadFile(file_name, unpacked_name, round_up=False):
 def ValidateFileAgainstSha1(input_tmp, file_name, file_path, expected_sha1):
   """Check if the file has the expected SHA-1."""
 
-  logging.info('Validating the SHA-1 of {}'.format(file_name))
+  logging.info('Validating the SHA-1 of %s', file_name)
   unpacked_name = os.path.join(input_tmp, file_path)
   assert os.path.exists(unpacked_name)
   actual_sha1 = _ReadFile(file_name, unpacked_name, False).sha1
   assert actual_sha1 == expected_sha1, \
       'SHA-1 mismatches for {}. actual {}, expected {}'.format(
-      file_name, actual_sha1, expected_sha1)
+          file_name, actual_sha1, expected_sha1)
 
 
-def ValidateFileConsistency(input_zip, input_tmp):
+def ValidateFileConsistency(input_zip, input_tmp, info_dict):
   """Compare the files from image files and unpacked folders."""
 
   def CheckAllFiles(which):
     logging.info('Checking %s image.', which)
-    image = _GetImage(which, input_tmp)
+    # Allow having shared blocks when loading the sparse image, because allowing
+    # that doesn't affect the checks below (we will have all the blocks on file,
+    # unless it's skipped due to the holes).
+    image = common.GetSparseImage(which, input_tmp, input_zip, True)
     prefix = '/' + which
     for entry in image.file_map:
+      # Skip entries like '__NONZERO-0'.
       if not entry.startswith(prefix):
         continue
 
       # Read the blocks that the file resides. Note that it will contain the
       # bytes past the file length, which is expected to be padded with '\0's.
       ranges = image.file_map[entry]
+
+      incomplete = ranges.extra.get('incomplete', False)
+      if incomplete:
+        logging.warning('Skipping %s that has incomplete block list', entry)
+        continue
+
+      # TODO(b/79951650): Handle files with non-monotonic ranges.
+      if not ranges.monotonic:
+        logging.warning(
+            'Skipping %s that has non-monotonic ranges: %s', entry, ranges)
+        continue
+
       blocks_sha1 = image.RangeSha1(ranges)
 
       # The filename under unpacked directory, such as SYSTEM/bin/sh.
       unpacked_name = os.path.join(
           input_tmp, which.upper(), entry[(len(prefix) + 1):])
       unpacked_file = _ReadFile(entry, unpacked_name, True)
-      file_size = unpacked_file.size
-
-      # block.map may contain less blocks, because mke2fs may skip allocating
-      # blocks if they contain all zeros. We can't reconstruct such a file from
-      # its block list. (Bug: 65213616)
-      if file_size > ranges.size() * 4096:
-        logging.warning(
-            'Skipping %s that has less blocks: file size %d-byte,'
-            ' ranges %s (%d-byte)', entry, file_size, ranges,
-            ranges.size() * 4096)
-        continue
-
       file_sha1 = unpacked_file.sha1
       assert blocks_sha1 == file_sha1, \
           'file: %s, range: %s, blocks_sha1: %s, file_sha1: %s' % (
               entry, ranges, blocks_sha1, file_sha1)
 
   logging.info('Validating file consistency.')
+
+  # TODO(b/79617342): Validate non-sparse images.
+  if info_dict.get('extfs_sparse_flag') != '-s':
+    logging.warning('Skipped due to target using non-sparse images')
+    return
 
   # Verify IMAGES/system.img.
   CheckAllFiles('system')
@@ -147,10 +149,10 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
 
   script_path = 'SYSTEM/bin/install-recovery.sh'
   if not os.path.exists(os.path.join(input_tmp, script_path)):
-    logging.info('{} does not exist in input_tmp'.format(script_path))
+    logging.info('%s does not exist in input_tmp', script_path)
     return
 
-  logging.info('Checking {}'.format(script_path))
+  logging.info('Checking %s', script_path)
   with open(os.path.join(input_tmp, script_path), 'r') as script:
     lines = script.read().strip().split('\n')
   assert len(lines) >= 6
@@ -168,7 +170,7 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
     expected_recovery_sha1 = applypatch_argv[3].strip()
     assert expected_recovery_check_sha1 == expected_recovery_sha1
     ValidateFileAgainstSha1(input_tmp, 'recovery.img',
-        'SYSTEM/etc/recovery.img', expected_recovery_sha1)
+                            'SYSTEM/etc/recovery.img', expected_recovery_sha1)
   else:
     # We're patching boot.img to get recovery.img where bonus_args is optional
     if applypatch_argv[1] == "-b":
@@ -182,43 +184,164 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
     boot_info = applypatch_argv[boot_info_index].strip().split(':')
     assert len(boot_info) == 4
     ValidateFileAgainstSha1(input_tmp, file_name='boot.img',
-        file_path='IMAGES/boot.img', expected_sha1=boot_info[3])
+                            file_path='IMAGES/boot.img',
+                            expected_sha1=boot_info[3])
 
     recovery_sha1_index = boot_info_index + 2
     expected_recovery_sha1 = applypatch_argv[recovery_sha1_index]
     assert expected_recovery_check_sha1 == expected_recovery_sha1
     ValidateFileAgainstSha1(input_tmp, file_name='recovery.img',
-        file_path='IMAGES/recovery.img',
-        expected_sha1=expected_recovery_sha1)
+                            file_path='IMAGES/recovery.img',
+                            expected_sha1=expected_recovery_sha1)
 
-  logging.info('Done checking {}'.format(script_path))
+  logging.info('Done checking %s', script_path)
 
 
-def main(argv):
-  def option_handler():
-    return True
+def ValidateVerifiedBootImages(input_tmp, info_dict, options):
+  """Validates the Verified Boot related images.
 
-  args = common.ParseOptions(
-      argv, __doc__, extra_opts="",
-      extra_long_opts=[],
-      extra_option_handler=option_handler)
+  For Verified Boot 1.0, it verifies the signatures of the bootable images
+  (boot/recovery etc), as well as the dm-verity metadata in system images
+  (system/vendor/product). For Verified Boot 2.0, it calls avbtool to verify
+  vbmeta.img, which in turn verifies all the descriptors listed in vbmeta.
 
-  if len(args) != 1:
-    common.Usage(__doc__)
-    sys.exit(1)
+  Args:
+    input_tmp: The top-level directory of unpacked target-files.zip.
+    info_dict: The loaded info dict.
+    options: A dict that contains the user-supplied public keys to be used for
+        image verification. In particular, 'verity_key' is used to verify the
+        bootable images in VB 1.0, and the vbmeta image in VB 2.0, where
+        applicable. 'verity_key_mincrypt' will be used to verify the system
+        images in VB 1.0.
+
+  Raises:
+    AssertionError: On any verification failure.
+  """
+  # Verified boot 1.0 (images signed with boot_signer and verity_signer).
+  if info_dict.get('boot_signer') == 'true':
+    logging.info('Verifying Verified Boot images...')
+
+    # Verify the boot/recovery images (signed with boot_signer), against the
+    # given X.509 encoded pubkey (or falling back to the one in the info_dict if
+    # none given).
+    verity_key = options['verity_key']
+    if verity_key is None:
+      verity_key = info_dict['verity_key'] + '.x509.pem'
+    for image in ('boot.img', 'recovery.img', 'recovery-two-step.img'):
+      image_path = os.path.join(input_tmp, 'IMAGES', image)
+      if not os.path.exists(image_path):
+        continue
+
+      cmd = ['boot_signer', '-verify', image_path, '-certificate', verity_key]
+      proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      stdoutdata, _ = proc.communicate()
+      assert proc.returncode == 0, \
+          'Failed to verify {} with boot_signer:\n{}'.format(image, stdoutdata)
+      logging.info(
+          'Verified %s with boot_signer (key: %s):\n%s', image, verity_key,
+          stdoutdata.rstrip())
+
+  # Verify verity signed system images in Verified Boot 1.0. Note that not using
+  # 'elif' here, since 'boot_signer' and 'verity' are not bundled in VB 1.0.
+  if info_dict.get('verity') == 'true':
+    # First verify that the verity key that's built into the root image (as
+    # /verity_key) matches the one given via command line, if any.
+    if info_dict.get("system_root_image") == "true":
+      verity_key_mincrypt = os.path.join(input_tmp, 'ROOT', 'verity_key')
+    else:
+      verity_key_mincrypt = os.path.join(
+          input_tmp, 'BOOT', 'RAMDISK', 'verity_key')
+    assert os.path.exists(verity_key_mincrypt), 'Missing verity_key'
+
+    if options['verity_key_mincrypt'] is None:
+      logging.warn(
+          'Skipped checking the content of /verity_key, as the key file not '
+          'provided. Use --verity_key_mincrypt to specify.')
+    else:
+      expected_key = options['verity_key_mincrypt']
+      assert filecmp.cmp(expected_key, verity_key_mincrypt, shallow=False), \
+          "Mismatching mincrypt verity key files"
+      logging.info('Verified the content of /verity_key')
+
+    # Then verify the verity signed system/vendor/product images, against the
+    # verity pubkey in mincrypt format.
+    for image in ('system.img', 'vendor.img', 'product.img'):
+      image_path = os.path.join(input_tmp, 'IMAGES', image)
+
+      # We are not checking if the image is actually enabled via info_dict (e.g.
+      # 'system_verity_block_device=...'). Because it's most likely a bug that
+      # skips signing some of the images in signed target-files.zip, while
+      # having the top-level verity flag enabled.
+      if not os.path.exists(image_path):
+        continue
+
+      cmd = ['verity_verifier', image_path, '-mincrypt', verity_key_mincrypt]
+      proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      stdoutdata, _ = proc.communicate()
+      assert proc.returncode == 0, \
+          'Failed to verify {} with verity_verifier (key: {}):\n{}'.format(
+              image, verity_key_mincrypt, stdoutdata)
+      logging.info(
+          'Verified %s with verity_verifier (key: %s):\n%s', image,
+          verity_key_mincrypt, stdoutdata.rstrip())
+
+  # Handle the case of Verified Boot 2.0 (AVB).
+  if info_dict.get("avb_enable") == "true":
+    logging.info('Verifying Verified Boot 2.0 (AVB) images...')
+
+    key = options['verity_key']
+    if key is None:
+      key = info_dict['avb_vbmeta_key_path']
+    # avbtool verifies all the images that have descriptors listed in vbmeta.
+    image = os.path.join(input_tmp, 'IMAGES', 'vbmeta.img')
+    cmd = ['avbtool', 'verify_image', '--image', image, '--key', key]
+    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    stdoutdata, _ = proc.communicate()
+    assert proc.returncode == 0, \
+        'Failed to verify {} with verity_verifier (key: {}):\n{}'.format(
+            image, key, stdoutdata)
+
+    logging.info(
+        'Verified %s with avbtool (key: %s):\n%s', image, key,
+        stdoutdata.rstrip())
+
+
+def main():
+  parser = argparse.ArgumentParser(
+      description=__doc__,
+      formatter_class=argparse.RawDescriptionHelpFormatter)
+  parser.add_argument(
+      'target_files',
+      help='the input target_files.zip to be validated')
+  parser.add_argument(
+      '--verity_key',
+      help='the verity public key to verify the bootable images (Verified '
+           'Boot 1.0), or the vbmeta image (Verified Boot 2.0), where '
+           'applicable')
+  parser.add_argument(
+      '--verity_key_mincrypt',
+      help='the verity public key in mincrypt format to verify the system '
+           'images, if target using Verified Boot 1.0')
+  args = parser.parse_args()
+
+  # Unprovided args will have 'None' as the value.
+  options = vars(args)
 
   logging_format = '%(asctime)s - %(filename)s - %(levelname)-8s: %(message)s'
   date_format = '%Y/%m/%d %H:%M:%S'
   logging.basicConfig(level=logging.INFO, format=logging_format,
                       datefmt=date_format)
 
-  logging.info("Unzipping the input target_files.zip: %s", args[0])
-  input_tmp, input_zip = common.UnzipTemp(args[0])
-
-  ValidateFileConsistency(input_zip, input_tmp)
+  logging.info("Unzipping the input target_files.zip: %s", args.target_files)
+  input_tmp = common.UnzipTemp(args.target_files)
 
   info_dict = common.LoadInfoDict(input_tmp)
+  with zipfile.ZipFile(args.target_files, 'r') as input_zip:
+    ValidateFileConsistency(input_zip, input_tmp, info_dict)
+
   ValidateInstallRecoveryScript(input_tmp, info_dict)
+
+  ValidateVerifiedBootImages(input_tmp, info_dict, options)
 
   # TODO: Check if the OTA keys have been properly updated (the ones on /system,
   # in recovery image).
@@ -228,6 +351,6 @@ def main(argv):
 
 if __name__ == '__main__':
   try:
-    main(sys.argv[1:])
+    main()
   finally:
     common.Cleanup()

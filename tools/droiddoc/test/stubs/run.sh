@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-DIR=build/tools/droiddoc/test/stubs
+DIR=build/make/tools/droiddoc/test/stubs
 
 pushd $TOP
 

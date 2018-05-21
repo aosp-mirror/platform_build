@@ -122,7 +122,7 @@ header file.
 For OEMs wishing to use the define AIDs in their native code, one can access the generated header
 file like so:
   1. In your C code just #include "generated_oem_aid.h" and start using the declared identifiers.
-  2. In your Makefile add this static library like so: LOCAL_STATIC_LIBRARIES := liboemaids
+  2. In your Makefile add this static library like so: LOCAL_HEADER_LIBRARIES := oemaids_headers
 
 Unit Tests:
 

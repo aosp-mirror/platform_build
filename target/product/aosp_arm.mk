@@ -22,9 +22,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # see copy file rules in core/Makefile
 PRODUCT_COPY_FILES += \
     development/sys-img/advancedFeatures.ini.arm:advancedFeatures.ini \
-    prebuilts/qemu-kernel/arm/3.18/kernel-qemu2:kernel-ranchu \
-    device/generic/goldfish/fstab.ranchu.arm:root/fstab.ranchu \
-    device/generic/goldfish/fstab.ranchu.early.arm:root/fstab.ranchu.early
+    prebuilts/qemu-kernel/arm64/3.18/kernel-qemu2:kernel-ranchu-64 \
+    device/generic/goldfish/fstab.ranchu.arm:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.ranchu
 
 include $(SRC_TARGET_DIR)/product/full.mk
 

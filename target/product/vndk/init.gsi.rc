@@ -1,0 +1,2 @@
+# If ro.vndk.version is not defined, import init.noenforce.rc
+import /system/etc/init/gsi/init.${ro.vndk.version:-noenforce}.rc

@@ -67,6 +67,8 @@ all_java_sources := $(java_sources)
 
 include $(BUILD_SYSTEM)/java_common.mk
 
+include $(BUILD_SYSTEM)/sdk_check.mk
+
 $(cleantarget): PRIVATE_CLEAN_FILES += $(intermediates.COMMON)
 
 # List of dependencies for anything that needs all java sources in place
@@ -74,6 +76,7 @@ java_sources_deps := \
     $(java_sources) \
     $(java_resource_sources) \
     $(proto_java_sources_file_stamp) \
+    $(LOCAL_SRCJARS) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
 $(java_source_list_file): $(java_sources_deps)
@@ -84,6 +87,9 @@ $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annota
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES :=
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES :=
+$(full_classes_compiled_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
+$(full_classes_compiled_jar): PRIVATE_SRCJAR_LIST_FILE := $(intermediates.COMMON)/srcjar-list
+$(full_classes_compiled_jar): PRIVATE_SRCJAR_INTERMEDIATES_DIR := $(intermediates.COMMON)/srcjars
 $(full_classes_compiled_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
@@ -93,6 +99,7 @@ $(full_classes_compiled_jar): \
     $(annotation_processor_deps) \
     $(NORMALIZE_PATH) \
     $(JAR_ARGS) \
+    $(ZIPSYNC) \
     | $(SOONG_JAVAC_WRAPPER)
 	$(transform-host-java-to-dalvik-package)
 
@@ -100,6 +107,7 @@ ifneq ($(TURBINE_ENABLED),false)
 
 $(full_classes_turbine_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_turbine_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
+$(full_classes_turbine_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
 $(full_classes_turbine_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
@@ -134,7 +142,7 @@ $(full_classes_combined_jar): $(full_classes_compiled_jar) \
                               $(full_static_java_libs)  | $(MERGE_ZIPS)
 	$(if $(PRIVATE_JAR_MANIFEST), $(hide) sed -e "s/%BUILD_NUMBER%/$(BUILD_NUMBER_FROM_FILE)/" \
             $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf)
-	$(MERGE_ZIPS) -j $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
+	$(MERGE_ZIPS) -j --ignore-duplicates $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
             $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
             $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
 
@@ -150,12 +158,16 @@ endif
 
 $(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
+ifneq ($(USE_D8_DESUGAR),true)
 my_desugaring :=
 ifeq ($(LOCAL_JAVA_LANGUAGE_VERSION),1.8)
 my_desugaring := true
 $(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 $(full_classes_desugar_jar): $(full_classes_jar) $(full_java_header_libs) $(DESUGAR)
 	$(desugar-classes-jar)
+endif
+else
+my_desugaring :=
 endif
 
 ifndef my_desugaring
@@ -172,7 +184,7 @@ $(LOCAL_BUILT_MODULE) : $(full_classes_jar)
 else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 $(built_dex): PRIVATE_INTERMEDIATES_DIR := $(intermediates.COMMON)
 $(built_dex): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-$(built_dex): $(full_classes_desugar_jar) $(DX)
+$(built_dex): $(full_classes_desugar_jar) $(DX) $(ZIP2ZIP)
 ifneq ($(USE_D8_DESUGAR),true)
 	$(transform-classes.jar-to-dex)
 else
@@ -189,7 +201,7 @@ $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 
 endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
-ifneq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
+ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
   my_default_app_target_sdk := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
   my_sdk_version := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
 else

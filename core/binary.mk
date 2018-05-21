@@ -7,6 +7,7 @@
 
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
+include $(BUILD_SYSTEM)/use_lld_setup.mk
 #######################################
 
 ##################################################
@@ -88,7 +89,7 @@ ifneq ($(LOCAL_SDK_VERSION),)
   endif
 
   # Make sure we've built the NDK.
-  my_additional_dependencies += $(SOONG_OUT_DIR)/ndk.timestamp
+  my_additional_dependencies += $(SOONG_OUT_DIR)/ndk_base.timestamp
 
   # mips32r6 is not supported by the NDK. No released NDK contains these
   # libraries, but the r10 in prebuilts/ndk had a local hack to add them :(
@@ -180,7 +181,6 @@ ifneq ($(LOCAL_SDK_VERSION),)
   my_ndk_stl_include_path :=
   my_ndk_stl_shared_lib_fullpath :=
   my_ndk_stl_static_lib :=
-  my_ndk_cpp_std_version :=
   my_cpu_variant := $(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)CPU_ABI)
   ifeq (mips32r6,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH_VARIANT))
     my_cpu_variant := mips32r6
@@ -189,89 +189,52 @@ ifneq ($(LOCAL_SDK_VERSION),)
   ifeq (,$(LOCAL_NDK_STL_VARIANT))
     LOCAL_NDK_STL_VARIANT := system
   endif
-  ifneq (1,$(words $(filter none system stlport_static stlport_shared c++_static c++_shared gnustl_static, $(LOCAL_NDK_STL_VARIANT))))
+  ifneq (1,$(words $(filter none system c++_static c++_shared, $(LOCAL_NDK_STL_VARIANT))))
     $(error $(LOCAL_PATH): Unknown LOCAL_NDK_STL_VARIANT $(LOCAL_NDK_STL_VARIANT))
   endif
+
   ifeq (system,$(LOCAL_NDK_STL_VARIANT))
     my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/system/include
     my_system_shared_libraries += libstdc++
-  else # LOCAL_NDK_STL_VARIANT is not system
-  ifneq (,$(filter stlport_%, $(LOCAL_NDK_STL_VARIANT)))
-    my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/stlport/stlport
-    my_system_shared_libraries += libstdc++
-    ifeq (stlport_static,$(LOCAL_NDK_STL_VARIANT))
-      my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/stlport/libs/$(my_cpu_variant)/libstlport_static.a
-      my_ldlibs += -ldl
-    else
-      my_ndk_stl_shared_lib_fullpath := $(my_ndk_source_root)/cxx-stl/stlport/libs/$(my_cpu_variant)/libstlport_shared.so
-    endif
-  else # LOCAL_NDK_STL_VARIANT is not stlport_* either
-  ifneq (,$(filter c++_%, $(LOCAL_NDK_STL_VARIANT)))
-    # Pre-r11 NDKs used libgabi++ for libc++'s C++ ABI, but r11 and later use
-    # libc++abi.
-    #
-    # r13 no longer has the inner directory as a side effect of just using
-    # external/libcxx.
-    ifeq (r10,$(LOCAL_NDK_VERSION))
-      my_ndk_stl_include_path := \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++/libcxx/include
-      my_ndk_stl_include_path += \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++/gabi++/include
-    else ifeq (r11,$(LOCAL_NDK_VERSION))
-      my_ndk_stl_include_path := \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++/libcxx/include
-      my_ndk_stl_include_path += \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++abi/libcxxabi/include
-    else
-      my_ndk_stl_include_path := \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++/include
-      my_ndk_stl_include_path += \
-        $(my_ndk_source_root)/cxx-stl/llvm-libc++abi/include
-    endif
+  else ifneq (,$(filter c++_%, $(LOCAL_NDK_STL_VARIANT)))
+    my_ndk_stl_include_path := \
+      $(my_ndk_source_root)/cxx-stl/llvm-libc++/include
+    my_ndk_stl_include_path += \
+      $(my_ndk_source_root)/cxx-stl/llvm-libc++abi/include
     my_ndk_stl_include_path += $(my_ndk_source_root)/android/support/include
 
     my_libcxx_libdir := \
       $(my_ndk_source_root)/cxx-stl/llvm-libc++/libs/$(my_cpu_variant)
 
-    ifneq (,$(filter r10 r11,$(LOCAL_NDK_VERSION)))
-      ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
-        my_ndk_stl_static_lib := $(my_libcxx_libdir)/libc++_static.a
-      else
-        my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
-      endif
+    ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
+      my_ndk_stl_static_lib := \
+        $(my_libcxx_libdir)/libc++_static.a \
+        $(my_libcxx_libdir)/libc++abi.a
     else
-      ifeq (c++_static,$(LOCAL_NDK_STL_VARIANT))
-        my_ndk_stl_static_lib := \
-          $(my_libcxx_libdir)/libc++_static.a \
-          $(my_libcxx_libdir)/libc++abi.a
-      else
-        my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
-      endif
+      my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
+    endif
 
-      my_ndk_stl_static_lib += $(my_libcxx_libdir)/libandroid_support.a
-      ifneq (,$(filter armeabi armeabi-v7a,$(my_cpu_variant)))
-        my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
-      endif
+    my_ndk_stl_static_lib += $(my_libcxx_libdir)/libandroid_support.a
+    ifneq (,$(filter armeabi armeabi-v7a,$(my_cpu_variant)))
+      my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
     endif
 
     my_ldlibs += -ldl
-
-    my_ndk_cpp_std_version := c++11
-  else # LOCAL_NDK_STL_VARIANT is not c++_* either
-  ifneq (,$(filter gnustl_%, $(LOCAL_NDK_STL_VARIANT)))
-    my_ndk_stl_include_path := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/$($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_GCC_VERSION)/libs/$(my_cpu_variant)/include \
-                               $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/$($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_GCC_VERSION)/include
-    my_ndk_stl_static_lib := $(my_ndk_source_root)/cxx-stl/gnu-libstdc++/$($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NDK_GCC_VERSION)/libs/$(my_cpu_variant)/libgnustl_static.a
   else # LOCAL_NDK_STL_VARIANT must be none
     # Do nothing.
-  endif
-  endif
-  endif
   endif
 endif
 
 ifneq ($(LOCAL_USE_VNDK),)
-  my_cflags += -D__ANDROID_API__=__ANDROID_API_FUTURE__ -D__ANDROID_VNDK__
+  # Required VNDK version for vendor modules is BOARD_VNDK_VERSION.
+  my_vndk_version := $(BOARD_VNDK_VERSION)
+  ifeq ($(my_vndk_version),current)
+    # Build with current PLATFORM_VNDK_VERSION.
+    # If PLATFORM_VNDK_VERSION has a CODENAME, it will return
+    # __ANDROID_API_FUTURE__.
+    my_vndk_version := $(call codename-or-sdk-to-sdk,$(PLATFORM_VNDK_VERSION))
+  endif
+  my_cflags += -D__ANDROID_API__=$(my_vndk_version) -D__ANDROID_VNDK__
 endif
 
 ifndef LOCAL_IS_HOST_MODULE
@@ -397,11 +360,6 @@ ifdef LOCAL_IS_HOST_MODULE
             my_clang := true
         endif
     endif
-# Add option to make gcc the default for device build
-else ifeq ($(USE_CLANG_PLATFORM_BUILD),false)
-    ifeq ($(my_clang),)
-        my_clang := false
-    endif
 else ifeq ($(my_clang),)
     my_clang := true
 endif
@@ -427,11 +385,6 @@ ifneq ($(my_clang),true)
     # __cxa_throw_bad_array_length, which is not a valid C++ RT ABI).
     # http://b/25022512
     my_cpp_std_version := $(DEFAULT_GCC_CPP_STD_VERSION)
-endif
-
-ifdef LOCAL_SDK_VERSION
-    # The NDK handles this itself.
-    my_cpp_std_version := $(my_ndk_cpp_std_version)
 endif
 
 ifdef LOCAL_IS_HOST_MODULE
@@ -564,7 +517,11 @@ ifeq ($(my_clang),true)
 my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
 my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
 my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
-my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
+ifeq ($(my_use_clang_lld),true)
+  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
+else
+  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
+endif # my_use_clang_lld
 else
 my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
 my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
@@ -590,7 +547,11 @@ ifeq ($(my_clang),true)
 my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
 my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
 my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
-my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
+ifeq ($(my_use_clang_lld),true)
+  my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
+else
+  my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
+endif # my_use_clang_lld
 else
 my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
 my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
@@ -664,6 +625,9 @@ ifeq ($(strip $(my_cc)),)
   endif
   my_cc := $(my_cc_wrapper) $(my_cc)
 endif
+
+SYNTAX_TOOLS_PREFIX := \
+    $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/libexec
 
 ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
   my_cc := CCC_CC=$(CLANG) CLANG=$(CLANG) \
@@ -840,7 +804,7 @@ $(RenderScript_file_stamp): PRIVATE_RS_CC := $(LOCAL_RENDERSCRIPT_CC)
 $(RenderScript_file_stamp): PRIVATE_RS_FLAGS := $(renderscript_flags)
 $(RenderScript_file_stamp): PRIVATE_RS_SOURCE_FILES := $(renderscript_sources_fullpath)
 $(RenderScript_file_stamp): PRIVATE_RS_OUTPUT_DIR := $(renderscript_intermediate)
-$(RenderScript_file_stamp): PRIVATE_RS_TARGET_API := $(renderscript_target_api)
+$(RenderScript_file_stamp): PRIVATE_RS_TARGET_API := $(patsubst current,0,$(renderscript_target_api))
 $(RenderScript_file_stamp): PRIVATE_DEP_FILES := $(bc_dep_files)
 $(RenderScript_file_stamp): $(renderscript_sources_fullpath) $(LOCAL_RENDERSCRIPT_CC)
 	$(transform-renderscripts-to-cpp-and-bc)
@@ -870,6 +834,9 @@ endif
 ###########################################################
 ## Compile the .proto files to .cc (or .c) and then to .o
 ###########################################################
+ifeq ($(strip $(LOCAL_PROTOC_OPTIMIZE_TYPE)),)
+  LOCAL_PROTOC_OPTIMIZE_TYPE := lite
+endif
 proto_sources := $(filter %.proto,$(my_src_files))
 ifneq ($(proto_sources),)
 proto_gen_dir := $(generated_sources_dir)/proto
@@ -891,7 +858,7 @@ my_rename_cpp_ext := true
 endif
 my_proto_c_includes := external/protobuf/src
 my_cflags += -DGOOGLE_PROTOBUF_NO_RTTI
-my_protoc_flags := --cpp_out=$(proto_gen_dir)
+my_protoc_flags := --cpp_out=$(if $(filter lite lite-static,$(LOCAL_PROTOC_OPTIMIZE_TYPE)),lite:,)$(proto_gen_dir)
 my_protoc_deps :=
 endif
 my_proto_c_includes += $(proto_gen_dir)
@@ -1372,6 +1339,15 @@ ifneq ($(LOCAL_USE_VNDK),)
   endif
 endif
 
+# Platform can use vendor public libraries. If a required shared lib is one of
+# the vendor public libraries, the lib is switched to the stub version of the lib.
+ifeq ($(LOCAL_USE_VNDK),)
+  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
+    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+      $(if $(filter $(l),$(VENDOR_PUBLIC_LIBRARIES)),$(l).vendorpublic,$(l)))
+  endif
+endif
+
 ##########################################################
 ## Set up installed module dependency
 ## We cannot compute the full path of the LOCAL_SHARED_LIBRARIES for
@@ -1426,10 +1402,12 @@ endif
 ## other NDK-built libraries
 ####################################################
 
+include $(BUILD_SYSTEM)/allowed_ndk_types.mk
+
 ifdef LOCAL_SDK_VERSION
-my_link_type := native:ndk
-my_warn_types :=
-my_allowed_types := native:ndk
+my_link_type := native:ndk:$(my_ndk_stl_family):$(my_ndk_stl_link_type)
+my_warn_types := $(my_warn_ndk_types)
+my_allowed_types := $(my_allowed_ndk_types)
 else ifdef LOCAL_USE_VNDK
     _name := $(patsubst %.vendor,%,$(LOCAL_MODULE))
     ifneq ($(filter $(_name),$(VNDK_CORE_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES) $(LLNDK_LIBRARIES)),)
@@ -1449,8 +1427,8 @@ else ifdef LOCAL_USE_VNDK
     endif
 else
 my_link_type := native:platform
-my_warn_types :=
-my_allowed_types := native:ndk native:platform
+my_warn_types := $(my_warn_ndk_types)
+my_allowed_types := $(my_allowed_ndk_types) native:platform
 endif
 
 my_link_deps := $(addprefix STATIC_LIBRARIES:,$(my_whole_static_libraries) $(my_static_libraries))
@@ -1736,21 +1714,29 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
     ifneq ($(LOCAL_TIDY_CHECKS),)
       my_tidy_checks := $(my_tidy_checks),$(LOCAL_TIDY_CHECKS)
     endif
-    # Set up global default clang-tidy flags, which is none.
-    my_tidy_flags := $(WITH_TIDY_FLAGS)
-    # Use local clang-tidy flags if specified.
-    ifneq ($(LOCAL_TIDY_FLAGS),)
-      my_tidy_flags := $(LOCAL_TIDY_FLAGS)
-    endif
+    my_tidy_flags += $(WITH_TIDY_FLAGS) $(LOCAL_TIDY_FLAGS)
     # If tidy flags are not specified, default to check all header files.
     ifeq ($(my_tidy_flags),)
       my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
     endif
+    # If clang-tidy is not enabled globally, add the -quiet flag.
+    ifeq (,$(filter 1 true,$(WITH_TIDY)))
+      my_tidy_flags += -quiet -extra-arg-before=-fno-caret-diagnostics
+    endif
 
-    # We might be using the static analyzer through clang-tidy.
-    # https://bugs.llvm.org/show_bug.cgi?id=32914
     ifneq ($(my_tidy_checks),)
-      my_tidy_flags += "-extra-arg-before=-D__clang_analyzer__"
+      # We might be using the static analyzer through clang-tidy.
+      # https://bugs.llvm.org/show_bug.cgi?id=32914
+      my_tidy_flags += -extra-arg-before=-D__clang_analyzer__
+
+      # A recent change in clang-tidy (r328258) enabled destructor inlining,
+      # which appears to cause a number of false positives. Until that's
+      # resolved, this turns off the effects of r328258.
+      # https://bugs.llvm.org/show_bug.cgi?id=37459
+      my_tidy_flags += -extra-arg-before=-Xclang
+      my_tidy_flags += -extra-arg-before=-analyzer-config
+      my_tidy_flags += -extra-arg-before=-Xclang
+      my_tidy_flags += -extra-arg-before=c++-temp-dtor-inlining=false
     endif
   endif
 endif
