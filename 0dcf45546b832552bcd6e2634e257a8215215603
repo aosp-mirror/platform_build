@@ -70,6 +70,24 @@
       "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "856437fa_10862a5a",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-05-21T17:25:42Z",
+      "side": 1,
+      "message": "\u003e LOCAL_PRIVATE_PLATFORM_APIS is relevant for java libraries, not just apps.\n\u003e \n\u003e We shouldn\u0027t force users of the library to know to specify .impl, that should stay as an implementation detail of java_sdk_library.  That may mean they need to use LOCAL_SDK_LIBRARIES so the build system knows to rewrite the dependency to .impl.\n\nMy point is just that setting it is the same thing as *not* setting LOCAL_SDK_VERSION. Only enforced for apps at the moment, we could do it for non-apps too, but given we have the link-type check enforcement I don\u0027t think it\u0027s worth it.\n\nOverloading it to mean something else for libraries like this CL does currently (especially choosing between system stubs and the impl lib) seems strange to me.\n\n\u003e \n\u003e If LOCAL_PRIVATE_PLATFORM_APIS doesn\u0027t make sense with LOCAL_SDK_VERSION then it should be an error.\n\nYeah, it is an error already.",
+      "parentUuid": "317c5f22_4ef483ff",
+      "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
