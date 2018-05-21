@@ -52,6 +52,24 @@
       "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "317c5f22_4ef483ff",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-21T17:15:35Z",
+      "side": 1,
+      "message": "LOCAL_PRIVATE_PLATFORM_APIS is relevant for java libraries, not just apps.\n\nWe shouldn\u0027t force users of the library to know to specify .impl, that should stay as an implementation detail of java_sdk_library.  That may mean they need to use LOCAL_SDK_LIBRARIES so the build system knows to rewrite the dependency to .impl.\n\nIf LOCAL_PRIVATE_PLATFORM_APIS doesn\u0027t make sense with LOCAL_SDK_VERSION then it should be an error.",
+      "parentUuid": "1bb10875_1f88cb39",
+      "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
