@@ -16,6 +16,24 @@
       "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f4afb71_458c83c5",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2018-05-21T02:01:11Z",
+      "side": 1,
+      "message": "\u003e I think this is always true in this block (either LOCAL_SDK_VERSION is set of LOCAL_PRIVATE_PLATFORM_APIS is true, which makes the \"else\" block dead code.\n\nI think it is always true only if LOCAL_MODULE_CLASS is APPS. So I think \"else\" block is not dead code.\n\n\u003e I find this whole block a bit strange -- do we need to use LOCAL_SDK_LIBRARIES for modules that don\u0027t use the SDK? They could just reference the impl directly\n\nIn this case, I think that we need to set the LOCAL_NO_STANDARD_LIBRARIES is true and link the impl directly.",
+      "parentUuid": "92778b6d_1c152c81",
+      "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
