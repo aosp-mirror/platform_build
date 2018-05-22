@@ -88,6 +88,24 @@
       "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40c84681_b7e4b9fa",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-05-22T13:36:58Z",
+      "side": 1,
+      "message": "Ok, I agree with Anton that the \u0027else\u0027 block should be dead. So when LOCAL_SDK_VERSION is unset, it always links to the impl library.\n\nHowever, in order it to be dead, we have to enforce the LOCAL_SDK_VERSION/LOCAL_PRIVATE_PLATFORM_APIS even to java libraries, not only to apps. For java libraries, we currently DO allow the state which LOCAL_SDK_VERSION and LOCAL_PRIVATE_PLATFORM_APIS are both unset. How to you think?",
+      "parentUuid": "856437fa_10862a5a",
+      "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
