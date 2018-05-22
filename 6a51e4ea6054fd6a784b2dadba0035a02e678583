@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e08c7bdc_6adefc3e",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 917,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-05-22T19:45:36Z",
+      "side": 1,
+      "message": "Dan / Colin, do you think this should be a BOARD_ variable or PRODUCT_ variable?",
+      "range": {
+        "startLine": 917,
+        "startChar": 2,
+        "endLine": 917,
+        "endChar": 30
+      },
+      "revId": "6a51e4ea6054fd6a784b2dadba0035a02e678583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9598cca0_0c01ed7c",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 924,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-05-22T19:45:36Z",
+      "side": 1,
+      "message": "Anyone has a better name than \"lrap\"?",
+      "range": {
+        "startLine": 924,
+        "startChar": 38,
+        "endLine": 924,
+        "endChar": 42
+      },
+      "revId": "6a51e4ea6054fd6a784b2dadba0035a02e678583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
