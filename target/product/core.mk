@@ -46,7 +46,6 @@ PRODUCT_PACKAGES += \
     ManagedProvisioning \
     MtpDocumentsProvider \
     PacProcessor \
-    libpac \
     PrintSpooler \
     PrintRecommendationService \
     ProxyHandler \
