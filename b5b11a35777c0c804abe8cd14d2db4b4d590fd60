@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0ba54def_c694bba3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-22T02:49:11Z",
+      "side": 1,
+      "message": "Why does atest need to know this, how is this information being used?\n\nI\u0027m assuming https://googleplex-android-review.git.corp.google.com/c/platform/tools/tradefederation/+/4068027 is the atest side of this? We wouldn\u0027t want to forbid all the 2nd architecture tests -- that means we wouldn\u0027t be able to run tests for 32-bit-only modules.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 48
+      },
+      "revId": "b5b11a35777c0c804abe8cd14d2db4b4d590fd60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
