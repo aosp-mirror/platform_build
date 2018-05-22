@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "73ae2a31_fe4dc9ee",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-22T02:50:51Z",
+      "side": 1,
+      "message": "This isn\u0027t an appropriate URL to use in public commit messages (or changes that will become public). Use a full android-review.googlesource url.",
+      "range": {
+        "startLine": 9,
+        "startChar": 6,
+        "endLine": 9,
+        "endChar": 19
+      },
+      "revId": "a54356d9a934e0bffe866e6a574e42274b743565",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
