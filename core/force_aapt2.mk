@@ -17,7 +17,7 @@
 # Including this makefile will force AAPT2 on if FORCE_AAPT2==true,
 # rewriting some properties to convert standard AAPT usage to AAPT2.
 
-ifeq ($(FORCE_AAPT2),true)
+ifneq ($(FORCE_AAPT2),false)
   ifeq ($(LOCAL_USE_AAPT2),)
     # Force AAPT2 on
     LOCAL_USE_AAPT2 := true
@@ -50,7 +50,6 @@ ifeq ($(FORCE_AAPT2),true)
     ifeq (,$(strip $(LOCAL_MANIFEST_FILE)$(LOCAL_FULL_MANIFEST_FILE)))
       ifeq (,$(wildcard $(LOCAL_PATH)/AndroidManifest.xml))
         # work around missing manifests by creating a default one
-        $(call pretty-warning, Missing manifest file)
         LOCAL_FULL_MANIFEST_FILE := $(call local-intermediates-dir,COMMON)/DefaultManifest.xml
         $(call create-default-manifest-file,$(LOCAL_FULL_MANIFEST_FILE))
       endif
