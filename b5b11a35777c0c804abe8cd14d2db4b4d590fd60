@@ -70,6 +70,30 @@
       "revId": "b5b11a35777c0c804abe8cd14d2db4b4d590fd60",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6daf5fee_26138bc8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-05-22T07:28:00Z",
+      "side": 1,
+      "message": "Quick reply: is there a better way/mechanism to resolve the \"proper\" name (or store in module-info the \"proper\" name) for all the modules that can be found at a certain path?",
+      "parentUuid": "1622492e_6dbd64c1",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 48
+      },
+      "revId": "b5b11a35777c0c804abe8cd14d2db4b4d590fd60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
