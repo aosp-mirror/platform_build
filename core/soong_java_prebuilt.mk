@@ -144,3 +144,13 @@ my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
 my_common := COMMON
 include $(BUILD_SYSTEM)/link_type.mk
 endif # !LOCAL_IS_HOST_MODULE
+
+# LOCAL_EXPORT_SDK_LIBRARIES set by soong is written to exported-sdk-libs file
+my_exported_sdk_libs_file := $(intermediates.COMMON)/exported-sdk-libs
+$(my_exported_sdk_libs_file): PRIVATE_EXPORTED_SDK_LIBS := $(LOCAL_EXPORT_SDK_LIBRARIES)
+$(my_exported_sdk_libs_file):
+	@echo "Export SDK libs $@"
+	$(hide) mkdir -p $(dir $@) && rm -f $@
+	$(if $(PRIVATE_EXPORTED_SDK_LIBS),\
+		$(hide) echo $(PRIVATE_EXPORTED_SDK_LIBS) | tr ' ' '\n' > $@,\
+		$(hide) touch $@)

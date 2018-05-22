@@ -674,6 +674,15 @@ endif  # LOCAL_USE_AAPT2
 # make sure the classes.jar and javalib.jar are built before $(LOCAL_BUILT_MODULE)
 $(built_module) : $(common_javalib_jar)
 
+my_exported_sdk_libs_file := $(intermediates.COMMON)/exported-sdk-libs
+$(my_exported_sdk_libs_file): PRIVATE_EXPORTED_SDK_LIBS := $(LOCAL_EXPORT_SDK_LIBRARIES)
+$(my_exported_sdk_libs_file):
+	@echo "Export SDK libs $@"
+	$(hide) mkdir -p $(dir $@) && rm -f $@
+	$(if $(PRIATE_EXPORTED_SDK_LIBS),\
+		$(hide) echo $(PRIVATE_EXPORTED_SDK_LIBS) | tr ' ' '\n' > $@,\
+		$(hide) touch $@)
+
 endif # ! prebuilt_module_is_dex_javalib
 endif # LOCAL_IS_HOST_MODULE is not set
 
