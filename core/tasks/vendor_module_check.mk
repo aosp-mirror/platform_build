@@ -44,6 +44,7 @@ _vendor_owner_whitelist := \
         ti \
         trusted_logic \
         verizon \
+        waves \
         widevine
 
 
