@@ -117,10 +117,6 @@ BOARD_VNDK_VERSION := current
 BOARD_ROOT_EXTRA_FOLDERS += firmware firmware/radio persist
 BOARD_ROOT_EXTRA_SYMLINKS := /vendor/lib/dsp:/dsp
 
-# TODO(b/79781913): This is a temporary mount pointer for FBE.
-#   Will be remove after the FBE change the placement.
-BOARD_ROOT_EXTRA_FOLDERS += metadata
-
 # TODO(b/36764215): remove this setting when the generic system image
 # no longer has QCOM-specific directories under /.
 BOARD_SEPOLICY_DIRS += build/target/board/generic_arm64_ab/sepolicy
