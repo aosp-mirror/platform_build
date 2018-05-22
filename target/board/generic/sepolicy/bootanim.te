@@ -5,4 +5,5 @@ dontaudit bootanim system_data_file:dir read;
 
 allow bootanim graphics_device:chr_file { read ioctl open };
 
+typeattribute bootanim system_writes_vendor_properties_violators;
 set_prop(bootanim, qemu_prop)
