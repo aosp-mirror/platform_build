@@ -22,6 +22,30 @@
       "revId": "b5b11a35777c0c804abe8cd14d2db4b4d590fd60",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "535825a6_82079212",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-05-22T06:21:12Z",
+      "side": 1,
+      "message": "Do you have an example of a 32-bit only module/test?\n\n\nEssentially we are using this for the path -\u003e module name resolution b/c TradeFed needs the proper name given to it for running the test. This is also a side effect of the auto generating configs since we don\u0027t know the the test config name.\n\nRight now if you pass atest platform_testing/.../example/native it would see hello_world_test32 and hello_world_test so with this change we can see there are 2 modules and we really want to build hello_world_test and tell tradefed to run hello_world_test. We\u0027ll still be able to support running the 32 bit module with a TF arg.\n\nFor a 32-bit only module, we could update the logic to choose the module that has FOR_2ND_ARCH if there is no other variant available.\n\n\nAlso this change is pretty trivial and shouldn\u0027t have any negative side effects besides a bigger json.",
+      "parentUuid": "0ba54def_c694bba3",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 48
+      },
+      "revId": "b5b11a35777c0c804abe8cd14d2db4b4d590fd60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
