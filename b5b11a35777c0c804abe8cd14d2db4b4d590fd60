@@ -46,6 +46,30 @@
       "revId": "b5b11a35777c0c804abe8cd14d2db4b4d590fd60",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1622492e_6dbd64c1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-22T06:59:39Z",
+      "side": 1,
+      "message": "Should we not just give atest the \"proper\" name for the module, so that this same problem doesn\u0027t happen for vendor modules (which can be appended with .vendor), any of the sanitizer / lto variants (though we\u0027re not currently exposing those to make afaik), etc?\n\n\u003e Do you have an example of a 32-bit only module/test?\n\nAdd this to your hello_world: (many camera / media modules are still 32-bit only)\n\n  LOCAL_32_BIT_ONLY :\u003d true\n\nor\n\n  LOCAL_MULTILIB :\u003d 32\n\n\u003e For a 32-bit only module, we could update the logic to choose the module that has FOR_2ND_ARCH if there is no other variant available.\n\nI didn\u0027t think that would help, with the point appears to be finding the proper name from the module name, and the module name still isn\u0027t going to match the tradefed name.",
+      "parentUuid": "535825a6_82079212",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 48
+      },
+      "revId": "b5b11a35777c0c804abe8cd14d2db4b4d590fd60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
