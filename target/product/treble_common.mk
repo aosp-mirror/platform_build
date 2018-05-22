@@ -84,6 +84,3 @@ PRODUCT_COPY_FILES += \
 # Name space configuration file for non-enforcing VNDK
 PRODUCT_PACKAGES += \
     ld.config.vndk_lite.txt
-
-# Support addtional O-MR1 vendor interface
-PRODUCT_EXTRA_VNDK_VERSIONS := 27
