@@ -10,7 +10,3 @@
 
 # files in firmware
 /firmware(/.*)?         u:object_r:firmware_file:s0
-
-# TODO(b/79781913): This is a temporary mount pointer for FBE.
-#   Will be remove after the FBE change the placement.
-/metadata(/.*)?         u:object_r:metadata_file:s0
