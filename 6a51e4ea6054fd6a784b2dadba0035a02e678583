@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "da8f2210_0a41df6b",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 917,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-05-22T20:04:45Z",
+      "side": 1,
+      "message": "I don\u0027t think there is any inheritance involved here...",
+      "parentUuid": "7678824b_95cf82fd",
+      "range": {
+        "startLine": 917,
+        "startChar": 2,
+        "endLine": 917,
+        "endChar": 30
+      },
+      "revId": "6a51e4ea6054fd6a784b2dadba0035a02e678583",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9598cca0_0c01ed7c",
         "filename": "core/config.mk",
         "patchSetId": 5
