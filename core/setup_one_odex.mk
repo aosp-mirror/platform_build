@@ -78,12 +78,12 @@ else
   my_stored_preopt_class_loader_context_libs := $(call normalize-path-list, \
       $(foreach lib_name,$(my_filtered_uses_libraries),/system/framework/$(lib_name).jar))
 
-  # Fix up org.apache.http.legacy.boot since it should be org.apache.http.legacy in the manifest.
-  my_lib_names := $(patsubst org.apache.http.legacy.boot,org.apache.http.legacy,$(my_lib_names))
-  my_optional_lib_names := $(patsubst org.apache.http.legacy.boot,org.apache.http.legacy,$(my_optional_lib_names))
+  # Fix up org.apache.http.legacy.impl since it should be org.apache.http.legacy in the manifest.
+  my_lib_names := $(patsubst org.apache.http.legacy.impl,org.apache.http.legacy,$(my_lib_names))
+  my_optional_lib_names := $(patsubst org.apache.http.legacy.impl,org.apache.http.legacy,$(my_optional_lib_names))
   ifeq (,$(filter org.apache.http.legacy,$(my_lib_names) $(my_optional_lib_names)))
-    my_conditional_uses_libraries_host := $(call intermediates-dir-for,JAVA_LIBRARIES,org.apache.http.legacy.boot,,COMMON)/javalib.jar
-    my_conditional_uses_libraries_target := /system/framework/org.apache.http.legacy.boot.jar
+    my_conditional_uses_libraries_host := $(call intermediates-dir-for,JAVA_LIBRARIES,org.apache.http.legacy.impl,,COMMON)/javalib.jar
+    my_conditional_uses_libraries_target := /system/framework/org.apache.http.legacy.impl.jar
   endif
 endif
 
