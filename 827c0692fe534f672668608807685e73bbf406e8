@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2f110b5a_73aa4bdd",
+        "filename": "core/config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 925,
+      "author": {
+        "id": 1108565
+      },
+      "writtenOn": "2018-05-22T18:44:47Z",
+      "side": 1,
+      "message": "I think we want to do this in device specific .mk (or atleast have an option there).\nJust the addition of this flag should be enough for us to differentiate..",
+      "range": {
+        "startLine": 923,
+        "startChar": 0,
+        "endLine": 925,
+        "endChar": 5
+      },
+      "revId": "827c0692fe534f672668608807685e73bbf406e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
