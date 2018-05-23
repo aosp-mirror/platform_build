@@ -34,6 +34,24 @@
       "revId": "0eef82ddc1483f9a7a84be75e39a17ba1e0bc9e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4979fec8_fa2f48f3",
+        "filename": "core/config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 917,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-23T18:34:43Z",
+      "side": 1,
+      "message": "It needs to be added to the product variable list in build/make/core/product.mk, adnd then this part should go in build/make/core/product_config.mk.  The BOARD_KERNEL_CMDLINE part should stay here.",
+      "parentUuid": "3e497046_ec3e3ec8",
+      "revId": "0eef82ddc1483f9a7a84be75e39a17ba1e0bc9e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
