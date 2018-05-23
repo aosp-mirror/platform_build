@@ -124,6 +124,24 @@
       "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "282741b4_249f4508",
+        "filename": "core/java_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 269,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-05-23T01:28:07Z",
+      "side": 1,
+      "message": "\u003e I don\u0027t think this is worth it given we have link-check\n\nI agree with you.\n\n\u003e I expect most java libraries end up being included in an app sooner or later anyway, so you won\u0027t be able to set LOCAL_SDK_VERSION for the app but not the lib.\n\nSorry, but I don\u0027t understand this. Yes, when we finished working on java_sdk_library, other java libs that aren\u0027t converted to the type should be static libs. But how is this related to LOCAL_SDK_VERSION and LOCAL_PRIVATE_PLATFORM_APIS?",
+      "parentUuid": "3d7518b8_46be932d",
+      "revId": "0dcf45546b832552bcd6e2634e257a8215215603",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
