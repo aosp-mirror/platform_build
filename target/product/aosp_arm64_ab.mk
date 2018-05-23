@@ -27,6 +27,9 @@ PRODUCT_PACKAGES += \
     update_engine \
     update_verifier
 
+# Enable control-flow integrity (CFI) for security sensitive components
+$(call inherit-product, build/make/target/product/cfi-common.mk)
+
 PRODUCT_NAME := aosp_arm64_ab
 PRODUCT_DEVICE := generic_arm64_ab
 PRODUCT_BRAND := Android
