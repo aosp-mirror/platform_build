@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b97ab591_f10eecea",
+        "filename": "core/config.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 917,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-23T18:18:49Z",
+      "side": 1,
+      "message": "PRODUCT_* variables should be handled in product.mk and product_config.mk, and shouldn\u0027t be set in BoardConfig.mk.",
+      "revId": "0eef82ddc1483f9a7a84be75e39a17ba1e0bc9e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
