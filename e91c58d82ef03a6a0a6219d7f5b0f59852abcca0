@@ -16,6 +16,24 @@
       "revId": "e91c58d82ef03a6a0a6219d7f5b0f59852abcca0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a41bd348_259bfb5b",
+        "filename": "core/config.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 920,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-05-23T21:40:36Z",
+      "side": 1,
+      "message": "I don\u0027t want any code below to use the PRODUCT_ variable though, because it doesn\u0027t use the override.",
+      "parentUuid": "ccb480d9_a54a5917",
+      "revId": "e91c58d82ef03a6a0a6219d7f5b0f59852abcca0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
