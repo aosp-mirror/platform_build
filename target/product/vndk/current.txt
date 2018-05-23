@@ -231,7 +231,6 @@ VNDK-core: libstagefright_soft_rawdec.so
 VNDK-core: libstagefright_soft_vorbisdec.so
 VNDK-core: libstagefright_soft_vpxdec.so
 VNDK-core: libstagefright_soft_vpxenc.so
-VNDK-core: libstagefright_soft_xaacdec.so
 VNDK-core: libstagefright_xmlparser.so
 VNDK-core: libsuspend.so
 VNDK-core: libsysutils.so
