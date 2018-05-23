@@ -33,6 +33,7 @@ PRODUCT_PACKAGES += \
     HTMLViewer \
     MediaProvider \
     PackageInstaller \
+    SecureElement \
     SettingsProvider \
     Shell \
     StatementService \
