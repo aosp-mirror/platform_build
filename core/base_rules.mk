@@ -557,7 +557,8 @@ multi_arch :=
 # The module itself.
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-    $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem))))
+    $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem))) \
+  $(eval my_compat_dist_config_$(suite) := ))
 
 # Make sure we only add the files once for multilib modules.
 ifndef $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
@@ -604,7 +605,7 @@ is_instrumentation_test :=
 
 ifneq (,$(test_config))
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+  $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
     $(test_config):$(dir)/$(LOCAL_MODULE).config)))
 endif
 
@@ -612,14 +613,14 @@ test_config :=
 
 ifneq (,$(wildcard $(LOCAL_PATH)/DynamicConfig.xml))
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+  $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
     $(LOCAL_PATH)/DynamicConfig.xml:$(dir)/$(LOCAL_MODULE).dynamic)))
 endif
 
 ifneq (,$(wildcard $(LOCAL_PATH)/$(LOCAL_MODULE)_*.config))
 $(foreach extra_config, $(wildcard $(LOCAL_PATH)/$(LOCAL_MODULE)_*.config), \
   $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-    $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+    $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
       $(extra_config):$(dir)/$(notdir $(extra_config))))))
 endif
 endif # $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
@@ -638,6 +639,8 @@ arch_dir :=
 is_native :=
 
 $(call create-suite-dependencies)
+$(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(eval my_compat_dist_config_$(suite) := ))
 
 endif  # LOCAL_COMPATIBILITY_SUITE
 
