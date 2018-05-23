@@ -52,6 +52,24 @@
       "revId": "e91c58d82ef03a6a0a6219d7f5b0f59852abcca0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4bb93b99_b1bd19cd",
+        "filename": "core/config.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 920,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-05-23T22:11:00Z",
+      "side": 1,
+      "message": "You are right, this is causing build errors...",
+      "parentUuid": "e6cec643_185e94bb",
+      "revId": "e91c58d82ef03a6a0a6219d7f5b0f59852abcca0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
