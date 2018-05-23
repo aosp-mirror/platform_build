@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a4115228_6b5f8183",
+        "filename": "core/product_config.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 506,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-23T20:12:27Z",
+      "side": 1,
+      "message": "We don\u0027t usually put overrides in this file, we would generally check the override at the usage of the flag, or compute another flag in config.mk based on the product flag and the override.  I\u0027m not sure that makes sense in this case, so maybe just add a comment here describing the override semantics?",
+      "revId": "3319032b7d0bc0c28a9215e81757ed13b15c8199",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
