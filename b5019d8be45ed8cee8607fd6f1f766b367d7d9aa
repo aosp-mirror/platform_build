@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7d831609_f81582f5",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1618,
+      "author": {
+        "id": 1128890
+      },
+      "writtenOn": "2018-05-23T21:21:20Z",
+      "side": 1,
+      "message": "Add in https://android-review.googlesource.com/c/platform/tools/acloud/+/692648",
+      "range": {
+        "startLine": 1618,
+        "startChar": 29,
+        "endLine": 1618,
+        "endChar": 38
+      },
+      "revId": "b5019d8be45ed8cee8607fd6f1f766b367d7d9aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
