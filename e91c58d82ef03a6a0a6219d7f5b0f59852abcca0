@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ccb480d9_a54a5917",
+        "filename": "core/config.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 920,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-23T21:29:46Z",
+      "side": 1,
+      "message": "This doesn\u0027t seem necessary, you\u0027ve already set PRODUCT_USE_LOGICAL_PARTITIONS to read-only.",
+      "revId": "e91c58d82ef03a6a0a6219d7f5b0f59852abcca0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
