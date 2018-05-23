@@ -21,9 +21,6 @@ ifeq ($(FORCE_AAPT2),true)
   ifeq ($(LOCAL_USE_AAPT2),)
     # Force AAPT2 on
     LOCAL_USE_AAPT2 := true
-    # Move LOCAL_STATIC_JAVA_AAR_LIBRARIES to LOCAL_STATIC_ANDROID_LIBRARIES
-    LOCAL_STATIC_ANDROID_LIBRARIES := $(strip $(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES))
-    LOCAL_STATIC_JAVA_AAR_LIBRARIES :=
     # Filter out support library resources
     LOCAL_RESOURCE_DIR := $(filter-out \
       prebuilts/sdk/current/% \
