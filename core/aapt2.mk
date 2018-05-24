@@ -64,9 +64,11 @@ endif
 $(my_res_resources_flat) $(my_overlay_resources_flat) $(my_resources_flata): \
   PRIVATE_AAPT2_CFLAGS := --pseudo-localize
 
-my_static_library_resources := $(foreach l, $(call reverse-list,$(LOCAL_STATIC_ANDROID_LIBRARIES)),\
+# TODO(b/78447299): Forbid LOCAL_STATIC_JAVA_AAR_LIBRARIES in aapt2 and remove
+# support for it.
+my_static_library_resources := $(foreach l, $(call reverse-list,$(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES)),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/package-res.apk)
-my_static_library_extra_packages := $(foreach l, $(call reverse-list,$(LOCAL_STATIC_ANDROID_LIBRARIES)),\
+my_static_library_extra_packages := $(foreach l, $(call reverse-list,$(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES)),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/extra_packages)
 my_shared_library_resources := $(foreach l, $(LOCAL_SHARED_ANDROID_LIBRARIES),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/package-res.apk)
