@@ -519,6 +519,10 @@ my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)G
 my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
 ifeq ($(my_use_clang_lld),true)
   my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
+  include $(BUILD_SYSTEM)/pack_dyn_relocs_setup.mk
+  ifeq ($(my_pack_module_relocations),false)
+    my_target_global_ldflags += -Wl,--pack-dyn-relocs=none
+  endif
 else
   my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
 endif # my_use_clang_lld
