@@ -2150,11 +2150,13 @@ endef
 define _create-default-manifest-file
 $(1):
 	rm -f $1
-	echo '<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="missing.manifest"></manifest>' > $1
+	(echo '<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="missing.manifest">' && \
+	 echo '    <uses-sdk android:minSdkVersion="$(2)" />' && \
+	 echo '</manifest>' ) > $1
 endef
 
 define create-default-manifest-file
-  $(eval $(call _create-default-manifest-file,$(1)))
+  $(eval $(call _create-default-manifest-file,$(1),$(2)))
 endef
 
 
