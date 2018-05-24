@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "09e42610_82676906",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1405,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-24T06:29:55Z",
+      "side": 1,
+      "message": "this can be removed",
+      "range": {
+        "startLine": 1405,
+        "startChar": 0,
+        "endLine": 1405,
+        "endChar": 38
+      },
+      "revId": "745522736e97065d063bceb9d6022a56adaf7212",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73904b61_0e29da66",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1417,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-24T06:29:55Z",
+      "side": 1,
+      "message": "this can be removed",
+      "range": {
+        "startLine": 1417,
+        "startChar": 68,
+        "endLine": 1417,
+        "endChar": 75
+      },
+      "revId": "745522736e97065d063bceb9d6022a56adaf7212",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "288c49ec_54e107da",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1432,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-24T06:29:55Z",
+      "side": 1,
+      "message": "this can be removed",
+      "range": {
+        "startLine": 1432,
+        "startChar": 71,
+        "endLine": 1432,
+        "endChar": 79
+      },
+      "revId": "745522736e97065d063bceb9d6022a56adaf7212",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
