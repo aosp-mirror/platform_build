@@ -82,6 +82,7 @@ VNDK-core: android.hardware.cas.native@1.0.so
 VNDK-core: android.hardware.cas@1.0.so
 VNDK-core: android.hardware.configstore-utils.so
 VNDK-core: android.hardware.configstore@1.0.so
+VNDK-core: android.hardware.configstore@1.1.so
 VNDK-core: android.hardware.confirmationui-support-lib.so
 VNDK-core: android.hardware.confirmationui@1.0.so
 VNDK-core: android.hardware.contexthub@1.0.so
