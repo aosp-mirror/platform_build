@@ -164,7 +164,7 @@ my_resource_dirs := $(call reverse-list,$(LOCAL_RESOURCE_DIR))
 my_res_dir :=
 my_overlay_res_dirs :=
 
-ifneq ($(LOCAL_STATIC_ANDROID_LIBRARIES),)
+ifneq ($(strip $(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES)),)
 # If we are using static android libraries, every source file becomes an overlay.
 # This is to emulate old AAPT behavior which simulated library support.
 my_res_dir :=
