@@ -723,19 +723,6 @@ HIDDENAPI := $(HOST_OUT_EXECUTABLES)/hiddenapi
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
 
-# Tool to merge AndroidManifest.xmls
-ANDROID_MANIFEST_MERGER_CLASSPATH := \
-    prebuilts/gradle-plugin/com/android/tools/build/manifest-merger/26.1.0/manifest-merger-26.1.0.jar \
-    prebuilts/gradle-plugin/com/android/tools/common/26.1.0/common-26.1.0.jar \
-    prebuilts/gradle-plugin/com/android/tools/sdk-common/26.1.0/sdk-common-26.1.0.jar \
-    prebuilts/gradle-plugin/com/android/tools/sdklib/26.1.0/sdklib-26.1.0.jar \
-    prebuilts/gradle-plugin/org/jetbrains/kotlin/kotlin-runtime/1.0.5/kotlin-runtime-1.0.5.jar \
-    prebuilts/gradle-plugin/org/jetbrains/kotlin/kotlin-stdlib/1.1.3/kotlin-stdlib-1.1.3.jar \
-    prebuilts/misc/common/guava/guava-21.0.jar
-ANDROID_MANIFEST_MERGER := $(JAVA) \
-    -classpath $(subst $(space),:,$(strip $(ANDROID_MANIFEST_MERGER_CLASSPATH))) \
-    com.android.manifmerger.Merger
-
 COLUMN:= column
 
 USE_OPENJDK9 := true
