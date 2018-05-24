@@ -42,7 +42,6 @@ PRODUCT_PACKAGES += \
     bugreportz \
     cameraserver \
     com.android.location.provider \
-    com.android.location.provider.xml \
     content \
     CtsShimPrebuilt \
     CtsShimPrivPrebuilt \
