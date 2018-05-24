@@ -49,7 +49,15 @@ ifeq ($(FORCE_AAPT2),true)
         # work around missing manifests by creating a default one
         $(call pretty-warning, Missing manifest file)
         LOCAL_FULL_MANIFEST_FILE := $(call local-intermediates-dir,COMMON)/DefaultManifest.xml
-        $(call create-default-manifest-file,$(LOCAL_FULL_MANIFEST_FILE))
+        ifdef LOCAL_MIN_SDK_VERSION
+          my_manifest_min_sdk_version := $(LOCAL_MIN_SDK_VERSION)
+        else ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
+          my_manifest_min_sdk_version := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
+        else
+          my_manifest_min_sdk_version := $(DEFAULT_APP_TARGET_SDK)
+        endif
+        $(call create-default-manifest-file,$(LOCAL_FULL_MANIFEST_FILE),$(my_manifest_min_sdk_version))
+        my_manifest_min_sdk_version :=
       endif
     endif
   endif
