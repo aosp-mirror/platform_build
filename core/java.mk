@@ -458,6 +458,9 @@ endif
 ifeq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
 # By default no obfuscation
 common_proguard_flags += -dontobfuscate
+# Workaround for b/80081393: R8 discards other attributes when
+# -keepattributes *Annotations* is used, even when obfuscation is off.
+common_proguard_flags += -keepattributes '*'
 endif  # No obfuscation
 ifeq ($(filter optimization,$(LOCAL_PROGUARD_ENABLED)),)
 # By default no optimization
