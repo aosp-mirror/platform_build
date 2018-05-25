@@ -41,6 +41,7 @@ PRODUCT_PACKAGES += \
     DefaultContainerService \
     ExtShared \
     ExtServices \
+    SecureElement \
     SettingsProvider \
     Shell \
     WallpaperBackup \
