@@ -20,6 +20,7 @@
 PRODUCT_PACKAGES += \
     adb \
     adbd \
+    adbd.recovery \
     usbd \
     android.hardware.configstore@1.0-service \
     android.hidl.allocator@1.0-service \
