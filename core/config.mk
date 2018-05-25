@@ -720,9 +720,12 @@ JETIFIER := prebuilts/sdk/tools/jetifier/jetifier-standalone/bin/jetifier-standa
 
 # Tool to merge AndroidManifest.xmls
 ANDROID_MANIFEST_MERGER_CLASSPATH := \
-    prebuilts/gradle-plugin/com/android/tools/build/manifest-merger/26.0.0-beta2/manifest-merger-26.0.0-beta2.jar \
-    prebuilts/gradle-plugin/com/android/tools/sdk-common/26.0.0-beta2/sdk-common-26.0.0-beta2.jar \
-    prebuilts/gradle-plugin/com/android/tools/common/26.0.0-beta2/common-26.0.0-beta2.jar \
+    prebuilts/gradle-plugin/com/android/tools/build/manifest-merger/26.1.0/manifest-merger-26.1.0.jar \
+    prebuilts/gradle-plugin/com/android/tools/common/26.1.0/common-26.1.0.jar \
+    prebuilts/gradle-plugin/com/android/tools/sdk-common/26.1.0/sdk-common-26.1.0.jar \
+    prebuilts/gradle-plugin/com/android/tools/sdklib/26.1.0/sdklib-26.1.0.jar \
+    prebuilts/gradle-plugin/org/jetbrains/kotlin/kotlin-runtime/1.0.5/kotlin-runtime-1.0.5.jar \
+    prebuilts/gradle-plugin/org/jetbrains/kotlin/kotlin-stdlib/1.1.3/kotlin-stdlib-1.1.3.jar \
     prebuilts/misc/common/guava/guava-21.0.jar
 ANDROID_MANIFEST_MERGER := $(JAVA) \
     -classpath $(subst $(space),:,$(strip $(ANDROID_MANIFEST_MERGER_CLASSPATH))) \
@@ -935,6 +938,15 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
     PLATFORM_SEPOLICY_VERSION \
     TOT_SEPOLICY_VERSION \
+
+ifndef USE_LOGICAL_PARTITIONS
+  USE_LOGICAL_PARTITIONS := $(PRODUCT_USE_LOGICAL_PARTITIONS)
+endif
+.KATI_READONLY := USE_LOGICAL_PARTITIONS
+
+ifeq ($(USE_LOGICAL_PARTITIONS),true)
+  BOARD_KERNEL_CMDLINE += androidboot.lrap=1
+endif
 
 # ###############################################################
 # Set up final options.

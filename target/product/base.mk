@@ -18,7 +18,7 @@
 PRODUCT_PACKAGES += \
     20-dns.conf \
     95-configured \
-    org.apache.http.legacy.boot \
+    org.apache.http.legacy \
     appwidget \
     appops \
     am \

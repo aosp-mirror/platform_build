@@ -33,6 +33,7 @@ PRODUCT_PACKAGES += \
     HTMLViewer \
     MediaProvider \
     PackageInstaller \
+    SecureElement \
     SettingsProvider \
     Shell \
     StatementService \
@@ -122,7 +123,7 @@ PRODUCT_BOOT_JARS := \
 ifeq ($(REMOVE_OAHL_FROM_BCP),true)
 PRODUCT_BOOT_JARS += framework-oahl-backward-compatibility
 else
-PRODUCT_BOOT_JARS += org.apache.http.legacy.boot
+PRODUCT_BOOT_JARS += org.apache.http.legacy.impl
 endif
 
 ifeq ($(REMOVE_ATB_FROM_BCP),true)
