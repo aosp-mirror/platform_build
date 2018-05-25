@@ -28,3 +28,7 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote64
 
 TARGET_SUPPORTS_32_BIT_APPS := false
 TARGET_SUPPORTS_64_BIT_APPS := true
+
+# Enable CFI for security-sensitive components
+$(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
+$(call inherit-product-if-exists, vendor/google/products/cfi-vendor.mk)
