@@ -28,7 +28,8 @@ PRODUCT_PACKAGES += \
     update_verifier
 
 # Enable control-flow integrity (CFI) for security sensitive components
-$(call inherit-product, build/make/target/product/cfi-common.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
+$(call inherit-product-if-exists, vendor/google/products/cfi-vendor.mk)
 
 PRODUCT_NAME := aosp_arm64_ab
 PRODUCT_DEVICE := generic_arm64_ab

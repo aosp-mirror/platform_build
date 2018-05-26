@@ -558,8 +558,9 @@ prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
 prebuilt_build_tools := prebuilts/build-tools
 prebuilt_build_tools_wrappers := prebuilts/build-tools/common/bin
 prebuilt_build_tools_jars := prebuilts/build-tools/common/framework
+prebuilt_build_tools_bin_noasan := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/bin
 ifeq ($(filter address,$(SANITIZE_HOST)),)
-prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/bin
+prebuilt_build_tools_bin := $(prebuilt_build_tools_bin_noasan)
 else
 prebuilt_build_tools_bin := $(prebuilt_build_tools)/$(HOST_PREBUILT_TAG)/asan/bin
 endif
@@ -629,13 +630,13 @@ ZIPTIME := $(prebuilt_build_tools_bin)/ziptime
 # ---------------------------------------------------------------
 # Generic tools.
 
-LEX := prebuilts/misc/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/flex/flex-2.5.39
+LEX := $(prebuilt_build_tools_bin_noasan)/flex
 # The default PKGDATADIR built in the prebuilt bison is a relative path
 # prebuilts/build-tools/common/bison.
 # To run bison from elsewhere you need to set up enviromental variable
 # BISON_PKGDATADIR.
 BISON_PKGDATADIR := $(PWD)/prebuilts/build-tools/common/bison
-BISON := prebuilts/build-tools/$(BUILD_OS)-$(HOST_PREBUILT_ARCH)/bin/bison
+BISON := $(prebuilt_build_tools_bin_noasan)/bison
 YACC := $(BISON) -d
 BISON_DATA := $(wildcard $(BISON_PKGDATADIR)/* $(BISON_PKGDATADIR)/*/*)
 
