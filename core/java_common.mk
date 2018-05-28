@@ -263,9 +263,8 @@ ifndef LOCAL_IS_HOST_MODULE
     ifneq (,$(TARGET_BUILD_APPS))
       sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,system_current,$(lib_name)))
     else
-      # When SDK libraries are referenced from modules built without SDK, provide the system stub to them
-      # because it has the largest API surface.
-      sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(lib_name).stubs.system)
+      # When SDK libraries are referenced from modules built without SDK, provide the all APIs to them
+      sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(lib_name).impl)
     endif
   else
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
