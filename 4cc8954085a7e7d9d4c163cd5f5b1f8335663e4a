@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "71397d67_10237962",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-29T22:00:43Z",
+      "side": 1,
+      "message": "Avoid duplicating the logic to determine if relocation packer is enabled, especially since you\u0027re missing the checks for whether it\u0027s enabled by default or disabled for binaries.  Add here:\n\nifeq ($(my_pack_module_relocations,false))\n  LOCAL_LDFLAGS +\u003d ...\nendif",
+      "revId": "4cc8954085a7e7d9d4c163cd5f5b1f8335663e4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
