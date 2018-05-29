@@ -71,6 +71,7 @@ PRODUCT_PACKAGES += \
     libui \
     libutils \
     linker \
+    linker.recovery \
     lmkd \
     logcat \
     lshal \
