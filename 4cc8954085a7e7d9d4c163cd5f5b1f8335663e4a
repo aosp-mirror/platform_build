@@ -16,6 +16,24 @@
       "revId": "4cc8954085a7e7d9d4c163cd5f5b1f8335663e4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21cd7576_3394d142",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-05-29T22:20:12Z",
+      "side": 1,
+      "message": "We don\u0027t need to change this part, because\nmy_pack_module_relocations is set false here to disable calling the relocation_packer when using clang lld.\nThe default global linker flag for lld has --pack-dyn-relocs\u003dandroid.\nThat seem to be working fine except for a few projects.\nSo we want to add --pack-dyn-relocs\u003dnone, when LOCAL_PACK_MODULE_RELOCATIONS* is false, in binary.mk.",
+      "parentUuid": "71397d67_10237962",
+      "revId": "4cc8954085a7e7d9d4c163cd5f5b1f8335663e4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
