@@ -118,6 +118,8 @@ ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
         enforce_rro_enabled :=
       else ifeq (true,$(LOCAL_PRODUCT_MODULE))
         enforce_rro_enabled :=
+      else ifeq (true,$(LOCAL_PRODUCT_SERVICES_MODULE))
+        enforce_rro_enabled :=
       endif
     else ifeq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
       enforce_rro_enabled :=

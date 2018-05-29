@@ -40,6 +40,8 @@ Common goals are:
                             Stands for "Vendor, NO Dependencies"
     pnod                    Quickly rebuild the product image from built packages
                             Stands for "Product, NO Dependencies"
+    psnod                   Quickly rebuild the product-services image from built packages
+                            Stands for "ProductServices, NO Dependencies"
 
 
 So, for example, you could run:

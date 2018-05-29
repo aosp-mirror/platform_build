@@ -78,7 +78,8 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 
 
 # The partitions allowed to be signed by AVB (Android verified boot 2.0).
-AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'product', 'dtbo')
+AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'product',
+                  'product-services', 'dtbo')
 
 
 class ErrorCode(object):
