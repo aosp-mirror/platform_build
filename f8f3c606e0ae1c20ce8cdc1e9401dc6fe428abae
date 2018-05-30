@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "83399f29_de8d2849",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1094,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-30T23:21:51Z",
+      "side": 1,
+      "message": "This is not a valid argument to du on Mac. Should this be calculated in the actual image builder instead of looking at the size on the local file system? Since this won\u0027t count any metadata overhead, etc (that would need to be in the reserved size)",
+      "range": {
+        "startLine": 1094,
+        "startChar": 23,
+        "endLine": 1094,
+        "endChar": 35
+      },
+      "revId": "f8f3c606e0ae1c20ce8cdc1e9401dc6fe428abae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
