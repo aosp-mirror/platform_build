@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d18535bc_0649eafb",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-30T22:22:02Z",
+      "side": 1,
+      "message": "This will pick up old values of my_pack_dyn_relocs for anything that includes binary.mk without including dynamic_binary.mk",
+      "revId": "a925f01f5512739ea5ab925a16cd47c5c9e2f006",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
