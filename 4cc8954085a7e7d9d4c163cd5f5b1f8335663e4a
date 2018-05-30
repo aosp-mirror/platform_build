@@ -34,6 +34,24 @@
       "revId": "4cc8954085a7e7d9d4c163cd5f5b1f8335663e4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6268c47a_88301066",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-30T04:54:55Z",
+      "side": 1,
+      "message": "You\u0027re unnecessarily duplicating the logic from line 49 into binary.mk, but failing to handle the logic from line 48, line 54, or line 61.",
+      "parentUuid": "21cd7576_3394d142",
+      "revId": "4cc8954085a7e7d9d4c163cd5f5b1f8335663e4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
