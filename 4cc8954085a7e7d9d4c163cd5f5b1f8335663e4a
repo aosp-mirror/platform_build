@@ -52,6 +52,24 @@
       "revId": "4cc8954085a7e7d9d4c163cd5f5b1f8335663e4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67d02488_7e6cac0d",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-05-30T18:07:02Z",
+      "side": 1,
+      "message": "I see. Now use my_pack_dyn_relocs to control --pack-dyn-relocs\u003dnone.",
+      "parentUuid": "6268c47a_88301066",
+      "revId": "4cc8954085a7e7d9d4c163cd5f5b1f8335663e4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
