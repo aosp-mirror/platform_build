@@ -16,6 +16,24 @@
       "revId": "e1a63763ec9b3e0688c252809cd3ee14e181adc6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5bc9a2cb_988440d8",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2279,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-05-30T00:49:13Z",
+      "side": 1,
+      "message": "I talked with Tao offline and it is updated in later PS.",
+      "parentUuid": "55198813_beded3be",
+      "revId": "e1a63763ec9b3e0688c252809cd3ee14e181adc6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
