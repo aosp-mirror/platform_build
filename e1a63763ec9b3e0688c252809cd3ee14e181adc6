@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "55198813_beded3be",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2279,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-05-30T00:48:46Z",
+      "side": 1,
+      "message": "Tao?",
+      "revId": "e1a63763ec9b3e0688c252809cd3ee14e181adc6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

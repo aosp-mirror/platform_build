@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "021bb276_9f36472f",
+        "filename": "core/Makefile",
+        "patchSetId": 8
+      },
+      "lineNbr": 1589,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-05-30T00:48:46Z",
+      "side": 1,
+      "message": "Dan, do you know a better way to do this? I can\u0027t copy the following statement after skip_fsck\u003dtrue in the previous line. I want to compute BOARD_SYSTEMIMAGE_PARTITION_SIZE dynamically when it is not defined and BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE is defined.",
+      "range": {
+        "startLine": 1589,
+        "startChar": 0,
+        "endLine": 1589,
+        "endChar": 39
+      },
+      "revId": "0adccde063d18213359debea3ad1c98627cc556e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
