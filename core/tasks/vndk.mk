@@ -141,9 +141,13 @@ vndk_snapshot_configs := \
 #######################################
 # vndk_snapshot_zip
 vndk_snapshot_variant := $(vndk_snapshot_out)/$(TARGET_ARCH)
-vndk_lib_dir := $(vndk_snapshot_variant)/arch-$(TARGET_ARCH)-$(TARGET_ARCH_VARIANT)
-vndk_lib_dir_2nd := $(vndk_snapshot_variant)/arch-$(TARGET_2ND_ARCH)-$(TARGET_2ND_ARCH_VARIANT)
-vndk_snapshot_zip := $(PRODUCT_OUT)/android-vndk-$(TARGET_ARCH).zip
+binder :=
+ifneq ($(TARGET_USES_64_BIT_BINDER), true)
+  binder := binder32
+endif
+vndk_lib_dir := $(subst $(space),/,$(strip $(vndk_snapshot_variant) $(binder) arch-$(TARGET_ARCH)-$(TARGET_ARCH_VARIANT)))
+vndk_lib_dir_2nd := $(subst $(space),/,$(strip $(vndk_snapshot_variant) $(binder) arch-$(TARGET_2ND_ARCH)-$(TARGET_2ND_ARCH_VARIANT)))
+vndk_snapshot_zip := $(PRODUCT_OUT)/android-vndk-$(TARGET_PRODUCT).zip
 
 $(vndk_snapshot_zip): PRIVATE_VNDK_SNAPSHOT_OUT := $(vndk_snapshot_out)
 
@@ -233,6 +237,7 @@ vndk_snapshot_top :=
 vndk_snapshot_out :=
 vndk_snapshot_configs_out :=
 vndk_snapshot_variant :=
+binder :=
 vndk_lib_dir :=
 vndk_lib_dir_2nd :=
 vndk_snapshot_dependencies :=
