@@ -234,6 +234,16 @@ ifndef PLATFORM_SECURITY_PATCH
       PLATFORM_SECURITY_PATCH := 2018-06-05
 endif
 
+ifndef PLATFORM_SECURITY_PATCH_TIMESTAMP
+  # Used to indicate the matching timestamp for the security patch string in PLATFORM_SECURITY_PATCH.
+  ifneq (,$(findstring Darwin,$(UNAME)))
+    PLATFORM_SECURITY_PATCH_TIMESTAMP := $(shell date -jf '%Y-%m-%d %T %Z' '$(PLATFORM_SECURITY_PATCH) 00:00:00 GMT' +%s)
+  else
+    PLATFORM_SECURITY_PATCH_TIMESTAMP := $(shell date -d 'TZ="GMT" $(PLATFORM_SECURITY_PATCH)' +%s)
+  endif
+endif
+.KATI_READONLY := PLATFORM_SECURITY_PATCH_TIMESTAMP
+
 ifndef PLATFORM_BASE_OS
   # Used to indicate the base os applied to the device.
   # Can be an arbitrary string, but must be a single word.
