@@ -923,7 +923,7 @@ endif
 .KATI_READONLY := USE_LOGICAL_PARTITIONS
 
 ifeq ($(USE_LOGICAL_PARTITIONS),true)
-  BOARD_KERNEL_CMDLINE += androidboot.lrap=1
+  BOARD_KERNEL_CMDLINE += androidboot.logical_partitions=1
 endif
 
 # ###############################################################
