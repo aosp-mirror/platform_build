@@ -46,6 +46,30 @@
       "revId": "f8f3c606e0ae1c20ce8cdc1e9401dc6fe428abae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "17604fa4_f77d0da8",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1094,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-05-31T19:57:33Z",
+      "side": 1,
+      "message": "Also, BLOCKSIZE\u003d1 du -s would work on both linux and mac; I\u0027ll fix this. \n\nI looked into build_image.py and find no good way of doing this; looks like the partition size is needed for  mkuserimg_mke2fs.sh, for example.",
+      "parentUuid": "dd79b505_fa67e078",
+      "range": {
+        "startLine": 1094,
+        "startChar": 23,
+        "endLine": 1094,
+        "endChar": 35
+      },
+      "revId": "f8f3c606e0ae1c20ce8cdc1e9401dc6fe428abae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
