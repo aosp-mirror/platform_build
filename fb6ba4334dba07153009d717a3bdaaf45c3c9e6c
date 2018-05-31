@@ -16,6 +16,24 @@
       "revId": "fb6ba4334dba07153009d717a3bdaaf45c3c9e6c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de6df2a3_3cdf8e7c",
+        "filename": "core/pack_dyn_relocs_setup.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-05-31T21:44:00Z",
+      "side": 1,
+      "message": "Actually, lld\u0027s --pack-dyn-relocs\u003dandroid can replace\nthe stand alone relocation_packer. I will update the comment.",
+      "parentUuid": "16a492f6_76b82766",
+      "revId": "fb6ba4334dba07153009d717a3bdaaf45c3c9e6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
