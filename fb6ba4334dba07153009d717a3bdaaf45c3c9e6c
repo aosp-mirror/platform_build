@@ -52,6 +52,24 @@
       "revId": "fb6ba4334dba07153009d717a3bdaaf45c3c9e6c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b8148c4_8e09091b",
+        "filename": "core/pack_dyn_relocs_setup.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-05-31T22:45:22Z",
+      "side": 1,
+      "message": "Good idea. PTAL the new patch.",
+      "parentUuid": "63512192_9fc8c6ef",
+      "revId": "fb6ba4334dba07153009d717a3bdaaf45c3c9e6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
