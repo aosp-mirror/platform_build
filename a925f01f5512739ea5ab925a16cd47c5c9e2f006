@@ -16,6 +16,24 @@
       "revId": "a925f01f5512739ea5ab925a16cd47c5c9e2f006",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07c2d81b_a63b0f78",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-05-31T21:07:23Z",
+      "side": 1,
+      "message": "Done. Thanks.\nFixed by computing my_pack_module_relocations in pack_dyn_relocs_setup.mk.",
+      "parentUuid": "d18535bc_0649eafb",
+      "revId": "a925f01f5512739ea5ab925a16cd47c5c9e2f006",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
