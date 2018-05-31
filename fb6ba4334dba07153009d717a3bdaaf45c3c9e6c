@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "16a492f6_76b82766",
+        "filename": "core/pack_dyn_relocs_setup.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-31T21:12:49Z",
+      "side": 1,
+      "message": "What\u0027s the difference between relocation packer and pack-dyn-relocs?  Is there some intention to switch to relocation packer in the future?  If so, can you add a TODO(b/...)?",
+      "revId": "fb6ba4334dba07153009d717a3bdaaf45c3c9e6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
