@@ -34,6 +34,24 @@
       "revId": "fb6ba4334dba07153009d717a3bdaaf45c3c9e6c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63512192_9fc8c6ef",
+        "filename": "core/pack_dyn_relocs_setup.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-05-31T21:47:23Z",
+      "side": 1,
+      "message": "If that\u0027s the case, maybe have a single output from here, and then put ifneq (,$(my_clang_lld)) around relocation packer?",
+      "parentUuid": "de6df2a3_3cdf8e7c",
+      "revId": "fb6ba4334dba07153009d717a3bdaaf45c3c9e6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
