@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a5d1dc5_35ca175f",
+        "filename": "core/build_rro_package.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-05-31T06:43:10Z",
+      "side": 1,
+      "message": "This should at least include $(LOCAL_PACKAGE_NAME) and $(LOCAL_MODULE_MAKEFILE)",
+      "range": {
+        "startLine": 23,
+        "startChar": 10,
+        "endLine": 23,
+        "endChar": 17
+      },
+      "revId": "ed0b00481582055e363283c082664dad2be75ceb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
