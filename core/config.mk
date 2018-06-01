@@ -45,6 +45,9 @@ endef
 backslash := \a
 backslash := $(patsubst %a,%,$(backslash))
 
+# Prevent accidentally changing these variables
+.KATI_READONLY := SHELL empty space comma newline pound backslash
+
 # this turns off the suffix rules built into make
 .SUFFIXES:
 
@@ -57,6 +60,10 @@ backslash := $(patsubst %a,%,$(backslash))
 
 # If a rule fails, delete $@.
 .DELETE_ON_ERROR:
+
+# Mark variables that should be coming as environment variables from soong_ui
+# as readonly
+.KATI_READONLY := OUT_DIR TMPDIR BUILD_DATETIME_FILE
 
 # Mark variables deprecated/obsolete
 CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
