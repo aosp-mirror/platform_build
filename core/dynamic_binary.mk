@@ -55,14 +55,10 @@ ifeq (false,$(my_use_clang_lld))
 $(relocation_packer_output): $(relocation_packer_input)
 	$(pack-elf-relocations)
 else
-$(relocation_packer_output): $(relocation_packer_input)
-	@echo "target Unpacked: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target)
+relocation_packer_output := $(relocation_packer_input)
 endif # my_use_clang_lld
 else
-$(relocation_packer_output): $(relocation_packer_input)
-	@echo "target Unpacked: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target)
+relocation_packer_output := $(relocation_packer_input)
 endif # my_pack_module_relocations
 
 ###########################################################
