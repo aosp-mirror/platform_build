@@ -105,6 +105,24 @@
       "revId": "289e8d601120b8b33e223ee41699d45afeca21e6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "57025469_074cc318",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-06-01T20:12:02Z",
+      "side": 1,
+      "message": "Okay, I will keep it as is now.\nMaybe we can simplify it in another CL.",
+      "parentUuid": "b68b4dab_52b386af",
+      "revId": "289e8d601120b8b33e223ee41699d45afeca21e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
