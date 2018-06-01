@@ -51,6 +51,24 @@
       "revId": "289e8d601120b8b33e223ee41699d45afeca21e6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f83fa11a_282a8fd4",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-06-01T18:12:15Z",
+      "side": 1,
+      "message": "I suppose that you also suggest this change made to line 58, right?",
+      "parentUuid": "e891fac3_8f88c00f",
+      "revId": "289e8d601120b8b33e223ee41699d45afeca21e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
