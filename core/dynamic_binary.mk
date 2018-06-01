@@ -35,6 +35,7 @@ ALL_ORIGINAL_DYNAMIC_BINARIES += $(linked_module)
 LOCAL_INTERMEDIATE_TARGETS := $(linked_module)
 
 ###################################
+include $(BUILD_SYSTEM)/use_lld_setup.mk
 include $(BUILD_SYSTEM)/binary.mk
 ###################################
 
@@ -44,35 +45,12 @@ include $(BUILD_SYSTEM)/binary.mk
 relocation_packer_input := $(linked_module)
 relocation_packer_output := $(intermediates)/PACKED/$(my_built_module_stem)
 
-my_pack_module_relocations := false
-ifneq ($(DISABLE_RELOCATION_PACKER),true)
-    my_pack_module_relocations := $(firstword \
-      $(LOCAL_PACK_MODULE_RELOCATIONS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
-      $(LOCAL_PACK_MODULE_RELOCATIONS))
-endif
+include $(BUILD_SYSTEM)/pack_dyn_relocs_setup.mk
 
-ifeq ($(my_pack_module_relocations),)
-  my_pack_module_relocations := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_PACK_MODULE_RELOCATIONS)
-endif
-
-# Do not pack relocations for executables. Because packing results in
-# non-zero p_vaddr which causes kernel to load executables to lower
-# address (starting at 0x8000) http://b/20665974
-ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-  my_pack_module_relocations := false
-endif
-
-# TODO (dimitry): Relocation packer is not yet available for darwin
-ifneq ($(HOST_OS),linux)
-  my_pack_module_relocations := false
-endif
-
-# Relocation packer does not work with LLD yet.
-ifeq ($(my_use_clang_lld),true)
-  my_pack_module_relocations := false
-endif
-
+# Stand-alone relocation_packer does not work with LLD output,
+# but it can be replaced by lld's --pack-dyn-relocs=android.
 ifeq (true,$(my_pack_module_relocations))
+ifeq (false,$(my_use_clang_lld))
 # Pack relocations
 $(relocation_packer_output): $(relocation_packer_input)
 	$(pack-elf-relocations)
@@ -80,7 +58,12 @@ else
 $(relocation_packer_output): $(relocation_packer_input)
 	@echo "target Unpacked: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target)
-endif
+endif # my_use_clang_lld
+else
+$(relocation_packer_output): $(relocation_packer_input)
+	@echo "target Unpacked: $(PRIVATE_MODULE) ($@)"
+	$(copy-file-to-target)
+endif # my_pack_module_relocations
 
 ###########################################################
 ## Store a copy with symbols for symbolic debugging
