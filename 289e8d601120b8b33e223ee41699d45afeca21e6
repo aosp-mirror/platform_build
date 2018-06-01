@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "477a285a_8658ff07",
+        "filename": "core/binary.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-01T04:14:01Z",
+      "side": 1,
+      "message": "I\u0027m a little worried that this negative will lead to lld enabling packed relocations at different times than relocation packer.  Should this be:\n\n my_target_global_ldflags +\u003d -Wl,--pack-dyn-relocs\u003d$(if $(filter true,$(my_pack_module_relocations)),android,none)\n\nThat may cause other problems, because you would be enabling relocation packer for module types that didn\u0027t come through dynamic_binary.mk, including static libraries and static binaries.",
+      "revId": "289e8d601120b8b33e223ee41699d45afeca21e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e891fac3_8f88c00f",
+        "filename": "core/dynamic_binary.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-01T04:14:01Z",
+      "side": 1,
+      "message": "you can just do relocation_packer_output :\u003d $(relocation_packer_input) here",
+      "revId": "289e8d601120b8b33e223ee41699d45afeca21e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
