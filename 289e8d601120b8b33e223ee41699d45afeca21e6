@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "167fbb27_24258008",
+        "filename": "core/binary.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-06-01T17:55:45Z",
+      "side": 1,
+      "message": "Isn\u0027t the assumption that my_pack_module_relocations can be either \u0027true\u0027 or \u0027false\u0027? I see also global variables set to make this true and some projects can make it false.\nSo current lld\u0027s global default ldflags contain --pack-dyn-relocs\u003dandroid, set in build/soong/cc/config/global.go.\nHere we only need to override global default when my_pack_module_relocations is false.\nAdding --pack-dyn-relocs\u003dandroid here will be duplication.\n\nDo we use ld or lld in static libraries?\n\nFor static binaries, the --pack-dyn-relocs should have no effect, right?",
+      "parentUuid": "477a285a_8658ff07",
+      "revId": "289e8d601120b8b33e223ee41699d45afeca21e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e891fac3_8f88c00f",
         "filename": "core/dynamic_binary.mk",
         "patchSetId": 6
