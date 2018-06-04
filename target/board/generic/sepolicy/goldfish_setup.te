@@ -25,10 +25,11 @@ allow goldfish_setup varrun_file:file { mounton getattr create read write open u
 allow goldfish_setup execns_exec:file rx_file_perms;
 allow goldfish_setup proc_net:file rw_file_perms;
 allow goldfish_setup proc:file r_file_perms;
-set_prop(goldfish_setup, ctl_default_prop);
 allow goldfish_setup nsfs:file r_file_perms;
 allow goldfish_setup system_data_file:dir getattr;
 allow goldfish_setup kernel:system module_request;
+set_prop(goldfish_setup, qemu_prop);
+get_prop(goldfish_setup, net_share_prop);
 # Allow goldfish_setup to run /system/bin/ip and /system/bin/iw
 allow goldfish_setup system_file:file execute_no_trans;
 # Allow goldfish_setup to run init.wifi.sh
