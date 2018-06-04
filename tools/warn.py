@@ -2635,7 +2635,6 @@ project_list = [
     simple_project_pattern('frameworks/av/cmds'),
     simple_project_pattern('frameworks/av/drm'),
     simple_project_pattern('frameworks/av/include'),
-    simple_project_pattern('frameworks/av/media/common_time'),
     simple_project_pattern('frameworks/av/media/img_utils'),
     simple_project_pattern('frameworks/av/media/libcpustats'),
     simple_project_pattern('frameworks/av/media/libeffects'),
