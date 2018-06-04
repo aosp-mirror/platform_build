@@ -22,7 +22,6 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.ril.gprsclass=10
 
 PRODUCT_COPY_FILES := \
-    device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml \
     device/generic/goldfish/camera/media_profiles.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_audio.xml \
     frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_telephony.xml \
