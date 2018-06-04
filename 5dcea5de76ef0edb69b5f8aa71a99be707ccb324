@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "572cd44f_2fe23eeb",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-06-04T17:21:13Z",
+      "side": 1,
+      "message": "clarification for a question I received. This variable is obsolete in the sense that it can\u0027t be used after this. PRODUCT_FULL_TREBLE is derived from multiple other properties (see requirements in config.mk). Branches in code should be based on these requirements rather than on this variable as a whole in order to make bringup easier for other devices.",
+      "range": {
+        "startLine": 203,
+        "startChar": 2,
+        "endLine": 203,
+        "endChar": 19
+      },
+      "revId": "5dcea5de76ef0edb69b5f8aa71a99be707ccb324",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
