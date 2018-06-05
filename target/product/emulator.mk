@@ -79,6 +79,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.audio@2.0-impl \
     android.hardware.audio.effect@2.0-impl \
+    android.hardware.broadcastradio@1.1-service \
     android.hardware.broadcastradio@1.0-impl \
     android.hardware.soundtrigger@2.0-impl
 
@@ -133,6 +134,7 @@ PRODUCT_PACKAGES += \
 	wpa_supplicant \
 
 PRODUCT_COPY_FILES += \
+    device/generic/goldfish/data/etc/apns-conf.xml:data/misc/apns/apns-conf.xml \
     device/generic/goldfish/init.ranchu-core.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-core.sh \
     device/generic/goldfish/init.ranchu-net.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.ranchu-net.sh \
     device/generic/goldfish/wifi/init.wifi.sh:$(TARGET_COPY_OUT_VENDOR)/bin/init.wifi.sh \
@@ -175,3 +177,16 @@ PRODUCT_FULL_TREBLE_OVERRIDE := true
 #once it is fixed in aosp, remove this block of comment.
 #PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 #config.disable_location=true
+
+# Enable Perfetto traced
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    persist.traced.enable=1
+
+# enable Google-specific location features,
+# like NetworkLocationProvider and LocationCollector
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    ro.com.google.locationfeatures=1
+
+# disable setupwizard
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    ro.setupwizard.mode=DISABLED
