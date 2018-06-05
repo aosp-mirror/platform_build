@@ -59,7 +59,6 @@ PRODUCT_PACKAGES += \
     libcamera_client \
     libcameraservice \
     libcamera2ndk \
-    libdl \
     libdrmclearkeyplugin \
     libclearkeycasplugin \
     libeffectproxy \
@@ -98,7 +97,6 @@ PRODUCT_PACKAGES += \
     libstagefright_omx \
     libstagefright_yuv \
     libusbhost \
-    libutils \
     libvisualizer \
     libvorbisidec \
     libmediandk \
