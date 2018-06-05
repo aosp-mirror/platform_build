@@ -16,6 +16,10 @@
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_x86.mk)
 
+# Define the host tools and libs that are parts of the SDK.
+-include sdk/build/product_sdk.mk
+-include development/build/product_sdk.mk
+
 # Overrides
 PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_x86
