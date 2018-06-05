@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "107a9901_d9ce708b",
+        "filename": "target/product/aosp_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-05T18:13:20Z",
+      "side": 1,
+      "message": "dan, colin: what produces these timestamp files? I\u0027ll probably whitelist all of them seems it seems like a build system internal, but I can\u0027t figure out where e.g. this java.obex comes from.",
+      "revId": "692c7824872019f5bd4323a7a07b188f0008fb5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
