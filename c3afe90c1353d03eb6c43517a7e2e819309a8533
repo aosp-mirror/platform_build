@@ -46,6 +46,30 @@
       "revId": "c3afe90c1353d03eb6c43517a7e2e819309a8533",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "abdbafcd_0f6d8503",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-06-05T22:08:28Z",
+      "side": 1,
+      "message": "Because that\u0027s even more confusing when reverts have happened (magic skipping without user interaction)",
+      "parentUuid": "af60b7df_98e12b9c",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 6
+      },
+      "revId": "c3afe90c1353d03eb6c43517a7e2e819309a8533",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
