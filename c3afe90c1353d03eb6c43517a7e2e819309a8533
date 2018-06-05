@@ -22,6 +22,30 @@
       "revId": "c3afe90c1353d03eb6c43517a7e2e819309a8533",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af60b7df_98e12b9c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2018-06-05T22:07:22Z",
+      "side": 1,
+      "message": "Done (why is this needed when the Change-Id and Merged-In are the same?)",
+      "parentUuid": "e0cc9e4d_a70f7bf7",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 6
+      },
+      "revId": "c3afe90c1353d03eb6c43517a7e2e819309a8533",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
