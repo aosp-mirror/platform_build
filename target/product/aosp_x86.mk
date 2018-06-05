@@ -15,7 +15,7 @@
 #
 
 PRODUCT_PROPERTY_OVERRIDES += \
-	rild.libpath=/vendor/lib/libreference-ril.so
+	vendor.rild.libpath=/vendor/lib/libreference-ril.so
 
 # This is a build configuration for a full-featured build of the
 # Open-Source part of the tree. It's geared toward a US-centric
