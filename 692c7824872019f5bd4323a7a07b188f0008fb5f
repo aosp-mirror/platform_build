@@ -16,6 +16,24 @@
       "revId": "692c7824872019f5bd4323a7a07b188f0008fb5f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "966c6b82_b99cf29a",
+        "filename": "target/product/aosp_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-06-05T19:29:04Z",
+      "side": 1,
+      "message": "That\u0027s the implementation behind BUILD_PHONY_PACKAGE, which is exported by Soong\u0027s java_sdk_library. Everything in the dependency tree needs a file with a timestamp attached to it, these are the ones for phony packages.",
+      "parentUuid": "107a9901_d9ce708b",
+      "revId": "692c7824872019f5bd4323a7a07b188f0008fb5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
