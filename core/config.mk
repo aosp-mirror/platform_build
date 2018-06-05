@@ -311,8 +311,8 @@ endef
 
 # Commands to generate .toc file from Darwin dynamic library.
 define _gen_toc_command_for_macho
-$(hide) otool -l $(1) | grep LC_ID_DYLIB -A 5 > $(2)
-$(hide) nm -gP $(1) | cut -f1-2 -d" " | (grep -v U$$ >> $(2) || true)
+$(hide) $(HOST_OTOOL) -l $(1) | grep LC_ID_DYLIB -A 5 > $(2)
+$(hide) $(HOST_NM) -gP $(1) | cut -f1-2 -d" " | (grep -v U$$ >> $(2) || true)
 endef
 
 combo_target := HOST_
