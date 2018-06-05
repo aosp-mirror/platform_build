@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2f6b8534_9d5c7d60",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-05T17:19:43Z",
+      "side": 1,
+      "message": "aosp/698127",
+      "range": {
+        "startLine": 26,
+        "startChar": 46,
+        "endLine": 26,
+        "endChar": 0
+      },
+      "revId": "72a7e7320ddaf783633c84c7775979a2b6c9ed00",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
