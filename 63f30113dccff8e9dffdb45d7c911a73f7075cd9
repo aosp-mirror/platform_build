@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c9874199_9a6ab2fc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-06-06T01:46:56Z",
+      "side": 1,
+      "message": "Insert reasoning.\n\nAdd Bug: \u003cid\u003e",
+      "revId": "63f30113dccff8e9dffdb45d7c911a73f7075cd9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
