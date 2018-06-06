@@ -34,6 +34,24 @@
       "revId": "692c7824872019f5bd4323a7a07b188f0008fb5f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "84dbda77_571dd33f",
+        "filename": "target/product/aosp_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-06T12:19:44Z",
+      "side": 1,
+      "message": "thanks, makes sense. I disregard all that TARGET_OUT_FAKE/% targets now.",
+      "parentUuid": "966c6b82_b99cf29a",
+      "revId": "692c7824872019f5bd4323a7a07b188f0008fb5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
