@@ -576,9 +576,7 @@ USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 
 # Work around for b/68406220
 # This should match the soong version.
-ifndef USE_D8
-  USE_D8 := true
-endif
+USE_D8 := true
 
 # Default R8 behavior when USE_R8 is not specified.
 ifndef USE_R8
@@ -592,7 +590,6 @@ ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))
   AIDL := $(HOST_OUT_EXECUTABLES)/aidl
   AAPT := $(HOST_OUT_EXECUTABLES)/aapt
   AAPT2 := $(HOST_OUT_EXECUTABLES)/aapt2
-  DESUGAR := $(HOST_OUT_JAVA_LIBRARIES)/desugar.jar
   MAINDEXCLASSES := $(HOST_OUT_EXECUTABLES)/mainDexClasses
   SIGNAPK_JAR := $(HOST_OUT_JAVA_LIBRARIES)/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(HOST_OUT_SHARED_LIBRARIES)
@@ -602,7 +599,6 @@ else # TARGET_BUILD_APPS || TARGET_BUILD_PDK
   AIDL := $(prebuilt_build_tools_bin)/aidl
   AAPT := $(prebuilt_sdk_tools_bin)/aapt
   AAPT2 := $(prebuilt_sdk_tools_bin)/aapt2
-  DESUGAR := $(prebuilt_build_tools_jars)/desugar.jar
   MAINDEXCLASSES := $(prebuilt_sdk_tools)/mainDexClasses
   SIGNAPK_JAR := $(prebuilt_sdk_tools)/lib/signapk$(COMMON_JAVA_PACKAGE_SUFFIX)
   SIGNAPK_JNI_LIBRARY_PATH := $(prebuilt_sdk_tools)/$(HOST_OS)/lib64
