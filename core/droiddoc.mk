@@ -15,12 +15,9 @@
 #
 
 $(call record-module-type,DROIDDOC)
-##
-##
-## Common to both droiddoc and javadoc
-##
-##
-
+###########################################################
+## Common logic to both droiddoc and javadoc
+###########################################################
 LOCAL_IS_HOST_MODULE := $(call true-or-empty,$(LOCAL_IS_HOST_MODULE))
 ifeq ($(LOCAL_IS_HOST_MODULE),true)
 my_prefix := HOST_
@@ -54,6 +51,7 @@ LOCAL_DROIDDOC_CUSTOM_ASSET_DIR := assets
 endif
 
 ifeq ($(LOCAL_IS_HOST_MODULE),true)
+
 $(full_target): PRIVATE_BOOTCLASSPATH :=
 full_java_libs := $(addprefix $(HOST_OUT_JAVA_LIBRARIES)/,\
   $(addsuffix $(COMMON_JAVA_PACKAGE_SUFFIX),$(LOCAL_JAVA_LIBRARIES)))
@@ -128,18 +126,10 @@ $(call dump-words-to-file, $(2), $(1))
 $(hide) for d in $(3) ; do find $$d -name '*.java' -and -not -name '.*' >> $(1) 2> /dev/null ; done ; true
 endef
 
-ifeq (a,b)
-$(full_target): PRIVATE_PROFILING_OPTIONS := \
-    -J-agentlib:jprofilerti=port=8849 -J-Xbootclasspath/a:/Applications/jprofiler5/bin/agent.jar
-endif
-
-
+###########################################################
+## Logic for droiddoc only
+###########################################################
 ifneq ($(strip $(LOCAL_DROIDDOC_USE_STANDARD_DOCLET)),true)
-##
-##
-## droiddoc only
-##
-##
 
 droiddoc_templates := \
     $(sort $(shell find $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR) -type f $(if $(ALLOW_MISSING_DEPENDENCIES),2>/dev/null)))
@@ -149,10 +139,6 @@ ifdef ALLOW_MISSING_DEPENDENCIES
     droiddoc_templates := $(LOCAL_DROIDDOC_CUSTOM_TEMPLATE_DIR)
   endif
 endif
-
-droiddoc := \
-	$(HOST_JDK_TOOLS_JAR) \
-	$(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX)
 
 $(full_target): PRIVATE_DOCLETPATH := $(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX):$(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX)
 $(full_target): PRIVATE_CURRENT_BUILD := -hdf page.build $(BUILD_ID)-$(BUILD_NUMBER_FROM_FILE)
@@ -175,18 +161,127 @@ else
 $(full_target): PRIVATE_ADDITIONAL_HTML_DIR :=
 endif
 
-# TODO: not clear if this is used any more
+# TODO(nanzhang): Remove it if this is not used any more
 $(full_target): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
+
+ifeq ($(strip $(LOCAL_DROIDDOC_USE_METALAVA)),true)
+ifneq (,$(filter --generate-documentation,$(LOCAL_DROIDDOC_OPTIONS)))
+
+pos = $(if $(findstring $1,$2),$(call pos,$1,$(wordlist 2,$(words $2),$2),x $3),$3)
+metalava_args := $(wordlist 1, $(words $(call pos,--generate-documentation,$(LOCAL_DROIDDOC_OPTIONS))), \
+    $(LOCAL_DROIDDOC_OPTIONS))
+remaining_args :=  $(wordlist $(words $(call pos,--generate-documentation,$(LOCAL_DROIDDOC_OPTIONS))), \
+    $(words $(LOCAL_DROIDDOC_OPTIONS)), $(LOCAL_DROIDDOC_OPTIONS))
+doclava_args := $(wordlist 2, $(words $(remaining_args)), $(remaining_args))
+
+ifneq ($(LOCAL_DROIDDOC_METALAVA_PREVIOUS_API),)
+$(full_target): PRIVATE_DROIDDOC_METALAVA_PREVIOUS_API := --check-compatibility --previous-api $(LOCAL_DROIDDOC_METALAVA_PREVIOUS_API)
+else
+$(full_target): PRIVATE_DROIDDOC_METALAVA_PREVIOUS_API :=
+endif #!LOCAL_DROIDDOC_METALAVA_PREVIOUS_API
+
+metalava_annotations_deps :=
+ifeq ($(strip $(LOCAL_DROIDDOC_METALAVA_ANNOTATIONS_ENABLED)),true)
+ifeq ($(LOCAL_DROIDDOC_METALAVA_PREVIOUS_API),)
+$(error $(LOCAL_PATH): LOCAL_DROIDDOC_METALAVA_PREVIOUS_API has to be non-empty if metalava annotations was enabled!)
+endif
+ifeq ($(LOCAL_DROIDDOC_METALAVA_MERGE_ANNOTATIONS_DIR),)
+$(error $(LOCAL_PATH): LOCAL_DROIDDOC_METALAVA_MERGE_ANNOTATIONS_DIR has to be non-empty if metalava annotations was enabled!)
+endif
+
+$(full_target): PRIVATE_DROIDDOC_METALAVA_ANNOTATIONS := --include-annotations --migrate-nullness \
+    --extract-annotations $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(LOCAL_MODULE)_annotations.zip \
+    --merge-annotations $(LOCAL_DROIDDOC_METALAVA_MERGE_ANNOTATIONS_DIR) \
+    --hide HiddenTypedefConstant --hide SuperfluousPrefix --hide AnnotationExtraction
+metalava_annotations_deps := $(sort $(shell find $(LOCAL_DROIDDOC_METALAVA_MERGE_ANNOTATIONS_DIR) -type f))
+else
+$(full_target): PRIVATE_DROIDDOC_METALAVA_ANNOTATIONS :=
+endif #LOCAL_DROIDDOC_METALAVA_ANNOTATIONS_ENABLED=true
+
+$(full_target): \
+        $(full_src_files) $(LOCAL_GENERATED_SOURCES) \
+        $(droiddoc_templates) \
+        $(HOST_JDK_TOOLS_JAR) \
+        $(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX) \
+        $(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX) \
+        $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX) \
+        $(html_dir_files) \
+        $(full_java_libs) \
+        $(ZIPSYNC) \
+        $(LOCAL_SRCJARS) \
+        $(LOCAL_ADDITIONAL_DEPENDENCIES) \
+        $(LOCAL_DROIDDOC_METALAVA_PREVIOUS_API) \
+        $(metalava_annotations_deps)
+	@echo metalava based docs: $(PRIVATE_OUT_DIR)
+	$(hide) mkdir -p $(dir $@)
+	$(hide) rm -rf $(PRIVATE_STUB_OUT_DIR)
+	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
+			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
+	$(ZIPSYNC) -d $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) -l $(PRIVATE_SRCJAR_LIST_FILE) -f "*.java" $(PRIVATE_SRCJARS)
+	$(hide) ( \
+		$(JAVA) -jar $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX) \
+                -encoding UTF-8 -source 1.8 \@$(PRIVATE_SRC_LIST_FILE) \@$(PRIVATE_SRCJAR_LIST_FILE) \
+                $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH)) \
+                $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
+                --sourcepath $(PRIVATE_SOURCE_PATH) \
+                --no-banner --color --quiet \
+                $(addprefix --stubs ,$(PRIVATE_STUB_OUT_DIR)) \
+                --write-stubs-source-list $(intermediates.COMMON)/stubs-src-list \
+                $(metalava_args) $(PRIVATE_DROIDDOC_METALAVA_PREVIOUS_API) $(PRIVATE_DROIDDOC_METALAVA_ANNOTATIONS) \
+                $(JAVADOC) -encoding UTF-8 -source 1.8 STUBS_SOURCE_LIST \
+                -J-Xmx1600m -J-XX:-OmitStackTraceInFastThrow -XDignore.symbol.file \
+                -quiet -doclet com.google.doclava.Doclava -docletpath $(PRIVATE_DOCLETPATH) \
+                -templatedir $(PRIVATE_CUSTOM_TEMPLATE_DIR) \
+                $(PRIVATE_DROIDDOC_HTML_DIR) $(PRIVATE_ADDITIONAL_HTML_DIR) \
+                $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH)) \
+                $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
+                -sourcepath $(PRIVATE_SOURCE_PATH) \
+                -d $(PRIVATE_OUT_DIR) \
+                $(PRIVATE_CURRENT_BUILD) $(PRIVATE_CURRENT_TIME) $(doclava_args) \
+        && touch -f $@ ) || (rm -rf $(PRIVATE_OUT_DIR) $(PRIVATE_SRC_LIST_FILE); exit 45)
+
+ifeq ($(strip $(LOCAL_DROIDDOC_METALAVA_ANNOTATIONS_ENABLED)),true)
+$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(LOCAL_MODULE)_annotations.zip: $(full_target)
+endif
+else
+# no docs generation
+$(full_target): \
+        $(full_src_files) $(LOCAL_GENERATED_SOURCES) \
+        $(full_java_libs) \
+        $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX) \
+        $(ZIPSYNC) \
+        $(LOCAL_SRCJARS) \
+        $(LOCAL_ADDITIONAL_DEPENDENCIES)
+	@echo metalava based stubs: $@
+	$(hide) mkdir -p $(dir $@)
+	$(hide) rm -rf $(PRIVATE_STUB_OUT_DIR)
+	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
+			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
+	$(ZIPSYNC) -d $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) -l $(PRIVATE_SRCJAR_LIST_FILE) -f "*.java" $(PRIVATE_SRCJARS)
+	$(hide) ( \
+		$(JAVA) -jar $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX) \
+                -encoding UTF-8 -source 1.8 \@$(PRIVATE_SRC_LIST_FILE) \@$(PRIVATE_SRCJAR_LIST_FILE) \
+                $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH)) \
+                $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
+                --sourcepath $(PRIVATE_SOURCE_PATH) \
+                $(PRIVATE_DROIDDOC_OPTIONS) --no-banner --color --quiet \
+                $(addprefix --stubs ,$(PRIVATE_STUB_OUT_DIR)) \
+        && touch -f $@ ) || (rm -rf $(PRIVATE_SRC_LIST_FILE); exit 45)
+
+endif # stubs + docs generation
+
+else
 
 # TODO(tobiast): Clean this up once we move to -source 1.9.
 # OpenJDK 9 does not have the concept of a "boot classpath" so we should
 # then rename PRIVATE_BOOTCLASSPATH to PRIVATE_MODULE or similar. For now,
 # keep -bootclasspath here since it works in combination with -source 1.8.
 $(full_target): \
-        $(full_src_files) \
-        $(LOCAL_GENERATED_SOURCES) \
+        $(full_src_files) $(LOCAL_GENERATED_SOURCES) \
         $(droiddoc_templates) \
-        $(droiddoc) \
+        $(HOST_JDK_TOOLS_JAR) \
+        $(HOST_OUT_JAVA_LIBRARIES)/jsilver$(COMMON_JAVA_PACKAGE_SUFFIX) \
+        $(HOST_OUT_JAVA_LIBRARIES)/doclava$(COMMON_JAVA_PACKAGE_SUFFIX) \
         $(html_dir_files) \
         $(full_java_libs) \
         $(ZIPSYNC) \
@@ -200,39 +295,25 @@ $(full_target): \
 	$(ZIPSYNC) -d $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) -l $(PRIVATE_SRCJAR_LIST_FILE) -f "*.java" $(PRIVATE_SRCJARS)
 	$(hide) ( \
 		$(JAVADOC) \
-                -encoding UTF-8 \
-                -source 1.8 \
-                \@$(PRIVATE_SRC_LIST_FILE) \
-                \@$(PRIVATE_SRCJAR_LIST_FILE) \
-                -J-Xmx1600m \
-                -J-XX:-OmitStackTraceInFastThrow \
-                -XDignore.symbol.file \
-                $(PRIVATE_PROFILING_OPTIONS) \
-                -quiet \
-                -doclet com.google.doclava.Doclava \
-                -docletpath $(PRIVATE_DOCLETPATH) \
+                -encoding UTF-8 -source 1.8 \@$(PRIVATE_SRC_LIST_FILE) \@$(PRIVATE_SRCJAR_LIST_FILE) \
+                -J-Xmx1600m -J-XX:-OmitStackTraceInFastThrow -XDignore.symbol.file \
+                -quiet -doclet com.google.doclava.Doclava -docletpath $(PRIVATE_DOCLETPATH) \
                 -templatedir $(PRIVATE_CUSTOM_TEMPLATE_DIR) \
-                $(PRIVATE_DROIDDOC_HTML_DIR) \
-                $(PRIVATE_ADDITIONAL_HTML_DIR) \
+                $(PRIVATE_DROIDDOC_HTML_DIR) $(PRIVATE_ADDITIONAL_HTML_DIR) \
                 $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH)) \
                 $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
                 -sourcepath $(PRIVATE_SOURCE_PATH)$(addprefix :,$(PRIVATE_CLASSPATH)) \
                 -d $(PRIVATE_OUT_DIR) \
-                $(PRIVATE_CURRENT_BUILD) $(PRIVATE_CURRENT_TIME) \
-                $(PRIVATE_DROIDDOC_OPTIONS) \
+                $(PRIVATE_CURRENT_BUILD) $(PRIVATE_CURRENT_TIME) $(PRIVATE_DROIDDOC_OPTIONS) \
                 $(addprefix -stubs ,$(PRIVATE_STUB_OUT_DIR)) \
-        && touch -f $@ \
-    ) || (rm -rf $(PRIVATE_OUT_DIR) $(PRIVATE_SRC_LIST_FILE); exit 45)
-
-
+        && touch -f $@ ) || (rm -rf $(PRIVATE_OUT_DIR) $(PRIVATE_SRC_LIST_FILE); exit 45)
+endif #LOCAL_DROIDDOC_USE_METALAVA
 
 else
-##
-##
-## standard doclet only
-##
-##
 
+###########################################################
+## Logic for javadoc only
+###########################################################
 ifdef USE_OPENJDK9
 # For OpenJDK 9 we use --patch-module to define the core libraries code.
 # TODO(tobiast): Reorganize this when adding proper support for OpenJDK 9
@@ -250,31 +331,15 @@ $(full_target): $(full_src_files) $(LOCAL_GENERATED_SOURCES) $(full_java_libs) $
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
 	$(ZIPSYNC) -d $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) -l $(PRIVATE_SRCJAR_LIST_FILE) -f "*.java" $(PRIVATE_SRCJARS)
 	$(hide) ( \
-		$(JAVADOC) \
-                -encoding UTF-8 \
-                $(PRIVATE_DROIDDOC_OPTIONS) \
-                \@$(PRIVATE_SRC_LIST_FILE) \
-                \@$(PRIVATE_SRCJAR_LIST_FILE) \
-                -J-Xmx1024m \
-                -XDignore.symbol.file \
-                -Xdoclint:none \
-                $(PRIVATE_PROFILING_OPTIONS) \
-                $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
-                $(PRIVATE_BOOTCLASSPATH_ARG) \
-                -sourcepath $(PRIVATE_SOURCE_PATH)$(addprefix :,$(PRIVATE_CLASSPATH)) \
+		$(JAVADOC) -encoding UTF-8 \@$(PRIVATE_SRC_LIST_FILE) \@$(PRIVATE_SRCJAR_LIST_FILE) \
+                $(PRIVATE_DROIDDOC_OPTIONS) -J-Xmx1024m -XDignore.symbol.file -Xdoclint:none -quiet \
+                $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) $(PRIVATE_BOOTCLASSPATH_ARG) \
+                -sourcepath $(PRIVATE_SOURCE_PATH) \
                 -d $(PRIVATE_OUT_DIR) \
-                -quiet \
         && touch -f $@ \
     ) || (rm -rf $(PRIVATE_OUT_DIR) $(PRIVATE_SRC_LIST_FILE); exit 45)
 
-
-endif
-##
-##
-## Common to both droiddoc and javadoc
-##
-##
-
+endif # !LOCAL_DROIDDOC_USE_STANDARD_DOCLET
 
 ALL_DOCS += $(full_target)
 
@@ -296,4 +361,4 @@ $(LOCAL_MODULE)-docs.zip : $(out_zip)
 
 $(call dist-for-goals,docs,$(out_zip))
 
-endif
+endif #!LOCAL_UNINSTALLABLE_MODULE
