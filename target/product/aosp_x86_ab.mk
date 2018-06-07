@@ -21,12 +21,6 @@
 
 include build/make/target/product/treble_common_32.mk
 
-AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS := system
-PRODUCT_PACKAGES += \
-    update_engine \
-    update_verifier
-
 PRODUCT_NAME := aosp_x86_ab
 PRODUCT_DEVICE := generic_x86_ab
 PRODUCT_BRAND := Android
