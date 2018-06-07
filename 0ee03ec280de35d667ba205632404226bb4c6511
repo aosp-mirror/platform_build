@@ -22,6 +22,47 @@
       "revId": "0ee03ec280de35d667ba205632404226bb4c6511",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c7e3b72_8b8df6d8",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2826,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-07T17:41:54Z",
+      "side": 1,
+      "message": "Singleton rules go in main.mk, or something that is included from there.  For example, dex_preopt.mk is included from there and does singleton preopting of the bootclasspath dex files.",
+      "parentUuid": "d9f8d2d2_ed39a046",
+      "range": {
+        "startLine": 2826,
+        "startChar": 0,
+        "endLine": 2826,
+        "endChar": 56
+      },
+      "revId": "0ee03ec280de35d667ba205632404226bb4c6511",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b097c672_6c9f813b",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2870,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-07T17:41:54Z",
+      "side": 1,
+      "message": "This would be simpler if you made the hiddenapi tool handle jars containing dex files and write the updated jar.",
+      "revId": "0ee03ec280de35d667ba205632404226bb4c6511",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
