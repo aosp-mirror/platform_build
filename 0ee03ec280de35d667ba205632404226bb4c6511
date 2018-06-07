@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d9f8d2d2_ed39a046",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2826,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2018-06-07T16:12:22Z",
+      "side": 1,
+      "message": "I wasn\u0027t sure where to put this. It\u0027s a \"singleton\" build rule which should not be included with every java module. Could you advise?",
+      "range": {
+        "startLine": 2826,
+        "startChar": 0,
+        "endLine": 2826,
+        "endChar": 56
+      },
+      "revId": "0ee03ec280de35d667ba205632404226bb4c6511",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
