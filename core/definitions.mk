@@ -2374,46 +2374,8 @@ define codename-or-sdk-to-sdk
 $(if $(filter $(1),$(PLATFORM_VERSION_CODENAME)),10000,$(1))
 endef
 
-# --add-opens is required because desugar reflects via java.lang.invoke.MethodHandles.Lookup
-define desugar-classes-jar
-@echo Desugar: $@
-@mkdir -p $(dir $@)
-$(hide) rm -f $@ $@.tmp
-@rm -rf $(dir $@)/desugar_dumped_classes
-@mkdir $(dir $@)/desugar_dumped_classes
-$(hide) $(JAVA) \
-    $(if $(USE_OPENJDK9),--add-opens java.base/java.lang.invoke=ALL-UNNAMED,) \
-    -Djdk.internal.lambda.dumpProxyClasses=$(abspath $(dir $@))/desugar_dumped_classes \
-    -jar $(DESUGAR) \
-    $(addprefix --bootclasspath_entry ,$(PRIVATE_BOOTCLASSPATH)) \
-    $(addprefix --classpath_entry ,$(PRIVATE_SHARED_JAVA_HEADER_LIBRARIES)) \
-    --min_sdk_version $(call codename-or-sdk-to-sdk,$(PRIVATE_MIN_SDK_VERSION)) \
-    --allow_empty_bootclasspath \
-    $(if $(filter --core-library,$(PRIVATE_DX_FLAGS)),--core_library) \
-    -i $< -o $@.tmp
-    mv $@.tmp $@
-endef
-
 
 define transform-classes.jar-to-dex
-@echo "target Dex: $(PRIVATE_MODULE)"
-@mkdir -p $(dir $@)
-$(hide) rm -f $(dir $@)classes*.dex
-$(hide) $(DX_COMMAND) \
-    --dex --output=$(dir $@) \
-    --min-sdk-version=$(PRIVATE_MIN_SDK_VERSION) \
-    $(if $(NO_OPTIMIZE_DX), \
-        --no-optimize) \
-    $(if $(GENERATE_DEX_DEBUG), \
-	    --debug --verbose \
-	    --dump-to=$(@:.dex=.lst) \
-	    --dump-width=1000) \
-    $(PRIVATE_DX_FLAGS) \
-    $<
-endef
-
-
-define transform-classes-d8.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
 $(hide) rm -f $(dir $@)classes*.dex $(dir $@)d8_input.jar
