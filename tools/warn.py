@@ -544,7 +544,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.LOW,
      'description':
-         'Java: Use Java\'s utility functional interfaces instead of Function\u003cA, B> for primitive types.',
+         r'Java: Use Java\'s utility functional interfaces instead of Function\u003cA, B> for primitive types.',
      'patterns': [r".*: warning: \[LambdaFunctionalInterface\] .+"]},
     {'category': 'java',
      'severity': Severity.LOW,
@@ -1139,7 +1139,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
-         'Java: Prefer the short-circuiting boolean operators \u0026\u0026 and || to \u0026 and |.',
+         r'Java: Prefer the short-circuiting boolean operators \u0026\u0026 and || to \u0026 and |.',
      'patterns': [r".*: warning: \[ShortCircuitBoolean\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
@@ -1344,7 +1344,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
-         'Java: Parcelable CREATOR fields should be Creator\u003cT>',
+         r'Java: Parcelable CREATOR fields should be Creator\u003cT>',
      'patterns': [r".*: warning: \[ParcelableCreatorType\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
@@ -1499,7 +1499,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
-         'Java:  Implementing \'Comparable\u003cT>\' where T is not compatible with the implementing class.',
+         r'Java:  Implementing \'Comparable\u003cT>\' where T is not compatible with the implementing class.',
      'patterns': [r".*: warning: \[ComparableType\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
@@ -1649,7 +1649,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
-         'Java: Path implements Iterable\u003cPath>; prefer Collection\u003cPath> for clarity',
+         r'Java: Path implements Iterable\u003cPath>; prefer Collection\u003cPath> for clarity',
      'patterns': [r".*: warning: \[IterablePathParameter\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
@@ -1999,7 +1999,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
-         'Java: Use of JodaTime\'s type.plus(long) or type.minus(long) is not allowed (where \u003ctype> = {Duration,Instant,DateTime,DateMidnight}). Please use type.plus(Duration.millis(long)) or type.minus(Duration.millis(long)) instead.',
+         r'Java: Use of JodaTime\'s type.plus(long) or type.minus(long) is not allowed (where \u003ctype> = {Duration,Instant,DateTime,DateMidnight}). Please use type.plus(Duration.millis(long)) or type.minus(Duration.millis(long)) instead.',
      'patterns': [r".*: warning: \[JodaPlusMinusLong\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
@@ -2014,7 +2014,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
-         'Java: Use of JodaTime\'s type.withDurationAdded(long, int) (where \u003ctype> = {Duration,Instant,DateTime}). Please use type.withDurationAdded(Duration.millis(long), int) instead.',
+         r'Java: Use of JodaTime\'s type.withDurationAdded(long, int) (where \u003ctype> = {Duration,Instant,DateTime}). Please use type.withDurationAdded(Duration.millis(long), int) instead.',
      'patterns': [r".*: warning: \[JodaWithDurationAddedLong\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
@@ -3033,6 +3033,7 @@ def find_project_index(line):
 
 
 def classify_one_warning(line, results):
+  """Classify one warning line."""
   for i in range(len(warn_patterns)):
     w = warn_patterns[i]
     for cpat in w['compiled_patterns']:
