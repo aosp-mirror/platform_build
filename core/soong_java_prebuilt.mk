@@ -64,6 +64,10 @@ ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
   my_static_library_extra_packages := $(intermediates.COMMON)/extra_packages
   $(eval $(call copy-one-file,$(LOCAL_SOONG_STATIC_LIBRARY_EXTRA_PACKAGES),$(my_static_library_extra_packages)))
   $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_static_library_extra_packages))
+
+  my_static_library_android_manifest := $(intermediates.COMMON)/manifest/AndroidManifest.xml
+  $(eval $(call copy-one-file,$(LOCAL_FULL_MANIFEST_FILE),$(my_static_library_android_manifest)))
+  $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_static_library_android_manifest))
 endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 
 ifneq ($(TURBINE_ENABLED),false)
