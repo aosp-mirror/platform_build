@@ -114,6 +114,7 @@ endif
 $(full_target): PRIVATE_OUT_DIR := $(out_dir)
 $(full_target): PRIVATE_DROIDDOC_OPTIONS := $(LOCAL_DROIDDOC_OPTIONS)
 $(full_target): PRIVATE_STUB_OUT_DIR := $(LOCAL_DROIDDOC_STUB_OUT_DIR)
+$(full_target): PRIVATE_METALAVA_DOCS_STUB_OUT_DIR := $(LOCAL_DROIDDOC_METALAVA_DOCS_STUB_OUT_DIR)
 
 # Lists the input files for the doc build into a text file
 # suitable for the @ syntax of javadoc.
@@ -165,17 +166,8 @@ endif
 $(full_target): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
 
 ifeq ($(strip $(LOCAL_DROIDDOC_USE_METALAVA)),true)
-ifneq (,$(filter --generate-documentation,$(LOCAL_DROIDDOC_OPTIONS)))
-
-pos = $(if $(findstring $1,$2),$(call pos,$1,$(wordlist 2,$(words $2),$2),x $3),$3)
-metalava_args := $(wordlist 1, $(words $(call pos,--generate-documentation,$(LOCAL_DROIDDOC_OPTIONS))), \
-    $(LOCAL_DROIDDOC_OPTIONS))
-remaining_args :=  $(wordlist $(words $(call pos,--generate-documentation,$(LOCAL_DROIDDOC_OPTIONS))), \
-    $(words $(LOCAL_DROIDDOC_OPTIONS)), $(LOCAL_DROIDDOC_OPTIONS))
-doclava_args := $(wordlist 2, $(words $(remaining_args)), $(remaining_args))
-
 ifneq ($(LOCAL_DROIDDOC_METALAVA_PREVIOUS_API),)
-$(full_target): PRIVATE_DROIDDOC_METALAVA_PREVIOUS_API := --check-compatibility --previous-api $(LOCAL_DROIDDOC_METALAVA_PREVIOUS_API)
+$(full_target): PRIVATE_DROIDDOC_METALAVA_PREVIOUS_API := --previous-api $(LOCAL_DROIDDOC_METALAVA_PREVIOUS_API)
 else
 $(full_target): PRIVATE_DROIDDOC_METALAVA_PREVIOUS_API :=
 endif #!LOCAL_DROIDDOC_METALAVA_PREVIOUS_API
@@ -198,6 +190,15 @@ else
 $(full_target): PRIVATE_DROIDDOC_METALAVA_ANNOTATIONS :=
 endif #LOCAL_DROIDDOC_METALAVA_ANNOTATIONS_ENABLED=true
 
+ifneq (,$(filter --generate-documentation,$(LOCAL_DROIDDOC_OPTIONS)))
+
+pos = $(if $(findstring $1,$2),$(call pos,$1,$(wordlist 2,$(words $2),$2),x $3),$3)
+metalava_args := $(wordlist 1, $(words $(call pos,--generate-documentation,$(LOCAL_DROIDDOC_OPTIONS))), \
+    $(LOCAL_DROIDDOC_OPTIONS))
+remaining_args :=  $(wordlist $(words $(call pos,--generate-documentation,$(LOCAL_DROIDDOC_OPTIONS))), \
+    $(words $(LOCAL_DROIDDOC_OPTIONS)), $(LOCAL_DROIDDOC_OPTIONS))
+doclava_args := $(wordlist 2, $(words $(remaining_args)), $(remaining_args))
+
 $(full_target): \
         $(full_src_files) $(LOCAL_GENERATED_SOURCES) \
         $(droiddoc_templates) \
@@ -215,6 +216,7 @@ $(full_target): \
 	@echo metalava based docs: $(PRIVATE_OUT_DIR)
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -rf $(PRIVATE_STUB_OUT_DIR)
+	$(hide) rm -rf $(PRIVATE_METALAVA_DOCS_STUB_OUT_DIR)
 	$(call prepare-doc-source-list,$(PRIVATE_SRC_LIST_FILE),$(PRIVATE_JAVA_FILES), \
 			$(PRIVATE_SOURCE_INTERMEDIATES_DIR) $(PRIVATE_ADDITIONAL_JAVA_DIR))
 	$(ZIPSYNC) -d $(PRIVATE_SRCJAR_INTERMEDIATES_DIR) -l $(PRIVATE_SRCJAR_LIST_FILE) -f "*.java" $(PRIVATE_SRCJARS)
@@ -226,6 +228,7 @@ $(full_target): \
                 --sourcepath $(PRIVATE_SOURCE_PATH) \
                 --no-banner --color --quiet \
                 $(addprefix --stubs ,$(PRIVATE_STUB_OUT_DIR)) \
+                $(addprefix --doc-stubs ,$(PRIVATE_METALAVA_DOCS_STUB_OUT_DIR)) \
                 --write-stubs-source-list $(intermediates.COMMON)/stubs-src-list \
                 $(metalava_args) $(PRIVATE_DROIDDOC_METALAVA_PREVIOUS_API) $(PRIVATE_DROIDDOC_METALAVA_ANNOTATIONS) \
                 $(JAVADOC) -encoding UTF-8 -source 1.8 STUBS_SOURCE_LIST \
@@ -239,10 +242,6 @@ $(full_target): \
                 -d $(PRIVATE_OUT_DIR) \
                 $(PRIVATE_CURRENT_BUILD) $(PRIVATE_CURRENT_TIME) $(doclava_args) \
         && touch -f $@ ) || (rm -rf $(PRIVATE_OUT_DIR) $(PRIVATE_SRC_LIST_FILE); exit 45)
-
-ifeq ($(strip $(LOCAL_DROIDDOC_METALAVA_ANNOTATIONS_ENABLED)),true)
-$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(LOCAL_MODULE)_annotations.zip: $(full_target)
-endif
 else
 # no docs generation
 $(full_target): \
@@ -264,13 +263,17 @@ $(full_target): \
                 $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH)) \
                 $(addprefix -classpath ,$(PRIVATE_CLASSPATH)) \
                 --sourcepath $(PRIVATE_SOURCE_PATH) \
-                $(PRIVATE_DROIDDOC_OPTIONS) --no-banner --color --quiet \
+                $(PRIVATE_DROIDDOC_OPTIONS) $(PRIVATE_DROIDDOC_METALAVA_PREVIOUS_API) $(PRIVATE_DROIDDOC_METALAVA_ANNOTATIONS) \
+                --no-banner --color --quiet \
                 $(addprefix --stubs ,$(PRIVATE_STUB_OUT_DIR)) \
         && touch -f $@ ) || (rm -rf $(PRIVATE_SRC_LIST_FILE); exit 45)
 
 endif # stubs + docs generation
+ifeq ($(strip $(LOCAL_DROIDDOC_METALAVA_ANNOTATIONS_ENABLED)),true)
+$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(LOCAL_MODULE)_annotations.zip: $(full_target)
+endif
 
-else
+else # doclava based droiddoc generation
 
 # TODO(tobiast): Clean this up once we move to -source 1.9.
 # OpenJDK 9 does not have the concept of a "boot classpath" so we should
