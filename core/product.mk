@@ -213,10 +213,14 @@ endef
 #
 # $(1): product to inherit
 #
-# Does three things:
+# To be called from product makefiles, and is later evaluated during the import-nodes
+# call below. It does three things:
 #  1. Inherits all of the variables from $1.
 #  2. Records the inheritance in the .INHERITS_FROM variable
-#  3. Records that we've visited this node, in ALL_PRODUCTS
+#  3. Records the calling makefile in PARENT_PRODUCT_FILES
+#
+# (2) and (3) can be used together to reconstruct the include hierarchy
+# See e.g. product-graph.mk for an example of this.
 #
 define inherit-product
   $(if $(findstring ../,$(1)),\
@@ -224,11 +228,10 @@ define inherit-product
     $(eval np := $(strip $(1))))\
   $(foreach v,$(_product_var_list), \
       $(eval $(v) := $($(v)) $(INHERIT_TAG)$(np))) \
-  $(eval inherit_var := \
-      PRODUCTS.$(strip $(word 1,$(_include_stack))).INHERITS_FROM) \
+  $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
+  $(eval inherit_var := PRODUCTS.$(current_mk).INHERITS_FROM) \
   $(eval $(inherit_var) := $(sort $($(inherit_var)) $(np))) \
-  $(eval inherit_var:=) \
-  $(eval ALL_PRODUCTS := $(sort $(ALL_PRODUCTS) $(word 1,$(_include_stack))))
+  $(eval PARENT_PRODUCT_FILES := $(sort $(PARENT_PRODUCT_FILES) $(current_mk)))
 endef
 
 
