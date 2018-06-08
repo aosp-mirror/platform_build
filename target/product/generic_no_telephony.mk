@@ -38,7 +38,6 @@ PRODUCT_PACKAGES := \
 PRODUCT_PACKAGES += \
     clatd \
     clatd.conf \
-    pppd \
     screenrecord
 
 PRODUCT_PACKAGES += \
