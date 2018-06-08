@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "10bfd639_75f22d8a",
+        "filename": "core/android_manifest.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-06-08T00:08:20Z",
+      "side": 1,
+      "message": "So, do you expect me to add a new option here to add \u003cuses-library\u003e tags? That works for me.\n\nBTW, is soong running the fixer as well? I can\u0027t find it.",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 67
+      },
+      "revId": "45047d67467c2aeb9313c8287bd5e3ecd56cc617",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
