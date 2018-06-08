@@ -1835,14 +1835,15 @@ endef
 ###########################################################
 
 ifneq ($(TARGET_BUILD_VARIANT),user)
-  TARGET_STRIP_EXTRA = && $(PRIVATE_OBJCOPY) --add-gnu-debuglink=$< $@
+  TARGET_STRIP_EXTRA = && $(PRIVATE_OBJCOPY_ADD_SECTION) --add-gnu-debuglink=$< $@
   TARGET_STRIP_KEEP_SYMBOLS_EXTRA = --add-gnu-debuglink=$<
 endif
 
 define transform-to-stripped
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Strip: $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
-$(hide) $(PRIVATE_STRIP) --strip-all $< -o $@ \
+$(hide) $(PRIVATE_STRIP) $(PRIVATE_STRIP_ALL_FLAGS) $< \
+  $(PRIVATE_STRIP_O_FLAG) $@ \
   $(if $(PRIVATE_NO_DEBUGLINK),,$(TARGET_STRIP_EXTRA))
 endef
 
@@ -1850,7 +1851,9 @@ define transform-to-stripped-keep-mini-debug-info
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Strip (mini debug info): $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
 $(hide) rm -f $@ $@.dynsyms $@.funcsyms $@.keep_symbols $@.debug $@.mini_debuginfo.xz
-if $(PRIVATE_STRIP) --strip-all -R .comment $< -o $@; then \
+if $(PRIVATE_STRIP) $(PRIVATE_STRIP_ALL_FLAGS) \
+  --remove-section .comment $< \
+  $(PRIVATE_STRIP_O_FLAG) $@; then  \
   $(PRIVATE_OBJCOPY) --only-keep-debug $< $@.debug && \
   $(PRIVATE_NM) -D $< --format=posix --defined-only | awk '{ print $$1 }' | sort >$@.dynsyms && \
   $(PRIVATE_NM) $< --format=posix --defined-only | awk '{ if ($$2 == "T" || $$2 == "t" || $$2 == "D") print $$1 }' | sort >$@.funcsyms && \
@@ -1861,7 +1864,7 @@ if $(PRIVATE_STRIP) --strip-all -R .comment $< -o $@; then \
   $(PRIVATE_OBJCOPY) --rename-section saved_debug_frame=.debug_frame $@.mini_debuginfo && \
   rm -f $@.mini_debuginfo.xz && \
   $(XZ) $@.mini_debuginfo && \
-  $(PRIVATE_OBJCOPY) --add-section .gnu_debugdata=$@.mini_debuginfo.xz $@; \
+  $(PRIVATE_OBJCOPY_ADD_SECTION) --add-section .gnu_debugdata=$@.mini_debuginfo.xz $@; \
 else \
   cp -f $< $@; \
 fi
@@ -1870,8 +1873,8 @@ endef
 define transform-to-stripped-keep-symbols
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Strip (keep symbols): $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
-$(hide) $(PRIVATE_OBJCOPY) \
-    `$(PRIVATE_READELF) -S $< | awk '/.debug_/ {print "-R " $$2}' | xargs` \
+$(hide) $(PRIVATE_OBJCOPY_ADD_SECTION) \
+    `$(PRIVATE_READELF) -S $< | awk '/.debug_/ {print "--remove-section " $$2}' | xargs` \
     $(TARGET_STRIP_KEEP_SYMBOLS_EXTRA) $< $@
 endef
 
@@ -2374,46 +2377,8 @@ define codename-or-sdk-to-sdk
 $(if $(filter $(1),$(PLATFORM_VERSION_CODENAME)),10000,$(1))
 endef
 
-# --add-opens is required because desugar reflects via java.lang.invoke.MethodHandles.Lookup
-define desugar-classes-jar
-@echo Desugar: $@
-@mkdir -p $(dir $@)
-$(hide) rm -f $@ $@.tmp
-@rm -rf $(dir $@)/desugar_dumped_classes
-@mkdir $(dir $@)/desugar_dumped_classes
-$(hide) $(JAVA) \
-    $(if $(USE_OPENJDK9),--add-opens java.base/java.lang.invoke=ALL-UNNAMED,) \
-    -Djdk.internal.lambda.dumpProxyClasses=$(abspath $(dir $@))/desugar_dumped_classes \
-    -jar $(DESUGAR) \
-    $(addprefix --bootclasspath_entry ,$(PRIVATE_BOOTCLASSPATH)) \
-    $(addprefix --classpath_entry ,$(PRIVATE_SHARED_JAVA_HEADER_LIBRARIES)) \
-    --min_sdk_version $(call codename-or-sdk-to-sdk,$(PRIVATE_MIN_SDK_VERSION)) \
-    --allow_empty_bootclasspath \
-    $(if $(filter --core-library,$(PRIVATE_DX_FLAGS)),--core_library) \
-    -i $< -o $@.tmp
-    mv $@.tmp $@
-endef
-
 
 define transform-classes.jar-to-dex
-@echo "target Dex: $(PRIVATE_MODULE)"
-@mkdir -p $(dir $@)
-$(hide) rm -f $(dir $@)classes*.dex
-$(hide) $(DX_COMMAND) \
-    --dex --output=$(dir $@) \
-    --min-sdk-version=$(PRIVATE_MIN_SDK_VERSION) \
-    $(if $(NO_OPTIMIZE_DX), \
-        --no-optimize) \
-    $(if $(GENERATE_DEX_DEBUG), \
-	    --debug --verbose \
-	    --dump-to=$(@:.dex=.lst) \
-	    --dump-width=1000) \
-    $(PRIVATE_DX_FLAGS) \
-    $<
-endef
-
-
-define transform-classes-d8.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
 @mkdir -p $(dir $@)
 $(hide) rm -f $(dir $@)classes*.dex $(dir $@)d8_input.jar
@@ -2682,18 +2647,6 @@ $(2): $(1) $(XMLLINT)
 	@echo "Copy xml: $$@"
 	$(hide) $(XMLLINT) $$< >/dev/null  # Don't print the xml file to stdout.
 	$$(copy-file-to-target)
-endef
-
-# Copies many xml files and check they are well-formed.
-# $(1): The xml files to copy.  Each entry is a ':' separated src:dst pair.
-# Evaluates to the list of the dst files. (ie suitable for a dependency list.)
-define copy-many-xml-files-checked
-$(foreach f, $(1), $(strip \
-    $(eval _cmf_tuple := $(subst :, ,$(f))) \
-    $(eval _cmf_src := $(word 1,$(_cmf_tuple))) \
-    $(eval _cmf_dest := $(word 2,$(_cmf_tuple))) \
-    $(eval $(call copy-xml-file-checked,$(_cmf_src),$(_cmf_dest))) \
-    $(_cmf_dest)))
 endef
 
 # Copy the file only if it is a well-formed manifest file. For use viea $(eval)
@@ -3139,20 +3092,15 @@ endef
 
 # For each suite:
 # 1. Copy the files to the many suite output directories.
-#    And for test config files, we'll check the .xml is well-formed before copy.
 # 2. Add all the files to each suite's dependent files list.
 # 3. Do the dependency addition to my_all_targets
-# Requires for each suite: use my_compat_dist_config_$(suite) to define the test config.
-#    and use my_compat_dist_$(suite) to define the others.
+# Requires for each suite: my_compat_dist_$(suite) to be defined.
 define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval COMPATIBILITY.$(suite).FILES := \
-    $$(COMPATIBILITY.$(suite).FILES) $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
-      $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f))))) \
+    $$(COMPATIBILITY.$(suite).FILES) $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))))) \
 $(eval $(my_all_targets) : $(call copy-many-files, \
-  $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE),$(my_compat_dist_$(suite))))) \
-  $(call copy-many-xml-files-checked, \
-    $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE),$(my_compat_dist_config_$(suite))))))
+  $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE),$(my_compat_dist_$(suite))))))
 endef
 
 ###########################################################
