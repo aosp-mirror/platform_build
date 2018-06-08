@@ -1,0 +1,3 @@
+# Allow rild to read these properties, they only have an SELinux label in the
+# emulator.
+get_prop(rild, net_eth0_prop);

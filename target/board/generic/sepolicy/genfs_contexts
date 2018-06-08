@@ -15,3 +15,6 @@ genfscon sysfs /devices/platform/GFSH0007:00/rtc u:object_r:sysfs_rtc:s0
 genfscon sysfs /devices/pci0000:00/0000:00:08.0/virtio5/net u:object_r:sysfs_net:s0
 genfscon sysfs /devices/virtual/mac80211_hwsim/hwsim0/net u:object_r:sysfs_net:s0
 genfscon sysfs /devices/virtual/mac80211_hwsim/hwsim1/net u:object_r:sysfs_net:s0
+
+# /proc/<pid>/ns
+genfscon nsfs / u:object_r:nsfs:s0
