@@ -23,78 +23,32 @@ PRODUCT_DEVICE := generic
 PRODUCT_NAME := core
 
 PRODUCT_PACKAGES += \
-    BackupRestoreConfirmation \
-    CompanionDeviceManager \
-    CtsShimPrebuilt \
-    CtsShimPrivPrebuilt \
-    DownloadProvider \
-    ExtShared \
-    ExtServices \
-    HTMLViewer \
-    MediaProvider \
-    PackageInstaller \
-    SecureElement \
-    SettingsProvider \
-    Shell \
-    StatementService \
-    WallpaperBackup \
-    android.hidl.base-V1.0-java \
-    android.hidl.manager-V1.0-java \
-    bcc \
-    bu \
     com.android.future.usb.accessory \
-    com.android.location.provider \
-    com.android.location.provider.xml \
+    com.android.mediadrm.signer \
     com.android.media.remotedisplay \
     com.android.media.remotedisplay.xml \
-    com.android.mediadrm.signer \
+    CompanionDeviceManager \
+    DownloadProvider \
     drmserver \
     ethernet-service \
-    framework-res \
+    HTMLViewer \
     idmap \
-    installd \
-    ims-common \
-    ip \
-    ip-up-vpn \
-    ip6tables \
-    iptables \
-    gatekeeperd \
-    keystore \
-    ld.config.txt \
-    ld.mc \
-    libaaudio \
-    libamidi \
-    libOpenMAXAL \
-    libOpenSLES \
     libdownmix \
     libdrmframework \
     libdrmframework_jni \
     libfilterfw \
-    libkeystore \
     libgatekeeper \
+    libkeystore \
     libneuralnetworks \
     libwebviewchromium_loader \
     libwebviewchromium_plat_support \
-    libwilhelm \
-    logd \
-    mke2fs \
-    e2fsck \
-    resize2fs \
-    tune2fs \
-    screencap \
-    sensorservice \
-    telephony-common \
-    uiautomator \
-    uncrypt \
+    MediaProvider \
+    PackageInstaller \
+    StatementService \
     vndk_snapshot_package \
-    voip-common \
     webview \
     webview_zygote \
 
-# Wifi modules
-PRODUCT_PACKAGES += \
-    wifi-service \
-    wificond \
 
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.webview.xml:system/etc/permissions/android.software.webview.xml
@@ -104,56 +58,17 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.preview_sdk.xml:system/etc/permissions/android.software.preview_sdk.xml
 endif
 
-ifeq ($(TARGET_CORE_JARS),)
-$(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
-endif
-
-# The order of PRODUCT_BOOT_JARS matters.
-PRODUCT_BOOT_JARS := \
-    $(TARGET_CORE_JARS) \
-    ext \
-    framework \
-    telephony-common \
-    voip-common \
-    ims-common \
-    android.hidl.base-V1.0-java \
-    android.hidl.manager-V1.0-java
-
-ifeq ($(REMOVE_OAHL_FROM_BCP),true)
-PRODUCT_BOOT_JARS += framework-oahl-backward-compatibility
-else
-PRODUCT_BOOT_JARS += org.apache.http.legacy.impl
-endif
-
-ifeq ($(REMOVE_ATB_FROM_BCP),true)
-PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
-else
-PRODUCT_BOOT_JARS += android.test.base
-endif
-
-# The order of PRODUCT_SYSTEM_SERVER_JARS matters.
+# The order here is the same order they end up on the classpath, so it matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service \
     wifi-service \
     com.android.location.provider \
 
-# The set of packages whose code can be loaded by the system server.
-PRODUCT_SYSTEM_SERVER_APPS += \
-    SettingsProvider \
-    WallpaperBackup
-
 # Adoptable external storage supports both ext4 and f2fs
 PRODUCT_PACKAGES += \
-    e2fsck \
-    mke2fs \
     fsck.f2fs \
     make_f2fs \
-
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    ro.zygote=zygote32
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
@@ -176,7 +91,6 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.logd.size.stats=64K \
     log.tag.stats_log=I
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 
 # Enable CFI for security-sensitive components
