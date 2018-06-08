@@ -15,7 +15,7 @@
 #
 
 PRODUCT_PROPERTY_OVERRIDES += \
-	rild.libpath=/vendor/lib64/libreference-ril.so
+	vendor.rild.libpath=/vendor/lib64/libreference-ril.so
 
 # This is a build configuration for a full-featured build of the
 # Open-Source part of the tree. It's geared toward a US-centric
@@ -38,11 +38,18 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc
 
+# TODO(b/78308559): includes vr_hwc into GSI before vr_hwc move to vendor
+PRODUCT_PACKAGES += \
+    vr_hwc
+
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_arm64/device.mk)
 
-include $(SRC_TARGET_DIR)/product/emulator.mk
+# Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
+PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
+
 PRODUCT_NAME := aosp_arm64
 PRODUCT_DEVICE := generic_arm64
 PRODUCT_BRAND := Android

@@ -23,6 +23,7 @@ PRODUCT_PACKAGES += \
     appops \
     am \
     android.policy \
+    android.test.base \
     android.test.mock \
     android.test.runner \
     app_process \
@@ -45,6 +46,7 @@ PRODUCT_PACKAGES += \
     ime \
     incidentd \
     incident \
+    incident_helper \
     incident_report \
     input \
     javax.obex \
@@ -60,6 +62,7 @@ PRODUCT_PACKAGES += \
     libcameraservice \
     libcamera2ndk \
     libdrmclearkeyplugin \
+    libdynproc \
     libclearkeycasplugin \
     libeffectproxy \
     libeffects \
@@ -129,6 +132,7 @@ PRODUCT_PACKAGES += \
     settings \
     sgdisk \
     sm \
+    statsd \
     svc \
     tc \
     telecom \
@@ -137,6 +141,18 @@ PRODUCT_PACKAGES += \
     vdc \
     vold \
     wm
+
+# Add the compatibility library that is needed when org.apache.http.legacy
+# is removed from the bootclasspath.
+ifeq ($(REMOVE_OAHL_FROM_BCP),true)
+PRODUCT_PACKAGES += framework-oahl-backward-compatibility
+endif
+
+# Add the compatibility library that is needed when android.test.base
+# is removed from the bootclasspath.
+ifeq ($(REMOVE_ATB_FROM_BCP),true)
+PRODUCT_PACKAGES += framework-atb-backward-compatibility
+endif
 
 # Essential HAL modules
 PRODUCT_PACKAGES += \

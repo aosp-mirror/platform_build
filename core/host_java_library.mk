@@ -113,9 +113,9 @@ full_classes_jarjar_jar := $(full_classes_combined_jar)
 endif
 
 
+#######################################
 LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_jarjar_jar)
 
-#######################################
 include $(BUILD_SYSTEM)/jacoco.mk
 #######################################
 

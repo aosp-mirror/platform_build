@@ -351,6 +351,7 @@ endif
 			PLATFORM_PREVIEW_SDK_VERSION="$(PLATFORM_PREVIEW_SDK_VERSION)" \
 			PLATFORM_VERSION_CODENAME="$(PLATFORM_VERSION_CODENAME)" \
 			PLATFORM_VERSION_ALL_CODENAMES="$(PLATFORM_VERSION_ALL_CODENAMES)" \
+			PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION="$(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION)" \
 			BUILD_VERSION_TAGS="$(BUILD_VERSION_TAGS)" \
 			BUILD_FINGERPRINT="$(BUILD_FINGERPRINT_FROM_FILE)" \
 			$(if $(OEM_THUMBPRINT_PROPERTIES),BUILD_THUMBPRINT="$(BUILD_THUMBPRINT_FROM_FILE)") \
@@ -416,6 +417,7 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(VENDOR_BUILDINFO_SH) $(intermediate_sys
 	$(hide) echo ro.vendor.build.date=`$(DATE_FROM_FILE)`>>$@
 	$(hide) echo ro.vendor.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
 	$(hide) echo ro.vendor.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
+	$(hide) echo ro.vendor.build.security_patch="$(VENDOR_SECURITY_PATCH)">>$@
 	$(hide) echo ro.vendor.product.cpu.abilist="$(TARGET_CPU_ABI_LIST)">>$@
 	$(hide) echo ro.vendor.product.cpu.abilist32="$(TARGET_CPU_ABI_LIST_32_BIT)">>$@
 	$(hide) echo ro.vendor.product.cpu.abilist64="$(TARGET_CPU_ABI_LIST_64_BIT)">>$@

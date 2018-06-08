@@ -42,7 +42,7 @@ PRODUCT_PACKAGES += \
     KeyChain \
     Keyguard \
     LatinIME \
-    Launcher2 \
+    Launcher3QuickStep \
     ManagedProvisioning \
     MtpDocumentsProvider \
     PacProcessor \
@@ -50,8 +50,11 @@ PRODUCT_PACKAGES += \
     PrintRecommendationService \
     ProxyHandler \
     QuickSearchBox \
+    SecureElement \
     Settings \
+    SettingsIntelligence \
     SharedStorageBackup \
+    SimAppDialog \
     StorageManager \
     Telecom \
     TeleService \

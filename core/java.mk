@@ -362,9 +362,9 @@ endif
 
 $(eval $(call copy-one-file,$(full_classes_jarjar_jar),$(full_classes_jar)))
 
+#######################################
 LOCAL_FULL_CLASSES_PRE_JACOCO_JAR := $(full_classes_jar)
 
-#######################################
 include $(BUILD_SYSTEM)/jacoco.mk
 #######################################
 
@@ -408,7 +408,12 @@ else
 endif
 endif
 
-legacy_proguard_flags := $(addprefix -libraryjars ,$(my_proguard_sdk_raise) \
+ifeq ($(USE_R8),true)
+proguard_jars_prefix := -libraryjars
+else
+proguard_jars_prefix := -systemjars
+endif
+legacy_proguard_flags := $(addprefix $(proguard_jars_prefix) ,$(my_proguard_sdk_raise) \
   $(filter-out $(my_proguard_sdk_raise), \
     $(full_java_bootclasspath_libs) \
     $(full_shared_java_header_libs)))
@@ -485,19 +490,6 @@ else
 extra_input_jar :=
 endif
 
-# If building against the current SDK version then filter out the junit,
-# android.test and c.a.i.u.Predicate classes that are to be removed from
-# the Android API as part of b/30188076 but which are still present in
-# the Android API. This is to allow changes to be made to the build to
-# statically include those classes into the application without
-# simultaneously removing those classes from the API.
-proguard_injar_filters :=
-ifdef LOCAL_SDK_VERSION
-ifeq (,$(filter-out current system_current test_current, $(LOCAL_SDK_VERSION)))
-proguard_injar_filters := (!junit/framework/**,!junit/runner/**,!junit/textui/**,!android/test/**,!com/android/internal/util/*)
-endif
-endif
-
 ifneq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
 ifneq ($(LOCAL_USE_R8),true)
   $(full_classes_proguard_jar): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary) $(proguard_configuration)
@@ -510,7 +502,6 @@ endif
 ifneq ($(LOCAL_USE_R8),true)
 # Changes to these dependencies need to be replicated below when using R8
 # instead of Proguard + dx.
-$(full_classes_proguard_jar): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
 $(full_classes_proguard_jar): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(full_classes_proguard_jar): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
 $(full_classes_proguard_jar) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) | $(PROGUARD)
@@ -535,7 +526,6 @@ ifeq ($(LOCAL_USE_R8),true)
 # Proguard + dx. They are used for the generated dex when using R8, as
 # R8 does Proguard + dx
 my_r8 := true
-$(built_dex_intermediate): PRIVATE_PROGUARD_INJAR_FILTERS := $(proguard_injar_filters)
 $(built_dex_intermediate): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
 $(built_dex_intermediate): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
 $(built_dex_intermediate) : $(full_classes_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD)

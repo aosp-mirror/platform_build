@@ -2824,15 +2824,13 @@ endef
 ###########################################################
 ifdef TARGET_OPENJDK9
 define transform-jar-to-proguard
-@echo Skipping Proguard: $<$(PRIVATE_PROGUARD_INJAR_FILTERS) $@
+@echo Skipping Proguard: $< $@
 $(hide) cp '$<' $@
 endef
 else
 define transform-jar-to-proguard
 @echo Proguard: $@
-$(hide) $(PROGUARD) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
-    -outjars $@ \
-    $(PRIVATE_PROGUARD_FLAGS) \
+$(hide) $(PROGUARD) -injars $< -outjars $@ $(PRIVATE_PROGUARD_FLAGS) \
     $(addprefix -injars , $(PRIVATE_EXTRA_INPUT_JAR))
 endef
 endif
@@ -2843,7 +2841,7 @@ endif
 ###########################################################
 define transform-jar-to-dex-r8
 @echo R8: $@
-$(hide) $(R8_COMPAT_PROGUARD) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
+$(hide) $(R8_COMPAT_PROGUARD) -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --force-proguard-compatibility --output $(subst classes.dex,,$@) \
     $(PRIVATE_PROGUARD_FLAGS) \

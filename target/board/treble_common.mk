@@ -29,12 +29,18 @@ TARGET_NO_BOOTLOADER := true
 TARGET_NO_KERNEL := true
 
 # system.img is always ext4 with sparse option
+# GSI also includes make_f2fs to support userdata parition in f2fs
+# for some devices
 TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
 TARGET_USES_MKE2FS := true
 
 # Generic AOSP image always requires separate vendor.img
 TARGET_COPY_OUT_VENDOR := vendor
+
+# Android generic system image always create metadata partition
+BOARD_USES_METADATA_PARTITION := true
 
 # Generic AOSP image does NOT support HWC1
 TARGET_USES_HWC2 := true
@@ -43,11 +49,6 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # Audio
 USE_XML_AUDIO_POLICY_CONF := 1
-
-# b/64700195: add minimum support for odm.img
-# Currently odm.img can only be built by `make custom_images`.
-# Adding /odm mount point under root directory.
-BOARD_ROOT_EXTRA_FOLDERS += odm
 
 # Android Verified Boot (AVB):
 #   Builds a special vbmeta.img that disables AVB verification.

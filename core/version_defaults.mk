@@ -82,12 +82,10 @@ MAX_PLATFORM_VERSION :=
 # please add that PLATFORM_VERSION as well as clean up obsolete PLATFORM_VERSION's
 # in the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
-PLATFORM_VERSION.PPR1 := P
 PLATFORM_VERSION.QPR1 := Q
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.PPR1 := P
 PLATFORM_VERSION_CODENAME.QPR1 := Q
 
 ifndef PLATFORM_VERSION
@@ -116,7 +114,7 @@ ifndef PLATFORM_SDK_VERSION
   # When you increment the PLATFORM_SDK_VERSION please ensure you also
   # clear out the following text file of all older PLATFORM_VERSION's:
   # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 27
+  PLATFORM_SDK_VERSION := 28
 endif
 .KATI_READONLY := PLATFORM_SDK_VERSION
 
@@ -225,10 +223,7 @@ ifndef PLATFORM_SYSTEMSDK_MIN_VERSION
   # to the public SDK where platform essentially supports all previous SDK versions,
   # platform supports only a few number of recent system SDK versions as some of
   # old system APIs are gradually deprecated, removed and then deleted.
-  # However, currently in P, we only support the single latest version since there
-  # is no old system SDK versions. Therefore, this is set to empty for now. This
-  # should later (in post P) be set to a number, like 28.
-  PLATFORM_SYSTEMSDK_MIN_VERSION :=
+  PLATFORM_SYSTEMSDK_MIN_VERSION := 28
 endif
 .KATI_READONLY := PLATFORM_SYSTEMSDK_MIN_VERSION
 
@@ -254,7 +249,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-      PLATFORM_SECURITY_PATCH := 2017-12-01
+      PLATFORM_SECURITY_PATCH := 2018-08-05
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH
 
@@ -320,3 +315,11 @@ ifndef BUILD_NUMBER
   HAS_BUILD_NUMBER := false
 endif
 .KATI_READONLY := BUILD_NUMBER HAS_BUILD_NUMBER
+
+ifndef PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION
+  # Used to set minimum supported target sdk version. Apps targeting sdk
+  # version lower than the set value will fail to install and run on android
+  # device.
+  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 17
+endif
+.KATI_READONLY := PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION

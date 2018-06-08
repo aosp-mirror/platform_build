@@ -94,6 +94,10 @@ $(shell mkdir -p $(EMPTY_DIRECTORY) && rm -rf $(EMPTY_DIRECTORY)/*)
 -include tools/tradefederation/build/suites/device-tests/config.mk
 # general-tests-specific-config.
 -include tools/tradefederation/build/suites/general-tests/config.mk
+# STS-specific config.
+-include test/sts/tools/sts-tradefed/build/config.mk
+# CTS-Instant-specific config
+-include test/suite_harness/tools/cts-instant-tradefed/build/config.mk
 
 # Clean rules
 .PHONY: clean-dex-files

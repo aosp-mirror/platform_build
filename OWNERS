@@ -1,3 +1,11 @@
 ccross@android.com
 dwillemsen@google.com
 nanzhang@google.com
+
+per-file * = ccross@android.com
+per-file * = dwillemsen@google.com
+per-file * = nanzhang@google.com
+
+# for version updates
+per-file version_defaults.mk = aseaton@google.com
+per-file version_defaults.mk = elisapascual@google.com

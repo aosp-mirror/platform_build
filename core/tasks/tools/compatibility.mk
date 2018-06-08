@@ -21,6 +21,8 @@
 #   test_suite_readme: the path to a README file for this test suite
 #   test_suite_prebuilt_tools: the set of prebuilt tools to be included directly
 #                         in the 'tools' subdirectory of the test suite.
+#   test_suite_tools: the set of tools for this test suite
+#
 # Output variables:
 #   compatibility_zip: the path to the output zip file.
 
@@ -38,6 +40,8 @@ test_tools := $(HOST_OUT_JAVA_LIBRARIES)/hosttestlib.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/$(test_suite_tradefed)-tests.jar \
   $(HOST_OUT_EXECUTABLES)/$(test_suite_tradefed) \
   $(test_suite_readme)
+
+test_tools += $(test_suite_tools)
 
 compatibility_zip := $(out_dir).zip
 $(compatibility_zip): PRIVATE_NAME := android-$(test_suite_name)
@@ -60,3 +64,4 @@ test_suite_tradefed :=
 test_suite_dynamic_config :=
 test_suite_readme :=
 test_suite_prebuilt_tools :=
+test_suite_tools :=

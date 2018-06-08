@@ -20,7 +20,10 @@
 PRODUCT_PROPERTY_OVERRIDES += \
      ro.config.low_ram=true \
      ro.lmk.critical_upgrade=true \
-     ro.lmk.upgrade_pressure=40
+     ro.lmk.upgrade_pressure=40 \
+     ro.lmk.downgrade_pressure=60 \
+     ro.lmk.kill_heaviest_task=false \
+     ro.statsd.enable=false
 
 # set threshold to filter unused apps
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -55,3 +58,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += dalvik.vm.heapgrowthlimit=128m
 PRODUCT_PROPERTY_OVERRIDES += dalvik.vm.heapsize=256m
 
+# Do not generate libartd.
+PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
+
+# Strip the local variable table and the local variable type table to reduce
+# the size of the system image. This has no bearing on stack traces, but will
+# leave less information available via JDWP.
+PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := true

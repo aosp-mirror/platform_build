@@ -14,25 +14,11 @@
 # limitations under the License.
 #
 
-PRODUCT_PROPERTY_OVERRIDES += \
-	rild.libpath=/vendor/lib/libreference-ril.so
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_x86.mk)
 
-# This is a build configuration for a full-featured build of the
-# Open-Source part of the tree. It's geared toward a US-centric
-# build quite specifically for the emulator, and might not be
-# entirely appropriate to inherit from for on-device configurations.
-PRODUCT_COPY_FILES += \
-    development/sys-img/advancedFeatures.ini:advancedFeatures.ini \
-    device/generic/goldfish/data/etc/encryptionkey.img:encryptionkey.img \
-    prebuilts/qemu-kernel/x86_64/4.4/kernel-qemu2:kernel-ranchu-64
-
-$(call inherit-product, $(SRC_TARGET_DIR)/product/sdk_base.mk)
-
-# AOSP emulator images build the AOSP messaging app.
-# Google API images override with the Google API app.
-# See vendor/google/products/sdk_google_phone_*.mk
-PRODUCT_PACKAGES += \
-    messaging
+# Define the host tools and libs that are parts of the SDK.
+-include sdk/build/product_sdk.mk
+-include development/build/product_sdk.mk
 
 # Overrides
 PRODUCT_BRAND := Android

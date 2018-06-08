@@ -33,6 +33,7 @@ PRODUCT_PACKAGES += \
     HTMLViewer \
     MediaProvider \
     PackageInstaller \
+    SecureElement \
     SettingsProvider \
     Shell \
     StatementService \
@@ -109,15 +110,25 @@ endif
 # The order of PRODUCT_BOOT_JARS matters.
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    legacy-test \
     ext \
     framework \
     telephony-common \
     voip-common \
     ims-common \
-    org.apache.http.legacy.impl \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java
+
+ifeq ($(REMOVE_OAHL_FROM_BCP),true)
+PRODUCT_BOOT_JARS += framework-oahl-backward-compatibility
+else
+PRODUCT_BOOT_JARS += org.apache.http.legacy.impl
+endif
+
+ifeq ($(REMOVE_ATB_FROM_BCP),true)
+PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
+else
+PRODUCT_BOOT_JARS += android.test.base
+endif
 
 # The order of PRODUCT_SYSTEM_SERVER_JARS matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
@@ -166,3 +177,7 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
+
+# Enable CFI for security-sensitive components
+$(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
+$(call inherit-product-if-exists, vendor/google/products/cfi-vendor.mk)
