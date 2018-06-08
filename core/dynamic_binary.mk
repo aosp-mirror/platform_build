@@ -117,7 +117,25 @@ ifneq ($(filter mips mips64,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
 endif
 endif
 
-$(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
+ifeq ($(my_use_clang_lld),true)
+  # b/80093681: GNU strip and objcopy --{add,remove}-section have bug in handling
+  # GNU_RELRO segment of files lnked by clang lld; so they are replaced
+  # by llvm-strip and llvm-objcopy here.
+  $(strip_output): PRIVATE_OBJCOPY_ADD_SECTION := $(LLVM_OBJCOPY)
+  $(strip_output): PRIVATE_STRIP := $(LLVM_STRIP)
+  $(strip_output): PRIVATE_STRIP_O_FLAG :=
+  # GNU strip keeps .ARM.attributes section even with -strip-all,
+  # so here pass -keep=.ARM.attributes to llvm-strip.
+  $(strip_output): PRIVATE_STRIP_ALL_FLAGS := -strip-all -keep=.ARM.attributes
+else
+  $(strip_output): PRIVATE_OBJCOPY_ADD_SECTION := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY)
+  $(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
+  $(strip_output): PRIVATE_STRIP_O_FLAG := -o
+  $(strip_output): PRIVATE_STRIP_ALL_FLAGS := --strip-all
+endif
+# PRIVATE_OBJCOPY is not changed to llvm-objcopy yet.
+# It is used even when my_use_clang_lld is true,
+# because some objcopy flags are not supported by llvm-objcopy yet.
 $(strip_output): PRIVATE_OBJCOPY := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY)
 $(strip_output): PRIVATE_NM := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NM)
 $(strip_output): PRIVATE_READELF := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_READELF)

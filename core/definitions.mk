@@ -1835,14 +1835,15 @@ endef
 ###########################################################
 
 ifneq ($(TARGET_BUILD_VARIANT),user)
-  TARGET_STRIP_EXTRA = && $(PRIVATE_OBJCOPY) --add-gnu-debuglink=$< $@
+  TARGET_STRIP_EXTRA = && $(PRIVATE_OBJCOPY_ADD_SECTION) --add-gnu-debuglink=$< $@
   TARGET_STRIP_KEEP_SYMBOLS_EXTRA = --add-gnu-debuglink=$<
 endif
 
 define transform-to-stripped
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Strip: $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
-$(hide) $(PRIVATE_STRIP) --strip-all $< -o $@ \
+$(hide) $(PRIVATE_STRIP) $(PRIVATE_STRIP_ALL_FLAGS) $< \
+  $(PRIVATE_STRIP_O_FLAG) $@ \
   $(if $(PRIVATE_NO_DEBUGLINK),,$(TARGET_STRIP_EXTRA))
 endef
 
@@ -1850,7 +1851,9 @@ define transform-to-stripped-keep-mini-debug-info
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Strip (mini debug info): $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
 $(hide) rm -f $@ $@.dynsyms $@.funcsyms $@.keep_symbols $@.debug $@.mini_debuginfo.xz
-if $(PRIVATE_STRIP) --strip-all -R .comment $< -o $@; then \
+if $(PRIVATE_STRIP) $(PRIVATE_STRIP_ALL_FLAGS) \
+  --remove-section .comment $< \
+  $(PRIVATE_STRIP_O_FLAG) $@; then  \
   $(PRIVATE_OBJCOPY) --only-keep-debug $< $@.debug && \
   $(PRIVATE_NM) -D $< --format=posix --defined-only | awk '{ print $$1 }' | sort >$@.dynsyms && \
   $(PRIVATE_NM) $< --format=posix --defined-only | awk '{ if ($$2 == "T" || $$2 == "t" || $$2 == "D") print $$1 }' | sort >$@.funcsyms && \
@@ -1861,7 +1864,7 @@ if $(PRIVATE_STRIP) --strip-all -R .comment $< -o $@; then \
   $(PRIVATE_OBJCOPY) --rename-section saved_debug_frame=.debug_frame $@.mini_debuginfo && \
   rm -f $@.mini_debuginfo.xz && \
   $(XZ) $@.mini_debuginfo && \
-  $(PRIVATE_OBJCOPY) --add-section .gnu_debugdata=$@.mini_debuginfo.xz $@; \
+  $(PRIVATE_OBJCOPY_ADD_SECTION) --add-section .gnu_debugdata=$@.mini_debuginfo.xz $@; \
 else \
   cp -f $< $@; \
 fi
@@ -1870,8 +1873,8 @@ endef
 define transform-to-stripped-keep-symbols
 @echo "$($(PRIVATE_PREFIX)DISPLAY) Strip (keep symbols): $(PRIVATE_MODULE) ($@)"
 @mkdir -p $(dir $@)
-$(hide) $(PRIVATE_OBJCOPY) \
-    `$(PRIVATE_READELF) -S $< | awk '/.debug_/ {print "-R " $$2}' | xargs` \
+$(hide) $(PRIVATE_OBJCOPY_ADD_SECTION) \
+    `$(PRIVATE_READELF) -S $< | awk '/.debug_/ {print "--remove-section " $$2}' | xargs` \
     $(TARGET_STRIP_KEEP_SYMBOLS_EXTRA) $< $@
 endef
 
