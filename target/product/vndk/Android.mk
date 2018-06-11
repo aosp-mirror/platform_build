@@ -98,8 +98,15 @@ include $(BUILD_PHONY_PACKAGE)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := vndk_snapshot_package
+_binder32 :=
+ifneq ($(TARGET_USES_64_BIT_BINDER),true)
+ifneq ($(TARGET_IS_64_BIT),true)
+_binder32 := _binder32
+endif
+endif
 LOCAL_REQUIRED_MODULES := \
-    $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),vndk_v$(vndk_ver)_$(TARGET_ARCH))
+    $(foreach vndk_ver,$(PRODUCT_EXTRA_VNDK_VERSIONS),vndk_v$(vndk_ver)_$(TARGET_ARCH)$(_binder32))
+_binder32 :=
 include $(BUILD_PHONY_PACKAGE)
 
 endif # BOARD_VNDK_VERSION is set
