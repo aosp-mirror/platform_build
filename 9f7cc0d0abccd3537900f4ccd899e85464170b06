@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "42020c86_d9e26243",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1014443
+      },
+      "writtenOn": "2018-06-11T14:43:19Z",
+      "side": 1,
+      "message": "You can go ahead and do this, perhaps in a separate change since there\u0027s a non-zero (albeit very low) risk of regression.\n\nRationale: The order only matters if there are duplicate classes between the jars that are different, but that won\u0027t be the case because (a) we\u0027re building them from the same source and (b) we\u0027re not proguarding them.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 0
+      },
+      "revId": "9f7cc0d0abccd3537900f4ccd899e85464170b06",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
