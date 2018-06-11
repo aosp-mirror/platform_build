@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a76f412e_157f00b7",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-11T15:08:54Z",
+      "side": 1,
+      "message": "I wonder if there is a better way to do an equals check (I don\u0027t like this one but don\u0027t know a better way...)",
+      "revId": "57c4db058642414ae27cc4c4b5a0dd4cb57db54a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
