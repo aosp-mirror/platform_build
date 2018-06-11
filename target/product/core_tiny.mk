@@ -17,77 +17,22 @@
 # No telephony
 
 PRODUCT_PACKAGES := \
+    audio.primary.default \
     Bluetooth \
     CalendarProvider \
-    ContactsProvider \
     CertInstaller \
-    FusedLocation \
-    InputDevices
-
-PRODUCT_PACKAGES += \
     clatd \
     clatd.conf \
-    pppd
-
-PRODUCT_PACKAGES += \
-    audio.primary.default \
-    local_time.default \
-    power.default
-
-PRODUCT_PACKAGES += \
-    BackupRestoreConfirmation \
-    CtsShimPrebuilt \
-    CtsShimPrivPrebuilt \
+    ContactsProvider \
     DefaultContainerService \
-    ExtShared \
-    ExtServices \
-    SettingsProvider \
-    Shell \
-    WallpaperBackup \
-    android.hidl.base-V1.0-java \
-    android.hidl.manager-V1.0-java \
-    bcc \
-    bu \
-    com.android.location.provider \
-    com.android.location.provider.xml \
-    framework-res \
-    installd \
-    ims-common \
-    ip \
-    ip-up-vpn \
-    ip6tables \
-    iptables \
-    gatekeeperd \
-    keystore \
-    ld.config.txt \
-    ld.mc \
-    libaaudio \
-    libOpenMAXAL \
-    libOpenSLES \
-    libdownmix \
-    libfilterfw \
-    libgatekeeper \
-    libkeystore \
-    libwilhelm \
-    libdrmframework_jni \
-    libdrmframework \
-    mke2fs \
-    e2fsck \
-    resize2fs \
-    tune2fs \
-    nullwebview \
-    screencap \
-    sensorservice \
-    uiautomator \
-    uncrypt \
-    telephony-common \
-    voip-common \
+    FusedLocation \
+    InputDevices \
+    local_time.default \
     logd \
+    nullwebview \
+    power.default \
+    pppd \
 
-# Wifi modules
-PRODUCT_PACKAGES += \
-    wifi-service \
-    wificond \
 
 ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
@@ -122,15 +67,9 @@ PRODUCT_SYSTEM_SERVER_APPS += \
 # The set of packages we want to force 'speed' compilation on.
 PRODUCT_DEXPREOPT_SPEED_APPS := \
 
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    ro.zygote=zygote32
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
-
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product-if-exists, external/roboto-fonts/fonts.mk)
