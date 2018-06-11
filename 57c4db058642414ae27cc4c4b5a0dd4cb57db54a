@@ -34,6 +34,24 @@
       "revId": "57c4db058642414ae27cc4c4b5a0dd4cb57db54a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5531fa18_8f294599",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-11T18:25:37Z",
+      "side": 1,
+      "message": "You can use https://android.googlesource.com/platform/build/+/87d8dc4d4e3797d5867a4f4eff5f3add6fe7bd07/core/definitions.mk#738, but filter is fine too as long as you\u0027re sure that the variables are empty or a single word, and you don\u0027t care about whitespace.",
+      "parentUuid": "6cb73ade_271d54d7",
+      "revId": "57c4db058642414ae27cc4c4b5a0dd4cb57db54a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
