@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bfe87b4b_f3188115",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-12T16:49:14Z",
+      "side": 1,
+      "message": "I\u0027d suggest renaming this to PRIVATE_DEX_INPUTS to make it clear that it is a rule-local value, since it is set later.",
+      "range": {
+        "startLine": 99,
+        "startChar": 12,
+        "endLine": 99,
+        "endChar": 22
+      },
+      "revId": "8960688876eae583425007ec8627379473cf9cf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c165ec2b_1e5ccf22",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-12T16:49:14Z",
+      "side": 1,
+      "message": "If you don\u0027t expect this list to be long, this might be simpler to expand in make instead of bash with a foreach, although you\u0027d probably have to combine inputs and outputs into a colon separated list to iterate and then split them inside the foreach.",
+      "revId": "8960688876eae583425007ec8627379473cf9cf3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
