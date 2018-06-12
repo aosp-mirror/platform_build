@@ -12,13 +12,9 @@ else
 endif
 
 my_full_libs_manifest_files := $(LOCAL_FULL_LIBS_MANIFEST_FILES)
-my_full_libs_manifest_deps := $(LOCAL_FULL_LIBS_MANIFEST_FILES)
 
-# Set up dependency on aar libraries
 LOCAL_STATIC_JAVA_AAR_LIBRARIES := $(strip $(LOCAL_STATIC_JAVA_AAR_LIBRARIES))
 ifdef LOCAL_STATIC_JAVA_AAR_LIBRARIES
-my_full_libs_manifest_deps += $(foreach lib, $(LOCAL_STATIC_JAVA_AAR_LIBRARIES),\
-  $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/aar/classes.jar)
 my_full_libs_manifest_files += $(foreach lib, $(LOCAL_STATIC_JAVA_AAR_LIBRARIES),\
   $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/aar/AndroidManifest.xml)
 
@@ -30,12 +26,13 @@ endif  # LOCAL_USE_AAPT2
 endif  # LOCAL_STATIC_JAVA_AAR_LIBRARIES
 
 # Set up rules to merge library manifest files
-ifdef my_full_libs_manifest_files
+ifneq (,$(strip $(my_full_libs_manifest_files)))
+
 main_android_manifest := $(full_android_manifest)
 full_android_manifest := $(intermediates.COMMON)/AndroidManifest.xml
 $(full_android_manifest): PRIVATE_LIBS_MANIFESTS := $(my_full_libs_manifest_files)
 $(full_android_manifest): $(ANDROID_MANIFEST_MERGER_CLASSPATH)
-$(full_android_manifest) : $(main_android_manifest) $(my_full_libs_manifest_deps)
+$(full_android_manifest) : $(main_android_manifest) $(my_full_libs_manifest_files)
 	@echo "Merge android manifest files: $@ <-- $< $(PRIVATE_LIBS_MANIFESTS)"
 	@mkdir -p $(dir $@)
 	$(hide) $(ANDROID_MANIFEST_MERGER) --main $< \
