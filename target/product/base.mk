@@ -18,63 +18,97 @@
 PRODUCT_PACKAGES += \
     20-dns.conf \
     95-configured \
-    org.apache.http.legacy \
-    appwidget \
-    appops \
     am \
+    android.hardware.cas@1.0-service \
+    android.hardware.media.omx@1.0-service \
+    android.hidl.base-V1.0-java \
+    android.hidl.manager-V1.0-java \
     android.policy \
     android.test.mock \
     android.test.runner \
-    app_process \
     applypatch \
+    appops \
+    app_process \
+    appwidget \
     audioserver \
+    BackupRestoreConfirmation \
+    bcc \
     bit \
     blkid \
     bmgr \
     bpfloader \
+    bu \
     bugreport \
     bugreportz \
     cameraserver \
+    com.android.location.provider \
+    com.android.location.provider.xml \
     content \
+    CtsShimPrebuilt \
+    CtsShimPrivPrebuilt \
     dnsmasq \
     dpm \
+    e2fsck \
+    ExtServices \
+    ExtShared \
     framework \
+    framework-res \
     framework-sysconfig.xml \
     fsck_msdos \
+    gatekeeperd \
     hid \
     ime \
-    incidentd \
+    ims-common \
     incident \
+    incidentd \
     incident_report \
     input \
+    installd \
+    ip \
+    ip6tables \
+    iptables \
+    ip-up-vpn \
     javax.obex \
+    keystore \
+    ld.config.txt \
+    ld.mc \
+    libaaudio \
     libandroid \
     libandroid_runtime \
     libandroid_servers \
     libaudioeffect_jni \
     libaudioflinger \
-    libaudiopolicyservice \
     libaudiopolicymanager \
+    libaudiopolicyservice \
     libbundlewrapper \
+    libcamera2ndk \
     libcamera_client \
     libcameraservice \
-    libcamera2ndk \
-    libdrmclearkeyplugin \
     libclearkeycasplugin \
+    libdownmix \
+    libdrmclearkeyplugin \
+    libdrmframework \
+    libdrmframework_jni \
     libeffectproxy \
     libeffects \
+    libfilterfw \
+    libgatekeeper \
     libinput \
     libinputflinger \
     libiprouteutil \
     libjnigraphics \
+    libkeystore \
     libldnhncr \
     libmedia \
     libmedia_jni \
+    libmediandk \
     libmediaplayerservice \
     libmtp \
     libnetd_client \
     libnetlink \
     libnetutils \
+    libOpenMAXAL \
+    libOpenSLES \
     libpdfium \
     libradio_metadata \
     libreference-ril \
@@ -99,53 +133,64 @@ PRODUCT_PACKAGES += \
     libusbhost \
     libvisualizer \
     libvorbisidec \
-    libmediandk \
     libvulkan \
     libwifi-service \
+    libwilhelm \
     locksettings \
+    logd \
     media \
     media_cmd \
     mediadrmserver \
-    mediaserver \
-    mediametrics \
     mediaextractor \
+    mediametrics \
+    media_profiles_V1_0.dtd \
+    mediaserver \
+    mke2fs \
     monkey \
     mtpd \
     ndc \
     netd \
+    org.apache.http.legacy \
     perfetto \
     ping \
     ping6 \
     platform.xml \
-    privapp-permissions-platform.xml \
-    pppd \
     pm \
+    pppd \
+    privapp-permissions-platform.xml \
     racoon \
+    resize2fs \
     run-as \
     schedtest \
+    screencap \
     sdcard \
     secdiscard \
+    sensorservice \
     services \
     settings \
+    SettingsProvider \
     sgdisk \
+    Shell \
     sm \
     svc \
     tc \
     telecom \
+    telephony-common \
     traced \
     traced_probes \
+    tune2fs \
+    uiautomator \
+    uncrypt \
     vdc \
+    voip-common \
     vold \
-    wm
+    WallpaperBackup \
+    wificond \
+    wifi-service \
+    wm \
 
-# Essential HAL modules
-PRODUCT_PACKAGES += \
-    android.hardware.cas@1.0-service \
-    android.hardware.media.omx@1.0-service
-
-# XML schema files
-PRODUCT_PACKAGES += \
-    media_profiles_V1_0.dtd
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
+PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
@@ -159,7 +204,7 @@ PRODUCT_PACKAGES_DEBUG := \
 # Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
 PRODUCT_PACKAGES_DEBUG_ASAN :=
 
-PRODUCT_COPY_FILES := $(call add-to-product-copy-files-if-exists,\
+PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
 
 # Note: it is acceptable to not have a dirty-image-objects file. In that case, the special bin
@@ -167,4 +212,10 @@ PRODUCT_COPY_FILES := $(call add-to-product-copy-files-if-exists,\
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
 
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
+    ro.zygote=zygote32
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
+
+$(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/embedded.mk)
