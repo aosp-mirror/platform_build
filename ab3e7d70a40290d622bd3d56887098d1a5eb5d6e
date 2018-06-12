@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "425b3587_4f04db00",
+        "filename": "core/configure_module_stem.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-06-12T19:43:54Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this not be evaluated here?",
+      "range": {
+        "startLine": 4,
+        "startChar": 30,
+        "endLine": 4,
+        "endChar": 46
+      },
+      "revId": "ab3e7d70a40290d622bd3d56887098d1a5eb5d6e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
