@@ -407,7 +407,7 @@ endif
 
 # Extra cflags for projects under external/ directory
 ifeq ($(my_clang),true)
-ifeq ($(filter external/%,$(LOCAL_PATH)),)
+ifneq ($(filter external/%,$(LOCAL_PATH)),)
     my_cflags += $(CLANG_EXTERNAL_CFLAGS)
 endif
 endif
