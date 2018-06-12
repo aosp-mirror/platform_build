@@ -152,6 +152,30 @@
       "revId": "079c5d7eda111c22c9c0f4cbce87cd04218d9a32",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef836e21_b330f813",
+        "filename": "core/product.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-12T17:28:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a5c507ae_ac9cf7c2",
+      "range": {
+        "startLine": 237,
+        "startChar": 7,
+        "endLine": 237,
+        "endChar": 27
+      },
+      "revId": "079c5d7eda111c22c9c0f4cbce87cd04218d9a32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
