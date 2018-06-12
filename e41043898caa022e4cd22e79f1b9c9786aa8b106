@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea35c3d9_e812b38f",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-12T22:32:54Z",
+      "side": 1,
+      "message": "We would normally write this as:\n\n ifneq (,$(filter external/%,$(LOCAL_PATH)),)",
+      "revId": "e41043898caa022e4cd22e79f1b9c9786aa8b106",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
