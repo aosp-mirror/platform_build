@@ -29,7 +29,7 @@ endif  # LOCAL_STATIC_JAVA_AAR_LIBRARIES
 ifneq (,$(strip $(my_full_libs_manifest_files)))
 
 main_android_manifest := $(full_android_manifest)
-full_android_manifest := $(intermediates.COMMON)/AndroidManifest.xml
+full_android_manifest := $(intermediates.COMMON)/manifest/AndroidManifest.xml
 $(full_android_manifest): PRIVATE_LIBS_MANIFESTS := $(my_full_libs_manifest_files)
 $(full_android_manifest): $(ANDROID_MANIFEST_MERGER_CLASSPATH)
 $(full_android_manifest) : $(main_android_manifest) $(my_full_libs_manifest_files)

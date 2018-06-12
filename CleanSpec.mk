@@ -488,6 +488,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Launcher3)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/Launcher3)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Launcher3_intermediates)
 
+# Remove old merged AndroidManifest.xml location
+$(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/*_intermediates/AndroidManifest.xml)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
