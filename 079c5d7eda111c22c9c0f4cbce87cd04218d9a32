@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c3e6aa7d_65bef094",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 938,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-12T17:02:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eaea0443_a124eaa1",
+      "revId": "079c5d7eda111c22c9c0f4cbce87cd04218d9a32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4e0a7a64_9e64eb99",
         "filename": "core/main.mk",
         "patchSetId": 6
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "b843afa8_32696b9e",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-12T17:02:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4e0a7a64_9e64eb99",
+      "range": {
+        "startLine": 948,
+        "startChar": 5,
+        "endLine": 948,
+        "endChar": 9
+      },
+      "revId": "079c5d7eda111c22c9c0f4cbce87cd04218d9a32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6e60e1fc_cd6beb9c",
         "filename": "core/product.mk",
         "patchSetId": 6
@@ -53,6 +95,30 @@
       "writtenOn": "2018-06-12T16:55:38Z",
       "side": 1,
       "message": "How about require-modules-in-partitions?",
+      "range": {
+        "startLine": 237,
+        "startChar": 7,
+        "endLine": 237,
+        "endChar": 27
+      },
+      "revId": "079c5d7eda111c22c9c0f4cbce87cd04218d9a32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b86d606_d3892bb0",
+        "filename": "core/product.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-12T17:02:57Z",
+      "side": 1,
+      "message": "- it doesn\u0027t just apply to modules (it tracks product_copy_files etc too), but maybe that doesn\u0027t really matter\n- it\u0027s not necessarily limited to partitions (although that limitation could be added if we wanted) - you could also add a claim like \"/system/app/\" or something like that\n\nrequire-artifacts-in-path ?\nrequire-files-in-path\nrequire-files-under-path",
+      "parentUuid": "6e60e1fc_cd6beb9c",
       "range": {
         "startLine": 237,
         "startChar": 7,
