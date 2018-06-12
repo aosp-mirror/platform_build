@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "74704332_7715b907",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 969,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-12T17:16:47Z",
+      "side": 1,
+      "message": "Can you time how long this function takes?  Each $(eval) could be causing make to have to build and parse an extremely long string.\nhttps://buganizer.corp.google.com/issues/26275726#comment2 has some tricks for timing makefiles.",
+      "revId": "29d4d532dbb64a5fda3bd3cf57859fff89c54f5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
