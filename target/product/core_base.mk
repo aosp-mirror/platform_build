@@ -21,44 +21,16 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.config.alarm_alert=Alarm_Classic.ogg
 
 PRODUCT_PACKAGES += \
-    ContactsProvider \
-    DefaultContainerService \
     Home \
     TelephonyProvider \
     UserDictionaryProvider \
     libandroidfw \
-    libaudiopreprocessing \
     libaudioutils \
-    libfilterpack_imageproc \
-    libgabi++ \
     libmdnssd \
     libnfc_ndef \
     libpowermanager \
     libspeexresampler \
-    libstagefright_soft_aacdec \
-    libstagefright_soft_aacenc \
-    libstagefright_soft_amrdec \
-    libstagefright_soft_amrnbenc \
-    libstagefright_soft_amrwbenc \
-    libstagefright_soft_avcdec \
-    libstagefright_soft_avcenc \
-    libstagefright_soft_flacdec \
-    libstagefright_soft_flacenc \
-    libstagefright_soft_g711dec \
-    libstagefright_soft_gsmdec \
-    libstagefright_soft_hevcdec \
-    libstagefright_soft_mp3dec \
-    libstagefright_soft_mpeg2dec \
-    libstagefright_soft_mpeg4dec \
-    libstagefright_soft_mpeg4enc \
-    libstagefright_soft_opusdec \
-    libstagefright_soft_rawdec \
-    libstagefright_soft_vorbisdec \
-    libstagefright_soft_vpxdec \
-    libstagefright_soft_vpxenc \
     libvariablespeed \
     libwebrtc_audio_preprocessing \
-    mdnsd \
-    requestsync \
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_minimal.mk)
