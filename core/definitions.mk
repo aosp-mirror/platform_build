@@ -3488,24 +3488,26 @@ upper :=
 ###########################################################
 ## Verify module name meets character requirements:
 ##   a-z A-Z 0-9
-##   _.+-=,@~/
+##   _.+-=,@~
 ##
-## This is equivalent to bazel's target name restrictions:
+## This is a subset of bazel's target name restrictions:
 ##   https://docs.bazel.build/versions/master/build-ref.html#name
 ###########################################################
 define verify-module-name
+$(if $(filter-out $(LOCAL_MODULE),$(subst /,,$(LOCAL_MODULE))), \
+  $(call pretty-warning,Module name contains a /$(comma) use LOCAL_MODULE_STEM and LOCAL_MODULE_RELATIVE_PATH instead)) \
 $(if $(call _invalid-name-chars,$(LOCAL_MODULE)), \
   $(call pretty-error,Invalid characters in module name: $(call _invalid-name-chars,$(LOCAL_MODULE))))
 endef
 define _invalid-name-chars
-$(subst /,,$(subst _,,$(subst .,,$(subst +,,$(subst -,,$(subst =,,$(subst $(comma),,$(subst @,,$(subst ~,,$(subst 0,,$(subst 1,,$(subst 2,,$(subst 3,,$(subst 4,,$(subst 5,,$(subst 6,,$(subst 7,,$(subst 8,,$(subst 9,,$(subst a,,$(subst b,,$(subst c,,$(subst d,,$(subst e,,$(subst f,,$(subst g,,$(subst h,,$(subst i,,$(subst j,,$(subst k,,$(subst l,,$(subst m,,$(subst n,,$(subst o,,$(subst p,,$(subst q,,$(subst r,,$(subst s,,$(subst t,,$(subst u,,$(subst v,,$(subst w,,$(subst x,,$(subst y,,$(subst z,,$(call to-lower,$(1)))))))))))))))))))))))))))))))))))))))))))))))
+$(subst _,,$(subst .,,$(subst +,,$(subst -,,$(subst =,,$(subst $(comma),,$(subst @,,$(subst ~,,$(subst 0,,$(subst 1,,$(subst 2,,$(subst 3,,$(subst 4,,$(subst 5,,$(subst 6,,$(subst 7,,$(subst 8,,$(subst 9,,$(subst a,,$(subst b,,$(subst c,,$(subst d,,$(subst e,,$(subst f,,$(subst g,,$(subst h,,$(subst i,,$(subst j,,$(subst k,,$(subst l,,$(subst m,,$(subst n,,$(subst o,,$(subst p,,$(subst q,,$(subst r,,$(subst s,,$(subst t,,$(subst u,,$(subst v,,$(subst w,,$(subst x,,$(subst y,,$(subst z,,$(call to-lower,$(1))))))))))))))))))))))))))))))))))))))))))))))
 endef
 .KATI_READONLY := verify-module-name _invalid-name-chars
 
 ###########################################################
 ## Verify module stem meets character requirements:
 ##   a-z A-Z 0-9
-##   _.+-=,@~/
+##   _.+-=,@~
 ##
 ## This is a subset of bazel's target name restrictions:
 ##   https://docs.bazel.build/versions/master/build-ref.html#name
@@ -3513,7 +3515,9 @@ endef
 ## $(1): The module stem variable to check
 ###########################################################
 define verify-module-stem
+$(if $(filter-out $($(1)),$(subst /,,$($(1)))), \
+  $(call pretty-warning,Module stem \($(1)\) contains a /$(comma) use LOCAL_MODULE_RELATIVE_PATH instead)) \
 $(if $(call _invalid-name-chars,$($(1))), \
-  $(call pretty-error,Invalid characters in module stem ($(1)): $(call _invalid-name-chars,$($(1)))))
+  $(call pretty-error,Invalid characters in module stem \($(1)\): $(call _invalid-name-chars,$($(1)))))
 endef
 .KATI_READONLY := verify-module-stem
