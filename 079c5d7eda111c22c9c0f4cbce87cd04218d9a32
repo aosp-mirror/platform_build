@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eaea0443_a124eaa1",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 938,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-12T16:55:38Z",
+      "side": 1,
+      "message": "We normally nest these instead of $(eval), which can be surprisingly slow.\n\n$(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),\n  $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\n    $(foreach p,$(1),$(PRODUCT_OUT)/$(p)$(2)))))",
+      "revId": "079c5d7eda111c22c9c0f4cbce87cd04218d9a32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4e0a7a64_9e64eb99",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 948,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-12T16:55:38Z",
+      "side": 1,
+      "message": "$(strip $(1)), otherwise you get weird behavior with:\n\n  $(call maybe-print-list-and-error,$(a) $(b))\n\nEven if a and b are empty it passes \u0027 \u0027, which is true (non-empty) according to $(if).",
+      "range": {
+        "startLine": 948,
+        "startChar": 5,
+        "endLine": 948,
+        "endChar": 9
+      },
+      "revId": "079c5d7eda111c22c9c0f4cbce87cd04218d9a32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e60e1fc_cd6beb9c",
+        "filename": "core/product.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 237,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-12T16:55:38Z",
+      "side": 1,
+      "message": "How about require-modules-in-partitions?",
+      "range": {
+        "startLine": 237,
+        "startChar": 7,
+        "endLine": 237,
+        "endChar": 27
+      },
+      "revId": "079c5d7eda111c22c9c0f4cbce87cd04218d9a32",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
