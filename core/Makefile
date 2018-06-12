@@ -2280,6 +2280,10 @@ ifdef BOARD_AVB_ROLLBACK_INDEX
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --rollback_index $(BOARD_AVB_ROLLBACK_INDEX)
 endif
 
+ifeq (eng,$(filter eng, $(TARGET_BUILD_VARIANT)))
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --set_hashtree_disabled_flag
+endif
+
 ifndef BOARD_BOOTIMAGE_PARTITION_SIZE
   $(error BOARD_BOOTIMAGE_PARTITION_SIZE must be set for BOARD_AVB_ENABLE)
 endif
