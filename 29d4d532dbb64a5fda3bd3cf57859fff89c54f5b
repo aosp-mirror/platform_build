@@ -99,6 +99,30 @@
       "revId": "29d4d532dbb64a5fda3bd3cf57859fff89c54f5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5301338e_1b69ddb6",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 970,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-13T17:54:38Z",
+      "side": 1,
+      "message": "Sure",
+      "parentUuid": "9e6bcb23_66aaed05",
+      "range": {
+        "startLine": 970,
+        "startChar": 7,
+        "endLine": 970,
+        "endChar": 39
+      },
+      "revId": "29d4d532dbb64a5fda3bd3cf57859fff89c54f5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
