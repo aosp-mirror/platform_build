@@ -1517,10 +1517,16 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
 
       common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
 
+      # TODO(b/110106408): Remove after properly handling the SHA-1 embedded in
+      # the filename argument in updater code. Prior to that, explicitly list
+      # the SHA-1 of the source image, in case the updater tries to find a
+      # matching backup from /cache. Similarly for the call to
+      # script.ApplyPatch() below.
       script.PatchCheck("%s:%s:%d:%s:%d:%s" %
                         (boot_type, boot_device,
                          source_boot.size, source_boot.sha1,
-                         target_boot.size, target_boot.sha1))
+                         target_boot.size, target_boot.sha1),
+                        source_boot.sha1)
       size.append(target_boot.size)
 
   if size:
