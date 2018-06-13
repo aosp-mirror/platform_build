@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "35301685_1f80da59",
+        "filename": "core/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 1088,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-06-13T14:19:32Z",
+      "side": 1,
+      "message": "Note that BOARD_SYSTEMIMAGE_PARTITION_SIZE is used to grow system.img to match \"physical partition size\", after verified boot signing.\n\nvboot 1.0 metadata is expected to be at the end of the /system.\nFor AVB (vboot 2.0), system metadata can be in /vbmeta (if /system is not a chained partition). But if system is chained, then system metadata is also expected to be at the end of /system. (this allows bootloader to parse raw data, without worrying about file system).\n \n\nHow about add assertions here?\n\nifeq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY),true)\n$(error vboot 1.0 doesn\u0027t support logical partition)\nendif\n\nifdef BOARD_AVB_SYSTEM_KEY_PATH\nifndef BOARD_AVB_SYSTEM_DETACHED_VBMETA  \u003c-- TBD per b/80195851#comment6\n$(error AVB chain partition cannot be used with logical partition, unless /vbmeta_system is created)\nendif\nendif\n\nvboot 1.0 signing:\nhttps://android.googlesource.com/platform/build/+/master/tools/releasetools/build_image.py#493\n\nvboot 2.0 (AVB) signing:\nhttps://android.googlesource.com/platform/build/+/master/tools/releasetools/build_image.py#513",
+      "revId": "9cc4a0c81b92049914542ccc32fba51be1fda6f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
