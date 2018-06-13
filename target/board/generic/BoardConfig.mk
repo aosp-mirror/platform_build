@@ -56,7 +56,7 @@ BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 
-BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
+BOARD_SEPOLICY_DIRS += device/generic/goldfish/sepolicy/common
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))

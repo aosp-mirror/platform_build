@@ -86,7 +86,7 @@ TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
-BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
+BOARD_SEPOLICY_DIRS += device/generic/goldfish/sepolicy/common
 
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 # GSI is always userdebug and needs a couple of properties taking precedence

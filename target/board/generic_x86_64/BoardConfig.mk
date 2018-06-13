@@ -57,8 +57,8 @@ BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 
 BOARD_SEPOLICY_DIRS += \
-        build/target/board/generic/sepolicy \
-        build/target/board/generic_x86/sepolicy
+        device/generic/goldfish/sepolicy/common \
+        device/generic/goldfish/sepolicy/x86
 
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 # GSI is always userdebug and needs a couple of properties taking precedence

@@ -1,1 +1,0 @@
-allow hal_wifi_default hal_wifi_default:netlink_route_socket { create bind write read nlmsg_read };
