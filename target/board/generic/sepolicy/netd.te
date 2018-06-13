@@ -1,3 +1,0 @@
-dontaudit netd self:capability sys_module;
-#TODO: This can safely be ignored until b/62954877 is fixed
-dontaudit netd kernel:system module_request;
