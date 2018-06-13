@@ -1,2 +1,0 @@
-allow zygote self:process execmem;
-allow zygote self:capability sys_nice;
