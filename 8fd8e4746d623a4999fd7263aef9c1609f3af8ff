@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c684f520_c98e8e94",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-13T12:05:43Z",
+      "side": 1,
+      "message": "caveat: this list doesn\u0027t expand LOCAL_REQUIRED_MODULES",
+      "revId": "8fd8e4746d623a4999fd7263aef9c1609f3af8ff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
