@@ -67,8 +67,8 @@ BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216
 
 BOARD_SEPOLICY_DIRS += \
-        build/target/board/generic/sepolicy \
-        build/target/board/generic_x86/sepolicy
+        device/generic/goldfish/sepolicy/common \
+        device/generic/goldfish/sepolicy/x86
 
 # Android Verified Boot (AVB):
 #   Builds a special vbmeta.img that disables AVB verification.

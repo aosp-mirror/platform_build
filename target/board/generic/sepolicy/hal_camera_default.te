@@ -1,3 +1,0 @@
-vndbinder_use(hal_camera_default);
-allow hal_camera_default hal_graphics_mapper_hwservice:hwservice_manager find;
-hal_client_domain(hal_camera_default, hal_graphics_composer)
