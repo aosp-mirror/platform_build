@@ -1398,10 +1398,6 @@ define build-recoveryimage-target
           >> $(TARGET_RECOVERY_ROOT_OUT)/prop.default
   $(hide) ln -sf prop.default $(TARGET_RECOVERY_ROOT_OUT)/default.prop
   $(BOARD_RECOVERY_IMAGE_PREPARE)
-  $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)), \
-    $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system_root; \
-            rm -rf $(TARGET_RECOVERY_ROOT_OUT)/system; \
-            ln -sf /system_root/system $(TARGET_RECOVERY_ROOT_OUT)/system) # Mount the system_root_image to /system_root and symlink /system.
   $(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_RECOVERY_ROOT_OUT) | $(MINIGZIP) > $(recovery_ramdisk)
   $(if $(filter true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT)), \
     $(hide) $(MKBOOTIMG) $(INTERNAL_RECOVERYIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(1).unsigned, \
