@@ -31,7 +31,7 @@ endif
 # Auto generating test config file for native test
 $(autogen_test_config_file) : $(autogen_test_config_template)
 	@echo "Auto generating test config $(notdir $@)"
-	$(hide) sed 's&{MODULE}&$(PRIVATE_MODULE)&g' $^ > $@
+	$(hide) sed 's&{MODULE}&$(PRIVATE_MODULE)&g' $< > $@
 my_auto_generate_config := true
 else
 # Auto generating test config file for instrumentation test
