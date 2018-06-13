@@ -1,9 +1,0 @@
-allow bootanim self:process execmem;
-allow bootanim ashmem_device:chr_file execute;
-#TODO: This can safely be ignored until b/62954877 is fixed
-dontaudit bootanim system_data_file:dir read;
-
-allow bootanim graphics_device:chr_file { read ioctl open };
-
-typeattribute bootanim system_writes_vendor_properties_violators;
-set_prop(bootanim, qemu_prop)
