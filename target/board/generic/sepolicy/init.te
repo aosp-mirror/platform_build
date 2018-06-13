@@ -1,2 +1,0 @@
-allow init tmpfs:lnk_file create_file_perms;
-dontaudit init kernel:system module_request;
