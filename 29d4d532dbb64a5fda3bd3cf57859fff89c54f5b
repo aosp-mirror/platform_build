@@ -34,6 +34,47 @@
       "revId": "29d4d532dbb64a5fda3bd3cf57859fff89c54f5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "acd0c131_a3460894",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 969,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-13T17:28:05Z",
+      "side": 1,
+      "message": "Thanks, since these are only called once it limits the cost.",
+      "parentUuid": "7ea2f41c_c43891a8",
+      "revId": "29d4d532dbb64a5fda3bd3cf57859fff89c54f5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "29ef1d82_cfe1012e",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 970,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-13T17:28:05Z",
+      "side": 1,
+      "message": "PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS?",
+      "range": {
+        "startLine": 970,
+        "startChar": 7,
+        "endLine": 970,
+        "endChar": 39
+      },
+      "revId": "29d4d532dbb64a5fda3bd3cf57859fff89c54f5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
