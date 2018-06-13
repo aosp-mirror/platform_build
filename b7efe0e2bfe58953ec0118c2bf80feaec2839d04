@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2c3dd513_fb1b7d80",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1103,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-13T18:17:17Z",
+      "side": 1,
+      "message": "Needs rebasing on the updated parent change",
+      "revId": "b7efe0e2bfe58953ec0118c2bf80feaec2839d04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
