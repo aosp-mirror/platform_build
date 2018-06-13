@@ -1,5 +1,16 @@
 # Build System Changes for Android.mk Writers
 
+## Valid Module Names {#name}
+
+We've adopted lexical requirements very similar to [Bazel's
+requirements](https://docs.bazel.build/versions/master/build-ref.html#name) for
+target names. Valid characters are `a-z`, `A-Z`, `0-9`, and the special
+characters `_.+-=,@~/`. This currently applies to `LOCAL_PACKAGE_NAME`,
+`LOCAL_MODULE`, and `LOCAL_MODULE_SUFFIX`, and `LOCAL_MODULE_STEM*`.
+
+Many other characters already caused problems if you used them, so we don't
+expect this to have a large effect.
+
 ## PATH Tools {#PATH_Tools}
 
 The build has started restricting the external host tools usable inside the

@@ -31,6 +31,7 @@ LOCAL_MODULE := $(strip $(LOCAL_MODULE))
 ifeq ($(LOCAL_MODULE),)
   $(error $(LOCAL_PATH): LOCAL_MODULE is not defined)
 endif
+$(call verify-module-name)
 
 LOCAL_IS_HOST_MODULE := $(strip $(LOCAL_IS_HOST_MODULE))
 LOCAL_IS_AUX_MODULE := $(strip $(LOCAL_IS_AUX_MODULE))
