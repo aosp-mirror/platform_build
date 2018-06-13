@@ -1,3 +1,0 @@
-allow domain qemu_device:chr_file rw_file_perms;
-
-get_prop(domain, qemu_prop)
