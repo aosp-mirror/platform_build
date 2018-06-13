@@ -16,6 +16,24 @@
       "revId": "9cc4a0c81b92049914542ccc32fba51be1fda6f0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68bc47ea_c63e1620",
+        "filename": "core/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 1088,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-13T20:18:08Z",
+      "side": 1,
+      "message": "Thanks Bowgo. I\u0027ll add the first assert.\nAs for the second, is the name finalized? I would wait until the bug is fixed than add this assert. I\u0027ll put a TODO tag though.",
+      "parentUuid": "35301685_1f80da59",
+      "revId": "9cc4a0c81b92049914542ccc32fba51be1fda6f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
