@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ae352a5_6aeaf351",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-14T14:45:47Z",
+      "side": 1,
+      "message": "Needs Merged-In",
+      "revId": "2b543a7267e2db7be61b4ca37e79853b8967e1e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
