@@ -26,7 +26,7 @@
 # build quite specifically for the emulator, and might not be
 # entirely appropriate to inherit from for on-device configurations.
 
-include device/generic/goldfish/arm64-vendor.mk
+-include device/generic/goldfish/arm64-vendor.mk
 
 # Copy different zygote settings for vendor.img to select by setting property
 # ro.zygote=zygote64_32 or ro.zygote=zygote32_64:

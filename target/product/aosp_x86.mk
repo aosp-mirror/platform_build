@@ -21,7 +21,7 @@
 # - VNDK enforcement
 # - compatible property override enabled
 
-include device/generic/goldfish/x86-vendor.mk
+-include device/generic/goldfish/x86-vendor.mk
 
 include $(SRC_TARGET_DIR)/product/full_x86.mk
 
