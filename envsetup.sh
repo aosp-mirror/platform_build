@@ -1100,32 +1100,16 @@ function stacks()
     fi
 
     if [ "$PID" ] ; then
-        # Determine whether the process is native
-        if adb shell ls -l /proc/$PID/exe | grep -q /system/bin/app_process ; then
-            # Dump stacks of Dalvik process
-            local TRACES=/data/anr/traces.txt
-            local ORIG=/data/anr/traces.orig
-            local TMP=/data/anr/traces.tmp
-
-            # Keep original traces to avoid clobbering
-            adb shell mv $TRACES $ORIG
-
-            # Make sure we have a usable file
-            adb shell touch $TRACES
-            adb shell chmod 666 $TRACES
-
-            # Dump stacks and wait for dump to finish
-            adb shell kill -3 $PID
-            adb shell notify $TRACES >/dev/null
-
-            # Restore original stacks, and show current output
-            adb shell mv $TRACES $TMP
-            adb shell mv $ORIG $TRACES
-            adb shell cat $TMP
-        else
-            # Dump stacks of native process
-            adb shell debuggerd -b $PID
+        # Use `debuggerd -j` on java processes.
+        if adb shell readlink /proc/$PID/exe | egrep -q '^/system/bin/app_process' ; then
+            # But not the zygote.
+            if ! adb shell cat /proc/$PID/cmdline | egrep -q '^zygote'; then
+                adb shell debuggerd -j $PID
+                return
+            fi
         fi
+
+        adb shell debuggerd -b $PID
     fi
 }
 
