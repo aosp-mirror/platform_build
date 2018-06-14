@@ -326,6 +326,8 @@ _product_stash_var_list += \
 _product_stash_var_list += \
 	BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE \
 	BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE \
+	BOARD_SUPER_PARTITION_SIZE \
+	BOARD_SUPER_PARTITION_PARTITION_LIST \
 
 #
 # Mark the variables in _product_stash_var_list as readonly
