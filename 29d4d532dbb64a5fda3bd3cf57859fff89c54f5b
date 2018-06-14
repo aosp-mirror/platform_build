@@ -147,6 +147,30 @@
       "revId": "29d4d532dbb64a5fda3bd3cf57859fff89c54f5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "552c0d5d_6e3fc64b",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 970,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-14T15:44:41Z",
+      "side": 1,
+      "message": "think it\u0027s good to go.",
+      "parentUuid": "acab44d3_83026ed5",
+      "range": {
+        "startLine": 970,
+        "startChar": 7,
+        "endLine": 970,
+        "endChar": 39
+      },
+      "revId": "29d4d532dbb64a5fda3bd3cf57859fff89c54f5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
