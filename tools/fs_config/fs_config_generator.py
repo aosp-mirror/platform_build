@@ -138,13 +138,13 @@ class AID(object):
         'media_codec': 'mediacodec'
     }
 
-    def __init__(self, identifier, value, found):
+    def __init__(self, identifier, value, found, login_shell):
         """
         Args:
             identifier: The identifier name for a #define <identifier>.
             value: The value of the AID, aka the uid.
             found (str): The file found in, not required to be specified.
-
+            login_shell (str): The shell field per man (5) passwd file.
         Raises:
             ValueError: if the friendly name is longer than 31 characters as
                 that is bionic's internal buffer size for name.
@@ -154,6 +154,8 @@ class AID(object):
         self.identifier = identifier
         self.value = value
         self.found = found
+        self.login_shell = login_shell
+
         try:
             self.normalized_value = str(int(value, 0))
         except ValueException:
@@ -171,7 +173,8 @@ class AID(object):
 
         return self.identifier == other.identifier \
             and self.value == other.value and self.found == other.found \
-            and self.normalized_value == other.normalized_value
+            and self.normalized_value == other.normalized_value \
+            and self.login_shell == other.login_shell
 
     @staticmethod
     def is_friendly(name):
@@ -336,7 +339,7 @@ class AIDHeaderParser(object):
             ValueError: With message set to indicate the error.
         """
 
-        aid = AID(identifier, value, self._aid_header)
+        aid = AID(identifier, value, self._aid_header, '/system/bin/sh')
 
         # duplicate name
         if aid.friendly in self._aid_name_to_value:
@@ -647,7 +650,7 @@ class FSConfigFileParser(object):
             sys.exit(error_message('Found specified but unset "value"'))
 
         try:
-            aid = AID(section_name, value, file_name)
+            aid = AID(section_name, value, file_name, '/vendor/bin/sh')
         except ValueError as exception:
             sys.exit(error_message(exception))
 
@@ -1280,7 +1283,7 @@ class PasswdGen(BaseGenerator):
         except ValueError as exception:
             sys.exit(exception)
 
-        print "%s::%s:%s::/:/system/bin/sh" % (logon, uid, uid)
+        print "%s::%s:%s::/:%s" % (logon, uid, uid, aid.login_shell)
 
 
 @generator('group')
