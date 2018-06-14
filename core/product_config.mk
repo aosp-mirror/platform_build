@@ -234,6 +234,12 @@ endif
 $(call import-products, $(current_product_makefile))
 endif  # Import all or just the current product makefile
 
+# Import all the products that have made artifact path requirements, so that we can verify
+# the artifacts they produce.
+$(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
+  $(if $(filter-out $(makefile),$(PRODUCTS)),$(eval $(call import-products,$(makefile))))\
+)
+
 # Sanity check
 $(check-all-products)
 
