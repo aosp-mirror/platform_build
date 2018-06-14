@@ -16,6 +16,24 @@
       "revId": "8b1fb0b7fac911625164c3eed91ec6f638aec35d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d9670dd_17629562",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-06-14T19:36:34Z",
+      "side": 1,
+      "message": "I went with the first.  I figure there\u0027s no point in having an empty config file when /dev/null is just as good.\n\nTARGET_FS_CONFIG_GEN actually expands to a list of config.fs files, so tacking on an empty file was a no-op in the case that it exists, but agreed it was ugly.  Just convenient that it could be done without any conditionals.",
+      "parentUuid": "8a9bf0c9_61410b76",
+      "revId": "8b1fb0b7fac911625164c3eed91ec6f638aec35d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
