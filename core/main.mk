@@ -931,6 +931,42 @@ else
   product_FILES :=
 endif
 
+# Transforms paths relative to PRODUCT_OUT to absolute paths.
+# $(1): list of relative paths
+# $(2): optional suffix to append to paths
+define resolve-product-relative-paths
+  $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),\
+    $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
+      $(foreach p,$(1),$(PRODUCT_OUT)/$(p)$(2))))
+endef
+
+# Fails the build if the given list is non-empty, and prints it entries (stripping PRODUCT_OUT).
+# $(1): list of files to print
+# $(2): heading to print on failure
+define maybe-print-list-and-error
+$(if $(strip $(1)), \
+  $(warning $(2)) \
+  $(info Offending entries:) \
+  $(foreach e,$(sort $(1)),$(info    $(patsubst $(PRODUCT_OUT)/%,%,$(e)))) \
+  $(error Build failed) \
+)
+endef
+
+# Verify the artifact path requirements made by included products.
+$(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
+  $(eval requirements := $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENTS)) \
+  $(eval ### Verify that the product only produces files inside its path requirements.) \
+  $(eval whitelist := $(PRODUCTS.$(makefile).ARTIFACT_PATH_WHITELIST)) \
+  $(eval path_patterns := $(call resolve-product-relative-paths,$(requirements),%)) \
+  $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
+  $(eval files := $(call product-installed-files, $(makefile))) \
+  $(eval files := $(filter-out $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%,$(files))) \
+  $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns),$(files))) \
+  $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
+  $(eval unused_whitelist := $(filter-out $(files),$(whitelist_patterns))) \
+  $(call maybe-print-list-and-error,$(unused_whitelist),$(makefile) includes redundant whitelist entries in its artifact path requirement.) \
+)
+
 ifeq (0,1)
   $(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
   $(foreach p,$(product_FILES),$(info :   $(p)))
