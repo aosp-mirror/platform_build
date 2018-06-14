@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "973d0cb8_b5391dc5",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 873,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-06-14T01:29:54Z",
+      "side": 1,
+      "message": "realpath doesn\u0027t exist on mac",
+      "range": {
+        "startLine": 873,
+        "startChar": 37,
+        "endLine": 873,
+        "endChar": 45
+      },
+      "revId": "3b99ecfbab7bd98656b792edb8882494bb7bfd8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
