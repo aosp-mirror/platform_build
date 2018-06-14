@@ -34,6 +34,24 @@
       "revId": "9cc4a0c81b92049914542ccc32fba51be1fda6f0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa33d622_4816fe29",
+        "filename": "core/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 1088,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-06-14T03:36:26Z",
+      "side": 1,
+      "message": "No, it\u0027s not finalized.\n\nTODO is good for now.",
+      "parentUuid": "68bc47ea_c63e1620",
+      "revId": "9cc4a0c81b92049914542ccc32fba51be1fda6f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
