@@ -47,6 +47,7 @@ PRODUCT_PACKAGES += \
     CtsShimPrebuilt \
     CtsShimPrivPrebuilt \
     dnsmasq \
+    DownloadProvider \
     dpm \
     e2fsck \
     ExtServices \
@@ -57,6 +58,7 @@ PRODUCT_PACKAGES += \
     fsck_msdos \
     gatekeeperd \
     hid \
+    idmap \
     ime \
     ims-common \
     incident \
@@ -108,6 +110,7 @@ PRODUCT_PACKAGES += \
     libnetd_client \
     libnetlink \
     libnetutils \
+    libneuralnetworks \
     libOpenMAXAL \
     libOpenSLES \
     libpdfium \
@@ -139,12 +142,14 @@ PRODUCT_PACKAGES += \
     libwilhelm \
     locksettings \
     logd \
+    mdnsd \
     media \
     media_cmd \
     mediadrmserver \
     mediaextractor \
     mediametrics \
     media_profiles_V1_0.dtd \
+    MediaProvider \
     mediaserver \
     mke2fs \
     monkey \
