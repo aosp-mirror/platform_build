@@ -43,7 +43,7 @@ PRODUCT_CHARACTERISTICS := emulator
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
 # goldfish vendor partition configurations
-$(call inherit-product, device/generic/goldfish/vendor.mk)
+$(call inherit-product-if-exists, device/generic/goldfish/vendor.mk)
 
 #watchdog tiggers reboot because location service is not
 #responding, disble it for now.
