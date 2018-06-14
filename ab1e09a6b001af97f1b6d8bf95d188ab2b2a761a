@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cc154953_3d70aaf5",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1103,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2018-06-14T22:41:56Z",
+      "side": 1,
+      "message": "(should debuggerd do this itself?)",
+      "revId": "ab1e09a6b001af97f1b6d8bf95d188ab2b2a761a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
