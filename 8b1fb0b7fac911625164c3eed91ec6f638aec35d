@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a9bf0c9_61410b76",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-14T19:30:50Z",
+      "side": 1,
+      "message": "This is a little weird for the case where TARGET_FS_CONFIG_GEN exists.  Maybe:\n\n ifneq ($(TARGET_FS_CONFIG_GEN),)\n $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN :\u003d $(TARGET_FS_CONFIG_GEN)\n else\n $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN :\u003d /dev/null\n endif\n\nor:\n\n ifeq ($(TARGET_FS_CONFIG_GEN),)\n TARGET_FS_CONFIG_GEN :\u003d $(LOCAL_PATH)/empty_config.fs\n endif",
+      "revId": "8b1fb0b7fac911625164c3eed91ec6f638aec35d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
