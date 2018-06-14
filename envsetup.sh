@@ -742,6 +742,7 @@ function findmakefile()
         \cd ..
     done
     \cd $HERE
+    return 1
 }
 
 function mm()
@@ -869,7 +870,7 @@ function mma()
       echo "Couldn't locate the top of the tree.  Try setting TOP."
       return 1
     fi
-    local M=$(findmakefile)
+    local M=$(findmakefile || echo $(realpath $PWD)/Android.mk)
     # Remove the path to top as the makefilepath needs to be relative
     local M=`echo $M|sed 's:'$T'/::'`
     local MODULES_IN_PATHS=MODULES-IN-$(dirname ${M})
