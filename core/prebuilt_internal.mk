@@ -581,15 +581,19 @@ ifneq ($(my_src_aar),)
 # This is .aar file, archive of classes.jar and Android resources.
 my_src_jar := $(intermediates.COMMON)/aar/classes.jar
 my_src_proguard_options := $(intermediates.COMMON)/aar/proguard.txt
+my_src_android_manifest := $(intermediates.COMMON)/aar/AndroidManifest.xml
 
 $(my_src_jar) : .KATI_IMPLICIT_OUTPUTS := $(my_src_proguard_options)
+$(my_src_jar) : .KATI_IMPLICIT_OUTPUTS += $(my_src_android_manifest)
 $(my_src_jar) : $(my_src_aar)
 	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@) $(dir $@)/res
 	$(hide) unzip -qo -d $(dir $@) $<
 	# Make sure the extracted classes.jar has a new timestamp.
 	$(hide) touch $@
-	# Make sure the proguard file exists and has a new timestamp.
+	# Make sure the proguard and AndroidManifest.xml files exist
+	# and have a new timestamp.
 	$(hide) touch $(dir $@)/proguard.txt
+	$(hide) touch $(dir $@)/AndroidManifest.xml
 
 endif
 
@@ -641,7 +645,7 @@ my_res_package := $(intermediates.COMMON)/package-res.apk
 # We needed only very few PRIVATE variables and aapt2.mk input variables. Reset the unnecessary ones.
 $(my_res_package): PRIVATE_AAPT2_CFLAGS :=
 $(my_res_package): PRIVATE_AAPT_FLAGS := --static-lib --no-static-lib-packages --auto-add-overlay
-$(my_res_package): PRIVATE_ANDROID_MANIFEST := $(intermediates.COMMON)/aar/AndroidManifest.xml
+$(my_res_package): PRIVATE_ANDROID_MANIFEST := $(my_src_android_manifest)
 $(my_res_package): PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
 $(my_res_package): PRIVATE_SOURCE_INTERMEDIATES_DIR :=
 $(my_res_package): PRIVATE_PROGUARD_OPTIONS_FILE :=
@@ -651,6 +655,7 @@ $(my_res_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
 $(my_res_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 $(my_res_package): PRIVATE_TARGET_AAPT_CHARACTERISTICS :=
 $(my_res_package) : $(framework_res_package_export)
+$(my_res_package) : $(my_src_android_manifest)
 
 full_android_manifest :=
 my_res_resources :=
