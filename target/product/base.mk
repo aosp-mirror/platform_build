@@ -72,6 +72,7 @@ PRODUCT_PACKAGES += \
     javax.obex \
     keystore \
     ld.config.txt \
+    ld.config.recovery.txt \
     ld.mc \
     libaaudio \
     libamidi \
