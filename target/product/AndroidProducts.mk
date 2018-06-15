@@ -42,7 +42,6 @@ PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/aosp_x86_64.mk
 else
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/core.mk \
     $(LOCAL_DIR)/generic.mk \
     $(LOCAL_DIR)/generic_x86.mk \
     $(LOCAL_DIR)/aosp_arm.mk \
