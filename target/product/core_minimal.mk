@@ -30,16 +30,13 @@ PRODUCT_PACKAGES += \
     CompanionDeviceManager \
     ContactsProvider \
     DefaultContainerService \
-    DownloadProvider \
     drmserver \
     ethernet-service \
     fsck.f2fs \
     HTMLViewer \
-    idmap \
     libaudiopreprocessing \
     libfilterpack_imageproc \
     libgabi++ \
-    libneuralnetworks \
     libstagefright_soft_aacdec \
     libstagefright_soft_aacenc \
     libstagefright_soft_amrdec \
@@ -65,8 +62,6 @@ PRODUCT_PACKAGES += \
     libwebviewchromium_plat_support \
     logd \
     make_f2fs \
-    mdnsd \
-    MediaProvider \
     PackageInstaller \
     requestsync \
     StatementService \
