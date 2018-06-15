@@ -30,11 +30,9 @@ PRODUCT_PACKAGES += \
     CompanionDeviceManager \
     ContactsProvider \
     DefaultContainerService \
-    DownloadProvider \
     drmserver \
     ethernet-service \
     HTMLViewer \
-    idmap \
     libaudiopreprocessing \
     libdownmix \
     libdrmframework \
@@ -44,7 +42,6 @@ PRODUCT_PACKAGES += \
     libgabi++ \
     libgatekeeper \
     libkeystore \
-    libneuralnetworks \
     libstagefright_soft_aacdec \
     libstagefright_soft_aacenc \
     libstagefright_soft_amrdec \
@@ -68,8 +65,6 @@ PRODUCT_PACKAGES += \
     libstagefright_soft_vpxenc \
     libwebviewchromium_loader \
     libwebviewchromium_plat_support \
-    mdnsd \
-    MediaProvider \
     PackageInstaller \
     requestsync \
     StatementService \
