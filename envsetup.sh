@@ -975,28 +975,6 @@ function qpid() {
     fi
 }
 
-function pid()
-{
-    local prepend=''
-    local append=''
-    if [ "$1" = "--exact" ]; then
-        prepend=' '
-        append='$'
-        shift
-    fi
-    local EXE="$1"
-    if [ "$EXE" ] ; then
-        local PID=`adb shell ps \
-            | tr -d '\r' \
-            | \grep "$prepend$EXE$append" \
-            | sed -e 's/^[^ ]* *\([0-9]*\).*$/\1/'`
-        echo "$PID"
-    else
-        echo "usage: pid [--exact] <process name>"
-        return 255
-    fi
-}
-
 # coredump_setup - enable core dumps globally for any process
 #                  that has the core-file-size limit set correctly
 #
@@ -1081,37 +1059,6 @@ function core()
 function systemstack()
 {
     stacks system_server
-}
-
-function stacks()
-{
-    if [[ $1 =~ ^[0-9]+$ ]] ; then
-        local PID="$1"
-    elif [ "$1" ] ; then
-        local PIDLIST="$(pid $1)"
-        if [[ $PIDLIST =~ ^[0-9]+$ ]] ; then
-            local PID="$PIDLIST"
-        elif [ "$PIDLIST" ] ; then
-            echo "more than one process: $1"
-        else
-            echo "no such process: $1"
-        fi
-    else
-        echo "usage: stacks [pid|process name]"
-    fi
-
-    if [ "$PID" ] ; then
-        # Use `debuggerd -j` on java processes.
-        if adb shell readlink /proc/$PID/exe | egrep -q '^/system/bin/app_process' ; then
-            # But not the zygote.
-            if ! adb shell cat /proc/$PID/cmdline | egrep -q '^zygote'; then
-                adb shell debuggerd -j $PID
-                return
-            fi
-        fi
-
-        adb shell debuggerd -b $PID
-    fi
 }
 
 # Read the ELF header from /proc/$PID/exe to determine if the process is
