@@ -63,6 +63,8 @@ else
 my_fs_config_h := $(LOCAL_PATH)/default/$(ANDROID_FS_CONFIG_H)
 endif
 
+system_android_filesystem_config := system/core/include/private/android_filesystem_config.h
+
 ##################################
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := fs_config_generate.c
@@ -72,8 +74,6 @@ LOCAL_SHARED_LIBRARIES := libcutils
 LOCAL_CFLAGS := -Werror -Wno-error=\#warnings
 
 ifneq ($(TARGET_FS_CONFIG_GEN),)
-system_android_filesystem_config := system/core/include/private/android_filesystem_config.h
-
 # Generate the "generated_oem_aid.h" file
 oem := $(local-generated-sources-dir)/generated_oem_aid.h
 $(oem): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
@@ -239,19 +239,17 @@ $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 
 endif
 
-# The newer passwd/group targets are only generated if you
-# use the new TARGET_FS_CONFIG_GEN method.
-ifneq ($(TARGET_FS_CONFIG_GEN),)
-
 ##################################
 # Build the oemaid header library when fs config files are present.
 # Intentionally break build if you require generated AIDs
 # header file, but are not using any fs config files.
+ifneq ($(TARGET_FS_CONFIG_GEN),)
 include $(CLEAR_VARS)
 LOCAL_MODULE := oemaids_headers
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(dir $(my_gen_oem_aid))
 LOCAL_EXPORT_C_INCLUDE_DEPS := $(my_gen_oem_aid)
 include $(BUILD_HEADER_LIBRARY)
+endif
 
 ##################################
 # Generate the vendor/etc/passwd text file for the target
@@ -265,8 +263,11 @@ LOCAL_VENDOR_MODULE := true
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
-$(LOCAL_BUILT_MODULE): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
+ifneq ($(TARGET_FS_CONFIG_GEN),)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+else
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := /dev/null
+endif
 $(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
 $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config)
 	@mkdir -p $(dir $@)
@@ -284,15 +285,17 @@ LOCAL_VENDOR_MODULE := true
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
-$(LOCAL_BUILT_MODULE): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
+ifneq ($(TARGET_FS_CONFIG_GEN),)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+else
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := /dev/null
+endif
 $(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
 $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config)
 	@mkdir -p $(dir $@)
 	$(hide) $< group --required-prefix=vendor_ --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
 
 system_android_filesystem_config :=
-endif
 
 ANDROID_FS_CONFIG_H :=
 my_fs_config_h :=
