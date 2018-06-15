@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-include device/generic/goldfish/arm32-vendor.mk
+-include device/generic/goldfish/arm32-vendor.mk
 
 # TODO(b/78308559): includes vr_hwc into GSI before vr_hwc move to vendor
 PRODUCT_PACKAGES += \
