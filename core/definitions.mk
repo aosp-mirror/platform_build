@@ -3454,10 +3454,18 @@ $(filter-out current,\
   $(if $(call has-system-sdk-version,$(1)),$(patsubst system_%,%,$(1)),$(1)))
 endef
 
-# Convert to lower case without requiring a shell, which isn't cacheable.
+###########################################################
+## Convert to lower case without requiring a shell, which isn't cacheable.
+##
+## $(1): string
+###########################################################
 to-lower=$(subst A,a,$(subst B,b,$(subst C,c,$(subst D,d,$(subst E,e,$(subst F,f,$(subst G,g,$(subst H,h,$(subst I,i,$(subst J,j,$(subst K,k,$(subst L,l,$(subst M,m,$(subst N,n,$(subst O,o,$(subst P,p,$(subst Q,q,$(subst R,r,$(subst S,s,$(subst T,t,$(subst U,u,$(subst V,v,$(subst W,w,$(subst X,x,$(subst Y,y,$(subst Z,z,$1))))))))))))))))))))))))))
 
-# Convert to upper case without requiring a shell, which isn't cacheable.
+###########################################################
+## Convert to upper case without requiring a shell, which isn't cacheable.
+##
+## $(1): string
+###########################################################
 to-upper=$(subst a,A,$(subst b,B,$(subst c,C,$(subst d,D,$(subst e,E,$(subst f,F,$(subst g,G,$(subst h,H,$(subst i,I,$(subst j,J,$(subst k,K,$(subst l,L,$(subst m,M,$(subst n,N,$(subst o,O,$(subst p,P,$(subst q,Q,$(subst r,R,$(subst s,S,$(subst t,T,$(subst u,U,$(subst v,V,$(subst w,W,$(subst x,X,$(subst y,Y,$(subst z,Z,$1))))))))))))))))))))))))))
 
 # Sanity-check to-lower and to-upper
@@ -3474,3 +3482,36 @@ endif
 
 lower :=
 upper :=
+
+###########################################################
+## Verify module name meets character requirements:
+##   a-z A-Z 0-9
+##   _.+-=,@~/
+##
+## This is equivalent to bazel's target name restrictions:
+##   https://docs.bazel.build/versions/master/build-ref.html#name
+###########################################################
+define verify-module-name
+$(if $(call _invalid-name-chars,$(LOCAL_MODULE)), \
+  $(call pretty-error,Invalid characters in module name: $(call _invalid-name-chars,$(LOCAL_MODULE))))
+endef
+define _invalid-name-chars
+$(subst /,,$(subst _,,$(subst .,,$(subst +,,$(subst -,,$(subst =,,$(subst $(comma),,$(subst @,,$(subst ~,,$(subst 0,,$(subst 1,,$(subst 2,,$(subst 3,,$(subst 4,,$(subst 5,,$(subst 6,,$(subst 7,,$(subst 8,,$(subst 9,,$(subst a,,$(subst b,,$(subst c,,$(subst d,,$(subst e,,$(subst f,,$(subst g,,$(subst h,,$(subst i,,$(subst j,,$(subst k,,$(subst l,,$(subst m,,$(subst n,,$(subst o,,$(subst p,,$(subst q,,$(subst r,,$(subst s,,$(subst t,,$(subst u,,$(subst v,,$(subst w,,$(subst x,,$(subst y,,$(subst z,,$(call to-lower,$(1)))))))))))))))))))))))))))))))))))))))))))))))
+endef
+.KATI_READONLY := verify-module-name _invalid-name-chars
+
+###########################################################
+## Verify module stem meets character requirements:
+##   a-z A-Z 0-9
+##   _.+-=,@~/
+##
+## This is a subset of bazel's target name restrictions:
+##   https://docs.bazel.build/versions/master/build-ref.html#name
+##
+## $(1): The module stem variable to check
+###########################################################
+define verify-module-stem
+$(if $(call _invalid-name-chars,$($(1))), \
+  $(call pretty-error,Invalid characters in module stem ($(1)): $(call _invalid-name-chars,$($(1)))))
+endef
+.KATI_READONLY := verify-module-stem

@@ -14,70 +14,104 @@
 # limitations under the License.
 #
 
-# Base modules (will move elsewhere, previously user tagged)
 PRODUCT_PACKAGES += \
     20-dns.conf \
     95-configured \
-    org.apache.http.legacy \
-    appwidget \
-    appops \
     am \
+    android.hardware.cas@1.0-service \
+    android.hardware.media.omx@1.0-service \
+    android.hidl.base-V1.0-java \
+    android.hidl.manager-V1.0-java \
     android.policy \
     android.test.base \
     android.test.mock \
     android.test.runner \
-    app_process \
     applypatch \
+    appops \
+    app_process \
+    appwidget \
     audioserver \
+    BackupRestoreConfirmation \
+    bcc \
     bit \
     blkid \
     bmgr \
     bpfloader \
+    bu \
     bugreport \
     bugreportz \
     cameraserver \
+    com.android.location.provider \
     content \
+    CtsShimPrebuilt \
+    CtsShimPrivPrebuilt \
     dnsmasq \
     dpm \
+    e2fsck \
+    ExtServices \
+    ExtShared \
     framework \
+    framework-res \
     framework-sysconfig.xml \
     fsck_msdos \
+    gatekeeperd \
     hid \
     ime \
-    incidentd \
+    ims-common \
     incident \
+    incidentd \
     incident_helper \
     incident_report \
     input \
+    installd \
+    ip \
+    ip6tables \
+    iptables \
+    ip-up-vpn \
     javax.obex \
+    keystore \
+    ld.config.txt \
+    ld.config.recovery.txt \
+    ld.mc \
+    libaaudio \
+    libamidi \
     libandroid \
     libandroid_runtime \
     libandroid_servers \
     libaudioeffect_jni \
     libaudioflinger \
-    libaudiopolicyservice \
     libaudiopolicymanager \
+    libaudiopolicyservice \
     libbundlewrapper \
+    libcamera2ndk \
     libcamera_client \
     libcameraservice \
-    libcamera2ndk \
-    libdrmclearkeyplugin \
-    libdynproc \
     libclearkeycasplugin \
+    libdownmix \
+    libdrmclearkeyplugin \
+    libdrmframework \
+    libdrmframework_jni \
+    libdynproc \
     libeffectproxy \
     libeffects \
+    libfilterfw \
+    libgatekeeper \
     libinput \
     libinputflinger \
     libiprouteutil \
     libjnigraphics \
+    libkeystore \
     libldnhncr \
     libmedia \
     libmedia_jni \
+    libmediandk \
     libmediaplayerservice \
     libmtp \
     libnetd_client \
     libnetlink \
     libnetutils \
+    libOpenMAXAL \
+    libOpenSLES \
     libpdfium \
     libradio_metadata \
     libreference-ril \
@@ -102,66 +136,100 @@ PRODUCT_PACKAGES += \
     libusbhost \
     libvisualizer \
     libvorbisidec \
-    libmediandk \
     libvulkan \
     libwifi-service \
+    libwilhelm \
     locksettings \
+    logd \
     media \
     media_cmd \
+    media_profiles_V1_0.dtd \
     mediadrmserver \
-    mediaserver \
-    mediametrics \
     mediaextractor \
+    mediametrics \
+    mediaserver \
+    mke2fs \
     monkey \
     mtpd \
     ndc \
     netd \
+    org.apache.http.legacy \
     perfetto \
     ping \
     ping6 \
     platform.xml \
-    privapp-permissions-platform.xml \
-    pppd \
     pm \
+    pppd \
+    privapp-permissions-platform.xml \
     racoon \
+    resize2fs \
     run-as \
     schedtest \
+    screencap \
     sdcard \
     secdiscard \
+    SecureElement \
+    sensorservice \
     services \
     settings \
+    SettingsProvider \
     sgdisk \
+    Shell \
     sm \
     statsd \
     svc \
     tc \
     telecom \
+    telephony-common \
     traced \
     traced_probes \
+    tune2fs \
+    uiautomator \
+    uncrypt \
     vdc \
+    voip-common \
     vold \
-    wm
+    WallpaperBackup \
+    wificond \
+    wifi-service \
+    wm \
+
+
+ifeq ($(TARGET_CORE_JARS),)
+$(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
+endif
+
+# The order matters
+PRODUCT_BOOT_JARS := \
+    $(TARGET_CORE_JARS) \
+    ext \
+    framework \
+    telephony-common \
+    voip-common \
+    ims-common \
+    android.hidl.base-V1.0-java \
+    android.hidl.manager-V1.0-java
 
 # Add the compatibility library that is needed when org.apache.http.legacy
 # is removed from the bootclasspath.
 ifeq ($(REMOVE_OAHL_FROM_BCP),true)
 PRODUCT_PACKAGES += framework-oahl-backward-compatibility
+PRODUCT_BOOT_JARS += framework-oahl-backward-compatibility
+else
+PRODUCT_BOOT_JARS += org.apache.http.legacy.impl
 endif
 
 # Add the compatibility library that is needed when android.test.base
 # is removed from the bootclasspath.
 ifeq ($(REMOVE_ATB_FROM_BCP),true)
 PRODUCT_PACKAGES += framework-atb-backward-compatibility
+PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
+else
+PRODUCT_BOOT_JARS += android.test.base
 endif
 
-# Essential HAL modules
-PRODUCT_PACKAGES += \
-    android.hardware.cas@1.0-service \
-    android.hardware.media.omx@1.0-service
-
-# XML schema files
-PRODUCT_PACKAGES += \
-    media_profiles_V1_0.dtd
+PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
@@ -173,12 +241,17 @@ PRODUCT_PACKAGES_DEBUG := \
     strace \
     sanitizer-status
 
+# The set of packages whose code can be loaded by the system server.
+PRODUCT_SYSTEM_SERVER_APPS += \
+    SettingsProvider \
+    WallpaperBackup
+
 # Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
 PRODUCT_PACKAGES_DEBUG_ASAN := \
     fuzz \
     honggfuzz
 
-PRODUCT_COPY_FILES := $(call add-to-product-copy-files-if-exists,\
+PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)
 
 # Note: it is acceptable to not have a dirty-image-objects file. In that case, the special bin
@@ -186,4 +259,5 @@ PRODUCT_COPY_FILES := $(call add-to-product-copy-files-if-exists,\
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/embedded.mk)

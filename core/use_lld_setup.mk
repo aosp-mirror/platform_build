@@ -4,12 +4,17 @@
 ## Output variables: my_use_clang_lld
 #############################################################
 
-# Use LLD only if it's not disabled by LOCAL_USE_CLANG_LLD,
-# and enabled by LOCAL_USE_CLANG_LLD or USE_CLANG_LLD.
-my_use_clang_lld := false
-ifeq (,$(filter 0 false,$(LOCAL_USE_CLANG_LLD)))
-  ifneq (,$(filter 1 true,$(LOCAL_USE_CLANG_LLD) $(USE_CLANG_LLD)))
-    my_use_clang_lld := true
+# Use LLD by default.
+# Do not use LLD if LOCAL_USE_CLANG_LLD is false or 0,
+# of if LOCAL_USE_CLANG_LLD is not set and USE_CLANG_LLD is 0 or false.
+my_use_clang_lld := true
+ifneq (,$(LOCAL_USE_CLANG_LLD))
+  ifneq (,$(filter 0 false,$(LOCAL_USE_CLANG_LLD)))
+    my_use_clang_lld := false
+  endif
+else
+  ifneq (,$(filter 0 false,$(USE_CLANG_LLD)))
+    my_use_clang_lld := false
   endif
 endif
 
