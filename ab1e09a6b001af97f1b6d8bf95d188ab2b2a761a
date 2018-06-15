@@ -16,6 +16,24 @@
       "revId": "ab1e09a6b001af97f1b6d8bf95d188ab2b2a761a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ee48c7a_f78e0d91",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1103,
+      "author": {
+        "id": 1079148
+      },
+      "writtenOn": "2018-06-15T00:44:29Z",
+      "side": 1,
+      "message": "I think it still makes sense to not use -j for java processes (e.g. what if ART deadlocks?)\n\n(maybe we could move `debuggerd $PID` to `debuggerd -t $PID`, and then make `debuggerd $PID` guess? finding all of the existing uses and switching them over sounds hard, though.)",
+      "parentUuid": "cc154953_3d70aaf5",
+      "revId": "ab1e09a6b001af97f1b6d8bf95d188ab2b2a761a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
