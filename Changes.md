@@ -1,5 +1,30 @@
 # Build System Changes for Android.mk Writers
 
+## Implicit make rules are deprecated {#implicit_rules}
+
+Implicit rules look something like the following:
+
+``` make
+$(TARGET_OUT_SHARED_LIBRARIES)/%_vendor.so: $(TARGET_OUT_SHARED_LIBRARIES)/%.so
+	...
+
+%.o : %.foo
+	...
+```
+
+These can have wide ranging effects across unrelated modules, so they're now deprecated. Instead, use static pattern rules, which are similar, but explicitly match the specified outputs:
+
+``` make
+libs := $(foreach lib,libfoo libbar,$(TARGET_OUT_SHARED_LIBRARIES)/$(lib)_vendor.so)
+$(libs): %_vendor.so: %.so
+	...
+
+files := $(wildcard $(LOCAL_PATH)/*.foo)
+gen := $(patsubst $(LOCAL_PATH)/%.foo,$(intermediates)/%.o,$(files))
+$(gen): %.o : %.foo
+	...
+```
+
 ## Removing '/' from Valid Module Names {#name_slash}
 
 The build system uses module names in path names in many places. Having an

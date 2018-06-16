@@ -416,10 +416,6 @@ include $(SOONG_ANDROID_MK) $(wildcard $(ONE_SHOT_MAKEFILE))
 # would have been with a normal make.
 CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
 FULL_BUILD :=
-# Stub out the notice targets, which probably aren't defined
-# when using ONE_SHOT_MAKEFILE.
-NOTICE-HOST-%: ;
-NOTICE-TARGET-%: ;
 
 # A helper goal printing out install paths
 define register_module_install_path
