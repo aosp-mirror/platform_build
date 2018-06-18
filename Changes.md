@@ -1,11 +1,57 @@
 # Build System Changes for Android.mk Writers
 
+## Removing '/' from Valid Module Names {#name_slash}
+
+The build system uses module names in path names in many places. Having an
+extra '/' or '../' being inserted can cause problems -- and not just build
+breaks, but stranger invalid behavior.
+
+In every case we've seen, the fix is relatively simple: move the directory into
+`LOCAL_MODULE_RELATIVE_PATH` (or `LOCAL_MODULE_PATH` if you're still using it).
+If this causes multiple modules to be named the same, use unique module names
+and `LOCAL_MODULE_STEM` to change the installed file name:
+
+``` make
+include $(CLEAR_VARS)
+LOCAL_MODULE := ver1/code.bin
+LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)/firmware
+...
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := ver2/code.bin
+LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)/firmware
+...
+include $(BUILD_PREBUILT)
+```
+
+Can be rewritten as:
+
+```
+include $(CLEAR_VARS)
+LOCAL_MODULE := ver1_code.bin
+LOCAL_MODULE_STEM := code.bin
+LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/firmware/ver1
+...
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := ver2_code.bin
+LOCAL_MODULE_STEM := code.bin
+LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/firmware/ver2
+...
+include $(BUILD_PREBUILT)
+```
+
+You just need to make sure that any other references (`PRODUCT_PACKAGES`,
+`LOCAL_REQUIRED_MODULES`, etc) are converted to the new names.
+
 ## Valid Module Names {#name}
 
 We've adopted lexical requirements very similar to [Bazel's
 requirements](https://docs.bazel.build/versions/master/build-ref.html#name) for
 target names. Valid characters are `a-z`, `A-Z`, `0-9`, and the special
-characters `_.+-=,@~/`. This currently applies to `LOCAL_PACKAGE_NAME`,
+characters `_.+-=,@~`. This currently applies to `LOCAL_PACKAGE_NAME`,
 `LOCAL_MODULE`, and `LOCAL_MODULE_SUFFIX`, and `LOCAL_MODULE_STEM*`.
 
 Many other characters already caused problems if you used them, so we don't
