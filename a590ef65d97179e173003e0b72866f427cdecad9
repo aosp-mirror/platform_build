@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9cdb0a53_cebfc225",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-06-18T17:45:21Z",
+      "side": 1,
+      "message": "Does it need to be more specific then? This removes completions for three different tools right now, and we\u0027re about to add a fourth (atest)",
+      "revId": "a590ef65d97179e173003e0b72866f427cdecad9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
