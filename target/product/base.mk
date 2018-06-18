@@ -18,11 +18,18 @@
 PRODUCT_PACKAGES += \
     20-dns.conf \
     95-configured \
+    adb \
+    adbd \
+    adbd.recovery \
     am \
     android.hardware.cas@1.0-service \
+    android.hardware.configstore@1.0-service \
     android.hardware.media.omx@1.0-service \
+    android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
+    android.hidl.memory@1.0-impl \
+    android.hidl.memory@1.0-impl.vendor \
     android.policy \
     android.test.mock \
     android.test.runner \
@@ -30,39 +37,56 @@ PRODUCT_PACKAGES += \
     appops \
     app_process \
     appwidget \
+    atrace \
     audioserver \
     BackupRestoreConfirmation \
     bcc \
     bit \
+    blank_screen \
     blkid \
     bmgr \
+    bootanimation \
+    bootstat \
     bpfloader \
     bu \
     bugreport \
     bugreportz \
     cameraserver \
+    charger \
+    cmd \
     com.android.location.provider \
     content \
+    crash_dump \
     CtsShimPrebuilt \
     CtsShimPrivPrebuilt \
+    debuggerd\
     dnsmasq \
     DownloadProvider \
     dpm \
+    dumpstate \
+    dumpsys \
     e2fsck \
     ExtServices \
     ExtShared \
+    fastboot \
     framework \
     framework-res \
     framework-sysconfig.xml \
     fsck_msdos \
     gatekeeperd \
+    gralloc.default \
+    healthd \
     hid \
+    hwservicemanager \
     idmap \
     ime \
     ims-common \
     incident \
     incidentd \
     incident_report \
+    init \
+    init.environ.rc \
+    init.rc \
     input \
     installd \
     ip \
@@ -71,8 +95,8 @@ PRODUCT_PACKAGES += \
     ip-up-vpn \
     javax.obex \
     keystore \
-    ld.config.txt \
     ld.config.recovery.txt \
+    ld.config.txt \
     ld.mc \
     libaaudio \
     libandroid \
@@ -82,25 +106,43 @@ PRODUCT_PACKAGES += \
     libaudioflinger \
     libaudiopolicymanager \
     libaudiopolicyservice \
+    libbinder \
     libbundlewrapper \
+    libc \
     libcamera2ndk \
     libcamera_client \
     libcameraservice \
     libclearkeycasplugin \
+    libc_malloc_debug \
+    libc_malloc_hooks \
+    libcutils \
+    libdl \
     libdownmix \
     libdrmclearkeyplugin \
     libdrmframework \
     libdrmframework_jni \
     libeffectproxy \
     libeffects \
+    libEGL \
+    libETC1 \
+    libFFTEm \
     libfilterfw \
     libgatekeeper \
+    libGLESv1_CM \
+    libGLESv2 \
+    libGLESv3 \
+    libgui \
+    libhardware \
+    libhardware_legacy \
     libinput \
     libinputflinger \
     libiprouteutil \
     libjnigraphics \
+    libjpeg \
     libkeystore \
     libldnhncr \
+    liblog \
+    libm \
     libmedia \
     libmedia_jni \
     libmediandk \
@@ -113,12 +155,15 @@ PRODUCT_PACKAGES += \
     libOpenMAXAL \
     libOpenSLES \
     libpdfium \
+    libpixelflinger \
+    libpower \
     libradio_metadata \
     libreference-ril \
     libreverbwrapper \
     libril \
     librtp_jni \
     libsensorservice \
+    libsigchain \
     libskia \
     libsonic \
     libsonivox \
@@ -133,14 +178,25 @@ PRODUCT_PACKAGES += \
     libstagefright_foundation \
     libstagefright_omx \
     libstagefright_yuv \
+    libstdc++ \
+    libsurfaceflinger \
+    libsurfaceflinger_ddmconnection \
+    libsysutils \
+    libui \
     libusbhost \
+    libutils \
     libvisualizer \
     libvorbisidec \
     libvulkan \
     libwifi-service \
     libwilhelm \
+    linker \
+    linker.recovery \
+    lmkd \
     locksettings \
+    logcat \
     logd \
+    lshal \
     mdnsd \
     media \
     media_cmd \
@@ -164,29 +220,42 @@ PRODUCT_PACKAGES += \
     pppd \
     privapp-permissions-platform.xml \
     racoon \
+    recovery \
     resize2fs \
     run-as \
     schedtest \
     screencap \
     sdcard \
     secdiscard \
+    selinux_policy \
     sensorservice \
+    service \
+    servicemanager \
     services \
     settings \
     SettingsProvider \
     sgdisk \
     Shell \
+    shell_and_utilities \
     sm \
+    storaged \
+    surfaceflinger \
     svc \
     tc \
     telecom \
     telephony-common \
+    thermalserviced \
+    tombstoned \
     traced \
     traced_probes \
     tune2fs \
+    tzdatacheck \
     uiautomator \
     uncrypt \
+    usbd \
     vdc \
+    vndservice \
+    vndservicemanager \
     voip-common \
     vold \
     WallpaperBackup \
@@ -194,11 +263,39 @@ PRODUCT_PACKAGES += \
     wifi-service \
     wm \
 
+
+# VINTF data
+PRODUCT_PACKAGES += \
+    device_compatibility_matrix.xml \
+    device_manifest.xml \
+    framework_manifest.xml \
+    framework_compatibility_matrix.xml \
+
+# AID Generation for
+# <pwd.h> and <grp.h>
+PRODUCT_PACKAGES += \
+    passwd \
+    group \
+    fs_config_files \
+    fs_config_dirs
+
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/init.usb.rc:root/init.usb.rc \
+    system/core/rootdir/init.usb.configfs.rc:root/init.usb.configfs.rc \
+    system/core/rootdir/ueventd.rc:root/ueventd.rc \
+    system/core/rootdir/etc/hosts:system/etc/hosts
+
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
 PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
 
+# Ensure that this property is always defined so that bionic_systrace.cpp
+# can rely on it being initially set by init.
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    debug.atrace.tags.enableflags=0
+
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
+    adb_keys \
     iotop \
     logpersist.start \
     micro_bench \
@@ -223,4 +320,3 @@ PRODUCT_COPY_FILES += \
     system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/embedded.mk)
