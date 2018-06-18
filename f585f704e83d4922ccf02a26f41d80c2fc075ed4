@@ -22,6 +22,30 @@
       "revId": "f585f704e83d4922ccf02a26f41d80c2fc075ed4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe15e345_d4c06c3f",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1227,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-18T21:50:53Z",
+      "side": 1,
+      "message": "Agree. Added more people to discuss about this name.",
+      "parentUuid": "c9e1522f_1d758b6e",
+      "range": {
+        "startLine": 1227,
+        "startChar": 6,
+        "endLine": 1227,
+        "endChar": 34
+      },
+      "revId": "f585f704e83d4922ccf02a26f41d80c2fc075ed4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
