@@ -928,7 +928,15 @@ endif
 
 ifeq ($(USE_LOGICAL_PARTITIONS),true)
   BOARD_KERNEL_CMDLINE += androidboot.logical_partitions=1
+
+ifneq ($(BOARD_SYSTEMIMAGE_PARTITION_SIZE),)
+ifneq ($(BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE),)
+$(error Should not define BOARD_SYSTEMIMAGE_PARTITION_SIZE and \
+    BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE together)
 endif
+endif
+
+endif # USE_LOGICAL_PARTITIONS
 
 # ###############################################################
 # Set up final options.

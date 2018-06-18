@@ -18,8 +18,10 @@
 Builds output_image from the given input_directory, properties_file,
 and writes the image to target_output_directory.
 
+If argument generated_prop_file exists, write additional properties to the file.
+
 Usage:  build_image.py input_directory properties_file output_image \\
-            target_output_directory
+            target_output_directory [generated_prop_file]
 """
 
 from __future__ import print_function
@@ -40,22 +42,29 @@ OPTIONS = common.OPTIONS
 
 FIXED_SALT = "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
 BLOCK_SIZE = 4096
+BYTES_IN_MB = 1024 * 1024
 
 
-def RunCommand(cmd, verbose=None):
+def RunCommand(cmd, verbose=None, env=None):
   """Echo and run the given command.
 
   Args:
     cmd: the command represented as a list of strings.
     verbose: show commands being executed.
+    env: a dictionary of additional environment variables.
   Returns:
     A tuple of the output and the exit code.
   """
+  env_copy = None
+  if env is not None:
+    env_copy = os.environ.copy()
+    env_copy.update(env)
   if verbose is None:
     verbose = OPTIONS.verbose
   if verbose:
     print("Running: " + " ".join(cmd))
-  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                       env=env_copy)
   output, _ = p.communicate()
 
   if verbose:
@@ -101,6 +110,24 @@ def GetVeritySize(partition_size, fec_supported):
       return 0
     return verity_size + fec_size
   return verity_size
+
+
+def GetDiskUsage(path):
+  """Return number of bytes that "path" occupies on host.
+
+  Args:
+    path: The directory or file to calculate size on
+  Returns:
+    True and the number of bytes if successful,
+    False and 0 otherwise.
+  """
+  env = {"POSIXLY_CORRECT": "1"}
+  cmd = ["du", "-s", path]
+  output, exit_code = RunCommand(cmd, verbose=False, env=env)
+  if exit_code != 0:
+    return False, 0
+  # POSIX du returns number of blocks with block size 512
+  return True, int(output.split()[0]) * 512
 
 
 def GetSimgSize(image_file):
@@ -442,6 +469,8 @@ def CheckHeadroom(ext4fs_output, prop_dict):
 
 def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   """Build an image to out_file from in_dir with property prop_dict.
+  After the function call, values in prop_dict is updated with
+  computed values.
 
   Args:
     in_dir: path of input directory.
@@ -485,6 +514,21 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   is_verity_partition = "verity_block_device" in prop_dict
   verity_supported = prop_dict.get("verity") == "true"
   verity_fec_supported = prop_dict.get("verity_fec") == "true"
+
+  if (prop_dict.get("use_logical_partitions") == "true" and
+      "partition_size" not in prop_dict):
+    # if partition_size is not defined, use output of `du' + reserved_size
+    success, size = GetDiskUsage(origin_in)
+    if not success:
+      return False
+    if OPTIONS.verbose:
+      print("The tree size of %s is %d MB." % (origin_in, size // BYTES_IN_MB))
+    size += int(prop_dict.get("partition_reserved_size", 0))
+    # Round this up to a multiple of 4K so that avbtool works
+    size = common.RoundUpTo4K(size)
+    prop_dict["partition_size"] = str(size)
+    if OPTIONS.verbose:
+      print("Allocating %d MB for %s." % (size // BYTES_IN_MB, out_file))
 
   # Adjust the partition size to make room for the hashes if this is to be
   # verified.
@@ -613,6 +657,17 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   if exit_code != 0:
     print("Error: '%s' failed with exit code %d:\n%s" % (
         build_command, exit_code, mkfs_output))
+    success, du = GetDiskUsage(origin_in)
+    du_str = ("%d bytes (%d MB)" % (du, du // BYTES_IN_MB)
+             ) if success else "unknown"
+    print("Out of space? The tree size of %s is %s.\n" % (
+        origin_in, du_str))
+    print("The max is %d bytes (%d MB).\n" % (
+        int(prop_dict["partition_size"]),
+        int(prop_dict["partition_size"]) // BYTES_IN_MB))
+    print("Reserved space is %d bytes (%d MB).\n" % (
+        int(prop_dict.get("partition_reserved_size", 0)),
+        int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
     return False
 
   # Check if there's enough headroom space available for ext4 image.
@@ -713,6 +768,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "avb_enable",
       "avb_avbtool",
       "avb_salt",
+      "use_logical_partitions",
   )
   for p in common_props:
     copy_prop(p, p)
@@ -745,6 +801,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_extfs_inode_count", "extfs_inode_count")
     if not copy_prop("system_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
+    copy_prop("system_reserved_size", "partition_reserved_size")
   elif mount_point == "system_other":
     # We inherit the selinux policies of /system since we contain some of its
     # files.
@@ -767,6 +824,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("system_extfs_inode_count", "extfs_inode_count")
     if not copy_prop("system_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
+    copy_prop("system_reserved_size", "partition_reserved_size")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
@@ -842,8 +900,27 @@ def LoadGlobalDict(filename):
   return d
 
 
+def GlobalDictFromImageProp(image_prop, mount_point):
+  d = {}
+  def copy_prop(src_p, dest_p):
+    if src_p in image_prop:
+      d[dest_p] = image_prop[src_p]
+      return True
+    return False
+  if mount_point == "system":
+    copy_prop("partition_size", "system_size")
+  elif mount_point == "system_other":
+    copy_prop("partition_size", "system_size")
+  return d
+
+
+def SaveGlobalDict(filename, glob_dict):
+  with open(filename, "w") as f:
+    f.writelines(["%s=%s" % (key, value) for (key, value) in glob_dict.items()])
+
+
 def main(argv):
-  if len(argv) != 4:
+  if len(argv) < 4 or len(argv) > 5:
     print(__doc__)
     sys.exit(1)
 
@@ -851,6 +928,7 @@ def main(argv):
   glob_dict_file = argv[1]
   out_file = argv[2]
   target_out = argv[3]
+  prop_file_out = argv[4] if len(argv) >= 5 else None
 
   glob_dict = LoadGlobalDict(glob_dict_file)
   if "mount_point" in glob_dict:
@@ -885,6 +963,9 @@ def main(argv):
           file=sys.stderr)
     sys.exit(1)
 
+  if prop_file_out:
+    glob_dict_out = GlobalDictFromImageProp(image_properties, mount_point)
+    SaveGlobalDict(prop_file_out, glob_dict_out)
 
 if __name__ == '__main__':
   try:
