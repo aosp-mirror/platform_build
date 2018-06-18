@@ -52,6 +52,24 @@
       "revId": "57c4db058642414ae27cc4c4b5a0dd4cb57db54a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a792e95a_d02b4458",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2018-06-18T14:56:50Z",
+      "side": 1,
+      "message": "noted, however definitions.mk is not imported in this file (see comment above). I think filter is OK for this use case.",
+      "parentUuid": "5531fa18_8f294599",
+      "revId": "57c4db058642414ae27cc4c4b5a0dd4cb57db54a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
