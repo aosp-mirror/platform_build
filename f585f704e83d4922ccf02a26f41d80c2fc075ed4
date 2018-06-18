@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c9e1522f_1d758b6e",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1227,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-18T21:47:38Z",
+      "side": 1,
+      "message": "This name is too generic.  Do we have a name for the outer partition?  Maybe BOARD_SUPER_PARTITION_SIZE?",
+      "range": {
+        "startLine": 1227,
+        "startChar": 6,
+        "endLine": 1227,
+        "endChar": 34
+      },
+      "revId": "f585f704e83d4922ccf02a26f41d80c2fc075ed4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
