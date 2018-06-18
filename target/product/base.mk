@@ -37,6 +37,7 @@ PRODUCT_PACKAGES += \
     appops \
     app_process \
     appwidget \
+    atest \
     atrace \
     audioserver \
     BackupRestoreConfirmation \
