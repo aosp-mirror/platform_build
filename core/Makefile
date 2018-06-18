@@ -2917,7 +2917,7 @@ endif
 # -----------------------------------------------------------------
 # NDK Sysroot Package
 NDK_SYSROOT_TARGET := $(PRODUCT_OUT)/ndk_sysroot.tar.bz2
-$(NDK_SYSROOT_TARGET): ndk
+$(NDK_SYSROOT_TARGET): $(SOONG_OUT_DIR)/ndk.timestamp
 	@echo Package NDK sysroot...
 	$(hide) tar cjf $@ -C $(SOONG_OUT_DIR) ndk
 
