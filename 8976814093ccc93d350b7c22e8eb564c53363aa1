@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "44796b47_cd5c4c01",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-06-18T17:38:18Z",
+      "side": 1,
+      "message": "Why?  (at least so that we know when making future changes what the intent is here)",
+      "revId": "8976814093ccc93d350b7c22e8eb564c53363aa1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
