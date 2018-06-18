@@ -22,6 +22,30 @@
       "revId": "508cefa8bd48bee60112d07949f9d9e3f25deb8f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5555caa8_c84ab5c2",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 374,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-06-18T23:35:51Z",
+      "side": 1,
+      "message": "Well, I expected some OEMs might have reason to have both arch. Do you want me to make this inflexible?",
+      "parentUuid": "9096bcc7_822c7256",
+      "range": {
+        "startLine": 374,
+        "startChar": 7,
+        "endLine": 374,
+        "endChar": 43
+      },
+      "revId": "508cefa8bd48bee60112d07949f9d9e3f25deb8f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
