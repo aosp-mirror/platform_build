@@ -855,6 +855,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("vendor_extfs_inode_count", "extfs_inode_count")
     if not copy_prop("vendor_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
+    copy_prop("vendor_reserved_size", "partition_reserved_size")
   elif mount_point == "product":
     copy_prop("avb_product_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_product_add_hashtree_footer_args",
@@ -911,6 +912,8 @@ def GlobalDictFromImageProp(image_prop, mount_point):
     copy_prop("partition_size", "system_size")
   elif mount_point == "system_other":
     copy_prop("partition_size", "system_size")
+  elif mount_point == "vendor":
+    copy_prop("partition_size", "vendor_size")
   return d
 
 
