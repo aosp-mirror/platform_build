@@ -793,8 +793,10 @@ ifneq (,$(filter $(my_module_tags),tests))
 $(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(my_checked_module)
 endif
 $(LOCAL_MODULE)-$(h_or_hc_or_t) : $(my_all_targets)
+.PHONY: $(LOCAL_MODULE)-$(h_or_hc_or_t)
 ifeq ($(j_or_n),native)
 $(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix) : $(my_all_targets)
+.PHONY: $(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix)
 endif
 endif
 
