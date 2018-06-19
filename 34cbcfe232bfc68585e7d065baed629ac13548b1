@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "65ca2f4d_378a0965",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2018-06-19T07:53:47Z",
+      "side": 1,
+      "message": "seems like the second argument \"vndk\" and \"vndk-sp\" are not needed anymore?",
+      "range": {
+        "startLine": 177,
+        "startChar": 0,
+        "endLine": 178,
+        "endChar": 61
+      },
+      "revId": "34cbcfe232bfc68585e7d065baed629ac13548b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
