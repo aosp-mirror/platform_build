@@ -40,6 +40,10 @@ endif
 
 ifdef notice_file
 
+ifdef my_register_name
+ALL_MODULES.$(my_register_name).NOTICES := $(ALL_MODULES.$(my_register_name).NOTICES) $(notice_file)
+endif
+
 # This relies on the name of the directory in PRODUCT_OUT matching where
 # it's installed on the target - i.e. system, data, etc.  This does
 # not work for root and isn't exact, but it's probably good enough for
