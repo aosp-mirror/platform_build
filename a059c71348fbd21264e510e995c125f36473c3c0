@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d75dca3_aac25fe9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-19T10:28:31Z",
+      "side": 1,
+      "message": "would it be an option to populate ALL_MODULES.\u003cx\u003e.STUBS with $(call java-lib-files,\u003cx\u003e.stubs) for sdk libraries instead of the default $(full_classes_stubs_jar) ?",
+      "range": {
+        "startLine": 661,
+        "startChar": 0,
+        "endLine": 661,
+        "endChar": 38
+      },
+      "revId": "a059c71348fbd21264e510e995c125f36473c3c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
