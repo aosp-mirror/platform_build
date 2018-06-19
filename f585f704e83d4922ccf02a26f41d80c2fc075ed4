@@ -46,6 +46,23 @@
       "revId": "f585f704e83d4922ccf02a26f41d80c2fc075ed4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ff8be1a_5fc192a5",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 1230,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-06-19T00:47:01Z",
+      "side": 1,
+      "message": "This doesn\u0027t really make sense for apps builds, so it should be inside the conditional directly above this (though the implementation should function in all cases right now)",
+      "revId": "f585f704e83d4922ccf02a26f41d80c2fc075ed4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
