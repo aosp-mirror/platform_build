@@ -55,12 +55,14 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.location.provider \
+    ContactsProvider \
     content \
     crash_dump \
     CtsShimPrebuilt \
     CtsShimPrivPrebuilt \
     debuggerd\
     dnsmasq \
+    DefaultContainerService \
     DownloadProvider \
     dpm \
     dumpstate \
