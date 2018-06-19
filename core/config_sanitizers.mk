@@ -190,6 +190,15 @@ ifneq ($(filter safe-stack,$(my_sanitize)),)
   endif
 endif
 
+# Disable Scudo if ASan or TSan is enabled.
+ifneq ($(filter address thread,$(my_sanitize)),)
+  my_sanitize := $(filter-out scudo,$(my_sanitize))
+endif
+
+ifneq ($(filter scudo,$(my_sanitize)),)
+  my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)SCUDO_RUNTIME_LIBRARY)
+endif
+
 # Undefined symbols can occur if a non-sanitized library links
 # sanitized static libraries. That's OK, because the executable
 # always depends on the ASan runtime library, which defines these
@@ -374,7 +383,7 @@ ifneq ($(my_sanitize_diag),)
     notrap_arg := $(subst $(space),$(comma),$(my_sanitize_diag)),
     my_cflags += -fno-sanitize-trap=$(notrap_arg)
     # Diagnostic requires a runtime library, unless ASan or TSan are also enabled.
-    ifeq ($(filter address thread,$(my_sanitize)),)
+    ifeq ($(filter address thread scudo,$(my_sanitize)),)
       # Does not have to be the first DT_NEEDED unlike ASan.
       my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY)
     endif
