@@ -572,11 +572,13 @@ USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 # Work around for b/68406220
 # This should match the soong version.
 USE_D8 := true
+.KATI_READONLY := USE_D8
 
 # Default R8 behavior when USE_R8 is not specified.
 ifndef USE_R8
   USE_R8 := true
 endif
+.KATI_READONLY := USE_R8
 
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
