@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "35c93b50_ca08cbce",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 734,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-06-20T23:27:23Z",
+      "side": 1,
+      "message": "Does TARGET_OPENJDK9 has the possible value: \"false\"? If not, it seems that we can just write the block(line 734-740) as:\n\nTARGET_OPENJDK9 :\u003d\nifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)\nTARGET_OPENJDK9 :\u003d true\nendif",
+      "revId": "19cc72905282ccb6cc4d3ef9fefd6fd3b582c7e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
