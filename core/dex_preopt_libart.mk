@@ -100,6 +100,9 @@ ifneq (true,$(TARGET_BUILD_PDK))
 my_use_profile_for_boot_image := true
 endif
 endif
+ifeq (,$(strip $(LIBART_TARGET_BOOT_DEX_FILES)))
+my_use_profile_for_boot_image := false
+endif
 
 ifeq (true,$(my_use_profile_for_boot_image))
 
