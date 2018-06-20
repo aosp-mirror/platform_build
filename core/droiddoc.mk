@@ -232,16 +232,11 @@ else
 ##
 ##
 
-ifdef USE_OPENJDK9
 # For OpenJDK 9 we use --patch-module to define the core libraries code.
 # TODO(tobiast): Reorganize this when adding proper support for OpenJDK 9
 # modules. Here we treat all code in core libraries as being in java.base
 # to work around the OpenJDK 9 module system. http://b/62049770
 $(full_target): PRIVATE_BOOTCLASSPATH_ARG := --patch-module=java.base=$(PRIVATE_BOOTCLASSPATH)
-else
-# For OpenJDK 8 we can use -bootclasspath to define the core libraries code.
-$(full_target): PRIVATE_BOOTCLASSPATH_ARG := $(addprefix -bootclasspath ,$(PRIVATE_BOOTCLASSPATH))
-endif
 $(full_target): $(full_src_files) $(LOCAL_GENERATED_SOURCES) $(full_java_libs) $(ZIPSYNC) $(LOCAL_SRCJARS) $(LOCAL_ADDITIONAL_DEPENDENCIES)
 	@echo Docs javadoc: $(PRIVATE_OUT_DIR)
 	@mkdir -p $(dir $@)
