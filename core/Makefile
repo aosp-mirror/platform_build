@@ -36,9 +36,7 @@ $(foreach cf,$(unique_product_copy_files_pairs), \
             $(eval $(call copy-xml-file-checked,$(_src),$(_fulldest))),\
             $(if $(and $(filter %.jar,$(_dest)),$(filter $(basename $(notdir $(_dest))),$(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))),\
                 $(eval $(call copy-and-uncompress-dexs,$(_src),$(_fulldest))), \
-                $(if $(filter init%rc,$(notdir $(_dest)))$(filter %/etc/init,$(dir $(_dest))),\
-                    $(eval $(call copy-init-script-file-checked,$(_src),$(_fulldest))),\
-                    $(eval $(call copy-one-file,$(_src),$(_fulldest)))))) \
+                $(eval $(call copy-one-file,$(_src),$(_fulldest))))) \
         $(eval ALL_DEFAULT_INSTALLED_MODULES += $(_fulldest)) \
         $(eval unique_product_copy_files_destinations += $(_dest))))
 

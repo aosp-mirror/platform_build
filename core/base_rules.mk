@@ -423,7 +423,7 @@ my_init_rc_installed := $(foreach rc,$(my_init_rc_pairs),$(call word-colon,2,$(r
 # Make sure we only set up the copy rules once, even if another arch variant
 # shares a common LOCAL_INIT_RC.
 my_init_rc_new_pairs := $(filter-out $(ALL_INIT_RC_INSTALLED_PAIRS),$(my_init_rc_pairs))
-my_init_rc_new_installed := $(call copy-many-init-script-files-checked,$(my_init_rc_new_pairs))
+my_init_rc_new_installed := $(call copy-many-files,$(my_init_rc_new_pairs))
 ALL_INIT_RC_INSTALLED_PAIRS += $(my_init_rc_new_pairs)
 
 $(my_all_targets) : $(my_init_rc_installed)
