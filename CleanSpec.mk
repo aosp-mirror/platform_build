@@ -488,6 +488,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Launcher3)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/Launcher3)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Launcher3_intermediates)
 
+$(call add-clean-step, find $(PRODUCT_OUT) -type f -name "vr_hwc*" -print0 | xargs -0 rm -f)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
