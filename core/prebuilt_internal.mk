@@ -600,6 +600,11 @@ $(my_src_jar) : $(my_src_aar)
 	# and have a new timestamp.
 	$(hide) touch $(dir $@)/proguard.txt
 	$(hide) touch $(dir $@)/AndroidManifest.xml
+
+my_prebuilt_android_manifest := $(intermediates.COMMON)/manifest/AndroidManifest.xml
+$(eval $(call copy-one-file,$(my_src_android_manifest),$(my_prebuilt_android_manifest)))
+$(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_prebuilt_android_manifest))
+
 else
 
 # run Jetifier if needed
