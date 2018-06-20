@@ -20,6 +20,10 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_x86_64.mk)
 -include sdk/build/product_sdk.mk
 -include development/build/product_sdk.mk
 
+# keep this apk for sdk targets for now
+PRODUCT_PACKAGES += \
+    EmulatorSmokeTests
+
 # Overrides
 PRODUCT_BRAND := Android
 PRODUCT_NAME := sdk_phone_x86_64
