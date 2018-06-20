@@ -28,8 +28,6 @@ PRODUCT_PACKAGES += \
     com.android.media.remotedisplay \
     com.android.media.remotedisplay.xml \
     CompanionDeviceManager \
-    ContactsProvider \
-    DefaultContainerService \
     drmserver \
     ethernet-service \
     fsck.f2fs \
