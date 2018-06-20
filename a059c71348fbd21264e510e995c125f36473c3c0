@@ -22,6 +22,30 @@
       "revId": "a059c71348fbd21264e510e995c125f36473c3c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59d82f07_47ac7fb9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2018-06-20T03:18:11Z",
+      "side": 1,
+      "message": "full_classes_stubs_jar means path of stubs.jar file in intermediates.COMMON and it is same with full_classes_jar which means path of classes.jar file. And the java-lib-files function finds the path of the classes.jar file. So I used this function.\nAnd ALL_MODULES. \u003cX\u003e .STUBS is only used in sdk-addon.mk.",
+      "parentUuid": "1d75dca3_aac25fe9",
+      "range": {
+        "startLine": 661,
+        "startChar": 0,
+        "endLine": 661,
+        "endChar": 38
+      },
+      "revId": "a059c71348fbd21264e510e995c125f36473c3c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
