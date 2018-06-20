@@ -315,6 +315,17 @@ function set_sequence_number()
     export BUILD_ENV_SEQUENCE_NUMBER=13
 }
 
+# Takes a command name, and check if it's in ENVSETUP_NO_COMPLETION or not.
+function should_add_completion() {
+    local cmd="$1"
+    case :"$ENVSETUP_NO_COMPLETION": in
+    *:"$cmd":*)
+        return 1
+        ;;
+    esac
+    return 0
+}
+
 function addcompletions()
 {
     local T dir f
@@ -329,13 +340,19 @@ function addcompletions()
         return
     fi
 
+    # Completion can be disabled selectively to allow users to use non-standard completion.
+    # e.g.
+    # ENVSETUP_NO_COMPLETION=adb # -> disable adb completion
+    # ENVSETUP_NO_COMPLETION=adb:bit # -> disable adb and bit completion
     for f in system/core/adb/adb.bash system/core/fastboot/fastboot.bash; do
-        if [ -f $f ]; then
+        if [ -f "$f" ] && should_add_completion $(basename "$f" .bash) ; then
             . $f
         fi
     done
 
-    complete -C "bit --tab" bit
+    if should_add_completion bit ; then
+        complete -C "bit --tab" bit
+    fi
 }
 
 function choosetype()
