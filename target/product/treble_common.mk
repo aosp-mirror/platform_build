@@ -62,7 +62,3 @@ PRODUCT_PACKAGES += \
 
 # Support addtional O-MR1 vendor interface
 PRODUCT_EXTRA_VNDK_VERSIONS := 27
-
-# TODO(b/78308559): includes vr_hwc into GSI before vr_hwc move to vendor
-PRODUCT_PACKAGES += \
-    vr_hwc
