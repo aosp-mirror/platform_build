@@ -27,6 +27,12 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       in the apkcerts.txt file.  Option may be repeated to give
       multiple extra packages.
 
+  --skip_apks_with_path_prefix  <prefix>
+      Skip signing an APK if it has the matching prefix in its path. The prefix
+      should be matching the entry name, which has partition names in upper
+      case, e.g. "VENDOR/app/", or "SYSTEM_OTHER/preloads/". Option may be
+      repeated to give multiple prefixes.
+
   -k  (--key_mapping)  <src_key=dest_key>
       Add a mapping from the key name as specified in apkcerts.txt (the
       src_key) to the real key you wish to sign the package with
@@ -118,6 +124,7 @@ if sys.hexversion < 0x02070000:
 OPTIONS = common.OPTIONS
 
 OPTIONS.extra_apks = {}
+OPTIONS.skip_apks_with_path_prefix = set()
 OPTIONS.key_map = {}
 OPTIONS.rebuild_recovery = False
 OPTIONS.replace_ota_keys = False
@@ -144,27 +151,40 @@ def GetApkCerts(certmap):
   return certmap
 
 
-def GetApkFileInfo(filename, compressed_extension):
+def GetApkFileInfo(filename, compressed_extension, skipped_prefixes):
   """Returns the APK info based on the given filename.
 
   Checks if the given filename (with path) looks like an APK file, by taking the
-  compressed extension into consideration.
+  compressed extension into consideration. If it appears to be an APK file,
+  further checks if the APK file should be skipped when signing, based on the
+  given path prefixes.
 
   Args:
     filename: Path to the file.
     compressed_extension: The extension string of compressed APKs (e.g. ".gz"),
         or None if there's no compressed APKs.
+    skipped_prefixes: A set/list/tuple of the path prefixes to be skipped.
 
   Returns:
-    (is_apk, is_compressed): is_apk indicates whether the given filename is an
-    APK file. is_compressed indicates whether the APK file is compressed (only
-    meaningful when is_apk is True).
+    (is_apk, is_compressed, should_be_skipped): is_apk indicates whether the
+    given filename is an APK file. is_compressed indicates whether the APK file
+    is compressed (only meaningful when is_apk is True). should_be_skipped
+    indicates whether the filename matches any of the given prefixes to be
+    skipped.
 
   Raises:
-    AssertionError: On invalid compressed_extension input.
+    AssertionError: On invalid compressed_extension or skipped_prefixes inputs.
   """
   assert compressed_extension is None or compressed_extension.startswith('.'), \
       "Invalid compressed_extension arg: '{}'".format(compressed_extension)
+
+  # skipped_prefixes should be one of set/list/tuple types. Other types such as
+  # str shouldn't be accepted.
+  assert (isinstance(skipped_prefixes, tuple) or
+          isinstance(skipped_prefixes, set) or
+          isinstance(skipped_prefixes, list)), \
+              "Invalid skipped_prefixes input type: {}".format(
+                  type(skipped_prefixes))
 
   compressed_apk_extension = (
       ".apk" + compressed_extension if compressed_extension else None)
@@ -172,11 +192,12 @@ def GetApkFileInfo(filename, compressed_extension):
             (compressed_apk_extension and
              filename.endswith(compressed_apk_extension)))
   if not is_apk:
-    return (False, False)
+    return (False, False, False)
 
   is_compressed = (compressed_apk_extension and
                    filename.endswith(compressed_apk_extension))
-  return (True, is_compressed)
+  should_be_skipped = filename.startswith(tuple(skipped_prefixes))
+  return (True, is_compressed, should_be_skipped)
 
 
 def CheckAllApksSigned(input_tf_zip, apk_key_map, compressed_extension):
@@ -193,9 +214,9 @@ def CheckAllApksSigned(input_tf_zip, apk_key_map, compressed_extension):
   """
   unknown_apks = []
   for info in input_tf_zip.infolist():
-    (is_apk, is_compressed) = GetApkFileInfo(
-        info.filename, compressed_extension)
-    if not is_apk:
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        info.filename, compressed_extension, OPTIONS.skip_apks_with_path_prefix)
+    if not is_apk or should_be_skipped:
       continue
     name = os.path.basename(info.filename)
     if is_compressed:
@@ -276,9 +297,11 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
                        apk_key_map, key_passwords, platform_api_level,
                        codename_to_api_level_map,
                        compressed_extension):
+  # maxsize measures the maximum filename length, including the ones to be
+  # skipped.
   maxsize = max(
       [len(os.path.basename(i.filename)) for i in input_tf_zip.infolist()
-       if GetApkFileInfo(i.filename, compressed_extension)[0]])
+       if GetApkFileInfo(i.filename, compressed_extension, [])[0]])
   system_root_image = misc_info.get("system_root_image") == "true"
 
   for info in input_tf_zip.infolist():
@@ -288,10 +311,18 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
     data = input_tf_zip.read(filename)
     out_info = copy.copy(info)
-    (is_apk, is_compressed) = GetApkFileInfo(filename, compressed_extension)
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        filename, compressed_extension, OPTIONS.skip_apks_with_path_prefix)
+
+    if is_apk and should_be_skipped:
+      # Copy skipped APKs verbatim.
+      print(
+          "NOT signing: %s\n"
+          "        (skipped due to matching prefix)" % (filename,))
+      common.ZipWriteStr(output_tf_zip, out_info, data)
 
     # Sign APKs.
-    if is_apk:
+    elif is_apk:
       name = os.path.basename(filename)
       if is_compressed:
         name = name[:-len(compressed_extension)]
@@ -304,7 +335,9 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         common.ZipWriteStr(output_tf_zip, out_info, signed_data)
       else:
         # an APK we're not supposed to sign.
-        print("NOT signing: %s" % (name,))
+        print(
+            "NOT signing: %s\n"
+            "        (skipped due to special cert string)" % (name,))
         common.ZipWriteStr(output_tf_zip, out_info, data)
 
     # System properties.
@@ -794,6 +827,12 @@ def main(argv):
       names = names.split(",")
       for n in names:
         OPTIONS.extra_apks[n] = key
+    elif o == "--skip_apks_with_path_prefix":
+      # Sanity check the prefix, which must be in all upper case.
+      prefix = a.split('/')[0]
+      if not prefix or prefix != prefix.upper():
+        raise ValueError("Invalid path prefix '%s'" % (a,))
+      OPTIONS.skip_apks_with_path_prefix.add(a)
     elif o in ("-d", "--default_key_mappings"):
       key_mapping_options.append((None, a))
     elif o in ("-k", "--key_mapping"):
@@ -853,6 +892,7 @@ def main(argv):
       extra_opts="e:d:k:ot:",
       extra_long_opts=[
           "extra_apks=",
+          "skip_apks_with_path_prefix=",
           "default_key_mappings=",
           "key_mapping=",
           "replace_ota_keys",

@@ -237,25 +237,116 @@ class SignTargetFilesApksTest(unittest.TestCase):
           AssertionError, CheckAllApksSigned, input_zip, apk_key_map, '.gz')
 
   def test_GetApkFileInfo(self):
-    (is_apk, is_compressed) = GetApkFileInfo("PRODUCT/apps/Chats.apk", None)
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "PRODUCT/apps/Chats.apk", None, [])
     self.assertTrue(is_apk)
     self.assertFalse(is_compressed)
+    self.assertFalse(should_be_skipped)
 
-    (is_apk, is_compressed) = GetApkFileInfo("PRODUCT/apps/Chats.dat", None)
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "PRODUCT/apps/Chats.apk", None, [])
+    self.assertTrue(is_apk)
+    self.assertFalse(is_compressed)
+    self.assertFalse(should_be_skipped)
+
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "PRODUCT/apps/Chats.dat", None, [])
     self.assertFalse(is_apk)
     self.assertFalse(is_compressed)
+    self.assertFalse(should_be_skipped)
 
   def test_GetApkFileInfo_withCompressedApks(self):
-    (is_apk, is_compressed) = GetApkFileInfo("PRODUCT/apps/Chats.apk.gz", ".gz")
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "PRODUCT/apps/Chats.apk.gz", ".gz", [])
     self.assertTrue(is_apk)
     self.assertTrue(is_compressed)
+    self.assertFalse(should_be_skipped)
 
-    (is_apk, is_compressed) = GetApkFileInfo("PRODUCT/apps/Chats.apk.gz", ".xz")
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "PRODUCT/apps/Chats.apk.gz", ".xz", [])
     self.assertFalse(is_apk)
     self.assertFalse(is_compressed)
+    self.assertFalse(should_be_skipped)
 
     self.assertRaises(
-        AssertionError, GetApkFileInfo, "PRODUCT/apps/Chats.apk", "")
+        AssertionError, GetApkFileInfo, "PRODUCT/apps/Chats.apk", "", [])
 
     self.assertRaises(
-        AssertionError, GetApkFileInfo, "PRODUCT/apps/Chats.apk", "apk")
+        AssertionError, GetApkFileInfo, "PRODUCT/apps/Chats.apk", "apk", [])
+
+  def test_GetApkFileInfo_withSkippedPrefixes(self):
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "PRODUCT/preloads/apps/Chats.apk", None, set())
+    self.assertTrue(is_apk)
+    self.assertFalse(is_compressed)
+    self.assertFalse(should_be_skipped)
+
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "PRODUCT/preloads/apps/Chats.apk",
+        None,
+        set(["PRODUCT/preloads/"]))
+    self.assertTrue(is_apk)
+    self.assertFalse(is_compressed)
+    self.assertTrue(should_be_skipped)
+
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "SYSTEM_OTHER/preloads/apps/Chats.apk",
+        None,
+        set(["SYSTEM/preloads/", "SYSTEM_OTHER/preloads/"]))
+    self.assertTrue(is_apk)
+    self.assertFalse(is_compressed)
+    self.assertTrue(should_be_skipped)
+
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "SYSTEM_OTHER/preloads/apps/Chats.apk.gz",
+        ".gz",
+        set(["PRODUCT/prebuilts/", "SYSTEM_OTHER/preloads/"]))
+    self.assertTrue(is_apk)
+    self.assertTrue(is_compressed)
+    self.assertTrue(should_be_skipped)
+
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "SYSTEM_OTHER/preloads/apps/Chats.dat",
+        None,
+        set(["SYSTEM_OTHER/preloads/"]))
+    self.assertFalse(is_apk)
+    self.assertFalse(is_compressed)
+    self.assertFalse(should_be_skipped)
+
+  def test_GetApkFileInfo_checkSkippedPrefixesInput(self):
+    # set
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "SYSTEM_OTHER/preloads/apps/Chats.apk",
+        None,
+        set(["SYSTEM_OTHER/preloads/"]))
+    self.assertTrue(is_apk)
+    self.assertFalse(is_compressed)
+    self.assertTrue(should_be_skipped)
+
+    # tuple
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "SYSTEM_OTHER/preloads/apps/Chats.apk",
+        None,
+        ("SYSTEM_OTHER/preloads/",))
+    self.assertTrue(is_apk)
+    self.assertFalse(is_compressed)
+    self.assertTrue(should_be_skipped)
+
+    # list
+    (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
+        "SYSTEM_OTHER/preloads/apps/Chats.apk",
+        None,
+        ["SYSTEM_OTHER/preloads/"])
+    self.assertTrue(is_apk)
+    self.assertFalse(is_compressed)
+    self.assertTrue(should_be_skipped)
+
+    # str is invalid.
+    self.assertRaises(
+        AssertionError, GetApkFileInfo, "SYSTEM_OTHER/preloads/apps/Chats.apk",
+        None, "SYSTEM_OTHER/preloads/")
+
+    # None is invalid.
+    self.assertRaises(
+        AssertionError, GetApkFileInfo, "SYSTEM_OTHER/preloads/apps/Chats.apk",
+        None, None)
