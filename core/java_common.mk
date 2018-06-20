@@ -237,6 +237,8 @@ endif
 full_java_bootclasspath_libs :=
 empty_bootclasspath :=
 my_system_modules :=
+exported_sdk_libs_files :=
+my_exported_sdk_libs_file :=
 
 ifndef LOCAL_IS_HOST_MODULE
   sdk_libs :=
@@ -326,6 +328,14 @@ ifndef LOCAL_IS_HOST_MODULE
   full_shared_java_libs := $(call java-lib-files,$(LOCAL_JAVA_LIBRARIES) $(sdk_libs),$(LOCAL_IS_HOST_MODULE))
   full_shared_java_header_libs := $(call java-lib-header-files,$(LOCAL_JAVA_LIBRARIES) $(sdk_libs),$(LOCAL_IS_HOST_MODULE))
   sdk_libs :=
+
+  # Files that contains the names of SDK libraries exported from dependencies. These will be re-exported.
+  # Note: No need to consider LOCAL_*_ANDROID_LIBRARIES and LOCAL_STATIC_JAVA_AAR_LIBRARIES. They are all appended to
+  # LOCAL_*_JAVA_LIBRARIES in java.mk
+  exported_sdk_libs_files := $(call exported-sdk-libs-files,$(LOCAL_JAVA_LIBRARIES) $(LOCAL_STATIC_JAVA_LIBRARIES))
+  # The file that contains the names of all SDK libraries that this module exports and re-exports
+  my_exported_sdk_libs_file := $(call local-intermediates-dir,COMMON)/exported-sdk-libs
+
 else # LOCAL_IS_HOST_MODULE
 
   ifeq ($(USE_CORE_LIB_BOOTCLASSPATH),true)
@@ -361,6 +371,22 @@ else # LOCAL_IS_HOST_MODULE
     full_shared_java_header_libs := $(full_shared_java_libs)
   endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
+
+
+# Export the SDK libs. The sdk library names listed in LOCAL_SDK_LIBRARIES are first exported.
+# Then sdk library names exported from dependencies are all re-exported.
+$(my_exported_sdk_libs_file): PRIVATE_EXPORTED_SDK_LIBS_FILES := $(exported_sdk_libs_files)
+$(my_exported_sdk_libs_file): PRIVATE_SDK_LIBS := $(sort $(LOCAL_SDK_LIBRARIES))
+$(my_exported_sdk_libs_file): $(exported_sdk_libs_files)
+	@echo "Export SDK libs $@"
+	$(hide) mkdir -p $(dir $@) && rm -f $@ $@.temp
+	$(if $(PRIVATE_SDK_LIBS),\
+		echo $(PRIVATE_SDK_LIBS) | tr ' ' '\n' > $@.temp,\
+		touch $@.temp)
+	$(if $(PRIVATE_EXPORTED_SDK_LIBS_FILES),\
+		cat $(PRIVATE_EXPORTED_SDK_LIBS_FILES) >> $@.temp)
+	$(hide) cat $@.temp | sort -u > $@
+	$(hide) rm -f $@.temp
 
 ifdef empty_bootclasspath
   ifdef full_java_bootclasspath_libs
