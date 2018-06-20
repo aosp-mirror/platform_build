@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "05e37549_01bc09e6",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2018-06-20T06:15:52Z",
+      "side": 1,
+      "message": "Resoved. refer to the next patch.",
+      "parentUuid": "f368b0b0_e8dd2675",
+      "range": {
+        "startLine": 51,
+        "startChar": 16,
+        "endLine": 51,
+        "endChar": 146
+      },
+      "revId": "dbb9b83077f6fab58471c21582ea46f1646f12bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0610934d_ca930912",
         "filename": "envsetup.sh",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "dbb9b83077f6fab58471c21582ea46f1646f12bb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d3dbfb3_3a6439ab",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2018-06-20T06:15:52Z",
+      "side": 1,
+      "message": "I\u0027ve fixed this in next patch set.",
+      "parentUuid": "0610934d_ca930912",
+      "range": {
+        "startLine": 82,
+        "startChar": 4,
+        "endLine": 89,
+        "endChar": 25
+      },
+      "revId": "dbb9b83077f6fab58471c21582ea46f1646f12bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
