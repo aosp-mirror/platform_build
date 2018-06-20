@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b5002e47_9e5ab4c5",
+        "filename": "core/Makefile",
+        "patchSetId": 23
+      },
+      "lineNbr": 1625,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-20T21:54:35Z",
+      "side": 1,
+      "message": "Sure.\n\nIn fact, this is what I did before :)",
+      "parentUuid": "0ae27dfc_6a7e1d7c",
+      "range": {
+        "startLine": 1618,
+        "startChar": 11,
+        "endLine": 1625,
+        "endChar": 91
+      },
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b42f0015_9f681f47",
         "filename": "core/Makefile",
         "patchSetId": 23
@@ -36,6 +60,30 @@
       "writtenOn": "2018-06-20T18:35:05Z",
       "side": 1,
       "message": "nit: also call this \"system_other_image\"?",
+      "range": {
+        "startLine": 2022,
+        "startChar": 50,
+        "endLine": 2022,
+        "endChar": 62
+      },
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13bccd2a_4142ba65",
+        "filename": "core/Makefile",
+        "patchSetId": 23
+      },
+      "lineNbr": 2022,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-20T21:54:35Z",
+      "side": 1,
+      "message": "Thanks for catching this!",
+      "parentUuid": "b42f0015_9f681f47",
       "range": {
         "startLine": 2022,
         "startChar": 50,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "72de46ad_d16be65a",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-20T21:54:35Z",
+      "side": 1,
+      "message": "Will do",
+      "parentUuid": "77ec8616_09c46f3e",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 7
+      },
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0d068b30_e84e9f03",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 23
@@ -82,6 +154,30 @@
       "writtenOn": "2018-06-20T18:35:05Z",
       "side": 1,
       "message": "nit: two blank lines around top-level functions.",
+      "range": {
+        "startLine": 113,
+        "startChar": 0,
+        "endLine": 113,
+        "endChar": 1
+      },
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f78f27ab_38bfc26f",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-20T21:54:35Z",
+      "side": 1,
+      "message": "Will do (I thought it was a mistake)",
+      "parentUuid": "0d068b30_e84e9f03",
       "range": {
         "startLine": 113,
         "startChar": 0,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "3b7bc913_bdc17c71",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-20T21:54:35Z",
+      "side": 1,
+      "message": "The old code uses du -sm because it is for informational purposes only. Now that I am actually using this number, I would like to compare in bytes.\n\nAlso, -m is not in POSIX standard, although both mac and linux builds support it. (And it is the old behavior.)",
+      "parentUuid": "61c7d660_158fae8e",
+      "range": {
+        "startLine": 122,
+        "startChar": 2,
+        "endLine": 123,
+        "endChar": 26
+      },
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d1b9b3bf_5005aa8d",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 23
@@ -128,6 +248,30 @@
       "writtenOn": "2018-06-20T18:35:05Z",
       "side": 1,
       "message": "nit: Run the linter to correct the indentation\n\n`pylint -d not-callable --rcfile\u003dpylintrc build_image.py`",
+      "range": {
+        "startLine": 468,
+        "startChar": 4,
+        "endLine": 468,
+        "endChar": 22
+      },
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1aafdb5_050565d3",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 468,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-20T21:54:35Z",
+      "side": 1,
+      "message": "will do",
+      "parentUuid": "d1b9b3bf_5005aa8d",
       "range": {
         "startLine": 468,
         "startChar": 4,
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "740b63ab_bb4486e3",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 520,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-20T21:54:35Z",
+      "side": 1,
+      "message": "Ah, this is a copy-paste error. Thanks for catching this!",
+      "parentUuid": "64fd30ad_f2031787",
+      "range": {
+        "startLine": 520,
+        "startChar": 13,
+        "endLine": 520,
+        "endChar": 14
+      },
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "cf491e69_db01e666",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 23
@@ -174,6 +342,30 @@
       "writtenOn": "2018-06-20T18:35:05Z",
       "side": 1,
       "message": "common.RoundUpTo4K()",
+      "range": {
+        "startLine": 526,
+        "startChar": 11,
+        "endLine": 526,
+        "endChar": 61
+      },
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "913fff4d_261008a7",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-20T21:54:35Z",
+      "side": 1,
+      "message": "Will do",
+      "parentUuid": "cf491e69_db01e666",
       "range": {
         "startLine": 526,
         "startChar": 11,
@@ -203,6 +395,24 @@
     },
     {
       "key": {
+        "uuid": "dc274be0_365fa766",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 528,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-20T21:54:35Z",
+      "side": 1,
+      "message": "Will do.",
+      "parentUuid": "80030d72_12603cfb",
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "69a50550_74e2c4fc",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 23
@@ -214,6 +424,30 @@
       "writtenOn": "2018-06-20T18:35:05Z",
       "side": 1,
       "message": "Feels like we should additionally create a separate dict (e.g. generate_prop_dict) that holds all the generated properties. Then writes everything in that dict here.",
+      "range": {
+        "startLine": 715,
+        "startChar": 6,
+        "endLine": 715,
+        "endChar": 38
+      },
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0f9f888_d86fa7ed",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 715,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-20T21:54:35Z",
+      "side": 1,
+      "message": "Right now there is only one that variable and it is from prop_dict, so I prefer the way it is now, unless you insist...",
+      "parentUuid": "69a50550_74e2c4fc",
       "range": {
         "startLine": 715,
         "startChar": 6,
