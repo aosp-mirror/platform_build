@@ -18,41 +18,83 @@
 # It includes the base Android platform.
 
 PRODUCT_PACKAGES := \
+    audio.primary.default \
+    BasicDreams \
+    BlockedNumberProvider \
     Bluetooth \
     BluetoothMidiService \
+    BookmarkProvider \
+    Browser2 \
+    BuiltInPrintService \
+    Calendar \
+    CalendarProvider \
     Camera2 \
+    CaptivePortalLogin \
+    CertInstaller \
+    clatd \
+    clatd.conf \
+    Contacts \
+    DeskClock \
+    DisplayCutoutEmulationCornerOverlay \
+    DisplayCutoutEmulationDoubleOverlay \
+    DisplayCutoutEmulationTallOverlay \
+    DocumentsUI \
+    DownloadProviderUi \
+    EasterEgg \
+    Email \
+    ExactCalculator \
+    ExternalStorageProvider \
+    FusedLocation \
     Gallery2 \
+    InputDevices \
+    KeyChain \
+    Keyguard \
+    LatinIME \
+    Launcher3QuickStep \
+    librs_jni \
+    libvideoeditor_core \
+    libvideoeditor_jni \
+    libvideoeditor_osal \
+    libvideoeditorplayer \
+    libvideoeditor_videofilters \
+    local_time.default \
+    ManagedProvisioning \
+    MmsService \
+    MtpDocumentsProvider \
     Music \
     MusicFX \
     NfcNci \
     OneTimeInitializer \
+    PacProcessor \
+    power.default \
+    PrintRecommendationService \
+    PrintSpooler \
     Provision \
+    ProxyHandler \
+    QuickSearchBox \
+    screenrecord \
+    SecureElement \
+    Settings \
+    SettingsIntelligence \
+    SharedStorageBackup \
+    SimAppDialog \
+    StorageManager \
     SystemUI \
     SysuiDarkThemeOverlay \
-    DisplayCutoutEmulationDoubleOverlay \
-    DisplayCutoutEmulationCornerOverlay \
-    DisplayCutoutEmulationTallOverlay \
-    EasterEgg \
-    WallpaperCropper
-
-PRODUCT_PACKAGES += \
-    clatd \
-    clatd.conf \
-    screenrecord
-
-PRODUCT_PACKAGES += \
-    librs_jni \
-    libvideoeditor_jni \
-    libvideoeditor_core \
-    libvideoeditor_osal \
-    libvideoeditor_videofilters \
-    libvideoeditorplayer \
-
-PRODUCT_PACKAGES += \
-    audio.primary.default \
-    local_time.default \
+    Telecom \
+    TeleService \
+    Traceur \
     vibrator.default \
-    power.default
+    VpnDialogs \
+    vr \
+    WallpaperCropper \
+
+
+PRODUCT_SYSTEM_SERVER_APPS += \
+    FusedLocation \
+    InputDevices \
+    KeyChain \
+    Telecom \
 
 PRODUCT_COPY_FILES := \
         frameworks/av/media/libeffects/data/audio_effects.conf:system/etc/audio_effects.conf
@@ -70,7 +112,7 @@ $(call inherit-product-if-exists, external/roboto-fonts/fonts.mk)
 $(call inherit-product-if-exists, external/hyphenation-patterns/patterns.mk)
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/core.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_base.mk)
 
 # Overrides
 PRODUCT_BRAND := generic

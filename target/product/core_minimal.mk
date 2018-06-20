@@ -16,7 +16,7 @@
 
 # Base configuration for most consumer android devices.  Do not put
 # things that are specific to communication devices (phones, tables,
-# etc.) here -- for that, use core.mk.
+# etc.) here -- for that, use generic_no_telephony.mk.
 
 PRODUCT_BRAND := generic
 PRODUCT_DEVICE := generic
