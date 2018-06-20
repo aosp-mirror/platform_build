@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "94f656d0_8598f6b7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-06-20T00:22:51Z",
+      "side": 1,
+      "message": "It can always build, this forces it to be installed on every device (of all types -- watches, tv, etc). What is ike, and is it reasonable to add it to every build configuration?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 57
+      },
+      "revId": "ab9905c82545909170cb89cc013b3d1433376ffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
