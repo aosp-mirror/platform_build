@@ -31,6 +31,8 @@ TARGET_2ND_CPU_VARIANT := generic
 # Tell the build system this isn't a typical 64bit+32bit multilib configuration.
 TARGET_TRANSLATE_2ND_ARCH := true
 
+BUILD_BROKEN_DUP_RULES := true
+
 # no hardware camera
 USE_CAMERA_STUB := true
 
