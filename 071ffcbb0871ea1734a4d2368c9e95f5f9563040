@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "82b886fc_0d39ed62",
+        "filename": "envsetup.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2018-06-21T10:47:20Z",
+      "side": 1,
+      "message": "I\u0027m reformatting filename here for reasons:\n* Let addcompletions() as simple as it should be.\n* bash completion files are named _completion conventionally.\n* treat *sh completion files equally.",
+      "range": {
+        "startLine": 320,
+        "startChar": 30,
+        "endLine": 320,
+        "endChar": 75
+      },
+      "revId": "071ffcbb0871ea1734a4d2368c9e95f5f9563040",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
