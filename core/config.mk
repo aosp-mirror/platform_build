@@ -208,8 +208,10 @@ endif
 # ###############################################################
 # Broken build defaults
 # ###############################################################
-# Assume that all boards have duplicate rules right now.
-BUILD_BROKEN_DUP_RULES := true
+BUILD_BROKEN_ANDROIDMK_EXPORTS :=
+BUILD_BROKEN_DUP_COPY_HEADERS :=
+BUILD_BROKEN_DUP_RULES :=
+BUILD_BROKEN_PHONY_TARGETS :=
 
 # ###############################################################
 # Include sub-configuration files

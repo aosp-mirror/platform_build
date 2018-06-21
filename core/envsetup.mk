@@ -273,6 +273,23 @@ endif
 board_config_mk :=
 
 ###########################################
+# Handle BUILD_BROKEN_* settings
+vars := \
+  BUILD_BROKEN_ANDROIDMK_EXPORTS \
+  BUILD_BROKEN_DUP_COPY_HEADERS \
+  BUILD_BROKEN_DUP_RULES \
+  BUILD_BROKEN_PHONY_TARGETS
+
+$(foreach var,$(vars),$(eval $(var) := $$(strip $$($(var)))))
+
+$(foreach var,$(vars), \
+  $(if $(filter-out true false,$($(var))), \
+    $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
+
+.KATI_READONLY := $(vars)
+
+
+###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR
 ifeq ($(TARGET_COPY_OUT_VENDOR),$(_vendor_path_placeholder))
 TARGET_COPY_OUT_VENDOR := system/vendor
