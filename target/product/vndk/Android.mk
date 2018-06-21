@@ -1,4 +1,3 @@
-ifneq ($(BOARD_VNDK_VERSION),)
 LOCAL_PATH:= $(call my-dir)
 
 #####################################################################
@@ -85,6 +84,8 @@ else
 	        echo "echo $(PRIVATE_LATEST_VNDK_LIB_LIST) updated." >> $@
 endif
 	@chmod a+x $@
+
+ifneq ($(BOARD_VNDK_VERSION),)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := vndk_package
