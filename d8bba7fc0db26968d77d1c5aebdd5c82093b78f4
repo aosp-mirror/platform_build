@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f1887734_1e658abd",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2670,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-21T18:14:15Z",
+      "side": 1,
+      "message": "Something is wrong here, you don\u0027t have $(2): $(1) for darwin",
+      "revId": "d8bba7fc0db26968d77d1c5aebdd5c82093b78f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
