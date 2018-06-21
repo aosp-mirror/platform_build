@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1735d302_aabdd14e",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 26
+      },
+      "lineNbr": 912,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-06-21T22:12:37Z",
+      "side": 1,
+      "message": "nit: elif",
+      "range": {
+        "startLine": 912,
+        "startChar": 2,
+        "endLine": 912,
+        "endChar": 4
+      },
+      "revId": "991aed73175c7129ce1609e601bc517f240b9291",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca7e813f_6996afa9",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 26
+      },
+      "lineNbr": 919,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-06-21T22:12:37Z",
+      "side": 1,
+      "message": "nit: \"%s\u003d%s\" % (key, value) for (key, value) in glob_dict.items()\n\n(\"%s\u003d%s\" % pair for pair in glob_dict.items() would also work. but the one above looks cleaner)",
+      "range": {
+        "startLine": 919,
+        "startChar": 18,
+        "endLine": 919,
+        "endChar": 70
+      },
+      "revId": "991aed73175c7129ce1609e601bc517f240b9291",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
