@@ -1266,6 +1266,16 @@ else # TARGET_BUILD_APPS
   ifeq ($(EMMA_INSTRUMENT),true)
     $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE)
     $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
+
+    # Put XML formatted API files in the dist dir.
+    api_xmls := $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/,api.xml system-api.xml test-api.xml)
+    $(api_xmls): $(TARGET_OUT_COMMON_INTERMEDIATES)/%api.xml : frameworks/base/api/%current.txt $(APICHECK)
+	$(hide) echo "Converting API file to XML: $@"
+	$(hide) mkdir -p $(dir $@)
+	$(hide) $(APICHECK_COMMAND) -convert2xml $< $@
+
+    $(call dist-for-goals, dist_files, $(api_xmls))
+    api_xmls :=
   endif
 
 # Building a full system-- the default is to build droidcore
