@@ -16,6 +16,24 @@
       "revId": "d8bba7fc0db26968d77d1c5aebdd5c82093b78f4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88d11790_a3ae448c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2670,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-06-21T18:17:25Z",
+      "side": 1,
+      "message": "Right; the new PS should be correct now?",
+      "parentUuid": "f1887734_1e658abd",
+      "revId": "d8bba7fc0db26968d77d1c5aebdd5c82093b78f4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
