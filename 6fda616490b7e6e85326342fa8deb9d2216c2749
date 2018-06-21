@@ -481,6 +481,30 @@
       "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "525164c7_f690a0f4",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 715,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-06-21T20:29:46Z",
+      "side": 1,
+      "message": "Sure, will do",
+      "parentUuid": "0cf18717_fc40e5a4",
+      "range": {
+        "startLine": 715,
+        "startChar": 6,
+        "endLine": 715,
+        "endChar": 38
+      },
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
