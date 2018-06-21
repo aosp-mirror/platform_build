@@ -1,5 +1,55 @@
 # Build System Changes for Android.mk Writers
 
+### `export` and `unexport` deprecation  {#export_keyword}
+
+The `export` and `unexport` keywords have been deprecated, and will throw
+warnings or errors depending on where they are used.
+
+Early in the make system, during product configuration and BoardConfig.mk
+reading: these will throw a warnings, and will be an error in the future.
+Device specific configuration should not be able to affect common core build
+steps -- we're looking at triggering build steps to be invalidated if the set
+of environment variables they can access changes. If device specific
+configuration is allowed to change those, switching devices with the same
+output directory could become significantly more expensive than it already can
+be.
+
+Later, during Android.mk files, and later tasks: these will throw errors, since
+it is increasingly likely that they are being used incorrectly, attempting to
+change the environment for a single build step, and instead setting it for
+hundreds of thousands.
+
+It is not recommended to just move the environment variable setting outside of
+the build (in vendorsetup.sh, or some other configuration script or wrapper).
+We expect to limit the environment variables that the build respects in the
+future, others will be cleared. (There will be methods to get custom variables
+into the build, just not to every build step)
+
+Instead, write the export commands into the rule command lines themselves:
+
+``` make
+$(intermediates)/generated_output.img:
+	rm -rf $@
+	export MY_ENV_A="$(MY_A)"; make ...
+```
+
+If you want to set many environment variables, and/or use them many times,
+write them out to a script and source the script:
+
+``` make
+envsh := $(intermediates)/env.sh
+$(envsh):
+	rm -rf $@
+	echo 'export MY_ENV_A="$(MY_A)"' >$@
+	echo 'export MY_ENV_B="$(MY_B)"' >>$@
+
+$(intermediates)/generated_output.img: PRIVATE_ENV := $(envsh)
+$(intermediates)/generated_output.img: $(envsh) a/b/c/package.sh
+	rm -rf $@
+	source $(PRIVATE_ENV); make ...
+	source $(PRIVATE_ENV); a/b/c/package.sh ...
+```
+
 ## Implicit make rules are deprecated {#implicit_rules}
 
 Implicit rules look something like the following:
