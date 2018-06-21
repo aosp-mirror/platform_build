@@ -457,6 +457,30 @@
       "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0cf18717_fc40e5a4",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 23
+      },
+      "lineNbr": 715,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-06-21T20:09:17Z",
+      "side": 1,
+      "message": "Ack. I found I misread the behavior of this new arg (prop_file_out). According to the comments in __doc__, I thought only \"additional properties\" (i.e. newly generated ones) would be written to this file. But reading the code again, it seems we will always write \"partition_size\" back, which could be the one provided by the caller.\n\nThere\u0027s also an (minor) inconsistency between the names. The caller (Makefile) passes in properties w/ \"system_\" prefix, but build_image.py writes back the one without.\n\nCan we separate the \"write back\" logic out of BuildImage(), such as into a separate function that\u0027s called at L948. Inside that function we can write the properties in need, as well as prefixing that with \u003cmount_point\u003e?",
+      "parentUuid": "c0f9f888_d86fa7ed",
+      "range": {
+        "startLine": 715,
+        "startChar": 6,
+        "endLine": 715,
+        "endChar": 38
+      },
+      "revId": "6fda616490b7e6e85326342fa8deb9d2216c2749",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }

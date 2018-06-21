@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "130dc413_4f897ae1",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 25
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-06-21T20:09:17Z",
+      "side": 1,
+      "message": "nit: exists",
+      "range": {
+        "startLine": 21,
+        "startChar": 32,
+        "endLine": 21,
+        "endChar": 37
+      },
+      "revId": "3aacf279ea624601dbe030b66907d2cde96e98a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f2a04df_72bb47b7",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 25
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-06-21T20:09:17Z",
+      "side": 1,
+      "message": "\"env is not None\" looks better (less likely to make any real difference for this case though)",
+      "range": {
+        "startLine": 58,
+        "startChar": 5,
+        "endLine": 58,
+        "endChar": 8
+      },
+      "revId": "3aacf279ea624601dbe030b66907d2cde96e98a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f06f1f33_6db43ab1",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 25
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-06-21T20:09:17Z",
+      "side": 1,
+      "message": "nit: one more blank line",
+      "range": {
+        "startLine": 130,
+        "startChar": 0,
+        "endLine": 131,
+        "endChar": 0
+      },
+      "revId": "3aacf279ea624601dbe030b66907d2cde96e98a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7dad41a_ce2c1c66",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 25
+      },
+      "lineNbr": 525,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-06-21T20:09:17Z",
+      "side": 1,
+      "message": "or to use .get(\"partition_reserved_size\", \"0\") to remove the branch",
+      "range": {
+        "startLine": 525,
+        "startChar": 53,
+        "endLine": 525,
+        "endChar": 54
+      },
+      "revId": "3aacf279ea624601dbe030b66907d2cde96e98a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c37cfd54_dcc7feb7",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 25
+      },
+      "lineNbr": 664,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-06-21T20:09:17Z",
+      "side": 1,
+      "message": "Also dump the reserved size?",
+      "revId": "3aacf279ea624601dbe030b66907d2cde96e98a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
