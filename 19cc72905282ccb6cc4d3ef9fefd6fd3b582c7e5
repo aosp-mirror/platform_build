@@ -16,6 +16,24 @@
       "revId": "19cc72905282ccb6cc4d3ef9fefd6fd3b582c7e5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1788827d_bf376ef0",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 734,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-21T19:22:09Z",
+      "side": 1,
+      "message": "I\u0027d prefer to keep it clearer that the current valid values are \"\", \"1.8\", and \"true\", even though \"\" and \"1.8\" are the same.",
+      "parentUuid": "35c93b50_ca08cbce",
+      "revId": "19cc72905282ccb6cc4d3ef9fefd6fd3b582c7e5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
