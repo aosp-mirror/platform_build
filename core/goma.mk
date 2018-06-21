@@ -14,9 +14,6 @@
 # limitations under the License.
 #
 
-# Used by the compiler wrapper, but should only be set by gomacc
-unexport GOMACC_PATH
-
 # Notice: this works only with Google's Goma build infrastructure.
 ifneq ($(filter-out false,$(USE_GOMA)),)
   # Goma requires a lot of processes and file descriptors.
