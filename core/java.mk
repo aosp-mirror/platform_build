@@ -227,11 +227,6 @@ $(full_classes_compiled_jar): PRIVATE_WARNINGS_ENABLE := $(LOCAL_WARNINGS_ENABLE
 # Deps for generated source files must be handled separately,
 # via deps on the target that generates the sources.
 
-# If error prone is enabled then add LOCAL_ERROR_PRONE_FLAGS to LOCAL_JAVACFLAGS
-ifeq ($(RUN_ERROR_PRONE),true)
-LOCAL_JAVACFLAGS += $(LOCAL_ERROR_PRONE_FLAGS)
-endif
-
 # For user / userdebug builds, strip the local variable table and the local variable
 # type table. This has no bearing on stack traces, but will leave less information
 # available via JDWP.
