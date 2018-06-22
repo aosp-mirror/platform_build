@@ -85,6 +85,9 @@ $(KATI_obsolete_var \
 $(KATI_obsolete_var PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE,Set FCM Version in device manifest instead. See $(CHANGES_URL)#PRODUCT_COMPATIBILITY_MATRIX_LEVEL_OVERRIDE)
 $(KATI_obsolete_var USE_CLANG_PLATFORM_BUILD,Clang is the only supported Android compiler. See $(CHANGES_URL)#USE_CLANG_PLATFORM_BUILD)
 
+# This is marked as obsolete in envsetup.mk after reading the BoardConfig.mk
+$(KATI_deprecate_export It is a global setting. See $(CHANGES_URL)#export_keyword)
+
 CHANGES_URL :=
 
 # Used to force goals to build.  Only use for conditionally defined goals.
@@ -214,8 +217,10 @@ endif
 # ###############################################################
 # Broken build defaults
 # ###############################################################
-# Assume that all boards have duplicate rules right now.
-BUILD_BROKEN_DUP_RULES := true
+BUILD_BROKEN_ANDROIDMK_EXPORTS :=
+BUILD_BROKEN_DUP_COPY_HEADERS :=
+BUILD_BROKEN_DUP_RULES :=
+BUILD_BROKEN_PHONY_TARGETS :=
 
 # ###############################################################
 # Include sub-configuration files
@@ -362,10 +367,6 @@ endif
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
-
-export CC_WRAPPER
-export CXX_WRAPPER
-export JAVAC_WRAPPER
 endif
 
 ifdef TARGET_PREFER_32_BIT
@@ -621,6 +622,7 @@ ACP := $(prebuilt_build_tools_bin)/acp
 CKATI := $(prebuilt_build_tools_bin)/ckati
 DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
 FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
+HOST_INIT_VERIFIER := $(HOST_OUT_EXECUTABLES)/host_init_verifier
 MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
 SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
@@ -737,21 +739,13 @@ ANDROID_MANIFEST_MERGER := $(JAVA) \
 
 COLUMN:= column
 
-ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
-ifeq ($(RUN_ERROR_PRONE),true)
-USE_OPENJDK9 :=
-else
 USE_OPENJDK9 := true
-endif
-TARGET_OPENJDK9 :=
-else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),false)
-USE_OPENJDK9 :=
+
+ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
 TARGET_OPENJDK9 :=
 else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),1.8)
-USE_OPENJDK9 := true
 TARGET_OPENJDK9 :=
 else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
-USE_OPENJDK9 := true
 TARGET_OPENJDK9 := true
 endif
 

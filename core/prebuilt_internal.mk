@@ -508,10 +508,13 @@ $(built_module) : $(my_prebuilt_src_file)
 endif # LOCAL_DEX_PREOPT
 
 else  # ! prebuilt_module_is_dex_javalib
+ifneq ($(filter init%rc,$(notdir $(LOCAL_INSTALLED_MODULE)))$(filter %/etc/init,$(dir $(LOCAL_INSTALLED_MODULE))),)
+  $(eval $(call copy-init-script-file-checked,$(my_prebuilt_src_file),$(built_module)))
+else ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 $(built_module) : $(my_prebuilt_src_file)
-ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 	$(transform-prebuilt-to-target-strip-comments)
 else
+$(built_module) : $(my_prebuilt_src_file)
 	$(transform-prebuilt-to-target)
 endif
 ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
@@ -600,6 +603,11 @@ $(my_src_jar) : $(my_src_aar)
 	# and have a new timestamp.
 	$(hide) touch $(dir $@)/proguard.txt
 	$(hide) touch $(dir $@)/AndroidManifest.xml
+
+my_prebuilt_android_manifest := $(intermediates.COMMON)/manifest/AndroidManifest.xml
+$(eval $(call copy-one-file,$(my_src_android_manifest),$(my_prebuilt_android_manifest)))
+$(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_prebuilt_android_manifest))
+
 else
 
 # run Jetifier if needed
@@ -685,6 +693,15 @@ endif  # $(my_src_aar)
 endif  # LOCAL_USE_AAPT2
 # make sure the classes.jar and javalib.jar are built before $(LOCAL_BUILT_MODULE)
 $(built_module) : $(common_javalib_jar)
+
+my_exported_sdk_libs_file := $(intermediates.COMMON)/exported-sdk-libs
+$(my_exported_sdk_libs_file): PRIVATE_EXPORTED_SDK_LIBS := $(LOCAL_EXPORT_SDK_LIBRARIES)
+$(my_exported_sdk_libs_file):
+	@echo "Export SDK libs $@"
+	$(hide) mkdir -p $(dir $@) && rm -f $@
+	$(if $(PRIATE_EXPORTED_SDK_LIBS),\
+		$(hide) echo $(PRIVATE_EXPORTED_SDK_LIBS) | tr ' ' '\n' > $@,\
+		$(hide) touch $@)
 
 endif # ! prebuilt_module_is_dex_javalib
 endif # LOCAL_IS_HOST_MODULE is not set

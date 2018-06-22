@@ -731,6 +731,25 @@ $(call app-lib-files,$(1))
 endef
 endif
 
+# Get the exported-sdk-libs files which collectively give you the list of exported java sdk
+# lib names that are (transitively) exported from the given set of java libs
+# $(1): library name list
+define exported-sdk-libs-files
+$(foreach lib,$(1),$(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/exported-sdk-libs)
+endef
+
+# Fix manifest
+# $(1): input manifest path
+# $(2): output manifest path
+# $(3): min sdk version
+# $(4): (optional) exported-sdk-libs file
+define fix-manifest
+$(MANIFEST_FIXER) \
+--minSdkVersion $(3) \
+$(if $(4),$$(cat $(4) | sort -u | sed -e 's/^/\ --uses-library\ /' | tr '\n' ' ')) \
+$(1) $(2)
+endef
+
 ###########################################################
 ## Returns true if $(1) and $(2) are equal.  Returns
 ## the empty string if they are not equal.
@@ -2636,6 +2655,33 @@ $(foreach f, $(1), $(strip \
     $(eval _cmf_src := $(word 1,$(_cmf_tuple))) \
     $(eval _cmf_dest := $(word 2,$(_cmf_tuple))) \
     $(eval $(call copy-one-file,$(_cmf_src),$(_cmf_dest))) \
+    $(_cmf_dest)))
+endef
+
+# Copy the file only if it's a well-formed init script file. For use via $(eval).
+# $(1): source file
+# $(2): destination file
+define copy-init-script-file-checked
+# Host init verifier doesn't exist on darwin.
+ifneq ($(HOST_OS),darwin)
+$(2): $(1) $(HOST_INIT_VERIFIER) $(call intermediates-dir-for,ETC,passwd)/passwd
+	$(hide) $(HOST_INIT_VERIFIER) $$< $(call intermediates-dir-for,ETC,passwd)/passwd
+else
+$(2): $(1)
+endif
+	@echo "Copy init script: $$@"
+	$$(copy-file-to-target)
+endef
+
+# Copies many init script files and check they are well-formed.
+# $(1): The init script files to copy.  Each entry is a ':' separated src:dst pair.
+# Evaluates to the list of the dst files. (ie suitable for a dependency list.)
+define copy-many-init-script-files-checked
+$(foreach f, $(1), $(strip \
+    $(eval _cmf_tuple := $(subst :, ,$(f))) \
+    $(eval _cmf_src := $(word 1,$(_cmf_tuple))) \
+    $(eval _cmf_dest := $(word 2,$(_cmf_tuple))) \
+    $(eval $(call copy-init-script-file-checked,$(_cmf_src),$(_cmf_dest))) \
     $(_cmf_dest)))
 endef
 

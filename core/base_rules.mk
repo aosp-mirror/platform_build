@@ -424,7 +424,7 @@ my_init_rc_installed := $(foreach rc,$(my_init_rc_pairs),$(call word-colon,2,$(r
 # Make sure we only set up the copy rules once, even if another arch variant
 # shares a common LOCAL_INIT_RC.
 my_init_rc_new_pairs := $(filter-out $(ALL_INIT_RC_INSTALLED_PAIRS),$(my_init_rc_pairs))
-my_init_rc_new_installed := $(call copy-many-files,$(my_init_rc_new_pairs))
+my_init_rc_new_installed := $(call copy-many-init-script-files-checked,$(my_init_rc_new_pairs))
 ALL_INIT_RC_INSTALLED_PAIRS += $(my_init_rc_new_pairs)
 
 $(my_all_targets) : $(my_init_rc_installed)
@@ -793,8 +793,10 @@ ifneq (,$(filter $(my_module_tags),tests))
 $(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(my_checked_module)
 endif
 $(LOCAL_MODULE)-$(h_or_hc_or_t) : $(my_all_targets)
+.PHONY: $(LOCAL_MODULE)-$(h_or_hc_or_t)
 ifeq ($(j_or_n),native)
 $(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix) : $(my_all_targets)
+.PHONY: $(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix)
 endif
 endif
 

@@ -1,4 +1,3 @@
-ifneq ($(BOARD_VNDK_VERSION),)
 LOCAL_PATH:= $(call my-dir)
 
 #####################################################################
@@ -39,7 +38,13 @@ endif
 droidcore: check-vndk-list
 
 check-vndk-list-timestamp := $(call intermediates-dir-for,PACKAGING,vndk)/check-list-timestamp
+
+ifeq ($(TARGET_IS_64_BIT)|$(TARGET_2ND_ARCH),true|)
+# TODO(b/110429754) remove this condition when we support 64-bit-only device
+check-vndk-list: ;
+else
 check-vndk-list: $(check-vndk-list-timestamp)
+endif
 
 _vndk_check_failure_message := " error: VNDK library list has been changed.\n"
 ifeq (REL,$(PLATFORM_VERSION_CODENAME))
@@ -85,6 +90,8 @@ else
 	        echo "echo $(PRIVATE_LATEST_VNDK_LIB_LIST) updated." >> $@
 endif
 	@chmod a+x $@
+
+ifneq ($(BOARD_VNDK_VERSION),)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := vndk_package
