@@ -50,7 +50,7 @@ $(intermediates)/generated_output.img: $(envsh) a/b/c/package.sh
 	source $(PRIVATE_ENV); a/b/c/package.sh ...
 ```
 
-## Implicit make rules are deprecated {#implicit_rules}
+## Implicit make rules are obsolete {#implicit_rules}
 
 Implicit rules look something like the following:
 
@@ -62,7 +62,7 @@ $(TARGET_OUT_SHARED_LIBRARIES)/%_vendor.so: $(TARGET_OUT_SHARED_LIBRARIES)/%.so
 	...
 ```
 
-These can have wide ranging effects across unrelated modules, so they're now deprecated. Instead, use static pattern rules, which are similar, but explicitly match the specified outputs:
+These can have wide ranging effects across unrelated modules, so they're now obsolete. Instead, use static pattern rules, which are similar, but explicitly match the specified outputs:
 
 ``` make
 libs := $(foreach lib,libfoo libbar,$(TARGET_OUT_SHARED_LIBRARIES)/$(lib)_vendor.so)
