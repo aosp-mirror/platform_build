@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67c354d7_da1e6a11",
+        "filename": "target/product/vndk/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-22T03:36:06Z",
+      "side": 1,
+      "message": "These variables are specifically for zygote support for 32 and 64 bit.  You probably need something like TARGET_IS_64_BIT and !TARGET_2ND_ARCH.",
+      "revId": "36b5f689687ba392a093001fd8348bb66dcbf887",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
