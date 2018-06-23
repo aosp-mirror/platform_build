@@ -660,12 +660,12 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     success, du = GetDiskUsage(origin_in)
     du_str = ("%d bytes (%d MB)" % (du, du // BYTES_IN_MB)
              ) if success else "unknown"
-    print("Out of space? The tree size of %s is %s.\n" % (
+    print("Out of space? The tree size of %s is %s." % (
         origin_in, du_str))
-    print("The max is %d bytes (%d MB).\n" % (
+    print("The max is %d bytes (%d MB)." % (
         int(prop_dict["partition_size"]),
         int(prop_dict["partition_size"]) // BYTES_IN_MB))
-    print("Reserved space is %d bytes (%d MB).\n" % (
+    print("Reserved space is %d bytes (%d MB)." % (
         int(prop_dict.get("partition_reserved_size", 0)),
         int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
     return False
