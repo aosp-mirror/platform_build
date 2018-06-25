@@ -1898,16 +1898,6 @@ $(hide) $(PRIVATE_OBJCOPY_ADD_SECTION) \
 endef
 
 ###########################################################
-## Commands for packing a target executable or library
-###########################################################
-
-define pack-elf-relocations
-@echo "$($(PRIVATE_PREFIX)DISPLAY) Pack Relocations: $(PRIVATE_MODULE) ($@)"
-$(copy-file-to-target)
-$(hide) $(RELOCATION_PACKER) $@
-endef
-
-###########################################################
 ## Commands for running gcc to link an executable
 ###########################################################
 
