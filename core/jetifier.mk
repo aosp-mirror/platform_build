@@ -24,7 +24,7 @@ ifeq ($(strip $(LOCAL_JETIFIER_ENABLED)),true)
 
 $(my_jetifier_output_path) : $(my_jetifier_input_path) $(JETIFIER)
 	rm -rf $@
-	$(JETIFIER) -l error -outputfile $@ -i $<
+	$(JETIFIER) -l error -o $@ -i $<
 
   LOCAL_JETIFIER_OUTPUT_FILE := $(my_jetifier_output_path)
   LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_JETIFIER_OUTPUT_FILE)
