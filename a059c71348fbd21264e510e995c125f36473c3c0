@@ -46,6 +46,30 @@
       "revId": "a059c71348fbd21264e510e995c125f36473c3c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "444e8d6c_6e7efb3e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-25T17:49:29Z",
+      "side": 1,
+      "message": "I think what Anton is suggesting is that $(ALL_MODULES.$(module).STUBS) should be correct for all modules.  For any SDK libraries coming from Soong, we should set $(ALL_MODULES.$(module).STUBS) to point to the stubs jar compiled by Soong.",
+      "parentUuid": "59d82f07_47ac7fb9",
+      "range": {
+        "startLine": 661,
+        "startChar": 0,
+        "endLine": 661,
+        "endChar": 38
+      },
+      "revId": "a059c71348fbd21264e510e995c125f36473c3c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
