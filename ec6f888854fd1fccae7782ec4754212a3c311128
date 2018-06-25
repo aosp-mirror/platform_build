@@ -22,6 +22,30 @@
       "revId": "ec6f888854fd1fccae7782ec4754212a3c311128",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85daed86_1a17fe5e",
+        "filename": "help.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2018-06-25T10:00:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7f8ddaae_bc4b4ae5",
+      "range": {
+        "startLine": 43,
+        "startChar": 48,
+        "endLine": 43,
+        "endChar": 54
+      },
+      "revId": "ec6f888854fd1fccae7782ec4754212a3c311128",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
