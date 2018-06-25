@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf7e7a06_48665739",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-06-25T18:53:18Z",
+      "side": 1,
+      "message": "Can you run `pylint -d not-callable --rcfile\u003dpylintrc add_img_to_target_files.py build_image.py` to fix the formatting?\n\n(common.py is not pylint-clean right now. But the touched line can be cleaned.)",
+      "range": {
+        "startLine": 192,
+        "startChar": 2,
+        "endLine": 192,
+        "endChar": 4
+      },
+      "revId": "19bb6b530b8f39816dfb604173b292305a7ed450",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56b2708a_1f6d6d14",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-06-25T18:53:18Z",
+      "side": 1,
+      "message": "This should be the folder name in target_files.zip, which would be in upper case (https://android-review.googlesource.com/c/platform/build/+/708806/4/core/Makefile#2852)",
+      "range": {
+        "startLine": 200,
+        "startChar": 26,
+        "endLine": 200,
+        "endChar": 41
+      },
+      "revId": "19bb6b530b8f39816dfb604173b292305a7ed450",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
