@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "674f738d_b1360adb",
+        "filename": "core/native_host_test_config_template.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-06-26T16:49:46Z",
+      "side": 1,
+      "message": "I think you\u0027ll need to declare a null-device.",
+      "revId": "3e910338da7869229bb13552823950ef3e43b12e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
