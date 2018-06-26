@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "90b0adf1_9e430f2c",
+        "filename": "target/product/core_base.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-26T20:56:29Z",
+      "side": 1,
+      "message": "We try to keep the trailing \\ in lists to make diffs simpler",
+      "revId": "573cc2d61418fdd7f6e8cef68f55544e1506f175",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
