@@ -22,6 +22,30 @@
       "revId": "ab80db3a225f9ead1abd2bb87e38cbb546774123",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c2c1b0c_bebfb2a9",
+        "filename": "core/pack_dyn_relocs_setup.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-26T00:37:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "46b73f63_37dd35a1",
+      "range": {
+        "startLine": 8,
+        "startChar": 14,
+        "endLine": 8,
+        "endChar": 19
+      },
+      "revId": "ab80db3a225f9ead1abd2bb87e38cbb546774123",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
