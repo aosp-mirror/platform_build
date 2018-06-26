@@ -956,6 +956,8 @@ $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(eval path_patterns := $(call resolve-product-relative-paths,$(requirements),%)) \
   $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
   $(eval files := $(call product-installed-files, $(makefile))) \
+  $(eval files += $(foreach cf,$(PRODUCTS.$(makefile).PRODUCT_COPY_FILES),\
+    $(call append-path,$(PRODUCT_OUT),$(call word-colon,2,$(cf))))) \
   $(eval files := $(filter-out $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%,$(files))) \
   $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns),$(files))) \
   $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
