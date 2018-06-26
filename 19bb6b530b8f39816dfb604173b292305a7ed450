@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1c54d9e6_14b159f9",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2018-06-26T16:29:15Z",
+      "side": 1,
+      "message": "Cool, there  is one unrelated violation:\n\n************* Module build_image\nR:470, 0: Too many return statements (13/6) (too-many-return-statements)",
+      "parentUuid": "cf7e7a06_48665739",
+      "range": {
+        "startLine": 192,
+        "startChar": 2,
+        "endLine": 192,
+        "endChar": 4
+      },
+      "revId": "19bb6b530b8f39816dfb604173b292305a7ed450",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "56b2708a_1f6d6d14",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "19bb6b530b8f39816dfb604173b292305a7ed450",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74b7a737_5b642f82",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2018-06-26T16:29:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56b2708a_1f6d6d14",
+      "range": {
+        "startLine": 200,
+        "startChar": 26,
+        "endLine": 200,
+        "endChar": 41
+      },
+      "revId": "19bb6b530b8f39816dfb604173b292305a7ed450",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
