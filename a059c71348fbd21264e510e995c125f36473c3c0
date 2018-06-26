@@ -70,6 +70,30 @@
       "revId": "a059c71348fbd21264e510e995c125f36473c3c0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9aa1f43_033cc71a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 661,
+      "author": {
+        "id": 1187124
+      },
+      "writtenOn": "2018-06-26T01:52:09Z",
+      "side": 1,
+      "message": "If we add it to soong_java_prebuilt.mk, we must change sdk library name to \u003cmodule\u003e.stubs when using module-stubs-files function. Because $(ALL_MODULES.$(module).STUBS is not a library and does not automatically add .stub suffix.\nSo I think this is a better way than changing module name to module.stub where module-stubs-files is used.",
+      "parentUuid": "444e8d6c_6e7efb3e",
+      "range": {
+        "startLine": 661,
+        "startChar": 0,
+        "endLine": 661,
+        "endChar": 38
+      },
+      "revId": "a059c71348fbd21264e510e995c125f36473c3c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
