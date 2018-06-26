@@ -9,13 +9,13 @@
 include $(BUILD_SYSTEM)/use_lld_setup.mk
 
 ifneq ($(LOCAL_PREBUILT_LIBS),)
-$(error dont use LOCAL_PREBUILT_LIBS anymore LOCAL_PATH=$(LOCAL_PATH))
+$(call pretty-error,dont use LOCAL_PREBUILT_LIBS anymore)
 endif
 ifneq ($(LOCAL_PREBUILT_EXECUTABLES),)
-$(error dont use LOCAL_PREBUILT_EXECUTABLES anymore LOCAL_PATH=$(LOCAL_PATH))
+$(call pretty-error,dont use LOCAL_PREBUILT_EXECUTABLES anymore)
 endif
 ifneq ($(LOCAL_PREBUILT_JAVA_LIBRARIES),)
-$(error dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore LOCAL_PATH=$(LOCAL_PATH))
+$(call pretty-error,dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore)
 endif
 
 my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)IS_64_BIT),64,32)
@@ -125,13 +125,13 @@ endif
 
 ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module)),)
   ifdef LOCAL_IS_HOST_MODULE
-    $(error Cannot strip/pack host module LOCAL_PATH=$(LOCAL_PATH))
+    $(call pretty-error,Cannot strip/pack host module)
   endif
   ifeq ($(filter SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-    $(error Can strip/pack only shared libraries or executables LOCAL_PATH=$(LOCAL_PATH))
+    $(call pretty-error,Can strip/pack only shared libraries or executables)
   endif
   ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
-    $(error Cannot strip/pack scripts LOCAL_PATH=$(LOCAL_PATH))
+    $(call pretty-error,Cannot strip/pack scripts)
   endif
   # Set the arch-specific variables to set up the strip rules
   LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) := $(my_strip_module)
