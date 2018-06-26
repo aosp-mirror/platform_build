@@ -70,6 +70,30 @@
       "revId": "78a21dfd523fa62faf8cb4c54aabd86c589493e6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8e9f1b7_3e5ebcca",
+        "filename": "target/product/core_base.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-26T20:54:26Z",
+      "side": 1,
+      "message": "yep, sound good. I\u0027ll take a look.\n\nremoved these two for now",
+      "parentUuid": "063a07ef_245f1fac",
+      "range": {
+        "startLine": 25,
+        "startChar": 3,
+        "endLine": 27,
+        "endChar": 0
+      },
+      "revId": "78a21dfd523fa62faf8cb4c54aabd86c589493e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
