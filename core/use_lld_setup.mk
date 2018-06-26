@@ -18,10 +18,14 @@ else
   endif
 endif
 
-# Do not use LLD for Darwin host executables or shared libraries.
-# See https://lld.llvm.org/AtomLLD.html for status of lld for Mach-O.
 ifeq ($(LOCAL_IS_HOST_MODULE),true)
+  # Do not use LLD for Darwin host executables or shared libraries.  See
+  # https://lld.llvm.org/AtomLLD.html for status of lld for Mach-O.
   ifeq ($(HOST_OS),darwin)
+    my_use_clang_lld := false
+  endif
+  # http://b/110800681 - lld cannot link Android's Windows modules yet.
+  ifeq ($(HOST_CROSS_OS),windows)
     my_use_clang_lld := false
   endif
 endif
