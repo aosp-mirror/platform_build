@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "519879c8_06a2ca0a",
+        "filename": "target/product/core_base.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-26T20:43:14Z",
+      "side": 0,
+      "message": "And these are all duplicated in packages/services/Car/car_product/build/car_base.mk",
+      "revId": "9b48c52247090ea29c2330068e03d8466c45319b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
