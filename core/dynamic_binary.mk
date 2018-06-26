@@ -40,28 +40,6 @@ include $(BUILD_SYSTEM)/binary.mk
 ###################################
 
 ###########################################################
-## Pack relocation tables
-###########################################################
-relocation_packer_input := $(linked_module)
-relocation_packer_output := $(intermediates)/PACKED/$(my_built_module_stem)
-
-include $(BUILD_SYSTEM)/pack_dyn_relocs_setup.mk
-
-# Stand-alone relocation_packer does not work with LLD output,
-# but it can be replaced by lld's --pack-dyn-relocs=android.
-ifeq (true,$(my_pack_module_relocations))
-ifeq (false,$(my_use_clang_lld))
-# Pack relocations
-$(relocation_packer_output): $(relocation_packer_input)
-	$(pack-elf-relocations)
-else
-relocation_packer_output := $(relocation_packer_input)
-endif # my_use_clang_lld
-else
-relocation_packer_output := $(relocation_packer_input)
-endif # my_pack_module_relocations
-
-###########################################################
 ## Store a copy with symbols for symbolic debugging
 ###########################################################
 ifeq ($(LOCAL_UNSTRIPPED_PATH),)
@@ -69,7 +47,7 @@ my_unstripped_path := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(m
 else
 my_unstripped_path := $(LOCAL_UNSTRIPPED_PATH)
 endif
-symbolic_input := $(relocation_packer_output)
+symbolic_input := $(linked_module)
 symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
 $(symbolic_output) : $(symbolic_input)
 	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
@@ -81,7 +59,7 @@ $(symbolic_output) : $(symbolic_input)
 
 ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
 my_breakpad_path := $(TARGET_OUT_BREAKPAD)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
-breakpad_input := $(relocation_packer_output)
+breakpad_input := $(linked_module)
 breakpad_output := $(my_breakpad_path)/$(my_installed_module_stem).sym
 $(breakpad_output) : $(breakpad_input) | $(BREAKPAD_DUMP_SYMS) $(PRIVATE_READELF)
 	@echo "target breakpad: $(PRIVATE_MODULE) ($@)"

@@ -5,6 +5,7 @@
 ##   LOCAL_PACK_MODULE_RELOCATIONS*,
 ##   *TARGET_PACK_MODULE_RELOCATIONS,
 ##   LOCAL_MODULE_CLASS, HOST_OS
+##   LOCAL_IS_HOST_MODULE
 ## Output variables:
 ##   my_pack_module_relocations, if false skip relocation_packer
 #############################################################
@@ -23,11 +24,11 @@ endif
 # Do not pack relocations for executables. Because packing results in
 # non-zero p_vaddr which causes kernel to load executables to lower
 # address (starting at 0x8000) http://b/20665974
-ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+ifeq ($(filter SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
   my_pack_module_relocations := false
 endif
 
-# TODO (dimitry): Relocation packer is not yet available for darwin
-ifneq ($(HOST_OS),linux)
+ifdef LOCAL_IS_HOST_MODULE
+  # Do not pack relocations on host modules
   my_pack_module_relocations := false
 endif
