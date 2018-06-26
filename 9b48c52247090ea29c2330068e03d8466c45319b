@@ -16,6 +16,24 @@
       "revId": "9b48c52247090ea29c2330068e03d8466c45319b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2df1db8b_43958ec3",
+        "filename": "target/product/core_base.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-26T20:50:20Z",
+      "side": 0,
+      "message": "k - they can be cleaned up separately (if someone cares enough to do it). All of these x_base.mk outside the build project have a ton of dupe packages listed because they\u0027re not kept in sync with the others. Perhaps an argument for moving them here..",
+      "parentUuid": "519879c8_06a2ca0a",
+      "revId": "9b48c52247090ea29c2330068e03d8466c45319b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

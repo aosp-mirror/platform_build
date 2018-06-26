@@ -22,6 +22,30 @@
       "revId": "78a21dfd523fa62faf8cb4c54aabd86c589493e6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32b59cee_f6334961",
+        "filename": "target/product/core_base.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-06-26T20:50:20Z",
+      "side": 1,
+      "message": "wow, it\u0027s not an error to reference non-existing modules? do you think that could be made an error?\n\nI\u0027ll delete them (had a followup ready to push everything down to the children, good that the list is shrinking..)",
+      "parentUuid": "1235c7f5_5f9c3469",
+      "range": {
+        "startLine": 25,
+        "startChar": 3,
+        "endLine": 27,
+        "endChar": 0
+      },
+      "revId": "78a21dfd523fa62faf8cb4c54aabd86c589493e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
