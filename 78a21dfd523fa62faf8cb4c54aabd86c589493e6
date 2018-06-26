@@ -46,6 +46,30 @@
       "revId": "78a21dfd523fa62faf8cb4c54aabd86c589493e6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "063a07ef_245f1fac",
+        "filename": "target/product/core_base.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-26T20:52:58Z",
+      "side": 1,
+      "message": "PRODUCT_PACKAGES being an error is covered in b/7456955.\n\nMaybe it should be an opt-in error for these core product makefiles?",
+      "parentUuid": "32b59cee_f6334961",
+      "range": {
+        "startLine": 25,
+        "startChar": 3,
+        "endLine": 27,
+        "endChar": 0
+      },
+      "revId": "78a21dfd523fa62faf8cb4c54aabd86c589493e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
