@@ -20,8 +20,8 @@ PRODUCT_PACKAGES += \
     android.hardware.configstore@1.1-service \
     android.hardware.media.omx@1.0-service \
     device_compatibility_matrix.xml \
-    fs_config_files \
-    fs_config_dirs \
+    fs_config_files_nonsystem \
+    fs_config_dirs_nonsystem \
     gralloc.default \
     group \
     libbundlewrapper \
