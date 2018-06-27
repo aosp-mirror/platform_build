@@ -1986,10 +1986,6 @@ ifdef BUILD_HOST_static
 HOST_FPIE_FLAGS :=
 else
 HOST_FPIE_FLAGS := -pie
-# Force the correct entry point to workaround a bug in binutils that manifests with -pie
-ifeq ($(HOST_CROSS_OS),windows)
-HOST_CROSS_FPIE_FLAGS += -Wl,-e_mainCRTStartup
-endif
 endif
 
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
