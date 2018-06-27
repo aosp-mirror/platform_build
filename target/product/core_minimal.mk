@@ -126,4 +126,5 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.logd.size.stats=64K \
     log.tag.stats_log=I
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/base_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/base_vendor.mk)
