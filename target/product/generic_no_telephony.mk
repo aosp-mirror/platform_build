@@ -43,6 +43,7 @@ PRODUCT_PACKAGES := \
     ExternalStorageProvider \
     FusedLocation \
     Gallery2 \
+    Home \
     InputDevices \
     KeyChain \
     Keyguard \
@@ -79,9 +80,11 @@ PRODUCT_PACKAGES := \
     SystemUI \
     SysuiDarkThemeOverlay \
     Telecom \
+    TelephonyProvider \
     TeleService \
     Traceur \
     vibrator.default \
+    UserDictionaryProvider \
     VpnDialogs \
     vr \
     WallpaperCropper \
@@ -97,7 +100,9 @@ PRODUCT_COPY_FILES := \
         frameworks/av/media/libeffects/data/audio_effects.conf:system/etc/audio_effects.conf
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.carrier=unknown
+    ro.carrier=unknown \
+    ro.config.notification_sound=OnTheHunt.ogg \
+    ro.config.alarm_alert=Alarm_Classic.ogg
 
 $(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
 $(call inherit-product-if-exists, external/google-fonts/dancing-script/fonts.mk)
@@ -109,7 +114,7 @@ $(call inherit-product-if-exists, external/roboto-fonts/fonts.mk)
 $(call inherit-product-if-exists, external/hyphenation-patterns/patterns.mk)
 $(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
 $(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/core_base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_minimal.mk)
 
 # Overrides
 PRODUCT_BRAND := generic
