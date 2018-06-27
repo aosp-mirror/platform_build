@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa57f5b9_18bc66eb",
+        "filename": "target/product/base.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-27T20:59:48Z",
+      "side": 1,
+      "message": "Can you add procrank too?",
+      "revId": "ce46d1d0b2d35ec07ea0f9825ceca2ea1c0f49bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
