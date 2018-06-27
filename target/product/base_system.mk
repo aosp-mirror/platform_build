@@ -285,6 +285,8 @@ PRODUCT_PACKAGES_DEBUG := \
     logpersist.start \
     micro_bench \
     perfprofd \
+    procrank \
+    showmap \
     sqlite3 \
     strace
 
