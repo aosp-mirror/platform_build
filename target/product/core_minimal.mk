@@ -56,6 +56,7 @@ PRODUCT_PACKAGES += \
     libstagefright_soft_vorbisdec \
     libstagefright_soft_vpxdec \
     libstagefright_soft_vpxenc \
+    libwebrtc_audio_preprocessing \
     libwebviewchromium_loader \
     libwebviewchromium_plat_support \
     logd \
