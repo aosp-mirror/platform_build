@@ -101,12 +101,14 @@ PRODUCT_PACKAGES += \
     ld.mc \
     libaaudio \
     libandroid \
+    libandroidfw \
     libandroid_runtime \
     libandroid_servers \
     libaudioeffect_jni \
     libaudioflinger \
     libaudiopolicymanager \
     libaudiopolicyservice \
+    libaudioutils \
     libbinder \
     libc \
     libcamera2ndk \
@@ -139,6 +141,7 @@ PRODUCT_PACKAGES += \
     libkeystore \
     liblog \
     libm \
+    libmdnssd \
     libmedia \
     libmedia_jni \
     libmediandk \
@@ -153,6 +156,7 @@ PRODUCT_PACKAGES += \
     libpdfium \
     libpixelflinger \
     libpower \
+    libpowermanager \
     libradio_metadata \
     librtp_jni \
     libsensorservice \
@@ -163,6 +167,7 @@ PRODUCT_PACKAGES += \
     libsoundpool \
     libsoundtrigger \
     libsoundtriggerservice \
+    libspeexresampler \
     libsqlite \
     libstagefright \
     libstagefright_amrnb_common \
