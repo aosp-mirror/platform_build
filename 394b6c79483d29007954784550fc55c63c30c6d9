@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "16ee56f3_8af6742b",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2018-06-28T18:40:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e0101585_33236d7b",
+      "revId": "394b6c79483d29007954784550fc55c63c30c6d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "715dcd20_c2cdea11",
         "filename": "core/dex_preopt.mk",
         "patchSetId": 4
@@ -30,6 +48,24 @@
       "writtenOn": "2018-06-28T18:23:21Z",
       "side": 1,
       "message": "This should stay HIDDEN_STUBS, but then add:\n\n $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): PRIVATE_HIDDENAPI_STUBS :\u003d $(HIDDENAPI_STUBS)",
+      "revId": "394b6c79483d29007954784550fc55c63c30c6d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3310996a_8a8962d8",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2018-06-28T18:40:10Z",
+      "side": 1,
+      "message": "Oh, sry, should have got that.",
+      "parentUuid": "715dcd20_c2cdea11",
       "revId": "394b6c79483d29007954784550fc55c63c30c6d9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true

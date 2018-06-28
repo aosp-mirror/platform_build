@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ab1d3913_dcdf7691",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2018-06-28T18:40:10Z",
+      "side": 1,
+      "message": "Just to double check - this is correct, right?",
+      "range": {
+        "startLine": 98,
+        "startChar": 16,
+        "endLine": 98,
+        "endChar": 19
+      },
+      "revId": "c5d505eab098b8f6c98c77ae38017c8407ac92a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
