@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "073cdcd0_d391ffed",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2857,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-28T15:09:02Z",
+      "side": 1,
+      "message": "This can have strange behavior because +\u003d on a variable that has never been set acts like \u003d and not :\u003d.  Use:\nPRIVATE_DEX_INPUTS :\u003d $(PRIVATE_DEX_INPUTS) $(1)\nIt may need to be:\nPRIVATE_DEX_INPUTS :\u003d $$(PRIVATE_DEX_INPUTS) $(1)",
+      "range": {
+        "startLine": 2857,
+        "startChar": 64,
+        "endLine": 2857,
+        "endChar": 66
+      },
+      "revId": "03ef5e3628e2712be1e40f5a2d0664f4911eace0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df032380_d8d4e226",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-28T15:09:02Z",
+      "side": 1,
+      "message": "I\u0027d suggest a PRIVATE_HIDDENAPI_STUBS here",
+      "range": {
+        "startLine": 120,
+        "startChar": 31,
+        "endLine": 120,
+        "endChar": 46
+      },
+      "revId": "03ef5e3628e2712be1e40f5a2d0664f4911eace0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
