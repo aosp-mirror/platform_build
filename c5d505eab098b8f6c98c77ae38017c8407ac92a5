@@ -22,6 +22,30 @@
       "revId": "c5d505eab098b8f6c98c77ae38017c8407ac92a5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd850d02_1b15e275",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-28T18:41:41Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "ab1d3913_dcdf7691",
+      "range": {
+        "startLine": 98,
+        "startChar": 16,
+        "endLine": 98,
+        "endChar": 19
+      },
+      "revId": "c5d505eab098b8f6c98c77ae38017c8407ac92a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
