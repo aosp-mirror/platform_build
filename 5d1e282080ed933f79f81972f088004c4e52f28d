@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ffac88e3_f2f9be3a",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-28T15:58:16Z",
+      "side": 1,
+      "message": "$(TARGET_IS_64_BIT)",
+      "revId": "5d1e282080ed933f79f81972f088004c4e52f28d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fddfdc28_bada1cdd",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-28T15:58:16Z",
+      "side": 1,
+      "message": "You have to be careful with this, for many make variables only empty is considered false.  For example, https://cs.corp.google.com/android/build/make/core/package.mk?q\u003dTARGET_SUPPORTS_64_BIT_APPS\u0026sq\u003dpackage:%5Eandroid$\u0026g\u003d0\u0026l\u003d11 would be incorrect if TARGET_SUPPORTS_64_BIT_APPS :\u003d false.",
+      "revId": "5d1e282080ed933f79f81972f088004c4e52f28d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
