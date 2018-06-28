@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0101585_33236d7b",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-28T18:23:21Z",
+      "side": 1,
+      "message": "This should stay HIDDEN_STUBS",
+      "revId": "394b6c79483d29007954784550fc55c63c30c6d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "715dcd20_c2cdea11",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-06-28T18:23:21Z",
+      "side": 1,
+      "message": "This should stay HIDDEN_STUBS, but then add:\n\n $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): PRIVATE_HIDDENAPI_STUBS :\u003d $(HIDDENAPI_STUBS)",
+      "revId": "394b6c79483d29007954784550fc55c63c30c6d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
