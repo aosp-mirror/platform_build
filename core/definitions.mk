@@ -2837,6 +2837,7 @@ fi
 endef
 
 # Copy dex files, invoking $(HIDDENAPI) on them in the process.
+# Also make the source dex file an input of the hiddenapi singleton rule in dex_preopt.mk.
 define hiddenapi-copy-dex-files
 $(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
       $(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
@@ -2848,6 +2849,10 @@ $(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
 	    --light-greylist=$(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
 	    --dark-greylist=$(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) \
 	    --blacklist=$(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
+
+$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): $(1)
+$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): \
+    PRIVATE_DEX_INPUTS := $$(PRIVATE_DEX_INPUTS) $(1)
 endef
 
 # File names for intermediate dex files of `hiddenapi-copy-soong-jar`.
