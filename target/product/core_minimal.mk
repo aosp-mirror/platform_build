@@ -61,6 +61,7 @@ PRODUCT_PACKAGES += \
     libstagefright_soft_vorbisdec \
     libstagefright_soft_vpxdec \
     libstagefright_soft_vpxenc \
+    libwebrtc_audio_preprocessing \
     libwebviewchromium_loader \
     libwebviewchromium_plat_support \
     PackageInstaller \
@@ -112,7 +113,8 @@ PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.logd.size.stats=64K \
     log.tag.stats_log=I
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/base_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/base_vendor.mk)
 
 # Enable CFI for security-sensitive components
 $(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)

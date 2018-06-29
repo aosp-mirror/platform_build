@@ -111,13 +111,57 @@ fs_config_generate_extra_partition_list := $(strip \
   $(if $(BOARD_USES_ODMIMAGE)$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),odm))
 
 ##################################
-# Generate the system/etc/fs_config_dirs binary file for the target
-# Add fs_config_dirs to PRODUCT_PACKAGES in the device make file to enable
+# Generate the <p>/etc/fs_config_dirs binary files for each partition.
+# Add fs_config_dirs to PRODUCT_PACKAGES in the device make file to enable.
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs
+LOCAL_REQUIRED_MODULES := \
+	fs_config_dirs_system \
+	$(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
+include $(BUILD_PHONY_PACKAGE)
+
+
+##################################
+# Generate the <p>/etc/fs_config_files binary files for each partition.
+# Add fs_config_files to PRODUCT_PACKAGES in the device make file to enable.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_files
+LOCAL_REQUIRED_MODULES := \
+  fs_config_files_system \
+  $(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
+include $(BUILD_PHONY_PACKAGE)
+
+##################################
+# Generate the <p>/etc/fs_config_dirs binary files for all enabled partitions
+# excluding /system. Add fs_config_dirs_nonsystem to PRODUCT_PACKAGES in the
+# device make file to enable.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_dirs_nonsystem
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),fs_config_dirs_$(t))
+include $(BUILD_PHONY_PACKAGE)
+
+##################################
+# Generate the <p>/etc/fs_config_files binary files for all enabled partitions
+# excluding /system. Add fs_config_files_nonsystem to PRODUCT_PACKAGES in the
+# device make file to enable.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_files_nonsystem
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),fs_config_files_$(t))
+include $(BUILD_PHONY_PACKAGE)
+
+##################################
+# Generate the system/etc/fs_config_dirs binary file for the target
+# Add fs_config_dirs or fs_config_dirs_system to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_dirs_system
 LOCAL_MODULE_CLASS := ETC
-LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
+LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
@@ -127,12 +171,13 @@ $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 
 ##################################
 # Generate the system/etc/fs_config_files binary file for the target
-# Add fs_config_files to PRODUCT_PACKAGES in the device make file to enable
+# Add fs_config_files or fs_config_files_system to PRODUCT_PACKAGES in
+# the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_files
+LOCAL_MODULE := fs_config_files_system
 LOCAL_MODULE_CLASS := ETC
-LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
+LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)

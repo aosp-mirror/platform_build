@@ -9,13 +9,13 @@
 include $(BUILD_SYSTEM)/use_lld_setup.mk
 
 ifneq ($(LOCAL_PREBUILT_LIBS),)
-$(error dont use LOCAL_PREBUILT_LIBS anymore LOCAL_PATH=$(LOCAL_PATH))
+$(call pretty-error,dont use LOCAL_PREBUILT_LIBS anymore)
 endif
 ifneq ($(LOCAL_PREBUILT_EXECUTABLES),)
-$(error dont use LOCAL_PREBUILT_EXECUTABLES anymore LOCAL_PATH=$(LOCAL_PATH))
+$(call pretty-error,dont use LOCAL_PREBUILT_EXECUTABLES anymore)
 endif
 ifneq ($(LOCAL_PREBUILT_JAVA_LIBRARIES),)
-$(error dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore LOCAL_PATH=$(LOCAL_PATH))
+$(call pretty-error,dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore)
 endif
 
 my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)IS_64_BIT),64,32)
@@ -42,9 +42,6 @@ LOCAL_CHECKED_MODULE := $(my_prebuilt_src_file)
 my_strip_module := $(firstword \
   $(LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
   $(LOCAL_STRIP_MODULE))
-my_pack_module_relocations := $(firstword \
-  $(LOCAL_PACK_MODULE_RELOCATIONS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
-  $(LOCAL_PACK_MODULE_RELOCATIONS))
 
 ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   # LOCAL_COPY_TO_INTERMEDIATE_LIBRARIES indicates that this prebuilt should be
@@ -62,21 +59,6 @@ ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   ifeq ($(LOCAL_IS_HOST_MODULE)$(my_strip_module),)
     # Strip but not try to add debuglink
     my_strip_module := no_debuglink
-  endif
-
-  ifeq ($(LOCAL_IS_HOST_MODULE)$(my_pack_module_relocations),)
-    # Do not pack relocations by default
-    my_pack_module_relocations := false
-  endif
-
-  ifeq ($(DISABLE_RELOCATION_PACKER),true)
-    my_pack_module_relocations := false
-  endif
-
-  # Relocation packer does not work with LLD yet.
-  # my_use_clang_lld might be used before being set up in binary.mk
-  ifeq ($(my_use_clang_lld),true)
-    my_pack_module_relocations := false
   endif
 endif
 
@@ -141,23 +123,22 @@ $(error $(LOCAL_MODULE) : LOCAL_COMPRESSED_MODULE can only be defined for module
 endif  # LOCAL_COMPRESSED_MODULE
 endif
 
-ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module) $(my_pack_module_relocations)),)
+ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module)),)
   ifdef LOCAL_IS_HOST_MODULE
-    $(error Cannot strip/pack host module LOCAL_PATH=$(LOCAL_PATH))
+    $(call pretty-error,Cannot strip/pack host module)
   endif
   ifeq ($(filter SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-    $(error Can strip/pack only shared libraries or executables LOCAL_PATH=$(LOCAL_PATH))
+    $(call pretty-error,Can strip/pack only shared libraries or executables)
   endif
   ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
-    $(error Cannot strip/pack scripts LOCAL_PATH=$(LOCAL_PATH))
+    $(call pretty-error,Cannot strip/pack scripts)
   endif
-  # Set the arch-specific variables to set up the strip/pack rules.
+  # Set the arch-specific variables to set up the strip rules
   LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) := $(my_strip_module)
-  LOCAL_PACK_MODULE_RELOCATIONS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) := $(my_pack_module_relocations)
   include $(BUILD_SYSTEM)/dynamic_binary.mk
   built_module := $(linked_module)
 
-else  # my_strip_module and my_pack_module_relocations not true
+else  # my_strip_module not true
   include $(BUILD_SYSTEM)/base_rules.mk
   built_module := $(LOCAL_BUILT_MODULE)
 

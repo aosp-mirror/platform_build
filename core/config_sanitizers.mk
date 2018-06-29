@@ -12,10 +12,12 @@ my_global_sanitize :=
 my_global_sanitize_diag :=
 ifeq ($(my_clang),true)
   ifdef LOCAL_IS_HOST_MODULE
-    my_global_sanitize := $(strip $(SANITIZE_HOST))
+    ifneq ($($(my_prefix)OS),windows)
+      my_global_sanitize := $(strip $(SANITIZE_HOST))
 
-    # SANITIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
-    my_global_sanitize := $(subst true,address,$(my_global_sanitize))
+      # SANITIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
+      my_global_sanitize := $(subst true,address,$(my_global_sanitize))
+    endif
   else
     my_global_sanitize := $(strip $(SANITIZE_TARGET))
     my_global_sanitize_diag := $(strip $(SANITIZE_TARGET_DIAG))
