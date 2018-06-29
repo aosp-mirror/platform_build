@@ -15,6 +15,7 @@ TARGET_BOOTLOADER_BOARD_NAME := goldfish_$(TARGET_ARCH)
 #emulator now uses 64bit kernel to run 32bit x86 image
 #
 TARGET_USES_64_BIT_BINDER := true
+TARGET_USES_MKE2FS := true
 
 # The IA emulator (qemu) uses the Goldfish devices
 HAVE_HTC_AUDIO_DRIVER := true
