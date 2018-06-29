@@ -22,6 +22,30 @@
       "revId": "310be0e8834646e9cde4e39b3f39af9883722ce6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2135e225_050f0ab1",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2018-06-29T13:52:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ac6bfa9a_7db9bc33",
+      "range": {
+        "startLine": 215,
+        "startChar": 25,
+        "endLine": 215,
+        "endChar": 40
+      },
+      "revId": "310be0e8834646e9cde4e39b3f39af9883722ce6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
