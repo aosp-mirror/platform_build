@@ -57,6 +57,7 @@ endif
 
 
 TARGET_USES_64_BIT_BINDER := true
+TARGET_USES_MKE2FS := true
 
 # no hardware camera
 USE_CAMERA_STUB := true
