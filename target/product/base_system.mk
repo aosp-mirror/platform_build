@@ -218,7 +218,7 @@ PRODUCT_PACKAGES += \
     screencap \
     sdcard \
     secdiscard \
-    selinux_policy \
+    selinux_policy_system \
     sensorservice \
     service \
     servicemanager \
