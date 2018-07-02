@@ -21,21 +21,7 @@ PRODUCT_NAME := mainline_system
 PRODUCT_BRAND := generic
 PRODUCT_SHIPPING_API_LEVEL := 28
 
-_selinux_policy_whitelist := \
-  vendor/etc/selinux/vndservice_contexts \
-  vendor/etc/selinux/plat_pub_versioned.cil \
-  vendor/etc/selinux/plat_sepolicy_vers.txt \
-  vendor/etc/selinux/precompiled_sepolicy \
-  vendor/etc/selinux/precompiled_sepolicy.plat_and_mapping.sha256 \
-  vendor/etc/selinux/vendor_file_contexts \
-  vendor/etc/selinux/vendor_hwservice_contexts \
-  vendor/etc/selinux/vendor_mac_permissions.xml \
-  vendor/etc/selinux/vendor_property_contexts \
-  vendor/etc/selinux/vendor_seapp_contexts \
-  vendor/etc/selinux/vendor_sepolicy.cil \
-
 _base_mk_whitelist := \
-  $(_selinux_policy_whitelist) \
   recovery/root/etc/mke2fs.conf \
   root/init \
   root/init.environ.rc \
