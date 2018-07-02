@@ -37,14 +37,6 @@ _selinux_policy_whitelist := \
 _base_mk_whitelist := \
   $(_selinux_policy_whitelist) \
   recovery/root/etc/mke2fs.conf \
-  root/init \
-  root/init.environ.rc \
-  root/init.rc \
-  root/init.usb.configfs.rc \
-  root/init.usb.rc \
-  root/init.zygote32.rc \
-  root/sbin/charger \
-  root/ueventd.rc \
   vendor/lib/mediadrm/libdrmclearkeyplugin.so \
   vendor/lib/soundfx/libdynproc.so \
   vendor/lib64/mediadrm/libdrmclearkeyplugin.so \
@@ -52,4 +44,9 @@ _base_mk_whitelist := \
 
 _my_whitelist := $(_base_mk_whitelist)
 
-$(call require-artifacts-in-path, $(TARGET_COPY_OUT_SYSTEM), $(_my_whitelist))
+# Both /system and / are in system.img when PRODUCT_SHIPPING_API_LEVEL>=28.
+_my_paths := \
+  $(TARGET_COPY_OUT_ROOT) \
+  $(TARGET_COPY_OUT_SYSTEM) \
+
+$(call require-artifacts-in-path, $(_my_paths), $(_my_whitelist))
