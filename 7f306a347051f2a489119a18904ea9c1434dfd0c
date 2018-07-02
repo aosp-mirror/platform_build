@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6bb8ed8_20e0e8ad",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2863,
+      "author": {
+        "id": 1057373
+      },
+      "writtenOn": "2018-07-02T10:18:14Z",
+      "side": 1,
+      "message": "\u0027 instead of \"?",
+      "range": {
+        "startLine": 2863,
+        "startChar": 38,
+        "endLine": 2863,
+        "endChar": 39
+      },
+      "revId": "7f306a347051f2a489119a18904ea9c1434dfd0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
