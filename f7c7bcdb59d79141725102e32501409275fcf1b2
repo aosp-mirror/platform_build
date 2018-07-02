@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c8c19545_3f7b3001",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-02T19:41:38Z",
+      "side": 1,
+      "message": "don\u0027t overwrite the product variable, use another local variable.",
+      "range": {
+        "startLine": 111,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 46
+      },
+      "revId": "f7c7bcdb59d79141725102e32501409275fcf1b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56469543_23aa94c8",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-02T19:41:38Z",
+      "side": 1,
+      "message": "This can just be cat $(PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION) \u003e $@",
+      "revId": "f7c7bcdb59d79141725102e32501409275fcf1b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
