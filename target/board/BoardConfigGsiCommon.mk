@@ -23,3 +23,6 @@ BOARD_VNDK_VERSION := current
 # Pi GSI supports system-as-root
 TARGET_NO_RECOVERY := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+
+# Audio: must using XML format for Treblized devices
+USE_XML_AUDIO_POLICY_CONF := 1
