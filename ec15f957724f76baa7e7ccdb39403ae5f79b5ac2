@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e67ed151_f218a730",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-02T23:37:42Z",
+      "side": 1,
+      "message": "Don\u0027t use AndroidTest.xml if the module is a host module.\n\nAdd support for DevicelessTest.xml first.",
+      "range": {
+        "startLine": 604,
+        "startChar": 0,
+        "endLine": 605,
+        "endChar": 31
+      },
+      "revId": "ec15f957724f76baa7e7ccdb39403ae5f79b5ac2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09897f44_35c76681",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-02T23:37:42Z",
+      "side": 1,
+      "message": "host",
+      "range": {
+        "startLine": 605,
+        "startChar": 8,
+        "endLine": 605,
+        "endChar": 12
+      },
+      "revId": "ec15f957724f76baa7e7ccdb39403ae5f79b5ac2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04dff89d_198cf481",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-02T23:37:42Z",
+      "side": 1,
+      "message": "Ripping out the test config is messy, let\u0027s ignore AndroidTest.xml for this situation.",
+      "range": {
+        "startLine": 607,
+        "startChar": 2,
+        "endLine": 607,
+        "endChar": 64
+      },
+      "revId": "ec15f957724f76baa7e7ccdb39403ae5f79b5ac2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2d4a883_1b283aac",
+        "filename": "core/definitions.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 3551,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-02T23:37:42Z",
+      "side": 1,
+      "message": "Why do you need this?",
+      "range": {
+        "startLine": 3544,
+        "startChar": 0,
+        "endLine": 3551,
+        "endChar": 5
+      },
+      "revId": "ec15f957724f76baa7e7ccdb39403ae5f79b5ac2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e58692f_3efab852",
+        "filename": "core/native_host_test_config_template.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-02T23:37:42Z",
+      "side": 1,
+      "message": "I was wrong you don\u0027t need this.",
+      "range": {
+        "startLine": 17,
+        "startChar": 41,
+        "endLine": 17,
+        "endChar": 59
+      },
+      "revId": "ec15f957724f76baa7e7ccdb39403ae5f79b5ac2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
