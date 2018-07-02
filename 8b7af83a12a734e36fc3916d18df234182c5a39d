@@ -34,6 +34,23 @@
       "revId": "8b7af83a12a734e36fc3916d18df234182c5a39d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a78cc04f_0f654975",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1136369
+      },
+      "writtenOn": "2018-07-02T16:45:34Z",
+      "side": 1,
+      "message": "Why not including treble_common_arm64.mk instead ? That would make sure arm64 is treble compatible as expected.",
+      "revId": "8b7af83a12a734e36fc3916d18df234182c5a39d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
