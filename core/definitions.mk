@@ -2859,7 +2859,8 @@ define hiddenapi-copy-soong-jar
 $(call hiddenapi-soong-input-dex,$(2)): $(1)
 	@rm -rf `dirname $$@`
 	@mkdir -p `dirname $$@`
-	unzip -o -DD -q $(1) 'classes*.dex' -d `dirname $$@`
+	unzip -o -q $(1) 'classes*.dex' -d `dirname $$@`
+	find `dirname $$@` -maxdepth 1 -name 'classes*.dex' | xargs touch
 
 $(call hiddenapi-copy-dex-files,\
     $(call hiddenapi-soong-input-dex,$(2)),\
