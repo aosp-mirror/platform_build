@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf63443b_4e44e54b",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 604,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-07-02T03:00:13Z",
+      "side": 1,
+      "message": "remove the space.",
+      "range": {
+        "startLine": 604,
+        "startChar": 70,
+        "endLine": 604,
+        "endChar": 71
+      },
+      "revId": "476e48ecdc88b904a62b2b3b5fee5459072b63fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2699b39b_18a4f601",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 606,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-07-02T03:00:13Z",
+      "side": 1,
+      "message": "when? LOCAL_DISABLE_AUTO_GENERATE_TEST_CONFIG not set.",
+      "range": {
+        "startLine": 605,
+        "startChar": 52,
+        "endLine": 606,
+        "endChar": 12
+      },
+      "revId": "476e48ecdc88b904a62b2b3b5fee5459072b63fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8dd9fcd_1348c1ea",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 3550,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-07-02T03:00:13Z",
+      "side": 1,
+      "message": "add \n| head -n 1 | \nto prevent the parse problem if there are more than one \u003ctest class.",
+      "range": {
+        "startLine": 3550,
+        "startChar": 54,
+        "endLine": 3550,
+        "endChar": 55
+      },
+      "revId": "476e48ecdc88b904a62b2b3b5fee5459072b63fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
