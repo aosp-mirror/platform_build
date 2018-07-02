@@ -16,6 +16,24 @@
       "revId": "8b7af83a12a734e36fc3916d18df234182c5a39d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67904731_16e90a45",
+        "filename": "target/board/generic/BoardConfig.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1136369
+      },
+      "writtenOn": "2018-07-02T16:43:39Z",
+      "side": 1,
+      "message": "and treble_common even references GSI:\nhttps://cs.corp.google.com/android/build/make/target/board/treble_common.mk?q\u003dGSI",
+      "parentUuid": "647953c8_3ac5400d",
+      "revId": "8b7af83a12a734e36fc3916d18df234182c5a39d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
