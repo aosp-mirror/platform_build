@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "91730c92_0ea72073",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1105104
+      },
+      "writtenOn": "2018-07-03T05:52:47Z",
+      "side": 1,
+      "message": "In the new patchset, I am appending to this variable instead of overwriting it.\nThis is so that the \"cat\" can be done on a single variable itself.\nDoes that seem ok?",
+      "parentUuid": "c8c19545_3f7b3001",
+      "range": {
+        "startLine": 111,
+        "startChar": 0,
+        "endLine": 111,
+        "endChar": 46
+      },
+      "revId": "f7c7bcdb59d79141725102e32501409275fcf1b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "56469543_23aa94c8",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 7
@@ -39,6 +63,24 @@
       "revId": "f7c7bcdb59d79141725102e32501409275fcf1b2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f2e83d85_172486e1",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1105104
+      },
+      "writtenOn": "2018-07-03T05:52:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56469543_23aa94c8",
+      "revId": "f7c7bcdb59d79141725102e32501409275fcf1b2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
