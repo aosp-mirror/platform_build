@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3888d8d7_9cf31b99",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-03T12:36:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ffac88e3_f2f9be3a",
+      "revId": "5d1e282080ed933f79f81972f088004c4e52f28d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fddfdc28_bada1cdd",
         "filename": "core/config.mk",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "5d1e282080ed933f79f81972f088004c4e52f28d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e65ba55_2b80ecc1",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-03T12:36:44Z",
+      "side": 1,
+      "message": "thanks for pointing that out! I fixed the only two references of this I could find to only treat \u0027true\u0027 as true. (the one you pointed out, and the one just above this)",
+      "parentUuid": "fddfdc28_bada1cdd",
+      "revId": "5d1e282080ed933f79f81972f088004c4e52f28d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
