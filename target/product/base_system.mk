@@ -224,7 +224,7 @@ PRODUCT_PACKAGES += \
     sdcard \
     secdiscard \
     SecureElement \
-    selinux_policy \
+    selinux_policy_system \
     sensorservice \
     service \
     servicemanager \
