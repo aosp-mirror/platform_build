@@ -43,6 +43,7 @@ PRODUCT_PACKAGES += \
     libril \
     libvisualizer \
     passwd \
+    selinux_policy_nonsystem \
     shell_and_utilities_vendor \
     vndservice \
     vndservicemanager
