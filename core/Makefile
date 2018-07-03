@@ -682,11 +682,23 @@ INTERNAL_RAMDISK_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
 	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
 
+INSTALLED_FILES_FILE_ROOT := $(PRODUCT_OUT)/installed-files-root.txt
+INSTALLED_FILES_JSON_ROOT := $(INSTALLED_FILES_FILE_ROOT:.txt=.json)
+$(INSTALLED_FILES_FILE_ROOT): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_ROOT)
+$(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_RAMDISK_FILES) $(FILESLIST)
+	@echo Installed file list: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(hide) $(FILESLIST) $(TARGET_ROOT_OUT) > $(@:.txt=.json)
+	$(hide) build/make/tools/fileslist_util.py -c $(@:.txt=.json) > $@
+
+$(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
+
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
 # We just build this directly to the install location.
 INSTALLED_RAMDISK_TARGET := $(BUILT_RAMDISK_TARGET)
-$(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_RAMDISK_FILES) | $(MINIGZIP)
+$(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_RAMDISK_FILES) $(INSTALLED_FILES_FILE_ROOT) | $(MINIGZIP)
 	$(call pretty,"Target ram disk: $@")
 	$(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_ROOT_OUT) | $(MINIGZIP) > $@
 
@@ -1528,6 +1540,12 @@ ifneq (,$(SANITIZE_TARGET))
   ifeq (true,$(SANITIZE_TARGET_SYSTEM))
     FULL_SYSTEMIMAGE_DEPS += $(ASAN_IN_SYSTEM_INSTALLED)
   endif
+endif
+
+# When building a system root image, also add the ramdisk image as a dependency
+# to ensure all files in it are built before it is created.
+ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+  FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_RAMDISK_FILES) $(INSTALLED_FILES_FILE_ROOT)
 endif
 
 # -----------------------------------------------------------------
