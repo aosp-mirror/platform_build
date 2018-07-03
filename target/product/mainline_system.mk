@@ -37,8 +37,6 @@ _selinux_policy_whitelist := \
 _base_mk_whitelist := \
   $(_selinux_policy_whitelist) \
   recovery/root/etc/mke2fs.conf \
-  vendor/lib/mediadrm/libdrmclearkeyplugin.so \
-  vendor/lib64/mediadrm/libdrmclearkeyplugin.so \
 
 _my_whitelist := $(_base_mk_whitelist)
 
