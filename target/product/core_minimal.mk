@@ -32,7 +32,6 @@ PRODUCT_PACKAGES += \
     ethernet-service \
     HTMLViewer \
     libaudiopreprocessing \
-    libdownmix \
     libdrmframework \
     libdrmframework_jni \
     libfilterfw \
