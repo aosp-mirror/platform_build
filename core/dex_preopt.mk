@@ -21,7 +21,7 @@ DEX_PREOPT_DEFAULT ?= true
 
 # The default filter for which files go into the system_other image (if it is
 # being used). To bundle everything one should set this to '%'
-SYSTEM_OTHER_ODEX_FILTER ?= app/% priv-app/%
+SYSTEM_OTHER_ODEX_FILTER ?= app/% priv-app/% product/app/% product/priv-app/%
 
 # Method returning whether the install path $(1) should be for system_other.
 # Under SANITIZE_LITE, we do not want system_other. Just put things under /data/asan.
