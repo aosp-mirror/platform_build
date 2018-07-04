@@ -22,6 +22,30 @@
       "revId": "2f68d2fe1c302804763796299176e71dd38fec7f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3fdf0a0_9cffb257",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 594,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-04T18:00:33Z",
+      "side": 1,
+      "message": "ah, it\u0027s not that it\u0027s incomplete - the name in ALL_MODULES that\u0027s sometimes different from LOCAL_MODULE. Warning still stands I guess",
+      "parentUuid": "9f2ac6f5_14c2b921",
+      "range": {
+        "startLine": 594,
+        "startChar": 24,
+        "endLine": 594,
+        "endChar": 46
+      },
+      "revId": "2f68d2fe1c302804763796299176e71dd38fec7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
