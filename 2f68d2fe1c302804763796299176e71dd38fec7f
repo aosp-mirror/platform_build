@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f2ac6f5_14c2b921",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 594,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-04T16:41:15Z",
+      "side": 1,
+      "message": "I think this ALL_MODULES list is incomplete, so make sure to verify the dependencies you cleanup are actually non-existant. I filed b/111154853 to investigate/fix this",
+      "range": {
+        "startLine": 594,
+        "startChar": 24,
+        "endLine": 594,
+        "endChar": 46
+      },
+      "revId": "2f68d2fe1c302804763796299176e71dd38fec7f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
