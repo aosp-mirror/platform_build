@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "901ccf91_6d2842da",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1536,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-04T04:29:53Z",
+      "side": 1,
+      "message": "If we just need the files can it depend on $(INTERNAL_RAMDISK_FILES) instead?",
+      "revId": "51a22d40453d4ae9db544852e7e7c856bd024cd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
