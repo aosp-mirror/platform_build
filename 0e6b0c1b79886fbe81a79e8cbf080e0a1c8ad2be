@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "067a5f74_3f262970",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1105104
+      },
+      "writtenOn": "2018-07-04T05:12:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d635ef8_2703c3b1",
+      "revId": "0e6b0c1b79886fbe81a79e8cbf080e0a1c8ad2be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "698563e7_66f5388a",
         "filename": "core/dex_preopt_libart.mk",
         "patchSetId": 9
@@ -62,6 +80,54 @@
       "revId": "0e6b0c1b79886fbe81a79e8cbf080e0a1c8ad2be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "646e6f20_88fb766c",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1105104
+      },
+      "writtenOn": "2018-07-04T05:12:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "698563e7_66f5388a",
+      "range": {
+        "startLine": 120,
+        "startChar": 63,
+        "endLine": 120,
+        "endChar": 65
+      },
+      "revId": "0e6b0c1b79886fbe81a79e8cbf080e0a1c8ad2be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fcfdb175_ce461cef",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 1105104
+      },
+      "writtenOn": "2018-07-04T05:12:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7ce8ade_91097303",
+      "range": {
+        "startLine": 120,
+        "startChar": 13,
+        "endLine": 120,
+        "endChar": 62
+      },
+      "revId": "0e6b0c1b79886fbe81a79e8cbf080e0a1c8ad2be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
