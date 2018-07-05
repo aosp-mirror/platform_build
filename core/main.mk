@@ -895,6 +895,14 @@ endef
 # The base list of modules to build for this product is specified
 # by the appropriate product definition file, which was included
 # by product_config.mk.
+# Name resolution for PRODUCT_PACKAGES:
+#   foo:32 resolves to foo_32;
+#   foo:64 resolves to foo;
+#   foo resolves to both foo and foo_32 (if foo_32 is defined).
+#
+# Name resolution for LOCAL_REQUIRED_MODULES:
+#   If a module is built for 2nd arch, its required module resolves to
+#   32-bit variant, if it exits. See the select-bitness-of-required-modules definition.
 # $(1): product makefile
 define product-installed-files
   $(eval _pif_modules := $(PRODUCTS.$(strip $(1)).PRODUCT_PACKAGES)) \
