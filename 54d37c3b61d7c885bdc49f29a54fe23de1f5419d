@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d553779_e993c5c6",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-05T08:30:58Z",
+      "side": 1,
+      "message": "alternatively, you could probably set\nJAVA_SDK_ENFORCEMENT_ERROR :\u003d nope (or some other non-existant class)",
+      "revId": "54d37c3b61d7c885bdc49f29a54fe23de1f5419d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
