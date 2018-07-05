@@ -34,6 +34,24 @@
       "revId": "54d37c3b61d7c885bdc49f29a54fe23de1f5419d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7c1962c_4cd8d640",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-05T10:33:21Z",
+      "side": 1,
+      "message": "This enforcement is here to make sure apps specify one or the other (making it a deliberate choice to build against the BCP, rather than the default).\n\nIf I understand correctly, you\u0027re trying to relax this requirement for some particular device. If so, I suspect that\u0027s already achievable the way the code is right now.\n\nIt would be even better if you updated your apps to specify one or the other, like we\u0027ve done for all the apps I could find in AOSP.",
+      "parentUuid": "abf45024_4e524534",
+      "revId": "54d37c3b61d7c885bdc49f29a54fe23de1f5419d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
