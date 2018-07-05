@@ -22,6 +22,30 @@
       "revId": "8fb091eecc17a6264f927c22e6c8cb4b541fb3c1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "47fe0619_2e70d494",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-05T02:43:49Z",
+      "side": 1,
+      "message": "I think for those native host test, it will always be set due to below two make file will set it as true.\n\nhttps://cs.corp.google.com/aosp-master/build/make/core/host_prebuilt.mk?q\u003dhost_prebuilt.mk\u0026dr\u0026l\u003d18\nhttps://cs.corp.google.com/android/build/make/core/host_shared_library.mk?q\u003dhost_shared_library.mk\u0026dr\u0026l\u003d2\nhttps://cs.corp.google.com/aosp-master/build/make/core/host_java_library_common.mk?q\u003dhost_java_library_common.mk\u0026dr\u0026l\u003d23\nhttps://cs.corp.google.com/aosp-master/build/make/core/host_test_config.mk?q\u003dhost_test_config.mk\u0026dr\u0026l\u003d23\nhttps://cs.corp.google.com/android/build/make/core/host_static_library.mk?q\u003dhost_static_library.mk\u0026dr\u0026l\u003d2\nhttps://cs.corp.google.com/aosp-master/build/make/core/host_executable.mk?q\u003dhost_executable.mk\u0026dr\u0026l\u003d2",
+      "parentUuid": "762b5ada_b39ae8dd",
+      "range": {
+        "startLine": 582,
+        "startChar": 20,
+        "endLine": 582,
+        "endChar": 41
+      },
+      "revId": "8fb091eecc17a6264f927c22e6c8cb4b541fb3c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
