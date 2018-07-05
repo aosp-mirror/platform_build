@@ -16,8 +16,6 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
-    20-dns.conf \
-    95-configured \
     adb \
     adbd \
     am \
@@ -26,7 +24,6 @@ PRODUCT_PACKAGES += \
     android.hidl.manager-V1.0-java \
     android.hidl.memory@1.0-impl \
     android.hidl.memory@1.0-impl.vendor \
-    android.policy \
     android.test.base \
     android.test.mock \
     android.test.runner \
@@ -139,7 +136,6 @@ PRODUCT_PACKAGES += \
     libiprouteutil \
     libjnigraphics \
     libjpeg \
-    libkeystore \
     liblog \
     libm \
     libmdnssd \
@@ -172,11 +168,9 @@ PRODUCT_PACKAGES += \
     libsqlite \
     libstagefright \
     libstagefright_amrnb_common \
-    libstagefright_avc_common \
     libstagefright_enc_common \
     libstagefright_foundation \
     libstagefright_omx \
-    libstagefright_yuv \
     libstdc++ \
     libsurfaceflinger \
     libsurfaceflinger_ddmconnection \
