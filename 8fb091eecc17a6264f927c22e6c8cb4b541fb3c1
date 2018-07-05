@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "762b5ada_b39ae8dd",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-07-05T01:32:54Z",
+      "side": 1,
+      "message": "I\u0027m not sure it\u0027s always true for all native test.\ne.g.\nhttps://cs.corp.google.com/android/system/core/liblog/tests/Android.mk?q\u003d+NATIVE_BENCHMARK\u0026dr\u003dC",
+      "range": {
+        "startLine": 582,
+        "startChar": 20,
+        "endLine": 582,
+        "endChar": 41
+      },
+      "revId": "8fb091eecc17a6264f927c22e6c8cb4b541fb3c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
