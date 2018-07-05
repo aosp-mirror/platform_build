@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "95a8b67c_72d8fc96",
+        "filename": "target/product/generic.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-05T15:43:34Z",
+      "side": 1,
+      "message": "An alternative to whitelisting is to require the same conditionals in the product makefiles as used in the Android.mk that defines them.",
+      "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
