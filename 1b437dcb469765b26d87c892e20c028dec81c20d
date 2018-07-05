@@ -16,6 +16,24 @@
       "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f2216901_48b3abdd",
+        "filename": "target/product/generic.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-05T15:51:27Z",
+      "side": 1,
+      "message": "I like that better, but I couldn\u0027t figure out what conditional is gating the definition of the .recovery modules. Do you know? Spent a fair bit of time trying to figure that out actually :\u003c\n\nthe device_manifest.xml is straight forward to prune in that manner.",
+      "parentUuid": "95a8b67c_72d8fc96",
+      "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
