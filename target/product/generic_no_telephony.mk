@@ -49,15 +49,9 @@ PRODUCT_PACKAGES := \
     Home \
     InputDevices \
     KeyChain \
-    Keyguard \
     LatinIME \
     Launcher3QuickStep \
     librs_jni \
-    libvideoeditor_core \
-    libvideoeditor_jni \
-    libvideoeditor_osal \
-    libvideoeditorplayer \
-    libvideoeditor_videofilters \
     local_time.default \
     ManagedProvisioning \
     MmsService \
