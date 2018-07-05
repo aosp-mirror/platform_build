@@ -52,6 +52,24 @@
       "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8fb839bc_9be400c8",
+        "filename": "target/product/generic.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-05T16:02:45Z",
+      "side": 1,
+      "message": "Not entirely sure how that \u0027InRecovery\u0027 flag works in soong. However I\u0027m seeing this:\n\n$ grep adbd\\\\.recovery out/soong/Android-aosp_arm64.mk\nLOCAL_MODULE :\u003d adbd.recovery\nLOCAL_MODULE :\u003d libadbd.recovery\n$ grep adbd\\\\.recovery out/soong/Android-generic.mk \n\u003cempty\u003e\n\nThe first is from \u0027lunch aosp_arm64\u0027 and the second from \u0027lunch generic\u0027.",
+      "parentUuid": "3b90f706_e36ca50e",
+      "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
