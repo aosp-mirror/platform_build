@@ -48,6 +48,54 @@
     },
     {
       "key": {
+        "uuid": "37f12a97_3ed67794",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-05T11:53:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "09897f44_35c76681",
+      "range": {
+        "startLine": 605,
+        "startChar": 8,
+        "endLine": 605,
+        "endChar": 12
+      },
+      "revId": "ec15f957724f76baa7e7ccdb39403ae5f79b5ac2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cc059adf_b4fff663",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 605,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-05T11:53:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e67ed151_f218a730",
+      "range": {
+        "startLine": 604,
+        "startChar": 0,
+        "endLine": 605,
+        "endChar": 31
+      },
+      "revId": "ec15f957724f76baa7e7ccdb39403ae5f79b5ac2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "04dff89d_198cf481",
         "filename": "core/base_rules.mk",
         "patchSetId": 6
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "f8af5e23_28504d70",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 607,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-05T11:53:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "04dff89d_198cf481",
+      "range": {
+        "startLine": 607,
+        "startChar": 2,
+        "endLine": 607,
+        "endChar": 64
+      },
+      "revId": "ec15f957724f76baa7e7ccdb39403ae5f79b5ac2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c2d4a883_1b283aac",
         "filename": "core/definitions.mk",
         "patchSetId": 6
@@ -82,6 +154,30 @@
       "writtenOn": "2018-07-02T23:37:42Z",
       "side": 1,
       "message": "Why do you need this?",
+      "range": {
+        "startLine": 3544,
+        "startChar": 0,
+        "endLine": 3551,
+        "endChar": 5
+      },
+      "revId": "ec15f957724f76baa7e7ccdb39403ae5f79b5ac2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ff13841_045ff6d7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 3551,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-05T11:53:36Z",
+      "side": 1,
+      "message": "Previous thinking is to make sure native testing for host side is using HostGTes class for testing. But it\u0027s too strange actually. Change the logic to judge DevicelessTest instead.",
+      "parentUuid": "c2d4a883_1b283aac",
       "range": {
         "startLine": 3544,
         "startChar": 0,
