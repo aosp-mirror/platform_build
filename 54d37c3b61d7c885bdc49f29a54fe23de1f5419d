@@ -52,6 +52,24 @@
       "revId": "54d37c3b61d7c885bdc49f29a54fe23de1f5419d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da7a6cfc_08e8b11d",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1217797
+      },
+      "writtenOn": "2018-07-06T00:49:47Z",
+      "side": 1,
+      "message": "Yes. We\u0027re working on setting LOCAL_SDK_VERSION or LOCAL_PRIVATE_PLATFORM_APIS for non-prebuilt applications targeting P. Until that finishes, I want to relax this enforcement without changing default AOSP value(JAVA_SDK_ENFORCEMENT_ERROR). Unless I delete/modify JAVA_SDK_ENFORCEMENT_ERROR defined in AOSP core.mk here, I cannot do that. This CL aims to fix that.",
+      "parentUuid": "d7c1962c_4cd8d640",
+      "revId": "54d37c3b61d7c885bdc49f29a54fe23de1f5419d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
