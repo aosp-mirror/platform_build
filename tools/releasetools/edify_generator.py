@@ -31,14 +31,6 @@ class EdifyGenerator(object):
     else:
       self.fstab = fstab
 
-  def MakeTemporary(self):
-    """Make a temporary script object whose commands can latter be
-    appended to the parent script with AppendScript().  Used when the
-    caller wants to generate script commands out-of-order."""
-    x = EdifyGenerator(self.version, self.info)
-    x.mounts = self.mounts
-    return x
-
   @property
   def required_cache(self):
     """Return the minimum cache size to apply the update."""
@@ -180,22 +172,6 @@ class EdifyGenerator(object):
         "".join([', "%s"' % (i,) for i in sha1]) +
         ') || abort("E%d: \\"%s\\" has unexpected contents.");' % (
             common.ErrorCode.BAD_PATCH_FILE, filename))
-
-  def Verify(self, filename):
-    """Check that the given file has one of the
-    given hashes (encoded in the filename)."""
-    self.script.append(
-        'apply_patch_check("{filename}") && '
-        'ui_print("    Verified.") || '
-        'ui_print("\\"{filename}\\" has unexpected contents.");'.format(
-            filename=filename))
-
-  def FileCheck(self, filename, *sha1):
-    """Check that the given file has one of the
-    given *sha1 hashes."""
-    self.script.append('assert(sha1_check(read_file("%s")' % (filename,) +
-                       "".join([', "%s"' % (i,) for i in sha1]) +
-                       '));')
 
   def CacheFreeSpaceCheck(self, amount):
     """Check that there's at least 'amount' space that can be made
