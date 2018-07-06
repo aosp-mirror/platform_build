@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "252c4072_2eb932e7",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 927,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-06T09:19:25Z",
+      "side": 1,
+      "message": "done, reused the macro I defined for the other stuff. Also managed to simplify a little bit..",
+      "parentUuid": "aeab3c1f_e0bcdd8a",
+      "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d58f2c33_02087ada",
         "filename": "core/product.mk",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7199b189_a02c0ca5",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-06T09:19:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d58f2c33_02087ada",
+      "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
