@@ -250,12 +250,14 @@ class BuildInfo(object):
   def __init__(self, info_dict, oem_dicts):
     """Initializes a BuildInfo instance with the given dicts.
 
+    Note that it only wraps up the given dicts, without making copies.
+
     Arguments:
       info_dict: The build-time info dict.
       oem_dicts: A list of OEM dicts (which is parsed from --oem_settings). Note
           that it always uses the first dict to calculate the fingerprint or the
           device name. The rest would be used for asserting OEM properties only
-          (e.g.  one package can be installed on one of these devices).
+          (e.g. one package can be installed on one of these devices).
     """
     self.info_dict = info_dict
     self.oem_dicts = oem_dicts
@@ -289,8 +291,14 @@ class BuildInfo(object):
   def __getitem__(self, key):
     return self.info_dict[key]
 
+  def __setitem__(self, key, value):
+    self.info_dict[key] = value
+
   def get(self, key, default=None):
     return self.info_dict.get(key, default)
+
+  def items(self):
+    return self.info_dict.items()
 
   def GetBuildProp(self, prop):
     """Returns the inquired build property."""
