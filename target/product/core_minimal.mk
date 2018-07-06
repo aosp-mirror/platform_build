@@ -32,14 +32,11 @@ PRODUCT_PACKAGES += \
     ethernet-service \
     HTMLViewer \
     libaudiopreprocessing \
-    libdownmix \
     libdrmframework \
     libdrmframework_jni \
     libfilterfw \
     libfilterpack_imageproc \
-    libgabi++ \
     libgatekeeper \
-    libkeystore \
     libstagefright_soft_aacdec \
     libstagefright_soft_aacenc \
     libstagefright_soft_amrdec \
@@ -69,7 +66,6 @@ PRODUCT_PACKAGES += \
     StatementService \
     vndk_snapshot_package \
     webview \
-    webview_zygote \
 
 
 PRODUCT_COPY_FILES += \
