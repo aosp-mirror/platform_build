@@ -22,6 +22,30 @@
       "revId": "b97716934010f6ed3a44a2d550aa48736f634ad8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89f94e9b_984b6684",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-06T07:00:24Z",
+      "side": 1,
+      "message": "Done. Thanks for the notice.",
+      "parentUuid": "4cba6f53_05005b73",
+      "range": {
+        "startLine": 578,
+        "startChar": 44,
+        "endLine": 578,
+        "endChar": 45
+      },
+      "revId": "b97716934010f6ed3a44a2d550aa48736f634ad8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
