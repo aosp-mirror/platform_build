@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "aeab3c1f_e0bcdd8a",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 927,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-06T01:36:28Z",
+      "side": 1,
+      "message": "Can you make it so that it prints out all of the problems before exiting? (I\u0027ve turned these into warnings before, along with setting a variable, then $(error done) if the variable is set at the end)",
+      "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d58f2c33_02087ada",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 255,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-06T01:36:28Z",
+      "side": 1,
+      "message": "Can you mark these two variables as readonly?",
+      "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "95a8b67c_72d8fc96",
         "filename": "target/product/generic.mk",
         "patchSetId": 1
