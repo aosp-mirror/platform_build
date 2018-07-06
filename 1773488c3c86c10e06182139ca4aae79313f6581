@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77f194a8_0b9a9bbd",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-07-06T07:04:33Z",
+      "side": 1,
+      "message": "nit: The feature should not be enabled on the device without \n     partition _a and _b (i.e., the aosp_{arm, x86}{_64}_a.mk targets).\n\nBecause you\u0027re not disabling something for _a.\nInstead you just don\u0027t enable it.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 20
+      },
+      "revId": "1773488c3c86c10e06182139ca4aae79313f6581",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
