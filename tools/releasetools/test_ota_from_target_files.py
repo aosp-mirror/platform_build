@@ -190,6 +190,16 @@ class BuildInfoTest(unittest.TestCase):
     self.assertRaises(KeyError,
                       lambda: target_info['build.prop']['ro.build.foo'])
 
+  def test___setitem__(self):
+    target_info = BuildInfo(copy.deepcopy(self.TEST_INFO_DICT), None)
+    self.assertEqual('value1', target_info['property1'])
+    target_info['property1'] = 'value2'
+    self.assertEqual('value2', target_info['property1'])
+
+    self.assertEqual('build-foo', target_info['build.prop']['ro.build.foo'])
+    target_info['build.prop']['ro.build.foo'] = 'build-bar'
+    self.assertEqual('build-bar', target_info['build.prop']['ro.build.foo'])
+
   def test_get(self):
     target_info = BuildInfo(self.TEST_INFO_DICT, None)
     self.assertEqual('value1', target_info.get('property1'))
@@ -208,6 +218,12 @@ class BuildInfoTest(unittest.TestCase):
     self.assertIsNone(target_info.get('build.prop').get('ro.build.foo'))
     self.assertRaises(KeyError,
                       lambda: target_info.get('build.prop')['ro.build.foo'])
+
+  def test_items(self):
+    target_info = BuildInfo(self.TEST_INFO_DICT, None)
+    items = target_info.items()
+    self.assertIn(('property1', 'value1'), items)
+    self.assertIn(('property2', 4096), items)
 
   def test_GetBuildProp(self):
     target_info = BuildInfo(self.TEST_INFO_DICT, None)
