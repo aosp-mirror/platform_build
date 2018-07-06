@@ -140,6 +140,24 @@
       "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9f03f60_772f1e7b",
+        "filename": "target/product/generic.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-06T15:24:08Z",
+      "side": 1,
+      "message": "It looks like this may be a bug in the soong recovery mutator on 32-bit targets?\n\n \u003e var recoveryMultilib string\n \u003e if mctx.Config().DevicePrefer32BitExecutables() {\n \u003e \trecoveryMultilib \u003d \"lib32\"\n \u003e } else {\n \u003e \trecoveryMultilib \u003d \"lib64\"\n \u003e }\n \u003e multilib :\u003d m.Target().Arch.ArchType.Multilib\n \u003e if multilib !\u003d recoveryMultilib {\n \u003e \trecoveryVariantNeeded \u003d false\n \u003e }\n\nrecoveryMultilib will be \"lib64\" on 32-bit devices (Prefer32Bit is only true when on a 32+64 device, preferring 32-bit). multilib will be \"lib32\", and we\u0027ll disable building recovery binaries.",
+      "parentUuid": "8fb839bc_9be400c8",
+      "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }

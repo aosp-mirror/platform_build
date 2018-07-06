@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "caa66dae_2a9cb80e",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-06T15:24:08Z",
+      "side": 1,
+      "message": "This is normally set in the BoardConfig.mk, which isn\u0027t loaded at this point.",
+      "range": {
+        "startLine": 251,
+        "startChar": 6,
+        "endLine": 251,
+        "endChar": 26
+      },
+      "revId": "c418712bcf14f087dce4a3b67ef673360d662b8f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
