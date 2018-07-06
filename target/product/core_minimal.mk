@@ -81,7 +81,7 @@ PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service \
     wifi-service \
-    com.android.location.provider \
+    com.android.location.provider.impl \
 
 # Adoptable external storage supports both ext4 and f2fs
 PRODUCT_PACKAGES += \
