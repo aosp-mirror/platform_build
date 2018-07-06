@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4cba6f53_05005b73",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-07-06T06:54:06Z",
+      "side": 1,
+      "message": "Remove the space.",
+      "range": {
+        "startLine": 578,
+        "startChar": 44,
+        "endLine": 578,
+        "endChar": 45
+      },
+      "revId": "b97716934010f6ed3a44a2d550aa48736f634ad8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
