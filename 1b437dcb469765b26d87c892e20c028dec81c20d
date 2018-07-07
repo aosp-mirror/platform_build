@@ -158,6 +158,24 @@
       "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb1cf542_9fadee7d",
+        "filename": "target/product/generic.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-07-07T06:36:35Z",
+      "side": 1,
+      "message": "oh that\u0027s my bug. sorry.\n\nWhat should I do if I want to know the primary ABI of the device?\n\nDo I need to read mctx.Config().Targets[Device] to extract Arch.ArchType.Multilib(s)? Or is there an easier path?",
+      "parentUuid": "a9f03f60_772f1e7b",
+      "revId": "1b437dcb469765b26d87c892e20c028dec81c20d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
