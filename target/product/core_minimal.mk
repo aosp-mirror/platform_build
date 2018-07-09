@@ -97,7 +97,7 @@ PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service \
     wifi-service \
-    com.android.location.provider \
+    com.android.location.provider.impl \
 
 # The set of packages whose code can be loaded by the system server.
 PRODUCT_SYSTEM_SERVER_APPS += \

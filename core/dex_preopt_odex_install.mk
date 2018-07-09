@@ -191,14 +191,19 @@ installed_odex := $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
 installed_odex += $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
 else  # boot jar
 ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
+
+my_module_multilib := $(LOCAL_MULTILIB)
+# If the module is not an SDK library and it's a system server jar, only preopt the primary arch.
+my_filtered_lib_name := $(patsubst %.impl,%,$(LOCAL_MODULE))
+ifeq (,$(filter $(JAVA_SDK_LIBRARIES),$(my_filtered_lib_name)))
 # For a Java library, by default we build odex for both 1st arch and 2nd arch.
 # But it can be overridden with "LOCAL_MULTILIB := first".
 ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
 # For system server jars, we build for only "first".
 my_module_multilib := first
-else
-my_module_multilib := $(LOCAL_MULTILIB)
 endif
+endif
+
 # #################################################
 # Odex for the 1st arch
 my_2nd_arch_prefix :=
