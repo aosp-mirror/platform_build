@@ -30,13 +30,10 @@ PRODUCT_PACKAGES += \
     CompanionDeviceManager \
     drmserver \
     ethernet-service \
+    fsck.f2fs \
     HTMLViewer \
     libaudiopreprocessing \
-    libdrmframework \
-    libdrmframework_jni \
-    libfilterfw \
     libfilterpack_imageproc \
-    libgatekeeper \
     libstagefright_soft_aacdec \
     libstagefright_soft_aacenc \
     libstagefright_soft_amrdec \
@@ -61,6 +58,7 @@ PRODUCT_PACKAGES += \
     libwebrtc_audio_preprocessing \
     libwebviewchromium_loader \
     libwebviewchromium_plat_support \
+    make_f2fs \
     PackageInstaller \
     requestsync \
     StatementService \
@@ -82,11 +80,6 @@ PRODUCT_SYSTEM_SERVER_JARS := \
     ethernet-service \
     wifi-service \
     com.android.location.provider \
-
-# Adoptable external storage supports both ext4 and f2fs
-PRODUCT_PACKAGES += \
-    fsck.f2fs \
-    make_f2fs \
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
