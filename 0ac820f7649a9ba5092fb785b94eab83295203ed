@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "07556457_ce7cedf9",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 686,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-09T17:58:52Z",
+      "side": 1,
+      "message": "Add:\n\n INSTALLED_FILES_JSON_ROOT :\u003d $(INSTALLED_FILES_FILE_ROOT:.txt\u003d.json)\n $(INSTALLED_FILES_FILE_ROOT): .KATI_IMPLICIT_OUTPUTS :\u003d $(INSTALLED_FILES_JSON_ROOT)",
+      "revId": "0ac820f7649a9ba5092fb785b94eab83295203ed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "788bbc75_0027fb5c",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1239,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-09T17:58:52Z",
+      "side": 1,
+      "message": "Conditionally add INSTALLED_FILES_FILE_ROOT and INSTALLED_FILES_JSON_ROOT here too",
+      "revId": "0ac820f7649a9ba5092fb785b94eab83295203ed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
