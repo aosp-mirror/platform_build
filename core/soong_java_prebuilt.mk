@@ -79,49 +79,55 @@ endif
 endif # TURBINE_ENABLED != false
 
 ifdef LOCAL_SOONG_DEX_JAR
-  ifndef LOCAL_IS_HOST_MODULE
-    ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)  # is_boot_jar
-      $(eval $(call hiddenapi-copy-soong-jar,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
-    else # !is_boot_jar
-      $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
-    endif # is_boot_jar
-    $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar) $(full_classes_header_jar)))
+  ifneq ($(LOCAL_UNINSTALLABLE_MODULE),true)
+    ifndef LOCAL_IS_HOST_MODULE
+      ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)  # is_boot_jar
+        $(eval $(call hiddenapi-copy-soong-jar,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
+      else # !is_boot_jar
+        $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
+      endif # is_boot_jar
+      $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar) $(full_classes_header_jar)))
 
-    dex_preopt_profile_src_file := $(common_javalib.jar)
+      dex_preopt_profile_src_file := $(common_javalib.jar)
 
-    # defines built_odex along with rule to install odex
-    include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
+      # defines built_odex along with rule to install odex
+      include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 
-    dex_preopt_profile_src_file :=
+      dex_preopt_profile_src_file :=
 
-    ifdef LOCAL_DEX_PREOPT
-      ifneq ($(dexpreopt_boot_jar_module),) # boot jar
-        # boot jar's rules are defined in dex_preopt.mk
-        dexpreopted_boot_jar := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(dexpreopt_boot_jar_module)_nodex.jar
-        $(eval $(call copy-one-file,$(dexpreopted_boot_jar),$(LOCAL_BUILT_MODULE)))
+      ifdef LOCAL_DEX_PREOPT
+        ifneq ($(dexpreopt_boot_jar_module),) # boot jar
+          # boot jar's rules are defined in dex_preopt.mk
+          dexpreopted_boot_jar := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(dexpreopt_boot_jar_module)_nodex.jar
+          $(eval $(call copy-one-file,$(dexpreopted_boot_jar),$(LOCAL_BUILT_MODULE)))
 
-        # For libart boot jars, we don't have .odex files.
-      else # ! boot jar
-        $(built_odex): PRIVATE_MODULE := $(LOCAL_MODULE)
-        # Use pattern rule - we may have multiple built odex files.
+          # For libart boot jars, we don't have .odex files.
+        else # ! boot jar
+          $(built_odex): PRIVATE_MODULE := $(LOCAL_MODULE)
+          # Use pattern rule - we may have multiple built odex files.
 $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(common_javalib.jar)
 	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
 	$(call dexpreopt-one-file,$<,$@)
 
-       $(eval $(call dexpreopt-copy-jar,$(common_javalib.jar),$(LOCAL_BUILT_MODULE),$(LOCAL_DEX_PREOPT)))
-      endif # ! boot jar
-    else # LOCAL_DEX_PREOPT
-      $(eval $(call copy-one-file,$(common_javalib.jar),$(LOCAL_BUILT_MODULE)))
-    endif # LOCAL_DEX_PREOPT
-  else # LOCAL_IS_HOST_MODULE
-    $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(LOCAL_BUILT_MODULE)))
-    $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(full_classes_jar) $(full_classes_header_jar)))
-  endif
+         $(eval $(call dexpreopt-copy-jar,$(common_javalib.jar),$(LOCAL_BUILT_MODULE),$(LOCAL_DEX_PREOPT)))
+        endif # ! boot jar
+      else # LOCAL_DEX_PREOPT
+        $(eval $(call copy-one-file,$(common_javalib.jar),$(LOCAL_BUILT_MODULE)))
+      endif # LOCAL_DEX_PREOPT
+    else # LOCAL_IS_HOST_MODULE
+      $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(LOCAL_BUILT_MODULE)))
+      $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(full_classes_jar) $(full_classes_header_jar)))
+    endif
 
-  java-dex : $(LOCAL_BUILT_MODULE)
-else
+    java-dex : $(LOCAL_BUILT_MODULE)
+  else  # LOCAL_UNINSTALLABLE_MODULE
+    $(eval $(call copy-one-file,$(full_classes_jar),$(LOCAL_BUILT_MODULE)))
+    $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
+    java-dex : $(common_javalib.jar)
+  endif  # LOCAL_UNINSTALLABLE_MODULE
+else  # LOCAL_SOONG_DEX_JAR
   $(eval $(call copy-one-file,$(full_classes_jar),$(LOCAL_BUILT_MODULE)))
-endif
+endif  # LOCAL_SOONG_DEX_JAR
 
 javac-check : $(full_classes_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_jar)
