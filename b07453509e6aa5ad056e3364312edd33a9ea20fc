@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "24a222e8_73959146",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-09T14:38:33Z",
+      "side": 1,
+      "message": "I\u0027ve already merged a change in AOSP with ID Iddff... does that matter?",
+      "revId": "b07453509e6aa5ad056e3364312edd33a9ea20fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
