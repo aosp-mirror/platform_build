@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25af7bb2_96f5437a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-09T18:10:04Z",
+      "side": 1,
+      "message": "Why does this have a different change-id than the internal patch?",
+      "revId": "502892a9364a7e9e7cb28820edc1af605fc3e073",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
