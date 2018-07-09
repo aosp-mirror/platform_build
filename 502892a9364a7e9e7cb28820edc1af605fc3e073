@@ -34,6 +34,24 @@
       "revId": "502892a9364a7e9e7cb28820edc1af605fc3e073",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0e6b1304_db629622",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-09T18:14:24Z",
+      "side": 1,
+      "message": "Maybe repo deletes the change-id?  I usually use git cherry-pick, which doesn\u0027t.  Keeping the same change-id is less confusing, but ok either way.",
+      "parentUuid": "251395c6_9761db46",
+      "revId": "502892a9364a7e9e7cb28820edc1af605fc3e073",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
