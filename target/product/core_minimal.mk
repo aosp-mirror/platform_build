@@ -75,34 +75,12 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.preview_sdk.xml:system/etc/permissions/android.software.preview_sdk.xml
 endif
 
-ifeq ($(TARGET_CORE_JARS),)
-$(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
-endif
-
-# The order of PRODUCT_BOOT_JARS matters.
-PRODUCT_BOOT_JARS := \
-    $(TARGET_CORE_JARS) \
-    legacy-test \
-    ext \
-    framework \
-    telephony-common \
-    voip-common \
-    ims-common \
-    org.apache.http.legacy.impl \
-    android.hidl.base-V1.0-java \
-    android.hidl.manager-V1.0-java
-
 # The order of PRODUCT_SYSTEM_SERVER_JARS matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service \
     wifi-service \
     com.android.location.provider \
-
-# The set of packages whose code can be loaded by the system server.
-PRODUCT_SYSTEM_SERVER_APPS += \
-    SettingsProvider \
-    WallpaperBackup
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
