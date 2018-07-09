@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6a12022a_9c4e1cf3",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-09T20:01:00Z",
+      "side": 1,
+      "message": "Why are we checking for non-cts and that it\u0027s native-tests here?\n\nShouldn\u0027t we just check that it\u0027s host. And then the autogeneration below should make sure it\u0027s non-cts and it is a native-test (which you did in the autogen...mk file).",
+      "range": {
+        "startLine": 579,
+        "startChar": 1,
+        "endLine": 579,
+        "endChar": 12
+      },
+      "revId": "0fef95515f56a79d77ba43e148995fe37c355699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
