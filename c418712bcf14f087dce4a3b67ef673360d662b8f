@@ -22,6 +22,30 @@
       "revId": "c418712bcf14f087dce4a3b67ef673360d662b8f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8c227df_ede78d7c",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-09T09:49:43Z",
+      "side": 1,
+      "message": "thanks, reverted this agian. Maybe defining an empty phony is the right thing to do when it\u0027s not needed. This can be cleaned up separately anyhow.",
+      "parentUuid": "caa66dae_2a9cb80e",
+      "range": {
+        "startLine": 251,
+        "startChar": 6,
+        "endLine": 251,
+        "endChar": 26
+      },
+      "revId": "c418712bcf14f087dce4a3b67ef673360d662b8f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
