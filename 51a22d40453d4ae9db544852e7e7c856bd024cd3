@@ -16,6 +16,24 @@
       "revId": "51a22d40453d4ae9db544852e7e7c856bd024cd3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc5613e3_1b6ca3e9",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1536,
+      "author": {
+        "id": 1066743
+      },
+      "writtenOn": "2018-07-09T17:07:48Z",
+      "side": 1,
+      "message": "Ah that\u0027s a much better idea!",
+      "parentUuid": "901ccf91_6d2842da",
+      "revId": "51a22d40453d4ae9db544852e7e7c856bd024cd3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
