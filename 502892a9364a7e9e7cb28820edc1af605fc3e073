@@ -16,6 +16,24 @@
       "revId": "502892a9364a7e9e7cb28820edc1af605fc3e073",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "251395c6_9761db46",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-07-09T18:11:18Z",
+      "side": 1,
+      "message": "Not sure, that\u0027s just the one that amending the repo cherry pick added. Should I change it?",
+      "parentUuid": "25af7bb2_96f5437a",
+      "revId": "502892a9364a7e9e7cb28820edc1af605fc3e073",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
