@@ -58,7 +58,6 @@ PRODUCT_PACKAGES += \
     libwebrtc_audio_preprocessing \
     libwebviewchromium_loader \
     libwebviewchromium_plat_support \
-    logd \
     make_f2fs \
     PackageInstaller \
     requestsync \
