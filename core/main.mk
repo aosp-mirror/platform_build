@@ -925,6 +925,32 @@ define product-installed-files
   $(call module-installed-files, $(_pif_modules))
 endef
 
+# Fails the build if the given list is non-empty, and prints it entries (stripping PRODUCT_OUT).
+# $(1): list of files to print
+# $(2): heading to print on failure
+define maybe-print-list-and-error
+$(if $(strip $(1)), \
+  $(warning $(2)) \
+  $(info Offending entries:) \
+  $(foreach e,$(sort $(1)),$(info    $(patsubst $(PRODUCT_OUT)/%,%,$(e)))) \
+  $(error Build failed) \
+)
+endef
+
+ifeq (true|,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_PACKAGES_EXIST)|$(filter true,$(ALLOW_MISSING_DEPENDENCIES)))
+  _whitelist := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST)
+  _modules := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
+  # Sanity check all modules in PRODUCT_PACKAGES exist. We check for the
+  # existence if either <module> or the <module>_32 variant.
+  _nonexistant_modules := $(filter-out $(ALL_MODULES),$(_modules))
+  _nonexistant_modules := $(foreach m,$(_nonexistant_modules),\
+    $(if $(call get-32-bit-modules,$(m)),,$(m)))
+  $(call maybe-print-list-and-error,$(filter-out $(_whitelist),$(_nonexistant_modules)),\
+    $(INTERNAL_PRODUCT) includes non-existant modules in PRODUCT_PACKAGES)
+  $(call maybe-print-list-and-error,$(filter-out $(_nonexistant_modules),$(_whitelist)),\
+    $(INTERNAL_PRODUCT) includes redundant whitelist entries for nonexistant PRODUCT_PACKAGES)
+endif
+
 ifdef FULL_BUILD
   product_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
 else
@@ -942,18 +968,6 @@ define resolve-product-relative-paths
   $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),\
     $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
       $(foreach p,$(1),$(PRODUCT_OUT)/$(p)$(2))))
-endef
-
-# Fails the build if the given list is non-empty, and prints it entries (stripping PRODUCT_OUT).
-# $(1): list of files to print
-# $(2): heading to print on failure
-define maybe-print-list-and-error
-$(if $(strip $(1)), \
-  $(warning $(2)) \
-  $(info Offending entries:) \
-  $(foreach e,$(sort $(1)),$(info    $(patsubst $(PRODUCT_OUT)/%,%,$(e)))) \
-  $(error Build failed) \
-)
 endef
 
 # Verify the artifact path requirements made by included products.
