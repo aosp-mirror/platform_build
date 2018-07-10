@@ -8,7 +8,9 @@ my_prefix := TARGET_
 include $(BUILD_SYSTEM)/multilib.mk
 
 ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
-  ifneq ($(TARGET_SUPPORTS_64_BIT_APPS)|$(my_module_multilib),|64)
+  ifeq ($(TARGET_SUPPORTS_64_BIT_APPS),true)
+    my_module_multilib := first
+  else ifneq ($(my_module_multilib),64)
     my_module_multilib := first
   endif
 endif
