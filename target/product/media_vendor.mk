@@ -14,21 +14,12 @@
 # limitations under the License.
 #
 
-# TODO(hansson): change inheritance to generic_no_telephony
-$(call inherit-product, $(SRC_TARGET_DIR)/product/media_system.mk)
+# This makefile contains the non-system partition contents for
+# media-capable devices (non-wearables). Only add something here
+# if it definitely doesn't belong on wearables. Otherwise, choose
+# base_vendor.mk.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/base_vendor.mk)
 
-PRODUCT_NAME := mainline_system
-PRODUCT_BRAND := generic
-PRODUCT_SHIPPING_API_LEVEL := 28
-
-_base_mk_whitelist := \
-  recovery/root/etc/mke2fs.conf \
-
-_my_whitelist := $(_base_mk_whitelist)
-
-# Both /system and / are in system.img when PRODUCT_SHIPPING_API_LEVEL>=28.
-_my_paths := \
-  $(TARGET_COPY_OUT_ROOT) \
-  $(TARGET_COPY_OUT_SYSTEM) \
-
-$(call require-artifacts-in-path, $(_my_paths), $(_my_whitelist))
+PRODUCT_PACKAGES += \
+    libaudiopreprocessing \
+    libwebrtc_audio_preprocessing \
