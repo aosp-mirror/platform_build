@@ -16,6 +16,24 @@
       "revId": "17cbaab03eae2d284e43ca6171df3c42df63f9af",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2cc639b9_6dd2c9b0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2018-07-10T23:52:14Z",
+      "side": 1,
+      "message": "Good point, let\u0027s merge into master first and cherry-pick here.",
+      "parentUuid": "c667a67a_337efb8e",
+      "revId": "17cbaab03eae2d284e43ca6171df3c42df63f9af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
