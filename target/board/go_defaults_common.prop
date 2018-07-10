@@ -17,7 +17,6 @@
 # Sets Android Go recommended default values for propreties.
 
 # Set lowram options
-ro.config.low_ram=true
 ro.lmk.critical_upgrade=true
 ro.lmk.upgrade_pressure=40
 ro.lmk.downgrade_pressure=60
