@@ -245,12 +245,28 @@ PRODUCT_PACKAGES += \
     wifi-service \
     wm \
 
-
 # VINTF data
 PRODUCT_PACKAGES += \
     device_manifest.xml \
     framework_manifest.xml \
     framework_compatibility_matrix.xml \
+
+ifeq ($(TARGET_CORE_JARS),)
+$(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
+endif
+
+# The order of PRODUCT_BOOT_JARS matters.
+PRODUCT_BOOT_JARS := \
+    $(TARGET_CORE_JARS) \
+    legacy-test \
+    ext \
+    framework \
+    telephony-common \
+    voip-common \
+    ims-common \
+    org.apache.http.legacy.impl \
+    android.hidl.base-V1.0-java \
+    android.hidl.manager-V1.0-java
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
@@ -258,13 +274,12 @@ PRODUCT_COPY_FILES += \
     system/core/rootdir/ueventd.rc:root/ueventd.rc \
     system/core/rootdir/etc/hosts:system/etc/hosts
 
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
 PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
+PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
 
 # Ensure that this property is always defined so that bionic_systrace.cpp
 # can rely on it being initially set by init.
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    debug.atrace.tags.enableflags=0
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
 
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
@@ -278,6 +293,11 @@ PRODUCT_PACKAGES_DEBUG := \
     sqlite3 \
     strace
 
+# The set of packages whose code can be loaded by the system server.
+PRODUCT_SYSTEM_SERVER_APPS += \
+    SettingsProvider \
+    WallpaperBackup
+
 # Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
 PRODUCT_PACKAGES_DEBUG_ASAN :=
 
@@ -288,10 +308,5 @@ PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
 #       for known dirty objects in the image will be empty.
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/dirty-image-objects:system/etc/dirty-image-objects)
-
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    ro.zygote=zygote32
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/runtime_libart.mk)
