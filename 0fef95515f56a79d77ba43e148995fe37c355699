@@ -46,6 +46,30 @@
       "revId": "0fef95515f56a79d77ba43e148995fe37c355699",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "89879ccf_9dbf9d7e",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-10T15:49:23Z",
+      "side": 1,
+      "message": "Yeah I don\u0027t think there exists a CTS+Host+Native test. All CTS tests require a device.\n\nSo if you get rid of line 580+586 I think we should be fine.\n\nWe will only use devicelesstest.xml and autogenerate if its native+host for now.",
+      "parentUuid": "0c82bf7d_199136b4",
+      "range": {
+        "startLine": 579,
+        "startChar": 1,
+        "endLine": 579,
+        "endChar": 12
+      },
+      "revId": "0fef95515f56a79d77ba43e148995fe37c355699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
