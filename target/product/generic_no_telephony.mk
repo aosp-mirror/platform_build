@@ -75,7 +75,6 @@ PRODUCT_PACKAGES := \
     SimAppDialog \
     StorageManager \
     SystemUI \
-    SysuiDarkThemeOverlay \
     Telecom \
     TelephonyProvider \
     TeleService \
