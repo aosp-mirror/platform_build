@@ -35,6 +35,7 @@ PRODUCT_PACKAGES += \
     libbundlewrapper \
     libclearkeycasplugin \
     libdownmix \
+    libdrmclearkeyplugin \
     libeffectproxy \
     libeffects \
     libldnhncr \
