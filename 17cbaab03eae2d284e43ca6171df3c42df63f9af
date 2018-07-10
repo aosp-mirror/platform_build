@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c667a67a_337efb8e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 8
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-10T17:43:55Z",
+      "side": 1,
+      "message": "We normally use the same change-id for cherry-picks of the same logical patch",
+      "revId": "17cbaab03eae2d284e43ca6171df3c42df63f9af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
