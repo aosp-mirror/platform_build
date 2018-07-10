@@ -654,11 +654,24 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks):
   # if they contain all zeros. We can't reconstruct such a file from its block
   # list. Tag such entries accordingly. (Bug: 65213616)
   for entry in image.file_map:
-    # "/system/framework/am.jar" => "SYSTEM/framework/am.jar".
-    arcname = string.replace(entry, which, which.upper(), 1)[1:]
     # Skip artificial names, such as "__ZERO", "__NONZERO-1".
-    if arcname not in input_zip.namelist():
+    if not entry.startswith('/'):
       continue
+
+    # "/system/framework/am.jar" => "SYSTEM/framework/am.jar". Note that when
+    # using system_root_image, the filename listed in system.map may contain an
+    # additional leading slash (i.e. "//system/framework/am.jar"). Using lstrip
+    # to get consistent results.
+    arcname = string.replace(entry, which, which.upper(), 1).lstrip('/')
+
+    # Special handling another case with system_root_image, where files not
+    # under /system (e.g. "/sbin/charger") are packed under ROOT/ in a
+    # target_files.zip.
+    if which == 'system' and not arcname.startswith('SYSTEM'):
+      arcname = 'ROOT/' + arcname
+
+    assert arcname in input_zip.namelist(), \
+        "Failed to find the ZIP entry for {}".format(entry)
 
     info = input_zip.getinfo(arcname)
     ranges = image.file_map[entry]
