@@ -22,6 +22,30 @@
       "revId": "0fef95515f56a79d77ba43e148995fe37c355699",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c82bf7d_199136b4",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-10T03:24:03Z",
+      "side": 1,
+      "message": "It\u0027s due to test_config variable will be used in below situation.\n\nhttps://cs.corp.google.com/android/build/make/core/base_rules.mk?type\u003dcs\u0026q\u003dbase_rules.mk\u0026g\u003d0\u0026l\u003d610\n\nIf not filter out cts, it will try to use DevielessTest.xml or auto-generate test config if it\u0027s not exist.\nI think it will break current cts\u0027s rule, maybe some CTS test cases will losing test config.\nBut maybe there\u0027s no such case in CTS(host+native).\nI will scan module-info to check if this kind of case exists.",
+      "parentUuid": "6a12022a_9c4e1cf3",
+      "range": {
+        "startLine": 579,
+        "startChar": 1,
+        "endLine": 579,
+        "endChar": 12
+      },
+      "revId": "0fef95515f56a79d77ba43e148995fe37c355699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
