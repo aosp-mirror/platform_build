@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77bf4e5a_916e5967",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-11T14:43:43Z",
+      "side": 1,
+      "message": "Why did you make this change again?",
+      "range": {
+        "startLine": 38,
+        "startChar": 27,
+        "endLine": 38,
+        "endChar": 46
+      },
+      "revId": "ad02c323be7125864de6dcc711a57ef57a77de0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
