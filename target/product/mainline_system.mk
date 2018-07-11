@@ -15,7 +15,7 @@
 #
 
 # TODO(hansson): change inheritance to generic_no_telephony
-$(call inherit-product, $(SRC_TARGET_DIR)/product/media_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
 
 PRODUCT_NAME := mainline_system
 PRODUCT_BRAND := generic

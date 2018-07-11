@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 The Android Open Source Project
+# Copyright (C) 2018 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
 # limitations under the License.
 #
 
-# This product is a generic phone or tablet, that doesn't have telephony.
-#
-# Note: Do not add any contents directly to this file. Choose either
-# handheld_system or handheld_vendor depending on partition (also consider
-# base_<x>.mk or media_<x>.mk.
-
-$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_vendor.mk)
-
-PRODUCT_BRAND := generic
-PRODUCT_DEVICE := generic
-PRODUCT_NAME := generic_no_telephony
+# This makefile contains the non-system partition contents for
+# a generic phone or tablet device. Only add something here if
+# it definitely doesn't belong on other types of devices (if it
+# does, use base_vendor.mk).
+$(call inherit-product, $(SRC_TARGET_DIR)/product/media_vendor.mk)
+PRODUCT_PACKAGES += \
+    audio.primary.default \
+    local_time.default \
+    power.default \
+    SysuiDarkThemeOverlay \
+    vibrator.default \
