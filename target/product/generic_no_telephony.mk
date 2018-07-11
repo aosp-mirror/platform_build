@@ -14,106 +14,15 @@
 # limitations under the License.
 #
 
-# This is a generic phone product that isn't specialized for a specific device.
-# It includes the base Android platform.
+# This product is a generic phone or tablet, that doesn't have telephony.
+#
+# Note: Do not add any contents directly to this file. Choose either
+# handheld_system or handheld_vendor depending on partition (also consider
+# base_<x>.mk or media_<x>.mk.
 
-PRODUCT_PACKAGES := \
-    audio.primary.default \
-    BasicDreams \
-    BlockedNumberProvider \
-    Bluetooth \
-    BluetoothMidiService \
-    BookmarkProvider \
-    Browser2 \
-    BuiltInPrintService \
-    Calendar \
-    CalendarProvider \
-    Camera2 \
-    CaptivePortalLogin \
-    CertInstaller \
-    clatd \
-    clatd.conf \
-    Contacts \
-    DeskClock \
-    DisplayCutoutEmulationCornerOverlay \
-    DisplayCutoutEmulationDoubleOverlay \
-    DisplayCutoutEmulationTallOverlay \
-    DocumentsUI \
-    DownloadProviderUi \
-    EasterEgg \
-    Email \
-    ExactCalculator \
-    ExternalStorageProvider \
-    FusedLocation \
-    Gallery2 \
-    Home \
-    InputDevices \
-    KeyChain \
-    LatinIME \
-    Launcher3QuickStep \
-    librs_jni \
-    local_time.default \
-    ManagedProvisioning \
-    MmsService \
-    MtpDocumentsProvider \
-    Music \
-    MusicFX \
-    NfcNci \
-    OneTimeInitializer \
-    PacProcessor \
-    power.default \
-    PrintRecommendationService \
-    PrintSpooler \
-    Provision \
-    ProxyHandler \
-    QuickSearchBox \
-    screenrecord \
-    SecureElement \
-    Settings \
-    SettingsIntelligence \
-    SharedStorageBackup \
-    SimAppDialog \
-    StorageManager \
-    SystemUI \
-    SysuiDarkThemeOverlay \
-    Telecom \
-    TelephonyProvider \
-    TeleService \
-    Traceur \
-    vibrator.default \
-    UserDictionaryProvider \
-    VpnDialogs \
-    vr \
-    WallpaperCropper \
+$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_vendor.mk)
 
-
-PRODUCT_SYSTEM_SERVER_APPS += \
-    FusedLocation \
-    InputDevices \
-    KeyChain \
-    Telecom \
-
-PRODUCT_COPY_FILES := \
-        frameworks/av/media/libeffects/data/audio_effects.conf:system/etc/audio_effects.conf
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.carrier=unknown \
-    ro.config.notification_sound=OnTheHunt.ogg \
-    ro.config.alarm_alert=Alarm_Classic.ogg
-
-$(call inherit-product-if-exists, frameworks/base/data/fonts/fonts.mk)
-$(call inherit-product-if-exists, external/google-fonts/dancing-script/fonts.mk)
-$(call inherit-product-if-exists, external/google-fonts/carrois-gothic-sc/fonts.mk)
-$(call inherit-product-if-exists, external/google-fonts/coming-soon/fonts.mk)
-$(call inherit-product-if-exists, external/google-fonts/cutive-mono/fonts.mk)
-$(call inherit-product-if-exists, external/noto-fonts/fonts.mk)
-$(call inherit-product-if-exists, external/roboto-fonts/fonts.mk)
-$(call inherit-product-if-exists, external/hyphenation-patterns/patterns.mk)
-$(call inherit-product-if-exists, frameworks/base/data/keyboards/keyboards.mk)
-$(call inherit-product-if-exists, frameworks/webview/chromium/chromium.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/core_minimal.mk)
-
-# Overrides
 PRODUCT_BRAND := generic
 PRODUCT_DEVICE := generic
 PRODUCT_NAME := generic_no_telephony
