@@ -116,10 +116,8 @@ PRODUCT_PACKAGES += \
     libc_malloc_hooks \
     libcutils \
     libdl \
-    libdrmclearkeyplugin \
     libdrmframework \
     libdrmframework_jni \
-    libdynproc \
     libEGL \
     libETC1 \
     libFFTEm \
