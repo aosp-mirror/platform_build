@@ -662,6 +662,74 @@ class CommonUtilsTest(unittest.TestCase):
     self.assertFalse(sparse_image.file_map['/system/file1'].extra)
     self.assertTrue(sparse_image.file_map['/system/file2'].extra['incomplete'])
 
+  def test_GetSparseImage_systemRootImage_filenameWithExtraLeadingSlash(self):
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.write(
+          test_utils.construct_sparse_image([(0xCAC2, 16)]),
+          arcname='IMAGES/system.img')
+      target_files_zip.writestr(
+          'IMAGES/system.map',
+          '\n'.join([
+              '//system/file1 1-5 9-10',
+              '//system/file2 11-12',
+              '/system/app/file3 13-15']))
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 7))
+      # '/system/file2' has less blocks listed (2) than actual (3).
+      target_files_zip.writestr('SYSTEM/file2', os.urandom(4096 * 3))
+      # '/system/app/file3' has less blocks listed (3) than actual (4).
+      target_files_zip.writestr('SYSTEM/app/file3', os.urandom(4096 * 4))
+
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
+
+    self.assertFalse(sparse_image.file_map['//system/file1'].extra)
+    self.assertTrue(sparse_image.file_map['//system/file2'].extra['incomplete'])
+    self.assertTrue(
+        sparse_image.file_map['/system/app/file3'].extra['incomplete'])
+
+  def test_GetSparseImage_systemRootImage_nonSystemFiles(self):
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.write(
+          test_utils.construct_sparse_image([(0xCAC2, 16)]),
+          arcname='IMAGES/system.img')
+      target_files_zip.writestr(
+          'IMAGES/system.map',
+          '\n'.join([
+              '//system/file1 1-5 9-10',
+              '//init.rc 13-15']))
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 7))
+      # '/init.rc' has less blocks listed (3) than actual (4).
+      target_files_zip.writestr('ROOT/init.rc', os.urandom(4096 * 4))
+
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      sparse_image = common.GetSparseImage('system', tempdir, input_zip, False)
+
+    self.assertFalse(sparse_image.file_map['//system/file1'].extra)
+    self.assertTrue(sparse_image.file_map['//init.rc'].extra['incomplete'])
+
+  def test_GetSparseImage_fileNotFound(self):
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.write(
+          test_utils.construct_sparse_image([(0xCAC2, 16)]),
+          arcname='IMAGES/system.img')
+      target_files_zip.writestr(
+          'IMAGES/system.map',
+          '\n'.join([
+              '//system/file1 1-5 9-10',
+              '//system/file2 11-12']))
+      target_files_zip.writestr('SYSTEM/file1', os.urandom(4096 * 7))
+
+    tempdir = common.UnzipTemp(target_files)
+    with zipfile.ZipFile(target_files, 'r') as input_zip:
+      self.assertRaises(
+          AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
+          False)
+
 
 class InstallRecoveryScriptFormatTest(unittest.TestCase):
   """Checks the format of install-recovery.sh.
