@@ -70,6 +70,30 @@
       "revId": "0fef95515f56a79d77ba43e148995fe37c355699",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4caf0aae_44d0893f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 579,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-11T05:56:56Z",
+      "side": 1,
+      "message": "Yes, I just double confirmed there\u0027s no CTS+Native+Host in current situation.\nJust remove Line:580 and 586.",
+      "parentUuid": "89879ccf_9dbf9d7e",
+      "range": {
+        "startLine": 579,
+        "startChar": 1,
+        "endLine": 579,
+        "endChar": 12
+      },
+      "revId": "0fef95515f56a79d77ba43e148995fe37c355699",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
