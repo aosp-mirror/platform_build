@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad59069e_7c44b091",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 10
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-11T20:16:49Z",
+      "side": 1,
+      "message": "This should also have:\n\n Merged-In: I826d8ac513a41a1d6d5e29a8300073158cff5acf",
+      "revId": "0b2409dec6635138fb5515156f6a52b117992c81",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
