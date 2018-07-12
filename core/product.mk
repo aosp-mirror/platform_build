@@ -209,6 +209,7 @@ _product_var_list := \
     PRODUCT_USE_DYNAMIC_PARTITION_SIZE \
     PRODUCT_BUILD_SUPER_PARTITION \
     PRODUCT_USE_FASTBOOTD \
+    PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION \
 
 define dump-product
 $(info ==== $(1) ====)\
