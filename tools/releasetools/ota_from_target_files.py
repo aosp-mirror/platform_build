@@ -1657,9 +1657,15 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   target_zip = zipfile.ZipFile(target_file, 'w', allowZip64=True)
 
-  input_tmp = common.UnzipTemp(input_file, UNZIP_PATTERN)
   with zipfile.ZipFile(input_file, 'r') as input_zip:
     infolist = input_zip.infolist()
+    namelist = input_zip.namelist()
+
+  # Additionally unzip 'RADIO/*' if exists.
+  unzip_pattern = UNZIP_PATTERN[:]
+  if any([entry.startswith('RADIO/') for entry in namelist]):
+    unzip_pattern.append('RADIO/*')
+  input_tmp = common.UnzipTemp(input_file, unzip_pattern)
 
   for info in infolist:
     unzipped_file = os.path.join(input_tmp, *info.filename.split('/'))
@@ -1675,7 +1681,7 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
     elif skip_postinstall and info.filename == POSTINSTALL_CONFIG:
       pass
 
-    elif info.filename.startswith(('META/', 'IMAGES/')):
+    elif info.filename.startswith(('META/', 'IMAGES/', 'RADIO/')):
       common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
 
   common.ZipClose(target_zip)

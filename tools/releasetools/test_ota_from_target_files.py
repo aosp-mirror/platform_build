@@ -566,6 +566,8 @@ class OtaFromTargetFilesTest(unittest.TestCase):
     self.assertIn('IMAGES/boot.img', namelist)
     self.assertIn('IMAGES/system.img', namelist)
     self.assertIn('IMAGES/vendor.img', namelist)
+    self.assertIn('RADIO/bootloader.img', namelist)
+    self.assertIn('RADIO/modem.img', namelist)
     self.assertIn(POSTINSTALL_CONFIG, namelist)
 
     self.assertNotIn('IMAGES/system_other.img', namelist)
@@ -583,10 +585,32 @@ class OtaFromTargetFilesTest(unittest.TestCase):
     self.assertIn('IMAGES/boot.img', namelist)
     self.assertIn('IMAGES/system.img', namelist)
     self.assertIn('IMAGES/vendor.img', namelist)
+    self.assertIn('RADIO/bootloader.img', namelist)
+    self.assertIn('RADIO/modem.img', namelist)
 
     self.assertNotIn('IMAGES/system_other.img', namelist)
     self.assertNotIn('IMAGES/system.map', namelist)
     self.assertNotIn(POSTINSTALL_CONFIG, namelist)
+
+  def test_GetTargetFilesZipForSecondaryImages_withoutRadioImages(self):
+    input_file = construct_target_files(secondary=True)
+    common.ZipDelete(input_file, 'RADIO/bootloader.img')
+    common.ZipDelete(input_file, 'RADIO/modem.img')
+    target_file = GetTargetFilesZipForSecondaryImages(input_file)
+
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertIn('IMAGES/boot.img', namelist)
+    self.assertIn('IMAGES/system.img', namelist)
+    self.assertIn('IMAGES/vendor.img', namelist)
+    self.assertIn(POSTINSTALL_CONFIG, namelist)
+
+    self.assertNotIn('IMAGES/system_other.img', namelist)
+    self.assertNotIn('IMAGES/system.map', namelist)
+    self.assertNotIn('RADIO/bootloader.img', namelist)
+    self.assertNotIn('RADIO/modem.img', namelist)
 
   def test_GetTargetFilesZipWithoutPostinstallConfig(self):
     input_file = construct_target_files()
