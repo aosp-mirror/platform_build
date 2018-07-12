@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5ff5133a_f994b0ae",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-12T09:42:25Z",
+      "side": 1,
+      "message": "with this merged-in tag, this change won\u0027t get merged to oc-mr1-dev-plus-aosp, so you would have to cp it there. But I agree with colin that changing stage-aosp-master to have the trailing \\ would be better.",
+      "revId": "d4525cf56486698ae431eb1a8b1016f2d478f062",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
