@@ -34,6 +34,11 @@ else # WITH_DEXPREOPT=true
         else # LOCAL_APK_LIBRARIES not empty
           LOCAL_DEX_PREOPT := nostripping
         endif # LOCAL_APK_LIBRARIES not empty
+      else
+        # Default to nostripping for non system preopt (enables preopt).
+        # Don't strip in case the oat/vdex version in system ROM doesn't match the one in other
+        # partitions. It needs to be able to fall back to the APK for that case.
+        LOCAL_DEX_PREOPT := nostripping
       endif # Installed to system.img.
     endif # LOCAL_DEX_PREOPT undefined
   endif # TARGET_BUILD_APPS empty
@@ -194,7 +199,8 @@ installed_odex += $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_INSTALLED_IM
 else  # boot jar
 ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
 
-my_module_multilib := $(LOCAL_MULTILIB)
+# Use my_module_dexpreopt_multilib since my_module_multilib is modified in included files below.
+my_module_dexpreopt_multilib := $(LOCAL_MULTILIB)
 # If the module is not an SDK library and it's a system server jar, only preopt the primary arch.
 my_filtered_lib_name := $(patsubst %.impl,%,$(LOCAL_MODULE))
 ifeq (,$(filter $(JAVA_SDK_LIBRARIES),$(my_filtered_lib_name)))
@@ -202,8 +208,13 @@ ifeq (,$(filter $(JAVA_SDK_LIBRARIES),$(my_filtered_lib_name)))
 # But it can be overridden with "LOCAL_MULTILIB := first".
 ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
 # For system server jars, we build for only "first".
-my_module_multilib := first
+my_module_dexpreopt_multilib := first
 endif
+endif
+
+# Only preopt primary arch for translated arch since there is only an image there.
+ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
+my_module_dexpreopt_multilib := first
 endif
 
 # #################################################
@@ -214,10 +225,10 @@ include $(BUILD_SYSTEM)/setup_one_odex.mk
 # Odex for the 2nd arch
 ifdef TARGET_2ND_ARCH
 ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
-ifneq (first,$(my_module_multilib))
+ifneq (first,$(my_module_dexpreopt_multilib))
 my_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/setup_one_odex.mk
-endif  # my_module_multilib is not first.
+endif  # my_module_dexpreopt_multilib is not first.
 endif  # TARGET_TRANSLATE_2ND_ARCH not true
 endif  # TARGET_2ND_ARCH
 # #################################################
@@ -226,7 +237,7 @@ else  # must be APPS
 my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/setup_one_odex.mk
 ifdef TARGET_2ND_ARCH
-ifeq ($(LOCAL_MULTILIB),both)
+ifeq ($(my_module_dexpreopt_multilib),both)
 # The non-preferred arch
 my_2nd_arch_prefix := $(if $(LOCAL_2ND_ARCH_VAR_PREFIX),,$(TARGET_2ND_ARCH_VAR_PREFIX))
 include $(BUILD_SYSTEM)/setup_one_odex.mk
