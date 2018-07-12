@@ -22,6 +22,30 @@
       "revId": "ad02c323be7125864de6dcc711a57ef57a77de0b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79eaee58_e29ad86e",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-12T02:55:18Z",
+      "side": 1,
+      "message": "Below link is a simple doc that I listed or the problem met for auto-generate config for host native tests.\nhttps://docs.google.com/document/d/1QWMOSyg0LK3S8R2Zhpwh-rOmC3FPwEuYS6yaKvkGyFk/edit\n\nThe first problem is solved by adding Deviceless.xml rule.\nThe Second is talking about this kind of case I want to solve.\n\n\nWhy I am changing it back is due to Android\u0027s make file provide this kind of mechanism to provide the flexibility for users to change the file name be built out.\n\nLOCAL_MODULE_STEM_32 :\u003d $(LOCAL_MODULE)\nLOCAL_MODULE_STEM_64 :\u003d $(LOCAL_MODULE)64\n\nI think using STEM should be the best choice for config actually.\nDue to TF will try to find the match file name in test config.\nUsing CtsLiblogTestCases_list as an example.\nThe output will like this.\n\n/out/host/linux-x86/testcases/CtsLiblogTestCases_list$ tree\n.\n├── CtsLiblogTestCases_list.config\n├── x86\n│   └── CtsLiblogTestCases_list\n└── x86_64\n    └── CtsLiblogTestCases_list64\n\nAnd using MODULE_STEM will let out build config look like this.\nTF could find the matching CtsLiblogTestCases_list64 to run the test for sure due to MODULE_STEM is the file name that build system use to generate output.\n\n\u003c!-- This test config file is auto-generated. --\u003e\n\u003cconfiguration description\u003d\"Runs CtsLiblogTestCases_list64.\"\u003e\n    \u003coption name\u003d\"null-device\" value\u003d\"true\" /\u003e\n    \u003ctest class\u003d\"com.android.tradefed.testtype.HostGTest\" \u003e\n        \u003coption name\u003d\"module-name\" value\u003d\"CtsLiblogTestCases_list64\" /\u003e\n    \u003c/test\u003e\n\u003c/configuration\u003e",
+      "parentUuid": "77bf4e5a_916e5967",
+      "range": {
+        "startLine": 38,
+        "startChar": 27,
+        "endLine": 38,
+        "endChar": 46
+      },
+      "revId": "ad02c323be7125864de6dcc711a57ef57a77de0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
