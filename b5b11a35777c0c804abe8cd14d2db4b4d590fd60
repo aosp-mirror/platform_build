@@ -94,6 +94,30 @@
       "revId": "b5b11a35777c0c804abe8cd14d2db4b4d590fd60",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7860b002_dce543a6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1315724
+      },
+      "writtenOn": "2018-07-12T10:15:17Z",
+      "side": 1,
+      "message": "Dan, I used my_module_multilib to know it\u0027s 32 bits only even in both arch build. I update this patch for review. Any feedback is welcome.",
+      "parentUuid": "6daf5fee_26138bc8",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 48
+      },
+      "revId": "b5b11a35777c0c804abe8cd14d2db4b4d590fd60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
