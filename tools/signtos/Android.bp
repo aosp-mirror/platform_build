@@ -21,7 +21,7 @@ java_library_host {
     srcs: ["SignTos.java"],
     manifest: "SignTos.mf",
     static_libs: [
-        "bouncycastle",
-        "bouncycastle-bcpkix",
+        "bouncycastle-unbundled",
+        "bouncycastle-bcpkix-unbundled",
     ],
 }
