@@ -270,7 +270,6 @@ class ImgdiffStats(object):
   USED_IMGDIFF_LARGE_APK = "Large APK files split and diff'd with imgdiff"
 
   # Reasons for not applying imgdiff on APKs.
-  SKIPPED_TRIMMED = "Not used imgdiff due to trimmed RangeSet"
   SKIPPED_NONMONOTONIC = "Not used imgdiff due to having non-monotonic ranges"
   SKIPPED_SHARED_BLOCKS = "Not used imgdiff due to using shared blocks"
   SKIPPED_INCOMPLETE = "Not used imgdiff due to incomplete RangeSet"
@@ -279,7 +278,6 @@ class ImgdiffStats(object):
   REASONS = (
       USED_IMGDIFF,
       USED_IMGDIFF_LARGE_APK,
-      SKIPPED_TRIMMED,
       SKIPPED_NONMONOTONIC,
       SKIPPED_SHARED_BLOCKS,
       SKIPPED_INCOMPLETE,
@@ -447,10 +445,6 @@ class BlockImageDiff(object):
 
     if tgt_ranges.extra.get('incomplete') or src_ranges.extra.get('incomplete'):
       self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_INCOMPLETE)
-      return False
-
-    if tgt_ranges.extra.get('trimmed') or src_ranges.extra.get('trimmed'):
-      self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_TRIMMED)
       return False
 
     reason = (ImgdiffStats.USED_IMGDIFF_LARGE_APK if large_apk
@@ -836,14 +830,10 @@ class BlockImageDiff(object):
                   str(xf.tgt_ranges), str(xf.src_ranges)))
           else:
             if xf.patch:
-              # We have already generated the patch with imgdiff. Check if the
-              # transfer is intact.
+              # We have already generated the patch with imgdiff, while
+              # splitting large APKs (i.e. in FindTransfers()).
               assert not self.disable_imgdiff
               imgdiff = True
-              if (xf.src_ranges.extra.get('trimmed') or
-                  xf.tgt_ranges.extra.get('trimmed')):
-                imgdiff = False
-                xf.patch = None
             else:
               imgdiff = self.CanUseImgdiff(
                   xf.tgt_name, xf.tgt_ranges, xf.src_ranges)
@@ -1044,42 +1034,6 @@ class BlockImageDiff(object):
     self.transfers = L
     for i, xf in enumerate(L):
       xf.order = i
-
-  def RemoveBackwardEdges(self):
-    print("Removing backward edges...")
-    in_order = 0
-    out_of_order = 0
-    lost_source = 0
-
-    for xf in self.transfers:
-      lost = 0
-      size = xf.src_ranges.size()
-      for u in xf.goes_before:
-        # xf should go before u
-        if xf.order < u.order:
-          # it does, hurray!
-          in_order += 1
-        else:
-          # it doesn't, boo.  trim the blocks that u writes from xf's
-          # source, so that xf can go after u.
-          out_of_order += 1
-          assert xf.src_ranges.overlaps(u.tgt_ranges)
-          xf.src_ranges = xf.src_ranges.subtract(u.tgt_ranges)
-          xf.src_ranges.extra['trimmed'] = True
-
-      if xf.style == "diff" and not xf.src_ranges:
-        # nothing left to diff from; treat as new data
-        xf.style = "new"
-
-      lost = size - xf.src_ranges.size()
-      lost_source += lost
-
-    print(("  %d/%d dependencies (%.2f%%) were violated; "
-           "%d source blocks removed.") %
-          (out_of_order, in_order + out_of_order,
-           (out_of_order * 100.0 / (in_order + out_of_order))
-           if (in_order + out_of_order) else 0.0,
-           lost_source))
 
   def ReverseBackwardEdges(self):
     """Reverse unsatisfying edges and compute pairs of stashed blocks.
