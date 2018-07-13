@@ -901,7 +901,18 @@ $(if $(_erm_new_modules),$(eval $(1) += $(_erm_new_modules))\
   $(call expand-required-modules,$(1),$(_erm_new_modules)))
 endef
 
-# Determines the files a particular product installs.
+# Transforms paths relative to PRODUCT_OUT to absolute paths.
+# $(1): list of relative paths
+# $(2): optional suffix to append to paths
+define resolve-product-relative-paths
+  $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),\
+    $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
+      $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))
+endef
+
+# Lists most of the files a particular product installs, including:
+# - PRODUCT_PACKAGES, and their LOCAL_REQUIRED_MODULES
+# - PRODUCT_COPY_FILES
 # The base list of modules to build for this product is specified
 # by the appropriate product definition file, which was included
 # by product_config.mk.
@@ -915,7 +926,8 @@ endef
 #   32-bit variant, if it exits. See the select-bitness-of-required-modules definition.
 # $(1): product makefile
 define product-installed-files
-  $(eval _pif_modules := $(PRODUCTS.$(strip $(1)).PRODUCT_PACKAGES)) \
+  $(eval _mk := $(strip $(1))) \
+  $(eval _pif_modules := $(PRODUCTS.$(_mk).PRODUCT_PACKAGES)) \
   $(if $(BOARD_VNDK_VERSION),$(eval _pif_modules += vndk_package)) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
   $(eval _pif_overrides := $(foreach p, $(_pif_modules), $(PACKAGES.$(p).OVERRIDES))) \
@@ -932,7 +944,9 @@ define product-installed-files
   $(eval _pif_modules += $(call get-32-bit-modules, $(_pif_modules_rest))) \
   $(eval _pif_modules += $(_pif_modules_rest)) \
   $(call expand-required-modules,_pif_modules,$(_pif_modules)) \
-  $(call module-installed-files, $(_pif_modules))
+  $(call module-installed-files, $(_pif_modules)) \
+  $(call resolve-product-relative-paths,\
+    $(foreach cf,$(PRODUCTS.$(_mk).PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
 endef
 
 # Fails the build if the given list is non-empty, and prints it entries (stripping PRODUCT_OUT).
@@ -971,15 +985,6 @@ else
   product_FILES :=
 endif
 
-# Transforms paths relative to PRODUCT_OUT to absolute paths.
-# $(1): list of relative paths
-# $(2): optional suffix to append to paths
-define resolve-product-relative-paths
-  $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),\
-    $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
-      $(foreach p,$(1),$(PRODUCT_OUT)/$(p)$(2))))
-endef
-
 # Verify the artifact path requirements made by included products.
 $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(eval requirements := $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENTS)) \
@@ -988,8 +993,6 @@ $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(eval path_patterns := $(call resolve-product-relative-paths,$(requirements),%)) \
   $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
   $(eval files := $(call product-installed-files, $(makefile))) \
-  $(eval files += $(foreach cf,$(PRODUCTS.$(makefile).PRODUCT_COPY_FILES),\
-    $(call append-path,$(PRODUCT_OUT),$(call word-colon,2,$(cf))))) \
   $(eval files := $(filter-out $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%,$(files))) \
   $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns),$(files))) \
   $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
