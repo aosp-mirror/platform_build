@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "b774e624_e1122fa0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-13T18:10:37Z",
+      "side": 1,
+      "message": "for multiblib modules",
+      "range": {
+        "startLine": 7,
+        "startChar": 29,
+        "endLine": 7,
+        "endChar": 53
+      },
+      "revId": "59594430160da50f8aab9bd5a67be7b13b46113d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "47dd0425_7195a90b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-13T18:10:37Z",
+      "side": 1,
+      "message": "treat the multilib variant modules as testable.",
+      "range": {
+        "startLine": 11,
+        "startChar": 18,
+        "endLine": 11,
+        "endChar": 37
+      },
+      "revId": "59594430160da50f8aab9bd5a67be7b13b46113d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "91409e43_893bed70",
         "filename": "core/base_rules.mk",
         "patchSetId": 1
