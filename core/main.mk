@@ -991,6 +991,8 @@ $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(eval files += $(foreach cf,$(PRODUCTS.$(makefile).PRODUCT_COPY_FILES),\
     $(call append-path,$(PRODUCT_OUT),$(call word-colon,2,$(cf))))) \
   $(eval files := $(filter-out $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%,$(files))) \
+  $(eval # RROs become REQUIRED by the source module, but are always placed on the vendor partition.) \
+  $(eval files := $(filter-out %__auto_generated_rro.apk,$(files))) \
   $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns),$(files))) \
   $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
   $(eval unused_whitelist := $(filter-out $(files),$(whitelist_patterns))) \
