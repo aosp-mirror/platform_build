@@ -250,9 +250,8 @@ PRODUCT_PACKAGES += \
     wifi-service \
     wm \
 
-# VINTF data
+# VINTF data for system image
 PRODUCT_PACKAGES += \
-    device_manifest.xml \
     framework_manifest.xml \
     framework_compatibility_matrix.xml \
 
