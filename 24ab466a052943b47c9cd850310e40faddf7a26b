@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f0a5caca_ab0ecbcc",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 15
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-13T14:40:38Z",
+      "side": 1,
+      "message": "Let\u0027s put this in its own CL.\n\nAlso it has to go before line 566 b/c that will set _compat_files to true",
+      "range": {
+        "startLine": 637,
+        "startChar": 0,
+        "endLine": 642,
+        "endChar": 5
+      },
+      "revId": "24ab466a052943b47c9cd850310e40faddf7a26b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
