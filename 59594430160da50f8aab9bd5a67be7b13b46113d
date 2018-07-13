@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91409e43_893bed70",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 564,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-13T18:09:29Z",
+      "side": 1,
+      "message": "# Sync the auto_test_config value for multilib modules.",
+      "range": {
+        "startLine": 564,
+        "startChar": 33,
+        "endLine": 564,
+        "endChar": 37
+      },
+      "revId": "59594430160da50f8aab9bd5a67be7b13b46113d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
