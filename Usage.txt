@@ -29,7 +29,7 @@ Ways to specify what to build:
   An alternative to setting $TARGET_PRODUCT and $TARGET_BUILD_VARIANT,
   which you may see in build servers, is to execute:
 
-    make PRODUCT-<product>-<variant>
+    m PRODUCT-<product>-<variant>
 
 
   A target may be a file path. For example, out/host/linux-x86/bin/adb .
@@ -46,6 +46,17 @@ Ways to specify what to build:
     files named Android.bp
       these files are defined in Blueprint syntax
 
+  During a build, a few log files are generated in ${OUT} (or ${DIST_DIR}/logs
+    for dist builds):
+
+    verbose.log.gz
+      every command run, along with its outputs. This is similar to the
+      previous `m showcommands` option.
+    error.log
+      list of actions that failed during the build, and their outputs.
+    soong.log
+      verbose debug information from soong_ui
+
   For now, the full (extremely large) compiled list of targets can be found
     (after running the build once), split among these two files:
 
@@ -57,8 +68,6 @@ Ways to specify what to build:
     tool here.
 
 Targets that adjust an existing build:
-  showcommands              Display the individual commands run to implement
-                            the build
   dist                      Copy into ${DIST_DIR} the portion of the build
                             that must be distributed
 
@@ -71,7 +80,7 @@ Variables
   Variables can either be set in the surrounding shell environment or can be
     passed as command-line arguments. For example:
       export I_AM_A_SHELL_VAR=1
-      I_AM_ANOTHER_SHELL_VAR=2 make droid I_AM_A_MAKE_VAR=3
+      I_AM_ANOTHER_SHELL_VAR=2 m droid I_AM_A_MAKE_VAR=3
   Here are some common variables and their meanings:
     TARGET_PRODUCT          The <product> to build # as described above
     TARGET_BUILD_VARIANT    The <variant> to build # as described above
