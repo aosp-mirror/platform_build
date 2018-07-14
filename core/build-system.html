@@ -147,12 +147,6 @@ figure out exactly how this will work.</p>
 .c, .cpp, .h, .java, java libraries, etc., should all work without intervention
 in the Android.mk file.</p>
 
-<h3>Hiding command lines</h3>
-<p>The default of the build system will be to hide the command lines being
-executed for make steps.  It will be possible to override this by specifying
-the showcommands pseudo-target, and possibly by setting an environment
-variable.</p>
-
 <h3>Wildcard source files</h3>
 <p>Wildcarding source file will be discouraged.  It may be useful in some
 scenarios.  The default <code>$(wildcard *)</code> will not work due to the
@@ -326,19 +320,6 @@ and intermediate files for all configurations.  This is the same as
 directory inside the current combo directory.  This is especially useful on the
 simulator and emulator, where the persistent data remains present between 
 builds.</li>
-<li><b>showcommands</b> - <code>showcommands</code> is a modifier target
-which causes the build system to show the actual command lines for the build
-steps, instead of the brief descriptions.  Most people don't like seeing the
-actual commands, because they're quite long and hard to read, but if you need
-to for debugging purposes, you can add <code>showcommands</code> to the list
-of targets you build.  For example <code>make showcommands</code> will build
-the default android configuration, and <code>make runtime showcommands</code>
-will build just the runtime, and targets that it depends on, while displaying
-the full command lines.  Please note that there are a couple places where the
-commands aren't shown here.  These are considered bugs, and should be fixed,
-but they're often hard to track down.  Please let
-<a href="mailto:android-build-team">android-build-team</a> know if you find
-any.</li>
 <li><b>LOCAL_MODULE</b> - Anything you specify as a <code>LOCAL_MODULE</code>
 in an Android.mk is made into a pseudotarget.  For example, <code>make
 runtime</code> might be shorthand for <code>make
