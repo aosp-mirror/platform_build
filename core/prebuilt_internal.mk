@@ -680,7 +680,7 @@ $(my_exported_sdk_libs_file): PRIVATE_EXPORTED_SDK_LIBS := $(LOCAL_EXPORT_SDK_LI
 $(my_exported_sdk_libs_file):
 	@echo "Export SDK libs $@"
 	$(hide) mkdir -p $(dir $@) && rm -f $@
-	$(if $(PRIATE_EXPORTED_SDK_LIBS),\
+	$(if $(PRIVATE_EXPORTED_SDK_LIBS),\
 		$(hide) echo $(PRIVATE_EXPORTED_SDK_LIBS) | tr ' ' '\n' > $@,\
 		$(hide) touch $@)
 
