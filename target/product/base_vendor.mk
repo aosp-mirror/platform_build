@@ -27,7 +27,6 @@ PRODUCT_PACKAGES += \
     android.hardware.cas@1.0-service \
     android.hardware.configstore@1.1-service \
     android.hardware.media.omx@1.0-service \
-    device_compatibility_matrix.xml \
     fs_config_files_nonsystem \
     fs_config_dirs_nonsystem \
     gralloc.default \
@@ -48,4 +47,9 @@ PRODUCT_PACKAGES += \
     selinux_policy_nonsystem \
     shell_and_utilities_vendor \
     vndservice \
-    vndservicemanager
+    vndservicemanager \
+
+# VINTF data for vendor image
+PRODUCT_PACKAGES += \
+    device_manifest.xml \
+    device_compatibility_matrix.xml \

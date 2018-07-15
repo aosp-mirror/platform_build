@@ -26,6 +26,8 @@ $(sort $(MAKECMDGOALS)) : run_soong_ui
 
 else # KATI
 
+$(info [1/1] initializing build system ...)
+
 # Absolute path of the present working direcotry.
 # This overrides the shell variable $PWD, which does not necessarily points to
 # the top of the source tree, for example when "make -C" is used in m/mm/mmm.
@@ -409,6 +411,8 @@ ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
 ENFORCE_RRO_SOURCES :=
 endif
 
+subdir_makefiles_inc := .
+
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
 # with a subdirectory's makefile.
@@ -453,7 +457,7 @@ ifneq ($(dont_bother),true)
 #
 
 subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)/.module_paths/Android.mk.list)
-subdir_makefiles_total := $(words $(subdir_makefiles))
+subdir_makefiles_total := $(words int $(subdir_makefiles) post finish)
 .KATI_READONLY := subdir_makefiles_total
 
 $(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
@@ -468,6 +472,12 @@ droid_targets : blueprint_tools
 endif # dont_bother
 
 endif # ONE_SHOT_MAKEFILE
+
+ifndef subdir_makefiles_total
+subdir_makefiles_total := $(words init post finish)
+endif
+
+$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] finishing build rules ...)
 
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
@@ -1408,5 +1418,7 @@ tidy_only:
 
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
+
+$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] writing build rules ...)
 
 endif # KATI
