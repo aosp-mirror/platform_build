@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ac40c88_c675f15a",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-16T22:51:55Z",
+      "side": 1,
+      "message": "this bug is marked as fixed, so it\u0027s not eligible for being the target of a TODO",
+      "range": {
+        "startLine": 66,
+        "startChar": 9,
+        "endLine": 66,
+        "endChar": 17
+      },
+      "revId": "2850c9ee1ab68a8f77fa9ad2664a234b3e29c6ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
