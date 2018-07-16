@@ -88,6 +88,24 @@
       "revId": "54d37c3b61d7c885bdc49f29a54fe23de1f5419d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b584990_b88a2e38",
+        "filename": "core/sdk_check.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-16T16:34:11Z",
+      "side": 1,
+      "message": "Sorry for the delayed reply... My point is, that you can already relax it by setting both variables in your mk:\n\nJAVA_SDK_ENFORCEMENT_ERROR :\u003d false\nJAVA_SDK_ENFORCEMENT_WARNING :\u003d APPS\n\nJAVA_SDK_ENFORCEMENT_ERROR is only set here if it\u0027s not already set. Does that make sense?",
+      "parentUuid": "2eba8ab7_b3549121",
+      "revId": "54d37c3b61d7c885bdc49f29a54fe23de1f5419d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
