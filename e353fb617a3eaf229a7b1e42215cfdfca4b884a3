@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45da2048_644e365e",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-16T21:51:19Z",
+      "side": 1,
+      "message": "you appear to be using this for a file name. you should be using the private equivalent of my_installed_module_stem / a subset of LOCAL_INSTALLED_MODULE if you need to deal with subdirs.",
+      "range": {
+        "startLine": 38,
+        "startChar": 27,
+        "endLine": 38,
+        "endChar": 46
+      },
+      "revId": "e353fb617a3eaf229a7b1e42215cfdfca4b884a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1fed9f7_2a8f6376",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-16T21:51:19Z",
+      "side": 1,
+      "message": "I\u0027d strongly prefer not to expand the use of implicit files in the current directory. Many many directories contain more than one module. Do we support specifying a file explicitly yet?",
+      "range": {
+        "startLine": 582,
+        "startChar": 0,
+        "endLine": 582,
+        "endChar": 64
+      },
+      "revId": "e353fb617a3eaf229a7b1e42215cfdfca4b884a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
