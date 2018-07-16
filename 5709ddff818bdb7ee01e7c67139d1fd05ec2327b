@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79ecfb18_89caad9b",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 650,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2018-07-16T15:10:42Z",
+      "side": 1,
+      "message": "I think you want to run veridex before this. Otherwise you will never check stripped packages.",
+      "revId": "5709ddff818bdb7ee01e7c67139d1fd05ec2327b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
