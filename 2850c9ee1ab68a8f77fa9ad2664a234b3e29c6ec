@@ -22,6 +22,30 @@
       "revId": "2850c9ee1ab68a8f77fa9ad2664a234b3e29c6ec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ebc831c_0cb0653c",
+        "filename": "target/board/generic_arm64/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2018-07-17T02:12:23Z",
+      "side": 1,
+      "message": "Updated.",
+      "parentUuid": "8ac40c88_c675f15a",
+      "range": {
+        "startLine": 66,
+        "startChar": 9,
+        "endLine": 66,
+        "endChar": 17
+      },
+      "revId": "2850c9ee1ab68a8f77fa9ad2664a234b3e29c6ec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
