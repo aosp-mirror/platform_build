@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8c5b2f40_76c9c215",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2018-07-17T18:50:54Z",
+      "side": 1,
+      "message": "Not sure what you mean by that, do you mean core/definitions.mk ? at a first glance I don\u0027t see target (or templates of targets) defined there.\n\ndwillemsen: any suggestion here?",
+      "parentUuid": "ea9b6477_e619871a",
+      "range": {
+        "startLine": 592,
+        "startChar": 0,
+        "endLine": 602,
+        "endChar": 5
+      },
+      "revId": "8e0e6f407c3b55742a1ef9c634ce39d7f91b3626",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1872ee94_f4274869",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 4
