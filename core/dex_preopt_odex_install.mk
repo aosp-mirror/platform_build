@@ -34,6 +34,14 @@ else # WITH_DEXPREOPT=true
         else # LOCAL_APK_LIBRARIES not empty
           LOCAL_DEX_PREOPT := nostripping
         endif # LOCAL_APK_LIBRARIES not empty
+      else
+        # Default to nostripping for non system preopt (enables preopt).
+        # Don't strip in case the oat/vdex version in system ROM doesn't match the one in other
+        # partitions. It needs to be able to fall back to the APK for that case.
+        # Also only enable preopt for non tests.
+        ifeq (,$(filter $(LOCAL_MODULE_TAGS),tests))
+          LOCAL_DEX_PREOPT := nostripping
+        endif
       endif # Installed to system.img.
     endif # LOCAL_DEX_PREOPT undefined
   endif # TARGET_BUILD_APPS empty
@@ -206,6 +214,11 @@ my_module_multilib := first
 endif
 endif
 
+# Only preopt primary arch for translated arch since there is only an image there.
+ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
+my_module_multilib := first
+endif
+
 # #################################################
 # Odex for the 1st arch
 my_2nd_arch_prefix :=
@@ -224,9 +237,12 @@ endif  # TARGET_2ND_ARCH
 else  # must be APPS
 # The preferred arch
 my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
+# Save the module multilib since setup_one_odex modifies it.
+saved_my_module_multilib := $(my_module_multilib)
 include $(BUILD_SYSTEM)/setup_one_odex.mk
+my_module_multilib := $(saved_my_module_multilib)
 ifdef TARGET_2ND_ARCH
-ifeq ($(LOCAL_MULTILIB),both)
+ifeq ($(my_module_multilib),both)
 # The non-preferred arch
 my_2nd_arch_prefix := $(if $(LOCAL_2ND_ARCH_VAR_PREFIX),,$(TARGET_2ND_ARCH_VAR_PREFIX))
 include $(BUILD_SYSTEM)/setup_one_odex.mk
