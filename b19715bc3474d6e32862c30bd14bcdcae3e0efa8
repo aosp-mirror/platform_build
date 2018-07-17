@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1b6998dc_c1e40cab",
+        "filename": "target/product/base_vendor.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-07-17T22:45:33Z",
+      "side": 1,
+      "message": "can you include these next to where the regular ones are included?\n\n(also, this is another good reason to always define these targets)",
+      "range": {
+        "startLine": 27,
+        "startChar": 7,
+        "endLine": 28,
+        "endChar": 9
+      },
+      "revId": "b19715bc3474d6e32862c30bd14bcdcae3e0efa8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
