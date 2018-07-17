@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c49b2bc4_f5eb6541",
+        "filename": "core/Makefile",
+        "patchSetId": 9
+      },
+      "lineNbr": 2301,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-17T01:41:34Z",
+      "side": 1,
+      "message": "add KATI_IMPLICIT_OUTPUTS like the others",
+      "revId": "855cd186bcfb1921bea7760051e3aa464c08b19a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e45d70ad_82644025",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-17T01:41:34Z",
+      "side": 1,
+      "message": "This list is supposed to be alphabetical",
+      "range": {
+        "startLine": 101,
+        "startChar": 0,
+        "endLine": 101,
+        "endChar": 29
+      },
+      "revId": "855cd186bcfb1921bea7760051e3aa464c08b19a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
