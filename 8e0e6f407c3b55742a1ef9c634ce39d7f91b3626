@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea9b6477_e619871a",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2018-07-17T04:19:14Z",
+      "side": 1,
+      "message": "Why do you need to have this copy? I think veridex should probably go into core definitions.",
+      "range": {
+        "startLine": 592,
+        "startChar": 0,
+        "endLine": 602,
+        "endChar": 5
+      },
+      "revId": "8e0e6f407c3b55742a1ef9c634ce39d7f91b3626",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1872ee94_f4274869",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 388,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2018-07-17T04:19:14Z",
+      "side": 1,
+      "message": "Same comment on copy.",
+      "range": {
+        "startLine": 379,
+        "startChar": 0,
+        "endLine": 388,
+        "endChar": 5
+      },
+      "revId": "8e0e6f407c3b55742a1ef9c634ce39d7f91b3626",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
