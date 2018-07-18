@@ -62,9 +62,10 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 # Emulator system image is going to be used as GSI and some vendor still hasn't
 # cleaned up all device specific directories under root!
 
-# TODO(jiyong) These might be SoC specific.
-BOARD_ROOT_EXTRA_FOLDERS += firmware firmware/radio persist
+# TODO(b/111434759, b/111287060) SoC specific hacks
 BOARD_ROOT_EXTRA_SYMLINKS := /vendor/lib/dsp:/dsp
+BOARD_ROOT_EXTRA_SYMLINKS += /mnt/vendor/persist:/persist
+BOARD_ROOT_EXTRA_SYMLINKS += /vendor/firmware_mnt:/firmware
 
 # TODO(b/36764215): remove this setting when the generic system image
 # no longer has QCOM-specific directories under /.
