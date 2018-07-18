@@ -22,6 +22,30 @@
       "revId": "a92453d4428101e67a259b016e0be6fe95e92332",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a7fae1f_fe9ce125",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-18T08:25:54Z",
+      "side": 1,
+      "message": "Ah, I had missed the context comment -- the commit message should have some of that information.\n\nSince the APIs are already different, the host_support argument is a bit weaker. It seems like it would remain possible to expose the renamed source files to the device variant, and pass through bouncycastle-unbundled for host like we did before.",
+      "parentUuid": "f25d94fb_bf4209ff",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 40
+      },
+      "revId": "a92453d4428101e67a259b016e0be6fe95e92332",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
