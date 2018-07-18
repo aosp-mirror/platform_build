@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "b5705a60_7a6025bd",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 602,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2018-07-18T11:24:42Z",
+      "side": 1,
+      "message": "OK, turns out that there was already a suitable rule, PTAL.",
+      "parentUuid": "bedaf554_39cf2b97",
+      "range": {
+        "startLine": 592,
+        "startChar": 0,
+        "endLine": 602,
+        "endChar": 5
+      },
+      "revId": "8e0e6f407c3b55742a1ef9c634ce39d7f91b3626",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1872ee94_f4274869",
         "filename": "core/prebuilt_internal.mk",
         "patchSetId": 4
