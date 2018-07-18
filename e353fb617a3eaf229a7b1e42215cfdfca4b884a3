@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "6d22d300_d6dc22f2",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-18T00:57:37Z",
+      "side": 1,
+      "message": "If using PRIVATE_MODULE may has the chance to generate some config file with $(LOCAL_MODULE)_32 case.",
+      "parentUuid": "c7c54dd7_30e6fd78",
+      "range": {
+        "startLine": 38,
+        "startChar": 27,
+        "endLine": 38,
+        "endChar": 46
+      },
+      "revId": "e353fb617a3eaf229a7b1e42215cfdfca4b884a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a1fed9f7_2a8f6376",
         "filename": "core/base_rules.mk",
         "patchSetId": 16
