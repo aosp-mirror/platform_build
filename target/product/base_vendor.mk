@@ -17,6 +17,7 @@
 # Base modules and settings for recovery.
 PRODUCT_PACKAGES += \
     adbd.recovery \
+    android.hardware.health@2.0-impl-default.recovery \
     ld.config.recovery.txt \
     linker.recovery \
     recovery \
