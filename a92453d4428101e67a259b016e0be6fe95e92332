@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f25d94fb_bf4209ff",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-18T08:20:26Z",
+      "side": 1,
+      "message": "The host version of bouncycastle doesn\u0027t run the jarjar rules -- that\u0027s generally what we want, as we don\u0027t want different \"host\" and \"device\" modules (it makes it harder to use host_supported).\n\nWhy is this actually needed?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 40
+      },
+      "revId": "a92453d4428101e67a259b016e0be6fe95e92332",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
