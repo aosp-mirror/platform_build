@@ -25,5 +25,6 @@ PRODUCT_SHIPPING_API_LEVEL := 28
 
 PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST := \
+  root/init.zygote64_32.rc \
   system/etc/seccomp_policy/crash_dump.arm.policy \
   system/etc/seccomp_policy/mediacodec.policy \
