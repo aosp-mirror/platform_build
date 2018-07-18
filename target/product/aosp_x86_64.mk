@@ -48,6 +48,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86_64/device.mk)
 
 include $(SRC_TARGET_DIR)/product/emulator.mk
 
+# Enable dynamic partition size
+PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
+
 # Enable A/B update
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS := system
