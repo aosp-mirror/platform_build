@@ -46,6 +46,30 @@
       "revId": "a92453d4428101e67a259b016e0be6fe95e92332",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2dc6cae1_669f1b7d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2018-07-18T10:01:07Z",
+      "side": 1,
+      "message": "I don\u0027t understand the final sentence [what is the \"host_support\" argument?]. Please can you be more explicit because I don\u0027t understand the build system as well as you. Perhaps an example would help.\n\nWe effectively want two targets for each \"thing\":\n\nA library containing compiled org.bouncycastle code and a library containing compiled com.android.org.bouncycastle code.\n\ncom.android.org.bouncycastle is for use on device.\norg.bouncycastle can be used in the unbundled apps case, or for host.\n\nPreviously there were 2 targets:\n\nOne that sometimes produced org.bouncycastle and sometimes com.android.org.bouncycastle depending on whether it was a host or a device library depending on it.\n\nOne that always produces org.bouncycastle.\n\nAFAICT my change here switches a host module to using the always-org.bouncycastle version because after my proposed follow-up change we can no longer have a target that conditionally produces different packages (which I also think is rather confusing).",
+      "parentUuid": "5a7fae1f_fe9ce125",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 40
+      },
+      "revId": "a92453d4428101e67a259b016e0be6fe95e92332",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
