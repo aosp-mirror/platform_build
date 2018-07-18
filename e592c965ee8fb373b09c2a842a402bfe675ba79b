@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cbcb682c_695e5dcb",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-18T10:25:47Z",
+      "side": 1,
+      "message": "isn\u0027t this an emulator-ism..? most other devices will want a sparse system.img",
+      "revId": "e592c965ee8fb373b09c2a842a402bfe675ba79b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
