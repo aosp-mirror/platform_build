@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "033f5590_7044574e",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-18T20:15:29Z",
+      "side": 1,
+      "message": "I believe the conflicts you are referring to are in CTS and those should not autogen configs.\n\nDo we know of others?\n\n\n\nHow about LOCAL_MODULE (or something that is equal to it)?\n\n\nLastly we probably want this fix to be in your other CL: https://android-review.googlesource.com/c/platform/build/+/717007 so we can fix cuttlefix asap.",
+      "parentUuid": "6d22d300_d6dc22f2",
+      "range": {
+        "startLine": 38,
+        "startChar": 27,
+        "endLine": 38,
+        "endChar": 46
+      },
+      "revId": "e353fb617a3eaf229a7b1e42215cfdfca4b884a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a1fed9f7_2a8f6376",
         "filename": "core/base_rules.mk",
         "patchSetId": 16
