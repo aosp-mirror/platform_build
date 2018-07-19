@@ -697,16 +697,10 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
   if not HasTrebleEnabled(target_zip, target_info):
     return
 
-  # We don't support OEM thumbprint in Treble world (which calculates
-  # fingerprints in a different way as shown in CalculateFingerprint()).
-  assert not target_info.oem_props
-
   # Full OTA carries the info for system/vendor both.
   if source_info is None:
     AddCompatibilityArchive(True, True)
     return
-
-  assert not source_info.oem_props
 
   source_fp = source_info.fingerprint
   target_fp = target_info.fingerprint
