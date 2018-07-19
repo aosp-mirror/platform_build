@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "4380cb51_ae7ba17a",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-19T14:57:33Z",
+      "side": 1,
+      "message": "This problem original be found in hello_world_test.\nThe config content will like this.\nvalue\u003d\"hello_world_test_32-\u003e/data/local/tmp/hello_world_test_32\n\nAs you can see, PRIVATE_MODULE:\u003d $(my_register_name)\n$(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_MODULE:\u003d $(my_register_name)\n\nBut my_register_name will be changed.\nhttps://cs.corp.google.com/android/build/make/core/base_rules.mk?dr\u0026q\u003dbase_rules.m\u0026g\u003d0\u0026l\u003d236\nIt will have chance to hit Non-CTS case.\n\nThe way I am using is just as LOCAL_MODULE.\nI defined this in base_rules.mk\n$(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_MODULE_NAME:\u003d $(LOCAL_MODULE)\nFor always using LOCAL_MODULE for auto gen.",
+      "parentUuid": "033f5590_7044574e",
+      "range": {
+        "startLine": 38,
+        "startChar": 27,
+        "endLine": 38,
+        "endChar": 46
+      },
+      "revId": "e353fb617a3eaf229a7b1e42215cfdfca4b884a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a1fed9f7_2a8f6376",
         "filename": "core/base_rules.mk",
         "patchSetId": 16
