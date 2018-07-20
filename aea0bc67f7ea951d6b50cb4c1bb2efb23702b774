@@ -34,6 +34,24 @@
       "revId": "aea0bc67f7ea951d6b50cb4c1bb2efb23702b774",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "acc097bf_d72ac077",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1008,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-20T11:55:27Z",
+      "side": 1,
+      "message": "done (not hooked up to \u0027droid\u0027 yet, we can build it explicitly)",
+      "parentUuid": "a63c3f2d_836d9cbb",
+      "revId": "aea0bc67f7ea951d6b50cb4c1bb2efb23702b774",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
