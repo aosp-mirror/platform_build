@@ -70,6 +70,30 @@
       "revId": "a92453d4428101e67a259b016e0be6fe95e92332",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "014f53ce_44ec1b50",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-20T05:05:10Z",
+      "side": 1,
+      "message": "We\u0027ve been using `host_supported: true` in Soong so that we define a single module that\u0027s supported on both device and host (instead of lib and lib-host that had been common). Even if it doesn\u0027t entirely make sense for a particular library, if there\u0027s a user of the library that is marked as host_supported, it\u0027s somewhat verbose \u0026 painful to list:\n\n  host_supported: true,\n  target: {\n    host: {\n      libs: [\"lib-host\"],\n    },\n    android: {\n      libs: [\"lib\"],\n    },\n  }\n\nvs\n\n  host_supported: true,\n  libs: [\"lib\"],\n\nSo I\u0027d argue that if there\u0027s ever going to be a user that is supported on both host and device, it can be nicer to expose both interfaces from a single name, even if their API is different (maybe it\u0027s a different library they use that uses host/device-specific sources using this library).\n\nBut if that\u0027s far-fetched enough in this case, maybe it\u0027s not worth it.\n\n\u003e after my proposed follow-up change we can no longer have a target that conditionally produces different packages \n\nYou\u0027d just need to put the srcs/exclude_srcs inside target: { android: {} } and move the current static_libs inside target: { host: {} }.\n\nDoes it make sense to turn off the host version of \"bouncycastle\" if it\u0027s always going to contain the com.android.org.bouncycastle version?",
+      "parentUuid": "2dc6cae1_669f1b7d",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 40
+      },
+      "revId": "a92453d4428101e67a259b016e0be6fe95e92332",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
