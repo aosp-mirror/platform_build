@@ -189,6 +189,30 @@
       "revId": "e353fb617a3eaf229a7b1e42215cfdfca4b884a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79b3214d_17582cd9",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 582,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-20T15:10:44Z",
+      "side": 1,
+      "message": "OK, got it.\nShould be.",
+      "parentUuid": "c06bf5f1_219ce9e5",
+      "range": {
+        "startLine": 582,
+        "startChar": 0,
+        "endLine": 582,
+        "endChar": 64
+      },
+      "revId": "e353fb617a3eaf229a7b1e42215cfdfca4b884a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
