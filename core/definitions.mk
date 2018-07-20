@@ -2557,6 +2557,17 @@ $(hide) \
   mv $@.compressed $@;
 endef
 
+ifeq ($(HOST_OS),linux)
+# Runs appcompat and store logs in $(PRODUCT_OUT)/appcompat
+define run-appcompat
+$(hide) \
+  mkdir -p $(PRODUCT_OUT)/appcompat; \
+  art/tools/veridex/appcompat.sh --dex-file=$@ 2>&1 > $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log;
+endef
+else
+run-appcompat =
+endif
+
 # Remove dynamic timestamps from packages
 #
 define remove-timestamps-from-package
