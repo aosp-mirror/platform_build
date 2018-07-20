@@ -931,6 +931,13 @@ $(error Should not define BOARD_VENDORIMAGE_PARTITION_SIZE and \
 endif
 endif
 
+ifneq ($(BOARD_PRODUCTIMAGE_PARTITION_SIZE),)
+ifneq ($(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE),)
+$(error Should not define BOARD_PRODUCTIMAGE_PARTITION_SIZE and \
+    BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE together)
+endif
+endif
+
 endif # USE_LOGICAL_PARTITIONS
 
 # ###############################################################
