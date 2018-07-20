@@ -373,6 +373,14 @@ PRODUCT_PRODUCT_PROPERTIES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_PROPERTIES))
 .KATI_READONLY := PRODUCT_PRODUCT_PROPERTIES
 
+
+# A list of property assignments, like "key = value", with zero or more
+# whitespace characters on either side of the '='.
+# used for adding properties to build.prop of product partition
+PRODUCT_PRODUCT_SERVICES_PROPERTIES := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_SERVICES_PROPERTIES))
+.KATI_READONLY := PRODUCT_PRODUCT_SERVICES_PROPERTIES
+
 # Should we use the default resources or add any product specific overlays
 PRODUCT_PACKAGE_OVERLAYS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGE_OVERLAYS))
