@@ -34,6 +34,24 @@
       "revId": "e592c965ee8fb373b09c2a842a402bfe675ba79b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "92d6f06d_9221f5ac",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-20T10:14:35Z",
+      "side": 1,
+      "message": "Sounds good, thanks.",
+      "parentUuid": "708457cd_2770167f",
+      "revId": "e592c965ee8fb373b09c2a842a402bfe675ba79b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
