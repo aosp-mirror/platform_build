@@ -1089,6 +1089,7 @@ dont_bother_goals := out \
     bptimage-nodeps \
     vnod vendorimage-nodeps \
     pnod productimage-nodeps \
+    psnod productservicesimage-nodeps \
     systemotherimage-nodeps \
     ramdisk-nodeps \
     bootimage-nodeps \

@@ -467,6 +467,34 @@ endif  # BOARD_USES_PRODUCTIMAGE
 # ----------------------------------------------------------------
 
 # -----------------------------------------------------------------
+# product-services build.prop
+INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT_SERVICES)/build.prop
+ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET)
+
+FINAL_PRODUCT_SERVICES_PROPERTIES += \
+    $(call collapse-pairs, $(PRODUCT_PRODUCT_SERVICES_PROPERTIES))
+FINAL_PRODUCT_SERVICES_PROPERTIES := $(call uniq-pairs-by-first-component, \
+    $(FINAL_PRODUCT_SERVICES_PROPERTIES),=)
+
+$(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET):
+	@echo Target product-services buildinfo: $@
+	@mkdir -p $(dir $@)
+	$(hide) echo > $@
+ifdef BOARD_USES_PRODUCT_SERVICESIMAGE
+	$(hide) echo ro.productservices.build.date=`$(DATE_FROM_FILE)`>>$@
+	$(hide) echo ro.productservices.build.date.utc=`$(DATE_FROM_FILE) +%s`>>$@
+	$(hide) echo ro.productservices.build.fingerprint="$(BUILD_FINGERPRINT_FROM_FILE)">>$@
+endif  # BOARD_USES_PRODUCT_SERVICESIMAGE
+	$(hide) echo "#" >> $@; \
+	        echo "# ADDITIONAL PRODUCT_SERVICES PROPERTIES" >> $@; \
+	        echo "#" >> $@;
+	$(hide) $(foreach line,$(FINAL_PRODUCT_SERVICES_PROPERTIES), \
+		echo "$(line)" >> $@;)
+	$(hide) build/make/tools/post_process_props.py $@
+
+# ----------------------------------------------------------------
+
+# -----------------------------------------------------------------
 # sdk-build.prop
 #
 # There are certain things in build.prop that we don't want to
@@ -1101,7 +1129,7 @@ endif
 ifneq (true,$(TARGET_USERIMAGES_SPARSE_SQUASHFS_DISABLED))
   INTERNAL_USERIMAGES_SPARSE_SQUASHFS_FLAG := -s
 endif
-ifneq ($(filter $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE) $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE) $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),squashfs),)
+ifneq ($(filter $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE) $(BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE) $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE) $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),squashfs),)
 INTERNAL_USERIMAGES_DEPS += $(MAKE_SQUASHFS) $(MKSQUASHFSUSERIMG) $(IMG2SIMG)
 endif
 
@@ -1135,7 +1163,7 @@ endif
 endif # USE_LOGICAL_PARTITIONS
 
 # $(1): the path of the output dictionary file
-# $(2): a subset of "system vendor cache userdata product oem"
+# $(2): a subset of "system vendor cache userdata product productservices oem"
 # $(3): additional "key=value" pairs to append to the dictionary file.
 define generate-image-prop-dictionary
 $(if $(filter $(2),system),\
@@ -1185,6 +1213,17 @@ $(if $(filter $(2),product),\
     $(if $(BOARD_PRODUCTIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "product_squashfs_disable_4k_align=$(BOARD_PRODUCTIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
     $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH),$(hide) echo "product_base_fs_file=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH)" >> $(1))
 )
+$(if $(filter $(2),productservices),\
+    $(if $(BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "productservices_fs_type=$(BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
+    $(if $(BOARD_PRODUCT_SERVICESIMAGE_EXTFS_INODE_COUNT),$(hide) echo "productservices_extfs_inode_count=$(BOARD_PRODUCT_SERVICESIMAGE_EXTFS_INODE_COUNT)" >> $(1))
+    $(if $(BOARD_PRODUCT_SERVICESIMAGE_EXTFS_RSV_PCT),$(hide) echo "productservices_extfs_rsv_pct=$(BOARD_PRODUCT_SERVICESIMAGE_EXTFS_RSV_PCT)" >> $(1))
+    $(if $(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE),$(hide) echo "productservices_size=$(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE)" >> $(1))
+    $(if $(BOARD_PRODUCT_SERVICESIMAGE_JOURNAL_SIZE),$(hide) echo "productservices_journal_size=$(BOARD_PRODUCT_SERVICESIMAGE_JOURNAL_SIZE)" >> $(1))
+    $(if $(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_COMPRESSOR),$(hide) echo "productservices_squashfs_compressor=$(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_COMPRESSOR)" >> $(1))
+    $(if $(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "productservices_squashfs_compressor_opt=$(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
+    $(if $(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "productservices_squashfs_block_size=$(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
+    $(if $(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "productservices_squashfs_disable_4k_align=$(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
+)
 $(if $(filter $(2),oem),\
     $(if $(BOARD_OEMIMAGE_PARTITION_SIZE),$(hide) echo "oem_size=$(BOARD_OEMIMAGE_PARTITION_SIZE)" >> $(1))
     $(if $(BOARD_OEMIMAGE_JOURNAL_SIZE),$(hide) echo "oem_journal_size=$(BOARD_OEMIMAGE_JOURNAL_SIZE)" >> $(1))
@@ -1208,6 +1247,7 @@ $(if $(filter eng, $(TARGET_BUILD_VARIANT)),$(hide) echo "verity_disable=true" >
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_VERITY_PARTITION),$(hide) echo "system_verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_VERITY_PARTITION)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_VERITY_PARTITION),$(hide) echo "vendor_verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_VERITY_PARTITION)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_VERITY_PARTITION),$(hide) echo "product_verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_VERITY_PARTITION)" >> $(1))
+$(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_SERVICES_VERITY_PARTITION),$(hide) echo "productservices_verity_block_device=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_SERVICES_VERITY_PARTITION)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_key=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_KEY)" >> $(1))
 $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VBOOT),$(hide) echo "vboot_subkey=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VBOOT_SIGNING_SUBKEY)" >> $(1))
@@ -1235,6 +1275,11 @@ $(if $(BOARD_AVB_ENABLE),\
         $(hide) echo "avb_product_key_path=$(BOARD_AVB_PRODUCT_KEY_PATH)" >> $(1)
         $(hide) echo "avb_product_algorithm=$(BOARD_AVB_PRODUCT_ALGORITHM)" >> $(1)
         $(hide) echo "avb_product_rollback_index_location=$(BOARD_AVB_PRODUCT_ROLLBACK_INDEX_LOCATION)" >> $(1)))
+$(if $(BOARD_AVB_ENABLE),\
+    $(if $(BOARD_AVB_PRODUCT_SERVICES_KEY_PATH),\
+        $(hide) echo "avb_productservices_key_path=$(BOARD_AVB_PRODUCT_SERVICES_KEY_PATH)" >> $(1)
+        $(hide) echo "avb_productservices_algorithm=$(BOARD_AVB_PRODUCT_SERVICES_ALGORITHM)" >> $(1)
+        $(hide) echo "avb_productservices_rollback_index_location=$(BOARD_AVB_PRODUCT_SERVICES_ROLLBACK_INDEX_LOCATION)" >> $(1)))
 $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(hide) echo "recovery_as_boot=true" >> $(1))
 $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
@@ -1247,7 +1292,7 @@ endef
 # $(1): the path of the output dictionary file
 # $(2): additional "key=value" pairs to append to the dictionary file.
 define generate-userimage-prop-dictionary
-$(call generate-image-prop-dictionary,$(1),system vendor cache userdata product oem,$(2))
+$(call generate-image-prop-dictionary,$(1),system vendor cache userdata product productservices oem,$(2))
 endef
 
 # $(1): the path of the input dictionary file, where each line has the format key=value
@@ -1308,6 +1353,9 @@ recovery_build_props += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
 endif
 ifdef BOARD_USES_PRODUCTIMAGE
 recovery_build_props += $(INSTALLED_PRODUCT_BUILD_PROP_TARGET)
+endif
+ifdef BOARD_USES_PRODUCT_SERVICESIMAGE
+recovery_build_props += $(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET)
 endif
 recovery_resources_common := $(call include-path-for, recovery)/res
 
@@ -1647,11 +1695,27 @@ define create-system-product-symlink
 endef
 endif
 
+# Create symlink /system/product-services to /product-services if necessary.
+ifdef BOARD_USES_PRODUCT_SERVICESIMAGE
+define create-system-productservices-symlink
+$(hide) if [ -d $(TARGET_OUT)/product-services ] && [ ! -h $(TARGET_OUT)/product-services ]; then \
+  echo 'Non-symlink $(TARGET_OUT)/product-services detected!' 1>&2; \
+  echo 'You cannot install files to $(TARGET_OUT)/product-services while building a separate product-services.img!' 1>&2; \
+  exit 1; \
+fi
+$(hide) ln -sf /product-services $(TARGET_OUT)/product-services
+endef
+else
+define create-system-productservices-symlink
+endef
+endif
+
 # $(1): output file
 define build-systemimage-target
   @echo "Target system fs image: $(1)"
   $(call create-system-vendor-symlink)
   $(call create-system-product-symlink)
+  $(call create-system-productservices-symlink)
   @mkdir -p $(dir $(1)) $(systemimage_intermediates) && rm -rf $(systemimage_intermediates)/system_image_info.txt
   $(call generate-image-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt,system, \
       skip_fsck=true)
@@ -1731,6 +1795,7 @@ define build-systemtarball-target
   $(call pretty,"Target system fs tarball: $(INSTALLED_SYSTEMTARBALL_TARGET)")
   $(call create-system-vendor-symlink)
   $(call create-system-product-symlink)
+  $(call create-system-productservices-symlink)
   $(MKTARBALL) $(FS_GET_STATS) \
     $(PRODUCT_OUT) system $(PRIVATE_SYSTEM_TAR) \
     $(INSTALLED_SYSTEMTARBALL_TARGET) $(TARGET_OUT)
@@ -1814,6 +1879,10 @@ endif
 ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
 	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
 		$(TARGET_COPY_OUT_PRODUCT)
+endif
+ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
+	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
+		$(TARGET_COPY_OUT_PRODUCT_SERVICES)
 endif
 ifneq ($(PDK_PLATFORM_JAVA_ZIP_CONTENTS),)
 	$(hide) cd $(OUT_DIR) && zip -qryX $(patsubst $(OUT_DIR)/%,%,$@) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
@@ -2217,6 +2286,58 @@ $(eval $(call copy-one-file,$(BOARD_PREBUILT_PRODUCTIMAGE),$(INSTALLED_PRODUCTIM
 endif
 
 # -----------------------------------------------------------------
+# product-services partition image
+ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
+INTERNAL_PRODUCT_SERVICESIMAGE_FILES := \
+    $(filter $(TARGET_OUT_PRODUCT_SERVICES)/%,\
+      $(ALL_DEFAULT_INSTALLED_MODULES)\
+      $(ALL_PDK_FUSION_FILES)) \
+    $(PDK_FUSION_SYMLINK_STAMP)
+
+# platform.zip depends on $(INTERNAL_PRODUCT_SERVICESIMAGE_FILES).
+$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_PRODUCT_SERVICESIMAGE_FILES)
+
+INSTALLED_FILES_FILE_PRODUCT_SERVICES := $(PRODUCT_OUT)/installed-files-productservices.txt
+INSTALLED_FILES_JSON_PRODUCT_SERVICES := $(INSTALLED_FILES_FILE_PRODUCT_SERVICES:.txt=.json)
+$(INSTALLED_FILES_FILE_PRODUCT_SERVICES): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_PRODUCT_SERVICES)
+$(INSTALLED_FILES_FILE_PRODUCT_SERVICES) : $(INTERNAL_PRODUCT_SERVICESIMAGE_FILES) $(FILESLIST)
+	@echo Installed file list: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(hide) $(FILESLIST) $(TARGET_OUT_PRODUCT_SERVICES) > $(@:.txt=.json)
+	$(hide) build/tools/fileslist_util.py -c $(@:.txt=.json) > $@
+
+productservicesimage_intermediates := \
+    $(call intermediates-dir-for,PACKAGING,productservices)
+BUILT_PRODUCT_SERVICESIMAGE_TARGET := $(PRODUCT_OUT)/product-services.img
+define build-productservicesimage-target
+  $(call pretty,"Target product-services fs image: $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)")
+  @mkdir -p $(TARGET_OUT_PRODUCT_SERVICES)
+  @mkdir -p $(productservicesimage_intermediates) && rm -rf $(productservicesimage_intermediates)/productservices_image_info.txt
+  $(call generate-userimage-prop-dictionary, $(productservicesimage_intermediates)/productservices_image_info.txt, skip_fsck=true)
+  $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
+      ./build/tools/releasetools/build_image.py \
+      $(TARGET_OUT_PRODUCT_SERVICES) $(productservicesimage_intermediates)/productservices_image_info.txt $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) $(TARGET_OUT)
+  $(hide) $(call assert-max-image-size,$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET),$(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE))
+endef
+
+# We just build this directly to the install location.
+INSTALLED_PRODUCT_SERVICESIMAGE_TARGET := $(BUILT_PRODUCT_SERVICESIMAGE_TARGET)
+$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_PRODUCT_SERVICESIMAGE_FILES) $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) $(BUILD_IMAGE_SRCS)
+	$(build-productservicesimage-target)
+
+.PHONY: productservicesimage-nodeps psnod
+productservicesimage-nodeps psnod: | $(INTERNAL_USERIMAGES_DEPS)
+	$(build-productservicesimage-target)
+
+sync: $(INTERNAL_PRODUCT_SERVICESIMAGE_FILES)
+
+else ifdef BOARD_PREBUILT_PRODUCT_SERVICESIMAGE
+INSTALLED_PRODUCT_SERVICESIMAGE_TARGET := $(PRODUCT_OUT)/product-services.img
+$(eval $(call copy-one-file,$(BOARD_PREBUILT_PRODUCT_SERVICESIMAGE),$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)))
+endif
+
+# -----------------------------------------------------------------
 # dtbo image
 ifdef BOARD_PREBUILT_DTBOIMAGE
 INSTALLED_DTBOIMAGE_TARGET := $(PRODUCT_OUT)/dtbo.img
@@ -2260,6 +2381,7 @@ SYSTEM_FOOTER_ARGS := BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS
 VENDOR_FOOTER_ARGS := BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS
 RECOVERY_FOOTER_ARGS := BOARD_AVB_RECOVERY_ADD_HASH_FOOTER_ARGS
 PRODUCT_FOOTER_ARGS := BOARD_AVB_PRODUCT_ADD_HASHTREE_FOOTER_ARGS
+PRODUCT_SERVICES_FOOTER_ARGS := BOARD_AVB_PRODUCT_SERVICES_ADD_HASHTREE_FOOTER_ARGS
 
 # Check and set required build variables for a chain partition.
 # $(1): the partition to enable AVB chain, e.g., BOOT or SYSTEM.
@@ -2377,6 +2499,9 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_AVB_PRODUCT_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_PRODUCT_KEY_PATH) \
       --output $(1)/product.avbpubkey)
+  $(if $(BOARD_AVB_PRODUCT_SERVICES_KEY_PATH),\
+    $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_PRODUCT_SERVICES_KEY_PATH) \
+      --output $(1)/product-services.avbpubkey)
   $(if $(BOARD_AVB_DTBO_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_DTBO_KEY_PATH) \
       --output $(1)/dtbo.avbpubkey)
@@ -2404,6 +2529,7 @@ $(INSTALLED_VBMETAIMAGE_TARGET): \
 		$(INSTALLED_SYSTEMIMAGE) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
 		$(INSTALLED_PRODUCTIMAGE_TARGET) \
+		$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) \
 		$(INSTALLED_DTBOIMAGE_TARGET) \
 		$(INSTALLED_RECOVERYIMAGE_TARGET) \
 		$(BOARD_AVB_KEY_PATH)
@@ -2665,6 +2791,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_CACHEIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
 		$(INSTALLED_PRODUCTIMAGE_TARGET) \
+		$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) \
 		$(INSTALLED_VBMETAIMAGE_TARGET) \
 		$(INSTALLED_DTBOIMAGE_TARGET) \
 		$(INTERNAL_SYSTEMOTHERIMAGE_FILES) \
@@ -2674,6 +2801,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_BASE_FS_PATH) \
 		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH) \
 		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH) \
+		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_SERVICES_BASE_FS_PATH) \
 		$(SELINUX_FC) \
 		$(APKCERTS_FILE) \
 		$(SOONG_ZIP) \
@@ -2689,6 +2817,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	@echo "Package target files: $@"
 	$(call create-system-vendor-symlink)
 	$(call create-system-product-symlink)
+	$(call create-system-productservices-symlink)
 	$(hide) rm -rf $@ $@.list $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
 ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
@@ -2762,6 +2891,11 @@ ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
 	$(hide) $(call package_files-copy-root, \
 		$(TARGET_OUT_PRODUCT),$(zip_root)/PRODUCT)
 endif
+ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
+	@# Contents of the product-services image
+	$(hide) $(call package_files-copy-root, \
+		$(TARGET_OUT_PRODUCT_SERVICES),$(zip_root)/PRODUCT_SERVICES)
+endif
 ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
 	@# Contents of the system_other image
 	$(hide) $(call package_files-copy-root, \
@@ -2832,6 +2966,10 @@ endif
 ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH),)
 	$(hide) cp $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH) \
 	  $(zip_root)/META/$(notdir $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH))
+endif
+ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_SERVICES_BASE_FS_PATH),)
+	$(hide) cp $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_SERVICES_BASE_FS_PATH) \
+	  $(zip_root)/META/$(notdir $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_SERVICES_BASE_FS_PATH))
 endif
 ifneq ($(strip $(SANITIZE_TARGET)),)
 	# We need to create userdata.img with real data because the instrumented libraries are in userdata.img.
@@ -2909,6 +3047,10 @@ ifdef BOARD_PREBUILT_PRODUCTIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_PRODUCTIMAGE_TARGET) $(zip_root)/IMAGES/
 endif
+ifdef BOARD_PREBUILT_PRODUCT_SERVICESIMAGE
+	$(hide) mkdir -p $(zip_root)/IMAGES
+	$(hide) cp $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) $(zip_root)/IMAGES/
+endif
 ifdef BOARD_PREBUILT_BOOTIMAGE
 	$(hide) mkdir -p $(zip_root)/IMAGES
 	$(hide) cp $(INSTALLED_BOOTIMAGE_TARGET) $(zip_root)/IMAGES/
@@ -2941,6 +3083,9 @@ ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
 endif
 ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
 	$(hide) $(call fs_config,$(zip_root)/PRODUCT,product/) > $(zip_root)/META/product_filesystem_config.txt
+endif
+ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
+	$(hide) $(call fs_config,$(zip_root)/PRODUCT_SERVICES,product-services/) > $(zip_root)/META/productservices_filesystem_config.txt
 endif
 ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 	@# When using BOARD_BUILD_SYSTEM_ROOT_IMAGE, ROOT always contains the files for the root under
@@ -3066,6 +3211,7 @@ $(SYMBOLS_ZIP): $(INSTALLED_SYSTEMIMAGE) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
 		$(INSTALLED_PRODUCTIMAGE_TARGET) \
+		$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) \
 		$(updater_dep)
 endif
 $(SYMBOLS_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,symbols)/filelist
@@ -3089,7 +3235,8 @@ $(COVERAGE_ZIP): $(INSTALLED_SYSTEMIMAGE) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
-		$(INSTALLED_PRODUCTIMAGE_TARGET)
+		$(INSTALLED_PRODUCTIMAGE_TARGET) \
+		$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
 endif
 $(COVERAGE_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,coverage)/filelist
 $(COVERAGE_ZIP): $(SOONG_ZIP)
@@ -3197,6 +3344,15 @@ $(INSTALLED_QEMU_PRODUCTIMAGE): $(INSTALLED_PRODUCTIMAGE_TARGET) $(MK_QEMU_IMAGE
 
 productimage: $(INSTALLED_QEMU_PRODUCTIMAGE)
 droidcore: $(INSTALLED_QEMU_PRODUCTIMAGE)
+endif
+ifeq ($(BOARD_USES_PRODUCT_SERVICESIMAGE),true)
+INSTALLED_QEMU_PRODUCT_SERVICESIMAGE := $(PRODUCT_OUT)/product-services-qemu.img
+$(INSTALLED_QEMU_PRODUCT_SERVICESIMAGE): $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST)
+	@echo Create product-services-qemu.img
+	(export SGDISK=$(SGDISK_HOST); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/product-services.img)
+
+productservicesimage: $(INSTALLED_QEMU_PRODUCT_SERVICESIMAGE)
+droidcore: $(INSTALLED_QEMU_PRODUCT_SERVICESIMAGE)
 endif
 endif
 # -----------------------------------------------------------------
