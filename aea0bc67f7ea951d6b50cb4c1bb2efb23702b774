@@ -16,6 +16,24 @@
       "revId": "aea0bc67f7ea951d6b50cb4c1bb2efb23702b774",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a63c3f2d_836d9cbb",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1008,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-20T05:20:33Z",
+      "side": 1,
+      "message": "I definitely prefer an explicit target, otherwise we write this file during every incremental build. That\u0027s a bit simpler to use with dist-for-goals as well, so that you can get it in the build server artifacts",
+      "parentUuid": "d8ae7944_7ede0630",
+      "revId": "aea0bc67f7ea951d6b50cb4c1bb2efb23702b774",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
