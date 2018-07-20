@@ -311,7 +311,10 @@ PRODUCT_PACKAGES_DEBUG := \
     showmap \
     sqlite3 \
     strace \
-    sanitizer-status
+    sanitizer-status \
+    unwind_info \
+    unwind_reg_info \
+    unwind_symbols \
 
 # The set of packages whose code can be loaded by the system server.
 PRODUCT_SYSTEM_SERVER_APPS += \
