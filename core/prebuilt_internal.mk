@@ -376,6 +376,10 @@ ifdef LOCAL_COMPRESSED_MODULE
 $(built_module) : $(MINIGZIP)
 endif
 
+ifdef LOCAL_PRODUCT_MODULE
+$(built_module) : $(call intermediates-dir-for,PACKAGING,veridex,HOST)/veridex.zip
+endif
+
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
 	$(uncompress-shared-libs)
@@ -390,6 +394,10 @@ endif  # BUILD_PLATFORM_ZIP
 endif  # LOCAL_DEX_PREOPT
 ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 	@# Only strip out files if we can re-sign the package.
+# Run appcompat before stripping the classes.dex file.
+ifdef LOCAL_PRODUCT_MODULE
+	$(run-appcompat)
+endif  # LOCAL_PRODUCT_MODULE
 ifdef LOCAL_DEX_PREOPT
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
