@@ -875,6 +875,27 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("product_extfs_inode_count", "extfs_inode_count")
     if not copy_prop("product_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
+  elif mount_point == "product-services":
+    copy_prop("avb_productservices_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_productservices_add_hashtree_footer_args",
+              "avb_add_hashtree_footer_args")
+    copy_prop("avb_productservices_key_path", "avb_key_path")
+    copy_prop("avb_productservices_algorithm", "avb_algorithm")
+    copy_prop("productservices_fs_type", "fs_type")
+    copy_prop("productservices_size", "partition_size")
+    if not copy_prop("productservices_journal_size", "journal_size"):
+      d["journal_size"] = "0"
+    copy_prop("productservices_verity_block_device", "verity_block_device")
+    copy_prop("productservices_squashfs_compressor", "squashfs_compressor")
+    copy_prop("productservices_squashfs_compressor_opt",
+              "squashfs_compressor_opt")
+    copy_prop("productservices_squashfs_block_size", "squashfs_block_size")
+    copy_prop("productservices_squashfs_disable_4k_align",
+              "squashfs_disable_4k_align")
+    copy_prop("productservices_base_fs_file", "base_fs_file")
+    copy_prop("productservices_extfs_inode_count", "extfs_inode_count")
+    if not copy_prop("productservices_extfs_rsv_pct", "extfs_rsv_pct"):
+      d["extfs_rsv_pct"] = "0"
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
@@ -955,6 +976,8 @@ def main(argv):
       mount_point = "oem"
     elif image_filename == "product.img":
       mount_point = "product"
+    elif image_filename == "product-services.img":
+      mount_point = "product-services"
     else:
       print("error: unknown image file name ", image_filename, file=sys.stderr)
       sys.exit(1)
