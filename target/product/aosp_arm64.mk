@@ -14,21 +14,12 @@
 # limitations under the License.
 #
 
-PRODUCT_PROPERTY_OVERRIDES += \
-	vendor.rild.libpath=/vendor/lib64/libreference-ril.so
-
 # This is a build configuration for a full-featured build of the
 # Open-Source part of the tree. It's geared toward a US-centric
 # build quite specifically for the emulator, and might not be
 # entirely appropriate to inherit from for on-device configurations.
 
-# Note: the following lines need to stay at the beginning so that it can
-# take priority  and override the rules it inherit from other mk files
-# see copy file rules in core/Makefile
-PRODUCT_COPY_FILES += \
-    development/sys-img/advancedFeatures.ini.arm:advancedFeatures.ini \
-    prebuilts/qemu-kernel/arm64/3.18/kernel-qemu2:kernel-ranchu \
-    device/generic/goldfish/fstab.ranchu.arm:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.ranchu
+-include device/generic/goldfish/arm64-vendor.mk
 
 # Copy different zygote settings for vendor.img to select by setting property
 # ro.zygote=zygote64_32 or ro.zygote=zygote32_64:
