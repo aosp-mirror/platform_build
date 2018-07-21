@@ -309,7 +309,10 @@ PRODUCT_PACKAGES_DEBUG := \
     procrank \
     showmap \
     sqlite3 \
-    strace
+    strace \
+    unwind_info \
+    unwind_reg_info \
+    unwind_symbols \
 
 # The set of packages whose code can be loaded by the system server.
 PRODUCT_SYSTEM_SERVER_APPS += \
