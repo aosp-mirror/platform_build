@@ -998,6 +998,8 @@ $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
   $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
   $(eval files := $(call product-installed-files, $(makefile))) \
   $(eval files := $(filter-out $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%,$(files))) \
+  $(eval # RROs become REQUIRED by the source module, but are always placed on the vendor partition.) \
+  $(eval files := $(filter-out %__auto_generated_rro.apk,$(files))) \
   $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns),$(files))) \
   $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
   $(eval unused_whitelist := $(filter-out $(files),$(whitelist_patterns))) \
@@ -1181,6 +1183,9 @@ vendorimage: $(INSTALLED_VENDORIMAGE_TARGET)
 .PHONY: productimage
 productimage: $(INSTALLED_PRODUCTIMAGE_TARGET)
 
+.PHONY: productservicesimage
+productservicesimage: $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
+
 .PHONY: systemotherimage
 systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 
@@ -1212,6 +1217,8 @@ droidcore: files \
     $(INSTALLED_FILES_JSON_VENDOR) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
+    $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) \
+    $(INSTALLED_FILES_JSON_PRODUCT_SERVICES) \
     $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
     $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
     soong_docs
@@ -1282,6 +1289,8 @@ else # TARGET_BUILD_APPS
     $(INSTALLED_FILES_JSON_VENDOR) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
+    $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) \
+    $(INSTALLED_FILES_JSON_PRODUCT_SERVICES) \
     $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
     $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
     $(INSTALLED_BUILD_PROP_TARGET) \

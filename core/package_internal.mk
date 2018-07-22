@@ -118,6 +118,8 @@ ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
         enforce_rro_enabled :=
       else ifeq (true,$(LOCAL_PRODUCT_MODULE))
         enforce_rro_enabled :=
+      else ifeq (true,$(LOCAL_PRODUCT_SERVICES_MODULE))
+        enforce_rro_enabled :=
       endif
     else ifeq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
       enforce_rro_enabled :=
@@ -590,6 +592,10 @@ else
 endif
 endif
 
+ifdef LOCAL_PRODUCT_MODULE
+$(LOCAL_BUILT_MODULE) : $(call intermediates-dir-for,PACKAGING,veridex,HOST)/veridex.zip
+endif
+
 $(LOCAL_BUILT_MODULE): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
 $(LOCAL_BUILT_MODULE): PRIVATE_RESOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/resources
 $(LOCAL_BUILT_MODULE): PRIVATE_FULL_CLASSES_JAR := $(full_classes_jar)
@@ -630,6 +636,10 @@ ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 	@# No need to align, sign-package below will do it.
 	$(uncompress-dexs)
 endif
+# Run appcompat before stripping the classes.dex file.
+ifdef LOCAL_PRODUCT_MODULE
+	$(run-appcompat)
+endif  # LOCAL_PRODUCT_MODULE
 ifdef LOCAL_DEX_PREOPT
 ifneq ($(BUILD_PLATFORM_ZIP),)
 	@# Keep a copy of apk with classes.dex unstripped

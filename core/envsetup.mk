@@ -180,6 +180,7 @@ TARGET_COPY_OUT_ASAN := $(TARGET_COPY_OUT_DATA)/asan
 TARGET_COPY_OUT_OEM := oem
 TARGET_COPY_OUT_ODM := odm
 TARGET_COPY_OUT_PRODUCT := product
+TARGET_COPY_OUT_PRODUCT_SERVICES := product-services
 TARGET_COPY_OUT_ROOT := root
 TARGET_COPY_OUT_RECOVERY := recovery
 
@@ -208,6 +209,17 @@ TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
 # We'll substitute with the real value after loading BoardConfig.mk.
 _product_path_placeholder := ||PRODUCT-PATH-PH||
 TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
+###########################################
+
+###########################################
+# Define TARGET_COPY_OUT_PRODUCT_SERVICES to a placeholder, for at this point
+# we don't know if the device wants to build a separate product-services.img
+# or just build product stuff into system.img.
+# A device can set up TARGET_COPY_OUT_PRODUCT_SERVICES to "product-services" in its
+# BoardConfig.mk.
+# We'll substitute with the real value after loading BoardConfig.mk.
+_productservices_path_placeholder := ||PRODUCTSERVICES-PATH-PH||
+TARGET_COPY_OUT_PRODUCT_SERVICES := $(_productservices_path_placeholder)
 ###########################################
 
 #################################################################
@@ -339,6 +351,28 @@ ifeq ($(TARGET_COPY_OUT_PRODUCT),product)
 BOARD_USES_PRODUCTIMAGE := true
 else ifdef BOARD_USES_PRODUCTIMAGE
 $(error TARGET_COPY_OUT_PRODUCT must be set to 'product' to use a product image)
+endif
+
+###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_PRODUCT_SERVICES
+ifeq ($(TARGET_COPY_OUT_PRODUCT_SERVICES),$(_productservices_path_placeholder))
+TARGET_COPY_OUT_PRODUCT_SERVICES := system/product-services
+else ifeq ($(filter product-services system/product-services,$(TARGET_COPY_OUT_PRODUCT_SERVICES)),)
+$(error TARGET_COPY_OUT_PRODUCT_SERVICES must be either 'product-services' or 'system/product-services', seeing '$(TARGET_COPY_OUT_PRODUCT_SERVICES)'.)
+endif
+PRODUCT_SERVICES_COPY_FILES := $(subst $(_productservices_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),$(PRODUCT_SERVICES_COPY_FILES))
+
+BOARD_USES_PRODUCT_SERVICESIMAGE :=
+ifdef BOARD_PREBUILT_PRODUCT_SERVICESIMAGE
+BOARD_USES_PRODUCT_SERVICESIMAGE := true
+endif
+ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
+BOARD_USES_PRODUCT_SERVICESIMAGE := true
+endif
+ifeq ($(TARGET_COPY_OUT_PRODUCT_SERVICES),product-services)
+BOARD_USES_PRODUCT_SERVICESIMAGE := true
+else ifdef BOARD_USES_PRODUCT_SERVICESIMAGE
+$(error TARGET_COPY_OUT_PRODUCT_SERVICES must be set to 'product-services' to use a product-services image)
 endif
 
 ###########################################
@@ -879,6 +913,39 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS_PRIVILEGED := $(TARGET_OUT_
   $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SHARED_LIBRARIES \
   $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS \
   $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS_PRIVILEGED
+
+TARGET_OUT_PRODUCT_SERVICES := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT_SERVICES)
+ifneq ($(filter address,$(SANITIZE_TARGET)),)
+target_out_productservices_shared_libraries_base := $(PRODUCT_SERVICES_OUT)/$(TARGET_COPY_OUT_ASAN)/product-services
+ifeq ($(SANITIZE_LITE),true)
+# When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
+# work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
+target_out_productservices_app_base := $(PRODUCT_SERVICES_OUT)/$(TARGET_COPY_OUT_ASAN)/product-services
+else
+target_out_productservices_app_base := $(TARGET_OUT_PRODUCT_SERVICES)
+endif
+else
+target_out_productservices_shared_libraries_base := $(TARGET_OUT_PRODUCT_SERVICES)
+target_out_productservices_app_base := $(TARGET_OUT_PRODUCT_SERVICES)
+endif
+
+ifeq ($(TARGET_IS_64_BIT),true)
+TARGET_OUT_PRODUCT_SERVICES_SHARED_LIBRARIES := $(target_out_productservices_shared_libraries_base)/lib64
+else
+TARGET_OUT_PRODUCT_SERVICES_SHARED_LIBRARIES := $(target_out_productservices_shared_libraries_base)/lib
+endif
+TARGET_OUT_PRODUCT_SERVICES_JAVA_LIBRARIES:= $(TARGET_OUT_PRODUCT_SERVICES)/framework
+TARGET_OUT_PRODUCT_SERVICES_APPS := $(target_out_productservices_app_base)/app
+TARGET_OUT_PRODUCT_SERVICES_APPS_PRIVILEGED := $(target_out_productservices_app_base)/priv-app
+TARGET_OUT_PRODUCT_SERVICES_ETC := $(TARGET_OUT_PRODUCT_SERVICES)/etc
+
+ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SERVICES_SHARED_LIBRARIES := $(target_out_productservices_shared_libraries_base)/lib/$(TARGET_2ND_ARCH)
+else
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SERVICES_SHARED_LIBRARIES := $(target_out_productservices_shared_libraries_base)/lib
+endif
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SERVICES_APPS := $(TARGET_OUT_PRODUCT_SERVICES_APPS)
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SERVICES_APPS_PRIVILEGED := $(TARGET_OUT_PRODUCT_SERVICES_APPS_PRIVILEGED)
 
 TARGET_OUT_BREAKPAD := $(PRODUCT_OUT)/breakpad
 .KATI_READONLY := TARGET_OUT_BREAKPAD

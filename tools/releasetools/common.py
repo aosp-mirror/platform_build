@@ -78,7 +78,8 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 
 
 # The partitions allowed to be signed by AVB (Android verified boot 2.0).
-AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'product', 'dtbo')
+AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'product',
+                  'product-services', 'dtbo')
 
 
 class ErrorCode(object):
@@ -1914,7 +1915,7 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
       if os.path.exists(path):
         diff_program.append("-b")
         diff_program.append(path)
-        bonus_args = "-b /system/etc/recovery-resource.dat"
+        bonus_args = "--bonus /system/etc/recovery-resource.dat"
       else:
         bonus_args = ""
 
@@ -1932,8 +1933,12 @@ def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
 
   if full_recovery_image:
     sh = """#!/system/bin/sh
-if ! applypatch -c %(type)s:%(device)s:%(size)d:%(sha1)s; then
-  applypatch /system/etc/recovery.img %(type)s:%(device)s %(sha1)s %(size)d && log -t recovery "Installing new recovery image: succeeded" || log -t recovery "Installing new recovery image: failed"
+if ! applypatch --check %(type)s:%(device)s:%(size)d:%(sha1)s; then
+  applypatch \\
+          --flash /system/etc/recovery.img \\
+          --target %(type)s:%(device)s:%(size)d:%(sha1)s && \\
+      log -t recovery "Installing new recovery image: succeeded" || \\
+      log -t recovery "Installing new recovery image: failed"
 else
   log -t recovery "Recovery image already installed"
 fi
@@ -1943,8 +1948,13 @@ fi
        'size': recovery_img.size}
   else:
     sh = """#!/system/bin/sh
-if ! applypatch -c %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
-  applypatch %(bonus_args)s %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s %(recovery_type)s:%(recovery_device)s %(recovery_sha1)s %(recovery_size)d %(boot_sha1)s:/system/recovery-from-boot.p && log -t recovery "Installing new recovery image: succeeded" || log -t recovery "Installing new recovery image: failed"
+if ! applypatch --check %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s; then
+  applypatch %(bonus_args)s \\
+          --patch /system/recovery-from-boot.p \\
+          --source %(boot_type)s:%(boot_device)s:%(boot_size)d:%(boot_sha1)s \\
+          --target %(recovery_type)s:%(recovery_device)s:%(recovery_size)d:%(recovery_sha1)s && \\
+      log -t recovery "Installing new recovery image: succeeded" || \\
+      log -t recovery "Installing new recovery image: failed"
 else
   log -t recovery "Recovery image already installed"
 fi
