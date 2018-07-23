@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c85513f3_9fffebb0",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 18
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-23T20:42:03Z",
+      "side": 1,
+      "message": "This is still not working for correct for the multilib target case.\n\nI still get libinput_tests_arm",
+      "range": {
+        "startLine": 38,
+        "startChar": 27,
+        "endLine": 38,
+        "endChar": 46
+      },
+      "revId": "4e7c802275cbb30488827d2f928f6638bbc0a495",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
