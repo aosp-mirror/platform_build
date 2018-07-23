@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "93fb7e31_e19223ae",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-07-23T22:05:50Z",
+      "side": 1,
+      "message": "Test seems to fail with a empty key file?",
+      "range": {
+        "startLine": 749,
+        "startChar": 1,
+        "endLine": 749,
+        "endChar": 58
+      },
+      "revId": "a872e6d2ce58ef277db91ba25a3e1ae9e8fc02f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
