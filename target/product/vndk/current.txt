@@ -147,6 +147,7 @@ VNDK-core: android.hardware.wifi.supplicant@1.1.so
 VNDK-core: android.hardware.wifi@1.0.so
 VNDK-core: android.hardware.wifi@1.1.so
 VNDK-core: android.hardware.wifi@1.2.so
+VNDK-core: android.hardware.wifi@1.3.so
 VNDK-core: android.hidl.allocator@1.0.so
 VNDK-core: android.hidl.memory.block@1.0.so
 VNDK-core: android.hidl.token@1.0.so
