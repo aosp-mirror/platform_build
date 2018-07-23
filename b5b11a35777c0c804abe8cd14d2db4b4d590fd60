@@ -118,6 +118,30 @@
       "revId": "b5b11a35777c0c804abe8cd14d2db4b4d590fd60",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58448d70_ab92c640",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1315724
+      },
+      "writtenOn": "2018-07-23T13:48:15Z",
+      "side": 1,
+      "message": "For making atest more flexible, I update the patch to get information from build system.\nFOR_2ND_ARCH: the module is building 2nd arch.\n32_BIT_ONLY: the module is building for 32 bit only.",
+      "parentUuid": "7860b002_dce543a6",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 48
+      },
+      "revId": "b5b11a35777c0c804abe8cd14d2db4b4d590fd60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
