@@ -22,6 +22,30 @@
       "revId": "a872e6d2ce58ef277db91ba25a3e1ae9e8fc02f0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4418ab51_2b5eb985",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-07-23T22:24:09Z",
+      "side": 1,
+      "message": "I must have accidentally overwritten the file while writing the openssl command in the commit message... Fixed in PS4.",
+      "parentUuid": "93fb7e31_e19223ae",
+      "range": {
+        "startLine": 749,
+        "startChar": 1,
+        "endLine": 749,
+        "endChar": 58
+      },
+      "revId": "a872e6d2ce58ef277db91ba25a3e1ae9e8fc02f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
