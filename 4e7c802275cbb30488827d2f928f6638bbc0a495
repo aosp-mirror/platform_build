@@ -22,6 +22,30 @@
       "revId": "4e7c802275cbb30488827d2f928f6638bbc0a495",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8aee7296_aacb2459",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 18
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-07-23T21:33:50Z",
+      "side": 1,
+      "message": "Actually sorry I had cherry-picked your other CL not this one by mistake.\n\nThis appears to be working as expected.\n\n\nPlease move this change to your other CL (https://android-review.googlesource.com/c/platform/build/+/717007), because we should not submit the new host gtest template until we submit the corresponding tradefed change.",
+      "parentUuid": "c85513f3_9fffebb0",
+      "range": {
+        "startLine": 38,
+        "startChar": 27,
+        "endLine": 38,
+        "endChar": 46
+      },
+      "revId": "4e7c802275cbb30488827d2f928f6638bbc0a495",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
