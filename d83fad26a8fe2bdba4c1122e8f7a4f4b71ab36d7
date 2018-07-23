@@ -16,6 +16,24 @@
       "revId": "d83fad26a8fe2bdba4c1122e8f7a4f4b71ab36d7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "edcb466e_03e2603a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-07-23T09:51:58Z",
+      "side": 1,
+      "message": "yeah, that\u0027s fine for now. This line was stale, fixed now.",
+      "parentUuid": "124189e4_e2e31e7a",
+      "revId": "d83fad26a8fe2bdba4c1122e8f7a4f4b71ab36d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
