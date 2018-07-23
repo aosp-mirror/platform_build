@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "124189e4_e2e31e7a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-23T05:40:08Z",
+      "side": 1,
+      "message": "This shouldn\u0027t actually build this file... is that ok?",
+      "revId": "d83fad26a8fe2bdba4c1122e8f7a4f4b71ab36d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
