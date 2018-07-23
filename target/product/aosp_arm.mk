@@ -14,6 +14,13 @@
 # limitations under the License.
 #
 
+# The system image of aosp_arm-userdebug is a GSI for the devices with:
+# - ARM 32 bits user space
+# - 64 bits binder interface
+# - system-as-root
+# - VNDK enforcement
+# - compatible property override enabled
+
 -include device/generic/goldfish/arm32-vendor.mk
 
 # TODO(b/78308559): includes vr_hwc into GSI before vr_hwc move to vendor
@@ -21,6 +28,13 @@ PRODUCT_PACKAGES += \
     vr_hwc
 
 include $(SRC_TARGET_DIR)/product/full.mk
+
+# Enable A/B update
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS := system
+PRODUCT_PACKAGES += \
+    update_engine \
+    update_verifier
 
 # Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
