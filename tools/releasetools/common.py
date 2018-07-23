@@ -44,7 +44,7 @@ class Options(object):
         "darwin": "out/host/darwin-x86",
     }
 
-    self.search_path = platform_search_path.get(sys.platform, None)
+    self.search_path = platform_search_path.get(sys.platform)
     self.signapk_path = "framework/signapk.jar"  # Relative to search_path
     self.signapk_shared_library_path = "lib64"   # Relative to search_path
     self.extra_signapk_args = []
@@ -237,15 +237,15 @@ def LoadInfoDict(input_file, input_dir=None):
   makeint("boot_size")
   makeint("fstab_version")
 
-  system_root_image = d.get("system_root_image", None) == "true"
-  if d.get("no_recovery", None) != "true":
+  system_root_image = d.get("system_root_image") == "true"
+  if d.get("no_recovery") != "true":
     recovery_fstab_path = "RECOVERY/RAMDISK/etc/recovery.fstab"
-    d["fstab"] = LoadRecoveryFSTab(read_helper, d["fstab_version"],
-        recovery_fstab_path, system_root_image)
-  elif d.get("recovery_as_boot", None) == "true":
+    d["fstab"] = LoadRecoveryFSTab(
+        read_helper, d["fstab_version"], recovery_fstab_path, system_root_image)
+  elif d.get("recovery_as_boot") == "true":
     recovery_fstab_path = "BOOT/RAMDISK/etc/recovery.fstab"
-    d["fstab"] = LoadRecoveryFSTab(read_helper, d["fstab_version"],
-        recovery_fstab_path, system_root_image)
+    d["fstab"] = LoadRecoveryFSTab(
+        read_helper, d["fstab_version"], recovery_fstab_path, system_root_image)
   else:
     d["fstab"] = None
 
@@ -441,11 +441,11 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
     cmd.append("--pagesize")
     cmd.append(open(fn).read().rstrip("\n"))
 
-  args = info_dict.get("mkbootimg_args", None)
+  args = info_dict.get("mkbootimg_args")
   if args and args.strip():
     cmd.extend(shlex.split(args))
 
-  args = info_dict.get("mkbootimg_version_args", None)
+  args = info_dict.get("mkbootimg_version_args")
   if args and args.strip():
     cmd.extend(shlex.split(args))
 
@@ -453,7 +453,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
     cmd.extend(["--ramdisk", ramdisk_img.name])
 
   img_unsigned = None
-  if info_dict.get("vboot", None):
+  if info_dict.get("vboot"):
     img_unsigned = tempfile.NamedTemporaryFile()
     cmd.extend(["--output", img_unsigned.name])
   else:
@@ -471,8 +471,8 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   p.communicate()
   assert p.returncode == 0, "mkbootimg of %s image failed" % (partition_name,)
 
-  if (info_dict.get("boot_signer", None) == "true" and
-      info_dict.get("verity_key", None)):
+  if (info_dict.get("boot_signer") == "true" and
+      info_dict.get("verity_key")):
     # Hard-code the path as "/boot" for two-step special recovery image (which
     # will be loaded into /boot during the two-step OTA).
     if two_step_image:
@@ -489,7 +489,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
     assert p.returncode == 0, "boot_signer of %s image failed" % path
 
   # Sign the image if vboot is non-empty.
-  elif info_dict.get("vboot", None):
+  elif info_dict.get("vboot"):
     path = "/" + partition_name
     img_keyblock = tempfile.NamedTemporaryFile()
     # We have switched from the prebuilt futility binary to using the tool
@@ -578,9 +578,9 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
 
 
 def Gunzip(in_filename, out_filename):
-  """Gunzip the given gzip compressed file to a given output file.
-  """
-  with gzip.open(in_filename, "rb") as in_file, open(out_filename, "wb") as out_file:
+  """Gunzips the given gzip compressed file to a given output file."""
+  with gzip.open(in_filename, "rb") as in_file, \
+       open(out_filename, "wb") as out_file:
     shutil.copyfileobj(in_file, out_file)
 
 
@@ -734,7 +734,7 @@ def GetKeyPasswords(keylist):
   devnull.close()
 
   key_passwords.update(PasswordManager().GetPasswords(need_passwords))
-  key_passwords.update(dict.fromkeys(no_passwords, None))
+  key_passwords.update(dict.fromkeys(no_passwords))
   return key_passwords
 
 
@@ -799,8 +799,7 @@ def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
 
 
 def SignFile(input_name, output_name, key, password, min_api_level=None,
-    codename_to_api_level_map=dict(),
-    whole_file=False):
+             codename_to_api_level_map=None, whole_file=False):
   """Sign the input_name zip/jar/apk, producing output_name.  Use the
   given key and password (the latter may be None if the key does not
   have a password.
@@ -816,6 +815,8 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
   codename_to_api_level_map is needed to translate the codename which may be
   encountered as the APK's minSdkVersion.
   """
+  if codename_to_api_level_map is None:
+    codename_to_api_level_map = {}
 
   java_library_path = os.path.join(
       OPTIONS.search_path, OPTIONS.signapk_shared_library_path)
@@ -877,7 +878,7 @@ def CheckSize(data, target, info_dict):
     device = p.device
     if "/" in device:
       device = device[device.rfind("/")+1:]
-    limit = info_dict.get(device + "_size", None)
+    limit = info_dict.get(device + "_size")
   if not fs_type or not limit:
     return
 
@@ -1107,8 +1108,8 @@ def Cleanup():
 
 class PasswordManager(object):
   def __init__(self):
-    self.editor = os.getenv("EDITOR", None)
-    self.pwfile = os.getenv("ANDROID_PW_FILE", None)
+    self.editor = os.getenv("EDITOR")
+    self.pwfile = os.getenv("ANDROID_PW_FILE")
 
   def GetPasswords(self, items):
     """Get passwords corresponding to each string in 'items',
@@ -1358,7 +1359,7 @@ class DeviceSpecificParams(object):
     module does not define the function, return the value of the
     'default' kwarg (which itself defaults to None)."""
     if self.module is None or not hasattr(self.module, function_name):
-      return kwargs.get("default", None)
+      return kwargs.get("default")
     return getattr(self.module, function_name)(*((self,) + args), **kwargs)
 
   def FullOTA_Assertions(self):
@@ -1408,8 +1409,9 @@ class DeviceSpecificParams(object):
   def VerifyOTA_Assertions(self):
     return self._DoCall("VerifyOTA_Assertions")
 
+
 class File(object):
-  def __init__(self, name, data, compress_size = None):
+  def __init__(self, name, data, compress_size=None):
     self.name = name
     self.data = data
     self.size = len(data)
@@ -1436,6 +1438,7 @@ class File(object):
   def AddToZip(self, z, compression=None):
     ZipWriteStr(z, self.name, self.data, compress_type=compression)
 
+
 DIFF_PROGRAM_BY_EXT = {
     ".gz" : "imgdiff",
     ".zip" : ["imgdiff", "-z"],
@@ -1443,6 +1446,7 @@ DIFF_PROGRAM_BY_EXT = {
     ".apk" : ["imgdiff", "-z"],
     ".img" : "imgdiff",
     }
+
 
 class Difference(object):
   def __init__(self, tf, sf, diff_program=None):
@@ -1511,9 +1515,11 @@ class Difference(object):
 
 
   def GetPatch(self):
-    """Return a tuple (target_file, source_file, patch_data).
+    """Returns a tuple of (target_file, source_file, patch_data).
+
     patch_data may be None if ComputePatch hasn't been called, or if
-    computing the patch failed."""
+    computing the patch failed.
+    """
     return self.tf, self.sf, self.patch
 
 
@@ -1545,7 +1551,8 @@ def ComputeDifferences(diffs):
         else:
           name = "%s (%s)" % (tf.name, sf.name)
         if patch is None:
-          print("patching failed!                                  %s" % (name,))
+          print(
+              "patching failed!                                  %s" % (name,))
         else:
           print("%8.2f sec %8d / %8d bytes (%6.2f%%) %s" % (
               dur, len(patch), tf.size, 100.0 * len(patch) / tf.size, name))
@@ -1598,7 +1605,8 @@ class BlockDifference(object):
   def required_cache(self):
     return self._required_cache
 
-  def WriteScript(self, script, output_zip, progress=None):
+  def WriteScript(self, script, output_zip, progress=None,
+                  write_verify_script=False):
     if not self.src:
       # write the output unconditionally
       script.Print("Patching %s image unconditionally..." % (self.partition,))
@@ -1608,7 +1616,8 @@ class BlockDifference(object):
     if progress:
       script.ShowProgress(progress, 0)
     self._WriteUpdate(script, output_zip)
-    if OPTIONS.verify:
+
+    if write_verify_script:
       self._WritePostInstallVerifyScript(script)
 
   def WriteStrictVerifyScript(self, script):
@@ -1622,12 +1631,12 @@ class BlockDifference(object):
     script.Print("Verifying %s..." % (partition,))
     ranges = self.tgt.care_map
     ranges_str = ranges.to_string_raw()
-    script.AppendExtra('range_sha1("%s", "%s") == "%s" && '
-                       'ui_print("    Verified.") || '
-                       'ui_print("\\"%s\\" has unexpected contents.");' % (
-                       self.device, ranges_str,
-                       self.tgt.TotalSha1(include_clobbered_blocks=True),
-                       self.device))
+    script.AppendExtra(
+        'range_sha1("%s", "%s") == "%s" && ui_print("    Verified.") || '
+        'ui_print("\\"%s\\" has unexpected contents.");' % (
+            self.device, ranges_str,
+            self.tgt.TotalSha1(include_clobbered_blocks=True),
+            self.device))
     script.AppendExtra("")
 
   def WriteVerifyScript(self, script, touched_blocks_only=False):
@@ -1651,12 +1660,12 @@ class BlockDifference(object):
         return
 
       ranges_str = ranges.to_string_raw()
-      script.AppendExtra(('if (range_sha1("%s", "%s") == "%s" || '
-                          'block_image_verify("%s", '
-                          'package_extract_file("%s.transfer.list"), '
-                          '"%s.new.dat", "%s.patch.dat")) then') % (
-                          self.device, ranges_str, expected_sha1,
-                          self.device, partition, partition, partition))
+      script.AppendExtra(
+          'if (range_sha1("%s", "%s") == "%s" || block_image_verify("%s", '
+          'package_extract_file("%s.transfer.list"), "%s.new.dat", '
+          '"%s.patch.dat")) then' % (
+              self.device, ranges_str, expected_sha1,
+              self.device, partition, partition, partition))
       script.Print('Verified %s image...' % (partition,))
       script.AppendExtra('else')
 
@@ -1706,17 +1715,19 @@ class BlockDifference(object):
     # Unlike pre-install verification, clobbered_blocks should not be ignored.
     ranges = self.tgt.care_map
     ranges_str = ranges.to_string_raw()
-    script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' % (
-                       self.device, ranges_str,
-                       self.tgt.TotalSha1(include_clobbered_blocks=True)))
+    script.AppendExtra(
+        'if range_sha1("%s", "%s") == "%s" then' % (
+            self.device, ranges_str,
+            self.tgt.TotalSha1(include_clobbered_blocks=True)))
 
     # Bug: 20881595
     # Verify that extended blocks are really zeroed out.
     if self.tgt.extended:
       ranges_str = self.tgt.extended.to_string_raw()
-      script.AppendExtra('if range_sha1("%s", "%s") == "%s" then' % (
-                         self.device, ranges_str,
-                         self._HashZeroBlocks(self.tgt.extended.size())))
+      script.AppendExtra(
+          'if range_sha1("%s", "%s") == "%s" then' % (
+              self.device, ranges_str,
+              self._HashZeroBlocks(self.tgt.extended.size())))
       script.Print('Verified the updated %s image.' % (partition,))
       if partition == "system":
         code = ErrorCode.SYSTEM_NONZERO_CONTENTS
@@ -1746,9 +1757,9 @@ class BlockDifference(object):
              '{}.transfer.list'.format(self.path),
              '{}.transfer.list'.format(self.partition))
 
-    # For full OTA, compress the new.dat with brotli with quality 6 to reduce its size. Quailty 9
-    # almost triples the compression time but doesn't further reduce the size too much.
-    # For a typical 1.8G system.new.dat
+    # For full OTA, compress the new.dat with brotli with quality 6 to reduce
+    # its size. Quailty 9 almost triples the compression time but doesn't
+    # further reduce the size too much. For a typical 1.8G system.new.dat
     #                       zip  | brotli(quality 6)  | brotli(quality 9)
     #   compressed_size:    942M | 869M (~8% reduced) | 854M
     #   compression_time:   75s  | 265s               | 719s
@@ -1813,6 +1824,7 @@ class BlockDifference(object):
 
 DataImage = blockimgdiff.DataImage
 
+
 # map recovery.fstab's fs_types to mount/format "partition types"
 PARTITION_TYPES = {
     "ext4": "EMMC",
@@ -1820,6 +1832,7 @@ PARTITION_TYPES = {
     "f2fs": "EMMC",
     "squashfs": "EMMC"
 }
+
 
 def GetTypeAndDevice(mount_point, info):
   fstab = info["fstab"]
