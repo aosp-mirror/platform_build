@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2f72898a_13530d6a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2871,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-23T21:21:45Z",
+      "side": 1,
+      "message": "this should be removed",
+      "range": {
+        "startLine": 2871,
+        "startChar": 0,
+        "endLine": 2871,
+        "endChar": 53
+      },
+      "revId": "33e575be4d2e8872c8ad6e91fbff2f5bec91ae1b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
