@@ -666,14 +666,24 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     success, du = GetDiskUsage(origin_in)
     du_str = ("%d bytes (%d MB)" % (du, du // BYTES_IN_MB)
              ) if success else "unknown"
-    print("Out of space? The tree size of %s is %s.\n" % (
-        origin_in, du_str))
-    print("The max is %d bytes (%d MB).\n" % (
-        int(prop_dict["partition_size"]),
-        int(prop_dict["partition_size"]) // BYTES_IN_MB))
-    print("Reserved space is %d bytes (%d MB).\n" % (
-        int(prop_dict.get("partition_reserved_size", 0)),
-        int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
+    print(
+        "Out of space? The tree size of {} is {}, with reserved space of {} "
+        "bytes ({} MB).".format(
+            origin_in, du_str,
+            int(prop_dict.get("partition_reserved_size", 0)),
+            int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
+    if "original_partition_size" in prop_dict:
+      print(
+          "The max size for filsystem files is {} bytes ({} MB), out of a "
+          "total image size of {} bytes ({} MB).".format(
+              int(prop_dict["partition_size"]),
+              int(prop_dict["partition_size"]) // BYTES_IN_MB,
+              int(prop_dict["original_partition_size"]),
+              int(prop_dict["original_partition_size"]) // BYTES_IN_MB))
+    else:
+      print("The max image size is {} bytes ({} MB).".format(
+          int(prop_dict["partition_size"]),
+          int(prop_dict["partition_size"]) // BYTES_IN_MB))
     return False
 
   # Check if there's enough headroom space available for ext4 image.
@@ -915,14 +925,20 @@ def GlobalDictFromImageProp(image_prop, mount_point):
       d[dest_p] = image_prop[src_p]
       return True
     return False
+
+  if "original_partition_size" in image_prop:
+    size_property = "original_partition_size"
+  else:
+    size_property = "partition_size"
+
   if mount_point == "system":
-    copy_prop("partition_size", "system_size")
+    copy_prop(size_property, "system_size")
   elif mount_point == "system_other":
-    copy_prop("partition_size", "system_size")
+    copy_prop(size_property, "system_size")
   elif mount_point == "vendor":
-    copy_prop("partition_size", "vendor_size")
+    copy_prop(size_property, "vendor_size")
   elif mount_point == "product":
-    copy_prop("partition_size", "product_size")
+    copy_prop(size_property, "product_size")
   return d
 
 
