@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25d443f4_912561a3",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-07-24T07:24:37Z",
+      "side": 1,
+      "message": "is it partition_size since \"original_partition_size\" is not in prop_dict.",
+      "range": {
+        "startLine": 679,
+        "startChar": 25,
+        "endLine": 679,
+        "endChar": 48
+      },
+      "revId": "996ad8e719bfbc262b7c15ca5059dfab53326451",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
