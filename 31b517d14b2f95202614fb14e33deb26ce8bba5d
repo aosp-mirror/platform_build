@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b36e0d43_e1c60b83",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2018-07-24T09:46:42Z",
+      "side": 1,
+      "message": "Hmm, I see what you did here. Makes sense to generate it from the JAR that the DEX was built from, but sounds weird to assume we would greylist something that is proguarded. By definition it should not be possible for apps to find it and depend on it, unless it is on a proguard whitelist. Could you at least add a comment with the rationale?",
+      "range": {
+        "startLine": 548,
+        "startChar": 50,
+        "endLine": 548,
+        "endChar": 75
+      },
+      "revId": "31b517d14b2f95202614fb14e33deb26ce8bba5d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b77ec950_53ab08a0",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2018-07-24T09:46:42Z",
+      "side": 1,
+      "message": "So Soong does not have a proguard rule?",
+      "range": {
+        "startLine": 86,
+        "startChar": 56,
+        "endLine": 86,
+        "endChar": 72
+      },
+      "revId": "31b517d14b2f95202614fb14e33deb26ce8bba5d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
