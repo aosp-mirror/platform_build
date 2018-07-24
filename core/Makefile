@@ -3257,6 +3257,27 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(ZIP2ZIP)
 updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
 
 # -----------------------------------------------------------------
+# A zip of the appcompat directory containing logs
+APPCOMPAT_ZIP := $(PRODUCT_OUT)/appcompat.zip
+# For apps_only build we'll establish the dependency later in build/make/core/main.mk.
+ifndef TARGET_BUILD_APPS
+$(APPCOMPAT_ZIP): $(INSTALLED_SYSTEMIMAGE) \
+		$(INSTALLED_BOOTIMAGE_TARGET) \
+		$(INSTALLED_USERDATAIMAGE_TARGET) \
+		$(INSTALLED_VENDORIMAGE_TARGET) \
+		$(INSTALLED_PRODUCTIMAGE_TARGET) \
+		$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
+endif
+$(APPCOMPAT_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,appcompat)/filelist
+$(APPCOMPAT_ZIP): $(SOONG_ZIP)
+	@echo "appcompat logs: $@"
+	$(hide) rm -rf $@ $(PRIVATE_LIST_FILE)
+	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/appcompat $(dir $(PRIVATE_LIST_FILE))
+	$(hide) find $(PRODUCT_OUT)/appcompat | sort >$(PRIVATE_LIST_FILE)
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/appcompat -l $(PRIVATE_LIST_FILE)
+
+
+# -----------------------------------------------------------------
 # A zip of the symbols directory.  Keep the full paths to make it
 # more obvious where these files came from.
 #
@@ -3512,6 +3533,7 @@ deps := \
 	$(OUT_DOCS)/offline-sdk-timestamp \
 	$(SYMBOLS_ZIP) \
 	$(COVERAGE_ZIP) \
+	$(APPCOMPAT_ZIP) \
 	$(INSTALLED_SYSTEMIMAGE) \
 	$(INSTALLED_QEMU_SYSTEMIMAGE) \
 	$(INSTALLED_QEMU_VENDORIMAGE) \
