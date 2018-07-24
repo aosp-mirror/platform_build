@@ -93,6 +93,7 @@ $(full_classes_compiled_jar): \
 
 javac-check : $(full_classes_compiled_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
+.PHONY: javac-check-$(LOCAL_MODULE)
 
 $(full_classes_combined_jar): $(full_classes_compiled_jar) \
                               $(jar_manifest_file) \
