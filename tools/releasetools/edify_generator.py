@@ -132,8 +132,8 @@ class EdifyGenerator(object):
     self.script.append(
         ('(!less_than_int(%s, getprop("ro.build.date.utc"))) || '
          'abort("E%d: Can\'t install this package (%s) over newer '
-         'build (" + getprop("ro.build.date") + ").");') % (timestamp,
-             common.ErrorCode.OLDER_BUILD, timestamp_text))
+         'build (" + getprop("ro.build.date") + ").");') % (
+             timestamp, common.ErrorCode.OLDER_BUILD, timestamp_text))
 
   def AssertDevice(self, device):
     """Assert that the device identifier is the given string."""
@@ -260,8 +260,8 @@ class EdifyGenerator(object):
       cmd.append(',\0%s,\0package_extract_file("%s")' % patchpairs[i:i+2])
     cmd.append(') ||\n    abort("E%d: Failed to apply patch to %s");' % (
         common.ErrorCode.APPLY_PATCH_FAILURE, srcfile))
-    cmd = "".join(cmd)
-    self.script.append(self.WordWrap(cmd))
+    cmd_str = "".join(cmd)
+    self.script.append(self.WordWrap(cmd_str))
 
   def WriteRawImage(self, mount_point, fn, mapfn=None):
     """Write the given package file into the partition for the given
