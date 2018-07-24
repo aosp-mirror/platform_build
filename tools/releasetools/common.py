@@ -371,6 +371,40 @@ def AppendAVBSigningArgs(cmd, partition):
     cmd.extend(["--salt", avb_salt])
 
 
+def GetAvbChainedPartitionArg(partition, info_dict, key=None):
+  """Constructs and returns the arg to build or verify a chained partition.
+
+  Args:
+    partition: The partition name.
+    info_dict: The info dict to look up the key info and rollback index
+        location.
+    key: The key to be used for building or verifying the partition. Defaults to
+        the key listed in info_dict.
+
+  Returns:
+    A string of form "partition:rollback_index_location:key" that can be used to
+    build or verify vbmeta image.
+
+  Raises:
+    AssertionError: When it fails to extract the public key with avbtool.
+  """
+  if key is None:
+    key = info_dict["avb_" + partition + "_key_path"]
+  avbtool = os.getenv('AVBTOOL') or info_dict["avb_avbtool"]
+  pubkey_path = MakeTempFile(prefix="avb-", suffix=".pubkey")
+  proc = Run(
+      [avbtool, "extract_public_key", "--key", key, "--output", pubkey_path],
+      stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  stdoutdata, _ = proc.communicate()
+  assert proc.returncode == 0, \
+      "Failed to extract pubkey for {}:\n{}".format(
+          partition, stdoutdata)
+
+  rollback_index_location = info_dict[
+      "avb_" + partition + "_rollback_index_location"]
+  return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
+
+
 def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
                         has_ramdisk=False, two_step_image=False):
   """Build a bootable image from the specified sourcedir.
