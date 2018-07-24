@@ -22,6 +22,30 @@
       "revId": "996ad8e719bfbc262b7c15ca5059dfab53326451",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ccc4f5f4_9cc90a9b",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 679,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-07-24T18:59:31Z",
+      "side": 1,
+      "message": "Done (also tested this path and mentioned that in commit message).",
+      "parentUuid": "25d443f4_912561a3",
+      "range": {
+        "startLine": 679,
+        "startChar": 25,
+        "endLine": 679,
+        "endChar": 48
+      },
+      "revId": "996ad8e719bfbc262b7c15ca5059dfab53326451",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
