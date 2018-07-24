@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a5b48266_5ef56a12",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-07-24T13:56:19Z",
+      "side": 1,
+      "message": "Yeah; IIUC, we don\u0027t currently proguard any bootclasspath code, so the difference is academic. If we started doing that, I guess we\u0027d have to keep anything with the annotation.\n\nWill add a comment.",
+      "parentUuid": "b36e0d43_e1c60b83",
+      "range": {
+        "startLine": 548,
+        "startChar": 50,
+        "endLine": 548,
+        "endChar": 75
+      },
+      "revId": "31b517d14b2f95202614fb14e33deb26ce8bba5d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b77ec950_53ab08a0",
         "filename": "core/soong_java_prebuilt.mk",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2018-07-24T09:46:42Z",
       "side": 1,
       "message": "So Soong does not have a proguard rule?",
+      "range": {
+        "startLine": 86,
+        "startChar": 56,
+        "endLine": 86,
+        "endChar": 72
+      },
+      "revId": "31b517d14b2f95202614fb14e33deb26ce8bba5d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "605a404b_08853e08",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-07-24T13:56:19Z",
+      "side": 1,
+      "message": "Not sure - this file defines full_classes_jar and full_classes_pre_proguard_jar, but they appear to be the same file (see lines 24, 25). I guess that implies no proguard support here yet, but to be consistent with the non-soong rules it seems full_classes_jar (implicitly post-proguard) would be the right one?",
+      "parentUuid": "b77ec950_53ab08a0",
       "range": {
         "startLine": 86,
         "startChar": 56,
