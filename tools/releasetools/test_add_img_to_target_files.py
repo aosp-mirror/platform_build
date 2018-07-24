@@ -22,7 +22,8 @@ import zipfile
 import common
 import test_utils
 from add_img_to_target_files import (
-    AddCareMapTxtForAbOta, AddPackRadioImages, CheckAbOtaImages, GetCareMap)
+    AddCareMapTxtForAbOta, AddPackRadioImages, AppendVBMetaArgsForPartition,
+    CheckAbOtaImages, GetCareMap)
 from rangelib import RangeSet
 
 
@@ -263,6 +264,31 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
 
     # The existing entry should be scheduled to be replaced.
     self.assertIn('META/care_map.txt', OPTIONS.replace_updated_files_list)
+
+  def test_AppendVBMetaArgsForPartition(self):
+    OPTIONS.info_dict = {}
+    cmd = []
+    AppendVBMetaArgsForPartition(cmd, 'system', '/path/to/system.img')
+    self.assertEqual(
+        ['--include_descriptors_from_image', '/path/to/system.img'], cmd)
+
+  def test_AppendVBMetaArgsForPartition_vendorAsChainedPartition(self):
+    testdata_dir = test_utils.get_testdata_dir()
+    pubkey = os.path.join(testdata_dir, 'testkey.pubkey.pem')
+    OPTIONS.info_dict = {
+        'avb_avbtool': 'avbtool',
+        'avb_vendor_key_path': pubkey,
+        'avb_vendor_rollback_index_location': 5,
+    }
+    cmd = []
+    AppendVBMetaArgsForPartition(cmd, 'vendor', '/path/to/vendor.img')
+    self.assertEqual(2, len(cmd))
+    self.assertEqual('--chain_partition', cmd[0])
+    chained_partition_args = cmd[1].split(':')
+    self.assertEqual(3, len(chained_partition_args))
+    self.assertEqual('vendor', chained_partition_args[0])
+    self.assertEqual('5', chained_partition_args[1])
+    self.assertTrue(os.path.exists(chained_partition_args[2]))
 
   def test_GetCareMap(self):
     sparse_image = test_utils.construct_sparse_image([
