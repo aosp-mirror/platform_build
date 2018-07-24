@@ -28,17 +28,17 @@ Usage:  img_from_target_files [flags] input_target_files output_image_zip
 
 from __future__ import print_function
 
+import os
+import shutil
 import sys
+import zipfile
+
+import common
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
   sys.exit(1)
 
-import os
-import shutil
-import zipfile
-
-import common
 
 OPTIONS = common.OPTIONS
 
@@ -51,11 +51,12 @@ def CopyInfo(output_zip):
 
 
 def main(argv):
-  bootable_only = [False]
+  # This allows modifying the value from inner function.
+  bootable_only_array = [False]
 
   def option_handler(o, _):
     if o in ("-z", "--bootable_zip"):
-      bootable_only[0] = True
+      bootable_only_array[0] = True
     else:
       return False
     return True
@@ -65,7 +66,7 @@ def main(argv):
                              extra_long_opts=["bootable_zip"],
                              extra_option_handler=option_handler)
 
-  bootable_only = bootable_only[0]
+  bootable_only = bootable_only_array[0]
 
   if len(args) != 2:
     common.Usage(__doc__)

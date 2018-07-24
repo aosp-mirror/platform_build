@@ -163,7 +163,7 @@ class DataImage(Image):
 
   def RangeSha1(self, ranges):
     h = sha1()
-    for data in self._GetRangeData(ranges):
+    for data in self._GetRangeData(ranges): # pylint: disable=not-an-iterable
       h.update(data)
     return h.hexdigest()
 
@@ -177,7 +177,7 @@ class DataImage(Image):
       return sha1(self.data).hexdigest()
 
   def WriteRangeDataToFd(self, ranges, fd):
-    for data in self._GetRangeData(ranges):
+    for data in self._GetRangeData(ranges): # pylint: disable=not-an-iterable
       fd.write(data)
 
 
@@ -320,46 +320,45 @@ class ImgdiffStats(object):
       print(''.join(['  {}\n'.format(name) for name in values]))
 
 
-# BlockImageDiff works on two image objects.  An image object is
-# anything that provides the following attributes:
-#
-#    blocksize: the size in bytes of a block, currently must be 4096.
-#
-#    total_blocks: the total size of the partition/image, in blocks.
-#
-#    care_map: a RangeSet containing which blocks (in the range [0,
-#      total_blocks) we actually care about; i.e. which blocks contain
-#      data.
-#
-#    file_map: a dict that partitions the blocks contained in care_map
-#      into smaller domains that are useful for doing diffs on.
-#      (Typically a domain is a file, and the key in file_map is the
-#      pathname.)
-#
-#    clobbered_blocks: a RangeSet containing which blocks contain data
-#      but may be altered by the FS. They need to be excluded when
-#      verifying the partition integrity.
-#
-#    ReadRangeSet(): a function that takes a RangeSet and returns the
-#      data contained in the image blocks of that RangeSet.  The data
-#      is returned as a list or tuple of strings; concatenating the
-#      elements together should produce the requested data.
-#      Implementations are free to break up the data into list/tuple
-#      elements in any way that is convenient.
-#
-#    RangeSha1(): a function that returns (as a hex string) the SHA-1
-#      hash of all the data in the specified range.
-#
-#    TotalSha1(): a function that returns (as a hex string) the SHA-1
-#      hash of all the data in the image (ie, all the blocks in the
-#      care_map minus clobbered_blocks, or including the clobbered
-#      blocks if include_clobbered_blocks is True).
-#
-# When creating a BlockImageDiff, the src image may be None, in which
-# case the list of transfers produced will never read from the
-# original image.
-
 class BlockImageDiff(object):
+  """Generates the diff of two block image objects.
+
+  BlockImageDiff works on two image objects. An image object is anything that
+  provides the following attributes:
+
+     blocksize: the size in bytes of a block, currently must be 4096.
+
+     total_blocks: the total size of the partition/image, in blocks.
+
+     care_map: a RangeSet containing which blocks (in the range [0,
+       total_blocks) we actually care about; i.e. which blocks contain data.
+
+     file_map: a dict that partitions the blocks contained in care_map into
+         smaller domains that are useful for doing diffs on. (Typically a domain
+         is a file, and the key in file_map is the pathname.)
+
+     clobbered_blocks: a RangeSet containing which blocks contain data but may
+         be altered by the FS. They need to be excluded when verifying the
+         partition integrity.
+
+     ReadRangeSet(): a function that takes a RangeSet and returns the data
+         contained in the image blocks of that RangeSet. The data is returned as
+         a list or tuple of strings; concatenating the elements together should
+         produce the requested data. Implementations are free to break up the
+         data into list/tuple elements in any way that is convenient.
+
+     RangeSha1(): a function that returns (as a hex string) the SHA-1 hash of
+         all the data in the specified range.
+
+     TotalSha1(): a function that returns (as a hex string) the SHA-1 hash of
+         all the data in the image (ie, all the blocks in the care_map minus
+         clobbered_blocks, or including the clobbered blocks if
+         include_clobbered_blocks is True).
+
+  When creating a BlockImageDiff, the src image may be None, in which case the
+  list of transfers produced will never read from the original image.
+  """
+
   def __init__(self, tgt, src=None, threads=None, version=4,
                disable_imgdiff=False):
     if threads is None:
