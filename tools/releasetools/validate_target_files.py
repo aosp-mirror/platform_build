@@ -315,9 +315,19 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
     key = options['verity_key']
     if key is None:
       key = info_dict['avb_vbmeta_key_path']
+
     # avbtool verifies all the images that have descriptors listed in vbmeta.
     image = os.path.join(input_tmp, 'IMAGES', 'vbmeta.img')
     cmd = ['avbtool', 'verify_image', '--image', image, '--key', key]
+
+    # Append the args for chained partitions if any.
+    for partition in common.AVB_PARTITIONS:
+      key_name = 'avb_' + partition + '_key_path'
+      if info_dict.get(key_name) is not None:
+        chained_partition_arg = common.GetAvbChainedPartitionArg(
+            partition, info_dict, options[key_name])
+        cmd.extend(["--expected_chain_partition", chained_partition_arg])
+
     proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdoutdata, _ = proc.communicate()
     assert proc.returncode == 0, \
@@ -339,8 +349,13 @@ def main():
   parser.add_argument(
       '--verity_key',
       help='the verity public key to verify the bootable images (Verified '
-           'Boot 1.0), or the vbmeta image (Verified Boot 2.0), where '
+           'Boot 1.0), or the vbmeta image (Verified Boot 2.0, aka AVB), where '
            'applicable')
+  for partition in common.AVB_PARTITIONS:
+    parser.add_argument(
+        '--avb_' + partition + '_key_path',
+        help='the public or private key in PEM format to verify AVB chained '
+             'partition of {}'.format(partition))
   parser.add_argument(
       '--verity_key_mincrypt',
       help='the verity public key in mincrypt format to verify the system '
