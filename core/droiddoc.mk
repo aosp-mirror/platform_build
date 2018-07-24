@@ -287,6 +287,7 @@ $(out_zip): $(full_target)
 	$(hide) ( F=$$(pwd)/$@ ; cd $(PRIVATE_DOCS_DIR) && zip -rqX $$F * )
 
 $(LOCAL_MODULE)-docs.zip : $(out_zip)
+.PHONY: $(LOCAL_MODULE)-docs.zip
 
 $(call dist-for-goals,docs,$(out_zip))
 
