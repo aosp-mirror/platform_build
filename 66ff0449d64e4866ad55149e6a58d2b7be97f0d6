@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4f93c30b_e1c8a064",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-07-24T08:54:41Z",
+      "side": 1,
+      "message": "Can change to \n\nifdef $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files\n   ...\n\nelse\n  $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files :\u003d true\n  ...\n\n\n\nendif # $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files",
+      "range": {
+        "startLine": 570,
+        "startChar": 0,
+        "endLine": 578,
+        "endChar": 70
+      },
+      "revId": "66ff0449d64e4866ad55149e6a58d2b7be97f0d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
