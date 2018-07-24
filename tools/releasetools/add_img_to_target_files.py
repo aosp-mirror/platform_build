@@ -373,22 +373,9 @@ def AppendVBMetaArgsForPartition(cmd, partition, image):
   # Check if chain partition is used.
   key_path = OPTIONS.info_dict.get("avb_" + partition + "_key_path")
   if key_path:
-    # extract public key in AVB format to be included in vbmeta.img
-    avbtool = os.getenv('AVBTOOL') or OPTIONS.info_dict["avb_avbtool"]
-    pubkey_path = common.MakeTempFile(prefix="avb-", suffix=".pubkey")
-    proc = common.Run(
-        [avbtool, "extract_public_key", "--key", key_path, "--output",
-         pubkey_path],
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    stdoutdata, _ = proc.communicate()
-    assert proc.returncode == 0, \
-        "Failed to extract pubkey for {}:\n{}".format(
-            partition, stdoutdata)
-
-    rollback_index_location = OPTIONS.info_dict[
-        "avb_" + partition + "_rollback_index_location"]
-    cmd.extend(["--chain_partition", "%s:%s:%s" % (
-        partition, rollback_index_location, pubkey_path)])
+    chained_partition_arg = common.GetAvbChainedPartitionArg(
+        partition, OPTIONS.info_dict)
+    cmd.extend(["--chain_partition", chained_partition_arg])
   else:
     cmd.extend(["--include_descriptors_from_image", image])
 
