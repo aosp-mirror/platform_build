@@ -131,6 +131,7 @@ endif  # LOCAL_SOONG_DEX_JAR
 
 javac-check : $(full_classes_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_jar)
+.PHONY: javac-check-$(LOCAL_MODULE)
 
 ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_SDK_VERSION),system_current)
