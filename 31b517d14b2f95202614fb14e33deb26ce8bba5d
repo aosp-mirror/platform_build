@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "bafb0f08_be378c86",
+        "filename": "core/java.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 548,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-07-24T14:29:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a5b48266_5ef56a12",
+      "range": {
+        "startLine": 548,
+        "startChar": 50,
+        "endLine": 548,
+        "endChar": 75
+      },
+      "revId": "31b517d14b2f95202614fb14e33deb26ce8bba5d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b77ec950_53ab08a0",
         "filename": "core/soong_java_prebuilt.mk",
         "patchSetId": 3
@@ -117,6 +141,30 @@
       "revId": "31b517d14b2f95202614fb14e33deb26ce8bba5d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ccdd8709_c05e668f",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-07-24T14:29:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "adc847db_8d4f45ef",
+      "range": {
+        "startLine": 86,
+        "startChar": 56,
+        "endLine": 86,
+        "endChar": 72
+      },
+      "revId": "31b517d14b2f95202614fb14e33deb26ce8bba5d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
