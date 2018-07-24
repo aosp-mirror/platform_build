@@ -145,3 +145,4 @@ $(products_svg): $(products_graph) $(product_debug_files)
 	dot -Tsvg -Nshape=box -o $@ $<
 
 product-graph: $(products_pdf) $(products_svg)
+.PHONY: product-graph

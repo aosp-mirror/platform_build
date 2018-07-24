@@ -308,6 +308,7 @@ $(full_classes_compiled_jar): \
 
 javac-check : $(full_classes_compiled_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
+.PHONY: javac-check-$(LOCAL_MODULE)
 
 $(full_classes_combined_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_combined_jar): $(full_classes_compiled_jar) \
@@ -566,6 +567,7 @@ ALL_FINDBUGS_FILES += $(findbugs_xml)
 findbugs_html := $(PRODUCT_OUT)/findbugs/$(LOCAL_MODULE).html
 $(findbugs_html) : PRIVATE_XML_FILE := $(findbugs_xml)
 $(LOCAL_MODULE)-findbugs : $(findbugs_html)
+.PHONY: $(LOCAL_MODULE)-findbugs
 $(findbugs_html) : $(findbugs_xml)
 	@mkdir -p $(dir $@)
 	@echo ConvertXmlToText: $@
