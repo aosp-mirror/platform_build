@@ -145,8 +145,10 @@ vndk_snapshot_configs := \
 # vndk_snapshot_zip
 vndk_snapshot_variant := $(vndk_snapshot_out)/$(TARGET_ARCH)
 binder :=
-ifneq ($(TARGET_USES_64_BIT_BINDER), true)
-  binder := binder32
+ifneq ($(TARGET_IS_64_BIT), true)
+  ifneq ($(TARGET_USES_64_BIT_BINDER), true)
+    binder := binder32
+  endif
 endif
 vndk_lib_dir := $(subst $(space),/,$(strip $(vndk_snapshot_variant) $(binder) arch-$(TARGET_ARCH)-$(TARGET_ARCH_VARIANT)))
 vndk_lib_dir_2nd := $(subst $(space),/,$(strip $(vndk_snapshot_variant) $(binder) arch-$(TARGET_2ND_ARCH)-$(TARGET_2ND_ARCH_VARIANT)))
