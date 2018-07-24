@@ -3,11 +3,12 @@
 # Common compile-time definitions for GSI
 #
 
-# system.img is always ext4 with sparse option
+# GSIs always use ext4.
 TARGET_USERIMAGES_USE_EXT4 := true
-# TODO(b/63790380): emulator doesn't support sparse yet
-#TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
-TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
+# GSIs are historically released in sparse format.
+# Some vendors' bootloaders don't work properly with raw format images. So
+# we explicit specify this need below (even though it's the current default).
+TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
 TARGET_USES_MKE2FS := true
 
 # Android Verified Boot (AVB):
