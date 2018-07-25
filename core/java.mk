@@ -457,13 +457,14 @@ legacy_proguard_flags := -injars  $(link_instr_classes_jar) \
     -applymapping $(link_instr_intermediates_dir.COMMON)/proguard_dictionary \
     -verbose \
     $(legacy_proguard_flags)
+legacy_proguard_lib_deps += \
+  $(link_instr_classes_jar) \
+  $(link_instr_intermediates_dir.COMMON)/proguard_options \
+  $(link_instr_intermediates_dir.COMMON)/proguard_dictionary \
 
 # Sometimes (test + main app) uses different keep rules from the main app -
 # apply the main app's dictionary anyway.
 legacy_proguard_flags += -ignorewarnings
-
-# Make sure we run Proguard on the main app first
-$(full_classes_proguard_jar) : $(link_instr_intermediates_dir.COMMON)/proguard.classes.jar
 
 endif # no obfuscation
 endif # LOCAL_INSTRUMENTATION_FOR
