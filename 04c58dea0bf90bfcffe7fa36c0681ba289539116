@@ -16,6 +16,24 @@
       "revId": "04c58dea0bf90bfcffe7fa36c0681ba289539116",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f02d9e0a_30fa98db",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2876,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-25T16:46:31Z",
+      "side": 1,
+      "message": "I believe that this is executed in the target-specific context (at the time of evaluation, not later). We\u0027re already using this above. (dependencies don\u0027t use that context though, which is where it would be most helpful)",
+      "parentUuid": "aa002e00_b428e47f",
+      "revId": "04c58dea0bf90bfcffe7fa36c0681ba289539116",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
