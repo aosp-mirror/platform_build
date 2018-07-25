@@ -483,7 +483,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     True iff the image is built successfully.
   """
   # system_root_image=true: build a system.img that combines the contents of
-  # /system and the ramdisk, and can be mounted at the root of the file system.
+  # /system and root, which should be mounted at the root of the file system.
   origin_in = in_dir
   fs_config = prop_dict.get("fs_config")
   if (prop_dict.get("system_root_image") == "true" and
@@ -492,12 +492,12 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     # Change the mount point to "/".
     prop_dict["mount_point"] = "/"
     if fs_config:
-      # We need to merge the fs_config files of system and ramdisk.
-      merged_fs_config = common.MakeTempFile(prefix="root_fs_config",
+      # We need to merge the fs_config files of system and root.
+      merged_fs_config = common.MakeTempFile(prefix="merged_fs_config",
                                              suffix=".txt")
       with open(merged_fs_config, "w") as fw:
-        if "ramdisk_fs_config" in prop_dict:
-          with open(prop_dict["ramdisk_fs_config"]) as fr:
+        if "root_fs_config" in prop_dict:
+          with open(prop_dict["root_fs_config"]) as fr:
             fw.writelines(fr.readlines())
         with open(fs_config) as fr:
           fw.writelines(fr.readlines())
@@ -645,10 +645,10 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
   if in_dir != origin_in:
     # Construct a staging directory of the root file system.
-    ramdisk_dir = prop_dict.get("ramdisk_dir")
-    if ramdisk_dir:
+    root_dir = prop_dict.get("root_dir")
+    if root_dir:
       shutil.rmtree(in_dir)
-      shutil.copytree(ramdisk_dir, in_dir, symlinks=True)
+      shutil.copytree(root_dir, in_dir, symlinks=True)
     staging_system = os.path.join(in_dir, "system")
     shutil.rmtree(staging_system, ignore_errors=True)
     shutil.copytree(origin_in, staging_system, symlinks=True)
@@ -790,8 +790,8 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["journal_size"] = "0"
     copy_prop("system_verity_block_device", "verity_block_device")
     copy_prop("system_root_image", "system_root_image")
-    copy_prop("ramdisk_dir", "ramdisk_dir")
-    copy_prop("ramdisk_fs_config", "ramdisk_fs_config")
+    copy_prop("root_dir", "root_dir")
+    copy_prop("root_fs_config", "root_fs_config")
     copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
@@ -875,6 +875,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("product_extfs_inode_count", "extfs_inode_count")
     if not copy_prop("product_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
+    copy_prop("product_reserved_size", "partition_reserved_size")
   elif mount_point == "product-services":
     copy_prop("avb_productservices_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_productservices_add_hashtree_footer_args",
@@ -896,6 +897,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("productservices_extfs_inode_count", "extfs_inode_count")
     if not copy_prop("productservices_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
+    copy_prop("productservices_reserved_size", "partition_reserved_size")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
@@ -935,6 +937,10 @@ def GlobalDictFromImageProp(image_prop, mount_point):
     copy_prop("partition_size", "system_size")
   elif mount_point == "vendor":
     copy_prop("partition_size", "vendor_size")
+  elif mount_point == "product":
+    copy_prop("partition_size", "product_size")
+  elif mount_point == "product-services":
+    copy_prop("partition_size", "productservices_size")
   return d
 
 

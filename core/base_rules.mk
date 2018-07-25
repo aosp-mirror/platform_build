@@ -356,6 +356,7 @@ endif
 ## make clean- targets
 ###########################################################
 cleantarget := clean-$(my_register_name)
+.PHONY: $(cleantarget)
 $(cleantarget) : PRIVATE_MODULE := $(my_register_name)
 $(cleantarget) : PRIVATE_CLEAN_FILES := \
     $(LOCAL_BUILT_MODULE) \

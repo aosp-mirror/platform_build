@@ -524,6 +524,9 @@ class CommonApkUtilsTest(unittest.TestCase):
 
 class CommonUtilsTest(unittest.TestCase):
 
+  def setUp(self):
+    self.testdata_dir = test_utils.get_testdata_dir()
+
   def tearDown(self):
     common.Cleanup()
 
@@ -729,6 +732,56 @@ class CommonUtilsTest(unittest.TestCase):
       self.assertRaises(
           AssertionError, common.GetSparseImage, 'system', tempdir, input_zip,
           False)
+
+  def test_GetAvbChainedPartitionArg(self):
+    pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
+    info_dict = {
+        'avb_avbtool': 'avbtool',
+        'avb_system_key_path': pubkey,
+        'avb_system_rollback_index_location': 2,
+    }
+    args = common.GetAvbChainedPartitionArg('system', info_dict).split(':')
+    self.assertEqual(3, len(args))
+    self.assertEqual('system', args[0])
+    self.assertEqual('2', args[1])
+    self.assertTrue(os.path.exists(args[2]))
+
+  def test_GetAvbChainedPartitionArg_withPrivateKey(self):
+    key = os.path.join(self.testdata_dir, 'testkey.key')
+    info_dict = {
+        'avb_avbtool': 'avbtool',
+        'avb_product_key_path': key,
+        'avb_product_rollback_index_location': 2,
+    }
+    args = common.GetAvbChainedPartitionArg('product', info_dict).split(':')
+    self.assertEqual(3, len(args))
+    self.assertEqual('product', args[0])
+    self.assertEqual('2', args[1])
+    self.assertTrue(os.path.exists(args[2]))
+
+  def test_GetAvbChainedPartitionArg_withSpecifiedKey(self):
+    info_dict = {
+        'avb_avbtool': 'avbtool',
+        'avb_system_key_path': 'does-not-exist',
+        'avb_system_rollback_index_location': 2,
+    }
+    pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
+    args = common.GetAvbChainedPartitionArg(
+        'system', info_dict, pubkey).split(':')
+    self.assertEqual(3, len(args))
+    self.assertEqual('system', args[0])
+    self.assertEqual('2', args[1])
+    self.assertTrue(os.path.exists(args[2]))
+
+  def test_GetAvbChainedPartitionArg_invalidKey(self):
+    pubkey = os.path.join(self.testdata_dir, 'testkey_with_passwd.x509.pem')
+    info_dict = {
+        'avb_avbtool': 'avbtool',
+        'avb_system_key_path': pubkey,
+        'avb_system_rollback_index_location': 2,
+    }
+    self.assertRaises(
+        AssertionError, common.GetAvbChainedPartitionArg, 'system', info_dict)
 
 
 class InstallRecoveryScriptFormatTest(unittest.TestCase):

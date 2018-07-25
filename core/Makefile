@@ -1213,6 +1213,7 @@ $(if $(filter $(2),product),\
     $(if $(BOARD_PRODUCTIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "product_squashfs_block_size=$(BOARD_PRODUCTIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
     $(if $(BOARD_PRODUCTIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "product_squashfs_disable_4k_align=$(BOARD_PRODUCTIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
     $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH),$(hide) echo "product_base_fs_file=$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH)" >> $(1))
+    $(if $(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "product_reserved_size=$(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
 )
 $(if $(filter $(2),productservices),\
     $(if $(BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE),$(hide) echo "productservices_fs_type=$(BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE)" >> $(1))
@@ -1224,6 +1225,7 @@ $(if $(filter $(2),productservices),\
     $(if $(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_COMPRESSOR_OPT),$(hide) echo "productservices_squashfs_compressor_opt=$(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_COMPRESSOR_OPT)" >> $(1))
     $(if $(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_BLOCK_SIZE),$(hide) echo "productservices_squashfs_block_size=$(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_BLOCK_SIZE)" >> $(1))
     $(if $(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_DISABLE_4K_ALIGN),$(hide) echo "productservices_squashfs_disable_4k_align=$(BOARD_PRODUCT_SERVICESIMAGE_SQUASHFS_DISABLE_4K_ALIGN)" >> $(1))
+    $(if $(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE),$(hide) echo "productservices_reserved_size=$(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE)" >> $(1))
 )
 $(if $(filter $(2),oem),\
     $(if $(BOARD_OEMIMAGE_PARTITION_SIZE),$(hide) echo "oem_size=$(BOARD_OEMIMAGE_PARTITION_SIZE)" >> $(1))
@@ -1285,7 +1287,7 @@ $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(hide) echo "recovery_as_boot=true" >> $(1))
 $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
     $(hide) echo "system_root_image=true" >> $(1)
-    $(hide) echo "ramdisk_dir=$(TARGET_ROOT_OUT)" >> $(1))
+    $(hide) echo "root_dir=$(TARGET_ROOT_OUT)" >> $(1))
 $(if $(USE_LOGICAL_PARTITIONS),$(hide) echo "use_logical_partitions=true" >> $(1))
 $(if $(3),$(hide) $(foreach kv,$(3),echo "$(kv)" >> $(1);))
 endef
@@ -2266,8 +2268,11 @@ define build-productimage-target
   $(call generate-image-prop-dictionary, $(productimage_intermediates)/product_image_info.txt,product,skip_fsck=true)
   $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
       ./build/tools/releasetools/build_image.py \
-      $(TARGET_OUT_PRODUCT) $(productimage_intermediates)/product_image_info.txt $(INSTALLED_PRODUCTIMAGE_TARGET) $(TARGET_OUT)
-  $(hide) $(call assert-max-image-size,$(INSTALLED_PRODUCTIMAGE_TARGET),$(BOARD_PRODUCTIMAGE_PARTITION_SIZE))
+      $(TARGET_OUT_PRODUCT) $(productimage_intermediates)/product_image_info.txt $(INSTALLED_PRODUCTIMAGE_TARGET) $(TARGET_OUT) \
+      $(productimage_intermediates)/generated_product_image_info.txt
+  $(hide) $(call assert-max-image-size,$(INSTALLED_PRODUCTIMAGE_TARGET),\
+      $(call read-image-prop-dictionary,\
+          $(productimage_intermediates)/generated_product_image_info.txt,product_size))
 endef
 
 # We just build this directly to the install location.
@@ -2318,8 +2323,11 @@ define build-productservicesimage-target
   $(call generate-userimage-prop-dictionary, $(productservicesimage_intermediates)/productservices_image_info.txt, skip_fsck=true)
   $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
       ./build/tools/releasetools/build_image.py \
-      $(TARGET_OUT_PRODUCT_SERVICES) $(productservicesimage_intermediates)/productservices_image_info.txt $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) $(TARGET_OUT)
-  $(hide) $(call assert-max-image-size,$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET),$(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE))
+      $(TARGET_OUT_PRODUCT_SERVICES) $(productservicesimage_intermediates)/productservices_image_info.txt $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) $(TARGET_OUT) \
+      $(productservicesimage_intermediates)/generated_productservices_image_info.txt
+  $(hide) $(call assert-max-image-size,$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET),\
+      $(call read-image-prop-dictionary,\
+          $(productservicesimage_intermediates)/generated_productservices_image_info.txt,productservices_size))
 endef
 
 # We just build this directly to the install location.
@@ -2549,6 +2557,60 @@ $(INSTALLED_VBMETAIMAGE_TARGET): $(AVBTOOL)
 	  --flag 2 --padding_size 4096 --output $@
 
 endif # BOARD_AVB_ENABLE
+
+# -----------------------------------------------------------------
+# Check image sizes <= size of super partition
+
+ifeq (,$(TARGET_BUILD_APPS))
+# Do not check for apps-only build
+
+ifeq (true,$(USE_LOGICAL_PARTITIONS))
+ifdef BOARD_SUPER_PARTITION_SIZE
+ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
+
+droid_targets: check_android_partition_sizes
+
+.PHONY: check_android_partition_sizes
+
+# BOARD_SUPER_PARTITION_PARTITION_LIST: a list of the following tokens
+valid_super_partition_list := system vendor product productservices
+ifneq (,$(filter-out $(valid_super_partition_list),$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
+$(error BOARD_SUPER_PARTITION_PARTITION_LIST contains invalid partition name. \
+        Valid names are $(valid_super_partition_list).)
+endif
+valid_super_partition_list :=
+
+# Add image dependencies so that generated_*_image_info.txt are written before checking.
+ifneq (,$(filter system,$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
+check_android_partition_sizes: $(BUILT_SYSTEMIMAGE)
+endif
+ifneq (,$(filter vendor,$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
+check_android_partition_sizes: $(INSTALLED_VENDORIMAGE_TARGET)
+endif
+ifneq (,$(filter product,$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
+check_android_partition_sizes: $(INSTALLED_PRODUCTIMAGE_TARGET)
+endif
+ifneq (,$(filter productservices,$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
+check_android_partition_sizes: $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
+endif
+
+check_android_partition_sizes:
+	partition_size_list="$(foreach p,$(BOARD_SUPER_PARTITION_PARTITION_LIST),$(call read-image-prop-dictionary,$($(p)image_intermediates)/generated_$(p)_image_info.txt,$(p)_size))"; \
+	sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${partition_size_list}"); \
+	if [ $$(( $${sum_sizes_expr} )) -gt $(BOARD_SUPER_PARTITION_SIZE) ]; then \
+		echo 'The sum of sizes of all logical partitions is larger than BOARD_SUPER_PARTITION_SIZE.'; \
+		echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' $(BOARD_SUPER_PARTITION_SIZE); \
+		exit 1; \
+	else \
+		echo 'The sum of sizes of all logical partitions is within BOARD_SUPER_PARTITION_SIZE:' \
+		    $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '<=' $(BOARD_SUPER_PARTITION_SIZE); \
+	fi
+
+endif # BOARD_SUPER_PARTITION_PARTITION_LIST
+endif # BOARD_SUPER_PARTITION_SIZE
+endif # USE_LOGICAL_PARTITIONS
+
+endif # TARGET_BUILD_APPS
 
 # -----------------------------------------------------------------
 # bring in the installer image generation defines if necessary
@@ -3195,6 +3257,27 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(ZIP2ZIP)
 updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
 
 # -----------------------------------------------------------------
+# A zip of the appcompat directory containing logs
+APPCOMPAT_ZIP := $(PRODUCT_OUT)/appcompat.zip
+# For apps_only build we'll establish the dependency later in build/make/core/main.mk.
+ifndef TARGET_BUILD_APPS
+$(APPCOMPAT_ZIP): $(INSTALLED_SYSTEMIMAGE) \
+		$(INSTALLED_BOOTIMAGE_TARGET) \
+		$(INSTALLED_USERDATAIMAGE_TARGET) \
+		$(INSTALLED_VENDORIMAGE_TARGET) \
+		$(INSTALLED_PRODUCTIMAGE_TARGET) \
+		$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
+endif
+$(APPCOMPAT_ZIP): PRIVATE_LIST_FILE := $(call intermediates-dir-for,PACKAGING,appcompat)/filelist
+$(APPCOMPAT_ZIP): $(SOONG_ZIP)
+	@echo "appcompat logs: $@"
+	$(hide) rm -rf $@ $(PRIVATE_LIST_FILE)
+	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/appcompat $(dir $(PRIVATE_LIST_FILE))
+	$(hide) find $(PRODUCT_OUT)/appcompat | sort >$(PRIVATE_LIST_FILE)
+	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/appcompat -l $(PRIVATE_LIST_FILE)
+
+
+# -----------------------------------------------------------------
 # A zip of the symbols directory.  Keep the full paths to make it
 # more obvious where these files came from.
 #
@@ -3450,6 +3533,7 @@ deps := \
 	$(OUT_DOCS)/offline-sdk-timestamp \
 	$(SYMBOLS_ZIP) \
 	$(COVERAGE_ZIP) \
+	$(APPCOMPAT_ZIP) \
 	$(INSTALLED_SYSTEMIMAGE) \
 	$(INSTALLED_QEMU_SYSTEMIMAGE) \
 	$(INSTALLED_QEMU_VENDORIMAGE) \
