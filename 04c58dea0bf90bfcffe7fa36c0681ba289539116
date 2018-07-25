@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aa002e00_b428e47f",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2876,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-25T16:43:53Z",
+      "side": 1,
+      "message": "Does this work?  I\u0027d expect it to be evaluated in the global context where $(PRIVATE_GREYLIST_INPUTS) is never set.",
+      "revId": "04c58dea0bf90bfcffe7fa36c0681ba289539116",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
