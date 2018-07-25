@@ -16,6 +16,24 @@
       "revId": "6a69848ea67166e2ccec71172ddcaa53b9cc72b6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c646e315_60513aac",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2018-07-25T08:01:23Z",
+      "side": 1,
+      "message": "We know it\u0027s the default. We still put it here to make it explicit that we want to release GSIs in sparse format, kind of like a documentation. Added some comments in PS3.",
+      "parentUuid": "be974fb1_6468c9b7",
+      "revId": "6a69848ea67166e2ccec71172ddcaa53b9cc72b6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
