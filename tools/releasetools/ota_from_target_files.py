@@ -250,12 +250,14 @@ class BuildInfo(object):
   def __init__(self, info_dict, oem_dicts):
     """Initializes a BuildInfo instance with the given dicts.
 
+    Note that it only wraps up the given dicts, without making copies.
+
     Arguments:
       info_dict: The build-time info dict.
       oem_dicts: A list of OEM dicts (which is parsed from --oem_settings). Note
           that it always uses the first dict to calculate the fingerprint or the
           device name. The rest would be used for asserting OEM properties only
-          (e.g.  one package can be installed on one of these devices).
+          (e.g. one package can be installed on one of these devices).
     """
     self.info_dict = info_dict
     self.oem_dicts = oem_dicts
@@ -289,8 +291,14 @@ class BuildInfo(object):
   def __getitem__(self, key):
     return self.info_dict[key]
 
+  def __setitem__(self, key, value):
+    self.info_dict[key] = value
+
   def get(self, key, default=None):
     return self.info_dict.get(key, default)
+
+  def items(self):
+    return self.info_dict.items()
 
   def GetBuildProp(self, prop):
     """Returns the inquired build property."""
@@ -689,16 +697,10 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
   if not HasTrebleEnabled(target_zip, target_info):
     return
 
-  # We don't support OEM thumbprint in Treble world (which calculates
-  # fingerprints in a different way as shown in CalculateFingerprint()).
-  assert not target_info.oem_props
-
   # Full OTA carries the info for system/vendor both.
   if source_info is None:
     AddCompatibilityArchive(True, True)
     return
-
-  assert not source_info.oem_props
 
   source_fp = source_info.fingerprint
   target_fp = target_info.fingerprint
@@ -825,7 +827,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
                                      allow_shared_blocks)
   system_tgt.ResetFileMap()
   system_diff = common.BlockDifference("system", system_tgt, src=None)
-  system_diff.WriteScript(script, output_zip)
+  system_diff.WriteScript(script, output_zip,
+                          write_verify_script=OPTIONS.verify)
 
   boot_img = common.GetBootableImage(
       "boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
@@ -837,7 +840,8 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
                                        allow_shared_blocks)
     vendor_tgt.ResetFileMap()
     vendor_diff = common.BlockDifference("vendor", vendor_tgt)
-    vendor_diff.WriteScript(script, output_zip)
+    vendor_diff.WriteScript(script, output_zip,
+                            write_verify_script=OPTIONS.verify)
 
   AddCompatibilityArchiveIfTrebleEnabled(input_zip, output_zip, target_info)
 
@@ -1517,10 +1521,16 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
 
       common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
 
+      # TODO(b/110106408): Remove after properly handling the SHA-1 embedded in
+      # the filename argument in updater code. Prior to that, explicitly list
+      # the SHA-1 of the source image, in case the updater tries to find a
+      # matching backup from /cache. Similarly for the call to
+      # script.ApplyPatch() below.
       script.PatchCheck("%s:%s:%d:%s:%d:%s" %
                         (boot_type, boot_device,
                          source_boot.size, source_boot.sha1,
-                         target_boot.size, target_boot.sha1))
+                         target_boot.size, target_boot.sha1),
+                        source_boot.sha1)
       size.append(target_boot.size)
 
   if size:
@@ -1551,10 +1561,12 @@ else
   device_specific.IncrementalOTA_InstallBegin()
 
   system_diff.WriteScript(script, output_zip,
-                          progress=0.8 if vendor_diff else 0.9)
+                          progress=0.8 if vendor_diff else 0.9,
+                          write_verify_script=OPTIONS.verify)
 
   if vendor_diff:
-    vendor_diff.WriteScript(script, output_zip, progress=0.1)
+    vendor_diff.WriteScript(script, output_zip, progress=0.1,
+                            write_verify_script=OPTIONS.verify)
 
   if OPTIONS.two_step:
     common.ZipWriteStr(output_zip, "boot.img", target_boot.data)
@@ -1643,9 +1655,15 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   target_zip = zipfile.ZipFile(target_file, 'w', allowZip64=True)
 
-  input_tmp = common.UnzipTemp(input_file, UNZIP_PATTERN)
   with zipfile.ZipFile(input_file, 'r') as input_zip:
     infolist = input_zip.infolist()
+    namelist = input_zip.namelist()
+
+  # Additionally unzip 'RADIO/*' if exists.
+  unzip_pattern = UNZIP_PATTERN[:]
+  if any([entry.startswith('RADIO/') for entry in namelist]):
+    unzip_pattern.append('RADIO/*')
+  input_tmp = common.UnzipTemp(input_file, unzip_pattern)
 
   for info in infolist:
     unzipped_file = os.path.join(input_tmp, *info.filename.split('/'))
@@ -1661,7 +1679,7 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
     elif skip_postinstall and info.filename == POSTINSTALL_CONFIG:
       pass
 
-    elif info.filename.startswith(('META/', 'IMAGES/')):
+    elif info.filename.startswith(('META/', 'IMAGES/', 'RADIO/')):
       common.ZipWrite(target_zip, unzipped_file, arcname=info.filename)
 
   common.ZipClose(target_zip)

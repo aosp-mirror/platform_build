@@ -17,12 +17,6 @@
 # Inherit common Android Go defaults.
 $(call inherit-product, build/target/product/go_defaults_common.mk)
 
-# 512MB specific properties.
-
-# lmkd can kill more now.
-PRODUCT_PROPERTY_OVERRIDES += \
-     ro.lmk.medium=700 \
-
-# madvise random in ART to reduce page cache thrashing.
-PRODUCT_PROPERTY_OVERRIDES += \
-     dalvik.vm.madvise-random=true
+# Add the system properties.
+TARGET_SYSTEM_PROP += \
+    build/make/target/board/go_defaults_512.prop

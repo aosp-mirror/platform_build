@@ -12,10 +12,12 @@ my_global_sanitize :=
 my_global_sanitize_diag :=
 ifeq ($(my_clang),true)
   ifdef LOCAL_IS_HOST_MODULE
-    my_global_sanitize := $(strip $(SANITIZE_HOST))
+    ifneq ($($(my_prefix)OS),windows)
+      my_global_sanitize := $(strip $(SANITIZE_HOST))
 
-    # SANITIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
-    my_global_sanitize := $(subst true,address,$(my_global_sanitize))
+      # SANITIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
+      my_global_sanitize := $(subst true,address,$(my_global_sanitize))
+    endif
   else
     my_global_sanitize := $(strip $(SANITIZE_TARGET))
     my_global_sanitize_diag := $(strip $(SANITIZE_TARGET_DIAG))
@@ -188,6 +190,15 @@ ifneq ($(filter safe-stack,$(my_sanitize)),)
   ifeq ($(my_32_64_bit_suffix),32)
     my_sanitize := $(filter-out safe-stack,$(my_sanitize))
   endif
+endif
+
+# Disable Scudo if ASan or TSan is enabled.
+ifneq ($(filter address thread,$(my_sanitize)),)
+  my_sanitize := $(filter-out scudo,$(my_sanitize))
+endif
+
+ifneq ($(filter scudo,$(my_sanitize)),)
+  my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)SCUDO_RUNTIME_LIBRARY)
 endif
 
 # Undefined symbols can occur if a non-sanitized library links
@@ -374,7 +385,7 @@ ifneq ($(my_sanitize_diag),)
     notrap_arg := $(subst $(space),$(comma),$(my_sanitize_diag)),
     my_cflags += -fno-sanitize-trap=$(notrap_arg)
     # Diagnostic requires a runtime library, unless ASan or TSan are also enabled.
-    ifeq ($(filter address thread,$(my_sanitize)),)
+    ifeq ($(filter address thread scudo,$(my_sanitize)),)
       # Does not have to be the first DT_NEEDED unlike ASan.
       my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY)
     endif

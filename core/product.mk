@@ -128,6 +128,7 @@ _product_var_list := \
     PRODUCT_PROPERTY_OVERRIDES \
     PRODUCT_DEFAULT_PROPERTY_OVERRIDES \
     PRODUCT_PRODUCT_PROPERTIES \
+    PRODUCT_PRODUCT_SERVICES_PROPERTIES \
     PRODUCT_CHARACTERISTICS \
     PRODUCT_COPY_FILES \
     PRODUCT_OTA_PUBLIC_KEYS \
@@ -167,6 +168,7 @@ _product_var_list := \
     PRODUCT_SYSTEM_VERITY_PARTITION \
     PRODUCT_VENDOR_VERITY_PARTITION \
     PRODUCT_PRODUCT_VERITY_PARTITION \
+    PRODUCT_PRODUCT_SERVICES_VERITY_PARTITION \
     PRODUCT_SYSTEM_SERVER_DEBUG_INFO \
     PRODUCT_OTHER_JAVA_DEBUG_INFO \
     PRODUCT_DEX_PREOPT_MODULE_CONFIGS \
@@ -182,6 +184,7 @@ _product_var_list := \
     PRODUCT_SYSTEM_BASE_FS_PATH \
     PRODUCT_VENDOR_BASE_FS_PATH \
     PRODUCT_PRODUCT_BASE_FS_PATH \
+    PRODUCT_PRODUCT_SERVICES_BASE_FS_PATH \
     PRODUCT_SHIPPING_API_LEVEL \
     VENDOR_PRODUCT_RESTRICT_VENDOR_FILES \
     VENDOR_EXCEPTION_MODULES \
@@ -197,6 +200,9 @@ _product_var_list := \
     PRODUCT_CFI_EXCLUDE_PATHS \
     PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE \
     PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE \
+    PRODUCT_USE_LOGICAL_PARTITIONS \
+    PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS \
+    PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST \
 
 define dump-product
 $(info ==== $(1) ====)\
@@ -212,10 +218,14 @@ endef
 #
 # $(1): product to inherit
 #
-# Does three things:
+# To be called from product makefiles, and is later evaluated during the import-nodes
+# call below. It does three things:
 #  1. Inherits all of the variables from $1.
 #  2. Records the inheritance in the .INHERITS_FROM variable
-#  3. Records that we've visited this node, in ALL_PRODUCTS
+#  3. Records the calling makefile in PARENT_PRODUCT_FILES
+#
+# (2) and (3) can be used together to reconstruct the include hierarchy
+# See e.g. product-graph.mk for an example of this.
 #
 define inherit-product
   $(if $(findstring ../,$(1)),\
@@ -223,13 +233,32 @@ define inherit-product
     $(eval np := $(strip $(1))))\
   $(foreach v,$(_product_var_list), \
       $(eval $(v) := $($(v)) $(INHERIT_TAG)$(np))) \
-  $(eval inherit_var := \
-      PRODUCTS.$(strip $(word 1,$(_include_stack))).INHERITS_FROM) \
+  $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
+  $(eval inherit_var := PRODUCTS.$(current_mk).INHERITS_FROM) \
   $(eval $(inherit_var) := $(sort $($(inherit_var)) $(np))) \
-  $(eval inherit_var:=) \
-  $(eval ALL_PRODUCTS := $(sort $(ALL_PRODUCTS) $(word 1,$(_include_stack))))
+  $(eval PARENT_PRODUCT_FILES := $(sort $(PARENT_PRODUCT_FILES) $(current_mk)))
 endef
 
+# Specifies a number of path prefixes, relative to PRODUCT_OUT, where the
+# product makefile hierarchy rooted in the current node places its artifacts.
+# Creating artifacts outside the specified paths will cause a build-time error.
+define require-artifacts-in-path
+  $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
+  $(eval PRODUCTS.$(current_mk).ARTIFACT_PATH_REQUIREMENTS := $(strip $(1))) \
+  $(eval PRODUCTS.$(current_mk).ARTIFACT_PATH_WHITELIST := $(strip $(2))) \
+  $(eval ARTIFACT_PATH_REQUIREMENT_PRODUCTS := \
+    $(sort $(ARTIFACT_PATH_REQUIREMENT_PRODUCTS) $(current_mk)))
+endef
+
+# Makes including non-existant modules in PRODUCT_PACKAGES an error.
+# $(1): whitelist of non-existant modules to allow.
+define enforce-product-packages-exist
+  $(eval current_mk := $(strip $(word 1,$(_include_stack)))) \
+  $(eval PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST := true) \
+  $(eval PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST := $(1)) \
+  $(eval .KATI_READONLY := PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST) \
+  $(eval .KATI_READONLY := PRODUCTS.$(current_mk).PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST)
+endef
 
 #
 # Do inherit-product only if $(1) exists
@@ -352,6 +381,8 @@ _product_stash_var_list += \
 	BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE \
 	BOARD_PRODUCTIMAGE_PARTITION_SIZE \
 	BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE \
+	BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE \
+	BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE \
 	BOARD_INSTALLER_CMDLINE \
 
 
@@ -359,6 +390,15 @@ _product_stash_var_list += \
 	DEFAULT_SYSTEM_DEV_CERTIFICATE \
 	WITH_DEXPREOPT \
 	WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY
+
+# Logical partitions related variables.
+_product_stash_var_list += \
+	BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE \
+	BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE \
+	BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE \
+	BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE \
+	BOARD_SUPER_PARTITION_SIZE \
+	BOARD_SUPER_PARTITION_PARTITION_LIST \
 
 #
 # Mark the variables in _product_stash_var_list as readonly

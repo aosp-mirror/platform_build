@@ -18,7 +18,7 @@
 define gather-all-products
 $(sort $(foreach p, \
 	$(eval _all_products_visited := )
-  $(call all-products-inner, $(ALL_PRODUCTS)) \
+  $(call all-products-inner, $(PARENT_PRODUCT_FILES)) \
 	, $(if $(strip $(p)),$(strip $(p)),)) \
 )
 endef
@@ -49,7 +49,7 @@ products_list := $(foreach prod,$(ANDROID_PRODUCT_GRAPH),$(call resolve-short-pr
 endif
 endif
 
-really_all_products := $(call gather-all-products)
+all_products := $(call gather-all-products)
 
 open_parethesis := (
 close_parenthesis := )
@@ -66,7 +66,7 @@ colorscheme=\"svg\" fontcolor=\"darkblue\" href=\"products/$(1).html\" \
 
 endef
 
-$(products_graph): PRIVATE_PRODUCTS := $(really_all_products)
+$(products_graph): PRIVATE_PRODUCTS := $(all_products)
 $(products_graph): PRIVATE_PRODUCTS_FILTER := $(products_list)
 
 $(products_graph): $(this_makefile)
@@ -105,6 +105,7 @@ $(OUT_DIR)/products/$(strip $(1)).txt: $(this_makefile)
 	$(hide) echo 'PRODUCT_DEFAULT_PROPERTY_OVERRIDES=$$(PRODUCTS.$(strip $(1)).PRODUCT_DEFAULT_PROPERTY_OVERRIDES)' >> $$@
 	$(hide) echo 'PRODUCT_SYSTEM_DEFAULT_PROPERTIES=$$(PRODUCTS.$(strip $(1)).PRODUCT_SYSTEM_DEFAULT_PROPERTIES)' >> $$@
 	$(hide) echo 'PRODUCT_PRODUCT_PROPERTIES=$$(PRODUCTS.$(strip $(1)).PRODUCT_PRODUCT_PROPERTIES)' >> $$@
+	$(hide) echo 'PRODUCT_PRODUCT_SERVICES_PROPERTIES=$$(PRODUCTS.$(strip $(1)).PRODUCT_PRODUCT_SERVICES_PROPERTIES)' >> $$@
 	$(hide) echo 'PRODUCT_CHARACTERISTICS=$$(PRODUCTS.$(strip $(1)).PRODUCT_CHARACTERISTICS)' >> $$@
 	$(hide) echo 'PRODUCT_COPY_FILES=$$(PRODUCTS.$(strip $(1)).PRODUCT_COPY_FILES)' >> $$@
 	$(hide) echo 'PRODUCT_OTA_PUBLIC_KEYS=$$(PRODUCTS.$(strip $(1)).PRODUCT_OTA_PUBLIC_KEYS)' >> $$@
@@ -130,7 +131,7 @@ $(call product-debug-filename, $(p)): \
 endef
 
 product_debug_files:=
-$(foreach p,$(really_all_products), \
+$(foreach p,$(all_products), \
 			$(eval $(call transform-product-debug, $(p))) \
 			$(eval product_debug_files += $(call product-debug-filename, $(p))) \
    )
@@ -144,3 +145,4 @@ $(products_svg): $(products_graph) $(product_debug_files)
 	dot -Tsvg -Nshape=box -o $@ $<
 
 product-graph: $(products_pdf) $(products_svg)
+.PHONY: product-graph

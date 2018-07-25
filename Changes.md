@@ -1,5 +1,137 @@
 # Build System Changes for Android.mk Writers
 
+### `export` and `unexport` deprecation  {#export_keyword}
+
+The `export` and `unexport` keywords have been deprecated, and will throw
+warnings or errors depending on where they are used.
+
+Early in the make system, during product configuration and BoardConfig.mk
+reading: these will throw a warnings, and will be an error in the future.
+Device specific configuration should not be able to affect common core build
+steps -- we're looking at triggering build steps to be invalidated if the set
+of environment variables they can access changes. If device specific
+configuration is allowed to change those, switching devices with the same
+output directory could become significantly more expensive than it already can
+be.
+
+Later, during Android.mk files, and later tasks: these will throw errors, since
+it is increasingly likely that they are being used incorrectly, attempting to
+change the environment for a single build step, and instead setting it for
+hundreds of thousands.
+
+It is not recommended to just move the environment variable setting outside of
+the build (in vendorsetup.sh, or some other configuration script or wrapper).
+We expect to limit the environment variables that the build respects in the
+future, others will be cleared. (There will be methods to get custom variables
+into the build, just not to every build step)
+
+Instead, write the export commands into the rule command lines themselves:
+
+``` make
+$(intermediates)/generated_output.img:
+	rm -rf $@
+	export MY_ENV_A="$(MY_A)"; make ...
+```
+
+If you want to set many environment variables, and/or use them many times,
+write them out to a script and source the script:
+
+``` make
+envsh := $(intermediates)/env.sh
+$(envsh):
+	rm -rf $@
+	echo 'export MY_ENV_A="$(MY_A)"' >$@
+	echo 'export MY_ENV_B="$(MY_B)"' >>$@
+
+$(intermediates)/generated_output.img: PRIVATE_ENV := $(envsh)
+$(intermediates)/generated_output.img: $(envsh) a/b/c/package.sh
+	rm -rf $@
+	source $(PRIVATE_ENV); make ...
+	source $(PRIVATE_ENV); a/b/c/package.sh ...
+```
+
+## Implicit make rules are obsolete {#implicit_rules}
+
+Implicit rules look something like the following:
+
+``` make
+$(TARGET_OUT_SHARED_LIBRARIES)/%_vendor.so: $(TARGET_OUT_SHARED_LIBRARIES)/%.so
+	...
+
+%.o : %.foo
+	...
+```
+
+These can have wide ranging effects across unrelated modules, so they're now obsolete. Instead, use static pattern rules, which are similar, but explicitly match the specified outputs:
+
+``` make
+libs := $(foreach lib,libfoo libbar,$(TARGET_OUT_SHARED_LIBRARIES)/$(lib)_vendor.so)
+$(libs): %_vendor.so: %.so
+	...
+
+files := $(wildcard $(LOCAL_PATH)/*.foo)
+gen := $(patsubst $(LOCAL_PATH)/%.foo,$(intermediates)/%.o,$(files))
+$(gen): %.o : %.foo
+	...
+```
+
+## Removing '/' from Valid Module Names {#name_slash}
+
+The build system uses module names in path names in many places. Having an
+extra '/' or '../' being inserted can cause problems -- and not just build
+breaks, but stranger invalid behavior.
+
+In every case we've seen, the fix is relatively simple: move the directory into
+`LOCAL_MODULE_RELATIVE_PATH` (or `LOCAL_MODULE_PATH` if you're still using it).
+If this causes multiple modules to be named the same, use unique module names
+and `LOCAL_MODULE_STEM` to change the installed file name:
+
+``` make
+include $(CLEAR_VARS)
+LOCAL_MODULE := ver1/code.bin
+LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)/firmware
+...
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := ver2/code.bin
+LOCAL_MODULE_PATH := $(TARGET_OUT_ETC)/firmware
+...
+include $(BUILD_PREBUILT)
+```
+
+Can be rewritten as:
+
+```
+include $(CLEAR_VARS)
+LOCAL_MODULE := ver1_code.bin
+LOCAL_MODULE_STEM := code.bin
+LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/firmware/ver1
+...
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := ver2_code.bin
+LOCAL_MODULE_STEM := code.bin
+LOCAL_MODULE_PATH := $(TARGET_OUT_VENDOR)/firmware/ver2
+...
+include $(BUILD_PREBUILT)
+```
+
+You just need to make sure that any other references (`PRODUCT_PACKAGES`,
+`LOCAL_REQUIRED_MODULES`, etc) are converted to the new names.
+
+## Valid Module Names {#name}
+
+We've adopted lexical requirements very similar to [Bazel's
+requirements](https://docs.bazel.build/versions/master/build-ref.html#name) for
+target names. Valid characters are `a-z`, `A-Z`, `0-9`, and the special
+characters `_.+-=,@~`. This currently applies to `LOCAL_PACKAGE_NAME`,
+`LOCAL_MODULE`, and `LOCAL_MODULE_SUFFIX`, and `LOCAL_MODULE_STEM*`.
+
+Many other characters already caused problems if you used them, so we don't
+expect this to have a large effect.
+
 ## PATH Tools {#PATH_Tools}
 
 The build has started restricting the external host tools usable inside the

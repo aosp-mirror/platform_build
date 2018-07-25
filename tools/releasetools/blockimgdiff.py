@@ -163,7 +163,7 @@ class DataImage(Image):
 
   def RangeSha1(self, ranges):
     h = sha1()
-    for data in self._GetRangeData(ranges):
+    for data in self._GetRangeData(ranges): # pylint: disable=not-an-iterable
       h.update(data)
     return h.hexdigest()
 
@@ -177,7 +177,7 @@ class DataImage(Image):
       return sha1(self.data).hexdigest()
 
   def WriteRangeDataToFd(self, ranges, fd):
-    for data in self._GetRangeData(ranges):
+    for data in self._GetRangeData(ranges): # pylint: disable=not-an-iterable
       fd.write(data)
 
 
@@ -270,7 +270,6 @@ class ImgdiffStats(object):
   USED_IMGDIFF_LARGE_APK = "Large APK files split and diff'd with imgdiff"
 
   # Reasons for not applying imgdiff on APKs.
-  SKIPPED_TRIMMED = "Not used imgdiff due to trimmed RangeSet"
   SKIPPED_NONMONOTONIC = "Not used imgdiff due to having non-monotonic ranges"
   SKIPPED_SHARED_BLOCKS = "Not used imgdiff due to using shared blocks"
   SKIPPED_INCOMPLETE = "Not used imgdiff due to incomplete RangeSet"
@@ -279,7 +278,6 @@ class ImgdiffStats(object):
   REASONS = (
       USED_IMGDIFF,
       USED_IMGDIFF_LARGE_APK,
-      SKIPPED_TRIMMED,
       SKIPPED_NONMONOTONIC,
       SKIPPED_SHARED_BLOCKS,
       SKIPPED_INCOMPLETE,
@@ -322,46 +320,45 @@ class ImgdiffStats(object):
       print(''.join(['  {}\n'.format(name) for name in values]))
 
 
-# BlockImageDiff works on two image objects.  An image object is
-# anything that provides the following attributes:
-#
-#    blocksize: the size in bytes of a block, currently must be 4096.
-#
-#    total_blocks: the total size of the partition/image, in blocks.
-#
-#    care_map: a RangeSet containing which blocks (in the range [0,
-#      total_blocks) we actually care about; i.e. which blocks contain
-#      data.
-#
-#    file_map: a dict that partitions the blocks contained in care_map
-#      into smaller domains that are useful for doing diffs on.
-#      (Typically a domain is a file, and the key in file_map is the
-#      pathname.)
-#
-#    clobbered_blocks: a RangeSet containing which blocks contain data
-#      but may be altered by the FS. They need to be excluded when
-#      verifying the partition integrity.
-#
-#    ReadRangeSet(): a function that takes a RangeSet and returns the
-#      data contained in the image blocks of that RangeSet.  The data
-#      is returned as a list or tuple of strings; concatenating the
-#      elements together should produce the requested data.
-#      Implementations are free to break up the data into list/tuple
-#      elements in any way that is convenient.
-#
-#    RangeSha1(): a function that returns (as a hex string) the SHA-1
-#      hash of all the data in the specified range.
-#
-#    TotalSha1(): a function that returns (as a hex string) the SHA-1
-#      hash of all the data in the image (ie, all the blocks in the
-#      care_map minus clobbered_blocks, or including the clobbered
-#      blocks if include_clobbered_blocks is True).
-#
-# When creating a BlockImageDiff, the src image may be None, in which
-# case the list of transfers produced will never read from the
-# original image.
-
 class BlockImageDiff(object):
+  """Generates the diff of two block image objects.
+
+  BlockImageDiff works on two image objects. An image object is anything that
+  provides the following attributes:
+
+     blocksize: the size in bytes of a block, currently must be 4096.
+
+     total_blocks: the total size of the partition/image, in blocks.
+
+     care_map: a RangeSet containing which blocks (in the range [0,
+       total_blocks) we actually care about; i.e. which blocks contain data.
+
+     file_map: a dict that partitions the blocks contained in care_map into
+         smaller domains that are useful for doing diffs on. (Typically a domain
+         is a file, and the key in file_map is the pathname.)
+
+     clobbered_blocks: a RangeSet containing which blocks contain data but may
+         be altered by the FS. They need to be excluded when verifying the
+         partition integrity.
+
+     ReadRangeSet(): a function that takes a RangeSet and returns the data
+         contained in the image blocks of that RangeSet. The data is returned as
+         a list or tuple of strings; concatenating the elements together should
+         produce the requested data. Implementations are free to break up the
+         data into list/tuple elements in any way that is convenient.
+
+     RangeSha1(): a function that returns (as a hex string) the SHA-1 hash of
+         all the data in the specified range.
+
+     TotalSha1(): a function that returns (as a hex string) the SHA-1 hash of
+         all the data in the image (ie, all the blocks in the care_map minus
+         clobbered_blocks, or including the clobbered blocks if
+         include_clobbered_blocks is True).
+
+  When creating a BlockImageDiff, the src image may be None, in which case the
+  list of transfers produced will never read from the original image.
+  """
+
   def __init__(self, tgt, src=None, threads=None, version=4,
                disable_imgdiff=False):
     if threads is None:
@@ -447,10 +444,6 @@ class BlockImageDiff(object):
 
     if tgt_ranges.extra.get('incomplete') or src_ranges.extra.get('incomplete'):
       self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_INCOMPLETE)
-      return False
-
-    if tgt_ranges.extra.get('trimmed') or src_ranges.extra.get('trimmed'):
-      self.imgdiff_stats.Log(name, ImgdiffStats.SKIPPED_TRIMMED)
       return False
 
     reason = (ImgdiffStats.USED_IMGDIFF_LARGE_APK if large_apk
@@ -836,14 +829,10 @@ class BlockImageDiff(object):
                   str(xf.tgt_ranges), str(xf.src_ranges)))
           else:
             if xf.patch:
-              # We have already generated the patch with imgdiff. Check if the
-              # transfer is intact.
+              # We have already generated the patch with imgdiff, while
+              # splitting large APKs (i.e. in FindTransfers()).
               assert not self.disable_imgdiff
               imgdiff = True
-              if (xf.src_ranges.extra.get('trimmed') or
-                  xf.tgt_ranges.extra.get('trimmed')):
-                imgdiff = False
-                xf.patch = None
             else:
               imgdiff = self.CanUseImgdiff(
                   xf.tgt_name, xf.tgt_ranges, xf.src_ranges)
@@ -1044,42 +1033,6 @@ class BlockImageDiff(object):
     self.transfers = L
     for i, xf in enumerate(L):
       xf.order = i
-
-  def RemoveBackwardEdges(self):
-    print("Removing backward edges...")
-    in_order = 0
-    out_of_order = 0
-    lost_source = 0
-
-    for xf in self.transfers:
-      lost = 0
-      size = xf.src_ranges.size()
-      for u in xf.goes_before:
-        # xf should go before u
-        if xf.order < u.order:
-          # it does, hurray!
-          in_order += 1
-        else:
-          # it doesn't, boo.  trim the blocks that u writes from xf's
-          # source, so that xf can go after u.
-          out_of_order += 1
-          assert xf.src_ranges.overlaps(u.tgt_ranges)
-          xf.src_ranges = xf.src_ranges.subtract(u.tgt_ranges)
-          xf.src_ranges.extra['trimmed'] = True
-
-      if xf.style == "diff" and not xf.src_ranges:
-        # nothing left to diff from; treat as new data
-        xf.style = "new"
-
-      lost = size - xf.src_ranges.size()
-      lost_source += lost
-
-    print(("  %d/%d dependencies (%.2f%%) were violated; "
-           "%d source blocks removed.") %
-          (out_of_order, in_order + out_of_order,
-           (out_of_order * 100.0 / (in_order + out_of_order))
-           if (in_order + out_of_order) else 0.0,
-           lost_source))
 
   def ReverseBackwardEdges(self):
     """Reverse unsatisfying edges and compute pairs of stashed blocks.

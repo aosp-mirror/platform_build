@@ -9,13 +9,13 @@
 include $(BUILD_SYSTEM)/use_lld_setup.mk
 
 ifneq ($(LOCAL_PREBUILT_LIBS),)
-$(error dont use LOCAL_PREBUILT_LIBS anymore LOCAL_PATH=$(LOCAL_PATH))
+$(call pretty-error,dont use LOCAL_PREBUILT_LIBS anymore)
 endif
 ifneq ($(LOCAL_PREBUILT_EXECUTABLES),)
-$(error dont use LOCAL_PREBUILT_EXECUTABLES anymore LOCAL_PATH=$(LOCAL_PATH))
+$(call pretty-error,dont use LOCAL_PREBUILT_EXECUTABLES anymore)
 endif
 ifneq ($(LOCAL_PREBUILT_JAVA_LIBRARIES),)
-$(error dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore LOCAL_PATH=$(LOCAL_PATH))
+$(call pretty-error,dont use LOCAL_PREBUILT_JAVA_LIBRARIES anymore)
 endif
 
 my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)IS_64_BIT),64,32)
@@ -42,9 +42,6 @@ LOCAL_CHECKED_MODULE := $(my_prebuilt_src_file)
 my_strip_module := $(firstword \
   $(LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
   $(LOCAL_STRIP_MODULE))
-my_pack_module_relocations := $(firstword \
-  $(LOCAL_PACK_MODULE_RELOCATIONS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
-  $(LOCAL_PACK_MODULE_RELOCATIONS))
 
 ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   # LOCAL_COPY_TO_INTERMEDIATE_LIBRARIES indicates that this prebuilt should be
@@ -62,21 +59,6 @@ ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
   ifeq ($(LOCAL_IS_HOST_MODULE)$(my_strip_module),)
     # Strip but not try to add debuglink
     my_strip_module := no_debuglink
-  endif
-
-  ifeq ($(LOCAL_IS_HOST_MODULE)$(my_pack_module_relocations),)
-    # Do not pack relocations by default
-    my_pack_module_relocations := false
-  endif
-
-  ifeq ($(DISABLE_RELOCATION_PACKER),true)
-    my_pack_module_relocations := false
-  endif
-
-  # Relocation packer does not work with LLD yet.
-  # my_use_clang_lld might be used before being set up in binary.mk
-  ifeq ($(my_use_clang_lld),true)
-    my_pack_module_relocations := false
   endif
 endif
 
@@ -141,23 +123,22 @@ $(error $(LOCAL_MODULE) : LOCAL_COMPRESSED_MODULE can only be defined for module
 endif  # LOCAL_COMPRESSED_MODULE
 endif
 
-ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module) $(my_pack_module_relocations)),)
+ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module)),)
   ifdef LOCAL_IS_HOST_MODULE
-    $(error Cannot strip/pack host module LOCAL_PATH=$(LOCAL_PATH))
+    $(call pretty-error,Cannot strip/pack host module)
   endif
   ifeq ($(filter SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-    $(error Can strip/pack only shared libraries or executables LOCAL_PATH=$(LOCAL_PATH))
+    $(call pretty-error,Can strip/pack only shared libraries or executables)
   endif
   ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
-    $(error Cannot strip/pack scripts LOCAL_PATH=$(LOCAL_PATH))
+    $(call pretty-error,Cannot strip/pack scripts)
   endif
-  # Set the arch-specific variables to set up the strip/pack rules.
+  # Set the arch-specific variables to set up the strip rules
   LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) := $(my_strip_module)
-  LOCAL_PACK_MODULE_RELOCATIONS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) := $(my_pack_module_relocations)
   include $(BUILD_SYSTEM)/dynamic_binary.mk
   built_module := $(linked_module)
 
-else  # my_strip_module and my_pack_module_relocations not true
+else  # my_strip_module not true
   include $(BUILD_SYSTEM)/base_rules.mk
   built_module := $(LOCAL_BUILT_MODULE)
 
@@ -395,6 +376,10 @@ ifdef LOCAL_COMPRESSED_MODULE
 $(built_module) : $(MINIGZIP)
 endif
 
+ifdef LOCAL_PRODUCT_MODULE
+$(built_module) : $(call intermediates-dir-for,PACKAGING,veridex,HOST)/veridex.zip
+endif
+
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
 	$(uncompress-shared-libs)
@@ -409,6 +394,10 @@ endif  # BUILD_PLATFORM_ZIP
 endif  # LOCAL_DEX_PREOPT
 ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 	@# Only strip out files if we can re-sign the package.
+# Run appcompat before stripping the classes.dex file.
+ifdef LOCAL_PRODUCT_MODULE
+	$(run-appcompat)
+endif  # LOCAL_PRODUCT_MODULE
 ifdef LOCAL_DEX_PREOPT
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
@@ -508,10 +497,13 @@ $(built_module) : $(my_prebuilt_src_file)
 endif # LOCAL_DEX_PREOPT
 
 else  # ! prebuilt_module_is_dex_javalib
+ifneq ($(filter init%rc,$(notdir $(LOCAL_INSTALLED_MODULE)))$(filter %/etc/init,$(dir $(LOCAL_INSTALLED_MODULE))),)
+  $(eval $(call copy-init-script-file-checked,$(my_prebuilt_src_file),$(built_module)))
+else ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 $(built_module) : $(my_prebuilt_src_file)
-ifneq ($(LOCAL_PREBUILT_STRIP_COMMENTS),)
 	$(transform-prebuilt-to-target-strip-comments)
 else
+$(built_module) : $(my_prebuilt_src_file)
 	$(transform-prebuilt-to-target)
 endif
 ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
@@ -581,15 +573,23 @@ ifneq ($(my_src_aar),)
 # This is .aar file, archive of classes.jar and Android resources.
 my_src_jar := $(intermediates.COMMON)/aar/classes.jar
 my_src_proguard_options := $(intermediates.COMMON)/aar/proguard.txt
+my_src_android_manifest := $(intermediates.COMMON)/aar/AndroidManifest.xml
 
 $(my_src_jar) : .KATI_IMPLICIT_OUTPUTS := $(my_src_proguard_options)
+$(my_src_jar) : .KATI_IMPLICIT_OUTPUTS += $(my_src_android_manifest)
 $(my_src_jar) : $(my_src_aar)
 	$(hide) rm -rf $(dir $@) && mkdir -p $(dir $@) $(dir $@)/res
 	$(hide) unzip -qo -d $(dir $@) $<
 	# Make sure the extracted classes.jar has a new timestamp.
 	$(hide) touch $@
-	# Make sure the proguard file exists and has a new timestamp.
+	# Make sure the proguard and AndroidManifest.xml files exist
+	# and have a new timestamp.
 	$(hide) touch $(dir $@)/proguard.txt
+	$(hide) touch $(dir $@)/AndroidManifest.xml
+
+my_prebuilt_android_manifest := $(intermediates.COMMON)/manifest/AndroidManifest.xml
+$(eval $(call copy-one-file,$(my_src_android_manifest),$(my_prebuilt_android_manifest)))
+$(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_prebuilt_android_manifest))
 
 endif
 
@@ -641,7 +641,7 @@ my_res_package := $(intermediates.COMMON)/package-res.apk
 # We needed only very few PRIVATE variables and aapt2.mk input variables. Reset the unnecessary ones.
 $(my_res_package): PRIVATE_AAPT2_CFLAGS :=
 $(my_res_package): PRIVATE_AAPT_FLAGS := --static-lib --no-static-lib-packages --auto-add-overlay
-$(my_res_package): PRIVATE_ANDROID_MANIFEST := $(intermediates.COMMON)/aar/AndroidManifest.xml
+$(my_res_package): PRIVATE_ANDROID_MANIFEST := $(my_src_android_manifest)
 $(my_res_package): PRIVATE_AAPT_INCLUDES := $(framework_res_package_export)
 $(my_res_package): PRIVATE_SOURCE_INTERMEDIATES_DIR :=
 $(my_res_package): PRIVATE_PROGUARD_OPTIONS_FILE :=
@@ -651,6 +651,7 @@ $(my_res_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
 $(my_res_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
 $(my_res_package): PRIVATE_TARGET_AAPT_CHARACTERISTICS :=
 $(my_res_package) : $(framework_res_package_export)
+$(my_res_package) : $(my_src_android_manifest)
 
 full_android_manifest :=
 my_res_resources :=
@@ -668,6 +669,15 @@ endif  # $(my_src_aar)
 endif  # LOCAL_USE_AAPT2
 # make sure the classes.jar and javalib.jar are built before $(LOCAL_BUILT_MODULE)
 $(built_module) : $(common_javalib_jar)
+
+my_exported_sdk_libs_file := $(intermediates.COMMON)/exported-sdk-libs
+$(my_exported_sdk_libs_file): PRIVATE_EXPORTED_SDK_LIBS := $(LOCAL_EXPORT_SDK_LIBRARIES)
+$(my_exported_sdk_libs_file):
+	@echo "Export SDK libs $@"
+	$(hide) mkdir -p $(dir $@) && rm -f $@
+	$(if $(PRIVATE_EXPORTED_SDK_LIBS),\
+		$(hide) echo $(PRIVATE_EXPORTED_SDK_LIBS) | tr ' ' '\n' > $@,\
+		$(hide) touch $@)
 
 endif # ! prebuilt_module_is_dex_javalib
 endif # LOCAL_IS_HOST_MODULE is not set

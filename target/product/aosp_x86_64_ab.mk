@@ -19,8 +19,14 @@
 # on the generic system image, place them in build/make/target/board/
 # treble_system.prop.
 
+# aosp_x86_64_ab-userdebug is a Legacy GSI for the devices with:
+# - x86 64 bits user space
+# - 64 bits binder interface
+# - system-as-root
+
 include build/make/target/product/treble_common_64.mk
 
+# Enable A/B update
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS := system
 PRODUCT_PACKAGES += \

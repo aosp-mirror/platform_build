@@ -1,4 +1,0 @@
-allow surfaceflinger self:process execmem;
-allow surfaceflinger ashmem_device:chr_file execute;
-
-set_prop(surfaceflinger, qemu_prop)

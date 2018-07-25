@@ -14,6 +14,13 @@
 # limitations under the License.
 #
 
+# The system image of aosp_arm64-userdebug is a GSI for the devices with:
+# - ARM 64 bits user space
+# - 64 bits binder interface
+# - system-as-root
+# - VNDK enforcement
+# - compatible property override enabled
+
 PRODUCT_PROPERTY_OVERRIDES += \
 	rild.libpath=/vendor/lib64/libreference-ril.so
 
@@ -43,6 +50,17 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_arm64/device.mk)
 
 include $(SRC_TARGET_DIR)/product/emulator.mk
+
+# Enable A/B update
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS := system
+PRODUCT_PACKAGES += \
+    update_engine \
+    update_verifier
+
+# Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
+PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
+
 PRODUCT_NAME := aosp_arm64
 PRODUCT_DEVICE := generic_arm64
 PRODUCT_BRAND := Android

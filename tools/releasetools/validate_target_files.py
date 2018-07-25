@@ -131,14 +131,18 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
 
   1. full recovery:
   ...
-  if ! applypatch -c type:device:size:SHA-1; then
-  applypatch /system/etc/recovery.img type:device sha1 size && ...
+  if ! applypatch --check type:device:size:sha1; then
+    applypatch --flash /system/etc/recovery.img \\
+        type:device:size:sha1 && \\
   ...
 
   2. recovery from boot:
   ...
-  applypatch [-b bonus_args] boot_info recovery_info recovery_sha1 \
-  recovery_size patch_info && ...
+  if ! applypatch --check type:recovery_device:recovery_size:recovery_sha1; then
+    applypatch [--bonus bonus_args] \\
+        --patch /system/recovery-from-boot.p \\
+        --source type:boot_device:boot_size:boot_sha1 \\
+        --target type:recovery_device:recovery_size:recovery_sha1 && \\
   ...
 
   For full recovery, we want to calculate the SHA-1 of /system/etc/recovery.img
@@ -155,44 +159,63 @@ def ValidateInstallRecoveryScript(input_tmp, info_dict):
   logging.info('Checking %s', script_path)
   with open(os.path.join(input_tmp, script_path), 'r') as script:
     lines = script.read().strip().split('\n')
-  assert len(lines) >= 6
-  check_cmd = re.search(r'if ! applypatch -c \w+:.+:\w+:(\w+);',
+  assert len(lines) >= 10
+  check_cmd = re.search(r'if ! applypatch --check (\w+:.+:\w+:\w+);',
                         lines[1].strip())
-  expected_recovery_check_sha1 = check_cmd.group(1)
-  patch_cmd = re.search(r'(applypatch.+)&&', lines[2].strip())
-  applypatch_argv = patch_cmd.group(1).strip().split()
+  check_partition = check_cmd.group(1)
+  assert len(check_partition.split(':')) == 4
 
   full_recovery_image = info_dict.get("full_recovery_image") == "true"
   if full_recovery_image:
-    assert len(applypatch_argv) == 5
-    # Check we have the same expected SHA-1 of recovery.img in both check mode
-    # and patch mode.
-    expected_recovery_sha1 = applypatch_argv[3].strip()
-    assert expected_recovery_check_sha1 == expected_recovery_sha1
-    ValidateFileAgainstSha1(input_tmp, 'recovery.img',
-                            'SYSTEM/etc/recovery.img', expected_recovery_sha1)
-  else:
-    # We're patching boot.img to get recovery.img where bonus_args is optional
-    if applypatch_argv[1] == "-b":
-      assert len(applypatch_argv) == 8
-      boot_info_index = 3
-    else:
-      assert len(applypatch_argv) == 6
-      boot_info_index = 1
+    assert len(lines) == 10, "Invalid line count: {}".format(lines)
 
-    # boot_info: boot_type:boot_device:boot_size:boot_sha1
-    boot_info = applypatch_argv[boot_info_index].strip().split(':')
-    assert len(boot_info) == 4
+    # Expect something like "EMMC:/dev/block/recovery:28:5f9c..62e3".
+    target = re.search(r'--target (.+) &&', lines[4].strip())
+    assert target is not None, \
+        "Failed to parse target line \"{}\"".format(lines[4])
+    flash_partition = target.group(1)
+
+    # Check we have the same recovery target in the check and flash commands.
+    assert check_partition == flash_partition, \
+        "Mismatching targets: {} vs {}".format(check_partition, flash_partition)
+
+    # Validate the SHA-1 of the recovery image.
+    recovery_sha1 = flash_partition.split(':')[3]
+    ValidateFileAgainstSha1(
+        input_tmp, 'recovery.img', 'SYSTEM/etc/recovery.img', recovery_sha1)
+  else:
+    assert len(lines) == 11, "Invalid line count: {}".format(lines)
+
+    # --source boot_type:boot_device:boot_size:boot_sha1
+    source = re.search(r'--source (\w+:.+:\w+:\w+) \\', lines[4].strip())
+    assert source is not None, \
+        "Failed to parse source line \"{}\"".format(lines[4])
+
+    source_partition = source.group(1)
+    source_info = source_partition.split(':')
+    assert len(source_info) == 4, \
+        "Invalid source partition: {}".format(source_partition)
     ValidateFileAgainstSha1(input_tmp, file_name='boot.img',
                             file_path='IMAGES/boot.img',
-                            expected_sha1=boot_info[3])
+                            expected_sha1=source_info[3])
 
-    recovery_sha1_index = boot_info_index + 2
-    expected_recovery_sha1 = applypatch_argv[recovery_sha1_index]
-    assert expected_recovery_check_sha1 == expected_recovery_sha1
+    # --target recovery_type:recovery_device:recovery_size:recovery_sha1
+    target = re.search(r'--target (\w+:.+:\w+:\w+) && \\', lines[5].strip())
+    assert target is not None, \
+        "Failed to parse target line \"{}\"".format(lines[5])
+    target_partition = target.group(1)
+
+    # Check we have the same recovery target in the check and patch commands.
+    assert check_partition == target_partition, \
+        "Mismatching targets: {} vs {}".format(
+            check_partition, target_partition)
+
+    recovery_info = target_partition.split(':')
+    assert len(recovery_info) == 4, \
+        "Invalid target partition: {}".format(target_partition)
     ValidateFileAgainstSha1(input_tmp, file_name='recovery.img',
                             file_path='IMAGES/recovery.img',
-                            expected_sha1=expected_recovery_sha1)
+                            expected_sha1=recovery_info[3])
 
   logging.info('Done checking %s', script_path)
 
@@ -292,9 +315,19 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
     key = options['verity_key']
     if key is None:
       key = info_dict['avb_vbmeta_key_path']
+
     # avbtool verifies all the images that have descriptors listed in vbmeta.
     image = os.path.join(input_tmp, 'IMAGES', 'vbmeta.img')
     cmd = ['avbtool', 'verify_image', '--image', image, '--key', key]
+
+    # Append the args for chained partitions if any.
+    for partition in common.AVB_PARTITIONS:
+      key_name = 'avb_' + partition + '_key_path'
+      if info_dict.get(key_name) is not None:
+        chained_partition_arg = common.GetAvbChainedPartitionArg(
+            partition, info_dict, options[key_name])
+        cmd.extend(["--expected_chain_partition", chained_partition_arg])
+
     proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdoutdata, _ = proc.communicate()
     assert proc.returncode == 0, \
@@ -316,8 +349,13 @@ def main():
   parser.add_argument(
       '--verity_key',
       help='the verity public key to verify the bootable images (Verified '
-           'Boot 1.0), or the vbmeta image (Verified Boot 2.0), where '
+           'Boot 1.0), or the vbmeta image (Verified Boot 2.0, aka AVB), where '
            'applicable')
+  for partition in common.AVB_PARTITIONS:
+    parser.add_argument(
+        '--avb_' + partition + '_key_path',
+        help='the public or private key in PEM format to verify AVB chained '
+             'partition of {}'.format(partition))
   parser.add_argument(
       '--verity_key_mincrypt',
       help='the verity public key in mincrypt format to verify the system '
