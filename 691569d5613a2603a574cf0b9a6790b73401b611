@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43040c93_9a14501b",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-25T21:55:50Z",
+      "side": 1,
+      "message": "$(autogen_test_config_file) : PRIVATE_MODULE_NAME:\u003d $(LOCAL_MODULE)",
+      "revId": "691569d5613a2603a574cf0b9a6790b73401b611",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5249893_cdfc6b89",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-25T21:55:50Z",
+      "side": 1,
+      "message": "Instead of adding this to all targets can you add it to your specific rule?",
+      "revId": "691569d5613a2603a574cf0b9a6790b73401b611",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2fe7c162_ef4fc021",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-25T21:55:50Z",
+      "side": 1,
+      "message": "This is confusing, the else is the opposite of this.  Either remove it and indent everything under here, or replace it with !$(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files",
+      "range": {
+        "startLine": 577,
+        "startChar": 5,
+        "endLine": 577,
+        "endChar": 75
+      },
+      "revId": "691569d5613a2603a574cf0b9a6790b73401b611",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
