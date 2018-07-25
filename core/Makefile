@@ -2570,14 +2570,6 @@ droid_targets: check_android_partition_sizes
 
 .PHONY: check_android_partition_sizes
 
-# BOARD_SUPER_PARTITION_PARTITION_LIST: a list of the following tokens
-valid_super_partition_list := system vendor product productservices
-ifneq (,$(filter-out $(valid_super_partition_list),$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
-$(error BOARD_SUPER_PARTITION_PARTITION_LIST contains invalid partition name. \
-        Valid names are $(valid_super_partition_list).)
-endif
-valid_super_partition_list :=
-
 # Add image dependencies so that generated_*_image_info.txt are written before checking.
 ifneq (,$(filter system,$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
 check_android_partition_sizes: $(BUILT_SYSTEMIMAGE)
