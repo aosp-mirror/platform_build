@@ -72,7 +72,6 @@ full_classes_header_jarjar := $(intermediates.COMMON)/classes-header-jarjar.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 full_classes_compiled_jar := $(intermediates.COMMON)/classes-full-debug.jar
 full_classes_processed_jar := $(intermediates.COMMON)/classes-processed.jar
-full_classes_desugar_jar := $(intermediates.COMMON)/classes-desugar.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_proguard_jar := $(intermediates.COMMON)/classes-proguard.jar
 full_classes_combined_jar := $(intermediates.COMMON)/classes-combined.jar
@@ -94,7 +93,6 @@ endif
 LOCAL_INTERMEDIATE_TARGETS += \
     $(full_classes_turbine_jar) \
     $(full_classes_compiled_jar) \
-    $(full_classes_desugar_jar) \
     $(full_classes_jarjar_jar) \
     $(full_classes_jar) \
     $(full_classes_combined_jar) \
@@ -229,11 +227,6 @@ $(full_classes_compiled_jar): PRIVATE_WARNINGS_ENABLE := $(LOCAL_WARNINGS_ENABLE
 # Deps for generated source files must be handled separately,
 # via deps on the target that generates the sources.
 
-# If error prone is enabled then add LOCAL_ERROR_PRONE_FLAGS to LOCAL_JAVACFLAGS
-ifeq ($(RUN_ERROR_PRONE),true)
-LOCAL_JAVACFLAGS += $(LOCAL_ERROR_PRONE_FLAGS)
-endif
-
 # For user / userdebug builds, strip the local variable table and the local variable
 # type table. This has no bearing on stack traces, but will leave less information
 # available via JDWP.
@@ -315,6 +308,7 @@ $(full_classes_compiled_jar): \
 
 javac-check : $(full_classes_compiled_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_compiled_jar)
+.PHONY: javac-check-$(LOCAL_MODULE)
 
 $(full_classes_combined_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_combined_jar): $(full_classes_compiled_jar) \
@@ -376,23 +370,7 @@ ifdef TARGET_OPENJDK9
 LOCAL_DX_FLAGS := $(filter-out --multi-dex,$(LOCAL_DX_FLAGS)) --multi-dex
 endif
 
-ifneq ($(USE_D8_DESUGAR),true)
-my_desugaring :=
-ifndef LOCAL_IS_STATIC_JAVA_LIBRARY
-my_desugaring := true
-$(full_classes_desugar_jar): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
-$(full_classes_desugar_jar): $(LOCAL_FULL_CLASSES_JACOCO_JAR) $(full_java_header_libs) $(DESUGAR)
-	$(desugar-classes-jar)
-endif
-else
-my_desugaring :=
-endif
-
-ifndef my_desugaring
-full_classes_desugar_jar := $(LOCAL_FULL_CLASSES_JACOCO_JAR)
-endif
-
-full_classes_pre_proguard_jar := $(full_classes_desugar_jar)
+full_classes_pre_proguard_jar := $(LOCAL_FULL_CLASSES_JACOCO_JAR)
 
 # Keep a copy of the jar just before proguard processing.
 $(eval $(call copy-one-file,$(full_classes_pre_proguard_jar),$(intermediates.COMMON)/classes-pre-proguard.jar))
@@ -563,11 +541,7 @@ endif # LOCAL_PROGUARD_ENABLED
 
 ifndef my_r8
 $(built_dex_intermediate): $(full_classes_proguard_jar) $(DX) $(ZIP2ZIP)
-ifneq ($(USE_D8_DESUGAR),true)
 	$(transform-classes.jar-to-dex)
-else
-	$(transform-classes-d8.jar-to-dex)
-endif
 endif
 
 ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),) # is_boot_jar
@@ -603,6 +577,7 @@ ALL_FINDBUGS_FILES += $(findbugs_xml)
 findbugs_html := $(PRODUCT_OUT)/findbugs/$(LOCAL_MODULE).html
 $(findbugs_html) : PRIVATE_XML_FILE := $(findbugs_xml)
 $(LOCAL_MODULE)-findbugs : $(findbugs_html)
+.PHONY: $(LOCAL_MODULE)-findbugs
 $(findbugs_html) : $(findbugs_xml)
 	@mkdir -p $(dir $@)
 	@echo ConvertXmlToText: $@

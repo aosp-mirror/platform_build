@@ -405,6 +405,13 @@ ifneq (,$(my_cpp_std_version))
    my_cpp_std_cppflags := -std=$(my_cpp_std_version)
 endif
 
+# Extra cflags for projects under external/ directory
+ifeq ($(my_clang),true)
+ifneq ($(filter external/%,$(LOCAL_PATH)),)
+    my_cflags += $(CLANG_EXTERNAL_CFLAGS)
+endif
+endif
+
 # arch-specific static libraries go first so that generic ones can depend on them
 my_static_libraries := $(LOCAL_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_static_libraries)
 my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_WHOLE_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_whole_static_libraries)
@@ -519,6 +526,10 @@ my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)G
 my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
 ifeq ($(my_use_clang_lld),true)
   my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
+  include $(BUILD_SYSTEM)/pack_dyn_relocs_setup.mk
+  ifeq ($(my_pack_module_relocations),false)
+    my_target_global_ldflags += -Wl,--pack-dyn-relocs=none
+  endif
 else
   my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
 endif # my_use_clang_lld
@@ -1591,10 +1602,15 @@ built_whole_libraries := \
 # libraries have already been linked into the module at that point.
 # We do, however, care about the NOTICE files for any static
 # libraries that we use. (see notice_files.mk)
-
+#
+# Don't do this in mm, since many of the targets won't exist.
+ifeq ($(ONE_SHOT_MAKEFILE),)
 installed_static_library_notice_file_targets := \
     $(foreach lib,$(my_static_libraries) $(my_whole_static_libraries), \
       NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST,TARGET)-STATIC_LIBRARIES-$(lib))
+else
+installed_static_library_notice_file_targets :=
+endif
 
 # Default is -fno-rtti.
 ifeq ($(strip $(LOCAL_RTTI_FLAG)),)

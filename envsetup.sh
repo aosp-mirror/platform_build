@@ -48,12 +48,12 @@ function build_build_var_cache()
 {
     local T=$(gettop)
     # Grep out the variable names from the script.
-    cached_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
-    cached_abs_vars=`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_abs_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`
+    cached_vars=(`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`)
+    cached_abs_vars=(`cat $T/build/envsetup.sh | tr '()' '  ' | awk '{for(i=1;i<=NF;i++) if($i~/get_abs_build_var/) print $(i+1)}' | sort -u | tr '\n' ' '`)
     # Call the build system to dump the "<val>=<value>" pairs as a shell script.
     build_dicts_script=`\builtin cd $T; build/soong/soong_ui.bash --dumpvars-mode \
-                        --vars="$cached_vars" \
-                        --abs-vars="$cached_abs_vars" \
+                        --vars="${cached_vars[*]}" \
+                        --abs-vars="${cached_abs_vars[*]}" \
                         --var-prefix=var_cache_ \
                         --abs-var-prefix=abs_var_cache_`
     local ret=$?
@@ -315,27 +315,50 @@ function set_sequence_number()
     export BUILD_ENV_SEQUENCE_NUMBER=13
 }
 
+# Takes a command name, and check if it's in ENVSETUP_NO_COMPLETION or not.
+function should_add_completion() {
+    local cmd="$(basename $1| sed 's/_completion//' |sed 's/\.\(.*\)*sh$//')"
+    case :"$ENVSETUP_NO_COMPLETION": in
+        *:"$cmd":*)
+            return 1
+            ;;
+    esac
+    return 0
+}
+
 function addcompletions()
 {
     local T dir f
 
-    # Keep us from trying to run in something that isn't bash.
-    if [ -z "${BASH_VERSION}" ]; then
+    # Keep us from trying to run in something that's neither bash nor zsh.
+    if [ -z "$BASH_VERSION" -a -z "$ZSH_VERSION" ]; then
         return
     fi
 
     # Keep us from trying to run in bash that's too old.
-    if [ ${BASH_VERSINFO[0]} -lt 3 ]; then
+    if [ -n "$BASH_VERSION" -a ${BASH_VERSINFO[0]} -lt 3 ]; then
         return
     fi
 
-    for f in system/core/adb/adb.bash system/core/fastboot/fastboot.bash; do
-        if [ -f $f ]; then
+    local completion_files=(
+      system/core/adb/adb.bash
+      system/core/fastboot/fastboot.bash
+      tools/tradefederation/core/atest/atest_completion.sh
+    )
+    # Completion can be disabled selectively to allow users to use non-standard completion.
+    # e.g.
+    # ENVSETUP_NO_COMPLETION=adb # -> disable adb completion
+    # ENVSETUP_NO_COMPLETION=adb:bit # -> disable adb and bit completion
+    for f in ${completion_files[*]}; do
+        if [ -f "$f" ] && should_add_completion "$f"; then
             . $f
         fi
     done
 
-    complete -C "bit --tab" bit
+    if should_add_completion bit ; then
+        complete -C "bit --tab" bit
+    fi
+    complete -F _lunch lunch
 }
 
 function choosetype()
@@ -629,7 +652,6 @@ function _lunch()
     COMPREPLY=( $(compgen -W "${COMMON_LUNCH_CHOICES_CACHE}" -- ${cur}) )
     return 0
 }
-complete -F _lunch lunch
 
 # Configures the build to build unbundled apps.
 # Run tapas with one or more app names (from LOCAL_PACKAGE_NAME)
@@ -742,6 +764,7 @@ function findmakefile()
         \cd ..
     done
     \cd $HERE
+    return 1
 }
 
 function mm()
@@ -869,7 +892,7 @@ function mma()
       echo "Couldn't locate the top of the tree.  Try setting TOP."
       return 1
     fi
-    local M=$(findmakefile)
+    local M=$(findmakefile || echo $(realpath $PWD)/Android.mk)
     # Remove the path to top as the makefilepath needs to be relative
     local M=`echo $M|sed 's:'$T'/::'`
     local MODULES_IN_PATHS=MODULES-IN-$(dirname ${M})
@@ -974,28 +997,6 @@ function qpid() {
     fi
 }
 
-function pid()
-{
-    local prepend=''
-    local append=''
-    if [ "$1" = "--exact" ]; then
-        prepend=' '
-        append='$'
-        shift
-    fi
-    local EXE="$1"
-    if [ "$EXE" ] ; then
-        local PID=`adb shell ps \
-            | tr -d '\r' \
-            | \grep "$prepend$EXE$append" \
-            | sed -e 's/^[^ ]* *\([0-9]*\).*$/\1/'`
-        echo "$PID"
-    else
-        echo "usage: pid [--exact] <process name>"
-        return 255
-    fi
-}
-
 # coredump_setup - enable core dumps globally for any process
 #                  that has the core-file-size limit set correctly
 #
@@ -1080,53 +1081,6 @@ function core()
 function systemstack()
 {
     stacks system_server
-}
-
-function stacks()
-{
-    if [[ $1 =~ ^[0-9]+$ ]] ; then
-        local PID="$1"
-    elif [ "$1" ] ; then
-        local PIDLIST="$(pid $1)"
-        if [[ $PIDLIST =~ ^[0-9]+$ ]] ; then
-            local PID="$PIDLIST"
-        elif [ "$PIDLIST" ] ; then
-            echo "more than one process: $1"
-        else
-            echo "no such process: $1"
-        fi
-    else
-        echo "usage: stacks [pid|process name]"
-    fi
-
-    if [ "$PID" ] ; then
-        # Determine whether the process is native
-        if adb shell ls -l /proc/$PID/exe | grep -q /system/bin/app_process ; then
-            # Dump stacks of Dalvik process
-            local TRACES=/data/anr/traces.txt
-            local ORIG=/data/anr/traces.orig
-            local TMP=/data/anr/traces.tmp
-
-            # Keep original traces to avoid clobbering
-            adb shell mv $TRACES $ORIG
-
-            # Make sure we have a usable file
-            adb shell touch $TRACES
-            adb shell chmod 666 $TRACES
-
-            # Dump stacks and wait for dump to finish
-            adb shell kill -3 $PID
-            adb shell notify $TRACES >/dev/null
-
-            # Restore original stacks, and show current output
-            adb shell mv $TRACES $TMP
-            adb shell mv $ORIG $TRACES
-            adb shell cat $TMP
-        else
-            # Dump stacks of native process
-            adb shell debuggerd -b $PID
-        fi
-    fi
 }
 
 # Read the ELF header from /proc/$PID/exe to determine if the process is
@@ -1613,24 +1567,37 @@ function atest()
     "$(gettop)"/tools/tradefederation/core/atest/atest.py "$@"
 }
 
-if [ "x$SHELL" != "x/bin/bash" ]; then
-    case `ps -o command -p $$` in
+# Zsh needs bashcompinit called to support bash-style completion.
+function add_zsh_completion() {
+    autoload -U compinit && compinit
+    autoload -U bashcompinit && bashcompinit
+}
+
+function validate_current_shell() {
+    local current_sh="$(ps -o command -p $$)"
+    case "$current_sh" in
         *bash*)
+            function check_type() { type -t "$1"; }
             ;;
+        *zsh*)
+            function check_type() { type "$1"; }
+            add_zsh_completion ;;
         *)
-            echo "WARNING: Only bash is supported, use of other shell would lead to erroneous results"
+            echo -e "WARNING: Only bash and zsh are supported.\nUse of other shell would lead to erroneous results."
             ;;
     esac
-fi
+}
 
 # Execute the contents of any vendorsetup.sh files we can find.
-for f in `test -d device && find -L device -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
-         `test -d vendor && find -L vendor -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort` \
-         `test -d product && find -L product -maxdepth 4 -name 'vendorsetup.sh' 2> /dev/null | sort`
-do
-    echo "including $f"
-    . $f
-done
-unset f
+function source_vendorsetup() {
+    for dir in device vendor product; do
+        for f in $(test -d $dir && \
+            find -L $dir -maxdepth 4 -name 'vendorsetup.sh' 2>/dev/null | sort); do
+            echo "including $f"; . $f
+        done
+    done
+}
 
+validate_current_shell
+source_vendorsetup
 addcompletions

@@ -74,7 +74,7 @@ OPTIONS.is_signing = False
 
 
 # Partitions that should have their care_map added to META/care_map.txt.
-PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product')
+PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product-services')
 
 
 class OutputFile(object):
@@ -192,6 +192,24 @@ def AddProduct(output_zip):
       output_zip, OPTIONS.input_tmp, "IMAGES", "product.map")
   CreateImage(
       OPTIONS.input_tmp, OPTIONS.info_dict, "product", img,
+      block_list=block_list)
+  return img.name
+
+
+def AddProductServices(output_zip):
+  """Turn the contents of PRODUCT_SERVICES into a product-services image and
+  store it in output_zip."""
+
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES",
+                   "product-services.img")
+  if os.path.exists(img.input_name):
+    print("product-services.img already exists; no need to rebuild...")
+    return img.input_name
+
+  block_list = OutputFile(
+      output_zip, OPTIONS.input_tmp, "IMAGES", "product-services.map")
+  CreateImage(
+      OPTIONS.input_tmp, OPTIONS.info_dict, "product-services", img,
       block_list=block_list)
   return img.name
 
@@ -340,29 +358,26 @@ def AddUserdata(output_zip):
   img.Write()
 
 
-def AppendVBMetaArgsForPartition(cmd, partition, img_path, public_key_dir):
-  if not img_path:
-    return
+def AppendVBMetaArgsForPartition(cmd, partition, image):
+  """Appends the VBMeta arguments for partition.
 
+  It sets up the VBMeta argument by including the partition descriptor from the
+  given 'image', or by configuring the partition as a chained partition.
+
+  Args:
+    cmd: A list of command args that will be used to generate the vbmeta image.
+        The argument for the partition will be appended to the list.
+    partition: The name of the partition (e.g. "system").
+    image: The path to the partition image.
+  """
   # Check if chain partition is used.
   key_path = OPTIONS.info_dict.get("avb_" + partition + "_key_path")
   if key_path:
-    # extract public key in AVB format to be included in vbmeta.img
-    avbtool = os.getenv('AVBTOOL') or OPTIONS.info_dict["avb_avbtool"]
-    public_key_path = os.path.join(public_key_dir, "%s.avbpubkey" % partition)
-    p = common.Run([avbtool, "extract_public_key", "--key", key_path,
-                    "--output", public_key_path],
-                   stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    p.communicate()
-    assert p.returncode == 0, \
-        "avbtool extract_public_key fail for partition: %r" % partition
-
-    rollback_index_location = OPTIONS.info_dict[
-        "avb_" + partition + "_rollback_index_location"]
-    cmd.extend(["--chain_partition", "%s:%s:%s" % (
-        partition, rollback_index_location, public_key_path)])
+    chained_partition_arg = common.GetAvbChainedPartitionArg(
+        partition, OPTIONS.info_dict)
+    cmd.extend(["--chain_partition", chained_partition_arg])
   else:
-    cmd.extend(["--include_descriptors_from_image", img_path])
+    cmd.extend(["--include_descriptors_from_image", image])
 
 
 def AddVBMeta(output_zip, partitions):
@@ -371,8 +386,8 @@ def AddVBMeta(output_zip, partitions):
   Args:
     output_zip: The output zip file, which needs to be already open.
     partitions: A dict that's keyed by partition names with image paths as
-        values. Only valid partition names are accepted, which include 'boot',
-        'recovery', 'system', 'vendor', 'dtbo'.
+        values. Only valid partition names are accepted, as listed in
+        common.AVB_PARTITIONS.
   """
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vbmeta.img")
   if os.path.exists(img.input_name):
@@ -383,13 +398,12 @@ def AddVBMeta(output_zip, partitions):
   cmd = [avbtool, "make_vbmeta_image", "--output", img.name]
   common.AppendAVBSigningArgs(cmd, "vbmeta")
 
-  public_key_dir = common.MakeTempDir(prefix="avbpubkey-")
   for partition, path in partitions.items():
-    assert partition in common.AVB_PARTITIONS, 'Unknown partition: %s' % (
-        partition,)
-    assert os.path.exists(path), 'Failed to find %s for partition %s' % (
-        path, partition)
-    AppendVBMetaArgsForPartition(cmd, partition, path, public_key_dir)
+    assert partition in common.AVB_PARTITIONS, \
+        'Unknown partition: {}'.format(partition)
+    assert os.path.exists(path), \
+        'Failed to find {} for {}'.format(path, partition)
+    AppendVBMetaArgsForPartition(cmd, partition, path)
 
   args = OPTIONS.info_dict.get("avb_vbmeta_args")
   if args and args.strip():
@@ -628,16 +642,22 @@ def AddImagesToTargetFiles(filename):
 
   has_recovery = OPTIONS.info_dict.get("no_recovery") != "true"
 
-  # {vendor,product}.img is unlike system.img or system_other.img. Because it
-  # could be built from source, or dropped into target_files.zip as a prebuilt
-  # blob. We consider either of them as {vendor,product}.img being available,
-  # which could be used when generating vbmeta.img for AVB.
+  # {vendor,product,product-services}.img are unlike system.img or
+  # system_other.img. Because it could be built from source, or dropped into
+  # target_files.zip as a prebuilt blob. We consider either of them as
+  # {vendor,product,product-services}.img being available, which could be
+  # used when generating vbmeta.img for AVB.
   has_vendor = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR")) or
                 os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
                                             "vendor.img")))
   has_product = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "PRODUCT")) or
                  os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
                                              "product.img")))
+  has_productservices = (os.path.isdir(os.path.join(OPTIONS.input_tmp,
+                                                    "PRODUCTSERVICES")) or
+                         os.path.exists(os.path.join(OPTIONS.input_tmp,
+                                                     "IMAGES",
+                                                     "product-services.img")))
   has_system_other = os.path.isdir(os.path.join(OPTIONS.input_tmp,
                                                 "SYSTEM_OTHER"))
 
@@ -713,6 +733,10 @@ def AddImagesToTargetFiles(filename):
   if has_product:
     banner("product")
     partitions['product'] = AddProduct(output_zip)
+
+  if has_productservices:
+    banner("product-services")
+    partitions['product-services'] = AddProductServices(output_zip)
 
   if has_system_other:
     banner("system_other")

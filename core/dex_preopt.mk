@@ -21,7 +21,7 @@ DEX_PREOPT_DEFAULT ?= true
 
 # The default filter for which files go into the system_other image (if it is
 # being used). To bundle everything one should set this to '%'
-SYSTEM_OTHER_ODEX_FILTER ?= app/% priv-app/%
+SYSTEM_OTHER_ODEX_FILTER ?= app/% priv-app/% product/app/% product/priv-app/%
 
 # Method returning whether the install path $(1) should be for system_other.
 # Under SANITIZE_LITE, we do not want system_other. Just put things under /data/asan.
@@ -89,3 +89,36 @@ DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT := $(DEFAULT_DEX_PREOPT_BUILT_IM
 ifdef TARGET_2ND_ARCH
 $(TARGET_2ND_ARCH_VAR_PREFIX)DEXPREOPT_ONE_FILE_DEPENDENCY_BUILT_BOOT_PREOPT := $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
 endif  # TARGET_2ND_ARCH
+
+# === hiddenapi rules ===
+
+hiddenapi_stubs_jar = $(call intermediates-dir-for,JAVA_LIBRARIES,$(1),,COMMON)/javalib.jar
+
+# Public API stubs
+HIDDENAPI_STUBS := \
+    $(call hiddenapi_stubs_jar,android_stubs_current) \
+    $(call hiddenapi_stubs_jar,android.test.base.stubs) \
+    $(call hiddenapi_stubs_jar,android.test.mock.stubs) \
+    $(call hiddenapi_stubs_jar,android.test.runner.stubs)
+
+# System API stubs
+HIDDENAPI_STUBS += \
+    $(call hiddenapi_stubs_jar,android_system_stubs_current)
+
+# Test API stubs
+HIDDENAPI_STUBS += \
+    $(call hiddenapi_stubs_jar,android_test_stubs_current)
+
+# Singleton rule which applies $(HIDDENAPI) on all boot class path dex files.
+# Inputs are filled with `hiddenapi-copy-dex-files` rules.
+$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): \
+    PRIVATE_HIDDENAPI_STUBS := $(HIDDENAPI_STUBS)
+$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): \
+    .KATI_IMPLICIT_OUTPUTS := $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
+$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): $(HIDDENAPI) $(HIDDENAPI_STUBS)
+	for INPUT_DEX in $(PRIVATE_DEX_INPUTS); do \
+		find `dirname $${INPUT_DEX}` -maxdepth 1 -name "classes*.dex"; \
+	done | sort | sed 's/^/--boot-dex=/' | xargs $(HIDDENAPI) list \
+	    $(addprefix --stub-dex=,$(PRIVATE_HIDDENAPI_STUBS)) \
+	    --out-public=$(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) \
+	    --out-private=$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST)

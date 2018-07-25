@@ -26,6 +26,8 @@ $(sort $(MAKECMDGOALS)) : run_soong_ui
 
 else # KATI
 
+$(info [1/1] initializing build system ...)
+
 # Absolute path of the present working direcotry.
 # This overrides the shell variable $PWD, which does not necessarily points to
 # the top of the source tree, for example when "make -C" is used in m/mm/mmm.
@@ -229,6 +231,8 @@ else
 ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
 endif
 
+ADDITIONAL_BUILD_PROPERTIES += ro.boot.logical_partitions=${USE_LOGICAL_PARTITIONS}
+
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
@@ -403,6 +407,8 @@ ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
 ENFORCE_RRO_SOURCES :=
 endif
 
+subdir_makefiles_inc := .
+
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
 # with a subdirectory's makefile.
@@ -414,10 +420,6 @@ include $(SOONG_ANDROID_MK) $(wildcard $(ONE_SHOT_MAKEFILE))
 # would have been with a normal make.
 CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
 FULL_BUILD :=
-# Stub out the notice targets, which probably aren't defined
-# when using ONE_SHOT_MAKEFILE.
-NOTICE-HOST-%: ;
-NOTICE-TARGET-%: ;
 
 # A helper goal printing out install paths
 define register_module_install_path
@@ -451,7 +453,7 @@ ifneq ($(dont_bother),true)
 #
 
 subdir_makefiles := $(SOONG_ANDROID_MK) $(file <$(OUT_DIR)/.module_paths/Android.mk.list)
-subdir_makefiles_total := $(words $(subdir_makefiles))
+subdir_makefiles_total := $(words int $(subdir_makefiles) post finish)
 .KATI_READONLY := subdir_makefiles_total
 
 $(foreach mk,$(subdir_makefiles),$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] including $(mk) ...)$(eval include $(mk)))
@@ -466,6 +468,12 @@ droid_targets : blueprint_tools
 endif # dont_bother
 
 endif # ONE_SHOT_MAKEFILE
+
+ifndef subdir_makefiles_total
+subdir_makefiles_total := $(words init post finish)
+endif
+
+$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] finishing build rules ...)
 
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
@@ -887,53 +895,132 @@ $(foreach lt,$(ALL_LINK_TYPES),\
 # $(2): The initial module name list.
 # Returns empty string (maybe with some whitespaces).
 define expand-required-modules
-$(eval _erm_new_modules := $(sort $(filter-out $($(1)),\
-  $(foreach m,$(2),$(ALL_MODULES.$(m).REQUIRED)))))\
+$(eval _erm_req := $(foreach m,$(2),$(ALL_MODULES.$(m).REQUIRED))) \
+$(eval _erm_new_modules := $(sort $(filter-out $($(1)),$(_erm_req))))\
 $(if $(_erm_new_modules),$(eval $(1) += $(_erm_new_modules))\
   $(call expand-required-modules,$(1),$(_erm_new_modules)))
 endef
 
-ifdef FULL_BUILD
-  # The base list of modules to build for this product is specified
-  # by the appropriate product definition file, which was included
-  # by product_config.mk.
-  product_MODULES := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
-ifdef BOARD_VNDK_VERSION
-  product_MODULES += vndk_package
+# Transforms paths relative to PRODUCT_OUT to absolute paths.
+# $(1): list of relative paths
+# $(2): optional suffix to append to paths
+define resolve-product-relative-paths
+  $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),\
+    $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
+      $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))
+endef
+
+# Lists most of the files a particular product installs, including:
+# - PRODUCT_PACKAGES, and their LOCAL_REQUIRED_MODULES
+# - PRODUCT_COPY_FILES
+# The base list of modules to build for this product is specified
+# by the appropriate product definition file, which was included
+# by product_config.mk.
+# Name resolution for PRODUCT_PACKAGES:
+#   foo:32 resolves to foo_32;
+#   foo:64 resolves to foo;
+#   foo resolves to both foo and foo_32 (if foo_32 is defined).
+#
+# Name resolution for LOCAL_REQUIRED_MODULES:
+#   If a module is built for 2nd arch, its required module resolves to
+#   32-bit variant, if it exits. See the select-bitness-of-required-modules definition.
+# $(1): product makefile
+define product-installed-files
+  $(eval _mk := $(strip $(1))) \
+  $(eval _pif_modules := $(PRODUCTS.$(_mk).PRODUCT_PACKAGES)) \
+  $(if $(BOARD_VNDK_VERSION),$(eval _pif_modules += vndk_package)) \
+  $(eval ### Filter out the overridden packages and executables before doing expansion) \
+  $(eval _pif_overrides := $(foreach p, $(_pif_modules), $(PACKAGES.$(p).OVERRIDES))) \
+  $(eval _pif_overrides += $(foreach m, $(_pif_modules), $(EXECUTABLES.$(m).OVERRIDES))) \
+  $(eval _pif_modules := $(filter-out $(_pif_overrides), $(_pif_modules))) \
+  $(eval ### Resolve the :32 :64 module name) \
+  $(eval _pif_modules_32 := $(patsubst %:32,%,$(filter %:32, $(_pif_modules)))) \
+  $(eval _pif_modules_64 := $(patsubst %:64,%,$(filter %:64, $(_pif_modules)))) \
+  $(eval _pif_modules_rest := $(filter-out %:32 %:64,$(_pif_modules))) \
+  $(eval ### Note for 32-bit product, 32 and 64 will be added as their original module names.) \
+  $(eval _pif_modules := $(call get-32-bit-modules-if-we-can, $(_pif_modules_32))) \
+  $(eval _pif_modules += $(_pif_modules_64)) \
+  $(eval ### For the rest we add both) \
+  $(eval _pif_modules += $(call get-32-bit-modules, $(_pif_modules_rest))) \
+  $(eval _pif_modules += $(_pif_modules_rest)) \
+  $(call expand-required-modules,_pif_modules,$(_pif_modules)) \
+  $(call module-installed-files, $(_pif_modules)) \
+  $(call resolve-product-relative-paths,\
+    $(foreach cf,$(PRODUCTS.$(_mk).PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
+endef
+
+# Fails the build if the given list is non-empty, and prints it entries (stripping PRODUCT_OUT).
+# $(1): list of files to print
+# $(2): heading to print on failure
+define maybe-print-list-and-error
+$(if $(strip $(1)), \
+  $(warning $(2)) \
+  $(info Offending entries:) \
+  $(foreach e,$(sort $(1)),$(info    $(patsubst $(PRODUCT_OUT)/%,%,$(e)))) \
+  $(error Build failed) \
+)
+endef
+
+ifeq (true|,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_PACKAGES_EXIST)|$(filter true,$(ALLOW_MISSING_DEPENDENCIES)))
+  _whitelist := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST)
+  _modules := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
+  # Sanity check all modules in PRODUCT_PACKAGES exist. We check for the
+  # existence if either <module> or the <module>_32 variant.
+  _nonexistant_modules := $(filter-out $(ALL_MODULES),$(_modules))
+  _nonexistant_modules := $(foreach m,$(_nonexistant_modules),\
+    $(if $(call get-32-bit-modules,$(m)),,$(m)))
+  $(call maybe-print-list-and-error,$(filter-out $(_whitelist),$(_nonexistant_modules)),\
+    $(INTERNAL_PRODUCT) includes non-existant modules in PRODUCT_PACKAGES)
+  $(call maybe-print-list-and-error,$(filter-out $(_nonexistant_modules),$(_whitelist)),\
+    $(INTERNAL_PRODUCT) includes redundant whitelist entries for nonexistant PRODUCT_PACKAGES)
 endif
-  # Filter out the overridden packages before doing expansion
-  product_MODULES := $(filter-out $(foreach p, $(product_MODULES), \
-      $(PACKAGES.$(p).OVERRIDES)), $(product_MODULES))
-  # Filter out executables as well
-  product_MODULES := $(filter-out $(foreach m, $(product_MODULES), \
-      $(EXECUTABLES.$(m).OVERRIDES)), $(product_MODULES))
 
-  # Resolve the :32 :64 module name
-  modules_32 := $(patsubst %:32,%,$(filter %:32, $(product_MODULES)))
-  modules_64 := $(patsubst %:64,%,$(filter %:64, $(product_MODULES)))
-  modules_rest := $(filter-out %:32 %:64,$(product_MODULES))
-  # Note for 32-bit product, $(modules_32) and $(modules_64) will be
-  # added as their original module names.
-  product_MODULES := $(call get-32-bit-modules-if-we-can, $(modules_32))
-  product_MODULES += $(modules_64)
-  # For the rest we add both
-  product_MODULES += $(call get-32-bit-modules, $(modules_rest))
-  product_MODULES += $(modules_rest)
-
-  $(call expand-required-modules,product_MODULES,$(product_MODULES))
-
-  product_FILES := $(call module-installed-files, $(product_MODULES))
-  ifeq (0,1)
-    $(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
-    $(foreach p,$(product_FILES),$(info :   $(p)))
-    $(error done)
-  endif
+ifdef FULL_BUILD
+  product_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
 else
   # We're not doing a full build, and are probably only including
   # a subset of the module makefiles.  Don't try to build any modules
   # requested by the product, because we probably won't have rules
   # to build them.
   product_FILES :=
+endif
+
+# Verify the artifact path requirements made by included products.
+$(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
+  $(eval requirements := $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENTS)) \
+  $(eval ### Verify that the product only produces files inside its path requirements.) \
+  $(eval whitelist := $(PRODUCTS.$(makefile).ARTIFACT_PATH_WHITELIST)) \
+  $(eval path_patterns := $(call resolve-product-relative-paths,$(requirements),%)) \
+  $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
+  $(eval files := $(call product-installed-files, $(makefile))) \
+  $(eval files := $(filter-out $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%,$(files))) \
+  $(eval # RROs become REQUIRED by the source module, but are always placed on the vendor partition.) \
+  $(eval files := $(filter-out %__auto_generated_rro.apk,$(files))) \
+  $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns),$(files))) \
+  $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
+  $(eval unused_whitelist := $(filter-out $(files),$(whitelist_patterns))) \
+  $(call maybe-print-list-and-error,$(unused_whitelist),$(makefile) includes redundant whitelist entries in its artifact path requirement.) \
+  $(eval ### Optionally verify that nothing else produces files inside this artifact path requirement.) \
+  $(eval extra_files := $(filter-out $(files) $(HOST_OUT)/%,$(product_FILES))) \
+  $(eval files_in_requirement := $(filter $(path_patterns),$(extra_files))) \
+  $(eval all_offending_files += $(files_in_requirement)) \
+  $(eval whitelist := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST)) \
+  $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
+  $(eval offending_files := $(filter-out $(whitelist_patterns),$(files_in_requirement))) \
+  $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS),\
+    $(call maybe-print-list-and-error,$(offending_files),$(INTERNAL_PRODUCT) produces files inside $(makefile)s artifact path requirement.) \
+    $(eval unused_whitelist := $(filter-out $(extra_files),$(whitelist_patterns))) \
+    $(call maybe-print-list-and-error,$(unused_whitelist),$(INTERNAL_PRODUCT) includes redundant artifact path requirement whitelist entries.) \
+  ) \
+)
+$(PRODUCT_OUT)/offending_artifacts.txt:
+	rm -f $@
+	$(foreach f,$(sort $(all_offending_files)),echo $(f) >> $@;)
+
+ifeq (0,1)
+  $(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
+  $(foreach p,$(product_FILES),$(info :   $(p)))
+  $(error done)
 endif
 
 eng_MODULES := $(sort \
@@ -1096,6 +1183,9 @@ vendorimage: $(INSTALLED_VENDORIMAGE_TARGET)
 .PHONY: productimage
 productimage: $(INSTALLED_PRODUCTIMAGE_TARGET)
 
+.PHONY: productservicesimage
+productservicesimage: $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
+
 .PHONY: systemotherimage
 systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 
@@ -1111,21 +1201,27 @@ auxiliary: $(INSTALLED_AUX_TARGETS)
 # Build files and then package it into the rom formats
 .PHONY: droidcore
 droidcore: files \
-	systemimage \
-	$(INSTALLED_BOOTIMAGE_TARGET) \
-	$(INSTALLED_RECOVERYIMAGE_TARGET) \
-	$(INSTALLED_VBMETAIMAGE_TARGET) \
-	$(INSTALLED_USERDATAIMAGE_TARGET) \
-	$(INSTALLED_CACHEIMAGE_TARGET) \
-	$(INSTALLED_BPTIMAGE_TARGET) \
-	$(INSTALLED_VENDORIMAGE_TARGET) \
-	$(INSTALLED_PRODUCTIMAGE_TARGET) \
-	$(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
-	$(INSTALLED_FILES_FILE) \
-	$(INSTALLED_FILES_FILE_VENDOR) \
-	$(INSTALLED_FILES_FILE_PRODUCT) \
-	$(INSTALLED_FILES_FILE_SYSTEMOTHER) \
-	soong_docs
+    systemimage \
+    $(INSTALLED_BOOTIMAGE_TARGET) \
+    $(INSTALLED_RECOVERYIMAGE_TARGET) \
+    $(INSTALLED_VBMETAIMAGE_TARGET) \
+    $(INSTALLED_USERDATAIMAGE_TARGET) \
+    $(INSTALLED_CACHEIMAGE_TARGET) \
+    $(INSTALLED_BPTIMAGE_TARGET) \
+    $(INSTALLED_VENDORIMAGE_TARGET) \
+    $(INSTALLED_PRODUCTIMAGE_TARGET) \
+    $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
+    $(INSTALLED_FILES_FILE) \
+    $(INSTALLED_FILES_JSON) \
+    $(INSTALLED_FILES_FILE_VENDOR) \
+    $(INSTALLED_FILES_JSON_VENDOR) \
+    $(INSTALLED_FILES_FILE_PRODUCT) \
+    $(INSTALLED_FILES_JSON_PRODUCT) \
+    $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) \
+    $(INSTALLED_FILES_JSON_PRODUCT_SERVICES) \
+    $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
+    $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
+    soong_docs
 
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
@@ -1166,6 +1262,9 @@ ifneq ($(TARGET_BUILD_APPS),)
   $(COVERAGE_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(COVERAGE_ZIP))
 
+  $(APPCOMPAT_ZIP) : $(apps_only_installed_files)
+  $(call dist-for-goals,apps_only, $(APPCOMPAT_ZIP))
+
 .PHONY: apps_only
 apps_only: $(unbundled_build_modules)
 
@@ -1187,10 +1286,17 @@ else # TARGET_BUILD_APPS
     $(BUILT_OTATOOLS_PACKAGE) \
     $(SYMBOLS_ZIP) \
     $(COVERAGE_ZIP) \
+    $(APPCOMPAT_ZIP) \
     $(INSTALLED_FILES_FILE) \
+    $(INSTALLED_FILES_JSON) \
     $(INSTALLED_FILES_FILE_VENDOR) \
+    $(INSTALLED_FILES_JSON_VENDOR) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
+    $(INSTALLED_FILES_JSON_PRODUCT) \
+    $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) \
+    $(INSTALLED_FILES_JSON_PRODUCT_SERVICES) \
     $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
+    $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
     $(INSTALLED_BUILD_PROP_TARGET) \
     $(BUILT_TARGET_FILES_PACKAGE) \
     $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
@@ -1211,9 +1317,26 @@ else # TARGET_BUILD_APPS
   endif
   endif
 
+  ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+    $(call dist-for-goals, droidcore, \
+      $(INSTALLED_FILES_FILE_ROOT) \
+      $(INSTALLED_FILES_JSON_ROOT) \
+    )
+  endif
+
   ifeq ($(EMMA_INSTRUMENT),true)
     $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE)
     $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
+
+    # Put XML formatted API files in the dist dir.
+    api_xmls := $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/,api.xml system-api.xml test-api.xml)
+    $(api_xmls): $(TARGET_OUT_COMMON_INTERMEDIATES)/%api.xml : frameworks/base/api/%current.txt $(APICHECK)
+	$(hide) echo "Converting API file to XML: $@"
+	$(hide) mkdir -p $(dir $@)
+	$(hide) $(APICHECK_COMMAND) -convert2xml $< $@
+
+    $(call dist-for-goals, dist_files, $(api_xmls))
+    api_xmls :=
   endif
 
 # Building a full system-- the default is to build droidcore
@@ -1231,13 +1354,15 @@ $(call dist-for-goals,sdk win_sdk, \
     $(ALL_SDK_TARGETS) \
     $(SYMBOLS_ZIP) \
     $(COVERAGE_ZIP) \
+    $(APPCOMPAT_ZIP) \
     $(INSTALLED_BUILD_PROP_TARGET) \
 )
 
 # umbrella targets to assit engineers in verifying builds
 .PHONY: java native target host java-host java-target native-host native-target \
         java-host-tests java-target-tests native-host-tests native-target-tests \
-        java-tests native-tests host-tests target-tests tests java-dex
+        java-tests native-tests host-tests target-tests tests java-dex \
+        native-host-cross
 # some synonyms
 .PHONY: host-java target-java host-native target-native \
         target-java-tests target-native-tests
@@ -1291,5 +1416,7 @@ tidy_only:
 
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
+
+$(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] writing build rules ...)
 
 endif # KATI

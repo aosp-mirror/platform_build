@@ -31,6 +31,8 @@ TARGET_2ND_CPU_VARIANT := generic
 # Tell the build system this isn't a typical 64bit+32bit multilib configuration.
 TARGET_TRANSLATE_2ND_ARCH := true
 
+BUILD_BROKEN_DUP_RULES := true
+
 # no hardware camera
 USE_CAMERA_STUB := true
 
@@ -61,4 +63,4 @@ BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := true
 
-BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
+BOARD_SEPOLICY_DIRS += device/generic/goldfish/sepolicy/common

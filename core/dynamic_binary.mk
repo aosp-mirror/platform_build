@@ -35,52 +35,9 @@ ALL_ORIGINAL_DYNAMIC_BINARIES += $(linked_module)
 LOCAL_INTERMEDIATE_TARGETS := $(linked_module)
 
 ###################################
+include $(BUILD_SYSTEM)/use_lld_setup.mk
 include $(BUILD_SYSTEM)/binary.mk
 ###################################
-
-###########################################################
-## Pack relocation tables
-###########################################################
-relocation_packer_input := $(linked_module)
-relocation_packer_output := $(intermediates)/PACKED/$(my_built_module_stem)
-
-my_pack_module_relocations := false
-ifneq ($(DISABLE_RELOCATION_PACKER),true)
-    my_pack_module_relocations := $(firstword \
-      $(LOCAL_PACK_MODULE_RELOCATIONS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
-      $(LOCAL_PACK_MODULE_RELOCATIONS))
-endif
-
-ifeq ($(my_pack_module_relocations),)
-  my_pack_module_relocations := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_PACK_MODULE_RELOCATIONS)
-endif
-
-# Do not pack relocations for executables. Because packing results in
-# non-zero p_vaddr which causes kernel to load executables to lower
-# address (starting at 0x8000) http://b/20665974
-ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-  my_pack_module_relocations := false
-endif
-
-# TODO (dimitry): Relocation packer is not yet available for darwin
-ifneq ($(HOST_OS),linux)
-  my_pack_module_relocations := false
-endif
-
-# Relocation packer does not work with LLD yet.
-ifeq ($(my_use_clang_lld),true)
-  my_pack_module_relocations := false
-endif
-
-ifeq (true,$(my_pack_module_relocations))
-# Pack relocations
-$(relocation_packer_output): $(relocation_packer_input)
-	$(pack-elf-relocations)
-else
-$(relocation_packer_output): $(relocation_packer_input)
-	@echo "target Unpacked: $(PRIVATE_MODULE) ($@)"
-	$(copy-file-to-target)
-endif
 
 ###########################################################
 ## Store a copy with symbols for symbolic debugging
@@ -90,7 +47,7 @@ my_unstripped_path := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(m
 else
 my_unstripped_path := $(LOCAL_UNSTRIPPED_PATH)
 endif
-symbolic_input := $(relocation_packer_output)
+symbolic_input := $(linked_module)
 symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
 $(symbolic_output) : $(symbolic_input)
 	@echo "target Symbolic: $(PRIVATE_MODULE) ($@)"
@@ -102,7 +59,7 @@ $(symbolic_output) : $(symbolic_input)
 
 ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
 my_breakpad_path := $(TARGET_OUT_BREAKPAD)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
-breakpad_input := $(relocation_packer_output)
+breakpad_input := $(linked_module)
 breakpad_output := $(my_breakpad_path)/$(my_installed_module_stem).sym
 $(breakpad_output) : $(breakpad_input) | $(BREAKPAD_DUMP_SYMS) $(PRIVATE_READELF)
 	@echo "target breakpad: $(PRIVATE_MODULE) ($@)"
@@ -138,7 +95,25 @@ ifneq ($(filter mips mips64,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
 endif
 endif
 
-$(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
+ifeq ($(my_use_clang_lld),true)
+  # b/80093681: GNU strip and objcopy --{add,remove}-section have bug in handling
+  # GNU_RELRO segment of files lnked by clang lld; so they are replaced
+  # by llvm-strip and llvm-objcopy here.
+  $(strip_output): PRIVATE_OBJCOPY_ADD_SECTION := $(LLVM_OBJCOPY)
+  $(strip_output): PRIVATE_STRIP := $(LLVM_STRIP)
+  $(strip_output): PRIVATE_STRIP_O_FLAG :=
+  # GNU strip keeps .ARM.attributes section even with -strip-all,
+  # so here pass -keep=.ARM.attributes to llvm-strip.
+  $(strip_output): PRIVATE_STRIP_ALL_FLAGS := -strip-all -keep=.ARM.attributes
+else
+  $(strip_output): PRIVATE_OBJCOPY_ADD_SECTION := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY)
+  $(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
+  $(strip_output): PRIVATE_STRIP_O_FLAG := -o
+  $(strip_output): PRIVATE_STRIP_ALL_FLAGS := --strip-all
+endif
+# PRIVATE_OBJCOPY is not changed to llvm-objcopy yet.
+# It is used even when my_use_clang_lld is true,
+# because some objcopy flags are not supported by llvm-objcopy yet.
 $(strip_output): PRIVATE_OBJCOPY := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY)
 $(strip_output): PRIVATE_NM := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NM)
 $(strip_output): PRIVATE_READELF := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_READELF)

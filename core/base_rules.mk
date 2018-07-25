@@ -31,6 +31,7 @@ LOCAL_MODULE := $(strip $(LOCAL_MODULE))
 ifeq ($(LOCAL_MODULE),)
   $(error $(LOCAL_PATH): LOCAL_MODULE is not defined)
 endif
+$(call verify-module-name)
 
 LOCAL_IS_HOST_MODULE := $(strip $(LOCAL_IS_HOST_MODULE))
 LOCAL_IS_AUX_MODULE := $(strip $(LOCAL_IS_AUX_MODULE))
@@ -74,6 +75,8 @@ else ifneq ($(filter $(TARGET_OUT_ODM)/%,$(_path)),)
 LOCAL_ODM_MODULE := true
 else ifneq ($(filter $(TARGET_OUT_PRODUCT)/%,$(_path)),)
 LOCAL_PRODUCT_MODULE := true
+else ifneq ($(filter $(TARGET_OUT_PRODUCT_SERVICES)/%,$(_path)),)
+LOCAL_PRODUCT_SERVICES_MODULE := true
 endif
 _path :=
 
@@ -204,6 +207,8 @@ else ifeq (true,$(LOCAL_ODM_MODULE))
   partition_tag := _ODM
 else ifeq (true,$(LOCAL_PRODUCT_MODULE))
   partition_tag := _PRODUCT
+else ifeq (true,$(LOCAL_PRODUCT_SERVICES_MODULE))
+  partition_tag := _PRODUCT_SERVICES
 else ifeq (NATIVE_TESTS,$(LOCAL_MODULE_CLASS))
   partition_tag := _DATA
 else
@@ -351,6 +356,7 @@ endif
 ## make clean- targets
 ###########################################################
 cleantarget := clean-$(my_register_name)
+.PHONY: $(cleantarget)
 $(cleantarget) : PRIVATE_MODULE := $(my_register_name)
 $(cleantarget) : PRIVATE_CLEAN_FILES := \
     $(LOCAL_BUILT_MODULE) \
@@ -423,7 +429,7 @@ my_init_rc_installed := $(foreach rc,$(my_init_rc_pairs),$(call word-colon,2,$(r
 # Make sure we only set up the copy rules once, even if another arch variant
 # shares a common LOCAL_INIT_RC.
 my_init_rc_new_pairs := $(filter-out $(ALL_INIT_RC_INSTALLED_PAIRS),$(my_init_rc_pairs))
-my_init_rc_new_installed := $(call copy-many-files,$(my_init_rc_new_pairs))
+my_init_rc_new_installed := $(call copy-many-init-script-files-checked,$(my_init_rc_new_pairs))
 ALL_INIT_RC_INSTALLED_PAIRS += $(my_init_rc_new_pairs)
 
 $(my_all_targets) : $(my_init_rc_installed)
@@ -557,7 +563,8 @@ multi_arch :=
 # The module itself.
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-    $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem))))
+    $(LOCAL_BUILT_MODULE):$(dir)/$(my_installed_module_stem))) \
+  $(eval my_compat_dist_config_$(suite) := ))
 
 # Make sure we only add the files once for multilib modules.
 ifndef $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
@@ -604,7 +611,7 @@ is_instrumentation_test :=
 
 ifneq (,$(test_config))
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+  $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
     $(test_config):$(dir)/$(LOCAL_MODULE).config)))
 endif
 
@@ -612,14 +619,14 @@ test_config :=
 
 ifneq (,$(wildcard $(LOCAL_PATH)/DynamicConfig.xml))
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+  $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
     $(LOCAL_PATH)/DynamicConfig.xml:$(dir)/$(LOCAL_MODULE).dynamic)))
 endif
 
 ifneq (,$(wildcard $(LOCAL_PATH)/$(LOCAL_MODULE)_*.config))
 $(foreach extra_config, $(wildcard $(LOCAL_PATH)/$(LOCAL_MODULE)_*.config), \
   $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-    $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
+    $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
       $(extra_config):$(dir)/$(notdir $(extra_config))))))
 endif
 endif # $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
@@ -638,6 +645,8 @@ arch_dir :=
 is_native :=
 
 $(call create-suite-dependencies)
+$(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+  $(eval my_compat_dist_config_$(suite) := ))
 
 endif  # LOCAL_COMPATIBILITY_SUITE
 
@@ -792,8 +801,10 @@ ifneq (,$(filter $(my_module_tags),tests))
 $(j_or_n)-$(h_or_t)-tests $(j_or_n)-tests $(h_or_t)-tests : $(my_checked_module)
 endif
 $(LOCAL_MODULE)-$(h_or_hc_or_t) : $(my_all_targets)
+.PHONY: $(LOCAL_MODULE)-$(h_or_hc_or_t)
 ifeq ($(j_or_n),native)
 $(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix) : $(my_all_targets)
+.PHONY: $(LOCAL_MODULE)-$(h_or_hc_or_t)$(my_32_64_bit_suffix)
 endif
 endif
 

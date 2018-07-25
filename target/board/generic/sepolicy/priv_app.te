@@ -1,5 +1,0 @@
-#TODO: b/62908025
-dontaudit priv_app firstboot_prop:file { getattr open };
-dontaudit priv_app device:dir { open read };
-dontaudit priv_app proc_interrupts:file { getattr open read };
-dontaudit priv_app proc_modules:file { getattr open read };

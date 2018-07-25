@@ -34,44 +34,47 @@
 # Unbundled apps will be built with the most generic product config.
 ifneq ($(TARGET_BUILD_APPS),)
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/aosp_arm.mk \
-    $(LOCAL_DIR)/full.mk \
-    $(LOCAL_DIR)/aosp_x86.mk \
-    $(LOCAL_DIR)/full_x86.mk \
     $(LOCAL_DIR)/aosp_arm64.mk \
-    $(LOCAL_DIR)/aosp_x86_64.mk
+    $(LOCAL_DIR)/aosp_arm.mk \
+    $(LOCAL_DIR)/aosp_x86_64.mk \
+    $(LOCAL_DIR)/aosp_x86.mk \
+    $(LOCAL_DIR)/full.mk \
+    $(LOCAL_DIR)/full_x86.mk \
+
 else
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/core.mk \
+    $(LOCAL_DIR)/aosp_arm64_ab.mk \
+    $(LOCAL_DIR)/aosp_arm64_a.mk \
+    $(LOCAL_DIR)/aosp_arm64.mk \
+    $(LOCAL_DIR)/aosp_arm_ab.mk \
+    $(LOCAL_DIR)/aosp_arm_a.mk \
+    $(LOCAL_DIR)/aosp_arm.mk \
+    $(LOCAL_DIR)/aosp_x86_64_ab.mk \
+    $(LOCAL_DIR)/aosp_x86_64_a.mk \
+    $(LOCAL_DIR)/aosp_x86_64.mk \
+    $(LOCAL_DIR)/aosp_x86_ab.mk \
+    $(LOCAL_DIR)/aosp_x86_a.mk \
+    $(LOCAL_DIR)/aosp_x86_arm.mk \
+    $(LOCAL_DIR)/aosp_x86.mk \
+    $(LOCAL_DIR)/full.mk \
+    $(LOCAL_DIR)/full_x86.mk \
     $(LOCAL_DIR)/generic.mk \
     $(LOCAL_DIR)/generic_x86.mk \
-    $(LOCAL_DIR)/aosp_arm.mk \
-    $(LOCAL_DIR)/aosp_arm_a.mk \
-    $(LOCAL_DIR)/aosp_arm_ab.mk \
-    $(LOCAL_DIR)/full.mk \
-    $(LOCAL_DIR)/aosp_x86.mk \
-    $(LOCAL_DIR)/aosp_x86_a.mk \
-    $(LOCAL_DIR)/aosp_x86_ab.mk \
-    $(LOCAL_DIR)/aosp_x86_arm.mk \
-    $(LOCAL_DIR)/full_x86.mk \
-    $(LOCAL_DIR)/aosp_arm64.mk \
-    $(LOCAL_DIR)/aosp_arm64_a.mk \
-    $(LOCAL_DIR)/aosp_arm64_ab.mk \
-    $(LOCAL_DIR)/aosp_x86_64.mk \
-    $(LOCAL_DIR)/aosp_x86_64_a.mk \
-    $(LOCAL_DIR)/aosp_x86_64_ab.mk \
-    $(LOCAL_DIR)/sdk_phone_armv7.mk \
-    $(LOCAL_DIR)/sdk_phone_x86.mk \
-    $(LOCAL_DIR)/sdk_phone_arm64.mk \
-    $(LOCAL_DIR)/sdk_phone_x86_64.mk \
-    $(LOCAL_DIR)/sdk.mk \
-    $(LOCAL_DIR)/sdk_x86.mk \
+    $(LOCAL_DIR)/mainline_arm64.mk \
+    $(LOCAL_DIR)/mainline_system_arm64.mk \
     $(LOCAL_DIR)/sdk_arm64.mk \
-    $(LOCAL_DIR)/sdk_x86_64.mk
+    $(LOCAL_DIR)/sdk.mk \
+    $(LOCAL_DIR)/sdk_phone_arm64.mk \
+    $(LOCAL_DIR)/sdk_phone_armv7.mk \
+    $(LOCAL_DIR)/sdk_phone_x86_64.mk \
+    $(LOCAL_DIR)/sdk_phone_x86.mk \
+    $(LOCAL_DIR)/sdk_x86_64.mk \
+    $(LOCAL_DIR)/sdk_x86.mk \
+
 endif
 
 COMMON_LUNCH_CHOICES := \
-    aosp_arm-eng \
     aosp_arm64-eng \
+    aosp_arm-eng \
+    aosp_x86_64-eng \
     aosp_x86-eng \
-    aosp_x86_64-eng

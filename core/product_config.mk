@@ -234,6 +234,12 @@ endif
 $(call import-products, $(current_product_makefile))
 endif  # Import all or just the current product makefile
 
+# Import all the products that have made artifact path requirements, so that we can verify
+# the artifacts they produce.
+$(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
+  $(if $(filter-out $(makefile),$(PRODUCTS)),$(eval $(call import-products,$(makefile))))\
+)
+
 # Sanity check
 $(check-all-products)
 
@@ -366,6 +372,14 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES := \
 PRODUCT_PRODUCT_PROPERTIES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_PROPERTIES))
 .KATI_READONLY := PRODUCT_PRODUCT_PROPERTIES
+
+
+# A list of property assignments, like "key = value", with zero or more
+# whitespace characters on either side of the '='.
+# used for adding properties to build.prop of product partition
+PRODUCT_PRODUCT_SERVICES_PROPERTIES := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_SERVICES_PROPERTIES))
+.KATI_READONLY := PRODUCT_PRODUCT_SERVICES_PROPERTIES
 
 # Should we use the default resources or add any product specific overlays
 PRODUCT_PACKAGE_OVERLAYS := \
@@ -500,3 +514,8 @@ PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := \
 # Whether the whitelist of actionable compatible properties should be disabled or not
 PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE))
+
+# Logical and Resizable Partitions feature flag.
+PRODUCT_USE_LOGICAL_PARTITIONS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_USE_LOGICAL_PARTITIONS))
+.KATI_READONLY := PRODUCT_USE_LOGICAL_PARTITIONS

@@ -14,6 +14,13 @@
 # limitations under the License.
 #
 
+# The system image of aosp_x86-userdebug is a GSI for the devices with:
+# - x86 32 bits user space
+# - 64 bits binder interface
+# - system-as-root
+# - VNDK enforcement
+# - compatible property override enabled
+
 PRODUCT_PROPERTY_OVERRIDES += \
 	rild.libpath=/vendor/lib/libreference-ril.so
 
@@ -27,5 +34,15 @@ PRODUCT_COPY_FILES += \
     prebuilts/qemu-kernel/x86_64/4.4/kernel-qemu2:kernel-ranchu-64
 
 include $(SRC_TARGET_DIR)/product/full_x86.mk
+
+# Enable A/B update
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS := system
+PRODUCT_PACKAGES += \
+    update_engine \
+    update_verifier
+
+# Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
+PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
 
 PRODUCT_NAME := aosp_x86

@@ -190,6 +190,16 @@ class BuildInfoTest(unittest.TestCase):
     self.assertRaises(KeyError,
                       lambda: target_info['build.prop']['ro.build.foo'])
 
+  def test___setitem__(self):
+    target_info = BuildInfo(copy.deepcopy(self.TEST_INFO_DICT), None)
+    self.assertEqual('value1', target_info['property1'])
+    target_info['property1'] = 'value2'
+    self.assertEqual('value2', target_info['property1'])
+
+    self.assertEqual('build-foo', target_info['build.prop']['ro.build.foo'])
+    target_info['build.prop']['ro.build.foo'] = 'build-bar'
+    self.assertEqual('build-bar', target_info['build.prop']['ro.build.foo'])
+
   def test_get(self):
     target_info = BuildInfo(self.TEST_INFO_DICT, None)
     self.assertEqual('value1', target_info.get('property1'))
@@ -208,6 +218,12 @@ class BuildInfoTest(unittest.TestCase):
     self.assertIsNone(target_info.get('build.prop').get('ro.build.foo'))
     self.assertRaises(KeyError,
                       lambda: target_info.get('build.prop')['ro.build.foo'])
+
+  def test_items(self):
+    target_info = BuildInfo(self.TEST_INFO_DICT, None)
+    items = target_info.items()
+    self.assertIn(('property1', 'value1'), items)
+    self.assertIn(('property2', 4096), items)
 
   def test_GetBuildProp(self):
     target_info = BuildInfo(self.TEST_INFO_DICT, None)
@@ -550,6 +566,8 @@ class OtaFromTargetFilesTest(unittest.TestCase):
     self.assertIn('IMAGES/boot.img', namelist)
     self.assertIn('IMAGES/system.img', namelist)
     self.assertIn('IMAGES/vendor.img', namelist)
+    self.assertIn('RADIO/bootloader.img', namelist)
+    self.assertIn('RADIO/modem.img', namelist)
     self.assertIn(POSTINSTALL_CONFIG, namelist)
 
     self.assertNotIn('IMAGES/system_other.img', namelist)
@@ -567,10 +585,32 @@ class OtaFromTargetFilesTest(unittest.TestCase):
     self.assertIn('IMAGES/boot.img', namelist)
     self.assertIn('IMAGES/system.img', namelist)
     self.assertIn('IMAGES/vendor.img', namelist)
+    self.assertIn('RADIO/bootloader.img', namelist)
+    self.assertIn('RADIO/modem.img', namelist)
 
     self.assertNotIn('IMAGES/system_other.img', namelist)
     self.assertNotIn('IMAGES/system.map', namelist)
     self.assertNotIn(POSTINSTALL_CONFIG, namelist)
+
+  def test_GetTargetFilesZipForSecondaryImages_withoutRadioImages(self):
+    input_file = construct_target_files(secondary=True)
+    common.ZipDelete(input_file, 'RADIO/bootloader.img')
+    common.ZipDelete(input_file, 'RADIO/modem.img')
+    target_file = GetTargetFilesZipForSecondaryImages(input_file)
+
+    with zipfile.ZipFile(target_file) as verify_zip:
+      namelist = verify_zip.namelist()
+
+    self.assertIn('META/ab_partitions.txt', namelist)
+    self.assertIn('IMAGES/boot.img', namelist)
+    self.assertIn('IMAGES/system.img', namelist)
+    self.assertIn('IMAGES/vendor.img', namelist)
+    self.assertIn(POSTINSTALL_CONFIG, namelist)
+
+    self.assertNotIn('IMAGES/system_other.img', namelist)
+    self.assertNotIn('IMAGES/system.map', namelist)
+    self.assertNotIn('RADIO/bootloader.img', namelist)
+    self.assertNotIn('RADIO/modem.img', namelist)
 
   def test_GetTargetFilesZipWithoutPostinstallConfig(self):
     input_file = construct_target_files()

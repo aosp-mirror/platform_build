@@ -63,6 +63,8 @@ else
 my_fs_config_h := $(LOCAL_PATH)/default/$(ANDROID_FS_CONFIG_H)
 endif
 
+system_android_filesystem_config := system/core/include/private/android_filesystem_config.h
+
 ##################################
 include $(CLEAR_VARS)
 LOCAL_SRC_FILES := fs_config_generate.c
@@ -72,8 +74,6 @@ LOCAL_SHARED_LIBRARIES := libcutils
 LOCAL_CFLAGS := -Werror -Wno-error=\#warnings
 
 ifneq ($(TARGET_FS_CONFIG_GEN),)
-system_android_filesystem_config := system/core/include/private/android_filesystem_config.h
-
 # Generate the "generated_oem_aid.h" file
 oem := $(local-generated-sources-dir)/generated_oem_aid.h
 $(oem): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
@@ -111,13 +111,57 @@ fs_config_generate_extra_partition_list := $(strip \
   $(if $(BOARD_USES_ODMIMAGE)$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),odm))
 
 ##################################
-# Generate the system/etc/fs_config_dirs binary file for the target
-# Add fs_config_dirs to PRODUCT_PACKAGES in the device make file to enable
+# Generate the <p>/etc/fs_config_dirs binary files for each partition.
+# Add fs_config_dirs to PRODUCT_PACKAGES in the device make file to enable.
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := fs_config_dirs
+LOCAL_REQUIRED_MODULES := \
+	fs_config_dirs_system \
+	$(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
+include $(BUILD_PHONY_PACKAGE)
+
+
+##################################
+# Generate the <p>/etc/fs_config_files binary files for each partition.
+# Add fs_config_files to PRODUCT_PACKAGES in the device make file to enable.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_files
+LOCAL_REQUIRED_MODULES := \
+  fs_config_files_system \
+  $(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
+include $(BUILD_PHONY_PACKAGE)
+
+##################################
+# Generate the <p>/etc/fs_config_dirs binary files for all enabled partitions
+# excluding /system. Add fs_config_dirs_nonsystem to PRODUCT_PACKAGES in the
+# device make file to enable.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_dirs_nonsystem
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),fs_config_dirs_$(t))
+include $(BUILD_PHONY_PACKAGE)
+
+##################################
+# Generate the <p>/etc/fs_config_files binary files for all enabled partitions
+# excluding /system. Add fs_config_files_nonsystem to PRODUCT_PACKAGES in the
+# device make file to enable.
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_files_nonsystem
+LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),fs_config_files_$(t))
+include $(BUILD_PHONY_PACKAGE)
+
+##################################
+# Generate the system/etc/fs_config_dirs binary file for the target
+# Add fs_config_dirs or fs_config_dirs_system to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_dirs_system
 LOCAL_MODULE_CLASS := ETC
-LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
+LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
@@ -127,12 +171,13 @@ $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 
 ##################################
 # Generate the system/etc/fs_config_files binary file for the target
-# Add fs_config_files to PRODUCT_PACKAGES in the device make file to enable
+# Add fs_config_files or fs_config_files_system to PRODUCT_PACKAGES in
+# the device make file to enable
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := fs_config_files
+LOCAL_MODULE := fs_config_files_system
 LOCAL_MODULE_CLASS := ETC
-LOCAL_REQUIRED_MODULES := $(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))
+LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
@@ -239,19 +284,17 @@ $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 
 endif
 
-# The newer passwd/group targets are only generated if you
-# use the new TARGET_FS_CONFIG_GEN method.
-ifneq ($(TARGET_FS_CONFIG_GEN),)
-
 ##################################
 # Build the oemaid header library when fs config files are present.
 # Intentionally break build if you require generated AIDs
 # header file, but are not using any fs config files.
+ifneq ($(TARGET_FS_CONFIG_GEN),)
 include $(CLEAR_VARS)
 LOCAL_MODULE := oemaids_headers
 LOCAL_EXPORT_C_INCLUDE_DIRS := $(dir $(my_gen_oem_aid))
 LOCAL_EXPORT_C_INCLUDE_DEPS := $(my_gen_oem_aid)
 include $(BUILD_HEADER_LIBRARY)
+endif
 
 ##################################
 # Generate the vendor/etc/passwd text file for the target
@@ -265,8 +308,11 @@ LOCAL_VENDOR_MODULE := true
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
-$(LOCAL_BUILT_MODULE): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
+ifneq ($(TARGET_FS_CONFIG_GEN),)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+else
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := /dev/null
+endif
 $(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
 $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config)
 	@mkdir -p $(dir $@)
@@ -284,15 +330,17 @@ LOCAL_VENDOR_MODULE := true
 
 include $(BUILD_SYSTEM)/base_rules.mk
 
-$(LOCAL_BUILT_MODULE): PRIVATE_LOCAL_PATH := $(LOCAL_PATH)
+ifneq ($(TARGET_FS_CONFIG_GEN),)
 $(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := $(TARGET_FS_CONFIG_GEN)
+else
+$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_FS_CONFIG_GEN := /dev/null
+endif
 $(LOCAL_BUILT_MODULE): PRIVATE_ANDROID_FS_HDR := $(system_android_filesystem_config)
 $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_GEN) $(system_android_filesystem_config)
 	@mkdir -p $(dir $@)
 	$(hide) $< group --required-prefix=vendor_ --aid-header=$(PRIVATE_ANDROID_FS_HDR) $(PRIVATE_TARGET_FS_CONFIG_GEN) > $@
 
 system_android_filesystem_config :=
-endif
 
 ANDROID_FS_CONFIG_H :=
 my_fs_config_h :=
