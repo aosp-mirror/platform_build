@@ -2906,22 +2906,6 @@ $(2): $(1) $(call hiddenapi-soong-output-dex,$(2)) | $(SOONG_ZIP) $(MERGE_ZIPS)
 	$(MERGE_ZIPS) -D -zipToNotStrip $${OUTPUT_JAR} -stripFile "classes*.dex" $(2) $${OUTPUT_JAR} $(1)
 endef
 
-###########################################################
-## Commands to call Proguard
-###########################################################
-ifdef TARGET_OPENJDK9
-define transform-jar-to-proguard
-@echo Skipping Proguard: $< $@
-$(hide) cp '$<' $@
-endef
-else
-define transform-jar-to-proguard
-@echo Proguard: $@
-$(hide) $(PROGUARD) -injars $< -outjars $@ $(PRIVATE_PROGUARD_FLAGS) \
-    $(addprefix -injars , $(PRIVATE_EXTRA_INPUT_JAR))
-endef
-endif
-
 
 ###########################################################
 ## Commands to call R8
