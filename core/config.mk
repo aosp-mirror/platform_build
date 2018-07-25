@@ -701,6 +701,7 @@ JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/make/tools/fat16copy.py
 CHECK_LINK_TYPE := build/make/tools/check_link_type.py
+UUIDGEN := build/make/tools/uuidgen.py
 
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/make/tools/java-event-log-tags.py
