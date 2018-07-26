@@ -124,7 +124,7 @@ $(full_target): \
 		$(full_java_lib_deps) \
 		$(jdiff) \
 		$(doclava) \
-		$(OUT_DOCS)/$(LOCAL_MODULE)-docs-stubs.srcjar \
+		$(call doc-timestamp-for,$(LOCAL_MODULE)) \
 		$(LOCAL_ADDITIONAL_DEPENDENCIES)
 	@echo Generating API diff: $(PRIVATE_OUT_DIR)
 	@echo   Old API: $(PRIVATE_OLDAPI)
