@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b8fdb581_6121c2f6",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-26T06:04:44Z",
+      "side": 1,
+      "message": "Thanks for the suggestion.",
+      "parentUuid": "43040c93_9a14501b",
+      "revId": "691569d5613a2603a574cf0b9a6790b73401b611",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b5249893_cdfc6b89",
         "filename": "core/base_rules.mk",
         "patchSetId": 10
@@ -33,6 +51,24 @@
       "revId": "691569d5613a2603a574cf0b9a6790b73401b611",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9c65661_11e99b4c",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 383,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-26T06:04:44Z",
+      "side": 1,
+      "message": "Sure, that should be better.\nThanks.",
+      "parentUuid": "b5249893_cdfc6b89",
+      "revId": "691569d5613a2603a574cf0b9a6790b73401b611",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -56,6 +92,30 @@
       "revId": "691569d5613a2603a574cf0b9a6790b73401b611",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48de986c_ca2e161e",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-07-26T06:04:44Z",
+      "side": 1,
+      "message": "Get your point. Thanks.",
+      "parentUuid": "2fe7c162_ef4fc021",
+      "range": {
+        "startLine": 577,
+        "startChar": 5,
+        "endLine": 577,
+        "endChar": 75
+      },
+      "revId": "691569d5613a2603a574cf0b9a6790b73401b611",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
