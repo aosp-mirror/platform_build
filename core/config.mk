@@ -948,10 +948,11 @@ endif
 
 ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
 # BOARD_SUPER_PARTITION_PARTITION_LIST: a list of the following tokens
-valid_super_partition_list := system vendor product productservices
+valid_super_partition_list := system vendor product product_services
 ifneq (,$(filter-out $(valid_super_partition_list),$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
-$(error BOARD_SUPER_PARTITION_PARTITION_LIST contains invalid partition name. \
-        Valid names are $(valid_super_partition_list).)
+$(error BOARD_SUPER_PARTITION_PARTITION_LIST contains invalid partition name \
+		($(filter-out $(valid_super_partition_list),$(BOARD_SUPER_PARTITION_PARTITION_LIST))). \
+        Valid names are $(valid_super_partition_list))
 endif
 valid_super_partition_list :=
 endif # BOARD_SUPER_PARTITION_PARTITION_LIST
