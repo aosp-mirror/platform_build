@@ -117,6 +117,30 @@
       "revId": "0dee1f2b6fbba0f78977a04a6acde3b48a23d21e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca2b122c_5e8417b8",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2606,
+      "author": {
+        "id": 1290458
+      },
+      "writtenOn": "2018-07-26T20:00:21Z",
+      "side": 1,
+      "message": "Since the uuid isn\u0027t used (yet), we could just put a hardcoded value (or have a separate hardcoded value per-partition). There\u0027s not really any reason for a device to override it.",
+      "parentUuid": "ae8e8f59_d5005122",
+      "range": {
+        "startLine": 2606,
+        "startChar": 53,
+        "endLine": 2606,
+        "endChar": 60
+      },
+      "revId": "0dee1f2b6fbba0f78977a04a6acde3b48a23d21e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
