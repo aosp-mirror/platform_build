@@ -23,19 +23,6 @@ ifneq (,$(PLATFORM_VNDK_VERSION))
 # BOARD_VNDK_RUNTIME_DISABLE must not be set to 'true'.
 ifneq ($(BOARD_VNDK_RUNTIME_DISABLE),true)
 
-# Returns arch-specific libclang_rt.ubsan* library name.
-# Because VNDK_CORE_LIBRARIES includes all arch variants for libclang_rt.ubsan*
-# libs, the arch-specific libs are selected separately.
-#
-# Args:
-#   $(1): if not empty, evaluates for TARGET_2ND_ARCH
-define clang-ubsan-vndk-core
-$(strip \
-  $(eval prefix := $(if $(1),2ND_,)) \
-  $(addsuffix .vendor,$($(addprefix $(prefix),UBSAN_RUNTIME_LIBRARY))) \
-)
-endef
-
 # Returns list of src:dest paths of the intermediate objs
 #
 # Args:
@@ -70,20 +57,7 @@ $(strip \
     $(if $(notice),$(notice):$(subst .vendor,,$(lib)).so.txt)))
 endef
 
-# If in the future libclang_rt.ubsan* is removed from the VNDK-core list,
-# need to update the related logic in this file.
-ifeq (,$(filter libclang_rt.ubsan%,$(VNDK_CORE_LIBRARIES)))
-  $(warning libclang_rt.ubsan* is no longer a VNDK-core library. Please update this file.)
-  vndk_core_libs := $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES))
-else
-  vndk_core_libs := $(addsuffix .vendor,$(filter-out libclang_rt.ubsan%,$(VNDK_CORE_LIBRARIES)))
-
-  vndk_core_libs += $(call clang-ubsan-vndk-core)
-  ifdef TARGET_2ND_ARCH
-    vndk_core_libs += $(call clang-ubsan-vndk-core,true)
-  endif
-endif
-
+vndk_core_libs := $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES))
 vndk_sp_libs := $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES))
 vndk_private_libs := $(addsuffix .vendor,$(VNDK_PRIVATE_LIBRARIES))
 
