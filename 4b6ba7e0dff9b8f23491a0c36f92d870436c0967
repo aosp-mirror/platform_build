@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "cb6d7122_acdb93d1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2018-07-26T06:53:27Z",
+      "side": 1,
+      "message": "I believe it was https://android-review.googlesource.com/c/platform/build/soong/+/620507",
+      "parentUuid": "d44a9747_2608e38d",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 20
+      },
+      "revId": "4b6ba7e0dff9b8f23491a0c36f92d870436c0967",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b3de5558_bf4a209c",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-07-26T05:33:15Z",
       "side": 1,
       "message": "Does this work properly on aosp_x86_arm builds? (for the vndk, we should be treating this as an x86 build)",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 15
+      },
+      "revId": "4b6ba7e0dff9b8f23491a0c36f92d870436c0967",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25ccbf0d_3b8e46ab",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1135414
+      },
+      "writtenOn": "2018-07-26T06:53:27Z",
+      "side": 1,
+      "message": "I tried building with \u0027lunch aosp_x86_arm-user\u0027 but BOARD_VNDK_VERSION is not set, so \u0027vndk\u0027 does not build.",
+      "parentUuid": "b3de5558_bf4a209c",
       "range": {
         "startLine": 10,
         "startChar": 0,
