@@ -141,6 +141,30 @@
       "revId": "0dee1f2b6fbba0f78977a04a6acde3b48a23d21e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3366b64_02c22830",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2606,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-07-26T20:47:37Z",
+      "side": 1,
+      "message": "I used python to generate it based on the name (so that we don\u0027t have to put more hard-coded values when we allow more partitions in BOARD_SUPER_PARTITION_PARTITION_LIST).",
+      "parentUuid": "ca2b122c_5e8417b8",
+      "range": {
+        "startLine": 2606,
+        "startChar": 53,
+        "endLine": 2606,
+        "endChar": 60
+      },
+      "revId": "0dee1f2b6fbba0f78977a04a6acde3b48a23d21e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
