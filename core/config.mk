@@ -969,6 +969,16 @@ $(error Should not define BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE and \
 endif
 endif
 
+ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
+# BOARD_SUPER_PARTITION_PARTITION_LIST: a list of the following tokens
+valid_super_partition_list := system vendor product productservices
+ifneq (,$(filter-out $(valid_super_partition_list),$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
+$(error BOARD_SUPER_PARTITION_PARTITION_LIST contains invalid partition name. \
+        Valid names are $(valid_super_partition_list).)
+endif
+valid_super_partition_list :=
+endif # BOARD_SUPER_PARTITION_PARTITION_LIST
+
 endif # USE_LOGICAL_PARTITIONS
 
 # ###############################################################
