@@ -69,6 +69,30 @@
       "revId": "4747ae8d673ec428941130d320cf9d98c19529f2",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6158995f_1830fdb8",
+        "filename": "target/product/aosp_x86.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-07-26T06:05:58Z",
+      "side": 1,
+      "message": "aosp_arch$ do not include treble_common.mk, we will remove treble_common.mk from all aosp_arch$_a(b) to be like aosp_arch$.",
+      "parentUuid": "b4b0a159_9c81673a",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 30
+      },
+      "revId": "4747ae8d673ec428941130d320cf9d98c19529f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
