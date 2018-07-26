@@ -2866,6 +2866,16 @@ $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): \
     PRIVATE_DEX_INPUTS := $$(PRIVATE_DEX_INPUTS) $(1)
 endef
 
+# Generate a greylist.txt from a classes.jar
+define hiddenapi-generate-greylist-txt
+$(2): $(1) $(CLASS2GREYLIST)
+	$(CLASS2GREYLIST) $(1) > $(2)
+
+$(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST): $(2)
+$(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST): \
+    PRIVATE_GREYLIST_INPUTS := $$(PRIVATE_GREYLIST_INPUTS) $(2)
+endef
+
 # File names for intermediate dex files of `hiddenapi-copy-soong-jar`.
 hiddenapi-soong-input-dex = $(dir $(1))/hiddenapi/dex-input/classes.dex
 hiddenapi-soong-output-dex = $(dir $(1))/hiddenapi/dex-output/classes.dex
