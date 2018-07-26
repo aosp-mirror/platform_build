@@ -189,6 +189,30 @@
       "revId": "0dee1f2b6fbba0f78977a04a6acde3b48a23d21e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72958f68_a2a6ac79",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2606,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-07-26T21:01:47Z",
+      "side": 1,
+      "message": "It does look very \"magical\". https://android.googlesource.com/platform/system/extras/+/8d81763715bc681243955d831cc36dd2ea2998b7/ext4_utils/ext4_utils.c#79",
+      "parentUuid": "7f55c260_4a18334e",
+      "range": {
+        "startLine": 2606,
+        "startChar": 53,
+        "endLine": 2606,
+        "endChar": 60
+      },
+      "revId": "0dee1f2b6fbba0f78977a04a6acde3b48a23d21e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
