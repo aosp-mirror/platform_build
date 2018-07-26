@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "faf408b6_98d1f8e4",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2018-07-26T02:49:39Z",
+      "side": 1,
+      "message": "this is 64MB",
+      "range": {
+        "startLine": 14,
+        "startChar": 45,
+        "endLine": 14,
+        "endChar": 53
+      },
+      "revId": "4747ae8d673ec428941130d320cf9d98c19529f2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
