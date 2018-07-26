@@ -742,18 +742,6 @@ define exported-sdk-libs-files
 $(foreach lib,$(1),$(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/exported-sdk-libs)
 endef
 
-# Fix manifest
-# $(1): input manifest path
-# $(2): output manifest path
-# $(3): min sdk version
-# $(4): (optional) exported-sdk-libs file
-define fix-manifest
-$(MANIFEST_FIXER) \
---minSdkVersion $(3) \
-$(if $(4),$$(cat $(4) | sort -u | sed -e 's/^/\ --uses-library\ /' | tr '\n' ' ')) \
-$(1) $(2)
-endef
-
 ###########################################################
 ## Returns true if $(1) and $(2) are equal.  Returns
 ## the empty string if they are not equal.
