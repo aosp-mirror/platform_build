@@ -141,6 +141,30 @@
       "revId": "4b6ba7e0dff9b8f23491a0c36f92d870436c0967",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "32cd8d2c_956aaab0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-07-26T15:39:43Z",
+      "side": 1,
+      "message": "cf_x86_phone in the internal is using VNDK, but aosp_cf_x86_phone isn\u0027t yet.",
+      "parentUuid": "9e5465c9_40ae873f",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 15
+      },
+      "revId": "4b6ba7e0dff9b8f23491a0c36f92d870436c0967",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
