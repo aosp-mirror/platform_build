@@ -213,6 +213,30 @@
       "revId": "0dee1f2b6fbba0f78977a04a6acde3b48a23d21e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f7944119_798cf872",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2606,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-07-26T21:18:43Z",
+      "side": 1,
+      "message": "Anyways, please look at the latest patchset, where I used Python\u0027s uuid module to do the work.",
+      "parentUuid": "72958f68_a2a6ac79",
+      "range": {
+        "startLine": 2606,
+        "startChar": 53,
+        "endLine": 2606,
+        "endChar": 60
+      },
+      "revId": "0dee1f2b6fbba0f78977a04a6acde3b48a23d21e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
