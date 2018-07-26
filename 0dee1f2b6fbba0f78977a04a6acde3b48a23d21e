@@ -93,6 +93,30 @@
       "revId": "0dee1f2b6fbba0f78977a04a6acde3b48a23d21e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae8e8f59_d5005122",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2606,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-26T19:48:56Z",
+      "side": 1,
+      "message": "Make it stable so that the same source tree and build configuration produces the same output. I\u0027m not particular about how that\u0027s done. Caching does not satisfy that requirement, but seeding it with a hash of the contents, using something static, etc would.",
+      "parentUuid": "7bdadfee_d472a991",
+      "range": {
+        "startLine": 2606,
+        "startChar": 53,
+        "endLine": 2606,
+        "endChar": 60
+      },
+      "revId": "0dee1f2b6fbba0f78977a04a6acde3b48a23d21e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
