@@ -38,28 +38,36 @@ else
   $(full_android_manifest): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
 endif
 
-# Set up rules to merge library manifest files
-my_exported_sdk_libs_file := $(call local-intermediates-dir,COMMON)/exported-sdk-libs
-$(full_android_manifest): PRIVATE_EXPORTED_SDK_LIBS_FILE := $(my_exported_sdk_libs_file)
-$(full_android_manifest): $(my_exported_sdk_libs_file)
-$(full_android_manifest): $(MANIFEST_FIXER)
-
 ifneq (,$(strip $(my_full_libs_manifest_files)))
+  # Set up rules to merge library manifest files
+  fixed_android_manifest := $(intermediates.COMMON)/manifest/AndroidManifest.xml.fixed
 
-$(full_android_manifest): PRIVATE_LIBS_MANIFESTS := $(my_full_libs_manifest_files)
-$(full_android_manifest): $(ANDROID_MANIFEST_MERGER_DEPS)
-$(full_android_manifest) : $(main_android_manifest) $(my_full_libs_manifest_files)
+  $(full_android_manifest): PRIVATE_LIBS_MANIFESTS := $(my_full_libs_manifest_files)
+  $(full_android_manifest): $(ANDROID_MANIFEST_MERGER_DEPS)
+  $(full_android_manifest) : $(fixed_android_manifest) $(my_full_libs_manifest_files)
 	@echo "Merge android manifest files: $@ <-- $< $(PRIVATE_LIBS_MANIFESTS)"
 	@mkdir -p $(dir $@)
-	$(call fix-manifest,$<,$@.tmp,$(PRIVATE_MIN_SDK_VERSION),$(PRIVATE_EXPORTED_SDK_LIBS_FILE))
-	$(hide) $(ANDROID_MANIFEST_MERGER) --main $@.tmp \
+	$(hide) $(ANDROID_MANIFEST_MERGER) --main $< \
 	    --libs $(call normalize-path-list,$(PRIVATE_LIBS_MANIFESTS)) \
 	    --out $@
-	rm $@.tmp
-
 else
-$(full_android_manifest): $(main_android_manifest)
-	@echo "Fix manifest: $@"
-	$(call fix-manifest,$<,$@,$(PRIVATE_MIN_SDK_VERSION),$(PRIVATE_EXPORTED_SDK_LIBS_FILE))
-
+  fixed_android_manifest := $(full_android_manifest)
 endif
+
+my_exported_sdk_libs_file := $(call local-intermediates-dir,COMMON)/exported-sdk-libs
+$(fixed_android_manifest): PRIVATE_EXPORTED_SDK_LIBS_FILE := $(my_exported_sdk_libs_file)
+$(fixed_android_manifest): $(my_exported_sdk_libs_file)
+
+$(fixed_android_manifest): PRIVATE_MANIFEST_FIXER_FLAGS :=
+ifneq ($(LOCAL_MODULE_CLASS),APPS)
+$(fixed_android_manifest): PRIVATE_MANIFEST_FIXER_FLAGS := --library
+endif
+$(fixed_android_manifest): $(MANIFEST_FIXER)
+$(fixed_android_manifest): $(main_android_manifest)
+	@echo "Fix manifest: $@"
+	$(MANIFEST_FIXER) \
+	  --minSdkVersion $(PRIVATE_MIN_SDK_VERSION) \
+	  $(PRIVATE_MANIFEST_FIXER_FLAGS) \
+	  $(if (PRIVATE_EXPORTED_SDK_LIBS_FILE),\
+	    $$(cat $(PRIVATE_EXPORTED_SDK_LIBS_FILE) | sort -u | sed -e 's/^/\ --uses-library\ /' | tr '\n' ' ')) \
+	  $< $@
