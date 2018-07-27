@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3afc8498_b697f608",
+        "filename": "core/Makefile",
+        "patchSetId": 10
+      },
+      "lineNbr": 2590,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-07-27T01:44:08Z",
+      "side": 1,
+      "message": "Does it mean we\u0027ll have both of fastboot and fastbootd even on devices shipping with fastbootd? That would look confusing, e.g. `fastboot update` only works with fastbootd, and this \"bootloader fastboot\" won\u0027t be able to flash system_other.img (which is not included in super.img).\n\nOr is this super image build rule only needed for dev purpose, before fastbootd flashing becomes ready?",
+      "range": {
+        "startLine": 2590,
+        "startChar": 2,
+        "endLine": 2590,
+        "endChar": 21
+      },
+      "revId": "3ed6abe1887193e346fda1407e31078fafba6f6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86b719c8_87581d9c",
+        "filename": "tools/uuidgen.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-07-27T01:44:08Z",
+      "side": 1,
+      "message": "from __future__ import print_function",
+      "range": {
+        "startLine": 25,
+        "startChar": 8,
+        "endLine": 25,
+        "endChar": 13
+      },
+      "revId": "3ed6abe1887193e346fda1407e31078fafba6f6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
