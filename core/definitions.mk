@@ -796,8 +796,8 @@ endef
 
 define collapse-pairs
 $(eval _cpSEP := $(strip $(if $(2),$(2),=)))\
-$(subst $(space)$(_cpSEP)$(space),$(_cpSEP),$(strip \
-    $(subst $(_cpSEP), $(_cpSEP) ,$(1))))
+$(strip $(subst $(space)$(_cpSEP)$(space),$(_cpSEP),$(strip \
+    $(subst $(_cpSEP), $(_cpSEP) ,$(1)))$(space)))
 endef
 
 ###########################################################
