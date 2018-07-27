@@ -22,6 +22,53 @@
       "revId": "2b174445fb7f14d910e0f5a41795549ab644fc2b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2e19f54_d908e7b3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1108565
+      },
+      "writtenOn": "2018-07-27T18:55:20Z",
+      "side": 1,
+      "message": "+1",
+      "parentUuid": "a57a4c28_a2a3759c",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 30
+      },
+      "revId": "2b174445fb7f14d910e0f5a41795549ab644fc2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "914ec119_d5d46be4",
+        "filename": "core/config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 920,
+      "author": {
+        "id": 1108565
+      },
+      "writtenOn": "2018-07-27T18:55:20Z",
+      "side": 1,
+      "message": "can we make it so it default true for newer devices (so nobody forgets?)",
+      "range": {
+        "startLine": 918,
+        "startChar": 22,
+        "endLine": 920,
+        "endChar": 5
+      },
+      "revId": "2b174445fb7f14d910e0f5a41795549ab644fc2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
