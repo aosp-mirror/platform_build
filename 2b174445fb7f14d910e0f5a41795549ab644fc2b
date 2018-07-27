@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "ae9290da_1ffe86df",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-07-27T19:43:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "50050cf6_3e578225",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 30
+      },
+      "revId": "2b174445fb7f14d910e0f5a41795549ab644fc2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "914ec119_d5d46be4",
         "filename": "core/config.mk",
         "patchSetId": 4
