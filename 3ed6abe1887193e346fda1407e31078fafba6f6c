@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7ef74e7e_cc0d8f15",
+        "filename": "core/Makefile",
+        "patchSetId": 10
+      },
+      "lineNbr": 2590,
+      "author": {
+        "id": 1290458
+      },
+      "writtenOn": "2018-07-27T03:47:59Z",
+      "side": 1,
+      "message": "Yes, devices will have both fastboot and fastbootd. Indeed the bootloader fastboot will not be able to flash, resize, or delete logical partitions.",
+      "parentUuid": "3afc8498_b697f608",
+      "range": {
+        "startLine": 2590,
+        "startChar": 2,
+        "endLine": 2590,
+        "endChar": 21
+      },
+      "revId": "3ed6abe1887193e346fda1407e31078fafba6f6c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "86b719c8_87581d9c",
         "filename": "tools/uuidgen.py",
         "patchSetId": 10
