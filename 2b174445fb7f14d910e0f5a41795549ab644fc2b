@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a57a4c28_a2a3759c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-27T18:29:20Z",
+      "side": 1,
+      "message": "OTA generation already requires a kernel. While the description below helps, this name is rather confusing (and you\u0027ll never see the description when reading/writing BoardConfig files)",
+      "range": {
+        "startLine": 7,
+        "startChar": 4,
+        "endLine": 7,
+        "endChar": 30
+      },
+      "revId": "2b174445fb7f14d910e0f5a41795549ab644fc2b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
