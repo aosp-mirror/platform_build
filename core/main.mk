@@ -148,6 +148,15 @@ ADDITIONAL_BUILD_PROPERTIES :=
 
 #
 # -----------------------------------------------------------------
+# Validate ADDITIONAL_PRODUCT_PROPERTIES.
+ifneq ($(ADDITIONAL_PRODUCT_PROPERTIES),)
+$(error ADDITIONAL_PRODUCT_PROPERTIES must not be set before here: $(ADDITIONAL_PRODUCT_PROPERTIES))
+endif
+
+ADDITIONAL_PRODUCT_PROPERTIES :=
+
+#
+# -----------------------------------------------------------------
 # Add the product-defined properties to the build properties.
 ifdef PRODUCT_SHIPPING_API_LEVEL
 ADDITIONAL_BUILD_PROPERTIES += \
@@ -233,7 +242,7 @@ else
 ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
 endif
 
-ADDITIONAL_BUILD_PROPERTIES += ro.boot.logical_partitions=${USE_LOGICAL_PARTITIONS}
+ADDITIONAL_PRODUCT_PROPERTIES += ro.boot.logical_partitions=${USE_LOGICAL_PARTITIONS}
 
 # -----------------------------------------------------------------
 ###
@@ -399,6 +408,8 @@ ADDITIONAL_DEFAULT_PROPERTIES := $(strip $(ADDITIONAL_DEFAULT_PROPERTIES))
 .KATI_READONLY := ADDITIONAL_DEFAULT_PROPERTIES
 ADDITIONAL_BUILD_PROPERTIES := $(strip $(ADDITIONAL_BUILD_PROPERTIES))
 .KATI_READONLY := ADDITIONAL_BUILD_PROPERTIES
+ADDITIONAL_PRODUCT_PROPERTIES := $(strip $(ADDITIONAL_PRODUCT_PROPERTIES))
+.KATI_READONLY := ADDITIONAL_PRODUCT_PROPERTIES
 
 ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
 ENFORCE_RRO_SOURCES :=
