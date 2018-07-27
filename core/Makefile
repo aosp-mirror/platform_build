@@ -1664,7 +1664,7 @@ FULL_SYSTEMIMAGE_DEPS := $(INTERNAL_SYSTEMIMAGE_FILES) $(INTERNAL_USERIMAGES_DEP
 
 # ASAN libraries in the system image - add dependency.
 ASAN_IN_SYSTEM_INSTALLED := $(TARGET_OUT)/asan.tar.bz2
-ifneq (,$(SANITIZE_TARGET))
+ifneq (,$(filter address, $(SANITIZE_TARGET)))
   ifeq (true,$(SANITIZE_TARGET_SYSTEM))
     FULL_SYSTEMIMAGE_DEPS += $(ASAN_IN_SYSTEM_INSTALLED)
   endif

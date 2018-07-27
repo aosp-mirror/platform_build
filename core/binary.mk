@@ -1320,6 +1320,24 @@ ifneq ($(filter cfi,$(my_sanitize)),)
     $(my_static_libraries))
 endif
 
+ifneq ($(LOCAL_USE_VNDK),)
+  my_soong_hwasan_static_libraries := $(SOONG_HWASAN_VENDOR_STATIC_LIBRARIES)
+else
+  my_soong_hwasan_static_libraries = $(SOONG_HWASAN_STATIC_LIBRARIES)
+endif
+
+define use_soong_hwasan_static_libraries
+  $(foreach l,$(1),$(if $(filter $(l),$(my_soong_hwasan_static_libraries)),\
+      $(l).hwasan,$(l)))
+endef
+
+ifneq ($(filter hwaddress,$(my_sanitize)),)
+  my_whole_static_libraries := $(call use_soong_hwasan_static_libraries,\
+    $(my_whole_static_libraries))
+  my_static_libraries := $(call use_soong_hwasan_static_libraries,\
+    $(my_static_libraries))
+endif
+
 ###########################################################
 ## When compiling against the VNDK, use LL-NDK libraries
 ###########################################################
