@@ -189,6 +189,30 @@
       "revId": "4b6ba7e0dff9b8f23491a0c36f92d870436c0967",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fa83fa84_a640f1a4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-07-27T03:06:47Z",
+      "side": 1,
+      "message": "That sounds questionable -- for vendor, that should probably be considered an x86 only device. But it sounds like this change doesn\u0027t make anything worse.",
+      "parentUuid": "7d3ef3ab_56919d38",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 15
+      },
+      "revId": "4b6ba7e0dff9b8f23491a0c36f92d870436c0967",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
