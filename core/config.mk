@@ -725,6 +725,7 @@ BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump2$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
 HIDDENAPI := $(HOST_OUT_EXECUTABLES)/hiddenapi
+CLASS2GREYLIST := $(HOST_OUT_EXECUTABLES)/class2greylist
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
@@ -967,6 +968,16 @@ $(error Should not define BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE and \
     BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE together)
 endif
 endif
+
+ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
+# BOARD_SUPER_PARTITION_PARTITION_LIST: a list of the following tokens
+valid_super_partition_list := system vendor product productservices
+ifneq (,$(filter-out $(valid_super_partition_list),$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
+$(error BOARD_SUPER_PARTITION_PARTITION_LIST contains invalid partition name. \
+        Valid names are $(valid_super_partition_list).)
+endif
+valid_super_partition_list :=
+endif # BOARD_SUPER_PARTITION_PARTITION_LIST
 
 endif # USE_LOGICAL_PARTITIONS
 

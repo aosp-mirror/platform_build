@@ -742,18 +742,6 @@ define exported-sdk-libs-files
 $(foreach lib,$(1),$(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/exported-sdk-libs)
 endef
 
-# Fix manifest
-# $(1): input manifest path
-# $(2): output manifest path
-# $(3): min sdk version
-# $(4): (optional) exported-sdk-libs file
-define fix-manifest
-$(MANIFEST_FIXER) \
---minSdkVersion $(3) \
-$(if $(4),$$(cat $(4) | sort -u | sed -e 's/^/\ --uses-library\ /' | tr '\n' ' ')) \
-$(1) $(2)
-endef
-
 ###########################################################
 ## Returns true if $(1) and $(2) are equal.  Returns
 ## the empty string if they are not equal.
@@ -2864,6 +2852,16 @@ $(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
 $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): $(1)
 $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): \
     PRIVATE_DEX_INPUTS := $$(PRIVATE_DEX_INPUTS) $(1)
+endef
+
+# Generate a greylist.txt from a classes.jar
+define hiddenapi-generate-greylist-txt
+$(2): $(1) $(CLASS2GREYLIST)
+	$(CLASS2GREYLIST) $(1) > $(2)
+
+$(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST): $(2)
+$(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST): \
+    PRIVATE_GREYLIST_INPUTS := $$(PRIVATE_GREYLIST_INPUTS) $(2)
 endef
 
 # File names for intermediate dex files of `hiddenapi-copy-soong-jar`.

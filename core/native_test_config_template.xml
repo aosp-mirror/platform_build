@@ -15,6 +15,8 @@
 -->
 <!-- This test config file is auto-generated. -->
 <configuration description="Runs {MODULE}.">
+    <option name="test-suite-tag" value="apct" />
+    <option name="test-suite-tag" value="apct-native" />
     <target_preparer class="com.android.tradefed.targetprep.PushFilePreparer">
         <option name="cleanup" value="true" />
         <option name="push" value="{MODULE}->/data/local/tmp/{MODULE}" />

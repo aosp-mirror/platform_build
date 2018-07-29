@@ -100,7 +100,9 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		$(PRIVATE_BOOT_IMAGE_FLAGS) \
 		$(addprefix --dex-file=,$(LIBART_TARGET_BOOT_DEX_FILES)) \
 		$(addprefix --dex-location=,$(LIBART_TARGET_BOOT_DEX_LOCATIONS)) \
+		--generate-debug-info --generate-build-id \
 		--oat-symbols=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED) \
+		--strip \
 		--oat-file=$(patsubst %.art,%.oat,$@) \
 		--oat-location=$(patsubst %.art,%.oat,$($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_BOOT_IMAGE_FILENAME)) \
 		--image=$@ --base=$(LIBART_IMG_TARGET_BASE_ADDRESS) \
@@ -109,7 +111,6 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--instruction-set-features=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES) \
 		--android-root=$(PRODUCT_OUT)/system \
 		--runtime-arg -Xnorelocate --compile-pic \
-		--no-generate-debug-info --generate-build-id \
 		--multi-image --no-inline-from=core-oj.jar \
 		--abort-on-hard-verifier-error \
 		--abort-on-soft-verifier-error \
