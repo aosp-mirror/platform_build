@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "83744220_f3afcb4d",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 2564,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-07-30T17:51:03Z",
+      "side": 1,
+      "message": "This is correct (see L2571); vendor and product will be converted correctly.\nIn fact, after I change the name to product_services, I can remove L2568 as well...",
+      "parentUuid": "ec414b07_d7982de9",
+      "range": {
+        "startLine": 2564,
+        "startChar": 34,
+        "endLine": 2564,
+        "endChar": 40
+      },
+      "revId": "37c0c7c82dd32e53bc4c5ee0a6d8acefb9294875",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dc26343a_f5dbe3f4",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -36,6 +60,30 @@
       "writtenOn": "2018-07-28T05:05:54Z",
       "side": 1,
       "message": "isn\u0027t it an error if this isn\u0027t defined? This looks like it fails silently?",
+      "range": {
+        "startLine": 2583,
+        "startChar": 6,
+        "endLine": 2583,
+        "endChar": 32
+      },
+      "revId": "37c0c7c82dd32e53bc4c5ee0a6d8acefb9294875",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c661df9_dfec9e69",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 2583,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-07-30T17:51:03Z",
+      "side": 1,
+      "message": "PRODUCT_USE_LOGICAL_PARTITIONS can be defined without BOARD_SUPER_PARTITION_SIZE; in fact GSI targets are using this.\n\n-- Or maybe they shouldn\u0027t? GSI targets define PRODUCT_USE_LOGICAL_PARTITIONS to remove the hard-coded system partition sizes only. Maybe there should be a separate flag for hard-coded system partitions?",
+      "parentUuid": "dc26343a_f5dbe3f4",
       "range": {
         "startLine": 2583,
         "startChar": 6,
