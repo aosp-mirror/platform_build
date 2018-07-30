@@ -653,11 +653,11 @@ def AddImagesToTargetFiles(filename):
   has_product = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "PRODUCT")) or
                  os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
                                              "product.img")))
-  has_productservices = (os.path.isdir(os.path.join(OPTIONS.input_tmp,
-                                                    "PRODUCTSERVICES")) or
-                         os.path.exists(os.path.join(OPTIONS.input_tmp,
-                                                     "IMAGES",
-                                                     "product-services.img")))
+  has_product_services = (os.path.isdir(os.path.join(OPTIONS.input_tmp,
+                                                     "PRODUCT_SERVICES")) or
+                          os.path.exists(os.path.join(OPTIONS.input_tmp,
+                                                      "IMAGES",
+                                                      "product-services.img")))
   has_system_other = os.path.isdir(os.path.join(OPTIONS.input_tmp,
                                                 "SYSTEM_OTHER"))
 
@@ -734,7 +734,7 @@ def AddImagesToTargetFiles(filename):
     banner("product")
     partitions['product'] = AddProduct(output_zip)
 
-  if has_productservices:
+  if has_product_services:
     banner("product-services")
     partitions['product-services'] = AddProductServices(output_zip)
 
