@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ifneq ($(wildcard test/sts/README.md),)
 test_suite_name := sts
 test_suite_tradefed := sts-tradefed
 test_suite_readme := test/sts/README.md
@@ -21,3 +22,4 @@ include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 .PHONY: sts
 sts: $(compatibility_zip)
 $(call dist-for-goals, sts, $(compatibility_zip))
+endif
