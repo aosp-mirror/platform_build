@@ -908,27 +908,27 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("product_reserved_size", "partition_reserved_size")
   elif mount_point == "product-services":
-    copy_prop("avb_productservices_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_productservices_add_hashtree_footer_args",
+    copy_prop("avb_product_services_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_product_services_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
-    copy_prop("avb_productservices_key_path", "avb_key_path")
-    copy_prop("avb_productservices_algorithm", "avb_algorithm")
-    copy_prop("productservices_fs_type", "fs_type")
-    copy_prop("productservices_size", "partition_size")
-    if not copy_prop("productservices_journal_size", "journal_size"):
+    copy_prop("avb_product_services_key_path", "avb_key_path")
+    copy_prop("avb_product_services_algorithm", "avb_algorithm")
+    copy_prop("product_services_fs_type", "fs_type")
+    copy_prop("product_services_size", "partition_size")
+    if not copy_prop("product_services_journal_size", "journal_size"):
       d["journal_size"] = "0"
-    copy_prop("productservices_verity_block_device", "verity_block_device")
-    copy_prop("productservices_squashfs_compressor", "squashfs_compressor")
-    copy_prop("productservices_squashfs_compressor_opt",
+    copy_prop("product_services_verity_block_device", "verity_block_device")
+    copy_prop("product_services_squashfs_compressor", "squashfs_compressor")
+    copy_prop("product_services_squashfs_compressor_opt",
               "squashfs_compressor_opt")
-    copy_prop("productservices_squashfs_block_size", "squashfs_block_size")
-    copy_prop("productservices_squashfs_disable_4k_align",
+    copy_prop("product_services_squashfs_block_size", "squashfs_block_size")
+    copy_prop("product_services_squashfs_disable_4k_align",
               "squashfs_disable_4k_align")
-    copy_prop("productservices_base_fs_file", "base_fs_file")
-    copy_prop("productservices_extfs_inode_count", "extfs_inode_count")
-    if not copy_prop("productservices_extfs_rsv_pct", "extfs_rsv_pct"):
+    copy_prop("product_services_base_fs_file", "base_fs_file")
+    copy_prop("product_services_extfs_inode_count", "extfs_inode_count")
+    if not copy_prop("product_services_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
-    copy_prop("productservices_reserved_size", "partition_reserved_size")
+    copy_prop("product_services_reserved_size", "partition_reserved_size")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
@@ -977,7 +977,7 @@ def GlobalDictFromImageProp(image_prop, mount_point):
   elif mount_point == "product":
     copy_prop(size_property, "product_size")
   elif mount_point == "product-services":
-    copy_prop(size_property, "productservices_size")
+    copy_prop(size_property, "product_services_size")
   return d
 
 
