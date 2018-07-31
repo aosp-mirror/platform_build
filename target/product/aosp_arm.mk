@@ -32,10 +32,6 @@ PRODUCT_COPY_FILES += \
     prebuilts/qemu-kernel/arm64/3.18/kernel-qemu2:kernel-ranchu-64 \
     device/generic/goldfish/fstab.ranchu.arm:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.ranchu
 
-# TODO(b/78308559): includes vr_hwc into GSI before vr_hwc move to vendor
-PRODUCT_PACKAGES += \
-    vr_hwc
-
 include $(SRC_TARGET_DIR)/product/full.mk
 
 # Enable A/B update
