@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "82eaab51_2bf2a860",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2564,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-31T23:17:14Z",
+      "side": 1,
+      "message": "If it is the end of a line in the make rule just drop the ;",
+      "parentUuid": "23a734c6_3d6d806a",
+      "revId": "d2e22dabe9300123601f9d3ba33db48117156274",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5128075d_bd52cfa4",
         "filename": "core/definitions.mk",
         "patchSetId": 5
