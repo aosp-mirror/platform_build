@@ -1277,9 +1277,6 @@ ifneq ($(TARGET_BUILD_APPS),)
   $(COVERAGE_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(COVERAGE_ZIP))
 
-  $(APPCOMPAT_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(APPCOMPAT_ZIP))
-
 .PHONY: apps_only
 apps_only: $(unbundled_build_modules)
 
