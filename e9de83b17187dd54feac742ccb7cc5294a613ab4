@@ -34,6 +34,24 @@
       "revId": "e9de83b17187dd54feac742ccb7cc5294a613ab4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aac18ca5_8acc5ebf",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-31T20:51:24Z",
+      "side": 1,
+      "message": "Seems complicated, but OK.",
+      "parentUuid": "21775882_c503eeff",
+      "revId": "e9de83b17187dd54feac742ccb7cc5294a613ab4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
