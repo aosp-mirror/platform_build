@@ -16,6 +16,24 @@
       "revId": "e9de83b17187dd54feac742ccb7cc5294a613ab4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21775882_c503eeff",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-07-31T20:36:49Z",
+      "side": 1,
+      "message": "A device can:\n\ndefine PARENT\u003dtrue, which means CHILD_1\u003dtrue and CHILD_2\u003dtrue\ndefine CHILD_1\u003dtrue, but not CHILD_2 and PARENT; PARENT is implicitly empty (which means false)\ndefine CHILD_1\u003dtrue, CHILD_2\u003dfalse, PARENT\u003dtrue: error, it requires CHILD_2\u003dtrue.\n\nThis is the fallback of child values unless they are explicitly set to false by a device.\nThe error checking in core/config.mk prevents the third case.",
+      "parentUuid": "eebf5eec_485334fd",
+      "revId": "e9de83b17187dd54feac742ccb7cc5294a613ab4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }

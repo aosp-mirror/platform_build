@@ -16,6 +16,24 @@
       "revId": "e0808daee311fa7589b67e3168a41ed3b7e5daf9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a7a1ea76_161e782c",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 928,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-07-31T20:36:49Z",
+      "side": 1,
+      "message": "\"PRODUCT_USE_LOGICAL_PARTITIONS\" is the parent flag (like PRODUCT_FULL_TREBLE) and PRODUCT_BUILD_SUPER_PARTITION is the child flag (like PRODUCT_USE_VNDK).\n\nPRODUCT_USE_LOGICAL_PARTITIONS :\u003d true implies that PRODUCT_BUILD_SUPER_PARTITION must be true, but not necessary the reverse.\n\nPRODUCT_USE_LOGICAL_PARTITIONS :\u003d true only if all the requirements are true, see L929-932.",
+      "parentUuid": "6ba3cba5_2f12ae5b",
+      "revId": "e0808daee311fa7589b67e3168a41ed3b7e5daf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
