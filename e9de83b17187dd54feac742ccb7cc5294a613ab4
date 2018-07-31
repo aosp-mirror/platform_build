@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eebf5eec_485334fd",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 526,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-31T20:31:26Z",
+      "side": 1,
+      "message": "Why have this as well as the error checking in core/config.mk?",
+      "revId": "e9de83b17187dd54feac742ccb7cc5294a613ab4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
