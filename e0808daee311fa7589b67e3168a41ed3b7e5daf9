@@ -34,6 +34,24 @@
       "revId": "e0808daee311fa7589b67e3168a41ed3b7e5daf9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d5d1dfd_866b90a9",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 928,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-07-31T20:39:38Z",
+      "side": 1,
+      "message": "(Sorry, not PRODUCT_USE_VNDK, but things like PRODUCT_SEPOLICY_SPLIT)",
+      "parentUuid": "a7a1ea76_161e782c",
+      "revId": "e0808daee311fa7589b67e3168a41ed3b7e5daf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
