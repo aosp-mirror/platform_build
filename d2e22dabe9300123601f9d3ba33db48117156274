@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "07485eb6_47f5e235",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2564,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2018-07-31T23:22:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "82eaab51_2bf2a860",
+      "revId": "d2e22dabe9300123601f9d3ba33db48117156274",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5128075d_bd52cfa4",
         "filename": "core/definitions.mk",
         "patchSetId": 5
@@ -87,6 +105,24 @@
       "revId": "d2e22dabe9300123601f9d3ba33db48117156274",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "988f0914_a51417d6",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2569,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2018-07-31T23:22:40Z",
+      "side": 1,
+      "message": "removed ;",
+      "parentUuid": "078c72e7_6b1d8499",
+      "revId": "d2e22dabe9300123601f9d3ba33db48117156274",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
