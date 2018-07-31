@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "23a734c6_3d6d806a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2564,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2018-07-31T23:15:13Z",
+      "side": 1,
+      "message": "aren\u0027t these treated as different commands? in the rule there are\n\n  $(appcompat-header)\n  $(run-appcompat)\n\nso not sure what adding \u0026\u0026 at the end of each command will add",
+      "parentUuid": "3888044c_6faa1b01",
+      "revId": "d2e22dabe9300123601f9d3ba33db48117156274",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5128075d_bd52cfa4",
         "filename": "core/definitions.mk",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2018-07-31T23:12:18Z",
       "side": 1,
       "message": "Here too",
+      "revId": "d2e22dabe9300123601f9d3ba33db48117156274",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "078c72e7_6b1d8499",
+        "filename": "core/definitions.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 2569,
+      "author": {
+        "id": 1305591
+      },
+      "writtenOn": "2018-07-31T23:15:13Z",
+      "side": 1,
+      "message": "ditto",
+      "parentUuid": "5128075d_bd52cfa4",
       "revId": "d2e22dabe9300123601f9d3ba33db48117156274",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
