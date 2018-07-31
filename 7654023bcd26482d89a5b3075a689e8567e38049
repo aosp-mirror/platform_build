@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bcdd2676_77d6c1d9",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 1290,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-07-31T18:09:19Z",
+      "side": 0,
+      "message": "same, put that separate flag here.",
+      "range": {
+        "startLine": 1290,
+        "startChar": 0,
+        "endLine": 1290,
+        "endChar": 82
+      },
+      "revId": "7654023bcd26482d89a5b3075a689e8567e38049",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "5dec37b9_e5c10a6a",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 950,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-07-31T18:09:19Z",
+      "side": 1,
+      "message": "Please put these behind a separate flag.",
+      "range": {
+        "startLine": 949,
+        "startChar": 0,
+        "endLine": 950,
+        "endChar": 53
+      },
+      "revId": "2b6d6a5daa76c5adfa6a58fee89fe6844af1b86a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "1350f906_003f559c",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 5
