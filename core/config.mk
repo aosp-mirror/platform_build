@@ -707,6 +707,7 @@ JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/make/tools/fat16copy.py
 CHECK_LINK_TYPE := build/make/tools/check_link_type.py
+UUIDGEN := build/make/tools/uuidgen.py
 
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/make/tools/java-event-log-tags.py
@@ -933,6 +934,20 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     PLATFORM_SEPOLICY_VERSION \
     TOT_SEPOLICY_VERSION \
 
+# If true, kernel configuration requirements are present in OTA package (and will be enforced
+# during OTA). Otherwise, kernel configuration requirements are enforced in VTS.
+# Devices that checks the running kernel (instead of the kernel in OTA package) should not
+# set this variable to prevent OTA failures.
+ifndef PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
+  PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS :=
+  ifdef PRODUCT_SHIPPING_API_LEVEL
+    ifeq (true,$(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29))
+      PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := true
+    endif
+  endif
+endif
+.KATI_READONLY := PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
+
 ifndef USE_LOGICAL_PARTITIONS
   USE_LOGICAL_PARTITIONS := $(PRODUCT_USE_LOGICAL_PARTITIONS)
 endif
@@ -971,10 +986,11 @@ endif
 
 ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
 # BOARD_SUPER_PARTITION_PARTITION_LIST: a list of the following tokens
-valid_super_partition_list := system vendor product productservices
+valid_super_partition_list := system vendor product product_services
 ifneq (,$(filter-out $(valid_super_partition_list),$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
-$(error BOARD_SUPER_PARTITION_PARTITION_LIST contains invalid partition name. \
-        Valid names are $(valid_super_partition_list).)
+$(error BOARD_SUPER_PARTITION_PARTITION_LIST contains invalid partition name \
+		($(filter-out $(valid_super_partition_list),$(BOARD_SUPER_PARTITION_PARTITION_LIST))). \
+        Valid names are $(valid_super_partition_list))
 endif
 valid_super_partition_list :=
 endif # BOARD_SUPER_PARTITION_PARTITION_LIST
