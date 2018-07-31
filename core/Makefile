@@ -1210,7 +1210,7 @@ $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
 $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
     $(hide) echo "system_root_image=true" >> $(1)
     $(hide) echo "root_dir=$(TARGET_ROOT_OUT)" >> $(1))
-$(if $(USE_LOGICAL_PARTITIONS),$(hide) echo "use_logical_partitions=true" >> $(1))
+$(if $(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),$(hide) echo "use_dynamic_partition_size=true" >> $(1))
 $(if $(3),$(hide) $(foreach kv,$(3),echo "$(kv)" >> $(1);))
 endef
 
@@ -2358,7 +2358,7 @@ define read-size-of-partitions
 $(foreach p,$(1),$(call read-image-prop-dictionary,$($(p)image_intermediates)/generated_$(p)_image_info.txt,$(p)_size))
 endef
 
-ifeq (true,$(USE_LOGICAL_PARTITIONS))
+ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 
 # BOARD_SUPER_PARTITION_SIZE must be defined to build super image.
 ifdef BOARD_SUPER_PARTITION_SIZE
@@ -2391,7 +2391,7 @@ $(INSTALLED_SUPERIMAGE_TARGET): $(HOST_OUT_EXECUTABLES)/lpmake
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_TARGET))
 
 endif # BOARD_SUPER_PARTITION_SIZE
-endif # USE_LOGICAL_PARTITIONS
+endif # PRODUCT_BUILD_SUPER_PARTITION
 
 # -----------------------------------------------------------------
 # Check image sizes <= size of super partition
@@ -2399,7 +2399,7 @@ endif # USE_LOGICAL_PARTITIONS
 ifeq (,$(TARGET_BUILD_APPS))
 # Do not check for apps-only build
 
-ifeq (true,$(USE_LOGICAL_PARTITIONS))
+ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 ifdef BOARD_SUPER_PARTITION_SIZE
 ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
 
@@ -2432,7 +2432,7 @@ check_android_partition_sizes:
 
 endif # BOARD_SUPER_PARTITION_PARTITION_LIST
 endif # BOARD_SUPER_PARTITION_SIZE
-endif # USE_LOGICAL_PARTITIONS
+endif # PRODUCT_BUILD_SUPER_PARTITION
 
 endif # TARGET_BUILD_APPS
 
