@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1350f906_003f559c",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-31T15:59:19Z",
+      "side": 1,
+      "message": "I think the dynamic partition sizes should be opt-in and not just a fallback if the partition size is not specified, otherwise we might have strange behavior if we drop partition_size somehow.",
+      "revId": "2b6d6a5daa76c5adfa6a58fee89fe6844af1b86a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
