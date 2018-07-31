@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6ba3cba5_2f12ae5b",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 928,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-07-31T20:05:21Z",
+      "side": 1,
+      "message": "What does PRODUCT_USE_LOGICAL_PARTITIONS do?  I.e., what is different if PRODUCT_BUILD_SUPER_PARTITION is true but PRODUCT_USE_LOGICAL_PARTITIONS is false?",
+      "revId": "e0808daee311fa7589b67e3168a41ed3b7e5daf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
