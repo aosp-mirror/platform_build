@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "44ed38f5_2bd47823",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1459,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-01T04:11:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4985db7b_2537e3c9",
+      "range": {
+        "startLine": 1459,
+        "startChar": 58,
+        "endLine": 1459,
+        "endChar": 59
+      },
+      "revId": "8f1d69c098b328ad3e1c1b17ab5a60fc84f3d8d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d1ef6823_cb973518",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "8f1d69c098b328ad3e1c1b17ab5a60fc84f3d8d5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b046187_64d2be79",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1470,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-01T04:11:51Z",
+      "side": 1,
+      "message": "Done\n\nyou\u0027re right. `echo \u003e $@` doesn\u0027t make sense. PS3 replaces the line with `rm`.",
+      "parentUuid": "d1ef6823_cb973518",
+      "range": {
+        "startLine": 1470,
+        "startChar": 0,
+        "endLine": 1470,
+        "endChar": 18
+      },
+      "revId": "8f1d69c098b328ad3e1c1b17ab5a60fc84f3d8d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
