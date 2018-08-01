@@ -95,10 +95,12 @@ else
   prebuilt_module_is_dex_javalib :=
 endif
 
-# Run veridex on product modules.
+# Run veridex on product, product-services and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
-ifdef LOCAL_PRODUCT_MODULE
+ifeq (true,$(filter true, \
+   $(LOCAL_PRODUCT_MODULE) $(LOCAL_PRODUCT_SERVICES_MODULE) \
+   $(LOCAL_VENDOR_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
 ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))  # ! unbundled app build
   module_run_appcompat := true
 endif
@@ -387,6 +389,7 @@ endif
 
 ifeq ($(module_run_appcompat),true)
 $(built_module) : $(call intermediates-dir-for,PACKAGING,veridex,HOST)/veridex.zip
+$(LOCAL_BUILT_MODULE): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
 endif
 
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR)
@@ -405,6 +408,11 @@ ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 	@# Only strip out files if we can re-sign the package.
 # Run appcompat before stripping the classes.dex file.
 ifeq ($(module_run_appcompat),true)
+ifeq ($(LOCAL_USE_AAPT2),true)
+	$(call appcompat-header, aapt2)
+else
+	$(appcompat-header)
+endif
 	$(run-appcompat)
 endif  # module_run_appcompat
 ifdef LOCAL_DEX_PREOPT
