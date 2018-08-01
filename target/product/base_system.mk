@@ -201,7 +201,9 @@ PRODUCT_PACKAGES += \
     ndc \
     netd \
     org.apache.http.legacy \
+    PackageInstaller \
     perfetto \
+    PermissionController \
     ping \
     ping6 \
     platform.xml \

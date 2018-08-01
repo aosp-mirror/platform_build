@@ -55,7 +55,6 @@ PRODUCT_PACKAGES += \
     libwebviewchromium_loader \
     libwebviewchromium_plat_support \
     make_f2fs \
-    PackageInstaller \
     requestsync \
     StatementService \
     vndk_snapshot_package \
