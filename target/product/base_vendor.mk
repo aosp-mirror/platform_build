@@ -21,6 +21,7 @@ PRODUCT_PACKAGES += \
     linker.recovery \
     recovery \
     shell_and_utilities_recovery \
+    watchdogd.recovery \
 
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
