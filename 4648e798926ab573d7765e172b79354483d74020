@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d72cb87d_2c3dc663",
+        "filename": "core/Makefile",
+        "patchSetId": 10
+      },
+      "lineNbr": 1279,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-01T16:05:15Z",
+      "side": 1,
+      "message": "There\u0027re additional changes needed (e.g. config.mk, product.mk). See https://android-review.googlesource.com/c/platform/build/+/704462.",
+      "range": {
+        "startLine": 1279,
+        "startChar": 11,
+        "endLine": 1279,
+        "endChar": 49
+      },
+      "revId": "4648e798926ab573d7765e172b79354483d74020",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
