@@ -95,6 +95,15 @@ else
   prebuilt_module_is_dex_javalib :=
 endif
 
+# Run veridex on product modules.
+# We skip it for unbundled app builds where we cannot build veridex.
+module_run_appcompat :=
+ifdef LOCAL_PRODUCT_MODULE
+ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))  # ! unbundled app build
+  module_run_appcompat := true
+endif
+endif
+
 ifdef LOCAL_COMPRESSED_MODULE
 ifneq (true,$(LOCAL_COMPRESSED_MODULE))
 $(call pretty-error, Unknown value for LOCAL_COMPRESSED_MODULE $(LOCAL_COMPRESSED_MODULE))
@@ -376,7 +385,7 @@ ifdef LOCAL_COMPRESSED_MODULE
 $(built_module) : $(MINIGZIP)
 endif
 
-ifdef LOCAL_PRODUCT_MODULE
+ifeq ($(module_run_appcompat),true)
 $(built_module) : $(call intermediates-dir-for,PACKAGING,veridex,HOST)/veridex.zip
 endif
 
@@ -395,9 +404,9 @@ endif  # LOCAL_DEX_PREOPT
 ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 	@# Only strip out files if we can re-sign the package.
 # Run appcompat before stripping the classes.dex file.
-ifdef LOCAL_PRODUCT_MODULE
+ifeq ($(module_run_appcompat),true)
 	$(run-appcompat)
-endif  # LOCAL_PRODUCT_MODULE
+endif  # module_run_appcompat
 ifdef LOCAL_DEX_PREOPT
 ifneq (nostripping,$(LOCAL_DEX_PREOPT))
 	$(call dexpreopt-remove-classes.dex,$@)
