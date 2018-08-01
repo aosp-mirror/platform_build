@@ -2114,7 +2114,9 @@ endef
 # $(2): the base dir of the output file path
 # Returns: the compiled output file path
 define aapt2-compiled-resource-out-file
-$(eval _p_w := $(strip $(subst /,$(space),$(dir $(1)))))$(2)/$(subst $(space),/,$(_p_w))_$(if $(filter values%,$(lastword $(_p_w))),$(patsubst %.xml,%.arsc,$(notdir $(1))),$(notdir $(1))).flat
+$(strip \
+  $(eval _p_w := $(strip $(subst /,$(space),$(dir $(call clean-path,$(1))))))
+  $(2)/$(subst $(space),/,$(_p_w))_$(if $(filter values%,$(lastword $(_p_w))),$(patsubst %.xml,%.arsc,$(notdir $(1))),$(notdir $(1))).flat)
 endef
 
 define aapt2-link
