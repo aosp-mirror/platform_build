@@ -925,13 +925,21 @@ ifndef PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 endif
 .KATI_READONLY := PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
-ifndef USE_LOGICAL_PARTITIONS
-  USE_LOGICAL_PARTITIONS := $(PRODUCT_USE_LOGICAL_PARTITIONS)
-endif
-.KATI_READONLY := USE_LOGICAL_PARTITIONS
-
 ifeq ($(USE_LOGICAL_PARTITIONS),true)
+    requirements := \
+        PRODUCT_USE_DYNAMIC_PARTITION_SIZE \
+        PRODUCT_BUILD_SUPER_PARTITION \
+        PRODUCT_USE_FASTBOOTD \
+
+    $(foreach req,$(requirements),$(if $(filter false,$($(req))),\
+        $(error USE_LOGICAL_PARTITIONS requires $(req) to be true)))
+
+    requirements :=
+
   BOARD_KERNEL_CMDLINE += androidboot.logical_partitions=1
+endif
+
+ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
 
 ifneq ($(BOARD_SYSTEMIMAGE_PARTITION_SIZE),)
 ifneq ($(BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE),)
@@ -961,6 +969,9 @@ $(error Should not define BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE and \
 endif
 endif
 
+endif # PRODUCT_USE_DYNAMIC_PARTITION_SIZE
+
+ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
 ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
 # BOARD_SUPER_PARTITION_PARTITION_LIST: a list of the following tokens
 valid_super_partition_list := system vendor product product_services
@@ -971,8 +982,7 @@ $(error BOARD_SUPER_PARTITION_PARTITION_LIST contains invalid partition name \
 endif
 valid_super_partition_list :=
 endif # BOARD_SUPER_PARTITION_PARTITION_LIST
-
-endif # USE_LOGICAL_PARTITIONS
+endif # PRODUCT_BUILD_SUPER_PARTITION
 
 # ###############################################################
 # Set up final options.
