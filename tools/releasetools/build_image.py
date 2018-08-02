@@ -546,7 +546,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   verity_supported = prop_dict.get("verity") == "true"
   verity_fec_supported = prop_dict.get("verity_fec") == "true"
 
-  if (prop_dict.get("use_logical_partitions") == "true" and
+  if (prop_dict.get("use_dynamic_partition_size") == "true" and
       "partition_size" not in prop_dict):
     # if partition_size is not defined, use output of `du' + reserved_size
     success, size = GetDiskUsage(in_dir)
@@ -799,7 +799,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "avb_enable",
       "avb_avbtool",
       "avb_salt",
-      "use_logical_partitions",
+      "use_dynamic_partition_size",
   )
   for p in common_props:
     copy_prop(p, p)

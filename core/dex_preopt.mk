@@ -97,9 +97,7 @@ hiddenapi_stubs_jar = $(call intermediates-dir-for,JAVA_LIBRARIES,$(1),,COMMON)/
 # Public API stubs
 HIDDENAPI_STUBS := \
     $(call hiddenapi_stubs_jar,android_stubs_current) \
-    $(call hiddenapi_stubs_jar,android.test.base.stubs) \
-    $(call hiddenapi_stubs_jar,android.test.mock.stubs) \
-    $(call hiddenapi_stubs_jar,android.test.runner.stubs)
+    $(call hiddenapi_stubs_jar,android.test.base.stubs)
 
 # System API stubs
 HIDDENAPI_STUBS += \

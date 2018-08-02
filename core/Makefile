@@ -1158,7 +1158,7 @@ ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
 INTERNAL_USERIMAGES_DEPS += $(MKE2FS_CONF)
 endif
 
-ifeq (true,$(USE_LOGICAL_PARTITIONS))
+ifeq (true,$(PRODUCT_USE_LOGICAL_PARTITIONS))
 
 ifeq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY),true)
   $(error vboot 1.0 doesn't support logical partition)
@@ -1167,7 +1167,7 @@ endif
 # TODO(b/80195851): Should not define BOARD_AVB_SYSTEM_KEY_PATH without
 # BOARD_AVB_SYSTEM_DETACHED_VBMETA.
 
-endif # USE_LOGICAL_PARTITIONS
+endif # PRODUCT_USE_LOGICAL_PARTITIONS
 
 # $(1): the path of the output dictionary file
 # $(2): a subset of "system vendor cache userdata product product_services oem"
@@ -1294,7 +1294,7 @@ $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
 $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
     $(hide) echo "system_root_image=true" >> $(1)
     $(hide) echo "root_dir=$(TARGET_ROOT_OUT)" >> $(1))
-$(if $(USE_LOGICAL_PARTITIONS),$(hide) echo "use_logical_partitions=true" >> $(1))
+$(if $(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),$(hide) echo "use_dynamic_partition_size=true" >> $(1))
 $(if $(3),$(hide) $(foreach kv,$(3),echo "$(kv)" >> $(1);))
 endef
 
@@ -2585,7 +2585,7 @@ define read-size-of-partitions
 $(foreach p,$(1),$(call read-image-prop-dictionary,$($(p)image_intermediates)/generated_$(p)_image_info.txt,$(p)_size))
 endef
 
-ifeq (true,$(USE_LOGICAL_PARTITIONS))
+ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 
 # BOARD_SUPER_PARTITION_SIZE must be defined to build super image.
 ifdef BOARD_SUPER_PARTITION_SIZE
@@ -2618,7 +2618,7 @@ $(INSTALLED_SUPERIMAGE_TARGET): $(HOST_OUT_EXECUTABLES)/lpmake
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_TARGET))
 
 endif # BOARD_SUPER_PARTITION_SIZE
-endif # USE_LOGICAL_PARTITIONS
+endif # PRODUCT_BUILD_SUPER_PARTITION
 
 # -----------------------------------------------------------------
 # Check image sizes <= size of super partition
@@ -2626,7 +2626,7 @@ endif # USE_LOGICAL_PARTITIONS
 ifeq (,$(TARGET_BUILD_APPS))
 # Do not check for apps-only build
 
-ifeq (true,$(USE_LOGICAL_PARTITIONS))
+ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 ifdef BOARD_SUPER_PARTITION_SIZE
 ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
 
@@ -2651,7 +2651,7 @@ check_android_partition_sizes:
 
 endif # BOARD_SUPER_PARTITION_PARTITION_LIST
 endif # BOARD_SUPER_PARTITION_SIZE
-endif # USE_LOGICAL_PARTITIONS
+endif # PRODUCT_BUILD_SUPER_PARTITION
 
 endif # TARGET_BUILD_APPS
 
@@ -3448,35 +3448,35 @@ ifeq ($(BUILD_QEMU_IMAGES),true)
 INSTALLED_QEMU_SYSTEMIMAGE := $(PRODUCT_OUT)/system-qemu.img
 MK_QEMU_IMAGE_SH := device/generic/goldfish/tools/mk_qemu_image.sh
 SGDISK_HOST := $(HOST_OUT_EXECUTABLES)/sgdisk
-$(INSTALLED_QEMU_SYSTEMIMAGE): $(INSTALLED_SYSTEMIMAGE) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST) $(SIMG2IMG)
+$(INSTALLED_QEMU_SYSTEMIMAGE): $(INSTALLED_SYSTEMIMAGE) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST)
 	@echo Create system-qemu.img
-	(export SGDISK=$(SGDISK_HOST) SIMG2IMG=$(SIMG2IMG); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/system.img)
+	(export SGDISK=$(SGDISK_HOST); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/system.img)
 
 systemimage: $(INSTALLED_QEMU_SYSTEMIMAGE)
 droidcore: $(INSTALLED_QEMU_SYSTEMIMAGE)
 ifeq ($(BOARD_USES_VENDORIMAGE),true)
 INSTALLED_QEMU_VENDORIMAGE := $(PRODUCT_OUT)/vendor-qemu.img
-$(INSTALLED_QEMU_VENDORIMAGE): $(INSTALLED_VENDORIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST) $(SIMG2IMG)
+$(INSTALLED_QEMU_VENDORIMAGE): $(INSTALLED_VENDORIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST)
 	@echo Create vendor-qemu.img
-	(export SGDISK=$(SGDISK_HOST) SIMG2IMG=$(SIMG2IMG); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/vendor.img)
+	(export SGDISK=$(SGDISK_HOST); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/vendor.img)
 
 vendorimage: $(INSTALLED_QEMU_VENDORIMAGE)
 droidcore: $(INSTALLED_QEMU_VENDORIMAGE)
 endif
 ifeq ($(BOARD_USES_PRODUCTIMAGE),true)
 INSTALLED_QEMU_PRODUCTIMAGE := $(PRODUCT_OUT)/product-qemu.img
-$(INSTALLED_QEMU_PRODUCTIMAGE): $(INSTALLED_PRODUCTIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST) $(SIMG2IMG)
+$(INSTALLED_QEMU_PRODUCTIMAGE): $(INSTALLED_PRODUCTIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST)
 	@echo Create product-qemu.img
-	(export SGDISK=$(SGDISK_HOST) SIMG2IMG=$(SIMG2IMG); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/product.img)
+	(export SGDISK=$(SGDISK_HOST); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/product.img)
 
 productimage: $(INSTALLED_QEMU_PRODUCTIMAGE)
 droidcore: $(INSTALLED_QEMU_PRODUCTIMAGE)
 endif
 ifeq ($(BOARD_USES_PRODUCT_SERVICESIMAGE),true)
 INSTALLED_QEMU_PRODUCT_SERVICESIMAGE := $(PRODUCT_OUT)/product-services-qemu.img
-$(INSTALLED_QEMU_PRODUCT_SERVICESIMAGE): $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST) $(SIMG2IMG)
+$(INSTALLED_QEMU_PRODUCT_SERVICESIMAGE): $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST)
 	@echo Create product-services-qemu.img
-	(export SGDISK=$(SGDISK_HOST) SIMG2IMG=$(SIMG2IMG); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/product-services.img)
+	(export SGDISK=$(SGDISK_HOST); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/product-services.img)
 
 productservicesimage: $(INSTALLED_QEMU_PRODUCT_SERVICESIMAGE)
 droidcore: $(INSTALLED_QEMU_PRODUCT_SERVICESIMAGE)
@@ -3694,4 +3694,4 @@ endif
 # Find lsdump paths
 FIND_LSDUMPS_FILE := $(PRODUCT_OUT)/lsdump_paths.txt
 $(FIND_LSDUMPS_FILE) : $(LSDUMP_PATHS)
-	$(hide) rm -rf $@ && echo "$^" > $@
+	$(hide) rm -rf $@ && echo "$^" | sed -e 's/ /\n/g' > $@
