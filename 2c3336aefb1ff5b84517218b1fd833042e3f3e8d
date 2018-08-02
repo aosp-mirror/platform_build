@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6762f470_a839a2c9",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-08-02T19:56:33Z",
+      "side": 1,
+      "message": "does this really need to be a wildcard?",
+      "range": {
+        "startLine": 589,
+        "startChar": 19,
+        "endLine": 589,
+        "endChar": 30
+      },
+      "revId": "2c3336aefb1ff5b84517218b1fd833042e3f3e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
