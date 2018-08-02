@@ -1284,6 +1284,9 @@ $(if $(BOARD_AVB_ENABLE),\
         $(hide) echo "avb_product_key_path=$(BOARD_AVB_PRODUCT_KEY_PATH)" >> $(1)
         $(hide) echo "avb_product_algorithm=$(BOARD_AVB_PRODUCT_ALGORITHM)" >> $(1)
         $(hide) echo "avb_product_rollback_index_location=$(BOARD_AVB_PRODUCT_ROLLBACK_INDEX_LOCATION)" >> $(1)))
+$(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_product_services_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
+$(if $(BOARD_AVB_ENABLE),\
+    $(hide) echo "avb_product_services_add_hashtree_footer_args=$(BOARD_AVB_PRODUCT_SERVICES_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
 $(if $(BOARD_AVB_ENABLE),\
     $(if $(BOARD_AVB_PRODUCT_SERVICES_KEY_PATH),\
         $(hide) echo "avb_product_services_key_path=$(BOARD_AVB_PRODUCT_SERVICES_KEY_PATH)" >> $(1)
