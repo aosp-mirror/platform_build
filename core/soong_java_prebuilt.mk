@@ -19,6 +19,7 @@ full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 common_javalib.jar := $(intermediates.COMMON)/javalib.jar
+greylist_txt := $(intermediates.COMMON)/greylist.txt
 
 $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_jar)))
 $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_pre_proguard_jar)))
@@ -86,6 +87,11 @@ ifdef LOCAL_SOONG_DEX_JAR
   ifneq ($(LOCAL_UNINSTALLABLE_MODULE),true)
     ifndef LOCAL_IS_HOST_MODULE
       ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)  # is_boot_jar
+        # Derive greylist from classes.jar.
+        # We use full_classes_jar here, which is the post-proguard jar (on the basis that we also
+        # have a full_classes_pre_proguard_jar). This is consistent with the equivalent code in
+        # java.mk.
+        $(eval $(call hiddenapi-generate-greylist-txt,$(full_classes_jar),$(greylist_txt)))
         $(eval $(call hiddenapi-copy-soong-jar,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
       else # !is_boot_jar
         $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))

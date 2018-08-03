@@ -425,6 +425,52 @@ def ConvertBlockMapToBaseFs(block_map_file):
   return base_fs_file if exit_code == 0 else None
 
 
+def SetUpInDirAndFsConfig(origin_in, prop_dict):
+  """Returns the in_dir and fs_config that should be used for image building.
+
+  If the target uses system_root_image and it's building system.img, it creates
+  and returns a staged dir that combines the contents of /system (i.e. in the
+  given in_dir) and root.
+
+  Args:
+    origin_in: Path to the input directory.
+    prop_dict: A property dict that contains info like partition size. Values
+        may be updated.
+
+  Returns:
+    A tuple of in_dir and fs_config that should be used to build the image.
+  """
+  fs_config = prop_dict.get("fs_config")
+  if (prop_dict.get("system_root_image") != "true" or
+      prop_dict["mount_point"] != "system"):
+    return origin_in, fs_config
+
+  # Construct a staging directory of the root file system.
+  in_dir = common.MakeTempDir()
+  root_dir = prop_dict.get("root_dir")
+  if root_dir:
+    shutil.rmtree(in_dir)
+    shutil.copytree(root_dir, in_dir, symlinks=True)
+  in_dir_system = os.path.join(in_dir, "system")
+  shutil.rmtree(in_dir_system, ignore_errors=True)
+  shutil.copytree(origin_in, in_dir_system, symlinks=True)
+
+  # Change the mount point to "/".
+  prop_dict["mount_point"] = "/"
+  if fs_config:
+    # We need to merge the fs_config files of system and root.
+    merged_fs_config = common.MakeTempFile(
+        prefix="merged_fs_config", suffix=".txt")
+    with open(merged_fs_config, "w") as fw:
+      if "root_fs_config" in prop_dict:
+        with open(prop_dict["root_fs_config"]) as fr:
+          fw.writelines(fr.readlines())
+      with open(fs_config) as fr:
+        fw.writelines(fr.readlines())
+    fs_config = merged_fs_config
+  return in_dir, fs_config
+
+
 def CheckHeadroom(ext4fs_output, prop_dict):
   """Checks if there's enough headroom space available.
 
@@ -468,40 +514,25 @@ def CheckHeadroom(ext4fs_output, prop_dict):
 
 
 def BuildImage(in_dir, prop_dict, out_file, target_out=None):
-  """Build an image to out_file from in_dir with property prop_dict.
-  After the function call, values in prop_dict is updated with
-  computed values.
+  """Builds an image for the files under in_dir and writes it to out_file.
+
+  When using system_root_image, it will additionally look for the files under
+  root (specified by 'root_dir') and builds an image that contains both sources.
 
   Args:
-    in_dir: path of input directory.
-    prop_dict: property dictionary.
-    out_file: path of the output image file.
-    target_out: path of the product out directory to read device specific FS
-        config files.
+    in_dir: Path to input directory.
+    prop_dict: A property dict that contains info like partition size. Values
+        will be updated with computed values.
+    out_file: The output image file.
+    target_out: Path to the TARGET_OUT directory as in Makefile. It actually
+        points to the /system directory under PRODUCT_OUT. fs_config (the one
+        under system/core/libcutils) reads device specific FS config files from
+        there.
 
   Returns:
     True iff the image is built successfully.
   """
-  # system_root_image=true: build a system.img that combines the contents of
-  # /system and root, which should be mounted at the root of the file system.
-  origin_in = in_dir
-  fs_config = prop_dict.get("fs_config")
-  if (prop_dict.get("system_root_image") == "true" and
-      prop_dict["mount_point"] == "system"):
-    in_dir = common.MakeTempDir()
-    # Change the mount point to "/".
-    prop_dict["mount_point"] = "/"
-    if fs_config:
-      # We need to merge the fs_config files of system and root.
-      merged_fs_config = common.MakeTempFile(prefix="merged_fs_config",
-                                             suffix=".txt")
-      with open(merged_fs_config, "w") as fw:
-        if "root_fs_config" in prop_dict:
-          with open(prop_dict["root_fs_config"]) as fr:
-            fw.writelines(fr.readlines())
-        with open(fs_config) as fr:
-          fw.writelines(fr.readlines())
-      fs_config = merged_fs_config
+  in_dir, fs_config = SetUpInDirAndFsConfig(in_dir, prop_dict)
 
   build_command = []
   fs_type = prop_dict.get("fs_type", "")
@@ -515,14 +546,14 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   verity_supported = prop_dict.get("verity") == "true"
   verity_fec_supported = prop_dict.get("verity_fec") == "true"
 
-  if (prop_dict.get("use_logical_partitions") == "true" and
+  if (prop_dict.get("use_dynamic_partition_size") == "true" and
       "partition_size" not in prop_dict):
     # if partition_size is not defined, use output of `du' + reserved_size
-    success, size = GetDiskUsage(origin_in)
+    success, size = GetDiskUsage(in_dir)
     if not success:
       return False
     if OPTIONS.verbose:
-      print("The tree size of %s is %d MB." % (origin_in, size // BYTES_IN_MB))
+      print("The tree size of %s is %d MB." % (in_dir, size // BYTES_IN_MB))
     size += int(prop_dict.get("partition_reserved_size", 0))
     # Round this up to a multiple of 4K so that avbtool works
     size = common.RoundUpTo4K(size)
@@ -643,31 +674,31 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     print("Error: unknown filesystem type '%s'" % (fs_type))
     return False
 
-  if in_dir != origin_in:
-    # Construct a staging directory of the root file system.
-    root_dir = prop_dict.get("root_dir")
-    if root_dir:
-      shutil.rmtree(in_dir)
-      shutil.copytree(root_dir, in_dir, symlinks=True)
-    staging_system = os.path.join(in_dir, "system")
-    shutil.rmtree(staging_system, ignore_errors=True)
-    shutil.copytree(origin_in, staging_system, symlinks=True)
-
   (mkfs_output, exit_code) = RunCommand(build_command)
   if exit_code != 0:
     print("Error: '%s' failed with exit code %d:\n%s" % (
         build_command, exit_code, mkfs_output))
-    success, du = GetDiskUsage(origin_in)
+    success, du = GetDiskUsage(in_dir)
     du_str = ("%d bytes (%d MB)" % (du, du // BYTES_IN_MB)
              ) if success else "unknown"
-    print("Out of space? The tree size of %s is %s." % (
-        origin_in, du_str))
-    print("The max is %d bytes (%d MB)." % (
-        int(prop_dict["partition_size"]),
-        int(prop_dict["partition_size"]) // BYTES_IN_MB))
-    print("Reserved space is %d bytes (%d MB)." % (
-        int(prop_dict.get("partition_reserved_size", 0)),
-        int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
+    print(
+        "Out of space? The tree size of {} is {}, with reserved space of {} "
+        "bytes ({} MB).".format(
+            in_dir, du_str,
+            int(prop_dict.get("partition_reserved_size", 0)),
+            int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
+    if "original_partition_size" in prop_dict:
+      print(
+          "The max size for filsystem files is {} bytes ({} MB), out of a "
+          "total image size of {} bytes ({} MB).".format(
+              int(prop_dict["partition_size"]),
+              int(prop_dict["partition_size"]) // BYTES_IN_MB,
+              int(prop_dict["original_partition_size"]),
+              int(prop_dict["original_partition_size"]) // BYTES_IN_MB))
+    else:
+      print("The max image size is {} bytes ({} MB).".format(
+          int(prop_dict["partition_size"]),
+          int(prop_dict["partition_size"]) // BYTES_IN_MB))
     return False
 
   # Check if there's enough headroom space available for ext4 image.
@@ -768,7 +799,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       "avb_enable",
       "avb_avbtool",
       "avb_salt",
-      "use_logical_partitions",
+      "use_dynamic_partition_size",
   )
   for p in common_props:
     copy_prop(p, p)
@@ -877,27 +908,27 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("product_reserved_size", "partition_reserved_size")
   elif mount_point == "product-services":
-    copy_prop("avb_productservices_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_productservices_add_hashtree_footer_args",
+    copy_prop("avb_product_services_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_product_services_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
-    copy_prop("avb_productservices_key_path", "avb_key_path")
-    copy_prop("avb_productservices_algorithm", "avb_algorithm")
-    copy_prop("productservices_fs_type", "fs_type")
-    copy_prop("productservices_size", "partition_size")
-    if not copy_prop("productservices_journal_size", "journal_size"):
+    copy_prop("avb_product_services_key_path", "avb_key_path")
+    copy_prop("avb_product_services_algorithm", "avb_algorithm")
+    copy_prop("product_services_fs_type", "fs_type")
+    copy_prop("product_services_size", "partition_size")
+    if not copy_prop("product_services_journal_size", "journal_size"):
       d["journal_size"] = "0"
-    copy_prop("productservices_verity_block_device", "verity_block_device")
-    copy_prop("productservices_squashfs_compressor", "squashfs_compressor")
-    copy_prop("productservices_squashfs_compressor_opt",
+    copy_prop("product_services_verity_block_device", "verity_block_device")
+    copy_prop("product_services_squashfs_compressor", "squashfs_compressor")
+    copy_prop("product_services_squashfs_compressor_opt",
               "squashfs_compressor_opt")
-    copy_prop("productservices_squashfs_block_size", "squashfs_block_size")
-    copy_prop("productservices_squashfs_disable_4k_align",
+    copy_prop("product_services_squashfs_block_size", "squashfs_block_size")
+    copy_prop("product_services_squashfs_disable_4k_align",
               "squashfs_disable_4k_align")
-    copy_prop("productservices_base_fs_file", "base_fs_file")
-    copy_prop("productservices_extfs_inode_count", "extfs_inode_count")
-    if not copy_prop("productservices_extfs_rsv_pct", "extfs_rsv_pct"):
+    copy_prop("product_services_base_fs_file", "base_fs_file")
+    copy_prop("product_services_extfs_inode_count", "extfs_inode_count")
+    if not copy_prop("product_services_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
-    copy_prop("productservices_reserved_size", "partition_reserved_size")
+    copy_prop("product_services_reserved_size", "partition_reserved_size")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
@@ -931,16 +962,22 @@ def GlobalDictFromImageProp(image_prop, mount_point):
       d[dest_p] = image_prop[src_p]
       return True
     return False
+
+  if "original_partition_size" in image_prop:
+    size_property = "original_partition_size"
+  else:
+    size_property = "partition_size"
+
   if mount_point == "system":
-    copy_prop("partition_size", "system_size")
+    copy_prop(size_property, "system_size")
   elif mount_point == "system_other":
-    copy_prop("partition_size", "system_size")
+    copy_prop(size_property, "system_size")
   elif mount_point == "vendor":
-    copy_prop("partition_size", "vendor_size")
+    copy_prop(size_property, "vendor_size")
   elif mount_point == "product":
-    copy_prop("partition_size", "product_size")
+    copy_prop(size_property, "product_size")
   elif mount_point == "product-services":
-    copy_prop("partition_size", "productservices_size")
+    copy_prop(size_property, "product_services_size")
   return d
 
 

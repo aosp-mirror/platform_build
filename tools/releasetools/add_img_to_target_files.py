@@ -72,10 +72,12 @@ OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
 OPTIONS.is_signing = False
 
-
 # Partitions that should have their care_map added to META/care_map.txt.
 PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product-services')
-
+# Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
+# images. (b/24377993, b/80600931)
+FIXED_FILE_TIMESTAMP = (datetime.datetime(2009, 1, 1, 0, 0, 0, 0, None)
+                        - datetime.datetime.utcfromtimestamp(0)).total_seconds()
 
 class OutputFile(object):
   def __init__(self, output_zip, input_dir, prefix, name):
@@ -93,7 +95,6 @@ class OutputFile(object):
   def Write(self):
     if self._output_zip:
       common.ZipWrite(self._output_zip, self.name, self._zip_name)
-
 
 def GetCareMap(which, imgname):
   """Returns the care_map string for the given partition.
@@ -197,7 +198,7 @@ def AddProduct(output_zip):
 
 
 def AddProductServices(output_zip):
-  """Turn the contents of PRODUCT_SERVICES into a product-services image and
+  """Turn the contents of PRODUCT-SERVICES into a product-services image and
   store it in output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES",
@@ -259,11 +260,7 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   if fstab and mount_point in fstab:
     image_props["fs_type"] = fstab[mount_point].fs_type
 
-  # Use a fixed timestamp (01/01/2009) when packaging the image.
-  # Bug: 24377993
-  epoch = datetime.datetime.fromtimestamp(0)
-  timestamp = (datetime.datetime(2009, 1, 1) - epoch).total_seconds()
-  image_props["timestamp"] = int(timestamp)
+  image_props["timestamp"] = FIXED_FILE_TIMESTAMP
 
   if what == "system":
     fs_config_prefix = ""
@@ -337,11 +334,7 @@ def AddUserdata(output_zip):
 
   print("creating userdata.img...")
 
-  # Use a fixed timestamp (01/01/2009) when packaging the image.
-  # Bug: 24377993
-  epoch = datetime.datetime.fromtimestamp(0)
-  timestamp = (datetime.datetime(2009, 1, 1) - epoch).total_seconds()
-  image_props["timestamp"] = int(timestamp)
+  image_props["timestamp"] = FIXED_FILE_TIMESTAMP
 
   if OPTIONS.info_dict.get("userdata_img_with_data") == "true":
     user_dir = os.path.join(OPTIONS.input_tmp, "DATA")
@@ -483,11 +476,7 @@ def AddCache(output_zip):
 
   print("creating cache.img...")
 
-  # Use a fixed timestamp (01/01/2009) when packaging the image.
-  # Bug: 24377993
-  epoch = datetime.datetime.fromtimestamp(0)
-  timestamp = (datetime.datetime(2009, 1, 1) - epoch).total_seconds()
-  image_props["timestamp"] = int(timestamp)
+  image_props["timestamp"] = FIXED_FILE_TIMESTAMP
 
   user_dir = common.MakeTempDir()
 
@@ -653,11 +642,11 @@ def AddImagesToTargetFiles(filename):
   has_product = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "PRODUCT")) or
                  os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
                                              "product.img")))
-  has_productservices = (os.path.isdir(os.path.join(OPTIONS.input_tmp,
-                                                    "PRODUCTSERVICES")) or
-                         os.path.exists(os.path.join(OPTIONS.input_tmp,
-                                                     "IMAGES",
-                                                     "product-services.img")))
+  has_product_services = (os.path.isdir(os.path.join(OPTIONS.input_tmp,
+                                                     "PRODUCT-SERVICES")) or
+                          os.path.exists(os.path.join(OPTIONS.input_tmp,
+                                                      "IMAGES",
+                                                      "product-services.img")))
   has_system_other = os.path.isdir(os.path.join(OPTIONS.input_tmp,
                                                 "SYSTEM_OTHER"))
 
@@ -734,7 +723,7 @@ def AddImagesToTargetFiles(filename):
     banner("product")
     partitions['product'] = AddProduct(output_zip)
 
-  if has_productservices:
+  if has_product_services:
     banner("product-services")
     partitions['product-services'] = AddProductServices(output_zip)
 

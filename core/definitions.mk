@@ -742,18 +742,6 @@ define exported-sdk-libs-files
 $(foreach lib,$(1),$(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/exported-sdk-libs)
 endef
 
-# Fix manifest
-# $(1): input manifest path
-# $(2): output manifest path
-# $(3): min sdk version
-# $(4): (optional) exported-sdk-libs file
-define fix-manifest
-$(MANIFEST_FIXER) \
---minSdkVersion $(3) \
-$(if $(4),$$(cat $(4) | sort -u | sed -e 's/^/\ --uses-library\ /' | tr '\n' ' ')) \
-$(1) $(2)
-endef
-
 ###########################################################
 ## Returns true if $(1) and $(2) are equal.  Returns
 ## the empty string if they are not equal.
@@ -808,8 +796,8 @@ endef
 
 define collapse-pairs
 $(eval _cpSEP := $(strip $(if $(2),$(2),=)))\
-$(subst $(space)$(_cpSEP)$(space),$(_cpSEP),$(strip \
-    $(subst $(_cpSEP), $(_cpSEP) ,$(1))))
+$(strip $(subst $(space)$(_cpSEP)$(space),$(_cpSEP),$(strip \
+    $(subst $(_cpSEP), $(_cpSEP) ,$(1)))$(space)))
 endef
 
 ###########################################################
@@ -2126,7 +2114,9 @@ endef
 # $(2): the base dir of the output file path
 # Returns: the compiled output file path
 define aapt2-compiled-resource-out-file
-$(eval _p_w := $(strip $(subst /,$(space),$(dir $(1)))))$(2)/$(subst $(space),/,$(_p_w))_$(if $(filter values%,$(lastword $(_p_w))),$(patsubst %.xml,%.arsc,$(notdir $(1))),$(notdir $(1))).flat
+$(strip \
+  $(eval _p_w := $(strip $(subst /,$(space),$(dir $(call clean-path,$(1))))))
+  $(2)/$(subst $(space),/,$(_p_w))_$(if $(filter values%,$(lastword $(_p_w))),$(patsubst %.xml,%.arsc,$(notdir $(1))),$(notdir $(1))).flat)
 endef
 
 define aapt2-link
@@ -2559,14 +2549,31 @@ endef
 
 ifeq ($(HOST_OS),linux)
 # Runs appcompat and store logs in $(PRODUCT_OUT)/appcompat
+define extract-package
+$(if $(filter aapt2, $(1)), \
+  $(AAPT2) dump $@ | awk -F ' |=' '/^Package/{print $$3}' >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log &&, \
+  $(AAPT) dump badging $@ | awk -F \' '/^package/{print $$2}' >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log &&)
+endef
+define appcompat-header
+$(hide) \
+  mkdir -p $(PRODUCT_OUT)/appcompat && \
+  rm -f $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
+  echo -n "Package name: " >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
+  $(call extract-package, $(1)) \
+  echo "Module name in Android tree: $(PRIVATE_MODULE)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
+  echo "Local path in Android tree: $(PRIVATE_PATH)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
+  echo "Install path on $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT): $(PRIVATE_INSTALLED_MODULE)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
+  echo >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
+endef
 define run-appcompat
 $(hide) \
-  mkdir -p $(PRODUCT_OUT)/appcompat; \
-  art/tools/veridex/appcompat.sh --dex-file=$@ 2>&1 > $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log;
+  echo "appcompat.sh output:" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
+  art/tools/veridex/appcompat.sh --dex-file=$@ 2>&1 >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
 endef
 else
+appcompat-header =
 run-appcompat =
-endif
+endif  # HOST_OS == linux
 
 # Remove dynamic timestamps from packages
 #
@@ -2864,6 +2871,16 @@ $(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
 $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): $(1)
 $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): \
     PRIVATE_DEX_INPUTS := $$(PRIVATE_DEX_INPUTS) $(1)
+endef
+
+# Generate a greylist.txt from a classes.jar
+define hiddenapi-generate-greylist-txt
+$(2): $(1) $(CLASS2GREYLIST)
+	$(CLASS2GREYLIST) $(1) > $(2)
+
+$(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST): $(2)
+$(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST): \
+    PRIVATE_GREYLIST_INPUTS := $$(PRIVATE_GREYLIST_INPUTS) $(2)
 endef
 
 # File names for intermediate dex files of `hiddenapi-copy-soong-jar`.
