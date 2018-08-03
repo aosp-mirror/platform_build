@@ -46,6 +46,30 @@
       "revId": "2c3336aefb1ff5b84517218b1fd833042e3f3e8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48192a2f_db4b6b2b",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1121894
+      },
+      "writtenOn": "2018-08-03T15:56:52Z",
+      "side": 1,
+      "message": "I think the makefile specifies explicitly a LOCAL_TEST_CONFIG that isn\u0027t there, it should be a build breakage. This is the best way to ensure that people don\u0027t reference the wrong file (typos, etc.) so we should remove the wildcard here.",
+      "parentUuid": "681e1514_3381e614",
+      "range": {
+        "startLine": 589,
+        "startChar": 19,
+        "endLine": 589,
+        "endChar": 30
+      },
+      "revId": "2c3336aefb1ff5b84517218b1fd833042e3f3e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
