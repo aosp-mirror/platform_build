@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2aee3a88_e1216d7e",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-03T00:54:18Z",
+      "side": 1,
+      "message": "It\u0027s expecting a dict: {\u0027ASAN_OPTIONS\u0027: \u0027...\u0027}",
+      "range": {
+        "startLine": 718,
+        "startChar": 17,
+        "endLine": 718,
+        "endChar": 54
+      },
+      "revId": "c460fe1c66809ac3bead31311f5fd007aba7c05d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
