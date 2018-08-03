@@ -249,6 +249,7 @@ PRODUCT_PACKAGES += \
     voip-common \
     vold \
     WallpaperBackup \
+    watchdogd \
     wificond \
     wifi-service \
     wm \
