@@ -22,6 +22,30 @@
       "revId": "2c3336aefb1ff5b84517218b1fd833042e3f3e8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "681e1514_3381e614",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-03T08:38:25Z",
+      "side": 1,
+      "message": "If we use wildcard, there is a chance to enter the logical of autogen_test_config.mk, but it may be correct.\nIf we don\u0027t use wildcard, it may cause build break.\n\nIt seems that deleting $(wildcard) makes more sense, but I\u0027m not sure.\n\ne.g.\n  $(LOCAL_TEST_CONFIG) \u003d ahat_test.xml but ahat_test.xml doesn\u0027t exist.\n\n\ncase1: test_config :\u003d $(wildcard $(LOCAL_PATH)/$(LOCAL_TEST_CONFIG))\n       --\u003e test_config \u003d \"\"\n       if it\u0027s not cts and  ($(is_native) \u003d true or $(is_instrumentation_test) \u003d true)\n       --\u003e entering   autogen_test_config.mk\n\ncase2: test_config :\u003d  $(LOCAL_PATH)/$(LOCAL_TEST_CONFIG)\n       --\u003e test_config \u003d art/tools/ahat/ahat_test.xml\n       --\u003e It will cause break like below.\nFAILED: ninja: \u0027art/tools/ahat/ahat_test.xml\u0027, needed by \u0027out/host/linux-x86/testcases/ahat/ahat.config\u0027, missing and no known rule to make it\n16:03:38 ninja failed with: exit status 1",
+      "parentUuid": "6762f470_a839a2c9",
+      "range": {
+        "startLine": 589,
+        "startChar": 19,
+        "endLine": 589,
+        "endChar": 30
+      },
+      "revId": "2c3336aefb1ff5b84517218b1fd833042e3f3e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
