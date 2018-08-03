@@ -854,7 +854,7 @@ ifneq (,$(filter nanopb-c nanopb-c-enable_malloc, $(LOCAL_PROTOC_OPTIMIZE_TYPE))
 my_proto_source_suffix := .c
 my_proto_c_includes := external/nanopb-c
 my_protoc_flags := --nanopb_out=$(proto_gen_dir) \
-    --plugin=external/nanopb-c/generator/protoc-gen-nanopb
+    --plugin=$(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
 my_protoc_deps := $(NANOPB_SRCS) $(proto_sources_fullpath:%.proto=%.options)
 else
 my_proto_source_suffix := $(LOCAL_CPP_EXTENSION)
