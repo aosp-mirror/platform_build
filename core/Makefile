@@ -1359,16 +1359,6 @@ IGNORE_RECOVERY_SEPOLICY := $(patsubst $(TARGET_RECOVERY_OUT)/%,--exclude=/%,$(r
 
 recovery_kernel := $(INSTALLED_KERNEL_TARGET) # same as a non-recovery system
 recovery_ramdisk := $(PRODUCT_OUT)/ramdisk-recovery.img
-recovery_build_props := $(intermediate_system_build_prop)
-ifdef property_overrides_split_enabled
-recovery_build_props += $(INSTALLED_VENDOR_BUILD_PROP_TARGET)
-endif
-ifdef BOARD_USES_PRODUCTIMAGE
-recovery_build_props += $(INSTALLED_PRODUCT_BUILD_PROP_TARGET)
-endif
-ifdef BOARD_USES_PRODUCT_SERVICESIMAGE
-recovery_build_props += $(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET)
-endif
 recovery_resources_common := $(call include-path-for, recovery)/res
 
 # Set recovery_density to the density bucket of the device.
@@ -1441,6 +1431,54 @@ else
 RECOVERY_RESOURCE_ZIP :=
 endif
 
+INSTALLED_RECOVERY_BUILD_PROP_TARGET := $(TARGET_RECOVERY_ROOT_OUT)/prop.default
+
+$(INSTALLED_RECOVERY_BUILD_PROP_TARGET): PRIVATE_RECOVERY_UI_PROPERTIES := \
+    TARGET_RECOVERY_DEFAULT_ROTATION:default_rotation \
+    TARGET_RECOVERY_OVERSCAN_PERCENT:overscan_percent \
+    TARGET_RECOVERY_PIXEL_FORMAT:pixel_format \
+    TARGET_RECOVERY_UI_ANIMATION_FPS:animation_fps \
+    TARGET_RECOVERY_UI_MARGIN_HEIGHT:margin_height \
+    TARGET_RECOVERY_UI_MARGIN_WIDTH:margin_width \
+    TARGET_RECOVERY_UI_MENU_UNUSABLE_ROWS:menu_unusable_rows \
+    TARGET_RECOVERY_UI_PROGRESS_BAR_BASELINE:progress_bar_baseline \
+    TARGET_RECOVERY_UI_TOUCH_LOW_THRESHOLD:touch_low_threshold \
+    TARGET_RECOVERY_UI_TOUCH_HIGH_THRESHOLD:touch_high_threshold \
+    TARGET_RECOVERY_UI_VR_STEREO_OFFSET:vr_stereo_offset
+
+# Parses the given list of build variables and writes their values as build properties if defined.
+# For example, if a target defines `TARGET_RECOVERY_UI_MARGIN_HEIGHT := 100`,
+# `ro.recovery.ui.margin_height=100` will be appended to the given output file.
+# $(1): Map from the build variable names to property names
+# $(2): Output file
+define append-recovery-ui-properties
+echo "#" >> $(2)
+echo "# RECOVERY UI BUILD PROPERTIES" >> $(2)
+echo "#" >> $(2)
+$(foreach prop,$(1), \
+    $(eval _varname := $(call word-colon,1,$(prop))) \
+    $(eval _propname := $(call word-colon,2,$(prop))) \
+    $(eval _value := $($(_varname))) \
+    $(if $(_value), \
+        echo ro.recovery.ui.$(_propname)=$(_value) >> $(2) &&)) true
+endef
+
+$(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
+		$(INSTALLED_DEFAULT_PROP_TARGET) \
+		$(INSTALLED_VENDOR_DEFAULT_PROP_TARGET) \
+		$(INSTALLED_VENDOR_BUILD_PROP_TARGET) \
+		$(INSTALLED_PRODUCT_BUILD_PROP_TARGET) \
+		$(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET)
+	@echo "Target recovery buildinfo: $@
+	$(hide) mkdir -p $(dir $@)
+	$(hide) rm -f $@
+	$(hide) cat $(INSTALLED_DEFAULT_PROP_TARGET) > $@
+	$(hide) cat $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET) >> $@
+	$(hide) cat $(INSTALLED_VENDOR_BUILD_PROP_TARGET) >> $@
+	$(hide) cat $(INSTALLED_PRODUCT_BUILD_PROP_TARGET) >> $@
+	$(hide) cat $(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET) >> $@
+	$(call append-recovery-ui-properties,$(PRIVATE_RECOVERY_UI_PROPERTIES),$@)
+
 INTERNAL_RECOVERYIMAGE_ARGS := \
 	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
 	--kernel $(recovery_kernel) \
@@ -1506,13 +1544,6 @@ define build-recoveryimage-target
   $(if $(strip $(recovery_wipe)), \
     $(hide) cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/etc/recovery.wipe)
   $(hide) cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
-  $(hide) cat $(INSTALLED_DEFAULT_PROP_TARGET) \
-          > $(TARGET_RECOVERY_ROOT_OUT)/prop.default
-  $(if $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET), \
-    $(hide) cat $(INSTALLED_VENDOR_DEFAULT_PROP_TARGET) \
-            >> $(TARGET_RECOVERY_ROOT_OUT)/prop.default)
-  $(hide) cat $(recovery_build_props) \
-          >> $(TARGET_RECOVERY_ROOT_OUT)/prop.default
   $(hide) ln -sf prop.default $(TARGET_RECOVERY_ROOT_OUT)/default.prop
   $(BOARD_RECOVERY_IMAGE_PREPARE)
   $(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_RECOVERY_ROOT_OUT) | $(MINIGZIP) > $(recovery_ramdisk)
@@ -1551,10 +1582,10 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 		$(INTERNAL_RECOVERYIMAGE_FILES) \
 		$(recovery_initrc) $(recovery_sepolicy) $(recovery_kernel) \
 		$(INSTALLED_2NDBOOTLOADER_TARGET) \
-		$(recovery_build_props) $(recovery_resource_deps) \
+		$(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
+		$(recovery_resource_deps) \
 		$(recovery_fstab) \
 		$(RECOVERY_INSTALL_OTA_KEYS) \
-		$(INSTALLED_VENDOR_DEFAULT_PROP_TARGET) \
 		$(BOARD_RECOVERY_KERNEL_MODULES) \
 		$(DEPMOD)
 		$(call pretty,"Target boot image from recovery: $@")
@@ -1567,10 +1598,10 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 		$(INTERNAL_RECOVERYIMAGE_FILES) \
 		$(recovery_initrc) $(recovery_sepolicy) $(recovery_kernel) \
 		$(INSTALLED_2NDBOOTLOADER_TARGET) \
-		$(recovery_build_props) $(recovery_resource_deps) \
+		$(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
+		$(recovery_resource_deps) \
 		$(recovery_fstab) \
 		$(RECOVERY_INSTALL_OTA_KEYS) \
-		$(INSTALLED_VENDOR_DEFAULT_PROP_TARGET) \
 		$(BOARD_RECOVERY_KERNEL_MODULES) \
 		$(DEPMOD)
 		$(call build-recoveryimage-target, $@)
