@@ -701,6 +701,7 @@ JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/make/tools/fat16copy.py
 CHECK_LINK_TYPE := build/make/tools/check_link_type.py
+UUIDGEN := build/make/tools/uuidgen.py
 
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/make/tools/java-event-log-tags.py
@@ -719,6 +720,7 @@ BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump2$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
 HIDDENAPI := $(HOST_OUT_EXECUTABLES)/hiddenapi
+CLASS2GREYLIST := $(HOST_OUT_EXECUTABLES)/class2greylist
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
@@ -909,13 +911,35 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     PLATFORM_SEPOLICY_VERSION \
     TOT_SEPOLICY_VERSION \
 
-ifndef USE_LOGICAL_PARTITIONS
-  USE_LOGICAL_PARTITIONS := $(PRODUCT_USE_LOGICAL_PARTITIONS)
+# If true, kernel configuration requirements are present in OTA package (and will be enforced
+# during OTA). Otherwise, kernel configuration requirements are enforced in VTS.
+# Devices that checks the running kernel (instead of the kernel in OTA package) should not
+# set this variable to prevent OTA failures.
+ifndef PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
+  PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS :=
+  ifdef PRODUCT_SHIPPING_API_LEVEL
+    ifeq (true,$(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29))
+      PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := true
+    endif
+  endif
 endif
-.KATI_READONLY := USE_LOGICAL_PARTITIONS
+.KATI_READONLY := PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
-ifeq ($(USE_LOGICAL_PARTITIONS),true)
+ifeq ($(PRODUCT_USE_LOGICAL_PARTITIONS),true)
+    requirements := \
+        PRODUCT_USE_DYNAMIC_PARTITION_SIZE \
+        PRODUCT_BUILD_SUPER_PARTITION \
+        PRODUCT_USE_FASTBOOTD \
+
+    $(foreach req,$(requirements),$(if $(filter false,$($(req))),\
+        $(error PRODUCT_USE_LOGICAL_PARTITIONS requires $(req) to be true)))
+
+    requirements :=
+
   BOARD_KERNEL_CMDLINE += androidboot.logical_partitions=1
+endif
+
+ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
 
 ifneq ($(BOARD_SYSTEMIMAGE_PARTITION_SIZE),)
 ifneq ($(BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE),)
@@ -945,7 +969,20 @@ $(error Should not define BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE and \
 endif
 endif
 
-endif # USE_LOGICAL_PARTITIONS
+endif # PRODUCT_USE_DYNAMIC_PARTITION_SIZE
+
+ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
+ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
+# BOARD_SUPER_PARTITION_PARTITION_LIST: a list of the following tokens
+valid_super_partition_list := system vendor product product_services
+ifneq (,$(filter-out $(valid_super_partition_list),$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
+$(error BOARD_SUPER_PARTITION_PARTITION_LIST contains invalid partition name \
+		($(filter-out $(valid_super_partition_list),$(BOARD_SUPER_PARTITION_PARTITION_LIST))). \
+        Valid names are $(valid_super_partition_list))
+endif
+valid_super_partition_list :=
+endif # BOARD_SUPER_PARTITION_PARTITION_LIST
+endif # PRODUCT_BUILD_SUPER_PARTITION
 
 # ###############################################################
 # Set up final options.

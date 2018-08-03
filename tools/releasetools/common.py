@@ -1271,8 +1271,12 @@ def ZipWrite(zip_file, filename, arcname=None, perms=0o644,
     os.chmod(filename, perms)
 
     # Use a fixed timestamp so the output is repeatable.
-    epoch = datetime.datetime.fromtimestamp(0)
-    timestamp = (datetime.datetime(2009, 1, 1) - epoch).total_seconds()
+    # Note: Use of fromtimestamp rather than utcfromtimestamp here is
+    # intentional. zip stores datetimes in local time without a time zone
+    # attached, so we need "epoch" but in the local time zone to get 2009/01/01
+    # in the zip archive.
+    local_epoch = datetime.datetime.fromtimestamp(0)
+    timestamp = (datetime.datetime(2009, 1, 1) - local_epoch).total_seconds()
     os.utime(filename, (timestamp, timestamp))
 
     zip_file.write(filename, arcname=arcname, compress_type=compress_type)

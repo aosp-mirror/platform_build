@@ -29,9 +29,10 @@ else
 autogen_test_config_template := $(NATIVE_TEST_CONFIG_TEMPLATE)
 endif
 # Auto generating test config file for native test
+$(autogen_test_config_file): PRIVATE_MODULE_NAME := $(LOCAL_MODULE)
 $(autogen_test_config_file) : $(autogen_test_config_template)
 	@echo "Auto generating test config $(notdir $@)"
-	$(hide) sed 's&{MODULE}&$(PRIVATE_MODULE)&g' $< > $@
+	$(hide) sed 's&{MODULE}&$(PRIVATE_MODULE_NAME)&g' $< > $@
 my_auto_generate_config := true
 else
 # Auto generating test config file for instrumentation test
@@ -52,6 +53,7 @@ ifeq (true,$(my_auto_generate_config))
   LOCAL_INTERMEDIATE_TARGETS += $(autogen_test_config_file)
   $(LOCAL_BUILT_MODULE): $(autogen_test_config_file)
   ALL_MODULES.$(my_register_name).auto_test_config := true
+  $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_autogen := true
 else
   autogen_test_config_file :=
 endif

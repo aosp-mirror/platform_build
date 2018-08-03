@@ -146,6 +146,15 @@ ADDITIONAL_BUILD_PROPERTIES :=
 
 #
 # -----------------------------------------------------------------
+# Validate ADDITIONAL_PRODUCT_PROPERTIES.
+ifneq ($(ADDITIONAL_PRODUCT_PROPERTIES),)
+$(error ADDITIONAL_PRODUCT_PROPERTIES must not be set before here: $(ADDITIONAL_PRODUCT_PROPERTIES))
+endif
+
+ADDITIONAL_PRODUCT_PROPERTIES :=
+
+#
+# -----------------------------------------------------------------
 # Add the product-defined properties to the build properties.
 ifdef PRODUCT_SHIPPING_API_LEVEL
 ADDITIONAL_BUILD_PROPERTIES += \
@@ -231,7 +240,7 @@ else
 ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
 endif
 
-ADDITIONAL_BUILD_PROPERTIES += ro.boot.logical_partitions=${USE_LOGICAL_PARTITIONS}
+ADDITIONAL_PRODUCT_PROPERTIES += ro.boot.logical_partitions=$(PRODUCT_USE_LOGICAL_PARTITIONS)
 
 # -----------------------------------------------------------------
 ###
@@ -402,6 +411,8 @@ ADDITIONAL_DEFAULT_PROPERTIES := $(strip $(ADDITIONAL_DEFAULT_PROPERTIES))
 .KATI_READONLY := ADDITIONAL_DEFAULT_PROPERTIES
 ADDITIONAL_BUILD_PROPERTIES := $(strip $(ADDITIONAL_BUILD_PROPERTIES))
 .KATI_READONLY := ADDITIONAL_BUILD_PROPERTIES
+ADDITIONAL_PRODUCT_PROPERTIES := $(strip $(ADDITIONAL_PRODUCT_PROPERTIES))
+.KATI_READONLY := ADDITIONAL_PRODUCT_PROPERTIES
 
 ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
 ENFORCE_RRO_SOURCES :=
@@ -977,6 +988,39 @@ endif
 
 ifdef FULL_BUILD
   product_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
+
+  # Verify the artifact path requirements made by included products.
+  all_offending_files :=
+  $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
+    $(eval requirements := $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENTS)) \
+    $(eval ### Verify that the product only produces files inside its path requirements.) \
+    $(eval whitelist := $(PRODUCTS.$(makefile).ARTIFACT_PATH_WHITELIST)) \
+    $(eval path_patterns := $(call resolve-product-relative-paths,$(requirements),%)) \
+    $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
+    $(eval files := $(call product-installed-files, $(makefile))) \
+    $(eval files := $(filter-out $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%,$(files))) \
+    $(eval # RROs become REQUIRED by the source module, but are always placed on the vendor partition.) \
+    $(eval files := $(filter-out %__auto_generated_rro.apk,$(files))) \
+    $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns),$(files))) \
+    $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
+    $(eval unused_whitelist := $(filter-out $(files),$(whitelist_patterns))) \
+    $(call maybe-print-list-and-error,$(unused_whitelist),$(makefile) includes redundant whitelist entries in its artifact path requirement.) \
+    $(eval ### Optionally verify that nothing else produces files inside this artifact path requirement.) \
+    $(eval extra_files := $(filter-out $(files) $(HOST_OUT)/%,$(product_FILES))) \
+    $(eval files_in_requirement := $(filter $(path_patterns),$(extra_files))) \
+    $(eval all_offending_files += $(files_in_requirement)) \
+    $(eval whitelist := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST)) \
+    $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
+    $(eval offending_files := $(filter-out $(whitelist_patterns),$(files_in_requirement))) \
+    $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS),\
+      $(call maybe-print-list-and-error,$(offending_files),$(INTERNAL_PRODUCT) produces files inside $(makefile)s artifact path requirement.) \
+      $(eval unused_whitelist := $(filter-out $(extra_files),$(whitelist_patterns))) \
+      $(call maybe-print-list-and-error,$(unused_whitelist),$(INTERNAL_PRODUCT) includes redundant artifact path requirement whitelist entries.) \
+    ) \
+  )
+$(PRODUCT_OUT)/offending_artifacts.txt:
+	rm -f $@
+	$(foreach f,$(sort $(all_offending_files)),echo $(f) >> $@;)
 else
   # We're not doing a full build, and are probably only including
   # a subset of the module makefiles.  Don't try to build any modules
@@ -984,38 +1028,6 @@ else
   # to build them.
   product_FILES :=
 endif
-
-# Verify the artifact path requirements made by included products.
-$(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
-  $(eval requirements := $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENTS)) \
-  $(eval ### Verify that the product only produces files inside its path requirements.) \
-  $(eval whitelist := $(PRODUCTS.$(makefile).ARTIFACT_PATH_WHITELIST)) \
-  $(eval path_patterns := $(call resolve-product-relative-paths,$(requirements),%)) \
-  $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
-  $(eval files := $(call product-installed-files, $(makefile))) \
-  $(eval files := $(filter-out $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%,$(files))) \
-  $(eval # RROs become REQUIRED by the source module, but are always placed on the vendor partition.) \
-  $(eval files := $(filter-out %__auto_generated_rro.apk,$(files))) \
-  $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns),$(files))) \
-  $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
-  $(eval unused_whitelist := $(filter-out $(files),$(whitelist_patterns))) \
-  $(call maybe-print-list-and-error,$(unused_whitelist),$(makefile) includes redundant whitelist entries in its artifact path requirement.) \
-  $(eval ### Optionally verify that nothing else produces files inside this artifact path requirement.) \
-  $(eval extra_files := $(filter-out $(files) $(HOST_OUT)/%,$(product_FILES))) \
-  $(eval files_in_requirement := $(filter $(path_patterns),$(extra_files))) \
-  $(eval all_offending_files += $(files_in_requirement)) \
-  $(eval whitelist := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST)) \
-  $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
-  $(eval offending_files := $(filter-out $(whitelist_patterns),$(files_in_requirement))) \
-  $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS),\
-    $(call maybe-print-list-and-error,$(offending_files),$(INTERNAL_PRODUCT) produces files inside $(makefile)s artifact path requirement.) \
-    $(eval unused_whitelist := $(filter-out $(extra_files),$(whitelist_patterns))) \
-    $(call maybe-print-list-and-error,$(unused_whitelist),$(INTERNAL_PRODUCT) includes redundant artifact path requirement whitelist entries.) \
-  ) \
-)
-$(PRODUCT_OUT)/offending_artifacts.txt:
-	rm -f $@
-	$(foreach f,$(sort $(all_offending_files)),echo $(f) >> $@;)
 
 ifeq (0,1)
   $(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
@@ -1189,6 +1201,9 @@ productservicesimage: $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
 .PHONY: systemotherimage
 systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 
+.PHONY: superimage
+superimage: $(INSTALLED_SUPERIMAGE_TARGET)
+
 .PHONY: bootimage
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
@@ -1261,9 +1276,6 @@ ifneq ($(TARGET_BUILD_APPS),)
 
   $(COVERAGE_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(COVERAGE_ZIP))
-
-  $(APPCOMPAT_ZIP) : $(apps_only_installed_files)
-  $(call dist-for-goals,apps_only, $(APPCOMPAT_ZIP))
 
 .PHONY: apps_only
 apps_only: $(unbundled_build_modules)

@@ -592,8 +592,20 @@ else
 endif
 endif
 
-ifdef LOCAL_PRODUCT_MODULE
+# Run veridex on product, product-services and vendor modules.
+# We skip it for unbundled app builds where we cannot build veridex.
+module_run_appcompat :=
+ifeq (true,$(filter true, \
+   $(LOCAL_PRODUCT_MODULE) $(LOCAL_PRODUCT_SERVICES_MODULE) \
+   $(LOCAL_VENDOR_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
+ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))  # ! unbundled app build
+  module_run_appcompat := true
+endif
+endif
+
+ifeq ($(module_run_appcompat),true)
 $(LOCAL_BUILT_MODULE) : $(call intermediates-dir-for,PACKAGING,veridex,HOST)/veridex.zip
+$(LOCAL_BUILT_MODULE): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
 endif
 
 $(LOCAL_BUILT_MODULE): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
@@ -637,9 +649,14 @@ ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 	$(uncompress-dexs)
 endif
 # Run appcompat before stripping the classes.dex file.
-ifdef LOCAL_PRODUCT_MODULE
+ifeq ($(module_run_appcompat),true)
+ifeq ($(LOCAL_USE_AAPT2),true)
+	$(call appcompat-header, aapt2)
+else
+	$(appcompat-header)
+endif
 	$(run-appcompat)
-endif  # LOCAL_PRODUCT_MODULE
+endif  # module_run_appcompat
 ifdef LOCAL_DEX_PREOPT
 ifneq ($(BUILD_PLATFORM_ZIP),)
 	@# Keep a copy of apk with classes.dex unstripped
