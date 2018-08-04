@@ -70,6 +70,30 @@
       "revId": "2c3336aefb1ff5b84517218b1fd833042e3f3e8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cec51a04_25e30d0f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-04T17:42:45Z",
+      "side": 1,
+      "message": "I also think so and I uploaded a new patch.\nThanks for your suggestion.",
+      "parentUuid": "48192a2f_db4b6b2b",
+      "range": {
+        "startLine": 589,
+        "startChar": 19,
+        "endLine": 589,
+        "endChar": 30
+      },
+      "revId": "2c3336aefb1ff5b84517218b1fd833042e3f3e8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
