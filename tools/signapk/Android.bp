@@ -22,8 +22,8 @@ java_library_host {
     manifest: "SignApk.mf",
     static_libs: [
         "apksig",
-        "bouncycastle",
-        "bouncycastle-bcpkix",
+        "bouncycastle-unbundled",
+        "bouncycastle-bcpkix-unbundled",
         "conscrypt",
     ],
 
