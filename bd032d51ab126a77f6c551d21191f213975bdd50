@@ -52,6 +52,24 @@
       "revId": "bd032d51ab126a77f6c551d21191f213975bdd50",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c48b61b3_19e87548",
+        "filename": "core/OWNERS",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2018-08-06T19:51:43Z",
+      "side": 1,
+      "message": "Darn. Ok, thanks",
+      "parentUuid": "c30e2819_7db95464",
+      "revId": "bd032d51ab126a77f6c551d21191f213975bdd50",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
