@@ -48,8 +48,6 @@ TARGET_CPU_ABI2 := armeabi
 include build/make/target/board/BoardConfigEmuCommon.mk
 include build/make/target/board/BoardConfigGsiCommon.mk
 
-# Partition size is default 1.5GB (1536MB) for 64 bits projects
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1610612736
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 
 # Wifi.
