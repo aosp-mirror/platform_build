@@ -286,7 +286,6 @@ PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     iotop \
     logpersist.start \
-    micro_bench \
     perfprofd \
     procrank \
     showmap \
