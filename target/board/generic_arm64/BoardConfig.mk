@@ -55,7 +55,6 @@ endif
 include build/make/target/board/BoardConfigEmuCommon.mk
 include build/make/target/board/BoardConfigGsiCommon.mk
 
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 2684354560 # 2.5 GB
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 
 # Emulator system image is going to be used as GSI and some vendor still hasn't
