@@ -36,6 +36,9 @@ TARGET_USERIMAGES_USE_F2FS := true
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
 TARGET_USES_MKE2FS := true
 
+# Enable dyanmic system image size and reserved 64MB in it.
+BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
+
 # Generic AOSP image always requires separate vendor.img
 TARGET_COPY_OUT_VENDOR := vendor
 
