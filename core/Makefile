@@ -3580,7 +3580,7 @@ ATREE_FILES := \
 	$(ALL_DEFAULT_INSTALLED_MODULES) \
 	$(INSTALLED_RAMDISK_TARGET) \
 	$(ALL_DOCS) \
-	$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/metalava-api-stubs-docs_annotations.zip \
+	$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/api-stubs-docs_annotations.zip \
 	$(ALL_SDK_FILES)
 endif
 
