@@ -44,5 +44,3 @@ BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216
 # TODO(b/36764215): remove this setting when the generic system image
 # no longer has QCOM-specific directories under /.
 BOARD_SEPOLICY_DIRS += build/target/board/generic_arm64_ab/sepolicy
-
-BOARD_VNDK_VERSION := current

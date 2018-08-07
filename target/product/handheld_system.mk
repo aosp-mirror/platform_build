@@ -59,6 +59,7 @@ PRODUCT_PACKAGES += \
     InputDevices \
     KeyChain \
     LatinIME \
+    Launcher3QuickStep \
     librs_jni \
     ManagedProvisioning \
     MmsService \
@@ -76,7 +77,9 @@ PRODUCT_PACKAGES += \
     screenrecord \
     SecureElement \
     Settings \
+    SettingsIntelligence \
     SharedStorageBackup \
+    SimAppDialog \
     StorageManager \
     SystemUI \
     Telecom \
@@ -102,3 +105,4 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown \
     ro.config.notification_sound=OnTheHunt.ogg \
     ro.config.alarm_alert=Alarm_Classic.ogg
+

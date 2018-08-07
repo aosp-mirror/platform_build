@@ -22,7 +22,7 @@
 # - compatible property override enabled
 
 PRODUCT_PROPERTY_OVERRIDES += \
-	rild.libpath=/vendor/lib64/libreference-ril.so
+	vendor.rild.libpath=/vendor/lib64/libreference-ril.so
 
 # This is a build configuration for a full-featured build of the
 # Open-Source part of the tree. It's geared toward a US-centric
@@ -32,7 +32,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_COPY_FILES += \
     development/sys-img/advancedFeatures.ini:advancedFeatures.ini \
     device/generic/goldfish/data/etc/encryptionkey.img:encryptionkey.img \
-    prebuilts/qemu-kernel/x86_64/4.4/kernel-qemu2:kernel-ranchu
+    prebuilts/qemu-kernel/x86_64/4.9/kernel-qemu2:kernel-ranchu
 
 # Copy different zygote settings for vendor.img to select by setting property
 # ro.zygote=zygote64_32 or ro.zygote=zygote32_64:
@@ -42,11 +42,10 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc
 
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86_64/device.mk)
-
-include $(SRC_TARGET_DIR)/product/emulator.mk
 
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true

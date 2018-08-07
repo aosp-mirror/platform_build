@@ -14,7 +14,8 @@
 # limitations under the License.
 #
 
-# TODO(hansson): change inheritance to generic_no_telephony
+# This makefile is the basis of a generic system image for a handheld
+# device with no telephony.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
 
 PRODUCT_NAME := mainline_system

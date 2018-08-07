@@ -121,7 +121,7 @@ com\.android\..*
 
 
 ###################################################
-# legacy-test.jar
+# android.test.base.jar
 junit\.extensions
 junit\.framework
 android\.test
@@ -237,3 +237,7 @@ org\.apache\.xalan\.xslt
 # Packages in the google namespace across all bootclasspath jars.
 com\.google\.android\..*
 com\.google\.vr\.platform.*
+
+###################################################
+# Packages used for Android in Chrome OS
+org\.chromium\.arc
