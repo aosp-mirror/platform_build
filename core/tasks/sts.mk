@@ -1,4 +1,4 @@
-# Copyright (C) 2015 The Android Open Source Project
+# Copyright (C) 2016 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,17 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-test_suite_name := cts
-test_suite_tradefed := cts-tradefed
-# TODO: Fix the following two lines after harness is moved to its own repo
-test_suite_dynamic_config := test/suite_harness/tools/cts-tradefed/DynamicConfig.xml
-test_suite_readme := test/suite_harness/tools/cts-tradefed/README
+ifneq ($(wildcard test/sts/README.md),)
+test_suite_name := sts
+test_suite_tradefed := sts-tradefed
+test_suite_readme := test/sts/README.md
 
 include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
 
-.PHONY: cts
-cts: $(compatibility_zip)
-$(call dist-for-goals, cts, $(compatibility_zip))
-
-.PHONY: cts_v2
-cts_v2: cts
+.PHONY: sts
+sts: $(compatibility_zip)
+$(call dist-for-goals, sts, $(compatibility_zip))
+endif

@@ -147,6 +147,7 @@ BUILD_JAVA_LIBRARY:= $(BUILD_SYSTEM)/java_library.mk
 BUILD_STATIC_JAVA_LIBRARY:= $(BUILD_SYSTEM)/static_java_library.mk
 BUILD_HOST_JAVA_LIBRARY:= $(BUILD_SYSTEM)/host_java_library.mk
 BUILD_DROIDDOC:= $(BUILD_SYSTEM)/droiddoc.mk
+BUILD_APIDIFF:= $(BUILD_SYSTEM)/apidiff.mk
 BUILD_COPY_HEADERS := $(BUILD_SYSTEM)/copy_headers.mk
 BUILD_NATIVE_TEST := $(BUILD_SYSTEM)/native_test.mk
 BUILD_NATIVE_BENCHMARK := $(BUILD_SYSTEM)/native_benchmark.mk
@@ -206,6 +207,11 @@ ifdef TMPDIR
 JAVA_TMPDIR_ARG := -Djava.io.tmpdir=$(TMPDIR)
 else
 JAVA_TMPDIR_ARG :=
+endif
+
+# Default to remove the org.apache.http.legacy from bootclasspath
+ifeq ($(REMOVE_OAHL_FROM_BCP),)
+REMOVE_OAHL_FROM_BCP := true
 endif
 
 # ###############################################################
@@ -725,6 +731,8 @@ CLASS2GREYLIST := $(HOST_OUT_EXECUTABLES)/class2greylist
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
 
+JETIFIER := prebuilts/sdk/tools/jetifier/jetifier-standalone/bin/jetifier-standalone
+
 COLUMN:= column
 
 USE_OPENJDK9 := true
@@ -839,6 +847,21 @@ $(KATI_obsolete_var PRODUCT_USE_VNDK_OVERRIDE,Use PRODUCT_USE_VNDK instead)
 .KATI_READONLY := \
     PRODUCT_USE_VNDK
 
+# Set BOARD_SYSTEMSDK_VERSIONS to the latest SystemSDK version starting from P-launching
+# devices if unset.
+ifndef BOARD_SYSTEMSDK_VERSIONS
+  ifdef PRODUCT_SHIPPING_API_LEVEL
+  ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),28),)
+    ifeq (REL,$(PLATFORM_VERSION_CODENAME))
+      BOARD_SYSTEMSDK_VERSIONS := $(PLATFORM_SDK_VERSION)
+    else
+      BOARD_SYSTEMSDK_VERSIONS := $(PLATFORM_VERSION_CODENAME)
+    endif
+  endif
+  endif
+endif
+
+
 ifdef PRODUCT_SHIPPING_API_LEVEL
   ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),27),)
     ifneq ($(TARGET_USES_MKE2FS),true)
@@ -884,7 +907,7 @@ BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
 # is made which breaks compatibility with the previous platform sepolicy version,
 # not just on every increase in PLATFORM_SDK_VERSION.  The minor version should
 # be reset to 0 on every bump of the PLATFORM_SDK_VERSION.
-sepolicy_major_vers := 27
+sepolicy_major_vers := 28
 sepolicy_minor_vers := 0
 
 ifneq ($(sepolicy_major_vers), $(PLATFORM_SDK_VERSION))
@@ -1087,6 +1110,19 @@ TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_
 
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,27,$(TARGET_AVAILABLE_SDK_VERSIONS))
+
+ifndef INTERNAL_PLATFORM_PRIVATE_API_FILE
+INTERNAL_PLATFORM_PRIVATE_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/private.txt
+endif
+ifndef INTERNAL_PLATFORM_PRIVATE_DEX_API_FILE
+INTERNAL_PLATFORM_PRIVATE_DEX_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/private-dex.txt
+endif
+ifndef INTERNAL_PLATFORM_SYSTEM_PRIVATE_API_FILE
+INTERNAL_PLATFORM_SYSTEM_PRIVATE_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-private.txt
+endif
+ifndef INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE
+INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-private-dex.txt
+endif
 
 INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-public-list.txt
 INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-private-list.txt

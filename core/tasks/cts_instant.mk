@@ -1,4 +1,3 @@
-#
 # Copyright (C) 2018 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +11,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-# This makefile contains the non-system partition contents for
-# a generic phone or tablet device. Only add something here if
-# it definitely doesn't belong on other types of devices (if it
-# does, use base_vendor.mk).
-$(call inherit-product, $(SRC_TARGET_DIR)/product/media_vendor.mk)
-PRODUCT_PACKAGES += \
-    audio.primary.default \
-    DisplayCutoutEmulationCornerOverlay \
-    DisplayCutoutEmulationDoubleOverlay \
-    DisplayCutoutEmulationTallOverlay \
-    local_time.default \
-    power.default \
-    SysuiDarkThemeOverlay \
-    vibrator.default \
+test_suite_name := cts_instant
+test_suite_tradefed := cts-instant-tradefed
+test_suite_dynamic_config := test/suite_harness/tools/cts-instant-tradefed/DynamicConfig.xml
+test_suite_readme := test/suite_harness/tools/cts-instant-tradefed/README
+
+include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
+
+.PHONY: cts_instant
+cts_instant: $(compatibility_zip)
+$(call dist-for-goals, cts_instant, $(compatibility_zip))
+

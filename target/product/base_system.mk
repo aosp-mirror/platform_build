@@ -24,12 +24,14 @@ PRODUCT_PACKAGES += \
     android.hidl.manager-V1.0-java \
     android.hidl.memory@1.0-impl \
     android.hidl.memory@1.0-impl.vendor \
+    android.test.base \
     android.test.mock \
     android.test.runner \
     applypatch \
     appops \
     app_process \
     appwidget \
+    atest \
     atrace \
     audioserver \
     BackupRestoreConfirmation \
@@ -79,6 +81,7 @@ PRODUCT_PACKAGES += \
     ims-common \
     incident \
     incidentd \
+    incident_helper \
     incident_report \
     init \
     init.environ.rc \
@@ -211,6 +214,7 @@ PRODUCT_PACKAGES += \
     screencap \
     sdcard \
     secdiscard \
+    SecureElement \
     selinux_policy_system \
     sensorservice \
     service \
@@ -222,6 +226,7 @@ PRODUCT_PACKAGES += \
     Shell \
     shell_and_utilities_system \
     sm \
+    statsd \
     storaged \
     surfaceflinger \
     svc \
@@ -255,18 +260,25 @@ ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
 endif
 
-# The order of PRODUCT_BOOT_JARS matters.
+# The order matters
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    legacy-test \
     ext \
     framework \
     telephony-common \
     voip-common \
     ims-common \
-    org.apache.http.legacy.impl \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java
+
+# Add the compatibility library that is needed when org.apache.http.legacy
+# is removed from the bootclasspath.
+ifeq ($(REMOVE_OAHL_FROM_BCP),true)
+PRODUCT_PACKAGES += framework-oahl-backward-compatibility
+PRODUCT_BOOT_JARS += framework-oahl-backward-compatibility
+else
+PRODUCT_BOOT_JARS += org.apache.http.legacy.impl
+endif
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
@@ -274,11 +286,18 @@ PRODUCT_COPY_FILES += \
     system/core/rootdir/ueventd.rc:root/ueventd.rc \
     system/core/rootdir/etc/hosts:system/etc/hosts
 
+# Add the compatibility library that is needed when android.test.base
+# is removed from the bootclasspath.
+ifeq ($(REMOVE_ATB_FROM_BCP),true)
+PRODUCT_PACKAGES += framework-atb-backward-compatibility
+PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
+else
+PRODUCT_BOOT_JARS += android.test.base
+endif
+
 PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += ro.zygote=zygote32
 
-# Ensure that this property is always defined so that bionic_systrace.cpp
-# can rely on it being initially set by init.
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
 
 # Packages included only for eng or userdebug builds, previously debug tagged

@@ -8,11 +8,6 @@
 
 whitelisted_modules := framework-res__auto_generated_rro
 
-
-ifeq (,$(JAVA_SDK_ENFORCEMENT_ERROR))
-  JAVA_SDK_ENFORCEMENT_ERROR := APPS
-endif
-
 ifeq ($(LOCAL_SDK_VERSION)$(LOCAL_PRIVATE_PLATFORM_APIS),)
   ifeq (,$(filter $(LOCAL_MODULE),$(whitelisted_modules)))
     ifneq ($(JAVA_SDK_ENFORCEMENT_WARNING)$(JAVA_SDK_ENFORCEMENT_ERROR),)

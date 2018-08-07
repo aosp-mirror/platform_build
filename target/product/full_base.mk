@@ -21,10 +21,6 @@
 
 PRODUCT_PACKAGES := \
     libfwdlockengine \
-    OpenWnn \
-    libWnnEngDic \
-    libWnnJpnDic \
-    libwnndict \
     WAPPushManager
 
 PRODUCT_PACKAGES += \
@@ -63,7 +59,7 @@ PRODUCT_LOCALES := en_US
 $(call inherit-product-if-exists, frameworks/base/data/sounds/AllAudio.mk)
 
 # Get a list of languages.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/locales_full.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 
 # Get everything else from the parent package
 $(call inherit-product, $(SRC_TARGET_DIR)/product/generic_no_telephony.mk)
