@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "6ad933bf_f79502c2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2878,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-08T15:23:11Z",
+      "side": 1,
+      "message": "You need a dependency on $(3)",
+      "revId": "e582baee5187dc39f2754fd4ba385d8ac9560f34",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c836a85a_0b851395",
         "filename": "core/java.mk",
         "patchSetId": 1
@@ -22,6 +39,30 @@
       "revId": "e582baee5187dc39f2754fd4ba385d8ac9560f34",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19793b13_2bd25130",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-08T15:23:11Z",
+      "side": 1,
+      "message": "This is fine as long as INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST is set early and never modified",
+      "parentUuid": "c836a85a_0b851395",
+      "range": {
+        "startLine": 545,
+        "startChar": 95,
+        "endLine": 545,
+        "endChar": 134
+      },
+      "revId": "e582baee5187dc39f2754fd4ba385d8ac9560f34",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
