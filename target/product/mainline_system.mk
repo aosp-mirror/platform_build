@@ -18,6 +18,9 @@
 # device with no telephony.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
 
+# Enable dynamic partition size
+PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
+
 PRODUCT_NAME := mainline_system
 PRODUCT_BRAND := generic
 PRODUCT_SHIPPING_API_LEVEL := 28
