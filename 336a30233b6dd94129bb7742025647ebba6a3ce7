@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "df3a3845_69768275",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2879,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2018-08-08T17:39:39Z",
+      "side": 1,
+      "message": "This does not need to be configurable. Use PUBLIC_LIST here directly?",
+      "range": {
+        "startLine": 2879,
+        "startChar": 37,
+        "endLine": 2879,
+        "endChar": 41
+      },
+      "revId": "336a30233b6dd94129bb7742025647ebba6a3ce7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
