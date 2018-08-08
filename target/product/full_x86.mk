@@ -36,6 +36,9 @@ PRODUCT_PACKAGES += \
 	bios.bin \
 	vgabios-cirrus.bin \
 
+# Enable dynamic partition size
+PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
+
 # Overrides
 PRODUCT_NAME := full_x86
 PRODUCT_DEVICE := generic_x86
