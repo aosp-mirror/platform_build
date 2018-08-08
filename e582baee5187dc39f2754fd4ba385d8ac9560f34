@@ -63,6 +63,30 @@
       "revId": "e582baee5187dc39f2754fd4ba385d8ac9560f34",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "134f8cd8_cf4b631b",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 545,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-08-08T15:26:16Z",
+      "side": 1,
+      "message": "Thanks. It\u0027s set in config.mk:\nhttps://cs.corp.google.com/android/build/make/core/config.mk?q\u003dINTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST\u0026sq\u003dpackage:%5Eandroid$\u0026dr\u003dC\u0026l\u003d1127\n\nis that ok?",
+      "parentUuid": "19793b13_2bd25130",
+      "range": {
+        "startLine": 545,
+        "startChar": 95,
+        "endLine": 545,
+        "endChar": 134
+      },
+      "revId": "e582baee5187dc39f2754fd4ba385d8ac9560f34",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
