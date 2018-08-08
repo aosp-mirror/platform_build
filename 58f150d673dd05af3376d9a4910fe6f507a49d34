@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ad90cfcd_edf67092",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2880,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-08T16:32:39Z",
+      "side": 1,
+      "message": "remove this",
+      "revId": "58f150d673dd05af3376d9a4910fe6f507a49d34",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
