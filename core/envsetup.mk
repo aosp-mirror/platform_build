@@ -181,6 +181,7 @@ TARGET_COPY_OUT_OEM := oem
 TARGET_COPY_OUT_ODM := odm
 TARGET_COPY_OUT_PRODUCT := product
 TARGET_COPY_OUT_PRODUCT_SERVICES := product_services
+TARGET_COPY_OUT_RAMDISK := ramdisk
 TARGET_COPY_OUT_ROOT := root
 TARGET_COPY_OUT_RECOVERY := recovery
 
@@ -318,6 +319,12 @@ $(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword
 endif
 
 CHANGES_URL :=
+
+###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_RAMDISK
+ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+TARGET_COPY_OUT_RAMDISK := $(TARGET_COPY_OUT_ROOT)
+endif
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR
@@ -1025,6 +1032,9 @@ TARGET_OUT_COVERAGE := $(PRODUCT_OUT)/coverage
   TARGET_ROOT_OUT_SBIN_UNSTRIPPED \
   TARGET_ROOT_OUT_BIN_UNSTRIPPED \
   TARGET_OUT_COVERAGE
+
+TARGET_RAMDISK_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_RAMDISK)
+TARGET_RAMDISK_OUT_UNSTRIPPED := $(TARGET_OUT_UNSTRIPPED)
 
 TARGET_ROOT_OUT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ROOT)
 TARGET_ROOT_OUT_BIN := $(TARGET_ROOT_OUT)/bin

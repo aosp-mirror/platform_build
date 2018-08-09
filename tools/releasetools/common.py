@@ -181,26 +181,18 @@ def LoadInfoDict(input_file, input_dir=None):
   if input_dir is not None:
     # We carry a copy of file_contexts.bin under META/. If not available,
     # search BOOT/RAMDISK/. Note that sometimes we may need a different file
-    # to build images than the one running on device, such as when enabling
-    # system_root_image. In that case, we must have the one for image
-    # generation copied to META/.
+    # to build images than the one running on device, in that case, we must
+    # have the one for image generation copied to META/.
     fc_basename = os.path.basename(d.get("selinux_fc", "file_contexts"))
     fc_config = os.path.join(input_dir, "META", fc_basename)
-    if d.get("system_root_image") == "true":
-      assert os.path.exists(fc_config)
-    if not os.path.exists(fc_config):
-      fc_config = os.path.join(input_dir, "BOOT", "RAMDISK", fc_basename)
-      if not os.path.exists(fc_config):
-        fc_config = None
+    assert os.path.exists(fc_config)
 
-    if fc_config:
-      d["selinux_fc"] = fc_config
+    d["selinux_fc"] = fc_config
 
-    # Similarly we need to redirect "root_dir" and "root_fs_config".
-    if d.get("system_root_image") == "true":
-      d["root_dir"] = os.path.join(input_dir, "ROOT")
-      d["root_fs_config"] = os.path.join(
-          input_dir, "META", "root_filesystem_config.txt")
+    # Similarly we need to redirect "root_dir", and "root_fs_config".
+    d["root_dir"] = os.path.join(input_dir, "ROOT")
+    d["root_fs_config"] = os.path.join(
+        input_dir, "META", "root_filesystem_config.txt")
 
     # Redirect {system,vendor}_base_fs_file.
     if "system_base_fs_file" in d:
@@ -709,15 +701,14 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks):
     if not entry.startswith('/'):
       continue
 
-    # "/system/framework/am.jar" => "SYSTEM/framework/am.jar". Note that when
-    # using system_root_image, the filename listed in system.map may contain an
-    # additional leading slash (i.e. "//system/framework/am.jar"). Using lstrip
-    # to get consistent results.
+    # "/system/framework/am.jar" => "SYSTEM/framework/am.jar". Note that the
+    # filename listed in system.map may contain an additional leading slash
+    # (i.e. "//system/framework/am.jar"). Using lstrip to get consistent
+    # results.
     arcname = string.replace(entry, which, which.upper(), 1).lstrip('/')
 
-    # Special handling another case with system_root_image, where files not
-    # under /system (e.g. "/sbin/charger") are packed under ROOT/ in a
-    # target_files.zip.
+    # Special handling another case, where files not under /system
+    # (e.g. "/sbin/charger") are packed under ROOT/ in a target_files.zip.
     if which == 'system' and not arcname.startswith('SYSTEM'):
       arcname = 'ROOT/' + arcname
 
