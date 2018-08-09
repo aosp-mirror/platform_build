@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6bbc2451_611119de",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 19
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-09T17:16:12Z",
+      "side": 1,
+      "message": "this will need a host config too",
+      "revId": "571fbb8f38cec6d47c898fba78f78e31f95d4b7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
