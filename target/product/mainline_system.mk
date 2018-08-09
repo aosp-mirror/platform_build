@@ -43,6 +43,33 @@ _base_mk_whitelist := \
   recovery/root/system/lib64/libselinux.so \
   recovery/root/system/lib64/libz.so \
 
+ifeq ($(PRODUCT_USE_FASTBOOTD), true)
+  _base_mk_whitelist += \
+    recovery/root/system/bin/fastbootd \
+    recovery/root/system/lib64/android.hardware.boot@1.0.so \
+    recovery/root/system/lib64/hw/bootctrl.default.so \
+    recovery/root/system/lib64/libadbd.so \
+    recovery/root/system/lib64/libadbd_services.so \
+    recovery/root/system/lib64/libasyncio.so \
+    recovery/root/system/lib64/libbootloader_message.so \
+    recovery/root/system/lib64/libcrypto_utils.so \
+    recovery/root/system/lib64/libext2_uuid.so \
+    recovery/root/system/lib64/libext4_utils.so \
+    recovery/root/system/lib64/libfec.so \
+    recovery/root/system/lib64/libfec_rs.so \
+    recovery/root/system/lib64/libfs_mgr.so \
+    recovery/root/system/lib64/libhidlbase.so \
+    recovery/root/system/lib64/libhidltransport.so \
+    recovery/root/system/lib64/libhwbinder.so \
+    recovery/root/system/lib64/libkeyutils.so \
+    recovery/root/system/lib64/liblogwrap.so \
+    recovery/root/system/lib64/liblp.so \
+    recovery/root/system/lib64/libmdnssd.so \
+    recovery/root/system/lib64/libsparse.so \
+    recovery/root/system/lib64/libsquashfs_utils.so \
+    recovery/root/system/lib64/libutils.so
+endif
+
 _my_whitelist := $(_base_mk_whitelist)
 
 # Both /system and / are in system.img when PRODUCT_SHIPPING_API_LEVEL>=28.
