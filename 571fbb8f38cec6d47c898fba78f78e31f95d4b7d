@@ -16,6 +16,24 @@
       "revId": "571fbb8f38cec6d47c898fba78f78e31f95d4b7d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "096251fc_9f658210",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 19
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-08-09T17:19:06Z",
+      "side": 1,
+      "message": "Curious is there a user story/benefit of running the benchmarks on their host?\n\n\nFor the meanwhile we should not gen the host config here until we have done the corresponding TF work.",
+      "parentUuid": "6bbc2451_611119de",
+      "revId": "571fbb8f38cec6d47c898fba78f78e31f95d4b7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
