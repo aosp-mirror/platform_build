@@ -18,12 +18,30 @@
 # device with no telephony.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
 
+# Enable dynamic partition size
+PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
+
 PRODUCT_NAME := mainline_system
 PRODUCT_BRAND := generic
 PRODUCT_SHIPPING_API_LEVEL := 28
 
 _base_mk_whitelist := \
   recovery/root/etc/mke2fs.conf \
+  recovery/root/system/bin/init \
+  recovery/root/system/bin/ueventd \
+  recovery/root/system/lib64/ld-android.so \
+  recovery/root/system/lib64/libbase.so \
+  recovery/root/system/lib64/libc++.so \
+  recovery/root/system/lib64/libc.so \
+  recovery/root/system/lib64/libcrypto.so \
+  recovery/root/system/lib64/libcutils.so \
+  recovery/root/system/lib64/libdl.so \
+  recovery/root/system/lib64/liblog.so \
+  recovery/root/system/lib64/libm.so \
+  recovery/root/system/lib64/libpackagelistparser.so \
+  recovery/root/system/lib64/libpcre2.so \
+  recovery/root/system/lib64/libselinux.so \
+  recovery/root/system/lib64/libz.so \
 
 _my_whitelist := $(_base_mk_whitelist)
 
