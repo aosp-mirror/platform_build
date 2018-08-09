@@ -34,6 +34,24 @@
       "revId": "571fbb8f38cec6d47c898fba78f78e31f95d4b7d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ddeb5501_acccb0c3",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 19
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-09T17:29:00Z",
+      "side": 1,
+      "message": "We have lots of host-only code, and benchmarks for that code can be useful.  b/77585931 lists a few times people tried to add host benchmarks to soong (which doesn\u0027t currently work, but will soon).",
+      "parentUuid": "096251fc_9f658210",
+      "revId": "571fbb8f38cec6d47c898fba78f78e31f95d4b7d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
