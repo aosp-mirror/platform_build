@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7eec820c_c358e6fd",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1551,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-08-10T02:10:45Z",
+      "side": 1,
+      "message": "I\u0027m probably missing a dependency for this aren\u0027t I?  I\u0027m guessing that\u0027s why some recovery tests passed presubmit but not the others.",
+      "revId": "b25c7393011c31ba0936f1d9b821f37d19fd0b84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "46127e5e_1dcac4db",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3014,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-08-10T02:10:45Z",
+      "side": 1,
+      "message": "Same RE the missing dependency.",
+      "revId": "b25c7393011c31ba0936f1d9b821f37d19fd0b84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
