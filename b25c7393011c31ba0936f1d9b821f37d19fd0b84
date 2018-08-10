@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3e988b39_113bdfd8",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1551,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-10T02:52:05Z",
+      "side": 1,
+      "message": "Probably need to depend on $(INTERNAL_RAMDISK_FILES)",
+      "parentUuid": "7eec820c_c358e6fd",
+      "revId": "b25c7393011c31ba0936f1d9b821f37d19fd0b84",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "46127e5e_1dcac4db",
         "filename": "core/Makefile",
         "patchSetId": 4
