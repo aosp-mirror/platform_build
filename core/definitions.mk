@@ -2875,8 +2875,8 @@ endef
 
 # Generate a greylist.txt from a classes.jar
 define hiddenapi-generate-greylist-txt
-$(2): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
-	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) > $(2)
+$(2): $(1) $(CLASS2GREYLIST)
+	$(CLASS2GREYLIST) $(1) > $(2)
 
 $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST): $(2)
 $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST): \
