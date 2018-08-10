@@ -75,6 +75,8 @@ ifdef LOCAL_CERTIFICATE
   PACKAGES.$(LOCAL_MODULE).PRIVATE_KEY := $(patsubst %.x509.pem,%.pk8,$(LOCAL_CERTIFICATE))
 endif
 
+PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
+
 ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_SDK_VERSION),system_current)
 my_link_type := java:system
