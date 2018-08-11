@@ -198,9 +198,9 @@ static int verify(const char* fileName, int alignment, bool verbose,
             const int alignTo = getAlignment(pageAlignSharedLibs, alignment, pEntry);
             if ((offset % alignTo) != 0) {
                 if (verbose) {
-                    printf("%8jd %s (BAD - %ld)\n",
+                    printf("%8jd %s (BAD - %jd)\n",
                         (intmax_t) offset, pEntry->getFileName(),
-                        offset % alignTo);
+                        (intmax_t) (offset % alignTo));
                 }
                 foundBad = true;
             } else {
