@@ -224,7 +224,7 @@ private:
     status_t copyDataToFp(FILE* dstFp,
         const void* data, size_t size, uint32_t* pCRC32);
     /* copy some of "srcFp" into "dstFp" */
-    status_t copyPartialFpToFp(FILE* dstFp, FILE* srcFp, long length,
+    status_t copyPartialFpToFp(FILE* dstFp, FILE* srcFp, size_t length,
         uint32_t* pCRC32);
     /* like memmove(), but on parts of a single file */
     status_t filemove(FILE* fp, off_t dest, off_t src, size_t n);
