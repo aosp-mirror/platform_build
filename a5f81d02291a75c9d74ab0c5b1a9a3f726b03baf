@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "60d0314f_9f74c958",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-11T00:13:22Z",
+      "side": 1,
+      "message": "We generally don\u0027t want warnings during the build, they just add to the noise and nobody pays attention to them.  If you want to track which files are being moved, write a text file.  For example:\nhttps://cs.corp.google.com/android/build/make/core/Makefile?rcl\u003d035eac84ff814ecbd43c21deaace2bf2735972b2\u0026l\u003d615",
+      "revId": "a5f81d02291a75c9d74ab0c5b1a9a3f726b03baf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
