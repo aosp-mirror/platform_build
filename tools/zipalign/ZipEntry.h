@@ -179,8 +179,8 @@ protected:
     /*
      * Set information about the data for this entry.
      */
-    void setDataInfo(long uncompLen, long compLen, uint32_t crc32,
-        int compressionMethod);
+    void setDataInfo(uint32_t uncompLen, uint32_t compLen, uint32_t crc32,
+        uint32_t compressionMethod);
 
     /*
      * Set the modification date.

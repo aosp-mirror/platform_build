@@ -41,7 +41,7 @@ using namespace android;
 status_t ZipEntry::initFromCDE(FILE* fp)
 {
     status_t result;
-    long posn;
+    long posn; // NOLINT(google-runtime-int), for ftell/fseek
     bool hasDD;
 
     //ALOGV("initFromCDE ---\n");
@@ -258,8 +258,8 @@ void ZipEntry::copyCDEtoLFH(void)
 /*
  * Set some information about a file after we add it.
  */
-void ZipEntry::setDataInfo(long uncompLen, long compLen, uint32_t crc32,
-    int compressionMethod)
+void ZipEntry::setDataInfo(uint32_t uncompLen, uint32_t compLen, uint32_t crc32,
+    uint32_t compressionMethod)
 {
     mCDE.mCompressionMethod = compressionMethod;
     mCDE.mCRC32 = crc32;
@@ -367,7 +367,7 @@ void ZipEntry::setModWhen(time_t when)
     struct tm* ptm;
 
     /* round up to an even number of seconds */
-    even = (time_t)(((unsigned long)(when) + 1) & (~1));
+    even = (when & 1) ? (when + 1) : when;
 
     /* expand */
 #if !defined(_WIN32)
