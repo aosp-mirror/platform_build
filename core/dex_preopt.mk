@@ -107,6 +107,19 @@ HIDDENAPI_STUBS_SYSTEM := \
 HIDDENAPI_STUBS_TEST := \
     $(call hiddenapi_stubs_jar,android_test_stubs_current)
 
+# Allow products to define their own stubs for custom product jars that apps can use.
+ifdef PRODUCT_HIDDENAPI_STUBS
+  HIDDENAPI_STUBS += $(foreach stub,$(PRODUCT_HIDDENAPI_STUBS), $(call hiddenapi_stubs_jar,$(stub)))
+endif
+
+ifdef PRODUCT_HIDDENAPI_STUBS_SYSTEM
+  HIDDENAPI_STUBS_SYSTEM += $(foreach stub,$(PRODUCT_HIDDENAPI_STUBS_SYSTEM), $(call hiddenapi_stubs_jar,$(stub)))
+endif
+
+ifdef PRODUCT_HIDDENAPI_STUBS_TEST
+  HIDDENAPI_STUBS_TEST += $(foreach stub,$(PRODUCT_HIDDENAPI_STUBS_TEST), $(call hiddenapi_stubs_jar,$(stub)))
+endif
+
 # Singleton rule which applies $(HIDDENAPI) on all boot class path dex files.
 # Inputs are filled with `hiddenapi-copy-dex-files` rules.
 $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): PRIVATE_HIDDENAPI_STUBS := $(HIDDENAPI_STUBS)
