@@ -71,6 +71,54 @@
     },
     {
       "key": {
+        "uuid": "8aeb7790_61f9797d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2878,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-08-13T15:24:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "45181b60_a874bdc5",
+      "range": {
+        "startLine": 2878,
+        "startChar": 43,
+        "endLine": 2878,
+        "endChar": 44
+      },
+      "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f3a13001_22bf2bc9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2878,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-08-13T15:24:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2af2f61_6c62551e",
+      "range": {
+        "startLine": 2878,
+        "startChar": 19,
+        "endLine": 2878,
+        "endChar": 28
+      },
+      "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5853a870_478f84ff",
         "filename": "core/definitions.mk",
         "patchSetId": 4
@@ -82,6 +130,24 @@
       "writtenOn": "2018-08-13T15:15:48Z",
       "side": 1,
       "message": "m checkbuild does extra checks for rules that depends on output files that don\u0027t exist, so this statement is false.",
+      "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "996f2e13_8e26bb8c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2880,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-08-13T15:24:18Z",
+      "side": 1,
+      "message": "removed.",
+      "parentUuid": "5853a870_478f84ff",
       "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
