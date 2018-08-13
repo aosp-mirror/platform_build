@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d36c35d6_8ad9b5de",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2636,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-13T19:37:19Z",
+      "side": 1,
+      "message": "These should stay as rule local variables.  If you need them in multiple rules you can use:\n$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): PRIVATE_PARTITION_SUFFIX\u003d_a",
+      "revId": "c0ebe50c5216cfde912b751196545d72729e9a6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "948622b6_ed079676",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2653,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-13T19:37:19Z",
+      "side": 1,
+      "message": "make the new one dist-for-goals too, if fastboot needs it then the flashstation will need to be able to download it.",
+      "revId": "c0ebe50c5216cfde912b751196545d72729e9a6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
