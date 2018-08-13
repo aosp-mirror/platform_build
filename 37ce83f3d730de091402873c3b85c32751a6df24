@@ -22,6 +22,92 @@
       "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2af2f61_6c62551e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2878,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-13T15:15:48Z",
+      "side": 1,
+      "message": "$(TOPDIR) is unnecessary, make is always run from TOPDIR and TOPDIR is always \"./\"",
+      "range": {
+        "startLine": 2878,
+        "startChar": 19,
+        "endLine": 2878,
+        "endChar": 28
+      },
+      "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "45181b60_a874bdc5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2878,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-13T15:15:48Z",
+      "side": 1,
+      "message": "No need for the *, $(wildcard) can take a path without wildcards",
+      "range": {
+        "startLine": 2878,
+        "startChar": 43,
+        "endLine": 2878,
+        "endChar": 44
+      },
+      "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5853a870_478f84ff",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2880,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-13T15:15:48Z",
+      "side": 1,
+      "message": "m checkbuild does extra checks for rules that depends on output files that don\u0027t exist, so this statement is false.",
+      "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78bc4c12_76eb2d28",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2882,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-13T15:15:48Z",
+      "side": 1,
+      "message": "This is what is introducing the problem, $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) depends on the stubs jars that don\u0027t exist.  Would it be possible to make the rule for $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST) and $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) work when the stubs jars are not present?",
+      "range": {
+        "startLine": 2882,
+        "startChar": 29,
+        "endLine": 2882,
+        "endChar": 71
+      },
+      "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
