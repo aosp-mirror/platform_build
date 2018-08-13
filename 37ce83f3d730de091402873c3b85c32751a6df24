@@ -108,6 +108,30 @@
       "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d716b8d_ce824e49",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2882,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-08-13T15:19:50Z",
+      "side": 1,
+      "message": "Yes, the public API list is build from the stubs jars (since they are the definition of the public API).\n\nI don\u0027t think we can build INTERNAL_PLATFORM_HIDDENAPI_(PUBLIC|PRIVATE)_LIST without the stubs, or at least not without significant other changes to how the API is built. The public API is monolithic, and I think it has to be so due to some subtle rules about API visibility.\n\n+dbrazdil can correct me if I\u0027m wrong.",
+      "parentUuid": "78bc4c12_76eb2d28",
+      "range": {
+        "startLine": 2882,
+        "startChar": 29,
+        "endLine": 2882,
+        "endChar": 71
+      },
+      "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
