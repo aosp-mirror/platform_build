@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0a614c17_7921f1ec",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2878,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-08-13T14:12:11Z",
+      "side": 1,
+      "message": "Is this a reasonable fix to the problem?\n\nSee build failure from before:\nhttps://build.chromium.org/p/client.art/builders/angler-armv7-ndebug/builds/2045/steps/build%20target/logs/stdio",
+      "range": {
+        "startLine": 2878,
+        "startChar": 0,
+        "endLine": 2878,
+        "endChar": 5
+      },
+      "revId": "37ce83f3d730de091402873c3b85c32751a6df24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
