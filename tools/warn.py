@@ -2549,7 +2549,6 @@ project_list = [
     simple_project_pattern('system/extras/iotop'),
     simple_project_pattern('system/extras/libfec'),
     simple_project_pattern('system/extras/memory_replay'),
-    simple_project_pattern('system/extras/micro_bench'),
     simple_project_pattern('system/extras/mmap-perf'),
     simple_project_pattern('system/extras/multinetwork'),
     simple_project_pattern('system/extras/perfprofd'),
