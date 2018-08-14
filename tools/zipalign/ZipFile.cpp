@@ -804,7 +804,7 @@ status_t ZipFile::copyDataToFp(FILE* dstFp,
  * On exit, "srcFp" will be seeked to the end of the file, and "dstFp"
  * will be seeked immediately past the data just written.
  */
-status_t ZipFile::copyPartialFpToFp(FILE* dstFp, FILE* srcFp, long length,
+status_t ZipFile::copyPartialFpToFp(FILE* dstFp, FILE* srcFp, size_t length,
     uint32_t* pCRC32)
 {
     uint8_t tmpBuf[32768];
@@ -814,14 +814,14 @@ status_t ZipFile::copyPartialFpToFp(FILE* dstFp, FILE* srcFp, long length,
         *pCRC32 = crc32(0L, Z_NULL, 0);
 
     while (length) {
-        long readSize;
+        size_t readSize;
 
         readSize = sizeof(tmpBuf);
         if (readSize > length)
             readSize = length;
 
         count = fread(tmpBuf, 1, readSize, srcFp);
-        if ((long) count != readSize) {     // error or unexpected EOF
+        if (count != readSize) {     // error or unexpected EOF
             ALOGD("fread %d bytes failed\n", (int) readSize);
             return UNKNOWN_ERROR;
         }

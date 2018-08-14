@@ -339,11 +339,10 @@ ifneq ($(my_cc)$(my_cxx),)
         my_clang := false
     endif
 endif
-# Issue warning if LOCAL_CLANG* is set to false and the local makefile is not found
-# in the exception project list.
 ifeq ($(my_clang),false)
-    ifeq ($(call find_in_local_clang_exception_projects,$(LOCAL_MODULE_MAKEFILE))$(LOCAL_IS_AUX_MODULE),)
-        $(error $(LOCAL_MODULE_MAKEFILE): $(LOCAL_MODULE): LOCAL_CLANG is set to false)
+    # https://android-review.googlesource.com/720799
+    ifneq ($(LOCAL_MODULE),bionic-compile-time-tests-g++)
+        $(call pretty-error,LOCAL_CLANG false is no longer supported)
     endif
 endif
 
@@ -351,10 +350,7 @@ endif
 # enable it unless we've specifically disabled clang above
 ifdef LOCAL_IS_HOST_MODULE
     ifneq ($($(my_prefix)CLANG_SUPPORTED),true)
-        ifeq ($(my_clang),true)
-            $(call pretty-error,Clang is not yet supported for $($(my_prefix)OS) binaries)
-        endif
-        my_clang := false
+        $(error $($(my_prefix)OS) requires GCC$(comma) but only Clang is supported)
     else
         ifeq ($(my_clang),)
             my_clang := true

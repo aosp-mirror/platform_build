@@ -463,6 +463,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/manifest.xml)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/vendor/compatibility_matrix.xml)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/compatibility_matrix.xml)
 
+# Remove DisplayCutoutEmulation overlays
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/overlay/DisplayCutoutEmulationWide)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/overlay/DisplayCutoutEmulationNarrow)
+
 # Remove obsolete intermedates src files
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/*/*_intermediates/src/RenderScript.stamp*)
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/*_intermediates/src)
@@ -479,8 +483,15 @@ $(call add-clean-step, rm -rf $(TARGET_COMMON_OUT_ROOT)/obj_asan/JAVA_LIBRARIES/
 # Remove stale init.noenforce.rc
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/init/gsi/init.noenforce.rc)
 
+# Clean up Launcher3 which has been replaced with Launcher3QuickStep
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/Launcher3)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/priv-app/Launcher3)
+$(call add-clean-step, rm -rf $(OUT_DIR)/target/common/obj/APPS/Launcher3_intermediates)
+
 # Remove old merged AndroidManifest.xml location
 $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/*_intermediates/AndroidManifest.xml)
+
+$(call add-clean-step, find $(PRODUCT_OUT) -type f -name "vr_hwc*" -print0 | xargs -0 rm -f)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST

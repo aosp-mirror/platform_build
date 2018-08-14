@@ -23,10 +23,16 @@ PRODUCT_PACKAGES += \
     shell_and_utilities_recovery \
     watchdogd.recovery \
 
+ifeq ($(PRODUCT_USE_FASTBOOTD), true)
+PRODUCT_PACKAGES += \
+    android.hardware.boot@1.0-impl.recovery \
+    bootctrl.default.recovery
+endif
+
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
     android.hardware.cas@1.0-service \
-    android.hardware.configstore@1.0-service \
+    android.hardware.configstore@1.1-service \
     android.hardware.media.omx@1.0-service \
     fs_config_files_nonsystem \
     fs_config_dirs_nonsystem \
@@ -36,6 +42,7 @@ PRODUCT_PACKAGES += \
     libclearkeycasplugin \
     libdownmix \
     libdrmclearkeyplugin \
+    libdynproc \
     libeffectproxy \
     libeffects \
     libldnhncr \

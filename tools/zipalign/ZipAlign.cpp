@@ -102,7 +102,7 @@ static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfl
              * file position in the new file will be equal to the file
              * position in the original.
              */
-            long newOffset = pEntry->getFileOffset() + bias;
+            off_t newOffset = pEntry->getFileOffset() + bias;
             padding = (alignTo - (newOffset % alignTo)) % alignTo;
 
             //printf("--- %s: orig at %ld(+%d) len=%ld, adding pad=%d\n",
@@ -190,23 +190,23 @@ static int verify(const char* fileName, int alignment, bool verbose,
         pEntry = zipFile.getEntryByIndex(i);
         if (pEntry->isCompressed()) {
             if (verbose) {
-                printf("%8ld %s (OK - compressed)\n",
-                    (long) pEntry->getFileOffset(), pEntry->getFileName());
+                printf("%8jd %s (OK - compressed)\n",
+                    (intmax_t) pEntry->getFileOffset(), pEntry->getFileName());
             }
         } else {
-            long offset = pEntry->getFileOffset();
+            off_t offset = pEntry->getFileOffset();
             const int alignTo = getAlignment(pageAlignSharedLibs, alignment, pEntry);
             if ((offset % alignTo) != 0) {
                 if (verbose) {
-                    printf("%8ld %s (BAD - %ld)\n",
-                        (long) offset, pEntry->getFileName(),
-                        offset % alignTo);
+                    printf("%8jd %s (BAD - %jd)\n",
+                        (intmax_t) offset, pEntry->getFileName(),
+                        (intmax_t) (offset % alignTo));
                 }
                 foundBad = true;
             } else {
                 if (verbose) {
-                    printf("%8ld %s (OK)\n",
-                        (long) offset, pEntry->getFileName());
+                    printf("%8jd %s (OK)\n",
+                        (intmax_t) offset, pEntry->getFileName());
                 }
             }
         }
