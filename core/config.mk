@@ -883,6 +883,11 @@ ifdef PRODUCT_SHIPPING_API_LEVEL
       endif
     endif
   endif
+  ifneq ($(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29),)
+    ifneq ($(BOARD_OTA_FRAMEWORK_VBMETA_VERSION_OVERRIDE),)
+      $(error When PRODUCT_SHIPPING_API_LEVEL >= 29, BOARD_OTA_FRAMEWORK_VBMETA_VERSION_OVERRIDE cannot be set)
+    endif
+  endif
 endif
 
 # The default key if not set as LOCAL_CERTIFICATE
