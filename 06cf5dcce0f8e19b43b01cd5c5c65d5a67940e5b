@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b90d5848_c6e43826",
+        "filename": "target/product/base_vendor.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-08-14T17:53:50Z",
+      "side": 1,
+      "message": "You generally should not put conditionals like this in product makefiles. It\u0027s not guaranteed that they\u0027ll be set.",
+      "revId": "06cf5dcce0f8e19b43b01cd5c5c65d5a67940e5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
