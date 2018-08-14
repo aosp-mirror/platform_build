@@ -23,6 +23,7 @@ PRODUCT_LOCALES := \
         am_ET \
         ar_EG \
         ar_XB \
+        as_IN \
         az_AZ \
         be_BY \
         bg_BG \
@@ -76,6 +77,7 @@ PRODUCT_LOCALES := \
         nb_NO \
         ne_NP \
         nl_NL \
+        or_IN \
         pa_IN \
         pl_PL \
         pt_BR \

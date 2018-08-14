@@ -48,6 +48,15 @@ TARGET_CPU_ABI2 := armeabi
 include build/make/target/board/BoardConfigEmuCommon.mk
 include build/make/target/board/BoardConfigGsiCommon.mk
 
-# Partition size is default 1.5GB (1536MB) for 64 bits projects
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1610612736
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
+
+# Wifi.
+BOARD_WLAN_DEVICE           := emulator
+BOARD_HOSTAPD_DRIVER        := NL80211
+BOARD_WPA_SUPPLICANT_DRIVER := NL80211
+BOARD_HOSTAPD_PRIVATE_LIB   := lib_driver_cmd_simulated
+BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_simulated
+WPA_SUPPLICANT_VERSION      := VER_0_8_X
+WIFI_DRIVER_FW_PATH_PARAM   := "/dev/null"
+WIFI_DRIVER_FW_PATH_STA     := "/dev/null"
+WIFI_DRIVER_FW_PATH_AP      := "/dev/null"

@@ -583,8 +583,11 @@ else
       $(eval n := $(or $(word 2,$(p)),$(notdir $(word 1, $(p))))) \
       $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
         $(s):$(dir)/$(n)))))
-
-  test_config := $(wildcard $(LOCAL_PATH)/AndroidTest.xml)
+  ifeq (,$(LOCAL_TEST_CONFIG))
+    test_config := $(wildcard $(LOCAL_PATH)/AndroidTest.xml)
+  else
+    test_config := $(LOCAL_PATH)/$(LOCAL_TEST_CONFIG)
+  endif
   ifeq (,$(test_config))
     ifneq (true,$(is_native))
       is_instrumentation_test := true
@@ -745,6 +748,7 @@ ifdef LOCAL_2ND_ARCH_VAR_PREFIX
 ALL_MODULES.$(my_register_name).FOR_2ND_ARCH := true
 endif
 ALL_MODULES.$(my_register_name).FOR_HOST_CROSS := $(my_host_cross)
+ALL_MODULES.$(my_register_name).MODULE_NAME := $(LOCAL_MODULE)
 ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES := $(LOCAL_COMPATIBILITY_SUITE)
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)

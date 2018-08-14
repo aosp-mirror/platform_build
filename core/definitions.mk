@@ -2875,12 +2875,15 @@ endef
 
 # Generate a greylist.txt from a classes.jar
 define hiddenapi-generate-greylist-txt
-$(2): $(1) $(CLASS2GREYLIST)
-	$(CLASS2GREYLIST) $(1) > $(2)
+ifneq (,$(wildcard frameworks/base))
+# Only generate this target if we're in a tree with frameworks/base present.
+$(2): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
+	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) > $(2)
 
 $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST): $(2)
 $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST): \
     PRIVATE_GREYLIST_INPUTS := $$(PRIVATE_GREYLIST_INPUTS) $(2)
+endif
 endef
 
 # File names for intermediate dex files of `hiddenapi-copy-soong-jar`.
@@ -2911,15 +2914,13 @@ endef
 ###########################################################
 ifdef TARGET_OPENJDK9
 define transform-jar-to-proguard
-@echo Skipping Proguard: $<$(PRIVATE_PROGUARD_INJAR_FILTERS) $@
+@echo Skipping Proguard: $< $@
 $(hide) cp '$<' $@
 endef
 else
 define transform-jar-to-proguard
 @echo Proguard: $@
-$(hide) $(PROGUARD) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
-    -outjars $@ \
-    $(PRIVATE_PROGUARD_FLAGS) \
+$(hide) $(PROGUARD) -injars $< -outjars $@ $(PRIVATE_PROGUARD_FLAGS) \
     $(addprefix -injars , $(PRIVATE_EXTRA_INPUT_JAR))
 endef
 endif
@@ -2930,7 +2931,7 @@ endif
 ###########################################################
 define transform-jar-to-dex-r8
 @echo R8: $@
-$(hide) $(R8_COMPAT_PROGUARD) -injars '$<$(PRIVATE_PROGUARD_INJAR_FILTERS)' \
+$(hide) $(R8_COMPAT_PROGUARD) -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --force-proguard-compatibility --output $(subst classes.dex,,$@) \
     $(PRIVATE_PROGUARD_FLAGS) \

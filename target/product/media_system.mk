@@ -70,7 +70,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.preview_sdk.xml:system/etc/permissions/android.software.preview_sdk.xml
 endif
 
-# The order of PRODUCT_SYSTEM_SERVER_JARS matters.
+# The order here is the same order they end up on the classpath, so it matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service \
@@ -97,3 +97,7 @@ endif
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
     ro.logd.size.stats=64K \
     log.tag.stats_log=I
+
+# Enable CFI for security-sensitive components
+$(call inherit-product, $(SRC_TARGET_DIR)/product/cfi-common.mk)
+$(call inherit-product-if-exists, vendor/google/products/cfi-vendor.mk)
