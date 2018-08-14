@@ -36,5 +36,3 @@ DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 
 BOARD_SEPOLICY_DIRS += device/generic/goldfish/sepolicy/common
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
-
-BUILD_BROKEN_DUP_RULES := false
