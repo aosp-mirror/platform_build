@@ -863,23 +863,18 @@ bootimage-nodeps: $(MKBOOTIMG)
 endif # TARGET_BOOTIMAGE_USE_EXT2
 endif # BOARD_USES_RECOVERY_AS_BOOT
 
-else	# TARGET_NO_KERNEL
+else # TARGET_NO_KERNEL == "true"
 ifdef BOARD_PREBUILT_BOOTIMAGE
 ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 # Remove when b/63676296 is resolved.
 $(error Prebuilt bootimage is only supported for AB targets)
 endif
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_BOOTIMAGE),$(INSTALLED_BOOTIMAGE_TARGET)))
-else
+else # BOARD_PREBUILT_BOOTIMAGE not defined
 INTERNAL_KERNEL_CMDLINE := $(strip $(BOARD_KERNEL_CMDLINE))
-# HACK: The top-level targets depend on the bootimage.  Not all targets
-# can produce a bootimage, though, and emulator targets need the ramdisk
-# instead.  Fake it out by calling the ramdisk the bootimage.
-# TODO: make the emulator use bootimages, and make mkbootimg accept
-#       kernel-less inputs.
-INSTALLED_BOOTIMAGE_TARGET := $(INSTALLED_RAMDISK_TARGET)
-endif
-endif
+INSTALLED_BOOTIMAGE_TARGET :=
+endif # BOARD_PREBUILT_BOOTIMAGE
+endif # TARGET_NO_KERNEL
 
 # -----------------------------------------------------------------
 # NOTICE files
@@ -1805,6 +1800,7 @@ SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
 # as the source (since they are very similar).  Generate the patch so
 # we can see how big it's going to be, and include that in the system
 # image size check calculation.
+ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 ifneq ($(BOARD_USES_FULL_RECOVERY_IMAGE),true)
 ifneq (,$(filter true, $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) $(BOARD_INCLUDE_RECOVERY_DTBO)))
@@ -1824,9 +1820,9 @@ $(RECOVERY_FROM_BOOT_PATCH): \
 	$(PRIVATE_DIFF_TOOL) $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_RECOVERYIMAGE_TARGET) $@
 else # $(BOARD_USES_FULL_RECOVERY_IMAGE) == true
 RECOVERY_FROM_BOOT_PATCH := $(INSTALLED_RECOVERYIMAGE_TARGET)
-endif
-endif
-
+endif # BOARD_USES_FULL_RECOVERY_IMAGE
+endif # INSTALLED_RECOVERYIMAGE_TARGET
+endif # INSTALLED_BOOTIMAGE_TARGET
 
 $(INSTALLED_SYSTEMIMAGE): $(BUILT_SYSTEMIMAGE) $(RECOVERY_FROM_BOOT_PATCH)
 	@echo "Install system fs image: $@"
@@ -2483,11 +2479,13 @@ $(eval _footer_args := $(PART)_FOOTER_ARGS)
 $(eval $($(_footer_args)) += --rollback_index $($(_rollback_index)))
 endef
 
+ifdef INSTALLED_BOOTIMAGE_TARGET
 ifdef BOARD_AVB_BOOT_KEY_PATH
 $(eval $(call check-and-set-avb-chain-args,BOOT))
 else
 INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
     --include_descriptors_from_image $(INSTALLED_BOOTIMAGE_TARGET)
+endif
 endif
 
 ifdef BOARD_AVB_SYSTEM_KEY_PATH
@@ -2946,6 +2944,7 @@ endef
 # Depending on the various images guarantees that the underlying
 # directories are up-to-date.
 $(BUILT_TARGET_FILES_PACKAGE): \
+		$(INSTALLED_RAMDISK_TARGET) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_RADIOIMAGE_TARGET) \
 		$(INSTALLED_RECOVERYIMAGE_TARGET) \
@@ -3362,6 +3361,7 @@ APPCOMPAT_ZIP := $(PRODUCT_OUT)/appcompat.zip
 # For apps_only build we'll establish the dependency later in build/make/core/main.mk.
 ifndef TARGET_BUILD_APPS
 $(APPCOMPAT_ZIP): $(INSTALLED_SYSTEMIMAGE) \
+		$(INSTALLED_RAMDISK_TARGET) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
@@ -3391,6 +3391,7 @@ SYMBOLS_ZIP := $(PRODUCT_OUT)/$(name).zip
 # For apps_only build we'll establish the dependency later in build/make/core/main.mk.
 ifndef TARGET_BUILD_APPS
 $(SYMBOLS_ZIP): $(INSTALLED_SYSTEMIMAGE) \
+		$(INSTALLED_RAMDISK_TARGET) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
@@ -3416,6 +3417,7 @@ name := $(name)-coverage-$(FILE_NAME_TAG)
 COVERAGE_ZIP := $(PRODUCT_OUT)/$(name).zip
 ifndef TARGET_BUILD_APPS
 $(COVERAGE_ZIP): $(INSTALLED_SYSTEMIMAGE) \
+		$(INSTALLED_RAMDISK_TARGET) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
