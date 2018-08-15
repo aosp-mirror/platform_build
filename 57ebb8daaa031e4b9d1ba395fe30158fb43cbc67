@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a2d20db_df6af5a0",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2018-08-15T16:20:16Z",
+      "side": 1,
+      "message": "These seem only making sense for the ramdisk in bootimage. Maybe we should move them to ramdisk?",
+      "range": {
+        "startLine": 177,
+        "startChar": 0,
+        "endLine": 186,
+        "endChar": 0
+      },
+      "revId": "57ebb8daaa031e4b9d1ba395fe30158fb43cbc67",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f59bb2ce_72b7bf36",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 452,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2018-08-15T16:20:16Z",
+      "side": 1,
+      "message": "nit: indentation",
+      "range": {
+        "startLine": 452,
+        "startChar": 0,
+        "endLine": 452,
+        "endChar": 9
+      },
+      "revId": "57ebb8daaa031e4b9d1ba395fe30158fb43cbc67",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
