@@ -9,7 +9,6 @@ TARGET_USERIMAGES_USE_EXT4 := true
 # Some vendors' bootloaders don't work properly with raw format images. So
 # we explicit specify this need below (even though it's the current default).
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
-TARGET_USES_MKE2FS := true
 
 # Enable dyanmic system image size and reserved 64MB in it.
 BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
