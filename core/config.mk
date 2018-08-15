@@ -171,6 +171,7 @@ INSTRUMENTATION_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/instrumentation_test_con
 NATIVE_BENCHMARK_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/native_benchmark_test_config_template.xml
 NATIVE_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/native_test_config_template.xml
 EMPTY_TEST_CONFIG := $(BUILD_SYSTEM)/empty_test_config.xml
+NATIVE_HOST_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/native_host_test_config_template.xml
 
 # Tool to generate TradeFed test config file automatically.
 AUTOGEN_TEST_CONFIG_SCRIPT := build/make/tools/auto_gen_test_config.py

@@ -26,7 +26,11 @@ ifeq (true,$(is_native))
 ifeq ($(LOCAL_NATIVE_BENCHMARK),true)
 autogen_test_config_template := $(NATIVE_BENCHMARK_TEST_CONFIG_TEMPLATE)
 else
-autogen_test_config_template := $(NATIVE_TEST_CONFIG_TEMPLATE)
+  ifeq ($(LOCAL_IS_HOST_MODULE),true)
+    autogen_test_config_template := $(NATIVE_HOST_TEST_CONFIG_TEMPLATE)
+  else
+    autogen_test_config_template := $(NATIVE_TEST_CONFIG_TEMPLATE)
+  endif
 endif
 # Auto generating test config file for native test
 $(autogen_test_config_file): PRIVATE_MODULE_NAME := $(LOCAL_MODULE)
