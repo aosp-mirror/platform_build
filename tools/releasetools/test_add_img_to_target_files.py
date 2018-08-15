@@ -16,6 +16,7 @@
 
 import os
 import os.path
+import subprocess
 import unittest
 import zipfile
 
@@ -37,6 +38,20 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
 
   def tearDown(self):
     common.Cleanup()
+
+  def _verifyCareMap(self, expected, file_name):
+    """Parses the care_map proto; and checks the content in plain text."""
+    text_file = common.MakeTempFile(prefix="caremap-", suffix=".txt")
+
+    # Calls an external binary to convert the proto message.
+    cmd = ["care_map_generator", "--parse_proto", file_name, text_file]
+    p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output, _ = p.communicate()
+    self.assertEqual(0, p.returncode)
+
+    with open(text_file, 'r') as verify_fp:
+      plain_text = verify_fp.read()
+    self.assertEqual('\n'.join(expected), plain_text)
 
   @staticmethod
   def _create_images(images, prefix):
@@ -155,15 +170,10 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
     AddCareMapTxtForAbOta(None, ['system', 'vendor'], image_paths)
 
     care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.txt')
-    with open(care_map_file, 'r') as verify_fp:
-      care_map = verify_fp.read()
+    expected = ['system', RangeSet("0-5 10-15").to_string_raw(), 'vendor',
+                RangeSet("0-9").to_string_raw()]
 
-    lines = care_map.split('\n')
-    self.assertEqual(4, len(lines))
-    self.assertEqual('system', lines[0])
-    self.assertEqual(RangeSet("0-5 10-15").to_string_raw(), lines[1])
-    self.assertEqual('vendor', lines[2])
-    self.assertEqual(RangeSet("0-9").to_string_raw(), lines[3])
+    self._verifyCareMap(expected, care_map_file)
 
   def test_AddCareMapTxtForAbOta_withNonCareMapPartitions(self):
     """Partitions without care_map should be ignored."""
@@ -173,15 +183,10 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
         None, ['boot', 'system', 'vendor', 'vbmeta'], image_paths)
 
     care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.txt')
-    with open(care_map_file, 'r') as verify_fp:
-      care_map = verify_fp.read()
+    expected = ['system', RangeSet("0-5 10-15").to_string_raw(), 'vendor',
+                RangeSet("0-9").to_string_raw()]
 
-    lines = care_map.split('\n')
-    self.assertEqual(4, len(lines))
-    self.assertEqual('system', lines[0])
-    self.assertEqual(RangeSet("0-5 10-15").to_string_raw(), lines[1])
-    self.assertEqual('vendor', lines[2])
-    self.assertEqual(RangeSet("0-9").to_string_raw(), lines[3])
+    self._verifyCareMap(expected, care_map_file)
 
   def test_AddCareMapTxtForAbOta_withAvb(self):
     """Tests the case for device using AVB."""
@@ -194,15 +199,10 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
     AddCareMapTxtForAbOta(None, ['system', 'vendor'], image_paths)
 
     care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.txt')
-    with open(care_map_file, 'r') as verify_fp:
-      care_map = verify_fp.read()
+    expected = ['system', RangeSet("0-5 10-15").to_string_raw(), 'vendor',
+                RangeSet("0-9").to_string_raw()]
 
-    lines = care_map.split('\n')
-    self.assertEqual(4, len(lines))
-    self.assertEqual('system', lines[0])
-    self.assertEqual(RangeSet("0-5 10-15").to_string_raw(), lines[1])
-    self.assertEqual('vendor', lines[2])
-    self.assertEqual(RangeSet("0-9").to_string_raw(), lines[3])
+    self._verifyCareMap(expected, care_map_file)
 
   def test_AddCareMapTxtForAbOta_verityNotEnabled(self):
     """No care_map.txt should be generated if verity not enabled."""
@@ -228,15 +228,15 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
     with zipfile.ZipFile(output_file, 'w') as output_zip:
       AddCareMapTxtForAbOta(output_zip, ['system', 'vendor'], image_paths)
 
+    care_map_name = "META/care_map.txt"
+    temp_dir = common.MakeTempDir()
     with zipfile.ZipFile(output_file, 'r') as verify_zip:
-      care_map = verify_zip.read('META/care_map.txt').decode('ascii')
+      self.assertTrue(care_map_name in verify_zip.namelist())
+      verify_zip.extract(care_map_name, path=temp_dir)
 
-    lines = care_map.split('\n')
-    self.assertEqual(4, len(lines))
-    self.assertEqual('system', lines[0])
-    self.assertEqual(RangeSet("0-5 10-15").to_string_raw(), lines[1])
-    self.assertEqual('vendor', lines[2])
-    self.assertEqual(RangeSet("0-9").to_string_raw(), lines[3])
+    expected = ['system', RangeSet("0-5 10-15").to_string_raw(), 'vendor',
+                RangeSet("0-9").to_string_raw()]
+    self._verifyCareMap(expected, os.path.join(temp_dir, care_map_name))
 
   def test_AddCareMapTxtForAbOta_zipOutput_careMapEntryExists(self):
     """Tests the case with ZIP output which already has care_map entry."""
@@ -252,15 +252,10 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
 
     # The one under OPTIONS.input_tmp must have been replaced.
     care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.txt')
-    with open(care_map_file, 'r') as verify_fp:
-      care_map = verify_fp.read()
+    expected = ['system', RangeSet("0-5 10-15").to_string_raw(), 'vendor',
+                RangeSet("0-9").to_string_raw()]
 
-    lines = care_map.split('\n')
-    self.assertEqual(4, len(lines))
-    self.assertEqual('system', lines[0])
-    self.assertEqual(RangeSet("0-5 10-15").to_string_raw(), lines[1])
-    self.assertEqual('vendor', lines[2])
-    self.assertEqual(RangeSet("0-9").to_string_raw(), lines[3])
+    self._verifyCareMap(expected, care_map_file)
 
     # The existing entry should be scheduled to be replaced.
     self.assertIn('META/care_map.txt', OPTIONS.replace_updated_files_list)
