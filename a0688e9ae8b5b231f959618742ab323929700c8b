@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "714a663b_00a48d54",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-08-16T16:10:48Z",
+      "side": 1,
+      "message": "BUILDINFO_COMMON_SH is set later, so this would be empty",
+      "revId": "a0688e9ae8b5b231f959618742ab323929700c8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
