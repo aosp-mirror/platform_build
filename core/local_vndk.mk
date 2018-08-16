@@ -1,5 +1,5 @@
 
-#Set LOCAL_USE_VNDK for modules going into vendor partition, except for host modules
+#Set LOCAL_USE_VNDK for modules going into vendor or odm partition, except for host modules
 #If LOCAL_SDK_VERSION is set, thats a more restrictive set, so they dont need LOCAL_USE_VNDK
 ifndef LOCAL_IS_HOST_MODULE
 ifndef LOCAL_SDK_VERSION
