@@ -22,6 +22,30 @@
       "revId": "d624fa63d53c3024a1078a476ec671eddf84d637",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50bf4f20_d4a75589",
+        "filename": "tools/device_buildinfo.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-08-16T07:42:24Z",
+      "side": 1,
+      "message": "Good catch. \n\nTalked to Anton and he\u0027ll fix this in go/oag/731514",
+      "parentUuid": "15a2cc2d_70cee716",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 47
+      },
+      "revId": "d624fa63d53c3024a1078a476ec671eddf84d637",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
