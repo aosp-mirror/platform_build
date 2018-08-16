@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15a2cc2d_70cee716",
+        "filename": "tools/device_buildinfo.sh",
+        "patchSetId": 12
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-08-16T07:21:40Z",
+      "side": 1,
+      "message": "don\u0027t these two get defined multiple times now?",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 47
+      },
+      "revId": "d624fa63d53c3024a1078a476ec671eddf84d637",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
