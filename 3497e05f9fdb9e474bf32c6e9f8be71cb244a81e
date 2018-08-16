@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d15f4902_a4cc3096",
+        "filename": "tools/releasetools/test_add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-16T22:07:54Z",
+      "side": 1,
+      "message": "nit: give it an \u0027_\u0027 prefix",
+      "range": {
+        "startLine": 42,
+        "startChar": 6,
+        "endLine": 42,
+        "endChar": 19
+      },
+      "revId": "3497e05f9fdb9e474bf32c6e9f8be71cb244a81e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20f64deb_3762540f",
+        "filename": "tools/releasetools/test_add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-16T22:07:54Z",
+      "side": 1,
+      "message": "parentheses no-op here. [...] is sufficient to handle the multi-line",
+      "range": {
+        "startLine": 173,
+        "startChar": 15,
+        "endLine": 173,
+        "endChar": 16
+      },
+      "revId": "3497e05f9fdb9e474bf32c6e9f8be71cb244a81e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
