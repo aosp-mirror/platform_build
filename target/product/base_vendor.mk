@@ -18,6 +18,7 @@
 PRODUCT_PACKAGES += \
     adbd.recovery \
     android.hardware.health@2.0-impl-default.recovery \
+    init_second_stage.recovery \
     ld.config.recovery.txt \
     linker.recovery \
     recovery \
