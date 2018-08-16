@@ -516,7 +516,7 @@ $(INSTALLED_ODM_BUILD_PROP_TARGET): $(DEVICE_BUILDINFO_SH)
 	$(hide) build/make/tools/post_process_props.py $@
 
 # -----------------------------------------------------------------
-# product-services build.prop
+# product_services build.prop
 INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT_SERVICES)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET)
 
@@ -526,7 +526,7 @@ FINAL_PRODUCT_SERVICES_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_PRODUCT_SERVICES_PROPERTIES),=)
 
 $(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET):
-	@echo Target product-services buildinfo: $@
+	@echo Target product_services buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) echo > $@
 ifdef BOARD_USES_PRODUCT_SERVICESIMAGE
@@ -1821,18 +1821,18 @@ define create-system-product-symlink
 endef
 endif
 
-# Create symlink /system/product-services to /product-services if necessary.
+# Create symlink /system/product_services to /product_services if necessary.
 ifdef BOARD_USES_PRODUCT_SERVICESIMAGE
-define create-system-product-services-symlink
-$(hide) if [ -d $(TARGET_OUT)/product-services ] && [ ! -h $(TARGET_OUT)/product-services ]; then \
-  echo 'Non-symlink $(TARGET_OUT)/product-services detected!' 1>&2; \
-  echo 'You cannot install files to $(TARGET_OUT)/product-services while building a separate product-services.img!' 1>&2; \
+define create-system-product_services-symlink
+$(hide) if [ -d $(TARGET_OUT)/product_services ] && [ ! -h $(TARGET_OUT)/product_services ]; then \
+  echo 'Non-symlink $(TARGET_OUT)/product_services detected!' 1>&2; \
+  echo 'You cannot install files to $(TARGET_OUT)/product_services while building a separate product_services.img!' 1>&2; \
   exit 1; \
 fi
-$(hide) ln -sf /product-services $(TARGET_OUT)/product-services
+$(hide) ln -sf /product_services $(TARGET_OUT)/product_services
 endef
 else
-define create-system-product-services-symlink
+define create-system-product_services-symlink
 endef
 endif
 
@@ -1856,7 +1856,7 @@ define build-systemimage-target
   @echo "Target system fs image: $(1)"
   $(call create-system-vendor-symlink)
   $(call create-system-product-symlink)
-  $(call create-system-product-services-symlink)
+  $(call create-system-product_services-symlink)
   @mkdir -p $(dir $(1)) $(systemimage_intermediates) && rm -rf $(systemimage_intermediates)/system_image_info.txt
   $(call generate-image-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt,system, \
       skip_fsck=true)
@@ -1937,7 +1937,7 @@ define build-systemtarball-target
   $(call pretty,"Target system fs tarball: $(INSTALLED_SYSTEMTARBALL_TARGET)")
   $(call create-system-vendor-symlink)
   $(call create-system-product-symlink)
-  $(call create-system-product-services-symlink)
+  $(call create-system-product_services-symlink)
   $(MKTARBALL) $(FS_GET_STATS) \
     $(PRODUCT_OUT) system $(PRIVATE_SYSTEM_TAR) \
     $(INSTALLED_SYSTEMTARBALL_TARGET) $(TARGET_OUT)
@@ -2436,7 +2436,7 @@ $(eval $(call copy-one-file,$(BOARD_PREBUILT_PRODUCTIMAGE),$(INSTALLED_PRODUCTIM
 endif
 
 # -----------------------------------------------------------------
-# product-services partition image
+# product_services partition image
 ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
 INTERNAL_PRODUCT_SERVICESIMAGE_FILES := \
     $(filter $(TARGET_OUT_PRODUCT_SERVICES)/%,\
@@ -2447,7 +2447,7 @@ INTERNAL_PRODUCT_SERVICESIMAGE_FILES := \
 # platform.zip depends on $(INTERNAL_PRODUCT_SERVICESIMAGE_FILES).
 $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_PRODUCT_SERVICESIMAGE_FILES)
 
-INSTALLED_FILES_FILE_PRODUCT_SERVICES := $(PRODUCT_OUT)/installed-files-product-services.txt
+INSTALLED_FILES_FILE_PRODUCT_SERVICES := $(PRODUCT_OUT)/installed-files-product_services.txt
 INSTALLED_FILES_JSON_PRODUCT_SERVICES := $(INSTALLED_FILES_FILE_PRODUCT_SERVICES:.txt=.json)
 $(INSTALLED_FILES_FILE_PRODUCT_SERVICES): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_PRODUCT_SERVICES)
 $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) : $(INTERNAL_PRODUCT_SERVICESIMAGE_FILES) $(FILESLIST)
@@ -2459,9 +2459,9 @@ $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) : $(INTERNAL_PRODUCT_SERVICESIMAGE_FILE
 
 product_servicesimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,product_services)
-BUILT_PRODUCT_SERVICESIMAGE_TARGET := $(PRODUCT_OUT)/product-services.img
-define build-product-servicesimage-target
-  $(call pretty,"Target product-services fs image: $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)")
+BUILT_PRODUCT_SERVICESIMAGE_TARGET := $(PRODUCT_OUT)/product_services.img
+define build-product_servicesimage-target
+  $(call pretty,"Target product_services fs image: $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)")
   @mkdir -p $(TARGET_OUT_PRODUCT_SERVICES)
   @mkdir -p $(product_servicesimage_intermediates) && rm -rf $(product_servicesimage_intermediates)/product_services_image_info.txt
   $(call generate-image-prop-dictionary, $(product_servicesimage_intermediates)/product_services_image_info.txt,product_services, skip_fsck=true)
@@ -2477,16 +2477,16 @@ endef
 # We just build this directly to the install location.
 INSTALLED_PRODUCT_SERVICESIMAGE_TARGET := $(BUILT_PRODUCT_SERVICESIMAGE_TARGET)
 $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_PRODUCT_SERVICESIMAGE_FILES) $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) $(BUILD_IMAGE_SRCS)
-	$(build-product-servicesimage-target)
+	$(build-product_servicesimage-target)
 
 .PHONY: productservicesimage-nodeps psnod
 productservicesimage-nodeps psnod: | $(INTERNAL_USERIMAGES_DEPS)
-	$(build-product-servicesimage-target)
+	$(build-product_servicesimage-target)
 
 sync: $(INTERNAL_PRODUCT_SERVICESIMAGE_FILES)
 
 else ifdef BOARD_PREBUILT_PRODUCT_SERVICESIMAGE
-INSTALLED_PRODUCT_SERVICESIMAGE_TARGET := $(PRODUCT_OUT)/product-services.img
+INSTALLED_PRODUCT_SERVICESIMAGE_TARGET := $(PRODUCT_OUT)/product_services.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_PRODUCT_SERVICESIMAGE),$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)))
 endif
 
@@ -2722,7 +2722,7 @@ define extract-avb-chain-public-keys
       --output $(1)/product.avbpubkey)
   $(if $(BOARD_AVB_PRODUCT_SERVICES_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_PRODUCT_SERVICES_KEY_PATH) \
-      --output $(1)/product-services.avbpubkey)
+      --output $(1)/product_services.avbpubkey)
   $(if $(BOARD_AVB_ODM_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_ODM_KEY_PATH) \
       --output $(1)/odm.avbpubkey)
@@ -3137,7 +3137,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	@echo "Package target files: $@"
 	$(call create-system-vendor-symlink)
 	$(call create-system-product-symlink)
-	$(call create-system-product-services-symlink)
+	$(call create-system-product_services-symlink)
 	$(call create-vendor-odm-symlink)
 	$(hide) rm -rf $@ $@.list $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)
@@ -3213,7 +3213,7 @@ ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
 		$(TARGET_OUT_PRODUCT),$(zip_root)/PRODUCT)
 endif
 ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
-	@# Contents of the product-services image
+	@# Contents of the product_services image
 	$(hide) $(call package_files-copy-root, \
 		$(TARGET_OUT_PRODUCT_SERVICES),$(zip_root)/PRODUCT_SERVICES)
 endif
@@ -3419,7 +3419,7 @@ ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
 	$(hide) $(call fs_config,$(zip_root)/PRODUCT,product/) > $(zip_root)/META/product_filesystem_config.txt
 endif
 ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
-	$(hide) $(call fs_config,$(zip_root)/PRODUCT_SERVICES,product-services/) > $(zip_root)/META/product_services_filesystem_config.txt
+	$(hide) $(call fs_config,$(zip_root)/PRODUCT_SERVICES,product_services/) > $(zip_root)/META/product_services_filesystem_config.txt
 endif
 ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
 	$(hide) $(call fs_config,$(zip_root)/ODM,odm/) > $(zip_root)/META/odm_filesystem_config.txt
@@ -3709,10 +3709,10 @@ productimage: $(INSTALLED_QEMU_PRODUCTIMAGE)
 droidcore: $(INSTALLED_QEMU_PRODUCTIMAGE)
 endif
 ifeq ($(BOARD_USES_PRODUCT_SERVICESIMAGE),true)
-INSTALLED_QEMU_PRODUCT_SERVICESIMAGE := $(PRODUCT_OUT)/product-services-qemu.img
+INSTALLED_QEMU_PRODUCT_SERVICESIMAGE := $(PRODUCT_OUT)/product_services-qemu.img
 $(INSTALLED_QEMU_PRODUCT_SERVICESIMAGE): $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST) $(SIMG2IMG)
-	@echo Create product-services-qemu.img
-	(export SGDISK=$(SGDISK_HOST) SIMG2IMG=$(SIMG2IMG); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/product-services.img)
+	@echo Create product_services-qemu.img
+	(export SGDISK=$(SGDISK_HOST) SIMG2IMG=$(SIMG2IMG); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/product_services.img)
 
 productservicesimage: $(INSTALLED_QEMU_PRODUCT_SERVICESIMAGE)
 droidcore: $(INSTALLED_QEMU_PRODUCT_SERVICESIMAGE)

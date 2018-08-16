@@ -95,7 +95,7 @@ else
   prebuilt_module_is_dex_javalib :=
 endif
 
-# Run veridex on product, product-services and vendor modules.
+# Run veridex on product, product_services and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
 ifeq (true,$(filter true, \

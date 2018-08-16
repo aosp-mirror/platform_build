@@ -73,7 +73,7 @@ OPTIONS.replace_verity_private_key = False
 OPTIONS.is_signing = False
 
 # Partitions that should have their care_map added to META/care_map.txt.
-PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product-services',
+PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product_services',
                             'odm')
 # Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
 # images. (b/24377993, b/80600931)
@@ -200,19 +200,19 @@ def AddProduct(output_zip):
 
 
 def AddProductServices(output_zip):
-  """Turn the contents of PRODUCT_SERVICES into a product-services image and
+  """Turn the contents of PRODUCT_SERVICES into a product_services image and
   store it in output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES",
-                   "product-services.img")
+                   "product_services.img")
   if os.path.exists(img.input_name):
-    print("product-services.img already exists; no need to rebuild...")
+    print("product_services.img already exists; no need to rebuild...")
     return img.input_name
 
   block_list = OutputFile(
-      output_zip, OPTIONS.input_tmp, "IMAGES", "product-services.map")
+      output_zip, OPTIONS.input_tmp, "IMAGES", "product_services.map")
   CreateImage(
-      OPTIONS.input_tmp, OPTIONS.info_dict, "product-services", img,
+      OPTIONS.input_tmp, OPTIONS.info_dict, "product_services", img,
       block_list=block_list)
   return img.name
 
@@ -666,10 +666,10 @@ def AddImagesToTargetFiles(filename):
 
   has_recovery = OPTIONS.info_dict.get("no_recovery") != "true"
 
-  # {vendor,odm,product,product-services}.img are unlike system.img or
+  # {vendor,odm,product,product_services}.img are unlike system.img or
   # system_other.img. Because it could be built from source, or dropped into
   # target_files.zip as a prebuilt blob. We consider either of them as
-  # {vendor,product,product-services}.img being available, which could be
+  # {vendor,product,product_services}.img being available, which could be
   # used when generating vbmeta.img for AVB.
   has_vendor = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR")) or
                 os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
@@ -684,7 +684,7 @@ def AddImagesToTargetFiles(filename):
                                                      "PRODUCT_SERVICES")) or
                           os.path.exists(os.path.join(OPTIONS.input_tmp,
                                                       "IMAGES",
-                                                      "product-services.img")))
+                                                      "product_services.img")))
   has_system_other = os.path.isdir(os.path.join(OPTIONS.input_tmp,
                                                 "SYSTEM_OTHER"))
 
@@ -762,8 +762,8 @@ def AddImagesToTargetFiles(filename):
     partitions['product'] = AddProduct(output_zip)
 
   if has_product_services:
-    banner("product-services")
-    partitions['product-services'] = AddProductServices(output_zip)
+    banner("product_services")
+    partitions['product_services'] = AddProductServices(output_zip)
 
   if has_odm:
     banner("odm")
