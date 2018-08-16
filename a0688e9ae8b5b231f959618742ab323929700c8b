@@ -34,6 +34,24 @@
       "revId": "a0688e9ae8b5b231f959618742ab323929700c8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "264ce3c8_d4cda443",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-08-16T23:19:49Z",
+      "side": 1,
+      "message": "Yes, it\u0027s necessary, otherwise we won\u0027t regenerate the property file when the script changes",
+      "parentUuid": "f96df623_4dbc900a",
+      "revId": "a0688e9ae8b5b231f959618742ab323929700c8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
