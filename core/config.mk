@@ -167,14 +167,6 @@ BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java
 BUILD_HOST_TEST_CONFIG := $(BUILD_SYSTEM)/host_test_config.mk
 BUILD_TARGET_TEST_CONFIG := $(BUILD_SYSTEM)/target_test_config.mk
 
-INSTRUMENTATION_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/instrumentation_test_config_template.xml
-NATIVE_BENCHMARK_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/native_benchmark_test_config_template.xml
-NATIVE_TEST_CONFIG_TEMPLATE := $(BUILD_SYSTEM)/native_test_config_template.xml
-EMPTY_TEST_CONFIG := $(BUILD_SYSTEM)/empty_test_config.xml
-
-# Tool to generate TradeFed test config file automatically.
-AUTOGEN_TEST_CONFIG_SCRIPT := build/make/tools/auto_gen_test_config.py
-
 # ###############################################################
 # Parse out any modifier targets.
 # ###############################################################
@@ -588,12 +580,6 @@ USE_PREBUILT_SDK_TOOLS_IN_PLACE := true
 USE_D8 := true
 .KATI_READONLY := USE_D8
 
-# Default R8 behavior when USE_R8 is not specified.
-ifndef USE_R8
-  USE_R8 := true
-endif
-.KATI_READONLY := USE_R8
-
 #
 # Tools that are prebuilts for TARGET_BUILD_APPS
 #
@@ -665,10 +651,7 @@ else
 BREAKPAD_GENERATE_SYMBOLS := false
 endif
 PROTOC := $(HOST_OUT_EXECUTABLES)/aprotoc$(HOST_EXECUTABLE_SUFFIX)
-NANOPB_SRCS := external/nanopb-c/generator/protoc-gen-nanopb \
-    $(wildcard external/nanopb-c/generator/*.py \
-               external/nanopb-c/generator/google/*.py \
-               external/nanopb-c/generator/proto/*.py)
+NANOPB_SRCS := $(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
 VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
