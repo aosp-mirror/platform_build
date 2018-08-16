@@ -103,7 +103,7 @@ def main(argv):
       prune.append(p)
     elif arg.startswith("--dir="):
       d = arg[len("--dir="):]
-      if len(p) == 0:
+      if len(d) == 0:
         usage()
       dirlist.append(d)
     else:
