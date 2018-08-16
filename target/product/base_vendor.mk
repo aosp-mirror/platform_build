@@ -24,12 +24,6 @@ PRODUCT_PACKAGES += \
     shell_and_utilities_recovery \
     watchdogd.recovery \
 
-ifeq ($(PRODUCT_USE_FASTBOOTD), true)
-PRODUCT_PACKAGES += \
-    android.hardware.boot@1.0-impl.recovery \
-    bootctrl.default.recovery
-endif
-
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
     android.hardware.cas@1.0-service \
