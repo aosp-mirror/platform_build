@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d79ae66_b716b953",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-16T22:19:05Z",
+      "side": 1,
+      "message": "Are these all identical other than the partition name? If so, define a function and $(call \u003cfunction-name\u003e,\u003cpartition-name\u003e)?",
+      "range": {
+        "startLine": 181,
+        "startChar": 1,
+        "endLine": 194,
+        "endChar": 48
+      },
+      "revId": "9125e8369353b7f194baaa7bb628978455620824",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
