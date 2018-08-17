@@ -545,7 +545,7 @@ def AddCareMapTxtForAbOta(output_zip, ab_partitions, image_paths):
 
   Args:
     output_zip: The output zip file (needs to be already open), or None to
-        write images to OPTIONS.input_tmp/.
+        write care_map.txt to OPTIONS.input_tmp/.
     ab_partitions: The list of A/B partitions.
     image_paths: A map from the partition name to the image path.
   """
@@ -563,15 +563,32 @@ def AddCareMapTxtForAbOta(output_zip, ab_partitions, image_paths):
       assert os.path.exists(image_path)
       care_map_list += GetCareMap(partition, image_path)
 
-  if care_map_list:
-    care_map_path = "META/care_map.txt"
-    if output_zip and care_map_path not in output_zip.namelist():
-      common.ZipWriteStr(output_zip, care_map_path, '\n'.join(care_map_list))
-    else:
-      with open(os.path.join(OPTIONS.input_tmp, care_map_path), 'w') as fp:
-        fp.write('\n'.join(care_map_list))
-      if output_zip:
-        OPTIONS.replace_updated_files_list.append(care_map_path)
+  if not care_map_list:
+    return
+
+  # Converts the list into proto buf message by calling care_map_generator; and
+  # writes the result to a temp file.
+  temp_care_map_text = common.MakeTempFile(prefix="caremap_text-",
+                                           suffix=".txt")
+  with open(temp_care_map_text, 'w') as text_file:
+    text_file.write('\n'.join(care_map_list))
+
+  temp_care_map = common.MakeTempFile(prefix="caremap-", suffix=".txt")
+  care_map_gen_cmd = (["care_map_generator", temp_care_map_text, temp_care_map])
+  p = common.Run(care_map_gen_cmd, stdout=subprocess.PIPE,
+                 stderr=subprocess.STDOUT)
+  output, _ = p.communicate()
+  assert p.returncode == 0, "Failed to generate the care_map proto message."
+  if OPTIONS.verbose:
+    print(output.rstrip())
+
+  care_map_path = "META/care_map.txt"
+  if output_zip and care_map_path not in output_zip.namelist():
+    common.ZipWrite(output_zip, temp_care_map, arcname=care_map_path)
+  else:
+    shutil.copy(temp_care_map, os.path.join(OPTIONS.input_tmp, care_map_path))
+    if output_zip:
+      OPTIONS.replace_updated_files_list.append(care_map_path)
 
 
 def AddPackRadioImages(output_zip, images):
