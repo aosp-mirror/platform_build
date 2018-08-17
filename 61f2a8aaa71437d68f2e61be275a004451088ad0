@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c6a07658_200a5158",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-08-17T07:40:39Z",
+      "side": 1,
+      "message": "Do we need to change to local_test_config to let it match LOCAL_TEST_CONFIG?",
+      "range": {
+        "startLine": 17,
+        "startChar": 5,
+        "endLine": 17,
+        "endChar": 20
+      },
+      "revId": "61f2a8aaa71437d68f2e61be275a004451088ad0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
