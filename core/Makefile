@@ -69,14 +69,23 @@ endef
 # If more than one makefile declared a header, print a warning,
 # then copy the last one defined. This matches the previous make
 # behavior.
+has_dup_copy_headers :=
 $(foreach dest,$(ALL_COPIED_HEADERS), \
     $(eval _srcs := $(ALL_COPIED_HEADERS.$(dest).SRC)) \
     $(eval _src := $(word $(words $(_srcs)),$(_srcs))) \
     $(if $(call streq,$(_src),$(_srcs)),, \
         $(warning Duplicate header copy: $(dest)) \
-	$(warning Defined in: $(ALL_COPIED_HEADERS.$(dest).MAKEFILE))) \
+	$(warning Defined in: $(ALL_COPIED_HEADERS.$(dest).MAKEFILE)) \
+	$(eval has_dup_copy_headers := true)) \
     $(eval $(call copy-one-header,$(_src),$(dest))))
 all_copied_headers: $(ALL_COPIED_HEADERS)
+
+ifdef has_dup_copy_headers
+  has_dup_copy_headers :=
+  ifneq ($(BUILD_BROKEN_DUP_COPY_HEADERS),true)
+    $(error duplicate header copies are no longer allowed. For more information about headers, see: https://android.googlesource.com/platform/build/soong/+/master/docs/best_practices.md#headers)
+  endif
+endif
 
 # -----------------------------------------------------------------
 # docs/index.html
