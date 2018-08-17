@@ -651,10 +651,7 @@ else
 BREAKPAD_GENERATE_SYMBOLS := false
 endif
 PROTOC := $(HOST_OUT_EXECUTABLES)/aprotoc$(HOST_EXECUTABLE_SUFFIX)
-NANOPB_SRCS := external/nanopb-c/generator/protoc-gen-nanopb \
-    $(wildcard external/nanopb-c/generator/*.py \
-               external/nanopb-c/generator/google/*.py \
-               external/nanopb-c/generator/proto/*.py)
+NANOPB_SRCS := $(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
 VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
