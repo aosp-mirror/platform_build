@@ -200,7 +200,7 @@ def AddProduct(output_zip):
 
 
 def AddProductServices(output_zip):
-  """Turn the contents of PRODUCT-SERVICES into a product-services image and
+  """Turn the contents of PRODUCT_SERVICES into a product-services image and
   store it in output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES",
@@ -681,7 +681,7 @@ def AddImagesToTargetFiles(filename):
                  os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
                                              "product.img")))
   has_product_services = (os.path.isdir(os.path.join(OPTIONS.input_tmp,
-                                                     "PRODUCT-SERVICES")) or
+                                                     "PRODUCT_SERVICES")) or
                           os.path.exists(os.path.join(OPTIONS.input_tmp,
                                                       "IMAGES",
                                                       "product-services.img")))
