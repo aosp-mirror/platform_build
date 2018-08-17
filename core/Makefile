@@ -3214,7 +3214,7 @@ endif
 ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
 	@# Contents of the product-services image
 	$(hide) $(call package_files-copy-root, \
-		$(TARGET_OUT_PRODUCT_SERVICES),$(zip_root)/PRODUCT-SERVICES)
+		$(TARGET_OUT_PRODUCT_SERVICES),$(zip_root)/PRODUCT_SERVICES)
 endif
 ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
 	@# Contents of the odm image
