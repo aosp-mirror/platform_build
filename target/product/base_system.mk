@@ -256,11 +256,6 @@ PRODUCT_PACKAGES += \
     framework_manifest.xml \
     framework_compatibility_matrix.xml \
 
-ifeq ($(PRODUCT_USE_FASTBOOTD), true)
-PRODUCT_PACKAGES += \
-    fastbootd
-endif
-
 ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
 endif
