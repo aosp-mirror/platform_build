@@ -22,6 +22,30 @@
       "revId": "9125e8369353b7f194baaa7bb628978455620824",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f2d2594a_a55e6ead",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-08-17T08:10:42Z",
+      "side": 1,
+      "message": "They are. I was thinking the params would change (b/110206836), but that could also be achieved by just individually building the pieces and setting the PRODUCT_X variables appropriately (or be added to the macro if necessary). So, thanks for the suggestion, done.",
+      "parentUuid": "1d79ae66_b716b953",
+      "range": {
+        "startLine": 181,
+        "startChar": 1,
+        "endLine": 194,
+        "endChar": 48
+      },
+      "revId": "9125e8369353b7f194baaa7bb628978455620824",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
