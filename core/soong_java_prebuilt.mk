@@ -161,3 +161,5 @@ $(my_exported_sdk_libs_file):
 	$(if $(PRIVATE_EXPORTED_SDK_LIBS),\
 		$(hide) echo $(PRIVATE_EXPORTED_SDK_LIBS) | tr ' ' '\n' > $@,\
 		$(hide) touch $@)
+
+SOONG_ALREADY_CONV := $(SOONG_ALREADY_CONV) $(LOCAL_MODULE)
