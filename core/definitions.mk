@@ -2551,7 +2551,7 @@ ifeq ($(HOST_OS),linux)
 # Runs appcompat and store logs in $(PRODUCT_OUT)/appcompat
 define extract-package
 $(if $(filter aapt2, $(1)), \
-  $(AAPT2) dump $@ | awk -F ' |=' '/^Package/{print $$3}' >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log &&, \
+  $(AAPT2) dump resources $@ | awk -F ' |=' '/^Package/{print $$3}' >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log &&, \
   $(AAPT) dump badging $@ | awk -F \' '/^package/{print $$2}' >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log &&)
 endef
 define appcompat-header

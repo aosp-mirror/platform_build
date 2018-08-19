@@ -259,11 +259,6 @@ PRODUCT_PACKAGES += \
     framework_manifest.xml \
     framework_compatibility_matrix.xml \
 
-ifeq ($(PRODUCT_USE_FASTBOOTD), true)
-PRODUCT_PACKAGES += \
-    fastbootd
-endif
-
 ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
 endif
@@ -300,7 +295,7 @@ ifeq ($(REMOVE_ATB_FROM_BCP),true)
 PRODUCT_PACKAGES += framework-atb-backward-compatibility
 PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
 else
-PRODUCT_BOOT_JARS += android.test.base
+PRODUCT_BOOT_JARS += android.test.base.impl
 endif
 
 PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
