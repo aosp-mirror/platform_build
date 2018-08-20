@@ -14,25 +14,29 @@
 
 .PHONY: general-tests
 
+intermediates_dir := $(call intermediates-dir-for,PACKAGING,general-tests)
 general_tests_zip := $(PRODUCT_OUT)/general-tests.zip
 # Create an artifact to include a list of test config files in general-tests.
 general_tests_list_zip := $(PRODUCT_OUT)/general-tests_list.zip
 $(general_tests_zip) : PRIVATE_general_tests_list_zip := $(general_tests_list_zip)
 $(general_tests_zip) : .KATI_IMPLICIT_OUTPUTS := $(general_tests_list_zip)
-$(general_tests_zip) : PRIVATE_general_tests_list := $(PRODUCT_OUT)/general-tests_list
+$(general_tests_zip) : PRIVATE_INTERMEDIATES_DIR := $(intermediates_dir)
 $(general_tests_zip) : $(COMPATIBILITY.general-tests.FILES) $(SOONG_ZIP)
-	echo $(sort $(COMPATIBILITY.general-tests.FILES)) | tr " " "\n" > $@.list
-	grep $(HOST_OUT_TESTCASES) $@.list > $@-host.list || true
-	grep $(TARGET_OUT_TESTCASES) $@.list > $@-target.list || true
-	$(hide) $(SOONG_ZIP) -d -o $@ -P host -C $(HOST_OUT) -l $@-host.list -P target -C $(PRODUCT_OUT) -l $@-target.list
-	rm -f $(PRIVATE_general_tests_list)
-	$(hide) grep -e .*.config$$ $@-host.list | sed s%$(HOST_OUT)%host%g > $(PRIVATE_general_tests_list)
-	$(hide) grep -e .*.config$$ $@-target.list | sed s%$(PRODUCT_OUT)%target%g >> $(PRIVATE_general_tests_list)
-	$(hide) $(SOONG_ZIP) -d -o $(PRIVATE_general_tests_list_zip) -C $(dir $@) -f $(PRIVATE_general_tests_list)
-	rm -f $@.list $@-host.list $@-target.list $(PRIVATE_general_tests_list)
+	rm -rf $(PRIVATE_INTERMEDIATES_DIR)
+	mkdir -p $(PRIVATE_INTERMEDIATES_DIR)
+	echo $(sort $(COMPATIBILITY.general-tests.FILES)) | tr " " "\n" > $(PRIVATE_INTERMEDIATES_DIR)/list
+	grep $(HOST_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/host.list || true
+	grep $(TARGET_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/target.list || true
+	$(SOONG_ZIP) -d -o $@ \
+	  -P host -C $(HOST_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/host.list \
+	  -P target -C $(PRODUCT_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/target.list
+	grep -e .*.config$$ $(PRIVATE_INTERMEDIATES_DIR)/host.list | sed s%$(HOST_OUT)%host%g > $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
+	grep -e .*.config$$ $(PRIVATE_INTERMEDIATES_DIR)/target.list | sed s%$(PRODUCT_OUT)%target%g >> $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
+	$(SOONG_ZIP) -d -o $(general_tests_list_zip) -C $(PRIVATE_INTERMEDIATES_DIR) -f $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
 
 general-tests: $(general_tests_zip)
 $(call dist-for-goals, general-tests, $(general_tests_zip) $(general_tests_list_zip))
 
+intermediates_dir :=
 general_tests_zip :=
 general_tests_list_zip :=
