@@ -854,7 +854,7 @@ ifneq (,$(filter nanopb-c nanopb-c-enable_malloc, $(LOCAL_PROTOC_OPTIMIZE_TYPE))
 my_proto_source_suffix := .c
 my_proto_c_includes := external/nanopb-c
 my_protoc_flags := --nanopb_out=$(proto_gen_dir) \
-    --plugin=external/nanopb-c/generator/protoc-gen-nanopb
+    --plugin=$(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
 my_protoc_deps := $(NANOPB_SRCS) $(proto_sources_fullpath:%.proto=%.options)
 else
 my_proto_source_suffix := $(LOCAL_CPP_EXTENSION)
@@ -1320,6 +1320,24 @@ ifneq ($(filter cfi,$(my_sanitize)),)
     $(my_static_libraries))
 endif
 
+ifneq ($(LOCAL_USE_VNDK),)
+  my_soong_hwasan_static_libraries := $(SOONG_HWASAN_VENDOR_STATIC_LIBRARIES)
+else
+  my_soong_hwasan_static_libraries = $(SOONG_HWASAN_STATIC_LIBRARIES)
+endif
+
+define use_soong_hwasan_static_libraries
+  $(foreach l,$(1),$(if $(filter $(l),$(my_soong_hwasan_static_libraries)),\
+      $(l).hwasan,$(l)))
+endef
+
+ifneq ($(filter hwaddress,$(my_sanitize)),)
+  my_whole_static_libraries := $(call use_soong_hwasan_static_libraries,\
+    $(my_whole_static_libraries))
+  my_static_libraries := $(call use_soong_hwasan_static_libraries,\
+    $(my_static_libraries))
+endif
+
 ###########################################################
 ## When compiling against the VNDK, use LL-NDK libraries
 ###########################################################
@@ -1608,6 +1626,9 @@ else
 installed_static_library_notice_file_targets :=
 endif
 
+$(notice_target): | $(installed_static_library_notice_file_targets)
+$(LOCAL_INSTALLED_MODULE): | $(notice_target)
+
 # Default is -fno-rtti.
 ifeq ($(strip $(LOCAL_RTTI_FLAG)),)
 LOCAL_RTTI_FLAG := -fno-rtti
@@ -1812,11 +1833,6 @@ all_libraries := \
     $(my_system_shared_libraries_fullpath) \
     $(built_static_libraries) \
     $(built_whole_libraries)
-
-# Also depend on the notice files for any static libraries that
-# are linked into this module.  This will force them to be installed
-# when this module is.
-$(LOCAL_INSTALLED_MODULE): | $(installed_static_library_notice_file_targets)
 
 ###########################################################
 # Export includes

@@ -35,22 +35,31 @@ def find_address(address):
     echo('Checking email address: ' + address)
     result = urllib2.urlopen(request).read()
     checked_addresses[address] = result.find('"_account_id":') >= 0
+    if checked_addresses[address]:
+      echo('Found email address: ' + address)
   return checked_addresses[address]
+
+
+def check_address(fname, num, address):
+  if find_address(address):
+    return 0
+  print '%s:%d: ERROR: unknown email address: %s' % (fname, num, address)
+  return 1
 
 
 def main():
   # One regular expression to check all valid lines.
   noparent = 'set +noparent'
   email = '([^@ ]+@[^ @]+|\\*)'
-  directive = '(%s|%s)' % (email, noparent)
+  emails = '(%s( *, *%s)*)' % (email, email)
+  directive = '(%s|%s)' % (emails, noparent)
   glob = '[a-zA-Z0-9_\\.\\-\\*\\?]+'
-  perfile = 'per-file +' + glob + ' *= *' + directive
+  globs = '(%s( *, *%s)*)' % (glob, glob)
+  perfile = 'per-file +' + globs + ' *= *' + directive
   pats = '(|%s|%s|%s)$' % (noparent, email, perfile)
   patterns = re.compile(pats)
-
-  # One pattern to capture email address.
-  email_address = '.*(@| |=|^)([^@ =]+@[^ @]+)'
-  address_pattern = re.compile(email_address)
+  address_pattern = re.compile('([^@ ]+@[^ @]+)')
+  perfile_pattern = re.compile('per-file +.*=(.*)')
 
   error = 0
   for fname in args.owners:
@@ -60,17 +69,16 @@ def main():
       num += 1
       stripped_line = re.sub('#.*$', '', line).strip()
       if not patterns.match(stripped_line):
-        error = 1
-        print('%s:%d: ERROR: unknown line [%s]'
-              % (fname, num, line.strip()))
-      elif args.check_address and address_pattern.match(stripped_line):
-        address = address_pattern.match(stripped_line).group(2)
-        if find_address(address):
-          echo('Found email address: ' + address)
-        else:
-          error = 1
-          print('%s:%d: ERROR: unknown email address: %s'
-                % (fname, num, address))
+        error += 1
+        print '%s:%d: ERROR: unknown line [%s]' % (fname, num, line.strip())
+      elif args.check_address:
+        if perfile_pattern.match(stripped_line):
+          for addr in perfile_pattern.match(stripped_line).group(1).split(','):
+            a = addr.strip()
+            if a and a != '*':
+              error += check_address(fname, num, addr.strip())
+        elif address_pattern.match(stripped_line):
+          error += check_address(fname, num, stripped_line)
   sys.exit(error)
 
 if __name__ == '__main__':
