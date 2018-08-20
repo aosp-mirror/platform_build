@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1cae058c_9e37f107",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2018-08-20T22:00:26Z",
+      "side": 1,
+      "message": "The idea is to remove hwaddress on arm when a device has both that and arm64. On x86_64 devices SANITIZE_TARGET\u003dhwaddress should not be used at all.\n\nI guess I\u0027ll add all three to the list anyway, in case someone builds this on something strange like x86+arm.",
+      "parentUuid": "6aceda4c_4d71eb1b",
+      "range": {
+        "startLine": 177,
+        "startChar": 16,
+        "endLine": 177,
+        "endChar": 19
+      },
+      "revId": "5c9decf6c747bd5c4880add708b711f5a34de3c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9b93c5c4_f1b17484",
         "filename": "core/config_sanitizers.mk",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "dfd2ef1c_c69f9bb5",
+        "filename": "core/config_sanitizers.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 385,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2018-08-20T22:00:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9b93c5c4_f1b17484",
+      "range": {
+        "startLine": 385,
+        "startChar": 23,
+        "endLine": 385,
+        "endChar": 30
+      },
+      "revId": "5c9decf6c747bd5c4880add708b711f5a34de3c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c0834481_d8558330",
         "filename": "core/definitions.mk",
         "patchSetId": 1
@@ -62,6 +110,24 @@
       "revId": "5c9decf6c747bd5c4880add708b711f5a34de3c5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1de0e29_28894241",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1952,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2018-08-20T22:00:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c0834481_d8558330",
+      "revId": "5c9decf6c747bd5c4880add708b711f5a34de3c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
