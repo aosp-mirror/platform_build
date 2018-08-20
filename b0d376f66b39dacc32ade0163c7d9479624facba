@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "ace7630c_1d41aa51",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-08-20T01:52:02Z",
+      "side": 1,
+      "message": "My only concern with this statement is that some tests require tools.\n\nSo would CTS/general-tests and each suite that such a test belong to need to add it to X locations.\n\nAnyways not a blocker for this CL, just a concern I think should be known.\n\n\nI *think* ahat and ahat-tests is such an example: https://cs.corp.google.com/android/art/tools/ahat/Android.mk?dr\u003dC\u0026g\u003d0\u0026l\u003d31",
+      "range": {
+        "startLine": 11,
+        "startChar": 44,
+        "endLine": 12,
+        "endChar": 45
+      },
+      "revId": "b0d376f66b39dacc32ade0163c7d9479624facba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "50aaa08f_c0b5cb6d",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
