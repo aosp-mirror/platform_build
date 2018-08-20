@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9f5a21b2_c3a4dc5c",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 774,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-08-20T14:21:04Z",
+      "side": 1,
+      "message": "ifneq (,$(LOCAL_FULL_TEST_CONFIG))\n  ALL_MODULES.$(my_register_name).LOCAL_FULL_TEST_CONFIG :\u003d $(LOCAL_FULL_TEST_CONFIG)\nelse\n  ifneq (,$(LOCAL_TEST_CONFIG))\n    ALL_MODULES.$(my_register_name).LOCAL_FULL_TEST_CONFIG :\u003d $(LOCAL_PATH)/$(LOCAL_TEST_CONFIG)\n  else\n    ALL_MODULES.$(my_register_name).LOCAL_FULL_TEST_CONFIG :\u003d\n  endif\nendif",
+      "revId": "7e5c1950914607418d3efea0a00eadac01755fc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
