@@ -1,2 +1,1 @@
-per-file warn.py = chh@google.com
-per-file checkowners.py = chh@google.com
+per-file warn.py,checkowners.py = chh@google.com

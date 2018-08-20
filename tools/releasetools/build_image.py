@@ -931,6 +931,26 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("product_services_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
     copy_prop("product_services_reserved_size", "partition_reserved_size")
+  elif mount_point == "odm":
+    copy_prop("avb_odm_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_odm_add_hashtree_footer_args",
+              "avb_add_hashtree_footer_args")
+    copy_prop("avb_odm_key_path", "avb_key_path")
+    copy_prop("avb_odm_algorithm", "avb_algorithm")
+    copy_prop("odm_fs_type", "fs_type")
+    copy_prop("odm_size", "partition_size")
+    if not copy_prop("odm_journal_size", "journal_size"):
+      d["journal_size"] = "0"
+    copy_prop("odm_verity_block_device", "verity_block_device")
+    copy_prop("odm_squashfs_compressor", "squashfs_compressor")
+    copy_prop("odm_squashfs_compressor_opt", "squashfs_compressor_opt")
+    copy_prop("odm_squashfs_block_size", "squashfs_block_size")
+    copy_prop("odm_squashfs_disable_4k_align", "squashfs_disable_4k_align")
+    copy_prop("odm_base_fs_file", "base_fs_file")
+    copy_prop("odm_extfs_inode_count", "extfs_inode_count")
+    if not copy_prop("odm_extfs_rsv_pct", "extfs_rsv_pct"):
+      d["extfs_rsv_pct"] = "0"
+    copy_prop("odm_reserved_size", "partition_reserved_size")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
@@ -976,6 +996,8 @@ def GlobalDictFromImageProp(image_prop, mount_point):
     copy_prop(size_property, "system_size")
   elif mount_point == "vendor":
     copy_prop(size_property, "vendor_size")
+  elif mount_point == "odm":
+    copy_prop(size_property, "odm_size")
   elif mount_point == "product":
     copy_prop(size_property, "product_size")
   elif mount_point == "product-services":
@@ -1017,6 +1039,8 @@ def main(argv):
       mount_point = "cache"
     elif image_filename == "vendor.img":
       mount_point = "vendor"
+    elif image_filename == "odm.img":
+      mount_point = "odm"
     elif image_filename == "oem.img":
       mount_point = "oem"
     elif image_filename == "product.img":

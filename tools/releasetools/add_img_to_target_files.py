@@ -73,11 +73,13 @@ OPTIONS.replace_verity_private_key = False
 OPTIONS.is_signing = False
 
 # Partitions that should have their care_map added to META/care_map.txt.
-PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product-services')
+PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product-services',
+                            'odm')
 # Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
 # images. (b/24377993, b/80600931)
 FIXED_FILE_TIMESTAMP = (datetime.datetime(2009, 1, 1, 0, 0, 0, 0, None)
                         - datetime.datetime.utcfromtimestamp(0)).total_seconds()
+
 
 class OutputFile(object):
   def __init__(self, output_zip, input_dir, prefix, name):
@@ -211,6 +213,22 @@ def AddProductServices(output_zip):
       output_zip, OPTIONS.input_tmp, "IMAGES", "product-services.map")
   CreateImage(
       OPTIONS.input_tmp, OPTIONS.info_dict, "product-services", img,
+      block_list=block_list)
+  return img.name
+
+
+def AddOdm(output_zip):
+  """Turn the contents of ODM into an odm image and store it in output_zip."""
+
+  img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "odm.img")
+  if os.path.exists(img.input_name):
+    print("odm.img already exists; no need to rebuild...")
+    return img.input_name
+
+  block_list = OutputFile(
+      output_zip, OPTIONS.input_tmp, "IMAGES", "odm.map")
+  CreateImage(
+      OPTIONS.input_tmp, OPTIONS.info_dict, "odm", img,
       block_list=block_list)
   return img.name
 
@@ -527,7 +545,7 @@ def AddCareMapTxtForAbOta(output_zip, ab_partitions, image_paths):
 
   Args:
     output_zip: The output zip file (needs to be already open), or None to
-        write images to OPTIONS.input_tmp/.
+        write care_map.txt to OPTIONS.input_tmp/.
     ab_partitions: The list of A/B partitions.
     image_paths: A map from the partition name to the image path.
   """
@@ -545,15 +563,32 @@ def AddCareMapTxtForAbOta(output_zip, ab_partitions, image_paths):
       assert os.path.exists(image_path)
       care_map_list += GetCareMap(partition, image_path)
 
-  if care_map_list:
-    care_map_path = "META/care_map.txt"
-    if output_zip and care_map_path not in output_zip.namelist():
-      common.ZipWriteStr(output_zip, care_map_path, '\n'.join(care_map_list))
-    else:
-      with open(os.path.join(OPTIONS.input_tmp, care_map_path), 'w') as fp:
-        fp.write('\n'.join(care_map_list))
-      if output_zip:
-        OPTIONS.replace_updated_files_list.append(care_map_path)
+  if not care_map_list:
+    return
+
+  # Converts the list into proto buf message by calling care_map_generator; and
+  # writes the result to a temp file.
+  temp_care_map_text = common.MakeTempFile(prefix="caremap_text-",
+                                           suffix=".txt")
+  with open(temp_care_map_text, 'w') as text_file:
+    text_file.write('\n'.join(care_map_list))
+
+  temp_care_map = common.MakeTempFile(prefix="caremap-", suffix=".txt")
+  care_map_gen_cmd = (["care_map_generator", temp_care_map_text, temp_care_map])
+  p = common.Run(care_map_gen_cmd, stdout=subprocess.PIPE,
+                 stderr=subprocess.STDOUT)
+  output, _ = p.communicate()
+  assert p.returncode == 0, "Failed to generate the care_map proto message."
+  if OPTIONS.verbose:
+    print(output.rstrip())
+
+  care_map_path = "META/care_map.txt"
+  if output_zip and care_map_path not in output_zip.namelist():
+    common.ZipWrite(output_zip, temp_care_map, arcname=care_map_path)
+  else:
+    shutil.copy(temp_care_map, os.path.join(OPTIONS.input_tmp, care_map_path))
+    if output_zip:
+      OPTIONS.replace_updated_files_list.append(care_map_path)
 
 
 def AddPackRadioImages(output_zip, images):
@@ -631,7 +666,7 @@ def AddImagesToTargetFiles(filename):
 
   has_recovery = OPTIONS.info_dict.get("no_recovery") != "true"
 
-  # {vendor,product,product-services}.img are unlike system.img or
+  # {vendor,odm,product,product-services}.img are unlike system.img or
   # system_other.img. Because it could be built from source, or dropped into
   # target_files.zip as a prebuilt blob. We consider either of them as
   # {vendor,product,product-services}.img being available, which could be
@@ -639,6 +674,9 @@ def AddImagesToTargetFiles(filename):
   has_vendor = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR")) or
                 os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
                                             "vendor.img")))
+  has_odm = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "ODM")) or
+                 os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
+                                             "odm.img")))
   has_product = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "PRODUCT")) or
                  os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
                                              "product.img")))
@@ -726,6 +764,10 @@ def AddImagesToTargetFiles(filename):
   if has_product_services:
     banner("product-services")
     partitions['product-services'] = AddProductServices(output_zip)
+
+  if has_odm:
+    banner("odm")
+    partitions['odm'] = AddOdm(output_zip)
 
   if has_system_other:
     banner("system_other")

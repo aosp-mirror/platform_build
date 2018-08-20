@@ -17,17 +17,13 @@
 # Base modules and settings for recovery.
 PRODUCT_PACKAGES += \
     adbd.recovery \
+    android.hardware.health@2.0-impl-default.recovery \
+    init_second_stage.recovery \
     ld.config.recovery.txt \
     linker.recovery \
     recovery \
     shell_and_utilities_recovery \
     watchdogd.recovery \
-
-ifeq ($(PRODUCT_USE_FASTBOOTD), true)
-PRODUCT_PACKAGES += \
-    android.hardware.boot@1.0-impl.recovery \
-    bootctrl.default.recovery
-endif
 
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \

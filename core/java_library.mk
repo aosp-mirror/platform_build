@@ -57,9 +57,9 @@ include $(BUILD_SYSTEM)/java.mk
 ifeq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
 # There are some dependencies outside the build system that assume classes.jar
 # is available as javalib.jar so copy it there too.
-$(eval $(call copy-one-file,$(full_classes_proguard_jar),$(common_javalib.jar)))
+$(eval $(call copy-one-file,$(full_classes_pre_proguard_jar),$(common_javalib.jar)))
 
-$(eval $(call copy-one-file,$(full_classes_proguard_jar),$(LOCAL_BUILT_MODULE)))
+$(eval $(call copy-one-file,$(full_classes_pre_proguard_jar),$(LOCAL_BUILT_MODULE)))
 
 else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
