@@ -909,7 +909,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("product_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
     copy_prop("product_reserved_size", "partition_reserved_size")
-  elif mount_point == "product-services":
+  elif mount_point == "product_services":
     copy_prop("avb_product_services_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_product_services_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
@@ -1000,7 +1000,7 @@ def GlobalDictFromImageProp(image_prop, mount_point):
     copy_prop(size_property, "odm_size")
   elif mount_point == "product":
     copy_prop(size_property, "product_size")
-  elif mount_point == "product-services":
+  elif mount_point == "product_services":
     copy_prop(size_property, "product_services_size")
   return d
 
@@ -1045,8 +1045,8 @@ def main(argv):
       mount_point = "oem"
     elif image_filename == "product.img":
       mount_point = "product"
-    elif image_filename == "product-services.img":
-      mount_point = "product-services"
+    elif image_filename == "product_services.img":
+      mount_point = "product_services"
     else:
       print("error: unknown image file name ", image_filename, file=sys.stderr)
       sys.exit(1)
