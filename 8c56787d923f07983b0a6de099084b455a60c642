@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dbea4b60_4dc6e984",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-21T14:47:24Z",
+      "side": 1,
+      "message": "What is the problem here?\n\nMake sure it\u0027s described in a bug and use TODO(b/####) to make it easier to get more context if it isn\u0027t fixed quickly.",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee97a9f7_90d9f9a2",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-21T14:47:24Z",
+      "side": 1,
+      "message": "ifneq (,$(filter $(SOONG_OUT_DIR)%,$(LOCAL_FULL_TEST_CONFIG))",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42569519_74313152",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-21T14:47:24Z",
+      "side": 1,
+      "message": "This is going to put an empty test_config for all non-tests, would it be better to wrap this in an ifdef ALL_MODULES.$(m).TEST_CONFIG",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
