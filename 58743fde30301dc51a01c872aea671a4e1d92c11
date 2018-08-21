@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "b6c0911c_1c643d7c",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2781,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-21T23:08:52Z",
+      "side": 1,
+      "message": "INSTALLED_SYSTEMIMAGE points to the one at installed location (e.g. out/target/product/marlin/system.img), while BUILT_SYSTEMIMAGE points to the one at intermediate dir.\n\nI don\u0027t think it makes much difference for the use case of images-for-partitions. It could slow down the rule a bit to wait for the copy of BUILT_SYSTEMIMAGE, but otherwise it shouldn\u0027t affect the correctness as the pointed files are identical (plain copy).\n\nCreating an alias of INSTALLED_SYSTEMIMAGE_TARGET sounds good. I\u0027m thinking maybe even changing the original definition to INSTALLED_SYSTEMIMAGE_TARGET, then add INSTALLED_SYSTEMIMAGE :\u003d $(INSTALLED_SYSTEMIMAGE_TARGET) for backward compatibility?",
+      "parentUuid": "5eb02a74_a2db3bae",
+      "range": {
+        "startLine": 2781,
+        "startChar": 16,
+        "endLine": 2781,
+        "endChar": 33
+      },
+      "revId": "58743fde30301dc51a01c872aea671a4e1d92c11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5f74c25a_2a3500ea",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -60,6 +84,30 @@
       "writtenOn": "2018-08-21T22:32:02Z",
       "side": 1,
       "message": "Will this pollute global variables? I avoid using this so that this can be evaluated statically (i.e. before any command is executed) and so that the dependencies are evaluated correctly (e.g. L2804)",
+      "range": {
+        "startLine": 2786,
+        "startChar": 28,
+        "endLine": 2786,
+        "endChar": 38
+      },
+      "revId": "58743fde30301dc51a01c872aea671a4e1d92c11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3c5bb844_de2d20cb",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2786,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-21T23:08:52Z",
+      "side": 1,
+      "message": "Hmm right, the value would be available after the use.\n\nThe code here would be killed if we replace BUILT_SYSTEMIMAGE with INSTALLED_SYSTEMIMAGE_TARGET though.",
+      "parentUuid": "5f74c25a_2a3500ea",
       "range": {
         "startLine": 2786,
         "startChar": 28,
