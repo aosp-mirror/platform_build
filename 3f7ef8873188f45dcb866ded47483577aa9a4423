@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6f6dfa40_99fc774c",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-08-21T06:58:31Z",
+      "side": 1,
+      "message": "ifneq (,$(findstring soong/.intermediates/, $(LOCAL_FULL_TEST_CONFIG)))\n\nMaybe change the if condition like this to restrict the result.",
+      "range": {
+        "startLine": 654,
+        "startChar": 0,
+        "endLine": 654,
+        "endChar": 28
+      },
+      "revId": "3f7ef8873188f45dcb866ded47483577aa9a4423",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
