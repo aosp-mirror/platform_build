@@ -68,6 +68,7 @@ PRODUCT_PACKAGES += \
     MusicFX \
     NfcNci \
     OneTimeInitializer \
+    OsuLogin \
     PacProcessor \
     PrintRecommendationService \
     PrintSpooler \
