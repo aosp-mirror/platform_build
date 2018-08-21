@@ -28,6 +28,7 @@ $(general_tests_zip) : PRIVATE_TOOLS := $(general_tests_tools)
 $(general_tests_zip) : PRIVATE_INTERMEDIATES_DIR := $(intermediates_dir)
 $(general_tests_zip) : $(COMPATIBILITY.general-tests.FILES) $(general_tests_tools) $(SOONG_ZIP)
 	rm -rf $(PRIVATE_INTERMEDIATES_DIR)
+	rm -f $@ $(PRIVATE_general_tests_list_zip)
 	mkdir -p $(PRIVATE_INTERMEDIATES_DIR) $(PRIVATE_INTERMEDIATES_DIR)/tools
 	echo $(sort $(COMPATIBILITY.general-tests.FILES)) | tr " " "\n" > $(PRIVATE_INTERMEDIATES_DIR)/list
 	grep $(HOST_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/host.list || true
@@ -39,7 +40,7 @@ $(general_tests_zip) : $(COMPATIBILITY.general-tests.FILES) $(general_tests_tool
 	  -P target -C $(PRODUCT_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/target.list
 	grep -e .*.config$$ $(PRIVATE_INTERMEDIATES_DIR)/host.list | sed s%$(HOST_OUT)%host%g > $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
 	grep -e .*.config$$ $(PRIVATE_INTERMEDIATES_DIR)/target.list | sed s%$(PRODUCT_OUT)%target%g >> $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
-	$(SOONG_ZIP) -d -o $(general_tests_list_zip) -C $(PRIVATE_INTERMEDIATES_DIR) -f $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
+	$(SOONG_ZIP) -d -o $(PRIVATE_general_tests_list_zip) -C $(PRIVATE_INTERMEDIATES_DIR) -f $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
 
 general-tests: $(general_tests_zip)
 $(call dist-for-goals, general-tests, $(general_tests_zip) $(general_tests_list_zip))
