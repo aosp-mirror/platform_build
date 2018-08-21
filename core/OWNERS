@@ -1,8 +1,1 @@
-per-file * = ccross@android.com
-per-file * = dwillemsen@google.com
-per-file * = nanzhang@google.com
-
-per-file dex_preopt*.mk = ngeoffray@google.com
-per-file dex_preopt*.mk = calin@google.com
-per-file dex_preopt*.mk = mathewi@google.com
-per-file dex_preopt*.mk = dbrazdil@google.com
+per-file dex_preopt*.mk = ngeoffray@google.com,calin@google.com,mathewi@google.com,dbrazdil@google.com
