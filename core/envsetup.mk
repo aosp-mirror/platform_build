@@ -218,7 +218,7 @@ TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
 # A device can set up TARGET_COPY_OUT_PRODUCT_SERVICES to "product-services" in its
 # BoardConfig.mk.
 # We'll substitute with the real value after loading BoardConfig.mk.
-_product_services_path_placeholder := ||PRODUCT-SERVICES-PATH-PH||
+_product_services_path_placeholder := ||PRODUCT_SERVICES-PATH-PH||
 TARGET_COPY_OUT_PRODUCT_SERVICES := $(_product_services_path_placeholder)
 ###########################################
 
