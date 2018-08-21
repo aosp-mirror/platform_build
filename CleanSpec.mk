@@ -498,6 +498,7 @@ $(call add-clean-step, rm -rf $(SOONG_OUT_DIR)/.intermediates/system/vold)
 # Remove product-services related files / images
 $(call add-clean-step, find $(PRODUCT_OUT) -type f -name "*product-services*" -print0 | xargs -0 rm -rf)
 $(call add-clean-step, find $(PRODUCT_OUT) -type d -name "*product-services*" -print0 | xargs -0 rm -rf)
+$(call add-clean-step, find $(PRODUCT_OUT) -type l -name "*product-services*" -print0 | xargs -0 rm -rf)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
