@@ -174,6 +174,24 @@ ifneq ($(my_nosanitize),)
   my_sanitize := $(filter-out $(my_nosanitize),$(my_sanitize))
 endif
 
+ifneq ($(filter arm x86 x86_64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
+  my_sanitize := $(filter-out hwaddress,$(my_sanitize))
+endif
+
+ifneq ($(filter hwaddress,$(my_sanitize)),)
+  my_sanitize := $(filter-out address,$(my_sanitize))
+  my_sanitize := $(filter-out thread,$(my_sanitize))
+endif
+
+ifneq ($(filter hwaddress,$(my_sanitize)),)
+  my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)HWADDRESS_SANITIZER_RUNTIME_LIBRARY)
+  ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+    ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+      my_static_libraries := $(my_static_libraries) $($(LOCAL_2ND_ARCH_VAR_PREFIX)HWADDRESS_SANITIZER_STATIC_LIBRARY)
+    endif
+  endif
+endif
+
 # TSAN is not supported on 32-bit architectures. For non-multilib cases, make
 # its use an error. For multilib cases, don't use it for the 32-bit case.
 ifneq ($(filter thread,$(my_sanitize)),)
@@ -195,7 +213,7 @@ ifneq ($(filter safe-stack,$(my_sanitize)),)
 endif
 
 # Disable Scudo if ASan or TSan is enabled.
-ifneq ($(filter address thread,$(my_sanitize)),)
+ifneq ($(filter address thread hwaddress,$(my_sanitize)),)
   my_sanitize := $(filter-out scudo,$(my_sanitize))
 endif
 
@@ -364,7 +382,7 @@ ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
   ifneq ($(filter unsigned-integer-overflow signed-integer-overflow integer,$(my_sanitize)),)
     ifeq ($(filter unsigned-integer-overflow signed-integer overflow integer,$(my_sanitize_diag)),)
       ifeq ($(filter cfi,$(my_sanitize_diag)),)
-        ifeq ($(filter address,$(my_sanitize)),)
+        ifeq ($(filter address hwaddress,$(my_sanitize)),)
           my_cflags += -fsanitize-minimal-runtime
           my_cflags += -fno-sanitize-trap=integer
           my_cflags += -fno-sanitize-recover=integer
@@ -387,7 +405,7 @@ ifneq ($(my_sanitize_diag),)
     notrap_arg := $(subst $(space),$(comma),$(my_sanitize_diag)),
     my_cflags += -fno-sanitize-trap=$(notrap_arg)
     # Diagnostic requires a runtime library, unless ASan or TSan are also enabled.
-    ifeq ($(filter address thread scudo,$(my_sanitize)),)
+    ifeq ($(filter address thread scudo hwaddress,$(my_sanitize)),)
       # Does not have to be the first DT_NEEDED unlike ASan.
       my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY)
     endif
