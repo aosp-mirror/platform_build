@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "2f43555d_adc29b73",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2781,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-08-21T23:10:26Z",
+      "side": 1,
+      "message": "+1, Dan?",
+      "parentUuid": "b6c0911c_1c643d7c",
+      "range": {
+        "startLine": 2781,
+        "startChar": 16,
+        "endLine": 2781,
+        "endChar": 33
+      },
+      "revId": "58743fde30301dc51a01c872aea671a4e1d92c11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5f74c25a_2a3500ea",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -108,6 +132,30 @@
       "side": 1,
       "message": "Hmm right, the value would be available after the use.\n\nThe code here would be killed if we replace BUILT_SYSTEMIMAGE with INSTALLED_SYSTEMIMAGE_TARGET though.",
       "parentUuid": "5f74c25a_2a3500ea",
+      "range": {
+        "startLine": 2786,
+        "startChar": 28,
+        "endLine": 2786,
+        "endChar": 38
+      },
+      "revId": "58743fde30301dc51a01c872aea671a4e1d92c11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b50a60b_bb2025d9",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2786,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-08-21T23:10:26Z",
+      "side": 1,
+      "message": "Ack, please do.",
+      "parentUuid": "3c5bb844_de2d20cb",
       "range": {
         "startLine": 2786,
         "startChar": 28,
