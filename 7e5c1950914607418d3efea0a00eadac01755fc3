@@ -48,6 +48,54 @@
     },
     {
       "key": {
+        "uuid": "7fc39a11_ad390b0c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-21T04:09:23Z",
+      "side": 1,
+      "message": "Done, thanks.",
+      "parentUuid": "575a200d_ab07f1c3",
+      "range": {
+        "startLine": 7,
+        "startChar": 30,
+        "endLine": 7,
+        "endChar": 40
+      },
+      "revId": "7e5c1950914607418d3efea0a00eadac01755fc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2e8efcd7_5b605c4d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-21T04:09:23Z",
+      "side": 1,
+      "message": "Done, thanks.",
+      "parentUuid": "a2a938af_f4f56bf3",
+      "range": {
+        "startLine": 7,
+        "startChar": 11,
+        "endLine": 7,
+        "endChar": 26
+      },
+      "revId": "7e5c1950914607418d3efea0a00eadac01755fc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0191b813_b4130414",
         "filename": "core/base_rules.mk",
         "patchSetId": 2
@@ -59,6 +107,30 @@
       "writtenOn": "2018-08-20T20:06:20Z",
       "side": 1,
       "message": "You can remove this hack as part of this patch to stop marking soong tests as auto_test_config.",
+      "range": {
+        "startLine": 650,
+        "startChar": 0,
+        "endLine": 662,
+        "endChar": 0
+      },
+      "revId": "7e5c1950914607418d3efea0a00eadac01755fc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1983a922_b855ea21",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 662,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-21T04:09:23Z",
+      "side": 1,
+      "message": "Currently, atest still need it.\nWe\u0027ll remove it after we fixed the parsing problems.",
+      "parentUuid": "0191b813_b4130414",
       "range": {
         "startLine": 650,
         "startChar": 0,
@@ -103,6 +175,24 @@
       "revId": "7e5c1950914607418d3efea0a00eadac01755fc3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea7d8200_32038736",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 774,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-21T04:09:23Z",
+      "side": 1,
+      "message": "Done, thanks.",
+      "parentUuid": "abcfefa5_9d5f6ec8",
+      "revId": "7e5c1950914607418d3efea0a00eadac01755fc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
