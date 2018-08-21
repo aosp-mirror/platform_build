@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ce33e869_5a9e8b5c",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 762,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-21T02:24:24Z",
+      "side": 1,
+      "message": "Just call this TEST_CONFIG",
+      "range": {
+        "startLine": 762,
+        "startChar": 34,
+        "endLine": 762,
+        "endChar": 56
+      },
+      "revId": "a0a393073ba473aa75a38350fb0d229d93397e3c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2eca39c0_befd1b32",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-21T02:24:24Z",
+      "side": 1,
+      "message": "I\u0027d suggest calling this test_config, the local_ prefix just means its a makefile variable local to the current module.",
+      "range": {
+        "startLine": 17,
+        "startChar": 5,
+        "endLine": 17,
+        "endChar": 22
+      },
+      "revId": "a0a393073ba473aa75a38350fb0d229d93397e3c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e50ee297_f984c335",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-21T02:24:24Z",
+      "side": 1,
+      "message": "You called this LOCAL_FULL_TEST_CONFIG in base_rules.mk",
+      "range": {
+        "startLine": 17,
+        "startChar": 46,
+        "endLine": 17,
+        "endChar": 63
+      },
+      "revId": "a0a393073ba473aa75a38350fb0d229d93397e3c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
