@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "a2a938af_f4f56bf3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-08-21T00:21:05Z",
+      "side": 1,
+      "message": "LOCAL_TEST_CONFIG",
+      "range": {
+        "startLine": 7,
+        "startChar": 11,
+        "endLine": 7,
+        "endChar": 26
+      },
+      "revId": "7e5c1950914607418d3efea0a00eadac01755fc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "575a200d_ab07f1c3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-08-21T00:21:05Z",
+      "side": 1,
+      "message": "module_info",
+      "range": {
+        "startLine": 7,
+        "startChar": 30,
+        "endLine": 7,
+        "endChar": 40
+      },
+      "revId": "7e5c1950914607418d3efea0a00eadac01755fc3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0191b813_b4130414",
         "filename": "core/base_rules.mk",
         "patchSetId": 2
