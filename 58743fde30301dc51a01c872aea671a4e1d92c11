@@ -22,6 +22,53 @@
       "revId": "58743fde30301dc51a01c872aea671a4e1d92c11",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5eb02a74_a2db3bae",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2781,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-08-21T22:32:02Z",
+      "side": 1,
+      "message": "Ack.\n\nWhat\u0027s the difference between BUILT_SYSTEMIMAGE and INSTALLED_SYSTEMIMAGE?",
+      "parentUuid": "89793929_6ce65827",
+      "range": {
+        "startLine": 2781,
+        "startChar": 16,
+        "endLine": 2781,
+        "endChar": 33
+      },
+      "revId": "58743fde30301dc51a01c872aea671a4e1d92c11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f74c25a_2a3500ea",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2786,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-08-21T22:32:02Z",
+      "side": 1,
+      "message": "Will this pollute global variables? I avoid using this so that this can be evaluated statically (i.e. before any command is executed) and so that the dependencies are evaluated correctly (e.g. L2804)",
+      "range": {
+        "startLine": 2786,
+        "startChar": 28,
+        "endLine": 2786,
+        "endChar": 38
+      },
+      "revId": "58743fde30301dc51a01c872aea671a4e1d92c11",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
