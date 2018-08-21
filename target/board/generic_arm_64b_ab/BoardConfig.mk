@@ -19,9 +19,6 @@ include build/make/target/board/treble_common_32.mk
 # For devices using 64-bit binder interface
 TARGET_USES_64_BIT_BINDER := true
 
-# Overwrite the setting in treble_common_32.mk for non-A/B arm GSI
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 943718400 # 900MB
-
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_CPU_ABI := armeabi-v7a
