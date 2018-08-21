@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50f25fc2_2958631b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-08-21T23:32:43Z",
+      "side": 1,
+      "message": "Merged-In instead of the legacy DO NOT MERGE? They should be the same here, but Merged-In is significantly safer",
+      "range": {
+        "startLine": 7,
+        "startChar": 32,
+        "endLine": 7,
+        "endChar": 45
+      },
+      "revId": "a2bf65b430cc9548e651abd9377c8ee83cdcb3dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
