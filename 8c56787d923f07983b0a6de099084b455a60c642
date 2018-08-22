@@ -145,6 +145,24 @@
     },
     {
       "key": {
+        "uuid": "ec521531_c3cd08e7",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-22T03:26:44Z",
+      "side": 1,
+      "message": "For the 2nd but, it can handled by atest.\nAnd atest won\u0027t add it to build target when auto-gen \u003d true.",
+      "parentUuid": "ff869c8c_aa14bb38",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ee97a9f7_90d9f9a2",
         "filename": "core/base_rules.mk",
         "patchSetId": 10
