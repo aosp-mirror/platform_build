@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "077e0a64_412fc4c1",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-08-22T00:24:29Z",
+      "side": 0,
+      "message": "Can this just be set to empty here, removing the empty on 437/436 too? Then it won\u0027t try to read the environment variable",
+      "range": {
+        "startLine": 409,
+        "startChar": 14,
+        "endLine": 409,
+        "endChar": 18
+      },
+      "revId": "5d1688bf27a8051cfdd5e2cc8c5d2b07cf79a9e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
