@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db48b5a0_37e05a1c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-22T16:50:02Z",
+      "side": 1,
+      "message": "Why not use the script to make soong and make match?",
+      "revId": "4275dcf866fecf083bb7dd88669bc7330fcdeee9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
