@@ -22,6 +22,30 @@
       "revId": "a2bf65b430cc9548e651abd9377c8ee83cdcb3dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e038cfb_97e4c4d3",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-08-22T10:30:04Z",
+      "side": 1,
+      "message": "I couldn\u0027t use Merged-In because there was no corresponding CL in this project (it was in device/generic/goldfish in stage-aosp-master). I don\u0027t know what you usually do in this case, but DO NOT MERGE seems to have the right effect.\n\nWith go/oag/735495 now in AOSP, I can abandon this CL and merge go/oag/736221 instead.",
+      "parentUuid": "50f25fc2_2958631b",
+      "range": {
+        "startLine": 7,
+        "startChar": 32,
+        "endLine": 7,
+        "endChar": 45
+      },
+      "revId": "a2bf65b430cc9548e651abd9377c8ee83cdcb3dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
