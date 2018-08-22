@@ -1435,6 +1435,11 @@ modules:
 	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
 	      tr -s ' ' '\n' | sort -u | $(COLUMN)
 
+.PHONY: dump-products
+dump-products:
+	$(dump-products)
+	@echo Successfully dumped products
+
 .PHONY: nothing
 nothing:
 	@echo Successfully read the makefiles.
