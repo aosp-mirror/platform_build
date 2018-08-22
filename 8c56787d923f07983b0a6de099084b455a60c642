@@ -122,6 +122,24 @@
       "revId": "8c56787d923f07983b0a6de099084b455a60c642",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6dbf22d_4f047f58",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-08-22T02:33:04Z",
+      "side": 1,
+      "message": "Nelson in case you\u0027re confused here Colin means this will be: \"test_config\": [\"\"] instead of \"test_config\": []",
+      "parentUuid": "42569519_74313152",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
