@@ -22,6 +22,30 @@
       "revId": "936ebbb066c10ae6555f95ea585c615b74749e13",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "463ff729_9092deb2",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3117,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-22T21:38:24Z",
+      "side": 1,
+      "message": "Done.\n\nSeems we also miss the dependency on BOARD_INCLUDE_RECOVERY_DTBO, in the fules for INSTALLED_RECOVERYIMAGE_TARGET / INSTALLED_BOOTIMAGE_TARGET. I uploaded a separate CL in https://android-review.googlesource.com/c/platform/build/+/736574 to address that.",
+      "parentUuid": "cab493aa_73a0580b",
+      "range": {
+        "startLine": 3117,
+        "startChar": 4,
+        "endLine": 3117,
+        "endChar": 30
+      },
+      "revId": "936ebbb066c10ae6555f95ea585c615b74749e13",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
