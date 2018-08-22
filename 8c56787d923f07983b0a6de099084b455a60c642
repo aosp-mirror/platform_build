@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "59558ac5_bb9a86ea",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-08-22T02:56:37Z",
+      "side": 1,
+      "message": "I think keeping the original part but update as Colin comment make much more sense.\nthe module info here.\n  \"hello_world_test\": { \"class\": [\"NATIVE_TESTS\"],  \"path\": [\"platform_testing/tests/example/native\"],  \"tags\": [\"optional\"],  \"installed\": [\"out/host/linux-x86/nativetest64/hello_world_test/hello_world_test\",  \"out/target/product/generic_arm64/data/nativetest64/hello_world_test/hello_world_test\"],  \"compatibility_suites\": [\"device-tests\"],  \"auto_test_config\": [],  \"module_name\": [\"hello_world_test\"],  \"test_config\": [\"out/soong/.intermediates/platform_testing/tests/example/native/hello_world_test/linux_glibc_x86_64/hello_world_test.config\"] },\n\nThe \"auto_test_config\": [] is not set, but actually, it\u0027s auto_generate but by soong.\nThat\u0027s why we think we should keep this block to reflect the real case.",
+      "parentUuid": "57f5e3e8_a48a7286",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ee97a9f7_90d9f9a2",
         "filename": "core/base_rules.mk",
         "patchSetId": 10
