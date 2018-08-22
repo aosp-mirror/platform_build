@@ -406,7 +406,6 @@ endif
 # Typical build; include any Android.mk files we can find.
 #
 
-FULL_BUILD := true
 
 # Before we go and include all of the module makefiles, mark the PRODUCT_*
 # and ADDITIONAL*PROPERTIES values readonly so that they won't be modified.
@@ -423,6 +422,7 @@ ENFORCE_RRO_SOURCES :=
 endif
 
 subdir_makefiles_inc := .
+FULL_BUILD :=
 
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
@@ -434,7 +434,6 @@ include $(SOONG_ANDROID_MK) $(wildcard $(ONE_SHOT_MAKEFILE))
 # so that the modules will be installed in the same place they
 # would have been with a normal make.
 CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
-FULL_BUILD :=
 
 # A helper goal printing out install paths
 define register_module_install_path
@@ -463,6 +462,7 @@ UNIQUE_ALL_MODULES :=
 else # ONE_SHOT_MAKEFILE
 
 ifneq ($(dont_bother),true)
+FULL_BUILD := true
 #
 # Include all of the makefiles in the system
 #
