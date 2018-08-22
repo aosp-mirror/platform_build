@@ -2829,6 +2829,7 @@ define build-superimage-target
     $(foreach name,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
       --partition $(name)$(2):$$($(UUIDGEN) $(name)$(2)):readonly:$(if $(3),$(call read-size-of-partitions,$(name)),0) \
       $(if $(3), --image $(name)$(2)=$(call images-for-partitions,$(name))) \
+      $(if $(2), --partition $(name)_b:$$($(UUIDGEN) $(name)_b):readonly:0) \
     )
 endef
 
