@@ -109,6 +109,24 @@
     },
     {
       "key": {
+        "uuid": "77aae16f_bbc52e8d",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-08-22T03:07:22Z",
+      "side": 1,
+      "message": "Hmm yeah that does make sense.\n\nThe alternative is we update all our python auto_gen checks to see if they are prefixed with $SOONG_OUT_DIR (not sure if that\u0027s exported by the build system though).",
+      "parentUuid": "59558ac5_bb9a86ea",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ee97a9f7_90d9f9a2",
         "filename": "core/base_rules.mk",
         "patchSetId": 10
