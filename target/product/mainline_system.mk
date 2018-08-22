@@ -18,6 +18,11 @@
 # device with no telephony.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
 
+# OTA support.
+PRODUCT_PACKAGES += \
+    update_engine \
+    update_verifier \
+
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
