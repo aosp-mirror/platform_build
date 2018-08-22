@@ -2812,32 +2812,35 @@ $(INSTALLED_SUPERIMAGE_TARGET): $(call images-for-partitions,$(BOARD_SUPER_PARTI
 # bootloader fastboot should always mark _a slot as bootable.
 ifeq ($(AB_OTA_UPDATER),true)
 $(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): PRIVATE_PARTITION_SUFFIX=_a
-$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): PRIVATE_METADATA_SLOTS=2
-else
-$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): PRIVATE_METADATA_SLOTS=1
 endif # AB_OTA_UPDATER
 
-$(INSTALLED_SUPERIMAGE_TARGET): $(HOST_OUT_EXECUTABLES)/lpmake
-	$< \
-		--sparse \
-		--metadata-size 65536 \
-		--metadata-slots $(PRIVATE_METADATA_SLOTS) \
-		--device-size $(BOARD_SUPER_PARTITION_SIZE) \
-		--output $@ \
-		$(foreach name,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-			--partition $(name)$(PRIVATE_PARTITION_SUFFIX):$$($(UUIDGEN) $(name)$(PRIVATE_PARTITION_SUFFIX)):readonly:$(call read-size-of-partitions,$(name)) \
-			--image $(name)$(PRIVATE_PARTITION_SUFFIX)=$(call images-for-partitions,$(name)))
+$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(HOST_OUT_EXECUTABLES)/lpmake
+
+# $(1): output image path
+# $(2): slot A suffix (_a or empty)
+# $(3): include images or not (true or empty)
+define build-superimage-target
+  $(HOST_OUT_EXECUTABLES)/lpmake \
+    $(if $(3), --sparse) \
+    --metadata-size 65536 \
+    --metadata-slots $(if $(2),2,1) \
+    --device-size $(BOARD_SUPER_PARTITION_SIZE) \
+    --output $(1) \
+    $(foreach name,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+      --partition $(name)$(2):$$($(UUIDGEN) $(name)$(2)):readonly:$(if $(3),$(call read-size-of-partitions,$(name)),0) \
+      $(if $(3), --image $(name)$(2)=$(call images-for-partitions,$(name))) \
+    )
+endef
+
+$(INSTALLED_SUPERIMAGE_TARGET):
+	$(call pretty,"Target super fs image: $@")
+	$(call build-superimage-target,$@,$(PRIVATE_PARTITION_SUFFIX),true)
 
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_TARGET))
 
-$(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(HOST_OUT_EXECUTABLES)/lpmake
-	$< \
-		--metadata-size 65536 \
-		--metadata-slots $(PRIVATE_METADATA_SLOTS) \
-		--device-size $(BOARD_SUPER_PARTITION_SIZE) \
-		--output $@ \
-		$(foreach name,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-			--partition $(name)$(PRIVATE_PARTITION_SUFFIX):$$($(UUIDGEN) $(name)$(PRIVATE_SUPER_PARTITION_SUFFIX)):readonly:0)
+$(INSTALLED_SUPERIMAGE_EMPTY_TARGET):
+	$(call pretty,"Target empty super fs image: $@")
+	$(call build-superimage-target,$@,$(PRIVATE_PARTITION_SUFFIX))
 
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_EMPTY_TARGET))
 
