@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "b00d4899_c31f5979",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-22T02:08:36Z",
+      "side": 1,
+      "message": "Atest will add a new target for it. But this target doesn\u0027t exist.\ne.g. \n  atest hello_world_test\n\nBuilding targets: out/target/product/walleye/module-info.json tradefed-core MODULES-IN-out-soong-.intermediates-platform_testing-tests-example-native-hello_world_test-linux_glibc_x86_64\n\nBut there is no such build target of \"\u0027MODULES-IN-out-soong-.intermediates-platform_testing-tests-example-native-hello_world_test-linux_glibc_x86_64\u0027\"\n\nFAILED: ninja: unknown target \u0027MODULES-IN-out-soong-.intermediates-platform_testing-tests-example-native-hello_world_test-linux_glibc_x86_64\u0027\n10:05:16 ninja failed with: exit status 1\n\nI\u0027ll create a new Bug ID for it later, thanks.",
+      "parentUuid": "80aa7cc6_0b4e03be",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ee97a9f7_90d9f9a2",
         "filename": "core/base_rules.mk",
         "patchSetId": 10
