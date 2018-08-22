@@ -163,6 +163,24 @@
     },
     {
       "key": {
+        "uuid": "874f6acb_afa4af65",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-08-22T03:46:37Z",
+      "side": 1,
+      "message": "+1 for these 2 point of view.\nBut from ATest due to it\u0027s support finding test by user input the source code location.\nIt will use the TestConfig\u0027s location or auto_gen_flag to judge if the module is testable or not.\nI will try to clean up this part. change MODULES-IN-$(dirname ${path}). But the auto_test_config flag information will still be essential for atest.",
+      "parentUuid": "ff869c8c_aa14bb38",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ee97a9f7_90d9f9a2",
         "filename": "core/base_rules.mk",
         "patchSetId": 10
