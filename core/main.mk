@@ -1354,7 +1354,7 @@ else # TARGET_BUILD_APPS
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE)
+    $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE_TARGET)
     $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
 
     # Put XML formatted API files in the dist dir.
