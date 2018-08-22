@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2f8cc912_4bc3cb1a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 658,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-22T16:47:21Z",
+      "side": 1,
+      "message": "We don\u0027t need the copy any more, right?  Just set the autogen flag.",
+      "revId": "380e11bcb3cf353bf3b9e34009f49a37030fccb5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "603c21ec_d6402aa8",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 777,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-22T16:47:21Z",
+      "side": 1,
+      "message": "Don\u0027t duplicate this logic here, use test_config from above (which means not clearing it or clearing it after this)",
+      "revId": "380e11bcb3cf353bf3b9e34009f49a37030fccb5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
