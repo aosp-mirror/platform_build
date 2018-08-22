@@ -198,6 +198,24 @@
     },
     {
       "key": {
+        "uuid": "c5d9a3cd_c3972029",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 654,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-22T09:56:26Z",
+      "side": 1,
+      "message": "Done, thanks.",
+      "parentUuid": "ee97a9f7_90d9f9a2",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "42569519_74313152",
         "filename": "core/tasks/module-info.mk",
         "patchSetId": 10
@@ -230,6 +248,24 @@
       "revId": "8c56787d923f07983b0a6de099084b455a60c642",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09be71c7_d4c8fa87",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-22T09:56:26Z",
+      "side": 1,
+      "message": "Done, thanks.",
+      "parentUuid": "b6dbf22d_4f047f58",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
