@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "80aa7cc6_0b4e03be",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-08-22T01:46:44Z",
+      "side": 1,
+      "message": "If the problem is that you need to land your atest change at the same time as this change, just set a topic :).",
+      "parentUuid": "03c4642d_629f2776",
+      "revId": "8c56787d923f07983b0a6de099084b455a60c642",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ee97a9f7_90d9f9a2",
         "filename": "core/base_rules.mk",
         "patchSetId": 10
