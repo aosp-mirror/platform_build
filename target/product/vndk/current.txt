@@ -84,6 +84,7 @@ VNDK-core: android.hardware.cas@1.0.so
 VNDK-core: android.hardware.configstore-utils.so
 VNDK-core: android.hardware.configstore@1.0.so
 VNDK-core: android.hardware.configstore@1.1.so
+VNDK-core: android.hardware.configstore@1.2.so
 VNDK-core: android.hardware.confirmationui-support-lib.so
 VNDK-core: android.hardware.confirmationui@1.0.so
 VNDK-core: android.hardware.contexthub@1.0.so
@@ -106,6 +107,7 @@ VNDK-core: android.hardware.keymaster@3.0.so
 VNDK-core: android.hardware.keymaster@4.0.so
 VNDK-core: android.hardware.light@2.0.so
 VNDK-core: android.hardware.media.bufferpool@1.0.so
+VNDK-core: android.hardware.media.bufferpool@2.0.so
 VNDK-core: android.hardware.media.omx@1.0.so
 VNDK-core: android.hardware.media@1.0.so
 VNDK-core: android.hardware.memtrack@1.0.so

@@ -1117,8 +1117,10 @@ $(TARGET_OUT_ETC)/update_engine/update-payload-key.pub.pem: $(addsuffix .x509.pe
 	$(hide) mkdir -p $(dir $@)
 	$(hide) openssl x509 -pubkey -noout -in $< > $@
 
-ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_RECOVERY_ROOT_OUT)/etc/update_engine/update-payload-key.pub.pem
-$(TARGET_RECOVERY_ROOT_OUT)/etc/update_engine/update-payload-key.pub.pem: $(TARGET_OUT_ETC)/update_engine/update-payload-key.pub.pem
+ALL_DEFAULT_INSTALLED_MODULES += \
+    $(TARGET_RECOVERY_ROOT_OUT)/system/etc/update_engine/update-payload-key.pub.pem
+$(TARGET_RECOVERY_ROOT_OUT)/system/etc/update_engine/update-payload-key.pub.pem: \
+		$(TARGET_OUT_ETC)/update_engine/update-payload-key.pub.pem
 	$(hide) cp -f $< $@
 endif
 endif
@@ -1605,10 +1607,10 @@ RECOVERYIMAGE_ID_FILE := $(PRODUCT_OUT)/recovery.id
 define build-recoveryimage-target
   # Making recovery image
   $(hide) mkdir -p $(TARGET_RECOVERY_OUT)
-  $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/etc $(TARGET_RECOVERY_ROOT_OUT)/sdcard $(TARGET_RECOVERY_ROOT_OUT)/tmp
+  $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/sdcard $(TARGET_RECOVERY_ROOT_OUT)/tmp
   # Copying baseline ramdisk...
   # Use rsync because "cp -Rf" fails to overwrite broken symlinks on Mac.
-  $(hide) rsync -a --exclude=etc --exclude=sdcard $(IGNORE_RECOVERY_SEPOLICY) $(IGNORE_CACHE_LINK) $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
+  $(hide) rsync -a --exclude=sdcard $(IGNORE_RECOVERY_SEPOLICY) $(IGNORE_CACHE_LINK) $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
   # Modifying ramdisk contents...
   $(if $(BOARD_RECOVERY_KERNEL_MODULES), \
     $(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery)))
@@ -1623,9 +1625,9 @@ define build-recoveryimage-target
   $(hide) $(foreach item,$(TARGET_PRIVATE_RES_DIRS), \
     cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/$(newline))
   $(hide) $(foreach item,$(recovery_fstab), \
-    cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/etc/recovery.fstab)
+    cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab)
   $(if $(strip $(recovery_wipe)), \
-    $(hide) cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/etc/recovery.wipe)
+    $(hide) cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.wipe)
   $(hide) cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
   $(hide) ln -sf prop.default $(TARGET_RECOVERY_ROOT_OUT)/default.prop
   $(BOARD_RECOVERY_IMAGE_PREPARE)
@@ -1872,8 +1874,12 @@ $(BUILT_SYSTEMIMAGE): $(BUILT_ASSEMBLED_SYSTEM_MANIFEST)
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(BUILD_IMAGE_SRCS)
 	$(call build-systemimage-target,$@)
 
-INSTALLED_SYSTEMIMAGE := $(PRODUCT_OUT)/system.img
+INSTALLED_SYSTEMIMAGE_TARGET := $(PRODUCT_OUT)/system.img
 SYSTEMIMAGE_SOURCE_DIR := $(TARGET_OUT)
+
+# INSTALLED_SYSTEMIMAGE_TARGET used to be named INSTALLED_SYSTEMIMAGE. Create an alias for backward
+# compatibility, in case device-specific Makefiles still refer to the old name.
+INSTALLED_SYSTEMIMAGE := $(INSTALLED_SYSTEMIMAGE_TARGET)
 
 # The system partition needs room for the recovery image as well.  We
 # now store the recovery image as a binary patch using the boot image
@@ -1904,21 +1910,21 @@ endif # BOARD_USES_FULL_RECOVERY_IMAGE
 endif # INSTALLED_RECOVERYIMAGE_TARGET
 endif # INSTALLED_BOOTIMAGE_TARGET
 
-$(INSTALLED_SYSTEMIMAGE): $(BUILT_SYSTEMIMAGE) $(RECOVERY_FROM_BOOT_PATCH)
+$(INSTALLED_SYSTEMIMAGE_TARGET): $(BUILT_SYSTEMIMAGE) $(RECOVERY_FROM_BOOT_PATCH)
 	@echo "Install system fs image: $@"
 	$(copy-file-to-target)
 	$(hide) $(call assert-max-image-size,$@ $(RECOVERY_FROM_BOOT_PATCH),\
 		$(call read-image-prop-dictionary,\
 			$(systemimage_intermediates)/generated_system_image_info.txt,system_size))
 
-systemimage: $(INSTALLED_SYSTEMIMAGE)
+systemimage: $(INSTALLED_SYSTEMIMAGE_TARGET)
 
 .PHONY: systemimage-nodeps snod
 systemimage-nodeps snod: $(filter-out systemimage-nodeps snod,$(MAKECMDGOALS)) \
 	            | $(INTERNAL_USERIMAGES_DEPS)
 	@echo "make $@: ignoring dependencies"
-	$(call build-systemimage-target,$(INSTALLED_SYSTEMIMAGE))
-	$(hide) $(call assert-max-image-size,$(INSTALLED_SYSTEMIMAGE),\
+	$(call build-systemimage-target,$(INSTALLED_SYSTEMIMAGE_TARGET))
+	$(hide) $(call assert-max-image-size,$(INSTALLED_SYSTEMIMAGE_TARGET),\
 		$(call read-image-prop-dictionary,\
 			$(systemimage_intermediates)/generated_system_image_info.txt,system_size))
 
@@ -2634,7 +2640,7 @@ ifdef BOARD_AVB_SYSTEM_KEY_PATH
 $(eval $(call check-and-set-avb-chain-args,SYSTEM))
 else
 INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-    --include_descriptors_from_image $(INSTALLED_SYSTEMIMAGE)
+    --include_descriptors_from_image $(INSTALLED_SYSTEMIMAGE_TARGET)
 endif
 
 ifdef INSTALLED_VENDORIMAGE_TARGET
@@ -2750,7 +2756,7 @@ INSTALLED_VBMETAIMAGE_TARGET := $(BUILT_VBMETAIMAGE_TARGET)
 $(INSTALLED_VBMETAIMAGE_TARGET): \
 		$(AVBTOOL) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
-		$(INSTALLED_SYSTEMIMAGE) \
+		$(INSTALLED_SYSTEMIMAGE_TARGET) \
 		$(INSTALLED_VENDORIMAGE_TARGET) \
 		$(INSTALLED_PRODUCTIMAGE_TARGET) \
 		$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET) \
@@ -2777,16 +2783,12 @@ endif # BOARD_AVB_ENABLE
 # -----------------------------------------------------------------
 # super partition image
 
-# (1): list of items like "system", "vendor", "product", "product_services"
-# return: map each item to the corresponding image target.
-# system => $(BUILT_SYSTEMIMAGE), vendor => $(INSTALLED_VENDORIMAGE_TARGET), etc.
-define image-for-partitions
-$(foreach item,$(1),$(or $(strip $(foreach mapping,
-            system:$(BUILT_SYSTEMIMAGE)
-            product_services:$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET),
-        $(if $(filter $(call word-colon,1,$(mapping)),$(item)),
-            $(patsubst $(call word-colon,1,$(mapping)),$(call word-colon,2,$(mapping)),$(item))))),
-    $(INSTALLED_$(call to-upper,$(item)IMAGE_TARGET))))
+# Returns a list of image targets corresponding to the given list of partitions. For example, it
+# returns "$(INSTALLED_PRODUCTIMAGE_TARGET)" for "product", or "$(INSTALLED_SYSTEMIMAGE_TARGET)
+# $(INSTALLED_VENDORIMAGE_TARGET)" for "system vendor".
+# (1): list of partitions like "system", "vendor" or "system product product_services".
+define images-for-partitions
+$(strip $(foreach item,$(1),$(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET)))
 endef
 
 # (1): list of items like "system", "vendor", "product", "product_services"
@@ -2801,18 +2803,19 @@ ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 ifdef BOARD_SUPER_PARTITION_SIZE
 
 INSTALLED_SUPERIMAGE_TARGET := $(PRODUCT_OUT)/super.img
-$(INSTALLED_SUPERIMAGE_TARGET): $(call image-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
+INSTALLED_SUPERIMAGE_EMPTY_TARGET := $(PRODUCT_OUT)/super_empty.img
+
+$(INSTALLED_SUPERIMAGE_TARGET): $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
 
 # For A/B devices, super partition always contains sub-partitions in the _a slot, because this
 # image should only be used for bootstrapping / initializing the device. When flashing the image,
 # bootloader fastboot should always mark _a slot as bootable.
 ifeq ($(AB_OTA_UPDATER),true)
-$(INSTALLED_SUPERIMAGE_TARGET): PRIVATE_PARTITION_SUFFIX=_a
-$(INSTALLED_SUPERIMAGE_TARGET): PRIVATE_METADATA_SLOTS=2
+$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): PRIVATE_PARTITION_SUFFIX=_a
+$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): PRIVATE_METADATA_SLOTS=2
 else
-$(INSTALLED_SUPERIMAGE_TARGET): PRIVATE_METADATA_SLOTS=1
+$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): PRIVATE_METADATA_SLOTS=1
 endif # AB_OTA_UPDATER
-
 
 $(INSTALLED_SUPERIMAGE_TARGET): $(HOST_OUT_EXECUTABLES)/lpmake
 	$< \
@@ -2823,9 +2826,20 @@ $(INSTALLED_SUPERIMAGE_TARGET): $(HOST_OUT_EXECUTABLES)/lpmake
 		--output $@ \
 		$(foreach name,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
 			--partition $(name)$(PRIVATE_PARTITION_SUFFIX):$$($(UUIDGEN) $(name)$(PRIVATE_PARTITION_SUFFIX)):readonly:$(call read-size-of-partitions,$(name)) \
-			--image $(name)$(PRIVATE_PARTITION_SUFFIX)=$(call image-for-partitions,$(name)))
+			--image $(name)$(PRIVATE_PARTITION_SUFFIX)=$(call images-for-partitions,$(name)))
 
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_TARGET))
+
+$(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(HOST_OUT_EXECUTABLES)/lpmake
+	$< \
+		--metadata-size 65536 \
+		--metadata-slots $(PRIVATE_METADATA_SLOTS) \
+		--device-size $(BOARD_SUPER_PARTITION_SIZE) \
+		--output $@ \
+		$(foreach name,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+			--partition $(name)$(PRIVATE_PARTITION_SUFFIX):$$($(UUIDGEN) $(name)$(PRIVATE_SUPER_PARTITION_SUFFIX)):readonly:0)
+
+$(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_EMPTY_TARGET))
 
 endif # BOARD_SUPER_PARTITION_SIZE
 endif # PRODUCT_BUILD_SUPER_PARTITION
@@ -2845,7 +2859,7 @@ droid_targets: check_android_partition_sizes
 .PHONY: check_android_partition_sizes
 
 # Add image dependencies so that generated_*_image_info.txt are written before checking.
-check_android_partition_sizes: $(call image-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
+check_android_partition_sizes: $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
 
 check_android_partition_sizes:
 	partition_size_list="$(call read-size-of-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))"; \
@@ -3535,7 +3549,7 @@ updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
 APPCOMPAT_ZIP := $(PRODUCT_OUT)/appcompat.zip
 # For apps_only build we'll establish the dependency later in build/make/core/main.mk.
 ifndef TARGET_BUILD_APPS
-$(APPCOMPAT_ZIP): $(INSTALLED_SYSTEMIMAGE) \
+$(APPCOMPAT_ZIP): $(INSTALLED_SYSTEMIMAGE_TARGET) \
 		$(INSTALLED_RAMDISK_TARGET) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
@@ -3565,7 +3579,7 @@ name := $(name)-symbols-$(FILE_NAME_TAG)
 SYMBOLS_ZIP := $(PRODUCT_OUT)/$(name).zip
 # For apps_only build we'll establish the dependency later in build/make/core/main.mk.
 ifndef TARGET_BUILD_APPS
-$(SYMBOLS_ZIP): $(INSTALLED_SYSTEMIMAGE) \
+$(SYMBOLS_ZIP): $(INSTALLED_SYSTEMIMAGE_TARGET) \
 		$(INSTALLED_RAMDISK_TARGET) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
@@ -3592,7 +3606,7 @@ endif
 name := $(name)-coverage-$(FILE_NAME_TAG)
 COVERAGE_ZIP := $(PRODUCT_OUT)/$(name).zip
 ifndef TARGET_BUILD_APPS
-$(COVERAGE_ZIP): $(INSTALLED_SYSTEMIMAGE) \
+$(COVERAGE_ZIP): $(INSTALLED_SYSTEMIMAGE_TARGET) \
 		$(INSTALLED_RAMDISK_TARGET) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INSTALLED_USERDATAIMAGE_TARGET) \
@@ -3620,7 +3634,7 @@ endif
 name := $(name)-apps-$(FILE_NAME_TAG)
 
 APPS_ZIP := $(PRODUCT_OUT)/$(name).zip
-$(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE)
+$(APPS_ZIP): $(INSTALLED_SYSTEMIMAGE_TARGET)
 	@echo "Package apps: $@"
 	$(hide) rm -rf $@
 	$(hide) mkdir -p $(dir $@)
@@ -3684,7 +3698,7 @@ ifeq ($(BUILD_QEMU_IMAGES),true)
 INSTALLED_QEMU_SYSTEMIMAGE := $(PRODUCT_OUT)/system-qemu.img
 MK_QEMU_IMAGE_SH := device/generic/goldfish/tools/mk_qemu_image.sh
 SGDISK_HOST := $(HOST_OUT_EXECUTABLES)/sgdisk
-$(INSTALLED_QEMU_SYSTEMIMAGE): $(INSTALLED_SYSTEMIMAGE) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST) $(SIMG2IMG)
+$(INSTALLED_QEMU_SYSTEMIMAGE): $(INSTALLED_SYSTEMIMAGE_TARGET) $(MK_QEMU_IMAGE_SH) $(SGDISK_HOST) $(SIMG2IMG)
 	@echo Create system-qemu.img
 	(export SGDISK=$(SGDISK_HOST) SIMG2IMG=$(SIMG2IMG); $(MK_QEMU_IMAGE_SH) ${PRODUCT_OUT}/system.img)
 
@@ -3734,8 +3748,8 @@ INTERNAL_EMULATOR_PACKAGE_FILES += \
         $(HOST_OUT_EXECUTABLES)/emulator$(HOST_EXECUTABLE_SUFFIX) \
         prebuilts/qemu-kernel/$(TARGET_ARCH)/kernel-qemu \
         $(INSTALLED_RAMDISK_TARGET) \
-		$(INSTALLED_SYSTEMIMAGE) \
-		$(INSTALLED_USERDATAIMAGE_TARGET)
+        $(INSTALLED_SYSTEMIMAGE_TARGET) \
+        $(INSTALLED_USERDATAIMAGE_TARGET)
 
 name := $(TARGET_PRODUCT)-emulator-$(FILE_NAME_TAG)
 
@@ -3823,7 +3837,7 @@ deps := \
 	$(SYMBOLS_ZIP) \
 	$(COVERAGE_ZIP) \
 	$(APPCOMPAT_ZIP) \
-	$(INSTALLED_SYSTEMIMAGE) \
+	$(INSTALLED_SYSTEMIMAGE_TARGET) \
 	$(INSTALLED_QEMU_SYSTEMIMAGE) \
 	$(INSTALLED_QEMU_VENDORIMAGE) \
 	$(INSTALLED_USERDATAIMAGE_TARGET) \

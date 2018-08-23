@@ -500,6 +500,9 @@ $(call add-clean-step, find $(PRODUCT_OUT) -type f -name "*product-services*" -p
 $(call add-clean-step, find $(PRODUCT_OUT) -type d -name "*product-services*" -print0 | xargs -0 rm -rf)
 $(call add-clean-step, find $(PRODUCT_OUT) -type l -name "*product-services*" -print0 | xargs -0 rm -rf)
 
+# Remove obsolete recovery etc files
+$(call add-clean-step, rm -rf $(TARGET_RECOVERY_ROOT_OUT)/etc)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

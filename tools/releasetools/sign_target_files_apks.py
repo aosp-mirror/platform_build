@@ -370,13 +370,14 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       OPTIONS.rebuild_recovery = True
 
     # Don't copy OTA keys if we're replacing them.
-    elif (OPTIONS.replace_ota_keys and
-          filename in (
-              "BOOT/RAMDISK/res/keys",
-              "BOOT/RAMDISK/etc/update_engine/update-payload-key.pub.pem",
-              "RECOVERY/RAMDISK/res/keys",
-              "SYSTEM/etc/security/otacerts.zip",
-              "SYSTEM/etc/update_engine/update-payload-key.pub.pem")):
+    elif (
+        OPTIONS.replace_ota_keys and
+        filename in (
+            "BOOT/RAMDISK/res/keys",
+            "BOOT/RAMDISK/system/etc/update_engine/update-payload-key.pub.pem",
+            "RECOVERY/RAMDISK/res/keys",
+            "SYSTEM/etc/security/otacerts.zip",
+            "SYSTEM/etc/update_engine/update-payload-key.pub.pem")):
       pass
 
     # Skip META/misc_info.txt since we will write back the new values later.
@@ -635,7 +636,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
         pubkey)
     common.ZipWriteStr(
         output_tf_zip,
-        "BOOT/RAMDISK/etc/update_engine/update-payload-key.pub.pem",
+        "BOOT/RAMDISK/system/etc/update_engine/update-payload-key.pub.pem",
         pubkey)
 
   return new_recovery_keys

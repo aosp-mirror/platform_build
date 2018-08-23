@@ -18,6 +18,11 @@
 # device with no telephony.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
 
+# OTA support.
+PRODUCT_PACKAGES += \
+    update_engine \
+    update_verifier \
+
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
@@ -25,8 +30,7 @@ PRODUCT_NAME := mainline_system
 PRODUCT_BRAND := generic
 PRODUCT_SHIPPING_API_LEVEL := 28
 
-_base_mk_whitelist := \
-  recovery/root/etc/mke2fs.conf \
+_base_mk_whitelist :=
 
 _my_whitelist := $(_base_mk_whitelist)
 

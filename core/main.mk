@@ -406,7 +406,6 @@ endif
 # Typical build; include any Android.mk files we can find.
 #
 
-FULL_BUILD := true
 
 # Before we go and include all of the module makefiles, mark the PRODUCT_*
 # and ADDITIONAL*PROPERTIES values readonly so that they won't be modified.
@@ -423,6 +422,7 @@ ENFORCE_RRO_SOURCES :=
 endif
 
 subdir_makefiles_inc := .
+FULL_BUILD :=
 
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
@@ -434,7 +434,6 @@ include $(SOONG_ANDROID_MK) $(wildcard $(ONE_SHOT_MAKEFILE))
 # so that the modules will be installed in the same place they
 # would have been with a normal make.
 CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
-FULL_BUILD :=
 
 # A helper goal printing out install paths
 define register_module_install_path
@@ -463,6 +462,7 @@ UNIQUE_ALL_MODULES :=
 else # ONE_SHOT_MAKEFILE
 
 ifneq ($(dont_bother),true)
+FULL_BUILD := true
 #
 # Include all of the makefiles in the system
 #
@@ -1211,6 +1211,9 @@ systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 .PHONY: superimage
 superimage: $(INSTALLED_SUPERIMAGE_TARGET)
 
+.PHONY: superimage_empty
+superimage_empty: $(INSTALLED_SUPERIMAGE_EMPTY_TARGET)
+
 .PHONY: bootimage
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
@@ -1233,6 +1236,7 @@ droidcore: files \
     $(INSTALLED_BPTIMAGE_TARGET) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
     $(INSTALLED_ODMIMAGE_TARGET) \
+    $(INSTALLED_SUPERIMAGE_EMPTY_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \
     $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
     $(INSTALLED_FILES_FILE) \
@@ -1354,7 +1358,7 @@ else # TARGET_BUILD_APPS
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE)
+    $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE_TARGET)
     $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
 
     # Put XML formatted API files in the dist dir.
@@ -1434,6 +1438,11 @@ modules:
 	@echo "Available sub-modules:"
 	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
 	      tr -s ' ' '\n' | sort -u | $(COLUMN)
+
+.PHONY: dump-products
+dump-products:
+	$(dump-products)
+	@echo Successfully dumped products
 
 .PHONY: nothing
 nothing:
