@@ -93,6 +93,30 @@
       "revId": "9241c20d8af0865e641b388a71f912aba664e972",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f33fcaf3_5674730e",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 778,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-23T02:53:43Z",
+      "side": 1,
+      "message": "There are still some issue like below.\natest still can work correctly, but just a little doesn\u0027t make sense.\n\ne.g.\n  \"vintf_object_test\": { \"class\": [\"NATIVE_TESTS\"],  \"path\": [\"system/libvintf/test\"],  \"tags\": [\"optional\"],  \"installed\": [\"out/host/linux-x86/nativetest64/vintf_object_test/vintf_object_test\",  \"out/target/product/walleye/data/nativetest64/vintf_object_test/vintf_object_test\"],  \"compatibility_suites\": [\"null-suite\"],  \"auto_test_config\": [],  \"module_name\": [\"vintf_object_test\"],  \"test_config\": [] }, \n\n  \"vintf_object_test_32\": { \"class\": [\"NATIVE_TESTS\"],  \"path\": [\"system/libvintf/test\"],  \"tags\": [\"optional\"],  \"installed\": [\"out/host/linux-x86/nativetest/vintf_object_test/vintf_object_test\",  \"out/target/product/walleye/data/nativetest/vintf_object_test/vintf_object_test\"],  \"compatibility_suites\": [\"null-suite\"],  \"auto_test_config\": [],  \"module_name\": [\"vintf_object_test\"],  \"test_config\": [\"system/libvintf/test/AndroidTest.xml\"] },\n\nvintf_object_test \n    --\u003e auto_test_config \u003d [], \"test_config\": [] \nvintf_object_test_32 \n    --\u003e \"auto_test_config\": [], \"test_config\": [\"system/libvintf/test/AndroidTest.xml\"]",
+      "parentUuid": "5d2f2c94_f1e2adf2",
+      "range": {
+        "startLine": 771,
+        "startChar": 0,
+        "endLine": 778,
+        "endChar": 5
+      },
+      "revId": "9241c20d8af0865e641b388a71f912aba664e972",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
