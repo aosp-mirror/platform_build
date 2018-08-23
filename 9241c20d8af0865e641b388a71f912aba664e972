@@ -141,6 +141,30 @@
       "revId": "9241c20d8af0865e641b388a71f912aba664e972",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98fa950a_cf1e5fe2",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 778,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-08-23T03:49:01Z",
+      "side": 1,
+      "message": "I think this will make some problem on ATest due to currently we are only focus on those mod_info which their key \u003d\u003d \"module_name\". And if missing test_config value atest may treat it as untestable.",
+      "parentUuid": "f33fcaf3_5674730e",
+      "range": {
+        "startLine": 771,
+        "startChar": 0,
+        "endLine": 778,
+        "endChar": 5
+      },
+      "revId": "9241c20d8af0865e641b388a71f912aba664e972",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
