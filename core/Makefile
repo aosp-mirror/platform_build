@@ -2669,6 +2669,15 @@ INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
 endif
 endif
 
+ifdef INSTALLED_PRODUCT_SERVICESIMAGE_TARGET
+ifdef BOARD_AVB_PRODUCT_SERVICES_KEY_PATH
+$(eval $(call check-and-set-avb-chain-args,PRODUCT_SERVICES))
+else
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
+    --include_descriptors_from_image $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
+endif
+endif
+
 ifdef INSTALLED_ODMIMAGE_TARGET
 ifdef BOARD_AVB_ODM_KEY_PATH
 $(eval $(call check-and-set-avb-chain-args,ODM))
