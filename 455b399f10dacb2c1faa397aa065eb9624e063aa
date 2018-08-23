@@ -22,6 +22,30 @@
       "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f861ff2_043e1469",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 19
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-23T16:25:32Z",
+      "side": 1,
+      "message": "If we remove the logic here, it will be: \"test_config\": [\"\"] instead of \"test_config\": []\n\nAnd according this discussion, we kept the logic here.\nhttps://android-review.googlesource.com/c/platform/build/+/733616/10/core/tasks/module-info.mk#17\n\nthanks.",
+      "parentUuid": "44e2e4bf_ef0ef569",
+      "range": {
+        "startLine": 771,
+        "startChar": 0,
+        "endLine": 773,
+        "endChar": 5
+      },
+      "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
