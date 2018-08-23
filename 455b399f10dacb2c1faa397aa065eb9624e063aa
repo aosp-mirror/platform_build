@@ -94,6 +94,30 @@
       "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ba253d4_0f117692",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 19
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-08-23T17:13:44Z",
+      "side": 1,
+      "message": "If change to this we need to modified module-info.mk part from\n\u0027\"test_config\": [$(ALL_MODULES.$(m).TEST_CONFIG)], \u0027\nto\n\u0027\"test_config\": [\"$(ALL_MODULES.$(m).TEST_CONFIG)\"], \u0027\n\nThen it will be \"\" if $(ALL_MODULES.$(m).TEST_CONFIG) is empty.",
+      "parentUuid": "ec703b35_d3da6a35",
+      "range": {
+        "startLine": 771,
+        "startChar": 0,
+        "endLine": 773,
+        "endChar": 5
+      },
+      "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
