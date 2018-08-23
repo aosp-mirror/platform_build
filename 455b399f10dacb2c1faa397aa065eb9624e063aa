@@ -70,6 +70,30 @@
       "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "617d1562_44bda16e",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 19
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-23T17:12:16Z",
+      "side": 1,
+      "message": "It will cause error when we parsing the JSON file.\nBecause the value is not a \"string\".\n\nhttps://screenshot.googleplex.com/9y28mUBQVa0\n\n  File \"/usr/lib/python2.7/json/decoder.py\", line 382, in raw_decode\n    raise ValueError(\"No JSON object could be decoded\")\nValueError: No JSON object could be decoded",
+      "parentUuid": "ec703b35_d3da6a35",
+      "range": {
+        "startLine": 771,
+        "startChar": 0,
+        "endLine": 773,
+        "endChar": 5
+      },
+      "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
