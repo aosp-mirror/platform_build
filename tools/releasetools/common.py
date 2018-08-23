@@ -240,12 +240,28 @@ def LoadInfoDict(input_file, input_dir=None):
   system_root_image = d.get("system_root_image") == "true"
   if d.get("no_recovery") != "true":
     recovery_fstab_path = "RECOVERY/RAMDISK/system/etc/recovery.fstab"
+    if isinstance(input_file, zipfile.ZipFile):
+      if recovery_fstab_path not in input_file.namelist():
+        recovery_fstab_path = "RECOVERY/RAMDISK/etc/recovery.fstab"
+    else:
+      path = os.path.join(input_file, *recovery_fstab_path.split("/"))
+      if not os.path.exists(path):
+        recovery_fstab_path = "RECOVERY/RAMDISK/etc/recovery.fstab"
     d["fstab"] = LoadRecoveryFSTab(
         read_helper, d["fstab_version"], recovery_fstab_path, system_root_image)
+
   elif d.get("recovery_as_boot") == "true":
     recovery_fstab_path = "BOOT/RAMDISK/system/etc/recovery.fstab"
+    if isinstance(input_file, zipfile.ZipFile):
+      if recovery_fstab_path not in input_file.namelist():
+        recovery_fstab_path = "BOOT/RAMDISK/etc/recovery.fstab"
+    else:
+      path = os.path.join(input_file, *recovery_fstab_path.split("/"))
+      if not os.path.exists(path):
+        recovery_fstab_path = "BOOT/RAMDISK/etc/recovery.fstab"
     d["fstab"] = LoadRecoveryFSTab(
         read_helper, d["fstab_version"], recovery_fstab_path, system_root_image)
+
   else:
     d["fstab"] = None
 
