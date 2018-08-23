@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "4f453941_2c7ea31f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 653,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-23T03:36:39Z",
+      "side": 1,
+      "message": "Done, thanks.",
+      "parentUuid": "5504aeaf_fe6d6f71",
+      "range": {
+        "startLine": 652,
+        "startChar": 18,
+        "endLine": 653,
+        "endChar": 54
+      },
+      "revId": "9241c20d8af0865e641b388a71f912aba664e972",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e8a767c2_4f0f8914",
         "filename": "core/base_rules.mk",
         "patchSetId": 13
