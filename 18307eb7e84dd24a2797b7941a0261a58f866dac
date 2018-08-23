@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79cd5e2e_323c6ae1",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-23T05:03:52Z",
+      "side": 1,
+      "message": "This block is the problem.  You are not configuring test_config for multilib modules.  I think all of the test_config logic can move out of this conditional - there should be no problem autogenerating the test config files twice for multilib modules.",
+      "revId": "18307eb7e84dd24a2797b7941a0261a58f866dac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fad97f8c_dadf414f",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 649,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-23T05:03:52Z",
+      "side": 1,
+      "message": "remove this",
+      "range": {
+        "startLine": 648,
+        "startChar": 67,
+        "endLine": 649,
+        "endChar": 49
+      },
+      "revId": "18307eb7e84dd24a2797b7941a0261a58f866dac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f61d19f6_ace45647",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 771,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-23T05:03:52Z",
+      "side": 1,
+      "message": "This is unnecessary, assigning empty is mostly the same as non assigning at all",
+      "revId": "18307eb7e84dd24a2797b7941a0261a58f866dac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
