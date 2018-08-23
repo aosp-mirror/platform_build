@@ -69,6 +69,30 @@
       "revId": "9241c20d8af0865e641b388a71f912aba664e972",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d2f2c94_f1e2adf2",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 778,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-08-23T02:07:35Z",
+      "side": 1,
+      "message": "You\u0027re not adding anything to line 592-597:\n\nTry the following:\n* Delete line 634\n* Here at line 771 put:\n\nALL_MODULES.$(my_register_name).TEST_CONFIG :\u003d $(test_config)\ntest_config :\u003d",
+      "parentUuid": "9f5a631b_1a21126a",
+      "range": {
+        "startLine": 771,
+        "startChar": 0,
+        "endLine": 778,
+        "endChar": 5
+      },
+      "revId": "9241c20d8af0865e641b388a71f912aba664e972",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
