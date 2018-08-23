@@ -45,6 +45,30 @@
       "revId": "9241c20d8af0865e641b388a71f912aba664e972",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f5a631b_1a21126a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 778,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-23T02:02:26Z",
+      "side": 1,
+      "message": "We can\u0027t add this to line 592-597.\nThere are some problems because of lint 570\nifdef $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files\n\nI ran some test and it can\u0027t write the module-info correctly.",
+      "parentUuid": "e8a767c2_4f0f8914",
+      "range": {
+        "startLine": 771,
+        "startChar": 0,
+        "endLine": 778,
+        "endChar": 5
+      },
+      "revId": "9241c20d8af0865e641b388a71f912aba664e972",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
