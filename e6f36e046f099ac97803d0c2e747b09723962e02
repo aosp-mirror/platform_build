@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d1fccd20_0822637a",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-23T23:15:30Z",
+      "side": 1,
+      "message": "What\u0027s the expected mounting point for system.img, in non-system-as-root device\u0027s fstab?\n\nI was under the impression that it would be \"/system\", but maybe I misread the comment here:\nhttps://android-review.googlesource.com/c/platform/system/core/+/727609/7/init/first_stage_mount.cpp#366\n\n(If we indeed make the change, the code here needs to deal with both cases for the update path. As this function will possibly be called against an old build, when generating incremental OTAs from that old build.)",
+      "range": {
+        "startLine": 355,
+        "startChar": 2,
+        "endLine": 355,
+        "endChar": 48
+      },
+      "revId": "e6f36e046f099ac97803d0c2e747b09723962e02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
