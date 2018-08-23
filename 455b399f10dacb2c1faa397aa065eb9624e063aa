@@ -46,6 +46,30 @@
       "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec703b35_d3da6a35",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 19
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-08-23T16:37:02Z",
+      "side": 1,
+      "message": "But what if you just do:\n\nALL_MODULES.$(my_register_name).TEST_CONFIG :\u003d $(test_config)",
+      "parentUuid": "0f861ff2_043e1469",
+      "range": {
+        "startLine": 771,
+        "startChar": 0,
+        "endLine": 773,
+        "endChar": 5
+      },
+      "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
