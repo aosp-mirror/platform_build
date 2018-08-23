@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "57e27b09_5318b37a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 578,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-23T08:30:25Z",
+      "side": 1,
+      "message": "Thanks, I removed the following section and changed whole the indentation.\n\nifdef $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files\n  # Sync the auto_test_config value for multilib modules.\n  ifdef $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_autogen\n    ALL_MODULES.$(my_register_name).auto_test_config :\u003d true\n  endif\nelse\n\nAnd it worked well in my test.",
+      "parentUuid": "79cd5e2e_323c6ae1",
+      "revId": "18307eb7e84dd24a2797b7941a0261a58f866dac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad97f8c_dadf414f",
         "filename": "core/base_rules.mk",
         "patchSetId": 14
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "9bc2af0f_3685b59a",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 649,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-23T08:30:25Z",
+      "side": 1,
+      "message": "Done, thanks.",
+      "parentUuid": "fad97f8c_dadf414f",
+      "range": {
+        "startLine": 648,
+        "startChar": 67,
+        "endLine": 649,
+        "endChar": 49
+      },
+      "revId": "18307eb7e84dd24a2797b7941a0261a58f866dac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f61d19f6_ace45647",
         "filename": "core/base_rules.mk",
         "patchSetId": 14
@@ -56,6 +98,24 @@
       "revId": "18307eb7e84dd24a2797b7941a0261a58f866dac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e63bc970_a87e3ea8",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 771,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-23T08:30:25Z",
+      "side": 1,
+      "message": "Done, thanks.",
+      "parentUuid": "f61d19f6_ace45647",
+      "revId": "18307eb7e84dd24a2797b7941a0261a58f866dac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
