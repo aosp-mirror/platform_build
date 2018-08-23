@@ -370,7 +370,7 @@ TARGET_COPY_OUT_PRODUCT_SERVICES := system/product_services
 else ifeq ($(filter product_services system/product_services,$(TARGET_COPY_OUT_PRODUCT_SERVICES)),)
 $(error TARGET_COPY_OUT_PRODUCT_SERVICES must be either 'product_services' or 'system/product_services', seeing '$(TARGET_COPY_OUT_PRODUCT_SERVICES)'.)
 endif
-PRODUCT_SERVICES_COPY_FILES := $(subst $(_product_services_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),$(PRODUCT_SERVICES_COPY_FILES))
+PRODUCT_COPY_FILES := $(subst $(_product_services_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),$(PRODUCT_COPY_FILES))
 
 BOARD_USES_PRODUCT_SERVICESIMAGE :=
 ifdef BOARD_PREBUILT_PRODUCT_SERVICESIMAGE
