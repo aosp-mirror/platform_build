@@ -165,6 +165,30 @@
       "revId": "9241c20d8af0865e641b388a71f912aba664e972",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ce304bc_dd85b062",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 13
+      },
+      "lineNbr": 778,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-08-23T05:11:33Z",
+      "side": 1,
+      "message": "Yes, I also think so.\nNow, I changed it as the follows.\n\nifneq (,$(LOCAL_FULL_TEST_CONFIG))\n  ALL_MODULES.$(my_register_name).TEST_CONFIG :\u003d \"$(LOCAL_FULL_TEST_CONFIG)\"\nelse ifneq (,$(LOCAL_TEST_CONFIG))\n  ALL_MODULES.$(my_register_name).TEST_CONFIG :\u003d \"$(LOCAL_PATH)/$(LOCAL_TEST_CONFIG)\"\nelse\n  module_test_config :\u003d $(wildcard $(LOCAL_PATH)/AndroidTest.xml)\n  ifeq (,$(module_test_config))\n    ALL_MODULES.$(my_register_name).TEST_CONFIG :\u003d\n  else\n    ALL_MODULES.$(my_register_name).TEST_CONFIG :\u003d \"$(module_test_config)\"\n  endif\n  module_test_config :\u003d\nendif\n\nThen, it can make sure all TEST_CONFIG be set to a correct value.\nAnd it will be useful for atest. \ne.g. \n   Tab Completion: It can read this value to know it\u0027s a correst test and don\u0027t have to parsing its path.",
+      "parentUuid": "98fa950a_cf1e5fe2",
+      "range": {
+        "startLine": 771,
+        "startChar": 0,
+        "endLine": 778,
+        "endChar": 5
+      },
+      "revId": "9241c20d8af0865e641b388a71f912aba664e972",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
