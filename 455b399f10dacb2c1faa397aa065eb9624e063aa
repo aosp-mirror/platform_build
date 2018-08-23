@@ -118,6 +118,30 @@
       "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7e63437f_642cd9e7",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 19
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-08-23T17:27:18Z",
+      "side": 1,
+      "message": "Explained in chat, we need to quotes so its \"config/path\" not config/path",
+      "parentUuid": "3ba253d4_0f117692",
+      "range": {
+        "startLine": 771,
+        "startChar": 0,
+        "endLine": 773,
+        "endChar": 5
+      },
+      "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
