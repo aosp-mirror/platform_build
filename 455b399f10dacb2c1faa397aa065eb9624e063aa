@@ -142,6 +142,23 @@
       "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7e9cbde_512a12e0",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 19
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-23T18:16:11Z",
+      "side": 1,
+      "message": "$(if $(ALL_MODULES.$(m).TEST_CONFIG),\"$(ALL_MODULES.$(m).TEST_CONFIG)\")\n\nThen you won\u0027t need to store quotes in the variable, which might cause problems later.\n\nThe structure of the modules-info.json file is pretty weird, why is everything an array?  I\u0027d expect test_config: \".../AndroidTest.xml\" and then leave it out if it is not set.",
+      "revId": "455b399f10dacb2c1faa397aa065eb9624e063aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
