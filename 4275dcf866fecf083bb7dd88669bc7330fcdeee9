@@ -16,6 +16,24 @@
       "revId": "4275dcf866fecf083bb7dd88669bc7330fcdeee9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5ce19cc_743bede7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-08-23T22:23:08Z",
+      "side": 1,
+      "message": "Okay, I will try that in a follow up CL, which will need a lot more changes in core/definitions.mk.",
+      "parentUuid": "db48b5a0_37e05a1c",
+      "revId": "4275dcf866fecf083bb7dd88669bc7330fcdeee9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
