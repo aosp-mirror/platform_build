@@ -664,7 +664,7 @@ def AddImagesToTargetFiles(filename):
       print("target_files appears to already contain images.")
       sys.exit(1)
 
-  OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.input_tmp, OPTIONS.input_tmp)
+  OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.input_tmp, repacking=True)
 
   has_recovery = OPTIONS.info_dict.get("no_recovery") != "true"
 
