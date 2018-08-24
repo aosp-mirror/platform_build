@@ -22,6 +22,30 @@
       "revId": "e6f36e046f099ac97803d0c2e747b09723962e02",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8d01b38_77d4fd6e",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 13
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-08-24T16:49:39Z",
+      "side": 1,
+      "message": "Hm.  You\u0027re right, these lines of code don\u0027t need to be changed at all.  With actual system-as-root, system will be mounted as /, but otherwise it is still mounted as /system and then switched to.  I\u0027ll update it.",
+      "parentUuid": "d1fccd20_0822637a",
+      "range": {
+        "startLine": 355,
+        "startChar": 2,
+        "endLine": 355,
+        "endChar": 48
+      },
+      "revId": "e6f36e046f099ac97803d0c2e747b09723962e02",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
