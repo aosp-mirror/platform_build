@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9802ac4_31ceec97",
+        "filename": "core/envsetup.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-08-24T08:31:43Z",
+      "side": 1,
+      "message": "Should probably use PRODUCT_COPY_FILES, no matter it\u0027s for which partition image.",
+      "range": {
+        "startLine": 395,
+        "startChar": 0,
+        "endLine": 395,
+        "endChar": 18
+      },
+      "revId": "d2412269368a7c60321ba012e5c47bdea6095f05",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
