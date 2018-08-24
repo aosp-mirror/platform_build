@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ef885530_30878575",
+        "filename": "core/Makefile",
+        "patchSetId": 16
+      },
+      "lineNbr": 784,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-24T22:25:42Z",
+      "side": 1,
+      "message": "Not seeing `installed-files-ramdisk.txt` in the build artifacts (I checked taimen-userdebug). I think this needs to be added to droidcore (in core/main.mk).",
+      "range": {
+        "startLine": 784,
+        "startChar": 0,
+        "endLine": 784,
+        "endChar": 28
+      },
+      "revId": "6d3a1bb32f6ff99d3773e91eaf8b5a66dfc41d9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
