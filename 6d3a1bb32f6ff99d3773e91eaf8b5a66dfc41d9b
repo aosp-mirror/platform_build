@@ -22,6 +22,30 @@
       "revId": "6d3a1bb32f6ff99d3773e91eaf8b5a66dfc41d9b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8860cc1f_1f040330",
+        "filename": "core/Makefile",
+        "patchSetId": 16
+      },
+      "lineNbr": 784,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-08-24T23:37:04Z",
+      "side": 1,
+      "message": "Hm looks like INSTALLED_FILES_FILE_ROOT and INSTALLED_FILES_JSON_ROOT were missing too.  I added them all.",
+      "parentUuid": "ef885530_30878575",
+      "range": {
+        "startLine": 784,
+        "startChar": 0,
+        "endLine": 784,
+        "endChar": 28
+      },
+      "revId": "6d3a1bb32f6ff99d3773e91eaf8b5a66dfc41d9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
