@@ -1096,7 +1096,9 @@ class PropertyFiles(object):
     def ComputeEntryOffsetSize(name):
       """Computes the zip entry offset and size."""
       info = zip_file.getinfo(name)
-      offset = info.header_offset + len(info.FileHeader())
+      offset = info.header_offset
+      offset += zipfile.sizeFileHeader
+      offset += len(info.extra) + len(info.filename)
       size = info.file_size
       return '%s:%d:%d' % (os.path.basename(name), offset, size)
 
@@ -1220,7 +1222,9 @@ class AbOtaPropertyFiles(StreamingPropertyFiles):
     payload, till the end of 'medatada_signature_message'.
     """
     payload_info = input_zip.getinfo('payload.bin')
-    payload_offset = payload_info.header_offset + len(payload_info.FileHeader())
+    payload_offset = payload_info.header_offset
+    payload_offset += zipfile.sizeFileHeader
+    payload_offset += len(payload_info.extra) + len(payload_info.filename)
     payload_size = payload_info.file_size
 
     with input_zip.open('payload.bin', 'r') as payload_fp:
