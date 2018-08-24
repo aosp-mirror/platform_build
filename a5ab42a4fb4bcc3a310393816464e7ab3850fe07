@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bef3fa92_3dcd3375",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2918,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-24T15:29:17Z",
+      "side": 1,
+      "message": "I\u0027d prefer rm -f \u0026\u0026 touch",
+      "revId": "a5ab42a4fb4bcc3a310393816464e7ab3850fe07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff3f9ce4_a6454c13",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-24T15:29:17Z",
+      "side": 1,
+      "message": "We try to only declare the proguard map output here if obfuscation is enabled, but can obfuscation be turned back on in a flags file that is not visible to the make command line?",
+      "revId": "a5ab42a4fb4bcc3a310393816464e7ab3850fe07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
