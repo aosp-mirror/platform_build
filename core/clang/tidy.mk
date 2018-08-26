@@ -14,6 +14,19 @@
 # limitations under the License.
 #
 
+# clang-tidy doesn't recognize every flag that clang does. This is unlikely to
+# be a complete list, but we can populate this with the ones we know to avoid
+# issues with clang-diagnostic-unused-command-line-argument.
+# b/111885396: -flto affected header include directory;
+# -fsanitize and -fwhole-program-vtables need -flto.
+CLANG_TIDY_UNKNOWN_CFLAGS := \
+  -Wa,% \
+  -flto \
+  -flto=% \
+  -fsanitize=% \
+  -fsanitize-% \
+  -fwhole-program-vtables \
+
 # Returns 2nd word of $(1) if $(2) has prefix of the 1st word of $(1).
 define find_default_local_tidy_check2
 $(if $(filter $(word 1,$(1))%,$(2)/),$(word 2,$(1)))

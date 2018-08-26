@@ -1662,6 +1662,10 @@ endif
 ifeq (true,$(BOARD_AVB_ENABLE))
 $(INSTALLED_BOOTIMAGE_TARGET) : $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
 endif
+ifdef BOARD_INCLUDE_RECOVERY_DTBO
+$(INSTALLED_BOOTIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
+endif
+
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 		$(INSTALLED_RAMDISK_TARGET) \
 		$(INTERNAL_RECOVERYIMAGE_FILES) \
@@ -1673,8 +1677,12 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 		$(RECOVERY_INSTALL_OTA_KEYS) \
 		$(BOARD_RECOVERY_KERNEL_MODULES) \
 		$(DEPMOD)
-		$(call pretty,"Target boot image from recovery: $@")
-		$(call build-recoveryimage-target, $@)
+	$(call pretty,"Target boot image from recovery: $@")
+	$(call build-recoveryimage-target, $@)
+endif # BOARD_USES_RECOVERY_AS_BOOT
+
+ifdef BOARD_INCLUDE_RECOVERY_DTBO
+$(INSTALLED_RECOVERYIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
 endif
 
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
@@ -1689,7 +1697,7 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 		$(RECOVERY_INSTALL_OTA_KEYS) \
 		$(BOARD_RECOVERY_KERNEL_MODULES) \
 		$(DEPMOD)
-		$(call build-recoveryimage-target, $@)
+	$(call build-recoveryimage-target, $@)
 
 ifdef RECOVERY_RESOURCE_ZIP
 $(RECOVERY_RESOURCE_ZIP): $(INSTALLED_RECOVERYIMAGE_TARGET) | $(ZIPTIME)
@@ -2661,6 +2669,15 @@ INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
 endif
 endif
 
+ifdef INSTALLED_PRODUCT_SERVICESIMAGE_TARGET
+ifdef BOARD_AVB_PRODUCT_SERVICES_KEY_PATH
+$(eval $(call check-and-set-avb-chain-args,PRODUCT_SERVICES))
+else
+INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
+    --include_descriptors_from_image $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
+endif
+endif
+
 ifdef INSTALLED_ODMIMAGE_TARGET
 ifdef BOARD_AVB_ODM_KEY_PATH
 $(eval $(call check-and-set-avb-chain-args,ODM))
@@ -2812,32 +2829,36 @@ $(INSTALLED_SUPERIMAGE_TARGET): $(call images-for-partitions,$(BOARD_SUPER_PARTI
 # bootloader fastboot should always mark _a slot as bootable.
 ifeq ($(AB_OTA_UPDATER),true)
 $(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): PRIVATE_PARTITION_SUFFIX=_a
-$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): PRIVATE_METADATA_SLOTS=2
-else
-$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): PRIVATE_METADATA_SLOTS=1
 endif # AB_OTA_UPDATER
 
-$(INSTALLED_SUPERIMAGE_TARGET): $(HOST_OUT_EXECUTABLES)/lpmake
-	$< \
-		--sparse \
-		--metadata-size 65536 \
-		--metadata-slots $(PRIVATE_METADATA_SLOTS) \
-		--device-size $(BOARD_SUPER_PARTITION_SIZE) \
-		--output $@ \
-		$(foreach name,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-			--partition $(name)$(PRIVATE_PARTITION_SUFFIX):$$($(UUIDGEN) $(name)$(PRIVATE_PARTITION_SUFFIX)):readonly:$(call read-size-of-partitions,$(name)) \
-			--image $(name)$(PRIVATE_PARTITION_SUFFIX)=$(call images-for-partitions,$(name)))
+$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(HOST_OUT_EXECUTABLES)/lpmake
+
+# $(1): output image path
+# $(2): slot A suffix (_a or empty)
+# $(3): include images or not (true or empty)
+define build-superimage-target
+  $(HOST_OUT_EXECUTABLES)/lpmake \
+    $(if $(3), --sparse) \
+    --metadata-size 65536 \
+    --metadata-slots $(if $(2),2,1) \
+    --device-size $(BOARD_SUPER_PARTITION_SIZE) \
+    --output $(1) \
+    $(foreach name,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+      --partition $(name)$(2):$$($(UUIDGEN) $(name)$(2)):readonly:$(if $(3),$(call read-size-of-partitions,$(name)),0) \
+      $(if $(3), --image $(name)$(2)=$(call images-for-partitions,$(name))) \
+      $(if $(2), --partition $(name)_b:$$($(UUIDGEN) $(name)_b):readonly:0) \
+    )
+endef
+
+$(INSTALLED_SUPERIMAGE_TARGET):
+	$(call pretty,"Target super fs image: $@")
+	$(call build-superimage-target,$@,$(PRIVATE_PARTITION_SUFFIX),true)
 
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_TARGET))
 
-$(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(HOST_OUT_EXECUTABLES)/lpmake
-	$< \
-		--metadata-size 65536 \
-		--metadata-slots $(PRIVATE_METADATA_SLOTS) \
-		--device-size $(BOARD_SUPER_PARTITION_SIZE) \
-		--output $@ \
-		$(foreach name,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-			--partition $(name)$(PRIVATE_PARTITION_SUFFIX):$$($(UUIDGEN) $(name)$(PRIVATE_SUPER_PARTITION_SUFFIX)):readonly:0)
+$(INSTALLED_SUPERIMAGE_EMPTY_TARGET):
+	$(call pretty,"Target empty super fs image: $@")
+	$(call build-superimage-target,$@,$(PRIVATE_PARTITION_SUFFIX))
 
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_EMPTY_TARGET))
 
@@ -3131,6 +3152,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 		$(INSTALLED_KERNEL_TARGET) \
 		$(INSTALLED_2NDBOOTLOADER_TARGET) \
+		$(BOARD_PREBUILT_DTBOIMAGE) \
 		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_BASE_FS_PATH) \
 		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH) \
 		$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH) \
@@ -3167,7 +3189,7 @@ ifdef INSTALLED_2NDBOOTLOADER_TARGET
 	$(hide) cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/second
 endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
-	$(hide) cp $(INSTALLED_DTBOIMAGE_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_dtbo
+	$(hide) cp $(BOARD_PREBUILT_DTBOIMAGE) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_dtbo
 endif
 ifdef INTERNAL_KERNEL_CMDLINE
 	$(hide) echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/cmdline
