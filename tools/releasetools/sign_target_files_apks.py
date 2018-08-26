@@ -597,8 +597,8 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   if p.returncode != 0:
     raise common.ExternalError("failed to run dumpkeys")
 
-  # system_root_image puts the recovery keys at BOOT/RAMDISK.
-  if misc_info.get("system_root_image") == "true":
+  if (misc_info.get("system_root_image") == "true" and
+      misc_info.get("recovery_as_boot") == "true"):
     recovery_keys_location = "BOOT/RAMDISK/res/keys"
   else:
     recovery_keys_location = "RECOVERY/RAMDISK/res/keys"
