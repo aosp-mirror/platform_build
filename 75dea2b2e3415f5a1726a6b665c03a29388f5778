@@ -16,6 +16,24 @@
       "revId": "75dea2b2e3415f5a1726a6b665c03a29388f5778",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09a59825_b1629bec",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1255,
+      "author": {
+        "id": 1052399
+      },
+      "writtenOn": "2018-08-27T21:13:14Z",
+      "side": 1,
+      "message": "Could you give me more instructions about adding the ninja build rule dependencies?\nI see now that compilation units defined in Android.bp files have ninja dependency on compilers like clang/clang++ and clang-tidy. However for compilation units defined in Android.mk, their ninja build rules only depend on the source files, not compilers. Thanks.",
+      "parentUuid": "daf5c608_fda062b2",
+      "revId": "75dea2b2e3415f5a1726a6b665c03a29388f5778",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
