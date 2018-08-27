@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8317fd76_f2c3691d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2918,
+      "author": {
+        "id": 1121678
+      },
+      "writtenOn": "2018-08-27T11:00:18Z",
+      "side": 1,
+      "message": "Done. Ended up placing the rm before the invocation of R8, and the touch after.",
+      "parentUuid": "bef3fa92_3dcd3375",
+      "revId": "a5ab42a4fb4bcc3a310393816464e7ab3850fe07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ff3f9ce4_a6454c13",
         "filename": "core/java.mk",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2018-08-24T15:29:17Z",
       "side": 1,
       "message": "We try to only declare the proguard map output here if obfuscation is enabled, but can obfuscation be turned back on in a flags file that is not visible to the make command line?",
+      "revId": "a5ab42a4fb4bcc3a310393816464e7ab3850fe07",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "25132438_7468bef2",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 478,
+      "author": {
+        "id": 1121678
+      },
+      "writtenOn": "2018-08-27T11:00:18Z",
+      "side": 1,
+      "message": "No, that is not possible. ProGuard has obfuscation on by default, and -dontobfuscate to turn it off. There is no option to turn it off. R8 has the same behavior.\n\nHowever, even with \n\nLOCAL_PROGUARD_ENABLED :\u003d obfuscation\n\nthe configuration file can contain -dontobfuscate, so that obfuscation does not happen after all.",
+      "parentUuid": "ff3f9ce4_a6454c13",
       "revId": "a5ab42a4fb4bcc3a310393816464e7ab3850fe07",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
