@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "978e4d65_c40e9ca8",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1090,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-27T21:25:58Z",
+      "side": 1,
+      "message": "This should depend on $(my_cc), etc.  Fixing it for everything except clang-tidy.sh should probably go in a different CL, but clang-tidy.sh is likely to change along with the platform so is more important to fix.  Same for all other occurrences of -to-o in this file.",
+      "revId": "75dea2b2e3415f5a1726a6b665c03a29388f5778",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "daf5c608_fda062b2",
         "filename": "core/definitions.mk",
         "patchSetId": 1
