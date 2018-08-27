@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "daf5c608_fda062b2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1255,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-08-27T17:24:48Z",
+      "side": 1,
+      "message": "You\u0027ll need to add clang-tidy.sh to the dependencies of any rule that calls this function.\n\nAlso, we prefer to export the location of clang-tidy.sh as a variable from Soong so it\u0027s only hardcoded in one place.",
+      "revId": "75dea2b2e3415f5a1726a6b665c03a29388f5778",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
