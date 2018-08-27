@@ -77,8 +77,9 @@ PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product_services',
                             'odm')
 # Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
 # images. (b/24377993, b/80600931)
-FIXED_FILE_TIMESTAMP = (datetime.datetime(2009, 1, 1, 0, 0, 0, 0, None)
-                        - datetime.datetime.utcfromtimestamp(0)).total_seconds()
+FIXED_FILE_TIMESTAMP = int((
+    datetime.datetime(2009, 1, 1, 0, 0, 0, 0, None) -
+    datetime.datetime.utcfromtimestamp(0)).total_seconds())
 
 
 class OutputFile(object):
@@ -97,6 +98,7 @@ class OutputFile(object):
   def Write(self):
     if self._output_zip:
       common.ZipWrite(self._output_zip, self.name, self._zip_name)
+
 
 def GetCareMap(which, imgname):
   """Returns the care_map string for the given partition.
