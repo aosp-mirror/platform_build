@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ce19fab2_76d183c5",
+        "filename": "core/main.mk",
+        "patchSetId": 22
+      },
+      "lineNbr": 1316,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-08-28T16:33:45Z",
+      "side": 1,
+      "message": "Here\u0027s the list of files to be dist\u0027d (the one above only list the dependencies).\n\nL1357-1361 likely need to be updated.",
+      "range": {
+        "startLine": 1316,
+        "startChar": 4,
+        "endLine": 1316,
+        "endChar": 34
+      },
+      "revId": "77e072fde98b133a4a6e5ae9d1110b0082d0f407",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
