@@ -147,6 +147,11 @@ $(error Building on a 32-bit x86 host is not supported: $(UNAME)!)
 endif
 endif
 
+ifeq ($(HOST_OS),darwin)
+  # Mac no longer supports 32-bit executables
+  HOST_2ND_ARCH :=
+endif
+
 BUILD_ARCH := $(HOST_ARCH)
 BUILD_2ND_ARCH := $(HOST_2ND_ARCH)
 
