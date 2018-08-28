@@ -370,6 +370,11 @@ ifneq ($(filter address,$(my_sanitize)),)
   endif
 endif
 
+# If local module needs HWASAN, add compiler flags.
+ifneq ($(filter hwaddress,$(my_sanitize)),)
+  my_cflags += $(HWADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
+endif
+
 # Use minimal diagnostics when integer overflow is enabled; never do it for HOST or AUX modules
 ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
   # Pre-emptively add UBSAN minimal runtime incase a static library dependency requires it
