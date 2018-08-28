@@ -2569,7 +2569,15 @@ $(INSTALLED_DTBOIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
 	cp $(BOARD_PREBUILT_DTBOIMAGE) $@
 endif
 
-endif
+endif # BOARD_PREBUILT_DTBOIMAGE
+
+# Returns a list of image targets corresponding to the given list of partitions. For example, it
+# returns "$(INSTALLED_PRODUCTIMAGE_TARGET)" for "product", or "$(INSTALLED_SYSTEMIMAGE_TARGET)
+# $(INSTALLED_VENDORIMAGE_TARGET)" for "system vendor".
+# (1): list of partitions like "system", "vendor" or "system product product_services".
+define images-for-partitions
+$(strip $(foreach item,$(1),$(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET)))
+endef
 
 # -----------------------------------------------------------------
 # vbmeta image
@@ -2586,8 +2594,9 @@ BOARD_AVB_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 endif
 
-INTERNAL_AVB_SIGNING_ARGS := \
-    --algorithm $(BOARD_AVB_ALGORITHM) --key $(BOARD_AVB_KEY_PATH)
+ifndef BOARD_BOOTIMAGE_PARTITION_SIZE
+$(error BOARD_BOOTIMAGE_PARTITION_SIZE must be set for BOARD_AVB_ENABLE)
+endif
 
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
 DTBO_FOOTER_ARGS := BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS
@@ -2598,11 +2607,11 @@ PRODUCT_FOOTER_ARGS := BOARD_AVB_PRODUCT_ADD_HASHTREE_FOOTER_ARGS
 PRODUCT_SERVICES_FOOTER_ARGS := BOARD_AVB_PRODUCT_SERVICES_ADD_HASHTREE_FOOTER_ARGS
 ODM_FOOTER_ARGS := BOARD_AVB_ODM_ADD_HASHTREE_FOOTER_ARGS
 
-# Check and set required build variables for a chain partition.
-# $(1): the partition to enable AVB chain, e.g., BOOT or SYSTEM.
-define check-and-set-avb-chain-args
-$(eval PART := $(1))
-$(eval part=$(call to-lower,$(PART)))
+# Helper function that checks and sets required build variables for an AVB chained partition.
+# $(1): the partition to enable AVB chain, e.g., boot or system.
+define _check-and-set-avb-chain-args
+$(eval part := $(1))
+$(eval PART=$(call to-upper,$(part)))
 
 $(eval _key_path := BOARD_AVB_$(PART)_KEY_PATH)
 $(eval _signing_algorithm := BOARD_AVB_$(PART)_ALGORITHM)
@@ -2626,77 +2635,46 @@ $(eval _footer_args := $(PART)_FOOTER_ARGS)
 $(eval $($(_footer_args)) += --rollback_index $($(_rollback_index)))
 endef
 
+# Checks and sets the required build variables for an AVB partition. The partition will be
+# configured as a chained partition, if BOARD_AVB_<partition>_KEY_PATH is defined. Otherwise the
+# image descriptor will be included into vbmeta.img.
+# $(1): Partition name, e.g. boot or system.
+define check-and-set-avb-args
+$(if $(BOARD_AVB_$(call to-upper,$(1))_KEY_PATH),\
+    $(call _check-and-set-avb-chain-args,$(1)),\
+    $(eval INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
+        --include_descriptors_from_image $(call images-for-partitions,$(1))))
+endef
+
 ifdef INSTALLED_BOOTIMAGE_TARGET
-ifdef BOARD_AVB_BOOT_KEY_PATH
-$(eval $(call check-and-set-avb-chain-args,BOOT))
-else
-INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-    --include_descriptors_from_image $(INSTALLED_BOOTIMAGE_TARGET)
-endif
+$(eval $(call check-and-set-avb-args,boot))
 endif
 
-ifdef BOARD_AVB_SYSTEM_KEY_PATH
-$(eval $(call check-and-set-avb-chain-args,SYSTEM))
-else
-INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-    --include_descriptors_from_image $(INSTALLED_SYSTEMIMAGE_TARGET)
-endif
+$(eval $(call check-and-set-avb-args,system))
 
 ifdef INSTALLED_VENDORIMAGE_TARGET
-ifdef BOARD_AVB_VENDOR_KEY_PATH
-$(eval $(call check-and-set-avb-chain-args,VENDOR))
-else
-INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-    --include_descriptors_from_image $(INSTALLED_VENDORIMAGE_TARGET)
-endif
+$(eval $(call check-and-set-avb-args,vendor))
 endif
 
 ifdef INSTALLED_PRODUCTIMAGE_TARGET
-ifdef BOARD_AVB_PRODUCT_KEY_PATH
-$(eval $(call check-and-set-avb-chain-args,PRODUCT))
-else
-INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-    --include_descriptors_from_image $(INSTALLED_PRODUCTIMAGE_TARGET)
-endif
+$(eval $(call check-and-set-avb-args,product))
 endif
 
 ifdef INSTALLED_PRODUCT_SERVICESIMAGE_TARGET
-ifdef BOARD_AVB_PRODUCT_SERVICES_KEY_PATH
-$(eval $(call check-and-set-avb-chain-args,PRODUCT_SERVICES))
-else
-INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-    --include_descriptors_from_image $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
-endif
+$(eval $(call check-and-set-avb-args,product_services))
 endif
 
 ifdef INSTALLED_ODMIMAGE_TARGET
-ifdef BOARD_AVB_ODM_KEY_PATH
-$(eval $(call check-and-set-avb-chain-args,ODM))
-else
-INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-    --include_descriptors_from_image $(INSTALLED_ODMIMAGE_TARGET)
-endif
+$(eval $(call check-and-set-avb-args,odm))
 endif
 
 ifdef INSTALLED_DTBOIMAGE_TARGET
-ifdef BOARD_AVB_DTBO_KEY_PATH
-$(eval $(call check-and-set-avb-chain-args,DTBO))
-else
-INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-    --include_descriptors_from_image $(INSTALLED_DTBOIMAGE_TARGET)
-endif
+$(eval $(call check-and-set-avb-args,dtbo))
 endif
 
 ifdef INSTALLED_RECOVERYIMAGE_TARGET
-ifdef BOARD_AVB_RECOVERY_KEY_PATH
-$(eval $(call check-and-set-avb-chain-args,RECOVERY))
-else
-INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
-    --include_descriptors_from_image $(INSTALLED_RECOVERYIMAGE_TARGET)
+$(eval $(call check-and-set-avb-args,recovery))
 endif
-endif
-
-BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096
 
 # Add kernel cmdline descriptor for kernel to mount system.img as root with
 # dm-verity. This works when system.img is either chained or not-chained:
@@ -2708,16 +2686,14 @@ ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += --setup_as_rootfs_from_kernel
 endif
 
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096
+
 ifdef BOARD_AVB_ROLLBACK_INDEX
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --rollback_index $(BOARD_AVB_ROLLBACK_INDEX)
 endif
 
 ifeq (eng,$(filter eng, $(TARGET_BUILD_VARIANT)))
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --set_hashtree_disabled_flag
-endif
-
-ifndef BOARD_BOOTIMAGE_PARTITION_SIZE
-  $(error BOARD_BOOTIMAGE_PARTITION_SIZE must be set for BOARD_AVB_ENABLE)
 endif
 
 # $(1): the directory to extract public keys to
@@ -2754,13 +2730,16 @@ define build-vbmetaimage-target
   $(call extract-avb-chain-public-keys, $(AVB_CHAIN_KEY_DIR))
   $(hide) $(AVBTOOL) make_vbmeta_image \
     $(INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS) \
-    $(INTERNAL_AVB_SIGNING_ARGS) \
+    $(PRIVATE_AVB_VBMETA_SIGNING_ARGS) \
     $(BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS) \
     --output $@
   $(hide) rm -rf $(AVB_CHAIN_KEY_DIR)
 endef
 
 INSTALLED_VBMETAIMAGE_TARGET := $(BUILT_VBMETAIMAGE_TARGET)
+$(INSTALLED_VBMETAIMAGE_TARGET): PRIVATE_AVB_VBMETA_SIGNING_ARGS := \
+    --algorithm $(BOARD_AVB_ALGORITHM) --key $(BOARD_AVB_KEY_PATH)
+
 $(INSTALLED_VBMETAIMAGE_TARGET): \
 		$(AVBTOOL) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
@@ -2790,14 +2769,6 @@ endif # BOARD_AVB_ENABLE
 
 # -----------------------------------------------------------------
 # super partition image
-
-# Returns a list of image targets corresponding to the given list of partitions. For example, it
-# returns "$(INSTALLED_PRODUCTIMAGE_TARGET)" for "product", or "$(INSTALLED_SYSTEMIMAGE_TARGET)
-# $(INSTALLED_VENDORIMAGE_TARGET)" for "system vendor".
-# (1): list of partitions like "system", "vendor" or "system product product_services".
-define images-for-partitions
-$(strip $(foreach item,$(1),$(INSTALLED_$(call to-upper,$(item))IMAGE_TARGET)))
-endef
 
 # (1): list of items like "system", "vendor", "product", "product_services"
 # return: map each item into a command ( wrapped in $$() ) that reads the size
