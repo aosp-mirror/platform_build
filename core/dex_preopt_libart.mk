@@ -77,8 +77,7 @@ define get-image-file-path
 $(dir $(2))$(1)/$(notdir $(2))
 endef
 
-# note we use core-libart.jar in place of core.jar for ART.
-LIBART_TARGET_BOOT_JARS := $(patsubst core, core-libart,$(DEXPREOPT_BOOT_JARS_MODULES))
+LIBART_TARGET_BOOT_JARS := $(DEXPREOPT_BOOT_JARS_MODULES)
 LIBART_TARGET_BOOT_DEX_LOCATIONS := $(foreach jar,$(LIBART_TARGET_BOOT_JARS),/$(DEXPREOPT_BOOT_JAR_DIR)/$(jar).jar)
 LIBART_TARGET_BOOT_DEX_FILES := $(foreach jar,$(LIBART_TARGET_BOOT_JARS),$(call intermediates-dir-for,JAVA_LIBRARIES,$(jar),,COMMON)/javalib.jar)
 
