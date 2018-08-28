@@ -105,8 +105,6 @@ ALL_VINTF_MANIFEST_FRAGMENTS_LIST:=
 # All tests that should be skipped in presubmit check.
 ALL_DISABLED_PRESUBMIT_TESTS :=
 
-sanitize_tidy_cflags = $(filter-out $(CLANG_TIDY_UNKNOWN_CFLAGS),$1)
-
 ###########################################################
 ## Debugging; prints a variable list to stdout
 ###########################################################
@@ -1252,10 +1250,16 @@ define transform-cpp-to-o-compiler-args
 	$(PRIVATE_CPPFLAGS_NO_OVERRIDE)
 endef
 
+# PATH_TO_CLANG_TIDY_SHELL is defined in build/soong
+define call-clang-tidy
+CLANG_TIDY=$(PATH_TO_CLANG_TIDY) \
+  $(PATH_TO_CLANG_TIDY_SHELL) \
+  $(PRIVATE_TIDY_FLAGS) \
+  -checks=$(PRIVATE_TIDY_CHECKS)
+endef
+
 define clang-tidy-cpp
-$(hide) $(PATH_TO_CLANG_TIDY) $(PRIVATE_TIDY_FLAGS) \
-  -checks=$(PRIVATE_TIDY_CHECKS) \
-  $< -- $(call sanitize_tidy_cflags,$(transform-cpp-to-o-compiler-args))
+$(hide) $(call-clang-tidy) $< -- $(transform-cpp-to-o-compiler-args)
 endef
 
 ifneq (,$(filter 1 true,$(WITH_TIDY_ONLY)))
@@ -1301,9 +1305,7 @@ $(call transform-c-or-s-to-o-compiler-args, \
 endef
 
 define clang-tidy-c
-$(hide) $(PATH_TO_CLANG_TIDY) $(PRIVATE_TIDY_FLAGS) \
-  -checks=$(PRIVATE_TIDY_CHECKS) \
-  $< -- $(call sanitize_tidy_cflags,$(transform-c-to-o-compiler-args))
+$(hide) $(call-clang-tidy) $< -- $(transform-c-to-o-compiler-args)
 endef
 
 ifneq (,$(filter 1 true,$(WITH_TIDY_ONLY)))
@@ -1371,9 +1373,7 @@ define transform-host-cpp-to-o-compiler-args
 endef
 
 define clang-tidy-host-cpp
-$(hide) $(PATH_TO_CLANG_TIDY) $(PRIVATE_TIDY_FLAGS) \
-  -checks=$(PRIVATE_TIDY_CHECKS) \
-  $< -- $(call sanitize_tidy_cflags,$(transform-host-cpp-to-o-compiler-args))
+$(hide) $(call-clang-tidy) $< -- $(transform-host-cpp-to-o-compiler-args)
 endef
 
 ifneq (,$(filter 1 true,$(WITH_TIDY_ONLY)))
@@ -1423,9 +1423,7 @@ define transform-host-c-to-o-compiler-args
 endef
 
 define clang-tidy-host-c
-$(hide) $(PATH_TO_CLANG_TIDY) $(PRIVATE_TIDY_FLAGS) \
-  -checks=$(PRIVATE_TIDY_CHECKS) \
-  $< -- $(call sanitize_tidy_cflags,$(transform-host-c-to-o-compiler-args))
+$(hide) $(call-clang-tidy) $< -- $(transform-host-c-to-o-compiler-args)
 endef
 
 ifneq (,$(filter 1 true,$(WITH_TIDY_ONLY)))
