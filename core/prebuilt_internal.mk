@@ -188,6 +188,8 @@ else ifdef LOCAL_USE_VNDK
     else
         my_link_type := native:vendor
     endif
+else ifneq ($(filter $(TARGET_RECOVERY_OUT)/%,$(LOCAL_MODULE_PATH)),)
+my_link_type := native:recovery
 else
 my_link_type := native:platform
 endif
