@@ -237,6 +237,10 @@ def LoadInfoDict(input_file, input_dir=None):
   makeint("boot_size")
   makeint("fstab_version")
 
+  # We changed recovery.fstab path in Q, from ../RAMDISK/etc/recovery.fstab to
+  # ../RAMDISK/system/etc/recovery.fstab. LoadInfoDict() has to handle both
+  # cases, since it may load the info_dict from an old build (e.g. when
+  # generating incremental OTAs from that build).
   system_root_image = d.get("system_root_image") == "true"
   if d.get("no_recovery") != "true":
     recovery_fstab_path = "RECOVERY/RAMDISK/system/etc/recovery.fstab"
