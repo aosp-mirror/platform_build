@@ -1450,6 +1450,11 @@ else ifdef LOCAL_USE_VNDK
         my_warn_types :=
         my_allowed_types := native:vendor native:vndk
     endif
+else ifneq ($(filter $(TARGET_RECOVERY_OUT)/%,$(LOCAL_MODULE_PATH)),)
+my_link_type := native:recovery
+my_warn_types :=
+# TODO(b/113303515) remove native:platform and my_allowed_ndk_types
+my_allowed_types := native:recovery native:platform $(my_allowed_ndk_types)
 else
 my_link_type := native:platform
 my_warn_types := $(my_warn_ndk_types)
@@ -1737,7 +1742,7 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
     # Disable clang-tidy if clang is disabled.
     my_tidy_enabled := false
   else
-    tidy_only: $(cpp_objects) $(c_objects)
+    tidy_only: $(cpp_objects) $(c_objects) $(gen_c_objects) $(gen_cpp_objects)
     # Set up global default checks
     my_tidy_checks := $(WITH_TIDY_CHECKS)
     ifeq ($(my_tidy_checks),)
@@ -1775,6 +1780,15 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
 endif
 
 my_tidy_checks := $(subst $(space),,$(my_tidy_checks))
+
+# Add dependency of clang-tidy and clang-tidy.sh
+ifneq ($(my_tidy_checks),)
+  my_clang_tidy_programs := $(PATH_TO_CLANG_TIDY) $(PATH_TO_CLANG_TIDY_SHELL)
+  $(cpp_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
+  $(c_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
+  $(gen_cpp_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
+  $(gen_c_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
+endif
 
 # Move -l* entries from ldflags to ldlibs, and everything else to ldflags
 my_ldlib_flags := $(my_ldflags) $(my_ldlibs)

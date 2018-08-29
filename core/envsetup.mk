@@ -147,6 +147,11 @@ $(error Building on a 32-bit x86 host is not supported: $(UNAME)!)
 endif
 endif
 
+ifeq ($(HOST_OS),darwin)
+  # Mac no longer supports 32-bit executables
+  HOST_2ND_ARCH :=
+endif
+
 BUILD_ARCH := $(HOST_ARCH)
 BUILD_2ND_ARCH := $(HOST_2ND_ARCH)
 
@@ -236,7 +241,7 @@ TARGET_COPY_OUT_ODM := $(_odm_path_placeholder)
 #################################################################
 # Set up minimal BOOTCLASSPATH list of jars to build/execute
 # java code with dalvikvm/art.
-TARGET_CORE_JARS := core-oj core-libart conscrypt okhttp bouncycastle apache-xml
+TARGET_CORE_JARS := core-oj core-libart core-simple conscrypt okhttp bouncycastle apache-xml
 ifeq ($(EMMA_INSTRUMENT),true)
   ifneq ($(EMMA_INSTRUMENT_STATIC),true)
     # For instrumented build, if Jacoco is not being included statically

@@ -922,7 +922,9 @@ endef
 define resolve-product-relative-paths
   $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),\
     $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
-      $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))
+      $(subst $(_product_services_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),\
+        $(subst $(_odm_path_placeholder),$(TARGET_COPY_OUT_ODM),\
+          $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))
 endef
 
 # Lists most of the files a particular product installs, including:
