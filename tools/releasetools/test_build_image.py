@@ -96,16 +96,6 @@ class BuildImageTest(unittest.TestCase):
     }
     self.assertFalse(CheckHeadroom(ext4fs_output, prop_dict))
 
-  def test_SetUpInDirAndFsConfig_SystemRootImageFalse(self):
-    prop_dict = {
-        'fs_config': 'fs-config',
-        'mount_point': 'system',
-    }
-    in_dir, fs_config = SetUpInDirAndFsConfig('/path/to/in_dir', prop_dict)
-    self.assertEqual('/path/to/in_dir', in_dir)
-    self.assertEqual('fs-config', fs_config)
-    self.assertEqual('system', prop_dict['mount_point'])
-
   def test_SetUpInDirAndFsConfig_SystemRootImageTrue_NonSystem(self):
     prop_dict = {
         'fs_config': 'fs-config',
@@ -124,7 +114,7 @@ class BuildImageTest(unittest.TestCase):
       fs_config_fp.write('fs-config-{}\n'.format(partition))
     return fs_config
 
-  def test_SetUpInDirAndFsConfig_SystemRootImageTrue(self):
+  def test_SetUpInDirAndFsConfig(self):
     root_dir = common.MakeTempDir()
     with open(os.path.join(root_dir, 'init'), 'w') as init_fp:
       init_fp.write('init')
@@ -140,7 +130,6 @@ class BuildImageTest(unittest.TestCase):
         'fs_config': fs_config_system,
         'mount_point': 'system',
         'root_dir': root_dir,
-        'system_root_image': 'true',
     }
     in_dir, fs_config = SetUpInDirAndFsConfig(origin_in, prop_dict)
 
@@ -154,7 +143,7 @@ class BuildImageTest(unittest.TestCase):
     self.assertTrue(filecmp.cmp(fs_config_system, fs_config))
     self.assertEqual('/', prop_dict['mount_point'])
 
-  def test_SetUpInDirAndFsConfig_SystemRootImageTrue_WithRootFsConfig(self):
+  def test_SetUpInDirAndFsConfig_WithRootFsConfig(self):
     root_dir = common.MakeTempDir()
     with open(os.path.join(root_dir, 'init'), 'w') as init_fp:
       init_fp.write('init')
@@ -172,7 +161,6 @@ class BuildImageTest(unittest.TestCase):
         'mount_point': 'system',
         'root_dir': root_dir,
         'root_fs_config': fs_config_root,
-        'system_root_image': 'true',
     }
     in_dir, fs_config = SetUpInDirAndFsConfig(origin_in, prop_dict)
 
