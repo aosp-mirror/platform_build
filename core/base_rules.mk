@@ -776,7 +776,7 @@ INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 ##########################################################
 # Track module-level dependencies.
 # Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
-ALL_DEPS.MODULES := $(sort $(ALL_DEPS.MODULES) $(LOCAL_MODULE))
+ALL_DEPS.MODULES := $(ALL_DEPS.MODULES) $(LOCAL_MODULE)
 ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(ALL_MODULES.$(LOCAL_MODULE).ALL_DEPS) \
   $(LOCAL_STATIC_LIBRARIES) \
