@@ -108,6 +108,7 @@ PRODUCT_PACKAGES += \
     libaudiopolicyservice \
     libaudioutils \
     libbinder \
+    libbinder_ndk \
     libc \
     libcamera2ndk \
     libcamera_client \
