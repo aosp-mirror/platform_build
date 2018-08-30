@@ -745,15 +745,15 @@ else
 endif
 
 # -----------------------------------------------------------------
-# the ramdisk
-INTERNAL_RAMDISK_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
+# the root dir
+INTERNAL_ROOT_FILES := $(filter $(TARGET_ROOT_OUT)/%, \
 	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
 
 INSTALLED_FILES_FILE_ROOT := $(PRODUCT_OUT)/installed-files-root.txt
 INSTALLED_FILES_JSON_ROOT := $(INSTALLED_FILES_FILE_ROOT:.txt=.json)
 $(INSTALLED_FILES_FILE_ROOT): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_ROOT)
-$(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_RAMDISK_FILES) $(FILESLIST)
+$(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_ROOT_FILES) $(FILESLIST)
 	@echo Installed file list: $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
@@ -762,18 +762,35 @@ $(INSTALLED_FILES_FILE_ROOT) : $(INTERNAL_RAMDISK_FILES) $(FILESLIST)
 
 $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
 
+# -----------------------------------------------------------------
+# the ramdisk
+INTERNAL_RAMDISK_FILES := $(filter $(TARGET_RAMDISK_OUT)/%, \
+	$(ALL_GENERATED_SOURCES) \
+	$(ALL_DEFAULT_INSTALLED_MODULES))
+
+INSTALLED_FILES_FILE_RAMDISK := $(PRODUCT_OUT)/installed-files-ramdisk.txt
+INSTALLED_FILES_JSON_RAMDISK := $(INSTALLED_FILES_FILE_RAMDISK:.txt=.json)
+$(INSTALLED_FILES_FILE_RAMDISK): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_RAMDISK)
+$(INSTALLED_FILES_FILE_RAMDISK) : $(INTERNAL_RAMDISK_FILES) $(FILESLIST)
+	@echo Installed file list: $@
+	@mkdir -p $(dir $@)
+	@rm -f $@
+	$(hide) $(FILESLIST) $(TARGET_RAMDISK_OUT) > $(@:.txt=.json)
+	$(hide) build/make/tools/fileslist_util.py -c $(@:.txt=.json) > $@
+
+$(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_RAMDISK))
 BUILT_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk.img
 
 # We just build this directly to the install location.
 INSTALLED_RAMDISK_TARGET := $(BUILT_RAMDISK_TARGET)
-$(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_RAMDISK_FILES) $(INSTALLED_FILES_FILE_ROOT) | $(MINIGZIP)
+$(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_RAMDISK_FILES) $(INSTALLED_FILES_FILE_RAMDISK) | $(MINIGZIP)
 	$(call pretty,"Target ram disk: $@")
-	$(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_ROOT_OUT) | $(MINIGZIP) > $@
+	$(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_RAMDISK_OUT) | $(MINIGZIP) > $@
 
 .PHONY: ramdisk-nodeps
 ramdisk-nodeps: $(MKBOOTFS) | $(MINIGZIP)
 	@echo "make $@: ignoring dependencies"
-	$(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_ROOT_OUT) | $(MINIGZIP) > $(INSTALLED_RAMDISK_TARGET)
+	$(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_RAMDISK_OUT) | $(MINIGZIP) > $(INSTALLED_RAMDISK_TARGET)
 
 INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 
@@ -949,10 +966,11 @@ $(2) $(3): PRIVATE_DIR := $(5)
 $(2) : $(3)
 $(3) : $(6) $(BUILD_SYSTEM)/Makefile build/make/tools/generate-notice-files.py
 	build/make/tools/generate-notice-files.py --text-output $(2) \
-		$(if $(filter $(1),xml_excluded_vendor_product),-e vendor$(comma)product --xml-output, \
+		$(if $(filter $(1),xml_excluded_extra_partitions),-e vendor$(comma)product$(comma)product_services --xml-output, \
 		  $(if $(filter $(1),xml_vendor),-i vendor --xml-output, \
 		    $(if $(filter $(1),xml_product),-i product --xml-output, \
-		      --html-output))) $(3) \
+		      $(if $(filter $(1),xml_product_services),-i product_services --xml-output, \
+		        --html-output)))) $(3) \
 		-t $$(PRIVATE_MESSAGE) -s $$(PRIVATE_DIR)/src
 notice_files: $(2) $(3)
 endef
@@ -983,6 +1001,11 @@ target_product_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE_PRODUCT.txt
 target_product_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE_PRODUCT.xml
 target_product_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_PRODUCT.xml.gz
 installed_product_notice_xml_gz := $(TARGET_OUT_PRODUCT)/etc/NOTICE.xml.gz
+
+target_product_services_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE_PRODUCT_SERVICES.txt
+target_product_services_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE_PRODUCT_SERVICES.xml
+target_product_services_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_PRODUCT_SERVICES.xml.gz
+installed_product_services_notice_xml_gz := $(TARGET_OUT_PRODUCT_SERVICES)/etc/NOTICE.xml.gz
 endif
 
 ifndef TARGET_BUILD_APPS
@@ -991,7 +1014,7 @@ winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
 pdk_fusion_notice_files := $(filter $(TARGET_OUT_NOTICE_FILES)/%, $(ALL_PDK_FUSION_FILES))
 
 ifdef target_vendor_notice_file_xml_gz
-$(eval $(call combine-notice-files, xml_excluded_vendor_product, \
+$(eval $(call combine-notice-files, xml_excluded_extra_partitions, \
 			$(target_notice_file_txt), \
 			$(target_notice_file_html_or_xml), \
 			"Notices for files contained in the filesystem images in this directory:", \
@@ -1008,6 +1031,14 @@ $(eval $(call combine-notice-files, xml_product, \
 			$(target_product_notice_file_txt), \
 			$(target_product_notice_file_xml), \
 			"Notices for files contained in the product filesystem image in this directory:", \
+			$(TARGET_OUT_NOTICE_FILES), \
+			$(target_notice_file_html_or_xml)))
+endif
+ifdef target_product_services_notice_file_txt
+$(eval $(call combine-notice-files, xml_product_services, \
+			$(target_product_services_notice_file_txt), \
+			$(target_product_services_notice_file_xml), \
+			"Notices for files contained in the product_services filesystem image in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
 			$(target_notice_file_html_or_xml)))
 endif
@@ -1054,6 +1085,14 @@ $(installed_product_notice_xml_gz): $(target_product_notice_file_xml_gz)
 	$(copy-file-to-target)
 endif
 
+ifdef target_product_services_notice_file_xml_gz
+# Install the product html file at /product_services/etc/NOTICE.xml.gz.
+$(target_product_services_notice_file_xml_gz): $(target_product_services_notice_file_xml) | $(MINIGZIP)
+	$(hide) $(MINIGZIP) -9 < $< > $@
+$(installed_product_services_notice_xml_gz): $(target_product_services_notice_file_xml_gz)
+	$(copy-file-to-target)
+endif
+
 # if we've been run my mm, mmm, etc, don't reinstall this every time
 ifeq ($(ONE_SHOT_MAKEFILE),)
   ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
@@ -1062,6 +1101,9 @@ ifeq ($(ONE_SHOT_MAKEFILE),)
   endif
   ifdef target_product_notice_file_xml_gz
     ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_notice_xml_gz)
+  endif
+  ifdef target_product_services_notice_file_xml_gz
+    ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_services_notice_xml_gz)
   endif
 endif
 endif  # TARGET_BUILD_APPS
@@ -1346,8 +1388,8 @@ $(if $(BOARD_AVB_ENABLE),\
 $(if $(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)),\
     $(hide) echo "recovery_as_boot=true" >> $(1))
 $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),\
-    $(hide) echo "system_root_image=true" >> $(1)
-    $(hide) echo "root_dir=$(TARGET_ROOT_OUT)" >> $(1))
+    $(hide) echo "system_root_image=true" >> $(1))
+$(hide) echo "root_dir=$(TARGET_ROOT_OUT)" >> $(1)
 $(if $(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),$(hide) echo "use_dynamic_partition_size=true" >> $(1))
 $(if $(3),$(hide) $(foreach kv,$(3),echo "$(kv)" >> $(1);))
 endef
@@ -1602,6 +1644,8 @@ define build-recoveryimage-target
   # Copying baseline ramdisk...
   # Use rsync because "cp -Rf" fails to overwrite broken symlinks on Mac.
   $(hide) rsync -a --exclude=sdcard $(IGNORE_RECOVERY_SEPOLICY) $(IGNORE_CACHE_LINK) $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
+  $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),, \
+    $(hide) rsync -a $(TARGET_RAMDISK_OUT)/* $(TARGET_RECOVERY_ROOT_OUT)/)
   # Modifying ramdisk contents...
   $(if $(BOARD_RECOVERY_KERNEL_MODULES), \
     $(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery)))
@@ -1658,6 +1702,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
 endif
 
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
+		$(INTERNAL_ROOT_FILES) \
 		$(INSTALLED_RAMDISK_TARGET) \
 		$(INTERNAL_RECOVERYIMAGE_FILES) \
 		$(recovery_initrc) $(recovery_sepolicy) $(recovery_kernel) \
@@ -1677,6 +1722,7 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
 endif
 
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
+		$(INTERNAL_ROOT_FILES) \
 		$(INSTALLED_RAMDISK_TARGET) \
 		$(INSTALLED_BOOTIMAGE_TARGET) \
 		$(INTERNAL_RECOVERYIMAGE_FILES) \
@@ -1742,11 +1788,7 @@ ifneq (,$(filter address, $(SANITIZE_TARGET)))
   endif
 endif
 
-# When building a system root image, also add the ramdisk image as a dependency
-# to ensure all files in it are built before it is created.
-ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-  FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_RAMDISK_FILES) $(INSTALLED_FILES_FILE_ROOT)
-endif
+FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
 
 # -----------------------------------------------------------------
 # Final System VINTF manifest including fragments. This is not assembled
@@ -3165,13 +3207,12 @@ endif
 endif # INSTALLED_RECOVERYIMAGE_TARGET defined or BOARD_USES_RECOVERY_AS_BOOT is true
 	@# Components of the boot image
 	$(hide) mkdir -p $(zip_root)/BOOT
-ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 	$(hide) mkdir -p $(zip_root)/ROOT
 	$(hide) $(call package_files-copy-root, \
 		$(TARGET_ROOT_OUT),$(zip_root)/ROOT)
-else
+ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 	$(hide) $(call package_files-copy-root, \
-		$(TARGET_ROOT_OUT),$(zip_root)/BOOT/RAMDISK)
+		$(TARGET_RAMDISK_OUT),$(zip_root)/BOOT/RAMDISK)
 endif
 	@# If we are using recovery as boot, this is already done when processing recovery.
 ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
@@ -3422,10 +3463,10 @@ endif
 ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
 	$(hide) $(call fs_config,$(zip_root)/ODM,odm/) > $(zip_root)/META/odm_filesystem_config.txt
 endif
-ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
-	@# When using BOARD_BUILD_SYSTEM_ROOT_IMAGE, ROOT always contains the files for the root under
-	@# normal boot. BOOT/RAMDISK exists only if additionally using BOARD_USES_RECOVERY_AS_BOOT.
+	@# ROOT always contains the files for the root under normal boot.
 	$(hide) $(call fs_config,$(zip_root)/ROOT,) > $(zip_root)/META/root_filesystem_config.txt
+ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+	@# BOOT/RAMDISK exists only if additionally using BOARD_USES_RECOVERY_AS_BOOT.
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
 	$(hide) $(call fs_config,$(zip_root)/BOOT/RAMDISK,) > $(zip_root)/META/boot_filesystem_config.txt
 endif
