@@ -183,6 +183,7 @@ PRODUCT_PACKAGES += \
     libwilhelm \
     linker \
     lmkd \
+    LocalTransport \
     locksettings \
     logcat \
     logd \
