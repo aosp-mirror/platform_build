@@ -1475,15 +1475,26 @@ recovery_kernel := $(INSTALLED_KERNEL_TARGET) # same as a non-recovery system
 recovery_ramdisk := $(PRODUCT_OUT)/ramdisk-recovery.img
 recovery_resources_common := $(call include-path-for, recovery)/res
 
-# Set recovery_density to the density bucket of the device.
-recovery_density := unknown
+# Set recovery_density to a density bucket based on PRODUCT_AAPT_PREF_CONFIG if set. Otherwise use
+# the default medium density.
 ifneq (,$(PRODUCT_AAPT_PREF_CONFIG))
-# If PRODUCT_AAPT_PREF_CONFIG includes a dpi bucket, then use that value.
+# If PRODUCT_AAPT_PREF_CONFIG includes a non-numeric dpi bucket, always perfer that value.
 recovery_density := $(filter %dpi,$(PRODUCT_AAPT_PREF_CONFIG))
-else
-# Otherwise, use the default medium density.
-recovery_densities := mdpi
+ifeq (,$(filter xxxhdpi xxhdpi xhdpi hdpi mdpi,$(recovery_density)))
+recovery_density_value := $(patsubst %dpi,%,$(recovery_density))
+# Map the numeric dpi value to a bucket. We roughly use the medium point between the primary
+# densities to split buckets.
+# ------160------240------320----------480------------640------
+#       mdpi     hdpi    xhdpi        xxhdpi        xxxhdpi
+recovery_density := $(strip \
+  $(or $(if $(filter $(shell echo $$(($(recovery_density_value) >= 560))),1),xxxhdpi),\
+       $(if $(filter $(shell echo $$(($(recovery_density_value) >= 400))),1),xxhdpi),\
+       $(if $(filter $(shell echo $$(($(recovery_density_value) >= 280))),1),xhdpi),\
+       $(if $(filter $(shell echo $$(($(recovery_density_value) >= 200))),1),hdpi,mdpi)))
 endif
+else # PRODUCT_AAPT_PREF_CONFIG is empty
+recovery_density := mdpi
+endif # PRODUCT_AAPT_PREF_CONFIG
 
 ifneq (,$(wildcard $(recovery_resources_common)-$(recovery_density)))
 recovery_resources_common := $(recovery_resources_common)-$(recovery_density)
@@ -1491,12 +1502,10 @@ else
 recovery_resources_common := $(recovery_resources_common)-xhdpi
 endif
 
-# Select the 18x32 font on high-density devices (xhdpi and up); and
-# the 12x22 font on other devices.  Note that the font selected here
-# can be overridden for a particular device by putting a font.png in
-# its private recovery resources.
-
-ifneq (,$(filter xxxhdpi 560dpi xxhdpi 400dpi xhdpi,$(recovery_density)))
+# Select the 18x32 font on high-density devices (xhdpi and up); and the 12x22 font on other devices.
+# Note that the font selected here can be overridden for a particular device by putting a font.png
+# in its private recovery resources.
+ifneq (,$(filter xxxhdpi xxhdpi xhdpi,$(recovery_density)))
 recovery_font := $(call include-path-for, recovery)/fonts/18x32.png
 else
 recovery_font := $(call include-path-for, recovery)/fonts/12x22.png
