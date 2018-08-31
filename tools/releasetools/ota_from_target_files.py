@@ -1523,18 +1523,14 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
       print("boot      target: %d  source: %d  diff: %d" % (
           target_boot.size, source_boot.size, len(d)))
 
-      common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
+      common.ZipWriteStr(output_zip, "boot.img.p", d)
 
-      # TODO(b/110106408): Remove after properly handling the SHA-1 embedded in
-      # the filename argument in updater code. Prior to that, explicitly list
-      # the SHA-1 of the source image, in case the updater tries to find a
-      # matching backup from /cache. Similarly for the call to
-      # script.ApplyPatch() below.
-      script.PatchCheck("%s:%s:%d:%s:%d:%s" %
-                        (boot_type, boot_device,
-                         source_boot.size, source_boot.sha1,
-                         target_boot.size, target_boot.sha1),
-                        source_boot.sha1)
+      script.PatchPartitionCheck(
+          "{}:{}:{}:{}".format(
+              boot_type, boot_device, target_boot.size, target_boot.sha1),
+          "{}:{}:{}:{}".format(
+              boot_type, boot_device, source_boot.size, source_boot.sha1))
+
       size.append(target_boot.size)
 
   if size:
@@ -1590,13 +1586,12 @@ else
         print("boot image changed; including patch.")
         script.Print("Patching boot image...")
         script.ShowProgress(0.1, 10)
-        script.ApplyPatch("%s:%s:%d:%s:%d:%s"
-                          % (boot_type, boot_device,
-                             source_boot.size, source_boot.sha1,
-                             target_boot.size, target_boot.sha1),
-                          "-",
-                          target_boot.size, target_boot.sha1,
-                          source_boot.sha1, "patch/boot.img.p")
+        script.PatchPartition(
+            '{}:{}:{}:{}'.format(
+                boot_type, boot_device, target_boot.size, target_boot.sha1),
+            '{}:{}:{}:{}'.format(
+                boot_type, boot_device, source_boot.size, source_boot.sha1),
+            'boot.img.p')
     else:
       print("boot image unchanged; skipping.")
 
