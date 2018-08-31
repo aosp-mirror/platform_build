@@ -58,10 +58,14 @@ my_exported_sdk_libs_file := $(call local-intermediates-dir,COMMON)/exported-sdk
 $(fixed_android_manifest): PRIVATE_EXPORTED_SDK_LIBS_FILE := $(my_exported_sdk_libs_file)
 $(fixed_android_manifest): $(my_exported_sdk_libs_file)
 
-$(fixed_android_manifest): PRIVATE_MANIFEST_FIXER_FLAGS :=
+my_manifest_fixer_flags :=
 ifneq ($(LOCAL_MODULE_CLASS),APPS)
-$(fixed_android_manifest): PRIVATE_MANIFEST_FIXER_FLAGS := --library
+    my_manifest_fixer_flags += --library
 endif
+ifeq ($(LOCAL_PRIVATE_PLATFORM_APIS),true)
+    my_manifest_fixer_flags += --uses-non-sdk-api
+endif
+$(fixed_android_manifest): PRIVATE_MANIFEST_FIXER_FLAGS := $(my_manifest_fixer_flags)
 $(fixed_android_manifest): $(MANIFEST_FIXER)
 $(fixed_android_manifest): $(main_android_manifest)
 	@echo "Fix manifest: $@"
