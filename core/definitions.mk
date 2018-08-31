@@ -1178,7 +1178,6 @@ endef
 ###########################################################
 ## Commands for running protoc to compile .proto into .java
 ###########################################################
-# PATH contains HOST_OUT_EXECUTABLES to allow protoc-gen-* plugins
 
 define transform-proto-to-java
 @mkdir -p $(dir $@)
@@ -1186,7 +1185,6 @@ define transform-proto-to-java
 @rm -rf $(PRIVATE_PROTO_JAVA_OUTPUT_DIR)
 @mkdir -p $(PRIVATE_PROTO_JAVA_OUTPUT_DIR)
 $(hide) for f in $(PRIVATE_PROTO_SRC_FILES); do \
-        PATH=$$PATH:$(HOST_OUT_EXECUTABLES) \
         $(PROTOC) \
         $(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
         $(PRIVATE_PROTO_JAVA_OUTPUT_OPTION)="$(PRIVATE_PROTO_JAVA_OUTPUT_PARAMS):$(PRIVATE_PROTO_JAVA_OUTPUT_DIR)" \
@@ -1199,13 +1197,11 @@ endef
 ######################################################################
 ## Commands for running protoc to compile .proto into .pb.cc (or.pb.c) and .pb.h
 ######################################################################
-# PATH contains HOST_OUT_EXECUTABLES to allow protoc-gen-* plugins
 
 define transform-proto-to-cc
 @echo "Protoc: $@ <= $<"
 @mkdir -p $(dir $@)
 $(hide) \
-	PATH=$$PATH:$(HOST_OUT_EXECUTABLES) \
 	$(PROTOC) \
 	$(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
 	$(PRIVATE_PROTOC_FLAGS) \
