@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bbbfaca2_92b95c77",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-08-31T19:33:23Z",
+      "side": 1,
+      "message": "this isn\u0027t a publicly accessible location. I don\u0027t think we\u0027ve got a prebuilt of this publicly yet.",
+      "range": {
+        "startLine": 87,
+        "startChar": 76,
+        "endLine": 87,
+        "endChar": 89
+      },
+      "revId": "3c17e6db63614bf0d2306eedaeb6583cedeebfe7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
