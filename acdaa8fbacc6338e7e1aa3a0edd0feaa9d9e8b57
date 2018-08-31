@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f5897818_7924b34c",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-08-31T06:48:19Z",
+      "side": 0,
+      "message": "Let\u0027s mark this variable as obsolete so that any users get an error instead of silently ignoring it",
+      "range": {
+        "startLine": 149,
+        "startChar": 0,
+        "endLine": 149,
+        "endChar": 14
+      },
+      "revId": "acdaa8fbacc6338e7e1aa3a0edd0feaa9d9e8b57",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
