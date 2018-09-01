@@ -2268,6 +2268,9 @@ warn_patterns = [
     {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wunnamed-type-template-args',
      'description': 'Unnamed template type argument',
      'patterns': [r".*: warning: template argument.+Wunnamed-type-template-args"]},
+    {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wimplicit-fallthrough',
+     'description': 'Unannotated fall-through between switch labels',
+     'patterns': [r".*: warning: unannotated fall-through between switch labels.+Wimplicit-fallthrough"]},
 
     {'category': 'C/C++', 'severity': Severity.HARMLESS,
      'description': 'Discarded qualifier from pointer target type',
