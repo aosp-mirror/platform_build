@@ -806,6 +806,9 @@ class CommonUtilsTest(unittest.TestCase):
       else:
         fstab_values = FSTAB_TEMPLATE.format('/system')
       common.ZipWriteStr(target_files_zip, fstab_path, fstab_values)
+
+      common.ZipWriteStr(
+          target_files_zip, 'META/file_contexts', 'file-contexts')
     return target_files
 
   def test_LoadInfoDict(self):
@@ -897,6 +900,38 @@ class CommonUtilsTest(unittest.TestCase):
       self.assertEqual(3, loaded_dict['recovery_api_version'])
       self.assertEqual(2, loaded_dict['fstab_version'])
       self.assertIsNone(loaded_dict['fstab'])
+
+  def test_LoadInfoDict_missingMetaMiscInfoTxt(self):
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        self.INFO_DICT_DEFAULT,
+        'BOOT/RAMDISK/system/etc/recovery.fstab')
+    common.ZipDelete(target_files, 'META/misc_info.txt')
+    with zipfile.ZipFile(target_files, 'r') as target_files_zip:
+      self.assertRaises(ValueError, common.LoadInfoDict, target_files_zip)
+
+  def test_LoadInfoDict_repacking(self):
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        self.INFO_DICT_DEFAULT,
+        'BOOT/RAMDISK/system/etc/recovery.fstab')
+    unzipped = common.UnzipTemp(target_files)
+    loaded_dict = common.LoadInfoDict(unzipped, True)
+    self.assertEqual(3, loaded_dict['recovery_api_version'])
+    self.assertEqual(2, loaded_dict['fstab_version'])
+    self.assertIn('/', loaded_dict['fstab'])
+    self.assertIn('/system', loaded_dict['fstab'])
+    self.assertEqual(
+        os.path.join(unzipped, 'ROOT'), loaded_dict['root_dir'])
+    self.assertEqual(
+        os.path.join(unzipped, 'META', 'root_filesystem_config.txt'),
+        loaded_dict['root_fs_config'])
+
+  def test_LoadInfoDict_repackingWithZipFileInput(self):
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        self.INFO_DICT_DEFAULT,
+        'BOOT/RAMDISK/system/etc/recovery.fstab')
+    with zipfile.ZipFile(target_files, 'r') as target_files_zip:
+      self.assertRaises(
+          AssertionError, common.LoadInfoDict, target_files_zip, True)
 
 
 class InstallRecoveryScriptFormatTest(unittest.TestCase):
