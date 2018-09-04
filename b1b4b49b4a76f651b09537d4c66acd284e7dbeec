@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77d9e4d8_4837d125",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2605,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-04T16:28:57Z",
+      "side": 1,
+      "message": "nit: should we be more restrictive? Only allow product/system/product_services in MAINLINE and vendor/odm in VENDOR?",
+      "range": {
+        "startLine": 2605,
+        "startChar": 2,
+        "endLine": 2605,
+        "endChar": 63
+      },
+      "revId": "b1b4b49b4a76f651b09537d4c66acd284e7dbeec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7e46424_b6f1ecc2",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2642,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-04T16:28:57Z",
+      "side": 1,
+      "message": "should \u0027include\u0027 be removed?",
+      "range": {
+        "startLine": 2642,
+        "startChar": 101,
+        "endLine": 2642,
+        "endChar": 108
+      },
+      "revId": "b1b4b49b4a76f651b09537d4c66acd284e7dbeec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
