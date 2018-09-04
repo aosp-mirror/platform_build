@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1f1d2e74_c0dab79c",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2605,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-04T21:25:00Z",
+      "side": 1,
+      "message": "Sandeep: do we have a decision for the name and the contents for this vbmeta image? Seems it\u0027s one of vbmeta_system, vbmeta_mainline (used in this CL) and vbmeta_google (which is mentioned in aosp/727488).",
+      "parentUuid": "77d9e4d8_4837d125",
+      "range": {
+        "startLine": 2605,
+        "startChar": 2,
+        "endLine": 2605,
+        "endChar": 63
+      },
+      "revId": "b1b4b49b4a76f651b09537d4c66acd284e7dbeec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b7e46424_b6f1ecc2",
         "filename": "core/Makefile",
         "patchSetId": 4
