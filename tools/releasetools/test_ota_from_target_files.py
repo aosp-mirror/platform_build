@@ -255,6 +255,23 @@ class BuildInfoTest(unittest.TestCase):
     self.assertRaises(common.ExternalError, target_info.GetVendorBuildProp,
                       'ro.build.nonexistent')
 
+  def test_vendor_fingerprint(self):
+    target_info = BuildInfo(self.TEST_INFO_DICT, None)
+    self.assertEqual('vendor-build-fingerprint',
+                     target_info.vendor_fingerprint)
+
+  def test_vendor_fingerprint_blacklisted(self):
+    target_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
+    del target_info_dict['vendor.build.prop']['ro.vendor.build.fingerprint']
+    target_info = BuildInfo(target_info_dict, self.TEST_OEM_DICTS)
+    self.assertIsNone(target_info.vendor_fingerprint)
+
+  def test_vendor_fingerprint_without_vendor_build_prop(self):
+    target_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
+    del target_info_dict['vendor.build.prop']
+    target_info = BuildInfo(target_info_dict, self.TEST_OEM_DICTS)
+    self.assertIsNone(target_info.vendor_fingerprint)
+
   def test_WriteMountOemScript(self):
     target_info = BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
                             self.TEST_OEM_DICTS)
