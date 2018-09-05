@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "e4577c0c_9ddacbe5",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2642,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-05T22:02:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b7e46424_b6f1ecc2",
+      "range": {
+        "startLine": 2642,
+        "startChar": 101,
+        "endLine": 2642,
+        "endChar": 108
+      },
+      "revId": "b1b4b49b4a76f651b09537d4c66acd284e7dbeec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9f953ab0_2c84cf3c",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -83,6 +107,30 @@
       "writtenOn": "2018-09-05T16:10:50Z",
       "side": 1,
       "message": "Will it switch to extract_vbmeta_image, after CL:727488 is merged?",
+      "range": {
+        "startLine": 2786,
+        "startChar": 12,
+        "endLine": 2786,
+        "endChar": 42
+      },
+      "revId": "b1b4b49b4a76f651b09537d4c66acd284e7dbeec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ce83211_e6218009",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2786,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-05T22:02:58Z",
+      "side": 1,
+      "message": "Not planning to switch. extract_vbmeta_image requires images (e.g. system.img) already containing all the desired descriptors prior to the extraction, which doesn\u0027t work well with the build system. Because we can\u0027t touch INSTALLED_SYSTEMIMAGE_TARGET at this later point, and have to make a copy for that purpose.",
+      "parentUuid": "9f953ab0_2c84cf3c",
       "range": {
         "startLine": 2786,
         "startChar": 12,
