@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a66e1ad_6b5a125e",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 852,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-05T21:35:07Z",
+      "side": 1,
+      "message": "The checks (here and below) don\u0027t seem that useful. The call to avbtool would error out upon seeing empty / invalid partition size anyway? Also it looks inconsistent to only assert the ones for boot image, as there\u0027re similar cases for recovery / dtbo /...",
+      "range": {
+        "startLine": 852,
+        "startChar": 1,
+        "endLine": 852,
+        "endChar": 120
+      },
+      "revId": "41b87109083149ee75c752f37a480bfc8dddd6d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
