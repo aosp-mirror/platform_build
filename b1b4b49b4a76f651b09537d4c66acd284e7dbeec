@@ -69,6 +69,29 @@
       "revId": "b1b4b49b4a76f651b09537d4c66acd284e7dbeec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f953ab0_2c84cf3c",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2786,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-05T16:10:50Z",
+      "side": 1,
+      "message": "Will it switch to extract_vbmeta_image, after CL:727488 is merged?",
+      "range": {
+        "startLine": 2786,
+        "startChar": 12,
+        "endLine": 2786,
+        "endChar": 42
+      },
+      "revId": "b1b4b49b4a76f651b09537d4c66acd284e7dbeec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
