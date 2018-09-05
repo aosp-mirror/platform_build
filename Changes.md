@@ -1,6 +1,81 @@
 # Build System Changes for Android.mk Writers
 
-### `export` and `unexport` deprecation  {#export_keyword}
+## `.PHONY` rule enforcement  {#phony_targets}
+
+There are several new warnings/errors meant to ensure the proper use of
+`.PHONY` targets in order to improve the speed and reliability of incremental
+builds.
+
+`.PHONY`-marked targets are often used as shortcuts to provide "friendly" names
+for real files to be built, but any target marked with `.PHONY` is also always
+considered dirty, needing to be rebuilt every build. This isn't a problem for
+aliases or one-off user-requested operations, but if real builds steps depend
+on a `.PHONY` target, it can get quite expensive for what should be a tiny
+build.
+
+``` make
+...mk:42: warning: PHONY target "out/.../foo" looks like a real file (contains a "/")
+```
+
+Between this warning and the next, we're requiring that `.PHONY` targets do not
+have "/" in them, and real file targets do have a "/". This makes it more
+obvious when reading makefiles what is happening, and will help the build
+system differentiate these in the future too.
+
+``` make
+...mk:42: warning: writing to readonly directory: "kernel-modules"
+```
+
+This warning will show up for one of two reasons:
+
+1. The target isn't intended to be a real file, and should be marked with
+   `.PHONY`. This would be the case for this example.
+2. The target is a real file, but it's outside the output directories. All
+   outputs from the build system should be within the output directory,
+   otherwise `m clean` is unable to clean the build, and future builds may not
+   work properly.
+
+``` make
+...mk:42: warning: real file "out/.../foo" depends on PHONY target "buildbins"
+```
+
+If the first target isn't intended to be a real file, then it should be marked
+with `.PHONY`, which will satisfy this warning. This isn't the case for this
+example, as we require `.PHONY` targets not to have '/' in them.
+
+If the second (PHONY) target is a real file, it may unnecessarily be marked
+with `.PHONY`.
+
+### `.PHONY` and calling other build systems
+
+One common pattern (mostly outside AOSP) that we've seen hit these warning is
+when building with external build systems (firmware, bootloader, kernel, etc).
+Those are often marked as `.PHONY` because the Android build system doesn't
+have enough dependencies to know when to run the other build system again
+during an incremental build.
+
+We recommend to build these outside of Android, and deliver prebuilts into the
+Android tree instead of decreasing the speed and reliability of the incremental
+Android build.
+
+In cases where that's not desired, to preserve the speed of Android
+incrementals, over-specifying dependencies is likely a better option than
+marking it with `.PHONY`:
+
+``` make
+out/target/.../zImage: $(sort $(shell find -L $(KERNEL_SRCDIR)))
+	...
+```
+
+For reliability, many of these other build systems do not guarantee the same
+level of incremental build assurances as the Android Build is attempting to do
+-- without custom checks, Make doesn't rebuild objects when CFLAGS change, etc.
+In order to fix this, our recommendation is to do clean builds for each of
+these external build systems every time anything they rely on changes. For
+relatively smaller builds (like the kernel), this may be reasonable as long as
+you're not trying to actively debug the kernel.
+
+## `export` and `unexport` deprecation  {#export_keyword}
 
 The `export` and `unexport` keywords have been deprecated, and will throw
 warnings or errors depending on where they are used.
