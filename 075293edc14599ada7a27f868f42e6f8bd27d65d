@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30c0ed12_26b15851",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1400,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-05T18:43:17Z",
+      "side": 1,
+      "message": "This means the target image will always be loaded and updated with explicit zeros, even if target doesn\u0027t use verity?",
+      "range": {
+        "startLine": 1400,
+        "startChar": 58,
+        "endLine": 1400,
+        "endChar": 79
+      },
+      "revId": "075293edc14599ada7a27f868f42e6f8bd27d65d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
