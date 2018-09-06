@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "9e8f41de_a7e9ea95",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1056,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-09-06T05:29:30Z",
+      "side": 1,
+      "message": "we either need to write all of these out in a single rule (and start by `rm -rf` this directory), or we need different include directories per input file. Otherwise old headers can be used even after the file has been removed from the list of sources.",
+      "range": {
+        "startLine": 1056,
+        "startChar": 0,
+        "endLine": 1056,
+        "endChar": 70
+      },
+      "revId": "dd45641c63ee581a4f96134d3bed4d25b0ae2d22",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "98e31e7a_a3a413d8",
         "filename": "core/definitions.mk",
         "patchSetId": 1
