@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "98e31e7a_a3a413d8",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1150,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-09-06T02:30:56Z",
+      "side": 1,
+      "message": "where is this defined?",
+      "range": {
+        "startLine": 1150,
+        "startChar": 10,
+        "endLine": 1150,
+        "endChar": 21
+      },
+      "revId": "dd45641c63ee581a4f96134d3bed4d25b0ae2d22",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
