@@ -164,6 +164,30 @@
       "revId": "b1b4b49b4a76f651b09537d4c66acd284e7dbeec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67d825d0_3d4d490b",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2786,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-06T23:14:34Z",
+      "side": 1,
+      "message": "Ack. Thanks for the pointers! (I was wondering about the vbmeta.digest computation when debugging some unrelated bugs. But agreed we should be good for this case.)",
+      "parentUuid": "48d778b4_66ab32ef",
+      "range": {
+        "startLine": 2786,
+        "startChar": 12,
+        "endLine": 2786,
+        "endChar": 42
+      },
+      "revId": "b1b4b49b4a76f651b09537d4c66acd284e7dbeec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
