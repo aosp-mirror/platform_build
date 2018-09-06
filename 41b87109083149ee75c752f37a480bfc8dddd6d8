@@ -22,6 +22,30 @@
       "revId": "41b87109083149ee75c752f37a480bfc8dddd6d8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69546f00_2ac37b8b",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 852,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-06T01:40:41Z",
+      "side": 1,
+      "message": "OK, agree.\n\navbtool will actually error out saying that partition_size is invalid.\nLet me rollback to the first version :)",
+      "parentUuid": "5a66e1ad_6b5a125e",
+      "range": {
+        "startLine": 852,
+        "startChar": 1,
+        "endLine": 852,
+        "endChar": 120
+      },
+      "revId": "41b87109083149ee75c752f37a480bfc8dddd6d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
