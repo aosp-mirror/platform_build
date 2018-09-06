@@ -140,6 +140,30 @@
       "revId": "b1b4b49b4a76f651b09537d4c66acd284e7dbeec",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "48d778b4_66ab32ef",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2786,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-06T02:44:48Z",
+      "side": 1,
+      "message": "OK, I see.\n\nI was just worrying that will bootloader and Android OS (init/fs_mgr) have different views of vbmeta images. They need to have the same view because of the following check.\n\nhttps://android.googlesource.com/platform/external/avb/+/pie-dev/libavb/avb_cmdline.c#263\n \u003d\u003d\u003e bootloader calculate a hash for all vbmeta images for fs_mgr to verify\n\nhttps://android.googlesource.com/platform/system/core/+/pie-dev/fs_mgr/fs_mgr_avb.cpp#115\n \u003d\u003d\u003e fs_mgr read all vbmeta images and checks against the androidboot.vbmeta.digest provided by bootloader\n\n\ne.g., will it have such case, in terms of vbmeta structs:\n  bootloader (unaware of logical partitions): /vbmeta, /vbmeta_mainline, /vbmeta_vendor\n  init/fs_mgr (aware of logical partitions): /vbmeta, \n                                             /system, /product, /product_services, /vendor, etc \u003c\u003d\u003d read vbmeta structs from footer\n\n\nIf they will have different view then we need to use \u0027extract_vbmeta_images\u0027 to preserve the vbmeta signature (b/112007947#comment15).\n\n\nBut since we have chained partitions \u0027vbmeta_mainline\u0027, and \u0027vbmeta_vendor\u0027 in the top-level /vbmeta, so fs_mgr will see the same vbmeta images as that in bootloader. So it looks no problem to me.",
+      "parentUuid": "0ce83211_e6218009",
+      "range": {
+        "startLine": 2786,
+        "startChar": 12,
+        "endLine": 2786,
+        "endChar": 42
+      },
+      "revId": "b1b4b49b4a76f651b09537d4c66acd284e7dbeec",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
