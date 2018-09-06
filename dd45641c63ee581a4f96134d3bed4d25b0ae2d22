@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "c6f8580d_c31c8d0f",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1063,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-09-06T05:36:09Z",
+      "side": 1,
+      "message": "are you actually producing depfiles? the Soong change isn\u0027t declaring one",
+      "range": {
+        "startLine": 1063,
+        "startChar": 0,
+        "endLine": 1063,
+        "endChar": 68
+      },
+      "revId": "dd45641c63ee581a4f96134d3bed4d25b0ae2d22",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "98e31e7a_a3a413d8",
         "filename": "core/definitions.mk",
         "patchSetId": 1
