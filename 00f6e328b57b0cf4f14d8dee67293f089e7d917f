@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "84efcef7_5ddd7c71",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-09-06T23:21:10Z",
+      "side": 1,
+      "message": "This probably shouldn\u0027t be dist_files. dist_files will distribute it with every platform build. Using module-info allows it to only be distributed when asked for by the build command.",
+      "range": {
+        "startLine": 29,
+        "startChar": 23,
+        "endLine": 29,
+        "endChar": 33
+      },
+      "revId": "00f6e328b57b0cf4f14d8dee67293f089e7d917f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
