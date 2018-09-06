@@ -285,6 +285,17 @@ class BuildInfo(object):
     return self._fingerprint
 
   @property
+  def vendor_fingerprint(self):
+    if "vendor.build.prop" not in self.info_dict:
+      return None
+    vendor_build_prop = self.info_dict["vendor.build.prop"]
+    if "ro.vendor.build.fingerprint" in vendor_build_prop:
+      return vendor_build_prop["ro.vendor.build.fingerprint"]
+    if "ro.vendor.build.thumbprint" in vendor_build_prop:
+      return vendor_build_prop["ro.vendor.build.thumbprint"]
+    return None
+
+  @property
   def oem_props(self):
     return self._oem_props
 
@@ -706,11 +717,14 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
   target_fp = target_info.fingerprint
   system_updated = source_fp != target_fp
 
-  source_fp_vendor = source_info.GetVendorBuildProp(
-      "ro.vendor.build.fingerprint")
-  target_fp_vendor = target_info.GetVendorBuildProp(
-      "ro.vendor.build.fingerprint")
-  vendor_updated = source_fp_vendor != target_fp_vendor
+  source_fp_vendor = source_info.vendor_fingerprint
+  target_fp_vendor = target_info.vendor_fingerprint
+  # vendor build fingerprints could be possibly blacklisted at build time. For
+  # such a case, we consider the vendor images being changed.
+  if source_fp_vendor is None or target_fp_vendor is None:
+    vendor_updated = True
+  else:
+    vendor_updated = source_fp_vendor != target_fp_vendor
 
   AddCompatibilityArchive(system_updated, vendor_updated)
 
