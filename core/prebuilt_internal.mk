@@ -68,20 +68,6 @@ else
   prebuilt_module_is_a_library :=
 endif
 
-ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-  ifeq ($(prebuilt_module_is_a_library),true)
-    SOONG_ALREADY_CONV := $(SOONG_ALREADY_CONV) $(LOCAL_MODULE)
-  endif
-
-  ifdef LOCAL_USE_VNDK
-    name_without_suffix := $(patsubst %.vendor,%,$(LOCAL_MODULE))
-    ifneq ($(name_without_suffix),$(LOCAL_MODULE)
-      SPLIT_VENDOR.$(LOCAL_MODULE_CLASS).$(name_without_suffix) := 1
-    endif
-    name_without_suffix :=
-  endif
-endif
-
 # Don't install static libraries by default.
 ifndef LOCAL_UNINSTALLABLE_MODULE
 ifeq (STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS))
@@ -156,12 +142,6 @@ else  # my_strip_module not true
 ifdef prebuilt_module_is_a_library
 export_includes := $(intermediates)/export_includes
 export_cflags := $(foreach d,$(LOCAL_EXPORT_C_INCLUDE_DIRS),-I $(d))
-# Soong exports cflags instead of include dirs, so that -isystem can be included.
-ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-export_cflags += $(LOCAL_EXPORT_CFLAGS)
-else ifdef LOCAL_EXPORT_CFLAGS
-$(call pretty-error,LOCAL_EXPORT_CFLAGS can only be used by Soong, use LOCAL_EXPORT_C_INCLUDE_DIRS instead)
-endif
 $(export_includes): PRIVATE_EXPORT_CFLAGS := $(export_cflags)
 $(export_includes): $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 	@echo Export includes file: $< -- $@
@@ -210,10 +190,8 @@ my_shared_libraries := $(LOCAL_SHARED_LIBRARIES)
 # Extra shared libraries introduced by LOCAL_CXX_STL.
 include $(BUILD_SYSTEM)/cxx_stl_setup.mk
 ifdef LOCAL_USE_VNDK
-  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
-      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
-  endif
+  my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+    $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
 endif
 $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
   $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(my_shared_libraries))
