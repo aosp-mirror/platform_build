@@ -128,6 +128,9 @@ endif
 
 # Singleton rule which applies $(HIDDENAPI) on all boot class path dex files.
 # Inputs are filled with `hiddenapi-copy-dex-files` rules.
+.KATI_RESTAT: \
+	$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST) \
+	$(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
 $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): PRIVATE_HIDDENAPI_STUBS := $(HIDDENAPI_STUBS)
 $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): PRIVATE_HIDDENAPI_STUBS_SYSTEM := $(HIDDENAPI_STUBS_SYSTEM)
 $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): PRIVATE_HIDDENAPI_STUBS_TEST := $(HIDDENAPI_STUBS_TEST)
@@ -141,8 +144,10 @@ $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): $(HIDDENAPI) $(HIDDENAPI_STUBS) \
 	    --stub-classpath=$(call normalize-path-list, $(PRIVATE_HIDDENAPI_STUBS)) \
 	    --stub-classpath=$(call normalize-path-list, $(PRIVATE_HIDDENAPI_STUBS_SYSTEM)) \
 	    --stub-classpath=$(call normalize-path-list, $(PRIVATE_HIDDENAPI_STUBS_TEST)) \
-	    --out-public=$(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) \
-	    --out-private=$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST)
+	    --out-public=$(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST).tmp \
+	    --out-private=$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST).tmp
+	$(call commit-change-for-toc,$(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST))
+	$(call commit-change-for-toc,$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST))
 
 ifeq ($(PRODUCT_DIST_BOOT_AND_SYSTEM_JARS),true)
 boot_profile_jars_zip := $(PRODUCT_OUT)/boot_profile_jars.zip
