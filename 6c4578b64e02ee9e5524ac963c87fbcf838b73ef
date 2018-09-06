@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a32df56a_a7d2d5a0",
+        "filename": "target/product/treble_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2018-09-06T05:44:30Z",
+      "side": 1,
+      "message": "The build system checks if we have all required VNDK snapshots in the source tree. The build fails because the aosp do not have VNDK snapshot v28.",
+      "range": {
+        "startLine": 58,
+        "startChar": 34,
+        "endLine": 58,
+        "endChar": 36
+      },
+      "revId": "6c4578b64e02ee9e5524ac963c87fbcf838b73ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
