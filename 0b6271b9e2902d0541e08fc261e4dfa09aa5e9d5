@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b0ac95d7_3947ac39",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2653,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-09-06T23:24:10Z",
+      "side": 1,
+      "message": "ifneq ($(words $(sort $(INTERNAL_AVB_PARTITIONS_IN_CHAINED_VBMETA_IMAGES))),$(words $(INTERNAL_AVB_PARTITIONS_IN_CHAINED_VBMETA_IMAGES)))",
+      "revId": "0b6271b9e2902d0541e08fc261e4dfa09aa5e9d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
