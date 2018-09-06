@@ -46,6 +46,30 @@
       "revId": "dd45641c63ee581a4f96134d3bed4d25b0ae2d22",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "126a607a_4f726b01",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1150,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-09-06T02:38:55Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "49b4daee_ab984325",
+      "range": {
+        "startLine": 1150,
+        "startChar": 10,
+        "endLine": 1150,
+        "endChar": 21
+      },
+      "revId": "dd45641c63ee581a4f96134d3bed4d25b0ae2d22",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
