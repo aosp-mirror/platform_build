@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "16d268d0_69ee0ed4",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1056,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2018-09-07T03:09:04Z",
+      "side": 1,
+      "message": "I see, let me inspect more about this..",
+      "parentUuid": "9e8f41de_a7e9ea95",
+      "range": {
+        "startLine": 1056,
+        "startChar": 0,
+        "endLine": 1056,
+        "endChar": 70
+      },
+      "revId": "dd45641c63ee581a4f96134d3bed4d25b0ae2d22",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c6f8580d_c31c8d0f",
         "filename": "core/binary.mk",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-09-06T05:36:09Z",
       "side": 1,
       "message": "are you actually producing depfiles? the Soong change isn\u0027t declaring one",
+      "range": {
+        "startLine": 1063,
+        "startChar": 0,
+        "endLine": 1063,
+        "endChar": 68
+      },
+      "revId": "dd45641c63ee581a4f96134d3bed4d25b0ae2d22",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "947d7581_24b61038",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1063,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2018-09-07T03:09:04Z",
+      "side": 1,
+      "message": "No, actually I\u0027m not. I\u0027ll test after removing these",
+      "parentUuid": "c6f8580d_c31c8d0f",
       "range": {
         "startLine": 1063,
         "startChar": 0,
