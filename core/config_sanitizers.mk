@@ -277,6 +277,7 @@ endif
 ifneq ($(my_sanitize),)
   fsanitize_arg := $(subst $(space),$(comma),$(my_sanitize))
   my_cflags += -fsanitize=$(fsanitize_arg)
+  my_asflags += -fsanitize=$(fsanitize_arg)
 
   ifdef LOCAL_IS_HOST_MODULE
     my_cflags += -fno-sanitize-recover=all
@@ -297,6 +298,7 @@ ifneq ($(filter cfi,$(my_sanitize)),)
   # entire module.
   LOCAL_ARM_MODE := thumb
   my_cflags += $(CFI_EXTRA_CFLAGS)
+  my_asflags += $(CFI_EXTRA_ASFLAGS)
   # Only append the default visibility flag if -fvisibility has not already been
   # set to hidden.
   ifeq ($(filter -fvisibility=hidden,$(LOCAL_CFLAGS)),)
