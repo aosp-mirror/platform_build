@@ -332,32 +332,8 @@ endif
 ifdef LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
 my_clang := $(strip $(LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
 endif
-
-# if custom toolchain is in use, default is not to use clang, if not explicitly required
-ifneq ($(my_cc)$(my_cxx),)
-    ifeq ($(my_clang),)
-        my_clang := false
-    endif
-endif
 ifeq ($(my_clang),false)
-    # https://android-review.googlesource.com/720799
-    ifneq ($(LOCAL_MODULE),bionic-compile-time-tests-g++)
-        $(call pretty-error,LOCAL_CLANG false is no longer supported)
-    endif
-endif
-
-# clang is enabled by default for host builds
-# enable it unless we've specifically disabled clang above
-ifdef LOCAL_IS_HOST_MODULE
-    ifneq ($($(my_prefix)CLANG_SUPPORTED),true)
-        $(error $($(my_prefix)OS) requires GCC$(comma) but only Clang is supported)
-    else
-        ifeq ($(my_clang),)
-            my_clang := true
-        endif
-    endif
-else ifeq ($(my_clang),)
-    my_clang := true
+    $(call pretty-error,LOCAL_CLANG false is no longer supported)
 endif
 
 ifeq ($(LOCAL_C_STD),)
@@ -376,21 +352,6 @@ else
     my_cpp_std_version := $(LOCAL_CPP_STD)
 endif
 
-ifneq ($(my_clang),true)
-    # GCC uses an invalid C++14 ABI (emits calls to
-    # __cxa_throw_bad_array_length, which is not a valid C++ RT ABI).
-    # http://b/25022512
-    my_cpp_std_version := $(DEFAULT_GCC_CPP_STD_VERSION)
-endif
-
-ifdef LOCAL_IS_HOST_MODULE
-    ifneq ($(my_clang),true)
-        # The host GCC doesn't support C++14 (and is deprecated, so likely
-        # never will). Build these modules with C++11.
-        my_cpp_std_version := $(DEFAULT_GCC_CPP_STD_VERSION)
-    endif
-endif
-
 my_c_std_conlyflags :=
 my_cpp_std_cppflags :=
 ifneq (,$(my_c_std_version))
@@ -402,10 +363,8 @@ ifneq (,$(my_cpp_std_version))
 endif
 
 # Extra cflags for projects under external/ directory
-ifeq ($(my_clang),true)
 ifneq ($(filter external/%,$(LOCAL_PATH)),)
     my_cflags += $(CLANG_EXTERNAL_CFLAGS)
-endif
 endif
 
 # arch-specific static libraries go first so that generic ones can depend on them
@@ -516,7 +475,6 @@ my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) $(TARGET_OUT_HEADERS
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
 endif
 
-ifeq ($(my_clang),true)
 my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
 my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
 my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
@@ -529,12 +487,6 @@ ifeq ($(my_use_clang_lld),true)
 else
   my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
 endif # my_use_clang_lld
-else
-my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
-my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
-my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
-my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_LDFLAGS)
-endif # my_clang
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_target_global_c_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_SYSTEM_INCLUDES := $(my_target_global_c_system_includes)
@@ -550,7 +502,6 @@ my_host_global_c_includes := $(SRC_HEADERS) \
 my_host_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
     $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
 
-ifeq ($(my_clang),true)
 my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
 my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
 my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
@@ -559,12 +510,6 @@ ifeq ($(my_use_clang_lld),true)
 else
   my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
 endif # my_use_clang_lld
-else
-my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
-my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
-my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
-my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_LDFLAGS)
-endif # my_clang
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_host_global_c_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_SYSTEM_INCLUDES := $(my_host_global_c_system_includes)
@@ -590,11 +535,7 @@ ifeq ($(NATIVE_COVERAGE),true)
         my_ldflags += --coverage
     endif
 
-    ifeq ($(my_clang),true)
-        my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
-    else
-        my_coverage_lib := $(call intermediates-dir-for,STATIC_LIBRARIES,libgcov,$(filter AUX,$(my_kind)),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/libgcov.a
-    endif
+    my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
 
     $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_COVERAGE_LIB := $(my_coverage_lib)
     $(LOCAL_INTERMEDIATE_TARGETS): $(my_coverage_lib)
@@ -612,12 +553,6 @@ ifeq ($(strip $(WITH_STATIC_ANALYZER)),)
   LOCAL_NO_STATIC_ANALYZER := true
 endif
 
-# Clang does not recognize all gcc flags.
-# Use static analyzer only if clang is used.
-ifneq ($(my_clang),true)
-  LOCAL_NO_STATIC_ANALYZER := true
-endif
-
 ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
   my_syntax_arch := host
 else
@@ -625,12 +560,7 @@ else
 endif
 
 ifeq ($(strip $(my_cc)),)
-  ifeq ($(my_clang),true)
-    my_cc := $(CLANG)
-  else
-    my_cc := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)CC)
-  endif
-  my_cc := $(my_cc_wrapper) $(my_cc)
+  my_cc := $(my_cc_wrapper) $(CLANG)
 endif
 
 SYNTAX_TOOLS_PREFIX := \
@@ -644,12 +574,7 @@ endif
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CC := $(my_cc)
 
 ifeq ($(strip $(my_cxx)),)
-  ifeq ($(my_clang),true)
-    my_cxx := $(CLANG_CXX)
-  else
-    my_cxx := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)CXX)
-  endif
-  my_cxx := $(my_cxx_wrapper) $(my_cxx)
+  my_cxx := $(my_cxx_wrapper) $(CLANG_CXX)
 endif
 
 ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
@@ -659,7 +584,6 @@ endif
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LINKER := $(my_linker)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CXX := $(my_cxx)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CLANG := $(my_clang)
 
 # TODO: support a mix of standard extensions so that this isn't necessary
 LOCAL_CPP_EXTENSION := $(strip $(LOCAL_CPP_EXTENSION))
@@ -703,10 +627,8 @@ normal_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)
 # actually used (although they are usually empty).
 arm_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(arm_objects_mode)_CFLAGS)
 normal_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(normal_objects_mode)_CFLAGS)
-ifeq ($(my_clang),true)
 arm_objects_cflags := $(call convert-to-clang-flags,$(arm_objects_cflags))
 normal_objects_cflags := $(call convert-to-clang-flags,$(normal_objects_cflags))
-endif
 
 else
 arm_objects_mode :=
@@ -1643,7 +1565,6 @@ endif
 # Rule-specific variable definitions
 ###########################################################
 
-ifeq ($(my_clang),true)
 my_cflags += $(LOCAL_CLANG_CFLAGS)
 my_conlyflags += $(LOCAL_CLANG_CONLYFLAGS)
 my_cppflags += $(LOCAL_CLANG_CPPFLAGS)
@@ -1660,11 +1581,6 @@ my_cflags := $(call convert-to-clang-flags,$(my_cflags))
 my_cppflags := $(call convert-to-clang-flags,$(my_cppflags))
 my_asflags := $(call convert-to-clang-flags,$(my_asflags))
 my_ldflags := $(call convert-to-clang-flags,$(my_ldflags))
-else
-# gcc does not handle hidden functions in a manner compatible with LLVM libcxx
-# see b/27908145
-my_cflags += -Wno-attributes
-endif
 
 ifeq ($(my_fdo_build), true)
   my_cflags := $(patsubst -Os,-O2,$(my_cflags))
@@ -1738,44 +1654,39 @@ endif
 my_tidy_checks :=
 my_tidy_flags :=
 ifneq (,$(filter 1 true,$(my_tidy_enabled)))
-  ifneq ($(my_clang),true)
-    # Disable clang-tidy if clang is disabled.
-    my_tidy_enabled := false
-  else
-    tidy_only: $(cpp_objects) $(c_objects) $(gen_c_objects) $(gen_cpp_objects)
-    # Set up global default checks
-    my_tidy_checks := $(WITH_TIDY_CHECKS)
-    ifeq ($(my_tidy_checks),)
-      my_tidy_checks := $(call default_global_tidy_checks,$(LOCAL_PATH))
-    endif
-    # Append local clang-tidy checks.
-    ifneq ($(LOCAL_TIDY_CHECKS),)
-      my_tidy_checks := $(my_tidy_checks),$(LOCAL_TIDY_CHECKS)
-    endif
-    my_tidy_flags += $(WITH_TIDY_FLAGS) $(LOCAL_TIDY_FLAGS)
-    # If tidy flags are not specified, default to check all header files.
-    ifeq ($(my_tidy_flags),)
-      my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
-    endif
-    # If clang-tidy is not enabled globally, add the -quiet flag.
-    ifeq (,$(filter 1 true,$(WITH_TIDY)))
-      my_tidy_flags += -quiet -extra-arg-before=-fno-caret-diagnostics
-    endif
+  tidy_only: $(cpp_objects) $(c_objects) $(gen_c_objects) $(gen_cpp_objects)
+  # Set up global default checks
+  my_tidy_checks := $(WITH_TIDY_CHECKS)
+  ifeq ($(my_tidy_checks),)
+    my_tidy_checks := $(call default_global_tidy_checks,$(LOCAL_PATH))
+  endif
+  # Append local clang-tidy checks.
+  ifneq ($(LOCAL_TIDY_CHECKS),)
+    my_tidy_checks := $(my_tidy_checks),$(LOCAL_TIDY_CHECKS)
+  endif
+  my_tidy_flags += $(WITH_TIDY_FLAGS) $(LOCAL_TIDY_FLAGS)
+  # If tidy flags are not specified, default to check all header files.
+  ifeq ($(my_tidy_flags),)
+    my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
+  endif
+  # If clang-tidy is not enabled globally, add the -quiet flag.
+  ifeq (,$(filter 1 true,$(WITH_TIDY)))
+    my_tidy_flags += -quiet -extra-arg-before=-fno-caret-diagnostics
+  endif
 
-    ifneq ($(my_tidy_checks),)
-      # We might be using the static analyzer through clang-tidy.
-      # https://bugs.llvm.org/show_bug.cgi?id=32914
-      my_tidy_flags += -extra-arg-before=-D__clang_analyzer__
+  ifneq ($(my_tidy_checks),)
+    # We might be using the static analyzer through clang-tidy.
+    # https://bugs.llvm.org/show_bug.cgi?id=32914
+    my_tidy_flags += -extra-arg-before=-D__clang_analyzer__
 
-      # A recent change in clang-tidy (r328258) enabled destructor inlining,
-      # which appears to cause a number of false positives. Until that's
-      # resolved, this turns off the effects of r328258.
-      # https://bugs.llvm.org/show_bug.cgi?id=37459
-      my_tidy_flags += -extra-arg-before=-Xclang
-      my_tidy_flags += -extra-arg-before=-analyzer-config
-      my_tidy_flags += -extra-arg-before=-Xclang
-      my_tidy_flags += -extra-arg-before=c++-temp-dtor-inlining=false
-    endif
+    # A recent change in clang-tidy (r328258) enabled destructor inlining,
+    # which appears to cause a number of false positives. Until that's
+    # resolved, this turns off the effects of r328258.
+    # https://bugs.llvm.org/show_bug.cgi?id=37459
+    my_tidy_flags += -extra-arg-before=-Xclang
+    my_tidy_flags += -extra-arg-before=-analyzer-config
+    my_tidy_flags += -extra-arg-before=-Xclang
+    my_tidy_flags += -extra-arg-before=c++-temp-dtor-inlining=false
   endif
 endif
 
