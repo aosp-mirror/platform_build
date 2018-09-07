@@ -22,6 +22,30 @@
       "revId": "00f6e328b57b0cf4f14d8dee67293f089e7d917f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27b848e1_a0805780",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-09-07T00:15:05Z",
+      "side": 1,
+      "message": "Hmm what\u0027s the argument against distributing it with every platform build? Once make has processed all the build files, this is built really fast.\n\nCTS/TH team plans to use it with the OWNERS.zip so it would make more sense that they\u0027re distributed together.\n\nOtherwise I think you\u0027re saying I need to update the busytown configs to all build it?",
+      "parentUuid": "84efcef7_5ddd7c71",
+      "range": {
+        "startLine": 29,
+        "startChar": 23,
+        "endLine": 29,
+        "endChar": 33
+      },
+      "revId": "00f6e328b57b0cf4f14d8dee67293f089e7d917f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
