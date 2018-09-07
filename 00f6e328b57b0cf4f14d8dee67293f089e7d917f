@@ -46,6 +46,30 @@
       "revId": "00f6e328b57b0cf4f14d8dee67293f089e7d917f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c65b872_bce9d220",
+        "filename": "core/tasks/module-info.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-09-07T01:11:27Z",
+      "side": 1,
+      "message": "In general, we don\u0027t particularly care about distributed artifact size, but others running continuous build infrastructure may not be able to use `dist` due to the number of artifacts. At some point we\u0027re going to need to take a look at this.\n\nIn this particular case, we don\u0027t build CTS with a full platform, so owners.zip will show up on nearly every build *except* a CTS(test_suites) build (unless the busytown config is updated to add \u0027module-info\u0027/\u0027owners\u0027 to the command line of test_suites). Maybe this should be using the \u0027tests\u0027 or \u0027cts\u0027 goals? That would distribute it with the builds that are building/distributing tests or cts.",
+      "parentUuid": "27b848e1_a0805780",
+      "range": {
+        "startLine": 29,
+        "startChar": 23,
+        "endLine": 29,
+        "endChar": 33
+      },
+      "revId": "00f6e328b57b0cf4f14d8dee67293f089e7d917f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
