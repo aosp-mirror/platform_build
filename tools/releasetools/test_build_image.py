@@ -77,7 +77,7 @@ class BuildImageTest(unittest.TestCase):
     """Tests the result parsing from actual call to mke2fs."""
     input_dir = common.MakeTempDir()
     output_image = common.MakeTempFile(suffix='.img')
-    command = ['mkuserimg_mke2fs.sh', input_dir, output_image, 'ext4',
+    command = ['mkuserimg_mke2fs', input_dir, output_image, 'ext4',
                '/system', '409600', '-j', '0']
     ext4fs_output, exit_code = RunCommand(command)
     self.assertEqual(0, exit_code)
