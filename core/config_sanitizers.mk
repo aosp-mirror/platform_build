@@ -5,23 +5,18 @@
 my_sanitize := $(strip $(LOCAL_SANITIZE))
 my_sanitize_diag := $(strip $(LOCAL_SANITIZE_DIAG))
 
-# SANITIZE_HOST is only in effect if the module is already using clang (host
-# modules that haven't set `LOCAL_CLANG := false` and device modules that
-# have set `LOCAL_CLANG := true`.
 my_global_sanitize :=
 my_global_sanitize_diag :=
-ifeq ($(my_clang),true)
-  ifdef LOCAL_IS_HOST_MODULE
-    ifneq ($($(my_prefix)OS),windows)
-      my_global_sanitize := $(strip $(SANITIZE_HOST))
+ifdef LOCAL_IS_HOST_MODULE
+  ifneq ($($(my_prefix)OS),windows)
+    my_global_sanitize := $(strip $(SANITIZE_HOST))
 
-      # SANITIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
-      my_global_sanitize := $(subst true,address,$(my_global_sanitize))
-    endif
-  else
-    my_global_sanitize := $(strip $(SANITIZE_TARGET))
-    my_global_sanitize_diag := $(strip $(SANITIZE_TARGET_DIAG))
+    # SANITIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
+    my_global_sanitize := $(subst true,address,$(my_global_sanitize))
   endif
+else
+  my_global_sanitize := $(strip $(SANITIZE_TARGET))
+  my_global_sanitize_diag := $(strip $(SANITIZE_TARGET_DIAG))
 endif
 
 # Disable global integer_overflow in excluded paths.
@@ -235,13 +230,6 @@ ifneq ($(filter address thread,$(strip $(SANITIZE_TARGET))),)
   endif
 endif
 
-# Sanitizers can only be used with clang.
-ifneq ($(my_clang),true)
-  ifneq ($(my_sanitize),)
-    $(error $(LOCAL_PATH): $(LOCAL_MODULE): Use of sanitizers requires LOCAL_CLANG := true)
-  endif
-endif
-
 ifneq ($(filter default-ub,$(my_sanitize)),)
   my_sanitize := $(CLANG_DEFAULT_UB_CHECKS)
 endif
@@ -289,6 +277,7 @@ endif
 ifneq ($(my_sanitize),)
   fsanitize_arg := $(subst $(space),$(comma),$(my_sanitize))
   my_cflags += -fsanitize=$(fsanitize_arg)
+  my_asflags += -fsanitize=$(fsanitize_arg)
 
   ifdef LOCAL_IS_HOST_MODULE
     my_cflags += -fno-sanitize-recover=all
@@ -309,6 +298,7 @@ ifneq ($(filter cfi,$(my_sanitize)),)
   # entire module.
   LOCAL_ARM_MODE := thumb
   my_cflags += $(CFI_EXTRA_CFLAGS)
+  my_asflags += $(CFI_EXTRA_ASFLAGS)
   # Only append the default visibility flag if -fvisibility has not already been
   # set to hidden.
   ifeq ($(filter -fvisibility=hidden,$(LOCAL_CFLAGS)),)

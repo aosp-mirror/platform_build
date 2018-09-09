@@ -197,8 +197,11 @@ def AVBAddFooter(image_path, avbtool, footer_type, partition_size,
 
   cmd.extend(shlex.split(additional_args))
 
-  (_, exit_code) = RunCommand(cmd)
-  return exit_code == 0
+  output, exit_code = RunCommand(cmd)
+  if exit_code != 0:
+    print("Failed to add AVB footer! Error: %s" % output)
+    return False
+  return True
 
 
 def AdjustPartitionSizeForVerity(partition_size, fec_supported):
@@ -587,7 +590,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     additional_args = prop_dict["avb_add_" + avb_footer_type + "_footer_args"]
     max_image_size = AVBCalcMaxImageSize(avbtool, avb_footer_type,
                                          partition_size, additional_args)
-    if max_image_size == 0:
+    if max_image_size <= 0:
+      print("AVBCalcMaxImageSize is <= 0: %d" % max_image_size)
       return False
     prop_dict["partition_size"] = str(max_image_size)
     prop_dict["original_partition_size"] = partition_size
@@ -625,7 +629,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     if "flash_logical_block_size" in prop_dict:
       build_command.extend(["-o", prop_dict["flash_logical_block_size"]])
     # Specify UUID and hash_seed if using mke2fs.
-    if prop_dict["ext_mkuserimg"] == "mkuserimg_mke2fs.sh":
+    if prop_dict["ext_mkuserimg"] == "mkuserimg_mke2fs":
       if "uuid" in prop_dict:
         build_command.extend(["-U", prop_dict["uuid"]])
       if "hash_seed" in prop_dict:

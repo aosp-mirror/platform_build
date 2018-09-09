@@ -121,13 +121,13 @@ class ValidateTargetFilesTest(unittest.TestCase):
 
     # Use an empty root directory.
     system_root = common.MakeTempDir()
-    cmd = ['mkuserimg_mke2fs.sh', '-s', system_root, output_file, 'ext4',
+    cmd = ['mkuserimg_mke2fs', '-s', system_root, output_file, 'ext4',
            '/system', str(adjusted_size), '-j', '0']
     proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdoutdata, _ = proc.communicate()
     self.assertEqual(
         0, proc.returncode,
-        "Failed to create system image with mkuserimg_mke2fs.sh: {}".format(
+        "Failed to create system image with mkuserimg_mke2fs: {}".format(
             stdoutdata))
 
     # Append the verity metadata.

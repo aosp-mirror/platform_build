@@ -1475,15 +1475,26 @@ recovery_kernel := $(INSTALLED_KERNEL_TARGET) # same as a non-recovery system
 recovery_ramdisk := $(PRODUCT_OUT)/ramdisk-recovery.img
 recovery_resources_common := $(call include-path-for, recovery)/res
 
-# Set recovery_density to the density bucket of the device.
-recovery_density := unknown
+# Set recovery_density to a density bucket based on PRODUCT_AAPT_PREF_CONFIG if set. Otherwise use
+# the default medium density.
 ifneq (,$(PRODUCT_AAPT_PREF_CONFIG))
-# If PRODUCT_AAPT_PREF_CONFIG includes a dpi bucket, then use that value.
+# If PRODUCT_AAPT_PREF_CONFIG includes a non-numeric dpi bucket, always perfer that value.
 recovery_density := $(filter %dpi,$(PRODUCT_AAPT_PREF_CONFIG))
-else
-# Otherwise, use the default medium density.
-recovery_densities := mdpi
+ifeq (,$(filter xxxhdpi xxhdpi xhdpi hdpi mdpi,$(recovery_density)))
+recovery_density_value := $(patsubst %dpi,%,$(recovery_density))
+# Map the numeric dpi value to a bucket. We roughly use the medium point between the primary
+# densities to split buckets.
+# ------160------240------320----------480------------640------
+#       mdpi     hdpi    xhdpi        xxhdpi        xxxhdpi
+recovery_density := $(strip \
+  $(or $(if $(filter $(shell echo $$(($(recovery_density_value) >= 560))),1),xxxhdpi),\
+       $(if $(filter $(shell echo $$(($(recovery_density_value) >= 400))),1),xxhdpi),\
+       $(if $(filter $(shell echo $$(($(recovery_density_value) >= 280))),1),xhdpi),\
+       $(if $(filter $(shell echo $$(($(recovery_density_value) >= 200))),1),hdpi,mdpi)))
 endif
+else # PRODUCT_AAPT_PREF_CONFIG is empty
+recovery_density := mdpi
+endif # PRODUCT_AAPT_PREF_CONFIG
 
 ifneq (,$(wildcard $(recovery_resources_common)-$(recovery_density)))
 recovery_resources_common := $(recovery_resources_common)-$(recovery_density)
@@ -1491,12 +1502,10 @@ else
 recovery_resources_common := $(recovery_resources_common)-xhdpi
 endif
 
-# Select the 18x32 font on high-density devices (xhdpi and up); and
-# the 12x22 font on other devices.  Note that the font selected here
-# can be overridden for a particular device by putting a font.png in
-# its private recovery resources.
-
-ifneq (,$(filter xxxhdpi 560dpi xxhdpi 400dpi xhdpi,$(recovery_density)))
+# Select the 18x32 font on high-density devices (xhdpi and up); and the 12x22 font on other devices.
+# Note that the font selected here can be overridden for a particular device by putting a font.png
+# in its private recovery resources.
+ifneq (,$(filter xxxhdpi xxhdpi xhdpi,$(recovery_density)))
 recovery_font := $(call include-path-for, recovery)/fonts/18x32.png
 else
 recovery_font := $(call include-path-for, recovery)/fonts/12x22.png
@@ -2636,10 +2645,6 @@ BOARD_AVB_ALGORITHM := SHA256_RSA4096
 BOARD_AVB_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 endif
 
-ifndef BOARD_BOOTIMAGE_PARTITION_SIZE
-$(error BOARD_BOOTIMAGE_PARTITION_SIZE must be set for BOARD_AVB_ENABLE)
-endif
-
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
 DTBO_FOOTER_ARGS := BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS
 SYSTEM_FOOTER_ARGS := BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS
@@ -2960,7 +2965,7 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/VeritySigner.jar \
   $(HOST_OUT_EXECUTABLES)/mke2fs \
-  $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs.sh \
+  $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs \
   $(HOST_OUT_EXECUTABLES)/e2fsdroid \
   $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh \
   $(HOST_OUT_EXECUTABLES)/mksquashfs \
@@ -3178,6 +3183,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 		$(HOST_OUT_EXECUTABLES)/fs_config \
 		$(HOST_OUT_EXECUTABLES)/imgdiff \
 		$(HOST_OUT_EXECUTABLES)/bsdiff \
+		$(HOST_OUT_EXECUTABLES)/care_map_generator \
 		$(BUILD_IMAGE_SRCS) \
 		$(BUILT_ASSEMBLED_SYSTEM_MANIFEST) \
 		$(BUILT_ASSEMBLED_VENDOR_MANIFEST) \
