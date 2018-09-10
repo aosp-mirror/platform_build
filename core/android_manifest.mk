@@ -30,14 +30,6 @@ endif
 
 full_android_manifest := $(intermediates.COMMON)/manifest/AndroidManifest.xml
 
-ifdef LOCAL_MIN_SDK_VERSION
-  $(full_android_manifest): PRIVATE_MIN_SDK_VERSION := $(LOCAL_MIN_SDK_VERSION)
-else ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
-  $(full_android_manifest): PRIVATE_MIN_SDK_VERSION := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
-else
-  $(full_android_manifest): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
-endif
-
 ifneq (,$(strip $(my_full_libs_manifest_files)))
   # Set up rules to merge library manifest files
   fixed_android_manifest := $(intermediates.COMMON)/manifest/AndroidManifest.xml.fixed
@@ -52,6 +44,14 @@ ifneq (,$(strip $(my_full_libs_manifest_files)))
 	    --out $@
 else
   fixed_android_manifest := $(full_android_manifest)
+endif
+
+ifdef LOCAL_MIN_SDK_VERSION
+  $(fixed_android_manifest): PRIVATE_MIN_SDK_VERSION := $(LOCAL_MIN_SDK_VERSION)
+else ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
+  $(fixed_android_manifest): PRIVATE_MIN_SDK_VERSION := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
+else
+  $(fixed_android_manifest): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
 endif
 
 my_exported_sdk_libs_file := $(call local-intermediates-dir,COMMON)/exported-sdk-libs
