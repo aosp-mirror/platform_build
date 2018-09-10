@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0645795_fb7f61cb",
+        "filename": "core/clear_vars.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-09-10T17:50:21Z",
+      "side": 1,
+      "message": "this should stay below with LOCAL_SOURCE_FILES_ALL_GENERATED",
+      "range": {
+        "startLine": 82,
+        "startChar": 0,
+        "endLine": 82,
+        "endChar": 9
+      },
+      "revId": "37fa7a472eb5798c298772dabd7b4afae721dbe2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
