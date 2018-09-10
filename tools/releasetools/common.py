@@ -194,10 +194,10 @@ def LoadInfoDict(input_file, input_dir=None):
     if fc_config:
       d["selinux_fc"] = fc_config
 
-    # Similarly we need to redirect "ramdisk_dir" and "ramdisk_fs_config".
+    # Similarly we need to redirect "root_dir" and "root_fs_config".
     if d.get("system_root_image") == "true":
-      d["ramdisk_dir"] = os.path.join(input_dir, "ROOT")
-      d["ramdisk_fs_config"] = os.path.join(
+      d["root_dir"] = os.path.join(input_dir, "ROOT")
+      d["root_fs_config"] = os.path.join(
           input_dir, "META", "root_filesystem_config.txt")
 
     # Redirect {system,vendor}_base_fs_file.

@@ -14,22 +14,26 @@
 # limitations under the License.
 #
 
-PRODUCT_PROPERTY_OVERRIDES += \
-	vendor.rild.libpath=/vendor/lib/libreference-ril.so
+# The system image of aosp_arm-userdebug is a GSI for the devices with:
+# - ARM 32 bits user space
+# - 64 bits binder interface
+# - system-as-root
+# - VNDK enforcement
+# - compatible property override enabled
 
-# Note: the following lines need to stay at the beginning so that it can
-# take priority  and override the rules it inherit from other mk files
-# see copy file rules in core/Makefile
-PRODUCT_COPY_FILES += \
-    development/sys-img/advancedFeatures.ini.arm:advancedFeatures.ini \
-    prebuilts/qemu-kernel/arm64/3.18/kernel-qemu2:kernel-ranchu-64 \
-    device/generic/goldfish/fstab.ranchu.arm:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.ranchu
-
-# TODO(b/78308559): includes vr_hwc into GSI before vr_hwc move to vendor
-PRODUCT_PACKAGES += \
-    vr_hwc
+-include device/generic/goldfish/arm32-vendor.mk
 
 include $(SRC_TARGET_DIR)/product/full.mk
+
+# Enable dynamic partition size
+PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
+
+# Enable A/B update
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS := system
+PRODUCT_PACKAGES += \
+    update_engine \
+    update_verifier
 
 # Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true

@@ -681,6 +681,7 @@ JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/make/tools/fat16copy.py
 CHECK_LINK_TYPE := build/make/tools/check_link_type.py
+UUIDGEN := build/make/tools/uuidgen.py
 
 PROGUARD := external/proguard/bin/proguard.sh
 JAVATAGS := build/make/tools/java-event-log-tags.py
@@ -925,6 +926,62 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
     PLATFORM_SEPOLICY_VERSION \
     TOT_SEPOLICY_VERSION \
+
+# If true, kernel configuration requirements are present in OTA package (and will be enforced
+# during OTA). Otherwise, kernel configuration requirements are enforced in VTS.
+# Devices that checks the running kernel (instead of the kernel in OTA package) should not
+# set this variable to prevent OTA failures.
+ifndef PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
+  PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS :=
+  ifdef PRODUCT_SHIPPING_API_LEVEL
+    ifeq (true,$(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29))
+      PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := true
+    endif
+  endif
+endif
+.KATI_READONLY := PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
+
+ifeq ($(USE_LOGICAL_PARTITIONS),true)
+    requirements := \
+        PRODUCT_USE_DYNAMIC_PARTITION_SIZE \
+        PRODUCT_BUILD_SUPER_PARTITION \
+        PRODUCT_USE_FASTBOOTD \
+
+    $(foreach req,$(requirements),$(if $(filter false,$($(req))),\
+        $(error USE_LOGICAL_PARTITIONS requires $(req) to be true)))
+
+    requirements :=
+
+  BOARD_KERNEL_CMDLINE += androidboot.logical_partitions=1
+endif
+
+ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
+
+ifneq ($(BOARD_SYSTEMIMAGE_PARTITION_SIZE),)
+ifneq ($(BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE),)
+$(error Should not define BOARD_SYSTEMIMAGE_PARTITION_SIZE and \
+    BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE together)
+endif
+endif
+
+ifneq ($(BOARD_VENDORIMAGE_PARTITION_SIZE),)
+ifneq ($(BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE),)
+$(error Should not define BOARD_VENDORIMAGE_PARTITION_SIZE and \
+    BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE together)
+endif
+endif
+
+endif # PRODUCT_USE_DYNAMIC_PARTITION_SIZE
+
+ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
+ifneq ($(BOARD_PRODUCTIMAGE_PARTITION_SIZE),)
+ifneq ($(BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE),)
+$(error Should not define BOARD_PRODUCTIMAGE_PARTITION_SIZE and \
+    BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE together)
+endif
+endif
+
+endif # PRODUCT_BUILD_SUPER_PARTITION
 
 # ###############################################################
 # Set up final options.

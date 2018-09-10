@@ -23,6 +23,9 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
 
+# Enable dynamic partition size
+PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
+
 # Split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
@@ -30,15 +33,6 @@ PRODUCT_FULL_TREBLE_OVERRIDE := true
 #   Needed for android.telecom.cts.ExtendedInCallServiceTest#testOnCannedTextResponsesLoaded
 PRODUCT_PACKAGES += \
     messaging
-
-# The following policy XML files are used as fallback for
-# vendors/devices not using XML to configure audio policy.
-PRODUCT_COPY_FILES += \
-    frameworks/av/services/audiopolicy/config/audio_policy_configuration_generic.xml:system/etc/audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/primary_audio_policy_configuration.xml:system/etc/primary_audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:system/etc/r_submix_audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/audio_policy_volumes.xml:system/etc/audio_policy_volumes.xml \
-    frameworks/av/services/audiopolicy/config/default_volume_tables.xml:system/etc/default_volume_tables.xml \
 
 # Telephony:
 #   Provide a default APN configuration
@@ -62,7 +56,3 @@ PRODUCT_PACKAGES += \
 
 # Support addtional O-MR1 vendor interface
 PRODUCT_EXTRA_VNDK_VERSIONS := 27
-
-# TODO(b/78308559): includes vr_hwc into GSI before vr_hwc move to vendor
-PRODUCT_PACKAGES += \
-    vr_hwc

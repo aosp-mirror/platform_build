@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 The Android Open-Source Project
+# Copyright (C) 2018 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,21 +19,9 @@
 # on the generic system image, place them in build/make/target/board/
 # treble_system.prop.
 
-# aosp_x86_ab-userdebug is a Legacy GSI for the devices with:
-# - x86 32 bits user space
-# - 32 bits binder interface
-# - system-as-root
-
 include build/make/target/product/treble_common_32.mk
 
-# Enable A/B update
-AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS := system
-PRODUCT_PACKAGES += \
-    update_engine \
-    update_verifier
-
-PRODUCT_NAME := aosp_x86_ab
-PRODUCT_DEVICE := generic_x86_ab
+PRODUCT_NAME := aosp_arm_64b_ab
+PRODUCT_DEVICE := generic_arm_64b_ab
 PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on x86
+PRODUCT_MODEL := AOSP on ARM32

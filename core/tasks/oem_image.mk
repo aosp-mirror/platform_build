@@ -33,7 +33,7 @@ $(INSTALLED_OEMIMAGE_TARGET) : $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_OEMIMAGE_F
 	$(call pretty,"Target oem fs image: $@")
 	@mkdir -p $(TARGET_OUT_OEM)
 	@mkdir -p $(oemimage_intermediates) && rm -rf $(oemimage_intermediates)/oem_image_info.txt
-	$(call generate-userimage-prop-dictionary, $(oemimage_intermediates)/oem_image_info.txt, skip_fsck=true)
+	$(call generate-image-prop-dictionary, $(oemimage_intermediates)/oem_image_info.txt,oem,skip_fsck=true)
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
 	  build/make/tools/releasetools/build_image.py \
 	  $(TARGET_OUT_OEM) $(oemimage_intermediates)/oem_image_info.txt $@ $(TARGET_OUT)
