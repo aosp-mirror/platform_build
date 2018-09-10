@@ -54,6 +54,12 @@ else
   $(fixed_android_manifest): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
 endif
 
+ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
+  $(fixed_android_manifest): PRIVATE_TARGET_SDK_VERSION := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
+else
+  $(fixed_android_manifest): PRIVATE_TARGET_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
+endif
+
 my_exported_sdk_libs_file := $(call local-intermediates-dir,COMMON)/exported-sdk-libs
 $(fixed_android_manifest): PRIVATE_EXPORTED_SDK_LIBS_FILE := $(my_exported_sdk_libs_file)
 $(fixed_android_manifest): $(my_exported_sdk_libs_file)
@@ -71,6 +77,8 @@ $(fixed_android_manifest): $(main_android_manifest)
 	@echo "Fix manifest: $@"
 	$(MANIFEST_FIXER) \
 	  --minSdkVersion $(PRIVATE_MIN_SDK_VERSION) \
+          --targetSdkVersion $(PRIVATE_TARGET_SDK_VERSION) \
+          --raise-min-sdk-version \
 	  $(PRIVATE_MANIFEST_FIXER_FLAGS) \
 	  $(if (PRIVATE_EXPORTED_SDK_LIBS_FILE),\
 	    $$(cat $(PRIVATE_EXPORTED_SDK_LIBS_FILE) | sort -u | sed -e 's/^/\ --uses-library\ /' | tr '\n' ' ')) \
