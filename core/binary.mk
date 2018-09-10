@@ -372,10 +372,7 @@ my_static_libraries := $(LOCAL_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_V
 my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_WHOLE_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_whole_static_libraries)
 my_header_libraries := $(LOCAL_HEADER_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_HEADER_LIBRARIES_$(my_32_64_bit_suffix)) $(my_header_libraries)
 
-# soong defined modules already have done through this
-ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 include $(BUILD_SYSTEM)/cxx_stl_setup.mk
-endif
 
 # Add static HAL libraries
 ifdef LOCAL_HAL_STATIC_LIBRARIES
@@ -392,8 +389,6 @@ else
   my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LINKER)
 endif
 
-# Modules from soong do not need this since the dependencies are already handled there.
-ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 include $(BUILD_SYSTEM)/config_sanitizers.mk
 
 ifneq ($(LOCAL_NO_LIBCOMPILER_RT),true)
@@ -407,7 +402,6 @@ endif
 ifeq ($($(my_prefix)OS),windows)
   my_static_libraries += libwinpthread
 endif
-endif # this module is not from soong
 
 ifneq ($(filter ../%,$(my_src_files)),)
 my_soong_problems += dotdot_srcs
@@ -1270,29 +1264,23 @@ ifneq ($(LOCAL_USE_VNDK),)
   ## switch all soong libraries over to the /vendor
   ## variant.
   ####################################################
-  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-    # We don't do this renaming for soong-defined modules since they already have correct
-    # names (with .vendor suffix when necessary) in their LOCAL_*_LIBRARIES.
-    my_whole_static_libraries := $(foreach l,$(my_whole_static_libraries),\
-      $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_static_libraries := $(foreach l,$(my_static_libraries),\
-      $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
-      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_system_shared_libraries := $(foreach l,$(my_system_shared_libraries),\
-      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_header_libraries := $(foreach l,$(my_header_libraries),\
-      $(if $(SPLIT_VENDOR.HEADER_LIBRARIES.$(l)),$(l).vendor,$(l)))
-  endif
+  my_whole_static_libraries := $(foreach l,$(my_whole_static_libraries),\
+    $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  my_static_libraries := $(foreach l,$(my_static_libraries),\
+    $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+    $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  my_system_shared_libraries := $(foreach l,$(my_system_shared_libraries),\
+    $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  my_header_libraries := $(foreach l,$(my_header_libraries),\
+    $(if $(SPLIT_VENDOR.HEADER_LIBRARIES.$(l)),$(l).vendor,$(l)))
 endif
 
 # Platform can use vendor public libraries. If a required shared lib is one of
 # the vendor public libraries, the lib is switched to the stub version of the lib.
 ifeq ($(LOCAL_USE_VNDK),)
-  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
-      $(if $(filter $(l),$(VENDOR_PUBLIC_LIBRARIES)),$(l).vendorpublic,$(l)))
-  endif
+  my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+    $(if $(filter $(l),$(VENDOR_PUBLIC_LIBRARIES)),$(l).vendorpublic,$(l)))
 endif
 
 ##########################################################
@@ -1613,26 +1601,23 @@ ifeq ($(my_strict),true)
 endif
 
 # Check if -Werror or -Wno-error is used in C compiler flags.
-# Modules defined in $(SOONG_ANDROID_MK) are checked in soong's cc.go.
-ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-  # Header libraries do not need cflags.
-  ifneq (HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS))
-    # Prebuilt modules do not need cflags.
-    ifeq (,$(LOCAL_PREBUILT_MODULE_FILE))
-      my_all_cflags := $(my_cflags) $(my_cppflags) $(my_cflags_no_override)
-      # Issue warning if -Wno-error is used.
-      ifneq (,$(filter -Wno-error,$(my_all_cflags)))
-        $(eval MODULES_USING_WNO_ERROR := $(MODULES_USING_WNO_ERROR) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
-      else
-        # Issue warning if -Werror is not used. Add it.
-        ifeq (,$(filter -Werror,$(my_all_cflags)))
-          # Add -Wall -Werror unless the project is in the WARNING_ALLOWED project list.
-          ifeq (,$(strip $(call find_warning_allowed_projects,$(LOCAL_PATH))))
-            my_cflags := -Wall -Werror $(my_cflags)
-          else
-            $(eval MODULES_ADDED_WALL := $(MODULES_ADDED_WALL) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
-            my_cflags := -Wall $(my_cflags)
-          endif
+# Header libraries do not need cflags.
+ifneq (HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS))
+  # Prebuilt modules do not need cflags.
+  ifeq (,$(LOCAL_PREBUILT_MODULE_FILE))
+    my_all_cflags := $(my_cflags) $(my_cppflags) $(my_cflags_no_override)
+    # Issue warning if -Wno-error is used.
+    ifneq (,$(filter -Wno-error,$(my_all_cflags)))
+      $(eval MODULES_USING_WNO_ERROR := $(MODULES_USING_WNO_ERROR) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
+    else
+      # Issue warning if -Werror is not used. Add it.
+      ifeq (,$(filter -Werror,$(my_all_cflags)))
+        # Add -Wall -Werror unless the project is in the WARNING_ALLOWED project list.
+        ifeq (,$(strip $(call find_warning_allowed_projects,$(LOCAL_PATH))))
+          my_cflags := -Wall -Werror $(my_cflags)
+        else
+          $(eval MODULES_ADDED_WALL := $(MODULES_ADDED_WALL) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
+          my_cflags := -Wall $(my_cflags)
         endif
       endif
     endif
@@ -1764,12 +1749,6 @@ all_libraries := \
 ###########################################################
 export_includes := $(intermediates)/export_includes
 export_cflags := $(foreach d,$(my_export_c_include_dirs),-I $(d))
-# Soong exports cflags instead of include dirs, so that -isystem can be included.
-ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-export_cflags += $(LOCAL_EXPORT_CFLAGS)
-else ifdef LOCAL_EXPORT_CFLAGS
-$(call pretty-error,LOCAL_EXPORT_CFLAGS can only be used by Soong, use LOCAL_EXPORT_C_INCLUDE_DIRS instead)
-endif
 $(export_includes): PRIVATE_EXPORT_CFLAGS := $(export_cflags)
 # Headers exported by whole static libraries are also exported by this library.
 export_include_deps := $(strip \
@@ -1814,7 +1793,6 @@ export_cflags :=
 # Make sure export_includes gets generated when you are running mm/mmm
 $(LOCAL_BUILT_MODULE) : | $(export_includes)
 
-ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 ifneq (,$(filter-out $(LOCAL_PATH)/%,$(my_export_c_include_dirs)))
 my_soong_problems += non_local__export_c_include_dirs
 endif
@@ -1830,7 +1808,6 @@ SOONG_CONV.$(LOCAL_MODULE).DEPS := \
         $(my_system_shared_libraries))
 SOONG_CONV.$(LOCAL_MODULE).TYPE := native
 SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
-endif
 
 ###########################################################
 # Coverage packaging.
