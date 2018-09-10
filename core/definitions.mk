@@ -1835,54 +1835,6 @@ $(transform-o-to-shared-lib-inner)
 endef
 
 ###########################################################
-## Commands for filtering a target executable or library
-###########################################################
-
-ifneq ($(TARGET_BUILD_VARIANT),user)
-  TARGET_STRIP_EXTRA = && $(PRIVATE_OBJCOPY_ADD_SECTION) --add-gnu-debuglink=$< $@
-  TARGET_STRIP_KEEP_SYMBOLS_EXTRA = --add-gnu-debuglink=$<
-endif
-
-define transform-to-stripped
-@echo "$($(PRIVATE_PREFIX)DISPLAY) Strip: $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-$(hide) $(PRIVATE_STRIP) $(PRIVATE_STRIP_ALL_FLAGS) $< \
-  $(PRIVATE_STRIP_O_FLAG) $@ \
-  $(if $(PRIVATE_NO_DEBUGLINK),,$(TARGET_STRIP_EXTRA))
-endef
-
-define transform-to-stripped-keep-mini-debug-info
-@echo "$($(PRIVATE_PREFIX)DISPLAY) Strip (mini debug info): $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-$(hide) rm -f $@ $@.dynsyms $@.funcsyms $@.keep_symbols $@.debug $@.mini_debuginfo.xz
-if $(PRIVATE_STRIP) $(PRIVATE_STRIP_ALL_FLAGS) \
-  --remove-section .comment $< \
-  $(PRIVATE_STRIP_O_FLAG) $@; then  \
-  $(PRIVATE_OBJCOPY) --only-keep-debug $< $@.debug && \
-  $(PRIVATE_NM) -D $< --format=posix --defined-only | awk '{ print $$1 }' | sort >$@.dynsyms && \
-  $(PRIVATE_NM) $< --format=posix --defined-only | awk '{ if ($$2 == "T" || $$2 == "t" || $$2 == "D") print $$1 }' | sort >$@.funcsyms && \
-  comm -13 $@.dynsyms $@.funcsyms >$@.keep_symbols && \
-  echo >>$@.keep_symbols && \
-  $(PRIVATE_OBJCOPY) --rename-section .debug_frame=saved_debug_frame $@.debug $@.mini_debuginfo && \
-  $(PRIVATE_OBJCOPY) -S --remove-section .gdb_index --remove-section .comment --keep-symbols=$@.keep_symbols $@.mini_debuginfo && \
-  $(PRIVATE_OBJCOPY) --rename-section saved_debug_frame=.debug_frame $@.mini_debuginfo && \
-  rm -f $@.mini_debuginfo.xz && \
-  $(XZ) $@.mini_debuginfo && \
-  $(PRIVATE_OBJCOPY_ADD_SECTION) --add-section .gnu_debugdata=$@.mini_debuginfo.xz $@; \
-else \
-  cp -f $< $@; \
-fi
-endef
-
-define transform-to-stripped-keep-symbols
-@echo "$($(PRIVATE_PREFIX)DISPLAY) Strip (keep symbols): $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-$(hide) $(PRIVATE_OBJCOPY_ADD_SECTION) \
-    `$(PRIVATE_READELF) -S $< | awk '/.debug_/ {print "--remove-section " $$2}' | xargs` \
-    $(TARGET_STRIP_KEEP_SYMBOLS_EXTRA) $< $@
-endef
-
-###########################################################
 ## Commands for running gcc to link an executable
 ###########################################################
 
