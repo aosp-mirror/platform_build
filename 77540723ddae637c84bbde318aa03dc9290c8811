@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c07d7ad9_439cb457",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1342319
+      },
+      "writtenOn": "2018-09-10T21:48:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e100904c_c544a025",
+      "revId": "77540723ddae637c84bbde318aa03dc9290c8811",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a00538f8_f695cd6a",
         "filename": "target/board/treble_common.mk",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "77540723ddae637c84bbde318aa03dc9290c8811",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9351fb7c_1d4f171f",
+        "filename": "target/board/treble_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1342319
+      },
+      "writtenOn": "2018-09-10T21:48:48Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "a00538f8_f695cd6a",
+      "revId": "77540723ddae637c84bbde318aa03dc9290c8811",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
