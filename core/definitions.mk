@@ -1835,54 +1835,6 @@ $(transform-o-to-shared-lib-inner)
 endef
 
 ###########################################################
-## Commands for filtering a target executable or library
-###########################################################
-
-ifneq ($(TARGET_BUILD_VARIANT),user)
-  TARGET_STRIP_EXTRA = && $(PRIVATE_OBJCOPY_ADD_SECTION) --add-gnu-debuglink=$< $@
-  TARGET_STRIP_KEEP_SYMBOLS_EXTRA = --add-gnu-debuglink=$<
-endif
-
-define transform-to-stripped
-@echo "$($(PRIVATE_PREFIX)DISPLAY) Strip: $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-$(hide) $(PRIVATE_STRIP) $(PRIVATE_STRIP_ALL_FLAGS) $< \
-  $(PRIVATE_STRIP_O_FLAG) $@ \
-  $(if $(PRIVATE_NO_DEBUGLINK),,$(TARGET_STRIP_EXTRA))
-endef
-
-define transform-to-stripped-keep-mini-debug-info
-@echo "$($(PRIVATE_PREFIX)DISPLAY) Strip (mini debug info): $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-$(hide) rm -f $@ $@.dynsyms $@.funcsyms $@.keep_symbols $@.debug $@.mini_debuginfo.xz
-if $(PRIVATE_STRIP) $(PRIVATE_STRIP_ALL_FLAGS) \
-  --remove-section .comment $< \
-  $(PRIVATE_STRIP_O_FLAG) $@; then  \
-  $(PRIVATE_OBJCOPY) --only-keep-debug $< $@.debug && \
-  $(PRIVATE_NM) -D $< --format=posix --defined-only | awk '{ print $$1 }' | sort >$@.dynsyms && \
-  $(PRIVATE_NM) $< --format=posix --defined-only | awk '{ if ($$2 == "T" || $$2 == "t" || $$2 == "D") print $$1 }' | sort >$@.funcsyms && \
-  comm -13 $@.dynsyms $@.funcsyms >$@.keep_symbols && \
-  echo >>$@.keep_symbols && \
-  $(PRIVATE_OBJCOPY) --rename-section .debug_frame=saved_debug_frame $@.debug $@.mini_debuginfo && \
-  $(PRIVATE_OBJCOPY) -S --remove-section .gdb_index --remove-section .comment --keep-symbols=$@.keep_symbols $@.mini_debuginfo && \
-  $(PRIVATE_OBJCOPY) --rename-section saved_debug_frame=.debug_frame $@.mini_debuginfo && \
-  rm -f $@.mini_debuginfo.xz && \
-  $(XZ) $@.mini_debuginfo && \
-  $(PRIVATE_OBJCOPY_ADD_SECTION) --add-section .gnu_debugdata=$@.mini_debuginfo.xz $@; \
-else \
-  cp -f $< $@; \
-fi
-endef
-
-define transform-to-stripped-keep-symbols
-@echo "$($(PRIVATE_PREFIX)DISPLAY) Strip (keep symbols): $(PRIVATE_MODULE) ($@)"
-@mkdir -p $(dir $@)
-$(hide) $(PRIVATE_OBJCOPY_ADD_SECTION) \
-    `$(PRIVATE_READELF) -S $< | awk '/.debug_/ {print "--remove-section " $$2}' | xargs` \
-    $(TARGET_STRIP_KEEP_SYMBOLS_EXTRA) $< $@
-endef
-
-###########################################################
 ## Commands for running gcc to link an executable
 ###########################################################
 
@@ -2870,16 +2822,20 @@ endef
 define hiddenapi-generate-greylist-txt
 ifneq (,$(wildcard frameworks/base))
 # Only generate this target if we're in a tree with frameworks/base present.
-$(3): .KATI_IMPLICIT_OUTPUTS := $(2)
+$(3): .KATI_IMPLICIT_OUTPUTS := $(2) $(4)
+# For now, write P & Q blacklist to single file until runtime support is finished
 $(3): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
 	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) \
-	    --write-whitelist $(2) --write-greylist $(3)
+	    --write-whitelist $(2) \
+	    --write-greylist $(3) \
+	    --write-greylist 26,28:$(4)
 
-$(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST): $(2) $(3)
+$(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST): $(2) $(3) $(4)
 $(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST): \
     PRIVATE_WHITELIST_INPUTS := $$(PRIVATE_WHITELIST_INPUTS) $(2)
 $(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST): \
     PRIVATE_GREYLIST_INPUTS := $$(PRIVATE_GREYLIST_INPUTS) $(3)
+    PRIVATE_DARKGREYLIST_INPUTS := $$(PRIVATE_DARKGREYLIST_INPUTS) $(4)
 endif
 endef
 
