@@ -408,7 +408,7 @@ def AppendAVBSigningArgs(cmd, partition):
     cmd.extend(["--key", key_path, "--algorithm", algorithm])
   avb_salt = OPTIONS.info_dict.get("avb_salt")
   # make_vbmeta_image doesn't like "--salt" (and it's not needed).
-  if avb_salt and partition != "vbmeta":
+  if avb_salt and not partition.startswith("vbmeta"):
     cmd.extend(["--salt", avb_salt])
 
 
