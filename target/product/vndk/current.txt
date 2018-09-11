@@ -233,7 +233,6 @@ VNDK-core: libstagefright_soft_g711dec.so
 VNDK-core: libstagefright_soft_gsmdec.so
 VNDK-core: libstagefright_soft_hevcdec.so
 VNDK-core: libstagefright_soft_mp3dec.so
-VNDK-core: libstagefright_soft_mpeg2dec.so
 VNDK-core: libstagefright_soft_mpeg4dec.so
 VNDK-core: libstagefright_soft_mpeg4enc.so
 VNDK-core: libstagefright_soft_opusdec.so
