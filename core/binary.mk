@@ -1372,7 +1372,7 @@ else ifdef LOCAL_USE_VNDK
         my_warn_types :=
         my_allowed_types := native:vendor native:vndk
     endif
-else ifneq ($(filter $(TARGET_RECOVERY_OUT)/%,$(LOCAL_MODULE_PATH)),)
+else ifneq ($(filter $(TARGET_RECOVERY_OUT)/%,$(call get_non_asan_path,$(LOCAL_MODULE_PATH))),)
 my_link_type := native:recovery
 my_warn_types :=
 # TODO(b/113303515) remove native:platform and my_allowed_ndk_types
