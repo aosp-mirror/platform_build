@@ -986,11 +986,11 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS_PRIVILEGED := $(TARGET_OUT_
 
 TARGET_OUT_PRODUCT_SERVICES := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT_SERVICES)
 ifneq ($(filter address,$(SANITIZE_TARGET)),)
-target_out_product_services_shared_libraries_base := $(PRODUCT_SERVICES_OUT)/$(TARGET_COPY_OUT_ASAN)/product_services
+target_out_product_services_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/product_services
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
 # work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
-target_out_product_services_app_base := $(PRODUCT_SERVICES_OUT)/$(TARGET_COPY_OUT_ASAN)/product_services
+target_out_product_services_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/product_services
 else
 target_out_product_services_app_base := $(TARGET_OUT_PRODUCT_SERVICES)
 endif
