@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f537381_a94a4bba",
+        "filename": "tools/signapk/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-09-12T14:56:20Z",
+      "side": 1,
+      "message": "It seems a little odd to force host users of conscrypt to know about jarjar vs nojarjar, but I guess if there is only one that\u0027s OK.",
+      "revId": "72298174579b4b8f62f0493a18beaf7011c4e5c7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
