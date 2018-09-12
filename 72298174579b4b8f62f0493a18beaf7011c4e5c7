@@ -16,6 +16,24 @@
       "revId": "72298174579b4b8f62f0493a18beaf7011c4e5c7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "126ed9b7_43f22949",
+        "filename": "tools/signapk/Android.bp",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1038039
+      },
+      "writtenOn": "2018-09-12T15:09:56Z",
+      "side": 1,
+      "message": "I think it makes more sense to use an \"unbundled\", but the one that exists is not great. I\u0027ll see if I can tackle that latter. This should unblock my ability to mess with the \"conscrypt\" target, which is my main goal.",
+      "parentUuid": "3f537381_a94a4bba",
+      "revId": "72298174579b4b8f62f0493a18beaf7011c4e5c7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
