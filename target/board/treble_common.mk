@@ -35,8 +35,10 @@ TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
 
-# Enable dyanmic system image size and reserved 64MB in it.
-BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
+# Enable dynamic system image size and reserved 128MB in it.
+# Currently the reserve size includes verified boot metadata.
+# TODO: adjust to a smaller value if the reserved size is only for file system.
+BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 134217728
 
 # Generic AOSP image always requires separate vendor.img
 TARGET_COPY_OUT_VENDOR := vendor
@@ -53,11 +55,19 @@ NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 USE_XML_AUDIO_POLICY_CONF := 1
 
 # Android Verified Boot (AVB):
-#   Builds a special vbmeta.img that disables AVB verification.
-#   Otherwise, AVB will prevent the device from booting the generic system.img.
-#   Also checks that BOARD_AVB_ENABLE is not set, to prevent adding verity
-#   metadata into system.img.
-ifeq ($(BOARD_AVB_ENABLE),true)
-$(error BOARD_AVB_ENABLE cannot be set for Treble GSI)
-endif
-BOARD_BUILD_DISABLED_VBMETAIMAGE := true
+#   1) Sets BOARD_AVB_ENABLE to sign the GSI image.
+#   2) Sets AVB_VBMETA_IMAGE_FLAGS_VERIFICATION_DISABLED (--flag 2) in
+#      vbmeta.img to disable AVB verification.
+#
+# To disable AVB for GSI, use the vbmeta.img and the GSI together.
+# To enable AVB for GSI, include the GSI public key into the device-specific
+# vbmeta.img.
+BOARD_AVB_ENABLE := true
+BOARD_AVB_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flag 2
+
+# Enable chain partition for system.
+BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 1

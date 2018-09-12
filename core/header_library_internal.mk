@@ -11,16 +11,6 @@ ifneq ($(strip $(LOCAL_MODULE_STEM)$(LOCAL_BUILT_MODULE_STEM)),)
 $(error $(LOCAL_PATH): Cannot set module stem for a library)
 endif
 
-ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-  ifdef LOCAL_USE_VNDK
-    name_without_suffix := $(patsubst %.vendor,%,$(LOCAL_MODULE))
-    ifneq ($(name_without_suffix),$(LOCAL_MODULE))
-      SPLIT_VENDOR.$(LOCAL_MODULE_CLASS).$(name_without_suffix) := 1
-    endif
-    name_without_suffix :=
-  endif
-endif
-
 include $(BUILD_SYSTEM)/binary.mk
 
 ifneq ($(strip $(all_objects)),)

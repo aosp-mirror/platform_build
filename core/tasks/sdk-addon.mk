@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+.PHONY: sdk_addon
 
 # If they didn't define PRODUCT_SDK_ADDON_NAME, then we won't define
 # any of these rules.
@@ -122,7 +123,6 @@ $(full_target_img): $(full_target) $(addon_img_source_prop) | $(ACP) $(SOONG_ZIP
 	$(hide) $(SOONG_ZIP) -o $@ -C $(dir $(PRIVATE_STAGING_DIR)) -D $(PRIVATE_STAGING_DIR)
 
 
-.PHONY: sdk_addon
 sdk_addon: $(full_target) $(full_target_img)
 
 ifneq ($(sdk_repo_goal),)
