@@ -15,6 +15,8 @@ $(MODULE_INFO_JSON):
 			'"auto_test_config": [$(ALL_MODULES.$(m).auto_test_config)], ' \
 			'"module_name": "$(ALL_MODULES.$(m).MODULE_NAME)", ' \
 			'"test_config": [$(if $(ALL_MODULES.$(m).TEST_CONFIG),"$(ALL_MODULES.$(m).TEST_CONFIG)")], ' \
+			'"dependencies": [$(foreach w,$(sort $(ALL_DEPS.$(m).ALL_DEPS)),"$(w)", )], ' \
+			'"srcs": [$(foreach w,$(sort $(ALL_MODULES.$(m).SRCS)),"$(w)", )], ' \
 			'},\n' \
 	 ) | sed -e 's/, *\]/]/g' -e 's/, *\}/ }/g' -e '$$s/,$$//' >> $@
 	$(hide) echo '}' >> $@
