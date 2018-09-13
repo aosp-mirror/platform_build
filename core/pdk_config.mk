@@ -13,8 +13,6 @@ ifneq (,$(filter platform-java, $(MAKECMDGOALS))$(PDK_FUSION_PLATFORM_ZIP)$(PDK_
 # all paths under out dir
 PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
   target/common/obj/JAVA_LIBRARIES/android.test.runner_intermediates \
-  target/common/obj/JAVA_LIBRARIES/android.hidl.base-V1.0-java_intermediates \
-  target/common/obj/JAVA_LIBRARIES/android.hidl.manager-V1.0-java_intermediates \
   target/common/obj/JAVA_LIBRARIES/android-common_intermediates \
   target/common/obj/JAVA_LIBRARIES/android-ex-camera2_intermediates \
   target/common/obj/JAVA_LIBRARIES/android_stubs_current_intermediates \
