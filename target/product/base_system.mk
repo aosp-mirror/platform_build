@@ -273,9 +273,7 @@ PRODUCT_BOOT_JARS := \
     framework \
     telephony-common \
     voip-common \
-    ims-common \
-    android.hidl.base-V1.0-java \
-    android.hidl.manager-V1.0-java
+    ims-common
 
 # Add the compatibility library that is needed when org.apache.http.legacy
 # is removed from the bootclasspath.
