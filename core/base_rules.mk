@@ -774,6 +774,8 @@ ALL_MODULES.$(my_register_name).FOR_HOST_CROSS := $(my_host_cross)
 ALL_MODULES.$(my_register_name).MODULE_NAME := $(LOCAL_MODULE)
 ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES := $(LOCAL_COMPATIBILITY_SUITE)
 ALL_MODULES.$(my_register_name).TEST_CONFIG := $(test_config)
+ALL_MODULES.$(my_register_name).SRCS := \
+    $(ALL_MODULES.$(my_register_name).SRCS) $(LOCAL_SRC_FILES)
 test_config :=
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
