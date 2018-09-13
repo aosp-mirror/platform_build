@@ -22,6 +22,30 @@
       "revId": "6c4578b64e02ee9e5524ac963c87fbcf838b73ef",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c6285a98_605632a7",
+        "filename": "target/product/treble_common.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2018-09-13T04:17:59Z",
+      "side": 1,
+      "message": "I submitted VNDK v28 to AOSP.",
+      "parentUuid": "a32df56a_a7d2d5a0",
+      "range": {
+        "startLine": 58,
+        "startChar": 34,
+        "endLine": 58,
+        "endChar": 36
+      },
+      "revId": "6c4578b64e02ee9e5524ac963c87fbcf838b73ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
