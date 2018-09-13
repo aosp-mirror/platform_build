@@ -328,7 +328,11 @@ LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE)
 # As .KATI_RESTAT is specified to .toc files and commit-change-for-toc is used,
 # dependent binaries of a .toc file will be rebuilt only when the content of
 # the .toc file is changed.
+#
+# Don't create .toc files for Soong shared libraries, that is handled in
+# Soong and soong_cc_prebuilt.mk
 ###########################################################
+ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
 LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE).toc
 $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
@@ -343,6 +347,7 @@ $(my_all_targets): $(LOCAL_BUILT_MODULE).toc
 ifdef OVERRIDE_BUILT_MODULE_PATH
 $(eval $(call copy-one-file,$(LOCAL_BUILT_MODULE).toc,$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem).toc))
 $(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem).toc: $(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem)
+endif
 endif
 endif
 

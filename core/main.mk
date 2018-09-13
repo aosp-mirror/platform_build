@@ -1264,6 +1264,7 @@ droidcore: files \
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
 
+.PHONY: apps_only
 ifneq ($(TARGET_BUILD_APPS),)
   # If this build is just for apps, only build apps and not the full system by default.
 
@@ -1300,7 +1301,6 @@ ifneq ($(TARGET_BUILD_APPS),)
   $(COVERAGE_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(COVERAGE_ZIP))
 
-.PHONY: apps_only
 apps_only: $(unbundled_build_modules)
 
 droid_targets: apps_only
