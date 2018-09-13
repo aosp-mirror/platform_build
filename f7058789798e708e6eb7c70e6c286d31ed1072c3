@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "12ba77f2_e42c5048",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 3880,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-09-13T22:35:42Z",
+      "side": 1,
+      "message": "It\u0027s easier to keep dependencies correct if you pass explicit files here and not the directory.  Also () instead of {}.",
+      "range": {
+        "startLine": 3880,
+        "startChar": 89,
+        "endLine": 3880,
+        "endChar": 103
+      },
+      "revId": "f7058789798e708e6eb7c70e6c286d31ed1072c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
