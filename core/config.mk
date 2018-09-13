@@ -819,11 +819,15 @@ $(foreach req,$(requirements),$(eval \
 PRODUCT_FULL_TREBLE_OVERRIDE ?=
 $(foreach req,$(requirements),$(eval $(req)_OVERRIDE ?=))
 
+# TODO(b/114488870): disallow PRODUCT_FULL_TREBLE_OVERRIDE from being used.
 .KATI_READONLY := \
     PRODUCT_FULL_TREBLE_OVERRIDE \
     $(foreach req,$(requirements),$(req)_OVERRIDE) \
     $(requirements) \
     PRODUCT_FULL_TREBLE \
+
+$(KATI_obsolete_var $(foreach req,$(requirements),$(req)_OVERRIDE) \
+    ,This should be referenced without the _OVERRIDE suffix.)
 
 requirements :=
 
