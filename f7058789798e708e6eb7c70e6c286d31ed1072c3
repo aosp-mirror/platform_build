@@ -22,6 +22,30 @@
       "revId": "f7058789798e708e6eb7c70e6c286d31ed1072c3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "452769e4_c09f1168",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 3880,
+      "author": {
+        "id": 1342319
+      },
+      "writtenOn": "2018-09-14T16:57:10Z",
+      "side": 1,
+      "message": "Good point.  Done.",
+      "parentUuid": "12ba77f2_e42c5048",
+      "range": {
+        "startLine": 3880,
+        "startChar": 89,
+        "endLine": 3880,
+        "endChar": 103
+      },
+      "revId": "f7058789798e708e6eb7c70e6c286d31ed1072c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
