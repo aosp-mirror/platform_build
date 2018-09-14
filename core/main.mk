@@ -944,8 +944,14 @@ endef
 # $(1): product makefile
 define product-installed-files
   $(eval _mk := $(strip $(1))) \
-  $(eval _pif_modules := $(PRODUCTS.$(_mk).PRODUCT_PACKAGES)) \
-  $(if $(BOARD_VNDK_VERSION),$(eval _pif_modules += vndk_package)) \
+  $(eval _pif_modules := \
+    $(PRODUCTS.$(_mk).PRODUCT_PACKAGES) \
+    $(if $(filter eng,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_ENG)) \
+    $(if $(filter debug,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG)) \
+    $(if $(filter tests,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_TESTS)) \
+    $(if $(filter asan,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_ASAN)) \
+    $(if $(BOARD_VNDK_VERSION),vndk_package) \
+  ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
   $(eval _pif_overrides := $(foreach p, $(_pif_modules), $(PACKAGES.$(p).OVERRIDES))) \
   $(eval _pif_overrides += $(foreach m, $(_pif_modules), $(EXECUTABLES.$(m).OVERRIDES))) \
@@ -1041,28 +1047,12 @@ ifeq (0,1)
   $(error done)
 endif
 
-eng_MODULES := $(sort \
-        $(call get-tagged-modules,eng) \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG)) \
-    )
-debug_MODULES := $(sort \
-        $(call get-tagged-modules,debug) \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG)) \
-    )
-tests_MODULES := $(sort \
-        $(call get-tagged-modules,tests) \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS)) \
-    )
-asan_MODULES := $(sort \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG_ASAN)) \
-    )
-
 # TODO: Remove the 3 places in the tree that use ALL_DEFAULT_INSTALLED_MODULES
 # and get rid of it from this list.
 modules_to_install := $(sort \
     $(ALL_DEFAULT_INSTALLED_MODULES) \
     $(product_FILES) \
-    $(foreach tag,$(tags_to_install),$($(tag)_MODULES)) \
+    $(call get-tagged-modules,$(tags_to_install)) \
     $(CUSTOM_MODULES) \
   )
 
