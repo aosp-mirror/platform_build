@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cd96443d_7210aa93",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2294,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-09-14T23:58:16Z",
+      "side": 1,
+      "message": "Does this affect d8 too?  The d8 is using this hack to avoid passing resources to d8 that could be replaced with the flag",
+      "revId": "c81798f2a28b5c6b0929c0fae4af6386e796fe69",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
