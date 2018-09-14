@@ -1167,7 +1167,8 @@ class StreamingPropertyFiles(PropertyFiles):
         'payload_properties.txt',
     )
     self.optional = (
-        # care_map.txt is available only if dm-verity is enabled.
+        # care_map is available only if dm-verity is enabled.
+        'care_map.pb',
         'care_map.txt',
         # compatibility.zip is available only if target supports Treble.
         'compatibility.zip',
@@ -1786,13 +1787,16 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   target_zip = zipfile.ZipFile(target_file, "r")
   if (target_info.get("verity") == "true" or
       target_info.get("avb_enable") == "true"):
-    care_map_path = "META/care_map.txt"
-    namelist = target_zip.namelist()
-    if care_map_path in namelist:
-      care_map_data = target_zip.read(care_map_path)
-      # In order to support streaming, care_map.txt needs to be packed as
+    care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
+                     "META/" + x in target_zip.namelist()]
+
+    # Adds care_map if either the protobuf format or the plain text one exists.
+    if care_map_list:
+      care_map_name = care_map_list[0]
+      care_map_data = target_zip.read("META/" + care_map_name)
+      # In order to support streaming, care_map needs to be packed as
       # ZIP_STORED.
-      common.ZipWriteStr(output_zip, "care_map.txt", care_map_data,
+      common.ZipWriteStr(output_zip, care_map_name, care_map_data,
                          compress_type=zipfile.ZIP_STORED)
     else:
       print("Warning: cannot find care map file in target_file package")
