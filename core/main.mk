@@ -902,18 +902,31 @@ $(foreach lt,$(ALL_LINK_TYPES),\
 # Of the modules defined by the component makefiles,
 # determine what we actually want to build.
 
+
+# Expand a list of modules to the modules that they override (if any)
+# $(1): The list of modules.
+define module-overrides
+$(foreach m,$(1),$(PACKAGES.$(m).OVERRIDES) $(EXECUTABLES.$(m).OVERRIDES))
+endef
+
 ###########################################################
 ## Expand a module name list with REQUIRED modules
 ###########################################################
 # $(1): The variable name that holds the initial module name list.
 #       the variable will be modified to hold the expanded results.
 # $(2): The initial module name list.
+# $(3): The list of overridden modules.
 # Returns empty string (maybe with some whitespaces).
 define expand-required-modules
 $(eval _erm_req := $(foreach m,$(2),$(ALL_MODULES.$(m).REQUIRED))) \
-$(eval _erm_new_modules := $(sort $(filter-out $($(1)),$(_erm_req))))\
-$(if $(_erm_new_modules),$(eval $(1) += $(_erm_new_modules))\
-  $(call expand-required-modules,$(1),$(_erm_new_modules)))
+$(eval _erm_new_modules := $(sort $(filter-out $($(1)),$(_erm_req)))) \
+$(eval _erm_new_overrides := $(call module-overrides,$(_erm_new_modules))) \
+$(eval _erm_all_overrides := $(3) $(_erm_new_overrides)) \
+$(eval _erm_new_modules := $(filter-out $(_erm_all_overrides), $(_erm_new_modules))) \
+$(eval $(1) := $(filter-out $(_erm_new_overrides),$($(1)))) \
+$(eval $(1) += $(_erm_new_modules)) \
+$(if $(_erm_new_modules),\
+  $(call expand-required-modules,$(1),$(_erm_new_modules),$(_erm_all_overrides)))
 endef
 
 # Transforms paths relative to PRODUCT_OUT to absolute paths.
@@ -953,8 +966,7 @@ define product-installed-files
     $(if $(BOARD_VNDK_VERSION),vndk_package) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
-  $(eval _pif_overrides := $(foreach p, $(_pif_modules), $(PACKAGES.$(p).OVERRIDES))) \
-  $(eval _pif_overrides += $(foreach m, $(_pif_modules), $(EXECUTABLES.$(m).OVERRIDES))) \
+  $(eval _pif_overrides := $(call module-overrides,$(_pif_modules))) \
   $(eval _pif_modules := $(filter-out $(_pif_overrides), $(_pif_modules))) \
   $(eval ### Resolve the :32 :64 module name) \
   $(eval _pif_modules_32 := $(patsubst %:32,%,$(filter %:32, $(_pif_modules)))) \
@@ -966,7 +978,7 @@ define product-installed-files
   $(eval ### For the rest we add both) \
   $(eval _pif_modules += $(call get-32-bit-modules, $(_pif_modules_rest))) \
   $(eval _pif_modules += $(_pif_modules_rest)) \
-  $(call expand-required-modules,_pif_modules,$(_pif_modules)) \
+  $(call expand-required-modules,_pif_modules,$(_pif_modules),$(_pif_overrides)) \
   $(call module-installed-files, $(_pif_modules)) \
   $(call resolve-product-relative-paths,\
     $(foreach cf,$(PRODUCTS.$(_mk).PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
@@ -1055,18 +1067,6 @@ modules_to_install := $(sort \
     $(call get-tagged-modules,$(tags_to_install)) \
     $(CUSTOM_MODULES) \
   )
-
-# Some packages may override others using LOCAL_OVERRIDES_PACKAGES.
-# Filter out (do not install) any overridden packages.
-overridden_packages := $(call get-package-overrides,$(modules_to_install))
-ifdef overridden_packages
-#  old_modules_to_install := $(modules_to_install)
-  modules_to_install := \
-      $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk %/$(p).odex %/$(p).vdex), \
-          $(modules_to_install))
-endif
-#$(error filtered out
-#           $(filter-out $(modules_to_install),$(old_modules_to_install)))
 
 # Don't include any GNU General Public License shared objects or static
 # libraries in SDK images.  GPL executables (not static/dynamic libraries)
