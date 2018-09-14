@@ -2836,6 +2836,7 @@ define transform-jar-to-dex-r8
 $(hide) rm -f $(PRIVATE_PROGUARD_DICTIONARY)
 $(hide) $(R8_COMPAT_PROGUARD) -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
+    --no-data-resources \
     --force-proguard-compatibility --output $(subst classes.dex,,$@) \
     $(PRIVATE_PROGUARD_FLAGS) \
     $(addprefix -injars , $(PRIVATE_EXTRA_INPUT_JAR)) \
