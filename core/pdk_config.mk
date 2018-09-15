@@ -174,11 +174,15 @@ ifneq (,$(filter platform platform-java, $(MAKECMDGOALS))$(filter true,$(TARGET_
   # files under $(PRODUCT_OUT)/symbols to help debugging.
   # Source not included to PDK due to dependency issue, so provide symbols instead.
 
-  # We may not be building all of them.
-  # The platform.zip just silently ignores the nonexistent ones.
-  PDK_SYMBOL_FILES_LIST := \
-      system/bin/app_process32 \
-      system/bin/app_process64
+  PDK_SYMBOL_FILES_LIST :=
+  ifeq ($(TARGET_IS_64_BIT),true)
+    PDK_SYMBOL_FILES_LIST += system/bin/app_process64
+    ifdef TARGET_2ND_ARCH
+      PDK_SYMBOL_FILES_LIST += system/bin/app_process32
+    endif
+  else
+    PDK_SYMBOL_FILES_LIST += system/bin/app_process32
+  endif
 
   ifneq (,$(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR))
     # symbols should be explicitly pulled for fusion build

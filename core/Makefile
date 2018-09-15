@@ -2066,39 +2066,45 @@ INSTALLED_PLATFORM_ZIP := $(PRODUCT_OUT)/platform.zip
 
 $(INSTALLED_PLATFORM_ZIP): PRIVATE_DEX_FILES := $(pdk_classes_dex)
 $(INSTALLED_PLATFORM_ZIP): PRIVATE_ODEX_CONFIG := $(pdk_odex_config_mk)
+$(INSTALLED_PLATFORM_ZIP) : $(SOONG_ZIP)
+# dependencies for the other partitions are defined below after their file lists
+# are known
 $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES) $(pdk_classes_dex) $(pdk_odex_config_mk)
 	$(call pretty,"Platform zip package: $(INSTALLED_PLATFORM_ZIP)")
-	$(hide) rm -f $@
-	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
-		$(TARGET_COPY_OUT_SYSTEM) \
-		$(patsubst $(PRODUCT_OUT)/%, %, $(TARGET_OUT_NOTICE_FILES)) \
-		$(addprefix symbols/,$(PDK_SYMBOL_FILES_LIST))
+	rm -f $@ $@.lst
+	echo "-C $(PRODUCT_OUT)" >> $@.lst
+	echo "-D $(TARGET_OUT)" >> $@.lst
+	echo "-D $(TARGET_OUT_NOTICE_FILES)" >> $@.lst
+	echo "$(addprefix -f $(TARGET_OUT_UNSTRIPPED)/,$(PDK_SYMBOL_FILES_LIST))" >> $@.lst
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
-	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
-		$(TARGET_COPY_OUT_VENDOR)
+	echo "-D $(TARGET_OUT_VENDOR)" >> $@.lst
 endif
 ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
-	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
-		$(TARGET_COPY_OUT_PRODUCT)
+	echo "-D $(TARGET_OUT_PRODUCT)" >> $@.lst
 endif
 ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
-	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
-		$(TARGET_COPY_OUT_PRODUCT_SERVICES)
+	echo "-D $(TARGET_OUT_PRODUCT_SERVICES)" >> $@.lst
 endif
 ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
-	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
-		$(TARGET_COPY_OUT_ODM)
+	echo "-D $(TARGET_OUT_ODM)" >> $@.lst
 endif
 ifneq ($(PDK_PLATFORM_JAVA_ZIP_CONTENTS),)
-	$(hide) cd $(OUT_DIR) && zip -qryX $(patsubst $(OUT_DIR)/%,%,$@) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
+	echo "-C $(OUT_DIR)" >> $@.lst
+	for f in $(filter-out $(PRIVATE_DEX_FILES),$(addprefix -f $(OUT_DIR)/,$(PDK_PLATFORM_JAVA_ZIP_CONTENTS))); do \
+	  if [ -e $$f ]; then \
+	    echo "-f $$f"; \
+	  fi \
+	done >> $@.lst
 endif
 ifneq ($(PDK_PLATFORM_ZIP_PRODUCT_BINARIES),)
-	$(hide) zip -qryX $@ $(PDK_PLATFORM_ZIP_PRODUCT_BINARIES)
+        echo "-C . $(addprefix -f ,$(PDK_PLATFORM_ZIP_PRODUCT_BINARIES))" >> $@.lst
 endif
 	@# Add dex-preopt files and config.
-	$(if $(PRIVATE_DEX_FILES),$(hide) cd $(OUT_DIR) && zip -qryX $(patsubst $(OUT_DIR)/%,%,$@ $(PRIVATE_DEX_FILES)))
-	$(hide) touch $(PRODUCT_OUT)/pdk.mk
-	$(hide) zip -qryXj $@ $(PRIVATE_ODEX_CONFIG) $(PRODUCT_OUT)/pdk.mk
+	$(if $(PRIVATE_DEX_FILES),\
+	  echo "-C $(OUT_DIR) $(addprefix -f ,$(PRIVATE_DEX_FILES))") >> $@.lst
+	touch $(PRODUCT_OUT)/pdk.mk
+	echo "-C $(PRODUCT_OUT) -f $(PRIVATE_ODEX_CONFIG) -f $(PRODUCT_OUT)/pdk.mk" >> $@.lst
+	$(SOONG_ZIP) --ignore_missing_files -o $@ @$@.lst
 
 .PHONY: platform
 platform: $(INSTALLED_PLATFORM_ZIP)
