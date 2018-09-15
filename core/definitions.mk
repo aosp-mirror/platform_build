@@ -2305,19 +2305,12 @@ endef
 # The MacOS jar tool doesn't like creating empty jar files,
 # so we need to give it something.
 # $(1) package to create
-define create-empty-package-at
+define create-empty-package
 @mkdir -p $(dir $(1))
 $(hide) touch $(dir $(1))zipdummy
 $(hide) $(JAR) cf $(1) -C $(dir $(1)) zipdummy
 $(hide) zip -qd $(1) zipdummy
 $(hide) rm $(dir $(1))zipdummy
-endef
-
-# Create a mostly-empty .jar file that we'll add to later.
-# The MacOS jar tool doesn't like creating empty jar files,
-# so we need to give it something.
-define create-empty-package
-$(call create-empty-package-at,$@)
 endef
 
 # Copy an arhchive file and delete any class files and empty folders inside.
@@ -2339,6 +2332,7 @@ endef
 #Note that the version numbers are given to aapt as simple default
 #values; applications can override these by explicitly stating
 #them in their manifest.
+# $(1) the package file
 define add-assets-to-package
 $(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -c , $(PRIVATE_PRODUCT_AAPT_CONFIG)) \
@@ -2355,16 +2349,17 @@ $(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
     $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
     $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
     --skip-symbols-without-default-localization \
-    -F $@
+    -F $(1)
 # So that we re-run aapt when the list of input files change
 $(hide) echo $(PRIVATE_RESOURCE_LIST) >/dev/null
 endef
 
 # We need the extra blank line, so that the command will be on a separate line.
-# $(1): the ABI name
-# $(2): the list of shared libraies
+# $(1): the package
+# $(2): the ABI name
+# $(3): the list of shared libraies
 define _add-jni-shared-libs-to-package-per-abi
-$(hide) cp $(2) $(dir $@)lib/$(1)
+$(hide) cp $(3) $(dir $(1))lib/$(2)
 
 endef
 
@@ -2378,23 +2373,19 @@ JNI_COMPRESS_FLAGS := -0
 ZIPALIGN_PAGE_ALIGN_FLAGS := -p
 endif
 
+# $(1): the package file
 define add-jni-shared-libs-to-package
-$(hide) rm -rf $(dir $@)lib
-$(hide) mkdir -p $(addprefix $(dir $@)lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
+$(hide) rm -rf $(dir $(1))lib
+$(hide) mkdir -p $(addprefix $(dir $(1))lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
 $(foreach abi,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI),\
-  $(call _add-jni-shared-libs-to-package-per-abi,$(abi),\
+  $(call _add-jni-shared-libs-to-package-per-abi,$(1),$(abi),\
     $(patsubst $(abi):%,%,$(filter $(abi):%,$(PRIVATE_JNI_SHARED_LIBRARIES)))))
-$(hide) (cd $(dir $@) && zip -qrX $(JNI_COMPRESS_FLAGS) $(notdir $@) lib)
-$(hide) rm -rf $(dir $@)lib
-endef
-
-#TODO: update the manifest to point to the dex file
-define add-dex-to-package
-$(call add-dex-to-package-arg,$@)
+$(hide) (cd $(dir $(1)) && zip -qrX $(JNI_COMPRESS_FLAGS) $(notdir $(1)) lib)
+$(hide) rm -rf $(dir $(1))lib
 endef
 
 # $(1): the package file.
-define add-dex-to-package-arg
+define add-dex-to-package
 $(hide) find $(dir $(PRIVATE_DEX_FILE)) -maxdepth 1 -name "classes*.dex" | sort | xargs zip -qjX $(1)
 endef
 
