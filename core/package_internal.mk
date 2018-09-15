@@ -420,8 +420,8 @@ else  # LOCAL_USE_AAPT2
     $(resource_export_package): PRIVATE_RESOURCE_LIST := $(all_res_assets)
     $(resource_export_package): $(all_res_assets) $(full_android_manifest) $(rs_generated_res_zip) $(AAPT)
 	@echo "target Export Resources: $(PRIVATE_MODULE) ($@)"
-	$(call create-empty-package,$@)
-	$(call add-assets-to-package,$@)
+	$(create-empty-package)
+	$(add-assets-to-package)
   endif
 
 endif  # LOCAL_USE_AAPT2
@@ -628,17 +628,17 @@ ifeq ($(LOCAL_USE_AAPT2),true)
 else  # ! LOCAL_USE_AAPT2
 	$(if $(PRIVATE_SOURCE_ARCHIVE),\
 	  $(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@),\
-	  $(call create-empty-package,$@))
-	$(call add-assets-to-package,$@)
+	  $(create-empty-package))
+	$(add-assets-to-package)
 endif  # LOCAL_USE_AAPT2
 ifneq ($(jni_shared_libraries),)
-	$(call add-jni-shared-libs-to-package,$@)
+	$(add-jni-shared-libs-to-package)
 endif
 ifeq ($(full_classes_jar),)
 # We don't build jar, need to add the Java resources here.
 	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 else  # full_classes_jar
-	$(call add-dex-to-package,$@)
+	$(add-dex-to-package)
 ifeq ($(LOCAL_USE_AAPT2),true)
 	$(call add-jar-resources-to-package,$@,$(PRIVATE_FULL_CLASSES_JAR),$(PRIVATE_RESOURCE_INTERMEDIATES_DIR))
 endif
@@ -687,7 +687,7 @@ $(built_odex): PRIVATE_DEX_FILE := $(built_dex)
 # Use pattern rule - we may have multiple built odex files.
 $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(built_dex)
 	$(hide) mkdir -p $(dir $@) && rm -f $@
-	$(call add-dex-to-package,$@)
+	$(add-dex-to-package)
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 	$(uncompress-dexs)
 	$(align-package)
