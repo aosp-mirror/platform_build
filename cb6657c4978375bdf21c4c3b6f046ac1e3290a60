@@ -22,6 +22,30 @@
       "revId": "cb6657c4978375bdf21c4c3b6f046ac1e3290a60",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "606a2c3a_cac43cfa",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2439,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-09-15T01:00:22Z",
+      "side": 1,
+      "message": "I meant -x \u0027**/*/\u0027, but maybe that\u0027s unnecessary?",
+      "parentUuid": "a769acf1_584c3d7a",
+      "range": {
+        "startLine": 2439,
+        "startChar": 45,
+        "endLine": 2439,
+        "endChar": 52
+      },
+      "revId": "cb6657c4978375bdf21c4c3b6f046ac1e3290a60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
