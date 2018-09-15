@@ -46,6 +46,30 @@
       "revId": "cb6657c4978375bdf21c4c3b6f046ac1e3290a60",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9d90b56_37e87b04",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2439,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-09-15T03:22:26Z",
+      "side": 1,
+      "message": "Switched to -x \u0027**/*/\u0027, which removes the directories from the zip.",
+      "parentUuid": "606a2c3a_cac43cfa",
+      "range": {
+        "startLine": 2439,
+        "startChar": 45,
+        "endLine": 2439,
+        "endChar": 52
+      },
+      "revId": "cb6657c4978375bdf21c4c3b6f046ac1e3290a60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
