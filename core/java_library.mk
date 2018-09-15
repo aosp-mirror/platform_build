@@ -68,7 +68,7 @@ $(common_javalib.jar): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar
 $(common_javalib.jar) : $(built_dex) $(java_resource_sources) | $(ZIPTIME) $(ZIPALIGN)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
 	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@.tmp)
-	$(call add-dex-to-package-arg,$@.tmp)
+	$(call add-dex-to-package,$@.tmp)
 	$(hide) $(ZIPTIME) $@.tmp
 	$(call commit-change-for-toc,$@)
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))

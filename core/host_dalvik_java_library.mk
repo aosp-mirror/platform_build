@@ -174,7 +174,7 @@ $(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
 $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 	@echo "Host Jar: $(PRIVATE_MODULE) ($@)"
 	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
-	$(add-dex-to-package)
+	$(add-dex-to-package,$@)
 
 endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
 

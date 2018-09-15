@@ -51,16 +51,16 @@ $(built_dpi_apk) : $(all_res_assets) $(jni_shared_libraries) $(full_android_mani
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
 	$(if $(PRIVATE_SOURCE_ARCHIVE),\
 	  $(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@),\
-	  $(create-empty-package))
-	$(add-assets-to-package)
+	  $(call create-empty-package,$@))
+	$(call add-assets-to-package,$@)
 ifneq ($(jni_shared_libraries),)
-	$(add-jni-shared-libs-to-package)
+	$(call add-jni-shared-libs-to-package,$@)
 endif
 ifeq ($(full_classes_jar),)
 # We don't build jar, need to add the Java resources here.
 	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
 else
-	$(add-dex-to-package)
+	$(call add-dex-to-package,$@)
 endif
 	$(sign-package)
 
