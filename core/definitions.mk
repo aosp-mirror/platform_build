@@ -891,41 +891,6 @@ $(error done)
 endef
 
 ###########################################################
-## Package filtering
-###########################################################
-
-# Given a list of installed modules (short or long names)
-# return a list of the packages (yes, .apk packages, not
-# modules in general) that are overridden by this list and,
-# therefore, should not be installed.
-# $(1): mixed list of installed modules
-# TODO: This is fragile; find a reliable way to get this information.
-define _get-package-overrides
- $(eval ### Discard any words containing slashes, unless they end in .apk, \
-        ### in which case trim off the directory component and the suffix. \
-        ### If there are no slashes, keep the entire word.)
- $(eval _gpo_names := $(subst /,@@@ @@@,$(1)))
- $(eval _gpo_names := \
-     $(filter %.apk,$(_gpo_names)) \
-     $(filter-out %@@@ @@@%,$(_gpo_names)))
- $(eval _gpo_names := $(patsubst %.apk,%,$(_gpo_names)))
- $(eval _gpo_names := $(patsubst @@@%,%,$(_gpo_names)))
-
- $(eval ### Remove any remaining words that contain dots.)
- $(eval _gpo_names := $(subst .,@@@ @@@,$(_gpo_names)))
- $(eval _gpo_names := $(filter-out %@@@ @@@%,$(_gpo_names)))
-
- $(eval ### Now we have a list of any words that could possibly refer to \
-        ### packages, although there may be words that do not.  Only \
-        ### real packages will be present under PACKAGES.*, though.)
- $(foreach _gpo_name,$(_gpo_names),$(PACKAGES.$(_gpo_name).OVERRIDES))
-endef
-
-define get-package-overrides
-$(sort $(strip $(call _get-package-overrides,$(1))))
-endef
-
-###########################################################
 ## Output the command lines, or not
 ###########################################################
 
@@ -2361,8 +2326,7 @@ endef
 define initialize-package-file
 @mkdir -p $(dir $(2))
 $(hide) cp -f $(1) $(2)
-$(hide) zip -qd $(2) "*.class" \
-    $(if $(strip $(PRIVATE_DONT_DELETE_JAR_DIRS)),,"*/") \
+$(hide) zip -qd $(2) "*.class" "*/" \
     || true # Ignore the error when nothing to delete.
 endef
 
