@@ -34,6 +34,24 @@
       "revId": "c81798f2a28b5c6b0929c0fae4af6386e796fe69",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "07813d74_a853cef1",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2294,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-09-17T17:10:09Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "009cfb72_9ae47154",
+      "revId": "c81798f2a28b5c6b0929c0fae4af6386e796fe69",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
