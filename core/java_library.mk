@@ -65,10 +65,14 @@ else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
 $(common_javalib.jar): PRIVATE_DEX_FILE := $(built_dex)
 $(common_javalib.jar): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar)
+$(common_javalib.jar): $(MERGE_ZIPS) $(SOONG_ZIP) $(ZIP2ZIP)
 $(common_javalib.jar) : $(built_dex) $(java_resource_sources) | $(ZIPTIME) $(ZIPALIGN)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
-	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@.tmp)
-	$(call add-dex-to-package,$@.tmp)
+	rm -rf $@.parts && mkdir -p $@.parts
+	$(call create-dex-jar,$@.parts/dex.zip,$(PRIVATE_DEX_FILE))
+	$(call extract-resources-jar,$@.parts/res.zip,$(PRIVATE_SOURCE_ARCHIVE))
+	$(MERGE_ZIPS) -j $@.tmp $@.parts/dex.zip $@.parts/res.zip
+	rm -rf $@.parts
 	$(hide) $(ZIPTIME) $@.tmp
 	$(call commit-change-for-toc,$@)
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))

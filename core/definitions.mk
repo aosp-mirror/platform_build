@@ -2301,28 +2301,6 @@ $(hide) $(DX_COMMAND) \
 $(hide) rm -f $(dir $@)d8_input.jar
 endef
 
-# Create a mostly-empty .jar file that we'll add to later.
-# The MacOS jar tool doesn't like creating empty jar files,
-# so we need to give it something.
-# $(1) package to create
-define create-empty-package
-@mkdir -p $(dir $(1))
-$(hide) touch $(dir $(1))zipdummy
-$(hide) $(JAR) cf $(1) -C $(dir $(1)) zipdummy
-$(hide) zip -qd $(1) zipdummy
-$(hide) rm $(dir $(1))zipdummy
-endef
-
-# Copy an arhchive file and delete any class files and empty folders inside.
-# $(1): the source archive file.
-# $(2): the destination archive file.
-define initialize-package-file
-@mkdir -p $(dir $(2))
-$(hide) cp -f $(1) $(2)
-$(hide) zip -qd $(2) "*.class" "*/" \
-    || true # Ignore the error when nothing to delete.
-endef
-
 #TODO: we kinda want to build different asset packages for
 #      different configurations, then combine them later (or something).
 #      Per-locale, etc.
@@ -2333,8 +2311,8 @@ endef
 #values; applications can override these by explicitly stating
 #them in their manifest.
 # $(1) the package file
-define add-assets-to-package
-$(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package -u $(PRIVATE_AAPT_FLAGS) \
+define create-assets-package
+$(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package $(PRIVATE_AAPT_FLAGS) \
     $(addprefix -c , $(PRIVATE_PRODUCT_AAPT_CONFIG)) \
     $(addprefix --preferred-density , $(PRIVATE_PRODUCT_AAPT_PREF_CONFIG)) \
     $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
@@ -2369,32 +2347,43 @@ ifdef TARGET_BUILD_APPS
 JNI_COMPRESS_FLAGS :=
 ZIPALIGN_PAGE_ALIGN_FLAGS :=
 else
-JNI_COMPRESS_FLAGS := -0
+JNI_COMPRESS_FLAGS := -L 0
 ZIPALIGN_PAGE_ALIGN_FLAGS := -p
 endif
 
 # $(1): the package file
-define add-jni-shared-libs-to-package
-$(hide) rm -rf $(dir $(1))lib
-$(hide) mkdir -p $(addprefix $(dir $(1))lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
+define create-jni-shared-libs-package
+rm -rf $(dir $(1))lib
+mkdir -p $(addprefix $(dir $(1))lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
 $(foreach abi,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI),\
   $(call _add-jni-shared-libs-to-package-per-abi,$(1),$(abi),\
     $(patsubst $(abi):%,%,$(filter $(abi):%,$(PRIVATE_JNI_SHARED_LIBRARIES)))))
-$(hide) (cd $(dir $(1)) && zip -qrX $(JNI_COMPRESS_FLAGS) $(notdir $(1)) lib)
-$(hide) rm -rf $(dir $(1))lib
+$(SOONG_ZIP) $(JNI_COMPRESS_FLAGS) -o $(1) -C $(dir $(1)) -D $(dir $(1))lib
+rm -rf $(dir $(1))lib
 endef
 
-# $(1): the package file.
-define add-dex-to-package
-$(hide) find $(dir $(PRIVATE_DEX_FILE)) -maxdepth 1 -name "classes*.dex" | sort | xargs zip -qjX $(1)
+# $(1): the jar file.
+# $(2): the classes.dex file.
+define create-dex-jar
+find $(dir $(2)) -maxdepth 1 -name "classes*.dex" | sort > $(1).lst
+$(SOONG_ZIP) -o $(1) -C $(dir $(2)) -l $(1).lst
 endef
 
-# Add java resources added by the current module.
-# $(1) destination package
-#
+# Add java resources added by the current module to an existing package.
+# $(1) destination package.
 define add-java-resources-to
+  $(call _java-resources,$(1),u)
+endef
+
+# Add java resources added by the current module to a new jar.
+# $(1) destination jar.
+define create-java-resources-jar
+  $(call _java-resources,$(1),c)
+endef
+
+define _java-resources
 $(call dump-words-to-file, $(PRIVATE_EXTRA_JAR_ARGS), $(1).jar-arg-list)
-$(hide) $(JAR) uf $(1) @$(1).jar-arg-list
+$(hide) $(JAR) $(2)f $(1) @$(1).jar-arg-list
 @rm -f $(1).jar-arg-list
 endef
 
@@ -2407,6 +2396,12 @@ define add-jar-resources-to-package
   mkdir -p $(3)
   unzip -qo $(2) -d $(3) $$(zipinfo -1 $(2) | grep -v -E "\.class$$")
   $(JAR) uf $(1) $(call jar-args-sorted-files-in-directory,$(3))
+endef
+
+# $(1): the output resources jar.
+# $(2): the input jar
+define extract-resources-jar
+  $(ZIP2ZIP) -i $(2) -o $(1) -x '**/*.class' -x '**/*/'
 endef
 
 # Sign a package using the specified key/cert.
@@ -3510,3 +3505,9 @@ $(if $(call _invalid-name-chars,$($(1))), \
   $(call pretty-error,Invalid characters in module stem \($(1)\): $(call _invalid-name-chars,$($(1)))))
 endef
 .KATI_READONLY := verify-module-stem
+
+$(KATI_obsolete_var \
+  create-empty-package \
+  initialize-package-file \
+  add-jni-shared-libs-to-package,\
+  These functions have been removed)
