@@ -54,6 +54,9 @@ PRODUCT_PACKAGES += \
 # Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
 
+# Support addtional P vendor interface
+PRODUCT_EXTRA_VNDK_VERSIONS := 28
+
 ifdef NET_ETH0_STARTONBOOT
   PRODUCT_PROPERTY_OVERRIDES += net.eth0.startonboot=1
 endif
