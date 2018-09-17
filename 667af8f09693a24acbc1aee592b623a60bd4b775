@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b94edcde_86530a23",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-09-17T06:18:54Z",
+      "side": 1,
+      "message": "Please change it to\n/a\\        \u003coption name \u003d ...\n   (↑8 spaces)",
+      "range": {
+        "startLine": 43,
+        "startChar": 35,
+        "endLine": 43,
+        "endChar": 38
+      },
+      "revId": "667af8f09693a24acbc1aee592b623a60bd4b775",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
