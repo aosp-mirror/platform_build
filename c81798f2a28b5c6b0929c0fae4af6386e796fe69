@@ -16,6 +16,24 @@
       "revId": "c81798f2a28b5c6b0929c0fae4af6386e796fe69",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "009cfb72_9ae47154",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2294,
+      "author": {
+        "id": 1121678
+      },
+      "writtenOn": "2018-09-17T06:42:15Z",
+      "side": 1,
+      "message": "No, this R8 only. D8 will not try to process anything but Java class files (and dex files when merging) - everything else is ignored.",
+      "parentUuid": "cd96443d_7210aa93",
+      "revId": "c81798f2a28b5c6b0929c0fae4af6386e796fe69",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
