@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "13499149_12d15eae",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1151,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-09-17T18:02:02Z",
+      "side": 1,
+      "message": "$\u003c is defined as the first prerequisite. This may work, but is a bit confusing (and addprefix is likely unnecessary):\n\n$(TARGET_OUT_ETC)/security/otacerts.zip: $(DEFAULT_KEY_CERT_PAIR).x509.pem $(SOONG_ZIP)\n\n(we\u0027ve already been using DEFAULT_KEY_CERT_PAIR without addprefix, but it could be good to strip it above when it\u0027s set)",
+      "range": {
+        "startLine": 1150,
+        "startChar": 0,
+        "endLine": 1151,
+        "endChar": 0
+      },
+      "revId": "cb4124669398f9867e1983d40066a818437f63e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95b9cb12_b68e557f",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2078,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-09-17T18:02:02Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 2078,
+        "startChar": 2,
+        "endLine": 2078,
+        "endChar": 13
+      },
+      "revId": "cb4124669398f9867e1983d40066a818437f63e2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
