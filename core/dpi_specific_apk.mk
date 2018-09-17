@@ -47,21 +47,24 @@ $(built_dpi_apk) : $(R_file_stamp)
 $(built_dpi_apk) : $(all_library_res_package_export_deps)
 $(built_dpi_apk) : $(private_key) $(certificate) $(SIGNAPK_JAR)
 $(built_dpi_apk) : $(AAPT)
+$(built_dpi_apk) : $(MERGE_ZIPS) $(SOONG_ZIP) $(ZIP2ZIP)
 $(built_dpi_apk) : $(all_res_assets) $(jni_shared_libraries) $(full_android_manifest)
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
-	$(if $(PRIVATE_SOURCE_ARCHIVE),\
-	  $(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@),\
-	  $(create-empty-package))
-	$(add-assets-to-package)
+	rm -rf $@.parts
+	mkdir -p $@.parts
+	$(call create-assets-package,$@.parts/apk.zip)
 ifneq ($(jni_shared_libraries),)
-	$(add-jni-shared-libs-to-package)
+	$(call create-jni-shared-libs-package,$@.parts/jni.zip)
 endif
 ifeq ($(full_classes_jar),)
 # We don't build jar, need to add the Java resources here.
-	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call add-java-resources-to,$@))
+	$(if $(PRIVATE_EXTRA_JAR_ARGS),$(call create-java-resources-jar,$@.parts/res.zip))
 else
-	$(add-dex-to-package)
+	$(call create-dex-jar,$@.parts/dex.zip,$(PRIVATE_DEX_FILE))
+	$(call extract-resources-jar,$@.parts/res.zip,$(PRIVATE_SOURCE_ARCHIVE))
 endif
+	$(MERGE_ZIPS) $@ $@.parts/*.zip
+	rm -rf $@.parts
 	$(sign-package)
 
 # Set up global variables to register this apk to the higher-level dependency graph.
