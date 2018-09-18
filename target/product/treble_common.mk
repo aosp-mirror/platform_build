@@ -54,5 +54,5 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     ld.config.vndk_lite.txt
 
-# Support addtional O-MR1 and P vendor interface
-PRODUCT_EXTRA_VNDK_VERSIONS := 27 28
+# Support addtional O-MR1 vendor interface
+PRODUCT_EXTRA_VNDK_VERSIONS := 27
