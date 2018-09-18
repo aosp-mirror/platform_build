@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e078d19d_478dc590",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-09-18T17:40:46Z",
+      "side": 1,
+      "message": "You never set PRIVATE_CONDITIONAL_USES_LIBRARIES_HOST_29 and PRIVATE_CONDITIONAL_USES_LIBRARIES_TARGET_29",
+      "revId": "9c6b438930b7fff23dad8b89894cefe72674d400",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
