@@ -16,6 +16,24 @@
       "revId": "9c6b438930b7fff23dad8b89894cefe72674d400",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2bbfe1f8_f7cea3e4",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-09-18T17:42:12Z",
+      "side": 1,
+      "message": "good catch. This will save me a headache I\u0027m sure when I can test this (waiting on b/115993194).",
+      "parentUuid": "e078d19d_478dc590",
+      "revId": "9c6b438930b7fff23dad8b89894cefe72674d400",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
