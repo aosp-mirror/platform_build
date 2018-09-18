@@ -685,7 +685,7 @@ $(call dist-for-goals,droidcore,$(PGO_PROFILE_MISSING))
 # for future OTA packages installed by this system.  Actual product
 # deliverables will be re-signed by hand.  We expect this file to
 # exist with the suffixes ".x509.pem" and ".pk8".
-DEFAULT_KEY_CERT_PAIR := $(DEFAULT_SYSTEM_DEV_CERTIFICATE)
+DEFAULT_KEY_CERT_PAIR := $(strip $(DEFAULT_SYSTEM_DEV_CERTIFICATE))
 
 
 # Rules that need to be present for the all targets, even
@@ -1147,12 +1147,12 @@ $(winpthreads_notice_file): \
 # This rule adds to ALL_DEFAULT_INSTALLED_MODULES, so it needs to come
 # before the rules that use that variable to build the image.
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_ETC)/security/otacerts.zip
-$(TARGET_OUT_ETC)/security/otacerts.zip: KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
-$(TARGET_OUT_ETC)/security/otacerts.zip: $(addsuffix .x509.pem,$(DEFAULT_KEY_CERT_PAIR)) | $(ZIPTIME)
+$(TARGET_OUT_ETC)/security/otacerts.zip: PRIVATE_CERT := $(DEFAULT_KEY_CERT_PAIR).x509.pem
+$(TARGET_OUT_ETC)/security/otacerts.zip: $(SOONG_ZIP)
+$(TARGET_OUT_ETC)/security/otacerts.zip: $(DEFAULT_KEY_CERT_PAIR).x509.pem
 	$(hide) rm -f $@
 	$(hide) mkdir -p $(dir $@)
-	$(hide) zip -qjX $@ $<
-	$(remove-timestamps-from-package)
+	$(hide) $(SOONG_ZIP) -o $@ -C $(dir $(PRIVATE_CERT)) -f $(PRIVATE_CERT)
 
 # Carry the public key for update_engine if it's a non-IoT target that
 # uses the AB updater. We use the same key as otacerts but in RSA public key
@@ -1160,7 +1160,7 @@ $(TARGET_OUT_ETC)/security/otacerts.zip: $(addsuffix .x509.pem,$(DEFAULT_KEY_CER
 ifeq ($(AB_OTA_UPDATER),true)
 ifneq ($(PRODUCT_IOT),true)
 ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_ETC)/update_engine/update-payload-key.pub.pem
-$(TARGET_OUT_ETC)/update_engine/update-payload-key.pub.pem: $(addsuffix .x509.pem,$(DEFAULT_KEY_CERT_PAIR))
+$(TARGET_OUT_ETC)/update_engine/update-payload-key.pub.pem: $(DEFAULT_KEY_CERT_PAIR).x509.pem
 	$(hide) rm -f $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) openssl x509 -pubkey -noout -in $< > $@
@@ -2075,39 +2075,45 @@ INSTALLED_PLATFORM_ZIP := $(PRODUCT_OUT)/platform.zip
 
 $(INSTALLED_PLATFORM_ZIP): PRIVATE_DEX_FILES := $(pdk_classes_dex)
 $(INSTALLED_PLATFORM_ZIP): PRIVATE_ODEX_CONFIG := $(pdk_odex_config_mk)
+$(INSTALLED_PLATFORM_ZIP) : $(SOONG_ZIP)
+# dependencies for the other partitions are defined below after their file lists
+# are known
 $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES) $(pdk_odex_config_mk)
 	$(call pretty,"Platform zip package: $(INSTALLED_PLATFORM_ZIP)")
-	$(hide) rm -f $@
-	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
-		$(TARGET_COPY_OUT_SYSTEM) \
-		$(patsubst $(PRODUCT_OUT)/%, %, $(TARGET_OUT_NOTICE_FILES)) \
-		$(addprefix symbols/,$(PDK_SYMBOL_FILES_LIST))
+	rm -f $@ $@.lst
+	echo "-C $(PRODUCT_OUT)" >> $@.lst
+	echo "-D $(TARGET_OUT)" >> $@.lst
+	echo "-D $(TARGET_OUT_NOTICE_FILES)" >> $@.lst
+	echo "$(addprefix -f $(TARGET_OUT_UNSTRIPPED)/,$(PDK_SYMBOL_FILES_LIST))" >> $@.lst
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
-	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
-		$(TARGET_COPY_OUT_VENDOR)
+	echo "-D $(TARGET_COPY_OUT_VENDOR)" >> $@.lst
 endif
 ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
-	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
-		$(TARGET_COPY_OUT_PRODUCT)
+	echo "-D $(TARGET_COPY_OUT_PRODUCT)" >> $@.lst
 endif
 ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
-	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
-		$(TARGET_COPY_OUT_PRODUCT_SERVICES)
+	echo "-D $(TARGET_COPY_OUT_PRODUCT_SERVICES)" >> $@.lst
 endif
 ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
-	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
-		$(TARGET_COPY_OUT_ODM)
+	echo "-D $(TARGET_COPY_OUT_ODM)" >> $@.lst
 endif
 ifneq ($(PDK_PLATFORM_JAVA_ZIP_CONTENTS),)
-	$(hide) cd $(OUT_DIR) && zip -qryX $(patsubst $(OUT_DIR)/%,%,$@) $(PDK_PLATFORM_JAVA_ZIP_CONTENTS)
+	echo "-C $(OUT_DIR)" >> $@.lst
+	for f in $(filter-out $(PRIVATE_DEX_FILES),$(addprefix -f $(OUT_DIR)/,$(PDK_PLATFORM_JAVA_ZIP_CONTENTS))); do \
+	  if [ -e $$f ]; then \
+	    echo "-f $$f"; \
+	  fi \
+	done >> $@.lst
 endif
 ifneq ($(PDK_PLATFORM_ZIP_PRODUCT_BINARIES),)
-	$(hide) zip -qryX $@ $(PDK_PLATFORM_ZIP_PRODUCT_BINARIES)
+        echo "-C . $(addprefix -f ,$(PDK_PLATFORM_ZIP_PRODUCT_BINARIES))" >> $@.lst
 endif
 	@# Add dex-preopt files and config.
-	$(if $(PRIVATE_DEX_FILES),$(hide) cd $(OUT_DIR) && zip -qryX $(patsubst $(OUT_DIR)/%,%,$@ $(PRIVATE_DEX_FILES)))
-	$(hide) touch $(PRODUCT_OUT)/pdk.mk
-	$(hide) zip -qryXj $@ $(PRIVATE_ODEX_CONFIG) $(PRODUCT_OUT)/pdk.mk
+	$(if $(PRIVATE_DEX_FILES),\
+	  echo "-C $(OUT_DIR) $(addprefix -f ,$(PRIVATE_DEX_FILES))") >> $@.lst
+	touch $(PRODUCT_OUT)/pdk.mk
+	echo "-C $(PRODUCT_OUT) -f $(PRIVATE_ODEX_CONFIG) -f $(PRODUCT_OUT)/pdk.mk" >> $@.lst
+	$(SOONG_ZIP) -o $@ @$@.lst
 
 .PHONY: platform
 platform: $(INSTALLED_PLATFORM_ZIP)
@@ -3144,15 +3150,15 @@ OTATOOLS_DEPS += \
   $(sort $(shell find external/vboot_reference/tests/devkeys -type f))
 endif
 
-$(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) $(OTATOOLS_DEPS) $(OTATOOLS_RELEASETOOLS) | $(ACP)
+$(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) $(OTATOOLS_DEPS) $(OTATOOLS_RELEASETOOLS) $(SOONG_ZIP)
 	@echo "Package OTA tools: $@"
 	$(hide) rm -rf $@ $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools
 	$(call copy-files-with-structure,$(OTATOOLS),$(HOST_OUT)/,$(zip_root))
-	$(hide) $(ACP) -r -d -p build/make/tools/releasetools/* $(zip_root)/releasetools
+	$(hide) cp -r -d -p build/make/tools/releasetools/* $(zip_root)/releasetools
 	$(hide) rm -rf $@ $(zip_root)/releasetools/*.pyc
-	$(hide) (cd $(zip_root) && zip -qryX $(abspath $@) *)
-	$(hide) echo $(OTATOOLS_DEPS) | xargs zip -qryX $(abspath $@)>/dev/null || true
+	$(hide) $(SOONG_ZIP) -o $@ -C $(zip_root) -D $(zip_root) \
+	  -C . $(addprefix -f ,$(OTATOOLS_DEPS))
 
 .PHONY: otatools-package
 otatools-package: $(BUILT_OTATOOLS_PACKAGE)
