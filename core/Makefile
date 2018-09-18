@@ -1606,7 +1606,7 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 		$(INSTALLED_ODM_BUILD_PROP_TARGET) \
 		$(INSTALLED_PRODUCT_BUILD_PROP_TARGET) \
 		$(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET)
-	@echo "Target recovery buildinfo: $@
+	@echo "Target recovery buildinfo: $@"
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $@
 	$(hide) cat $(INSTALLED_DEFAULT_PROP_TARGET) > $@
