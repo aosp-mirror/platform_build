@@ -295,16 +295,6 @@ include $(BUILD_SYSTEM)/configure_module_stem.mk
 
 LOCAL_BUILT_MODULE := $(intermediates)/$(my_built_module_stem)
 
-# OVERRIDE_BUILT_MODULE_PATH is only allowed to be used by the
-# internal SHARED_LIBRARIES build files.
-OVERRIDE_BUILT_MODULE_PATH := $(strip $(OVERRIDE_BUILT_MODULE_PATH))
-ifdef OVERRIDE_BUILT_MODULE_PATH
-  ifneq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
-    $(error $(LOCAL_PATH): Illegal use of OVERRIDE_BUILT_MODULE_PATH)
-  endif
-  $(eval $(call copy-one-file,$(LOCAL_BUILT_MODULE),$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem)))
-endif
-
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   # Apk and its attachments reside in its own subdir.
   ifeq ($(LOCAL_MODULE_CLASS),APPS)
@@ -343,11 +333,6 @@ $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
 .KATI_RESTAT: $(LOCAL_BUILT_MODULE).toc
 # Build .toc file when using mm, mma, or make $(my_register_name)
 $(my_all_targets): $(LOCAL_BUILT_MODULE).toc
-
-ifdef OVERRIDE_BUILT_MODULE_PATH
-$(eval $(call copy-one-file,$(LOCAL_BUILT_MODULE).toc,$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem).toc))
-$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem).toc: $(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem)
-endif
 endif
 endif
 

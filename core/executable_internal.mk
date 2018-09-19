@@ -47,13 +47,13 @@ my_target_crtbegin_dynamic_o :=
 my_target_crtbegin_static_o :=
 my_target_crtend_o :=
 else ifdef LOCAL_USE_VNDK
-my_target_crtbegin_dynamic_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.vendor.o
-my_target_crtbegin_static_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.vendor.o
-my_target_crtend_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_android.vendor.o
+my_target_crtbegin_dynamic_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_dynamic.vendor)
+my_target_crtbegin_static_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_static.vendor)
+my_target_crtend_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtend_android.vendor)
 else
-my_target_crtbegin_dynamic_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o
-my_target_crtbegin_static_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
-my_target_crtend_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_android.o
+my_target_crtbegin_dynamic_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_dynamic)
+my_target_crtbegin_static_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_static)
+my_target_crtend_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtend_android)
 endif
 ifneq ($(LOCAL_SDK_VERSION),)
 my_target_crtbegin_dynamic_o := $(wildcard $(my_ndk_sysroot_lib)/crtbegin_dynamic.o)
@@ -65,7 +65,6 @@ $(linked_module): PRIVATE_TARGET_LIBATOMIC := $(my_target_libatomic)
 $(linked_module): PRIVATE_TARGET_CRTBEGIN_DYNAMIC_O := $(my_target_crtbegin_dynamic_o)
 $(linked_module): PRIVATE_TARGET_CRTBEGIN_STATIC_O := $(my_target_crtbegin_static_o)
 $(linked_module): PRIVATE_TARGET_CRTEND_O := $(my_target_crtend_o)
-$(linked_module): PRIVATE_TARGET_OUT_INTERMEDIATE_LIBRARIES := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)
 $(linked_module): PRIVATE_POST_LINK_CMD := $(LOCAL_POST_LINK_CMD)
 
 ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)

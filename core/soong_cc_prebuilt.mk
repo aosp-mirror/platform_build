@@ -51,21 +51,6 @@ ifndef LOCAL_UNINSTALLABLE_MODULE
   endif
 endif
 
-ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
-  # LOCAL_COPY_TO_INTERMEDIATE_LIBRARIES indicates that this prebuilt should be
-  # installed to the common directory of libraries. This is needed for the NDK
-  # shared libraries built by soong, as we build many different versions of each
-  # library (one for each API level). Since they all have the same basename,
-  # they'd clobber each other (as well as any platform libraries by the same
-  # name).
-  ifneq ($(LOCAL_COPY_TO_INTERMEDIATE_LIBRARIES),false)
-    # Put the built targets of all shared libraries in a common directory
-    # to simplify the link line.
-    OVERRIDE_BUILT_MODULE_PATH :=  \
-        $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)
-  endif
-endif
-
 #######################################
 include $(BUILD_SYSTEM)/base_rules.mk
 #######################################
@@ -87,12 +72,6 @@ ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODUL
     $(eval $(call copy-one-file,$(LOCAL_SOONG_TOC),$(LOCAL_BUILT_MODULE).toc))
     $(call add-dependency,$(LOCAL_BUILT_MODULE).toc,$(LOCAL_BUILT_MODULE))
     $(my_all_targets): $(LOCAL_BUILT_MODULE).toc
-
-    ifdef OVERRIDE_BUILT_MODULE_PATH
-      $(eval $(call copy-one-file,$(LOCAL_BUILT_MODULE).toc,$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem).toc))
-      $(call add-dependency,$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem).toc,$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem))
-      $(my_all_targets): $(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem).toc
-    endif
   endif
 
   SOONG_ALREADY_CONV := $(SOONG_ALREADY_CONV) $(LOCAL_MODULE)
@@ -125,14 +104,6 @@ ifdef LOCAL_INSTALLED_MODULE
     endif
     $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
       $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(my_shared_libraries))
-
-    # We also need the LOCAL_BUILT_MODULE dependency,
-    # since we use -rpath-link which points to the built module's path.
-    my_built_shared_libraries := \
-      $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
-      $(addsuffix $($(my_prefix)SHLIB_SUFFIX), \
-        $(my_shared_libraries)))
-    $(LOCAL_BUILT_MODULE) : $(my_built_shared_libraries)
   endif
 endif
 
