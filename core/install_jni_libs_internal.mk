@@ -13,9 +13,8 @@
 #
 
 my_jni_shared_libraries := \
-    $(addprefix $($(my_2nd_arch_prefix)TARGET_OUT_INTERMEDIATE_LIBRARIES)/, \
-      $(addsuffix .so, \
-          $(LOCAL_JNI_SHARED_LIBRARIES)))
+    $(foreach lib,$(LOCAL_JNI_SHARED_LIBRARIES), \
+      $(call intermediates-dir-for,SHARED_LIBRARIES,$(lib),,,$(my_2nd_arch_prefix))/$(lib).so)
 
 # App-specific lib path.
 my_app_lib_path := $(dir $(LOCAL_INSTALLED_MODULE))lib/$(TARGET_$(my_2nd_arch_prefix)ARCH)
