@@ -446,8 +446,10 @@ else
   TARGET_VENDOR_TEST_SUFFIX :=
 endif
 
+ifeq (,$(TARGET_BUILD_APPS))
 ifdef PRODUCT_EXTRA_VNDK_VERSIONS
   $(foreach v,$(PRODUCT_EXTRA_VNDK_VERSIONS),$(call check_vndk_version,$(v)))
+endif
 endif
 
 # Ensure that BOARD_SYSTEMSDK_VERSIONS are all within PLATFORM_SYSTEMSDK_VERSIONS
