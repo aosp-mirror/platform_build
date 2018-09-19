@@ -18,4 +18,4 @@
 
 .PHONY: api-diff
 
-api-diff: offline-sdk-referenceonly-diff
+api-diff: api-stubs-docs-jdiff
