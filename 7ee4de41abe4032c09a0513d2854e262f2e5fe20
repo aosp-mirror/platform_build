@@ -22,6 +22,30 @@
       "revId": "7ee4de41abe4032c09a0513d2854e262f2e5fe20",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "56390493_ddaf3c6c",
+        "filename": "core/setup_one_odex.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-09-19T20:19:42Z",
+      "side": 1,
+      "message": "Seems fine to leave it as is.",
+      "parentUuid": "0fb445a2_4c5f8453",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 44
+      },
+      "revId": "7ee4de41abe4032c09a0513d2854e262f2e5fe20",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }

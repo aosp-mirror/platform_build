@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "045dc3ab_7a8ecf4a",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 1015378
+      },
+      "writtenOn": "2018-09-19T20:19:42Z",
+      "side": 1,
+      "message": "Isn\u0027t this broken? construct_context.sh is not additive.",
+      "range": {
+        "startLine": 191,
+        "startChar": 0,
+        "endLine": 191,
+        "endChar": 151
+      },
+      "revId": "c071a0dab9c11013792f9b032ead98f03489f63b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
