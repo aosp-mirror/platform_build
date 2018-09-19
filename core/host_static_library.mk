@@ -23,7 +23,6 @@ LOCAL_2ND_ARCH_VAR_PREFIX := $(HOST_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 ifeq ($(my_module_arch_supported),true)
 # Build for HOST_2ND_ARCH
-OVERRIDE_BUILT_MODULE_PATH :=
 LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
 LOCAL_INTERMEDIATE_TARGETS :=
@@ -39,7 +38,6 @@ LOCAL_HOST_PREFIX := $(my_prefix)
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 ifeq ($(my_module_arch_supported),true)
 # Build for Windows
-OVERRIDE_BUILT_MODULE_PATH :=
 LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
 LOCAL_INTERMEDIATE_TARGETS :=
@@ -52,7 +50,6 @@ LOCAL_2ND_ARCH_VAR_PREFIX := $(HOST_CROSS_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 ifeq ($(my_module_arch_supported),true)
 # Build for HOST_CROSS_2ND_ARCH
-OVERRIDE_BUILT_MODULE_PATH :=
 LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
 LOCAL_INTERMEDIATE_TARGETS :=

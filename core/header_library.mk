@@ -25,7 +25,6 @@ ifdef $(my_prefix)2ND_ARCH
 
   ifeq ($(my_module_arch_supported),true)
     # Build for 2ND_ARCH
-    OVERRIDE_BUILT_MODULE_PATH :=
     LOCAL_BUILT_MODULE :=
     LOCAL_INSTALLED_MODULE :=
     LOCAL_INTERMEDIATE_TARGETS :=
@@ -43,7 +42,6 @@ ifdef LOCAL_IS_HOST_MODULE
 
     ifeq ($(my_module_arch_supported),true)
       # Build for 2ND_ARCH
-      OVERRIDE_BUILT_MODULE_PATH :=
       LOCAL_BUILT_MODULE :=
       LOCAL_INSTALLED_MODULE :=
       LOCAL_INTERMEDIATE_TARGETS :=
@@ -56,7 +54,6 @@ ifdef LOCAL_IS_HOST_MODULE
 
       ifeq ($(my_module_arch_supported),true)
         # Build for HOST_CROSS_2ND_ARCH
-        OVERRIDE_BUILT_MODULE_PATH :=
         LOCAL_BUILT_MODULE :=
         LOCAL_INSTALLED_MODULE :=
         LOCAL_INTERMEDIATE_TARGETS :=
