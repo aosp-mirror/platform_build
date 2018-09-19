@@ -603,7 +603,7 @@ endif
 endif
 
 ifeq ($(module_run_appcompat),true)
-$(LOCAL_BUILT_MODULE) : $(call intermediates-dir-for,PACKAGING,veridex,HOST)/veridex.zip
+$(LOCAL_BUILT_MODULE) : $(appcompat-files)
 $(LOCAL_BUILT_MODULE): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
 endif
 

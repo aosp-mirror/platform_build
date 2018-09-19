@@ -1606,7 +1606,7 @@ $(INSTALLED_RECOVERY_BUILD_PROP_TARGET): \
 		$(INSTALLED_ODM_BUILD_PROP_TARGET) \
 		$(INSTALLED_PRODUCT_BUILD_PROP_TARGET) \
 		$(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET)
-	@echo "Target recovery buildinfo: $@
+	@echo "Target recovery buildinfo: $@"
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $@
 	$(hide) cat $(INSTALLED_DEFAULT_PROP_TARGET) > $@
@@ -2767,7 +2767,9 @@ endif
 # - not-chained: The --include_descriptors_from_image option for make_vbmeta_image
 #   will include the kernel cmdline descriptor from system.img into vbmeta.img
 ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+ifeq ($(filter system, $(BOARD_SUPER_PARTITION_PARTITION_LIST)),)
 BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += --setup_as_rootfs_from_kernel
+endif
 endif
 
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096

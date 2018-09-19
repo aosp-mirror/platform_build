@@ -2465,10 +2465,21 @@ $(hide) \
   echo "appcompat.sh output:" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
   art/tools/veridex/appcompat.sh --dex-file=$@ 2>&1 >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
 endef
+appcompat-files = \
+  art/tools/veridex/appcompat.sh \
+  $(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST) \
+  $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
+  $(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) \
+  $(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST) \
+  $(HOST_OUT_EXECUTABLES)/veridex \
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/core_dex_intermediates/classes.dex \
+  $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/oahl_dex_intermediates/classes.dex
 else
 appcompat-header =
 run-appcompat =
+appcompat-files =
 endif  # HOST_OS == linux
+.KATI_READONLY: appcompat-header run-appcompat appcompat-files
 
 # Remove dynamic timestamps from packages
 #
@@ -2821,6 +2832,7 @@ define transform-jar-to-dex-r8
 $(hide) rm -f $(PRIVATE_PROGUARD_DICTIONARY)
 $(hide) $(R8_COMPAT_PROGUARD) -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
+    --no-data-resources \
     --force-proguard-compatibility --output $(subst classes.dex,,$@) \
     $(PRIVATE_PROGUARD_FLAGS) \
     $(addprefix -injars , $(PRIVATE_EXTRA_INPUT_JAR)) \

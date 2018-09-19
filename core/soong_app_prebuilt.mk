@@ -43,8 +43,6 @@ endif
 endif # TURBINE_ENABLED != false
 
 
-$(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
-
 ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 resource_export_package := $(intermediates.COMMON)/package-export.apk
 resource_export_stamp := $(intermediates.COMMON)/src/R.stamp
@@ -61,13 +59,17 @@ endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 
 java-dex: $(LOCAL_SOONG_DEX_JAR)
 
-ifdef LOCAL_DEX_PREOPT
 # defines built_odex along with rule to install odex
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 
-$(built_odex): $(LOCAL_SOONG_DEX_JAR)
+ifdef LOCAL_DEX_PREOPT
+  $(built_odex): $(LOCAL_SOONG_DEX_JAR)
 	$(call dexpreopt-one-file,$<,$@)
+  $(eval $(call dexpreopt-copy-jar,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE),$(LOCAL_DEX_PREOPT)))
+else
+  $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
 endif
+
 
 PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
 ifdef LOCAL_CERTIFICATE

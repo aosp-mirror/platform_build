@@ -368,7 +368,7 @@ $(built_module) : $(MINIGZIP)
 endif
 
 ifeq ($(module_run_appcompat),true)
-$(built_module) : $(call intermediates-dir-for,PACKAGING,veridex,HOST)/veridex.zip
+$(built_module) : $(appcompat-files)
 $(LOCAL_BUILT_MODULE): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
 endif
 
