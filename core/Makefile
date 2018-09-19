@@ -2991,13 +2991,15 @@ check_android_partition_sizes: $(call images-for-partitions,$(BOARD_SUPER_PARTIT
 check_android_partition_sizes:
 	partition_size_list="$(call read-size-of-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))"; \
 	sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${partition_size_list}"); \
-	if [ $$(( $${sum_sizes_expr} )) -gt $(BOARD_SUPER_PARTITION_SIZE) ]; then \
-		echo 'The sum of sizes of all logical partitions is larger than BOARD_SUPER_PARTITION_SIZE.'; \
-		echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' $(BOARD_SUPER_PARTITION_SIZE); \
+	max_size_tail=$(if $(filter true,$(AB_OTA_UPDATER))," / 2"); \
+	max_size_expr=$(BOARD_SUPER_PARTITION_SIZE)$${max_size_tail}; \
+	if [ $$(( $${sum_sizes_expr} )) -gt $$(( $${max_size_expr} )) ]; then \
+		echo "The sum of sizes of all logical partitions is larger than BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
+		echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' $${max_size_expr} '==' $$(( $${max_size_expr} )); \
 		exit 1; \
 	else \
-		echo 'The sum of sizes of all logical partitions is within BOARD_SUPER_PARTITION_SIZE:' \
-		    $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '<=' $(BOARD_SUPER_PARTITION_SIZE); \
+		echo "The sum of sizes of all logical partitions is within BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
+		echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '<=' $${max_size_expr} '==' $$(( $${max_size_expr} )); \
 	fi
 
 endif # BOARD_SUPER_PARTITION_PARTITION_LIST
