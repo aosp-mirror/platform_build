@@ -11,10 +11,6 @@ my_module_multilib := first
 endif
 endif
 
-ifeq ($(LOCAL_NO_FPIE),)
-LOCAL_LDFLAGS += $(HOST_FPIE_FLAGS)
-endif
-
 ifeq ($(my_module_multilib),both)
 ifneq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
 ifeq ($(LOCAL_MODULE_PATH_32)$(LOCAL_MODULE_STEM_32),)
@@ -63,10 +59,6 @@ LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
 LOCAL_INTERMEDIATE_TARGETS :=
 
-ifeq ($(LOCAL_NO_FPIE),)
-LOCAL_LDFLAGS += $(HOST_CROSS_FPIE_FLAGS)
-endif
-
 include $(BUILD_SYSTEM)/host_executable_internal.mk
 LOCAL_LDFLAGS := $(saved_LOCAL_LDFLAGS)
 LOCAL_BUILT_MODULE := $(saved_LOCAL_BUILT_MODULE)
@@ -84,10 +76,6 @@ saved_LOCAL_LDFLAGS := $(LOCAL_LDFLAGS)
 LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
 LOCAL_INTERMEDIATE_TARGETS :=
-
-ifeq ($(LOCAL_NO_FPIE),)
-LOCAL_LDFLAGS += $(HOST_CROSS_FPIE_FLAGS)
-endif
 
 include $(BUILD_SYSTEM)/host_executable_internal.mk
 LOCAL_LDFLAGS := $(saved_LOCAL_LDFLAGS)
