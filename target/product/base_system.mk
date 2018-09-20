@@ -211,6 +211,7 @@ PRODUCT_PACKAGES += \
     pppd \
     privapp-permissions-platform.xml \
     racoon \
+    recovery-persist \
     resize2fs \
     run-as \
     schedtest \
