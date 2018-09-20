@@ -1879,11 +1879,6 @@ endef
 ###########################################################
 ## Commands for running gcc to link a host executable
 ###########################################################
-ifdef BUILD_HOST_static
-HOST_FPIE_FLAGS :=
-else
-HOST_FPIE_FLAGS := -pie
-endif
 
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-executable-inner

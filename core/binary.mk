@@ -281,13 +281,18 @@ endif
 # all code is position independent, and then those warnings get promoted to
 # errors.
 ifneq ($(LOCAL_NO_PIC),true)
-ifneq ($($(my_prefix)OS),windows)
-ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-my_cflags += -fPIE
-else
-my_cflags += -fPIC
-endif
-endif
+  ifneq ($($(my_prefix)OS),windows)
+    ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+      my_cflags += -fPIE
+      ifndef BUILD_HOST_static
+        ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+          my_ldflags += -pie
+        endif
+      endif
+    else
+      my_cflags += -fPIC
+    endif
+  endif
 endif
 
 ifdef LOCAL_IS_HOST_MODULE
