@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "06160da8_c2d1e5f5",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-20T17:07:13Z",
+      "side": 1,
+      "message": "None is more appropriate.\n\nAnd if we make that change, L560 needs to be updated. For L558-560, it looks cleaner to guard them by avb_footer_type anyway, to avoid having non-meaningful values.",
+      "range": {
+        "startLine": 552,
+        "startChar": 20,
+        "endLine": 552,
+        "endChar": 22
+      },
+      "revId": "7a22d3f2e8839a7a164561d2deb8ad3f11608f64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73cc0c5a_5583d734",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-20T17:07:13Z",
+      "side": 1,
+      "message": "nit: double quote to be consistent with its neighboring lines (unless it actually means differently)\n\n(I know they\u0027re from existing codes, but since you\u0027re here...)",
+      "range": {
+        "startLine": 554,
+        "startChar": 22,
+        "endLine": 554,
+        "endChar": 28
+      },
+      "revId": "7a22d3f2e8839a7a164561d2deb8ad3f11608f64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ec88fb4_790ce676",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-20T17:07:13Z",
+      "side": 1,
+      "message": "Seems we may possibly run into an edge case, where the computed max_footer_size could be still insufficient.\n\nBecause the max_footer_size is calculated based on the _old_ partition_size (i.e. the \"size\" at L572). There is a chance that\n  AVBCalcMaxImageSize(..., the size at L572) \u003c AVBCalcMaxImageSize(..., the size at L578)?",
+      "range": {
+        "startLine": 576,
+        "startChar": 6,
+        "endLine": 577,
+        "endChar": 74
+      },
+      "revId": "7a22d3f2e8839a7a164561d2deb8ad3f11608f64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
