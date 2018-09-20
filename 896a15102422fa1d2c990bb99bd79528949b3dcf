@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "363116ed_8001cf5e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-20T00:59:15Z",
+      "side": 1,
+      "message": "Can you also mention the commands to generate of the keys in commit message? In particular the public key isn\u0027t in standard format, but in AvbRSAPublicKeyHeader format (I couldn\u0027t figure it out until reading into the other change).",
+      "range": {
+        "startLine": 10,
+        "startChar": 23,
+        "endLine": 10,
+        "endChar": 31
+      },
+      "revId": "896a15102422fa1d2c990bb99bd79528949b3dcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
