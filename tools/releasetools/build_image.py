@@ -150,13 +150,14 @@ def AVBCalcMaxImageSize(avbtool, footer_type, partition_size, additional_args):
     avbtool: String with path to avbtool.
     footer_type: 'hash' or 'hashtree' for generating footer.
     partition_size: The size of the partition in question.
-    additional_args: Additional arguments to pass to 'avbtool
-      add_hashtree_image'.
+    additional_args: Additional arguments to pass to "avbtool add_hash_footer"
+        or "avbtool add_hashtree_footer".
+
   Returns:
     The maximum image size or 0 if an error occurred.
   """
   cmd = [avbtool, "add_%s_footer" % footer_type,
-         "--partition_size", partition_size, "--calc_max_image_size"]
+         "--partition_size", str(partition_size), "--calc_max_image_size"]
   cmd.extend(shlex.split(additional_args))
 
   (output, exit_code) = RunCommand(cmd)
@@ -164,6 +165,63 @@ def AVBCalcMaxImageSize(avbtool, footer_type, partition_size, additional_args):
     return 0
   else:
     return int(output)
+
+
+def AVBCalcMinPartitionSize(image_size, size_calculator):
+  """Calculates min partition size for a given image size.
+
+  Args:
+    image_size: The size of the image in question.
+    size_calculator: The function to calculate max image size
+        for a given partition size.
+
+  Returns:
+    The minimum partition size required to accommodate the image size.
+  """
+  # Use image size as partition size to approximate final partition size.
+  image_ratio = size_calculator(image_size) / float(image_size)
+
+  # Prepare a binary search for the optimal partition size.
+  lo = int(image_size / image_ratio) // BLOCK_SIZE * BLOCK_SIZE - BLOCK_SIZE
+
+  # Ensure lo is small enough: max_image_size should <= image_size.
+  delta = BLOCK_SIZE
+  max_image_size = size_calculator(lo)
+  while max_image_size > image_size:
+    image_ratio = max_image_size / float(lo)
+    lo = int(image_size / image_ratio) // BLOCK_SIZE * BLOCK_SIZE - delta
+    delta *= 2
+    max_image_size = size_calculator(lo)
+
+  hi = lo + BLOCK_SIZE
+
+  # Ensure hi is large enough: max_image_size should >= image_size.
+  delta = BLOCK_SIZE
+  max_image_size = size_calculator(hi)
+  while max_image_size < image_size:
+    image_ratio = max_image_size / float(hi)
+    hi = int(image_size / image_ratio) // BLOCK_SIZE * BLOCK_SIZE + delta
+    delta *= 2
+    max_image_size = size_calculator(hi)
+
+  partition_size = hi
+
+  # Start to binary search.
+  while lo < hi:
+    mid = ((lo + hi) // (2 * BLOCK_SIZE)) * BLOCK_SIZE
+    max_image_size = size_calculator(mid)
+    if max_image_size >= image_size:  # if mid can accommodate image_size
+      if mid < partition_size:  # if a smaller partition size is found
+        partition_size = mid
+      hi = mid
+    else:
+      lo = mid + BLOCK_SIZE
+
+  if OPTIONS.verbose:
+    print("AVBCalcMinPartitionSize({}): partition_size: {}.".format(
+        image_size, partition_size))
+
+  return partition_size
 
 
 def AVBAddFooter(image_path, avbtool, footer_type, partition_size,
@@ -180,8 +238,8 @@ def AVBAddFooter(image_path, avbtool, footer_type, partition_size,
     key_path: Path to key to use or None.
     algorithm: Name of algorithm to use or None.
     salt: The salt to use (a hexadecimal string) or None.
-    additional_args: Additional arguments to pass to 'avbtool
-        add_hashtree_image'.
+    additional_args: Additional arguments to pass to "avbtool add_hash_footer"
+        or "avbtool add_hashtree_footer".
 
   Returns:
     True if the operation succeeded.
@@ -551,6 +609,17 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   verity_supported = prop_dict.get("verity") == "true"
   verity_fec_supported = prop_dict.get("verity_fec") == "true"
 
+  avb_footer_type = None
+  if prop_dict.get("avb_hash_enable") == "true":
+    avb_footer_type = "hash"
+  elif prop_dict.get("avb_hashtree_enable") == "true":
+    avb_footer_type = "hashtree"
+
+  if avb_footer_type:
+    avbtool = prop_dict.get("avb_avbtool")
+    avb_signing_args = prop_dict.get(
+        "avb_add_" + avb_footer_type + "_footer_args")
+
   if (prop_dict.get("use_dynamic_partition_size") == "true" and
       "partition_size" not in prop_dict):
     # if partition_size is not defined, use output of `du' + reserved_size
@@ -562,6 +631,13 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     size += int(prop_dict.get("partition_reserved_size", 0))
     # Round this up to a multiple of 4K so that avbtool works
     size = common.RoundUpTo4K(size)
+    # Adjust partition_size to add more space for AVB footer, to prevent
+    # it from consuming partition_reserved_size.
+    if avb_footer_type:
+      size = AVBCalcMinPartitionSize(
+          size,
+          lambda x: AVBCalcMaxImageSize(
+              avbtool, avb_footer_type, x, avb_signing_args))
     prop_dict["partition_size"] = str(size)
     if OPTIONS.verbose:
       print("Allocating %d MB for %s." % (size // BYTES_IN_MB, out_file))
@@ -578,20 +654,12 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     prop_dict["image_size"] = str(image_size)
     prop_dict["verity_size"] = str(verity_size)
 
-  avb_footer_type = ''
-  if prop_dict.get("avb_hash_enable") == "true":
-    avb_footer_type = 'hash'
-  elif prop_dict.get("avb_hashtree_enable") == "true":
-    avb_footer_type = 'hashtree'
-
   # Adjust the image size for AVB hash footer or AVB hashtree footer.
   if avb_footer_type:
-    avbtool = prop_dict["avb_avbtool"]
     partition_size = prop_dict["partition_size"]
     # avb_add_hash_footer_args or avb_add_hashtree_footer_args.
-    additional_args = prop_dict["avb_add_" + avb_footer_type + "_footer_args"]
     max_image_size = AVBCalcMaxImageSize(avbtool, avb_footer_type,
-                                         partition_size, additional_args)
+                                         partition_size, avb_signing_args)
     if max_image_size <= 0:
       print("AVBCalcMaxImageSize is <= 0: %d" % max_image_size)
       return False
@@ -724,18 +792,15 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
   # Add AVB HASH or HASHTREE footer (metadata).
   if avb_footer_type:
-    avbtool = prop_dict["avb_avbtool"]
     partition_size = prop_dict["partition_size"]
     partition_name = prop_dict["partition_name"]
     # key_path and algorithm are only available when chain partition is used.
     key_path = prop_dict.get("avb_key_path")
     algorithm = prop_dict.get("avb_algorithm")
     salt = prop_dict.get("avb_salt")
-    # avb_add_hash_footer_args or avb_add_hashtree_footer_args
-    additional_args = prop_dict["avb_add_" + avb_footer_type + "_footer_args"]
     if not AVBAddFooter(out_file, avbtool, avb_footer_type,
                         partition_size, partition_name, key_path,
-                        algorithm, salt, additional_args):
+                        algorithm, salt, avb_signing_args):
       return False
 
   if run_e2fsck and prop_dict.get("skip_fsck") != "true":
