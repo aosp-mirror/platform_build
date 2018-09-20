@@ -13,9 +13,6 @@ endif
 ifeq ($(strip $(LOCAL_MODULE_SUFFIX)),)
 LOCAL_MODULE_SUFFIX := $($(my_prefix)SHLIB_SUFFIX)
 endif
-ifneq ($(strip $(OVERRIDE_BUILT_MODULE_PATH)),)
-$(error $(LOCAL_PATH): Illegal use of OVERRIDE_BUILT_MODULE_PATH)
-endif
 ifneq ($(strip $(LOCAL_MODULE_STEM)$(LOCAL_BUILT_MODULE_STEM)),)
 $(error $(LOCAL_PATH): Cannot set module stem for a library)
 endif
@@ -33,10 +30,6 @@ endif
 endif
 
 ifndef skip_build_from_source
-
-# Put the built modules of all shared libraries in a common directory
-# to simplify the link line.
-OVERRIDE_BUILT_MODULE_PATH := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)
 
 include $(BUILD_SYSTEM)/binary.mk
 

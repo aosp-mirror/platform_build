@@ -503,6 +503,12 @@ $(call add-clean-step, find $(PRODUCT_OUT) -type l -name "*product-services*" -p
 # Remove obsolete recovery etc files
 $(call add-clean-step, rm -rf $(TARGET_RECOVERY_ROOT_OUT)/etc)
 
+# Remove *_OUT_INTERMEDIATE_LIBRARIES
+$(call add-clean-step, rm -rf $(addsuffix /lib,\
+  $(HOST_OUT_INTERMEDIATES) $(2ND_HOST_OUT_INTERMEDIATES) \
+  $(HOST_CROSS_OUT_INTERMEDIATES) $(2ND_HOST_CROSS_OUT_INTERMEDIATES) \
+  $(TARGET_OUT_INTERMEDIATES) $(2ND_TARGET_OUT_INTERMEDIATES)))
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
