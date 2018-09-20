@@ -22,6 +22,30 @@
       "revId": "896a15102422fa1d2c990bb99bd79528949b3dcf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11fbe976_46a4c4c4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1013030
+      },
+      "writtenOn": "2018-09-20T06:48:14Z",
+      "side": 1,
+      "message": "Done. Jiyong, can you confirm this is what you used?",
+      "parentUuid": "363116ed_8001cf5e",
+      "range": {
+        "startLine": 10,
+        "startChar": 23,
+        "endLine": 10,
+        "endChar": 31
+      },
+      "revId": "896a15102422fa1d2c990bb99bd79528949b3dcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
