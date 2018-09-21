@@ -395,7 +395,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       pass
 
     # Skip the care_map as we will regenerate the system/vendor images.
-    elif filename == "META/care_map.txt":
+    elif filename == "META/care_map.pb" or filename == "META/care_map.txt":
       pass
 
     # A non-APK file; copy it verbatim.
