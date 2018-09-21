@@ -889,6 +889,7 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
         property_files.required)
     self.assertEqual(
         (
+            'care_map.pb',
             'care_map.txt',
             'compatibility.zip',
         ),
@@ -984,6 +985,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
         property_files.required)
     self.assertEqual(
         (
+            'care_map.pb',
             'care_map.txt',
             'compatibility.zip',
         ),

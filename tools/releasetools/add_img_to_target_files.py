@@ -72,7 +72,7 @@ OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
 OPTIONS.is_signing = False
 
-# Partitions that should have their care_map added to META/care_map.txt.
+# Partitions that should have their care_map added to META/care_map.pb
 PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product_services',
                             'odm')
 # Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
@@ -556,12 +556,12 @@ def CheckAbOtaImages(output_zip, ab_partitions):
     assert available, "Failed to find " + img_name
 
 
-def AddCareMapTxtForAbOta(output_zip, ab_partitions, image_paths):
-  """Generates and adds care_map.txt for system and vendor partitions.
+def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
+  """Generates and adds care_map.pb for system and vendor partitions.
 
   Args:
     output_zip: The output zip file (needs to be already open), or None to
-        write care_map.txt to OPTIONS.input_tmp/.
+        write care_map.pb to OPTIONS.input_tmp/.
     ab_partitions: The list of A/B partitions.
     image_paths: A map from the partition name to the image path.
   """
@@ -594,11 +594,11 @@ def AddCareMapTxtForAbOta(output_zip, ab_partitions, image_paths):
   p = common.Run(care_map_gen_cmd, stdout=subprocess.PIPE,
                  stderr=subprocess.STDOUT)
   output, _ = p.communicate()
-  assert p.returncode == 0, "Failed to generate the care_map proto message."
+  assert p.returncode == 0, "Failed to generate the care_map.pb message."
   if OPTIONS.verbose:
     print(output.rstrip())
 
-  care_map_path = "META/care_map.txt"
+  care_map_path = "META/care_map.pb"
   if output_zip and care_map_path not in output_zip.namelist():
     common.ZipWrite(output_zip, temp_care_map, arcname=care_map_path)
   else:
@@ -658,7 +658,7 @@ def AddSuperEmpty(output_zip):
 def ReplaceUpdatedFiles(zip_filename, files_list):
   """Updates all the ZIP entries listed in files_list.
 
-  For now the list includes META/care_map.txt, and the related files under
+  For now the list includes META/care_map.pb, and the related files under
   SYSTEM/ after rebuilding recovery.
   """
   common.ZipDelete(zip_filename, files_list)
@@ -863,9 +863,9 @@ def AddImagesToTargetFiles(filename):
     # ready under IMAGES/ or RADIO/.
     CheckAbOtaImages(output_zip, ab_partitions)
 
-    # Generate care_map.txt for system and vendor partitions (if present), then
-    # write this file to target_files package.
-    AddCareMapTxtForAbOta(output_zip, ab_partitions, partitions)
+    # Generate care_map.pb for system and vendor partitions (if present),
+    # then write this file to target_files package.
+    AddCareMapForAbOta(output_zip, ab_partitions, partitions)
 
   # Radio images that need to be packed into IMAGES/, and product-img.zip.
   pack_radioimages_txt = os.path.join(
