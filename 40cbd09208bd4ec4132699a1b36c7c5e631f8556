@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9b2e31c0_ee0cfb44",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-09-21T17:15:56Z",
+      "side": 1,
+      "message": "will hard-code 64 cause a problem? If a host doesn\u0027t build 64 bit lib, this will fail.\nIf we don\u0027t want to hard-code this, is there another way to reference library in addition bitness?",
+      "range": {
+        "startLine": 32,
+        "startChar": 41,
+        "endLine": 32,
+        "endChar": 46
+      },
+      "revId": "40cbd09208bd4ec4132699a1b36c7c5e631f8556",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
