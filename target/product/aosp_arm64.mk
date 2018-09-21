@@ -54,6 +54,9 @@ PRODUCT_PACKAGES += \
 # Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
 
+# Support addtional P vendor interface
+PRODUCT_EXTRA_VNDK_VERSIONS := 28
+
 PRODUCT_NAME := aosp_arm64
 PRODUCT_DEVICE := generic_arm64
 PRODUCT_BRAND := Android
