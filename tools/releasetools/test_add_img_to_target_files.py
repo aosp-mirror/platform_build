@@ -23,7 +23,7 @@ import zipfile
 import common
 import test_utils
 from add_img_to_target_files import (
-    AddCareMapTxtForAbOta, AddPackRadioImages, AppendVBMetaArgsForPartition,
+    AddCareMapForAbOta, AddPackRadioImages, AppendVBMetaArgsForPartition,
     CheckAbOtaImages, GetCareMap)
 from rangelib import RangeSet
 
@@ -40,7 +40,7 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
     common.Cleanup()
 
   def _verifyCareMap(self, expected, file_name):
-    """Parses the care_map proto; and checks the content in plain text."""
+    """Parses the care_map.pb; and checks the content in plain text."""
     text_file = common.MakeTempFile(prefix="caremap-", suffix=".txt")
 
     # Calls an external binary to convert the proto message.
@@ -139,8 +139,8 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
                       images + ['baz'])
 
   @staticmethod
-  def _test_AddCareMapTxtForAbOta():
-    """Helper function to set up the test for test_AddCareMapTxtForAbOta()."""
+  def _test_AddCareMapForAbOta():
+    """Helper function to set up the test for test_AddCareMapForAbOta()."""
     OPTIONS.info_dict = {
         'system_verity_block_device' : '/dev/block/system',
         'vendor_verity_block_device' : '/dev/block/vendor',
@@ -164,71 +164,71 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
     }
     return image_paths
 
-  def test_AddCareMapTxtForAbOta(self):
-    image_paths = self._test_AddCareMapTxtForAbOta()
+  def test_AddCareMapForAbOta(self):
+    image_paths = self._test_AddCareMapForAbOta()
 
-    AddCareMapTxtForAbOta(None, ['system', 'vendor'], image_paths)
+    AddCareMapForAbOta(None, ['system', 'vendor'], image_paths)
 
-    care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.txt')
+    care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.pb')
     expected = ['system', RangeSet("0-5 10-15").to_string_raw(), 'vendor',
                 RangeSet("0-9").to_string_raw()]
 
     self._verifyCareMap(expected, care_map_file)
 
-  def test_AddCareMapTxtForAbOta_withNonCareMapPartitions(self):
+  def test_AddCareMapForAbOta_withNonCareMapPartitions(self):
     """Partitions without care_map should be ignored."""
-    image_paths = self._test_AddCareMapTxtForAbOta()
+    image_paths = self._test_AddCareMapForAbOta()
 
-    AddCareMapTxtForAbOta(
+    AddCareMapForAbOta(
         None, ['boot', 'system', 'vendor', 'vbmeta'], image_paths)
 
-    care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.txt')
+    care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.pb')
     expected = ['system', RangeSet("0-5 10-15").to_string_raw(), 'vendor',
                 RangeSet("0-9").to_string_raw()]
 
     self._verifyCareMap(expected, care_map_file)
 
-  def test_AddCareMapTxtForAbOta_withAvb(self):
+  def test_AddCareMapForAbOta_withAvb(self):
     """Tests the case for device using AVB."""
-    image_paths = self._test_AddCareMapTxtForAbOta()
+    image_paths = self._test_AddCareMapForAbOta()
     OPTIONS.info_dict = {
         'avb_system_hashtree_enable' : 'true',
         'avb_vendor_hashtree_enable' : 'true',
     }
 
-    AddCareMapTxtForAbOta(None, ['system', 'vendor'], image_paths)
+    AddCareMapForAbOta(None, ['system', 'vendor'], image_paths)
 
-    care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.txt')
+    care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.pb')
     expected = ['system', RangeSet("0-5 10-15").to_string_raw(), 'vendor',
                 RangeSet("0-9").to_string_raw()]
 
     self._verifyCareMap(expected, care_map_file)
 
-  def test_AddCareMapTxtForAbOta_verityNotEnabled(self):
-    """No care_map.txt should be generated if verity not enabled."""
-    image_paths = self._test_AddCareMapTxtForAbOta()
+  def test_AddCareMapForAbOta_verityNotEnabled(self):
+    """No care_map.pb should be generated if verity not enabled."""
+    image_paths = self._test_AddCareMapForAbOta()
     OPTIONS.info_dict = {}
-    AddCareMapTxtForAbOta(None, ['system', 'vendor'], image_paths)
+    AddCareMapForAbOta(None, ['system', 'vendor'], image_paths)
 
-    care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.txt')
+    care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.pb')
     self.assertFalse(os.path.exists(care_map_file))
 
-  def test_AddCareMapTxtForAbOta_missingImageFile(self):
+  def test_AddCareMapForAbOta_missingImageFile(self):
     """Missing image file should be considered fatal."""
-    image_paths = self._test_AddCareMapTxtForAbOta()
+    image_paths = self._test_AddCareMapForAbOta()
     image_paths['vendor'] = ''
-    self.assertRaises(AssertionError, AddCareMapTxtForAbOta, None,
+    self.assertRaises(AssertionError, AddCareMapForAbOta, None,
                       ['system', 'vendor'], image_paths)
 
-  def test_AddCareMapTxtForAbOta_zipOutput(self):
+  def test_AddCareMapForAbOta_zipOutput(self):
     """Tests the case with ZIP output."""
-    image_paths = self._test_AddCareMapTxtForAbOta()
+    image_paths = self._test_AddCareMapForAbOta()
 
     output_file = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(output_file, 'w') as output_zip:
-      AddCareMapTxtForAbOta(output_zip, ['system', 'vendor'], image_paths)
+      AddCareMapForAbOta(output_zip, ['system', 'vendor'], image_paths)
 
-    care_map_name = "META/care_map.txt"
+    care_map_name = "META/care_map.pb"
     temp_dir = common.MakeTempDir()
     with zipfile.ZipFile(output_file, 'r') as verify_zip:
       self.assertTrue(care_map_name in verify_zip.namelist())
@@ -238,27 +238,28 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
                 RangeSet("0-9").to_string_raw()]
     self._verifyCareMap(expected, os.path.join(temp_dir, care_map_name))
 
-  def test_AddCareMapTxtForAbOta_zipOutput_careMapEntryExists(self):
+  def test_AddCareMapForAbOta_zipOutput_careMapEntryExists(self):
     """Tests the case with ZIP output which already has care_map entry."""
-    image_paths = self._test_AddCareMapTxtForAbOta()
+    image_paths = self._test_AddCareMapForAbOta()
 
     output_file = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(output_file, 'w') as output_zip:
-      # Create an existing META/care_map.txt entry.
-      common.ZipWriteStr(output_zip, 'META/care_map.txt', 'dummy care_map.txt')
+      # Create an existing META/care_map.pb entry.
+      common.ZipWriteStr(output_zip, 'META/care_map.pb',
+                         'dummy care_map.pb')
 
-      # Request to add META/care_map.txt again.
-      AddCareMapTxtForAbOta(output_zip, ['system', 'vendor'], image_paths)
+      # Request to add META/care_map.pb again.
+      AddCareMapForAbOta(output_zip, ['system', 'vendor'], image_paths)
 
     # The one under OPTIONS.input_tmp must have been replaced.
-    care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.txt')
+    care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.pb')
     expected = ['system', RangeSet("0-5 10-15").to_string_raw(), 'vendor',
                 RangeSet("0-9").to_string_raw()]
 
     self._verifyCareMap(expected, care_map_file)
 
     # The existing entry should be scheduled to be replaced.
-    self.assertIn('META/care_map.txt', OPTIONS.replace_updated_files_list)
+    self.assertIn('META/care_map.pb', OPTIONS.replace_updated_files_list)
 
   def test_AppendVBMetaArgsForPartition(self):
     OPTIONS.info_dict = {}
