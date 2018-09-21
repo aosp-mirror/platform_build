@@ -1654,7 +1654,7 @@ ifneq (,$(filter 1 true,$(my_tidy_enabled)))
   ifneq ($(LOCAL_TIDY_CHECKS),)
     my_tidy_checks := $(my_tidy_checks),$(LOCAL_TIDY_CHECKS)
   endif
-  my_tidy_flags += $(WITH_TIDY_FLAGS) $(LOCAL_TIDY_FLAGS)
+  my_tidy_flags := $(strip $(WITH_TIDY_FLAGS) $(LOCAL_TIDY_FLAGS))
   # If tidy flags are not specified, default to check all header files.
   ifeq ($(my_tidy_flags),)
     my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
