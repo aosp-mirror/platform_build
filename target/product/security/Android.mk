@@ -12,6 +12,19 @@ LOCAL_MODULE_PATH := $(TARGET_ROOT_OUT)
 include $(BUILD_PREBUILT)
 
 #######################################
+# apex_debug_key for eng/userdebug
+ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
+  include $(CLEAR_VARS)
+
+  LOCAL_MODULE := apex_debug_key
+  LOCAL_SRC_FILES := $(LOCAL_MODULE)
+  LOCAL_MODULE_CLASS := ETC
+  LOCAL_MODULE_PATH := $(TARGET_OUT)/etc/security/apex
+
+  include $(BUILD_PREBUILT)
+endif
+
+#######################################
 # adb key, if configured via PRODUCT_ADB_KEYS
 ifdef PRODUCT_ADB_KEYS
   ifneq ($(filter eng userdebug,$(TARGET_BUILD_VARIANT)),)
