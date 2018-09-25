@@ -144,6 +144,8 @@ endif
 # Here since this file is included by envsetup as well as during build.
 include $(BUILD_SYSTEM)/math.mk
 
+include $(BUILD_SYSTEM)/strings.mk
+
 # Various mappings to avoid hard-coding paths all over the place
 include $(BUILD_SYSTEM)/pathmap.mk
 
