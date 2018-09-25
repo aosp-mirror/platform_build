@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "91f67737_d34130e6",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1548,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-09-25T20:24:38Z",
+      "side": 1,
+      "message": "Hmm...  Does this code need updating as well?  Or was this comment actually a bit misleading in the first place?  Building the root image into system image isn\u0027t sufficient to always do bsdiff, right?  It\u0027s the BOARD_USES_RECOVERY_AS_BOOT flag that really makes the difference here?",
+      "parentUuid": "abc27d2f_b683aaad",
+      "range": {
+        "startLine": 1548,
+        "startChar": 7,
+        "endLine": 1548,
+        "endChar": 42
+      },
+      "revId": "2d294c504bfd89cdc345437e62ffff655a51e6e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6bc7199a_720cc81c",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "247a0396_be5c9e9b",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3570,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-09-25T20:24:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6bc7199a_720cc81c",
+      "range": {
+        "startLine": 3570,
+        "startChar": 60,
+        "endLine": 3570,
+        "endChar": 61
+      },
+      "revId": "2d294c504bfd89cdc345437e62ffff655a51e6e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f3a02a5e_a57169c5",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "2d294c504bfd89cdc345437e62ffff655a51e6e9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4190bdf6_0c4e5209",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 600,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-09-25T20:24:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f3a02a5e_a57169c5",
+      "range": {
+        "startLine": 600,
+        "startChar": 5,
+        "endLine": 600,
+        "endChar": 6
+      },
+      "revId": "2d294c504bfd89cdc345437e62ffff655a51e6e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
