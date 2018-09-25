@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "0cf71814_84917720",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1548,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-25T23:32:00Z",
+      "side": 1,
+      "message": "\u003e  The code that I changed is correct then in that case, right? \n\nYes, the code is correct - explicitly checking both b) and c) is needed now.\n\n\u003e Is it just the fact that there is no ramdisk for BOARD_BUILD_SYSTEM_ROOT_IMAGE?  I can make that update if you confirm.\n\nYes, just update the comment to mention ramdisk instead of root.",
+      "parentUuid": "e75413b5_2858c819",
+      "range": {
+        "startLine": 1548,
+        "startChar": 7,
+        "endLine": 1548,
+        "endChar": 42
+      },
+      "revId": "2d294c504bfd89cdc345437e62ffff655a51e6e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6bc7199a_720cc81c",
         "filename": "core/Makefile",
         "patchSetId": 1
