@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc8f0f16_0af2ff25",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-25T23:52:36Z",
+      "side": 1,
+      "message": "When we increased delta, it also increases the final footer size a bit (by footer_ratio).\nSo using * 2 to prevent it from entering the loop at L198 in most cases.",
+      "range": {
+        "startLine": 194,
+        "startChar": 64,
+        "endLine": 194,
+        "endChar": 65
+      },
+      "revId": "754b59b87ad74c37d5f1f11f714d1733b74b98d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "772f6fbd_432718f2",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-25T23:52:36Z",
+      "side": 1,
+      "message": "In my local test, we won\u0027t go into this loop.\nThe hi at L195 is large enough.\n\nAnyway, L198-L202 is to ensure hi is always big enough.",
+      "range": {
+        "startLine": 198,
+        "startChar": 1,
+        "endLine": 199,
+        "endChar": 15
+      },
+      "revId": "754b59b87ad74c37d5f1f11f714d1733b74b98d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
