@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "e75413b5_2858c819",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1548,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-09-25T22:59:25Z",
+      "side": 1,
+      "message": "Makes sense.  The code that I changed is correct then in that case, right?  I\u0027m explicitly adding the b) case now, since it\u0027s now not dependent on the c) case and therefore explicitly needed?\n\nWhat is wrong with the comments now in this case?  Is it just the fact that there is no ramdisk for BOARD_BUILD_SYSTEM_ROOT_IMAGE?  I can make that update if you confirm.\n\n(Sorry for all the comments; I\u0027m far from familiar with this specific section).",
+      "parentUuid": "c503c501_64632f3c",
+      "range": {
+        "startLine": 1548,
+        "startChar": 7,
+        "endLine": 1548,
+        "endChar": 42
+      },
+      "revId": "2d294c504bfd89cdc345437e62ffff655a51e6e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "6bc7199a_720cc81c",
         "filename": "core/Makefile",
         "patchSetId": 1
