@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e981372f_1e94c258",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-25T23:45:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "06160da8_c2d1e5f5",
+      "range": {
+        "startLine": 552,
+        "startChar": 20,
+        "endLine": 552,
+        "endChar": 22
+      },
+      "revId": "7a22d3f2e8839a7a164561d2deb8ad3f11608f64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "73cc0c5a_5583d734",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "7a22d3f2e8839a7a164561d2deb8ad3f11608f64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e59f43f7_85dc3a54",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 554,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-25T23:45:48Z",
+      "side": 1,
+      "message": "Agree, thanks for catching this!",
+      "parentUuid": "73cc0c5a_5583d734",
+      "range": {
+        "startLine": 554,
+        "startChar": 22,
+        "endLine": 554,
+        "endChar": 28
+      },
+      "revId": "7a22d3f2e8839a7a164561d2deb8ad3f11608f64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -92,6 +140,30 @@
       "revId": "7a22d3f2e8839a7a164561d2deb8ad3f11608f64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b7b7eec_5415513f",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-25T23:45:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8edcf50f_c4bfba15",
+      "range": {
+        "startLine": 576,
+        "startChar": 6,
+        "endLine": 577,
+        "endChar": 74
+      },
+      "revId": "7a22d3f2e8839a7a164561d2deb8ad3f11608f64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
