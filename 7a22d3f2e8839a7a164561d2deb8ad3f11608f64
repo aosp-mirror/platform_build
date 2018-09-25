@@ -68,6 +68,30 @@
       "revId": "7a22d3f2e8839a7a164561d2deb8ad3f11608f64",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8edcf50f_c4bfba15",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 577,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-25T06:22:40Z",
+      "side": 1,
+      "message": "Yup, this is possible.\n\nWe can probably consider:\n  1) Using binary_search to figure out a target_size, such that AVBCalcMaxImageSize(target_size) \u003d\u003d size at L572 OR\n\n  2) size +\u003d 2 * max_footer_size at L578\n     This should be ok as the footer_size is relatively much small than the system.img.\n     e.g., 1.2G system.img introduces 18MB avb_footer.",
+      "parentUuid": "2ec88fb4_790ce676",
+      "range": {
+        "startLine": 576,
+        "startChar": 6,
+        "endLine": 577,
+        "endChar": 74
+      },
+      "revId": "7a22d3f2e8839a7a164561d2deb8ad3f11608f64",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
