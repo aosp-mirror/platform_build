@@ -22,6 +22,30 @@
       "revId": "ec17af3364525001703701a6186de75e5c9bb2be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "209d8925_a24d7ed5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2292,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-09-26T21:23:40Z",
+      "side": 1,
+      "message": "After discussion in b/116243313 I\u0027m going to stick with --lib for now.",
+      "parentUuid": "8334ddd7_7d82e011",
+      "range": {
+        "startLine": 2292,
+        "startChar": 16,
+        "endLine": 2292,
+        "endChar": 21
+      },
+      "revId": "ec17af3364525001703701a6186de75e5c9bb2be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
