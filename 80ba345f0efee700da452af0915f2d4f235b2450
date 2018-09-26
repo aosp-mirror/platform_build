@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cf887a93_1d05d0dc",
+        "filename": "core/cxx_stl_setup.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2018-09-26T18:18:31Z",
+      "side": 1,
+      "message": "Does the platform build system support `LOCAL_EXPORT_CPPFLAGS` these days? Would be nice to move all this stuff into the libc++ build files instead if possible.",
+      "revId": "80ba345f0efee700da452af0915f2d4f235b2450",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
