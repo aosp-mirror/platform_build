@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 The Android Open Source Project
+# Copyright (C) 2018 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
 # limitations under the License.
 #
 
-# This is the list of product-level settings that are specific
-# to products that have telephony hardware.
+# This is the list of modules that are specific to products that have telephony
+# hardware, and install on the system partition.
 
 PRODUCT_PACKAGES := \
     CarrierConfig \
@@ -24,6 +24,5 @@ PRODUCT_PACKAGES := \
     CallLogBackup \
     CellBroadcastReceiver \
     EmergencyInfo \
-    rild
 
 PRODUCT_COPY_FILES := \
