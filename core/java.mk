@@ -494,6 +494,8 @@ ifdef LOCAL_PROGUARD_ENABLED
   $(built_dex_intermediate) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD)
 	$(transform-jar-to-dex-r8)
 else # !LOCAL_PROGUARD_ENABLED
+  $(built_dex_intermediate): PRIVATE_D8_LIBS := $(full_java_bootclasspath_libs) $(full_shared_java_header_libs)
+  $(built_dex_intermediate): $(full_java_bootclasspath_libs) $(full_shared_java_header_libs)
   $(built_dex_intermediate): $(full_classes_pre_proguard_jar) $(DX) $(ZIP2ZIP)
 	$(transform-classes.jar-to-dex)
 endif
