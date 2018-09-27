@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-# This makefile is the basis of a generic system image for a handheld
-# device with no telephony.
+# This makefile is the basis of a generic system image for a handheld device.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system.mk)
 
 # OTA support.
 PRODUCT_PACKAGES += \
