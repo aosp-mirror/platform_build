@@ -72,9 +72,6 @@ OPTIONS.replace_verity_public_key = False
 OPTIONS.replace_verity_private_key = False
 OPTIONS.is_signing = False
 
-# Partitions that should have their care_map added to META/care_map.pb
-PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product_services',
-                            'odm')
 # Use a fixed timestamp (01/01/2009 00:00:00 UTC) for files when packaging
 # images. (b/24377993, b/80600931)
 FIXED_FILE_TIMESTAMP = int((
@@ -111,7 +108,7 @@ def GetCareMap(which, imgname):
     (which, care_map_ranges): care_map_ranges is the raw string of the care_map
     RangeSet.
   """
-  assert which in PARTITIONS_WITH_CARE_MAP
+  assert which in common.PARTITIONS_WITH_CARE_MAP
 
   simg = sparse_img.SparseImage(imgname)
   care_map_ranges = simg.care_map
@@ -557,7 +554,7 @@ def CheckAbOtaImages(output_zip, ab_partitions):
 
 
 def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
-  """Generates and adds care_map.pb for system and vendor partitions.
+  """Generates and adds care_map.pb for a/b partition that has care_map.
 
   Args:
     output_zip: The output zip file (needs to be already open), or None to
@@ -568,7 +565,7 @@ def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
   care_map_list = []
   for partition in ab_partitions:
     partition = partition.strip()
-    if partition not in PARTITIONS_WITH_CARE_MAP:
+    if partition not in common.PARTITIONS_WITH_CARE_MAP:
       continue
 
     verity_block_device = "{}_verity_block_device".format(partition)
@@ -578,6 +575,21 @@ def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
       image_path = image_paths[partition]
       assert os.path.exists(image_path)
       care_map_list += GetCareMap(partition, image_path)
+
+      # adds fingerprint field to the care_map
+      build_props = OPTIONS.info_dict.get(partition + ".build.prop", {})
+      prop_name_list = ["ro.{}.build.fingerprint".format(partition),
+                        "ro.{}.build.thumbprint".format(partition)]
+
+      present_props = [x for x in prop_name_list if x in build_props]
+      if not present_props:
+        print("Warning: fingerprint is not present for partition {}".
+              format(partition))
+        property_id, fingerprint = "unknown", "unknown"
+      else:
+        property_id = present_props[0]
+        fingerprint = build_props[property_id]
+      care_map_list += [property_id, fingerprint]
 
   if not care_map_list:
     return
@@ -589,14 +601,14 @@ def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
   with open(temp_care_map_text, 'w') as text_file:
     text_file.write('\n'.join(care_map_list))
 
-  temp_care_map = common.MakeTempFile(prefix="caremap-", suffix=".txt")
-  care_map_gen_cmd = (["care_map_generator", temp_care_map_text, temp_care_map])
+  temp_care_map = common.MakeTempFile(prefix="caremap-", suffix=".pb")
+  care_map_gen_cmd = ["care_map_generator", temp_care_map_text, temp_care_map]
   p = common.Run(care_map_gen_cmd, stdout=subprocess.PIPE,
                  stderr=subprocess.STDOUT)
   output, _ = p.communicate()
-  assert p.returncode == 0, "Failed to generate the care_map.pb message."
   if OPTIONS.verbose:
     print(output.rstrip())
+  assert p.returncode == 0, "Failed to generate the care_map proto message."
 
   care_map_path = "META/care_map.pb"
   if output_zip and care_map_path not in output_zip.namelist():
@@ -863,8 +875,8 @@ def AddImagesToTargetFiles(filename):
     # ready under IMAGES/ or RADIO/.
     CheckAbOtaImages(output_zip, ab_partitions)
 
-    # Generate care_map.pb for system and vendor partitions (if present),
-    # then write this file to target_files package.
+    # Generate care_map.pb for ab_partitions, then write this file to
+    # target_files package.
     AddCareMapForAbOta(output_zip, ab_partitions, partitions)
 
   # Radio images that need to be packed into IMAGES/, and product-img.zip.
