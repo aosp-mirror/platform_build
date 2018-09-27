@@ -308,9 +308,8 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   hash_seed = "hash_seed-" + uuid_seed
   image_props["hash_seed"] = str(uuid.uuid5(uuid.NAMESPACE_URL, hash_seed))
 
-  succ = build_image.BuildImage(os.path.join(input_dir, what.upper()),
-                                image_props, output_file.name)
-  assert succ, "build " + what + ".img image failed"
+  build_image.BuildImage(
+      os.path.join(input_dir, what.upper()), image_props, output_file.name)
 
   output_file.Write()
   if block_list:
@@ -361,8 +360,7 @@ def AddUserdata(output_zip):
   fstab = OPTIONS.info_dict["fstab"]
   if fstab:
     image_props["fs_type"] = fstab["/data"].fs_type
-  succ = build_image.BuildImage(user_dir, image_props, img.name)
-  assert succ, "build userdata.img image failed"
+  build_image.BuildImage(user_dir, image_props, img.name)
 
   common.CheckSize(img.name, "userdata.img", OPTIONS.info_dict)
   img.Write()
@@ -514,8 +512,7 @@ def AddCache(output_zip):
   fstab = OPTIONS.info_dict["fstab"]
   if fstab:
     image_props["fs_type"] = fstab["/cache"].fs_type
-  succ = build_image.BuildImage(user_dir, image_props, img.name)
-  assert succ, "build cache.img image failed"
+  build_image.BuildImage(user_dir, image_props, img.name)
 
   common.CheckSize(img.name, "cache.img", OPTIONS.info_dict)
   img.Write()
