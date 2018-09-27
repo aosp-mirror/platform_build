@@ -375,7 +375,7 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
     True on success, False otherwise.
   """
   # get properties
-  image_size = int(prop_dict["partition_size"])
+  image_size = int(prop_dict["image_size"])
   block_dev = prop_dict["verity_block_device"]
   signer_key = prop_dict["verity_key"] + ".pk8"
   if OPTIONS.verity_signer_path is not None:
@@ -406,10 +406,10 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
     return False
 
   # build the full verified image
-  target_size = int(prop_dict["original_partition_size"])
+  partition_size = int(prop_dict["partition_size"])
   verity_size = int(prop_dict["verity_size"])
 
-  padding_size = target_size - image_size - verity_size
+  padding_size = partition_size - image_size - verity_size
   assert padding_size >= 0
 
   if not BuildVerifiedImage(out_file,
@@ -566,25 +566,25 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     if OPTIONS.verbose:
       print("Allocating %d MB for %s." % (size // BYTES_IN_MB, out_file))
 
-  # Adjust the partition size to make room for the hashes if this is to be
-  # verified.
+  prop_dict["image_size"] = prop_dict["partition_size"]
+
+  # Adjust the image size to make room for the hashes if this is to be verified.
   if verity_supported and is_verity_partition:
     partition_size = int(prop_dict.get("partition_size"))
-    (adjusted_size, verity_size) = AdjustPartitionSizeForVerity(
+    image_size, verity_size = AdjustPartitionSizeForVerity(
         partition_size, verity_fec_supported)
-    if not adjusted_size:
+    if not image_size:
       return False
-    prop_dict["partition_size"] = str(adjusted_size)
-    prop_dict["original_partition_size"] = str(partition_size)
+    prop_dict["image_size"] = str(image_size)
     prop_dict["verity_size"] = str(verity_size)
 
-  # Adjust partition size for AVB hash footer or AVB hashtree footer.
   avb_footer_type = ''
   if prop_dict.get("avb_hash_enable") == "true":
     avb_footer_type = 'hash'
   elif prop_dict.get("avb_hashtree_enable") == "true":
     avb_footer_type = 'hashtree'
 
+  # Adjust the image size for AVB hash footer or AVB hashtree footer.
   if avb_footer_type:
     avbtool = prop_dict["avb_avbtool"]
     partition_size = prop_dict["partition_size"]
@@ -595,8 +595,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     if max_image_size <= 0:
       print("AVBCalcMaxImageSize is <= 0: %d" % max_image_size)
       return False
-    prop_dict["partition_size"] = str(max_image_size)
-    prop_dict["original_partition_size"] = partition_size
+    prop_dict["image_size"] = str(max_image_size)
 
   if fs_type.startswith("ext"):
     build_command = [prop_dict["ext_mkuserimg"]]
@@ -605,7 +604,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       run_e2fsck = True
     build_command.extend([in_dir, out_file, fs_type,
                           prop_dict["mount_point"]])
-    build_command.append(prop_dict["partition_size"])
+    build_command.append(prop_dict["image_size"])
     if "journal_size" in prop_dict:
       build_command.extend(["-j", prop_dict["journal_size"]])
     if "timestamp" in prop_dict:
@@ -664,7 +663,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       build_command.extend(["-a"])
   elif fs_type.startswith("f2fs"):
     build_command = ["mkf2fsuserimg.sh"]
-    build_command.extend([out_file, prop_dict["partition_size"]])
+    build_command.extend([out_file, prop_dict["image_size"]])
     if fs_config:
       build_command.extend(["-C", fs_config])
     build_command.extend(["-f", in_dir])
@@ -693,18 +692,13 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
             in_dir, du_str,
             int(prop_dict.get("partition_reserved_size", 0)),
             int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
-    if "original_partition_size" in prop_dict:
-      print(
-          "The max size for filsystem files is {} bytes ({} MB), out of a "
-          "total image size of {} bytes ({} MB).".format(
-              int(prop_dict["partition_size"]),
-              int(prop_dict["partition_size"]) // BYTES_IN_MB,
-              int(prop_dict["original_partition_size"]),
-              int(prop_dict["original_partition_size"]) // BYTES_IN_MB))
-    else:
-      print("The max image size is {} bytes ({} MB).".format(
-          int(prop_dict["partition_size"]),
-          int(prop_dict["partition_size"]) // BYTES_IN_MB))
+    print(
+        "The max image size for filsystem files is {} bytes ({} MB), out of a "
+        "total partition size of {} bytes ({} MB).".format(
+            int(prop_dict["image_size"]),
+            int(prop_dict["image_size"]) // BYTES_IN_MB,
+            int(prop_dict["partition_size"]),
+            int(prop_dict["partition_size"]) // BYTES_IN_MB))
     return False
 
   # Check if there's enough headroom space available for ext4 image.
@@ -714,14 +708,14 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
   if not fs_spans_partition:
     mount_point = prop_dict.get("mount_point")
-    partition_size = int(prop_dict.get("partition_size"))
-    image_size = GetSimgSize(out_file)
-    if image_size > partition_size:
+    image_size = int(prop_dict["image_size"])
+    sparse_image_size = GetSimgSize(out_file)
+    if sparse_image_size > image_size:
       print("Error: %s image size of %d is larger than partition size of "
-            "%d" % (mount_point, image_size, partition_size))
+            "%d" % (mount_point, sparse_image_size, image_size))
       return False
     if verity_supported and is_verity_partition:
-      ZeroPadSimg(out_file, partition_size - image_size)
+      ZeroPadSimg(out_file, image_size - sparse_image_size)
 
   # Create the verified image if this is to be verified.
   if verity_supported and is_verity_partition:
@@ -731,7 +725,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   # Add AVB HASH or HASHTREE footer (metadata).
   if avb_footer_type:
     avbtool = prop_dict["avb_avbtool"]
-    original_partition_size = prop_dict["original_partition_size"]
+    partition_size = prop_dict["partition_size"]
     partition_name = prop_dict["partition_name"]
     # key_path and algorithm are only available when chain partition is used.
     key_path = prop_dict.get("avb_key_path")
@@ -740,7 +734,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     # avb_add_hash_footer_args or avb_add_hashtree_footer_args
     additional_args = prop_dict["avb_add_" + avb_footer_type + "_footer_args"]
     if not AVBAddFooter(out_file, avbtool, avb_footer_type,
-                        original_partition_size, partition_name, key_path,
+                        partition_size, partition_name, key_path,
                         algorithm, salt, additional_args):
       return False
 
@@ -947,19 +941,14 @@ def GlobalDictFromImageProp(image_prop, mount_point):
       return True
     return False
 
-  if "original_partition_size" in image_prop:
-    size_property = "original_partition_size"
-  else:
-    size_property = "partition_size"
-
   if mount_point == "system":
-    copy_prop(size_property, "system_size")
+    copy_prop("partition_size", "system_size")
   elif mount_point == "system_other":
-    copy_prop(size_property, "system_size")
+    copy_prop("partition_size", "system_size")
   elif mount_point == "vendor":
-    copy_prop(size_property, "vendor_size")
+    copy_prop("partition_size", "vendor_size")
   elif mount_point == "product":
-    copy_prop(size_property, "product_size")
+    copy_prop("partition_size", "product_size")
   return d
 
 
