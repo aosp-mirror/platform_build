@@ -70,6 +70,24 @@
       "revId": "34aff2387c1cc35159f787b8b9fbd3fb3d96605b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e96d5a9e_b0da9e26",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003259
+      },
+      "writtenOn": "2018-09-27T18:30:18Z",
+      "side": 1,
+      "message": "isn\u0027t going to change when we fix the hack where BT A2DP HAL runs in audioserver. Aren;t we supposed to fix this for Q? In this case there is no need to merge this change",
+      "parentUuid": "7ca7263c_52ac3f74",
+      "revId": "34aff2387c1cc35159f787b8b9fbd3fb3d96605b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
