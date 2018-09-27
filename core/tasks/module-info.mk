@@ -28,3 +28,4 @@ ifndef ONE_SHOT_MAKEFILE
 files: $(MODULE_INFO_JSON)
 endif
 
+$(call dist-for-goals, general-tests, $(MODULE_INFO_JSON))

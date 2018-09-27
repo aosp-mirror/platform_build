@@ -72,6 +72,12 @@ files_to_copy += \
 	$(addon_dir_img):$(target_notice_file_txt):images/$(TARGET_CPU_ABI)/NOTICE.txt \
 	$(addon_dir_img):$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_SYS_IMG_SOURCE_PROP):images/source.properties
 
+
+ifeq ($(BOARD_AVB_ENABLE),true)
+files_to_copy += \
+	$(addon_dir_img):$(QEMU_VERIFIED_BOOT_PARAMS):images/$(TARGET_CPU_ABI)/VerifiedBootParams.textproto
+endif
+
 # Generate rules to copy the requested files
 $(foreach cf,$(files_to_copy), \
   $(eval _root := $(call word-colon,1,$(cf))) \
