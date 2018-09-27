@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7fadd35_144b8ece",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-27T05:33:48Z",
+      "side": 1,
+      "message": "nit: make it like a sentence. \"Tries ...\" and put a full stop to the end.",
+      "range": {
+        "startLine": 298,
+        "startChar": 4,
+        "endLine": 298,
+        "endChar": 9
+      },
+      "revId": "95104ba308099bbc988f74507bed18c1b65d6602",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

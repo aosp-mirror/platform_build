@@ -46,6 +46,30 @@
       "revId": "d08d300c6e39f7909792f41085cc9a026c48c452",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f13306c0_6ca97089",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 303,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-09-27T05:33:48Z",
+      "side": 1,
+      "message": "I mean we can remove the special case for system partition, by removing these two lines as well as https://android-review.googlesource.com/c/platform/build/+/755808/5/tools/releasetools/add_img_to_target_files.py#580.\n\nL300 can be moved down to L306, as an alias: d[\"build.prop\"] \u003d d[\"system.build.prop\"]. When new logic to compute d[\"build.prop\"] becomes available (e.g. loading from a different file), we can update this line at that point.",
+      "parentUuid": "e4b888c2_99ffb304",
+      "range": {
+        "startLine": 302,
+        "startChar": 4,
+        "endLine": 303,
+        "endChar": 14
+      },
+      "revId": "d08d300c6e39f7909792f41085cc9a026c48c452",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
