@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "24b1bff7_1b304d42",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-28T09:45:57Z",
+      "side": 1,
+      "message": "Done.\n\nSorry, I used to use single quote when I was in ChromeOS team.\nSometimes still forget to switch to \" :(",
+      "parentUuid": "f4c3d2bd_6cf53972",
+      "range": {
+        "startLine": 152,
+        "startChar": 53,
+        "endLine": 153,
+        "endChar": 39
+      },
+      "revId": "754b59b87ad74c37d5f1f11f714d1733b74b98d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "33d786f8_beea2123",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "754b59b87ad74c37d5f1f11f714d1733b74b98d1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "98c6f2f6_274fae8a",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-28T09:45:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33d786f8_beea2123",
+      "range": {
+        "startLine": 180,
+        "startChar": 31,
+        "endLine": 180,
+        "endChar": 56
+      },
+      "revId": "754b59b87ad74c37d5f1f11f714d1733b74b98d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -83,6 +131,30 @@
       "side": 1,
       "message": "Ack",
       "parentUuid": "dc8f0f16_0af2ff25",
+      "range": {
+        "startLine": 194,
+        "startChar": 64,
+        "endLine": 194,
+        "endChar": 65
+      },
+      "revId": "754b59b87ad74c37d5f1f11f714d1733b74b98d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ce03697f_87ce6aa7",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-28T09:45:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4709cce1_8cc9dd19",
       "range": {
         "startLine": 194,
         "startChar": 64,
@@ -139,6 +211,30 @@
       "revId": "754b59b87ad74c37d5f1f11f714d1733b74b98d1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd1a70b8_246c3da1",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-09-28T09:45:57Z",
+      "side": 1,
+      "message": "Great, nice suggestion!\n\nYup, I was thinking about the same thing, those avbtool, avb_signing_args are totally irrelevant to this function.\n\nIt\u0027s much cleaner now. Thanks a lot!",
+      "parentUuid": "f52e1f22_0c16708e",
+      "range": {
+        "startLine": 198,
+        "startChar": 1,
+        "endLine": 199,
+        "endChar": 15
+      },
+      "revId": "754b59b87ad74c37d5f1f11f714d1733b74b98d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
