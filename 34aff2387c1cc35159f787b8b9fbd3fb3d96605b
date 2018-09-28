@@ -124,6 +124,24 @@
       "revId": "34aff2387c1cc35159f787b8b9fbd3fb3d96605b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dcf0b62c_5c10be1b",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1003259
+      },
+      "writtenOn": "2018-09-28T16:01:58Z",
+      "side": 1,
+      "message": "I let Pavlin confirm but the tracking bug for this Q feature request is b/111519504",
+      "parentUuid": "5fb79cb1_61a459c2",
+      "revId": "34aff2387c1cc35159f787b8b9fbd3fb3d96605b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
