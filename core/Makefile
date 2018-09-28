@@ -2026,6 +2026,7 @@ stnod: systemtarball-nodeps
 ## PDK_PLATFORM_ZIP_PRODUCT_BINARIES is used to store specified files to platform.zip.
 ## The variable will be typically set from BoardConfig.mk.
 ## Files under out dir will be rejected to prevent possible conflicts with other rules.
+ifneq (,$(BUILD_PLATFORM_ZIP))
 pdk_odex_javalibs := $(strip $(foreach m,$(DEXPREOPT.MODULES.JAVA_LIBRARIES),\
   $(if $(filter $(DEXPREOPT.$(m).INSTALLED),$(ALL_DEFAULT_INSTALLED_MODULES)),$(m))))
 pdk_odex_apps := $(strip $(foreach m,$(DEXPREOPT.MODULES.APPS),\
@@ -2065,7 +2066,7 @@ INSTALLED_PLATFORM_ZIP := $(PRODUCT_OUT)/platform.zip
 
 $(INSTALLED_PLATFORM_ZIP): PRIVATE_DEX_FILES := $(pdk_classes_dex)
 $(INSTALLED_PLATFORM_ZIP): PRIVATE_ODEX_CONFIG := $(pdk_odex_config_mk)
-$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES) $(pdk_odex_config_mk)
+$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES) $(pdk_classes_dex) $(pdk_odex_config_mk)
 	$(call pretty,"Platform zip package: $(INSTALLED_PLATFORM_ZIP)")
 	$(hide) rm -f $@
 	$(hide) cd $(dir $@) && zip -qryX $(notdir $@) \
@@ -2109,6 +2110,8 @@ platform-java: platform
 ifneq (,$(filter platform platform-java, $(MAKECMDGOALS)))
 $(call dist-for-goals, platform platform-java, $(INSTALLED_PLATFORM_ZIP))
 endif
+
+endif # BUILD_PLATFORM_ZIP
 
 # -----------------------------------------------------------------
 ## boot tarball
