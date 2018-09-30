@@ -14,14 +14,19 @@
 # limitations under the License.
 #
 
-# This makefile is the basis of a generic system image for a handheld
-# device with no telephony.
+# This makefile is the basis of a generic system image for a handheld device.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system.mk)
 
-# OTA support.
+# OTA support
 PRODUCT_PACKAGES += \
     update_engine \
     update_verifier \
+
+# system_other support
+PRODUCT_PACKAGES += \
+    cppreopts.sh \
+    otapreopt_script \
 
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
