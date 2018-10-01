@@ -27,6 +27,10 @@ PRODUCT_PACKAGES += \
     update_engine \
     update_verifier \
 
+# Wrapped net utils for /vendor access.
+PRODUCT_PACKAGES += \
+    netutils-wrapper-1.0 \
+
 # system_other support
 PRODUCT_PACKAGES += \
     cppreopts.sh \
