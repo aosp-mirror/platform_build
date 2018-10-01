@@ -352,6 +352,9 @@ $(built_module) : $(appcompat-files)
 $(LOCAL_BUILT_MODULE): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
 endif
 
+ifneq ($(BUILD_PLATFORM_ZIP),)
+$(built_module) : .KATI_IMPLICIT_OUTPUTS := $(dir $(LOCAL_BUILT_MODULE))package.dex.apk
+endif
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
 	$(uncompress-shared-libs)
