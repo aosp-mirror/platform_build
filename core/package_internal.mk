@@ -620,11 +620,15 @@ endif  # LOCAL_USE_AAPT2
 ifdef LOCAL_COMPRESSED_MODULE
 $(LOCAL_BUILT_MODULE) : $(MINIGZIP)
 endif
+ifneq ($(BUILD_PLATFORM_ZIP),)
+$(LOCAL_BUILT_MODULE) : .KATI_IMPLICIT_OUTPUTS := $(dir $(LOCAL_BUILT_MODULE))package.dex.apk
+endif
+$(LOCAL_BUILT_MODULE):
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
 	rm -rf $@.parts
 	mkdir -p $@.parts
 ifeq ($(LOCAL_USE_AAPT2),true)
-	cp -f $< $@.parts/apk.zip
+	cp -f $(PRIVATE_RES_PACKAGE) $@.parts/apk.zip
 else  # ! LOCAL_USE_AAPT2
 	$(call create-assets-package,$@.parts/apk.zip)
 endif  # LOCAL_USE_AAPT2
