@@ -116,13 +116,13 @@ class ValidateTargetFilesTest(unittest.TestCase):
   def _generate_system_image(self, output_file):
     verity_fec = True
     partition_size = 1024 * 1024
-    adjusted_size, verity_size = build_image.AdjustPartitionSizeForVerity(
+    image_size, verity_size = build_image.AdjustPartitionSizeForVerity(
         partition_size, verity_fec)
 
     # Use an empty root directory.
     system_root = common.MakeTempDir()
     cmd = ['mkuserimg_mke2fs', '-s', system_root, output_file, 'ext4',
-           '/system', str(adjusted_size), '-j', '0']
+           '/system', str(image_size), '-j', '0']
     proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     stdoutdata, _ = proc.communicate()
     self.assertEqual(
@@ -132,8 +132,8 @@ class ValidateTargetFilesTest(unittest.TestCase):
 
     # Append the verity metadata.
     prop_dict = {
-        'original_partition_size' : str(partition_size),
-        'partition_size' : str(adjusted_size),
+        'partition_size' : str(partition_size),
+        'image_size' : str(image_size),
         'verity_block_device' : '/dev/block/system',
         'verity_key' : os.path.join(self.testdata_dir, 'testkey'),
         'verity_signer_cmd' : 'verity_signer',
