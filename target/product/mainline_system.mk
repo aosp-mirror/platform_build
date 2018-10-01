@@ -18,6 +18,10 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system.mk)
 
+# Shared java libs
+PRODUCT_PACKAGES += \
+    com.android.nfc_extras \
+
 # OTA support
 PRODUCT_PACKAGES += \
     update_engine \
