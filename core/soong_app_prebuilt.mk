@@ -62,6 +62,10 @@ java-dex: $(LOCAL_SOONG_DEX_JAR)
 # defines built_odex along with rule to install odex
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 
+ifneq ($(BUILD_PLATFORM_ZIP),)
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(dir $(LOCAL_BUILT_MODULE))package.dex.apk))
+endif
+
 ifdef LOCAL_DEX_PREOPT
   $(built_odex): $(LOCAL_SOONG_DEX_JAR)
 	$(call dexpreopt-one-file,$<,$@)
