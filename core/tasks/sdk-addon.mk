@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+ifndef ONE_SHOT_MAKEFILE
+
 .PHONY: sdk_addon
 
 # If they didn't define PRODUCT_SDK_ADDON_NAME, then we won't define
@@ -147,3 +149,5 @@ ifneq ($(filter sdk_addon,$(MAKECMDGOALS)),)
 $(error Trying to build sdk_addon, but product '$(INTERNAL_PRODUCT)' does not define one)
 endif
 endif # addon_name
+
+endif # !ONE_SHOT_MAKEFILE
