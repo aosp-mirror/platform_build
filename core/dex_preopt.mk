@@ -159,7 +159,7 @@ $(boot_profile_jars_zip): PRIVATE_JARS := $(all_boot_jars)
 $(boot_profile_jars_zip): $(all_boot_jars) $(SOONG_ZIP)
 	echo "Create boot profiles package: $@"
 	rm -f $@
-	$(SOONG_ZIP) -o $@ -C $(PRODUCT_OUT) $(PRIVATE_JARS)
+	$(SOONG_ZIP) -o $@ -C $(PRODUCT_OUT) $(addprefix -f ,$(PRIVATE_JARS))
 
 droidcore: $(boot_profile_jars_zip)
 
