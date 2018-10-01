@@ -32,6 +32,11 @@ PRODUCT_PACKAGES += \
     cppreopts.sh \
     otapreopt_script \
 
+# Bluetooth libraries
+PRODUCT_PACKAGES += \
+    audio.a2dp.default \
+    audio.hearing_aid.default \
+
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
