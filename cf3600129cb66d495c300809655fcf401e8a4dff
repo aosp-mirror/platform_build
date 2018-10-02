@@ -1,0 +1,280 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6fb2980c_55ac42c2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "update",
+      "range": {
+        "startLine": 14,
+        "startChar": 20,
+        "endLine": 14,
+        "endChar": 36
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "442a9765_f695b0ee",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1536,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "Do we still need this? Seems sparse_img.py has excluded hash_tree ranges from all the other entries?",
+      "range": {
+        "startLine": 1534,
+        "startChar": 6,
+        "endLine": 1536,
+        "endChar": 16
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "621e7d3f_80de47af",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "update (something like non-None to indicate we want to generate HashTreeInfo for the sparse image)",
+      "range": {
+        "startLine": 718,
+        "startChar": 29,
+        "endLine": 718,
+        "endChar": 76
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02fa246f_aa6e68b1",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "nit: remove the empty line above",
+      "range": {
+        "startLine": 180,
+        "startChar": 0,
+        "endLine": 180,
+        "endChar": 1
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d92d288_1e1a603f",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "assert that build_map \u003d\u003d False and hashtree_info_generator !\u003d None won\u0027t hold at the same time",
+      "range": {
+        "startLine": 67,
+        "startChar": 4,
+        "endLine": 68,
+        "endChar": 12
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4646e3b6_6c777c9a",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "if",
+      "range": {
+        "startLine": 107,
+        "startChar": 8,
+        "endLine": 107,
+        "endChar": 12
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "87a40db2_7e7a0d60",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "This is the reason I want to have https://android-review.googlesource.com/c/platform/build/+/773008.\n\nSince Generate() is a new function, shall we just make it returning the actual HashTreeInfo instance (to match its name)? The rest in verity_utils.py can be addressed with the CL above.",
+      "range": {
+        "startLine": 143,
+        "startChar": 6,
+        "endLine": 144,
+        "endChar": 64
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6ae9949_3856e8b8",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "nit: filesystem",
+      "range": {
+        "startLine": 170,
+        "startChar": 9,
+        "endLine": 170,
+        "endChar": 20
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aef2413c_785e1d1c",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "Call this and L210 VerifiedBootVersion[1-2]HashTreeInfoGenerator?",
+      "range": {
+        "startLine": 199,
+        "startChar": 6,
+        "endLine": 199,
+        "endChar": 30
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ddf19826_a81140f0",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "using a single `pass` should suffice",
+      "range": {
+        "startLine": 200,
+        "startChar": 2,
+        "endLine": 207,
+        "endChar": 29
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21f66e5a_4a74ce8c",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "(fill in, here and L237)",
+      "range": {
+        "startLine": 216,
+        "startChar": 4,
+        "endLine": 216,
+        "endChar": 14
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5187a4d6_42e56c91",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-02T19:14:37Z",
+      "side": 1,
+      "message": "_ParseHashtreeMetadata",
+      "range": {
+        "startLine": 273,
+        "startChar": 6,
+        "endLine": 273,
+        "endChar": 30
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
