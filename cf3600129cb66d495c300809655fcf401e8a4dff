@@ -163,6 +163,30 @@
     },
     {
       "key": {
+        "uuid": "37b3dfe9_d8f43c7f",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T19:19:27Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "87a40db2_7e7a0d60",
+      "range": {
+        "startLine": 143,
+        "startChar": 6,
+        "endLine": 144,
+        "endChar": 64
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a6ae9949_3856e8b8",
         "filename": "tools/releasetools/verity_utils.py",
         "patchSetId": 6
