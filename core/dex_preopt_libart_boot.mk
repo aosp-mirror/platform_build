@@ -85,16 +85,14 @@ endif
 
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_BOOT_IMAGE_FLAGS := $(my_boot_image_flags)
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_2ND_ARCH_VAR_PREFIX := $(my_2nd_arch_prefix)
-$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_IMAGE_LOCATION := $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
 # Use dex2oat debug version for better error reporting
-$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGET_BOOT_DEX_FILES) $(PRELOADED_CLASSES) $(DIRTY_IMAGE_OBJECTS) $(DEX2OAT_DEPENDENCY) $(PATCHOAT_DEPENDENCY) $(my_out_boot_image_profile_location)
+$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGET_BOOT_DEX_FILES) $(PRELOADED_CLASSES) $(DIRTY_IMAGE_OBJECTS) $(DEX2OAT_DEPENDENCY) $(my_out_boot_image_profile_location)
 	@echo "target dex2oat: $@"
 	@mkdir -p $(dir $@)
 	@mkdir -p $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))
-	@rm -f $(dir $@)/*.art $(dir $@)/*.oat $(dir $@)/*.art.rel
+	@rm -f $(dir $@)/*.art $(dir $@)/*.oat
 	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.art
 	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.oat
-	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.art.rel
 	$(hide) $(DEX2OAT_BOOT_IMAGE_LOG_TAGS) $(DEX2OAT) --runtime-arg -Xms$(DEX2OAT_IMAGE_XMS) \
 		--runtime-arg -Xmx$(DEX2OAT_IMAGE_XMX) \
 		$(PRIVATE_BOOT_IMAGE_FLAGS) \
@@ -115,11 +113,6 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--abort-on-hard-verifier-error \
 		--abort-on-soft-verifier-error \
 		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS) \
-		|| ( echo "$(DEX2OAT_FAILURE_MESSAGE)" ; false ) && \
-	$(DEX2OAT_BOOT_IMAGE_LOG_TAGS) ANDROID_ROOT=$(PRODUCT_OUT)/system ANDROID_DATA=$(dir $@) $(PATCHOAT) \
-		--input-image-location=$(PRIVATE_IMAGE_LOCATION) \
-		--output-image-relocation-directory=$(dir $@) \
-		--instruction-set=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH) \
-		--base-offset-delta=0x10000000
+		|| ( echo "$(DEX2OAT_FAILURE_MESSAGE)" ; false )
 
 endif
