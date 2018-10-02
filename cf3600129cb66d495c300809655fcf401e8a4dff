@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "cb08eb4d_cd4bb633",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1536,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T23:17:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "442a9765_f695b0ee",
+      "range": {
+        "startLine": 1534,
+        "startChar": 6,
+        "endLine": 1536,
+        "endChar": 16
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "621e7d3f_80de47af",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 6
@@ -68,6 +92,30 @@
       "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a8ba8426_88de3d34",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 718,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T23:17:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "621e7d3f_80de47af",
+      "range": {
+        "startLine": 718,
+        "startChar": 29,
+        "endLine": 718,
+        "endChar": 76
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "c59d4330_904e16b5",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T23:17:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "02fa246f_aa6e68b1",
+      "range": {
+        "startLine": 180,
+        "startChar": 0,
+        "endLine": 180,
+        "endChar": 1
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5d92d288_1e1a603f",
         "filename": "tools/releasetools/sparse_img.py",
         "patchSetId": 6
@@ -117,6 +189,30 @@
     },
     {
       "key": {
+        "uuid": "89b4a0ad_afdc97b9",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T23:17:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5d92d288_1e1a603f",
+      "range": {
+        "startLine": 67,
+        "startChar": 4,
+        "endLine": 68,
+        "endChar": 12
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4646e3b6_6c777c9a",
         "filename": "tools/releasetools/sparse_img.py",
         "patchSetId": 6
@@ -137,6 +233,30 @@
       "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62d5405a_8a7e52a1",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T23:17:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4646e3b6_6c777c9a",
+      "range": {
+        "startLine": 107,
+        "startChar": 8,
+        "endLine": 107,
+        "endChar": 12
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -187,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "6a72a9e3_18fecb41",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T23:17:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37b3dfe9_d8f43c7f",
+      "range": {
+        "startLine": 143,
+        "startChar": 6,
+        "endLine": 144,
+        "endChar": 64
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a6ae9949_3856e8b8",
         "filename": "tools/releasetools/verity_utils.py",
         "patchSetId": 6
@@ -207,6 +351,30 @@
       "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b138e43b_0913dcdc",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T23:17:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a6ae9949_3856e8b8",
+      "range": {
+        "startLine": 170,
+        "startChar": 9,
+        "endLine": 170,
+        "endChar": 20
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -233,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "a628f5fb_d687af3b",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T23:17:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aef2413c_785e1d1c",
+      "range": {
+        "startLine": 199,
+        "startChar": 6,
+        "endLine": 199,
+        "endChar": 30
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ddf19826_a81140f0",
         "filename": "tools/releasetools/verity_utils.py",
         "patchSetId": 6
@@ -253,6 +445,30 @@
       "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e9a074f_cfc5e2d2",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 207,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T23:17:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ddf19826_a81140f0",
+      "range": {
+        "startLine": 200,
+        "startChar": 2,
+        "endLine": 207,
+        "endChar": 29
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -279,6 +495,30 @@
     },
     {
       "key": {
+        "uuid": "4a5aa9ce_52f0f92f",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T23:17:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "21f66e5a_4a74ce8c",
+      "range": {
+        "startLine": 216,
+        "startChar": 4,
+        "endLine": 216,
+        "endChar": 14
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5187a4d6_42e56c91",
         "filename": "tools/releasetools/verity_utils.py",
         "patchSetId": 6
@@ -299,6 +539,30 @@
       "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ca77b90_77318281",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-02T23:17:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5187a4d6_42e56c91",
+      "range": {
+        "startLine": 273,
+        "startChar": 6,
+        "endLine": 273,
+        "endChar": 30
+      },
+      "revId": "cf3600129cb66d495c300809655fcf401e8a4dff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
