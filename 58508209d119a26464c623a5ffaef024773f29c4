@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c480a7ef_a8af06fa",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-02T08:20:07Z",
+      "side": 1,
+      "message": "divide by image_ratio allows us to reach a better lo value (closer to the answer).\nWith this, it only needs one or two iterations for the binary search at L209, when building images.",
+      "range": {
+        "startLine": 184,
+        "startChar": 11,
+        "endLine": 184,
+        "endChar": 36
+      },
+      "revId": "58508209d119a26464c623a5ffaef024773f29c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "897c5e96_9e0a16ba",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-02T08:20:07Z",
+      "side": 1,
+      "message": "In my local test to build images (e.g., system.img, vendor.img), no one enters this loop. (i.e., the \u0027lo\u0027 selected at L184 is small enough)",
+      "range": {
+        "startLine": 189,
+        "startChar": 2,
+        "endLine": 189,
+        "endChar": 36
+      },
+      "revId": "58508209d119a26464c623a5ffaef024773f29c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "86f6cb92_d8432a4a",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-02T08:20:07Z",
+      "side": 1,
+      "message": "Note that image_size is fixed (input value), and image_ratio is controlled by size_calculator().\nKeep minus delta exponentially (1 delta, 2 delta, etc) guarantees it can exit the loop. (e.g., think about if image_ratio is fixed in this iteration).  Same for the + delta at L202 for searching \u0027hi\u0027.",
+      "range": {
+        "startLine": 191,
+        "startChar": 65,
+        "endLine": 191,
+        "endChar": 73
+      },
+      "revId": "58508209d119a26464c623a5ffaef024773f29c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c3fb658f_574bf3fd",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-02T08:20:07Z",
+      "side": 1,
+      "message": "In my local test, images \u003e ~500M, it won\u0027t enter this loop.\nSmaller images (e.g., \u003c100MB) might have one iteration here.",
+      "range": {
+        "startLine": 200,
+        "startChar": 2,
+        "endLine": 200,
+        "endChar": 36
+      },
+      "revId": "58508209d119a26464c623a5ffaef024773f29c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c2d4f276_202780c4",
+        "filename": "tools/releasetools/test_build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-02T08:20:07Z",
+      "side": 1,
+      "message": "Input \u0027y\u003dx^0.95\u0027 in Google will show the graph.\n\nhttps://www.google.com.tw/search?q\u003dy%3Dx%5E0.95\u0026oq\u003dy%3Dx%5E0.95\u0026aqs\u003dchrome..69i57.3727j0j1\u0026sourceid\u003dchrome\u0026ie\u003dUTF-8\n\nI used square root (x^0.5) before, but it decreased too quickly.\nSo decided to use ^0.95 finally.",
+      "range": {
+        "startLine": 206,
+        "startChar": 59,
+        "endLine": 206,
+        "endChar": 63
+      },
+      "revId": "58508209d119a26464c623a5ffaef024773f29c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e331936d_258ec4c0",
+        "filename": "tools/releasetools/test_build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-02T08:20:07Z",
+      "side": 1,
+      "message": "This is the reverse of Slower test case at L200.",
+      "range": {
+        "startLine": 219,
+        "startChar": 35,
+        "endLine": 219,
+        "endChar": 41
+      },
+      "revId": "58508209d119a26464c623a5ffaef024773f29c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
