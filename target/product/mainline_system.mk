@@ -18,15 +18,28 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system.mk)
 
+# Shared java libs
+PRODUCT_PACKAGES += \
+    com.android.nfc_extras \
+
 # OTA support
 PRODUCT_PACKAGES += \
     update_engine \
     update_verifier \
 
+# Wrapped net utils for /vendor access.
+PRODUCT_PACKAGES += \
+    netutils-wrapper-1.0 \
+
 # system_other support
 PRODUCT_PACKAGES += \
     cppreopts.sh \
     otapreopt_script \
+
+# Bluetooth libraries
+PRODUCT_PACKAGES += \
+    audio.a2dp.default \
+    audio.hearing_aid.default \
 
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
