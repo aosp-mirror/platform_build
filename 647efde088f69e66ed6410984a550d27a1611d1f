@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d02f71a7_b752a2e8",
+        "filename": "envsetup.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 1603,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-10-03T20:13:24Z",
+      "side": 1,
+      "message": "Can\u0027t you just use which?",
+      "range": {
+        "startLine": 1599,
+        "startChar": 5,
+        "endLine": 1603,
+        "endChar": 14
+      },
+      "revId": "647efde088f69e66ed6410984a550d27a1611d1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
