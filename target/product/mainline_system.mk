@@ -22,6 +22,15 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system.mk)
 PRODUCT_PACKAGES += \
     com.android.nfc_extras \
 
+# Applications
+PRODUCT_PACKAGES += \
+    DMService \
+    LiveWallpapersPicker \
+    PartnerBookmarksProvider \
+    RcsService \
+    SafetyRegulatoryInfo \
+    Stk \
+
 # OTA support
 PRODUCT_PACKAGES += \
     update_engine \
