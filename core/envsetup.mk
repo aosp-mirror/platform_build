@@ -183,61 +183,25 @@ TARGET_COPY_OUT_SYSTEM_OTHER := system_other
 TARGET_COPY_OUT_DATA := data
 TARGET_COPY_OUT_ASAN := $(TARGET_COPY_OUT_DATA)/asan
 TARGET_COPY_OUT_OEM := oem
-TARGET_COPY_OUT_ODM := odm
-TARGET_COPY_OUT_PRODUCT := product
-TARGET_COPY_OUT_PRODUCT_SERVICES := product_services
 TARGET_COPY_OUT_RAMDISK := ramdisk
 TARGET_COPY_OUT_ROOT := root
 TARGET_COPY_OUT_RECOVERY := recovery
+# The directory used for optional partitions depend on the BoardConfig, so
+# they're defined to placeholder values here and swapped after reading the
+# BoardConfig, to be either the partition dir, or a subdir within 'system'.
+_vendor_path_placeholder := ||VENDOR-PATH-PH||
+_product_path_placeholder := ||PRODUCT-PATH-PH||
+_product_services_path_placeholder := ||PRODUCT_SERVICES-PATH-PH||
+_odm_path_placeholder := ||ODM-PATH-PH||
+TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
+TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
+TARGET_COPY_OUT_PRODUCT_SERVICES := $(_product_services_path_placeholder)
+TARGET_COPY_OUT_ODM := $(_odm_path_placeholder)
 
 # Returns the non-sanitized version of the path provided in $1.
 define get_non_asan_path
 $(patsubst $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/%,$(PRODUCT_OUT)/%,$1)
 endef
-
-###########################################
-# Define TARGET_COPY_OUT_VENDOR to a placeholder, for at this point
-# we don't know if the device wants to build a separate vendor.img
-# or just build vendor stuff into system.img.
-# A device can set up TARGET_COPY_OUT_VENDOR to "vendor" in its
-# BoardConfig.mk.
-# We'll substitute with the real value after loading BoardConfig.mk.
-_vendor_path_placeholder := ||VENDOR-PATH-PH||
-TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
-###########################################
-
-###########################################
-# Define TARGET_COPY_OUT_PRODUCT to a placeholder, for at this point
-# we don't know if the device wants to build a separate product.img
-# or just build product stuff into system.img.
-# A device can set up TARGET_COPY_OUT_PRODUCT to "product" in its
-# BoardConfig.mk.
-# We'll substitute with the real value after loading BoardConfig.mk.
-_product_path_placeholder := ||PRODUCT-PATH-PH||
-TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
-###########################################
-
-###########################################
-# Define TARGET_COPY_OUT_PRODUCT_SERVICES to a placeholder, for at this point
-# we don't know if the device wants to build a separate product_services.img
-# or just build product stuff into system.img.
-# A device can set up TARGET_COPY_OUT_PRODUCT_SERVICES to "product_services" in its
-# BoardConfig.mk.
-# We'll substitute with the real value after loading BoardConfig.mk.
-_product_services_path_placeholder := ||PRODUCT_SERVICES-PATH-PH||
-TARGET_COPY_OUT_PRODUCT_SERVICES := $(_product_services_path_placeholder)
-###########################################
-
-###########################################
-# Define TARGET_COPY_OUT_ODM to a placeholder, for at this point
-# we don't know if the device wants to build a separate odm.img
-# or just build odm stuff into vendor.img.
-# A device can set up TARGET_COPY_OUT_ODM to "odm" in its
-# BoardConfig.mk.
-# We'll substitute with the real value after loading BoardConfig.mk.
-_odm_path_placeholder := ||ODM-PATH-PH||
-TARGET_COPY_OUT_ODM := $(_odm_path_placeholder)
-###########################################
 
 #################################################################
 # Set up minimal BOOTCLASSPATH list of jars to build/execute
