@@ -46,6 +46,30 @@
       "revId": "647efde088f69e66ed6410984a550d27a1611d1f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ef848fe7_2a8ade46",
+        "filename": "envsetup.sh",
+        "patchSetId": 7
+      },
+      "lineNbr": 1603,
+      "author": {
+        "id": 1128890
+      },
+      "writtenOn": "2018-10-03T20:37:53Z",
+      "side": 1,
+      "message": "Actually, I\u0027m going to reverse the logic and use the built version over the prebuilt. That\u0027ll make dev easier for acloud and if someone intentionally built acloud, they\u0027d probably want to use it too over the prebuilt.\n\nI\u0027m going to keep the \"which\" logic to check if acloud already exists or not.",
+      "parentUuid": "ef7b83c8_5051541e",
+      "range": {
+        "startLine": 1599,
+        "startChar": 5,
+        "endLine": 1603,
+        "endChar": 14
+      },
+      "revId": "647efde088f69e66ed6410984a550d27a1611d1f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
