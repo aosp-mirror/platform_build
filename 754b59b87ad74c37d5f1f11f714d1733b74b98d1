@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "81779dab_5d2d2cfc",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-03T00:31:20Z",
+      "side": 1,
+      "message": "(actually I meant the string here: \"add_hash_image\" is not the right command.)",
+      "parentUuid": "24b1bff7_1b304d42",
+      "range": {
+        "startLine": 152,
+        "startChar": 53,
+        "endLine": 153,
+        "endChar": 39
+      },
+      "revId": "754b59b87ad74c37d5f1f11f714d1733b74b98d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "33d786f8_beea2123",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 2

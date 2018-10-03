@@ -117,6 +117,30 @@
     },
     {
       "key": {
+        "uuid": "c57e27a0_9f8cc033",
+        "filename": "tools/releasetools/test_build_image.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-03T00:31:20Z",
+      "side": 1,
+      "message": "wow, quite some math computations!",
+      "parentUuid": "c2d4f276_202780c4",
+      "range": {
+        "startLine": 206,
+        "startChar": 59,
+        "endLine": 206,
+        "endChar": 63
+      },
+      "revId": "58508209d119a26464c623a5ffaef024773f29c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e331936d_258ec4c0",
         "filename": "tools/releasetools/test_build_image.py",
         "patchSetId": 8
