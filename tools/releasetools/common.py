@@ -701,7 +701,8 @@ def UnzipTemp(filename, pattern=None):
   return tmp
 
 
-def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks):
+def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
+                   hashtree_info_generator=None):
   """Returns a SparseImage object suitable for passing to BlockImageDiff.
 
   This function loads the specified sparse image from the given path, and
@@ -714,7 +715,8 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks):
     tmpdir: The directory that contains the prebuilt image and block map file.
     input_zip: The target-files ZIP archive.
     allow_shared_blocks: Whether having shared blocks is allowed.
-
+    hashtree_info_generator: If present, generates the hashtree_info for this
+        sparse image.
   Returns:
     A SparseImage object, with file_map info loaded.
   """
@@ -732,8 +734,9 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks):
   # unconditionally. Note that they are still part of care_map. (Bug: 20939131)
   clobbered_blocks = "0"
 
-  image = sparse_img.SparseImage(path, mappath, clobbered_blocks,
-                                 allow_shared_blocks=allow_shared_blocks)
+  image = sparse_img.SparseImage(
+      path, mappath, clobbered_blocks, allow_shared_blocks=allow_shared_blocks,
+      hashtree_info_generator=hashtree_info_generator)
 
   # block.map may contain less blocks, because mke2fs may skip allocating blocks
   # if they contain all zeros. We can't reconstruct such a file from its block

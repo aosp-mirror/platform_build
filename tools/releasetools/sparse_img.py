@@ -33,7 +33,8 @@ class SparseImage(object):
   """
 
   def __init__(self, simg_fn, file_map_fn=None, clobbered_blocks=None,
-               mode="rb", build_map=True, allow_shared_blocks=False):
+               mode="rb", build_map=True, allow_shared_blocks=False,
+               hashtree_info_generator=None):
     self.simg_f = f = open(simg_fn, mode)
 
     header_bin = f.read(28)
@@ -64,6 +65,8 @@ class SparseImage(object):
           % (total_blks, blk_sz, total_chunks))
 
     if not build_map:
+      assert not hashtree_info_generator, \
+        "Cannot generate the hashtree info without building the offset map."
       return
 
     pos = 0   # in blocks
@@ -102,8 +105,18 @@ class SparseImage(object):
         if data_sz != 0:
           raise ValueError("Don't care chunk input size is non-zero (%u)" %
                            (data_sz))
-        else:
-          pos += chunk_sz
+        # Fills the don't care data ranges with zeros.
+        # TODO(xunchang) pass the care_map to hashtree info generator.
+        if hashtree_info_generator:
+          fill_data = '\x00' * 4
+          # In order to compute verity hashtree on device, we need to write
+          # zeros explicitly to the don't care ranges. Because these ranges may
+          # contain non-zero data from the previous build.
+          care_data.append(pos)
+          care_data.append(pos + chunk_sz)
+          offset_map.append((pos, chunk_sz, None, fill_data))
+
+        pos += chunk_sz
 
       elif chunk_type == 0xCAC4:
         raise ValueError("CRC32 chunks are not supported")
@@ -127,6 +140,10 @@ class SparseImage(object):
     all_blocks = rangelib.RangeSet(data=(0, self.total_blocks))
     extended = extended.intersect(all_blocks).subtract(self.care_map)
     self.extended = extended
+
+    self.hashtree_info = None
+    if hashtree_info_generator:
+      self.hashtree_info = hashtree_info_generator.Generate(self)
 
     if file_map_fn:
       self.LoadFileBlockMap(file_map_fn, self.clobbered_blocks,
@@ -246,6 +263,8 @@ class SparseImage(object):
         remaining = remaining.subtract(ranges)
 
     remaining = remaining.subtract(clobbered_blocks)
+    if self.hashtree_info:
+      remaining = remaining.subtract(self.hashtree_info.hashtree_range)
 
     # For all the remaining blocks in the care_map (ie, those that
     # aren't part of the data for any file nor part of the clobbered_blocks),
@@ -308,6 +327,8 @@ class SparseImage(object):
         out["__NONZERO-%d" % i] = rangelib.RangeSet(data=blocks)
     if clobbered_blocks:
       out["__COPY"] = clobbered_blocks
+    if self.hashtree_info:
+      out["__HASHTREE"] = self.hashtree_info.hashtree_range
 
   def ResetFileMap(self):
     """Throw away the file map and treat the entire image as
