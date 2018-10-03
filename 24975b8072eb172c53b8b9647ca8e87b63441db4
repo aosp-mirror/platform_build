@@ -22,6 +22,30 @@
       "revId": "24975b8072eb172c53b8b9647ca8e87b63441db4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5f9f7cb1_ba0134e4",
+        "filename": "core/strings.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-10-03T15:36:48Z",
+      "side": 1,
+      "message": "fixed.\n\nI\u0027m not particularly good about cleaning up my own temp vars... does that matter?",
+      "parentUuid": "06430ee5_7bbd4896",
+      "range": {
+        "startLine": 144,
+        "startChar": 7,
+        "endLine": 144,
+        "endChar": 13
+      },
+      "revId": "24975b8072eb172c53b8b9647ca8e87b63441db4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
