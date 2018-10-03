@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b7861427_cbca15f1",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-03T20:42:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3de5546_a2e99846",
+      "range": {
+        "startLine": 27,
+        "startChar": 6,
+        "endLine": 27,
+        "endChar": 18
+      },
+      "revId": "d05ce9852397af325276ada31a7a8c574fa2a686",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6c9fbe93_60dea198",
         "filename": "tools/releasetools/verity_utils.py",
         "patchSetId": 8
@@ -45,6 +69,30 @@
       "revId": "d05ce9852397af325276ada31a7a8c574fa2a686",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82e2d703_51c96b8b",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-03T20:42:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c9fbe93_60dea198",
+      "range": {
+        "startLine": 70,
+        "startChar": 26,
+        "endLine": 70,
+        "endChar": 38
+      },
+      "revId": "d05ce9852397af325276ada31a7a8c574fa2a686",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
