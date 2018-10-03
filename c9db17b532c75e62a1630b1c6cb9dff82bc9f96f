@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3ed7de2a_85332322",
+        "filename": "envsetup.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 1598,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-10-03T19:28:51Z",
+      "side": 1,
+      "message": "Before erroring out, check if acloud is in the path and if so use that.",
+      "range": {
+        "startLine": 1598,
+        "startChar": 8,
+        "endLine": 1598,
+        "endChar": 71
+      },
+      "revId": "c9db17b532c75e62a1630b1c6cb9dff82bc9f96f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
