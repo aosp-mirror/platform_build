@@ -22,8 +22,8 @@ import unittest
 
 import common
 from build_image import (
-    AVBCalcMinPartitionSize, BLOCK_SIZE,
-    CheckHeadroom, RunCommand, SetUpInDirAndFsConfig)
+    AVBCalcMinPartitionSize, BLOCK_SIZE, BuildImageError, CheckHeadroom,
+    RunCommand, SetUpInDirAndFsConfig)
 
 
 class BuildImageTest(unittest.TestCase):
@@ -49,7 +49,7 @@ class BuildImageTest(unittest.TestCase):
         'partition_headroom' : '4096000',
         'mount_point' : 'system',
     }
-    self.assertTrue(CheckHeadroom(self.EXT4FS_OUTPUT, prop_dict))
+    CheckHeadroom(self.EXT4FS_OUTPUT, prop_dict)
 
   def test_CheckHeadroom_InsufficientHeadroom(self):
     # Required headroom: 1001 blocks.
@@ -58,7 +58,8 @@ class BuildImageTest(unittest.TestCase):
         'partition_headroom' : '4100096',
         'mount_point' : 'system',
     }
-    self.assertFalse(CheckHeadroom(self.EXT4FS_OUTPUT, prop_dict))
+    self.assertRaises(
+        BuildImageError, CheckHeadroom, self.EXT4FS_OUTPUT, prop_dict)
 
   def test_CheckHeadroom_WrongFsType(self):
     prop_dict = {
@@ -98,14 +99,14 @@ class BuildImageTest(unittest.TestCase):
         'partition_headroom' : '40960',
         'mount_point' : 'system',
     }
-    self.assertTrue(CheckHeadroom(ext4fs_output, prop_dict))
+    CheckHeadroom(ext4fs_output, prop_dict)
 
     prop_dict = {
         'fs_type' : 'ext4',
         'partition_headroom' : '413696',
         'mount_point' : 'system',
     }
-    self.assertFalse(CheckHeadroom(ext4fs_output, prop_dict))
+    self.assertRaises(BuildImageError, CheckHeadroom, ext4fs_output, prop_dict)
 
   def test_SetUpInDirAndFsConfig_SystemRootImageTrue_NonSystem(self):
     prop_dict = {
