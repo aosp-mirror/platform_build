@@ -139,8 +139,7 @@ class ValidateTargetFilesTest(unittest.TestCase):
         'verity_signer_cmd' : 'verity_signer',
         'verity_size' : str(verity_size),
     }
-    self.assertTrue(
-        build_image.MakeVerityEnabledImage(output_file, verity_fec, prop_dict))
+    build_image.MakeVerityEnabledImage(output_file, verity_fec, prop_dict)
 
   def test_ValidateVerifiedBootImages_systemImage(self):
     input_tmp = common.MakeTempDir()
