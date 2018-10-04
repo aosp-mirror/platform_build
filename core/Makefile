@@ -2916,7 +2916,7 @@ endef
 ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 
 # BOARD_SUPER_PARTITION_SIZE must be defined to build super image.
-ifdef BOARD_SUPER_PARTITION_SIZE
+ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 
 INSTALLED_SUPERIMAGE_TARGET := $(PRODUCT_OUT)/super.img
 INSTALLED_SUPERIMAGE_EMPTY_TARGET := $(PRODUCT_OUT)/super_empty.img
@@ -2977,32 +2977,61 @@ ifeq (,$(TARGET_BUILD_APPS))
 # Do not check for apps-only build
 
 ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
-ifdef BOARD_SUPER_PARTITION_SIZE
-ifdef BOARD_SUPER_PARTITION_PARTITION_LIST
 
-droid_targets: check_android_partition_sizes
+droid_targets: check-all-partition-sizes
 
-.PHONY: check_android_partition_sizes
+.PHONY: check-all-partition-sizes check-all-partition-sizes-nodeps
 
 # Add image dependencies so that generated_*_image_info.txt are written before checking.
-check_android_partition_sizes: $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
+check-all-partition-sizes: $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
 
-check_android_partition_sizes:
-	partition_size_list="$(call read-size-of-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))"; \
-	sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${partition_size_list}"); \
-	max_size_tail=$(if $(filter true,$(AB_OTA_UPDATER))," / 2"); \
-	max_size_expr=$(BOARD_SUPER_PARTITION_SIZE)$${max_size_tail}; \
-	if [ $$(( $${sum_sizes_expr} )) -gt $$(( $${max_size_expr} )) ]; then \
-		echo "The sum of sizes of all logical partitions is larger than BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
-		echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' $${max_size_expr} '==' $$(( $${max_size_expr} )); \
-		exit 1; \
-	else \
-		echo "The sum of sizes of all logical partitions is within BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
-		echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '<=' $${max_size_expr} '==' $$(( $${max_size_expr} )); \
-	fi
+# $(1): human-readable max size string
+# $(2): max size expression
+# $(3): list of partition names
+define check-sum-of-partition-sizes
+  partition_size_list="$(call read-size-of-partitions,$(3))"; \
+  sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${partition_size_list}"); \
+  if [ $$(( $${sum_sizes_expr} )) -gt $$(( $(2) )) ]; then \
+    echo "The sum of sizes of [$(strip $(3))] is larger than $(strip $(1)):"; \
+    echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' "$(2)" '==' $$(( $(2) )); \
+    exit 1; \
+  else \
+    echo "The sum of sizes of [$(strip $(3))] is within $(strip $(1)):"; \
+    echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '<=' "$(2)" '==' $$(( $(2) )); \
+  fi
+endef
 
-endif # BOARD_SUPER_PARTITION_PARTITION_LIST
-endif # BOARD_SUPER_PARTITION_SIZE
+define check-all-partition-sizes-target
+  # Check sum(all partitions) <= super partition (/ 2 for A/B)
+  $(if $(BOARD_SUPER_PARTITION_SIZE),$(if $(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+    $(call check-sum-of-partition-sizes,BOARD_SUPER_PARTITION_SIZE$(if $(filter true,$(AB_OTA_UPDATER)), / 2), \
+      $(BOARD_SUPER_PARTITION_SIZE)$(if $(filter true,$(AB_OTA_UPDATER)), / 2),$(BOARD_SUPER_PARTITION_PARTITION_LIST))))
+
+  # For each group, check sum(partitions in group) <= group size
+  $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
+    $(if $(BOARD_$(group)_SIZE),$(if $(BOARD_$(group)_PARTITION_LIST), \
+      $(call check-sum-of-partition-sizes,BOARD_$(group)_SIZE,$(BOARD_$(group)_SIZE),$(BOARD_$(group)_PARTITION_LIST)))))
+
+  # Check sum(all group sizes) <= super partition (/ 2 for A/B)
+  if [[ ! -z $(BOARD_SUPER_PARTITION_SIZE) ]]; then \
+    group_size_list="$(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)),$(BOARD_$(group)_SIZE))"; \
+    sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${group_size_list}"); \
+    max_size_tail=$(if $(filter true,$(AB_OTA_UPDATER))," / 2"); \
+    max_size_expr="$(BOARD_SUPER_PARTITION_SIZE)$${max_size_tail}"; \
+    if [ $$(( $${sum_sizes_expr} )) -gt $$(( $${max_size_expr} )) ]; then \
+      echo "The sum of sizes of [$(strip $(BOARD_SUPER_PARTITION_GROUPS))] is larger than BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
+      echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' $${max_size_expr} '==' $$(( $${max_size_expr} )); \
+      exit 1; \
+    else \
+      echo "The sum of sizes of [$(strip $(BOARD_SUPER_PARTITION_GROUPS))] is within BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
+      echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '<=' $${max_size_expr} '==' $$(( $${max_size_expr} )); \
+    fi \
+  fi
+endef
+
+check-all-partition-sizes check-all-partition-sizes-nodeps:
+	$(call check-all-partition-sizes-target)
+
 endif # PRODUCT_BUILD_SUPER_PARTITION
 
 endif # TARGET_BUILD_APPS
@@ -3602,7 +3631,7 @@ endif
 ifdef BUILT_VENDOR_MATRIX
 	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
 endif
-ifdef BOARD_SUPER_PARTITION_SIZE
+ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 	$(hide) echo "super_size=$(BOARD_SUPER_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "lpmake=$(notdir $(LPMAKE))" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo -n "lpmake_args=" >> $(zip_root)/META/misc_info.txt
