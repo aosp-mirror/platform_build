@@ -2940,9 +2940,9 @@ define build-superimage-target-args
   --metadata-slots $(if $(1),2,1) \
   --device-size $(BOARD_SUPER_PARTITION_SIZE) \
   $(foreach name,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-    --partition $(name)$(1):$$($(UUIDGEN) $(name)$(1)):readonly:$(if $(2),$(call read-size-of-partitions,$(name)),0) \
+    --partition $(name)$(1):readonly:$(if $(2),$(call read-size-of-partitions,$(name)),0) \
     $(if $(2), --image $(name)$(1)=$(call images-for-partitions,$(name))) \
-    $(if $(1), --partition $(name)_b:$$($(UUIDGEN) $(name)_b):readonly:0) \
+    $(if $(1), --partition $(name)_b:readonly:0) \
   )
 endef
 
