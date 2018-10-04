@@ -42,3 +42,76 @@ endif
 
 lower :=
 upper :=
+
+###########################################################
+## Returns true if $(1) and $(2) are equal.  Returns
+## the empty string if they are not equal.
+###########################################################
+define streq
+$(strip $(if $(strip $(1)),\
+  $(if $(strip $(2)),\
+    $(if $(filter-out __,_$(subst $(strip $(1)),,$(strip $(2)))$(subst $(strip $(2)),,$(strip $(1)))_),,true), \
+    ),\
+  $(if $(strip $(2)),\
+    ,\
+    true)\
+ ))
+endef
+
+###########################################################
+## Convert "a b c" into "a:b:c"
+###########################################################
+define normalize-path-list
+$(subst $(space),:,$(strip $(1)))
+endef
+
+###########################################################
+## Convert "a b c" into "a,b,c"
+###########################################################
+define normalize-comma-list
+$(subst $(space),$(comma),$(strip $(1)))
+endef
+
+###########################################################
+## Read the word out of a colon-separated list of words.
+## This has the same behavior as the built-in function
+## $(word n,str).
+##
+## The individual words may not contain spaces.
+##
+## $(1): 1 based index
+## $(2): value of the form a:b:c...
+###########################################################
+
+define word-colon
+$(word $(1),$(subst :,$(space),$(2)))
+endef
+
+###########################################################
+## Convert "a=b c= d e = f" into "a=b c=d e=f"
+##
+## $(1): list to collapse
+## $(2): if set, separator word; usually "=", ":", or ":="
+##       Defaults to "=" if not set.
+###########################################################
+
+define collapse-pairs
+$(eval _cpSEP := $(strip $(if $(2),$(2),=)))\
+$(strip $(subst $(space)$(_cpSEP)$(space),$(_cpSEP),$(strip \
+    $(subst $(_cpSEP), $(_cpSEP) ,$(1)))$(space)))
+endef
+
+###########################################################
+## Given a list of pairs, if multiple pairs have the same
+## first components, keep only the first pair.
+##
+## $(1): list of pairs
+## $(2): the separator word, such as ":", "=", etc.
+define uniq-pairs-by-first-component
+$(eval _upbfc_fc_set :=)\
+$(strip $(foreach w,$(1), $(eval _first := $(word 1,$(subst $(2),$(space),$(w))))\
+    $(if $(filter $(_upbfc_fc_set),$(_first)),,$(w)\
+        $(eval _upbfc_fc_set += $(_first)))))\
+$(eval _upbfc_fc_set :=)\
+$(eval _first:=)
+endef
