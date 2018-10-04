@@ -169,14 +169,17 @@ class VerifiedBootVersion1HashtreeInfoGenerator(HashtreeInfoGenerator):
       self.image.WriteRangeDataToFd(self.hashtree_info.filesystem_range, fd)
 
     generated_verity_tree = common.MakeTempFile(prefix="verity")
-    prop_dict = {}
-    BuildVerityTree(adjusted_partition, generated_verity_tree, prop_dict)
+    root_hash, salt = BuildVerityTree(adjusted_partition, generated_verity_tree)
 
-    assert prop_dict["verity_salt"] == self.hashtree_info.salt
-    if prop_dict["verity_root_hash"] != self.hashtree_info.root_hash:
-      print("Calculated verty root hash {} doesn't match the one in metadata"
-            " {}".format(prop_dict["verity_root_hash"],
-                         self.hashtree_info.root_hash))
+    # The salt should be always identical, as we use fixed value.
+    assert salt == self.hashtree_info.salt, \
+        "Calculated salt {} doesn't match the one in metadata {}".format(
+            salt, self.hashtree_info.salt)
+
+    if root_hash != self.hashtree_info.root_hash:
+      print(
+          "Calculated root hash {} doesn't match the one in metadata {}".format(
+              root_hash, self.hashtree_info.root_hash))
       return False
 
     # Reads the generated hash tree and checks if it has the exact same bytes
@@ -190,6 +193,7 @@ class VerifiedBootVersion1HashtreeInfoGenerator(HashtreeInfoGenerator):
 
     Returns:
       hashtree_info: The information needed to reconstruct the hashtree.
+
     Raises:
       HashtreeInfoGenerationError: If we fail to generate the exact bytes of
           the hashtree.
