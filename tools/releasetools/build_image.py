@@ -330,7 +330,7 @@ def BuildVerityFEC(sparse_image_path, verity_path, verity_fec_path,
         "Failed to build FEC data:\n{}".format(output))
 
 
-def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
+def BuildVerityTree(sparse_image_path, verity_image_path):
   cmd = ["build_verity_tree", "-A", FIXED_SALT, sparse_image_path,
          verity_image_path]
   output, exit_code = RunCommand(cmd)
@@ -338,8 +338,7 @@ def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
     raise BuildImageError(
         "Failed to build verity tree:\n{}".format(output))
   root, salt = output.split()
-  prop_dict["verity_root_hash"] = root
-  prop_dict["verity_salt"] = salt
+  return root, salt
 
 
 def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
@@ -453,11 +452,9 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
   verity_fec_path = os.path.join(tempdir_name, "verity_fec.img")
 
   # Build the verity tree and get the root hash and salt.
-  BuildVerityTree(out_file, verity_image_path, prop_dict)
+  root_hash, salt = BuildVerityTree(out_file, verity_image_path)
 
   # Build the metadata blocks.
-  root_hash = prop_dict["verity_root_hash"]
-  salt = prop_dict["verity_salt"]
   verity_disable = "verity_disable" in prop_dict
   BuildVerityMetadata(
       image_size, verity_metadata_path, root_hash, salt, block_dev, signer_path,
