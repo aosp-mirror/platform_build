@@ -10,10 +10,8 @@ TARGET_USERIMAGES_USE_EXT4 := true
 # we explicit specify this need below (even though it's the current default).
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
 
-# Enable dynamic system image size and reserved 128MB in it.
-# Currently the reserve size includes verified boot metadata.
-# TODO: adjust to a smaller value if the reserved size is only for file system.
-BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 134217728
+# Enable dynamic system image size and reserved 64MB in it.
+BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
 
 # Android Verified Boot (AVB):
 #   1) Sets BOARD_AVB_ENABLE to sign the GSI image.
