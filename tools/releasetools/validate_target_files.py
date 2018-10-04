@@ -35,7 +35,6 @@ import filecmp
 import logging
 import os.path
 import re
-import subprocess
 import zipfile
 
 import common
@@ -256,7 +255,7 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
         continue
 
       cmd = ['boot_signer', '-verify', image_path, '-certificate', verity_key]
-      proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      proc = common.Run(cmd)
       stdoutdata, _ = proc.communicate()
       assert proc.returncode == 0, \
           'Failed to verify {} with boot_signer:\n{}'.format(image, stdoutdata)
@@ -299,7 +298,7 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
         continue
 
       cmd = ['verity_verifier', image_path, '-mincrypt', verity_key_mincrypt]
-      proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      proc = common.Run(cmd)
       stdoutdata, _ = proc.communicate()
       assert proc.returncode == 0, \
           'Failed to verify {} with verity_verifier (key: {}):\n{}'.format(
@@ -328,7 +327,7 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
             partition, info_dict, options[key_name])
         cmd.extend(["--expected_chain_partition", chained_partition_arg])
 
-    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    proc = common.Run(cmd)
     stdoutdata, _ = proc.communicate()
     assert proc.returncode == 0, \
         'Failed to verify {} with verity_verifier (key: {}):\n{}'.format(

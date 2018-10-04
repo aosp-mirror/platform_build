@@ -17,7 +17,6 @@
 import copy
 import os
 import os.path
-import subprocess
 import unittest
 import zipfile
 
@@ -1024,11 +1023,11 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
            '--signature_size', str(self.SIGNATURE_SIZE),
            '--metadata_hash_file', metadata_sig_file,
            '--payload_hash_file', payload_sig_file]
-    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    proc = common.Run(cmd)
     stdoutdata, _ = proc.communicate()
     self.assertEqual(
         0, proc.returncode,
-        'Failed to run brillo_update_payload: {}'.format(stdoutdata))
+        'Failed to run brillo_update_payload:\n{}'.format(stdoutdata))
 
     signed_metadata_sig_file = payload_signer.Sign(metadata_sig_file)
 
