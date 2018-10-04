@@ -35,10 +35,8 @@ TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
 
-# Enable dynamic system image size and reserved 128MB in it.
-# Currently the reserve size includes verified boot metadata.
-# TODO: adjust to a smaller value if the reserved size is only for file system.
-BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 134217728
+# Enable dynamic system image size and reserved 64MB in it.
+BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
 
 # Generic AOSP image always requires separate vendor.img
 TARGET_COPY_OUT_VENDOR := vendor
