@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0c062353_f337a89c",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1908,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-05T05:25:01Z",
+      "side": 1,
+      "message": "L1910 should be doing this?",
+      "range": {
+        "startLine": 1908,
+        "startChar": 4,
+        "endLine": 1908,
+        "endChar": 71
+      },
+      "revId": "ababa581f20f575ddca2f82fe4c225c1aa1514c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "066813e5_b66b2921",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1935,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-05T05:25:01Z",
+      "side": 1,
+      "message": "nit: slightly more readable to move this line above L1932, so that \u0027mkdir odm\u0027 appears to happen before creating the odm/$d symlinks (which is actually the case per L1963-L1969)",
+      "range": {
+        "startLine": 1935,
+        "startChar": 0,
+        "endLine": 1935,
+        "endChar": 25
+      },
+      "revId": "ababa581f20f575ddca2f82fe4c225c1aa1514c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "54ec6207_b2407477",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1976,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-05T05:25:01Z",
+      "side": 1,
+      "message": "create-root-mountpoints-and-symlinks?",
+      "range": {
+        "startLine": 1976,
+        "startChar": 9,
+        "endLine": 1976,
+        "endChar": 52
+      },
+      "revId": "ababa581f20f575ddca2f82fe4c225c1aa1514c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
