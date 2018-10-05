@@ -21,7 +21,6 @@ from __future__ import print_function
 import os
 import os.path
 import shutil
-import subprocess
 import unittest
 
 import build_image
@@ -44,7 +43,7 @@ class ValidateTargetFilesTest(unittest.TestCase):
       kernel_fp.write(os.urandom(10))
 
     cmd = ['mkbootimg', '--kernel', kernel, '-o', output_file]
-    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    proc = common.Run(cmd)
     stdoutdata, _ = proc.communicate()
     self.assertEqual(
         0, proc.returncode,
@@ -53,7 +52,7 @@ class ValidateTargetFilesTest(unittest.TestCase):
     cmd = ['boot_signer', '/boot', output_file,
            os.path.join(self.testdata_dir, 'testkey.pk8'),
            os.path.join(self.testdata_dir, 'testkey.x509.pem'), output_file]
-    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    proc = common.Run(cmd)
     stdoutdata, _ = proc.communicate()
     self.assertEqual(
         0, proc.returncode,
@@ -123,7 +122,7 @@ class ValidateTargetFilesTest(unittest.TestCase):
     system_root = common.MakeTempDir()
     cmd = ['mkuserimg_mke2fs', '-s', system_root, output_file, 'ext4',
            '/system', str(image_size), '-j', '0']
-    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    proc = common.Run(cmd)
     stdoutdata, _ = proc.communicate()
     self.assertEqual(
         0, proc.returncode,
