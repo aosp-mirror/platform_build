@@ -16,7 +16,6 @@
 
 import os
 import os.path
-import subprocess
 import unittest
 import zipfile
 
@@ -45,9 +44,11 @@ class AddImagesToTargetFilesTest(unittest.TestCase):
 
     # Calls an external binary to convert the proto message.
     cmd = ["care_map_generator", "--parse_proto", file_name, text_file]
-    p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    p.communicate()
-    self.assertEqual(0, p.returncode)
+    proc = common.Run(cmd)
+    output, _ = proc.communicate()
+    self.assertEqual(
+        0, proc.returncode,
+        "Failed to run care_map_generator:\n{}".format(output))
 
     with open(text_file, 'r') as verify_fp:
       plain_text = verify_fp.read()

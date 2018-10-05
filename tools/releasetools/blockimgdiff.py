@@ -23,7 +23,6 @@ import multiprocessing
 import os
 import os.path
 import re
-import subprocess
 import sys
 import threading
 from collections import deque, OrderedDict
@@ -43,11 +42,10 @@ def compute_patch(srcfile, tgtfile, imgdiff=False):
 
   # Don't dump the bsdiff/imgdiff commands, which are not useful for the case
   # here, since they contain temp filenames only.
-  p = common.Run(cmd, verbose=False, stdout=subprocess.PIPE,
-                 stderr=subprocess.STDOUT)
-  output, _ = p.communicate()
+  proc = common.Run(cmd, verbose=False)
+  output, _ = proc.communicate()
 
-  if p.returncode != 0:
+  if proc.returncode != 0:
     raise ValueError(output)
 
   with open(patchfile, 'rb') as f:
@@ -1494,9 +1492,9 @@ class BlockImageDiff(object):
                "--block-limit={}".format(max_blocks_per_transfer),
                "--split-info=" + patch_info_file,
                src_file, tgt_file, patch_file]
-        p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        imgdiff_output, _ = p.communicate()
-        assert p.returncode == 0, \
+        proc = common.Run(cmd)
+        imgdiff_output, _ = proc.communicate()
+        assert proc.returncode == 0, \
             "Failed to create imgdiff patch between {} and {}:\n{}".format(
                 src_name, tgt_name, imgdiff_output)
 
