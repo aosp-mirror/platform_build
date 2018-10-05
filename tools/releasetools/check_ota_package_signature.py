@@ -24,7 +24,6 @@ import argparse
 import re
 import subprocess
 import sys
-import tempfile
 import zipfile
 
 from hashlib import sha1
@@ -165,11 +164,11 @@ def VerifyAbOtaPayload(cert, package):
   cmd = ['delta_generator',
          '--in_file=' + payload_file,
          '--public_key=' + pubkey]
-  proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  proc = common.Run(cmd)
   stdoutdata, _ = proc.communicate()
   assert proc.returncode == 0, \
-      'Failed to verify payload with delta_generator: %s\n%s' % (package,
-                                                                 stdoutdata)
+      'Failed to verify payload with delta_generator: {}\n{}'.format(
+          package, stdoutdata)
   common.ZipClose(package_zip)
 
   # Verified successfully upon reaching here.

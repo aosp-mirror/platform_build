@@ -394,8 +394,7 @@ class PayloadSigner(object):
       signing_key = common.MakeTempFile(prefix="key-", suffix=".key")
       cmd.extend(["-out", signing_key])
 
-      get_signing_key = common.Run(cmd, verbose=False, stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT)
+      get_signing_key = common.Run(cmd, verbose=False)
       stdoutdata, _ = get_signing_key.communicate()
       assert get_signing_key.returncode == 0, \
           "Failed to get signing key: {}".format(stdoutdata)
@@ -411,7 +410,7 @@ class PayloadSigner(object):
     """Signs the given input file. Returns the output filename."""
     out_file = common.MakeTempFile(prefix="signed-", suffix=".bin")
     cmd = [self.signer] + self.signer_args + ['-in', in_file, '-out', out_file]
-    signing = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    signing = common.Run(cmd)
     stdoutdata, _ = signing.communicate()
     assert signing.returncode == 0, \
         "Failed to sign the input file: {}".format(stdoutdata)
