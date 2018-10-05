@@ -49,7 +49,7 @@ ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
 endif
 
 # If we have product-specific config for this module?
-ifeq (disable,$(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG))
+ifneq (,$(filter $(LOCAL_MODULE),$(DEXPREOPT_DISABLED_MODULES)))
   LOCAL_DEX_PREOPT :=
 endif
 
