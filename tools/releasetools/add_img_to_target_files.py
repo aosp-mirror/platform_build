@@ -49,7 +49,6 @@ import datetime
 import os
 import shlex
 import shutil
-import subprocess
 import sys
 import uuid
 import zipfile
@@ -259,10 +258,11 @@ def AddDtbo(output_zip):
     args = OPTIONS.info_dict.get("avb_dtbo_add_hash_footer_args")
     if args and args.strip():
       cmd.extend(shlex.split(args))
-    p = common.Run(cmd, stdout=subprocess.PIPE)
-    p.communicate()
-    assert p.returncode == 0, \
-        "avbtool add_hash_footer of %s failed" % (img.name,)
+    proc = common.Run(cmd)
+    output, _ = proc.communicate()
+    assert proc.returncode == 0, \
+        "Failed to call 'avbtool add_hash_footer' for {}:\n{}".format(
+            img.name, output)
 
   img.Write()
   return img.name
@@ -451,9 +451,9 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
         assert found, 'Failed to find {}'.format(image_path)
     cmd.extend(split_args)
 
-  p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-  stdoutdata, _ = p.communicate()
-  assert p.returncode == 0, \
+  proc = common.Run(cmd)
+  stdoutdata, _ = proc.communicate()
+  assert proc.returncode == 0, \
       "avbtool make_vbmeta_image failed:\n{}".format(stdoutdata)
   img.Write()
 
@@ -481,9 +481,9 @@ def AddPartitionTable(output_zip):
   if args:
     cmd.extend(shlex.split(args))
 
-  p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-  stdoutdata, _ = p.communicate()
-  assert p.returncode == 0, \
+  proc = common.Run(cmd)
+  stdoutdata, _ = proc.communicate()
+  assert proc.returncode == 0, \
       "bpttool make_table failed:\n{}".format(stdoutdata)
 
   img.Write()
@@ -600,12 +600,10 @@ def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
 
   temp_care_map = common.MakeTempFile(prefix="caremap-", suffix=".pb")
   care_map_gen_cmd = ["care_map_generator", temp_care_map_text, temp_care_map]
-  p = common.Run(care_map_gen_cmd, stdout=subprocess.PIPE,
-                 stderr=subprocess.STDOUT)
-  output, _ = p.communicate()
-  if OPTIONS.verbose:
-    print(output.rstrip())
-  assert p.returncode == 0, "Failed to generate the care_map proto message."
+  proc = common.Run(care_map_gen_cmd)
+  output, _ = proc.communicate()
+  assert proc.returncode == 0, \
+      "Failed to generate the care_map proto message:\n{}".format(output)
 
   care_map_path = "META/care_map.pb"
   if output_zip and care_map_path not in output_zip.namelist():
@@ -656,9 +654,9 @@ def AddSuperEmpty(output_zip):
   cmd += shlex.split(OPTIONS.info_dict.get('lpmake_args').strip())
   cmd += ['--output', img.name]
 
-  p = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  stdoutdata, _ = p.communicate()
-  assert p.returncode == 0, \
+  proc = common.Run(cmd)
+  stdoutdata, _ = proc.communicate()
+  assert proc.returncode == 0, \
       "lpmake tool failed:\n{}".format(stdoutdata)
 
   img.Write()
