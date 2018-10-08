@@ -2739,7 +2739,7 @@ $(call hiddenapi-copy-dex-files,\
 $(2): OUTPUT_DIR := $(dir $(call hiddenapi-soong-output-dex,$(2)))
 $(2): OUTPUT_JAR := $(dir $(call hiddenapi-soong-output-dex,$(2)))classes.jar
 $(2): $(1) $(call hiddenapi-soong-output-dex,$(2)) | $(SOONG_ZIP) $(MERGE_ZIPS)
-	$(SOONG_ZIP) -o $${OUTPUT_JAR} -C $${OUTPUT_DIR} -D $${OUTPUT_DIR}
+	$(SOONG_ZIP) -o $${OUTPUT_JAR} -C $${OUTPUT_DIR} -f "$${OUTPUT_DIR}/classes*.dex"
 	$(MERGE_ZIPS) -D -zipToNotStrip $${OUTPUT_JAR} -stripFile "classes*.dex" $(2) $${OUTPUT_JAR} $(1)
 endef
 
