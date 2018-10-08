@@ -342,6 +342,7 @@ ifndef embedded_prebuilt_jni_libs
 embedded_prebuilt_jni_libs := 'lib/*.so'
 endif
 $(built_module): PRIVATE_EMBEDDED_JNI_LIBS := $(embedded_prebuilt_jni_libs)
+$(built_module): $(ZIP2ZIP)
 
 ifdef LOCAL_COMPRESSED_MODULE
 $(built_module) : $(MINIGZIP)
