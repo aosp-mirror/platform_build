@@ -90,6 +90,7 @@ PRODUCT_PACKAGES += \
     init.rc \
     input \
     installd \
+    iorapd \
     ip \
     ip6tables \
     iptables \
