@@ -46,8 +46,8 @@ my_header_libraries := $(LOCAL_HEADER_LIBRARIES)
 my_cflags := $(LOCAL_CFLAGS)
 my_conlyflags := $(LOCAL_CONLYFLAGS)
 my_cppflags := $(LOCAL_CPPFLAGS)
-my_cflags_no_override := $(GLOBAL_CFLAGS_NO_OVERRIDE)
-my_cppflags_no_override := $(GLOBAL_CPPFLAGS_NO_OVERRIDE)
+my_cflags_no_override := $(GLOBAL_CLANG_CFLAGS_NO_OVERRIDE)
+my_cppflags_no_override := $(GLOBAL_CLANG_CPPFLAGS_NO_OVERRIDE)
 my_ldflags := $(LOCAL_LDFLAGS)
 my_ldlibs := $(LOCAL_LDLIBS)
 my_asflags := $(LOCAL_ASFLAGS)
@@ -626,8 +626,6 @@ normal_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)
 # actually used (although they are usually empty).
 arm_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(arm_objects_mode)_CFLAGS)
 normal_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(normal_objects_mode)_CFLAGS)
-arm_objects_cflags := $(call convert-to-clang-flags,$(arm_objects_cflags))
-normal_objects_cflags := $(call convert-to-clang-flags,$(normal_objects_cflags))
 
 else
 arm_objects_mode :=
@@ -1561,8 +1559,6 @@ endif
 my_cflags += $(LOCAL_CLANG_CFLAGS)
 my_conlyflags += $(LOCAL_CLANG_CONLYFLAGS)
 my_cppflags += $(LOCAL_CLANG_CPPFLAGS)
-my_cflags_no_override += $(GLOBAL_CLANG_CFLAGS_NO_OVERRIDE)
-my_cppflags_no_override += $(GLOBAL_CLANG_CPPFLAGS_NO_OVERRIDE)
 my_asflags += $(LOCAL_CLANG_ASFLAGS)
 my_ldflags += $(LOCAL_CLANG_LDFLAGS)
 my_cflags += $(LOCAL_CLANG_CFLAGS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_CLANG_CFLAGS_$(my_32_64_bit_suffix))
