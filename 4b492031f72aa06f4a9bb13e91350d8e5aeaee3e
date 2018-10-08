@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c423d5ef_f883d8c8",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 2576,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-10-08T18:37:10Z",
+      "side": 1,
+      "message": "Can\u0027t you do the if check here?",
+      "revId": "4b492031f72aa06f4a9bb13e91350d8e5aeaee3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d9dee49_56a88a21",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3101,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-10-08T18:37:10Z",
+      "side": 1,
+      "message": "A possible alternative is to replace copy-many-files here with a new copy-many-files-filtered definition instead.",
+      "range": {
+        "startLine": 3101,
+        "startChar": 34,
+        "endLine": 3101,
+        "endChar": 49
+      },
+      "revId": "4b492031f72aa06f4a9bb13e91350d8e5aeaee3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
