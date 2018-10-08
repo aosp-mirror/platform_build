@@ -24,6 +24,8 @@ PRODUCT_PACKAGES += \
     DisplayCutoutEmulationCornerOverlay \
     DisplayCutoutEmulationDoubleOverlay \
     DisplayCutoutEmulationTallOverlay \
+    ExperimentNavigationBarFloatingOverlay \
+    ExperimentNavigationBarSlimOverlay \
     local_time.default \
     power.default \
     vibrator.default \
