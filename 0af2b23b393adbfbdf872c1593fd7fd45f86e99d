@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3bbb9b64_0fa0bd1a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2422,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-08T19:43:34Z",
+      "side": 1,
+      "message": "Should we just always run zip2zip, and ensure it produces the same output? I guess it\u0027s more write bandwidth to always write to the intermediate file...",
+      "range": {
+        "startLine": 2422,
+        "startChar": 6,
+        "endLine": 2422,
+        "endChar": 13
+      },
+      "revId": "0af2b23b393adbfbdf872c1593fd7fd45f86e99d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fbfd33b6_dc1e3d58",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2423,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-08T19:43:34Z",
+      "side": 1,
+      "message": "Should this just be:\n\n  $(patsubst \u0027lib/*.so\u0027,\u0027lib/**/*.so\u0027,$(PRIVATE_EMBEDDED_JNI_LIBS))",
+      "range": {
+        "startLine": 2423,
+        "startChar": 47,
+        "endLine": 2423,
+        "endChar": 145
+      },
+      "revId": "0af2b23b393adbfbdf872c1593fd7fd45f86e99d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
