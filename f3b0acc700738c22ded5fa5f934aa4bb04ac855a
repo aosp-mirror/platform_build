@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21bc6940_6c9c714b",
+        "filename": "envsetup.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 1594,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-08T18:00:50Z",
+      "side": 1,
+      "message": "don\u0027t depend on $PATH -- this could be coming from somewhere else. Instead, use:\n\n  $ANDROID_HOST_OUT/bin/acloud",
+      "range": {
+        "startLine": 1594,
+        "startChar": 23,
+        "endLine": 1594,
+        "endChar": 38
+      },
+      "revId": "f3b0acc700738c22ded5fa5f934aa4bb04ac855a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "17d32c72_65fbf7dd",
+        "filename": "envsetup.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 1600,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-08T18:00:50Z",
+      "side": 1,
+      "message": "At least:\n\n  $(get_build_var HOST_PREBUILT_TAG)\n\nto make this faster.",
+      "range": {
+        "startLine": 1600,
+        "startChar": 23,
+        "endLine": 1600,
+        "endChar": 74
+      },
+      "revId": "f3b0acc700738c22ded5fa5f934aa4bb04ac855a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50162dc8_e742fcb0",
+        "filename": "envsetup.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 1602,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-08T18:00:50Z",
+      "side": 1,
+      "message": "we only support 64-bit build hosts, but when switching over to HOST_PREBUILT_TAG, this will always be linux-x86",
+      "range": {
+        "startLine": 1602,
+        "startChar": 8,
+        "endLine": 1602,
+        "endChar": 30
+      },
+      "revId": "f3b0acc700738c22ded5fa5f934aa4bb04ac855a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
