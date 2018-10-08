@@ -65,6 +65,24 @@
     },
     {
       "key": {
+        "uuid": "c34716eb_8dcb8d9d",
+        "filename": "tools/fs_config/android_filesystem_config.h",
+        "patchSetId": 2
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-08T14:31:37Z",
+      "side": 1,
+      "message": "The Jury in my mind is still out, resorting to the default file means someone requested fs_config_dirs or fs_config_files in their device configuration without providing an associated header.\n\nThe _decision_ as to whether this is bad is made with this one line. The message on the line makes the failure clearer. The default file stands as a documented example whether for good (drop this line), or for bad (keep this line).\n\nI will add a comment ...",
+      "parentUuid": "63f74ae2_56e8957b",
+      "revId": "be72c070efe7e6f3b6e1e8ea98c9a7e8ec6a7412",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "63f74ae2_f6ce6130",
         "filename": "tools/fs_config/fs_config_generate.c",
         "patchSetId": 2
@@ -76,6 +94,30 @@
       "writtenOn": "2015-04-04T01:03:28Z",
       "side": 1,
       "message": "Where is this functiond efined?\nI got this error:\nerror: implicit declaration of function \u0027fs_config_generate\u0027 is invalid in C99 [-Werror,-Wimplicit-function-declaration]",
+      "range": {
+        "startLine": 125,
+        "startChar": 4,
+        "endLine": 125,
+        "endChar": 65
+      },
+      "revId": "be72c070efe7e6f3b6e1e8ea98c9a7e8ec6a7412",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "83519eaa_3ce4f14e",
+        "filename": "tools/fs_config/fs_config_generate.c",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-08T14:31:37Z",
+      "side": 1,
+      "message": "libcutils in https://android-review.googlesource.com/#/c/145198",
+      "parentUuid": "63f74ae2_f6ce6130",
       "range": {
         "startLine": 125,
         "startChar": 4,
