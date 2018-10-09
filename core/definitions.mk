@@ -2416,11 +2416,14 @@ define uncompress-dexs
   fi
 endef
 
-# Uncompress shared libraries embedded in an apk.
+# Uncompress shared JNI libraries embedded in an apk.
 #
-define uncompress-shared-libs
-  if (zipinfo $@ $(PRIVATE_EMBEDDED_JNI_LIBS) 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
-    $(ZIP2ZIP) -i $@ -o $@.tmp $(addprefix -0 ,$(patsubst 'lib/*.so','lib/**/*.so',$(PRIVATE_EMBEDDED_JNI_LIBS))) && \
+define uncompress-prebuilt-embedded-jni-libs
+  if (zipinfo $@ 'lib/*.so' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
+    $(ZIP2ZIP) -i $@ -o $@.tmp -0 'lib/**/*.so' \
+      $(if $(PRIVATE_EMBEDDED_JNI_LIBS), \
+        -x 'lib/**/*.so' \
+        $(addprefix -X ,$(PRIVATE_EMBEDDED_JNI_LIBS))) && \
     mv -f $@.tmp $@ ; \
   fi
 endef
