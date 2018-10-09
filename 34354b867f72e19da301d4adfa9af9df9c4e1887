@@ -22,6 +22,30 @@
       "revId": "34354b867f72e19da301d4adfa9af9df9c4e1887",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ed64f457_12a7ce48",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2484,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-10-09T06:48:24Z",
+      "side": 1,
+      "message": "Oops, I didn\u0027t notice I used tab. Thanks.",
+      "parentUuid": "966362c3_2465263a",
+      "range": {
+        "startLine": 2484,
+        "startChar": 0,
+        "endLine": 2484,
+        "endChar": 1
+      },
+      "revId": "34354b867f72e19da301d4adfa9af9df9c4e1887",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
