@@ -620,6 +620,9 @@ endif  # LOCAL_USE_AAPT2
 ifdef LOCAL_COMPRESSED_MODULE
 $(LOCAL_BUILT_MODULE) : $(MINIGZIP)
 endif
+ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
+$(LOCAL_BUILT_MODULE) : $(ZIP2ZIP)
+endif
 ifneq ($(BUILD_PLATFORM_ZIP),)
 $(LOCAL_BUILT_MODULE) : .KATI_IMPLICIT_OUTPUTS := $(dir $(LOCAL_BUILT_MODULE))package.dex.apk
 endif
@@ -685,6 +688,9 @@ endif
 ## Rule to build the odex file
 ifdef LOCAL_DEX_PREOPT
 $(built_odex): PRIVATE_DEX_FILE := $(built_dex)
+ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
+$(built_odex): $(ZIP2ZIP)
+endif
 # Use pattern rule - we may have multiple built odex files.
 $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(built_dex)
 	$(hide) mkdir -p $(dir $@) && rm -f $@

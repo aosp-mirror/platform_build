@@ -2410,25 +2410,18 @@ endef
 # Uncompress dex files embedded in an apk.
 #
 define uncompress-dexs
-$(hide) if (zipinfo $@ '*.dex' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
-  tmpdir=$@.tmpdir; \
-  rm -rf $$tmpdir && mkdir $$tmpdir; \
-  unzip -q $@ '*.dex' -d $$tmpdir && \
-  zip -qd $@ '*.dex' && \
-  ( cd $$tmpdir && find . -type f | sort | zip -qD -X -0 ../$(notdir $@) -@ ) && \
-  rm -rf $$tmpdir; \
+  if (zipinfo $@ '*.dex' 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
+    $(ZIP2ZIP) -i $@ -o $@.tmp -0 "classes*.dex" && \
+    mv -f $@.tmp $@ ; \
   fi
 endef
 
 # Uncompress shared libraries embedded in an apk.
 #
 define uncompress-shared-libs
-$(hide) if (zipinfo $@ $(PRIVATE_EMBEDDED_JNI_LIBS) 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
-  rm -rf $(dir $@)uncompressedlibs && mkdir $(dir $@)uncompressedlibs; \
-  unzip -q $@ $(PRIVATE_EMBEDDED_JNI_LIBS) -d $(dir $@)uncompressedlibs && \
-  zip -qd $@ 'lib/*.so' && \
-  ( cd $(dir $@)uncompressedlibs && find lib -type f | sort | zip -qD -X -0 ../$(notdir $@) -@ ) && \
-  rm -rf $(dir $@)uncompressedlibs; \
+  if (zipinfo $@ $(PRIVATE_EMBEDDED_JNI_LIBS) 2>/dev/null | grep -v ' stor ' >/dev/null) ; then \
+    $(ZIP2ZIP) -i $@ -o $@.tmp $(addprefix -0 ,$(patsubst 'lib/*.so','lib/**/*.so',$(PRIVATE_EMBEDDED_JNI_LIBS))) && \
+    mv -f $@.tmp $@ ; \
   fi
 endef
 
@@ -2473,7 +2466,7 @@ $(2): $(1)
 endef
 
 define copy-and-uncompress-dexs
-$(2): $(1) $(ZIPALIGN)
+$(2): $(1) $(ZIPALIGN) $(ZIP2ZIP)
 	@echo "Uncompress dexs in: $$@"
 	$$(copy-file-to-target)
 	$$(uncompress-dexs)
@@ -2739,7 +2732,7 @@ $(call hiddenapi-copy-dex-files,\
 $(2): OUTPUT_DIR := $(dir $(call hiddenapi-soong-output-dex,$(2)))
 $(2): OUTPUT_JAR := $(dir $(call hiddenapi-soong-output-dex,$(2)))classes.jar
 $(2): $(1) $(call hiddenapi-soong-output-dex,$(2)) | $(SOONG_ZIP) $(MERGE_ZIPS)
-	$(SOONG_ZIP) -o $${OUTPUT_JAR} -C $${OUTPUT_DIR} -D $${OUTPUT_DIR}
+	$(SOONG_ZIP) -o $${OUTPUT_JAR} -C $${OUTPUT_DIR} -f "$${OUTPUT_DIR}/classes*.dex"
 	$(MERGE_ZIPS) -D -zipToNotStrip $${OUTPUT_JAR} -stripFile "classes*.dex" $(2) $${OUTPUT_JAR} $(1)
 endef
 
