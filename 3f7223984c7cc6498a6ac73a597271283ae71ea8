@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b8477a11_be5036cf",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1985,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-09T12:55:22Z",
+      "side": 0,
+      "message": "Not quite sure is this appropriate.\n\nBut from Treble\u0027s POV, it\u0027s possible to \u0027repo sync\u0027 and build only system.img or vendor.img.\nNot sure is it possible to generate partial OTA package when \u0027TARGET_NO_RECOVERY\u0027 is True.",
+      "range": {
+        "startLine": 1985,
+        "startChar": 28,
+        "endLine": 1985,
+        "endChar": 39
+      },
+      "revId": "3f7223984c7cc6498a6ac73a597271283ae71ea8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
