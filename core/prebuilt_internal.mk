@@ -335,11 +335,11 @@ ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
 # For PRESIGNED apks we must uncompress every .so file:
 # even if the .so file isn't for the current TARGET_ARCH,
 # we can't strip the file.
-embedded_prebuilt_jni_libs := 'lib/*.so'
+embedded_prebuilt_jni_libs :=
 endif
 ifndef embedded_prebuilt_jni_libs
 # No LOCAL_PREBUILT_JNI_LIBS, uncompress all.
-embedded_prebuilt_jni_libs := 'lib/*.so'
+embedded_prebuilt_jni_libs :=
 endif
 $(built_module): PRIVATE_EMBEDDED_JNI_LIBS := $(embedded_prebuilt_jni_libs)
 $(built_module): $(ZIP2ZIP)
@@ -358,7 +358,7 @@ $(built_module) : .KATI_IMPLICIT_OUTPUTS := $(dir $(LOCAL_BUILT_MODULE))package.
 endif
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
-	$(uncompress-shared-libs)
+	$(uncompress-prebuilt-embedded-jni-libs)
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 	$(uncompress-dexs)
 endif  # LOCAL_UNCOMPRESS_DEX
