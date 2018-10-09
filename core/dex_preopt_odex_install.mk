@@ -9,44 +9,51 @@ LOCAL_UNCOMPRESS_DEX := false
 ifneq (true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))
   ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
     LOCAL_UNCOMPRESS_DEX := true
-  else
-    ifneq (,$(filter $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES), $(LOCAL_MODULE)))
-      LOCAL_UNCOMPRESS_DEX := true
-    endif  # PRODUCT_LOADED_BY_PRIVILEGED_MODULES
-  endif  # LOCAL_PRIVILEGED_MODULE
+  endif
+
+  ifneq (,$(filter $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES), $(LOCAL_MODULE)))
+    LOCAL_UNCOMPRESS_DEX := true
+  endif
 endif  # DONT_UNCOMPRESS_PRIV_APPS_DEXS
 
 # Setting LOCAL_DEX_PREOPT based on WITH_DEXPREOPT, LOCAL_DEX_PREOPT, etc
 LOCAL_DEX_PREOPT := $(strip $(LOCAL_DEX_PREOPT))
-ifneq (true,$(WITH_DEXPREOPT))
-  LOCAL_DEX_PREOPT :=
-else # WITH_DEXPREOPT=true
-  ifeq (,$(TARGET_BUILD_APPS)) # TARGET_BUILD_APPS empty
-    ifndef LOCAL_DEX_PREOPT # LOCAL_DEX_PREOPT undefined
-      ifneq ($(filter $(TARGET_OUT)/%,$(my_module_path)),) # Installed to system.img.
-        ifeq (,$(LOCAL_APK_LIBRARIES)) # LOCAL_APK_LIBRARIES empty
-          # If we have product-specific config for this module?
-          ifeq (disable,$(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG))
-            LOCAL_DEX_PREOPT := false
-          else
-            LOCAL_DEX_PREOPT := $(DEX_PREOPT_DEFAULT)
-          endif
-        else # LOCAL_APK_LIBRARIES not empty
-          LOCAL_DEX_PREOPT := nostripping
-        endif # LOCAL_APK_LIBRARIES not empty
-      else
-        # Default to nostripping for non system preopt (enables preopt).
-        # Don't strip in case the oat/vdex version in system ROM doesn't match the one in other
-        # partitions. It needs to be able to fall back to the APK for that case.
-        # Also only enable preopt for non tests.
-        ifeq (,$(filter $(LOCAL_MODULE_TAGS),tests))
-          LOCAL_DEX_PREOPT := nostripping
-        endif
-      endif # Installed to system.img.
-    endif # LOCAL_DEX_PREOPT undefined
-  endif # TARGET_BUILD_APPS empty
-endif # WITH_DEXPREOPT=true
+ifndef LOCAL_DEX_PREOPT # LOCAL_DEX_PREOPT undefined
+  LOCAL_DEX_PREOPT := $(DEX_PREOPT_DEFAULT)
+
+  ifeq ($(filter $(TARGET_OUT)/%,$(my_module_path)),) # Not installed to system.img.
+    # Default to nostripping for non system preopt (enables preopt).
+    # Don't strip in case the oat/vdex version in system ROM doesn't match the one in other
+    # partitions. It needs to be able to fall back to the APK for that case.
+    LOCAL_DEX_PREOPT := nostripping
+  endif
+
+  ifneq (,$(LOCAL_APK_LIBRARIES)) # LOCAL_APK_LIBRARIES not empty
+    LOCAL_DEX_PREOPT := nostripping
+  endif
+endif
+
 ifeq (false,$(LOCAL_DEX_PREOPT))
+  LOCAL_DEX_PREOPT :=
+endif
+
+# Only enable preopt for non tests.
+ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
+  LOCAL_DEX_PREOPT :=
+endif
+
+# If we have product-specific config for this module?
+ifeq (disable,$(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG))
+  LOCAL_DEX_PREOPT :=
+endif
+
+# Disable preopt for TARGET_BUILD_APPS
+ifneq (,$(TARGET_BUILD_APPS))
+  LOCAL_DEX_PREOPT :=
+endif
+
+# Disable preopt if not WITH_DEXPREOPT
+ifneq (true,$(WITH_DEXPREOPT))
   LOCAL_DEX_PREOPT :=
 endif
 
