@@ -756,11 +756,11 @@ TARGET_OUT_CACHE := $(PRODUCT_OUT)/cache
 TARGET_OUT_VENDOR := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_VENDOR)
 .KATI_READONLY := TARGET_OUT_VENDOR
 ifneq ($(filter address,$(SANITIZE_TARGET)),)
-target_out_vendor_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/vendor
+target_out_vendor_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_VENDOR)
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
 # work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
-target_out_vendor_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/vendor
+target_out_vendor_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_VENDOR)
 else
 target_out_vendor_app_base := $(TARGET_OUT_VENDOR)
 endif
@@ -839,11 +839,11 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_OEM_APPS := $(TARGET_OUT_OEM_APPS)
 
 TARGET_OUT_ODM := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ODM)
 ifneq ($(filter address,$(SANITIZE_TARGET)),)
-target_out_odm_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/odm
+target_out_odm_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_OEM)
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
 # work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
-target_out_odm_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/odm
+target_out_odm_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_OEM)
 else
 target_out_odm_app_base := $(TARGET_OUT_ODM)
 endif
@@ -895,11 +895,11 @@ TARGET_OUT_PRODUCT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT)
 TARGET_OUT_PRODUCT_EXECUTABLES := $(TARGET_OUT_PRODUCT)/bin
 .KATI_READONLY := TARGET_OUT_PRODUCT
 ifneq ($(filter address,$(SANITIZE_TARGET)),)
-target_out_product_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/product
+target_out_product_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_PRODUCT)
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
 # work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
-target_out_product_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/product
+target_out_product_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_PRODUCT)
 else
 target_out_product_app_base := $(TARGET_OUT_PRODUCT)
 endif
@@ -941,11 +941,11 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS_PRIVILEGED := $(TARGET_OUT_
 
 TARGET_OUT_PRODUCT_SERVICES := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT_SERVICES)
 ifneq ($(filter address,$(SANITIZE_TARGET)),)
-target_out_product_services_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/product_services
+target_out_product_services_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_PRODUCT_SERVICES)
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
 # work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
-target_out_product_services_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/product_services
+target_out_product_services_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_PRODUCT_SERVICES)
 else
 target_out_product_services_app_base := $(TARGET_OUT_PRODUCT_SERVICES)
 endif
