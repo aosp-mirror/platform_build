@@ -57,6 +57,30 @@
       "revId": "4b492031f72aa06f4a9bb13e91350d8e5aeaee3e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "749bfe1f_f78b6bff",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3101,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-10-09T07:22:38Z",
+      "side": 1,
+      "message": "Update the original function since Dan Willemsen agreed whit that.",
+      "parentUuid": "8d9dee49_56a88a21",
+      "range": {
+        "startLine": 3101,
+        "startChar": 34,
+        "endLine": 3101,
+        "endChar": 49
+      },
+      "revId": "4b492031f72aa06f4a9bb13e91350d8e5aeaee3e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
