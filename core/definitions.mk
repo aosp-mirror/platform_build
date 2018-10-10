@@ -2481,7 +2481,8 @@ $(foreach f, $(1), $(strip \
     $(eval _cmf_tuple := $(subst :, ,$(f))) \
     $(eval _cmf_src := $(word 1,$(_cmf_tuple))) \
     $(eval _cmf_dest := $(word 2,$(_cmf_tuple))) \
-    $(eval $(call copy-one-file,$(_cmf_src),$(_cmf_dest))) \
+    $(if $(filter-out $(_cmf_src), $(_cmf_dest)), \
+      $(eval $(call copy-one-file,$(_cmf_src),$(_cmf_dest)))) \
     $(_cmf_dest)))
 endef
 
