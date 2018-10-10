@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f1cdce95_c2070768",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-10T23:47:45Z",
+      "side": 1,
+      "message": "not a BuildImageError anymore? It\u0027s used in l685.",
+      "range": {
+        "startLine": 92,
+        "startChar": 4,
+        "endLine": 92,
+        "endChar": 19
+      },
+      "revId": "ff9e79ad720c3272cce476ab303e3dbca7fe9e91",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
