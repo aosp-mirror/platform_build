@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1e068720_c8de4faf",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-10T14:54:49Z",
+      "side": 1,
+      "message": "Based on the recent bug in b/117473440, stripping the outputs would make the debugging much harder. I\u0027ll upload a new PS to keep the old behavior.",
+      "range": {
+        "startLine": 12,
+        "startChar": 55,
+        "endLine": 13,
+        "endChar": 39
+      },
+      "revId": "03f79abea294b4673a67de4229d86c01306e07ef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
