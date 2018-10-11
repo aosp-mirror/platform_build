@@ -101,6 +101,7 @@ built_installed_vdex :=
 built_installed_art :=
 my_process_profile :=
 my_profile_is_text_listing :=
+my_generate_dm :=
 
 ifeq (false,$(WITH_DEX_PREOPT_GENERATE_PROFILE))
 LOCAL_DEX_PREOPT_GENERATE_PROFILE := false
