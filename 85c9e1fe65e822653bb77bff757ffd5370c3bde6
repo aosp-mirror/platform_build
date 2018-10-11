@@ -33,6 +33,24 @@
       "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70251289_5c2ff8e5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3023,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-10-11T22:51:10Z",
+      "side": 1,
+      "message": "I think you can use the LOCAL... because other definitions do that in this file. They are all global variables.",
+      "parentUuid": "2e762b35_1f4effa8",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
