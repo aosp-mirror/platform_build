@@ -73,6 +73,9 @@ class Options(object):
 
 OPTIONS = Options()
 
+# The block size that's used across the releasetools scripts.
+BLOCK_SIZE = 4096
+
 # Values for "certificate" in apkcerts that mean special things.
 SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 
