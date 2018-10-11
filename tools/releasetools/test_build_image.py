@@ -23,7 +23,7 @@ import unittest
 import common
 from build_image import (
     AVBCalcMinPartitionSize, BLOCK_SIZE, BuildImageError, CheckHeadroom,
-    RunCommand, SetUpInDirAndFsConfig)
+    SetUpInDirAndFsConfig)
 
 
 class BuildImageTest(unittest.TestCase):
@@ -91,8 +91,9 @@ class BuildImageTest(unittest.TestCase):
     output_image = common.MakeTempFile(suffix='.img')
     command = ['mkuserimg_mke2fs', input_dir, output_image, 'ext4',
                '/system', '409600', '-j', '0']
-    ext4fs_output, exit_code = RunCommand(command)
-    self.assertEqual(0, exit_code)
+    proc = common.Run(command)
+    ext4fs_output, _ = proc.communicate()
+    self.assertEqual(0, proc.returncode)
 
     prop_dict = {
         'fs_type' : 'ext4',
