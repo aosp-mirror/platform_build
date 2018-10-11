@@ -16,6 +16,24 @@
       "revId": "16f45d6cd90be48c87a7b24296942669ad0cbcdf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88d435d4_55476e0a",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-10-11T17:57:07Z",
+      "side": 1,
+      "message": "Understood.  I filed b/117606184 to track this.  I\u0027m happy to achieve that goal too, we just need to figure out how to handle first stage init / the new ramdisk.\n\nThanks for approving this in the meantime.",
+      "parentUuid": "46857c3a_3a6e1b1a",
+      "revId": "16f45d6cd90be48c87a7b24296942669ad0cbcdf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
