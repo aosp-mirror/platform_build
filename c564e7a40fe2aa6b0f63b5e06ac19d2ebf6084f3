@@ -1,0 +1,78 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3455224e_7a1d2a4f",
+        "filename": "core/binary.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1309,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-11T16:56:26Z",
+      "side": 1,
+      "message": "is there a common place I can call update-suite-host-shared-libraries after DEPENDENCIES_ON_SHARED_LIBRARIES is updated? It\u0027s updated in 3 places:\nbinary.mk\nprebuilt_internal.mk\nsoong_cc_prebuilt.mk\n\nFor now I have to call this in each mk file. I can\u0027t do it in base_rules (in section \"Compatibility suite files.\"), because the DEPENDENCIES_ON_SHARED_LIBRARIES is updated after that.",
+      "revId": "c564e7a40fe2aa6b0f63b5e06ac19d2ebf6084f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d593d2d_0475c5f5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 3023,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-11T16:56:26Z",
+      "side": 1,
+      "message": "this is actually LOCAL_2ND_ARCH_VAR_PREFIX. Do I need use an argument or I can directly use this LOCAL_* variable here?",
+      "revId": "c564e7a40fe2aa6b0f63b5e06ac19d2ebf6084f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71923ccf_2ecccd63",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-11T16:56:26Z",
+      "side": 1,
+      "message": "There are 5 libraries failed to copy:\nlibcuttlefish_fs.so\nlibcuttlefish_strings.so\nthese 2 are shared libraries for adb_integration_test_adb. As the libraries are cuttlefish specific, I don\u0027t think I can add them to shared library of that module directly (not sure if that will even work).\n\nlibc.so\nlibm.so\nlibdl.so\nThese 3 are required by some python tests (py2-funcsigs-tests, tradefed_hello_world)\nI tried to add them to the Android.bp of each module, but they failed to build.\n\nSimran:\nOne way to fix these are to remove `test_suites: [\"general-tests\"],` from these 3 tests. Will that be OK?",
+      "range": {
+        "startLine": 29,
+        "startChar": 22,
+        "endLine": 29,
+        "endChar": 25
+      },
+      "revId": "c564e7a40fe2aa6b0f63b5e06ac19d2ebf6084f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ac1bacf1_fa89f03d",
+        "filename": "core/tasks/general-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-11T16:56:26Z",
+      "side": 1,
+      "message": "will remove this.",
+      "revId": "c564e7a40fe2aa6b0f63b5e06ac19d2ebf6084f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
