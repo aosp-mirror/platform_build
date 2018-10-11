@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f53bcc38_6b169f0b",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1309,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-11T22:27:31Z",
+      "side": 1,
+      "message": "(same comment as in patchset 1)\n\nis there a common place I can call update-suite-host-shared-libraries after DEPENDENCIES_ON_SHARED_LIBRARIES is updated? It\u0027s updated in 3 places:\nbinary.mk\nprebuilt_internal.mk\nsoong_cc_prebuilt.mk\n\nFor now I have to call this in each mk file. I can\u0027t do it in base_rules (in section \"Compatibility suite files.\"), because the DEPENDENCIES_ON_SHARED_LIBRARIES is updated after that.",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e762b35_1f4effa8",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3023,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-11T22:27:31Z",
+      "side": 1,
+      "message": "this is actually LOCAL_2ND_ARCH_VAR_PREFIX. Do I need use an argument or I can directly use this LOCAL_* variable inside the function body?",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
