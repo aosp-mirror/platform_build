@@ -63,10 +63,6 @@ class HashtreeInfoGenerator(object):
     raise NotImplementedError
 
 
-class VerifiedBootVersion2HashtreeInfoGenerator(HashtreeInfoGenerator):
-  pass
-
-
 class VerifiedBootVersion1HashtreeInfoGenerator(HashtreeInfoGenerator):
   """A class that parses the metadata of hashtree for a given partition."""
 
