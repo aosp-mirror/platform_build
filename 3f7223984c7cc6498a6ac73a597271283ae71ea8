@@ -22,6 +22,30 @@
       "revId": "3f7223984c7cc6498a6ac73a597271283ae71ea8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e03d447d_aa204021",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1985,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-11T22:04:41Z",
+      "side": 0,
+      "message": "Maybe eventually we\u0027ll get an OTA package for GSI target (even for non-A/B), but right now I don\u0027t think we\u0027re ready or anywhere close yet. So for the current GSI target, building only otatools.zip but not ota.zip looks more practical.",
+      "parentUuid": "b8477a11_be5036cf",
+      "range": {
+        "startLine": 1985,
+        "startChar": 28,
+        "endLine": 1985,
+        "endChar": 39
+      },
+      "revId": "3f7223984c7cc6498a6ac73a597271283ae71ea8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }

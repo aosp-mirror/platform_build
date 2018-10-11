@@ -22,6 +22,30 @@
       "revId": "d3dc43d81e4d09f9fc1a2eb4dc8dd5bc4b6f01a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "344c3092_1572c8ea",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 3072,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-11T22:04:41Z",
+      "side": 1,
+      "message": "TARGET_BUILD_OTA_PACKAGE looks contradicting with TARGET_SKIP_OTA_PACKAGE. Also the logic looks hard to follow with a \"build_ota_package :\u003d true\" sitting among other opposite conditions.\n\nI wonder if it\u0027s better to a) introduce a flag that controls the building behavior for otatools, which overrides the default value from build_ota_package; and b) move the check on darwin to a top-level.\n\nifeq ($(BUILD_OS),darwin)\n  build_ota_package :\u003d false\n  build_otatools_package :\u003d false\nelse\n  build_ota_package :\u003d true\n  ...(L3049-L3072 that set build_ota_package.\n\n  ifeq ($(TARGET_BUILD_OTATOOLS_PACKAGE),true)\n    build_otatools_package :\u003d true\n  else\n    build_otatools_package :\u003d $(build_ota_package)\n  endif\nendif\n\nifeq ($(build_otatools_package),true)\nOTATOOLS :\u003d ...\nendif",
+      "parentUuid": "5b7893cc_849df85a",
+      "range": {
+        "startLine": 3070,
+        "startChar": 0,
+        "endLine": 3072,
+        "endChar": 5
+      },
+      "revId": "d3dc43d81e4d09f9fc1a2eb4dc8dd5bc4b6f01a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
