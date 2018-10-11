@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b2da6910_7d610230",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1309,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-11T23:00:18Z",
+      "side": 1,
+      "message": "You probably need it in each.  Make is a terrible language to work with, and copy-and-paste ends up being the best solution more often than not.  If there is a big block of identical code soemtimes its worth moving that out to its own .mk file and including it from the 3 locations.\n\nThe only code shared by those 3 files is in base_rules.mk, but that is much earlier before this data is available.",
+      "parentUuid": "f53bcc38_6b169f0b",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2e762b35_1f4effa8",
         "filename": "core/definitions.mk",
         "patchSetId": 2
@@ -48,6 +66,24 @@
       "side": 1,
       "message": "I think you can use the LOCAL... because other definitions do that in this file. They are all global variables.",
       "parentUuid": "2e762b35_1f4effa8",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0973cdf7_95f72983",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3023,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-11T23:00:18Z",
+      "side": 1,
+      "message": "It depends, if the function is used in a rule then it can\u0027t use LOCAL_2ND_ARCH_VAR_PREFIX, it has to use a value local to the rule (something like PRIVATE_2ND_ARCH_VAR_PREFIX).\n\nIt\u0027s generally better to make things like this arguments instead of assuming a global variable is set, so I\u0027d suggest leaving it like this.",
+      "parentUuid": "70251289_5c2ff8e5",
       "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
