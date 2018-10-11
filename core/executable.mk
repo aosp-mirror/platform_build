@@ -12,6 +12,8 @@ ifneq ($(filter address,$(SANITIZE_TARGET)),)
     my_skip_this_target := true
   else ifeq (false, $(LOCAL_CLANG))
     my_skip_this_target := true
+  else ifeq (never, $(LOCAL_SANITIZE))
+    my_skip_this_target := true
   endif
 endif
 
