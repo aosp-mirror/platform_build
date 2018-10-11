@@ -199,7 +199,6 @@ ANDROID_LOG_TAGS="*:e" $(DEX2OAT) \
 	--instruction-set=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH) \
 	--instruction-set-variant=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT) \
 	--instruction-set-features=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES) \
-	--runtime-arg -Xnorelocate --compile-pic \
 	--no-generate-debug-info --generate-build-id \
 	--abort-on-hard-verifier-error \
 	--force-determinism \
