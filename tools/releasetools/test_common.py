@@ -334,8 +334,8 @@ class CommonZipTest(unittest.TestCase):
         self.assertFalse('Test2' in entries)
         self.assertTrue('Test3' in entries)
 
-      self.assertRaises(AssertionError, common.ZipDelete, zip_file.name,
-                        'Test2')
+      self.assertRaises(
+          common.ExternalError, common.ZipDelete, zip_file.name, 'Test2')
       with zipfile.ZipFile(zip_file.name, 'r') as check_zip:
         entries = check_zip.namelist()
         self.assertTrue('Test1' in entries)
@@ -782,7 +782,8 @@ class CommonUtilsTest(unittest.TestCase):
         'avb_system_rollback_index_location': 2,
     }
     self.assertRaises(
-        AssertionError, common.GetAvbChainedPartitionArg, 'system', info_dict)
+        common.ExternalError, common.GetAvbChainedPartitionArg, 'system',
+        info_dict)
 
   INFO_DICT_DEFAULT = {
       'recovery_api_version': 3,
