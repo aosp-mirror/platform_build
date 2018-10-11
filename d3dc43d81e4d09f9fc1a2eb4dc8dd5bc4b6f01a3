@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5b7893cc_849df85a",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 3072,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-11T12:58:28Z",
+      "side": 1,
+      "message": "Add a new variable \u0027TARGET_BUILD_OTA_PACKAGE\u0027 to allow override this to true.\nSo it won\u0027t affect existing targets.\n\nBut still need to set this before \u0027darwin\u0027 below.",
+      "range": {
+        "startLine": 3070,
+        "startChar": 0,
+        "endLine": 3072,
+        "endChar": 5
+      },
+      "revId": "d3dc43d81e4d09f9fc1a2eb4dc8dd5bc4b6f01a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
