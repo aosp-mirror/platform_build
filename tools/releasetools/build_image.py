@@ -31,7 +31,6 @@ import os.path
 import re
 import shlex
 import shutil
-import subprocess
 import sys
 
 import common
@@ -52,54 +51,21 @@ class BuildImageError(Exception):
     Exception.__init__(self, message)
 
 
-def RunCommand(cmd, verbose=None, env=None):
-  """Echo and run the given command.
-
-  Args:
-    cmd: the command represented as a list of strings.
-    verbose: show commands being executed.
-    env: a dictionary of additional environment variables.
-  Returns:
-    A tuple of the output and the exit code.
-  """
-  env_copy = None
-  if env is not None:
-    env_copy = os.environ.copy()
-    env_copy.update(env)
-  if verbose is None:
-    verbose = OPTIONS.verbose
-  if verbose:
-    print("Running: " + " ".join(cmd))
-  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                       env=env_copy)
-  output, _ = p.communicate()
-
-  if verbose:
-    print(output.rstrip())
-  return (output, p.returncode)
-
-
 def GetVerityFECSize(partition_size):
   cmd = ["fec", "-s", str(partition_size)]
-  output, exit_code = RunCommand(cmd, False)
-  if exit_code != 0:
-    raise BuildImageError("Failed to GetVerityFECSize:\n{}".format(output))
+  output = common.RunAndCheckOutput(cmd, verbose=False)
   return int(output)
 
 
 def GetVerityTreeSize(partition_size):
   cmd = ["build_verity_tree", "-s", str(partition_size)]
-  output, exit_code = RunCommand(cmd, False)
-  if exit_code != 0:
-    raise BuildImageError("Failed to GetVerityTreeSize:\n{}".format(output))
+  output = common.RunAndCheckOutput(cmd, verbose=False)
   return int(output)
 
 
 def GetVerityMetadataSize(partition_size):
   cmd = ["build_verity_metadata.py", "size", str(partition_size)]
-  output, exit_code = RunCommand(cmd, False)
-  if exit_code != 0:
-    raise BuildImageError("Failed to GetVerityMetadataSize:\n{}".format(output))
+  output = common.RunAndCheckOutput(cmd, verbose=False)
   return int(output)
 
 
@@ -125,10 +91,12 @@ def GetDiskUsage(path):
   Raises:
     BuildImageError: On error.
   """
-  env = {"POSIXLY_CORRECT": "1"}
+  env_copy = os.environ.copy()
+  env_copy["POSIXLY_CORRECT"] = "1"
   cmd = ["du", "-s", path]
-  output, exit_code = RunCommand(cmd, verbose=False, env=env)
-  if exit_code != 0:
+  try:
+    output = common.RunAndCheckOutput(cmd, verbose=False, env=env_copy)
+  except common.ExternalError:
     raise BuildImageError("Failed to get disk usage:\n{}".format(output))
   # POSIX du returns number of blocks with block size 512
   return int(output.split()[0]) * 512
@@ -160,16 +128,13 @@ def AVBCalcMaxImageSize(avbtool, footer_type, partition_size, additional_args):
     The maximum image size.
 
   Raises:
-    BuildImageError: On error or getting invalid image size.
+    BuildImageError: On invalid image size.
   """
   cmd = [avbtool, "add_%s_footer" % footer_type,
          "--partition_size", str(partition_size), "--calc_max_image_size"]
   cmd.extend(shlex.split(additional_args))
 
-  output, exit_code = RunCommand(cmd)
-  if exit_code != 0:
-    raise BuildImageError(
-        "Failed to calculate max image size:\n{}".format(output))
+  output = common.RunAndCheckOutput(cmd)
   image_size = int(output)
   if image_size <= 0:
     raise BuildImageError(
@@ -250,9 +215,6 @@ def AVBAddFooter(image_path, avbtool, footer_type, partition_size,
     salt: The salt to use (a hexadecimal string) or None.
     additional_args: Additional arguments to pass to "avbtool add_hash_footer"
         or "avbtool add_hashtree_footer".
-
-  Raises:
-    BuildImageError: On error.
   """
   cmd = [avbtool, "add_%s_footer" % footer_type,
          "--partition_size", partition_size,
@@ -266,10 +228,7 @@ def AVBAddFooter(image_path, avbtool, footer_type, partition_size,
 
   cmd.extend(shlex.split(additional_args))
 
-  output, exit_code = RunCommand(cmd)
-  if exit_code != 0:
-    raise BuildImageError(
-        "Failed to add AVB footer:\n{}".format(output))
+  common.RunAndCheckOutput(cmd)
 
 
 def AdjustPartitionSizeForVerity(partition_size, fec_supported):
@@ -324,19 +283,13 @@ def BuildVerityFEC(sparse_image_path, verity_path, verity_fec_path,
                    padding_size):
   cmd = ["fec", "-e", "-p", str(padding_size), sparse_image_path,
          verity_path, verity_fec_path]
-  output, exit_code = RunCommand(cmd)
-  if exit_code != 0:
-    raise BuildImageError(
-        "Failed to build FEC data:\n{}".format(output))
+  common.RunAndCheckOutput(cmd)
 
 
 def BuildVerityTree(sparse_image_path, verity_image_path):
   cmd = ["build_verity_tree", "-A", FIXED_SALT, sparse_image_path,
          verity_image_path]
-  output, exit_code = RunCommand(cmd)
-  if exit_code != 0:
-    raise BuildImageError(
-        "Failed to build verity tree:\n{}".format(output))
+  output = common.RunAndCheckOutput(cmd)
   root, salt = output.split()
   return root, salt
 
@@ -350,10 +303,7 @@ def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
     cmd.append("--signer_args=\"%s\"" % (' '.join(signer_args),))
   if verity_disable:
     cmd.append("--verity_disable")
-  output, exit_code = RunCommand(cmd)
-  if exit_code != 0:
-    raise BuildImageError(
-        "Failed to build verity metadata:\n{}".format(output))
+  common.RunAndCheckOutput(cmd)
 
 
 def Append2Simg(sparse_image_path, unsparse_image_path, error_message):
@@ -367,9 +317,10 @@ def Append2Simg(sparse_image_path, unsparse_image_path, error_message):
     BuildImageError: On error.
   """
   cmd = ["append2simg", sparse_image_path, unsparse_image_path]
-  output, exit_code = RunCommand(cmd)
-  if exit_code != 0:
-    raise BuildImageError("{}:\n{}".format(error_message, output))
+  try:
+    common.RunAndCheckOutput(cmd)
+  except:
+    raise BuildImageError(error_message)
 
 
 def Append(target, file_to_append, error_message):
@@ -413,12 +364,11 @@ def UnsparseImage(sparse_image_path, replace=True):
     else:
       return unsparse_image_path
   inflate_command = ["simg2img", sparse_image_path, unsparse_image_path]
-  inflate_output, exit_code = RunCommand(inflate_command)
-  if exit_code != 0:
+  try:
+    common.RunAndCheckOutput(inflate_command)
+  except:
     os.remove(unsparse_image_path)
-    raise BuildImageError(
-        "Error: '{}' failed with exit code {}:\n{}".format(
-            inflate_command, exit_code, inflate_output))
+    raise
   return unsparse_image_path
 
 
@@ -475,10 +425,7 @@ def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
 def ConvertBlockMapToBaseFs(block_map_file):
   base_fs_file = common.MakeTempFile(prefix="script_gen_", suffix=".base_fs")
   convert_command = ["blk_alloc_to_base_fs", block_map_file, base_fs_file]
-  output, exit_code = RunCommand(convert_command)
-  if exit_code != 0:
-    raise BuildImageError(
-        "Failed to call blk_alloc_to_base_fs:\n{}".format(output))
+  common.RunAndCheckOutput(convert_command)
   return base_fs_file
 
 
@@ -729,12 +676,15 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     raise BuildImageError(
         "Error: unknown filesystem type: {}".format(fs_type))
 
-  mkfs_output, exit_code = RunCommand(build_command)
-  if exit_code != 0:
+  try:
+    mkfs_output = common.RunAndCheckOutput(build_command)
+  except:
     try:
       du = GetDiskUsage(in_dir)
       du_str = "{} bytes ({} MB)".format(du, du // BYTES_IN_MB)
-    except BuildImageError as e:
+    # Suppress any errors from GetDiskUsage() to avoid hiding the real errors
+    # from common.RunAndCheckOutput().
+    except Exception as e:  # pylint: disable=broad-except
       print(e, file=sys.stderr)
       du_str = "unknown"
     print(
@@ -750,10 +700,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
             int(prop_dict["image_size"]) // BYTES_IN_MB,
             int(prop_dict["partition_size"]),
             int(prop_dict["partition_size"]) // BYTES_IN_MB))
-
-    raise BuildImageError(
-        "Error: '{}' failed with exit code {}:\n{}".format(
-            build_command, exit_code, mkfs_output))
+    raise
 
   # Check if there's enough headroom space available for ext4 image.
   if "partition_headroom" in prop_dict and fs_type.startswith("ext4"):
@@ -792,15 +739,12 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     # Run e2fsck on the inflated image file
     e2fsck_command = ["e2fsck", "-f", "-n", unsparse_image]
     # TODO(b/112062612): work around e2fsck failure with SANITIZE_HOST=address
-    env4e2fsck = {"ASAN_OPTIONS": "detect_odr_violation=0"}
-    e2fsck_output, exit_code = RunCommand(e2fsck_command, env=env4e2fsck)
-
-    os.remove(unsparse_image)
-
-    if exit_code != 0:
-      raise BuildImageError(
-          "Error: '{}' failed with exit code {}:\n{}".format(
-              e2fsck_command, exit_code, e2fsck_output))
+    env4e2fsck = os.environ.copy()
+    env4e2fsck["ASAN_OPTIONS"] = "detect_odr_violation=0"
+    try:
+      common.RunAndCheckOutput(e2fsck_command, env=env4e2fsck)
+    finally:
+      os.remove(unsparse_image)
 
 
 def ImagePropFromGlobalDict(glob_dict, mount_point):
