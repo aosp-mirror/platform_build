@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "46857c3a_3a6e1b1a",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-10-11T12:47:58Z",
+      "side": 1,
+      "message": "What I\u0027d like to see is:\n1) this makefile containing the right PRODUCT_ variables that triggers the system.img behavior we want for mainline\n2) the _my_paths variable to contain the paths matching #1\n\nPut another way: $ lunch mainline_system_arm64 \u0026\u0026 make should produce a system.img which includes all the files this list includes.\n\nThis was true prior to https://android-review.googlesource.com/c/platform/build/+/728287/23/core/config.mk. Before that CL, PRODUCT_SHIPPING_API_LEVEL :\u003d 28 implied system-as-root (via PRODUCT_FULL_TREBLE), but this is no longer enforced.\n\nIt might still be accurate, I\u0027m not sure. I\u0027m happy for you to submit this if it\u0027s blocking things, but we need to resolve this - I\u0027ll try to catch you on chat this evening.",
+      "revId": "16f45d6cd90be48c87a7b24296942669ad0cbcdf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
