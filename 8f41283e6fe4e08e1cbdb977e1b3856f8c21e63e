@@ -22,6 +22,30 @@
       "revId": "8f41283e6fe4e08e1cbdb977e1b3856f8c21e63e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8f790a5_e295280e",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3075,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-12T06:34:45Z",
+      "side": 1,
+      "message": "I guess some branch may not have all the projects included in its manifest, such as external/fec is not added into build-tools (https://android.googlesource.com/platform/manifest/+/build-tools/default.xml).",
+      "parentUuid": "86a5d0f2_fbce6879",
+      "range": {
+        "startLine": 3075,
+        "startChar": 10,
+        "endLine": 3075,
+        "endChar": 39
+      },
+      "revId": "8f41283e6fe4e08e1cbdb977e1b3856f8c21e63e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
