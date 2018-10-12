@@ -46,6 +46,30 @@
       "revId": "d3dc43d81e4d09f9fc1a2eb4dc8dd5bc4b6f01a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95f25e36_a8f68d8e",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 3072,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-12T04:36:25Z",
+      "side": 1,
+      "message": "\u003e Also the logic looks hard to follow with a \"build_ota_package :\u003d true\" sitting among other opposite conditions.\n\nAgree, your proposal looks much better.\nThanks for the suggestion!",
+      "parentUuid": "344c3092_1572c8ea",
+      "range": {
+        "startLine": 3070,
+        "startChar": 0,
+        "endLine": 3072,
+        "endChar": 5
+      },
+      "revId": "d3dc43d81e4d09f9fc1a2eb4dc8dd5bc4b6f01a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

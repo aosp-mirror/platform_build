@@ -46,6 +46,30 @@
       "revId": "3f7223984c7cc6498a6ac73a597271283ae71ea8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bef148a1_8dbea538",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1985,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-12T04:36:25Z",
+      "side": 0,
+      "message": "Yup, let\u0027s allow signing GSI first.",
+      "parentUuid": "e03d447d_aa204021",
+      "range": {
+        "startLine": 1985,
+        "startChar": 28,
+        "endLine": 1985,
+        "endChar": 39
+      },
+      "revId": "3f7223984c7cc6498a6ac73a597271283ae71ea8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
