@@ -142,6 +142,30 @@
       "revId": "8f41283e6fe4e08e1cbdb977e1b3856f8c21e63e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2bc60cc4_2007b17d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3075,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-12T07:02:40Z",
+      "side": 1,
+      "message": "Got it, good to know that.\nSaw (default revision\u003d\"master\") in the build-tools manifest.xml",
+      "parentUuid": "944e9ad7_e2e99157",
+      "range": {
+        "startLine": 3075,
+        "startChar": 10,
+        "endLine": 3075,
+        "endChar": 39
+      },
+      "revId": "8f41283e6fe4e08e1cbdb977e1b3856f8c21e63e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
