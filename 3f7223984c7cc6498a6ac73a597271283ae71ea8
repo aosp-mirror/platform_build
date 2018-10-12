@@ -94,6 +94,30 @@
       "revId": "3f7223984c7cc6498a6ac73a597271283ae71ea8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bbd0588d_fbd16c14",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1985,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-12T17:23:00Z",
+      "side": 0,
+      "message": "A/B and non-A/B packages have fundamentally different formats (because they\u0027re consumed by different updaters: one built from bootable/recovery whereas the other from system/update_engine).\n\nThere\u0027re Q (and beyond) works to do for the actual package building and installing. For example, b/111080116 tries to address some of them: adding system-only OTA pubkey to /system, getting (native, e.g. from fs_mgr) API support to query the updatable partitions for A/B, finding ways to query the path to /system partitions for non-A/B etc.",
+      "parentUuid": "f193734f_ed3017ce",
+      "range": {
+        "startLine": 1985,
+        "startChar": 28,
+        "endLine": 1985,
+        "endChar": 39
+      },
+      "revId": "3f7223984c7cc6498a6ac73a597271283ae71ea8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
