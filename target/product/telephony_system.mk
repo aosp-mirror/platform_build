@@ -18,6 +18,7 @@
 # hardware, and install on the system partition.
 
 PRODUCT_PACKAGES := \
+    ANS \
     CarrierConfig \
     CarrierDefaultApp \
     Dialer \
