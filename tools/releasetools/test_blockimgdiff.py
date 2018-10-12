@@ -14,17 +14,14 @@
 # limitations under the License.
 #
 
-from __future__ import print_function
-
-import unittest
-
 import common
-from blockimgdiff import (BlockImageDiff, EmptyImage, HeapItem, ImgdiffStats,
-                          Transfer)
+from blockimgdiff import (
+    BlockImageDiff, EmptyImage, HeapItem, ImgdiffStats, Transfer)
 from rangelib import RangeSet
+from test_utils import ReleaseToolsTestCase
 
 
-class HealpItemTest(unittest.TestCase):
+class HealpItemTest(ReleaseToolsTestCase):
 
   class Item(object):
     def __init__(self, score):
@@ -54,7 +51,7 @@ class HealpItemTest(unittest.TestCase):
     self.assertFalse(item)
 
 
-class BlockImageDiffTest(unittest.TestCase):
+class BlockImageDiffTest(ReleaseToolsTestCase):
 
   def test_GenerateDigraphOrder(self):
     """Make sure GenerateDigraph preserves the order.
@@ -245,7 +242,7 @@ class BlockImageDiffTest(unittest.TestCase):
         block_image_diff.imgdiff_stats.stats)
 
 
-class ImgdiffStatsTest(unittest.TestCase):
+class ImgdiffStatsTest(ReleaseToolsTestCase):
 
   def test_Log(self):
     imgdiff_stats = ImgdiffStats()

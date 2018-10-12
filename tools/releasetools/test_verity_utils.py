@@ -16,25 +16,22 @@
 
 """Unittests for verity_utils.py."""
 
-from __future__ import print_function
-
 import os.path
-import unittest
 
 import build_image
 import common
 import sparse_img
-import test_utils
 from rangelib import RangeSet
+from test_utils import get_testdata_dir, ReleaseToolsTestCase
 from verity_utils import (
     CreateHashtreeInfoGenerator, HashtreeInfo,
     VerifiedBootVersion1HashtreeInfoGenerator)
 
 
-class VerifiedBootVersion1HashtreeInfoGeneratorTest(unittest.TestCase):
+class VerifiedBootVersion1HashtreeInfoGeneratorTest(ReleaseToolsTestCase):
 
   def setUp(self):
-    self.testdata_dir = test_utils.get_testdata_dir()
+    self.testdata_dir = get_testdata_dir()
 
     self.partition_size = 1024 * 1024
     self.prop_dict = {
@@ -49,9 +46,6 @@ class VerifiedBootVersion1HashtreeInfoGeneratorTest(unittest.TestCase):
         "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
     self.expected_root_hash = \
         "0b7c4565e87b1026e11fbab91c0bc29e185c847a5b44d40e6e86e461e8adf80d"
-
-  def tearDown(self):
-    common.Cleanup()
 
   def _create_simg(self, raw_data):
     output_file = common.MakeTempFile()
