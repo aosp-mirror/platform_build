@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d08e55ed_f8f54c8d",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-12T19:04:26Z",
+      "side": 1,
+      "message": "This is the new change in this CL (along with the references below).",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 0
+      },
+      "revId": "5eefe11bf24d6f513c325cc3e3ae47860334fda3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
