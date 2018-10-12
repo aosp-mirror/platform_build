@@ -70,6 +70,30 @@
       "revId": "8f41283e6fe4e08e1cbdb977e1b3856f8c21e63e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22b79f7c_a398e81c",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3075,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-12T06:52:32Z",
+      "side": 1,
+      "message": "OK, using opt-out seems cleaner to me.\n\nAlso, there is no auto-merging from aosp/master to the \"build-tools\" branch.\nLet\u0027s adopt Dan\u0027s suggestion and see how it works or not.",
+      "parentUuid": "ecd8b307_406d3851",
+      "range": {
+        "startLine": 3075,
+        "startChar": 10,
+        "endLine": 3075,
+        "endChar": 39
+      },
+      "revId": "8f41283e6fe4e08e1cbdb977e1b3856f8c21e63e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
