@@ -70,6 +70,30 @@
       "revId": "3f7223984c7cc6498a6ac73a597271283ae71ea8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f193734f_ed3017ce",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1985,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-12T17:02:00Z",
+      "side": 0,
+      "message": "Just to be clear, GSI target actually has no concept of A/B or non-A/B.\n\nIn Oreo, *_ab or *_a (non-A/B) actually refers to \"system-as-root\" and \"non-system-as-root\", respectively. https://source.android.com/setup/build/gsi#legacy-gsi-build-targets\n\nIn P, as \"system-as-root\u0027 becomes mandatory, we removed *_ab and *_a targets for new launched devices in P. https://source.android.com/setup/build/gsi#p-gsi-build-targets\n\nGiven that, is it possible to build a \"system-only\" OTA package from a GSI target that can be used in both A/B and non-A/B devices? (assuming they\u0027re all system-as-root or non-system-as-root).",
+      "parentUuid": "bef148a1_8dbea538",
+      "range": {
+        "startLine": 1985,
+        "startChar": 28,
+        "endLine": 1985,
+        "endChar": 39
+      },
+      "revId": "3f7223984c7cc6498a6ac73a597271283ae71ea8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
