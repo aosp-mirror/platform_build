@@ -46,6 +46,30 @@
       "revId": "8f41283e6fe4e08e1cbdb977e1b3856f8c21e63e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ecd8b307_406d3851",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3075,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-12T06:40:57Z",
+      "side": 1,
+      "message": "Even if it was defined, it should only be built if you\u0027re building the \"full\" platform (droidcore), so side branches shouldn\u0027t be impacted.",
+      "parentUuid": "b8f790a5_e295280e",
+      "range": {
+        "startLine": 3075,
+        "startChar": 10,
+        "endLine": 3075,
+        "endChar": 39
+      },
+      "revId": "8f41283e6fe4e08e1cbdb977e1b3856f8c21e63e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
