@@ -61,8 +61,4 @@ clang_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/clang/TARGET_$(TARGET_2ND_ARCH).mk
 endif
 
-# This allows us to use the superset of functionality that compiler-rt
-# provides to Clang (for supporting features like -ftrapv).
-COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES := libcompiler_rt-extras
-
 include $(BUILD_SYSTEM)/clang/tidy.mk
