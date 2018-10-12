@@ -3169,13 +3169,23 @@ $(BUILT_OTATOOLS_PACKAGE): zip_root := $(call intermediates-dir-for,PACKAGING,ot
 
 OTATOOLS_DEPS := \
   system/extras/ext4_utils/mke2fs.conf \
-  $(sort $(shell find external/avb/test/data -type f -name "testkey_*.pem" -o \
-      -name "atx_metadata.bin")) \
-  $(sort $(shell find system/update_engine/scripts -name "*.pyc" -prune -o -type f -print)) \
   $(sort $(shell find build/target/product/security -type f -name "*.x509.pem" -o -name "*.pk8" -o \
-      -name verity_key)) \
+      -name verity_key))
+
+ifneq (,$(wildcard device))
+OTATOOLS_DEPS += \
   $(sort $(shell find device $(wildcard vendor) -type f -name "*.pk8" -o -name "verifiedboot*" -o \
       -name "*.x509.pem" -o -name "oem*.prop"))
+endif
+ifneq (,$(wildcard external/avb))
+OTATOOLS_DEPS += \
+  $(sort $(shell find external/avb/test/data -type f -name "testkey_*.pem" -o \
+      -name "atx_metadata.bin"))
+endif
+ifneq (,$(wildcard system/update_engine))
+OTATOOLS_DEPS += \
+  $(sort $(shell find system/update_engine/scripts -name "*.pyc" -prune -o -type f -print))
+endif
 
 OTATOOLS_RELEASETOOLS := \
   $(sort $(shell find build/make/tools/releasetools -name "*.pyc" -prune -o -type f))
