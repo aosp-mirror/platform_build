@@ -18,15 +18,15 @@ import filecmp
 import math
 import os.path
 import random
-import unittest
 
 import common
 from build_image import (
     AVBCalcMinPartitionSize, BLOCK_SIZE, BuildImageError, CheckHeadroom,
     SetUpInDirAndFsConfig)
+from test_utils import ReleaseToolsTestCase
 
 
-class BuildImageTest(unittest.TestCase):
+class BuildImageTest(ReleaseToolsTestCase):
 
   # Available: 1000 blocks.
   EXT4FS_OUTPUT = (
@@ -38,9 +38,6 @@ class BuildImageTest(unittest.TestCase):
     #   - 524288 = 2GB * 1024 * 1024 * 1024 / 4096
     self._image_sizes = [BLOCK_SIZE * random.randint(51200, 524288) + offset
                          for offset in range(BLOCK_SIZE)]
-
-  def tearDown(self):
-    common.Cleanup()
 
   def test_CheckHeadroom_SizeUnderLimit(self):
     # Required headroom: 1000 blocks.
