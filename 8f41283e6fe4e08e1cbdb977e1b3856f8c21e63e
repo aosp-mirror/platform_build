@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "86a5d0f2_fbce6879",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3075,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-12T06:26:36Z",
+      "side": 1,
+      "message": "Is there a reason to add a conditional, vs just allowing us to create otatools always (except on Darwin)? Or should we turn it into an opt-out setting, like TARGET_SKIP_OTA_PACKAGE?",
+      "range": {
+        "startLine": 3075,
+        "startChar": 10,
+        "endLine": 3075,
+        "endChar": 39
+      },
+      "revId": "8f41283e6fe4e08e1cbdb977e1b3856f8c21e63e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
