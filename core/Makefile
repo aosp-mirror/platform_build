@@ -3045,33 +3045,42 @@ endif
 # -----------------------------------------------------------------
 # host tools needed to build dist and OTA packages
 
-build_ota_package := true
-ifeq ($(TARGET_SKIP_OTA_PACKAGE),true)
-build_ota_package := false
-endif
 ifeq ($(BUILD_OS),darwin)
-build_ota_package := false
-endif
-ifneq ($(strip $(SANITIZE_TARGET)),)
-build_ota_package := false
-endif
-ifeq ($(TARGET_PRODUCT),sdk)
-build_ota_package := false
-endif
-ifneq ($(filter generic%,$(TARGET_DEVICE)),)
-build_ota_package := false
-endif
-ifeq ($(TARGET_NO_KERNEL),true)
-build_ota_package := false
-endif
-ifeq ($(recovery_fstab),)
-build_ota_package := false
-endif
-ifeq ($(TARGET_BUILD_PDK),true)
-build_ota_package := false
+  build_ota_package := false
+  build_otatools_package := false
+else
+  # set build_ota_package, and allow opt-out below
+  build_ota_package := true
+  ifeq ($(TARGET_SKIP_OTA_PACKAGE),true)
+    build_ota_package := false
+  endif
+  ifneq ($(strip $(SANITIZE_TARGET)),)
+    build_ota_package := false
+  endif
+  ifeq ($(TARGET_PRODUCT),sdk)
+    build_ota_package := false
+  endif
+  ifneq ($(filter generic%,$(TARGET_DEVICE)),)
+    build_ota_package := false
+  endif
+  ifeq ($(TARGET_NO_KERNEL),true)
+    build_ota_package := false
+  endif
+  ifeq ($(recovery_fstab),)
+    build_ota_package := false
+  endif
+  ifeq ($(TARGET_BUILD_PDK),true)
+    build_ota_package := false
+  endif
+
+  # set build_otatools_package, and allow opt-out below
+  build_otatools_package := true
+  ifeq ($(TARGET_SKIP_OTATOOLS_PACKAGE),true)
+    build_otatools_package := false
+  endif
 endif
 
-ifeq ($(build_ota_package),true)
+ifeq ($(build_otatools_package),true)
 OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/aapt \
   $(HOST_OUT_EXECUTABLES)/checkvintf \
@@ -3189,7 +3198,7 @@ $(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) $(OTATOOLS_DEPS) $(OTATOOLS_RELEASETOOLS)
 .PHONY: otatools-package
 otatools-package: $(BUILT_OTATOOLS_PACKAGE)
 
-endif # build_ota_package
+endif # build_otatools_package
 
 # -----------------------------------------------------------------
 # A zip of the directories that map to the target filesystem.
