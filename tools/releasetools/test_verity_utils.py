@@ -18,7 +18,6 @@
 
 from __future__ import print_function
 
-import os
 import os.path
 import unittest
 
@@ -26,11 +25,14 @@ import build_image
 import common
 import sparse_img
 import test_utils
-import verity_utils
 from rangelib import RangeSet
+from verity_utils import (
+    CreateHashtreeInfoGenerator, HashtreeInfo,
+    VerifiedBootVersion1HashtreeInfoGenerator)
 
 
-class VerityUtilsTest(unittest.TestCase):
+class VerifiedBootVersion1HashtreeInfoGeneratorTest(unittest.TestCase):
+
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
 
@@ -88,33 +90,33 @@ class VerityUtilsTest(unittest.TestCase):
 
     return output_file
 
-  def test_VerifiedBootVersion1HashtreeInfoGenerator_create(self):
+  def test_CreateHashtreeInfoGenerator(self):
     image_file = sparse_img.SparseImage(self._generate_image())
 
-    generator = verity_utils.CreateHashtreeInfoGenerator(
+    generator = CreateHashtreeInfoGenerator(
         'system', image_file, self.prop_dict)
     self.assertEqual(
-        verity_utils.VerifiedBootVersion1HashtreeInfoGenerator, type(generator))
+        VerifiedBootVersion1HashtreeInfoGenerator, type(generator))
     self.assertEqual(self.partition_size, generator.partition_size)
     self.assertTrue(generator.fec_supported)
 
-  def test_VerifiedBootVersion1HashtreeInfoGenerator_decomposeImage(self):
+  def test_DecomposeSparseImage(self):
     image_file = sparse_img.SparseImage(self._generate_image())
 
-    generator = verity_utils.VerifiedBootVersion1HashtreeInfoGenerator(
+    generator = VerifiedBootVersion1HashtreeInfoGenerator(
         self.partition_size, 4096, True)
     generator.DecomposeSparseImage(image_file)
     self.assertEqual(991232, generator.filesystem_size)
     self.assertEqual(12288, generator.hashtree_size)
     self.assertEqual(32768, generator.metadata_size)
 
-  def test_VerifiedBootVersion1HashtreeInfoGenerator_parseHashtreeMetadata(
-      self):
+  def test_ParseHashtreeMetadata(self):
     image_file = sparse_img.SparseImage(self._generate_image())
-    generator = verity_utils.VerifiedBootVersion1HashtreeInfoGenerator(
+    generator = VerifiedBootVersion1HashtreeInfoGenerator(
         self.partition_size, 4096, True)
     generator.DecomposeSparseImage(image_file)
 
+    # pylint: disable=protected-access
     generator._ParseHashtreeMetadata()
 
     self.assertEqual(
@@ -122,13 +124,12 @@ class VerityUtilsTest(unittest.TestCase):
     self.assertEqual(self.fixed_salt, generator.hashtree_info.salt)
     self.assertEqual(self.expected_root_hash, generator.hashtree_info.root_hash)
 
-  def test_VerifiedBootVersion1HashtreeInfoGenerator_validateHashtree_smoke(
-      self):
-    generator = verity_utils.VerifiedBootVersion1HashtreeInfoGenerator(
+  def test_ValidateHashtree_smoke(self):
+    generator = VerifiedBootVersion1HashtreeInfoGenerator(
         self.partition_size, 4096, True)
     generator.image = sparse_img.SparseImage(self._generate_image())
 
-    generator.hashtree_info = info = verity_utils.HashtreeInfo()
+    generator.hashtree_info = info = HashtreeInfo()
     info.filesystem_range = RangeSet(data=[0, 991232 / 4096])
     info.hashtree_range = RangeSet(
         data=[991232 / 4096, (991232 + 12288) / 4096])
@@ -138,13 +139,12 @@ class VerityUtilsTest(unittest.TestCase):
 
     self.assertTrue(generator.ValidateHashtree())
 
-  def test_VerifiedBootVersion1HashtreeInfoGenerator_validateHashtree_failure(
-      self):
-    generator = verity_utils.VerifiedBootVersion1HashtreeInfoGenerator(
+  def test_ValidateHashtree_failure(self):
+    generator = VerifiedBootVersion1HashtreeInfoGenerator(
         self.partition_size, 4096, True)
     generator.image = sparse_img.SparseImage(self._generate_image())
 
-    generator.hashtree_info = info = verity_utils.HashtreeInfo()
+    generator.hashtree_info = info = HashtreeInfo()
     info.filesystem_range = RangeSet(data=[0, 991232 / 4096])
     info.hashtree_range = RangeSet(
         data=[991232 / 4096, (991232 + 12288) / 4096])
@@ -154,10 +154,9 @@ class VerityUtilsTest(unittest.TestCase):
 
     self.assertFalse(generator.ValidateHashtree())
 
-  def test_VerifiedBootVersion1HashtreeInfoGenerator_generate(self):
+  def test_Generate(self):
     image_file = sparse_img.SparseImage(self._generate_image())
-    generator = verity_utils.CreateHashtreeInfoGenerator(
-        'system', 4096, self.prop_dict)
+    generator = CreateHashtreeInfoGenerator('system', 4096, self.prop_dict)
     info = generator.Generate(image_file)
 
     self.assertEqual(RangeSet(data=[0, 991232 / 4096]), info.filesystem_range)
