@@ -16,7 +16,6 @@
 
 import os
 import os.path
-import unittest
 import zipfile
 
 import common
@@ -30,13 +29,10 @@ from rangelib import RangeSet
 OPTIONS = common.OPTIONS
 
 
-class AddImagesToTargetFilesTest(unittest.TestCase):
+class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
   def setUp(self):
     OPTIONS.input_tmp = common.MakeTempDir()
-
-  def tearDown(self):
-    common.Cleanup()
 
   def _verifyCareMap(self, expected, file_name):
     """Parses the care_map.pb; and checks the content in plain text."""
