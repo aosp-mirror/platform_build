@@ -118,6 +118,30 @@
       "revId": "8f41283e6fe4e08e1cbdb977e1b3856f8c21e63e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "944e9ad7_e2e99157",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3075,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-12T06:57:09Z",
+      "side": 1,
+      "message": "\u003e no auto-merging from aosp/master to build-tools\n\nIt doesn\u0027t need an automerger, it\u0027s just another view of the same branch. Not that we actually use this makefile on that branch at all, but there are other branches (like master-art-host) that do.",
+      "parentUuid": "94b08b2d_8745a00e",
+      "range": {
+        "startLine": 3075,
+        "startChar": 10,
+        "endLine": 3075,
+        "endChar": 39
+      },
+      "revId": "8f41283e6fe4e08e1cbdb977e1b3856f8c21e63e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
