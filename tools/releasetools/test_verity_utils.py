@@ -16,15 +16,17 @@
 
 """Unittests for verity_utils.py."""
 
+import math
 import os.path
+import random
 
-import build_image
 import common
 import sparse_img
 from rangelib import RangeSet
 from test_utils import get_testdata_dir, ReleaseToolsTestCase
 from verity_utils import (
-    CreateHashtreeInfoGenerator, HashtreeInfo,
+    AdjustPartitionSizeForVerity, AVBCalcMinPartitionSize, BLOCK_SIZE,
+    CreateHashtreeInfoGenerator, HashtreeInfo, MakeVerityEnabledImage,
     VerifiedBootVersion1HashtreeInfoGenerator)
 
 
@@ -62,7 +64,7 @@ class VerifiedBootVersion1HashtreeInfoGeneratorTest(ReleaseToolsTestCase):
 
   def _generate_image(self):
     partition_size = 1024 * 1024
-    adjusted_size, verity_size = build_image.AdjustPartitionSizeForVerity(
+    adjusted_size, verity_size = AdjustPartitionSizeForVerity(
         partition_size, True)
 
     raw_image = ""
@@ -80,7 +82,7 @@ class VerifiedBootVersion1HashtreeInfoGeneratorTest(ReleaseToolsTestCase):
         'verity_signer_cmd': 'verity_signer',
         'verity_size': str(verity_size),
     }
-    build_image.MakeVerityEnabledImage(output_file, True, prop_dict)
+    MakeVerityEnabledImage(output_file, True, prop_dict)
 
     return output_file
 
@@ -159,3 +161,62 @@ class VerifiedBootVersion1HashtreeInfoGeneratorTest(ReleaseToolsTestCase):
     self.assertEqual(self.hash_algorithm, info.hash_algorithm)
     self.assertEqual(self.fixed_salt, info.salt)
     self.assertEqual(self.expected_root_hash, info.root_hash)
+
+
+class VerityUtilsTest(ReleaseToolsTestCase):
+
+  def setUp(self):
+    # To test AVBCalcMinPartitionSize(), by using 200MB to 2GB image size.
+    #   -  51200 = 200MB * 1024 * 1024 / 4096
+    #   - 524288 = 2GB * 1024 * 1024 * 1024 / 4096
+    self._image_sizes = [BLOCK_SIZE * random.randint(51200, 524288) + offset
+                         for offset in range(BLOCK_SIZE)]
+
+  def test_AVBCalcMinPartitionSize_LinearFooterSize(self):
+    """Tests with footer size which is linear to partition size."""
+    for image_size in self._image_sizes:
+      for ratio in 0.95, 0.56, 0.22:
+        expected_size = common.RoundUpTo4K(int(math.ceil(image_size / ratio)))
+        self.assertEqual(
+            expected_size,
+            AVBCalcMinPartitionSize(
+                image_size, lambda x, ratio=ratio: int(x * ratio)))
+
+  def test_AVBCalcMinPartitionSize_SlowerGrowthFooterSize(self):
+    """Tests with footer size which grows slower than partition size."""
+
+    def _SizeCalculator(partition_size):
+      """Footer size is the power of 0.95 of partition size."""
+      # Minus footer size to return max image size.
+      return partition_size - int(math.pow(partition_size, 0.95))
+
+    for image_size in self._image_sizes:
+      min_partition_size = AVBCalcMinPartitionSize(image_size, _SizeCalculator)
+      # Checks min_partition_size can accommodate image_size.
+      self.assertGreaterEqual(
+          _SizeCalculator(min_partition_size),
+          image_size)
+      # Checks min_partition_size (round to BLOCK_SIZE) is the minimum.
+      self.assertLess(
+          _SizeCalculator(min_partition_size - BLOCK_SIZE),
+          image_size)
+
+  def test_AVBCalcMinPartitionSize_FasterGrowthFooterSize(self):
+    """Tests with footer size which grows faster than partition size."""
+
+    def _SizeCalculator(partition_size):
+      """Max image size is the power of 0.95 of partition size."""
+      # Max image size grows less than partition size, which means
+      # footer size grows faster than partition size.
+      return int(math.pow(partition_size, 0.95))
+
+    for image_size in self._image_sizes:
+      min_partition_size = AVBCalcMinPartitionSize(image_size, _SizeCalculator)
+      # Checks min_partition_size can accommodate image_size.
+      self.assertGreaterEqual(
+          _SizeCalculator(min_partition_size),
+          image_size)
+      # Checks min_partition_size (round to BLOCK_SIZE) is the minimum.
+      self.assertLess(
+          _SizeCalculator(min_partition_size - BLOCK_SIZE),
+          image_size)
