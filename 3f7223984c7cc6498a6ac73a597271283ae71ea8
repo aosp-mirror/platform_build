@@ -118,6 +118,30 @@
       "revId": "3f7223984c7cc6498a6ac73a597271283ae71ea8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b749fa48_ff2287be",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1985,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-10-13T03:58:29Z",
+      "side": 0,
+      "message": "\u003e they\u0027re consumed by different updaters: one built from bootable/recovery whereas the other from system/update_engine\n\nAh, this is interesting.\nThanks for the info.",
+      "parentUuid": "bbd0588d_fbd16c14",
+      "range": {
+        "startLine": 1985,
+        "startChar": 28,
+        "endLine": 1985,
+        "endChar": 39
+      },
+      "revId": "3f7223984c7cc6498a6ac73a597271283ae71ea8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
