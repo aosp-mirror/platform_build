@@ -19,7 +19,6 @@ import os
 import subprocess
 import tempfile
 import time
-import unittest
 import zipfile
 from hashlib import sha1
 
@@ -44,7 +43,8 @@ def get_2gb_string():
     yield '\0' * (step_size - block_size)
 
 
-class CommonZipTest(unittest.TestCase):
+class CommonZipTest(test_utils.ReleaseToolsTestCase):
+
   def _verify(self, zip_file, zip_file_name, arcname, expected_hash,
               test_file_name=None, expected_stat=None, expected_mode=0o644,
               expected_compress_type=zipfile.ZIP_STORED):
@@ -334,8 +334,8 @@ class CommonZipTest(unittest.TestCase):
         self.assertFalse('Test2' in entries)
         self.assertTrue('Test3' in entries)
 
-      self.assertRaises(AssertionError, common.ZipDelete, zip_file.name,
-                        'Test2')
+      self.assertRaises(
+          common.ExternalError, common.ZipDelete, zip_file.name, 'Test2')
       with zipfile.ZipFile(zip_file.name, 'r') as check_zip:
         entries = check_zip.namelist()
         self.assertTrue('Test1' in entries)
@@ -359,7 +359,7 @@ class CommonZipTest(unittest.TestCase):
       os.remove(zip_file.name)
 
 
-class CommonApkUtilsTest(unittest.TestCase):
+class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   """Tests the APK utils related functions."""
 
   APKCERTS_TXT1 = (
@@ -406,9 +406,6 @@ class CommonApkUtilsTest(unittest.TestCase):
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
-
-  def tearDown(self):
-    common.Cleanup()
 
   @staticmethod
   def _write_apkcerts_txt(apkcerts_txt, additional=None):
@@ -523,13 +520,10 @@ class CommonApkUtilsTest(unittest.TestCase):
         {})
 
 
-class CommonUtilsTest(unittest.TestCase):
+class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
-
-  def tearDown(self):
-    common.Cleanup()
 
   def test_GetSparseImage_emptyBlockMapFile(self):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
@@ -782,7 +776,8 @@ class CommonUtilsTest(unittest.TestCase):
         'avb_system_rollback_index_location': 2,
     }
     self.assertRaises(
-        AssertionError, common.GetAvbChainedPartitionArg, 'system', info_dict)
+        common.ExternalError, common.GetAvbChainedPartitionArg, 'system',
+        info_dict)
 
   INFO_DICT_DEFAULT = {
       'recovery_api_version': 3,
@@ -934,7 +929,7 @@ class CommonUtilsTest(unittest.TestCase):
           AssertionError, common.LoadInfoDict, target_files_zip, True)
 
 
-class InstallRecoveryScriptFormatTest(unittest.TestCase):
+class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
   """Checks the format of install-recovery.sh.
 
   Its format should match between common.py and validate_target_files.py.
@@ -993,6 +988,3 @@ class InstallRecoveryScriptFormatTest(unittest.TestCase):
                              recovery_image, boot_image, self._info)
     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
                                                         self._info)
-
-  def tearDown(self):
-    common.Cleanup()

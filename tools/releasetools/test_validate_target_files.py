@@ -16,12 +16,9 @@
 
 """Unittests for validate_target_files.py."""
 
-from __future__ import print_function
-
 import os
 import os.path
 import shutil
-import unittest
 
 import build_image
 import common
@@ -29,13 +26,10 @@ import test_utils
 from validate_target_files import ValidateVerifiedBootImages
 
 
-class ValidateTargetFilesTest(unittest.TestCase):
+class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
-
-  def tearDown(self):
-    common.Cleanup()
 
   def _generate_boot_image(self, output_file):
     kernel = common.MakeTempFile(prefix='kernel-')

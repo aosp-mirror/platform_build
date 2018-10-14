@@ -108,8 +108,7 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--instruction-set-variant=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT) \
 		--instruction-set-features=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES) \
 		--android-root=$(PRODUCT_OUT)/system \
-		--runtime-arg -Xnorelocate --compile-pic \
-		--multi-image --no-inline-from=core-oj.jar \
+		--no-inline-from=core-oj.jar \
 		--abort-on-hard-verifier-error \
 		--abort-on-soft-verifier-error \
 		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS) \

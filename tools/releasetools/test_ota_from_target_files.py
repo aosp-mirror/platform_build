@@ -17,7 +17,6 @@
 import copy
 import os
 import os.path
-import unittest
 import zipfile
 
 import common
@@ -104,7 +103,7 @@ class MockScriptWriter(object):
     self.script.append(('AssertSomeThumbprint',) + args)
 
 
-class BuildInfoTest(unittest.TestCase):
+class BuildInfoTest(test_utils.ReleaseToolsTestCase):
 
   TEST_INFO_DICT = {
       'build.prop' : {
@@ -352,10 +351,7 @@ class BuildInfoTest(unittest.TestCase):
         script_writer.script)
 
 
-class LoadOemDictsTest(unittest.TestCase):
-
-  def tearDown(self):
-    common.Cleanup()
+class LoadOemDictsTest(test_utils.ReleaseToolsTestCase):
 
   def test_NoneDict(self):
     self.assertIsNone(_LoadOemDicts(None))
@@ -388,7 +384,7 @@ class LoadOemDictsTest(unittest.TestCase):
       self.assertEqual('{}'.format(i), oem_dict['ro.build.index'])
 
 
-class OtaFromTargetFilesTest(unittest.TestCase):
+class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
   TEST_TARGET_INFO_DICT = {
       'build.prop' : {
@@ -429,9 +425,6 @@ class OtaFromTargetFilesTest(unittest.TestCase):
 
     common.OPTIONS.search_path = test_utils.get_search_path()
     self.assertIsNotNone(common.OPTIONS.search_path)
-
-  def tearDown(self):
-    common.Cleanup()
 
   def test_GetPackageMetadata_abOta_full(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
@@ -720,13 +713,10 @@ class TestPropertyFiles(PropertyFiles):
     )
 
 
-class PropertyFilesTest(unittest.TestCase):
+class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
 
   def setUp(self):
     common.OPTIONS.no_signing = False
-
-  def tearDown(self):
-    common.Cleanup()
 
   @staticmethod
   def construct_zip_package(entries):
@@ -1151,7 +1141,7 @@ class NonAbOtaPropertyFilesTest(PropertyFilesTest):
       property_files.Verify(zip_fp, raw_metadata)
 
 
-class PayloadSignerTest(unittest.TestCase):
+class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
 
   SIGFILE = 'sigfile.bin'
   SIGNED_SIGFILE = 'signed-sigfile.bin'
@@ -1166,9 +1156,6 @@ class PayloadSignerTest(unittest.TestCase):
     common.OPTIONS.key_passwords = {
         common.OPTIONS.package_key : None,
     }
-
-  def tearDown(self):
-    common.Cleanup()
 
   def _assertFilesEqual(self, file1, file2):
     with open(file1, 'rb') as fp1, open(file2, 'rb') as fp2:
@@ -1230,7 +1217,7 @@ class PayloadSignerTest(unittest.TestCase):
     self._assertFilesEqual(verify_file, signed_file)
 
 
-class PayloadTest(unittest.TestCase):
+class PayloadTest(test_utils.ReleaseToolsTestCase):
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
@@ -1243,9 +1230,6 @@ class PayloadTest(unittest.TestCase):
     common.OPTIONS.key_passwords = {
         common.OPTIONS.package_key : None,
     }
-
-  def tearDown(self):
-    common.Cleanup()
 
   @staticmethod
   def _create_payload_full(secondary=False):

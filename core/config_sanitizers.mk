@@ -212,10 +212,6 @@ ifneq ($(filter address thread hwaddress,$(my_sanitize)),)
   my_sanitize := $(filter-out scudo,$(my_sanitize))
 endif
 
-ifneq ($(filter scudo,$(my_sanitize)),)
-  my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)SCUDO_RUNTIME_LIBRARY)
-endif
-
 # Undefined symbols can occur if a non-sanitized library links
 # sanitized static libraries. That's OK, because the executable
 # always depends on the ASan runtime library, which defines these
@@ -375,7 +371,7 @@ ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
     endif
   endif
   ifneq ($(filter unsigned-integer-overflow signed-integer-overflow integer,$(my_sanitize)),)
-    ifeq ($(filter unsigned-integer-overflow signed-integer overflow integer,$(my_sanitize_diag)),)
+    ifeq ($(filter unsigned-integer-overflow signed-integer-overflow integer,$(my_sanitize_diag)),)
       ifeq ($(filter cfi,$(my_sanitize_diag)),)
         ifeq ($(filter address hwaddress,$(my_sanitize)),)
           my_cflags += -fsanitize-minimal-runtime
@@ -384,6 +380,18 @@ ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
         endif
       endif
     endif
+  endif
+endif
+
+# For Scudo, we opt for the minimal runtime, unless some diagnostics are enabled.
+ifneq ($(filter scudo,$(my_sanitize)),)
+  ifeq ($(filter unsigned-integer-overflow signed-integer-overflow integer cfi,$(my_sanitize_diag)),)
+    my_cflags += -fsanitize-minimal-runtime
+  endif
+  ifneq ($(filter -fsanitize-minimal-runtime,$(my_cflags)),)
+    my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)SCUDO_MINIMAL_RUNTIME_LIBRARY)
+  else
+    my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)SCUDO_RUNTIME_LIBRARY)
   endif
 endif
 

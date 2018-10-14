@@ -37,6 +37,7 @@ from hashlib import sha1, sha256
 import blockimgdiff
 import sparse_img
 
+
 class Options(object):
   def __init__(self):
     platform_search_path = {
@@ -72,15 +73,15 @@ class Options(object):
 
 OPTIONS = Options()
 
+# The block size that's used across the releasetools scripts.
+BLOCK_SIZE = 4096
 
 # Values for "certificate" in apkcerts that mean special things.
 SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 
-
 # The partitions allowed to be signed by AVB (Android verified boot 2.0).
 AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'product',
                   'product_services', 'dtbo', 'odm')
-
 
 # Partitions that should have their care_map added to META/care_map.pb
 PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product_services',
@@ -142,6 +143,36 @@ def Run(args, verbose=None, **kwargs):
   if verbose:
     print("  Running: \"{}\"".format(" ".join(args)))
   return subprocess.Popen(args, **kwargs)
+
+
+def RunAndCheckOutput(args, verbose=None, **kwargs):
+  """Runs the given command and returns the output.
+
+  Args:
+    args: The command represented as a list of strings.
+    verbose: Whether the commands should be shown (default to OPTIONS.verbose
+        if unspecified).
+    kwargs: Any additional args to be passed to subprocess.Popen(), such as env,
+        stdin, etc. stdout and stderr will default to subprocess.PIPE and
+        subprocess.STDOUT respectively unless caller specifies any of them.
+
+  Returns:
+    The output string.
+
+  Raises:
+    ExternalError: On non-zero exit from the command.
+  """
+  if verbose is None:
+    verbose = OPTIONS.verbose
+  proc = Run(args, verbose=verbose, **kwargs)
+  output, _ = proc.communicate()
+  if verbose:
+    print("{}".format(output.rstrip()))
+  if proc.returncode != 0:
+    raise ExternalError(
+        "Failed to run command '{}' (exit code {}):\n{}".format(
+            args, proc.returncode, output))
+  return output
 
 
 def RoundUpTo4K(value):
@@ -445,20 +476,13 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   Returns:
     A string of form "partition:rollback_index_location:key" that can be used to
     build or verify vbmeta image.
-
-  Raises:
-    AssertionError: When it fails to extract the public key with avbtool.
   """
   if key is None:
     key = info_dict["avb_" + partition + "_key_path"]
   avbtool = os.getenv('AVBTOOL') or info_dict["avb_avbtool"]
   pubkey_path = MakeTempFile(prefix="avb-", suffix=".pubkey")
-  proc = Run(
+  RunAndCheckOutput(
       [avbtool, "extract_public_key", "--key", key, "--output", pubkey_path])
-  stdoutdata, _ = proc.communicate()
-  assert proc.returncode == 0, \
-      "Failed to extract pubkey for {}:\n{}".format(
-          partition, stdoutdata)
 
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
@@ -561,10 +585,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
     fn = os.path.join(sourcedir, "recovery_dtbo")
     cmd.extend(["--recovery_dtbo", fn])
 
-  proc = Run(cmd)
-  output, _ = proc.communicate()
-  assert proc.returncode == 0, \
-      "Failed to run mkbootimg of {}:\n{}".format(partition_name, output)
+  RunAndCheckOutput(cmd)
 
   if (info_dict.get("boot_signer") == "true" and
       info_dict.get("verity_key")):
@@ -579,10 +600,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
     cmd.extend([path, img.name,
                 info_dict["verity_key"] + ".pk8",
                 info_dict["verity_key"] + ".x509.pem", img.name])
-    proc = Run(cmd)
-    output, _ = proc.communicate()
-    assert proc.returncode == 0, \
-        "Failed to run boot_signer of {} image:\n{}".format(path, output)
+    RunAndCheckOutput(cmd)
 
   # Sign the image if vboot is non-empty.
   elif info_dict.get("vboot"):
@@ -600,10 +618,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
            info_dict["vboot_subkey"] + ".vbprivk",
            img_keyblock.name,
            img.name]
-    proc = Run(cmd)
-    proc.communicate()
-    assert proc.returncode == 0, \
-        "Failed to run vboot_signer of {} image:\n{}".format(path, output)
+    RunAndCheckOutput(cmd)
 
     # Clean up the temp files.
     img_unsigned.close()
@@ -620,11 +635,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
     args = info_dict.get("avb_" + partition_name + "_add_hash_footer_args")
     if args and args.strip():
       cmd.extend(shlex.split(args))
-    proc = Run(cmd)
-    output, _ = proc.communicate()
-    assert proc.returncode == 0, \
-        "Failed to run 'avbtool add_hash_footer' of {}:\n{}".format(
-            partition_name, output)
+    RunAndCheckOutput(cmd)
 
   img.seek(os.SEEK_SET, 0)
   data = img.read()
@@ -696,12 +707,7 @@ def UnzipTemp(filename, pattern=None):
     cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
     if pattern is not None:
       cmd.extend(pattern)
-    proc = Run(cmd)
-    stdoutdata, _ = proc.communicate()
-    if proc.returncode != 0:
-      raise ExternalError(
-          "Failed to unzip input target-files \"{}\":\n{}".format(
-              filename, stdoutdata))
+    RunAndCheckOutput(cmd)
 
   tmp = MakeTempDir(prefix="targetfiles-")
   m = re.match(r"^(.*[.]zip)\+(.*[.]zip)$", filename, re.IGNORECASE)
@@ -1280,7 +1286,7 @@ class PasswordManager(object):
         first_line = i + 4
     f.close()
 
-    Run([self.editor, "+%d" % (first_line,), self.pwfile]).communicate()
+    RunAndCheckOutput([self.editor, "+%d" % (first_line,), self.pwfile])
 
     return self.ReadFile()
 
@@ -1408,10 +1414,7 @@ def ZipDelete(zip_filename, entries):
   if isinstance(entries, basestring):
     entries = [entries]
   cmd = ["zip", "-d", zip_filename] + entries
-  proc = Run(cmd)
-  stdoutdata, _ = proc.communicate()
-  assert proc.returncode == 0, \
-      "Failed to delete {}:\n{}".format(entries, stdoutdata)
+  RunAndCheckOutput(cmd)
 
 
 def ZipClose(zip_file):
@@ -1872,11 +1875,7 @@ class BlockDifference(object):
                     '--output={}.new.dat.br'.format(self.path),
                     '{}.new.dat'.format(self.path)]
       print("Compressing {}.new.dat with brotli".format(self.partition))
-      proc = Run(brotli_cmd)
-      stdoutdata, _ = proc.communicate()
-      assert proc.returncode == 0, \
-          'Failed to compress {}.new.dat with brotli:\n{}'.format(
-              self.partition, stdoutdata)
+      RunAndCheckOutput(brotli_cmd)
 
       new_data_name = '{}.new.dat.br'.format(self.partition)
       ZipWrite(output_zip,
