@@ -20,9 +20,9 @@ import os
 import os.path
 import shutil
 
-import build_image
 import common
 import test_utils
+import verity_utils
 from validate_target_files import ValidateVerifiedBootImages
 
 
@@ -109,7 +109,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
   def _generate_system_image(self, output_file):
     verity_fec = True
     partition_size = 1024 * 1024
-    image_size, verity_size = build_image.AdjustPartitionSizeForVerity(
+    image_size, verity_size = verity_utils.AdjustPartitionSizeForVerity(
         partition_size, verity_fec)
 
     # Use an empty root directory.
@@ -132,7 +132,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
         'verity_signer_cmd' : 'verity_signer',
         'verity_size' : str(verity_size),
     }
-    build_image.MakeVerityEnabledImage(output_file, verity_fec, prop_dict)
+    verity_utils.MakeVerityEnabledImage(output_file, verity_fec, prop_dict)
 
   def test_ValidateVerifiedBootImages_systemImage(self):
     input_tmp = common.MakeTempDir()
