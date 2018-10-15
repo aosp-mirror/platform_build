@@ -64,8 +64,8 @@ _my_whitelist := $(_base_mk_whitelist)
 # Both /system and / are in system.img when PRODUCT_SHIPPING_API_LEVEL>=28.
 # Though we do have a new ramdisk partition for logical partitions.
 _my_paths := \
-  $(TARGET_COPY_OUT_ROOT) \
-  $(TARGET_COPY_OUT_SYSTEM) \
-  $(TARGET_COPY_OUT_RAMDISK) \
+  $(TARGET_COPY_OUT_ROOT)/ \
+  $(TARGET_COPY_OUT_SYSTEM)/ \
+  $(TARGET_COPY_OUT_RAMDISK)/ \
 
 $(call require-artifacts-in-path, $(_my_paths), $(_my_whitelist))
