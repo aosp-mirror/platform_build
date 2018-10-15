@@ -161,6 +161,24 @@
     },
     {
       "key": {
+        "uuid": "47fdd240_a75504d2",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-15T23:23:37Z",
+      "side": 1,
+      "message": "correction, the src part of $(COMPATIBILITY.device-tests.shared_lib.FILES) is for the intermediate dir, build complains there is no rule to build it.",
+      "parentUuid": "dee4d956_3ee3c1ce",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "69dbdd3e_eb94a48c",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 2
