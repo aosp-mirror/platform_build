@@ -22,6 +22,30 @@
       "revId": "ed4218a3d3feb603ac83e3b683d2885e4747579e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc42d6d5_e15b9926",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2710,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-10-15T15:47:24Z",
+      "side": 1,
+      "message": "you mean adding another c2gl invocation just to generate $(5)? Would probably be cleaner, I\u0027ll take a look.",
+      "parentUuid": "0a3ecd66_6edcc1fd",
+      "range": {
+        "startLine": 2710,
+        "startChar": 5,
+        "endLine": 2710,
+        "endChar": 30
+      },
+      "revId": "ed4218a3d3feb603ac83e3b683d2885e4747579e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
