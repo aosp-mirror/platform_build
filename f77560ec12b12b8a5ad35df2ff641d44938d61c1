@@ -16,6 +16,24 @@
       "revId": "f77560ec12b12b8a5ad35df2ff641d44938d61c1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5c86c88_d535437d",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1039,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-10-15T17:43:36Z",
+      "side": 0,
+      "message": "that\u0027s probably better than the current impl, but I wanted to allow this more relaxed setting of allowing unused whitelist entries too, for now. The whitelist for the current I\u0027m enabling is annoyingly long right now..",
+      "parentUuid": "8a3a20bd_7d7990de",
+      "revId": "f77560ec12b12b8a5ad35df2ff641d44938d61c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
