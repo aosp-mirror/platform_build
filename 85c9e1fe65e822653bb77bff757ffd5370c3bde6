@@ -179,6 +179,24 @@
     },
     {
       "key": {
+        "uuid": "8bbe5b39_e1640956",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-15T23:24:19Z",
+      "side": 1,
+      "message": "What do you mean \"for the intermediate dir\"?  Can you give an example?",
+      "parentUuid": "47fdd240_a75504d2",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "69dbdd3e_eb94a48c",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 2
