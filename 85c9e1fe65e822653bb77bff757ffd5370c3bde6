@@ -126,6 +126,46 @@
     },
     {
       "key": {
+        "uuid": "43d11e68_8caf01b0",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-15T21:38:36Z",
+      "side": 1,
+      "message": "You also need the src parts of $(COMPATIBILITY.device-tests.shared_lib.FILES) in the dependency list",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "69dbdd3e_eb94a48c",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-15T21:38:36Z",
+      "side": 1,
+      "message": "$(hide) is unnecessary now, just leave it out",
+      "range": {
+        "startLine": 26,
+        "startChar": 1,
+        "endLine": 26,
+        "endChar": 9
+      },
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "11ea81fb_22f9a3a4",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 2
@@ -137,6 +177,47 @@
       "writtenOn": "2018-10-15T18:37:56Z",
       "side": 1,
       "message": "There are 5 libraries don\u0027t exist in their intermediate folder, and failed to copy:\nlibcuttlefish_fs.so\nlibcuttlefish_strings.so\nthese 2 are shared libraries for adb_integration_test_adb. As the libraries are cuttlefish specific, I don\u0027t think I can add them to shared library of that module directly (not sure if that will even work).\n\nlibc.so\nlibm.so\nlibdl.so\nThese 3 are required by some python tests (py2-funcsigs-tests, tradefed_hello_world)\nI tried to add them to the Android.bp of each module, but they failed to build.\n\nThese related tests are currently in general-tests suite. One way to avoid the check is to remove these tests from general-tests suite.",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "063368f4_311a99cb",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-15T21:38:36Z",
+      "side": 1,
+      "message": "only put a tab as the first character on each line in the rule, indent the rest with spaces.",
+      "range": {
+        "startLine": 31,
+        "startChar": 1,
+        "endLine": 31,
+        "endChar": 2
+      },
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "70060857_6033b8eb",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-15T21:38:36Z",
+      "side": 1,
+      "message": "Once you add the missing dependencies above I expect these will exist.",
+      "parentUuid": "11ea81fb_22f9a3a4",
       "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
