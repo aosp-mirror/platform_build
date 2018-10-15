@@ -34,6 +34,24 @@
       "revId": "f77560ec12b12b8a5ad35df2ff641d44938d61c1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "634a4287_65992df2",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1039,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-10-15T19:51:03Z",
+      "side": 0,
+      "message": "changed the check to your version (on top of the \"relaxed\" setting, so wildcards work in the strict version too).",
+      "parentUuid": "c5c86c88_d535437d",
+      "revId": "f77560ec12b12b8a5ad35df2ff641d44938d61c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
