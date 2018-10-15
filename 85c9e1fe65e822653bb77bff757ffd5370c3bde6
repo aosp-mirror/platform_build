@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "5c9199c3_7e6e360f",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1309,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-15T18:37:56Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b2da6910_7d610230",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2e762b35_1f4effa8",
         "filename": "core/definitions.mk",
         "patchSetId": 2
@@ -84,6 +102,41 @@
       "side": 1,
       "message": "It depends, if the function is used in a rule then it can\u0027t use LOCAL_2ND_ARCH_VAR_PREFIX, it has to use a value local to the rule (something like PRIVATE_2ND_ARCH_VAR_PREFIX).\n\nIt\u0027s generally better to make things like this arguments instead of assuming a global variable is set, so I\u0027d suggest leaving it like this.",
       "parentUuid": "70251289_5c2ff8e5",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23f0632a_2700e111",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 3023,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-15T18:37:56Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "0973cdf7_95f72983",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "11ea81fb_22f9a3a4",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-15T18:37:56Z",
+      "side": 1,
+      "message": "There are 5 libraries don\u0027t exist in their intermediate folder, and failed to copy:\nlibcuttlefish_fs.so\nlibcuttlefish_strings.so\nthese 2 are shared libraries for adb_integration_test_adb. As the libraries are cuttlefish specific, I don\u0027t think I can add them to shared library of that module directly (not sure if that will even work).\n\nlibc.so\nlibm.so\nlibdl.so\nThese 3 are required by some python tests (py2-funcsigs-tests, tradefed_hello_world)\nI tried to add them to the Android.bp of each module, but they failed to build.\n\nThese related tests are currently in general-tests suite. One way to avoid the check is to remove these tests from general-tests suite.",
       "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
