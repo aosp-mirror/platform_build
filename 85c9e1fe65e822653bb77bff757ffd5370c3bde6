@@ -143,6 +143,24 @@
     },
     {
       "key": {
+        "uuid": "dee4d956_3ee3c1ce",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-15T23:22:22Z",
+      "side": 1,
+      "message": "That list is not a file list, instead it\u0027s a list of keyval like src:dest, will build supports that format?\nAnother issue is that the source path is for intermediate directory, build script will complain that there is no rule to build that.\n\nI tried the deps, build gives me an error:\nbuild/make/core/tasks/device-tests.mk:24: error: multiple target patterns",
+      "parentUuid": "43d11e68_8caf01b0",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "69dbdd3e_eb94a48c",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 2
@@ -154,6 +172,30 @@
       "writtenOn": "2018-10-15T21:38:36Z",
       "side": 1,
       "message": "$(hide) is unnecessary now, just leave it out",
+      "range": {
+        "startLine": 26,
+        "startChar": 1,
+        "endLine": 26,
+        "endChar": 9
+      },
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "436cc348_16042278",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-15T23:22:22Z",
+      "side": 1,
+      "message": "remove this line. It\u0027s for debug.",
+      "parentUuid": "69dbdd3e_eb94a48c",
       "range": {
         "startLine": 26,
         "startChar": 1,
@@ -221,6 +263,30 @@
       "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "141e5780_a7b2affb",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-15T23:22:22Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "063368f4_311a99cb",
+      "range": {
+        "startLine": 31,
+        "startChar": 1,
+        "endLine": 31,
+        "endChar": 2
+      },
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
