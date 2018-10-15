@@ -1268,7 +1268,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     target_file = construct_target_files()
     common.ZipDelete(target_file, 'IMAGES/vendor.img')
     payload = Payload()
-    self.assertRaises(AssertionError, payload.Generate, target_file)
+    self.assertRaises(common.ExternalError, payload.Generate, target_file)
 
   def test_Sign_full(self):
     payload = self._create_payload_full()
@@ -1316,7 +1316,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload = self._create_payload_full()
     payload_signer = PayloadSigner()
     payload_signer.signer_args.append('bad-option')
-    self.assertRaises(AssertionError, payload.Sign, payload_signer)
+    self.assertRaises(common.ExternalError, payload.Sign, payload_signer)
 
   def test_WriteToZip(self):
     payload = self._create_payload_full()
