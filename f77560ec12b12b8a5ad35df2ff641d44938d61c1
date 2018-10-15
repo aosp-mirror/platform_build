@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8a3a20bd_7d7990de",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1039,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-15T17:15:24Z",
+      "side": 0,
+      "message": "If it\u0027s just wildcards you need to solve, you could use:\n$(eval unused_whitelist :\u003d $(foreach pattern,$(whitelist_patterns),\\\n  $(if $(filter $(pattern),$(extra_files)),,$(pattern)))",
+      "revId": "f77560ec12b12b8a5ad35df2ff641d44938d61c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
