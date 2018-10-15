@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a3c450f_654d515b",
+        "filename": "core/strings.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-15T17:00:01Z",
+      "side": 1,
+      "message": "\"word\" has a distinct meaning in Makefiles, it\u0027s characters separated by whitespace.  Maybe \"tuple\"?",
+      "range": {
+        "startLine": 76,
+        "startChar": 8,
+        "endLine": 76,
+        "endChar": 12
+      },
+      "revId": "0c1b40aafe8a50ec3585983f34efeabc7cd0b2a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "020cab2f_30e997ca",
+        "filename": "core/strings.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-15T17:00:01Z",
+      "side": 1,
+      "message": "Might be worth a quick performance check before and after this change, this might be a hot enough path to be worth leaving as-is",
+      "revId": "0c1b40aafe8a50ec3585983f34efeabc7cd0b2a4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
