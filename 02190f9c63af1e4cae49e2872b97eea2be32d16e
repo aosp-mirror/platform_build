@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e70bc651_970f5f7d",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-10-15T10:31:39Z",
+      "side": 1,
+      "message": "I think it should be better that adding one more if statement to make sure that this kind of filtering will only be apply.\nDue to the create-suite-dependencies will only be applied for this if statement.\n\"ifdef LOCAL_COMPATIBILITY_SUITE\"",
+      "range": {
+        "startLine": 413,
+        "startChar": 0,
+        "endLine": 413,
+        "endChar": 90
+      },
+      "revId": "02190f9c63af1e4cae49e2872b97eea2be32d16e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
