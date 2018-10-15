@@ -399,7 +399,7 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
     partitions: A dict that's keyed by partition names with image paths as
         values. Only valid partition names are accepted, as listed in
         common.AVB_PARTITIONS.
-    name: Name of the VBMeta partition, e.g. 'vbmeta', 'vbmeta_mainline'.
+    name: Name of the VBMeta partition, e.g. 'vbmeta', 'vbmeta_system'.
     needed_partitions: Partitions whose descriptors should be included into the
         generated VBMeta image.
 
@@ -832,15 +832,15 @@ def AddImagesToTargetFiles(filename):
     # chained VBMeta image plus the chained VBMeta images themselves.
     vbmeta_partitions = common.AVB_PARTITIONS[:]
 
-    vbmeta_mainline = OPTIONS.info_dict.get("avb_vbmeta_mainline", "").strip()
-    if vbmeta_mainline:
-      banner("vbmeta_mainline")
+    vbmeta_system = OPTIONS.info_dict.get("avb_vbmeta_system", "").strip()
+    if vbmeta_system:
+      banner("vbmeta_system")
       AddVBMeta(
-          output_zip, partitions, "vbmeta_mainline", vbmeta_mainline.split())
+          output_zip, partitions, "vbmeta_system", vbmeta_system.split())
       vbmeta_partitions = [
           item for item in vbmeta_partitions
-          if item not in vbmeta_mainline.split()]
-      vbmeta_partitions.append("vbmeta_mainline")
+          if item not in vbmeta_system.split()]
+      vbmeta_partitions.append("vbmeta_system")
 
     vbmeta_vendor = OPTIONS.info_dict.get("avb_vbmeta_vendor", "").strip()
     if vbmeta_vendor:

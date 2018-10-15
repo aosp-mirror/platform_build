@@ -2657,12 +2657,12 @@ BOARD_AVB_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 endif
 
 INTERNAL_AVB_PARTITIONS_IN_CHAINED_VBMETA_IMAGES := \
-    $(BOARD_AVB_VBMETA_MAINLINE) \
+    $(BOARD_AVB_VBMETA_SYSTEM) \
     $(BOARD_AVB_VBMETA_VENDOR)
 
 # Not allowing the same partition to appear in multiple groups.
 ifneq ($(words $(sort $(INTERNAL_AVB_PARTITIONS_IN_CHAINED_VBMETA_IMAGES))),$(words $(INTERNAL_AVB_PARTITIONS_IN_CHAINED_VBMETA_IMAGES)))
-  $(error BOARD_AVB_VBMETA_MAINLINE and BOARD_AVB_VBMETA_VENDOR cannot have duplicates)
+  $(error BOARD_AVB_VBMETA_SYSTEM and BOARD_AVB_VBMETA_VENDOR cannot have duplicates)
 endif
 
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
@@ -2675,7 +2675,7 @@ PRODUCT_SERVICES_FOOTER_ARGS := BOARD_AVB_PRODUCT_SERVICES_ADD_HASHTREE_FOOTER_A
 ODM_FOOTER_ARGS := BOARD_AVB_ODM_ADD_HASHTREE_FOOTER_ARGS
 
 # Helper function that checks and sets required build variables for an AVB chained partition.
-# $(1): the partition to enable AVB chain, e.g., boot or system or vbmeta_mainline.
+# $(1): the partition to enable AVB chain, e.g., boot or system or vbmeta_system.
 define _check-and-set-avb-chain-args
 $(eval part := $(1))
 $(eval PART=$(call to-upper,$(part)))
@@ -2698,7 +2698,7 @@ $(eval INTERNAL_AVB_MAKE_VBMETA_IMAGE_ARGS += \
     --chain_partition $(part):$($(_rollback_index_location)):$(AVB_CHAIN_KEY_DIR)/$(part).avbpubkey)
 
 # Set rollback_index via footer args for non-chained vbmeta image. Chained vbmeta image will pick up
-# the index via a separate flag (e.g. BOARD_AVB_VBMETA_MAINLINE_ROLLBACK_INDEX).
+# the index via a separate flag (e.g. BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX).
 $(if $(filter $(part),$(part:vbmeta_%=%)),\
     $(eval _footer_args := $(PART)_FOOTER_ARGS) \
     $(eval $($(_footer_args)) += --rollback_index $($(_rollback_index))))
@@ -2750,9 +2750,9 @@ ifdef INSTALLED_RECOVERYIMAGE_TARGET
 $(eval $(call check-and-set-avb-args,recovery))
 endif
 
-# Not using INSTALLED_VBMETA_MAINLINEIMAGE_TARGET as it won't be set yet.
-ifdef BOARD_AVB_VBMETA_MAINLINE
-$(eval $(call check-and-set-avb-args,vbmeta_mainline))
+# Not using INSTALLED_VBMETA_SYSTEMIMAGE_TARGET as it won't be set yet.
+ifdef BOARD_AVB_VBMETA_SYSTEM
+$(eval $(call check-and-set-avb-args,vbmeta_system))
 endif
 
 ifdef BOARD_AVB_VBMETA_VENDOR
@@ -2772,12 +2772,12 @@ endif
 endif
 
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096
-BOARD_AVB_MAKE_VBMETA_MAINLINE_IMAGE_ARGS += --padding_size 4096
+BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS += --padding_size 4096
 BOARD_AVB_MAKE_VBMETA_VENDOR_IMAGE_ARGS += --padding_size 4096
 
 ifeq (eng,$(filter eng, $(TARGET_BUILD_VARIANT)))
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --set_hashtree_disabled_flag
-BOARD_AVB_MAKE_VBMETA_MAINLINE_IMAGE_ARGS += --set_hashtree_disabled_flag
+BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS += --set_hashtree_disabled_flag
 BOARD_AVB_MAKE_VBMETA_VENDOR_IMAGE_ARGS += --set_hashtree_disabled_flag
 endif
 
@@ -2785,9 +2785,9 @@ ifdef BOARD_AVB_ROLLBACK_INDEX
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --rollback_index $(BOARD_AVB_ROLLBACK_INDEX)
 endif
 
-ifdef BOARD_AVB_VBMETA_MAINLINE_ROLLBACK_INDEX
-BOARD_AVB_MAKE_VBMETA_MAINLINE_IMAGE_ARGS += \
-    --rollback_index $(BOARD_AVB_VBMETA_MAINLINE_ROLLBACK_INDEX)
+ifdef BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX
+BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS += \
+    --rollback_index $(BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX)
 endif
 
 ifdef BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX
@@ -2821,9 +2821,9 @@ define extract-avb-chain-public-keys
   $(if $(BOARD_AVB_RECOVERY_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_RECOVERY_KEY_PATH) \
       --output $(1)/recovery.avbpubkey)
-  $(if $(BOARD_AVB_VBMETA_MAINLINE_KEY_PATH),\
-    $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VBMETA_MAINLINE_KEY_PATH) \
-        --output $(1)/vbmeta_mainline.avbpubkey)
+  $(if $(BOARD_AVB_VBMETA_SYSTEM_KEY_PATH),\
+    $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VBMETA_SYSTEM_KEY_PATH) \
+        --output $(1)/vbmeta_system.avbpubkey)
   $(if $(BOARD_AVB_VBMETA_VENDOR_KEY_PATH),\
     $(hide) $(AVBTOOL) extract_public_key --key $(BOARD_AVB_VBMETA_VENDOR_KEY_PATH) \
         --output $(1)/vbmeta_vendor.avbpubkey)
@@ -2831,11 +2831,11 @@ endef
 
 # Builds a chained VBMeta image. This VBMeta image will contain the descriptors for the partitions
 # specified in BOARD_AVB_VBMETA_<NAME>. The built VBMeta image will be included into the top-level
-# vbmeta image as a chained partition. For example, if a target defines `BOARD_AVB_VBMETA_MAINLINE
-# := system product_services`, `vbmeta_mainline.img` will be created that includes the descriptors
-# for `system.img` and `product_services.img`. `vbmeta_mainline.img` itself will be included into
+# vbmeta image as a chained partition. For example, if a target defines `BOARD_AVB_VBMETA_SYSTEM
+# := system product_services`, `vbmeta_system.img` will be created that includes the descriptors
+# for `system.img` and `product_services.img`. `vbmeta_system.img` itself will be included into
 # `vbmeta.img` as a chained partition.
-# $(1): VBMeta image name, such as "vbmeta_mainline", "vbmeta_vendor" etc.
+# $(1): VBMeta image name, such as "vbmeta_system", "vbmeta_vendor" etc.
 # $(2): Output filename.
 define build-chained-vbmeta-image
   $(call pretty,"Target chained vbmeta image: $@")
@@ -2847,13 +2847,13 @@ define build-chained-vbmeta-image
       --output $@
 endef
 
-ifdef BOARD_AVB_VBMETA_MAINLINE
-INSTALLED_VBMETA_MAINLINEIMAGE_TARGET := $(PRODUCT_OUT)/vbmeta_mainline.img
-$(INSTALLED_VBMETA_MAINLINEIMAGE_TARGET): \
+ifdef BOARD_AVB_VBMETA_SYSTEM
+INSTALLED_VBMETA_SYSTEMIMAGE_TARGET := $(PRODUCT_OUT)/vbmeta_system.img
+$(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET): \
 		$(AVBTOOL) \
-		$(call images-for-partitions,$(BOARD_AVB_VBMETA_MAINLINE)) \
-		$(BOARD_AVB_VBMETA_MAINLINE_KEY_PATH)
-	$(call build-chained-vbmeta-image,vbmeta_mainline)
+		$(call images-for-partitions,$(BOARD_AVB_VBMETA_SYSTEM)) \
+		$(BOARD_AVB_VBMETA_SYSTEM_KEY_PATH)
+	$(call build-chained-vbmeta-image,vbmeta_system)
 endif
 
 ifdef BOARD_AVB_VBMETA_VENDOR
@@ -2891,9 +2891,9 @@ $(INSTALLED_VBMETAIMAGE_TARGET): \
 		$(INSTALLED_ODMIMAGE_TARGET) \
 		$(INSTALLED_DTBOIMAGE_TARGET) \
 		$(INSTALLED_RECOVERYIMAGE_TARGET) \
-		$(INSTALLED_VBMETA_MAINLINEIMAGE_TARGET) \
+		$(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET) \
 		$(INSTALLED_VBMETA_VENDORIMAGE_TARGET) \
-		$(BOARD_AVB_VBMETA_MAINLINE_KEY_PATH) \
+		$(BOARD_AVB_VBMETA_SYSTEM_KEY_PATH) \
 		$(BOARD_AVB_VBMETA_VENDOR_KEY_PATH) \
 		$(BOARD_AVB_KEY_PATH)
 	$(build-vbmetaimage-target)
@@ -3520,16 +3520,16 @@ ifdef BOARD_AVB_RECOVERY_KEY_PATH
 	$(hide) echo "avb_recovery_algorithm=$(BOARD_AVB_RECOVERY_ALGORITHM)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "avb_recovery_rollback_index_location=$(BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION)" >> $(zip_root)/META/misc_info.txt
 endif # BOARD_AVB_RECOVERY_KEY_PATH
-ifneq (,$(strip $(BOARD_AVB_VBMETA_MAINLINE)))
-	$(hide) echo "avb_vbmeta_mainline=$(BOARD_AVB_VBMETA_MAINLINE)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "avb_vbmeta_mainline_args=$(BOARD_AVB_MAKE_VBMETA_MAINLINE_IMAGE_ARGS)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "avb_vbmeta_mainline_key_path=$(BOARD_AVB_VBMETA_MAINLINE_KEY_PATH)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "avb_vbmeta_mainline_algorithm=$(BOARD_AVB_VBMETA_MAINLINE_ALGORITHM)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "avb_vbmeta_mainline_rollback_index_location=$(BOARD_AVB_VBMETA_MAINLINE_ROLLBACK_INDEX_LOCATION)" >> $(zip_root)/META/misc_info.txt
-endif # BOARD_AVB_VBMETA_MAINLINE
+ifneq (,$(strip $(BOARD_AVB_VBMETA_SYSTEM)))
+	$(hide) echo "avb_vbmeta_system=$(BOARD_AVB_VBMETA_SYSTEM)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "avb_vbmeta_system_args=$(BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "avb_vbmeta_system_key_path=$(BOARD_AVB_VBMETA_SYSTEM_KEY_PATH)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "avb_vbmeta_system_algorithm=$(BOARD_AVB_VBMETA_SYSTEM_ALGORITHM)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "avb_vbmeta_system_rollback_index_location=$(BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION)" >> $(zip_root)/META/misc_info.txt
+endif # BOARD_AVB_VBMETA_SYSTEM
 ifneq (,$(strip $(BOARD_AVB_VBMETA_VENDOR)))
 	$(hide) echo "avb_vbmeta_vendor=$(BOARD_AVB_VBMETA_VENDOR)" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo "avb_vbmeta_vendor_args=$(BOARD_AVB_MAKE_VBMETA_MAINLINE_IMAGE_ARGS)" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "avb_vbmeta_vendor_args=$(BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "avb_vbmeta_vendor_key_path=$(BOARD_AVB_VBMETA_VENDOR_KEY_PATH)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "avb_vbmeta_vendor_algorithm=$(BOARD_AVB_VBMETA_VENDOR_ALGORITHM)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "avb_vbmeta_vendor_rollback_index_location=$(BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION)" >> $(zip_root)/META/misc_info.txt
