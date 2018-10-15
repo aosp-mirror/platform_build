@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04797b0b_9b499603",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-15T16:45:41Z",
+      "side": 1,
+      "message": "Don\u0027t add extra echos, the first one becomes the description status line in ninja, but any others just become build noise.",
+      "revId": "498791860f98ffce8c700227dbdb644de4674c98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
