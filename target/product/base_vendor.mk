@@ -34,6 +34,7 @@ PRODUCT_PACKAGES += \
     fs_config_dirs_nonsystem \
     gralloc.default \
     group \
+    init_vendor \
     libbundlewrapper \
     libclearkeycasplugin \
     libdownmix \
