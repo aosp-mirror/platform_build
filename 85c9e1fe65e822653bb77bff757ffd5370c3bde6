@@ -251,6 +251,24 @@
     },
     {
       "key": {
+        "uuid": "d08e0a60_a8ece848",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-16T06:16:07Z",
+      "side": 1,
+      "message": "Comparing Android.bp of libunwindstack and libperfetto, it seems that libperfetto needs a \"host\" section in target setting. I\u0027m wondering if I need to find out the modules that have these shared lib deps and remove these modules from general-tests? That\u0027s the only way to have the shared libraries as general-tests target\u0027s dependency.",
+      "parentUuid": "7eb15d77_97b210a8",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "69dbdd3e_eb94a48c",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 2
