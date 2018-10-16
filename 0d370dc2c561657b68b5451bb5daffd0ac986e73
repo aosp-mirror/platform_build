@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a171f631_6dd29a5d",
+        "filename": "core/android_manifest.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-16T18:24:40Z",
+      "side": 1,
+      "message": "Add a comment explaining why these two are special",
+      "revId": "0d370dc2c561657b68b5451bb5daffd0ac986e73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
