@@ -16,6 +16,24 @@
       "revId": "a366433092a712b5f6073542cf36fdc1072baf3d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c32b1830_5defb7d0",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-16T20:39:45Z",
+      "side": 1,
+      "message": "Thanks! This is indeed the issue.",
+      "parentUuid": "7b6a226e_73f26395",
+      "revId": "a366433092a712b5f6073542cf36fdc1072baf3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
