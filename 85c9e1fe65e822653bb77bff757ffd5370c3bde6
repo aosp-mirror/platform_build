@@ -215,6 +215,24 @@
     },
     {
       "key": {
+        "uuid": "2cf3cb2a_83d7a0f1",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-16T04:18:43Z",
+      "side": 1,
+      "message": "m -j general-tests\n\nFAILED: ninja: \u0027out/host/linux-x86/obj/SHARED_LIBRARIES/libtraced_shared_intermediates/libtraced_shared.so\u0027, needed by \u0027out/target/product/vsoc_x86/general-tests.zip\u0027, missing and no known rule to make it\n\nso far there is one failure when building general-tests.zip\nBuilding device-tests is successful though.",
+      "parentUuid": "95bc2c4e_f7b3d243",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "69dbdd3e_eb94a48c",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 2
