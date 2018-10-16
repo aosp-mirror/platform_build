@@ -22,6 +22,30 @@
       "revId": "02190f9c63af1e4cae49e2872b97eea2be32d16e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e5994c0e_a2f1281d",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-10-16T03:01:28Z",
+      "side": 1,
+      "message": "After my testing, I think we don\u0027t have to add this.\nBecause if LOCAL_COMPATIBILITY_SUITE \u003d null,\nthen it won\u0027t enter the logic of create-suite-dependencies.",
+      "parentUuid": "e70bc651_970f5f7d",
+      "range": {
+        "startLine": 413,
+        "startChar": 0,
+        "endLine": 413,
+        "endChar": 90
+      },
+      "revId": "02190f9c63af1e4cae49e2872b97eea2be32d16e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
