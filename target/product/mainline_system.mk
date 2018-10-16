@@ -27,6 +27,7 @@ PRODUCT_PACKAGES += \
     DMService \
     LiveWallpapersPicker \
     PartnerBookmarksProvider \
+    PresencePolling \
     RcsService \
     SafetyRegulatoryInfo \
     Stk \
