@@ -269,6 +269,24 @@
     },
     {
       "key": {
+        "uuid": "c7810267_ac4a1a2a",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-16T18:19:07Z",
+      "side": 1,
+      "message": "The first one works fine for me:\nm out/host/linux-x86/obj/SHARED_LIBRARIES/libcuttlefish_strings_intermediates/libcuttlefish_strings.so\n\nAnything with .vendor is a device library, so you must be mixing host and device dependencies somewhere.\n\nlibperfetto doesn\u0027t build for the host, and I don\u0027t see it used as a device dependency of anything that builds for host and device.  How is it getting into the host libraries list?",
+      "parentUuid": "d08e0a60_a8ece848",
+      "revId": "85c9e1fe65e822653bb77bff757ffd5370c3bde6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "69dbdd3e_eb94a48c",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 2
