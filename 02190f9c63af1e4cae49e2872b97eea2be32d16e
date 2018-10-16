@@ -46,6 +46,30 @@
       "revId": "02190f9c63af1e4cae49e2872b97eea2be32d16e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78ee53ee_c784a719",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 413,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-10-16T03:19:58Z",
+      "side": 1,
+      "message": "I misunderstood the problem of LOCAL_COMPATIBILITY_SUITE and I fixed it, thx.",
+      "parentUuid": "e5994c0e_a2f1281d",
+      "range": {
+        "startLine": 413,
+        "startChar": 0,
+        "endLine": 413,
+        "endChar": 90
+      },
+      "revId": "02190f9c63af1e4cae49e2872b97eea2be32d16e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
