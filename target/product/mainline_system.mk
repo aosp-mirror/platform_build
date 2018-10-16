@@ -40,6 +40,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     netutils-wrapper-1.0 \
 
+# Charger images
+PRODUCT_PACKAGES += \
+    charger_res_images \
+
 # system_other support
 PRODUCT_PACKAGES += \
     cppreopts.sh \
