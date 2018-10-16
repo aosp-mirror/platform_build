@@ -958,7 +958,6 @@ ifeq ($(PRODUCT_USE_LOGICAL_PARTITIONS),true)
     requirements := \
         PRODUCT_USE_DYNAMIC_PARTITION_SIZE \
         PRODUCT_BUILD_SUPER_PARTITION \
-        PRODUCT_USE_FASTBOOTD \
 
     $(foreach req,$(requirements),$(if $(filter false,$($(req))),\
         $(error PRODUCT_USE_LOGICAL_PARTITIONS requires $(req) to be true)))
