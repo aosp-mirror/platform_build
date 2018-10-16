@@ -3660,6 +3660,13 @@ ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 	$(hide) echo $(call build-superimage-target-args,$(if $(filter true,$(AB_OTA_UPDATER)),_a,)) \
 	    >> $(zip_root)/META/misc_info.txt
 endif
+ifneq ($(BOARD_SUPER_PARTITION_GROUPS),)
+	$(hide) echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" > $(zip_root)/META/dynamic_partitions_info.txt
+	$(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
+	    echo "$(group)_size=$(BOARD_$(call to-upper,$(group))_SIZE)" >> $(zip_root)/META/dynamic_partitions_info.txt; \
+	    $(if $(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
+	        echo "$(group)_partition_list=$(BOARD_$(call to-upper,$(group))_PARTITION_LIST)" >> $(zip_root)/META/dynamic_partitions_info.txt;))
+endif
 
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    build/make/tools/releasetools/add_img_to_target_files -a -v -p $(HOST_OUT) $(zip_root)
