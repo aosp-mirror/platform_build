@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7b6a226e_73f26395",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-16T19:36:58Z",
+      "side": 1,
+      "message": "my_shared_libraries may not have been set if !LOCAL_SHARED_LIBRARIES.  That will mean it reuses the previously set value of my_shared_libraries from a different module.  Add my_shared_libraries :\u003d outside the if LOCAL_SHARED_LIBRARIES, or move this inside if LOCAL_SHARED_LIBRARIES.",
+      "revId": "a366433092a712b5f6073542cf36fdc1072baf3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
