@@ -1034,9 +1034,11 @@ ifdef FULL_BUILD
     $(eval whitelist := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST)) \
     $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
     $(eval offending_files := $(filter-out $(whitelist_patterns),$(files_in_requirement))) \
-    $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS),\
+    $(eval enforcement := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS)) \
+    $(if $(enforcement),\
       $(call maybe-print-list-and-error,$(offending_files),$(INTERNAL_PRODUCT) produces files inside $(makefile)s artifact path requirement.) \
-      $(eval unused_whitelist := $(filter-out $(extra_files),$(whitelist_patterns))) \
+      $(eval unused_whitelist := $(if $(filter true strict,$(enforcement)),\
+        $(foreach p,$(whitelist_patterns),$(if $(filter $(p),$(extra_files)),,$(p))))) \
       $(call maybe-print-list-and-error,$(unused_whitelist),$(INTERNAL_PRODUCT) includes redundant artifact path requirement whitelist entries.) \
     ) \
   )
