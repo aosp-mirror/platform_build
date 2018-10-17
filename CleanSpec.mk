@@ -512,6 +512,9 @@ $(call add-clean-step, rm -rf $(addsuffix /lib,\
 # Remove strip.sh intermediates to save space
 $(call add-clean-step, find $(OUT_DIR) \( -name "*.so.debug" -o -name "*.so.dynsyms" -o -name "*.so.funcsyms" -o -name "*.so.keep_symbols" -o -name "*.so.mini_debuginfo.xz" \) -print0 | xargs -0 rm -f)
 
+# Clean up old ninja files
+$(call add-clean-step, rm -f $(OUT_DIR)/build-*-dist*.ninja)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

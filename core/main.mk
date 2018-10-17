@@ -1490,6 +1490,8 @@ tidy_only:
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
 
+$(call dist-write-file,$(KATI_PACKAGE_MK_DIR)/dist.mk)
+
 $(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] writing build rules ...)
 
 endif # KATI

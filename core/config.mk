@@ -24,7 +24,13 @@ include $(BUILD_SYSTEM_COMMON)/core.mk
 
 # Mark variables that should be coming as environment variables from soong_ui
 # as readonly
-.KATI_READONLY := OUT_DIR TMPDIR BUILD_DATETIME_FILE DIST_DIR
+.KATI_READONLY := OUT_DIR TMPDIR BUILD_DATETIME_FILE
+ifdef CALLED_FROM_SETUP
+  .KATI_READONLY := CALLED_FROM_SETUP DIST_DIR
+endif
+ifdef KATI_PACKAGE_MK_DIR
+  .KATI_READONLY := KATI_PACKAGE_MK_DIR
+endif
 
 # Mark variables deprecated/obsolete
 CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
@@ -87,16 +93,21 @@ $(KATI_obsolete_var \
 # This is marked as obsolete in envsetup.mk after reading the BoardConfig.mk
 $(KATI_deprecate_export It is a global setting. See $(CHANGES_URL)#export_keyword)
 
-CHANGES_URL :=
-
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
 FORCE:
 
 ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
 
-dist_goal := $(strip $(filter dist,$(MAKECMDGOALS)))
-MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
+ifdef CALLED_FROM_SETUP
+  dist_goal := $(strip $(filter dist,$(MAKECMDGOALS)))
+  MAKECMDGOALS := $(strip $(filter-out dist,$(MAKECMDGOALS)))
+  .KATI_READONLY := dist_goal
+else
+  $(KATI_obsolete_var DIST_DIR dist_goal,Use dist-for-goals instead. See $(CHANGES_URL)#dist)
+endif
+
+CHANGES_URL :=
 
 UNAME := $(shell uname -sm)
 
