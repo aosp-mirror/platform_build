@@ -42,11 +42,14 @@ $(foreach cf,$(unique_product_copy_files_pairs), \
         $(eval unique_product_copy_files_destinations += $(_dest))))
 
 # Dump a list of overriden (and ignored PRODUCT_COPY_FILES entries)
-$(file >$(PRODUCT_OUT)/product_copy_files_ignored.txt,$(subst $(space),$(newline),$(strip $(product_copy_files_ignored))))
-ifdef dist_goal
-$(file >$(DIST_DIR)/logs/product_copy_files_ignored.txt,$(subst $(space),$(newline),$(strip $(product_copy_files_ignored))))
-endif
+pcf_ignored_file := $(PRODUCT_OUT)/product_copy_files_ignored.txt
+$(pcf_ignored_file): PRIVATE_IGNORED := $(sort $(product_copy_files_ignored))
+$(pcf_ignored_file):
+	echo "$(PRIVATE_IGNORED)" | tr " " "\n" >$@
 
+$(call dist-for-goals,droidcore,$(pcf_ignored_file):logs/$(notdir $(pcf_ignored_file)))
+
+pcf_ignored_file :=
 product_copy_files_ignored :=
 unique_product_copy_files_pairs :=
 unique_product_copy_files_destinations :=
@@ -1918,7 +1921,7 @@ define build-systemimage-target
       build/make/tools/releasetools/build_image.py \
       $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1) $(TARGET_OUT) \
       $(systemimage_intermediates)/generated_system_image_info.txt \
-      || ( mkdir -p $(DIST_DIR); cp $(INSTALLED_FILES_FILE) $(DIST_DIR)/installed-files-rescued.txt; \
+      || ( mkdir -p $$(DIST_DIR); cp $(INSTALLED_FILES_FILE) $$(DIST_DIR)/installed-files-rescued.txt; \
            exit 1 )
 endef
 
