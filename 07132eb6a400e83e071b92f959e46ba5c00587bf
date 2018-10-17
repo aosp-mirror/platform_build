@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1781d7b4_4f5172f7",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1675,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-17T07:31:49Z",
+      "side": 1,
+      "message": "%d?",
+      "range": {
+        "startLine": 1675,
+        "startChar": 14,
+        "endLine": 1675,
+        "endChar": 27
+      },
+      "revId": "07132eb6a400e83e071b92f959e46ba5c00587bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
