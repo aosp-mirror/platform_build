@@ -2939,18 +2939,20 @@ define build-superimage-target-args
   --metadata-size 65536 \
   --metadata-slots $(if $(1),2,1) \
   --device-size $(BOARD_SUPER_PARTITION_SIZE) \
-  $(foreach name,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-    --partition $(name)$(1):readonly:$(if $(2),$(call read-size-of-partitions,$(name)),0) \
-    $(if $(2), --image $(name)$(1)=$(call images-for-partitions,$(name))) \
-    $(if $(1), --partition $(name)_b:readonly:0) \
-  )
+  $(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
+    --group $(group):$(BOARD_$(call to-upper,$(group))_SIZE) \
+    $(foreach name,$(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
+      --partition $(name)$(1):readonly:$(if $(2),$(call read-size-of-partitions,$(name)),0):$(group) \
+      $(if $(2), --image $(name)$(1)=$(call images-for-partitions,$(name))) \
+      $(if $(1), --partition $(name)_b:readonly:0:$(group)) \
+  ))
 endef
 
 # $(1): output image path
 # $(2): slot A suffix (_a or empty)
 # $(3): include images or not (true or empty)
 define build-superimage-target
-  $(HOST_OUT_EXECUTABLES)/lpmake \
+  $(LPMAKE) \
     $(call build-superimage-target-args,$(2),$(3)) \
     --output $(1)
 endef
