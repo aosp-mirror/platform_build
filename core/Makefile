@@ -2941,11 +2941,12 @@ define build-superimage-target-args
   --metadata-slots $(if $(1),2,1) \
   --device-size $(BOARD_SUPER_PARTITION_SIZE) \
   $(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
-    --group $(group):$(BOARD_$(call to-upper,$(group))_SIZE) \
+    --group $(group)$(1):$(BOARD_$(call to-upper,$(group))_SIZE) \
+    $(if $(1), --group $(group)_b:$(BOARD_$(call to-upper,$(group))_SIZE)) \
     $(foreach name,$(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
-      --partition $(name)$(1):readonly:$(if $(2),$(call read-size-of-partitions,$(name)),0):$(group) \
+      --partition $(name)$(1):readonly:$(if $(2),$(call read-size-of-partitions,$(name)),0):$(group)$(1) \
       $(if $(2), --image $(name)$(1)=$(call images-for-partitions,$(name))) \
-      $(if $(1), --partition $(name)_b:readonly:0:$(group)) \
+      $(if $(1), --partition $(name)_b:readonly:0:$(group)_b) \
   ))
 endef
 
