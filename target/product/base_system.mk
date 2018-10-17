@@ -85,9 +85,9 @@ PRODUCT_PACKAGES += \
     incidentd \
     incident_helper \
     incident_report \
-    init \
     init.environ.rc \
     init.rc \
+    init_system \
     input \
     installd \
     iorapd \

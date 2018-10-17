@@ -169,7 +169,6 @@ import os.path
 import shlex
 import shutil
 import struct
-import subprocess
 import sys
 import tempfile
 import zipfile
@@ -393,11 +392,7 @@ class PayloadSigner(object):
       cmd.extend(["-passin", "pass:" + pw] if pw else ["-nocrypt"])
       signing_key = common.MakeTempFile(prefix="key-", suffix=".key")
       cmd.extend(["-out", signing_key])
-
-      get_signing_key = common.Run(cmd, verbose=False)
-      stdoutdata, _ = get_signing_key.communicate()
-      assert get_signing_key.returncode == 0, \
-          "Failed to get signing key: {}".format(stdoutdata)
+      common.RunAndCheckOutput(cmd, verbose=False)
 
       self.signer = "openssl"
       self.signer_args = ["pkeyutl", "-sign", "-inkey", signing_key,
@@ -410,10 +405,7 @@ class PayloadSigner(object):
     """Signs the given input file. Returns the output filename."""
     out_file = common.MakeTempFile(prefix="signed-", suffix=".bin")
     cmd = [self.signer] + self.signer_args + ['-in', in_file, '-out', out_file]
-    signing = common.Run(cmd)
-    stdoutdata, _ = signing.communicate()
-    assert signing.returncode == 0, \
-        "Failed to sign the input file: {}".format(stdoutdata)
+    common.RunAndCheckOutput(cmd)
     return out_file
 
 
@@ -431,8 +423,6 @@ class Payload(object):
     Args:
       secondary: Whether it's generating a secondary payload (default: False).
     """
-    # The place where the output from the subprocess should go.
-    self._log_file = sys.stdout if OPTIONS.verbose else subprocess.PIPE
     self.payload_file = None
     self.payload_properties = None
     self.secondary = secondary
@@ -457,10 +447,7 @@ class Payload(object):
     if source_file is not None:
       cmd.extend(["--source_image", source_file])
     cmd.extend(additional_args)
-    p = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
-    stdoutdata, _ = p.communicate()
-    assert p.returncode == 0, \
-        "brillo_update_payload generate failed: {}".format(stdoutdata)
+    common.RunAndCheckOutput(cmd)
 
     self.payload_file = payload_file
     self.payload_properties = None
@@ -484,9 +471,7 @@ class Payload(object):
            "--signature_size", "256",
            "--metadata_hash_file", metadata_sig_file,
            "--payload_hash_file", payload_sig_file]
-    p1 = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
-    p1.communicate()
-    assert p1.returncode == 0, "brillo_update_payload hash failed"
+    common.RunAndCheckOutput(cmd)
 
     # 2. Sign the hashes.
     signed_payload_sig_file = payload_signer.Sign(payload_sig_file)
@@ -501,9 +486,7 @@ class Payload(object):
            "--signature_size", "256",
            "--metadata_signature_file", signed_metadata_sig_file,
            "--payload_signature_file", signed_payload_sig_file]
-    p1 = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
-    p1.communicate()
-    assert p1.returncode == 0, "brillo_update_payload sign failed"
+    common.RunAndCheckOutput(cmd)
 
     # 4. Dump the signed payload properties.
     properties_file = common.MakeTempFile(prefix="payload-properties-",
@@ -511,9 +494,7 @@ class Payload(object):
     cmd = ["brillo_update_payload", "properties",
            "--payload", signed_payload_file,
            "--properties_file", properties_file]
-    p1 = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
-    p1.communicate()
-    assert p1.returncode == 0, "brillo_update_payload properties failed"
+    common.RunAndCheckOutput(cmd)
 
     if self.secondary:
       with open(properties_file, "a") as f:
