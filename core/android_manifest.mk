@@ -72,8 +72,15 @@ ifeq ($(LOCAL_PRIVATE_PLATFORM_APIS),true)
     my_manifest_fixer_flags += --uses-non-sdk-api
 endif
 $(fixed_android_manifest): PRIVATE_MANIFEST_FIXER_FLAGS := $(my_manifest_fixer_flags)
+# These two libs are added as optional dependencies (<uses-library> with
+# android:required set to false). This is because they haven't existed in pre-P
+# devices, but classes in them were in bootclasspath jars, etc. So making them
+# hard dependencies (andriod:required=true) would prevent apps from being
+# installed to such legacy devices.
+$(fixed_android_manifest): PRIVATE_OPTIONAL_SDK_LIB_NAMES := android.test.base android.test.mock
 $(fixed_android_manifest): $(MANIFEST_FIXER)
 $(fixed_android_manifest): $(main_android_manifest)
+	echo $(PRIVATE_OPTIONAL_SDK_LIB_NAMES) | tr ' ' '\n' > $(PRIVATE_EXPORTED_SDK_LIBS_FILE).optional
 	@echo "Fix manifest: $@"
 	$(MANIFEST_FIXER) \
 	  --minSdkVersion $(PRIVATE_MIN_SDK_VERSION) \
@@ -81,5 +88,8 @@ $(fixed_android_manifest): $(main_android_manifest)
           --raise-min-sdk-version \
 	  $(PRIVATE_MANIFEST_FIXER_FLAGS) \
 	  $(if (PRIVATE_EXPORTED_SDK_LIBS_FILE),\
-	    $$(cat $(PRIVATE_EXPORTED_SDK_LIBS_FILE) | sort -u | sed -e 's/^/\ --uses-library\ /' | tr '\n' ' ')) \
+	    $$(cat $(PRIVATE_EXPORTED_SDK_LIBS_FILE) | grep -v -f $(PRIVATE_EXPORTED_SDK_LIBS_FILE).optional | sort -u | sed -e 's/^/\ --uses-library\ /' | tr '\n' ' ') \
+	    $$(cat $(PRIVATE_EXPORTED_SDK_LIBS_FILE) | grep -f $(PRIVATE_EXPORTED_SDK_LIBS_FILE).optional | sort -u | sed -e 's/^/\ --optional-uses-library\ /' | tr '\n' ' ') \
+	   ) \
 	  $< $@
+	rm $(PRIVATE_EXPORTED_SDK_LIBS_FILE).optional
