@@ -22,6 +22,30 @@
       "revId": "07132eb6a400e83e071b92f959e46ba5c00587bf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b3920101_4473923c",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1675,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-17T14:53:34Z",
+      "side": 1,
+      "message": "Done\n\n(my local verification didn\u0027t trigger this path, as it seems to be a legacy path from file-based patching, used by some targets.)",
+      "parentUuid": "1781d7b4_4f5172f7",
+      "range": {
+        "startLine": 1675,
+        "startChar": 14,
+        "endLine": 1675,
+        "endChar": 27
+      },
+      "revId": "07132eb6a400e83e071b92f959e46ba5c00587bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
