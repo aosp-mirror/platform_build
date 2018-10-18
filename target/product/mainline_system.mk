@@ -68,13 +68,12 @@ PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
 PRODUCT_NAME := mainline_system
 PRODUCT_BRAND := generic
-PRODUCT_SHIPPING_API_LEVEL := 28
 
 _base_mk_whitelist :=
 
 _my_whitelist := $(_base_mk_whitelist)
 
-# Both /system and / are in system.img when PRODUCT_SHIPPING_API_LEVEL>=28.
+# For mainline, system.img should be mounted at /, so we include ROOT here.
 _my_paths := \
   $(TARGET_COPY_OUT_ROOT) \
   $(TARGET_COPY_OUT_SYSTEM) \
