@@ -54,7 +54,7 @@ PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio.hearing_aid.default \
 
-PRODUCT_PACKAGES_DEBUG := \
+PRODUCT_PACKAGES_DEBUG += \
     avbctl \
     bootctl \
     tinyplay \
