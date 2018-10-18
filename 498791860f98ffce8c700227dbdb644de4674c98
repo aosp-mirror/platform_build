@@ -16,6 +16,24 @@
       "revId": "498791860f98ffce8c700227dbdb644de4674c98",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cbeda837_ed2e39c3",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-10-18T07:46:17Z",
+      "side": 1,
+      "message": "Got it, thanks.",
+      "parentUuid": "04797b0b_9b499603",
+      "revId": "498791860f98ffce8c700227dbdb644de4674c98",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
