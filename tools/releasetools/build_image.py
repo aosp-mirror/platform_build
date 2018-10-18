@@ -26,6 +26,7 @@ Usage:  build_image.py input_directory properties_file output_image \\
 
 from __future__ import print_function
 
+import logging
 import os
 import os.path
 import re
@@ -34,6 +35,8 @@ import sys
 
 import common
 import verity_utils
+
+logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
 BLOCK_SIZE = common.BLOCK_SIZE
@@ -228,8 +231,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       "partition_size" not in prop_dict):
     # If partition_size is not defined, use output of `du' + reserved_size.
     size = GetDiskUsage(in_dir)
-    if OPTIONS.verbose:
-      print("The tree size of %s is %d MB." % (in_dir, size // BYTES_IN_MB))
+    logger.info(
+        "The tree size of %s is %d MB.", in_dir, size // BYTES_IN_MB)
     size += int(prop_dict.get("partition_reserved_size", 0))
     # Round this up to a multiple of 4K so that avbtool works
     size = common.RoundUpTo4K(size)
@@ -241,8 +244,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
           lambda x: verity_utils.AVBCalcMaxImageSize(
               avbtool, avb_footer_type, x, avb_signing_args))
     prop_dict["partition_size"] = str(size)
-    if OPTIONS.verbose:
-      print("Allocating %d MB for %s." % (size // BYTES_IN_MB, out_file))
+    logger.info(
+        "Allocating %d MB for %s.", size // BYTES_IN_MB, out_file)
 
   prop_dict["image_size"] = prop_dict["partition_size"]
 
@@ -350,8 +353,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       du_str = "{} bytes ({} MB)".format(du, du // BYTES_IN_MB)
     # Suppress any errors from GetDiskUsage() to avoid hiding the real errors
     # from common.RunAndCheckOutput().
-    except Exception as e:  # pylint: disable=broad-except
-      print(e, file=sys.stderr)
+    except Exception:  # pylint: disable=broad-except
+      logger.exception("Failed to compute disk usage with du")
       du_str = "unknown"
     print(
         "Out of space? The tree size of {} is {}, with reserved space of {} "
@@ -664,6 +667,8 @@ def main(argv):
     print(__doc__)
     sys.exit(1)
 
+  common.InitLogging()
+
   in_dir = argv[0]
   glob_dict_file = argv[1]
   out_file = argv[2]
@@ -697,7 +702,7 @@ def main(argv):
     elif image_filename == "product_services.img":
       mount_point = "product_services"
     else:
-      print("error: unknown image file name ", image_filename, file=sys.stderr)
+      logger.error("Unknown image file name %s", image_filename)
       sys.exit(1)
 
     image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
@@ -705,13 +710,13 @@ def main(argv):
   try:
     BuildImage(in_dir, image_properties, out_file, target_out)
   except:
-    print("Error: Failed to build {} from {}".format(out_file, in_dir),
-          file=sys.stderr)
+    logger.error("Failed to build %s from %s", out_file, in_dir)
     raise
 
   if prop_file_out:
     glob_dict_out = GlobalDictFromImageProp(image_properties, mount_point)
     SaveGlobalDict(prop_file_out, glob_dict_out)
+
 
 if __name__ == '__main__':
   try:

@@ -16,6 +16,7 @@
 
 from __future__ import print_function
 
+import logging
 import os.path
 import shlex
 import struct
@@ -23,6 +24,8 @@ import struct
 import common
 import sparse_img
 from rangelib import RangeSet
+
+logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
 BLOCK_SIZE = common.BLOCK_SIZE
@@ -71,7 +74,7 @@ def GetSimgSize(image_file):
 
 def ZeroPadSimg(image_file, pad_size):
   blocks = pad_size // BLOCK_SIZE
-  print("Padding %d blocks (%d bytes)" % (blocks, pad_size))
+  logger.info("Padding %d blocks (%d bytes)", blocks, pad_size)
   simg = sparse_img.SparseImage(image_file, mode="r+b", build_map=False)
   simg.AppendFillChunk(0, blocks)
 
@@ -114,9 +117,9 @@ def AdjustPartitionSizeForVerity(partition_size, fec_supported):
     else:
       hi = i
 
-  if OPTIONS.verbose:
-    print("Adjusted partition size for verity, partition_size: {},"
-          " verity_size: {}".format(result, verity_size))
+  logger.info(
+      "Adjusted partition size for verity, partition_size: %s, verity_size: %s",
+      result, verity_size)
   AdjustPartitionSizeForVerity.results[key] = (result, verity_size)
   return (result, verity_size)
 
@@ -326,9 +329,9 @@ def AVBCalcMinPartitionSize(image_size, size_calculator):
     else:
       lo = mid + BLOCK_SIZE
 
-  if OPTIONS.verbose:
-    print("AVBCalcMinPartitionSize({}): partition_size: {}.".format(
-        image_size, partition_size))
+  logger.info(
+      "AVBCalcMinPartitionSize(%d): partition_size: %d.",
+      image_size, partition_size)
 
   return partition_size
 
@@ -514,9 +517,9 @@ class VerifiedBootVersion1HashtreeInfoGenerator(HashtreeInfoGenerator):
             salt, self.hashtree_info.salt)
 
     if root_hash != self.hashtree_info.root_hash:
-      print(
-          "Calculated root hash {} doesn't match the one in metadata {}".format(
-              root_hash, self.hashtree_info.root_hash))
+      logger.warning(
+          "Calculated root hash %s doesn't match the one in metadata %s",
+          root_hash, self.hashtree_info.root_hash)
       return False
 
     # Reads the generated hash tree and checks if it has the exact same bytes
