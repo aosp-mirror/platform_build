@@ -36,8 +36,6 @@ PWD := $(shell pwd)
 TOP := .
 TOPDIR :=
 
-BUILD_SYSTEM := $(TOPDIR)build/make/core
-
 # This is the default target.  It must be the first declared target.
 .PHONY: droid
 DEFAULT_GOAL := droid
@@ -48,7 +46,7 @@ droid_targets:
 
 # Set up various standard variables based on configuration
 # and host information.
-include $(BUILD_SYSTEM)/config.mk
+include build/make/core/config.mk
 
 ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
 dont_bother := true
@@ -419,6 +417,19 @@ ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
 ENFORCE_RRO_SOURCES :=
 endif
 
+# Color-coded warnings including current module info
+# $(1): message to print
+define pretty-warning
+$(shell $(call echo-warning,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
+endef
+
+# Color-coded errors including current module info
+# $(1): message to print
+define pretty-error
+$(shell $(call echo-error,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
+$(error done)
+endef
+
 subdir_makefiles_inc := .
 FULL_BUILD :=
 
@@ -491,6 +502,18 @@ $(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] fi
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
+
+# -------------------------------------------------------------------
+# Use basic warning/error messages now that LOCAL_MODULE_MAKEFILE
+# and LOCAL_MODULE aren't useful anymore.
+# -------------------------------------------------------------------
+define pretty-warning
+$(warning $(1))
+endef
+
+define pretty-error
+$(error $(1))
+endef
 
 # -------------------------------------------------------------------
 # Enforce to generate all RRO packages for modules having resource

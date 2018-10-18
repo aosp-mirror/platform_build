@@ -17,36 +17,10 @@ $(warning )
 $(error done)
 endif
 
-# Only use ANDROID_BUILD_SHELL to wrap around bash.
-# DO NOT use other shells such as zsh.
-ifdef ANDROID_BUILD_SHELL
-SHELL := $(ANDROID_BUILD_SHELL)
-else
-# Use bash, not whatever shell somebody has installed as /bin/sh
-# This is repeated from main.mk, since envsetup.sh runs this file
-# directly.
-SHELL := /bin/bash
-endif
+BUILD_SYSTEM :=$= build/make/core
+BUILD_SYSTEM_COMMON :=$= build/make/common
 
-# Utility variables.
-empty :=
-space := $(empty) $(empty)
-comma := ,
-# Note that make will eat the newline just before endef.
-define newline
-
-
-endef
-# The pound character "#"
-define pound
-#
-endef
-# Unfortunately you can't simply define backslash as \ or \\.
-backslash := \a
-backslash := $(patsubst %a,%,$(backslash))
-
-# Prevent accidentally changing these variables
-.KATI_READONLY := SHELL empty space comma newline pound backslash
+include $(BUILD_SYSTEM_COMMON)/core.mk
 
 # Mark variables that should be coming as environment variables from soong_ui
 # as readonly
@@ -138,9 +112,9 @@ endif
 
 # Set up efficient math functions which are used in make.
 # Here since this file is included by envsetup as well as during build.
-include $(BUILD_SYSTEM)/math.mk
+include $(BUILD_SYSTEM_COMMON)/math.mk
 
-include $(BUILD_SYSTEM)/strings.mk
+include $(BUILD_SYSTEM_COMMON)/strings.mk
 
 # Various mappings to avoid hard-coding paths all over the place
 include $(BUILD_SYSTEM)/pathmap.mk
