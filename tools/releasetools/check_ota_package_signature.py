@@ -21,15 +21,17 @@ Verify a given OTA package with the specifed certificate.
 from __future__ import print_function
 
 import argparse
+import logging
 import re
 import subprocess
 import sys
 import zipfile
-
 from hashlib import sha1
 from hashlib import sha256
 
 import common
+
+logger = logging.getLogger(__name__)
 
 
 def CertUsesSha256(cert):
@@ -180,6 +182,8 @@ def main():
   parser.add_argument('certificate', help='The certificate to be used.')
   parser.add_argument('package', help='The OTA package to be verified.')
   args = parser.parse_args()
+
+  common.InitLogging()
 
   VerifyPackage(args.certificate, args.package)
   VerifyAbOtaPayload(args.certificate, args.package)

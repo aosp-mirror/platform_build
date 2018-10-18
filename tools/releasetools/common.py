@@ -20,6 +20,9 @@ import getopt
 import getpass
 import gzip
 import imp
+import json
+import logging
+import logging.config
 import os
 import platform
 import re
@@ -36,6 +39,8 @@ from hashlib import sha1, sha256
 
 import blockimgdiff
 import sparse_img
+
+logger = logging.getLogger(__name__)
 
 
 class Options(object):
@@ -121,13 +126,53 @@ class ExternalError(RuntimeError):
   pass
 
 
+def InitLogging():
+  DEFAULT_LOGGING_CONFIG = {
+      'version': 1,
+      'disable_existing_loggers': False,
+      'formatters': {
+          'standard': {
+              'format':
+                  '%(asctime)s - %(filename)s - %(levelname)-8s: %(message)s',
+              'datefmt': '%Y-%m-%d %H:%M:%S',
+          },
+      },
+      'handlers': {
+          'default': {
+              'class': 'logging.StreamHandler',
+              'formatter': 'standard',
+          },
+      },
+      'loggers': {
+          '': {
+              'handlers': ['default'],
+              'level': 'WARNING',
+              'propagate': True,
+          }
+      }
+  }
+  env_config = os.getenv('LOGGING_CONFIG')
+  if env_config:
+    with open(env_config) as f:
+      config = json.load(f)
+  else:
+    config = DEFAULT_LOGGING_CONFIG
+
+    # Increase the logging level for verbose mode.
+    if OPTIONS.verbose:
+      config = copy.deepcopy(DEFAULT_LOGGING_CONFIG)
+      config['loggers']['']['level'] = 'INFO'
+
+  logging.config.dictConfig(config)
+
+
 def Run(args, verbose=None, **kwargs):
   """Creates and returns a subprocess.Popen object.
 
   Args:
     args: The command represented as a list of strings.
-    verbose: Whether the commands should be shown (default to OPTIONS.verbose
-        if unspecified).
+    verbose: Whether the commands should be shown. Default to the global
+        verbosity if unspecified.
     kwargs: Any additional args to be passed to subprocess.Popen(), such as env,
         stdin, etc. stdout and stderr will default to subprocess.PIPE and
         subprocess.STDOUT respectively unless caller specifies any of them.
@@ -135,13 +180,12 @@ def Run(args, verbose=None, **kwargs):
   Returns:
     A subprocess.Popen object.
   """
-  if verbose is None:
-    verbose = OPTIONS.verbose
   if 'stdout' not in kwargs and 'stderr' not in kwargs:
     kwargs['stdout'] = subprocess.PIPE
     kwargs['stderr'] = subprocess.STDOUT
-  if verbose:
-    print("  Running: \"{}\"".format(" ".join(args)))
+  # Don't log any if caller explicitly says so.
+  if verbose != False:
+    logger.info("  Running: \"%s\"", " ".join(args))
   return subprocess.Popen(args, **kwargs)
 
 
@@ -150,8 +194,8 @@ def RunAndCheckOutput(args, verbose=None, **kwargs):
 
   Args:
     args: The command represented as a list of strings.
-    verbose: Whether the commands should be shown (default to OPTIONS.verbose
-        if unspecified).
+    verbose: Whether the commands should be shown. Default to the global
+        verbosity if unspecified.
     kwargs: Any additional args to be passed to subprocess.Popen(), such as env,
         stdin, etc. stdout and stderr will default to subprocess.PIPE and
         subprocess.STDOUT respectively unless caller specifies any of them.
@@ -162,12 +206,11 @@ def RunAndCheckOutput(args, verbose=None, **kwargs):
   Raises:
     ExternalError: On non-zero exit from the command.
   """
-  if verbose is None:
-    verbose = OPTIONS.verbose
   proc = Run(args, verbose=verbose, **kwargs)
   output, _ = proc.communicate()
-  if verbose:
-    print("{}".format(output.rstrip()))
+  # Don't log any if caller explicitly says so.
+  if verbose != False:
+    logger.info("%s", output.rstrip())
   if proc.returncode != 0:
     raise ExternalError(
         "Failed to run command '{}' (exit code {}):\n{}".format(
@@ -277,8 +320,8 @@ def LoadInfoDict(input_file, repacking=False):
       if os.path.exists(system_base_fs_file):
         d["system_base_fs_file"] = system_base_fs_file
       else:
-        print("Warning: failed to find system base fs file: %s" % (
-            system_base_fs_file,))
+        logger.warning(
+            "Failed to find system base fs file: %s", system_base_fs_file)
         del d["system_base_fs_file"]
 
     if "vendor_base_fs_file" in d:
@@ -287,8 +330,8 @@ def LoadInfoDict(input_file, repacking=False):
       if os.path.exists(vendor_base_fs_file):
         d["vendor_base_fs_file"] = vendor_base_fs_file
       else:
-        print("Warning: failed to find vendor base fs file: %s" % (
-            vendor_base_fs_file,))
+        logger.warning(
+            "Failed to find vendor base fs file: %s", vendor_base_fs_file)
         del d["vendor_base_fs_file"]
 
   def makeint(key):
@@ -364,7 +407,7 @@ def LoadBuildProp(read_helper, prop_file):
   try:
     data = read_helper(prop_file)
   except KeyError:
-    print("Warning: could not read %s" % (prop_file,))
+    logger.warning("Failed to read %s", prop_file)
     data = ""
   return LoadDictionaryFromLines(data.split("\n"))
 
@@ -394,7 +437,7 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
   try:
     data = read_helper(recovery_fstab_path)
   except KeyError:
-    print("Warning: could not find {}".format(recovery_fstab_path))
+    logger.warning("Failed to find %s", recovery_fstab_path)
     data = ""
 
   assert fstab_version == 2
@@ -447,7 +490,7 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
 
 def DumpInfoDict(d):
   for k, v in sorted(d.items()):
-    print("%-25s = (%s) %s" % (k, type(v).__name__, v))
+    logger.info("%-25s = (%s) %s", k, type(v).__name__, v)
 
 
 def AppendAVBSigningArgs(cmd, partition):
@@ -657,15 +700,15 @@ def GetBootableImage(name, prebuilt_name, unpack_dir, tree_subdir,
 
   prebuilt_path = os.path.join(unpack_dir, "BOOTABLE_IMAGES", prebuilt_name)
   if os.path.exists(prebuilt_path):
-    print("using prebuilt %s from BOOTABLE_IMAGES..." % (prebuilt_name,))
+    logger.info("using prebuilt %s from BOOTABLE_IMAGES...", prebuilt_name)
     return File.FromLocalFile(name, prebuilt_path)
 
   prebuilt_path = os.path.join(unpack_dir, "IMAGES", prebuilt_name)
   if os.path.exists(prebuilt_path):
-    print("using prebuilt %s from IMAGES..." % (prebuilt_name,))
+    logger.info("using prebuilt %s from IMAGES...", prebuilt_name)
     return File.FromLocalFile(name, prebuilt_path)
 
-  print("building image from target_files %s..." % (tree_subdir,))
+  logger.info("building image from target_files %s...", tree_subdir)
 
   if info_dict is None:
     info_dict = OPTIONS.info_dict
@@ -1001,9 +1044,9 @@ def CheckSize(data, target, info_dict):
     if pct >= 99.0:
       raise ExternalError(msg)
     elif pct >= 95.0:
-      print("\n  WARNING: %s\n" % (msg,))
-    elif OPTIONS.verbose:
-      print("  ", msg)
+      logger.warning("\n  WARNING: %s\n", msg)
+    else:
+      logger.info("  %s", msg)
 
 
 def ReadApkCerts(tf_zip):
@@ -1302,13 +1345,13 @@ class PasswordManager(object):
           continue
         m = re.match(r"^\[\[\[\s*(.*?)\s*\]\]\]\s*(\S+)$", line)
         if not m:
-          print("failed to parse password file: ", line)
+          logger.warning("Failed to parse password file: %s", line)
         else:
           result[m.group(2)] = m.group(1)
       f.close()
     except IOError as e:
       if e.errno != errno.ENOENT:
-        print("error reading password file: ", str(e))
+        logger.exception("Error reading password file:")
     return result
 
 
@@ -1452,10 +1495,10 @@ class DeviceSpecificParams(object):
           if x == ".py":
             f = b
           info = imp.find_module(f, [d])
-        print("loaded device-specific extensions from", path)
+        logger.info("loaded device-specific extensions from %s", path)
         self.module = imp.load_module("device_specific", *info)
       except ImportError:
-        print("unable to load device-specific module; assuming none")
+        logger.info("unable to load device-specific module; assuming none")
 
   def _DoCall(self, function_name, *args, **kwargs):
     """Call the named function in the device-specific module, passing
@@ -1597,7 +1640,7 @@ class Difference(object):
       th.start()
       th.join(timeout=300)   # 5 mins
       if th.is_alive():
-        print("WARNING: diff command timed out")
+        logger.warning("diff command timed out")
         p.terminate()
         th.join(5)
         if th.is_alive():
@@ -1605,8 +1648,7 @@ class Difference(object):
           th.join()
 
       if p.returncode != 0:
-        print("WARNING: failure running %s:\n%s\n" % (
-            diff_program, "".join(err)))
+        logger.warning("Failure running %s:\n%s\n", diff_program, "".join(err))
         self.patch = None
         return None, None, None
       diff = ptemp.read()
@@ -1630,7 +1672,7 @@ class Difference(object):
 
 def ComputeDifferences(diffs):
   """Call ComputePatch on all the Difference objects in 'diffs'."""
-  print(len(diffs), "diffs to compute")
+  logger.info("%d diffs to compute", len(diffs))
 
   # Do the largest files first, to try and reduce the long-pole effect.
   by_size = [(i.tf.size, i) for i in diffs]
@@ -1656,14 +1698,14 @@ def ComputeDifferences(diffs):
         else:
           name = "%s (%s)" % (tf.name, sf.name)
         if patch is None:
-          print(
-              "patching failed!                                  %s" % (name,))
+          logger.error("patching failed! %40s", name)
         else:
-          print("%8.2f sec %8d / %8d bytes (%6.2f%%) %s" % (
-              dur, len(patch), tf.size, 100.0 * len(patch) / tf.size, name))
+          logger.info(
+              "%8.2f sec %8d / %8d bytes (%6.2f%%) %s", dur, len(patch),
+              tf.size, 100.0 * len(patch) / tf.size, name)
       lock.release()
-    except Exception as e:
-      print(e)
+    except Exception:
+      logger.exception("Failed to compute diff from worker")
       raise
 
   # start worker threads; wait for them all to finish.
@@ -2086,6 +2128,6 @@ fi
   # in the L release.
   sh_location = "bin/install-recovery.sh"
 
-  print("putting script in", sh_location)
+  logger.info("putting script in %s", sh_location)
 
   output_sink(sh_location, sh)
