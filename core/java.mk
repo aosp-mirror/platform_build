@@ -77,6 +77,7 @@ java_source_list_file := $(intermediates.COMMON)/java-source-list
 hiddenapi_whitelist_txt := $(intermediates.COMMON)/hiddenapi/whitelist.txt
 hiddenapi_greylist_txt := $(intermediates.COMMON)/hiddenapi/greylist.txt
 hiddenapi_darkgreylist_txt := $(intermediates.COMMON)/hiddenapi/darkgreylist.txt
+hiddenapi_greylist_metadata_csv := $(intermediates.COMMON)/hiddenapi/greylist.csv
 
 ifeq ($(LOCAL_MODULE_CLASS)$(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),APPS)
 # If this is an apk without any Java code (e.g. framework-res), we should skip compiling Java.
@@ -507,8 +508,8 @@ ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),) # is_boot_jar
   # dex later on. The difference is academic currently, as we don't proguard any
   # bootclasspath code at the moment. If we were to do that, we should add keep
   # rules for all members with the @UnsupportedAppUsage annotation.
-  $(eval $(call hiddenapi-generate-greylist-txt, $(full_classes_pre_proguard_jar),$(hiddenapi_whitelist_txt),$(hiddenapi_greylist_txt),$(hiddenapi_darkgreylist_txt)))
-  LOCAL_INTERMEDIATE_TARGETS += $(hiddenapi_whitelist_txt) $(hiddenapi_greylist_txt) $(hiddenapi_darkgreylist_txt)
+  $(eval $(call hiddenapi-generate-greylist-txt, $(full_classes_pre_proguard_jar),$(hiddenapi_whitelist_txt),$(hiddenapi_greylist_txt),$(hiddenapi_darkgreylist_txt),$(hiddenapi_greylist_metadata_csv)))
+  LOCAL_INTERMEDIATE_TARGETS += $(hiddenapi_whitelist_txt) $(hiddenapi_greylist_txt) $(hiddenapi_darkgreylist_txt) $(hiddenapi_greylist_metadata_csv)
   $(eval $(call hiddenapi-copy-dex-files,$(built_dex_intermediate),$(built_dex_hiddenapi)))
   built_dex_copy_from := $(built_dex_hiddenapi)
 else # !is_boot_jar
