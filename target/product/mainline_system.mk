@@ -40,6 +40,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     netutils-wrapper-1.0 \
 
+# Charger images
+PRODUCT_PACKAGES += \
+    charger_res_images \
+
 # system_other support
 PRODUCT_PACKAGES += \
     cppreopts.sh \
@@ -49,6 +53,15 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio.hearing_aid.default \
+
+PRODUCT_PACKAGES_DEBUG := \
+    avbctl \
+    bootctl \
+    tinyplay \
+    tinycap \
+    tinymix \
+    tinypcminfo \
+    update_engine_client \
 
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
