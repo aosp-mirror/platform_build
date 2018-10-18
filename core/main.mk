@@ -1012,6 +1012,18 @@ ifdef FULL_BUILD
   product_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
 
   # Verify the artifact path requirements made by included products.
+
+  # Fakes don't get installed, and host files are irrelevant.
+  static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%
+  # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
+  static_whitelist_patterns += %__auto_generated_rro.apk
+  ifeq (true,$(BOARD_USES_SYSTEM_OTHER_ODEX))
+    # Allow system_other odex space optimization.
+    static_whitelist_patterns += \
+      $(TARGET_OUT_SYSTEM_OTHER)/%.odex \
+      $(TARGET_OUT_SYSTEM_OTHER)/%.vdex \
+      $(TARGET_OUT_SYSTEM_OTHER)/%.art
+  endif
   all_offending_files :=
   $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
     $(eval requirements := $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENTS)) \
@@ -1020,10 +1032,7 @@ ifdef FULL_BUILD
     $(eval path_patterns := $(call resolve-product-relative-paths,$(requirements),%)) \
     $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
     $(eval files := $(call product-installed-files, $(makefile))) \
-    $(eval files := $(filter-out $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%,$(files))) \
-    $(eval # RROs become REQUIRED by the source module, but are always placed on the vendor partition.) \
-    $(eval files := $(filter-out %__auto_generated_rro.apk,$(files))) \
-    $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns),$(files))) \
+    $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns) $(static_whitelist_patterns),$(files))) \
     $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
     $(eval unused_whitelist := $(filter-out $(files),$(whitelist_patterns))) \
     $(call maybe-print-list-and-error,$(unused_whitelist),$(makefile) includes redundant whitelist entries in its artifact path requirement.) \
