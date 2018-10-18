@@ -164,6 +164,7 @@ A/B OTA specific options
 
 from __future__ import print_function
 
+import logging
 import multiprocessing
 import os.path
 import shlex
@@ -181,6 +182,7 @@ if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
   sys.exit(1)
 
+logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
 OPTIONS.package_key = None
@@ -576,11 +578,11 @@ def _WriteRecoveryImageToBoot(script, output_zip):
         OPTIONS.input_tmp, "RECOVERY")
     common.ZipWriteStr(
         output_zip, recovery_two_step_img_name, recovery_two_step_img.data)
-    print("two-step package: using %s in stage 1/3" % (
-        recovery_two_step_img_name,))
+    logger.info(
+        "two-step package: using %s in stage 1/3", recovery_two_step_img_name)
     script.WriteRawImage("/boot", recovery_two_step_img_name)
   else:
-    print("two-step package: using recovery.img in stage 1/3")
+    logger.info("two-step package: using recovery.img in stage 1/3")
     # The "recovery.img" entry has been written into package earlier.
     script.WriteRawImage("/boot", "recovery.img")
 
@@ -1344,8 +1346,8 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
   target_api_version = target_info["recovery_api_version"]
   source_api_version = source_info["recovery_api_version"]
   if source_api_version == 0:
-    print("WARNING: generating edify script for a source that "
-          "can't install it.")
+    logger.warning(
+        "Generating edify script for a source that can't install it.")
 
   script = edify_generator.EdifyGenerator(
       source_api_version, target_info, fstab=source_info["fstab"])
@@ -1523,8 +1525,9 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
     else:
       include_full_boot = False
 
-      print("boot      target: %d  source: %d  diff: %d" % (
-          target_boot.size, source_boot.size, len(d)))
+      logger.info(
+          "boot      target: %d  source: %d  diff: %d", target_boot.size,
+          source_boot.size, len(d))
 
       common.ZipWriteStr(output_zip, "boot.img.p", d)
 
@@ -1574,19 +1577,19 @@ else
   if OPTIONS.two_step:
     common.ZipWriteStr(output_zip, "boot.img", target_boot.data)
     script.WriteRawImage("/boot", "boot.img")
-    print("writing full boot image (forced by two-step mode)")
+    logger.info("writing full boot image (forced by two-step mode)")
 
   if not OPTIONS.two_step:
     if updating_boot:
       if include_full_boot:
-        print("boot image changed; including full.")
+        logger.info("boot image changed; including full.")
         script.Print("Installing boot image...")
         script.WriteRawImage("/boot", "boot.img")
       else:
         # Produce the boot image by applying a patch to the current
         # contents of the boot partition, and write it back to the
         # partition.
-        print("boot image changed; including patch.")
+        logger.info("boot image changed; including patch.")
         script.Print("Patching boot image...")
         script.ShowProgress(0.1, 10)
         script.PatchPartition(
@@ -1596,7 +1599,7 @@ else
                 boot_type, boot_device, source_boot.size, source_boot.sha1),
             'boot.img.p')
     else:
-      print("boot image unchanged; skipping.")
+      logger.info("boot image unchanged; skipping.")
 
   # Do device-specific installation (eg, write radio image).
   device_specific.IncrementalOTA_InstallEnd()
@@ -1787,7 +1790,7 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
       common.ZipWriteStr(output_zip, care_map_name, care_map_data,
                          compress_type=zipfile.ZIP_STORED)
     else:
-      print("Warning: cannot find care map file in target_file package")
+      logger.warning("Cannot find care map file in target_file package")
 
   AddCompatibilityArchiveIfTrebleEnabled(
       target_zip, output_zip, target_info, source_info)
@@ -1903,6 +1906,8 @@ def main(argv):
     common.Usage(__doc__)
     sys.exit(1)
 
+  common.InitLogging()
+
   if OPTIONS.downgrade:
     # We should only allow downgrading incrementals (as opposed to full).
     # Otherwise the device may go back from arbitrary build with this full
@@ -1923,9 +1928,8 @@ def main(argv):
     with zipfile.ZipFile(args[0], 'r') as input_zip:
       OPTIONS.info_dict = common.LoadInfoDict(input_zip)
 
-  if OPTIONS.verbose:
-    print("--- target info ---")
-    common.DumpInfoDict(OPTIONS.info_dict)
+  logger.info("--- target info ---")
+  common.DumpInfoDict(OPTIONS.info_dict)
 
   # Load the source build dict if applicable.
   if OPTIONS.incremental_source is not None:
@@ -1933,9 +1937,8 @@ def main(argv):
     with zipfile.ZipFile(OPTIONS.incremental_source, 'r') as source_zip:
       OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
 
-    if OPTIONS.verbose:
-      print("--- source info ---")
-      common.DumpInfoDict(OPTIONS.source_info_dict)
+    logger.info("--- source info ---")
+    common.DumpInfoDict(OPTIONS.source_info_dict)
 
   # Load OEM dicts if provided.
   OPTIONS.oem_dicts = _LoadOemDicts(OPTIONS.oem_source)
@@ -1959,7 +1962,7 @@ def main(argv):
         output_file=args[1],
         source_file=OPTIONS.incremental_source)
 
-    print("done.")
+    logger.info("done.")
     return
 
   # Sanity check the loaded info dicts first.
@@ -1970,7 +1973,7 @@ def main(argv):
   # Non-A/B OTAs rely on /cache partition to store temporary files.
   cache_size = OPTIONS.info_dict.get("cache_size")
   if cache_size is None:
-    print("--- can't determine the cache partition size ---")
+    logger.warning("--- can't determine the cache partition size ---")
   OPTIONS.cache_size = cache_size
 
   if OPTIONS.extra_script is not None:
@@ -1979,7 +1982,7 @@ def main(argv):
   if OPTIONS.extracted_input is not None:
     OPTIONS.input_tmp = OPTIONS.extracted_input
   else:
-    print("unzipping target target-files...")
+    logger.info("unzipping target target-files...")
     OPTIONS.input_tmp = common.UnzipTemp(args[0], UNZIP_PATTERN)
   OPTIONS.target_tmp = OPTIONS.input_tmp
 
@@ -1991,7 +1994,7 @@ def main(argv):
   if OPTIONS.device_specific is None:
     from_input = os.path.join(OPTIONS.input_tmp, "META", "releasetools.py")
     if os.path.exists(from_input):
-      print("(using device-specific extensions from target_files)")
+      logger.info("(using device-specific extensions from target_files)")
       OPTIONS.device_specific = from_input
     else:
       OPTIONS.device_specific = OPTIONS.info_dict.get("tool_extensions")
@@ -2008,7 +2011,7 @@ def main(argv):
 
   # Generate an incremental OTA.
   else:
-    print("unzipping source target-files...")
+    logger.info("unzipping source target-files...")
     OPTIONS.source_tmp = common.UnzipTemp(
         OPTIONS.incremental_source, UNZIP_PATTERN)
     with zipfile.ZipFile(args[0], 'r') as input_zip, \
@@ -2024,15 +2027,15 @@ def main(argv):
         target_files_diff.recursiveDiff(
             '', OPTIONS.source_tmp, OPTIONS.input_tmp, out_file)
 
-  print("done.")
+  logger.info("done.")
 
 
 if __name__ == '__main__':
   try:
     common.CloseInheritedPipes()
     main(sys.argv[1:])
-  except common.ExternalError as e:
-    print("\n   ERROR: %s\n" % (e,))
+  except common.ExternalError:
+    logger.exception("\n   ERROR:\n")
     sys.exit(1)
   finally:
     common.Cleanup()

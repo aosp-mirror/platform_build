@@ -46,6 +46,7 @@ Usage:  add_img_to_target_files [flag] target_files
 from __future__ import print_function
 
 import datetime
+import logging
 import os
 import shlex
 import shutil
@@ -62,8 +63,9 @@ if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
   sys.exit(1)
 
-OPTIONS = common.OPTIONS
+logger = logging.getLogger(__name__)
 
+OPTIONS = common.OPTIONS
 OPTIONS.add_missing = False
 OPTIONS.rebuild_recovery = False
 OPTIONS.replace_updated_files_list = []
@@ -127,7 +129,7 @@ def AddSystem(output_zip, recovery_img=None, boot_img=None):
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system.img")
   if os.path.exists(img.input_name):
-    print("system.img already exists; no need to rebuild...")
+    logger.info("system.img already exists; no need to rebuild...")
     return img.input_name
 
   def output_sink(fn, data):
@@ -142,7 +144,7 @@ def AddSystem(output_zip, recovery_img=None, boot_img=None):
       common.ZipWrite(output_zip, ofile.name, arc_name)
 
   if OPTIONS.rebuild_recovery:
-    print("Building new recovery patch")
+    logger.info("Building new recovery patch")
     common.MakeRecoveryPatch(OPTIONS.input_tmp, output_sink, recovery_img,
                              boot_img, info_dict=OPTIONS.info_dict)
 
@@ -159,7 +161,7 @@ def AddSystemOther(output_zip):
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system_other.img")
   if os.path.exists(img.input_name):
-    print("system_other.img already exists; no need to rebuild...")
+    logger.info("system_other.img already exists; no need to rebuild...")
     return
 
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "system_other", img)
@@ -171,7 +173,7 @@ def AddVendor(output_zip):
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vendor.img")
   if os.path.exists(img.input_name):
-    print("vendor.img already exists; no need to rebuild...")
+    logger.info("vendor.img already exists; no need to rebuild...")
     return img.input_name
 
   block_list = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vendor.map")
@@ -186,7 +188,7 @@ def AddProduct(output_zip):
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "product.img")
   if os.path.exists(img.input_name):
-    print("product.img already exists; no need to rebuild...")
+    logger.info("product.img already exists; no need to rebuild...")
     return img.input_name
 
   block_list = OutputFile(
@@ -204,7 +206,7 @@ def AddProductServices(output_zip):
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES",
                    "product_services.img")
   if os.path.exists(img.input_name):
-    print("product_services.img already exists; no need to rebuild...")
+    logger.info("product_services.img already exists; no need to rebuild...")
     return img.input_name
 
   block_list = OutputFile(
@@ -220,7 +222,7 @@ def AddOdm(output_zip):
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "odm.img")
   if os.path.exists(img.input_name):
-    print("odm.img already exists; no need to rebuild...")
+    logger.info("odm.img already exists; no need to rebuild...")
     return img.input_name
 
   block_list = OutputFile(
@@ -239,7 +241,7 @@ def AddDtbo(output_zip):
   """
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "dtbo.img")
   if os.path.exists(img.input_name):
-    print("dtbo.img already exists; no need to rebuild...")
+    logger.info("dtbo.img already exists; no need to rebuild...")
     return img.input_name
 
   dtbo_prebuilt_path = os.path.join(
@@ -269,7 +271,7 @@ def AddDtbo(output_zip):
 
 
 def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
-  print("creating " + what + ".img...")
+  logger.info("creating " + what + ".img...")
 
   image_props = build_image.ImagePropFromGlobalDict(info_dict, what)
   fstab = info_dict["fstab"]
@@ -340,7 +342,7 @@ def AddUserdata(output_zip):
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "userdata.img")
   if os.path.exists(img.input_name):
-    print("userdata.img already exists; no need to rebuild...")
+    logger.info("userdata.img already exists; no need to rebuild...")
     return
 
   # Skip userdata.img if no size.
@@ -348,7 +350,7 @@ def AddUserdata(output_zip):
   if not image_props.get("partition_size"):
     return
 
-  print("creating userdata.img...")
+  logger.info("creating userdata.img...")
 
   image_props["timestamp"] = FIXED_FILE_TIMESTAMP
 
@@ -411,7 +413,7 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
   img = OutputFile(
       output_zip, OPTIONS.input_tmp, "IMAGES", "{}.img".format(name))
   if os.path.exists(img.input_name):
-    print("{}.img already exists; not rebuilding...".format(name))
+    logger.info("%s.img already exists; not rebuilding...", name)
     return img.input_name
 
   avbtool = os.getenv('AVBTOOL') or OPTIONS.info_dict["avb_avbtool"]
@@ -495,7 +497,7 @@ def AddCache(output_zip):
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "cache.img")
   if os.path.exists(img.input_name):
-    print("cache.img already exists; no need to rebuild...")
+    logger.info("cache.img already exists; no need to rebuild...")
     return
 
   image_props = build_image.ImagePropFromGlobalDict(OPTIONS.info_dict, "cache")
@@ -503,7 +505,7 @@ def AddCache(output_zip):
   if "fs_type" not in image_props:
     return
 
-  print("creating cache.img...")
+  logger.info("creating cache.img...")
 
   image_props["timestamp"] = FIXED_FILE_TIMESTAMP
 
@@ -580,8 +582,7 @@ def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
 
       present_props = [x for x in prop_name_list if x in build_props]
       if not present_props:
-        print("Warning: fingerprint is not present for partition {}".
-              format(partition))
+        logger.warning("fingerprint is not present for partition %s", partition)
         property_id, fingerprint = "unknown", "unknown"
       else:
         property_id = present_props[0]
@@ -633,7 +634,7 @@ def AddPackRadioImages(output_zip, images):
 
     prebuilt_path = os.path.join(OPTIONS.input_tmp, "IMAGES", img_name)
     if os.path.exists(prebuilt_path):
-      print("%s already exists, no need to overwrite..." % (img_name,))
+      logger.info("%s already exists, no need to overwrite...", img_name)
       continue
 
     img_radio_path = os.path.join(OPTIONS.input_tmp, "RADIO", img_name)
@@ -698,7 +699,7 @@ def AddImagesToTargetFiles(filename):
 
   if not OPTIONS.add_missing:
     if os.path.isdir(os.path.join(OPTIONS.input_tmp, "IMAGES")):
-      print("target_files appears to already contain images.")
+      logger.warning("target_files appears to already contain images.")
       sys.exit(1)
 
   OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.input_tmp, repacking=True)
@@ -748,7 +749,7 @@ def AddImagesToTargetFiles(filename):
   partitions = dict()
 
   def banner(s):
-    print("\n\n++++ " + s + " ++++\n\n")
+    logger.info("\n\n++++ " + s + " ++++\n\n")
 
   banner("boot")
   # common.GetBootableImage() returns the image directly if present.
@@ -912,20 +913,21 @@ def main(argv):
                        "is_signing"],
       extra_option_handler=option_handler)
 
-
   if len(args) != 1:
     common.Usage(__doc__)
     sys.exit(1)
 
+  common.InitLogging()
+
   AddImagesToTargetFiles(args[0])
-  print("done.")
+  logger.info("done.")
 
 if __name__ == '__main__':
   try:
     common.CloseInheritedPipes()
     main(sys.argv[1:])
-  except common.ExternalError as e:
-    print("\n   ERROR: %s\n" % (e,))
+  except common.ExternalError:
+    logger.exception("\n   ERROR:\n")
     sys.exit(1)
   finally:
     common.Cleanup()
