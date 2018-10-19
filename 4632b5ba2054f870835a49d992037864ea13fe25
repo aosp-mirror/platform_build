@@ -191,6 +191,30 @@
     },
     {
       "key": {
+        "uuid": "fa918f46_04ea650f",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2018-10-19T16:01:34Z",
+      "side": 1,
+      "message": "use the POSIX -k option to get output in 1024-byte blocks, and multiply by 1024 instead?\n\n(that is worth explicitly doing, since there is broad disagreement about whether 512 or 1024 is right default.)\n\nbut there\u0027s no magic going on here... there\u0027s no secret access to the actual number of bytes. struct stat is in terms of 512-byte blocks, and any other answer you get is just a multiplication.",
+      "parentUuid": "6e02d1e5_fe3ea982",
+      "range": {
+        "startLine": 65,
+        "startChar": 15,
+        "endLine": 65,
+        "endChar": 19
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "392744d3_ca317cf0",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
