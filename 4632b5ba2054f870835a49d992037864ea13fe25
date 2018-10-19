@@ -71,6 +71,30 @@
     },
     {
       "key": {
+        "uuid": "96a801ce_827f4c97",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-19T14:57:20Z",
+      "side": 1,
+      "message": "Portable variant for linux and MaxOS:\n\nBLOCKSIZE\u003d4096 du -s\n\n_nothing_ works for the Android toybox version, fortunately we do not need to use it.",
+      "parentUuid": "8782a1bc_26d174eb",
+      "range": {
+        "startLine": 65,
+        "startChar": 15,
+        "endLine": 65,
+        "endChar": 19
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "392744d3_ca317cf0",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
