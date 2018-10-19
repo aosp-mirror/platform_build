@@ -14,16 +14,6 @@
 # limitations under the License.
 #
 
-# This is a build configuration for the product aspects that
-# are specific to the emulator.
-
-PRODUCT_COPY_FILES := \
-    device/generic/goldfish/camera/media_profiles.xml:system/etc/media_profiles.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:system/etc/media_codecs_google_audio.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:system/etc/media_codecs_google_telephony.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:system/etc/media_codecs_google_video.xml \
-    device/generic/goldfish/camera/media_codecs.xml:system/etc/media_codecs.xml
-
 # NFC:
 #   Provide default libnfc-nci.conf file for devices that does not have one in
 #   vendor/etc because aosp system image (of aosp_$arch products) is going to
@@ -32,7 +22,3 @@ PRODUCT_COPY_FILES := \
 #   NFC configuration file should be in vendor/etc, instead of system/etc
 PRODUCT_COPY_FILES += \
     device/generic/common/nfc/libnfc-nci.conf:system/etc/libnfc-nci.conf
-
-PRODUCT_PACKAGES := \
-    audio.primary.goldfish \
-    vibrator.goldfish
