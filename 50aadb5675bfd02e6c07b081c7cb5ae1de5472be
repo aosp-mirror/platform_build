@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "557e0faf_fedeef75",
+        "filename": "core/config.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1136354
+      },
+      "writtenOn": "2018-10-19T20:30:02Z",
+      "side": 1,
+      "message": "does it mean dumpvars phase need it still?",
+      "revId": "50aadb5675bfd02e6c07b081c7cb5ae1de5472be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
