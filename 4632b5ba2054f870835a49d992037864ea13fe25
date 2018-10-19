@@ -215,6 +215,30 @@
     },
     {
       "key": {
+        "uuid": "93ec3b6b_07d6c5c6",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-19T16:35:13Z",
+      "side": 1,
+      "message": "Ok, -k instead.\n\nBut so you understand why I _was_ doing this.\n\nIt is supposed to round up on each individual file. The du for SysVr3 in 1981 did so, I used it to prototype file systems for distribution, I never checked if this remained true on other *NIX variants since then, first time I cared is today. This produces a different sum than if rounding is done only on the total. Two files of 1 byte each should report a total of 12K (3 * 4096, including housing directory). du (back then) was also allowed to round up internally to either 512 or 4K minimum recognizing the page size of the system; alas POSIX specifies 512 today (if no block size is specified) to give a more consistent result.\n\nI only partially care if du does this or not, I add another 16MB of slop below (for zero reserved space condition) just in case it underestimates the size because it is doing the math as you propose. As such, if I chose `du -k` * 1024, everything should still really work ...\n\nI may care when we add squashfs since its blocksize is 128KB, because then du output might be considered as a lie and we will have to replace the tool (perhaps let python migrate through the directory itself to get a more accurate value). I have not started (and it is not a priority) on squashfs, the estimates with du is likely to be bogus anyways due to compression and the ability of squashfs to serialize the content and not be _really_ 128KB except for blacklisted uncompressed file(s).",
+      "parentUuid": "fa918f46_04ea650f",
+      "range": {
+        "startLine": 65,
+        "startChar": 15,
+        "endLine": 65,
+        "endChar": 19
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "392744d3_ca317cf0",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
