@@ -18,12 +18,17 @@
 Utils for running unittests.
 """
 
+import logging
 import os
 import os.path
 import struct
+import sys
 import unittest
 
 import common
+
+# Some test runner doesn't like outputs from stderr.
+logging.basicConfig(stream=sys.stdout)
 
 
 def get_testdata_dir():
