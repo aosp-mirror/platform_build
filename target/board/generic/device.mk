@@ -14,17 +14,6 @@
 # limitations under the License.
 #
 
-# This is a build configuration for the product aspects that
-# are specific to the emulator.
-
-PRODUCT_COPY_FILES := \
-    device/generic/goldfish/camera/media_profiles.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_audio.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_telephony.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_telephony.xml \
-    frameworks/av/media/libstagefright/data/media_codecs_google_video.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_google_video.xml \
-    device/generic/goldfish/camera/media_codecs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs.xml \
-    hardware/libhardware_legacy/audio/audio_policy.conf:system/etc/audio_policy.conf
-
 # NFC:
 #   Provide default libnfc-nci.conf file for devices that does not have one in
 #   vendor/etc because aosp system image (of aosp_$arch products) is going to
