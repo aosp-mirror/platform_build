@@ -86,6 +86,24 @@
       "revId": "252b2df47ba13587a2feeab24ae415a58532ddc9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73c65990_88393542",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 516,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-19T20:38:14Z",
+      "side": 1,
+      "message": "Done. Yeah, we used to consider dist a PARSE_TIME_MAKE_GOAL, which would create a \"build-aosp_arm-dist.ninja\" (etc) whenever you used dist on the command line. Since they would no longer be used (and are rather large), I added this.",
+      "parentUuid": "e0282beb_f822f735",
+      "revId": "252b2df47ba13587a2feeab24ae415a58532ddc9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
