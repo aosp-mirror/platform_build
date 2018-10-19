@@ -61,7 +61,7 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 # cleaned up all device specific directories under root!
 
 # TODO(b/111434759, b/111287060) SoC specific hacks
-BOARD_ROOT_EXTRA_SYMLINKS := /vendor/lib/dsp:/dsp
+BOARD_ROOT_EXTRA_SYMLINKS += /vendor/lib/dsp:/dsp
 BOARD_ROOT_EXTRA_SYMLINKS += /mnt/vendor/persist:/persist
 BOARD_ROOT_EXTRA_SYMLINKS += /vendor/firmware_mnt:/firmware
 
