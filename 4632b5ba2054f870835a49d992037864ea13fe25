@@ -167,6 +167,30 @@
     },
     {
       "key": {
+        "uuid": "6e02d1e5_fe3ea982",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-19T15:31:54Z",
+      "side": 1,
+      "message": "+enh, as we\u0027re looking into using toybox on the host.",
+      "parentUuid": "96a801ce_827f4c97",
+      "range": {
+        "startLine": 65,
+        "startChar": 15,
+        "endLine": 65,
+        "endChar": 19
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "392744d3_ca317cf0",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
