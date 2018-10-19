@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d1d6cbcd_fdb56038",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-19T15:30:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4c16a522_f10c5ff9",
+      "range": {
+        "startLine": 1209,
+        "startChar": 0,
+        "endLine": 1209,
+        "endChar": 24
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "621970ee_58671bd1",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb609955_716705f9",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3089,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-19T15:30:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "621970ee_58671bd1",
+      "range": {
+        "startLine": 3089,
+        "startChar": 0,
+        "endLine": 3089,
+        "endChar": 8
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -95,6 +143,30 @@
     },
     {
       "key": {
+        "uuid": "0ce307f5_bbb8c3ce",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-19T15:30:58Z",
+      "side": 1,
+      "message": "NB: for future we need to set BLOCKSIZE to prop_dict[\"squashfs_block_size\"] for squashfs, and if we ever add a blocksize argument for ext4.",
+      "parentUuid": "96a801ce_827f4c97",
+      "range": {
+        "startLine": 65,
+        "startChar": 15,
+        "endLine": 65,
+        "endChar": 19
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "392744d3_ca317cf0",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
@@ -106,6 +178,30 @@
       "writtenOn": "2018-10-18T23:21:18Z",
       "side": 1,
       "message": "should add a unittest into test_build_image.py, to ensure it\u0027s not silently broken due to tune2fs change",
+      "range": {
+        "startLine": 117,
+        "startChar": 12,
+        "endLine": 117,
+        "endChar": 25
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c9f5c12_abe71b84",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-19T15:30:58Z",
+      "side": 1,
+      "message": "Will look into this ...",
+      "parentUuid": "392744d3_ca317cf0",
       "range": {
         "startLine": 117,
         "startChar": 12,
@@ -141,6 +237,30 @@
     },
     {
       "key": {
+        "uuid": "1b2e104f_993677a6",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-19T15:30:58Z",
+      "side": 1,
+      "message": "will return and land the characteristics into fs_dict.",
+      "parentUuid": "a041c2e9_8bc9a70e",
+      "range": {
+        "startLine": 121,
+        "startChar": 6,
+        "endLine": 121,
+        "endChar": 15
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ffc77dc4_972f5827",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
@@ -164,6 +284,30 @@
     },
     {
       "key": {
+        "uuid": "737ebb81_f6fd930e",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-19T15:30:58Z",
+      "side": 1,
+      "message": "We eventually need to also support \"squashfs\" as well (maybe others? msdosfs if we ever land firmware images in a dynamic partition?), setting this to an inode count default should not hurt? squashfs or f2fs of course do not need advance notice of the number of possible inodes.\n\nAgree, considering we do not support them today, we should skip.",
+      "parentUuid": "ffc77dc4_972f5827",
+      "range": {
+        "startLine": 296,
+        "startChar": 0,
+        "endLine": 296,
+        "endChar": 2
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f9a3d078_213d428c",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
@@ -184,6 +328,30 @@
       "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f9adebb4_848ad768",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-19T15:30:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9a3d078_213d428c",
+      "range": {
+        "startLine": 305,
+        "startChar": 17,
+        "endLine": 305,
+        "endChar": 18
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
