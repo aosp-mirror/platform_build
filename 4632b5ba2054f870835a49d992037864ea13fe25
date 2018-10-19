@@ -263,6 +263,30 @@
     },
     {
       "key": {
+        "uuid": "e69849f8_e8c1bd6b",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2018-10-19T22:04:28Z",
+      "side": 1,
+      "message": "\u003e This produces a different sum than if rounding is done only on the total\n\ndoes it?\n\ndo you actually mean you were expecting it to use st_size rather than st_blocks? (which is the recently-added -A for BSD and --apparent-size for GNU.)",
+      "parentUuid": "c4ebfd50_107362a2",
+      "range": {
+        "startLine": 65,
+        "startChar": 15,
+        "endLine": 65,
+        "endChar": 19
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "392744d3_ca317cf0",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
