@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b87e869e_17e66f97",
+        "filename": "tools/releasetools/test_build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-19T21:15:00Z",
+      "side": 1,
+      "message": "I am an experimental physicist ... no science here.",
+      "range": {
+        "startLine": 196,
+        "startChar": 4,
+        "endLine": 199,
+        "endChar": 50
+      },
+      "revId": "2f8c6913c0356a7cccc114871edc90b0153a5d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
