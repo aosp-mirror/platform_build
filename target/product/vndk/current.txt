@@ -145,6 +145,7 @@ VNDK-core: android.hardware.tetheroffload.config@1.0.so
 VNDK-core: android.hardware.tetheroffload.control@1.0.so
 VNDK-core: android.hardware.thermal@1.0.so
 VNDK-core: android.hardware.thermal@1.1.so
+VNDK-core: android.hardware.thermal@2.0.so
 VNDK-core: android.hardware.tv.cec@1.0.so
 VNDK-core: android.hardware.tv.input@1.0.so
 VNDK-core: android.hardware.usb.gadget@1.0.so
