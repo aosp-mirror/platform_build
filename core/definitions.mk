@@ -806,29 +806,13 @@ define echo-error
 echo -e "$(ESC_BOLD)$(1): $(ESC_ERROR)error:$(ESC_RESET)$(ESC_BOLD)" $(2) "$(ESC_RESET)" >&2
 endef
 
-# $(1): message to print
-define pretty-warning
-$(shell $(call echo-warning,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
-endef
-
-# $(1): message to print
-define pretty-error
-$(shell $(call echo-error,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
-$(error done)
-endef
-
 ###########################################################
-## Output the command lines, or not
+## Legacy showcommands compatibility
 ###########################################################
 
-ifeq ($(strip $(SHOW_COMMANDS)),)
 define pretty
 @echo $1
 endef
-else
-define pretty
-endef
-endif
 
 ###########################################################
 ## Commands for including the dependency files the compiler generates
