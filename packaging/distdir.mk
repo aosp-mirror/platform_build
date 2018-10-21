@@ -24,7 +24,8 @@ $(foreach pair,$(DIST_GOAL_OUTPUT_PAIRS), \
   $(eval output := $(call word-colon,2,$(pair))) \
   $(eval .PHONY: _dist_$$(goal)) \
   $(if $(call streq,$(DIST),true),\
-    $(eval _dist_$$(goal): $$(DIST_DIR)/$$(output))))
+    $(eval _dist_$$(goal): $$(DIST_DIR)/$$(output)), \
+    $(eval _dist_$$(goal):)))
 
 define copy-one-dist-file
 $(2): $(1)
