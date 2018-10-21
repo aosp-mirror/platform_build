@@ -1921,7 +1921,7 @@ define build-systemimage-target
       build/make/tools/releasetools/build_image.py \
       $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1) $(TARGET_OUT) \
       $(systemimage_intermediates)/generated_system_image_info.txt \
-      || ( mkdir -p $$(DIST_DIR); cp $(INSTALLED_FILES_FILE) $$(DIST_DIR)/installed-files-rescued.txt; \
+      || ( mkdir -p $${DIST_DIR}; cp $(INSTALLED_FILES_FILE) $${DIST_DIR}/installed-files-rescued.txt; \
            exit 1 )
 endef
 
