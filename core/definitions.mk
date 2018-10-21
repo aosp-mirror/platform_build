@@ -806,29 +806,13 @@ define echo-error
 echo -e "$(ESC_BOLD)$(1): $(ESC_ERROR)error:$(ESC_RESET)$(ESC_BOLD)" $(2) "$(ESC_RESET)" >&2
 endef
 
-# $(1): message to print
-define pretty-warning
-$(shell $(call echo-warning,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
-endef
-
-# $(1): message to print
-define pretty-error
-$(shell $(call echo-error,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
-$(error done)
-endef
-
 ###########################################################
-## Output the command lines, or not
+## Legacy showcommands compatibility
 ###########################################################
 
-ifeq ($(strip $(SHOW_COMMANDS)),)
 define pretty
 @echo $1
 endef
-else
-define pretty
-endef
-endif
 
 ###########################################################
 ## Commands for including the dependency files the compiler generates
@@ -2708,12 +2692,20 @@ $(3): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
 	    --write-greylist $(3) \
 	    --write-greylist 26,28:$(4)
 
+$(5): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
+	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) \
+	    --write-metadata-csv $(5)
+
 $(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST): $(2) $(3) $(4)
 $(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST): \
     PRIVATE_WHITELIST_INPUTS := $$(PRIVATE_WHITELIST_INPUTS) $(2)
 $(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST): \
     PRIVATE_GREYLIST_INPUTS := $$(PRIVATE_GREYLIST_INPUTS) $(3)
     PRIVATE_DARKGREYLIST_INPUTS := $$(PRIVATE_DARKGREYLIST_INPUTS) $(4)
+$(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): $(5)
+$(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): \
+    PRIVATE_METADATA_INPUTS := $$(PRIVATE_METADATA_INPUTS) $(5)
+
 endif
 endef
 

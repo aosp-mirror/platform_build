@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2009 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
 
-BUILD_ID=QP1A.181021.001
+# NFC:
+#   Provide default libnfc-nci.conf file for devices that does not have one in
+#   vendor/etc because aosp system image (of aosp_$arch products) is going to
+#   be used as GSI.
+#   May need to remove the following for newly launched devices in P since this
+#   NFC configuration file should be in vendor/etc, instead of system/etc
+PRODUCT_COPY_FILES += \
+    device/generic/common/nfc/libnfc-nci.conf:system/etc/libnfc-nci.conf

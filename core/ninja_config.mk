@@ -28,7 +28,6 @@ PARSE_TIME_MAKE_GOALS := \
 	custom_images \
 	deps-license \
 	dicttool_aosp \
-	dist \
 	dump-products \
 	eng \
 	fusion \

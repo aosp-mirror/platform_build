@@ -1574,9 +1574,12 @@ function atest()
 }
 
 # Zsh needs bashcompinit called to support bash-style completion.
-function add_zsh_completion() {
-    autoload -U compinit && compinit
-    autoload -U bashcompinit && bashcompinit
+function enable_zsh_completion() {
+    # Don't override user's options if bash-style completion is already enabled.
+    if ! declare -f complete >/dev/null; then
+        autoload -U compinit && compinit
+        autoload -U bashcompinit && bashcompinit
+    fi
 }
 
 function validate_current_shell() {
@@ -1587,7 +1590,7 @@ function validate_current_shell() {
             ;;
         *zsh*)
             function check_type() { type "$1"; }
-            add_zsh_completion ;;
+            enable_zsh_completion ;;
         *)
             echo -e "WARNING: Only bash and zsh are supported.\nUse of other shell would lead to erroneous results."
             ;;

@@ -13,12 +13,15 @@
 # limitations under the License.
 
 import bisect
+import logging
 import os
 import struct
 import threading
 from hashlib import sha1
 
 import rangelib
+
+logger = logging.getLogger(__name__)
 
 
 class SparseImage(object):
@@ -61,8 +64,9 @@ class SparseImage(object):
       raise ValueError("Chunk header size was expected to be 12, but is %u." %
                        (chunk_hdr_sz,))
 
-    print("Total of %u %u-byte output blocks in %u input chunks."
-          % (total_blks, blk_sz, total_chunks))
+    logger.info(
+        "Total of %u %u-byte output blocks in %u input chunks.", total_blks,
+        blk_sz, total_chunks)
 
     if not build_map:
       assert not hashtree_info_generator, \

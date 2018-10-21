@@ -1,5 +1,31 @@
 # Build System Changes for Android.mk Writers
 
+## `DIST_DIR`, `dist_goal`, and `dist-for-goals`  {#dist}
+
+`DIST_DIR` and `dist_goal` are no longer available when reading Android.mk
+files (or other build tasks). Always use `dist-for-goals` instead, which takes
+a PHONY goal, and a list of files to copy to `$DIST_DIR`. Whenever `dist` is
+specified, and the goal would be built (either explicitly on the command line,
+or as a dependency of something on the command line), that file will be copied
+into `$DIST_DIR`. For example,
+
+``` make
+$(call dist-for-goals,foo,bar/baz)
+```
+
+will copy `bar/baz` into `$DIST_DIR/baz` when `m foo dist` is run.
+
+#### Renames during copy
+
+Instead of specifying just a file, a destination name can be specified,
+including subdirectories:
+
+``` make
+$(call dist-for-goals,foo,bar/baz:logs/foo.log)
+```
+
+will copy `bar/baz` into `$DIST_DIR/logs/foo.log` when `m foo dist` is run.
+
 ## `.PHONY` rule enforcement  {#phony_targets}
 
 There are several new warnings/errors meant to ensure the proper use of

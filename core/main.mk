@@ -36,8 +36,6 @@ PWD := $(shell pwd)
 TOP := .
 TOPDIR :=
 
-BUILD_SYSTEM := $(TOPDIR)build/make/core
-
 # This is the default target.  It must be the first declared target.
 .PHONY: droid
 DEFAULT_GOAL := droid
@@ -48,7 +46,7 @@ droid_targets:
 
 # Set up various standard variables based on configuration
 # and host information.
-include $(BUILD_SYSTEM)/config.mk
+include build/make/core/config.mk
 
 ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
 dont_bother := true
@@ -419,6 +417,19 @@ ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
 ENFORCE_RRO_SOURCES :=
 endif
 
+# Color-coded warnings including current module info
+# $(1): message to print
+define pretty-warning
+$(shell $(call echo-warning,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
+endef
+
+# Color-coded errors including current module info
+# $(1): message to print
+define pretty-error
+$(shell $(call echo-error,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
+$(error done)
+endef
+
 subdir_makefiles_inc := .
 FULL_BUILD :=
 
@@ -491,6 +502,18 @@ $(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] fi
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
+
+# -------------------------------------------------------------------
+# Use basic warning/error messages now that LOCAL_MODULE_MAKEFILE
+# and LOCAL_MODULE aren't useful anymore.
+# -------------------------------------------------------------------
+define pretty-warning
+$(warning $(1))
+endef
+
+define pretty-error
+$(error $(1))
+endef
 
 # -------------------------------------------------------------------
 # Enforce to generate all RRO packages for modules having resource
@@ -1012,6 +1035,18 @@ ifdef FULL_BUILD
   product_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
 
   # Verify the artifact path requirements made by included products.
+
+  # Fakes don't get installed, and host files are irrelevant.
+  static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%
+  # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
+  static_whitelist_patterns += %__auto_generated_rro.apk
+  ifeq (true,$(BOARD_USES_SYSTEM_OTHER_ODEX))
+    # Allow system_other odex space optimization.
+    static_whitelist_patterns += \
+      $(TARGET_OUT_SYSTEM_OTHER)/%.odex \
+      $(TARGET_OUT_SYSTEM_OTHER)/%.vdex \
+      $(TARGET_OUT_SYSTEM_OTHER)/%.art
+  endif
   all_offending_files :=
   $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
     $(eval requirements := $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENTS)) \
@@ -1020,10 +1055,7 @@ ifdef FULL_BUILD
     $(eval path_patterns := $(call resolve-product-relative-paths,$(requirements),%)) \
     $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
     $(eval files := $(call product-installed-files, $(makefile))) \
-    $(eval files := $(filter-out $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%,$(files))) \
-    $(eval # RROs become REQUIRED by the source module, but are always placed on the vendor partition.) \
-    $(eval files := $(filter-out %__auto_generated_rro.apk,$(files))) \
-    $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns),$(files))) \
+    $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns) $(static_whitelist_patterns),$(files))) \
     $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
     $(eval unused_whitelist := $(filter-out $(files),$(whitelist_patterns))) \
     $(call maybe-print-list-and-error,$(unused_whitelist),$(makefile) includes redundant whitelist entries in its artifact path requirement.) \
@@ -1457,6 +1489,8 @@ tidy_only:
 
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
+
+$(call dist-write-file,$(KATI_PACKAGE_MK_DIR)/dist.mk)
 
 $(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] writing build rules ...)
 
