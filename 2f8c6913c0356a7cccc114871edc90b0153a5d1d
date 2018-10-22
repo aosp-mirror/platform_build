@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "fb2695c7_eeb6aac0",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-22T16:54:50Z",
+      "side": 1,
+      "message": "I also need to manage save/restore the in_dir for the first-pass BuildImage (but a little more complicated than how prop_dict[\"mount_point\"] is managed...)",
+      "range": {
+        "startLine": 171,
+        "startChar": 2,
+        "endLine": 171,
+        "endChar": 31
+      },
+      "revId": "2f8c6913c0356a7cccc114871edc90b0153a5d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b87e869e_17e66f97",
         "filename": "tools/releasetools/test_build_image.py",
         "patchSetId": 2
