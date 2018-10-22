@@ -287,6 +287,30 @@
     },
     {
       "key": {
+        "uuid": "20be90c1_c00dc913",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-22T14:58:29Z",
+      "side": 1,
+      "message": "What I _want_ is not st_blocks, use st_size, because st_blocks is associated with the filesystem it is on, not the hypothetical file system it is targeted to. (st_size + \u003cblocks\u003e - 1) \u0026 ~(\u003cblocks\u003e - 1) on each file. Round up each file to the specified block size, then sum. This was the legacy behavior on some variants of *NIX before POSIX; and the behavior I want to provide the most accurate estimate.\n\ne.g. three byte files (st_size \u003d 1) with blocksize of 512 will total 1.5K. Three one byte files with blocksize of 4096 will total 12K. 12K is what will be used by a 4K blocksize targeted filesystem\n\nAs noted, I do not fully care which way du implemented, just reporting rationale, since I use 16MB of slop added to the poor estimate from du, so it does not matter if they round individually on each file, or round on the total. The accurate one with respect to hypothetical filesystem usage is the former. If the slop is not enough (future, my WAG is very unlikely), then we may consider creating a more accurate estimate on our own and not use du\u0027s flawed results.\n\nUsing 1K works on all du variants (portability), and that is all I really care about right now.",
+      "parentUuid": "e69849f8_e8c1bd6b",
+      "range": {
+        "startLine": 65,
+        "startChar": 15,
+        "endLine": 65,
+        "endChar": 19
+      },
+      "revId": "4632b5ba2054f870835a49d992037864ea13fe25",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "392744d3_ca317cf0",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
