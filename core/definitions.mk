@@ -2701,8 +2701,8 @@ $(3): .KATI_IMPLICIT_OUTPUTS := $(2) $(4)
 $(3): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
 	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) \
 	    --write-whitelist $(2) \
-	    --write-greylist $(3) \
-	    --write-greylist 26,28:$(4)
+	    --write-greylist none,28:$(3) \
+	    --write-greylist 26:$(4)
 
 $(5): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
 	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) \
