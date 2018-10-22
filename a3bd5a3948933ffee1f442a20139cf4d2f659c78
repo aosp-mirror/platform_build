@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "aa24b851_bf3cb056",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-10-22T09:50:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6c18d37_fadd353a",
+      "range": {
+        "startLine": 7,
+        "startChar": 14,
+        "endLine": 7,
+        "endChar": 38
+      },
+      "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "663337a2_e18e9d42",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "effb5e1c_d3a1ceff",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-10-22T09:50:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "663337a2_e18e9d42",
+      "range": {
+        "startLine": 11,
+        "startChar": 9,
+        "endLine": 11,
+        "endChar": 30
+      },
+      "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8772736c_bec46cd5",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2641c76e_c1a208d5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-10-22T09:50:19Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8772736c_bec46cd5",
+      "range": {
+        "startLine": 12,
+        "startChar": 9,
+        "endLine": 12,
+        "endChar": 16
+      },
+      "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -106,6 +178,30 @@
       "side": 1,
       "message": "Hi Dan,\nThanks for the instruction.\nHow about this CL\nhttps://android-review.googlesource.com/c/platform/build/+/786636\nWill it more clear to what you expected for this problem?\nThanks.",
       "parentUuid": "6736326a_4d074cc4",
+      "range": {
+        "startLine": 419,
+        "startChar": 0,
+        "endLine": 420,
+        "endChar": 36
+      },
+      "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68dbaa16_457ef0aa",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-10-22T09:50:19Z",
+      "side": 1,
+      "message": "Hi Dan,\nWe tried to solve it in create-suite-dependencies.\nReference: https://android-review.googlesource.com/c/platform/build/+/797312\nIn this patch, we only create copy pair when src and dst are different.\nBut it still doesn\u0027t work, because we have to add multi-dependency for the $(LOCAL_INSTALLED_MODULE)\n\ne.g. \nfor the patch of \nhttps://android-review.googlesource.com/c/platform/platform_testing/+/797192\n\nWe have to copy hello_world_test_mk to many places which like below:\n\nout/target/product/generic_arm64/obj/EXECUTABLES/hello_world_test_mk_intermediates/hello_world_test_mk:out/host/linux-x86/cts/android-cts/testcases/hello_world_test_mk   \nout/target/product/generic_arm64/obj/EXECUTABLES/hello_world_test_mk_intermediates/hello_world_test_mk:out/target/product/generic_arm64/testcases/hello_world_test_mk/hello_world_test_mk \n\nThat\u0027s why we have to create the dependency for it again. And we can\u0027t just disable it in create-suite-dependencies ,because the dependency are different from the original one.",
+      "parentUuid": "09117f19_882d6102",
       "range": {
         "startLine": 419,
         "startChar": 0,
