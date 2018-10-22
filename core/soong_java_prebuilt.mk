@@ -120,6 +120,15 @@ $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(common_javalib.jar)
 
     java-dex : $(LOCAL_BUILT_MODULE)
   else  # LOCAL_UNINSTALLABLE_MODULE
+
+    ifneq ($(filter $(LOCAL_MODULE),$(HIDDENAPI_EXTRA_APP_USAGE_JARS)),)
+      # Derive greylist from classes.jar.
+      # We use full_classes_jar here, which is the post-proguard jar (on the basis that we also
+      # have a full_classes_pre_proguard_jar). This is consistent with the equivalent code in
+      # java.mk.
+      $(eval $(call hiddenapi-generate-greylist-txt,$(full_classes_jar),$(hiddenapi_whitelist_txt),$(hiddenapi_greylist_txt),$(hiddenapi_darkgreylist_txt),$(hiddenapi_greylist_metadata_csv)))
+    endif
+
     $(eval $(call copy-one-file,$(full_classes_jar),$(LOCAL_BUILT_MODULE)))
     $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
     java-dex : $(common_javalib.jar)
