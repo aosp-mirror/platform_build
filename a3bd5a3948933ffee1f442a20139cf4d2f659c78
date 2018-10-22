@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6c18d37_fadd353a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-22T03:15:19Z",
+      "side": 1,
+      "message": "Can you describe what the problem is in the commit message?",
+      "range": {
+        "startLine": 7,
+        "startChar": 14,
+        "endLine": 7,
+        "endChar": 38
+      },
+      "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "663337a2_e18e9d42",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-22T03:15:19Z",
+      "side": 1,
+      "message": "This doesn\u0027t help anyone on AOSP understand this change",
+      "range": {
+        "startLine": 11,
+        "startChar": 9,
+        "endLine": 11,
+        "endChar": 30
+      },
+      "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8772736c_bec46cd5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-22T03:15:19Z",
+      "side": 1,
+      "message": "This is the legacy invocation, you can just type \u0027m\u0027",
+      "range": {
+        "startLine": 12,
+        "startChar": 9,
+        "endLine": 12,
+        "endChar": 16
+      },
+      "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6736326a_4d074cc4",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-22T03:15:19Z",
+      "side": 1,
+      "message": "Why aren\u0027t we disabling the create-suite-dependencies copy and keeping this installation rule?",
+      "range": {
+        "startLine": 419,
+        "startChar": 0,
+        "endLine": 420,
+        "endChar": 36
+      },
+      "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
