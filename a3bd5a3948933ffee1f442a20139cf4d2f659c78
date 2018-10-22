@@ -91,6 +91,30 @@
       "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "09117f19_882d6102",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-10-22T03:40:36Z",
+      "side": 1,
+      "message": "Hi Dan,\nThanks for the instruction.\nHow about this CL\nhttps://android-review.googlesource.com/c/platform/build/+/786636\nWill it more clear to what you expected for this problem?\nThanks.",
+      "parentUuid": "6736326a_4d074cc4",
+      "range": {
+        "startLine": 419,
+        "startChar": 0,
+        "endLine": 420,
+        "endChar": 36
+      },
+      "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
