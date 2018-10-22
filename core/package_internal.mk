@@ -665,7 +665,7 @@ ifneq ($(BUILD_PLATFORM_ZIP),)
 	@# Keep a copy of apk with classes.dex unstripped
 	$(hide) cp -f $@ $(dir $@)package.dex.apk
 endif  # BUILD_PLATFORM_ZIP
-ifneq (nostripping,$(LOCAL_DEX_PREOPT))
+ifdef LOCAL_STRIP_DEX
 	$(call dexpreopt-remove-classes.dex,$@)
 endif
 endif  # LOCAL_DEX_PREOPT
