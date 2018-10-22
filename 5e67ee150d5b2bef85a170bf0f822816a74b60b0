@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b7a1d2be_8ffe0fbe",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-22T23:41:46Z",
+      "side": 1,
+      "message": "I probably do not understand what cleanup means in the python world ...",
+      "range": {
+        "startLine": 306,
+        "startChar": 0,
+        "endLine": 307,
+        "endChar": 29
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
