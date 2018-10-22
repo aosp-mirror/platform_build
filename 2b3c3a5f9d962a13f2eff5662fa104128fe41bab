@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ec5e6f19_ad6aebb1",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1678,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-22T20:08:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8ed03a65_801fce33",
+      "range": {
+        "startLine": 1678,
+        "startChar": 70,
+        "endLine": 1678,
+        "endChar": 73
+      },
+      "revId": "2b3c3a5f9d962a13f2eff5662fa104128fe41bab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "75e13b20_0895c591",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "101367b9_e4e1c72e",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-22T20:08:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "75e13b20_0895c591",
+      "range": {
+        "startLine": 376,
+        "startChar": 26,
+        "endLine": 376,
+        "endChar": 34
+      },
+      "revId": "2b3c3a5f9d962a13f2eff5662fa104128fe41bab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b677413c_cdeae796",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 1
@@ -68,6 +116,30 @@
       "revId": "2b3c3a5f9d962a13f2eff5662fa104128fe41bab",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31346433_72533e45",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 601,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-10-22T20:08:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b677413c_cdeae796",
+      "range": {
+        "startLine": 601,
+        "startChar": 29,
+        "endLine": 601,
+        "endChar": 52
+      },
+      "revId": "2b3c3a5f9d962a13f2eff5662fa104128fe41bab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
