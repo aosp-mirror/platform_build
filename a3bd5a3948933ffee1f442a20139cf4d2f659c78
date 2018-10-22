@@ -211,6 +211,30 @@
       "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "96c614c8_2bea677c",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-10-22T15:02:56Z",
+      "side": 1,
+      "message": "Sorry, I misunderstood the problem and found a way to solve it.\nThanks for your advice.",
+      "parentUuid": "68dbaa16_457ef0aa",
+      "range": {
+        "startLine": 419,
+        "startChar": 0,
+        "endLine": 420,
+        "endChar": 36
+      },
+      "revId": "a3bd5a3948933ffee1f442a20139cf4d2f659c78",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
