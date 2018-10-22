@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifndef ONE_SHOT_MAKEFILE
-
 .PHONY: sdk_addon
+
+ifndef ONE_SHOT_MAKEFILE
 
 # If they didn't define PRODUCT_SDK_ADDON_NAME, then we won't define
 # any of these rules.
