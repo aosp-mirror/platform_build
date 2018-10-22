@@ -34,7 +34,8 @@ _all_dist_src_dst_pairs :=
 #       to under the dist directory.  Subdirs are ok, and will be created
 #       at copy time if necessary.
 define dist-for-goals
-$(eval _all_dist_goals += $$(1)) \
+$(if $(strip $(2)), \
+  $(eval _all_dist_goals += $$(1))) \
 $(foreach file,$(2), \
   $(eval src := $(call word-colon,1,$(file))) \
   $(eval dst := $(call word-colon,2,$(file))) \
