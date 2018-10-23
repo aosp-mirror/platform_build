@@ -1638,15 +1638,13 @@ OTA_PUBLIC_KEYS := $(DEFAULT_SYSTEM_DEV_CERTIFICATE).x509.pem
 # Generate a file containing the keys that will be read by the
 # recovery binary.
 RECOVERY_INSTALL_OTA_KEYS := \
-	$(call intermediates-dir-for,PACKAGING,ota_keys)/keys
-DUMPKEY_JAR := $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar
+	$(call intermediates-dir-for,PACKAGING,ota_keys)/otacerts.zip
 $(RECOVERY_INSTALL_OTA_KEYS): PRIVATE_OTA_PUBLIC_KEYS := $(OTA_PUBLIC_KEYS)
 $(RECOVERY_INSTALL_OTA_KEYS): extra_keys := $(patsubst %,%.x509.pem,$(PRODUCT_EXTRA_RECOVERY_KEYS))
-$(RECOVERY_INSTALL_OTA_KEYS): $(OTA_PUBLIC_KEYS) $(DUMPKEY_JAR) $(extra_keys)
-	@echo "DumpPublicKey: $@ <= $(PRIVATE_OTA_PUBLIC_KEYS) $(extra_keys)"
-	@rm -rf $@
-	@mkdir -p $(dir $@)
-	$(JAVA) -jar $(DUMPKEY_JAR) $(PRIVATE_OTA_PUBLIC_KEYS) $(extra_keys) > $@
+$(RECOVERY_INSTALL_OTA_KEYS): $(SOONG_ZIP) $(OTA_PUBLIC_KEYS) $(extra_keys)
+	$(hide) rm -f $@
+	$(hide) mkdir -p $(dir $@)
+	$(hide) $(SOONG_ZIP) -o $@ $(foreach key_file, $(PRIVATE_OTA_PUBLIC_KEYS) $(extra_keys), -C $(dir $(key_file)) -f $(key_file))
 
 RECOVERYIMAGE_ID_FILE := $(PRODUCT_OUT)/recovery.id
 
@@ -1677,7 +1675,8 @@ define build-recoveryimage-target
     cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab)
   $(if $(strip $(recovery_wipe)), \
     $(hide) cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.wipe)
-  $(hide) cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/res/keys
+  $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc/security
+  $(hide) cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/security/otacerts.zip
   $(hide) ln -sf prop.default $(TARGET_RECOVERY_ROOT_OUT)/default.prop
   $(BOARD_RECOVERY_IMAGE_PREPARE)
   $(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_RECOVERY_ROOT_OUT) | $(MINIGZIP) > $(recovery_ramdisk)
@@ -3094,7 +3093,6 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/zipalign \
   $(HOST_OUT_EXECUTABLES)/bsdiff \
   $(HOST_OUT_EXECUTABLES)/imgdiff \
-  $(HOST_OUT_JAVA_LIBRARIES)/dumpkey.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar \
   $(HOST_OUT_JAVA_LIBRARIES)/VeritySigner.jar \
