@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0db462da_faa8091a",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-23T19:43:58Z",
+      "side": 1,
+      "message": "THX\n\n(My alternative was to factor out the call to SetUpInDirAndFsConfig, \"stuff\" below the call would be a new BuildImageFromSetupInDirAndFSConfig, but am fine with using a prop_dict[\"first_pass\"] as a cache for the decisions).",
+      "parentUuid": "32d4671c_6f4468c5",
+      "range": {
+        "startLine": 302,
+        "startChar": 6,
+        "endLine": 304,
+        "endChar": 30
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b7a1d2be_8ffe0fbe",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 3
@@ -72,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "16ff8bc1_4cabd778",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-23T19:43:58Z",
+      "side": 1,
+      "message": "Yup, confirmed. Your comment above will help shape a better solution to this ...",
+      "parentUuid": "049cf82e_2ad28119",
+      "range": {
+        "startLine": 306,
+        "startChar": 0,
+        "endLine": 307,
+        "endChar": 29
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d64316c1_8d47c929",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 3
@@ -92,6 +140,30 @@
       "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d65f6681_9b1db60e",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-23T19:43:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d64316c1_8d47c929",
+      "range": {
+        "startLine": 315,
+        "startChar": 41,
+        "endLine": 315,
+        "endChar": 42
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -118,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "8bf6742c_e69b0421",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-23T19:43:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "61ff0234_f985a417",
+      "range": {
+        "startLine": 322,
+        "startChar": 42,
+        "endLine": 322,
+        "endChar": 43
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3b99a43f_7b4ab18d",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 3
@@ -138,6 +234,30 @@
       "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4385b881_384f8c53",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-23T19:43:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3b99a43f_7b4ab18d",
+      "range": {
+        "startLine": 323,
+        "startChar": 26,
+        "endLine": 323,
+        "endChar": 63
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
