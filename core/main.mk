@@ -1033,6 +1033,8 @@ endif
 
 ifdef FULL_BUILD
   product_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
+  # WARNING: The product_MODULES variable is depended on by external files.
+  product_MODULES := $(_pif_modules)
 
   # Verify the artifact path requirements made by included products.
 

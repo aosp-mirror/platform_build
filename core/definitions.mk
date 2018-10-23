@@ -2663,6 +2663,10 @@ endef
 
 # Copy dex files, invoking $(HIDDENAPI) on them in the process.
 # Also make the source dex file an input of the hiddenapi singleton rule in dex_preopt.mk.
+# Users can set UNSAFE_DISABLE_HIDDENAPI_FLAGS=true to skip this step. This is
+# meant to speed up local incremental builds. Note that skipping this step changes
+# Java semantics of the result dex bytecode. Use at own risk.
+ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
 define hiddenapi-copy-dex-files
 $(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
       $(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
@@ -2676,9 +2680,17 @@ $(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
 	    --blacklist=$(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
 
 $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): $(1)
-$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): \
-    PRIVATE_DEX_INPUTS := $$(PRIVATE_DEX_INPUTS) $(1)
+$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): PRIVATE_DEX_INPUTS := $$(PRIVATE_DEX_INPUTS) $(1)
 endef
+else  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
+define hiddenapi-copy-dex-files
+$(2): $(1)
+	echo "WARNING: skipping hiddenapi post-processing for $(1)" 1>&2
+	@rm -rf $(dir $(2))
+	@mkdir -p $(dir $(2))
+	find $(dir $(1)) -maxdepth 1 -name "classes*.dex" | xargs -I{} cp -f {} $(dir $(2))/
+endef
+endif  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
 
 # Generate a greylist.txt from a classes.jar
 define hiddenapi-generate-greylist-txt
@@ -2689,8 +2701,8 @@ $(3): .KATI_IMPLICIT_OUTPUTS := $(2) $(4)
 $(3): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
 	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) \
 	    --write-whitelist $(2) \
-	    --write-greylist $(3) \
-	    --write-greylist 26,28:$(4)
+	    --write-greylist none,28:$(3) \
+	    --write-greylist 26:$(4)
 
 $(5): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
 	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) \
