@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "2bda3d05_85ddd7e5",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-10-23T22:14:35Z",
+      "side": 1,
+      "message": "I should not have dropped this from the latest CL ...",
+      "range": {
+        "startLine": 251,
+        "startChar": 2,
+        "endLine": 251,
+        "endChar": 49
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "32d4671c_6f4468c5",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 3
