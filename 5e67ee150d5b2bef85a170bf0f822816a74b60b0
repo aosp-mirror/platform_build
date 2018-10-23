@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "32d4671c_6f4468c5",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-23T00:03:12Z",
+      "side": 1,
+      "message": "it does look a little more complicated... and as a side-effect, we have to construct the same in_dir twice.\n\nhow about we handle this by writing a special prop into prop_dict, and re-use in_dir/fs_config/mount_point in SetUpInDirAndFsConfig()?\n\ndef SetUpInDirAndFsConfig(origin_in, prop_dict):\n  if prop_dict[\"mount_point\"] \u003d\u003d \"system_other\":\n    ...\n  if prop_dict[\"mount_point\"] !\u003d \"system\":\n    ...\n\n  if \"first_pass\" in prop_dict:\n    prop_dict[\"mount_point\"] \u003d \"/\"\n    return prop_dict[\"first_pass\"]\n\n  in_dir \u003d ...\n  ...\n\n  prop_dict[\"first_pass\"] \u003d (in_dir, fs_config)",
+      "range": {
+        "startLine": 302,
+        "startChar": 6,
+        "endLine": 304,
+        "endChar": 30
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b7a1d2be_8ffe0fbe",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 3
@@ -18,6 +41,99 @@
         "startChar": 0,
         "endLine": 307,
         "endChar": 29
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "049cf82e_2ad28119",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-23T00:03:12Z",
+      "side": 1,
+      "message": "I think you managed to remove the original_input_dir at out/target/product/generic_arm64/system...",
+      "parentUuid": "b7a1d2be_8ffe0fbe",
+      "range": {
+        "startLine": 306,
+        "startChar": 0,
+        "endLine": 307,
+        "endChar": 29
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d64316c1_8d47c929",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-23T00:03:12Z",
+      "side": 1,
+      "message": "nit: \u003c\u003d",
+      "range": {
+        "startLine": 315,
+        "startChar": 41,
+        "endLine": 315,
+        "endChar": 42
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "61ff0234_f985a417",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-23T00:03:12Z",
+      "side": 1,
+      "message": "nit: \"//\"",
+      "range": {
+        "startLine": 322,
+        "startChar": 42,
+        "endLine": 322,
+        "endChar": 43
+      },
+      "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b99a43f_7b4ab18d",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-23T00:03:12Z",
+      "side": 1,
+      "message": "prop_dict[\"extfs_inode_count\"], since it must have existed at this point",
+      "range": {
+        "startLine": 323,
+        "startChar": 26,
+        "endLine": 323,
+        "endChar": 63
       },
       "revId": "5e67ee150d5b2bef85a170bf0f822816a74b60b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",

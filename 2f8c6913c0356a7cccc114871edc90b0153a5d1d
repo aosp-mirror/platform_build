@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "dbe0de9c_27fbfd8c",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1209,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-23T00:03:12Z",
+      "side": 1,
+      "message": "nit: seems () is preferred",
+      "range": {
+        "startLine": 1209,
+        "startChar": 70,
+        "endLine": 1209,
+        "endChar": 71
+      },
+      "revId": "2f8c6913c0356a7cccc114871edc90b0153a5d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fb2695c7_eeb6aac0",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 2
@@ -36,6 +59,30 @@
       "writtenOn": "2018-10-19T21:15:00Z",
       "side": 1,
       "message": "I am an experimental physicist ... no science here.",
+      "range": {
+        "startLine": 196,
+        "startChar": 4,
+        "endLine": 199,
+        "endChar": 50
+      },
+      "revId": "2f8c6913c0356a7cccc114871edc90b0153a5d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7aeea16_1726d6d5",
+        "filename": "tools/releasetools/test_build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-10-23T00:03:12Z",
+      "side": 1,
+      "message": "seems too specific. how about just ensuring the fields exist and look like meaningful ints?\n\ne.g.\nself.assertEqual(\u00274096\u0027, fs_dict[\u0027Block size\u0027])\nself.assertGreater(int(fs_dict[\u0027Free blocks\u0027]), 0)\nself.assertGreater(int(fs_dict[\u0027Free inodes\u0027]), 0)\nself.assertGreaterEqual(int(fs_dict[\u0027Inode count\u0027]), int(fs_dict[\u0027Free inodes\u0027]))\n\n(based on my guess, not sure if they actually all make sense)",
+      "parentUuid": "b87e869e_17e66f97",
       "range": {
         "startLine": 196,
         "startChar": 4,
