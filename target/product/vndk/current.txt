@@ -258,8 +258,6 @@ VNDK-core: libtinyalsa.so
 VNDK-core: libtinyxml2.so
 VNDK-core: libui.so
 VNDK-core: libusbhost.so
-VNDK-core: libvixl-arm.so
-VNDK-core: libvixl-arm64.so
 VNDK-core: libvorbisidec.so
 VNDK-core: libwifi-system-iface.so
 VNDK-core: libxml2.so
