@@ -405,6 +405,9 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
     needed_partitions: Partitions whose descriptors should be included into the
         generated VBMeta image.
 
+  Returns:
+    Path to the created image.
+
   Raises:
     AssertionError: On invalid input args.
   """
@@ -423,7 +426,8 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
   for partition, path in partitions.items():
     if partition not in needed_partitions:
       continue
-    assert partition in common.AVB_PARTITIONS, \
+    assert (partition in common.AVB_PARTITIONS or
+            partition.startswith('vbmeta_')), \
         'Unknown partition: {}'.format(partition)
     assert os.path.exists(path), \
         'Failed to find {} for {}'.format(path, partition)
@@ -458,6 +462,7 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
   assert proc.returncode == 0, \
       "avbtool make_vbmeta_image failed:\n{}".format(stdoutdata)
   img.Write()
+  return img.name
 
 
 def AddPartitionTable(output_zip):
@@ -836,7 +841,7 @@ def AddImagesToTargetFiles(filename):
     vbmeta_system = OPTIONS.info_dict.get("avb_vbmeta_system", "").strip()
     if vbmeta_system:
       banner("vbmeta_system")
-      AddVBMeta(
+      partitions["vbmeta_system"] = AddVBMeta(
           output_zip, partitions, "vbmeta_system", vbmeta_system.split())
       vbmeta_partitions = [
           item for item in vbmeta_partitions
@@ -846,7 +851,7 @@ def AddImagesToTargetFiles(filename):
     vbmeta_vendor = OPTIONS.info_dict.get("avb_vbmeta_vendor", "").strip()
     if vbmeta_vendor:
       banner("vbmeta_vendor")
-      AddVBMeta(
+      partitions["vbmeta_vendor"] = AddVBMeta(
           output_zip, partitions, "vbmeta_vendor", vbmeta_vendor.split())
       vbmeta_partitions = [
           item for item in vbmeta_partitions
