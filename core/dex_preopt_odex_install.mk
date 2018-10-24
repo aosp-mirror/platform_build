@@ -5,7 +5,6 @@
 
 # We explicitly uncompress APKs of privileged apps, and used by
 # privileged apps
-LOCAL_UNCOMPRESS_DEX := false
 ifneq (true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))
   ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
     LOCAL_UNCOMPRESS_DEX := true
@@ -31,6 +30,13 @@ ifndef LOCAL_DEX_PREOPT # LOCAL_DEX_PREOPT undefined
   ifneq (,$(LOCAL_APK_LIBRARIES)) # LOCAL_APK_LIBRARIES not empty
     LOCAL_DEX_PREOPT := nostripping
   endif
+endif
+
+ifeq (nostripping,$(LOCAL_DEX_PREOPT))
+  LOCAL_DEX_PREOPT := true
+  LOCAL_STRIP_DEX :=
+else
+  LOCAL_STRIP_DEX := true
 endif
 
 ifeq (false,$(LOCAL_DEX_PREOPT))
@@ -81,14 +87,14 @@ endif
 ifeq ($(LOCAL_DEX_PREOPT),true)
   # Don't strip with dexes we explicitly uncompress (dexopt will not store the dex code).
   ifeq ($(LOCAL_UNCOMPRESS_DEX),true)
-    LOCAL_DEX_PREOPT := nostripping
+    LOCAL_STRIP_DEX :=
   endif  # LOCAL_UNCOMPRESS_DEX
 
   # system_other isn't there for an OTA, so don't strip
   # if module is on system, and odex is on system_other.
   ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
     ifneq ($(call install-on-system-other, $(my_module_path)),)
-      LOCAL_DEX_PREOPT := nostripping
+      LOCAL_STRIP_DEX :=
     endif  # install-on-system-other
   endif  # BOARD_USES_SYSTEM_OTHER_ODEX
 
@@ -320,7 +326,8 @@ ifdef LOCAL_DEX_PREOPT
 
     ifeq (true,$(my_generate_dm))
       LOCAL_DEX_PREOPT_FLAGS += --copy-dex-files=false
-      LOCAL_DEX_PREOPT := nostripping
+      LOCAL_DEX_PREOPT := true
+      LOCAL_STRIP_DEX :=
       my_built_dm := $(dir $(LOCAL_BUILT_MODULE))generated.dm
       my_installed_dm := $(patsubst %.apk,%,$(LOCAL_INSTALLED_MODULE)).dm
       my_copied_vdex := $(dir $(LOCAL_BUILT_MODULE))primary.vdex
