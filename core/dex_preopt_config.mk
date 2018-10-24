@@ -1,9 +1,9 @@
 DEX_PREOPT_CONFIG := $(PRODUCT_OUT)/dexpreopt.config
 
 # list of boot classpath jars for dexpreopt
-DEXPREOPT_BOOT_JARS := $(subst $(space),:,$(PRODUCT_BOOT_JARS))
 DEXPREOPT_BOOT_JARS_MODULES := $(PRODUCT_BOOT_JARS)
-PRODUCT_BOOTCLASSPATH := $(subst $(space),:,$(foreach m,$(DEXPREOPT_BOOT_JARS_MODULES),/system/framework/$(m).jar))
+PRODUCT_BOOTCLASSPATH_JARS := $(strip $(DEXPREOPT_BOOT_JARS_MODULES))
+PRODUCT_BOOTCLASSPATH := $(subst $(space),:,$(foreach m,$(PRODUCT_BOOTCLASSPATH_JARS),/system/framework/$(m).jar))
 
 PRODUCT_SYSTEM_SERVER_CLASSPATH := $(subst $(space),:,$(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),/system/framework/$(m).jar))
 
@@ -12,6 +12,9 @@ DEXPREOPT_PRODUCT_DIR_FULL_PATH := $(PRODUCT_OUT)/dex_bootjars
 DEXPREOPT_PRODUCT_DIR := $(patsubst $(DEXPREOPT_BUILD_DIR)/%,%,$(DEXPREOPT_PRODUCT_DIR_FULL_PATH))
 DEXPREOPT_BOOT_JAR_DIR := system/framework
 DEXPREOPT_BOOT_JAR_DIR_FULL_PATH := $(DEXPREOPT_PRODUCT_DIR_FULL_PATH)/$(DEXPREOPT_BOOT_JAR_DIR)
+
+DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS := $(foreach m,$(PRODUCT_BOOTCLASSPATH_JARS),/$(DEXPREOPT_BOOT_JAR_DIR)/$(m).jar)
+DEXPREOPT_BOOTCLASSPATH_DEX_FILES := $(foreach jar,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS),$(PRODUCT_OUT)$(jar))
 
 DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/boot.art
 DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(DEX2OAT_TARGET_ARCH)/boot.art
@@ -112,7 +115,9 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, HasSystemOther,                     $(BOARD_USES_SYSTEM_OTHER_ODEX))
   $(call add_json_list, PatternsOnSystemOther,              $(SYSTEM_OTHER_ODEX_FILTER))
   $(call add_json_bool, DisableGenerateProfile,             $(filter false,$(WITH_DEX_PREOPT_GENERATE_PROFILE)))
-  $(call add_json_list, BootJars,                           $(DEXPREOPT_BOOT_JARS_MODULES))
+  $(call add_json_list, PreoptBootClassPathDexFiles,        $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
+  $(call add_json_list, PreoptBootClassPathDexLocations,    $(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
+  $(call add_json_list, BootJars,                           $(PRODUCT_BOOT_JARS))
   $(call add_json_list, SystemServerJars,                   $(PRODUCT_SYSTEM_SERVER_JARS))
   $(call add_json_list, SystemServerApps,                   $(PRODUCT_SYSTEM_SERVER_APPS))
   $(call add_json_list, SpeedApps,                          $(PRODUCT_DEXPREOPT_SPEED_APPS))
