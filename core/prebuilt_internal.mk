@@ -380,9 +380,9 @@ endif
 	$(run-appcompat)
 endif  # module_run_appcompat
 ifdef LOCAL_DEX_PREOPT
-ifneq (nostripping,$(LOCAL_DEX_PREOPT))
+ifdef LOCAL_STRIP_DEX
 	$(call dexpreopt-remove-classes.dex,$@)
-endif  # LOCAL_DEX_PREOPT != nostripping
+endif  # LOCAL_STRIP_DEX
 endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 	# No need for align-package because sign-package takes care of alignment
@@ -400,7 +400,7 @@ endif  # ! LOCAL_REPLACE_PREBUILT_APK_INSTALLED
 # can do optimizations based on whether the built module only
 # contains uncompressed dex code.
 ifdef LOCAL_DEX_PREOPT
-ifeq (nostripping,$(LOCAL_DEX_PREOPT))
+ifndef LOCAL_STRIP_DEX
 $(built_odex) : $(built_module)
 	$(call dexpreopt-one-file,$<,$@)
 else
@@ -470,7 +470,7 @@ $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(my_prebuilt_src_file)
 	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
 	$(call dexpreopt-one-file,$<,$@)
 
-$(eval $(call dexpreopt-copy-jar,$(my_prebuilt_src_file),$(built_module),$(LOCAL_DEX_PREOPT)))
+$(eval $(call dexpreopt-copy-jar,$(my_prebuilt_src_file),$(built_module),$(LOCAL_STRIP_DEX)))
 endif # boot jar
 else # ! LOCAL_DEX_PREOPT
 $(built_module) : $(my_prebuilt_src_file)
