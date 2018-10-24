@@ -73,7 +73,7 @@ define _dexpreopt-boot-jar-remove-classes.dex
 _dbj_jar_no_dex := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(1)_nodex.jar
 _dbj_src_jar := $(call intermediates-dir-for,JAVA_LIBRARIES,$(1),,COMMON)/javalib.jar
 
-$(call dexpreopt-copy-jar,$$(_dbj_src_jar),$$(_dbj_jar_no_dex),$(DEX_PREOPT_DEFAULT))
+$(call dexpreopt-copy-jar,$$(_dbj_src_jar),$$(_dbj_jar_no_dex),$(filter-out nostripping,$(DEX_PREOPT_DEFAULT)))
 
 _dbj_jar_no_dex :=
 _dbj_src_jar :=
