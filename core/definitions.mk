@@ -2640,12 +2640,12 @@ endef
 # Copy an apk to a target location while removing classes*.dex
 # $(1): source file
 # $(2): destination file
-# $(3): LOCAL_DEX_PREOPT, if nostripping then leave classes*.dex
+# $(3): LOCAL_STRIP_DEX, if non-empty then strip classes*.dex
 define dexpreopt-copy-jar
 $(2): $(1)
 	@echo "Copy: $$@"
 	$$(copy-file-to-target)
-	$(if $(filter nostripping,$(3)),,$$(call dexpreopt-remove-classes.dex,$$@))
+	$(if $(3),$$(call dexpreopt-remove-classes.dex,$$@))
 endef
 
 # $(1): the .jar or .apk to remove classes.dex. Note that if all dex files
