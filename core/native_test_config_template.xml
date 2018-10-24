@@ -23,6 +23,7 @@
     </target_preparer>
 
     <test class="com.android.tradefed.testtype.GTest" >
+        {UID_OPTION}
         <option name="native-test-device-path" value="/data/local/tmp" />
         <option name="module-name" value="{MODULE}" />
     </test>
