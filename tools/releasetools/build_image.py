@@ -58,15 +58,9 @@ def GetDiskUsage(path):
 
   Returns:
     The number of bytes based on a 1K block_size.
-
-  Raises:
-    BuildImageError: On error.
   """
   cmd = ["du", "-k", "-s", path]
-  try:
-    output = common.RunAndCheckOutput(cmd, verbose=False)
-  except common.ExternalError:
-    raise BuildImageError("Failed to get disk usage:\n{}".format(output))
+  output = common.RunAndCheckOutput(cmd, verbose=False)
   return int(output.split()[0]) * 1024
 
 
@@ -78,15 +72,9 @@ def GetInodeUsage(path):
 
   Returns:
     The number of inodes used.
-
-  Raises:
-    BuildImageError: On error.
   """
   cmd = ["find", path, "-print"]
-  try:
-    output = common.RunAndCheckOutput(cmd, verbose=False)
-  except common.ExternalError:
-    raise BuildImageError("Failed to get disk inode usage:\n{}".format(output))
+  output = common.RunAndCheckOutput(cmd, verbose=False)
   # increase by > 4% as number of files and directories is not whole picture.
   return output.count('\n') * 25 // 24
 
@@ -99,19 +87,15 @@ def GetFilesystemCharacteristics(sparse_image_path):
 
   Returns:
     The characteristics dictionary.
-
-  Raises:
-    BuildImageError: On error.
   """
   unsparse_image_path = UnsparseImage(sparse_image_path, replace=False)
 
   cmd = ["tune2fs", "-l", unsparse_image_path]
   try:
     output = common.RunAndCheckOutput(cmd, verbose=False)
-  except common.ExternalError:
-    raise BuildImageError("Failed to get tune2fs usage:\n{}".format(output))
-  os.remove(unsparse_image_path)
-  fs_dict = { }
+  finally:
+    os.remove(unsparse_image_path)
+  fs_dict = {}
   for line in output.splitlines():
     fields = line.split(":")
     if len(fields) == 2:
