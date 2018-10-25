@@ -54,23 +54,69 @@ def GetDiskUsage(path):
   """Returns the number of bytes that "path" occupies on host.
 
   Args:
-    path: The directory or file to calculate size on
+    path: The directory or file to calculate size on.
 
   Returns:
-    The number of bytes.
+    The number of bytes based on a 1K block_size.
 
   Raises:
     BuildImageError: On error.
   """
-  env_copy = os.environ.copy()
-  env_copy["POSIXLY_CORRECT"] = "1"
-  cmd = ["du", "-s", path]
+  cmd = ["du", "-k", "-s", path]
   try:
-    output = common.RunAndCheckOutput(cmd, verbose=False, env=env_copy)
+    output = common.RunAndCheckOutput(cmd, verbose=False)
   except common.ExternalError:
     raise BuildImageError("Failed to get disk usage:\n{}".format(output))
-  # POSIX du returns number of blocks with block size 512
-  return int(output.split()[0]) * 512
+  return int(output.split()[0]) * 1024
+
+
+def GetInodeUsage(path):
+  """Returns the number of inodes that "path" occupies on host.
+
+  Args:
+    path: The directory or file to calculate inode number on.
+
+  Returns:
+    The number of inodes used.
+
+  Raises:
+    BuildImageError: On error.
+  """
+  cmd = ["find", path, "-print"]
+  try:
+    output = common.RunAndCheckOutput(cmd, verbose=False)
+  except common.ExternalError:
+    raise BuildImageError("Failed to get disk inode usage:\n{}".format(output))
+  # increase by > 4% as number of files and directories is not whole picture.
+  return output.count('\n') * 25 // 24
+
+
+def GetFilesystemCharacteristics(sparse_image_path):
+  """Returns various filesystem characteristics of "sparse_image_path".
+
+  Args:
+    sparse_image_path: The file to analyze.
+
+  Returns:
+    The characteristics dictionary.
+
+  Raises:
+    BuildImageError: On error.
+  """
+  unsparse_image_path = UnsparseImage(sparse_image_path, replace=False)
+
+  cmd = ["tune2fs", "-l", unsparse_image_path]
+  try:
+    output = common.RunAndCheckOutput(cmd, verbose=False)
+  except common.ExternalError:
+    raise BuildImageError("Failed to get tune2fs usage:\n{}".format(output))
+  os.remove(unsparse_image_path)
+  fs_dict = { }
+  for line in output.splitlines():
+    fields = line.split(":")
+    if len(fields) == 2:
+      fs_dict[fields[0].strip()] = fields[1].strip()
+  return fs_dict
 
 
 def UnsparseImage(sparse_image_path, replace=True):
@@ -121,6 +167,10 @@ def SetUpInDirAndFsConfig(origin_in, prop_dict):
   if prop_dict["mount_point"] != "system":
     return origin_in, fs_config
 
+  if "first_pass" in prop_dict:
+    prop_dict["mount_point"] = "/"
+    return prop_dict["first_pass"]
+
   # Construct a staging directory of the root file system.
   in_dir = common.MakeTempDir()
   root_dir = prop_dict.get("root_dir")
@@ -144,6 +194,7 @@ def SetUpInDirAndFsConfig(origin_in, prop_dict):
       with open(fs_config) as fr:
         fw.writelines(fr.readlines())
     fs_config = merged_fs_config
+  prop_dict["first_pass"] = (in_dir, fs_config)
   return in_dir, fs_config
 
 
@@ -175,7 +226,7 @@ def CheckHeadroom(ext4fs_output, prop_dict):
   m = ext4fs_stats.match(last_line)
   used_blocks = int(m.groupdict().get('used_blocks'))
   total_blocks = int(m.groupdict().get('total_blocks'))
-  headroom_blocks = int(prop_dict['partition_headroom']) / BLOCK_SIZE
+  headroom_blocks = int(prop_dict['partition_headroom']) // BLOCK_SIZE
   adjusted_blocks = total_blocks - headroom_blocks
   if used_blocks > adjusted_blocks:
     mount_point = prop_dict["mount_point"]
@@ -202,6 +253,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   Raises:
     BuildImageError: On build image failures.
   """
+  original_mount_point = prop_dict["mount_point"]
   in_dir, fs_config = SetUpInDirAndFsConfig(in_dir, prop_dict)
 
   build_command = []
@@ -233,7 +285,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     size = GetDiskUsage(in_dir)
     logger.info(
         "The tree size of %s is %d MB.", in_dir, size // BYTES_IN_MB)
-    size += int(prop_dict.get("partition_reserved_size", 0))
+    # If not specified, give us 16MB margin for GetDiskUsage error ...
+    size += int(prop_dict.get("partition_reserved_size", BYTES_IN_MB * 16))
     # Round this up to a multiple of 4K so that avbtool works
     size = common.RoundUpTo4K(size)
     # Adjust partition_size to add more space for AVB footer, to prevent
@@ -244,6 +297,35 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
           lambda x: verity_utils.AVBCalcMaxImageSize(
               avbtool, avb_footer_type, x, avb_signing_args))
     prop_dict["partition_size"] = str(size)
+    if fs_type.startswith("ext"):
+      if "extfs_inode_count" not in prop_dict:
+        prop_dict["extfs_inode_count"] = str(GetInodeUsage(in_dir))
+      logger.info(
+          "First Pass based on estimates of %d MB and %s inodes.",
+          size // BYTES_IN_MB, prop_dict["extfs_inode_count"])
+      prop_dict["mount_point"] = original_mount_point
+      BuildImage(in_dir, prop_dict, out_file, target_out)
+      fs_dict = GetFilesystemCharacteristics(out_file)
+      block_size = int(fs_dict.get("Block size", "4096"))
+      free_size = int(fs_dict.get("Free blocks", "0")) * block_size
+      reserved_size = int(prop_dict.get("partition_reserved_size", 0))
+      if free_size <= reserved_size:
+        logger.info(
+            "Not worth reducing image %d <= %d.", free_size, reserved_size)
+      else:
+        size -= free_size
+        size += reserved_size
+        if block_size <= 4096:
+          size = common.RoundUpTo4K(size)
+        else:
+          size = ((size + block_size - 1) // block_size) * block_size
+      extfs_inode_count = prop_dict["extfs_inode_count"]
+      inodes = int(fs_dict.get("Inode count", extfs_inode_count))
+      inodes -= int(fs_dict.get("Free inodes", "0"))
+      prop_dict["extfs_inode_count"] = str(inodes)
+      prop_dict["partition_size"] = str(size)
+      logger.info(
+          "Allocating %d Inodes for %s.", inodes, out_file)
     logger.info(
         "Allocating %d MB for %s.", size // BYTES_IN_MB, out_file)
 
@@ -363,7 +445,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
             int(prop_dict.get("partition_reserved_size", 0)),
             int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
     print(
-        "The max image size for filsystem files is {} bytes ({} MB), out of a "
+        "The max image size for filesystem files is {} bytes ({} MB), out of a "
         "total partition size of {} bytes ({} MB).".format(
             int(prop_dict["image_size"]),
             int(prop_dict["image_size"]) // BYTES_IN_MB,
@@ -677,7 +759,7 @@ def main(argv):
 
   glob_dict = LoadGlobalDict(glob_dict_file)
   if "mount_point" in glob_dict:
-    # The caller knows the mount point and provides a dictionay needed by
+    # The caller knows the mount point and provides a dictionary needed by
     # BuildImage().
     image_properties = glob_dict
   else:
