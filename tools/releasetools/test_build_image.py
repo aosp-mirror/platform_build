@@ -19,7 +19,7 @@ import os.path
 
 import common
 from build_image import (
-    BuildImageError, CheckHeadroom, SetUpInDirAndFsConfig)
+    BuildImageError, CheckHeadroom, GetFilesystemCharacteristics, SetUpInDirAndFsConfig)
 from test_utils import ReleaseToolsTestCase
 
 
@@ -176,3 +176,25 @@ class BuildImageTest(ReleaseToolsTestCase):
     self.assertIn('fs-config-system\n', fs_config_data)
     self.assertIn('fs-config-root\n', fs_config_data)
     self.assertEqual('/', prop_dict['mount_point'])
+
+  def test_GetFilesystemCharacteristics(self):
+    input_dir = common.MakeTempDir()
+    output_image = common.MakeTempFile(suffix='.img')
+    command = ['mkuserimg_mke2fs', input_dir, output_image, 'ext4',
+               '/system', '409600', '-j', '0']
+    proc = common.Run(command)
+    ext4fs_output, _ = proc.communicate()
+    self.assertEqual(0, proc.returncode)
+
+    output_file = common.MakeTempFile(suffix='.img')
+    cmd = ["img2simg", output_image, output_file]
+    p = common.Run(cmd)
+    p.communicate()
+    self.assertEqual(0, p.returncode)
+
+    fs_dict = GetFilesystemCharacteristics(output_file)
+    self.assertEqual(int(fs_dict['Block size']), 4096)
+    self.assertGreaterEqual(int(fs_dict['Free blocks']), 0) # expect ~88
+    self.assertGreater(int(fs_dict['Inode count']), 0)      # expect ~64
+    self.assertGreaterEqual(int(fs_dict['Free inodes']), 0) # expect ~53
+    self.assertGreater(int(fs_dict['Inode count']), int(fs_dict['Free inodes']))
