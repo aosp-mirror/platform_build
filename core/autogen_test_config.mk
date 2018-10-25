@@ -34,16 +34,9 @@ else
 endif
 # Auto generating test config file for native test
 $(autogen_test_config_file): PRIVATE_MODULE_NAME := $(LOCAL_MODULE)
-$(autogen_test_config_file): PRIVATE_RUN_UID := $(LOCAL_RUN_TEST_AS)
 $(autogen_test_config_file) : $(autogen_test_config_template)
 	@echo "Auto generating test config $(notdir $@)"
 	$(hide) sed 's&{MODULE}&$(PRIVATE_MODULE_NAME)&g' $< > $@
-ifneq ($(LOCAL_RUN_TEST_AS),)
-	$(hide) sed -i 's&{UID_OPTION}&<option name="run-test-as" value="$(PRIVATE_RUN_UID)" />&g' $@
-else
-	$(hide) sed -i '/{UID_OPTION}/d' $@
-endif
-
 my_auto_generate_config := true
 else
 # Auto generating test config file for instrumentation test
