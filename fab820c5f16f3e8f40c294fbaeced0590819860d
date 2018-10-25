@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "475ec5c0_a140ec35",
+        "filename": "core/autogen_test_config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-25T04:30:56Z",
+      "side": 1,
+      "message": "This is breaking mac builds, since -i requires an argument on mac (it\u0027s optional on linux)",
+      "range": {
+        "startLine": 42,
+        "startChar": 13,
+        "endLine": 42,
+        "endChar": 16
+      },
+      "revId": "fab820c5f16f3e8f40c294fbaeced0590819860d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
