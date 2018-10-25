@@ -69,7 +69,7 @@ endif
 ifdef LOCAL_DEX_PREOPT
   $(built_odex): $(LOCAL_SOONG_DEX_JAR)
 	$(call dexpreopt-one-file,$<,$@)
-  $(eval $(call dexpreopt-copy-jar,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE),$(LOCAL_DEX_PREOPT)))
+  $(eval $(call dexpreopt-copy-jar,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE),$(LOCAL_STRIP_DEX)))
 else
   $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
 endif
