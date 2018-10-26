@@ -423,6 +423,7 @@ PRODUCT_OTHER_JAVA_DEBUG_INFO := \
 # Resolve and setup per-module dex-preopt configs.
 PRODUCT_DEX_PREOPT_MODULE_CONFIGS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEX_PREOPT_MODULE_CONFIGS))
+DEXPREOPT_DISABLED_MODULES :=
 # If a module has multiple setups, the first takes precedence.
 _pdpmc_modules :=
 $(foreach c,$(PRODUCT_DEX_PREOPT_MODULE_CONFIGS),\
@@ -431,7 +432,9 @@ $(foreach c,$(PRODUCT_DEX_PREOPT_MODULE_CONFIGS),\
     $(eval _pdpmc_modules += $(m))\
     $(eval cf := $(patsubst $(m)=%,%,$(c)))\
     $(eval cf := $(subst $(_PDPMC_SP_PLACE_HOLDER),$(space),$(cf)))\
-    $(eval DEXPREOPT.$(TARGET_PRODUCT).$(m).CONFIG := $(cf))))
+    $(if $(filter disable,$(cf)),\
+      $(eval DEXPREOPT_DISABLED_MODULES += $(m)),\
+      $(eval DEXPREOPT.$(TARGET_PRODUCT).$(m).CONFIG := $(cf)))))
 _pdpmc_modules :=
 
 # Resolve and setup per-module sanitizer configs.
