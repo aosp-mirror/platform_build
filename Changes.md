@@ -1,5 +1,22 @@
 # Build System Changes for Android.mk Writers
 
+## `BUILD_NUMBER` removal from Android.mk  {#BUILD_NUMBER}
+
+`BUILD_NUMBER` should not be used directly in Android.mk files, as it would
+trigger them to be re-read every time the `BUILD_NUMBER` changes (which it does
+on every build server build). If possible, just remove the use so that your
+builds are more reproducible. If you do need it, use `BUILD_NUMBER_FROM_FILE`:
+
+``` make
+$(LOCAL_BUILT_MODULE):
+	mytool --build_number $(BUILD_NUMBER_FROM_FILE) -o $@
+```
+
+That will expand out to a subshell that will read the current `BUILD_NUMBER`
+whenever it's run. It will not re-run your command if the build number has
+changed, so incremental builds will have the build number from the last time
+the particular output was rebuilt.
+
 ## `DIST_DIR`, `dist_goal`, and `dist-for-goals`  {#dist}
 
 `DIST_DIR` and `dist_goal` are no longer available when reading Android.mk
