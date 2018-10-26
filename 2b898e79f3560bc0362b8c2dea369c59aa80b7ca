@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6772b45c_2650f86b",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 737,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-26T15:27:06Z",
+      "side": 1,
+      "message": "I have to use a flag to indicate if _all_deps_for_$(1)_ was scanned already. Somehow \n\"$(ifdef _all_deps_for_$(1)_,\" does not work. \n\nI did defined a var like \"DUMMY_DEPS\u003d\", and assign it to _all_deps_for_$(1)_. But the _all_deps_for_$(1)_ with empty value still can\u0027t pass ifdef.",
+      "range": {
+        "startLine": 737,
+        "startChar": 7,
+        "endLine": 737,
+        "endChar": 30
+      },
+      "revId": "2b898e79f3560bc0362b8c2dea369c59aa80b7ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
