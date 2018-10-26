@@ -2672,10 +2672,9 @@ $(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
       $(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
 	@rm -rf $(dir $(2))
 	@mkdir -p $(dir $(2))
-	for INPUT_DEX in `find $(dir $(1)) -maxdepth 1 -name "classes*.dex" | sort`; do \
-	    echo "--input-dex=$$$${INPUT_DEX}"; \
-	    echo "--output-dex=$(dir $(2))/`basename $$$${INPUT_DEX}`"; \
-	done | xargs $(HIDDENAPI) encode \
+	find $(dir $(1)) -maxdepth 1 -name "classes*.dex" | xargs -I{} cp -f {} $(dir $(2))/; \
+	find $(dir $(2)) -maxdepth 1 -name "classes*.dex" | sort | sed 's/^/--dex=/' \
+	| xargs $(HIDDENAPI) encode \
 	    --light-greylist=$(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
 	    --dark-greylist=$(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) \
 	    --blacklist=$(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
