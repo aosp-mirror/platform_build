@@ -66,12 +66,15 @@ include $(BUILD_SYSTEM)/clang/config.mk
 $(shell mkdir -p $(OUT_DIR) && \
     echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt)
 BUILD_NUMBER_FILE := $(OUT_DIR)/build_number.txt
+.KATI_READONLY := BUILD_NUMBER_FILE
+$(KATI_obsolete_var BUILD_NUMBER,See https://android.googlesource.com/platform/build/+/master/Changes.md#BUILD_NUMBER)
 
 ifeq ($(HOST_OS),darwin)
 DATE_FROM_FILE := date -r $(BUILD_DATETIME_FROM_FILE)
 else
 DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
 endif
+.KATI_READONLY := DATE_FROM_FILE
 
 # Pick a reasonable string to use to identify files.
 ifeq ($(strip $(HAS_BUILD_NUMBER)),false)
@@ -81,6 +84,7 @@ ifeq ($(strip $(HAS_BUILD_NUMBER)),false)
 else
   FILE_NAME_TAG := $(file <$(BUILD_NUMBER_FILE))
 endif
+.KATI_READONLY := FILE_NAME_TAG
 
 # Make an empty directory, which can be used to make empty jars
 EMPTY_DIRECTORY := $(OUT_DIR)/empty
