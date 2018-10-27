@@ -1415,7 +1415,7 @@ endif # TARGET_BUILD_APPS
 .PHONY: docs
 docs: $(ALL_DOCS)
 
-.PHONY: sdk win_sdk winsdk-tools
+.PHONY: sdk win_sdk winsdk-tools sdk_addon
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
 $(call dist-for-goals,sdk win_sdk, \
