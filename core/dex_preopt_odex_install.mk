@@ -3,6 +3,12 @@
 # Output variables: LOCAL_DEX_PREOPT, LOCAL_UNCOMPRESS_DEX, built_odex,
 #                   dexpreopt_boot_jar_module
 
+ifeq (true,$(LOCAL_PREFER_INTEGRITY))
+  LOCAL_UNCOMPRESS_DEX := true
+else
+  LOCAL_UNCOMPRESS_DEX :=
+endif
+
 # We explicitly uncompress APKs of privileged apps, and used by
 # privileged apps
 ifneq (true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS))
@@ -49,7 +55,7 @@ ifneq (,$(filter $(LOCAL_MODULE_TAGS),tests))
 endif
 
 # If we have product-specific config for this module?
-ifeq (disable,$(DEXPREOPT.$(TARGET_PRODUCT).$(LOCAL_MODULE).CONFIG))
+ifneq (,$(filter $(LOCAL_MODULE),$(DEXPREOPT_DISABLED_MODULES)))
   LOCAL_DEX_PREOPT :=
 endif
 

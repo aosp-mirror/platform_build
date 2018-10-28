@@ -1206,7 +1206,7 @@ endif
 
 ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
 INTERNAL_USERIMAGES_DEPS := $(SIMG2IMG)
-INTERNAL_USERIMAGES_DEPS += $(MKEXTUSERIMG) $(MAKE_EXT4FS) $(E2FSCK)
+INTERNAL_USERIMAGES_DEPS += $(MKEXTUSERIMG) $(MAKE_EXT4FS) $(E2FSCK) $(TUNE2FS)
 ifeq ($(TARGET_USERIMAGES_USE_F2FS),true)
 INTERNAL_USERIMAGES_DEPS += $(MKF2FSUSERIMG) $(MAKE_F2FS)
 endif
@@ -2941,11 +2941,12 @@ define build-superimage-target-args
   --metadata-slots $(if $(1),2,1) \
   --device-size $(BOARD_SUPER_PARTITION_SIZE) \
   $(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
-    --group $(group):$(BOARD_$(call to-upper,$(group))_SIZE) \
+    --group $(group)$(1):$(BOARD_$(call to-upper,$(group))_SIZE) \
+    $(if $(1), --group $(group)_b:$(BOARD_$(call to-upper,$(group))_SIZE)) \
     $(foreach name,$(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
-      --partition $(name)$(1):readonly:$(if $(2),$(call read-size-of-partitions,$(name)),0):$(group) \
+      --partition $(name)$(1):readonly:$(if $(2),$(call read-size-of-partitions,$(name)),0):$(group)$(1) \
       $(if $(2), --image $(name)$(1)=$(call images-for-partitions,$(name))) \
-      $(if $(1), --partition $(name)_b:readonly:0:$(group)) \
+      $(if $(1), --partition $(name)_b:readonly:0:$(group)_b) \
   ))
 endef
 
@@ -3099,6 +3100,7 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/mke2fs \
   $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs \
   $(HOST_OUT_EXECUTABLES)/e2fsdroid \
+  $(HOST_OUT_EXECUTABLES)/tune2fs \
   $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh \
   $(HOST_OUT_EXECUTABLES)/mksquashfs \
   $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh \
@@ -3658,6 +3660,13 @@ ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 	$(hide) echo -n "lpmake_args=" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo $(call build-superimage-target-args,$(if $(filter true,$(AB_OTA_UPDATER)),_a,)) \
 	    >> $(zip_root)/META/misc_info.txt
+endif
+ifneq ($(BOARD_SUPER_PARTITION_GROUPS),)
+	$(hide) echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" > $(zip_root)/META/dynamic_partitions_info.txt
+	$(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
+	    echo "$(group)_size=$(BOARD_$(call to-upper,$(group))_SIZE)" >> $(zip_root)/META/dynamic_partitions_info.txt; \
+	    $(if $(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
+	        echo "$(group)_partition_list=$(BOARD_$(call to-upper,$(group))_PARTITION_LIST)" >> $(zip_root)/META/dynamic_partitions_info.txt;))
 endif
 
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
