@@ -297,7 +297,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
         logger.info(
             "Not worth reducing image %d <= %d.", free_size, reserved_size)
       else:
-        size -= free_size
+        size -= free_size + (free_size // 59)
         size += reserved_size
         if block_size <= 4096:
           size = common.RoundUpTo4K(size)
@@ -573,6 +573,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("system_journal_size", "journal_size"):
       d["journal_size"] = "0"
     copy_prop("system_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
@@ -623,6 +624,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("product_journal_size", "journal_size"):
       d["journal_size"] = "0"
     copy_prop("product_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("product_squashfs_compressor", "squashfs_compressor")
     copy_prop("product_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("product_squashfs_block_size", "squashfs_block_size")
@@ -643,6 +645,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("product_services_journal_size", "journal_size"):
       d["journal_size"] = "0"
     copy_prop("product_services_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("product_services_squashfs_compressor", "squashfs_compressor")
     copy_prop("product_services_squashfs_compressor_opt",
               "squashfs_compressor_opt")
@@ -665,6 +668,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("odm_journal_size", "journal_size"):
       d["journal_size"] = "0"
     copy_prop("odm_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("odm_squashfs_compressor", "squashfs_compressor")
     copy_prop("odm_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("odm_squashfs_block_size", "squashfs_block_size")
@@ -680,6 +684,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("oem_journal_size", "journal_size"):
       d["journal_size"] = "0"
     copy_prop("oem_extfs_inode_count", "extfs_inode_count")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     if not copy_prop("oem_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
   d["partition_name"] = mount_point
