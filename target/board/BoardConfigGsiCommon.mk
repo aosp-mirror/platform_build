@@ -3,6 +3,10 @@
 # Common compile-time definitions for GSI
 #
 
+# The generic product target doesn't have any hardware-specific pieces.
+TARGET_NO_BOOTLOADER := true
+TARGET_NO_KERNEL := true
+
 # GSIs always use ext4.
 TARGET_USERIMAGES_USE_EXT4 := true
 # GSIs are historically released in sparse format.
