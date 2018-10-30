@@ -22,6 +22,30 @@
       "revId": "2b898e79f3560bc0362b8c2dea369c59aa80b7ca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7848609b_5e627488",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 737,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-30T23:33:37Z",
+      "side": 1,
+      "message": "ifdef is a directive, not a function, so it can\u0027t be used in this context.",
+      "parentUuid": "6772b45c_2650f86b",
+      "range": {
+        "startLine": 737,
+        "startChar": 7,
+        "endLine": 737,
+        "endChar": 30
+      },
+      "revId": "2b898e79f3560bc0362b8c2dea369c59aa80b7ca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
