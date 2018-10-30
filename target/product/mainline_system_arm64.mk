@@ -18,6 +18,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
 
 PRODUCT_NAME := mainline_system_arm64
-PRODUCT_DEVICE := generic_arm64
+PRODUCT_DEVICE := mainline_arm64
 PRODUCT_BRAND := generic
 PRODUCT_SHIPPING_API_LEVEL := 28
