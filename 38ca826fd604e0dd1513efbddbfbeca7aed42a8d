@@ -1,0 +1,101 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6dcf4de3_1434b23e",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 740,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-30T23:42:46Z",
+      "side": 1,
+      "message": "deps?  I don\u0027t know why resolve-shared-libs-depes has depes, but no need to continue it.",
+      "range": {
+        "startLine": 740,
+        "startChar": 27,
+        "endLine": 740,
+        "endChar": 32
+      },
+      "revId": "38ca826fd604e0dd1513efbddbfbeca7aed42a8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a17ccbb_7380e15e",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-30T23:42:46Z",
+      "side": 1,
+      "message": "Instead of filtering here you can add all dependencies to _all_deps_for_$(1)_, and then at the end do $(eval _all_deps_for_$(1)_ :\u003d $(sort $(_all_deps_for_$(1)_))) to remove duplicates.",
+      "revId": "38ca826fd604e0dd1513efbddbfbeca7aed42a8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6a0e7a18_711a1500",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 747,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-30T23:42:46Z",
+      "side": 1,
+      "message": "Same here",
+      "revId": "38ca826fd604e0dd1513efbddbfbeca7aed42a8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3983cdba_ad1a38a9",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 762,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-30T23:42:46Z",
+      "side": 1,
+      "message": "I think this can be $(notdir $(dir $(f))",
+      "range": {
+        "startLine": 762,
+        "startChar": 49,
+        "endLine": 762,
+        "endChar": 85
+      },
+      "revId": "38ca826fd604e0dd1513efbddbfbeca7aed42a8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64131ba8_412ca63e",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-10-30T23:42:46Z",
+      "side": 1,
+      "message": "I think this would be better as $(call copy-many-files,$(COMPATIBILITY.device-tests.HOST_SHARED_LIBRARY.FILES)) to make rules to copy all the files into place, which returns the target files so you can use them as a dependency of $(device-tests-zip).  Then I don\u0027t think you would need HOST_SHARED_LIBRARY.DEPS either.",
+      "revId": "38ca826fd604e0dd1513efbddbfbeca7aed42a8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
