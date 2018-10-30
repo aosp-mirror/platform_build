@@ -474,11 +474,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
 
     # Run e2fsck on the inflated image file
     e2fsck_command = ["e2fsck", "-f", "-n", unsparse_image]
-    # TODO(b/112062612): work around e2fsck failure with SANITIZE_HOST=address
-    env4e2fsck = os.environ.copy()
-    env4e2fsck["ASAN_OPTIONS"] = "detect_odr_violation=0"
     try:
-      common.RunAndCheckOutput(e2fsck_command, env=env4e2fsck)
+      common.RunAndCheckOutput(e2fsck_command)
     finally:
       os.remove(unsparse_image)
 
