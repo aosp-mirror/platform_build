@@ -1303,6 +1303,12 @@ ifneq ($(TARGET_BUILD_APPS),)
   # Dist the installed files if they exist.
   apps_only_installed_files := $(foreach m,$(unbundled_build_modules),$(ALL_MODULES.$(m).INSTALLED))
   $(call dist-for-goals,apps_only, $(apps_only_installed_files))
+
+  # Dist the bundle files if they exist.
+  apps_only_bundle_files := $(foreach m,$(unbundled_build_modules),\
+    $(if $(ALL_MODULES.$(m).BUNDLE),$(ALL_MODULES.$(m).BUNDLE):$(m)-base.zip))
+  $(call dist-for-goals,apps_only, $(apps_only_bundle_files))
+
   # For uninstallable modules such as static Java library, we have to dist the built file,
   # as <module_name>.<suffix>
   apps_only_dist_built_files := $(foreach m,$(unbundled_build_modules),$(if $(ALL_MODULES.$(m).INSTALLED),,\
