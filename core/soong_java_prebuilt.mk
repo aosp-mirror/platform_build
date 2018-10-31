@@ -128,6 +128,10 @@ else  # LOCAL_SOONG_DEX_JAR
   $(eval $(call copy-one-file,$(full_classes_jar),$(LOCAL_BUILT_MODULE)))
 endif  # LOCAL_SOONG_DEX_JAR
 
+ifdef LOCAL_SOONG_AAR
+  ALL_MODULES.$(LOCAL_MODULE).AAR := $(LOCAL_SOONG_AAR)
+endif
+
 javac-check : $(full_classes_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_jar)
 .PHONY: javac-check-$(LOCAL_MODULE)
