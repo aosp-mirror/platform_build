@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "171813b5_2fd536f1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-10-31T02:09:17Z",
+      "side": 1,
+      "message": "It can, but I thought you were using it for the outputs of test_suites, which won\u0027t?",
+      "revId": "0944b0e9f15e893fa2908da4c1b7c152e74430f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
