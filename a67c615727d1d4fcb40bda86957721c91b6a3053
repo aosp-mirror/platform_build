@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b185757c_1f1ce7a9",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-10-31T22:57:23Z",
+      "side": 1,
+      "message": "Move this to after the install you added below.\n\nThen there\u0027s also no need to for loop over $(call compatibility_suite_dirs,$(suite),$(arch_dir)) because we\u0027ve already installed the file into the testcase directories.",
+      "range": {
+        "startLine": 559,
+        "startChar": 0,
+        "endLine": 563,
+        "endChar": 45
+      },
+      "revId": "a67c615727d1d4fcb40bda86957721c91b6a3053",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf234497_a83161fc",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 565,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-10-31T22:57:23Z",
+      "side": 1,
+      "message": "Install also into the testcase folder",
+      "range": {
+        "startLine": 565,
+        "startChar": 2,
+        "endLine": 565,
+        "endChar": 6
+      },
+      "revId": "a67c615727d1d4fcb40bda86957721c91b6a3053",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "63399d26_8a470689",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 567,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-10-31T22:57:23Z",
+      "side": 1,
+      "message": "New line.",
+      "revId": "a67c615727d1d4fcb40bda86957721c91b6a3053",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d73f5aa0_fe71e047",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 570,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-10-31T22:57:23Z",
+      "side": 1,
+      "message": "Can\u0027t you just do the filtering here?\n\nI don\u0027t get why you need compat-copy-pair below, those won\u0027t be LOCAL_INSTALLED_MODULE",
+      "range": {
+        "startLine": 570,
+        "startChar": 4,
+        "endLine": 570,
+        "endChar": 81
+      },
+      "revId": "a67c615727d1d4fcb40bda86957721c91b6a3053",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
