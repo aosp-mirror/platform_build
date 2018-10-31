@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "aebb2fcc_108813ec",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 740,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-31T17:51:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6dcf4de3_1434b23e",
+      "range": {
+        "startLine": 740,
+        "startChar": 27,
+        "endLine": 740,
+        "endChar": 32
+      },
+      "revId": "38ca826fd604e0dd1513efbddbfbeca7aed42a8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a17ccbb_7380e15e",
         "filename": "core/main.mk",
         "patchSetId": 5
@@ -39,6 +63,24 @@
       "revId": "38ca826fd604e0dd1513efbddbfbeca7aed42a8d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b8b2ff55_ca067c71",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 745,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-31T17:51:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a17ccbb_7380e15e",
+      "revId": "38ca826fd604e0dd1513efbddbfbeca7aed42a8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -59,6 +101,24 @@
     },
     {
       "key": {
+        "uuid": "287bb3d4_bb1891bb",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 747,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-31T17:51:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6a0e7a18_711a1500",
+      "revId": "38ca826fd604e0dd1513efbddbfbeca7aed42a8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3983cdba_ad1a38a9",
         "filename": "core/main.mk",
         "patchSetId": 5
@@ -70,6 +130,30 @@
       "writtenOn": "2018-10-30T23:42:46Z",
       "side": 1,
       "message": "I think this can be $(notdir $(dir $(f))",
+      "range": {
+        "startLine": 762,
+        "startChar": 49,
+        "endLine": 762,
+        "endChar": 85
+      },
+      "revId": "38ca826fd604e0dd1513efbddbfbeca7aed42a8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e6426acc_2a12808c",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 762,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-31T17:51:32Z",
+      "side": 1,
+      "message": "I tried that, dir returns a path ends with /, then notdir of that path returns empty string. Any other way to do this?",
+      "parentUuid": "3983cdba_ad1a38a9",
       "range": {
         "startLine": 762,
         "startChar": 49,
