@@ -194,6 +194,11 @@ all_resources := $(strip $(my_res_resources) $(my_overlay_resources))
 my_res_package := $(intermediates)/package-res.apk
 LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
 
+ifeq ($(LOCAL_USE_AAPT2),true)
+  my_bundle_module := $(intermediates)/base.zip
+  LOCAL_INTERMEDIATE_TARGETS += $(my_bundle_module)
+endif
+
 # Always run aapt2, because we need to at least compile the AndroidManifest.xml.
 need_compile_res := true
 
@@ -673,6 +678,52 @@ endif  # LOCAL_DEX_PREOPT
 ifdef LOCAL_COMPRESSED_MODULE
 	$(compress-package)
 endif  # LOCAL_COMPRESSED_MODULE
+
+ifeq ($(LOCAL_USE_AAPT2),true)
+  my_package_res_pb := $(intermediates)/package-res.pb.apk
+  $(my_package_res_pb): $(my_res_package) $(AAPT2)
+	$(AAPT2) convert --output-format proto $< -o $@
+
+  $(my_bundle_module): $(my_package_res_pb)
+  $(my_bundle_module): PRIVATE_RES_PACKAGE := $(my_package_res_pb)
+
+  $(my_bundle_module): $(jni_shared_libraries)
+  $(my_bundle_module): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries_with_abis)
+  $(my_bundle_module): PRIVATE_JNI_SHARED_LIBRARIES_ABI := $(jni_shared_libraries_abis)
+
+  ifneq ($(full_classes_jar),)
+    $(my_bundle_module): PRIVATE_DEX_FILE := $(built_dex)
+    # Use the jarjar processed archive as the initial package file.
+    $(my_bundle_module): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar)
+    $(my_bundle_module): $(built_dex)
+  else
+    $(my_bundle_module): PRIVATE_DEX_FILE :=
+    $(my_bundle_module): PRIVATE_SOURCE_ARCHIVE :=
+  endif # full_classes_jar
+
+  $(my_bundle_module): $(MERGE_ZIPS) $(SOONG_ZIP) $(ZIP2ZIP)
+	@echo "target Bundle: $(PRIVATE_MODULE) ($@)"
+	rm -rf $@.parts
+	mkdir -p $@.parts
+	$(ZIP2ZIP) -i $(PRIVATE_RES_PACKAGE) -o $@.parts/apk.zip AndroidManifest.xml:manifest/AndroidManifest.xml resources.pb "res/**/*" "assets/**/*"
+        ifneq ($(jni_shared_libraries),)
+	  $(call create-jni-shared-libs-package,$@.parts/jni.zip)
+        endif
+        ifeq ($(full_classes_jar),)
+        # We don't build jar, need to add the Java resources here.
+	  $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call create-java-resources-jar,$@.parts/res.zip))
+        else  # full_classes_jar
+	  $(call create-dex-jar,$@.parts/dex.zip,$(PRIVATE_DEX_FILE))
+	  $(ZIP2ZIP) -i $@.parts/dex.zip -o $@.parts/dex.zip.tmp "classes*.dex:dex/"
+	  mv -f $@.parts/dex.zip.tmp $@.parts/dex.zip
+	  $(call extract-resources-jar,$@.parts/res.zip,$(PRIVATE_SOURCE_ARCHIVE))
+        endif  # full_classes_jar
+	$(ZIP2ZIP) -i $@.parts/res.zip -o $@.parts/res.zip.tmp "**/*:root/"
+	mv -f $@.parts/res.zip.tmp $@.parts/res.zip
+	$(MERGE_ZIPS) $@ $@.parts/*.zip
+	rm -rf $@.parts
+  ALL_MODULES.$(LOCAL_MODULE).BUNDLE := $(my_bundle_module)
+endif
 
 ###############################
 ## Build dpi-specific apks, if it's apps_only build.
