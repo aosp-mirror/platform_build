@@ -2919,27 +2919,20 @@ ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 # BOARD_SUPER_PARTITION_SIZE must be defined to build super image.
 ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 
-INSTALLED_SUPERIMAGE_TARGET := $(PRODUCT_OUT)/super.img
-INSTALLED_SUPERIMAGE_EMPTY_TARGET := $(PRODUCT_OUT)/super_empty.img
-
-$(INSTALLED_SUPERIMAGE_TARGET): $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
-
-# For A/B devices, super partition always contains sub-partitions in the _a slot, because this
-# image should only be used for bootstrapping / initializing the device. When flashing the image,
-# bootloader fastboot should always mark _a slot as bootable.
-ifeq ($(AB_OTA_UPDATER),true)
-$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): PRIVATE_PARTITION_SUFFIX=_a
-endif # AB_OTA_UPDATER
-
-$(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(LPMAKE)
+define super-slot-suffix
+$(if $(filter true,$(AB_OTA_UPDATER)),$(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)),,_a))
+endef
 
 # $(1): slot A suffix (_a or empty)
 # $(2): include images or not (true or empty)
 define build-superimage-target-args
   $(if $(2), --sparse) \
   --metadata-size 65536 \
-  --metadata-slots $(if $(1),2,1) \
-  --device-size $(BOARD_SUPER_PARTITION_SIZE) \
+  --metadata-slots $(if $(filter true,$(AB_OTA_UPDATER)),2,1) \
+  --super-name $(BOARD_SUPER_PARTITION_METADATA_DEVICE) \
+  $(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)), $(if $(filter true,$(AB_OTA_UPDATER)), --auto-slot-suffixing)) \
+  $(foreach device,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
+    --device $(device):$(BOARD_SUPER_PARTITION_$(call to-upper,$(device))_DEVICE_SIZE)) \
   $(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
     --group $(group)$(1):$(BOARD_$(call to-upper,$(group))_SIZE) \
     $(if $(1), --group $(group)_b:$(BOARD_$(call to-upper,$(group))_SIZE)) \
@@ -2959,15 +2952,23 @@ define build-superimage-target
     --output $(1)
 endef
 
-$(INSTALLED_SUPERIMAGE_TARGET):
+# For A/B devices, super partition always contains sub-partitions in the _a slot, because this
+# image should only be used for bootstrapping / initializing the device. When flashing the image,
+# bootloader fastboot should always mark _a slot as bootable.
+
+ifneq (true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS))
+INSTALLED_SUPERIMAGE_TARGET := $(PRODUCT_OUT)/super.img
+$(INSTALLED_SUPERIMAGE_TARGET): $(LPMAKE) $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
 	$(call pretty,"Target super fs image: $@")
-	$(call build-superimage-target,$@,$(PRIVATE_PARTITION_SUFFIX),true)
+	$(call build-superimage-target,$@,$(call super-slot-suffix),true)
+endif
 
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_TARGET))
 
-$(INSTALLED_SUPERIMAGE_EMPTY_TARGET):
+INSTALLED_SUPERIMAGE_EMPTY_TARGET := $(PRODUCT_OUT)/super_empty.img
+$(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(LPMAKE)
 	$(call pretty,"Target empty super fs image: $@")
-	$(call build-superimage-target,$@,$(PRIVATE_PARTITION_SUFFIX))
+	$(call build-superimage-target,$@,$(call super-slot-suffix))
 
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_EMPTY_TARGET))
 
@@ -2988,6 +2989,25 @@ droid_targets: check-all-partition-sizes
 
 # Add image dependencies so that generated_*_image_info.txt are written before checking.
 check-all-partition-sizes: $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
+
+ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
+# Check sum(super partition block devices) == super partition (/ 2 for A/B)
+# Non-retrofit devices already defines BOARD_SUPER_PARTITION_SUPER_DEVICE_SIZE = BOARD_SUPER_PARTITION_SIZE
+define check-super-partition-size
+  size_list="$(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)),$(BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE))"; \
+  sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${size_list}"); \
+  max_size_tail=$(if $(filter true,$(AB_OTA_UPDATER))," / 2"); \
+  max_size_expr="$(BOARD_SUPER_PARTITION_SIZE)$${max_size_tail}"; \
+  if [ $$(( $${sum_sizes_expr} )) -ne $$(( $${max_size_expr} )) ]; then \
+    echo "The sum of super partition block device sizes is not equal to BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
+    echo $${sum_sizes_expr} '!=' $${max_size_expr}; \
+    exit 1; \
+  else \
+    echo "The sum of super partition block device sizes is equal to BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
+    echo $${sum_sizes_expr} '==' $${max_size_expr}; \
+  fi
+endef
+endif
 
 # $(1): human-readable max size string
 # $(2): max size expression
@@ -3035,6 +3055,7 @@ endef
 
 check-all-partition-sizes check-all-partition-sizes-nodeps:
 	$(call check-all-partition-sizes-target)
+	$(call check-super-partition-size)
 
 endif # PRODUCT_BUILD_SUPER_PARTITION
 
@@ -3658,7 +3679,7 @@ ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 	$(hide) echo "super_size=$(BOARD_SUPER_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "lpmake=$(notdir $(LPMAKE))" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo -n "lpmake_args=" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo $(call build-superimage-target-args,$(if $(filter true,$(AB_OTA_UPDATER)),_a,)) \
+	$(hide) echo $(call build-superimage-target-args,$(call super-slot-suffix)) \
 	    >> $(zip_root)/META/misc_info.txt
 endif
 ifneq ($(BOARD_SUPER_PARTITION_GROUPS),)

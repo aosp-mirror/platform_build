@@ -250,6 +250,7 @@ endif
 ADDITIONAL_PRODUCT_PROPERTIES += \
     ro.boot.logical_partitions=$(PRODUCT_USE_DYNAMIC_PARTITIONS) \
     ro.boot.dynamic_partitions=$(PRODUCT_USE_DYNAMIC_PARTITIONS) \
+    ro.boot.dynamic_partitions_retrofit=$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)
 
 # -----------------------------------------------------------------
 ###
