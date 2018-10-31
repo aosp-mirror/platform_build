@@ -166,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "f5c4d669_42d412c4",
+        "filename": "core/main.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 762,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-10-31T17:52:39Z",
+      "side": 1,
+      "message": "Or is there a simple way to strip the last /?",
+      "parentUuid": "e6426acc_2a12808c",
+      "range": {
+        "startLine": 762,
+        "startChar": 49,
+        "endLine": 762,
+        "endChar": 85
+      },
+      "revId": "38ca826fd604e0dd1513efbddbfbeca7aed42a8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "64131ba8_412ca63e",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 5
