@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2dfb12ad_695720e6",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1025,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-10-31T17:49:11Z",
+      "side": 1,
+      "message": "nit: suggest to use a separate build var for this (like BOARD_SUPER_PARTITION_METADATA_DEVICE). The order of tokens in a list can be hard to track when it is appended in different files.\n\nYou can still check that BOARD_SUPER_PARTITION_METADATA_DEVICE is in BOARD_SUPER_PARTITION_BLOCK_DEVICES here.",
+      "range": {
+        "startLine": 1025,
+        "startChar": 2,
+        "endLine": 1025,
+        "endChar": 7
+      },
+      "revId": "f10e1964aca9f31b6b4eb8a32d0bb3f465e71c0d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
