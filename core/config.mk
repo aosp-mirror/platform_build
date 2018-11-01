@@ -204,6 +204,11 @@ else
 JAVA_TMPDIR_ARG :=
 endif
 
+# A list of the jars that provide information about usages of the hidden API.
+# The core-oj-hiddenapi provides information for the core-oj jar.
+HIDDENAPI_EXTRA_APP_USAGE_JARS := \
+    core-oj-hiddenapi \
+
 # Default to remove the org.apache.http.legacy from bootclasspath
 ifeq ($(REMOVE_OAHL_FROM_BCP),)
 REMOVE_OAHL_FROM_BCP := true
