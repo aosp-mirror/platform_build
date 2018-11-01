@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1ef89783_491e2adc",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 563,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-11-01T17:20:50Z",
+      "side": 1,
+      "message": "There is a bug here,\n$(my_installed_module_stem) should use $(my_installed_module_stem)",
+      "parentUuid": "b185757c_1f1ce7a9",
+      "range": {
+        "startLine": 559,
+        "startChar": 0,
+        "endLine": 563,
+        "endChar": 45
+      },
+      "revId": "a67c615727d1d4fcb40bda86957721c91b6a3053",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bf234497_a83161fc",
         "filename": "core/base_rules.mk",
         "patchSetId": 14
@@ -76,6 +100,30 @@
       "writtenOn": "2018-10-31T22:57:23Z",
       "side": 1,
       "message": "Can\u0027t you just do the filtering here?\n\nI don\u0027t get why you need compat-copy-pair below, those won\u0027t be LOCAL_INSTALLED_MODULE",
+      "range": {
+        "startLine": 570,
+        "startChar": 4,
+        "endLine": 570,
+        "endChar": 81
+      },
+      "revId": "a67c615727d1d4fcb40bda86957721c91b6a3053",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f393d3d4_33134aa5",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 570,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-11-01T17:20:50Z",
+      "side": 1,
+      "message": "I think this block could be removed directly. It\u0027s already be covered by the upper section.",
+      "parentUuid": "d73f5aa0_fe71e047",
       "range": {
         "startLine": 570,
         "startChar": 4,
