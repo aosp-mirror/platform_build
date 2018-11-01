@@ -68,6 +68,7 @@ PRODUCT_PACKAGES += \
     ExtServices \
     ExtShared \
     fastboot \
+    flags_health_check \
     framework \
     framework-res \
     framework-sysconfig.xml \
