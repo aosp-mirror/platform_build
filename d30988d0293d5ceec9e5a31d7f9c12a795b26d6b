@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ea5cf075_cfc630cd",
+        "filename": "core/tasks/general-tests.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-11-01T06:29:37Z",
+      "side": 1,
+      "message": "This introduced a new issue. Build failed with:\nbuild/make/core/tasks/general-tests.mk:25: error: overriding commands for target `out/multiproduct/aosp_x86_ab/host/linux-x86/testcases/lib/libbase.so\u0027, previously defined at build/make/core/tasks/device-tests.mk:21\n\nIt seems that I have to dedupe items in COMPATIBILITY.general-tests.HOST_SHARED_LIBRARY.FILES for the ones in *device-tests*. Is that workaround OK?",
+      "revId": "d30988d0293d5ceec9e5a31d7f9c12a795b26d6b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
