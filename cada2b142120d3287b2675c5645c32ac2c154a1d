@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "072cc357_2ee92475",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-01T19:26:52Z",
+      "side": 1,
+      "message": "Can you also paste the commit message from CL:807786?",
+      "revId": "cada2b142120d3287b2675c5645c32ac2c154a1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
