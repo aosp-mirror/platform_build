@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "30018eb6_44029244",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1574,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-11-02T02:41:43Z",
+      "side": 1,
+      "message": "Doesn\u0027t this need to be different for linux vs darwin?",
+      "range": {
+        "startLine": 1574,
+        "startChar": 37,
+        "endLine": 1574,
+        "endChar": 65
+      },
+      "revId": "395694f104f333ed0b697277517ca097964d62a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "17bd538b_ba94bfb0",
         "filename": "envsetup.sh",
         "patchSetId": 2
