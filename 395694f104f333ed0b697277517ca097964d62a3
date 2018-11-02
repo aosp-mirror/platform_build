@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17bd538b_ba94bfb0",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1581,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-11-02T02:36:32Z",
+      "side": 1,
+      "message": "Add a todo to update this once we move it.",
+      "range": {
+        "startLine": 1579,
+        "startChar": 3,
+        "endLine": 1581,
+        "endChar": 6
+      },
+      "revId": "395694f104f333ed0b697277517ca097964d62a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
