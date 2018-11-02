@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ed924cd8_27430cc0",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 568,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-11-02T00:45:08Z",
+      "side": 1,
+      "message": "Update this section to something like:\nfor each suite:\n  eval my_compat_dist_$(suite) :\u003d $(LOCAL_BUILT_MODULE):$(COMPATIBILITY_TESTCASES_OUT_$(SUITE))/$(my_installed_module_stem)",
+      "range": {
+        "startLine": 565,
+        "startChar": 0,
+        "endLine": 568,
+        "endChar": 45
+      },
+      "revId": "849ef9238187d853756aff9638a438efc6e8118d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "21e593cc_a50d4287",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 621,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-11-02T00:45:08Z",
+      "side": 1,
+      "message": "I don\u0027t get why you need this call compat-copy-pair here...",
+      "range": {
+        "startLine": 621,
+        "startChar": 15,
+        "endLine": 621,
+        "endChar": 31
+      },
+      "revId": "849ef9238187d853756aff9638a438efc6e8118d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7ccf05f_3ebe7e3b",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 626,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-11-02T00:45:08Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 626,
+        "startChar": 14,
+        "endLine": 626,
+        "endChar": 32
+      },
+      "revId": "849ef9238187d853756aff9638a438efc6e8118d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6ffc9353_7ffc34ab",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 632,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-11-02T00:45:08Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 632,
+        "startChar": 14,
+        "endLine": 632,
+        "endChar": 31
+      },
+      "revId": "849ef9238187d853756aff9638a438efc6e8118d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40da6950_8258a8ec",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 639,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-11-02T00:45:08Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 639,
+        "startChar": 15,
+        "endLine": 639,
+        "endChar": 31
+      },
+      "revId": "849ef9238187d853756aff9638a438efc6e8118d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "af201f1e_caab78d2",
+        "filename": "core/definitions.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 2471,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-11-02T00:45:08Z",
+      "side": 1,
+      "message": "You really don\u0027t need this function.",
+      "range": {
+        "startLine": 2468,
+        "startChar": 0,
+        "endLine": 2471,
+        "endChar": 0
+      },
+      "revId": "849ef9238187d853756aff9638a438efc6e8118d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
