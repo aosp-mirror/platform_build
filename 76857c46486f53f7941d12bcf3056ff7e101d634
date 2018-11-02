@@ -16,6 +16,24 @@
       "revId": "76857c46486f53f7941d12bcf3056ff7e101d634",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f8e1b364_77ebd43d",
+        "filename": "core/tasks/general-tests.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2018-11-02T23:10:58Z",
+      "side": 1,
+      "message": "The outcome does match (name of my_general_tests_shared_lib_files and my_host_shared_lib_for_general_tests needs to be swapped)",
+      "parentUuid": "6f141492_bbc6a923",
+      "revId": "76857c46486f53f7941d12bcf3056ff7e101d634",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
