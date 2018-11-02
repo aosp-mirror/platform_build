@@ -508,8 +508,9 @@ my_test_data_pairs := $(strip $(foreach td,$(LOCAL_TEST_DATA), \
       $(eval _src_base := $(call word-colon,1,$(td))), \
       $(eval _src_base := $(LOCAL_PATH)) \
         $(eval _file := $(call word-colon,1,$(td)))) \
-    $(if $(findstring ..,$(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include '..': $(_file))) \
-    $(if $(filter /%,$(_src_base) $(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include absolute paths: $(_src_base) $(_file))) \
+    $(if $(call streq,$(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK)),, \
+      $(if $(findstring ..,$(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include '..': $(_file))) \
+      $(if $(filter /%,$(_src_base) $(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include absolute paths: $(_src_base) $(_file)))) \
     $(eval my_test_data_file_pairs := $(my_test_data_file_pairs) $(call append-path,$(_src_base),$(_file)):$(_file)) \
     $(call append-path,$(_src_base),$(_file)):$(call append-path,$(my_module_path),$(_file))))
 
