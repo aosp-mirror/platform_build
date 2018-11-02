@@ -185,6 +185,30 @@
       "revId": "849ef9238187d853756aff9638a438efc6e8118d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67313128_75d5869d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 2471,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-11-02T12:09:49Z",
+      "side": 1,
+      "message": "If we switch LOCAL_INSTALLED_MODULE to testcase folder, maybe this function is needed I think?",
+      "parentUuid": "5dab88e4_dc761229",
+      "range": {
+        "startLine": 2468,
+        "startChar": 0,
+        "endLine": 2471,
+        "endChar": 0
+      },
+      "revId": "849ef9238187d853756aff9638a438efc6e8118d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
