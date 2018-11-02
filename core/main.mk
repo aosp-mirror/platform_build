@@ -1162,6 +1162,9 @@ ifneq ($(filter all,$(MAKECMDGOALS)),)
 modules_to_check += $(foreach m,$(ALL_MODULES),$(ALL_MODULES.$(m).BUILT))
 endif
 
+# Build docs as part of checkbuild to catch more breakages.
+module_to_check += $(ALL_DOCS)
+
 # for easier debugging
 modules_to_check := $(sort $(modules_to_check))
 #$(error modules_to_check $(modules_to_check))
