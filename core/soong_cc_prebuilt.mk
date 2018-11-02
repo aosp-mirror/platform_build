@@ -8,7 +8,6 @@ ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   $(call pretty-error,soong_cc_prebuilt.mk may only be used from Soong)
 endif
 
-skip_module :=
 ifdef LOCAL_IS_HOST_MODULE
   ifneq ($(HOST_OS),$(LOCAL_MODULE_HOST_OS))
     my_prefix := HOST_CROSS_
@@ -31,6 +30,7 @@ else
   $(call pretty-error,Unsupported LOCAL_MODULE_$(my_prefix)ARCH=$(LOCAL_MODULE_$(my_prefix)ARCH))
 endif
 
+skip_module :=
 ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
   ifndef LOCAL_IS_HOST_MODULE
     ifdef LOCAL_2ND_ARCH_VAR_PREFIX
@@ -176,6 +176,22 @@ $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := \
 endif
 
 $(LOCAL_BUILT_MODULE): $(LOCAL_ADDITIONAL_DEPENDENCIES)
+
+# We don't care about installed static libraries, since the libraries have
+# already been linked into the module at that point. We do, however, care
+# about the NOTICE files for any static libraries that we use.
+# (see notice_files.mk)
+#
+# Filter out some NDK libraries that are not being exported.
+my_static_libraries := \
+    $(filter-out ndk_libc++_static ndk_libc++abi ndk_libandroid_support ndk_libunwind, \
+      $(LOCAL_STATIC_LIBRARIES))
+installed_static_library_notice_file_targets := \
+    $(foreach lib,$(my_static_libraries) $(LOCAL_WHOLE_STATIC_LIBRARIES), \
+      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST,TARGET)-STATIC_LIBRARIES-$(lib))
+
+$(notice_target): | $(installed_static_library_notice_file_targets)
+$(LOCAL_INSTALLED_MODULE): | $(notice_target)
 
 endif # !skip_module
 
