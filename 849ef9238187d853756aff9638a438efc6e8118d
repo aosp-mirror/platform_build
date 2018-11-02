@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0f469dbd_76aa034e",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 568,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-11-02T09:26:41Z",
+      "side": 1,
+      "message": "We already deleted the following lines below and keep the original code in base_rules.\nBecause we only have to add the dependency in line 561 ~ 562 to make sure they will be installed to testcase folder and keep\n$(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \\\n  $(eval my_compat_dist_$(suite) +\u003d \\\n    $(call compat-copy-pair,$(LOCAL_BUILT_MODULE),$(LOCAL_DEFAULT_TEST_MODULE))))",
+      "parentUuid": "ed924cd8_27430cc0",
+      "range": {
+        "startLine": 565,
+        "startChar": 0,
+        "endLine": 568,
+        "endChar": 45
+      },
+      "revId": "849ef9238187d853756aff9638a438efc6e8118d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "21e593cc_a50d4287",
         "filename": "core/base_rules.mk",
         "patchSetId": 16
@@ -128,6 +152,30 @@
       "writtenOn": "2018-11-02T00:45:08Z",
       "side": 1,
       "message": "You really don\u0027t need this function.",
+      "range": {
+        "startLine": 2468,
+        "startChar": 0,
+        "endLine": 2471,
+        "endChar": 0
+      },
+      "revId": "849ef9238187d853756aff9638a438efc6e8118d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5dab88e4_dc761229",
+        "filename": "core/definitions.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 2471,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2018-11-02T09:26:41Z",
+      "side": 1,
+      "message": "Our original design is to prevent the build break like below.\nhttps://googleplex-android-review.git.corp.google.com/c/platform/vendor/google_testing/pts/+/5223697\nIt will cause build break because $(LOCAL_INSTALLED_MODULE) be set to testcase folder.\n\noverriding commands for target `out/target/product/generic_arm64/testcases/connectpwhal/connectpwhal\u0027, previously defined at build/make/core/base_rules.mk:414 18:08:47 ckati failed with: exit status 1 make: *** [run_soong_ui] Error 1 Return Code: 2",
+      "parentUuid": "af201f1e_caab78d2",
       "range": {
         "startLine": 2468,
         "startChar": 0,
