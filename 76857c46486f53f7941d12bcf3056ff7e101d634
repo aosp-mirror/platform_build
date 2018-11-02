@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6f141492_bbc6a923",
+        "filename": "core/tasks/general-tests.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-02T22:18:34Z",
+      "side": 1,
+      "message": "This would probably be faster as something like (untested):\n\n my_general_tests_shared_lib_files :\u003d $(foreach m,$(filter $(COMPATIBILITY.device-tests.HOST_SHARED_LIBRARY.FILES),$(COMPATIBILITY.general-tests.HOST_SHARED_LIBRARY.FILES)),$(call word-colon,2,$(m)))\n my_host_shared_lib_for_general_tests :\u003d $(filter-out $(COMPATIBILITY.device-tests.HOST_SHARED_LIBRARY.FILES),$(COMPATIBILITY.general-tests.HOST_SHARED_LIBRARY.FILES))",
+      "revId": "76857c46486f53f7941d12bcf3056ff7e101d634",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
