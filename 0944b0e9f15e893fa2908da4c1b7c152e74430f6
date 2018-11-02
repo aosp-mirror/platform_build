@@ -16,6 +16,24 @@
       "revId": "0944b0e9f15e893fa2908da4c1b7c152e74430f6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f6bd7b58_c96ad9f6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-11-02T18:53:30Z",
+      "side": 1,
+      "message": "I thought you wanted me to changed it based off your comment here:\n\nhttps://docs.google.com/a/google.com/document/d/1rUy66h5IA0-pm2FqRroHKQ0wyy2bGATNpNihxl5KLc8/edit?disco\u003dAAAACOIumEk",
+      "parentUuid": "171813b5_2fd536f1",
+      "revId": "0944b0e9f15e893fa2908da4c1b7c152e74430f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
