@@ -18,12 +18,16 @@
 device-tests-zip := $(PRODUCT_OUT)/device-tests.zip
 # Create an artifact to include a list of test config files in device-tests.
 device-tests-list-zip := $(PRODUCT_OUT)/device-tests_list.zip
+my_host_shared_lib_for_device_tests := $(call copy-many-files,$(COMPATIBILITY.device-tests.HOST_SHARED_LIBRARY.FILES))
 $(device-tests-zip) : .KATI_IMPLICIT_OUTPUTS := $(device-tests-list-zip)
 $(device-tests-zip) : PRIVATE_device_tests_list := $(PRODUCT_OUT)/device-tests_list
-
-$(device-tests-zip) : $(COMPATIBILITY.device-tests.FILES) $(SOONG_ZIP)
+$(device-tests-zip) : PRIVATE_HOST_SHARED_LIBS := $(my_host_shared_lib_for_device_tests)
+$(device-tests-zip) : $(COMPATIBILITY.device-tests.FILES) $(my_host_shared_lib_for_device_tests) $(SOONG_ZIP)
 	echo $(sort $(COMPATIBILITY.device-tests.FILES)) | tr " " "\n" > $@.list
 	grep $(HOST_OUT_TESTCASES) $@.list > $@-host.list || true
+	$(hide) for shared_lib in $(PRIVATE_HOST_SHARED_LIBS); do \
+	  echo $$shared_lib >> $@-host.list; \
+	done
 	grep $(TARGET_OUT_TESTCASES) $@.list > $@-target.list || true
 	$(hide) $(SOONG_ZIP) -d -o $@ -P host -C $(HOST_OUT) -l $@-host.list -P target -C $(PRODUCT_OUT) -l $@-target.list
 	rm -f $(PRIVATE_device_tests_list)

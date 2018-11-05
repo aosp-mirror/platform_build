@@ -725,9 +725,42 @@ $(foreach m,$($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))$(1)DEPENDENCIES_ON_SHARED_LI
   $(eval r := $(filter $($(root))/%,$(call module-installed-files,\
     $(deps))))\
   $(if $(filter $(1),HOST_),\
+    $(eval ALL_MODULES.$(mod).HOST_SHARED_LIBRARY_FILES := $$(ALL_MODULES.$(mod).HOST_SHARED_LIBRARY_FILES) $(word 2,$(p)) $(r))\
+    $(eval ALL_MODULES.$(mod).HOST_SHARED_LIBRARIES := $$(ALL_MODULES.$(mod).HOST_SHARED_LIBRARIES) $(deps))\
     $(eval $(call add-required-host-so-deps,$(word 2,$(p)),$(r))),\
     $(eval $(call add-required-deps,$(word 2,$(p)),$(r))))\
   $(eval ALL_MODULES.$(mod).REQUIRED += $(deps)))
+endef
+
+# Recursively resolve host shared library dependency for a given module.
+# $(1): module name
+# Returns all dependencies of shared library.
+define get-all-shared-libs-deps
+$(if $(_all_deps_for_$(1)_set_),$(_all_deps_for_$(1)_),\
+  $(eval _all_deps_for_$(1)_ :=) \
+  $(foreach dep,$(ALL_MODULES.$(1).HOST_SHARED_LIBRARIES),\
+    $(foreach m,$(call get-all-shared-libs-deps,$(dep)),\
+      $(eval _all_deps_for_$(1)_ := $$(_all_deps_for_$(1)_) $(m))\
+      $(eval _all_deps_for_$(1)_ := $(sort $(_all_deps_for_$(1)_))))\
+    $(eval _all_deps_for_$(1)_ := $$(_all_deps_for_$(1)_) $(dep))\
+    $(eval _all_deps_for_$(1)_ := $(sort $(_all_deps_for_$(1)_) $(dep)))\
+    $(eval _all_deps_for_$(1)_set_ := true))\
+$(_all_deps_for_$(1)_))
+endef
+
+# Scan all modules in general-tests and device-tests suite and flatten the
+# shared library dependencies.
+define update-host-shared-libs-deps-for-suites
+$(foreach suite,general-tests device-tests,\
+  $(foreach m,$(COMPATIBILITY.$(suite).MODULES),\
+    $(eval my_deps := $(call get-all-shared-libs-deps,$(m)))\
+    $(foreach dep,$(my_deps),\
+      $(foreach f,$(ALL_MODULES.$(dep).HOST_SHARED_LIBRARY_FILES),\
+        $(eval target := $(HOST_OUT_TESTCASES)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
+          $$(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES) $(f):$(target))\
+        $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
+          $(sort $(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES)))))))
 endef
 
 $(call resolve-shared-libs-depes,TARGET_)
@@ -738,6 +771,9 @@ $(call resolve-shared-libs-depes,HOST_)
 ifdef HOST_2ND_ARCH
 $(call resolve-shared-libs-depes,HOST_,true)
 endif
+# Update host side shared library dependencies for tests in suite device-tests and general-tests.
+# This should be called after calling resolve-shared-libs-depes for HOST_2ND_ARCH.
+$(call update-host-shared-libs-deps-for-suites)
 ifdef HOST_CROSS_OS
 $(call resolve-shared-libs-depes,HOST_CROSS_,,true)
 endif
