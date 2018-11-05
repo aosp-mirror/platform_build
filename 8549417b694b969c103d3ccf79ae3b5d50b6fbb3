@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f898801a_780f0eb9",
+        "filename": "core/generate_enforce_rro.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-05T18:18:05Z",
+      "side": 1,
+      "message": "This may cause problems if the RRO references non-SDK resources.  Can we store the value of LOCAL_SDK_VERSION from the original module isntead?",
+      "revId": "8549417b694b969c103d3ccf79ae3b5d50b6fbb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
