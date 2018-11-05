@@ -70,6 +70,24 @@
       "revId": "8549417b694b969c103d3ccf79ae3b5d50b6fbb3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c85fbb0f_27c6259a",
+        "filename": "core/generate_enforce_rro.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-05T19:03:33Z",
+      "side": 1,
+      "message": "I\u0027m not sure, couldn\u0027t they reference at least the system SDK?\n\nHow is framework-res special?  I think if you have to special case framework-res then there may be other modules we haven\u0027t hit yet.",
+      "parentUuid": "d3efb01f_b2b1bbd3",
+      "revId": "8549417b694b969c103d3ccf79ae3b5d50b6fbb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
