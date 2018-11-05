@@ -407,7 +407,6 @@ endif
 			TARGET_CPU_ABI_LIST_64_BIT="$(TARGET_CPU_ABI_LIST_64_BIT)" \
 			TARGET_CPU_ABI="$(TARGET_CPU_ABI)" \
 			TARGET_CPU_ABI2="$(TARGET_CPU_ABI2)" \
-			TARGET_AAPT_CHARACTERISTICS="$(TARGET_AAPT_CHARACTERISTICS)" \
 	        bash $(BUILDINFO_SH) >> $@
 	$(hide) $(foreach file,$(system_prop_file), \
 		if [ -f "$(file)" ]; then \
@@ -496,7 +495,8 @@ ifdef BOARD_USES_PRODUCTIMAGE
 endif  # BOARD_USES_PRODUCTIMAGE
 	$(hide) echo "#" >> $@; \
 	        echo "# ADDITIONAL PRODUCT PROPERTIES" >> $@; \
-	        echo "#" >> $@;
+	        echo "#" >> $@; \
+          echo "ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)" >> $@;
 	$(hide) $(foreach line,$(FINAL_PRODUCT_PROPERTIES), \
 		echo "$(line)" >> $@;)
 	$(hide) build/make/tools/post_process_props.py $@
