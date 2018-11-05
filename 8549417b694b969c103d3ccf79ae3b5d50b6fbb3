@@ -34,6 +34,24 @@
       "revId": "8549417b694b969c103d3ccf79ae3b5d50b6fbb3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c8d3d112_9f71508d",
+        "filename": "core/generate_enforce_rro.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-05T18:48:51Z",
+      "side": 1,
+      "message": "These modules are created by https://cs.corp.google.com/android/build/make/core/definitions.mk?rcl\u003df038d2678b0fb151de7393d20c576e94a9a78e1a\u0026l\u003d3342 based on data saved by https://cs.corp.google.com/android/build/make/core/definitions.mk?rcl\u003df038d2678b0fb151de7393d20c576e94a9a78e1a\u0026l\u003d3333",
+      "parentUuid": "631fff13_410d2eff",
+      "revId": "8549417b694b969c103d3ccf79ae3b5d50b6fbb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
