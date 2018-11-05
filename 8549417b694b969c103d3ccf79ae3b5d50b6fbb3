@@ -88,6 +88,24 @@
       "revId": "8549417b694b969c103d3ccf79ae3b5d50b6fbb3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a3af6cf_6b723e94",
+        "filename": "core/generate_enforce_rro.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-05T19:18:24Z",
+      "side": 1,
+      "message": "The exception is copied over from the other file:\n\n          # Runtime resource overlay for framework-res is exempted from building\n          # against System SDK.\n          # TODO(b/35859726): remove this exception\n\nI tried setting LOCAL_SDK_VERSION for the framework-res RRO, and ran into a link-type error: \nvendor/google/security/Android.mk: error: framework-res__auto_generated_rro (java:sdk) should not link to framework-res (java:platform)\n\nI don\u0027t know the history, but it\u0027s not a new problem.\n\nThe only thing this change does is set LOCAL_SDK_VERSION for a bunch of apps that previously didn\u0027t, on a partition where they all should have this set (or system_current). I don\u0027t think there\u0027s any difference between current and system_current as far as resources go (there is no @SystemApi for resources)..?",
+      "parentUuid": "c85fbb0f_27c6259a",
+      "revId": "8549417b694b969c103d3ccf79ae3b5d50b6fbb3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
