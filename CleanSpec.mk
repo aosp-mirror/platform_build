@@ -515,6 +515,8 @@ $(call add-clean-step, find $(OUT_DIR) \( -name "*.so.debug" -o -name "*.so.dyns
 # Clean up old ninja files
 $(call add-clean-step, rm -f $(OUT_DIR)/build-*-dist*.ninja)
 
+$(call add-clean-step, rm -f $(HOST_OUT)/*ts/host-libprotobuf-java-*.jar)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
