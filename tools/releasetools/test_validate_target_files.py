@@ -24,6 +24,7 @@ import common
 import test_utils
 import verity_utils
 from validate_target_files import ValidateVerifiedBootImages
+from verity_utils import CreateVerityImageBuilder
 
 
 class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
@@ -107,10 +108,16 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
         options)
 
   def _generate_system_image(self, output_file):
-    verity_fec = True
-    partition_size = 1024 * 1024
-    image_size, verity_size = verity_utils.AdjustPartitionSizeForVerity(
-        partition_size, verity_fec)
+    prop_dict = {
+        'partition_size': str(1024 * 1024),
+        'verity': 'true',
+        'verity_block_device': '/dev/block/system',
+        'verity_key' : os.path.join(self.testdata_dir, 'testkey'),
+        'verity_fec': "true",
+        'verity_signer_cmd': 'verity_signer',
+    }
+    verity_image_builder = CreateVerityImageBuilder(prop_dict)
+    image_size = verity_image_builder.CalculateMaxImageSize()
 
     # Use an empty root directory.
     system_root = common.MakeTempDir()
@@ -124,15 +131,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
             stdoutdata))
 
     # Append the verity metadata.
-    prop_dict = {
-        'partition_size' : str(partition_size),
-        'image_size' : str(image_size),
-        'verity_block_device' : '/dev/block/system',
-        'verity_key' : os.path.join(self.testdata_dir, 'testkey'),
-        'verity_signer_cmd' : 'verity_signer',
-        'verity_size' : str(verity_size),
-    }
-    verity_utils.MakeVerityEnabledImage(output_file, verity_fec, prop_dict)
+    verity_image_builder.Build(output_file)
 
   def test_ValidateVerifiedBootImages_systemImage(self):
     input_tmp = common.MakeTempDir()
