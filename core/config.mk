@@ -532,8 +532,8 @@ endif  # pdk or fusion
 ifdef PDK_FUSION_PLATFORM_ZIP
 TARGET_BUILD_PDK := true
 ifeq (,$(wildcard $(PDK_FUSION_PLATFORM_ZIP)))
-  ifneq (,$(wildcard $(dir $(PDK_FUSION_PLATFORM_ZIP))/pdk.mk))
-    PDK_FUSION_PLATFORM_DIR := $(dir $(PDK_FUSION_PLATFORM_ZIP))
+  ifneq (,$(wildcard $(patsubst %.zip,%,$(PDK_FUSION_PLATFORM_ZIP))/pdk.mk))
+    PDK_FUSION_PLATFORM_DIR := $(patsubst %.zip,%,$(PDK_FUSION_PLATFORM_ZIP))
     PDK_FUSION_PLATFORM_ZIP :=
   else
     $(error Cannot find file $(PDK_FUSION_PLATFORM_ZIP).)
