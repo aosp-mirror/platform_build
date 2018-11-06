@@ -31,6 +31,7 @@ PRODUCT_PACKAGES += \
     RcsService \
     SafetyRegulatoryInfo \
     Stk \
+    TimeZoneUpdater \
 
 # OTA support
 PRODUCT_PACKAGES += \
