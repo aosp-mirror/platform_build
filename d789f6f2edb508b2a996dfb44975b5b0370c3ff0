@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5d1438e5_96f0d602",
+        "filename": "tools/releasetools/verity_utils.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-11-06T08:16:11Z",
+      "side": 1,
+      "message": "just raise unimplemented here, since assign the image_size doesn\u0027t make sense?",
+      "range": {
+        "startLine": 248,
+        "startChar": 6,
+        "endLine": 248,
+        "endChar": 34
+      },
+      "revId": "d789f6f2edb508b2a996dfb44975b5b0370c3ff0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
