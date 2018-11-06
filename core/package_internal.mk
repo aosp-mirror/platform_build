@@ -711,15 +711,18 @@ ifeq ($(LOCAL_USE_AAPT2),true)
         endif
         ifeq ($(full_classes_jar),)
         # We don't build jar, need to add the Java resources here.
-	  $(if $(PRIVATE_EXTRA_JAR_ARGS),$(call create-java-resources-jar,$@.parts/res.zip))
+	  $(if $(PRIVATE_EXTRA_JAR_ARGS),\
+	    $(call create-java-resources-jar,$@.parts/res.zip) && \
+	    $(ZIP2ZIP) -i $@.parts/res.zip -o $@.parts/res.zip.tmp "**/*:root/" && \
+	    mv -f $@.parts/res.zip.tmp $@.parts/res.zip)
         else  # full_classes_jar
 	  $(call create-dex-jar,$@.parts/dex.zip,$(PRIVATE_DEX_FILE))
 	  $(ZIP2ZIP) -i $@.parts/dex.zip -o $@.parts/dex.zip.tmp "classes*.dex:dex/"
 	  mv -f $@.parts/dex.zip.tmp $@.parts/dex.zip
 	  $(call extract-resources-jar,$@.parts/res.zip,$(PRIVATE_SOURCE_ARCHIVE))
+	  $(ZIP2ZIP) -i $@.parts/res.zip -o $@.parts/res.zip.tmp "**/*:root/"
+	  mv -f $@.parts/res.zip.tmp $@.parts/res.zip
         endif  # full_classes_jar
-	$(ZIP2ZIP) -i $@.parts/res.zip -o $@.parts/res.zip.tmp "**/*:root/"
-	mv -f $@.parts/res.zip.tmp $@.parts/res.zip
 	$(MERGE_ZIPS) $@ $@.parts/*.zip
 	rm -rf $@.parts
   ALL_MODULES.$(LOCAL_MODULE).BUNDLE := $(my_bundle_module)
