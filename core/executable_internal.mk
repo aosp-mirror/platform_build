@@ -36,7 +36,11 @@ endif
 endif
 
 # Define PRIVATE_ variables from global vars
+ifeq ($(LOCAL_NO_LIBCRT_BUILTINS),true)
+my_target_libcrt_builtins :=
+else
 my_target_libcrt_builtins := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBCRT_BUILTINS)
+endif
 ifeq ($(LOCAL_NO_LIBGCC),true)
 my_target_libgcc :=
 else
