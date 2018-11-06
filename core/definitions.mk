@@ -3007,14 +3007,17 @@ endef
 # 1. Copy the files to the many suite output directories.
 #    And for test config files, we'll check the .xml is well-formed before copy.
 # 2. Add all the files to each suite's dependent files list.
-# 3. Do the dependency addition to my_all_targets
+# 3. Do the dependency addition to my_all_targets.
+# 4. Save the module name to COMPATIBILITY.$(suite).MODULES for each suite.
 # Requires for each suite: use my_compat_dist_config_$(suite) to define the test config.
 #    and use my_compat_dist_$(suite) to define the others.
 define create-suite-dependencies
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval COMPATIBILITY.$(suite).FILES := \
     $$(COMPATIBILITY.$(suite).FILES) $$(foreach f,$$(my_compat_dist_$(suite)),$$(call word-colon,2,$$(f))) \
-      $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f))))) \
+      $$(foreach f,$$(my_compat_dist_config_$(suite)),$$(call word-colon,2,$$(f)))) \
+  $(eval COMPATIBILITY.$(suite).MODULES := \
+    $$(COMPATIBILITY.$(suite).MODULES) $$(my_register_name))) \
 $(eval $(my_all_targets) : $(call copy-many-files, \
   $(sort $(foreach suite,$(LOCAL_COMPATIBILITY_SUITE),$(my_compat_dist_$(suite))))) \
   $(call copy-many-xml-files-checked, \
