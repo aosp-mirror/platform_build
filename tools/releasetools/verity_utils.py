@@ -168,6 +168,7 @@ def Append2Simg(sparse_image_path, unsparse_image_path, error_message):
   try:
     common.RunAndCheckOutput(cmd)
   except:
+    logger.exception(error_message)
     raise BuildVerityImageError(error_message)
 
 
@@ -182,6 +183,7 @@ def Append(target, file_to_append, error_message):
       for line in input_file:
         out_file.write(line)
   except IOError:
+    logger.exception(error_message)
     raise BuildVerityImageError(error_message)
 
 
