@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "69ba840d_d7113761",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-07T22:14:10Z",
+      "side": 1,
+      "message": "When verity is enabled, first pass will use `partition_reserved_size` or 16MiB to cover the verity metadata cost, which might not be sufficiently large. I think we need to either explicitly disable verity during first pass (e.g. by setting avb_enable to False), or to write str(verity_image_builder.CalculateDynamicPartitionSize(size)) into prop_dict (but keeping `size` variable as is for the later computation).",
+      "range": {
+        "startLine": 266,
+        "startChar": 36,
+        "endLine": 266,
+        "endChar": 45
+      },
+      "revId": "d3e616f3c7330e6c439031252db3a30bb8c0cea0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
