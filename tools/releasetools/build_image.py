@@ -248,20 +248,9 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   if fs_type.startswith("squash"):
     fs_spans_partition = False
 
-  is_verity_partition = "verity_block_device" in prop_dict
-  verity_supported = prop_dict.get("verity") == "true"
-  verity_fec_supported = prop_dict.get("verity_fec") == "true"
-
-  avb_footer_type = None
-  if prop_dict.get("avb_hash_enable") == "true":
-    avb_footer_type = "hash"
-  elif prop_dict.get("avb_hashtree_enable") == "true":
-    avb_footer_type = "hashtree"
-
-  if avb_footer_type:
-    avbtool = prop_dict.get("avb_avbtool")
-    avb_signing_args = prop_dict.get(
-        "avb_add_" + avb_footer_type + "_footer_args")
+  # Get a builder for creating an image that's to be verified by Verified Boot,
+  # or None if not applicable.
+  verity_image_builder = verity_utils.CreateVerityImageBuilder(prop_dict)
 
   if (prop_dict.get("use_dynamic_partition_size") == "true" and
       "partition_size" not in prop_dict):
@@ -273,13 +262,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     size += int(prop_dict.get("partition_reserved_size", BYTES_IN_MB * 16))
     # Round this up to a multiple of 4K so that avbtool works
     size = common.RoundUpTo4K(size)
-    # Adjust partition_size to add more space for AVB footer, to prevent
-    # it from consuming partition_reserved_size.
-    if avb_footer_type:
-      size = verity_utils.AVBCalcMinPartitionSize(
-          size,
-          lambda x: verity_utils.AVBCalcMaxImageSize(
-              avbtool, avb_footer_type, x, avb_signing_args))
+    if verity_image_builder:
+      size = verity_image_builder.CalculateDynamicPartitionSize(size)
     prop_dict["partition_size"] = str(size)
     if fs_type.startswith("ext"):
       if "extfs_inode_count" not in prop_dict:
@@ -316,19 +300,8 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   prop_dict["image_size"] = prop_dict["partition_size"]
 
   # Adjust the image size to make room for the hashes if this is to be verified.
-  if verity_supported and is_verity_partition:
-    partition_size = int(prop_dict.get("partition_size"))
-    image_size, verity_size = verity_utils.AdjustPartitionSizeForVerity(
-        partition_size, verity_fec_supported)
-    prop_dict["image_size"] = str(image_size)
-    prop_dict["verity_size"] = str(verity_size)
-
-  # Adjust the image size for AVB hash footer or AVB hashtree footer.
-  if avb_footer_type:
-    partition_size = prop_dict["partition_size"]
-    # avb_add_hash_footer_args or avb_add_hashtree_footer_args.
-    max_image_size = verity_utils.AVBCalcMaxImageSize(
-        avbtool, avb_footer_type, partition_size, avb_signing_args)
+  if verity_image_builder:
+    max_image_size = verity_image_builder.CalculateMaxImageSize()
     prop_dict["image_size"] = str(max_image_size)
 
   if fs_type.startswith("ext"):
@@ -441,33 +414,12 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   if "partition_headroom" in prop_dict and fs_type.startswith("ext4"):
     CheckHeadroom(mkfs_output, prop_dict)
 
-  if not fs_spans_partition:
-    mount_point = prop_dict.get("mount_point")
-    image_size = int(prop_dict["image_size"])
-    sparse_image_size = verity_utils.GetSimgSize(out_file)
-    if sparse_image_size > image_size:
-      raise BuildImageError(
-          "Error: {} image size of {} is larger than partition size of "
-          "{}".format(mount_point, sparse_image_size, image_size))
-    if verity_supported and is_verity_partition:
-      verity_utils.ZeroPadSimg(out_file, image_size - sparse_image_size)
+  if not fs_spans_partition and verity_image_builder:
+    verity_image_builder.PadSparseImage(out_file)
 
   # Create the verified image if this is to be verified.
-  if verity_supported and is_verity_partition:
-    verity_utils.MakeVerityEnabledImage(
-        out_file, verity_fec_supported, prop_dict)
-
-  # Add AVB HASH or HASHTREE footer (metadata).
-  if avb_footer_type:
-    partition_size = prop_dict["partition_size"]
-    partition_name = prop_dict["partition_name"]
-    # key_path and algorithm are only available when chain partition is used.
-    key_path = prop_dict.get("avb_key_path")
-    algorithm = prop_dict.get("avb_algorithm")
-    salt = prop_dict.get("avb_salt")
-    verity_utils.AVBAddFooter(
-        out_file, avbtool, avb_footer_type, partition_size, partition_name,
-        key_path, algorithm, salt, avb_signing_args)
+  if verity_image_builder:
+    verity_image_builder.Build(out_file)
 
   if run_e2fsck and prop_dict.get("skip_fsck") != "true":
     unsparse_image = UnsparseImage(out_file, replace=False)
