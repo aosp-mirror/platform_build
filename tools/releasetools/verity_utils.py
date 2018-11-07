@@ -301,7 +301,7 @@ class Version1VerityImageBuilder(VerityImageBuilder):
     """Creates an image that is verifiable using dm-verity.
 
     Args:
-      out_file: the location to write the verifiable image at
+      out_file: the output image.
 
     Returns:
       AssertionError: On invalid partition sizes.
