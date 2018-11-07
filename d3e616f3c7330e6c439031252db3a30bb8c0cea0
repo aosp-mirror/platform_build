@@ -22,6 +22,30 @@
       "revId": "d3e616f3c7330e6c439031252db3a30bb8c0cea0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1d81ad39_ba569fa8",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-11-07T22:39:10Z",
+      "side": 1,
+      "message": "I\u0027d prefer the later since the estimation process really does need some \u0027slop\u0027 and I do not mind adding.\n\nI would be more concerned about anything in a _build_ _fix_ change that started mucking with avb/verity on or off ...\n\nwhat this amounts to is that the calc at the top and bottom are both necessary, and it was false economy to skip the one at the top.",
+      "parentUuid": "69ba840d_d7113761",
+      "range": {
+        "startLine": 266,
+        "startChar": 36,
+        "endLine": 266,
+        "endChar": 45
+      },
+      "revId": "d3e616f3c7330e6c439031252db3a30bb8c0cea0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
