@@ -262,10 +262,10 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     size += int(prop_dict.get("partition_reserved_size", BYTES_IN_MB * 16))
     # Round this up to a multiple of 4K so that avbtool works
     size = common.RoundUpTo4K(size)
-    if verity_image_builder:
-      size = verity_image_builder.CalculateDynamicPartitionSize(size)
-    prop_dict["partition_size"] = str(size)
     if fs_type.startswith("ext"):
+      if verity_image_builder:
+        size = verity_image_builder.CalculateDynamicPartitionSize(size)
+      prop_dict["partition_size"] = str(size)
       if "extfs_inode_count" not in prop_dict:
         prop_dict["extfs_inode_count"] = str(GetInodeUsage(in_dir))
       logger.info(
@@ -274,6 +274,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       prop_dict["mount_point"] = original_mount_point
       BuildImage(in_dir, prop_dict, out_file, target_out)
       fs_dict = GetFilesystemCharacteristics(out_file)
+      os.remove(out_file)
       block_size = int(fs_dict.get("Block size", "4096"))
       free_size = int(fs_dict.get("Free blocks", "0")) * block_size
       reserved_size = int(prop_dict.get("partition_reserved_size", 0))
@@ -294,6 +295,9 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       prop_dict["partition_size"] = str(size)
       logger.info(
           "Allocating %d Inodes for %s.", inodes, out_file)
+    if verity_image_builder:
+      size = verity_image_builder.CalculateDynamicPartitionSize(size)
+    prop_dict["partition_size"] = str(size)
     logger.info(
         "Allocating %d MB for %s.", size // BYTES_IN_MB, out_file)
 
