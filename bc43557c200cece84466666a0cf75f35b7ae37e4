@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3c221709_514e7cbe",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 800,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-07T18:34:30Z",
+      "side": 1,
+      "message": "Would it be better to quote with single-quotes?  Something like:\n\n  \u0027$(subst \u0027,\u0027\\\u0027,$(2))\u0027 \n\nshould do a perfect shell quoting.",
+      "range": {
+        "startLine": 800,
+        "startChar": 73,
+        "endLine": 800,
+        "endChar": 79
+      },
+      "revId": "bc43557c200cece84466666a0cf75f35b7ae37e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
