@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d3cb3c78_e380b68c",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-11-08T19:54:25Z",
+      "side": 1,
+      "message": "return mkfs_output",
+      "revId": "2b72b7f01e446c2f270f24b840f484bd7c339165",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49eb4895_783c26a8",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-11-08T19:54:25Z",
+      "side": 1,
+      "message": "need the maximum of either this or if \"ext4\" \"partition_headroom\" so that we get a good result for CheckHeadroom.",
+      "range": {
+        "startLine": 398,
+        "startChar": 4,
+        "endLine": 398,
+        "endChar": 75
+      },
+      "revId": "2b72b7f01e446c2f270f24b840f484bd7c339165",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "378e17f8_4b1b960c",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 414,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-11-08T19:54:25Z",
+      "side": 1,
+      "message": "ditto (need the maximum of either this or \"partition_headroom\")",
+      "range": {
+        "startLine": 414,
+        "startChar": 6,
+        "endLine": 414,
+        "endChar": 70
+      },
+      "revId": "2b72b7f01e446c2f270f24b840f484bd7c339165",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31672498_84c46fed",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-11-08T19:54:25Z",
+      "side": 1,
+      "message": "mkfs_output \u003d BuildImageMkfs",
+      "range": {
+        "startLine": 445,
+        "startChar": 2,
+        "endLine": 445,
+        "endChar": 16
+      },
+      "revId": "2b72b7f01e446c2f270f24b840f484bd7c339165",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
