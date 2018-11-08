@@ -546,3 +546,10 @@ PRODUCT_BUILD_SUPER_PARTITION := $(or \
 PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION))
 .KATI_READONLY := PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION
+
+# If set, kernel configuration requirements are present in OTA package (and will be enforced
+# during OTA). Otherwise, kernel configuration requirements are enforced in VTS.
+# Devices that checks the running kernel (instead of the kernel in OTA package) should not
+# set this variable to prevent OTA failures.
+PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS))
