@@ -66,6 +66,30 @@
     },
     {
       "key": {
+        "uuid": "22f83e2a_312fd4b5",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-11-08T23:42:08Z",
+      "side": 1,
+      "message": "I seriously doubt either partition_reserved_size or partition_headroom would _ever_ be set for dynamic partitions. This is more for \u0027correctness\u0027 so that if these are set, we get a good estimate and adjustment. I agree, neither should be set on dynamic, but I want to leave them in.\n\n[TL;DR}\n\nHowever, I have a future plan ... not just limiting this to dynamic partitions.\n\nI am expecting eventually to _drop_ use_dynamic_partition_size, and keying this code on partition_size not set.\n\nThen, after that drop it altogether or partially(?), to address the possibility of supporting legacy products that are experiencing sizing problems, as right-sizing also has the advantage of limiting the free blocks and free inodes giving up more available space for _real_ content (6% more space in some use cases, maybe less as you get closer to full). In that case we will need to add an option when partition_size is set to say _optimize_filesystem_ (which today only works on ext4, need to evaluate if squashfs or other options can gain too). At that point being correct about partition_headroom and partition_reserved_size will be a requirement. Or we could _always_ optimize (adding about a minute to the build) since that is the right thing to do.\n\nAlso, in the future, for Dynamic Partitions on non-A/B devices to reduce the chances of fragmentation from OTAs, we will also want to add a granularity other than 4K or \"Block Size\". For instance we would select the expected maximum erase block size for the target device and let that guide the resizing to the closest boundary. liblp would be adjusted to recognize that as well and use the actual on-device erase block size alignment when allocating. On A/B devices we always erase and replace, so there is no fragmentation issue there.",
+      "parentUuid": "cd82d6c6_214f82d5",
+      "range": {
+        "startLine": 398,
+        "startChar": 4,
+        "endLine": 398,
+        "endChar": 75
+      },
+      "revId": "2b72b7f01e446c2f270f24b840f484bd7c339165",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "378e17f8_4b1b960c",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
