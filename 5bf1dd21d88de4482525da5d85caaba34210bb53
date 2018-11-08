@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8bc1c704_04805cd8",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 800,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-11-08T23:53:40Z",
+      "side": 1,
+      "message": "This should be \u0027\\\u0027\u0027 (it\u0027s supposed to stop the quote, providing an escaped single quote character, then start the quote again)",
+      "range": {
+        "startLine": 800,
+        "startChar": 84,
+        "endLine": 800,
+        "endChar": 87
+      },
+      "revId": "5bf1dd21d88de4482525da5d85caaba34210bb53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
