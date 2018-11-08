@@ -280,7 +280,7 @@ ifndef LOCAL_IS_HOST_MODULE
       sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,system_current,$(lib_name)))
     else
       # When SDK libraries are referenced from modules built without SDK, provide the all APIs to them
-      sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(lib_name).impl)
+      sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(lib_name))
     endif
   else
     ifeq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
