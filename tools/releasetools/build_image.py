@@ -281,7 +281,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
         logger.info(
             "Not worth reducing image %d <= %d.", free_size, reserved_size)
       else:
-        size -= free_size + (free_size // 60)
+        size -= free_size
         size += reserved_size
         if block_size <= 4096:
           size = common.RoundUpTo4K(size)
