@@ -221,8 +221,8 @@ def CheckHeadroom(ext4fs_output, prop_dict):
             adjusted_blocks))
 
 
-def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
-  """Builds a pure image for the files under in_dir and writes it to out_file.
+def BuildImage(in_dir, prop_dict, out_file, target_out=None):
+  """Builds an image for the files under in_dir and writes it to out_file.
 
   Args:
     in_dir: Path to input directory.
@@ -233,14 +233,80 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
         points to the /system directory under PRODUCT_OUT. fs_config (the one
         under system/core/libcutils) reads device specific FS config files from
         there.
-    fs_config: The fs_config file that drives the prototype
 
   Raises:
     BuildImageError: On build image failures.
   """
+  original_mount_point = prop_dict["mount_point"]
+  in_dir, fs_config = SetUpInDirAndFsConfig(in_dir, prop_dict)
+
   build_command = []
   fs_type = prop_dict.get("fs_type", "")
   run_e2fsck = False
+
+  fs_spans_partition = True
+  if fs_type.startswith("squash"):
+    fs_spans_partition = False
+
+  # Get a builder for creating an image that's to be verified by Verified Boot,
+  # or None if not applicable.
+  verity_image_builder = verity_utils.CreateVerityImageBuilder(prop_dict)
+
+  if (prop_dict.get("use_dynamic_partition_size") == "true" and
+      "partition_size" not in prop_dict):
+    # If partition_size is not defined, use output of `du' + reserved_size.
+    size = GetDiskUsage(in_dir)
+    logger.info(
+        "The tree size of %s is %d MB.", in_dir, size // BYTES_IN_MB)
+    # If not specified, give us 16MB margin for GetDiskUsage error ...
+    size += int(prop_dict.get("partition_reserved_size", BYTES_IN_MB * 16))
+    # Round this up to a multiple of 4K so that avbtool works
+    size = common.RoundUpTo4K(size)
+    if fs_type.startswith("ext"):
+      if verity_image_builder:
+        size = verity_image_builder.CalculateDynamicPartitionSize(size)
+      prop_dict["partition_size"] = str(size)
+      if "extfs_inode_count" not in prop_dict:
+        prop_dict["extfs_inode_count"] = str(GetInodeUsage(in_dir))
+      logger.info(
+          "First Pass based on estimates of %d MB and %s inodes.",
+          size // BYTES_IN_MB, prop_dict["extfs_inode_count"])
+      prop_dict["mount_point"] = original_mount_point
+      BuildImage(in_dir, prop_dict, out_file, target_out)
+      fs_dict = GetFilesystemCharacteristics(out_file)
+      os.remove(out_file)
+      block_size = int(fs_dict.get("Block size", "4096"))
+      free_size = int(fs_dict.get("Free blocks", "0")) * block_size
+      reserved_size = int(prop_dict.get("partition_reserved_size", 0))
+      if free_size <= reserved_size:
+        logger.info(
+            "Not worth reducing image %d <= %d.", free_size, reserved_size)
+      else:
+        size -= free_size
+        size += reserved_size
+        if block_size <= 4096:
+          size = common.RoundUpTo4K(size)
+        else:
+          size = ((size + block_size - 1) // block_size) * block_size
+      extfs_inode_count = prop_dict["extfs_inode_count"]
+      inodes = int(fs_dict.get("Inode count", extfs_inode_count))
+      inodes -= int(fs_dict.get("Free inodes", "0"))
+      prop_dict["extfs_inode_count"] = str(inodes)
+      prop_dict["partition_size"] = str(size)
+      logger.info(
+          "Allocating %d Inodes for %s.", inodes, out_file)
+    if verity_image_builder:
+      size = verity_image_builder.CalculateDynamicPartitionSize(size)
+    prop_dict["partition_size"] = str(size)
+    logger.info(
+        "Allocating %d MB for %s.", size // BYTES_IN_MB, out_file)
+
+  prop_dict["image_size"] = prop_dict["partition_size"]
+
+  # Adjust the image size to make room for the hashes if this is to be verified.
+  if verity_image_builder:
+    max_image_size = verity_image_builder.CalculateMaxImageSize()
+    prop_dict["image_size"] = str(max_image_size)
 
   if fs_type.startswith("ext"):
     build_command = [prop_dict["ext_mkuserimg"]]
@@ -334,8 +400,8 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
       logger.exception("Failed to compute disk usage with du")
       du_str = "unknown"
     print(
-        "Out of space? Out of inodes? The tree size of {} is {}, "
-        "with reserved space of {} bytes ({} MB).".format(
+        "Out of space? The tree size of {} is {}, with reserved space of {} "
+        "bytes ({} MB).".format(
             in_dir, du_str,
             int(prop_dict.get("partition_reserved_size", 0)),
             int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
@@ -348,102 +414,6 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
             int(prop_dict["partition_size"]) // BYTES_IN_MB))
     raise
 
-  if run_e2fsck and prop_dict.get("skip_fsck") != "true":
-    unsparse_image = UnsparseImage(out_file, replace=False)
-
-    # Run e2fsck on the inflated image file
-    e2fsck_command = ["e2fsck", "-f", "-n", unsparse_image]
-    try:
-      common.RunAndCheckOutput(e2fsck_command)
-    finally:
-      os.remove(unsparse_image)
-
-
-def BuildImage(in_dir, prop_dict, out_file, target_out=None):
-  """Builds an image for the files under in_dir and writes it to out_file.
-
-  Args:
-    in_dir: Path to input directory.
-    prop_dict: A property dict that contains info like partition size. Values
-        will be updated with computed values.
-    out_file: The output image file.
-    target_out: Path to the TARGET_OUT directory as in Makefile. It actually
-        points to the /system directory under PRODUCT_OUT. fs_config (the one
-        under system/core/libcutils) reads device specific FS config files from
-        there.
-
-  Raises:
-    BuildImageError: On build image failures.
-  """
-  in_dir, fs_config = SetUpInDirAndFsConfig(in_dir, prop_dict)
-
-  build_command = []
-  fs_type = prop_dict.get("fs_type", "")
-
-  fs_spans_partition = True
-  if fs_type.startswith("squash"):
-    fs_spans_partition = False
-
-  # Get a builder for creating an image that's to be verified by Verified Boot,
-  # or None if not applicable.
-  verity_image_builder = verity_utils.CreateVerityImageBuilder(prop_dict)
-
-  if (prop_dict.get("use_dynamic_partition_size") == "true" and
-      "partition_size" not in prop_dict):
-    # If partition_size is not defined, use output of `du' + reserved_size.
-    size = GetDiskUsage(in_dir)
-    logger.info(
-        "The tree size of %s is %d MB.", in_dir, size // BYTES_IN_MB)
-    # If not specified, give us 16MB margin for GetDiskUsage error ...
-    size += int(prop_dict.get("partition_reserved_size", BYTES_IN_MB * 16))
-    # Round this up to a multiple of 4K so that avbtool works
-    size = common.RoundUpTo4K(size)
-    if fs_type.startswith("ext"):
-      prop_dict["partition_size"] = str(size)
-      prop_dict["image_size"] = str(size)
-      if "extfs_inode_count" not in prop_dict:
-        prop_dict["extfs_inode_count"] = str(GetInodeUsage(in_dir))
-      logger.info(
-          "First Pass based on estimates of %d MB and %s inodes.",
-          size // BYTES_IN_MB, prop_dict["extfs_inode_count"])
-      BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
-      fs_dict = GetFilesystemCharacteristics(out_file)
-      os.remove(out_file)
-      block_size = int(fs_dict.get("Block size", "4096"))
-      free_size = int(fs_dict.get("Free blocks", "0")) * block_size
-      reserved_size = int(prop_dict.get("partition_reserved_size", 0))
-      if free_size <= reserved_size:
-        logger.info(
-            "Not worth reducing image %d <= %d.", free_size, reserved_size)
-      else:
-        size -= free_size
-        size += reserved_size
-        if block_size <= 4096:
-          size = common.RoundUpTo4K(size)
-        else:
-          size = ((size + block_size - 1) // block_size) * block_size
-      extfs_inode_count = prop_dict["extfs_inode_count"]
-      inodes = int(fs_dict.get("Inode count", extfs_inode_count))
-      inodes -= int(fs_dict.get("Free inodes", "0"))
-      prop_dict["extfs_inode_count"] = str(inodes)
-      prop_dict["partition_size"] = str(size)
-      logger.info(
-          "Allocating %d Inodes for %s.", inodes, out_file)
-    if verity_image_builder:
-      size = verity_image_builder.CalculateDynamicPartitionSize(size)
-    prop_dict["partition_size"] = str(size)
-    logger.info(
-        "Allocating %d MB for %s.", size // BYTES_IN_MB, out_file)
-
-  prop_dict["image_size"] = prop_dict["partition_size"]
-
-  # Adjust the image size to make room for the hashes if this is to be verified.
-  if verity_image_builder:
-    max_image_size = verity_image_builder.CalculateMaxImageSize()
-    prop_dict["image_size"] = str(max_image_size)
-
-  BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
-
   # Check if there's enough headroom space available for ext4 image.
   if "partition_headroom" in prop_dict and fs_type.startswith("ext4"):
     CheckHeadroom(mkfs_output, prop_dict)
@@ -454,6 +424,16 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
   # Create the verified image if this is to be verified.
   if verity_image_builder:
     verity_image_builder.Build(out_file)
+
+  if run_e2fsck and prop_dict.get("skip_fsck") != "true":
+    unsparse_image = UnsparseImage(out_file, replace=False)
+
+    # Run e2fsck on the inflated image file
+    e2fsck_command = ["e2fsck", "-f", "-n", unsparse_image]
+    try:
+      common.RunAndCheckOutput(e2fsck_command)
+    finally:
+      os.remove(unsparse_image)
 
 
 def ImagePropFromGlobalDict(glob_dict, mount_point):
