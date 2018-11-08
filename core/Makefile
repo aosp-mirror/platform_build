@@ -3672,12 +3672,23 @@ endif
 ifdef BUILT_VENDOR_MATRIX
 	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
 endif
+ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
+	$(hide) echo "dynamic_partition_use=true" >> $(zip_root)/META/misc_info.txt
+endif
+ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
+	$(hide) echo "dynamic_partition_retrofit=true" >> $(zip_root)/META/misc_info.txt
+endif
 ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
-	$(hide) echo "super_size=$(BOARD_SUPER_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "lpmake=$(notdir $(LPMAKE))" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo -n "lpmake_args=" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo $(call build-superimage-target-args,$(call super-slot-suffix)) \
 	    >> $(zip_root)/META/misc_info.txt
+endif
+ifneq ($(BOARD_SUPER_PARTITION_BLOCK_DEVICES),)
+	$(hide) echo "super_block_devices=$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)" >> $(zip_root)/META/misc_info.txt
+endif
+ifneq ($(BOARD_SUPER_PARTITION_PARTITION_LIST),)
+	$(hide) echo "dynamic_partition_list=$(BOARD_SUPER_PARTITION_PARTITION_LIST)" >> $(zip_root)/META/misc_info.txt
 endif
 ifneq ($(BOARD_SUPER_PARTITION_GROUPS),)
 	$(hide) echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" > $(zip_root)/META/dynamic_partitions_info.txt
