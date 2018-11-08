@@ -22,6 +22,30 @@
       "revId": "bc43557c200cece84466666a0cf75f35b7ae37e4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d203d5a_81290ba5",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 800,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-08T14:27:07Z",
+      "side": 1,
+      "message": "not sure I\u0027m parsing that correctly, is the intention apostrophes \u0027 should work in the message? not sure it\u0027s achieving that, but I can\u0027t really say I can parse what it\u0027s doing (hopefully kati can!). Anyway, done :o",
+      "parentUuid": "3c221709_514e7cbe",
+      "range": {
+        "startLine": 800,
+        "startChar": 73,
+        "endLine": 800,
+        "endChar": 79
+      },
+      "revId": "bc43557c200cece84466666a0cf75f35b7ae37e4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
