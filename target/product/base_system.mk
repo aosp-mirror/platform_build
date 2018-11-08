@@ -246,7 +246,6 @@ PRODUCT_PACKAGES += \
     tc \
     telecom \
     telephony-common \
-    thermalserviced \
     tombstoned \
     traced \
     traced_probes \
