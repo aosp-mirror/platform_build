@@ -42,6 +42,30 @@
     },
     {
       "key": {
+        "uuid": "cd82d6c6_214f82d5",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-08T20:09:37Z",
+      "side": 1,
+      "message": "i thought about this during the code review, but felt it contradicted the goal of having dynamic partitions. because it won\u0027t ever fail the check at L449 if we always explicitly reserve that.\n\nhowever on a second thought, seems it still has some value, to get early warnings when the sum of partitions (i.e. super partition) exceeds the limit - it won\u0027t fail the checks in this script, but would be captured by the check in Makefile.",
+      "parentUuid": "49eb4895_783c26a8",
+      "range": {
+        "startLine": 398,
+        "startChar": 4,
+        "endLine": 398,
+        "endChar": 75
+      },
+      "revId": "2b72b7f01e446c2f270f24b840f484bd7c339165",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "378e17f8_4b1b960c",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 1
@@ -76,6 +100,30 @@
       "writtenOn": "2018-11-08T19:54:25Z",
       "side": 1,
       "message": "mkfs_output \u003d BuildImageMkfs",
+      "range": {
+        "startLine": 445,
+        "startChar": 2,
+        "endLine": 445,
+        "endChar": 16
+      },
+      "revId": "2b72b7f01e446c2f270f24b840f484bd7c339165",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7422f119_1798eff5",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 445,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-08T20:09:37Z",
+      "side": 1,
+      "message": "yeah, I missed this earlier. `pylint --rcfile\u003dpylintrc build_image.py` (installing the default pylint package is fine) should be able to capture the issue (as a linter...)",
+      "parentUuid": "31672498_84c46fed",
       "range": {
         "startLine": 445,
         "startChar": 2,
