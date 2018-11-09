@@ -1075,7 +1075,7 @@ ifdef FULL_BUILD
   product_MODULES := $(_pif_modules)
 
   # Verify the artifact path requirements made by included products.
-
+  ifneq (true,$(DISABLE_ARTIFACT_PATH_REQUIREMENTS))
   # Fakes don't get installed, and host files are irrelevant.
   static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%
   # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
@@ -1119,6 +1119,7 @@ ifdef FULL_BUILD
 $(PRODUCT_OUT)/offending_artifacts.txt:
 	rm -f $@
 	$(foreach f,$(sort $(all_offending_files)),echo $(f) >> $@;)
+  endif
 else
   # We're not doing a full build, and are probably only including
   # a subset of the module makefiles.  Don't try to build any modules
