@@ -64,6 +64,13 @@ Common options that apply to both of non-A/B and A/B OTAs
       Generate an OTA package that will wipe the user data partition when
       installed.
 
+  --retrofit_dynamic_partitions
+      Generates an OTA package that updates a device to support dynamic
+      partitions (default False). This flag is implied when generating
+      an incremental OTA where the base build does not support dynamic
+      partitions but the target build does. For A/B, when this flag is set,
+      --skip_postinstall is implied.
+
 Non-A/B OTA specific options
 
   -b  (--binary) <file>
@@ -213,11 +220,14 @@ OPTIONS.payload_signer_args = []
 OPTIONS.extracted_input = None
 OPTIONS.key_passwords = []
 OPTIONS.skip_postinstall = False
+OPTIONS.retrofit_dynamic_partitions = False
 
 
 METADATA_NAME = 'META-INF/com/android/metadata'
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
+DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*']
+SUPER_SPLIT_PATTERN = ['OTA/super_*.img']
 
 
 class BuildInfo(object):
@@ -1717,6 +1727,59 @@ def GetTargetFilesZipWithoutPostinstallConfig(input_file):
   return target_file
 
 
+def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
+                                                  super_block_devices):
+  """Returns a target-files.zip for retrofitting dynamic partitions.
+
+  This allows brillo_update_payload to generate an OTA based on the exact
+  bits on the block devices. Postinstall is disabled.
+
+  Args:
+    input_file: The input target-files.zip filename.
+    super_block_devices: The list of super block devices
+
+  Returns:
+    The filename of target-files.zip with *.img replaced with super_*.img for
+    each block device in super_block_devices.
+  """
+  assert super_block_devices, "No super_block_devices are specified."
+
+  replace = {'OTA/super_{}.img'.format(dev): 'IMAGES/{}.img'.format(dev)
+      for dev in super_block_devices}
+
+  target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
+  shutil.copyfile(input_file, target_file)
+
+  with zipfile.ZipFile(input_file, 'r') as input_zip:
+    namelist = input_zip.namelist()
+
+  # Always skip postinstall for a retrofit update.
+  to_delete = [POSTINSTALL_CONFIG]
+
+  # Delete dynamic_partitions_info.txt so that brillo_update_payload thinks this
+  # is a regular update on devices without dynamic partitions support.
+  to_delete += [DYNAMIC_PARTITION_INFO]
+
+  # Remove the existing partition images.
+  to_delete += replace.values()
+
+  common.ZipDelete(target_file, to_delete)
+
+  input_tmp = common.UnzipTemp(input_file, SUPER_SPLIT_PATTERN)
+  target_zip = zipfile.ZipFile(target_file, 'a', allowZip64=True)
+
+  # Write super_{foo}.img as {foo}.img.
+  for src, dst in replace.items():
+    assert src in namelist, \
+          'Missing {} in {}; {} cannot be written'.format(src, input_file, dst)
+    unzipped_file = os.path.join(input_tmp, *src.split('/'))
+    common.ZipWrite(target_zip, unzipped_file, arcname=dst)
+
+  common.ZipClose(target_zip)
+
+  return target_file
+
+
 def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                                       source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
@@ -1738,7 +1801,10 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
 
-  if OPTIONS.skip_postinstall:
+  if OPTIONS.retrofit_dynamic_partitions:
+    target_file = GetTargetFilesZipForRetrofitDynamicPartitions(
+        target_file, target_info.get("super_block_devices").strip().split())
+  elif OPTIONS.skip_postinstall:
     target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
 
   # Generate payload.
@@ -1870,6 +1936,8 @@ def main(argv):
       OPTIONS.extracted_input = a
     elif o == "--skip_postinstall":
       OPTIONS.skip_postinstall = True
+    elif o == "--retrofit_dynamic_partitions":
+      OPTIONS.retrofit_dynamic_partitions = True
     else:
       return False
     return True
@@ -1900,6 +1968,7 @@ def main(argv):
                                  "payload_signer_args=",
                                  "extracted_input_target_files=",
                                  "skip_postinstall",
+                                 "retrofit_dynamic_partitions",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
@@ -1942,6 +2011,23 @@ def main(argv):
 
   # Load OEM dicts if provided.
   OPTIONS.oem_dicts = _LoadOemDicts(OPTIONS.oem_source)
+
+  # Assume retrofitting dynamic partitions when base build does not set
+  # dynamic_partition_use but target build does.
+  if (OPTIONS.source_info_dict and
+      OPTIONS.source_info_dict.get("dynamic_partition_use") != "true" and
+      OPTIONS.target_info_dict.get("dynamic_partition_use") == "true"):
+    if OPTIONS.target_info_dict.get("dynamic_partition_retrofit") != "true":
+      raise common.ExternalError(
+          "Expect to generate incremental OTA for retrofitting dynamic "
+          "partitions, but dynamic_partition_retrofit is not set in target "
+          "build.")
+    logger.info("Implicitly generating retrofit incremental OTA.")
+    OPTIONS.retrofit_dynamic_partitions = True
+
+  # Skip postinstall for retrofitting dynamic partitions.
+  if OPTIONS.retrofit_dynamic_partitions:
+    OPTIONS.skip_postinstall = True
 
   ab_update = OPTIONS.info_dict.get("ab_update") == "true"
 
