@@ -22,6 +22,30 @@
       "revId": "5bf1dd21d88de4482525da5d85caaba34210bb53",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a45fbdc2_e412528c",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 800,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-09T09:01:14Z",
+      "side": 1,
+      "message": "ah,that makes sense. tested, and it works with single quotes in the msg. it\u0027s also sufficiently complicated to break the syntax highlighting in my editor :\u0027(",
+      "parentUuid": "8bc1c704_04805cd8",
+      "range": {
+        "startLine": 800,
+        "startChar": 84,
+        "endLine": 800,
+        "endChar": 87
+      },
+      "revId": "5bf1dd21d88de4482525da5d85caaba34210bb53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
