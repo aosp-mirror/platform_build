@@ -1241,7 +1241,7 @@ ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
 INTERNAL_USERIMAGES_DEPS += $(MKE2FS_CONF)
 endif
 
-ifeq (true,$(PRODUCT_USE_LOGICAL_PARTITIONS))
+ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
 
 ifeq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SUPPORTS_VERITY),true)
   $(error vboot 1.0 doesn't support logical partition)
@@ -1250,7 +1250,7 @@ endif
 # TODO(b/80195851): Should not define BOARD_AVB_SYSTEM_KEY_PATH without
 # BOARD_AVB_SYSTEM_DETACHED_VBMETA.
 
-endif # PRODUCT_USE_LOGICAL_PARTITIONS
+endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 
 # $(1): the path of the output dictionary file
 # $(2): a subset of "system vendor cache userdata product product_services oem odm"

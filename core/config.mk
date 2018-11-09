@@ -932,13 +932,13 @@ ifndef PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 endif
 .KATI_READONLY := PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
-ifeq ($(PRODUCT_USE_LOGICAL_PARTITIONS),true)
+ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
     requirements := \
         PRODUCT_USE_DYNAMIC_PARTITION_SIZE \
         PRODUCT_BUILD_SUPER_PARTITION \
 
     $(foreach req,$(requirements),$(if $(filter false,$($(req))),\
-        $(error PRODUCT_USE_LOGICAL_PARTITIONS requires $(req) to be true)))
+        $(error PRODUCT_USE_DYNAMIC_PARTITIONS requires $(req) to be true)))
 
     requirements :=
 

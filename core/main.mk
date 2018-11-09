@@ -246,7 +246,10 @@ else
 ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
 endif
 
-ADDITIONAL_PRODUCT_PROPERTIES += ro.boot.logical_partitions=$(PRODUCT_USE_LOGICAL_PARTITIONS)
+# TODO(b/119286600): remove ro.logical_partitions
+ADDITIONAL_PRODUCT_PROPERTIES += \
+    ro.boot.logical_partitions=$(PRODUCT_USE_DYNAMIC_PARTITIONS) \
+    ro.boot.dynamic_partitions=$(PRODUCT_USE_DYNAMIC_PARTITIONS) \
 
 # -----------------------------------------------------------------
 ###
