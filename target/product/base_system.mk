@@ -78,6 +78,7 @@ PRODUCT_PACKAGES += \
     heapprofd \
     heapprofd_client \
     gatekeeperd \
+    gpuservice \
     healthd \
     hid \
     hwservicemanager \
