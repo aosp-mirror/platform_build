@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba117cdc_ba47897c",
+        "filename": "core/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 3001,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-09T23:57:42Z",
+      "side": 1,
+      "message": "This needs to be fixed.",
+      "range": {
+        "startLine": 3001,
+        "startChar": 38,
+        "endLine": 3001,
+        "endChar": 41
+      },
+      "revId": "cfd4fb66c91e27313b350ce95bc37b2a5f794142",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
