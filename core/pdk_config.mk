@@ -20,7 +20,6 @@ PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
   target/common/obj/JAVA_LIBRARIES/conscrypt_intermediates \
   target/common/obj/JAVA_LIBRARIES/core-oj_intermediates \
   target/common/obj/JAVA_LIBRARIES/core-libart_intermediates \
-  target/common/obj/JAVA_LIBRARIES/core-simple_intermediates \
   target/common/obj/JAVA_LIBRARIES/legacy-test_intermediates \
   target/common/obj/JAVA_LIBRARIES/legacy-android-test_intermediates \
   target/common/obj/JAVA_LIBRARIES/ext_intermediates \
