@@ -119,6 +119,6 @@ endif
 # Define it even if the notice file doesn't exist so that other
 # modules can depend on it.
 notice_target := NOTICE-$(if \
-    $(LOCAL_IS_HOST_MODULE),HOST,TARGET)-$(LOCAL_MODULE_CLASS)-$(LOCAL_MODULE)
+    $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-$(LOCAL_MODULE_CLASS)-$(LOCAL_MODULE)
 .PHONY: $(notice_target)
 $(notice_target): $(installed_notice_file)
