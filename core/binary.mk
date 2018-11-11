@@ -396,13 +396,6 @@ endif
 
 include $(BUILD_SYSTEM)/config_sanitizers.mk
 
-ifneq ($(LOCAL_NO_LIBCOMPILER_RT),true)
-# Add in libcompiler_rt for all regular device builds
-ifeq (,$(WITHOUT_LIBCOMPILER_RT))
-  my_static_libraries += $(COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES)
-endif
-endif
-
 # Statically link libwinpthread when cross compiling win32.
 ifeq ($($(my_prefix)OS),windows)
   my_static_libraries += libwinpthread
@@ -1539,7 +1532,7 @@ built_whole_libraries := \
 ifeq ($(ONE_SHOT_MAKEFILE),)
 installed_static_library_notice_file_targets := \
     $(foreach lib,$(my_static_libraries) $(my_whole_static_libraries), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST,TARGET)-STATIC_LIBRARIES-$(lib))
+      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-STATIC_LIBRARIES-$(lib))
 else
 installed_static_library_notice_file_targets :=
 endif

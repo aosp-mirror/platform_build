@@ -1,6 +1,6 @@
 ## Clang configurations.
 
-LLVM_RTLIB_PATH := $(LLVM_PREBUILTS_PATH)/../lib64/clang/$(LLVM_RELEASE_VERSION)/lib/linux/
+LLVM_RTLIB_PATH := $(LLVM_PREBUILTS_PATH)/../lib64/clang/$(LLVM_RELEASE_VERSION)/lib/$(HOST_OS)/
 
 define convert-to-clang-flags
 $(strip $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(1)))
@@ -60,9 +60,5 @@ ifdef TARGET_2ND_ARCH
 clang_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/clang/TARGET_$(TARGET_2ND_ARCH).mk
 endif
-
-# This allows us to use the superset of functionality that compiler-rt
-# provides to Clang (for supporting features like -ftrapv).
-COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES := libcompiler_rt-extras
 
 include $(BUILD_SYSTEM)/clang/tidy.mk

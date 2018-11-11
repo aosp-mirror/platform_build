@@ -78,6 +78,7 @@ PRODUCT_PACKAGES += \
     heapprofd \
     heapprofd_client \
     gatekeeperd \
+    gpuservice \
     healthd \
     hid \
     hwservicemanager \
@@ -246,7 +247,6 @@ PRODUCT_PACKAGES += \
     tc \
     telecom \
     telephony-common \
-    thermalserviced \
     tombstoned \
     traced \
     traced_probes \

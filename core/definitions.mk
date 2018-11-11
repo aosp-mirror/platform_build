@@ -797,13 +797,13 @@ ESC_RESET := \033[0m
 # $(1): path (and optionally line) information
 # $(2): message to print
 define echo-warning
-echo -e "$(ESC_BOLD)$(1): $(ESC_WARNING)warning:$(ESC_RESET)$(ESC_BOLD)" $(2) "$(ESC_RESET)" >&2
+echo -e "$(ESC_BOLD)$(1): $(ESC_WARNING)warning:$(ESC_RESET)$(ESC_BOLD)" '$(subst ','\'',$(2))'  "$(ESC_RESET)" >&2
 endef
 
 # $(1): path (and optionally line) information
 # $(2): message to print
 define echo-error
-echo -e "$(ESC_BOLD)$(1): $(ESC_ERROR)error:$(ESC_RESET)$(ESC_BOLD)" $(2) "$(ESC_RESET)" >&2
+echo -e "$(ESC_BOLD)$(1): $(ESC_ERROR)error:$(ESC_RESET)$(ESC_BOLD)" '$(subst ','\'',$(2))'  "$(ESC_RESET)" >&2
 endef
 
 ###########################################################
@@ -1693,6 +1693,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(PRIVATE_ALL_STATIC_LIBRARIES) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
 	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
+	$(PRIVATE_TARGET_LIBCRT_BUILTINS) \
 	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(PRIVATE_TARGET_LIBGCC) \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
@@ -1728,6 +1729,7 @@ $(hide) $(PRIVATE_CXX) -pie \
 	$(PRIVATE_ALL_STATIC_LIBRARIES) \
 	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
 	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
+	$(PRIVATE_TARGET_LIBCRT_BUILTINS) \
 	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(PRIVATE_TARGET_LIBGCC) \
 	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
@@ -1775,6 +1777,7 @@ $(hide) $(PRIVATE_CXX) \
 	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
 	$(PRIVATE_TARGET_LIBATOMIC) \
 	$(filter %libcompiler_rt.a %libcompiler_rt.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+	$(PRIVATE_TARGET_LIBCRT_BUILTINS) \
 	$(PRIVATE_TARGET_LIBGCC) \
 	-Wl,--end-group \
 	$(PRIVATE_TARGET_CRTEND_O)

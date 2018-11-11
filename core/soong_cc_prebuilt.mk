@@ -188,7 +188,7 @@ my_static_libraries := \
       $(LOCAL_STATIC_LIBRARIES))
 installed_static_library_notice_file_targets := \
     $(foreach lib,$(my_static_libraries) $(LOCAL_WHOLE_STATIC_LIBRARIES), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST,TARGET)-STATIC_LIBRARIES-$(lib))
+      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-STATIC_LIBRARIES-$(lib))
 
 $(notice_target): | $(installed_static_library_notice_file_targets)
 $(LOCAL_INSTALLED_MODULE): | $(notice_target)

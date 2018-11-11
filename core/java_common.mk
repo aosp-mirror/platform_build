@@ -499,7 +499,7 @@ ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
 ifeq ($(ONE_SHOT_MAKEFILE),)
 installed_static_library_notice_file_targets := \
     $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST,TARGET)-JAVA_LIBRARIES-$(lib))
+      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-JAVA_LIBRARIES-$(lib))
 else
 installed_static_library_notice_file_targets :=
 endif
