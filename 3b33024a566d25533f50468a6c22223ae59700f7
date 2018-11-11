@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "beae3ce4_7d6187f5",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2018-11-11T10:45:55Z",
+      "side": 1,
+      "message": "Note: Not sure that it really matters, but you may want to know: I\u0027m the Runtime APEX module to PRODUCT_PACKAGES via target/product/runtime_libart.mk (https://android-review.googlesource.com/c/platform/build/+/804934).",
+      "range": {
+        "startLine": 55,
+        "startChar": 4,
+        "endLine": 55,
+        "endChar": 22
+      },
+      "revId": "3b33024a566d25533f50468a6c22223ae59700f7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
