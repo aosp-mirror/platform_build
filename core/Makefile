@@ -1034,30 +1034,42 @@ target_product_services_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE_PR
 target_product_services_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_PRODUCT_SERVICES.xml.gz
 installed_product_services_notice_xml_gz := $(TARGET_OUT_PRODUCT_SERVICES)/etc/NOTICE.xml.gz
 
+# Notice files are copied to TARGET_OUT_NOTICE_FILES as a side-effect of their module
+# being built. A notice xml file must depend on all modules that could potentially
+# install a license file relevant to it.
+license_modules := $(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files)
+# Phonys/fakes don't have notice files (though their deps might)
+license_modules := $(filter-out $(TARGET_OUT_FAKE)/%,$(license_modules))
+license_modules_vendor := $(filter $(TARGET_OUT_VENDOR)/%,$(license_modules))
+license_modules_product := $(filter $(TARGET_OUT_PRODUCT)/%,$(license_modules))
+license_modules_product_services := $(filter $(TARGET_OUT_PRODUCT_SERVICES)/%,$(license_modules))
+license_modules_agg := $(license_modules_vendor) $(license_modules_product) $(license_modules_product_services)
+license_modules_rest := $(filter-out $(license_modules_agg),$(license_modules))
+
 $(eval $(call combine-notice-files, xml_excluded_extra_partitions, \
 			$(target_notice_file_txt), \
 			$(target_notice_file_xml), \
 			"Notices for files contained in the filesystem images in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
-			$(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files)))
+			$(license_modules_rest)))
 $(eval $(call combine-notice-files, xml_vendor, \
 			$(target_vendor_notice_file_txt), \
 			$(target_vendor_notice_file_xml), \
 			"Notices for files contained in the vendor filesystem image in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
-			$(target_notice_file_xml)))
+			$(license_modules_vendor)))
 $(eval $(call combine-notice-files, xml_product, \
 			$(target_product_notice_file_txt), \
 			$(target_product_notice_file_xml), \
 			"Notices for files contained in the product filesystem image in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
-			$(target_notice_file_xml)))
+			$(license_modules_product)))
 $(eval $(call combine-notice-files, xml_product_services, \
 			$(target_product_services_notice_file_txt), \
 			$(target_product_services_notice_file_xml), \
 			"Notices for files contained in the product_services filesystem image in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
-			$(target_notice_file_xml)))
+			$(license_modules_product_services)))
 
 $(target_notice_file_xml_gz): $(target_notice_file_xml) | $(MINIGZIP)
 	$(hide) $(MINIGZIP) -9 < $< > $@
