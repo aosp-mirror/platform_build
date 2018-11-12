@@ -51,6 +51,8 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += art-runtime
 # ART/dex helpers.
 PRODUCT_PACKAGES += art-tools
+# Android Runtime APEX module.
+PRODUCT_PACKAGES += com.android.runtime
 
 # Certificates.
 PRODUCT_PACKAGES += \
