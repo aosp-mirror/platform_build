@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d78eba9b_7f09cfa0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-12T18:47:42Z",
+      "side": 1,
+      "message": "I don\u0027t see --use-gnu-strip for darwin",
+      "revId": "862635faea686d19f332cce024c98c1d73fe17e9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
