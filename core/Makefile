@@ -986,21 +986,37 @@ $(3) : $(6) $(BUILD_SYSTEM)/Makefile build/make/tools/generate-notice-files.py
 notice_files: $(2) $(3)
 endef
 
+# Notice file logic isn't relevant for TARGET_BUILD_APPS
+ifndef TARGET_BUILD_APPS
+
 # TODO These intermediate NOTICE.txt/NOTICE.html files should go into
 # TARGET_OUT_NOTICE_FILES now that the notice files are gathered from
 # the src subdirectory.
-
 target_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE.txt
-target_notice_file_html_or_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html
-target_notice_file_html_or_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html.gz
-installed_notice_html_or_xml_gz := $(TARGET_OUT)/etc/NOTICE.html.gz
 tools_notice_file_txt := $(HOST_OUT_INTERMEDIATES)/NOTICE.txt
 tools_notice_file_html := $(HOST_OUT_INTERMEDIATES)/NOTICE.html
+kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
+winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
+pdk_fusion_notice_files := $(filter $(TARGET_OUT_NOTICE_FILES)/%, $(ALL_PDK_FUSION_FILES))
 
 # TODO(b/69865032): Make PRODUCT_NOTICE_SPLIT the default behavior.
-ifeq ($(PRODUCT_NOTICE_SPLIT),true)
-target_notice_file_html_or_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml
-target_notice_file_html_or_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml.gz
+ifneq ($(PRODUCT_NOTICE_SPLIT),true)
+target_notice_file_html := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html
+target_notice_file_html_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.html.gz
+installed_notice_html_or_xml_gz := $(TARGET_OUT)/etc/NOTICE.html.gz
+$(eval $(call combine-notice-files, html, \
+			$(target_notice_file_txt), \
+			$(target_notice_file_html), \
+			"Notices for files contained in the filesystem images in this directory:", \
+			$(TARGET_OUT_NOTICE_FILES), \
+			$(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files)))
+$(target_notice_file_html_gz): $(target_notice_file_html) | $(MINIGZIP)
+	$(hide) $(MINIGZIP) -9 < $< > $@
+$(installed_notice_html_or_xml_gz): $(target_notice_file_html_gz)
+	$(copy-file-to-target)
+else
+target_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml
+target_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE.xml.gz
 installed_notice_html_or_xml_gz := $(TARGET_OUT)/etc/NOTICE.xml.gz
 
 target_vendor_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE_VENDOR.txt
@@ -1017,17 +1033,10 @@ target_product_services_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE_PR
 target_product_services_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE_PRODUCT_SERVICES.xml
 target_product_services_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_PRODUCT_SERVICES.xml.gz
 installed_product_services_notice_xml_gz := $(TARGET_OUT_PRODUCT_SERVICES)/etc/NOTICE.xml.gz
-endif
 
-ifndef TARGET_BUILD_APPS
-kernel_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/kernel.txt
-winpthreads_notice_file := $(TARGET_OUT_NOTICE_FILES)/src/winpthreads.txt
-pdk_fusion_notice_files := $(filter $(TARGET_OUT_NOTICE_FILES)/%, $(ALL_PDK_FUSION_FILES))
-
-ifdef target_vendor_notice_file_xml_gz
 $(eval $(call combine-notice-files, xml_excluded_extra_partitions, \
 			$(target_notice_file_txt), \
-			$(target_notice_file_html_or_xml), \
+			$(target_notice_file_xml), \
 			"Notices for files contained in the filesystem images in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
 			$(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files)))
@@ -1036,30 +1045,48 @@ $(eval $(call combine-notice-files, xml_vendor, \
 			$(target_vendor_notice_file_xml), \
 			"Notices for files contained in the vendor filesystem image in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
-			$(target_notice_file_html_or_xml)))
-ifdef target_product_notice_file_txt
+			$(target_notice_file_xml)))
 $(eval $(call combine-notice-files, xml_product, \
 			$(target_product_notice_file_txt), \
 			$(target_product_notice_file_xml), \
 			"Notices for files contained in the product filesystem image in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
-			$(target_notice_file_html_or_xml)))
-endif
-ifdef target_product_services_notice_file_txt
+			$(target_notice_file_xml)))
 $(eval $(call combine-notice-files, xml_product_services, \
 			$(target_product_services_notice_file_txt), \
 			$(target_product_services_notice_file_xml), \
 			"Notices for files contained in the product_services filesystem image in this directory:", \
 			$(TARGET_OUT_NOTICE_FILES), \
-			$(target_notice_file_html_or_xml)))
+			$(target_notice_file_xml)))
+
+$(target_notice_file_xml_gz): $(target_notice_file_xml) | $(MINIGZIP)
+	$(hide) $(MINIGZIP) -9 < $< > $@
+$(target_vendor_notice_file_xml_gz): $(target_vendor_notice_file_xml) | $(MINIGZIP)
+	$(hide) $(MINIGZIP) -9 < $< > $@
+$(target_product_notice_file_xml_gz): $(target_product_notice_file_xml) | $(MINIGZIP)
+	$(hide) $(MINIGZIP) -9 < $< > $@
+$(target_product_services_notice_file_xml_gz): $(target_product_services_notice_file_xml) | $(MINIGZIP)
+	$(hide) $(MINIGZIP) -9 < $< > $@
+$(installed_notice_html_or_xml_gz): $(target_notice_file_xml_gz)
+	$(copy-file-to-target)
+$(installed_vendor_notice_xml_gz): $(target_vendor_notice_file_xml_gz)
+	$(copy-file-to-target)
+$(installed_product_notice_xml_gz): $(target_product_notice_file_xml_gz)
+	$(copy-file-to-target)
+$(installed_product_services_notice_xml_gz): $(target_product_services_notice_file_xml_gz)
+	$(copy-file-to-target)
+
+# if we've been run my mm, mmm, etc, don't reinstall this every time
+ifeq ($(ONE_SHOT_MAKEFILE),)
+  ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
+  ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_notice_xml_gz)
+  ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_notice_xml_gz)
+  ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_services_notice_xml_gz)
 endif
-else
-$(eval $(call combine-notice-files, html, \
-			$(target_notice_file_txt), \
-			$(target_notice_file_html_or_xml), \
-			"Notices for files contained in the filesystem images in this directory:", \
-			$(TARGET_OUT_NOTICE_FILES), \
-			$(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_fusion_notice_files)))
+endif # PRODUCT_NOTICE_SPLIT
+
+ifeq ($(ONE_SHOT_MAKEFILE),)
+  ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
 endif
 
 $(eval $(call combine-notice-files, html, \
@@ -1070,53 +1097,6 @@ $(eval $(call combine-notice-files, html, \
 			$(ALL_DEFAULT_INSTALLED_MODULES) \
 			$(winpthreads_notice_file)))
 
-# Install the html file at /system/etc/NOTICE.html.gz.
-# This is not ideal, but this is very late in the game, after a lot of
-# the module processing has already been done -- in fact, we used the
-# fact that all that has been done to get the list of modules that we
-# need notice files for.
-$(target_notice_file_html_or_xml_gz): $(target_notice_file_html_or_xml) | $(MINIGZIP)
-	$(hide) $(MINIGZIP) -9 < $< > $@
-$(installed_notice_html_or_xml_gz): $(target_notice_file_html_or_xml_gz)
-	$(copy-file-to-target)
-
-ifdef target_vendor_notice_file_xml_gz
-# Install the vendor html file at /vendor/etc/NOTICE.xml.gz.
-$(target_vendor_notice_file_xml_gz): $(target_vendor_notice_file_xml) | $(MINIGZIP)
-	$(hide) $(MINIGZIP) -9 < $< > $@
-$(installed_vendor_notice_xml_gz): $(target_vendor_notice_file_xml_gz)
-	$(copy-file-to-target)
-endif
-
-ifdef target_product_notice_file_xml_gz
-# Install the product html file at /product/etc/NOTICE.xml.gz.
-$(target_product_notice_file_xml_gz): $(target_product_notice_file_xml) | $(MINIGZIP)
-	$(hide) $(MINIGZIP) -9 < $< > $@
-$(installed_product_notice_xml_gz): $(target_product_notice_file_xml_gz)
-	$(copy-file-to-target)
-endif
-
-ifdef target_product_services_notice_file_xml_gz
-# Install the product html file at /product_services/etc/NOTICE.xml.gz.
-$(target_product_services_notice_file_xml_gz): $(target_product_services_notice_file_xml) | $(MINIGZIP)
-	$(hide) $(MINIGZIP) -9 < $< > $@
-$(installed_product_services_notice_xml_gz): $(target_product_services_notice_file_xml_gz)
-	$(copy-file-to-target)
-endif
-
-# if we've been run my mm, mmm, etc, don't reinstall this every time
-ifeq ($(ONE_SHOT_MAKEFILE),)
-  ALL_DEFAULT_INSTALLED_MODULES += $(installed_notice_html_or_xml_gz)
-  ifdef target_vendor_notice_file_xml_gz
-    ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_notice_xml_gz)
-  endif
-  ifdef target_product_notice_file_xml_gz
-    ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_notice_xml_gz)
-  endif
-  ifdef target_product_services_notice_file_xml_gz
-    ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_services_notice_xml_gz)
-  endif
-endif
 endif  # TARGET_BUILD_APPS
 
 # The kernel isn't really a module, so to get its module file in there, we
