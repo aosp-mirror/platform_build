@@ -1075,7 +1075,8 @@ ifdef FULL_BUILD
   product_MODULES := $(_pif_modules)
 
   # Verify the artifact path requirements made by included products.
-  ifneq (true,$(DISABLE_ARTIFACT_PATH_REQUIREMENTS))
+  is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
+  ifneq (true,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS)))
   # Fakes don't get installed, and host files are irrelevant.
   static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%
   # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
