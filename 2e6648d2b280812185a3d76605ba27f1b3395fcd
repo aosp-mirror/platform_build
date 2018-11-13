@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6624a012_f2e342df",
+        "filename": "core/config.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 1075,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-11-13T00:09:01Z",
+      "side": 1,
+      "message": "This should be indented with spaces, not tabs (since tabs are somewhat special in make, though not in this context)",
+      "range": {
+        "startLine": 1075,
+        "startChar": 0,
+        "endLine": 1075,
+        "endChar": 1
+      },
+      "revId": "2e6648d2b280812185a3d76605ba27f1b3395fcd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
