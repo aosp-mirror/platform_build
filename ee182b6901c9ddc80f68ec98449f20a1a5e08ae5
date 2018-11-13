@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "97ad9f6b_2506fbe6",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1078,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-13T22:32:06Z",
+      "side": 1,
+      "message": "The canonical way to check for asan is $(filter address,$(SANITIZE_TARGET))",
+      "revId": "ee182b6901c9ddc80f68ec98449f20a1a5e08ae5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
