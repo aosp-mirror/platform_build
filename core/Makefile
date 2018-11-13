@@ -977,7 +977,7 @@ $(2) $(3): PRIVATE_DIR := $(5)
 $(2) : $(3)
 $(3) : $(6) $(BUILD_SYSTEM)/Makefile build/make/tools/generate-notice-files.py
 	build/make/tools/generate-notice-files.py --text-output $(2) \
-		$(if $(filter $(1),xml_excluded_extra_partitions),-e vendor$(comma)product$(comma)product_services --xml-output, \
+		$(if $(filter $(1),xml_excluded_extra_partitions),-e vendor -e product -e product_services --xml-output, \
 		  $(if $(filter $(1),xml_vendor),-i vendor --xml-output, \
 		    $(if $(filter $(1),xml_product),-i product --xml-output, \
 		      $(if $(filter $(1),xml_product_services),-i product_services --xml-output, \
