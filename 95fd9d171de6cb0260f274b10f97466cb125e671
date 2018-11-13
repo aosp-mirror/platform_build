@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "97999215_93d5e5fd",
+        "filename": "core/clang/HOST_x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-13T21:18:56Z",
+      "side": 1,
+      "message": "This broke the mac build when it was submitted to internal because LLVM_RTLIB_PATH contains \"/linux/\"",
+      "revId": "95fd9d171de6cb0260f274b10f97466cb125e671",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
