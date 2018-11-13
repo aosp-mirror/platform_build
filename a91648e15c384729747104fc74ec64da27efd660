@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8b0d6afc_7588afb1",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1042,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-13T13:32:06Z",
+      "side": 1,
+      "message": "added this in the new PS",
+      "revId": "a91648e15c384729747104fc74ec64da27efd660",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
