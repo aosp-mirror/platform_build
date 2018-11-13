@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "214bed7a_28f7da92",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1087,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2018-11-13T16:45:07Z",
+      "side": 1,
+      "message": "nit: Add # PRODUCT_NOTICE_SPLIT?",
+      "range": {
+        "startLine": 1086,
+        "startChar": 5,
+        "endLine": 1087,
+        "endChar": 0
+      },
+      "revId": "5f2c51bbcee4273bd33d010a3dc72fe667bc735c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
