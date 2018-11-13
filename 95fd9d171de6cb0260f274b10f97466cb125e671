@@ -16,6 +16,24 @@
       "revId": "95fd9d171de6cb0260f274b10f97466cb125e671",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a6fbbea_6589edba",
+        "filename": "core/clang/HOST_x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1087625
+      },
+      "writtenOn": "2018-11-13T21:21:52Z",
+      "side": 1,
+      "message": "This has been fixed. Now LLVM_RTLIB_PATH finds libraries from the Linux toolchain build directory, so \"/linux/\" is the correct path.",
+      "parentUuid": "97999215_93d5e5fd",
+      "revId": "95fd9d171de6cb0260f274b10f97466cb125e671",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
