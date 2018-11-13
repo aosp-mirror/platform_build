@@ -1,6 +1,6 @@
 ## Clang configurations.
 
-LLVM_RTLIB_PATH := $(LLVM_PREBUILTS_PATH)/../lib64/clang/$(LLVM_RELEASE_VERSION)/lib/$(HOST_OS)/
+LLVM_RTLIB_PATH := $(LLVM_PREBUILTS_BASE)/linux-x86/$(LLVM_PREBUILTS_VERSION)/lib64/clang/$(LLVM_RELEASE_VERSION)/lib/linux/
 
 define convert-to-clang-flags
 $(strip $(filter-out $(CLANG_CONFIG_UNKNOWN_CFLAGS),$(1)))
