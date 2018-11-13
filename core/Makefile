@@ -1988,8 +1988,8 @@ $(warning Warning: with dexpreopt enabled, you may need a full rebuild.)
 endif
 endif
 
-.PHONY: sync
-sync: $(INTERNAL_SYSTEMIMAGE_FILES)
+.PHONY: sync syncsys
+sync syncsys: $(INTERNAL_SYSTEMIMAGE_FILES)
 
 #######
 ## system tarball
