@@ -34,6 +34,24 @@
       "revId": "95fd9d171de6cb0260f274b10f97466cb125e671",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e38f8a85_8aeb73c4",
+        "filename": "core/clang/HOST_x86.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1010056
+      },
+      "writtenOn": "2018-11-13T21:33:12Z",
+      "side": 1,
+      "message": "Yeah, it\u0027s always supposed to use the same builtins for all builds (except darwin host). We purposefully don\u0027t ship multiple versions of these to cut down on the chance for non-identical builds.",
+      "parentUuid": "2a6fbbea_6589edba",
+      "revId": "95fd9d171de6cb0260f274b10f97466cb125e671",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
