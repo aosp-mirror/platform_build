@@ -3058,7 +3058,7 @@ else
   ifeq ($(TARGET_SKIP_OTA_PACKAGE),true)
     build_ota_package := false
   endif
-  ifneq ($(strip $(SANITIZE_TARGET)),)
+  ifneq (,$(filter address, $(SANITIZE_TARGET)))
     build_ota_package := false
   endif
   ifeq ($(TARGET_PRODUCT),sdk)
@@ -3244,7 +3244,7 @@ endef
 built_ota_tools :=
 
 # We can't build static executables when SANITIZE_TARGET=address
-ifeq ($(strip $(SANITIZE_TARGET)),)
+ifeq (,$(filter address, $(SANITIZE_TARGET)))
 built_ota_tools += \
     $(call intermediates-dir-for,EXECUTABLES,updater,,,$(TARGET_PREFER_32_BIT))/updater
 endif
