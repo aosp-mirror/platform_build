@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "815733a1_80c468c3",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 670,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-14T22:40:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "77ee74e0_f72a9b52",
+      "range": {
+        "startLine": 670,
+        "startChar": 0,
+        "endLine": 670,
+        "endChar": 1
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3b60fff3_7ca69ae7",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 3
@@ -72,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "802fed8e_6465fa09",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 692,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-14T22:40:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52e78565_3a7381ba",
+      "range": {
+        "startLine": 692,
+        "startChar": 31,
+        "endLine": 692,
+        "endChar": 61
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "76cfa75e_7455196e",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 3
@@ -116,6 +164,30 @@
       "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bc1c470d_4ad11239",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 693,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-14T22:40:08Z",
+      "side": 1,
+      "message": "I used OTA for now.",
+      "parentUuid": "441466be_26d2a135",
+      "range": {
+        "startLine": 693,
+        "startChar": 53,
+        "endLine": 693,
+        "endChar": 59
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
