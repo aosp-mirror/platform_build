@@ -1567,10 +1567,19 @@ function provision()
 
 function atest()
 {
-    # TODO (sbasi): Replace this to be a destination in the build out when & if
-    # atest is built by the build system. (This will be necessary if it ever
-    # depends on external pip projects).
-    "$(gettop)"/tools/tradefederation/core/atest/atest.py "$@"
+    # Let's use the built version over the prebuilt, then source code.
+    local os_arch=$(get_build_var HOST_PREBUILT_TAG)
+    local built_atest=${ANDROID_HOST_OUT}/bin/atest
+    local prebuilt_atest="$(gettop)"/prebuilts/asuite/atest/$os_arch/atest
+    if [[ -x $built_atest ]]; then
+        $built_atest "$@"
+    elif [[ -x $prebuilt_atest ]]; then
+        $prebuilt_atest "$@"
+    else
+        # TODO: once prebuilt atest released, remove the source code section
+        # and change the location of atest_completion.sh in addcompletions().
+        "$(gettop)"/tools/tradefederation/core/atest/atest.py "$@"
+    fi
 }
 
 # Zsh needs bashcompinit called to support bash-style completion.
