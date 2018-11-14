@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "77ee74e0_f72a9b52",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 670,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-14T00:05:45Z",
+      "side": 1,
+      "message": "nit: two blank lines between top-level functions",
+      "range": {
+        "startLine": 670,
+        "startChar": 0,
+        "endLine": 670,
+        "endChar": 1
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b60fff3_7ca69ae7",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 692,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-14T00:05:45Z",
+      "side": 1,
+      "message": "\u0027super_block_devices\u0027 must be defined in this path, right? If so, use [\u0027super_block_devices\u0027] to trigger an abort",
+      "range": {
+        "startLine": 692,
+        "startChar": 31,
+        "endLine": 692,
+        "endChar": 61
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "76cfa75e_7455196e",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 693,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-14T00:05:45Z",
+      "side": 1,
+      "message": "Images under IMAGES/ in a target_files.zip will be packed into -img.zip:\nhttps://cs.corp.google.com/android/build/make/tools/releasetools/img_from_target_files.py?l\u003d84\n\nUnless fastboot wants them, we should pack them elsewhere to avoid doubling the size of -img.zip.",
+      "range": {
+        "startLine": 693,
+        "startChar": 53,
+        "endLine": 693,
+        "endChar": 59
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ff66951_f3c06dc9",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-14T00:05:45Z",
+      "side": 1,
+      "message": "Prefer to having matching logic as in Makefile. BOARD_SUPER_PARTITION_SIZE was used to be the top-level toggle for building super_empty, but now the condition looks unclear.\n\nThis CL also adds a flag of `dynamic_partition_use`, but seems not used. Feels like something as follows?\n\nif dynamic_partition_use \u003d\u003d true:\n  BuildSuperEmpty()\n  BuildSuper()\n  if dynamic_partition_retrofit \u003d\u003d true:\n    BuildSuperSplit()",
+      "range": {
+        "startLine": 890,
+        "startChar": 2,
+        "endLine": 890,
+        "endChar": 48
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
