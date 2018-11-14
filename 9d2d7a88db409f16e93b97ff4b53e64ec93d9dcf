@@ -16,6 +16,24 @@
       "revId": "9d2d7a88db409f16e93b97ff4b53e64ec93d9dcf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9298dbfb_643edfdb",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1380617
+      },
+      "writtenOn": "2018-11-14T12:17:12Z",
+      "side": 1,
+      "message": "That works for me; I\u0027ll send CLs.",
+      "parentUuid": "13ea2c16_8a8f3091",
+      "revId": "9d2d7a88db409f16e93b97ff4b53e64ec93d9dcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
