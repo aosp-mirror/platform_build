@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d733ade8_9c2d236c",
+        "filename": "target/product/vndk/init.gsi.rc",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2018-11-15T03:59:25Z",
+      "side": 1,
+      "message": "Let\u0027s use `on early-init`.\n\nMy local test on normal images works.",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 10
+      },
+      "revId": "44b51b4d6f0fdb66f26918bd03310b1b185d2f8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
