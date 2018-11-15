@@ -70,6 +70,30 @@
       "revId": "1ab192ee39542058e3e354d13ecdc2af0c106c24",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3549451e_66b9deee",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3247,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2018-11-15T01:43:34Z",
+      "side": 1,
+      "message": "Thank you very much! I think I understand the problem now, I\u0027ve got some hwasan modules in recovery, in particular android.hardware.boot. I\u0027ll need to hack the build system some more.\n\nBtw, the OTA itself is fine; I can sideload a full hwasan OTA on a non-hwasan build.",
+      "parentUuid": "2fbc4238_9db8d0d1",
+      "range": {
+        "startLine": 3247,
+        "startChar": 0,
+        "endLine": 3247,
+        "endChar": 35
+      },
+      "revId": "1ab192ee39542058e3e354d13ecdc2af0c106c24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
