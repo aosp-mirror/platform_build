@@ -94,6 +94,30 @@
       "revId": "1ab192ee39542058e3e354d13ecdc2af0c106c24",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b25b1f4_0bf1c386",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3247,
+      "author": {
+        "id": 1005967
+      },
+      "writtenOn": "2018-11-15T19:15:47Z",
+      "side": 1,
+      "message": "Fixed this condition to allow updater to be built with hwasan.",
+      "parentUuid": "3549451e_66b9deee",
+      "range": {
+        "startLine": 3247,
+        "startChar": 0,
+        "endLine": 3247,
+        "endChar": 35
+      },
+      "revId": "1ab192ee39542058e3e354d13ecdc2af0c106c24",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
