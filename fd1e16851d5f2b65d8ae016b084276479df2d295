@@ -22,6 +22,30 @@
       "revId": "fd1e16851d5f2b65d8ae016b084276479df2d295",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3695d09c_4de415e6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2018-11-16T15:56:48Z",
+      "side": 1,
+      "message": "Here \"module\" refers to a \"build module\", in the Android build system/Soong parlance. \"Runtime Module APEX module\" feels a bit hard to read. :-)",
+      "parentUuid": "0115f03f_5b132f70",
+      "range": {
+        "startLine": 9,
+        "startChar": 12,
+        "endLine": 9,
+        "endChar": 39
+      },
+      "revId": "fd1e16851d5f2b65d8ae016b084276479df2d295",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
