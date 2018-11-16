@@ -1,2 +1,2 @@
-# If ro.vndk.version is not defined, import init.vndk-27.rc.
-import /system/etc/init/gsi/init.vndk-${ro.vndk.version:-27}.rc
+on early-init
+    umount /product   # TODO(b/119391482): workaround for /system/product
