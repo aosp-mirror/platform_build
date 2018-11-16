@@ -1095,7 +1095,7 @@ function is64bit()
 {
     local PID="$1"
     if [ "$PID" ] ; then
-        if [[ "$(adb shell cat /proc/$PID/exe | xxd -l 1 -s 4 -ps)" -eq "02" ]] ; then
+        if [[ "$(adb shell cat /proc/$PID/exe | xxd -l 1 -s 4 -p)" -eq "02" ]] ; then
             echo "64"
         else
             echo ""
