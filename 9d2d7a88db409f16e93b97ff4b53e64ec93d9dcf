@@ -34,6 +34,24 @@
       "revId": "9d2d7a88db409f16e93b97ff4b53e64ec93d9dcf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "28f0dccc_93e095a3",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1380617
+      },
+      "writtenOn": "2018-11-16T11:17:25Z",
+      "side": 1,
+      "message": "Hi Colin, can we re-evaluate this given the discussion and Tom\u0027s opposition to doing this in the rc file in I20cc7a956c561517b340d8b69382de713dda74e3? It does seem like not including the cameraserver package in the first place would be the cleanest solution.\n\nPotentially we could do this with Makefile trickery further down the line, i.e.\n\n  PRODUCT_PACKAGES :\u003d $(filter-out cameraserver,$(PRODUCT_PACKAGES))\n\nbut violating the additive nature of this inheritance chain seems like it might cause headaches later on.\n\nDo you see other cleaner possibilities? Should cameraserver come in through base_system / should ATV be inheriting from base_system?",
+      "parentUuid": "9298dbfb_643edfdb",
+      "revId": "9d2d7a88db409f16e93b97ff4b53e64ec93d9dcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
