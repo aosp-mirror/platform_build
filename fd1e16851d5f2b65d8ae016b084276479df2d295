@@ -46,6 +46,23 @@
       "revId": "fd1e16851d5f2b65d8ae016b084276479df2d295",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c447d52_3b6c1022",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-16T17:57:47Z",
+      "side": 1,
+      "message": "depending on PRODUCT_\u003cx\u003e variables inside a product mk is not particularly robust, as all children must set the variable before inheriting (standard make condition apply, you get no warnings when you\u0027re doing it wrong).\n\ncan this logic live in the Android.mk that defines this module instead? Make a phony package com.android.runtime that depends on the right targets depending on your choice of flags. The PRODUCT variables will have been set appropriately at that point, and you keep this logic out of the core of the build system.\n\nWhat products set these flags BTW? Another approach is just leaving this out of the core products for now and just import it in those products.",
+      "revId": "fd1e16851d5f2b65d8ae016b084276479df2d295",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
