@@ -320,6 +320,7 @@ PRODUCT_PACKAGES_DEBUG := \
     procrank \
     showmap \
     sqlite3 \
+    ss \
     strace \
     sanitizer-status \
     tracepath \
