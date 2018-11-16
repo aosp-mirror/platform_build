@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b1da5c0b_2faee6b3",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 3683,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-16T01:16:56Z",
+      "side": 1,
+      "message": "The sizes in Makefile are for the ones under $OUT, which may not be identical to the ones in target_files.zip. add_img_to_target_files.py needs to find out the image sizes on its own.",
+      "range": {
+        "startLine": 3683,
+        "startChar": 77,
+        "endLine": 3683,
+        "endChar": 81
+      },
+      "revId": "d2760b98147eb2ce4d742f0e295b1164c80b9cd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d90008f_d861583a",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 659,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-16T01:16:56Z",
+      "side": 1,
+      "message": "[\u0027lpmake\u0027]\n\n(and a few occurrences below)",
+      "range": {
+        "startLine": 659,
+        "startChar": 26,
+        "endLine": 659,
+        "endChar": 40
+      },
+      "revId": "d2760b98147eb2ce4d742f0e295b1164c80b9cd5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

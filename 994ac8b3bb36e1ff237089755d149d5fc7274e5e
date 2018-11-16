@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "bd4711e5_e7b16e90",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 692,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-16T01:16:56Z",
+      "side": 1,
+      "message": "should still use info_dict[\u0027super_block_devices\u0027] to let it error out, instead of the later None.strip()",
+      "parentUuid": "802fed8e_6465fa09",
+      "range": {
+        "startLine": 692,
+        "startChar": 31,
+        "endLine": 692,
+        "endChar": 61
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "76cfa75e_7455196e",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 3
