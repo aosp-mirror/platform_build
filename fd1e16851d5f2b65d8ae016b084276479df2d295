@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0115f03f_5b132f70",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1071150
+      },
+      "writtenOn": "2018-11-16T15:25:54Z",
+      "side": 1,
+      "message": "Just to be consistent with docs, \"release Runtime Module APEX\".",
+      "range": {
+        "startLine": 9,
+        "startChar": 12,
+        "endLine": 9,
+        "endChar": 39
+      },
+      "revId": "fd1e16851d5f2b65d8ae016b084276479df2d295",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
