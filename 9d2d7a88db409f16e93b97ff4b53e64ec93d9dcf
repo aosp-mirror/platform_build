@@ -52,6 +52,24 @@
       "revId": "9d2d7a88db409f16e93b97ff4b53e64ec93d9dcf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27372120_cc470e81",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-16T17:46:12Z",
+      "side": 1,
+      "message": "I\u0027ve spent some time restructuring this hierarchy lately. There are essentially 3 tiers now (there used to be 7 I think):\n- base: clockwork fork off here\n- core_minimal (media_x.mk files): car, tv, and some other internal projects\n- generic_no_telephony (handheld_x.mk files): phones, tablets\n\nIsn\u0027t it just phones and tablets that have cameras? maybe cars? I\u0027d argue cameraserver is at the wrong level at the moment, and should be moved down to one of these children (maybe handheld). If you do this, it\u0027d be worth reaching out to the impacted teams.\n\nI don\u0027t particularly like the concept of a child un-doing what one of its ancestors has done, though it\u0027s already rampant via other mechanisms (LOCAL_OVERRIDES_PACKAGES and friends).",
+      "parentUuid": "28f0dccc_93e095a3",
+      "revId": "9d2d7a88db409f16e93b97ff4b53e64ec93d9dcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
