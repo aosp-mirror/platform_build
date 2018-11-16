@@ -163,10 +163,11 @@ LOCAL_MODULE := fs_config_dirs_system
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): PRIVATE_PARTITION_LIST := $(fs_config_generate_extra_partition_list)
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
-	$< -D $(if $(fs_config_generate_extra_partition_list), \
-	   -P '$(subst $(space),$(comma),$(addprefix -,$(fs_config_generate_extra_partition_list)))') \
+	$< -D $(if $(PRIVATE_PARTITION_LIST), \
+	   -P '$(subst $(space),$(comma),$(addprefix -,$(PRIVATE_PARTITION_LIST)))') \
 	   -o $@
 
 ##################################
@@ -179,10 +180,11 @@ LOCAL_MODULE := fs_config_files_system
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): PRIVATE_PARTITION_LIST := $(fs_config_generate_extra_partition_list)
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
-	$< -F $(if $(fs_config_generate_extra_partition_list), \
-	   -P '$(subst $(space),$(comma),$(addprefix -,$(fs_config_generate_extra_partition_list)))') \
+	$< -F $(if $(PRIVATE_PARTITION_LIST), \
+	   -P '$(subst $(space),$(comma),$(addprefix -,$(PRIVATE_PARTITION_LIST)))') \
 	   -o $@
 
 ifneq ($(filter vendor,$(fs_config_generate_extra_partition_list)),)
