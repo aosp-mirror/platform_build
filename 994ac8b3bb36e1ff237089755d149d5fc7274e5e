@@ -211,6 +211,30 @@
       "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1ed9025_01dd08ff",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-16T00:06:14Z",
+      "side": 1,
+      "message": "dynamic_partition_use is used in follow up CL. I want to the check to be on lpmake_empty_args (which is defined when BOARD_SUPER_PARTITION_SIZE is defined) so that during device bring up, the super empty image can still be generated even if PRODUCT_USE_DYNAMIC_PARTITIONS isn\u0027t defined.",
+      "parentUuid": "3ff66951_f3c06dc9",
+      "range": {
+        "startLine": 890,
+        "startChar": 2,
+        "endLine": 890,
+        "endChar": 48
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
