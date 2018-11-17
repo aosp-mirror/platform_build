@@ -277,14 +277,16 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 generated_sources_dir := $(call local-generated-sources-dir)
 
 ifneq ($(LOCAL_OVERRIDES_MODULES),)
-  ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
-    ifndef LOCAL_IS_HOST_MODULE
+  ifndef LOCAL_IS_HOST_MODULE
+    ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
       EXECUTABLES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_MODULES))
+    else ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
+      SHARED_LIBRARIES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_MODULES))
     else
-      $(call pretty-error,host modules cannot use LOCAL_OVERRIDES_MODULES)
+      $(call pretty-error,LOCAL_MODULE_CLASS := $(LOCAL_MODULE_CLASS) cannot use LOCAL_OVERRIDES_MODULES)
     endif
   else
-      $(call pretty-error,LOCAL_MODULE_CLASS := $(LOCAL_MODULE_CLASS) cannot use LOCAL_OVERRIDES_MODULES)
+    $(call pretty-error,host modules cannot use LOCAL_OVERRIDES_MODULES)
   endif
 endif
 
