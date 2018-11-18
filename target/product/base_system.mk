@@ -52,6 +52,7 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.location.provider \
+    com.android.tzdata \
     ContactsProvider \
     content \
     crash_dump \
@@ -83,6 +84,8 @@ PRODUCT_PACKAGES += \
     hid \
     hwservicemanager \
     idmap \
+    idmap2 \
+    idmap2d \
     ime \
     ims-common \
     incident \

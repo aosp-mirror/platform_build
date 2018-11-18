@@ -56,6 +56,9 @@ PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio.hearing_aid.default \
 
+# For ringtones that rely on forward lock encryption
+PRODUCT_PACKAGES += libfwdlockengine
+
 PRODUCT_PACKAGES_DEBUG += \
     avbctl \
     bootctl \
