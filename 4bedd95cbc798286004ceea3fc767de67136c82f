@@ -46,6 +46,30 @@
       "revId": "4bedd95cbc798286004ceea3fc767de67136c82f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b266cfe6_7f529d08",
+        "filename": "core/python_binary_host_test_config_template.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2018-11-19T18:36:05Z",
+      "side": 1,
+      "message": "What does acloud have to do with this?",
+      "parentUuid": "610dc56a_3c78f7a2",
+      "range": {
+        "startLine": 19,
+        "startChar": 43,
+        "endLine": 19,
+        "endChar": 45
+      },
+      "revId": "4bedd95cbc798286004ceea3fc767de67136c82f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
