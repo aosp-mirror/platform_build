@@ -2983,19 +2983,18 @@ droid_targets: check-all-partition-sizes
 check-all-partition-sizes: $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
 
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
-# Check sum(super partition block devices) == super partition (/ 2 for A/B)
+# Check sum(super partition block devices) == super partition
 # Non-retrofit devices already defines BOARD_SUPER_PARTITION_SUPER_DEVICE_SIZE = BOARD_SUPER_PARTITION_SIZE
 define check-super-partition-size
   size_list="$(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)),$(BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE))"; \
   sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${size_list}"); \
-  max_size_tail=$(if $(filter true,$(AB_OTA_UPDATER))," / 2"); \
-  max_size_expr="$(BOARD_SUPER_PARTITION_SIZE)$${max_size_tail}"; \
+  max_size_expr="$(BOARD_SUPER_PARTITION_SIZE)"; \
   if [ $$(( $${sum_sizes_expr} )) -ne $$(( $${max_size_expr} )) ]; then \
-    echo "The sum of super partition block device sizes is not equal to BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
+    echo "The sum of super partition block device sizes is not equal to BOARD_SUPER_PARTITION_SIZE:"; \
     echo $${sum_sizes_expr} '!=' $${max_size_expr}; \
     exit 1; \
   else \
-    echo "The sum of super partition block device sizes is equal to BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
+    echo "The sum of super partition block device sizes is equal to BOARD_SUPER_PARTITION_SIZE:"; \
     echo $${sum_sizes_expr} '==' $${max_size_expr}; \
   fi
 endef
@@ -3018,21 +3017,21 @@ define check-sum-of-partition-sizes
 endef
 
 define check-all-partition-sizes-target
-  # Check sum(all partitions) <= super partition (/ 2 for A/B)
+  # Check sum(all partitions) <= super partition (/ 2 for A/B devices launched with dynamic partitions)
   $(if $(BOARD_SUPER_PARTITION_SIZE),$(if $(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-    $(call check-sum-of-partition-sizes,BOARD_SUPER_PARTITION_SIZE$(if $(filter true,$(AB_OTA_UPDATER)), / 2), \
-      $(BOARD_SUPER_PARTITION_SIZE)$(if $(filter true,$(AB_OTA_UPDATER)), / 2),$(BOARD_SUPER_PARTITION_PARTITION_LIST))))
+    $(call check-sum-of-partition-sizes,BOARD_SUPER_PARTITION_SIZE$(if $(call super-slot-suffix), / 2), \
+      $(BOARD_SUPER_PARTITION_SIZE)$(if $(call super-slot-suffix), / 2),$(BOARD_SUPER_PARTITION_PARTITION_LIST))))
 
   # For each group, check sum(partitions in group) <= group size
   $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
     $(if $(BOARD_$(group)_SIZE),$(if $(BOARD_$(group)_PARTITION_LIST), \
       $(call check-sum-of-partition-sizes,BOARD_$(group)_SIZE,$(BOARD_$(group)_SIZE),$(BOARD_$(group)_PARTITION_LIST)))))
 
-  # Check sum(all group sizes) <= super partition (/ 2 for A/B)
+  # Check sum(all group sizes) <= super partition (/ 2 for A/B devices launched with dynamic partitions)
   if [[ ! -z $(BOARD_SUPER_PARTITION_SIZE) ]]; then \
     group_size_list="$(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)),$(BOARD_$(group)_SIZE))"; \
     sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${group_size_list}"); \
-    max_size_tail=$(if $(filter true,$(AB_OTA_UPDATER))," / 2"); \
+    max_size_tail=$(if $(call super-slot-suffix)," / 2"); \
     max_size_expr="$(BOARD_SUPER_PARTITION_SIZE)$${max_size_tail}"; \
     if [ $$(( $${sum_sizes_expr} )) -gt $$(( $${max_size_expr} )) ]; then \
       echo "The sum of sizes of [$(strip $(BOARD_SUPER_PARTITION_GROUPS))] is larger than BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
