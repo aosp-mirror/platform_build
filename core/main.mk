@@ -1531,7 +1531,7 @@ dump-products:
 .PHONY: dump-files
 dump-files:
 	$(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
-	$(foreach p,$(product_FILES),$(info :   $(p)))
+	$(foreach p,$(sort $(product_FILES)),$(info :   $(p)))
 	@echo Successfully dumped product file list
 
 .PHONY: nothing
