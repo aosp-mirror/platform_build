@@ -22,6 +22,30 @@
       "revId": "181dbc53fd372f5c5d7dcfcfdf40942bb262d08c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "605605f3_08dc1770",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-19T21:40:09Z",
+      "side": 1,
+      "message": "_32 is generally not part of the LOCAL_MODULE, it\u0027s part of my_register_name.",
+      "parentUuid": "b4019fa0_2d8e5cbe",
+      "range": {
+        "startLine": 117,
+        "startChar": 37,
+        "endLine": 117,
+        "endChar": 44
+      },
+      "revId": "181dbc53fd372f5c5d7dcfcfdf40942bb262d08c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
