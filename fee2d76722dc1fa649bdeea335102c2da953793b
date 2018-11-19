@@ -46,6 +46,30 @@
       "revId": "fee2d76722dc1fa649bdeea335102c2da953793b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0ecbe7f1_e39339d1",
+        "filename": "core/dex_preopt_libart.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-19T14:31:00Z",
+      "side": 1,
+      "message": "I was seeing some other diffs in the odex files too.. some sort of offsets, which might just be a result of this cmdline diffing (I don\u0027t know).\n\nIf there won\u0027t be any odex files on /system in Q, it might not be worth investigating/fixing.",
+      "parentUuid": "12c7e16e_5255da81",
+      "range": {
+        "startLine": 194,
+        "startChar": 0,
+        "endLine": 197,
+        "endChar": 18
+      },
+      "revId": "fee2d76722dc1fa649bdeea335102c2da953793b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
