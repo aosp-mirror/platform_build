@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5e78b8fc_b4513cd6",
+        "filename": "tools/fs_config/fs_config_test.cpp",
+        "patchSetId": 2
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-11-19T20:39:33Z",
+      "side": 1,
+      "message": "Could collapse the bulk of these into one function and have each test call that function with the needed parameters.",
+      "revId": "a9eb379041cd79663934bc40ecc1fbab0a545090",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
