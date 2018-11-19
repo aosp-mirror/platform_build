@@ -312,6 +312,7 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     apex.test.key \
+    arping \
     iotop \
     logpersist.start \
     perfprofd \
@@ -319,6 +320,10 @@ PRODUCT_PACKAGES_DEBUG := \
     showmap \
     sqlite3 \
     strace \
+    sanitizer-status \
+    tracepath \
+    tracepath6 \
+    traceroute6 \
     unwind_info \
     unwind_reg_info \
     unwind_symbols \
