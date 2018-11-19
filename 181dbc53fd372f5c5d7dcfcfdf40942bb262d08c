@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b4019fa0_2d8e5cbe",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-11-19T21:33:17Z",
+      "side": 1,
+      "message": "Does this work properly for modules which end in .vendor_32? I thought _32 was part of the module name.",
+      "range": {
+        "startLine": 117,
+        "startChar": 37,
+        "endLine": 117,
+        "endChar": 44
+      },
+      "revId": "181dbc53fd372f5c5d7dcfcfdf40942bb262d08c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
