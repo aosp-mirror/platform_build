@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fae1c0ea_43d3745f",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-19T14:26:11Z",
+      "side": 1,
+      "message": "s/ODM/PRODUCT/ (ditto below)",
+      "revId": "734ee7d2a244b0a008bfbd47ea853d5b3b779429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
