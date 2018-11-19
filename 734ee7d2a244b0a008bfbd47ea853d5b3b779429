@@ -16,6 +16,24 @@
       "revId": "734ee7d2a244b0a008bfbd47ea853d5b3b779429",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "902b2759_f49c794b",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 300,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-11-19T15:16:32Z",
+      "side": 1,
+      "message": "Good catch! tks",
+      "parentUuid": "fae1c0ea_43d3745f",
+      "revId": "734ee7d2a244b0a008bfbd47ea853d5b3b779429",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
