@@ -148,6 +148,11 @@ endif
 FINAL_VENDOR_DEFAULT_PROPERTIES += \
     $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
 
+FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.arch=$(TARGET_ARCH)
+FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.cpu_variant=$(TARGET_CPU_VARIANT)
+FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.2nd_arch=$(TARGET_2ND_ARCH)
+FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.2nd_cpu_variant=$(TARGET_2ND_CPU_VARIANT)
+
 # Although these variables are prefixed with TARGET_RECOVERY_, they are also needed under charger
 # mode (via libminui).
 ifdef TARGET_RECOVERY_DEFAULT_ROTATION
