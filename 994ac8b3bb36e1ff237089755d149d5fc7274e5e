@@ -331,6 +331,30 @@
       "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5c9cf47_1024b942",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T19:18:28Z",
+      "side": 1,
+      "message": "That\u0027s correct, it should be based on lpmake_args. See other comment.",
+      "parentUuid": "2fd39c4e_a0bb3252",
+      "range": {
+        "startLine": 890,
+        "startChar": 2,
+        "endLine": 890,
+        "endChar": 48
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

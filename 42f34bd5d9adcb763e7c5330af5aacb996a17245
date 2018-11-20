@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "14e885b2_39a4c7da",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 3683,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T19:18:28Z",
+      "side": 1,
+      "message": "Tao: it is lpmake_args here and everywhere else. There is no lpmake_empty_args at all now.",
+      "revId": "42f34bd5d9adcb763e7c5330af5aacb996a17245",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "89031d9c_75aa833c",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 11
