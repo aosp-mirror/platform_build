@@ -70,6 +70,30 @@
       "revId": "4bedd95cbc798286004ceea3fc767de67136c82f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcbc2192_7f3d6989",
+        "filename": "core/python_binary_host_test_config_template.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-11-20T01:18:02Z",
+      "side": 1,
+      "message": "They want to run their unit test through TF.\nhttps://cs.corp.google.com/android/tools/acloud/acloud_unittest.xml?dr\u003dCSs\u0026q\u003dacloud_unittest.xml\u0026g\u003d0\u0026l\u003d1",
+      "parentUuid": "b266cfe6_7f529d08",
+      "range": {
+        "startLine": 19,
+        "startChar": 43,
+        "endLine": 19,
+        "endChar": 45
+      },
+      "revId": "4bedd95cbc798286004ceea3fc767de67136c82f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
