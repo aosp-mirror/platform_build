@@ -1041,8 +1041,13 @@ ifdef BOARD_SUPER_PARTITION_SIZE
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
 
 # The metadata device must be specified manually for retrofitting.
-ifndef BOARD_SUPER_PARTITION_METADATA_DEVICE
-$(error Must specify BOARD_SUPER_PARTITION_METADATA_DEVICE if BOARD_SUPER_PARTITION_BLOCK_DEVICES is used.)
+ifeq ($(BOARD_SUPER_PARTITION_METADATA_DEVICE),)
+$(error Must specify BOARD_SUPER_PARTITION_METADATA_DEVICE if PRODUCT_RETROFIT_DYNAMIC_PARTITIONS=true.)
+endif
+
+# The super partition block device list must be specified manually for retrofitting.
+ifeq ($(BOARD_SUPER_PARTITION_BLOCK_DEVICES),)
+$(error Must specify BOARD_SUPER_PARTITION_BLOCK_DEVICES if PRODUCT_RETROFIT_DYNAMIC_PARTITIONS=true.)
 endif
 
 # The metadata device must be included in the super partition block device list.
