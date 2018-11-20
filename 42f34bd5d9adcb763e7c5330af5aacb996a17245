@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "89031d9c_75aa833c",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-20T17:01:08Z",
+      "side": 1,
+      "message": "nit: double blank lines",
+      "revId": "42f34bd5d9adcb763e7c5330af5aacb996a17245",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79d00604_e4b6d68b",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-20T17:01:08Z",
+      "side": 1,
+      "message": "nit: use `for i, arg in enumerate(lpmake_args):` instead",
+      "range": {
+        "startLine": 695,
+        "startChar": 4,
+        "endLine": 695,
+        "endChar": 37
+      },
+      "revId": "42f34bd5d9adcb763e7c5330af5aacb996a17245",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

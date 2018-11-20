@@ -307,6 +307,30 @@
       "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2fd39c4e_a0bb3252",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-20T17:01:08Z",
+      "side": 1,
+      "message": "Not really? I\u0027m still seeing the condition based on lpmake_args, and that doesn\u0027t match the one in Makefile\n\nhttps://android-review.googlesource.com/c/platform/build/+/824181/11/tools/releasetools/add_img_to_target_files.py#921",
+      "parentUuid": "75d776ef_c9f4051f",
+      "range": {
+        "startLine": 890,
+        "startChar": 2,
+        "endLine": 890,
+        "endChar": 48
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
