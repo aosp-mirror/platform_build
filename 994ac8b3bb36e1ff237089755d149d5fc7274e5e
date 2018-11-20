@@ -355,6 +355,30 @@
       "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c49e40af_42115650",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T19:23:54Z",
+      "side": 1,
+      "message": "I see; you want me to use super_size here?\nWill do",
+      "parentUuid": "d5c9cf47_1024b942",
+      "range": {
+        "startLine": 890,
+        "startChar": 2,
+        "endLine": 890,
+        "endChar": 48
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
