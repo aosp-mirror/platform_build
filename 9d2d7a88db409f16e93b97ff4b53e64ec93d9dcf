@@ -70,6 +70,24 @@
       "revId": "9d2d7a88db409f16e93b97ff4b53e64ec93d9dcf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58dc2097_33b68ebb",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1380617
+      },
+      "writtenOn": "2018-11-20T13:18:51Z",
+      "side": 1,
+      "message": "Anton, this sounds good to me, but for a larger restructuring I don\u0027t think I\u0027m a good person to do it as I never work on this package. How can we move forward?",
+      "parentUuid": "27372120_cc470e81",
+      "revId": "9d2d7a88db409f16e93b97ff4b53e64ec93d9dcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
