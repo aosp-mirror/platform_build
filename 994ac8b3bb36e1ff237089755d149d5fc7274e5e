@@ -144,6 +144,30 @@
     },
     {
       "key": {
+        "uuid": "f321ab9a_9f69ca61",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 692,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T19:26:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bd4711e5_e7b16e90",
+      "range": {
+        "startLine": 692,
+        "startChar": 31,
+        "endLine": 692,
+        "endChar": 61
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "76cfa75e_7455196e",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 3
@@ -379,6 +403,30 @@
       "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "977935c8_fa13cdd2",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 890,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T19:26:43Z",
+      "side": 1,
+      "message": "Actually, in Makefile, super_size is no longer set (in PS 12), but lpmake_args is always set (and it is the correct condition to based on). Please ack.",
+      "parentUuid": "c49e40af_42115650",
+      "range": {
+        "startLine": 890,
+        "startChar": 2,
+        "endLine": 890,
+        "endChar": 48
+      },
+      "revId": "994ac8b3bb36e1ff237089755d149d5fc7274e5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
