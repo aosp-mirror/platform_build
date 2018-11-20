@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "b1225349_f1768490",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T00:53:32Z",
+      "side": 1,
+      "message": "Will do. the \"assert\" shouldn\u0027t be here because we still allow fix size logical partitions now (i.e. BOARD_*IMAGE_PARTITION_SIZE is defined). I can have that assert the build system has similar checks.",
+      "parentUuid": "2b5c2c7f_03fad49f",
+      "range": {
+        "startLine": 275,
+        "startChar": 21,
+        "endLine": 275,
+        "endChar": 38
+      },
+      "revId": "952c7d93301a32fcbf01d293d5e64f2f6be5037b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4ece843c_7e2b8445",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 9
