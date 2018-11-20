@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "6ff55d4d_e9a6b0a9",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T01:07:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b1225349_f1768490",
+      "range": {
+        "startLine": 275,
+        "startChar": 21,
+        "endLine": 275,
+        "endChar": 38
+      },
+      "revId": "952c7d93301a32fcbf01d293d5e64f2f6be5037b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4ece843c_7e2b8445",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 9
