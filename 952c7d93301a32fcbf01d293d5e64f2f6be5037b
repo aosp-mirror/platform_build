@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "2b5c2c7f_03fad49f",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-20T00:42:19Z",
+      "side": 1,
+      "message": "It looks error-prone to rely on callers passing the right value. Why don\u0027t we handle that inside this function, based on the use of DAP with sanity checks?\n\n  use_dynamic_size \u003d (\n      prop_dict.get(\"use_dynamic_partition_size\") \u003d\u003d \"true\" and\n      what in PARTITIONS_USING_DYNAMIC_SIZE)\n\n  if use_dynamic_size:\n    assert \"partition_size\" not in image_props\n\n  build_image.BuildImage()\n\n  if use_dynamic_size:\n    info_dict[what + \"_size\"] \u003d image_props[\"partition_size\"]",
+      "range": {
+        "startLine": 275,
+        "startChar": 21,
+        "endLine": 275,
+        "endChar": 38
+      },
+      "revId": "952c7d93301a32fcbf01d293d5e64f2f6be5037b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ece843c_7e2b8445",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 668,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-20T00:42:19Z",
+      "side": 1,
+      "message": "[\u0027lpmake_args\u0027]",
+      "range": {
+        "startLine": 668,
+        "startChar": 38,
+        "endLine": 668,
+        "endChar": 57
+      },
+      "revId": "952c7d93301a32fcbf01d293d5e64f2f6be5037b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "631b67c1_1d269953",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 9
@@ -13,6 +59,70 @@
       "writtenOn": "2018-11-19T19:21:16Z",
       "side": 1,
       "message": "Note: filed b/119769527 for this.",
+      "revId": "952c7d93301a32fcbf01d293d5e64f2f6be5037b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa350bb2_4b2d867e",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 686,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-20T00:42:19Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "631b67c1_1d269953",
+      "revId": "952c7d93301a32fcbf01d293d5e64f2f6be5037b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "474c5082_5d9b8402",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 691,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-20T00:42:19Z",
+      "side": 1,
+      "message": "mismatching args",
+      "range": {
+        "startLine": 691,
+        "startChar": 8,
+        "endLine": 691,
+        "endChar": 57
+      },
+      "revId": "952c7d93301a32fcbf01d293d5e64f2f6be5037b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "038393f2_c5ddd3b5",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 696,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-20T00:42:19Z",
+      "side": 1,
+      "message": "[\u0027lpmake_args\u0027]",
+      "range": {
+        "startLine": 696,
+        "startChar": 47,
+        "endLine": 696,
+        "endChar": 66
+      },
       "revId": "952c7d93301a32fcbf01d293d5e64f2f6be5037b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
