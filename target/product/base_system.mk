@@ -320,11 +320,13 @@ PRODUCT_PACKAGES_DEBUG := \
     apex.test.key \
     arping \
     iotop \
+    iw \
     logpersist.start \
     perfprofd \
     procrank \
     showmap \
     sqlite3 \
+    ss \
     strace \
     sanitizer-status \
     tracepath \
