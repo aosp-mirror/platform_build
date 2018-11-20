@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "dcd5a59c_7e496a7d",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T19:18:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "89031d9c_75aa833c",
+      "revId": "42f34bd5d9adcb763e7c5330af5aacb996a17245",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "79d00604_e4b6d68b",
         "filename": "tools/releasetools/add_img_to_target_files.py",
         "patchSetId": 11
@@ -56,6 +74,30 @@
       "revId": "42f34bd5d9adcb763e7c5330af5aacb996a17245",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83466b37_eba28b7a",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T19:18:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "79d00604_e4b6d68b",
+      "range": {
+        "startLine": 695,
+        "startChar": 4,
+        "endLine": 695,
+        "endChar": 37
+      },
+      "revId": "42f34bd5d9adcb763e7c5330af5aacb996a17245",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
