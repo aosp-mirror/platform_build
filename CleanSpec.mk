@@ -517,6 +517,8 @@ $(call add-clean-step, rm -f $(OUT_DIR)/build-*-dist*.ninja)
 
 $(call add-clean-step, rm -f $(HOST_OUT)/*ts/host-libprotobuf-java-*.jar)
 
+$(call add-clean-step, find $(OUT_DIR)/target/product/mainline_arm64/system -type f -name "*.*dex" -print0 | xargs -0 rm -f)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
