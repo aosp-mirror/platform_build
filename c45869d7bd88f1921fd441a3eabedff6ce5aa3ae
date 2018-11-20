@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "53a97838_b842ed82",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T19:51:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1ec6fdbc_8aeed0ac",
+      "range": {
+        "startLine": 9,
+        "startChar": 6,
+        "endLine": 9,
+        "endChar": 10
+      },
+      "revId": "c45869d7bd88f1921fd441a3eabedff6ce5aa3ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dcd9839e_97b996b0",
         "filename": "core/product_config.mk",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "f0df2b01_551c90a5",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T19:51:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dcd9839e_97b996b0",
+      "range": {
+        "startLine": 550,
+        "startChar": 5,
+        "endLine": 550,
+        "endChar": 9
+      },
+      "revId": "c45869d7bd88f1921fd441a3eabedff6ce5aa3ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a8f8ee60_42657687",
         "filename": "core/product_config.mk",
         "patchSetId": 4
@@ -68,6 +116,30 @@
       "revId": "c45869d7bd88f1921fd441a3eabedff6ce5aa3ae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67db7591_202de2b0",
+        "filename": "core/product_config.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-20T19:51:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a8f8ee60_42657687",
+      "range": {
+        "startLine": 555,
+        "startChar": 43,
+        "endLine": 555,
+        "endChar": 88
+      },
+      "revId": "c45869d7bd88f1921fd441a3eabedff6ce5aa3ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
