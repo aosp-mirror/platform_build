@@ -142,6 +142,30 @@
       "revId": "4bedd95cbc798286004ceea3fc767de67136c82f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a83f25c3_16174277",
+        "filename": "core/python_binary_host_test_config_template.xml",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1308035
+      },
+      "writtenOn": "2018-11-20T07:35:26Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6d6dc4bc_81b296f0",
+      "range": {
+        "startLine": 19,
+        "startChar": 43,
+        "endLine": 19,
+        "endChar": 45
+      },
+      "revId": "4bedd95cbc798286004ceea3fc767de67136c82f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
