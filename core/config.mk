@@ -959,8 +959,6 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
         $(error PRODUCT_USE_DYNAMIC_PARTITIONS requires $(req) to be true)))
 
     requirements :=
-
-  BOARD_KERNEL_CMDLINE += androidboot.logical_partitions=1
 endif
 
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
