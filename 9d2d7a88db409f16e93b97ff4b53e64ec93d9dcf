@@ -88,6 +88,24 @@
       "revId": "9d2d7a88db409f16e93b97ff4b53e64ec93d9dcf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa05ef22_d684e0ac",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-20T13:54:37Z",
+      "side": 1,
+      "message": "The current solution creates technical debt that I don\u0027t want in this repo. I\u0027m sure you can imagine how tricky these mk chains would be to understand if you had many conditionals of this sort at various levels in the hierarchy. If you want atv not to have cameraserver you have the option of \n1) removing it from here / convincing someone else to remove it from here\n2) make atv not inherit this mk\n\nI wouldn\u0027t really suggest #2 as that would mean atv will quickly diverge from other devices. I don\u0027t think #1 is very difficult. If you want, I can give you more information about what work that involves, just ask me on the chat.",
+      "parentUuid": "58dc2097_33b68ebb",
+      "revId": "9d2d7a88db409f16e93b97ff4b53e64ec93d9dcf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
