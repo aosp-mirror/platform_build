@@ -48,7 +48,6 @@ PRODUCT_PACKAGES += \
     bu \
     bugreport \
     bugreportz \
-    cameraserver \
     charger \
     cmd \
     com.android.location.provider \
