@@ -46,6 +46,30 @@
       "revId": "b2c505c896db3ec44ae8d170b19ba2ee1cdea7b9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7004e510_b3b09125",
+        "filename": "core/native_test_config_template.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1308035
+      },
+      "writtenOn": "2018-11-21T06:17:16Z",
+      "side": 1,
+      "message": "How about use ADDITIONAL_OPTION, in GTest it means GTest option, in Preparer it means preparer option.",
+      "parentUuid": "ddb5dff2_3c2cc6fa",
+      "range": {
+        "startLine": 26,
+        "startChar": 8,
+        "endLine": 26,
+        "endChar": 20
+      },
+      "revId": "b2c505c896db3ec44ae8d170b19ba2ee1cdea7b9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
