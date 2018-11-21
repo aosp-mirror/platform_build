@@ -1391,6 +1391,7 @@ else # TARGET_BUILD_APPS
   $(call dist-for-goals, droidcore, \
     $(INTERNAL_UPDATE_PACKAGE_TARGET) \
     $(INTERNAL_OTA_PACKAGE_TARGET) \
+    $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET) \
     $(BUILT_OTATOOLS_PACKAGE) \
     $(SYMBOLS_ZIP) \
     $(COVERAGE_ZIP) \
@@ -1531,7 +1532,7 @@ dump-products:
 .PHONY: dump-files
 dump-files:
 	$(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
-	$(foreach p,$(product_FILES),$(info :   $(p)))
+	$(foreach p,$(sort $(product_FILES)),$(info :   $(p)))
 	@echo Successfully dumped product file list
 
 .PHONY: nothing

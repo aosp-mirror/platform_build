@@ -148,6 +148,11 @@ endif
 FINAL_VENDOR_DEFAULT_PROPERTIES += \
     $(call collapse-pairs, $(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
 
+FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.arch=$(TARGET_ARCH)
+FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.cpu_variant=$(TARGET_CPU_VARIANT)
+FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.2nd_arch=$(TARGET_2ND_ARCH)
+FINAL_VENDOR_DEFAULT_PROPERTIES += ro.bionic.2nd_cpu_variant=$(TARGET_2ND_CPU_VARIANT)
+
 # Although these variables are prefixed with TARGET_RECOVERY_, they are also needed under charger
 # mode (via libminui).
 ifdef TARGET_RECOVERY_DEFAULT_ROTATION
@@ -2983,19 +2988,18 @@ droid_targets: check-all-partition-sizes
 check-all-partition-sizes: $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
 
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
-# Check sum(super partition block devices) == super partition (/ 2 for A/B)
+# Check sum(super partition block devices) == super partition
 # Non-retrofit devices already defines BOARD_SUPER_PARTITION_SUPER_DEVICE_SIZE = BOARD_SUPER_PARTITION_SIZE
 define check-super-partition-size
   size_list="$(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)),$(BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE))"; \
   sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${size_list}"); \
-  max_size_tail=$(if $(filter true,$(AB_OTA_UPDATER))," / 2"); \
-  max_size_expr="$(BOARD_SUPER_PARTITION_SIZE)$${max_size_tail}"; \
+  max_size_expr="$(BOARD_SUPER_PARTITION_SIZE)"; \
   if [ $$(( $${sum_sizes_expr} )) -ne $$(( $${max_size_expr} )) ]; then \
-    echo "The sum of super partition block device sizes is not equal to BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
+    echo "The sum of super partition block device sizes is not equal to BOARD_SUPER_PARTITION_SIZE:"; \
     echo $${sum_sizes_expr} '!=' $${max_size_expr}; \
     exit 1; \
   else \
-    echo "The sum of super partition block device sizes is equal to BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
+    echo "The sum of super partition block device sizes is equal to BOARD_SUPER_PARTITION_SIZE:"; \
     echo $${sum_sizes_expr} '==' $${max_size_expr}; \
   fi
 endef
@@ -3018,21 +3022,21 @@ define check-sum-of-partition-sizes
 endef
 
 define check-all-partition-sizes-target
-  # Check sum(all partitions) <= super partition (/ 2 for A/B)
+  # Check sum(all partitions) <= super partition (/ 2 for A/B devices launched with dynamic partitions)
   $(if $(BOARD_SUPER_PARTITION_SIZE),$(if $(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-    $(call check-sum-of-partition-sizes,BOARD_SUPER_PARTITION_SIZE$(if $(filter true,$(AB_OTA_UPDATER)), / 2), \
-      $(BOARD_SUPER_PARTITION_SIZE)$(if $(filter true,$(AB_OTA_UPDATER)), / 2),$(BOARD_SUPER_PARTITION_PARTITION_LIST))))
+    $(call check-sum-of-partition-sizes,BOARD_SUPER_PARTITION_SIZE$(if $(call super-slot-suffix), / 2), \
+      $(BOARD_SUPER_PARTITION_SIZE)$(if $(call super-slot-suffix), / 2),$(BOARD_SUPER_PARTITION_PARTITION_LIST))))
 
   # For each group, check sum(partitions in group) <= group size
   $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
     $(if $(BOARD_$(group)_SIZE),$(if $(BOARD_$(group)_PARTITION_LIST), \
       $(call check-sum-of-partition-sizes,BOARD_$(group)_SIZE,$(BOARD_$(group)_SIZE),$(BOARD_$(group)_PARTITION_LIST)))))
 
-  # Check sum(all group sizes) <= super partition (/ 2 for A/B)
+  # Check sum(all group sizes) <= super partition (/ 2 for A/B devices launched with dynamic partitions)
   if [[ ! -z $(BOARD_SUPER_PARTITION_SIZE) ]]; then \
     group_size_list="$(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)),$(BOARD_$(group)_SIZE))"; \
     sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${group_size_list}"); \
-    max_size_tail=$(if $(filter true,$(AB_OTA_UPDATER))," / 2"); \
+    max_size_tail=$(if $(call super-slot-suffix)," / 2"); \
     max_size_expr="$(BOARD_SUPER_PARTITION_SIZE)$${max_size_tail}"; \
     if [ $$(( $${sum_sizes_expr} )) -gt $$(( $${max_size_expr} )) ]; then \
       echo "The sum of sizes of [$(strip $(BOARD_SUPER_PARTITION_GROUPS))] is larger than BOARD_SUPER_PARTITION_SIZE$${max_size_tail}:"; \
@@ -3667,12 +3671,23 @@ endif
 ifdef BUILT_VENDOR_MATRIX
 	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
 endif
+ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
+	$(hide) echo "dynamic_partition_use=true" >> $(zip_root)/META/misc_info.txt
+endif
+ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
+	$(hide) echo "dynamic_partition_retrofit=true" >> $(zip_root)/META/misc_info.txt
+endif
 ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
-	$(hide) echo "super_size=$(BOARD_SUPER_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "lpmake=$(notdir $(LPMAKE))" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo -n "lpmake_args=" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo $(call build-superimage-target-args,$(call super-slot-suffix)) \
 	    >> $(zip_root)/META/misc_info.txt
+endif
+ifneq ($(BOARD_SUPER_PARTITION_BLOCK_DEVICES),)
+	$(hide) echo "super_block_devices=$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)" >> $(zip_root)/META/misc_info.txt
+endif
+ifneq ($(BOARD_SUPER_PARTITION_PARTITION_LIST),)
+	$(hide) echo "dynamic_partition_list=$(BOARD_SUPER_PARTITION_PARTITION_LIST)" >> $(zip_root)/META/misc_info.txt
 endif
 ifneq ($(BOARD_SUPER_PARTITION_GROUPS),)
 	$(hide) echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" > $(zip_root)/META/dynamic_partitions_info.txt
@@ -3710,6 +3725,19 @@ ifeq ($(build_ota_package),true)
 # -----------------------------------------------------------------
 # OTA update package
 
+# $(1): output file
+# $(2): additional args
+define build-ota-package-target
+PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
+   build/make/tools/releasetools/ota_from_target_files -v \
+   --block \
+   --extracted_input_target_files $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE)) \
+   -p $(HOST_OUT) \
+   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
+   $(2) \
+   $(BUILT_TARGET_FILES_PACKAGE) $(1)
+endef
+
 name := $(TARGET_PRODUCT)
 ifeq ($(TARGET_BUILD_TYPE),debug)
   name := $(name)_debug
@@ -3729,17 +3757,38 @@ endif
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 		build/make/tools/releasetools/ota_from_target_files
 	@echo "Package OTA: $@"
-	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
-	   build/make/tools/releasetools/ota_from_target_files -v \
-	   --block \
-	   --extracted_input_target_files $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE)) \
-	   -p $(HOST_OUT) \
-	   -k $(KEY_CERT_PAIR) \
-	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
-	   $(BUILT_TARGET_FILES_PACKAGE) $@
+	$(call build-ota-package-target,$@,-k $(KEY_CERT_PAIR))
 
 .PHONY: otapackage
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
+
+ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
+name := $(TARGET_PRODUCT)
+ifeq ($(TARGET_BUILD_TYPE),debug)
+  name := $(name)_debug
+endif
+name := $(name)-ota-retrofit-$(FILE_NAME_TAG)
+
+INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
+
+$(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
+
+ifeq ($(AB_OTA_UPDATER),true)
+$(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET): $(BRILLO_UPDATE_PAYLOAD)
+else
+$(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET): $(BROTLI)
+endif
+
+$(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
+		build/make/tools/releasetools/ota_from_target_files
+	@echo "Package OTA (retrofit dynamic partitions): $@"
+	$(call build-ota-package-target,$@,-k $(KEY_CERT_PAIR) --retrofit_dynamic_partitions)
+
+.PHONY: otardppackage
+
+otapackage otardppackage: $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET)
+
+endif # PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 
 endif    # build_ota_package
 

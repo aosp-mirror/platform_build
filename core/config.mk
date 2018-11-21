@@ -923,12 +923,7 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     PLATFORM_SEPOLICY_VERSION \
     TOT_SEPOLICY_VERSION \
 
-# If true, kernel configuration requirements are present in OTA package (and will be enforced
-# during OTA). Otherwise, kernel configuration requirements are enforced in VTS.
-# Devices that checks the running kernel (instead of the kernel in OTA package) should not
-# set this variable to prevent OTA failures.
-ifndef PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
-  PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS :=
+ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),)
   ifdef PRODUCT_SHIPPING_API_LEVEL
     ifeq (true,$(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29))
       PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := true
@@ -959,8 +954,6 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
         $(error PRODUCT_USE_DYNAMIC_PARTITIONS requires $(req) to be true)))
 
     requirements :=
-
-  BOARD_KERNEL_CMDLINE += androidboot.logical_partitions=1
 endif
 
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
@@ -1043,8 +1036,13 @@ ifdef BOARD_SUPER_PARTITION_SIZE
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
 
 # The metadata device must be specified manually for retrofitting.
-ifndef BOARD_SUPER_PARTITION_METADATA_DEVICE
-$(error Must specify BOARD_SUPER_PARTITION_METADATA_DEVICE if BOARD_SUPER_PARTITION_BLOCK_DEVICES is used.)
+ifeq ($(BOARD_SUPER_PARTITION_METADATA_DEVICE),)
+$(error Must specify BOARD_SUPER_PARTITION_METADATA_DEVICE if PRODUCT_RETROFIT_DYNAMIC_PARTITIONS=true.)
+endif
+
+# The super partition block device list must be specified manually for retrofitting.
+ifeq ($(BOARD_SUPER_PARTITION_BLOCK_DEVICES),)
+$(error Must specify BOARD_SUPER_PARTITION_BLOCK_DEVICES if PRODUCT_RETROFIT_DYNAMIC_PARTITIONS=true.)
 endif
 
 # The metadata device must be included in the super partition block device list.
