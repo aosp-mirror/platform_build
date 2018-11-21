@@ -260,11 +260,7 @@ def AddDtbo(output_zip):
     args = OPTIONS.info_dict.get("avb_dtbo_add_hash_footer_args")
     if args and args.strip():
       cmd.extend(shlex.split(args))
-    proc = common.Run(cmd)
-    output, _ = proc.communicate()
-    assert proc.returncode == 0, \
-        "Failed to call 'avbtool add_hash_footer' for {}:\n{}".format(
-            img.name, output)
+    common.RunAndCheckOutput(cmd)
 
   img.Write()
   return img.name
@@ -331,8 +327,8 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
       info_dict[image_blocks_key] = int(image_size) / 4096 - 1
 
   use_dynamic_size = (
-    info_dict.get("use_dynamic_partition_size") == "true" and
-    what in shlex.split(info_dict.get("dynamic_partition_list", "").strip()))
+      info_dict.get("use_dynamic_partition_size") == "true" and
+      what in shlex.split(info_dict.get("dynamic_partition_list", "").strip()))
   if use_dynamic_size:
     info_dict.update(build_image.GlobalDictFromImageProp(image_props, what))
 
@@ -463,10 +459,7 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
         assert found, 'Failed to find {}'.format(image_path)
     cmd.extend(split_args)
 
-  proc = common.Run(cmd)
-  stdoutdata, _ = proc.communicate()
-  assert proc.returncode == 0, \
-      "avbtool make_vbmeta_image failed:\n{}".format(stdoutdata)
+  common.RunAndCheckOutput(cmd)
   img.Write()
   return img.name
 
@@ -493,11 +486,7 @@ def AddPartitionTable(output_zip):
   args = OPTIONS.info_dict.get("board_bpt_make_table_args")
   if args:
     cmd.extend(shlex.split(args))
-
-  proc = common.Run(cmd)
-  stdoutdata, _ = proc.communicate()
-  assert proc.returncode == 0, \
-      "bpttool make_table failed:\n{}".format(stdoutdata)
+  common.RunAndCheckOutput(cmd)
 
   img.Write()
   bpt.Write()
@@ -612,10 +601,7 @@ def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
 
   temp_care_map = common.MakeTempFile(prefix="caremap-", suffix=".pb")
   care_map_gen_cmd = ["care_map_generator", temp_care_map_text, temp_care_map]
-  proc = common.Run(care_map_gen_cmd)
-  output, _ = proc.communicate()
-  assert proc.returncode == 0, \
-      "Failed to generate the care_map proto message:\n{}".format(output)
+  common.RunAndCheckOutput(care_map_gen_cmd)
 
   care_map_path = "META/care_map.pb"
   if output_zip and care_map_path not in output_zip.namelist():
@@ -665,11 +651,7 @@ def AddSuperEmpty(output_zip):
   cmd = [OPTIONS.info_dict['lpmake']]
   cmd += shlex.split(OPTIONS.info_dict['lpmake_args'].strip())
   cmd += ['--output', img.name]
-
-  proc = common.Run(cmd)
-  stdoutdata, _ = proc.communicate()
-  assert proc.returncode == 0, \
-      "lpmake tool failed:\n{}".format(stdoutdata)
+  common.RunAndCheckOutput(cmd)
 
   img.Write()
 
@@ -715,10 +697,7 @@ def AddSuperSplit(output_zip):
 
   cmd += ['--output', outdir.name]
 
-  proc = common.Run(cmd)
-  stdoutdata, _ = proc.communicate()
-  assert proc.returncode == 0, \
-      "lpmake tool failed:\n{}".format(stdoutdata)
+  common.RunAndCheckOutput(cmd)
 
   for dev in OPTIONS.info_dict['super_block_devices'].strip().split():
     img = OutputFile(output_zip, OPTIONS.input_tmp, "OTA",
