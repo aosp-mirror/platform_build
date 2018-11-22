@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac5d76c6_9df64313",
+        "filename": "core/python_binary_host_test_config_template.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1330217
+      },
+      "writtenOn": "2018-11-22T09:55:46Z",
+      "side": 1,
+      "message": "Just a curiosity, shouldn\u0027t we define an option? such as:\n\u003coption name\u003d\"test-suite-tag\" value\u003d\"xxx\" /\u003e",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 62
+      },
+      "revId": "3a7822d75e4ca7b63cda514ae7de4fd41c333d5c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
