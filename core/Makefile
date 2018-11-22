@@ -3672,7 +3672,7 @@ ifdef BUILT_VENDOR_MATRIX
 	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
 endif
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
-	$(hide) echo "dynamic_partition_use=true" >> $(zip_root)/META/misc_info.txt
+	$(hide) echo "use_dynamic_partitions=true" >> $(zip_root)/META/misc_info.txt
 endif
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
 	$(hide) echo "dynamic_partition_retrofit=true" >> $(zip_root)/META/misc_info.txt
