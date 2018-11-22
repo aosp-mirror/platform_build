@@ -2013,10 +2013,10 @@ def main(argv):
   OPTIONS.oem_dicts = _LoadOemDicts(OPTIONS.oem_source)
 
   # Assume retrofitting dynamic partitions when base build does not set
-  # dynamic_partition_use but target build does.
+  # use_dynamic_partitions but target build does.
   if (OPTIONS.source_info_dict and
-      OPTIONS.source_info_dict.get("dynamic_partition_use") != "true" and
-      OPTIONS.target_info_dict.get("dynamic_partition_use") == "true"):
+      OPTIONS.source_info_dict.get("use_dynamic_partitions") != "true" and
+      OPTIONS.target_info_dict.get("use_dynamic_partitions") == "true"):
     if OPTIONS.target_info_dict.get("dynamic_partition_retrofit") != "true":
       raise common.ExternalError(
           "Expect to generate incremental OTA for retrofitting dynamic "
