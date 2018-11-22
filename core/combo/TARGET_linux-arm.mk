@@ -34,9 +34,9 @@ TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT := generic
 endif
 
 KNOWN_ARMv8_CORES := cortex-a53 cortex-a53.a57 cortex-a55 cortex-a73 cortex-a75 cortex-a76
-KNOWN_ARMv8_CORES += kryo exynos-m1 exynos-m2
+KNOWN_ARMv8_CORES += kryo kryo385 exynos-m1 exynos-m2
 
-KNOWN_ARMv82a_CORES := cortex-a55 cortex-a75
+KNOWN_ARMv82a_CORES := cortex-a55 cortex-a75 kryo385
 
 # Check for cores that implement armv8-2a ISAs.
 ifneq (,$(filter $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT), $(KNOWN_ARMv82a_CORES)))
