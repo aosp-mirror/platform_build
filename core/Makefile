@@ -415,11 +415,13 @@ endif
 	        bash $(BUILDINFO_SH) >> $@
 	$(hide) $(foreach file,$(system_prop_file), \
 		if [ -f "$(file)" ]; then \
-			echo "#" >> $@; \
 			echo Target buildinfo from: "$(file)"; \
+			echo "" >> $@; \
+			echo "#" >> $@; \
 			echo "# from $(file)" >> $@; \
 			echo "#" >> $@; \
 			cat $(file) >> $@; \
+			echo "# end of $(file)" >> $@; \
 		fi;)
 	$(if $(FINAL_BUILD_PROPERTIES), \
 		$(hide) echo >> $@; \
@@ -486,22 +488,38 @@ endif  # property_overrides_split_enabled
 INSTALLED_PRODUCT_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_PRODUCT_BUILD_PROP_TARGET)
 
+ifdef TARGET_PRODUCT_PROP
+product_prop_files := $(TARGET_PRODUCT_PROP)
+else
+product_prop_files := $(wildcard $(TARGET_DEVICE_DIR)/product.prop)
+endif
+
 FINAL_PRODUCT_PROPERTIES += \
     $(call collapse-pairs, $(PRODUCT_PRODUCT_PROPERTIES) $(ADDITIONAL_PRODUCT_PROPERTIES))
 FINAL_PRODUCT_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_PRODUCT_PROPERTIES),=)
 
-$(INSTALLED_PRODUCT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH)
+$(INSTALLED_PRODUCT_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(product_prop_files)
 	@echo Target product buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) echo > $@
 ifdef BOARD_USES_PRODUCTIMAGE
 	$(hide) $(call generate-common-build-props,product,$@)
 endif  # BOARD_USES_PRODUCTIMAGE
+	$(hide) $(foreach file,$(product_prop_files), \
+		if [ -f "$(file)" ]; then \
+			echo Target product properties from: "$(file)"; \
+			echo "" >> $@; \
+			echo "#" >> $@; \
+			echo "# from $(file)" >> $@; \
+			echo "#" >> $@; \
+			cat $(file) >> $@; \
+			echo "# end of $(file)" >> $@; \
+		fi;)
 	$(hide) echo "#" >> $@; \
 	        echo "# ADDITIONAL PRODUCT PROPERTIES" >> $@; \
 	        echo "#" >> $@; \
-          echo "ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)" >> $@;
+	        echo "ro.build.characteristics=$(TARGET_AAPT_CHARACTERISTICS)" >> $@;
 	$(hide) $(foreach line,$(FINAL_PRODUCT_PROPERTIES), \
 		echo "$(line)" >> $@;)
 	$(hide) build/make/tools/post_process_props.py $@
