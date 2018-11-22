@@ -677,17 +677,25 @@ def AddSuperEmpty(output_zip):
 def AddSuperSplit(output_zip):
   """Create split super_*.img and store it in output_zip."""
 
+  def GetPartitionSizeFromImage(img):
+    try:
+      simg = sparse_img.SparseImage(img)
+      return simg.blocksize * simg.total_blocks
+    except ValueError:
+      return os.path.getsize(img)
+
   def TransformPartitionArg(arg):
     lst = arg.split(':')
     # Because --auto-slot-suffixing for A/B, there is no need to remove suffix.
     name = lst[0]
-    assert name + '_size' in OPTIONS.info_dict, (
-        "{} is a prebuilt. Dynamic partitions with prebuilt images "
-        "are not supported yet.".format(name))
-    size = OPTIONS.info_dict[name + '_size']
-    assert size is not None, \
-        '{0}_size is not found; is {0} built?'.format(name)
-    lst[2] = str(size)
+    if name + '_size' in OPTIONS.info_dict:
+      size = str(OPTIONS.info_dict[name + '_size'])
+      logger.info("Using %s_size = %s", name, size)
+    else:
+      size = str(GetPartitionSizeFromImage(
+          os.path.join(OPTIONS.input_tmp, "IMAGES", '{}.img'.format(name))))
+      logger.info("Using size of prebuilt %s = %s", name, size)
+    lst[2] = size
     return ':'.join(lst)
 
   def GetLpmakeArgsWithSizes():
