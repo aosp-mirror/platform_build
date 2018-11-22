@@ -209,6 +209,7 @@ PRODUCT_PACKAGES += \
     mtpd \
     ndc \
     netd \
+    NetworkStack \
     org.apache.http.legacy \
     perfetto \
     ping \

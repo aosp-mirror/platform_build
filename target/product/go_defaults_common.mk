@@ -61,6 +61,10 @@ PRODUCT_PROPERTY_OVERRIDES += dalvik.vm.heapsize=256m
 # Do not generate libartd.
 PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
 
+# Do not spin up a separate process for the network stack on go devices, use an in-process lib.
+PRODUCT_PACKAGES += NetworkStackLib
+PRODUCT_SYSTEM_SERVER_JARS += NetworkStackLib
+
 # Strip the local variable table and the local variable type table to reduce
 # the size of the system image. This has no bearing on stack traces, but will
 # leave less information available via JDWP.
