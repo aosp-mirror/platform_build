@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e05699ae_ffd5a91e",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-23T12:50:17Z",
+      "side": 1,
+      "message": "Hmm, I\u0027m not sure. This applies to /system right? I think we want sparse images. I\u0027ll leave it in GSI for now, maybe we can move it later.",
+      "parentUuid": "66c03e61_a31465b9",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 46
+      },
+      "revId": "460c5a03e329cefb9c26085b15af94287582a98e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "000de126_90224ba9",
         "filename": "target/board/BoardConfigGsiCommon.mk",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "6a8b0df4_eec64138",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-23T12:50:17Z",
+      "side": 1,
+      "message": "don\u0027t think it has an effect on arm64, which is the only mainline device for now, but I\u0027ll move it over as we\u0027ll likely need it at some point.",
+      "parentUuid": "000de126_90224ba9",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 33
+      },
+      "revId": "460c5a03e329cefb9c26085b15af94287582a98e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4adf2abe_93fc4e4a",
         "filename": "target/board/BoardConfigGsiCommon.mk",
         "patchSetId": 1
@@ -62,6 +110,24 @@
       "revId": "460c5a03e329cefb9c26085b15af94287582a98e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "38cf3d41_305a5e94",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-23T12:50:17Z",
+      "side": 1,
+      "message": "thanks, I was wondering about that. The odex logic is almost certainly going to change in Q fwiw, but I\u0027ll add this back for now.",
+      "parentUuid": "4adf2abe_93fc4e4a",
+      "revId": "460c5a03e329cefb9c26085b15af94287582a98e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
