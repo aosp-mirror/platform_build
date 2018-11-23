@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "66c03e61_a31465b9",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-11-23T01:08:08Z",
+      "side": 1,
+      "message": "I guess this could be moved to mainline? No?",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 46
+      },
+      "revId": "460c5a03e329cefb9c26085b15af94287582a98e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "000de126_90224ba9",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-11-23T01:08:08Z",
+      "side": 1,
+      "message": "This is a mandatory item, too. Move to mainline?",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 33
+      },
+      "revId": "460c5a03e329cefb9c26085b15af94287582a98e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4adf2abe_93fc4e4a",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-11-23T01:08:08Z",
+      "side": 1,
+      "message": "Maybe add following setting to disable for GSI?\n\n    BOARD_USES_SYSTEM_OTHER_ODEX :\u003d false",
+      "revId": "460c5a03e329cefb9c26085b15af94287582a98e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f4920b33_ecc803ee",
+        "filename": "target/board/BoardConfigMainlineCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-11-23T01:08:08Z",
+      "side": 1,
+      "message": "should be BoardConfigMainlineCommon.mk?",
+      "range": {
+        "startLine": 1,
+        "startChar": 2,
+        "endLine": 1,
+        "endChar": 22
+      },
+      "revId": "460c5a03e329cefb9c26085b15af94287582a98e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
