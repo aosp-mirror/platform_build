@@ -70,6 +70,30 @@
       "revId": "e9ee80e24a615f69b027bb6ca4cb84c30ab6d96f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a1ab4571_1e40894b",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-26T18:07:55Z",
+      "side": 1,
+      "message": "I think they are technically not necessary, but I\u0027d suggest leaving them to make it easier to edit the rule later if something gets moved to not be a line continuation.",
+      "parentUuid": "0d3ca0ee_a23bdf84",
+      "range": {
+        "startLine": 510,
+        "startChar": 1,
+        "endLine": 510,
+        "endChar": 2
+      },
+      "revId": "e9ee80e24a615f69b027bb6ca4cb84c30ab6d96f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
