@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a042fc07_1d11ec6e",
+        "filename": "target/board/BoardConfigMainlineCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1248808
+      },
+      "writtenOn": "2018-11-26T19:35:57Z",
+      "side": 1,
+      "message": "Maybe you want to add following as well:\n\nPRODUCT_PROPERTY_OVERRIDES +\u003d \\\n    ro.lmk.log_stats\u003dtrue",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 29
+      },
+      "revId": "d0744a2fe08b853d835f0336dbc006431423455e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
