@@ -46,6 +46,30 @@
       "revId": "e9ee80e24a615f69b027bb6ca4cb84c30ab6d96f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0d3ca0ee_a23bdf84",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-26T17:58:19Z",
+      "side": 1,
+      "message": "btw, the tabs here are redundant as well right (given they\u0027re all line continuations)?",
+      "parentUuid": "9e9cec37_779f500a",
+      "range": {
+        "startLine": 510,
+        "startChar": 1,
+        "endLine": 510,
+        "endChar": 2
+      },
+      "revId": "e9ee80e24a615f69b027bb6ca4cb84c30ab6d96f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
