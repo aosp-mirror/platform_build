@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "685ec243_5713ef46",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 510,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-26T17:43:11Z",
+      "side": 1,
+      "message": "It\u0027s a little weird, but it\u0027s generally better to use an initial tab to make Make happy, and then use spaces for any additional indentation.  Otherwise the tab characters end up in the command line, which I\u0027ve seen cause really weird behavior when copying and pasting into a terminal.",
+      "range": {
+        "startLine": 510,
+        "startChar": 1,
+        "endLine": 510,
+        "endChar": 2
+      },
+      "revId": "e9ee80e24a615f69b027bb6ca4cb84c30ab6d96f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
