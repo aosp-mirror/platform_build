@@ -40,11 +40,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     # Calls an external binary to convert the proto message.
     cmd = ["care_map_generator", "--parse_proto", file_name, text_file]
-    proc = common.Run(cmd)
-    output, _ = proc.communicate()
-    self.assertEqual(
-        0, proc.returncode,
-        "Failed to run care_map_generator:\n{}".format(output))
+    common.RunAndCheckOutput(cmd)
 
     with open(text_file, 'r') as verify_fp:
       plain_text = verify_fp.read()
