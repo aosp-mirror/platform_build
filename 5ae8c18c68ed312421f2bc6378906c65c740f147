@@ -70,6 +70,24 @@
       "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aaec5a94_3b32f0a5",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-27T11:34:42Z",
+      "side": 1,
+      "message": "(oops, didn\u0027t see Vladimir\u0027s response before I posted mine)",
+      "parentUuid": "5ff7c42d_3ad97f3a",
+      "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
