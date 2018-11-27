@@ -16,6 +16,24 @@
       "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "decce0fe_057f31a8",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2018-11-27T11:23:03Z",
+      "side": 1,
+      "message": "I think we should only require this one, and then dex2oat should know whether storing the invocation is deterministic? +vmarko.",
+      "parentUuid": "91ebb322_8ae2594b",
+      "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
