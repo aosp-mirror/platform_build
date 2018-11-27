@@ -52,6 +52,24 @@
       "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5ff7c42d_3ad97f3a",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-27T11:33:49Z",
+      "side": 1,
+      "message": "technically it is deterministic without avoid-storing-invocation, it\u0027s just that storing it produces diffs when building to/from different paths (such as when building different android products), making it difficult to verify they\u0027re the same.\n\nI don\u0027t know if this invocation not passing --force-determinism is a problem in practice, but it seems like a potential problem to not pass it.",
+      "parentUuid": "decce0fe_057f31a8",
+      "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
