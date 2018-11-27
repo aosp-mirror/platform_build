@@ -91,7 +91,9 @@ ifeq ($(strip $(ENABLE_XOM)),true)
 
     ifeq ($(strip $(my_xom)),true)
       ifeq (arm64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
-        my_ldflags += -Wl,-execute-only
+        ifeq ($(my_use_clang_lld),true)
+          my_ldflags += -Wl,-execute-only
+        endif
       endif
     endif
   endif
