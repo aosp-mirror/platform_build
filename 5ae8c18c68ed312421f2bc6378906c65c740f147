@@ -88,6 +88,24 @@
       "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7c8fa75_22f5eb04",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2018-11-27T16:19:20Z",
+      "side": 1,
+      "message": "Dex2oat has force-determinism hardcoded for the boot image compilation on host (see dex2oat.cc:938). (Not saying that\u0027s great, just that we\u0027re doing it implicitly.)",
+      "parentUuid": "aaec5a94_3b32f0a5",
+      "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
