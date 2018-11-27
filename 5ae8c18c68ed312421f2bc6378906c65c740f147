@@ -34,6 +34,24 @@
       "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03a0d016_009b9c59",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1018108
+      },
+      "writtenOn": "2018-11-27T11:31:15Z",
+      "side": 1,
+      "message": "Storing invocation and deterministic compilation are orthogonal.\n\nI\u0027m surprised that we\u0027re not passing --force-determinism when compiling the boot image. We definitely should do that.",
+      "parentUuid": "decce0fe_057f31a8",
+      "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
