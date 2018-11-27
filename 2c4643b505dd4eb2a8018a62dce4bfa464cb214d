@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f23872cc_ecfd75b2",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3376,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-27T17:07:14Z",
+      "side": 1,
+      "message": "Seems TreeHugger caught an issue with the combination of non-system-root-image and recovery-as-boot.\n- L3348 copies $(TARGET_RECOVERY_ROOT_OUT) to BOOT/RAMDISK, where \"/init\" is a symlink to /system/bin/init;\n- L3375 tries to copy first-stage-init from $(TARGET_RAMDISK_OUT) to BOOT/RAMDISK as \"/init\", but the copy would fail to overwrite the dangling symlink of \"/init\" thus the TreeHugger failure.\n\nIt seems we should keep using the symlink version of \"/init\" in such a case, as long as we have a combined /system/bin/init in recovery?",
+      "range": {
+        "startLine": 3373,
+        "startChar": 0,
+        "endLine": 3376,
+        "endChar": 5
+      },
+      "revId": "2c4643b505dd4eb2a8018a62dce4bfa464cb214d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
