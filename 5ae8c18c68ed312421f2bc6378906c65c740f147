@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91ebb322_8ae2594b",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-27T08:56:35Z",
+      "side": 1,
+      "message": "do we also want --force-determinism in this invocation?",
+      "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
