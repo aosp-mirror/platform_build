@@ -22,6 +22,30 @@
       "revId": "d0744a2fe08b853d835f0336dbc006431423455e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "90f05f68_44cf6dea",
+        "filename": "target/board/BoardConfigMainlineCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-11-27T14:42:16Z",
+      "side": 1,
+      "message": "Done. Also moved to mainline_system.mk instead of the BoardConfig",
+      "parentUuid": "a042fc07_1d11ec6e",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 29
+      },
+      "revId": "d0744a2fe08b853d835f0336dbc006431423455e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
