@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26c38c55_11713d50",
+        "filename": "target/product/security/README",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-11-27T22:34:08Z",
+      "side": 1,
+      "message": "Probably we can just remove this. As it doesn\u0027t mention the exact keys to use or the ways to pick them up. Maybe mention the switch to x.509 certificates in the commit message? Something like \"we used to use ... in recovery\".",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 32,
+        "endChar": 62
+      },
+      "revId": "c30205c24a8cdfe8640ddb7d85d46b9dce1875be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
