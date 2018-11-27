@@ -62,6 +62,7 @@ PRODUCT_PACKAGES += libfwdlockengine
 # System libraries commonly depended on by things on the product partition.
 # This list will be pruned periodically.
 PRODUCT_PACKAGES += \
+    android.hardware.biometrics.fingerprint@2.1 \
     android.hardware.radio@1.0 \
     android.hardware.radio@1.1 \
     android.hardware.radio@1.2 \
@@ -74,6 +75,7 @@ PRODUCT_PACKAGES += \
     liblogwrap \
     liblz4 \
     libminui \
+    libnl \
     libprotobuf-cpp-full \
     libprotobuf-cpp-full-rtti \
 
