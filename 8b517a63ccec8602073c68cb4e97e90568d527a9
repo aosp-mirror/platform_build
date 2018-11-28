@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8dc040e7_79810d8a",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1010103
+      },
+      "writtenOn": "2018-11-28T20:58:02Z",
+      "side": 1,
+      "message": "Can we just remove the usage in libhwui instead? I can toss together that CL if you want",
+      "range": {
+        "startLine": 94,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 24
+      },
+      "revId": "8b517a63ccec8602073c68cb4e97e90568d527a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
