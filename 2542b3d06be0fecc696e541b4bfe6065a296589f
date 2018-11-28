@@ -22,6 +22,30 @@
       "revId": "2542b3d06be0fecc696e541b4bfe6065a296589f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1715a613_c9c6fe35",
+        "filename": "core/product.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-28T23:30:00Z",
+      "side": 1,
+      "message": "yeah, but doesn\u0027t it work?\n\nI could change to :\u003d if you want",
+      "parentUuid": "34cb8e9f_6609c2f8",
+      "range": {
+        "startLine": 417,
+        "startChar": 0,
+        "endLine": 417,
+        "endChar": 23
+      },
+      "revId": "2542b3d06be0fecc696e541b4bfe6065a296589f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
