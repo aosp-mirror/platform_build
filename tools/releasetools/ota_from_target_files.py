@@ -1745,7 +1745,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   assert super_block_devices, "No super_block_devices are specified."
 
   replace = {'OTA/super_{}.img'.format(dev): 'IMAGES/{}.img'.format(dev)
-      for dev in super_block_devices}
+             for dev in super_block_devices}
 
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   shutil.copyfile(input_file, target_file)
@@ -1760,8 +1760,9 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   # is a regular update on devices without dynamic partitions support.
   to_delete += [DYNAMIC_PARTITION_INFO]
 
-  # Remove the existing partition images.
+  # Remove the existing partition images as well as the map files.
   to_delete += replace.values()
+  to_delete += ['IMAGES/{}.map'.format(dev) for dev in super_block_devices]
 
   common.ZipDelete(target_file, to_delete)
 
