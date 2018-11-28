@@ -22,6 +22,30 @@
       "revId": "2c4643b505dd4eb2a8018a62dce4bfa464cb214d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02471286_a6eab5af",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3376,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-11-28T01:41:47Z",
+      "side": 1,
+      "message": "Done; Thank you for finding this.  That sounds like a reasonable culprit to me.  Let\u0027s see if pre-submit is happy now.",
+      "parentUuid": "f23872cc_ecfd75b2",
+      "range": {
+        "startLine": 3373,
+        "startChar": 0,
+        "endLine": 3376,
+        "endChar": 5
+      },
+      "revId": "2c4643b505dd4eb2a8018a62dce4bfa464cb214d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
