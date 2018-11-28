@@ -70,6 +70,30 @@
       "revId": "2542b3d06be0fecc696e541b4bfe6065a296589f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cb5db266_c93caa51",
+        "filename": "core/product.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-11-28T23:40:07Z",
+      "side": 1,
+      "message": "It\u0027s actually a decent difference:\n\n  1. It ends up being a recursive variables, instead of a simple variable. So it\u0027ll defer reading _dynamic_partitions_var_list until it is used.\n  2. Since it\u0027s not initialized, it looks into the environment variables to see if it\u0027s set, so you could change the value as a user.",
+      "parentUuid": "be69b20a_5e536014",
+      "range": {
+        "startLine": 417,
+        "startChar": 0,
+        "endLine": 417,
+        "endChar": 23
+      },
+      "revId": "2542b3d06be0fecc696e541b4bfe6065a296589f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
