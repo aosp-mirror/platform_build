@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "34cb8e9f_6609c2f8",
+        "filename": "core/product.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 417,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-11-28T23:24:47Z",
+      "side": 1,
+      "message": "You\u0027re never initializing this variable",
+      "range": {
+        "startLine": 417,
+        "startChar": 0,
+        "endLine": 417,
+        "endChar": 23
+      },
+      "revId": "2542b3d06be0fecc696e541b4bfe6065a296589f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
