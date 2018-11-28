@@ -106,6 +106,24 @@
       "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cea38e41_ba2bf625",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-11-28T20:00:16Z",
+      "side": 1,
+      "message": "Passing it explicitly seems better to me, but unrelated to this patch.",
+      "parentUuid": "e7c8fa75_22f5eb04",
+      "revId": "5ae8c18c68ed312421f2bc6378906c65c740f147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
