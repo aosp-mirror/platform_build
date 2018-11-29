@@ -2967,19 +2967,6 @@ define build-superimage-target
     --output $(1)
 endef
 
-# For A/B devices, super partition always contains sub-partitions in the _a slot, because this
-# image should only be used for bootstrapping / initializing the device. When flashing the image,
-# bootloader fastboot should always mark _a slot as bootable.
-
-ifneq (true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS))
-INSTALLED_SUPERIMAGE_TARGET := $(PRODUCT_OUT)/super.img
-$(INSTALLED_SUPERIMAGE_TARGET): $(LPMAKE) $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
-	$(call pretty,"Target super fs image: $@")
-	$(call build-superimage-target,$@,$(call super-slot-suffix),true)
-endif
-
-$(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_TARGET))
-
 INSTALLED_SUPERIMAGE_EMPTY_TARGET := $(PRODUCT_OUT)/super_empty.img
 $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(LPMAKE)
 	$(call pretty,"Target empty super fs image: $@")
@@ -3329,6 +3316,31 @@ define fs_config
 (cd $(1); find . -type d | sed 's,$$,/,'; find . \! -type d) | cut -c 3- | sort | sed 's,^,$(2),' | $(HOST_OUT_EXECUTABLES)/fs_config -C -D $(TARGET_OUT) -S $(SELINUX_FC) -R "$(2)"
 endef
 
+# $(1): file
+define dump-dynamic-partitions-info
+  $(if $(filter true,$(PRODUCT_USE_DYNAMIC_PARTITIONS)), \
+    echo "use_dynamic_partitions=true" >> $(1))
+  $(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)), \
+    echo "dynamic_partition_retrofit=true" >> $(1))
+  $(if $(BOARD_SUPER_PARTITION_SIZE), \
+    echo "lpmake=$(notdir $(LPMAKE))" >> $(1); \
+    echo -n "lpmake_args=" >> $(1); \
+    echo $(call build-superimage-target-args,$(call super-slot-suffix)) >> $(1))
+  echo "super_metadata_device=$(BOARD_SUPER_PARTITION_METADATA_DEVICE)" >> $(1)
+  $(if $(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
+    echo "super_block_devices=$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)" >> $(1))
+  $(foreach device,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
+    echo "super_$(device)_device_size=$(BOARD_SUPER_PARTITION_$(call to-upper,$(device))_DEVICE_SIZE)" >> $(1);)
+  $(if $(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+    echo "dynamic_partition_list=$(BOARD_SUPER_PARTITION_PARTITION_LIST)" >> $(1))
+  $(if $(BOARD_SUPER_PARTITION_GROUPS),
+    echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" >> $(1))
+  $(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
+    echo "super_$(group)_group_size=$(BOARD_$(call to-upper,$(group))_SIZE)" >> $(1); \
+    $(if $(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
+      echo "super_$(group)_partition_list=$(BOARD_$(call to-upper,$(group))_PARTITION_LIST)" >> $(1);))
+endef
+
 # Depending on the various images guarantees that the underlying
 # directories are up-to-date.
 $(BUILT_TARGET_FILES_PACKAGE): \
@@ -3644,6 +3656,7 @@ ifdef BOARD_AVB_DTBO_KEY_PATH
 endif # BOARD_AVB_DTBO_KEY_PATH
 endif # BOARD_AVB_ENABLE
 endif # BOARD_PREBUILT_DTBOIMAGE
+	$(call dump-dynamic-partitions-info,$(zip_root)/META/misc_info.txt)
 	@# The radio images in BOARD_PACK_RADIOIMAGES will be additionally copied from RADIO/ into
 	@# IMAGES/, which then will be added into <product>-img.zip. Such images must be listed in
 	@# INSTALLED_RADIOIMAGE_TARGET.
@@ -3688,24 +3701,6 @@ ifdef BUILT_ASSEMBLED_VENDOR_MANIFEST
 endif
 ifdef BUILT_VENDOR_MATRIX
 	$(hide) cp $(BUILT_VENDOR_MATRIX) $(zip_root)/META/vendor_matrix.xml
-endif
-ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
-	$(hide) echo "use_dynamic_partitions=true" >> $(zip_root)/META/misc_info.txt
-endif
-ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
-	$(hide) echo "dynamic_partition_retrofit=true" >> $(zip_root)/META/misc_info.txt
-endif
-ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
-	$(hide) echo "lpmake=$(notdir $(LPMAKE))" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo -n "lpmake_args=" >> $(zip_root)/META/misc_info.txt
-	$(hide) echo $(call build-superimage-target-args,$(call super-slot-suffix)) \
-	    >> $(zip_root)/META/misc_info.txt
-endif
-ifneq ($(BOARD_SUPER_PARTITION_BLOCK_DEVICES),)
-	$(hide) echo "super_block_devices=$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)" >> $(zip_root)/META/misc_info.txt
-endif
-ifneq ($(BOARD_SUPER_PARTITION_PARTITION_LIST),)
-	$(hide) echo "dynamic_partition_list=$(BOARD_SUPER_PARTITION_PARTITION_LIST)" >> $(zip_root)/META/misc_info.txt
 endif
 ifneq ($(BOARD_SUPER_PARTITION_GROUPS),)
 	$(hide) echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" > $(zip_root)/META/dynamic_partitions_info.txt
@@ -3973,6 +3968,27 @@ $(PROGUARD_DICT_ZIP) :
 	    fi
 
 endif # TARGET_BUILD_APPS
+
+# -----------------------------------------------------------------
+# super partition image
+
+ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
+
+# BOARD_SUPER_PARTITION_SIZE must be defined to build super image.
+ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
+
+ifneq (true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS))
+INSTALLED_SUPERIMAGE_TARGET := $(PRODUCT_OUT)/super.img
+$(INSTALLED_SUPERIMAGE_TARGET): extracted_input_target_files := $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE))
+$(INSTALLED_SUPERIMAGE_TARGET): $(LPMAKE) $(BUILT_TARGET_FILES_PACKAGE) $(BUILD_SUPER_IMAGE)
+	$(call pretty,"Target super fs image: $@")
+	$(BUILD_SUPER_IMAGE) -v $(extracted_input_target_files) $@
+endif
+
+$(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_TARGET))
+
+endif # BOARD_SUPER_PARTITION_SIZE != ""
+endif # PRODUCT_BUILD_SUPER_PARTITION == "true"
 
 # -----------------------------------------------------------------
 # dalvik something
