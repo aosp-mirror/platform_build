@@ -2958,22 +2958,6 @@ define build-superimage-target-args
   ))
 endef
 
-# $(1): output image path
-# $(2): slot A suffix (_a or empty)
-# $(3): include images or not (true or empty)
-define build-superimage-target
-  $(LPMAKE) \
-    $(call build-superimage-target-args,$(2),$(3)) \
-    --output $(1)
-endef
-
-INSTALLED_SUPERIMAGE_EMPTY_TARGET := $(PRODUCT_OUT)/super_empty.img
-$(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(LPMAKE)
-	$(call pretty,"Target empty super fs image: $@")
-	$(call build-superimage-target,$@,$(call super-slot-suffix))
-
-$(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_EMPTY_TARGET))
-
 endif # BOARD_SUPER_PARTITION_SIZE
 endif # PRODUCT_BUILD_SUPER_PARTITION
 
@@ -3986,6 +3970,20 @@ $(INSTALLED_SUPERIMAGE_TARGET): $(LPMAKE) $(BUILT_TARGET_FILES_PACKAGE) $(BUILD_
 endif
 
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_TARGET))
+
+INSTALLED_SUPERIMAGE_EMPTY_TARGET := $(PRODUCT_OUT)/super_empty.img
+$(INSTALLED_SUPERIMAGE_EMPTY_TARGET): intermediates := $(call intermediates-dir-for,PACKAGING,super_empty)
+$(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(LPMAKE) $(BUILD_SUPER_IMAGE)
+	$(call pretty,"Target empty super fs image: $@")
+	mkdir -p $(intermediates)
+	rm -rf $(intermediates)/misc_info.txt
+	$(call dump-dynamic-partitions-info,$(intermediates)/misc_info.txt)
+ifeq ($(AB_OTA_UPDATER),true)
+	$(hide) echo "ab_update=true" >> $(intermediates)/misc_info.txt
+endif
+	$(BUILD_SUPER_IMAGE) -v $(intermediates)/misc_info.txt $@
+
+$(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_EMPTY_TARGET))
 
 endif # BOARD_SUPER_PARTITION_SIZE != ""
 endif # PRODUCT_BUILD_SUPER_PARTITION == "true"
