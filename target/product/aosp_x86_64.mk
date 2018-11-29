@@ -14,18 +14,12 @@
 # limitations under the License.
 #
 
-PRODUCT_PROPERTY_OVERRIDES += \
-	vendor.rild.libpath=/vendor/lib64/libreference-ril.so
-
 # This is a build configuration for a full-featured build of the
 # Open-Source part of the tree. It's geared toward a US-centric
 # build quite specifically for the emulator, and might not be
 # entirely appropriate to inherit from for on-device configurations.
 
-PRODUCT_COPY_FILES += \
-    development/sys-img/advancedFeatures.ini:advancedFeatures.ini \
-    device/generic/goldfish/data/etc/encryptionkey.img:encryptionkey.img \
-    prebuilts/qemu-kernel/x86_64/4.9/kernel-qemu2:kernel-ranchu
+-include device/generic/goldfish/x86_64-vendor.mk
 
 # Copy different zygote settings for vendor.img to select by setting property
 # ro.zygote=zygote64_32 or ro.zygote=zygote32_64:

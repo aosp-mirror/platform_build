@@ -77,7 +77,7 @@ BOARD_USES_METADATA_PARTITION := true
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216
 
-BOARD_SEPOLICY_DIRS += build/target/board/generic/sepolicy
+BOARD_SEPOLICY_DIRS += device/generic/goldfish/sepolicy/common
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 
 # Android Verified Boot (AVB):
