@@ -173,6 +173,9 @@ my_2nd_arch_prefix :=
 # In the case where LOCAL_ENFORCE_USES_LIBRARIES is true, PRIVATE_DEX2OAT_CLASS_LOADER_CONTEXT
 # contains the normalized path list of the libraries. This makes it easier to conditionally prepend
 # org.apache.http.legacy.impl based on the SDK level if required.
+#
+# Pass --avoid-storing-invocation to make the output deterministics between
+# different products that may have different paths on the command line.
 define dex2oat-one-file
 $(hide) rm -f $(2)
 $(hide) mkdir -p $(dir $(2))
@@ -188,6 +191,7 @@ source build/make/core/verify_uses_libraries.sh "$(1)" && \
 source build/make/core/construct_context.sh "$(PRIVATE_CONDITIONAL_USES_LIBRARIES_HOST)" "$(PRIVATE_CONDITIONAL_USES_LIBRARIES_TARGET)" && \
 ,) \
 ANDROID_LOG_TAGS="*:e" $(DEX2OAT) \
+	--avoid-storing-invocation \
 	--runtime-arg -Xms$(DEX2OAT_XMS) --runtime-arg -Xmx$(DEX2OAT_XMX) \
 	$${class_loader_context_arg} \
 	$${stored_class_loader_context_arg} \
