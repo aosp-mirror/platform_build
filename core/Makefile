@@ -2921,7 +2921,12 @@ vbmetaimage-nodeps:
 endif # BOARD_AVB_ENABLE
 
 # -----------------------------------------------------------------
-# super partition image
+# Check image sizes <= size of super partition
+
+ifeq (,$(TARGET_BUILD_APPS))
+# Do not check for apps-only build
+
+ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 
 # (1): list of items like "system", "vendor", "product", "product_services"
 # return: map each item into a command ( wrapped in $$() ) that reads the size
@@ -2929,45 +2934,9 @@ define read-size-of-partitions
 $(foreach p,$(1),$(call read-image-prop-dictionary,$($(p)image_intermediates)/generated_$(p)_image_info.txt,$(p)_size))
 endef
 
-ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
-
-# BOARD_SUPER_PARTITION_SIZE must be defined to build super image.
-ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
-
 define super-slot-suffix
 $(if $(filter true,$(AB_OTA_UPDATER)),$(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)),,_a))
 endef
-
-# $(1): slot A suffix (_a or empty)
-# $(2): include images or not (true or empty)
-define build-superimage-target-args
-  $(if $(2), --sparse) \
-  --metadata-size 65536 \
-  --metadata-slots $(if $(filter true,$(AB_OTA_UPDATER)),2,1) \
-  --super-name $(BOARD_SUPER_PARTITION_METADATA_DEVICE) \
-  $(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)), $(if $(filter true,$(AB_OTA_UPDATER)), --auto-slot-suffixing)) \
-  $(foreach device,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
-    --device $(device):$(BOARD_SUPER_PARTITION_$(call to-upper,$(device))_DEVICE_SIZE)) \
-  $(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
-    --group $(group)$(1):$(BOARD_$(call to-upper,$(group))_SIZE) \
-    $(if $(1), --group $(group)_b:$(BOARD_$(call to-upper,$(group))_SIZE)) \
-    $(foreach name,$(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
-      --partition $(name)$(1):readonly:$(if $(2),$(call read-size-of-partitions,$(name)),0):$(group)$(1) \
-      $(if $(2), --image $(name)$(1)=$(call images-for-partitions,$(name))) \
-      $(if $(1), --partition $(name)_b:readonly:0:$(group)_b) \
-  ))
-endef
-
-endif # BOARD_SUPER_PARTITION_SIZE
-endif # PRODUCT_BUILD_SUPER_PARTITION
-
-# -----------------------------------------------------------------
-# Check image sizes <= size of super partition
-
-ifeq (,$(TARGET_BUILD_APPS))
-# Do not check for apps-only build
-
-ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 
 droid_targets: check-all-partition-sizes
 
@@ -3306,10 +3275,9 @@ define dump-dynamic-partitions-info
     echo "use_dynamic_partitions=true" >> $(1))
   $(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)), \
     echo "dynamic_partition_retrofit=true" >> $(1))
-  $(if $(BOARD_SUPER_PARTITION_SIZE), \
-    echo "lpmake=$(notdir $(LPMAKE))" >> $(1); \
-    echo -n "lpmake_args=" >> $(1); \
-    echo $(call build-superimage-target-args,$(call super-slot-suffix)) >> $(1))
+  echo "lpmake=$(notdir $(LPMAKE))" >> $(1)
+  $(if $(filter true,$(PRODUCT_BUILD_SUPER_PARTITION)), $(if $(BOARD_SUPER_PARTITION_SIZE), \
+    echo "build_super_partition=true" >> $(1)))
   echo "super_metadata_device=$(BOARD_SUPER_PARTITION_METADATA_DEVICE)" >> $(1)
   $(if $(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
     echo "super_block_devices=$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)" >> $(1))

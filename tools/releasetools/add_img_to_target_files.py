@@ -55,6 +55,7 @@ import uuid
 import zipfile
 
 import build_image
+import build_super_image
 import common
 import rangelib
 import sparse_img
@@ -648,64 +649,15 @@ def AddSuperEmpty(output_zip):
   """Create a super_empty.img and store it in output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "super_empty.img")
-  cmd = [OPTIONS.info_dict['lpmake']]
-  cmd += shlex.split(OPTIONS.info_dict['lpmake_args'].strip())
-  cmd += ['--output', img.name]
-  common.RunAndCheckOutput(cmd)
-
+  build_super_image.BuildSuperImage(OPTIONS.info_dict, img.name)
   img.Write()
 
 
 def AddSuperSplit(output_zip):
   """Create split super_*.img and store it in output_zip."""
 
-  def GetPartitionSizeFromImage(img):
-    try:
-      simg = sparse_img.SparseImage(img)
-      return simg.blocksize * simg.total_blocks
-    except ValueError:
-      return os.path.getsize(img)
-
-  def TransformPartitionArg(arg):
-    lst = arg.split(':')
-    # Because --auto-slot-suffixing for A/B, there is no need to remove suffix.
-    name = lst[0]
-    if name + '_size' in OPTIONS.info_dict:
-      size = str(OPTIONS.info_dict[name + '_size'])
-      logger.info("Using %s_size = %s", name, size)
-    else:
-      size = str(GetPartitionSizeFromImage(
-          os.path.join(OPTIONS.input_tmp, "IMAGES", '{}.img'.format(name))))
-      logger.info("Using size of prebuilt %s = %s", name, size)
-    lst[2] = size
-    return ':'.join(lst)
-
-  def GetLpmakeArgsWithSizes():
-    lpmake_args = shlex.split(OPTIONS.info_dict['lpmake_args'].strip())
-
-    for i, arg in enumerate(lpmake_args):
-      if arg == '--partition':
-        assert i + 1 < len(lpmake_args), \
-          'lpmake_args has --partition without value'
-        lpmake_args[i + 1] = TransformPartitionArg(lpmake_args[i + 1])
-
-    return lpmake_args
-
-  outdir = OutputFile(output_zip, OPTIONS.input_tmp, "OTA", "")
-  cmd = [OPTIONS.info_dict['lpmake']]
-  cmd += GetLpmakeArgsWithSizes()
-
-  source = OPTIONS.info_dict.get('dynamic_partition_list', '').strip()
-  if source:
-    cmd.append('--sparse')
-    for name in shlex.split(source):
-      img = os.path.join(OPTIONS.input_tmp, "IMAGES", '{}.img'.format(name))
-      # Because --auto-slot-suffixing for A/B, there is no need to add suffix.
-      cmd += ['--image', '{}={}'.format(name, img)]
-
-  cmd += ['--output', outdir.name]
-
-  common.RunAndCheckOutput(cmd)
+  outdir = os.path.join(OPTIONS.input_tmp, "OTA")
+  build_super_image.BuildSuperImage(OPTIONS.input_tmp, outdir)
 
   for dev in OPTIONS.info_dict['super_block_devices'].strip().split():
     img = OutputFile(output_zip, OPTIONS.input_tmp, "OTA",
@@ -906,14 +858,13 @@ def AddImagesToTargetFiles(filename):
     banner("vbmeta")
     AddVBMeta(output_zip, partitions, "vbmeta", vbmeta_partitions)
 
-  if OPTIONS.info_dict.get("lpmake_args"):
+  if OPTIONS.info_dict.get("build_super_partition"):
     banner("super_empty")
     AddSuperEmpty(output_zip)
 
     if OPTIONS.info_dict.get("dynamic_partition_retrofit") == "true":
       banner("super split images")
       AddSuperSplit(output_zip)
-    # TODO(b/119322123): Add super.img to target_files for non-retrofit
 
   banner("radio")
   ab_partitions_txt = os.path.join(OPTIONS.input_tmp, "META",
