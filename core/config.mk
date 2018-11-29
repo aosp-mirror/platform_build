@@ -1006,6 +1006,7 @@ ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
 #     - BOARD_{GROUP}_PARTITION_PARTITION_LIST: the list of partitions that belongs to this group.
 #       If empty, no partitions belong to this group, and the sum of sizes is effectively 0.
 $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
+    $(eval BOARD_$(group)_SIZE := $(strip $(BOARD_$(group)_SIZE))) \
     $(if $(BOARD_$(group)_SIZE),,$(error BOARD_$(group)_SIZE must not be empty)) \
     $(eval .KATI_READONLY := BOARD_$(group)_SIZE) \
     $(eval BOARD_$(group)_PARTITION_LIST ?=) \
@@ -1032,7 +1033,7 @@ BOARD_SUPER_PARTITION_PARTITION_LIST := \
         $(BOARD_$(group)_PARTITION_LIST))
 .KATI_READONLY := BOARD_SUPER_PARTITION_PARTITION_LIST
 
-ifdef BOARD_SUPER_PARTITION_SIZE
+ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
 
 # The metadata device must be specified manually for retrofitting.
@@ -1075,6 +1076,7 @@ endif # BOARD_SUPER_PARTITION_SIZE
 .KATI_READONLY := BOARD_SUPER_PARTITION_METADATA_DEVICE
 
 $(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)), \
+    $(eval BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE := $(strip $(BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE))) \
     $(if $(BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE),, \
         $(error $(BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE must not be empty))) \
     $(eval .KATI_READONLY := BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE))
