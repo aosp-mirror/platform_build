@@ -1671,9 +1671,9 @@ define build-recoveryimage-target
   # Copying baseline ramdisk...
   # Use rsync because "cp -Rf" fails to overwrite broken symlinks on Mac.
   $(hide) rsync -a --exclude=sdcard $(IGNORE_RECOVERY_SEPOLICY) $(IGNORE_CACHE_LINK) $(TARGET_ROOT_OUT) $(TARGET_RECOVERY_OUT)
-  $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),, \
-    $(hide) rsync -a $(TARGET_RAMDISK_OUT)/* $(TARGET_RECOVERY_ROOT_OUT)/)
   # Modifying ramdisk contents...
+  $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),, \
+    $(hide) ln -sf /system/bin/init $(TARGET_RECOVERY_ROOT_OUT)/init)
   $(if $(BOARD_RECOVERY_KERNEL_MODULES), \
     $(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery)))
   # Removes $(TARGET_RECOVERY_ROOT_OUT)/init*.rc EXCEPT init.recovery*.rc.
@@ -3405,12 +3405,12 @@ endif # INSTALLED_RECOVERYIMAGE_TARGET defined or BOARD_USES_RECOVERY_AS_BOOT is
 	$(hide) mkdir -p $(zip_root)/ROOT
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_ROOT_OUT),$(zip_root)/ROOT)
+	@# If we are using recovery as boot, this is already done when processing recovery.
+ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
 ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_RAMDISK_OUT),$(zip_root)/BOOT/RAMDISK)
 endif
-	@# If we are using recovery as boot, this is already done when processing recovery.
-ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
 ifdef INSTALLED_KERNEL_TARGET
 	$(hide) cp $(INSTALLED_KERNEL_TARGET) $(zip_root)/BOOT/kernel
 endif
