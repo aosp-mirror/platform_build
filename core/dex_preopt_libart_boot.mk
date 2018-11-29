@@ -86,6 +86,8 @@ endif
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_BOOT_IMAGE_FLAGS := $(my_boot_image_flags)
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_2ND_ARCH_VAR_PREFIX := $(my_2nd_arch_prefix)
 # Use dex2oat debug version for better error reporting
+# Pass --avoid-storing-invocation to make the output deterministics between
+# different products that may have different paths on the command line.
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGET_BOOT_DEX_FILES) $(PRELOADED_CLASSES) $(DIRTY_IMAGE_OBJECTS) $(DEX2OAT_DEPENDENCY) $(my_out_boot_image_profile_location)
 	@echo "target dex2oat: $@"
 	@mkdir -p $(dir $@)
@@ -94,6 +96,7 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.art
 	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.oat
 	$(hide) $(DEX2OAT_BOOT_IMAGE_LOG_TAGS) $(DEX2OAT) --runtime-arg -Xms$(DEX2OAT_IMAGE_XMS) \
+		--avoid-storing-invocation \
 		--runtime-arg -Xmx$(DEX2OAT_IMAGE_XMX) \
 		$(PRIVATE_BOOT_IMAGE_FLAGS) \
 		$(addprefix --dex-file=,$(LIBART_TARGET_BOOT_DEX_FILES)) \
