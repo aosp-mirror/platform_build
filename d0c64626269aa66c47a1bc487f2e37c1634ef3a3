@@ -224,6 +224,30 @@
       "revId": "d0c64626269aa66c47a1bc487f2e37c1634ef3a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2f1cd7e4_cb0ca194",
+        "filename": "tools/releasetools/build_super_image.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-11-30T21:00:30Z",
+      "side": 1,
+      "message": "Ack. Maybe I\u0027ll do it along with the change that calls it during signing?",
+      "parentUuid": "6a19b1fb_61dc9f02",
+      "range": {
+        "startLine": 145,
+        "startChar": 2,
+        "endLine": 145,
+        "endChar": 17
+      },
+      "revId": "d0c64626269aa66c47a1bc487f2e37c1634ef3a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
