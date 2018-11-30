@@ -25,7 +25,10 @@ PRODUCT_PACKAGES += \
     DisplayCutoutEmulationDoubleOverlay \
     DisplayCutoutEmulationTallOverlay \
     ExperimentNavigationBarFloatingOverlay \
-    ExperimentNavigationBarSlimOverlay \
+    ExperimentNavigationBarDefaultOverlay \
+    ExperimentNavigationBarSlimOverlay24 \
+    ExperimentNavigationBarSlimOverlay32 \
+    ExperimentNavigationBarSlimOverlay40 \
     local_time.default \
     power.default \
     vibrator.default \
