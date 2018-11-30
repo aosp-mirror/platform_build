@@ -10,7 +10,6 @@ TARGET_BOOTLOADER_BOARD_NAME := goldfish_$(TARGET_ARCH)
 # no hardware camera
 USE_CAMERA_STUB := true
 
-TARGET_USES_HWC2 := true
 NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 
 # Build OpenGLES emulation guest and host libraries
