@@ -58,11 +58,8 @@ VNDK-core: android.frameworks.sensorservice@1.0.so
 VNDK-core: android.frameworks.stats@1.0.so
 VNDK-core: android.frameworks.vr.composer@1.0.so
 VNDK-core: android.hardware.atrace@1.0.so
-VNDK-core: android.hardware.audio.common-util.so
 VNDK-core: android.hardware.audio.common@2.0.so
-VNDK-core: android.hardware.audio.common@2.0-util.so
 VNDK-core: android.hardware.audio.common@4.0.so
-VNDK-core: android.hardware.audio.common@4.0-util.so
 VNDK-core: android.hardware.audio.effect@2.0.so
 VNDK-core: android.hardware.audio.effect@4.0.so
 VNDK-core: android.hardware.audio@2.0.so
