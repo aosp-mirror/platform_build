@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "caa79813_197a74b4",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 3322,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-01T01:03:39Z",
+      "side": 1,
+      "message": "nit: seems inconsistent use of $(hide): e.g. L3322 has it, but L3326 not. remove all of them and use one at the callsite?",
+      "range": {
+        "startLine": 3322,
+        "startChar": 4,
+        "endLine": 3322,
+        "endChar": 11
+      },
+      "revId": "430e0e1e1735e5c6a8ef8a4117e1056f7e792aae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc38f3ce_0f8adb68",
+        "filename": "tools/releasetools/build_super_image.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-01T01:03:39Z",
+      "side": 1,
+      "message": "logging is standard lib",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 14
+      },
+      "revId": "430e0e1e1735e5c6a8ef8a4117e1056f7e792aae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "756f56f3_c673c2d0",
+        "filename": "tools/releasetools/build_super_image.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-01T01:03:39Z",
+      "side": 1,
+      "message": "this should be swapped with L165?",
+      "range": {
+        "startLine": 169,
+        "startChar": 18,
+        "endLine": 169,
+        "endChar": 71
+      },
+      "revId": "430e0e1e1735e5c6a8ef8a4117e1056f7e792aae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
