@@ -404,7 +404,7 @@ _product_stash_var_list += \
 	WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY
 
 # Logical partitions related variables.
-_product_stash_var_list += \
+_dynamic_partitions_var_list += \
 	BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE \
 	BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE \
 	BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE \
@@ -412,6 +412,9 @@ _product_stash_var_list += \
 	BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE \
 	BOARD_SUPER_PARTITION_SIZE \
 	BOARD_SUPER_PARTITION_GROUPS \
+
+_product_stash_var_list += $(_dynamic_partitions_var_list)
+_product_strip_var_list := $(_dynamic_partitions_var_list)
 
 #
 # Mark the variables in _product_stash_var_list as readonly
@@ -421,6 +424,13 @@ $(foreach v,$(_product_stash_var_list), \
 	$(eval $(v) ?=) \
 	$(eval .KATI_READONLY := $(v)) \
  )
+endef
+
+#
+# Strip the variables in _product_strip_var_list
+#
+define strip-product-vars
+$(foreach v,$(_product_strip_var_list),$(eval $(v) := $(strip $($(v)))))
 endef
 
 define add-to-product-copy-files-if-exists

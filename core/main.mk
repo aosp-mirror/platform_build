@@ -410,7 +410,9 @@ endif
 # Typical build; include any Android.mk files we can find.
 #
 
-
+# Before we go and include all of the module makefiles, strip values for easier
+# processing.
+$(call strip-product-vars)
 # Before we go and include all of the module makefiles, mark the PRODUCT_*
 # and ADDITIONAL*PROPERTIES values readonly so that they won't be modified.
 $(call readonly-product-vars)
