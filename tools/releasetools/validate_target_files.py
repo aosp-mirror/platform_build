@@ -89,13 +89,20 @@ def ValidateFileConsistency(input_zip, input_tmp, info_dict):
         logging.warning('Skipping %s that has incomplete block list', entry)
         continue
 
+      # Use the original RangeSet if applicable, which includes the shared
+      # blocks. And this needs to happen before checking the monotonicity flag.
+      if ranges.extra.get('uses_shared_blocks'):
+        file_ranges = ranges.extra['uses_shared_blocks']
+      else:
+        file_ranges = ranges
+
       # TODO(b/79951650): Handle files with non-monotonic ranges.
-      if not ranges.monotonic:
+      if not file_ranges.monotonic:
         logging.warning(
-            'Skipping %s that has non-monotonic ranges: %s', entry, ranges)
+            'Skipping %s that has non-monotonic ranges: %s', entry, file_ranges)
         continue
 
-      blocks_sha1 = image.RangeSha1(ranges)
+      blocks_sha1 = image.RangeSha1(file_ranges)
 
       # The filename under unpacked directory, such as SYSTEM/bin/sh.
       unpacked_name = os.path.join(
@@ -104,7 +111,7 @@ def ValidateFileConsistency(input_zip, input_tmp, info_dict):
       file_sha1 = unpacked_file.sha1
       assert blocks_sha1 == file_sha1, \
           'file: %s, range: %s, blocks_sha1: %s, file_sha1: %s' % (
-              entry, ranges, blocks_sha1, file_sha1)
+              entry, file_ranges, blocks_sha1, file_sha1)
 
   logging.info('Validating file consistency.')
 
@@ -311,9 +318,9 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   if info_dict.get("avb_enable") == "true":
     logging.info('Verifying Verified Boot 2.0 (AVB) images...')
 
-    # Temporarily disable the verification for AVB-signed images, due to the
-    # dependency on PyCrypto in `avbtool verify_image` (Bug: 119624011).
-    logging.info('Temporarily disabled due to b/119624011')
+    # TODO(b/120517892): Temporarily disable the verification for AVB-signed
+    # images. Needing supporting changes in caller to pass in the desired keys.
+    logging.info('Temporarily disabled due to b/120517892')
 
 
 def main():
