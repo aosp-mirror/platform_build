@@ -2738,6 +2738,14 @@ endef
 ###########################################################
 ## Commands to call R8
 ###########################################################
+
+# Use --debug flag for eng builds by default
+ifeq (eng,$(TARGET_BUILD_VARIANT))
+R8_DEBUG_MODE := --debug
+else
+R8_DEBUG_MODE :=
+endif
+
 define transform-jar-to-dex-r8
 @echo R8: $@
 $(hide) rm -f $(PRIVATE_PROGUARD_DICTIONARY)
@@ -2745,6 +2753,7 @@ $(hide) $(R8_COMPAT_PROGUARD) -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --no-data-resources \
     --force-proguard-compatibility --output $(subst classes.dex,,$@) \
+    $(R8_DEBUG_MODE) \
     $(PRIVATE_PROGUARD_FLAGS) \
     $(addprefix -injars , $(PRIVATE_EXTRA_INPUT_JAR)) \
     $(PRIVATE_DX_FLAGS)
