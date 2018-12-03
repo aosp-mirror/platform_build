@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "f16e8c1d_91d15513",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 3322,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-12-03T19:34:07Z",
+      "side": 1,
+      "message": "Deleted.",
+      "parentUuid": "101c1443_951215e2",
+      "range": {
+        "startLine": 3322,
+        "startChar": 4,
+        "endLine": 3322,
+        "endChar": 11
+      },
+      "revId": "430e0e1e1735e5c6a8ef8a4117e1056f7e792aae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc38f3ce_0f8adb68",
         "filename": "tools/releasetools/build_super_image.py",
         "patchSetId": 7
@@ -72,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "73bb9410_e68403dc",
+        "filename": "tools/releasetools/build_super_image.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-12-03T19:34:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fc38f3ce_0f8adb68",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 14
+      },
+      "revId": "430e0e1e1735e5c6a8ef8a4117e1056f7e792aae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "756f56f3_c673c2d0",
         "filename": "tools/releasetools/build_super_image.py",
         "patchSetId": 7
@@ -92,6 +140,30 @@
       "revId": "430e0e1e1735e5c6a8ef8a4117e1056f7e792aae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c9a2ed9_d1e4f28b",
+        "filename": "tools/releasetools/build_super_image.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-12-03T19:34:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "756f56f3_c673c2d0",
+      "range": {
+        "startLine": 169,
+        "startChar": 18,
+        "endLine": 169,
+        "endChar": 71
+      },
+      "revId": "430e0e1e1735e5c6a8ef8a4117e1056f7e792aae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
