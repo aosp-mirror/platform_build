@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "101c1443_951215e2",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 3322,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-03T18:31:00Z",
+      "side": 1,
+      "message": "$(hide) doesn\u0027t do anything anymore",
+      "parentUuid": "caa79813_197a74b4",
+      "range": {
+        "startLine": 3322,
+        "startChar": 4,
+        "endLine": 3322,
+        "endChar": 11
+      },
+      "revId": "430e0e1e1735e5c6a8ef8a4117e1056f7e792aae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fc38f3ce_0f8adb68",
         "filename": "tools/releasetools/build_super_image.py",
         "patchSetId": 7
