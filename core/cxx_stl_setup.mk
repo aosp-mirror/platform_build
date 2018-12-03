@@ -51,8 +51,8 @@ linux_static_gcclibs := -Wl,--start-group -lgcc -lgcc_eh -lc -Wl,--end-group
 darwin_dynamic_gcclibs := -lc -lSystem
 darwin_static_gcclibs := NO_STATIC_HOST_BINARIES_ON_DARWIN
 windows_dynamic_gcclibs := \
-    -Wl,--start-group -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex -lmsvcr110 \
-    -lmsvcrt -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lpsapi \
+    -Wl,--start-group -lmingw32 -lgcc -lgcc_eh -lmoldname -lmingwex \
+    -lmsvcrt -lucrt -lpthread -ladvapi32 -lshell32 -luser32 -lkernel32 -lpsapi \
     -Wl,--end-group
 windows_static_gcclibs := NO_STATIC_HOST_BINARIES_ON_WINDOWS
 
