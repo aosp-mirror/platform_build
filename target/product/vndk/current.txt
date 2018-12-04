@@ -60,10 +60,13 @@ VNDK-core: android.frameworks.vr.composer@1.0.so
 VNDK-core: android.hardware.atrace@1.0.so
 VNDK-core: android.hardware.audio.common@2.0.so
 VNDK-core: android.hardware.audio.common@4.0.so
+VNDK-core: android.hardware.audio.common@5.0.so
 VNDK-core: android.hardware.audio.effect@2.0.so
 VNDK-core: android.hardware.audio.effect@4.0.so
+VNDK-core: android.hardware.audio.effect@5.0.so
 VNDK-core: android.hardware.audio@2.0.so
 VNDK-core: android.hardware.audio@4.0.so
+VNDK-core: android.hardware.audio@5.0.so
 VNDK-core: android.hardware.authsecret@1.0.so
 VNDK-core: android.hardware.automotive.audiocontrol@1.0.so
 VNDK-core: android.hardware.automotive.evs@1.0.so
@@ -101,6 +104,7 @@ VNDK-core: android.hardware.drm@1.2.so
 VNDK-core: android.hardware.dumpstate@1.0.so
 VNDK-core: android.hardware.fastboot@1.0.so
 VNDK-core: android.hardware.gatekeeper@1.0.so
+VNDK-core: android.hardware.gnss.measurement_corrections@1.0.so
 VNDK-core: android.hardware.gnss@1.0.so
 VNDK-core: android.hardware.gnss@1.1.so
 VNDK-core: android.hardware.gnss@2.0.so

@@ -2374,10 +2374,7 @@ $(hide) \
 endef
 appcompat-files = \
   art/tools/veridex/appcompat.sh \
-  $(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST) \
-  $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
-  $(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) \
-  $(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST) \
+  $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS) \
   $(HOST_OUT_EXECUTABLES)/veridex \
   $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/core_dex_intermediates/classes.dex \
   $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/oahl_dex_intermediates/classes.dex
@@ -2671,17 +2668,13 @@ endef
 # Java semantics of the result dex bytecode. Use at own risk.
 ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
 define hiddenapi-copy-dex-files
-$(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
-      $(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
+$(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS)
 	@rm -rf $(dir $(2))
 	@mkdir -p $(dir $(2))
 	for INPUT_DEX in `find $(dir $(1)) -maxdepth 1 -name "classes*.dex" | sort`; do \
 	    echo "--input-dex=$$$${INPUT_DEX}"; \
 	    echo "--output-dex=$(dir $(2))/`basename $$$${INPUT_DEX}`"; \
-	done | xargs $(HIDDENAPI) encode \
-	    --light-greylist=$(INTERNAL_PLATFORM_HIDDENAPI_LIGHT_GREYLIST) \
-	    --dark-greylist=$(INTERNAL_PLATFORM_HIDDENAPI_DARK_GREYLIST) \
-	    --blacklist=$(INTERNAL_PLATFORM_HIDDENAPI_BLACKLIST)
+	done | xargs $(HIDDENAPI) encode --api-flags=$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS)
 
 $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): $(1)
 $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): PRIVATE_DEX_INPUTS := $$(PRIVATE_DEX_INPUTS) $(1)
@@ -2697,27 +2690,20 @@ endef
 endif  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
 
 # Generate a greylist.txt from a classes.jar
-define hiddenapi-generate-greylist-txt
+define hiddenapi-generate-csv
 ifneq (,$(wildcard frameworks/base))
 # Only generate this target if we're in a tree with frameworks/base present.
-$(3): .KATI_IMPLICIT_OUTPUTS := $(2) $(4)
-# For now, write P & Q blacklist to single file until runtime support is finished
+$(2): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
+	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) \
+	    --write-flags-csv $(2)
+
 $(3): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
 	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) \
-	    --write-whitelist $(2) \
-	    --write-greylist none,28:$(3) \
-	    --write-greylist 26:$(4)
+	    --write-metadata-csv $(3)
 
-$(5): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
-	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) \
-	    --write-metadata-csv $(5)
+$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS): $(2)
+$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS): PRIVATE_FLAGS_INPUTS := $$(PRIVATE_FLAGS_INPUTS) $(2)
 
-$(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST): $(2) $(3) $(4)
-$(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST): \
-    PRIVATE_WHITELIST_INPUTS := $$(PRIVATE_WHITELIST_INPUTS) $(2)
-$(INTERNAL_PLATFORM_HIDDENAPI_WHITELIST): \
-    PRIVATE_GREYLIST_INPUTS := $$(PRIVATE_GREYLIST_INPUTS) $(3)
-    PRIVATE_DARKGREYLIST_INPUTS := $$(PRIVATE_DARKGREYLIST_INPUTS) $(4)
 $(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): $(5)
 $(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): \
     PRIVATE_METADATA_INPUTS := $$(PRIVATE_METADATA_INPUTS) $(5)
@@ -2752,6 +2738,14 @@ endef
 ###########################################################
 ## Commands to call R8
 ###########################################################
+
+# Use --debug flag for eng builds by default
+ifeq (eng,$(TARGET_BUILD_VARIANT))
+R8_DEBUG_MODE := --debug
+else
+R8_DEBUG_MODE :=
+endif
+
 define transform-jar-to-dex-r8
 @echo R8: $@
 $(hide) rm -f $(PRIVATE_PROGUARD_DICTIONARY)
@@ -2759,6 +2753,7 @@ $(hide) $(R8_COMPAT_PROGUARD) -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --no-data-resources \
     --force-proguard-compatibility --output $(subst classes.dex,,$@) \
+    $(R8_DEBUG_MODE) \
     $(PRIVATE_PROGUARD_FLAGS) \
     $(addprefix -injars , $(PRIVATE_EXTRA_INPUT_JAR)) \
     $(PRIVATE_DX_FLAGS)
