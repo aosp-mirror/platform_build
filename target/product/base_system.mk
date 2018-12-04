@@ -114,10 +114,6 @@ PRODUCT_PACKAGES += \
     libandroid_runtime \
     libandroid_servers \
     libaudioeffect_jni \
-    libaudioflinger \
-    libaudiopolicymanager \
-    libaudiopolicyservice \
-    libaudioutils \
     libbinder \
     libbinder_ndk \
     libc \
@@ -172,8 +168,6 @@ PRODUCT_PACKAGES += \
     libsonic \
     libsonivox \
     libsoundpool \
-    libsoundtrigger \
-    libsoundtriggerservice \
     libspeexresampler \
     libsqlite \
     libstagefright \
