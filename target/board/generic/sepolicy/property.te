@@ -1,5 +1,0 @@
-type qemu_prop, property_type;
-type qemu_cmdline, property_type;
-type radio_noril_prop, property_type;
-type net_eth0_prop, property_type;
-type net_share_prop, property_type;
