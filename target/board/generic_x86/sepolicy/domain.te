@@ -1,1 +1,0 @@
-allow domain cpuctl_device:dir search;

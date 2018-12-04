@@ -1,4 +1,0 @@
-type sysfs_writable, fs_type, sysfs_type, mlstrustedobject;
-type varrun_file, file_type, data_file_type, mlstrustedobject;
-type mediadrm_vendor_data_file, file_type, data_file_type;
-type nsfs, fs_type;

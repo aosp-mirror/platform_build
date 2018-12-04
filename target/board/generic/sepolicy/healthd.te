@@ -1,2 +1,0 @@
-# Allow to read /sys/class/power_supply directory
-allow healthd sysfs:dir r_dir_perms;
