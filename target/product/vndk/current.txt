@@ -58,10 +58,13 @@ VNDK-core: android.hardware.audio.common@2.0.so
 VNDK-core: android.hardware.audio.common@2.0-util.so
 VNDK-core: android.hardware.audio.common@4.0.so
 VNDK-core: android.hardware.audio.common@4.0-util.so
+VNDK-core: android.hardware.audio.common@5.0.so
 VNDK-core: android.hardware.audio.effect@2.0.so
 VNDK-core: android.hardware.audio.effect@4.0.so
+VNDK-core: android.hardware.audio.effect@5.0.so
 VNDK-core: android.hardware.audio@2.0.so
 VNDK-core: android.hardware.audio@4.0.so
+VNDK-core: android.hardware.audio@5.0.so
 VNDK-core: android.hardware.authsecret@1.0.so
 VNDK-core: android.hardware.automotive.audiocontrol@1.0.so
 VNDK-core: android.hardware.automotive.evs@1.0.so
