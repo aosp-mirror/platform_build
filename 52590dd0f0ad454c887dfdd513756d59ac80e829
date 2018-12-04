@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d9537ca6_8814ea60",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2018-12-04T17:07:49Z",
+      "side": 1,
+      "message": "nice. that\u0027s a clear win either way then.",
+      "revId": "52590dd0f0ad454c887dfdd513756d59ac80e829",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca3bb62c_cc49b4fd",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1140,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2018-12-04T17:07:49Z",
+      "side": 1,
+      "message": "would it be clearer to have the `+ 1` here rather than L1146? i thought i\u0027d spotted a bug at first :-)",
+      "range": {
+        "startLine": 1140,
+        "startChar": 30,
+        "endLine": 1140,
+        "endChar": 47
+      },
+      "revId": "52590dd0f0ad454c887dfdd513756d59ac80e829",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
