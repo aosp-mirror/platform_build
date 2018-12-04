@@ -1108,9 +1108,14 @@ class AIDArrayGen(BaseGenerator):
 
     _INCLUDE = '#include <private/android_filesystem_config.h>'
 
+    # Note that the android_id name field is of type 'const char[]' instead of
+    # 'const char*'.  While this seems less straightforward as we need to
+    # calculate the max length of all names, this allows the entire android_ids
+    # table to be placed in .rodata section instead of .data.rel.ro section,
+    # resulting in less memory pressure.
     _STRUCT_FS_CONFIG = textwrap.dedent("""
                          struct android_id_info {
-                             const char *name;
+                             const char name[%d];
                              unsigned aid;
                          };""")
 
@@ -1132,12 +1137,13 @@ class AIDArrayGen(BaseGenerator):
     def __call__(self, args):
 
         hdr = AIDHeaderParser(args['hdrfile'])
+        max_name_length = max(len(aid.friendly) + 1 for aid in hdr.aids)
 
         print AIDArrayGen._GENERATED
         print
         print AIDArrayGen._INCLUDE
         print
-        print AIDArrayGen._STRUCT_FS_CONFIG
+        print AIDArrayGen._STRUCT_FS_CONFIG % max_name_length
         print
         print AIDArrayGen._OPEN_ID_ARRAY
 
