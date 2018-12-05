@@ -1625,6 +1625,19 @@ function acloud()
     esac
 }
 
+function aidegen()
+{
+    # Always use the prebuilt version.
+    local host_os_arch=$(get_build_var HOST_PREBUILT_TAG)
+    case $host_os_arch in
+        linux-x86) "$(gettop)"/prebuilts/asuite/aidegen/linux-x86/aidegen "$@"
+        ;;
+    *)
+        echo "aidegen is not supported on your host arch: $host_os_arch"
+        ;;
+    esac
+}
+
 # Execute the contents of any vendorsetup.sh files we can find.
 function source_vendorsetup() {
     for dir in device vendor product; do
