@@ -1,0 +1,136 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1d2c2b04_09b2ae92",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1518,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-05T18:24:35Z",
+      "side": 1,
+      "message": "nit: files",
+      "range": {
+        "startLine": 1518,
+        "startChar": 54,
+        "endLine": 1518,
+        "endChar": 58
+      },
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72e647a0_6697e460",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1534,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-05T18:24:35Z",
+      "side": 1,
+      "message": "nit: Merge this into L1525 to explain the meaning of TARGET_RECOVERY_UI_SCREEN_WIDTH in one place?",
+      "range": {
+        "startLine": 1532,
+        "startChar": 0,
+        "endLine": 1534,
+        "endChar": 10
+      },
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cbca6c37_5cc688d5",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1534,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-05T18:24:35Z",
+      "side": 1,
+      "message": "nit: it sounds unclear to me.\n- \"we can also set a variable\"... which variable?\n- \"to control the generations\"... how? to toggle it on and off?",
+      "range": {
+        "startLine": 1534,
+        "startChar": 11,
+        "endLine": 1534,
+        "endChar": 89
+      },
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36639102_20eab5e7",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1544,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-05T18:24:35Z",
+      "side": 1,
+      "message": "nit: prefix with recovery_? and i think you can call it recovery_text_res to be consistent with the rest",
+      "range": {
+        "startLine": 1544,
+        "startChar": 40,
+        "endLine": 1544,
+        "endChar": 41
+      },
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8bdd984b_fc58a38c",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1547,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-05T18:24:35Z",
+      "side": 1,
+      "message": "make it priviate",
+      "range": {
+        "startLine": 1547,
+        "startChar": 0,
+        "endLine": 1547,
+        "endChar": 18
+      },
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "633660d3_dd6f8f69",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1561,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-05T18:24:35Z",
+      "side": 1,
+      "message": "nit: add \"# TARGET_RECOVERY_UI_SCREEN_WIDTH\"\n\n(and do we need to explicitly clear the var on else?)",
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
