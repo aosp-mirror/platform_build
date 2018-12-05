@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3f5bbba2_b84b9a21",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 838,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-05T22:34:53Z",
+      "side": 1,
+      "message": "file_ranges according to the comment?",
+      "range": {
+        "startLine": 838,
+        "startChar": 6,
+        "endLine": 838,
+        "endChar": 12
+      },
+      "revId": "42994dea2c67a10ccf16a25d4de628bdf31cce76",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
