@@ -176,6 +176,7 @@ endif
 ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_sanitize := $(filter-out address,$(my_sanitize))
   my_sanitize := $(filter-out thread,$(my_sanitize))
+  my_sanitize := $(filter-out cfi,$(my_sanitize))
 endif
 
 ifneq ($(filter hwaddress,$(my_sanitize)),)
