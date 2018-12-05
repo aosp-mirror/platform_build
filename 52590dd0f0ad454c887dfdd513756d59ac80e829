@@ -39,6 +39,30 @@
       "revId": "52590dd0f0ad454c887dfdd513756d59ac80e829",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5018a1c5_27974918",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1140,
+      "author": {
+        "id": 1349653
+      },
+      "writtenOn": "2018-12-05T08:11:08Z",
+      "side": 1,
+      "message": "Good point. Done.",
+      "parentUuid": "ca3bb62c_cc49b4fd",
+      "range": {
+        "startLine": 1140,
+        "startChar": 30,
+        "endLine": 1140,
+        "endChar": 47
+      },
+      "revId": "52590dd0f0ad454c887dfdd513756d59ac80e829",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
