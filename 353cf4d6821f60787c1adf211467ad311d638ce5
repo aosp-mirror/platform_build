@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8821435c_7098aab5",
+        "filename": "core/build_rro_package.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-12-05T14:43:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0a73a485_0d5504a8",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 34
+      },
+      "revId": "353cf4d6821f60787c1adf211467ad311d638ce5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4af510af_99d6d5ac",
         "filename": "core/build_rro_package.mk",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "353cf4d6821f60787c1adf211467ad311d638ce5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "197f51e1_c7051d6a",
+        "filename": "core/build_rro_package.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-12-05T14:43:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4af510af_99d6d5ac",
+      "range": {
+        "startLine": 19,
+        "startChar": 2,
+        "endLine": 19,
+        "endChar": 19
+      },
+      "revId": "353cf4d6821f60787c1adf211467ad311d638ce5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
