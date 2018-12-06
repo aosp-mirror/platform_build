@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a75ecba5_06736963",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1518,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-06T01:13:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1d2c2b04_09b2ae92",
+      "range": {
+        "startLine": 1518,
+        "startChar": 54,
+        "endLine": 1518,
+        "endChar": 58
+      },
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "72e647a0_6697e460",
         "filename": "core/Makefile",
         "patchSetId": 6
@@ -71,6 +95,54 @@
     },
     {
       "key": {
+        "uuid": "69174508_115c0e54",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1534,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-06T01:13:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cbca6c37_5cc688d5",
+      "range": {
+        "startLine": 1534,
+        "startChar": 11,
+        "endLine": 1534,
+        "endChar": 89
+      },
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7745ad09_9d230cd2",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1534,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-06T01:13:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "72e647a0_6697e460",
+      "range": {
+        "startLine": 1532,
+        "startChar": 0,
+        "endLine": 1534,
+        "endChar": 10
+      },
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "36639102_20eab5e7",
         "filename": "core/Makefile",
         "patchSetId": 6
@@ -91,6 +163,30 @@
       "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b07d9be_7c682a9a",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1544,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-06T01:13:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "36639102_20eab5e7",
+      "range": {
+        "startLine": 1544,
+        "startChar": 40,
+        "endLine": 1544,
+        "endChar": 41
+      },
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "86624416_b2cf608b",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1547,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-06T01:13:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8bdd984b_fc58a38c",
+      "range": {
+        "startLine": 1547,
+        "startChar": 0,
+        "endLine": 1547,
+        "endChar": 18
+      },
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "633660d3_dd6f8f69",
         "filename": "core/Makefile",
         "patchSetId": 6
@@ -131,6 +251,24 @@
       "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24556d43_634b98c3",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1561,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-06T01:13:37Z",
+      "side": 1,
+      "message": "It\u0027s safe to. RECOVERY_BACKGROUND_TEXT_RESOURCES is the only variable that will be used later.",
+      "parentUuid": "633660d3_dd6f8f69",
+      "revId": "42474e51c1c25ba2ea184554770a1e09bc72dc9b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
