@@ -91,7 +91,6 @@ PRODUCT_PACKAGES += \
     gpuservice \
     hid \
     hwservicemanager \
-    idmap \
     idmap2 \
     idmap2d \
     ime \
