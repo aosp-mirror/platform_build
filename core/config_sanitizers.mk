@@ -176,6 +176,7 @@ endif
 ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_sanitize := $(filter-out address,$(my_sanitize))
   my_sanitize := $(filter-out thread,$(my_sanitize))
+  my_sanitize := $(filter-out cfi,$(my_sanitize))
 endif
 
 ifneq ($(filter hwaddress,$(my_sanitize)),)
@@ -411,6 +412,17 @@ ifneq ($(my_sanitize_diag),)
     ifeq ($(filter address thread scudo hwaddress,$(my_sanitize)),)
       # Does not have to be the first DT_NEEDED unlike ASan.
       my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY)
+    endif
+  endif
+endif
+
+# http://b/119329758, Android core does not boot up with this sanitizer yet.
+# Previously sanitized modules might not pass new implicit-integer-sign-change check.
+# Disable this check unless it has been explicitly specified.
+ifneq ($(findstring fsanitize,$(my_cflags)),)
+  ifneq ($(findstring integer,$(my_cflags)),)
+    ifeq ($(findstring sanitize=implicit-integer-sign-change,$(my_cflags)),)
+      my_cflags += -fno-sanitize=implicit-integer-sign-change
     endif
   endif
 endif
