@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "587b4613_60061c70",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1543,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T02:42:05Z",
+      "side": 1,
+      "message": "Directories should not be make targets, as the modification date/times for directories don\u0027t really match the file semantics. You\u0027ve got a complete file list here, so you should be able to come up with a complete list in order to set up individual copy rules, or one rule with a number of outputs via .KATI_IMPLICIT_OUTPUTS",
+      "range": {
+        "startLine": 1543,
+        "startChar": 2,
+        "endLine": 1543,
+        "endChar": 25
+      },
+      "revId": "6f4615b1cc13a79d95783e8e1c3c6558c39526bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bdd3ce5f_32e3c2fe",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1567,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T02:42:05Z",
+      "side": 1,
+      "message": "either don\u0027t wrap this, or use spaces instead of tabs to indent the next line (tabs imply commands, which isn\u0027t the case here)",
+      "range": {
+        "startLine": 1567,
+        "startChar": 38,
+        "endLine": 1567,
+        "endChar": 39
+      },
+      "revId": "6f4615b1cc13a79d95783e8e1c3c6558c39526bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b62fce4_f72edfe7",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1571,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T02:42:05Z",
+      "side": 1,
+      "message": "Same here, these should either be independent rules, or a list of outputs via .KATI_IMPLICIT_OUTPUTS",
+      "range": {
+        "startLine": 1571,
+        "startChar": 2,
+        "endLine": 1571,
+        "endChar": 36
+      },
+      "revId": "6f4615b1cc13a79d95783e8e1c3c6558c39526bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d4ce012_942f2416",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1580,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T02:42:05Z",
+      "side": 1,
+      "message": "This should be a PRIVATE_* variable too",
+      "range": {
+        "startLine": 1580,
+        "startChar": 21,
+        "endLine": 1580,
+        "endChar": 41
+      },
+      "revId": "6f4615b1cc13a79d95783e8e1c3c6558c39526bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
