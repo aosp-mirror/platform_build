@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "c0b301d4_4bebb048",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-06T20:47:13Z",
+      "side": 1,
+      "message": "(I also renamed the functions to try to fit in with these)",
+      "parentUuid": "c956f2c8_595ddfd2",
+      "revId": "8bdf9842f08ba6234d7e6e54413772c97465aa6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d15c8123_8029b411",
         "filename": "envsetup.sh",
         "patchSetId": 1
