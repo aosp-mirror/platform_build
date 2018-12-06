@@ -46,6 +46,30 @@
       "revId": "0b8d1e60074814bc242db8082baafb1b2a04fe47",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e00df0d9_8f9d9152",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1616,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T00:38:36Z",
+      "side": 1,
+      "message": "This is what the embedded launcher is for. It\u0027s quite possible to hit this on Linux too.",
+      "parentUuid": "36dc5088_a767a085",
+      "range": {
+        "startLine": 1616,
+        "startChar": 36,
+        "endLine": 1616,
+        "endChar": 88
+      },
+      "revId": "0b8d1e60074814bc242db8082baafb1b2a04fe47",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
