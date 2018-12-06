@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "169059d1_27d8504a",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1543,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-06T09:13:47Z",
+      "side": 1,
+      "message": "Done, move the logic to the generation rules of text images; so that we don\u0027t need to list all the font files here.",
+      "parentUuid": "587b4613_60061c70",
+      "range": {
+        "startLine": 1543,
+        "startChar": 2,
+        "endLine": 1543,
+        "endChar": 25
+      },
+      "revId": "6f4615b1cc13a79d95783e8e1c3c6558c39526bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "bdd3ce5f_32e3c2fe",
         "filename": "core/Makefile",
         "patchSetId": 7
@@ -45,6 +69,30 @@
       "revId": "6f4615b1cc13a79d95783e8e1c3c6558c39526bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2ed8fef0_24593511",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1567,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-06T09:13:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bdd3ce5f_32e3c2fe",
+      "range": {
+        "startLine": 1567,
+        "startChar": 38,
+        "endLine": 1567,
+        "endChar": 39
+      },
+      "revId": "6f4615b1cc13a79d95783e8e1c3c6558c39526bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "19dbbc43_06c9dcf6",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1571,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-06T09:13:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b62fce4_f72edfe7",
+      "range": {
+        "startLine": 1571,
+        "startChar": 2,
+        "endLine": 1571,
+        "endChar": 36
+      },
+      "revId": "6f4615b1cc13a79d95783e8e1c3c6558c39526bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9d4ce012_942f2416",
         "filename": "core/Makefile",
         "patchSetId": 7
@@ -87,6 +159,53 @@
         "startChar": 21,
         "endLine": 1580,
         "endChar": 41
+      },
+      "revId": "6f4615b1cc13a79d95783e8e1c3c6558c39526bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd4acc84_ca7e4150",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1580,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-06T09:13:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9d4ce012_942f2416",
+      "range": {
+        "startLine": 1580,
+        "startChar": 21,
+        "endLine": 1580,
+        "endChar": 41
+      },
+      "revId": "6f4615b1cc13a79d95783e8e1c3c6558c39526bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ff1d8a1a_ee407dce",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1584,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-06T09:13:47Z",
+      "side": 1,
+      "message": "Now the images files must generate successfully.",
+      "range": {
+        "startLine": 1584,
+        "startChar": 69,
+        "endLine": 1584,
+        "endChar": 75
       },
       "revId": "6f4615b1cc13a79d95783e8e1c3c6558c39526bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
