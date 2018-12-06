@@ -22,6 +22,30 @@
       "revId": "0b8d1e60074814bc242db8082baafb1b2a04fe47",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36dc5088_a767a085",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1616,
+      "author": {
+        "id": 1128890
+      },
+      "writtenOn": "2018-12-06T00:17:01Z",
+      "side": 1,
+      "message": "It\u0027s too old (2.7.10) and hits a relative import bug that\u0027s resolved with the python version that macports installs (2.7.15). \n\nmacports is part of the aosp mac env setup instructions so that\u0027s why I thought it\u0027d be safe to assume macports was available: https://source.android.com/setup/build/initializing#setting-up-a-mac-os-x-build-environment\n\nWould it be better to just check that the python version is at a particular level and tell the user they need a newer python and let them decide how they want to go about it?",
+      "parentUuid": "426e7825_df133bfe",
+      "range": {
+        "startLine": 1616,
+        "startChar": 36,
+        "endLine": 1616,
+        "endChar": 88
+      },
+      "revId": "0b8d1e60074814bc242db8082baafb1b2a04fe47",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
