@@ -1,0 +1,159 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cfaf053e_ab385526",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T22:37:44Z",
+      "side": 1,
+      "message": "we\u0027ve been calling these modules",
+      "range": {
+        "startLine": 29,
+        "startChar": 22,
+        "endLine": 29,
+        "endChar": 29
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "20c1c05a_fa102f5b",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T22:37:44Z",
+      "side": 1,
+      "message": "This seems obtuse enough that a long name may make more sense (and you can always have a user-created shortened version)",
+      "range": {
+        "startLine": 31,
+        "startChar": 2,
+        "endLine": 31,
+        "endChar": 8
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1a6e5e1f_cd2cad23",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1473,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T22:37:44Z",
+      "side": 1,
+      "message": "Does this work when OUT_DIR is set to a relative path (like OUT_DIR\u003d../out)?",
+      "range": {
+        "startLine": 1473,
+        "startChar": 33,
+        "endLine": 1473,
+        "endChar": 50
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ceb61030_629c5ff3",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1473,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T22:37:44Z",
+      "side": 1,
+      "message": "remove this, it\u0027s not necessary",
+      "range": {
+        "startLine": 1473,
+        "startChar": 5,
+        "endLine": 1473,
+        "endChar": 8
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "73f4aa75_82b29dac",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1485,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T22:37:44Z",
+      "side": 1,
+      "message": "python3 does exist on Mac",
+      "range": {
+        "startLine": 1485,
+        "startChar": 4,
+        "endLine": 1485,
+        "endChar": 11
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a77a5573_90d82ccf",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1516,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T22:37:44Z",
+      "side": 1,
+      "message": "Have you tested this in zsh?",
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7c89d27d_4bf7757c",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1524,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-06T22:37:44Z",
+      "side": 1,
+      "message": "These should happen in addcompletions",
+      "range": {
+        "startLine": 1521,
+        "startChar": 0,
+        "endLine": 1524,
+        "endChar": 47
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
