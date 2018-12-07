@@ -23,7 +23,6 @@
 #include <android-base/file.h>
 #include <android-base/macros.h>
 #include <android-base/strings.h>
-#include <android-base/stringprintf.h>
 #include <gtest/gtest.h>
 #include <private/android_filesystem_config.h>
 #include <private/fs_config.h>
@@ -31,12 +30,12 @@
 #include "android_filesystem_config_test_data.h"
 
 // must run test in the test directory
-const static char fs_config_generate_command[] = "./fs_config_generate_test";
+static const std::string fs_config_generate_command = "./fs_config_generate_test";
 
-static std::string popenToString(std::string command) {
+static std::string popenToString(const std::string command) {
   std::string ret;
 
-  FILE* fp = popen(command.c_str(), "r");
+  auto fp = popen(command.c_str(), "r");
   if (fp) {
     if (!android::base::ReadFdToString(fileno(fp), &ret)) ret = "";
     pclose(fp);
@@ -46,15 +45,14 @@ static std::string popenToString(std::string command) {
 
 static void confirm(std::string&& data, const fs_path_config* config,
                     ssize_t num_config) {
-  const struct fs_path_config_from_file* pc =
-      reinterpret_cast<const fs_path_config_from_file*>(data.c_str());
-  size_t len = data.size();
+  auto pc = reinterpret_cast<const fs_path_config_from_file*>(data.c_str());
+  auto len = data.size();
 
   ASSERT_TRUE(config != NULL);
   ASSERT_LT(0, num_config);
 
   while (len > 0) {
-    uint16_t host_len = pc->len;
+    auto host_len = pc->len;
     if (host_len > len) break;
 
     EXPECT_EQ(config->mode, pc->mode);
@@ -76,148 +74,114 @@ static void confirm(std::string&& data, const fs_path_config* config,
 /* See local android_filesystem_config.h for test data */
 
 TEST(fs_conf_test, dirs) {
-  confirm(popenToString(
-              android::base::StringPrintf("%s -D", fs_config_generate_command)),
+  confirm(popenToString(fs_config_generate_command + " -D"),
           android_device_dirs, arraysize(android_device_dirs));
 }
 
 TEST(fs_conf_test, files) {
-  confirm(popenToString(
-              android::base::StringPrintf("%s -F", fs_config_generate_command)),
+  confirm(popenToString(fs_config_generate_command + " -F"),
           android_device_files, arraysize(android_device_files));
 }
 
-static const char vendor_str[] = "vendor/";
-static const char vendor_alt_str[] = "system/vendor/";
-static const char oem_str[] = "oem/";
-static const char oem_alt_str[] = "system/oem/";
-static const char odm_str[] = "odm/";
-static const char odm_alt_str[] = "system/odm/";
+static bool is_system(const char* prefix) {
+  return !android::base::StartsWith(prefix, "vendor/") &&
+         !android::base::StartsWith(prefix, "system/vendor/") &&
+         !android::base::StartsWith(prefix, "oem/") &&
+         !android::base::StartsWith(prefix, "system/oem/") &&
+         !android::base::StartsWith(prefix, "odm/") &&
+         !android::base::StartsWith(prefix, "system/odm/") &&
+         !android::base::StartsWith(prefix, "product/") &&
+         !android::base::StartsWith(prefix, "system/product/") &&
+         !android::base::StartsWith(prefix, "product_services/") &&
+         !android::base::StartsWith(prefix, "system/product_services/");
+}
 
 TEST(fs_conf_test, system_dirs) {
   std::vector<fs_path_config> dirs;
-  const fs_path_config* config = android_device_dirs;
-  for (size_t num = arraysize(android_device_dirs); num; --num) {
-    if (!android::base::StartsWith(config->prefix, vendor_str) &&
-        !android::base::StartsWith(config->prefix, vendor_alt_str) &&
-        !android::base::StartsWith(config->prefix, oem_str) &&
-        !android::base::StartsWith(config->prefix, oem_alt_str) &&
-        !android::base::StartsWith(config->prefix, odm_str) &&
-        !android::base::StartsWith(config->prefix, odm_alt_str)) {
+  auto config = android_device_dirs;
+  for (auto num = arraysize(android_device_dirs); num; --num) {
+    if (is_system(config->prefix)) {
       dirs.emplace_back(*config);
     }
     ++config;
   }
-  confirm(popenToString(android::base::StringPrintf(
-              "%s -D -P -vendor,-oem,-odm", fs_config_generate_command)),
+  confirm(popenToString(fs_config_generate_command + " -D -P -vendor,-oem,-odm,-product,-product_services"),
+          &dirs[0], dirs.size());
+}
+
+static void fs_conf_test_dirs(const std::string& partition_name) {
+  std::vector<fs_path_config> dirs;
+  auto config = android_device_dirs;
+  const auto str = partition_name + "/";
+  const auto alt_str = "system/" + partition_name + "/";
+  for (auto num = arraysize(android_device_dirs); num; --num) {
+    if (android::base::StartsWith(config->prefix, str) ||
+        android::base::StartsWith(config->prefix, alt_str)) {
+      dirs.emplace_back(*config);
+    }
+    ++config;
+  }
+  confirm(popenToString(fs_config_generate_command + " -D -P " + partition_name),
           &dirs[0], dirs.size());
 }
 
 TEST(fs_conf_test, vendor_dirs) {
-  std::vector<fs_path_config> dirs;
-  const fs_path_config* config = android_device_dirs;
-  for (size_t num = arraysize(android_device_dirs); num; --num) {
-    if (android::base::StartsWith(config->prefix, vendor_str) ||
-        android::base::StartsWith(config->prefix, vendor_alt_str)) {
-      dirs.emplace_back(*config);
-    }
-    ++config;
-  }
-  confirm(popenToString(android::base::StringPrintf(
-              "%s -D -P vendor", fs_config_generate_command)),
-          &dirs[0], dirs.size());
+  fs_conf_test_dirs("vendor");
 }
 
 TEST(fs_conf_test, oem_dirs) {
-  std::vector<fs_path_config> dirs;
-  const fs_path_config* config = android_device_dirs;
-  for (size_t num = arraysize(android_device_dirs); num; --num) {
-    if (android::base::StartsWith(config->prefix, oem_str) ||
-        android::base::StartsWith(config->prefix, oem_alt_str)) {
-      dirs.emplace_back(*config);
-    }
-    ++config;
-  }
-  confirm(popenToString(android::base::StringPrintf(
-              "%s -D -P oem", fs_config_generate_command)),
-          &dirs[0], dirs.size());
+  fs_conf_test_dirs("oem");
 }
 
 TEST(fs_conf_test, odm_dirs) {
-  std::vector<fs_path_config> dirs;
-  const fs_path_config* config = android_device_dirs;
-  for (size_t num = arraysize(android_device_dirs); num; --num) {
-    if (android::base::StartsWith(config->prefix, odm_str) ||
-        android::base::StartsWith(config->prefix, odm_alt_str)) {
-      dirs.emplace_back(*config);
-    }
-    ++config;
-  }
-  confirm(popenToString(android::base::StringPrintf(
-              "%s -D -P odm", fs_config_generate_command)),
-          &dirs[0], dirs.size());
+  fs_conf_test_dirs("odm");
 }
 
 TEST(fs_conf_test, system_files) {
   std::vector<fs_path_config> files;
-  const fs_path_config* config = android_device_files;
-  for (size_t num = arraysize(android_device_files); num; --num) {
-    if (!android::base::StartsWith(config->prefix, vendor_str) &&
-        !android::base::StartsWith(config->prefix, vendor_alt_str) &&
-        !android::base::StartsWith(config->prefix, oem_str) &&
-        !android::base::StartsWith(config->prefix, oem_alt_str) &&
-        !android::base::StartsWith(config->prefix, odm_str) &&
-        !android::base::StartsWith(config->prefix, odm_alt_str)) {
+  auto config = android_device_files;
+  for (auto num = arraysize(android_device_files); num; --num) {
+    if (is_system(config->prefix)) {
       files.emplace_back(*config);
     }
     ++config;
   }
-  confirm(popenToString(android::base::StringPrintf(
-              "%s -F -P -vendor,-oem,-odm", fs_config_generate_command)),
+  confirm(popenToString(fs_config_generate_command + " -F -P -vendor,-oem,-odm,-product,-product_services"),
+          &files[0], files.size());
+}
+
+static void fs_conf_test_files(const std::string& partition_name) {
+  std::vector<fs_path_config> files;
+  auto config = android_device_files;
+  const auto str = partition_name + "/";
+  const auto alt_str = "system/" + partition_name + "/";
+  for (auto num = arraysize(android_device_files); num; --num) {
+    if (android::base::StartsWith(config->prefix, str) ||
+        android::base::StartsWith(config->prefix, alt_str)) {
+      files.emplace_back(*config);
+    }
+    ++config;
+  }
+  confirm(popenToString(fs_config_generate_command + " -F -P " + partition_name),
           &files[0], files.size());
 }
 
 TEST(fs_conf_test, vendor_files) {
-  std::vector<fs_path_config> files;
-  const fs_path_config* config = android_device_files;
-  for (size_t num = arraysize(android_device_files); num; --num) {
-    if (android::base::StartsWith(config->prefix, vendor_str) ||
-        android::base::StartsWith(config->prefix, vendor_alt_str)) {
-      files.emplace_back(*config);
-    }
-    ++config;
-  }
-  confirm(popenToString(android::base::StringPrintf(
-              "%s -F -P vendor", fs_config_generate_command)),
-          &files[0], files.size());
+  fs_conf_test_files("vendor");
 }
 
 TEST(fs_conf_test, oem_files) {
-  std::vector<fs_path_config> files;
-  const fs_path_config* config = android_device_files;
-  for (size_t num = arraysize(android_device_files); num; --num) {
-    if (android::base::StartsWith(config->prefix, oem_str) ||
-        android::base::StartsWith(config->prefix, oem_alt_str)) {
-      files.emplace_back(*config);
-    }
-    ++config;
-  }
-  confirm(popenToString(android::base::StringPrintf(
-              "%s -F -P oem", fs_config_generate_command)),
-          &files[0], files.size());
+  fs_conf_test_files("oem");
 }
 
 TEST(fs_conf_test, odm_files) {
-  std::vector<fs_path_config> files;
-  const fs_path_config* config = android_device_files;
-  for (size_t num = arraysize(android_device_files); num; --num) {
-    if (android::base::StartsWith(config->prefix, odm_str) ||
-        android::base::StartsWith(config->prefix, odm_alt_str)) {
-      files.emplace_back(*config);
-    }
-    ++config;
-  }
-  confirm(popenToString(android::base::StringPrintf(
-              "%s -F -P odm", fs_config_generate_command)),
-          &files[0], files.size());
+  fs_conf_test_files("odm");
+}
+
+TEST(fs_conf_test, product_files) {
+  fs_conf_test_files("product");
+}
+
+TEST(fs_conf_test, product_services_files) {
+  fs_conf_test_files("product_services");
 }
