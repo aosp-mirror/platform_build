@@ -657,12 +657,13 @@ def AddSuperSplit(output_zip):
   """Create split super_*.img and store it in output_zip."""
 
   outdir = os.path.join(OPTIONS.input_tmp, "OTA")
-  build_super_image.BuildSuperImage(OPTIONS.input_tmp, outdir)
+  built = build_super_image.BuildSuperImage(OPTIONS.input_tmp, outdir)
 
-  for dev in OPTIONS.info_dict['super_block_devices'].strip().split():
-    img = OutputFile(output_zip, OPTIONS.input_tmp, "OTA",
-                     "super_" + dev + ".img")
-    img.Write()
+  if built:
+    for dev in OPTIONS.info_dict['super_block_devices'].strip().split():
+      img = OutputFile(output_zip, OPTIONS.input_tmp, "OTA",
+                       "super_" + dev + ".img")
+      img.Write()
 
 
 def ReplaceUpdatedFiles(zip_filename, files_list):
