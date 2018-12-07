@@ -1564,43 +1564,73 @@ RECOVERY_ERASING_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/erasing_te
 RECOVERY_ERROR_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/error_text.png
 RECOVERY_NO_COMMAND_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/no_command_text.png
 
-generated_recovery_background_text_files := \
+RECOVERY_CANCEL_WIPE_DATA_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/cancel_wipe_data_text.png
+RECOVERY_FACTORY_DATA_RESET_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/factory_data_reset_text.png
+RECOVERY_TRY_AGAIN_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/try_again_text.png
+RECOVERY_WIPE_DATA_CONFIRMATION_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/wipe_data_confirmation_text.png
+RECOVERY_WIPE_DATA_MENU_HEADER_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/wipe_data_menu_header_text.png
+
+generated_recovery_text_files := \
   $(RECOVERY_INSTALLING_TEXT_FILE) \
   $(RECOVERY_INSTALLING_SECURITY_TEXT_FILE) \
   $(RECOVERY_ERASING_TEXT_FILE) \
   $(RECOVERY_ERROR_TEXT_FILE) \
-  $(RECOVERY_NO_COMMAND_TEXT_FILE)
+  $(RECOVERY_NO_COMMAND_TEXT_FILE) \
+  $(RECOVERY_CANCEL_WIPE_DATA_TEXT_FILE) \
+  $(RECOVERY_FACTORY_DATA_RESET_TEXT_FILE) \
+  $(RECOVERY_TRY_AGAIN_TEXT_FILE) \
+  $(RECOVERY_WIPE_DATA_CONFIRMATION_TEXT_FILE) \
+  $(RECOVERY_WIPE_DATA_MENU_HEADER_TEXT_FILE)
 
 resource_dir := $(call include-path-for, recovery)/tools/recovery_l10n/res/
 image_generator_jar := $(HOST_OUT_JAVA_LIBRARIES)/RecoveryImageGenerator.jar
+zopflipng := $(HOST_OUT_EXECUTABLES)/zopflipng
 $(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_SOURCE_FONTS := $(recovery_noto-fonts_dep) $(recovery_roboto-fonts_dep)
 $(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RECOVERY_FONT_FILES_DIR := $(call intermediates-dir-for,PACKAGING,recovery_font_files)
 $(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RESOURCE_DIR := $(resource_dir)
 $(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_IMAGE_GENERATOR_JAR := $(image_generator_jar)
+$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_ZOPFLIPNG := $(zopflipng)
 $(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RECOVERY_IMAGE_WIDTH := $(recovery_image_width)
-$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RECOVERY_TEXT_LIST := recovery_installing recovery_installing_security recovery_erasing recovery_error recovery_no_command
-$(RECOVERY_INSTALLING_TEXT_FILE): .KATI_IMPLICIT_OUTPUTS := $(RECOVERY_INSTALLING_SECURITY_TEXT_FILE) $(RECOVERY_ERASING_TEXT_FILE) $(RECOVERY_ERROR_TEXT_FILE) $(RECOVERY_NO_COMMAND_TEXT_FILE)
-$(RECOVERY_INSTALLING_TEXT_FILE): $(image_generator_jar) $(resource_dir) $(recovery_noto-fonts_dep) $(recovery_roboto-fonts_dep)
+$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RECOVERY_TEXT_LIST := \
+  recovery_installing \
+  recovery_installing_security \
+  recovery_erasing \
+  recovery_error \
+  recovery_no_command \
+  recovery_cancel_wipe_data \
+  recovery_factory_data_reset \
+  recovery_try_again \
+  recovery_wipe_data_menu_header \
+  recovery_wipe_data_confirmation
+$(RECOVERY_INSTALLING_TEXT_FILE): .KATI_IMPLICIT_OUTPUTS := $(filter-out $(RECOVERY_INSTALLING_TEXT_FILE),$(generated_recovery_text_files))
+$(RECOVERY_INSTALLING_TEXT_FILE): $(image_generator_jar) $(resource_dir) $(recovery_noto-fonts_dep) $(recovery_roboto-fonts_dep) $(zopflipng)
 	# Prepares the font directory.
 	@rm -rf $(PRIVATE_RECOVERY_FONT_FILES_DIR)
 	@mkdir -p $(PRIVATE_RECOVERY_FONT_FILES_DIR)
-	$(foreach filename,$(PRIVATE_SOURCE_FONTS), cp $(filename) $(PRIVATE_RECOVERY_FONT_FILES_DIR);)
+	$(foreach filename,$(PRIVATE_SOURCE_FONTS), cp $(filename) $(PRIVATE_RECOVERY_FONT_FILES_DIR) &&) true
 
 	@rm -rf $(dir $@)
 	@mkdir -p $(dir $@)
 	$(foreach text_name,$(PRIVATE_RECOVERY_TEXT_LIST), \
+	  $(eval output_file := $(dir $@)/$(patsubst recovery_%,%_text.png,$(text_name))) \
 	  java -jar $(PRIVATE_IMAGE_GENERATOR_JAR) \
 	    --image_width $(PRIVATE_RECOVERY_IMAGE_WIDTH) \
 	    --text_name $(text_name) \
 	    --font_dir $(PRIVATE_RECOVERY_FONT_FILES_DIR) \
 	    --resource_dir $(PRIVATE_RESOURCE_DIR) \
-	    --output_file $(dir $@)/$(patsubst recovery_%,%_text.png,$(text_name));)
+	    --output_file $(output_file) && \
+	  $(PRIVATE_ZOPFLIPNG) -y --iterations=1 --filters=0 $(output_file) $(output_file) > /dev/null &&) true
 else
 RECOVERY_INSTALLING_TEXT_FILE :=
 RECOVERY_INSTALLING_SECURITY_TEXT_FILE :=
 RECOVERY_ERASING_TEXT_FILE :=
 RECOVERY_ERROR_TEXT_FILE :=
 RECOVERY_NO_COMMAND_TEXT_FILE :=
+RECOVERY_CANCEL_WIPE_DATA_TEXT_FILE :=
+RECOVERY_FACTORY_DATA_RESET_TEXT_FILE :=
+RECOVERY_TRY_AGAIN_TEXT_FILE :=
+RECOVERY_WIPE_DATA_CONFIRMATION_TEXT_FILE :=
+RECOVERY_WIPE_DATA_MENU_HEADER_TEXT_FILE :=
 endif # TARGET_RECOVERY_UI_SCREEN_WIDTH
 
 ifndef TARGET_PRIVATE_RES_DIRS
@@ -1608,7 +1638,7 @@ TARGET_PRIVATE_RES_DIRS := $(wildcard $(TARGET_DEVICE_DIR)/recovery/res)
 endif
 recovery_resource_deps := $(shell find $(recovery_resources_common) \
   $(TARGET_PRIVATE_RES_DIRS) -type f)
-recovery_resource_deps += $(generated_recovery_background_text_files)
+recovery_resource_deps += $(generated_recovery_text_files)
 
 
 ifdef TARGET_RECOVERY_FSTAB
@@ -1752,8 +1782,8 @@ define build-recoveryimage-target
   $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/res
   $(hide) rm -rf $(TARGET_RECOVERY_ROOT_OUT)/res/*
   $(hide) cp -rf $(recovery_resources_common)/* $(TARGET_RECOVERY_ROOT_OUT)/res
-  $(hide) $(foreach recovery_text_file,$(generated_recovery_background_text_files), \
-    cp -rf $(recovery_text_file) $(TARGET_RECOVERY_ROOT_OUT)/res/images/;)
+  $(hide) $(foreach recovery_text_file,$(generated_recovery_text_files), \
+    cp -rf $(recovery_text_file) $(TARGET_RECOVERY_ROOT_OUT)/res/images/ &&) true
   $(hide) cp -f $(recovery_font) $(TARGET_RECOVERY_ROOT_OUT)/res/images/font.png
   $(hide) $(foreach item,$(TARGET_PRIVATE_RES_DIRS), \
     cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/$(newline))
