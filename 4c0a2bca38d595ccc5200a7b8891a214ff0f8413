@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "16a1dec6_ca5ebf93",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-07T21:10:20Z",
+      "side": 1,
+      "message": "Why is this the wrong Change-Id?",
+      "revId": "4c0a2bca38d595ccc5200a7b8891a214ff0f8413",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
