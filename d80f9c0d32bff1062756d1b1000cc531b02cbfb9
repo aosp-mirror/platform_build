@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "734e7b2c_f26c4cde",
+        "filename": "core/soong_app_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2018-12-07T10:58:12Z",
+      "side": 1,
+      "message": "Lines 74 and 80 are the same; can they be factored out and moved out of the conditional?",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 107
+      },
+      "revId": "d80f9c0d32bff1062756d1b1000cc531b02cbfb9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
