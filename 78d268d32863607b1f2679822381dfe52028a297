@@ -261,6 +261,30 @@
     },
     {
       "key": {
+        "uuid": "d3103d08_b76666f3",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1485,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-07T01:41:20Z",
+      "side": 1,
+      "message": "Ah, I see, it doesn\u0027t actually exist on mac. Typo, Dan!",
+      "parentUuid": "12095152_7284ff76",
+      "range": {
+        "startLine": 1485,
+        "startChar": 4,
+        "endLine": 1485,
+        "endChar": 11
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a77a5573_90d82ccf",
         "filename": "envsetup.sh",
         "patchSetId": 2

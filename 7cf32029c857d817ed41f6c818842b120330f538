@@ -22,6 +22,30 @@
       "revId": "7cf32029c857d817ed41f6c818842b120330f538",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41981ed6_f07444c4",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-07T01:41:20Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5e94c108_6225b9d7",
+      "range": {
+        "startLine": 369,
+        "startChar": 0,
+        "endLine": 369,
+        "endChar": 51
+      },
+      "revId": "7cf32029c857d817ed41f6c818842b120330f538",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
