@@ -99,6 +99,30 @@
       "revId": "8bdf9842f08ba6234d7e6e54413772c97465aa6a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3c5463b8_110d7a39",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1470,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-07T01:30:38Z",
+      "side": 1,
+      "message": "Yeah, actually switched to yours. zsh didn\u0027t like mine apparently.",
+      "parentUuid": "70e673af_277fd8a0",
+      "range": {
+        "startLine": 1470,
+        "startChar": 12,
+        "endLine": 1470,
+        "endChar": 31
+      },
+      "revId": "8bdf9842f08ba6234d7e6e54413772c97465aa6a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

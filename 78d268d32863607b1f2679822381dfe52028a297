@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "e05183c6_e30d782d",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-07T01:30:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cfaf053e_ab385526",
+      "range": {
+        "startLine": 29,
+        "startChar": 22,
+        "endLine": 29,
+        "endChar": 29
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "20c1c05a_fa102f5b",
         "filename": "envsetup.sh",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "78d268d32863607b1f2679822381dfe52028a297",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "408eaf6c_1cb1d1ac",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-07T01:30:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "20c1c05a_fa102f5b",
+      "range": {
+        "startLine": 31,
+        "startChar": 2,
+        "endLine": 31,
+        "endChar": 8
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -94,6 +142,54 @@
     },
     {
       "key": {
+        "uuid": "a1a3ba27_e26f9d39",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1473,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-07T01:30:38Z",
+      "side": 1,
+      "message": "Yes it does, I tried (because this variable is expanded).",
+      "parentUuid": "1a6e5e1f_cd2cad23",
+      "range": {
+        "startLine": 1473,
+        "startChar": 33,
+        "endLine": 1473,
+        "endChar": 50
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30db0e36_665885de",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1473,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-07T01:30:38Z",
+      "side": 1,
+      "message": "Done. I wrote this script when it was though :)\n\nand I\u0027ve been leaving it in for when I work in older branches..\n\nwe need a compatibility layer ;)",
+      "parentUuid": "ceb61030_629c5ff3",
+      "range": {
+        "startLine": 1473,
+        "startChar": 5,
+        "endLine": 1473,
+        "endChar": 8
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "73f4aa75_82b29dac",
         "filename": "envsetup.sh",
         "patchSetId": 2
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "f2018320_b4b870ba",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1485,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-07T01:30:38Z",
+      "side": 1,
+      "message": "I believe it\u0027s part of the command line tools",
+      "parentUuid": "73f4aa75_82b29dac",
+      "range": {
+        "startLine": 1485,
+        "startChar": 4,
+        "endLine": 1485,
+        "endChar": 11
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a77a5573_90d82ccf",
         "filename": "envsetup.sh",
         "patchSetId": 2
@@ -131,6 +251,24 @@
       "revId": "78d268d32863607b1f2679822381dfe52028a297",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "65f43b0d_a894e48a",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1516,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-07T01:30:38Z",
+      "side": 1,
+      "message": "This does (but some other things didn\u0027t). It\u0027s all fixed now, and I\u0027ve filed b/120629501 for an unrelated build issue.",
+      "parentUuid": "a77a5573_90d82ccf",
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -154,6 +292,30 @@
       "revId": "78d268d32863607b1f2679822381dfe52028a297",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "19c16f10_b0f1d998",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1524,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-07T01:30:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c89d27d_4bf7757c",
+      "range": {
+        "startLine": 1521,
+        "startChar": 0,
+        "endLine": 1524,
+        "endChar": 47
+      },
+      "revId": "78d268d32863607b1f2679822381dfe52028a297",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
