@@ -46,6 +46,30 @@
       "revId": "d80f9c0d32bff1062756d1b1000cc531b02cbfb9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d1461cd_428d8cb8",
+        "filename": "core/soong_app_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2018-12-07T11:24:06Z",
+      "side": 1,
+      "message": "According to the definition of `dexpreopt-copy-jar`, it looks like this call actually generates a Make rule itself, which is independent from the `$(built_odex)` rule above it:\n\nhttps://android.googlesource.com/platform/build/+/master/core/definitions.mk#2640\n\n  # Copy an apk to a target location while removing classes*.dex\n  # $(1): source file\n  # $(2): destination file\n  # $(3): LOCAL_STRIP_DEX, if non-empty then strip classes*.dex\n  define dexpreopt-copy-jar\n  $(2): $(1)\n  \t@echo \"Copy: $$@\"\n  \t$$(copy-file-to-target)\n  \t$(if $(3),$$(call dexpreopt-remove-classes.dex,$$@))\n  endef",
+      "parentUuid": "aefed6d5_28254ef7",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 107
+      },
+      "revId": "d80f9c0d32bff1062756d1b1000cc531b02cbfb9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
