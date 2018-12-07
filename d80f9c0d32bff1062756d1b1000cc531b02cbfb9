@@ -22,6 +22,30 @@
       "revId": "d80f9c0d32bff1062756d1b1000cc531b02cbfb9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aefed6d5_28254ef7",
+        "filename": "core/soong_app_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2018-12-07T11:00:45Z",
+      "side": 1,
+      "message": "Those are part of a rule (built_odex), so not without creating additional indirections. So I\u0027d rather keep it this way - note that Colin is working on an overhaul rewrite of dexpreopt, so hopefully this can be cleaned up there as well.",
+      "parentUuid": "734e7b2c_f26c4cde",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 107
+      },
+      "revId": "d80f9c0d32bff1062756d1b1000cc531b02cbfb9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
