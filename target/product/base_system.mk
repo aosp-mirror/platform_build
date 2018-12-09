@@ -48,7 +48,6 @@ PRODUCT_PACKAGES += \
     bu \
     bugreport \
     bugreportz \
-    cameraserver \
     charger \
     cmd \
     com.android.location.provider \
@@ -314,6 +313,8 @@ PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     apex.test.key \
     arping \
+    com.android.apex.test_package.key \
+    com.android.apex.test_package.preinstall.key \
     iotop \
     iw \
     logpersist.start \

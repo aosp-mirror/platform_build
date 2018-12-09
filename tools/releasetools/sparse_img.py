@@ -248,15 +248,21 @@ class SparseImage(object):
         ranges = rangelib.RangeSet.parse(ranges)
 
         if allow_shared_blocks:
-          # Find the shared blocks that have been claimed by others.
+          # Find the shared blocks that have been claimed by others. If so, tag
+          # the entry so that we can skip applying imgdiff on this file.
           shared_blocks = ranges.subtract(remaining)
           if shared_blocks:
-            ranges = ranges.subtract(shared_blocks)
-            if not ranges:
+            non_shared = ranges.subtract(shared_blocks)
+            if not non_shared:
               continue
 
-            # Tag the entry so that we can skip applying imgdiff on this file.
-            ranges.extra['uses_shared_blocks'] = True
+            # There shouldn't anything in the extra dict yet.
+            assert not ranges.extra, "Non-empty RangeSet.extra"
+
+            # Put the non-shared RangeSet as the value in the block map, which
+            # has a copy of the original RangeSet.
+            non_shared.extra['uses_shared_blocks'] = ranges
+            ranges = non_shared
 
         out[fn] = ranges
         assert ranges.size() == ranges.intersect(remaining).size()
