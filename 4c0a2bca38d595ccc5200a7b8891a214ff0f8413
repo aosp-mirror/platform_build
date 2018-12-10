@@ -16,6 +16,24 @@
       "revId": "4c0a2bca38d595ccc5200a7b8891a214ff0f8413",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59ad09f9_12f101b6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2018-12-10T12:45:44Z",
+      "side": 1,
+      "message": "How do you mean? Different from the Merged-In one? (I was under the impression they should be different?).",
+      "parentUuid": "16a1dec6_ca5ebf93",
+      "revId": "4c0a2bca38d595ccc5200a7b8891a214ff0f8413",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
