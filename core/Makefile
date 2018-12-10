@@ -1537,11 +1537,80 @@ else
 recovery_font := $(call include-path-for, recovery)/fonts/12x22.png
 endif
 
+
+# We will only generate the recovery background text images if the variable
+# TARGET_RECOVERY_UI_SCREEN_WIDTH is defined. For devices with xxxhdpi and xxhdpi, we set the
+# variable to the commonly used values here, if it hasn't been intialized elsewhere. While for
+# devices with lower density, they must have TARGET_RECOVERY_UI_SCREEN_WIDTH defined in their
+# BoardConfig in order to use this feature.
+ifeq ($(recovery_density),xxxhdpi)
+TARGET_RECOVERY_UI_SCREEN_WIDTH ?= 1440
+else ifeq ($(recovery_density),xxhdpi)
+TARGET_RECOVERY_UI_SCREEN_WIDTH ?= 1080
+endif
+
+ifneq ($(TARGET_RECOVERY_UI_SCREEN_WIDTH),)
+# Subtracts the margin width and menu indent from the screen width; it's safe to be conservative.
+ifeq ($(TARGET_RECOVERY_UI_MARGIN_WIDTH),)
+  recovery_image_width := $$(($(TARGET_RECOVERY_UI_SCREEN_WIDTH) - 10))
+else
+  recovery_image_width := $$(($(TARGET_RECOVERY_UI_SCREEN_WIDTH) - $(TARGET_RECOVERY_UI_MARGIN_WIDTH) - 10))
+endif
+
+
+RECOVERY_INSTALLING_TEXT_FILE := $(call intermediates-dir-for,PACKAGING,recovery_text_res)/installing_text.png
+RECOVERY_INSTALLING_SECURITY_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/installing_security_text.png
+RECOVERY_ERASING_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/erasing_text.png
+RECOVERY_ERROR_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/error_text.png
+RECOVERY_NO_COMMAND_TEXT_FILE := $(dir $(RECOVERY_INSTALLING_TEXT_FILE))/no_command_text.png
+
+generated_recovery_background_text_files := \
+  $(RECOVERY_INSTALLING_TEXT_FILE) \
+  $(RECOVERY_INSTALLING_SECURITY_TEXT_FILE) \
+  $(RECOVERY_ERASING_TEXT_FILE) \
+  $(RECOVERY_ERROR_TEXT_FILE) \
+  $(RECOVERY_NO_COMMAND_TEXT_FILE)
+
+resource_dir := $(call include-path-for, recovery)/tools/recovery_l10n/res/
+image_generator_jar := $(HOST_OUT_JAVA_LIBRARIES)/RecoveryImageGenerator.jar
+$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_SOURCE_FONTS := $(recovery_noto-fonts_dep) $(recovery_roboto-fonts_dep)
+$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RECOVERY_FONT_FILES_DIR := $(call intermediates-dir-for,PACKAGING,recovery_font_files)
+$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RESOURCE_DIR := $(resource_dir)
+$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_IMAGE_GENERATOR_JAR := $(image_generator_jar)
+$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RECOVERY_IMAGE_WIDTH := $(recovery_image_width)
+$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RECOVERY_TEXT_LIST := recovery_installing recovery_installing_security recovery_erasing recovery_error recovery_no_command
+$(RECOVERY_INSTALLING_TEXT_FILE): .KATI_IMPLICIT_OUTPUTS := $(RECOVERY_INSTALLING_SECURITY_TEXT_FILE) $(RECOVERY_ERASING_TEXT_FILE) $(RECOVERY_ERROR_TEXT_FILE) $(RECOVERY_NO_COMMAND_TEXT_FILE)
+$(RECOVERY_INSTALLING_TEXT_FILE): $(image_generator_jar) $(resource_dir) $(recovery_noto-fonts_dep) $(recovery_roboto-fonts_dep)
+	# Prepares the font directory.
+	@rm -rf $(PRIVATE_RECOVERY_FONT_FILES_DIR)
+	@mkdir -p $(PRIVATE_RECOVERY_FONT_FILES_DIR)
+	$(foreach filename,$(PRIVATE_SOURCE_FONTS), cp $(filename) $(PRIVATE_RECOVERY_FONT_FILES_DIR);)
+
+	@rm -rf $(dir $@)
+	@mkdir -p $(dir $@)
+	$(foreach text_name,$(PRIVATE_RECOVERY_TEXT_LIST), \
+	  java -jar $(PRIVATE_IMAGE_GENERATOR_JAR) \
+	    --image_width $(PRIVATE_RECOVERY_IMAGE_WIDTH) \
+	    --text_name $(text_name) \
+	    --font_dir $(PRIVATE_RECOVERY_FONT_FILES_DIR) \
+	    --resource_dir $(PRIVATE_RESOURCE_DIR) \
+	    --output_file $(dir $@)/$(patsubst recovery_%,%_text.png,$(text_name));)
+else
+RECOVERY_INSTALLING_TEXT_FILE :=
+RECOVERY_INSTALLING_SECURITY_TEXT_FILE :=
+RECOVERY_ERASING_TEXT_FILE :=
+RECOVERY_ERROR_TEXT_FILE :=
+RECOVERY_NO_COMMAND_TEXT_FILE :=
+endif # TARGET_RECOVERY_UI_SCREEN_WIDTH
+
 ifndef TARGET_PRIVATE_RES_DIRS
 TARGET_PRIVATE_RES_DIRS := $(wildcard $(TARGET_DEVICE_DIR)/recovery/res)
 endif
 recovery_resource_deps := $(shell find $(recovery_resources_common) \
   $(TARGET_PRIVATE_RES_DIRS) -type f)
+recovery_resource_deps += $(generated_recovery_background_text_files)
+
+
 ifdef TARGET_RECOVERY_FSTAB
 recovery_fstab := $(TARGET_RECOVERY_FSTAB)
 else
@@ -1683,6 +1752,8 @@ define build-recoveryimage-target
   $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/res
   $(hide) rm -rf $(TARGET_RECOVERY_ROOT_OUT)/res/*
   $(hide) cp -rf $(recovery_resources_common)/* $(TARGET_RECOVERY_ROOT_OUT)/res
+  $(hide) $(foreach recovery_text_file,$(generated_recovery_background_text_files), \
+    cp -rf $(recovery_text_file) $(TARGET_RECOVERY_ROOT_OUT)/res/images/;)
   $(hide) cp -f $(recovery_font) $(TARGET_RECOVERY_ROOT_OUT)/res/images/font.png
   $(hide) $(foreach item,$(TARGET_PRIVATE_RES_DIRS), \
     cp -rf $(item) $(TARGET_RECOVERY_ROOT_OUT)/$(newline))
