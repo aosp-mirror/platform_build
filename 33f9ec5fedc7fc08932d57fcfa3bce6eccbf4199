@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d933998c_cb21e471",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1274,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-10T22:40:59Z",
+      "side": 1,
+      "message": "these are the additions to the old logic.",
+      "range": {
+        "startLine": 1263,
+        "startChar": 7,
+        "endLine": 1274,
+        "endChar": 67
+      },
+      "revId": "33f9ec5fedc7fc08932d57fcfa3bce6eccbf4199",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
