@@ -118,6 +118,30 @@
       "revId": "0b8d1e60074814bc242db8082baafb1b2a04fe47",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea260c26_25a7b637",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1616,
+      "author": {
+        "id": 1128890
+      },
+      "writtenOn": "2018-12-10T22:38:51Z",
+      "side": 1,
+      "message": "ping",
+      "parentUuid": "d687b07f_b8793842",
+      "range": {
+        "startLine": 1616,
+        "startChar": 36,
+        "endLine": 1616,
+        "endChar": 88
+      },
+      "revId": "0b8d1e60074814bc242db8082baafb1b2a04fe47",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
