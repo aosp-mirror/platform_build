@@ -22,6 +22,30 @@
       "revId": "9939f8685ccf0ead2e62d38d2ef9097f4edebcf7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0061b9c_73ab225d",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 1594,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-10T23:51:02Z",
+      "side": 1,
+      "message": "Done. In the future, we might want to add a special flag to some of the images. e.g. centerAlignment.",
+      "parentUuid": "190a54c6_f057f244",
+      "range": {
+        "startLine": 1594,
+        "startChar": 34,
+        "endLine": 1594,
+        "endChar": 71
+      },
+      "revId": "9939f8685ccf0ead2e62d38d2ef9097f4edebcf7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
