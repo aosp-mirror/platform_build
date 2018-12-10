@@ -22,6 +22,52 @@
       "revId": "e814bb0fe3ab386312bce0abcbc537ad555db21f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d9f9a87_61bf9860",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-12-10T16:40:02Z",
+      "side": 1,
+      "message": "vendor, product (formerly oem), odm and product_services?",
+      "range": {
+        "startLine": 107,
+        "startChar": 20,
+        "endLine": 107,
+        "endChar": 66
+      },
+      "revId": "e814bb0fe3ab386312bce0abcbc537ad555db21f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cf83e1af_4e6a4d20",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 1032276
+      },
+      "writtenOn": "2018-12-10T16:40:02Z",
+      "side": 1,
+      "message": "Remove this glue as well?",
+      "range": {
+        "startLine": 225,
+        "startChar": 0,
+        "endLine": 257,
+        "endChar": 0
+      },
+      "revId": "e814bb0fe3ab386312bce0abcbc537ad555db21f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
