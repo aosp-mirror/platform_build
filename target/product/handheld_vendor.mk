@@ -20,15 +20,24 @@
 # does, use base_vendor.mk).
 $(call inherit-product, $(SRC_TARGET_DIR)/product/media_vendor.mk)
 PRODUCT_PACKAGES += \
+    AccentColorBlackOverlay \
+    AccentColorGreenOverlay \
+    AccentColorPurpleOverlay \
     audio.primary.default \
     DisplayCutoutEmulationCornerOverlay \
     DisplayCutoutEmulationDoubleOverlay \
     DisplayCutoutEmulationTallOverlay \
+    IconShapeRoundedRectOverlay \
+    IconShapeSquircleOverlay \
+    IconShapeTeardropOverlay \
+    local_time.default \
+    power.default \
+    vibrator.default \
+
+PRODUCT_PACKAGES_DEBUG += \
     ExperimentNavigationBarFloatingOverlay \
     ExperimentNavigationBarDefaultOverlay \
     ExperimentNavigationBarSlimOverlay24 \
     ExperimentNavigationBarSlimOverlay32 \
     ExperimentNavigationBarSlimOverlay40 \
-    local_time.default \
-    power.default \
-    vibrator.default \
+    IconShapeSquareOverlay \
