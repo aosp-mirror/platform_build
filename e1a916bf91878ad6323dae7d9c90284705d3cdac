@@ -46,6 +46,29 @@
       "revId": "e1a916bf91878ad6323dae7d9c90284705d3cdac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e1bdefc_7c3cb439",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1622,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-11T02:37:32Z",
+      "side": 1,
+      "message": "This would have the same problem. If you replace with \u0026\u0026, you\u0027ll need to add \"true\" to the end of the line to deal with the trailing \u0026\u0026",
+      "range": {
+        "startLine": 1622,
+        "startChar": 95,
+        "endLine": 1622,
+        "endChar": 96
+      },
+      "revId": "e1a916bf91878ad6323dae7d9c90284705d3cdac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
