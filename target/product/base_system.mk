@@ -51,6 +51,7 @@ PRODUCT_PACKAGES += \
     cameraserver \
     charger \
     cmd \
+    com.android.conscrypt \
     com.android.location.provider \
     com.android.resolv \
     com.android.tzdata \
