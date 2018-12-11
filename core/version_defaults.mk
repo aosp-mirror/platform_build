@@ -179,8 +179,11 @@ else
     # SDK version the package was built for, otherwise it should fall back to
     # assuming the device can only support APIs as of the previous official
     # public release.
-    # This value will always be 0 for release builds.
-    PLATFORM_PREVIEW_SDK_VERSION := 0
+    # This value will always be forced to 0 for release builds by the logic
+    # in the "ifeq" block above, so the value below will be used on any
+    # non-release builds, and it should always be at least 1, to indicate that
+    # APIs may have changed since the claimed PLATFORM_SDK_VERSION.
+    PLATFORM_PREVIEW_SDK_VERSION := 1
   endif
 endif
 .KATI_READONLY := PLATFORM_PREVIEW_SDK_VERSION
