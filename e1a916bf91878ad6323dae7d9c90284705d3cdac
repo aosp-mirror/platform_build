@@ -69,6 +69,30 @@
       "revId": "e1a916bf91878ad6323dae7d9c90284705d3cdac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d3426d1_53f9eb8b",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1622,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-11T03:57:43Z",
+      "side": 1,
+      "message": "Done，in the previous setting, the build actually succeeded despite the raised exceptions",
+      "parentUuid": "2e1bdefc_7c3cb439",
+      "range": {
+        "startLine": 1622,
+        "startChar": 95,
+        "endLine": 1622,
+        "endChar": 96
+      },
+      "revId": "e1a916bf91878ad6323dae7d9c90284705d3cdac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
