@@ -623,10 +623,13 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
   # "boot" or "recovery", without extension.
   partition_name = os.path.basename(sourcedir).lower()
 
-  if (partition_name == "recovery" and
-      info_dict.get("include_recovery_dtbo") == "true"):
-    fn = os.path.join(sourcedir, "recovery_dtbo")
-    cmd.extend(["--recovery_dtbo", fn])
+  if partition_name == "recovery":
+    if info_dict.get("include_recovery_dtbo") == "true":
+      fn = os.path.join(sourcedir, "recovery_dtbo")
+      cmd.extend(["--recovery_dtbo", fn])
+    if info_dict.get("include_recovery_acpio") == "true":
+      fn = os.path.join(sourcedir, "recovery_acpio")
+      cmd.extend(["--recovery_acpio", fn])
 
   RunAndCheckOutput(cmd)
 
