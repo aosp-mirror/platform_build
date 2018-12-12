@@ -19,6 +19,7 @@ PRODUCT_PACKAGES += \
     adb \
     adbd \
     am \
+    android.frameworks.bufferhub@1.0-service \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
