@@ -170,6 +170,7 @@ VNDK-core: android.hardware.tv.input@1.0.so
 VNDK-core: android.hardware.usb.gadget@1.0.so
 VNDK-core: android.hardware.usb@1.0.so
 VNDK-core: android.hardware.usb@1.1.so
+VNDK-core: android.hardware.usb@1.2.so
 VNDK-core: android.hardware.vibrator@1.0.so
 VNDK-core: android.hardware.vibrator@1.1.so
 VNDK-core: android.hardware.vibrator@1.2.so
