@@ -401,6 +401,11 @@ ifneq ($(strip $(LOCAL_SANITIZE_RECOVER)),)
   my_cflags += -fsanitize-recover=$(recover_arg)
 endif
 
+ifneq ($(strip $(LOCAL_SANITIZE_NO_RECOVER)),)
+  no_recover_arg := $(subst $(space),$(comma),$(LOCAL_SANITIZE_NO_RECOVER)),
+  my_cflags += -fno-sanitize-recover=$(no_recover_arg)
+endif
+
 ifneq ($(my_sanitize_diag),)
   # TODO(vishwath): Add diagnostic support for static executables once
   # we switch to clang-4393122 (which adds the static ubsan runtime
