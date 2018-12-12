@@ -52,7 +52,6 @@ PRODUCT_PACKAGES += \
     DownloadProviderUi \
     EasterEgg \
     Email \
-    ExactCalculator \
     ExternalStorageProvider \
     FusedLocation \
     Gallery2 \
@@ -107,4 +106,3 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown \
     ro.config.notification_sound=OnTheHunt.ogg \
     ro.config.alarm_alert=Alarm_Classic.ogg
-

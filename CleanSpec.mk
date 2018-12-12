@@ -529,6 +529,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/perfprofd)
 $(call add-clean-step, find system/app system/priv-app system/framework system_other -depth -type d -print0 | xargs -0 rmdir)
 $(call add-clean-step, rm -f .d)
 
+# Remove obsolete apps
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
