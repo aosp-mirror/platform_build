@@ -363,8 +363,8 @@ function addcompletions()
     fi
     complete -F _lunch lunch
 
-    complete -F _complete-android-module-names gomod
-    complete -F _complete-android-module-names m
+    complete -F _complete_android_module_names gomod
+    complete -F _complete_android_module_names m
 }
 
 function choosetype()
@@ -1535,7 +1535,7 @@ print module_info[module]['path'][0]" 2>/dev/null)
     fi
 }
 
-function _complete-android-module-names() {
+function _complete_android_module_names() {
     local word=${COMP_WORDS[COMP_CWORD]}
     COMPREPLY=( $(allmod | grep -E "^$word") )
 }
