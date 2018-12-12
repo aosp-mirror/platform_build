@@ -522,6 +522,9 @@ $(call add-clean-step, find $(OUT_DIR)/target/product/mainline_arm64/system -typ
 # Clean up aidegen
 $(call add-clean-step, rm -f $(HOST_OUT)/bin/aidegen)
 
+# Remove perfprofd
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/perfprofd)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
