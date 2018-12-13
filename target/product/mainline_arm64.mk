@@ -18,14 +18,12 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline.mk)
 
 PRODUCT_NAME := mainline_arm64
-PRODUCT_DEVICE := generic_arm64
+PRODUCT_DEVICE := mainline_arm64
 PRODUCT_BRAND := generic
 PRODUCT_SHIPPING_API_LEVEL := 28
 PRODUCT_RESTRICT_VENDOR_FILES := all
 
 PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
-# Target device doesn't have a product partition, so whitelist the /system/ fallback path.
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST := system/product/%
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
   root/init.zygote64_32.rc \
   system/etc/seccomp_policy/crash_dump.arm.policy \
