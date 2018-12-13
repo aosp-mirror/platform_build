@@ -19,6 +19,7 @@ PRODUCT_PACKAGES += \
     adb \
     adbd \
     am \
+    android.frameworks.bufferhub@1.0-service \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
@@ -51,6 +52,7 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.location.provider \
+    com.android.media \
     com.android.resolv \
     com.android.tzdata \
     ContactsProvider \
@@ -60,6 +62,7 @@ PRODUCT_PACKAGES += \
     CtsShimPrivPrebuilt \
     debuggerd\
     DefaultContainerService \
+    device_config \
     dnsmasq \
     DownloadProvider \
     dpm \
@@ -318,7 +321,6 @@ PRODUCT_PACKAGES_DEBUG := \
     iotop \
     iw \
     logpersist.start \
-    perfprofd \
     procrank \
     showmap \
     sqlite3 \

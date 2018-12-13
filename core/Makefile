@@ -1667,9 +1667,12 @@ endif
 #   d) We include the recovery DTBO image within recovery - not needing the resource file as we
 #      do bsdiff because boot and recovery will contain different number of entries
 #      (BOARD_INCLUDE_RECOVERY_DTBO = true).
+#   e) We include the recovery ACPIO image within recovery - not needing the resource file as we
+#      do bsdiff because boot and recovery will contain different number of entries
+#      (BOARD_INCLUDE_RECOVERY_ACPIO = true).
 
 ifeq (,$(filter true, $(BOARD_USES_FULL_RECOVERY_IMAGE) $(BOARD_USES_RECOVERY_AS_BOOT) \
-  $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) $(BOARD_INCLUDE_RECOVERY_DTBO)))
+  $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) $(BOARD_INCLUDE_RECOVERY_DTBO) $(BOARD_INCLUDE_RECOVERY_ACPIO)))
 # Named '.dat' so we don't attempt to use imgdiff for patching it.
 RECOVERY_RESOURCE_ZIP := $(TARGET_OUT)/etc/recovery-resource.dat
 else
@@ -1742,6 +1745,9 @@ ifdef BOARD_KERNEL_PAGESIZE
 endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
   INTERNAL_RECOVERYIMAGE_ARGS += --recovery_dtbo $(BOARD_PREBUILT_DTBOIMAGE)
+endif
+ifdef BOARD_INCLUDE_RECOVERY_ACPIO
+  INTERNAL_RECOVERYIMAGE_ARGS += --recovery_acpio $(BOARD_RECOVERY_ACPIO)
 endif
 
 # Keys authorized to sign OTA packages this build will accept.  The
@@ -1829,6 +1835,9 @@ endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
 $(INSTALLED_BOOTIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
 endif
+ifdef BOARD_INCLUDE_RECOVERY_ACPIO
+$(INSTALLED_BOOTIMAGE_TARGET): $(BOARD_RECOVERY_ACPIO)
+endif
 
 $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	    $(INTERNAL_ROOT_FILES) \
@@ -1848,6 +1857,9 @@ endif # BOARD_USES_RECOVERY_AS_BOOT
 
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
+endif
+ifdef BOARD_INCLUDE_RECOVERY_ACPIO
+$(INSTALLED_RECOVERYIMAGE_TARGET): $(BOARD_RECOVERY_ACPIO)
 endif
 
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
@@ -2059,7 +2071,7 @@ INSTALLED_SYSTEMIMAGE := $(INSTALLED_SYSTEMIMAGE_TARGET)
 ifneq ($(INSTALLED_BOOTIMAGE_TARGET),)
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 ifneq ($(BOARD_USES_FULL_RECOVERY_IMAGE),true)
-ifneq (,$(filter true, $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) $(BOARD_INCLUDE_RECOVERY_DTBO)))
+ifneq (,$(filter true, $(BOARD_BUILD_SYSTEM_ROOT_IMAGE) $(BOARD_INCLUDE_RECOVERY_DTBO) $(BOARD_INCLUDE_RECOVERY_ACPIO)))
 diff_tool := $(HOST_OUT_EXECUTABLES)/bsdiff
 else
 diff_tool := $(HOST_OUT_EXECUTABLES)/imgdiff
@@ -3415,6 +3427,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(INSTALLED_KERNEL_TARGET) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
 	    $(BOARD_PREBUILT_DTBOIMAGE) \
+	    $(BOARD_RECOVERY_ACPIO) \
 	    $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_BASE_FS_PATH) \
 	    $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH) \
 	    $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_BASE_FS_PATH) \
@@ -3454,6 +3467,9 @@ ifdef INSTALLED_2NDBOOTLOADER_TARGET
 endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
 	$(hide) cp $(BOARD_PREBUILT_DTBOIMAGE) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_dtbo
+endif
+ifdef BOARD_INCLUDE_RECOVERY_ACPIO
+	$(hide) cp $(BOARD_RECOVERY_ACPIO) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_acpio
 endif
 ifdef INTERNAL_KERNEL_CMDLINE
 	$(hide) echo "$(INTERNAL_KERNEL_CMDLINE)" > $(zip_root)/$(PRIVATE_RECOVERY_OUT)/cmdline
@@ -3557,6 +3573,9 @@ ifeq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
 	$(hide) echo "include_recovery_dtbo=true" >> $(zip_root)/META/misc_info.txt
+endif
+ifdef BOARD_INCLUDE_RECOVERY_ACPIO
+	$(hide) echo "include_recovery_acpio=true" >> $(zip_root)/META/misc_info.txt
 endif
 ifdef BOARD_RECOVERYIMAGE_PARTITION_SIZE
 	$(hide) echo "recovery_size=$(BOARD_RECOVERYIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
