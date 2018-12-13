@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e4c960b_1f99ea37",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-13T00:00:58Z",
+      "side": 1,
+      "message": "This guy should return a PatchInfo instance then",
+      "range": {
+        "startLine": 44,
+        "startChar": 4,
+        "endLine": 44,
+        "endChar": 17
+      },
+      "revId": "19e6fce83982f6037959a4d2006e0c5a3a765084",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "572b5c2d_95db7e92",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 839,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-13T00:00:58Z",
+      "side": 1,
+      "message": "reduction",
+      "range": {
+        "startLine": 839,
+        "startChar": 24,
+        "endLine": 839,
+        "endChar": 30
+      },
+      "revId": "19e6fce83982f6037959a4d2006e0c5a3a765084",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79a39f96_6fdb8834",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 928,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-13T00:00:58Z",
+      "side": 1,
+      "message": "It doesn\u0027t look like a wrapper to me (maybe it\u0027s only meaningful in the context of this CL?)\n\nAnd it doesn\u0027t seem to do anything with \"minimum stashed blocks\" yet",
+      "range": {
+        "startLine": 928,
+        "startChar": 7,
+        "endLine": 928,
+        "endChar": 25
+      },
+      "revId": "19e6fce83982f6037959a4d2006e0c5a3a765084",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ebd6c5e_dd289d62",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1207,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-13T00:00:58Z",
+      "side": 1,
+      "message": "nit: \"A list of (transfer index, patch_info, compressed_size) tuples.\"",
+      "range": {
+        "startLine": 1207,
+        "startChar": 8,
+        "endLine": 1207,
+        "endChar": 73
+      },
+      "revId": "19e6fce83982f6037959a4d2006e0c5a3a765084",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
