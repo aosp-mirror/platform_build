@@ -319,6 +319,8 @@ ifdef LOCAL_COMPRESSED_MODULE
 LOCAL_DEX_PREOPT := false
 endif
 
+my_dex_jar := $(my_prebuilt_src_file)
+
 #######################################
 # defines built_odex along with rule to install odex
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
@@ -342,7 +344,6 @@ ifndef embedded_prebuilt_jni_libs
 embedded_prebuilt_jni_libs :=
 endif
 $(built_module): PRIVATE_EMBEDDED_JNI_LIBS := $(embedded_prebuilt_jni_libs)
-$(built_module): $(ZIP2ZIP)
 
 ifdef LOCAL_COMPRESSED_MODULE
 $(built_module) : $(MINIGZIP)
@@ -355,6 +356,12 @@ endif
 
 ifneq ($(BUILD_PLATFORM_ZIP),)
 $(built_module) : .KATI_IMPLICIT_OUTPUTS := $(dir $(LOCAL_BUILT_MODULE))package.dex.apk
+endif
+ifdef LOCAL_DEX_PREOPT
+$(built_module) : PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
+$(built_module) : $(intermediates)/strip.sh
+$(built_module) : | $(DEXPREOPT_GEN_DEPS)
+$(built_module) : .KATI_DEPFILE := $(built_module).d
 endif
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
@@ -380,9 +387,8 @@ endif
 	$(run-appcompat)
 endif  # module_run_appcompat
 ifdef LOCAL_DEX_PREOPT
-ifdef LOCAL_STRIP_DEX
-	$(call dexpreopt-remove-classes.dex,$@)
-endif  # LOCAL_STRIP_DEX
+	$(PRIVATE_STRIP_SCRIPT) $@ $@.tmp
+	mv -f $@.tmp $@
 endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 	# No need for align-package because sign-package takes care of alignment
@@ -394,20 +400,6 @@ ifdef LOCAL_COMPRESSED_MODULE
 endif  # LOCAL_COMPRESSED_MODULE
 endif  # ! LOCAL_REPLACE_PREBUILT_APK_INSTALLED
 
-###############################
-## Rule to build the odex file.
-# In case we don't strip the built module, use it, as dexpreopt
-# can do optimizations based on whether the built module only
-# contains uncompressed dex code.
-ifdef LOCAL_DEX_PREOPT
-ifndef LOCAL_STRIP_DEX
-$(built_odex) : $(built_module)
-	$(call dexpreopt-one-file,$<,$@)
-else
-$(built_odex) : $(my_prebuilt_src_file)
-	$(call dexpreopt-one-file,$<,$@)
-endif
-endif
 
 ###############################
 ## Install split apks.
@@ -450,6 +442,7 @@ $(my_all_targets): $(installed_apk_splits)
 endif # LOCAL_PACKAGE_SPLITS
 
 else ifeq ($(prebuilt_module_is_dex_javalib),true)  # ! LOCAL_MODULE_CLASS != APPS
+my_dex_jar := $(my_prebuilt_src_file)
 # This is a target shared library, i.e. a jar with classes.dex.
 #######################################
 # defines built_odex along with rule to install odex
@@ -464,13 +457,14 @@ $(built_module) : $(dexpreopted_boot_jar)
 
 # For libart boot jars, we don't have .odex files.
 else # ! boot jar
-$(built_odex): PRIVATE_MODULE := $(LOCAL_MODULE)
-# Use pattern rule - we may have multiple built odex files.
-$(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(my_prebuilt_src_file)
-	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
-	$(call dexpreopt-one-file,$<,$@)
 
-$(eval $(call dexpreopt-copy-jar,$(my_prebuilt_src_file),$(built_module),$(LOCAL_STRIP_DEX)))
+$(built_module): PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
+$(built_module): $(intermediates)/strip.sh
+$(built_module): | $(DEXPREOPT_GEN_DEPS)
+$(built_module): .KATI_DEPFILE := $(built_module).d
+$(built_module): $(my_prebuilt_src_file)
+	$(PRIVATE_STRIP_SCRIPT) $< $@
+
 endif # boot jar
 else # ! LOCAL_DEX_PREOPT
 $(built_module) : $(my_prebuilt_src_file)
