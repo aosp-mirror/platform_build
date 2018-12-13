@@ -43,7 +43,6 @@ VNDK-SP: libhwbinder.so
 VNDK-SP: libhwbinder_noltopgo.so
 VNDK-SP: libion.so
 VNDK-SP: liblzma.so
-VNDK-SP: libunwind.so
 VNDK-SP: libunwindstack.so
 VNDK-SP: libutils.so
 VNDK-SP: libutilscallstack.so
@@ -262,4 +261,3 @@ VNDK-private: libblas.so
 VNDK-private: libcompiler_rt.so
 VNDK-private: libft2.so
 VNDK-private: libgui.so
-VNDK-private: libunwind.so
