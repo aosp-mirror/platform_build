@@ -181,7 +181,7 @@ ifeq (true,$(my_process_profile))
     $(my_built_profile):
 	$(hide) mkdir -p $(dir $@)
 	touch $@
-	ANDROID_LOG_TAGS="*:i" $(PROFMAN) \
+	ANDROID_LOG_TAGS="*:e" $(PROFMAN) \
 	  --copy-and-update-profile-key \
 		--profile-file=$(PRIVATE_SOURCE_CLASSES) \
 		--apk=$(PRIVATE_BUILT_MODULE) \
