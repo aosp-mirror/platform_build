@@ -52,6 +52,7 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.location.provider \
+    com.android.media \
     com.android.resolv \
     com.android.tzdata \
     ContactsProvider \
