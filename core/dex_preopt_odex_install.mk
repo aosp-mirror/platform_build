@@ -253,7 +253,7 @@ ifdef LOCAL_DEX_PREOPT
     LOCAL_POST_INSTALL_CMD += &&
   endif
 
-  LOCAL_POST_INSTALL_CMD += for i in $$(zipinfo -1 $(my_dexpreopt_zip)); do mkdir -p $$(dirname $$i); done && unzip -qo -d $(PRODUCT_OUT) $(my_dexpreopt_zip)
+  LOCAL_POST_INSTALL_CMD += for i in $$(zipinfo -1 $(my_dexpreopt_zip)); do mkdir -p $(PRODUCT_OUT)/$$(dirname $$i); done && unzip -qo -d $(PRODUCT_OUT) $(my_dexpreopt_zip)
   $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
   $(LOCAL_INSTALLED_MODULE): $(my_dexpreopt_zip)
 
