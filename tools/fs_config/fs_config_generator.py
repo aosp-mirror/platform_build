@@ -1294,6 +1294,28 @@ class GroupGen(PasswdGen):
 
         print "%s::%s:" % (logon, uid)
 
+@generator('print')
+class PrintGen(BaseGenerator):
+    """Prints just the constants and values, separated by spaces, in an easy to
+    parse format for use by other scripts.
+
+    Each line is just the identifier and the value, separated by a space.
+    """
+
+    def add_opts(self, opt_group):
+        opt_group.add_argument(
+            'aid-header', help='An android_filesystem_config.h file.')
+
+    def __call__(self, args):
+
+        hdr_parser = AIDHeaderParser(args['aid-header'])
+        aids = hdr_parser.aids
+
+        aids.sort(key=lambda item: int(item.normalized_value))
+
+        for aid in aids:
+            print '%s %s' % (aid.identifier, aid.normalized_value)
+
 
 def main():
     """Main entry point for execution."""
