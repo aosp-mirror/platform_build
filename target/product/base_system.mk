@@ -51,6 +51,7 @@ PRODUCT_PACKAGES += \
     bugreportz \
     charger \
     cmd \
+    com.android.conscrypt \
     com.android.location.provider \
     com.android.media \
     com.android.resolv \
