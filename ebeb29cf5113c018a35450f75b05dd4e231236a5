@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9730e93_458156db",
+        "filename": "target/product/mainline_arm64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-12-14T16:59:44Z",
+      "side": 1,
+      "message": "separate groups just to avoid the merge conflict in master.",
+      "revId": "ebeb29cf5113c018a35450f75b05dd4e231236a5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
