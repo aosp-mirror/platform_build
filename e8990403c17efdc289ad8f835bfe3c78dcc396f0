@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "4dfcf2d7_560254d5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1000678
+      },
+      "writtenOn": "2018-12-14T14:53:29Z",
+      "side": 1,
+      "message": "For unbundled builds we\u0027d like to feed the value coming from the prebuilt SDK into manifest to populate the min/max SDK fields instead of hardcoding them. I *think* this will allow us to do that once we have a prebuilt SDK in place that has the api_fingerprint.txt file.",
+      "parentUuid": "6b292d3c_53ab427c",
+      "revId": "e8990403c17efdc289ad8f835bfe3c78dcc396f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "72a22f08_08ae7ddc",
         "filename": "core/Makefile",
         "patchSetId": 1
