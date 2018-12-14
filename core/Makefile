@@ -4057,7 +4057,8 @@ INSTALLED_SUPERIMAGE_TARGET := $(PRODUCT_OUT)/super.img
 $(INSTALLED_SUPERIMAGE_TARGET): extracted_input_target_files := $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE))
 $(INSTALLED_SUPERIMAGE_TARGET): $(LPMAKE) $(BUILT_TARGET_FILES_PACKAGE) $(BUILD_SUPER_IMAGE)
 	$(call pretty,"Target super fs image: $@")
-	$(BUILD_SUPER_IMAGE) -v $(extracted_input_target_files) $@
+	PATH=$(dir $(LPMAKE)):$$PATH \
+	    $(BUILD_SUPER_IMAGE) -v $(extracted_input_target_files) $@
 endif
 
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_TARGET))
@@ -4070,9 +4071,10 @@ $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(LPMAKE) $(BUILD_SUPER_IMAGE)
 	rm -rf $(intermediates)/misc_info.txt
 	$(call dump-dynamic-partitions-info,$(intermediates)/misc_info.txt)
 ifeq ($(AB_OTA_UPDATER),true)
-	$(hide) echo "ab_update=true" >> $(intermediates)/misc_info.txt
+	echo "ab_update=true" >> $(intermediates)/misc_info.txt
 endif
-	$(BUILD_SUPER_IMAGE) -v $(intermediates)/misc_info.txt $@
+	PATH=$(dir $(LPMAKE)):$$PATH \
+	    $(BUILD_SUPER_IMAGE) -v $(intermediates)/misc_info.txt $@
 
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_EMPTY_TARGET))
 
