@@ -50,6 +50,7 @@ PRODUCT_PACKAGES += \
     bu \
     bugreport \
     bugreportz \
+    cgroups.json \
     charger \
     cmd \
     com.android.conscrypt \
@@ -251,6 +252,7 @@ PRODUCT_PACKAGES += \
     storaged \
     surfaceflinger \
     svc \
+    task_profiles.json \
     tc \
     telecom \
     telephony-common \
