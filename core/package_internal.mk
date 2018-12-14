@@ -432,8 +432,6 @@ endif  # LOCAL_USE_AAPT2
 
 endif  # need_compile_res
 
-my_dex_jar := $(intermediates.COMMON)/dex.jar
-
 called_from_package_internal := true
 #################################
 include $(BUILD_SYSTEM)/java.mk
@@ -633,12 +631,6 @@ endif
 ifneq ($(BUILD_PLATFORM_ZIP),)
 $(LOCAL_BUILT_MODULE) : .KATI_IMPLICIT_OUTPUTS := $(dir $(LOCAL_BUILT_MODULE))package.dex.apk
 endif
-ifdef LOCAL_DEX_PREOPT
-$(LOCAL_BUILT_MODULE) : PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
-$(LOCAL_BUILT_MODULE) : $(intermediates)/strip.sh
-$(LOCAL_BUILT_MODULE) : | $(DEXPREOPT_GEN_DEPS)
-$(LOCAL_BUILT_MODULE): .KATI_DEPFILE := $(LOCAL_BUILT_MODULE).d
-endif
 $(LOCAL_BUILT_MODULE):
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
 	rm -rf $@.parts
@@ -678,8 +670,9 @@ ifneq ($(BUILD_PLATFORM_ZIP),)
 	@# Keep a copy of apk with classes.dex unstripped
 	$(hide) cp -f $@ $(dir $@)package.dex.apk
 endif  # BUILD_PLATFORM_ZIP
-	$(PRIVATE_STRIP_SCRIPT) $@ $@.tmp
-	mv -f $@.tmp $@
+ifdef LOCAL_STRIP_DEX
+	$(call dexpreopt-remove-classes.dex,$@)
+endif
 endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 ifdef LOCAL_COMPRESSED_MODULE
@@ -746,13 +739,23 @@ endif
 endif
 
 ###############################
-## Rule to build a jar containing dex files to dexpreopt without waiting for
-## the APK
+## Rule to build the odex file
 ifdef LOCAL_DEX_PREOPT
-  $(my_dex_jar): PRIVATE_DEX_FILE := $(built_dex)
-  $(my_dex_jar): $(built_dex)
+$(built_odex): PRIVATE_DEX_FILE := $(built_dex)
+ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
+$(built_odex): $(ZIP2ZIP) $(ZIPALIGN)
+endif
+# Use pattern rule - we may have multiple built odex files.
+$(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(built_dex)
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 	$(call create-dex-jar,$@,$(PRIVATE_DEX_FILE))
+ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
+	$(uncompress-dexs)
+	$(align-package)
+endif
+	$(hide) mv $@ $@.input
+	$(call dexpreopt-one-file,$@.input,$@)
+	$(hide) rm $@.input
 endif
 
 ###############################
