@@ -50,6 +50,7 @@ PRODUCT_PACKAGES += \
     bugreportz \
     charger \
     cmd \
+    com.android.conscrypt \
     com.android.location.provider \
     com.android.resolv \
     com.android.tzdata \
