@@ -363,7 +363,7 @@ $(built_module) : $(intermediates)/strip.sh
 $(built_module) : | $(DEXPREOPT_GEN_DEPS)
 $(built_module) : .KATI_DEPFILE := $(built_module).d
 endif
-$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR)
+$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
 	$(uncompress-prebuilt-embedded-jni-libs)
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
