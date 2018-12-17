@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "91952c5e_5eac101b",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2018-12-17T14:50:56Z",
+      "side": 1,
+      "message": "why isn\u0027t there a single gsi.mk that all of these inherit from, to avoid duplication?\n\nThese are the inheritance chains now.. seems strange they\u0027re not unified\n\naosp_arm.mk -\u003e full.mk -\u003e aosp_base_telephony.mk -\u003e full_base_telephony.mk -\u003e aosp_base.mk -\u003e full_base.mk -\u003e generic_no_telephony -\u003e handheld_system.mk -\u003e media_system.mk -\u003e base_system.mk -\u003e runtime_libart.mk\n\naosp_arm64 -\u003e aosp_base_telephony.mk -\u003e full_base_telephony.mk -\u003e aosp_base.mk -\u003e full_base.mk -\u003e generic_no_telephony -\u003e handheld_system.mk -\u003e media_system.mk -\u003e base_system.mk -\u003e runtime_libart.mk\n\naosp_x86.mk -\u003e full_x86.mk -\u003e aosp_base_telephony.mk -\u003e full_base_telephony.mk -\u003e aosp_base.mk -\u003e full_base.mk -\u003e generic_no_telephony -\u003e handheld_system.mk -\u003e media_system.mk -\u003e base_system.mk -\u003e runtime_libart.mk\n\naosp_x86_64 -\u003e aosp_base_telephony.mk -\u003e full_base_telephony.mk -\u003e aosp_base.mk -\u003e full_base.mk -\u003e generic_no_telephony -\u003e handheld_system.mk -\u003e media_system.mk -\u003e base_system.mk -\u003e runtime_libart.mk",
+      "revId": "4f873ef3a171a6244ad6413ba191246b70c5025f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
