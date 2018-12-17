@@ -34,6 +34,24 @@
       "revId": "ab847928157cddb7e469b15f5a8310f535173805",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d9565ea_2aa98e22",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 530,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2018-12-17T18:51:33Z",
+      "side": 1,
+      "message": "\u003e These are just one-off cleanup commands, I don\u0027t think they each need a long comment.  The details are available in the git commit message findable with git blame if necessary.\n\nSo, I asked this question in your other change, but do you plan to address the issues and remove these lines in the near future? If so, I think they\u0027re totally okay without any more detailed comments. If not, a simple comment, like a reference to the offending change, goes a long way toward improving the readability of the code, IMHO.",
+      "parentUuid": "79964a60_7a7c204b",
+      "revId": "ab847928157cddb7e469b15f5a8310f535173805",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
