@@ -16,6 +16,23 @@
       "revId": "4f873ef3a171a6244ad6413ba191246b70c5025f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2c03fec5_5b5bbad9",
+        "filename": "target/product/treble_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2018-12-17T16:40:29Z",
+      "side": 1,
+      "message": "Isn\u0027t this the file that you\u0027re deleting here?  Seems that this line should be deleted?",
+      "revId": "4f873ef3a171a6244ad6413ba191246b70c5025f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
