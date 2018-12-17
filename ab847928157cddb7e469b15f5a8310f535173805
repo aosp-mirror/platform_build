@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "99d54ca8_c1b9f63f",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 530,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2018-12-17T15:22:37Z",
+      "side": 1,
+      "message": "A comment about which process could produce this file would be helpful.",
+      "revId": "ab847928157cddb7e469b15f5a8310f535173805",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
