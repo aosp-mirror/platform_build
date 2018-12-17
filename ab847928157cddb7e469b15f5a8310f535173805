@@ -16,6 +16,24 @@
       "revId": "ab847928157cddb7e469b15f5a8310f535173805",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79964a60_7a7c204b",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 530,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-12-17T18:01:22Z",
+      "side": 1,
+      "message": "These are just one-off cleanup commands, I don\u0027t think they each need a long comment.  The details are available in the git commit message findable with git blame if necessary.",
+      "parentUuid": "99d54ca8_c1b9f63f",
+      "revId": "ab847928157cddb7e469b15f5a8310f535173805",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
