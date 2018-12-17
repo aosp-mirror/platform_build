@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2f90bf2b_38d3693d",
+        "filename": "core/main.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 1104,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-12-17T05:58:59Z",
+      "side": 1,
+      "message": "Do this check outside of the foreach loop?",
+      "range": {
+        "startLine": 1104,
+        "startChar": 4,
+        "endLine": 1104,
+        "endChar": 71
+      },
+      "revId": "0dfeeee2a449f430e07dff9d78c0d0443dca7fcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d18b2489_6240eebd",
+        "filename": "core/main.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 1105,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-12-17T05:58:59Z",
+      "side": 1,
+      "message": "Isn\u0027t this showing the error only for the first violator?",
+      "range": {
+        "startLine": 1105,
+        "startChar": 90,
+        "endLine": 1105,
+        "endChar": 98
+      },
+      "revId": "0dfeeee2a449f430e07dff9d78c0d0443dca7fcb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
