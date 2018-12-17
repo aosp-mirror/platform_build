@@ -52,6 +52,24 @@
       "revId": "ab847928157cddb7e469b15f5a8310f535173805",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b09943b9_df33295a",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 530,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-12-17T20:31:25Z",
+      "side": 1,
+      "message": "The lines will never get removed, but they will only be relevant for a very short time.  They will run once for anyone who built before they were added and then did an incremental build afterwards.  Once everyone has done one build they will never be run again.",
+      "parentUuid": "8d9565ea_2aa98e22",
+      "revId": "ab847928157cddb7e469b15f5a8310f535173805",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
