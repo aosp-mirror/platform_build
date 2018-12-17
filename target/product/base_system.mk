@@ -221,6 +221,7 @@ PRODUCT_PACKAGES += \
     racoon \
     recovery-persist \
     resize2fs \
+    rss_hwm_reset \
     run-as \
     schedtest \
     screencap \
