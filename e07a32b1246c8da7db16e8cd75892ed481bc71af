@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "edbbd4b2_0a1dd95d",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 529,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2018-12-17T15:28:18Z",
+      "side": 1,
+      "message": "Hmm, this and the other CleanSpec.mk change make me wonder if these are fixable or not. If they are, and if you plan to address them soon, I think the current comment is enough. If not, some more detailed comments would be desirable, IMO.",
+      "revId": "e07a32b1246c8da7db16e8cd75892ed481bc71af",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
