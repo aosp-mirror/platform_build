@@ -97,6 +97,7 @@ ifdef LOCAL_SOONG_DEX_JAR
       $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar) $(full_classes_header_jar)))
 
       $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
+      $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(common_javalib.jar)))
     else # LOCAL_IS_HOST_MODULE
       $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(LOCAL_BUILT_MODULE)))
       $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(full_classes_jar) $(full_classes_header_jar)))
