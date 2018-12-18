@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7e916226_d9c55e63",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-12-18T05:48:08Z",
+      "side": 1,
+      "message": "Can you use the same style as ANDROID_BUILD_PATHS above to store what was added and remove it before re-adding it?",
+      "revId": "5880edc0cb2eadfcdc1e0185dfa051a1370b3206",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
