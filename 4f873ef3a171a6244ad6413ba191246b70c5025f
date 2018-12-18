@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "abd65df9_e0b34a4a",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-12-18T03:23:48Z",
+      "side": 1,
+      "message": "done.",
+      "parentUuid": "f3232ebe_53e9f053",
+      "revId": "4f873ef3a171a6244ad6413ba191246b70c5025f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2c03fec5_5b5bbad9",
         "filename": "target/product/treble_common.mk",
         "patchSetId": 2
@@ -69,6 +87,24 @@
       "revId": "4f873ef3a171a6244ad6413ba191246b70c5025f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de93a7ad_b3e11fd3",
+        "filename": "target/product/treble_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-12-18T03:23:48Z",
+      "side": 1,
+      "message": "done.",
+      "parentUuid": "b1f07e75_775e3a1c",
+      "revId": "4f873ef3a171a6244ad6413ba191246b70c5025f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
