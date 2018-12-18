@@ -120,6 +120,8 @@ include $(BUILD_SYSTEM_COMMON)/math.mk
 
 include $(BUILD_SYSTEM_COMMON)/strings.mk
 
+include $(BUILD_SYSTEM_COMMON)/json.mk
+
 # Various mappings to avoid hard-coding paths all over the place
 include $(BUILD_SYSTEM)/pathmap.mk
 

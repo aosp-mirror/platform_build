@@ -50,6 +50,8 @@ else
 LOCAL_EMMA_INSTRUMENT := false
 endif # EMMA_INSTRUMENT
 
+my_dex_jar := $(common_javalib.jar)
+
 #################################
 include $(BUILD_SYSTEM)/java.mk
 #################################
@@ -90,13 +92,13 @@ $(eval $(call copy-one-file,$(dexpreopted_boot_jar),$(LOCAL_BUILT_MODULE)))
 
 # For libart boot jars, we don't have .odex files.
 else # ! boot jar
-$(built_odex): PRIVATE_MODULE := $(LOCAL_MODULE)
-# Use pattern rule - we may have multiple built odex files.
-$(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(common_javalib.jar)
-	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
-	$(call dexpreopt-one-file,$<,$@)
 
-$(eval $(call dexpreopt-copy-jar,$(common_javalib.jar),$(LOCAL_BUILT_MODULE),$(LOCAL_STRIP_DEX)))
+$(LOCAL_BUILT_MODULE): PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
+$(LOCAL_BUILT_MODULE): $(intermediates)/strip.sh
+$(LOCAL_BUILT_MODULE): | $(DEXPREOPT_GEN_DEPS)
+$(LOCAL_BUILT_MODULE): .KATI_DEPFILE := $(LOCAL_BUILT_MODULE).d
+$(LOCAL_BUILT_MODULE): $(common_javalib.jar)
+	$(PRIVATE_STRIP_SCRIPT) $< $@
 
 endif # ! boot jar
 

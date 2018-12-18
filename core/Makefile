@@ -2158,9 +2158,9 @@ stnod: systemtarball-nodeps
 ## Files under out dir will be rejected to prevent possible conflicts with other rules.
 ifneq (,$(BUILD_PLATFORM_ZIP))
 pdk_odex_javalibs := $(strip $(foreach m,$(DEXPREOPT.MODULES.JAVA_LIBRARIES),\
-  $(if $(filter $(DEXPREOPT.$(m).INSTALLED),$(ALL_DEFAULT_INSTALLED_MODULES)),$(m))))
+  $(if $(filter $(DEXPREOPT.$(m).INSTALLED_STRIPPED),$(ALL_DEFAULT_INSTALLED_MODULES)),$(m))))
 pdk_odex_apps := $(strip $(foreach m,$(DEXPREOPT.MODULES.APPS),\
-  $(if $(filter $(DEXPREOPT.$(m).INSTALLED),$(ALL_DEFAULT_INSTALLED_MODULES)),$(m))))
+  $(if $(filter $(DEXPREOPT.$(m).INSTALLED_STRIPPED),$(ALL_DEFAULT_INSTALLED_MODULES)),$(m))))
 pdk_classes_dex := $(strip \
   $(foreach m,$(pdk_odex_javalibs),$(call intermediates-dir-for,JAVA_LIBRARIES,$(m),,COMMON)/javalib.jar) \
   $(foreach m,$(pdk_odex_apps),$(call intermediates-dir-for,APPS,$(m))/package.dex.apk))
@@ -2445,6 +2445,9 @@ INTERNAL_SYSTEMOTHERIMAGE_FILES := \
       $(ALL_DEFAULT_INSTALLED_MODULES)\
       $(ALL_PDK_FUSION_FILES)) \
     $(PDK_FUSION_SYMLINK_STAMP)
+
+# system_other dex files are installed as a side-effect of installing system image files
+INTERNAL_SYSTEMOTHERIMAGE_FILES += $(INTERNAL_SYSTEMIMAGE_FILES)
 
 INSTALLED_FILES_FILE_SYSTEMOTHER := $(PRODUCT_OUT)/installed-files-system-other.txt
 INSTALLED_FILES_JSON_SYSTEMOTHER := $(INSTALLED_FILES_FILE_SYSTEMOTHER:.txt=.json)
