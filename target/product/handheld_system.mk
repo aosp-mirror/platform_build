@@ -82,7 +82,6 @@ PRODUCT_PACKAGES += \
     SharedStorageBackup \
     SimAppDialog \
     StorageManager \
-    SystemUI \
     Telecom \
     TelephonyProvider \
     TeleService \
