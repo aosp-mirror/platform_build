@@ -61,6 +61,7 @@ PRODUCT_PACKAGES += \
     CtsShimPrivPrebuilt \
     debuggerd\
     DefaultContainerService \
+    dmctl \
     dnsmasq \
     DownloadProvider \
     dpm \
