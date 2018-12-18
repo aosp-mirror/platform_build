@@ -83,14 +83,16 @@ ifdef LOCAL_SOONG_DEX_JAR
         $(eval $(call hiddenapi-generate-csv,$(full_classes_jar),$(hiddenapi_flags_csv),$(hiddenapi_metadata_csv)))
         $(eval $(call hiddenapi-copy-soong-jar,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
 
-        # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
-        # We use this installed_odex trick to get boot.art installed.
-        installed_odex := $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
-        # Append the odex for the 2nd arch if we have one.
-        installed_odex += $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
-        ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
-        # Make sure to install the .odex and .vdex when you run "make <module_name>"
-        $(my_all_targets): $(installed_odex)
+        ifeq (true,$(WITH_DEXPREOPT))
+          # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
+          # We use this installed_odex trick to get boot.art installed.
+          installed_odex := $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
+          # Append the odex for the 2nd arch if we have one.
+          installed_odex += $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
+          ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
+          # Make sure to install the .odex and .vdex when you run "make <module_name>"
+         $(my_all_targets): $(installed_odex)
+        endif
       else # !is_boot_jar
         $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
       endif # is_boot_jar
