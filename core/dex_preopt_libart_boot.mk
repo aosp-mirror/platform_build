@@ -20,8 +20,6 @@
 # 2ND_DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME=out/target/product/generic_x86_64/dex_bootjars/system/framework/x86/boot.art
 # 2ND_LIBART_BOOT_IMAGE=/system/framework/x86/boot.art
 
-$(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/boot.art
-$(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$($(my_2nd_arch_prefix)DEX2OAT_TARGET_ARCH)/boot.art
 $(my_2nd_arch_prefix)LIBART_BOOT_IMAGE_FILENAME := /$(DEXPREOPT_BOOT_JAR_DIR)/$($(my_2nd_arch_prefix)DEX2OAT_TARGET_ARCH)/boot.art
 
 # The .oat with symbols
@@ -114,7 +112,7 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--no-inline-from=core-oj.jar \
 		--abort-on-hard-verifier-error \
 		--abort-on-soft-verifier-error \
-		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS) \
+		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS) \
 		|| ( echo "$(DEX2OAT_FAILURE_MESSAGE)" ; false )
 
 endif
