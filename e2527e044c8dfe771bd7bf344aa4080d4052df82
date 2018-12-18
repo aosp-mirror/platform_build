@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8cbd81fa_65c57839",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1315,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-18T20:25:57Z",
+      "side": 1,
+      "message": "removed, will add in the next cl.",
+      "parentUuid": "c676c8b9_fda26e9d",
+      "range": {
+        "startLine": 1315,
+        "startChar": 47,
+        "endLine": 1315,
+        "endChar": 62
+      },
+      "revId": "e2527e044c8dfe771bd7bf344aa4080d4052df82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "37cdcf01_0e1dcc3f",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "e2527e044c8dfe771bd7bf344aa4080d4052df82",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4046e488_1b78d358",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1332,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-18T20:25:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "37cdcf01_0e1dcc3f",
+      "range": {
+        "startLine": 1332,
+        "startChar": 6,
+        "endLine": 1332,
+        "endChar": 13
+      },
+      "revId": "e2527e044c8dfe771bd7bf344aa4080d4052df82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -82,6 +130,30 @@
       "writtenOn": "2018-12-18T06:57:33Z",
       "side": 1,
       "message": "I don\u0027t follow the logic for this \"quick estimate\". Why don\u0027t we factor out the actual calculation (L746) to avoid the duplicate / inconsistent computations?",
+      "range": {
+        "startLine": 1359,
+        "startChar": 7,
+        "endLine": 1359,
+        "endChar": 63
+      },
+      "revId": "e2527e044c8dfe771bd7bf344aa4080d4052df82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "445351ec_799df424",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1359,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-18T20:25:57Z",
+      "side": 1,
+      "message": "It\u0027s merely a simulation of stashed blocks without taking stash hash collusion into account. And the logic in ReviseStashSize is pretty complicated and hard to break down. Right now, I am able to extend that function a bit. But I haven\u0027t thought clearly how to refactor that function.\n\nThe violated stashed size to eliminate will be an estimation anyway; because we will set a threshold to call the compare \u0026 conversion steps. And in some rare cases, converting a transfer to new will not directly reduce the max stashed size.",
+      "parentUuid": "074fd9fa_e69b77de",
       "range": {
         "startLine": 1359,
         "startChar": 7,
