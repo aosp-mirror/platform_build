@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0947bb71_7c48e845",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 471,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-18T06:57:33Z",
+      "side": 1,
+      "message": "Move these lines into L485? (Or remove L485 in a separate CL if that check is no longer in need.)",
+      "range": {
+        "startLine": 471,
+        "startChar": 19,
+        "endLine": 471,
+        "endChar": 44
+      },
+      "revId": "be66e50de30418400f42d97ed87a763a56475c2f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41b53bde_e11d2754",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1314,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-18T06:57:33Z",
+      "side": 1,
+      "message": "nit: wrong indentation",
+      "range": {
+        "startLine": 1314,
+        "startChar": 4,
+        "endLine": 1314,
+        "endChar": 6
+      },
+      "revId": "be66e50de30418400f42d97ed87a763a56475c2f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

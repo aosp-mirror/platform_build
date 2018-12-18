@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c676c8b9_fda26e9d",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1315,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-18T06:57:33Z",
+      "side": 1,
+      "message": "what is this arg?",
+      "range": {
+        "startLine": 1315,
+        "startChar": 47,
+        "endLine": 1315,
+        "endChar": 62
+      },
+      "revId": "e2527e044c8dfe771bd7bf344aa4080d4052df82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37cdcf01_0e1dcc3f",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1332,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-18T06:57:33Z",
+      "side": 1,
+      "message": "nit: Use imperative for inline comments (descriptive is for function comments).\n\n\"Remove ...\"",
+      "range": {
+        "startLine": 1332,
+        "startChar": 6,
+        "endLine": 1332,
+        "endChar": 13
+      },
+      "revId": "e2527e044c8dfe771bd7bf344aa4080d4052df82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "552e0d70_dbac9309",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1358,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-18T06:57:33Z",
+      "side": 1,
+      "message": "CalculateMaxStashedBlocks",
+      "range": {
+        "startLine": 1358,
+        "startChar": 6,
+        "endLine": 1358,
+        "endChar": 29
+      },
+      "revId": "e2527e044c8dfe771bd7bf344aa4080d4052df82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "074fd9fa_e69b77de",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1359,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-18T06:57:33Z",
+      "side": 1,
+      "message": "I don\u0027t follow the logic for this \"quick estimate\". Why don\u0027t we factor out the actual calculation (L746) to avoid the duplicate / inconsistent computations?",
+      "range": {
+        "startLine": 1359,
+        "startChar": 7,
+        "endLine": 1359,
+        "endChar": 63
+      },
+      "revId": "e2527e044c8dfe771bd7bf344aa4080d4052df82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e00731c_6f663278",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1370,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-18T06:57:33Z",
+      "side": 1,
+      "message": "nit:\nmax(max_stash_blocks,\n    stashed_range.size() + implicit_stash_size)",
+      "range": {
+        "startLine": 1369,
+        "startChar": 25,
+        "endLine": 1370,
+        "endChar": 51
+      },
+      "revId": "e2527e044c8dfe771bd7bf344aa4080d4052df82",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
