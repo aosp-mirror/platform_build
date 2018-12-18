@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f3232ebe_53e9f053",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-12-18T02:23:19Z",
+      "side": 1,
+      "message": "Hi Anton, thanks for the suggestion.\n\nFor the targets aosp_$arch_(a|ab), we have treble_common.mk to avoid duplication.\n\nHowever, these makefiles are for Android emulators for a very long time, there are a lot of dependency on these makefiles. We avoid to modify the structure when we merging GSI to these emulator build targets..\n\nI am working on another task for cleaning up the GSI makefiles, maybe you could help to review it.",
+      "parentUuid": "91952c5e_5eac101b",
+      "revId": "4f873ef3a171a6244ad6413ba191246b70c5025f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2c03fec5_5b5bbad9",
         "filename": "target/product/treble_common.mk",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2018-12-17T16:40:29Z",
       "side": 1,
       "message": "Isn\u0027t this the file that you\u0027re deleting here?  Seems that this line should be deleted?",
+      "revId": "4f873ef3a171a6244ad6413ba191246b70c5025f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1f07e75_775e3a1c",
+        "filename": "target/product/treble_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2018-12-18T02:23:19Z",
+      "side": 1,
+      "message": "Oh! Thanks Tom.\n\nI would like to put an empty init script (.rc) file in the GSI for the future.\nLooks Git deems the file as delete.\n\nLet me fix it.",
+      "parentUuid": "2c03fec5_5b5bbad9",
       "revId": "4f873ef3a171a6244ad6413ba191246b70c5025f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
