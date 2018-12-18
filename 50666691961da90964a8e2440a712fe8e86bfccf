@@ -46,6 +46,30 @@
       "revId": "50666691961da90964a8e2440a712fe8e86bfccf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0b0efb0c_bab94550",
+        "filename": "target/product/vndk/current.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2018-12-18T19:05:58Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "cc6ee25b_cf91b89b",
+      "range": {
+        "startLine": 69,
+        "startChar": 38,
+        "endLine": 69,
+        "endChar": 42
+      },
+      "revId": "50666691961da90964a8e2440a712fe8e86bfccf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
