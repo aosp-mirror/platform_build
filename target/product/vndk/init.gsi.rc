@@ -1,2 +1,0 @@
-on early-init
-    umount /product   # TODO(b/119391482): workaround for /system/product
