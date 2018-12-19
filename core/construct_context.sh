@@ -16,39 +16,54 @@
 
 set -e
 
-# inputs:
-# $1 is PRIVATE_CONDITIONAL_USES_LIBRARIES_HOST
-# $2 is PRIVATE_CONDITIONAL_USES_LIBRARIES_TARGET
-
-# class_loader_context: library paths on the host
-# stored_class_loader_context_libs: library paths on device
-# these are both comma separated paths, example: lib1.jar:lib2.jar or /system/framework/lib1.jar:/system/framework/lib2.jar
-
 # target_sdk_version: parsed from manifest
-# my_conditional_host_libs: libraries conditionally added for non P
-# my_conditional_target_libs: target libraries conditionally added for non P
 #
 # outputs
 # class_loader_context_arg: final class loader conext arg
 # stored_class_loader_context_arg: final stored class loader context arg
 
-my_conditional_host_libs=$1
-my_conditional_target_libs=$2
+# The hidl.manager shared library has a dependency on hidl.base. We'll manually
+# add that information to the class loader context if we see those libraries.
+hidl_manager="android.hidl.manager-V1.0-java"
+hidl_base="android.hidl.base-V1.0-java"
 
-# Note that SDK 28 is P.
+function add_to_contexts {
+  for i in $1; do
+    if [[ -z "${class_loader_context}" ]]; then
+      export class_loader_context="PCL[$i]"
+    else
+      export class_loader_context+="#PCL[$i]"
+    fi
+    if [[ $i == *"$hidl_manager"* ]]; then
+      export class_loader_context+="{PCL[${i/$hidl_manager/$hidl_base}]}"
+    fi
+  done
+
+  for i in $2; do
+    if [[ -z "${stored_class_loader_context}" ]]; then
+      export stored_class_loader_context="PCL[$i]"
+    else
+      export stored_class_loader_context+="#PCL[$i]"
+    fi
+    if [[ $i == *"$hidl_manager"* ]]; then
+      export stored_class_loader_context+="{PCL[${i/$hidl_manager/$hidl_base}]}"
+    fi
+  done
+}
+
+# The order below must match what the package manager also computes for
+# class loader context.
+
 if [[ "${target_sdk_version}" -lt "28" ]]; then
-  if [[ -z "${class_loader_context}" ]]; then
-    export class_loader_context="${my_conditional_host_libs}"
-  else
-    export class_loader_context="${my_conditional_host_libs}:${class_loader_context}"
-  fi
-  if [[ -z "${stored_class_loader_context_libs}" ]]; then
-    export stored_class_loader_context_libs="${my_conditional_target_libs}";
-  else
-    export stored_class_loader_context_libs="${my_conditional_target_libs}:${stored_class_loader_context_libs}";
-  fi
+  add_to_contexts "${conditional_host_libs_28}" "${conditional_target_libs_28}"
 fi
 
+if [[ "${target_sdk_version}" -lt "29" ]]; then
+  add_to_contexts "${conditional_host_libs_29}" "${conditional_target_libs_29}"
+fi
+
+add_to_contexts "${dex_preopt_host_libraries}" "${dex_preopt_target_libraries}"
+
 # Generate the actual context string.
-export class_loader_context_arg="--class-loader-context=PCL[${class_loader_context}]"
-export stored_class_loader_context_arg="--stored-class-loader-context=PCL[${stored_class_loader_context_libs}]"
+export class_loader_context_arg="--class-loader-context=PCL[]{${class_loader_context}}"
+export stored_class_loader_context_arg="--stored-class-loader-context=PCL[]{${stored_class_loader_context}}"
