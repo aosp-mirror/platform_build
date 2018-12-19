@@ -32,6 +32,8 @@ PRODUCT_PACKAGES += \
     IconShapeTeardropOverlay \
     local_time.default \
     power.default \
+    Settings \
+    SystemUI \
     vibrator.default \
 
 PRODUCT_PACKAGES_DEBUG += \

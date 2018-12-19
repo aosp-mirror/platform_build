@@ -78,12 +78,10 @@ PRODUCT_PACKAGES += \
     QuickSearchBox \
     screenrecord \
     SecureElement \
-    Settings \
     SettingsIntelligence \
     SharedStorageBackup \
     SimAppDialog \
     StorageManager \
-    SystemUI \
     Telecom \
     TelephonyProvider \
     TeleService \
