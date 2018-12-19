@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "00e46f38_eb394cbd",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2018-12-19T07:36:28Z",
+      "side": 1,
+      "message": "I\u0027ve updated it in patchset #5, thank you!",
+      "parentUuid": "918b2577_ec13d495",
+      "range": {
+        "startLine": 184,
+        "startChar": 2,
+        "endLine": 186,
+        "endChar": 6
+      },
+      "revId": "5880edc0cb2eadfcdc1e0185dfa051a1370b3206",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7e916226_d9c55e63",
         "filename": "envsetup.sh",
         "patchSetId": 3
@@ -57,6 +81,24 @@
       "revId": "5880edc0cb2eadfcdc1e0185dfa051a1370b3206",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eaeab6cd_d62cfc3b",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2018-12-19T07:36:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "de55cc99_21496870",
+      "revId": "5880edc0cb2eadfcdc1e0185dfa051a1370b3206",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
