@@ -40,7 +40,8 @@ PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
 
 # GSI specific tasks on boot
 PRODUCT_COPY_FILES += \
-    build/make/target/product/vndk/init.gsi.rc:system/etc/init/init.gsi.rc
+    build/make/target/product/gsi/skip_mount.cfg:system/etc/init/config/skip_mount.cfg \
+    build/make/target/product/gsi/init.gsi.rc:system/etc/init/init.gsi.rc \
 
 # Support addtional P vendor interface
 PRODUCT_EXTRA_VNDK_VERSIONS := 28
