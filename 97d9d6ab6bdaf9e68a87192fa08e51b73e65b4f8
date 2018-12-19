@@ -16,6 +16,24 @@
       "revId": "97d9d6ab6bdaf9e68a87192fa08e51b73e65b4f8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "adfd04ab_f3277d3a",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1576,
+      "author": {
+        "id": 1308044
+      },
+      "writtenOn": "2018-12-19T07:19:08Z",
+      "side": 1,
+      "message": "This variable will be set under internal branch.",
+      "parentUuid": "dc4bd023_a98524c5",
+      "revId": "97d9d6ab6bdaf9e68a87192fa08e51b73e65b4f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
