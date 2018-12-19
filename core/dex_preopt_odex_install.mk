@@ -192,7 +192,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_list, OptionalUsesLibraries,         $(LOCAL_OPTIONAL_USES_LIBRARIES))
   $(call add_json_list, UsesLibraries,                 $(LOCAL_USES_LIBRARIES))
   $(call add_json_map,  LibraryPaths)
-  $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy.impl),\
+  $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy.impl android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
     $(call add_json_str, $(lib), $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar))
   $(call end_json_map)
   $(call add_json_list, Archs,                         $(my_dexpreopt_archs))
@@ -233,7 +233,7 @@ ifdef LOCAL_DEX_PREOPT
   my_dexpreopt_deps := $(my_dex_jar)
   my_dexpreopt_deps += $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE))
   my_dexpreopt_deps += \
-    $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy.impl),\
+    $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy.impl android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar)
   my_dexpreopt_deps += $(LOCAL_DEX_PREOPT_IMAGE_LOCATION)
   # TODO: default boot images
