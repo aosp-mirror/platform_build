@@ -195,6 +195,7 @@ PRODUCT_PACKAGES += \
     locksettings \
     logcat \
     logd \
+    lpdump \
     lshal \
     mdnsd \
     media \
