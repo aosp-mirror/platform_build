@@ -3780,12 +3780,16 @@ ifdef BUILT_VENDOR_MATRIX
 endif
 ifneq ($(BOARD_SUPER_PARTITION_GROUPS),)
 	$(hide) echo "super_partition_groups=$(BOARD_SUPER_PARTITION_GROUPS)" > $(zip_root)/META/dynamic_partitions_info.txt
+	@# Remove 'vendor' from the group partition list if the image is not available. This should only
+	@# happen to AOSP targets built without vendor.img. We can't remove the partition from the
+	@# BoardConfig file, as it's still needed elsewhere (e.g. when creating super_empty.img).
 	$(foreach group,$(BOARD_SUPER_PARTITION_GROUPS), \
+	    $(eval _group_partition_list := $(BOARD_$(call to-upper,$(group))_PARTITION_LIST)) \
+	    $(if $(INSTALLED_VENDORIMAGE_TARGET),,$(eval _group_partition_list := $(filter-out vendor,$(_group_partition_list)))) \
 	    echo "$(group)_size=$(BOARD_$(call to-upper,$(group))_SIZE)" >> $(zip_root)/META/dynamic_partitions_info.txt; \
-	    $(if $(BOARD_$(call to-upper,$(group))_PARTITION_LIST), \
-	        echo "$(group)_partition_list=$(BOARD_$(call to-upper,$(group))_PARTITION_LIST)" >> $(zip_root)/META/dynamic_partitions_info.txt;))
-endif
-
+	    $(if $(_group_partition_list), \
+	        echo "$(group)_partition_list=$(_group_partition_list)" >> $(zip_root)/META/dynamic_partitions_info.txt;))
+endif # BOARD_SUPER_PARTITION_GROUPS
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    build/make/tools/releasetools/add_img_to_target_files -a -v -p $(HOST_OUT) $(zip_root)
 	@# Zip everything up, preserving symlinks and placing META/ files first to
