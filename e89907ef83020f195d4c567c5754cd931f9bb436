@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0b0199fb_c573500e",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-12-20T15:35:16Z",
+      "side": 1,
+      "message": "Why not use the same logic as PATH?",
+      "revId": "e89907ef83020f195d4c567c5754cd931f9bb436",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
