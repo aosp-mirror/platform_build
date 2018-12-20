@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b8f1eafb_c286d83d",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 729,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-20T01:27:23Z",
+      "side": 1,
+      "message": "nit: stashed (same for the use in var name)",
+      "range": {
+        "startLine": 729,
+        "startChar": 19,
+        "endLine": 729,
+        "endChar": 24
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c6b7397_00aa9c21",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-20T01:27:23Z",
+      "side": 1,
+      "message": "nit: max_allowed_blocks",
+      "range": {
+        "startLine": 749,
+        "startChar": 4,
+        "endLine": 749,
+        "endChar": 15
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "848c337a_945209bd",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-20T01:27:23Z",
+      "side": 1,
+      "message": "nit: or just max_stashed_blocks",
+      "range": {
+        "startLine": 761,
+        "startChar": 4,
+        "endLine": 761,
+        "endChar": 33
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85395261_0a7b153b",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 806,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-20T01:27:23Z",
+      "side": 1,
+      "message": "stashed_blocks + xf.src_ranges.size()",
+      "range": {
+        "startLine": 806,
+        "startChar": 48,
+        "endLine": 806,
+        "endChar": 68
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26fa5b02_875f7c88",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1349,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-20T01:27:23Z",
+      "side": 1,
+      "message": "nit: increase",
+      "range": {
+        "startLine": 1349,
+        "startChar": 9,
+        "endLine": 1349,
+        "endChar": 13
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb9a22e5_f50464c2",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1360,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-20T01:27:23Z",
+      "side": 1,
+      "message": "nit: compute",
+      "range": {
+        "startLine": 1360,
+        "startChar": 39,
+        "endLine": 1360,
+        "endChar": 47
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "411c7fdb_7719c114",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1378,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-20T01:27:23Z",
+      "side": 1,
+      "message": "99% is non-obvious. it should be 100 if \"the compressed size is smaller\" being the criteria?\n\nif we only care about \"the compressed size is smaller\", shall we just compare them directly, rather than computing a ratio?",
+      "range": {
+        "startLine": 1378,
+        "startChar": 20,
+        "endLine": 1378,
+        "endChar": 24
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "35a5859f_04f8573d",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1379,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-20T01:27:23Z",
+      "side": 1,
+      "message": "We should also update the transfers that save these stashes (i.e. xf\u0027.stash_before), similar to L815?",
+      "range": {
+        "startLine": 1379,
+        "startChar": 61,
+        "endLine": 1379,
+        "endChar": 73
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
