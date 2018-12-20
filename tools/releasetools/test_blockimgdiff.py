@@ -127,11 +127,11 @@ class BlockImageDiffTest(ReleaseToolsTestCase):
 
     # Sufficient cache to stash 5 blocks (size * 0.8 >= 5).
     common.OPTIONS.cache_size = 7 * 4096
-    self.assertEqual(0, block_image_diff.ReviseStashSize())
+    self.assertEqual((0, 5), block_image_diff.ReviseStashSize())
 
     # Insufficient cache to stash 5 blocks (size * 0.8 < 5).
     common.OPTIONS.cache_size = 6 * 4096
-    self.assertEqual(10, block_image_diff.ReviseStashSize())
+    self.assertEqual((10, 0), block_image_diff.ReviseStashSize())
 
   def test_ReviseStashSize_bug_33687949(self):
     """ReviseStashSize() should "free" the used stash _after_ the command.
@@ -169,7 +169,7 @@ class BlockImageDiffTest(ReleaseToolsTestCase):
 
     # Insufficient cache to stash 15 blocks (size * 0.8 < 15).
     common.OPTIONS.cache_size = 15 * 4096
-    self.assertEqual(15, block_image_diff.ReviseStashSize())
+    self.assertEqual((15, 5), block_image_diff.ReviseStashSize())
 
   def test_FileTypeSupportedByImgdiff(self):
     self.assertTrue(
