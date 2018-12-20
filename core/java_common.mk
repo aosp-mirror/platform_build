@@ -29,7 +29,7 @@ ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
     LOCAL_JAVA_LANGUAGE_VERSION := 1.7
   else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT)))
     LOCAL_JAVA_LANGUAGE_VERSION := 1.8
-  else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS))
+  else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS_USE_PREBUILT_SDK))
     # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
     LOCAL_JAVA_LANGUAGE_VERSION := 1.8
   else
@@ -276,7 +276,7 @@ ifndef LOCAL_IS_HOST_MODULE
       my_system_modules := $(DEFAULT_SYSTEM_MODULES)
     endif  # LOCAL_NO_STANDARD_LIBRARIES
 
-    ifneq (,$(TARGET_BUILD_APPS))
+    ifneq (,$(TARGET_BUILD_APPS_USE_PREBUILT_SDK))
       sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,system_current,$(lib_name)))
     else
       # When SDK libraries are referenced from modules built without SDK, provide the all APIs to them
@@ -291,7 +291,7 @@ ifndef LOCAL_IS_HOST_MODULE
              Choices are: $(TARGET_AVAILABLE_SDK_VERSIONS))
     endif
 
-    ifneq (,$(TARGET_BUILD_APPS)$(filter-out %current,$(LOCAL_SDK_VERSION)))
+    ifneq (,$(TARGET_BUILD_APPS_USE_PREBUILT_SDK)$(filter-out %current,$(LOCAL_SDK_VERSION)))
       # TARGET_BUILD_APPS mode or numbered SDK. Use prebuilt modules.
       sdk_module := $(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION))
       sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION),$(lib_name)))
@@ -333,7 +333,7 @@ ifndef LOCAL_IS_HOST_MODULE
   # related classes to be present. This change adds stubs needed for
   # javac to compile lambdas.
   ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-    ifdef TARGET_BUILD_APPS
+    ifdef TARGET_BUILD_APPS_USE_PREBUILT_SDK
       full_java_bootclasspath_libs += $(call java-lib-header-files,sdk-core-lambda-stubs)
     else
       full_java_bootclasspath_libs += $(call java-lib-header-files,core-lambda-stubs)
