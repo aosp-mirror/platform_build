@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "379618e0_9a96fd70",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 749,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-20T04:19:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c6b7397_00aa9c21",
+      "range": {
+        "startLine": 749,
+        "startChar": 4,
+        "endLine": 749,
+        "endChar": 15
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "848c337a_945209bd",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 7
@@ -68,6 +92,30 @@
       "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e73dcaf_1ee7b32f",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-20T04:19:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "848c337a_945209bd",
+      "range": {
+        "startLine": 761,
+        "startChar": 4,
+        "endLine": 761,
+        "endChar": 33
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -94,6 +142,30 @@
     },
     {
       "key": {
+        "uuid": "fc4b77b3_f8d1ee15",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 806,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-20T04:19:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "85395261_0a7b153b",
+      "range": {
+        "startLine": 806,
+        "startChar": 48,
+        "endLine": 806,
+        "endChar": 68
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "26fa5b02_875f7c88",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 7
@@ -114,6 +186,30 @@
       "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf12f9fa_6fdf5d17",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1349,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-20T04:19:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "26fa5b02_875f7c88",
+      "range": {
+        "startLine": 1349,
+        "startChar": 9,
+        "endLine": 1349,
+        "endChar": 13
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -140,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "7b3f49e4_c7e8ef3d",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1360,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-20T04:19:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cb9a22e5_f50464c2",
+      "range": {
+        "startLine": 1360,
+        "startChar": 39,
+        "endLine": 1360,
+        "endChar": 47
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "411c7fdb_7719c114",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 7
@@ -163,6 +283,30 @@
     },
     {
       "key": {
+        "uuid": "abd6d757_b15ade79",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1378,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-20T04:19:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "411c7fdb_7719c114",
+      "range": {
+        "startLine": 1378,
+        "startChar": 20,
+        "endLine": 1378,
+        "endChar": 24
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "35a5859f_04f8573d",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 7
@@ -174,6 +318,30 @@
       "writtenOn": "2018-12-20T01:27:23Z",
       "side": 1,
       "message": "We should also update the transfers that save these stashes (i.e. xf\u0027.stash_before), similar to L815?",
+      "range": {
+        "startLine": 1379,
+        "startChar": 61,
+        "endLine": 1379,
+        "endChar": 73
+      },
+      "revId": "4d181dd5bfea6b3011bb63ae0b78c579f25f8780",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "59701627_ff7684b7",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1379,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2018-12-20T04:19:31Z",
+      "side": 1,
+      "message": "We don\u0027t need to do it here. Since stash_before isn\u0027t used in the function, and the dependency will be cleared and regenerated in L977.",
+      "parentUuid": "35a5859f_04f8573d",
       "range": {
         "startLine": 1379,
         "startChar": 61,
