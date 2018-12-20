@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "161fbc92_00726a96",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1612,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-20T19:06:09Z",
+      "side": 1,
+      "message": "nit: can you remove this blank line? there shouldn\u0027t be any within a recipe",
+      "revId": "a4fe3e50eb5ddb35e6bf5abb78f2f7874e0bc144",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "792e7313_480b5a0f",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1617,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-20T19:06:09Z",
+      "side": 1,
+      "message": "using \u0027if\u0027 alone should be sufficient?",
+      "range": {
+        "startLine": 1617,
+        "startChar": 32,
+        "endLine": 1617,
+        "endChar": 34
+      },
+      "revId": "a4fe3e50eb5ddb35e6bf5abb78f2f7874e0bc144",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
