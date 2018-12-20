@@ -569,6 +569,13 @@ ALLOW_MISSING_DEPENDENCIES := true
 endif
 .KATI_READONLY := ALLOW_MISSING_DEPENDENCIES
 
+TARGET_BUILD_APPS_USE_PREBUILT_SDK :=
+ifdef TARGET_BUILD_APPS
+  ifndef UNBUNDLED_BUILD_SDKS_FROM_SOURCE
+    TARGET_BUILD_APPS_USE_PREBUILT_SDK := true
+  endif
+endif
+
 prebuilt_sdk_tools := prebuilts/sdk/tools
 prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
 
