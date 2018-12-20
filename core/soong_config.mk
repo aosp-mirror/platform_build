@@ -36,6 +36,7 @@ $(call add_json_csv,  Platform_version_future_codenames, $(PLATFORM_VERSION_FUTU
 
 $(call add_json_bool, Allow_missing_dependencies,        $(ALLOW_MISSING_DEPENDENCIES))
 $(call add_json_bool, Unbundled_build,                   $(TARGET_BUILD_APPS))
+$(call add_json_bool, Unbundled_build_sdks_from_source,  $(UNBUNDLED_BUILD_SDKS_FROM_SOURCE))
 $(call add_json_bool, Pdk,                               $(filter true,$(TARGET_BUILD_PDK)))
 
 $(call add_json_bool, Debuggable,                        $(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
