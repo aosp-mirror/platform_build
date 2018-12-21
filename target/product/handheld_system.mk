@@ -41,6 +41,7 @@ PRODUCT_PACKAGES += \
     Calendar \
     CalendarProvider \
     Camera2 \
+    cameraserver \
     CaptivePortalLogin \
     CertInstaller \
     clatd \
