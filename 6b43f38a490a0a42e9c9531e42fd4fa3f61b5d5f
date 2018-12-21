@@ -34,6 +34,24 @@
       "revId": "6b43f38a490a0a42e9c9531e42fd4fa3f61b5d5f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8dbd918f_57f5027f",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1018108
+      },
+      "writtenOn": "2018-12-21T15:33:06Z",
+      "side": 1,
+      "message": "I see, I just have to extend the Tools struct in config.go and pass the $(ZIPALIGN). Done.\n\n(Even though I see two different approaches for zip2zip on the soong side and this just creates 2 approaches for zipalign as well.)",
+      "parentUuid": "f9c2a66f_effe7ec0",
+      "revId": "6b43f38a490a0a42e9c9531e42fd4fa3f61b5d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
