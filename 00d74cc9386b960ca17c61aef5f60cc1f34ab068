@@ -16,6 +16,24 @@
       "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c1b2a95_5befd11b",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1018108
+      },
+      "writtenOn": "2018-12-21T10:36:39Z",
+      "side": 0,
+      "message": "There are a few classes in framework that reference conscrypt. Without conscrypt, these cannot be verified AOT. They shall be verified at runtime. (\"Had 11 soft failure(s) verifying all classes, and was asked to abort in such situations.\")",
+      "parentUuid": "2506a055_923f28f8",
+      "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

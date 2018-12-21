@@ -16,6 +16,24 @@
       "revId": "6b43f38a490a0a42e9c9531e42fd4fa3f61b5d5f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f9c2a66f_effe7ec0",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1018108
+      },
+      "writtenOn": "2018-12-21T10:36:39Z",
+      "side": 1,
+      "message": "If you tell me how...\n\nI tried putting it to the GenerateStripRule() with an `else if module.UncompressedDex` but while I can use tools.Zip2Zip, there is no tools.ZipAlign. I can make it work locally with hard-coded `Textf(\"out/soong/host/linux-x86/bin/zipalign\")` but that\u0027s surely not how we should do that.\n\nWhile I\u0027d prefer to use a pipe, zip2zip does not support \"-o -\" for writing to standard output (and I guess zipalign does not support reading from standard input either), so I would need to use a temporary file (just like \"align-package\" in definitions.mk) and delete it afterwards.",
+      "parentUuid": "26713ecc_1c2fbd75",
+      "revId": "6b43f38a490a0a42e9c9531e42fd4fa3f61b5d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
