@@ -16,6 +16,24 @@
       "revId": "e89907ef83020f195d4c567c5754cd931f9bb436",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4b9fdd8d_712b9514",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2018-12-21T08:22:18Z",
+      "side": 1,
+      "message": "local ANDROID_PYTHONPATH\u003d\"$T/development/python-packages:\"\nif [ -n $(echo $PYTHONPATH | grep $ANDROID_PYTHONPATH || true) ]; then\n    PYTHON_PATH\u003d${PYTHONPATH//$ANDROID_PYTHONPATH/}\nfi\nexport PYTHONPATH\u003d$ANDROID_PYTHONPATH$PYTHON_PATH\n\ndoes above catch up your idea?\n\nThanks!",
+      "parentUuid": "0b0199fb_c573500e",
+      "revId": "e89907ef83020f195d4c567c5754cd931f9bb436",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
