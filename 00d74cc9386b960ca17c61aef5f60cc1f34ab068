@@ -34,6 +34,24 @@
       "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a7832b59_739108a1",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-12-21T21:20:39Z",
+      "side": 0,
+      "message": "That means that any other dangling references in the boot image will now no longer be errors at build time, which is an unfortunate loss of build reliability.  Could they be whitelisted or something?",
+      "parentUuid": "8c1b2a95_5befd11b",
+      "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
