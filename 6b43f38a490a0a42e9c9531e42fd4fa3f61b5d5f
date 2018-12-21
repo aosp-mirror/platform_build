@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "26713ecc_1c2fbd75",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2018-12-21T05:43:29Z",
+      "side": 1,
+      "message": "We already have logic to uncompress the dex files in Soong, can you add this logic there?",
+      "revId": "6b43f38a490a0a42e9c9531e42fd4fa3f61b5d5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
