@@ -337,7 +337,7 @@ ifneq ($(filter address,$(my_global_sanitize) $(my_sanitize)),)
       my_ldflags += -Wl,--as-needed
     endif
 
-    ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+    ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
       ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
         my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_LINKER)
         # Make sure linker_asan get installed.
