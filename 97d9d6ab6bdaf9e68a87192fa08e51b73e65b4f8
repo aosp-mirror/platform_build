@@ -2,6 +2,69 @@
   "comments": [
     {
       "key": {
+        "uuid": "1d1806a4_64b05c5f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2018-12-22T06:05:33Z",
+      "side": 1,
+      "message": "How about adding source/lunch/make between aosp/internal?",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 5
+      },
+      "revId": "97d9d6ab6bdaf9e68a87192fa08e51b73e65b4f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fc2938e7_c0fd3371",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2018-12-22T06:05:33Z",
+      "side": 1,
+      "message": "# sanity check(b/121106770)\nif [ -n $ATEST_PYTHONPATH ]; then\n    export PYTHONPATH\u003d${PYTHONPATH/$ATEST_PYTHONPATH/}\nfi",
+      "revId": "97d9d6ab6bdaf9e68a87192fa08e51b73e65b4f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "999d7da7_28fa2904",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 535,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2018-12-22T06:05:33Z",
+      "side": 1,
+      "message": "delete it.",
+      "range": {
+        "startLine": 535,
+        "startChar": 0,
+        "endLine": 535,
+        "endChar": 22
+      },
+      "revId": "97d9d6ab6bdaf9e68a87192fa08e51b73e65b4f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "dc4bd023_a98524c5",
         "filename": "envsetup.sh",
         "patchSetId": 2
@@ -31,6 +94,24 @@
       "side": 1,
       "message": "This variable will be set under internal branch.",
       "parentUuid": "dc4bd023_a98524c5",
+      "revId": "97d9d6ab6bdaf9e68a87192fa08e51b73e65b4f8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c134ecb5_8147d316",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1576,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2018-12-22T06:05:33Z",
+      "side": 1,
+      "message": "Please leave these alone and add my comment in #267.",
+      "parentUuid": "adfd04ab_f3277d3a",
       "revId": "97d9d6ab6bdaf9e68a87192fa08e51b73e65b4f8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
