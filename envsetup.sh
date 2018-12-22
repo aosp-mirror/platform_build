@@ -266,7 +266,14 @@ function setpaths()
     fi
 
     export PATH=$ANDROID_BUILD_PATHS$PATH
-    export PYTHONPATH=$T/development/python-packages:$PYTHONPATH
+
+    # out with the duplicate old
+    if [ -n $ANDROID_PYTHONPATH ]; then
+        export PYTHONPATH=${PYTHONPATH//$ANDROID_PYTHONPATH/}
+    fi
+    # and in with the new
+    export ANDROID_PYTHONPATH=$T/development/python-packages:
+    export PYTHONPATH=$ANDROID_PYTHONPATH$PYTHONPATH
 
     export ANDROID_JAVA_HOME=$(get_abs_build_var ANDROID_JAVA_HOME)
     export JAVA_HOME=$ANDROID_JAVA_HOME
