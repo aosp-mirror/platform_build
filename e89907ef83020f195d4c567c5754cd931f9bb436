@@ -52,6 +52,24 @@
       "revId": "e89907ef83020f195d4c567c5754cd931f9bb436",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "debbfe29_47dc30cb",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2018-12-22T02:03:18Z",
+      "side": 1,
+      "message": "Thank you! Now I get the sense of the logic!",
+      "parentUuid": "8ca97a70_ce71facc",
+      "revId": "e89907ef83020f195d4c567c5754cd931f9bb436",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
