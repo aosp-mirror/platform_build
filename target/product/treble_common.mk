@@ -48,12 +48,13 @@ PRODUCT_COPY_FILES += \
 
 # GSI specific tasks on boot
 PRODUCT_COPY_FILES += \
-    build/make/target/product/vndk/init.gsi.rc:system/etc/init/init.gsi.rc
+    build/make/target/product/gsi/skip_mount.cfg:system/etc/init/config/skip_mount.cfg \
+    build/make/target/product/gsi/init.gsi.rc:system/etc/init/init.gsi.rc \
 
 # Support for the O-MR1 devices
 PRODUCT_COPY_FILES += \
-    build/make/target/product/vndk/init.legacy-gsi.rc:system/etc/init/init.legacy-gsi.rc \
-    build/make/target/product/vndk/init.vndk-27.rc:system/etc/init/gsi/init.vndk-27.rc
+    build/make/target/product/gsi/init.legacy-gsi.rc:system/etc/init/init.legacy-gsi.rc \
+    build/make/target/product/gsi/init.vndk-27.rc:system/etc/init/gsi/init.vndk-27.rc
 
 # Name space configuration file for non-enforcing VNDK
 PRODUCT_PACKAGES += \
