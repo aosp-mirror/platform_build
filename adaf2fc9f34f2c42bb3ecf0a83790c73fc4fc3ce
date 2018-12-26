@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6cef7ace_a8387ac1",
+        "filename": "core/main.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 1113,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2018-12-26T10:32:08Z",
+      "side": 1,
+      "message": "when this rule is executed?",
+      "range": {
+        "startLine": 1113,
+        "startChar": 0,
+        "endLine": 1113,
+        "endChar": 45
+      },
+      "revId": "adaf2fc9f34f2c42bb3ecf0a83790c73fc4fc3ce",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
