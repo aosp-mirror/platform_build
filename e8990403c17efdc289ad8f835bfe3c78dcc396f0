@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "7735f37c_009d1de1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-26T21:28:27Z",
+      "side": 1,
+      "message": "Yep, that was the plan, assuming we actually put the fingerprint in the min/max SDK (which requires everything reading the values not to choke on it before we start adding them).\n\nNow that we support building these against non-prebuilt SDKs this many not be quite as necessary of a dependency.",
+      "parentUuid": "4dfcf2d7_560254d5",
+      "revId": "e8990403c17efdc289ad8f835bfe3c78dcc396f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "72a22f08_08ae7ddc",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -60,6 +78,30 @@
     },
     {
       "key": {
+        "uuid": "851bf854_7f57c4de",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-26T21:28:27Z",
+      "side": 1,
+      "message": "I was hoping that distributed apks wouldn\u0027t rely on the test API, but yeah.. better safe than sorry.",
+      "parentUuid": "72a22f08_08ae7ddc",
+      "range": {
+        "startLine": 145,
+        "startChar": 22,
+        "endLine": 145,
+        "endChar": 92
+      },
+      "revId": "e8990403c17efdc289ad8f835bfe3c78dcc396f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6dcd253f_1ca85ff9",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -80,6 +122,30 @@
       "revId": "e8990403c17efdc289ad8f835bfe3c78dcc396f0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4685a417_5bdf29ef",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 431,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2018-12-26T21:28:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6dcd253f_1ca85ff9",
+      "range": {
+        "startLine": 431,
+        "startChar": 1,
+        "endLine": 431,
+        "endChar": 2
+      },
+      "revId": "e8990403c17efdc289ad8f835bfe3c78dcc396f0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
