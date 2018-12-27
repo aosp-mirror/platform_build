@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4c442c0b_56c0eeb1",
+        "filename": "core/config.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1069,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-12-27T21:13:59Z",
+      "side": 1,
+      "message": "Actually, the case should be \"if vendor is in BOARD_SUPER_PARTITION_BLOCK_DEVICES but super_vendor.img is unavailable\", not vendor.img. \n\nTechnically, you can have a setup with a physical vendor partition (that\u0027s part of super block devices) but no logical vendor partition; for example, we could technically remove the logical vendor partition from a retrofit device.\n\nBUT, I guess we don\u0027t have a check that\u0027s better than this...",
+      "range": {
+        "startLine": 1069,
+        "startChar": 65,
+        "endLine": 1069,
+        "endChar": 91
+      },
+      "revId": "4f2a09877afb524c4527b030d1711435fecfa7e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
