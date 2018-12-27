@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "36a65163_ebe189a1",
+        "filename": "core/main.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 1113,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2018-12-27T04:10:52Z",
+      "side": 1,
+      "message": "We may use \"certificate_violation_modules\" as a var name and a file name rather than using \u0027error\u0027 here.",
+      "range": {
+        "startLine": 1113,
+        "startChar": 0,
+        "endLine": 1113,
+        "endChar": 71
+      },
+      "revId": "d27f3e2149dfe1064d09bd4157ae0e87e6a929c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
