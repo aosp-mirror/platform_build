@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a5f2f62a_e3b7db96",
+        "filename": "core/config.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 1073,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-27T21:13:05Z",
+      "side": 1,
+      "message": "This part is too restrictive that always requires \"vendor\" available to build retrofit OTA package. PS8 relaxes this condition.",
+      "range": {
+        "startLine": 1066,
+        "startChar": 0,
+        "endLine": 1073,
+        "endChar": 59
+      },
+      "revId": "a06d4a179f8f869ccedbc04141a12f31f5daa2a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
