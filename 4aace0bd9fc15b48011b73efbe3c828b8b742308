@@ -34,6 +34,24 @@
       "revId": "4aace0bd9fc15b48011b73efbe3c828b8b742308",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "317ae7e6_9d34216e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-27T21:02:29Z",
+      "side": 1,
+      "message": "PS7 updated the logic by deriving a separate flag BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE to guard this.",
+      "parentUuid": "3174f731_158a7e72",
+      "revId": "4aace0bd9fc15b48011b73efbe3c828b8b742308",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
