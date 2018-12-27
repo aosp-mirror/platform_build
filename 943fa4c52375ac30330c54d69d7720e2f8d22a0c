@@ -22,6 +22,29 @@
       "revId": "943fa4c52375ac30330c54d69d7720e2f8d22a0c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99cd7ca3_ec70f32c",
+        "filename": "tools/releasetools/build_super_image.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-12-27T18:24:47Z",
+      "side": 0,
+      "message": "This code touch super image (super.img for non-retrofit and super_*.img for retrofit), but doesn\u0027t touch super_empty.img",
+      "range": {
+        "startLine": 148,
+        "startChar": 0,
+        "endLine": 159,
+        "endChar": 16
+      },
+      "revId": "943fa4c52375ac30330c54d69d7720e2f8d22a0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
