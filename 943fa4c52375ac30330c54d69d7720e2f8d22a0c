@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b7847a25_45db28e3",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 3784,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-12-27T20:21:54Z",
+      "side": 1,
+      "message": "vendor image is not needed when building super_empty.img. I think the problem lies elsewhere.",
+      "range": {
+        "startLine": 3784,
+        "startChar": 54,
+        "endLine": 3784,
+        "endChar": 88
+      },
+      "revId": "943fa4c52375ac30330c54d69d7720e2f8d22a0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
