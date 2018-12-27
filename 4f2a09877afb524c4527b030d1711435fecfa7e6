@@ -22,6 +22,53 @@
       "revId": "4f2a09877afb524c4527b030d1711435fecfa7e6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c46ea8f6_dd4f898c",
+        "filename": "core/config.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1069,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-27T21:48:27Z",
+      "side": 1,
+      "message": "\"super_vendor.img\" should be serving the retrofit OTA generation only? That is, the availability of that image should be a result of this BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE flag.\n\n\u003e Technically, you can have a setup with a physical vendor partition (that\u0027s part of super block devices) but no logical vendor partition; for example, we could technically remove the logical vendor partition from a retrofit device.\n\nHmm that sounds like effectively PS5 of this CL? PS5 would still generate a retrofit full OTA, with vendor setup as one of super block devices, but without the image for vendor partition. Since such a package won\u0027t be useful in practice, not generating that nor the super_*.img seems like a cleaner option.",
+      "parentUuid": "4c442c0b_56c0eeb1",
+      "range": {
+        "startLine": 1069,
+        "startChar": 65,
+        "endLine": 1069,
+        "endChar": 91
+      },
+      "revId": "4f2a09877afb524c4527b030d1711435fecfa7e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "757a47d7_974eb04a",
+        "filename": "core/config.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1072,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-27T21:48:27Z",
+      "side": 1,
+      "message": "When verifying this CL, realized this flag not working as I thought. For example, it would still be set to true when building aosp_blueline without vendor.img. Because https://android-review.googlesource.com/c/platform/build/+/855129/8/core/envsetup.mk#314 sets it as long as TARGET_COPY_OUT_VENDOR pointing to \u0027vendor\u0027 (as opposed to \u0027system/vendor\u0027).\n\nI\u0027ll upload a new PS after doing additional verification.",
+      "range": {
+        "startLine": 1072,
+        "startChar": 7,
+        "endLine": 1072,
+        "endChar": 37
+      },
+      "revId": "4f2a09877afb524c4527b030d1711435fecfa7e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
