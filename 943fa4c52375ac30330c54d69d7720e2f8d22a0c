@@ -22,6 +22,30 @@
       "revId": "943fa4c52375ac30330c54d69d7720e2f8d22a0c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a74524f8_452fabb7",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 3784,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-27T20:24:42Z",
+      "side": 1,
+      "message": "This comment is not saying \"needing vendor.img to build super_empty.img\".\n\nWe need \"vendor\" listed in $(BOARD_SUPER_PARTITION_GROUPS) (i.e. from BoardConfig), but not ending in dynamic_partitions_info.txt.",
+      "parentUuid": "b7847a25_45db28e3",
+      "range": {
+        "startLine": 3784,
+        "startChar": 54,
+        "endLine": 3784,
+        "endChar": 88
+      },
+      "revId": "943fa4c52375ac30330c54d69d7720e2f8d22a0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
