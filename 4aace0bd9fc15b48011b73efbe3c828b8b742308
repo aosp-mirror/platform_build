@@ -16,6 +16,24 @@
       "revId": "4aace0bd9fc15b48011b73efbe3c828b8b742308",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3174f731_158a7e72",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2018-12-27T20:27:14Z",
+      "side": 1,
+      "message": "My bad. This is indeed misleading (I was probably thinking about different approaches, with one of them having a side-effect of not generating super_empty.img).\n\nThis CL actually tries to address the issue with the retrofit full OTA package building (i.e. as part of `m dist`). It tries to keep allowing generating split super images, so that retrofit full OTA package building works.\n\nNow I think I can do this in a better way, to not generating them both (split super as well as retrofit full OTA), by computing a new make variable. I\u0027ll update this CL.",
+      "parentUuid": "673d257b_fb28380b",
+      "revId": "4aace0bd9fc15b48011b73efbe3c828b8b742308",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
