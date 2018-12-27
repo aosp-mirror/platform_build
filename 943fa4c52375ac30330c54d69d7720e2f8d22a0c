@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ac204ff5_5cd23286",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 666,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2018-12-27T18:20:34Z",
+      "side": 0,
+      "message": "I think this is the exact intention of the original code. If images are missing, built \u003d\u003d  False and it won\u0027t write the super_*.img here.",
+      "range": {
+        "startLine": 660,
+        "startChar": 0,
+        "endLine": 666,
+        "endChar": 17
+      },
+      "revId": "943fa4c52375ac30330c54d69d7720e2f8d22a0c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
