@@ -765,6 +765,9 @@ function findmakefile()
 {
     local TOPFILE=build/make/core/envsetup.mk
     local HERE=$PWD
+    if [ "$1" ]; then
+        \cd $1
+    fi;
     local T=
     while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
         T=`PWD= /bin/pwd`
@@ -845,24 +848,29 @@ function mmm()
             # Remove the leading ./ and trailing / if any exists.
             DIR=${DIR#./}
             DIR=${DIR%/}
-            if [ -f $DIR/Android.mk -o -f $DIR/Android.bp ]; then
-                local TO_CHOP=`(\cd -P -- $T && pwd -P) | wc -c | tr -d ' '`
-                local TO_CHOP=`expr $TO_CHOP + 1`
-                local START=`PWD= /bin/pwd`
-                local MDIR=`echo $START | cut -c${TO_CHOP}-`
-                if [ "$MDIR" = "" ] ; then
-                    MDIR=$DIR
-                else
-                    MDIR=$MDIR/$DIR
+            local M
+            if [ "$DIR_MODULES" = "" ]; then
+                M=$(findmakefile $DIR)
+            else
+                # Only check the target directory if a module is specified.
+                if [ -f $DIR/Android.mk -o -f $DIR/Android.bp ]; then
+                    local HERE=$PWD
+                    cd $DIR
+                    M=`PWD= /bin/pwd`
+                    M=$M/Android.mk
+                    cd $HERE
                 fi
-                MDIR=${MDIR%/.}
+            fi
+            if [ "$M" ]; then
+                # Remove the path to top as the makefilepath needs to be relative
+                local M=`echo $M|sed 's:'$T'/::'`
                 if [ "$DIR_MODULES" = "" ]; then
-                    MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN-$MDIR"
-                    GET_INSTALL_PATHS="$GET_INSTALL_PATHS GET-INSTALL-PATH-IN-$MDIR"
+                    MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN-$(dirname ${M})"
+                    GET_INSTALL_PATHS="$GET_INSTALL_PATHS GET-INSTALL-PATH-IN-$(dirname ${M})"
                 else
                     MODULES="$MODULES $DIR_MODULES"
                 fi
-                MAKEFILE="$MAKEFILE $MDIR/Android.mk"
+                MAKEFILE="$MAKEFILE $M"
             else
                 case $DIR in
                   showcommands | snod | dist | *=*) ARGS="$ARGS $DIR";;
