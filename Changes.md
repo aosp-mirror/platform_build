@@ -1,5 +1,15 @@
 # Build System Changes for Android.mk Writers
 
+## `USER` deprecation  {#USER}
+
+`USER` will soon be `nobody` in many cases due to the addition of a sandbox
+around the Android build. Most of the time you shouldn't need to know the
+identity of the user running the build, but if you do, it's available in the
+make variable `BUILD_USERNAME` for now.
+
+Similarly, the `hostname` tool will also be returning a more consistent value
+of `android-build`. The real value is available as `BUILD_HOSTNAME`.
+
 ## `BUILD_NUMBER` removal from Android.mk  {#BUILD_NUMBER}
 
 `BUILD_NUMBER` should not be used directly in Android.mk files, as it would
