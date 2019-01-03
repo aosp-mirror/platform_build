@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3e744fbe_c90b2e92",
+        "filename": "core/app_certificate_validate.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-01-03T18:45:01Z",
+      "side": 1,
+      "message": "Clear this at the end of the file",
+      "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88206219_4fd21680",
+        "filename": "core/app_certificate_validate.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-01-03T18:45:01Z",
+      "side": 1,
+      "message": "Why $(if,$(if,$(eval)) instead of ifeq? You don\u0027t really even need the temporary variable either",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 28
+      },
+      "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02b0cda7_20535568",
+        "filename": "core/app_certificate_validate.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-01-03T18:45:01Z",
+      "side": 1,
+      "message": "Should this really be a substring match, or should it be a prefix match?",
+      "range": {
+        "startLine": 9,
+        "startChar": 8,
+        "endLine": 9,
+        "endChar": 19
+      },
+      "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "08004f22_d6256b05",
+        "filename": "core/main.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 1102,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-01-03T18:45:01Z",
+      "side": 1,
+      "message": "Why not just build up the list as you find them, instead of having to search through all the packages at the end?",
+      "range": {
+        "startLine": 1099,
+        "startChar": 2,
+        "endLine": 1102,
+        "endChar": 52
+      },
+      "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c56fe591_34a5a174",
+        "filename": "core/main.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 1110,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-01-03T18:45:01Z",
+      "side": 1,
+      "message": "It would be a much better error message if this was printed once during each makefile load, since you could use $(call pretty-error) and get the makefile and name listed at the beginning of the line.\n\nYou could probably look up the makefile from here too if you didn\u0027t want to move it around.",
+      "range": {
+        "startLine": 1110,
+        "startChar": 8,
+        "endLine": 1110,
+        "endChar": 13
+      },
+      "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
