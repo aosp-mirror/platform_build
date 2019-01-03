@@ -319,10 +319,7 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
-    apex.test.key \
     arping \
-    com.android.apex.test_package.key \
-    com.android.apex.test_package.preinstall.key \
     iotop \
     iw \
     logpersist.start \
