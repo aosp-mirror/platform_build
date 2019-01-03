@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "ae7bb005_efdf308f",
+        "filename": "core/config.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1069,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-03T21:05:56Z",
+      "side": 1,
+      "message": "I understand this a bit better, but I am still confused. I understand the sentence like this:\n\nIf (physical) vendor is listed in super block devices, but without (logical) vendor image available (e.g. building an AOSP target without (logical) vendor image), don\u0027t build the retrofit full OTA package (which uses logical vendor image to build physical vendor partition image). \n\nThe reason we don\u0027t build is that we don\u0027t have a logical vendor image available. It seems to me that the sentence should be:\n\nIf (logical) vendor is listed in *super partition list*, but without (logical) vendor image available (e.g. building an AOSP target without (logical) vendor image), don\u0027t build the retrofit full OTA package (which uses logical vendor image to build physical vendor partition image). \n\nSo, I think L1071 should be $(filter vendor,$(BOARD_SUPER_PARTITION_PARTITION_LIST)).\n\n(It is a very nitty point; I don\u0027t think we have any targets that lists vendor in super block devices but not in super partition list).",
+      "parentUuid": "c46ea8f6_dd4f898c",
+      "range": {
+        "startLine": 1069,
+        "startChar": 65,
+        "endLine": 1069,
+        "endChar": 91
+      },
+      "revId": "4f2a09877afb524c4527b030d1711435fecfa7e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "757a47d7_974eb04a",
         "filename": "core/config.mk",
         "patchSetId": 8
