@@ -206,6 +206,7 @@ PRODUCT_PACKAGES += \
     MediaProvider \
     mediaserver \
     mke2fs \
+    ModuleMetadata \
     monkey \
     mtpd \
     ndc \
