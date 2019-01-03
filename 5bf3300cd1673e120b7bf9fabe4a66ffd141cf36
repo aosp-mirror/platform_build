@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f93ca1ba_9b97f2d6",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-03T13:29:55Z",
+      "side": 1,
+      "message": "already set in MainlineCommon",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 26
+      },
+      "revId": "5bf3300cd1673e120b7bf9fabe4a66ffd141cf36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8c952ce8_e1f52e07",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-03T13:29:55Z",
+      "side": 1,
+      "message": "this should probably be in MainlineCommon?",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 34
+      },
+      "revId": "5bf3300cd1673e120b7bf9fabe4a66ffd141cf36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88b1eb98_593e0d2e",
+        "filename": "target/board/generic_arm64_a/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-03T13:29:55Z",
+      "side": 1,
+      "message": "this is set in BoardConfigMainlineCommon which Gsi imports. Remove? (other files that set \u0027true\u0027 too)",
+      "revId": "5bf3300cd1673e120b7bf9fabe4a66ffd141cf36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b5df850_41ed29e7",
+        "filename": "target/board/generic_arm_ab/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-03T13:29:55Z",
+      "side": 1,
+      "message": "typo (Legacy). Same in other files",
+      "range": {
+        "startLine": 25,
+        "startChar": 2,
+        "endLine": 25,
+        "endChar": 9
+      },
+      "revId": "5bf3300cd1673e120b7bf9fabe4a66ffd141cf36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
