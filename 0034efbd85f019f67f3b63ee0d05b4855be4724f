@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f05cd9f9_59528c8c",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-01-03T17:47:28Z",
+      "side": 1,
+      "message": "This also needs to change",
+      "revId": "0034efbd85f019f67f3b63ee0d05b4855be4724f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
