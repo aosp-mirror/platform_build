@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "41094c14_8f0a62a1",
+        "filename": "core/config.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 1069,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-03T23:39:04Z",
+      "side": 1,
+      "message": "Ah now I see the confusing part, and it does seem to make a point. Although it looks like an infeasible case in practice, it\u0027s more consistent to align the conditions (i.e. all based on logical vendor). PS10 updated the varible at L1071.",
+      "parentUuid": "ae7bb005_efdf308f",
+      "range": {
+        "startLine": 1069,
+        "startChar": 65,
+        "endLine": 1069,
+        "endChar": 91
+      },
+      "revId": "4f2a09877afb524c4527b030d1711435fecfa7e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "757a47d7_974eb04a",
         "filename": "core/config.mk",
         "patchSetId": 8
