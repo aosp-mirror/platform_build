@@ -166,6 +166,30 @@
       "revId": "0b8d1e60074814bc242db8082baafb1b2a04fe47",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2cced6f3_d07e65f5",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 1616,
+      "author": {
+        "id": 1128890
+      },
+      "writtenOn": "2019-01-04T17:56:59Z",
+      "side": 1,
+      "message": "hey Dan, I\u0027ve outlined another approach in go/acloud-mac, can you take a look if you\u0027re ok with this change?",
+      "parentUuid": "94f00be9_5f436824",
+      "range": {
+        "startLine": 1616,
+        "startChar": 36,
+        "endLine": 1616,
+        "endChar": 88
+      },
+      "revId": "0b8d1e60074814bc242db8082baafb1b2a04fe47",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
