@@ -1620,12 +1620,13 @@ $(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RESOURCE_DIR := $(resource_dir)
 $(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_IMAGE_GENERATOR_JAR := $(image_generator_jar)
 $(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_ZOPFLIPNG := $(zopflipng)
 $(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RECOVERY_IMAGE_WIDTH := $(recovery_image_width)
-$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RECOVERY_TEXT_LIST := \
+$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RECOVERY_BACKGROUND_TEXT_LIST := \
   recovery_installing \
   recovery_installing_security \
   recovery_erasing \
   recovery_error \
-  recovery_no_command \
+  recovery_no_command
+$(RECOVERY_INSTALLING_TEXT_FILE): PRIVATE_RECOVERY_WIPE_DATA_TEXT_LIST := \
   recovery_cancel_wipe_data \
   recovery_factory_data_reset \
   recovery_try_again \
@@ -1637,17 +1638,17 @@ $(RECOVERY_INSTALLING_TEXT_FILE): $(image_generator_jar) $(resource_dir) $(recov
 	@rm -rf $(PRIVATE_RECOVERY_FONT_FILES_DIR)
 	@mkdir -p $(PRIVATE_RECOVERY_FONT_FILES_DIR)
 	$(foreach filename,$(PRIVATE_SOURCE_FONTS), cp $(filename) $(PRIVATE_RECOVERY_FONT_FILES_DIR) &&) true
-
 	@rm -rf $(dir $@)
 	@mkdir -p $(dir $@)
-	$(foreach text_name,$(PRIVATE_RECOVERY_TEXT_LIST), \
+	$(foreach text_name,$(PRIVATE_RECOVERY_BACKGROUND_TEXT_LIST) $(PRIVATE_RECOVERY_WIPE_DATA_TEXT_LIST), \
 	  $(eval output_file := $(dir $@)/$(patsubst recovery_%,%_text.png,$(text_name))) \
+	  $(eval center_alignment := $(if $(filter $(text_name),$(PRIVATE_RECOVERY_BACKGROUND_TEXT_LIST)), --center_alignment)) \
 	  java -jar $(PRIVATE_IMAGE_GENERATOR_JAR) \
 	    --image_width $(PRIVATE_RECOVERY_IMAGE_WIDTH) \
 	    --text_name $(text_name) \
 	    --font_dir $(PRIVATE_RECOVERY_FONT_FILES_DIR) \
 	    --resource_dir $(PRIVATE_RESOURCE_DIR) \
-	    --output_file $(output_file) && \
+	    --output_file $(output_file) $(center_alignment) && \
 	  $(PRIVATE_ZOPFLIPNG) -y --iterations=1 --filters=0 $(output_file) $(output_file) > /dev/null &&) true
 else
 RECOVERY_INSTALLING_TEXT_FILE :=
