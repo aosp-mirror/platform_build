@@ -34,6 +34,24 @@
       "revId": "4c0a2bca38d595ccc5200a7b8891a214ff0f8413",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "358329fc_aa60394d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-01-04T18:55:53Z",
+      "side": 1,
+      "message": "Most of the time they should be the same, as the same logical change should have the same Change-Id on every branch. The exceptions are mostly when doing partial backports, or changes that are not needed in downstream branches due to other reasons.",
+      "parentUuid": "59ad09f9_12f101b6",
+      "revId": "4c0a2bca38d595ccc5200a7b8891a214ff0f8413",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
