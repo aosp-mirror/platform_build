@@ -64,6 +64,7 @@ PRODUCT_PACKAGES += \
     debuggerd\
     DefaultContainerService \
     device_config \
+    dmctl \
     dnsmasq \
     DownloadProvider \
     dpm \
