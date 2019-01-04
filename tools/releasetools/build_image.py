@@ -75,8 +75,8 @@ def GetInodeUsage(path):
   """
   cmd = ["find", path, "-print"]
   output = common.RunAndCheckOutput(cmd, verbose=False)
-  # TODO(b/122328872) Fix estimation algorithm to not need the multiplier.
-  return output.count('\n') * 2
+  # increase by 25 % as number of files and directories is not whole picture.
+  return output.count('\n') * 30 // 24
 
 
 def GetFilesystemCharacteristics(image_path, sparse_image=True):
