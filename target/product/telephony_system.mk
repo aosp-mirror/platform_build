@@ -19,9 +19,7 @@
 
 PRODUCT_PACKAGES := \
     ANS \
-    CarrierConfig \
     CarrierDefaultApp \
-    Dialer \
     CallLogBackup \
     CellBroadcastReceiver \
     EmergencyInfo \
