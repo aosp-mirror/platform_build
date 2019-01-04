@@ -31,6 +31,7 @@ PRODUCT_PACKAGES += \
     RcsService \
     SafetyRegulatoryInfo \
     Stk \
+    Tag \
     TimeZoneUpdater \
 
 # Binaries
