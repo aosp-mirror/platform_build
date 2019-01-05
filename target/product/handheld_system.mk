@@ -56,7 +56,6 @@ PRODUCT_PACKAGES += \
     ExternalStorageProvider \
     FusedLocation \
     Gallery2 \
-    Home \
     InputDevices \
     KeyChain \
     LatinIME \
