@@ -67,6 +67,17 @@ def GetPartitionSizeFromImage(img):
     return os.path.getsize(img)
 
 
+def GetArgumentsForImage(partition, group, image=None):
+  image_size = GetPartitionSizeFromImage(image) if image else 0
+
+  cmd = ["--partition",
+         "{}:readonly:{}:{}".format(partition, image_size, group)]
+  if image:
+    cmd += ["--image", "{}={}".format(partition, image)]
+
+  return cmd
+
+
 def BuildSuperImageFromDict(info_dict, output):
 
   cmd = [info_dict["lpmake"],
@@ -107,26 +118,25 @@ def BuildSuperImageFromDict(info_dict, output):
 
     for partition in partition_list:
       image = info_dict.get("{}_image".format(partition))
-      image_size = 0
       if image:
-        image_size = GetPartitionSizeFromImage(image)
         has_image = True
-      if append_suffix:
-        cmd += ["--partition",
-                "{}_a:readonly:{}:{}_a".format(partition, image_size, group),
-                "--partition",
-                "{}_b:readonly:0:{}_b".format(partition, group)]
-        if image:
-          # For A/B devices, super partition always contains sub-partitions in
-          # the _a slot, because this image should only be used for
-          # bootstrapping / initializing the device. When flashing the image,
-          # bootloader fastboot should always mark _a slot as bootable.
-          cmd += ["--image", "{}_a={}".format(partition, image)]
-      else:
-        cmd += ["--partition",
-                "{}:readonly:{}:{}".format(partition, image_size, group)]
-        if image:
-          cmd += ["--image", "{}={}".format(partition, image)]
+
+      if not append_suffix:
+        cmd += GetArgumentsForImage(partition, group, image)
+        continue
+
+      # For A/B devices, super partition always contains sub-partitions in
+      # the _a slot, because this image should only be used for
+      # bootstrapping / initializing the device. When flashing the image,
+      # bootloader fastboot should always mark _a slot as bootable.
+      cmd += GetArgumentsForImage(partition + "_a", group + "_a", image)
+
+      other_image = None
+      if partition == "system" and "system_other_image" in info_dict:
+        other_image = info_dict["system_other_image"]
+        has_image = True
+
+      cmd += GetArgumentsForImage(partition + "_b", group + "_b", other_image)
 
   if has_image:
     cmd.append("--sparse")
@@ -147,6 +157,12 @@ def BuildSuperImageFromExtractedTargetFiles(inp, out):
   info_dict = common.LoadInfoDict(inp)
   partition_list = shlex.split(
       info_dict.get("dynamic_partition_list", "").strip())
+
+  if "system" in partition_list:
+    image_path = os.path.join(inp, "IMAGES", "system_other.img")
+    if os.path.isfile(image_path):
+      info_dict["system_other_image"] = image_path
+
   missing_images = []
   for partition in partition_list:
     image_path = os.path.join(inp, "IMAGES", "{}.img".format(partition))
