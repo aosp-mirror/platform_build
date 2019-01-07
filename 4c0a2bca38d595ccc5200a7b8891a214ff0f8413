@@ -52,6 +52,24 @@
       "revId": "4c0a2bca38d595ccc5200a7b8891a214ff0f8413",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3a0c82f1_379c7432",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1010681
+      },
+      "writtenOn": "2019-01-07T15:01:33Z",
+      "side": 1,
+      "message": "Ok, I thought you were meant to change it.\n\nNew change: http://r.android.com/862611",
+      "parentUuid": "358329fc_aa60394d",
+      "revId": "4c0a2bca38d595ccc5200a7b8891a214ff0f8413",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
