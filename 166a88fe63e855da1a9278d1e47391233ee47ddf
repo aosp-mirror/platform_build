@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "db40f28f_ffa37ece",
+        "filename": "core/app_certificate_validate.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-07T04:53:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e744fbe_c90b2e92",
+      "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "88206219_4fd21680",
         "filename": "core/app_certificate_validate.mk",
         "patchSetId": 12
@@ -39,6 +57,30 @@
       "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b266c2b_6c62137d",
+        "filename": "core/app_certificate_validate.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-07T04:53:03Z",
+      "side": 1,
+      "message": "Yes, I removed temporary variable.",
+      "parentUuid": "88206219_4fd21680",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 28
+      },
+      "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "e61c7c51_cc844109",
+        "filename": "core/app_certificate_validate.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-07T04:53:03Z",
+      "side": 1,
+      "message": "It should be prefix match.",
+      "parentUuid": "02b0cda7_20535568",
+      "range": {
+        "startLine": 9,
+        "startChar": 8,
+        "endLine": 9,
+        "endChar": 19
+      },
+      "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "08004f22_d6256b05",
         "filename": "core/main.mk",
         "patchSetId": 12
@@ -88,6 +154,30 @@
     },
     {
       "key": {
+        "uuid": "da4b1093_08cd4251",
+        "filename": "core/main.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 1102,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-07T04:53:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "08004f22_d6256b05",
+      "range": {
+        "startLine": 1099,
+        "startChar": 2,
+        "endLine": 1102,
+        "endChar": 52
+      },
+      "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "c56fe591_34a5a174",
         "filename": "core/main.mk",
         "patchSetId": 12
@@ -108,6 +198,30 @@
       "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d11f1d44_7df3e873",
+        "filename": "core/main.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 1110,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-07T04:53:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c56fe591_34a5a174",
+      "range": {
+        "startLine": 1110,
+        "startChar": 8,
+        "endLine": 1110,
+        "endChar": 13
+      },
+      "revId": "166a88fe63e855da1a9278d1e47391233ee47ddf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
