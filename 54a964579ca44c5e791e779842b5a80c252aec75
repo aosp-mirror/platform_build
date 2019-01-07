@@ -70,6 +70,29 @@
       "revId": "54a964579ca44c5e791e779842b5a80c252aec75",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7f638665_6665c894",
+        "filename": "target/product/treble_common_64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-07T01:13:08Z",
+      "side": 1,
+      "message": "Due to this is ARM64-only and the file will be also used for other 64bits CPU architecture, like x86_64.\nPlease put this from this file to aosp_arm64_ab.mk and aosp_arm64_a.mk.",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 44
+      },
+      "revId": "54a964579ca44c5e791e779842b5a80c252aec75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
