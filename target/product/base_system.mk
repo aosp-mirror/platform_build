@@ -16,6 +16,7 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
+    abb \
     adb \
     adbd \
     am \
