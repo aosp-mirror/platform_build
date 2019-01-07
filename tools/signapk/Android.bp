@@ -28,4 +28,10 @@ java_library_host {
     ],
 
     required: ["libconscrypt_openjdk_jni"],
+
+    // The post-build signing tools need signapk.jar (and its shared libraries,
+    // handled in their own Android.bp files)
+    dist: {
+        targets: ["droidcore"],
+    },
 }
