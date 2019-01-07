@@ -15,3 +15,6 @@
 #
 
 include build/make/target/board/treble_common.mk
+
+# Legacy GSI keeps 32 bits binder for 32 bits CPU Arch
+TARGET_USES_64_BIT_BINDER := false
