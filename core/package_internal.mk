@@ -678,8 +678,8 @@ ifneq ($(BUILD_PLATFORM_ZIP),)
 	@# Keep a copy of apk with classes.dex unstripped
 	$(hide) cp -f $@ $(dir $@)package.dex.apk
 endif  # BUILD_PLATFORM_ZIP
-	$(PRIVATE_STRIP_SCRIPT) $@ $@.tmp
-	mv -f $@.tmp $@
+	mv -f $@ $@.tmp
+	$(PRIVATE_STRIP_SCRIPT) $@.tmp $@
 endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 ifdef LOCAL_COMPRESSED_MODULE
