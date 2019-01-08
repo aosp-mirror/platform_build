@@ -20,6 +20,11 @@
 # base_vendor.mk.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base_vendor.mk)
 
+# /vendor packages
 PRODUCT_PACKAGES += \
     libaudiopreprocessing \
     libwebrtc_audio_preprocessing \
+
+# /product packages
+PRODUCT_PACKAGES += \
+    webview \

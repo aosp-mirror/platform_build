@@ -17,7 +17,13 @@
 # This is the list of modules that are specific to products that have telephony
 # hardware, and install outside the system partition.
 
+# /vendor packages
 PRODUCT_PACKAGES := \
     rild \
+
+# /product packages
+PRODUCT_PACKAGES += \
+    CarrierConfig \
+    Dialer \
 
 PRODUCT_COPY_FILES := \
