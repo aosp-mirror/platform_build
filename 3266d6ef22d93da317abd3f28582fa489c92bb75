@@ -22,6 +22,30 @@
       "revId": "3266d6ef22d93da317abd3f28582fa489c92bb75",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d4ce32ad_9e2a9efb",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2019-01-08T15:47:57Z",
+      "side": 1,
+      "message": "My CL was for shared libraries defined by product apps (eg dialer). For boot classpath jars, those are (at least currently) never in a product partition.",
+      "parentUuid": "0a402834_976d8147",
+      "range": {
+        "startLine": 6,
+        "startChar": 86,
+        "endLine": 6,
+        "endChar": 103
+      },
+      "revId": "3266d6ef22d93da317abd3f28582fa489c92bb75",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
