@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "301869c1_c61bac4e",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-08T09:15:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f93ca1ba_9b97f2d6",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 26
+      },
+      "revId": "5bf3300cd1673e120b7bf9fabe4a66ffd141cf36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8c952ce8_e1f52e07",
         "filename": "target/board/BoardConfigGsiCommon.mk",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2019-01-03T13:29:55Z",
       "side": 1,
       "message": "this should probably be in MainlineCommon?",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 34
+      },
+      "revId": "5bf3300cd1673e120b7bf9fabe4a66ffd141cf36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e45be62d_89b4d1d4",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-08T09:15:02Z",
+      "side": 1,
+      "message": "Maybe we could align the policy later.\n\nGSI\u0027s policy is including as most AOSP features as possible, it is for any vendor need it,\nso we include F2FS here.\n\nAs I know, some devices use F2FS for data partition.",
+      "parentUuid": "8c952ce8_e1f52e07",
       "range": {
         "startLine": 21,
         "startChar": 0,
@@ -65,6 +113,24 @@
     },
     {
       "key": {
+        "uuid": "4b6705f3_ab2d2a0c",
+        "filename": "target/board/generic_arm64_a/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-08T09:15:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "88b1eb98_593e0d2e",
+      "revId": "5bf3300cd1673e120b7bf9fabe4a66ffd141cf36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2b5df850_41ed29e7",
         "filename": "target/board/generic_arm_ab/BoardConfig.mk",
         "patchSetId": 3
@@ -85,6 +151,30 @@
       "revId": "5bf3300cd1673e120b7bf9fabe4a66ffd141cf36",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02931599_8993a54e",
+        "filename": "target/board/generic_arm_ab/BoardConfig.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-08T09:15:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2b5df850_41ed29e7",
+      "range": {
+        "startLine": 25,
+        "startChar": 2,
+        "endLine": 25,
+        "endChar": 9
+      },
+      "revId": "5bf3300cd1673e120b7bf9fabe4a66ffd141cf36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
