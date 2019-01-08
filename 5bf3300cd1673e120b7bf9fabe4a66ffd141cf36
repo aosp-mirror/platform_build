@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "60ce51e7_6b5d35f4",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-08T09:21:44Z",
+      "side": 1,
+      "message": "makes sense",
+      "parentUuid": "e45be62d_89b4d1d4",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 34
+      },
+      "revId": "5bf3300cd1673e120b7bf9fabe4a66ffd141cf36",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "88b1eb98_593e0d2e",
         "filename": "target/board/generic_arm64_a/BoardConfig.mk",
         "patchSetId": 3
