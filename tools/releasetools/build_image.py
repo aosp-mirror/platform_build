@@ -280,6 +280,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
         build_command.extend(["-S", prop_dict["hash_seed"]])
     if "ext4_share_dup_blocks" in prop_dict:
       build_command.append("-c")
+    build_command.extend(["--inode_size", "256"])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("squash"):
