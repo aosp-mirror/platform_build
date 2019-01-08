@@ -212,11 +212,6 @@ endif
 HIDDENAPI_EXTRA_APP_USAGE_JARS := \
     core-oj-hiddenapi \
 
-# Default to remove the org.apache.http.legacy from bootclasspath
-ifeq ($(REMOVE_OAHL_FROM_BCP),)
-REMOVE_OAHL_FROM_BCP := true
-endif
-
 # ###############################################################
 # Broken build defaults
 # ###############################################################
