@@ -73,6 +73,7 @@ PRODUCT_PACKAGES += \
     android.hardware.radio.deprecated@1.0 \
     android.hardware.secure_element@1.0 \
     android.hardware.tests.libhwbinder@1.0-impl \
+    android.hardware.wifi@1.0 \
     android.hidl.base@1.0 \
     libaudio-resampler \
     liblogwrap \
