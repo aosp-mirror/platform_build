@@ -859,11 +859,12 @@ def AddImagesToTargetFiles(filename):
     banner("vbmeta")
     AddVBMeta(output_zip, partitions, "vbmeta", vbmeta_partitions)
 
-  if OPTIONS.info_dict.get("build_super_partition"):
+  if OPTIONS.info_dict.get("build_super_partition") == "true":
     banner("super_empty")
     AddSuperEmpty(output_zip)
 
-    if OPTIONS.info_dict.get("dynamic_partition_retrofit") == "true":
+    if OPTIONS.info_dict.get(
+        "build_retrofit_dynamic_partitions_ota_package") == "true":
       banner("super split images")
       AddSuperSplit(output_zip)
 
