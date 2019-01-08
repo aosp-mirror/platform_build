@@ -357,11 +357,13 @@ endif
 ifneq ($(BUILD_PLATFORM_ZIP),)
 $(built_module) : .KATI_IMPLICIT_OUTPUTS := $(dir $(LOCAL_BUILT_MODULE))package.dex.apk
 endif
+ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 ifdef LOCAL_DEX_PREOPT
 $(built_module) : PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
 $(built_module) : $(intermediates)/strip.sh
 $(built_module) : | $(DEXPREOPT_GEN_DEPS)
 $(built_module) : .KATI_DEPFILE := $(built_module).d
+endif
 endif
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
@@ -387,8 +389,8 @@ endif
 	$(run-appcompat)
 endif  # module_run_appcompat
 ifdef LOCAL_DEX_PREOPT
-	$(PRIVATE_STRIP_SCRIPT) $@ $@.tmp
-	mv -f $@.tmp $@
+	mv -f $@ $@.tmp
+	$(PRIVATE_STRIP_SCRIPT) $@.tmp $@
 endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 	# No need for align-package because sign-package takes care of alignment
