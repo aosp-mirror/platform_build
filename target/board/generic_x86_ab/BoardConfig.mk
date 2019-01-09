@@ -22,12 +22,3 @@ TARGET_ARCH_VARIANT := x86
 
 # Legacy GSI keeps 32 bits binder for 32 bits CPU Arch
 TARGET_USES_64_BIT_BINDER := false
-
-# Enable System-as-Root
-TARGET_NO_RECOVERY := true
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
-
-# Set this to create /cache mount point for non-A/B devices that mounts /cache.
-# The partition size doesn't matter, just to make build pass.
-BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216

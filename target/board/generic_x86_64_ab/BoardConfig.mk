@@ -23,12 +23,3 @@ TARGET_ARCH_VARIANT := x86_64
 TARGET_2ND_CPU_ABI := x86
 TARGET_2ND_ARCH := x86
 TARGET_2ND_ARCH_VARIANT := x86_64
-
-# Enable System-as-Root
-TARGET_NO_RECOVERY := true
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
-
-# Set this to create /cache mount point for non-A/B devices that mounts /cache.
-# The partition size doesn't matter, just to make build pass.
-BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216
