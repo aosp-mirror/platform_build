@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-include build/make/target/board/treble_common_64.mk
+include build/make/target/board/BoardConfigGsiCommon.mk
 
 TARGET_CPU_ABI := x86_64
 TARGET_ARCH := x86_64
