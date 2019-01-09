@@ -46,25 +46,3 @@ PRODUCT_PACKAGES_DEBUG += \
     ExperimentNavigationBarSlimOverlay32 \
     ExperimentNavigationBarSlimOverlay40 \
     IconShapeSquareOverlay \
-
-# /product packages
-PRODUCT_PACKAGES += \
-    Browser2 \
-    Calendar \
-    Camera2 \
-    Contacts \
-    DeskClock \
-    Email \
-    Gallery2 \
-    LatinIME \
-    Launcher3QuickStep \
-    Music \
-    OneTimeInitializer \
-    PrintRecommendationService \
-    Provision \
-    QuickSearchBox \
-    Settings \
-    SettingsIntelligence \
-    StorageManager \
-    SystemUI \
-    WallpaperCropper \
