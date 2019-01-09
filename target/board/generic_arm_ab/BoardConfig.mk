@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-include build/make/target/board/treble_common_32.mk
+include build/make/target/board/BoardConfigGsiCommon.mk
 
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
@@ -22,7 +22,10 @@ TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_CPU_VARIANT := generic
 
-# Enable A/B update
+# Legacy GSI keeps 32 bits binder for 32 bits CPU Arch
+TARGET_USES_64_BIT_BINDER := false
+
+# Enable System-as-Root
 TARGET_NO_RECOVERY := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 
