@@ -46,6 +46,30 @@
       "revId": "81e2b03f36698118d004c4245728bf82e3aafb8a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7efe7735_59a0d8a5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2019-01-09T13:26:53Z",
+      "side": 1,
+      "message": "Thanks! Can you add that to the commit message?",
+      "parentUuid": "b0c68b5e_fe4c5f2d",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 61
+      },
+      "revId": "81e2b03f36698118d004c4245728bf82e3aafb8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
