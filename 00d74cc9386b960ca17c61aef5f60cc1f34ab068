@@ -88,6 +88,24 @@
       "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "afa3e2e8_0cdaa091",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2019-01-09T17:28:10Z",
+      "side": 0,
+      "message": "If we got problems with javac getting a too large classpath in the past, we could add a no-op dex2oat step that will abort on soft verifier error. Ideally we should detangle it from preopt really, as preopt can and is sometimes optional.",
+      "parentUuid": "409967aa_1acac1a8",
+      "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
