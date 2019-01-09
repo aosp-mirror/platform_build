@@ -913,8 +913,6 @@ vts_gen_include_root := $(intermediates)/vts-generated/include
 # Thus we'll actually generate source for each architecture.
 $(foreach s,$(vts_src),\
     $(eval $(call define-vts-cpp-rule,$(s),$(vts_gen_cpp_root),vts_gen_cpp)))
-$(foreach cpp,$(vts_gen_cpp), \
-    $(call include-depfile,$(addsuffix .vts.P,$(basename $(cpp))),$(cpp)))
 $(call track-src-file-gen,$(vts_src),$(vts_gen_cpp))
 
 $(vts_gen_cpp) : PRIVATE_MODULE := $(LOCAL_MODULE)
