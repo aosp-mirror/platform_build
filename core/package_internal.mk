@@ -87,6 +87,23 @@ else
   LOCAL_RESOURCE_DIR := $(foreach d,$(LOCAL_RESOURCE_DIR),$(call clean-path,$(d)))
 endif
 
+# If LOCAL_MODULE matches a rule in PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES,
+# override the manfest package name by the (first) rule matched
+override_manifest_name := $(strip $(word 1,\
+  $(foreach rule,$(PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES),\
+    $(eval _pkg_name_pat := $(call word-colon,1,$(rule)))\
+    $(eval _manifest_name_pat := $(call word-colon,2,$(rule)))\
+    $(if $(filter $(_pkg_name_pat),$(LOCAL_MODULE)),\
+      $(patsubst $(_pkg_name_pat),$(_manifest_name_pat),$(LOCAL_MODULE))\
+     )\
+   )\
+))
+
+ifneq (,$(override_manifest_name))
+# Note: this can override LOCAL_MANFEST_PACKAGE_NAME value set in Android.mk
+LOCAL_MANIFEST_PACKAGE_NAME := $(override_manifest_name)
+endif
+
 include $(BUILD_SYSTEM)/force_aapt2.mk
 
 # Process Support Library dependencies.
