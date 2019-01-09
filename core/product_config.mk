@@ -346,6 +346,11 @@ PRODUCT_SHIPPING_API_LEVEL := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SHI
 # used for adding properties to default.prop
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
+
+$(foreach rule,$(PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES),\
+    $(if $(filter 2,$(words $(subst :,$(space),$(rule)))),,\
+        $(error Rule "$(rule)" in PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDE is not <module_name>:<manifest_name>)))
+
 .KATI_READONLY := PRODUCT_DEFAULT_PROPERTY_OVERRIDES
 
 # A list of property assignments, like "key = value", with zero or more
@@ -549,3 +554,10 @@ PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION := \
 # set this variable to prevent OTA failures.
 PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS))
+
+# List of <module_name>:<manifest_name> pairs to override the manifest package name
+# of a module <module_name> to <manifest_name>. Patterns can be used as in
+# com.android.%:com.acme.android.%.release
+PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES))
+.KATI_READONLY := PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
