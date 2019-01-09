@@ -56,3 +56,6 @@ BOARD_USES_METADATA_PARTITION := true
 # The partition size doesn't matter, just to make build pass.
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216
+
+# Disable 64 bit mediadrmserver
+TARGET_ENABLE_MEDIADRM_64 :=
