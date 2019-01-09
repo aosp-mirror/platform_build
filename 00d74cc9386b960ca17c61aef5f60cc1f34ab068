@@ -70,6 +70,24 @@
       "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "409967aa_1acac1a8",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1041833
+      },
+      "writtenOn": "2019-01-09T17:00:18Z",
+      "side": 0,
+      "message": "You\u0027re incorrect, Nicolas. You get no errors at the dx level, and the javac level is not relevant because of things like \"shared libraries\" - the javac stage is sufficiently disconnected from the AoT stage to allow mismatch when not being careful with things like transitive dependencies (which is exactly why Colin asked - this check helped him in the past).",
+      "parentUuid": "c425684c_d4d1cd4d",
+      "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
