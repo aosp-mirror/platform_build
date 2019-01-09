@@ -22,6 +22,30 @@
       "revId": "81e2b03f36698118d004c4245728bf82e3aafb8a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b0c68b5e_fe4c5f2d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1065473
+      },
+      "writtenOn": "2019-01-09T13:18:21Z",
+      "side": 1,
+      "message": "Averages for quickened/non-compiled execution of maps which filled JIT code cache to ~4MB:\nQ:  code:1.55kb/method  data:0.738kb/method  debug:0.064kb/method (*this CL*)\nP:  code:1.62kb/method  data:0.956kb/method  debug:0.835kb/method (if enabled)\n\nAlternatively, I measured the P to Q on-disk stack maps savings in CL/762841 as ~28%.  Although not all of that is applicable to JIT, so that is overestimate.",
+      "parentUuid": "c8fe4fe6_31dae94f",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 61
+      },
+      "revId": "81e2b03f36698118d004c4245728bf82e3aafb8a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
