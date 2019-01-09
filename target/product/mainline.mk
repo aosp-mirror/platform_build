@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 The Android Open Source Project
+# Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,16 +14,8 @@
 # limitations under the License.
 #
 
-# This is the list of modules that are specific to products that have telephony
-# hardware, and install outside the system partition.
-
-# /vendor packages
-PRODUCT_PACKAGES := \
-    rild \
-
-# /product packages
-PRODUCT_PACKAGES += \
-    CarrierConfig \
-    Dialer \
-
-PRODUCT_COPY_FILES := \
+# Makefile including the mainline system image, and the relevant AOSP portions
+# for the other partitions.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_vendor.mk)
