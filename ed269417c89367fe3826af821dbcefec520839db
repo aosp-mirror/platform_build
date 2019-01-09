@@ -22,6 +22,30 @@
       "revId": "ed269417c89367fe3826af821dbcefec520839db",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "739dc4a9_cd2e4034",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1042885
+      },
+      "writtenOn": "2019-01-09T11:56:42Z",
+      "side": 1,
+      "message": "\u003e This obviously works, but could we not create /system/framework/conscrypt.jar in the first place?\n\nThat\u0027s the plan, but I want to do that in a follow-on change.",
+      "parentUuid": "30e48202_f18a846f",
+      "range": {
+        "startLine": 9,
+        "startChar": 27,
+        "endLine": 9,
+        "endChar": 114
+      },
+      "revId": "ed269417c89367fe3826af821dbcefec520839db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
