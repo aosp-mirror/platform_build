@@ -37,6 +37,8 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
   system/app/Calendar/Calendar.apk \
   system/app/Camera2/Camera2.apk \
   system/app/DeskClock/DeskClock.apk \
+  system/app/DeskClock/oat/arm64/DeskClock.odex \
+  system/app/DeskClock/oat/arm64/DeskClock.vdex \
   system/app/Email/Email.apk \
   system/app/Gallery2/Gallery2.apk \
   system/app/LatinIME/LatinIME.apk \
@@ -55,6 +57,8 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
   system/lib64/libjni_latinime.so \
   system/lib64/libjni_tinyplanet.so \
   system/priv-app/CarrierConfig/CarrierConfig.apk \
+  system/priv-app/CarrierConfig/oat/arm64/CarrierConfig.odex \
+  system/priv-app/CarrierConfig/oat/arm64/CarrierConfig.vdex \
   system/priv-app/Contacts/Contacts.apk \
   system/priv-app/Dialer/Dialer.apk \
   system/priv-app/Launcher3QuickStep/Launcher3QuickStep.apk \

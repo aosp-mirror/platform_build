@@ -14,10 +14,10 @@
 # limitations under the License.
 #
 
-# Makefile including the mainline system image, and the relevant AOSP portions
-# for the other partitions.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_product.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_product.mk)
+# This is the list of modules that are specific to products that have telephony
+# hardware, and install to the product partition.
+
+# /product packages
+PRODUCT_PACKAGES += \
+    CarrierConfig \
+    Dialer \
