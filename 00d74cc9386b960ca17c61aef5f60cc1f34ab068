@@ -52,6 +52,24 @@
       "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c425684c_d4d1cd4d",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2019-01-09T15:22:44Z",
+      "side": 0,
+      "message": "You\u0027ll still get errors at the javac / dx level if trying to access an unresolved class.\n\nWhitelisting them in dex2oat will be annoying given there are a few jars that are moving to modules.",
+      "parentUuid": "a7832b59_739108a1",
+      "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
