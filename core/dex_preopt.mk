@@ -88,7 +88,7 @@ $(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): $(HIDDENAPI) $(HIDDENAPI_STUBS) \
 ifeq ($(PRODUCT_DIST_BOOT_AND_SYSTEM_JARS),true)
 boot_profile_jars_zip := $(PRODUCT_OUT)/boot_profile_jars.zip
 all_boot_jars := \
-  $(foreach m,$(DEXPREOPT_BOOT_JARS_MODULES),$(PRODUCT_OUT)/system/framework/$(m).jar) \
+  $(foreach m,$(PRODUCT_BOOT_JARS),$(PRODUCT_OUT)/system/framework/$(m).jar) \
   $(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),$(PRODUCT_OUT)/system/framework/$(m).jar)
 
 $(boot_profile_jars_zip): PRIVATE_JARS := $(all_boot_jars)
