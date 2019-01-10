@@ -61,7 +61,7 @@ PRODUCT_PACKAGES += \
 # - These libraries are used by the new media code path that relies on new
 #   plugins and HAL implementations that may not exist on older devices.
 PRODUCT_PACKAGES += \
-    libmedia_codecserviceregistrant \
+    com.android.media.swcodec \
     libsfplugin_ccodec \
 
 # For ringtones that rely on forward lock encryption
