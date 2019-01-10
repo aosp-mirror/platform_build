@@ -202,6 +202,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_bool, ForceCreateAppImage,           $(filter true,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
   $(call add_json_bool, PresignedPrebuilt,             $(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
 
+  $(call add_json_bool, NoStripping,                   $(filter nostripping,$(LOCAL_DEX_PREOPT)))
   $(call add_json_str,  StripInputPath,                $$1)
   $(call add_json_str,  StripOutputPath,               $$2)
 
