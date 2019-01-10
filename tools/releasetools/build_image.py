@@ -428,16 +428,21 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       else:
         size -= free_size
         size += reserved_size
+        if reserved_size == 0:
+          # add .2% margin
+          size = size * 1002 // 1000
+        # Use a minimum size, otherwise we will fail to calculate an AVB footer
+        # or fail to construct an ext4 image.
+        size = max(size, 256 * 1024)
         if block_size <= 4096:
           size = common.RoundUpTo4K(size)
         else:
           size = ((size + block_size - 1) // block_size) * block_size
-        # Use a minimum size, otherwise we will fail to calculate an AVB footer
-        # or fail to construct an ext4 image.
-        size = max(size, 256 * 1024)
       extfs_inode_count = prop_dict["extfs_inode_count"]
       inodes = int(fs_dict.get("Inode count", extfs_inode_count))
       inodes -= int(fs_dict.get("Free inodes", "0"))
+      # add .2% margin
+      inodes = inodes * 1002 // 1000
       prop_dict["extfs_inode_count"] = str(inodes)
       prop_dict["partition_size"] = str(size)
       logger.info(
