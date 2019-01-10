@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "392cdfa5_ea2e0911",
+        "filename": "target/board/generic/BoardConfig.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2019-01-10T04:57:27Z",
+      "side": 1,
+      "message": "Not sure about sdk, but cts for 32-bit arm is built from aosp_arm64 (also mentioned in the comment below). Maybe you want to change target/board/generic_arm64/BoardConfig.mk, too?",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 77
+      },
+      "revId": "27932bf3a81eb8f4d81377fafa7100d457c29cb2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
