@@ -80,7 +80,7 @@ endif
 ifeq ($(strip $(HAS_BUILD_NUMBER)),false)
   # BUILD_NUMBER has a timestamp in it, which means that
   # it will change every time.  Pick a stable value.
-  FILE_NAME_TAG := eng.$(USER)
+  FILE_NAME_TAG := eng.$(BUILD_USERNAME)
 else
   FILE_NAME_TAG := $(file <$(BUILD_NUMBER_FILE))
 endif
