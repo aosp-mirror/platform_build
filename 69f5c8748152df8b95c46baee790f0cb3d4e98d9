@@ -70,6 +70,30 @@
       "revId": "69f5c8748152df8b95c46baee790f0cb3d4e98d9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04f8b6ea_c964ae48",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1048480
+      },
+      "writtenOn": "2019-01-10T06:45:23Z",
+      "side": 1,
+      "message": "Sure I\u0027ll make the change. FWIW, My teams\u0027 have preferred to use unique Change-Ids so that it\u0027s clear what the progression of changes is when looking at Merged-In tags.",
+      "parentUuid": "22301553_8c90b89c",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 52
+      },
+      "revId": "69f5c8748152df8b95c46baee790f0cb3d4e98d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
