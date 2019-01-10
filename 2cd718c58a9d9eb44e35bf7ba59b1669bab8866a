@@ -16,6 +16,24 @@
       "revId": "2cd718c58a9d9eb44e35bf7ba59b1669bab8866a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e2d21fa_7b5d2f80",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-10T08:42:09Z",
+      "side": 1,
+      "message": "Soong needs this path because appcompat needs it when it starts.\n\n(https://android-review.googlesource.com/c/platform/build/soong/+/867532/1/java/app_builder.go#59)",
+      "parentUuid": "327bb0f0_22b84fef",
+      "revId": "2cd718c58a9d9eb44e35bf7ba59b1669bab8866a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
