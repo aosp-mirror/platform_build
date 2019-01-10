@@ -106,6 +106,24 @@
       "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6f776d68_2163884c",
+        "filename": "core/dex_preopt_libart_boot.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2019-01-10T19:36:42Z",
+      "side": 0,
+      "message": "Filed b/122648702 for this.",
+      "parentUuid": "afa3e2e8_0cdaa091",
+      "revId": "00d74cc9386b960ca17c61aef5f60cc1f34ab068",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
