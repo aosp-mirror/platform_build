@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "55e89ebc_9338864a",
+        "filename": "core/soong_app_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-10T10:48:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "478c2b2b_3028a84a",
+      "range": {
+        "startLine": 93,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 81
+      },
+      "revId": "96775201e50e0c4ed01fb2879163454bba04a097",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fef06da7_56682e4a",
         "filename": "core/soong_app_prebuilt.mk",
         "patchSetId": 2
@@ -45,6 +69,30 @@
       "revId": "96775201e50e0c4ed01fb2879163454bba04a097",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c99467d_4aca55ae",
+        "filename": "core/soong_app_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-10T10:48:43Z",
+      "side": 1,
+      "message": "Move this logic to soong and use aapt2 in soong",
+      "parentUuid": "fef06da7_56682e4a",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 30
+      },
+      "revId": "96775201e50e0c4ed01fb2879163454bba04a097",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
