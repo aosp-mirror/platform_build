@@ -16,6 +16,24 @@
       "revId": "a122a7be8b7fddfb4bc62821b965f2f4346ba522",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "870701d7_266dfefc",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-10T02:28:43Z",
+      "side": 1,
+      "message": "Yeah, let\u0027s refactor step-by-step :)",
+      "parentUuid": "9fb5a4f6_c42433cc",
+      "revId": "a122a7be8b7fddfb4bc62821b965f2f4346ba522",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
