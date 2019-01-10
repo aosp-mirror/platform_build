@@ -6,6 +6,9 @@
 
 include build/make/target/board/BoardConfigMainlineCommon.mk
 
+# Enable system property split for Treble
+BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
+
 # This flag is set by mainline but isn't desired for GSI.
 BOARD_USES_SYSTEM_OTHER_ODEX :=
 
@@ -14,8 +17,16 @@ BOARD_USES_SYSTEM_OTHER_ODEX :=
 # we explicit specify this need below (even though it's the current default).
 TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
 
+# system.img is always ext4 with sparse option
+# GSI also includes make_f2fs to support userdata parition in f2fs
+# for some devices
+TARGET_USERIMAGES_USE_F2FS := true
+
 # Enable dynamic system image size and reserved 64MB in it.
 BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
+
+# Generic AOSP image always requires separate vendor.img
+TARGET_COPY_OUT_VENDOR := vendor
 
 # Android Verified Boot (AVB):
 #   Set AVB_VBMETA_IMAGE_FLAGS_VERIFICATION_DISABLED (--flag 2) in

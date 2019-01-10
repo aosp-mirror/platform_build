@@ -17,7 +17,7 @@
 # PRODUCT_PROPERTY_OVERRIDES cannot be used here because sysprops will be at
 # /vendor/[build|default].prop when build split is on. In order to have sysprops
 # on the generic system image, place them in build/make/target/board/
-# treble_system.prop.
+# gsi_system.prop.
 
 # aosp_x86_64_ab-userdebug is a Legacy GSI for the devices with:
 # - x86 64 bits user space
