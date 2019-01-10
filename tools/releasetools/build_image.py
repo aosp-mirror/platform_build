@@ -79,22 +79,26 @@ def GetInodeUsage(path):
   return output.count('\n') * 2
 
 
-def GetFilesystemCharacteristics(sparse_image_path):
-  """Returns various filesystem characteristics of "sparse_image_path".
+def GetFilesystemCharacteristics(image_path, sparse_image=True):
+  """Returns various filesystem characteristics of "image_path".
 
   Args:
-    sparse_image_path: The file to analyze.
+    image_path: The file to analyze.
+    sparse_image: Image is sparse
 
   Returns:
     The characteristics dictionary.
   """
-  unsparse_image_path = UnsparseImage(sparse_image_path, replace=False)
+  unsparse_image_path = image_path
+  if sparse_image:
+    unsparse_image_path = UnsparseImage(image_path, replace=False)
 
   cmd = ["tune2fs", "-l", unsparse_image_path]
   try:
     output = common.RunAndCheckOutput(cmd, verbose=False)
   finally:
-    os.remove(unsparse_image_path)
+    if sparse_image:
+      os.remove(unsparse_image_path)
   fs_dict = {}
   for line in output.splitlines():
     fields = line.split(":")
@@ -414,7 +418,10 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
           "First Pass based on estimates of %d MB and %s inodes.",
           size // BYTES_IN_MB, prop_dict["extfs_inode_count"])
       BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
-      fs_dict = GetFilesystemCharacteristics(out_file)
+      sparse_image = False
+      if "extfs_sparse_flag" in prop_dict:
+        sparse_image = True
+      fs_dict = GetFilesystemCharacteristics(out_file, sparse_image)
       os.remove(out_file)
       block_size = int(fs_dict.get("Block size", "4096"))
       free_size = int(fs_dict.get("Free blocks", "0")) * block_size
