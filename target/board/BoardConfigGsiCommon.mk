@@ -25,8 +25,12 @@ TARGET_USERIMAGES_USE_F2FS := true
 # Enable dynamic system image size and reserved 64MB in it.
 BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
 
-# Generic AOSP image always requires separate vendor.img
+# GSI always requires separate vendor packages to vendor.img
 TARGET_COPY_OUT_VENDOR := vendor
+
+# Creates metadata partition mount point under root for
+# the devices with metadata parition
+BOARD_USES_METADATA_PARTITION := true
 
 # Android Verified Boot (AVB):
 #   Set AVB_VBMETA_IMAGE_FLAGS_VERIFICATION_DISABLED (--flag 2) in
@@ -43,14 +47,12 @@ BOARD_AVB_SYSTEM_ALGORITHM := SHA256_RSA2048
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
 BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
 
+# GSI specific System Properties
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
 # GSI is always userdebug and needs a couple of properties taking precedence
 # over those set by the vendor.
 TARGET_SYSTEM_PROP := build/make/target/board/gsi_system.prop
 endif
-
-# Android generic system image always create metadata partition
-BOARD_USES_METADATA_PARTITION := true
 
 # Set this to create /cache mount point for non-A/B devices that mounts /cache.
 # The partition size doesn't matter, just to make build pass.
