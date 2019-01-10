@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "327bb0f0_22b84fef",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-01-10T08:17:37Z",
+      "side": 1,
+      "message": "wait, this doesn\u0027t seem right. why soong has to know make\u0027s internal directory?",
+      "revId": "2cd718c58a9d9eb44e35bf7ba59b1669bab8866a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
