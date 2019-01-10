@@ -16,9 +16,10 @@
 # arm emulator specific definitions
 TARGET_ARCH := arm
 
-# Note: Before Pi, we built the platform images for ARMv7-A _without_ NEON.
+# Note: Before P, we built the platform images for ARMv7-A _without_ NEON.
+# Note: Before Q, we built the CTS and SDK images for ARMv7-A _without_ NEON.
 #
-ifneq ($(TARGET_BUILD_APPS)$(filter cts sdk,$(MAKECMDGOALS)),)
+ifneq ($(TARGET_BUILD_APPS),)
 # DO NOT USE
 #
 # This architecture variant should NOT be used for 32 bit arm platform
