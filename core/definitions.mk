@@ -1023,7 +1023,7 @@ define transform-vts-to-cpp
 @mkdir -p $(dir $@)
 @mkdir -p $(PRIVATE_HEADER_OUTPUT_DIR)
 @echo "Generating C++ from VTS: $(PRIVATE_MODULE) <= $<"
-$(hide) $(VTSC) -d$(basename $@).vts.P $(PRIVATE_VTS_FLAGS) \
+$(hide) $(VTSC) -TODO_b/120496070 $(PRIVATE_VTS_FLAGS) \
     $< $(PRIVATE_HEADER_OUTPUT_DIR) $@
 endef
 
