@@ -46,6 +46,30 @@
       "revId": "69f5c8748152df8b95c46baee790f0cb3d4e98d9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "22301553_8c90b89c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-01-10T05:57:05Z",
+      "side": 1,
+      "message": "The Change-Id is supposed to be the same for the same logical change so that they can be mapped together w/gerrit and manually. 95%+ of the time the Change-Id and Merged-In lines should be same.",
+      "parentUuid": "4a5372fb_72a9cc8b",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 52
+      },
+      "revId": "69f5c8748152df8b95c46baee790f0cb3d4e98d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
