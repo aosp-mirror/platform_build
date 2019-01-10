@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3e3a4711_624dcfd7",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-01-10T05:24:56Z",
+      "side": 1,
+      "message": "I don\u0027t see where this side of the conditional writes to $(LOCAL_BUILT_MODULE), am I missing something?",
+      "range": {
+        "startLine": 130,
+        "startChar": 0,
+        "endLine": 134,
+        "endChar": 58
+      },
+      "revId": "8afeeedb205708e9c867567f6729ff7906c7d7d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
