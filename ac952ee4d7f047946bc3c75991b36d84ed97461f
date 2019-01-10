@@ -34,6 +34,24 @@
       "revId": "ac952ee4d7f047946bc3c75991b36d84ed97461f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f2b6848e_9c74e039",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-10T02:54:25Z",
+      "side": 1,
+      "message": "Ask I know, TARGET_ENABLE_MEDIADRM_64 is a not mandatory setting at this time.\nSo, some (maybe most) partners only provide 32-bits DRM libs.\n\nIf a device TARGET_ENABLE_MEDIADRM_64 is enabled, it will provide both 64-bits and 32-bits libs, like Pixel.\n\nIf you want to enable the setting on Mainline, it is better to disable it on GSI at this time.\nLet us to have more evaluate for this, and update it later if need.",
+      "parentUuid": "47a8977a_ece2f060",
+      "revId": "ac952ee4d7f047946bc3c75991b36d84ed97461f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
