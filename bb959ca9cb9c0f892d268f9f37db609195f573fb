@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5fcbf6f0_804895ec",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 10
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-11T01:33:20Z",
+      "side": 1,
+      "message": "This isn\u0027t used any more",
+      "revId": "bb959ca9cb9c0f892d268f9f37db609195f573fb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
