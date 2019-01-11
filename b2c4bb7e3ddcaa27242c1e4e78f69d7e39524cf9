@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "05fd274b_1519b13b",
+        "filename": "core/app_certificate_validate.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-11T11:38:41Z",
+      "side": 1,
+      "message": "would be good to define something like LOCAL_SYSTEM_MODULE in base_rules and reuse that instead of hard-coding this list in multiple places that all need to be updated as new partitions get added",
+      "revId": "b2c4bb7e3ddcaa27242c1e4e78f69d7e39524cf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
