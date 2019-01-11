@@ -1096,6 +1096,13 @@ ifdef FULL_BUILD
       $(TARGET_OUT_SYSTEM_OTHER)/%.vdex \
       $(TARGET_OUT_SYSTEM_OTHER)/%.art
   endif
+
+CERTIFICATE_VIOLATION_MODULES_FILENAME := $(PRODUCT_OUT)/certificate_violation_modules.txt
+$(CERTIFICATE_VIOLATION_MODULES_FILENAME):
+	rm -f $@
+	$(foreach m,$(sort $(CERTIFICATE_VIOLATION_MODULES)), echo $(m) >> $@;)
+$(call dist-for-goals,droidcore,$(CERTIFICATE_VIOLATION_MODULES_FILENAME))
+
   all_offending_files :=
   $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
     $(eval requirements := $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENTS)) \

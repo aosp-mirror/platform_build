@@ -306,6 +306,8 @@ else
   $(built_module) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 endif
 
+include $(BUILD_SYSTEM)/app_certificate_validate.mk
+
 # Disable dex-preopt of prebuilts to save space, if requested.
 ifndef LOCAL_DEX_PREOPT
 ifeq ($(DONT_DEXPREOPT_PREBUILTS),true)
