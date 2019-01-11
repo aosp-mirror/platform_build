@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "48f8a436_1cda953a",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2019-01-11T18:05:27Z",
+      "side": 1,
+      "message": "What\u0027s the point of this if branch?",
+      "revId": "170a0a1dd5cd8626b371b98867f9b2b00812d8b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23ed6552_f420c92e",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2019-01-11T18:05:27Z",
+      "side": 1,
+      "message": "This variable looks wrong",
+      "range": {
+        "startLine": 273,
+        "startChar": 28,
+        "endLine": 273,
+        "endChar": 49
+      },
+      "revId": "170a0a1dd5cd8626b371b98867f9b2b00812d8b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
