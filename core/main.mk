@@ -1089,12 +1089,6 @@ ifdef FULL_BUILD
   static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%
   # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
   static_whitelist_patterns += %__auto_generated_rro.apk
-  # $(PRODUCT_OUT)/apex is where shared libraries in APEXes get installed.
-  # The path can be considered as a fake path, as the shared libraries
-  # are installed there just to have symbols files for them under
-  # $(PRODUCT_OUT)/symbols/apex for debugging purpose. The /apex directory
-  # is never compiled into a filesystem image.
-  static_whitelist_patterns += $(PRODUCT_OUT)/apex/%
   ifeq (true,$(BOARD_USES_SYSTEM_OTHER_ODEX))
     # Allow system_other odex space optimization.
     static_whitelist_patterns += \
