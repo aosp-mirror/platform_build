@@ -33,15 +33,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     ext \
 
-# Why are we pulling in expat, which is used in frameworks, only, it seem?
-PRODUCT_PACKAGES += \
-    libexpat \
-
-# Libcore.
-PRODUCT_PACKAGES += \
-    libjavacore \
-    libopenjdk \
-
 # Libcore ICU. TODO: Try to figure out if/why we need them explicitly.
 PRODUCT_PACKAGES += \
     libicui18n \
