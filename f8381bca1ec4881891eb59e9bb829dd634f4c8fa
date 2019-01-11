@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "edc728f4_cfb7ab10",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1256966
+      },
+      "writtenOn": "2019-01-11T07:02:47Z",
+      "side": 1,
+      "message": "If we mount these under /mnt, it will be unmounted by vold.",
+      "parentUuid": "7245e8b9_38b22097",
+      "range": {
+        "startLine": 10,
+        "startChar": 8,
+        "endLine": 10,
+        "endChar": 25
+      },
+      "revId": "f8381bca1ec4881891eb59e9bb829dd634f4c8fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "5ce59c42_77735772",
         "filename": "target/product/gsi/skip_mount.cfg",
         "patchSetId": 1
@@ -132,6 +156,30 @@
       "side": 1,
       "message": "early mount",
       "parentUuid": "5ce59c42_77735772",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 8
+      },
+      "revId": "f8381bca1ec4881891eb59e9bb829dd634f4c8fa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5f57266_1a8ac463",
+        "filename": "target/product/gsi/skip_mount.cfg",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1256966
+      },
+      "writtenOn": "2019-01-11T07:02:47Z",
+      "side": 1,
+      "message": "We have another fstab in dt as extend, and we use it by hard code.\nThe fstab that GSI and Huawei both used, just have \"vendor\" and \"odm\".\nI found that someone add TriSkipMountParitions, I think it is a good and simple idea to solve the problame instead of make modifications in system/core.",
+      "parentUuid": "467c6606_bf136dc1",
       "range": {
         "startLine": 3,
         "startChar": 0,
