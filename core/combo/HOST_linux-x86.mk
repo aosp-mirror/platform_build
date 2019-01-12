@@ -26,5 +26,5 @@ endef
 
 # $(1): The file to check
 define get-file-size
-stat --format "%s" "$(1)" | tr -d '\n'
+stat -c "%s" "$(1)" | tr -d '\n'
 endef
