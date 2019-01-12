@@ -1711,6 +1711,8 @@ function acloud()
     case $host_os_arch in
         linux-x86) "$(gettop)"/prebuilts/asuite/acloud/linux-x86/acloud "$@"
         ;;
+        darwin-x86) "$(gettop)"/prebuilts/asuite/acloud/darwin-x86/acloud "$@"
+        ;;
     *)
         echo "acloud is not supported on your host arch: $host_os_arch"
         ;;
