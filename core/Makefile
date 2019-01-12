@@ -3124,7 +3124,7 @@ define check-sum-of-partition-sizes
   else \
     echo "The sum of sizes of [$(strip $(3))] is within $(strip $(1)):"; \
     echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '<=' "$(2)" '==' $$(( $(2) )); \
-  fi
+  fi;
 endef
 
 define check-all-partition-sizes-target
