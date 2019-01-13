@@ -79,22 +79,26 @@ def GetInodeUsage(path):
   return output.count('\n') * 2
 
 
-def GetFilesystemCharacteristics(sparse_image_path):
-  """Returns various filesystem characteristics of "sparse_image_path".
+def GetFilesystemCharacteristics(image_path, sparse_image=True):
+  """Returns various filesystem characteristics of "image_path".
 
   Args:
-    sparse_image_path: The file to analyze.
+    image_path: The file to analyze.
+    sparse_image: Image is sparse
 
   Returns:
     The characteristics dictionary.
   """
-  unsparse_image_path = UnsparseImage(sparse_image_path, replace=False)
+  unsparse_image_path = image_path
+  if sparse_image:
+    unsparse_image_path = UnsparseImage(image_path, replace=False)
 
   cmd = ["tune2fs", "-l", unsparse_image_path]
   try:
     output = common.RunAndCheckOutput(cmd, verbose=False)
   finally:
-    os.remove(unsparse_image_path)
+    if sparse_image:
+      os.remove(unsparse_image_path)
   fs_dict = {}
   for line in output.splitlines():
     fields = line.split(":")
@@ -280,6 +284,7 @@ def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
         build_command.extend(["-S", prop_dict["hash_seed"]])
     if "ext4_share_dup_blocks" in prop_dict:
       build_command.append("-c")
+    build_command.extend(["--inode_size", "256"])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("squash"):
@@ -413,7 +418,10 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
           "First Pass based on estimates of %d MB and %s inodes.",
           size // BYTES_IN_MB, prop_dict["extfs_inode_count"])
       BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
-      fs_dict = GetFilesystemCharacteristics(out_file)
+      sparse_image = False
+      if "extfs_sparse_flag" in prop_dict:
+        sparse_image = True
+      fs_dict = GetFilesystemCharacteristics(out_file, sparse_image)
       os.remove(out_file)
       block_size = int(fs_dict.get("Block size", "4096"))
       free_size = int(fs_dict.get("Free blocks", "0")) * block_size
@@ -427,16 +435,21 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       else:
         size -= free_size
         size += reserved_size
+        if reserved_size == 0:
+          # add .2% margin
+          size = size * 1002 // 1000
+        # Use a minimum size, otherwise we will fail to calculate an AVB footer
+        # or fail to construct an ext4 image.
+        size = max(size, 256 * 1024)
         if block_size <= 4096:
           size = common.RoundUpTo4K(size)
         else:
           size = ((size + block_size - 1) // block_size) * block_size
-        # Use a minimum size, otherwise we will fail to calculate an AVB footer
-        # or fail to construct an ext4 image.
-        size = max(size, 256 * 1024)
       extfs_inode_count = prop_dict["extfs_inode_count"]
       inodes = int(fs_dict.get("Inode count", extfs_inode_count))
       inodes -= int(fs_dict.get("Free inodes", "0"))
+      # add .2% margin
+      inodes = inodes * 1002 // 1000
       prop_dict["extfs_inode_count"] = str(inodes)
       prop_dict["partition_size"] = str(size)
       logger.info(

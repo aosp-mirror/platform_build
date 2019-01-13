@@ -100,4 +100,5 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 
 # Enable minidebuginfo generation unless overridden.
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    dalvik.vm.minidebuginfo=true \
     dalvik.vm.dex2oat-minidebuginfo=true

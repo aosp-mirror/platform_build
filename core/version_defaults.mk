@@ -321,7 +321,7 @@ ifndef BUILD_NUMBER
   # If no BUILD_NUMBER is set, create a useful "I am an engineering build
   # from this date/time" value.  Make it start with a non-digit so that
   # anyone trying to parse it as an integer will probably get "0".
-  BUILD_NUMBER := eng.$(shell echo $${USER:0:6}).$(shell $(DATE) +%Y%m%d.%H%M%S)
+  BUILD_NUMBER := eng.$(shell echo $${BUILD_USERNAME:0:6}).$(shell $(DATE) +%Y%m%d.%H%M%S)
   HAS_BUILD_NUMBER := false
 endif
 .KATI_READONLY := BUILD_NUMBER HAS_BUILD_NUMBER

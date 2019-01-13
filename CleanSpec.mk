@@ -532,6 +532,9 @@ $(call add-clean-step, rm -f .d)
 # Remove obsolete apps
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
 
+# Remove corrupt generated rule due to using toybox's sed
+$(call add-clean-step, rm -rf $(SOONG_OUT_DIR)/.intermediates/system/core/init/generated_stub_builtin_function_map)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

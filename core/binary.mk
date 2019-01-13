@@ -72,6 +72,9 @@ endif
 else
   my_native_coverage := false
 endif
+ifneq ($(NATIVE_COVERAGE),true)
+  my_native_coverage := false
+endif
 
 ifeq ($(strip $(ENABLE_XOM)),true)
   ifndef LOCAL_IS_HOST_MODULE
@@ -470,144 +473,6 @@ endif
 my_asflags += -D__ASSEMBLY__
 
 ###########################################################
-## Define PRIVATE_ variables from global vars
-###########################################################
-ifndef LOCAL_IS_HOST_MODULE
-ifdef LOCAL_USE_VNDK
-my_target_global_c_includes := \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES)
-my_target_global_c_system_includes := \
-    $(TARGET_OUT_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES)
-else ifdef LOCAL_SDK_VERSION
-my_target_global_c_includes :=
-my_target_global_c_system_includes := $(my_ndk_stl_include_path) $(my_ndk_sysroot_include)
-else ifdef BOARD_VNDK_VERSION
-my_target_global_c_includes := $(SRC_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
-my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
-else
-my_target_global_c_includes := $(SRC_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
-my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) $(TARGET_OUT_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
-endif
-
-my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
-my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
-my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
-ifeq ($(my_use_clang_lld),true)
-  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
-  include $(BUILD_SYSTEM)/pack_dyn_relocs_setup.mk
-  ifeq ($(my_pack_module_relocations),false)
-    my_target_global_ldflags += -Wl,--pack-dyn-relocs=none
-  endif
-else
-  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
-endif # my_use_clang_lld
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_target_global_c_includes)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_SYSTEM_INCLUDES := $(my_target_global_c_system_includes)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CFLAGS := $(my_target_global_cflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CONLYFLAGS := $(my_target_global_conlyflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(my_target_global_cppflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_LDFLAGS := $(my_target_global_ldflags)
-
-else # LOCAL_IS_HOST_MODULE
-
-my_host_global_c_includes := $(SRC_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
-my_host_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
-
-my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
-my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
-my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
-ifeq ($(my_use_clang_lld),true)
-  my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
-else
-  my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
-endif # my_use_clang_lld
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_host_global_c_includes)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_SYSTEM_INCLUDES := $(my_host_global_c_system_includes)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CFLAGS := $(my_host_global_cflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CONLYFLAGS := $(my_host_global_conlyflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CPPFLAGS := $(my_host_global_cppflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_LDFLAGS := $(my_host_global_ldflags)
-endif # LOCAL_IS_HOST_MODULE
-
-# To enable coverage for a given module, set LOCAL_NATIVE_COVERAGE=true and
-# build with NATIVE_COVERAGE=true in your enviornment. Note that the build
-# system is not sensitive to changes to NATIVE_COVERAGE, so you should do a
-# clean build of your module after toggling it.
-ifeq ($(NATIVE_COVERAGE),true)
-    ifeq ($(my_native_coverage),true)
-        # Note that clang coverage doesn't play nicely with acov out of the box.
-        # Clang apparently generates .gcno files that aren't compatible with
-        # gcov-4.8.  This can be solved by installing gcc-4.6 and invoking lcov
-        # with `--gcov-tool /usr/bin/gcov-4.6`.
-        #
-        # http://stackoverflow.com/questions/17758126/clang-code-coverage-invalid-output
-        my_cflags += --coverage -O0
-        my_ldflags += --coverage
-    endif
-
-    my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
-
-    $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_COVERAGE_LIB := $(my_coverage_lib)
-    $(LOCAL_INTERMEDIATE_TARGETS): $(my_coverage_lib)
-else
-    my_native_coverage := false
-endif
-
-###########################################################
-## Define PRIVATE_ variables used by multiple module types
-###########################################################
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_NO_DEFAULT_COMPILER_FLAGS := \
-    $(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS))
-
-ifeq ($(strip $(WITH_STATIC_ANALYZER)),)
-  LOCAL_NO_STATIC_ANALYZER := true
-endif
-
-ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
-  my_syntax_arch := host
-else
-  my_syntax_arch := $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-endif
-
-ifeq ($(strip $(my_cc)),)
-  my_cc := $(my_cc_wrapper) $(CLANG)
-endif
-
-SYNTAX_TOOLS_PREFIX := \
-    $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/libexec
-
-ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
-  my_cc := CCC_CC=$(CLANG) CLANG=$(CLANG) \
-           $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer
-endif
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CC := $(my_cc)
-
-ifeq ($(strip $(my_cxx)),)
-  my_cxx := $(my_cxx_wrapper) $(CLANG_CXX)
-endif
-
-ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
-  my_cxx := CCC_CXX=$(CLANG_CXX) CLANG_CXX=$(CLANG_CXX) \
-            $(SYNTAX_TOOLS_PREFIX)/c++-analyzer
-endif
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LINKER := $(my_linker)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CXX := $(my_cxx)
-
 # TODO: support a mix of standard extensions so that this isn't necessary
 LOCAL_CPP_EXTENSION := $(strip $(LOCAL_CPP_EXTENSION))
 ifeq ($(LOCAL_CPP_EXTENSION),)
@@ -913,8 +778,6 @@ vts_gen_include_root := $(intermediates)/vts-generated/include
 # Thus we'll actually generate source for each architecture.
 $(foreach s,$(vts_src),\
     $(eval $(call define-vts-cpp-rule,$(s),$(vts_gen_cpp_root),vts_gen_cpp)))
-$(foreach cpp,$(vts_gen_cpp), \
-    $(call include-depfile,$(addsuffix .vts.P,$(basename $(cpp))),$(cpp)))
 $(call track-src-file-gen,$(vts_src),$(vts_gen_cpp))
 
 $(vts_gen_cpp) : PRIVATE_MODULE := $(LOCAL_MODULE)
@@ -1445,6 +1308,8 @@ normal_objects += $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES
 
 all_objects := $(normal_objects) $(gen_o_objects)
 
+LOCAL_INTERMEDIATE_TARGETS += $(all_objects)
+
 # Cleanup file tracking
 $(foreach f,$(my_tracked_gen_files),$(eval my_src_file_gen_$(s):=))
 my_tracked_gen_files :=
@@ -1734,6 +1599,141 @@ endif
 # my_cxx_ldlibs may contain linker flags need to wrap certain libraries
 # (start-group/end-group), so append after the check above.
 my_ldlibs += $(my_cxx_ldlibs)
+
+###########################################################
+## Define PRIVATE_ variables from global vars
+###########################################################
+ifndef LOCAL_IS_HOST_MODULE
+ifdef LOCAL_USE_VNDK
+my_target_global_c_includes := \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES)
+my_target_global_c_system_includes := \
+    $(TARGET_OUT_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES)
+else ifdef LOCAL_SDK_VERSION
+my_target_global_c_includes :=
+my_target_global_c_system_includes := $(my_ndk_stl_include_path) $(my_ndk_sysroot_include)
+else ifdef BOARD_VNDK_VERSION
+my_target_global_c_includes := $(SRC_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
+my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
+else
+my_target_global_c_includes := $(SRC_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
+my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) $(TARGET_OUT_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
+endif
+
+my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
+my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
+my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
+ifeq ($(my_use_clang_lld),true)
+  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
+  include $(BUILD_SYSTEM)/pack_dyn_relocs_setup.mk
+  ifeq ($(my_pack_module_relocations),false)
+    my_target_global_ldflags += -Wl,--pack-dyn-relocs=none
+  endif
+else
+  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
+endif # my_use_clang_lld
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_target_global_c_includes)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_SYSTEM_INCLUDES := $(my_target_global_c_system_includes)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CFLAGS := $(my_target_global_cflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CONLYFLAGS := $(my_target_global_conlyflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(my_target_global_cppflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_LDFLAGS := $(my_target_global_ldflags)
+
+else # LOCAL_IS_HOST_MODULE
+
+my_host_global_c_includes := $(SRC_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
+my_host_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
+
+my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
+my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
+my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
+ifeq ($(my_use_clang_lld),true)
+  my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
+else
+  my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
+endif # my_use_clang_lld
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_host_global_c_includes)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_SYSTEM_INCLUDES := $(my_host_global_c_system_includes)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CFLAGS := $(my_host_global_cflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CONLYFLAGS := $(my_host_global_conlyflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CPPFLAGS := $(my_host_global_cppflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_LDFLAGS := $(my_host_global_ldflags)
+endif # LOCAL_IS_HOST_MODULE
+
+# To enable coverage for a given module, set LOCAL_NATIVE_COVERAGE=true and
+# build with NATIVE_COVERAGE=true in your enviornment.
+ifeq ($(NATIVE_COVERAGE),true)
+    ifeq ($(my_native_coverage),true)
+        # Note that clang coverage doesn't play nicely with acov out of the box.
+        # Clang apparently generates .gcno files that aren't compatible with
+        # gcov-4.8.  This can be solved by installing gcc-4.6 and invoking lcov
+        # with `--gcov-tool /usr/bin/gcov-4.6`.
+        #
+        # http://stackoverflow.com/questions/17758126/clang-code-coverage-invalid-output
+        my_cflags += --coverage -O0
+        my_ldflags += --coverage
+    endif
+
+    my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
+
+    $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_COVERAGE_LIB := $(my_coverage_lib)
+    $(LOCAL_INTERMEDIATE_TARGETS): $(my_coverage_lib)
+endif
+
+###########################################################
+## Define PRIVATE_ variables used by multiple module types
+###########################################################
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_NO_DEFAULT_COMPILER_FLAGS := \
+    $(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS))
+
+ifeq ($(strip $(WITH_STATIC_ANALYZER)),)
+  LOCAL_NO_STATIC_ANALYZER := true
+endif
+
+ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
+  my_syntax_arch := host
+else
+  my_syntax_arch := $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+endif
+
+ifeq ($(strip $(my_cc)),)
+  my_cc := $(my_cc_wrapper) $(CLANG)
+endif
+
+SYNTAX_TOOLS_PREFIX := \
+    $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/libexec
+
+ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
+  my_cc := CCC_CC=$(CLANG) CLANG=$(CLANG) \
+           $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer
+endif
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CC := $(my_cc)
+
+ifeq ($(strip $(my_cxx)),)
+  my_cxx := $(my_cxx_wrapper) $(CLANG_CXX)
+endif
+
+ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
+  my_cxx := CCC_CXX=$(CLANG_CXX) CLANG_CXX=$(CLANG_CXX) \
+            $(SYNTAX_TOOLS_PREFIX)/c++-analyzer
+endif
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LINKER := $(my_linker)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CXX := $(my_cxx)
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_YACCFLAGS := $(LOCAL_YACCFLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASFLAGS := $(my_asflags)

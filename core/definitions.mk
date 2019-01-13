@@ -77,6 +77,9 @@ ALL_FINDBUGS_FILES:=
 # GPL module license files
 ALL_GPL_MODULE_LICENSE_FILES:=
 
+# Packages with certificate violation
+CERTIFICATE_VIOLATION_MODULES :=
+
 # Target and host installed module's dependencies on shared libraries.
 # They are list of "<module_name>:<installed_file>:lib1,lib2...".
 TARGET_DEPENDENCIES_ON_SHARED_LIBRARIES :=
@@ -1023,7 +1026,7 @@ define transform-vts-to-cpp
 @mkdir -p $(dir $@)
 @mkdir -p $(PRIVATE_HEADER_OUTPUT_DIR)
 @echo "Generating C++ from VTS: $(PRIVATE_MODULE) <= $<"
-$(hide) $(VTSC) -d$(basename $@).vts.P $(PRIVATE_VTS_FLAGS) \
+$(hide) $(VTSC) -TODO_b/120496070 $(PRIVATE_VTS_FLAGS) \
     $< $(PRIVATE_HEADER_OUTPUT_DIR) $@
 endef
 

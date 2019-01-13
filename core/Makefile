@@ -317,7 +317,7 @@ $(intermediate_system_build_prop): PRIVATE_BUILD_DESC := $(build_desc)
 # The string used to uniquely identify the combined build and product; used by the OTA server.
 ifeq (,$(strip $(BUILD_FINGERPRINT)))
   ifeq ($(strip $(HAS_BUILD_NUMBER)),false)
-    BF_BUILD_NUMBER := $(USER)$$($(DATE_FROM_FILE) +%m%d%H%M)
+    BF_BUILD_NUMBER := $(BUILD_USERNAME)$$($(DATE_FROM_FILE) +%m%d%H%M)
   else
     BF_BUILD_NUMBER := $(file <$(BUILD_NUMBER_FILE))
   endif
@@ -420,6 +420,8 @@ endif
 	        BUILD_ID="$(BUILD_ID)" \
 	        BUILD_DISPLAY_ID="$(BUILD_DISPLAY_ID)" \
 	        DATE="$(DATE_FROM_FILE)" \
+	        BUILD_USERNAME="$(BUILD_USERNAME)" \
+	        BUILD_HOSTNAME="$(BUILD_HOSTNAME)" \
 	        BUILD_NUMBER="$(BUILD_NUMBER_FROM_FILE)" \
 	        BOARD_BUILD_SYSTEM_ROOT_IMAGE="$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)" \
 	        AB_OTA_UPDATER="$(AB_OTA_UPDATER)" \
@@ -3123,7 +3125,7 @@ define check-sum-of-partition-sizes
   else \
     echo "The sum of sizes of [$(strip $(3))] is within $(strip $(1)):"; \
     echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '<=' "$(2)" '==' $$(( $(2) )); \
-  fi
+  fi;
 endef
 
 define check-all-partition-sizes-target

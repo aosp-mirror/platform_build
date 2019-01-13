@@ -18,7 +18,7 @@
 # hardware, and install on the system partition.
 
 PRODUCT_PACKAGES := \
-    ANS \
+    ONS \
     CarrierDefaultApp \
     CallLogBackup \
     CellBroadcastReceiver \
