@@ -262,6 +262,7 @@ PRODUCT_PACKAGES += \
     uncrypt \
     usbd \
     vdc \
+    viewcompiler \
     voip-common \
     vold \
     WallpaperBackup \
