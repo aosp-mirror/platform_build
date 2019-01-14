@@ -113,7 +113,6 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--android-root=$(PRODUCT_OUT)/system \
 		--no-inline-from=core-oj.jar \
 		--abort-on-hard-verifier-error \
-		--abort-on-soft-verifier-error \
 		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS) \
 		|| ( echo "$(DEX2OAT_FAILURE_MESSAGE)" ; false )
 
