@@ -52,9 +52,7 @@ PRODUCT_PACKAGES += art-runtime
 # ART/dex helpers.
 PRODUCT_PACKAGES += art-tools
 # Android Runtime APEX module.
-ifneq ($(DONT_INCLUDE_RUNTIME_APEX), true)
-  PRODUCT_PACKAGES += com.android.runtime
-endif
+PRODUCT_PACKAGES += com.android.runtime
 
 # Certificates.
 PRODUCT_PACKAGES += \
