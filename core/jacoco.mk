@@ -51,7 +51,7 @@ $(my_unzipped_timestamp_path): $(LOCAL_FULL_CLASSES_PRE_JACOCO_JAR)
 	  -d $(PRIVATE_UNZIPPED_PATH) \
 	  $(PRIVATE_INCLUDE_ARGS)
 	(cd $(PRIVATE_UNZIPPED_PATH) && rm -rf $(PRIVATE_EXCLUDE_ARGS))
-	(cd $(PRIVATE_UNZIPPED_PATH) && find -not -name "*.class" -type f | xargs --no-run-if-empty rm)
+	(cd $(PRIVATE_UNZIPPED_PATH) && find -not -name "*.class" -type f -exec rm {} \;)
 	touch $(PRIVATE_UNZIPPED_TIMESTAMP_PATH)
 # Unfortunately in the previous task above,
 # 'rm -rf $(PRIVATE_EXCLUDE_ARGS)' needs to be a separate
