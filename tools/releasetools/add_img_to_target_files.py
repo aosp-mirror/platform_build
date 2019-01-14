@@ -82,17 +82,22 @@ FIXED_FILE_TIMESTAMP = int((
 
 
 class OutputFile(object):
-  def __init__(self, output_zip, input_dir, prefix, name):
-    self._output_zip = output_zip
-    self.input_name = os.path.join(input_dir, prefix, name)
+  """A helper class to write a generated file to the given dir or zip.
 
+  When generating images, we want the outputs to go into the given zip file, or
+  the given dir.
+
+  Attributes:
+    name: The name of the output file, regardless of the final destination.
+  """
+
+  def __init__(self, output_zip, input_dir, prefix, name):
+    # We write the intermediate output file under the given input_dir, even if
+    # the final destination is a zip archive.
+    self.name = os.path.join(input_dir, prefix, name)
+    self._output_zip = output_zip
     if self._output_zip:
       self._zip_name = os.path.join(prefix, name)
-
-      root, suffix = os.path.splitext(name)
-      self.name = common.MakeTempFile(prefix=root + '-', suffix=suffix)
-    else:
-      self.name = self.input_name
 
   def Write(self):
     if self._output_zip:
@@ -129,9 +134,9 @@ def AddSystem(output_zip, recovery_img=None, boot_img=None):
   output_zip. Returns the name of the system image file."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system.img")
-  if os.path.exists(img.input_name):
+  if os.path.exists(img.name):
     logger.info("system.img already exists; no need to rebuild...")
-    return img.input_name
+    return img.name
 
   def output_sink(fn, data):
     ofile = open(os.path.join(OPTIONS.input_tmp, "SYSTEM", fn), "w")
@@ -161,7 +166,7 @@ def AddSystemOther(output_zip):
   and store it in output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "system_other.img")
-  if os.path.exists(img.input_name):
+  if os.path.exists(img.name):
     logger.info("system_other.img already exists; no need to rebuild...")
     return
 
@@ -173,9 +178,9 @@ def AddVendor(output_zip):
   output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vendor.img")
-  if os.path.exists(img.input_name):
+  if os.path.exists(img.name):
     logger.info("vendor.img already exists; no need to rebuild...")
-    return img.input_name
+    return img.name
 
   block_list = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "vendor.map")
   CreateImage(OPTIONS.input_tmp, OPTIONS.info_dict, "vendor", img,
@@ -188,9 +193,9 @@ def AddProduct(output_zip):
   output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "product.img")
-  if os.path.exists(img.input_name):
+  if os.path.exists(img.name):
     logger.info("product.img already exists; no need to rebuild...")
-    return img.input_name
+    return img.name
 
   block_list = OutputFile(
       output_zip, OPTIONS.input_tmp, "IMAGES", "product.map")
@@ -206,9 +211,9 @@ def AddProductServices(output_zip):
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES",
                    "product_services.img")
-  if os.path.exists(img.input_name):
+  if os.path.exists(img.name):
     logger.info("product_services.img already exists; no need to rebuild...")
-    return img.input_name
+    return img.name
 
   block_list = OutputFile(
       output_zip, OPTIONS.input_tmp, "IMAGES", "product_services.map")
@@ -222,9 +227,9 @@ def AddOdm(output_zip):
   """Turn the contents of ODM into an odm image and store it in output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "odm.img")
-  if os.path.exists(img.input_name):
+  if os.path.exists(img.name):
     logger.info("odm.img already exists; no need to rebuild...")
-    return img.input_name
+    return img.name
 
   block_list = OutputFile(
       output_zip, OPTIONS.input_tmp, "IMAGES", "odm.map")
@@ -241,9 +246,9 @@ def AddDtbo(output_zip):
   image under PREBUILT_IMAGES/, signs it as needed, and returns the image name.
   """
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "dtbo.img")
-  if os.path.exists(img.input_name):
+  if os.path.exists(img.name):
     logger.info("dtbo.img already exists; no need to rebuild...")
-    return img.input_name
+    return img.name
 
   dtbo_prebuilt_path = os.path.join(
       OPTIONS.input_tmp, "PREBUILT_IMAGES", "dtbo.img")
@@ -344,7 +349,7 @@ def AddUserdata(output_zip):
   """
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "userdata.img")
-  if os.path.exists(img.input_name):
+  if os.path.exists(img.name):
     logger.info("userdata.img already exists; no need to rebuild...")
     return
 
@@ -418,9 +423,9 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
 
   img = OutputFile(
       output_zip, OPTIONS.input_tmp, "IMAGES", "{}.img".format(name))
-  if os.path.exists(img.input_name):
+  if os.path.exists(img.name):
     logger.info("%s.img already exists; not rebuilding...", name)
-    return img.input_name
+    return img.name
 
   avbtool = os.getenv('AVBTOOL') or OPTIONS.info_dict["avb_avbtool"]
   cmd = [avbtool, "make_vbmeta_image", "--output", img.name]
@@ -497,7 +502,7 @@ def AddCache(output_zip):
   """Create an empty cache image and store it in output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES", "cache.img")
-  if os.path.exists(img.input_name):
+  if os.path.exists(img.name):
     logger.info("cache.img already exists; no need to rebuild...")
     return
 
