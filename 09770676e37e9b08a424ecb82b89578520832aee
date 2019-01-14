@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c6f05bde_84ff1732",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 1581,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-14T22:21:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f2493d16_b9687b15",
+      "range": {
+        "startLine": 1581,
+        "startChar": 0,
+        "endLine": 1581,
+        "endChar": 0
+      },
+      "revId": "09770676e37e9b08a424ecb82b89578520832aee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9366bbcf_fa6cc961",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 11
@@ -45,6 +69,30 @@
       "revId": "09770676e37e9b08a424ecb82b89578520832aee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8c70611_cb480215",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 1767,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-14T22:21:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9366bbcf_fa6cc961",
+      "range": {
+        "startLine": 1767,
+        "startChar": 61,
+        "endLine": 1767,
+        "endChar": 71
+      },
+      "revId": "09770676e37e9b08a424ecb82b89578520832aee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "3ba6127b_eb338c40",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 2272,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-14T22:21:13Z",
+      "side": 1,
+      "message": "yes if the partition is in dynamic_partition_list but not listed in any groups (won\u0027t happen in normal builds, but could happen if it is a bad build). I\u0027ll change these to an assert.",
+      "parentUuid": "75d06372_a81d79a5",
+      "range": {
+        "startLine": 2270,
+        "startChar": 4,
+        "endLine": 2272,
+        "endChar": 62
+      },
+      "revId": "09770676e37e9b08a424ecb82b89578520832aee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f95f8122_d00e91c1",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 11
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "a61ae4ed_6ab309f9",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 2316,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-14T22:21:13Z",
+      "side": 1,
+      "message": "good catch!",
+      "parentUuid": "f95f8122_d00e91c1",
+      "range": {
+        "startLine": 2316,
+        "startChar": 35,
+        "endLine": 2316,
+        "endChar": 37
+      },
+      "revId": "09770676e37e9b08a424ecb82b89578520832aee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eb38c97d_eb5ba15b",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 11
@@ -114,6 +210,30 @@
       "revId": "09770676e37e9b08a424ecb82b89578520832aee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eaed58d7_ece27281",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 11
+      },
+      "lineNbr": 1584,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-14T22:21:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eb38c97d_eb5ba15b",
+      "range": {
+        "startLine": 1584,
+        "startChar": 4,
+        "endLine": 1584,
+        "endChar": 35
+      },
+      "revId": "09770676e37e9b08a424ecb82b89578520832aee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
