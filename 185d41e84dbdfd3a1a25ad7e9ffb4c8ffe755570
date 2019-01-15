@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aba6d517_8b1665fa",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-01-15T14:10:45Z",
+      "side": 1,
+      "message": "manifest",
+      "range": {
+        "startLine": 91,
+        "startChar": 15,
+        "endLine": 91,
+        "endChar": 22
+      },
+      "revId": "185d41e84dbdfd3a1a25ad7e9ffb4c8ffe755570",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71c66735_987bdb0f",
+        "filename": "core/package_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-01-15T14:10:45Z",
+      "side": 1,
+      "message": "LOCAL_MANIFEST_PACKAGE_NAME",
+      "revId": "185d41e84dbdfd3a1a25ad7e9ffb4c8ffe755570",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
