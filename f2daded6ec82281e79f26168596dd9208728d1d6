@@ -260,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "6ff3f81c_08989abf",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2312,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T21:28:58Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e2a3db26_d9949657",
+      "range": {
+        "startLine": 2312,
+        "startChar": 8,
+        "endLine": 2312,
+        "endChar": 31
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "64c08a03_64f9ebf6",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
@@ -355,6 +379,30 @@
     },
     {
       "key": {
+        "uuid": "02047d12_2cd2a1e7",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2336,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T21:28:58Z",
+      "side": 1,
+      "message": "Is it allowed to have partitions in the default group before or after an OTA? For example, P is initially in default group, but later added to group G1 during OTA. It seems for such a case, P.src_group would be None, and P.tgt_group being G1. It will then follow the path at L2366 that calls \"add P G1\", as opposed to \"move P G1\"?",
+      "parentUuid": "7e4ead27_a5faaf32",
+      "range": {
+        "startLine": 2336,
+        "startChar": 9,
+        "endLine": 2336,
+        "endChar": 67
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9fa86233_ff388520",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
@@ -402,6 +450,30 @@
     },
     {
       "key": {
+        "uuid": "c1771362_cada3ab4",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2350,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T21:28:58Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b0a34ac9_8bb7b674",
+      "range": {
+        "startLine": 2349,
+        "startChar": 6,
+        "endLine": 2350,
+        "endChar": 35
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "79ce7201_d060af7b",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 12
@@ -413,6 +485,24 @@
       "writtenOn": "2019-01-15T20:56:38Z",
       "side": 1,
       "message": "Tao, maybe call \n\n    for e in device_specific_diffs: e.WriteScript(...) \n\nhere?",
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "708d6921_6e834da4",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 868,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T21:28:58Z",
+      "side": 1,
+      "message": "+1. that makes *_GetBlockDifferences being a more general solution, even for non-DAP devices",
+      "parentUuid": "79ce7201_d060af7b",
       "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
