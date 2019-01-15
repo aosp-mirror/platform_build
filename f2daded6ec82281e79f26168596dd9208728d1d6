@@ -403,6 +403,30 @@
     },
     {
       "key": {
+        "uuid": "2c772611_1dcdb48b",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2336,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-15T23:59:19Z",
+      "side": 1,
+      "message": "No (except scratch partition).\n\n\"default\" is not expected to be a valid group at build time (although, I haven\u0027t black list that name). But even if \"default\" is, then it is expected that P.src_group to be \"default\" and tgt_group to be \"G1\". \"default\" doesn\u0027t get map to \"None\". None means the partition does not exist at all.",
+      "parentUuid": "02047d12_2cd2a1e7",
+      "range": {
+        "startLine": 2336,
+        "startChar": 9,
+        "endLine": 2336,
+        "endChar": 67
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9fa86233_ff388520",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
