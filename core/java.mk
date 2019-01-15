@@ -74,8 +74,8 @@ built_dex_intermediate := $(intermediates.COMMON)/dex/classes.dex
 built_dex_hiddenapi := $(intermediates.COMMON)/dex-hiddenapi/classes.dex
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 java_source_list_file := $(intermediates.COMMON)/java-source-list
-greylist_txt := $(intermediates.COMMON)/greylist.txt
-
+hiddenapi_flags_csv := $(intermediates.COMMON)/hiddenapi/flags.csv
+hiddenapi_metadata_csv := $(intermediates.COMMON)/hiddenapi/greylist.csv
 
 ifeq ($(LOCAL_MODULE_CLASS)$(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),APPS)
 # If this is an apk without any Java code (e.g. framework-res), we should skip compiling Java.
@@ -109,7 +109,7 @@ ifneq ($(strip $(aidl_sources)),)
 
 aidl_preprocess_import :=
 ifdef LOCAL_SDK_VERSION
-ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS)),)
+ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS_USE_PREBUILT_SDK)),)
   # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS
   aidl_preprocess_import := $(TARGET_OUT_COMMON_INTERMEDIATES)/framework.aidl
 else
@@ -169,6 +169,7 @@ java_sources := $(addprefix $(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES)))
                 $(filter %.java,$(LOCAL_GENERATED_SOURCES))
 java_intermediate_sources := $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/, $(filter %.java,$(LOCAL_INTERMEDIATE_SOURCES)))
 all_java_sources := $(java_sources) $(java_intermediate_sources)
+ALL_MODULES.$(my_register_name).SRCS := $(ALL_MODULES.$(my_register_name).SRCS) $(all_java_sources)
 
 include $(BUILD_SYSTEM)/java_common.mk
 
@@ -489,9 +490,12 @@ $(built_dex_intermediate): PRIVATE_DX_FLAGS := $(LOCAL_DX_FLAGS)
 ifdef LOCAL_PROGUARD_ENABLED
   $(built_dex_intermediate): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
   $(built_dex_intermediate): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
+  $(built_dex_intermediate): PRIVATE_PROGUARD_DICTIONARY := $(proguard_dictionary)
   $(built_dex_intermediate) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD)
 	$(transform-jar-to-dex-r8)
 else # !LOCAL_PROGUARD_ENABLED
+  $(built_dex_intermediate): PRIVATE_D8_LIBS := $(full_java_bootclasspath_libs) $(full_shared_java_header_libs)
+  $(built_dex_intermediate): $(full_java_bootclasspath_libs) $(full_shared_java_header_libs)
   $(built_dex_intermediate): $(full_classes_pre_proguard_jar) $(DX) $(ZIP2ZIP)
 	$(transform-classes.jar-to-dex)
 endif
@@ -502,8 +506,8 @@ ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),) # is_boot_jar
   # dex later on. The difference is academic currently, as we don't proguard any
   # bootclasspath code at the moment. If we were to do that, we should add keep
   # rules for all members with the @UnsupportedAppUsage annotation.
-  $(eval $(call hiddenapi-generate-greylist-txt,$(full_classes_pre_proguard_jar),$(greylist_txt)))
-  LOCAL_INTERMEDIATE_TARGETS += $(greylist_txt)
+  $(eval $(call hiddenapi-generate-csv, $(full_classes_pre_proguard_jar),$(hiddenapi_flags_csv),$(hiddenapi_metadata_csv)))
+  LOCAL_INTERMEDIATE_TARGETS += $(hiddenapi_flags_csv) $(hiddenapi_metadata_csv)
   $(eval $(call hiddenapi-copy-dex-files,$(built_dex_intermediate),$(built_dex_hiddenapi)))
   built_dex_copy_from := $(built_dex_hiddenapi)
 else # !is_boot_jar

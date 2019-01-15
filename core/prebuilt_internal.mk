@@ -44,18 +44,6 @@ my_strip_module := $(firstword \
   $(LOCAL_STRIP_MODULE))
 
 ifeq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))
-  # LOCAL_COPY_TO_INTERMEDIATE_LIBRARIES indicates that this prebuilt should be
-  # installed to the common directory of libraries. This is needed for the NDK
-  # shared libraries built by soong, as we build many different versions of each
-  # library (one for each API level). Since they all have the same basename,
-  # they'd clobber each other (as well as any platform libraries by the same
-  # name).
-  ifneq ($(LOCAL_COPY_TO_INTERMEDIATE_LIBRARIES),false)
-    # Put the built targets of all shared libraries in a common directory
-    # to simplify the link line.
-    OVERRIDE_BUILT_MODULE_PATH :=  \
-        $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)
-  endif
   ifeq ($(LOCAL_IS_HOST_MODULE)$(my_strip_module),)
     # Strip but not try to add debuglink
     my_strip_module := no_debuglink
@@ -66,20 +54,6 @@ ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
   prebuilt_module_is_a_library := true
 else
   prebuilt_module_is_a_library :=
-endif
-
-ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-  ifeq ($(prebuilt_module_is_a_library),true)
-    SOONG_ALREADY_CONV := $(SOONG_ALREADY_CONV) $(LOCAL_MODULE)
-  endif
-
-  ifdef LOCAL_USE_VNDK
-    name_without_suffix := $(patsubst %.vendor,%,$(LOCAL_MODULE))
-    ifneq ($(name_without_suffix),$(LOCAL_MODULE)
-      SPLIT_VENDOR.$(LOCAL_MODULE_CLASS).$(name_without_suffix) := 1
-    endif
-    name_without_suffix :=
-  endif
 endif
 
 # Don't install static libraries by default.
@@ -95,7 +69,7 @@ else
   prebuilt_module_is_dex_javalib :=
 endif
 
-# Run veridex on product, product-services and vendor modules.
+# Run veridex on product, product_services and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
 ifeq (true,$(filter true, \
@@ -156,12 +130,6 @@ else  # my_strip_module not true
 ifdef prebuilt_module_is_a_library
 export_includes := $(intermediates)/export_includes
 export_cflags := $(foreach d,$(LOCAL_EXPORT_C_INCLUDE_DIRS),-I $(d))
-# Soong exports cflags instead of include dirs, so that -isystem can be included.
-ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-export_cflags += $(LOCAL_EXPORT_CFLAGS)
-else ifdef LOCAL_EXPORT_CFLAGS
-$(call pretty-error,LOCAL_EXPORT_CFLAGS can only be used by Soong, use LOCAL_EXPORT_C_INCLUDE_DIRS instead)
-endif
 $(export_includes): PRIVATE_EXPORT_CFLAGS := $(export_cflags)
 $(export_includes): $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 	@echo Export includes file: $< -- $@
@@ -188,6 +156,8 @@ else ifdef LOCAL_USE_VNDK
     else
         my_link_type := native:vendor
     endif
+else ifneq ($(filter $(TARGET_RECOVERY_OUT)/%,$(LOCAL_MODULE_PATH)),)
+my_link_type := native:recovery
 else
 my_link_type := native:platform
 endif
@@ -208,21 +178,11 @@ my_shared_libraries := $(LOCAL_SHARED_LIBRARIES)
 # Extra shared libraries introduced by LOCAL_CXX_STL.
 include $(BUILD_SYSTEM)/cxx_stl_setup.mk
 ifdef LOCAL_USE_VNDK
-  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
-      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
-  endif
+  my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+    $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
 endif
 $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
   $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(my_shared_libraries))
-
-# We also need the LOCAL_BUILT_MODULE dependency,
-# since we use -rpath-link which points to the built module's path.
-my_built_shared_libraries := \
-    $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
-    $(addsuffix $($(my_prefix)SHLIB_SUFFIX), \
-        $(my_shared_libraries)))
-$(LOCAL_BUILT_MODULE) : $(my_built_shared_libraries)
 endif
 endif
 
@@ -346,6 +306,8 @@ else
   $(built_module) : PRIVATE_CERTIFICATE := $(LOCAL_CERTIFICATE).x509.pem
 endif
 
+include $(BUILD_SYSTEM)/app_certificate_validate.mk
+
 # Disable dex-preopt of prebuilts to save space, if requested.
 ifndef LOCAL_DEX_PREOPT
 ifeq ($(DONT_DEXPREOPT_PREBUILTS),true)
@@ -358,6 +320,8 @@ endif
 ifdef LOCAL_COMPRESSED_MODULE
 LOCAL_DEX_PREOPT := false
 endif
+
+my_dex_jar := $(my_prebuilt_src_file)
 
 #######################################
 # defines built_odex along with rule to install odex
@@ -375,11 +339,11 @@ ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
 # For PRESIGNED apks we must uncompress every .so file:
 # even if the .so file isn't for the current TARGET_ARCH,
 # we can't strip the file.
-embedded_prebuilt_jni_libs := 'lib/*.so'
+embedded_prebuilt_jni_libs :=
 endif
 ifndef embedded_prebuilt_jni_libs
 # No LOCAL_PREBUILT_JNI_LIBS, uncompress all.
-embedded_prebuilt_jni_libs := 'lib/*.so'
+embedded_prebuilt_jni_libs :=
 endif
 $(built_module): PRIVATE_EMBEDDED_JNI_LIBS := $(embedded_prebuilt_jni_libs)
 
@@ -388,13 +352,24 @@ $(built_module) : $(MINIGZIP)
 endif
 
 ifeq ($(module_run_appcompat),true)
-$(built_module) : $(call intermediates-dir-for,PACKAGING,veridex,HOST)/veridex.zip
+$(built_module) : $(appcompat-files)
 $(LOCAL_BUILT_MODULE): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
 endif
 
-$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(SIGNAPK_JAR)
+ifneq ($(BUILD_PLATFORM_ZIP),)
+$(built_module) : .KATI_IMPLICIT_OUTPUTS := $(dir $(LOCAL_BUILT_MODULE))package.dex.apk
+endif
+ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
+ifdef LOCAL_DEX_PREOPT
+$(built_module) : PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
+$(built_module) : $(intermediates)/strip.sh
+$(built_module) : | $(DEXPREOPT_GEN_DEPS)
+$(built_module) : .KATI_DEPFILE := $(built_module).d
+endif
+endif
+$(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
-	$(uncompress-shared-libs)
+	$(uncompress-prebuilt-embedded-jni-libs)
 ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 	$(uncompress-dexs)
 endif  # LOCAL_UNCOMPRESS_DEX
@@ -416,9 +391,8 @@ endif
 	$(run-appcompat)
 endif  # module_run_appcompat
 ifdef LOCAL_DEX_PREOPT
-ifneq (nostripping,$(LOCAL_DEX_PREOPT))
-	$(call dexpreopt-remove-classes.dex,$@)
-endif  # LOCAL_DEX_PREOPT != nostripping
+	mv -f $@ $@.tmp
+	$(PRIVATE_STRIP_SCRIPT) $@.tmp $@
 endif  # LOCAL_DEX_PREOPT
 	$(sign-package)
 	# No need for align-package because sign-package takes care of alignment
@@ -430,20 +404,6 @@ ifdef LOCAL_COMPRESSED_MODULE
 endif  # LOCAL_COMPRESSED_MODULE
 endif  # ! LOCAL_REPLACE_PREBUILT_APK_INSTALLED
 
-###############################
-## Rule to build the odex file.
-# In case we don't strip the built module, use it, as dexpreopt
-# can do optimizations based on whether the built module only
-# contains uncompressed dex code.
-ifdef LOCAL_DEX_PREOPT
-ifeq (nostripping,$(LOCAL_DEX_PREOPT))
-$(built_odex) : $(built_module)
-	$(call dexpreopt-one-file,$<,$@)
-else
-$(built_odex) : $(my_prebuilt_src_file)
-	$(call dexpreopt-one-file,$<,$@)
-endif
-endif
 
 ###############################
 ## Install split apks.
@@ -486,6 +446,7 @@ $(my_all_targets): $(installed_apk_splits)
 endif # LOCAL_PACKAGE_SPLITS
 
 else ifeq ($(prebuilt_module_is_dex_javalib),true)  # ! LOCAL_MODULE_CLASS != APPS
+my_dex_jar := $(my_prebuilt_src_file)
 # This is a target shared library, i.e. a jar with classes.dex.
 #######################################
 # defines built_odex along with rule to install odex
@@ -500,13 +461,14 @@ $(built_module) : $(dexpreopted_boot_jar)
 
 # For libart boot jars, we don't have .odex files.
 else # ! boot jar
-$(built_odex): PRIVATE_MODULE := $(LOCAL_MODULE)
-# Use pattern rule - we may have multiple built odex files.
-$(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(my_prebuilt_src_file)
-	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
-	$(call dexpreopt-one-file,$<,$@)
 
-$(eval $(call dexpreopt-copy-jar,$(my_prebuilt_src_file),$(built_module),$(LOCAL_DEX_PREOPT)))
+$(built_module): PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
+$(built_module): $(intermediates)/strip.sh
+$(built_module): | $(DEXPREOPT_GEN_DEPS)
+$(built_module): .KATI_DEPFILE := $(built_module).d
+$(built_module): $(my_prebuilt_src_file)
+	$(PRIVATE_STRIP_SCRIPT) $< $@
+
 endif # boot jar
 else # ! LOCAL_DEX_PREOPT
 $(built_module) : $(my_prebuilt_src_file)

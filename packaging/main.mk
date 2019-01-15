@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 The Android Open Source Project
+# Copyright (C) 2018 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,10 +14,24 @@
 # limitations under the License.
 #
 
-LOCAL_PATH := $(call my-dir)
+# Create a default rule. This is unused currently, as the real default rule is
+# still in the Kati build step.
+.PHONY: _packaging_default_rule_
+_packaging_default_rule_:
 
-# Only if this Android.mk was included not by a symlink should it be used.
-# This facilitates the transition away from symlinks: b/64397960
-ifeq ($(LOCAL_PATH),build/make/target)
-include $(call first-makefiles-under,$(LOCAL_PATH))
+ifndef KATI
+$(error Only Kati is supported.)
 endif
+
+$(info [1/3] initializing packaging system ...)
+
+.KATI_READONLY := KATI_PACKAGE_MK_DIR
+
+include build/make/common/core.mk
+include build/make/common/strings.mk
+
+$(info [2/3] including distdir.mk ...)
+
+include build/make/packaging/distdir.mk
+
+$(info [3/3] writing packaging rules ...)

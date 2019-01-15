@@ -18,11 +18,17 @@
 Utils for running unittests.
 """
 
+import logging
 import os
 import os.path
 import struct
+import sys
+import unittest
 
 import common
+
+# Some test runner doesn't like outputs from stderr.
+logging.basicConfig(stream=sys.stdout)
 
 
 def get_testdata_dir():
@@ -110,3 +116,10 @@ def construct_sparse_image(chunks):
         fp.write(os.urandom(data_size))
 
   return sparse_image
+
+
+class ReleaseToolsTestCase(unittest.TestCase):
+  """A common base class for all the releasetools unittests."""
+
+  def tearDown(self):
+    common.Cleanup()

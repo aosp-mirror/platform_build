@@ -24,8 +24,14 @@ java_library_host {
         "apksig",
         "bouncycastle-unbundled",
         "bouncycastle-bcpkix-unbundled",
-        "conscrypt",
+        "conscrypt-nojarjar",
     ],
 
     required: ["libconscrypt_openjdk_jni"],
+
+    // The post-build signing tools need signapk.jar (and its shared libraries,
+    // handled in their own Android.bp files)
+    dist: {
+        targets: ["droidcore"],
+    },
 }

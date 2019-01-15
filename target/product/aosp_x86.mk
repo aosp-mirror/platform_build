@@ -21,17 +21,7 @@
 # - VNDK enforcement
 # - compatible property override enabled
 
-PRODUCT_PROPERTY_OVERRIDES += \
-	vendor.rild.libpath=/vendor/lib/libreference-ril.so
-
-# This is a build configuration for a full-featured build of the
-# Open-Source part of the tree. It's geared toward a US-centric
-# build quite specifically for the emulator, and might not be
-# entirely appropriate to inherit from for on-device configurations.
-PRODUCT_COPY_FILES += \
-    development/sys-img/advancedFeatures.ini:advancedFeatures.ini \
-    device/generic/goldfish/data/etc/encryptionkey.img:encryptionkey.img \
-    prebuilts/qemu-kernel/x86_64/4.9/kernel-qemu2:kernel-ranchu-64
+-include device/generic/goldfish/x86-vendor.mk
 
 include $(SRC_TARGET_DIR)/product/full_x86.mk
 
@@ -47,5 +37,13 @@ PRODUCT_PACKAGES += \
 
 # Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
+
+# GSI specific tasks on boot
+PRODUCT_COPY_FILES += \
+    build/make/target/product/gsi/skip_mount.cfg:system/etc/init/config/skip_mount.cfg \
+    build/make/target/product/gsi/init.gsi.rc:system/etc/init/init.gsi.rc \
+
+# Support addtional P vendor interface
+PRODUCT_EXTRA_VNDK_VERSIONS := 28
 
 PRODUCT_NAME := aosp_x86

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 The Android Open-Source Project
+# Copyright (C) 2018 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,4 +14,16 @@
 # limitations under the License.
 #
 
-include build/make/target/board/treble_common.mk
+# This is the list of modules that are specific to products that have telephony
+# hardware, and install outside the system partition.
+
+# /vendor packages
+PRODUCT_PACKAGES := \
+    rild \
+
+# /product packages
+PRODUCT_PACKAGES += \
+    CarrierConfig \
+    Dialer \
+
+PRODUCT_COPY_FILES := \

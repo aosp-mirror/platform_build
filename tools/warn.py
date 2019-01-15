@@ -505,6 +505,11 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.LOW,
      'description':
+         'Java: This class\'s name looks like a Type Parameter.',
+     'patterns': [r".*: warning: \[ClassNamedLikeTypeParameter\] .+"]},
+    {'category': 'java',
+     'severity': Severity.LOW,
+     'description':
          'Java: Field name is CONSTANT_CASE, but field is not static and final',
      'patterns': [r".*: warning: \[ConstantField\] .+"]},
     {'category': 'java',
@@ -512,6 +517,11 @@ warn_patterns = [
      'description':
          'Java: @Multibinds is a more efficient and declarative mechanism for ensuring that a set multibinding is present in the graph.',
      'patterns': [r".*: warning: \[EmptySetMultibindingContributions\] .+"]},
+    {'category': 'java',
+     'severity': Severity.LOW,
+     'description':
+         'Java: Prefer assertThrows to ExpectedException',
+     'patterns': [r".*: warning: \[ExpectedExceptionRefactoring\] .+"]},
     {'category': 'java',
      'severity': Severity.LOW,
      'description':
@@ -525,7 +535,12 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.LOW,
      'description':
-         r'Java: Use Java\'s utility functional interfaces instead of Function\u003cA, B> for primitive types.',
+         'Java: Refactors uses of the JSR 305 @Immutable to Error Prone\'s annotation',
+     'patterns': [r".*: warning: \[ImmutableRefactoring\] .+"]},
+    {'category': 'java',
+     'severity': Severity.LOW,
+     'description':
+         'Java: Use Java\'s utility functional interfaces instead of Function\u003cA, B> for primitive types.',
      'patterns': [r".*: warning: \[LambdaFunctionalInterface\] .+"]},
     {'category': 'java',
      'severity': Severity.LOW,
@@ -560,7 +575,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.LOW,
      'description':
-         'Java: Non-standard parameter comment; prefer `/*paramName=*/ arg`',
+         'Java: Non-standard parameter comment; prefer `/* paramName= */ arg`',
      'patterns': [r".*: warning: \[ParameterComment\] .+"]},
     {'category': 'java',
      'severity': Severity.LOW,
@@ -600,8 +615,18 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.LOW,
      'description':
+         'Java: Prefer assertThrows to @Test(expected=...)',
+     'patterns': [r".*: warning: \[TestExceptionRefactoring\] .+"]},
+    {'category': 'java',
+     'severity': Severity.LOW,
+     'description':
          'Java: Unchecked exceptions do not need to be declared in the method signature.',
      'patterns': [r".*: warning: \[ThrowsUncheckedException\] .+"]},
+    {'category': 'java',
+     'severity': Severity.LOW,
+     'description':
+         'Java: Prefer assertThrows to try/fail',
+     'patterns': [r".*: warning: \[TryFailRefactoring\] .+"]},
     {'category': 'java',
      'severity': Severity.LOW,
      'description':
@@ -610,7 +635,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.LOW,
      'description':
-         'Java: Constructors and methods with the same name should appear sequentially with no other code in between',
+         'Java: Constructors and methods with the same name should appear sequentially with no other code in between. Please re-order or re-name methods.',
      'patterns': [r".*: warning: \[UngroupedOverloads\] .+"]},
     {'category': 'java',
      'severity': Severity.LOW,
@@ -640,8 +665,23 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: This method passes a pair of parameters through to String.format, but the enclosing method wasn\'t annotated @FormatMethod. Doing so gives compile-time rather than run-time protection against malformed format strings.',
+     'patterns': [r".*: warning: \[AnnotateFormatMethod\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Annotations should be positioned after Javadocs, but before modifiers..',
+     'patterns': [r".*: warning: \[AnnotationPosition\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: Arguments are in the wrong order or could be commented for clarity.',
      'patterns': [r".*: warning: \[ArgumentSelectionDefectChecker\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Arrays do not override equals() or hashCode, so comparisons will be done on reference equality only. If neither deduplication nor lookup are needed, consider using a List instead. Otherwise, use IdentityHashMap/Set, a Map from a library that handles object arrays, or an Iterable/List of pairs.',
+     'patterns': [r".*: warning: \[ArrayAsKeyOfSetOrMap\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -655,7 +695,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
-         'Java: The lambda passed to assertThows should contain exactly one statement',
+         'Java: The lambda passed to assertThrows should contain exactly one statement',
      'patterns': [r".*: warning: \[AssertThrowsMultipleStatements\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
@@ -670,6 +710,11 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: Make toString(), hashCode() and equals() final in AutoValue classes, so it is clear to readers that AutoValue is not overriding them',
+     'patterns': [r".*: warning: \[AutoValueFinalMethods\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: Classes that implement Annotation must override equals and hashCode. Consider using AutoAnnotation instead of implementing Annotation by hand.',
      'patterns': [r".*: warning: \[BadAnnotationImplementation\] .+"]},
     {'category': 'java',
@@ -680,7 +725,22 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
-         'Java: BigDecimal(double) and BigDecimal.valueOf(double) may lose precision, prefer BigDecimal(String) or BigDecimal(long)',
+         'Java: Importing nested classes/static methods/static fields with commonly-used names can make code harder to read, because it may not be clear from the context exactly which type is being referred to. Qualifying the name with that of the containing class can make the code clearer.',
+     'patterns': [r".*: warning: \[BadImport\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: instanceof used in a way that is equivalent to a null check.',
+     'patterns': [r".*: warning: \[BadInstanceof\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: BigDecimal#equals has surprising behavior: it also compares scale.',
+     'patterns': [r".*: warning: \[BigDecimalEquals\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: new BigDecimal(double) loses precision in this case.',
      'patterns': [r".*: warning: \[BigDecimalLiteralDouble\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
@@ -735,6 +795,11 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: Providing Closeable resources makes their lifecycle unclear',
+     'patterns': [r".*: warning: \[CloseableProvides\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: The type of the array parameter of Collection.toArray needs to be compatible with the array type',
      'patterns': [r".*: warning: \[CollectionToArraySafeParameter\] .+"]},
     {'category': 'java',
@@ -770,6 +835,11 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: Avoid deprecated Thread methods; read the method\'s javadoc for details.',
+     'patterns': [r".*: warning: \[DeprecatedThreadMethods\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: Prefer collection factory methods or builders to the double-brace initialization pattern.',
      'patterns': [r".*: warning: \[DoubleBraceInitialization\] .+"]},
     {'category': 'java',
@@ -785,6 +855,16 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: equals() implementation may throw NullPointerException when given null',
+     'patterns': [r".*: warning: \[EqualsBrokenForNull\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Overriding Object#equals in a non-final class by using getClass rather than instanceof breaks substitutability of subclasses.',
+     'patterns': [r".*: warning: \[EqualsGetClass\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: Classes that override equals should also override hashCode.',
      'patterns': [r".*: warning: \[EqualsHashCode\] .+"]},
     {'category': 'java',
@@ -795,8 +875,23 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: The contract of #equals states that it should return false for incompatible types, while this implementation may throw ClassCastException.',
+     'patterns': [r".*: warning: \[EqualsUnsafeCast\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Implementing #equals by just comparing hashCodes is fragile. Hashes collide frequently, and this will lead to false positives in #equals.',
+     'patterns': [r".*: warning: \[EqualsUsingHashCode\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: Calls to ExpectedException#expect should always be followed by exactly one statement.',
      'patterns': [r".*: warning: \[ExpectedExceptionChecker\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: When only using JUnit Assert\'s static methods, you should import statically instead of extending.',
+     'patterns': [r".*: warning: \[ExtendingJUnitAssert\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -812,6 +907,11 @@ warn_patterns = [
      'description':
          'Java: Use parentheses to make the precedence explicit',
      'patterns': [r".*: warning: \[FloatCast\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: This fuzzy equality check is using a tolerance less than the gap to the next number. You may want a less restrictive tolerance, or to assert equality.',
+     'patterns': [r".*: warning: \[FloatingPointAssertionWithinEpsilon\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -875,6 +975,11 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: Including fields in hashCode which are not compared in equals violates the contract of hashCode.',
+     'patterns': [r".*: warning: \[InconsistentHashCode\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: The ordering of parameters in overloaded methods should be as consistent as possible (when viewed from left to right)',
      'patterns': [r".*: warning: \[InconsistentOverloads\] .+"]},
     {'category': 'java',
@@ -902,6 +1007,21 @@ warn_patterns = [
      'description':
          'Java: Expression of type int may overflow before being assigned to a long',
      'patterns': [r".*: warning: \[IntLongMath\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: This @param tag doesn\'t refer to a parameter of the method.',
+     'patterns': [r".*: warning: \[InvalidParam\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: This tag is invalid.',
+     'patterns': [r".*: warning: \[InvalidTag\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: The documented method doesn\'t actually throw this checked exception.',
+     'patterns': [r".*: warning: \[InvalidThrows\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -935,8 +1055,18 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: Calls to Lock#lock should be immediately followed by a try block which releases the lock.',
+     'patterns': [r".*: warning: \[LockNotBeforeTry\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: Assignment where a boolean expression was expected; use == if this assignment wasn\'t expected or add parentheses for clarity.',
      'patterns': [r".*: warning: \[LogicalAssignment\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Math.abs does not always give a positive result. Please consider other methods for positive random numbers.',
+     'patterns': [r".*: warning: \[MathAbsoluteRandom\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -957,6 +1087,11 @@ warn_patterns = [
      'description':
          'Java: method overrides method in supertype; expected @Override',
      'patterns': [r".*: warning: \[MissingOverride\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: A collection or proto builder was created, but its values were never accessed.',
+     'patterns': [r".*: warning: \[ModifiedButNotUsed\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -990,6 +1125,11 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: Instead of returning a functional type, return the actual type that the returned function would return and use lambdas at use site.',
+     'patterns': [r".*: warning: \[NoFunctionalReturnType\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: This update of a volatile variable is non-atomic',
      'patterns': [r".*: warning: \[NonAtomicVolatileUpdate\] .+"]},
     {'category': 'java',
@@ -1010,6 +1150,11 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: Dereference of possibly-null value',
+     'patterns': [r".*: warning: \[NullableDereference\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: @Nullable should not be used for primitive types since they cannot be null',
      'patterns': [r".*: warning: \[NullablePrimitive\] .+"]},
     {'category': 'java',
@@ -1022,6 +1167,11 @@ warn_patterns = [
      'description':
          'Java: Calling toString on Objects that don\'t override toString() doesn\'t provide useful information',
      'patterns': [r".*: warning: \[ObjectToString\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Objects.hashCode(Object o) should not be passed a primitive value',
+     'patterns': [r".*: warning: \[ObjectsHashCodePrimitive\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -1070,8 +1220,13 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
-         'Java: Protobuf fields cannot be null, so this check is redundant',
-     'patterns': [r".*: warning: \[ProtoFieldPreconditionsCheckNotNull\] .+"]},
+         'Java: A field on a protocol buffer was set twice in the same chained expression.',
+     'patterns': [r".*: warning: \[ProtoRedundantSet\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Protos should not be used as a key to a map, in a set, or in a contains method on a descendant of a collection. Protos have non deterministic ordering and proto equality is deep, which is a performance issue.',
+     'patterns': [r".*: warning: \[ProtosAsKeyOfSetOrMap\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -1110,7 +1265,12 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
-         r'Java: Prefer the short-circuiting boolean operators \u0026\u0026 and || to \u0026 and |.',
+         'Java: Void methods should not have a @return tag.',
+     'patterns': [r".*: warning: \[ReturnFromVoid\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Prefer the short-circuiting boolean operators \u0026\u0026 and || to \u0026 and |.',
      'patterns': [r".*: warning: \[ShortCircuitBoolean\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
@@ -1140,8 +1300,18 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: SWIG generated code that can\'t call a C++ destructor will leak memory',
+     'patterns': [r".*: warning: \[SwigMemoryLeak\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: Synchronizing on non-final fields is not safe: if the field is ever updated, different threads may end up locking on different objects.',
      'patterns': [r".*: warning: \[SynchronizeOnNonFinalField\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Code that contains System.exit() is untestable.',
+     'patterns': [r".*: warning: \[SystemExitOutsideMain\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -1160,8 +1330,23 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: Relying on the thread scheduler is discouraged; see Effective Java Item 72 (2nd edition) / 84 (3rd edition).',
+     'patterns': [r".*: warning: \[ThreadPriorityCheck\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: Three-letter time zone identifiers are deprecated, may be ambiguous, and might not do what you intend; the full IANA time zone ID should be used instead.',
      'patterns': [r".*: warning: \[ThreeLetterTimeZoneID\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: An implementation of Object.toString() should never return null.',
+     'patterns': [r".*: warning: \[ToStringReturnsNull\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: The actual and expected values appear to be swapped, which results in poor assertion failure messages. The actual value should come first.',
+     'patterns': [r".*: warning: \[TruthAssertExpected\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -1172,6 +1357,11 @@ warn_patterns = [
      'description':
          'Java: Argument is not compatible with the subject\'s type.',
      'patterns': [r".*: warning: \[TruthIncompatibleType\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Type parameter declaration shadows another named type',
+     'patterns': [r".*: warning: \[TypeNameShadowing\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -1190,8 +1380,18 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
-         'Java: Switch handles all enum values; an explicit default case is unnecessary and defeats error checking for non-exhaustive switches.',
+         'Java: Collection, Iterable, Multimap, and Queue do not have well-defined equals behavior',
+     'patterns': [r".*: warning: \[UndefinedEquals\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Switch handles all enum values: an explicit default case is unnecessary and defeats error checking for non-exhaustive switches.',
      'patterns': [r".*: warning: \[UnnecessaryDefaultInEnumSwitch\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Unnecessary use of grouping parentheses',
+     'patterns': [r".*: warning: \[UnnecessaryParentheses\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -1200,8 +1400,23 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
+         'Java: Prefer `asSubclass` instead of casting the result of `newInstance`, to detect classes of incorrect type before invoking their constructors.This way, if the class is of the incorrect type,it will throw an exception before invoking its constructor.',
+     'patterns': [r".*: warning: \[UnsafeReflectiveConstructionCast\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
          'Java: Unsynchronized method overrides a synchronized method.',
      'patterns': [r".*: warning: \[UnsynchronizedOverridesSynchronized\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: Unused.',
+     'patterns': [r".*: warning: \[Unused\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: This catch block catches an exception and re-throws another, but swallows the caught exception rather than setting it as a cause. This can make debugging harder.',
+     'patterns': [r".*: warning: \[UnusedException\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -1212,6 +1427,11 @@ warn_patterns = [
      'description':
          'Java: Non-constant variable missing @Var annotation',
      'patterns': [r".*: warning: \[Var\] .+"]},
+    {'category': 'java',
+     'severity': Severity.MEDIUM,
+     'description':
+         'Java: variableName and type with the same name would refer to the static field instead of the class',
+     'patterns': [r".*: warning: \[VariableNameSameAsType\] .+"]},
     {'category': 'java',
      'severity': Severity.MEDIUM,
      'description':
@@ -1227,6 +1447,11 @@ warn_patterns = [
      'description':
          'Java: AndroidInjection.inject() should always be invoked before calling super.lifecycleMethod()',
      'patterns': [r".*: warning: \[AndroidInjectionBeforeSuper\] .+"]},
+    {'category': 'java',
+     'severity': Severity.HIGH,
+     'description':
+         'Java: Use of class, field, or method that is not compatible with legacy Android devices',
+     'patterns': [r".*: warning: \[AndroidJdkLibsChecker\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
@@ -1310,8 +1535,13 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
-         r'Java:  Implementing \'Comparable\u003cT>\' where T is not compatible with the implementing class.',
+         'Java:  Implementing \'Comparable\u003cT>\' where T is not compatible with the implementing class.',
      'patterns': [r".*: warning: \[ComparableType\] .+"]},
+    {'category': 'java',
+     'severity': Severity.HIGH,
+     'description':
+         'Java: this == null is always false, this != null is always true',
+     'patterns': [r".*: warning: \[ComparingThisWithNull\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
@@ -1392,6 +1622,11 @@ warn_patterns = [
      'description':
          'Java: == must be used in equals method to check equality to itself or an infinite loop will occur.',
      'patterns': [r".*: warning: \[EqualsReference\] .+"]},
+    {'category': 'java',
+     'severity': Severity.HIGH,
+     'description':
+         'Java: Comparing different pairs of fields/getters in an equals implementation is probably a mistake.',
+     'patterns': [r".*: warning: \[EqualsWrongThing\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
@@ -1510,6 +1745,11 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
+         'Java: Members shouldn\'t be annotated with @Inject if constructor is already annotated @Inject',
+     'patterns': [r".*: warning: \[InjectOnMemberAndConstructor\] .+"]},
+    {'category': 'java',
+     'severity': Severity.HIGH,
+     'description':
          'Java: Scope annotation on an interface or abstact class is not allowed',
      'patterns': [r".*: warning: \[InjectScopeAnnotationOnInterfaceOrAbstractClass\] .+"]},
     {'category': 'java',
@@ -1550,7 +1790,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
-         r'Java: Path implements Iterable\u003cPath>; prefer Collection\u003cPath> for clarity',
+         'Java: Path implements Iterable\u003cPath>; prefer Collection\u003cPath> for clarity',
      'patterns': [r".*: warning: \[IterablePathParameter\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
@@ -1590,6 +1830,11 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
+         'Java: Use of class, field, or method that is not compatible with JDK 7',
+     'patterns': [r".*: warning: \[Java7ApiChecker\] .+"]},
+    {'category': 'java',
+     'severity': Severity.HIGH,
+     'description':
          'Java: Abstract and default methods are not injectable with javax.inject.Inject',
      'patterns': [r".*: warning: \[JavaxInjectOnAbstractMethod\] .+"]},
     {'category': 'java',
@@ -1620,6 +1865,11 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
+         'Java: Math.round(Integer) results in truncation',
+     'patterns': [r".*: warning: \[MathRoundIntLong\] .+"]},
+    {'category': 'java',
+     'severity': Severity.HIGH,
+     'description':
          'Java: Certain resources in `android.R.string` have names that do not match their content',
      'patterns': [r".*: warning: \[MislabeledAndroidString\] .+"]},
     {'category': 'java',
@@ -1627,6 +1877,11 @@ warn_patterns = [
      'description':
          'Java: Overriding method is missing a call to overridden super method',
      'patterns': [r".*: warning: \[MissingSuperCall\] .+"]},
+    {'category': 'java',
+     'severity': Severity.HIGH,
+     'description':
+         'Java: A terminating method call is required for a test helper to have any effect.',
+     'patterns': [r".*: warning: \[MissingTestCall\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
@@ -1735,7 +1990,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
-         'Java: Using ::equals as an incompatible Predicate; the predicate will always return false',
+         'Java: Using ::equals or ::isInstance as an incompatible Predicate; the predicate will always return false',
      'patterns': [r".*: warning: \[PredicateIncompatibleType\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
@@ -1745,7 +2000,7 @@ warn_patterns = [
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
-         'Java: Protobuf fields cannot be null',
+         'Java: Protobuf fields cannot be null.',
      'patterns': [r".*: warning: \[ProtoFieldNullComparison\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
@@ -1832,6 +2087,11 @@ warn_patterns = [
      'description':
          'Java: StringBuilder does not have a char constructor; this invokes the int constructor.',
      'patterns': [r".*: warning: \[StringBuilderInitWithChar\] .+"]},
+    {'category': 'java',
+     'severity': Severity.HIGH,
+     'description':
+         'Java: String.substring(0) returns the original String',
+     'patterns': [r".*: warning: \[SubstringOfZero\] .+"]},
     {'category': 'java',
      'severity': Severity.HIGH,
      'description':
@@ -2268,6 +2528,9 @@ warn_patterns = [
     {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wunnamed-type-template-args',
      'description': 'Unnamed template type argument',
      'patterns': [r".*: warning: template argument.+Wunnamed-type-template-args"]},
+    {'category': 'C/C++', 'severity': Severity.MEDIUM, 'option': '-Wimplicit-fallthrough',
+     'description': 'Unannotated fall-through between switch labels',
+     'patterns': [r".*: warning: unannotated fall-through between switch labels.+Wimplicit-fallthrough"]},
 
     {'category': 'C/C++', 'severity': Severity.HARMLESS,
      'description': 'Discarded qualifier from pointer target type',

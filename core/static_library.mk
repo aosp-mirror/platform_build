@@ -21,7 +21,6 @@ include $(BUILD_SYSTEM)/module_arch_supported.mk
 
 ifeq ($(my_module_arch_supported),true)
 # Build for TARGET_2ND_ARCH
-OVERRIDE_BUILT_MODULE_PATH :=
 LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
 LOCAL_INTERMEDIATE_TARGETS :=

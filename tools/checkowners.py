@@ -56,7 +56,8 @@ def main():
   glob = '[a-zA-Z0-9_\\.\\-\\*\\?]+'
   globs = '(%s( *, *%s)*)' % (glob, glob)
   perfile = 'per-file +' + globs + ' *= *' + directive
-  pats = '(|%s|%s|%s)$' % (noparent, email, perfile)
+  include = 'include +([^ :]+ *: *)?[^ ]+'
+  pats = '(|%s|%s|%s|%s)$' % (noparent, email, perfile, include)
   patterns = re.compile(pats)
   address_pattern = re.compile('([^@ ]+@[^ @]+)')
   perfile_pattern = re.compile('per-file +.*=(.*)')

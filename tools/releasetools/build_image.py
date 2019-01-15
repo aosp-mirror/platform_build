@@ -26,318 +26,85 @@ Usage:  build_image.py input_directory properties_file output_image \\
 
 from __future__ import print_function
 
+import logging
 import os
 import os.path
 import re
-import shlex
 import shutil
-import subprocess
 import sys
 
 import common
-import sparse_img
+import verity_utils
 
+logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
-
-FIXED_SALT = "aee087a5be3b982978c923f566a94613496b417f2af592639bc80d141e34dfe7"
-BLOCK_SIZE = 4096
+BLOCK_SIZE = common.BLOCK_SIZE
 BYTES_IN_MB = 1024 * 1024
 
 
-def RunCommand(cmd, verbose=None, env=None):
-  """Echo and run the given command.
+class BuildImageError(Exception):
+  """An Exception raised during image building."""
 
-  Args:
-    cmd: the command represented as a list of strings.
-    verbose: show commands being executed.
-    env: a dictionary of additional environment variables.
-  Returns:
-    A tuple of the output and the exit code.
-  """
-  env_copy = None
-  if env is not None:
-    env_copy = os.environ.copy()
-    env_copy.update(env)
-  if verbose is None:
-    verbose = OPTIONS.verbose
-  if verbose:
-    print("Running: " + " ".join(cmd))
-  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                       env=env_copy)
-  output, _ = p.communicate()
-
-  if verbose:
-    print(output.rstrip())
-  return (output, p.returncode)
-
-
-def GetVerityFECSize(partition_size):
-  cmd = ["fec", "-s", str(partition_size)]
-  output, exit_code = RunCommand(cmd, False)
-  if exit_code != 0:
-    return False, 0
-  return True, int(output)
-
-
-def GetVerityTreeSize(partition_size):
-  cmd = ["build_verity_tree", "-s", str(partition_size)]
-  output, exit_code = RunCommand(cmd, False)
-  if exit_code != 0:
-    return False, 0
-  return True, int(output)
-
-
-def GetVerityMetadataSize(partition_size):
-  cmd = ["build_verity_metadata.py", "size", str(partition_size)]
-  output, exit_code = RunCommand(cmd, False)
-  if exit_code != 0:
-    return False, 0
-  return True, int(output)
-
-
-def GetVeritySize(partition_size, fec_supported):
-  success, verity_tree_size = GetVerityTreeSize(partition_size)
-  if not success:
-    return 0
-  success, verity_metadata_size = GetVerityMetadataSize(partition_size)
-  if not success:
-    return 0
-  verity_size = verity_tree_size + verity_metadata_size
-  if fec_supported:
-    success, fec_size = GetVerityFECSize(partition_size + verity_size)
-    if not success:
-      return 0
-    return verity_size + fec_size
-  return verity_size
+  def __init__(self, message):
+    Exception.__init__(self, message)
 
 
 def GetDiskUsage(path):
-  """Return number of bytes that "path" occupies on host.
+  """Returns the number of bytes that "path" occupies on host.
 
   Args:
-    path: The directory or file to calculate size on
+    path: The directory or file to calculate size on.
+
   Returns:
-    True and the number of bytes if successful,
-    False and 0 otherwise.
+    The number of bytes based on a 1K block_size.
   """
-  env = {"POSIXLY_CORRECT": "1"}
-  cmd = ["du", "-s", path]
-  output, exit_code = RunCommand(cmd, verbose=False, env=env)
-  if exit_code != 0:
-    return False, 0
-  # POSIX du returns number of blocks with block size 512
-  return True, int(output.split()[0]) * 512
+  cmd = ["du", "-k", "-s", path]
+  output = common.RunAndCheckOutput(cmd, verbose=False)
+  return int(output.split()[0]) * 1024
 
 
-def GetSimgSize(image_file):
-  simg = sparse_img.SparseImage(image_file, build_map=False)
-  return simg.blocksize * simg.total_blocks
-
-
-def ZeroPadSimg(image_file, pad_size):
-  blocks = pad_size // BLOCK_SIZE
-  print("Padding %d blocks (%d bytes)" % (blocks, pad_size))
-  simg = sparse_img.SparseImage(image_file, mode="r+b", build_map=False)
-  simg.AppendFillChunk(0, blocks)
-
-
-def AVBCalcMaxImageSize(avbtool, footer_type, partition_size, additional_args):
-  """Calculates max image size for a given partition size.
+def GetInodeUsage(path):
+  """Returns the number of inodes that "path" occupies on host.
 
   Args:
-    avbtool: String with path to avbtool.
-    footer_type: 'hash' or 'hashtree' for generating footer.
-    partition_size: The size of the partition in question.
-    additional_args: Additional arguments to pass to 'avbtool
-      add_hashtree_image'.
+    path: The directory or file to calculate inode number on.
+
   Returns:
-    The maximum image size or 0 if an error occurred.
+    The number of inodes used.
   """
-  cmd = [avbtool, "add_%s_footer" % footer_type,
-         "--partition_size", partition_size, "--calc_max_image_size"]
-  cmd.extend(shlex.split(additional_args))
-
-  (output, exit_code) = RunCommand(cmd)
-  if exit_code != 0:
-    return 0
-  else:
-    return int(output)
+  cmd = ["find", path, "-print"]
+  output = common.RunAndCheckOutput(cmd, verbose=False)
+  # increase by > 4% as number of files and directories is not whole picture.
+  return output.count('\n') * 25 // 24
 
 
-def AVBAddFooter(image_path, avbtool, footer_type, partition_size,
-                 partition_name, key_path, algorithm, salt,
-                 additional_args):
-  """Adds dm-verity hashtree and AVB metadata to an image.
+def GetFilesystemCharacteristics(image_path, sparse_image=True):
+  """Returns various filesystem characteristics of "image_path".
 
   Args:
-    image_path: Path to image to modify.
-    avbtool: String with path to avbtool.
-    footer_type: 'hash' or 'hashtree' for generating footer.
-    partition_size: The size of the partition in question.
-    partition_name: The name of the partition - will be embedded in metadata.
-    key_path: Path to key to use or None.
-    algorithm: Name of algorithm to use or None.
-    salt: The salt to use (a hexadecimal string) or None.
-    additional_args: Additional arguments to pass to 'avbtool
-        add_hashtree_image'.
+    image_path: The file to analyze.
+    sparse_image: Image is sparse
 
   Returns:
-    True if the operation succeeded.
+    The characteristics dictionary.
   """
-  cmd = [avbtool, "add_%s_footer" % footer_type,
-         "--partition_size", partition_size,
-         "--partition_name", partition_name,
-         "--image", image_path]
+  unsparse_image_path = image_path
+  if sparse_image:
+    unsparse_image_path = UnsparseImage(image_path, replace=False)
 
-  if key_path and algorithm:
-    cmd.extend(["--key", key_path, "--algorithm", algorithm])
-  if salt:
-    cmd.extend(["--salt", salt])
-
-  cmd.extend(shlex.split(additional_args))
-
-  (_, exit_code) = RunCommand(cmd)
-  return exit_code == 0
-
-
-def AdjustPartitionSizeForVerity(partition_size, fec_supported):
-  """Modifies the provided partition size to account for the verity metadata.
-
-  This information is used to size the created image appropriately.
-
-  Args:
-    partition_size: the size of the partition to be verified.
-
-  Returns:
-    A tuple of the size of the partition adjusted for verity metadata, and
-    the size of verity metadata.
-  """
-  key = "%d %d" % (partition_size, fec_supported)
-  if key in AdjustPartitionSizeForVerity.results:
-    return AdjustPartitionSizeForVerity.results[key]
-
-  hi = partition_size
-  if hi % BLOCK_SIZE != 0:
-    hi = (hi // BLOCK_SIZE) * BLOCK_SIZE
-
-  # verity tree and fec sizes depend on the partition size, which
-  # means this estimate is always going to be unnecessarily small
-  verity_size = GetVeritySize(hi, fec_supported)
-  lo = partition_size - verity_size
-  result = lo
-
-  # do a binary search for the optimal size
-  while lo < hi:
-    i = ((lo + hi) // (2 * BLOCK_SIZE)) * BLOCK_SIZE
-    v = GetVeritySize(i, fec_supported)
-    if i + v <= partition_size:
-      if result < i:
-        result = i
-        verity_size = v
-      lo = i + BLOCK_SIZE
-    else:
-      hi = i
-
-  if OPTIONS.verbose:
-    print("Adjusted partition size for verity, partition_size: {},"
-          " verity_size: {}".format(result, verity_size))
-  AdjustPartitionSizeForVerity.results[key] = (result, verity_size)
-  return (result, verity_size)
-
-
-AdjustPartitionSizeForVerity.results = {}
-
-
-def BuildVerityFEC(sparse_image_path, verity_path, verity_fec_path,
-                   padding_size):
-  cmd = ["fec", "-e", "-p", str(padding_size), sparse_image_path,
-         verity_path, verity_fec_path]
-  output, exit_code = RunCommand(cmd)
-  if exit_code != 0:
-    print("Could not build FEC data! Error: %s" % output)
-    return False
-  return True
-
-
-def BuildVerityTree(sparse_image_path, verity_image_path, prop_dict):
-  cmd = ["build_verity_tree", "-A", FIXED_SALT, sparse_image_path,
-         verity_image_path]
-  output, exit_code = RunCommand(cmd)
-  if exit_code != 0:
-    print("Could not build verity tree! Error: %s" % output)
-    return False
-  root, salt = output.split()
-  prop_dict["verity_root_hash"] = root
-  prop_dict["verity_salt"] = salt
-  return True
-
-
-def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
-                        block_device, signer_path, key, signer_args,
-                        verity_disable):
-  cmd = ["build_verity_metadata.py", "build", str(image_size),
-         verity_metadata_path, root_hash, salt, block_device, signer_path, key]
-  if signer_args:
-    cmd.append("--signer_args=\"%s\"" % (' '.join(signer_args),))
-  if verity_disable:
-    cmd.append("--verity_disable")
-  output, exit_code = RunCommand(cmd)
-  if exit_code != 0:
-    print("Could not build verity metadata! Error: %s" % output)
-    return False
-  return True
-
-
-def Append2Simg(sparse_image_path, unsparse_image_path, error_message):
-  """Appends the unsparse image to the given sparse image.
-
-  Args:
-    sparse_image_path: the path to the (sparse) image
-    unsparse_image_path: the path to the (unsparse) image
-  Returns:
-    True on success, False on failure.
-  """
-  cmd = ["append2simg", sparse_image_path, unsparse_image_path]
-  output, exit_code = RunCommand(cmd)
-  if exit_code != 0:
-    print("%s: %s" % (error_message, output))
-    return False
-  return True
-
-
-def Append(target, file_to_append, error_message):
-  """Appends file_to_append to target."""
+  cmd = ["tune2fs", "-l", unsparse_image_path]
   try:
-    with open(target, "a") as out_file, open(file_to_append, "r") as input_file:
-      for line in input_file:
-        out_file.write(line)
-  except IOError:
-    print(error_message)
-    return False
-  return True
-
-
-def BuildVerifiedImage(data_image_path, verity_image_path,
-                       verity_metadata_path, verity_fec_path,
-                       padding_size, fec_supported):
-  if not Append(verity_image_path, verity_metadata_path,
-                "Could not append verity metadata!"):
-    return False
-
-  if fec_supported:
-    # build FEC for the entire partition, including metadata
-    if not BuildVerityFEC(data_image_path, verity_image_path,
-                          verity_fec_path, padding_size):
-      return False
-
-    if not Append(verity_image_path, verity_fec_path, "Could not append FEC!"):
-      return False
-
-  if not Append2Simg(data_image_path, verity_image_path,
-                     "Could not append verity data!"):
-    return False
-  return True
+    output = common.RunAndCheckOutput(cmd, verbose=False)
+  finally:
+    if sparse_image:
+      os.remove(unsparse_image_path)
+  fs_dict = {}
+  for line in output.splitlines():
+    fields = line.split(":")
+    if len(fields) == 2:
+      fs_dict[fields[0].strip()] = fields[1].strip()
+  return fs_dict
 
 
 def UnsparseImage(sparse_image_path, replace=True):
@@ -348,89 +115,28 @@ def UnsparseImage(sparse_image_path, replace=True):
     if replace:
       os.unlink(unsparse_image_path)
     else:
-      return True, unsparse_image_path
+      return unsparse_image_path
   inflate_command = ["simg2img", sparse_image_path, unsparse_image_path]
-  (inflate_output, exit_code) = RunCommand(inflate_command)
-  if exit_code != 0:
-    print("Error: '%s' failed with exit code %d:\n%s" % (
-        inflate_command, exit_code, inflate_output))
+  try:
+    common.RunAndCheckOutput(inflate_command)
+  except:
     os.remove(unsparse_image_path)
-    return False, None
-  return True, unsparse_image_path
-
-
-def MakeVerityEnabledImage(out_file, fec_supported, prop_dict):
-  """Creates an image that is verifiable using dm-verity.
-
-  Args:
-    out_file: the location to write the verifiable image at
-    prop_dict: a dictionary of properties required for image creation and
-               verification
-  Returns:
-    True on success, False otherwise.
-  """
-  # get properties
-  image_size = int(prop_dict["partition_size"])
-  block_dev = prop_dict["verity_block_device"]
-  signer_key = prop_dict["verity_key"] + ".pk8"
-  if OPTIONS.verity_signer_path is not None:
-    signer_path = OPTIONS.verity_signer_path
-  else:
-    signer_path = prop_dict["verity_signer_cmd"]
-  signer_args = OPTIONS.verity_signer_args
-
-  # make a tempdir
-  tempdir_name = common.MakeTempDir(suffix="_verity_images")
-
-  # get partial image paths
-  verity_image_path = os.path.join(tempdir_name, "verity.img")
-  verity_metadata_path = os.path.join(tempdir_name, "verity_metadata.img")
-  verity_fec_path = os.path.join(tempdir_name, "verity_fec.img")
-
-  # build the verity tree and get the root hash and salt
-  if not BuildVerityTree(out_file, verity_image_path, prop_dict):
-    return False
-
-  # build the metadata blocks
-  root_hash = prop_dict["verity_root_hash"]
-  salt = prop_dict["verity_salt"]
-  verity_disable = "verity_disable" in prop_dict
-  if not BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
-                             block_dev, signer_path, signer_key, signer_args,
-                             verity_disable):
-    return False
-
-  # build the full verified image
-  target_size = int(prop_dict["original_partition_size"])
-  verity_size = int(prop_dict["verity_size"])
-
-  padding_size = target_size - image_size - verity_size
-  assert padding_size >= 0
-
-  if not BuildVerifiedImage(out_file,
-                            verity_image_path,
-                            verity_metadata_path,
-                            verity_fec_path,
-                            padding_size,
-                            fec_supported):
-    return False
-
-  return True
+    raise
+  return unsparse_image_path
 
 
 def ConvertBlockMapToBaseFs(block_map_file):
   base_fs_file = common.MakeTempFile(prefix="script_gen_", suffix=".base_fs")
   convert_command = ["blk_alloc_to_base_fs", block_map_file, base_fs_file]
-  (_, exit_code) = RunCommand(convert_command)
-  return base_fs_file if exit_code == 0 else None
+  common.RunAndCheckOutput(convert_command)
+  return base_fs_file
 
 
 def SetUpInDirAndFsConfig(origin_in, prop_dict):
   """Returns the in_dir and fs_config that should be used for image building.
 
-  If the target uses system_root_image and it's building system.img, it creates
-  and returns a staged dir that combines the contents of /system (i.e. in the
-  given in_dir) and root.
+  When building system.img for all targets, it creates and returns a staged dir
+  that combines the contents of /system (i.e. in the given in_dir) and root.
 
   Args:
     origin_in: Path to the input directory.
@@ -441,9 +147,17 @@ def SetUpInDirAndFsConfig(origin_in, prop_dict):
     A tuple of in_dir and fs_config that should be used to build the image.
   """
   fs_config = prop_dict.get("fs_config")
-  if (prop_dict.get("system_root_image") != "true" or
-      prop_dict["mount_point"] != "system"):
+
+  if prop_dict["mount_point"] == "system_other":
+    prop_dict["mount_point"] = "system"
     return origin_in, fs_config
+
+  if prop_dict["mount_point"] != "system":
+    return origin_in, fs_config
+
+  if "first_pass" in prop_dict:
+    prop_dict["mount_point"] = "/"
+    return prop_dict["first_pass"]
 
   # Construct a staging directory of the root file system.
   in_dir = common.MakeTempDir()
@@ -468,6 +182,7 @@ def SetUpInDirAndFsConfig(origin_in, prop_dict):
       with open(fs_config) as fr:
         fw.writelines(fr.readlines())
     fs_config = merged_fs_config
+  prop_dict["first_pass"] = (in_dir, fs_config)
   return in_dir, fs_config
 
 
@@ -483,11 +198,9 @@ def CheckHeadroom(ext4fs_output, prop_dict):
     ext4fs_output: The output string from mke2fs command.
     prop_dict: The property dict.
 
-  Returns:
-    The check result.
-
   Raises:
     AssertionError: On invalid input.
+    BuildImageError: On check failure.
   """
   assert ext4fs_output is not None
   assert prop_dict.get('fs_type', '').startswith('ext4')
@@ -501,23 +214,19 @@ def CheckHeadroom(ext4fs_output, prop_dict):
   m = ext4fs_stats.match(last_line)
   used_blocks = int(m.groupdict().get('used_blocks'))
   total_blocks = int(m.groupdict().get('total_blocks'))
-  headroom_blocks = int(prop_dict['partition_headroom']) / BLOCK_SIZE
+  headroom_blocks = int(prop_dict['partition_headroom']) // BLOCK_SIZE
   adjusted_blocks = total_blocks - headroom_blocks
   if used_blocks > adjusted_blocks:
     mount_point = prop_dict["mount_point"]
-    print("Error: Not enough room on %s (total: %d blocks, used: %d blocks, "
-          "headroom: %d blocks, available: %d blocks)" % (
-              mount_point, total_blocks, used_blocks, headroom_blocks,
-              adjusted_blocks))
-    return False
-  return True
+    raise BuildImageError(
+        "Error: Not enough room on {} (total: {} blocks, used: {} blocks, "
+        "headroom: {} blocks, available: {} blocks)".format(
+            mount_point, total_blocks, used_blocks, headroom_blocks,
+            adjusted_blocks))
 
 
-def BuildImage(in_dir, prop_dict, out_file, target_out=None):
-  """Builds an image for the files under in_dir and writes it to out_file.
-
-  When using system_root_image, it will additionally look for the files under
-  root (specified by 'root_dir') and builds an image that contains both sources.
+def BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config):
+  """Builds a pure image for the files under in_dir and writes it to out_file.
 
   Args:
     in_dir: Path to input directory.
@@ -528,69 +237,14 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
         points to the /system directory under PRODUCT_OUT. fs_config (the one
         under system/core/libcutils) reads device specific FS config files from
         there.
+    fs_config: The fs_config file that drives the prototype
 
-  Returns:
-    True iff the image is built successfully.
+  Raises:
+    BuildImageError: On build image failures.
   """
-  in_dir, fs_config = SetUpInDirAndFsConfig(in_dir, prop_dict)
-
   build_command = []
   fs_type = prop_dict.get("fs_type", "")
   run_e2fsck = False
-
-  fs_spans_partition = True
-  if fs_type.startswith("squash"):
-    fs_spans_partition = False
-
-  is_verity_partition = "verity_block_device" in prop_dict
-  verity_supported = prop_dict.get("verity") == "true"
-  verity_fec_supported = prop_dict.get("verity_fec") == "true"
-
-  if (prop_dict.get("use_dynamic_partition_size") == "true" and
-      "partition_size" not in prop_dict):
-    # if partition_size is not defined, use output of `du' + reserved_size
-    success, size = GetDiskUsage(in_dir)
-    if not success:
-      return False
-    if OPTIONS.verbose:
-      print("The tree size of %s is %d MB." % (in_dir, size // BYTES_IN_MB))
-    size += int(prop_dict.get("partition_reserved_size", 0))
-    # Round this up to a multiple of 4K so that avbtool works
-    size = common.RoundUpTo4K(size)
-    prop_dict["partition_size"] = str(size)
-    if OPTIONS.verbose:
-      print("Allocating %d MB for %s." % (size // BYTES_IN_MB, out_file))
-
-  # Adjust the partition size to make room for the hashes if this is to be
-  # verified.
-  if verity_supported and is_verity_partition:
-    partition_size = int(prop_dict.get("partition_size"))
-    (adjusted_size, verity_size) = AdjustPartitionSizeForVerity(
-        partition_size, verity_fec_supported)
-    if not adjusted_size:
-      return False
-    prop_dict["partition_size"] = str(adjusted_size)
-    prop_dict["original_partition_size"] = str(partition_size)
-    prop_dict["verity_size"] = str(verity_size)
-
-  # Adjust partition size for AVB hash footer or AVB hashtree footer.
-  avb_footer_type = ''
-  if prop_dict.get("avb_hash_enable") == "true":
-    avb_footer_type = 'hash'
-  elif prop_dict.get("avb_hashtree_enable") == "true":
-    avb_footer_type = 'hashtree'
-
-  if avb_footer_type:
-    avbtool = prop_dict["avb_avbtool"]
-    partition_size = prop_dict["partition_size"]
-    # avb_add_hash_footer_args or avb_add_hashtree_footer_args.
-    additional_args = prop_dict["avb_add_" + avb_footer_type + "_footer_args"]
-    max_image_size = AVBCalcMaxImageSize(avbtool, avb_footer_type,
-                                         partition_size, additional_args)
-    if max_image_size == 0:
-      return False
-    prop_dict["partition_size"] = str(max_image_size)
-    prop_dict["original_partition_size"] = partition_size
 
   if fs_type.startswith("ext"):
     build_command = [prop_dict["ext_mkuserimg"]]
@@ -599,7 +253,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       run_e2fsck = True
     build_command.extend([in_dir, out_file, fs_type,
                           prop_dict["mount_point"]])
-    build_command.append(prop_dict["partition_size"])
+    build_command.append(prop_dict["image_size"])
     if "journal_size" in prop_dict:
       build_command.extend(["-j", prop_dict["journal_size"]])
     if "timestamp" in prop_dict:
@@ -612,8 +266,6 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       build_command.extend(["-B", prop_dict["block_list"]])
     if "base_fs_file" in prop_dict:
       base_fs_file = ConvertBlockMapToBaseFs(prop_dict["base_fs_file"])
-      if base_fs_file is None:
-        return False
       build_command.extend(["-d", base_fs_file])
     build_command.extend(["-L", prop_dict["mount_point"]])
     if "extfs_inode_count" in prop_dict:
@@ -625,13 +277,14 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
     if "flash_logical_block_size" in prop_dict:
       build_command.extend(["-o", prop_dict["flash_logical_block_size"]])
     # Specify UUID and hash_seed if using mke2fs.
-    if prop_dict["ext_mkuserimg"] == "mkuserimg_mke2fs.sh":
+    if prop_dict["ext_mkuserimg"] == "mkuserimg_mke2fs":
       if "uuid" in prop_dict:
         build_command.extend(["-U", prop_dict["uuid"]])
       if "hash_seed" in prop_dict:
         build_command.extend(["-S", prop_dict["hash_seed"]])
     if "ext4_share_dup_blocks" in prop_dict:
       build_command.append("-c")
+    build_command.extend(["--inode_size", "256"])
     if "selinux_fc" in prop_dict:
       build_command.append(prop_dict["selinux_fc"])
   elif fs_type.startswith("squash"):
@@ -658,7 +311,7 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       build_command.extend(["-a"])
   elif fs_type.startswith("f2fs"):
     build_command = ["mkf2fsuserimg.sh"]
-    build_command.extend([out_file, prop_dict["partition_size"]])
+    build_command.extend([out_file, prop_dict["image_size"]])
     if fs_config:
       build_command.extend(["-C", fs_config])
     build_command.extend(["-f", in_dir])
@@ -671,92 +324,161 @@ def BuildImage(in_dir, prop_dict, out_file, target_out=None):
       build_command.extend(["-T", str(prop_dict["timestamp"])])
     build_command.extend(["-L", prop_dict["mount_point"]])
   else:
-    print("Error: unknown filesystem type '%s'" % (fs_type))
-    return False
+    raise BuildImageError(
+        "Error: unknown filesystem type: {}".format(fs_type))
 
-  (mkfs_output, exit_code) = RunCommand(build_command)
-  if exit_code != 0:
-    print("Error: '%s' failed with exit code %d:\n%s" % (
-        build_command, exit_code, mkfs_output))
-    success, du = GetDiskUsage(in_dir)
-    du_str = ("%d bytes (%d MB)" % (du, du // BYTES_IN_MB)
-             ) if success else "unknown"
+  try:
+    mkfs_output = common.RunAndCheckOutput(build_command)
+  except:
+    try:
+      du = GetDiskUsage(in_dir)
+      du_str = "{} bytes ({} MB)".format(du, du // BYTES_IN_MB)
+    # Suppress any errors from GetDiskUsage() to avoid hiding the real errors
+    # from common.RunAndCheckOutput().
+    except Exception:  # pylint: disable=broad-except
+      logger.exception("Failed to compute disk usage with du")
+      du_str = "unknown"
     print(
-        "Out of space? The tree size of {} is {}, with reserved space of {} "
-        "bytes ({} MB).".format(
+        "Out of space? Out of inodes? The tree size of {} is {}, "
+        "with reserved space of {} bytes ({} MB).".format(
             in_dir, du_str,
             int(prop_dict.get("partition_reserved_size", 0)),
             int(prop_dict.get("partition_reserved_size", 0)) // BYTES_IN_MB))
-    if "original_partition_size" in prop_dict:
-      print(
-          "The max size for filsystem files is {} bytes ({} MB), out of a "
-          "total image size of {} bytes ({} MB).".format(
-              int(prop_dict["partition_size"]),
-              int(prop_dict["partition_size"]) // BYTES_IN_MB,
-              int(prop_dict["original_partition_size"]),
-              int(prop_dict["original_partition_size"]) // BYTES_IN_MB))
-    else:
-      print("The max image size is {} bytes ({} MB).".format(
-          int(prop_dict["partition_size"]),
-          int(prop_dict["partition_size"]) // BYTES_IN_MB))
-    return False
-
-  # Check if there's enough headroom space available for ext4 image.
-  if "partition_headroom" in prop_dict and fs_type.startswith("ext4"):
-    if not CheckHeadroom(mkfs_output, prop_dict):
-      return False
-
-  if not fs_spans_partition:
-    mount_point = prop_dict.get("mount_point")
-    partition_size = int(prop_dict.get("partition_size"))
-    image_size = GetSimgSize(out_file)
-    if image_size > partition_size:
-      print("Error: %s image size of %d is larger than partition size of "
-            "%d" % (mount_point, image_size, partition_size))
-      return False
-    if verity_supported and is_verity_partition:
-      ZeroPadSimg(out_file, partition_size - image_size)
-
-  # Create the verified image if this is to be verified.
-  if verity_supported and is_verity_partition:
-    if not MakeVerityEnabledImage(out_file, verity_fec_supported, prop_dict):
-      return False
-
-  # Add AVB HASH or HASHTREE footer (metadata).
-  if avb_footer_type:
-    avbtool = prop_dict["avb_avbtool"]
-    original_partition_size = prop_dict["original_partition_size"]
-    partition_name = prop_dict["partition_name"]
-    # key_path and algorithm are only available when chain partition is used.
-    key_path = prop_dict.get("avb_key_path")
-    algorithm = prop_dict.get("avb_algorithm")
-    salt = prop_dict.get("avb_salt")
-    # avb_add_hash_footer_args or avb_add_hashtree_footer_args
-    additional_args = prop_dict["avb_add_" + avb_footer_type + "_footer_args"]
-    if not AVBAddFooter(out_file, avbtool, avb_footer_type,
-                        original_partition_size, partition_name, key_path,
-                        algorithm, salt, additional_args):
-      return False
+    print(
+        "The max image size for filesystem files is {} bytes ({} MB), out of a "
+        "total partition size of {} bytes ({} MB).".format(
+            int(prop_dict["image_size"]),
+            int(prop_dict["image_size"]) // BYTES_IN_MB,
+            int(prop_dict["partition_size"]),
+            int(prop_dict["partition_size"]) // BYTES_IN_MB))
+    raise
 
   if run_e2fsck and prop_dict.get("skip_fsck") != "true":
-    success, unsparse_image = UnsparseImage(out_file, replace=False)
-    if not success:
-      return False
+    unsparse_image = UnsparseImage(out_file, replace=False)
 
     # Run e2fsck on the inflated image file
     e2fsck_command = ["e2fsck", "-f", "-n", unsparse_image]
-    # TODO(b/112062612): work around e2fsck failure with SANITIZE_HOST=address
-    env4e2fsck = {"ASAN_OPTIONS": "detect_odr_violation=0"}
-    (e2fsck_output, exit_code) = RunCommand(e2fsck_command, env=env4e2fsck)
+    try:
+      common.RunAndCheckOutput(e2fsck_command)
+    finally:
+      os.remove(unsparse_image)
 
-    os.remove(unsparse_image)
+  return mkfs_output
 
-    if exit_code != 0:
-      print("Error: '%s' failed with exit code %d:\n%s" % (
-          e2fsck_command, exit_code, e2fsck_output))
-      return False
 
-  return True
+def BuildImage(in_dir, prop_dict, out_file, target_out=None):
+  """Builds an image for the files under in_dir and writes it to out_file.
+
+  Args:
+    in_dir: Path to input directory.
+    prop_dict: A property dict that contains info like partition size. Values
+        will be updated with computed values.
+    out_file: The output image file.
+    target_out: Path to the TARGET_OUT directory as in Makefile. It actually
+        points to the /system directory under PRODUCT_OUT. fs_config (the one
+        under system/core/libcutils) reads device specific FS config files from
+        there.
+
+  Raises:
+    BuildImageError: On build image failures.
+  """
+  in_dir, fs_config = SetUpInDirAndFsConfig(in_dir, prop_dict)
+
+  build_command = []
+  fs_type = prop_dict.get("fs_type", "")
+
+  fs_spans_partition = True
+  if fs_type.startswith("squash"):
+    fs_spans_partition = False
+
+  # Get a builder for creating an image that's to be verified by Verified Boot,
+  # or None if not applicable.
+  verity_image_builder = verity_utils.CreateVerityImageBuilder(prop_dict)
+
+  if (prop_dict.get("use_dynamic_partition_size") == "true" and
+      "partition_size" not in prop_dict):
+    # If partition_size is not defined, use output of `du' + reserved_size.
+    size = GetDiskUsage(in_dir)
+    logger.info(
+        "The tree size of %s is %d MB.", in_dir, size // BYTES_IN_MB)
+    # If not specified, give us 16MB margin for GetDiskUsage error ...
+    reserved_size = int(prop_dict.get("partition_reserved_size", BYTES_IN_MB * 16))
+    partition_headroom = int(prop_dict.get("partition_headroom", 0))
+    if fs_type.startswith("ext4") and partition_headroom > reserved_size:
+      reserved_size = partition_headroom
+    size += reserved_size
+    # Round this up to a multiple of 4K so that avbtool works
+    size = common.RoundUpTo4K(size)
+    if fs_type.startswith("ext"):
+      prop_dict["partition_size"] = str(size)
+      prop_dict["image_size"] = str(size)
+      if "extfs_inode_count" not in prop_dict:
+        prop_dict["extfs_inode_count"] = str(GetInodeUsage(in_dir))
+      logger.info(
+          "First Pass based on estimates of %d MB and %s inodes.",
+          size // BYTES_IN_MB, prop_dict["extfs_inode_count"])
+      BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
+      sparse_image = False
+      if "extfs_sparse_flag" in prop_dict:
+        sparse_image = True
+      fs_dict = GetFilesystemCharacteristics(out_file, sparse_image)
+      os.remove(out_file)
+      block_size = int(fs_dict.get("Block size", "4096"))
+      free_size = int(fs_dict.get("Free blocks", "0")) * block_size
+      reserved_size = int(prop_dict.get("partition_reserved_size", 0))
+      partition_headroom = int(fs_dict.get("partition_headroom", 0))
+      if fs_type.startswith("ext4") and partition_headroom > reserved_size:
+        reserved_size = partition_headroom
+      if free_size <= reserved_size:
+        logger.info(
+            "Not worth reducing image %d <= %d.", free_size, reserved_size)
+      else:
+        size -= free_size
+        size += reserved_size
+        if reserved_size == 0:
+          # add .2% margin
+          size = size * 1002 // 1000
+        # Use a minimum size, otherwise we will fail to calculate an AVB footer
+        # or fail to construct an ext4 image.
+        size = max(size, 256 * 1024)
+        if block_size <= 4096:
+          size = common.RoundUpTo4K(size)
+        else:
+          size = ((size + block_size - 1) // block_size) * block_size
+      extfs_inode_count = prop_dict["extfs_inode_count"]
+      inodes = int(fs_dict.get("Inode count", extfs_inode_count))
+      inodes -= int(fs_dict.get("Free inodes", "0"))
+      # add .2% margin
+      inodes = inodes * 1002 // 1000
+      prop_dict["extfs_inode_count"] = str(inodes)
+      prop_dict["partition_size"] = str(size)
+      logger.info(
+          "Allocating %d Inodes for %s.", inodes, out_file)
+    if verity_image_builder:
+      size = verity_image_builder.CalculateDynamicPartitionSize(size)
+    prop_dict["partition_size"] = str(size)
+    logger.info(
+        "Allocating %d MB for %s.", size // BYTES_IN_MB, out_file)
+
+  prop_dict["image_size"] = prop_dict["partition_size"]
+
+  # Adjust the image size to make room for the hashes if this is to be verified.
+  if verity_image_builder:
+    max_image_size = verity_image_builder.CalculateMaxImageSize()
+    prop_dict["image_size"] = str(max_image_size)
+
+  mkfs_output = BuildImageMkfs(in_dir, prop_dict, out_file, target_out, fs_config)
+
+  # Check if there's enough headroom space available for ext4 image.
+  if "partition_headroom" in prop_dict and fs_type.startswith("ext4"):
+    CheckHeadroom(mkfs_output, prop_dict)
+
+  if not fs_spans_partition and verity_image_builder:
+    verity_image_builder.PadSparseImage(out_file)
+
+  # Create the verified image if this is to be verified.
+  if verity_image_builder:
+    verity_image_builder.Build(out_file)
 
 
 def ImagePropFromGlobalDict(glob_dict, mount_point):
@@ -838,7 +560,6 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   elif mount_point == "system_other":
     # We inherit the selinux policies of /system since we contain some of its
     # files.
-    d["mount_point"] = "system"
     copy_prop("avb_system_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_system_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
@@ -850,6 +571,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("system_journal_size", "journal_size"):
       d["journal_size"] = "0"
     copy_prop("system_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("system_squashfs_compressor", "squashfs_compressor")
     copy_prop("system_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("system_squashfs_block_size", "squashfs_block_size")
@@ -900,6 +622,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("product_journal_size", "journal_size"):
       d["journal_size"] = "0"
     copy_prop("product_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("product_squashfs_compressor", "squashfs_compressor")
     copy_prop("product_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("product_squashfs_block_size", "squashfs_block_size")
@@ -909,7 +632,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("product_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
     copy_prop("product_reserved_size", "partition_reserved_size")
-  elif mount_point == "product-services":
+  elif mount_point == "product_services":
     copy_prop("avb_product_services_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_product_services_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
@@ -920,6 +643,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("product_services_journal_size", "journal_size"):
       d["journal_size"] = "0"
     copy_prop("product_services_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("product_services_squashfs_compressor", "squashfs_compressor")
     copy_prop("product_services_squashfs_compressor_opt",
               "squashfs_compressor_opt")
@@ -942,6 +666,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("odm_journal_size", "journal_size"):
       d["journal_size"] = "0"
     copy_prop("odm_verity_block_device", "verity_block_device")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     copy_prop("odm_squashfs_compressor", "squashfs_compressor")
     copy_prop("odm_squashfs_compressor_opt", "squashfs_compressor_opt")
     copy_prop("odm_squashfs_block_size", "squashfs_block_size")
@@ -957,6 +682,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("oem_journal_size", "journal_size"):
       d["journal_size"] = "0"
     copy_prop("oem_extfs_inode_count", "extfs_inode_count")
+    copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     if not copy_prop("oem_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
   d["partition_name"] = mount_point
@@ -985,23 +711,18 @@ def GlobalDictFromImageProp(image_prop, mount_point):
       return True
     return False
 
-  if "original_partition_size" in image_prop:
-    size_property = "original_partition_size"
-  else:
-    size_property = "partition_size"
-
   if mount_point == "system":
-    copy_prop(size_property, "system_size")
+    copy_prop("partition_size", "system_size")
   elif mount_point == "system_other":
-    copy_prop(size_property, "system_size")
+    copy_prop("partition_size", "system_size")
   elif mount_point == "vendor":
-    copy_prop(size_property, "vendor_size")
+    copy_prop("partition_size", "vendor_size")
   elif mount_point == "odm":
-    copy_prop(size_property, "odm_size")
+    copy_prop("partition_size", "odm_size")
   elif mount_point == "product":
-    copy_prop(size_property, "product_size")
-  elif mount_point == "product-services":
-    copy_prop(size_property, "product_services_size")
+    copy_prop("partition_size", "product_size")
+  elif mount_point == "product_services":
+    copy_prop("partition_size", "product_services_size")
   return d
 
 
@@ -1015,6 +736,8 @@ def main(argv):
     print(__doc__)
     sys.exit(1)
 
+  common.InitLogging()
+
   in_dir = argv[0]
   glob_dict_file = argv[1]
   out_file = argv[2]
@@ -1023,7 +746,7 @@ def main(argv):
 
   glob_dict = LoadGlobalDict(glob_dict_file)
   if "mount_point" in glob_dict:
-    # The caller knows the mount point and provides a dictionay needed by
+    # The caller knows the mount point and provides a dictionary needed by
     # BuildImage().
     image_properties = glob_dict
   else:
@@ -1045,22 +768,24 @@ def main(argv):
       mount_point = "oem"
     elif image_filename == "product.img":
       mount_point = "product"
-    elif image_filename == "product-services.img":
-      mount_point = "product-services"
+    elif image_filename == "product_services.img":
+      mount_point = "product_services"
     else:
-      print("error: unknown image file name ", image_filename, file=sys.stderr)
+      logger.error("Unknown image file name %s", image_filename)
       sys.exit(1)
 
     image_properties = ImagePropFromGlobalDict(glob_dict, mount_point)
 
-  if not BuildImage(in_dir, image_properties, out_file, target_out):
-    print("error: failed to build %s from %s" % (out_file, in_dir),
-          file=sys.stderr)
-    sys.exit(1)
+  try:
+    BuildImage(in_dir, image_properties, out_file, target_out)
+  except:
+    logger.error("Failed to build %s from %s", out_file, in_dir)
+    raise
 
   if prop_file_out:
     glob_dict_out = GlobalDictFromImageProp(image_properties, mount_point)
     SaveGlobalDict(prop_file_out, glob_dict_out)
+
 
 if __name__ == '__main__':
   try:

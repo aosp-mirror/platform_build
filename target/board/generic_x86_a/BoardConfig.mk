@@ -14,8 +14,14 @@
 # limitations under the License.
 #
 
-include build/make/target/board/treble_common_32.mk
+include build/make/target/board/BoardConfigGsiCommon.mk
 
 TARGET_CPU_ABI := x86
 TARGET_ARCH := x86
 TARGET_ARCH_VARIANT := x86
+
+# Legacy GSI keeps 32 bits binder for 32 bits CPU Arch
+TARGET_USES_64_BIT_BINDER := false
+
+# This is a non-system-as-root Legacy GSI build target
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := false

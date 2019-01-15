@@ -15,16 +15,55 @@
 #
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/base_vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline.mk)
 
 PRODUCT_NAME := mainline_arm64
 PRODUCT_DEVICE := generic_arm64
 PRODUCT_BRAND := generic
 PRODUCT_SHIPPING_API_LEVEL := 28
+PRODUCT_RESTRICT_VENDOR_FILES := all
 
-PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := true
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST := \
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+# Target device doesn't have a product partition, so whitelist the /system/ fallback path.
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST := system/product/%
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
   root/init.zygote64_32.rc \
   system/etc/seccomp_policy/crash_dump.arm.policy \
   system/etc/seccomp_policy/mediacodec.policy \
+
+# Modules that are to be moved to /product
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
+  system/app/Browser2/Browser2.apk \
+  system/app/Calendar/Calendar.apk \
+  system/app/Camera2/Camera2.apk \
+  system/app/DeskClock/DeskClock.apk \
+  system/app/Email/Email.apk \
+  system/app/Gallery2/Gallery2.apk \
+  system/app/LatinIME/LatinIME.apk \
+  system/app/LatinIME/oat/arm64/LatinIME.odex \
+  system/app/LatinIME/oat/arm64/LatinIME.vdex \
+  system/app/Music/Music.apk \
+  system/app/PrintRecommendationService/PrintRecommendationService.apk \
+  system/app/QuickSearchBox/QuickSearchBox.apk \
+  system/bin/healthd \
+  system/etc/init/healthd.rc \
+  system/etc/vintf/manifest/manifest_healthd.xml \
+  system/lib64/libjni_eglfence.so \
+  system/lib64/libjni_filtershow_filters.so \
+  system/lib64/libjni_jpegstream.so \
+  system/lib64/libjni_jpegutil.so \
+  system/lib64/libjni_latinime.so \
+  system/lib64/libjni_tinyplanet.so \
+  system/priv-app/CarrierConfig/CarrierConfig.apk \
+  system/priv-app/Contacts/Contacts.apk \
+  system/priv-app/Dialer/Dialer.apk \
+  system/priv-app/Launcher3QuickStep/Launcher3QuickStep.apk \
+  system/priv-app/OneTimeInitializer/OneTimeInitializer.apk \
+  system/priv-app/Provision/Provision.apk \
+  system/priv-app/Settings/Settings.apk \
+  system/priv-app/SettingsIntelligence/SettingsIntelligence.apk \
+  system/priv-app/StorageManager/StorageManager.apk \
+  system/priv-app/SystemUI/SystemUI.apk \
+  system/priv-app/SystemUI/oat/arm64/SystemUI.odex \
+  system/priv-app/SystemUI/oat/arm64/SystemUI.vdex \
+  system/priv-app/WallpaperCropper/WallpaperCropper.apk \

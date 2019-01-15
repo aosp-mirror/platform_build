@@ -104,11 +104,14 @@ LOCAL_C_INCLUDES := $(dir $(my_fs_config_h)) $(dir $(my_gen_oem_aid))
 
 include $(BUILD_HOST_EXECUTABLE)
 fs_config_generate_bin := $(LOCAL_INSTALLED_MODULE)
-# List of all supported vendor, oem and odm Partitions
+# List of supported vendor, oem, odm, product and product_services Partitions
 fs_config_generate_extra_partition_list := $(strip \
   $(if $(BOARD_USES_VENDORIMAGE)$(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE),vendor) \
   $(if $(BOARD_USES_OEMIMAGE)$(BOARD_OEMIMAGE_FILE_SYSTEM_TYPE),oem) \
-  $(if $(BOARD_USES_ODMIMAGE)$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),odm))
+  $(if $(BOARD_USES_ODMIMAGE)$(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE),odm) \
+  $(if $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE),product) \
+  $(if $(BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE),product_services) \
+)
 
 ##################################
 # Generate the <p>/etc/fs_config_dirs binary files for each partition.
@@ -163,10 +166,11 @@ LOCAL_MODULE := fs_config_dirs_system
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
 include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): PRIVATE_PARTITION_LIST := $(fs_config_generate_extra_partition_list)
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
-	$< -D $(if $(fs_config_generate_extra_partition_list), \
-	   -P '$(subst $(space),$(comma),$(addprefix -,$(fs_config_generate_extra_partition_list)))') \
+	$< -D $(if $(PRIVATE_PARTITION_LIST), \
+	   -P '$(subst $(space),$(comma),$(addprefix -,$(PRIVATE_PARTITION_LIST)))') \
 	   -o $@
 
 ##################################
@@ -179,10 +183,11 @@ LOCAL_MODULE := fs_config_files_system
 LOCAL_MODULE_CLASS := ETC
 LOCAL_INSTALLED_MODULE_STEM := fs_config_files
 include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): PRIVATE_PARTITION_LIST := $(fs_config_generate_extra_partition_list)
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
-	$< -F $(if $(fs_config_generate_extra_partition_list), \
-	   -P '$(subst $(space),$(comma),$(addprefix -,$(fs_config_generate_extra_partition_list)))') \
+	$< -F $(if $(PRIVATE_PARTITION_LIST), \
+	   -P '$(subst $(space),$(comma),$(addprefix -,$(PRIVATE_PARTITION_LIST)))') \
 	   -o $@
 
 ifneq ($(filter vendor,$(fs_config_generate_extra_partition_list)),)
@@ -281,6 +286,72 @@ include $(BUILD_SYSTEM)/base_rules.mk
 $(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
 	@mkdir -p $(dir $@)
 	$< -F -P odm -o $@
+
+endif
+
+ifneq ($(filter product,$(fs_config_generate_extra_partition_list)),)
+##################################
+# Generate the product/etc/fs_config_dirs binary file for the target
+# Add fs_config_dirs or fs_config_dirs_product to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_dirs_product
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
+LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
+	@mkdir -p $(dir $@)
+	$< -D -P product -o $@
+
+##################################
+# Generate the product/etc/fs_config_files binary file for the target
+# Add fs_config_files of fs_config_files_product to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_files_product
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_files
+LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
+	@mkdir -p $(dir $@)
+	$< -F -P product -o $@
+
+endif
+
+ifneq ($(filter product_services,$(fs_config_generate_extra_partition_list)),)
+##################################
+# Generate the product_services/etc/fs_config_dirs binary file for the target
+# Add fs_config_dirs or fs_config_dirs_product_services to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_dirs_product_services
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_dirs
+LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT_SERVICES)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
+	@mkdir -p $(dir $@)
+	$< -D -P product_services -o $@
+
+##################################
+# Generate the product_services/etc/fs_config_files binary file for the target
+# Add fs_config_files of fs_config_files_product_services to PRODUCT_PACKAGES in
+# the device make file to enable
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := fs_config_files_product_services
+LOCAL_MODULE_CLASS := ETC
+LOCAL_INSTALLED_MODULE_STEM := fs_config_files
+LOCAL_MODULE_PATH := $(TARGET_OUT_PRODUCT_SERVICES)/etc
+include $(BUILD_SYSTEM)/base_rules.mk
+$(LOCAL_BUILT_MODULE): $(fs_config_generate_bin)
+	@mkdir -p $(dir $@)
+	$< -F -P product_services -o $@
 
 endif
 

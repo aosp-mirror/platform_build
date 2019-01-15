@@ -14,11 +14,8 @@
 # limitations under the License.
 #
 
-from __future__ import print_function
-
 import base64
 import os.path
-import unittest
 import zipfile
 
 import common
@@ -28,7 +25,7 @@ from sign_target_files_apks import (
     ReplaceVerityKeyId, RewriteProps)
 
 
-class SignTargetFilesApksTest(unittest.TestCase):
+class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
 
   MAC_PERMISSIONS_XML = """<?xml version="1.0" encoding="iso-8859-1"?>
 <policy>
@@ -38,9 +35,6 @@ class SignTargetFilesApksTest(unittest.TestCase):
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
-
-  def tearDown(self):
-    common.Cleanup()
 
   def test_EditTags(self):
     self.assertEqual(EditTags('dev-keys'), ('release-keys'))

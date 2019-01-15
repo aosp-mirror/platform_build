@@ -14,11 +14,11 @@
 # limitations under the License.
 #
 
+import copy
 import os
 import subprocess
 import tempfile
 import time
-import unittest
 import zipfile
 from hashlib import sha1
 
@@ -43,7 +43,8 @@ def get_2gb_string():
     yield '\0' * (step_size - block_size)
 
 
-class CommonZipTest(unittest.TestCase):
+class CommonZipTest(test_utils.ReleaseToolsTestCase):
+
   def _verify(self, zip_file, zip_file_name, arcname, expected_hash,
               test_file_name=None, expected_stat=None, expected_mode=0o644,
               expected_compress_type=zipfile.ZIP_STORED):
@@ -333,8 +334,8 @@ class CommonZipTest(unittest.TestCase):
         self.assertFalse('Test2' in entries)
         self.assertTrue('Test3' in entries)
 
-      self.assertRaises(AssertionError, common.ZipDelete, zip_file.name,
-                        'Test2')
+      self.assertRaises(
+          common.ExternalError, common.ZipDelete, zip_file.name, 'Test2')
       with zipfile.ZipFile(zip_file.name, 'r') as check_zip:
         entries = check_zip.namelist()
         self.assertTrue('Test1' in entries)
@@ -358,7 +359,7 @@ class CommonZipTest(unittest.TestCase):
       os.remove(zip_file.name)
 
 
-class CommonApkUtilsTest(unittest.TestCase):
+class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   """Tests the APK utils related functions."""
 
   APKCERTS_TXT1 = (
@@ -405,9 +406,6 @@ class CommonApkUtilsTest(unittest.TestCase):
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
-
-  def tearDown(self):
-    common.Cleanup()
 
   @staticmethod
   def _write_apkcerts_txt(apkcerts_txt, additional=None):
@@ -522,13 +520,10 @@ class CommonApkUtilsTest(unittest.TestCase):
         {})
 
 
-class CommonUtilsTest(unittest.TestCase):
+class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
-
-  def tearDown(self):
-    common.Cleanup()
 
   def test_GetSparseImage_emptyBlockMapFile(self):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
@@ -781,10 +776,160 @@ class CommonUtilsTest(unittest.TestCase):
         'avb_system_rollback_index_location': 2,
     }
     self.assertRaises(
-        AssertionError, common.GetAvbChainedPartitionArg, 'system', info_dict)
+        common.ExternalError, common.GetAvbChainedPartitionArg, 'system',
+        info_dict)
+
+  INFO_DICT_DEFAULT = {
+      'recovery_api_version': 3,
+      'fstab_version': 2,
+      'system_root_image': 'true',
+      'no_recovery' : 'true',
+      'recovery_as_boot': 'true',
+  }
+
+  @staticmethod
+  def _test_LoadInfoDict_createTargetFiles(info_dict, fstab_path):
+    target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      info_values = ''.join(
+          ['{}={}\n'.format(k, v) for k, v in sorted(info_dict.iteritems())])
+      common.ZipWriteStr(target_files_zip, 'META/misc_info.txt', info_values)
+
+      FSTAB_TEMPLATE = "/dev/block/system {} ext4 ro,barrier=1 defaults"
+      if info_dict.get('system_root_image') == 'true':
+        fstab_values = FSTAB_TEMPLATE.format('/')
+      else:
+        fstab_values = FSTAB_TEMPLATE.format('/system')
+      common.ZipWriteStr(target_files_zip, fstab_path, fstab_values)
+
+      common.ZipWriteStr(
+          target_files_zip, 'META/file_contexts', 'file-contexts')
+    return target_files
+
+  def test_LoadInfoDict(self):
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        self.INFO_DICT_DEFAULT,
+        'BOOT/RAMDISK/system/etc/recovery.fstab')
+    with zipfile.ZipFile(target_files, 'r') as target_files_zip:
+      loaded_dict = common.LoadInfoDict(target_files_zip)
+      self.assertEqual(3, loaded_dict['recovery_api_version'])
+      self.assertEqual(2, loaded_dict['fstab_version'])
+      self.assertIn('/', loaded_dict['fstab'])
+      self.assertIn('/system', loaded_dict['fstab'])
+
+  def test_LoadInfoDict_legacyRecoveryFstabPath(self):
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        self.INFO_DICT_DEFAULT,
+        'BOOT/RAMDISK/etc/recovery.fstab')
+    with zipfile.ZipFile(target_files, 'r') as target_files_zip:
+      loaded_dict = common.LoadInfoDict(target_files_zip)
+      self.assertEqual(3, loaded_dict['recovery_api_version'])
+      self.assertEqual(2, loaded_dict['fstab_version'])
+      self.assertIn('/', loaded_dict['fstab'])
+      self.assertIn('/system', loaded_dict['fstab'])
+
+  def test_LoadInfoDict_dirInput(self):
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        self.INFO_DICT_DEFAULT,
+        'BOOT/RAMDISK/system/etc/recovery.fstab')
+    unzipped = common.UnzipTemp(target_files)
+    loaded_dict = common.LoadInfoDict(unzipped)
+    self.assertEqual(3, loaded_dict['recovery_api_version'])
+    self.assertEqual(2, loaded_dict['fstab_version'])
+    self.assertIn('/', loaded_dict['fstab'])
+    self.assertIn('/system', loaded_dict['fstab'])
+
+  def test_LoadInfoDict_dirInput_legacyRecoveryFstabPath(self):
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        self.INFO_DICT_DEFAULT,
+        'BOOT/RAMDISK/system/etc/recovery.fstab')
+    unzipped = common.UnzipTemp(target_files)
+    loaded_dict = common.LoadInfoDict(unzipped)
+    self.assertEqual(3, loaded_dict['recovery_api_version'])
+    self.assertEqual(2, loaded_dict['fstab_version'])
+    self.assertIn('/', loaded_dict['fstab'])
+    self.assertIn('/system', loaded_dict['fstab'])
+
+  def test_LoadInfoDict_systemRootImageFalse(self):
+    # Devices not using system-as-root nor recovery-as-boot. Non-A/B devices
+    # launched prior to P will likely have this config.
+    info_dict = copy.copy(self.INFO_DICT_DEFAULT)
+    del info_dict['no_recovery']
+    del info_dict['system_root_image']
+    del info_dict['recovery_as_boot']
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        info_dict,
+        'RECOVERY/RAMDISK/system/etc/recovery.fstab')
+    with zipfile.ZipFile(target_files, 'r') as target_files_zip:
+      loaded_dict = common.LoadInfoDict(target_files_zip)
+      self.assertEqual(3, loaded_dict['recovery_api_version'])
+      self.assertEqual(2, loaded_dict['fstab_version'])
+      self.assertNotIn('/', loaded_dict['fstab'])
+      self.assertIn('/system', loaded_dict['fstab'])
+
+  def test_LoadInfoDict_recoveryAsBootFalse(self):
+    # Devices using system-as-root, but with standalone recovery image. Non-A/B
+    # devices launched since P will likely have this config.
+    info_dict = copy.copy(self.INFO_DICT_DEFAULT)
+    del info_dict['no_recovery']
+    del info_dict['recovery_as_boot']
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        info_dict,
+        'RECOVERY/RAMDISK/system/etc/recovery.fstab')
+    with zipfile.ZipFile(target_files, 'r') as target_files_zip:
+      loaded_dict = common.LoadInfoDict(target_files_zip)
+      self.assertEqual(3, loaded_dict['recovery_api_version'])
+      self.assertEqual(2, loaded_dict['fstab_version'])
+      self.assertIn('/', loaded_dict['fstab'])
+      self.assertIn('/system', loaded_dict['fstab'])
+
+  def test_LoadInfoDict_noRecoveryTrue(self):
+    # Device doesn't have a recovery partition at all.
+    info_dict = copy.copy(self.INFO_DICT_DEFAULT)
+    del info_dict['recovery_as_boot']
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        info_dict,
+        'RECOVERY/RAMDISK/system/etc/recovery.fstab')
+    with zipfile.ZipFile(target_files, 'r') as target_files_zip:
+      loaded_dict = common.LoadInfoDict(target_files_zip)
+      self.assertEqual(3, loaded_dict['recovery_api_version'])
+      self.assertEqual(2, loaded_dict['fstab_version'])
+      self.assertIsNone(loaded_dict['fstab'])
+
+  def test_LoadInfoDict_missingMetaMiscInfoTxt(self):
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        self.INFO_DICT_DEFAULT,
+        'BOOT/RAMDISK/system/etc/recovery.fstab')
+    common.ZipDelete(target_files, 'META/misc_info.txt')
+    with zipfile.ZipFile(target_files, 'r') as target_files_zip:
+      self.assertRaises(ValueError, common.LoadInfoDict, target_files_zip)
+
+  def test_LoadInfoDict_repacking(self):
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        self.INFO_DICT_DEFAULT,
+        'BOOT/RAMDISK/system/etc/recovery.fstab')
+    unzipped = common.UnzipTemp(target_files)
+    loaded_dict = common.LoadInfoDict(unzipped, True)
+    self.assertEqual(3, loaded_dict['recovery_api_version'])
+    self.assertEqual(2, loaded_dict['fstab_version'])
+    self.assertIn('/', loaded_dict['fstab'])
+    self.assertIn('/system', loaded_dict['fstab'])
+    self.assertEqual(
+        os.path.join(unzipped, 'ROOT'), loaded_dict['root_dir'])
+    self.assertEqual(
+        os.path.join(unzipped, 'META', 'root_filesystem_config.txt'),
+        loaded_dict['root_fs_config'])
+
+  def test_LoadInfoDict_repackingWithZipFileInput(self):
+    target_files = self._test_LoadInfoDict_createTargetFiles(
+        self.INFO_DICT_DEFAULT,
+        'BOOT/RAMDISK/system/etc/recovery.fstab')
+    with zipfile.ZipFile(target_files, 'r') as target_files_zip:
+      self.assertRaises(
+          AssertionError, common.LoadInfoDict, target_files_zip, True)
 
 
-class InstallRecoveryScriptFormatTest(unittest.TestCase):
+class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
   """Checks the format of install-recovery.sh.
 
   Its format should match between common.py and validate_target_files.py.
@@ -843,6 +988,3 @@ class InstallRecoveryScriptFormatTest(unittest.TestCase):
                              recovery_image, boot_image, self._info)
     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
                                                         self._info)
-
-  def tearDown(self):
-    common.Cleanup()

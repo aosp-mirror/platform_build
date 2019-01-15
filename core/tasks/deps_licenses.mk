@@ -40,7 +40,7 @@ $(if $(_gmad_new),$(eval $(1) += $(_gmad_new))\
 endef
 
 define print-deps-license
-$(foreach m, $(ALL_DEPS.MODULES),\
+$(foreach m, $(sort $(ALL_DEPS.MODULES)),\
   $(eval m_p := $(sort $(ALL_MODULES.$(m).PATH) $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).PATH)))\
   $(if $(filter $(PROJ_PATH),$(m_p)),\
     $(eval deps :=)\

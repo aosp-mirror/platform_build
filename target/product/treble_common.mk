@@ -21,7 +21,8 @@
 
 # Generic system image inherits from AOSP with telephony
 $(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_vendor.mk)
 
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
@@ -34,19 +35,10 @@ PRODUCT_FULL_TREBLE_OVERRIDE := true
 PRODUCT_PACKAGES += \
     messaging
 
-# The following policy XML files are used as fallback for
-# vendors/devices not using XML to configure audio policy.
-PRODUCT_COPY_FILES += \
-    frameworks/av/services/audiopolicy/config/audio_policy_configuration_generic.xml:system/etc/audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/primary_audio_policy_configuration.xml:system/etc/primary_audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/r_submix_audio_policy_configuration.xml:system/etc/r_submix_audio_policy_configuration.xml \
-    frameworks/av/services/audiopolicy/config/audio_policy_volumes.xml:system/etc/audio_policy_volumes.xml \
-    frameworks/av/services/audiopolicy/config/default_volume_tables.xml:system/etc/default_volume_tables.xml \
-
 # Telephony:
 #   Provide a default APN configuration
 PRODUCT_COPY_FILES += \
-    device/generic/goldfish/data/etc/apns-conf.xml:system/etc/apns-conf.xml
+    device/sample/etc/apns-full-conf.xml:system/etc/apns-conf.xml
 
 # NFC:
 #   Provide default libnfc-nci.conf file for devices that does not have one in
@@ -54,14 +46,19 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/generic/common/nfc/libnfc-nci.conf:system/etc/libnfc-nci.conf
 
+# GSI specific tasks on boot
+PRODUCT_COPY_FILES += \
+    build/make/target/product/gsi/skip_mount.cfg:system/etc/init/config/skip_mount.cfg \
+    build/make/target/product/gsi/init.gsi.rc:system/etc/init/init.gsi.rc \
+
 # Support for the O-MR1 devices
 PRODUCT_COPY_FILES += \
-    build/make/target/product/vndk/init.gsi.rc:system/etc/init/init.gsi.rc \
-    build/make/target/product/vndk/init.vndk-27.rc:system/etc/init/gsi/init.vndk-27.rc
+    build/make/target/product/gsi/init.legacy-gsi.rc:system/etc/init/init.legacy-gsi.rc \
+    build/make/target/product/gsi/init.vndk-27.rc:system/etc/init/gsi/init.vndk-27.rc
 
 # Name space configuration file for non-enforcing VNDK
 PRODUCT_PACKAGES += \
     ld.config.vndk_lite.txt
 
-# Support addtional O-MR1 vendor interface
-PRODUCT_EXTRA_VNDK_VERSIONS := 27
+# Support addtional O-MR1 and P vendor interface
+PRODUCT_EXTRA_VNDK_VERSIONS := 27 28

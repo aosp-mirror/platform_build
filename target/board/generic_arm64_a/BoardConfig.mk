@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-include build/make/target/board/treble_common_64.mk
+include build/make/target/board/BoardConfigGsiCommon.mk
 
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
@@ -27,3 +27,6 @@ TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := generic
+
+# This is a non-system-as-root Legacy GSI build target
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := false

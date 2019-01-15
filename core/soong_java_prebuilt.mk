@@ -1,5 +1,7 @@
 # Java prebuilt coming from Soong.
 # Extra inputs:
+# LOCAL_SOONG_BUILT_INSTALLED
+# LOCAL_SOONG_CLASSES_JAR
 # LOCAL_SOONG_HEADER_JAR
 # LOCAL_SOONG_DEX_JAR
 # LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
@@ -19,10 +21,11 @@ full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 common_javalib.jar := $(intermediates.COMMON)/javalib.jar
-greylist_txt := $(intermediates.COMMON)/greylist.txt
+hiddenapi_flags_csv := $(intermediates.COMMON)/hiddenapi/flags.csv
+hiddenapi_metadata_csv := $(intermediates.COMMON)/hiddenapi/greylist.csv
 
-$(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_jar)))
-$(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(full_classes_pre_proguard_jar)))
+$(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_jar)))
+$(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_pre_proguard_jar)))
 
 ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
@@ -77,39 +80,26 @@ ifdef LOCAL_SOONG_DEX_JAR
         # We use full_classes_jar here, which is the post-proguard jar (on the basis that we also
         # have a full_classes_pre_proguard_jar). This is consistent with the equivalent code in
         # java.mk.
-        $(eval $(call hiddenapi-generate-greylist-txt,$(full_classes_jar),$(greylist_txt)))
+        $(eval $(call hiddenapi-generate-csv,$(full_classes_jar),$(hiddenapi_flags_csv),$(hiddenapi_metadata_csv)))
         $(eval $(call hiddenapi-copy-soong-jar,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
+
+        ifeq (true,$(WITH_DEXPREOPT))
+          # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
+          # We use this installed_odex trick to get boot.art installed.
+          installed_odex := $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
+          # Append the odex for the 2nd arch if we have one.
+          installed_odex += $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE)
+          ALL_MODULES.$(my_register_name).INSTALLED += $(installed_odex)
+          # Make sure to install the .odex and .vdex when you run "make <module_name>"
+         $(my_all_targets): $(installed_odex)
+        endif
       else # !is_boot_jar
         $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
       endif # is_boot_jar
       $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar) $(full_classes_header_jar)))
 
-      dex_preopt_profile_src_file := $(common_javalib.jar)
-
-      # defines built_odex along with rule to install odex
-      include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
-
-      dex_preopt_profile_src_file :=
-
-      ifdef LOCAL_DEX_PREOPT
-        ifneq ($(dexpreopt_boot_jar_module),) # boot jar
-          # boot jar's rules are defined in dex_preopt.mk
-          dexpreopted_boot_jar := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(dexpreopt_boot_jar_module)_nodex.jar
-          $(eval $(call copy-one-file,$(dexpreopted_boot_jar),$(LOCAL_BUILT_MODULE)))
-
-          # For libart boot jars, we don't have .odex files.
-        else # ! boot jar
-          $(built_odex): PRIVATE_MODULE := $(LOCAL_MODULE)
-          # Use pattern rule - we may have multiple built odex files.
-$(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(common_javalib.jar)
-	@echo "Dexpreopt Jar: $(PRIVATE_MODULE) ($@)"
-	$(call dexpreopt-one-file,$<,$@)
-
-         $(eval $(call dexpreopt-copy-jar,$(common_javalib.jar),$(LOCAL_BUILT_MODULE),$(LOCAL_DEX_PREOPT)))
-        endif # ! boot jar
-      else # LOCAL_DEX_PREOPT
-        $(eval $(call copy-one-file,$(common_javalib.jar),$(LOCAL_BUILT_MODULE)))
-      endif # LOCAL_DEX_PREOPT
+      $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
+      $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(common_javalib.jar)))
     else # LOCAL_IS_HOST_MODULE
       $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(LOCAL_BUILT_MODULE)))
       $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(full_classes_jar) $(full_classes_header_jar)))
@@ -117,13 +107,38 @@ $(built_odex) : $(dir $(LOCAL_BUILT_MODULE))% : $(common_javalib.jar)
 
     java-dex : $(LOCAL_BUILT_MODULE)
   else  # LOCAL_UNINSTALLABLE_MODULE
+
+    ifneq ($(filter $(LOCAL_MODULE),$(HIDDENAPI_EXTRA_APP_USAGE_JARS)),)
+      # Derive greylist from classes.jar.
+      # We use full_classes_jar here, which is the post-proguard jar (on the basis that we also
+      # have a full_classes_pre_proguard_jar). This is consistent with the equivalent code in
+      # java.mk.
+      $(eval $(call hiddenapi-generate-csv,$(full_classes_jar),$(hiddenapi_flags_csv),$(hiddenapi_metadata_csv)))
+    endif
+
     $(eval $(call copy-one-file,$(full_classes_jar),$(LOCAL_BUILT_MODULE)))
     $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
     java-dex : $(common_javalib.jar)
   endif  # LOCAL_UNINSTALLABLE_MODULE
 else  # LOCAL_SOONG_DEX_JAR
+  ifndef LOCAL_UNINSTALLABLE_MODULE
+    ifndef LOCAL_IS_HOST_MODULE
+      $(call pretty-error,Installable device module must have LOCAL_SOONG_DEX_JAR set)
+    endif
+  endif
   $(eval $(call copy-one-file,$(full_classes_jar),$(LOCAL_BUILT_MODULE)))
 endif  # LOCAL_SOONG_DEX_JAR
+
+my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
+  $(call word-colon,1,$(f)):$(PRODUCT_OUT)$(call word-colon,2,$(f)))
+my_installed := $(call copy-many-files, $(my_built_installed))
+ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_installed)
+$(my_register_name): $(my_installed)
+
+ifdef LOCAL_SOONG_AAR
+  ALL_MODULES.$(LOCAL_MODULE).AAR := $(LOCAL_SOONG_AAR)
+endif
 
 javac-check : $(full_classes_jar)
 javac-check-$(LOCAL_MODULE) : $(full_classes_jar)

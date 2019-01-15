@@ -12,12 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ifdef dist_goal
-
 # The rule below doesn't have dependenices on the files that it copies,
-# so manually generate directly into the DIST_DIR directory that is always
-# wiped between dist builds.
-gpl_source_tgz := $(DIST_DIR)/gpl_source.tgz
+# so manually generate into a PACKAGING intermediate dir, which is wiped
+# in installclean between incremental builds on build servers.
+gpl_source_tgz := $(call intermediates-dir-for,PACKAGING,gpl_source)/gpl_source.tgz
 
 # FORCE since we can't know whether any of the sources changed
 $(gpl_source_tgz): PRIVATE_PATHS := $(sort $(patsubst %/, %, $(dir $(ALL_GPL_MODULE_LICENSE_FILES))))
@@ -26,8 +24,4 @@ $(gpl_source_tgz) : $(ALL_GPL_MODULE_LICENSE_FILES)
 	$(hide) tar cfz $@ --exclude ".git*" $(PRIVATE_PATHS)
 
 # Dist the tgz only if we are doing a full build
-ifeq (,$(TARGET_BUILD_APPS))
-droidcore: $(gpl_source_tgz)
-endif
-
-endif # dist_goal
+$(call dist-for-goals,droidcore,$(gpl_source_tgz))

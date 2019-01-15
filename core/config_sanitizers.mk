@@ -5,23 +5,18 @@
 my_sanitize := $(strip $(LOCAL_SANITIZE))
 my_sanitize_diag := $(strip $(LOCAL_SANITIZE_DIAG))
 
-# SANITIZE_HOST is only in effect if the module is already using clang (host
-# modules that haven't set `LOCAL_CLANG := false` and device modules that
-# have set `LOCAL_CLANG := true`.
 my_global_sanitize :=
 my_global_sanitize_diag :=
-ifeq ($(my_clang),true)
-  ifdef LOCAL_IS_HOST_MODULE
-    ifneq ($($(my_prefix)OS),windows)
-      my_global_sanitize := $(strip $(SANITIZE_HOST))
+ifdef LOCAL_IS_HOST_MODULE
+  ifneq ($($(my_prefix)OS),windows)
+    my_global_sanitize := $(strip $(SANITIZE_HOST))
 
-      # SANITIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
-      my_global_sanitize := $(subst true,address,$(my_global_sanitize))
-    endif
-  else
-    my_global_sanitize := $(strip $(SANITIZE_TARGET))
-    my_global_sanitize_diag := $(strip $(SANITIZE_TARGET_DIAG))
+    # SANITIZE_HOST=true is a deprecated way to say SANITIZE_HOST=address.
+    my_global_sanitize := $(subst true,address,$(my_global_sanitize))
   endif
+else
+  my_global_sanitize := $(strip $(SANITIZE_TARGET))
+  my_global_sanitize_diag := $(strip $(SANITIZE_TARGET_DIAG))
 endif
 
 # Disable global integer_overflow in excluded paths.
@@ -181,11 +176,12 @@ endif
 ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_sanitize := $(filter-out address,$(my_sanitize))
   my_sanitize := $(filter-out thread,$(my_sanitize))
+  my_sanitize := $(filter-out cfi,$(my_sanitize))
 endif
 
 ifneq ($(filter hwaddress,$(my_sanitize)),)
   my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)HWADDRESS_SANITIZER_RUNTIME_LIBRARY)
-  ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
     ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
       my_static_libraries := $(my_static_libraries) $($(LOCAL_2ND_ARCH_VAR_PREFIX)HWADDRESS_SANITIZER_STATIC_LIBRARY)
     endif
@@ -217,10 +213,6 @@ ifneq ($(filter address thread hwaddress,$(my_sanitize)),)
   my_sanitize := $(filter-out scudo,$(my_sanitize))
 endif
 
-ifneq ($(filter scudo,$(my_sanitize)),)
-  my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)SCUDO_RUNTIME_LIBRARY)
-endif
-
 # Undefined symbols can occur if a non-sanitized library links
 # sanitized static libraries. That's OK, because the executable
 # always depends on the ASan runtime library, which defines these
@@ -232,13 +224,6 @@ ifneq ($(filter address thread,$(strip $(SANITIZE_TARGET))),)
         my_allow_undefined_symbols := true
       endif
     endif
-  endif
-endif
-
-# Sanitizers can only be used with clang.
-ifneq ($(my_clang),true)
-  ifneq ($(my_sanitize),)
-    $(error $(LOCAL_PATH): $(LOCAL_MODULE): Use of sanitizers requires LOCAL_CLANG := true)
   endif
 endif
 
@@ -289,6 +274,7 @@ endif
 ifneq ($(my_sanitize),)
   fsanitize_arg := $(subst $(space),$(comma),$(my_sanitize))
   my_cflags += -fsanitize=$(fsanitize_arg)
+  my_asflags += -fsanitize=$(fsanitize_arg)
 
   ifdef LOCAL_IS_HOST_MODULE
     my_cflags += -fno-sanitize-recover=all
@@ -309,6 +295,7 @@ ifneq ($(filter cfi,$(my_sanitize)),)
   # entire module.
   LOCAL_ARM_MODE := thumb
   my_cflags += $(CFI_EXTRA_CFLAGS)
+  my_asflags += $(CFI_EXTRA_ASFLAGS)
   # Only append the default visibility flag if -fvisibility has not already been
   # set to hidden.
   ifeq ($(filter -fvisibility=hidden,$(LOCAL_CFLAGS)),)
@@ -350,7 +337,7 @@ ifneq ($(filter address,$(my_global_sanitize) $(my_sanitize)),)
       my_ldflags += -Wl,--as-needed
     endif
 
-    ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
+    ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
       ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
         my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_LINKER)
         # Make sure linker_asan get installed.
@@ -370,6 +357,11 @@ ifneq ($(filter address,$(my_sanitize)),)
   endif
 endif
 
+# If local module needs HWASAN, add compiler flags.
+ifneq ($(filter hwaddress,$(my_sanitize)),)
+  my_cflags += $(HWADDRESS_SANITIZER_CONFIG_EXTRA_CFLAGS)
+endif
+
 # Use minimal diagnostics when integer overflow is enabled; never do it for HOST or AUX modules
 ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
   # Pre-emptively add UBSAN minimal runtime incase a static library dependency requires it
@@ -380,7 +372,7 @@ ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
     endif
   endif
   ifneq ($(filter unsigned-integer-overflow signed-integer-overflow integer,$(my_sanitize)),)
-    ifeq ($(filter unsigned-integer-overflow signed-integer overflow integer,$(my_sanitize_diag)),)
+    ifeq ($(filter unsigned-integer-overflow signed-integer-overflow integer,$(my_sanitize_diag)),)
       ifeq ($(filter cfi,$(my_sanitize_diag)),)
         ifeq ($(filter address hwaddress,$(my_sanitize)),)
           my_cflags += -fsanitize-minimal-runtime
@@ -392,9 +384,26 @@ ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
   endif
 endif
 
+# For Scudo, we opt for the minimal runtime, unless some diagnostics are enabled.
+ifneq ($(filter scudo,$(my_sanitize)),)
+  ifeq ($(filter unsigned-integer-overflow signed-integer-overflow integer cfi,$(my_sanitize_diag)),)
+    my_cflags += -fsanitize-minimal-runtime
+  endif
+  ifneq ($(filter -fsanitize-minimal-runtime,$(my_cflags)),)
+    my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)SCUDO_MINIMAL_RUNTIME_LIBRARY)
+  else
+    my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)SCUDO_RUNTIME_LIBRARY)
+  endif
+endif
+
 ifneq ($(strip $(LOCAL_SANITIZE_RECOVER)),)
   recover_arg := $(subst $(space),$(comma),$(LOCAL_SANITIZE_RECOVER)),
   my_cflags += -fsanitize-recover=$(recover_arg)
+endif
+
+ifneq ($(strip $(LOCAL_SANITIZE_NO_RECOVER)),)
+  no_recover_arg := $(subst $(space),$(comma),$(LOCAL_SANITIZE_NO_RECOVER)),
+  my_cflags += -fno-sanitize-recover=$(no_recover_arg)
 endif
 
 ifneq ($(my_sanitize_diag),)
@@ -408,6 +417,17 @@ ifneq ($(my_sanitize_diag),)
     ifeq ($(filter address thread scudo hwaddress,$(my_sanitize)),)
       # Does not have to be the first DT_NEEDED unlike ASan.
       my_shared_libraries += $($(LOCAL_2ND_ARCH_VAR_PREFIX)UBSAN_RUNTIME_LIBRARY)
+    endif
+  endif
+endif
+
+# http://b/119329758, Android core does not boot up with this sanitizer yet.
+# Previously sanitized modules might not pass new implicit-integer-sign-change check.
+# Disable this check unless it has been explicitly specified.
+ifneq ($(findstring fsanitize,$(my_cflags)),)
+  ifneq ($(findstring integer,$(my_cflags)),)
+    ifeq ($(findstring sanitize=implicit-integer-sign-change,$(my_cflags)),)
+      my_cflags += -fno-sanitize=implicit-integer-sign-change
     endif
   endif
 endif

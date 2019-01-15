@@ -36,52 +36,33 @@ PRODUCT_PACKAGES += \
     Bluetooth \
     BluetoothMidiService \
     BookmarkProvider \
-    Browser2 \
     BuiltInPrintService \
-    Calendar \
     CalendarProvider \
-    Camera2 \
+    cameraserver \
     CaptivePortalLogin \
     CertInstaller \
     clatd \
     clatd.conf \
-    Contacts \
-    DeskClock \
     DocumentsUI \
     DownloadProviderUi \
     EasterEgg \
-    Email \
-    ExactCalculator \
     ExternalStorageProvider \
     FusedLocation \
-    Gallery2 \
-    Home \
     InputDevices \
     KeyChain \
-    LatinIME \
-    Launcher3QuickStep \
     librs_jni \
     ManagedProvisioning \
     MmsService \
     MtpDocumentsProvider \
-    Music \
     MusicFX \
     NfcNci \
-    OneTimeInitializer \
     PacProcessor \
-    PrintRecommendationService \
     PrintSpooler \
-    Provision \
     ProxyHandler \
-    QuickSearchBox \
     screenrecord \
     SecureElement \
-    Settings \
-    SettingsIntelligence \
     SharedStorageBackup \
     SimAppDialog \
-    StorageManager \
-    SystemUI \
     Telecom \
     TelephonyProvider \
     TeleService \
@@ -89,7 +70,6 @@ PRODUCT_PACKAGES += \
     UserDictionaryProvider \
     VpnDialogs \
     vr \
-    WallpaperCropper \
 
 
 PRODUCT_SYSTEM_SERVER_APPS += \
@@ -105,4 +85,3 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.carrier=unknown \
     ro.config.notification_sound=OnTheHunt.ogg \
     ro.config.alarm_alert=Alarm_Classic.ogg
-

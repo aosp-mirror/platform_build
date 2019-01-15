@@ -36,6 +36,11 @@ endif
 endif
 
 # Define PRIVATE_ variables from global vars
+ifeq ($(LOCAL_NO_LIBCRT_BUILTINS),true)
+my_target_libcrt_builtins :=
+else
+my_target_libcrt_builtins := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBCRT_BUILTINS)
+endif
 ifeq ($(LOCAL_NO_LIBGCC),true)
 my_target_libgcc :=
 else
@@ -47,33 +52,33 @@ my_target_crtbegin_dynamic_o :=
 my_target_crtbegin_static_o :=
 my_target_crtend_o :=
 else ifdef LOCAL_USE_VNDK
-my_target_crtbegin_dynamic_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.vendor.o
-my_target_crtbegin_static_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.vendor.o
-my_target_crtend_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_android.vendor.o
+my_target_crtbegin_dynamic_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_dynamic.vendor)
+my_target_crtbegin_static_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_static.vendor)
+my_target_crtend_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtend_android.vendor)
 else
-my_target_crtbegin_dynamic_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_dynamic.o
-my_target_crtbegin_static_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtbegin_static.o
-my_target_crtend_o := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)/crtend_android.o
+my_target_crtbegin_dynamic_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_dynamic)
+my_target_crtbegin_static_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtbegin_static)
+my_target_crtend_o := $(SOONG_$(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJECT_crtend_android)
 endif
 ifneq ($(LOCAL_SDK_VERSION),)
 my_target_crtbegin_dynamic_o := $(wildcard $(my_ndk_sysroot_lib)/crtbegin_dynamic.o)
 my_target_crtbegin_static_o := $(wildcard $(my_ndk_sysroot_lib)/crtbegin_static.o)
 my_target_crtend_o := $(wildcard $(my_ndk_sysroot_lib)/crtend_android.o)
 endif
+$(linked_module): PRIVATE_TARGET_LIBCRT_BUILTINS := $(my_target_libcrt_builtins)
 $(linked_module): PRIVATE_TARGET_LIBGCC := $(my_target_libgcc)
 $(linked_module): PRIVATE_TARGET_LIBATOMIC := $(my_target_libatomic)
 $(linked_module): PRIVATE_TARGET_CRTBEGIN_DYNAMIC_O := $(my_target_crtbegin_dynamic_o)
 $(linked_module): PRIVATE_TARGET_CRTBEGIN_STATIC_O := $(my_target_crtbegin_static_o)
 $(linked_module): PRIVATE_TARGET_CRTEND_O := $(my_target_crtend_o)
-$(linked_module): PRIVATE_TARGET_OUT_INTERMEDIATE_LIBRARIES := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OUT_INTERMEDIATE_LIBRARIES)
 $(linked_module): PRIVATE_POST_LINK_CMD := $(LOCAL_POST_LINK_CMD)
 
 ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
-$(linked_module): $(my_target_crtbegin_static_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libgcc) $(my_target_libatomic)
+$(linked_module): $(my_target_crtbegin_static_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libcrt_builtins) $(my_target_libgcc) $(my_target_libatomic)
 	$(transform-o-to-static-executable)
 	$(PRIVATE_POST_LINK_CMD)
 else
-$(linked_module): $(my_target_crtbegin_dynamic_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libgcc) $(my_target_libatomic)
+$(linked_module): $(my_target_crtbegin_dynamic_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libcrt_builtins) $(my_target_libgcc) $(my_target_libatomic)
 	$(transform-o-to-executable)
 	$(PRIVATE_POST_LINK_CMD)
 endif

@@ -23,3 +23,17 @@ endif
 ifdef LOCAL_DROIDDOC_ANNOTATIONS_ZIP
 $(eval $(call copy-one-file,$(LOCAL_DROIDDOC_ANNOTATIONS_ZIP),$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(LOCAL_MODULE)_annotations.zip))
 endif
+
+ifdef LOCAL_DROIDDOC_API_VERSIONS_XML
+$(eval $(call copy-one-file,$(LOCAL_DROIDDOC_API_VERSIONS_XML),$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/$(LOCAL_MODULE)_generated-api-versions.xml))
+endif
+
+ifdef LOCAL_DROIDDOC_JDIFF_DOC_ZIP
+$(eval $(call copy-one-file,$(LOCAL_DROIDDOC_JDIFF_DOC_ZIP),$(OUT_DOCS)/$(LOCAL_MODULE)-jdiff-docs.zip))
+$(call dist-for-goals,docs,$(OUT_DOCS)/$(LOCAL_MODULE)-jdiff-docs.zip)
+
+ALL_DOCS += $(OUT_DOCS)/$(LOCAL_MODULE)-jdiff-docs.zip
+
+.PHONY: $(LOCAL_MODULE)-jdiff
+$(LOCAL_MODULE)-jdiff : $(OUT_DOCS)/$(LOCAL_MODULE)-jdiff-docs.zip
+endif

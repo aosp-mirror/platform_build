@@ -11,10 +11,6 @@ my_module_multilib := first
 endif
 endif
 
-ifeq ($(LOCAL_NO_FPIE),)
-LOCAL_LDFLAGS += $(HOST_FPIE_FLAGS)
-endif
-
 ifeq ($(my_module_multilib),both)
 ifneq ($(LOCAL_MODULE_CLASS),NATIVE_TESTS)
 ifeq ($(LOCAL_MODULE_PATH_32)$(LOCAL_MODULE_STEM_32),)
@@ -40,7 +36,6 @@ LOCAL_2ND_ARCH_VAR_PREFIX := $(HOST_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 ifeq ($(my_module_arch_supported),true)
 # Build for HOST_2ND_ARCH
-OVERRIDE_BUILT_MODULE_PATH :=
 LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
 LOCAL_INTERMEDIATE_TARGETS :=
@@ -56,7 +51,6 @@ LOCAL_HOST_PREFIX := $(my_prefix)
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 ifeq ($(my_module_arch_supported),true)
 # Build for Windows
-OVERRIDE_BUILT_MODULE_PATH :=
 # we don't want others using the cross compiled version
 saved_LOCAL_BUILT_MODULE := $(LOCAL_BUILT_MODULE)
 saved_LOCAL_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
@@ -64,10 +58,6 @@ saved_LOCAL_LDFLAGS := $(LOCAL_LDFLAGS)
 LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
 LOCAL_INTERMEDIATE_TARGETS :=
-
-ifeq ($(LOCAL_NO_FPIE),)
-LOCAL_LDFLAGS += $(HOST_CROSS_FPIE_FLAGS)
-endif
 
 include $(BUILD_SYSTEM)/host_executable_internal.mk
 LOCAL_LDFLAGS := $(saved_LOCAL_LDFLAGS)
@@ -79,7 +69,6 @@ ifdef HOST_CROSS_2ND_ARCH
 LOCAL_2ND_ARCH_VAR_PREFIX := $(HOST_CROSS_2ND_ARCH_VAR_PREFIX)
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 ifeq ($(my_module_arch_supported),true)
-OVERRIDE_BUILT_MODULE_PATH :=
 # we don't want others using the cross compiled version
 saved_LOCAL_BUILT_MODULE := $(LOCAL_BUILT_MODULE)
 saved_LOCAL_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
@@ -87,10 +76,6 @@ saved_LOCAL_LDFLAGS := $(LOCAL_LDFLAGS)
 LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
 LOCAL_INTERMEDIATE_TARGETS :=
-
-ifeq ($(LOCAL_NO_FPIE),)
-LOCAL_LDFLAGS += $(HOST_CROSS_FPIE_FLAGS)
-endif
 
 include $(BUILD_SYSTEM)/host_executable_internal.mk
 LOCAL_LDFLAGS := $(saved_LOCAL_LDFLAGS)

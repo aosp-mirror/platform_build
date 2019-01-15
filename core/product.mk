@@ -203,13 +203,19 @@ _product_var_list := \
     PRODUCT_CFI_EXCLUDE_PATHS \
     PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE \
     PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE \
-    PRODUCT_USE_LOGICAL_PARTITIONS \
     PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS \
+    PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT \
+    PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_WHITELIST \
+    PRODUCT_ARTIFACT_PATH_REQUIREMENT_HINT \
     PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST \
     PRODUCT_USE_DYNAMIC_PARTITION_SIZE \
     PRODUCT_BUILD_SUPER_PARTITION \
-    PRODUCT_USE_FASTBOOTD \
     PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION \
+    PRODUCT_USE_DYNAMIC_PARTITIONS \
+    PRODUCT_RETROFIT_DYNAMIC_PARTITIONS \
+    PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS \
+    PRODUCT_XOM_EXCLUDE_PATHS \
+    PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES \
 
 define dump-product
 $(info ==== $(1) ====)\
@@ -401,14 +407,17 @@ _product_stash_var_list += \
 	WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY
 
 # Logical partitions related variables.
-_product_stash_var_list += \
+_dynamic_partitions_var_list += \
 	BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE \
 	BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE \
 	BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE \
 	BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE \
 	BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE \
 	BOARD_SUPER_PARTITION_SIZE \
-	BOARD_SUPER_PARTITION_PARTITION_LIST \
+	BOARD_SUPER_PARTITION_GROUPS \
+
+_product_stash_var_list += $(_dynamic_partitions_var_list)
+_product_strip_var_list := $(_dynamic_partitions_var_list)
 
 #
 # Mark the variables in _product_stash_var_list as readonly
@@ -418,6 +427,13 @@ $(foreach v,$(_product_stash_var_list), \
 	$(eval $(v) ?=) \
 	$(eval .KATI_READONLY := $(v)) \
  )
+endef
+
+#
+# Strip the variables in _product_strip_var_list
+#
+define strip-product-vars
+$(foreach v,$(_product_strip_var_list),$(eval $(v) := $(strip $($(v)))))
 endef
 
 define add-to-product-copy-files-if-exists

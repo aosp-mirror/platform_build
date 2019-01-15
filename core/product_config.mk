@@ -175,15 +175,9 @@ include $(BUILD_SYSTEM)/node_fns.mk
 include $(BUILD_SYSTEM)/product.mk
 include $(BUILD_SYSTEM)/device.mk
 
-ifneq ($(strip $(TARGET_BUILD_APPS)),)
-# An unbundled app build needs only the core product makefiles.
-all_product_configs := $(call get-product-makefiles,\
-    $(SRC_TARGET_DIR)/product/AndroidProducts.mk)
-else
 # Read in all of the product definitions specified by the AndroidProducts.mk
 # files in the tree.
 all_product_configs := $(get-all-product-makefiles)
-endif
 
 all_named_products :=
 
@@ -242,11 +236,6 @@ $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
 
 # Sanity check
 $(check-all-products)
-
-ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
-$(dump-products)
-$(error done)
-endif
 
 # Convert a short name like "sooner" into the path to the product
 # file defining that product.
@@ -357,6 +346,11 @@ PRODUCT_SHIPPING_API_LEVEL := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SHI
 # used for adding properties to default.prop
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
+
+$(foreach rule,$(PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES),\
+    $(if $(filter 2,$(words $(subst :,$(space),$(rule)))),,\
+        $(error Rule "$(rule)" in PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDE is not <module_name>:<manifest_name>)))
+
 .KATI_READONLY := PRODUCT_DEFAULT_PROPERTY_OVERRIDES
 
 # A list of property assignments, like "key = value", with zero or more
@@ -373,6 +367,11 @@ PRODUCT_PRODUCT_PROPERTIES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PRODUCT_PROPERTIES))
 .KATI_READONLY := PRODUCT_PRODUCT_PROPERTIES
 
+ENFORCE_SYSTEM_CERTIFICATE := \
+    $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT)
+
+ENFORCE_SYSTEM_CERTIFICATE_WHITELIST := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_WHITELIST))
 
 # A list of property assignments, like "key = value", with zero or more
 # whitespace characters on either side of the '='.
@@ -428,6 +427,7 @@ PRODUCT_OTHER_JAVA_DEBUG_INFO := \
 # Resolve and setup per-module dex-preopt configs.
 PRODUCT_DEX_PREOPT_MODULE_CONFIGS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEX_PREOPT_MODULE_CONFIGS))
+DEXPREOPT_DISABLED_MODULES :=
 # If a module has multiple setups, the first takes precedence.
 _pdpmc_modules :=
 $(foreach c,$(PRODUCT_DEX_PREOPT_MODULE_CONFIGS),\
@@ -436,7 +436,9 @@ $(foreach c,$(PRODUCT_DEX_PREOPT_MODULE_CONFIGS),\
     $(eval _pdpmc_modules += $(m))\
     $(eval cf := $(patsubst $(m)=%,%,$(c)))\
     $(eval cf := $(subst $(_PDPMC_SP_PLACE_HOLDER),$(space),$(cf)))\
-    $(eval DEXPREOPT.$(TARGET_PRODUCT).$(m).CONFIG := $(cf))))
+    $(if $(filter disable,$(cf)),\
+      $(eval DEXPREOPT_DISABLED_MODULES += $(m)),\
+      $(eval DEXPREOPT.$(TARGET_PRODUCT).$(m).CONFIG := $(cf)))))
 _pdpmc_modules :=
 
 # Resolve and setup per-module sanitizer configs.
@@ -503,6 +505,10 @@ PRODUCT_CFI_EXCLUDE_PATHS := \
 PRODUCT_CFI_INCLUDE_PATHS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CFI_INCLUDE_PATHS))
 
+# Whether any paths are excluded from being set XOM when ENABLE_XOM=true
+PRODUCT_XOM_EXCLUDE_PATHS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_XOM_EXCLUDE_PATHS))
+
 # which Soong namespaces to export to Make
 PRODUCT_SOONG_NAMESPACES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SOONG_NAMESPACES))
@@ -515,28 +521,48 @@ PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := \
 PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE))
 
-# Logical and Resizable Partitions feature flag.
-PRODUCT_USE_LOGICAL_PARTITIONS := \
-    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_USE_LOGICAL_PARTITIONS))
-.KATI_READONLY := PRODUCT_USE_LOGICAL_PARTITIONS
+# Dynamic partition feature flags.
 
-# All requirements of PRODUCT_USE_LOGICAL_PARTITIONS falls back to
-# PRODUCT_USE_LOGICAL_PARTITIONS if not defined.
+# When this is true, dynamic partitions is retrofitted on a device that has
+# already been launched without dynamic partitions. Otherwise, the device
+# is launched with dynamic partitions.
+# This flag implies PRODUCT_USE_DYNAMIC_PARTITIONS.
+PRODUCT_RETROFIT_DYNAMIC_PARTITIONS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RETROFIT_DYNAMIC_PARTITIONS))
+.KATI_READONLY := PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
+
+PRODUCT_USE_DYNAMIC_PARTITIONS := $(or \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_USE_DYNAMIC_PARTITIONS)), \
+    $(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS))
+.KATI_READONLY := PRODUCT_USE_DYNAMIC_PARTITIONS
+
+# All requirements of PRODUCT_USE_DYNAMIC_PARTITIONS falls back to
+# PRODUCT_USE_DYNAMIC_PARTITIONS if not defined.
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := $(or \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_USE_DYNAMIC_PARTITION_SIZE)),\
-    $(PRODUCT_USE_LOGICAL_PARTITIONS))
+    $(PRODUCT_USE_DYNAMIC_PARTITIONS))
 .KATI_READONLY := PRODUCT_USE_DYNAMIC_PARTITION_SIZE
 PRODUCT_BUILD_SUPER_PARTITION := $(or \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BUILD_SUPER_PARTITION)),\
-    $(PRODUCT_USE_LOGICAL_PARTITIONS))
+    $(PRODUCT_USE_DYNAMIC_PARTITIONS))
 .KATI_READONLY := PRODUCT_BUILD_SUPER_PARTITION
-PRODUCT_USE_FASTBOOTD := $(or \
-    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_USE_FASTBOOTD)),\
-    $(PRODUCT_USE_LOGICAL_PARTITIONS))
-.KATI_READONLY := PRODUCT_USE_FASTBOOTD
 
 # List of modules that should be forcefully unmarked from being LOCAL_PRODUCT_MODULE, and hence
 # installed on /system directory by default.
 PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION))
 .KATI_READONLY := PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION
+
+# If set, kernel configuration requirements are present in OTA package (and will be enforced
+# during OTA). Otherwise, kernel configuration requirements are enforced in VTS.
+# Devices that checks the running kernel (instead of the kernel in OTA package) should not
+# set this variable to prevent OTA failures.
+PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS))
+
+# List of <module_name>:<manifest_name> pairs to override the manifest package name
+# of a module <module_name> to <manifest_name>. Patterns can be used as in
+# com.android.%:com.acme.android.%.release
+PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES))
+.KATI_READONLY := PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES

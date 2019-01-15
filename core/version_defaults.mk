@@ -179,8 +179,11 @@ else
     # SDK version the package was built for, otherwise it should fall back to
     # assuming the device can only support APIs as of the previous official
     # public release.
-    # This value will always be 0 for release builds.
-    PLATFORM_PREVIEW_SDK_VERSION := 0
+    # This value will always be forced to 0 for release builds by the logic
+    # in the "ifeq" block above, so the value below will be used on any
+    # non-release builds, and it should always be at least 1, to indicate that
+    # APIs may have changed since the claimed PLATFORM_SDK_VERSION.
+    PLATFORM_PREVIEW_SDK_VERSION := 1
   endif
 endif
 .KATI_READONLY := PLATFORM_PREVIEW_SDK_VERSION
@@ -249,7 +252,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-      PLATFORM_SECURITY_PATCH := 2018-08-05
+      PLATFORM_SECURITY_PATCH := 2018-12-05
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH
 
@@ -311,15 +314,15 @@ ifndef BUILD_NUMBER
   # If no BUILD_NUMBER is set, create a useful "I am an engineering build
   # from this date/time" value.  Make it start with a non-digit so that
   # anyone trying to parse it as an integer will probably get "0".
-  BUILD_NUMBER := eng.$(shell echo $${USER:0:6}).$(shell $(DATE) +%Y%m%d.%H%M%S)
+  BUILD_NUMBER := eng.$(shell echo $${BUILD_USERNAME:0:6}).$(shell $(DATE) +%Y%m%d.%H%M%S)
   HAS_BUILD_NUMBER := false
 endif
 .KATI_READONLY := BUILD_NUMBER HAS_BUILD_NUMBER
 
 ifndef PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION
   # Used to set minimum supported target sdk version. Apps targeting sdk
-  # version lower than the set value will fail to install and run on android
-  # device.
-  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 17
+  # version lower than the set value will result in a warning being shown
+  # when any activity from the app is started.
+  PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION := 23
 endif
 .KATI_READONLY := PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION

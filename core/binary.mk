@@ -46,8 +46,8 @@ my_header_libraries := $(LOCAL_HEADER_LIBRARIES)
 my_cflags := $(LOCAL_CFLAGS)
 my_conlyflags := $(LOCAL_CONLYFLAGS)
 my_cppflags := $(LOCAL_CPPFLAGS)
-my_cflags_no_override := $(GLOBAL_CFLAGS_NO_OVERRIDE)
-my_cppflags_no_override := $(GLOBAL_CPPFLAGS_NO_OVERRIDE)
+my_cflags_no_override := $(GLOBAL_CLANG_CFLAGS_NO_OVERRIDE)
+my_cppflags_no_override := $(GLOBAL_CLANG_CPPFLAGS_NO_OVERRIDE)
 my_ldflags := $(LOCAL_LDFLAGS)
 my_ldlibs := $(LOCAL_LDLIBS)
 my_asflags := $(LOCAL_ASFLAGS)
@@ -71,6 +71,35 @@ else
 endif
 else
   my_native_coverage := false
+endif
+ifneq ($(NATIVE_COVERAGE),true)
+  my_native_coverage := false
+endif
+
+ifeq ($(strip $(ENABLE_XOM)),true)
+  ifndef LOCAL_IS_HOST_MODULE
+    my_xom := true
+    # Disable XOM in excluded paths.
+    combined_xom_exclude_paths := $(XOM_EXCLUDE_PATHS) \
+                                  $(PRODUCT_XOM_EXCLUDE_PATHS)
+    ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_xom_exclude_paths)),\
+           $(filter $(dir)%,$(LOCAL_PATH)))),)
+      my_xom := false
+    endif
+
+    # Allow LOCAL_XOM to override the above
+    ifdef LOCAL_XOM
+      my_xom := $(LOCAL_XOM)
+    endif
+
+    ifeq ($(strip $(my_xom)),true)
+      ifeq (arm64,$(TARGET_$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+        ifeq ($(my_use_clang_lld),true)
+          my_ldflags += -Wl,-execute-only
+        endif
+      endif
+    endif
+  endif
 endif
 
 my_allow_undefined_symbols := $(strip $(LOCAL_ALLOW_UNDEFINED_SYMBOLS))
@@ -201,7 +230,6 @@ ifneq ($(LOCAL_SDK_VERSION),)
       $(my_ndk_source_root)/cxx-stl/llvm-libc++/include
     my_ndk_stl_include_path += \
       $(my_ndk_source_root)/cxx-stl/llvm-libc++abi/include
-    my_ndk_stl_include_path += $(my_ndk_source_root)/android/support/include
 
     my_libcxx_libdir := \
       $(my_ndk_source_root)/cxx-stl/llvm-libc++/libs/$(my_cpu_variant)
@@ -214,7 +242,13 @@ ifneq ($(LOCAL_SDK_VERSION),)
       my_ndk_stl_shared_lib_fullpath := $(my_libcxx_libdir)/libc++_shared.so
     endif
 
-    my_ndk_stl_static_lib += $(my_libcxx_libdir)/libandroid_support.a
+    ifneq ($(my_ndk_api),current)
+      ifeq ($(call math_lt,$(my_ndk_api),21),true)
+        my_ndk_stl_include_path += $(my_ndk_source_root)/android/support/include
+        my_ndk_stl_static_lib += $(my_libcxx_libdir)/libandroid_support.a
+      endif
+    endif
+
     ifneq (,$(filter armeabi armeabi-v7a,$(my_cpu_variant)))
       my_ndk_stl_static_lib += $(my_libcxx_libdir)/libunwind.a
     endif
@@ -281,13 +315,18 @@ endif
 # all code is position independent, and then those warnings get promoted to
 # errors.
 ifneq ($(LOCAL_NO_PIC),true)
-ifneq ($($(my_prefix)OS),windows)
-ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-my_cflags += -fPIE
-else
-my_cflags += -fPIC
-endif
-endif
+  ifneq ($($(my_prefix)OS),windows)
+    ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+      my_cflags += -fPIE
+      ifndef BUILD_HOST_static
+        ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+          my_ldflags += -pie
+        endif
+      endif
+    else
+      my_cflags += -fPIC
+    endif
+  endif
 endif
 
 ifdef LOCAL_IS_HOST_MODULE
@@ -332,32 +371,8 @@ endif
 ifdef LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
 my_clang := $(strip $(LOCAL_CLANG_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
 endif
-
-# if custom toolchain is in use, default is not to use clang, if not explicitly required
-ifneq ($(my_cc)$(my_cxx),)
-    ifeq ($(my_clang),)
-        my_clang := false
-    endif
-endif
 ifeq ($(my_clang),false)
-    # https://android-review.googlesource.com/720799
-    ifneq ($(LOCAL_MODULE),bionic-compile-time-tests-g++)
-        $(call pretty-error,LOCAL_CLANG false is no longer supported)
-    endif
-endif
-
-# clang is enabled by default for host builds
-# enable it unless we've specifically disabled clang above
-ifdef LOCAL_IS_HOST_MODULE
-    ifneq ($($(my_prefix)CLANG_SUPPORTED),true)
-        $(error $($(my_prefix)OS) requires GCC$(comma) but only Clang is supported)
-    else
-        ifeq ($(my_clang),)
-            my_clang := true
-        endif
-    endif
-else ifeq ($(my_clang),)
-    my_clang := true
+    $(call pretty-error,LOCAL_CLANG false is no longer supported)
 endif
 
 ifeq ($(LOCAL_C_STD),)
@@ -376,21 +391,6 @@ else
     my_cpp_std_version := $(LOCAL_CPP_STD)
 endif
 
-ifneq ($(my_clang),true)
-    # GCC uses an invalid C++14 ABI (emits calls to
-    # __cxa_throw_bad_array_length, which is not a valid C++ RT ABI).
-    # http://b/25022512
-    my_cpp_std_version := $(DEFAULT_GCC_CPP_STD_VERSION)
-endif
-
-ifdef LOCAL_IS_HOST_MODULE
-    ifneq ($(my_clang),true)
-        # The host GCC doesn't support C++14 (and is deprecated, so likely
-        # never will). Build these modules with C++11.
-        my_cpp_std_version := $(DEFAULT_GCC_CPP_STD_VERSION)
-    endif
-endif
-
 my_c_std_conlyflags :=
 my_cpp_std_cppflags :=
 ifneq (,$(my_c_std_version))
@@ -402,10 +402,8 @@ ifneq (,$(my_cpp_std_version))
 endif
 
 # Extra cflags for projects under external/ directory
-ifeq ($(my_clang),true)
 ifneq ($(filter external/%,$(LOCAL_PATH)),)
     my_cflags += $(CLANG_EXTERNAL_CFLAGS)
-endif
 endif
 
 # arch-specific static libraries go first so that generic ones can depend on them
@@ -413,10 +411,7 @@ my_static_libraries := $(LOCAL_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_V
 my_whole_static_libraries := $(LOCAL_WHOLE_STATIC_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_WHOLE_STATIC_LIBRARIES_$(my_32_64_bit_suffix)) $(my_whole_static_libraries)
 my_header_libraries := $(LOCAL_HEADER_LIBRARIES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_HEADER_LIBRARIES_$(my_32_64_bit_suffix)) $(my_header_libraries)
 
-# soong defined modules already have done through this
-ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 include $(BUILD_SYSTEM)/cxx_stl_setup.mk
-endif
 
 # Add static HAL libraries
 ifdef LOCAL_HAL_STATIC_LIBRARIES
@@ -433,22 +428,12 @@ else
   my_linker := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LINKER)
 endif
 
-# Modules from soong do not need this since the dependencies are already handled there.
-ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 include $(BUILD_SYSTEM)/config_sanitizers.mk
-
-ifneq ($(LOCAL_NO_LIBCOMPILER_RT),true)
-# Add in libcompiler_rt for all regular device builds
-ifeq (,$(WITHOUT_LIBCOMPILER_RT))
-  my_static_libraries += $(COMPILER_RT_CONFIG_EXTRA_STATIC_LIBRARIES)
-endif
-endif
 
 # Statically link libwinpthread when cross compiling win32.
 ifeq ($($(my_prefix)OS),windows)
   my_static_libraries += libwinpthread
 endif
-endif # this module is not from soong
 
 ifneq ($(filter ../%,$(my_src_files)),)
 my_soong_problems += dotdot_srcs
@@ -488,179 +473,6 @@ endif
 my_asflags += -D__ASSEMBLY__
 
 ###########################################################
-## Define PRIVATE_ variables from global vars
-###########################################################
-ifndef LOCAL_IS_HOST_MODULE
-ifdef LOCAL_USE_VNDK
-my_target_global_c_includes := \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES)
-my_target_global_c_system_includes := \
-    $(TARGET_OUT_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES)
-else ifdef LOCAL_SDK_VERSION
-my_target_global_c_includes :=
-my_target_global_c_system_includes := $(my_ndk_stl_include_path) $(my_ndk_sysroot_include)
-else ifdef BOARD_VNDK_VERSION
-my_target_global_c_includes := $(SRC_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
-my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
-else
-my_target_global_c_includes := $(SRC_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
-my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) $(TARGET_OUT_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
-endif
-
-ifeq ($(my_clang),true)
-my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
-my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
-my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
-ifeq ($(my_use_clang_lld),true)
-  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
-  include $(BUILD_SYSTEM)/pack_dyn_relocs_setup.mk
-  ifeq ($(my_pack_module_relocations),false)
-    my_target_global_ldflags += -Wl,--pack-dyn-relocs=none
-  endif
-else
-  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
-endif # my_use_clang_lld
-else
-my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
-my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
-my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
-my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_LDFLAGS)
-endif # my_clang
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_target_global_c_includes)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_SYSTEM_INCLUDES := $(my_target_global_c_system_includes)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CFLAGS := $(my_target_global_cflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CONLYFLAGS := $(my_target_global_conlyflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(my_target_global_cppflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_LDFLAGS := $(my_target_global_ldflags)
-
-else # LOCAL_IS_HOST_MODULE
-
-my_host_global_c_includes := $(SRC_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
-my_host_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
-    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
-
-ifeq ($(my_clang),true)
-my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
-my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
-my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
-ifeq ($(my_use_clang_lld),true)
-  my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
-else
-  my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
-endif # my_use_clang_lld
-else
-my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CFLAGS)
-my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
-my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
-my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)GLOBAL_LDFLAGS)
-endif # my_clang
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_host_global_c_includes)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_SYSTEM_INCLUDES := $(my_host_global_c_system_includes)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CFLAGS := $(my_host_global_cflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CONLYFLAGS := $(my_host_global_conlyflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CPPFLAGS := $(my_host_global_cppflags)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_LDFLAGS := $(my_host_global_ldflags)
-endif # LOCAL_IS_HOST_MODULE
-
-# To enable coverage for a given module, set LOCAL_NATIVE_COVERAGE=true and
-# build with NATIVE_COVERAGE=true in your enviornment. Note that the build
-# system is not sensitive to changes to NATIVE_COVERAGE, so you should do a
-# clean build of your module after toggling it.
-ifeq ($(NATIVE_COVERAGE),true)
-    ifeq ($(my_native_coverage),true)
-        # Note that clang coverage doesn't play nicely with acov out of the box.
-        # Clang apparently generates .gcno files that aren't compatible with
-        # gcov-4.8.  This can be solved by installing gcc-4.6 and invoking lcov
-        # with `--gcov-tool /usr/bin/gcov-4.6`.
-        #
-        # http://stackoverflow.com/questions/17758126/clang-code-coverage-invalid-output
-        my_cflags += --coverage -O0
-        my_ldflags += --coverage
-    endif
-
-    ifeq ($(my_clang),true)
-        my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
-    else
-        my_coverage_lib := $(call intermediates-dir-for,STATIC_LIBRARIES,libgcov,$(filter AUX,$(my_kind)),,$(LOCAL_2ND_ARCH_VAR_PREFIX))/libgcov.a
-    endif
-
-    $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_COVERAGE_LIB := $(my_coverage_lib)
-    $(LOCAL_INTERMEDIATE_TARGETS): $(my_coverage_lib)
-else
-    my_native_coverage := false
-endif
-
-###########################################################
-## Define PRIVATE_ variables used by multiple module types
-###########################################################
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_NO_DEFAULT_COMPILER_FLAGS := \
-    $(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS))
-
-ifeq ($(strip $(WITH_STATIC_ANALYZER)),)
-  LOCAL_NO_STATIC_ANALYZER := true
-endif
-
-# Clang does not recognize all gcc flags.
-# Use static analyzer only if clang is used.
-ifneq ($(my_clang),true)
-  LOCAL_NO_STATIC_ANALYZER := true
-endif
-
-ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
-  my_syntax_arch := host
-else
-  my_syntax_arch := $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-endif
-
-ifeq ($(strip $(my_cc)),)
-  ifeq ($(my_clang),true)
-    my_cc := $(CLANG)
-  else
-    my_cc := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)CC)
-  endif
-  my_cc := $(my_cc_wrapper) $(my_cc)
-endif
-
-SYNTAX_TOOLS_PREFIX := \
-    $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/libexec
-
-ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
-  my_cc := CCC_CC=$(CLANG) CLANG=$(CLANG) \
-           $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer
-endif
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CC := $(my_cc)
-
-ifeq ($(strip $(my_cxx)),)
-  ifeq ($(my_clang),true)
-    my_cxx := $(CLANG_CXX)
-  else
-    my_cxx := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)CXX)
-  endif
-  my_cxx := $(my_cxx_wrapper) $(my_cxx)
-endif
-
-ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
-  my_cxx := CCC_CXX=$(CLANG_CXX) CLANG_CXX=$(CLANG_CXX) \
-            $(SYNTAX_TOOLS_PREFIX)/c++-analyzer
-endif
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LINKER := $(my_linker)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CXX := $(my_cxx)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CLANG := $(my_clang)
-
 # TODO: support a mix of standard extensions so that this isn't necessary
 LOCAL_CPP_EXTENSION := $(strip $(LOCAL_CPP_EXTENSION))
 ifeq ($(LOCAL_CPP_EXTENSION),)
@@ -703,10 +515,6 @@ normal_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)
 # actually used (although they are usually empty).
 arm_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(arm_objects_mode)_CFLAGS)
 normal_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(normal_objects_mode)_CFLAGS)
-ifeq ($(my_clang),true)
-arm_objects_cflags := $(call convert-to-clang-flags,$(arm_objects_cflags))
-normal_objects_cflags := $(call convert-to-clang-flags,$(normal_objects_cflags))
-endif
 
 else
 arm_objects_mode :=
@@ -970,8 +778,6 @@ vts_gen_include_root := $(intermediates)/vts-generated/include
 # Thus we'll actually generate source for each architecture.
 $(foreach s,$(vts_src),\
     $(eval $(call define-vts-cpp-rule,$(s),$(vts_gen_cpp_root),vts_gen_cpp)))
-$(foreach cpp,$(vts_gen_cpp), \
-    $(call include-depfile,$(addsuffix .vts.P,$(basename $(cpp))),$(cpp)))
 $(call track-src-file-gen,$(vts_src),$(vts_gen_cpp))
 
 $(vts_gen_cpp) : PRIVATE_MODULE := $(LOCAL_MODULE)
@@ -1348,29 +1154,23 @@ ifneq ($(LOCAL_USE_VNDK),)
   ## switch all soong libraries over to the /vendor
   ## variant.
   ####################################################
-  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-    # We don't do this renaming for soong-defined modules since they already have correct
-    # names (with .vendor suffix when necessary) in their LOCAL_*_LIBRARIES.
-    my_whole_static_libraries := $(foreach l,$(my_whole_static_libraries),\
-      $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_static_libraries := $(foreach l,$(my_static_libraries),\
-      $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
-      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_system_shared_libraries := $(foreach l,$(my_system_shared_libraries),\
-      $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
-    my_header_libraries := $(foreach l,$(my_header_libraries),\
-      $(if $(SPLIT_VENDOR.HEADER_LIBRARIES.$(l)),$(l).vendor,$(l)))
-  endif
+  my_whole_static_libraries := $(foreach l,$(my_whole_static_libraries),\
+    $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  my_static_libraries := $(foreach l,$(my_static_libraries),\
+    $(if $(SPLIT_VENDOR.STATIC_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+    $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  my_system_shared_libraries := $(foreach l,$(my_system_shared_libraries),\
+    $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
+  my_header_libraries := $(foreach l,$(my_header_libraries),\
+    $(if $(SPLIT_VENDOR.HEADER_LIBRARIES.$(l)),$(l).vendor,$(l)))
 endif
 
 # Platform can use vendor public libraries. If a required shared lib is one of
 # the vendor public libraries, the lib is switched to the stub version of the lib.
 ifeq ($(LOCAL_USE_VNDK),)
-  ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-    my_shared_libraries := $(foreach l,$(my_shared_libraries),\
-      $(if $(filter $(l),$(VENDOR_PUBLIC_LIBRARIES)),$(l).vendorpublic,$(l)))
-  endif
+  my_shared_libraries := $(foreach l,$(my_shared_libraries),\
+    $(if $(filter $(l),$(VENDOR_PUBLIC_LIBRARIES)),$(l).vendorpublic,$(l)))
 endif
 
 ##########################################################
@@ -1450,6 +1250,11 @@ else ifdef LOCAL_USE_VNDK
         my_warn_types :=
         my_allowed_types := native:vendor native:vndk
     endif
+else ifneq ($(filter $(TARGET_RECOVERY_OUT)/%,$(call get_non_asan_path,$(LOCAL_MODULE_PATH))),)
+my_link_type := native:recovery
+my_warn_types :=
+# TODO(b/113303515) remove native:platform and my_allowed_ndk_types
+my_allowed_types := native:recovery native:platform $(my_allowed_ndk_types)
 else
 my_link_type := native:platform
 my_warn_types := $(my_warn_ndk_types)
@@ -1502,6 +1307,8 @@ endif
 normal_objects += $(addprefix $(TOPDIR)$(LOCAL_PATH)/,$(LOCAL_PREBUILT_OBJ_FILES))
 
 all_objects := $(normal_objects) $(gen_o_objects)
+
+LOCAL_INTERMEDIATE_TARGETS += $(all_objects)
 
 # Cleanup file tracking
 $(foreach f,$(my_tracked_gen_files),$(eval my_src_file_gen_$(s):=))
@@ -1565,9 +1372,9 @@ a_suffix := $($(my_prefix)STATIC_LIB_SUFFIX)
 
 ifneq ($(LOCAL_SDK_VERSION),)
 built_shared_libraries := \
-    $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
-      $(addsuffix $(so_suffix), \
-        $(my_shared_libraries)))
+    $(foreach lib,$(my_shared_libraries), \
+      $(call intermediates-dir-for, \
+        SHARED_LIBRARIES,$(lib),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/$(lib)$(so_suffix))
 built_shared_library_deps := $(addsuffix .toc, $(built_shared_libraries))
 
 # Add the NDK libraries to the built module dependency
@@ -1591,9 +1398,9 @@ built_shared_libraries += \
 
 else
 built_shared_libraries := \
-    $(addprefix $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT_INTERMEDIATE_LIBRARIES)/, \
-      $(addsuffix $(so_suffix), \
-        $(installed_shared_library_module_names)))
+    $(foreach lib,$(installed_shared_library_module_names), \
+      $(call intermediates-dir-for, \
+        SHARED_LIBRARIES,$(lib),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/$(lib)$(so_suffix))
 built_shared_library_deps := $(addsuffix .toc, $(built_shared_libraries))
 my_system_shared_libraries_fullpath :=
 endif
@@ -1621,10 +1428,13 @@ built_whole_libraries := \
 ifeq ($(ONE_SHOT_MAKEFILE),)
 installed_static_library_notice_file_targets := \
     $(foreach lib,$(my_static_libraries) $(my_whole_static_libraries), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST,TARGET)-STATIC_LIBRARIES-$(lib))
+      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-STATIC_LIBRARIES-$(lib))
 else
 installed_static_library_notice_file_targets :=
 endif
+
+$(notice_target): | $(installed_static_library_notice_file_targets)
+$(LOCAL_INSTALLED_MODULE): | $(notice_target)
 
 $(notice_target): | $(installed_static_library_notice_file_targets)
 $(LOCAL_INSTALLED_MODULE): | $(notice_target)
@@ -1638,12 +1448,9 @@ endif
 # Rule-specific variable definitions
 ###########################################################
 
-ifeq ($(my_clang),true)
 my_cflags += $(LOCAL_CLANG_CFLAGS)
 my_conlyflags += $(LOCAL_CLANG_CONLYFLAGS)
 my_cppflags += $(LOCAL_CLANG_CPPFLAGS)
-my_cflags_no_override += $(GLOBAL_CLANG_CFLAGS_NO_OVERRIDE)
-my_cppflags_no_override += $(GLOBAL_CLANG_CPPFLAGS_NO_OVERRIDE)
 my_asflags += $(LOCAL_CLANG_ASFLAGS)
 my_ldflags += $(LOCAL_CLANG_LDFLAGS)
 my_cflags += $(LOCAL_CLANG_CFLAGS_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) $(LOCAL_CLANG_CFLAGS_$(my_32_64_bit_suffix))
@@ -1655,11 +1462,6 @@ my_cflags := $(call convert-to-clang-flags,$(my_cflags))
 my_cppflags := $(call convert-to-clang-flags,$(my_cppflags))
 my_asflags := $(call convert-to-clang-flags,$(my_asflags))
 my_ldflags := $(call convert-to-clang-flags,$(my_ldflags))
-else
-# gcc does not handle hidden functions in a manner compatible with LLVM libcxx
-# see b/27908145
-my_cflags += -Wno-attributes
-endif
 
 ifeq ($(my_fdo_build), true)
   my_cflags := $(patsubst -Os,-O2,$(my_cflags))
@@ -1692,26 +1494,23 @@ ifeq ($(my_strict),true)
 endif
 
 # Check if -Werror or -Wno-error is used in C compiler flags.
-# Modules defined in $(SOONG_ANDROID_MK) are checked in soong's cc.go.
-ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-  # Header libraries do not need cflags.
-  ifneq (HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS))
-    # Prebuilt modules do not need cflags.
-    ifeq (,$(LOCAL_PREBUILT_MODULE_FILE))
-      my_all_cflags := $(my_cflags) $(my_cppflags) $(my_cflags_no_override)
-      # Issue warning if -Wno-error is used.
-      ifneq (,$(filter -Wno-error,$(my_all_cflags)))
-        $(eval MODULES_USING_WNO_ERROR := $(MODULES_USING_WNO_ERROR) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
-      else
-        # Issue warning if -Werror is not used. Add it.
-        ifeq (,$(filter -Werror,$(my_all_cflags)))
-          # Add -Wall -Werror unless the project is in the WARNING_ALLOWED project list.
-          ifeq (,$(strip $(call find_warning_allowed_projects,$(LOCAL_PATH))))
-            my_cflags := -Wall -Werror $(my_cflags)
-          else
-            $(eval MODULES_ADDED_WALL := $(MODULES_ADDED_WALL) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
-            my_cflags := -Wall $(my_cflags)
-          endif
+# Header libraries do not need cflags.
+ifneq (HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS))
+  # Prebuilt modules do not need cflags.
+  ifeq (,$(LOCAL_PREBUILT_MODULE_FILE))
+    my_all_cflags := $(my_cflags) $(my_cppflags) $(my_cflags_no_override)
+    # Issue warning if -Wno-error is used.
+    ifneq (,$(filter -Wno-error,$(my_all_cflags)))
+      $(eval MODULES_USING_WNO_ERROR := $(MODULES_USING_WNO_ERROR) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
+    else
+      # Issue warning if -Werror is not used. Add it.
+      ifeq (,$(filter -Werror,$(my_all_cflags)))
+        # Add -Wall -Werror unless the project is in the WARNING_ALLOWED project list.
+        ifeq (,$(strip $(call find_warning_allowed_projects,$(LOCAL_PATH))))
+          my_cflags := -Wall -Werror $(my_cflags)
+        else
+          $(eval MODULES_ADDED_WALL := $(MODULES_ADDED_WALL) $(LOCAL_MODULE_MAKEFILE):$(LOCAL_MODULE))
+          my_cflags := -Wall $(my_cflags)
         endif
       endif
     endif
@@ -1733,48 +1532,52 @@ endif
 my_tidy_checks :=
 my_tidy_flags :=
 ifneq (,$(filter 1 true,$(my_tidy_enabled)))
-  ifneq ($(my_clang),true)
-    # Disable clang-tidy if clang is disabled.
-    my_tidy_enabled := false
-  else
-    tidy_only: $(cpp_objects) $(c_objects)
-    # Set up global default checks
-    my_tidy_checks := $(WITH_TIDY_CHECKS)
-    ifeq ($(my_tidy_checks),)
-      my_tidy_checks := $(call default_global_tidy_checks,$(LOCAL_PATH))
-    endif
-    # Append local clang-tidy checks.
-    ifneq ($(LOCAL_TIDY_CHECKS),)
-      my_tidy_checks := $(my_tidy_checks),$(LOCAL_TIDY_CHECKS)
-    endif
-    my_tidy_flags += $(WITH_TIDY_FLAGS) $(LOCAL_TIDY_FLAGS)
-    # If tidy flags are not specified, default to check all header files.
-    ifeq ($(my_tidy_flags),)
-      my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
-    endif
-    # If clang-tidy is not enabled globally, add the -quiet flag.
-    ifeq (,$(filter 1 true,$(WITH_TIDY)))
-      my_tidy_flags += -quiet -extra-arg-before=-fno-caret-diagnostics
-    endif
+  tidy_only: $(cpp_objects) $(c_objects) $(gen_c_objects) $(gen_cpp_objects)
+  # Set up global default checks
+  my_tidy_checks := $(WITH_TIDY_CHECKS)
+  ifeq ($(my_tidy_checks),)
+    my_tidy_checks := $(call default_global_tidy_checks,$(LOCAL_PATH))
+  endif
+  # Append local clang-tidy checks.
+  ifneq ($(LOCAL_TIDY_CHECKS),)
+    my_tidy_checks := $(my_tidy_checks),$(LOCAL_TIDY_CHECKS)
+  endif
+  my_tidy_flags := $(strip $(WITH_TIDY_FLAGS) $(LOCAL_TIDY_FLAGS))
+  # If tidy flags are not specified, default to check all header files.
+  ifeq ($(my_tidy_flags),)
+    my_tidy_flags := $(call default_tidy_header_filter,$(LOCAL_PATH))
+  endif
+  # If clang-tidy is not enabled globally, add the -quiet flag.
+  ifeq (,$(filter 1 true,$(WITH_TIDY)))
+    my_tidy_flags += -quiet -extra-arg-before=-fno-caret-diagnostics
+  endif
 
-    ifneq ($(my_tidy_checks),)
-      # We might be using the static analyzer through clang-tidy.
-      # https://bugs.llvm.org/show_bug.cgi?id=32914
-      my_tidy_flags += -extra-arg-before=-D__clang_analyzer__
+  ifneq ($(my_tidy_checks),)
+    # We might be using the static analyzer through clang-tidy.
+    # https://bugs.llvm.org/show_bug.cgi?id=32914
+    my_tidy_flags += -extra-arg-before=-D__clang_analyzer__
 
-      # A recent change in clang-tidy (r328258) enabled destructor inlining,
-      # which appears to cause a number of false positives. Until that's
-      # resolved, this turns off the effects of r328258.
-      # https://bugs.llvm.org/show_bug.cgi?id=37459
-      my_tidy_flags += -extra-arg-before=-Xclang
-      my_tidy_flags += -extra-arg-before=-analyzer-config
-      my_tidy_flags += -extra-arg-before=-Xclang
-      my_tidy_flags += -extra-arg-before=c++-temp-dtor-inlining=false
-    endif
+    # A recent change in clang-tidy (r328258) enabled destructor inlining,
+    # which appears to cause a number of false positives. Until that's
+    # resolved, this turns off the effects of r328258.
+    # https://bugs.llvm.org/show_bug.cgi?id=37459
+    my_tidy_flags += -extra-arg-before=-Xclang
+    my_tidy_flags += -extra-arg-before=-analyzer-config
+    my_tidy_flags += -extra-arg-before=-Xclang
+    my_tidy_flags += -extra-arg-before=c++-temp-dtor-inlining=false
   endif
 endif
 
 my_tidy_checks := $(subst $(space),,$(my_tidy_checks))
+
+# Add dependency of clang-tidy and clang-tidy.sh
+ifneq ($(my_tidy_checks),)
+  my_clang_tidy_programs := $(PATH_TO_CLANG_TIDY) $(PATH_TO_CLANG_TIDY_SHELL)
+  $(cpp_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
+  $(c_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
+  $(gen_cpp_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
+  $(gen_c_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
+endif
 
 # Move -l* entries from ldflags to ldlibs, and everything else to ldflags
 my_ldlib_flags := $(my_ldflags) $(my_ldlibs)
@@ -1799,6 +1602,141 @@ endif
 # my_cxx_ldlibs may contain linker flags need to wrap certain libraries
 # (start-group/end-group), so append after the check above.
 my_ldlibs += $(my_cxx_ldlibs)
+
+###########################################################
+## Define PRIVATE_ variables from global vars
+###########################################################
+ifndef LOCAL_IS_HOST_MODULE
+ifdef LOCAL_USE_VNDK
+my_target_global_c_includes := \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES)
+my_target_global_c_system_includes := \
+    $(TARGET_OUT_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES)
+else ifdef LOCAL_SDK_VERSION
+my_target_global_c_includes :=
+my_target_global_c_system_includes := $(my_ndk_stl_include_path) $(my_ndk_sysroot_include)
+else ifdef BOARD_VNDK_VERSION
+my_target_global_c_includes := $(SRC_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
+my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
+else
+my_target_global_c_includes := $(SRC_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_INCLUDES) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
+my_target_global_c_system_includes := $(SRC_SYSTEM_HEADERS) $(TARGET_OUT_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)PROJECT_SYSTEM_INCLUDES) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
+endif
+
+my_target_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
+my_target_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
+my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
+ifeq ($(my_use_clang_lld),true)
+  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
+  include $(BUILD_SYSTEM)/pack_dyn_relocs_setup.mk
+  ifeq ($(my_pack_module_relocations),false)
+    my_target_global_ldflags += -Wl,--pack-dyn-relocs=none
+  endif
+else
+  my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
+endif # my_use_clang_lld
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_target_global_c_includes)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_SYSTEM_INCLUDES := $(my_target_global_c_system_includes)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CFLAGS := $(my_target_global_cflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CONLYFLAGS := $(my_target_global_conlyflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_CPPFLAGS := $(my_target_global_cppflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_GLOBAL_LDFLAGS := $(my_target_global_ldflags)
+
+else # LOCAL_IS_HOST_MODULE
+
+my_host_global_c_includes := $(SRC_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_INCLUDES)
+my_host_global_c_system_includes := $(SRC_SYSTEM_HEADERS) \
+    $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)C_SYSTEM_INCLUDES)
+
+my_host_global_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CFLAGS)
+my_host_global_conlyflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CONLYFLAGS) $(my_c_std_conlyflags)
+my_host_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_CPPFLAGS) $(my_cpp_std_cppflags)
+ifeq ($(my_use_clang_lld),true)
+  my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
+else
+  my_host_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
+endif # my_use_clang_lld
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_host_global_c_includes)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_SYSTEM_INCLUDES := $(my_host_global_c_system_includes)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CFLAGS := $(my_host_global_cflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CONLYFLAGS := $(my_host_global_conlyflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_CPPFLAGS := $(my_host_global_cppflags)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HOST_GLOBAL_LDFLAGS := $(my_host_global_ldflags)
+endif # LOCAL_IS_HOST_MODULE
+
+# To enable coverage for a given module, set LOCAL_NATIVE_COVERAGE=true and
+# build with NATIVE_COVERAGE=true in your enviornment.
+ifeq ($(NATIVE_COVERAGE),true)
+    ifeq ($(my_native_coverage),true)
+        # Note that clang coverage doesn't play nicely with acov out of the box.
+        # Clang apparently generates .gcno files that aren't compatible with
+        # gcov-4.8.  This can be solved by installing gcc-4.6 and invoking lcov
+        # with `--gcov-tool /usr/bin/gcov-4.6`.
+        #
+        # http://stackoverflow.com/questions/17758126/clang-code-coverage-invalid-output
+        my_cflags += --coverage -O0
+        my_ldflags += --coverage
+    endif
+
+    my_coverage_lib := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)LIBPROFILE_RT)
+
+    $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TARGET_COVERAGE_LIB := $(my_coverage_lib)
+    $(LOCAL_INTERMEDIATE_TARGETS): $(my_coverage_lib)
+endif
+
+###########################################################
+## Define PRIVATE_ variables used by multiple module types
+###########################################################
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_NO_DEFAULT_COMPILER_FLAGS := \
+    $(strip $(LOCAL_NO_DEFAULT_COMPILER_FLAGS))
+
+ifeq ($(strip $(WITH_STATIC_ANALYZER)),)
+  LOCAL_NO_STATIC_ANALYZER := true
+endif
+
+ifneq ($(strip $(LOCAL_IS_HOST_MODULE)),)
+  my_syntax_arch := host
+else
+  my_syntax_arch := $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+endif
+
+ifeq ($(strip $(my_cc)),)
+  my_cc := $(my_cc_wrapper) $(CLANG)
+endif
+
+SYNTAX_TOOLS_PREFIX := \
+    $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/libexec
+
+ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
+  my_cc := CCC_CC=$(CLANG) CLANG=$(CLANG) \
+           $(SYNTAX_TOOLS_PREFIX)/ccc-analyzer
+endif
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CC := $(my_cc)
+
+ifeq ($(strip $(my_cxx)),)
+  my_cxx := $(my_cxx_wrapper) $(CLANG_CXX)
+endif
+
+ifneq ($(LOCAL_NO_STATIC_ANALYZER),true)
+  my_cxx := CCC_CXX=$(CLANG_CXX) CLANG_CXX=$(CLANG_CXX) \
+            $(SYNTAX_TOOLS_PREFIX)/c++-analyzer
+endif
+
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LINKER := $(my_linker)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CXX := $(my_cxx)
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_YACCFLAGS := $(LOCAL_YACCFLAGS)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASFLAGS := $(my_asflags)
@@ -1839,12 +1777,6 @@ all_libraries := \
 ###########################################################
 export_includes := $(intermediates)/export_includes
 export_cflags := $(foreach d,$(my_export_c_include_dirs),-I $(d))
-# Soong exports cflags instead of include dirs, so that -isystem can be included.
-ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-export_cflags += $(LOCAL_EXPORT_CFLAGS)
-else ifdef LOCAL_EXPORT_CFLAGS
-$(call pretty-error,LOCAL_EXPORT_CFLAGS can only be used by Soong, use LOCAL_EXPORT_C_INCLUDE_DIRS instead)
-endif
 $(export_includes): PRIVATE_EXPORT_CFLAGS := $(export_cflags)
 # Headers exported by whole static libraries are also exported by this library.
 export_include_deps := $(strip \
@@ -1889,7 +1821,6 @@ export_cflags :=
 # Make sure export_includes gets generated when you are running mm/mmm
 $(LOCAL_BUILT_MODULE) : | $(export_includes)
 
-ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 ifneq (,$(filter-out $(LOCAL_PATH)/%,$(my_export_c_include_dirs)))
 my_soong_problems += non_local__export_c_include_dirs
 endif
@@ -1905,7 +1836,6 @@ SOONG_CONV.$(LOCAL_MODULE).DEPS := \
         $(my_system_shared_libraries))
 SOONG_CONV.$(LOCAL_MODULE).TYPE := native
 SOONG_CONV := $(SOONG_CONV) $(LOCAL_MODULE)
-endif
 
 ###########################################################
 # Coverage packaging.

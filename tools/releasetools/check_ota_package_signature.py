@@ -21,16 +21,17 @@ Verify a given OTA package with the specifed certificate.
 from __future__ import print_function
 
 import argparse
+import logging
 import re
 import subprocess
 import sys
-import tempfile
 import zipfile
-
 from hashlib import sha1
 from hashlib import sha256
 
 import common
+
+logger = logging.getLogger(__name__)
 
 
 def CertUsesSha256(cert):
@@ -165,11 +166,11 @@ def VerifyAbOtaPayload(cert, package):
   cmd = ['delta_generator',
          '--in_file=' + payload_file,
          '--public_key=' + pubkey]
-  proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+  proc = common.Run(cmd)
   stdoutdata, _ = proc.communicate()
   assert proc.returncode == 0, \
-      'Failed to verify payload with delta_generator: %s\n%s' % (package,
-                                                                 stdoutdata)
+      'Failed to verify payload with delta_generator: {}\n{}'.format(
+          package, stdoutdata)
   common.ZipClose(package_zip)
 
   # Verified successfully upon reaching here.
@@ -181,6 +182,8 @@ def main():
   parser.add_argument('certificate', help='The certificate to be used.')
   parser.add_argument('package', help='The OTA package to be verified.')
   args = parser.parse_args()
+
+  common.InitLogging()
 
   VerifyPackage(args.certificate, args.package)
   VerifyAbOtaPayload(args.certificate, args.package)

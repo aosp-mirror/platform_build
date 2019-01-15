@@ -16,6 +16,7 @@
 
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
+    abb \
     adb \
     adbd \
     am \
@@ -24,9 +25,11 @@ PRODUCT_PACKAGES += \
     android.hidl.manager-V1.0-java \
     android.hidl.memory@1.0-impl \
     android.hidl.memory@1.0-impl.vendor \
+    android.system.suspend@1.0-service \
     android.test.base \
     android.test.mock \
     android.test.runner \
+    apexd \
     applypatch \
     appops \
     app_process \
@@ -46,10 +49,12 @@ PRODUCT_PACKAGES += \
     bu \
     bugreport \
     bugreportz \
-    cameraserver \
     charger \
     cmd \
+    com.android.conscrypt \
     com.android.location.provider \
+    com.android.resolv \
+    com.android.tzdata \
     ContactsProvider \
     content \
     crash_dump \
@@ -57,6 +62,7 @@ PRODUCT_PACKAGES += \
     CtsShimPrivPrebuilt \
     debuggerd\
     DefaultContainerService \
+    dmctl \
     dnsmasq \
     DownloadProvider \
     dpm \
@@ -66,14 +72,17 @@ PRODUCT_PACKAGES += \
     ExtServices \
     ExtShared \
     fastboot \
+    flags_health_check \
     framework \
     framework-res \
     framework-sysconfig.xml \
     fsck_msdos \
     fs_config_files_system \
     fs_config_dirs_system \
+    heapprofd \
+    heapprofd_client \
     gatekeeperd \
-    healthd \
+    gpuservice \
     hid \
     hwservicemanager \
     idmap \
@@ -83,11 +92,12 @@ PRODUCT_PACKAGES += \
     incidentd \
     incident_helper \
     incident_report \
-    init \
     init.environ.rc \
     init.rc \
+    init_system \
     input \
     installd \
+    iorapd \
     ip \
     ip6tables \
     iptables \
@@ -107,14 +117,15 @@ PRODUCT_PACKAGES += \
     libaudiopolicyservice \
     libaudioutils \
     libbinder \
-    libc \
+    libbinder_ndk \
+    libc.bootstrap \
     libcamera2ndk \
     libcamera_client \
     libcameraservice \
     libc_malloc_debug \
     libc_malloc_hooks \
     libcutils \
-    libdl \
+    libdl.bootstrap \
     libdrmframework \
     libdrmframework_jni \
     libEGL \
@@ -134,7 +145,7 @@ PRODUCT_PACKAGES += \
     libjnigraphics \
     libjpeg \
     liblog \
-    libm \
+    libm.bootstrap \
     libmdnssd \
     libmedia \
     libmedia_jni \
@@ -184,6 +195,7 @@ PRODUCT_PACKAGES += \
     locksettings \
     logcat \
     logd \
+    lpdump \
     lshal \
     mdnsd \
     media \
@@ -195,10 +207,12 @@ PRODUCT_PACKAGES += \
     MediaProvider \
     mediaserver \
     mke2fs \
+    ModuleMetadata \
     monkey \
     mtpd \
     ndc \
     netd \
+    NetworkStack \
     org.apache.http.legacy \
     perfetto \
     ping \
@@ -208,7 +222,9 @@ PRODUCT_PACKAGES += \
     pppd \
     privapp-permissions-platform.xml \
     racoon \
+    recovery-persist \
     resize2fs \
+    rss_hwm_reset \
     run-as \
     schedtest \
     screencap \
@@ -243,6 +259,7 @@ PRODUCT_PACKAGES += \
     uncrypt \
     usbd \
     vdc \
+    viewcompiler \
     voip-common \
     vold \
     WallpaperBackup \
@@ -267,9 +284,7 @@ PRODUCT_BOOT_JARS := \
     framework \
     telephony-common \
     voip-common \
-    ims-common \
-    android.hidl.base-V1.0-java \
-    android.hidl.manager-V1.0-java
+    ims-common
 
 # Add the compatibility library that is needed when org.apache.http.legacy
 # is removed from the bootclasspath.
@@ -292,7 +307,7 @@ ifeq ($(REMOVE_ATB_FROM_BCP),true)
 PRODUCT_PACKAGES += framework-atb-backward-compatibility
 PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
 else
-PRODUCT_BOOT_JARS += android.test.base
+PRODUCT_BOOT_JARS += android.test.base.impl
 endif
 
 PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
@@ -303,13 +318,19 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
 # Packages included only for eng or userdebug builds, previously debug tagged
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
+    arping \
     iotop \
+    iw \
     logpersist.start \
-    perfprofd \
     procrank \
     showmap \
     sqlite3 \
+    ss \
     strace \
+    sanitizer-status \
+    tracepath \
+    tracepath6 \
+    traceroute6 \
     unwind_info \
     unwind_reg_info \
     unwind_symbols \

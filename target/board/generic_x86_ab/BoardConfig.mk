@@ -14,17 +14,11 @@
 # limitations under the License.
 #
 
-include build/make/target/board/treble_common_32.mk
+include build/make/target/board/BoardConfigGsiCommon.mk
 
 TARGET_CPU_ABI := x86
 TARGET_ARCH := x86
 TARGET_ARCH_VARIANT := x86
 
-# Set this to create /cache mount point for non-A/B devices that mounts /cache.
-# The partition size doesn't matter, just to make build pass.
-BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216
-
-# Enable A/B update
-TARGET_NO_RECOVERY := true
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
+# Legacy GSI keeps 32 bits binder for 32 bits CPU Arch
+TARGET_USES_64_BIT_BINDER := false

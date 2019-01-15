@@ -20,8 +20,6 @@
 # 2ND_DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME=out/target/product/generic_x86_64/dex_bootjars/system/framework/x86/boot.art
 # 2ND_LIBART_BOOT_IMAGE=/system/framework/x86/boot.art
 
-$(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/boot.art
-$(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$($(my_2nd_arch_prefix)DEX2OAT_TARGET_ARCH)/boot.art
 $(my_2nd_arch_prefix)LIBART_BOOT_IMAGE_FILENAME := /$(DEXPREOPT_BOOT_JAR_DIR)/$($(my_2nd_arch_prefix)DEX2OAT_TARGET_ARCH)/boot.art
 
 # The .oat with symbols
@@ -85,17 +83,20 @@ endif
 
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_BOOT_IMAGE_FLAGS := $(my_boot_image_flags)
 $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_2ND_ARCH_VAR_PREFIX := $(my_2nd_arch_prefix)
-$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME): PRIVATE_IMAGE_LOCATION := $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION)
 # Use dex2oat debug version for better error reporting
-$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGET_BOOT_DEX_FILES) $(PRELOADED_CLASSES) $(DIRTY_IMAGE_OBJECTS) $(DEX2OAT_DEPENDENCY) $(PATCHOAT_DEPENDENCY) $(my_out_boot_image_profile_location)
+# Pass --avoid-storing-invocation to make the output deterministics between
+# different products that may have different paths on the command line.
+$($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGET_BOOT_DEX_FILES) $(PRELOADED_CLASSES) $(DIRTY_IMAGE_OBJECTS) $(DEX2OAT_DEPENDENCY) $(my_out_boot_image_profile_location)
 	@echo "target dex2oat: $@"
 	@mkdir -p $(dir $@)
 	@mkdir -p $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))
-	@rm -f $(dir $@)/*.art $(dir $@)/*.oat $(dir $@)/*.art.rel
+	@rm -f $(dir $@)/*.art $(dir $@)/*.oat $(dir $@)/*.invocation
 	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.art
 	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.oat
-	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.art.rel
+	@rm -f $(dir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)LIBART_TARGET_BOOT_OAT_UNSTRIPPED))/*.invocation
 	$(hide) $(DEX2OAT_BOOT_IMAGE_LOG_TAGS) $(DEX2OAT) --runtime-arg -Xms$(DEX2OAT_IMAGE_XMS) \
+		--avoid-storing-invocation \
+		--write-invocation-to=$(patsubst %.art,%.invocation,$@) \
 		--runtime-arg -Xmx$(DEX2OAT_IMAGE_XMX) \
 		$(PRIVATE_BOOT_IMAGE_FLAGS) \
 		$(addprefix --dex-file=,$(LIBART_TARGET_BOOT_DEX_FILES)) \
@@ -110,16 +111,9 @@ $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME) : $(LIBART_TARGE
 		--instruction-set-variant=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT) \
 		--instruction-set-features=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES) \
 		--android-root=$(PRODUCT_OUT)/system \
-		--runtime-arg -Xnorelocate --compile-pic \
-		--multi-image --no-inline-from=core-oj.jar \
+		--no-inline-from=core-oj.jar \
 		--abort-on-hard-verifier-error \
-		--abort-on-soft-verifier-error \
-		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(GLOBAL_DEXPREOPT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS) \
-		|| ( echo "$(DEX2OAT_FAILURE_MESSAGE)" ; false ) && \
-	$(DEX2OAT_BOOT_IMAGE_LOG_TAGS) ANDROID_ROOT=$(PRODUCT_OUT)/system ANDROID_DATA=$(dir $@) $(PATCHOAT) \
-		--input-image-location=$(PRIVATE_IMAGE_LOCATION) \
-		--output-image-relocation-directory=$(dir $@) \
-		--instruction-set=$($(PRIVATE_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH) \
-		--base-offset-delta=0x10000000
+		$(PRODUCT_DEX_PREOPT_BOOT_FLAGS) $(ART_BOOT_IMAGE_EXTRA_ARGS) \
+		|| ( echo "$(DEX2OAT_FAILURE_MESSAGE)" ; false )
 
 endif

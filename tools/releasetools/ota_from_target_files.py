@@ -64,6 +64,13 @@ Common options that apply to both of non-A/B and A/B OTAs
       Generate an OTA package that will wipe the user data partition when
       installed.
 
+  --retrofit_dynamic_partitions
+      Generates an OTA package that updates a device to support dynamic
+      partitions (default False). This flag is implied when generating
+      an incremental OTA where the base build does not support dynamic
+      partitions but the target build does. For A/B, when this flag is set,
+      --skip_postinstall is implied.
+
 Non-A/B OTA specific options
 
   -b  (--binary) <file>
@@ -164,23 +171,25 @@ A/B OTA specific options
 
 from __future__ import print_function
 
+import logging
 import multiprocessing
 import os.path
 import shlex
 import shutil
 import struct
-import subprocess
 import sys
 import tempfile
 import zipfile
 
 import common
 import edify_generator
+import verity_utils
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
   sys.exit(1)
 
+logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
 OPTIONS.package_key = None
@@ -211,11 +220,14 @@ OPTIONS.payload_signer_args = []
 OPTIONS.extracted_input = None
 OPTIONS.key_passwords = []
 OPTIONS.skip_postinstall = False
+OPTIONS.retrofit_dynamic_partitions = False
 
 
 METADATA_NAME = 'META-INF/com/android/metadata'
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
+DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
 UNZIP_PATTERN = ['IMAGES/*', 'META/*']
+SUPER_SPLIT_PATTERN = ['OTA/super_*.img']
 
 
 class BuildInfo(object):
@@ -283,6 +295,17 @@ class BuildInfo(object):
   @property
   def fingerprint(self):
     return self._fingerprint
+
+  @property
+  def vendor_fingerprint(self):
+    if "vendor.build.prop" not in self.info_dict:
+      return None
+    vendor_build_prop = self.info_dict["vendor.build.prop"]
+    if "ro.vendor.build.fingerprint" in vendor_build_prop:
+      return vendor_build_prop["ro.vendor.build.fingerprint"]
+    if "ro.vendor.build.thumbprint" in vendor_build_prop:
+      return vendor_build_prop["ro.vendor.build.thumbprint"]
+    return None
 
   @property
   def oem_props(self):
@@ -381,12 +404,7 @@ class PayloadSigner(object):
       cmd.extend(["-passin", "pass:" + pw] if pw else ["-nocrypt"])
       signing_key = common.MakeTempFile(prefix="key-", suffix=".key")
       cmd.extend(["-out", signing_key])
-
-      get_signing_key = common.Run(cmd, verbose=False, stdout=subprocess.PIPE,
-                                   stderr=subprocess.STDOUT)
-      stdoutdata, _ = get_signing_key.communicate()
-      assert get_signing_key.returncode == 0, \
-          "Failed to get signing key: {}".format(stdoutdata)
+      common.RunAndCheckOutput(cmd, verbose=False)
 
       self.signer = "openssl"
       self.signer_args = ["pkeyutl", "-sign", "-inkey", signing_key,
@@ -399,10 +417,7 @@ class PayloadSigner(object):
     """Signs the given input file. Returns the output filename."""
     out_file = common.MakeTempFile(prefix="signed-", suffix=".bin")
     cmd = [self.signer] + self.signer_args + ['-in', in_file, '-out', out_file]
-    signing = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    stdoutdata, _ = signing.communicate()
-    assert signing.returncode == 0, \
-        "Failed to sign the input file: {}".format(stdoutdata)
+    common.RunAndCheckOutput(cmd)
     return out_file
 
 
@@ -420,8 +435,6 @@ class Payload(object):
     Args:
       secondary: Whether it's generating a secondary payload (default: False).
     """
-    # The place where the output from the subprocess should go.
-    self._log_file = sys.stdout if OPTIONS.verbose else subprocess.PIPE
     self.payload_file = None
     self.payload_properties = None
     self.secondary = secondary
@@ -446,10 +459,7 @@ class Payload(object):
     if source_file is not None:
       cmd.extend(["--source_image", source_file])
     cmd.extend(additional_args)
-    p = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
-    stdoutdata, _ = p.communicate()
-    assert p.returncode == 0, \
-        "brillo_update_payload generate failed: {}".format(stdoutdata)
+    common.RunAndCheckOutput(cmd)
 
     self.payload_file = payload_file
     self.payload_properties = None
@@ -473,9 +483,7 @@ class Payload(object):
            "--signature_size", "256",
            "--metadata_hash_file", metadata_sig_file,
            "--payload_hash_file", payload_sig_file]
-    p1 = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
-    p1.communicate()
-    assert p1.returncode == 0, "brillo_update_payload hash failed"
+    common.RunAndCheckOutput(cmd)
 
     # 2. Sign the hashes.
     signed_payload_sig_file = payload_signer.Sign(payload_sig_file)
@@ -490,9 +498,7 @@ class Payload(object):
            "--signature_size", "256",
            "--metadata_signature_file", signed_metadata_sig_file,
            "--payload_signature_file", signed_payload_sig_file]
-    p1 = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
-    p1.communicate()
-    assert p1.returncode == 0, "brillo_update_payload sign failed"
+    common.RunAndCheckOutput(cmd)
 
     # 4. Dump the signed payload properties.
     properties_file = common.MakeTempFile(prefix="payload-properties-",
@@ -500,9 +506,7 @@ class Payload(object):
     cmd = ["brillo_update_payload", "properties",
            "--payload", signed_payload_file,
            "--properties_file", properties_file]
-    p1 = common.Run(cmd, stdout=self._log_file, stderr=subprocess.STDOUT)
-    p1.communicate()
-    assert p1.returncode == 0, "brillo_update_payload properties failed"
+    common.RunAndCheckOutput(cmd)
 
     if self.secondary:
       with open(properties_file, "a") as f:
@@ -584,11 +588,11 @@ def _WriteRecoveryImageToBoot(script, output_zip):
         OPTIONS.input_tmp, "RECOVERY")
     common.ZipWriteStr(
         output_zip, recovery_two_step_img_name, recovery_two_step_img.data)
-    print("two-step package: using %s in stage 1/3" % (
-        recovery_two_step_img_name,))
+    logger.info(
+        "two-step package: using %s in stage 1/3", recovery_two_step_img_name)
     script.WriteRawImage("/boot", recovery_two_step_img_name)
   else:
-    print("two-step package: using recovery.img in stage 1/3")
+    logger.info("two-step package: using recovery.img in stage 1/3")
     # The "recovery.img" entry has been written into package earlier.
     script.WriteRawImage("/boot", "recovery.img")
 
@@ -706,11 +710,14 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
   target_fp = target_info.fingerprint
   system_updated = source_fp != target_fp
 
-  source_fp_vendor = source_info.GetVendorBuildProp(
-      "ro.vendor.build.fingerprint")
-  target_fp_vendor = target_info.GetVendorBuildProp(
-      "ro.vendor.build.fingerprint")
-  vendor_updated = source_fp_vendor != target_fp_vendor
+  source_fp_vendor = source_info.vendor_fingerprint
+  target_fp_vendor = target_info.vendor_fingerprint
+  # vendor build fingerprints could be possibly blacklisted at build time. For
+  # such a case, we consider the vendor images being changed.
+  if source_fp_vendor is None or target_fp_vendor is None:
+    vendor_updated = True
+  else:
+    vendor_updated = source_fp_vendor != target_fp_vendor
 
   AddCompatibilityArchive(system_updated, vendor_updated)
 
@@ -1096,7 +1103,9 @@ class PropertyFiles(object):
     def ComputeEntryOffsetSize(name):
       """Computes the zip entry offset and size."""
       info = zip_file.getinfo(name)
-      offset = info.header_offset + len(info.FileHeader())
+      offset = info.header_offset
+      offset += zipfile.sizeFileHeader
+      offset += len(info.extra) + len(info.filename)
       size = info.file_size
       return '%s:%d:%d' % (os.path.basename(name), offset, size)
 
@@ -1151,7 +1160,8 @@ class StreamingPropertyFiles(PropertyFiles):
         'payload_properties.txt',
     )
     self.optional = (
-        # care_map.txt is available only if dm-verity is enabled.
+        # care_map is available only if dm-verity is enabled.
+        'care_map.pb',
         'care_map.txt',
         # compatibility.zip is available only if target supports Treble.
         'compatibility.zip',
@@ -1220,7 +1230,9 @@ class AbOtaPropertyFiles(StreamingPropertyFiles):
     payload, till the end of 'medatada_signature_message'.
     """
     payload_info = input_zip.getinfo('payload.bin')
-    payload_offset = payload_info.header_offset + len(payload_info.FileHeader())
+    payload_offset = payload_info.header_offset
+    payload_offset += zipfile.sizeFileHeader
+    payload_offset += len(payload_info.extra) + len(payload_info.filename)
     payload_size = payload_info.file_size
 
     with input_zip.open('payload.bin', 'r') as payload_fp:
@@ -1344,8 +1356,8 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
   target_api_version = target_info["recovery_api_version"]
   source_api_version = source_info["recovery_api_version"]
   if source_api_version == 0:
-    print("WARNING: generating edify script for a source that "
-          "can't install it.")
+    logger.warning(
+        "Generating edify script for a source that can't install it.")
 
   script = edify_generator.EdifyGenerator(
       source_api_version, target_info, fstab=source_info["fstab"])
@@ -1392,8 +1404,12 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
                          target_info.get('ext4_share_dup_blocks') == "true")
   system_src = common.GetSparseImage("system", OPTIONS.source_tmp, source_zip,
                                      allow_shared_blocks)
+
+  hashtree_info_generator = verity_utils.CreateHashtreeInfoGenerator(
+      "system", 4096, target_info)
   system_tgt = common.GetSparseImage("system", OPTIONS.target_tmp, target_zip,
-                                     allow_shared_blocks)
+                                     allow_shared_blocks,
+                                     hashtree_info_generator)
 
   blockimgdiff_version = max(
       int(i) for i in target_info.get("blockimgdiff_versions", "1").split(","))
@@ -1420,8 +1436,11 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
       raise RuntimeError("can't generate incremental that adds /vendor")
     vendor_src = common.GetSparseImage("vendor", OPTIONS.source_tmp, source_zip,
                                        allow_shared_blocks)
-    vendor_tgt = common.GetSparseImage("vendor", OPTIONS.target_tmp, target_zip,
-                                       allow_shared_blocks)
+    hashtree_info_generator = verity_utils.CreateHashtreeInfoGenerator(
+        "vendor", 4096, target_info)
+    vendor_tgt = common.GetSparseImage(
+        "vendor", OPTIONS.target_tmp, target_zip, allow_shared_blocks,
+        hashtree_info_generator)
 
     # Check first block of vendor partition for remount R/W only if
     # disk type is ext4
@@ -1516,21 +1535,18 @@ else if get_stage("%(bcb_dev)s") != "3/3" then
     else:
       include_full_boot = False
 
-      print("boot      target: %d  source: %d  diff: %d" % (
-          target_boot.size, source_boot.size, len(d)))
+      logger.info(
+          "boot      target: %d  source: %d  diff: %d", target_boot.size,
+          source_boot.size, len(d))
 
-      common.ZipWriteStr(output_zip, "patch/boot.img.p", d)
+      common.ZipWriteStr(output_zip, "boot.img.p", d)
 
-      # TODO(b/110106408): Remove after properly handling the SHA-1 embedded in
-      # the filename argument in updater code. Prior to that, explicitly list
-      # the SHA-1 of the source image, in case the updater tries to find a
-      # matching backup from /cache. Similarly for the call to
-      # script.ApplyPatch() below.
-      script.PatchCheck("%s:%s:%d:%s:%d:%s" %
-                        (boot_type, boot_device,
-                         source_boot.size, source_boot.sha1,
-                         target_boot.size, target_boot.sha1),
-                        source_boot.sha1)
+      script.PatchPartitionCheck(
+          "{}:{}:{}:{}".format(
+              boot_type, boot_device, target_boot.size, target_boot.sha1),
+          "{}:{}:{}:{}".format(
+              boot_type, boot_device, source_boot.size, source_boot.sha1))
+
       size.append(target_boot.size)
 
   if size:
@@ -1571,30 +1587,29 @@ else
   if OPTIONS.two_step:
     common.ZipWriteStr(output_zip, "boot.img", target_boot.data)
     script.WriteRawImage("/boot", "boot.img")
-    print("writing full boot image (forced by two-step mode)")
+    logger.info("writing full boot image (forced by two-step mode)")
 
   if not OPTIONS.two_step:
     if updating_boot:
       if include_full_boot:
-        print("boot image changed; including full.")
+        logger.info("boot image changed; including full.")
         script.Print("Installing boot image...")
         script.WriteRawImage("/boot", "boot.img")
       else:
         # Produce the boot image by applying a patch to the current
         # contents of the boot partition, and write it back to the
         # partition.
-        print("boot image changed; including patch.")
+        logger.info("boot image changed; including patch.")
         script.Print("Patching boot image...")
         script.ShowProgress(0.1, 10)
-        script.ApplyPatch("%s:%s:%d:%s:%d:%s"
-                          % (boot_type, boot_device,
-                             source_boot.size, source_boot.sha1,
-                             target_boot.size, target_boot.sha1),
-                          "-",
-                          target_boot.size, target_boot.sha1,
-                          source_boot.sha1, "patch/boot.img.p")
+        script.PatchPartition(
+            '{}:{}:{}:{}'.format(
+                boot_type, boot_device, target_boot.size, target_boot.sha1),
+            '{}:{}:{}:{}'.format(
+                boot_type, boot_device, source_boot.size, source_boot.sha1),
+            'boot.img.p')
     else:
-      print("boot image unchanged; skipping.")
+      logger.info("boot image unchanged; skipping.")
 
   # Do device-specific installation (eg, write radio image).
   device_specific.IncrementalOTA_InstallEnd()
@@ -1712,6 +1727,60 @@ def GetTargetFilesZipWithoutPostinstallConfig(input_file):
   return target_file
 
 
+def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
+                                                  super_block_devices):
+  """Returns a target-files.zip for retrofitting dynamic partitions.
+
+  This allows brillo_update_payload to generate an OTA based on the exact
+  bits on the block devices. Postinstall is disabled.
+
+  Args:
+    input_file: The input target-files.zip filename.
+    super_block_devices: The list of super block devices
+
+  Returns:
+    The filename of target-files.zip with *.img replaced with super_*.img for
+    each block device in super_block_devices.
+  """
+  assert super_block_devices, "No super_block_devices are specified."
+
+  replace = {'OTA/super_{}.img'.format(dev): 'IMAGES/{}.img'.format(dev)
+             for dev in super_block_devices}
+
+  target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
+  shutil.copyfile(input_file, target_file)
+
+  with zipfile.ZipFile(input_file, 'r') as input_zip:
+    namelist = input_zip.namelist()
+
+  # Always skip postinstall for a retrofit update.
+  to_delete = [POSTINSTALL_CONFIG]
+
+  # Delete dynamic_partitions_info.txt so that brillo_update_payload thinks this
+  # is a regular update on devices without dynamic partitions support.
+  to_delete += [DYNAMIC_PARTITION_INFO]
+
+  # Remove the existing partition images as well as the map files.
+  to_delete += replace.values()
+  to_delete += ['IMAGES/{}.map'.format(dev) for dev in super_block_devices]
+
+  common.ZipDelete(target_file, to_delete)
+
+  input_tmp = common.UnzipTemp(input_file, SUPER_SPLIT_PATTERN)
+  target_zip = zipfile.ZipFile(target_file, 'a', allowZip64=True)
+
+  # Write super_{foo}.img as {foo}.img.
+  for src, dst in replace.items():
+    assert src in namelist, \
+          'Missing {} in {}; {} cannot be written'.format(src, input_file, dst)
+    unzipped_file = os.path.join(input_tmp, *src.split('/'))
+    common.ZipWrite(target_zip, unzipped_file, arcname=dst)
+
+  common.ZipClose(target_zip)
+
+  return target_file
+
+
 def WriteABOTAPackageWithBrilloScript(target_file, output_file,
                                       source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
@@ -1733,7 +1802,10 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   # Metadata to comply with Android OTA package format.
   metadata = GetPackageMetadata(target_info, source_info)
 
-  if OPTIONS.skip_postinstall:
+  if OPTIONS.retrofit_dynamic_partitions:
+    target_file = GetTargetFilesZipForRetrofitDynamicPartitions(
+        target_file, target_info.get("super_block_devices").strip().split())
+  elif OPTIONS.skip_postinstall:
     target_file = GetTargetFilesZipWithoutPostinstallConfig(target_file)
 
   # Generate payload.
@@ -1773,16 +1845,19 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
   target_zip = zipfile.ZipFile(target_file, "r")
   if (target_info.get("verity") == "true" or
       target_info.get("avb_enable") == "true"):
-    care_map_path = "META/care_map.txt"
-    namelist = target_zip.namelist()
-    if care_map_path in namelist:
-      care_map_data = target_zip.read(care_map_path)
-      # In order to support streaming, care_map.txt needs to be packed as
+    care_map_list = [x for x in ["care_map.pb", "care_map.txt"] if
+                     "META/" + x in target_zip.namelist()]
+
+    # Adds care_map if either the protobuf format or the plain text one exists.
+    if care_map_list:
+      care_map_name = care_map_list[0]
+      care_map_data = target_zip.read("META/" + care_map_name)
+      # In order to support streaming, care_map needs to be packed as
       # ZIP_STORED.
-      common.ZipWriteStr(output_zip, "care_map.txt", care_map_data,
+      common.ZipWriteStr(output_zip, care_map_name, care_map_data,
                          compress_type=zipfile.ZIP_STORED)
     else:
-      print("Warning: cannot find care map file in target_file package")
+      logger.warning("Cannot find care map file in target_file package")
 
   AddCompatibilityArchiveIfTrebleEnabled(
       target_zip, output_zip, target_info, source_info)
@@ -1862,6 +1937,8 @@ def main(argv):
       OPTIONS.extracted_input = a
     elif o == "--skip_postinstall":
       OPTIONS.skip_postinstall = True
+    elif o == "--retrofit_dynamic_partitions":
+      OPTIONS.retrofit_dynamic_partitions = True
     else:
       return False
     return True
@@ -1892,11 +1969,14 @@ def main(argv):
                                  "payload_signer_args=",
                                  "extracted_input_target_files=",
                                  "skip_postinstall",
+                                 "retrofit_dynamic_partitions",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
     common.Usage(__doc__)
     sys.exit(1)
+
+  common.InitLogging()
 
   if OPTIONS.downgrade:
     # We should only allow downgrading incrementals (as opposed to full).
@@ -1918,9 +1998,8 @@ def main(argv):
     with zipfile.ZipFile(args[0], 'r') as input_zip:
       OPTIONS.info_dict = common.LoadInfoDict(input_zip)
 
-  if OPTIONS.verbose:
-    print("--- target info ---")
-    common.DumpInfoDict(OPTIONS.info_dict)
+  logger.info("--- target info ---")
+  common.DumpInfoDict(OPTIONS.info_dict)
 
   # Load the source build dict if applicable.
   if OPTIONS.incremental_source is not None:
@@ -1928,12 +2007,28 @@ def main(argv):
     with zipfile.ZipFile(OPTIONS.incremental_source, 'r') as source_zip:
       OPTIONS.source_info_dict = common.LoadInfoDict(source_zip)
 
-    if OPTIONS.verbose:
-      print("--- source info ---")
-      common.DumpInfoDict(OPTIONS.source_info_dict)
+    logger.info("--- source info ---")
+    common.DumpInfoDict(OPTIONS.source_info_dict)
 
   # Load OEM dicts if provided.
   OPTIONS.oem_dicts = _LoadOemDicts(OPTIONS.oem_source)
+
+  # Assume retrofitting dynamic partitions when base build does not set
+  # use_dynamic_partitions but target build does.
+  if (OPTIONS.source_info_dict and
+      OPTIONS.source_info_dict.get("use_dynamic_partitions") != "true" and
+      OPTIONS.target_info_dict.get("use_dynamic_partitions") == "true"):
+    if OPTIONS.target_info_dict.get("dynamic_partition_retrofit") != "true":
+      raise common.ExternalError(
+          "Expect to generate incremental OTA for retrofitting dynamic "
+          "partitions, but dynamic_partition_retrofit is not set in target "
+          "build.")
+    logger.info("Implicitly generating retrofit incremental OTA.")
+    OPTIONS.retrofit_dynamic_partitions = True
+
+  # Skip postinstall for retrofitting dynamic partitions.
+  if OPTIONS.retrofit_dynamic_partitions:
+    OPTIONS.skip_postinstall = True
 
   ab_update = OPTIONS.info_dict.get("ab_update") == "true"
 
@@ -1954,7 +2049,7 @@ def main(argv):
         output_file=args[1],
         source_file=OPTIONS.incremental_source)
 
-    print("done.")
+    logger.info("done.")
     return
 
   # Sanity check the loaded info dicts first.
@@ -1965,7 +2060,7 @@ def main(argv):
   # Non-A/B OTAs rely on /cache partition to store temporary files.
   cache_size = OPTIONS.info_dict.get("cache_size")
   if cache_size is None:
-    print("--- can't determine the cache partition size ---")
+    logger.warning("--- can't determine the cache partition size ---")
   OPTIONS.cache_size = cache_size
 
   if OPTIONS.extra_script is not None:
@@ -1974,7 +2069,7 @@ def main(argv):
   if OPTIONS.extracted_input is not None:
     OPTIONS.input_tmp = OPTIONS.extracted_input
   else:
-    print("unzipping target target-files...")
+    logger.info("unzipping target target-files...")
     OPTIONS.input_tmp = common.UnzipTemp(args[0], UNZIP_PATTERN)
   OPTIONS.target_tmp = OPTIONS.input_tmp
 
@@ -1986,7 +2081,7 @@ def main(argv):
   if OPTIONS.device_specific is None:
     from_input = os.path.join(OPTIONS.input_tmp, "META", "releasetools.py")
     if os.path.exists(from_input):
-      print("(using device-specific extensions from target_files)")
+      logger.info("(using device-specific extensions from target_files)")
       OPTIONS.device_specific = from_input
     else:
       OPTIONS.device_specific = OPTIONS.info_dict.get("tool_extensions")
@@ -2003,7 +2098,7 @@ def main(argv):
 
   # Generate an incremental OTA.
   else:
-    print("unzipping source target-files...")
+    logger.info("unzipping source target-files...")
     OPTIONS.source_tmp = common.UnzipTemp(
         OPTIONS.incremental_source, UNZIP_PATTERN)
     with zipfile.ZipFile(args[0], 'r') as input_zip, \
@@ -2019,15 +2114,15 @@ def main(argv):
         target_files_diff.recursiveDiff(
             '', OPTIONS.source_tmp, OPTIONS.input_tmp, out_file)
 
-  print("done.")
+  logger.info("done.")
 
 
 if __name__ == '__main__':
   try:
     common.CloseInheritedPipes()
     main(sys.argv[1:])
-  except common.ExternalError as e:
-    print("\n   ERROR: %s\n" % (e,))
+  except common.ExternalError:
+    logger.exception("\n   ERROR:\n")
     sys.exit(1)
   finally:
     common.Cleanup()
