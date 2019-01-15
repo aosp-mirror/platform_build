@@ -77,6 +77,7 @@ PRODUCT_PACKAGES += \
     fsck_msdos \
     fs_config_files_system \
     fs_config_dirs_system \
+    gsid \
     heapprofd \
     heapprofd_client \
     gatekeeperd \
