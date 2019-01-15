@@ -72,17 +72,23 @@ $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
 endif
 endif # TURBINE_ENABLED != false
 
+
 ifdef LOCAL_SOONG_DEX_JAR
+  # Hidden API for boot jars
+  ifndef LOCAL_IS_HOST_MODULE
+    ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)  # is_boot_jar
+      # Derive greylist from classes.jar.
+      # We use full_classes_jar here, which is the post-proguard jar (on the basis that we also
+      # have a full_classes_pre_proguard_jar). This is consistent with the equivalent code in
+      # java.mk.
+      $(eval $(call hiddenapi-generate-csv,$(full_classes_jar),$(hiddenapi_flags_csv),$(hiddenapi_metadata_csv)))
+      $(eval $(call hiddenapi-copy-soong-jar,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
+    endif
+  endif
+
   ifneq ($(LOCAL_UNINSTALLABLE_MODULE),true)
     ifndef LOCAL_IS_HOST_MODULE
       ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)  # is_boot_jar
-        # Derive greylist from classes.jar.
-        # We use full_classes_jar here, which is the post-proguard jar (on the basis that we also
-        # have a full_classes_pre_proguard_jar). This is consistent with the equivalent code in
-        # java.mk.
-        $(eval $(call hiddenapi-generate-csv,$(full_classes_jar),$(hiddenapi_flags_csv),$(hiddenapi_metadata_csv)))
-        $(eval $(call hiddenapi-copy-soong-jar,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
-
         ifeq (true,$(WITH_DEXPREOPT))
           # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
           # We use this installed_odex trick to get boot.art installed.
