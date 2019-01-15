@@ -1305,8 +1305,8 @@ auxiliary: $(INSTALLED_AUX_TARGETS)
 
 # Build files and then package it into the rom formats
 .PHONY: droidcore
-droidcore: files \
-    systemimage \
+droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
+    $(INSTALLED_SYSTEMIMAGE_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
     $(INSTALLED_BOOTIMAGE_TARGET) \
     $(INSTALLED_RECOVERYIMAGE_TARGET) \
@@ -1337,6 +1337,7 @@ droidcore: files \
     $(INSTALLED_FILES_JSON_ROOT) \
     $(INSTALLED_FILES_FILE_RECOVERY) \
     $(INSTALLED_FILES_JSON_RECOVERY) \
+    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     soong_docs
 
 # dist_files only for putting your library into the dist directory with a full build.
