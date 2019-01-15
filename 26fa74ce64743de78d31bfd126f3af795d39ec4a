@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fb66ee28_cf9d4c7b",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 1386,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T22:08:53Z",
+      "side": 1,
+      "message": "this should be removed then?",
+      "revId": "26fa74ce64743de78d31bfd126f3af795d39ec4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74655f09_85b0a8e2",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 1390,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T22:08:53Z",
+      "side": 1,
+      "message": "\"-maxint-1\" per https://docs.python.org/2/library/sys.html#sys.maxint. But the score at L1394 should always give positive value (or zero in practice), right? If so, putting something like -1 should suffice?",
+      "range": {
+        "startLine": 1390,
+        "startChar": 55,
+        "endLine": 1390,
+        "endChar": 66
+      },
+      "revId": "26fa74ce64743de78d31bfd126f3af795d39ec4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "62762d33_c774094c",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 1399,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T22:08:53Z",
+      "side": 1,
+      "message": "nit: and mention the removal will happen from the end...\n\nor how about just sorting in ascending order here, and change the while below to a for loop, with a break in-between?",
+      "range": {
+        "startLine": 1399,
+        "startChar": 27,
+        "endLine": 1399,
+        "endChar": 28
+      },
+      "revId": "26fa74ce64743de78d31bfd126f3af795d39ec4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
