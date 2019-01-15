@@ -88,7 +88,7 @@ else
 endif
 
 # If LOCAL_MODULE matches a rule in PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES,
-# override the manfest package name by the (first) rule matched
+# override the manifest package name by the (first) rule matched
 override_manifest_name := $(strip $(word 1,\
   $(foreach rule,$(PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES),\
     $(eval _pkg_name_pat := $(call word-colon,1,$(rule)))\
@@ -100,7 +100,7 @@ override_manifest_name := $(strip $(word 1,\
 ))
 
 ifneq (,$(override_manifest_name))
-# Note: this can override LOCAL_MANFEST_PACKAGE_NAME value set in Android.mk
+# Note: this can override LOCAL_MANIFEST_PACKAGE_NAME value set in Android.mk
 LOCAL_MANIFEST_PACKAGE_NAME := $(override_manifest_name)
 endif
 
