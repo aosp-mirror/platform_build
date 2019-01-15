@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "550d0364_b056f878",
+        "filename": "envsetup.sh",
+        "patchSetId": 5
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2019-01-15T01:51:19Z",
+      "side": 1,
+      "message": "Can a comment, explaining this section.",
+      "range": {
+        "startLine": 272,
+        "startChar": 3,
+        "endLine": 274,
+        "endChar": 6
+      },
+      "revId": "1606262608357a7adce7355b0baebcccef9a2173",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
