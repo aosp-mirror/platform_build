@@ -183,6 +183,29 @@
       "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "833c1320_3f39376f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 1627,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T19:28:18Z",
+      "side": 1,
+      "message": "This needs to be a get(), to handle device-specific diffs",
+      "range": {
+        "startLine": 1627,
+        "startChar": 38,
+        "endLine": 1627,
+        "endChar": 73
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
