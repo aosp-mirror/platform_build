@@ -1,8 +1,8 @@
 DEX_PREOPT_CONFIG := $(PRODUCT_OUT)/dexpreopt.config
 
 # list of boot classpath jars for dexpreopt
-DEXPREOPT_BOOT_JARS_MODULES := $(PRODUCT_BOOT_JARS)
-PRODUCT_BOOTCLASSPATH_JARS := $(strip $(DEXPREOPT_BOOT_JARS_MODULES))
+DEXPREOPT_BOOT_JARS_MODULES := $(strip $(filter-out conscrypt,$(PRODUCT_BOOT_JARS)))
+PRODUCT_BOOTCLASSPATH_JARS := $(strip $(DEXPREOPT_BOOT_JARS_MODULES) $(filter conscrypt,$(PRODUCT_BOOT_JARS)))
 PRODUCT_BOOTCLASSPATH := $(subst $(space),:,$(foreach m,$(PRODUCT_BOOTCLASSPATH_JARS),/system/framework/$(m).jar))
 
 PRODUCT_SYSTEM_SERVER_CLASSPATH := $(subst $(space),:,$(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),/system/framework/$(m).jar))
@@ -118,6 +118,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_list, PreoptBootClassPathDexFiles,        $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
   $(call add_json_list, PreoptBootClassPathDexLocations,    $(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
   $(call add_json_list, BootJars,                           $(PRODUCT_BOOT_JARS))
+  $(call add_json_list, PreoptBootJars,                     $(DEXPREOPT_BOOT_JARS_MODULES))
   $(call add_json_list, SystemServerJars,                   $(PRODUCT_SYSTEM_SERVER_JARS))
   $(call add_json_list, SystemServerApps,                   $(PRODUCT_SYSTEM_SERVER_APPS))
   $(call add_json_list, SpeedApps,                          $(PRODUCT_DEXPREOPT_SPEED_APPS))
