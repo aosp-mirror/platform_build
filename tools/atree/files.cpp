@@ -81,7 +81,7 @@ split_line(const char* p, vector<string>* out)
                     state = TEXT;
                     break;
                 }
-                // otherwise fall-through to TEXT case
+                [[fallthrough]];
             case TEXT:
                 if (state != IN_QUOTE && isspace(*p)) {
                     if (q != p) {

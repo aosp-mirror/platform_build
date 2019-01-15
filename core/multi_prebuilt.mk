@@ -38,7 +38,6 @@ multi_prebuilt_once := true
 # $(2): IS_HOST_MODULE
 # $(3): MODULE_CLASS
 # $(4): MODULE_TAGS
-# $(5): OVERRIDE_BUILT_MODULE_PATH
 # $(6): UNINSTALLABLE_MODULE
 # $(7): BUILT_MODULE_STEM
 # $(8): LOCAL_STRIP_MODULE
@@ -56,7 +55,6 @@ $(foreach t,$(1), \
   $(eval LOCAL_IS_HOST_MODULE := $(2)) \
   $(eval LOCAL_MODULE_CLASS := $(3)) \
   $(eval LOCAL_MODULE_TAGS := $(4)) \
-  $(eval OVERRIDE_BUILT_MODULE_PATH := $(5)) \
   $(eval LOCAL_UNINSTALLABLE_MODULE := $(6)) \
   $(eval tw := $(subst :, ,$(strip $(t)))) \
   $(if $(word 3,$(tw)),$(error $(LOCAL_PATH): Bad prebuilt filename '$(t)')) \
@@ -98,7 +96,7 @@ $(call auto-prebuilt-boilerplate, \
     $(prebuilt_is_host), \
     SHARED_LIBRARIES, \
     $(prebuilt_module_tags), \
-    $($(if $(prebuilt_is_host),HOST,TARGET)_OUT_INTERMEDIATE_LIBRARIES), \
+    , \
     , \
     , \
     $(prebuilt_strip_module))

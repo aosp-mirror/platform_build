@@ -35,7 +35,6 @@ import filecmp
 import logging
 import os.path
 import re
-import subprocess
 import zipfile
 
 import common
@@ -90,13 +89,20 @@ def ValidateFileConsistency(input_zip, input_tmp, info_dict):
         logging.warning('Skipping %s that has incomplete block list', entry)
         continue
 
+      # Use the original RangeSet if applicable, which includes the shared
+      # blocks. And this needs to happen before checking the monotonicity flag.
+      if ranges.extra.get('uses_shared_blocks'):
+        file_ranges = ranges.extra['uses_shared_blocks']
+      else:
+        file_ranges = ranges
+
       # TODO(b/79951650): Handle files with non-monotonic ranges.
-      if not ranges.monotonic:
+      if not file_ranges.monotonic:
         logging.warning(
-            'Skipping %s that has non-monotonic ranges: %s', entry, ranges)
+            'Skipping %s that has non-monotonic ranges: %s', entry, file_ranges)
         continue
 
-      blocks_sha1 = image.RangeSha1(ranges)
+      blocks_sha1 = image.RangeSha1(file_ranges)
 
       # The filename under unpacked directory, such as SYSTEM/bin/sh.
       unpacked_name = os.path.join(
@@ -105,7 +111,7 @@ def ValidateFileConsistency(input_zip, input_tmp, info_dict):
       file_sha1 = unpacked_file.sha1
       assert blocks_sha1 == file_sha1, \
           'file: %s, range: %s, blocks_sha1: %s, file_sha1: %s' % (
-              entry, ranges, blocks_sha1, file_sha1)
+              entry, file_ranges, blocks_sha1, file_sha1)
 
   logging.info('Validating file consistency.')
 
@@ -256,7 +262,7 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
         continue
 
       cmd = ['boot_signer', '-verify', image_path, '-certificate', verity_key]
-      proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      proc = common.Run(cmd)
       stdoutdata, _ = proc.communicate()
       assert proc.returncode == 0, \
           'Failed to verify {} with boot_signer:\n{}'.format(image, stdoutdata)
@@ -299,7 +305,7 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
         continue
 
       cmd = ['verity_verifier', image_path, '-mincrypt', verity_key_mincrypt]
-      proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+      proc = common.Run(cmd)
       stdoutdata, _ = proc.communicate()
       assert proc.returncode == 0, \
           'Failed to verify {} with verity_verifier (key: {}):\n{}'.format(
@@ -312,31 +318,9 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   if info_dict.get("avb_enable") == "true":
     logging.info('Verifying Verified Boot 2.0 (AVB) images...')
 
-    key = options['verity_key']
-    if key is None:
-      key = info_dict['avb_vbmeta_key_path']
-
-    # avbtool verifies all the images that have descriptors listed in vbmeta.
-    image = os.path.join(input_tmp, 'IMAGES', 'vbmeta.img')
-    cmd = ['avbtool', 'verify_image', '--image', image, '--key', key]
-
-    # Append the args for chained partitions if any.
-    for partition in common.AVB_PARTITIONS:
-      key_name = 'avb_' + partition + '_key_path'
-      if info_dict.get(key_name) is not None:
-        chained_partition_arg = common.GetAvbChainedPartitionArg(
-            partition, info_dict, options[key_name])
-        cmd.extend(["--expected_chain_partition", chained_partition_arg])
-
-    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    stdoutdata, _ = proc.communicate()
-    assert proc.returncode == 0, \
-        'Failed to verify {} with verity_verifier (key: {}):\n{}'.format(
-            image, key, stdoutdata)
-
-    logging.info(
-        'Verified %s with avbtool (key: %s):\n%s', image, key,
-        stdoutdata.rstrip())
+    # TODO(b/120517892): Temporarily disable the verification for AVB-signed
+    # images. Needing supporting changes in caller to pass in the desired keys.
+    logging.info('Temporarily disabled due to b/120517892')
 
 
 def main():

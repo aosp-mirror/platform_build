@@ -17,27 +17,32 @@
 
 # aosp_x86 with arm libraries needed by binary translation.
 
+# The system image of aosp_x86-userdebug is a GSI for the devices with:
+# - x86 32 bits user space
+# - 64 bits binder interface
+# - system-as-root
+# - VNDK enforcement
+# - compatible property override enabled
+
+-include device/generic/goldfish/x86-vendor.mk
+
 include $(SRC_TARGET_DIR)/product/full_x86.mk
 
-# arm libraries. This is the list of shared libraries included in the NDK.
-# Their dependency libraries will be automatically pulled in.
+# Enable dynamic partition size
+PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
+
+# Enable A/B update
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS := system
 PRODUCT_PACKAGES += \
-  libandroid_arm \
-  libaaudio_arm \
-  libc_arm \
-  libdl_arm \
-  libEGL_arm \
-  libGLESv1_CM_arm \
-  libGLESv2_arm \
-  libGLESv3_arm \
-  libjnigraphics_arm \
-  liblog_arm \
-  libm_arm \
-  libmediandk_arm \
-  libOpenMAXAL_arm \
-  libstdc++_arm \
-  libOpenSLES_arm \
-  libz_arm \
+    update_engine \
+    update_verifier
+
+# Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
+PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
+
+# Support addtional P vendor interface
+PRODUCT_EXTRA_VNDK_VERSIONS := 28
 
 PRODUCT_NAME := aosp_x86_arm
 PRODUCT_DEVICE := generic_x86_arm

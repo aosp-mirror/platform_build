@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007 The Android Open Source Project
+# Copyright (C) 2009 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,16 +14,11 @@
 # limitations under the License.
 #
 
-# This is the list of product-level settings that are specific
-# to products that have telephony hardware.
-
-PRODUCT_PACKAGES := \
-    CarrierConfig \
-    CarrierDefaultApp \
-    Dialer \
-    CallLogBackup \
-    CellBroadcastReceiver \
-    EmergencyInfo \
-    rild
-
-PRODUCT_COPY_FILES := \
+# NFC:
+#   Provide default libnfc-nci.conf file for devices that does not have one in
+#   vendor/etc because aosp system image (of aosp_$arch products) is going to
+#   be used as GSI.
+#   May need to remove the following for newly launched devices in P since this
+#   NFC configuration file should be in vendor/etc, instead of system/etc
+PRODUCT_COPY_FILES += \
+    device/generic/common/nfc/libnfc-nci.conf:system/etc/libnfc-nci.conf

@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-include build/make/target/board/treble_common_64.mk
+include build/make/target/board/BoardConfigGsiCommon.mk
 
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-a
@@ -28,18 +28,11 @@ TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := generic
 
-# Enable A/B update
-TARGET_NO_RECOVERY := true
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
-
 # TODO(jiyong) These might be SoC specific.
 BOARD_ROOT_EXTRA_FOLDERS += firmware firmware/radio persist
-BOARD_ROOT_EXTRA_SYMLINKS := /vendor/lib/dsp:/dsp
-
-# Set this to create /cache mount point for non-A/B devices that mounts /cache.
-# The partition size doesn't matter, just to make build pass.
-BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_CACHEIMAGE_PARTITION_SIZE := 16777216
+BOARD_ROOT_EXTRA_SYMLINKS += /vendor/lib/dsp:/dsp
+BOARD_ROOT_EXTRA_SYMLINKS += /vendor/firmware_mnt/image:/firmware/image
+BOARD_ROOT_EXTRA_SYMLINKS += /vendor/firmware_mnt/verinfo:/firmware/verinfo
 
 # TODO(b/36764215): remove this setting when the generic system image
 # no longer has QCOM-specific directories under /.

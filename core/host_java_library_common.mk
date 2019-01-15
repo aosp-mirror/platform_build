@@ -32,15 +32,15 @@ all_res_assets :=
 proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
 ifneq ($(proto_sources),)
 ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
-    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-micro
+    LOCAL_JAVA_LIBRARIES += libprotobuf-java-micro
 else
   ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nano)
-    LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-nano
+    LOCAL_JAVA_LIBRARIES += libprotobuf-java-nano
   else
     ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),full)
-      LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-full
+      LOCAL_JAVA_LIBRARIES += libprotobuf-java-full
     else
-      LOCAL_JAVA_LIBRARIES += host-libprotobuf-java-lite
+      LOCAL_JAVA_LIBRARIES += libprotobuf-java-lite
     endif
   endif
 endif

@@ -80,7 +80,6 @@ $(cleantarget): PRIVATE_CLEAN_FILES += \
     $(linked_module) \
 
 # Define PRIVATE_ variables from global vars
-$(linked_module): PRIVATE_TARGET_OUT_INTERMEDIATE_LIBRARIES := $(AUX_OUT_INTERMEDIATE_LIBRARIES)
 $(linked_module): PRIVATE_POST_LINK_CMD := $(LOCAL_POST_LINK_CMD)
 
 ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)

@@ -309,6 +309,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     if filename.startswith("IMAGES/"):
       continue
 
+    # Skip split super images, which will be re-generated during signing.
+    if filename.startswith("OTA/") and filename.endswith(".img"):
+      continue
+
     data = input_tf_zip.read(filename)
     out_info = copy.copy(info)
     (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
@@ -369,14 +373,15 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
                       "SYSTEM/bin/install-recovery.sh"):
       OPTIONS.rebuild_recovery = True
 
-    # Don't copy OTA keys if we're replacing them.
-    elif (OPTIONS.replace_ota_keys and
-          filename in (
-              "BOOT/RAMDISK/res/keys",
-              "BOOT/RAMDISK/etc/update_engine/update-payload-key.pub.pem",
-              "RECOVERY/RAMDISK/res/keys",
-              "SYSTEM/etc/security/otacerts.zip",
-              "SYSTEM/etc/update_engine/update-payload-key.pub.pem")):
+    # Don't copy OTA certs if we're replacing them.
+    elif (
+        OPTIONS.replace_ota_keys and
+        filename in (
+            "BOOT/RAMDISK/system/etc/security/otacerts.zip",
+            "BOOT/RAMDISK/system/etc/update_engine/update-payload-key.pub.pem",
+            "RECOVERY/RAMDISK/system/etc/security/otacerts.zip",
+            "SYSTEM/etc/security/otacerts.zip",
+            "SYSTEM/etc/update_engine/update-payload-key.pub.pem")):
       pass
 
     # Skip META/misc_info.txt since we will write back the new values later.
@@ -394,7 +399,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       pass
 
     # Skip the care_map as we will regenerate the system/vendor images.
-    elif filename == "META/care_map.txt":
+    elif filename == "META/care_map.pb" or filename == "META/care_map.txt":
       pass
 
     # A non-APK file; copy it verbatim.
@@ -547,6 +552,27 @@ def RewriteProps(data):
   return "\n".join(output) + "\n"
 
 
+def WriteOtacerts(output_zip, filename, keys):
+  """Constructs a zipfile from given keys; and writes it to output_zip.
+
+  Args:
+    output_zip: The output target_files zip.
+    filename: The archive name in the output zip.
+    keys: A list of public keys to use during OTA package verification.
+  """
+
+  try:
+    from StringIO import StringIO
+  except ImportError:
+    from io import StringIO
+  temp_file = StringIO()
+  certs_zip = zipfile.ZipFile(temp_file, "w")
+  for k in keys:
+    common.ZipWrite(certs_zip, k)
+  common.ZipClose(certs_zip)
+  common.ZipWriteStr(output_zip, filename, temp_file.getvalue())
+
+
 def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
   try:
     keylist = input_tf_zip.read("META/otakeys.txt").split()
@@ -584,40 +610,20 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
     print("META/otakeys.txt has no keys; using %s for OTA package"
           " verification." % (mapped_keys[0],))
 
-  # recovery uses a version of the key that has been slightly
-  # predigested (by DumpPublicKey.java) and put in res/keys.
+  # recovery now uses the same x509.pem version of the keys.
   # extra_recovery_keys are used only in recovery.
-  cmd = ([OPTIONS.java_path] + OPTIONS.java_args +
-         ["-jar",
-          os.path.join(OPTIONS.search_path, "framework", "dumpkey.jar")] +
-         mapped_keys + extra_recovery_keys)
-  p = common.Run(cmd, stdout=subprocess.PIPE)
-  new_recovery_keys, _ = p.communicate()
-  if p.returncode != 0:
-    raise common.ExternalError("failed to run dumpkeys")
-
-  # system_root_image puts the recovery keys at BOOT/RAMDISK.
-  if misc_info.get("system_root_image") == "true":
-    recovery_keys_location = "BOOT/RAMDISK/res/keys"
+  if misc_info.get("recovery_as_boot") == "true":
+    recovery_keys_location = "BOOT/RAMDISK/system/etc/security/otacerts.zip"
   else:
-    recovery_keys_location = "RECOVERY/RAMDISK/res/keys"
-  common.ZipWriteStr(output_tf_zip, recovery_keys_location, new_recovery_keys)
+    recovery_keys_location = "RECOVERY/RAMDISK/system/etc/security/otacerts.zip"
+
+  WriteOtacerts(output_tf_zip, recovery_keys_location,
+                mapped_keys + extra_recovery_keys)
 
   # SystemUpdateActivity uses the x509.pem version of the keys, but
   # put into a zipfile system/etc/security/otacerts.zip.
   # We DO NOT include the extra_recovery_keys (if any) here.
-
-  try:
-    from StringIO import StringIO
-  except ImportError:
-    from io import StringIO
-  temp_file = StringIO()
-  certs_zip = zipfile.ZipFile(temp_file, "w")
-  for k in mapped_keys:
-    common.ZipWrite(certs_zip, k)
-  common.ZipClose(certs_zip)
-  common.ZipWriteStr(output_tf_zip, "SYSTEM/etc/security/otacerts.zip",
-                     temp_file.getvalue())
+  WriteOtacerts(output_tf_zip, "SYSTEM/etc/security/otacerts.zip", mapped_keys)
 
   # For A/B devices, update the payload verification key.
   if misc_info.get("ab_update") == "true":
@@ -635,10 +641,8 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
         pubkey)
     common.ZipWriteStr(
         output_tf_zip,
-        "BOOT/RAMDISK/etc/update_engine/update-payload-key.pub.pem",
+        "BOOT/RAMDISK/system/etc/update_engine/update-payload-key.pub.pem",
         pubkey)
-
-  return new_recovery_keys
 
 
 def ReplaceVerityPublicKey(output_zip, filename, key_path):

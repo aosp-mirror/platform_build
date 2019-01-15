@@ -909,22 +909,6 @@ class FSConfigGen(BaseGenerator):
         '#warning No device-supplied android_filesystem_config.h,'
         ' using empty default.')
 
-    # Long names.
-    # pylint: disable=invalid-name
-    _NO_ANDROID_FILESYSTEM_CONFIG_DEVICE_DIRS_ENTRY = (
-        '{ 00000, AID_ROOT, AID_ROOT, 0,'
-        '"system/etc/fs_config_dirs" },')
-
-    _NO_ANDROID_FILESYSTEM_CONFIG_DEVICE_FILES_ENTRY = (
-        '{ 00000, AID_ROOT, AID_ROOT, 0,'
-        '"system/etc/fs_config_files" },')
-
-    _IFDEF_ANDROID_FILESYSTEM_CONFIG_DEVICE_DIRS = (
-        '#ifdef NO_ANDROID_FILESYSTEM_CONFIG_DEVICE_DIRS')
-    # pylint: enable=invalid-name
-
-    _ENDIF = '#endif'
-
     _OPEN_FILE_STRUCT = (
         'static const struct fs_path_config android_device_files[] = {')
 
@@ -1082,12 +1066,6 @@ class FSConfigGen(BaseGenerator):
             for fs_config in files:
                 self._to_fs_entry(fs_config)
 
-            if not are_dirs:
-                print FSConfigGen._IFDEF_ANDROID_FILESYSTEM_CONFIG_DEVICE_DIRS
-                print(
-                    '    ' +
-                    FSConfigGen._NO_ANDROID_FILESYSTEM_CONFIG_DEVICE_DIRS_ENTRY)
-                print FSConfigGen._ENDIF
             print FSConfigGen._CLOSE_FILE_STRUCT
 
         if are_dirs:
@@ -1108,9 +1086,14 @@ class AIDArrayGen(BaseGenerator):
 
     _INCLUDE = '#include <private/android_filesystem_config.h>'
 
+    # Note that the android_id name field is of type 'const char[]' instead of
+    # 'const char*'.  While this seems less straightforward as we need to
+    # calculate the max length of all names, this allows the entire android_ids
+    # table to be placed in .rodata section instead of .data.rel.ro section,
+    # resulting in less memory pressure.
     _STRUCT_FS_CONFIG = textwrap.dedent("""
                          struct android_id_info {
-                             const char *name;
+                             const char name[%d];
                              unsigned aid;
                          };""")
 
@@ -1132,12 +1115,13 @@ class AIDArrayGen(BaseGenerator):
     def __call__(self, args):
 
         hdr = AIDHeaderParser(args['hdrfile'])
+        max_name_length = max(len(aid.friendly) + 1 for aid in hdr.aids)
 
         print AIDArrayGen._GENERATED
         print
         print AIDArrayGen._INCLUDE
         print
-        print AIDArrayGen._STRUCT_FS_CONFIG
+        print AIDArrayGen._STRUCT_FS_CONFIG % max_name_length
         print
         print AIDArrayGen._OPEN_ID_ARRAY
 
@@ -1309,6 +1293,28 @@ class GroupGen(PasswdGen):
             sys.exit(exception)
 
         print "%s::%s:" % (logon, uid)
+
+@generator('print')
+class PrintGen(BaseGenerator):
+    """Prints just the constants and values, separated by spaces, in an easy to
+    parse format for use by other scripts.
+
+    Each line is just the identifier and the value, separated by a space.
+    """
+
+    def add_opts(self, opt_group):
+        opt_group.add_argument(
+            'aid-header', help='An android_filesystem_config.h file.')
+
+    def __call__(self, args):
+
+        hdr_parser = AIDHeaderParser(args['aid-header'])
+        aids = hdr_parser.aids
+
+        aids.sort(key=lambda item: int(item.normalized_value))
+
+        for aid in aids:
+            print '%s %s' % (aid.identifier, aid.normalized_value)
 
 
 def main():

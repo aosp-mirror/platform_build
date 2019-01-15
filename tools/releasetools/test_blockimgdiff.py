@@ -14,17 +14,14 @@
 # limitations under the License.
 #
 
-from __future__ import print_function
-
-import unittest
-
 import common
-from blockimgdiff import (BlockImageDiff, EmptyImage, HeapItem, ImgdiffStats,
-                          Transfer)
+from blockimgdiff import (
+    BlockImageDiff, EmptyImage, HeapItem, ImgdiffStats, Transfer)
 from rangelib import RangeSet
+from test_utils import ReleaseToolsTestCase
 
 
-class HealpItemTest(unittest.TestCase):
+class HealpItemTest(ReleaseToolsTestCase):
 
   class Item(object):
     def __init__(self, score):
@@ -54,7 +51,7 @@ class HealpItemTest(unittest.TestCase):
     self.assertFalse(item)
 
 
-class BlockImageDiffTest(unittest.TestCase):
+class BlockImageDiffTest(ReleaseToolsTestCase):
 
   def test_GenerateDigraphOrder(self):
     """Make sure GenerateDigraph preserves the order.
@@ -130,11 +127,11 @@ class BlockImageDiffTest(unittest.TestCase):
 
     # Sufficient cache to stash 5 blocks (size * 0.8 >= 5).
     common.OPTIONS.cache_size = 7 * 4096
-    self.assertEqual(0, block_image_diff.ReviseStashSize())
+    self.assertEqual((0, 5), block_image_diff.ReviseStashSize())
 
     # Insufficient cache to stash 5 blocks (size * 0.8 < 5).
     common.OPTIONS.cache_size = 6 * 4096
-    self.assertEqual(10, block_image_diff.ReviseStashSize())
+    self.assertEqual((10, 0), block_image_diff.ReviseStashSize())
 
   def test_ReviseStashSize_bug_33687949(self):
     """ReviseStashSize() should "free" the used stash _after_ the command.
@@ -172,7 +169,7 @@ class BlockImageDiffTest(unittest.TestCase):
 
     # Insufficient cache to stash 15 blocks (size * 0.8 < 15).
     common.OPTIONS.cache_size = 15 * 4096
-    self.assertEqual(15, block_image_diff.ReviseStashSize())
+    self.assertEqual((15, 5), block_image_diff.ReviseStashSize())
 
   def test_FileTypeSupportedByImgdiff(self):
     self.assertTrue(
@@ -245,7 +242,7 @@ class BlockImageDiffTest(unittest.TestCase):
         block_image_diff.imgdiff_stats.stats)
 
 
-class ImgdiffStatsTest(unittest.TestCase):
+class ImgdiffStatsTest(ReleaseToolsTestCase):
 
   def test_Log(self):
     imgdiff_stats = ImgdiffStats()

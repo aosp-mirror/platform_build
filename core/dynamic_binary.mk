@@ -86,68 +86,49 @@ ifeq ($(my_strip_module),)
   my_strip_module := mini-debug-info
 endif
 
-ifeq ($(my_strip_module),mini-debug-info)
-# Don't use mini-debug-info on mips (both 32-bit and 64-bit). objcopy checks that all
-# SH_MIPS_DWARF sections having name prefix .debug_ or .zdebug_, so there seems no easy
-# way using objcopy to remove all debug sections except .debug_frame on mips.
-ifneq ($(filter mips mips64,$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)),)
-  my_strip_module := true
+ifeq ($(my_strip_module),false)
+  my_strip_module :=
 endif
+
+my_strip_args :=
+ifeq ($(my_strip_module),mini-debug-info)
+  my_strip_args += --keep-mini-debug-info
+else ifeq ($(my_strip_module),keep_symbols)
+  my_strip_args += --keep-symbols
+endif
+
+ifeq (,$(filter no_debuglink mini-debug-info,$(my_strip_module)))
+  ifneq ($(TARGET_BUILD_VARIANT),user)
+    my_strip_args += --add-gnu-debuglink
+  endif
 endif
 
 ifeq ($(my_use_clang_lld),true)
   # b/80093681: GNU strip and objcopy --{add,remove}-section have bug in handling
   # GNU_RELRO segment of files lnked by clang lld; so they are replaced
   # by llvm-strip and llvm-objcopy here.
-  $(strip_output): PRIVATE_OBJCOPY_ADD_SECTION := $(LLVM_OBJCOPY)
-  $(strip_output): PRIVATE_STRIP := $(LLVM_STRIP)
-  $(strip_output): PRIVATE_STRIP_O_FLAG :=
-  # GNU strip keeps .ARM.attributes section even with -strip-all,
-  # so here pass -keep=.ARM.attributes to llvm-strip.
-  $(strip_output): PRIVATE_STRIP_ALL_FLAGS := -strip-all -keep=.ARM.attributes
-else
-  $(strip_output): PRIVATE_OBJCOPY_ADD_SECTION := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY)
-  $(strip_output): PRIVATE_STRIP := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
-  $(strip_output): PRIVATE_STRIP_O_FLAG := -o
-  $(strip_output): PRIVATE_STRIP_ALL_FLAGS := --strip-all
-endif
-# PRIVATE_OBJCOPY is not changed to llvm-objcopy yet.
-# It is used even when my_use_clang_lld is true,
-# because some objcopy flags are not supported by llvm-objcopy yet.
-$(strip_output): PRIVATE_OBJCOPY := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY)
-$(strip_output): PRIVATE_NM := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NM)
-$(strip_output): PRIVATE_READELF := $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_READELF)
-ifeq ($(my_strip_module),no_debuglink)
-$(strip_output): PRIVATE_NO_DEBUGLINK := true
-else
-$(strip_output): PRIVATE_NO_DEBUGLINK :=
+  my_strip_args += --use-llvm-strip
 endif
 
-ifeq ($(my_strip_module),mini-debug-info)
-# Strip the binary, but keep debug frames and symbol table in a compressed .gnu_debugdata section.
-$(strip_output): $(strip_input) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_OBJCOPY) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_NM) $(XZ)
-	$(transform-to-stripped-keep-mini-debug-info)
-else ifneq ($(filter true no_debuglink,$(my_strip_module)),)
-# Strip the binary
-$(strip_output): $(strip_input) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
-	$(transform-to-stripped)
-else ifeq ($(my_strip_module),keep_symbols)
-# Strip only the debug frames, but leave the symbol table.
-$(strip_output): $(strip_input) $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP)
-	$(transform-to-stripped-keep-symbols)
-
-# A product may be configured to strip everything in some build variants.
-# We do the stripping as a post-install command so that LOCAL_BUILT_MODULE
-# is still with the symbols and we don't need to clean it (and relink) when
-# you switch build variant.
-ifneq ($(filter $(STRIP_EVERYTHING_BUILD_VARIANTS),$(TARGET_BUILD_VARIANT)),)
-$(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := \
-  $($(LOCAL_2ND_ARCH_VAR_PREFIX)TARGET_STRIP) --strip-all $(LOCAL_INSTALLED_MODULE)
+valid_strip := mini-debug-info keep_symbols true no_debuglink
+ifneq (,$(filter-out $(valid_strip),$(my_strip_module)))
+  $(call pretty-error,Invalid strip value $(my_strip_module), only one of $(valid_strip) allowed)
 endif
+
+ifneq (,$(my_strip_module))
+  $(strip_output): PRIVATE_STRIP_ARGS := $(my_strip_args)
+  $(strip_output): PRIVATE_TOOLS_PREFIX := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)TOOLS_PREFIX)
+  $(strip_output): $(strip_input) $(SOONG_STRIP_PATH)
+	@echo "$($(PRIVATE_PREFIX)DISPLAY) Strip: $(PRIVATE_MODULE) ($@)"
+	CLANG_BIN=$(LLVM_PREBUILTS_PATH) \
+	CROSS_COMPILE=$(PRIVATE_TOOLS_PREFIX) \
+	XZ=$(XZ) \
+	$(SOONG_STRIP_PATH) -i $< -o $@ -d $@.d $(PRIVATE_STRIP_ARGS)
+  $(call include-depfile,$(strip_output).d)
 else
-# Don't strip the binary, just copy it.  We can't skip this step
-# because a copy of the binary must appear at LOCAL_BUILT_MODULE.
-$(strip_output): $(strip_input)
+  # Don't strip the binary, just copy it.  We can't skip this step
+  # because a copy of the binary must appear at LOCAL_BUILT_MODULE.
+  $(strip_output): $(strip_input)
 	@echo "target Unstripped: $(PRIVATE_MODULE) ($@)"
 	$(copy-file-to-target)
 endif # my_strip_module

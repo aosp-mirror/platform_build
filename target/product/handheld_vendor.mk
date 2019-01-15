@@ -19,6 +19,8 @@
 # it definitely doesn't belong on other types of devices (if it
 # does, use base_vendor.mk).
 $(call inherit-product, $(SRC_TARGET_DIR)/product/media_vendor.mk)
+
+# /vendor packages
 PRODUCT_PACKAGES += \
     audio.primary.default \
     DisplayCutoutEmulationCornerOverlay \
@@ -28,3 +30,25 @@ PRODUCT_PACKAGES += \
     power.default \
     SysuiDarkThemeOverlay \
     vibrator.default \
+
+# /product packages
+PRODUCT_PACKAGES += \
+    Browser2 \
+    Calendar \
+    Camera2 \
+    Contacts \
+    DeskClock \
+    Email \
+    Gallery2 \
+    LatinIME \
+    Launcher3QuickStep \
+    Music \
+    OneTimeInitializer \
+    PrintRecommendationService \
+    Provision \
+    QuickSearchBox \
+    Settings \
+    SettingsIntelligence \
+    StorageManager \
+    SystemUI \
+    WallpaperCropper \

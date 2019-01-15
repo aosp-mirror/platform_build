@@ -36,8 +36,6 @@ PWD := $(shell pwd)
 TOP := .
 TOPDIR :=
 
-BUILD_SYSTEM := $(TOPDIR)build/make/core
-
 # This is the default target.  It must be the first declared target.
 .PHONY: droid
 DEFAULT_GOAL := droid
@@ -48,7 +46,7 @@ droid_targets:
 
 # Set up various standard variables based on configuration
 # and host information.
-include $(BUILD_SYSTEM)/config.mk
+include build/make/core/config.mk
 
 ifneq ($(filter $(dont_bother_goals), $(MAKECMDGOALS)),)
 dont_bother := true
@@ -68,21 +66,25 @@ include $(BUILD_SYSTEM)/clang/config.mk
 $(shell mkdir -p $(OUT_DIR) && \
     echo -n $(BUILD_NUMBER) > $(OUT_DIR)/build_number.txt)
 BUILD_NUMBER_FILE := $(OUT_DIR)/build_number.txt
+.KATI_READONLY := BUILD_NUMBER_FILE
+$(KATI_obsolete_var BUILD_NUMBER,See https://android.googlesource.com/platform/build/+/master/Changes.md#BUILD_NUMBER)
 
 ifeq ($(HOST_OS),darwin)
 DATE_FROM_FILE := date -r $(BUILD_DATETIME_FROM_FILE)
 else
 DATE_FROM_FILE := date -d @$(BUILD_DATETIME_FROM_FILE)
 endif
+.KATI_READONLY := DATE_FROM_FILE
 
 # Pick a reasonable string to use to identify files.
 ifeq ($(strip $(HAS_BUILD_NUMBER)),false)
   # BUILD_NUMBER has a timestamp in it, which means that
   # it will change every time.  Pick a stable value.
-  FILE_NAME_TAG := eng.$(USER)
+  FILE_NAME_TAG := eng.$(BUILD_USERNAME)
 else
   FILE_NAME_TAG := $(file <$(BUILD_NUMBER_FILE))
 endif
+.KATI_READONLY := FILE_NAME_TAG
 
 # Make an empty directory, which can be used to make empty jars
 EMPTY_DIRECTORY := $(OUT_DIR)/empty
@@ -219,13 +221,11 @@ include build/make/core/pdk_config.mk
 # Enable dynamic linker and hidden API developer warnings for
 # userdebug, eng and non-REL builds
 ifneq ($(TARGET_BUILD_VARIANT),user)
-  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1 \
-                                 ro.art.hiddenapi.warning=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
 else
 # Enable it for user builds as long as they are not final.
 ifneq ($(PLATFORM_VERSION_CODENAME),REL)
-  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1 \
-                                 ro.art.hiddenapi.warning=1
+  ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
 endif
 endif
 
@@ -244,7 +244,13 @@ else
 ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
 endif
 
-ADDITIONAL_PRODUCT_PROPERTIES += ro.boot.logical_partitions=$(PRODUCT_USE_LOGICAL_PARTITIONS)
+ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
+ADDITIONAL_PRODUCT_PROPERTIES += ro.boot.dynamic_partitions=true
+endif
+
+ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
+ADDITIONAL_PRODUCT_PROPERTIES += ro.boot.dynamic_partitions_retrofit=true
+endif
 
 # -----------------------------------------------------------------
 ###
@@ -317,8 +323,6 @@ ifeq (true,$(strip $(enable_target_debugging)))
   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1
   # Enable Dalvik lock contention logging.
   ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=500
-  # Include the debugging/testing OTA keys in this build.
-  INCLUDE_TEST_OTA_KEYS := true
 else # !enable_target_debugging
   # Target is less debuggable and adbd is off by default
   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=0
@@ -406,8 +410,9 @@ endif
 # Typical build; include any Android.mk files we can find.
 #
 
-FULL_BUILD := true
-
+# Before we go and include all of the module makefiles, strip values for easier
+# processing.
+$(call strip-product-vars)
 # Before we go and include all of the module makefiles, mark the PRODUCT_*
 # and ADDITIONAL*PROPERTIES values readonly so that they won't be modified.
 $(call readonly-product-vars)
@@ -422,7 +427,21 @@ ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
 ENFORCE_RRO_SOURCES :=
 endif
 
+# Color-coded warnings including current module info
+# $(1): message to print
+define pretty-warning
+$(shell $(call echo-warning,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
+endef
+
+# Color-coded errors including current module info
+# $(1): message to print
+define pretty-error
+$(shell $(call echo-error,$(LOCAL_MODULE_MAKEFILE),$(LOCAL_MODULE): $(1)))
+$(error done)
+endef
+
 subdir_makefiles_inc := .
+FULL_BUILD :=
 
 ifneq ($(ONE_SHOT_MAKEFILE),)
 # We've probably been invoked by the "mm" shell function
@@ -434,7 +453,6 @@ include $(SOONG_ANDROID_MK) $(wildcard $(ONE_SHOT_MAKEFILE))
 # so that the modules will be installed in the same place they
 # would have been with a normal make.
 CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
-FULL_BUILD :=
 
 # A helper goal printing out install paths
 define register_module_install_path
@@ -463,6 +481,7 @@ UNIQUE_ALL_MODULES :=
 else # ONE_SHOT_MAKEFILE
 
 ifneq ($(dont_bother),true)
+FULL_BUILD := true
 #
 # Include all of the makefiles in the system
 #
@@ -493,6 +512,18 @@ $(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] fi
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
 # -------------------------------------------------------------------
+
+# -------------------------------------------------------------------
+# Use basic warning/error messages now that LOCAL_MODULE_MAKEFILE
+# and LOCAL_MODULE aren't useful anymore.
+# -------------------------------------------------------------------
+define pretty-warning
+$(warning $(1))
+endef
+
+define pretty-error
+$(error $(1))
+endef
 
 # -------------------------------------------------------------------
 # Enforce to generate all RRO packages for modules having resource
@@ -702,9 +733,42 @@ $(foreach m,$($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))$(1)DEPENDENCIES_ON_SHARED_LI
   $(eval r := $(filter $($(root))/%,$(call module-installed-files,\
     $(deps))))\
   $(if $(filter $(1),HOST_),\
+    $(eval ALL_MODULES.$(mod).HOST_SHARED_LIBRARY_FILES := $$(ALL_MODULES.$(mod).HOST_SHARED_LIBRARY_FILES) $(word 2,$(p)) $(r))\
+    $(eval ALL_MODULES.$(mod).HOST_SHARED_LIBRARIES := $$(ALL_MODULES.$(mod).HOST_SHARED_LIBRARIES) $(deps))\
     $(eval $(call add-required-host-so-deps,$(word 2,$(p)),$(r))),\
     $(eval $(call add-required-deps,$(word 2,$(p)),$(r))))\
   $(eval ALL_MODULES.$(mod).REQUIRED += $(deps)))
+endef
+
+# Recursively resolve host shared library dependency for a given module.
+# $(1): module name
+# Returns all dependencies of shared library.
+define get-all-shared-libs-deps
+$(if $(_all_deps_for_$(1)_set_),$(_all_deps_for_$(1)_),\
+  $(eval _all_deps_for_$(1)_ :=) \
+  $(foreach dep,$(ALL_MODULES.$(1).HOST_SHARED_LIBRARIES),\
+    $(foreach m,$(call get-all-shared-libs-deps,$(dep)),\
+      $(eval _all_deps_for_$(1)_ := $$(_all_deps_for_$(1)_) $(m))\
+      $(eval _all_deps_for_$(1)_ := $(sort $(_all_deps_for_$(1)_))))\
+    $(eval _all_deps_for_$(1)_ := $$(_all_deps_for_$(1)_) $(dep))\
+    $(eval _all_deps_for_$(1)_ := $(sort $(_all_deps_for_$(1)_) $(dep)))\
+    $(eval _all_deps_for_$(1)_set_ := true))\
+$(_all_deps_for_$(1)_))
+endef
+
+# Scan all modules in general-tests and device-tests suite and flatten the
+# shared library dependencies.
+define update-host-shared-libs-deps-for-suites
+$(foreach suite,general-tests device-tests,\
+  $(foreach m,$(COMPATIBILITY.$(suite).MODULES),\
+    $(eval my_deps := $(call get-all-shared-libs-deps,$(m)))\
+    $(foreach dep,$(my_deps),\
+      $(foreach f,$(ALL_MODULES.$(dep).HOST_SHARED_LIBRARY_FILES),\
+        $(eval target := $(HOST_OUT_TESTCASES)/$(lastword $(subst /, ,$(dir $(f))))/$(notdir $(f)))\
+        $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
+          $$(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES) $(f):$(target))\
+        $(eval COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES := \
+          $(sort $(COMPATIBILITY.$(suite).HOST_SHARED_LIBRARY.FILES)))))))
 endef
 
 $(call resolve-shared-libs-depes,TARGET_)
@@ -715,6 +779,9 @@ $(call resolve-shared-libs-depes,HOST_)
 ifdef HOST_2ND_ARCH
 $(call resolve-shared-libs-depes,HOST_,true)
 endif
+# Update host side shared library dependencies for tests in suite device-tests and general-tests.
+# This should be called after calling resolve-shared-libs-depes for HOST_2ND_ARCH.
+$(call update-host-shared-libs-deps-for-suites)
 ifdef HOST_CROSS_OS
 $(call resolve-shared-libs-depes,HOST_CROSS_,,true)
 endif
@@ -902,18 +969,31 @@ $(foreach lt,$(ALL_LINK_TYPES),\
 # Of the modules defined by the component makefiles,
 # determine what we actually want to build.
 
+
+# Expand a list of modules to the modules that they override (if any)
+# $(1): The list of modules.
+define module-overrides
+$(foreach m,$(1),$(PACKAGES.$(m).OVERRIDES) $(EXECUTABLES.$(m).OVERRIDES) $(SHARED_LIBRARIES.$(m).OVERRIDES))
+endef
+
 ###########################################################
 ## Expand a module name list with REQUIRED modules
 ###########################################################
 # $(1): The variable name that holds the initial module name list.
 #       the variable will be modified to hold the expanded results.
 # $(2): The initial module name list.
+# $(3): The list of overridden modules.
 # Returns empty string (maybe with some whitespaces).
 define expand-required-modules
 $(eval _erm_req := $(foreach m,$(2),$(ALL_MODULES.$(m).REQUIRED))) \
-$(eval _erm_new_modules := $(sort $(filter-out $($(1)),$(_erm_req))))\
-$(if $(_erm_new_modules),$(eval $(1) += $(_erm_new_modules))\
-  $(call expand-required-modules,$(1),$(_erm_new_modules)))
+$(eval _erm_new_modules := $(sort $(filter-out $($(1)),$(_erm_req)))) \
+$(eval _erm_new_overrides := $(call module-overrides,$(_erm_new_modules))) \
+$(eval _erm_all_overrides := $(3) $(_erm_new_overrides)) \
+$(eval _erm_new_modules := $(filter-out $(_erm_all_overrides), $(_erm_new_modules))) \
+$(eval $(1) := $(filter-out $(_erm_new_overrides),$($(1)))) \
+$(eval $(1) += $(_erm_new_modules)) \
+$(if $(_erm_new_modules),\
+  $(call expand-required-modules,$(1),$(_erm_new_modules),$(_erm_all_overrides)))
 endef
 
 # Transforms paths relative to PRODUCT_OUT to absolute paths.
@@ -922,7 +1002,9 @@ endef
 define resolve-product-relative-paths
   $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),\
     $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
-      $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))
+      $(subst $(_product_services_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),\
+        $(subst $(_odm_path_placeholder),$(TARGET_COPY_OUT_ODM),\
+          $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))
 endef
 
 # Lists most of the files a particular product installs, including:
@@ -942,11 +1024,16 @@ endef
 # $(1): product makefile
 define product-installed-files
   $(eval _mk := $(strip $(1))) \
-  $(eval _pif_modules := $(PRODUCTS.$(_mk).PRODUCT_PACKAGES)) \
-  $(if $(BOARD_VNDK_VERSION),$(eval _pif_modules += vndk_package)) \
+  $(eval _pif_modules := \
+    $(PRODUCTS.$(_mk).PRODUCT_PACKAGES) \
+    $(if $(filter eng,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_ENG)) \
+    $(if $(filter debug,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG)) \
+    $(if $(filter tests,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_TESTS)) \
+    $(if $(filter asan,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_ASAN)) \
+    $(if $(BOARD_VNDK_VERSION),vndk_package) \
+  ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
-  $(eval _pif_overrides := $(foreach p, $(_pif_modules), $(PACKAGES.$(p).OVERRIDES))) \
-  $(eval _pif_overrides += $(foreach m, $(_pif_modules), $(EXECUTABLES.$(m).OVERRIDES))) \
+  $(eval _pif_overrides := $(call module-overrides,$(_pif_modules))) \
   $(eval _pif_modules := $(filter-out $(_pif_overrides), $(_pif_modules))) \
   $(eval ### Resolve the :32 :64 module name) \
   $(eval _pif_modules_32 := $(patsubst %:32,%,$(filter %:32, $(_pif_modules)))) \
@@ -958,7 +1045,7 @@ define product-installed-files
   $(eval ### For the rest we add both) \
   $(eval _pif_modules += $(call get-32-bit-modules, $(_pif_modules_rest))) \
   $(eval _pif_modules += $(_pif_modules_rest)) \
-  $(call expand-required-modules,_pif_modules,$(_pif_modules)) \
+  $(call expand-required-modules,_pif_modules,$(_pif_modules),$(_pif_overrides)) \
   $(call module-installed-files, $(_pif_modules)) \
   $(call resolve-product-relative-paths,\
     $(foreach cf,$(PRODUCTS.$(_mk).PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
@@ -992,8 +1079,30 @@ endif
 
 ifdef FULL_BUILD
   product_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
+  # WARNING: The product_MODULES variable is depended on by external files.
+  product_MODULES := $(_pif_modules)
 
   # Verify the artifact path requirements made by included products.
+  is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
+  ifneq (true,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS)))
+  # Fakes don't get installed, and host files are irrelevant.
+  static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%
+  # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
+  static_whitelist_patterns += %__auto_generated_rro.apk
+  ifeq (true,$(BOARD_USES_SYSTEM_OTHER_ODEX))
+    # Allow system_other odex space optimization.
+    static_whitelist_patterns += \
+      $(TARGET_OUT_SYSTEM_OTHER)/%.odex \
+      $(TARGET_OUT_SYSTEM_OTHER)/%.vdex \
+      $(TARGET_OUT_SYSTEM_OTHER)/%.art
+  endif
+
+CERTIFICATE_VIOLATION_MODULES_FILENAME := $(PRODUCT_OUT)/certificate_violation_modules.txt
+$(CERTIFICATE_VIOLATION_MODULES_FILENAME):
+	rm -f $@
+	$(foreach m,$(sort $(CERTIFICATE_VIOLATION_MODULES)), echo $(m) >> $@;)
+$(call dist-for-goals,droidcore,$(CERTIFICATE_VIOLATION_MODULES_FILENAME))
+
   all_offending_files :=
   $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
     $(eval requirements := $(PRODUCTS.$(makefile).ARTIFACT_PATH_REQUIREMENTS)) \
@@ -1002,10 +1111,7 @@ ifdef FULL_BUILD
     $(eval path_patterns := $(call resolve-product-relative-paths,$(requirements),%)) \
     $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
     $(eval files := $(call product-installed-files, $(makefile))) \
-    $(eval files := $(filter-out $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%,$(files))) \
-    $(eval # RROs become REQUIRED by the source module, but are always placed on the vendor partition.) \
-    $(eval files := $(filter-out %__auto_generated_rro.apk,$(files))) \
-    $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns),$(files))) \
+    $(eval offending_files := $(filter-out $(path_patterns) $(whitelist_patterns) $(static_whitelist_patterns),$(files))) \
     $(call maybe-print-list-and-error,$(offending_files),$(makefile) produces files outside its artifact path requirement.) \
     $(eval unused_whitelist := $(filter-out $(files),$(whitelist_patterns))) \
     $(call maybe-print-list-and-error,$(unused_whitelist),$(makefile) includes redundant whitelist entries in its artifact path requirement.) \
@@ -1016,15 +1122,20 @@ ifdef FULL_BUILD
     $(eval whitelist := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST)) \
     $(eval whitelist_patterns := $(call resolve-product-relative-paths,$(whitelist))) \
     $(eval offending_files := $(filter-out $(whitelist_patterns),$(files_in_requirement))) \
-    $(if $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS),\
-      $(call maybe-print-list-and-error,$(offending_files),$(INTERNAL_PRODUCT) produces files inside $(makefile)s artifact path requirement.) \
-      $(eval unused_whitelist := $(filter-out $(extra_files),$(whitelist_patterns))) \
+    $(eval enforcement := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS)) \
+    $(if $(enforcement),\
+      $(call maybe-print-list-and-error,$(offending_files),\
+        $(INTERNAL_PRODUCT) produces files inside $(makefile)s artifact path requirement. \
+        $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ARTIFACT_PATH_REQUIREMENT_HINT)) \
+      $(eval unused_whitelist := $(if $(filter true strict,$(enforcement)),\
+        $(foreach p,$(whitelist_patterns),$(if $(filter $(p),$(extra_files)),,$(p))))) \
       $(call maybe-print-list-and-error,$(unused_whitelist),$(INTERNAL_PRODUCT) includes redundant artifact path requirement whitelist entries.) \
     ) \
   )
 $(PRODUCT_OUT)/offending_artifacts.txt:
 	rm -f $@
 	$(foreach f,$(sort $(all_offending_files)),echo $(f) >> $@;)
+  endif
 else
   # We're not doing a full build, and are probably only including
   # a subset of the module makefiles.  Don't try to build any modules
@@ -1033,48 +1144,14 @@ else
   product_FILES :=
 endif
 
-ifeq (0,1)
-  $(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
-  $(foreach p,$(product_FILES),$(info :   $(p)))
-  $(error done)
-endif
-
-eng_MODULES := $(sort \
-        $(call get-tagged-modules,eng) \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG)) \
-    )
-debug_MODULES := $(sort \
-        $(call get-tagged-modules,debug) \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG)) \
-    )
-tests_MODULES := $(sort \
-        $(call get-tagged-modules,tests) \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS)) \
-    )
-asan_MODULES := $(sort \
-        $(call module-installed-files, $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG_ASAN)) \
-    )
-
 # TODO: Remove the 3 places in the tree that use ALL_DEFAULT_INSTALLED_MODULES
 # and get rid of it from this list.
 modules_to_install := $(sort \
     $(ALL_DEFAULT_INSTALLED_MODULES) \
     $(product_FILES) \
-    $(foreach tag,$(tags_to_install),$($(tag)_MODULES)) \
+    $(call get-tagged-modules,$(tags_to_install)) \
     $(CUSTOM_MODULES) \
   )
-
-# Some packages may override others using LOCAL_OVERRIDES_PACKAGES.
-# Filter out (do not install) any overridden packages.
-overridden_packages := $(call get-package-overrides,$(modules_to_install))
-ifdef overridden_packages
-#  old_modules_to_install := $(modules_to_install)
-  modules_to_install := \
-      $(filter-out $(foreach p,$(overridden_packages),$(p) %/$(p).apk %/$(p).odex %/$(p).vdex), \
-          $(modules_to_install))
-endif
-#$(error filtered out
-#           $(filter-out $(modules_to_install),$(old_modules_to_install)))
 
 # Don't include any GNU General Public License shared objects or static
 # libraries in SDK images.  GPL executables (not static/dynamic libraries)
@@ -1137,6 +1214,9 @@ modules_to_check := $(foreach m,$(ALL_MODULES),$(ALL_MODULES.$(m).CHECKED))
 ifneq ($(filter all,$(MAKECMDGOALS)),)
 modules_to_check += $(foreach m,$(ALL_MODULES),$(ALL_MODULES.$(m).BUILT))
 endif
+
+# Build docs as part of checkbuild to catch more breakages.
+module_to_check += $(ALL_DOCS)
 
 # for easier debugging
 modules_to_check := $(sort $(modules_to_check))
@@ -1211,6 +1291,9 @@ systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 .PHONY: superimage
 superimage: $(INSTALLED_SUPERIMAGE_TARGET)
 
+.PHONY: superimage_empty
+superimage_empty: $(INSTALLED_SUPERIMAGE_EMPTY_TARGET)
+
 .PHONY: bootimage
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
 
@@ -1222,8 +1305,8 @@ auxiliary: $(INSTALLED_AUX_TARGETS)
 
 # Build files and then package it into the rom formats
 .PHONY: droidcore
-droidcore: files \
-    systemimage \
+droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
+    $(INSTALLED_SYSTEMIMAGE_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
     $(INSTALLED_BOOTIMAGE_TARGET) \
     $(INSTALLED_RECOVERYIMAGE_TARGET) \
@@ -1233,6 +1316,7 @@ droidcore: files \
     $(INSTALLED_BPTIMAGE_TARGET) \
     $(INSTALLED_VENDORIMAGE_TARGET) \
     $(INSTALLED_ODMIMAGE_TARGET) \
+    $(INSTALLED_SUPERIMAGE_EMPTY_TARGET) \
     $(INSTALLED_PRODUCTIMAGE_TARGET) \
     $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) \
     $(INSTALLED_FILES_FILE) \
@@ -1247,13 +1331,19 @@ droidcore: files \
     $(INSTALLED_FILES_JSON_PRODUCT_SERVICES) \
     $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
     $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
+    $(INSTALLED_FILES_FILE_RAMDISK) \
+    $(INSTALLED_FILES_JSON_RAMDISK) \
+    $(INSTALLED_FILES_FILE_ROOT) \
+    $(INSTALLED_FILES_JSON_ROOT) \
     $(INSTALLED_FILES_FILE_RECOVERY) \
     $(INSTALLED_FILES_JSON_RECOVERY) \
+    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
     soong_docs
 
 # dist_files only for putting your library into the dist directory with a full build.
 .PHONY: dist_files
 
+.PHONY: apps_only
 ifneq ($(TARGET_BUILD_APPS),)
   # If this build is just for apps, only build apps and not the full system by default.
 
@@ -1268,6 +1358,12 @@ ifneq ($(TARGET_BUILD_APPS),)
   # Dist the installed files if they exist.
   apps_only_installed_files := $(foreach m,$(unbundled_build_modules),$(ALL_MODULES.$(m).INSTALLED))
   $(call dist-for-goals,apps_only, $(apps_only_installed_files))
+
+  # Dist the bundle files if they exist.
+  apps_only_bundle_files := $(foreach m,$(unbundled_build_modules),\
+    $(if $(ALL_MODULES.$(m).BUNDLE),$(ALL_MODULES.$(m).BUNDLE):$(m)-base.zip))
+  $(call dist-for-goals,apps_only, $(apps_only_bundle_files))
+
   # For uninstallable modules such as static Java library, we have to dist the built file,
   # as <module_name>.<suffix>
   apps_only_dist_built_files := $(foreach m,$(unbundled_build_modules),$(if $(ALL_MODULES.$(m).INSTALLED),,\
@@ -1290,7 +1386,6 @@ ifneq ($(TARGET_BUILD_APPS),)
   $(COVERAGE_ZIP) : $(apps_only_installed_files)
   $(call dist-for-goals,apps_only, $(COVERAGE_ZIP))
 
-.PHONY: apps_only
 apps_only: $(unbundled_build_modules)
 
 droid_targets: apps_only
@@ -1308,6 +1403,7 @@ else # TARGET_BUILD_APPS
   $(call dist-for-goals, droidcore, \
     $(INTERNAL_UPDATE_PACKAGE_TARGET) \
     $(INTERNAL_OTA_PACKAGE_TARGET) \
+    $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET) \
     $(BUILT_OTATOOLS_PACKAGE) \
     $(SYMBOLS_ZIP) \
     $(COVERAGE_ZIP) \
@@ -1346,15 +1442,20 @@ else # TARGET_BUILD_APPS
   endif
   endif
 
-  ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+  $(call dist-for-goals, droidcore, \
+    $(INSTALLED_FILES_FILE_ROOT) \
+    $(INSTALLED_FILES_JSON_ROOT) \
+  )
+
+  ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
     $(call dist-for-goals, droidcore, \
-      $(INSTALLED_FILES_FILE_ROOT) \
-      $(INSTALLED_FILES_JSON_ROOT) \
+      $(INSTALLED_FILES_FILE_RAMDISK) \
+      $(INSTALLED_FILES_JSON_RAMDISK) \
     )
   endif
 
   ifeq ($(EMMA_INSTRUMENT),true)
-    $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE)
+    $(JACOCO_REPORT_CLASSES_ALL) : $(INSTALLED_SYSTEMIMAGE_TARGET)
     $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
 
     # Put XML formatted API files in the dist dir.
@@ -1376,7 +1477,7 @@ endif # TARGET_BUILD_APPS
 .PHONY: docs
 docs: $(ALL_DOCS)
 
-.PHONY: sdk
+.PHONY: sdk win_sdk winsdk-tools sdk_addon
 ALL_SDK_TARGETS := $(INTERNAL_SDK_TARGET)
 sdk: $(ALL_SDK_TARGETS)
 $(call dist-for-goals,sdk win_sdk, \
@@ -1435,6 +1536,17 @@ modules:
 	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
 	      tr -s ' ' '\n' | sort -u | $(COLUMN)
 
+.PHONY: dump-products
+dump-products:
+	$(dump-products)
+	@echo Successfully dumped products
+
+.PHONY: dump-files
+dump-files:
+	$(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
+	$(foreach p,$(sort $(product_FILES)),$(info :   $(p)))
+	@echo Successfully dumped product file list
+
 .PHONY: nothing
 nothing:
 	@echo Successfully read the makefiles.
@@ -1445,6 +1557,8 @@ tidy_only:
 
 ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 .PHONY: ndk
+
+$(call dist-write-file,$(KATI_PACKAGE_MK_DIR)/dist.mk)
 
 $(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] writing build rules ...)
 

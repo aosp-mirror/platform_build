@@ -12,6 +12,8 @@ ifneq ($(filter address,$(SANITIZE_TARGET)),)
     my_skip_this_target := true
   else ifeq (false, $(LOCAL_CLANG))
     my_skip_this_target := true
+  else ifeq (never, $(LOCAL_SANITIZE))
+    my_skip_this_target := true
   endif
 endif
 
@@ -79,7 +81,6 @@ endif
 include $(BUILD_SYSTEM)/module_arch_supported.mk
 ifeq ($(my_module_arch_supported),true)
 # non-preferred arch is supported
-OVERRIDE_BUILT_MODULE_PATH :=
 LOCAL_BUILT_MODULE :=
 LOCAL_INSTALLED_MODULE :=
 LOCAL_INTERMEDIATE_TARGETS :=

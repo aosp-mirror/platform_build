@@ -18,10 +18,20 @@ endif
 ifneq ($(filter tests samples, $(LOCAL_MODULE_TAGS)),)
 my_embed_jni := true
 endif
-ifeq ($(filter $(TARGET_OUT)/% $(TARGET_OUT_VENDOR)/% $(TARGET_OUT_OEM)/%, $(my_module_path)),)
-# If this app isn't to be installed to system partitions.
-my_embed_jni := true
+
+# If the APK is not installed in one of the following partitions, force its libraries
+# to be embedded inside the APK instead of installed to /<partition>/lib[64]/.
+supported_partition_patterns := \
+    $(TARGET_OUT)/% \
+    $(TARGET_OUT_VENDOR)/% \
+    $(TARGET_OUT_OEM)/% \
+    $(TARGET_OUT_PRODUCT)/% \
+    $(TARGET_OUT_PRODUCT_SERVICES)/% \
+
+ifeq ($(filter $(supported_partition_patterns),$(my_module_path)),)
+    my_embed_jni := true
 endif
+
 # If we're installing this APP as a compressed module, we include all JNI libraries
 # in the compressed artifact, rather than as separate files on the partition in question.
 ifdef LOCAL_COMPRESSED_MODULE

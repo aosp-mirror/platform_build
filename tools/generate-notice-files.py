@@ -238,12 +238,14 @@ def main(argv):
             if len(included_subdirs) > 0:
                 matched = False
                 for subdir in included_subdirs:
-                    if root.startswith(input_dir + '/' + subdir):
+                    if (root == (input_dir + '/' + subdir) or
+                        root.startswith(input_dir + '/' + subdir + '/')):
                         matched = True
                         break
             elif len(excluded_subdirs) > 0:
                 for subdir in excluded_subdirs:
-                    if root.startswith(input_dir + '/' + subdir):
+                    if (root == (input_dir + '/' + subdir) or
+                        root.startswith(input_dir + '/' + subdir + '/')):
                         matched = False
                         break
             if matched and file.endswith(".txt"):

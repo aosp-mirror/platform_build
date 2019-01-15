@@ -29,7 +29,7 @@ ifeq (,$(LOCAL_JAVA_LANGUAGE_VERSION))
     LOCAL_JAVA_LANGUAGE_VERSION := 1.7
   else ifneq (,$(filter $(LOCAL_SDK_VERSION), $(TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT)))
     LOCAL_JAVA_LANGUAGE_VERSION := 1.8
-  else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS))
+  else ifneq (,$(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS_USE_PREBUILT_SDK))
     # TODO(ccross): allow 1.9 for current and unbundled once we have SDK system modules
     LOCAL_JAVA_LANGUAGE_VERSION := 1.8
   else
@@ -80,6 +80,7 @@ proto_java_sources_dir := $(proto_java_intemediate_dir)/src
 $(proto_java_sources_file_stamp): PRIVATE_PROTO_INCLUDES := $(TOP)
 $(proto_java_sources_file_stamp): PRIVATE_PROTO_SRC_FILES := $(proto_sources_fullpath)
 $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_DIR := $(proto_java_sources_dir)
+$(proto_java_sources_file_stamp): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS)
 ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
 $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javamicro_out
 else
@@ -88,13 +89,13 @@ $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javanano
   else
     ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),stream)
 $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javastream_out
+$(proto_java_sources_file_stamp): PRIVATE_PROTOC_FLAGS += --plugin=$(HOST_OUT_EXECUTABLES)/protoc-gen-javastream
 $(proto_java_sources_file_stamp): $(HOST_OUT_EXECUTABLES)/protoc-gen-javastream
     else
 $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --java_out
     endif
   endif
 endif
-$(proto_java_sources_file_stamp): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS)
 $(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_PARAMS := $(if $(filter lite,$(LOCAL_PROTOC_OPTIMIZE_TYPE)),lite$(if $(LOCAL_PROTO_JAVA_OUTPUT_PARAMS),:,),)$(LOCAL_PROTO_JAVA_OUTPUT_PARAMS)
 $(proto_java_sources_file_stamp) : $(proto_sources_fullpath) $(PROTOC)
 	$(call transform-proto-to-java)
@@ -275,7 +276,7 @@ ifndef LOCAL_IS_HOST_MODULE
       my_system_modules := $(DEFAULT_SYSTEM_MODULES)
     endif  # LOCAL_NO_STANDARD_LIBRARIES
 
-    ifneq (,$(TARGET_BUILD_APPS))
+    ifneq (,$(TARGET_BUILD_APPS_USE_PREBUILT_SDK))
       sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,system_current,$(lib_name)))
     else
       # When SDK libraries are referenced from modules built without SDK, provide the all APIs to them
@@ -290,7 +291,7 @@ ifndef LOCAL_IS_HOST_MODULE
              Choices are: $(TARGET_AVAILABLE_SDK_VERSIONS))
     endif
 
-    ifneq (,$(TARGET_BUILD_APPS)$(filter-out %current,$(LOCAL_SDK_VERSION)))
+    ifneq (,$(TARGET_BUILD_APPS_USE_PREBUILT_SDK)$(filter-out %current,$(LOCAL_SDK_VERSION)))
       # TARGET_BUILD_APPS mode or numbered SDK. Use prebuilt modules.
       sdk_module := $(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION))
       sdk_libs := $(foreach lib_name,$(LOCAL_SDK_LIBRARIES),$(call resolve-prebuilt-sdk-module,$(LOCAL_SDK_VERSION),$(lib_name)))
@@ -332,7 +333,7 @@ ifndef LOCAL_IS_HOST_MODULE
   # related classes to be present. This change adds stubs needed for
   # javac to compile lambdas.
   ifneq ($(LOCAL_NO_STANDARD_LIBRARIES),true)
-    ifdef TARGET_BUILD_APPS
+    ifdef TARGET_BUILD_APPS_USE_PREBUILT_SDK
       full_java_bootclasspath_libs += $(call java-lib-header-files,sdk-core-lambda-stubs)
     else
       full_java_bootclasspath_libs += $(call java-lib-header-files,core-lambda-stubs)
@@ -498,7 +499,7 @@ ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
 ifeq ($(ONE_SHOT_MAKEFILE),)
 installed_static_library_notice_file_targets := \
     $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
-      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST,TARGET)-JAVA_LIBRARIES-$(lib))
+      NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-JAVA_LIBRARIES-$(lib))
 else
 installed_static_library_notice_file_targets :=
 endif

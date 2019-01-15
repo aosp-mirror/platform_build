@@ -277,14 +277,16 @@ intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 generated_sources_dir := $(call local-generated-sources-dir)
 
 ifneq ($(LOCAL_OVERRIDES_MODULES),)
-  ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
-    ifndef LOCAL_IS_HOST_MODULE
+  ifndef LOCAL_IS_HOST_MODULE
+    ifeq ($(LOCAL_MODULE_CLASS),EXECUTABLES)
       EXECUTABLES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_MODULES))
+    else ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
+      SHARED_LIBRARIES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_MODULES))
     else
-      $(call pretty-error,host modules cannot use LOCAL_OVERRIDES_MODULES)
+      $(call pretty-error,LOCAL_MODULE_CLASS := $(LOCAL_MODULE_CLASS) cannot use LOCAL_OVERRIDES_MODULES)
     endif
   else
-      $(call pretty-error,LOCAL_MODULE_CLASS := $(LOCAL_MODULE_CLASS) cannot use LOCAL_OVERRIDES_MODULES)
+    $(call pretty-error,host modules cannot use LOCAL_OVERRIDES_MODULES)
   endif
 endif
 
@@ -294,16 +296,6 @@ endif
 include $(BUILD_SYSTEM)/configure_module_stem.mk
 
 LOCAL_BUILT_MODULE := $(intermediates)/$(my_built_module_stem)
-
-# OVERRIDE_BUILT_MODULE_PATH is only allowed to be used by the
-# internal SHARED_LIBRARIES build files.
-OVERRIDE_BUILT_MODULE_PATH := $(strip $(OVERRIDE_BUILT_MODULE_PATH))
-ifdef OVERRIDE_BUILT_MODULE_PATH
-  ifneq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
-    $(error $(LOCAL_PATH): Illegal use of OVERRIDE_BUILT_MODULE_PATH)
-  endif
-  $(eval $(call copy-one-file,$(LOCAL_BUILT_MODULE),$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem)))
-endif
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   # Apk and its attachments reside in its own subdir.
@@ -328,7 +320,11 @@ LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE)
 # As .KATI_RESTAT is specified to .toc files and commit-change-for-toc is used,
 # dependent binaries of a .toc file will be rebuilt only when the content of
 # the .toc file is changed.
+#
+# Don't create .toc files for Soong shared libraries, that is handled in
+# Soong and soong_cc_prebuilt.mk
 ###########################################################
+ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
 ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
 LOCAL_INTERMEDIATE_TARGETS += $(LOCAL_BUILT_MODULE).toc
 $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
@@ -339,10 +335,6 @@ $(LOCAL_BUILT_MODULE).toc: $(LOCAL_BUILT_MODULE)
 .KATI_RESTAT: $(LOCAL_BUILT_MODULE).toc
 # Build .toc file when using mm, mma, or make $(my_register_name)
 $(my_all_targets): $(LOCAL_BUILT_MODULE).toc
-
-ifdef OVERRIDE_BUILT_MODULE_PATH
-$(eval $(call copy-one-file,$(LOCAL_BUILT_MODULE).toc,$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem).toc))
-$(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem).toc: $(OVERRIDE_BUILT_MODULE_PATH)/$(my_built_module_stem)
 endif
 endif
 
@@ -518,8 +510,9 @@ my_test_data_pairs := $(strip $(foreach td,$(LOCAL_TEST_DATA), \
       $(eval _src_base := $(call word-colon,1,$(td))), \
       $(eval _src_base := $(LOCAL_PATH)) \
         $(eval _file := $(call word-colon,1,$(td)))) \
-    $(if $(findstring ..,$(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include '..': $(_file))) \
-    $(if $(filter /%,$(_src_base) $(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include absolute paths: $(_src_base) $(_file))) \
+    $(if $(call streq,$(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK)),, \
+      $(if $(findstring ..,$(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include '..': $(_file))) \
+      $(if $(filter /%,$(_src_base) $(_file)),$(error $(LOCAL_MODULE_MAKEFILE): LOCAL_TEST_DATA may not include absolute paths: $(_src_base) $(_file)))) \
     $(eval my_test_data_file_pairs := $(my_test_data_file_pairs) $(call append-path,$(_src_base),$(_file)):$(_file)) \
     $(call append-path,$(_src_base),$(_file)):$(call append-path,$(my_module_path),$(_file))))
 
@@ -573,6 +566,42 @@ $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_config_$(suite) := ))
 
 
+# Auto-generate build config.
+ifneq (,$(LOCAL_FULL_TEST_CONFIG))
+  test_config := $(LOCAL_FULL_TEST_CONFIG)
+else ifneq (,$(LOCAL_TEST_CONFIG))
+  test_config := $(LOCAL_PATH)/$(LOCAL_TEST_CONFIG)
+else
+  test_config := $(wildcard $(LOCAL_PATH)/AndroidTest.xml)
+endif
+ifeq (,$(test_config))
+  ifneq (true,$(is_native))
+    is_instrumentation_test := true
+    ifeq (true, $(LOCAL_IS_HOST_MODULE))
+      is_instrumentation_test := false
+    endif
+    # If LOCAL_MODULE_CLASS is not APPS, it's certainly not an instrumentation
+    # test. However, some packages for test data also have LOCAL_MODULE_CLASS
+    # set to APPS. These will require flag LOCAL_DISABLE_AUTO_GENERATE_TEST_CONFIG
+    # to disable auto-generating test config file.
+    ifneq (APPS, $(LOCAL_MODULE_CLASS))
+      is_instrumentation_test := false
+    endif
+  endif
+  # CTS modules can be used for test data, so test config files must be
+  # explicitly created using AndroidTest.xml
+  ifeq (,$(filter cts, $(LOCAL_COMPATIBILITY_SUITE)))
+    ifneq (true, $(LOCAL_DISABLE_AUTO_GENERATE_TEST_CONFIG))
+      ifeq (true, $(filter true,$(is_native) $(is_instrumentation_test)))
+        include $(BUILD_SYSTEM)/autogen_test_config.mk
+        test_config := $(autogen_test_config_file)
+        autogen_test_config_file :=
+      endif
+    endif
+  endif
+endif
+is_instrumentation_test :=
+
 # Make sure we only add the files once for multilib modules.
 ifdef $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
   # Sync the auto_test_config value for multilib modules.
@@ -589,49 +618,12 @@ else
       $(eval n := $(or $(word 2,$(p)),$(notdir $(word 1, $(p))))) \
       $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
         $(s):$(dir)/$(n)))))
-  ifneq (,$(LOCAL_FULL_TEST_CONFIG))
-    test_config := $(LOCAL_FULL_TEST_CONFIG)
-  else ifneq (,$(LOCAL_TEST_CONFIG))
-    test_config := $(LOCAL_PATH)/$(LOCAL_TEST_CONFIG)
-  else
-    test_config := $(wildcard $(LOCAL_PATH)/AndroidTest.xml)
-  endif
-  ifeq (,$(test_config))
-    ifneq (true,$(is_native))
-      is_instrumentation_test := true
-      ifeq (true, $(LOCAL_IS_HOST_MODULE))
-        is_instrumentation_test := false
-      endif
-      # If LOCAL_MODULE_CLASS is not APPS, it's certainly not an instrumentation
-      # test. However, some packages for test data also have LOCAL_MODULE_CLASS
-      # set to APPS. These will require flag LOCAL_DISABLE_AUTO_GENERATE_TEST_CONFIG
-      # to disable auto-generating test config file.
-      ifneq (APPS, $(LOCAL_MODULE_CLASS))
-        is_instrumentation_test := false
-      endif
-    endif
-    # CTS modules can be used for test data, so test config files must be
-    # explicitly created using AndroidTest.xml
-    ifeq (,$(filter cts, $(LOCAL_COMPATIBILITY_SUITE)))
-      ifneq (true, $(LOCAL_DISABLE_AUTO_GENERATE_TEST_CONFIG))
-        ifeq (true, $(filter true,$(is_native) $(is_instrumentation_test)))
-          include $(BUILD_SYSTEM)/autogen_test_config.mk
-          test_config := $(autogen_test_config_file)
-          autogen_test_config_file :=
-        endif
-      endif
-    endif
-  endif
-
-  is_instrumentation_test :=
 
   ifneq (,$(test_config))
     $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
       $(eval my_compat_dist_config_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
         $(test_config):$(dir)/$(LOCAL_MODULE).config)))
   endif
-
-  test_config :=
 
   ifneq (,$(wildcard $(LOCAL_PATH)/DynamicConfig.xml))
     $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
@@ -647,18 +639,16 @@ else
   endif
 endif # $(my_prefix)$(LOCAL_MODULE_CLASS)_$(LOCAL_MODULE)_compat_files
 
-# HACK: pretend a soong LOCAL_FULL_TEST_CONFIG is autogenerated by copying it to
-# the location autogenerated test configs use and setting the flag in
+# HACK: pretend a soong LOCAL_FULL_TEST_CONFIG is autogenerated by setting the flag in
 # module-info.json
-ifdef LOCAL_FULL_TEST_CONFIG
+# TODO: (b/113029686) Add explicit flag from Soong to determine if a test was
+# autogenerated.
+ifneq (,$(filter $(SOONG_OUT_DIR)%,$(LOCAL_FULL_TEST_CONFIG)))
   ifeq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
-    my_test_config_file := $(dir $(LOCAL_BUILT_MODULE))$(LOCAL_MODULE).config
-    $(eval $(call copy-one-file,$(LOCAL_FULL_TEST_CONFIG),$(my_test_config_file)))
-    $(call add-dependency,$(LOCAL_BUILT_MODULE),$(my_test_config_file))
     ALL_MODULES.$(my_register_name).auto_test_config := true
-    my_test_config_file :=
   endif
 endif
+
 
 ifneq ($(my_test_data_file_pairs),)
 $(foreach pair, $(my_test_data_file_pairs), \
@@ -771,13 +761,15 @@ endif
 ALL_MODULES.$(my_register_name).FOR_HOST_CROSS := $(my_host_cross)
 ALL_MODULES.$(my_register_name).MODULE_NAME := $(LOCAL_MODULE)
 ALL_MODULES.$(my_register_name).COMPATIBILITY_SUITES := $(LOCAL_COMPATIBILITY_SUITE)
+ALL_MODULES.$(my_register_name).TEST_CONFIG := $(test_config)
+test_config :=
 
 INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 
 ##########################################################
 # Track module-level dependencies.
 # Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
-ALL_DEPS.MODULES := $(sort $(ALL_DEPS.MODULES) $(LOCAL_MODULE))
+ALL_DEPS.MODULES := $(ALL_DEPS.MODULES) $(LOCAL_MODULE)
 ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
   $(ALL_MODULES.$(LOCAL_MODULE).ALL_DEPS) \
   $(LOCAL_STATIC_LIBRARIES) \

@@ -13,8 +13,6 @@ ifneq (,$(filter platform-java, $(MAKECMDGOALS))$(PDK_FUSION_PLATFORM_ZIP)$(PDK_
 # all paths under out dir
 PDK_PLATFORM_JAVA_ZIP_JAVA_TARGET_LIB_DIR += \
   target/common/obj/JAVA_LIBRARIES/android.test.runner_intermediates \
-  target/common/obj/JAVA_LIBRARIES/android.hidl.base-V1.0-java_intermediates \
-  target/common/obj/JAVA_LIBRARIES/android.hidl.manager-V1.0-java_intermediates \
   target/common/obj/JAVA_LIBRARIES/android-common_intermediates \
   target/common/obj/JAVA_LIBRARIES/android-ex-camera2_intermediates \
   target/common/obj/JAVA_LIBRARIES/android_stubs_current_intermediates \
@@ -175,11 +173,15 @@ ifneq (,$(filter platform platform-java, $(MAKECMDGOALS))$(filter true,$(TARGET_
   # files under $(PRODUCT_OUT)/symbols to help debugging.
   # Source not included to PDK due to dependency issue, so provide symbols instead.
 
-  # We may not be building all of them.
-  # The platform.zip just silently ignores the nonexistent ones.
-  PDK_SYMBOL_FILES_LIST := \
-      system/bin/app_process32 \
-      system/bin/app_process64
+  PDK_SYMBOL_FILES_LIST :=
+  ifeq ($(TARGET_IS_64_BIT),true)
+    PDK_SYMBOL_FILES_LIST += system/bin/app_process64
+    ifdef TARGET_2ND_ARCH
+      PDK_SYMBOL_FILES_LIST += system/bin/app_process32
+    endif
+  else
+    PDK_SYMBOL_FILES_LIST += system/bin/app_process32
+  endif
 
   ifneq (,$(PDK_FUSION_PLATFORM_ZIP)$(PDK_FUSION_PLATFORM_DIR))
     # symbols should be explicitly pulled for fusion build

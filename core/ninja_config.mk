@@ -7,7 +7,7 @@ endif
 KATI_OUTPUT_PATTERNS := $(OUT_DIR)/build%.ninja $(OUT_DIR)/ninja%.sh
 
 # Modifier goals we don't need to pass to Ninja.
-NINJA_EXCLUDE_GOALS := all dist APP-% PRODUCT-%
+NINJA_EXCLUDE_GOALS := all APP-% PRODUCT-%
 
 # A list of goals which affect parsing of makefiles and we need to pass to Kati.
 PARSE_TIME_MAKE_GOALS := \
@@ -28,7 +28,6 @@ PARSE_TIME_MAKE_GOALS := \
 	custom_images \
 	deps-license \
 	dicttool_aosp \
-	dist \
 	dump-products \
 	eng \
 	fusion \

@@ -23,7 +23,44 @@ endef
 
 HOST_GLOBAL_ARFLAGS := cqs
 
-# We Reuse the following functions with the same name from HOST_darwin-x86.mk:
-# transform-host-o-to-shared-lib-inner
-# transform-host-o-to-executable-inner
-# get-file-size
+HOST_CUSTOM_LD_COMMAND := true
+
+define transform-host-o-to-shared-lib-inner
+$(hide) $(PRIVATE_CXX) \
+        -dynamiclib -single_module -read_only_relocs suppress \
+        $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
+            $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
+        ) \
+        $(PRIVATE_ALL_OBJECTS) \
+        $(addprefix -force_load , $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES)) \
+        $(PRIVATE_ALL_SHARED_LIBRARIES) \
+        $(PRIVATE_ALL_STATIC_LIBRARIES) \
+        $(PRIVATE_LDLIBS) \
+        -o $@ \
+        -install_name @rpath/$(notdir $@) \
+        -Wl,-rpath,@loader_path/../$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)) \
+        -Wl,-rpath,@loader_path/$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)) \
+        $(PRIVATE_LDFLAGS)
+endef
+
+define transform-host-o-to-executable-inner
+$(hide) $(PRIVATE_CXX) \
+        $(foreach path,$(PRIVATE_RPATHS), \
+          -Wl,-rpath,@loader_path/$(path)) \
+        -o $@ \
+        -Wl,-headerpad_max_install_names \
+        $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
+           $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
+        ) \
+        $(PRIVATE_ALL_SHARED_LIBRARIES) \
+        $(PRIVATE_ALL_OBJECTS) \
+        $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
+        $(PRIVATE_ALL_STATIC_LIBRARIES) \
+        $(PRIVATE_LDFLAGS) \
+        $(PRIVATE_LDLIBS)
+endef
+
+# $(1): The file to check
+define get-file-size
+stat -f "%z" $(1)
+endef

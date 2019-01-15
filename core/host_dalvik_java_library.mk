@@ -171,11 +171,15 @@ $(built_dex): $(full_classes_jar) $(DX) $(ZIP2ZIP)
 
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
 $(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE := $(full_classes_jarjar_jar)
-$(LOCAL_BUILT_MODULE): PRIVATE_DONT_DELETE_JAR_DIRS := $(LOCAL_DONT_DELETE_JAR_DIRS)
+$(LOCAL_BUILT_MODULE): $(MERGE_ZIPS) $(SOONG_ZIP) $(ZIP2ZIP)
 $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 	@echo "Host Jar: $(PRIVATE_MODULE) ($@)"
-	$(call initialize-package-file,$(PRIVATE_SOURCE_ARCHIVE),$@)
-	$(add-dex-to-package)
+	rm -rf $@.parts
+	mkdir -p $@.parts
+	$(call create-dex-jar,$@.parts/dex.zip,$(PRIVATE_DEX_FILE))
+	$(call extract-resources-jar,$@.parts/res.zip,$(PRIVATE_SOURCE_ARCHIVE))
+	$(MERGE_ZIPS) -j $@ $@.parts/dex.zip $@.parts/res.zip
+	rm -rf $@.parts
 
 endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
 

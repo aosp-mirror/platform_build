@@ -37,12 +37,14 @@ include $(BUILD_PREBUILT)
 
 # The source prebuilts are extracted in the rule of _pdk_fusion_stamp.
 # Use a touch rule to establish the dependency.
+ifndef PDK_FUSION_PLATFORM_DIR
 $(3) $(11) : $(_pdk_fusion_stamp)
 	$(hide) if [ ! -f $$@ ]; then \
 	  echo 'Error: $$@ does not exist. Check your platform.zip.' 1>&2; \
 	  exit 1; \
 	fi
 	$(hide) touch $$@
+endif
 endef
 
 # We don't have a LOCAL_PATH for the auto-generated modules, so let it be the $(BUILD_SYSTEM).

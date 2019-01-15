@@ -23,7 +23,7 @@ TARGET_2ND_ARCH := arm
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 
-ifneq ($(TARGET_BUILD_APPS)$(filter cts sdk,$(MAKECMDGOALS)),)
+ifneq ($(TARGET_BUILD_APPS)$(filter cts sdk vts,$(MAKECMDGOALS)),)
 # DO NOT USE
 # DO NOT USE
 #
@@ -41,7 +41,11 @@ ifneq ($(TARGET_BUILD_APPS)$(filter cts sdk,$(MAKECMDGOALS)),)
 #
 # DO NOT USE
 # DO NOT USE
+ifneq ($(filter cts sdk vts,$(MAKECMDGOALS)),)
+TARGET_2ND_ARCH_VARIANT := armv7-a-neon
+else
 TARGET_2ND_ARCH_VARIANT := armv7-a
+endif
 # DO NOT USE
 # DO NOT USE
 TARGET_2ND_CPU_VARIANT := generic
@@ -61,7 +65,7 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 # cleaned up all device specific directories under root!
 
 # TODO(b/111434759, b/111287060) SoC specific hacks
-BOARD_ROOT_EXTRA_SYMLINKS := /vendor/lib/dsp:/dsp
+BOARD_ROOT_EXTRA_SYMLINKS += /vendor/lib/dsp:/dsp
 BOARD_ROOT_EXTRA_SYMLINKS += /mnt/vendor/persist:/persist
 BOARD_ROOT_EXTRA_SYMLINKS += /vendor/firmware_mnt:/firmware
 

@@ -17,8 +17,6 @@
 import copy
 import os
 import os.path
-import subprocess
-import unittest
 import zipfile
 
 import common
@@ -105,7 +103,7 @@ class MockScriptWriter(object):
     self.script.append(('AssertSomeThumbprint',) + args)
 
 
-class BuildInfoTest(unittest.TestCase):
+class BuildInfoTest(test_utils.ReleaseToolsTestCase):
 
   TEST_INFO_DICT = {
       'build.prop' : {
@@ -255,6 +253,23 @@ class BuildInfoTest(unittest.TestCase):
     self.assertRaises(common.ExternalError, target_info.GetVendorBuildProp,
                       'ro.build.nonexistent')
 
+  def test_vendor_fingerprint(self):
+    target_info = BuildInfo(self.TEST_INFO_DICT, None)
+    self.assertEqual('vendor-build-fingerprint',
+                     target_info.vendor_fingerprint)
+
+  def test_vendor_fingerprint_blacklisted(self):
+    target_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
+    del target_info_dict['vendor.build.prop']['ro.vendor.build.fingerprint']
+    target_info = BuildInfo(target_info_dict, self.TEST_OEM_DICTS)
+    self.assertIsNone(target_info.vendor_fingerprint)
+
+  def test_vendor_fingerprint_without_vendor_build_prop(self):
+    target_info_dict = copy.deepcopy(self.TEST_INFO_DICT_USES_OEM_PROPS)
+    del target_info_dict['vendor.build.prop']
+    target_info = BuildInfo(target_info_dict, self.TEST_OEM_DICTS)
+    self.assertIsNone(target_info.vendor_fingerprint)
+
   def test_WriteMountOemScript(self):
     target_info = BuildInfo(self.TEST_INFO_DICT_USES_OEM_PROPS,
                             self.TEST_OEM_DICTS)
@@ -336,10 +351,7 @@ class BuildInfoTest(unittest.TestCase):
         script_writer.script)
 
 
-class LoadOemDictsTest(unittest.TestCase):
-
-  def tearDown(self):
-    common.Cleanup()
+class LoadOemDictsTest(test_utils.ReleaseToolsTestCase):
 
   def test_NoneDict(self):
     self.assertIsNone(_LoadOemDicts(None))
@@ -372,7 +384,7 @@ class LoadOemDictsTest(unittest.TestCase):
       self.assertEqual('{}'.format(i), oem_dict['ro.build.index'])
 
 
-class OtaFromTargetFilesTest(unittest.TestCase):
+class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
   TEST_TARGET_INFO_DICT = {
       'build.prop' : {
@@ -413,9 +425,6 @@ class OtaFromTargetFilesTest(unittest.TestCase):
 
     common.OPTIONS.search_path = test_utils.get_search_path()
     self.assertIsNotNone(common.OPTIONS.search_path)
-
-  def tearDown(self):
-    common.Cleanup()
 
   def test_GetPackageMetadata_abOta_full(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
@@ -704,13 +713,10 @@ class TestPropertyFiles(PropertyFiles):
     )
 
 
-class PropertyFilesTest(unittest.TestCase):
+class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
 
   def setUp(self):
     common.OPTIONS.no_signing = False
-
-  def tearDown(self):
-    common.Cleanup()
 
   @staticmethod
   def construct_zip_package(entries):
@@ -872,6 +878,7 @@ class StreamingPropertyFilesTest(PropertyFilesTest):
         property_files.required)
     self.assertEqual(
         (
+            'care_map.pb',
             'care_map.txt',
             'compatibility.zip',
         ),
@@ -967,6 +974,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
         property_files.required)
     self.assertEqual(
         (
+            'care_map.pb',
             'care_map.txt',
             'compatibility.zip',
         ),
@@ -1005,11 +1013,11 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
            '--signature_size', str(self.SIGNATURE_SIZE),
            '--metadata_hash_file', metadata_sig_file,
            '--payload_hash_file', payload_sig_file]
-    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    proc = common.Run(cmd)
     stdoutdata, _ = proc.communicate()
     self.assertEqual(
         0, proc.returncode,
-        'Failed to run brillo_update_payload: {}'.format(stdoutdata))
+        'Failed to run brillo_update_payload:\n{}'.format(stdoutdata))
 
     signed_metadata_sig_file = payload_signer.Sign(metadata_sig_file)
 
@@ -1133,7 +1141,7 @@ class NonAbOtaPropertyFilesTest(PropertyFilesTest):
       property_files.Verify(zip_fp, raw_metadata)
 
 
-class PayloadSignerTest(unittest.TestCase):
+class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
 
   SIGFILE = 'sigfile.bin'
   SIGNED_SIGFILE = 'signed-sigfile.bin'
@@ -1148,9 +1156,6 @@ class PayloadSignerTest(unittest.TestCase):
     common.OPTIONS.key_passwords = {
         common.OPTIONS.package_key : None,
     }
-
-  def tearDown(self):
-    common.Cleanup()
 
   def _assertFilesEqual(self, file1, file2):
     with open(file1, 'rb') as fp1, open(file2, 'rb') as fp2:
@@ -1212,7 +1217,7 @@ class PayloadSignerTest(unittest.TestCase):
     self._assertFilesEqual(verify_file, signed_file)
 
 
-class PayloadTest(unittest.TestCase):
+class PayloadTest(test_utils.ReleaseToolsTestCase):
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
@@ -1225,9 +1230,6 @@ class PayloadTest(unittest.TestCase):
     common.OPTIONS.key_passwords = {
         common.OPTIONS.package_key : None,
     }
-
-  def tearDown(self):
-    common.Cleanup()
 
   @staticmethod
   def _create_payload_full(secondary=False):
@@ -1266,7 +1268,7 @@ class PayloadTest(unittest.TestCase):
     target_file = construct_target_files()
     common.ZipDelete(target_file, 'IMAGES/vendor.img')
     payload = Payload()
-    self.assertRaises(AssertionError, payload.Generate, target_file)
+    self.assertRaises(common.ExternalError, payload.Generate, target_file)
 
   def test_Sign_full(self):
     payload = self._create_payload_full()
@@ -1314,7 +1316,7 @@ class PayloadTest(unittest.TestCase):
     payload = self._create_payload_full()
     payload_signer = PayloadSigner()
     payload_signer.signer_args.append('bad-option')
-    self.assertRaises(AssertionError, payload.Sign, payload_signer)
+    self.assertRaises(common.ExternalError, payload.Sign, payload_signer)
 
   def test_WriteToZip(self):
     payload = self._create_payload_full()

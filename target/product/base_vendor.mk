@@ -34,6 +34,7 @@ PRODUCT_PACKAGES += \
     fs_config_dirs_nonsystem \
     gralloc.default \
     group \
+    init_vendor \
     libbundlewrapper \
     libclearkeycasplugin \
     libdownmix \
@@ -51,6 +52,10 @@ PRODUCT_PACKAGES += \
     shell_and_utilities_vendor \
     vndservice \
     vndservicemanager \
+
+# Base modules and settings for the product partition.
+PRODUCT_PACKAGES += \
+    healthd \
 
 # VINTF data for vendor image
 PRODUCT_PACKAGES += \

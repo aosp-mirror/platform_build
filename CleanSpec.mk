@@ -493,6 +493,48 @@ $(call add-clean-step, rm -rf $(TARGET_OUT_COMMON_INTERMEDIATES)/APPS/*_intermed
 
 $(call add-clean-step, find $(PRODUCT_OUT) -type f -name "vr_hwc*" -print0 | xargs -0 rm -f)
 
+$(call add-clean-step, rm -rf $(SOONG_OUT_DIR)/.intermediates/system/vold)
+
+# Remove product-services related files / images
+$(call add-clean-step, find $(PRODUCT_OUT) -type f -name "*product-services*" -print0 | xargs -0 rm -rf)
+$(call add-clean-step, find $(PRODUCT_OUT) -type d -name "*product-services*" -print0 | xargs -0 rm -rf)
+$(call add-clean-step, find $(PRODUCT_OUT) -type l -name "*product-services*" -print0 | xargs -0 rm -rf)
+
+# Remove obsolete recovery etc files
+$(call add-clean-step, rm -rf $(TARGET_RECOVERY_ROOT_OUT)/etc)
+
+# Remove *_OUT_INTERMEDIATE_LIBRARIES
+$(call add-clean-step, rm -rf $(addsuffix /lib,\
+  $(HOST_OUT_INTERMEDIATES) $(2ND_HOST_OUT_INTERMEDIATES) \
+  $(HOST_CROSS_OUT_INTERMEDIATES) $(2ND_HOST_CROSS_OUT_INTERMEDIATES) \
+  $(TARGET_OUT_INTERMEDIATES) $(2ND_TARGET_OUT_INTERMEDIATES)))
+
+# Remove strip.sh intermediates to save space
+$(call add-clean-step, find $(OUT_DIR) \( -name "*.so.debug" -o -name "*.so.dynsyms" -o -name "*.so.funcsyms" -o -name "*.so.keep_symbols" -o -name "*.so.mini_debuginfo.xz" \) -print0 | xargs -0 rm -f)
+
+# Clean up old ninja files
+$(call add-clean-step, rm -f $(OUT_DIR)/build-*-dist*.ninja)
+
+$(call add-clean-step, rm -f $(HOST_OUT)/*ts/host-libprotobuf-java-*.jar)
+
+$(call add-clean-step, find $(OUT_DIR)/target/product/mainline_arm64/system -type f -name "*.*dex" -print0 | xargs -0 rm -f)
+
+# Clean up aidegen
+$(call add-clean-step, rm -f $(HOST_OUT)/bin/aidegen)
+
+# Remove perfprofd
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/perfprofd)
+
+# Remove incorrectly created directories in the source tree
+$(call add-clean-step, find system/app system/priv-app system/framework system_other -depth -type d -print0 | xargs -0 rmdir)
+$(call add-clean-step, rm -f .d)
+
+# Remove obsolete apps
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/app/*)
+
+# Remove corrupt generated rule due to using toybox's sed
+$(call add-clean-step, rm -rf $(SOONG_OUT_DIR)/.intermediates/system/core/init/generated_stub_builtin_function_map)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

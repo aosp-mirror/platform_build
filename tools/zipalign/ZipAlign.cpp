@@ -111,7 +111,7 @@ static int copyAndAlign(ZipFile* pZin, ZipFile* pZout, int alignment, bool zopfl
             status = pZout->add(pZin, pEntry, padding, &pNewEntry);
         }
 
-        if (status != NO_ERROR)
+        if (status != OK)
             return 1;
         bias += padding;
         //printf(" added '%s' at %ld (pad=%d)\n",
@@ -146,13 +146,13 @@ static int process(const char* inFileName, const char* outFileName,
         return 1;
     }
 
-    if (zin.open(inFileName, ZipFile::kOpenReadOnly) != NO_ERROR) {
+    if (zin.open(inFileName, ZipFile::kOpenReadOnly) != OK) {
         fprintf(stderr, "Unable to open '%s' as zip archive\n", inFileName);
         return 1;
     }
     if (zout.open(outFileName,
             ZipFile::kOpenReadWrite|ZipFile::kOpenCreate|ZipFile::kOpenTruncate)
-        != NO_ERROR)
+        != OK)
     {
         fprintf(stderr, "Unable to open '%s' as zip archive\n", outFileName);
         return 1;
@@ -178,7 +178,7 @@ static int verify(const char* fileName, int alignment, bool verbose,
     if (verbose)
         printf("Verifying alignment of %s (%d)...\n", fileName, alignment);
 
-    if (zipFile.open(fileName, ZipFile::kOpenReadOnly) != NO_ERROR) {
+    if (zipFile.open(fileName, ZipFile::kOpenReadOnly) != OK) {
         fprintf(stderr, "Unable to open '%s' for verification\n", fileName);
         return 1;
     }

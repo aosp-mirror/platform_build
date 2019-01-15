@@ -14,11 +14,11 @@
 # limitations under the License.
 #
 
-import unittest
-
 from rangelib import RangeSet
+from test_utils import ReleaseToolsTestCase
 
-class RangeSetTest(unittest.TestCase):
+
+class RangeSetTest(ReleaseToolsTestCase):
 
   def test_union(self):
     self.assertEqual(RangeSet("10-19 30-34").union(RangeSet("18-29")),
@@ -129,8 +129,8 @@ class RangeSetTest(unittest.TestCase):
     self.assertEqual(
         RangeSet.parse_raw(RangeSet("0-9").to_string_raw()),
         RangeSet("0-9"))
-    self.assertEqual(RangeSet.parse_raw(
-        RangeSet("2-10 12").to_string_raw()),
+    self.assertEqual(
+        RangeSet.parse_raw(RangeSet("2-10 12").to_string_raw()),
         RangeSet("2-10 12"))
     self.assertEqual(
         RangeSet.parse_raw(RangeSet("11 2-10 12 1 0").to_string_raw()),

@@ -16,23 +16,26 @@
 
 from __future__ import print_function
 
+import logging
+import os
 import sys
+
+import common
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
   sys.exit(1)
 
-import os
-import common
+logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
 
-def main(argv):
-  # def option_handler(o, a):
-  #   return False
 
+def main(argv):
   args = common.ParseOptions(argv, __doc__)
   input_dir, output_dir = args
+
+  common.InitLogging()
 
   OPTIONS.info_dict = common.LoadInfoDict(input_dir)
 

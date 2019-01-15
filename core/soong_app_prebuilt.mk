@@ -1,6 +1,16 @@
 # App prebuilt coming from Soong.
 # Extra inputs:
+# LOCAL_SOONG_BUILT_INSTALLED
+# LOCAL_SOONG_BUNDLE
+# LOCAL_SOONG_CLASSES_JAR
+# LOCAL_SOONG_DEX_JAR
+# LOCAL_SOONG_HEADER_JAR
+# LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
+# LOCAL_SOONG_PROGUARD_DICT
 # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
+# LOCAL_SOONG_RRO_DIRS
+# LOCAL_SOONG_JNI_LIBS_$(TARGET_ARCH)
+# LOCAL_SOONG_JNI_LIBS_$(TARGET_2ND_ARCH)
 
 ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   $(call pretty-error,soong_app_prebuilt.mk may only be used from Soong)
@@ -43,8 +53,6 @@ endif
 endif # TURBINE_ENABLED != false
 
 
-$(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
-
 ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 resource_export_package := $(intermediates.COMMON)/package-export.apk
 resource_export_stamp := $(intermediates.COMMON)/src/R.stamp
@@ -61,21 +69,51 @@ endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 
 java-dex: $(LOCAL_SOONG_DEX_JAR)
 
-ifdef LOCAL_DEX_PREOPT
-# defines built_odex along with rule to install odex
-include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 
-$(built_odex): $(LOCAL_SOONG_DEX_JAR)
-	$(call dexpreopt-one-file,$<,$@)
+ifneq ($(BUILD_PLATFORM_ZIP),)
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(dir $(LOCAL_BUILT_MODULE))package.dex.apk))
 endif
+
+$(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
+
+my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
+  $(call word-colon,1,$(f)):$(PRODUCT_OUT)$(call word-colon,2,$(f)))
+my_installed := $(call copy-many-files, $(my_built_installed))
+ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed)
+ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_installed)
+$(my_register_name): $(my_installed)
+
+# embedded JNI will already have been handled by soong
+my_embed_jni :=
+my_prebuilt_jni_libs :=
+ifdef LOCAL_SOONG_JNI_LIBS_$(TARGET_ARCH)
+  my_2nd_arch_prefix :=
+  LOCAL_JNI_SHARED_LIBRARIES := $(LOCAL_SOONG_JNI_LIBS_$(TARGET_ARCH))
+  include $(BUILD_SYSTEM)/install_jni_libs_internal.mk
+endif
+ifdef TARGET_2ND_ARCH
+  ifdef LOCAL_SOONG_JNI_LIBS_$(TARGET_2ND_ARCH)
+    my_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
+    LOCAL_JNI_SHARED_LIBRARIES := $(LOCAL_SOONG_JNI_LIBS_$(TARGET_2ND_ARCH))
+    include $(BUILD_SYSTEM)/install_jni_libs_internal.mk
+  endif
+endif
+LOCAL_SHARED_JNI_LIBRARIES :=
+my_embed_jni :=
+my_prebuilt_jni_libs :=
+my_2nd_arch_prefix :=
 
 PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
 ifdef LOCAL_CERTIFICATE
   PACKAGES.$(LOCAL_MODULE).CERTIFICATE := $(LOCAL_CERTIFICATE)
   PACKAGES.$(LOCAL_MODULE).PRIVATE_KEY := $(patsubst %.x509.pem,%.pk8,$(LOCAL_CERTIFICATE))
 endif
-
+include $(BUILD_SYSTEM)/app_certificate_validate.mk
 PACKAGES.$(LOCAL_MODULE).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
+
+ifdef LOCAL_SOONG_BUNDLE
+  ALL_MODULES.$(LOCAL_MODULE).BUNDLE := $(LOCAL_SOONG_BUNDLE)
+endif
 
 ifndef LOCAL_IS_HOST_MODULE
 ifeq ($(LOCAL_SDK_VERSION),system_current)
