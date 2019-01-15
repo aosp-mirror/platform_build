@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "c669cdb6_253178bd",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 1564,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T21:11:55Z",
+      "side": 1,
+      "message": "It\u0027ll be called _before_ IncrementalOTA_InstallBegin: https://android-review.googlesource.com/c/platform/build/+/859289/12/tools/releasetools/ota_from_target_files.py#1603. Maybe say something more general like the function will be called during incremental OTA verification and installation.",
+      "parentUuid": "a3d8f309_0f37665c",
+      "range": {
+        "startLine": 1563,
+        "startChar": 61,
+        "endLine": 1564,
+        "endChar": 31
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a34002af_262b79e6",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
@@ -295,6 +319,30 @@
       "side": 1,
       "message": "BTW, the device always has a \"default\" group and it cannot be removed, and no size limit can be set on it (liblp has hard-coded this).",
       "parentUuid": "e13e833f_b943edde",
+      "range": {
+        "startLine": 2336,
+        "startChar": 9,
+        "endLine": 2336,
+        "endChar": 67
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7e4ead27_a5faaf32",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2336,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T21:11:55Z",
+      "side": 1,
+      "message": "Ah I totally missed the way this \"default\" group works. I\u0027ll read through the code again, but maybe also add some comment to clarify the logic.",
+      "parentUuid": "734dfbb0_924f72eb",
       "range": {
         "startLine": 2336,
         "startChar": 9,
