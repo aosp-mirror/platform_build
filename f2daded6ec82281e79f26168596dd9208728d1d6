@@ -259,6 +259,30 @@
     },
     {
       "key": {
+        "uuid": "734dfbb0_924f72eb",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2336,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-15T21:02:45Z",
+      "side": 1,
+      "message": "BTW, the device always has a \"default\" group and it cannot be removed, and no size limit can be set on it (liblp has hard-coded this).",
+      "parentUuid": "e13e833f_b943edde",
+      "range": {
+        "startLine": 2336,
+        "startChar": 9,
+        "endLine": 2336,
+        "endChar": 67
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9fa86233_ff388520",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
