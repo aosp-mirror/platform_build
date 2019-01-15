@@ -34,6 +34,24 @@
       "revId": "3b6f6fe8aad172b8a2dd5bb5bcf9b8b6adc0a72d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b240fcd_a8fb1c14",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1238,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-15T19:10:27Z",
+      "side": 1,
+      "message": "I don\u0027t see any reason to remove it",
+      "parentUuid": "a36acc11_00e74824",
+      "revId": "3b6f6fe8aad172b8a2dd5bb5bcf9b8b6adc0a72d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
