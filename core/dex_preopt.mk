@@ -31,6 +31,7 @@ $(foreach b,$(DEXPREOPT_BOOT_JARS_MODULES),$(eval $(call _dexpreopt-boot-jar-rem
 include $(BUILD_SYSTEM)/dex_preopt_libart.mk
 
 # === hiddenapi rules ===
+ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
 
 hiddenapi_stubs_jar = $(call intermediates-dir-for,JAVA_LIBRARIES,$(1),,COMMON)/javalib.jar
 
@@ -88,6 +89,7 @@ $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS): $(HIDDENAPI) $(HIDDENAPI_STUBS) \
 # Additional inputs are filled with `hiddenapi-generate-csv`
 $(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): $(SOONG_HIDDENAPI_GREYLIST_METADATA)
 $(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): PRIVATE_METADATA_INPUTS := $(SOONG_HIDDENAPI_GREYLIST_METADATA)
+endif  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
 
 ifeq ($(PRODUCT_DIST_BOOT_AND_SYSTEM_JARS),true)
 boot_profile_jars_zip := $(PRODUCT_OUT)/boot_profile_jars.zip
