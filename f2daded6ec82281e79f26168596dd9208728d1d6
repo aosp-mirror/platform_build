@@ -94,6 +94,30 @@
     },
     {
       "key": {
+        "uuid": "cc7a62b2_0347a819",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2294,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-15T20:56:38Z",
+      "side": 1,
+      "message": "I wanted to avoid the unnecessary \"format\", but yeah it does look cleaner",
+      "parentUuid": "41ec80be_49f7d152",
+      "range": {
+        "startLine": 2293,
+        "startChar": 8,
+        "endLine": 2294,
+        "endChar": 21
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "16e5384c_9513b1d8",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
@@ -105,6 +129,30 @@
       "writtenOn": "2019-01-15T19:08:47Z",
       "side": 1,
       "message": "Should only apply to already updated partitions",
+      "range": {
+        "startLine": 2303,
+        "startChar": 6,
+        "endLine": 2303,
+        "endChar": 50
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94400ddd_61d62be2",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2303,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-15T20:56:38Z",
+      "side": 1,
+      "message": "Yeah I meant to verify shrinking partitions here. Will update.",
+      "parentUuid": "16e5384c_9513b1d8",
       "range": {
         "startLine": 2303,
         "startChar": 6,
@@ -140,6 +188,30 @@
     },
     {
       "key": {
+        "uuid": "e2a3db26_d9949657",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2312,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-15T20:56:38Z",
+      "side": 1,
+      "message": "I set write_verify_script\u003dwrite_verify_script in the line above, so it should write for me",
+      "parentUuid": "78f0222e_d52b682b",
+      "range": {
+        "startLine": 2312,
+        "startChar": 8,
+        "endLine": 2312,
+        "endChar": 31
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "64c08a03_64f9ebf6",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
@@ -151,6 +223,30 @@
       "writtenOn": "2019-01-15T19:08:47Z",
       "side": 1,
       "message": "The condition here looks identical to L2374.\n\nAlso not clear about the expected condition of \"partition in default group in target build\". Will u.tgt_group be None? Seems in that case the partition will be removed by L2333.",
+      "range": {
+        "startLine": 2336,
+        "startChar": 9,
+        "endLine": 2336,
+        "endChar": 67
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e13e833f_b943edde",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2336,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-15T20:56:38Z",
+      "side": 1,
+      "message": "The \"default\" group is a group that doesn\u0027t have any size limits. Think of it as the partition being unassigned.\n\nSay in the source build, partition P is in group G1, and in the target build it is in group G2. Also, the size limits of G1 shrinks and G2 grows. Then, the flow (would probably) look like this:\n\nmove P from G1 to default\nshrink G1\ngrow G2\nmove P from default to G2\n\nAlternatively, if P is moved from G1 to G2 directly:\n1.\nmove P from G1 to G2 \u003c-- G2 may not have enough space\nshrink G1\ngrow G2\n\n2.\nshrink G1 \u003c-- G1 may not have enough free space\nmove P from G1 to G2 \u003c-- G2 may not have enough space\ngrow G2\n\n3.\nshrink G1 \u003c-- G1 may not have enough free space\ngrow G2\nmove P from G1 to G2\n\nThat\u0027s why it needs to be assigned to default, then to G2 later. \n\n(Technically, liblp verifies the integrity of the metadata in the end, so we can actually do #1, but that\u0027s an implementation detail, and OTA shouldn\u0027t depend on that.)",
+      "parentUuid": "64c08a03_64f9ebf6",
       "range": {
         "startLine": 2336,
         "startChar": 9,
@@ -180,6 +276,47 @@
         "endLine": 2350,
         "endChar": 35
       },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b0a34ac9_8bb7b674",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2350,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-15T20:56:38Z",
+      "side": 1,
+      "message": "Yes (and that\u0027s what liblp exactly does). For group size, 0 means no limits, and \"None\" means group does not exist.",
+      "parentUuid": "9fa86233_ff388520",
+      "range": {
+        "startLine": 2349,
+        "startChar": 6,
+        "endLine": 2350,
+        "endChar": 35
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79ce7201_d060af7b",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 868,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-15T20:56:38Z",
+      "side": 1,
+      "message": "Tao, maybe call \n\n    for e in device_specific_diffs: e.WriteScript(...) \n\nhere?",
       "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
