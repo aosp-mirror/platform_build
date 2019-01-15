@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0f841065_2d52c478",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 1564,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T19:08:47Z",
+      "side": 1,
+      "message": "nit: update the comment",
+      "range": {
+        "startLine": 1563,
+        "startChar": 61,
+        "endLine": 1564,
+        "endChar": 31
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a34002af_262b79e6",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 1568,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T19:08:47Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 1568,
+        "startChar": 25,
+        "endLine": 1568,
+        "endChar": 39
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f407fc95_20619a8e",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2290,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T19:08:47Z",
+      "side": 1,
+      "message": "nit: MakeTempFile() suffices?",
+      "range": {
+        "startLine": 2289,
+        "startChar": 4,
+        "endLine": 2290,
+        "endChar": 51
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "41ec80be_49f7d152",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2294,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T19:08:47Z",
+      "side": 1,
+      "message": "nit: f.write(\u0027{}\\n\u0027.format(line)) looks cleaner",
+      "range": {
+        "startLine": 2293,
+        "startChar": 8,
+        "endLine": 2294,
+        "endChar": 21
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "16e5384c_9513b1d8",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2303,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T19:08:47Z",
+      "side": 1,
+      "message": "Should only apply to already updated partitions",
+      "range": {
+        "startLine": 2303,
+        "startChar": 6,
+        "endLine": 2303,
+        "endChar": 50
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78f0222e_d52b682b",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2312,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T19:08:47Z",
+      "side": 1,
+      "message": "Missing the call to WritePostInstallVerifyScript?",
+      "range": {
+        "startLine": 2312,
+        "startChar": 8,
+        "endLine": 2312,
+        "endChar": 31
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64c08a03_64f9ebf6",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2336,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T19:08:47Z",
+      "side": 1,
+      "message": "The condition here looks identical to L2374.\n\nAlso not clear about the expected condition of \"partition in default group in target build\". Will u.tgt_group be None? Seems in that case the partition will be removed by L2333.",
+      "range": {
+        "startLine": 2336,
+        "startChar": 9,
+        "endLine": 2336,
+        "endChar": 67
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9fa86233_ff388520",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2350,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-01-15T19:08:47Z",
+      "side": 1,
+      "message": "L2202 says \"0: no size limits\". Is it still expected to call \"resize_group group 0\" for such a case?",
+      "range": {
+        "startLine": 2349,
+        "startChar": 6,
+        "endLine": 2350,
+        "endChar": 35
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
