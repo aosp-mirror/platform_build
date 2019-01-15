@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "a3d8f309_0f37665c",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 1564,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-15T21:03:30Z",
+      "side": 1,
+      "message": "what needs to be updated?",
+      "parentUuid": "0f841065_2d52c478",
+      "range": {
+        "startLine": 1563,
+        "startChar": 61,
+        "endLine": 1564,
+        "endChar": 31
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a34002af_262b79e6",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
