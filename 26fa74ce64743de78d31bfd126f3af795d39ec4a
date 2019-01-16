@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "85d72646_aa4440a1",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 1386,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-01-16T19:44:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fb66ee28_cf9d4c7b",
+      "revId": "26fa74ce64743de78d31bfd126f3af795d39ec4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "74655f09_85b0a8e2",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 9
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "0c70a85b_5f1c3374",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 1390,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-01-16T19:44:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "74655f09_85b0a8e2",
+      "range": {
+        "startLine": 1390,
+        "startChar": 55,
+        "endLine": 1390,
+        "endChar": 66
+      },
+      "revId": "26fa74ce64743de78d31bfd126f3af795d39ec4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "62762d33_c774094c",
         "filename": "tools/releasetools/blockimgdiff.py",
         "patchSetId": 9
@@ -62,6 +104,30 @@
       "revId": "26fa74ce64743de78d31bfd126f3af795d39ec4a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ea475406_e1c2110d",
+        "filename": "tools/releasetools/blockimgdiff.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 1399,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-01-16T19:44:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "62762d33_c774094c",
+      "range": {
+        "startLine": 1399,
+        "startChar": 27,
+        "endLine": 1399,
+        "endChar": 28
+      },
+      "revId": "26fa74ce64743de78d31bfd126f3af795d39ec4a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
