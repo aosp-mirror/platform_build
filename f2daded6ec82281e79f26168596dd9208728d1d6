@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "3fe8a2de_074974cd",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 1564,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-16T01:05:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c669cdb6_253178bd",
+      "range": {
+        "startLine": 1563,
+        "startChar": 61,
+        "endLine": 1564,
+        "endChar": 31
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a34002af_262b79e6",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
@@ -96,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "9f8a88aa_503a471d",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 1568,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-16T01:05:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a34002af_262b79e6",
+      "range": {
+        "startLine": 1568,
+        "startChar": 25,
+        "endLine": 1568,
+        "endChar": 39
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f407fc95_20619a8e",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
@@ -116,6 +164,30 @@
       "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "555b8750_4af0ef63",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2290,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-16T01:05:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f407fc95_20619a8e",
+      "range": {
+        "startLine": 2289,
+        "startChar": 4,
+        "endLine": 2290,
+        "endChar": 51
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -166,6 +238,30 @@
     },
     {
       "key": {
+        "uuid": "92aee8c2_25789637",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2294,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-16T01:05:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc7a62b2_0347a819",
+      "range": {
+        "startLine": 2293,
+        "startChar": 8,
+        "endLine": 2294,
+        "endChar": 21
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "16e5384c_9513b1d8",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 12
@@ -210,6 +306,30 @@
       "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6fcd2055_ff8f02eb",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 2303,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-16T01:05:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "94400ddd_61d62be2",
+      "range": {
+        "startLine": 2303,
+        "startChar": 6,
+        "endLine": 2303,
+        "endChar": 50
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -557,6 +677,24 @@
     },
     {
       "key": {
+        "uuid": "4a3ae8b1_2ede707f",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 868,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-16T01:05:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "708d6921_6e834da4",
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "833c1320_3f39376f",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 12
@@ -577,6 +715,30 @@
       "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcda3a1e_6074846a",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 12
+      },
+      "lineNbr": 1627,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-16T01:05:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "833c1320_3f39376f",
+      "range": {
+        "startLine": 1627,
+        "startChar": 38,
+        "endLine": 1627,
+        "endChar": 73
+      },
+      "revId": "f2daded6ec82281e79f26168596dd9208728d1d6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
