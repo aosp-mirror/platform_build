@@ -16,6 +16,24 @@
       "revId": "9e50cfdd629f0d86c8ea40c761b7dfc916d0844d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "352003cc_c1edcb75",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-16T14:26:16Z",
+      "side": 1,
+      "message": "Ah~ thanks, this is just for testing.\nRemoved.",
+      "parentUuid": "5c50956c_8f7517c6",
+      "revId": "9e50cfdd629f0d86c8ea40c761b7dfc916d0844d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
