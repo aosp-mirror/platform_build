@@ -16,6 +16,23 @@
       "revId": "140a37cbf9db7bb2fa4a80273f15bac5f7619555",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "58ed411a_1e2b5e2a",
+        "filename": "envsetup.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-16T22:21:17Z",
+      "side": 1,
+      "message": "Add this to ANDROID_BUILD_PATHS on line 267 and then you won\u0027t need to duplicate the logic to add/remove it from PATH.",
+      "revId": "140a37cbf9db7bb2fa4a80273f15bac5f7619555",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
