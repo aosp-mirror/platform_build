@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "1bffc5d6_cf61ccb0",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2019-01-16T09:13:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47557a54_8047bfe3",
+      "revId": "170a0a1dd5cd8626b371b98867f9b2b00812d8b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "23ed6552_f420c92e",
         "filename": "envsetup.sh",
         "patchSetId": 3
@@ -72,6 +90,30 @@
       "side": 1,
       "message": "Thanks for catching this typo!",
       "parentUuid": "23ed6552_f420c92e",
+      "range": {
+        "startLine": 273,
+        "startChar": 28,
+        "endLine": 273,
+        "endChar": 49
+      },
+      "revId": "170a0a1dd5cd8626b371b98867f9b2b00812d8b7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ed07461_50ff2dd9",
+        "filename": "envsetup.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 273,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2019-01-16T09:13:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "602738b1_7d4f2326",
       "range": {
         "startLine": 273,
         "startChar": 28,
