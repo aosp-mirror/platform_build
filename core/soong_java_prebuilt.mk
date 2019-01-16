@@ -79,16 +79,8 @@ endif # LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 
 
 ifdef LOCAL_SOONG_DEX_JAR
-  # Hidden API for boot jars
   ifndef LOCAL_IS_HOST_MODULE
     ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)  # is_boot_jar
-      # Derive greylist from classes.jar.
-      # We use full_classes_jar here, which is the post-proguard jar (on the basis that we also
-      # have a full_classes_pre_proguard_jar). This is consistent with the equivalent code in
-      # java.mk.
-      $(eval $(call hiddenapi-generate-csv,$(full_classes_jar),$(hiddenapi_flags_csv),$(hiddenapi_metadata_csv)))
-      $(eval $(call hiddenapi-copy-soong-jar,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
-
       ifeq (true,$(WITH_DEXPREOPT))
         # For libart, the boot jars' odex files are replaced by $(DEFAULT_DEX_PREOPT_INSTALLED_IMAGE).
         # We use this installed_odex trick to get boot.art installed.
@@ -99,20 +91,11 @@ ifdef LOCAL_SOONG_DEX_JAR
         # Make sure to install the .odex and .vdex when you run "make <module_name>"
        $(my_all_targets): $(installed_odex)
       endif
-    else # !is_boot_jar
-      $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
     endif # is_boot_jar
 
+    $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
     $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(common_javalib.jar)))
     $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar) $(full_classes_header_jar)))
-
-    ifneq ($(filter $(LOCAL_MODULE),$(HIDDENAPI_EXTRA_APP_USAGE_JARS)),)
-      # Derive greylist from classes.jar.
-      # We use full_classes_jar here, which is the post-proguard jar (on the basis that we also
-      # have a full_classes_pre_proguard_jar). This is consistent with the equivalent code in
-      # java.mk.
-      $(eval $(call hiddenapi-generate-csv,$(full_classes_jar),$(hiddenapi_flags_csv),$(hiddenapi_metadata_csv)))
-    endif
   endif
 
   java-dex : $(LOCAL_BUILT_MODULE)
