@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "218510c6_4140a624",
+        "filename": "core/soong_app_prebuilt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-16T06:19:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "57630d8a_e7687768",
+      "range": {
+        "startLine": 93,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 81
+      },
+      "revId": "96775201e50e0c4ed01fb2879163454bba04a097",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fef06da7_56682e4a",
         "filename": "core/soong_app_prebuilt.mk",
         "patchSetId": 2

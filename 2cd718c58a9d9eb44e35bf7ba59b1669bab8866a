@@ -34,6 +34,24 @@
       "revId": "2cd718c58a9d9eb44e35bf7ba59b1669bab8866a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "72297552_0fea31b9",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-16T06:19:57Z",
+      "side": 1,
+      "message": "It is removed. Done.",
+      "parentUuid": "1e2d21fa_7b5d2f80",
+      "revId": "2cd718c58a9d9eb44e35bf7ba59b1669bab8866a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
