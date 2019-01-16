@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5c50956c_8f7517c6",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-16T09:41:38Z",
+      "side": 1,
+      "message": "this looks like an unrelated change?",
+      "revId": "9e50cfdd629f0d86c8ea40c761b7dfc916d0844d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
