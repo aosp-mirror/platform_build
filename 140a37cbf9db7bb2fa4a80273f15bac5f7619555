@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "db2148d2_4c1dbf0f",
+        "filename": "envsetup.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2019-01-16T18:37:29Z",
+      "side": 1,
+      "message": "Move this line to right above 275 where you use the variable.\n\nAnd then the comment will be right above the if where it should be.",
+      "revId": "140a37cbf9db7bb2fa4a80273f15bac5f7619555",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
