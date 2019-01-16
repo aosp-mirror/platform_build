@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 The Android Open Source Project
+# Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,19 +14,30 @@
 # limitations under the License.
 #
 
-# This makefile contains the non-system partition contents for
+# This makefile contains the product partition contents for
 # a generic phone or tablet device. Only add something here if
 # it definitely doesn't belong on other types of devices (if it
 # does, use base_vendor.mk).
-$(call inherit-product, $(SRC_TARGET_DIR)/product/media_vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/media_product.mk)
 
-# /vendor packages
+# /product packages
 PRODUCT_PACKAGES += \
-    audio.primary.default \
-    DisplayCutoutEmulationCornerOverlay \
-    DisplayCutoutEmulationDoubleOverlay \
-    DisplayCutoutEmulationTallOverlay \
-    local_time.default \
-    power.default \
-    SysuiDarkThemeOverlay \
-    vibrator.default \
+    Browser2 \
+    Calendar \
+    Camera2 \
+    Contacts \
+    DeskClock \
+    Email \
+    Gallery2 \
+    LatinIME \
+    Launcher3QuickStep \
+    Music \
+    OneTimeInitializer \
+    PrintRecommendationService \
+    Provision \
+    QuickSearchBox \
+    Settings \
+    SettingsIntelligence \
+    StorageManager \
+    SystemUI \
+    WallpaperCropper \

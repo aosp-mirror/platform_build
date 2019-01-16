@@ -14,10 +14,12 @@
 # limitations under the License.
 #
 
-# Makefile including the mainline system image, and the relevant AOSP portions
-# for the other partitions.
-$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_product.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_product.mk)
+# This makefile contains the product partition contents for
+# media-capable devices (non-wearables). Only add something here
+# if it definitely doesn't belong on wearables. Otherwise, choose
+# base_vendor.mk.
+$(call inherit-product, $(SRC_TARGET_DIR)/product/base_product.mk)
+
+# /product packages
+PRODUCT_PACKAGES += \
+    webview \
