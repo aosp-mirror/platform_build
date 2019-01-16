@@ -45,6 +45,7 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
   system/app/Music/Music.apk \
   system/app/PrintRecommendationService/PrintRecommendationService.apk \
   system/app/QuickSearchBox/QuickSearchBox.apk \
+  system/app/webview/webview.apk \
   system/bin/healthd \
   system/etc/init/healthd.rc \
   system/etc/vintf/manifest/manifest_healthd.xml \
