@@ -206,7 +206,7 @@ endef
 #################################################################
 # Set up minimal BOOTCLASSPATH list of jars to build/execute
 # java code with dalvikvm/art.
-TARGET_CORE_JARS := core-oj core-libart core-simple conscrypt okhttp bouncycastle apache-xml
+TARGET_CORE_JARS := core-oj core-libart conscrypt okhttp bouncycastle apache-xml
 ifeq ($(EMMA_INSTRUMENT),true)
   ifneq ($(EMMA_INSTRUMENT_STATIC),true)
     # For instrumented build, if Jacoco is not being included statically

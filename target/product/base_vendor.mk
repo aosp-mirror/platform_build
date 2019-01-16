@@ -53,10 +53,6 @@ PRODUCT_PACKAGES += \
     vndservice \
     vndservicemanager \
 
-# Base modules and settings for the product partition.
-PRODUCT_PACKAGES += \
-    healthd \
-
 # VINTF data for vendor image
 PRODUCT_PACKAGES += \
     device_manifest.xml \

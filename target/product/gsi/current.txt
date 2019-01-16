@@ -20,6 +20,7 @@ VNDK-SP: android.hardware.graphics.common@1.1.so
 VNDK-SP: android.hardware.graphics.common@1.2.so
 VNDK-SP: android.hardware.graphics.mapper@2.0.so
 VNDK-SP: android.hardware.graphics.mapper@2.1.so
+VNDK-SP: android.hardware.graphics.mapper@3.0.so
 VNDK-SP: android.hardware.renderscript@1.0.so
 VNDK-SP: android.hidl.memory.token@1.0.so
 VNDK-SP: android.hidl.memory@1.0.so
@@ -109,6 +110,7 @@ VNDK-core: android.hardware.gnss@1.0.so
 VNDK-core: android.hardware.gnss@1.1.so
 VNDK-core: android.hardware.gnss@2.0.so
 VNDK-core: android.hardware.graphics.allocator@2.0.so
+VNDK-core: android.hardware.graphics.allocator@3.0.so
 VNDK-core: android.hardware.graphics.bufferqueue@1.0.so
 VNDK-core: android.hardware.graphics.bufferqueue@2.0.so
 VNDK-core: android.hardware.graphics.composer@2.1.so

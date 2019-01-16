@@ -21,9 +21,4 @@
 PRODUCT_PACKAGES := \
     rild \
 
-# /product packages
-PRODUCT_PACKAGES += \
-    CarrierConfig \
-    Dialer \
-
 PRODUCT_COPY_FILES := \
