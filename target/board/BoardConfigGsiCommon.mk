@@ -25,8 +25,8 @@ TARGET_USERIMAGES_USE_F2FS := true
 # Enable dynamic system image size and reserved 64MB in it.
 BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
 
-# GSI always requires separate vendor packages to vendor.img
-TARGET_COPY_OUT_VENDOR := vendor
+# GSI forces product packages to /system for now.
+TARGET_COPY_OUT_PRODUCT := system/product
 
 # Creates metadata partition mount point under root for
 # the devices with metadata parition
