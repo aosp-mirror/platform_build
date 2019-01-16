@@ -59,7 +59,6 @@ PRODUCT_PACKAGES += \
     requestsync \
     StatementService \
     vndk_snapshot_package \
-    webview \
 
 
 PRODUCT_COPY_FILES += \
