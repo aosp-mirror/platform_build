@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85d5d647_b0c2d242",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2019-01-17T15:09:21Z",
+      "side": 1,
+      "message": "nit: this could probably go into the is_boot_jar else branch",
+      "revId": "6ca5d86c86dccd5623ab244c95ed2497d69eaff0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6e4a7ca2_4e84a15e",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2019-01-17T15:09:21Z",
+      "side": 1,
+      "message": "nit: # LOCAL_IS_HOST_MODULE",
+      "range": {
+        "startLine": 115,
+        "startChar": 2,
+        "endLine": 115,
+        "endChar": 7
+      },
+      "revId": "6ca5d86c86dccd5623ab244c95ed2497d69eaff0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
