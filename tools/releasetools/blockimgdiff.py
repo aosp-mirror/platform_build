@@ -483,7 +483,8 @@ class BlockImageDiff(object):
       # choose the transfers for conversion. The number '1024' can be further
       # tweaked here to balance the package size and build time.
       if max_stashed_blocks > stash_limit + 1024:
-        self.SelectAndConvertDiffTransfersToNew()
+        self.SelectAndConvertDiffTransfersToNew(
+            max_stashed_blocks - stash_limit)
         # Regenerate the sequence as the graph has changed.
         self.FindSequenceForTransfers()
 
@@ -830,7 +831,8 @@ class BlockImageDiff(object):
     num_of_bytes = new_blocks * self.tgt.blocksize
     logger.info(
         "  Total %d blocks (%d bytes) are packed as new blocks due to "
-        "insufficient cache size.", new_blocks, num_of_bytes)
+        "insufficient cache size. Maximum blocks stashed simultaneously: %d",
+        new_blocks, num_of_bytes, max_stashed_blocks)
     return new_blocks, max_stashed_blocks
 
   def ComputePatches(self, prefix):
@@ -1339,7 +1341,7 @@ class BlockImageDiff(object):
 
     return patches
 
-  def SelectAndConvertDiffTransfersToNew(self):
+  def SelectAndConvertDiffTransfersToNew(self, violated_stash_blocks):
     """Converts the diff transfers to reduce the max simultaneous stash.
 
     Since the 'new' data is compressed with deflate, we can select the 'diff'
@@ -1347,6 +1349,8 @@ class BlockImageDiff(object):
     compressed data. Ideally, we want to convert the transfers with a small
     size increase, but using a large number of stashed blocks.
     """
+    TransferSizeScore = namedtuple("TransferSizeScore",
+                                   "xf, used_stash_blocks, score")
 
     logger.info("Selecting diff commands to convert to new.")
     diff_queue = []
@@ -1360,7 +1364,7 @@ class BlockImageDiff(object):
     # for the remaining.
     result = self.ComputePatchesForInputList(diff_queue, True)
 
-    removed_stashed_blocks = 0
+    conversion_candidates = []
     for xf_index, patch_info, compressed_size in result:
       xf = self.transfers[xf_index]
       if not xf.patch_info:
@@ -1368,21 +1372,43 @@ class BlockImageDiff(object):
 
       size_ratio = len(xf.patch_info.content) * 100.0 / compressed_size
       diff_style = "imgdiff" if xf.patch_info.imgdiff else "bsdiff"
-      logger.info("%s, target size: %d, style: %s, patch size: %d,"
+      logger.info("%s, target size: %d blocks, style: %s, patch size: %d,"
                   " compression_size: %d, ratio %.2f%%", xf.tgt_name,
                   xf.tgt_ranges.size(), diff_style,
                   len(xf.patch_info.content), compressed_size, size_ratio)
 
+      used_stash_blocks = sum(sr.size() for _, sr in xf.use_stash)
       # Convert the transfer to new if the compressed size is smaller or equal.
       # We don't need to maintain the stash_before lists here because the
       # graph will be regenerated later.
       if len(xf.patch_info.content) >= compressed_size:
-        removed_stashed_blocks += sum(sr.size() for _, sr in xf.use_stash)
-        logger.info("Converting %s to new", xf.tgt_name)
-        xf.ConvertToNew()
+        # Add the transfer to the candidate list with negative score. And it
+        # will be converted later.
+        conversion_candidates.append(TransferSizeScore(xf, used_stash_blocks,
+                                                       -1))
+      elif used_stash_blocks > 0:
+        # This heuristic represents the size increase in the final package to
+        # remove per unit of stashed data.
+        score = ((compressed_size - len(xf.patch_info.content)) * 100.0
+                 / used_stash_blocks)
+        conversion_candidates.append(TransferSizeScore(xf, used_stash_blocks,
+                                                       score))
+    # Transfers with lower score (i.e. less expensive to convert) will be
+    # converted first.
+    conversion_candidates.sort(key=lambda x: x.score)
 
-    # TODO(xunchang) convert more transfers by sorting:
-    # (compressed size - patch_size) / used_stashed_blocks
+    # TODO(xunchang), improve the logic to find the transfers to convert, e.g.
+    # convert the ones that contribute to the max stash, run ReviseStashSize
+    # multiple times etc.
+    removed_stashed_blocks = 0
+    for xf, used_stash_blocks, _ in conversion_candidates:
+      logger.info("Converting %s to new", xf.tgt_name)
+      xf.ConvertToNew()
+      removed_stashed_blocks += used_stash_blocks
+      # Experiments show that we will get a smaller package size if we remove
+      # slightly more stashed blocks than the violated stash blocks.
+      if removed_stashed_blocks >= violated_stash_blocks:
+        break
 
     logger.info("Removed %d stashed blocks", removed_stashed_blocks)
 
