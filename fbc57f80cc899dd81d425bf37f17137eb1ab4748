@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "3ccccd83_38048d4b",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 1056364
+      },
+      "writtenOn": "2019-01-17T23:54:58Z",
+      "side": 1,
+      "message": "Done in https://android-review.googlesource.com/c/platform/system/extras/+/877054. simpleperf shipped on device uses version lib. simpleperf shipped in ndk will keep old way until build team support something similar.",
+      "parentUuid": "b7cd2f62_9b816b94",
+      "revId": "fbc57f80cc899dd81d425bf37f17137eb1ab4748",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "48f36de6_df053224",
         "filename": "target/product/base_system.mk",
         "patchSetId": 1
@@ -48,6 +66,24 @@
       "writtenOn": "2019-01-17T20:46:24Z",
       "side": 1,
       "message": "also, should these be part of shell_and_utilities rather than here?",
+      "revId": "fbc57f80cc899dd81d425bf37f17137eb1ab4748",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1337d084_792e5813",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1056364
+      },
+      "writtenOn": "2019-01-17T23:54:58Z",
+      "side": 1,
+      "message": "simpleperf done in https://android-review.googlesource.com/c/platform/system/core/+/876896. Will upload another CL for simpleperf_app_runner.",
+      "parentUuid": "48f36de6_df053224",
       "revId": "fbc57f80cc899dd81d425bf37f17137eb1ab4748",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
