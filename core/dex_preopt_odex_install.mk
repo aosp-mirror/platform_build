@@ -122,8 +122,7 @@ ifdef LOCAL_DEX_PREOPT
   ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
     my_module_multilib := $(LOCAL_MULTILIB)
     # If the module is not an SDK library and it's a system server jar, only preopt the primary arch.
-    my_filtered_lib_name := $(patsubst %.impl,%,$(LOCAL_MODULE))
-    ifeq (,$(filter $(JAVA_SDK_LIBRARIES),$(my_filtered_lib_name)))
+    ifeq (,$(filter $(JAVA_SDK_LIBRARIES),$(LOCAL_MODULE)))
       # For a Java library, by default we build odex for both 1st arch and 2nd arch.
       # But it can be overridden with "LOCAL_MULTILIB := first".
       ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
@@ -192,7 +191,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_list, OptionalUsesLibraries,         $(LOCAL_OPTIONAL_USES_LIBRARIES))
   $(call add_json_list, UsesLibraries,                 $(LOCAL_USES_LIBRARIES))
   $(call add_json_map,  LibraryPaths)
-  $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy.impl android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
+  $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
     $(call add_json_str, $(lib), $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar))
   $(call end_json_map)
   $(call add_json_list, Archs,                         $(my_dexpreopt_archs))
@@ -234,7 +233,7 @@ ifdef LOCAL_DEX_PREOPT
   my_dexpreopt_deps := $(my_dex_jar)
   my_dexpreopt_deps += $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE))
   my_dexpreopt_deps += \
-    $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy.impl android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
+    $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar)
   my_dexpreopt_deps += $(LOCAL_DEX_PREOPT_IMAGE_LOCATION)
   # TODO: default boot images
