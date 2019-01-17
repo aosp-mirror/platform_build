@@ -293,7 +293,7 @@ ifeq ($(REMOVE_OAHL_FROM_BCP),true)
 PRODUCT_PACKAGES += framework-oahl-backward-compatibility
 PRODUCT_BOOT_JARS += framework-oahl-backward-compatibility
 else
-PRODUCT_BOOT_JARS += org.apache.http.legacy.impl
+PRODUCT_BOOT_JARS += org.apache.http.legacy
 endif
 
 PRODUCT_COPY_FILES += \
@@ -308,7 +308,7 @@ ifeq ($(REMOVE_ATB_FROM_BCP),true)
 PRODUCT_PACKAGES += framework-atb-backward-compatibility
 PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
 else
-PRODUCT_BOOT_JARS += android.test.base.impl
+PRODUCT_BOOT_JARS += android.test.base
 endif
 
 PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
