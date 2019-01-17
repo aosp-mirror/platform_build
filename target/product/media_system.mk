@@ -58,7 +58,6 @@ PRODUCT_PACKAGES += \
     requestsync \
     StatementService \
     vndk_snapshot_package \
-    webview \
 
 
 PRODUCT_COPY_FILES += \
@@ -74,7 +73,7 @@ PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service \
     wifi-service \
-    com.android.location.provider.impl \
+    com.android.location.provider \
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt
