@@ -202,6 +202,7 @@ PRODUCT_PACKAGES += \
     mdnsd \
     media \
     media_cmd \
+    mediacodec.policy \
     mediadrmserver \
     mediaextractor \
     mediametrics \
