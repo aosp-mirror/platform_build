@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3be9b95e_e7d41b34",
+        "filename": "envsetup.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-17T05:44:39Z",
+      "side": 1,
+      "message": "You don\u0027t need this any more, with ASUITE_PREBUILD_PATH in ANDROID_BUILD_PATHS it will already have been removed by line 185.",
+      "range": {
+        "startLine": 268,
+        "startChar": 4,
+        "endLine": 271,
+        "endChar": 6
+      },
+      "revId": "a85e14dc9daef9954a5e1ed71dbb109cf31adb70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ab59352d_9a7f3b34",
+        "filename": "envsetup.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-17T05:44:39Z",
+      "side": 1,
+      "message": "You don\u0027t need this any more, just add $ACLOUD_PATH, etc. to ANDROID_BUILD_PATHS.  If you keep it as a local call it ASUITE_PREBUILTS_PATH.",
+      "revId": "a85e14dc9daef9954a5e1ed71dbb109cf31adb70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
