@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "85d6f338_2a60240a",
+        "filename": "envsetup.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2019-01-17T06:48:17Z",
+      "side": 1,
+      "message": "Thanks! It\u0027s a very elegant design!",
+      "parentUuid": "3be9b95e_e7d41b34",
+      "range": {
+        "startLine": 268,
+        "startChar": 4,
+        "endLine": 271,
+        "endChar": 6
+      },
+      "revId": "a85e14dc9daef9954a5e1ed71dbb109cf31adb70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ab59352d_9a7f3b34",
         "filename": "envsetup.sh",
         "patchSetId": 9
@@ -39,6 +63,24 @@
       "revId": "a85e14dc9daef9954a5e1ed71dbb109cf31adb70",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bcf3a184_e9ef7181",
+        "filename": "envsetup.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1311067
+      },
+      "writtenOn": "2019-01-17T06:48:17Z",
+      "side": 1,
+      "message": "Done, thank you!",
+      "parentUuid": "ab59352d_9a7f3b34",
+      "revId": "a85e14dc9daef9954a5e1ed71dbb109cf31adb70",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
