@@ -363,7 +363,7 @@ ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 ifdef LOCAL_DEX_PREOPT
 $(built_module) : PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
 $(built_module) : $(intermediates)/strip.sh
-$(built_module) : | $(DEXPREOPT_GEN_DEPS)
+$(built_module) : | $(DEXPREOPT_STRIP_DEPS)
 $(built_module) : .KATI_DEPFILE := $(built_module).d
 endif
 endif
@@ -464,7 +464,7 @@ else # ! boot jar
 
 $(built_module): PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
 $(built_module): $(intermediates)/strip.sh
-$(built_module): | $(DEXPREOPT_GEN_DEPS)
+$(built_module): | $(DEXPREOPT_STRIP_DEPS)
 $(built_module): .KATI_DEPFILE := $(built_module).d
 $(built_module): $(my_prebuilt_src_file)
 	$(PRIVATE_STRIP_SCRIPT) $< $@

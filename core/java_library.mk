@@ -95,7 +95,7 @@ else # ! boot jar
 
 $(LOCAL_BUILT_MODULE): PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
 $(LOCAL_BUILT_MODULE): $(intermediates)/strip.sh
-$(LOCAL_BUILT_MODULE): | $(DEXPREOPT_GEN_DEPS)
+$(LOCAL_BUILT_MODULE): | $(DEXPREOPT_STRIP_DEPS)
 $(LOCAL_BUILT_MODULE): .KATI_DEPFILE := $(LOCAL_BUILT_MODULE).d
 $(LOCAL_BUILT_MODULE): $(common_javalib.jar)
 	$(PRIVATE_STRIP_SCRIPT) $< $@
