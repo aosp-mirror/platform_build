@@ -2221,12 +2221,6 @@ class DynamicPartitionsDifference(object):
              collections.Counter(e.partition for e in block_diffs).items()
              if count > 1])
 
-    dynamic_partitions = set(shlex.split(info_dict.get(
-        "dynamic_partition_list", "").strip()))
-    assert set(block_diff_dict.keys()) == dynamic_partitions, \
-        "Dynamic partitions: {}, BlockDifference objects: {}".format(
-            list(dynamic_partitions), list(block_diff_dict.keys()))
-
     self._partition_updates = dict()
 
     for p, block_diff in block_diff_dict.items():
@@ -2257,6 +2251,22 @@ class DynamicPartitionsDifference(object):
             "{} is in source super_{}_partition_list but no BlockDifference " \
             "object is provided.".format(p, g)
         self._partition_updates[p].src_group = g
+
+    target_dynamic_partitions = set(shlex.split(info_dict.get(
+        "dynamic_partition_list", "").strip()))
+    block_diffs_with_target = set(p for p, u in self._partition_updates.items()
+                                  if u.tgt_size)
+    assert block_diffs_with_target == target_dynamic_partitions, \
+        "Target Dynamic partitions: {}, BlockDifference with target: {}".format(
+            list(target_dynamic_partitions), list(block_diffs_with_target))
+
+    source_dynamic_partitions = set(shlex.split(source_info_dict.get(
+        "dynamic_partition_list", "").strip()))
+    block_diffs_with_source = set(p for p, u in self._partition_updates.items()
+                                  if u.src_size)
+    assert block_diffs_with_source == source_dynamic_partitions, \
+        "Source Dynamic partitions: {}, BlockDifference with source: {}".format(
+            list(source_dynamic_partitions), list(block_diffs_with_source))
 
     if self._partition_updates:
       logger.info("Updating dynamic partitions %s",
