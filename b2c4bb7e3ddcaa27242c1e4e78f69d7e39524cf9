@@ -16,6 +16,24 @@
       "revId": "b2c4bb7e3ddcaa27242c1e4e78f69d7e39524cf9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "617fc73f_5aabbf9b",
+        "filename": "core/app_certificate_validate.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-18T02:48:59Z",
+      "side": 1,
+      "message": "It sound good, I\u0027ll do it.",
+      "parentUuid": "05fd274b_1519b13b",
+      "revId": "b2c4bb7e3ddcaa27242c1e4e78f69d7e39524cf9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
