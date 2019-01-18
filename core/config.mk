@@ -710,7 +710,9 @@ CHECK_LINK_TYPE := build/make/tools/check_link_type.py
 LPMAKE := $(HOST_OUT_EXECUTABLES)/lpmake$(HOST_EXECUTABLE_SUFFIX)
 BUILD_SUPER_IMAGE := build/make/tools/releasetools/build_super_image.py
 
-PROGUARD := external/proguard/bin/proguard.sh
+PROGUARD_HOME := external/proguard
+PROGUARD := $(PROGUARD_HOME)/bin/proguard.sh
+PROGUARD_DEPS := $(PROGUARD) $(PROGUARD_HOME)/lib/proguard.jar
 JAVATAGS := build/make/tools/java-event-log-tags.py
 MERGETAGS := build/make/tools/merge-event-log-tags.py
 BUILD_IMAGE_SRCS := $(wildcard build/make/tools/releasetools/*.py)
