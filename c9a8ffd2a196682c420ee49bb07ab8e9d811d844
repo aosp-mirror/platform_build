@@ -22,6 +22,30 @@
       "revId": "c9a8ffd2a196682c420ee49bb07ab8e9d811d844",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc77162d_f7c825d7",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1386891
+      },
+      "writtenOn": "2019-01-18T15:30:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "295eb317_07285e4e",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 31
+      },
+      "revId": "c9a8ffd2a196682c420ee49bb07ab8e9d811d844",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
