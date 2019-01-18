@@ -522,6 +522,9 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(intermediate_sys
 	$(hide) echo ro.vendor.product.cpu.abilist64="$(TARGET_CPU_ABI_LIST_64_BIT)">>$@
 	$(hide) echo ro.product.board="$(TARGET_BOOTLOADER_BOARD_NAME)">>$@
 	$(hide) echo ro.board.platform="$(TARGET_BOARD_PLATFORM)">>$@
+ifdef TARGET_SCREEN_DENSITY
+	$(hide) echo ro.sf.lcd_density="$(TARGET_SCREEN_DENSITY)">>$@
+endif
 	$(hide) $(call generate-common-build-props,vendor,$@)
 	$(hide) echo "#" >> $@; \
 	        echo "# BOOTIMAGE_BUILD_PROPERTIES" >> $@; \
@@ -1595,15 +1598,13 @@ recovery_kernel := $(INSTALLED_KERNEL_TARGET) # same as a non-recovery system
 recovery_ramdisk := $(PRODUCT_OUT)/ramdisk-recovery.img
 recovery_resources_common := $(call include-path-for, recovery)/res
 
-# Set recovery_density to a density bucket based on PRODUCT_AAPT_PREF_CONFIG if set. Otherwise use
-# the default medium density.
-ifneq (,$(PRODUCT_AAPT_PREF_CONFIG))
-# If PRODUCT_AAPT_PREF_CONFIG includes a non-numeric dpi bucket, always perfer that value.
-recovery_density := $(filter %dpi,$(PRODUCT_AAPT_PREF_CONFIG))
+# Set recovery_density to a density bucket based on TARGET_SCREEN_DENSITY, PRODUCT_AAPT_PREF_CONFIG,
+# or mdpi, in order of preference. We support both specific buckets (e.g. xdpi) and numbers,
+# which get remapped to a bucket.
+recovery_density := $(or $(TARGET_SCREEN_DENSITY),$(PRODUCT_AAPT_PREF_CONFIG),mdpi)
 ifeq (,$(filter xxxhdpi xxhdpi xhdpi hdpi mdpi,$(recovery_density)))
 recovery_density_value := $(patsubst %dpi,%,$(recovery_density))
-# Map the numeric dpi value to a bucket. We roughly use the medium point between the primary
-# densities to split buckets.
+# We roughly use the medium point between the primary densities to split buckets.
 # ------160------240------320----------480------------640------
 #       mdpi     hdpi    xhdpi        xxhdpi        xxxhdpi
 recovery_density := $(strip \
@@ -1612,9 +1613,6 @@ recovery_density := $(strip \
        $(if $(filter $(shell echo $$(($(recovery_density_value) >= 280))),1),xhdpi),\
        $(if $(filter $(shell echo $$(($(recovery_density_value) >= 200))),1),hdpi,mdpi)))
 endif
-else # PRODUCT_AAPT_PREF_CONFIG is empty
-recovery_density := mdpi
-endif # PRODUCT_AAPT_PREF_CONFIG
 
 ifneq (,$(wildcard $(recovery_resources_common)-$(recovery_density)))
 recovery_resources_common := $(recovery_resources_common)-$(recovery_density)
