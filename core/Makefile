@@ -3658,7 +3658,7 @@ ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ODM_BASE_FS_PATH),)
 	$(hide) cp $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ODM_BASE_FS_PATH) \
 	  $(zip_root)/META/$(notdir $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ODM_BASE_FS_PATH))
 endif
-ifneq ($(strip $(SANITIZE_TARGET)),)
+ifneq (,$(filter address, $(SANITIZE_TARGET)))
 	# We need to create userdata.img with real data because the instrumented libraries are in userdata.img.
 	$(hide) echo "userdata_img_with_data=true" >> $(zip_root)/META/misc_info.txt
 endif
