@@ -1085,8 +1085,8 @@ ifdef FULL_BUILD
   # Verify the artifact path requirements made by included products.
   is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
   ifneq (true,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS)))
-  # Fakes don't get installed, and host files are irrelevant.
-  static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%
+  # Fakes don't get installed, host files are irrelevant, and NDK stubs aren't installed to device.
+  static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/% $(SOONG_OUT_DIR)/ndk/%
   # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
   static_whitelist_patterns += %__auto_generated_rro.apk
   ifeq (true,$(BOARD_USES_SYSTEM_OTHER_ODEX))
