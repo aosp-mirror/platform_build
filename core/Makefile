@@ -835,6 +835,7 @@ $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
 
 # -----------------------------------------------------------------
 # the ramdisk
+ifdef BUILDING_RAMDISK_IMAGE
 INTERNAL_RAMDISK_FILES := $(filter $(TARGET_RAMDISK_OUT)/%, \
 	$(ALL_GENERATED_SOURCES) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
@@ -862,6 +863,9 @@ $(INSTALLED_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_RAMDISK_FILES) $(INSTALLED_F
 ramdisk-nodeps: $(MKBOOTFS) | $(MINIGZIP)
 	@echo "make $@: ignoring dependencies"
 	$(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_RAMDISK_OUT) | $(MINIGZIP) > $(INSTALLED_RAMDISK_TARGET)
+
+endif # BUILDING_RAMDISK_IMAGE
+
 
 INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 
@@ -1224,15 +1228,12 @@ otacerts: $(TARGET_OUT_ETC)/security/otacerts.zip
 
 INTERNAL_USERIMAGES_EXT_VARIANT :=
 ifeq ($(TARGET_USERIMAGES_USE_EXT2),true)
-INTERNAL_USERIMAGES_USE_EXT := true
 INTERNAL_USERIMAGES_EXT_VARIANT := ext2
 else
 ifeq ($(TARGET_USERIMAGES_USE_EXT3),true)
-INTERNAL_USERIMAGES_USE_EXT := true
 INTERNAL_USERIMAGES_EXT_VARIANT := ext3
 else
 ifeq ($(TARGET_USERIMAGES_USE_EXT4),true)
-INTERNAL_USERIMAGES_USE_EXT := true
 INTERNAL_USERIMAGES_EXT_VARIANT := ext4
 endif
 endif
@@ -1249,12 +1250,10 @@ ifneq (true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED))
   INTERNAL_USERIMAGES_SPARSE_EXT_FLAG := -s
 endif
 
-ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
 INTERNAL_USERIMAGES_DEPS := $(SIMG2IMG)
 INTERNAL_USERIMAGES_DEPS += $(MKEXTUSERIMG) $(MAKE_EXT4FS) $(E2FSCK) $(TUNE2FS)
 ifeq ($(TARGET_USERIMAGES_USE_F2FS),true)
 INTERNAL_USERIMAGES_DEPS += $(MKF2FSUSERIMG) $(MAKE_F2FS)
-endif
 endif
 
 ifeq ($(BOARD_AVB_ENABLE),true)
@@ -1282,9 +1281,7 @@ INTERNAL_USERIMAGES_DEPS += $(SELINUX_FC)
 
 INTERNAL_USERIMAGES_DEPS += $(BLK_ALLOC_TO_BASE_FS)
 
-ifeq ($(INTERNAL_USERIMAGES_USE_EXT),true)
 INTERNAL_USERIMAGES_DEPS += $(MKE2FS_CONF)
-endif
 
 ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
 
@@ -1982,6 +1979,8 @@ $(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(FULL_SYSTEMIMAGE_DEPS)
 	        sed "s/^/-i /" | tr '\n' ' ') -o $@
 
 # -----------------------------------------------------------------
+ifdef BUILDING_SYSTEM_IMAGE
+
 # installed file list
 # Depending on anything that $(BUILT_SYSTEMIMAGE) depends on.
 # We put installed-files.txt ahead of image itself in the dependency graph
@@ -2147,6 +2146,8 @@ $(warning Warning: with dexpreopt enabled, you may need a full rebuild.)
 endif
 endif
 
+endif # BUILDING_SYSTEM_IMAGE
+
 .PHONY: sync syncsys
 sync syncsys: $(INTERNAL_SYSTEMIMAGE_FILES)
 
@@ -2237,16 +2238,16 @@ $(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES) $(pdk_classes_dex) $(p
 	echo "-D $(TARGET_OUT)" >> $@.lst
 	echo "-D $(TARGET_OUT_NOTICE_FILES)" >> $@.lst
 	echo "$(addprefix -f $(TARGET_OUT_UNSTRIPPED)/,$(PDK_SYMBOL_FILES_LIST))" >> $@.lst
-ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_VENDOR_IMAGE
 	echo "-D $(TARGET_OUT_VENDOR)" >> $@.lst
 endif
-ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_PRODUCT_IMAGE
 	echo "-D $(TARGET_OUT_PRODUCT)" >> $@.lst
 endif
-ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_PRODUCT_SERVICES_IMAGE
 	echo "-D $(TARGET_OUT_PRODUCT_SERVICES)" >> $@.lst
 endif
-ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_ODM_IMAGE
 	echo "-D $(TARGET_OUT_ODM)" >> $@.lst
 endif
 ifneq ($(PDK_PLATFORM_JAVA_ZIP_CONTENTS),)
@@ -2314,15 +2315,7 @@ boottarball-nodeps btnod: $(FS_GET_STATS) \
 INTERNAL_USERDATAIMAGE_FILES := \
     $(filter $(TARGET_OUT_DATA)/%,$(ALL_DEFAULT_INSTALLED_MODULES))
 
-# Don't build userdata.img if it's extfs but no partition size
-skip_userdata.img :=
-ifdef INTERNAL_USERIMAGES_EXT_VARIANT
-ifndef BOARD_USERDATAIMAGE_PARTITION_SIZE
-skip_userdata.img := true
-endif
-endif
-
-ifneq ($(skip_userdata.img),true)
+ifdef BUILDING_USERDATA_IMAGE
 userdataimage_intermediates := \
     $(call intermediates-dir-for,PACKAGING,userdata)
 BUILT_USERDATAIMAGE_TARGET := $(PRODUCT_OUT)/userdata.img
@@ -2351,8 +2344,7 @@ $(INSTALLED_USERDATAIMAGE_TARGET): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS)
 userdataimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-userdataimage-target)
 
-endif # not skip_userdata.img
-skip_userdata.img :=
+endif # BUILDING_USERDATA_IMAGE
 
 # ASAN libraries in the system image - build rule.
 ASAN_OUT_DIRS_FOR_SYSTEM_INSTALL := $(sort $(patsubst $(PRODUCT_OUT)/%,%,\
@@ -2426,7 +2418,7 @@ endif # BOARD_BPT_INPUT_FILES
 
 # -----------------------------------------------------------------
 # cache partition image
-ifdef BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_CACHE_IMAGE
 INTERNAL_CACHEIMAGE_FILES := \
     $(filter $(TARGET_OUT_CACHE)/%,$(ALL_DEFAULT_INSTALLED_MODULES))
 
@@ -2454,16 +2446,15 @@ $(INSTALLED_CACHEIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_CACHEIMAG
 cacheimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-cacheimage-target)
 
-else # BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
+else # BUILDING_CACHE_IMAGE
 # we need to ignore the broken cache link when doing the rsync
 IGNORE_CACHE_LINK := --exclude=cache
-endif # BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
+endif # BUILDING_CACHE_IMAGE
 
 # -----------------------------------------------------------------
 # system_other partition image
+ifdef BUILDING_SYSTEM_OTHER_IMAGE
 ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
-BOARD_USES_SYSTEM_OTHER := true
-
 # Marker file to identify that odex files are installed
 INSTALLED_SYSTEM_OTHER_ODEX_MARKER := $(TARGET_OUT_SYSTEM_OTHER)/system-other-odex-marker
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_SYSTEM_OTHER_ODEX_MARKER)
@@ -2471,7 +2462,6 @@ $(INSTALLED_SYSTEM_OTHER_ODEX_MARKER):
 	$(hide) touch $@
 endif
 
-ifdef BOARD_USES_SYSTEM_OTHER
 INTERNAL_SYSTEMOTHERIMAGE_FILES := \
     $(filter $(TARGET_OUT_SYSTEM_OTHER)/%,\
       $(ALL_DEFAULT_INSTALLED_MODULES)\
@@ -2522,12 +2512,12 @@ endif
 systemotherimage-nodeps: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-systemotherimage-target)
 
-endif # BOARD_USES_SYSTEM_OTHER
+endif # BUILDING_SYSTEM_OTHER_IMAGE
 
 
 # -----------------------------------------------------------------
 # vendor partition image
-ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_VENDOR_IMAGE
 INTERNAL_VENDORIMAGE_FILES := \
     $(filter $(TARGET_OUT_VENDOR)/%,\
       $(ALL_DEFAULT_INSTALLED_MODULES)\
@@ -2614,7 +2604,7 @@ endif
 
 # -----------------------------------------------------------------
 # product partition image
-ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_PRODUCT_IMAGE
 INTERNAL_PRODUCTIMAGE_FILES := \
     $(filter $(TARGET_OUT_PRODUCT)/%,\
       $(ALL_DEFAULT_INSTALLED_MODULES)\
@@ -2669,7 +2659,7 @@ endif
 
 # -----------------------------------------------------------------
 # product_services partition image
-ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_PRODUCT_SERVICES_IMAGE
 INTERNAL_PRODUCT_SERVICESIMAGE_FILES := \
     $(filter $(TARGET_OUT_PRODUCT_SERVICES)/%,\
       $(ALL_DEFAULT_INSTALLED_MODULES)\
@@ -2724,7 +2714,7 @@ endif
 
 # -----------------------------------------------------------------
 # odm partition image
-ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_ODM_IMAGE
 INTERNAL_ODMIMAGE_FILES := \
     $(filter $(TARGET_OUT_ODM)/%,\
       $(ALL_DEFAULT_INSTALLED_MODULES)\
@@ -3550,33 +3540,37 @@ endif # BOARD_USES_RECOVERY_AS_BOOT
 	$(hide) $(foreach t,$(INSTALLED_RADIOIMAGE_TARGET),\
 	            mkdir -p $(zip_root)/RADIO; \
 	            cp $(t) $(zip_root)/RADIO/$(notdir $(t));)
+ifdef BUILDING_SYSTEM_IMAGE
 	@# Contents of the system image
 	$(hide) $(call package_files-copy-root, \
 	    $(SYSTEMIMAGE_SOURCE_DIR),$(zip_root)/SYSTEM)
+endif
+ifdef BUILDING_USERDATA_IMAGE
 	@# Contents of the data image
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_OUT_DATA),$(zip_root)/DATA)
-ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+endif
+ifdef BUILDING_VENDOR_IMAGE
 	@# Contents of the vendor image
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_OUT_VENDOR),$(zip_root)/VENDOR)
 endif
-ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_PRODUCT_IMAGE
 	@# Contents of the product image
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_OUT_PRODUCT),$(zip_root)/PRODUCT)
 endif
-ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_PRODUCT_SERVICES_IMAGE
 	@# Contents of the product_services image
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_OUT_PRODUCT_SERVICES),$(zip_root)/PRODUCT_SERVICES)
 endif
-ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_ODM_IMAGE
 	@# Contents of the odm image
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_OUT_ODM),$(zip_root)/ODM)
 endif
-ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
+ifdef BUILDING_SYSTEM_OTHER_IMAGE
 	@# Contents of the system_other image
 	$(hide) $(call package_files-copy-root, \
 	    $(TARGET_OUT_SYSTEM_OTHER),$(zip_root)/SYSTEM_OTHER)
@@ -3775,17 +3769,19 @@ endif # BOARD_PREBUILT_DTBOIMAGE
 	    echo $(part) >> $(zip_root)/META/pack_radioimages.txt;)
 	@# Run fs_config on all the system, vendor, boot ramdisk,
 	@# and recovery ramdisk files in the zip, and save the output
+ifdef BUILDING_SYSTEM_IMAGE
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM,system/) > $(zip_root)/META/filesystem_config.txt
-ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+endif
+ifdef BUILDING_VENDOR_IMAGE
 	$(hide) $(call fs_config,$(zip_root)/VENDOR,vendor/) > $(zip_root)/META/vendor_filesystem_config.txt
 endif
-ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_PRODUCT_IMAGE
 	$(hide) $(call fs_config,$(zip_root)/PRODUCT,product/) > $(zip_root)/META/product_filesystem_config.txt
 endif
-ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_PRODUCT_SERVICES_IMAGE
 	$(hide) $(call fs_config,$(zip_root)/PRODUCT_SERVICES,product_services/) > $(zip_root)/META/product_services_filesystem_config.txt
 endif
-ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
+ifdef BUILDING_ODM_IMAGE
 	$(hide) $(call fs_config,$(zip_root)/ODM,odm/) > $(zip_root)/META/odm_filesystem_config.txt
 endif
 	@# ROOT always contains the files for the root under normal boot.
@@ -3801,7 +3797,7 @@ endif
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) $(call fs_config,$(zip_root)/RECOVERY/RAMDISK,) > $(zip_root)/META/recovery_filesystem_config.txt
 endif
-ifdef INSTALLED_SYSTEMOTHERIMAGE_TARGET
+ifdef BUILDING_SYSTEM_OTHER_IMAGE
 	$(hide) $(call fs_config,$(zip_root)/SYSTEM_OTHER,system/) > $(zip_root)/META/system_other_filesystem_config.txt
 endif
 	@# Metadata for compatibility verification.
