@@ -286,6 +286,10 @@ PRODUCT_BOOT_JARS := \
     telephony-common \
     voip-common \
     ims-common
+PRODUCT_UPDATABLE_BOOT_MODULES := conscrypt
+PRODUCT_UPDATABLE_BOOT_LOCATIONS := \
+    /apex/com.android.conscrypt/javalib/conscrypt.jar
+
 
 # Add the compatibility library that is needed when org.apache.http.legacy
 # is removed from the bootclasspath.
