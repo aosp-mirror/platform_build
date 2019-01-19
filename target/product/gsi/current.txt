@@ -45,6 +45,7 @@ VNDK-SP: libhwbinder.so
 VNDK-SP: libhwbinder_noltopgo.so
 VNDK-SP: libion.so
 VNDK-SP: liblzma.so
+VNDK-SP: libprocessgroup.so
 VNDK-SP: libunwindstack.so
 VNDK-SP: libutils.so
 VNDK-SP: libutilscallstack.so
