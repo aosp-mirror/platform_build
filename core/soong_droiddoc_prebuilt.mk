@@ -16,8 +16,9 @@ ifdef LOCAL_DROIDDOC_DOC_ZIP
 $(eval $(call copy-one-file,$(LOCAL_DROIDDOC_DOC_ZIP),$(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip))
 $(call dist-for-goals,docs,$(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip)
 
-.PHONY: $(LOCAL_MODULE)-docs.zip
-$(LOCAL_MODULE)-docs.zip : $(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip
+.PHONY: $(LOCAL_MODULE) $(LOCAL_MODULE)-docs.zip
+$(LOCAL_MODULE) $(LOCAL_MODULE)-docs.zip : $(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip
+ALL_DOCS += $(OUT_DOCS)/$(LOCAL_MODULE)-docs.zip
 endif
 
 ifdef LOCAL_DROIDDOC_ANNOTATIONS_ZIP
@@ -34,6 +35,6 @@ $(call dist-for-goals,docs,$(OUT_DOCS)/$(LOCAL_MODULE)-jdiff-docs.zip)
 
 ALL_DOCS += $(OUT_DOCS)/$(LOCAL_MODULE)-jdiff-docs.zip
 
-.PHONY: $(LOCAL_MODULE)-jdiff
-$(LOCAL_MODULE)-jdiff : $(OUT_DOCS)/$(LOCAL_MODULE)-jdiff-docs.zip
+.PHONY: $(LOCAL_MODULE) $(LOCAL_MODULE)-jdiff
+$(LOCAL_MODULE) $(LOCAL_MODULE)-jdiff : $(OUT_DOCS)/$(LOCAL_MODULE)-jdiff-docs.zip
 endif
