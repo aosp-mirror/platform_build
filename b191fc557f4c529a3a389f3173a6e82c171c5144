@@ -16,6 +16,24 @@
       "revId": "b191fc557f4c529a3a389f3173a6e82c171c5144",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4411629_fafb8c06",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1014807
+      },
+      "writtenOn": "2019-01-19T08:03:20Z",
+      "side": 1,
+      "message": "Yeah.  I set a topic between this and aosp/826640 now.  Thanks.",
+      "parentUuid": "7c4feed0_5f00dc9a",
+      "revId": "b191fc557f4c529a3a389f3173a6e82c171c5144",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
