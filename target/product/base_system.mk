@@ -327,14 +327,18 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
+    gdbserver \
+    init-debug.rc \
     iotop \
     iw \
     logpersist.start \
+    logtagd.rc \
     procrank \
     showmap \
     sqlite3 \
     ss \
     strace \
+    su \
     sanitizer-status \
     tracepath \
     tracepath6 \
