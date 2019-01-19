@@ -57,7 +57,7 @@ ALL_MODULES.$(LOCAL_MODULE).INSTALLED += $(my_installed_library)
 
 # Create symlink in the app specific lib path
 # Skip creating this symlink when running the second part of a target sanitization build.
-ifndef SANITIZE_TARGET
+ifeq ($(filter address,$(SANITIZE_TARGET)),)
 ifdef LOCAL_POST_INSTALL_CMD
 # Add a shell command separator
 LOCAL_POST_INSTALL_CMD += ;
