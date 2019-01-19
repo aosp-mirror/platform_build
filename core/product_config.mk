@@ -566,3 +566,27 @@ PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := \
 PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES))
 .KATI_READONLY := PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
+
+# Macro to use below. $(1) is the name of the partition
+define product-build-image-config
+PRODUCT_BUILD_$(1)_IMAGE := $$(firstword $$(strip $$(PRODUCTS.$$(INTERNAL_PRODUCT).PRODUCT_BUILD_$(1)_IMAGE)))
+.KATI_READONLY := PRODUCT_BUILD_$(1)_IMAGE
+ifneq ($$(filter-out true false,$$(PRODUCT_BUILD_$(1)_IMAGE)),)
+    $$(error Invalid PRODUCT_BUILD_$(1)_IMAGE: $$(PRODUCT_BUILD_$(1)_IMAGE) -- true false and empty are supported)
+endif
+endef
+
+# Copy and check the value of each PRODUCT_BUILD_*_IMAGE variable
+$(foreach image, \
+    SYSTEM \
+    SYSTEM_OTHER \
+    VENDOR \
+    PRODUCT \
+    PRODUCT_SERVICES \
+    ODM \
+    CACHE \
+    RAMDISK \
+    USERDATA, \
+  $(eval $(call product-build-image-config,$(image))))
+
+product-build-image-config :=
