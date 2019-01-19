@@ -96,6 +96,12 @@ ifneq ($(filter-out $(LOCAL_PROPRIETARY_MODULE),$(LOCAL_VENDOR_MODULE))$(filter-
 $(call pretty-error,Only one of LOCAL_PROPRIETARY_MODULE[$(LOCAL_PROPRIETARY_MODULE)] and LOCAL_VENDOR_MODULE[$(LOCAL_VENDOR_MODULE)] may be set, or they must be equal)
 endif
 
+non_system_module := $(filter true, \
+   $(LOCAL_PRODUCT_MODULE) \
+   $(LOCAL_PRODUCT_SERVICES_MODULE) \
+   $(LOCAL_VENDOR_MODULE) \
+   $(LOCAL_PROPRIETARY_MODULE))
+
 include $(BUILD_SYSTEM)/local_vndk.mk
 include $(BUILD_SYSTEM)/local_systemsdk.mk
 
