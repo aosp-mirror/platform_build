@@ -710,7 +710,9 @@ CHECK_LINK_TYPE := build/make/tools/check_link_type.py
 LPMAKE := $(HOST_OUT_EXECUTABLES)/lpmake$(HOST_EXECUTABLE_SUFFIX)
 BUILD_SUPER_IMAGE := build/make/tools/releasetools/build_super_image.py
 
-PROGUARD := external/proguard/bin/proguard.sh
+PROGUARD_HOME := external/proguard
+PROGUARD := $(PROGUARD_HOME)/bin/proguard.sh
+PROGUARD_DEPS := $(PROGUARD) $(PROGUARD_HOME)/lib/proguard.jar
 JAVATAGS := build/make/tools/java-event-log-tags.py
 MERGETAGS := build/make/tools/merge-event-log-tags.py
 BUILD_IMAGE_SRCS := $(wildcard build/make/tools/releasetools/*.py)
@@ -726,8 +728,6 @@ BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump2$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
-HIDDENAPI := $(HOST_OUT_EXECUTABLES)/hiddenapi
-CLASS2GREYLIST := $(HOST_OUT_EXECUTABLES)/class2greylist
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
@@ -1065,11 +1065,11 @@ BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE := true
 # AOSP target built without vendor image), don't build the retrofit full OTA package. Because we
 # won't be able to build meaningful super_* images for retrofitting purpose.
 ifneq (,$(filter vendor,$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
-ifndef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+ifndef BUILDING_VENDOR_IMAGE
 ifndef BOARD_PREBUILT_VENDORIMAGE
 BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE :=
 endif # BOARD_PREBUILT_VENDORIMAGE
-endif # BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+endif # BUILDING_VENDOR_IMAGE
 endif # BOARD_SUPER_PARTITION_PARTITION_LIST
 
 else # PRODUCT_RETROFIT_DYNAMIC_PARTITIONS

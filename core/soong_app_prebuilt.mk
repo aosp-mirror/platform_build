@@ -27,8 +27,40 @@ full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 
-$(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_jar)))
-$(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_pre_proguard_jar)))
+ifdef LOCAL_SOONG_CLASSES_JAR
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_jar)))
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_pre_proguard_jar)))
+  $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(full_classes_jar)))
+
+  ifneq ($(TURBINE_ENABLED),false)
+    ifdef LOCAL_SOONG_HEADER_JAR
+      $(eval $(call copy-one-file,$(LOCAL_SOONG_HEADER_JAR),$(full_classes_header_jar)))
+    else
+      $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
+    endif
+  endif # TURBINE_ENABLED != false
+endif
+
+# Run veridex on product, product_services and vendor modules.
+# We skip it for unbundled app builds where we cannot build veridex.
+module_run_appcompat :=
+ifeq (true,$(non_system_module))
+ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))  # ! unbundled app build
+  module_run_appcompat := true
+endif
+endif
+
+ifeq ($(module_run_appcompat),true)
+  $(LOCAL_BUILT_MODULE): $(appcompat-files)
+  $(LOCAL_BUILT_MODULE): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
+  $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
+	@echo "Copy: $@"
+	$(copy-file-to-target)
+	$(call appcompat-header, aapt2)
+	$(run-appcompat)
+else
+  $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
+endif
 
 ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
@@ -43,15 +75,6 @@ ifdef LOCAL_SOONG_PROGUARD_DICT
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
     $(intermediates.COMMON)/proguard_dictionary)
 endif
-
-ifneq ($(TURBINE_ENABLED),false)
-ifdef LOCAL_SOONG_HEADER_JAR
-$(eval $(call copy-one-file,$(LOCAL_SOONG_HEADER_JAR),$(full_classes_header_jar)))
-else
-$(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
-endif
-endif # TURBINE_ENABLED != false
-
 
 ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 resource_export_package := $(intermediates.COMMON)/package-export.apk
@@ -72,29 +95,6 @@ java-dex: $(LOCAL_SOONG_DEX_JAR)
 
 ifneq ($(BUILD_PLATFORM_ZIP),)
   $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(dir $(LOCAL_BUILT_MODULE))package.dex.apk))
-endif
-
-# Run veridex on product, product_services and vendor modules.
-# We skip it for unbundled app builds where we cannot build veridex.
-module_run_appcompat :=
-ifeq (true,$(filter true, \
-   $(LOCAL_PRODUCT_MODULE) $(LOCAL_PRODUCT_SERVICES_MODULE) \
-   $(LOCAL_VENDOR_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
-ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))  # ! unbundled app build
-  module_run_appcompat := true
-endif
-endif
-
-ifeq ($(module_run_appcompat),true)
-  $(LOCAL_BUILT_MODULE): $(appcompat-files)
-  $(LOCAL_BUILT_MODULE): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
-  $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
-	@echo "Copy: $@"
-	$(copy-file-to-target)
-	$(call appcompat-header, aapt2)
-	$(run-appcompat)
-else
-  $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
 endif
 
 my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\

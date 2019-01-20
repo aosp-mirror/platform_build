@@ -574,9 +574,7 @@ endif
 # Run veridex on product, product_services and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
-ifeq (true,$(filter true, \
-   $(LOCAL_PRODUCT_MODULE) $(LOCAL_PRODUCT_SERVICES_MODULE) \
-   $(LOCAL_VENDOR_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
+ifeq (true,$(non_system_module))
 ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))  # ! unbundled app build
   module_run_appcompat := true
 endif
@@ -609,7 +607,7 @@ endif
 ifdef LOCAL_DEX_PREOPT
 $(LOCAL_BUILT_MODULE) : PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
 $(LOCAL_BUILT_MODULE) : $(intermediates)/strip.sh
-$(LOCAL_BUILT_MODULE) : | $(DEXPREOPT_GEN_DEPS)
+$(LOCAL_BUILT_MODULE) : | $(DEXPREOPT_STRIP_DEPS)
 $(LOCAL_BUILT_MODULE): .KATI_DEPFILE := $(LOCAL_BUILT_MODULE).d
 endif
 $(LOCAL_BUILT_MODULE):

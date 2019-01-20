@@ -2714,29 +2714,6 @@ $(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): \
 endif
 endef
 
-# File names for intermediate dex files of `hiddenapi-copy-soong-jar`.
-hiddenapi-soong-input-dex = $(dir $(1))/hiddenapi/dex-input/classes.dex
-hiddenapi-soong-output-dex = $(dir $(1))/hiddenapi/dex-output/classes.dex
-
-# Decompress a JAR with dex files, invoke $(HIDDENAPI) on them and compress again.
-define hiddenapi-copy-soong-jar
-$(call hiddenapi-soong-input-dex,$(2)): $(1)
-	@rm -rf `dirname $$@`
-	@mkdir -p `dirname $$@`
-	unzip -o -q $(1) 'classes*.dex' -d `dirname $$@`
-	find `dirname $$@` -maxdepth 1 -name 'classes*.dex' | xargs touch
-
-$(call hiddenapi-copy-dex-files,\
-    $(call hiddenapi-soong-input-dex,$(2)),\
-    $(call hiddenapi-soong-output-dex,$(2)))
-
-$(2): OUTPUT_DIR := $(dir $(call hiddenapi-soong-output-dex,$(2)))
-$(2): OUTPUT_JAR := $(dir $(call hiddenapi-soong-output-dex,$(2)))classes.jar
-$(2): $(1) $(call hiddenapi-soong-output-dex,$(2)) | $(SOONG_ZIP) $(MERGE_ZIPS)
-	$(SOONG_ZIP) -o $${OUTPUT_JAR} -C $${OUTPUT_DIR} -f "$${OUTPUT_DIR}/classes*.dex"
-	$(MERGE_ZIPS) -D -zipToNotStrip $${OUTPUT_JAR} -stripFile "classes*.dex" $(2) $${OUTPUT_JAR} $(1)
-endef
-
 
 ###########################################################
 ## Commands to call R8

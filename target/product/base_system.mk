@@ -289,6 +289,10 @@ PRODUCT_BOOT_JARS := \
     telephony-common \
     voip-common \
     ims-common
+PRODUCT_UPDATABLE_BOOT_MODULES := conscrypt
+PRODUCT_UPDATABLE_BOOT_LOCATIONS := \
+    /apex/com.android.conscrypt/javalib/conscrypt.jar
+
 
 # Add the compatibility library that is needed when org.apache.http.legacy
 # is removed from the bootclasspath.
@@ -323,14 +327,18 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
+    gdbserver \
+    init-debug.rc \
     iotop \
     iw \
     logpersist.start \
+    logtagd.rc \
     procrank \
     showmap \
     sqlite3 \
     ss \
     strace \
+    su \
     sanitizer-status \
     tracepath \
     tracepath6 \
