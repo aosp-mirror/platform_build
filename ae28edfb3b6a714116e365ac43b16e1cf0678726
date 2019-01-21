@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3e25795d_7614a8b8",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-21T05:38:54Z",
+      "side": 1,
+      "message": "Presubmit is failing because these odex/vdex files are already in the whitelist from     http://cs/android/build/make/core/main.mk?l\u003d1092\u0026rcl\u003d8ba31669e99270b453f40dd2a57dd6aa75bc9aaf, and they shouldn\u0027t be added twice.",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 51
+      },
+      "revId": "ae28edfb3b6a714116e365ac43b16e1cf0678726",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
