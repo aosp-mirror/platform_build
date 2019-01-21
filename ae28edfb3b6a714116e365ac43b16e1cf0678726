@@ -46,6 +46,30 @@
       "revId": "ae28edfb3b6a714116e365ac43b16e1cf0678726",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "15db3593_b0531a9b",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-21T07:08:22Z",
+      "side": 1,
+      "message": "If I removed these 2 line, the error on my local is:\n\nbuild/make/core/main.mk:1114: warning:  build/target/product/gsi_arm64.mk produces files inside build/target/product/mainline_system.mks artifact path requirement. \nOffending entries:\nsystem/app/PhotoTable/oat/arm64/PhotoTable.odex\nsystem/app/PhotoTable/oat/arm64/PhotoTable.vdex",
+      "parentUuid": "c6897cd8_290176ad",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 51
+      },
+      "revId": "ae28edfb3b6a714116e365ac43b16e1cf0678726",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
