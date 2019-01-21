@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "f811b2d9_aa78a50c",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1099,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-21T17:26:52Z",
+      "side": 1,
+      "message": "I don\u0027t like this whitelist addition. Why would arbitrary modules be allowed to install stuff to /system? Shouldn\u0027t the odex/vdex/art files normally end up on the same partition as the module itself?",
+      "revId": "9de53df217261ad539e037902934743ee4c77de6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b982d198_d8ce81ec",
         "filename": "core/main.mk",
         "patchSetId": 1
