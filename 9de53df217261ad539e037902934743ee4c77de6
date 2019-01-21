@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b982d198_d8ce81ec",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1100,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-21T16:21:56Z",
+      "side": 1,
+      "message": "+\u003d",
+      "range": {
+        "startLine": 1100,
+        "startChar": 37,
+        "endLine": 1100,
+        "endChar": 39
+      },
+      "revId": "9de53df217261ad539e037902934743ee4c77de6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
