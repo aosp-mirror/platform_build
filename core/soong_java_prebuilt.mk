@@ -95,7 +95,10 @@ ifdef LOCAL_SOONG_DEX_JAR
 
     $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(common_javalib.jar)))
     $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(common_javalib.jar)))
-    $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar) $(full_classes_header_jar)))
+    $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_jar)))
+    ifneq ($(TURBINE_ENABLED),false)
+      $(eval $(call add-dependency,$(common_javalib.jar),$(full_classes_header_jar)))
+    endif
   endif
 
   java-dex : $(LOCAL_BUILT_MODULE)
