@@ -152,7 +152,7 @@ $(call add_json_list, ManifestPackageNameOverrides,      $(PRODUCT_MANIFEST_PACK
 $(call add_json_bool, EnforceSystemCertificate,          $(ENFORCE_SYSTEM_CERTIFICATE))
 $(call add_json_list, EnforceSystemCertificateWhitelist, $(ENFORCE_SYSTEM_CERTIFICATE_WHITELIST))
 
-$(call add_json_str,  HiddenAPIPublicList,               $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST))
+$(call add_json_str,  HiddenAPIStubFlags,                $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS))
 $(call add_json_str,  HiddenAPIFlags,                    $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS))
 $(call add_json_list, HiddenAPIExtraAppUsageJars,        $(HIDDENAPI_EXTRA_APP_USAGE_JARS))
 
