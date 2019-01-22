@@ -94,6 +94,30 @@
       "revId": "ae28edfb3b6a714116e365ac43b16e1cf0678726",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1fc9ac76_d93ec134",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-22T09:33:54Z",
+      "side": 1,
+      "message": "A workaround I have used on other products:\n\n    PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS :\u003d relaxed\n    # dexopt files are side-effects of other, already whitelisted files\n    PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST +\u003d %.odex %.vdex %.art\n\nCould you try that?",
+      "parentUuid": "2af78e63_46604038",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 51
+      },
+      "revId": "ae28edfb3b6a714116e365ac43b16e1cf0678726",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
