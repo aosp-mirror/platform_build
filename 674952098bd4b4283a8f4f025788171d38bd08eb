@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15524e19_679eea1a",
+        "filename": "core/product_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 572,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-22T16:15:58Z",
+      "side": 1,
+      "message": "this caught my eye.. I have been thinking about adding some sort of distinction between PRODUCT variables that are meant to be lists, and those that are meant to take a single value (b/116769560). It looks like this firstword is trying to achieve basically that?",
+      "range": {
+        "startLine": 572,
+        "startChar": 31,
+        "endLine": 572,
+        "endChar": 40
+      },
+      "revId": "674952098bd4b4283a8f4f025788171d38bd08eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
