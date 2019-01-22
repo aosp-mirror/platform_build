@@ -2940,6 +2940,8 @@ BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096
 BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS += --padding_size 4096
 BOARD_AVB_MAKE_VBMETA_VENDOR_IMAGE_ARGS += --padding_size 4096
 
+BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += --prop system_security_patch:$(PLATFORM_SECURITY_PATCH)
+
 ifeq (eng,$(filter eng, $(TARGET_BUILD_VARIANT)))
 # We only need the flag in top-level vbmeta.img.
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --set_hashtree_disabled_flag
