@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "ece04b7f_6349a45c",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1099,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-22T09:38:01Z",
+      "side": 1,
+      "message": "I commented on the other CL too with a workaround of sorts.\n\n(the logic here probably isn\u0027t perfect, but I think the odex/vdex whitelisting fits better in the product mk)",
+      "parentUuid": "38f3af4f_8d192290",
+      "revId": "9de53df217261ad539e037902934743ee4c77de6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b982d198_d8ce81ec",
         "filename": "core/main.mk",
         "patchSetId": 1
