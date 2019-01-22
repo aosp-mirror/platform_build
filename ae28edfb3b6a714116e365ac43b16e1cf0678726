@@ -70,6 +70,30 @@
       "revId": "ae28edfb3b6a714116e365ac43b16e1cf0678726",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2af78e63_46604038",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-22T09:30:32Z",
+      "side": 1,
+      "message": "I think the whitelisting is correct. The problem is that the odex/vdex files only get created on userdebug builds, but not on eng build. So for gsi_arm64-eng, the entries are redundant.",
+      "parentUuid": "15db3593_b0531a9b",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 51
+      },
+      "revId": "ae28edfb3b6a714116e365ac43b16e1cf0678726",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
