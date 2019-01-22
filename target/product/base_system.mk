@@ -288,10 +288,12 @@ PRODUCT_BOOT_JARS := \
     framework \
     telephony-common \
     voip-common \
-    ims-common
-PRODUCT_UPDATABLE_BOOT_MODULES := conscrypt
+    ims-common \
+    updatable-media
+PRODUCT_UPDATABLE_BOOT_MODULES := conscrypt updatable-media
 PRODUCT_UPDATABLE_BOOT_LOCATIONS := \
-    /apex/com.android.conscrypt/javalib/conscrypt.jar
+    /apex/com.android.conscrypt/javalib/conscrypt.jar \
+    /apex/com.android.media/javalib/updatable-media.jar
 
 
 # Add the compatibility library that is needed when org.apache.http.legacy
