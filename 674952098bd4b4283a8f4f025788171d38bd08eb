@@ -22,6 +22,30 @@
       "revId": "674952098bd4b4283a8f4f025788171d38bd08eb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9cee16f9_92ef63dc",
+        "filename": "core/product_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 572,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-01-22T19:01:30Z",
+      "side": 1,
+      "message": "That\u0027s the intent, though I didn\u0027t do much testing to ensure that it picked up the \"correct\" value.",
+      "parentUuid": "15524e19_679eea1a",
+      "range": {
+        "startLine": 572,
+        "startChar": 31,
+        "endLine": 572,
+        "endChar": 40
+      },
+      "revId": "674952098bd4b4283a8f4f025788171d38bd08eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
