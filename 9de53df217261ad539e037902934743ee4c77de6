@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "38f3af4f_8d192290",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1099,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-22T03:00:29Z",
+      "side": 1,
+      "message": "BTW, most partners do not support AB update, and these devices do not have system_other partition. On the other hand, most devices turn on dexpreopt, it will enhance the speed of the first booting time about 3x. That\u0027s why I though we need a solution to handle preopt on mainline path.",
+      "parentUuid": "7d046770_60401b43",
+      "revId": "9de53df217261ad539e037902934743ee4c77de6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b982d198_d8ce81ec",
         "filename": "core/main.mk",
         "patchSetId": 1
