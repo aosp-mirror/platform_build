@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7d046770_60401b43",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1099,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-22T02:51:50Z",
+      "side": 1,
+      "message": "I\u0027m not sure your point. I have 2 understanding,\n\n1) $(TARGET_OUT) is not good, because it always be system partition. We should use another solution to whitelist on the same partition as the modules.\n\n2) .../%.odex, .../%.vdex and .../%.art here are not strict enough. We should whitelist more strict. For example: .../%/oat/%.odex, etc. and maybe we need to check these 2 % should be the same.\n\nLet me fix 1) first.",
+      "parentUuid": "f811b2d9_aa78a50c",
+      "revId": "9de53df217261ad539e037902934743ee4c77de6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b982d198_d8ce81ec",
         "filename": "core/main.mk",
         "patchSetId": 1
@@ -30,6 +48,30 @@
       "writtenOn": "2019-01-21T16:21:56Z",
       "side": 1,
       "message": "+\u003d",
+      "range": {
+        "startLine": 1100,
+        "startChar": 37,
+        "endLine": 1100,
+        "endChar": 39
+      },
+      "revId": "9de53df217261ad539e037902934743ee4c77de6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "185c3d56_685ac131",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1100,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-22T02:51:50Z",
+      "side": 1,
+      "message": "It is static_\"inside\"_whitelist_patterns\nThis is the first time we have the variable in the file.\nShould I use \"+\u003d\" here?",
+      "parentUuid": "b982d198_d8ce81ec",
       "range": {
         "startLine": 1100,
         "startChar": 37,
