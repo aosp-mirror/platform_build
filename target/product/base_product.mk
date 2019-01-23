@@ -17,3 +17,4 @@
 # Base modules and settings for the product partition.
 PRODUCT_PACKAGES += \
     healthd \
+    ModuleMetadata \
