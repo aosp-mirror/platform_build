@@ -227,6 +227,7 @@ _product_var_list := \
     PRODUCT_BUILD_USERDATA_IMAGE \
     PRODUCT_UPDATABLE_BOOT_MODULES \
     PRODUCT_UPDATABLE_BOOT_LOCATIONS \
+    PRODUCT_CHECK_ELF_FILES \
 
 define dump-product
 $(info ==== $(1) ====)\
