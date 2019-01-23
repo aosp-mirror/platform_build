@@ -271,7 +271,8 @@ vars := \
   BUILD_BROKEN_ANDROIDMK_EXPORTS \
   BUILD_BROKEN_DUP_COPY_HEADERS \
   BUILD_BROKEN_DUP_RULES \
-  BUILD_BROKEN_PHONY_TARGETS
+  BUILD_BROKEN_PHONY_TARGETS \
+  BUILD_BROKEN_ENG_DEBUG_TAGS
 
 $(foreach var,$(vars),$(eval $(var) := $$(strip $$($(var)))))
 
@@ -281,13 +282,9 @@ $(foreach var,$(vars), \
 
 .KATI_READONLY := $(vars)
 
-CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
-
 ifneq ($(BUILD_BROKEN_ANDROIDMK_EXPORTS),true)
 $(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
 endif
-
-CHANGES_URL :=
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_RAMDISK
