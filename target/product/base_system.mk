@@ -211,7 +211,6 @@ PRODUCT_PACKAGES += \
     mediaserver \
     mediaswcodec \
     mke2fs \
-    ModuleMetadata \
     monkey \
     mtpd \
     ndc \
