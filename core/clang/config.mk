@@ -1,5 +1,7 @@
 ## Clang configurations.
 
+LLVM_READOBJ := $(LLVM_PREBUILTS_BASE)/$(BUILD_OS)-x86/$(LLVM_PREBUILTS_VERSION)/bin/llvm-readobj
+
 LLVM_RTLIB_PATH := $(LLVM_PREBUILTS_BASE)/linux-x86/$(LLVM_PREBUILTS_VERSION)/lib64/clang/$(LLVM_RELEASE_VERSION)/lib/linux/
 
 define convert-to-clang-flags
