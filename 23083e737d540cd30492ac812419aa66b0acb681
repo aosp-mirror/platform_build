@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "55dbc941_d80d424f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-24T03:02:58Z",
+      "side": 1,
+      "message": "Please just say \"GSI\" instead of \"Pie-GSI\".",
+      "range": {
+        "startLine": 7,
+        "startChar": 42,
+        "endLine": 7,
+        "endChar": 49
+      },
+      "revId": "23083e737d540cd30492ac812419aa66b0acb681",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
