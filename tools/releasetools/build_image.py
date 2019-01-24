@@ -569,11 +569,11 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   elif mount_point == "system_other":
     # We inherit the selinux policies of /system since we contain some of its
     # files.
-    copy_prop("avb_system_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_system_add_hashtree_footer_args",
+    copy_prop("avb_system_other_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_system_other_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
-    copy_prop("avb_system_key_path", "avb_key_path")
-    copy_prop("avb_system_algorithm", "avb_algorithm")
+    copy_prop("avb_system_other_key_path", "avb_key_path")
+    copy_prop("avb_system_other_algorithm", "avb_algorithm")
     copy_prop("fs_type", "fs_type")
     copy_prop("system_fs_type", "fs_type")
     copy_prop("system_size", "partition_size")
