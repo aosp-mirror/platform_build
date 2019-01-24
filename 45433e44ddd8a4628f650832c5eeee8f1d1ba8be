@@ -93,6 +93,30 @@
       "revId": "45433e44ddd8a4628f650832c5eeee8f1d1ba8be",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e43d4f60_fcdac54c",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 1139,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-24T01:00:35Z",
+      "side": 1,
+      "message": "I used a mocked BlockDifference object, in which __init__, WriteScript and WritePostInstallScript doesn\u0027t really look at the tgt argument. Maybe add a unit test to BlockDifference (in a follow-up CL)?",
+      "parentUuid": "5a692da5_9769525c",
+      "range": {
+        "startLine": 1139,
+        "startChar": 43,
+        "endLine": 1139,
+        "endChar": 58
+      },
+      "revId": "45433e44ddd8a4628f650832c5eeee8f1d1ba8be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
