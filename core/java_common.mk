@@ -386,6 +386,7 @@ else # LOCAL_IS_HOST_MODULE
   endif # USE_CORE_LIB_BOOTCLASSPATH
 endif # !LOCAL_IS_HOST_MODULE
 
+ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS) $(full_java_bootclasspath_libs)
 
 # Export the SDK libs. The sdk library names listed in LOCAL_SDK_LIBRARIES are first exported.
 # Then sdk library names exported from dependencies are all re-exported.
