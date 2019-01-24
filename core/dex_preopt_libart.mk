@@ -10,6 +10,9 @@ LIBART_TARGET_BOOT_JARS := $(DEXPREOPT_BOOT_JARS_MODULES)
 LIBART_TARGET_BOOT_DEX_LOCATIONS := $(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS)
 LIBART_TARGET_BOOT_DEX_FILES := $(foreach mod,$(NON_UPDATABLE_BOOT_MODULES),$(call intermediates-dir-for,JAVA_LIBRARIES,$(mod),,COMMON)/javalib.jar)
 
+# Copy the files to a location Soong dex preopt will look at.
+$(foreach mod,$(LIBART_TARGET_BOOT_JARS),$(eval $(call copy-one-file,$(call intermediates-dir-for,JAVA_LIBRARIES,$(mod),,COMMON)/javalib.jar,$(DEXPREOPT_BOOT_JARS_INPUT_PATH)/$(mod).jar)))
+
 # dex preopt on the bootclasspath produces multiple files.  The first dex file
 # is converted into to boot.art (to match the legacy assumption that boot.art
 # exists), and the rest are converted to boot-<name>.art.
