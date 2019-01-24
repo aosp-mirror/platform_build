@@ -786,9 +786,43 @@ ifdef HOST_CROSS_OS
 $(call resolve-shared-libs-depes,HOST_CROSS_,,true)
 endif
 
+# Pass the shared libraries dependencies to prebuilt ELF file check.
+define add-elf-file-check-shared-lib
+$(1): PRIVATE_SHARED_LIBRARY_FILES += $(2)
+$(1): $(2)
+endef
+
+define resolve-shared-libs-for-elf-file-check
+$(foreach m,$($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))$(1)DEPENDENCIES_ON_SHARED_LIBRARIES),\
+  $(eval p := $(subst :,$(space),$(m)))\
+  $(eval mod := $(firstword $(p)))\
+  \
+  $(eval deps := $(subst $(comma),$(space),$(lastword $(p))))\
+  $(if $(2),$(eval deps := $(addsuffix $($(1)2ND_ARCH_MODULE_SUFFIX),$(deps))))\
+  $(eval root := $(1)OUT$(if $(call streq,$(1),TARGET_),_ROOT))\
+  $(eval deps := $(filter $($(root))/%$($(1)SHLIB_SUFFIX),$(call module-built-files,$(deps))))\
+  \
+  $(eval r := $(firstword $(filter \
+    $($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))TARGET_OUT_INTERMEDIATES)/EXECUTABLES/%\
+    $($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))TARGET_OUT_INTERMEDIATES)/NATIVE_TESTS/%\
+    $($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))TARGET_OUT_INTERMEDIATES)/SHARED_LIBRARIES/%,\
+    $(call module-built-files,$(mod)))))\
+  \
+  $(if $(r),\
+    $(eval stamp := $(dir $(r))check_elf_files.timestamp)\
+    $(eval $(call add-elf-file-check-shared-lib,$(stamp),$(deps)))\
+  ))
+endef
+
+$(call resolve-shared-libs-for-elf-file-check,TARGET_)
+ifdef TARGET_2ND_ARCH
+$(call resolve-shared-libs-for-elf-file-check,TARGET_,true)
+endif
+
 m :=
 r :=
 p :=
+stamp :=
 deps :=
 add-required-deps :=
 
@@ -1085,8 +1119,8 @@ ifdef FULL_BUILD
   # Verify the artifact path requirements made by included products.
   is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
   ifneq (true,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS)))
-  # Fakes don't get installed, and host files are irrelevant.
-  static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%
+  # Fakes don't get installed, host files are irrelevant, and NDK stubs aren't installed to device.
+  static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/% $(SOONG_OUT_DIR)/ndk/%
   # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
   static_whitelist_patterns += %__auto_generated_rro.apk
   ifeq (true,$(BOARD_USES_SYSTEM_OTHER_ODEX))
@@ -1528,6 +1562,9 @@ findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
 .PHONY: findlsdumps
 findlsdumps: $(FIND_LSDUMPS_FILE)
+
+.PHONY: check-elf-files
+check-elf-files:
 
 #xxx scrape this from ALL_MODULE_NAME_TAGS
 .PHONY: modules
