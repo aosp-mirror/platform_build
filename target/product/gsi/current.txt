@@ -122,6 +122,7 @@ VNDK-core: android.hardware.health.storage@1.0.so
 VNDK-core: android.hardware.health@1.0.so
 VNDK-core: android.hardware.health@2.0.so
 VNDK-core: android.hardware.input.classifier@1.0.so
+VNDK-core: android.hardware.input.common@1.0.so
 VNDK-core: android.hardware.ir@1.0.so
 VNDK-core: android.hardware.keymaster@3.0.so
 VNDK-core: android.hardware.keymaster@4.0.so
