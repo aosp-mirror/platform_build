@@ -21,29 +21,15 @@
 # - VNDK enforcement
 # - compatible property override enabled
 
--include device/generic/goldfish/arm32-vendor.mk
+# GSI for system/product
+$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_common.mk)
 
-include $(SRC_TARGET_DIR)/product/full.mk
-
-# Enable dynamic partition size
-PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
-
-# Enable A/B update
-AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS := system
-PRODUCT_PACKAGES += \
-    update_engine \
-    update_verifier
-
-# Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
-PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
-
-# GSI specific tasks on boot
-PRODUCT_COPY_FILES += \
-    build/make/target/product/gsi/skip_mount.cfg:system/etc/init/config/skip_mount.cfg \
-    build/make/target/product/gsi/init.gsi.rc:system/etc/init/init.gsi.rc \
-
-# Support addtional P vendor interface
-PRODUCT_EXTRA_VNDK_VERSIONS := 28
+# Emulator for vendor
+$(call inherit-product-if-exists, device/generic/goldfish/arm32-vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86/device.mk)
 
 PRODUCT_NAME := aosp_arm
+PRODUCT_DEVICE := generic
+PRODUCT_BRAND := Android
+PRODUCT_MODEL := AOSP on ARM32
