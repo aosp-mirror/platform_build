@@ -57,6 +57,7 @@ PRODUCT_PACKAGES += \
     MusicFX \
     NfcNci \
     PacProcessor \
+    PrintRecommendationService \
     PrintSpooler \
     ProxyHandler \
     screenrecord \
