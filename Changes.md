@@ -1,5 +1,15 @@
 # Build System Changes for Android.mk Writers
 
+## `*.c.arm` / `*.cpp.arm` deprecation  {#file_arm}
+
+In Android.mk files, you used to be able to change LOCAL_ARM_MODE for each
+source file by appending `.arm` to the end of the filename in
+`LOCAL_SRC_FILES`.
+
+Soong does not support this uncommonly used behavior, instead expecting those
+files to be split out into a separate static library that chooses `arm` over
+`thumb` for the entire library. This must now also be done in Android.mk files.
+
 ## Windows cross-compiles no longer supported in Android.mk
 
 Modules that build for Windows (our only `HOST_CROSS` OS currently) must now be
