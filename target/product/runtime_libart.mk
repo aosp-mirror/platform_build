@@ -87,6 +87,15 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     pm.dexopt.inactive=verify \
     pm.dexopt.shared=speed
 
+# Currently for all non-user builds only.
+ifneq (user,$(TARGET_BUILD_VARIANT))
+
+# Enable resolution of startup const strings.
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    dalvik.vm.dex2oat-resolve-startup-strings=true
+
+endif
+
 # Enable minidebuginfo generation unless overridden.
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     dalvik.vm.minidebuginfo=true \
