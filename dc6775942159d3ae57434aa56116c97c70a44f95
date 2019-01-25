@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6acf330c_9b43be6f",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-25T10:50:54Z",
+      "side": 1,
+      "message": "I think you can remove this. mainline_system has languages_default, which only excludes the en-xc pseudolocale",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 68
+      },
+      "revId": "dc6775942159d3ae57434aa56116c97c70a44f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1e4d348_ce0b965e",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-25T10:50:54Z",
+      "side": 1,
+      "message": "can remove this, it\u0027s in mainline_system",
+      "range": {
+        "startLine": 31,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 75
+      },
+      "revId": "dc6775942159d3ae57434aa56116c97c70a44f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "50e72379_8e60f885",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-25T10:50:54Z",
+      "side": 1,
+      "message": "I think this was mistakenly added to handheld_product. It should be in handheld_system - I\u0027ll move it back",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 74
+      },
+      "revId": "dc6775942159d3ae57434aa56116c97c70a44f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7da902d1_02e560f7",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-25T10:50:54Z",
+      "side": 1,
+      "message": "can rm this one, it\u0027s in /product now",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 36
+      },
+      "revId": "dc6775942159d3ae57434aa56116c97c70a44f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c17510da_b226fe6d",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-25T10:50:54Z",
+      "side": 1,
+      "message": "not necessary given the system/product whitelist above.",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 34
+      },
+      "revId": "dc6775942159d3ae57434aa56116c97c70a44f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7a2a506e_133a5349",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-25T10:50:54Z",
+      "side": 1,
+      "message": "is setting PRODUCT_SHIPPING_API_LEVEL a viable alternative?",
+      "range": {
+        "startLine": 71,
+        "startChar": 0,
+        "endLine": 73,
+        "endChar": 36
+      },
+      "revId": "dc6775942159d3ae57434aa56116c97c70a44f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f7a570d_3e505a59",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-25T10:50:54Z",
+      "side": 1,
+      "message": "can rm this, they are in mainline_system",
+      "range": {
+        "startLine": 81,
+        "startChar": 0,
+        "endLine": 83,
+        "endChar": 21
+      },
+      "revId": "dc6775942159d3ae57434aa56116c97c70a44f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ddb01a86_9897f473",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-25T10:50:54Z",
+      "side": 1,
+      "message": "these apps should be moved to /product I think. Are they actually needed (by CTS)?",
+      "range": {
+        "startLine": 96,
+        "startChar": 0,
+        "endLine": 103,
+        "endChar": 20
+      },
+      "revId": "dc6775942159d3ae57434aa56116c97c70a44f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c171e82_b7e63516",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-25T10:50:54Z",
+      "side": 1,
+      "message": "$(TARGET_COPY_OUT_PRODUCT) ?",
+      "range": {
+        "startLine": 108,
+        "startChar": 41,
+        "endLine": 108,
+        "endChar": 47
+      },
+      "revId": "dc6775942159d3ae57434aa56116c97c70a44f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd589e8d_e1bc5593",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-25T10:50:54Z",
+      "side": 1,
+      "message": "$(TARGET_COPY_OUT_PRODUCT)?",
+      "range": {
+        "startLine": 114,
+        "startChar": 46,
+        "endLine": 114,
+        "endChar": 52
+      },
+      "revId": "dc6775942159d3ae57434aa56116c97c70a44f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
