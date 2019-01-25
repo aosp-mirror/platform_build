@@ -48,3 +48,7 @@ PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := true
 # Add the system properties.
 TARGET_SYSTEM_PROP += \
     build/make/target/board/go_defaults_common.prop
+
+# use the go specific handheld_core_hardware.xml from frameworks
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/go_handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml
