@@ -27,6 +27,7 @@ import test_utils
 import validate_target_files
 from rangelib import RangeSet
 
+from blockimgdiff import EmptyImage, DataImage
 
 KiB = 1024
 MiB = 1024 * KiB
@@ -1113,7 +1114,7 @@ super_group_qux_group_size={group_qux_size}
                     "ops that remove / shrink partitions must precede ops that "
                     "grow / add partitions")
 
-  def test_inc_partitions(self):
+  def test_incremental(self):
     source_info = common.LoadDictionaryFromLines("""
 dynamic_partition_list=system vendor product product_services
 super_partition_groups=group_foo
@@ -1186,3 +1187,38 @@ super_group_bar_partition_list=product
                     min_idx_move_partition_in_foo,
                     "Must shrink partitions / remove partitions from group"
                     "before adding / moving partitions into group")
+
+  def test_remove_partition(self):
+    source_info = common.LoadDictionaryFromLines("""
+blockimgdiff_versions=3,4
+use_dynamic_partitions=true
+dynamic_partition_list=foo
+super_partition_groups=group_foo
+super_group_foo_group_size={group_foo_size}
+super_group_foo_partition_list=foo
+""".format(group_foo_size=4 * GiB).split("\n"))
+    target_info = common.LoadDictionaryFromLines("""
+blockimgdiff_versions=3,4
+use_dynamic_partitions=true
+super_partition_groups=group_foo
+super_group_foo_group_size={group_foo_size}
+""".format(group_foo_size=4 * GiB).split("\n"))
+
+    common.OPTIONS.info_dict = target_info
+    common.OPTIONS.target_info_dict = target_info
+    common.OPTIONS.source_info_dict = source_info
+    common.OPTIONS.cache_size = 4 * 4096
+
+    block_diffs = [common.BlockDifference("foo", EmptyImage(),
+                                          src=DataImage("source", pad=True))]
+
+    dp_diff = common.DynamicPartitionsDifference(target_info, block_diffs,
+                                                 source_info_dict=source_info)
+    with zipfile.ZipFile(self.output_path, 'w') as output_zip:
+      dp_diff.WriteScript(self.script, output_zip, write_verify_script=True)
+
+    self.assertNotIn("block_image_update", str(self.script),
+        "Removed partition should not be patched.")
+
+    lines = self.get_op_list(self.output_path)
+    self.assertEqual(lines, ["remove foo"])
