@@ -1,7 +1,11 @@
 DEX_PREOPT_CONFIG := $(PRODUCT_OUT)/dexpreopt.config
 
-NON_UPDATABLE_BOOT_MODULES := $(filter-out $(PRODUCT_UPDATABLE_BOOT_MODULES), $(PRODUCT_BOOT_JARS))
-NON_UPDATABLE_BOOT_LOCATIONS := $(foreach m,$(NON_UPDATABLE_BOOT_MODULES),/system/framework/$(m).jar)
+RUNTIME_MODULES := $(filter-out $(PRODUCT_UPDATABLE_BOOT_MODULES), $(TARGET_CORE_JARS))
+FRAMEWORK_MODULES := $(filter-out $(PRODUCT_UPDATABLE_BOOT_MODULES) $(RUNTIME_MODULES), $(PRODUCT_BOOT_JARS))
+
+NON_UPDATABLE_BOOT_MODULES := $(RUNTIME_MODULES) $(FRAMEWORK_MODULES)
+NON_UPDATABLE_BOOT_LOCATIONS := $(foreach m,$(RUNTIME_MODULES),/apex/com.android.runtime/javalib/$(m).jar)
+NON_UPDATABLE_BOOT_LOCATIONS += $(foreach m,$(FRAMEWORK_MODULES),/system/framework/$(m).jar)
 ALL_BOOT_LOCATIONS := $(NON_UPDATABLE_BOOT_LOCATIONS) $(PRODUCT_UPDATABLE_BOOT_LOCATIONS)
 ALL_BOOT_MODULES := $(NON_UPDATABLE_BOOT_MODULES) $(PRODUCT_UPDATABLE_BOOT_MODULES)
 
@@ -116,10 +120,10 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer, $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
   $(call add_json_bool, DontUncompressPrivAppsDex,          $(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS)))
   $(call add_json_list, ModulesLoadedByPrivilegedModules,   $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
+  $(call add_json_list, PreoptBootClassPathDexFiles,        $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
   $(call add_json_bool, HasSystemOther,                     $(BOARD_USES_SYSTEM_OTHER_ODEX))
   $(call add_json_list, PatternsOnSystemOther,              $(SYSTEM_OTHER_ODEX_FILTER))
   $(call add_json_bool, DisableGenerateProfile,             $(filter false,$(WITH_DEX_PREOPT_GENERATE_PROFILE)))
-  $(call add_json_list, PreoptBootClassPathDexFiles,        $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
   $(call add_json_list, PreoptBootClassPathDexLocations,    $(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
   $(call add_json_list, BootJars,                           $(PRODUCT_BOOT_JARS))
   $(call add_json_list, PreoptBootJars,                     $(DEXPREOPT_BOOT_JARS_MODULES))
