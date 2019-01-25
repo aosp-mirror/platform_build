@@ -63,6 +63,7 @@ PRODUCT_PACKAGES += \
     NfcNci \
     OsuLogin \
     PacProcessor \
+    PrintRecommendationService \
     PrintSpooler \
     ProxyHandler \
     screenrecord \

@@ -33,7 +33,6 @@ PRODUCT_PACKAGES += \
     Launcher3QuickStep \
     Music \
     OneTimeInitializer \
-    PrintRecommendationService \
     Provision \
     QuickSearchBox \
     Settings \
