@@ -2825,17 +2825,18 @@ endef
 #  $(5): New LOCAL_CERTIFICATE value.
 #  $(6): New LOCAL_INSTRUMENTATION_FOR value.
 #  $(7): New LOCAL_MANIFEST_INSTRUMENTATION_FOR value.
+#  $(8): New LOCAL_COMPATIBILITY_SUITE value.
 #
 # Note that LOCAL_PACKAGE_OVERRIDES is NOT cleared in
 # clear_vars.mk.
 ###########################################################
 define inherit-package
-  $(eval $(call inherit-package-internal,$(1),$(2),$(3),$(4),$(5),$(6),$(7)))
+  $(eval $(call inherit-package-internal,$(1),$(2),$(3),$(4),$(5),$(6),$(7),$(8)))
 endef
 
 define inherit-package-internal
   LOCAL_PACKAGE_OVERRIDES \
-      := $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||&&$(strip $(5))||&&$(strip $(6))||&&$(strip $(7)) $(LOCAL_PACKAGE_OVERRIDES)
+      := $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||&&$(strip $(5))||&&$(strip $(6))||&&$(strip $(7))||&&$(strip $(8)) $(LOCAL_PACKAGE_OVERRIDES)
   include $(1)
   LOCAL_PACKAGE_OVERRIDES \
       := $(wordlist 1,$(words $(LOCAL_PACKAGE_OVERRIDES)), $(LOCAL_PACKAGE_OVERRIDES))
@@ -2860,6 +2861,7 @@ define set-inherited-package-variables-internal
     $(call keep-or-override,LOCAL_CERTIFICATE,$(patsubst &&%,%,$(word 5,$(_o)))) \
     $(call keep-or-override,LOCAL_INSTRUMENTATION_FOR,$(patsubst &&%,%,$(word 6,$(_o)))) \
     $(call keep-or-override,LOCAL_MANIFEST_INSTRUMENTATION_FOR,$(patsubst &&%,%,$(word 7,$(_o)))) \
+    $(call keep-or-override,LOCAL_COMPATIBILITY_SUITE,$(patsubst &&%,%,$(word 8,$(_o)))) \
     $(eval LOCAL_OVERRIDES_PACKAGES := $(sort $(LOCAL_OVERRIDES_PACKAGES) $(word 2,$(_o)))) \
     true \
   ,)
