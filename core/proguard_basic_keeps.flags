@@ -1,7 +1,3 @@
-# see http://sourceforge.net/tracker/?func=detail&aid=2787465&group_id=54750&atid=474707
--optimizations !code/simplification/arithmetic
--optimizations !code/simplification/cast
-
 # To prevent name conflict in incremental obfuscation.
 -useuniqueclassmembernames
 
