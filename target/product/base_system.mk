@@ -296,15 +296,6 @@ PRODUCT_UPDATABLE_BOOT_LOCATIONS := \
     /apex/com.android.media/javalib/updatable-media.jar
 
 
-# Add the compatibility library that is needed when org.apache.http.legacy
-# is removed from the bootclasspath.
-ifeq ($(REMOVE_OAHL_FROM_BCP),true)
-PRODUCT_PACKAGES += framework-oahl-backward-compatibility
-PRODUCT_BOOT_JARS += framework-oahl-backward-compatibility
-else
-PRODUCT_BOOT_JARS += org.apache.http.legacy
-endif
-
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
     system/core/rootdir/init.usb.configfs.rc:root/init.usb.configfs.rc \

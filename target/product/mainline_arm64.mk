@@ -43,7 +43,6 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
   system/app/LatinIME/oat/arm64/LatinIME.odex \
   system/app/LatinIME/oat/arm64/LatinIME.vdex \
   system/app/Music/Music.apk \
-  system/app/PrintRecommendationService/PrintRecommendationService.apk \
   system/app/QuickSearchBox/QuickSearchBox.apk \
   system/app/webview/webview.apk \
   system/bin/healthd \
