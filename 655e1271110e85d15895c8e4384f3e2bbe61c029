@@ -75,6 +75,30 @@
       "revId": "655e1271110e85d15895c8e4384f3e2bbe61c029",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "054ca01c_b34d310e",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1045,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-28T18:44:37Z",
+      "side": 1,
+      "message": "Correct, but I don\u0027t want to keep common.OPTIONS empty.\n\nMaybe I should move this line to setUp instead?",
+      "parentUuid": "dd163f58_5acd89ae",
+      "range": {
+        "startLine": 1045,
+        "startChar": 4,
+        "endLine": 1045,
+        "endChar": 37
+      },
+      "revId": "655e1271110e85d15895c8e4384f3e2bbe61c029",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
