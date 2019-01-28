@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "895ee502_459f351c",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2943,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2019-01-28T20:07:31Z",
+      "side": 1,
+      "message": "Hmm, just realized this key is not name spaced which is not good... we\u0027re supposed to use reverse DNS so different users of properties don\u0027t step on each others toes... any chance you can change so e.g. \"com.android.build.\" (or something otherwise appropriate) is prefixed? Thanks!",
+      "range": {
+        "startLine": 2943,
+        "startChar": 52,
+        "endLine": 2943,
+        "endChar": 73
+      },
+      "revId": "41319b3abcc006913e6ff2da1100dcbd5051db53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
