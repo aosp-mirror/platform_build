@@ -1041,6 +1041,14 @@ define resolve-product-relative-paths
           $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))
 endef
 
+# Returns modules included automatically as a result of certain BoardConfig
+# variables being set.
+define auto-included-modules
+  $(if $(BOARD_VNDK_VERSION),vndk_package) \
+  $(if $(DEVICE_MANIFEST_FILE),device_manifest.xml) \
+
+endef
+
 # Lists most of the files a particular product installs, including:
 # - PRODUCT_PACKAGES, and their LOCAL_REQUIRED_MODULES
 # - PRODUCT_COPY_FILES
@@ -1064,7 +1072,7 @@ define product-installed-files
     $(if $(filter debug,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG)) \
     $(if $(filter tests,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_TESTS)) \
     $(if $(filter asan,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_ASAN)) \
-    $(if $(BOARD_VNDK_VERSION),vndk_package) \
+    $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
   $(eval _pif_overrides := $(call module-overrides,$(_pif_modules))) \
@@ -1123,6 +1131,9 @@ ifdef FULL_BUILD
   static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/% $(SOONG_OUT_DIR)/ndk/%
   # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
   static_whitelist_patterns += %__auto_generated_rro.apk
+  # Auto-included targets are not considered
+  static_whitelist_patterns += $(call module-installed-files,$(call auto-included-modules))
+
   ifeq (true,$(BOARD_USES_SYSTEM_OTHER_ODEX))
     # Allow system_other odex space optimization.
     static_whitelist_patterns += \
