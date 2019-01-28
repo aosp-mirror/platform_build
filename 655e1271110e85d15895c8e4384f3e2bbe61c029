@@ -99,6 +99,30 @@
       "revId": "655e1271110e85d15895c8e4384f3e2bbe61c029",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7980bd59_8c5daed9",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1045,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-01-28T18:59:11Z",
+      "side": 1,
+      "message": "common.OPTIONS should already be common.options() when you execute \"import common\". And the field assignment in one test will not affect others...",
+      "parentUuid": "054ca01c_b34d310e",
+      "range": {
+        "startLine": 1045,
+        "startChar": 4,
+        "endLine": 1045,
+        "endChar": 37
+      },
+      "revId": "655e1271110e85d15895c8e4384f3e2bbe61c029",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
