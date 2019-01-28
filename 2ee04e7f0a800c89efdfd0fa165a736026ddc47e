@@ -54,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "fec22515_f7f2397e",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-28T17:43:54Z",
+      "side": 1,
+      "message": "I meant the whitelist entry in particular. The file was moved to /product (bit further down in this mk).",
+      "parentUuid": "3e88cb77_c25ada1c",
+      "revId": "2ee04e7f0a800c89efdfd0fa165a736026ddc47e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b079d187_9810b7cd",
         "filename": "target/product/gsi_common.mk",
         "patchSetId": 9
