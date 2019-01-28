@@ -123,6 +123,30 @@
       "revId": "655e1271110e85d15895c8e4384f3e2bbe61c029",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "776a4b9e_d24d8db7",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1045,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-28T19:11:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7980bd59_8c5daed9",
+      "range": {
+        "startLine": 1045,
+        "startChar": 4,
+        "endLine": 1045,
+        "endChar": 37
+      },
+      "revId": "655e1271110e85d15895c8e4384f3e2bbe61c029",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
