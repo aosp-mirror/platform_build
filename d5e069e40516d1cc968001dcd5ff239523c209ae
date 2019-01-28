@@ -16,6 +16,24 @@
       "revId": "d5e069e40516d1cc968001dcd5ff239523c209ae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3cc33956_73f8f0a6",
+        "filename": "core/main.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1048,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-28T09:18:30Z",
+      "side": 1,
+      "message": "It could probably get a similar treatment. I\u0027m not doing it here because that module doesn\u0027t have the same problem of conditionally being defined (which causes problem enforcing all PRODUCT_PACKAGES exist).",
+      "parentUuid": "cb1ffe67_ff631a18",
+      "revId": "d5e069e40516d1cc968001dcd5ff239523c209ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
