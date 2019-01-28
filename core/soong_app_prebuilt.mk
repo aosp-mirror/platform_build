@@ -160,7 +160,7 @@ ifdef LOCAL_SOONG_RRO_DIRS
       $(my_register_name), \
       false, \
       $(LOCAL_FULL_MANIFEST_FILE), \
-      $(LOCAL_EXPORT_PACKAGE_RESOURCES), \
+      $(if $(LOCAL_EXPORT_PACKAGE_RESOURCES),true,false), \
       $(LOCAL_SOONG_RRO_DIRS))
 endif
 
