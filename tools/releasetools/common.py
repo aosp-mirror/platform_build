@@ -2226,7 +2226,7 @@ class DynamicPartitionsDifference(object):
              collections.Counter(e.partition for e in block_diffs).items()
              if count > 1])
 
-    self._partition_updates = dict()
+    self._partition_updates = collections.OrderedDict()
 
     for p, block_diff in block_diff_dict.items():
       self._partition_updates[p] = DynamicPartitionUpdate()
@@ -2277,7 +2277,7 @@ class DynamicPartitionsDifference(object):
       logger.info("Updating dynamic partitions %s",
                   self._partition_updates.keys())
 
-    self._group_updates = dict()
+    self._group_updates = collections.OrderedDict()
 
     for g in tgt_groups:
       self._group_updates[g] = DynamicGroupUpdate()
