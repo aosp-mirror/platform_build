@@ -34,6 +34,7 @@ PRODUCT_PACKAGES += \
     appops \
     app_process \
     appwidget \
+    ashmemd \
     atest \
     atrace \
     audioserver \
@@ -112,6 +113,7 @@ PRODUCT_PACKAGES += \
     libandroidfw \
     libandroid_runtime \
     libandroid_servers \
+    libashmemd_client \
     libaudioeffect_jni \
     libaudioflinger \
     libaudiopolicymanager \
