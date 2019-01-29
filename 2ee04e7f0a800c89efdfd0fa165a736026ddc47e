@@ -108,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "38a27633_4338f5e2",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2019-01-29T05:51:38Z",
+      "side": 1,
+      "message": "\u003e vendors usually has their own conf file on ...\n\nWhat if there\u0027s none on data/oem partition (say, after a factory reset) and we need a way to fall back?",
+      "parentUuid": "4f39c9fa_dc040a2c",
+      "revId": "2ee04e7f0a800c89efdfd0fa165a736026ddc47e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b079d187_9810b7cd",
         "filename": "target/product/gsi_common.mk",
         "patchSetId": 9
