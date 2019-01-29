@@ -389,7 +389,7 @@ $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_MODULE:= $(my_register_name)
 # We name both BUILT and INSTALLED in case
 # LOCAL_UNINSTALLABLE_MODULE is set.
 .PHONY: $(my_all_targets)
-$(my_all_targets): $(LOCAL_BUILT_MODULE) $(LOCAL_INSTALLED_MODULE)
+$(my_all_targets): $(LOCAL_BUILT_MODULE) $(LOCAL_INSTALLED_MODULE) $(LOCAL_ADDITIONAL_CHECKED_MODULE)
 
 .PHONY: $(my_register_name)
 $(my_register_name): $(my_all_targets)
@@ -484,6 +484,8 @@ ifdef LOCAL_CHECKED_MODULE
 else
   my_checked_module := $(LOCAL_BUILT_MODULE)
 endif
+
+my_checked_module += $(LOCAL_ADDITIONAL_CHECKED_MODULE)
 
 # If they request that this module not be checked, then don't.
 # PLEASE DON'T SET THIS.  ANY PLACES THAT SET THIS WITHOUT
