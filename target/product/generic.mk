@@ -25,7 +25,4 @@ PRODUCT_BRAND := generic
 PRODUCT_DEVICE := generic
 PRODUCT_NAME := generic
 
-_whitelist := \
-  device_manifest.xml \
-
-$(call enforce-product-packages-exist,$(_whitelist))
+$(call enforce-product-packages-exist,)

@@ -55,5 +55,4 @@ PRODUCT_PACKAGES += \
 
 # VINTF data for vendor image
 PRODUCT_PACKAGES += \
-    device_manifest.xml \
     device_compatibility_matrix.xml \
