@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "aacec8d8_71bc065f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-29T21:22:38Z",
+      "side": 1,
+      "message": "When would this be false?",
+      "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6c9228d_408fd9da",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 3448,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-29T21:22:38Z",
+      "side": 1,
+      "message": "build/make/tools",
+      "range": {
+        "startLine": 3448,
+        "startChar": 1,
+        "endLine": 3448,
+        "endChar": 12
+      },
+      "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfe099c7_39e07f8b",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-29T21:22:38Z",
+      "side": 1,
+      "message": "Indent all this by 2 spaces",
+      "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4bac2bca_dd03e833",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-29T21:22:38Z",
+      "side": 1,
+      "message": "A built module should never depend on an installed module, that will cause the module to rebuild after m installclean.  The LOCAL_INSTALLED_MODULE can depend on another installed module, or you\u0027ll have to find another way to get it installed directly.",
+      "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9cf33d02_3f47b047",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-29T21:22:38Z",
+      "side": 1,
+      "message": "This rule should have a dependency on the check script.  It\u0027s generally easier to read if you duplicate this line inside the condition.",
+      "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
