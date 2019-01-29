@@ -46,6 +46,30 @@
       "revId": "41319b3abcc006913e6ff2da1100dcbd5051db53",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9894801a_8e0af4f7",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2943,
+      "author": {
+        "id": 1076971
+      },
+      "writtenOn": "2019-01-29T14:02:02Z",
+      "side": 1,
+      "message": "The idea is to use a reverse DNS scheme (this is not in AVB\u0027s README.md but I\u0027ll make a CL put put it there) ... this way the namespace is in effect managed by IANA e.g. which is a good thing. So please use e.g. com.android.build., thanks!",
+      "parentUuid": "b5e6813e_e4c77746",
+      "range": {
+        "startLine": 2943,
+        "startChar": 52,
+        "endLine": 2943,
+        "endChar": 73
+      },
+      "revId": "41319b3abcc006913e6ff2da1100dcbd5051db53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
