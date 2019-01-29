@@ -16,6 +16,24 @@
       "revId": "1add03a55bd1edd85f531ebd7f7abab02406330b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f63e351_305865df",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-29T09:47:26Z",
+      "side": 1,
+      "message": "We discussed the file again, too.\nWill move to product.",
+      "parentUuid": "33ba38da_02939ebc",
+      "revId": "1add03a55bd1edd85f531ebd7f7abab02406330b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
