@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "6a6be3e6_86c88d21",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2541,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-29T19:52:35Z",
+      "side": 1,
+      "message": "nit: and this as well",
+      "range": {
+        "startLine": 2541,
+        "startChar": 78,
+        "endLine": 2541,
+        "endChar": 89
+      },
+      "revId": "60bcc3921c1c1328c6937ed91b293b5dc1349404",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bde5e6d2_e4e62680",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 4
@@ -41,6 +64,29 @@
         "startChar": 7,
         "endLine": 569,
         "endChar": 37
+      },
+      "revId": "60bcc3921c1c1328c6937ed91b293b5dc1349404",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c98bfaed_f540c651",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 726,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-01-29T19:52:35Z",
+      "side": 1,
+      "message": "nit: please fix this as well",
+      "range": {
+        "startLine": 726,
+        "startChar": 33,
+        "endLine": 726,
+        "endChar": 44
       },
       "revId": "60bcc3921c1c1328c6937ed91b293b5dc1349404",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
