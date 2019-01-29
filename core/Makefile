@@ -580,7 +580,12 @@ $(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH)
 	$(hide) build/make/tools/post_process_props.py $@
 
 # -----------------------------------------------------------------
-# product_services build.prop
+# product_services build.prop (unless it's merged into /product)
+ifdef MERGE_PRODUCT_SERVICES_INTO_PRODUCT
+  ifneq (,$(PRODUCT_PRODUCT_SERVICES_PROPERTIES))
+    $(error PRODUCT_PRODUCT_SERVICES_PROPERTIES is not supported in this build.)
+  endif
+else
 INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT_SERVICES)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET)
 
@@ -588,7 +593,6 @@ FINAL_PRODUCT_SERVICES_PROPERTIES += \
     $(call collapse-pairs, $(PRODUCT_PRODUCT_SERVICES_PROPERTIES))
 FINAL_PRODUCT_SERVICES_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_PRODUCT_SERVICES_PROPERTIES),=)
-
 $(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH)
 	@echo Target product_services buildinfo: $@
 	@mkdir -p $(dir $@)
@@ -602,6 +606,7 @@ endif  # BOARD_USES_PRODUCT_SERVICESIMAGE
 	$(hide) $(foreach line,$(FINAL_PRODUCT_SERVICES_PROPERTIES), \
 	    echo "$(line)" >> $@;)
 	$(hide) build/make/tools/post_process_props.py $@
+endif # MERGE_PRODUCT_SERVICES_INTO_PRODUCT
 
 # ----------------------------------------------------------------
 
@@ -1156,8 +1161,13 @@ $(installed_vendor_notice_xml_gz): $(target_vendor_notice_file_xml_gz)
 	$(copy-file-to-target)
 $(installed_product_notice_xml_gz): $(target_product_notice_file_xml_gz)
 	$(copy-file-to-target)
+
+# No notice file for product_services if its contents are merged into /product.
+# The notices will be part of the /product notice file.
+ifndef MERGE_PRODUCT_SERVICES_INTO_PRODUCT
 $(installed_product_services_notice_xml_gz): $(target_product_services_notice_file_xml_gz)
 	$(copy-file-to-target)
+endif
 
 # if we've been run my mm, mmm, etc, don't reinstall this every time
 ifeq ($(ONE_SHOT_MAKEFILE),)
