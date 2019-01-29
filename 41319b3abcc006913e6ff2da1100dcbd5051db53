@@ -22,6 +22,30 @@
       "revId": "41319b3abcc006913e6ff2da1100dcbd5051db53",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5e6813e_e4c77746",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2943,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-01-29T02:47:12Z",
+      "side": 1,
+      "message": "The \u0027system_\u0027 is actually the prefix.\n\ne.g.., if we want to add security_patch for vendor, boot partitions, etc.\nIt will probably be \u0027vendor_security_patch\u0027, \u0027boot_security_patch\u0027.\n\nAnyway, let me rename this to system.security_patch in later PS. Does that sound ok?",
+      "parentUuid": "895ee502_459f351c",
+      "range": {
+        "startLine": 2943,
+        "startChar": 52,
+        "endLine": 2943,
+        "endChar": 73
+      },
+      "revId": "41319b3abcc006913e6ff2da1100dcbd5051db53",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
