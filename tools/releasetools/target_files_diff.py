@@ -71,7 +71,6 @@ def rewrite_build_property(original, new):
              'ro.build.user=',
              'ro.build.description=',
              'ro.build.fingerprint=',
-             'ro.expect.recovery_id=',
              'ro.vendor.build.date=',
              'ro.vendor.build.date.utc=',
              'ro.vendor.build.fingerprint=']
