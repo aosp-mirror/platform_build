@@ -275,7 +275,7 @@ PRODUCT_PACKAGES += \
 # VINTF data for system image
 PRODUCT_PACKAGES += \
     framework_manifest.xml \
-    framework_compatibility_matrix.xml \
+    system_compatibility_matrix.xml \
 
 ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
