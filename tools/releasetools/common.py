@@ -1770,14 +1770,20 @@ class BlockDifference(object):
     if OPTIONS.source_info_dict is None:
       is_dynamic_build = OPTIONS.info_dict.get(
           "use_dynamic_partitions") == "true"
+      is_dynamic_source = False
     else:
       is_dynamic_build = OPTIONS.source_info_dict.get(
           "use_dynamic_partitions") == "true"
+      is_dynamic_source = partition in shlex.split(
+          OPTIONS.source_info_dict.get("dynamic_partition_list", "").strip())
 
-    # For dynamic partitions builds, always check partition list in target build
-    # because new partitions may be added.
-    is_dynamic = is_dynamic_build and partition in shlex.split(
+    is_dynamic_target = partition in shlex.split(
         OPTIONS.info_dict.get("dynamic_partition_list", "").strip())
+
+    # For dynamic partitions builds, check partition list in both source
+    # and target build because new partitions may be added, and existing
+    # partitions may be removed.
+    is_dynamic = is_dynamic_build and (is_dynamic_source or is_dynamic_target)
 
     if is_dynamic:
       self.device = 'map_partition("%s")' % partition
