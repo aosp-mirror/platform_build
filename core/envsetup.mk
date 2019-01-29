@@ -444,11 +444,16 @@ endif
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_PRODUCT_SERVICES
+MERGE_PRODUCT_SERVICES_INTO_PRODUCT :=
 ifeq ($(TARGET_COPY_OUT_PRODUCT_SERVICES),$(_product_services_path_placeholder))
   TARGET_COPY_OUT_PRODUCT_SERVICES := system/product_services
+else ifeq ($(TARGET_COPY_OUT_PRODUCT),$(TARGET_COPY_OUT_PRODUCT_SERVICES))
+  MERGE_PRODUCT_SERVICES_INTO_PRODUCT := true
 else ifeq ($(filter product_services system/product_services,$(TARGET_COPY_OUT_PRODUCT_SERVICES)),)
-  $(error TARGET_COPY_OUT_PRODUCT_SERVICES must be either 'product_services' or 'system/product_services', seeing '$(TARGET_COPY_OUT_PRODUCT_SERVICES)'.)
+  $(error TARGET_COPY_OUT_PRODUCT_SERVICES must be either 'product_services',\
+    '$(TARGET_COPY_OUT_PRODUCT)' or 'system/product_services', seeing '$(TARGET_COPY_OUT_PRODUCT_SERVICES)'.)
 endif
+.KATI_READONLY := MERGE_PRODUCT_SERVICES_INTO_PRODUCT
 PRODUCT_COPY_FILES := $(subst $(_product_services_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),$(PRODUCT_COPY_FILES))
 
 BOARD_USES_PRODUCT_SERVICESIMAGE :=
