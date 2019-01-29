@@ -84,6 +84,7 @@ class EmptyImage(Image):
     self.extended = RangeSet()
     self.total_blocks = 0
     self.file_map = {}
+    self.hashtree_info = None
 
   def RangeSha1(self, ranges):
     return sha1().hexdigest()
