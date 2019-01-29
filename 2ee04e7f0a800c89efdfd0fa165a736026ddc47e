@@ -126,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "2af30949_6a3f1e34",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-01-29T06:01:53Z",
+      "side": 1,
+      "message": "ack.\nI doubt any vendor will really use it,\nprobably you just want to keep it as is.",
+      "parentUuid": "38a27633_4338f5e2",
+      "revId": "2ee04e7f0a800c89efdfd0fa165a736026ddc47e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b079d187_9810b7cd",
         "filename": "target/product/gsi_common.mk",
         "patchSetId": 9
