@@ -27,7 +27,6 @@ PRODUCT_PACKAGES += \
 
 # Applications
 PRODUCT_PACKAGES += \
-    DMService \
     LiveWallpapersPicker \
     PartnerBookmarksProvider \
     PresencePolling \
