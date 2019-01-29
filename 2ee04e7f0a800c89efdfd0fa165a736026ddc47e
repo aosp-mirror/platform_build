@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "c8cc9b25_7dc9c720",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-29T03:14:49Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "6e8bea2a_60767510",
+      "revId": "2ee04e7f0a800c89efdfd0fa165a736026ddc47e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2404819d_19627abd",
         "filename": "target/product/gsi_common.mk",
         "patchSetId": 9
@@ -101,6 +119,24 @@
       "writtenOn": "2019-01-28T17:36:18Z",
       "side": 1,
       "message": "maybe put these whitelist additions next to the lines that add the actual files? makes it more likely they will be cleaned up",
+      "revId": "2ee04e7f0a800c89efdfd0fa165a736026ddc47e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b048de2e_1cc370ba",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-29T03:14:49Z",
+      "side": 1,
+      "message": "Let me clean up again :)",
+      "parentUuid": "b079d187_9810b7cd",
       "revId": "2ee04e7f0a800c89efdfd0fa165a736026ddc47e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
