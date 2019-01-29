@@ -40,3 +40,7 @@ PRODUCT_PACKAGES += \
     StorageManager \
     SystemUI \
     WallpaperCropper \
+    frameworks-base-overlays
+
+PRODUCT_PACKAGES_DEBUG += \
+    frameworks-base-overlays-debug
