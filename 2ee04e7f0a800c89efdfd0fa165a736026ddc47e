@@ -143,6 +143,24 @@
     },
     {
       "key": {
+        "uuid": "0bde8edf_528f9b80",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-29T04:57:58Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "b048de2e_1cc370ba",
+      "revId": "2ee04e7f0a800c89efdfd0fa165a736026ddc47e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "21a0c7f2_a8fadc12",
         "filename": "target/product/gsi_common.mk",
         "patchSetId": 9
@@ -154,6 +172,30 @@
       "writtenOn": "2019-01-28T17:47:44Z",
       "side": 1,
       "message": "IMO, still, it might be better not to copy it to product since it is not really useful",
+      "range": {
+        "startLine": 95,
+        "startChar": 3,
+        "endLine": 95,
+        "endChar": 85
+      },
+      "revId": "2ee04e7f0a800c89efdfd0fa165a736026ddc47e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2d7c2a98_a33ab471",
+        "filename": "target/product/gsi_common.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-29T04:57:58Z",
+      "side": 1,
+      "message": "Bo, you are right.\n\nAfter I review the code (TelephonyProvider.java) again. I thought it is better be placed on system. The priority order is product \u003e data \u003e Oem \u003e system. We want GSI as the fallback default.\n\nLet me move it back to system.",
+      "parentUuid": "21a0c7f2_a8fadc12",
       "range": {
         "startLine": 95,
         "startChar": 3,
