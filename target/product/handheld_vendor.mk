@@ -29,9 +29,7 @@ PRODUCT_PACKAGES += \
     DisplayCutoutEmulationCornerOverlay \
     DisplayCutoutEmulationDoubleOverlay \
     DisplayCutoutEmulationTallOverlay \
-    FontArbutusSourceOverlay \
-    FontArvoLatoOverlay \
-    FontRubikRubikOverlay \
+    FontNotoSerifSourceOverlay \
     IconShapeRoundedRectOverlay \
     IconShapeSquircleOverlay \
     IconShapeTeardropOverlay \
