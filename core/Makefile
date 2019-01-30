@@ -474,9 +474,6 @@ endif
 $(INSTALLED_BUILD_PROP_TARGET): $(intermediate_system_build_prop) $(INSTALLED_RECOVERYIMAGE_TARGET)
 	@echo "Target build info: $@"
 	$(hide) grep -v 'ro.product.first_api_level' $(intermediate_system_build_prop) > $@
-ifdef INSTALLED_RECOVERYIMAGE_TARGET
-	$(hide) echo ro.expect.recovery_id=`cat $(RECOVERYIMAGE_ID_FILE)` >> $@
-endif
 
 # -----------------------------------------------------------------
 # vendor build.prop
@@ -584,7 +581,12 @@ $(INSTALLED_ODM_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH)
 	$(hide) build/make/tools/post_process_props.py $@
 
 # -----------------------------------------------------------------
-# product_services build.prop
+# product_services build.prop (unless it's merged into /product)
+ifdef MERGE_PRODUCT_SERVICES_INTO_PRODUCT
+  ifneq (,$(PRODUCT_PRODUCT_SERVICES_PROPERTIES))
+    $(error PRODUCT_PRODUCT_SERVICES_PROPERTIES is not supported in this build.)
+  endif
+else
 INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET := $(TARGET_OUT_PRODUCT_SERVICES)/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET)
 
@@ -592,7 +594,6 @@ FINAL_PRODUCT_SERVICES_PROPERTIES += \
     $(call collapse-pairs, $(PRODUCT_PRODUCT_SERVICES_PROPERTIES))
 FINAL_PRODUCT_SERVICES_PROPERTIES := $(call uniq-pairs-by-first-component, \
     $(FINAL_PRODUCT_SERVICES_PROPERTIES),=)
-
 $(INSTALLED_PRODUCT_SERVICES_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH)
 	@echo Target product_services buildinfo: $@
 	@mkdir -p $(dir $@)
@@ -606,6 +607,7 @@ endif  # BOARD_USES_PRODUCT_SERVICESIMAGE
 	$(hide) $(foreach line,$(FINAL_PRODUCT_SERVICES_PROPERTIES), \
 	    echo "$(line)" >> $@;)
 	$(hide) build/make/tools/post_process_props.py $@
+endif # MERGE_PRODUCT_SERVICES_INTO_PRODUCT
 
 # ----------------------------------------------------------------
 
@@ -1160,8 +1162,13 @@ $(installed_vendor_notice_xml_gz): $(target_vendor_notice_file_xml_gz)
 	$(copy-file-to-target)
 $(installed_product_notice_xml_gz): $(target_product_notice_file_xml_gz)
 	$(copy-file-to-target)
+
+# No notice file for product_services if its contents are merged into /product.
+# The notices will be part of the /product notice file.
+ifndef MERGE_PRODUCT_SERVICES_INTO_PRODUCT
 $(installed_product_services_notice_xml_gz): $(target_product_services_notice_file_xml_gz)
 	$(copy-file-to-target)
+endif
 
 # if we've been run my mm, mmm, etc, don't reinstall this every time
 ifeq ($(ONE_SHOT_MAKEFILE),)
@@ -2558,10 +2565,9 @@ INTERNAL_VENDORIMAGE_FILES := \
 ifdef BUILT_VENDOR_MANIFEST
 BUILT_ASSEMBLED_VENDOR_MANIFEST := $(PRODUCT_OUT)/verified_assembled_vendor_manifest.xml
 ifeq (true,$(strip $(PRODUCT_ENFORCE_VINTF_MANIFEST)))
-ifdef DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE
-# TODO(b/65028233): turn this on globally
+ifneq ($(strip $(DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE) $(DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE)),)
 $(BUILT_ASSEMBLED_VENDOR_MANIFEST): PRIVATE_SYSTEM_ASSEMBLE_VINTF_ENV_VARS := VINTF_ENFORCE_NO_UNUSED_HALS=true
-endif # DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE
+endif # DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE or DEVICE_PRODUCT_COMPATIBILITY_MATRIX_FILE
 endif # PRODUCT_ENFORCE_VINTF_MANIFEST
 $(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(HOST_OUT_EXECUTABLES)/assemble_vintf
 $(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(BUILT_SYSTEM_MATRIX)
