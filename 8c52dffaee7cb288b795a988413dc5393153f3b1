@@ -118,6 +118,30 @@
       "revId": "8c52dffaee7cb288b795a988413dc5393153f3b1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0bb20d5_a25c8fbc",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-30T19:17:55Z",
+      "side": 1,
+      "message": "The only way to avoid the circular dependency would be to move the ashmem_create_region functions out of libcutils, which is probably more effort than it\u0027s worth.",
+      "parentUuid": "424880a1_edd275ba",
+      "range": {
+        "startLine": 116,
+        "startChar": 4,
+        "endLine": 116,
+        "endChar": 21
+      },
+      "revId": "8c52dffaee7cb288b795a988413dc5393153f3b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
