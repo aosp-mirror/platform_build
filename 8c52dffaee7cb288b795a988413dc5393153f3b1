@@ -22,6 +22,30 @@
       "revId": "8c52dffaee7cb288b795a988413dc5393153f3b1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5bc015d_91f965cd",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-01-30T18:42:49Z",
+      "side": 1,
+      "message": "Circular dependencies are usually a sign of a larger design problem.",
+      "parentUuid": "9375a151_3d536580",
+      "range": {
+        "startLine": 116,
+        "startChar": 4,
+        "endLine": 116,
+        "endChar": 21
+      },
+      "revId": "8c52dffaee7cb288b795a988413dc5393153f3b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
