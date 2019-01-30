@@ -46,6 +46,30 @@
       "revId": "8c52dffaee7cb288b795a988413dc5393153f3b1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d49e869f_f2c137bb",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-01-30T18:42:52Z",
+      "side": 1,
+      "message": "This is already listed in required for ashmemd, so it shouldn\u0027t be necessary here.  libcutils using runtime_libs: [\"libashmemd_client\"] is the right way, but that will hit a circular dependency in Soong module resolution, and probably also hit a circular dependency in the install rules.  required on libcutils avoids the first problem, but will still hit the second.",
+      "parentUuid": "9375a151_3d536580",
+      "range": {
+        "startLine": 116,
+        "startChar": 4,
+        "endLine": 116,
+        "endChar": 21
+      },
+      "revId": "8c52dffaee7cb288b795a988413dc5393153f3b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
