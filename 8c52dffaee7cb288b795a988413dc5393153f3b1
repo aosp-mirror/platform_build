@@ -94,6 +94,30 @@
       "revId": "8c52dffaee7cb288b795a988413dc5393153f3b1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "424880a1_edd275ba",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1124693
+      },
+      "writtenOn": "2019-01-30T18:55:29Z",
+      "side": 1,
+      "message": "fwiw, the setup here is symmetric to netd and libnetd_client.",
+      "parentUuid": "cffb739b_65a29f84",
+      "range": {
+        "startLine": 116,
+        "startChar": 4,
+        "endLine": 116,
+        "endChar": 21
+      },
+      "revId": "8c52dffaee7cb288b795a988413dc5393153f3b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
