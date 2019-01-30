@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9375a151_3d536580",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-01-30T16:59:30Z",
+      "side": 1,
+      "message": "@build, Asked Tri about this. It\u0027s dlopened. Circular dependency when not (or even when required).\n\nShould \u0027required\u0027 care about circular dependencies in Soong? Or is it just simpler this way?",
+      "range": {
+        "startLine": 116,
+        "startChar": 4,
+        "endLine": 116,
+        "endChar": 21
+      },
+      "revId": "8c52dffaee7cb288b795a988413dc5393153f3b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
