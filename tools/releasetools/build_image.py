@@ -576,7 +576,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("avb_system_other_algorithm", "avb_algorithm")
     copy_prop("fs_type", "fs_type")
     copy_prop("system_fs_type", "fs_type")
-    copy_prop("system_size", "partition_size")
+    copy_prop("system_other_size", "partition_size")
     if not copy_prop("system_journal_size", "journal_size"):
       d["journal_size"] = "0"
     copy_prop("system_verity_block_device", "verity_block_device")
@@ -723,7 +723,7 @@ def GlobalDictFromImageProp(image_prop, mount_point):
   if mount_point == "system":
     copy_prop("partition_size", "system_size")
   elif mount_point == "system_other":
-    copy_prop("partition_size", "system_size")
+    copy_prop("partition_size", "system_other_size")
   elif mount_point == "vendor":
     copy_prop("partition_size", "vendor_size")
   elif mount_point == "odm":
