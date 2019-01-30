@@ -13,9 +13,7 @@ endif
 LOCAL_MODULE_SUFFIX := .jar
 LOCAL_BUILT_MODULE_STEM := javalib.jar
 
-#######################################
-include $(BUILD_SYSTEM)/base_rules.mk
-#######################################
+intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
@@ -23,6 +21,14 @@ full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 common_javalib.jar := $(intermediates.COMMON)/javalib.jar
 hiddenapi_flags_csv := $(intermediates.COMMON)/hiddenapi/flags.csv
 hiddenapi_metadata_csv := $(intermediates.COMMON)/hiddenapi/greylist.csv
+
+ifdef LOCAL_SOONG_AAR
+  LOCAL_ADDITIONAL_CHECKED_MODULE += $(LOCAL_SOONG_AAR)
+endif
+
+#######################################
+include $(BUILD_SYSTEM)/base_rules.mk
+#######################################
 
 ifdef LOCAL_SOONG_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_jar)))
