@@ -206,7 +206,6 @@ VNDK-core: libmkbootimg_abi_check.so
 VNDK-core: libnetutils.so
 VNDK-core: libnl.so
 VNDK-core: libopus.so
-VNDK-core: libpagemap.so
 VNDK-core: libpcre2.so
 VNDK-core: libpiex.so
 VNDK-core: libpng.so
