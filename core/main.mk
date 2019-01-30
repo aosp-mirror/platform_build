@@ -1133,7 +1133,12 @@ ifdef FULL_BUILD
   static_whitelist_patterns += %__auto_generated_rro.apk
   # Auto-included targets are not considered
   static_whitelist_patterns += $(call module-installed-files,$(call auto-included-modules))
-
+  # $(PRODUCT_OUT)/apex is where shared libraries in APEXes get installed.
+  # The path can be considered as a fake path, as the shared libraries
+  # are installed there just to have symbols files for them under
+  # $(PRODUCT_OUT)/symbols/apex for debugging purpose. The /apex directory
+  # is never compiled into a filesystem image.
+  static_whitelist_patterns += $(PRODUCT_OUT)/apex/%
   ifeq (true,$(BOARD_USES_SYSTEM_OTHER_ODEX))
     # Allow system_other odex space optimization.
     static_whitelist_patterns += \
