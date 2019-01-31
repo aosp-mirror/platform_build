@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "13d9a4b1_e6fb7f37",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-31T10:13:02Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "75e34466_1604e01c",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 45
+      },
+      "revId": "e9a0f1fc9ec430c53f9d85444e178a13ec521d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7814c5a6_0c5cd518",
         "filename": "target/product/aosp_arm64.mk",
         "patchSetId": 6
@@ -72,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "a6924e78_4ab20780",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-31T10:13:02Z",
+      "side": 1,
+      "message": "Hi Anton,\n\n   I tried to keep the original emulator structure at this time.\n\nHi Bo,\n\n   Do you have idea? Maybe:\n\n- device/generic/goldfish/arm64-vendor.mk\n    inherit device/generic/goldfish/vendor.mk\n        (move all content of emulator_vendor.mk to vendor.mk)\n    (move the content of device.mk to arm64-vendor.mk)",
+      "parentUuid": "7814c5a6_0c5cd518",
+      "range": {
+        "startLine": 33,
+        "startChar": 21,
+        "endLine": 36,
+        "endChar": 72
+      },
+      "revId": "e9a0f1fc9ec430c53f9d85444e178a13ec521d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0a72d639_928a1a85",
         "filename": "target/product/emulator_vendor.mk",
         "patchSetId": 6
@@ -83,6 +131,30 @@
       "writtenOn": "2019-01-31T09:49:38Z",
       "side": 1,
       "message": "maybe the ../goldfish/arm32-vendor.mk etc should inherit this one?",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 68
+      },
+      "revId": "e9a0f1fc9ec430c53f9d85444e178a13ec521d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0507c6da_0d58c5ec",
+        "filename": "target/product/emulator_vendor.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-31T10:13:02Z",
+      "side": 1,
+      "message": "Commented in another comment.",
+      "parentUuid": "0a72d639_928a1a85",
       "range": {
         "startLine": 48,
         "startChar": 0,
