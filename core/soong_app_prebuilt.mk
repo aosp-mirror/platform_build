@@ -48,7 +48,9 @@ endif
 module_run_appcompat :=
 ifeq (true,$(non_system_module))
 ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))  # ! unbundled app build
+ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
   module_run_appcompat := true
+endif
 endif
 endif
 
