@@ -168,9 +168,6 @@ my_common :=
 include $(BUILD_SYSTEM)/link_type.mk
 endif  # prebuilt_module_is_a_library
 
-# Check prebuilt ELF binaries.
-include $(BUILD_SYSTEM)/check_elf_file.mk
-
 # The real dependency will be added after all Android.mks are loaded and the install paths
 # of the shared libraries are determined.
 ifdef LOCAL_INSTALLED_MODULE
@@ -208,6 +205,9 @@ endif  # my_shared_libraries
 # We need to enclose the above export_includes and my_built_shared_libraries in
 # "my_strip_module not true" because otherwise the rules are defined in dynamic_binary.mk.
 endif  # my_strip_module not true
+
+# Check prebuilt ELF binaries.
+include $(BUILD_SYSTEM)/check_elf_file.mk
 
 ifeq ($(NATIVE_COVERAGE),true)
 ifneq (,$(strip $(LOCAL_PREBUILT_COVERAGE_ARCHIVE)))
