@@ -3,7 +3,7 @@
 # Output variables: LOCAL_DEX_PREOPT, LOCAL_UNCOMPRESS_DEX, built_odex,
 #                   dexpreopt_boot_jar_module
 
-ifeq (true,$(LOCAL_PREFER_CODE_INTEGRITY))
+ifeq (true,$(LOCAL_USE_EMBEDDED_DEX))
   LOCAL_UNCOMPRESS_DEX := true
 else
   LOCAL_UNCOMPRESS_DEX :=
@@ -180,7 +180,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_str,  BuildPath,                     $(LOCAL_BUILT_MODULE))
   $(call add_json_str,  DexPath,                       $$1)
   $(call add_json_str,  ExtrasOutputPath,              $$2)
-  $(call add_json_bool, PreferCodeIntegrity,           $(filter true,$(LOCAL_PREFER_CODE_INTEGRITY)))
+  $(call add_json_bool, UseEmbeddedDex,                $(filter true,$(LOCAL_USE_EMBEDDED_DEX)))
   $(call add_json_bool, Privileged,                    $(filter true,$(LOCAL_PRIVILEGED_MODULE)))
   $(call add_json_bool, UncompressedDex,               $(filter true,$(LOCAL_UNCOMPRESS_DEX)))
   $(call add_json_bool, HasApkLibraries,               $(LOCAL_APK_LIBRARIES))

@@ -19,13 +19,15 @@ endif
 LOCAL_MODULE_SUFFIX := .apk
 LOCAL_BUILT_MODULE_STEM := package.apk
 
-#######################################
-include $(BUILD_SYSTEM)/base_rules.mk
-#######################################
+intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
+
+#######################################
+include $(BUILD_SYSTEM)/base_rules.mk
+#######################################
 
 ifdef LOCAL_SOONG_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_jar)))
@@ -102,7 +104,7 @@ my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
 my_installed := $(call copy-many-files, $(my_built_installed))
 ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_installed)
-$(my_register_name): $(my_installed)
+$(my_all_targets): $(my_installed)
 
 # embedded JNI will already have been handled by soong
 my_embed_jni :=

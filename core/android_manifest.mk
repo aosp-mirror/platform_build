@@ -72,8 +72,8 @@ ifeq ($(LOCAL_PRIVATE_PLATFORM_APIS),true)
     my_manifest_fixer_flags += --uses-non-sdk-api
 endif
 
-ifeq (true,$(LOCAL_PREFER_CODE_INTEGRITY))
-    my_manifest_fixer_flags += --prefer-code-integrity
+ifeq (true,$(LOCAL_USE_EMBEDDED_DEX))
+    my_manifest_fixer_flags += --use-embedded-dex
 endif
 
 $(fixed_android_manifest): PRIVATE_MANIFEST_FIXER_FLAGS := $(my_manifest_fixer_flags)
