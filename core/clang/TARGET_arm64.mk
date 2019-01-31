@@ -7,3 +7,4 @@ TARGET_LIBCRT_BUILTINS := $(LLVM_RTLIB_PATH)/libclang_rt.builtins-aarch64-androi
 
 # Address sanitizer clang config
 ADDRESS_SANITIZER_LINKER := /system/bin/linker_asan64
+ADDRESS_SANITIZER_LINKER_FILE := /system/bin/bootstrap/linker_asan64
