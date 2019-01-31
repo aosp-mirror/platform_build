@@ -730,6 +730,8 @@ FINDBUGS := $(FINDBUGS_DIR)/findbugs
 
 JETIFIER := prebuilts/sdk/tools/jetifier/jetifier-standalone/bin/jetifier-standalone
 
+EXTRACT_KERNEL := build/make/tools/extract_kernel.py
+
 COLUMN:= column
 
 USE_OPENJDK9 := true
