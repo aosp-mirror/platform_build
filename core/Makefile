@@ -2586,10 +2586,71 @@ $(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(HOST_OUT_EXECUTABLES)/assemble_vintf
 $(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(BUILT_SYSTEM_MATRIX)
 $(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(BUILT_VENDOR_MANIFEST)
 $(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(INTERNAL_VENDORIMAGE_FILES)
+
+$(BUILT_ASSEMBLED_VENDOR_MANIFEST): PRIVATE_FLAGS :=
+
+# -- Kernel version and configurations.
+ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),true)
+
+# BOARD_KERNEL_CONFIG_FILE and BOARD_KERNEL_VERSION can be used to override the values extracted
+# from INSTALLED_KERNEL_TARGET.
+ifdef BOARD_KERNEL_CONFIG_FILE
+ifdef BOARD_KERNEL_VERSION
+$(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(BOARD_KERNEL_CONFIG_FILE)
+$(BUILT_ASSEMBLED_VENDOR_MANIFEST): PRIVATE_FLAGS += --kernel $(BOARD_KERNEL_VERSION):$(BOARD_KERNEL_CONFIG_FILE)
+my_board_extracted_kernel := true
+endif # BOARD_KERNEL_VERSION
+endif # BOARD_KERNEL_CONFIG_FILE
+
+ifneq ($(my_board_extracted_kernel),true)
+ifndef INSTALLED_KERNEL_TARGET
+$(warning No INSTALLED_KERNEL_TARGET is defined when PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS \
+    is true. Information about the updated kernel cannot be built into OTA update package. \
+    You can fix this by: (1) setting TARGET_NO_KERNEL to false and installing the built kernel \
+    to $(PRODUCT_OUT)/kernel, so that kernel information will be extracted from the built kernel; \
+    or (2) extracting kernel configuration and defining BOARD_KERNEL_CONFIG_FILE and \
+    BOARD_KERNEL_VERSION manually; or (3) unsetting PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS \
+    manually.)
+else
+intermediates := $(call intermediates-dir-for,ETC,$(notdir $(BUILT_ASSEMBLED_VENDOR_MANIFEST)))
+
+# Tools for decompression that is not in PATH.
+# Check $(EXTRACT_KERNEL) for decompression algorithms supported by the script.
+# Algorithms that are in the script but not in this list will be found in PATH.
+my_decompress_tools := \
+    lz4:$(HOST_OUT_EXECUTABLES)/lz4 \
+
+my_kernel_configs := $(intermediates)/kernel_configs.txt
+my_kernel_version := $(intermediates)/kernel_version.txt
+$(my_kernel_configs): .KATI_IMPLICIT_OUTPUTS := $(my_kernel_version)
+$(my_kernel_configs): PRIVATE_KERNEL_VERSION_FILE := $(my_kernel_version)
+$(my_kernel_configs): PRIVATE_DECOMPRESS_TOOLS := $(my_decompress_tools)
+$(my_kernel_configs): $(foreach pair,$(my_decompress_tools),$(call word-colon,2,$(pair)))
+$(my_kernel_configs): $(EXTRACT_KERNEL) $(INSTALLED_KERNEL_TARGET)
+	$< --tools $(PRIVATE_DECOMPRESS_TOOLS) --input $(INSTALLED_KERNEL_TARGET) \
+	  --output-configs $@ \
+	  --output-version $(PRIVATE_KERNEL_VERSION_FILE)
+
+$(BUILT_ASSEMBLED_VENDOR_MANIFEST): $(my_kernel_configs) $(my_kernel_version)
+$(BUILT_ASSEMBLED_VENDOR_MANIFEST): PRIVATE_FLAGS += --kernel $$(cat $(my_kernel_version)):$(my_kernel_configs)
+
+intermediates :=
+my_kernel_configs :=
+my_kernel_version :=
+my_decompress_tools :=
+
+endif # my_board_extracted_kernel
+my_board_extracted_kernel :=
+
+endif # INSTALLED_KERNEL_TARGET
+endif # PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
+
+$(BUILT_ASSEMBLED_VENDOR_MANIFEST):
 	@echo "Verifying vendor VINTF manifest."
 	PRODUCT_ENFORCE_VINTF_MANIFEST=$(PRODUCT_ENFORCE_VINTF_MANIFEST) \
 	$(PRIVATE_SYSTEM_ASSEMBLE_VINTF_ENV_VARS) \
 	$(HOST_OUT_EXECUTABLES)/assemble_vintf \
+	    $(PRIVATE_FLAGS) \
 	    -c $(BUILT_SYSTEM_MATRIX) \
 	    -i $(BUILT_VENDOR_MANIFEST) \
 	    $$([ -d $(TARGET_OUT_VENDOR)/etc/vintf/manifest ] && \
