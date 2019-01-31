@@ -28,6 +28,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
 - godir:      Go to the directory containing a file.
 - allmod:     List all modules.
 - gomod:      Go to the directory containing a module.
+- pathmod:    Get the directory containing a module.
 - refreshmod: Refresh list of modules for allmod/gomod.
 
 Environment options:
@@ -1517,16 +1518,16 @@ function allmod() {
     python -c "import json; print '\n'.join(sorted(json.load(open('$ANDROID_PRODUCT_OUT/module-info.json')).keys()))"
 }
 
-# Go to a specific module in the android tree, as cached in module-info.json. If any build change
+# Get the path of a specific module in the android tree, as cached in module-info.json. If any build change
 # is made, and it should be reflected in the output, you should run 'refreshmod' first.
-function gomod() {
+function pathmod() {
     if [ ! "$ANDROID_PRODUCT_OUT" ]; then
         echo "No ANDROID_PRODUCT_OUT. Try running 'lunch' first." >&2
         return 1
     fi
 
     if [[ $# -ne 1 ]]; then
-        echo "usage: gomod <module>" >&2
+        echo "usage: pathmod <module>" >&2
         return 1
     fi
 
@@ -1546,8 +1547,23 @@ print module_info[module]['path'][0]" 2>/dev/null)
         echo "Could not find module '$1' (try 'refreshmod' if there have been build changes?)." >&2
         return 1
     else
-        cd $ANDROID_BUILD_TOP/$relpath
+        echo "$ANDROID_BUILD_TOP/$relpath"
     fi
+}
+
+# Go to a specific module in the android tree, as cached in module-info.json. If any build change
+# is made, and it should be reflected in the output, you should run 'refreshmod' first.
+function gomod() {
+    if [[ $# -ne 1 ]]; then
+        echo "usage: gomod <module>" >&2
+        return 1
+    fi
+
+    local path="$(pathmod $@)"
+    if [ -z "$path" ]; then
+        return 1
+    fi
+    cd $path
 }
 
 function _complete_android_module_names() {
