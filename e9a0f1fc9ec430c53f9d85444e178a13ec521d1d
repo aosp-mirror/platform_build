@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "a58bf8dd_40d2da24",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-31T14:44:51Z",
+      "side": 1,
+      "message": "I am preparing another patch, maybe we could discuss with that patch later.",
+      "parentUuid": "13d9a4b1_e6fb7f37",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 45
+      },
+      "revId": "e9a0f1fc9ec430c53f9d85444e178a13ec521d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7814c5a6_0c5cd518",
         "filename": "target/product/aosp_arm64.mk",
         "patchSetId": 6
