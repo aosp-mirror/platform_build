@@ -22,6 +22,76 @@
       "revId": "e9a0f1fc9ec430c53f9d85444e178a13ec521d1d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "75e34466_1604e01c",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-31T09:49:38Z",
+      "side": 1,
+      "message": "maybe this variable should be changed to only apply to the product itself but not be inherited by its children. I\u0027ll give that some thought",
+      "parentUuid": "b07339b6_73bfae3a",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 45
+      },
+      "revId": "e9a0f1fc9ec430c53f9d85444e178a13ec521d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7814c5a6_0c5cd518",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-31T09:49:38Z",
+      "side": 1,
+      "message": "not clear why there needs to be three. Could any of these be merged with each other?",
+      "range": {
+        "startLine": 33,
+        "startChar": 21,
+        "endLine": 36,
+        "endChar": 72
+      },
+      "revId": "e9a0f1fc9ec430c53f9d85444e178a13ec521d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a72d639_928a1a85",
+        "filename": "target/product/emulator_vendor.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-01-31T09:49:38Z",
+      "side": 1,
+      "message": "maybe the ../goldfish/arm32-vendor.mk etc should inherit this one?",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 68
+      },
+      "revId": "e9a0f1fc9ec430c53f9d85444e178a13ec521d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
