@@ -34,6 +34,7 @@ endif
 
 # Mark variables deprecated/obsolete
 CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
+.KATI_READONLY := CHANGES_URL
 $(KATI_obsolete_var PATH,Do not use PATH directly. See $(CHANGES_URL)#PATH)
 $(KATI_obsolete_var PYTHONPATH,Do not use PYTHONPATH directly. See $(CHANGES_URL)#PYTHONPATH)
 $(KATI_obsolete_var OUT,Use OUT_DIR instead. See $(CHANGES_URL)#OUT)
@@ -94,8 +95,6 @@ $(KATI_deprecated_var USER,Use BUILD_USERNAME instead. See $(CHANGES_URL)#USER)
 
 # This is marked as obsolete in envsetup.mk after reading the BoardConfig.mk
 $(KATI_deprecate_export It is a global setting. See $(CHANGES_URL)#export_keyword)
-
-CHANGES_URL :=
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -219,6 +218,7 @@ BUILD_BROKEN_ANDROIDMK_EXPORTS :=
 BUILD_BROKEN_DUP_COPY_HEADERS :=
 BUILD_BROKEN_DUP_RULES :=
 BUILD_BROKEN_PHONY_TARGETS :=
+BUILD_BROKEN_ENG_DEBUG_TAGS :=
 
 # ###############################################################
 # Include sub-configuration files
