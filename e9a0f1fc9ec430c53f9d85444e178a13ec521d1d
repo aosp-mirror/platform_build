@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b07339b6_73bfae3a",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-01-31T03:34:53Z",
+      "side": 1,
+      "message": "I will change this to be only disable for inherit build targets by another CL.\nTo make sure we have no more unexpected system modules on aosp_$arch.",
+      "range": {
+        "startLine": 33,
+        "startChar": 0,
+        "endLine": 33,
+        "endChar": 45
+      },
+      "revId": "e9a0f1fc9ec430c53f9d85444e178a13ec521d1d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
