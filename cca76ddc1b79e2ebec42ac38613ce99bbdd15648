@@ -22,6 +22,30 @@
       "revId": "cca76ddc1b79e2ebec42ac38613ce99bbdd15648",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a1d302e_38d39e4d",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2884,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-01-31T03:23:57Z",
+      "side": 1,
+      "message": "Nope, it seems we didn\u0027t inject this into Android sysprop.\nWe can do that in a separate CL if needed.\n\nBut for keymaster 4.0 design, each partition should have the SPL appended to AVB descriptor.\nhttps://docs.google.com/document/d/1A75sKi8nrRDw1eHI2E-CaRFmlrkWu78SpNsZzYzInU8/edit#heading\u003dh.n2fwogb9ljtk",
+      "parentUuid": "d272189d_7ac4f1f5",
+      "range": {
+        "startLine": 2884,
+        "startChar": 29,
+        "endLine": 2884,
+        "endChar": 60
+      },
+      "revId": "cca76ddc1b79e2ebec42ac38613ce99bbdd15648",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
