@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "625faffd_926ec9e1",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-01-31T22:20:26Z",
+      "side": 1,
+      "message": "do you need to check it\u0027s not a file, and use makedirs?",
+      "range": {
+        "startLine": 748,
+        "startChar": 9,
+        "endLine": 748,
+        "endChar": 22
+      },
+      "revId": "ad96a6457c57eec4b60939aa82638a58c16bdbf1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
