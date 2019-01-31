@@ -41,5 +41,8 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Use speed compiler filter since system server doesn't have JIT.
 PRODUCT_DEX_PREOPT_BOOT_FLAGS += --compiler-filter=speed
+# System server is speed compiled and doesn't have a separate preopt flag,
+# so we enable hotness in compiled code for everything.
+PRODUCT_DEX_PREOPT_DEFAULT_FLAGS := --count-hotness-in-compiled-code
 
 PRODUCT_DIST_BOOT_AND_SYSTEM_JARS := true
