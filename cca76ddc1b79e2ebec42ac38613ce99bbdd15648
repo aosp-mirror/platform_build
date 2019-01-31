@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d272189d_7ac4f1f5",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2884,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2019-01-31T03:15:24Z",
+      "side": 1,
+      "message": "Do we really have this property?",
+      "range": {
+        "startLine": 2884,
+        "startChar": 29,
+        "endLine": 2884,
+        "endChar": 60
+      },
+      "revId": "cca76ddc1b79e2ebec42ac38613ce99bbdd15648",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
