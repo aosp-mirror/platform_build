@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4d640f0d_9e836255",
+        "filename": "target/board/generic_arm64/device.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-02-01T18:13:58Z",
+      "side": 1,
+      "message": "wonder if these can be removed. Not this CL obviously..",
+      "range": {
+        "startLine": 17,
+        "startChar": 56,
+        "endLine": 19,
+        "endChar": 80
+      },
+      "revId": "ce1fdb2f553b7cf0a9a6402472a5ea34ae7753bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
