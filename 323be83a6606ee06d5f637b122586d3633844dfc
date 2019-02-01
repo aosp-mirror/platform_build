@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2434c2da_3db189af",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-02-01T18:15:40Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 27,
+        "startChar": 31,
+        "endLine": 27,
+        "endChar": 36
+      },
+      "revId": "323be83a6606ee06d5f637b122586d3633844dfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
