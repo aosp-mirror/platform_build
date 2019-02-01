@@ -35,6 +35,11 @@ $(call inherit-product-if-exists, device/generic/goldfish/x86_64-vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86_64/device.mk)
 
+# Enable mainline checking for excat this product name
+ifeq (aosp_x86_64,$(TARGET_PRODUCT))
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+endif
+
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     root/init.zygote32_64.rc \
     root/init.zygote64_32.rc \

@@ -27,6 +27,11 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/legacy_gsi_common.mk)
 
+# Enable mainline checking for excat this product name
+ifeq (aosp_arm64_ab,$(TARGET_PRODUCT))
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+endif
+
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     root/init.zygote32_64.rc \
     root/init.zygote64_32.rc \
