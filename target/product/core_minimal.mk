@@ -18,11 +18,12 @@
 # means most android products, but excludes wearables.
 #
 # Note: Do not add any contents directly to this file. Choose either
-# media_system or media_vendor depending on partition (also consider
-# base_<x>.mk or handheld_<x>.mk.
+# media_<x> depending on partition also consider base_<x>.mk or
+# handheld_<x>.mk.
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/media_system.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/media_vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/media_product.mk)
 
 PRODUCT_BRAND := generic
 PRODUCT_DEVICE := generic

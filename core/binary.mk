@@ -76,7 +76,7 @@ ifneq ($(NATIVE_COVERAGE),true)
   my_native_coverage := false
 endif
 
-ifeq ($(strip $(ENABLE_XOM)),true)
+ifneq ($(strip $(ENABLE_XOM)),false)
   ifndef LOCAL_IS_HOST_MODULE
     my_xom := true
     # Disable XOM in excluded paths.

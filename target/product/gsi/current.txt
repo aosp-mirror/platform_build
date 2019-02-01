@@ -43,6 +43,7 @@ VNDK-SP: libhwbinder.so
 VNDK-SP: libhwbinder_noltopgo.so
 VNDK-SP: libion.so
 VNDK-SP: liblzma.so
+VNDK-SP: libprocessgroup.so
 VNDK-SP: libunwindstack.so
 VNDK-SP: libutils.so
 VNDK-SP: libutilscallstack.so
@@ -136,6 +137,7 @@ VNDK-core: android.hardware.radio@1.2.so
 VNDK-core: android.hardware.radio@1.3.so
 VNDK-core: android.hardware.radio@1.4.so
 VNDK-core: android.hardware.secure_element@1.0.so
+VNDK-core: android.hardware.secure_element@1.1.so
 VNDK-core: android.hardware.sensors@1.0.so
 VNDK-core: android.hardware.soundtrigger@2.0.so
 VNDK-core: android.hardware.soundtrigger@2.0-core.so
@@ -204,7 +206,6 @@ VNDK-core: libmkbootimg_abi_check.so
 VNDK-core: libnetutils.so
 VNDK-core: libnl.so
 VNDK-core: libopus.so
-VNDK-core: libpagemap.so
 VNDK-core: libpcre2.so
 VNDK-core: libpiex.so
 VNDK-core: libpng.so

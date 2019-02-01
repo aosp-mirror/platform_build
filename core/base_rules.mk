@@ -96,6 +96,12 @@ ifneq ($(filter-out $(LOCAL_PROPRIETARY_MODULE),$(LOCAL_VENDOR_MODULE))$(filter-
 $(call pretty-error,Only one of LOCAL_PROPRIETARY_MODULE[$(LOCAL_PROPRIETARY_MODULE)] and LOCAL_VENDOR_MODULE[$(LOCAL_VENDOR_MODULE)] may be set, or they must be equal)
 endif
 
+non_system_module := $(filter true, \
+   $(LOCAL_PRODUCT_MODULE) \
+   $(LOCAL_PRODUCT_SERVICES_MODULE) \
+   $(LOCAL_VENDOR_MODULE) \
+   $(LOCAL_PROPRIETARY_MODULE))
+
 include $(BUILD_SYSTEM)/local_vndk.mk
 include $(BUILD_SYSTEM)/local_systemsdk.mk
 
@@ -154,6 +160,19 @@ ifneq ($(filter $(my_module_tags),user),)
   $(warning * section of a product makefile to have it installed.)
   $(warning * )
   $(error user tag detected on module.)
+endif
+
+my_bad_module_tags := $(filter eng debug,$(my_module_tags))
+ifdef my_bad_module_tags
+  ifeq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+    $(call pretty-warning,LOCAL_MODULE_TAGS := $(my_bad_module_tags) does not do anything for uninstallable modules)
+  endif
+  ifeq ($(BUILD_BROKEN_ENG_DEBUG_TAGS),false)
+    $(call pretty-error,LOCAL_MODULE_TAGS := $(my_bad_module_tags) is obsolete. See $(CHANGES_URL)#LOCAL_MODULE_TAGS)
+  else
+    $(call pretty-warning,LOCAL_MODULE_TAGS := $(my_bad_module_tags) is deprecated. See $(CHANGES_URL)#LOCAL_MODULE_TAGS)
+  endif
+  my_bad_module_tags :=
 endif
 
 # Only the tags mentioned in this test are expected to be set by module
@@ -383,7 +402,7 @@ $(LOCAL_INTERMEDIATE_TARGETS) : PRIVATE_MODULE:= $(my_register_name)
 # We name both BUILT and INSTALLED in case
 # LOCAL_UNINSTALLABLE_MODULE is set.
 .PHONY: $(my_all_targets)
-$(my_all_targets): $(LOCAL_BUILT_MODULE) $(LOCAL_INSTALLED_MODULE)
+$(my_all_targets): $(LOCAL_BUILT_MODULE) $(LOCAL_INSTALLED_MODULE) $(LOCAL_ADDITIONAL_CHECKED_MODULE)
 
 .PHONY: $(my_register_name)
 $(my_register_name): $(my_all_targets)
@@ -478,6 +497,8 @@ ifdef LOCAL_CHECKED_MODULE
 else
   my_checked_module := $(LOCAL_BUILT_MODULE)
 endif
+
+my_checked_module += $(LOCAL_ADDITIONAL_CHECKED_MODULE)
 
 # If they request that this module not be checked, then don't.
 # PLEASE DON'T SET THIS.  ANY PLACES THAT SET THIS WITHOUT

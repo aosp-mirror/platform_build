@@ -19,16 +19,52 @@ endif
 LOCAL_MODULE_SUFFIX := .apk
 LOCAL_BUILT_MODULE_STEM := package.apk
 
-#######################################
-include $(BUILD_SYSTEM)/base_rules.mk
-#######################################
+intermediates.COMMON := $(call local-intermediates-dir,COMMON)
 
 full_classes_jar := $(intermediates.COMMON)/classes.jar
 full_classes_pre_proguard_jar := $(intermediates.COMMON)/classes-pre-proguard.jar
 full_classes_header_jar := $(intermediates.COMMON)/classes-header.jar
 
-$(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_jar)))
-$(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_pre_proguard_jar)))
+#######################################
+include $(BUILD_SYSTEM)/base_rules.mk
+#######################################
+
+ifdef LOCAL_SOONG_CLASSES_JAR
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_jar)))
+  $(eval $(call copy-one-file,$(LOCAL_SOONG_CLASSES_JAR),$(full_classes_pre_proguard_jar)))
+  $(eval $(call add-dependency,$(LOCAL_BUILT_MODULE),$(full_classes_jar)))
+
+  ifneq ($(TURBINE_ENABLED),false)
+    ifdef LOCAL_SOONG_HEADER_JAR
+      $(eval $(call copy-one-file,$(LOCAL_SOONG_HEADER_JAR),$(full_classes_header_jar)))
+    else
+      $(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
+    endif
+  endif # TURBINE_ENABLED != false
+endif
+
+# Run veridex on product, product_services and vendor modules.
+# We skip it for unbundled app builds where we cannot build veridex.
+module_run_appcompat :=
+ifeq (true,$(non_system_module))
+ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))  # ! unbundled app build
+ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
+  module_run_appcompat := true
+endif
+endif
+endif
+
+ifeq ($(module_run_appcompat),true)
+  $(LOCAL_BUILT_MODULE): $(appcompat-files)
+  $(LOCAL_BUILT_MODULE): PRIVATE_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
+  $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
+	@echo "Copy: $@"
+	$(copy-file-to-target)
+	$(call appcompat-header, aapt2)
+	$(run-appcompat)
+else
+  $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
+endif
 
 ifdef LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR
   $(eval $(call copy-one-file,$(LOCAL_SOONG_JACOCO_REPORT_CLASSES_JAR),\
@@ -43,15 +79,6 @@ ifdef LOCAL_SOONG_PROGUARD_DICT
   $(call add-dependency,$(LOCAL_BUILT_MODULE),\
     $(intermediates.COMMON)/proguard_dictionary)
 endif
-
-ifneq ($(TURBINE_ENABLED),false)
-ifdef LOCAL_SOONG_HEADER_JAR
-$(eval $(call copy-one-file,$(LOCAL_SOONG_HEADER_JAR),$(full_classes_header_jar)))
-else
-$(eval $(call copy-one-file,$(full_classes_jar),$(full_classes_header_jar)))
-endif
-endif # TURBINE_ENABLED != false
-
 
 ifdef LOCAL_SOONG_RESOURCE_EXPORT_PACKAGE
 resource_export_package := $(intermediates.COMMON)/package-export.apk
@@ -74,14 +101,12 @@ ifneq ($(BUILD_PLATFORM_ZIP),)
   $(eval $(call copy-one-file,$(LOCAL_SOONG_DEX_JAR),$(dir $(LOCAL_BUILT_MODULE))package.dex.apk))
 endif
 
-$(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
-
 my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
   $(call word-colon,1,$(f)):$(PRODUCT_OUT)$(call word-colon,2,$(f)))
 my_installed := $(call copy-many-files, $(my_built_installed))
 ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_installed)
-$(my_register_name): $(my_installed)
+$(my_all_targets): $(my_installed)
 
 # embedded JNI will already have been handled by soong
 my_embed_jni :=
@@ -139,7 +164,7 @@ ifdef LOCAL_SOONG_RRO_DIRS
       $(my_register_name), \
       false, \
       $(LOCAL_FULL_MANIFEST_FILE), \
-      $(LOCAL_EXPORT_PACKAGE_RESOURCES), \
+      $(if $(LOCAL_EXPORT_PACKAGE_RESOURCES),true,false), \
       $(LOCAL_SOONG_RRO_DIRS))
 endif
 

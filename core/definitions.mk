@@ -2679,8 +2679,8 @@ $(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS)
 	    echo "--output-dex=$(dir $(2))/`basename $$$${INPUT_DEX}`"; \
 	done | xargs $(HIDDENAPI) encode --api-flags=$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS)
 
-$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): $(1)
-$(INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST): PRIVATE_DEX_INPUTS := $$(PRIVATE_DEX_INPUTS) $(1)
+$(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS): $(1)
+$(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS): PRIVATE_DEX_INPUTS := $$(PRIVATE_DEX_INPUTS) $(1)
 endef
 else  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
 define hiddenapi-copy-dex-files
@@ -2694,14 +2694,15 @@ endif  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
 
 # Generate a greylist.txt from a classes.jar
 define hiddenapi-generate-csv
+ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
 ifneq (,$(wildcard frameworks/base))
 # Only generate this target if we're in a tree with frameworks/base present.
-$(2): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
-	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) \
+$(2): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS)
+	$(CLASS2GREYLIST) --stub-api-flags $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS) $(1) \
 	    --write-flags-csv $(2)
 
-$(3): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST)
-	$(CLASS2GREYLIST) --public-api-list $(INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST) $(1) \
+$(3): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS)
+	$(CLASS2GREYLIST) --stub-api-flags $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS) $(1) \
 	    --write-metadata-csv $(3)
 
 $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS): $(2)
@@ -2712,29 +2713,7 @@ $(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): \
     PRIVATE_METADATA_INPUTS := $$(PRIVATE_METADATA_INPUTS) $(3)
 
 endif
-endef
-
-# File names for intermediate dex files of `hiddenapi-copy-soong-jar`.
-hiddenapi-soong-input-dex = $(dir $(1))/hiddenapi/dex-input/classes.dex
-hiddenapi-soong-output-dex = $(dir $(1))/hiddenapi/dex-output/classes.dex
-
-# Decompress a JAR with dex files, invoke $(HIDDENAPI) on them and compress again.
-define hiddenapi-copy-soong-jar
-$(call hiddenapi-soong-input-dex,$(2)): $(1)
-	@rm -rf `dirname $$@`
-	@mkdir -p `dirname $$@`
-	unzip -o -q $(1) 'classes*.dex' -d `dirname $$@`
-	find `dirname $$@` -maxdepth 1 -name 'classes*.dex' | xargs touch
-
-$(call hiddenapi-copy-dex-files,\
-    $(call hiddenapi-soong-input-dex,$(2)),\
-    $(call hiddenapi-soong-output-dex,$(2)))
-
-$(2): OUTPUT_DIR := $(dir $(call hiddenapi-soong-output-dex,$(2)))
-$(2): OUTPUT_JAR := $(dir $(call hiddenapi-soong-output-dex,$(2)))classes.jar
-$(2): $(1) $(call hiddenapi-soong-output-dex,$(2)) | $(SOONG_ZIP) $(MERGE_ZIPS)
-	$(SOONG_ZIP) -o $${OUTPUT_JAR} -C $${OUTPUT_DIR} -f "$${OUTPUT_DIR}/classes*.dex"
-	$(MERGE_ZIPS) -D -zipToNotStrip $${OUTPUT_JAR} -stripFile "classes*.dex" $(2) $${OUTPUT_JAR} $(1)
+endif  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
 endef
 
 
@@ -2848,17 +2827,18 @@ endef
 #  $(5): New LOCAL_CERTIFICATE value.
 #  $(6): New LOCAL_INSTRUMENTATION_FOR value.
 #  $(7): New LOCAL_MANIFEST_INSTRUMENTATION_FOR value.
+#  $(8): New LOCAL_COMPATIBILITY_SUITE value.
 #
 # Note that LOCAL_PACKAGE_OVERRIDES is NOT cleared in
 # clear_vars.mk.
 ###########################################################
 define inherit-package
-  $(eval $(call inherit-package-internal,$(1),$(2),$(3),$(4),$(5),$(6),$(7)))
+  $(eval $(call inherit-package-internal,$(1),$(2),$(3),$(4),$(5),$(6),$(7),$(8)))
 endef
 
 define inherit-package-internal
   LOCAL_PACKAGE_OVERRIDES \
-      := $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||&&$(strip $(5))||&&$(strip $(6))||&&$(strip $(7)) $(LOCAL_PACKAGE_OVERRIDES)
+      := $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||&&$(strip $(5))||&&$(strip $(6))||&&$(strip $(7))||&&$(strip $(8)) $(LOCAL_PACKAGE_OVERRIDES)
   include $(1)
   LOCAL_PACKAGE_OVERRIDES \
       := $(wordlist 1,$(words $(LOCAL_PACKAGE_OVERRIDES)), $(LOCAL_PACKAGE_OVERRIDES))
@@ -2883,6 +2863,7 @@ define set-inherited-package-variables-internal
     $(call keep-or-override,LOCAL_CERTIFICATE,$(patsubst &&%,%,$(word 5,$(_o)))) \
     $(call keep-or-override,LOCAL_INSTRUMENTATION_FOR,$(patsubst &&%,%,$(word 6,$(_o)))) \
     $(call keep-or-override,LOCAL_MANIFEST_INSTRUMENTATION_FOR,$(patsubst &&%,%,$(word 7,$(_o)))) \
+    $(call keep-or-override,LOCAL_COMPATIBILITY_SUITE,$(patsubst &&%,%,$(word 8,$(_o)))) \
     $(eval LOCAL_OVERRIDES_PACKAGES := $(sort $(LOCAL_OVERRIDES_PACKAGES) $(word 2,$(_o)))) \
     true \
   ,)

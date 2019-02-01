@@ -271,7 +271,8 @@ vars := \
   BUILD_BROKEN_ANDROIDMK_EXPORTS \
   BUILD_BROKEN_DUP_COPY_HEADERS \
   BUILD_BROKEN_DUP_RULES \
-  BUILD_BROKEN_PHONY_TARGETS
+  BUILD_BROKEN_PHONY_TARGETS \
+  BUILD_BROKEN_ENG_DEBUG_TAGS
 
 $(foreach var,$(vars),$(eval $(var) := $$(strip $$($(var)))))
 
@@ -281,13 +282,9 @@ $(foreach var,$(vars), \
 
 .KATI_READONLY := $(vars)
 
-CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
-
 ifneq ($(BUILD_BROKEN_ANDROIDMK_EXPORTS),true)
 $(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
 endif
-
-CHANGES_URL :=
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_RAMDISK
@@ -296,26 +293,112 @@ TARGET_COPY_OUT_RAMDISK := $(TARGET_COPY_OUT_ROOT)
 endif
 
 ###########################################
+# Configure whether we're building the system image
+BUILDING_SYSTEM_IMAGE := true
+ifeq ($(PRODUCT_BUILD_SYSTEM_IMAGE),)
+  ifndef PRODUCT_USE_DYNAMIC_PARTITION_SIZE
+    ifndef BOARD_SYSTEMIMAGE_PARTITION_SIZE
+      BUILDING_SYSTEM_IMAGE :=
+    endif
+  endif
+else ifeq ($(PRODUCT_BUILD_SYSTEM_IMAGE),false)
+  BUILDING_SYSTEM_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_SYSTEM_IMAGE
+
+# Are we building a system_other image
+BUILDING_SYSTEM_OTHER_IMAGE :=
+ifeq ($(PRODUCT_BUILD_SYSTEM_OTHER_IMAGE),)
+  ifdef BUILDING_SYSTEM_IMAGE
+    ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
+      BUILDING_SYSTEM_OTHER_IMAGE := true
+    endif
+  endif
+else ifeq ($(PRODUCT_BUILD_SYSTEM_OTHER_IMAGE),true)
+  BUILDING_SYSTEM_OTHER_IMAGE := true
+  ifndef BUILDING_SYSTEM_IMAGE
+    $(error PRODUCT_BUILD_SYSTEM_OTHER_IMAGE = true requires building the system image)
+  endif
+endif
+.KATI_READONLY := BUILDING_SYSTEM_OTHER_IMAGE
+
+# Are we building a cache image
+BUILDING_CACHE_IMAGE :=
+ifeq ($(PRODUCT_BUILD_CACHE_IMAGE),)
+  ifdef BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_CACHE_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_CACHE_IMAGE),true)
+  BUILDING_CACHE_IMAGE := true
+  ifndef BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_CACHE_IMAGE set to true, but BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE not defined)
+  endif
+endif
+.KATI_READONLY := BUILDING_CACHE_IMAGE
+
+# TODO: Add BUILDING_BOOT_IMAGE / BUILDING_RECOVERY_IMAGE
+# This gets complicated with BOARD_USES_RECOVERY_AS_BOOT, so skipping for now.
+
+# Are we building a ramdisk image
+BUILDING_RAMDISK_IMAGE := true
+ifeq ($(PRODUCT_BUILD_RAMDISK_IMAGE),)
+  # TODO: Be smarter about this. This probably only needs to happen when one of the follow is true:
+  #  BUILDING_BOOT_IMAGE
+  #  BUILDING_RECOVERY_IMAGE
+else ifeq ($(PRODUCT_BUILD_RAMDISK_IMAGE),false)
+  BUILDING_RAMDISK_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_RAMDISK_IMAGE
+
+# Are we building a userdata image
+BUILDING_USERDATA_IMAGE :=
+ifeq ($(PRODUCT_BUILD_USERDATA_IMAGE),)
+  ifdef BOARD_USERDATAIMAGE_PARTITION_SIZE
+    BUILDING_USERDATA_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_USERDATA_IMAGE),true)
+  BUILDING_USERDATA_IMAGE := true
+endif
+.KATI_READONLY := BUILDING_USERDATA_IMAGE
+
+###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR
 ifeq ($(TARGET_COPY_OUT_VENDOR),$(_vendor_path_placeholder))
-TARGET_COPY_OUT_VENDOR := system/vendor
+  TARGET_COPY_OUT_VENDOR := system/vendor
 else ifeq ($(filter vendor system/vendor,$(TARGET_COPY_OUT_VENDOR)),)
-$(error TARGET_COPY_OUT_VENDOR must be either 'vendor' or 'system/vendor', seeing '$(TARGET_COPY_OUT_VENDOR)'.)
+  $(error TARGET_COPY_OUT_VENDOR must be either 'vendor' or 'system/vendor', seeing '$(TARGET_COPY_OUT_VENDOR)'.)
 endif
 PRODUCT_COPY_FILES := $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),$(PRODUCT_COPY_FILES))
 
 BOARD_USES_VENDORIMAGE :=
 ifdef BOARD_PREBUILT_VENDORIMAGE
-BOARD_USES_VENDORIMAGE := true
+  BOARD_USES_VENDORIMAGE := true
 endif
 ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
-BOARD_USES_VENDORIMAGE := true
+  BOARD_USES_VENDORIMAGE := true
 endif
 ifeq ($(TARGET_COPY_OUT_VENDOR),vendor)
-BOARD_USES_VENDORIMAGE := true
+  BOARD_USES_VENDORIMAGE := true
 else ifdef BOARD_USES_VENDORIMAGE
-$(error TARGET_COPY_OUT_VENDOR must be set to 'vendor' to use a vendor image)
+  $(error TARGET_COPY_OUT_VENDOR must be set to 'vendor' to use a vendor image)
 endif
+.KATI_READONLY := BOARD_USES_VENDORIMAGE
+
+BUILDING_VENDOR_IMAGE :=
+ifeq ($(PRODUCT_BUILD_VENDOR_IMAGE),)
+  ifdef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_VENDOR_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_VENDOR_IMAGE),true)
+  BUILDING_VENDOR_IMAGE := true
+  ifndef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_VENDOR_IMAGE set to true, but BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE not defined)
+  endif
+endif
+ifdef BOARD_PREBUILT_VENDORIMAGE
+  BUILDING_VENDOR_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_VENDOR_IMAGE
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_PRODUCT
@@ -328,60 +411,114 @@ PRODUCT_COPY_FILES := $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRO
 
 BOARD_USES_PRODUCTIMAGE :=
 ifdef BOARD_PREBUILT_PRODUCTIMAGE
-BOARD_USES_PRODUCTIMAGE := true
+  BOARD_USES_PRODUCTIMAGE := true
 endif
 ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
-BOARD_USES_PRODUCTIMAGE := true
+  BOARD_USES_PRODUCTIMAGE := true
 endif
 ifeq ($(TARGET_COPY_OUT_PRODUCT),product)
-BOARD_USES_PRODUCTIMAGE := true
+  BOARD_USES_PRODUCTIMAGE := true
 else ifdef BOARD_USES_PRODUCTIMAGE
-$(error TARGET_COPY_OUT_PRODUCT must be set to 'product' to use a product image)
+  $(error TARGET_COPY_OUT_PRODUCT must be set to 'product' to use a product image)
 endif
+.KATI_READONLY := BOARD_USES_PRODUCTIMAGE
+
+BUILDING_PRODUCT_IMAGE :=
+ifeq ($(PRODUCT_BUILD_PRODUCT_IMAGE),)
+  ifdef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_PRODUCT_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_PRODUCT_IMAGE),true)
+  BUILDING_PRODUCT_IMAGE := true
+  ifndef BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_PRODUCT_IMAGE set to true, but BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE not defined)
+  endif
+endif
+ifdef BOARD_PREBUILT_PRODUCTIMAGE
+  BUILDING_PRODUCT_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_PRODUCT_IMAGE
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_PRODUCT_SERVICES
+MERGE_PRODUCT_SERVICES_INTO_PRODUCT :=
 ifeq ($(TARGET_COPY_OUT_PRODUCT_SERVICES),$(_product_services_path_placeholder))
-TARGET_COPY_OUT_PRODUCT_SERVICES := system/product_services
+  TARGET_COPY_OUT_PRODUCT_SERVICES := system/product_services
+else ifeq ($(TARGET_COPY_OUT_PRODUCT),$(TARGET_COPY_OUT_PRODUCT_SERVICES))
+  MERGE_PRODUCT_SERVICES_INTO_PRODUCT := true
 else ifeq ($(filter product_services system/product_services,$(TARGET_COPY_OUT_PRODUCT_SERVICES)),)
-$(error TARGET_COPY_OUT_PRODUCT_SERVICES must be either 'product_services' or 'system/product_services', seeing '$(TARGET_COPY_OUT_PRODUCT_SERVICES)'.)
+  $(error TARGET_COPY_OUT_PRODUCT_SERVICES must be either 'product_services',\
+    '$(TARGET_COPY_OUT_PRODUCT)' or 'system/product_services', seeing '$(TARGET_COPY_OUT_PRODUCT_SERVICES)'.)
 endif
+.KATI_READONLY := MERGE_PRODUCT_SERVICES_INTO_PRODUCT
 PRODUCT_COPY_FILES := $(subst $(_product_services_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),$(PRODUCT_COPY_FILES))
 
 BOARD_USES_PRODUCT_SERVICESIMAGE :=
 ifdef BOARD_PREBUILT_PRODUCT_SERVICESIMAGE
-BOARD_USES_PRODUCT_SERVICESIMAGE := true
+  BOARD_USES_PRODUCT_SERVICESIMAGE := true
 endif
 ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
-BOARD_USES_PRODUCT_SERVICESIMAGE := true
+  BOARD_USES_PRODUCT_SERVICESIMAGE := true
 endif
 ifeq ($(TARGET_COPY_OUT_PRODUCT_SERVICES),product_services)
-BOARD_USES_PRODUCT_SERVICESIMAGE := true
+  BOARD_USES_PRODUCT_SERVICESIMAGE := true
 else ifdef BOARD_USES_PRODUCT_SERVICESIMAGE
-$(error TARGET_COPY_OUT_PRODUCT_SERVICES must be set to 'product_services' to use a product_services image)
+  $(error TARGET_COPY_OUT_PRODUCT_SERVICES must be set to 'product_services' to use a product_services image)
 endif
+
+BUILDING_PRODUCT_SERVICES_IMAGE :=
+ifeq ($(PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE),)
+  ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_PRODUCT_SERVICES_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE),true)
+  BUILDING_PRODUCT_SERVICES_IMAGE := true
+  ifndef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE set to true, but BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE not defined)
+  endif
+endif
+ifdef BOARD_PREBUILT_PRODUCT_SERVICESIMAGE
+  BUILDING_PRODUCT_SERVICES_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_PRODUCT_SERVICES_IMAGE
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_ODM
 ifeq ($(TARGET_COPY_OUT_ODM),$(_odm_path_placeholder))
-TARGET_COPY_OUT_ODM := vendor/odm
+  TARGET_COPY_OUT_ODM := vendor/odm
 else ifeq ($(filter odm vendor/odm,$(TARGET_COPY_OUT_ODM)),)
-$(error TARGET_COPY_OUT_ODM must be either 'odm' or 'vendor/odm', seeing '$(TARGET_COPY_OUT_ODM)'.)
+  $(error TARGET_COPY_OUT_ODM must be either 'odm' or 'vendor/odm', seeing '$(TARGET_COPY_OUT_ODM)'.)
 endif
 PRODUCT_COPY_FILES := $(subst $(_odm_path_placeholder),$(TARGET_COPY_OUT_ODM),$(PRODUCT_COPY_FILES))
 
 BOARD_USES_ODMIMAGE :=
 ifdef BOARD_PREBUILT_ODMIMAGE
-BOARD_USES_ODMIMAGE := true
+  BOARD_USES_ODMIMAGE := true
 endif
 ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
-BOARD_USES_ODMIMAGE := true
+  BOARD_USES_ODMIMAGE := true
 endif
 ifeq ($(TARGET_COPY_OUT_ODM),odm)
-BOARD_USES_ODMIMAGE := true
+  BOARD_USES_ODMIMAGE := true
 else ifdef BOARD_USES_ODMIMAGE
-$(error TARGET_COPY_OUT_ODM must be set to 'odm' to use an odm image)
+  $(error TARGET_COPY_OUT_ODM must be set to 'odm' to use an odm image)
 endif
+
+BUILDING_ODM_IMAGE :=
+ifeq ($(ODM_BUILD_ODM_IMAGE),)
+  ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_ODM_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_ODM_IMAGE),true)
+  BUILDING_ODM_IMAGE := true
+  ifndef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_ODM_IMAGE set to true, but BOARD_ODMIMAGE_FILE_SYSTEM_TYPE not defined)
+  endif
+endif
+ifdef BOARD_PREBUILT_ODMIMAGE
+  BUILDING_ODM_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_ODM_IMAGE
 
 ###########################################
 # Ensure that only TARGET_RECOVERY_UPDATER_LIBS *or* AB_OTA_UPDATER is set.

@@ -72,11 +72,11 @@ endif
 # Run veridex on product, product_services and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
-ifeq (true,$(filter true, \
-   $(LOCAL_PRODUCT_MODULE) $(LOCAL_PRODUCT_SERVICES_MODULE) \
-   $(LOCAL_VENDOR_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
+ifeq (true,$(non_system_module))
 ifeq (,$(TARGET_BUILD_APPS)$(filter true,$(TARGET_BUILD_PDK)))  # ! unbundled app build
+ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
   module_run_appcompat := true
+endif
 endif
 endif
 
@@ -169,6 +169,9 @@ my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
 my_common :=
 include $(BUILD_SYSTEM)/link_type.mk
 endif  # prebuilt_module_is_a_library
+
+# Check prebuilt ELF binaries.
+include $(BUILD_SYSTEM)/check_elf_file.mk
 
 # The real dependency will be added after all Android.mks are loaded and the install paths
 # of the shared libraries are determined.
@@ -363,7 +366,7 @@ ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 ifdef LOCAL_DEX_PREOPT
 $(built_module) : PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
 $(built_module) : $(intermediates)/strip.sh
-$(built_module) : | $(DEXPREOPT_GEN_DEPS)
+$(built_module) : | $(DEXPREOPT_STRIP_DEPS)
 $(built_module) : .KATI_DEPFILE := $(built_module).d
 endif
 endif
@@ -464,7 +467,7 @@ else # ! boot jar
 
 $(built_module): PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
 $(built_module): $(intermediates)/strip.sh
-$(built_module): | $(DEXPREOPT_GEN_DEPS)
+$(built_module): | $(DEXPREOPT_STRIP_DEPS)
 $(built_module): .KATI_DEPFILE := $(built_module).d
 $(built_module): $(my_prebuilt_src_file)
 	$(PRIVATE_STRIP_SCRIPT) $< $@

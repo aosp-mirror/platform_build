@@ -34,6 +34,7 @@ endif
 
 # Mark variables deprecated/obsolete
 CHANGES_URL := https://android.googlesource.com/platform/build/+/master/Changes.md
+.KATI_READONLY := CHANGES_URL
 $(KATI_obsolete_var PATH,Do not use PATH directly. See $(CHANGES_URL)#PATH)
 $(KATI_obsolete_var PYTHONPATH,Do not use PYTHONPATH directly. See $(CHANGES_URL)#PYTHONPATH)
 $(KATI_obsolete_var OUT,Use OUT_DIR instead. See $(CHANGES_URL)#OUT)
@@ -94,8 +95,6 @@ $(KATI_deprecated_var USER,Use BUILD_USERNAME instead. See $(CHANGES_URL)#USER)
 
 # This is marked as obsolete in envsetup.mk after reading the BoardConfig.mk
 $(KATI_deprecate_export It is a global setting. See $(CHANGES_URL)#export_keyword)
-
-CHANGES_URL :=
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -212,11 +211,6 @@ endif
 HIDDENAPI_EXTRA_APP_USAGE_JARS := \
     core-oj-hiddenapi \
 
-# Default to remove the org.apache.http.legacy from bootclasspath
-ifeq ($(REMOVE_OAHL_FROM_BCP),)
-REMOVE_OAHL_FROM_BCP := true
-endif
-
 # ###############################################################
 # Broken build defaults
 # ###############################################################
@@ -224,6 +218,7 @@ BUILD_BROKEN_ANDROIDMK_EXPORTS :=
 BUILD_BROKEN_DUP_COPY_HEADERS :=
 BUILD_BROKEN_DUP_RULES :=
 BUILD_BROKEN_PHONY_TARGETS :=
+BUILD_BROKEN_ENG_DEBUG_TAGS :=
 
 # ###############################################################
 # Include sub-configuration files
@@ -707,10 +702,13 @@ JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/make/tools/fat16copy.py
 CHECK_LINK_TYPE := build/make/tools/check_link_type.py
+CHECK_ELF_FILE := build/make/tools/check_elf_file.py
 LPMAKE := $(HOST_OUT_EXECUTABLES)/lpmake$(HOST_EXECUTABLE_SUFFIX)
 BUILD_SUPER_IMAGE := build/make/tools/releasetools/build_super_image.py
 
-PROGUARD := external/proguard/bin/proguard.sh
+PROGUARD_HOME := external/proguard
+PROGUARD := $(PROGUARD_HOME)/bin/proguard.sh
+PROGUARD_DEPS := $(PROGUARD) $(PROGUARD_HOME)/lib/proguard.jar
 JAVATAGS := build/make/tools/java-event-log-tags.py
 MERGETAGS := build/make/tools/merge-event-log-tags.py
 BUILD_IMAGE_SRCS := $(wildcard build/make/tools/releasetools/*.py)
@@ -726,13 +724,13 @@ BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump2$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
-HIDDENAPI := $(HOST_OUT_EXECUTABLES)/hiddenapi
-CLASS2GREYLIST := $(HOST_OUT_EXECUTABLES)/class2greylist
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
 FINDBUGS := $(FINDBUGS_DIR)/findbugs
 
 JETIFIER := prebuilts/sdk/tools/jetifier/jetifier-standalone/bin/jetifier-standalone
+
+EXTRACT_KERNEL := build/make/tools/extract_kernel.py
 
 COLUMN:= column
 
@@ -1065,11 +1063,11 @@ BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE := true
 # AOSP target built without vendor image), don't build the retrofit full OTA package. Because we
 # won't be able to build meaningful super_* images for retrofitting purpose.
 ifneq (,$(filter vendor,$(BOARD_SUPER_PARTITION_PARTITION_LIST)))
-ifndef BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+ifndef BUILDING_VENDOR_IMAGE
 ifndef BOARD_PREBUILT_VENDORIMAGE
 BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE :=
 endif # BOARD_PREBUILT_VENDORIMAGE
-endif # BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE
+endif # BUILDING_VENDOR_IMAGE
 endif # BOARD_SUPER_PARTITION_PARTITION_LIST
 
 else # PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
@@ -1226,9 +1224,8 @@ ifndef INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE
 INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-private-dex.txt
 endif
 
-INTERNAL_PLATFORM_HIDDENAPI_PUBLIC_LIST := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-public-list.txt
-INTERNAL_PLATFORM_HIDDENAPI_PRIVATE_LIST := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-private-list.txt
 INTERNAL_PLATFORM_HIDDENAPI_FLAGS := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-flags.csv
+INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-stub-flags.txt
 INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-greylist.csv
 
 # Missing optional uses-libraries so that the platform doesn't create build rules that depend on
