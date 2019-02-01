@@ -27,6 +27,7 @@ import test_utils
 import validate_target_files
 from rangelib import RangeSet
 
+from blockimgdiff import EmptyImage, DataImage
 
 KiB = 1024
 MiB = 1024 * KiB
@@ -988,3 +989,236 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
                              recovery_image, boot_image, self._info)
     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
                                                         self._info)
+
+
+class MockScriptWriter(object):
+  """A class that mocks edify_generator.EdifyGenerator.
+  """
+  def __init__(self, enable_comments=False):
+    self.lines = []
+    self.enable_comments = enable_comments
+  def Comment(self, comment):
+    if self.enable_comments:
+      self.lines.append("# {}".format(comment))
+  def AppendExtra(self, extra):
+    self.lines.append(extra)
+  def __str__(self):
+    return "\n".join(self.lines)
+
+
+class MockBlockDifference(object):
+  def __init__(self, partition, tgt, src=None):
+    self.partition = partition
+    self.tgt = tgt
+    self.src = src
+  def WriteScript(self, script, _, progress=None,
+                  write_verify_script=False):
+    if progress:
+      script.AppendExtra("progress({})".format(progress))
+    script.AppendExtra("patch({});".format(self.partition))
+    if write_verify_script:
+      self.WritePostInstallVerifyScript(script)
+  def WritePostInstallVerifyScript(self, script):
+    script.AppendExtra("verify({});".format(self.partition))
+
+
+class FakeSparseImage(object):
+  def __init__(self, size):
+    self.blocksize = 4096
+    self.total_blocks = size // 4096
+    assert size % 4096 == 0, "{} is not a multiple of 4096".format(size)
+
+
+class DynamicPartitionsDifferenceTest(test_utils.ReleaseToolsTestCase):
+  @staticmethod
+  def get_op_list(output_path):
+    with zipfile.ZipFile(output_path, 'r') as output_zip:
+      with output_zip.open("dynamic_partitions_op_list") as op_list:
+        return [line.strip() for line in op_list.readlines()
+                if not line.startswith("#")]
+
+  def setUp(self):
+    self.script = MockScriptWriter()
+    self.output_path = common.MakeTempFile(suffix='.zip')
+
+  def test_full(self):
+    target_info = common.LoadDictionaryFromLines("""
+dynamic_partition_list=system vendor
+super_partition_groups=group_foo
+super_group_foo_group_size={group_size}
+super_group_foo_partition_list=system vendor
+""".format(group_size=4 * GiB).split("\n"))
+    block_diffs = [MockBlockDifference("system", FakeSparseImage(3 * GiB)),
+                   MockBlockDifference("vendor", FakeSparseImage(1 * GiB))]
+
+    dp_diff = common.DynamicPartitionsDifference(target_info, block_diffs)
+    with zipfile.ZipFile(self.output_path, 'w') as output_zip:
+      dp_diff.WriteScript(self.script, output_zip, write_verify_script=True)
+
+    self.assertEqual(str(self.script).strip(), """
+assert(update_dynamic_partitions(package_extract_file("dynamic_partitions_op_list")));
+patch(vendor);
+verify(vendor);
+unmap_partition("vendor");
+patch(system);
+verify(system);
+unmap_partition("system");
+""".strip())
+
+    lines = self.get_op_list(self.output_path)
+
+    remove_all_groups = lines.index("remove_all_groups")
+    add_group = lines.index("add_group group_foo 4294967296")
+    add_vendor = lines.index("add vendor group_foo")
+    add_system = lines.index("add system group_foo")
+    resize_vendor = lines.index("resize vendor 1073741824")
+    resize_system = lines.index("resize system 3221225472")
+
+    self.assertLess(remove_all_groups, add_group,
+                    "Should add groups after removing all groups")
+    self.assertLess(add_group, min(add_vendor, add_system),
+                    "Should add partitions after adding group")
+    self.assertLess(add_system, resize_system,
+                    "Should resize system after adding it")
+    self.assertLess(add_vendor, resize_vendor,
+                    "Should resize vendor after adding it")
+
+  def test_inc_groups(self):
+    source_info = common.LoadDictionaryFromLines("""
+super_partition_groups=group_foo group_bar group_baz
+super_group_foo_group_size={group_foo_size}
+super_group_bar_group_size={group_bar_size}
+""".format(group_foo_size=4 * GiB, group_bar_size=3 * GiB).split("\n"))
+    target_info = common.LoadDictionaryFromLines("""
+super_partition_groups=group_foo group_baz group_qux
+super_group_foo_group_size={group_foo_size}
+super_group_baz_group_size={group_baz_size}
+super_group_qux_group_size={group_qux_size}
+""".format(group_foo_size=3 * GiB, group_baz_size=4 * GiB,
+           group_qux_size=1 * GiB).split("\n"))
+
+    dp_diff = common.DynamicPartitionsDifference(target_info,
+                                                 block_diffs=[],
+                                                 source_info_dict=source_info)
+    with zipfile.ZipFile(self.output_path, 'w') as output_zip:
+      dp_diff.WriteScript(self.script, output_zip, write_verify_script=True)
+
+    lines = self.get_op_list(self.output_path)
+
+    removed = lines.index("remove_group group_bar")
+    shrunk = lines.index("resize_group group_foo 3221225472")
+    grown = lines.index("resize_group group_baz 4294967296")
+    added = lines.index("add_group group_qux 1073741824")
+
+    self.assertLess(max(removed, shrunk) < min(grown, added),
+                    "ops that remove / shrink partitions must precede ops that "
+                    "grow / add partitions")
+
+  def test_incremental(self):
+    source_info = common.LoadDictionaryFromLines("""
+dynamic_partition_list=system vendor product product_services
+super_partition_groups=group_foo
+super_group_foo_group_size={group_foo_size}
+super_group_foo_partition_list=system vendor product product_services
+""".format(group_foo_size=4 * GiB).split("\n"))
+    target_info = common.LoadDictionaryFromLines("""
+dynamic_partition_list=system vendor product odm
+super_partition_groups=group_foo group_bar
+super_group_foo_group_size={group_foo_size}
+super_group_foo_partition_list=system vendor odm
+super_group_bar_group_size={group_bar_size}
+super_group_bar_partition_list=product
+""".format(group_foo_size=3 * GiB, group_bar_size=1 * GiB).split("\n"))
+
+    block_diffs = [MockBlockDifference("system", FakeSparseImage(1536 * MiB),
+                                       src=FakeSparseImage(1024 * MiB)),
+                   MockBlockDifference("vendor", FakeSparseImage(512 * MiB),
+                                       src=FakeSparseImage(1024 * MiB)),
+                   MockBlockDifference("product", FakeSparseImage(1024 * MiB),
+                                       src=FakeSparseImage(1024 * MiB)),
+                   MockBlockDifference("product_services", None,
+                                       src=FakeSparseImage(1024 * MiB)),
+                   MockBlockDifference("odm", FakeSparseImage(1024 * MiB),
+                                       src=None)]
+
+    dp_diff = common.DynamicPartitionsDifference(target_info, block_diffs,
+                                                 source_info_dict=source_info)
+    with zipfile.ZipFile(self.output_path, 'w') as output_zip:
+      dp_diff.WriteScript(self.script, output_zip, write_verify_script=True)
+
+    metadata_idx = self.script.lines.index(
+        'assert(update_dynamic_partitions(package_extract_file('
+        '"dynamic_partitions_op_list")));')
+    self.assertLess(self.script.lines.index('patch(vendor);'), metadata_idx)
+    self.assertLess(metadata_idx, self.script.lines.index('verify(vendor);'))
+    for p in ("product", "system", "odm"):
+      patch_idx = self.script.lines.index("patch({});".format(p))
+      verify_idx = self.script.lines.index("verify({});".format(p))
+      self.assertLess(metadata_idx, patch_idx,
+                      "Should patch {} after updating metadata".format(p))
+      self.assertLess(patch_idx, verify_idx,
+                      "Should verify {} after patching".format(p))
+
+    self.assertNotIn("patch(product_services);", self.script.lines)
+
+    lines = self.get_op_list(self.output_path)
+
+    remove = lines.index("remove product_services")
+    move_product_out = lines.index("move product default")
+    shrink = lines.index("resize vendor 536870912")
+    shrink_group = lines.index("resize_group group_foo 3221225472")
+    add_group_bar = lines.index("add_group group_bar 1073741824")
+    add_odm = lines.index("add odm group_foo")
+    grow_existing = lines.index("resize system 1610612736")
+    grow_added = lines.index("resize odm 1073741824")
+    move_product_in = lines.index("move product group_bar")
+
+    max_idx_move_partition_out_foo = max(remove, move_product_out, shrink)
+    min_idx_move_partition_in_foo = min(add_odm, grow_existing, grow_added)
+
+    self.assertLess(max_idx_move_partition_out_foo, shrink_group,
+                    "Must shrink group after partitions inside group are shrunk"
+                    " / removed")
+
+    self.assertLess(add_group_bar, move_product_in,
+                    "Must add partitions to group after group is added")
+
+    self.assertLess(max_idx_move_partition_out_foo,
+                    min_idx_move_partition_in_foo,
+                    "Must shrink partitions / remove partitions from group"
+                    "before adding / moving partitions into group")
+
+  def test_remove_partition(self):
+    source_info = common.LoadDictionaryFromLines("""
+blockimgdiff_versions=3,4
+use_dynamic_partitions=true
+dynamic_partition_list=foo
+super_partition_groups=group_foo
+super_group_foo_group_size={group_foo_size}
+super_group_foo_partition_list=foo
+""".format(group_foo_size=4 * GiB).split("\n"))
+    target_info = common.LoadDictionaryFromLines("""
+blockimgdiff_versions=3,4
+use_dynamic_partitions=true
+super_partition_groups=group_foo
+super_group_foo_group_size={group_foo_size}
+""".format(group_foo_size=4 * GiB).split("\n"))
+
+    common.OPTIONS.info_dict = target_info
+    common.OPTIONS.target_info_dict = target_info
+    common.OPTIONS.source_info_dict = source_info
+    common.OPTIONS.cache_size = 4 * 4096
+
+    block_diffs = [common.BlockDifference("foo", EmptyImage(),
+                                          src=DataImage("source", pad=True))]
+
+    dp_diff = common.DynamicPartitionsDifference(target_info, block_diffs,
+                                                 source_info_dict=source_info)
+    with zipfile.ZipFile(self.output_path, 'w') as output_zip:
+      dp_diff.WriteScript(self.script, output_zip, write_verify_script=True)
+
+    self.assertNotIn("block_image_update", str(self.script),
+        "Removed partition should not be patched.")
+
+    lines = self.get_op_list(self.output_path)
+    self.assertEqual(lines, ["remove foo"])

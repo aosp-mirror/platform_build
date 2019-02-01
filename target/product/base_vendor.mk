@@ -30,6 +30,7 @@ PRODUCT_PACKAGES += \
     android.hardware.cas@1.0-service \
     android.hardware.configstore@1.1-service \
     android.hardware.media.omx@1.0-service \
+    dumpsys_vendor \
     fs_config_files_nonsystem \
     fs_config_dirs_nonsystem \
     gralloc.default \
@@ -53,11 +54,6 @@ PRODUCT_PACKAGES += \
     vndservice \
     vndservicemanager \
 
-# Base modules and settings for the product partition.
-PRODUCT_PACKAGES += \
-    healthd \
-
 # VINTF data for vendor image
 PRODUCT_PACKAGES += \
-    device_manifest.xml \
     device_compatibility_matrix.xml \

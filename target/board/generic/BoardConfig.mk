@@ -18,30 +18,13 @@ TARGET_ARCH := arm
 
 # Note: Before P, we built the platform images for ARMv7-A _without_ NEON.
 # Note: Before Q, we built the CTS and SDK images for ARMv7-A _without_ NEON.
+# Note: Before Q, we built unbundled apps for ARMv7-A _without_ NEON.
 #
-ifneq ($(TARGET_BUILD_APPS),)
-# DO NOT USE
-#
-# This architecture variant should NOT be used for 32 bit arm platform
-# builds. It is the lowest common denominator required to build
-# an unbundled application for all supported 32 platforms.
-# cts for 32 bit arm is built using aosp_arm64 product.
-#
-# If you are building a 32 bit platform (and not an application),
-# you should set the following as 2nd arch variant:
-#
-# TARGET_ARCH_VARIANT := armv7-a-neon
-#
-# DO NOT USE
-TARGET_ARCH_VARIANT := armv7-a
-# DO NOT USE
-else
 # Starting from Pi, System image of aosp_arm products is the new GSI
 # for real devices newly launched for Pi. These devices are usualy not
 # as performant as the mainstream 64-bit devices and the performance
 # provided by NEON is important for them to pass related CTS tests.
 TARGET_ARCH_VARIANT := armv7-a-neon
-endif
 TARGET_CPU_VARIANT := generic
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi

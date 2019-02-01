@@ -33,15 +33,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     ext \
 
-# Why are we pulling in expat, which is used in frameworks, only, it seem?
-PRODUCT_PACKAGES += \
-    libexpat \
-
-# Libcore.
-PRODUCT_PACKAGES += \
-    libjavacore \
-    libopenjdk \
-
 # Libcore ICU. TODO: Try to figure out if/why we need them explicitly.
 PRODUCT_PACKAGES += \
     libicui18n \
@@ -95,6 +86,10 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     pm.dexopt.ab-ota=speed-profile \
     pm.dexopt.inactive=verify \
     pm.dexopt.shared=speed
+
+# Enable resolution of startup const strings.
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    dalvik.vm.dex2oat-resolve-startup-strings=true
 
 # Enable minidebuginfo generation unless overridden.
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \

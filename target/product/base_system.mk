@@ -79,6 +79,7 @@ PRODUCT_PACKAGES += \
     fsck_msdos \
     fs_config_files_system \
     fs_config_dirs_system \
+    gsid \
     heapprofd \
     heapprofd_client \
     gatekeeperd \
@@ -207,7 +208,6 @@ PRODUCT_PACKAGES += \
     MediaProvider \
     mediaserver \
     mke2fs \
-    ModuleMetadata \
     monkey \
     mtpd \
     ndc \
@@ -271,7 +271,7 @@ PRODUCT_PACKAGES += \
 # VINTF data for system image
 PRODUCT_PACKAGES += \
     framework_manifest.xml \
-    framework_compatibility_matrix.xml \
+    system_compatibility_matrix.xml \
 
 ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
@@ -285,15 +285,10 @@ PRODUCT_BOOT_JARS := \
     telephony-common \
     voip-common \
     ims-common
+PRODUCT_UPDATABLE_BOOT_MODULES := conscrypt
+PRODUCT_UPDATABLE_BOOT_LOCATIONS := \
+    /apex/com.android.conscrypt/javalib/conscrypt.jar
 
-# Add the compatibility library that is needed when org.apache.http.legacy
-# is removed from the bootclasspath.
-ifeq ($(REMOVE_OAHL_FROM_BCP),true)
-PRODUCT_PACKAGES += framework-oahl-backward-compatibility
-PRODUCT_BOOT_JARS += framework-oahl-backward-compatibility
-else
-PRODUCT_BOOT_JARS += org.apache.http.legacy.impl
-endif
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.usb.rc:root/init.usb.rc \
@@ -307,7 +302,7 @@ ifeq ($(REMOVE_ATB_FROM_BCP),true)
 PRODUCT_PACKAGES += framework-atb-backward-compatibility
 PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
 else
-PRODUCT_BOOT_JARS += android.test.base.impl
+PRODUCT_BOOT_JARS += android.test.base
 endif
 
 PRODUCT_COPY_FILES += system/core/rootdir/init.zygote32.rc:root/init.zygote32.rc
@@ -319,14 +314,18 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += debug.atrace.tags.enableflags=0
 PRODUCT_PACKAGES_DEBUG := \
     adb_keys \
     arping \
+    gdbserver \
+    init-debug.rc \
     iotop \
     iw \
     logpersist.start \
+    logtagd.rc \
     procrank \
     showmap \
     sqlite3 \
     ss \
     strace \
+    su \
     sanitizer-status \
     tracepath \
     tracepath6 \

@@ -786,9 +786,43 @@ ifdef HOST_CROSS_OS
 $(call resolve-shared-libs-depes,HOST_CROSS_,,true)
 endif
 
+# Pass the shared libraries dependencies to prebuilt ELF file check.
+define add-elf-file-check-shared-lib
+$(1): PRIVATE_SHARED_LIBRARY_FILES += $(2)
+$(1): $(2)
+endef
+
+define resolve-shared-libs-for-elf-file-check
+$(foreach m,$($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))$(1)DEPENDENCIES_ON_SHARED_LIBRARIES),\
+  $(eval p := $(subst :,$(space),$(m)))\
+  $(eval mod := $(firstword $(p)))\
+  \
+  $(eval deps := $(subst $(comma),$(space),$(lastword $(p))))\
+  $(if $(2),$(eval deps := $(addsuffix $($(1)2ND_ARCH_MODULE_SUFFIX),$(deps))))\
+  $(eval root := $(1)OUT$(if $(call streq,$(1),TARGET_),_ROOT))\
+  $(eval deps := $(filter $($(root))/%$($(1)SHLIB_SUFFIX),$(call module-built-files,$(deps))))\
+  \
+  $(eval r := $(firstword $(filter \
+    $($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))TARGET_OUT_INTERMEDIATES)/EXECUTABLES/%\
+    $($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))TARGET_OUT_INTERMEDIATES)/NATIVE_TESTS/%\
+    $($(if $(2),$($(1)2ND_ARCH_VAR_PREFIX))TARGET_OUT_INTERMEDIATES)/SHARED_LIBRARIES/%,\
+    $(call module-built-files,$(mod)))))\
+  \
+  $(if $(r),\
+    $(eval stamp := $(dir $(r))check_elf_files.timestamp)\
+    $(eval $(call add-elf-file-check-shared-lib,$(stamp),$(deps)))\
+  ))
+endef
+
+$(call resolve-shared-libs-for-elf-file-check,TARGET_)
+ifdef TARGET_2ND_ARCH
+$(call resolve-shared-libs-for-elf-file-check,TARGET_,true)
+endif
+
 m :=
 r :=
 p :=
+stamp :=
 deps :=
 add-required-deps :=
 
@@ -1007,6 +1041,14 @@ define resolve-product-relative-paths
           $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))
 endef
 
+# Returns modules included automatically as a result of certain BoardConfig
+# variables being set.
+define auto-included-modules
+  $(if $(BOARD_VNDK_VERSION),vndk_package) \
+  $(if $(DEVICE_MANIFEST_FILE),device_manifest.xml) \
+
+endef
+
 # Lists most of the files a particular product installs, including:
 # - PRODUCT_PACKAGES, and their LOCAL_REQUIRED_MODULES
 # - PRODUCT_COPY_FILES
@@ -1030,7 +1072,7 @@ define product-installed-files
     $(if $(filter debug,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG)) \
     $(if $(filter tests,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_TESTS)) \
     $(if $(filter asan,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_ASAN)) \
-    $(if $(BOARD_VNDK_VERSION),vndk_package) \
+    $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
   $(eval _pif_overrides := $(call module-overrides,$(_pif_modules))) \
@@ -1085,10 +1127,18 @@ ifdef FULL_BUILD
   # Verify the artifact path requirements made by included products.
   is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
   ifneq (true,$(or $(is_asan),$(DISABLE_ARTIFACT_PATH_REQUIREMENTS)))
-  # Fakes don't get installed, and host files are irrelevant.
-  static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/%
+  # Fakes don't get installed, host files are irrelevant, and NDK stubs aren't installed to device.
+  static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/% $(SOONG_OUT_DIR)/ndk/%
   # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
   static_whitelist_patterns += %__auto_generated_rro.apk
+  # Auto-included targets are not considered
+  static_whitelist_patterns += $(call module-installed-files,$(call auto-included-modules))
+  # $(PRODUCT_OUT)/apex is where shared libraries in APEXes get installed.
+  # The path can be considered as a fake path, as the shared libraries
+  # are installed there just to have symbols files for them under
+  # $(PRODUCT_OUT)/symbols/apex for debugging purpose. The /apex directory
+  # is never compiled into a filesystem image.
+  static_whitelist_patterns += $(PRODUCT_OUT)/apex/%
   ifeq (true,$(BOARD_USES_SYSTEM_OTHER_ODEX))
     # Allow system_other odex space optimization.
     static_whitelist_patterns += \
@@ -1528,6 +1578,9 @@ findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
 .PHONY: findlsdumps
 findlsdumps: $(FIND_LSDUMPS_FILE)
+
+.PHONY: check-elf-files
+check-elf-files:
 
 #xxx scrape this from ALL_MODULE_NAME_TAGS
 .PHONY: modules

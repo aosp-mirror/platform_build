@@ -3,7 +3,7 @@
 # Output variables: LOCAL_DEX_PREOPT, LOCAL_UNCOMPRESS_DEX, built_odex,
 #                   dexpreopt_boot_jar_module
 
-ifeq (true,$(LOCAL_PREFER_CODE_INTEGRITY))
+ifeq (true,$(LOCAL_USE_EMBEDDED_DEX))
   LOCAL_UNCOMPRESS_DEX := true
 else
   LOCAL_UNCOMPRESS_DEX :=
@@ -122,8 +122,7 @@ ifdef LOCAL_DEX_PREOPT
   ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
     my_module_multilib := $(LOCAL_MULTILIB)
     # If the module is not an SDK library and it's a system server jar, only preopt the primary arch.
-    my_filtered_lib_name := $(patsubst %.impl,%,$(LOCAL_MODULE))
-    ifeq (,$(filter $(JAVA_SDK_LIBRARIES),$(my_filtered_lib_name)))
+    ifeq (,$(filter $(JAVA_SDK_LIBRARIES),$(LOCAL_MODULE)))
       # For a Java library, by default we build odex for both 1st arch and 2nd arch.
       # But it can be overridden with "LOCAL_MULTILIB := first".
       ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
@@ -181,7 +180,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_str,  BuildPath,                     $(LOCAL_BUILT_MODULE))
   $(call add_json_str,  DexPath,                       $$1)
   $(call add_json_str,  ExtrasOutputPath,              $$2)
-  $(call add_json_bool, PreferCodeIntegrity,           $(filter true,$(LOCAL_PREFER_CODE_INTEGRITY)))
+  $(call add_json_bool, UseEmbeddedDex,                $(filter true,$(LOCAL_USE_EMBEDDED_DEX)))
   $(call add_json_bool, Privileged,                    $(filter true,$(LOCAL_PRIVILEGED_MODULE)))
   $(call add_json_bool, UncompressedDex,               $(filter true,$(LOCAL_UNCOMPRESS_DEX)))
   $(call add_json_bool, HasApkLibraries,               $(LOCAL_APK_LIBRARIES))
@@ -192,7 +191,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_list, OptionalUsesLibraries,         $(LOCAL_OPTIONAL_USES_LIBRARIES))
   $(call add_json_list, UsesLibraries,                 $(LOCAL_USES_LIBRARIES))
   $(call add_json_map,  LibraryPaths)
-  $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy.impl android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
+  $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
     $(call add_json_str, $(lib), $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar))
   $(call end_json_map)
   $(call add_json_list, Archs,                         $(my_dexpreopt_archs))
@@ -234,7 +233,7 @@ ifdef LOCAL_DEX_PREOPT
   my_dexpreopt_deps := $(my_dex_jar)
   my_dexpreopt_deps += $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE))
   my_dexpreopt_deps += \
-    $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy.impl android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
+    $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar)
   my_dexpreopt_deps += $(LOCAL_DEX_PREOPT_IMAGE_LOCATION)
   # TODO: default boot images

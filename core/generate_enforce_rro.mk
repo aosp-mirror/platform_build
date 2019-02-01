@@ -27,10 +27,14 @@ LOCAL_CERTIFICATE := platform
 LOCAL_AAPT_FLAGS += --auto-add-overlay
 LOCAL_RESOURCE_DIR := $(enforce_rro_source_overlays)
 
-ifeq (framework-res__auto_generated_rro,$(enforce_rro_module))
-LOCAL_PRIVATE_PLATFORM_APIS := true
+ifneq (,$(LOCAL_RES_LIBRARIES))
+  # Technically we are linking against the app (if only to grab its resources),
+  # and because it's potentially not building against the SDK, we can't either.
+  LOCAL_PRIVATE_PLATFORM_APIS := true
+else ifeq (framework-res__auto_generated_rro,$(enforce_rro_module))
+  LOCAL_PRIVATE_PLATFORM_APIS := true
 else
-LOCAL_SDK_VERSION := current
+  LOCAL_SDK_VERSION := current
 endif
 
 include $(BUILD_RRO_PACKAGE)

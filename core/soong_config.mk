@@ -83,7 +83,7 @@ $(call add_json_bool, Safestack,                         $(filter true,$(USE_SAF
 $(call add_json_bool, EnableCFI,                         $(call invert_bool,$(filter false,$(ENABLE_CFI))))
 $(call add_json_list, CFIExcludePaths,                   $(CFI_EXCLUDE_PATHS) $(PRODUCT_CFI_EXCLUDE_PATHS))
 $(call add_json_list, CFIIncludePaths,                   $(CFI_INCLUDE_PATHS) $(PRODUCT_CFI_INCLUDE_PATHS))
-$(call add_json_bool, EnableXOM,                         $(filter true,$(ENABLE_XOM)))
+$(call add_json_bool, EnableXOM,                         $(call invert_bool,$(filter false,$(ENABLE_XOM))))
 $(call add_json_list, XOMExcludePaths,                   $(XOM_EXCLUDE_PATHS) $(PRODUCT_XOM_EXCLUDE_PATHS))
 $(call add_json_list, IntegerOverflowExcludePaths,       $(INTEGER_OVERFLOW_EXCLUDE_PATHS) $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
 
@@ -123,6 +123,8 @@ $(call add_json_bool, Product_is_iot,                    $(filter true,$(PRODUCT
 $(call add_json_bool, Treble_linker_namespaces,          $(filter true,$(PRODUCT_TREBLE_LINKER_NAMESPACES)))
 $(call add_json_bool, Enforce_vintf_manifest,            $(filter true,$(PRODUCT_ENFORCE_VINTF_MANIFEST)))
 
+$(call add_json_bool, Check_elf_files,                   $(filter true,$(PRODUCT_CHECK_ELF_FILES)))
+
 $(call add_json_bool, Uml,                               $(filter true,$(TARGET_USER_MODE_LINUX)))
 $(call add_json_bool, Use_lmkd_stats_log,                $(filter true,$(TARGET_LMKD_STATS_LOG)))
 $(call add_json_str,  VendorPath,                        $(TARGET_COPY_OUT_VENDOR))
@@ -151,6 +153,10 @@ $(call add_json_list, ManifestPackageNameOverrides,      $(PRODUCT_MANIFEST_PACK
 
 $(call add_json_bool, EnforceSystemCertificate,          $(ENFORCE_SYSTEM_CERTIFICATE))
 $(call add_json_list, EnforceSystemCertificateWhitelist, $(ENFORCE_SYSTEM_CERTIFICATE_WHITELIST))
+
+$(call add_json_str,  HiddenAPIStubFlags,                $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS))
+$(call add_json_str,  HiddenAPIFlags,                    $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS))
+$(call add_json_list, HiddenAPIExtraAppUsageJars,        $(HIDDENAPI_EXTRA_APP_USAGE_JARS))
 
 $(call add_json_map, VendorVars)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\

@@ -93,6 +93,12 @@ ifdef LOCAL_USE_VNDK
   name_without_suffix :=
 endif
 
+# Check prebuilt ELF binaries.
+ifneq ($(LOCAL_CHECK_ELF_FILES),)
+my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
+include $(BUILD_SYSTEM)/check_elf_file.mk
+endif
+
 # The real dependency will be added after all Android.mks are loaded and the install paths
 # of the shared libraries are determined.
 ifdef LOCAL_INSTALLED_MODULE

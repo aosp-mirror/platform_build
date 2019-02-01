@@ -42,6 +42,7 @@ PRODUCT_PACKAGES += llkd
 
 # OTA support
 PRODUCT_PACKAGES += \
+    recovery-refresh \
     update_engine \
     update_verifier \
 
