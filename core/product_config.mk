@@ -512,6 +512,10 @@ PRODUCT_CFI_EXCLUDE_PATHS := \
 PRODUCT_CFI_INCLUDE_PATHS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CFI_INCLUDE_PATHS))
 
+# Whether the Scudo hardened allocator is disabled platform-wide
+PRODUCT_DISABLE_SCUDO := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DISABLE_SCUDO))
+
 # Whether any paths are excluded from being set XOM when ENABLE_XOM=true
 PRODUCT_XOM_EXCLUDE_PATHS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_XOM_EXCLUDE_PATHS))
