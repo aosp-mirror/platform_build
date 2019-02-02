@@ -28,15 +28,15 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.config.ringtone=Ring_Synth_04.ogg \
     ro.config.notification_sound=pixiedust.ogg
 
-
-# Enable mainline checking and the whitelist for GSI
-PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+# The mainline checking whitelist, should be clean up
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST := \
     system/app/messaging/messaging.apk \
     system/app/PhotoTable/PhotoTable.apk \
     system/app/WAPPushManager/WAPPushManager.apk \
     system/bin/healthd \
     system/etc/init/healthd.rc \
+    system/etc/seccomp_policy/crash_dump.%.policy \
+    system/etc/seccomp_policy/mediacodec.policy \
     system/etc/vintf/manifest/manifest_healthd.xml \
     system/lib/libframesequence.so \
     system/lib/libgiftranscode.so \
@@ -52,9 +52,10 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     system/etc/init/config/skip_mount.cfg \
     system/etc/init/init.gsi.rc \
 
-# Exclude all files under system/product
+# Exclude all files under system/product and system/product_services
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-    system/product/%
+    system/product/% \
+    system/product_services/%
 
 
 # Split selinux policy
