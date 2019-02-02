@@ -22,6 +22,30 @@
       "revId": "323be83a6606ee06d5f637b122586d3633844dfc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a9667c47_e1da2710",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-02-02T00:27:15Z",
+      "side": 1,
+      "message": "Oops, let me note it and fix later.",
+      "parentUuid": "2434c2da_3db189af",
+      "range": {
+        "startLine": 27,
+        "startChar": 31,
+        "endLine": 27,
+        "endChar": 36
+      },
+      "revId": "323be83a6606ee06d5f637b122586d3633844dfc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
