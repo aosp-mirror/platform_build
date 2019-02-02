@@ -17,6 +17,8 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_common.mk)
 
+# Enable mainline checking
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     root/init.zygote32_64.rc \
     root/init.zygote64_32.rc \
@@ -33,4 +35,3 @@ PRODUCT_NAME := gsi_arm64
 PRODUCT_DEVICE := gsi_arm64
 PRODUCT_BRAND := generic
 PRODUCT_MODEL := GSI on ARM64
-
