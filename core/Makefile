@@ -3198,6 +3198,18 @@ define read-size-of-partitions
 $(foreach p,$(1),$(call read-image-prop-dictionary,$($(p)image_intermediates)/generated_$(p)_image_info.txt,$(p)_size))
 endef
 
+# round result to BOARD_SUPER_PARTITION_ALIGNMENT
+#$(1): the calculated size
+ifeq (,$(BOARD_SUPER_PARTITION_ALIGNMENT))
+define round-partition-size
+$(1)
+endef
+else
+define round-partition-size
+$$((($(1)+$(BOARD_SUPER_PARTITION_ALIGNMENT)-1)/$(BOARD_SUPER_PARTITION_ALIGNMENT)*$(BOARD_SUPER_PARTITION_ALIGNMENT)))
+endef
+endif
+
 define super-slot-suffix
 $(if $(filter true,$(AB_OTA_UPDATER)),$(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)),,_a))
 endef
@@ -3231,8 +3243,10 @@ endif
 # $(2): max size expression
 # $(3): list of partition names
 define check-sum-of-partition-sizes
-  partition_size_list="$(call read-size-of-partitions,$(3))"; \
-  sum_sizes_expr=$$(sed -e 's/ /+/g' <<< "$${partition_size_list}"); \
+  partition_size_list="$$(for i in $(call read-size-of-partitions,$(3)); do \
+    echo $(call round-partition-size,$${i}); \
+  done)"; \
+  sum_sizes_expr=$$(tr '\n' '+' <<< "$${partition_size_list}" | sed 's/+$$//'); \
   if [ $$(( $${sum_sizes_expr} )) -gt $$(( $(2) )) ]; then \
     echo "The sum of sizes of [$(strip $(3))] is larger than $(strip $(1)):"; \
     echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' "$(2)" '==' $$(( $(2) )); \
