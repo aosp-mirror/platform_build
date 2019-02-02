@@ -16,6 +16,24 @@
       "revId": "4bd3fe9565d23d079db46382ffbd0c4fcf8cc168",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5eb7fb71_dd63d193",
+        "filename": "tools/buildinfo.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-02-02T07:01:40Z",
+      "side": 0,
+      "message": "I think the flag is not really necessary.",
+      "parentUuid": "d4c9ba83_474f4f54",
+      "revId": "4bd3fe9565d23d079db46382ffbd0c4fcf8cc168",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
