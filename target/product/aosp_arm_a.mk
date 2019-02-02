@@ -19,7 +19,12 @@
 # on the generic system image, place them in build/make/target/board/
 # gsi_system.prop.
 
-include build/make/target/product/treble_common_32.mk
+$(call inherit-product, $(SRC_TARGET_DIR)/product/legacy_gsi_common.mk)
+
+# Enable mainline checking for excat this product name
+ifeq (aosp_arm_a,$(TARGET_PRODUCT))
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+endif
 
 PRODUCT_NAME := aosp_arm_a
 PRODUCT_DEVICE := generic_arm_a
