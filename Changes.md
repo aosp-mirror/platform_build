@@ -1,5 +1,20 @@
 # Build System Changes for Android.mk Writers
 
+## `LOCAL_MODULE_TAGS := eng debug` deprecation  {#LOCAL_MODULE_TAGS}
+
+`LOCAL_MODULE_TAGS` value `eng` and `debug` are being deprecated. They allowed
+modules to specify that they should always be installed on `-eng`, or `-eng`
+and `-userdebug` builds. This conflicted with the ability for products to
+specify which modules should be installed, effectively making it impossible to
+build a stripped down product configuration that did not include those modules.
+
+For the equivalent functionality, specify the modules in `PRODUCT_PACKAGES_ENG`
+or `PRODUCT_PACKAGES_DEBUG` in the appropriate product makefiles.
+
+Core android packages like `su` got added to the list in
+`build/make/target/product/base_system.mk`, but for device-specific modules
+there are often better base product makefiles to use instead.
+
 ## `USER` deprecation  {#USER}
 
 `USER` will soon be `nobody` in many cases due to the addition of a sandbox

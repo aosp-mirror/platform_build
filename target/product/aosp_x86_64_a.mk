@@ -19,7 +19,25 @@
 # on the generic system image, place them in build/make/target/board/
 # gsi_system.prop.
 
-include build/make/target/product/treble_common_64.mk
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/legacy_gsi_common.mk)
+
+# Enable mainline checking for excat this product name
+ifeq (aosp_x86_64_a,$(TARGET_PRODUCT))
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+endif
+
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
+    root/init.zygote32_64.rc \
+    root/init.zygote64_32.rc \
+
+# Copy different zygote settings for vendor.img to select by setting property
+# ro.zygote=zygote64_32 or ro.zygote=zygote32_64:
+#   1. 64-bit primary, 32-bit secondary OR
+#   2. 32-bit primary, 64-bit secondary
+# init.zygote64_32.rc is in the core_64_bit.mk below
+PRODUCT_COPY_FILES += \
+    system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc
 
 PRODUCT_NAME := aosp_x86_64_a
 PRODUCT_DEVICE := generic_x86_64_a
