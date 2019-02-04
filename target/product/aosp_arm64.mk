@@ -26,7 +26,23 @@
 # build quite specifically for the emulator, and might not be
 # entirely appropriate to inherit from for on-device configurations.
 
--include device/generic/goldfish/arm64-vendor.mk
+# GSI for system/product
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_common.mk)
+
+# Emulator for vendor
+$(call inherit-product-if-exists, device/generic/goldfish/arm64-vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/board/generic_arm64/device.mk)
+
+# Enable mainline checking for excat this product name
+ifeq (aosp_arm64,$(TARGET_PRODUCT))
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+endif
+
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
+    root/init.zygote32_64.rc \
+    root/init.zygote64_32.rc \
 
 # Copy different zygote settings for vendor.img to select by setting property
 # ro.zygote=zygote64_32 or ro.zygote=zygote32_64:
@@ -36,33 +52,7 @@
 PRODUCT_COPY_FILES += \
     system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_base_telephony.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/board/generic_arm64/device.mk)
-
-# Enable dynamic partition size
-PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
-
-# Enable A/B update
-AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS := system
-PRODUCT_PACKAGES += \
-    update_engine \
-    update_verifier
-
-# Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
-PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
-
-# GSI specific tasks on boot
-PRODUCT_COPY_FILES += \
-    build/make/target/product/gsi/skip_mount.cfg:system/etc/init/config/skip_mount.cfg \
-    build/make/target/product/gsi/init.gsi.rc:system/etc/init/init.gsi.rc \
-
-# Support addtional P vendor interface
-PRODUCT_EXTRA_VNDK_VERSIONS := 28
-
 PRODUCT_NAME := aosp_arm64
 PRODUCT_DEVICE := generic_arm64
 PRODUCT_BRAND := Android
-PRODUCT_MODEL := AOSP on ARM arm64 Emulator
+PRODUCT_MODEL := AOSP on ARM64
