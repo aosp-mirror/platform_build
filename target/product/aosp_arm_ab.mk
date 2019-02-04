@@ -24,14 +24,12 @@
 # - 32 bits binder interface
 # - system-as-root
 
-include build/make/target/product/treble_common_32.mk
+$(call inherit-product, $(SRC_TARGET_DIR)/product/legacy_gsi_common.mk)
 
-# Enable A/B update
-AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS := system
-PRODUCT_PACKAGES += \
-    update_engine \
-    update_verifier
+# Enable mainline checking for excat this product name
+ifeq (aosp_arm_ab,$(TARGET_PRODUCT))
+PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
+endif
 
 PRODUCT_NAME := aosp_arm_ab
 PRODUCT_DEVICE := generic_arm_ab
