@@ -2664,58 +2664,6 @@ done \
 fi
 endef
 
-# Copy dex files, invoking $(HIDDENAPI) on them in the process.
-# Also make the source dex file an input of the hiddenapi singleton rule in dex_preopt.mk.
-# Users can set UNSAFE_DISABLE_HIDDENAPI_FLAGS=true to skip this step. This is
-# meant to speed up local incremental builds. Note that skipping this step changes
-# Java semantics of the result dex bytecode. Use at own risk.
-ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
-define hiddenapi-copy-dex-files
-$(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS)
-	@rm -rf $(dir $(2))
-	@mkdir -p $(dir $(2))
-	for INPUT_DEX in `find $(dir $(1)) -maxdepth 1 -name "classes*.dex" | sort`; do \
-	    echo "--input-dex=$$$${INPUT_DEX}"; \
-	    echo "--output-dex=$(dir $(2))/`basename $$$${INPUT_DEX}`"; \
-	done | xargs $(HIDDENAPI) encode --api-flags=$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS)
-
-$(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS): $(1)
-$(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS): PRIVATE_DEX_INPUTS := $$(PRIVATE_DEX_INPUTS) $(1)
-endef
-else  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
-define hiddenapi-copy-dex-files
-$(2): $(1)
-	echo "WARNING: skipping hiddenapi post-processing for $(1)" 1>&2
-	@rm -rf $(dir $(2))
-	@mkdir -p $(dir $(2))
-	find $(dir $(1)) -maxdepth 1 -name "classes*.dex" | xargs -I{} cp -f {} $(dir $(2))/
-endef
-endif  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
-
-# Generate a greylist.txt from a classes.jar
-define hiddenapi-generate-csv
-ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
-ifneq (,$(wildcard frameworks/base))
-# Only generate this target if we're in a tree with frameworks/base present.
-$(2): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS)
-	$(CLASS2GREYLIST) --stub-api-flags $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS) $(1) \
-	    --write-flags-csv $(2)
-
-$(3): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS)
-	$(CLASS2GREYLIST) --stub-api-flags $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS) $(1) \
-	    --write-metadata-csv $(3)
-
-$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS): $(2)
-$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS): PRIVATE_FLAGS_INPUTS := $$(PRIVATE_FLAGS_INPUTS) $(2)
-
-$(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): $(3)
-$(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): \
-    PRIVATE_METADATA_INPUTS := $$(PRIVATE_METADATA_INPUTS) $(3)
-
-endif
-endif  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
-endef
-
 
 ###########################################################
 ## Commands to call R8
