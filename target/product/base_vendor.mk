@@ -27,7 +27,7 @@ PRODUCT_PACKAGES += \
 
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
-    android.hardware.cas@1.0-service \
+    android.hardware.cas@1.1-service \
     android.hardware.configstore@1.2-service \
     android.hardware.media.omx@1.0-service \
     dumpsys_vendor \
