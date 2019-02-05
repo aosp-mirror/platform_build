@@ -103,11 +103,9 @@ ifeq (,$(filter no_debuglink mini-debug-info,$(my_strip_module)))
   endif
 endif
 
-ifeq ($(my_use_clang_lld),true)
-  # b/80093681: GNU strip and objcopy --{add,remove}-section have bug in handling
-  # GNU_RELRO segment of files lnked by clang lld; so they are replaced
-  # by llvm-strip and llvm-objcopy here.
-  my_strip_args += --use-llvm-strip
+ifeq ($($(my_prefix)OS),darwin)
+  # llvm-strip does not support Darwin Mach-O yet.
+  my_strip_args += --use-gnu-strip
 endif
 
 valid_strip := mini-debug-info keep_symbols true no_debuglink
