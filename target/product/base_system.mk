@@ -183,7 +183,6 @@ PRODUCT_PACKAGES += \
     libstagefright_omx \
     libstdc++ \
     libsurfaceflinger \
-    libsurfaceflinger_ddmconnection \
     libsysutils \
     libui \
     libusbhost \
