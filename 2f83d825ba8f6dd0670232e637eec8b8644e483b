@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "80cbe973_e8470e11",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1415202
+      },
+      "writtenOn": "2019-02-05T14:22:42Z",
+      "side": 1,
+      "message": "Need to replace this with \"{}.build.prop\".format(search) instead. Else, this will not search in the per-partition build.prop file as we expect it to, and instead searches always in build.prop - which is System\u0027s build.prop file.",
+      "range": {
+        "startLine": 353,
+        "startChar": 34,
+        "endLine": 353,
+        "endChar": 46
+      },
+      "revId": "2f83d825ba8f6dd0670232e637eec8b8644e483b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f358d9cc_0d227121",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 1
