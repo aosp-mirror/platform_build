@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "65617fa2_cff09aad",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 1415202
+      },
+      "writtenOn": "2019-02-05T14:36:33Z",
+      "side": 1,
+      "message": "can we change this search order to put vendor ahead of product, since product can also become generic like system is becoming now.",
+      "range": {
+        "startLine": 264,
+        "startChar": 2,
+        "endLine": 265,
+        "endChar": 70
+      },
+      "revId": "2f83d825ba8f6dd0670232e637eec8b8644e483b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "80cbe973_e8470e11",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 1
