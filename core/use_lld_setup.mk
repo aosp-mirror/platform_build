@@ -18,7 +18,3 @@ endif
 ifeq ($($(my_prefix)OS),darwin)
 my_use_clang_lld := false
 endif
-# http://b/110800681 - lld cannot link Android's Windows modules yet.
-ifeq ($($(my_prefix)OS),windows)
-my_use_clang_lld := false
-endif

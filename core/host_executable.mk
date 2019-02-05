@@ -45,47 +45,5 @@ endif
 LOCAL_2ND_ARCH_VAR_PREFIX :=
 endif  # HOST_2ND_ARCH
 
-ifdef HOST_CROSS_OS
-my_prefix := HOST_CROSS_
-LOCAL_HOST_PREFIX := $(my_prefix)
-include $(BUILD_SYSTEM)/module_arch_supported.mk
-ifeq ($(my_module_arch_supported),true)
-# Build for Windows
-# we don't want others using the cross compiled version
-saved_LOCAL_BUILT_MODULE := $(LOCAL_BUILT_MODULE)
-saved_LOCAL_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
-saved_LOCAL_LDFLAGS := $(LOCAL_LDFLAGS)
-LOCAL_BUILT_MODULE :=
-LOCAL_INSTALLED_MODULE :=
-LOCAL_INTERMEDIATE_TARGETS :=
-
-include $(BUILD_SYSTEM)/host_executable_internal.mk
-LOCAL_LDFLAGS := $(saved_LOCAL_LDFLAGS)
-LOCAL_BUILT_MODULE := $(saved_LOCAL_BUILT_MODULE)
-LOCAL_INSTALLED_MODULE := $(saved_LOCAL_INSTALLED_MODULE)
-endif
-
-ifdef HOST_CROSS_2ND_ARCH
-LOCAL_2ND_ARCH_VAR_PREFIX := $(HOST_CROSS_2ND_ARCH_VAR_PREFIX)
-include $(BUILD_SYSTEM)/module_arch_supported.mk
-ifeq ($(my_module_arch_supported),true)
-# we don't want others using the cross compiled version
-saved_LOCAL_BUILT_MODULE := $(LOCAL_BUILT_MODULE)
-saved_LOCAL_INSTALLED_MODULE := $(LOCAL_INSTALLED_MODULE)
-saved_LOCAL_LDFLAGS := $(LOCAL_LDFLAGS)
-LOCAL_BUILT_MODULE :=
-LOCAL_INSTALLED_MODULE :=
-LOCAL_INTERMEDIATE_TARGETS :=
-
-include $(BUILD_SYSTEM)/host_executable_internal.mk
-LOCAL_LDFLAGS := $(saved_LOCAL_LDFLAGS)
-LOCAL_BUILT_MODULE := $(saved_LOCAL_BUILT_MODULE)
-LOCAL_INSTALLED_MODULE := $(saved_LOCAL_INSTALLED_MODULE)
-endif
-LOCAL_2ND_ARCH_VAR_PREFIX :=
-endif
-LOCAL_HOST_PREFIX :=
-endif
-
 LOCAL_NO_2ND_ARCH_MODULE_SUFFIX :=
 my_module_arch_supported :=
