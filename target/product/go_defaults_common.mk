@@ -69,3 +69,8 @@ PRODUCT_SYSTEM_SERVER_JARS += NetworkStackLib
 # the size of the system image. This has no bearing on stack traces, but will
 # leave less information available via JDWP.
 PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := true
+
+# Disable Scudo outside of eng builds to save RAM.
+ifneq (,$(filter eng, $(TARGET_BUILD_VARIANT)))
+  PRODUCT_DISABLE_SCUDO := true
+endif
