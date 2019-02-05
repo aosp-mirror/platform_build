@@ -1,5 +1,10 @@
 # Build System Changes for Android.mk Writers
 
+## Windows cross-compiles no longer supported in Android.mk
+
+Modules that build for Windows (our only `HOST_CROSS` OS currently) must now be
+defined in `Android.bp` files.
+
 ## `LOCAL_MODULE_TAGS := eng debug` deprecation  {#LOCAL_MODULE_TAGS}
 
 `LOCAL_MODULE_TAGS` value `eng` and `debug` are being deprecated. They allowed
