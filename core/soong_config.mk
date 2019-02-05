@@ -87,6 +87,8 @@ $(call add_json_bool, EnableXOM,                         $(call invert_bool,$(fi
 $(call add_json_list, XOMExcludePaths,                   $(XOM_EXCLUDE_PATHS) $(PRODUCT_XOM_EXCLUDE_PATHS))
 $(call add_json_list, IntegerOverflowExcludePaths,       $(INTEGER_OVERFLOW_EXCLUDE_PATHS) $(PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS))
 
+$(call add_json_bool, DisableScudo,                      $(filter true,$(PRODUCT_DISABLE_SCUDO)))
+
 $(call add_json_bool, ClangTidy,                         $(filter 1 true,$(WITH_TIDY)))
 $(call add_json_str,  TidyChecks,                        $(WITH_TIDY_CHECKS))
 
