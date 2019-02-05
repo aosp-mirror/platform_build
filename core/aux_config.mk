@@ -181,5 +181,3 @@ $(foreach v,$(AUX_ALL_VARIANTS),\
 endif
 
 INSTALLED_AUX_TARGETS :=
-
-droidcore: auxiliary
