@@ -45,7 +45,11 @@ SYSTEM_OTHER_ODEX_FILTER ?= \
     product/app/% \
     product/priv-app/% \
 
-# The default values for pre-opting: always preopt PIC.
+# The default values for pre-opting. To support the runtime module we ensure no dex files
+# get stripped.
+ifeq ($(PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING),)
+  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING := true
+endif
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
   WITH_DEXPREOPT ?= true
@@ -134,6 +138,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  DefaultCompilerFilter,              $(PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER))
   $(call add_json_str,  SystemServerCompilerFilter,         $(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
   $(call add_json_bool, GenerateDmFiles,                    $(PRODUCT_DEX_PREOPT_GENERATE_DM_FILES))
+  $(call add_json_bool, NeverAllowStripping,                $(PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING))
   $(call add_json_bool, NoDebugInfo,                        $(filter false,$(WITH_DEXPREOPT_DEBUG_INFO)))
   $(call add_json_bool, AlwaysSystemServerDebugInfo,        $(filter true,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)))
   $(call add_json_bool, NeverSystemServerDebugInfo,         $(filter false,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)))
