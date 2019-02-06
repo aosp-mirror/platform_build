@@ -35,6 +35,7 @@ Environment options:
 - SANITIZE_HOST: Set to 'true' to use ASAN for all host modules. Note that
                  ASAN_OPTIONS=detect_leaks=0 will be set by default until the
                  build is leak-check clean.
+- ANDROID_QUIET_BUILD: set to 'true' to display only the essential messages.
 
 Look at the source to view more functions. The complete list is:
 EOF
@@ -1603,6 +1604,10 @@ function get_make_command()
 
 function _wrap_build()
 {
+    if [[ "${ANDROID_QUIET_BUILD:-}" == true ]]; then
+      "$@"
+      return $?
+    fi
     local start_time=$(date +"%s")
     "$@"
     local ret=$?
