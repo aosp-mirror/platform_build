@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "5bf2624c_db00098c",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 353,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2019-02-06T23:27:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "80cbe973_e8470e11",
+      "range": {
+        "startLine": 353,
+        "startChar": 34,
+        "endLine": 353,
+        "endChar": 46
+      },
+      "revId": "2f83d825ba8f6dd0670232e637eec8b8644e483b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f358d9cc_0d227121",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 1
