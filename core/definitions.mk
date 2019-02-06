@@ -2195,6 +2195,30 @@ define codename-or-sdk-to-sdk
 $(if $(filter $(1),$(PLATFORM_VERSION_CODENAME)),10000,$(1))
 endef
 
+# Uses LOCAL_SDK_VERSION and PLATFORM_SDK_VERSION to determine a compileSdkVersion
+# in the form of a number or a codename (28 or P)
+define module-sdk-version
+$(strip \
+  $(if $(filter-out current system_current test_current core_current,$(LOCAL_SDK_VERSION)), \
+    $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)), \
+    $(PLATFORM_SDK_VERSION)))
+endef
+
+# Uses LOCAL_SDK_VERSION and DEFAULT_APP_TARGET_SDK to determine
+# a targetSdkVersion in the form of a number or a codename (28 or P).
+define module-target-sdk-version
+$(strip \
+  $(if $(filter-out current system_current test_current core_current,$(LOCAL_SDK_VERSION)), \
+    $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)), \
+    $(DEFAULT_APP_TARGET_SDK)))
+endef
+
+# Uses LOCAL_MIN_SDK_VERSION, LOCAL_SDK_VERSION and DEFAULT_APP_TARGET_SDK to determine
+# a minSdkVersion in the form of a number or a codename (28 or P).
+define module-min-sdk-version
+$(if $(LOCAL_MIN_SDK_VERSION),$(LOCAL_MIN_SDK_VERSION),$(call module-target-sdk-version))
+endef
+
 
 define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
