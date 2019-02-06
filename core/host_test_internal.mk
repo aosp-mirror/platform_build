@@ -3,7 +3,6 @@
 #####################################################
 
 ifeq ($(LOCAL_GTEST),true)
-  LOCAL_CFLAGS_windows += -DGTEST_OS_WINDOWS
   LOCAL_CFLAGS_linux += -DGTEST_OS_LINUX
   LOCAL_CFLAGS_darwin += -DGTEST_OS_MAC
 

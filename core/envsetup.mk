@@ -443,7 +443,8 @@ endif
 # Now we can substitute with the real value of TARGET_COPY_OUT_PRODUCT_SERVICES
 MERGE_PRODUCT_SERVICES_INTO_PRODUCT :=
 ifeq ($(TARGET_COPY_OUT_PRODUCT_SERVICES),$(_product_services_path_placeholder))
-  TARGET_COPY_OUT_PRODUCT_SERVICES := system/product_services
+  TARGET_COPY_OUT_PRODUCT_SERVICES := $(TARGET_COPY_OUT_PRODUCT)
+  MERGE_PRODUCT_SERVICES_INTO_PRODUCT := true
 else ifeq ($(TARGET_COPY_OUT_PRODUCT),$(TARGET_COPY_OUT_PRODUCT_SERVICES))
   MERGE_PRODUCT_SERVICES_INTO_PRODUCT := true
 else ifeq ($(filter product_services system/product_services,$(TARGET_COPY_OUT_PRODUCT_SERVICES)),)

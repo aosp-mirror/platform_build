@@ -35,6 +35,7 @@ PRODUCT_PACKAGES += \
     appops \
     app_process \
     appwidget \
+    ashmemd \
     atest \
     atrace \
     audioserver \
@@ -119,6 +120,7 @@ PRODUCT_PACKAGES += \
     libandroidfw \
     libandroid_runtime \
     libandroid_servers \
+    libashmemd_client \
     libaudioeffect_jni \
     libbinder \
     libbinder_ndk \
@@ -183,7 +185,6 @@ PRODUCT_PACKAGES += \
     libstagefright_omx \
     libstdc++ \
     libsurfaceflinger \
-    libsurfaceflinger_ddmconnection \
     libsysutils \
     libui \
     libusbhost \
