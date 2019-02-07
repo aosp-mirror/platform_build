@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2d589d5e_ce20283f",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-02-07T18:37:47Z",
+      "side": 1,
+      "message": ":\u003d",
+      "range": {
+        "startLine": 51,
+        "startChar": 43,
+        "endLine": 51,
+        "endChar": 44
+      },
+      "revId": "1b33f6f3eb7196ff7cd25239be6470ddb836d03d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3d4ea87d_99ea8da5",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-02-07T18:37:47Z",
+      "side": 1,
+      "message": "indent by 2",
+      "revId": "1b33f6f3eb7196ff7cd25239be6470ddb836d03d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b965683_bce94ad8",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-02-07T18:37:47Z",
+      "side": 1,
+      "message": ":\u003d",
+      "range": {
+        "startLine": 125,
+        "startChar": 25,
+        "endLine": 125,
+        "endChar": 26
+      },
+      "revId": "1b33f6f3eb7196ff7cd25239be6470ddb836d03d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1e9e0a35_0b7d07d0",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-02-07T18:37:47Z",
+      "side": 1,
+      "message": ":\u003d",
+      "range": {
+        "startLine": 128,
+        "startChar": 25,
+        "endLine": 128,
+        "endChar": 26
+      },
+      "revId": "1b33f6f3eb7196ff7cd25239be6470ddb836d03d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
