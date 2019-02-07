@@ -206,11 +206,6 @@ else
 JAVA_TMPDIR_ARG :=
 endif
 
-# A list of the jars that provide information about usages of the hidden API.
-# The core-oj-hiddenapi provides information for the core-oj jar.
-HIDDENAPI_EXTRA_APP_USAGE_JARS := \
-    core-oj-hiddenapi \
-
 # ###############################################################
 # Broken build defaults
 # ###############################################################
@@ -1223,10 +1218,6 @@ endif
 ifndef INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE
 INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-private-dex.txt
 endif
-
-INTERNAL_PLATFORM_HIDDENAPI_FLAGS := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-flags.csv
-INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-stub-flags.txt
-INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-greylist.csv
 
 # Missing optional uses-libraries so that the platform doesn't create build rules that depend on
 # them. See setup_one_odex.mk.
