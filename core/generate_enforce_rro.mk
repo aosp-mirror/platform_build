@@ -26,6 +26,7 @@ LOCAL_CERTIFICATE := platform
 
 LOCAL_AAPT_FLAGS += --auto-add-overlay
 LOCAL_RESOURCE_DIR := $(enforce_rro_source_overlays)
+LOCAL_PRODUCT_MODULE := true
 
 ifneq (,$(LOCAL_RES_LIBRARIES))
   # Technically we are linking against the app (if only to grab its resources),
