@@ -22,20 +22,8 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/media_vendor.mk)
 
 # /vendor packages
 PRODUCT_PACKAGES += \
-    AccentColorBlackOverlay \
-    AccentColorGreenOverlay \
-    AccentColorPurpleOverlay \
     audio.primary.default \
-    DisplayCutoutEmulationCornerOverlay \
-    DisplayCutoutEmulationDoubleOverlay \
-    DisplayCutoutEmulationTallOverlay \
-    FontNotoSerifSourceOverlay \
-    IconShapeRoundedRectOverlay \
-    IconShapeSquircleOverlay \
-    IconShapeTeardropOverlay \
     local_time.default \
     power.default \
     vibrator.default \
 
-PRODUCT_PACKAGES_DEBUG += \
-    frameworks-base-overlays \
