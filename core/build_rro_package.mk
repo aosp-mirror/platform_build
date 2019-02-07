@@ -18,12 +18,12 @@ endif
 partition :=
 ifeq ($(LOCAL_ODM_MODULE),true)
   partition := $(TARGET_OUT_ODM)
-else ifeq ($(LOCAL_PRODUCT_MODULE),true)
-  partition := $(TARGET_OUT_PRODUCT)
+else ifeq ($(LOCAL_VENDOR_MODULE),true)
+  partition := $(TARGET_OUT_VENDOR)
 else ifeq ($(LOCAL_PRODUCT_SERVICES_MODULE),true)
   partition := $(TARGET_OUT_PRODUCT_SERVICES)
 else
-  partition := $(TARGET_OUT_VENDOR)
+  partition := $(TARGET_OUT_PRODUCT)
 endif
 
 ifeq ($(LOCAL_RRO_THEME),)
