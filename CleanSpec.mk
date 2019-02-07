@@ -544,6 +544,8 @@ $(call add-clean-step, rm -f $(PRODUCT_OUT)/system/lib*/libexpat.so)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/product_services)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/product_services)
 
+# Clean up old location of hiddenapi files
+$(call add-clean-step, rm -f $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi*)
 
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
