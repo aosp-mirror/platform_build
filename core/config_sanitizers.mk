@@ -112,7 +112,6 @@ ifeq ($(filter cfi, $(my_sanitize)),)
     ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
            $(filter $(dir)%,$(LOCAL_PATH)))),)
       my_sanitize := cfi $(my_sanitize)
-      my_sanitize_diag := cfi $(my_sanitize_diag)
     endif
   endif
 endif
