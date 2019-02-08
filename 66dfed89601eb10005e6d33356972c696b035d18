@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8c25e6f2_5d389832",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-08T02:10:11Z",
+      "side": 1,
+      "message": "hmm, this trick doesn\u0027t work if the same source is listed twice",
+      "range": {
+        "startLine": 84,
+        "startChar": 33,
+        "endLine": 84,
+        "endChar": 52
+      },
+      "revId": "66dfed89601eb10005e6d33356972c696b035d18",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
