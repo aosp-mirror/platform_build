@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e1ba1d6_dbcc8079",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 338,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-08T04:41:01Z",
+      "side": 1,
+      "message": "just pass prop here as it\u0027s directly used in the function.",
+      "range": {
+        "startLine": 338,
+        "startChar": 47,
+        "endLine": 338,
+        "endChar": 58
+      },
+      "revId": "6d40ec98f76588a77f5e0fde555d591ca81da4e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e9071a4c_8bc19a09",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-08T04:41:01Z",
+      "side": 1,
+      "message": "These KeyError can turn into if statements\nresult \u003d self.info_dict.get(\"build.prop\", {}).get(prop, None)\nif result:\n  return result\n\nsame in L365",
+      "range": {
+        "startLine": 350,
+        "startChar": 4,
+        "endLine": 350,
+        "endChar": 20
+      },
+      "revId": "6d40ec98f76588a77f5e0fde555d591ca81da4e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
