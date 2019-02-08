@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "109896ba_099613e3",
+        "filename": "core/tasks/find-shareduid-violation.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-02-08T09:24:08Z",
+      "side": 1,
+      "message": "just droidcore?",
+      "range": {
+        "startLine": 21,
+        "startChar": 41,
+        "endLine": 27,
+        "endChar": 45
+      },
+      "revId": "1895d98605f5df2d706605c1069dc9fa9a123b93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5d13cfd2_88bc59c5",
+        "filename": "core/tasks/find-shareduid-violation.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-02-08T09:24:08Z",
+      "side": 1,
+      "message": "missing license header",
+      "revId": "1895d98605f5df2d706605c1069dc9fa9a123b93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3a82995_64a5a80a",
+        "filename": "core/tasks/find-shareduid-violation.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-02-08T09:24:08Z",
+      "side": 1,
+      "message": "use PRODUCT_OUT instead.\n\n(refer to build/make/Changes.md)",
+      "range": {
+        "startLine": 10,
+        "startChar": 30,
+        "endLine": 10,
+        "endChar": 49
+      },
+      "revId": "1895d98605f5df2d706605c1069dc9fa9a123b93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
