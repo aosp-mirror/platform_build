@@ -16,6 +16,24 @@
       "revId": "28871c549453748142c3703b86cab8aad84e0eef",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "00d1e7dc_10128a90",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-08T03:00:00Z",
+      "side": 1,
+      "message": "Well, these only get installed on eng and userdebug builds, I don\u0027t think we have a shell_and_utilities_debug",
+      "parentUuid": "b64cef49_32df2aaa",
+      "revId": "28871c549453748142c3703b86cab8aad84e0eef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
