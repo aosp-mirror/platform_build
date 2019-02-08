@@ -16,6 +16,24 @@
       "revId": "8e3180672fbc171fea47da3a98f24f636a9aedd0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c85f820_25b01865",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-02-08T08:26:04Z",
+      "side": 1,
+      "message": "thanks Dan. It looks like zsh doesn\u0027t have compgen, so just disabled for zsh for now.",
+      "parentUuid": "497dced4_9528166f",
+      "revId": "8e3180672fbc171fea47da3a98f24f636a9aedd0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
