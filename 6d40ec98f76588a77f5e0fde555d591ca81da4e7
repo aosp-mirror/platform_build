@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "f395250f_a2a57eb9",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 264,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-08T08:13:05Z",
+      "side": 1,
+      "message": "I just realize it actually has the same content as DEFAULT_SOURCE_ORDER, so no need to keep a separate list?",
+      "range": {
+        "startLine": 264,
+        "startChar": 2,
+        "endLine": 264,
+        "endChar": 35
+      },
+      "revId": "6d40ec98f76588a77f5e0fde555d591ca81da4e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0e1ba1d6_dbcc8079",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 3
@@ -41,6 +64,29 @@
         "startChar": 4,
         "endLine": 350,
         "endChar": 20
+      },
+      "revId": "6d40ec98f76588a77f5e0fde555d591ca81da4e7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cc4f8388_dfd0d1e4",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-08T08:13:05Z",
+      "side": 1,
+      "message": "btw, the build script prefers the string format function, {}.format; we are changing the existing code to that direction.",
+      "range": {
+        "startLine": 371,
+        "startChar": 49,
+        "endLine": 371,
+        "endChar": 63
       },
       "revId": "6d40ec98f76588a77f5e0fde555d591ca81da4e7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
