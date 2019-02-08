@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b64cef49_32df2aaa",
+        "filename": "target/product/base_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 1003224
+      },
+      "writtenOn": "2019-02-08T02:55:53Z",
+      "side": 1,
+      "message": "ugh. i didn\u0027t know about any of these.\n\ncommands should be in shell_and_utilities, not here.",
+      "revId": "28871c549453748142c3703b86cab8aad84e0eef",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
