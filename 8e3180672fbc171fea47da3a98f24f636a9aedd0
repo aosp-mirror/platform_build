@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "497dced4_9528166f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-08T02:05:53Z",
+      "side": 1,
+      "message": "This doesn\u0027t seem to work in zsh, though I did test bash 3.2 (Mac) \u0026 4.4.",
+      "revId": "8e3180672fbc171fea47da3a98f24f636a9aedd0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
