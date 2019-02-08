@@ -34,6 +34,24 @@
       "revId": "8e3180672fbc171fea47da3a98f24f636a9aedd0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "485a3e9d_65f8cf6c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-08T17:08:18Z",
+      "side": 1,
+      "message": "it has compgen, that\u0027s enabled via the enable_zsh_completion function already. i\u0027m not sure what\u0027s going wrong here...",
+      "parentUuid": "6c85f820_25b01865",
+      "revId": "8e3180672fbc171fea47da3a98f24f636a9aedd0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
