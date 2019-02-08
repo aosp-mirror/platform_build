@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "c4ec3d50_85233ce1",
+        "filename": "target/product/AndroidProducts.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-08T02:20:23Z",
+      "side": 1,
+      "message": "The lunch menu only shows a small fraction of the available targets. It\u0027s configured through COMMON_LUNCH_CHOICES. Most of the time you can just pass in the name instead: `lunch goldfish_kernel_tests_x86_64-userdebug`",
+      "parentUuid": "493fa8e3_72376bb0",
+      "range": {
+        "startLine": 78,
+        "startChar": 2,
+        "endLine": 78,
+        "endChar": 7
+      },
+      "revId": "8b72798b107b39302314c6acf579b17969f66330",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9f722e34_15a16eaf",
         "filename": "target/product/goldfish_kernel_tests_x86_64.mk",
         "patchSetId": 1
