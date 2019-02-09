@@ -117,6 +117,7 @@ ifeq (,$(LOCAL_ENFORCE_USES_LIBRARIES))
 endif
 
 my_dexpreopt_archs :=
+my_dexpreopt_images :=
 
 ifdef LOCAL_DEX_PREOPT
   ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
@@ -139,11 +140,13 @@ ifdef LOCAL_DEX_PREOPT
     # #################################################
     # Odex for the 1st arch
     my_dexpreopt_archs += $(TARGET_ARCH)
+    my_dexpreopt_images += $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
     # Odex for the 2nd arch
     ifdef TARGET_2ND_ARCH
       ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
         ifneq (first,$(my_module_multilib))
           my_dexpreopt_archs += $(TARGET_2ND_ARCH)
+          my_dexpreopt_images += $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
         endif  # my_module_multilib is not first.
       endif  # TARGET_TRANSLATE_2ND_ARCH not true
     endif  # TARGET_2ND_ARCH
@@ -153,11 +156,13 @@ ifdef LOCAL_DEX_PREOPT
     # Save the module multilib since setup_one_odex modifies it.
     my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
     my_dexpreopt_archs += $(TARGET_$(my_2nd_arch_prefix)ARCH)
+    my_dexpreopt_images += $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
     ifdef TARGET_2ND_ARCH
       ifeq ($(my_module_multilib),both)
         # The non-preferred arch
         my_2nd_arch_prefix := $(if $(LOCAL_2ND_ARCH_VAR_PREFIX),,$(TARGET_2ND_ARCH_VAR_PREFIX))
         my_dexpreopt_archs += $(TARGET_$(my_2nd_arch_prefix)ARCH)
+        my_dexpreopt_images += $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
       endif  # LOCAL_MULTILIB is both
     endif  # TARGET_2ND_ARCH
   endif  # LOCAL_MODULE_CLASS
@@ -194,7 +199,7 @@ ifdef LOCAL_DEX_PREOPT
     $(call add_json_str, $(lib), $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar))
   $(call end_json_map)
   $(call add_json_list, Archs,                         $(my_dexpreopt_archs))
-  $(call add_json_str,  DexPreoptImageLocation,        $(LOCAL_DEX_PREOPT_IMAGE_LOCATION))
+  $(call add_json_list, DexPreoptImages,               $(my_dexpreopt_images))
   $(call add_json_bool, PreoptExtractedApk,            $(my_preopt_for_extracted_apk))
   $(call add_json_bool, NoCreateAppImage,              $(filter false,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
   $(call add_json_bool, ForceCreateAppImage,           $(filter true,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
@@ -234,8 +239,7 @@ ifdef LOCAL_DEX_PREOPT
   my_dexpreopt_deps += \
     $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar)
-  my_dexpreopt_deps += $(LOCAL_DEX_PREOPT_IMAGE_LOCATION)
-  # TODO: default boot images
+  my_dexpreopt_deps += $(my_dexpreopt_images)
 
   $(my_dexpreopt_zip): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_zip): $(my_dexpreopt_deps)
