@@ -17,7 +17,6 @@
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
     abb \
-    adb \
     adbd \
     am \
     android.hidl.allocator@1.0-service \
@@ -35,12 +34,10 @@ PRODUCT_PACKAGES += \
     app_process \
     appwidget \
     ashmemd \
-    atest \
     atrace \
     audioserver \
     BackupRestoreConfirmation \
     bcc \
-    bit \
     blank_screen \
     blkid \
     bmgr \
@@ -73,7 +70,6 @@ PRODUCT_PACKAGES += \
     e2fsck \
     ExtServices \
     ExtShared \
-    fastboot \
     flags_health_check \
     framework \
     framework-res \
@@ -94,7 +90,6 @@ PRODUCT_PACKAGES += \
     incident \
     incidentd \
     incident_helper \
-    incident_report \
     init.environ.rc \
     init.rc \
     init_system \

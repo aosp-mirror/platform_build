@@ -553,19 +553,15 @@ ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
 define get-32-bit-modules
 $(sort $(foreach m,$(1),\
   $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),\
-    $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX))\
-  $(if $(ALL_MODULES.$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX).CLASS),\
-    $(m)$(HOST_2ND_ARCH_MODULE_SUFFIX))\
-    ))
+    $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX))))
 endef
 # Get a list of corresponding 32-bit module names, if one exists;
 # otherwise return the original module name
 define get-32-bit-modules-if-we-can
 $(sort $(foreach m,$(1),\
-  $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS)$(ALL_MODULES.$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX).CLASS),\
-    $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX)) \
-    $(if $(ALL_MODULES.$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX).CLASS),$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX)),\
-  $(m))))
+  $(if $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS),\
+    $(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX), \
+    $(m))))
 endef
 else  # TARGET_TRANSLATE_2ND_ARCH
 # For binary translation config, by default only install the first arch.
@@ -1110,7 +1106,7 @@ define product-installed-files
   $(eval _pif_modules += $(call get-32-bit-modules, $(_pif_modules_rest))) \
   $(eval _pif_modules += $(_pif_modules_rest)) \
   $(call expand-required-modules,_pif_modules,$(_pif_modules),$(_pif_overrides)) \
-  $(call module-installed-files, $(_pif_modules)) \
+  $(filter-out $(HOST_OUT_ROOT)/%,$(call module-installed-files, $(_pif_modules))) \
   $(call resolve-product-relative-paths,\
     $(foreach cf,$(PRODUCTS.$(_mk).PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
 endef
@@ -1174,27 +1170,24 @@ ifdef FULL_BUILD
     endif
   endif
 
+  # Some modules produce only host installed files when building with TARGET_BUILD_APPS
+  ifeq ($(TARGET_BUILD_APPS),)
+    _modules := $(foreach m,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES) \
+                            $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG) \
+                            $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_DEBUG_ASAN) \
+                            $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_ENG) \
+                            $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES_TESTS),\
+                  $(if $(ALL_MODULES.$(m).INSTALLED),\
+                    $(if $(filter-out $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,\
+                      $(m))))
+    $(call maybe-print-list-and-error,$(sort $(_modules)),\
+      Host modules should be in PRODUCT_HOST_PACKAGES$(comma) not PRODUCT_PACKAGES)
+  endif
+
   product_host_FILES := $(call host-installed-files,$(INTERNAL_PRODUCT))
   product_target_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
   # WARNING: The product_MODULES variable is depended on by external files.
   product_MODULES := $(_pif_modules)
-
-  # Verify that PRODUCT_HOST_PACKAGES is complete
-  # This is a temporary requirement during migration
-  # Ignore libraries, since they shouldn't need to be in PRODUCT_PACKAGES for the most part anyway.
-  host_files_in_target_FILES := $(filter-out \
-    $(HOST_OUT_SHARED_LIBRARIES)/% \
-    $($(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)/%,\
-      $(filter $(HOST_OUT_ROOT)/%,$(product_target_FILES)))
-  ifneq (,$(filter-out $(product_host_FILES),$(host_files_in_target_FILES)))
-    packages := $(foreach f,$(filter-out $(product_host_FILES),$(host_files_in_target_FILES)), \
-      $(or $(INSTALLABLE_FILES.$(f).MODULE),$(f)))
-    $(warning Missing modules from PRODUCT_HOST_PACKAGES)
-    $(warning See $(CHANGES_URL)#PRODUCT_HOST_PACKAGES for more information)
-    $(foreach f,$(sort $(packages)),$(warning _ $(f)))
-    $(error stop)
-  endif
-  host_files_in_target_FILES :=
 
   # Verify the artifact path requirements made by included products.
   is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
