@@ -75,11 +75,17 @@ endef
 has_dup_copy_headers :=
 $(foreach dest,$(ALL_COPIED_HEADERS), \
     $(eval _srcs := $(ALL_COPIED_HEADERS.$(dest).SRC)) \
-    $(eval _src := $(word $(words $(_srcs)),$(_srcs))) \
+    $(eval _src := $(lastword $(_srcs))) \
     $(if $(call streq,$(_src),$(_srcs)),, \
         $(warning Duplicate header copy: $(dest)) \
-	$(warning Defined in: $(ALL_COPIED_HEADERS.$(dest).MAKEFILE)) \
-	$(eval has_dup_copy_headers := true)) \
+        $(warning _ Using $(_src)) \
+        $(warning __ from $(lastword $(ALL_COPIED_HEADERS.$(dest).MAKEFILE))) \
+        $(eval _makefiles := $$(wordlist 1,$(call int_subtract,$(words $(ALL_COPIED_HEADERS.$(dest).MAKEFILE)),1),$$(ALL_COPIED_HEADERS.$$(dest).MAKEFILE))) \
+        $(foreach src,$(wordlist 1,$(call int_subtract,$(words $(_srcs)),1),$(_srcs)), \
+            $(warning _ Ignoring $(src)) \
+            $(warning __ from $(firstword $(_makefiles))) \
+            $(eval _makefiles := $$(wordlist 2,9999,$$(_makefiles)))) \
+        $(eval has_dup_copy_headers := true)) \
     $(eval $(call copy-one-header,$(_src),$(dest))))
 all_copied_headers: $(ALL_COPIED_HEADERS)
 
@@ -844,8 +850,7 @@ $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
 
 ifdef BOARD_PREBUILT_DTBIMAGE_DIR
 INSTALLED_DTBIMAGE_TARGET := $(PRODUCT_OUT)/dtb.img
-$(INSTALLED_DTBIMAGE_TARGET) : $(addprefix $(BOARD_PREBUILT_DTBIMAGE_DIR)/,\
-	$(call find-files-in-subdirs,$(BOARD_PREBUILT_DTBIMAGE_DIR),*.dtb,.))
+$(INSTALLED_DTBIMAGE_TARGET) : $(sort $(wildcard $(BOARD_PREBUILT_DTBIMAGE_DIR)/*.dtb))
 	cat $^ > $@
 endif
 

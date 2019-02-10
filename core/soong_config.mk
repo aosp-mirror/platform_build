@@ -152,13 +152,11 @@ $(call add_json_bool, FlattenApex,                       $(filter true,$(TARGET_
 $(call add_json_str,  DexpreoptGlobalConfig,             $(DEX_PREOPT_CONFIG))
 
 $(call add_json_list, ManifestPackageNameOverrides,      $(PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES))
+$(call add_json_list, PackageNameOverrides,              $(PRODUCT_PACKAGE_NAME_OVERRIDES))
+$(call add_json_list, CertificateOverrides,              $(PRODUCT_CERTIFICATE_OVERRIDES))
 
 $(call add_json_bool, EnforceSystemCertificate,          $(ENFORCE_SYSTEM_CERTIFICATE))
 $(call add_json_list, EnforceSystemCertificateWhitelist, $(ENFORCE_SYSTEM_CERTIFICATE_WHITELIST))
-
-$(call add_json_str,  HiddenAPIStubFlags,                $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS))
-$(call add_json_str,  HiddenAPIFlags,                    $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS))
-$(call add_json_list, HiddenAPIExtraAppUsageJars,        $(HIDDENAPI_EXTRA_APP_USAGE_JARS))
 
 $(call add_json_map, VendorVars)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
