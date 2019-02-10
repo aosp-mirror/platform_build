@@ -33,13 +33,13 @@ TARGET_COPY_OUT_PRODUCT := system/product
 BOARD_USES_METADATA_PARTITION := true
 
 # Android Verified Boot (AVB):
-#   Set AVB_VBMETA_IMAGE_FLAGS_VERIFICATION_DISABLED (--flag 2) in
+#   Set AVB_VBMETA_IMAGE_FLAGS_VERIFICATION_DISABLED (--flags 2) in
 #   vbmeta.img to disable AVB verification.
 #
 # To disable AVB for GSI, use the vbmeta.img and the GSI together.
 # To enable AVB for GSI, include the GSI public key into the device-specific
 # vbmeta.img.
-BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flag 2
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 2
 
 # Enable chain partition for system.
 BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
