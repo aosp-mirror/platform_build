@@ -1261,6 +1261,7 @@ endif
 modules_to_install := $(sort \
     $(ALL_DEFAULT_INSTALLED_MODULES) \
     $(product_target_FILES) \
+    $(product_host_FILES) \
     $(call get-tagged-modules,$(tags_to_install)) \
     $(CUSTOM_MODULES) \
   )
