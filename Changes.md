@@ -49,9 +49,9 @@ files to be split out into a separate static library that chooses `arm` over
 Modules that build for Windows (our only `HOST_CROSS` OS currently) must now be
 defined in `Android.bp` files.
 
-## `LOCAL_MODULE_TAGS := eng debug` deprecation  {#LOCAL_MODULE_TAGS}
+## `LOCAL_MODULE_TAGS := eng debug` are obsolete {#LOCAL_MODULE_TAGS}
 
-`LOCAL_MODULE_TAGS` value `eng` and `debug` are being deprecated. They allowed
+`LOCAL_MODULE_TAGS` value `eng` and `debug` are now obsolete. They allowed
 modules to specify that they should always be installed on `-eng`, or `-eng`
 and `-userdebug` builds. This conflicted with the ability for products to
 specify which modules should be installed, effectively making it impossible to
