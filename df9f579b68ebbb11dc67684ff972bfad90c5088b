@@ -22,6 +22,30 @@
       "revId": "df9f579b68ebbb11dc67684ff972bfad90c5088b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fdaff5f5_ebc18268",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 1340374
+      },
+      "writtenOn": "2019-02-11T23:03:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2660b414_fa3bc5c0",
+      "range": {
+        "startLine": 262,
+        "startChar": 71,
+        "endLine": 262,
+        "endChar": 72
+      },
+      "revId": "df9f579b68ebbb11dc67684ff972bfad90c5088b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
