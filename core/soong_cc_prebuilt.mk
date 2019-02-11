@@ -123,6 +123,8 @@ ifndef LOCAL_IS_HOST_MODULE
   ifdef LOCAL_SOONG_UNSTRIPPED_BINARY
     # Store a copy with symbols for symbolic debugging
     my_unstripped_path := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
+    # drop /root as /root is mounted as /
+    my_unstripped_path := $(patsubst $(TARGET_OUT_UNSTRIPPED)/root/%,$(TARGET_OUT_UNSTRIPPED)/%, $(my_unstripped_path))
     symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
     $(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))
     $(call add-dependency,$(LOCAL_BUILT_MODULE),$(symbolic_output))
