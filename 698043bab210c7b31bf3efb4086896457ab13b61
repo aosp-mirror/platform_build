@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "438ca1f9_f83d2ce1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1349653
+      },
+      "writtenOn": "2019-02-11T05:05:01Z",
+      "side": 1,
+      "message": "The agreed on plan is to first only enable this for Go devices. When/if we can all agree to enable this for all devices, this flag can be removed.",
+      "parentUuid": "aacec8d8_71bc065f",
+      "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d6c9228d_408fd9da",
         "filename": "core/definitions.mk",
         "patchSetId": 7
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "610a613b_bfb3e6aa",
+        "filename": "core/definitions.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 3448,
+      "author": {
+        "id": 1349653
+      },
+      "writtenOn": "2019-02-11T05:05:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d6c9228d_408fd9da",
+      "range": {
+        "startLine": 3448,
+        "startChar": 1,
+        "endLine": 3448,
+        "endChar": 12
+      },
+      "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dfe099c7_39e07f8b",
         "filename": "core/soong_cc_prebuilt.mk",
         "patchSetId": 7
@@ -56,6 +98,24 @@
       "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d7be747e_d1cab106",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1349653
+      },
+      "writtenOn": "2019-02-11T05:05:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dfe099c7_39e07f8b",
+      "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -76,6 +136,24 @@
     },
     {
       "key": {
+        "uuid": "bd7c02cc_f0f3a65f",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1349653
+      },
+      "writtenOn": "2019-02-11T05:05:01Z",
+      "side": 1,
+      "message": "Thanks for catching this! I\u0027ve split this up to two parts:\n  1. For checking for functional identity, the vendor built module will depend on the core *built* module.\n  2. Soong is modified to emit makefile that ensures the core variant is installed.",
+      "parentUuid": "4bac2bca_dd03e833",
+      "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9cf33d02_3f47b047",
         "filename": "core/soong_cc_prebuilt.mk",
         "patchSetId": 7
@@ -90,6 +168,24 @@
       "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9073dc99_54b8f602",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1349653
+      },
+      "writtenOn": "2019-02-11T05:05:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9cf33d02_3f47b047",
+      "revId": "698043bab210c7b31bf3efb4086896457ab13b61",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
