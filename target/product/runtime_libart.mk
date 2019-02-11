@@ -91,6 +91,10 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     dalvik.vm.dex2oat-resolve-startup-strings=true
 
+# Enable layout compilation by default.
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    pm.precompile_layouts=true
+
 # Enable minidebuginfo generation unless overridden.
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     dalvik.vm.minidebuginfo=true \
