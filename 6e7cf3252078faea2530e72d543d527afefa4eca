@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "fab3381c_eb8ed2a0",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-11T22:57:01Z",
+      "side": 1,
+      "message": "I looked at these, but they have a slightly different functionality. I could push this function down into common. Would that be a better approach?",
+      "parentUuid": "6045c10c_9c7421b6",
+      "range": {
+        "startLine": 108,
+        "startChar": 0,
+        "endLine": 108,
+        "endChar": 17
+      },
+      "revId": "6e7cf3252078faea2530e72d543d527afefa4eca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "78c75b8f_f3cfe0b8",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 4
@@ -68,6 +92,30 @@
       "revId": "6e7cf3252078faea2530e72d543d527afefa4eca",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "43b5ce02_0dc512fb",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-11T22:57:01Z",
+      "side": 1,
+      "message": "The semantics are slightly different, so I added a new function to common, and switched all the check_output to use the corresponding function in common.",
+      "parentUuid": "78c75b8f_f3cfe0b8",
+      "range": {
+        "startLine": 202,
+        "startChar": 22,
+        "endLine": 202,
+        "endChar": 26
+      },
+      "revId": "6e7cf3252078faea2530e72d543d527afefa4eca",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
