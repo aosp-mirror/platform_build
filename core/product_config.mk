@@ -349,10 +349,6 @@ PRODUCT_SHIPPING_API_LEVEL := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SHI
 PRODUCT_DEFAULT_PROPERTY_OVERRIDES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEFAULT_PROPERTY_OVERRIDES))
 
-$(foreach rule,$(PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES),\
-    $(if $(filter 2,$(words $(subst :,$(space),$(rule)))),,\
-        $(error Rule "$(rule)" in PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDE is not <module_name>:<manifest_name>)))
-
 .KATI_READONLY := PRODUCT_DEFAULT_PROPERTY_OVERRIDES
 
 # A list of property assignments, like "key = value", with zero or more
@@ -512,6 +508,10 @@ PRODUCT_CFI_EXCLUDE_PATHS := \
 PRODUCT_CFI_INCLUDE_PATHS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_CFI_INCLUDE_PATHS))
 
+# Whether the Scudo hardened allocator is disabled platform-wide
+PRODUCT_DISABLE_SCUDO := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DISABLE_SCUDO))
+
 # Whether any paths are excluded from being set XOM when ENABLE_XOM=true
 PRODUCT_XOM_EXCLUDE_PATHS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_XOM_EXCLUDE_PATHS))
@@ -567,12 +567,19 @@ PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION := \
 PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS))
 
-# List of <module_name>:<manifest_name> pairs to override the manifest package name
-# of a module <module_name> to <manifest_name>. Patterns can be used as in
-# com.android.%:com.acme.android.%.release
-PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES := \
-    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES))
-.KATI_READONLY := PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
+define product-overrides-config
+PRODUCT_$(1)_OVERRIDES := $$(strip $$(PRODUCTS.$$(INTERNAL_PRODUCT).PRODUCT_$(1)_OVERRIDES))
+.KATI_READONLY := PRODUCT_$(1)_OVERRIDES
+$$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\
+    $$(if $$(filter 2,$$(words $$(subst :,$$(space),$$(rule)))),,\
+        $$(error Rule "$$(rule)" in PRODUCT_$(1)_OVERRIDE is not <module_name>:<new_value>)))
+endef
+
+$(foreach var, \
+    MANIFEST_PACKAGE_NAME \
+    PACKAGE_NAME \
+    CERTIFICATE, \
+  $(eval $(call product-overrides-config,$(var))))
 
 # Macro to use below. $(1) is the name of the partition
 define product-build-image-config

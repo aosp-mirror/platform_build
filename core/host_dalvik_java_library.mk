@@ -183,23 +183,9 @@ $(LOCAL_BUILT_MODULE): $(built_dex) $(java_resource_sources)
 
 endif # !LOCAL_IS_STATIC_JAVA_LIBRARY
 
-ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
-  my_default_app_target_sdk := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
-  my_sdk_version := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
-else
-  my_default_app_target_sdk := $(DEFAULT_APP_TARGET_SDK)
-  my_sdk_version := $(PLATFORM_SDK_VERSION)
-endif
-
-ifdef LOCAL_MIN_SDK_VERSION
-  my_min_sdk_version := $(LOCAL_MIN_SDK_VERSION)
-else
-  my_min_sdk_version := $(call codename-or-sdk-to-sdk,$(my_default_app_target_sdk))
-endif
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_DEFAULT_APP_TARGET_SDK := $(my_default_app_target_sdk)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SDK_VERSION := $(my_sdk_version)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MIN_SDK_VERSION := $(my_min_sdk_version)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_DEFAULT_APP_TARGET_SDK := $(call module-target-sdk-version)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SDK_VERSION := $(call module-sdk-version)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MIN_SDK_VERSION := $(call codename-or-sdk-to-sdk,$(call module-min-sdk-version))
 
 USE_CORE_LIB_BOOTCLASSPATH :=
 

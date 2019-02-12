@@ -71,11 +71,8 @@ full_classes_processed_jar := $(intermediates.COMMON)/classes-processed.jar
 full_classes_jarjar_jar := $(intermediates.COMMON)/classes-jarjar.jar
 full_classes_combined_jar := $(intermediates.COMMON)/classes-combined.jar
 built_dex_intermediate := $(intermediates.COMMON)/dex/classes.dex
-built_dex_hiddenapi := $(intermediates.COMMON)/dex-hiddenapi/classes.dex
 full_classes_stubs_jar := $(intermediates.COMMON)/stubs.jar
 java_source_list_file := $(intermediates.COMMON)/java-source-list
-hiddenapi_flags_csv := $(intermediates.COMMON)/hiddenapi/flags.csv
-hiddenapi_metadata_csv := $(intermediates.COMMON)/hiddenapi/greylist.csv
 
 ifeq ($(LOCAL_MODULE_CLASS)$(LOCAL_SRC_FILES)$(LOCAL_STATIC_JAVA_LIBRARIES)$(LOCAL_SOURCE_FILES_ALL_GENERATED),APPS)
 # If this is an apk without any Java code (e.g. framework-res), we should skip compiling Java.
@@ -127,7 +124,7 @@ $(foreach java,$(aidl_java_sources), \
 
 $(aidl_java_sources) : $(LOCAL_ADDITIONAL_DEPENDENCIES) $(aidl_preprocess_import)
 
-$(aidl_java_sources): PRIVATE_AIDL_FLAGS := -b $(addprefix -p,$(aidl_preprocess_import)) -I$(LOCAL_PATH) -I$(LOCAL_PATH)/src $(addprefix -I,$(LOCAL_AIDL_INCLUDES))
+$(aidl_java_sources): PRIVATE_AIDL_FLAGS := $(addprefix -p,$(aidl_preprocess_import)) -I$(LOCAL_PATH) -I$(LOCAL_PATH)/src $(addprefix -I,$(LOCAL_AIDL_INCLUDES))
 $(aidl_java_sources): PRIVATE_MODULE := $(LOCAL_MODULE)
 
 endif
@@ -500,21 +497,11 @@ else # !LOCAL_PROGUARD_ENABLED
 	$(transform-classes.jar-to-dex)
 endif
 
-ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),) # is_boot_jar
-  # Derive API greylist from the classes jar.
-  # We use full_classes_pre_proguard_jar here, as that is what is converted to
-  # dex later on. The difference is academic currently, as we don't proguard any
-  # bootclasspath code at the moment. If we were to do that, we should add keep
-  # rules for all members with the @UnsupportedAppUsage annotation.
-  $(eval $(call hiddenapi-generate-csv, $(full_classes_pre_proguard_jar),$(hiddenapi_flags_csv),$(hiddenapi_metadata_csv)))
-  LOCAL_INTERMEDIATE_TARGETS += $(hiddenapi_flags_csv) $(hiddenapi_metadata_csv)
-  $(eval $(call hiddenapi-copy-dex-files,$(built_dex_intermediate),$(built_dex_hiddenapi)))
-  built_dex_copy_from := $(built_dex_hiddenapi)
-else # !is_boot_jar
-  built_dex_copy_from := $(built_dex_intermediate)
-endif # is_boot_jar
+ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)
+  $(call pretty-error,Modules in PRODUCT_BOOT_JARS must be defined in Android.bp files)
+endif
 
-$(built_dex): $(built_dex_copy_from)
+$(built_dex): $(built_dex_intermediate)
 	@echo Copying: $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $(dir $@)/classes*.dex
@@ -551,20 +538,6 @@ $(LOCAL_MODULE)-findbugs : $(findbugs_html)
 
 endif  # full_classes_jar is defined
 
-ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
-  my_default_app_target_sdk := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
-  my_sdk_version := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
-else
-  my_default_app_target_sdk := $(DEFAULT_APP_TARGET_SDK)
-  my_sdk_version := $(PLATFORM_SDK_VERSION)
-endif
-
-ifdef LOCAL_MIN_SDK_VERSION
-  my_min_sdk_version := $(LOCAL_MIN_SDK_VERSION)
-else
-  my_min_sdk_version := $(call codename-or-sdk-to-sdk,$(my_default_app_target_sdk))
-endif
-
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_DEFAULT_APP_TARGET_SDK := $(my_default_app_target_sdk)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SDK_VERSION := $(my_sdk_version)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MIN_SDK_VERSION := $(my_min_sdk_version)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_DEFAULT_APP_TARGET_SDK := $(call module-target-sdk-version)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SDK_VERSION := $(call module-sdk-version)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_MIN_SDK_VERSION := $(call codename-or-sdk-to-sdk,$(call module-min-sdk-version))

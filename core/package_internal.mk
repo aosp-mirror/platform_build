@@ -332,6 +332,12 @@ ifdef LOCAL_COMPRESSED_MODULE
 LOCAL_DEX_PREOPT := false
 endif
 
+# Default to use uncompressed native libraries in APKs if minSdkVersion >= marshmallow
+ifndef LOCAL_USE_EMBEDDED_NATIVE_LIBS
+  LOCAL_USE_EMBEDDED_NATIVE_LIBS := $(call math_gt_or_eq, \
+    $(patsubst $(PLATFORM_VERSION_CODENAME),100,$(call module-min-sdk-version)),23)
+endif
+
 include $(BUILD_SYSTEM)/android_manifest.mk
 
 resource_export_package :=
@@ -612,6 +618,7 @@ $(LOCAL_BUILT_MODULE) : $(intermediates)/strip.sh
 $(LOCAL_BUILT_MODULE) : | $(DEXPREOPT_STRIP_DEPS)
 $(LOCAL_BUILT_MODULE): .KATI_DEPFILE := $(LOCAL_BUILT_MODULE).d
 endif
+$(LOCAL_BUILT_MODULE): PRIVATE_USE_EMBEDDED_NATIVE_LIBS := $(LOCAL_USE_EMBEDDED_NATIVE_LIBS)
 $(LOCAL_BUILT_MODULE):
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
 	rm -rf $@.parts
@@ -622,7 +629,7 @@ else  # ! LOCAL_USE_AAPT2
 	$(call create-assets-package,$@.parts/apk.zip)
 endif  # LOCAL_USE_AAPT2
 ifneq ($(jni_shared_libraries),)
-	$(call create-jni-shared-libs-package,$@.parts/jni.zip)
+	$(call create-jni-shared-libs-package,$@.parts/jni.zip,$(PRIVATE_USE_EMBEDDED_NATIVE_LIBS))
 endif
 ifeq ($(full_classes_jar),)
 # We don't build jar, need to add the Java resources here.

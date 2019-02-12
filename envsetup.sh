@@ -9,7 +9,7 @@ Invoke ". build/envsetup.sh" from your shell to add the following functions to y
               build, and stores those selections in the environment to be read by subsequent
               invocations of 'm' etc.
 - tapas:      tapas [<App1> <App2> ...] [arm|x86|mips|arm64|x86_64|mips64] [eng|userdebug|user]
-- croot:      Changes directory to the top of the tree.
+- croot:      Changes directory to the top of the tree, or a subdirectory thereof.
 - m:          Makes from the top of the tree.
 - mm:         Builds all of the modules in the current directory, but not their dependencies.
 - mmm:        Builds all of the modules in the supplied directories, but not their dependencies.
@@ -35,6 +35,7 @@ Environment options:
 - SANITIZE_HOST: Set to 'true' to use ASAN for all host modules. Note that
                  ASAN_OPTIONS=detect_leaks=0 will be set by default until the
                  build is leak-check clean.
+- ANDROID_QUIET_BUILD: set to 'true' to display only the essential messages.
 
 Look at the source to view more functions. The complete list is:
 EOF
@@ -368,6 +369,10 @@ function addcompletions()
 
     if should_add_completion bit ; then
         complete -C "bit --tab" bit
+    fi
+    if [ -z "$ZSH_VERSION" ]; then
+        # Doesn't work in zsh.
+        complete -o nospace -F _croot croot
     fi
     complete -F _lunch lunch
 
@@ -981,6 +986,18 @@ function croot()
         fi
     else
         echo "Couldn't locate the top of the tree.  Try setting TOP."
+    fi
+}
+
+function _croot()
+{
+    local T=$(gettop)
+    if [ "$T" ]; then
+        local cur="${COMP_WORDS[COMP_CWORD]}"
+        k=0
+        for c in $(compgen -d ${T}/${cur}); do
+            COMPREPLY[k++]=${c#${T}/}/
+        done
     fi
 }
 
@@ -1603,6 +1620,10 @@ function get_make_command()
 
 function _wrap_build()
 {
+    if [[ "${ANDROID_QUIET_BUILD:-}" == true ]]; then
+      "$@"
+      return $?
+    fi
     local start_time=$(date +"%s")
     "$@"
     local ret=$?

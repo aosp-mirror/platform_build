@@ -75,11 +75,17 @@ endef
 has_dup_copy_headers :=
 $(foreach dest,$(ALL_COPIED_HEADERS), \
     $(eval _srcs := $(ALL_COPIED_HEADERS.$(dest).SRC)) \
-    $(eval _src := $(word $(words $(_srcs)),$(_srcs))) \
+    $(eval _src := $(lastword $(_srcs))) \
     $(if $(call streq,$(_src),$(_srcs)),, \
         $(warning Duplicate header copy: $(dest)) \
-	$(warning Defined in: $(ALL_COPIED_HEADERS.$(dest).MAKEFILE)) \
-	$(eval has_dup_copy_headers := true)) \
+        $(warning _ Using $(_src)) \
+        $(warning __ from $(lastword $(ALL_COPIED_HEADERS.$(dest).MAKEFILE))) \
+        $(eval _makefiles := $$(wordlist 1,$(call int_subtract,$(words $(ALL_COPIED_HEADERS.$(dest).MAKEFILE)),1),$$(ALL_COPIED_HEADERS.$$(dest).MAKEFILE))) \
+        $(foreach src,$(wordlist 1,$(call int_subtract,$(words $(_srcs)),1),$(_srcs)), \
+            $(warning _ Ignoring $(src)) \
+            $(warning __ from $(firstword $(_makefiles))) \
+            $(eval _makefiles := $$(wordlist 2,9999,$$(_makefiles)))) \
+        $(eval has_dup_copy_headers := true)) \
     $(eval $(call copy-one-header,$(_src),$(dest))))
 all_copied_headers: $(ALL_COPIED_HEADERS)
 
@@ -410,12 +416,8 @@ endif
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 	        TARGET_BUILD_FLAVOR="$(TARGET_BUILD_FLAVOR)" \
 	        TARGET_DEVICE="$(TARGET_DEVICE)" \
-	        PRODUCT_NAME="$(TARGET_PRODUCT)" \
-	        PRODUCT_BRAND="$(PRODUCT_BRAND)" \
 	        PRODUCT_DEFAULT_LOCALE="$(call get-default-product-locale,$(PRODUCT_LOCALES))" \
 	        PRODUCT_DEFAULT_WIFI_CHANNELS="$(PRODUCT_DEFAULT_WIFI_CHANNELS)" \
-	        PRODUCT_MODEL="$(PRODUCT_MODEL)" \
-	        PRODUCT_MANUFACTURER="$(PRODUCT_MANUFACTURER)" \
 	        PRIVATE_BUILD_DESC="$(PRIVATE_BUILD_DESC)" \
 	        BUILD_ID="$(BUILD_ID)" \
 	        BUILD_DISPLAY_ID="$(BUILD_DISPLAY_ID)" \
@@ -435,7 +437,6 @@ endif
 	        PLATFORM_VERSION_ALL_CODENAMES="$(PLATFORM_VERSION_ALL_CODENAMES)" \
 	        PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION="$(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION)" \
 	        BUILD_VERSION_TAGS="$(BUILD_VERSION_TAGS)" \
-	        BUILD_FINGERPRINT="$(BUILD_FINGERPRINT_FROM_FILE)" \
 	        $(if $(OEM_THUMBPRINT_PROPERTIES),BUILD_THUMBPRINT="$(BUILD_THUMBPRINT_FROM_FILE)") \
 	        TARGET_CPU_ABI_LIST="$(TARGET_CPU_ABI_LIST)" \
 	        TARGET_CPU_ABI_LIST_32_BIT="$(TARGET_CPU_ABI_LIST_32_BIT)" \
@@ -840,8 +841,7 @@ $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
 
 ifdef BOARD_PREBUILT_DTBIMAGE_DIR
 INSTALLED_DTBIMAGE_TARGET := $(PRODUCT_OUT)/dtb.img
-$(INSTALLED_DTBIMAGE_TARGET) : $(addprefix $(BOARD_PREBUILT_DTBIMAGE_DIR)/,\
-	$(call find-files-in-subdirs,$(BOARD_PREBUILT_DTBIMAGE_DIR),*.dtb,.))
+$(INSTALLED_DTBIMAGE_TARGET) : $(sort $(wildcard $(BOARD_PREBUILT_DTBIMAGE_DIR)/*.dtb))
 	cat $^ > $@
 endif
 
@@ -1800,7 +1800,11 @@ ifdef BOARD_KERNEL_PAGESIZE
   INTERNAL_RECOVERYIMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
 endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
+ifdef BOARD_PREBUILT_RECOVERY_DTBOIMAGE
+  INTERNAL_RECOVERYIMAGE_ARGS += --recovery_dtbo $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE)
+else
   INTERNAL_RECOVERYIMAGE_ARGS += --recovery_dtbo $(BOARD_PREBUILT_DTBOIMAGE)
+endif
 endif
 ifdef BOARD_INCLUDE_RECOVERY_ACPIO
   INTERNAL_RECOVERYIMAGE_ARGS += --recovery_acpio $(BOARD_RECOVERY_ACPIO)
@@ -1892,7 +1896,11 @@ ifeq (true,$(BOARD_AVB_ENABLE))
 $(INSTALLED_BOOTIMAGE_TARGET) : $(AVBTOOL) $(BOARD_AVB_BOOT_KEY_PATH)
 endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
+ifdef BOARD_PREBUILT_RECOVERY_DTBOIMAGE
+$(INSTALLED_BOOTIMAGE_TARGET): $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE)
+else
 $(INSTALLED_BOOTIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
+endif
 endif
 ifdef BOARD_INCLUDE_RECOVERY_ACPIO
 $(INSTALLED_BOOTIMAGE_TARGET): $(BOARD_RECOVERY_ACPIO)
@@ -1918,7 +1926,11 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 endif # BOARD_USES_RECOVERY_AS_BOOT
 
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
+ifdef BOARD_PREBUILT_RECOVERY_DTBOIMAGE
+$(INSTALLED_RECOVERYIMAGE_TARGET): $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE)
+else
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(BOARD_PREBUILT_DTBOIMAGE)
+endif
 endif
 ifdef BOARD_INCLUDE_RECOVERY_ACPIO
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(BOARD_RECOVERY_ACPIO)
@@ -3597,6 +3609,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(INSTALLED_KERNEL_TARGET) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
 	    $(BOARD_PREBUILT_DTBOIMAGE) \
+	    $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE) \
 	    $(BOARD_RECOVERY_ACPIO) \
 	    $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SYSTEM_BASE_FS_PATH) \
 	    $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_VENDOR_BASE_FS_PATH) \
@@ -3636,7 +3649,11 @@ ifdef INSTALLED_2NDBOOTLOADER_TARGET
 	$(hide) cp $(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/second
 endif
 ifdef BOARD_INCLUDE_RECOVERY_DTBO
+ifdef BOARD_PREBUILT_RECOVERY_DTBOIMAGE
+	$(hide) cp $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_dtbo
+else
 	$(hide) cp $(BOARD_PREBUILT_DTBOIMAGE) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_dtbo
+endif
 endif
 ifdef BOARD_INCLUDE_RECOVERY_ACPIO
 	$(hide) cp $(BOARD_RECOVERY_ACPIO) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_acpio
