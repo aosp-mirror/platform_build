@@ -92,7 +92,7 @@ $(sort \
    ) \
   $(eval PRODUCT_MAKEFILES :=) \
   $(eval LOCAL_DIR :=) \
-  $(eval COMMON_LUNCH_CHOICES := $(sort $(_COMMON_LUNCH_CHOICES) $(LUNCH_MENU_CHOICES))) \
+  $(eval COMMON_LUNCH_CHOICES := $(sort $(_COMMON_LUNCH_CHOICES))) \
   $(eval _COMMON_LUNCH_CHOICES :=) \
  )
 endef
