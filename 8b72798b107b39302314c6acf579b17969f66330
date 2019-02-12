@@ -164,6 +164,30 @@
       "revId": "8b72798b107b39302314c6acf579b17969f66330",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a162982_2c6d18e8",
+        "filename": "target/product/goldfish_kernel_tests_x86_64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1278660
+      },
+      "writtenOn": "2019-02-12T22:18:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9f722e34_15a16eaf",
+      "range": {
+        "startLine": 22,
+        "startChar": 2,
+        "endLine": 22,
+        "endChar": 7
+      },
+      "revId": "8b72798b107b39302314c6acf579b17969f66330",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
