@@ -14,55 +14,14 @@
 
 LOCAL_PATH := $(call my-dir)
 
-# One can override the default android_filesystem_config.h file in one of two ways:
-#
-# 1. The old way:
-#   To Build the custom target binary for the host to generate the fs_config
-#   override files. The executable is hard coded to include the
-#   $(TARGET_ANDROID_FILESYSTEM_CONFIG_H) file if it exists.
-#   Expectations:
-#      device/<vendor>/<device>/android_filesystem_config.h
-#          fills in struct fs_path_config android_device_dirs[] and
-#                   struct fs_path_config android_device_files[]
-#      device/<vendor>/<device>/device.mk
-#          PRODUCT_PACKAGES += fs_config_dirs fs_config_files
-#   If not specified, check if default one to be found
-#
-# 2. The new way:
-#   set TARGET_FS_CONFIG_GEN to contain a list of intermediate format files
+# One can override the default android_filesystem_config.h file by using TARGET_FS_CONFIG_GEN.
+#   Set TARGET_FS_CONFIG_GEN to contain a list of intermediate format files
 #   for generating the android_filesystem_config.h file.
 #
 # More information can be found in the README
 ANDROID_FS_CONFIG_H := android_filesystem_config.h
 
-ifneq ($(TARGET_ANDROID_FILESYSTEM_CONFIG_H),)
-ifneq ($(TARGET_FS_CONFIG_GEN),)
-$(error Cannot set TARGET_ANDROID_FILESYSTEM_CONFIG_H and TARGET_FS_CONFIG_GEN simultaneously)
-endif
-
-# One and only one file can be specified.
-ifneq ($(words $(TARGET_ANDROID_FILESYSTEM_CONFIG_H)),1)
-$(error Multiple fs_config files specified, \
- see "$(TARGET_ANDROID_FILESYSTEM_CONFIG_H)".)
-endif
-
-ifeq ($(filter %/$(ANDROID_FS_CONFIG_H),$(TARGET_ANDROID_FILESYSTEM_CONFIG_H)),)
-$(error TARGET_ANDROID_FILESYSTEM_CONFIG_H file name must be $(ANDROID_FS_CONFIG_H), \
- see "$(notdir $(TARGET_ANDROID_FILESYSTEM_CONFIG_H))".)
-endif
-
-my_fs_config_h := $(TARGET_ANDROID_FILESYSTEM_CONFIG_H)
-else ifneq ($(wildcard $(TARGET_DEVICE_DIR)/$(ANDROID_FS_CONFIG_H)),)
-
-ifneq ($(TARGET_FS_CONFIG_GEN),)
-$(error Cannot provide $(TARGET_DEVICE_DIR)/$(ANDROID_FS_CONFIG_H) and set TARGET_FS_CONFIG_GEN simultaneously)
-endif
-my_fs_config_h := $(TARGET_DEVICE_DIR)/$(ANDROID_FS_CONFIG_H)
-
-else
 my_fs_config_h := $(LOCAL_PATH)/default/$(ANDROID_FS_CONFIG_H)
-endif
-
 system_android_filesystem_config := system/core/include/private/android_filesystem_config.h
 
 ##################################
