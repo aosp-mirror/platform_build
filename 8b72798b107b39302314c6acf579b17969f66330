@@ -96,6 +96,54 @@
     },
     {
       "key": {
+        "uuid": "155ae02b_aa208eab",
+        "filename": "target/product/AndroidProducts.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1278660
+      },
+      "writtenOn": "2019-02-12T22:13:43Z",
+      "side": 1,
+      "message": "Thank you.",
+      "parentUuid": "c4ec3d50_85233ce1",
+      "range": {
+        "startLine": 78,
+        "startChar": 2,
+        "endLine": 78,
+        "endChar": 7
+      },
+      "revId": "8b72798b107b39302314c6acf579b17969f66330",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bdca08d5_d95ff095",
+        "filename": "target/product/AndroidProducts.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1278660
+      },
+      "writtenOn": "2019-02-12T22:13:43Z",
+      "side": 1,
+      "message": "Now \"make -j\" passes.",
+      "parentUuid": "3b2d5a98_c9b9cbbf",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 78,
+        "endChar": 29
+      },
+      "revId": "8b72798b107b39302314c6acf579b17969f66330",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9f722e34_15a16eaf",
         "filename": "target/product/goldfish_kernel_tests_x86_64.mk",
         "patchSetId": 1
