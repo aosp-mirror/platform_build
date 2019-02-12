@@ -548,19 +548,14 @@ function choosecombo()
     destroy_build_var_cache
 }
 
-# Clear this variable.  It will be built up again when the vendorsetup.sh
-# files are included at the end of this file.
-unset LUNCH_MENU_CHOICES
 function add_lunch_combo()
 {
-    local new_combo=$1
-    local c
-    for c in ${LUNCH_MENU_CHOICES[@]} ; do
-        if [ "$new_combo" = "$c" ] ; then
-            return
-        fi
-    done
-    LUNCH_MENU_CHOICES=(${LUNCH_MENU_CHOICES[@]} $new_combo)
+    if [ -n "$ZSH_VERSION" ]; then
+        echo -n "${funcfiletrace[1]}: "
+    else
+        echo -n "${BASH_SOURCE[1]}:${BASH_LINENO[0]}: "
+    fi
+    echo "add_lunch_combo is obsolete. Use COMMON_LUNCH_CHOICES in your AndroidProducts.mk instead."
 }
 
 function print_lunch_menu()
@@ -573,7 +568,7 @@ function print_lunch_menu()
 
     local i=1
     local choice
-    for choice in $(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES)
+    for choice in $(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
     do
         echo "     $i. $choice"
         i=$(($i+1))
@@ -601,7 +596,7 @@ function lunch()
         selection=aosp_arm-eng
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
-        local choices=($(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES))
+        local choices=($(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES))
         if [ $answer -le ${#choices[@]} ]
         then
             # array in zsh starts from 1 instead of 0.
@@ -671,7 +666,7 @@ function _lunch()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     if [ -z "$COMMON_LUNCH_CHOICES_CACHE" ]; then
-        COMMON_LUNCH_CHOICES_CACHE=$(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES)
+        COMMON_LUNCH_CHOICES_CACHE=$(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
     fi
 
     COMPREPLY=( $(compgen -W "${COMMON_LUNCH_CHOICES_CACHE}" -- ${cur}) )
