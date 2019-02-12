@@ -2957,6 +2957,33 @@ ifneq ($(words $(sort $(INTERNAL_AVB_PARTITIONS_IN_CHAINED_VBMETA_IMAGES))),$(wo
   $(error BOARD_AVB_VBMETA_SYSTEM and BOARD_AVB_VBMETA_VENDOR cannot have duplicates)
 endif
 
+# Appends security patch level as a AVB property descriptor
+
+BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.system.security_patch:$(PLATFORM_SECURITY_PATCH)
+
+BOARD_AVB_PRODUCT_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.product.security_patch:$(PLATFORM_SECURITY_PATCH)
+
+BOARD_AVB_PRODUCT_SERVICES_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.product_services.security_patch:$(PLATFORM_SECURITY_PATCH)
+
+# The following vendor- and odm-specific images needs explicitly set per board.
+ifdef BOOT_SECURITY_PATCH
+BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS += \
+    --prop com.android.build.boot.security_patch:$(BOOT_SECURITY_PATCH)
+endif
+
+ifdef VENDOR_SECURITY_PATCH
+BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.vendor.security_patch:$(VENDOR_SECURITY_PATCH)
+endif
+
+ifdef ODM_SECURITY_PATCH
+BOARD_AVB_ODM_ADD_HASHTREE_FOOTER_ARGS += \
+    --prop com.android.build.odm.security_patch:$(ODM_SECURITY_PATCH)
+endif
+
 BOOT_FOOTER_ARGS := BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS
 DTBO_FOOTER_ARGS := BOARD_AVB_DTBO_ADD_HASH_FOOTER_ARGS
 SYSTEM_FOOTER_ARGS := BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS
@@ -3066,8 +3093,6 @@ endif
 BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --padding_size 4096
 BOARD_AVB_MAKE_VBMETA_SYSTEM_IMAGE_ARGS += --padding_size 4096
 BOARD_AVB_MAKE_VBMETA_VENDOR_IMAGE_ARGS += --padding_size 4096
-
-BOARD_AVB_SYSTEM_ADD_HASHTREE_FOOTER_ARGS += --prop system_security_patch:$(PLATFORM_SECURITY_PATCH)
 
 ifeq (eng,$(filter eng, $(TARGET_BUILD_VARIANT)))
 # We only need the flag in top-level vbmeta.img.
