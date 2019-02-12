@@ -540,7 +540,15 @@ $(call add-clean-step, rm -f $(PRODUCT_OUT)/system/lib*/libjavacore.so)
 $(call add-clean-step, rm -f $(PRODUCT_OUT)/system/lib*/libopenjdk.so)
 $(call add-clean-step, rm -f $(PRODUCT_OUT)/system/lib*/libexpat.so)
 
+# Merge product_services into product
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/product_services)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/product_services)
 
+# Clean up old location of hiddenapi files
+$(call add-clean-step, rm -f $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi*)
+
+# Clean up previous default location of RROs
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/overlay)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

@@ -112,7 +112,6 @@ ifeq ($(filter cfi, $(my_sanitize)),)
     ifneq ($(strip $(foreach dir,$(subst $(comma),$(space),$(combined_include_paths)),\
            $(filter $(dir)%,$(LOCAL_PATH)))),)
       my_sanitize := cfi $(my_sanitize)
-      my_sanitize_diag := cfi $(my_sanitize_diag)
     endif
   endif
 endif
@@ -210,6 +209,11 @@ endif
 
 # Disable Scudo if ASan or TSan is enabled.
 ifneq ($(filter address thread hwaddress,$(my_sanitize)),)
+  my_sanitize := $(filter-out scudo,$(my_sanitize))
+endif
+
+# Or if disabled globally.
+ifeq ($(strip $(PRODUCT_DISABLE_SCUDO)),true)
   my_sanitize := $(filter-out scudo,$(my_sanitize))
 endif
 

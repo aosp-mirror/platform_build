@@ -2195,6 +2195,30 @@ define codename-or-sdk-to-sdk
 $(if $(filter $(1),$(PLATFORM_VERSION_CODENAME)),10000,$(1))
 endef
 
+# Uses LOCAL_SDK_VERSION and PLATFORM_SDK_VERSION to determine a compileSdkVersion
+# in the form of a number or a codename (28 or P)
+define module-sdk-version
+$(strip \
+  $(if $(filter-out current system_current test_current core_current,$(LOCAL_SDK_VERSION)), \
+    $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)), \
+    $(PLATFORM_SDK_VERSION)))
+endef
+
+# Uses LOCAL_SDK_VERSION and DEFAULT_APP_TARGET_SDK to determine
+# a targetSdkVersion in the form of a number or a codename (28 or P).
+define module-target-sdk-version
+$(strip \
+  $(if $(filter-out current system_current test_current core_current,$(LOCAL_SDK_VERSION)), \
+    $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION)), \
+    $(DEFAULT_APP_TARGET_SDK)))
+endef
+
+# Uses LOCAL_MIN_SDK_VERSION, LOCAL_SDK_VERSION and DEFAULT_APP_TARGET_SDK to determine
+# a minSdkVersion in the form of a number or a codename (28 or P).
+define module-min-sdk-version
+$(if $(LOCAL_MIN_SDK_VERSION),$(LOCAL_MIN_SDK_VERSION),$(call module-target-sdk-version))
+endef
+
 
 define transform-classes.jar-to-dex
 @echo "target Dex: $(PRIVATE_MODULE)"
@@ -2251,24 +2275,15 @@ $(hide) cp $(3) $(dir $(1))lib/$(2)
 
 endef
 
-# For apps_only build, don't uncompress/page-align the jni libraries,
-# because the apk may be run on older platforms that don't support loading jni directly from apk.
-ifdef TARGET_BUILD_APPS
-JNI_COMPRESS_FLAGS :=
-ZIPALIGN_PAGE_ALIGN_FLAGS :=
-else
-JNI_COMPRESS_FLAGS := -L 0
-ZIPALIGN_PAGE_ALIGN_FLAGS := -p
-endif
-
 # $(1): the package file
+# $(2): if true, uncompress jni libs
 define create-jni-shared-libs-package
 rm -rf $(dir $(1))lib
 mkdir -p $(addprefix $(dir $(1))lib/,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI))
 $(foreach abi,$(PRIVATE_JNI_SHARED_LIBRARIES_ABI),\
   $(call _add-jni-shared-libs-to-package-per-abi,$(1),$(abi),\
     $(patsubst $(abi):%,%,$(filter $(abi):%,$(PRIVATE_JNI_SHARED_LIBRARIES)))))
-$(SOONG_ZIP) $(JNI_COMPRESS_FLAGS) -o $(1) -C $(dir $(1)) -D $(dir $(1))lib
+$(SOONG_ZIP) $(if $(2),-L 0) -o $(1) -C $(dir $(1)) -D $(dir $(1))lib
 rm -rf $(dir $(1))lib
 endef
 
@@ -2336,7 +2351,7 @@ $(hide) if ! $(ZIPALIGN) -c $(ZIPALIGN_PAGE_ALIGN_FLAGS) 4 $@ >/dev/null ; then 
   mv $@ $@.unaligned; \
   $(ZIPALIGN) \
     -f \
-    $(ZIPALIGN_PAGE_ALIGN_FLAGS) \
+    -p \
     4 \
     $@.unaligned $@.aligned; \
   mv $@.aligned $@; \
@@ -2662,58 +2677,6 @@ while zip --quiet --delete $(1) classes$${dex_index}.dex > /dev/null; do \
   let dex_index=dex_index+1; \
 done \
 fi
-endef
-
-# Copy dex files, invoking $(HIDDENAPI) on them in the process.
-# Also make the source dex file an input of the hiddenapi singleton rule in dex_preopt.mk.
-# Users can set UNSAFE_DISABLE_HIDDENAPI_FLAGS=true to skip this step. This is
-# meant to speed up local incremental builds. Note that skipping this step changes
-# Java semantics of the result dex bytecode. Use at own risk.
-ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
-define hiddenapi-copy-dex-files
-$(2): $(1) $(HIDDENAPI) $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS)
-	@rm -rf $(dir $(2))
-	@mkdir -p $(dir $(2))
-	for INPUT_DEX in `find $(dir $(1)) -maxdepth 1 -name "classes*.dex" | sort`; do \
-	    echo "--input-dex=$$$${INPUT_DEX}"; \
-	    echo "--output-dex=$(dir $(2))/`basename $$$${INPUT_DEX}`"; \
-	done | xargs $(HIDDENAPI) encode --api-flags=$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS)
-
-$(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS): $(1)
-$(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS): PRIVATE_DEX_INPUTS := $$(PRIVATE_DEX_INPUTS) $(1)
-endef
-else  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
-define hiddenapi-copy-dex-files
-$(2): $(1)
-	echo "WARNING: skipping hiddenapi post-processing for $(1)" 1>&2
-	@rm -rf $(dir $(2))
-	@mkdir -p $(dir $(2))
-	find $(dir $(1)) -maxdepth 1 -name "classes*.dex" | xargs -I{} cp -f {} $(dir $(2))/
-endef
-endif  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
-
-# Generate a greylist.txt from a classes.jar
-define hiddenapi-generate-csv
-ifneq ($(UNSAFE_DISABLE_HIDDENAPI_FLAGS),true)
-ifneq (,$(wildcard frameworks/base))
-# Only generate this target if we're in a tree with frameworks/base present.
-$(2): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS)
-	$(CLASS2GREYLIST) --stub-api-flags $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS) $(1) \
-	    --write-flags-csv $(2)
-
-$(3): $(1) $(CLASS2GREYLIST) $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS)
-	$(CLASS2GREYLIST) --stub-api-flags $(INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS) $(1) \
-	    --write-metadata-csv $(3)
-
-$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS): $(2)
-$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS): PRIVATE_FLAGS_INPUTS := $$(PRIVATE_FLAGS_INPUTS) $(2)
-
-$(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): $(3)
-$(INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA): \
-    PRIVATE_METADATA_INPUTS := $$(PRIVATE_METADATA_INPUTS) $(3)
-
-endif
-endif  # UNSAFE_DISABLE_HIDDENAPI_FLAGS
 endef
 
 

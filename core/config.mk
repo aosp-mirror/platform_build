@@ -91,6 +91,7 @@ $(KATI_obsolete_var \
   GLOBAL_CFLAGS_NO_OVERRIDE GLOBAL_CPPFLAGS_NO_OVERRIDE \
   ,GCC support has been removed. Use Clang instead)
 $(KATI_obsolete_var DIST_DIR dist_goal,Use dist-for-goals instead. See $(CHANGES_URL)#dist)
+$(KATI_obsolete_var TARGET_ANDROID_FILESYSTEM_CONFIG_H,Use TARGET_FS_CONFIG_GEN instead)
 $(KATI_deprecated_var USER,Use BUILD_USERNAME instead. See $(CHANGES_URL)#USER)
 
 # This is marked as obsolete in envsetup.mk after reading the BoardConfig.mk
@@ -205,11 +206,6 @@ JAVA_TMPDIR_ARG := -Djava.io.tmpdir=$(TMPDIR)
 else
 JAVA_TMPDIR_ARG :=
 endif
-
-# A list of the jars that provide information about usages of the hidden API.
-# The core-oj-hiddenapi provides information for the core-oj jar.
-HIDDENAPI_EXTRA_APP_USAGE_JARS := \
-    core-oj-hiddenapi \
 
 # ###############################################################
 # Broken build defaults
@@ -1223,10 +1219,6 @@ endif
 ifndef INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE
 INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/system-private-dex.txt
 endif
-
-INTERNAL_PLATFORM_HIDDENAPI_FLAGS := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-flags.csv
-INTERNAL_PLATFORM_HIDDENAPI_STUB_FLAGS := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-stub-flags.txt
-INTERNAL_PLATFORM_HIDDENAPI_GREYLIST_METADATA := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hiddenapi-greylist.csv
 
 # Missing optional uses-libraries so that the platform doesn't create build rules that depend on
 # them. See setup_one_odex.mk.

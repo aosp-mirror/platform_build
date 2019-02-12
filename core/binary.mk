@@ -290,11 +290,9 @@ my_ldlibs := $(filter $(my_allowed_ldlibs),$(my_ldlibs))
 else # LOCAL_IS_HOST_MODULE
   # Add -ldl, -lpthread, -lm and -lrt to host builds to match the default behavior of
   # device builds
-  ifneq ($($(my_prefix)OS),windows)
-    my_ldlibs += -ldl -lpthread -lm
-    ifneq ($(HOST_OS),darwin)
-      my_ldlibs += -lrt
-    endif
+  my_ldlibs += -ldl -lpthread -lm
+  ifneq ($(HOST_OS),darwin)
+    my_ldlibs += -lrt
   endif
 endif
 
@@ -315,17 +313,15 @@ endif
 # all code is position independent, and then those warnings get promoted to
 # errors.
 ifneq ($(LOCAL_NO_PIC),true)
-  ifneq ($($(my_prefix)OS),windows)
-    ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
-      my_cflags += -fPIE
-      ifndef BUILD_HOST_static
-        ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
-          my_ldflags += -pie
-        endif
+  ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
+    my_cflags += -fPIE
+    ifndef BUILD_HOST_static
+      ifneq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
+        my_ldflags += -pie
       endif
-    else
-      my_cflags += -fPIC
     endif
+  else
+    my_cflags += -fPIC
   endif
 endif
 
@@ -429,11 +425,6 @@ else
 endif
 
 include $(BUILD_SYSTEM)/config_sanitizers.mk
-
-# Statically link libwinpthread when cross compiling win32.
-ifeq ($($(my_prefix)OS),windows)
-  my_static_libraries += libwinpthread
-endif
 
 ifneq ($(filter ../%,$(my_src_files)),)
 my_soong_problems += dotdot_srcs

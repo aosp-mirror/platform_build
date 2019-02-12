@@ -1,5 +1,6 @@
 # Handle AndroidManifest.xmls
-# Input: LOCAL_MANIFEST_FILE, LOCAL_FULL_MANIFEST_FILE, LOCAL_FULL_LIBS_MANIFEST_FILES
+# Input: LOCAL_MANIFEST_FILE, LOCAL_FULL_MANIFEST_FILE, LOCAL_FULL_LIBS_MANIFEST_FILES,
+#        LOCAL_USE_EMBEDDED_NATIVE_LIBS
 # Output: full_android_manifest
 
 ifeq ($(strip $(LOCAL_MANIFEST_FILE)),)
@@ -46,19 +47,8 @@ else
   fixed_android_manifest := $(full_android_manifest)
 endif
 
-ifdef LOCAL_MIN_SDK_VERSION
-  $(fixed_android_manifest): PRIVATE_MIN_SDK_VERSION := $(LOCAL_MIN_SDK_VERSION)
-else ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
-  $(fixed_android_manifest): PRIVATE_MIN_SDK_VERSION := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
-else
-  $(fixed_android_manifest): PRIVATE_MIN_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
-endif
-
-ifneq (,$(filter-out current system_current test_current core_current, $(LOCAL_SDK_VERSION)))
-  $(fixed_android_manifest): PRIVATE_TARGET_SDK_VERSION := $(call get-numeric-sdk-version,$(LOCAL_SDK_VERSION))
-else
-  $(fixed_android_manifest): PRIVATE_TARGET_SDK_VERSION := $(DEFAULT_APP_TARGET_SDK)
-endif
+$(fixed_android_manifest): PRIVATE_MIN_SDK_VERSION := $(call module-min-sdk-version)
+$(fixed_android_manifest): PRIVATE_TARGET_SDK_VERSION := $(call module-target-sdk-version)
 
 my_exported_sdk_libs_file := $(call local-intermediates-dir,COMMON)/exported-sdk-libs
 $(fixed_android_manifest): PRIVATE_EXPORTED_SDK_LIBS_FILE := $(my_exported_sdk_libs_file)
@@ -74,6 +64,18 @@ endif
 
 ifeq (true,$(LOCAL_USE_EMBEDDED_DEX))
     my_manifest_fixer_flags += --use-embedded-dex
+endif
+
+ifeq ($(LOCAL_MODULE_CLASS),APPS)
+  ifeq (true,$(call math_gt_or_eq,$(patsubst $(PLATFORM_VERSION_CODENAME),100,$(call module-min-sdk-version)),23))
+    ifeq (true,$(LOCAL_USE_EMBEDDED_NATIVE_LIBS))
+      my_manifest_fixer_flags += --extract-native-libs=false
+    else
+      my_manifest_fixer_flags += --extract-native-libs=true
+    endif
+  else ifeq (true,$(LOCAL_USE_EMBEDDED_NATIVE_LIBS))
+    $(call pretty-error,LOCAL_USE_EMBEDDED_NATIVE_LIBS is set but minSdkVersion $(call module-min-sdk-version) does not support it)
+  endif
 endif
 
 $(fixed_android_manifest): PRIVATE_MANIFEST_FIXER_FLAGS := $(my_manifest_fixer_flags)
