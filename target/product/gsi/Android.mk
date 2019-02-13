@@ -100,11 +100,14 @@ ifneq ($(BOARD_VNDK_VERSION),)
 include $(CLEAR_VARS)
 LOCAL_MODULE := vndk_package
 LOCAL_REQUIRED_MODULES := \
-    $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES)) \
-    $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES)) \
     $(LLNDK_LIBRARIES) \
     llndk.libraries.txt \
     vndksp.libraries.txt
+ifneq ($(TARGET_SKIP_CURRENT_VNDK),true)
+LOCAL_REQUIRED_MODULES += \
+    $(addsuffix .vendor,$(VNDK_CORE_LIBRARIES)) \
+    $(addsuffix .vendor,$(VNDK_SAMEPROCESS_LIBRARIES))
+endif
 include $(BUILD_PHONY_PACKAGE)
 
 include $(CLEAR_VARS)
