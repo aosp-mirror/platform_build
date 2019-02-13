@@ -120,6 +120,17 @@ my_dexpreopt_archs :=
 my_dexpreopt_images :=
 
 ifdef LOCAL_DEX_PREOPT
+  ifeq (,$(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
+    # Store uncompressed dex files preopted in /system
+    ifeq ($(BOARD_USES_SYSTEM_OTHER_ODEX),true)
+      ifeq ($(call install-on-system-other, $(my_module_path)),)
+        LOCAL_UNCOMPRESS_DEX := true
+      endif  # install-on-system-other
+    else  # BOARD_USES_SYSTEM_OTHER_ODEX
+      LOCAL_UNCOMPRESS_DEX := true
+    endif
+  endif
+
   ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
     my_module_multilib := $(LOCAL_MULTILIB)
     # If the module is not an SDK library and it's a system server jar, only preopt the primary arch.
