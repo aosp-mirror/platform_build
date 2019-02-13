@@ -362,7 +362,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         (0xCAC3, 4),
         (0xCAC1, 6)])
     OPTIONS.info_dict = {
-        'system_image_blocks' : 12,
+        'system_image_size' : 53248,
     }
     name, care_map = GetCareMap('system', sparse_image)
     self.assertEqual('system', name)
@@ -377,6 +377,6 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         (0xCAC3, 4),
         (0xCAC1, 6)])
     OPTIONS.info_dict = {
-        'system_image_blocks' : -12,
+        'system_image_size' : -45056,
     }
     self.assertRaises(AssertionError, GetCareMap, 'system', sparse_image)
