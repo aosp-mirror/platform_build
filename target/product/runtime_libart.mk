@@ -38,10 +38,6 @@ PRODUCT_PACKAGES += \
     libicui18n \
     libicuuc \
 
-# ART.
-PRODUCT_PACKAGES += art-runtime
-# ART/dex helpers.
-PRODUCT_PACKAGES += art-tools
 # Android Runtime APEX module.
 PRODUCT_PACKAGES += com.android.runtime
 
