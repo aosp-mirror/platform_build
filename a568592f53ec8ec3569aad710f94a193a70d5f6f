@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "911f97d3_940ad897",
+        "filename": "CleanSpec.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 555,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-02-13T23:07:39Z",
+      "side": 1,
+      "message": "This is fine, but FYI recovering from cleaning files in $(PRODUCT_OUT)/system is fast, so this could be:\n\n   $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*)\n   $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin)",
+      "revId": "a568592f53ec8ec3569aad710f94a193a70d5f6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
