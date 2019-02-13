@@ -5,25 +5,9 @@
 
 Generating the android_filesystem_config.h:
 
-To generate the android_filesystem_config.h file, one can choose from
-one of two methods. The first method, is to declare
-TARGET_ANDROID_FILESYSTEM_CONFIG_H in the device BoardConfig.mk file. This
-variable can only have one item in it, and it is used directly as the
-android_filesystem_config.h header when building
-fs_config_generate_$(TARGET_DEVICE) which is used to generate fs_config_files
-and fs_config_dirs target executable.
-
-The limitation with this, is that it can only be set once, thus if the device
-has a make hierarchy, then each device needs its own file, and cannot share
-from a common source or that common source needs to include everything from
-both devices.
-
-The other way is to set TARGET_FS_CONFIG_GEN, which can be a list of
-intermediate fs configuration files. It is a build error on any one
-these conditions:
- * Specify TARGET_FS_CONFIG_GEN and TARGET_ANDROID_FILESYSTEM_CONFIG_H
- * Specify TARGET_FS_CONFIG_GEN and provide
-   $(TARGET_DEVICE_DIR)/android_filesystem_config.h
+To generate the android_filesystem_config.h file, one can set
+TARGET_FS_CONFIG_GEN, which can be a list of intermediate fs configuration
+files.
 
 The parsing of the config file follows the Python ConfigParser specification,
 with the sections and fields as defined below. There are two types of sections,
