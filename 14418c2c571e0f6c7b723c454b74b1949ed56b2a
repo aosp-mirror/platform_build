@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e0928a63_548e6a39",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-13T05:28:30Z",
+      "side": 1,
+      "message": "this can be enclosed in a with statement.",
+      "range": {
+        "startLine": 154,
+        "startChar": 0,
+        "endLine": 159,
+        "endChar": 30
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c466f49_58e7d9d1",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-13T05:28:30Z",
+      "side": 1,
+      "message": "This can be simplified?\n\nitem_matches \u003d []\nfor pattern in extract_item_list:\n  match \u003d fnmatch.filter(namelist, pattern)\n  if not match:\n    log.warning\n  else:\n    item_matches.append(match)",
+      "range": {
+        "startLine": 161,
+        "startChar": 2,
+        "endLine": 178,
+        "endChar": 62
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f0a9612_39c3741f",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-13T05:28:30Z",
+      "side": 1,
+      "message": "we can modify the UnzipTemp() in common to accept a output dir. Put a TODO and change that in a follow up maybe. This CL is already incredibly long....",
+      "range": {
+        "startLine": 183,
+        "startChar": 1,
+        "endLine": 189,
+        "endChar": 32
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88112416_eb2fcd10",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-13T05:28:30Z",
+      "side": 1,
+      "message": "how about output_ab_partitions_dict \u003d set(system_ab_partitions + other_ab_partitions), and move definition of output_ab_partitions_txt to the next line.\n\nread.splitlines() also remove the newline in the end.",
+      "range": {
+        "startLine": 241,
+        "startChar": 1,
+        "endLine": 249,
+        "endChar": 65
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cfbbc3ed_2cbf70fc",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-13T05:28:30Z",
+      "side": 1,
+      "message": "this is TBD, so put a TODO for reminder.",
+      "range": {
+        "startLine": 293,
+        "startChar": 0,
+        "endLine": 297,
+        "endChar": 49
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e477674_3cae6109",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-13T05:28:30Z",
+      "side": 1,
+      "message": "the string format is preferred here, so\nfor key, value in sorted(merged_info_dict.iteritems()):\n  write(\"{}\u003d{}\".format(...))",
+      "range": {
+        "startLine": 306,
+        "startChar": 4,
+        "endLine": 307,
+        "endChar": 31
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7282c122_54e594b7",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-13T05:28:30Z",
+      "side": 1,
+      "message": "The code can be more concise with a loop, with system \u0026 vendor mandatory and odm \u0026 product optional.\n\nfor partition in [system, vendor ...]\n  file_context \u003d os.path.join(\n      output_target_files_temp_dir,\n      partition.upper(), \u0027etc\u0027, \u0027selinux\u0027, \u0027{}_file_contexts\u0027.format(plat if system else partition))\n...",
+      "range": {
+        "startLine": 342,
+        "startChar": 0,
+        "endLine": 370,
+        "endChar": 58
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e00147c9_7efbf9f7",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-13T05:28:30Z",
+      "side": 1,
+      "message": "why do we sometimes raise an exception and other times return a non zero value? Should cases like this one considered as a failure as well?",
+      "range": {
+        "startLine": 388,
+        "startChar": 0,
+        "endLine": 389,
+        "endChar": 17
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5b038049_a2b2cac6",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 576,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-13T05:28:30Z",
+      "side": 1,
+      "message": "os.listdir",
+      "range": {
+        "startLine": 572,
+        "startChar": 1,
+        "endLine": 576,
+        "endChar": 27
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "23cfb0d5_6acc668c",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-13T05:28:30Z",
+      "side": 1,
+      "message": "it should be available in the output directory: $out/soong/host/linux-x86/bin/soong_zip. I believe soong_zip is already part of otatools.",
+      "range": {
+        "startLine": 598,
+        "startChar": 6,
+        "endLine": 598,
+        "endChar": 54
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
