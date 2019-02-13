@@ -22,6 +22,30 @@
       "revId": "ad96a6457c57eec4b60939aa82638a58c16bdbf1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "727bdd85_e40f893a",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-02-13T09:07:38Z",
+      "side": 1,
+      "message": "OK, will remove it first if it\u0027s a file.",
+      "parentUuid": "625faffd_926ec9e1",
+      "range": {
+        "startLine": 748,
+        "startChar": 9,
+        "endLine": 748,
+        "endChar": 22
+      },
+      "revId": "ad96a6457c57eec4b60939aa82638a58c16bdbf1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
