@@ -112,7 +112,8 @@ class Utils(object):
                 'Cannot specify delimiter character ":" in uid: "%s"' % uid)
         if ':' in logon:
             raise ValueError(
-                'Cannot specify delimiter character ":" in logon: "%s"' % logon)
+                'Cannot specify delimiter character ":" in logon: "%s"' %
+                logon)
         return logon, uid
 
 
@@ -158,16 +159,17 @@ class AID(object):
 
         try:
             self.normalized_value = str(int(value, 0))
-        except ValueException:
-            raise ValueError('Invalid "value", not aid number, got: \"%s\"' % value)
+        except ValueError:
+            raise ValueError(
+                'Invalid "value", not aid number, got: \"%s\"' % value)
 
         # Where we calculate the friendly name
         friendly = identifier[len(AID.PREFIX):].lower()
         self.friendly = AID._fixup_friendly(friendly)
 
         if len(self.friendly) > 31:
-            raise ValueError('AID names must be under 32 characters "%s"' % self.friendly)
-
+            raise ValueError(
+                'AID names must be under 32 characters "%s"' % self.friendly)
 
     def __eq__(self, other):
 
@@ -217,6 +219,7 @@ class FSConfig(object):
         user (str): The uid or #define identifier (AID_SYSTEM)
         group (str): The gid or #define identifier (AID_SYSTEM)
         caps (str): The capability set.
+        path (str): The path of the file or directory.
         filename (str): The file it was found in.
     """
 
@@ -227,6 +230,7 @@ class FSConfig(object):
             user (str): The uid or #define identifier (AID_SYSTEM)
             group (str): The gid or #define identifier (AID_SYSTEM)
             caps (str): The capability set as a list.
+            path (str): The path of the file or directory.
             filename (str): The file it was found in.
         """
         self.mode = mode
@@ -242,6 +246,11 @@ class FSConfig(object):
             and self.group == other.group and self.caps == other.caps \
             and self.path == other.path and self.filename == other.filename
 
+    def __repr__(self):
+        return 'FSConfig(%r, %r, %r, %r, %r, %r)' % (self.mode, self.user,
+                                                     self.group, self.caps,
+                                                     self.path, self.filename)
+
 
 class AIDHeaderParser(object):
     """Parses an android_filesystem_config.h file.
@@ -256,10 +265,10 @@ class AIDHeaderParser(object):
     work.
     """
 
-
     _SKIP_AIDS = [
         re.compile(r'%sUNUSED[0-9].*' % AID.PREFIX),
-        re.compile(r'%sAPP' % AID.PREFIX), re.compile(r'%sUSER' % AID.PREFIX)
+        re.compile(r'%sAPP' % AID.PREFIX),
+        re.compile(r'%sUSER' % AID.PREFIX)
     ]
     _AID_DEFINE = re.compile(r'\s*#define\s+%s.*' % AID.PREFIX)
     _OEM_START_KW = 'START'
@@ -310,7 +319,9 @@ class AIDHeaderParser(object):
                 identifier = chunks[1]
                 value = chunks[2]
 
-                if any(x.match(identifier) for x in AIDHeaderParser._SKIP_AIDS):
+                if any(
+                        x.match(identifier)
+                        for x in AIDHeaderParser._SKIP_AIDS):
                     continue
 
                 try:
@@ -322,8 +333,8 @@ class AIDHeaderParser(object):
                         self._handle_aid(identifier, value)
                 except ValueError as exception:
                     sys.exit(
-                        error_message('{} for "{}"'.format(exception,
-                                                           identifier)))
+                        error_message('{} for "{}"'.format(
+                            exception, identifier)))
 
     def _handle_aid(self, identifier, value):
         """Handle an AID C #define.
@@ -346,8 +357,8 @@ class AIDHeaderParser(object):
             raise ValueError('Duplicate aid "%s"' % identifier)
 
         if value in self._aid_value_to_name and aid.identifier not in AIDHeaderParser._COLLISION_OK:
-            raise ValueError('Duplicate aid value "%s" for %s' % (value,
-                                                                  identifier))
+            raise ValueError(
+                'Duplicate aid value "%s" for %s' % (value, identifier))
 
         self._aid_name_to_value[aid.friendly] = aid
         self._aid_value_to_name[value] = aid.friendly
@@ -400,11 +411,11 @@ class AIDHeaderParser(object):
             if tmp == int_value:
                 raise ValueError('START and END values equal %u' % int_value)
             elif is_start and tmp < int_value:
-                raise ValueError('END value %u less than START value %u' %
-                                 (tmp, int_value))
+                raise ValueError(
+                    'END value %u less than START value %u' % (tmp, int_value))
             elif not is_start and tmp > int_value:
-                raise ValueError('END value %u less than START value %u' %
-                                 (int_value, tmp))
+                raise ValueError(
+                    'END value %u less than START value %u' % (int_value, tmp))
 
         # Add START values to the head of the list and END values at the end.
         # Thus, the list is ordered with index 0 as START and index 1 as END.
@@ -533,7 +544,7 @@ class FSConfigFileParser(object):
 
     # list of handler to required options, used to identify the
     # parsing section
-    _SECTIONS = [('_handle_aid', ('value',)),
+    _SECTIONS = [('_handle_aid', ('value', )),
                  ('_handle_path', ('mode', 'user', 'group', 'caps'))]
 
     def __init__(self, config_files, oem_ranges):
@@ -596,8 +607,8 @@ class FSConfigFileParser(object):
                     break
 
             if not found:
-                sys.exit('Invalid section "%s" in file: "%s"' %
-                         (section, file_name))
+                sys.exit('Invalid section "%s" in file: "%s"' % (section,
+                                                                 file_name))
 
             # sort entries:
             # * specified path before prefix match
@@ -959,7 +970,7 @@ class FSConfigGen(BaseGenerator):
 
         common = base_set & oem_set
 
-        if len(common) > 0:
+        if common:
             emsg = 'Following AID Collisions detected for: \n'
             for friendly in common:
                 base = base_friendly[friendly]
@@ -1234,11 +1245,12 @@ class PasswdGen(BaseGenerator):
         aids = parser.aids
 
         # nothing to do if no aids defined
-        if len(aids) == 0:
+        if not aids:
             return
 
         for aid in aids:
-            if required_prefix is None or aid.friendly.startswith(required_prefix):
+            if required_prefix is None or aid.friendly.startswith(
+                    required_prefix):
                 self._print_formatted_line(aid)
             else:
                 sys.exit("%s: AID '%s' must start with '%s'" %
@@ -1293,6 +1305,7 @@ class GroupGen(PasswdGen):
             sys.exit(exception)
 
         print "%s::%s:" % (logon, uid)
+
 
 @generator('print')
 class PrintGen(BaseGenerator):
