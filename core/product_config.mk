@@ -237,6 +237,10 @@ $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
 # Sanity check
 $(check-all-products)
 
+ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
+$(dump-products)
+endif
+
 # Convert a short name like "sooner" into the path to the product
 # file defining that product.
 #
