@@ -34,6 +34,24 @@
       "revId": "b3fda301c2c07c35cc28f37e7c1a2adce4898b55",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe879310_cf958bc2",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 365,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-13T21:02:49Z",
+      "side": 1,
+      "message": "This list is just for completion files, and all completions should be set up through this list.\n\nSo if you need to provide users other commands in addition to completions, you\u0027ll need two files, one in this list, and one included elsewhere.",
+      "parentUuid": "1b046605_075af4ae",
+      "revId": "b3fda301c2c07c35cc28f37e7c1a2adce4898b55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
