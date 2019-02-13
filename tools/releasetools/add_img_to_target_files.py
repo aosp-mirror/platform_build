@@ -119,9 +119,12 @@ def GetCareMap(which, imgname):
 
   simg = sparse_img.SparseImage(imgname)
   care_map_ranges = simg.care_map
-  key = which + "_image_blocks"
-  image_blocks = OPTIONS.info_dict.get(key)
-  if image_blocks:
+  size_key = which + "_image_size"
+  image_size = OPTIONS.info_dict.get(size_key)
+  if image_size:
+    # excludes the verity metadata blocks of the given image. When AVB is enabled,
+    # this size is the max image size returned by the AVB tool
+    image_blocks = int(image_size) / 4096 - 1
     assert image_blocks > 0, "blocks for {} must be positive".format(which)
     care_map_ranges = care_map_ranges.intersect(
         rangelib.RangeSet("0-{}".format(image_blocks)))
@@ -319,9 +322,7 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   if block_list:
     block_list.Write()
 
-  # Set the '_image_blocks' that excludes the verity metadata blocks of the
-  # given image. When AVB is enabled, this size is the max image size returned
-  # by the AVB tool.
+  # Set the '_image_size' for given image size.
   is_verity_partition = "verity_block_device" in image_props
   verity_supported = (image_props.get("verity") == "true" or
                       image_props.get("avb_enable") == "true")
@@ -329,8 +330,8 @@ def CreateImage(input_dir, info_dict, what, output_file, block_list=None):
   if verity_supported and (is_verity_partition or is_avb_enable):
     image_size = image_props.get("image_size")
     if image_size:
-      image_blocks_key = what + "_image_blocks"
-      info_dict[image_blocks_key] = int(image_size) / 4096 - 1
+      image_size_key = what + "_image_size"
+      info_dict[image_size_key] = int(image_size)
 
   use_dynamic_size = (
       info_dict.get("use_dynamic_partition_size") == "true" and
