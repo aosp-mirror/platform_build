@@ -147,10 +147,10 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  Dex2oatXms,                         $(DEX2OAT_XMS))
   $(call add_json_str,  EmptyDirectory,                     $(OUT_DIR)/empty)
 
-  $(call add_json_map,  DefaultDexPreoptImageLocation)
-  $(call add_json_str,  $(TARGET_ARCH), $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION))
+  $(call add_json_map,  DefaultDexPreoptImage)
+  $(call add_json_str,  $(TARGET_ARCH), $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME))
   ifdef TARGET_2ND_ARCH
-    $(call add_json_str, $(TARGET_2ND_ARCH), $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION))
+    $(call add_json_str, $(TARGET_2ND_ARCH), $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME))
   endif
   $(call end_json_map)
 
@@ -207,13 +207,6 @@ DEXPREOPT_GEN_DEPS := \
   $(BUILD_SYSTEM)/construct_context.sh \
 
 DEXPREOPT_GEN_DEPS += $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
-
-DEXPREOPT_GEN_DEPS += $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
-ifdef TARGET_2ND_ARCH
-  ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
-    DEXPREOPT_GEN_DEPS += $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
-  endif
-endif
 
 DEXPREOPT_STRIP_DEPS := \
   $(ZIP2ZIP) \
