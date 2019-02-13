@@ -73,6 +73,7 @@ PRODUCT_PACKAGES += \
     dpm \
     dumpstate \
     dumpsys \
+    DynamicAndroidInstallationService \
     e2fsck \
     ExtServices \
     ExtShared \
@@ -85,6 +86,7 @@ PRODUCT_PACKAGES += \
     fs_config_files_system \
     fs_config_dirs_system \
     gsid \
+    gsi_tool \
     heapprofd \
     heapprofd_client \
     gatekeeperd \
