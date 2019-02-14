@@ -35,7 +35,7 @@ $(check_elf_files_stamp): $(my_prebuilt_src_file) $(CHECK_ELF_FILE) $(LLVM_READO
 	$(hide) touch $@
 
 ifneq ($(PRODUCT_CHECK_ELF_FILES)$(CHECK_ELF_FILES),)
-ifneq ($(LOCAL_CHECK_ELF_FILES),false)
+ifneq ($(strip $(LOCAL_CHECK_ELF_FILES)),false)
 $(LOCAL_BUILT_MODULE): $(check_elf_files_stamp)
 check-elf-files: $(check_elf_files_stamp)
 endif  # LOCAL_CHECK_ELF_FILES
