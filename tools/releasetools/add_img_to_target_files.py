@@ -734,6 +734,7 @@ def AddImagesToTargetFiles(filename):
                           os.path.exists(os.path.join(OPTIONS.input_tmp,
                                                       "IMAGES",
                                                       "product_services.img")))
+  has_system = os.path.isdir(os.path.join(OPTIONS.input_tmp, "SYSTEM"))
   has_system_other = os.path.isdir(os.path.join(OPTIONS.input_tmp,
                                                 "SYSTEM_OTHER"))
 
@@ -798,9 +799,10 @@ def AddImagesToTargetFiles(filename):
         if output_zip:
           recovery_two_step_image.AddToZip(output_zip)
 
-  banner("system")
-  partitions['system'] = AddSystem(
-      output_zip, recovery_img=recovery_image, boot_img=boot_image)
+  if has_system:
+    banner("system")
+    partitions['system'] = AddSystem(
+        output_zip, recovery_img=recovery_image, boot_img=boot_image)
 
   if has_vendor:
     banner("vendor")
