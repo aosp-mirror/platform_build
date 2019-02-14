@@ -108,6 +108,8 @@ $(error $(LOCAL_MODULE) : LOCAL_COMPRESSED_MODULE can only be defined for module
 endif  # LOCAL_COMPRESSED_MODULE
 endif
 
+my_check_elf_file_shared_lib_files :=
+
 ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module)),)
   ifdef LOCAL_IS_HOST_MODULE
     $(call pretty-error,Cannot strip/pack host module)
@@ -123,6 +125,12 @@ ifneq ($(filter true keep_symbols no_debuglink mini-debug-info,$(my_strip_module
   include $(BUILD_SYSTEM)/dynamic_binary.mk
   built_module := $(linked_module)
 
+  ifneq ($(LOCAL_SDK_VERSION),)
+    # binary.mk filters out NDK_MIGRATED_LIBS from my_shared_libs, thus those NDK libs are not added
+    # to DEPENDENCIES_ON_SHARED_LIBRARIES. Assign $(my_ndk_shared_libraries_fullpath) to
+    # my_check_elf_file_shared_lib_files so that check_elf_file.py can see those NDK stub libs.
+    my_check_elf_file_shared_lib_files := $(my_ndk_shared_libraries_fullpath)
+  endif
 else  # my_strip_module not true
   include $(BUILD_SYSTEM)/base_rules.mk
   built_module := $(LOCAL_BUILT_MODULE)
