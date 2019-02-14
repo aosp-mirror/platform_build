@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "82fa9361_f4479814",
+        "filename": "target/product/goldfish_kernel_tests_x86_64.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-14T03:55:23Z",
+      "side": 1,
+      "message": "Why isn\u0027t this entire file in device/generic/goldfish? There\u0027s no need for it to be here.",
+      "revId": "3b0127ad0995b67fd963257f7e1f7a2303fb16a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
