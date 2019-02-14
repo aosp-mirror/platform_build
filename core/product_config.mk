@@ -237,6 +237,10 @@ $(foreach makefile,$(ARTIFACT_PATH_REQUIREMENT_PRODUCTS),\
 # Sanity check
 $(check-all-products)
 
+ifneq ($(filter dump-products, $(MAKECMDGOALS)),)
+$(dump-products)
+endif
+
 # Convert a short name like "sooner" into the path to the product
 # file defining that product.
 #
@@ -408,6 +412,8 @@ PRODUCT_DEX_PREOPT_BOOT_FLAGS := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEX_PREOPT_BOOT_FLAGS))
 PRODUCT_DEX_PREOPT_PROFILE_DIR := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEX_PREOPT_PROFILE_DIR))
+PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING := \
+    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING))
 
 # Boot image options.
 PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE := \

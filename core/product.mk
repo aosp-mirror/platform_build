@@ -180,6 +180,7 @@ _product_var_list := \
     PRODUCT_DEX_PREOPT_PROFILE_DIR \
     PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
     PRODUCT_DEX_PREOPT_GENERATE_DM_FILES \
+    PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
     PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE \
     PRODUCT_SYSTEM_SERVER_COMPILER_FILTER \
     PRODUCT_SANITIZER_MODULE_CONFIGS \
@@ -233,10 +234,10 @@ _product_var_list := \
     PRODUCT_CHECK_ELF_FILES \
 
 define dump-product
-$(info ==== $(1) ====)\
+$(warning ==== $(1) ====)\
 $(foreach v,$(_product_var_list),\
-$(info PRODUCTS.$(1).$(v) := $(PRODUCTS.$(1).$(v))))\
-$(info --------)
+$(warning PRODUCTS.$(1).$(v) := $(PRODUCTS.$(1).$(v))))\
+$(warning --------)
 endef
 
 define dump-products

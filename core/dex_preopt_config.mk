@@ -45,7 +45,11 @@ SYSTEM_OTHER_ODEX_FILTER ?= \
     product/app/% \
     product/priv-app/% \
 
-# The default values for pre-opting: always preopt PIC.
+# The default values for pre-opting. To support the runtime module we ensure no dex files
+# get stripped.
+ifeq ($(PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING),)
+  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING := true
+endif
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
   WITH_DEXPREOPT ?= true
@@ -134,6 +138,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  DefaultCompilerFilter,              $(PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER))
   $(call add_json_str,  SystemServerCompilerFilter,         $(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
   $(call add_json_bool, GenerateDmFiles,                    $(PRODUCT_DEX_PREOPT_GENERATE_DM_FILES))
+  $(call add_json_bool, NeverAllowStripping,                $(PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING))
   $(call add_json_bool, NoDebugInfo,                        $(filter false,$(WITH_DEXPREOPT_DEBUG_INFO)))
   $(call add_json_bool, AlwaysSystemServerDebugInfo,        $(filter true,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)))
   $(call add_json_bool, NeverSystemServerDebugInfo,         $(filter false,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)))
@@ -147,10 +152,10 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  Dex2oatXms,                         $(DEX2OAT_XMS))
   $(call add_json_str,  EmptyDirectory,                     $(OUT_DIR)/empty)
 
-  $(call add_json_map,  DefaultDexPreoptImageLocation)
-  $(call add_json_str,  $(TARGET_ARCH), $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION))
+  $(call add_json_map,  DefaultDexPreoptImage)
+  $(call add_json_str,  $(TARGET_ARCH), $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME))
   ifdef TARGET_2ND_ARCH
-    $(call add_json_str, $(TARGET_2ND_ARCH), $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION))
+    $(call add_json_str, $(TARGET_2ND_ARCH), $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME))
   endif
   $(call end_json_map)
 
@@ -207,13 +212,6 @@ DEXPREOPT_GEN_DEPS := \
   $(BUILD_SYSTEM)/construct_context.sh \
 
 DEXPREOPT_GEN_DEPS += $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
-
-DEXPREOPT_GEN_DEPS += $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
-ifdef TARGET_2ND_ARCH
-  ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
-    DEXPREOPT_GEN_DEPS += $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
-  endif
-endif
 
 DEXPREOPT_STRIP_DEPS := \
   $(ZIP2ZIP) \

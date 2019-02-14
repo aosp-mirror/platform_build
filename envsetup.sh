@@ -1765,11 +1765,33 @@ function aidegen()
 }
 
 # Execute the contents of any vendorsetup.sh files we can find.
+# Unless we find an allowed-vendorsetup_sh-files file, in which case we'll only
+# load those.
+#
+# This allows loading only approved vendorsetup.sh files
 function source_vendorsetup() {
+    allowed=
+    for f in $(find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
+        if [ -n "$allowed" ]; then
+            echo "More than one 'allowed_vendorsetup_sh-files' file found, not including any vendorsetup.sh files:"
+            echo "  $allowed"
+            echo "  $f"
+            return
+        fi
+        allowed="$f"
+    done
+
+    allowed_files=
+    [ -n "$allowed" ] && allowed_files=$(cat "$allowed")
     for dir in device vendor product; do
         for f in $(test -d $dir && \
             find -L $dir -maxdepth 4 -name 'vendorsetup.sh' 2>/dev/null | sort); do
-            echo "including $f"; . $f
+
+            if [[ -z "$allowed" || "$allowed_files" =~ $f ]]; then
+                echo "including $f"; . "$f"
+            else
+                echo "ignoring $f, not in $allowed"
+            fi
         done
     done
 }
