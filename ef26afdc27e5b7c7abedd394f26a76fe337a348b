@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c0ec4a4a_4708dfdf",
+        "filename": "core/tasks/find-shareduid-violation.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1096713
+      },
+      "writtenOn": "2019-02-14T18:16:48Z",
+      "side": 1,
+      "message": "What version of aapt2 is this script requiring?  version 2:19 doesn\u0027t seem to support the --file option, and that looks to be the version in a lot of areas.  This gets a broken build in areas I\u0027m happy to discuss outside this CL.",
+      "revId": "ef26afdc27e5b7c7abedd394f26a76fe337a348b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
