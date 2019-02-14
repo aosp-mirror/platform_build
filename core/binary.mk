@@ -257,6 +257,14 @@ ifneq ($(LOCAL_SDK_VERSION),)
   else # LOCAL_NDK_STL_VARIANT must be none
     # Do nothing.
   endif
+
+  # Clang's coverage/profile runtime needs symbols like 'stderr' that were not
+  # exported from libc prior to API level 23
+  ifneq ($(my_ndk_api),current)
+    ifeq ($(call math_lt, $(my_ndk_api),23),true)
+      my_native_coverage := false
+    endif
+  endif
 endif
 
 ifneq ($(LOCAL_USE_VNDK),)
