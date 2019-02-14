@@ -16,6 +16,24 @@
       "revId": "3b0127ad0995b67fd963257f7e1f7a2303fb16a0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec7e8b8f_9b5f602f",
+        "filename": "target/product/goldfish_kernel_tests_x86_64.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1278660
+      },
+      "writtenOn": "2019-02-14T17:15:09Z",
+      "side": 1,
+      "message": "For consistency and when I do thisL\n\nPRODUCT_MAKEFILES :\u003d \\\n    ...\n    device/generic/goldfish/kernel-tests/x86_64.mk \\\n\nlunch goldfish_kernel_tests_x86_64\n\nbuild/make/core/product_config.mk:223: error: Can not locate config makefile for product \"goldfish_kernel_tests_x86_64\".",
+      "parentUuid": "82fa9361_f4479814",
+      "revId": "3b0127ad0995b67fd963257f7e1f7a2303fb16a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
