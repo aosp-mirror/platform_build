@@ -22,6 +22,30 @@
       "revId": "14617f30e6d679059d4dc6366f7a7befa9dc97cd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1dbd81c_8ed87626",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-02-14T22:50:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3d05db39_17edeef2",
+      "range": {
+        "startLine": 102,
+        "startChar": 60,
+        "endLine": 102,
+        "endChar": 86
+      },
+      "revId": "14617f30e6d679059d4dc6366f7a7befa9dc97cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
