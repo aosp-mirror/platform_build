@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3d05db39_17edeef2",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-14T22:24:17Z",
+      "side": 1,
+      "message": "Reading from /dev/null is fine, but depending on /dev/null is not fine. Maybe keep it empty, and do the replacement inside the rule?\n\n  $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)",
+      "range": {
+        "startLine": 102,
+        "startChar": 60,
+        "endLine": 102,
+        "endChar": 86
+      },
+      "revId": "14617f30e6d679059d4dc6366f7a7befa9dc97cd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
