@@ -170,14 +170,29 @@ my_common :=
 include $(BUILD_SYSTEM)/link_type.mk
 endif  # prebuilt_module_is_a_library
 
-# Check prebuilt ELF binaries.
-include $(BUILD_SYSTEM)/check_elf_file.mk
-
 # The real dependency will be added after all Android.mks are loaded and the install paths
 # of the shared libraries are determined.
 ifdef LOCAL_INSTALLED_MODULE
-ifdef LOCAL_SHARED_LIBRARIES
-my_shared_libraries := $(LOCAL_SHARED_LIBRARIES)
+ifdef LOCAL_IS_HOST_MODULE
+    ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
+        my_system_shared_libraries :=
+    else
+        my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
+    endif
+else
+    ifeq ($(LOCAL_SYSTEM_SHARED_LIBRARIES),none)
+        my_system_shared_libraries := libc libm libdl
+    else
+        my_system_shared_libraries := $(LOCAL_SYSTEM_SHARED_LIBRARIES)
+        my_system_shared_libraries := $(patsubst libc,libc libdl,$(my_system_shared_libraries))
+    endif
+endif
+
+my_shared_libraries := \
+    $(filter-out $(my_system_shared_libraries),$(LOCAL_SHARED_LIBRARIES)) \
+    $(my_system_shared_libraries)
+
+ifdef my_shared_libraries
 # Extra shared libraries introduced by LOCAL_CXX_STL.
 include $(BUILD_SYSTEM)/cxx_stl_setup.mk
 ifdef LOCAL_USE_VNDK
@@ -187,11 +202,14 @@ endif
 $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
   $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(my_shared_libraries))
 endif
-endif
+endif  # my_shared_libraries
 
 # We need to enclose the above export_includes and my_built_shared_libraries in
 # "my_strip_module not true" because otherwise the rules are defined in dynamic_binary.mk.
 endif  # my_strip_module not true
+
+# Check prebuilt ELF binaries.
+include $(BUILD_SYSTEM)/check_elf_file.mk
 
 ifeq ($(NATIVE_COVERAGE),true)
 ifneq (,$(strip $(LOCAL_PREBUILT_COVERAGE_ARCHIVE)))
