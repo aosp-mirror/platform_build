@@ -1510,11 +1510,15 @@ else # TARGET_BUILD_APPS
     $(call dist-for-goals, dist_files, $(JACOCO_REPORT_CLASSES_ALL))
 
     # Put XML formatted API files in the dist dir.
+    $(TARGET_OUT_COMMON_INTERMEDIATES)/api.xml: $(call java-lib-header-files,android_stubs_current) $(APICHECK)
+    $(TARGET_OUT_COMMON_INTERMEDIATES)/system-api.xml: $(call java-lib-header-files,android_system_stubs_current) $(APICHECK)
+    $(TARGET_OUT_COMMON_INTERMEDIATES)/test-api.xml: $(call java-lib-header-files,android_test_stubs_current) $(APICHECK)
+
     api_xmls := $(addprefix $(TARGET_OUT_COMMON_INTERMEDIATES)/,api.xml system-api.xml test-api.xml)
-    $(api_xmls): $(TARGET_OUT_COMMON_INTERMEDIATES)/%api.xml : frameworks/base/api/%current.txt $(APICHECK)
+    $(api_xmls):
 	$(hide) echo "Converting API file to XML: $@"
 	$(hide) mkdir -p $(dir $@)
-	$(hide) $(APICHECK_COMMAND) -convert2xml $< $@
+	$(hide) $(APICHECK_COMMAND) --input-api-jar $< --api-xml $@
 
     $(call dist-for-goals, dist_files, $(api_xmls))
     api_xmls :=
