@@ -21,6 +21,10 @@ LOCAL_PATH := $(call my-dir)
 # More information can be found in the README
 ANDROID_FS_CONFIG_H := android_filesystem_config.h
 
+ifneq ($(wildcard $(TARGET_DEVICE_DIR)/$(ANDROID_FS_CONFIG_H)),)
+$(error Using $(ANDROID_FS_CONFIG_H) is deprecated, please use TARGET_FS_CONFIG_GEN instead)
+endif
+
 my_fs_config_h := $(LOCAL_PATH)/default/$(ANDROID_FS_CONFIG_H)
 system_android_filesystem_config := system/core/include/private/android_filesystem_config.h
 
