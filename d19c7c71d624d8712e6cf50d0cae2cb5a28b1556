@@ -121,6 +121,30 @@
     },
     {
       "key": {
+        "uuid": "6a9ed818_ba135dd9",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4319,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-15T19:17:09Z",
+      "side": 1,
+      "message": "BOARD_SYSTEMIMAGE_PARTITION_SIZE is the important one",
+      "parentUuid": "07bcb603_107fc940",
+      "range": {
+        "startLine": 4319,
+        "startChar": 33,
+        "endLine": 4319,
+        "endChar": 61
+      },
+      "revId": "d19c7c71d624d8712e6cf50d0cae2cb5a28b1556",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7edf7ca2_a69e93f0",
         "filename": "core/Makefile",
         "patchSetId": 1
