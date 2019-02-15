@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "e0c07ffe_adababbb",
+        "filename": "core/tasks/find-shareduid-violation.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-15T21:44:17Z",
+      "side": 1,
+      "message": "please fix",
+      "parentUuid": "c3b6a339_9974253b",
+      "revId": "894a91bbeb1a7564c2f950c33bb4eb54ec93a6f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "c85ea50b_170fc2c8",
         "filename": "core/tasks/find-shareduid-violation.py",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2019-02-15T20:26:25Z",
       "side": 1,
       "message": "From my naive view, it seems like we should be able to do better than always executing multiple commands for every project in the manifest.  Admittedly, I don\u0027t know python and don\u0027t know our build system, but to me it seems like forking off a shell process would be a relatively expensive command.  Perhaps I\u0027m overthinking this because it\u0027s super cheap?\n\nI would assume/hope that the versions of aapt2 which have different command line syntax also have a different version.  Naively, it seems like we should be able to run \"aapt2 version\", parse the output, and then know which command to run.\n\nIt\u0027s a matter of save ~90 shell subprocesses per every build invocation (at least for walleye).  I don\u0027t know if that ends up being such a trivial drop that it\u0027s not worth further optimization here.",
+      "revId": "894a91bbeb1a7564c2f950c33bb4eb54ec93a6f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "94742505_53247481",
+        "filename": "core/tasks/find-shareduid-violation.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-15T21:44:17Z",
+      "side": 1,
+      "message": "This doesn\u0027t run for local build, only on build server builds, and the python script is only executed once.\n\nIt does seem to take a while (23s in one case before this change, 90s in one case for treehugger on this change), but is generally happening in parallel with some rather big zip compressions, so it\u0027s not holding up the build.\n\nI wouldn\u0027t be too worried about the speed, though it\u0027s generally a bit better practice to not use the shell with Popen.",
+      "parentUuid": "c85ea50b_170fc2c8",
       "revId": "894a91bbeb1a7564c2f950c33bb4eb54ec93a6f6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
