@@ -38,6 +38,11 @@ PRODUCT_PACKAGES += \
     libicui18n \
     libicuuc \
 
+# TODO(b/124498388): This currently needs to be in /system/lib for the debugger
+# transport to work.
+PRODUCT_PACKAGES += \
+    libnpt
+
 # Android Runtime APEX module.
 PRODUCT_PACKAGES += com.android.runtime
 
