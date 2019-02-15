@@ -22,6 +22,30 @@
       "revId": "45db7cefb35bbdd080016c7a84a3cd27b18294e8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "42ae13d7_3de680f2",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2947,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-02-15T06:49:21Z",
+      "side": 1,
+      "message": "Ah, the usage of it is mostly covered in the previous CL:\nhttps://android-review.googlesource.com/c/platform/build/+/882252\n\n\nre your questions:\nSet by device/*/BoardConfig.mk (per project):\ne.g.,\nhttps://android.googlesource.com/device/google/crosshatch/+/refs/heads/pie-dr1-dev/BoardConfig-common.mk#85\n\nWhen set, it means the key will be used to sign system_other.img (in build_image.py, see aosp/882252).\n\nbuild_image.py will also extract this key into system.img (this CL).\nSo init can use /system/etc/security/avb/system_otehr.avbkey to verify system_other (e.g., system_b) at run time.\n\nDoes that sound ok?",
+      "parentUuid": "52a7ebdf_3b8712ca",
+      "range": {
+        "startLine": 2947,
+        "startChar": 25,
+        "endLine": 2947,
+        "endChar": 59
+      },
+      "revId": "45db7cefb35bbdd080016c7a84a3cd27b18294e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
