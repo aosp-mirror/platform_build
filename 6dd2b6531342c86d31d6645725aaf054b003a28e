@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f02b37e5_4a97ca1f",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 17
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-15T19:47:57Z",
+      "side": 1,
+      "message": "IMO turning into an exception is more consistent for users since we already throw exceptions in some cases. And you don\u0027t need the RunAndWait() function here.",
+      "range": {
+        "startLine": 357,
+        "startChar": 0,
+        "endLine": 360,
+        "endChar": 17
+      },
+      "revId": "6dd2b6531342c86d31d6645725aaf054b003a28e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

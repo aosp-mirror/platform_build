@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3565ed30_dc1af1ee",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 232,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-15T19:47:57Z",
+      "side": 1,
+      "message": "just name the set \"output_ab_partitions\" and combine with L235",
+      "range": {
+        "startLine": 232,
+        "startChar": 0,
+        "endLine": 232,
+        "endChar": 57
+      },
+      "revId": "2b6e554ce1645a21db37a283554f2fdcf0d062eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce2c8710_18c01c7d",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 16
+      },
+      "lineNbr": 541,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-15T19:47:57Z",
+      "side": 1,
+      "message": "line too long, you can run pylint with the config file in the directory, there are a few complaints about indent.  `pylint --rcfile\u003dpylintrc merge_target_files.py `",
+      "range": {
+        "startLine": 541,
+        "startChar": 76,
+        "endLine": 541,
+        "endChar": 83
+      },
+      "revId": "2b6e554ce1645a21db37a283554f2fdcf0d062eb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
