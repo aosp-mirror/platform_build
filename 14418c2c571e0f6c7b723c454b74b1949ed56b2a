@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "89ac962f_e7c6f594",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-15T00:06:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e0928a63_548e6a39",
+      "range": {
+        "startLine": 154,
+        "startChar": 0,
+        "endLine": 159,
+        "endChar": 30
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6c466f49_58e7d9d1",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 14
@@ -45,6 +69,30 @@
       "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d0dd6172_fbedc912",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-15T00:06:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c466f49_58e7d9d1",
+      "range": {
+        "startLine": 161,
+        "startChar": 2,
+        "endLine": 178,
+        "endChar": 62
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "84392815_5ca375bb",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-15T00:06:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6f0a9612_39c3741f",
+      "range": {
+        "startLine": 183,
+        "startChar": 1,
+        "endLine": 189,
+        "endChar": 32
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "88112416_eb2fcd10",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 14
@@ -91,6 +163,30 @@
       "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40b5467e_95dff73a",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-15T00:06:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "88112416_eb2fcd10",
+      "range": {
+        "startLine": 241,
+        "startChar": 1,
+        "endLine": 249,
+        "endChar": 65
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "c2351ebf_429a49fe",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 297,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-15T00:06:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cfbbc3ed_2cbf70fc",
+      "range": {
+        "startLine": 293,
+        "startChar": 0,
+        "endLine": 297,
+        "endChar": 49
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e477674_3cae6109",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 14
@@ -137,6 +257,30 @@
       "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2a7fd82b_3e938d13",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 307,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-15T00:06:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e477674_3cae6109",
+      "range": {
+        "startLine": 306,
+        "startChar": 4,
+        "endLine": 307,
+        "endChar": 31
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "21e7313e_bbf7ba2e",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-15T00:06:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7282c122_54e594b7",
+      "range": {
+        "startLine": 342,
+        "startChar": 0,
+        "endLine": 370,
+        "endChar": 58
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e00147c9_7efbf9f7",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 14
@@ -183,6 +351,30 @@
       "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1f4b2436_80fbaece",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-15T00:06:07Z",
+      "side": 1,
+      "message": "This is trying to mimic the behavior of subprocess.call. The value of result is the exit code of the called process (or some other error). I can add a TODO to make this raise an exception such as a subprocess.CalledProcessError if that\u0027s preferred.",
+      "parentUuid": "e00147c9_7efbf9f7",
+      "range": {
+        "startLine": 388,
+        "startChar": 0,
+        "endLine": 389,
+        "endChar": 17
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -209,6 +401,30 @@
     },
     {
       "key": {
+        "uuid": "eea62bd6_6112a1de",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 576,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-15T00:06:07Z",
+      "side": 1,
+      "message": "We can\u0027t use os.listdir because the behavior is subtly different. The find command includes the full path, which soong_zip needs for the -C option (below) to work. Also, this makes the target files content more like the build: https://android.googlesource.com/platform/build/+/cb52058f8f85605c66ef6f86574ef65ce099a569/core/Makefile#4017",
+      "parentUuid": "5b038049_a2b2cac6",
+      "range": {
+        "startLine": 572,
+        "startChar": 1,
+        "endLine": 576,
+        "endChar": 27
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "23cfb0d5_6acc668c",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 14
@@ -229,6 +445,30 @@
       "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ec868f53_a3d37f28",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 598,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-15T00:06:07Z",
+      "side": 1,
+      "message": "I\u0027ve created a bug to resolve this. It looks like soong_zip is not in otatools.zip right now. I\u0027ll look at adding it.",
+      "parentUuid": "23cfb0d5_6acc668c",
+      "range": {
+        "startLine": 598,
+        "startChar": 6,
+        "endLine": 598,
+        "endChar": 54
+      },
+      "revId": "14418c2c571e0f6c7b723c454b74b1949ed56b2a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
