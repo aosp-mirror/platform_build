@@ -22,6 +22,30 @@
       "revId": "6dd2b6531342c86d31d6645725aaf054b003a28e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b49b3466_316fdcfe",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 17
+      },
+      "lineNbr": 360,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-02-15T21:29:02Z",
+      "side": 1,
+      "message": "Opened b/124521133 to track this.",
+      "parentUuid": "f02b37e5_4a97ca1f",
+      "range": {
+        "startLine": 357,
+        "startChar": 0,
+        "endLine": 360,
+        "endChar": 17
+      },
+      "revId": "6dd2b6531342c86d31d6645725aaf054b003a28e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
