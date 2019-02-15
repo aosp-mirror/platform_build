@@ -34,6 +34,115 @@
       "revId": "0e2747a122ab3546ce36674856ca4111911f7ed4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "46f8a954_248908ab",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2019-02-15T00:43:51Z",
+      "side": 1,
+      "message": "Just use regex matching groups.\n\n    match \u003d CapabilityHeaderParse._CAP_DEFINE.match(line)\n    if match:\n        cap \u003d match.group(1)\n        value \u003d match.group(2)\n\nAnd update the regex to actually have the match groups.",
+      "range": {
+        "startLine": 285,
+        "startChar": 0,
+        "endLine": 286,
+        "endChar": 33
+      },
+      "revId": "0e2747a122ab3546ce36674856ca4111911f7ed4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2cddeceb_9485cb41",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2019-02-15T00:43:51Z",
+      "side": 1,
+      "message": "Don\u0027t bother with this. _caps should just be caps.",
+      "range": {
+        "startLine": 295,
+        "startChar": 0,
+        "endLine": 302,
+        "endChar": 25
+      },
+      "revId": "0e2747a122ab3546ce36674856ca4111911f7ed4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "735f5fdd_8eb6734d",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 995,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2019-02-15T00:43:51Z",
+      "side": 1,
+      "message": "This is the default",
+      "revId": "0e2747a122ab3546ce36674856ca4111911f7ed4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "95268e33_80f3ac2a",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1025,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2019-02-15T00:43:51Z",
+      "side": 1,
+      "message": "\u0027 (the rest of the file uses \u0027, so stick with it)",
+      "range": {
+        "startLine": 1025,
+        "startChar": 30,
+        "endLine": 1025,
+        "endChar": 31
+      },
+      "revId": "0e2747a122ab3546ce36674856ca4111911f7ed4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0dd878da_44f63024",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1105,
+      "author": {
+        "id": 1043845
+      },
+      "writtenOn": "2019-02-15T00:43:51Z",
+      "side": 1,
+      "message": "I don\u0027t think this is what you wanted :)",
+      "range": {
+        "startLine": 1105,
+        "startChar": 30,
+        "endLine": 1105,
+        "endChar": 31
+      },
+      "revId": "0e2747a122ab3546ce36674856ca4111911f7ed4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
