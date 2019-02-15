@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "52a7ebdf_3b8712ca",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2947,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-02-15T04:15:34Z",
+      "side": 1,
+      "message": "Who sets this, what do they set it to, and who writes to the file?",
+      "range": {
+        "startLine": 2947,
+        "startChar": 25,
+        "endLine": 2947,
+        "endChar": 59
+      },
+      "revId": "45db7cefb35bbdd080016c7a84a3cd27b18294e8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
