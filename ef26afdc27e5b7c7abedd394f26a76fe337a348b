@@ -16,6 +16,24 @@
       "revId": "ef26afdc27e5b7c7abedd394f26a76fe337a348b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f13d751a_ea2d72c6",
+        "filename": "core/tasks/find-shareduid-violation.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1226353
+      },
+      "writtenOn": "2019-02-15T00:27:04Z",
+      "side": 1,
+      "message": "+1, this part is very very noisy too, since in many cases this error out and print to logs",
+      "parentUuid": "c0ec4a4a_4708dfdf",
+      "revId": "ef26afdc27e5b7c7abedd394f26a76fe337a348b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
