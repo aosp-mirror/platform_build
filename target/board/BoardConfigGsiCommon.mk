@@ -49,9 +49,9 @@ BOARD_AVB_SYSTEM_ROLLBACK_INDEX_LOCATION := 1
 
 # GSI specific System Properties
 ifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))
-# GSI is always userdebug and needs a couple of properties taking precedence
-# over those set by the vendor.
 TARGET_SYSTEM_PROP := build/make/target/board/gsi_system.prop
+else
+TARGET_SYSTEM_PROP := build/make/target/board/gsi_system_user.prop
 endif
 
 # Set this to create /cache mount point for non-A/B devices that mounts /cache.
