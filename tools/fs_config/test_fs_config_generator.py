@@ -277,11 +277,11 @@ class Tests(unittest.TestCase):
 
             self.assertEqual(fcap,
                              FSConfig('0777', 'AID_FOO', 'AID_SYSTEM',
-                                      'CAP_MASK_LONG(CAP_BLOCK_SUSPEND)',
+                                      'CAP_BLOCK_SUSPEND',
                                       '/system/bin/file', temp_file.name))
 
             self.assertEqual(dcap,
-                             FSConfig('0777', 'AID_FOO', 'AID_SYSTEM', '(0)',
+                             FSConfig('0777', 'AID_FOO', 'AID_SYSTEM', '0',
                                       '/vendor/path/dir/', temp_file.name))
 
             self.assertEqual(aid, AID('AID_OEM1', '0x1389', temp_file.name, '/vendor/bin/sh'))
