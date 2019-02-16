@@ -3496,6 +3496,7 @@ $(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) $(OTATOOLS_DEPS) $(OTATOOLS_RELEASETOOLS)
 	$(hide) rm -rf $@ $(zip_root)
 	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools
 	$(call copy-files-with-structure,$(OTATOOLS),$(HOST_OUT)/,$(zip_root))
+	$(hide) cp $(SOONG_ZIP) $(zip_root)/bin/
 	$(hide) cp -r -d -p build/make/tools/releasetools/* $(zip_root)/releasetools
 	$(hide) rm -rf $@ $(zip_root)/releasetools/*.pyc
 	$(hide) $(SOONG_ZIP) -o $@ -C $(zip_root) -D $(zip_root) \
