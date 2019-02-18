@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "773171aa_91b2bbcc",
+        "filename": "core/dex_preopt_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-02-18T16:37:15Z",
+      "side": 0,
+      "message": "Partially for consistency with not making things like PROFMAN that are set in Make use Soong paths, and partially because I\u0027m worried about leaving old binaries in out/host/linux-x86/bin that have no dependency on them so they get out of date.\n\nI\u0027m planning to move this global config into Soong next, which will delete all of this.",
+      "parentUuid": "a28994f8_5bb63375",
+      "range": {
+        "startLine": 164,
+        "startChar": 62,
+        "endLine": 164,
+        "endChar": 69
+      },
+      "revId": "47e384c3d61ee2fb31ed5be6c0e6a045ba80b69c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "53354662_72d90848",
         "filename": "core/dex_preopt_config.mk",
         "patchSetId": 3
