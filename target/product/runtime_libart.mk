@@ -33,7 +33,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     ext \
 
-# Libcore ICU. TODO: Try to figure out if/why we need them explicitly.
+# Libcore ICU. TODO(b/124218500): Remove them explicitly when the bug is resolved.
 PRODUCT_PACKAGES += \
     libicui18n \
     libicuuc \
