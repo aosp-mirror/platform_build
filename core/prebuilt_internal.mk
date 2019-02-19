@@ -469,19 +469,16 @@ endif # LOCAL_PACKAGE_SPLITS
 else ifeq ($(prebuilt_module_is_dex_javalib),true)  # ! LOCAL_MODULE_CLASS != APPS
 my_dex_jar := $(my_prebuilt_src_file)
 # This is a target shared library, i.e. a jar with classes.dex.
+
+ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)
+  $(call pretty-error,Modules in PRODUCT_BOOT_JARS must be defined in Android.bp files)
+endif
+
 #######################################
 # defines built_odex along with rule to install odex
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
 #######################################
 ifdef LOCAL_DEX_PREOPT
-ifneq ($(dexpreopt_boot_jar_module),) # boot jar
-# boot jar's rules are defined in dex_preopt.mk
-dexpreopted_boot_jar := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(dexpreopt_boot_jar_module)_nodex.jar
-$(built_module) : $(dexpreopted_boot_jar)
-	$(call copy-file-to-target)
-
-# For libart boot jars, we don't have .odex files.
-else # ! boot jar
 
 $(built_module): PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
 $(built_module): $(intermediates)/strip.sh
@@ -490,7 +487,6 @@ $(built_module): .KATI_DEPFILE := $(built_module).d
 $(built_module): $(my_prebuilt_src_file)
 	$(PRIVATE_STRIP_SCRIPT) $< $@
 
-endif # boot jar
 else # ! LOCAL_DEX_PREOPT
 $(built_module) : $(my_prebuilt_src_file)
 	$(call copy-file-to-target)

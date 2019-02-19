@@ -85,13 +85,6 @@ endif  # LOCAL_UNCOMPRESS_DEX
 .KATI_RESTAT: $(common_javalib.jar)
 
 ifdef LOCAL_DEX_PREOPT
-ifneq ($(dexpreopt_boot_jar_module),) # boot jar
-# boot jar's rules are defined in dex_preopt.mk
-dexpreopted_boot_jar := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(dexpreopt_boot_jar_module)_nodex.jar
-$(eval $(call copy-one-file,$(dexpreopted_boot_jar),$(LOCAL_BUILT_MODULE)))
-
-# For libart boot jars, we don't have .odex files.
-else # ! boot jar
 
 $(LOCAL_BUILT_MODULE): PRIVATE_STRIP_SCRIPT := $(intermediates)/strip.sh
 $(LOCAL_BUILT_MODULE): $(intermediates)/strip.sh
@@ -99,8 +92,6 @@ $(LOCAL_BUILT_MODULE): | $(DEXPREOPT_STRIP_DEPS)
 $(LOCAL_BUILT_MODULE): .KATI_DEPFILE := $(LOCAL_BUILT_MODULE).d
 $(LOCAL_BUILT_MODULE): $(common_javalib.jar)
 	$(PRIVATE_STRIP_SCRIPT) $< $@
-
-endif # ! boot jar
 
 else # LOCAL_DEX_PREOPT
 $(eval $(call copy-one-file,$(common_javalib.jar),$(LOCAL_BUILT_MODULE)))
