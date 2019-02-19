@@ -1,7 +1,6 @@
 # dexpreopt_odex_install.mk is used to define odex creation rules for JARs and APKs
 # This file depends on variables set in base_rules.mk
-# Output variables: LOCAL_DEX_PREOPT, LOCAL_UNCOMPRESS_DEX, built_odex,
-#                   dexpreopt_boot_jar_module
+# Output variables: LOCAL_DEX_PREOPT, LOCAL_UNCOMPRESS_DEX
 
 ifeq (true,$(LOCAL_USE_EMBEDDED_DEX))
   LOCAL_UNCOMPRESS_DEX := true
@@ -151,13 +150,13 @@ ifdef LOCAL_DEX_PREOPT
     # #################################################
     # Odex for the 1st arch
     my_dexpreopt_archs += $(TARGET_ARCH)
-    my_dexpreopt_images += $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
+    my_dexpreopt_images += $(DEXPREOPT_IMAGE_$(TARGET_ARCH))
     # Odex for the 2nd arch
     ifdef TARGET_2ND_ARCH
       ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
         ifneq (first,$(my_module_multilib))
           my_dexpreopt_archs += $(TARGET_2ND_ARCH)
-          my_dexpreopt_images += $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
+          my_dexpreopt_images += $(DEXPREOPT_IMAGE_$(TARGET_2ND_ARCH))
         endif  # my_module_multilib is not first.
       endif  # TARGET_TRANSLATE_2ND_ARCH not true
     endif  # TARGET_2ND_ARCH
@@ -167,13 +166,13 @@ ifdef LOCAL_DEX_PREOPT
     # Save the module multilib since setup_one_odex modifies it.
     my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
     my_dexpreopt_archs += $(TARGET_$(my_2nd_arch_prefix)ARCH)
-    my_dexpreopt_images += $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
+    my_dexpreopt_images += $(DEXPREOPT_IMAGE_$(TARGET_$(my_2nd_arch_prefix)ARCH))
     ifdef TARGET_2ND_ARCH
       ifeq ($(my_module_multilib),both)
         # The non-preferred arch
         my_2nd_arch_prefix := $(if $(LOCAL_2ND_ARCH_VAR_PREFIX),,$(TARGET_2ND_ARCH_VAR_PREFIX))
         my_dexpreopt_archs += $(TARGET_$(my_2nd_arch_prefix)ARCH)
-        my_dexpreopt_images += $($(my_2nd_arch_prefix)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME)
+        my_dexpreopt_images += $(DEXPREOPT_IMAGE_$(TARGET_$(my_2nd_arch_prefix)ARCH))
       endif  # LOCAL_MULTILIB is both
     endif  # TARGET_2ND_ARCH
   endif  # LOCAL_MODULE_CLASS
@@ -191,34 +190,36 @@ ifdef LOCAL_DEX_PREOPT
 
   $(call json_start)
 
-  $(call add_json_str,  Name,                          $(LOCAL_MODULE))
-  $(call add_json_str,  DexLocation,                   $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE)))
-  $(call add_json_str,  BuildPath,                     $(LOCAL_BUILT_MODULE))
-  $(call add_json_str,  DexPath,                       $$1)
-  $(call add_json_str,  ExtrasOutputPath,              $$2)
-  $(call add_json_bool, Privileged,                    $(filter true,$(LOCAL_PRIVILEGED_MODULE)))
-  $(call add_json_bool, UncompressedDex,               $(filter true,$(LOCAL_UNCOMPRESS_DEX)))
-  $(call add_json_bool, HasApkLibraries,               $(LOCAL_APK_LIBRARIES))
-  $(call add_json_list, PreoptFlags,                   $(LOCAL_DEX_PREOPT_FLAGS))
-  $(call add_json_str,  ProfileClassListing,           $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE)))
-  $(call add_json_bool, ProfileIsTextListing,          $(my_profile_is_text_listing))
-  $(call add_json_bool, EnforceUsesLibraries,          $(LOCAL_ENFORCE_USES_LIBRARIES))
-  $(call add_json_list, OptionalUsesLibraries,         $(LOCAL_OPTIONAL_USES_LIBRARIES))
-  $(call add_json_list, UsesLibraries,                 $(LOCAL_USES_LIBRARIES))
+  $(call add_json_str,  Name,                           $(LOCAL_MODULE))
+  $(call add_json_str,  DexLocation,                    $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE)))
+  $(call add_json_str,  BuildPath,                      $(LOCAL_BUILT_MODULE))
+  $(call add_json_str,  DexPath,                        $$1)
+  $(call add_json_str,  ExtrasOutputPath,               $$2)
+  $(call add_json_bool, Privileged,                     $(filter true,$(LOCAL_PRIVILEGED_MODULE)))
+  $(call add_json_bool, UncompressedDex,                $(filter true,$(LOCAL_UNCOMPRESS_DEX)))
+  $(call add_json_bool, HasApkLibraries,                $(LOCAL_APK_LIBRARIES))
+  $(call add_json_list, PreoptFlags,                    $(LOCAL_DEX_PREOPT_FLAGS))
+  $(call add_json_str,  ProfileClassListing,            $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE)))
+  $(call add_json_bool, ProfileIsTextListing,           $(my_profile_is_text_listing))
+  $(call add_json_bool, EnforceUsesLibraries,           $(LOCAL_ENFORCE_USES_LIBRARIES))
+  $(call add_json_list, OptionalUsesLibraries,          $(LOCAL_OPTIONAL_USES_LIBRARIES))
+  $(call add_json_list, UsesLibraries,                  $(LOCAL_USES_LIBRARIES))
   $(call add_json_map,  LibraryPaths)
   $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
     $(call add_json_str, $(lib), $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar))
   $(call end_json_map)
-  $(call add_json_list, Archs,                         $(my_dexpreopt_archs))
-  $(call add_json_list, DexPreoptImages,               $(my_dexpreopt_images))
-  $(call add_json_bool, PreoptExtractedApk,            $(my_preopt_for_extracted_apk))
-  $(call add_json_bool, NoCreateAppImage,              $(filter false,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
-  $(call add_json_bool, ForceCreateAppImage,           $(filter true,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
-  $(call add_json_bool, PresignedPrebuilt,             $(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
+  $(call add_json_list, Archs,                          $(my_dexpreopt_archs))
+  $(call add_json_list, DexPreoptImages,                $(my_dexpreopt_images))
+  $(call add_json_list, PreoptBootClassPathDexFiles,    $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
+  $(call add_json_list, PreoptBootClassPathDexLocations,$(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
+  $(call add_json_bool, PreoptExtractedApk,             $(my_preopt_for_extracted_apk))
+  $(call add_json_bool, NoCreateAppImage,               $(filter false,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
+  $(call add_json_bool, ForceCreateAppImage,            $(filter true,$(LOCAL_DEX_PREOPT_APP_IMAGE)))
+  $(call add_json_bool, PresignedPrebuilt,              $(filter PRESIGNED,$(LOCAL_CERTIFICATE)))
 
-  $(call add_json_bool, NoStripping,                   $(filter nostripping,$(LOCAL_DEX_PREOPT)))
-  $(call add_json_str,  StripInputPath,                $$1)
-  $(call add_json_str,  StripOutputPath,               $$2)
+  $(call add_json_bool, NoStripping,                    $(filter nostripping,$(LOCAL_DEX_PREOPT)))
+  $(call add_json_str,  StripInputPath,                 $$1)
+  $(call add_json_str,  StripOutputPath,                $$2)
 
   $(call json_end)
 
@@ -251,6 +252,7 @@ ifdef LOCAL_DEX_PREOPT
     $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar)
   my_dexpreopt_deps += $(my_dexpreopt_images)
+  my_dexpreopt_deps += $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
 
   $(my_dexpreopt_zip): PRIVATE_MODULE := $(LOCAL_MODULE)
   $(my_dexpreopt_zip): $(my_dexpreopt_deps)

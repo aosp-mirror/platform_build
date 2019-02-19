@@ -595,6 +595,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libtombstoned_client.so
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libvixl.so)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libvixld.so)
 
+# Clean up old location of dexpreopted boot jars
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/dex_bootjars)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/dex_bootjars_input)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
