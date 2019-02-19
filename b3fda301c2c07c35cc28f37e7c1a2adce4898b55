@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "3151b6fb_327fd731",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1348646
+      },
+      "writtenOn": "2019-02-19T11:26:28Z",
+      "side": 1,
+      "message": "in mac, it should be \\\u0027$\u0027\\n.",
+      "range": {
+        "startLine": 16,
+        "startChar": 28,
+        "endLine": 16,
+        "endChar": 30
+      },
+      "revId": "b3fda301c2c07c35cc28f37e7c1a2adce4898b55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "46eebb56_57311f10",
         "filename": "envsetup.sh",
         "patchSetId": 1
