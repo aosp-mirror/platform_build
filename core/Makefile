@@ -2175,6 +2175,19 @@ endif # INSTALLED_BOOTIMAGE_TARGET
 $(INSTALLED_SYSTEMIMAGE_TARGET): $(BUILT_SYSTEMIMAGE) $(RECOVERY_FROM_BOOT_PATCH)
 	@echo "Install system fs image: $@"
 	$(copy-file-to-target)
+ifdef RECOVERY_FROM_BOOT_PATCH
+ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
+ifeq ($(BOARD_SYSTEMIMAGE_PARTITION_SIZE),)
+	# system image size is dynamic, hence system_size in generated_system_image_info.txt does not
+	# have room for recovery from boot patch. Increase system_size so that check-all-partition-sizes
+	# accounts for the size of the patch.
+	sed -i'.bak' -e 's/^system_size=.*$$/system_size='"$$(( \
+	      $(call read-image-prop-dictionary,$(systemimage_intermediates)/generated_system_image_info.txt,system_size) + \
+	      $$($(call get-file-size,$(RECOVERY_FROM_BOOT_PATCH))) ))"'/' \
+	    $(systemimage_intermediates)/generated_system_image_info.txt
+endif
+endif
+endif
 	$(hide) $(call assert-max-image-size,$@ $(RECOVERY_FROM_BOOT_PATCH),\
 	    $(call read-image-prop-dictionary,\
 	        $(systemimage_intermediates)/generated_system_image_info.txt,system_size))
