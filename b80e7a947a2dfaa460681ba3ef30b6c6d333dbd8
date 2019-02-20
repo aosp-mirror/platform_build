@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "accb14f2_5837de39",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-20T09:23:08Z",
+      "side": 1,
+      "message": "Actually, I don\u0027t see any references for dist-for-goals, which is the only way to get this into the dist directory. It\u0027s just going into $(PRODUCT_OUT)",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 8
+      },
+      "revId": "b80e7a947a2dfaa460681ba3ef30b6c6d333dbd8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
