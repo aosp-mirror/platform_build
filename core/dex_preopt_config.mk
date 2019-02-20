@@ -1,37 +1,5 @@
 DEX_PREOPT_CONFIG := $(PRODUCT_OUT)/dexpreopt.config
 
-RUNTIME_MODULES := $(filter-out $(PRODUCT_UPDATABLE_BOOT_MODULES), $(TARGET_CORE_JARS))
-FRAMEWORK_MODULES := $(filter-out $(PRODUCT_UPDATABLE_BOOT_MODULES) $(RUNTIME_MODULES), $(PRODUCT_BOOT_JARS))
-
-NON_UPDATABLE_BOOT_MODULES := $(RUNTIME_MODULES) $(FRAMEWORK_MODULES)
-NON_UPDATABLE_BOOT_LOCATIONS := $(foreach m,$(RUNTIME_MODULES),/apex/com.android.runtime/javalib/$(m).jar)
-NON_UPDATABLE_BOOT_LOCATIONS += $(foreach m,$(FRAMEWORK_MODULES),/system/framework/$(m).jar)
-ALL_BOOT_LOCATIONS := $(NON_UPDATABLE_BOOT_LOCATIONS) $(PRODUCT_UPDATABLE_BOOT_LOCATIONS)
-ALL_BOOT_MODULES := $(NON_UPDATABLE_BOOT_MODULES) $(PRODUCT_UPDATABLE_BOOT_MODULES)
-
-PRODUCT_BOOTCLASSPATH := $(subst $(space),:,$(ALL_BOOT_LOCATIONS))
-
-DEXPREOPT_BOOT_JARS_MODULES := $(NON_UPDATABLE_BOOT_MODULES)
-DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS := $(NON_UPDATABLE_BOOT_LOCATIONS)
-DEXPREOPT_BOOT_JARS_INPUT_PATH := $(PRODUCT_OUT)/dex_bootjars_input
-DEXPREOPT_BOOTCLASSPATH_DEX_FILES := $(foreach m,$(NON_UPDATABLE_BOOT_MODULES),$(DEXPREOPT_BOOT_JARS_INPUT_PATH)/$(m).jar)
-
-# Create paths for boot image.
-DEXPREOPT_BUILD_DIR := $(OUT_DIR)
-DEXPREOPT_PRODUCT_DIR_FULL_PATH := $(PRODUCT_OUT)/dex_bootjars
-DEXPREOPT_PRODUCT_DIR := $(patsubst $(DEXPREOPT_BUILD_DIR)/%,%,$(DEXPREOPT_PRODUCT_DIR_FULL_PATH))
-DEXPREOPT_BOOT_JAR_DIR := system/framework
-DEXPREOPT_BOOT_JAR_DIR_FULL_PATH := $(DEXPREOPT_PRODUCT_DIR_FULL_PATH)/$(DEXPREOPT_BOOT_JAR_DIR)
-DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/boot.art
-DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(DEX2OAT_TARGET_ARCH)/boot.art
-
-ifdef TARGET_2ND_ARCH
-  $(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_LOCATION := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/boot.art
-  $(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH)/boot.art
-endif
-
-PRODUCT_SYSTEM_SERVER_CLASSPATH := $(subst $(space),:,$(foreach m,$(PRODUCT_SYSTEM_SERVER_JARS),/system/framework/$(m).jar))
-
 # The default value for LOCAL_DEX_PREOPT
 DEX_PREOPT_DEFAULT ?= true
 
@@ -94,6 +62,25 @@ PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
 DIRTY_IMAGE_OBJECTS := $(call word-colon,1,$(firstword \
     $(filter %system/etc/dirty-image-objects,$(PRODUCT_COPY_FILES))))
 
+# If we use a boot image profile.
+my_use_profile_for_boot_image := $(PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE)
+ifeq (,$(my_use_profile_for_boot_image))
+  # If not set, set the default to true if we are not a PDK build. PDK builds
+  # can't build the profile since they don't have frameworks/base.
+  ifneq (true,$(TARGET_BUILD_PDK))
+    my_use_profile_for_boot_image := true
+  endif
+endif
+
+ifeq (true,$(my_use_profile_for_boot_image))
+  boot_image_profiles := $(PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION)
+
+  ifeq (,$(boot_image_profiles))
+  # If not set, use the default.
+  boot_image_profiles := frameworks/base/config/boot-image-profile.txt
+  endif
+endif
+
 define get-product-default-property
 $(strip \
   $(eval _prop := $(patsubst $(1)=%,%,$(filter $(1)=%,$(PRODUCT_DEFAULT_PROPERTY_OVERRIDES))))\
@@ -124,13 +111,13 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer, $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
   $(call add_json_bool, DontUncompressPrivAppsDex,          $(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS)))
   $(call add_json_list, ModulesLoadedByPrivilegedModules,   $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
-  $(call add_json_list, PreoptBootClassPathDexFiles,        $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES))
   $(call add_json_bool, HasSystemOther,                     $(BOARD_USES_SYSTEM_OTHER_ODEX))
   $(call add_json_list, PatternsOnSystemOther,              $(SYSTEM_OTHER_ODEX_FILTER))
   $(call add_json_bool, DisableGenerateProfile,             $(filter false,$(WITH_DEX_PREOPT_GENERATE_PROFILE)))
-  $(call add_json_list, PreoptBootClassPathDexLocations,    $(DEXPREOPT_BOOTCLASSPATH_DEX_LOCATIONS))
   $(call add_json_list, BootJars,                           $(PRODUCT_BOOT_JARS))
-  $(call add_json_list, PreoptBootJars,                     $(DEXPREOPT_BOOT_JARS_MODULES))
+  $(call add_json_list, TargetCoreJars,                     $(TARGET_CORE_JARS))
+  $(call add_json_list, ProductUpdatableBootModules,        $(PRODUCT_UPDATABLE_BOOT_MODULES))
+  $(call add_json_list, ProductUpdatableBootLocations,      $(PRODUCT_UPDATABLE_BOOT_LOCATIONS))
   $(call add_json_list, SystemServerJars,                   $(PRODUCT_SYSTEM_SERVER_JARS))
   $(call add_json_list, SystemServerApps,                   $(PRODUCT_SYSTEM_SERVER_APPS))
   $(call add_json_list, SpeedApps,                          $(PRODUCT_DEXPREOPT_SPEED_APPS))
@@ -152,13 +139,6 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  Dex2oatXms,                         $(DEX2OAT_XMS))
   $(call add_json_str,  EmptyDirectory,                     $(OUT_DIR)/empty)
 
-  $(call add_json_map,  DefaultDexPreoptImage)
-  $(call add_json_str,  $(TARGET_ARCH), $(DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME))
-  ifdef TARGET_2ND_ARCH
-    $(call add_json_str, $(TARGET_2ND_ARCH), $($(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_BUILT_IMAGE_FILENAME))
-  endif
-  $(call end_json_map)
-
   $(call add_json_map,  CpuVariant)
   $(call add_json_str,  $(TARGET_ARCH), $(DEX2OAT_TARGET_CPU_VARIANT))
   ifdef TARGET_2ND_ARCH
@@ -172,6 +152,13 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
     $(call add_json_str, $(TARGET_2ND_ARCH), $($(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES))
   endif
   $(call end_json_map)
+
+  $(call add_json_str,  DirtyImageObjects,                  $(DIRTY_IMAGE_OBJECTS))
+  $(call add_json_str,  PreloadedClasses,                   $(PRELOADED_CLASSES))
+  $(call add_json_list, BootImageProfiles,                  $(boot_image_profiles))
+  $(call add_json_str,  BootFlags,                          $(PRODUCT_DEX_PREOPT_BOOT_FLAGS))
+  $(call add_json_str,  Dex2oatImageXmx,                    $(DEX2OAT_IMAGE_XMX))
+  $(call add_json_str,  Dex2oatImageXms,                    $(DEX2OAT_IMAGE_XMS))
 
   $(call add_json_map,  Tools)
   $(call add_json_str,  Profman,                            $(PROFMAN))
@@ -210,8 +197,6 @@ DEXPREOPT_GEN_DEPS := \
   $(ZIP2ZIP) \
   $(BUILD_SYSTEM)/verify_uses_libraries.sh \
   $(BUILD_SYSTEM)/construct_context.sh \
-
-DEXPREOPT_GEN_DEPS += $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
 
 DEXPREOPT_STRIP_DEPS := \
   $(ZIP2ZIP) \
