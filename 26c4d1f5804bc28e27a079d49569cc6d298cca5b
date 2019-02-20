@@ -22,6 +22,30 @@
       "revId": "26c4d1f5804bc28e27a079d49569cc6d298cca5b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "86d82741_71037daf",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1552,
+      "author": {
+        "id": 1124693
+      },
+      "writtenOn": "2019-02-20T02:37:52Z",
+      "side": 1,
+      "message": "Yes, let\u0027s drop the ifdefs.",
+      "parentUuid": "4cb3e680_c2baaa48",
+      "range": {
+        "startLine": 1552,
+        "startChar": 6,
+        "endLine": 1552,
+        "endChar": 35
+      },
+      "revId": "26c4d1f5804bc28e27a079d49569cc6d298cca5b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
