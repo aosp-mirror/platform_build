@@ -71,6 +71,9 @@ Common options that apply to both of non-A/B and A/B OTAs
       partitions but the target build does. For A/B, when this flag is set,
       --skip_postinstall is implied.
 
+  --skip_compatibility_check
+      Skip adding the compatibility package to the generated OTA package.
+
 Non-A/B OTA specific options
 
   -b  (--binary) <file>
@@ -221,6 +224,7 @@ OPTIONS.extracted_input = None
 OPTIONS.key_passwords = []
 OPTIONS.skip_postinstall = False
 OPTIONS.retrofit_dynamic_partitions = False
+OPTIONS.skip_compatibility_check = False
 
 
 METADATA_NAME = 'META-INF/com/android/metadata'
@@ -748,6 +752,11 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
   # Will only proceed if the target has enabled the Treble support (as well as
   # having a /vendor partition).
   if not HasTrebleEnabled(target_zip, target_info):
+    return
+
+  # Skip adding the compatibility package as a workaround for b/114240221. The
+  # compatibility will always fail on devices without qualified kernels.
+  if OPTIONS.skip_compatibility_check:
     return
 
   # Full OTA carries the info for system/vendor both.
@@ -2032,6 +2041,8 @@ def main(argv):
       OPTIONS.skip_postinstall = True
     elif o == "--retrofit_dynamic_partitions":
       OPTIONS.retrofit_dynamic_partitions = True
+    elif o == "--skip_compatibility_check":
+      OPTIONS.skip_compatibility_check = True
     else:
       return False
     return True
@@ -2063,6 +2074,7 @@ def main(argv):
                                  "extracted_input_target_files=",
                                  "skip_postinstall",
                                  "retrofit_dynamic_partitions",
+                                 "skip_compatibility_check",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
