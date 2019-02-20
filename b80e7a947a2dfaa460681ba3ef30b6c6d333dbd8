@@ -46,6 +46,30 @@
       "revId": "b80e7a947a2dfaa460681ba3ef30b6c6d333dbd8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "83d93fb8_866c6c52",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-20T18:07:44Z",
+      "side": 1,
+      "message": "Yep, whoops, missed that :)",
+      "parentUuid": "dedf2e30_a3d18e8c",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 8
+      },
+      "revId": "b80e7a947a2dfaa460681ba3ef30b6c6d333dbd8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
