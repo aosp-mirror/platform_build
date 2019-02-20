@@ -3417,6 +3417,8 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/lib/shflags/shflags \
   $(HOST_OUT_EXECUTABLES)/delta_generator \
   $(HOST_OUT_EXECUTABLES)/care_map_generator \
+  $(HOST_OUT_EXECUTABLES)/fc_sort \
+  $(HOST_OUT_EXECUTABLES)/sefcontext_compile \
   $(LPMAKE) \
   $(AVBTOOL) \
   $(BLK_ALLOC_TO_BASE_FS) \
