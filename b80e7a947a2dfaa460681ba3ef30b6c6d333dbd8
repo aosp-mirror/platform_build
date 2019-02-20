@@ -22,6 +22,30 @@
       "revId": "b80e7a947a2dfaa460681ba3ef30b6c6d333dbd8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dedf2e30_a3d18e8c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-02-20T17:55:04Z",
+      "side": 1,
+      "message": "I believe the extra line in main.mk calls dist-for-goals. It copies the metadata along with the full ota package.",
+      "parentUuid": "accb14f2_5837de39",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 8
+      },
+      "revId": "b80e7a947a2dfaa460681ba3ef30b6c6d333dbd8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
