@@ -657,7 +657,7 @@ proto_gen_dir := $(generated_sources_dir)/proto
 proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
 
 my_rename_cpp_ext :=
-ifneq (,$(filter nanopb-c nanopb-c-enable_malloc, $(LOCAL_PROTOC_OPTIMIZE_TYPE)))
+ifneq (,$(filter nanopb-c nanopb-c-enable_malloc nanopb-c-16bit nanopb-c-enable_malloc-16bit nanopb-c-32bit nanopb-c-enable_malloc-32bit, $(LOCAL_PROTOC_OPTIMIZE_TYPE)))
 my_proto_source_suffix := .c
 my_proto_c_includes := external/nanopb-c
 my_protoc_flags := --nanopb_out=$(proto_gen_dir) \
@@ -712,6 +712,14 @@ ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-enable_malloc)
     my_static_libraries += libprotobuf-c-nano-enable_malloc
 else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c)
     my_static_libraries += libprotobuf-c-nano
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-enable_malloc-16bit)
+    my_static_libraries += libprotobuf-c-nano-enable_malloc-16bit
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-16bit)
+    my_static_libraries += libprotobuf-c-nano-16bit
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-enable_malloc-32bit)
+    my_static_libraries += libprotobuf-c-nano-enable_malloc-32bit
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-32bit)
+    my_static_libraries += libprotobuf-c-nano-32bit
 else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),full)
     ifdef LOCAL_SDK_VERSION
         my_static_libraries += libprotobuf-cpp-full-ndk
