@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "15ff294d_fe279754",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-02-20T23:42:27Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 671,
+        "startChar": 24,
+        "endLine": 671,
+        "endChar": 26
+      },
+      "revId": "85e45327eb141df75e69ecd8bc8581326f93b0f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "26f7bdea_114f22e0",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-02-20T23:42:27Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 672,
+        "startChar": 6,
+        "endLine": 672,
+        "endChar": 7
+      },
+      "revId": "85e45327eb141df75e69ecd8bc8581326f93b0f6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
