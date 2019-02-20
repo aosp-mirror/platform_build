@@ -94,6 +94,30 @@
       "revId": "79b52c9ce160f7813da1f2de39eca501a17faa67",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4696097_d312ab1f",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-02-20T18:30:12Z",
+      "side": 0,
+      "message": "Oops, will add a CL on top of this one to export DEXPREOPT_BOOT_JARS_MODULES from Soong back to Make for dex_preopt_odex_install.mk",
+      "parentUuid": "192dd435_27969e70",
+      "range": {
+        "startLine": 29,
+        "startChar": 14,
+        "endLine": 29,
+        "endChar": 41
+      },
+      "revId": "79b52c9ce160f7813da1f2de39eca501a17faa67",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
