@@ -13,21 +13,6 @@ else
 install-on-system-other = $(filter-out $(PRODUCT_DEXPREOPT_SPEED_APPS) $(PRODUCT_SYSTEM_SERVER_APPS),$(basename $(notdir $(filter $(foreach f,$(SYSTEM_OTHER_ODEX_FILTER),$(TARGET_OUT)/$(f)),$(1)))))
 endif
 
-# Special rules for building stripped boot jars that override java_library.mk rules
-
-# $(1): boot jar module name
-define _dexpreopt-boot-jar-remove-classes.dex
-_dbj_jar_no_dex := $(DEXPREOPT_BOOT_JAR_DIR_FULL_PATH)/$(1)_nodex.jar
-_dbj_src_jar := $(call intermediates-dir-for,JAVA_LIBRARIES,$(1),,COMMON)/javalib.jar
-
-$(call dexpreopt-copy-jar,$$(_dbj_src_jar),$$(_dbj_jar_no_dex),$(filter-out nostripping,$(DEX_PREOPT_DEFAULT)))
-
-_dbj_jar_no_dex :=
-_dbj_src_jar :=
-endef
-
-$(foreach b,$(DEXPREOPT_BOOT_JARS_MODULES),$(eval $(call _dexpreopt-boot-jar-remove-classes.dex,$(b))))
-
 include $(BUILD_SYSTEM)/dex_preopt_libart.mk
 
 ifeq ($(PRODUCT_DIST_BOOT_AND_SYSTEM_JARS),true)
