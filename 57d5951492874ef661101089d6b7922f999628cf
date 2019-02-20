@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d3cf49b4_7a0c955b",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-02-20T12:29:58Z",
+      "side": 1,
+      "message": "no longer needed?",
+      "range": {
+        "startLine": 19,
+        "startChar": 7,
+        "endLine": 19,
+        "endChar": 15
+      },
+      "revId": "57d5951492874ef661101089d6b7922f999628cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9be6c1b5_021a6d06",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-02-20T12:29:58Z",
+      "side": 1,
+      "message": "No need to do this. Keep it as in the base PS and __doc__ will be set.",
+      "range": {
+        "startLine": 29,
+        "startChar": 0,
+        "endLine": 29,
+        "endChar": 10
+      },
+      "revId": "57d5951492874ef661101089d6b7922f999628cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e24341a7_cbf5bd8a",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 674,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-02-20T12:29:58Z",
+      "side": 1,
+      "message": "nit: use parentheses here\n\nif (len(args) !\u003d 0 or\n    OPTIONS...)",
+      "range": {
+        "startLine": 671,
+        "startChar": 2,
+        "endLine": 674,
+        "endChar": 42
+      },
+      "revId": "57d5951492874ef661101089d6b7922f999628cf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
