@@ -47,9 +47,9 @@ endif
 # Default to debug version to help find bugs.
 # Set USE_DEX2OAT_DEBUG to false for only building non-debug versions.
 ifeq ($(USE_DEX2OAT_DEBUG),false)
-DEX2OAT := $(HOST_OUT_EXECUTABLES)/dex2oat$(HOST_EXECUTABLE_SUFFIX)
+DEX2OAT := $(SOONG_HOST_OUT_EXECUTABLES)/dex2oat$(HOST_EXECUTABLE_SUFFIX)
 else
-DEX2OAT := $(HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
+DEX2OAT := $(SOONG_HOST_OUT_EXECUTABLES)/dex2oatd$(HOST_EXECUTABLE_SUFFIX)
 endif
 
 DEX2OAT_DEPENDENCY += $(DEX2OAT)
@@ -61,25 +61,6 @@ PRELOADED_CLASSES := $(call word-colon,1,$(firstword \
 # Use the first dirty-image-objects file in PRODUCT_COPY_FILES.
 DIRTY_IMAGE_OBJECTS := $(call word-colon,1,$(firstword \
     $(filter %system/etc/dirty-image-objects,$(PRODUCT_COPY_FILES))))
-
-# If we use a boot image profile.
-my_use_profile_for_boot_image := $(PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE)
-ifeq (,$(my_use_profile_for_boot_image))
-  # If not set, set the default to true if we are not a PDK build. PDK builds
-  # can't build the profile since they don't have frameworks/base.
-  ifneq (true,$(TARGET_BUILD_PDK))
-    my_use_profile_for_boot_image := true
-  endif
-endif
-
-ifeq (true,$(my_use_profile_for_boot_image))
-  boot_image_profiles := $(PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION)
-
-  ifeq (,$(boot_image_profiles))
-  # If not set, use the default.
-  boot_image_profiles := frameworks/base/config/boot-image-profile.txt
-  endif
-endif
 
 define get-product-default-property
 $(strip \
@@ -107,6 +88,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call json_start)
 
   $(call add_json_bool, DefaultNoStripping,                 $(filter nostripping,$(DEX_PREOPT_DEFAULT)))
+  $(call add_json_bool, DisablePreopt,                      $(call invert_bool,$(filter true,$(WITH_DEXPREOPT))))
   $(call add_json_list, DisablePreoptModules,               $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer, $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
   $(call add_json_bool, DontUncompressPrivAppsDex,          $(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS)))
@@ -114,6 +96,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, HasSystemOther,                     $(BOARD_USES_SYSTEM_OTHER_ODEX))
   $(call add_json_list, PatternsOnSystemOther,              $(SYSTEM_OTHER_ODEX_FILTER))
   $(call add_json_bool, DisableGenerateProfile,             $(filter false,$(WITH_DEX_PREOPT_GENERATE_PROFILE)))
+  $(call add_json_str,  ProfileDir,                         $(PRODUCT_DEX_PREOPT_PROFILE_DIR))
   $(call add_json_list, BootJars,                           $(PRODUCT_BOOT_JARS))
   $(call add_json_list, RuntimeApexJars,                    $(RUNTIME_APEX_JARS))
   $(call add_json_list, ProductUpdatableBootModules,        $(PRODUCT_UPDATABLE_BOOT_MODULES))
@@ -155,15 +138,16 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
 
   $(call add_json_str,  DirtyImageObjects,                  $(DIRTY_IMAGE_OBJECTS))
   $(call add_json_str,  PreloadedClasses,                   $(PRELOADED_CLASSES))
-  $(call add_json_list, BootImageProfiles,                  $(boot_image_profiles))
+  $(call add_json_list, BootImageProfiles,                  $(PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION))
+  $(call add_json_bool, UseProfileForBootImage,             $(call invert_bool,$(filter false,$(PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE))))
   $(call add_json_str,  BootFlags,                          $(PRODUCT_DEX_PREOPT_BOOT_FLAGS))
   $(call add_json_str,  Dex2oatImageXmx,                    $(DEX2OAT_IMAGE_XMX))
   $(call add_json_str,  Dex2oatImageXms,                    $(DEX2OAT_IMAGE_XMS))
 
   $(call add_json_map,  Tools)
-  $(call add_json_str,  Profman,                            $(PROFMAN))
+  $(call add_json_str,  Profman,                            $(SOONG_HOST_OUT_EXECUTABLES)/profman)
   $(call add_json_str,  Dex2oat,                            $(DEX2OAT))
-  $(call add_json_str,  Aapt,                               $(AAPT))
+  $(call add_json_str,  Aapt,                               $(SOONG_HOST_OUT_EXECUTABLES)/aapt)
   $(call add_json_str,  SoongZip,                           $(SOONG_ZIP))
   $(call add_json_str,  Zip2zip,                            $(ZIP2ZIP))
   $(call add_json_str,  VerifyUsesLibraries,                $(BUILD_SYSTEM)/verify_uses_libraries.sh)
@@ -190,9 +174,9 @@ $(DEX_PREOPT_CONFIG):
 	@#empty
 
 DEXPREOPT_GEN_DEPS := \
-  $(PROFMAN) \
+  $(SOONG_HOST_OUT_EXECUTABLES)/profman \
   $(DEX2OAT) \
-  $(AAPT) \
+  $(SOONG_HOST_OUT_EXECUTABLES)/aapt \
   $(SOONG_ZIP) \
   $(ZIP2ZIP) \
   $(BUILD_SYSTEM)/verify_uses_libraries.sh \
