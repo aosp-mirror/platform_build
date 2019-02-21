@@ -694,7 +694,9 @@ apkcerts-list: $(APKCERTS_FILE)
 
 ifneq (,$(TARGET_BUILD_APPS))
   $(call dist-for-goals, apps_only, $(APKCERTS_FILE):apkcerts.txt)
+  $(call dist-for-goals, apps_only, $(SOONG_APEX_KEYS_FILE):apexkeys.txt)
 endif
+
 
 # -----------------------------------------------------------------
 # build system stats
@@ -3649,6 +3651,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(LPMAKE) \
 	    $(SELINUX_FC) \
 	    $(APKCERTS_FILE) \
+	    $(SOONG_APEX_KEYS_FILE) \
 	    $(SOONG_ZIP) \
 	    $(HOST_OUT_EXECUTABLES)/fs_config \
 	    $(HOST_OUT_EXECUTABLES)/imgdiff \
@@ -3782,6 +3785,7 @@ endif
 	@# build them.
 	$(hide) mkdir -p $(zip_root)/META
 	$(hide) cp $(APKCERTS_FILE) $(zip_root)/META/apkcerts.txt
+	$(hide) cp $(SOONG_APEX_KEYS_FILE) $(zip_root)/META/apexkeys.txt
 ifneq ($(tool_extension),)
 	$(hide) cp $(PRIVATE_TOOL_EXTENSION) $(zip_root)/META/
 endif
