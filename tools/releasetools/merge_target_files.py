@@ -35,7 +35,6 @@ Usage: merge_target_files.py [args]
 
 from __future__ import print_function
 
-import argparse
 import fnmatch
 import logging
 import os
@@ -48,6 +47,10 @@ import add_img_to_target_files
 logger = logging.getLogger(__name__)
 OPTIONS = common.OPTIONS
 OPTIONS.verbose = True
+OPTIONS.system_target_files = None
+OPTIONS.other_target_files = None
+OPTIONS.output_target_files = None
+OPTIONS.keep_tmp = False
 
 # system_extract_as_is_item_list is a list of items to extract from the partial
 # system target files package as is, meaning these items will land in the
@@ -561,8 +564,7 @@ def merge_target_files(
     f.write(other_content)
 
   command = [
-      # TODO(124468071): Use soong_zip from otatools.zip
-      'prebuilts/build-tools/linux-x86/bin/soong_zip',
+      'soong_zip',
       '-d',
       '-o', output_zip,
       '-C', output_target_files_temp_dir,
@@ -643,36 +645,41 @@ def main():
 
   common.InitLogging()
 
-  parser = argparse.ArgumentParser()
+  def option_handler(o, a):
+    if o == '--system-target-files':
+      OPTIONS.system_target_files = a
+    elif o == '--other-target-files':
+      OPTIONS.other_target_files = a
+    elif o == '--output-target-files':
+      OPTIONS.output_target_files = a
+    elif o == '--keep_tmp':
+      OPTIONS.keep_tmp = True
+    else:
+      return False
+    return True
 
-  parser.add_argument(
-      '--system-target-files',
-      required=True,
-      help='The input target files package containing system bits.')
+  args = common.ParseOptions(
+      sys.argv[1:], __doc__,
+      extra_long_opts=[
+          'system-target-files=',
+          'other-target-files=',
+          'output-target-files=',
+          "keep_tmp",
+      ],
+      extra_option_handler=option_handler)
 
-  parser.add_argument(
-      '--other-target-files',
-      required=True,
-      help='The input target files package containing other bits.')
-
-  parser.add_argument(
-      '--output-target-files',
-      required=True,
-      help='The output merged target files package.')
-
-  parser.add_argument(
-      '--keep-tmp',
-      required=False,
-      action='store_true',
-      help='Keep the temporary directories after execution.')
-
-  args = parser.parse_args()
+  if (len(args) != 0 or 
+      OPTIONS.system_target_files is None or
+      OPTIONS.other_target_files is None or
+      OPTIONS.output_target_files is None):
+    common.Usage(__doc__)
+    return 1
 
   return merge_target_files_with_temp_dir(
-      system_target_files=args.system_target_files,
-      other_target_files=args.other_target_files,
-      output_target_files=args.output_target_files,
-      keep_tmp=args.keep_tmp)
+      system_target_files=OPTIONS.system_target_files,
+      other_target_files=OPTIONS.other_target_files,
+      output_target_files=OPTIONS.output_target_files,
+      keep_tmp=OPTIONS.keep_tmp)
 
 
 if __name__ == '__main__':
