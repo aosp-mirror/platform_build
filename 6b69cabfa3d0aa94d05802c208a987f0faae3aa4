@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bb59b8e0_3f255b07",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-02-21T10:48:09Z",
+      "side": 1,
+      "message": "nit: any reason for not using transform-prebuilt-to-target?",
+      "range": {
+        "startLine": 137,
+        "startChar": 1,
+        "endLine": 137,
+        "endChar": 23
+      },
+      "revId": "6b69cabfa3d0aa94d05802c208a987f0faae3aa4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
