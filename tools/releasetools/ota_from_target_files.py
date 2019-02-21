@@ -74,6 +74,10 @@ Common options that apply to both of non-A/B and A/B OTAs
   --skip_compatibility_check
       Skip adding the compatibility package to the generated OTA package.
 
+  --output_metadata_path
+      Write a copy of the metadata to a separate file. Therefore, users can
+      read the post build fingerprint without extracting the OTA package.
+
 Non-A/B OTA specific options
 
   -b  (--binary) <file>
@@ -225,6 +229,7 @@ OPTIONS.key_passwords = []
 OPTIONS.skip_postinstall = False
 OPTIONS.retrofit_dynamic_partitions = False
 OPTIONS.skip_compatibility_check = False
+OPTIONS.output_metadata_path = None
 
 
 METADATA_NAME = 'META-INF/com/android/metadata'
@@ -978,10 +983,22 @@ endif;
   FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
 
 
-def WriteMetadata(metadata, output_zip):
+def WriteMetadata(metadata, output):
+  """Writes the metadata to the zip archive or a file.
+
+  Args:
+    metadata: The metadata dict for the package.
+    output: A ZipFile object or a string of the output file path.
+  """
+
   value = "".join(["%s=%s\n" % kv for kv in sorted(metadata.iteritems())])
-  common.ZipWriteStr(output_zip, METADATA_NAME, value,
-                     compress_type=zipfile.ZIP_STORED)
+  if isinstance(output, zipfile.ZipFile):
+    common.ZipWriteStr(output, METADATA_NAME, value,
+                       compress_type=zipfile.ZIP_STORED)
+    return
+
+  with open(output, 'w') as f:
+    f.write(value)
 
 
 def HandleDowngradeMetadata(metadata, target_info, source_info):
@@ -1424,6 +1441,11 @@ def FinalizeMetadata(metadata, input_file, output_file, needed_property_files):
   with zipfile.ZipFile(output_file) as output_zip:
     for property_files in needed_property_files:
       property_files.Verify(output_zip, metadata[property_files.name].strip())
+
+  # If requested, dump the metadata to a separate file.
+  output_metadata_path = OPTIONS.output_metadata_path
+  if output_metadata_path:
+    WriteMetadata(metadata, output_metadata_path)
 
 
 def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
@@ -2043,6 +2065,8 @@ def main(argv):
       OPTIONS.retrofit_dynamic_partitions = True
     elif o == "--skip_compatibility_check":
       OPTIONS.skip_compatibility_check = True
+    elif o == "--output_metadata_path":
+      OPTIONS.output_metadata_path = a
     else:
       return False
     return True
@@ -2075,6 +2099,7 @@ def main(argv):
                                  "skip_postinstall",
                                  "retrofit_dynamic_partitions",
                                  "skip_compatibility_check",
+                                 "output_metadata_path=",
                              ], extra_option_handler=option_handler)
 
   if len(args) != 2:
