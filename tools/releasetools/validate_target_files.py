@@ -84,17 +84,17 @@ def ValidateFileConsistency(input_zip, input_tmp, info_dict):
       # bytes past the file length, which is expected to be padded with '\0's.
       ranges = image.file_map[entry]
 
-      incomplete = ranges.extra.get('incomplete', False)
-      if incomplete:
-        logging.warning('Skipping %s that has incomplete block list', entry)
-        continue
-
       # Use the original RangeSet if applicable, which includes the shared
       # blocks. And this needs to happen before checking the monotonicity flag.
       if ranges.extra.get('uses_shared_blocks'):
         file_ranges = ranges.extra['uses_shared_blocks']
       else:
         file_ranges = ranges
+
+      incomplete = file_ranges.extra.get('incomplete', False)
+      if incomplete:
+        logging.warning('Skipping %s that has incomplete block list', entry)
+        continue
 
       # TODO(b/79951650): Handle files with non-monotonic ranges.
       if not file_ranges.monotonic:
