@@ -191,7 +191,7 @@ def Run(args, verbose=None, **kwargs):
 
 
 def RunAndWait(args, verbose=None, **kwargs):
-  """Runs the given command and returns the exit code.
+  """Runs the given command waiting for it to complete.
 
   Args:
     args: The command represented as a list of strings.
@@ -201,12 +201,16 @@ def RunAndWait(args, verbose=None, **kwargs):
         stdin, etc. stdout and stderr will default to subprocess.PIPE and
         subprocess.STDOUT respectively unless caller specifies any of them.
 
-  Returns:
-    The process return code.
+  Raises:
+    ExternalError: On non-zero exit from the command.
   """
   proc = Run(args, verbose=verbose, **kwargs)
   proc.wait()
-  return proc.returncode
+
+  if proc.returncode != 0:
+    raise ExternalError(
+        "Failed to run command '{}' (exit code {})".format(
+            args, proc.returncode))
 
 
 def RunAndCheckOutput(args, verbose=None, **kwargs):
