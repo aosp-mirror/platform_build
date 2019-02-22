@@ -22,6 +22,30 @@
       "revId": "70222b21eeb2a17f165d6f40d72aaa6d55c6a0d7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a10c6d37_82cfdf2b",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 378,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-02-22T00:02:49Z",
+      "side": 1,
+      "message": "It doesn\u0027t need to be, that variable is there to prevent hardcoded \"2ND_\" from propagating everywhere, but TARGET_2ND_ARCH is a well-known enough variable name that it doesn\u0027t matter.",
+      "parentUuid": "3d5b5157_acc37822",
+      "range": {
+        "startLine": 378,
+        "startChar": 9,
+        "endLine": 378,
+        "endChar": 13
+      },
+      "revId": "70222b21eeb2a17f165d6f40d72aaa6d55c6a0d7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
