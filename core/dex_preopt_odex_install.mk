@@ -150,13 +150,13 @@ ifdef LOCAL_DEX_PREOPT
     # #################################################
     # Odex for the 1st arch
     my_dexpreopt_archs += $(TARGET_ARCH)
-    my_dexpreopt_images += $(DEXPREOPT_IMAGE_$(TARGET_ARCH))
+    my_dexpreopt_images += $(DEXPREOPT_IMAGE_boot_$(TARGET_ARCH))
     # Odex for the 2nd arch
     ifdef TARGET_2ND_ARCH
       ifneq ($(TARGET_TRANSLATE_2ND_ARCH),true)
         ifneq (first,$(my_module_multilib))
           my_dexpreopt_archs += $(TARGET_2ND_ARCH)
-          my_dexpreopt_images += $(DEXPREOPT_IMAGE_$(TARGET_2ND_ARCH))
+          my_dexpreopt_images += $(DEXPREOPT_IMAGE_boot_$(TARGET_2ND_ARCH))
         endif  # my_module_multilib is not first.
       endif  # TARGET_TRANSLATE_2ND_ARCH not true
     endif  # TARGET_2ND_ARCH
@@ -166,13 +166,13 @@ ifdef LOCAL_DEX_PREOPT
     # Save the module multilib since setup_one_odex modifies it.
     my_2nd_arch_prefix := $(LOCAL_2ND_ARCH_VAR_PREFIX)
     my_dexpreopt_archs += $(TARGET_$(my_2nd_arch_prefix)ARCH)
-    my_dexpreopt_images += $(DEXPREOPT_IMAGE_$(TARGET_$(my_2nd_arch_prefix)ARCH))
+    my_dexpreopt_images += $(DEXPREOPT_IMAGE_boot_$(TARGET_$(my_2nd_arch_prefix)ARCH))
     ifdef TARGET_2ND_ARCH
       ifeq ($(my_module_multilib),both)
         # The non-preferred arch
         my_2nd_arch_prefix := $(if $(LOCAL_2ND_ARCH_VAR_PREFIX),,$(TARGET_2ND_ARCH_VAR_PREFIX))
         my_dexpreopt_archs += $(TARGET_$(my_2nd_arch_prefix)ARCH)
-        my_dexpreopt_images += $(DEXPREOPT_IMAGE_$(TARGET_$(my_2nd_arch_prefix)ARCH))
+        my_dexpreopt_images += $(DEXPREOPT_IMAGE_boot_$(TARGET_$(my_2nd_arch_prefix)ARCH))
       endif  # LOCAL_MULTILIB is both
     endif  # TARGET_2ND_ARCH
   endif  # LOCAL_MODULE_CLASS
