@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b9a796c1_da7ca7a7",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2184,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-02-22T20:31:15Z",
+      "side": 1,
+      "message": "This does not work on Mac, -i need to have a real argument.",
+      "range": {
+        "startLine": 2184,
+        "startChar": 5,
+        "endLine": 2184,
+        "endChar": 9
+      },
+      "revId": "e9a1e0c73ab3c1396030b45b14a3f4c0a2556848",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
