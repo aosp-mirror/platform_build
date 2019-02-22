@@ -1582,8 +1582,15 @@ endif  # samplecode in $(MAKECMDGOALS)
 .PHONY: findbugs
 findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
+LSDUMP_PATHS_FILE := $(PRODUCT_OUT)/lsdump_paths.txt
+
 .PHONY: findlsdumps
-findlsdumps: $(FIND_LSDUMPS_FILE)
+findlsdumps: $(LSDUMP_PATHS_FILE) $(LSDUMP_PATHS)
+
+$(LSDUMP_PATHS_FILE): PRIVATE_LSDUMP_PATHS := $(LSDUMP_PATHS)
+$(LSDUMP_PATHS_FILE):
+	@echo "Generate $@"
+	@rm -rf $@ && echo "$(PRIVATE_LSDUMP_PATHS)" | sed -e 's/ /\n/g' > $@
 
 .PHONY: check-elf-files
 check-elf-files:
