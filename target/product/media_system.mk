@@ -59,8 +59,6 @@ PRODUCT_PACKAGES += \
     StatementService \
     vndk_snapshot_package \
 
-PRODUCT_HOST_PACKAGES += \
-    fsck.f2fs \
 
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.webview.xml:system/etc/permissions/android.software.webview.xml

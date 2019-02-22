@@ -99,9 +99,6 @@ PRODUCT_PACKAGES_DEBUG += \
     tinypcminfo \
     update_engine_client \
 
-PRODUCT_HOST_PACKAGES += \
-    tinyplay
-
 # Enable stats logging in LMKD
 TARGET_LMKD_STATS_LOG := true
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \

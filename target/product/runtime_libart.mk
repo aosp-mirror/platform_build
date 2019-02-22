@@ -45,7 +45,6 @@ PRODUCT_PACKAGES += \
 
 # Android Runtime APEX module.
 PRODUCT_PACKAGES += com.android.runtime
-PRODUCT_HOST_PACKAGES += com.android.runtime
 
 # Certificates.
 PRODUCT_PACKAGES += \
