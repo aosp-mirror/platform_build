@@ -36,6 +36,10 @@ PRODUCT_PACKAGES += \
 	bios.bin \
 	vgabios-cirrus.bin \
 
+PRODUCT_HOST_PACKAGES += \
+	bios.bin \
+	vgabios-cirrus.bin \
+
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
