@@ -1,5 +1,35 @@
 # Build System Changes for Android.mk Writers
 
+## `PRODUCT_HOST_PACKAGES` split from `PRODUCT_PACKAGES` {#PRODUCT_HOST_PACKAGES}
+
+Previously, adding a module to `PRODUCT_PACKAGES` that supported both the host
+and the target (`host_supported` in Android.bp; two modules with the same name
+in Android.mk) would cause both to be built and installed. In many cases you
+only want either the host or target versions to be built/installed by default,
+and would be over-building with both. So `PRODUCT_PACKAGES` will be changing to
+just affect target modules, while `PRODUCT_HOST_PACKAGES` is being added for
+host modules.
+
+Functional differences between `PRODUCT_PACKAGES` and `PRODUCT_HOST_PACKAGES`:
+
+* `PRODUCT_HOST_PACKAGES` does not have `_ENG`/`_DEBUG` variants, as that's a
+  property of the target, not the host.
+* `PRODUCT_HOST_PACKAGES` does not support `LOCAL_MODULE_OVERRIDES`.
+* `PRODUCT_HOST_PACKAGES` requires listed modules to exist, and be host
+  modules. (Unless `ALLOW_MISSING_DEPENDENCIES` is set)
+
+This is still an active migration, so currently it still uses
+`PRODUCT_PACKAGES` to make installation decisions, but verifies that if we used
+`PRODUCT_HOST_PACKAGES`, it would trigger installation for all of the same host
+packages. This check ignores shared libraries, as those are not normally
+necessary in `PRODUCT_*PACKAGES`, and tended to be over-built (especially the
+32-bit variants).
+
+Future changes will switch installation decisions to `PRODUCT_HOST_PACKAGES`
+for host modules, error when there's a host-only module in `PRODUCT_PACKAGES`,
+and do some further cleanup where `LOCAL_REQUIRED_MODULES` are still merged
+between host and target modules with the same name.
+
 ## Windows cross-compiles no longer supported in Android.mk
 
 Modules that build for Windows (our only `HOST_CROSS` OS currently) must now be

@@ -583,6 +583,22 @@ $(strip $(1))
 endef
 endif  # TARGET_TRANSLATE_2ND_ARCH
 
+# TODO: we can probably check to see if these modules are actually host
+# modules
+define get-host-32-bit-modules
+$(sort $(foreach m,$(1),\
+  $(if $(ALL_MODULES.$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX).CLASS),\
+    $(m)$(HOST_2ND_ARCH_MODULE_SUFFIX))))
+endef
+# Get a list of corresponding 32-bit module names, if one exists;
+# otherwise return the original module name
+define get-host-32-bit-modules-if-we-can
+$(sort $(foreach m,$(1),\
+  $(if $(ALL_MODULES.$(m)$(HOST_2ND_ARCH_MODULE_SUFFIX).CLASS),\
+    $(m)$(HOST_2ND_ARCH_MODULE_SUFFIX),\
+    $(m))))
+endef
+
 # If a module is for a cross host os, the required modules must be for
 # that OS too.
 # If a module is built for 32-bit, the required modules must be 32-bit too;
@@ -1030,6 +1046,16 @@ $(if $(_erm_new_modules),\
   $(call expand-required-modules,$(1),$(_erm_new_modules),$(_erm_all_overrides)))
 endef
 
+# Same as expand-required-modules above, but does not handle module overrides, as
+# we don't intend to support them on the host.
+define expand-required-host-modules
+$(eval _erm_req := $(foreach m,$(2),$(ALL_MODULES.$(m).REQUIRED))) \
+$(eval _erm_new_modules := $(sort $(filter-out $($(1)),$(_erm_req)))) \
+$(eval $(1) += $(_erm_new_modules)) \
+$(if $(_erm_new_modules),\
+  $(call expand-required-host-modules,$(1),$(_erm_new_modules)))
+endef
+
 # Transforms paths relative to PRODUCT_OUT to absolute paths.
 # $(1): list of relative paths
 # $(2): optional suffix to append to paths
@@ -1093,6 +1119,23 @@ define product-installed-files
     $(foreach cf,$(PRODUCTS.$(_mk).PRODUCT_COPY_FILES),$(call word-colon,2,$(cf))))
 endef
 
+# Similar to product-installed-files above, but handles PRODUCT_HOST_PACKAGES instead
+# This does support the :32 / :64 syntax, but does not support module overrides.
+define host-installed-files
+  $(eval _hif_modules := $(PRODUCTS.$(strip $(1)).PRODUCT_HOST_PACKAGES)) \
+  $(eval ### Resolve the :32 :64 module name) \
+  $(eval _hif_modules_32 := $(patsubst %:32,%,$(filter %:32, $(_hif_modules)))) \
+  $(eval _hif_modules_64 := $(patsubst %:64,%,$(filter %:64, $(_hif_modules)))) \
+  $(eval _hif_modules_rest := $(filter-out %:32 %:64,$(_hif_modules))) \
+  $(eval _hif_modules := $(call get-host-32-bit-modules-if-we-can, $(_hif_modules_32))) \
+  $(eval _hif_modules += $(_hif_modules_64)) \
+  $(eval ### For the rest we add both) \
+  $(eval _hif_modules += $(call get-host-32-bit-modules, $(_hif_modules_rest))) \
+  $(eval _hif_modules += $(_hif_modules_rest)) \
+  $(call expand-required-host-modules,_hif_modules,$(_hif_modules)) \
+  $(filter $(HOST_OUT_ROOT)/%,$(call module-installed-files, $(_hif_modules)))
+endef
+
 # Fails the build if the given list is non-empty, and prints it entries (stripping PRODUCT_OUT).
 # $(1): list of files to print
 # $(2): heading to print on failure
@@ -1119,10 +1162,36 @@ ifeq (true|,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_PACKAGES_EXIST)|$(fil
     $(INTERNAL_PRODUCT) includes redundant whitelist entries for nonexistant PRODUCT_PACKAGES)
 endif
 
+ifneq (true,$(ALLOW_MISSING_DEPENDENCIES))
+  _modules := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_HOST_PACKAGES)
+  _nonexistant_modules := $(foreach m,$(_modules),\
+    $(if $(filter FAKE,$(ALL_MODULES.$(m).CLASS))$(filter $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,$(m)))
+  $(call maybe-print-list-and-error,$(_nonexistant_modules),\
+    $(INTERNAL_PRODUCT) includes non-existant modules in PRODUCT_HOST_PACKAGES)
+endif
+
 ifdef FULL_BUILD
-  product_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
+  product_host_FILES := $(call host-installed-files,$(INTERNAL_PRODUCT))
+  product_target_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
   # WARNING: The product_MODULES variable is depended on by external files.
   product_MODULES := $(_pif_modules)
+
+  # Verify that PRODUCT_HOST_PACKAGES is complete
+  # This is a temporary requirement during migration
+  # Ignore libraries, since they shouldn't need to be in PRODUCT_PACKAGES for the most part anyway.
+  host_files_in_target_FILES := $(filter-out \
+    $(HOST_OUT_SHARED_LIBRARIES)/% \
+    $($(HOST_2ND_ARCH_VAR_PREFIX)HOST_OUT_SHARED_LIBRARIES)/%,\
+      $(filter $(HOST_OUT_ROOT)/%,$(product_target_FILES)))
+  ifneq (,$(filter-out $(product_host_FILES),$(host_files_in_target_FILES)))
+    packages := $(foreach f,$(filter-out $(product_host_FILES),$(host_files_in_target_FILES)), \
+      $(or $(INSTALLABLE_FILES.$(f).MODULE),$(f)))
+    $(warning Missing modules from PRODUCT_HOST_PACKAGES)
+    $(warning See $(CHANGES_URL)#PRODUCT_HOST_PACKAGES for more information)
+    $(foreach f,$(sort $(packages)),$(warning _ $(f)))
+    $(error stop)
+  endif
+  host_files_in_target_FILES :=
 
   # Verify the artifact path requirements made by included products.
   is_asan := $(if $(filter address,$(SANITIZE_TARGET)),true)
@@ -1166,7 +1235,7 @@ $(call dist-for-goals,droidcore,$(CERTIFICATE_VIOLATION_MODULES_FILENAME))
     $(eval unused_whitelist := $(filter-out $(files),$(whitelist_patterns))) \
     $(call maybe-print-list-and-error,$(unused_whitelist),$(makefile) includes redundant whitelist entries in its artifact path requirement.) \
     $(eval ### Optionally verify that nothing else produces files inside this artifact path requirement.) \
-    $(eval extra_files := $(filter-out $(files) $(HOST_OUT)/%,$(product_FILES))) \
+    $(eval extra_files := $(filter-out $(files) $(HOST_OUT)/%,$(product_target_FILES))) \
     $(eval files_in_requirement := $(filter $(path_patterns),$(extra_files))) \
     $(eval all_offending_files += $(files_in_requirement)) \
     $(eval whitelist := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST)) \
@@ -1191,14 +1260,14 @@ else
   # a subset of the module makefiles.  Don't try to build any modules
   # requested by the product, because we probably won't have rules
   # to build them.
-  product_FILES :=
+  product_target_FILES :=
 endif
 
 # TODO: Remove the 3 places in the tree that use ALL_DEFAULT_INSTALLED_MODULES
 # and get rid of it from this list.
 modules_to_install := $(sort \
     $(ALL_DEFAULT_INSTALLED_MODULES) \
-    $(product_FILES) \
+    $(product_target_FILES) \
     $(call get-tagged-modules,$(tags_to_install)) \
     $(CUSTOM_MODULES) \
   )
@@ -1596,8 +1665,8 @@ modules:
 
 .PHONY: dump-files
 dump-files:
-	$(info product_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
-	$(foreach p,$(sort $(product_FILES)),$(info :   $(p)))
+	$(info product_target_FILES for $(TARGET_DEVICE) ($(INTERNAL_PRODUCT)):)
+	$(foreach p,$(sort $(product_target_FILES)),$(info :   $(p)))
 	@echo Successfully dumped product file list
 
 .PHONY: nothing
