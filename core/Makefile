@@ -4596,9 +4596,3 @@ include $(BUILD_SYSTEM)/product-graph.mk
 ifneq ($(sdk_repo_goal),)
 include $(TOPDIR)development/build/tools/sdk_repo.mk
 endif
-
-#------------------------------------------------------------------
-# Find lsdump paths
-FIND_LSDUMPS_FILE := $(PRODUCT_OUT)/lsdump_paths.txt
-$(FIND_LSDUMPS_FILE) : $(LSDUMP_PATHS)
-	$(hide) rm -rf $@ && echo "$^" | sed -e 's/ /\n/g' > $@
