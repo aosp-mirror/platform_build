@@ -142,9 +142,6 @@ def extract_items(target_files, target_files_temp_dir, extract_item_list):
     will land.
 
     extract_item_list: A list of items to extract.
-
-  Returns:
-    On success, 0. Otherwise, a non-zero exit code from unzip.
   """
 
   logger.info('extracting from %s', target_files)
@@ -178,13 +175,7 @@ def extract_items(target_files, target_files_temp_dir, extract_item_list):
       target_files
   ] + filtered_extract_item_list
 
-  result = common.RunAndWait(command, verbose=True)
-
-  if result != 0:
-    logger.error('extract_items command %s failed %d', str(command), result)
-    return result
-
-  return 0
+  common.RunAndWait(command, verbose=True)
 
 
 def process_ab_partitions_txt(
@@ -305,9 +296,6 @@ def process_file_contexts_bin(temp_dir, output_target_files_temp_dir):
     already contain plat_file_contexts and vendor_file_contexts (in the
     appropriate sub directories), and to which META/file_contexts.bin will be
     written.
-
-  Returns:
-    On success, 0. Otherwise, a non-zero exit code.
   """
 
   # To create a merged file_contexts.bin file, we use the system and vendor
@@ -352,12 +340,7 @@ def process_file_contexts_bin(temp_dir, output_target_files_temp_dir):
 
   sorted_file_contexts_txt = os.path.join(temp_dir, 'sorted_file_contexts.txt')
   command = ['fc_sort', merged_file_contexts_txt, sorted_file_contexts_txt]
-
-  # TODO(b/124521133): Refector RunAndWait to raise exception on failure.
-  result = common.RunAndWait(command, verbose=True)
-
-  if result != 0:
-    return result
+  common.RunAndWait(command, verbose=True)
 
   # Finally, the compile step creates the final META/file_contexts.bin.
 
@@ -371,12 +354,7 @@ def process_file_contexts_bin(temp_dir, output_target_files_temp_dir):
       sorted_file_contexts_txt,
   ]
 
-  result = common.RunAndWait(command, verbose=True)
-
-  if result != 0:
-    return result
-
-  return 0
+  common.RunAndWait(command, verbose=True)
 
 
 def process_special_cases(
@@ -402,9 +380,6 @@ def process_special_cases(
     output_target_files_temp_dir: The name of a directory that will be used
     to create the output target files package after all the special cases
     are processed.
-
-  Returns:
-    On success, 0. Otherwise, a non-zero exit code.
   """
 
   process_ab_partitions_txt(
@@ -417,14 +392,9 @@ def process_special_cases(
       other_target_files_temp_dir=other_target_files_temp_dir,
       output_target_files_temp_dir=output_target_files_temp_dir)
 
-  result = process_file_contexts_bin(
+  process_file_contexts_bin(
       temp_dir=temp_dir,
       output_target_files_temp_dir=output_target_files_temp_dir)
-
-  if result != 0:
-    return result
-
-  return 0
 
 
 def merge_target_files(
@@ -451,9 +421,6 @@ def merge_target_files(
 
     output_target_files: The name of the output zip archive target files
     package created by merging system and other.
-
-  Returns:
-    On success, 0. Otherwise, a non-zero exit code.
   """
 
   # Create directory names that we'll use when we extract files from system,
@@ -467,63 +434,48 @@ def merge_target_files(
   # We extract them directly into the output temporary directory since the
   # items do not need special case processing.
 
-  result = extract_items(
+  extract_items(
       target_files=system_target_files,
       target_files_temp_dir=output_target_files_temp_dir,
       extract_item_list=system_extract_as_is_item_list)
-
-  if result != 0:
-    return result
 
   # Extract "as is" items from the input other partial target files package. We
   # extract them directly into the output temporary directory since the items
   # do not need special case processing.
 
-  result = extract_items(
+  extract_items(
       target_files=other_target_files,
       target_files_temp_dir=output_target_files_temp_dir,
       extract_item_list=other_extract_as_is_item_list)
-
-  if result != 0:
-    return result
 
   # Extract "special" items from the input system partial target files package.
   # We extract these items to different directory since they require special
   # processing before they will end up in the output directory.
 
-  result = extract_items(
+  extract_items(
       target_files=system_target_files,
       target_files_temp_dir=system_target_files_temp_dir,
       extract_item_list=system_extract_special_item_list)
-
-  if result != 0:
-    return result
 
   # Extract "special" items from the input other partial target files package.
   # We extract these items to different directory since they require special
   # processing before they will end up in the output directory.
 
-  result = extract_items(
+  extract_items(
       target_files=other_target_files,
       target_files_temp_dir=other_target_files_temp_dir,
       extract_item_list=other_extract_special_item_list)
-
-  if result != 0:
-    return result
 
   # Now that the temporary directories contain all the extracted files, perform
   # special case processing on any items that need it. After this function
   # completes successfully, all the files we need to create the output target
   # files package are in place.
 
-  result = process_special_cases(
+  process_special_cases(
       temp_dir=temp_dir,
       system_target_files_temp_dir=system_target_files_temp_dir,
       other_target_files_temp_dir=other_target_files_temp_dir,
       output_target_files_temp_dir=output_target_files_temp_dir)
-
-  if result != 0:
-    return result
 
   # Regenerate IMAGES in the temporary directory.
 
@@ -571,13 +523,7 @@ def merge_target_files(
       '-l', output_target_files_list,
   ]
   logger.info('creating %s', output_target_files)
-  result = common.RunAndWait(command, verbose=True)
-
-  if result != 0:
-    logger.error('zip command %s failed %d', str(command), result)
-    return result
-
-  return 0
+  common.RunAndWait(command, verbose=True)
 
 
 def merge_target_files_with_temp_dir(
@@ -601,9 +547,6 @@ def merge_target_files_with_temp_dir(
     package created by merging system and other.
 
     keep_tmp: Keep the temporary directory after processing is complete.
-
-  Returns:
-    On success, 0. Otherwise, a non-zero exit code.
   """
 
   # Create a temporary directory. This will serve as the parent of directories
@@ -619,7 +562,7 @@ def merge_target_files_with_temp_dir(
   temp_dir = common.MakeTempDir(prefix='merge_target_files_')
 
   try:
-    return merge_target_files(
+    merge_target_files(
         temp_dir=temp_dir,
         system_target_files=system_target_files,
         other_target_files=other_target_files,
@@ -638,9 +581,6 @@ def main():
 
   Process command line arguments, then call merge_target_files_with_temp_dir to
   perform the heavy lifting.
-
-  Returns:
-    On success, 0. Otherwise, a non-zero exit code.
   """
 
   common.InitLogging()
@@ -668,14 +608,14 @@ def main():
       ],
       extra_option_handler=option_handler)
 
-  if (len(args) != 0 or 
+  if (len(args) != 0 or
       OPTIONS.system_target_files is None or
       OPTIONS.other_target_files is None or
       OPTIONS.output_target_files is None):
     common.Usage(__doc__)
-    return 1
+    sys.exit(1)
 
-  return merge_target_files_with_temp_dir(
+  merge_target_files_with_temp_dir(
       system_target_files=OPTIONS.system_target_files,
       other_target_files=OPTIONS.other_target_files,
       output_target_files=OPTIONS.output_target_files,
@@ -683,4 +623,4 @@ def main():
 
 
 if __name__ == '__main__':
-  sys.exit(main())
+  main()
