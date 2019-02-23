@@ -34,6 +34,24 @@
       "revId": "29ade3196bd7f9acd0086af8ee9d012c71d1e117",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "82a2fd2a_6611cde5",
+        "filename": "core/clang/OWNERS",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1453150
+      },
+      "writtenOn": "2019-02-23T09:20:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8c7b58d7_4a709e4a",
+      "revId": "29ade3196bd7f9acd0086af8ee9d012c71d1e117",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
