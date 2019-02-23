@@ -114,6 +114,7 @@ PRODUCT_PACKAGES += \
     libandroidfw \
     libandroid_runtime \
     libandroid_servers \
+    libartpalette-system \
     libashmemd_client \
     libaudioeffect_jni \
     libaudioflinger \
