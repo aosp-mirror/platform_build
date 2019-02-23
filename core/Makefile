@@ -4070,6 +4070,8 @@ name := $(name)-ota-$(FILE_NAME_TAG)
 
 INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 
+INTERNAL_OTA_METADATA := $(PRODUCT_OUT)/ota_metadata
+
 $(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
 
 ifeq ($(AB_OTA_UPDATER),true)
@@ -4078,10 +4080,12 @@ else
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BROTLI)
 endif
 
+$(INTERNAL_OTA_PACKAGE_TARGET): .KATI_IMPLICIT_OUTPUTS := $(INTERNAL_OTA_METADATA)
+
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
 	    build/make/tools/releasetools/ota_from_target_files
 	@echo "Package OTA: $@"
-	$(call build-ota-package-target,$@,-k $(KEY_CERT_PAIR))
+	$(call build-ota-package-target,$@,-k $(KEY_CERT_PAIR) --output_metadata_path $(INTERNAL_OTA_METADATA))
 
 .PHONY: otapackage
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
