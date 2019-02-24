@@ -114,11 +114,6 @@ $(call add_json_bool, UncompressPrivAppDex,              $(call invert_bool,$(fi
 $(call add_json_list, ModulesLoadedByPrivilegedModules,  $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
 
 $(call add_json_list, BootJars,                          $(PRODUCT_BOOT_JARS))
-$(call add_json_list, PreoptBootJars,                    $(DEXPREOPT_BOOT_JARS_MODULES))
-
-$(call add_json_bool, DisableDexPreopt,                  $(call invert_bool,$(filter true,$(WITH_DEXPREOPT))))
-$(call add_json_list, DisableDexPreoptModules,           $(DEXPREOPT_DISABLED_MODULES))
-$(call add_json_str,  DexPreoptProfileDir,               $(PRODUCT_DEX_PREOPT_PROFILE_DIR))
 
 $(call add_json_bool, Product_is_iot,                    $(filter true,$(PRODUCT_IOT)))
 
