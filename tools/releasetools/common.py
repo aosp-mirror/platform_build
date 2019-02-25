@@ -768,30 +768,46 @@ def Gunzip(in_filename, out_filename):
     shutil.copyfileobj(in_file, out_file)
 
 
+def UnzipToDir(filename, dirname, pattern=None):
+  """Unzips the archive to the given directory.
+
+  Args:
+    filename: The name of the zip file to unzip.
+
+    dirname: Where the unziped files will land.
+
+    pattern: Files to unzip from the archive. If omitted, will unzip the entire
+    archvie.
+  """
+
+  cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
+  if pattern is not None:
+    cmd.extend(pattern)
+  RunAndCheckOutput(cmd)
+
+
 def UnzipTemp(filename, pattern=None):
   """Unzips the given archive into a temporary directory and returns the name.
 
-  If filename is of the form "foo.zip+bar.zip", unzip foo.zip into a temp dir,
-  then unzip bar.zip into that_dir/BOOTABLE_IMAGES.
+  Args:
+    filename: If filename is of the form "foo.zip+bar.zip", unzip foo.zip into
+    a temp dir, then unzip bar.zip into that_dir/BOOTABLE_IMAGES.
+
+    pattern: Files to unzip from the archive. If omitted, will unzip the entire
+    archvie.
 
   Returns:
     The name of the temporary directory.
   """
 
-  def unzip_to_dir(filename, dirname):
-    cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
-    if pattern is not None:
-      cmd.extend(pattern)
-    RunAndCheckOutput(cmd)
-
   tmp = MakeTempDir(prefix="targetfiles-")
   m = re.match(r"^(.*[.]zip)\+(.*[.]zip)$", filename, re.IGNORECASE)
   if m:
-    unzip_to_dir(m.group(1), tmp)
-    unzip_to_dir(m.group(2), os.path.join(tmp, "BOOTABLE_IMAGES"))
+    UnzipToDir(m.group(1), tmp, pattern)
+    UnzipToDir(m.group(2), os.path.join(tmp, "BOOTABLE_IMAGES"), pattern)
     filename = m.group(1)
   else:
-    unzip_to_dir(filename, tmp)
+    UnzipToDir(filename, tmp, pattern)
 
   return tmp
 
