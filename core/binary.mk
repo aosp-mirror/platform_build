@@ -440,9 +440,6 @@ endif
 ifneq ($(foreach i,$(my_c_includes),$(filter %/..,$(i))$(findstring /../,$(i))),)
 my_soong_problems += dotdot_incs
 endif
-ifneq ($(filter %.arm,$(my_src_files)),)
-my_soong_problems += srcs_dotarm
-endif
 
 ####################################################
 ## Add FDO flags if FDO is turned on and supported
@@ -506,19 +503,15 @@ endif
 ###########################################################
 LOCAL_ARM_MODE := $(strip $(LOCAL_ARM_MODE))
 ifeq ($($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),arm)
-arm_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),arm)
 normal_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)
 
 # Read the values from something like TARGET_arm_CFLAGS or
 # TARGET_thumb_CFLAGS.  HOST_(arm|thumb)_CFLAGS values aren't
 # actually used (although they are usually empty).
-arm_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(arm_objects_mode)_CFLAGS)
 normal_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(normal_objects_mode)_CFLAGS)
 
 else
-arm_objects_mode :=
 normal_objects_mode :=
-arm_objects_cflags :=
 normal_objects_cflags :=
 endif
 
@@ -861,22 +854,9 @@ endif
 ## C++: Compile .cpp files to .o.
 ###########################################################
 
-# we also do this on host modules, even though
-# it's not really arm, because there are files that are shared.
-cpp_arm_sources := $(patsubst %$(LOCAL_CPP_EXTENSION).arm,%$(LOCAL_CPP_EXTENSION),$(filter %$(LOCAL_CPP_EXTENSION).arm,$(my_src_files)))
-dotdot_arm_sources := $(filter ../%,$(cpp_arm_sources))
-cpp_arm_sources := $(filter-out ../%,$(cpp_arm_sources))
-cpp_arm_objects := $(addprefix $(intermediates)/,$(cpp_arm_sources:$(LOCAL_CPP_EXTENSION)=.o))
-$(call track-src-file-obj,$(patsubst %,%.arm,$(cpp_arm_sources)),$(cpp_arm_objects))
-
-# For source files starting with ../, we remove all the ../ in the object file path,
-# to avoid object file escaping the intermediate directory.
-dotdot_arm_objects :=
-$(foreach s,$(dotdot_arm_sources),\
-  $(eval $(call compile-dotdot-cpp-file,$(s),\
-  $(my_additional_dependencies),\
-  dotdot_arm_objects)))
-$(call track-src-file-obj,$(patsubst %,%.arm,$(dotdot_arm_sources)),$(dotdot_arm_objects))
+ifneq ($(filter %$(LOCAL_CPP_EXTENSION).arm,$(my_src_files)),)
+$(call pretty-error,Files ending in $(LOCAL_CPP_EXTENSION).arm are deprecated. See $(CHANGES_URL)#file_arm)
+endif
 
 dotdot_sources := $(filter ../%$(LOCAL_CPP_EXTENSION),$(my_src_files))
 dotdot_objects :=
@@ -887,15 +867,11 @@ $(foreach s,$(dotdot_sources),\
 $(call track-src-file-obj,$(dotdot_sources),$(dotdot_objects))
 
 cpp_normal_sources := $(filter-out ../%,$(filter %$(LOCAL_CPP_EXTENSION),$(my_src_files)))
-cpp_normal_objects := $(addprefix $(intermediates)/,$(cpp_normal_sources:$(LOCAL_CPP_EXTENSION)=.o))
-$(call track-src-file-obj,$(cpp_normal_sources),$(cpp_normal_objects))
+cpp_objects := $(addprefix $(intermediates)/,$(cpp_normal_sources:$(LOCAL_CPP_EXTENSION)=.o))
+$(call track-src-file-obj,$(cpp_normal_sources),$(cpp_objects))
 
-$(dotdot_arm_objects) $(cpp_arm_objects): PRIVATE_ARM_MODE := $(arm_objects_mode)
-$(dotdot_arm_objects) $(cpp_arm_objects): PRIVATE_ARM_CFLAGS := $(arm_objects_cflags)
-$(dotdot_objects) $(cpp_normal_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
-$(dotdot_objects) $(cpp_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-
-cpp_objects        := $(cpp_arm_objects) $(cpp_normal_objects)
+$(dotdot_objects) $(cpp_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
+$(dotdot_objects) $(cpp_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 
 ifneq ($(strip $(cpp_objects)),)
 $(cpp_objects): $(intermediates)/%.o: \
@@ -905,7 +881,7 @@ $(cpp_objects): $(intermediates)/%.o: \
 $(call include-depfiles-for-objs, $(cpp_objects))
 endif
 
-cpp_objects += $(dotdot_arm_objects) $(dotdot_objects)
+cpp_objects += $(dotdot_objects)
 
 ###########################################################
 ## C++: Compile generated .cpp files to .o.
@@ -917,7 +893,6 @@ $(call track-gen-file-obj,$(gen_cpp_sources),$(gen_cpp_objects))
 
 ifneq ($(strip $(gen_cpp_objects)),)
 # Compile all generated files as thumb.
-# TODO: support compiling certain generated files as arm.
 $(gen_cpp_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_cpp_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(gen_cpp_objects): $(intermediates)/%.o: \
@@ -965,20 +940,9 @@ gen_o_objects := $(filter %.o,$(my_generated_sources))
 ## C: Compile .c files to .o.
 ###########################################################
 
-c_arm_sources := $(patsubst %.c.arm,%.c,$(filter %.c.arm,$(my_src_files)))
-dotdot_arm_sources := $(filter ../%,$(c_arm_sources))
-c_arm_sources := $(filter-out ../%,$(c_arm_sources))
-c_arm_objects := $(addprefix $(intermediates)/,$(c_arm_sources:.c=.o))
-$(call track-src-file-obj,$(patsubst %,%.arm,$(c_arm_sources)),$(c_arm_objects))
-
-# For source files starting with ../, we remove all the ../ in the object file path,
-# to avoid object file escaping the intermediate directory.
-dotdot_arm_objects :=
-$(foreach s,$(dotdot_arm_sources),\
-  $(eval $(call compile-dotdot-c-file,$(s),\
-    $(my_additional_dependencies),\
-    dotdot_arm_objects)))
-$(call track-src-file-obj,$(patsubst %,%.arm,$(dotdot_arm_sources)),$(dotdot_arm_objects))
+ifneq ($(filter %.c.arm,$(my_src_files)),)
+$(call pretty-error,Files ending in .c.arm are deprecated. See $(CHANGES_URL)#file_arm)
+endif
 
 dotdot_sources := $(filter ../%.c, $(my_src_files))
 dotdot_objects :=
@@ -989,15 +953,11 @@ $(foreach s, $(dotdot_sources),\
 $(call track-src-file-obj,$(dotdot_sources),$(dotdot_objects))
 
 c_normal_sources := $(filter-out ../%,$(filter %.c,$(my_src_files)))
-c_normal_objects := $(addprefix $(intermediates)/,$(c_normal_sources:.c=.o))
-$(call track-src-file-obj,$(c_normal_sources),$(c_normal_objects))
+c_objects := $(addprefix $(intermediates)/,$(c_normal_sources:.c=.o))
+$(call track-src-file-obj,$(c_normal_sources),$(c_objects))
 
-$(dotdot_arm_objects) $(c_arm_objects): PRIVATE_ARM_MODE := $(arm_objects_mode)
-$(dotdot_arm_objects) $(c_arm_objects): PRIVATE_ARM_CFLAGS := $(arm_objects_cflags)
-$(dotdot_objects) $(c_normal_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
-$(dotdot_objects) $(c_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-
-c_objects        := $(c_arm_objects) $(c_normal_objects)
+$(dotdot_objects) $(c_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
+$(dotdot_objects) $(c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 
 ifneq ($(strip $(c_objects)),)
 $(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c \
@@ -1006,7 +966,7 @@ $(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c \
 $(call include-depfiles-for-objs, $(c_objects))
 endif
 
-c_objects += $(dotdot_arm_objects) $(dotdot_objects)
+c_objects += $(dotdot_objects)
 
 ###########################################################
 ## C: Compile generated .c files to .o.
@@ -1018,7 +978,6 @@ $(call track-gen-file-obj,$(gen_c_sources),$(gen_c_objects))
 
 ifneq ($(strip $(gen_c_objects)),)
 # Compile all generated files as thumb.
-# TODO: support compiling certain generated files as arm.
 $(gen_c_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c \
