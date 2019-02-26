@@ -23,12 +23,6 @@ ifndef LOCAL_DONT_MERGE_MANIFESTS
     $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/manifest/AndroidManifest.xml)
 endif
 
-# With aapt2, we'll link in the built resource from the AAR.
-ifneq ($(LOCAL_USE_AAPT2),true)
-  LOCAL_RESOURCE_DIR += $(foreach lib, $(LOCAL_STATIC_JAVA_AAR_LIBRARIES),\
-    $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/aar/res)
-endif
-
 full_android_manifest := $(intermediates.COMMON)/manifest/AndroidManifest.xml
 
 ifneq (,$(strip $(my_full_libs_manifest_files)))

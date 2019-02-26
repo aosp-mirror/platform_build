@@ -534,13 +534,6 @@ my_warn_types :=
 my_allowed_types := java:sdk java:system java:platform java:core
 endif
 
-ifdef LOCAL_AAPT2_ONLY
-my_link_type += aapt2_only
-endif
-ifeq ($(LOCAL_USE_AAPT2),true)
-my_allowed_types += aapt2_only
-endif
-
 my_link_deps := $(addprefix JAVA_LIBRARIES:,$(LOCAL_STATIC_JAVA_LIBRARIES) $(LOCAL_JAVA_LIBRARIES))
 my_link_deps += $(addprefix APPS:,$(apk_libraries))
 
