@@ -163,19 +163,13 @@ def extract_items(target_files, target_files_temp_dir, extract_item_list):
     else:
       filtered_extract_item_list.append(pattern)
 
-  # Extract the filtered_extract_item_list from target_files into
-  # target_files_temp_dir.
+  # Extract from target_files into target_files_temp_dir the
+  # filtered_extract_item_list.
 
-  # TODO(b/124464492): Extend common.UnzipTemp() to handle this use case.
-  command = [
-      'unzip',
-      '-n',
-      '-q',
-      '-d', target_files_temp_dir,
-      target_files
-  ] + filtered_extract_item_list
-
-  common.RunAndWait(command, verbose=True)
+  common.UnzipToDir(
+      target_files,
+      target_files_temp_dir,
+      filtered_extract_item_list)
 
 
 def process_ab_partitions_txt(
