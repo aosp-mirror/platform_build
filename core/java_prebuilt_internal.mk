@@ -172,11 +172,6 @@ $(common_javalib_jar) : $(common_classes_jar)
 
 include $(BUILD_SYSTEM)/force_aapt2.mk
 
-ifdef LOCAL_AAPT2_ONLY
-LOCAL_USE_AAPT2 := true
-endif
-
-ifeq ($(LOCAL_USE_AAPT2),true)
 ifneq ($(my_src_aar),)
 
 $(intermediates.COMMON)/export_proguard_flags : $(my_src_proguard_options)
@@ -229,7 +224,7 @@ include $(BUILD_SYSTEM)/aapt2.mk
 # Make sure my_res_package is created when you run mm/mmm.
 $(built_module) : $(my_res_package)
 endif  # $(my_src_aar)
-endif  # LOCAL_USE_AAPT2
+
 # make sure the classes.jar and javalib.jar are built before $(LOCAL_BUILT_MODULE)
 $(built_module) : $(common_javalib_jar)
 
