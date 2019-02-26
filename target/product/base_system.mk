@@ -159,7 +159,6 @@ PRODUCT_PACKAGES += \
     libmedia \
     libmedia_jni \
     libmediandk \
-    libmediaplayerservice \
     libmtp \
     libnetd_client \
     libnetlink \
