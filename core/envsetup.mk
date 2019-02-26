@@ -235,17 +235,7 @@ SDK_HOST_ARCH := x86
 
 include $(BUILD_SYSTEM)/board_config.mk
 
-# ---------------------------------------------------------------
-# Set up configuration for target machine.
-# The following must be set:
-# 		TARGET_OS = { linux }
-# 		TARGET_ARCH = { arm | x86 | mips }
-
 TARGET_OS := linux
-# TARGET_ARCH should be set by BoardConfig.mk and will be checked later
-ifneq ($(filter %64,$(TARGET_ARCH)),)
-TARGET_IS_64_BIT := true
-endif
 
 # the target build type defaults to release
 ifneq ($(TARGET_BUILD_TYPE),debug)
