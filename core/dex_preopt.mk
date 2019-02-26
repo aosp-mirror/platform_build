@@ -13,7 +13,10 @@ else
 install-on-system-other = $(filter-out $(PRODUCT_DEXPREOPT_SPEED_APPS) $(PRODUCT_SYSTEM_SERVER_APPS),$(basename $(notdir $(filter $(foreach f,$(SYSTEM_OTHER_ODEX_FILTER),$(TARGET_OUT)/$(f)),$(1)))))
 endif
 
-include $(BUILD_SYSTEM)/dex_preopt_libart.mk
+# Install boot images. Note that there can be multiple.
+DEFAULT_DEX_PREOPT_INSTALLED_IMAGE :=
+$(TARGET_2ND_ARCH_VAR_PREFIX)DEFAULT_DEX_PREOPT_INSTALLED_IMAGE :=
+$(foreach my_boot_image_name,$(DEXPREOPT_IMAGE_NAMES),$(eval include $(BUILD_SYSTEM)/dex_preopt_libart.mk))
 
 boot_profile_jars_zip := $(PRODUCT_OUT)/boot_profile_jars.zip
 bootclasspath_jars := $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
