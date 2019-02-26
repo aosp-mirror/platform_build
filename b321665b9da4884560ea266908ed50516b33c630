@@ -22,6 +22,30 @@
       "revId": "b321665b9da4884560ea266908ed50516b33c630",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9ec4191b_be8a62ce",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-02-26T21:52:31Z",
+      "side": 1,
+      "message": "I can use the raw value. Are we okay with the variable being ODM_MANIFEST_baz_FILES?",
+      "parentUuid": "42a04c3e_6ee5b0c9",
+      "range": {
+        "startLine": 16,
+        "startChar": 17,
+        "endLine": 16,
+        "endChar": 20
+      },
+      "revId": "b321665b9da4884560ea266908ed50516b33c630",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
