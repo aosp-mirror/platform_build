@@ -257,6 +257,15 @@ ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
 ADDITIONAL_PRODUCT_PROPERTIES += dalvik.vm.systemservercompilerfilter=$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER)
 endif
 
+# Sets the default value of ro.postinstall.fstab.prefix to /system.
+# Device board config should override the value to /product when needed by:
+#
+#     PRODUCT_PRODUCT_PROPERTIES += ro.postinstall.fstab.prefix=/product
+#
+# It then uses ${ro.postinstall.fstab.prefix}/etc/fstab.postinstall to
+# mount system_other partition.
+ADDITIONAL_DEFAULT_PROPERTIES += ro.postinstall.fstab.prefix=/system
+
 # -----------------------------------------------------------------
 ###
 ### In this section we set up the things that are different
