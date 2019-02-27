@@ -46,6 +46,30 @@
       "revId": "a2f536f9fab8b3f8e2c293383c9eee134a49c504",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1d611f58_60986732",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2375,
+      "author": {
+        "id": 1339996
+      },
+      "writtenOn": "2019-02-27T18:35:59Z",
+      "side": 0,
+      "message": "Yep. I was talking with Todd the other day and suggested doing most aapt development on AOSP after the release.",
+      "parentUuid": "b5538d59_37ea6ebc",
+      "range": {
+        "startLine": 2375,
+        "startChar": 0,
+        "endLine": 2375,
+        "endChar": 115
+      },
+      "revId": "a2f536f9fab8b3f8e2c293383c9eee134a49c504",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
