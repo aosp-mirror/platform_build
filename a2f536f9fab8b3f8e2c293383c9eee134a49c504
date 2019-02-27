@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "735b7c9d_999eea8a",
+        "filename": "core/definitions.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 2375,
+      "author": {
+        "id": 1339996
+      },
+      "writtenOn": "2019-02-27T16:52:59Z",
+      "side": 0,
+      "message": "AAPT2 dump badging can be used if necessary, and will produce the same output as AAPT.",
+      "range": {
+        "startLine": 2375,
+        "startChar": 0,
+        "endLine": 2375,
+        "endChar": 115
+      },
+      "revId": "a2f536f9fab8b3f8e2c293383c9eee134a49c504",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
