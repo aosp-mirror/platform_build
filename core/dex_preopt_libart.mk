@@ -1,5 +1,7 @@
 ####################################
-# dexpreopt support for ART
+# ART boot image installation
+# Input variable:
+#   my_boot_image_name: the boot image to install
 #
 ####################################
 
@@ -10,7 +12,7 @@ ALL_DEFAULT_INSTALLED_MODULES += $(my_installed)
 
 # Install primary arch vdex files into a shared location, and then symlink them to both the primary
 # and secondary arch directories.
-my_vdex_copy_pairs := $(DEXPREOPT_IMAGE_VDEX_BUILT_INSTALLED_$(TARGET_ARCH))
+my_vdex_copy_pairs := $(DEXPREOPT_IMAGE_VDEX_BUILT_INSTALLED_$(my_boot_image_name)_$(TARGET_ARCH))
 my_installed := $(foreach v,$(my_vdex_copy_pairs),$(PRODUCT_OUT)$(call word-colon,2,$(v)))
 $(firstword $(my_installed)): $(wordlist 2,9999,$(my_installed))
 
