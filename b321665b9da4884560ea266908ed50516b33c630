@@ -63,6 +63,24 @@
       "revId": "b321665b9da4884560ea266908ed50516b33c630",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ce8810c6_1d716d9a",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-02-28T22:43:48Z",
+      "side": 1,
+      "message": "It should, due to legacy reasons. Unfortunately, the usage of \"device\" and \"vendor\" is indeed intermingled. I won\u0027t fix it in this CL in particular though; they are just module names.\n\nWhat\u0027s more important is that DEVICE_MANIFEST_FILE should be called VENDOR_MANIFEST_FILES, but since a lot of devices are already using it, it needs to be changed in a backwards-compatible way. I\u0027ll follow-up on this. b/126766144.",
+      "parentUuid": "c6ecb66a_d323ca55",
+      "revId": "b321665b9da4884560ea266908ed50516b33c630",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
