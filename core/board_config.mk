@@ -19,6 +19,11 @@
 # and sanity-checks the variable defined therein.
 # ###############################################################
 
+# Conditional to building on linux, as dex2oat currently does not work on darwin.
+ifeq ($(HOST_OS),linux)
+  WITH_DEXPREOPT := true
+endif
+
 # ###############################################################
 # Broken build defaults
 # ###############################################################
