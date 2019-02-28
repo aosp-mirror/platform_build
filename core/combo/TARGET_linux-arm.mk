@@ -29,45 +29,38 @@
 # include defines, and compiler settings for the given architecture
 # version.
 #
-ifeq ($(strip $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT)),)
-TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT := generic
-endif
 
 KNOWN_ARMv8_CORES := cortex-a53 cortex-a53.a57 cortex-a55 cortex-a73 cortex-a75 cortex-a76
 KNOWN_ARMv8_CORES += kryo kryo385 exynos-m1 exynos-m2
 
 KNOWN_ARMv82a_CORES := cortex-a55 cortex-a75 kryo385
 
-# Check for cores that implement armv8-2a ISAs.
+ifeq (,$(strip $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT)))
+  TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT := generic
+endif
+
+# This sanity checks TARGET_2ND_ARCH_VARIANT against the lists above.
 ifneq (,$(filter $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT), $(KNOWN_ARMv82a_CORES)))
-  ifneq ($(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT),armv8-2a)
-    $(warning $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT) is armv8-2a.)
-    ifneq (,$(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT))
-      $(warning TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT, $(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT), ignored! Use armv8-2a instead.)
-    endif
-    # Overwrite TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT
+  ifeq (,$(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT))
     TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT := armv8-2a
+  else ifneq (armv8-2a,$(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT))
+    $(error Incorrect TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT, $(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT). Use armv8-2a instead.)
   endif
-# Many devices (incorrectly) use armv7-a-neon as the 2nd architecture variant
-# for cores that implement armv8-a ISAs. The following sets it to armv8-a.
 else ifneq (,$(filter $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT), $(KNOWN_ARMv8_CORES)))
-  ifneq ($(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT),armv8-a)
-    $(warning $(TARGET_$(combo_2nd_arch_prefix)CPU_VARIANT) is armv8-a.)
-    ifneq (,$(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT))
-      $(warning TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT, $(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT), ignored! Use armv8-a instead.)
-    endif
-    # Overwrite TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT
+  ifeq (,$(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT))
     TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT := armv8-a
+  else ifneq ($(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT),armv8-a)
+    $(error Incorrect TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT, $(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT). Use armv8-a instead.)
   endif
 endif
 
 ifeq ($(strip $(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT)),)
-$(error TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT must be set)
+  $(error TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT must be set)
 endif
 
 TARGET_ARCH_SPECIFIC_MAKEFILE := $(BUILD_COMBOS)/arch/$(TARGET_$(combo_2nd_arch_prefix)ARCH)/$(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT).mk
 ifeq ($(strip $(wildcard $(TARGET_ARCH_SPECIFIC_MAKEFILE))),)
-$(error Unknown ARM architecture version: $(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT))
+  $(error Unknown ARM architecture version: $(TARGET_$(combo_2nd_arch_prefix)ARCH_VARIANT))
 endif
 
 include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
