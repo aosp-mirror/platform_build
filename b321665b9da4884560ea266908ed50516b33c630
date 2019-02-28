@@ -46,6 +46,23 @@
       "revId": "b321665b9da4884560ea266908ed50516b33c630",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c6ecb66a_d323ca55",
+        "filename": "target/board/Android.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-02-28T22:28:39Z",
+      "side": 1,
+      "message": "should the above module be called vendor_manifest.xml, or something else? \"device\" seems a bit watered out if there are multiple files on the device",
+      "revId": "b321665b9da4884560ea266908ed50516b33c630",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
