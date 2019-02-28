@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca6afb05_ea406d9d",
+        "filename": "tools/check_identical_lib.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1349653
+      },
+      "writtenOn": "2019-02-28T21:00:47Z",
+      "side": 1,
+      "message": "Updated to match the change in build/soong.",
+      "range": {
+        "startLine": 27,
+        "startChar": 3,
+        "endLine": 28,
+        "endChar": 100
+      },
+      "revId": "22b7ef2d5abd005a16c33c833cac7da1fb3bae95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
