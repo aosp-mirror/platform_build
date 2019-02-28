@@ -89,6 +89,16 @@ BOARD_KERNEL_PAGESIZE := $(strip $(BOARD_KERNEL_PAGESIZE))
 
 INTERNAL_KERNEL_CMDLINE := $(strip $(BOARD_KERNEL_CMDLINE))
 
+# The combo makefiles sanity-check and set defaults for various CPU configuration
+combo_target := TARGET_
+combo_2nd_arch_prefix :=
+include $(BUILD_SYSTEM)/combo/select.mk
+
+ifdef TARGET_2ND_ARCH
+  combo_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
+  include $(BUILD_SYSTEM)/combo/select.mk
+endif
+
 ifeq ($(TARGET_CPU_ABI),)
   $(error No TARGET_CPU_ABI defined by board config: $(board_config_mk))
 endif
