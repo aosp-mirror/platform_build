@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "efef5c6d_def80c3b",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 752,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-02-28T14:33:46Z",
+      "side": 1,
+      "message": "ok, not a problem to raise that, will fix here together.\n\nYup, it\u0027s from previous discussion. Agree it won\u0027t be a file anyway.\nhttps://android-review.googlesource.com/c/platform/build/+/890073/2/tools/releasetools/build_image.py#748",
+      "parentUuid": "a51fc46b_a04e978c",
+      "range": {
+        "startLine": 751,
+        "startChar": 2,
+        "endLine": 752,
+        "endChar": 29
+      },
+      "revId": "bf8d321978a8ff0b9c9d1e1139f1fe5ae8b74846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7543b2a8_f691e1d7",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 2
@@ -60,6 +84,30 @@
       "side": 1,
       "message": "Another concern with the current CL is that on devices w/o a separate /product partition, this code won\u0027t be called. But we should still expect the key to be available at /system/product/... instead.",
       "parentUuid": "7543b2a8_f691e1d7",
+      "range": {
+        "startLine": 800,
+        "startChar": 6,
+        "endLine": 800,
+        "endChar": 30
+      },
+      "revId": "bf8d321978a8ff0b9c9d1e1139f1fe5ae8b74846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fcb7b37a_ed6d58fe",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 800,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-02-28T14:33:46Z",
+      "side": 1,
+      "message": "re: sounds more natural to me to have build_image.py just building with the _given_ files, leaving the input dir intact.\n\nYup, I tried to extract the public key in build/core/Makefile before.\nBut eventually build_image.py will also need to do it again, to extract the final release signing key specified in product_image_info.txt.\n\nBecause release signing will just invoke build_image.py without using .bp or .mk.\nSimilar to how we extract the public key for chain partition:\nhttps://android.googlesource.com/platform/build/+/8ff3fbdd08a266d1b7055338e3694a872d83dd8c/tools/releasetools/common.py#552\n\nI\u0027ll try to do it in some .bp or .mk, too.\nSo we can fix the issue of  installed-files.txt or installed-files-product.txt and /system/product/...\n\nThanks for the review!!",
+      "parentUuid": "c9b3bd1b_c627697b",
       "range": {
         "startLine": 800,
         "startChar": 6,
