@@ -208,15 +208,6 @@ JAVA_TMPDIR_ARG :=
 endif
 
 # ###############################################################
-# Broken build defaults
-# ###############################################################
-BUILD_BROKEN_ANDROIDMK_EXPORTS :=
-BUILD_BROKEN_DUP_COPY_HEADERS :=
-BUILD_BROKEN_DUP_RULES :=
-BUILD_BROKEN_PHONY_TARGETS :=
-BUILD_BROKEN_ENG_DEBUG_TAGS :=
-
-# ###############################################################
 # Include sub-configuration files
 # ###############################################################
 
@@ -297,29 +288,6 @@ TARGET_PRODUCT_KERNEL_HEADERS := $(strip $(wildcard $(PRODUCT_VENDOR_KERNEL_HEAD
 TARGET_PRODUCT_KERNEL_HEADERS := $(patsubst %/,%,$(TARGET_PRODUCT_KERNEL_HEADERS))
 $(call validate-kernel-headers,$(TARGET_PRODUCT_KERNEL_HEADERS))
 
-# Clean up/verify variables defined by the board config file.
-# TODO: Move this to right after the BoardConfig parsing.
-TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
-TARGET_CPU_ABI := $(strip $(TARGET_CPU_ABI))
-ifeq ($(TARGET_CPU_ABI),)
-  $(error No TARGET_CPU_ABI defined by board config: $(board_config_mk))
-endif
-TARGET_CPU_ABI2 := $(strip $(TARGET_CPU_ABI2))
-TARGET_CPU_VARIANT := $(strip $(TARGET_CPU_VARIANT))
-TARGET_CPU_VARIANT_RUNTIME := $(strip $(TARGET_CPU_VARIANT_RUNTIME))
-
-TARGET_2ND_CPU_ABI := $(strip $(TARGET_2ND_CPU_ABI))
-TARGET_2ND_CPU_ABI2 := $(strip $(TARGET_2ND_CPU_ABI2))
-TARGET_2ND_CPU_VARIANT := $(strip $(TARGET_2ND_CPU_VARIANT))
-TARGET_2ND_CPU_VARIANT_RUNTIME := $(strip $(TARGET_2ND_CPU_VARIANT_RUNTIME))
-
-# Default *_CPU_VARIANT_RUNTIME to CPU_VARIANT if unspecified.
-TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
-TARGET_2ND_CPU_VARIANT_RUNTIME := $(or $(TARGET_2ND_CPU_VARIANT_RUNTIME),$(TARGET_2ND_CPU_VARIANT))
-
-BOARD_KERNEL_BASE := $(strip $(BOARD_KERNEL_BASE))
-BOARD_KERNEL_PAGESIZE := $(strip $(BOARD_KERNEL_PAGESIZE))
-
 # Commands to generate .toc file common to ELF .so files.
 define _gen_toc_command_for_elf
 $(hide) ($($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)READELF) -d $(1) | grep SONAME || echo "No SONAME for $1") > $(2)
@@ -379,62 +347,6 @@ ifdef TARGET_PREFER_32_BIT
 TARGET_PREFER_32_BIT_APPS := true
 TARGET_PREFER_32_BIT_EXECUTABLES := true
 endif
-
-ifeq (,$(filter true,$(TARGET_SUPPORTS_32_BIT_APPS) $(TARGET_SUPPORTS_64_BIT_APPS)))
-  TARGET_SUPPORTS_32_BIT_APPS := true
-endif
-
-# Sanity check to warn about likely cryptic errors later in the build.
-ifeq ($(TARGET_IS_64_BIT),true)
-  ifeq (,$(filter true false,$(TARGET_SUPPORTS_64_BIT_APPS)))
-    $(warning Building a 32-bit-app-only product on a 64-bit device. \
-      If this is intentional, set TARGET_SUPPORTS_64_BIT_APPS := false)
-  endif
-endif
-
-# "ro.product.cpu.abilist32" and "ro.product.cpu.abilist64" are
-# comma separated lists of the 32 and 64 bit ABIs (in order of
-# preference) that the target supports. If TARGET_CPU_ABI_LIST_{32,64}_BIT
-# are defined by the board config, we use them. Else, we construct
-# these lists based on whether TARGET_IS_64_BIT is set.
-#
-# Note that this assumes that the 2ND_CPU_ABI for a 64 bit target
-# is always 32 bits. If this isn't the case, these variables should
-# be overriden in the board configuration.
-ifeq (,$(TARGET_CPU_ABI_LIST_64_BIT))
-  ifeq (true|true,$(TARGET_IS_64_BIT)|$(TARGET_SUPPORTS_64_BIT_APPS))
-    TARGET_CPU_ABI_LIST_64_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
-  endif
-endif
-
-ifeq (,$(TARGET_CPU_ABI_LIST_32_BIT))
-  ifneq (true,$(TARGET_IS_64_BIT))
-    TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
-  else
-    ifeq (true,$(TARGET_SUPPORTS_32_BIT_APPS))
-      # For a 64 bit target, assume that the 2ND_CPU_ABI
-      # is a 32 bit ABI.
-      TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_2ND_CPU_ABI) $(TARGET_2ND_CPU_ABI2)
-    endif
-  endif
-endif
-
-# "ro.product.cpu.abilist" is a comma separated list of ABIs (in order
-# of preference) that the target supports. If a TARGET_CPU_ABI_LIST
-# is specified by the board configuration, we use that. If not, we
-# build a list out of the TARGET_CPU_ABIs specified by the config.
-ifeq (,$(TARGET_CPU_ABI_LIST))
-  ifeq ($(TARGET_IS_64_BIT)|$(TARGET_PREFER_32_BIT_APPS),true|true)
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_32_BIT) $(TARGET_CPU_ABI_LIST_64_BIT)
-  else
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT)
-  endif
-endif
-
-# Strip whitespace from the ABI list string.
-TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST)))
-TARGET_CPU_ABI_LIST_32_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_32_BIT)))
-TARGET_CPU_ABI_LIST_64_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_64_BIT)))
 
 # GCC version selection
 TARGET_GCC_VERSION := 4.9
