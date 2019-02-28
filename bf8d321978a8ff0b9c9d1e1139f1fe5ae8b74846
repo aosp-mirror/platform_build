@@ -117,6 +117,30 @@
       "revId": "bf8d321978a8ff0b9c9d1e1139f1fe5ae8b74846",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1da4502_8d3086e2",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 800,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-02-28T18:41:16Z",
+      "side": 1,
+      "message": "Re: release signing\nyeah, this is the other piece that we need to handle. We have to specify the release signing key for system_other when calling sign_target_files_apks.py: https://android-review.googlesource.com/c/platform/build/+/913493/2/tools/releasetools/sign_target_files_apks.py#89.\n\nThe current CL will try to read the key from the global info_dict (i.e. the one in input target_files), instead of the one specified via commandline. We should also remove / skip the file while processing the input target_files, similar to https://android-review.googlesource.com/c/platform/build/+/913493/2/tools/releasetools/sign_target_files_apks.py#384. Then call this ExtractSystemOtherAvbKey() later on to place the new key. Will have to duplicate the logic in Makefile (or .bp) as well as in python script, in order to avoid modifying the inputs in build_image.py.",
+      "parentUuid": "fcb7b37a_ed6d58fe",
+      "range": {
+        "startLine": 800,
+        "startChar": 6,
+        "endLine": 800,
+        "endChar": 30
+      },
+      "revId": "bf8d321978a8ff0b9c9d1e1139f1fe5ae8b74846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
