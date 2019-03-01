@@ -1031,6 +1031,8 @@ endef
 define auto-included-modules
   $(if $(BOARD_VNDK_VERSION),vndk_package) \
   $(if $(DEVICE_MANIFEST_FILE),device_manifest.xml) \
+  $(if $(ODM_MANIFEST_FILES),odm_manifest.xml) \
+  $(if $(ODM_MANIFEST_SKUS),$(foreach sku, $(ODM_MANIFEST_SKUS),odm_manifest_$(sku).xml)) \
 
 endef
 
