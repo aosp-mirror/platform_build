@@ -599,6 +599,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libvixld.so)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/dex_bootjars)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/dex_bootjars_input)
 
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libnpt.so)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
