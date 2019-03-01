@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "ca73f728_9aefb93a",
+        "filename": "target/product/gsi/current.txt",
+        "patchSetId": 9
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 1349653
+      },
+      "writtenOn": "2019-03-01T16:59:29Z",
+      "side": 1,
+      "message": "Uh no. This is embarrassing. Thanks for catching this!",
+      "parentUuid": "6062d1ec_c7ba6e91",
+      "revId": "22b7ef2d5abd005a16c33c833cac7da1fb3bae95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ca6afb05_ea406d9d",
         "filename": "tools/check_identical_lib.sh",
         "patchSetId": 9
