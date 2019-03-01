@@ -300,44 +300,6 @@ $(hide) $(HOST_OTOOL) -l $(1) | grep LC_ID_DYLIB -A 5 > $(2)
 $(hide) $(HOST_NM) -gP $(1) | cut -f1-2 -d" " | (grep -v U$$ >> $(2) || true)
 endef
 
-combo_target := HOST_
-combo_2nd_arch_prefix :=
-include $(BUILD_SYSTEM)/combo/select.mk
-
-# Load the 2nd host arch if it's needed.
-ifdef HOST_2ND_ARCH
-combo_target := HOST_
-combo_2nd_arch_prefix := $(HOST_2ND_ARCH_VAR_PREFIX)
-include $(BUILD_SYSTEM)/combo/select.mk
-endif
-
-# Load the windows cross compiler under Linux
-ifdef HOST_CROSS_OS
-combo_target := HOST_CROSS_
-combo_2nd_arch_prefix :=
-include $(BUILD_SYSTEM)/combo/select.mk
-
-ifdef HOST_CROSS_2ND_ARCH
-combo_target := HOST_CROSS_
-combo_2nd_arch_prefix := $(HOST_CROSS_2ND_ARCH_VAR_PREFIX)
-include $(BUILD_SYSTEM)/combo/select.mk
-endif
-endif
-
-# on windows, the tools have .exe at the end, and we depend on the
-# host config stuff being done first
-
-combo_target := TARGET_
-combo_2nd_arch_prefix :=
-include $(BUILD_SYSTEM)/combo/select.mk
-
-# Load the 2nd target arch if it's needed.
-ifdef TARGET_2ND_ARCH
-combo_target := TARGET_
-combo_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
-include $(BUILD_SYSTEM)/combo/select.mk
-endif
-
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
