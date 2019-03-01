@@ -287,6 +287,7 @@ $(call validate-kernel-headers,$(TARGET_BOARD_KERNEL_HEADERS))
 TARGET_PRODUCT_KERNEL_HEADERS := $(strip $(wildcard $(PRODUCT_VENDOR_KERNEL_HEADERS)))
 TARGET_PRODUCT_KERNEL_HEADERS := $(patsubst %/,%,$(TARGET_PRODUCT_KERNEL_HEADERS))
 $(call validate-kernel-headers,$(TARGET_PRODUCT_KERNEL_HEADERS))
+.KATI_READONLY := TARGET_DEVICE_KERNEL_HEADERS TARGET_BOARD_KERNEL_HEADERS TARGET_PRODUCT_KERNEL_HEADERS
 
 # Commands to generate .toc file common to ELF .so files.
 define _gen_toc_command_for_elf
@@ -765,6 +766,7 @@ ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
 else
   DEFAULT_SYSTEM_DEV_CERTIFICATE := build/target/product/security/testkey
 endif
+.KATI_READONLY := DEFAULT_SYSTEM_DEV_CERTIFICATE
 
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))

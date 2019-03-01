@@ -19,6 +19,80 @@
 # and sanity-checks the variable defined therein.
 # ###############################################################
 
+_board_strip_readonly_list := \
+  BOARD_EGL_CFG \
+  BOARD_HAVE_BLUETOOTH \
+  BOARD_INSTALLER_CMDLINE \
+  BOARD_KERNEL_CMDLINE \
+  BOARD_KERNEL_BASE \
+  BOARD_USES_GENERIC_AUDIO \
+  BOARD_VENDOR_USE_AKMD \
+  BOARD_WPA_SUPPLICANT_DRIVER \
+  BOARD_WLAN_DEVICE \
+  TARGET_ARCH \
+  TARGET_ARCH_VARIANT \
+  TARGET_CPU_ABI \
+  TARGET_CPU_ABI2 \
+  TARGET_CPU_VARIANT \
+  TARGET_CPU_VARIANT_RUNTIME \
+  TARGET_2ND_ARCH \
+  TARGET_2ND_ARCH_VARIANT \
+  TARGET_2ND_CPU_ABI \
+  TARGET_2ND_CPU_ABI2 \
+  TARGET_2ND_CPU_VARIANT \
+  TARGET_2ND_CPU_VARIANT_RUNTIME \
+  TARGET_BOARD_PLATFORM \
+  TARGET_BOARD_PLATFORM_GPU \
+  TARGET_BOOTLOADER_BOARD_NAME \
+  TARGET_NO_BOOTLOADER \
+  TARGET_NO_KERNEL \
+  TARGET_NO_RECOVERY \
+  TARGET_NO_RADIOIMAGE \
+  TARGET_HARDWARE_3D \
+  WITH_DEXPREOPT \
+
+# File system variables
+_board_strip_readonly_list += \
+  BOARD_FLASH_BLOCK_SIZE \
+  BOARD_BOOTIMAGE_PARTITION_SIZE \
+  BOARD_RECOVERYIMAGE_PARTITION_SIZE \
+  BOARD_SYSTEMIMAGE_PARTITION_SIZE \
+  BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_USERDATAIMAGE_PARTITION_SIZE \
+  BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_CACHEIMAGE_PARTITION_SIZE \
+  BOARD_VENDORIMAGE_PARTITION_SIZE \
+  BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_PRODUCTIMAGE_PARTITION_SIZE \
+  BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE \
+  BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_ODMIMAGE_PARTITION_SIZE \
+  BOARD_ODMIMAGE_FILE_SYSTEM_TYPE \
+
+# Logical partitions related variables.
+_dynamic_partitions_var_list += \
+  BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_SUPER_PARTITION_SIZE \
+  BOARD_SUPER_PARTITION_GROUPS \
+
+_board_strip_readonly_list += $(_dynamic_partitions_var_list)
+
+_build_broken_var_list := \
+  BUILD_BROKEN_ANDROIDMK_EXPORTS \
+  BUILD_BROKEN_DUP_COPY_HEADERS \
+  BUILD_BROKEN_DUP_RULES \
+  BUILD_BROKEN_PHONY_TARGETS \
+  BUILD_BROKEN_ENG_DEBUG_TAGS \
+
+_board_true_false_vars := $(_build_broken_var_list)
+_board_strip_readonly_list += $(_build_broken_var_list)
+
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
   WITH_DEXPREOPT := true
@@ -68,26 +142,15 @@ ifneq ($(MALLOC_IMPL),)
 endif
 board_config_mk :=
 
-# Clean up/verify variables defined by the board config file.
-TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
-TARGET_CPU_ABI := $(strip $(TARGET_CPU_ABI))
-TARGET_CPU_ABI2 := $(strip $(TARGET_CPU_ABI2))
-TARGET_CPU_VARIANT := $(strip $(TARGET_CPU_VARIANT))
-TARGET_CPU_VARIANT_RUNTIME := $(strip $(TARGET_CPU_VARIANT_RUNTIME))
-
-TARGET_2ND_CPU_ABI := $(strip $(TARGET_2ND_CPU_ABI))
-TARGET_2ND_CPU_ABI2 := $(strip $(TARGET_2ND_CPU_ABI2))
-TARGET_2ND_CPU_VARIANT := $(strip $(TARGET_2ND_CPU_VARIANT))
-TARGET_2ND_CPU_VARIANT_RUNTIME := $(strip $(TARGET_2ND_CPU_VARIANT_RUNTIME))
+# Clean up and verify BoardConfig variables
+$(foreach var,$(_board_strip_readonly_list),$(eval $(var) := $$(strip $$($(var)))))
+$(foreach var,$(_board_true_false_vars), \
+  $(if $(filter-out true false,$($(var))), \
+    $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
 
 # Default *_CPU_VARIANT_RUNTIME to CPU_VARIANT if unspecified.
 TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
 TARGET_2ND_CPU_VARIANT_RUNTIME := $(or $(TARGET_2ND_CPU_VARIANT_RUNTIME),$(TARGET_2ND_CPU_VARIANT))
-
-BOARD_KERNEL_BASE := $(strip $(BOARD_KERNEL_BASE))
-BOARD_KERNEL_PAGESIZE := $(strip $(BOARD_KERNEL_PAGESIZE))
-
-INTERNAL_KERNEL_CMDLINE := $(strip $(BOARD_KERNEL_CMDLINE))
 
 # The combo makefiles sanity-check and set defaults for various CPU configuration
 combo_target := TARGET_
@@ -99,6 +162,9 @@ ifdef TARGET_2ND_ARCH
   include $(BUILD_SYSTEM)/combo/select.mk
 endif
 
+.KATI_READONLY := $(_board_strip_readonly_list)
+
+INTERNAL_KERNEL_CMDLINE := $(BOARD_KERNEL_CMDLINE)
 ifeq ($(TARGET_CPU_ABI),)
   $(error No TARGET_CPU_ABI defined by board config: $(board_config_mk))
 endif
@@ -161,23 +227,6 @@ endif
 TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST)))
 TARGET_CPU_ABI_LIST_32_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_32_BIT)))
 TARGET_CPU_ABI_LIST_64_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_64_BIT)))
-
-###########################################
-# Handle BUILD_BROKEN_* settings
-vars := \
-  BUILD_BROKEN_ANDROIDMK_EXPORTS \
-  BUILD_BROKEN_DUP_COPY_HEADERS \
-  BUILD_BROKEN_DUP_RULES \
-  BUILD_BROKEN_PHONY_TARGETS \
-  BUILD_BROKEN_ENG_DEBUG_TAGS
-
-$(foreach var,$(vars),$(eval $(var) := $$(strip $$($(var)))))
-
-$(foreach var,$(vars), \
-  $(if $(filter-out true false,$($(var))), \
-    $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
-
-.KATI_READONLY := $(vars)
 
 ifneq ($(BUILD_BROKEN_ANDROIDMK_EXPORTS),true)
 $(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
