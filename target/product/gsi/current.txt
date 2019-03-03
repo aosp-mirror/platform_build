@@ -207,6 +207,9 @@ VNDK-core: libbinder.so
 VNDK-core: libcamera_metadata.so
 VNDK-core: libcap.so
 VNDK-core: libcn-cbor.so
+VNDK-core: libcodec2.so
+VNDK-core: libcodec2_hidl@1.0.so
+VNDK-core: libcodec2_vndk.so
 VNDK-core: libcrypto.so
 VNDK-core: libcrypto_utils.so
 VNDK-core: libcurl.so
@@ -250,6 +253,7 @@ VNDK-core: libspeexresampler.so
 VNDK-core: libsqlite.so
 VNDK-core: libssl.so
 VNDK-core: libstagefright_amrnb_common.so
+VNDK-core: libstagefright_bufferpool@2.0.so
 VNDK-core: libstagefright_bufferqueue_helper.so
 VNDK-core: libstagefright_enc_common.so
 VNDK-core: libstagefright_flacdec.so
