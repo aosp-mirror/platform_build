@@ -19,6 +19,94 @@
 # and sanity-checks the variable defined therein.
 # ###############################################################
 
+_board_strip_readonly_list := \
+  BOARD_EGL_CFG \
+  BOARD_HAVE_BLUETOOTH \
+  BOARD_INSTALLER_CMDLINE \
+  BOARD_KERNEL_CMDLINE \
+  BOARD_KERNEL_BASE \
+  BOARD_USES_GENERIC_AUDIO \
+  BOARD_VENDOR_USE_AKMD \
+  BOARD_WPA_SUPPLICANT_DRIVER \
+  BOARD_WLAN_DEVICE \
+  TARGET_ARCH \
+  TARGET_ARCH_VARIANT \
+  TARGET_CPU_ABI \
+  TARGET_CPU_ABI2 \
+  TARGET_CPU_VARIANT \
+  TARGET_CPU_VARIANT_RUNTIME \
+  TARGET_2ND_ARCH \
+  TARGET_2ND_ARCH_VARIANT \
+  TARGET_2ND_CPU_ABI \
+  TARGET_2ND_CPU_ABI2 \
+  TARGET_2ND_CPU_VARIANT \
+  TARGET_2ND_CPU_VARIANT_RUNTIME \
+  TARGET_BOARD_PLATFORM \
+  TARGET_BOARD_PLATFORM_GPU \
+  TARGET_BOOTLOADER_BOARD_NAME \
+  TARGET_NO_BOOTLOADER \
+  TARGET_NO_KERNEL \
+  TARGET_NO_RECOVERY \
+  TARGET_NO_RADIOIMAGE \
+  TARGET_HARDWARE_3D \
+  WITH_DEXPREOPT \
+
+# File system variables
+_board_strip_readonly_list += \
+  BOARD_FLASH_BLOCK_SIZE \
+  BOARD_BOOTIMAGE_PARTITION_SIZE \
+  BOARD_RECOVERYIMAGE_PARTITION_SIZE \
+  BOARD_SYSTEMIMAGE_PARTITION_SIZE \
+  BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_USERDATAIMAGE_PARTITION_SIZE \
+  BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_CACHEIMAGE_PARTITION_SIZE \
+  BOARD_VENDORIMAGE_PARTITION_SIZE \
+  BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_PRODUCTIMAGE_PARTITION_SIZE \
+  BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE \
+  BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_ODMIMAGE_PARTITION_SIZE \
+  BOARD_ODMIMAGE_FILE_SYSTEM_TYPE \
+
+# Logical partitions related variables.
+_dynamic_partitions_var_list += \
+  BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_SUPER_PARTITION_SIZE \
+  BOARD_SUPER_PARTITION_GROUPS \
+
+_board_strip_readonly_list += $(_dynamic_partitions_var_list)
+
+_build_broken_var_list := \
+  BUILD_BROKEN_ANDROIDMK_EXPORTS \
+  BUILD_BROKEN_DUP_COPY_HEADERS \
+  BUILD_BROKEN_DUP_RULES \
+  BUILD_BROKEN_PHONY_TARGETS \
+  BUILD_BROKEN_ENG_DEBUG_TAGS \
+
+_board_true_false_vars := $(_build_broken_var_list)
+_board_strip_readonly_list += $(_build_broken_var_list)
+
+# Conditional to building on linux, as dex2oat currently does not work on darwin.
+ifeq ($(HOST_OS),linux)
+  WITH_DEXPREOPT := true
+endif
+
+# ###############################################################
+# Broken build defaults
+# ###############################################################
+BUILD_BROKEN_ANDROIDMK_EXPORTS :=
+BUILD_BROKEN_DUP_COPY_HEADERS :=
+BUILD_BROKEN_DUP_RULES :=
+BUILD_BROKEN_PHONY_TARGETS :=
+BUILD_BROKEN_ENG_DEBUG_TAGS :=
+
 # Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
 # or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
 # make sure only one exists.
@@ -54,22 +142,91 @@ ifneq ($(MALLOC_IMPL),)
 endif
 board_config_mk :=
 
-###########################################
-# Handle BUILD_BROKEN_* settings
-vars := \
-  BUILD_BROKEN_ANDROIDMK_EXPORTS \
-  BUILD_BROKEN_DUP_COPY_HEADERS \
-  BUILD_BROKEN_DUP_RULES \
-  BUILD_BROKEN_PHONY_TARGETS \
-  BUILD_BROKEN_ENG_DEBUG_TAGS
-
-$(foreach var,$(vars),$(eval $(var) := $$(strip $$($(var)))))
-
-$(foreach var,$(vars), \
+# Clean up and verify BoardConfig variables
+$(foreach var,$(_board_strip_readonly_list),$(eval $(var) := $$(strip $$($(var)))))
+$(foreach var,$(_board_true_false_vars), \
   $(if $(filter-out true false,$($(var))), \
     $(error Valid values of $(var) are "true", "false", and "". Not "$($(var))")))
 
-.KATI_READONLY := $(vars)
+# Default *_CPU_VARIANT_RUNTIME to CPU_VARIANT if unspecified.
+TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
+TARGET_2ND_CPU_VARIANT_RUNTIME := $(or $(TARGET_2ND_CPU_VARIANT_RUNTIME),$(TARGET_2ND_CPU_VARIANT))
+
+# The combo makefiles sanity-check and set defaults for various CPU configuration
+combo_target := TARGET_
+combo_2nd_arch_prefix :=
+include $(BUILD_SYSTEM)/combo/select.mk
+
+ifdef TARGET_2ND_ARCH
+  combo_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
+  include $(BUILD_SYSTEM)/combo/select.mk
+endif
+
+.KATI_READONLY := $(_board_strip_readonly_list)
+
+INTERNAL_KERNEL_CMDLINE := $(BOARD_KERNEL_CMDLINE)
+ifeq ($(TARGET_CPU_ABI),)
+  $(error No TARGET_CPU_ABI defined by board config: $(board_config_mk))
+endif
+ifneq ($(filter %64,$(TARGET_ARCH)),)
+  TARGET_IS_64_BIT := true
+endif
+
+ifeq (,$(filter true,$(TARGET_SUPPORTS_32_BIT_APPS) $(TARGET_SUPPORTS_64_BIT_APPS)))
+  TARGET_SUPPORTS_32_BIT_APPS := true
+endif
+
+# Sanity check to warn about likely cryptic errors later in the build.
+ifeq ($(TARGET_IS_64_BIT),true)
+  ifeq (,$(filter true false,$(TARGET_SUPPORTS_64_BIT_APPS)))
+    $(warning Building a 32-bit-app-only product on a 64-bit device. \
+      If this is intentional, set TARGET_SUPPORTS_64_BIT_APPS := false)
+  endif
+endif
+
+# "ro.product.cpu.abilist32" and "ro.product.cpu.abilist64" are
+# comma separated lists of the 32 and 64 bit ABIs (in order of
+# preference) that the target supports. If TARGET_CPU_ABI_LIST_{32,64}_BIT
+# are defined by the board config, we use them. Else, we construct
+# these lists based on whether TARGET_IS_64_BIT is set.
+#
+# Note that this assumes that the 2ND_CPU_ABI for a 64 bit target
+# is always 32 bits. If this isn't the case, these variables should
+# be overriden in the board configuration.
+ifeq (,$(TARGET_CPU_ABI_LIST_64_BIT))
+  ifeq (true|true,$(TARGET_IS_64_BIT)|$(TARGET_SUPPORTS_64_BIT_APPS))
+    TARGET_CPU_ABI_LIST_64_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
+  endif
+endif
+
+ifeq (,$(TARGET_CPU_ABI_LIST_32_BIT))
+  ifneq (true,$(TARGET_IS_64_BIT))
+    TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
+  else
+    ifeq (true,$(TARGET_SUPPORTS_32_BIT_APPS))
+      # For a 64 bit target, assume that the 2ND_CPU_ABI
+      # is a 32 bit ABI.
+      TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_2ND_CPU_ABI) $(TARGET_2ND_CPU_ABI2)
+    endif
+  endif
+endif
+
+# "ro.product.cpu.abilist" is a comma separated list of ABIs (in order
+# of preference) that the target supports. If a TARGET_CPU_ABI_LIST
+# is specified by the board configuration, we use that. If not, we
+# build a list out of the TARGET_CPU_ABIs specified by the config.
+ifeq (,$(TARGET_CPU_ABI_LIST))
+  ifeq ($(TARGET_IS_64_BIT)|$(TARGET_PREFER_32_BIT_APPS),true|true)
+    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_32_BIT) $(TARGET_CPU_ABI_LIST_64_BIT)
+  else
+    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT)
+  endif
+endif
+
+# Strip whitespace from the ABI list string.
+TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST)))
+TARGET_CPU_ABI_LIST_32_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_32_BIT)))
+TARGET_CPU_ABI_LIST_64_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_64_BIT)))
 
 ifneq ($(BUILD_BROKEN_ANDROIDMK_EXPORTS),true)
 $(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)

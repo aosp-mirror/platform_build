@@ -20,7 +20,6 @@ ifeq ($(PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING),)
 endif
 # Conditional to building on linux, as dex2oat currently does not work on darwin.
 ifeq ($(HOST_OS),linux)
-  WITH_DEXPREOPT ?= true
   ifeq (eng,$(TARGET_BUILD_VARIANT))
     # Don't strip for quick development turnarounds.
     DEX_PREOPT_DEFAULT := nostripping

@@ -208,15 +208,6 @@ JAVA_TMPDIR_ARG :=
 endif
 
 # ###############################################################
-# Broken build defaults
-# ###############################################################
-BUILD_BROKEN_ANDROIDMK_EXPORTS :=
-BUILD_BROKEN_DUP_COPY_HEADERS :=
-BUILD_BROKEN_DUP_RULES :=
-BUILD_BROKEN_PHONY_TARGETS :=
-BUILD_BROKEN_ENG_DEBUG_TAGS :=
-
-# ###############################################################
 # Include sub-configuration files
 # ###############################################################
 
@@ -296,29 +287,7 @@ $(call validate-kernel-headers,$(TARGET_BOARD_KERNEL_HEADERS))
 TARGET_PRODUCT_KERNEL_HEADERS := $(strip $(wildcard $(PRODUCT_VENDOR_KERNEL_HEADERS)))
 TARGET_PRODUCT_KERNEL_HEADERS := $(patsubst %/,%,$(TARGET_PRODUCT_KERNEL_HEADERS))
 $(call validate-kernel-headers,$(TARGET_PRODUCT_KERNEL_HEADERS))
-
-# Clean up/verify variables defined by the board config file.
-# TODO: Move this to right after the BoardConfig parsing.
-TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
-TARGET_CPU_ABI := $(strip $(TARGET_CPU_ABI))
-ifeq ($(TARGET_CPU_ABI),)
-  $(error No TARGET_CPU_ABI defined by board config: $(board_config_mk))
-endif
-TARGET_CPU_ABI2 := $(strip $(TARGET_CPU_ABI2))
-TARGET_CPU_VARIANT := $(strip $(TARGET_CPU_VARIANT))
-TARGET_CPU_VARIANT_RUNTIME := $(strip $(TARGET_CPU_VARIANT_RUNTIME))
-
-TARGET_2ND_CPU_ABI := $(strip $(TARGET_2ND_CPU_ABI))
-TARGET_2ND_CPU_ABI2 := $(strip $(TARGET_2ND_CPU_ABI2))
-TARGET_2ND_CPU_VARIANT := $(strip $(TARGET_2ND_CPU_VARIANT))
-TARGET_2ND_CPU_VARIANT_RUNTIME := $(strip $(TARGET_2ND_CPU_VARIANT_RUNTIME))
-
-# Default *_CPU_VARIANT_RUNTIME to CPU_VARIANT if unspecified.
-TARGET_CPU_VARIANT_RUNTIME := $(or $(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_CPU_VARIANT))
-TARGET_2ND_CPU_VARIANT_RUNTIME := $(or $(TARGET_2ND_CPU_VARIANT_RUNTIME),$(TARGET_2ND_CPU_VARIANT))
-
-BOARD_KERNEL_BASE := $(strip $(BOARD_KERNEL_BASE))
-BOARD_KERNEL_PAGESIZE := $(strip $(BOARD_KERNEL_PAGESIZE))
+.KATI_READONLY := TARGET_DEVICE_KERNEL_HEADERS TARGET_BOARD_KERNEL_HEADERS TARGET_PRODUCT_KERNEL_HEADERS
 
 # Commands to generate .toc file common to ELF .so files.
 define _gen_toc_command_for_elf
@@ -332,44 +301,6 @@ $(hide) $(HOST_OTOOL) -l $(1) | grep LC_ID_DYLIB -A 5 > $(2)
 $(hide) $(HOST_NM) -gP $(1) | cut -f1-2 -d" " | (grep -v U$$ >> $(2) || true)
 endef
 
-combo_target := HOST_
-combo_2nd_arch_prefix :=
-include $(BUILD_SYSTEM)/combo/select.mk
-
-# Load the 2nd host arch if it's needed.
-ifdef HOST_2ND_ARCH
-combo_target := HOST_
-combo_2nd_arch_prefix := $(HOST_2ND_ARCH_VAR_PREFIX)
-include $(BUILD_SYSTEM)/combo/select.mk
-endif
-
-# Load the windows cross compiler under Linux
-ifdef HOST_CROSS_OS
-combo_target := HOST_CROSS_
-combo_2nd_arch_prefix :=
-include $(BUILD_SYSTEM)/combo/select.mk
-
-ifdef HOST_CROSS_2ND_ARCH
-combo_target := HOST_CROSS_
-combo_2nd_arch_prefix := $(HOST_CROSS_2ND_ARCH_VAR_PREFIX)
-include $(BUILD_SYSTEM)/combo/select.mk
-endif
-endif
-
-# on windows, the tools have .exe at the end, and we depend on the
-# host config stuff being done first
-
-combo_target := TARGET_
-combo_2nd_arch_prefix :=
-include $(BUILD_SYSTEM)/combo/select.mk
-
-# Load the 2nd target arch if it's needed.
-ifdef TARGET_2ND_ARCH
-combo_target := TARGET_
-combo_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
-include $(BUILD_SYSTEM)/combo/select.mk
-endif
-
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
@@ -379,62 +310,6 @@ ifdef TARGET_PREFER_32_BIT
 TARGET_PREFER_32_BIT_APPS := true
 TARGET_PREFER_32_BIT_EXECUTABLES := true
 endif
-
-ifeq (,$(filter true,$(TARGET_SUPPORTS_32_BIT_APPS) $(TARGET_SUPPORTS_64_BIT_APPS)))
-  TARGET_SUPPORTS_32_BIT_APPS := true
-endif
-
-# Sanity check to warn about likely cryptic errors later in the build.
-ifeq ($(TARGET_IS_64_BIT),true)
-  ifeq (,$(filter true false,$(TARGET_SUPPORTS_64_BIT_APPS)))
-    $(warning Building a 32-bit-app-only product on a 64-bit device. \
-      If this is intentional, set TARGET_SUPPORTS_64_BIT_APPS := false)
-  endif
-endif
-
-# "ro.product.cpu.abilist32" and "ro.product.cpu.abilist64" are
-# comma separated lists of the 32 and 64 bit ABIs (in order of
-# preference) that the target supports. If TARGET_CPU_ABI_LIST_{32,64}_BIT
-# are defined by the board config, we use them. Else, we construct
-# these lists based on whether TARGET_IS_64_BIT is set.
-#
-# Note that this assumes that the 2ND_CPU_ABI for a 64 bit target
-# is always 32 bits. If this isn't the case, these variables should
-# be overriden in the board configuration.
-ifeq (,$(TARGET_CPU_ABI_LIST_64_BIT))
-  ifeq (true|true,$(TARGET_IS_64_BIT)|$(TARGET_SUPPORTS_64_BIT_APPS))
-    TARGET_CPU_ABI_LIST_64_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
-  endif
-endif
-
-ifeq (,$(TARGET_CPU_ABI_LIST_32_BIT))
-  ifneq (true,$(TARGET_IS_64_BIT))
-    TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
-  else
-    ifeq (true,$(TARGET_SUPPORTS_32_BIT_APPS))
-      # For a 64 bit target, assume that the 2ND_CPU_ABI
-      # is a 32 bit ABI.
-      TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_2ND_CPU_ABI) $(TARGET_2ND_CPU_ABI2)
-    endif
-  endif
-endif
-
-# "ro.product.cpu.abilist" is a comma separated list of ABIs (in order
-# of preference) that the target supports. If a TARGET_CPU_ABI_LIST
-# is specified by the board configuration, we use that. If not, we
-# build a list out of the TARGET_CPU_ABIs specified by the config.
-ifeq (,$(TARGET_CPU_ABI_LIST))
-  ifeq ($(TARGET_IS_64_BIT)|$(TARGET_PREFER_32_BIT_APPS),true|true)
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_32_BIT) $(TARGET_CPU_ABI_LIST_64_BIT)
-  else
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT)
-  endif
-endif
-
-# Strip whitespace from the ABI list string.
-TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST)))
-TARGET_CPU_ABI_LIST_32_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_32_BIT)))
-TARGET_CPU_ABI_LIST_64_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_64_BIT)))
 
 # GCC version selection
 TARGET_GCC_VERSION := 4.9
@@ -891,6 +766,7 @@ ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
 else
   DEFAULT_SYSTEM_DEV_CERTIFICATE := build/target/product/security/testkey
 endif
+.KATI_READONLY := DEFAULT_SYSTEM_DEV_CERTIFICATE
 
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
@@ -1067,7 +943,7 @@ $(error BOARD_SUPER_PARTITION_METADATA_DEVICE is not listed in BOARD_SUPER_PARTI
 endif
 
 # The metadata device must be supplied to init via the kernel command-line.
-BOARD_KERNEL_CMDLINE += androidboot.super_partition=$(BOARD_SUPER_PARTITION_METADATA_DEVICE)
+INTERNAL_KERNEL_CMDLINE += androidboot.super_partition=$(BOARD_SUPER_PARTITION_METADATA_DEVICE)
 
 BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE := true
 
@@ -1101,7 +977,7 @@ BOARD_SUPER_PARTITION_$(call to-upper,$(strip $(BOARD_SUPER_PARTITION_BLOCK_DEVI
 endif
 
 ifneq ($(BOARD_SUPER_PARTITION_METADATA_DEVICE),super)
-BOARD_KERNEL_CMDLINE += androidboot.super_partition=$(BOARD_SUPER_PARTITION_METADATA_DEVICE)
+INTERNAL_KERNEL_CMDLINE += androidboot.super_partition=$(BOARD_SUPER_PARTITION_METADATA_DEVICE)
 endif
 BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE :=
 
