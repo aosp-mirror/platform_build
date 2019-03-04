@@ -2388,7 +2388,7 @@ endef
 define run-appcompat
 $(hide) \
   echo "appcompat.sh output:" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
-  PACKAGING=$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING ANDROID_LOG_TAGS="*:e" art/tools/veridex/appcompat.sh --dex-file=$@ 2>&1 >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
+  PACKAGING=$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING ANDROID_LOG_TAGS="*:e" art/tools/veridex/appcompat.sh --dex-file=$@ --api-flags=$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS) 2>&1 >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
 endef
 appcompat-files = \
   art/tools/veridex/appcompat.sh \
