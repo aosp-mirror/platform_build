@@ -36,7 +36,7 @@ ifneq (,$(strip $(my_full_libs_manifest_files)))
   fixed_android_manifest := $(intermediates.COMMON)/manifest/AndroidManifest.xml.fixed
 
   $(full_android_manifest): PRIVATE_LIBS_MANIFESTS := $(my_full_libs_manifest_files)
-  $(full_android_manifest): $(ANDROID_MANIFEST_MERGER_DEPS)
+  $(full_android_manifest): $(ANDROID_MANIFEST_MERGER)
   $(full_android_manifest) : $(fixed_android_manifest) $(my_full_libs_manifest_files)
 	@echo "Merge android manifest files: $@ <-- $< $(PRIVATE_LIBS_MANIFESTS)"
 	@mkdir -p $(dir $@)
