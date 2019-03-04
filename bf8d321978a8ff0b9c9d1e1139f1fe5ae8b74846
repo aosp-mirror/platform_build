@@ -141,6 +141,30 @@
       "revId": "bf8d321978a8ff0b9c9d1e1139f1fe5ae8b74846",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "149f41fd_ea023a6f",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 800,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-04T08:47:16Z",
+      "side": 1,
+      "message": "OK, thanks for the info. I incorrectly thought release signing was extracted in build_image.py.\n\nWill check related source later (will be busy in b/126493225 these days).",
+      "parentUuid": "d1da4502_8d3086e2",
+      "range": {
+        "startLine": 800,
+        "startChar": 6,
+        "endLine": 800,
+        "endChar": 30
+      },
+      "revId": "bf8d321978a8ff0b9c9d1e1139f1fe5ae8b74846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
