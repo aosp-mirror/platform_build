@@ -415,6 +415,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     # Reset the global options as in ota_from_target_files.py.
     common.OPTIONS.incremental_source = None
     common.OPTIONS.downgrade = False
+    common.OPTIONS.retrofit_dynamic_partitions = False
     common.OPTIONS.timestamp = False
     common.OPTIONS.wipe_user_data = False
     common.OPTIONS.no_signing = False
@@ -508,6 +509,23 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         {
             'ota-type' : 'BLOCK',
             'ota-wipe' : 'yes',
+            'post-build' : 'build-fingerprint-target',
+            'post-build-incremental' : 'build-version-incremental-target',
+            'post-sdk-level' : '27',
+            'post-security-patch-level' : '2017-12-01',
+            'post-timestamp' : '1500000000',
+            'pre-device' : 'product-device',
+        },
+        metadata)
+
+  def test_GetPackageMetadata_retrofitDynamicPartitions(self):
+    target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
+    common.OPTIONS.retrofit_dynamic_partitions = True
+    metadata = GetPackageMetadata(target_info)
+    self.assertDictEqual(
+        {
+            'ota-retrofit-dynamic-partitions' : 'yes',
+            'ota-type' : 'BLOCK',
             'post-build' : 'build-fingerprint-target',
             'post-build-incremental' : 'build-version-incremental-target',
             'post-sdk-level' : '27',
