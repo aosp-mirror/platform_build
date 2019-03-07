@@ -1060,6 +1060,9 @@ def GetPackageMetadata(target_info, source_info=None):
   if OPTIONS.wipe_user_data:
     metadata['ota-wipe'] = 'yes'
 
+  if OPTIONS.retrofit_dynamic_partitions:
+    metadata['ota-retrofit-dynamic-partitions'] = 'yes'
+
   is_incremental = source_info is not None
   if is_incremental:
     metadata['pre-build'] = source_info.fingerprint
