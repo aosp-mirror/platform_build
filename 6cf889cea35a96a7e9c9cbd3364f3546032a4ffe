@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8853813f_e39a5776",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-03-08T00:19:35Z",
+      "side": 1,
+      "message": "This should be explicitly set to empty before we load the product configuration so that we\u0027re not reading an environment variable.",
+      "range": {
+        "startLine": 728,
+        "startChar": 0,
+        "endLine": 728,
+        "endChar": 20
+      },
+      "revId": "6cf889cea35a96a7e9c9cbd3364f3546032a4ffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
