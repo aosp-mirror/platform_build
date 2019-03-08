@@ -22,6 +22,30 @@
       "revId": "6cf889cea35a96a7e9c9cbd3364f3546032a4ffe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67cda03e_88884a4c",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-03-08T00:27:55Z",
+      "side": 1,
+      "message": "Hmmm. When we were setting this up, I used to use it as an environment variable all the time, but that makes sense.\n\nWhere\u0027s the best place? Next to BUILD_* in board_config.mk?",
+      "parentUuid": "8853813f_e39a5776",
+      "range": {
+        "startLine": 728,
+        "startChar": 0,
+        "endLine": 728,
+        "endChar": 20
+      },
+      "revId": "6cf889cea35a96a7e9c9cbd3364f3546032a4ffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
