@@ -46,6 +46,47 @@
       "revId": "6cf889cea35a96a7e9c9cbd3364f3546032a4ffe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49024c51_f25dec9d",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 728,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-03-08T00:49:36Z",
+      "side": 1,
+      "message": "Yeah, that\u0027ll work",
+      "parentUuid": "67cda03e_88884a4c",
+      "range": {
+        "startLine": 728,
+        "startChar": 0,
+        "endLine": 728,
+        "endChar": 20
+      },
+      "revId": "6cf889cea35a96a7e9c9cbd3364f3546032a4ffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f53696cc_72d85a6d",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 731,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-03-08T00:49:36Z",
+      "side": 1,
+      "message": "We will make this readonly later, since we export it from Soong:\n\nhttps://android.googlesource.com/platform/build/soong/+/master/cc/makevars.go#94",
+      "revId": "6cf889cea35a96a7e9c9cbd3364f3546032a4ffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
