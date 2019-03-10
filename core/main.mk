@@ -1149,21 +1149,21 @@ ifeq (true|,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_PACKAGES_EXIST)|$(fil
     $(INTERNAL_PRODUCT) includes redundant whitelist entries for nonexistant PRODUCT_PACKAGES)
 endif
 
-# Check to ensure that all modules in PRODUCT_HOST_PACKAGES exist
-#
-# Many host modules are Linux-only, so skip this check on Mac. If we ever have Mac-only modules,
-# maybe it would make sense to have PRODUCT_HOST_PACKAGES_LINUX/_DARWIN?
-ifneq ($(HOST_OS),darwin)
-  ifneq (true,$(ALLOW_MISSING_DEPENDENCIES))
-    _modules := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_HOST_PACKAGES)
-    _nonexistant_modules := $(foreach m,$(_modules),\
-      $(if $(filter FAKE,$(ALL_MODULES.$(m).CLASS))$(filter $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,$(m)))
-    $(call maybe-print-list-and-error,$(_nonexistant_modules),\
-      $(INTERNAL_PRODUCT) includes non-existant modules in PRODUCT_HOST_PACKAGES)
-  endif
-endif
-
 ifdef FULL_BUILD
+  # Check to ensure that all modules in PRODUCT_HOST_PACKAGES exist
+  #
+  # Many host modules are Linux-only, so skip this check on Mac. If we ever have Mac-only modules,
+  # maybe it would make sense to have PRODUCT_HOST_PACKAGES_LINUX/_DARWIN?
+  ifneq ($(HOST_OS),darwin)
+    ifneq (true,$(ALLOW_MISSING_DEPENDENCIES))
+      _modules := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_HOST_PACKAGES)
+      _nonexistant_modules := $(foreach m,$(_modules),\
+        $(if $(filter FAKE,$(ALL_MODULES.$(m).CLASS))$(filter $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,$(m)))
+      $(call maybe-print-list-and-error,$(_nonexistant_modules),\
+        $(INTERNAL_PRODUCT) includes non-existant modules in PRODUCT_HOST_PACKAGES)
+    endif
+  endif
+
   product_host_FILES := $(call host-installed-files,$(INTERNAL_PRODUCT))
   product_target_FILES := $(call product-installed-files, $(INTERNAL_PRODUCT))
   # WARNING: The product_MODULES variable is depended on by external files.
@@ -1254,6 +1254,7 @@ else
   # requested by the product, because we probably won't have rules
   # to build them.
   product_target_FILES :=
+  product_host_FILES :=
 endif
 
 # TODO: Remove the 3 places in the tree that use ALL_DEFAULT_INSTALLED_MODULES
