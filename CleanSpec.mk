@@ -603,13 +603,6 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libnpt.so)
 
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*)
 
-# Clean up old testcase files
-$(call add-clean-step, rm -rf $(TARGET_OUT_TESTCASES)/*)
-$(call add-clean-step, rm -rf $(HOST_OUT_TESTCASES)/*)
-$(call add-clean-step, rm -rf $(HOST_CROSS_OUT_TESTCASES)/*)
-$(call add-clean-step, rm -rf $(TARGET_OUT_DATA)/*)
-$(call add-clean-step, rm -rf $(HOST_OUT)/vts/*)
-$(call add-clean-step, rm -rf $(HOST_OUT)/framework/vts-tradefed.jar)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

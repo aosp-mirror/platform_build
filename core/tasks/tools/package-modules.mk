@@ -40,8 +40,6 @@ $(foreach m,$(my_modules_and_deps),\
     $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).PICKUP_FILES)))\
   $(eval _built_files := $(strip $(ALL_MODULES.$(m).BUILT_INSTALLED)\
     $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).BUILT_INSTALLED)))\
-  $(eval _module_class_folder := $($(strip MODULE_CLASS_$(word 1, $(strip $(ALL_MODULES.$(m).CLASS)\
-    $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).CLASS))))))\
   $(if $(_pickup_files)$(_built_files),,\
     $(call my_missing_files,$(m)))\
   $(eval my_pickup_files += $(_pickup_files))\
@@ -51,15 +49,9 @@ $(foreach m,$(my_modules_and_deps),\
     $(if $(filter $(TARGET_OUT_ROOT)/%,$(ins)),\
       $(eval bui := $(word 1,$(bui_ins)))\
       $(eval my_built_modules += $(bui))\
-      $(if $(filter $(_module_class_folder), nativetest benchmarktest),\
-        $(eval module_class_folder_stem := $(_module_class_folder)$(findstring 64, $(patsubst $(PRODUCT_OUT)/%,%,$(ins)))),\
-        $(eval module_class_folder_stem := $(_module_class_folder)))\
       $(eval my_copy_dest := $(patsubst data/%,DATA/%,\
-                               $(patsubst testcases/%,DATA/$(module_class_folder_stem)/%,\
-                                 $(patsubst testcases/$(m)/$(TARGET_ARCH)/%,DATA/$(module_class_folder_stem)/$(m)/%,\
-                                   $(patsubst testcases/$(m)/$(TARGET_2ND_ARCH)/%,DATA/$(module_class_folder_stem)/$(m)/%,\
-                                     $(patsubst system/%,DATA/%,\
-                                       $(patsubst $(PRODUCT_OUT)/%,%,$(ins))))))))\
+                               $(patsubst system/%,DATA/%,\
+                                 $(patsubst $(PRODUCT_OUT)/%,%,$(ins)))))\
       $(eval my_copy_pairs += $(bui):$(my_staging_dir)/$(my_copy_dest)))\
   ))
 
