@@ -2478,25 +2478,6 @@ $(2): $(1) $(ZIPALIGN) $(ZIP2ZIP)
 	$$(align-package)
 endef
 
-# Create copy pair for compatibility suite
-# Filter out $(LOCAL_INSTALLED_MODULE) to prevent overriding target
-# $(1): source path
-# $(2): destination path
-# The format of copy pair is src:dst
-define compat-copy-pair
-$(if $(filter-out $(2), $(LOCAL_INSTALLED_MODULE)), $(1):$(2))
-endef
-
-# Create copy pair for $(1) $(2)
-# If $(2) is substring of $(3) do nothing.
-# $(1): source path
-# $(2): destination path
-# $(3): filter-out target
-# The format of copy pair is src:dst
-define filter-copy-pair
-$(if $(findstring $(2), $(3)),,$(1):$(2))
-endef
-
 # Copies many files.
 # $(1): The files to copy.  Each entry is a ':' separated src:dst pair
 # $(2): An optional directory to prepend to the destination
