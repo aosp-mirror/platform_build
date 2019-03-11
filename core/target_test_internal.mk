@@ -29,15 +29,6 @@ ifdef LOCAL_MODULE_PATH_64
 $(error $(LOCAL_PATH): Do not set LOCAL_MODULE_PATH_64 when building test $(LOCAL_MODULE))
 endif
 
-use_testcase_folder := false
-ifdef ENABLE_DEFAULT_TEST_LOCATION
-  ifneq ($(LOCAL_MODULE),$(filter $(LOCAL_MODULE),$(DEFAULT_DATA_OUT_MODULES)))
-    use_testcase_folder := true
-  endif
-endif
-
-ifneq ($(use_testcase_folder),true)
 ifndef LOCAL_MODULE_RELATIVE_PATH
 LOCAL_MODULE_RELATIVE_PATH := $(LOCAL_MODULE)
-endif
 endif

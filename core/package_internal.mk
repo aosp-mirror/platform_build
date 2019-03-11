@@ -768,17 +768,10 @@ $(my_all_targets): $(installed_apk_splits)
 
 ifdef LOCAL_COMPATIBILITY_SUITE
 
-ifndef ENABLE_DEFAULT_TEST_LOCATION
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
     $(foreach s,$(my_split_suffixes),\
       $(intermediates)/package_$(s).apk:$(dir)/$(LOCAL_MODULE)_$(s).apk))))
-else
-$(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-  $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
-    $(foreach s,$(my_split_suffixes),\
-      $(call compat-copy-pair,$(intermediates)/package_$(s).apk,$(dir)/$(LOCAL_MODULE)_$(s).apk)))))
-endif
 
 $(call create-suite-dependencies)
 
