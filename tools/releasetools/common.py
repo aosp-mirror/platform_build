@@ -46,9 +46,15 @@ logger = logging.getLogger(__name__)
 
 class Options(object):
   def __init__(self):
+    base_out_path = os.getenv('OUT_DIR_COMMON_BASE')
+    if base_out_path is None:
+      base_search_path = "out"
+    else:
+      base_search_path = os.path.join(base_out_path, os.path.basename(os.getcwd()))
+
     platform_search_path = {
-        "linux2": "out/host/linux-x86",
-        "darwin": "out/host/darwin-x86",
+        "linux2": os.path.join(base_search_path, "host/linux-x86"),
+        "darwin": os.path.join(base_search_path, "host/darwin-x86"),
     }
 
     self.search_path = platform_search_path.get(sys.platform)
