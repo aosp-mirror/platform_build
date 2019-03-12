@@ -25,9 +25,21 @@ Usage: merge_target_files.py [args]
       The input target files package containing system bits. This is a zip
       archive.
 
+  --system-item-list system-item-list-file
+      The optional path to a newline-separated config file that replaces the
+      contents of default_system_item_list if provided.
+
+  --system-misc-info-keys system-misc-info-keys-file
+      The optional path to a newline-separated config file that replaces the
+      contents of default_system_misc_info_keys if provided.
+
   --other-target-files other-target-files-zip-archive
       The input target files package containing other bits. This is a zip
       archive.
+
+  --other-item-list other-item-list-file
+      The optional path to a newline-separated config file that replaces the
+      contents of default_other_item_list if provided.
 
   --output-target-files output-target-files-package
       The output merged target files package. Also a zip archive.
@@ -48,16 +60,19 @@ logger = logging.getLogger(__name__)
 OPTIONS = common.OPTIONS
 OPTIONS.verbose = True
 OPTIONS.system_target_files = None
+OPTIONS.system_item_list = None
+OPTIONS.system_misc_info_keys = None
 OPTIONS.other_target_files = None
+OPTIONS.other_item_list = None
 OPTIONS.output_target_files = None
 OPTIONS.keep_tmp = False
 
-# system_extract_as_is_item_list is a list of items to extract from the partial
+# default_system_item_list is a list of items to extract from the partial
 # system target files package as is, meaning these items will land in the
 # output target files package exactly as they appear in the input partial
 # system target files package.
 
-system_extract_as_is_item_list = [
+default_system_item_list = [
     'META/apkcerts.txt',
     'META/filesystem_config.txt',
     'META/root_filesystem_config.txt',
@@ -78,10 +93,10 @@ system_extract_special_item_list = [
     'META/*',
 ]
 
-# system_misc_info_keys is a list of keys to obtain from the system instance of
+# default_system_misc_info_keys is a list of keys to obtain from the system instance of
 # META/misc_info.txt. The remaining keys from the other instance.
 
-system_misc_info_keys = [
+default_system_misc_info_keys = [
     'avb_system_hashtree_enable',
     'avb_system_add_hashtree_footer_args',
     'avb_system_key_path',
@@ -98,12 +113,12 @@ system_misc_info_keys = [
     'system_size',
 ]
 
-# other_extract_as_is_item_list is a list of items to extract from the partial
+# default_other_item_list is a list of items to extract from the partial
 # other target files package as is, meaning these items will land in the output
 # target files package exactly as they appear in the input partial other target
 # files package.
 
-other_extract_as_is_item_list = [
+default_other_item_list = [
     'META/boot_filesystem_config.txt',
     'META/otakeys.txt',
     'META/releasetools.py',
@@ -119,7 +134,7 @@ other_extract_as_is_item_list = [
     'VENDOR/*',
 ]
 
-# other_extract_for_merge_item_list is a list of items to extract from the
+# other_extract_special_item_list is a list of items to extract from the
 # partial other target files package that need some special processing, such as
 # some sort of combination with items from the partial system target files
 # package.
@@ -170,6 +185,18 @@ def extract_items(target_files, target_files_temp_dir, extract_item_list):
       target_files,
       target_files_temp_dir,
       filtered_extract_item_list)
+
+
+def read_config_list(config_file_path):
+  """Reads a config file into a list of strings.
+
+  Expects the file to be newline-separated.
+
+  Args:
+    config_file_path: The path to the config file to open and read.
+  """
+  with open(config_file_path) as config_file:
+    return config_file.read().splitlines()
 
 
 def process_ab_partitions_txt(
@@ -223,7 +250,8 @@ def process_ab_partitions_txt(
 def process_misc_info_txt(
     system_target_files_temp_dir,
     other_target_files_temp_dir,
-    output_target_files_temp_dir):
+    output_target_files_temp_dir,
+    system_misc_info_keys):
   """Perform special processing for META/misc_info.txt
 
   This function merges the contents of the META/misc_info.txt files from the
@@ -242,6 +270,9 @@ def process_misc_info_txt(
     output_target_files_temp_dir: The name of a directory that will be used
     to create the output target files package after all the special cases
     are processed.
+
+    system_misc_info_keys: A list of keys to obtain from the system instance
+    of META/misc_info.txt. The remaining keys from the other instance.
   """
 
   def read_helper(d):
@@ -258,8 +289,7 @@ def process_misc_info_txt(
       read_helper(other_target_files_temp_dir))
 
   # Replace certain values in merged_info_dict with values from
-  # system_info_dict. TODO(b/124467065): This should be more flexible than
-  # using the hard-coded system_misc_info_keys.
+  # system_info_dict.
 
   for key in system_misc_info_keys:
     merged_info_dict[key] = system_info_dict[key]
@@ -355,7 +385,8 @@ def process_special_cases(
     temp_dir,
     system_target_files_temp_dir,
     other_target_files_temp_dir,
-    output_target_files_temp_dir):
+    output_target_files_temp_dir,
+    system_misc_info_keys):
   """Perform special-case processing for certain target files items.
 
   Certain files in the output target files package require special-case
@@ -374,6 +405,9 @@ def process_special_cases(
     output_target_files_temp_dir: The name of a directory that will be used
     to create the output target files package after all the special cases
     are processed.
+
+    system_misc_info_keys: A list of keys to obtain from the system instance
+    of META/misc_info.txt. The remaining keys from the other instance.
   """
 
   process_ab_partitions_txt(
@@ -384,7 +418,8 @@ def process_special_cases(
   process_misc_info_txt(
       system_target_files_temp_dir=system_target_files_temp_dir,
       other_target_files_temp_dir=other_target_files_temp_dir,
-      output_target_files_temp_dir=output_target_files_temp_dir)
+      output_target_files_temp_dir=output_target_files_temp_dir,
+      system_misc_info_keys=system_misc_info_keys)
 
   process_file_contexts_bin(
       temp_dir=temp_dir,
@@ -394,7 +429,10 @@ def process_special_cases(
 def merge_target_files(
     temp_dir,
     system_target_files,
+    system_item_list,
+    system_misc_info_keys,
     other_target_files,
+    other_item_list,
     output_target_files):
   """Merge two target files packages together.
 
@@ -410,12 +448,31 @@ def merge_target_files(
     system_target_files: The name of the zip archive containing the system
     partial target files package.
 
+    system_item_list: The list of items to extract from the partial system
+    target files package as is, meaning these items will land in the output
+    target files package exactly as they appear in the input partial system
+    target files package.
+
+    system_misc_info_keys: The list of keys to obtain from the system instance
+    of META/misc_info.txt. The remaining keys from the other instance.
+
     other_target_files: The name of the zip archive containing the other
     partial target files package.
+
+    other_item_list: The list of items to extract from the partial other
+    target files package as is, meaning these items will land in the output
+    target files package exactly as they appear in the input partial other
+    target files package.
 
     output_target_files: The name of the output zip archive target files
     package created by merging system and other.
   """
+
+  logger.info(
+      'starting: merge system %s and other %s into output %s',
+      system_target_files,
+      other_target_files,
+      output_target_files)
 
   # Create directory names that we'll use when we extract files from system,
   # and other, and for zipping the final output.
@@ -431,7 +488,7 @@ def merge_target_files(
   extract_items(
       target_files=system_target_files,
       target_files_temp_dir=output_target_files_temp_dir,
-      extract_item_list=system_extract_as_is_item_list)
+      extract_item_list=system_item_list)
 
   # Extract "as is" items from the input other partial target files package. We
   # extract them directly into the output temporary directory since the items
@@ -440,7 +497,7 @@ def merge_target_files(
   extract_items(
       target_files=other_target_files,
       target_files_temp_dir=output_target_files_temp_dir,
-      extract_item_list=other_extract_as_is_item_list)
+      extract_item_list=other_item_list)
 
   # Extract "special" items from the input system partial target files package.
   # We extract these items to different directory since they require special
@@ -469,7 +526,8 @@ def merge_target_files(
       temp_dir=temp_dir,
       system_target_files_temp_dir=system_target_files_temp_dir,
       other_target_files_temp_dir=other_target_files_temp_dir,
-      output_target_files_temp_dir=output_target_files_temp_dir)
+      output_target_files_temp_dir=output_target_files_temp_dir,
+      system_misc_info_keys=system_misc_info_keys)
 
   # Regenerate IMAGES in the temporary directory.
 
@@ -520,25 +578,15 @@ def merge_target_files(
   common.RunAndWait(command, verbose=True)
 
 
-def merge_target_files_with_temp_dir(
-    system_target_files,
-    other_target_files,
-    output_target_files,
-    keep_tmp):
+def call_func_with_temp_dir(func, keep_tmp):
   """Manage the creation and cleanup of the temporary directory.
 
-  This function wraps merge_target_files after first creating a temporary
+  This function calls the given function after first creating a temporary
   directory. It also cleans up the temporary directory.
 
   Args:
-    system_target_files: The name of the zip archive containing the system
-    partial target files package.
-
-    other_target_files: The name of the zip archive containing the other
-    partial target files package.
-
-    output_target_files: The name of the output zip archive target files
-    package created by merging system and other.
+    func: The function to call. Should accept one parameter, the path to
+    the temporary directory.
 
     keep_tmp: Keep the temporary directory after processing is complete.
   """
@@ -547,20 +595,10 @@ def merge_target_files_with_temp_dir(
   # we use when we extract items from the input target files packages, and also
   # a scratch directory that we use for temporary files.
 
-  logger.info(
-      'starting: merge system %s and other %s into output %s',
-      system_target_files,
-      other_target_files,
-      output_target_files)
-
   temp_dir = common.MakeTempDir(prefix='merge_target_files_')
 
   try:
-    merge_target_files(
-        temp_dir=temp_dir,
-        system_target_files=system_target_files,
-        other_target_files=other_target_files,
-        output_target_files=output_target_files)
+    func(temp_dir)
   except:
     raise
   finally:
@@ -573,7 +611,7 @@ def merge_target_files_with_temp_dir(
 def main():
   """The main function.
 
-  Process command line arguments, then call merge_target_files_with_temp_dir to
+  Process command line arguments, then call merge_target_files to
   perform the heavy lifting.
   """
 
@@ -582,8 +620,14 @@ def main():
   def option_handler(o, a):
     if o == '--system-target-files':
       OPTIONS.system_target_files = a
+    elif o == '--system-item-list':
+      OPTIONS.system_item_list = a
+    elif o == '--system-misc-info-keys':
+      OPTIONS.system_misc_info_keys = a
     elif o == '--other-target-files':
       OPTIONS.other_target_files = a
+    elif o == '--other-item-list':
+      OPTIONS.other_item_list = a
     elif o == '--output-target-files':
       OPTIONS.output_target_files = a
     elif o == '--keep_tmp':
@@ -596,7 +640,10 @@ def main():
       sys.argv[1:], __doc__,
       extra_long_opts=[
           'system-target-files=',
+          'system-item-list=',
+          'system-misc-info-keys=',
           'other-target-files=',
+          'other-item-list=',
           'output-target-files=',
           "keep_tmp",
       ],
@@ -609,11 +656,31 @@ def main():
     common.Usage(__doc__)
     sys.exit(1)
 
-  merge_target_files_with_temp_dir(
-      system_target_files=OPTIONS.system_target_files,
-      other_target_files=OPTIONS.other_target_files,
-      output_target_files=OPTIONS.output_target_files,
-      keep_tmp=OPTIONS.keep_tmp)
+  if OPTIONS.system_item_list:
+    system_item_list = read_config_list(OPTIONS.system_item_list)
+  else:
+    system_item_list = default_system_item_list
+
+  if OPTIONS.system_misc_info_keys:
+    system_misc_info_keys = read_config_list(OPTIONS.system_misc_info_keys)
+  else:
+    system_misc_info_keys = default_system_misc_info_keys
+
+  if OPTIONS.other_item_list:
+    other_item_list = read_config_list(OPTIONS.other_item_list)
+  else:
+    other_item_list = default_other_item_list
+
+  call_func_with_temp_dir(
+      lambda temp_dir: merge_target_files(
+          temp_dir=temp_dir,
+          system_target_files=OPTIONS.system_target_files,
+          system_item_list=system_item_list,
+          system_misc_info_keys=system_misc_info_keys,
+          other_target_files=OPTIONS.other_target_files,
+          other_item_list=other_item_list,
+          output_target_files=OPTIONS.output_target_files),
+      OPTIONS.keep_tmp)
 
 
 if __name__ == '__main__':
