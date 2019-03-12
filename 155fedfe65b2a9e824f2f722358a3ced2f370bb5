@@ -34,6 +34,24 @@
       "revId": "155fedfe65b2a9e824f2f722358a3ced2f370bb5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "723f3596_a401244a",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 1027,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-12T17:11:44Z",
+      "side": 1,
+      "message": "\u003e I think add-all-host-to-target-required-modules-deps adds LOCAL_TARGET_REQUIRED_MODULES by calling add-required-deps. \n\nThat makes sense, but I think product_FILES will still be inaccurate.\n\nIt\u0027s also not clear to me how it interacts with OVERRIDES. If I\u0027m reading things correctly, a shared lib will always be included if depended on even if the lib is overridden by another via LOCAL_OVERRIDES_MODULES.\n\n\u003e \n\u003e IIUC, add-all-host-to-target-required-modules-deps has extra logic, e.g. build error if host module added LOCAL_TARGET_REQUIRED_MODULES. So we may need to keep it.",
+      "parentUuid": "cee9cf9a_18bf226e",
+      "revId": "155fedfe65b2a9e824f2f722358a3ced2f370bb5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
