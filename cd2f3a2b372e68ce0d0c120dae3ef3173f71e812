@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "be59939d_a962a7b6",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 4338,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-12T05:00:58Z",
+      "side": 1,
+      "message": "they should also go to the right of the vertical bar when building for nodeps",
+      "range": {
+        "startLine": 4338,
+        "startChar": 28,
+        "endLine": 4338,
+        "endChar": 58
+      },
+      "revId": "cd2f3a2b372e68ce0d0c120dae3ef3173f71e812",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "60d27a03_01e21387",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 4340,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-12T05:00:58Z",
+      "side": 1,
+      "message": "nit: technically they\u0027re also signed. they just (intentionally) miss some steps like resetting the timestamps. put some message like \"ignoring dependencies\"?",
+      "range": {
+        "startLine": 4340,
+        "startChar": 33,
+        "endLine": 4340,
+        "endChar": 53
+      },
+      "revId": "cd2f3a2b372e68ce0d0c120dae3ef3173f71e812",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
