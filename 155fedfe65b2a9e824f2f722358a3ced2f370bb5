@@ -52,6 +52,24 @@
       "revId": "155fedfe65b2a9e824f2f722358a3ced2f370bb5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "054d7be3_b0fc5f97",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 1027,
+      "author": {
+        "id": 1047684
+      },
+      "writtenOn": "2019-03-12T19:56:15Z",
+      "side": 1,
+      "message": "\u003e It\u0027s also not clear to me how it interacts with OVERRIDES. If I\u0027m reading things correctly, a shared lib will always be included if depended on even if the lib is overridden by another via LOCAL_OVERRIDES_MODULES.\n\nI did not try to understand the OVERRIDES issue. Is it an existing issue before my change? I know a little about make on Android.",
+      "parentUuid": "723f3596_a401244a",
+      "revId": "155fedfe65b2a9e824f2f722358a3ced2f370bb5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
