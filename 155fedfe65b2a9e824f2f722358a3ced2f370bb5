@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d89ebcf1_568007b4",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 1027,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-12T16:17:34Z",
+      "side": 1,
+      "message": "I\u0027m not sure about the change to resolve-shared-libs-deps (hopefully Dan knows more about that), but this change and the one below look like they should be made regardless? Does LOCAL_TARGET_REQUIRED_MODULES actually work as expected right now? Perhaps it\u0027s just \nleading to inaccuracies in product_FILES...?",
+      "revId": "155fedfe65b2a9e824f2f722358a3ced2f370bb5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
