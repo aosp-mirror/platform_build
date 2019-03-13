@@ -52,12 +52,13 @@ def main():
   noparent = 'set +noparent'
   email = '([^@ ]+@[^ @]+|\\*)'
   emails = '(%s( *, *%s)*)' % (email, email)
-  directive = '(%s|%s)' % (emails, noparent)
+  file_directive = 'file: *([^ :]+ *: *)?[^ ]+'
+  directive = '(%s|%s|%s)' % (emails, noparent, file_directive)
   glob = '[a-zA-Z0-9_\\.\\-\\*\\?]+'
   globs = '(%s( *, *%s)*)' % (glob, glob)
   perfile = 'per-file +' + globs + ' *= *' + directive
   include = 'include +([^ :]+ *: *)?[^ ]+'
-  pats = '(|%s|%s|%s|%s)$' % (noparent, email, perfile, include)
+  pats = '(|%s|%s|%s|%s|%s)$' % (noparent, email, perfile, include, file_directive)
   patterns = re.compile(pats)
   address_pattern = re.compile('([^@ ]+@[^ @]+)')
   perfile_pattern = re.compile('per-file +.*=(.*)')
