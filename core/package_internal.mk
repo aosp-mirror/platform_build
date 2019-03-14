@@ -109,50 +109,49 @@ include $(BUILD_SYSTEM)/force_aapt2.mk
 # Process Support Library dependencies.
 include $(BUILD_SYSTEM)/support_libraries.mk
 
-package_resource_overlays := $(strip \
+# Determine whether auto-RRO is enabled for this package.
+enforce_rro_enabled :=
+ifeq ($(PRODUCT_ENFORCE_RRO_TARGETS),*)
+  # * means all system APKs, so enable conditionally based on module path.
+
+  # Note that base_rules.mk has not yet been included, so it's likely that only
+  # one of LOCAL_MODULE_PATH and the LOCAL_X_MODULE flags has been set.
+  ifeq (,$(LOCAL_MODULE_PATH))
+    non_system_module := $(filter true,\
+        $(LOCAL_ODM_MODULE) \
+        $(LOCAL_OEM_MODULE) \
+        $(LOCAL_PRODUCT_MODULE) \
+        $(LOCAL_PRODUCT_SERVICES_MODULE) \
+        $(LOCAL_PROPRIETARY_MODULE) \
+        $(LOCAL_VENDOR_MODULE))
+    enforce_rro_enabled := $(if $(non_system_module),,true)
+  else ifneq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
+    enforce_rro_enabled := true
+  endif
+else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
+  enforce_rro_enabled := true
+endif
+
+all_package_resource_overlays := $(strip \
     $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \
       $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
     $(wildcard $(foreach dir, $(DEVICE_PACKAGE_OVERLAYS), \
       $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))))
 
-enforce_rro_enabled :=
-ifneq ($(package_resource_overlays),)
-  ifeq ($(PRODUCT_ENFORCE_RRO_TARGETS),*)
-    # * means all system APKs, so enable conditionally based on module path.
-
-    # Note that base_rules.mk has not yet been included, so it's likely that only
-    # one of LOCAL_MODULE_PATH and the LOCAL_X_MODULE flags has been set.
-    ifeq (,$(LOCAL_MODULE_PATH))
-      non_system_module := $(filter true,\
-          $(LOCAL_ODM_MODULE) \
-          $(LOCAL_OEM_MODULE) \
-          $(LOCAL_PRODUCT_MODULE) \
-          $(LOCAL_PRODUCT_SERVICES_MODULE) \
-          $(LOCAL_PROPRIETARY_MODULE) \
-          $(LOCAL_VENDOR_MODULE))
-      enforce_rro_enabled := $(if $(non_system_module),,true)
-    else ifneq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
-      enforce_rro_enabled := true
-    endif
-  else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
-    enforce_rro_enabled := true
-  endif
-endif
-
+static_resource_overlays :=
+runtime_resource_overlays :=
 ifdef enforce_rro_enabled
   ifneq ($(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS),)
-    static_only_resource_overlays := $(filter $(addsuffix %,$(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS)),$(package_resource_overlays))
-    ifneq ($(static_only_resource_overlays),)
-      package_resource_overlays := $(filter-out $(static_only_resource_overlays),$(package_resource_overlays))
-      LOCAL_RESOURCE_DIR := $(static_only_resource_overlays) $(LOCAL_RESOURCE_DIR)
-      ifeq ($(package_resource_overlays),)
-        enforce_rro_enabled :=
-      endif
-    endif
+    static_resource_overlays += $(filter $(addsuffix %,$(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS)),$(all_package_resource_overlays))
   endif
+  runtime_resource_overlays := $(filter-out $(static_resource_overlays),$(all_package_resource_overlays))
 else
-  LOCAL_RESOURCE_DIR := $(package_resource_overlays) $(LOCAL_RESOURCE_DIR)
+  static_resource_overlays := $(all_package_resource_overlays)
 endif
+
+# Add the static overlays. Auto-RRO is created later, as it depends on
+# other logic in this file.
+LOCAL_RESOURCE_DIR := $(static_resource_overlays) $(LOCAL_RESOURCE_DIR)
 
 all_assets := $(strip \
     $(foreach dir, $(LOCAL_ASSET_DIR), \
@@ -784,7 +783,7 @@ endif # skip_definition
 # Reset internal variables.
 all_res_assets :=
 
-ifdef enforce_rro_enabled
+ifdef runtime_resource_overlays
   ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
     enforce_rro_use_res_lib := true
   else
@@ -799,11 +798,11 @@ ifdef enforce_rro_enabled
     enforce_rro_manifest_package_info := $(full_android_manifest)
   endif
 
-$(call append_enforce_rro_sources, \
-    $(my_register_name), \
-    $(enforce_rro_is_manifest_package_name), \
-    $(enforce_rro_manifest_package_info), \
-    $(enforce_rro_use_res_lib), \
-    $(package_resource_overlays) \
-    )
-endif  # enforce_rro_enabled
+  $(call append_enforce_rro_sources, \
+      $(my_register_name), \
+      $(enforce_rro_is_manifest_package_name), \
+      $(enforce_rro_manifest_package_info), \
+      $(enforce_rro_use_res_lib), \
+      $(runtime_resource_overlays) \
+  )
+endif
