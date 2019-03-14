@@ -46,6 +46,30 @@
       "revId": "38a75b6946029b616ff16e7d986ba0689dbc5e92",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c3530796_b52a7ba6",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-14T08:07:23Z",
+      "side": 1,
+      "message": "Right, ADDITIONAL_DEFAULT_PROPERTIES will be on /system/etc/prop.default\nPRODUCT_PRODUCT_PROPERTIES will be on /product/build.prop",
+      "parentUuid": "a809b393_75cb5ef4",
+      "range": {
+        "startLine": 261,
+        "startChar": 26,
+        "endLine": 261,
+        "endChar": 46
+      },
+      "revId": "38a75b6946029b616ff16e7d986ba0689dbc5e92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
