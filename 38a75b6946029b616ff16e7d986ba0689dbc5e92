@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cc341691_f4f7e16b",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-03-14T07:30:52Z",
+      "side": 1,
+      "message": "Can you explicitly mention using PRODUCT_PRODUCT_PROPERTIES like in the other CL in this topic, since the point of this CL is for them not to touch the system image, which is where this property will be installed if I\u0027m not mistaken.",
+      "range": {
+        "startLine": 261,
+        "startChar": 26,
+        "endLine": 261,
+        "endChar": 46
+      },
+      "revId": "38a75b6946029b616ff16e7d986ba0689dbc5e92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
