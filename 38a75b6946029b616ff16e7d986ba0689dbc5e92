@@ -22,6 +22,30 @@
       "revId": "38a75b6946029b616ff16e7d986ba0689dbc5e92",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a809b393_75cb5ef4",
+        "filename": "core/main.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 261,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-14T08:04:06Z",
+      "side": 1,
+      "message": "Good point, otherwise someone might just change ADDITIONAL_DEFAULT_PROPERTIES to use /product instead.\n\nThanks!",
+      "parentUuid": "cc341691_f4f7e16b",
+      "range": {
+        "startLine": 261,
+        "startChar": 26,
+        "endLine": 261,
+        "endChar": 46
+      },
+      "revId": "38a75b6946029b616ff16e7d986ba0689dbc5e92",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
