@@ -43,6 +43,10 @@ Usage: merge_target_files.py [args]
 
   --output-target-files output-target-files-package
       The output merged target files package. Also a zip archive.
+
+  --rebuild_recovery
+      Rebuild the recovery patch used by non-A/B devices and write it to the
+      system image.
 """
 
 from __future__ import print_function
@@ -65,6 +69,7 @@ OPTIONS.system_misc_info_keys = None
 OPTIONS.other_target_files = None
 OPTIONS.other_item_list = None
 OPTIONS.output_target_files = None
+OPTIONS.rebuild_recovery = False
 OPTIONS.keep_tmp = False
 
 # default_system_item_list is a list of items to extract from the partial
@@ -433,7 +438,8 @@ def merge_target_files(
     system_misc_info_keys,
     other_target_files,
     other_item_list,
-    output_target_files):
+    output_target_files,
+    rebuild_recovery):
   """Merge two target files packages together.
 
   This function takes system and other target files packages as input, performs
@@ -466,6 +472,9 @@ def merge_target_files(
 
     output_target_files: The name of the output zip archive target files
     package created by merging system and other.
+
+    rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
+    devices and write it to the system image.
   """
 
   logger.info(
@@ -531,10 +540,10 @@ def merge_target_files(
 
   # Regenerate IMAGES in the temporary directory.
 
-  add_img_args = [
-      '--verbose',
-      output_target_files_temp_dir,
-  ]
+  add_img_args = ['--verbose']
+  if rebuild_recovery:
+    add_img_args.append('--rebuild_recovery')
+  add_img_args.append(output_target_files_temp_dir)
 
   add_img_to_target_files.main(add_img_args)
 
@@ -630,6 +639,8 @@ def main():
       OPTIONS.other_item_list = a
     elif o == '--output-target-files':
       OPTIONS.output_target_files = a
+    elif o == '--rebuild_recovery':
+      OPTIONS.rebuild_recovery = True
     elif o == '--keep_tmp':
       OPTIONS.keep_tmp = True
     else:
@@ -645,6 +656,7 @@ def main():
           'other-target-files=',
           'other-item-list=',
           'output-target-files=',
+          'rebuild_recovery',
           "keep_tmp",
       ],
       extra_option_handler=option_handler)
@@ -679,7 +691,8 @@ def main():
           system_misc_info_keys=system_misc_info_keys,
           other_target_files=OPTIONS.other_target_files,
           other_item_list=other_item_list,
-          output_target_files=OPTIONS.output_target_files),
+          output_target_files=OPTIONS.output_target_files,
+          rebuild_recovery=OPTIONS.rebuild_recovery),
       OPTIONS.keep_tmp)
 
 
