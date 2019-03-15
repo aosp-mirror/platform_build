@@ -39,6 +39,7 @@ Usage:  check_target_file_signatures [flags] target_files
 
 """
 
+import logging
 import os
 import re
 import subprocess
@@ -51,6 +52,8 @@ if sys.hexversion < 0x02070000:
   print >> sys.stderr, "Python 2.7 or newer is required."
   sys.exit(1)
 
+
+logger = logging.getLogger(__name__)
 
 # Work around a bug in Python's zipfile module that prevents opening of zipfiles
 # if any entry has an extra field of between 1 and 3 bytes (which is common with
@@ -414,6 +417,8 @@ def main(argv):
   if len(args) != 1:
     common.Usage(__doc__)
     sys.exit(1)
+
+  common.InitLogging()
 
   ALL_CERTS.FindLocalCerts()
 
