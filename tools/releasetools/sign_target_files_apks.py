@@ -85,16 +85,12 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       Replace the veritykeyid in BOOT/cmdline of input_target_file_zip
       with keyid of the cert pointed by <path_to_X509_PEM_cert_file>.
 
-  --apex_payload_key <name=key>
-      Add a mapping for apex package name to payload signing key.
-
-  --avb_{apex,boot,system,vendor,dtbo,vbmeta}_algorithm <algorithm>
-
+  --avb_{boot,system,vendor,dtbo,vbmeta}_algorithm <algorithm>
   --avb_{boot,system,vendor,dtbo,vbmeta}_key <key>
       Use the specified algorithm (e.g. SHA256_RSA4096) and the key to AVB-sign
       the specified image. Otherwise it uses the existing values in info dict.
 
-  --avb_{apex,boot,system,vendor,dtbo,vbmeta}_extra_args <args>
+  --avb_{boot,system,vendor,dtbo,vbmeta}_extra_args <args>
       Specify any additional args that are needed to AVB-sign the image
       (e.g. "--signing_helper /path/to/helper"). The args will be appended to
       the existing ones in info dict.
@@ -113,13 +109,11 @@ import shutil
 import stat
 import subprocess
 import sys
-import time
 import tempfile
 import zipfile
 from xml.etree import ElementTree
 
 import add_img_to_target_files
-import apex_utils
 import common
 
 
@@ -133,7 +127,6 @@ logger = logging.getLogger(__name__)
 OPTIONS = common.OPTIONS
 
 OPTIONS.extra_apks = {}
-OPTIONS.apex_payload_keys = {}
 OPTIONS.skip_apks_with_path_prefix = set()
 OPTIONS.key_map = {}
 OPTIONS.rebuild_recovery = False
@@ -299,79 +292,6 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
 
   return data
 
-def SignApex(data, name, image_key_path, container_key, pw,
-             platform_api_level, codename_to_api_level_map):
-  """Signing an Apex is a two step process.
-  1: Extract and sign the image_payload.img with image_key.
-  2: Sign the overall APK Container with container key.
-  """
-  unsigned_apex_payload = tempfile.NamedTemporaryFile()
-  signed_apex_payload = tempfile.NamedTemporaryFile()
-  unsigned_apex_payload.write(data)
-  unsigned_apex_payload.flush()
-  unsigned_apex_payload_zip = zipfile.ZipFile(
-      unsigned_apex_payload.name, "r")
-  signed_apex_payload_zip = zipfile.ZipFile(
-      signed_apex_payload.name, "w",
-      compression=zipfile.ZIP_DEFLATED,
-      allowZip64=False)
-
-  for info in unsigned_apex_payload_zip.infolist():
-    filename = info.filename
-
-    data = unsigned_apex_payload_zip.read(filename)
-    out_info = copy.copy(info)
-
-    if filename == 'apex_payload.img':
-      package_name = re.sub('.apex', '', name)
-      apex_sign_helper = apex_utils.ApexPayloadSignerHelper(
-          data)
-
-      extra_signing_args=OPTIONS.avb_extra_args.get('apex')
-      key_path = '%s_pub.pem' % image_key_path
-      signed_apex_payload_image = apex_sign_helper.Sign(
-          package_name,
-          key_path,
-          extra_signing_args)
-
-      common.ZipWriteStr(signed_apex_payload_zip,
-                         out_info,
-                         signed_apex_payload_image)
-    else:
-      common.ZipWriteStr(signed_apex_payload_zip,
-                         out_info,
-                         data)
-
-  common.ZipClose(unsigned_apex_payload_zip)
-  common.ZipClose(signed_apex_payload_zip)
-
-  signed_container = tempfile.NamedTemporaryFile()
-  signed_aligned_container = tempfile.NamedTemporaryFile()
-
-  common.SignFile(
-      signed_apex_payload.name,
-      signed_container.name,
-      container_key,
-      pw,
-      min_api_level=None,
-      codename_to_api_level_map=codename_to_api_level_map)
-
-  cmd = ['zipalign', '-f', '4096',
-         signed_container.name,
-         signed_aligned_container.name]
-  proc = common.Run(cmd)
-  output, _ = proc.communicate()
-  if proc.returncode != 0:
-    raise ApexInfoError(
-      "Unable to zipalign apex container:\n{}".format(output))
-
-  data = signed_aligned_container.read()
-  signed_container.close()
-  signed_aligned_container.close()
-  signed_apex_payload.close()
-
-  return data
-
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
                        apk_key_map, key_passwords, platform_api_level,
@@ -386,7 +306,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
   for info in input_tf_zip.infolist():
     filename = info.filename
-
     if filename.startswith("IMAGES/"):
       continue
 
@@ -482,43 +401,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # Skip the care_map as we will regenerate the system/vendor images.
     elif filename == "META/care_map.pb" or filename == "META/care_map.txt":
       pass
-
-    # Sign Bundled APEX files.
-    elif filename.startswith("SYSTEM/apex") and filename.endswith(".apex"):
-      name = os.path.basename(filename)
-      # TODO(baligh): Read Apex Image and Container keys from
-      # META/apexkeys.txt
-      if name in OPTIONS.apex_payload_keys and name in OPTIONS.extra_apks:
-        image_key_path = OPTIONS.apex_payload_keys[name]
-        container_key_path = OPTIONS.extra_apks[name]
-        print("    signing: %-*s (%s)" % (maxsize, name, container_key_path))
-        print("           : %-*s (%s)" % (maxsize, 'image_payload', image_key_path))
-        signed_data = SignApex(data,
-                               name,
-                               image_key_path,
-                               container_key_path,
-                               key_passwords[container_key_path],
-                               platform_api_level,
-                               codename_to_api_level_map)
-
-        common.ZipWriteStr(output_tf_zip, out_info, signed_data)
-      else:
-        print("    signing: %-*s (NOT SIGNING)" % (maxsize, name))
-        common.ZipWriteStr(output_tf_zip, out_info, data)
-
-    elif ((os.path.dirname(filename) == "SYSTEM/etc/security/apex") and
-          filename != 'SYSTEM/etc/security/apex/'):
-      # AVBPubkey is used to validate APEX payload_image at load time.
-      apex_name = '%s.apex' % os.path.basename(filename)
-      if apex_name in OPTIONS.extra_apks:
-        avb_pubkey_path = '%s.avbpubkey' % OPTIONS.apex_payload_keys[apex_name]
-        print ("Replacing AVB PubKey for %s with %s" % (
-            apex_name, avb_pubkey_path))
-        with open(avb_pubkey_path) as cf:
-          common.ZipWriteStr(output_tf_zip, out_info, cf.read())
-      else:
-        print ("Not Replacing AVB Pubkey for %s" % apex_name)
-        common.ZipWriteStr(output_tf_zip, out_info, data)
 
     # A non-APK file; copy it verbatim.
     else:
@@ -944,10 +826,7 @@ def main(argv):
   key_mapping_options = []
 
   def option_handler(o, a):
-    if o == "--apex_payload_key":
-      apex_name, key = a.split("=")
-      OPTIONS.apex_payload_keys[apex_name] = key
-    elif o in ("-e", "--extra_apks"):
+    if o in ("-e", "--extra_apks"):
       names, key = a.split("=")
       names = names.split(",")
       for n in names:
@@ -986,8 +865,6 @@ def main(argv):
       OPTIONS.avb_extra_args['vbmeta'] = a
     elif o == "--avb_boot_key":
       OPTIONS.avb_keys['boot'] = a
-    elif o == "--avb_apex_algorithm":
-      OPTIONS.avb_algorithms['apex'] = a
     elif o == "--avb_boot_algorithm":
       OPTIONS.avb_algorithms['boot'] = a
     elif o == "--avb_boot_extra_args":
@@ -1010,8 +887,6 @@ def main(argv):
       OPTIONS.avb_algorithms['vendor'] = a
     elif o == "--avb_vendor_extra_args":
       OPTIONS.avb_extra_args['vendor'] = a
-    elif o == "--avb_apex_extra_args":
-      OPTIONS.avb_extra_args['apex'] = a
     else:
       return False
     return True
@@ -1021,7 +896,6 @@ def main(argv):
       extra_opts="e:d:k:ot:",
       extra_long_opts=[
           "extra_apks=",
-          "apex_payload_key=",
           "skip_apks_with_path_prefix=",
           "default_key_mappings=",
           "key_mapping=",
@@ -1033,7 +907,6 @@ def main(argv):
           "avb_vbmeta_algorithm=",
           "avb_vbmeta_key=",
           "avb_vbmeta_extra_args=",
-          "avb_apex_algorithm=",
           "avb_boot_algorithm=",
           "avb_boot_key=",
           "avb_boot_extra_args=",
@@ -1046,8 +919,6 @@ def main(argv):
           "avb_vendor_algorithm=",
           "avb_vendor_key=",
           "avb_vendor_extra_args=",
-          "avb_apex_extra_args=",
-
       ],
       extra_option_handler=option_handler)
 
