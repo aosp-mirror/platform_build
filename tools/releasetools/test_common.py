@@ -491,6 +491,13 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
     wrong_input = os.path.join(self.testdata_dir, 'testkey.pk8')
     self.assertRaises(AssertionError, common.ExtractPublicKey, wrong_input)
 
+  def test_ExtractAvbPublicKey(self):
+    privkey = os.path.join(self.testdata_dir, 'testkey.key')
+    pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
+    with open(common.ExtractAvbPublicKey(privkey)) as privkey_fp, \
+        open(common.ExtractAvbPublicKey(pubkey)) as pubkey_fp:
+      self.assertEqual(privkey_fp.read(), pubkey_fp.read())
+
   def test_ParseCertificate(self):
     cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
 
@@ -1218,7 +1225,7 @@ super_group_foo_group_size={group_foo_size}
       dp_diff.WriteScript(self.script, output_zip, write_verify_script=True)
 
     self.assertNotIn("block_image_update", str(self.script),
-        "Removed partition should not be patched.")
+                     "Removed partition should not be patched.")
 
     lines = self.get_op_list(self.output_path)
     self.assertEqual(lines, ["remove foo"])
