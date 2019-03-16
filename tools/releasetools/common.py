@@ -50,7 +50,8 @@ class Options(object):
     if base_out_path is None:
       base_search_path = "out"
     else:
-      base_search_path = os.path.join(base_out_path, os.path.basename(os.getcwd()))
+      base_search_path = os.path.join(base_out_path,
+                                      os.path.basename(os.getcwd()))
 
     platform_search_path = {
         "linux2": os.path.join(base_search_path, "host/linux-x86"),
@@ -552,11 +553,7 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   """
   if key is None:
     key = info_dict["avb_" + partition + "_key_path"]
-  avbtool = os.getenv('AVBTOOL') or info_dict["avb_avbtool"]
-  pubkey_path = MakeTempFile(prefix="avb-", suffix=".pubkey")
-  RunAndCheckOutput(
-      [avbtool, "extract_public_key", "--key", key, "--output", pubkey_path])
-
+  pubkey_path = ExtractAvbPublicKey(key)
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
   return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
@@ -2121,6 +2118,21 @@ def ExtractPublicKey(cert):
   assert proc.returncode == 0, \
       'Failed to dump public key from certificate: %s\n%s' % (cert, stderrdata)
   return pubkey
+
+
+def ExtractAvbPublicKey(key):
+  """Extracts the AVB public key from the given public or private key.
+
+  Args:
+    key: The input key file, which should be PEM-encoded public or private key.
+
+  Returns:
+    The path to the extracted AVB public key file.
+  """
+  output = MakeTempFile(prefix='avb-', suffix='.avbpubkey')
+  RunAndCheckOutput(
+      ['avbtool', 'extract_public_key', "--key", key, "--output", output])
+  return output
 
 
 def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,
