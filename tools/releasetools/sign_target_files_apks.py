@@ -106,6 +106,7 @@ import base64
 import copy
 import errno
 import gzip
+import logging
 import os
 import re
 import shutil
@@ -126,6 +127,8 @@ if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
   sys.exit(1)
 
+
+logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
 
@@ -187,11 +190,8 @@ def GetApkFileInfo(filename, compressed_extension, skipped_prefixes):
 
   # skipped_prefixes should be one of set/list/tuple types. Other types such as
   # str shouldn't be accepted.
-  assert (isinstance(skipped_prefixes, tuple) or
-          isinstance(skipped_prefixes, set) or
-          isinstance(skipped_prefixes, list)), \
-              "Invalid skipped_prefixes input type: {}".format(
-                  type(skipped_prefixes))
+  assert isinstance(skipped_prefixes, (set, list, tuple)), \
+      "Invalid skipped_prefixes input type: {}".format(type(skipped_prefixes))
 
   compressed_apk_extension = (
       ".apk" + compressed_extension if compressed_extension else None)
@@ -934,7 +934,7 @@ def GetCodenameToApiLevelMap(input_tf_zip):
   result = dict()
   for codename in codenames:
     codename = codename.strip()
-    if len(codename) > 0:
+    if codename:
       result[codename] = api_level
   return result
 
@@ -1054,6 +1054,8 @@ def main(argv):
   if len(args) != 2:
     common.Usage(__doc__)
     sys.exit(1)
+
+  common.InitLogging()
 
   input_zip = zipfile.ZipFile(args[0], "r")
   output_zip = zipfile.ZipFile(args[1], "w",
