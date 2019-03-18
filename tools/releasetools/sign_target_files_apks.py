@@ -193,7 +193,7 @@ def GetApexKeys(keys_info, key_map):
     if apex not in keys_info:
       continue
     assert key, 'Presigned APEX container for {} is not allowed'.format(apex)
-    keys_info[apex][1] = key_map.get(key, key)
+    keys_info[apex] = (keys_info[apex][0], key_map.get(key, key))
 
   return keys_info
 
