@@ -16,6 +16,24 @@
       "revId": "395aa3f49a1b2071abd98f2093b2c23fdd6020d9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6730a119_c703e54b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1464125
+      },
+      "writtenOn": "2019-03-18T21:29:42Z",
+      "side": 1,
+      "message": "Hi Dan,\n\nI have added the justification. Please let me know if there are any more issues to resolve.",
+      "parentUuid": "194a40ed_e14a5c20",
+      "revId": "395aa3f49a1b2071abd98f2093b2c23fdd6020d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
