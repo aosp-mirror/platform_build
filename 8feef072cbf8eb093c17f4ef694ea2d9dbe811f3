@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "08df11c0_eea88f7c",
+        "filename": "core/product_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-03-18T18:15:11Z",
+      "side": 1,
+      "message": "hmm... why? PRODUCT_BUILD_SUPER_PARTITION shouldn\u0027t be defined before this. Do you need to redefine this in the command line? if so, I suggest:\n\nPRODUCT_BUILD_SUPER_PARTITION :\u003d $(or \\\n    $(TARGET_BUILD_SUPER_PARTITION),\n    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BUILD_SUPER_PARTITION)),\\\n    $(PRODUCT_USE_DYNAMIC_PARTITIONS))\n\nAnd use TARGET_BUILD_SUPER_PARTITION in command line.",
+      "range": {
+        "startLine": 558,
+        "startChar": 0,
+        "endLine": 558,
+        "endChar": 36
+      },
+      "revId": "8feef072cbf8eb093c17f4ef694ea2d9dbe811f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
