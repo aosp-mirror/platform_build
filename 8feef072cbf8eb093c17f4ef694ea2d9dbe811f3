@@ -22,6 +22,30 @@
       "revId": "8feef072cbf8eb093c17f4ef694ea2d9dbe811f3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8014b40e_01ddf436",
+        "filename": "core/product_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 558,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-03-18T18:51:42Z",
+      "side": 1,
+      "message": "Chatted offline, my addition was not needed.\n\n    $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_USE_DYNAMIC_PARTITION_SIZE)),\\\n\nhandles setting PRODUCT_BUILD_SUPER_PARTITION to whatever the device.mk file set it to (if it did set it).",
+      "parentUuid": "08df11c0_eea88f7c",
+      "range": {
+        "startLine": 558,
+        "startChar": 0,
+        "endLine": 558,
+        "endChar": 36
+      },
+      "revId": "8feef072cbf8eb093c17f4ef694ea2d9dbe811f3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
