@@ -22,6 +22,30 @@
       "revId": "7556703f0dfab14c91c03dab1a3c25f6386268d4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "81afe702_7ba77da7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-03-18T17:13:38Z",
+      "side": 1,
+      "message": "I believe that a newer ccache version should fix the correctness/reliability problems we had with corrupted objects in the cache (at least the release notes imply so).\n\nBut realistically, incremental builds provide larger benefits, and for many cases, ccache slows down incremental builds (I think because of additional IO load during our builds, even on SSDs).",
+      "parentUuid": "984d9ed3_40449848",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 63
+      },
+      "revId": "7556703f0dfab14c91c03dab1a3c25f6386268d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
