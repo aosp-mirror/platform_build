@@ -1,5 +1,6 @@
+#!/bin/sh
 #
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
 
-BUILD_ID=QP1A.190319.001
+tmpfile=$(mktemp)
+cat $3 | openssl rsautl -sign -inkey $2 -raw > $tmpfile
+cat $tmpfile > $3
+rm $tmpfile
