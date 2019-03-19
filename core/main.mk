@@ -1144,27 +1144,28 @@ $(if $(strip $(1)), \
 )
 endef
 
-ifeq (true|,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_PACKAGES_EXIST)|$(filter true,$(ALLOW_MISSING_DEPENDENCIES)))
-  _whitelist := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST)
-  _modules := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
-  # Sanity check all modules in PRODUCT_PACKAGES exist. We check for the
-  # existence if either <module> or the <module>_32 variant.
-  _nonexistant_modules := $(filter-out $(ALL_MODULES),$(_modules))
-  _nonexistant_modules := $(foreach m,$(_nonexistant_modules),\
-    $(if $(call get-32-bit-modules,$(m)),,$(m)))
-  $(call maybe-print-list-and-error,$(filter-out $(_whitelist),$(_nonexistant_modules)),\
-    $(INTERNAL_PRODUCT) includes non-existant modules in PRODUCT_PACKAGES)
-  $(call maybe-print-list-and-error,$(filter-out $(_nonexistant_modules),$(_whitelist)),\
-    $(INTERNAL_PRODUCT) includes redundant whitelist entries for nonexistant PRODUCT_PACKAGES)
-endif
-
 ifdef FULL_BUILD
-  # Check to ensure that all modules in PRODUCT_HOST_PACKAGES exist
-  #
-  # Many host modules are Linux-only, so skip this check on Mac. If we ever have Mac-only modules,
-  # maybe it would make sense to have PRODUCT_HOST_PACKAGES_LINUX/_DARWIN?
-  ifneq ($(HOST_OS),darwin)
-    ifneq (true,$(ALLOW_MISSING_DEPENDENCIES))
+  ifneq (true,$(ALLOW_MISSING_DEPENDENCIES))
+    # Check to ensure that all modules in PRODUCT_PACKAGES exist (opt in per product)
+    ifeq (true,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_PACKAGES_EXIST))
+      _whitelist := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST)
+      _modules := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES)
+      # Sanity check all modules in PRODUCT_PACKAGES exist. We check for the
+      # existence if either <module> or the <module>_32 variant.
+      _nonexistant_modules := $(filter-out $(ALL_MODULES),$(_modules))
+      _nonexistant_modules := $(foreach m,$(_nonexistant_modules),\
+        $(if $(call get-32-bit-modules,$(m)),,$(m)))
+      $(call maybe-print-list-and-error,$(filter-out $(_whitelist),$(_nonexistant_modules)),\
+        $(INTERNAL_PRODUCT) includes non-existant modules in PRODUCT_PACKAGES)
+      $(call maybe-print-list-and-error,$(filter-out $(_nonexistant_modules),$(_whitelist)),\
+        $(INTERNAL_PRODUCT) includes redundant whitelist entries for nonexistant PRODUCT_PACKAGES)
+    endif
+
+    # Check to ensure that all modules in PRODUCT_HOST_PACKAGES exist
+    #
+    # Many host modules are Linux-only, so skip this check on Mac. If we ever have Mac-only modules,
+    # maybe it would make sense to have PRODUCT_HOST_PACKAGES_LINUX/_DARWIN?
+    ifneq ($(HOST_OS),darwin)
       _modules := $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_HOST_PACKAGES)
       _nonexistant_modules := $(foreach m,$(_modules),\
         $(if $(filter FAKE,$(ALL_MODULES.$(m).CLASS))$(filter $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,$(m)))
