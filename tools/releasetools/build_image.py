@@ -739,6 +739,7 @@ def SaveGlobalDict(filename, glob_dict):
   with open(filename, "w") as f:
     f.writelines(["%s=%s" % (key, value) for (key, value) in glob_dict.items()])
 
+
 def ExtractSystemOtherAvbKey(in_dir, glob_dict):
   if glob_dict.get("avb_system_extract_system_other_key") != "true":
     return
@@ -754,11 +755,12 @@ def ExtractSystemOtherAvbKey(in_dir, glob_dict):
 
   # Extracts the public key used to sign system_other.img, into system.img:
   #   /system/etc/security/avb/system_other.avbpubkey.
-  avbtool = os.getenv('AVBTOOL') or glob_dict.get("avb_avbtool")
+  avbtool = glob_dict.get("avb_avbtool")
   extract_from = glob_dict.get("avb_system_other_key_path")
   cmd = [avbtool, "extract_public_key", "--key", extract_from,
          "--output", extract_to]
   common.RunAndCheckOutput(cmd, verbose=False)
+
 
 def main(argv):
   if len(argv) < 4 or len(argv) > 5:
