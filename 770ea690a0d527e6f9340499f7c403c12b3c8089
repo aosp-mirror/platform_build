@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "2722c789_acfd20dc",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 723,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-19T16:00:24Z",
+      "side": 1,
+      "message": "nit: $(TARGET_OUT_PRODUCT_ETC)",
+      "range": {
+        "startLine": 723,
+        "startChar": 48,
+        "endLine": 723,
+        "endChar": 73
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4a38b266_6d046dbf",
         "filename": "core/Makefile",
         "patchSetId": 3
@@ -59,6 +82,23 @@
         "endLine": 2980,
         "endChar": 8
       },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0413c965_fd34776d",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-19T16:00:24Z",
+      "side": 1,
+      "message": "nit: two blank lines between top-level functions",
       "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
