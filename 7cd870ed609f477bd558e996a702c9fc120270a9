@@ -34,6 +34,24 @@
       "revId": "7cd870ed609f477bd558e996a702c9fc120270a9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f1b64259_1ab886f6",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-03-19T20:20:48Z",
+      "side": 0,
+      "message": "Looks like this was broken by Iebdd3ec8c643be3d9877b7a96cbdd83465fa3878.",
+      "parentUuid": "295836d7_062ef821",
+      "revId": "7cd870ed609f477bd558e996a702c9fc120270a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
