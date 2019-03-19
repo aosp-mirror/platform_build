@@ -146,11 +146,12 @@ def AddSystem(output_zip, recovery_img=None, boot_img=None):
     ofile.write(data)
     ofile.close()
 
-    arc_name = "SYSTEM/" + fn
-    if arc_name in output_zip.namelist():
-      OPTIONS.replace_updated_files_list.append(arc_name)
-    else:
-      common.ZipWrite(output_zip, ofile.name, arc_name)
+    if output_zip:
+      arc_name = "SYSTEM/" + fn
+      if arc_name in output_zip.namelist():
+        OPTIONS.replace_updated_files_list.append(arc_name)
+      else:
+        common.ZipWrite(output_zip, ofile.name, arc_name)
 
   if OPTIONS.rebuild_recovery:
     logger.info("Building new recovery patch")
