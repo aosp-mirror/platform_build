@@ -199,6 +199,38 @@ def read_config_list(config_file_path):
     return config_file.read().splitlines()
 
 
+def validate_config_lists(system_item_list, other_item_list):
+  """Performs validations on the merge config lists.
+
+  Args:
+    system_item_list: The list of items to extract from the partial
+    system target files package as is.
+
+    other_item_list: The list of items to extract from the partial
+    other target files package as is.
+
+  Returns:
+    False if a validation fails, otherwise true.
+  """
+  default_combined_item_set = set(default_system_item_list)
+  default_combined_item_set.update(default_other_item_list)
+
+  combined_item_set = set(system_item_list)
+  combined_item_set.update(other_item_list)
+
+  # Check that the merge config lists are not missing any item specified
+  # by the default config lists.
+  difference = default_combined_item_set.difference(combined_item_set)
+  if difference:
+    logger.error('Missing merge config items: %s' % list(difference))
+    logger.error('Please ensure missing items are in either the '
+                 'system-item-list or other-item-list files provided to '
+                 'this script.')
+    return False
+
+  return True
+
+
 def process_ab_partitions_txt(
     system_target_files_temp_dir,
     other_target_files_temp_dir,
@@ -670,6 +702,11 @@ def main():
     other_item_list = read_config_list(OPTIONS.other_item_list)
   else:
     other_item_list = default_other_item_list
+
+  if not validate_config_lists(
+      system_item_list=system_item_list,
+      other_item_list=other_item_list):
+    sys.exit(1)
 
   call_func_with_temp_dir(
       lambda temp_dir: merge_target_files(
