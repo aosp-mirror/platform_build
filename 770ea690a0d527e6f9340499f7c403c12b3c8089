@@ -1,0 +1,182 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4a38b266_6d046dbf",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2977,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-19T14:39:45Z",
+      "side": 1,
+      "message": "and $(AVBTOOL)",
+      "range": {
+        "startLine": 2977,
+        "startChar": 48,
+        "endLine": 2977,
+        "endChar": 50
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e80d069a_908fb4e3",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2979,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-19T14:39:45Z",
+      "side": 1,
+      "message": "`@rm -f $@` before mkdir",
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "517f758a_9acb0ff8",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2980,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-19T14:39:45Z",
+      "side": 1,
+      "message": "remove (no longer needed)",
+      "range": {
+        "startLine": 2980,
+        "startChar": 1,
+        "endLine": 2980,
+        "endChar": 8
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f4f621f_4623f114",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-19T14:39:45Z",
+      "side": 1,
+      "message": "+system_other",
+      "range": {
+        "startLine": 99,
+        "startChar": 19,
+        "endLine": 99,
+        "endChar": 25
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d64b761c_a295ec8c",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-19T14:39:45Z",
+      "side": 1,
+      "message": "or filename \u003d\u003d \u0027SYSTEM/product/etc/security/avb/system_other.avbpubkey\u0027",
+      "range": {
+        "startLine": 549,
+        "startChar": 9,
+        "endLine": 549,
+        "endChar": 70
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8ffdf3fa_31c096c3",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-19T14:39:45Z",
+      "side": 1,
+      "message": "misc_info[\u0027avb_system_other_key_path\u0027]",
+      "range": {
+        "startLine": 550,
+        "startChar": 20,
+        "endLine": 550,
+        "endChar": 56
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1fa60967_7ace199a",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 551,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-19T14:39:45Z",
+      "side": 1,
+      "message": "this needs to be unconditional (because system_other.img must have been signed with some key, as in misc_info[\u0027avb_system_other_key_path\u0027]",
+      "range": {
+        "startLine": 551,
+        "startChar": 6,
+        "endLine": 551,
+        "endChar": 21
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ada6faea_b672d98b",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-19T14:39:45Z",
+      "side": 1,
+      "message": "remove the space",
+      "range": {
+        "startLine": 553,
+        "startChar": 13,
+        "endLine": 553,
+        "endChar": 14
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
