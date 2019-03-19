@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "599def77_6e9c61db",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 752,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-19T11:31:17Z",
+      "side": 1,
+      "message": "This function is removed.",
+      "parentUuid": "efef5c6d_def80c3b",
+      "range": {
+        "startLine": 751,
+        "startChar": 2,
+        "endLine": 752,
+        "endChar": 29
+      },
+      "revId": "bf8d321978a8ff0b9c9d1e1139f1fe5ae8b74846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7543b2a8_f691e1d7",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 2
@@ -165,6 +189,30 @@
       "revId": "bf8d321978a8ff0b9c9d1e1139f1fe5ae8b74846",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ecbab2b1_59530a25",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 800,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-19T11:31:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "149f41fd_ea023a6f",
+      "range": {
+        "startLine": 800,
+        "startChar": 6,
+        "endLine": 800,
+        "endChar": 30
+      },
+      "revId": "bf8d321978a8ff0b9c9d1e1139f1fe5ae8b74846",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
