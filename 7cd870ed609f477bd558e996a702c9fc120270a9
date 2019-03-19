@@ -16,6 +16,24 @@
       "revId": "7cd870ed609f477bd558e996a702c9fc120270a9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "295836d7_062ef821",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2019-03-19T20:09:57Z",
+      "side": 0,
+      "message": "I did a build with UNSAFE_DISABLE_HIDDENAPI_FLAGS\u003dfalse and couldn\u0027t find any modules that actually triggered this line, and so conveniently decided to put it in app_prebuilt_internal.mk and call it a day. Now that I look at the code again, this code actually seems to be meaningless?\n\nThe only place that non_system_module is set is here:\nhttp://cs/android/build/make/core/base_rules.mk?l\u003d99\u0026rcl\u003db378d4d0a580322de710feb35f16d1bb114e6ba2\n\nbut, base_rules.mk is included below, in line 127, which means non_system_module is always empty here?\n\nWDYT?",
+      "parentUuid": "e38efcc7_2936cd60",
+      "revId": "7cd870ed609f477bd558e996a702c9fc120270a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
