@@ -52,6 +52,24 @@
       "revId": "7cd870ed609f477bd558e996a702c9fc120270a9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b9bcd1cf_7602e692",
+        "filename": "core/prebuilt_internal.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2019-03-19T20:39:54Z",
+      "side": 0,
+      "message": "Ah, I now remember why I *conveniently* assumed it was only for APPS. All the references to the module_run_appcompat flag are inside the \u0027ifeq ($(LOCAL_MODULE_CLASS),APPS)\u0027 clause starting from line 242.\n\nMoving this in app_prebuilt_internal.mk so that it is executed after the base_rules.mk run.\n\nFWIW, I moved this to under \u0027include $(BUILD_SYSTEM)/base_rules.mk\u0027 line below in the current code to see which modules go through it and found ETC, APPS, and EXECUTABLES modules were logged.",
+      "parentUuid": "f1b64259_1ab886f6",
+      "revId": "7cd870ed609f477bd558e996a702c9fc120270a9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
