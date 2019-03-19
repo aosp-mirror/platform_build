@@ -166,7 +166,7 @@ def GetApkCerts(certmap):
 def GetApexKeys(keys_info, key_map):
   """Gets APEX payload and container signing keys by applying the mapping rules.
 
-  We currently don't allow PRESIGNED payload / container keys.
+  Presigned payload / container keys will be set accordingly.
 
   Args:
     keys_info: A dict that maps from APEX filenames to a tuple of (payload_key,
@@ -180,7 +180,8 @@ def GetApexKeys(keys_info, key_map):
   # Apply all the --extra_apex_payload_key options to override the payload
   # signing keys in the given keys_info.
   for apex, key in OPTIONS.extra_apex_payload_keys.items():
-    assert key, 'Presigned APEX payload for {} is not allowed'.format(apex)
+    if not key:
+      key = 'PRESIGNED'
     keys_info[apex] = (key, keys_info[apex][1])
 
   # Apply the key remapping to container keys.
@@ -192,7 +193,8 @@ def GetApexKeys(keys_info, key_map):
     # Skip non-APEX containers.
     if apex not in keys_info:
       continue
-    assert key, 'Presigned APEX container for {} is not allowed'.format(apex)
+    if not key:
+      key = 'PRESIGNED'
     keys_info[apex] = (keys_info[apex][0], key_map.get(key, key))
 
   return keys_info
@@ -245,7 +247,7 @@ def GetApkFileInfo(filename, compressed_extension, skipped_prefixes):
 
 
 def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
-                                 compressed_extension):
+                                 compressed_extension, apex_keys):
   """Checks that all the APKs and APEXes have keys specified.
 
   Args:
@@ -253,6 +255,8 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
     known_keys: A set of APKs and APEXes that have known signing keys.
     compressed_extension: The extension string of compressed APKs, such as
         '.gz', or None if there's no compressed APKs.
+    apex_keys: A dict that contains the key mapping from APEX name to
+        (payload_key, container_key).
 
   Raises:
     AssertionError: On finding unknown APKs and APEXes.
@@ -283,6 +287,31 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
       ("No key specified for:\n  {}\n"
        "Use '-e <apkname>=' to specify a key (which may be an empty string to "
        "not sign this apk).".format("\n  ".join(unknown_files)))
+
+  # For all the APEXes, double check that we won't have an APEX that has only
+  # one of the payload / container keys set.
+  if not apex_keys:
+    return
+
+  invalid_apexes = []
+  for info in input_tf_zip.infolist():
+    if (not info.filename.startswith('SYSTEM/apex') or
+        not info.filename.endswith('.apex')):
+      continue
+
+    name = os.path.basename(info.filename)
+    (payload_key, container_key) = apex_keys[name]
+    if ((payload_key in common.SPECIAL_CERT_STRINGS and
+         container_key not in common.SPECIAL_CERT_STRINGS) or
+        (payload_key not in common.SPECIAL_CERT_STRINGS and
+         container_key in common.SPECIAL_CERT_STRINGS)):
+      invalid_apexes.append(
+          "{}: payload_key {}, container_key {}".format(
+              name, payload_key, container_key))
+
+  assert not invalid_apexes, \
+      "Invalid APEX keys specified:\n  {}\n".format(
+          "\n  ".join(invalid_apexes))
 
 
 def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
@@ -468,19 +497,29 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       name = os.path.basename(filename)
       payload_key, container_key = apex_keys[name]
 
-      print("    signing: %-*s container (%s)" % (maxsize, name, container_key))
-      print("           : %-*s payload   (%s)" % (maxsize, name, payload_key))
+      # We've asserted not having a case with only one of them PRESIGNED.
+      if (payload_key not in common.SPECIAL_CERT_STRINGS and
+          container_key not in common.SPECIAL_CERT_STRINGS):
+        print("    signing: %-*s container (%s)" % (
+            maxsize, name, container_key))
+        print("           : %-*s payload   (%s)" % (
+            maxsize, name, payload_key))
 
-      (signed_apex, payload_key_name) = SignApex(
-          data,
-          payload_key,
-          container_key,
-          key_passwords[container_key],
-          codename_to_api_level_map,
-          OPTIONS.avb_extra_args.get('apex'))
-      common.ZipWrite(output_tf_zip, signed_apex, filename)
+        (signed_apex, payload_key_name) = SignApex(
+            data,
+            payload_key,
+            container_key,
+            key_passwords[container_key],
+            codename_to_api_level_map,
+            OPTIONS.avb_extra_args.get('apex'))
+        common.ZipWrite(output_tf_zip, signed_apex, filename)
+        updated_apex_payload_keys[payload_key_name] = payload_key
 
-      updated_apex_payload_keys[payload_key_name] = payload_key
+      else:
+        print(
+            "NOT signing: %s\n"
+            "        (skipped due to special cert string)" % (name,))
+        common.ZipWriteStr(output_tf_zip, out_info, data)
 
     # AVB public keys for the installed APEXes, which will be updated later.
     elif (os.path.dirname(filename) == 'SYSTEM/etc/security/apex' and
@@ -557,8 +596,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       continue
 
     name = os.path.basename(filename)
-    assert name in updated_apex_payload_keys, \
-        'Unsigned APEX payload key: {}'.format(filename)
+
+    # Skip PRESIGNED APEXes.
+    if name not in updated_apex_payload_keys:
+      continue
 
     key_path = updated_apex_payload_keys[name]
     if not os.path.exists(key_path) and not key_path.endswith('.pem'):
@@ -1181,7 +1222,8 @@ def main(argv):
   CheckApkAndApexKeysAvailable(
       input_zip,
       set(apk_keys.keys()) | set(apex_keys.keys()),
-      compressed_extension)
+      compressed_extension,
+      apex_keys)
 
   key_passwords = common.GetKeyPasswords(
       set(apk_keys.values()) | set(itertools.chain(*apex_keys.values())))
