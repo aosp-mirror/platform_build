@@ -260,7 +260,7 @@ def AddDtbo(output_zip):
 
   # AVB-sign the image as needed.
   if OPTIONS.info_dict.get("avb_enable") == "true":
-    avbtool = os.getenv('AVBTOOL') or OPTIONS.info_dict["avb_avbtool"]
+    avbtool = OPTIONS.info_dict["avb_avbtool"]
     part_size = OPTIONS.info_dict["dtbo_size"]
     # The AVB hash footer will be replaced if already present.
     cmd = [avbtool, "add_hash_footer", "--image", img.name,
@@ -428,7 +428,7 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
     logger.info("%s.img already exists; not rebuilding...", name)
     return img.name
 
-  avbtool = os.getenv('AVBTOOL') or OPTIONS.info_dict["avb_avbtool"]
+  avbtool = OPTIONS.info_dict["avb_avbtool"]
   cmd = [avbtool, "make_vbmeta_image", "--output", img.name]
   common.AppendAVBSigningArgs(cmd, name)
 
