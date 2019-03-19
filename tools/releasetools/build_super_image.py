@@ -24,9 +24,8 @@ input_file: one of the following:
   - target files package. Same as above, but extracts the archive before
     building super image.
   - a dictionary file containing input arguments to build. Check
-    `dump_dynamic_partitions_info' for details.
+    `dump-super-image-info' for details.
     In addition:
-    - "ab_update" needs to be true for A/B devices.
     - If source images should be included in the output image (for super.img
       and super split images), a list of "*_image" should be paths of each
       source images.
