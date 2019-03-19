@@ -704,7 +704,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
 
   # AVB: if enabled, calculate and add hash to boot.img or recovery.img.
   if info_dict.get("avb_enable") == "true":
-    avbtool = os.getenv('AVBTOOL') or info_dict["avb_avbtool"]
+    avbtool = info_dict["avb_avbtool"]
     part_size = info_dict[partition_name + "_size"]
     cmd = [avbtool, "add_hash_footer", "--image", img.name,
            "--partition_size", str(part_size), "--partition_name",
