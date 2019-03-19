@@ -836,16 +836,17 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
     ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
         $(error BOARD_BUILD_SYSTEM_ROOT_IMAGE cannot be true for devices with dynamic partitions)
     endif
-
-    requirements := \
-        PRODUCT_USE_DYNAMIC_PARTITION_SIZE \
-        PRODUCT_BUILD_SUPER_PARTITION \
-
-    $(foreach req,$(requirements),$(if $(filter false,$($(req))),\
-        $(error PRODUCT_USE_DYNAMIC_PARTITIONS requires $(req) to be true)))
-
-    requirements :=
+    ifneq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
+        $(error PRODUCT_USE_DYNAMIC_PARTITION_SIZE must be true for devices with dynamic partitions)
+    endif
 endif
+
+ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
+    ifneq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
+        $(error Can only build super partition for devices with dynamic partitions)
+    endif
+endif
+
 
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
 
@@ -886,7 +887,7 @@ endif
 
 endif # PRODUCT_USE_DYNAMIC_PARTITION_SIZE
 
-ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
+ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 
 # BOARD_SUPER_PARTITION_GROUPS defines a list of "updatable groups". Each updatable group is a
 # group of partitions that share the same pool of free spaces.
@@ -897,12 +898,16 @@ ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
 #     - BOARD_{GROUP}_PARTITION_PARTITION_LIST: the list of partitions that belongs to this group.
 #       If empty, no partitions belong to this group, and the sum of sizes is effectively 0.
 $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
-    $(eval BOARD_$(group)_SIZE := $(strip $(BOARD_$(group)_SIZE))) \
-    $(if $(BOARD_$(group)_SIZE),,$(error BOARD_$(group)_SIZE must not be empty)) \
-    $(eval .KATI_READONLY := BOARD_$(group)_SIZE) \
     $(eval BOARD_$(group)_PARTITION_LIST ?=) \
     $(eval .KATI_READONLY := BOARD_$(group)_PARTITION_LIST) \
 )
+ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
+$(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
+    $(eval BOARD_$(group)_SIZE := $(strip $(BOARD_$(group)_SIZE))) \
+    $(if $(BOARD_$(group)_SIZE),,$(error BOARD_$(group)_SIZE must not be empty)) \
+    $(eval .KATI_READONLY := BOARD_$(group)_SIZE) \
+)
+endif # PRODUCT_BUILD_SUPER_PARTITION
 
 # BOARD_*_PARTITION_LIST: a list of the following tokens
 valid_super_partition_list := system vendor product product_services odm
@@ -923,6 +928,10 @@ BOARD_SUPER_PARTITION_PARTITION_LIST := \
     $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
         $(BOARD_$(group)_PARTITION_LIST))
 .KATI_READONLY := BOARD_SUPER_PARTITION_PARTITION_LIST
+
+endif # PRODUCT_USE_DYNAMIC_PARTITIONS
+
+ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
 
 ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
