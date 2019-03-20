@@ -70,6 +70,30 @@
       "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e7c65dfc_d8fc4d22",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2165,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-20T15:25:45Z",
+      "side": 1,
+      "message": "by arbitrary dependencies do you mean adding a dependency via something like \"x: \u003clib\u003e\" in an Android.mk? I would have thought that to be strongly discouraged (and if it happens in our tree, it should be fixed).\n\nAre there other known things that list doesn\u0027t include?",
+      "parentUuid": "916d89d1_235894a4",
+      "range": {
+        "startLine": 2164,
+        "startChar": 10,
+        "endLine": 2165,
+        "endChar": 27
+      },
+      "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
