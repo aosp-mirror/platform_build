@@ -36,8 +36,6 @@ endef
 
 this_makefile := build/make/core/product-graph.mk
 
-products_svg := $(OUT_DIR)/products.svg
-products_pdf := $(OUT_DIR)/products.pdf
 products_graph := $(OUT_DIR)/products.dot
 ifeq ($(strip $(ANDROID_PRODUCT_GRAPH)),)
 products_list := $(INTERNAL_PRODUCT)
@@ -137,13 +135,8 @@ $(foreach p,$(all_products), \
 			$(eval product_debug_files += $(call product-debug-filename, $(p))) \
    )
 
-$(products_pdf): $(products_graph)
-	@echo Product graph PDF: $@
-	dot -Tpdf -Nshape=box -o $@ $<
-
-$(products_svg): $(products_graph) $(product_debug_files)
-	@echo Product graph SVG: $@
-	dot -Tsvg -Nshape=box -o $@ $<
-
-product-graph: $(products_pdf) $(products_svg)
 .PHONY: product-graph
+product-graph: $(products_graph)
+	@echo Product graph .dot file: $(products_graph)
+	@echo Command to convert to pdf: dot -Tpdf -Nshape=box -o $(OUT_DIR)/products.pdf $(products_graph)
+	@echo Command to convert to svg: dot -Tsvg -Nshape=box -o $(OUT_DIR)/products.svg $(products_graph)
