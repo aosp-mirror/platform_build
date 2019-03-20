@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7916096d_8de571c4",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2165,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-20T10:21:31Z",
+      "side": 1,
+      "message": "FYI, we have a bunch of validation of which files are produced during the build in main.mk already (search for product_target_FILES). It might make sense to tie this into that instead (would just need a single $(filter), probably)",
+      "range": {
+        "startLine": 2164,
+        "startChar": 10,
+        "endLine": 2165,
+        "endChar": 27
+      },
+      "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
