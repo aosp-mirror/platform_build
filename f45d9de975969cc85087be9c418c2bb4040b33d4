@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "30524306_430def9b",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 591,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-20T04:43:55Z",
+      "side": 1,
+      "message": "Renamed to signing_ as it contains both public and private part.",
+      "range": {
+        "startLine": 591,
+        "startChar": 6,
+        "endLine": 591,
+        "endChar": 17
+      },
+      "revId": "f45d9de975969cc85087be9c418c2bb4040b33d4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
