@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d8e4fab8_46f71238",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2161,
+      "author": {
+        "id": 1047684
+      },
+      "writtenOn": "2019-03-20T17:25:52Z",
+      "side": 1,
+      "message": "Could you add libpac.so here? I think it\u0027s also in runtime APEX.",
+      "revId": "4d851113007f0c0910ac7838363d149b61fddffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
