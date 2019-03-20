@@ -477,8 +477,6 @@ endif
 
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 ifneq ($(LOCAL_INSTALLED_MODULE),$(my_default_test_module))
-# Install into the testcase folder
-$(LOCAL_INSTALLED_MODULE) : $(my_default_test_module)
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
 $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	@echo "Install: $@"
@@ -621,6 +619,13 @@ endif
 endif
 
 multi_arch :=
+
+my_default_test_module :=
+my_default_test_module := $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)$(arch_dir)/$(my_installed_module_stem)
+ifneq ($(LOCAL_INSTALLED_MODULE),$(my_default_test_module))
+# Install into the testcase folder
+$(LOCAL_INSTALLED_MODULE) : $(my_default_test_module)
+endif
 
 # The module itself.
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
