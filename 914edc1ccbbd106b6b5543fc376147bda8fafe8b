@@ -118,6 +118,30 @@
       "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9aa92ad8_8f1ac9c0",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2165,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-03-20T17:18:47Z",
+      "side": 1,
+      "message": "b) Ok, that\u0027s unfortunate. Wouldn\u0027t it be better to stick with this hack then, to avoid getting blocked on that? I hope to be able to do something in Soong that is actually decent soon anyway.",
+      "parentUuid": "175e3d72_498efac9",
+      "range": {
+        "startLine": 2164,
+        "startChar": 10,
+        "endLine": 2165,
+        "endChar": 27
+      },
+      "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
