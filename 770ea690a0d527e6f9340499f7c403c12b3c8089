@@ -330,6 +330,30 @@
     },
     {
       "key": {
+        "uuid": "dda849f0_365fae35",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 550,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-20T06:01:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8ffdf3fa_31c096c3",
+      "range": {
+        "startLine": 550,
+        "startChar": 20,
+        "endLine": 550,
+        "endChar": 56
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1fa60967_7ace199a",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 3
@@ -365,6 +389,30 @@
       "side": 1,
       "message": "Doesn\u0027t misc_info[\u0027avb_system_other_key_path\u0027] might still be a dev key?\nas ReplaceAvbSigningKeys() is done later at L604?",
       "parentUuid": "1fa60967_7ace199a",
+      "range": {
+        "startLine": 551,
+        "startChar": 6,
+        "endLine": 551,
+        "endChar": 21
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c5d51f5e_8485fb88",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 551,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-20T06:01:54Z",
+      "side": 1,
+      "message": "You\u0027re right. I missed that part. It then makes sense to keep this `if` statement (would be helpful to put a note here). Alternatively we could move L604 earlier (e.g. to L421). I\u0027m fine with either approach.",
+      "parentUuid": "997aea2d_d898a793",
       "range": {
         "startLine": 551,
         "startChar": 6,
