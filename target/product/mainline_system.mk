@@ -81,7 +81,6 @@ PRODUCT_PACKAGES += \
     libminui \
     libnl \
     libprotobuf-cpp-full \
-    libprotobuf-cpp-full-rtti \
 
 PRODUCT_PACKAGES_DEBUG += \
     avbctl \
