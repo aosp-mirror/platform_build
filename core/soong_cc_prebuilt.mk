@@ -121,8 +121,9 @@ endif
 
 ifndef LOCAL_IS_HOST_MODULE
   ifdef LOCAL_SOONG_UNSTRIPPED_BINARY
+    my_symbol_path := $(if $(LOCAL_SOONG_SYMBOL_PATH),$(LOCAL_SOONG_SYMBOL_PATH),$(my_module_path))
     # Store a copy with symbols for symbolic debugging
-    my_unstripped_path := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
+    my_unstripped_path := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_symbol_path))
     # drop /root as /root is mounted as /
     my_unstripped_path := $(patsubst $(TARGET_OUT_UNSTRIPPED)/root/%,$(TARGET_OUT_UNSTRIPPED)/%, $(my_unstripped_path))
     symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
@@ -130,7 +131,7 @@ ifndef LOCAL_IS_HOST_MODULE
     $(call add-dependency,$(LOCAL_BUILT_MODULE),$(symbolic_output))
 
     ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
-      my_breakpad_path := $(TARGET_OUT_BREAKPAD)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
+      my_breakpad_path := $(TARGET_OUT_BREAKPAD)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_symbol_path))
       breakpad_output := $(my_breakpad_path)/$(my_installed_module_stem).sym
       $(breakpad_output) : $(LOCAL_SOONG_UNSTRIPPED_BINARY) | $(BREAKPAD_DUMP_SYMS) $(PRIVATE_READELF)
 	@echo "target breakpad: $(PRIVATE_MODULE) ($@)"
