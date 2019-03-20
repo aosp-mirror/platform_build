@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5021bd0f_4a4779f5",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 723,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-20T04:30:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2722c789_acfd20dc",
+      "range": {
+        "startLine": 723,
+        "startChar": 48,
+        "endLine": 723,
+        "endChar": 73
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4a38b266_6d046dbf",
         "filename": "core/Makefile",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "da3fd1b9_62de4814",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2977,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-20T04:30:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4a38b266_6d046dbf",
+      "range": {
+        "startLine": 2977,
+        "startChar": 48,
+        "endLine": 2977,
+        "endChar": 50
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e80d069a_908fb4e3",
         "filename": "core/Makefile",
         "patchSetId": 3
@@ -62,6 +110,24 @@
       "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bd10bddd_81a13460",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2979,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-20T04:30:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e80d069a_908fb4e3",
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -88,6 +154,30 @@
     },
     {
       "key": {
+        "uuid": "f7b30171_99fd3f7f",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2980,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-20T04:30:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "517f758a_9acb0ff8",
+      "range": {
+        "startLine": 2980,
+        "startChar": 1,
+        "endLine": 2980,
+        "endChar": 8
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0413c965_fd34776d",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 3
@@ -102,6 +192,24 @@
       "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9be3fd7f_ef02529c",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 741,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-20T04:30:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0413c965_fd34776d",
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -128,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "2d691d34_ce6655b1",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-20T04:30:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8f4f621f_4623f114",
+      "range": {
+        "startLine": 99,
+        "startChar": 19,
+        "endLine": 99,
+        "endChar": 25
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d64b761c_a295ec8c",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 3
@@ -148,6 +280,30 @@
       "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b888abf_a5581b17",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 549,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-20T04:30:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d64b761c_a295ec8c",
+      "range": {
+        "startLine": 549,
+        "startChar": 9,
+        "endLine": 549,
+        "endChar": 70
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -197,6 +353,30 @@
     },
     {
       "key": {
+        "uuid": "997aea2d_d898a793",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 551,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-20T04:30:01Z",
+      "side": 1,
+      "message": "Doesn\u0027t misc_info[\u0027avb_system_other_key_path\u0027] might still be a dev key?\nas ReplaceAvbSigningKeys() is done later at L604?",
+      "parentUuid": "1fa60967_7ace199a",
+      "range": {
+        "startLine": 551,
+        "startChar": 6,
+        "endLine": 551,
+        "endChar": 21
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "ada6faea_b672d98b",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 3
@@ -217,6 +397,30 @@
       "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6aab592_5ed388d8",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 553,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-20T04:30:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ada6faea_b672d98b",
+      "range": {
+        "startLine": 553,
+        "startChar": 13,
+        "endLine": 553,
+        "endChar": 14
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
