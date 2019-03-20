@@ -48,8 +48,9 @@ def get_args():
 def main(argv):
   args = get_args()
 
-  package_name = args.package_info
-  if not args.use_package_name:
+  if args.use_package_name:
+    package_name = args.package_info
+  else:
     with open(args.package_info) as f:
       data = f.read()
       f.close()
