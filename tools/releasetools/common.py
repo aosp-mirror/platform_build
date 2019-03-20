@@ -17,6 +17,7 @@ from __future__ import print_function
 import collections
 import copy
 import errno
+import fnmatch
 import getopt
 import getpass
 import gzip
@@ -771,21 +772,29 @@ def Gunzip(in_filename, out_filename):
     shutil.copyfileobj(in_file, out_file)
 
 
-def UnzipToDir(filename, dirname, pattern=None):
+def UnzipToDir(filename, dirname, patterns=None):
   """Unzips the archive to the given directory.
 
   Args:
     filename: The name of the zip file to unzip.
-
     dirname: Where the unziped files will land.
-
-    pattern: Files to unzip from the archive. If omitted, will unzip the entire
-    archvie.
+    patterns: Files to unzip from the archive. If omitted, will unzip the entire
+        archvie. Non-matching patterns will be filtered out. If there's no match
+        after the filtering, no file will be unzipped.
   """
-
   cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
-  if pattern is not None:
-    cmd.extend(pattern)
+  if patterns is not None:
+    # Filter out non-matching patterns. unzip will complain otherwise.
+    with zipfile.ZipFile(filename) as input_zip:
+      names = input_zip.namelist()
+    filtered = [
+        pattern for pattern in patterns if fnmatch.filter(names, pattern)]
+
+    # There isn't any matching files. Don't unzip anything.
+    if not filtered:
+      return
+    cmd.extend(filtered)
+
   RunAndCheckOutput(cmd)
 
 
