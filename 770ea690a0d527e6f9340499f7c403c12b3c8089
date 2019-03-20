@@ -425,6 +425,30 @@
     },
     {
       "key": {
+        "uuid": "9da5c80a_3008e538",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 551,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-20T08:15:55Z",
+      "side": 1,
+      "message": "After some thoughts, let me still keep it here :-)\n\n1. if --avb_system_other_key is NOT specified when invoking this script, there is no need to extract the dev key misc_info[\u0027avb_system_other_key_path\u0027] again. (as build/core/Makefile already done it).\n\n2. Moving ReplaceAvbSigningKeys() earlier creates some dependency.\n   e.g., it must be earlier than the source here. It might cause some problem if someone moves them around in the future.",
+      "parentUuid": "c5d51f5e_8485fb88",
+      "range": {
+        "startLine": 551,
+        "startChar": 6,
+        "endLine": 551,
+        "endChar": 21
+      },
+      "revId": "770ea690a0d527e6f9340499f7c403c12b3c8089",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ada6faea_b672d98b",
         "filename": "tools/releasetools/sign_target_files_apks.py",
         "patchSetId": 3
