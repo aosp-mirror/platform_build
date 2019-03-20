@@ -116,31 +116,26 @@ package_resource_overlays := $(strip \
       $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))))
 
 enforce_rro_enabled :=
-ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
-  ifneq ($(package_resource_overlays),)
-    ifeq ($(PRODUCT_ENFORCE_RRO_TARGETS),*)
-      enforce_rro_enabled := true
-    else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
-      enforce_rro_enabled := true
-    endif
-  endif
+ifneq ($(package_resource_overlays),)
+  ifeq ($(PRODUCT_ENFORCE_RRO_TARGETS),*)
+    # * means all system APKs, so enable conditionally based on module path.
 
-  ifdef enforce_rro_enabled
+    # Note that base_rules.mk has not yet been included, so it's likely that only
+    # one of LOCAL_MODULE_PATH and the LOCAL_X_MODULE flags has been set.
     ifeq (,$(LOCAL_MODULE_PATH))
-      ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
-        enforce_rro_enabled :=
-      else ifeq (true,$(LOCAL_OEM_MODULE))
-        enforce_rro_enabled :=
-      else ifeq (true,$(LOCAL_ODM_MODULE))
-        enforce_rro_enabled :=
-      else ifeq (true,$(LOCAL_PRODUCT_MODULE))
-        enforce_rro_enabled :=
-      else ifeq (true,$(LOCAL_PRODUCT_SERVICES_MODULE))
-        enforce_rro_enabled :=
-      endif
-    else ifeq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
-      enforce_rro_enabled :=
+      non_system_module := $(filter true,\
+          $(LOCAL_ODM_MODULE) \
+          $(LOCAL_OEM_MODULE) \
+          $(LOCAL_PRODUCT_MODULE) \
+          $(LOCAL_PRODUCT_SERVICES_MODULE) \
+          $(LOCAL_PROPRIETARY_MODULE) \
+          $(LOCAL_VENDOR_MODULE))
+      enforce_rro_enabled := $(if $(non_system_module),,true)
+    else ifneq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
+      enforce_rro_enabled := true
     endif
+  else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
+    enforce_rro_enabled := true
   endif
 endif
 
@@ -156,7 +151,7 @@ ifdef enforce_rro_enabled
     endif
   endif
 else
-LOCAL_RESOURCE_DIR := $(package_resource_overlays) $(LOCAL_RESOURCE_DIR)
+  LOCAL_RESOURCE_DIR := $(package_resource_overlays) $(LOCAL_RESOURCE_DIR)
 endif
 
 all_assets := $(strip \
