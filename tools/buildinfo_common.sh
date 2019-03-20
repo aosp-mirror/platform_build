@@ -21,7 +21,7 @@ echo "ro.${partition}.build.version.release=$PLATFORM_VERSION"
 echo "ro.${partition}.build.version.sdk=$PLATFORM_SDK_VERSION"
 
 echo "ro.product.${partition}.brand=$PRODUCT_BRAND"
-echo "ro.product.${partition}.device=$TARGET_DEVICE"
+echo "ro.product.${partition}.device=$PRODUCT_DEVICE"
 echo "ro.product.${partition}.manufacturer=$PRODUCT_MANUFACTURER"
 echo "ro.product.${partition}.model=$PRODUCT_MODEL"
 echo "ro.product.${partition}.name=$PRODUCT_NAME"
