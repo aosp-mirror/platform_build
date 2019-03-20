@@ -16,6 +16,24 @@
       "revId": "4d851113007f0c0910ac7838363d149b61fddffe",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0266d7b_48cfcde8",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2161,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-03-20T22:46:30Z",
+      "side": 1,
+      "message": "Done. I did notice it, but I left it out because it\u0027s in external and not clearly \"owned\" by the Runtime module, and so it might not be a problem if it\u0027s pulled in by some unrelated dependency.\n\nBtw, libexpat is a similar library in that sense, although it is still /system, possibly due to b/123925742.",
+      "parentUuid": "d8e4fab8_46f71238",
+      "revId": "4d851113007f0c0910ac7838363d149b61fddffe",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

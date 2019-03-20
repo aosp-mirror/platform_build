@@ -166,6 +166,30 @@
       "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dba84146_99077847",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2165,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-03-20T22:46:30Z",
+      "side": 1,
+      "message": "Well, b/128708192 isn\u0027t a P1 on my todo list atm, so even though I\u0027d like to consider it temporary I can\u0027t make promises on a time frame.\n\n\u003e /.../ \"m \u003clib\u003e\" followed by \"m\" would likely fail without running \"m installclean\" in-between\n\nInteresting. That shouldn\u0027t work, and I think it\u0027s the same problem as Dan pointed out in ag/6716160: We get install targets for these libs in system even when we don\u0027t want them there. I\u0027ll take a look at that as part of b/129006418.\n\nI consider it a feature that this check fails if something like that has happened, because the image would be faulty then. E.g:\n\n$ m systemimage\n$ m out/target/product/taimen/system/lib/libjdwp.so\n$ m snod\n/.../\nAPEX libraries found in system image:\nlib/libdt_socket.so\nlib/libjdwp.so\nlib/libnpt.so\n\nSo that is a palpable reason to keep it like this. (Need to use snod instead of systemimage in the 2nd invocation, since \"m systemimage\" doesn\u0027t do anything then. Presumably because the library isn\u0027t a proper dependency.)",
+      "parentUuid": "11851eb3_f057ab70",
+      "range": {
+        "startLine": 2164,
+        "startChar": 10,
+        "endLine": 2165,
+        "endChar": 27
+      },
+      "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
