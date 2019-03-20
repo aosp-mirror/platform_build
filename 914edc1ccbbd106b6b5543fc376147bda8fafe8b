@@ -142,6 +142,30 @@
       "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11851eb3_f057ab70",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2165,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-20T17:31:19Z",
+      "side": 1,
+      "message": "if it\u0027s truly temporary, I don\u0027t mind this CL as-is, as long as it doesn\u0027t meaningfully slow the build down (which I doubt it does). I don\u0027t believe b) to be a problem for you in practice though.\n\nNote that one potential problem with the current solution is the \"m \u003clib\u003e\" followed by \"m\" would likely fail without running \"m installclean\"  in-between, as I think the \"m \u003clib\u003e\" command still installs the file in /system? The product_target_FILES solution wouldn\u0027t have that problem. Anyway, no major concerns.",
+      "parentUuid": "9aa92ad8_8f1ac9c0",
+      "range": {
+        "startLine": 2164,
+        "startChar": 10,
+        "endLine": 2165,
+        "endChar": 27
+      },
+      "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
