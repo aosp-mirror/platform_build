@@ -46,6 +46,30 @@
       "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93c169e1_5494a298",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2165,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-03-20T15:23:55Z",
+      "side": 1,
+      "message": "Ok, had a look there, but neither control flow nor variable context is clear to me:\n\na) Where would I hook this in to ensure it isn\u0027t skipped? E.g. there\u0027s a big \"FULL_BUILD\" conditional in there - I\u0027m not sure what exactly that entails and if it\u0027s safe to assume it\u0027s set in all relevant cases.\n\nb) If the list in product_target_FILES doesn\u0027t track all dependencies then how do we know it\u0027s good enough? I\u0027d like to alert on these libraries ending up there by any possible means.\n\nArguably this crude \"find\" is less abstract and easier to understand, but it\u0027s entirely possible it has drawbacks that aren\u0027t clear to me. Also note that this should be a temporary measure for the real Soong fix tracked in b/128708192.",
+      "parentUuid": "7916096d_8de571c4",
+      "range": {
+        "startLine": 2164,
+        "startChar": 10,
+        "endLine": 2165,
+        "endChar": 27
+      },
+      "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
