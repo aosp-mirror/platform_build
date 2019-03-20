@@ -13,14 +13,18 @@
 # - intermediates
 # - my_installed_module_stem
 # - my_prebuilt_src_file
+# - my_check_elf_file_shared_lib_files
 
 ifndef LOCAL_IS_HOST_MODULE
 ifneq ($(filter $(LOCAL_MODULE_CLASS),SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS),)
 check_elf_files_stamp := $(intermediates)/check_elf_files.timestamp
 $(check_elf_files_stamp): PRIVATE_SONAME := $(if $(filter $(LOCAL_MODULE_CLASS),SHARED_LIBRARIES),$(my_installed_module_stem))
 $(check_elf_files_stamp): PRIVATE_ALLOW_UNDEFINED_SYMBOLS := $(LOCAL_ALLOW_UNDEFINED_SYMBOLS)
-$(check_elf_files_stamp): PRIVATE_SHARED_LIBRARY_FILES := # This variable will be set by `core/main.mk`
-$(check_elf_files_stamp): $(my_prebuilt_src_file) $(CHECK_ELF_FILE) $(LLVM_READOBJ)
+# PRIVATE_SHARED_LIBRARY_FILES are file paths to built shared libraries.
+# In addition to $(my_check_elf_file_shared_lib_files), some file paths are
+# added by `resolve-shared-libs-for-elf-file-check` from `core/main.mk`.
+$(check_elf_files_stamp): PRIVATE_SHARED_LIBRARY_FILES := $(my_check_elf_file_shared_lib_files)
+$(check_elf_files_stamp): $(my_prebuilt_src_file) $(my_check_elf_file_shared_lib_files) $(CHECK_ELF_FILE) $(LLVM_READOBJ)
 	@echo Check prebuilt ELF binary: $<
 	$(hide) mkdir -p $(dir $@)
 	$(hide) rm -f $@
