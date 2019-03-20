@@ -94,6 +94,30 @@
       "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "175e3d72_498efac9",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2165,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-20T15:46:49Z",
+      "side": 1,
+      "message": "oops, accidentally posted after Martin.\n\na) \"normal\" builds are always FULL_BUILD -- only special targets that skip reading Android.mk aren\u0027t (like mm, or m snod etc)\nb) I just checked and there appears to be a bunch of /system files not in product_target_FILES, but I would like for that list to shrink",
+      "parentUuid": "e7c65dfc_d8fc4d22",
+      "range": {
+        "startLine": 2164,
+        "startChar": 10,
+        "endLine": 2165,
+        "endChar": 27
+      },
+      "revId": "914edc1ccbbd106b6b5543fc376147bda8fafe8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
