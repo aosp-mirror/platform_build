@@ -222,10 +222,22 @@ FINAL_VENDOR_DEFAULT_PROPERTIES := $(call uniq-pairs-by-first-component, \
 
 BUILDINFO_SH := build/make/tools/buildinfo.sh
 BUILDINFO_COMMON_SH := build/make/tools/buildinfo_common.sh
-# Generates a set of common build system properties to a file.
+
+# Generates a set of sysprops common to all partitions to a file.
 # $(1): Partition name
 # $(2): Output file name
 define generate-common-build-props
+	PRODUCT_BRAND="$(PRODUCT_BRAND)" \
+	PRODUCT_DEVICE="$(TARGET_DEVICE)" \
+	PRODUCT_MANUFACTURER="$(PRODUCT_MANUFACTURER)" \
+	PRODUCT_MODEL="$(PRODUCT_MODEL)" \
+	PRODUCT_NAME="$(TARGET_PRODUCT)" \
+	$(call generate-common-build-props-with-product-vars-set,$(1),$(2))
+endef
+
+# Like the above macro, but requiring the relevant PRODUCT_ environment
+# variables to be set when called.
+define generate-common-build-props-with-product-vars-set
 	BUILD_FINGERPRINT="$(BUILD_FINGERPRINT_FROM_FILE)" \
 	BUILD_ID="$(BUILD_ID)" \
 	BUILD_NUMBER="$(BUILD_NUMBER_FROM_FILE)" \
@@ -233,11 +245,6 @@ define generate-common-build-props
 	DATE="$(DATE_FROM_FILE)" \
 	PLATFORM_SDK_VERSION="$(PLATFORM_SDK_VERSION)" \
 	PLATFORM_VERSION="$(PLATFORM_VERSION)" \
-	PRODUCT_BRAND="$(PRODUCT_BRAND)" \
-	PRODUCT_DEVICE="$(TARGET_DEVICE)" \
-	PRODUCT_MANUFACTURER="$(PRODUCT_MANUFACTURER)" \
-	PRODUCT_MODEL="$(PRODUCT_MODEL)" \
-	PRODUCT_NAME="$(TARGET_PRODUCT)" \
 	TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 	bash $(BUILDINFO_COMMON_SH) "$(1)" >> $(2)
 endef
@@ -426,7 +433,12 @@ ifneq ($(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OEM_PROPERTIES),)
 	$(hide) $(foreach prop,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_OEM_PROPERTIES), \
 	    echo "import /oem/oem.prop $(prop)" >> $@;)
 endif
-	$(hide) $(call generate-common-build-props,system,$@)
+	$(hide) PRODUCT_BRAND="$(PRODUCT_SYSTEM_BRAND)" \
+	        PRODUCT_MANUFACTURER="$(PRODUCT_SYSTEM_MANUFACTURER)" \
+	        PRODUCT_MODEL="$(PRODUCT_SYSTEM_MODEL)" \
+	        PRODUCT_NAME="$(PRODUCT_SYSTEM_NAME)" \
+	        PRODUCT_DEVICE="$(PRODUCT_SYSTEM_DEVICE)" \
+	        $(call generate-common-build-props-with-product-vars-set,system,$@)
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 	        TARGET_BUILD_FLAVOR="$(TARGET_BUILD_FLAVOR)" \
 	        TARGET_DEVICE="$(TARGET_DEVICE)" \
