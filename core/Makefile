@@ -732,8 +732,10 @@ $(call dist-for-goals,droidcore,$(BUILD_SYSTEM_STATS))
 # -----------------------------------------------------------------
 # build /product/etc/security/avb/system_other.avbpubkey if needed
 ifdef BUILDING_SYSTEM_OTHER_IMAGE
+ifeq ($(BOARD_AVB_ENABLE),true)
 INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET := $(TARGET_OUT_PRODUCT_ETC)/security/avb/system_other.avbpubkey
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET)
+endif # BOARD_AVB_ENABLE
 endif # BUILDING_SYSTEM_OTHER_IMAGE
 
 # -----------------------------------------------------------------
