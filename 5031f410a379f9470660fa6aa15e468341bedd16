@@ -22,6 +22,30 @@
       "revId": "5031f410a379f9470660fa6aa15e468341bedd16",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0b06a90_2ecb7d2f",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2169,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-03-21T17:53:25Z",
+      "side": 1,
+      "message": "Don\u0027t know how to make a doc externally accessible (with less than using a private account). Moved it into a comment instead.",
+      "parentUuid": "760b6772_53395f5d",
+      "range": {
+        "startLine": 2169,
+        "startChar": 48,
+        "endLine": 2169,
+        "endChar": 81
+      },
+      "revId": "5031f410a379f9470660fa6aa15e468341bedd16",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
