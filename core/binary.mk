@@ -1214,17 +1214,17 @@ else ifdef LOCAL_USE_VNDK
         # with vendor_available: false
         my_link_type := native:vendor
         my_warn_types :=
-        my_allowed_types := native:vendor native:vndk
+        my_allowed_types := native:vendor native:vndk native:platform_vndk
     endif
 else ifneq ($(filter $(TARGET_RECOVERY_OUT)/%,$(call get_non_asan_path,$(LOCAL_MODULE_PATH))),)
 my_link_type := native:recovery
 my_warn_types :=
 # TODO(b/113303515) remove native:platform and my_allowed_ndk_types
-my_allowed_types := native:recovery native:platform $(my_allowed_ndk_types)
+my_allowed_types := native:recovery native:platform native:platform_vndk $(my_allowed_ndk_types)
 else
 my_link_type := native:platform
 my_warn_types := $(my_warn_ndk_types)
-my_allowed_types := $(my_allowed_ndk_types) native:platform
+my_allowed_types := $(my_allowed_ndk_types) native:platform native:platform_vndk
 endif
 
 my_link_deps := $(addprefix STATIC_LIBRARIES:,$(my_whole_static_libraries) $(my_static_libraries))
