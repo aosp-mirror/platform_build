@@ -93,9 +93,11 @@ BLOCK_SIZE = 4096
 # Values for "certificate" in apkcerts that mean special things.
 SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 
-# The partitions allowed to be signed by AVB (Android verified boot 2.0).
-AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'product',
-                  'product_services', 'dtbo', 'odm')
+# The partitions allowed to be signed by AVB (Android Verified Boot 2.0). Note
+# that system_other is not in the list because we don't want to include its
+# descriptor into vbmeta.img.
+AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'product_services',
+                  'recovery', 'system', 'vendor')
 
 # Partitions that should have their care_map added to META/care_map.pb
 PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product_services',
