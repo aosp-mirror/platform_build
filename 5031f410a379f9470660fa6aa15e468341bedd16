@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "760b6772_53395f5d",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2169,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-21T16:05:44Z",
+      "side": 1,
+      "message": "not very open source/partner friendly. A publicly viewable direct doc link would probably work better?",
+      "range": {
+        "startLine": 2169,
+        "startChar": 48,
+        "endLine": 2169,
+        "endChar": 81
+      },
+      "revId": "5031f410a379f9470660fa6aa15e468341bedd16",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
