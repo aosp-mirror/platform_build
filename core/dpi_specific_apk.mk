@@ -67,6 +67,7 @@ endif
 ALL_MODULES += $(dpi_apk_name)
 ALL_MODULES.$(dpi_apk_name).CLASS := APPS
 ALL_MODULES.$(dpi_apk_name).BUILT := $(built_dpi_apk)
+ALL_MODULES.$(dpi_apk_name).TARGET_BUILT := $(built_dpi_apk)
 PACKAGES := $(PACKAGES) $(dpi_apk_name)
 PACKAGES.$(dpi_apk_name).PRIVATE_KEY := $(private_key)
 PACKAGES.$(dpi_apk_name).CERTIFICATE := $(certificate)

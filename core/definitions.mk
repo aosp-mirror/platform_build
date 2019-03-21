@@ -651,6 +651,18 @@ endef
 
 ###########################################################
 ## Convert a list of short modules names (e.g., "framework", "Browser")
+## into the list of files that are built *for the target* for those modules.
+## NOTE: this won't return reliable results until after all
+## sub-makefiles have been included.
+## $(1): target list
+###########################################################
+
+define module-target-built-files
+$(foreach module,$(1),$(ALL_MODULES.$(module).TARGET_BUILT))
+endef
+
+###########################################################
+## Convert a list of short modules names (e.g., "framework", "Browser")
 ## into the list of files that should be used when linking
 ## against that module as a public API.
 ## TODO: Allow this for more than JAVA_LIBRARIES modules
