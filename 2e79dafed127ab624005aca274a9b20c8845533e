@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6bfa3e7_634be85a",
+        "filename": "core/main.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1109,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-21T12:56:08Z",
+      "side": 1,
+      "message": "it would be nice to never put host files in this list to begin with. Does that require the my_register_name change Jiyong proposed, and more?",
+      "revId": "2e79dafed127ab624005aca274a9b20c8845533e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7952c35e_40865b32",
+        "filename": "core/main.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1174,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-21T12:56:08Z",
+      "side": 1,
+      "message": "feels like none of the sanity checks inside this FULL_BUILD block are relevant for TARGET_BUILD_APPS? what is INTERNAL_PRODUCT even set to for tapas builds?",
+      "range": {
+        "startLine": 1174,
+        "startChar": 2,
+        "endLine": 1174,
+        "endChar": 30
+      },
+      "revId": "2e79dafed127ab624005aca274a9b20c8845533e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
