@@ -740,28 +740,6 @@ def SaveGlobalDict(filename, glob_dict):
     f.writelines(["%s=%s" % (key, value) for (key, value) in glob_dict.items()])
 
 
-def ExtractSystemOtherAvbKey(in_dir, glob_dict):
-  if glob_dict.get("avb_system_extract_system_other_key") != "true":
-    return
-
-  extract_to = os.path.join(in_dir, "etc/security/avb/system_other.avbpubkey")
-  extract_to_dir = os.path.dirname(extract_to)
-
-  if os.path.isdir(extract_to_dir):
-    shutil.rmtree(extract_to_dir)
-  elif os.path.isfile(extract_to_dir):
-    os.remove(extract_to_dir)
-  os.mkdir(extract_to_dir);
-
-  # Extracts the public key used to sign system_other.img, into system.img:
-  #   /system/etc/security/avb/system_other.avbpubkey.
-  avbtool = glob_dict.get("avb_avbtool")
-  extract_from = glob_dict.get("avb_system_other_key_path")
-  cmd = [avbtool, "extract_public_key", "--key", extract_from,
-         "--output", extract_to]
-  common.RunAndCheckOutput(cmd, verbose=False)
-
-
 def main(argv):
   if len(argv) < 4 or len(argv) > 5:
     print(__doc__)
@@ -785,7 +763,6 @@ def main(argv):
     mount_point = ""
     if image_filename == "system.img":
       mount_point = "system"
-      ExtractSystemOtherAvbKey(in_dir, glob_dict)
     elif image_filename == "system_other.img":
       mount_point = "system_other"
     elif image_filename == "userdata.img":
