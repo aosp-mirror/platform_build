@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bf6541fb_a98d2a6b",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2167,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-21T14:43:12Z",
+      "side": 1,
+      "message": "I think the mac version of find sometimes has differences to linux which causes trouble, can you check it supports the syntax you\u0027re using here? (maybe it\u0027s obvious, I don\u0027t know)",
+      "revId": "2904830e32d469e315b6a67dc03ed44b0d160ef5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8364b988_9a8e61a1",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2169,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-21T14:43:12Z",
+      "side": 1,
+      "message": "can you make the error message a bit more descriptive for people unfamiliar with the problem? It\u0027s likely going to hit random developers adding a bad dependency of some sort. Maybe a bug ref",
+      "revId": "2904830e32d469e315b6a67dc03ed44b0d160ef5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
