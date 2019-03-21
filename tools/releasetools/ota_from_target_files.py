@@ -236,7 +236,7 @@ METADATA_NAME = 'META-INF/com/android/metadata'
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
 AB_PARTITIONS = 'META/ab_partitions.txt'
-UNZIP_PATTERN = ['IMAGES/*', 'META/*']
+UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'RADIO/*']
 RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
 
 
@@ -1802,12 +1802,7 @@ def GetTargetFilesZipForSecondaryImages(input_file, skip_postinstall=False):
     infolist = input_zip.infolist()
     namelist = input_zip.namelist()
 
-  # Additionally unzip 'RADIO/*' if exists.
-  unzip_pattern = UNZIP_PATTERN[:]
-  if any([entry.startswith('RADIO/') for entry in namelist]):
-    unzip_pattern.append('RADIO/*')
-  input_tmp = common.UnzipTemp(input_file, unzip_pattern)
-
+  input_tmp = common.UnzipTemp(input_file, UNZIP_PATTERN)
   for info in infolist:
     unzipped_file = os.path.join(input_tmp, *info.filename.split('/'))
     if info.filename == 'IMAGES/system_other.img':

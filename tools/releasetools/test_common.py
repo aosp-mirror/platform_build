@@ -359,6 +359,90 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     finally:
       os.remove(zip_file.name)
 
+  @staticmethod
+  def _test_UnzipTemp_createZipFile():
+    zip_file = common.MakeTempFile(suffix='.zip')
+    output_zip = zipfile.ZipFile(
+        zip_file, 'w', compression=zipfile.ZIP_DEFLATED)
+    contents = os.urandom(1024)
+    with tempfile.NamedTemporaryFile() as entry_file:
+      entry_file.write(contents)
+      common.ZipWrite(output_zip, entry_file.name, arcname='Test1')
+      common.ZipWrite(output_zip, entry_file.name, arcname='Test2')
+      common.ZipWrite(output_zip, entry_file.name, arcname='Foo3')
+      common.ZipWrite(output_zip, entry_file.name, arcname='Bar4')
+      common.ZipWrite(output_zip, entry_file.name, arcname='Dir5/Baz5')
+      common.ZipClose(output_zip)
+    common.ZipClose(output_zip)
+    return zip_file
+
+  def test_UnzipTemp(self):
+    zip_file = self._test_UnzipTemp_createZipFile()
+    unzipped_dir = common.UnzipTemp(zip_file)
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Test1')))
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Test2')))
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Foo3')))
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Bar4')))
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Dir5/Baz5')))
+
+  def test_UnzipTemp_withPatterns(self):
+    zip_file = self._test_UnzipTemp_createZipFile()
+
+    unzipped_dir = common.UnzipTemp(zip_file, ['Test1'])
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Test1')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Test2')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Foo3')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Bar4')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Dir5/Baz5')))
+
+    unzipped_dir = common.UnzipTemp(zip_file, ['Test1', 'Foo3'])
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Test1')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Test2')))
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Foo3')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Bar4')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Dir5/Baz5')))
+
+    unzipped_dir = common.UnzipTemp(zip_file, ['Test*', 'Foo3*'])
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Test1')))
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Test2')))
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Foo3')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Bar4')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Dir5/Baz5')))
+
+    unzipped_dir = common.UnzipTemp(zip_file, ['*Test1', '*Baz*'])
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Test1')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Test2')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Foo3')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Bar4')))
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Dir5/Baz5')))
+
+  def test_UnzipTemp_withEmptyPatterns(self):
+    zip_file = self._test_UnzipTemp_createZipFile()
+    unzipped_dir = common.UnzipTemp(zip_file, [])
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Test1')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Test2')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Foo3')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Bar4')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Dir5/Baz5')))
+
+  def test_UnzipTemp_withPartiallyMatchingPatterns(self):
+    zip_file = self._test_UnzipTemp_createZipFile()
+    unzipped_dir = common.UnzipTemp(zip_file, ['Test*', 'Nonexistent*'])
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Test1')))
+    self.assertTrue(os.path.exists(os.path.join(unzipped_dir, 'Test2')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Foo3')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Bar4')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Dir5/Baz5')))
+
+  def test_UnzipTemp_withNoMatchingPatterns(self):
+    zip_file = self._test_UnzipTemp_createZipFile()
+    unzipped_dir = common.UnzipTemp(zip_file, ['Foo4', 'Nonexistent*'])
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Test1')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Test2')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Foo3')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Bar4')))
+    self.assertFalse(os.path.exists(os.path.join(unzipped_dir, 'Dir5/Baz5')))
+
 
 class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   """Tests the APK utils related functions."""
