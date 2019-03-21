@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "97219020_93eda250",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2167,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-03-21T15:58:09Z",
+      "side": 1,
+      "message": "Good point, but I think it works. I tested this on a MacOS box:\n\n$ cd /usr\n$ find lib* -type f \\( -false -o -name libSystem.B.dylib -o -name libfoo.so \\) -print\nlib/libSystem.B.dylib",
+      "parentUuid": "bf6541fb_a98d2a6b",
+      "revId": "2904830e32d469e315b6a67dc03ed44b0d160ef5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8364b988_9a8e61a1",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -33,6 +51,24 @@
       "revId": "2904830e32d469e315b6a67dc03ed44b0d160ef5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e1be6519_7754d6e3",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2169,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-03-21T15:58:09Z",
+      "side": 1,
+      "message": "I\u0027m a bit hesitant to add a lot of text to the command in this build rule, so I created a doc.",
+      "parentUuid": "8364b988_9a8e61a1",
+      "revId": "2904830e32d469e315b6a67dc03ed44b0d160ef5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
