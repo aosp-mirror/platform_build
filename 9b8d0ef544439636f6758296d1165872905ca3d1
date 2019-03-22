@@ -70,6 +70,30 @@
       "revId": "9b8d0ef544439636f6758296d1165872905ca3d1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "90f4ddbf_82e5d758",
+        "filename": "target/product/gsi/adb_debug.prop",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-22T03:30:46Z",
+      "side": 1,
+      "message": "gsi_system.prop will only be used in (userdebug, eng).\n\nHowever, we need this on user GSI + root ramdisk, to allow test automation.\nSo I\u0027m adding it back :-)",
+      "parentUuid": "e3c97bc1_279530fb",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 21
+      },
+      "revId": "9b8d0ef544439636f6758296d1165872905ca3d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
