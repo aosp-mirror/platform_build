@@ -10,7 +10,10 @@ TARGET_USERIMAGES_USE_EXT4 := true
 
 # Mainline devices must have /vendor and /product partitions.
 TARGET_COPY_OUT_VENDOR := vendor
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
+
 TARGET_COPY_OUT_PRODUCT := product
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # system-as-root is mandatory from Android P
 TARGET_NO_RECOVERY := true
