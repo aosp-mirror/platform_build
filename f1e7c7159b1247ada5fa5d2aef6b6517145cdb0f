@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "03dfe917_1943d605",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2191,
+      "author": {
+        "id": 1052644
+      },
+      "writtenOn": "2019-03-22T13:55:26Z",
+      "side": 1,
+      "message": "Maybe print the contents of the comment directly instead of referring to it?",
+      "range": {
+        "startLine": 2191,
+        "startChar": 47,
+        "endLine": 2191,
+        "endChar": 89
+      },
+      "revId": "f1e7c7159b1247ada5fa5d2aef6b6517145cdb0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
