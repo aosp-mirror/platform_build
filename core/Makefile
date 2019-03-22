@@ -2148,12 +2148,80 @@ define create-vendor-odm-symlink
 endef
 endif
 
+# Check that libraries that should only be in APEXes don't end up in the system
+# image. For the Runtime APEX this complements the checks in
+# art/build/apex/art_apex_test.py.
+# TODO(b/128708192): Implement this restriction in Soong instead.
+
+# TODO(b/124293228): Fix remaining bugs and add these libraries to the list:
+#   libart-compiler.so
+#   libart-dexlayout.so
+#   libart.so
+#   libartbase.so
+#   libartpalette.so
+#   libdexfile.so
+#   libicui18n.so
+#   libicuuc.so
+#   libnativehelper.so  - cf_x86_phone-userdebug builds get this in system/lib/arm
+#   libprofile.so
+#   libsigchain.so
+#   libtombstoned_client.so
+APEX_MODULE_LIBS= \
+  libadbconnection.so \
+  libandroidicu.so \
+  libdexfile_external.so \
+  libdt_fd_forward.so \
+  libdt_socket.so \
+  libjavacore.so \
+  libjdwp.so \
+  libnativebridge.so \
+  libnativeloader.so \
+  libnpt.so \
+  libopenjdk.so \
+  libopenjdkjvm.so \
+  libopenjdkjvmti.so \
+  libpac.so \
+
+# If the check below fails, some library has ended up in system/lib or
+# system/lib64 that is intended to only go into some APEX package. The likely
+# cause is that a library or binary in /system has grown a dependency that
+# directly or indirectly pulls in the prohibited library.
+#
+# To resolve this, look for the APEX package that the library belong to - search
+# for it in 'native_shared_lib' properties in 'apex' build modules (see
+# art/build/apex/Android.bp for an example). Then check if there is an exported
+# library in that APEX package that should be used instead, i.e. one listed in
+# its 'native_shared_lib' property for which the corresponding 'cc_library'
+# module has a 'stubs' clause (like libdexfile_external in
+# art/libdexfile/Android.bp).
+#
+# If you cannot find an APEX exported library that fits your needs, or you think
+# that the library you want to depend on should be allowed in /system, then
+# please contact the owners of the APEX package containing the library.
+#
+# If you get this error for a library that is exported in an APEX, then the APEX
+# might be misconfigured or something is wrong in the build system. Please reach
+# out to the APEX package owners and/or soong-team@, or
+# android-building@googlegroups.com externally.
+define check-apex-libs-absence
+$(hide) ( \
+  cd $(TARGET_OUT); \
+  findres=$$(find lib* -type f \( -false $(foreach lib,$(APEX_MODULE_LIBS),-o -name $(lib)) \) -print) || exit 1; \
+  if [ -n "$$findres" ]; then \
+    echo "APEX libraries found in system image (see comment in this makefile for details):" 1>&2; \
+    echo "$$findres" | sort 1>&2; \
+    false; \
+  fi; \
+)
+endef
+
 # $(1): output file
 define build-systemimage-target
   @echo "Target system fs image: $(1)"
   $(call create-system-vendor-symlink)
   $(call create-system-product-symlink)
   $(call create-system-product_services-symlink)
+  $(call check-apex-libs-absence)
   @mkdir -p $(dir $(1)) $(systemimage_intermediates) && rm -rf $(systemimage_intermediates)/system_image_info.txt
   $(call generate-image-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt,system, \
       skip_fsck=true)
