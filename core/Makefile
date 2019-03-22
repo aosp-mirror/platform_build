@@ -2159,6 +2159,7 @@ endif
 #   libartbase.so
 #   libartpalette.so
 #   libdexfile.so
+#   libdexfile_external.so  - aosp_marlin-userdebug gets this in a vndk-sp-Q subdirectory.
 #   libicui18n.so
 #   libicuuc.so
 #   libnativehelper.so  - cf_x86_phone-userdebug builds get this in system/lib/arm
@@ -2168,7 +2169,6 @@ endif
 APEX_MODULE_LIBS= \
   libadbconnection.so \
   libandroidicu.so \
-  libdexfile_external.so \
   libdt_fd_forward.so \
   libdt_socket.so \
   libjavacore.so \
