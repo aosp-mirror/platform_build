@@ -73,7 +73,7 @@ PRODUCT_PACKAGES += \
     dpm \
     dumpstate \
     dumpsys \
-    DynamicAndroidInstallationService \
+    DynamicSystemInstallationService \
     e2fsck \
     ExtServices \
     ExtShared \
