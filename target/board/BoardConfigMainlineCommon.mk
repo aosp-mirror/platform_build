@@ -5,6 +5,7 @@
 # The generic product target doesn't have any hardware-specific pieces.
 TARGET_NO_BOOTLOADER := true
 TARGET_NO_KERNEL := true
+TARGET_NO_RECOVERY := true
 
 TARGET_USERIMAGES_USE_EXT4 := true
 
@@ -14,10 +15,6 @@ BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 
 TARGET_COPY_OUT_PRODUCT := product
 BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
-
-# system-as-root is mandatory from Android P
-TARGET_NO_RECOVERY := true
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 
 BOARD_VNDK_VERSION := current
 
