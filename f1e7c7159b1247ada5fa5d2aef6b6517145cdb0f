@@ -22,6 +22,30 @@
       "revId": "f1e7c7159b1247ada5fa5d2aef6b6517145cdb0f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3f80b124_84c3dc19",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2191,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-03-22T15:57:04Z",
+      "side": 1,
+      "message": "As said earlier, I\u0027m reluctant to have that much text directly in the shell command that ends up in the build rule. Also, the verbose explanation is helpful to users only the first time they see this - it gets in the way later.",
+      "parentUuid": "03dfe917_1943d605",
+      "range": {
+        "startLine": 2191,
+        "startChar": 47,
+        "endLine": 2191,
+        "endChar": 89
+      },
+      "revId": "f1e7c7159b1247ada5fa5d2aef6b6517145cdb0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
