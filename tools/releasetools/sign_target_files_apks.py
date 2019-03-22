@@ -600,7 +600,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     else:
       common.ZipWriteStr(output_tf_zip, out_info, data)
 
-  # Update APEX payload public keys.
+  # Copy or update APEX payload public keys.
   for info in input_tf_zip.infolist():
     filename = info.filename
     if (os.path.dirname(filename) != 'SYSTEM/etc/security/apex' or
@@ -609,8 +609,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
     name = os.path.basename(filename)
 
-    # Skip PRESIGNED APEXes.
+    # Copy the keys for PRESIGNED APEXes.
     if name not in updated_apex_payload_keys:
+      data = input_tf_zip.read(filename)
+      common.ZipWriteStr(output_tf_zip, info, data)
       continue
 
     key_path = updated_apex_payload_keys[name]
