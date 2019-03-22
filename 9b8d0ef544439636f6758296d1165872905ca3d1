@@ -94,6 +94,30 @@
       "revId": "9b8d0ef544439636f6758296d1165872905ca3d1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1f1ab56a_dba2bbeb",
+        "filename": "target/product/gsi/adb_debug.prop",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-03-22T03:41:04Z",
+      "side": 1,
+      "message": "Yeah, this is a GSI specific configuration, just like skip_mount.cfg. Just add it whitelist at this time.\n\nWe could discuss if these file could be moved to ramdisk or just in mainline_system in the future.",
+      "parentUuid": "90f4ddbf_82e5d758",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 21
+      },
+      "revId": "9b8d0ef544439636f6758296d1165872905ca3d1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
