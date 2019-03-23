@@ -1008,7 +1008,8 @@ def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
 
 
 def SignFile(input_name, output_name, key, password, min_api_level=None,
-             codename_to_api_level_map=None, whole_file=False):
+             codename_to_api_level_map=None, whole_file=False,
+             extra_signapk_args=None):
   """Sign the input_name zip/jar/apk, producing output_name.  Use the
   given key and password (the latter may be None if the key does not
   have a password.
@@ -1023,9 +1024,14 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
 
   codename_to_api_level_map is needed to translate the codename which may be
   encountered as the APK's minSdkVersion.
+
+  Caller may optionally specify extra args to be passed to SignApk, which
+  defaults to OPTIONS.extra_signapk_args if omitted.
   """
   if codename_to_api_level_map is None:
     codename_to_api_level_map = {}
+  if extra_signapk_args is None:
+    extra_signapk_args = OPTIONS.extra_signapk_args
 
   java_library_path = os.path.join(
       OPTIONS.search_path, OPTIONS.signapk_shared_library_path)
@@ -1033,7 +1039,7 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
   cmd = ([OPTIONS.java_path] + OPTIONS.java_args +
          ["-Djava.library.path=" + java_library_path,
           "-jar", os.path.join(OPTIONS.search_path, OPTIONS.signapk_path)] +
-         OPTIONS.extra_signapk_args)
+         extra_signapk_args)
   if whole_file:
     cmd.append("-w")
 
