@@ -260,13 +260,20 @@ class ELFParser(object):
   _SYMBOL_ENTRY_END_PATTERN = '  }'
 
 
-  @classmethod
-  def _parse_symbol_name(cls, name_with_version):
+  @staticmethod
+  def _parse_symbol_name(name_with_version):
     """Split `name_with_version` into name and version. This function may split
     at last occurrence of `@@` or `@`."""
-    name, version = name_with_version.rsplit('@', 1)
-    if name and name[-1] == '@':
-      name = name[:-1]
+    pos = name_with_version.rfind('@')
+    if pos == -1:
+      name = name_with_version
+      version = ''
+    else:
+      if pos > 0 and name_with_version[pos - 1] == '@':
+        name = name_with_version[0:pos - 1]
+      else:
+        name = name_with_version[0:pos]
+      version = name_with_version[pos + 1:]
     return (name, version)
 
 
