@@ -16,6 +16,24 @@
       "revId": "829b4620f859e47013d838824f34c9051056575d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fec3a199_c54443ba",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-24T18:56:05Z",
+      "side": 1,
+      "message": "(Yes, GSI should keep this flag on, so that first-stage-init goes into GSI system.img: no-op for devices built w/ non-system-root-image, and mandatory for system-root-image devices.)",
+      "parentUuid": "1ecc6f28_1adf5ba9",
+      "revId": "829b4620f859e47013d838824f34c9051056575d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
