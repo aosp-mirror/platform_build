@@ -400,7 +400,6 @@ def SignApex(apex_data, payload_key, container_key, container_pw,
 
   APEX_PAYLOAD_IMAGE = 'apex_payload.img'
 
-  # Signing an APEX is a two step process.
   # 1. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given payload_key.
   payload_dir = common.MakeTempDir(prefix='apex-payload-')
   with zipfile.ZipFile(apex_file) as apex_fd:
@@ -420,21 +419,28 @@ def SignApex(apex_data, payload_key, container_key, container_pw,
   common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
   common.ZipClose(apex_zip)
 
-  # 2. Sign the overall APEX container with container_key.
+  # 2. Align the files at page boundary (same as in apexer).
+  aligned_apex = common.MakeTempFile(
+      prefix='apex-container-', suffix='.apex')
+  common.RunAndCheckOutput(
+      ['zipalign', '-f', '4096', apex_file, aligned_apex])
+
+  # 3. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
+
+  # Specify the 4K alignment when calling SignApk.
+  extra_signapk_args = OPTIONS.extra_signapk_args[:]
+  extra_signapk_args.extend(['-a', '4096'])
+
   common.SignFile(
-      apex_file,
+      aligned_apex,
       signed_apex,
       container_key,
       container_pw,
-      codename_to_api_level_map=codename_to_api_level_map)
+      codename_to_api_level_map=codename_to_api_level_map,
+      extra_signapk_args=extra_signapk_args)
 
-  signed_and_aligned_apex = common.MakeTempFile(
-      prefix='apex-container-', suffix='.apex')
-  common.RunAndCheckOutput(
-      ['zipalign', '-f', '4096', signed_apex, signed_and_aligned_apex])
-
-  return (signed_and_aligned_apex, payload_info['apex.key'])
+  return (signed_apex, payload_info['apex.key'])
 
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
@@ -600,7 +606,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     else:
       common.ZipWriteStr(output_tf_zip, out_info, data)
 
-  # Update APEX payload public keys.
+  # Copy or update APEX payload public keys.
   for info in input_tf_zip.infolist():
     filename = info.filename
     if (os.path.dirname(filename) != 'SYSTEM/etc/security/apex' or
@@ -609,8 +615,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
 
     name = os.path.basename(filename)
 
-    # Skip PRESIGNED APEXes.
+    # Copy the keys for PRESIGNED APEXes.
     if name not in updated_apex_payload_keys:
+      data = input_tf_zip.read(filename)
+      common.ZipWriteStr(output_tf_zip, info, data)
       continue
 
     key_path = updated_apex_payload_keys[name]
