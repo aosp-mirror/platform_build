@@ -46,3 +46,6 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 # Enable A/B update
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS := system
+
+# Enable system property split for Treble
+BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
