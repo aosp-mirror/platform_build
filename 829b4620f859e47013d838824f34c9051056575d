@@ -34,6 +34,24 @@
       "revId": "829b4620f859e47013d838824f34c9051056575d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cebc1beb_9546c672",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-03-25T00:54:05Z",
+      "side": 1,
+      "message": "Yes, GSI need this set, just like the comment: system-as-root was mandatory in Android P\nHowever, Only I know is the init can support both the system partition with system-as-root and \nnon-system-as-root now.\nDo we remove this requirement now?",
+      "parentUuid": "fec3a199_c54443ba",
+      "revId": "829b4620f859e47013d838824f34c9051056575d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
