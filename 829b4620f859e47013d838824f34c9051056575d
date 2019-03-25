@@ -52,6 +52,24 @@
       "revId": "829b4620f859e47013d838824f34c9051056575d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "478fb928_1a4eb7c3",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-03-25T02:54:28Z",
+      "side": 1,
+      "message": "Just evaluated more. \n\nAnton, please just remove the flag here, because the flag does not affect the system image now.\n\n\nBo, you don\u0027t need to add `BOARD_BUILD_SYSTEM_ROOT_IMAGE :\u003d false` after this patch. Ex.\n\n    http://ag/c/platform/build/+/6661304/5/target/board/generic_x86_64/BoardConfig.mk#33\n\n\nBTW, the only difference between true and false on GSI is the system property ro.build.system_root_image, and I feel it should be move to vendor, because it only describe the boot behavior now.",
+      "parentUuid": "cebc1beb_9546c672",
+      "revId": "829b4620f859e47013d838824f34c9051056575d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
