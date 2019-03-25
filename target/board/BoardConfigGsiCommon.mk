@@ -6,9 +6,6 @@
 
 include build/make/target/board/BoardConfigMainlineCommon.mk
 
-# Enable system property split for Treble
-BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
-
 # This flag is set by mainline but isn't desired for GSI.
 BOARD_USES_SYSTEM_OTHER_ODEX :=
 
