@@ -89,6 +89,24 @@
       "revId": "829b4620f859e47013d838824f34c9051056575d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "373b4938_0e4b6167",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-03-25T16:48:43Z",
+      "side": 1,
+      "message": "\u003e Do we remove this requirement now?\n\nYes, after the split of first and second stage init (the matching VTS test has been removed as well: https://android-review.googlesource.com/c/platform/test/vts-testcase/kernel/+/790376). And we may even take the other direction to mandate non-system-as-root for DAP (TBD).\n\n\u003e Does anything actually read this property, or can it be removed now?\n\nro.build.system_root_image can be removed. We need the BOARD_ flag to correctly generate the images, but the runtime property should be deprecated. I did a quick cs/ just now, and didn\u0027t see anything depending on this flag.",
+      "parentUuid": "712f8a96_085a15d8",
+      "revId": "829b4620f859e47013d838824f34c9051056575d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
