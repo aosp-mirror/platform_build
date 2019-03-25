@@ -64,10 +64,6 @@ PRODUCT_FULL_TREBLE_OVERRIDE := true
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
 
-# Enable A/B update
-AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS := system
-
 # Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
 
