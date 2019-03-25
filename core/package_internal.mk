@@ -132,21 +132,26 @@ else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
   enforce_rro_enabled := true
 endif
 
-all_package_resource_overlays := $(strip \
+product_package_overlays := $(strip \
     $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \
-      $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
+      $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))))
+device_package_overlays := $(strip \
     $(wildcard $(foreach dir, $(DEVICE_PACKAGE_OVERLAYS), \
       $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))))
 
 static_resource_overlays :=
-runtime_resource_overlays :=
+runtime_resource_overlays_product :=
+runtime_resource_overlays_vendor :=
 ifdef enforce_rro_enabled
   ifneq ($(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS),)
-    static_resource_overlays += $(filter $(addsuffix %,$(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS)),$(all_package_resource_overlays))
+    # The PRODUCT_ exclusion variable applies to both inclusion variables..
+    static_resource_overlays += $(filter $(addsuffix %,$(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS)),$(product_package_overlays))
+    static_resource_overlays += $(filter $(addsuffix %,$(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS)),$(device_package_overlays))
   endif
-  runtime_resource_overlays := $(filter-out $(static_resource_overlays),$(all_package_resource_overlays))
+  runtime_resource_overlays_product := $(filter-out $(static_resource_overlays),$(product_package_overlays))
+  runtime_resource_overlays_vendor := $(filter-out $(static_resource_overlays),$(device_package_overlays))
 else
-  static_resource_overlays := $(all_package_resource_overlays)
+  static_resource_overlays := $(product_package_overlays) $(device_package_overlays)
 endif
 
 # Add the static overlays. Auto-RRO is created later, as it depends on
@@ -790,7 +795,7 @@ endif # skip_definition
 # Reset internal variables.
 all_res_assets :=
 
-ifdef runtime_resource_overlays
+ifneq (,$(runtime_resource_overlays_product)$(runtime_resource_overlays_vendor))
   ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
     enforce_rro_use_res_lib := true
   else
@@ -805,11 +810,24 @@ ifdef runtime_resource_overlays
     enforce_rro_manifest_package_info := $(full_android_manifest)
   endif
 
-  $(call append_enforce_rro_sources, \
-      $(my_register_name), \
-      $(enforce_rro_is_manifest_package_name), \
-      $(enforce_rro_manifest_package_info), \
-      $(enforce_rro_use_res_lib), \
-      $(runtime_resource_overlays) \
-  )
+  ifdef runtime_resource_overlays_product
+    $(call append_enforce_rro_sources, \
+        $(my_register_name), \
+        $(enforce_rro_is_manifest_package_name), \
+        $(enforce_rro_manifest_package_info), \
+        $(enforce_rro_use_res_lib), \
+        $(runtime_resource_overlays_product), \
+        product \
+    )
+  endif
+  ifdef runtime_resource_overlays_vendor
+    $(call append_enforce_rro_sources, \
+        $(my_register_name), \
+        $(enforce_rro_is_manifest_package_name), \
+        $(enforce_rro_manifest_package_info), \
+        $(enforce_rro_use_res_lib), \
+        $(runtime_resource_overlays_vendor), \
+        vendor \
+    )
+  endif
 endif
