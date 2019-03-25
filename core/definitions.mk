@@ -3312,10 +3312,12 @@ include $(BUILD_SYSTEM)/distdir.mk
 #  $(4): Whether LOCAL_EXPORT_PACKAGE_RESOURCES is set or
 #        not for the source module.
 #  $(5): Resource overlay list.
+#  $(6): Target partition
 ###########################################################
 define append_enforce_rro_sources
   $(eval ENFORCE_RRO_SOURCES += \
-      $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||$(call normalize-path-list, $(strip $(5))))
+      $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||$(call normalize-path-list, $(strip $(5)))||$(strip $(6)) \
+  )
 endef
 
 ###########################################################
@@ -3330,6 +3332,7 @@ $(foreach source,$(ENFORCE_RRO_SOURCES), \
   $(eval enforce_rro_source_manifest_package_info := $(word 3,$(_o))) \
   $(eval enforce_rro_use_res_lib := $(word 4,$(_o))) \
   $(eval enforce_rro_source_overlays := $(subst :, ,$(word 5,$(_o)))) \
+  $(eval enforce_rro_partition := $(word 6,$(_o))) \
   $(eval include $(BUILD_SYSTEM)/generate_enforce_rro.mk) \
   $(eval ALL_MODULES.$$(enforce_rro_source_module).REQUIRED += $$(LOCAL_PACKAGE_NAME)) \
 )
