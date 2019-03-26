@@ -18,6 +18,16 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
 $(call enforce-product-packages-exist,)
 
+PRODUCT_BUILD_CACHE_IMAGE := false
+PRODUCT_BUILD_ODM_IMAGE := false
+PRODUCT_BUILD_PRODUCT_IMAGE  := false
+PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE := false
+PRODUCT_BUILD_RAMDISK_IMAGE := false
+PRODUCT_BUILD_SYSTEM_IMAGE := true
+PRODUCT_BUILD_SYSTEM_OTHER_IMAGE := false
+PRODUCT_BUILD_USERDATA_IMAGE := false
+PRODUCT_BUILD_VENDOR_IMAGE := false
+
 PRODUCT_NAME := mainline_system_arm64
 PRODUCT_DEVICE := mainline_arm64
 PRODUCT_BRAND := generic
