@@ -1081,7 +1081,6 @@ def ReadApexKeysInfo(tf_zip):
       continue
 
     name = matches.group('NAME')
-    payload_public_key = matches.group("PAYLOAD_PUBLIC_KEY")
     payload_private_key = matches.group("PAYLOAD_PRIVATE_KEY")
 
     def CompareKeys(pubkey, pubkey_suffix, privkey, privkey_suffix):
@@ -1091,13 +1090,9 @@ def ReadApexKeysInfo(tf_zip):
               privkey.endswith(privkey_suffix) and
               pubkey[:-pubkey_suffix_len] == privkey[:-privkey_suffix_len])
 
-    PAYLOAD_PUBLIC_KEY_SUFFIX = '.avbpubkey'
-    PAYLOAD_PRIVATE_KEY_SUFFIX = '.pem'
-    if not CompareKeys(
-        payload_public_key, PAYLOAD_PUBLIC_KEY_SUFFIX,
-        payload_private_key, PAYLOAD_PRIVATE_KEY_SUFFIX):
-      raise ValueError("Failed to parse payload keys: \n{}".format(line))
-
+    # Sanity check on the container key names, as we'll carry them without the
+    # extensions. This doesn't apply to payload keys though, which we will use
+    # full names only.
     container_cert = matches.group("CONTAINER_CERT")
     container_private_key = matches.group("CONTAINER_PRIVATE_KEY")
     if not CompareKeys(
