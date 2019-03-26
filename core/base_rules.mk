@@ -257,13 +257,11 @@ ifndef LOCAL_COMPATIBILITY_SUITE
 endif
 
 use_testcase_folder :=
-ifdef ENABLE_DEFAULT_TEST_LOCATION
-  ifeq ($(my_module_path),)
-    ifneq ($(LOCAL_MODULE),$(filter $(LOCAL_MODULE),$(DEFAULT_DATA_OUT_MODULES)))
-      ifdef LOCAL_COMPATIBILITY_SUITE
-        ifneq (true, $(LOCAL_IS_HOST_MODULE))
-          use_testcase_folder := true
-        endif
+ifeq ($(my_module_path),)
+  ifneq ($(LOCAL_MODULE),$(filter $(LOCAL_MODULE),$(DEFAULT_DATA_OUT_MODULES)))
+    ifdef LOCAL_COMPATIBILITY_SUITE
+      ifneq (true, $(LOCAL_IS_HOST_MODULE))
+        use_testcase_folder := true
       endif
     endif
   endif
