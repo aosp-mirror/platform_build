@@ -30,3 +30,5 @@ DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
 
 BOARD_SEPOLICY_DIRS += device/generic/goldfish/sepolicy/common
 
+# TODO(b/125540538): Remove when emulator uses dynamic partitions
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
