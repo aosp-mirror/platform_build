@@ -259,7 +259,6 @@ VNDK-core: libstagefright_enc_common.so
 VNDK-core: libstagefright_flacdec.so
 VNDK-core: libstagefright_foundation.so
 VNDK-core: libstagefright_omx.so
-VNDK-core: libstagefright_omx_soft.so
 VNDK-core: libstagefright_omx_utils.so
 VNDK-core: libstagefright_soft_aacdec.so
 VNDK-core: libstagefright_soft_aacenc.so
