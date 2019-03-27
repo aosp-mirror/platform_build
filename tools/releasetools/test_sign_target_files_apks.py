@@ -401,14 +401,14 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
             'build/target/product/security/testkey'),
         }, keys_info)
 
-  def test_ReadApexKeysInfo_mismatchingKeys(self):
+  def test_ReadApexKeysInfo_mismatchingContainerKeys(self):
     # Mismatching payload public / private keys.
     apex_keys = self.APEX_KEYS_TXT + (
         'name="apex.apexd_test_different_app2.apex" '
         'public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" '
-        'private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_3.pem" '
+        'private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" '
         'container_certificate="build/target/product/security/testkey.x509.pem" '
-        'container_private_key="build/target/product/security/testkey.pk8"')
+        'container_private_key="build/target/product/security/testkey2.pk8"')
     target_files = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
@@ -416,11 +416,34 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     with zipfile.ZipFile(target_files) as target_files_zip:
       self.assertRaises(ValueError, ReadApexKeysInfo, target_files_zip)
 
-  def test_ReadApexKeysInfo_missingPrivateKey(self):
+  def test_ReadApexKeysInfo_missingPayloadPrivateKey(self):
     # Invalid lines will be skipped.
     apex_keys = self.APEX_KEYS_TXT + (
         'name="apex.apexd_test_different_app2.apex" '
         'public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" '
+        'container_certificate="build/target/product/security/testkey.x509.pem" '
+        'container_private_key="build/target/product/security/testkey.pk8"')
+    target_files = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.writestr('META/apexkeys.txt', apex_keys)
+
+    with zipfile.ZipFile(target_files) as target_files_zip:
+      keys_info = ReadApexKeysInfo(target_files_zip)
+
+    self.assertEqual({
+        'apex.apexd_test.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
+            'build/target/product/security/testkey'),
+        'apex.apexd_test_different_app.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
+            'build/target/product/security/testkey'),
+        }, keys_info)
+
+  def test_ReadApexKeysInfo_missingPayloadPublicKey(self):
+    # Invalid lines will be skipped.
+    apex_keys = self.APEX_KEYS_TXT + (
+        'name="apex.apexd_test_different_app2.apex" '
+        'private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" '
         'container_certificate="build/target/product/security/testkey.x509.pem" '
         'container_private_key="build/target/product/security/testkey.pk8"')
     target_files = common.MakeTempFile(suffix='.zip')
