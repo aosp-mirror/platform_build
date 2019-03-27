@@ -318,9 +318,31 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
   if info_dict.get("avb_enable") == "true":
     logging.info('Verifying Verified Boot 2.0 (AVB) images...')
 
-    # TODO(b/120517892): Temporarily disable the verification for AVB-signed
-    # images. Needing supporting changes in caller to pass in the desired keys.
-    logging.info('Temporarily disabled due to b/120517892')
+    key = options['verity_key']
+    if key is None:
+      key = info_dict['avb_vbmeta_key_path']
+
+    # avbtool verifies all the images that have descriptors listed in vbmeta.
+    image = os.path.join(input_tmp, 'IMAGES', 'vbmeta.img')
+    cmd = ['avbtool', 'verify_image', '--image', image, '--key', key]
+
+    # Append the args for chained partitions if any.
+    for partition in common.AVB_PARTITIONS:
+      key_name = 'avb_' + partition + '_key_path'
+      if info_dict.get(key_name) is not None:
+        chained_partition_arg = common.GetAvbChainedPartitionArg(
+            partition, info_dict, options[key_name])
+        cmd.extend(["--expected_chain_partition", chained_partition_arg])
+
+    proc = common.Run(cmd)
+    stdoutdata, _ = proc.communicate()
+    assert proc.returncode == 0, \
+        'Failed to verify {} with avbtool (key: {}):\n{}'.format(
+            image, key, stdoutdata)
+
+    logging.info(
+        'Verified %s with avbtool (key: %s):\n%s', image, key,
+        stdoutdata.rstrip())
 
 
 def main():
