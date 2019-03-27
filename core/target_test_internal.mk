@@ -30,10 +30,8 @@ $(error $(LOCAL_PATH): Do not set LOCAL_MODULE_PATH_64 when building test $(LOCA
 endif
 
 use_testcase_folder := false
-ifdef ENABLE_DEFAULT_TEST_LOCATION
-  ifneq ($(LOCAL_MODULE),$(filter $(LOCAL_MODULE),$(DEFAULT_DATA_OUT_MODULES)))
-    use_testcase_folder := true
-  endif
+ifneq ($(LOCAL_MODULE),$(filter $(LOCAL_MODULE),$(DEFAULT_DATA_OUT_MODULES)))
+  use_testcase_folder := true
 endif
 
 ifneq ($(use_testcase_folder),true)

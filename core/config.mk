@@ -1183,12 +1183,9 @@ include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
 
-# If ENABLE_DEFAULT_TEST_LOCATION is true, move default install path from
-# $(my_prefix)OUT_DATA to $(my_prefix)OUT_TESTCASES
-ENABLE_DEFAULT_TEST_LOCATION := true
 -include external/linux-kselftest/android/kselftest_test_list.mk
 -include external/ltp/android/ltp_package_list.mk
 DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
-.KATI_READONLY := ENABLE_DEFAULT_TEST_LOCATION DEFAULT_DATA_OUT_MODULES
+.KATI_READONLY := DEFAULT_DATA_OUT_MODULES
 
 include $(BUILD_SYSTEM)/dumpvar.mk

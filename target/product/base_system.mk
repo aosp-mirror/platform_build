@@ -286,6 +286,7 @@ PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
     adbd \
+    art-tools \
     atest \
     bcc \
     bit \
