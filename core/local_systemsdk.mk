@@ -25,7 +25,7 @@ ifdef BOARD_SYSTEMSDK_VERSIONS
   ifneq (,$(filter JAVA_LIBRARIES APPS,$(LOCAL_MODULE_CLASS)))
     ifndef LOCAL_SDK_VERSION
       ifeq ($(_is_vendor_app),true)
-        ifeq (,$(filter %__auto_generated_rro,$(LOCAL_MODULE)))
+        ifeq (,$(filter %__auto_generated_rro_vendor,$(LOCAL_MODULE)))
           # Runtime resource overlays are exempted from building against System SDK.
           # TODO(b/35859726): remove this exception
           LOCAL_SDK_VERSION := system_current

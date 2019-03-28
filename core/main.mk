@@ -501,6 +501,10 @@ ifndef subdir_makefiles_total
 subdir_makefiles_total := $(words init post finish)
 endif
 
+droid_targets: no_vendor_variant_vndk_check
+.PHONY: no_vendor_variant_vndk_check
+no_vendor_variant_vndk_check:
+
 $(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] finishing build rules ...)
 
 # -------------------------------------------------------------------
@@ -1202,7 +1206,8 @@ ifdef FULL_BUILD
   # Fakes don't get installed, host files are irrelevant, and NDK stubs aren't installed to device.
   static_whitelist_patterns := $(TARGET_OUT_FAKE)/% $(HOST_OUT)/% $(SOONG_OUT_DIR)/ndk/%
   # RROs become REQUIRED by the source module, but are always placed on the vendor partition.
-  static_whitelist_patterns += %__auto_generated_rro.apk
+  static_whitelist_patterns += %__auto_generated_rro_product.apk
+  static_whitelist_patterns += %__auto_generated_rro_vendor.apk
   # Auto-included targets are not considered
   static_whitelist_patterns += $(call module-installed-files,$(call auto-included-modules))
   # $(PRODUCT_OUT)/apex is where shared libraries in APEXes get installed.
