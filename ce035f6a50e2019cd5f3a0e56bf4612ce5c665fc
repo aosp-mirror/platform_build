@@ -188,6 +188,30 @@
       "revId": "ce035f6a50e2019cd5f3a0e56bf4612ce5c665fc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5943bd79_d4a37343",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2216,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-28T11:55:53Z",
+      "side": 1,
+      "message": "I don\u0027t think you\u0027re not going to get $(error) to work here regardless of how you wrap it, because $(error) can only run in make, and you want to fail in ninja?",
+      "parentUuid": "701352d6_59d02c97",
+      "range": {
+        "startLine": 2216,
+        "startChar": 8,
+        "endLine": 2216,
+        "endChar": 15
+      },
+      "revId": "ce035f6a50e2019cd5f3a0e56bf4612ce5c665fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
