@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "42adba72_35d3e424",
+        "filename": "core/main.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1109,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-03-28T15:59:08Z",
+      "side": 1,
+      "message": "We can\u0027t really change my_register_name, but yes, we can separate the variables between target\u0026host more than we do today. There\u0027s also a few cases where we do have device-\u003ehost and host-\u003edevice dependencies, usually for tests that have both host and device pieces. I don\u0027t think those are tracked in these lists though. I was planning on looking at that next (particularly splitting .REQUIRED -- .INSTALLED/etc we can do automatically in most cases)",
+      "parentUuid": "d6bfa3e7_634be85a",
+      "revId": "2e79dafed127ab624005aca274a9b20c8845533e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "7952c35e_40865b32",
         "filename": "core/main.mk",
         "patchSetId": 4
@@ -30,6 +48,30 @@
       "writtenOn": "2019-03-21T12:56:08Z",
       "side": 1,
       "message": "feels like none of the sanity checks inside this FULL_BUILD block are relevant for TARGET_BUILD_APPS? what is INTERNAL_PRODUCT even set to for tapas builds?",
+      "range": {
+        "startLine": 1174,
+        "startChar": 2,
+        "endLine": 1174,
+        "endChar": 30
+      },
+      "revId": "2e79dafed127ab624005aca274a9b20c8845533e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b187e4b9_61a66b49",
+        "filename": "core/main.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1174,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-03-28T15:59:08Z",
+      "side": 1,
+      "message": "Maybe, but that\u0027s probably a different change to make. They currently use aosp_(arm|arm64|x86|x86_64) for TARGET_PRODUCT, but instead of the default droid-\u003edroid_targets-\u003edroidcore target chain, they use droid-\u003edroid_targets-\u003eapps_only, so we\u0027re effectively ignoring the modules_to_install that this is generating.",
+      "parentUuid": "7952c35e_40865b32",
       "range": {
         "startLine": 1174,
         "startChar": 2,
