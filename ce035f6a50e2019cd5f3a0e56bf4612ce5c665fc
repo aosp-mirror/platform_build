@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "a71a162b_ce51d1e8",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2211,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-28T10:59:29Z",
+      "side": 1,
+      "message": "+1, using ifneq usually ends up less cryptic to read",
+      "parentUuid": "1f6caf95_86f399b6",
+      "range": {
+        "startLine": 2211,
+        "startChar": 0,
+        "endLine": 2211,
+        "endChar": 41
+      },
+      "revId": "ce035f6a50e2019cd5f3a0e56bf4612ce5c665fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fdbafb6b_918f268a",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -107,6 +131,30 @@
       "side": 1,
       "message": "Don\u0027t worry, nobody in the world fully understands makefile expansion... I think this gets evaluated when the Makefile is parsed, so you can\u0027t get `findres` in there. You\u0027d have to convert it to makefile commands. But leave it if too complicated.",
       "parentUuid": "3b0079ab_e1344658",
+      "range": {
+        "startLine": 2216,
+        "startChar": 8,
+        "endLine": 2216,
+        "endChar": 15
+      },
+      "revId": "ce035f6a50e2019cd5f3a0e56bf4612ce5c665fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7ae4ee26_4f9fe050",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2216,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-28T10:59:29Z",
+      "side": 1,
+      "message": "This was discussed in the original patch. The check could be converted to use $(product_target_FILES) from main.mk and fail at kati-time with $(error) rather than after doing the full build. The advantage of the current approach is that it doesn\u0027t run the risk of missing files not in product_target_FILES (there are a few, mostly JNI libs).",
+      "parentUuid": "129a09e2_e80ecd3c",
       "range": {
         "startLine": 2216,
         "startChar": 8,
