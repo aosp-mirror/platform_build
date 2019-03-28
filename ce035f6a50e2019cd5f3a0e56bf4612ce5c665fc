@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "86750b57_86a411e7",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2211,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-03-28T13:23:51Z",
+      "side": 1,
+      "message": "Good point, switched to ifndef like many other examples in this file.",
+      "parentUuid": "a71a162b_ce51d1e8",
+      "range": {
+        "startLine": 2211,
+        "startChar": 0,
+        "endLine": 2211,
+        "endChar": 41
+      },
+      "revId": "ce035f6a50e2019cd5f3a0e56bf4612ce5c665fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fdbafb6b_918f268a",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -202,6 +226,30 @@
       "writtenOn": "2019-03-28T11:55:53Z",
       "side": 1,
       "message": "I don\u0027t think you\u0027re not going to get $(error) to work here regardless of how you wrap it, because $(error) can only run in make, and you want to fail in ninja?",
+      "parentUuid": "701352d6_59d02c97",
+      "range": {
+        "startLine": 2216,
+        "startChar": 8,
+        "endLine": 2216,
+        "endChar": 15
+      },
+      "revId": "ce035f6a50e2019cd5f3a0e56bf4612ce5c665fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f55ea0f9_0a8fa776",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2216,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-03-28T13:23:51Z",
+      "side": 1,
+      "message": "Yes, it\u0027s intentional that the check is (late) in the build execution rather than in the make (i.e. kati) step, precisely to catch things like the one that is bothering David.",
       "parentUuid": "701352d6_59d02c97",
       "range": {
         "startLine": 2216,
