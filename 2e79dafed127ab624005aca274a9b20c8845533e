@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "bc524305_a6df3394",
+        "filename": "core/main.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1109,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-28T16:16:56Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "42adba72_35d3e424",
+      "revId": "2e79dafed127ab624005aca274a9b20c8845533e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7952c35e_40865b32",
         "filename": "core/main.mk",
         "patchSetId": 4
@@ -81,6 +99,30 @@
       "revId": "2e79dafed127ab624005aca274a9b20c8845533e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe1def62_880550a1",
+        "filename": "core/main.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 1174,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-28T16:16:56Z",
+      "side": 1,
+      "message": "got it. thanks for explaining!",
+      "parentUuid": "b187e4b9_61a66b49",
+      "range": {
+        "startLine": 1174,
+        "startChar": 2,
+        "endLine": 1174,
+        "endChar": 30
+      },
+      "revId": "2e79dafed127ab624005aca274a9b20c8845533e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
