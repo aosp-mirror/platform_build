@@ -164,6 +164,30 @@
       "revId": "ce035f6a50e2019cd5f3a0e56bf4612ce5c665fc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "701352d6_59d02c97",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2216,
+      "author": {
+        "id": 1059815
+      },
+      "writtenOn": "2019-03-28T11:51:11Z",
+      "side": 1,
+      "message": "One can delay the evaluation with $(eval $(error xyz)). But I am the last person who would force another human being to have to endure the pain of debugging makefiles.",
+      "parentUuid": "7ae4ee26_4f9fe050",
+      "range": {
+        "startLine": 2216,
+        "startChar": 8,
+        "endLine": 2216,
+        "endChar": 15
+      },
+      "revId": "ce035f6a50e2019cd5f3a0e56bf4612ce5c665fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
