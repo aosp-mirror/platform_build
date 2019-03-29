@@ -70,6 +70,30 @@
       "revId": "056d642d49472f93f8cdf3e815184d8faba515d9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ae72e83a_0c3f3c44",
+        "filename": "target/product/base_vendor.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-03-29T12:13:59Z",
+      "side": 1,
+      "message": "- PRODUCT_ variables are inherited in product makefiles, using $(call inherit-product). Large parts of the product hierarchy are reusable across devices. It\u0027s also common for each device to have several different products that tweak these variables\n- BOARD_ variables are device-specific, typically set in the BoardConfig, and don\u0027t support inheritance\n\nI think the intended split is roughly product\u003d\u003d\"what to compile\" whereas board\u003d\"how to compile it\"\n\nI don\u0027t understand how this flag is intended to be used... if it\u0027s a PRODUCT_ flag -- why couldn\u0027t the product that sets it just include these keys itself directly? What is the intended default?",
+      "parentUuid": "ffb614e2_3b2f42cd",
+      "range": {
+        "startLine": 73,
+        "startChar": 8,
+        "endLine": 73,
+        "endChar": 30
+      },
+      "revId": "056d642d49472f93f8cdf3e815184d8faba515d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
