@@ -61,7 +61,8 @@ $(call add_json_str,  CrossHost,                         $(HOST_CROSS_OS))
 $(call add_json_str,  CrossHostArch,                     $(HOST_CROSS_ARCH))
 $(call add_json_str,  CrossHostSecondaryArch,            $(HOST_CROSS_2ND_ARCH))
 
-$(call add_json_list, ResourceOverlays,                  $(PRODUCT_PACKAGE_OVERLAYS) $(DEVICE_PACKAGE_OVERLAYS))
+$(call add_json_list, DeviceResourceOverlays,            $(DEVICE_PACKAGE_OVERLAYS))
+$(call add_json_list, ProductResourceOverlays,           $(PRODUCT_PACKAGE_OVERLAYS))
 $(call add_json_list, EnforceRROTargets,                 $(PRODUCT_ENFORCE_RRO_TARGETS))
 $(call add_json_list, EnforceRROExcludedOverlays,        $(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS))
 
@@ -114,6 +115,8 @@ $(call add_json_bool, UncompressPrivAppDex,              $(call invert_bool,$(fi
 $(call add_json_list, ModulesLoadedByPrivilegedModules,  $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
 
 $(call add_json_list, BootJars,                          $(PRODUCT_BOOT_JARS))
+
+$(call add_json_bool, VndkUseCoreVariant,                $(TARGET_VNDK_USE_CORE_VARIANT))
 
 $(call add_json_bool, Product_is_iot,                    $(filter true,$(PRODUCT_IOT)))
 

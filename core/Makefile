@@ -734,6 +734,15 @@ $(BUILD_SYSTEM_STATS):
 $(call dist-for-goals,droidcore,$(BUILD_SYSTEM_STATS))
 
 # -----------------------------------------------------------------
+# build /product/etc/security/avb/system_other.avbpubkey if needed
+ifdef BUILDING_SYSTEM_OTHER_IMAGE
+ifeq ($(BOARD_AVB_ENABLE),true)
+INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET := $(TARGET_OUT_PRODUCT_ETC)/security/avb/system_other.avbpubkey
+ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET)
+endif # BOARD_AVB_ENABLE
+endif # BUILDING_SYSTEM_OTHER_IMAGE
+
+# -----------------------------------------------------------------
 # Modules ready to be converted to Soong, ordered by how many
 # modules depend on them.
 SOONG_CONV := $(sort $(SOONG_CONV))
@@ -1467,8 +1476,7 @@ $(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_system_other_add_hashtree_footer_args
 $(if $(BOARD_AVB_ENABLE),\
     $(if $(BOARD_AVB_SYSTEM_OTHER_KEY_PATH),\
         $(hide) echo "avb_system_other_key_path=$(BOARD_AVB_SYSTEM_OTHER_KEY_PATH)" >> $(1)
-        $(hide) echo "avb_system_other_algorithm=$(BOARD_AVB_SYSTEM_OTHER_ALGORITHM)" >> $(1)
-        $(hide) echo "avb_system_extract_system_other_key=true" >> $(1)))
+        $(hide) echo "avb_system_other_algorithm=$(BOARD_AVB_SYSTEM_OTHER_ALGORITHM)" >> $(1)))
 $(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_vendor_hashtree_enable=$(BOARD_AVB_ENABLE)" >> $(1))
 $(if $(BOARD_AVB_ENABLE),$(hide) echo "avb_vendor_add_hashtree_footer_args=$(BOARD_AVB_VENDOR_ADD_HASHTREE_FOOTER_ARGS)" >> $(1))
 $(if $(BOARD_AVB_ENABLE),\
@@ -2139,12 +2147,80 @@ define create-vendor-odm-symlink
 endef
 endif
 
+# Check that libraries that should only be in APEXes don't end up in the system
+# image. For the Runtime APEX this complements the checks in
+# art/build/apex/art_apex_test.py.
+# TODO(b/128708192): Implement this restriction in Soong instead.
+
+# TODO(b/124293228): Fix remaining bugs and add these libraries to the list:
+#   libart-compiler.so
+#   libart-dexlayout.so
+#   libart.so
+#   libartbase.so
+#   libartpalette.so
+#   libdexfile.so
+#   libdexfile_external.so  - aosp_marlin-userdebug gets this in a vndk-sp-Q subdirectory.
+#   libicui18n.so
+#   libicuuc.so
+#   libnativehelper.so  - cf_x86_phone-userdebug builds get this in system/lib/arm
+#   libprofile.so
+#   libsigchain.so
+#   libtombstoned_client.so
+APEX_MODULE_LIBS= \
+  libadbconnection.so \
+  libandroidicu.so \
+  libdt_fd_forward.so \
+  libdt_socket.so \
+  libjavacore.so \
+  libjdwp.so \
+  libnativebridge.so \
+  libnativeloader.so \
+  libnpt.so \
+  libopenjdk.so \
+  libopenjdkjvm.so \
+  libopenjdkjvmti.so \
+  libpac.so \
+
+# If the check below fails, some library has ended up in system/lib or
+# system/lib64 that is intended to only go into some APEX package. The likely
+# cause is that a library or binary in /system has grown a dependency that
+# directly or indirectly pulls in the prohibited library.
+#
+# To resolve this, look for the APEX package that the library belong to - search
+# for it in 'native_shared_lib' properties in 'apex' build modules (see
+# art/build/apex/Android.bp for an example). Then check if there is an exported
+# library in that APEX package that should be used instead, i.e. one listed in
+# its 'native_shared_lib' property for which the corresponding 'cc_library'
+# module has a 'stubs' clause (like libdexfile_external in
+# art/libdexfile/Android.bp).
+#
+# If you cannot find an APEX exported library that fits your needs, or you think
+# that the library you want to depend on should be allowed in /system, then
+# please contact the owners of the APEX package containing the library.
+#
+# If you get this error for a library that is exported in an APEX, then the APEX
+# might be misconfigured or something is wrong in the build system. Please reach
+# out to the APEX package owners and/or soong-team@, or
+# android-building@googlegroups.com externally.
+define check-apex-libs-absence
+$(hide) ( \
+  cd $(TARGET_OUT); \
+  findres=$$(find lib* -type f \( -false $(foreach lib,$(APEX_MODULE_LIBS),-o -name $(lib)) \) -print) || exit 1; \
+  if [ -n "$$findres" ]; then \
+    echo "APEX libraries found in system image (see comment in this makefile for details):" 1>&2; \
+    echo "$$findres" | sort 1>&2; \
+    false; \
+  fi; \
+)
+endef
+
 # $(1): output file
 define build-systemimage-target
   @echo "Target system fs image: $(1)"
   $(call create-system-vendor-symlink)
   $(call create-system-product-symlink)
   $(call create-system-product_services-symlink)
+  $(call check-apex-libs-absence)
   @mkdir -p $(dir $(1)) $(systemimage_intermediates) && rm -rf $(systemimage_intermediates)/system_image_info.txt
   $(call generate-image-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt,system, \
       skip_fsck=true)
@@ -2979,9 +3055,11 @@ BOARD_AVB_SYSTEM_OTHER_KEY_PATH := $(BOARD_AVB_KEY_PATH)
 BOARD_AVB_SYSTEM_OTHER_ALGORITHM := $(BOARD_AVB_ALGORITHM)
 endif
 
-# To extract the public key of SYSTEM_OTHER_KEY_PATH will into system.img:
-# /system/etc/security/avb/system_other.avbpubkey.
-FULL_SYSTEMIMAGE_DEPS += $(BOARD_AVB_SYSTEM_OTHER_KEY_PATH)
+$(INSTALLED_PRODUCT_SYSTEM_OTHER_AVBKEY_TARGET): $(AVBTOOL) $(BOARD_AVB_SYSTEM_OTHER_KEY_PATH)
+	@echo Extracting system_other avb key: $@
+	@rm -f $@
+	@mkdir -p $(dir $@)
+	$(AVBTOOL) extract_public_key --key $(BOARD_AVB_SYSTEM_OTHER_KEY_PATH) --output $@
 
 ifndef BOARD_AVB_SYSTEM_OTHER_ROLLBACK_INDEX
 BOARD_AVB_SYSTEM_OTHER_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
@@ -3937,8 +4015,10 @@ ifdef BOARD_BPT_DISK_SIZE
 endif
 	$(call generate-userimage-prop-dictionary, $(zip_root)/META/misc_info.txt)
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
+ifdef BUILDING_SYSTEM_IMAGE
 	$(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    build/make/tools/releasetools/make_recovery_patch $(zip_root) $(zip_root)
+endif # BUILDING_SYSTEM_IMAGE
 endif
 ifeq ($(AB_OTA_UPDATER),true)
 	@# When using the A/B updater, include the updater config files in the zip.
@@ -4225,7 +4305,7 @@ $(SYMBOLS_ZIP): $(SOONG_ZIP)
 	@echo "Package symbols: $@"
 	$(hide) rm -rf $@ $(PRIVATE_LIST_FILE)
 	$(hide) mkdir -p $(dir $@) $(TARGET_OUT_UNSTRIPPED) $(dir $(PRIVATE_LIST_FILE))
-	$(hide) find $(TARGET_OUT_UNSTRIPPED) | sort >$(PRIVATE_LIST_FILE)
+	$(hide) find -L $(TARGET_OUT_UNSTRIPPED) -type f | sort >$(PRIVATE_LIST_FILE)
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(OUT_DIR)/.. -l $(PRIVATE_LIST_FILE)
 # -----------------------------------------------------------------
 # A zip of the coverage directory.

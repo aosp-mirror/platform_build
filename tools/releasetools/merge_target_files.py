@@ -204,12 +204,18 @@ def read_config_list(config_file_path):
     return config_file.read().splitlines()
 
 
-def validate_config_lists(system_item_list, other_item_list):
+def validate_config_lists(
+    system_item_list,
+    system_misc_info_keys,
+    other_item_list):
   """Performs validations on the merge config lists.
 
   Args:
     system_item_list: The list of items to extract from the partial
     system target files package as is.
+
+    system_misc_info_keys: A list of keys to obtain from the system instance
+    of META/misc_info.txt. The remaining keys from the other instance.
 
     other_item_list: The list of items to extract from the partial
     other target files package as is.
@@ -231,6 +237,12 @@ def validate_config_lists(system_item_list, other_item_list):
     logger.error('Please ensure missing items are in either the '
                  'system-item-list or other-item-list files provided to '
                  'this script.')
+    return False
+
+  if ('dynamic_partition_list' in system_misc_info_keys) or (
+      'super_partition_groups' in system_misc_info_keys):
+    logger.error('Dynamic partition misc info keys should come from '
+                 'the other instance of META/misc_info.txt.')
     return False
 
   return True
@@ -330,6 +342,25 @@ def process_misc_info_txt(
 
   for key in system_misc_info_keys:
     merged_info_dict[key] = system_info_dict[key]
+
+  # Merge misc info keys used for Dynamic Partitions.
+  if (merged_info_dict.get('use_dynamic_partitions') == 'true') and (
+      system_info_dict.get('use_dynamic_partitions') == 'true'):
+    merged_info_dict['dynamic_partition_list'] = '%s %s' % (
+        system_info_dict.get('dynamic_partition_list', ''),
+        merged_info_dict.get('dynamic_partition_list', ''))
+    # Partition groups and group sizes are defined by the other (non-system)
+    # misc info file because these values may vary for each board that uses
+    # a shared system image.
+    for partition_group in merged_info_dict['super_partition_groups'].split(' '):
+      if ('super_%s_group_size' % partition_group) not in merged_info_dict:
+        raise common.ExternalError(
+            'Other META/misc_info.txt does not contain required key '
+            'super_%s_group_size.' % partition_group)
+      key = 'super_%s_partition_list' % partition_group
+      merged_info_dict[key] = '%s %s' % (
+        system_info_dict.get(key, ''),
+        merged_info_dict.get(key, ''))
 
   output_misc_info_txt = os.path.join(
       output_target_files_temp_dir,
@@ -717,6 +748,7 @@ def main():
 
   if not validate_config_lists(
       system_item_list=system_item_list,
+      system_misc_info_keys=system_misc_info_keys,
       other_item_list=other_item_list):
     sys.exit(1)
 
