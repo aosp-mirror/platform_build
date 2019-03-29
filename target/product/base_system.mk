@@ -198,7 +198,6 @@ PRODUCT_PACKAGES += \
     lshal \
     mdnsd \
     media \
-    media_cmd \
     mediadrmserver \
     mediaextractor \
     mediametrics \
