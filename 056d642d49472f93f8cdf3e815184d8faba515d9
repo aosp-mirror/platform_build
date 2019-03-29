@@ -46,6 +46,30 @@
       "revId": "056d642d49472f93f8cdf3e815184d8faba515d9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ffb614e2_3b2f42cd",
+        "filename": "target/product/base_vendor.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-03-29T09:48:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3e001e01_7640941f",
+      "range": {
+        "startLine": 73,
+        "startChar": 8,
+        "endLine": 73,
+        "endChar": 30
+      },
+      "revId": "056d642d49472f93f8cdf3e815184d8faba515d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
