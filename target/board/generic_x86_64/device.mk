@@ -19,10 +19,6 @@ ifdef NET_ETH0_STARTONBOOT
 endif
 
 # Ensure we package the BIOS files too.
-PRODUCT_PACKAGES += \
-	bios.bin \
-	vgabios-cirrus.bin \
-
 PRODUCT_HOST_PACKAGES += \
 	bios.bin \
 	vgabios-cirrus.bin \
