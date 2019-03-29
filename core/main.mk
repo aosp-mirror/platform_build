@@ -404,12 +404,8 @@ endif
 # Typical build; include any Android.mk files we can find.
 #
 
-# Before we go and include all of the module makefiles, strip values for easier
-# processing.
-$(call strip-product-vars)
-# Before we go and include all of the module makefiles, mark the PRODUCT_*
-# and ADDITIONAL*PROPERTIES values readonly so that they won't be modified.
-$(call readonly-product-vars)
+# Strip and readonly a few more variables so they won't be modified.
+$(readonly-final-product-vars)
 ADDITIONAL_DEFAULT_PROPERTIES := $(strip $(ADDITIONAL_DEFAULT_PROPERTIES))
 .KATI_READONLY := ADDITIONAL_DEFAULT_PROPERTIES
 ADDITIONAL_BUILD_PROPERTIES := $(strip $(ADDITIONAL_BUILD_PROPERTIES))
