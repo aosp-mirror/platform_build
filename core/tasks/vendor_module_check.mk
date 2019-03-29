@@ -48,18 +48,18 @@ _vendor_owner_whitelist := \
         widevine
 
 
-_restrictions := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES))
+_restrictions := $(PRODUCT_RESTRICT_VENDOR_FILES)
 
 ifneq (,$(_restrictions))
-ifneq (,$(PRODUCTS.$(INTERNAL_PRODUCT).VENDOR_PRODUCT_RESTRICT_VENDOR_FILES))
+ifneq (,$(VENDOR_PRODUCT_RESTRICT_VENDOR_FILES))
 $(error Error: cannot set both PRODUCT_RESTRICT_VENDOR_FILES and VENDOR_PRODUCT_RESTRICT_VENDOR_FILES)
 endif
 _vendor_exception_path_prefix :=
 _vendor_exception_modules :=
 else
-_restrictions := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).VENDOR_PRODUCT_RESTRICT_VENDOR_FILES))
-_vendor_exception_path_prefix := $(patsubst %, vendor/%/%, $(PRODUCTS.$(INTERNAL_PRODUCT).VENDOR_EXCEPTION_PATHS))
-_vendor_exception_modules := $(PRODUCTS.$(INTERNAL_PRODUCT).VENDOR_EXCEPTION_MODULES)
+_restrictions := $(VENDOR_PRODUCT_RESTRICT_VENDOR_FILES)
+_vendor_exception_path_prefix := $(patsubst %, vendor/%/%, $(VENDOR_EXCEPTION_PATHS))
+_vendor_exception_modules := $(VENDOR_EXCEPTION_MODULES)
 endif
 
 

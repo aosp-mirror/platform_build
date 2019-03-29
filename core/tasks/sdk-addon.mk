@@ -18,7 +18,7 @@ ifndef ONE_SHOT_MAKEFILE
 
 # If they didn't define PRODUCT_SDK_ADDON_NAME, then we won't define
 # any of these rules.
-addon_name := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_NAME))
+addon_name := $(PRODUCT_SDK_ADDON_NAME)
 ifneq ($(addon_name),)
 
 addon_dir_leaf  := $(addon_name)-$(FILE_NAME_TAG)-$(INTERNAL_SDK_HOST_OS_NAME)
@@ -43,8 +43,8 @@ $(call stub-addon-jar-file,$(1)): $(1) | mkstubs
 endef
 
 # Files that are built and then copied into the sdk-addon
-ifneq ($(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_COPY_MODULES)),)
-$(foreach cf,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_COPY_MODULES), \
+ifneq ($(PRODUCT_SDK_ADDON_COPY_MODULES),)
+$(foreach cf,$(PRODUCT_SDK_ADDON_COPY_MODULES), \
   $(eval _src := $(call module-stubs-files,$(call word-colon,1,$(cf)))) \
   $(eval $(call stub-addon-jar,$(_src))) \
   $(eval _src := $(call stub-addon-jar-file,$(_src))) \
@@ -55,8 +55,8 @@ $(foreach cf,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_COPY_MODULES), \
 endif
 
 # Files that are copied directly into the sdk-addon
-ifneq ($(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_COPY_FILES)),)
-$(foreach cf,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_COPY_FILES), \
+ifneq ($(PRODUCT_SDK_ADDON_COPY_FILES),)
+$(foreach cf,$(PRODUCT_SDK_ADDON_COPY_FILES), \
   $(eval _src  := $(call word-colon,1,$(cf))) \
   $(eval _dest := $(call word-colon,2,$(cf))) \
   $(if $(findstring images/,$(_dest)), $(eval _root := $(addon_dir_img)), $(eval _root := $(addon_dir_leaf))) \
@@ -72,7 +72,7 @@ files_to_copy += \
 	$(addon_dir_img):$(PRODUCT_OUT)/system/build.prop:images/$(TARGET_CPU_ABI)/build.prop \
 	$(addon_dir_img):device/generic/goldfish/data/etc/userdata.img:images/$(TARGET_CPU_ABI)/userdata.img \
 	$(addon_dir_img):$(target_notice_file_txt):images/$(TARGET_CPU_ABI)/NOTICE.txt \
-	$(addon_dir_img):$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_SYS_IMG_SOURCE_PROP):images/source.properties
+	$(addon_dir_img):$(PRODUCT_SDK_ADDON_SYS_IMG_SOURCE_PROP):images/source.properties
 
 
 ifeq ($(BOARD_AVB_ENABLE),true)
@@ -93,7 +93,7 @@ $(foreach cf,$(files_to_copy), \
 addon_img_source_prop := $(call append-path,$(staging),$(addon_dir_img))/images/$(TARGET_CPU_ABI)/source.properties
 sdk_addon_deps += $(addon_img_source_prop)
 
-$(addon_img_source_prop): $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_SYS_IMG_SOURCE_PROP)
+$(addon_img_source_prop): $(PRODUCT_SDK_ADDON_SYS_IMG_SOURCE_PROP)
 	@echo Generate $@
 	$(hide) mkdir -p $(dir $@)
 	$(hide) sed \
@@ -108,7 +108,7 @@ $(addon_img_source_prop): $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_SYS_I
 # We don't know about all of the docs files, so depend on the timestamps for
 # them, and record the directories, and the packaging rule will just copy the
 # whole thing.
-doc_modules := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_SDK_ADDON_DOC_MODULES))
+doc_modules := $(PRODUCT_SDK_ADDON_DOC_MODULES)
 sdk_addon_deps += $(foreach dm, $(doc_modules), $(call doc-timestamp-for, $(dm)))
 $(full_target): PRIVATE_DOCS_DIRS := $(addprefix $(OUT_DOCS)/, $(doc_modules))
 
