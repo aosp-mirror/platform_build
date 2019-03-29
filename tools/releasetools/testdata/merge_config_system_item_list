@@ -1,0 +1,9 @@
+META/apkcerts.txt
+META/filesystem_config.txt
+META/root_filesystem_config.txt
+META/system_manifest.xml
+META/system_matrix.xml
+META/update_engine_config.txt
+PRODUCT/*
+ROOT/*
+SYSTEM/*
