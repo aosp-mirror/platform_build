@@ -14,10 +14,24 @@
 # limitations under the License.
 #
 
-# Makefile including the mainline system image, and the relevant AOSP portions
-# for the other partitions.
+# This makefile is intended to serve as a base for completely AOSP based
+# mainline devices, It contain the mainline system partition and sensible
+# defaults for the product and vendor partition.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
+
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_product.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_product.mk)
+
+$(call inherit-product, frameworks/base/data/sounds/AllAudio.mk)
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.config.ringtone=Ring_Synth_04.ogg \
+    ro.com.android.dataroaming=true \
+
+PRODUCT_PACKAGES += \
+    PhotoTable \
+    WallpaperPicker \
+
+PRODUCT_COPY_FILES += device/sample/etc/apns-full-conf.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/apns-conf.xml
