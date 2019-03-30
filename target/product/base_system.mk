@@ -200,7 +200,6 @@ PRODUCT_PACKAGES += \
     lshal \
     mdnsd \
     media \
-    media_cmd \
     mediacodec.policy \
     mediadrmserver \
     mediaextractor \
