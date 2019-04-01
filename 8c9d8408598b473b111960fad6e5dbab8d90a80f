@@ -22,6 +22,30 @@
       "revId": "8c9d8408598b473b111960fad6e5dbab8d90a80f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2301c4b1_be29c478",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-01T10:20:27Z",
+      "side": 1,
+      "message": "given there are modules defined in go/oag/937136, could this not use PRODUCT_PACKAGES instead of PRODUCT_COPY_FILES, avoiding this problem?",
+      "parentUuid": "7105e27e_a3a2d413",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 0
+      },
+      "revId": "8c9d8408598b473b111960fad6e5dbab8d90a80f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
