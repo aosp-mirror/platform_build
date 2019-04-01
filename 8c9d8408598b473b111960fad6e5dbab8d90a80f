@@ -46,6 +46,30 @@
       "revId": "8c9d8408598b473b111960fad6e5dbab8d90a80f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "243ec65e_5278a379",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 4
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-01T10:27:22Z",
+      "side": 1,
+      "message": "You meant use PRODUCT_PACKAGES instead of PRODUCT_COPY_FILES, right? (i.e., the PS3).\n\nI\u0027m just trying to post different solutions for discussion.\nAgree having a single gsi_keys.mk is probably the top priority.",
+      "parentUuid": "2301c4b1_be29c478",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 0
+      },
+      "revId": "8c9d8408598b473b111960fad6e5dbab8d90a80f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
