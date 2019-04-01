@@ -94,6 +94,30 @@
       "revId": "056d642d49472f93f8cdf3e815184d8faba515d9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f1cb6ef_4d244aa5",
+        "filename": "target/product/base_vendor.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-01T13:43:10Z",
+      "side": 1,
+      "message": "re: product\u003d\u003d\"what to compile\" whereas board\u003d\"how to compile it\"\n\nThanks for the info.\n\nre: why couldn\u0027t the product that sets it just include these keys itself directly?\nBecause the keys are the same. Seems no need to duplicate them across different device/*/*/.",
+      "parentUuid": "ae72e83a_0c3f3c44",
+      "range": {
+        "startLine": 73,
+        "startChar": 8,
+        "endLine": 73,
+        "endChar": 30
+      },
+      "revId": "056d642d49472f93f8cdf3e815184d8faba515d9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
