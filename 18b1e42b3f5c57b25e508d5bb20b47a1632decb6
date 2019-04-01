@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "13eee3b2_434a1dda",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-01T15:48:59Z",
+      "side": 1,
+      "message": "nit: typo",
+      "range": {
+        "startLine": 321,
+        "startChar": 6,
+        "endLine": 321,
+        "endChar": 21
+      },
+      "revId": "18b1e42b3f5c57b25e508d5bb20b47a1632decb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b807fd6c_57447911",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 325,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-01T15:48:59Z",
+      "side": 1,
+      "message": "Can you also add the line for system/etc/recovery.img?\nsystem/etc/recovery.img 0 0 440 selabel\u003du:object_r:install_recovery_exec:s0 capabilities\u003d0x0\n\nsystem/etc/recovery.img is similar to system/recovery-from-boot.p, but handles the case of `BOARD_USES_FULL_RECOVERY_IMAGE :\u003d true`. Since having unused rules is a no-op here, can we just add both of them?",
+      "range": {
+        "startLine": 325,
+        "startChar": 4,
+        "endLine": 325,
+        "endChar": 12
+      },
+      "revId": "18b1e42b3f5c57b25e508d5bb20b47a1632decb6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
