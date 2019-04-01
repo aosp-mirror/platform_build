@@ -167,7 +167,6 @@ PRODUCT_PACKAGES += \
     libradio_metadata \
     librtp_jni \
     libsensorservice \
-    libsigchain \
     libskia \
     libsonic \
     libsonivox \
