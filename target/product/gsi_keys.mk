@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2009 The Android Open Source Project
+# Copyright (C) 2019 The Android Open-Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,11 +14,9 @@
 # limitations under the License.
 #
 
-ifdef NET_ETH0_STARTONBOOT
-  PRODUCT_PROPERTY_OVERRIDES += net.eth0.startonboot=1
-endif
-
-# Ensure we package the BIOS files too.
-PRODUCT_HOST_PACKAGES += \
-	bios.bin \
-	vgabios-cirrus.bin \
+# Include GSI keys into first-stage ramdisk, so we can enable verified
+# boot when booting a GSI.
+PRODUCT_PACKAGES += \
+    q-gsi.avbpubkey \
+    r-gsi.avbpubkey \
+    s-gsi.avbpubkey \
