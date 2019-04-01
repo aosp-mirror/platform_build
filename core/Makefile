@@ -2166,7 +2166,7 @@ endif
 #   libicuuc.so
 #   libnativehelper.so  - cf_x86_phone-userdebug builds get this in system/lib/arm
 #   libprofile.so
-#   libsigchain.so
+#   libsigchain.so  - cf_x86_phone-userdebug builds get this in system/lib/arm
 #   libtombstoned_client.so
 APEX_MODULE_LIBS= \
   libadbconnection.so \
