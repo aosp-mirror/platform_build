@@ -625,6 +625,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/target/common/obj/framework.aidl)
 
 # Clean up adb_debug.propr
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/adb_debug.prop)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libjavacrypto.so)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
