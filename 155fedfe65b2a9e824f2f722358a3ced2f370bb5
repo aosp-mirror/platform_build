@@ -70,6 +70,24 @@
       "revId": "155fedfe65b2a9e824f2f722358a3ced2f370bb5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ba2d1ee6_df56c69d",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 1027,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-02T13:24:14Z",
+      "side": 1,
+      "message": "Note that the way things work currently (IIUC)\n- LOCAL_TARGET_REQUIRED_MODULES is only to be used from HOST modules\n- LOCAL_HOST_REQUIRED_MODULES is only to be used from TARGET modules\n\nThis CL appears to change that by changing these two expand-required-... macros here, but only sets up the dependencies accordingly for shared libraries, but not other module classes.\n\nFor example, if I made an ETC module X that depended on another module Y via LOCAL_TARGET_REQUIRED_MODULES, I don\u0027t think changing Y would cause X to get rebuilt (but it would if Y was a shared library..). I think at a minimum the macro on line 647 needs to be changed as well.\n\nI think this CL should be split up into two separate changes that:\n1) change the semantics of LOCAL_[TARGET|HOST]_REQUIRED_MODULES, consistently for all module types\n2) changes shared library dependencies to separate between TARGET/HOST deps\n\nThey\u0027d also need to be tested more thoroughly than \"Test: device boot\", as that wouldn\u0027t surface the kind of subtle problems that changes like this one would produce.",
+      "parentUuid": "054d7be3_b0fc5f97",
+      "revId": "155fedfe65b2a9e824f2f722358a3ced2f370bb5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
