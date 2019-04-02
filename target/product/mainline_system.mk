@@ -61,13 +61,6 @@ PRODUCT_PACKAGES += \
     audio.a2dp.default \
     audio.hearing_aid.default \
 
-# Media libraries
-# - These libraries are used by the new media code path that relies on new
-#   plugins and HAL implementations that may not exist on older devices.
-PRODUCT_PACKAGES += \
-    com.android.media.swcodec \
-    libsfplugin_ccodec \
-
 # For ringtones that rely on forward lock encryption
 PRODUCT_PACKAGES += libfwdlockengine
 
