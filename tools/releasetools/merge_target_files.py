@@ -47,6 +47,9 @@ Usage: merge_target_files.py [args]
   --rebuild_recovery
       Rebuild the recovery patch used by non-A/B devices and write it to the
       system image.
+
+  --keep-tmp
+      Keep tempoary files for debugging purposes.
 """
 
 from __future__ import print_function
@@ -296,6 +299,37 @@ def process_ab_partitions_txt(
       output.write('%s\n' % partition)
 
 
+def append_recovery_to_filesystem_config(output_target_files_temp_dir):
+  """Perform special processing for META/filesystem_config.txt
+
+  This function appends recovery information to META/filesystem_config.txt
+  so that recovery patch regeneration will succeed.
+
+  Args:
+    output_target_files_temp_dir: The name of a directory that will be used
+    to create the output target files package after all the special cases
+    are processed. We find filesystem_config.txt here.
+  """
+
+  filesystem_config_txt = os.path.join(
+      output_target_files_temp_dir,
+      'META',
+      'filesystem_config.txt')
+
+  with open(filesystem_config_txt, 'a') as f:
+    # TODO(bpeckham) this data is hard coded. It should be generated
+    # programmatically.
+    f.write(
+        'system/bin/install-recovery.sh 0 0 750 '
+        'selabel=u:object_r:install_recovery_exec:s0 capabilities=0x0\n')
+    f.write(
+        'system/recovery-from-boot.p 0 0 644 '
+        'selabel=u:object_r:system_file:s0 capabilities=0x0\n')
+    f.write(
+        'system/etc/recovery.img 0 0 440 '
+        'selabel=u:object_r:install_recovery_exec:s0 capabilities=0x0\n')
+
+
 def process_misc_info_txt(
     system_target_files_temp_dir,
     other_target_files_temp_dir,
@@ -454,7 +488,9 @@ def process_special_cases(
     system_target_files_temp_dir,
     other_target_files_temp_dir,
     output_target_files_temp_dir,
-    system_misc_info_keys):
+    system_misc_info_keys,
+    rebuild_recovery
+):
   """Perform special-case processing for certain target files items.
 
   Certain files in the output target files package require special-case
@@ -476,12 +512,20 @@ def process_special_cases(
 
     system_misc_info_keys: A list of keys to obtain from the system instance
     of META/misc_info.txt. The remaining keys from the other instance.
+
+    rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
+    devices and write it to the system image.
   """
 
-  process_ab_partitions_txt(
-      system_target_files_temp_dir=system_target_files_temp_dir,
-      other_target_files_temp_dir=other_target_files_temp_dir,
-      output_target_files_temp_dir=output_target_files_temp_dir)
+  if 'ab_update' in system_misc_info_keys:
+    process_ab_partitions_txt(
+        system_target_files_temp_dir=system_target_files_temp_dir,
+        other_target_files_temp_dir=other_target_files_temp_dir,
+        output_target_files_temp_dir=output_target_files_temp_dir)
+
+  if rebuild_recovery:
+    append_recovery_to_filesystem_config(
+        output_target_files_temp_dir=output_target_files_temp_dir)
 
   process_misc_info_txt(
       system_target_files_temp_dir=system_target_files_temp_dir,
@@ -599,7 +643,8 @@ def merge_target_files(
       system_target_files_temp_dir=system_target_files_temp_dir,
       other_target_files_temp_dir=other_target_files_temp_dir,
       output_target_files_temp_dir=output_target_files_temp_dir,
-      system_misc_info_keys=system_misc_info_keys)
+      system_misc_info_keys=system_misc_info_keys,
+      rebuild_recovery=rebuild_recovery)
 
   # Regenerate IMAGES in the temporary directory.
 
@@ -704,7 +749,7 @@ def main():
       OPTIONS.output_target_files = a
     elif o == '--rebuild_recovery':
       OPTIONS.rebuild_recovery = True
-    elif o == '--keep_tmp':
+    elif o == '--keep-tmp':
       OPTIONS.keep_tmp = True
     else:
       return False
@@ -720,7 +765,7 @@ def main():
           'other-item-list=',
           'output-target-files=',
           'rebuild_recovery',
-          "keep_tmp",
+          'keep-tmp',
       ],
       extra_option_handler=option_handler)
 
