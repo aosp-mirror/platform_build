@@ -88,6 +88,24 @@
       "revId": "155fedfe65b2a9e824f2f722358a3ced2f370bb5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "add4fab1_0115669e",
+        "filename": "core/main.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 1027,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-04-02T16:25:44Z",
+      "side": 1,
+      "message": "I largely agree with Anton, which is why I had been waiting to actually look into this problem.\n\n\u003e  changing Y would cause X to get rebuilt\n\nnit: REQUIRED adds an installation dependency, not a build dependency (it should never cause something to be rebuilt)",
+      "parentUuid": "ba2d1ee6_df56c69d",
+      "revId": "155fedfe65b2a9e824f2f722358a3ced2f370bb5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
