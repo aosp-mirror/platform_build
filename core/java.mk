@@ -395,6 +395,13 @@ else
   # that would break apps that use APIs removed from the current SDK.
   my_proguard_sdk_raise := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
 endif
+ifdef BOARD_SYSTEMSDK_VERSIONS
+ifneq (,$(filter true,$(LOCAL_VENDOR_MODULE) $(LOCAL_ODM_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
+  # But for vendor or odm apks, don't raise SDK as the apks are required to
+  # use SDK APIs only
+  my_proguard_sdk_raise :=
+endif
+endif
 endif
 
 legacy_proguard_flags := $(addprefix -libraryjars ,$(my_proguard_sdk_raise) \
