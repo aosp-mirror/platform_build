@@ -31,7 +31,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # The mainline checking whitelist, should be clean up
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     system/app/messaging/messaging.apk \
-    system/app/PhotoTable/PhotoTable.apk \
     system/app/WAPPushManager/WAPPushManager.apk \
     system/bin/healthd \
     system/etc/init/healthd.rc \
