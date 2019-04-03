@@ -277,7 +277,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
-    adbd \
     art-tools \
     atest \
     bcc \
@@ -294,9 +293,7 @@ PRODUCT_HOST_PACKAGES += \
     minigzip \
     mke2fs \
     resize2fs \
-    selinux_policy_system \
     sgdisk \
-    shell_and_utilities_system \
     sqlite3 \
     tinyplay \
     tune2fs \
