@@ -1668,7 +1668,7 @@ check-elf-files:
 modules:
 	@echo "Available sub-modules:"
 	@echo "$(call module-names-for-tag-list,$(ALL_MODULE_TAGS))" | \
-	      tr -s ' ' '\n' | sort -u | $(COLUMN)
+	      tr -s ' ' '\n' | sort -u
 
 .PHONY: dump-files
 dump-files:
