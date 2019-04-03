@@ -383,24 +383,24 @@ def SignApex(apex_data, payload_key, container_key, container_pw,
 
   Args:
     apex_data: Raw APEX data.
-    payload_key: The path to payload signing key (w/o extension).
+    payload_key: The path to payload signing key (w/ extension).
     container_key: The path to container signing key (w/o extension).
     container_pw: The matching password of the container_key, or None.
     codename_to_api_level_map: A dict that maps from codename to API level.
     signing_args: Additional args to be passed to the payload signer.
 
   Returns:
-    (signed_apex, payload_key_name): signed_apex is the path to the signed APEX
-        file; payload_key_name is a str of the payload signing key name (e.g.
-        com.android.tzdata).
+    The path to the signed APEX file.
   """
   apex_file = common.MakeTempFile(prefix='apex-', suffix='.apex')
   with open(apex_file, 'wb') as apex_fp:
     apex_fp.write(apex_data)
 
   APEX_PAYLOAD_IMAGE = 'apex_payload.img'
+  APEX_PUBKEY = 'apex_pubkey'
 
-  # 1. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given payload_key.
+  # 1a. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given
+  # payload_key.
   payload_dir = common.MakeTempDir(prefix='apex-payload-')
   with zipfile.ZipFile(apex_file) as apex_fd:
     payload_file = apex_fd.extract(APEX_PAYLOAD_IMAGE, payload_dir)
@@ -414,9 +414,14 @@ def SignApex(apex_data, payload_key, container_key, container_pw,
       payload_info['Salt'],
       signing_args)
 
+  # 1b. Update the embedded payload public key.
+  payload_public_key = common.ExtractAvbPublicKey(payload_key)
+
   common.ZipDelete(apex_file, APEX_PAYLOAD_IMAGE)
+  common.ZipDelete(apex_file, APEX_PUBKEY)
   apex_zip = zipfile.ZipFile(apex_file, 'a')
   common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
+  common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
   common.ZipClose(apex_zip)
 
   # 2. Align the files at page boundary (same as in apexer).
@@ -440,7 +445,7 @@ def SignApex(apex_data, payload_key, container_key, container_pw,
       codename_to_api_level_map=codename_to_api_level_map,
       extra_signapk_args=extra_signapk_args)
 
-  return (signed_apex, payload_info['apex.key'])
+  return signed_apex
 
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
@@ -453,10 +458,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       [len(os.path.basename(i.filename)) for i in input_tf_zip.infolist()
        if GetApkFileInfo(i.filename, compressed_extension, [])[0]])
   system_root_image = misc_info.get("system_root_image") == "true"
-
-  # A dict of APEX payload public keys that should be updated, i.e. the files
-  # under '/system/etc/security/apex/'.
-  updated_apex_payload_keys = {}
 
   for info in input_tf_zip.infolist():
     filename = info.filename
@@ -511,7 +512,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         print("           : %-*s payload   (%s)" % (
             maxsize, name, payload_key))
 
-        (signed_apex, payload_key_name) = SignApex(
+        signed_apex = SignApex(
             data,
             payload_key,
             container_key,
@@ -519,7 +520,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             codename_to_api_level_map,
             OPTIONS.avb_extra_args.get('apex'))
         common.ZipWrite(output_tf_zip, signed_apex, filename)
-        updated_apex_payload_keys[payload_key_name] = payload_key
 
       else:
         print(
@@ -605,34 +605,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # A non-APK file; copy it verbatim.
     else:
       common.ZipWriteStr(output_tf_zip, out_info, data)
-
-  # Copy or update APEX payload public keys.
-  for info in input_tf_zip.infolist():
-    filename = info.filename
-    if (os.path.dirname(filename) != 'SYSTEM/etc/security/apex' or
-        filename == 'SYSTEM/etc/security/apex/'):
-      continue
-
-    name = os.path.basename(filename)
-
-    # Copy the keys for PRESIGNED APEXes.
-    if name not in updated_apex_payload_keys:
-      data = input_tf_zip.read(filename)
-      common.ZipWriteStr(output_tf_zip, info, data)
-      continue
-
-    key_path = updated_apex_payload_keys[name]
-    if not os.path.exists(key_path) and not key_path.endswith('.pem'):
-      key_path = '{}.pem'.format(key_path)
-    assert os.path.exists(key_path), \
-        'Failed to find public key file {} for APEX {}'.format(
-            updated_apex_payload_keys[name], name)
-
-    print('Replacing APEX payload public key for {} with {}'.format(
-        name, key_path))
-
-    public_key = common.ExtractAvbPublicKey(key_path)
-    common.ZipWrite(output_tf_zip, public_key, arcname=filename)
 
   if OPTIONS.replace_ota_keys:
     ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
