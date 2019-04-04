@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d00d2508_e086fd6a",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 2297,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-04T15:40:47Z",
+      "side": 1,
+      "message": "nit: INSTALLED_SYSTEMIMAGE_TARGET (INSTALLED_SYSTEMIMAGE is the legacy name)",
+      "range": {
+        "startLine": 2297,
+        "startChar": 40,
+        "endLine": 2297,
+        "endChar": 61
+      },
+      "revId": "22fa86ea66626444b72138ef2c474f08bf6b65cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8051b086_18b8b4cc",
+        "filename": "tools/releasetools/add_img_to_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-04T15:40:47Z",
+      "side": 1,
+      "message": "(And TH caught this one)",
+      "range": {
+        "startLine": 341,
+        "startChar": 33,
+        "endLine": 341,
+        "endChar": 56
+      },
+      "revId": "22fa86ea66626444b72138ef2c474f08bf6b65cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "03683010_4fc5495e",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-04T15:40:47Z",
+      "side": 1,
+      "message": "nit: update (and L24)",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 80
+      },
+      "revId": "22fa86ea66626444b72138ef2c474f08bf6b65cb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
