@@ -277,7 +277,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
-    adbd \
     art-tools \
     atest \
     bcc \
@@ -294,9 +293,7 @@ PRODUCT_HOST_PACKAGES += \
     minigzip \
     mke2fs \
     resize2fs \
-    selinux_policy_system \
     sgdisk \
-    shell_and_utilities_system \
     sqlite3 \
     tinyplay \
     tune2fs \
@@ -315,11 +312,11 @@ ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
 endif
 
-# The order matters
+# The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    ext \
     framework \
+    ext \
     telephony-common \
     voip-common \
     ims-common \
