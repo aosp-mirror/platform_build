@@ -4445,6 +4445,7 @@ superimage-nodeps supernod: | $(LPMAKE) $(BUILD_SUPER_IMAGE) \
 	$(call dump-super-image-info,$(intermediates)/misc_info.txt)
 	$(foreach p,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
 	  echo "$(p)_image=$(INSTALLED_$(call to-upper,$(p))IMAGE_TARGET)" >> $(intermediates)/misc_info.txt;)
+	mkdir -p $(dir $(INSTALLED_SUPERIMAGE_TARGET))
 	PATH=$(dir $(LPMAKE)):$$PATH \
 	  $(BUILD_SUPER_IMAGE) -v $(intermediates)/misc_info.txt $(INSTALLED_SUPERIMAGE_TARGET)
 
