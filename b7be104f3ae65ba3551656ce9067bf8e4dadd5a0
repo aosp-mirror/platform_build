@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eb2174bd_61e9b24e",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-04T19:54:36Z",
+      "side": 1,
+      "message": "specify `build_map\u003dFalse`",
+      "range": {
+        "startLine": 354,
+        "startChar": 26,
+        "endLine": 354,
+        "endChar": 27
+      },
+      "revId": "b7be104f3ae65ba3551656ce9067bf8e4dadd5a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dcbccdde_01859778",
+        "filename": "tools/releasetools/sparse_img.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-04T19:54:36Z",
+      "side": 1,
+      "message": "add `from __future__ import print_function` to the imports",
+      "range": {
+        "startLine": 367,
+        "startChar": 4,
+        "endLine": 367,
+        "endChar": 9
+      },
+      "revId": "b7be104f3ae65ba3551656ce9067bf8e4dadd5a0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
