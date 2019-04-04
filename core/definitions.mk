@@ -1137,10 +1137,9 @@ define transform-cpp-to-o-compiler-args
 	$(PRIVATE_CPPFLAGS_NO_OVERRIDE)
 endef
 
-# PATH_TO_CLANG_TIDY_SHELL is defined in build/soong
+# PATH_TO_CLANG_TIDY is defined in build/soong
 define call-clang-tidy
-CLANG_TIDY=$(PATH_TO_CLANG_TIDY) \
-  $(PATH_TO_CLANG_TIDY_SHELL) \
+$(PATH_TO_CLANG_TIDY) \
   $(PRIVATE_TIDY_FLAGS) \
   -checks=$(PRIVATE_TIDY_CHECKS)
 endef
