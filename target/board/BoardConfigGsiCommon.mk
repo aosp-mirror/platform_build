@@ -6,6 +6,8 @@
 
 include build/make/target/board/BoardConfigMainlineCommon.mk
 
+TARGET_NO_KERNEL := true
+
 # This flag is set by mainline but isn't desired for GSI.
 BOARD_USES_SYSTEM_OTHER_ODEX :=
 
