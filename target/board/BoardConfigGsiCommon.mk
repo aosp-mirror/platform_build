@@ -6,9 +6,6 @@
 
 include build/make/target/board/BoardConfigMainlineCommon.mk
 
-# Enable system property split for Treble
-BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
-
 # This flag is set by mainline but isn't desired for GSI.
 BOARD_USES_SYSTEM_OTHER_ODEX :=
 
@@ -27,6 +24,7 @@ BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 67108864
 
 # GSI forces product packages to /system for now.
 TARGET_COPY_OUT_PRODUCT := system/product
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE :=
 
 # Creates metadata partition mount point under root for
 # the devices with metadata parition

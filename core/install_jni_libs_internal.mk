@@ -113,12 +113,12 @@ my_link_type := app:sdk
 my_warn_types := native:platform $(my_warn_ndk_types)
 my_allowed_types := $(my_allowed_ndk_types)
     ifneq (,$(filter true,$(LOCAL_VENDOR_MODULE) $(LOCAL_ODM_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
-        my_allowed_types += native:vendor native:vndk
+        my_allowed_types += native:vendor native:vndk native:platform_vndk
     endif
 else
 my_link_type := app:platform
 my_warn_types := $(my_warn_ndk_types)
-my_allowed_types := $(my_allowed_ndk_types) native:platform native:vendor native:vndk native:vndk_private
+my_allowed_types := $(my_allowed_ndk_types) native:platform native:vendor native:vndk native:vndk_private native:platform_vndk
 endif
 
 my_link_deps := $(addprefix SHARED_LIBRARIES:,$(LOCAL_JNI_SHARED_LIBRARIES))

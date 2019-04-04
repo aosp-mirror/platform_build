@@ -17,10 +17,8 @@
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
     abb \
-    adb \
     adbd \
     am \
-    android.frameworks.bufferhub@1.0-service \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
@@ -36,12 +34,10 @@ PRODUCT_PACKAGES += \
     app_process \
     appwidget \
     ashmemd \
-    atest \
     atrace \
     audioserver \
     BackupRestoreConfirmation \
     bcc \
-    bit \
     blank_screen \
     blkid \
     bmgr \
@@ -73,11 +69,10 @@ PRODUCT_PACKAGES += \
     dpm \
     dumpstate \
     dumpsys \
-    DynamicAndroidInstallationService \
+    DynamicSystemInstallationService \
     e2fsck \
     ExtServices \
     ExtShared \
-    fastboot \
     flags_health_check \
     framework \
     framework-res \
@@ -101,7 +96,6 @@ PRODUCT_PACKAGES += \
     incident \
     incidentd \
     incident_helper \
-    incident_report \
     init.environ.rc \
     init.rc \
     init_system \
@@ -173,7 +167,6 @@ PRODUCT_PACKAGES += \
     libradio_metadata \
     librtp_jni \
     libsensorservice \
-    libsigchain \
     libskia \
     libsonic \
     libsonivox \
@@ -205,7 +198,6 @@ PRODUCT_PACKAGES += \
     lshal \
     mdnsd \
     media \
-    media_cmd \
     mediacodec.policy \
     mediadrmserver \
     mediaextractor \
@@ -285,7 +277,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_HOST_PACKAGES += \
     BugReport \
     adb \
-    adbd \
+    art-tools \
     atest \
     bcc \
     bit \
@@ -301,9 +293,7 @@ PRODUCT_HOST_PACKAGES += \
     minigzip \
     mke2fs \
     resize2fs \
-    selinux_policy_system \
     sgdisk \
-    shell_and_utilities_system \
     sqlite3 \
     tinyplay \
     tune2fs \
@@ -322,11 +312,11 @@ ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
 endif
 
-# The order matters
+# The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    ext \
     framework \
+    ext \
     telephony-common \
     voip-common \
     ims-common \

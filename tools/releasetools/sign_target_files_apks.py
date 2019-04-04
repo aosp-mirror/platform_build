@@ -91,12 +91,12 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       Replace the veritykeyid in BOOT/cmdline of input_target_file_zip
       with keyid of the cert pointed by <path_to_X509_PEM_cert_file>.
 
-  --avb_{boot,system,vendor,dtbo,vbmeta}_algorithm <algorithm>
-  --avb_{boot,system,vendor,dtbo,vbmeta}_key <key>
+  --avb_{boot,system,system_other,vendor,dtbo,vbmeta}_algorithm <algorithm>
+  --avb_{boot,system,system_other,vendor,dtbo,vbmeta}_key <key>
       Use the specified algorithm (e.g. SHA256_RSA4096) and the key to AVB-sign
       the specified image. Otherwise it uses the existing values in info dict.
 
-  --avb_{apex,boot,system,vendor,dtbo,vbmeta}_extra_args <args>
+  --avb_{apex,boot,system,system_other,vendor,dtbo,vbmeta}_extra_args <args>
       Specify any additional args that are needed to AVB-sign the image
       (e.g. "--signing_helper /path/to/helper"). The args will be appended to
       the existing ones in info dict.
@@ -383,25 +383,24 @@ def SignApex(apex_data, payload_key, container_key, container_pw,
 
   Args:
     apex_data: Raw APEX data.
-    payload_key: The path to payload signing key (w/o extension).
+    payload_key: The path to payload signing key (w/ extension).
     container_key: The path to container signing key (w/o extension).
     container_pw: The matching password of the container_key, or None.
     codename_to_api_level_map: A dict that maps from codename to API level.
     signing_args: Additional args to be passed to the payload signer.
 
   Returns:
-    (signed_apex, payload_key_name): signed_apex is the path to the signed APEX
-        file; payload_key_name is a str of the payload signing key name (e.g.
-        com.android.tzdata).
+    The path to the signed APEX file.
   """
   apex_file = common.MakeTempFile(prefix='apex-', suffix='.apex')
   with open(apex_file, 'wb') as apex_fp:
     apex_fp.write(apex_data)
 
   APEX_PAYLOAD_IMAGE = 'apex_payload.img'
+  APEX_PUBKEY = 'apex_pubkey'
 
-  # Signing an APEX is a two step process.
-  # 1. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given payload_key.
+  # 1a. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given
+  # payload_key.
   payload_dir = common.MakeTempDir(prefix='apex-payload-')
   with zipfile.ZipFile(apex_file) as apex_fd:
     payload_file = apex_fd.extract(APEX_PAYLOAD_IMAGE, payload_dir)
@@ -415,26 +414,38 @@ def SignApex(apex_data, payload_key, container_key, container_pw,
       payload_info['Salt'],
       signing_args)
 
+  # 1b. Update the embedded payload public key.
+  payload_public_key = common.ExtractAvbPublicKey(payload_key)
+
   common.ZipDelete(apex_file, APEX_PAYLOAD_IMAGE)
+  common.ZipDelete(apex_file, APEX_PUBKEY)
   apex_zip = zipfile.ZipFile(apex_file, 'a')
   common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
+  common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
   common.ZipClose(apex_zip)
 
-  # 2. Sign the overall APEX container with container_key.
+  # 2. Align the files at page boundary (same as in apexer).
+  aligned_apex = common.MakeTempFile(
+      prefix='apex-container-', suffix='.apex')
+  common.RunAndCheckOutput(
+      ['zipalign', '-f', '4096', apex_file, aligned_apex])
+
+  # 3. Sign the APEX container with container_key.
   signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
+
+  # Specify the 4K alignment when calling SignApk.
+  extra_signapk_args = OPTIONS.extra_signapk_args[:]
+  extra_signapk_args.extend(['-a', '4096'])
+
   common.SignFile(
-      apex_file,
+      aligned_apex,
       signed_apex,
       container_key,
       container_pw,
-      codename_to_api_level_map=codename_to_api_level_map)
+      codename_to_api_level_map=codename_to_api_level_map,
+      extra_signapk_args=extra_signapk_args)
 
-  signed_and_aligned_apex = common.MakeTempFile(
-      prefix='apex-container-', suffix='.apex')
-  common.RunAndCheckOutput(
-      ['zipalign', '-f', '4096', signed_apex, signed_and_aligned_apex])
-
-  return (signed_and_aligned_apex, payload_info['apex.key'])
+  return signed_apex
 
 
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
@@ -447,10 +458,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       [len(os.path.basename(i.filename)) for i in input_tf_zip.infolist()
        if GetApkFileInfo(i.filename, compressed_extension, [])[0]])
   system_root_image = misc_info.get("system_root_image") == "true"
-
-  # A dict of APEX payload public keys that should be updated, i.e. the files
-  # under '/system/etc/security/apex/'.
-  updated_apex_payload_keys = {}
 
   for info in input_tf_zip.infolist():
     filename = info.filename
@@ -505,7 +512,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         print("           : %-*s payload   (%s)" % (
             maxsize, name, payload_key))
 
-        (signed_apex, payload_key_name) = SignApex(
+        signed_apex = SignApex(
             data,
             payload_key,
             container_key,
@@ -513,7 +520,6 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             codename_to_api_level_map,
             OPTIONS.avb_extra_args.get('apex'))
         common.ZipWrite(output_tf_zip, signed_apex, filename)
-        updated_apex_payload_keys[payload_key_name] = payload_key
 
       else:
         print(
@@ -584,35 +590,21 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif filename == "META/care_map.pb" or filename == "META/care_map.txt":
       pass
 
+    # Updates system_other.avbpubkey in /product/etc/.
+    elif filename in (
+        "PRODUCT/etc/security/avb/system_other.avbpubkey",
+        "SYSTEM/product/etc/security/avb/system_other.avbpubkey"):
+      # Only update system_other's public key, if the corresponding signing
+      # key is specified via --avb_system_other_key.
+      signing_key = OPTIONS.avb_keys.get("system_other")
+      if signing_key:
+        public_key = common.ExtractAvbPublicKey(signing_key)
+        print("    Rewriting AVB public key of system_other in /product")
+        common.ZipWrite(output_tf_zip, public_key, filename)
+
     # A non-APK file; copy it verbatim.
     else:
       common.ZipWriteStr(output_tf_zip, out_info, data)
-
-  # Update APEX payload public keys.
-  for info in input_tf_zip.infolist():
-    filename = info.filename
-    if (os.path.dirname(filename) != 'SYSTEM/etc/security/apex' or
-        filename == 'SYSTEM/etc/security/apex/'):
-      continue
-
-    name = os.path.basename(filename)
-
-    # Skip PRESIGNED APEXes.
-    if name not in updated_apex_payload_keys:
-      continue
-
-    key_path = updated_apex_payload_keys[name]
-    if not os.path.exists(key_path) and not key_path.endswith('.pem'):
-      key_path = '{}.pem'.format(key_path)
-    assert os.path.exists(key_path), \
-        'Failed to find public key file {} for APEX {}'.format(
-            updated_apex_payload_keys[name], name)
-
-    print('Replacing APEX payload public key for {} with {}'.format(
-        name, key_path))
-
-    public_key = common.ExtractAvbPublicKey(key_path)
-    common.ZipWrite(output_tf_zip, public_key, arcname=filename)
 
   if OPTIONS.replace_ota_keys:
     ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info)
@@ -934,6 +926,7 @@ def ReplaceAvbSigningKeys(misc_info):
       'dtbo' : 'avb_dtbo_add_hash_footer_args',
       'recovery' : 'avb_recovery_add_hash_footer_args',
       'system' : 'avb_system_add_hashtree_footer_args',
+      'system_other' : 'avb_system_other_add_hashtree_footer_args',
       'vendor' : 'avb_vendor_add_hashtree_footer_args',
       'vbmeta' : 'avb_vbmeta_args',
   }
@@ -1060,7 +1053,6 @@ def ReadApexKeysInfo(tf_zip):
       continue
 
     name = matches.group('NAME')
-    payload_public_key = matches.group("PAYLOAD_PUBLIC_KEY")
     payload_private_key = matches.group("PAYLOAD_PRIVATE_KEY")
 
     def CompareKeys(pubkey, pubkey_suffix, privkey, privkey_suffix):
@@ -1070,13 +1062,9 @@ def ReadApexKeysInfo(tf_zip):
               privkey.endswith(privkey_suffix) and
               pubkey[:-pubkey_suffix_len] == privkey[:-privkey_suffix_len])
 
-    PAYLOAD_PUBLIC_KEY_SUFFIX = '.avbpubkey'
-    PAYLOAD_PRIVATE_KEY_SUFFIX = '.pem'
-    if not CompareKeys(
-        payload_public_key, PAYLOAD_PUBLIC_KEY_SUFFIX,
-        payload_private_key, PAYLOAD_PRIVATE_KEY_SUFFIX):
-      raise ValueError("Failed to parse payload keys: \n{}".format(line))
-
+    # Sanity check on the container key names, as we'll carry them without the
+    # extensions. This doesn't apply to payload keys though, which we will use
+    # full names only.
     container_cert = matches.group("CONTAINER_CERT")
     container_private_key = matches.group("CONTAINER_PRIVATE_KEY")
     if not CompareKeys(
@@ -1153,6 +1141,12 @@ def main(argv):
       OPTIONS.avb_algorithms['system'] = a
     elif o == "--avb_system_extra_args":
       OPTIONS.avb_extra_args['system'] = a
+    elif o == "--avb_system_other_key":
+      OPTIONS.avb_keys['system_other'] = a
+    elif o == "--avb_system_other_algorithm":
+      OPTIONS.avb_algorithms['system_other'] = a
+    elif o == "--avb_system_other_extra_args":
+      OPTIONS.avb_extra_args['system_other'] = a
     elif o == "--avb_vendor_key":
       OPTIONS.avb_keys['vendor'] = a
     elif o == "--avb_vendor_algorithm":
@@ -1192,6 +1186,9 @@ def main(argv):
           "avb_system_algorithm=",
           "avb_system_key=",
           "avb_system_extra_args=",
+          "avb_system_other_algorithm=",
+          "avb_system_other_key=",
+          "avb_system_other_extra_args=",
           "avb_vendor_algorithm=",
           "avb_vendor_key=",
           "avb_vendor_extra_args=",

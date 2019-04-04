@@ -610,6 +610,15 @@ $(call add-clean-step, rm -rf $(HOST_CROSS_OUT_TESTCASES)/*)
 $(call add-clean-step, rm -rf $(TARGET_OUT_DATA)/*)
 $(call add-clean-step, rm -rf $(HOST_OUT)/vts/*)
 $(call add-clean-step, rm -rf $(HOST_OUT)/framework/vts-tradefed.jar)
+
+# Clean up old location of system_other.avbpubkey
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/security/avb/)
+
+# Clean up bufferhub files
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/hw/android.frameworks.bufferhub@1.0-service)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/init/android.frameworks.bufferhub@1.0-service.rc)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/super.img)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

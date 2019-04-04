@@ -31,7 +31,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # The mainline checking whitelist, should be clean up
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     system/app/messaging/messaging.apk \
-    system/app/PhotoTable/PhotoTable.apk \
     system/app/WAPPushManager/WAPPushManager.apk \
     system/bin/healthd \
     system/etc/init/healthd.rc \
@@ -51,22 +50,18 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += %.odex %.vdex %.art
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     system/etc/init/config/skip_mount.cfg \
     system/etc/init/init.gsi.rc \
+    system/etc/adb_debug.prop \
 
 # Exclude all files under system/product and system/product_services
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     system/product/% \
     system/product_services/%
 
-
 # Split selinux policy
 PRODUCT_FULL_TREBLE_OVERRIDE := true
 
 # Enable dynamic partition size
 PRODUCT_USE_DYNAMIC_PARTITION_SIZE := true
-
-# Enable A/B update
-AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS := system
 
 # Needed by Pi newly launched device to pass VtsTrebleSysProp on GSI
 PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE := true
@@ -97,3 +92,7 @@ PRODUCT_COPY_FILES += \
 #   Provide a libnfc-nci.conf to GSI product
 PRODUCT_COPY_FILES += \
     device/generic/common/nfc/libnfc-nci.conf:$(TARGET_COPY_OUT_PRODUCT)/etc/libnfc-nci.conf
+
+# Allow 'adb root' on user build GSI
+PRODUCT_COPY_FILES += \
+    build/make/target/product/gsi/adb_debug.prop:$(TARGET_COPY_OUT_SYSTEM)/etc/adb_debug.prop

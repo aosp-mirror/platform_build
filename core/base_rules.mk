@@ -224,15 +224,15 @@ my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
 ifdef LOCAL_IS_HOST_MODULE
   partition_tag :=
 else
-ifeq (true,$(LOCAL_VENDOR_MODULE))
+ifeq (true,$(strip $(LOCAL_VENDOR_MODULE)))
   partition_tag := _VENDOR
-else ifeq (true,$(LOCAL_OEM_MODULE))
+else ifeq (true,$(strip $(LOCAL_OEM_MODULE)))
   partition_tag := _OEM
-else ifeq (true,$(LOCAL_ODM_MODULE))
+else ifeq (true,$(strip $(LOCAL_ODM_MODULE)))
   partition_tag := _ODM
-else ifeq (true,$(LOCAL_PRODUCT_MODULE))
+else ifeq (true,$(strip $(LOCAL_PRODUCT_MODULE)))
   partition_tag := _PRODUCT
-else ifeq (true,$(LOCAL_PRODUCT_SERVICES_MODULE))
+else ifeq (true,$(strip $(LOCAL_PRODUCT_SERVICES_MODULE)))
   partition_tag := _PRODUCT_SERVICES
 else ifeq (NATIVE_TESTS,$(LOCAL_MODULE_CLASS))
   partition_tag := _DATA
@@ -257,13 +257,11 @@ ifndef LOCAL_COMPATIBILITY_SUITE
 endif
 
 use_testcase_folder :=
-ifdef ENABLE_DEFAULT_TEST_LOCATION
-  ifeq ($(my_module_path),)
-    ifneq ($(LOCAL_MODULE),$(filter $(LOCAL_MODULE),$(DEFAULT_DATA_OUT_MODULES)))
-      ifdef LOCAL_COMPATIBILITY_SUITE
-        ifneq (true, $(LOCAL_IS_HOST_MODULE))
-          use_testcase_folder := true
-        endif
+ifeq ($(my_module_path),)
+  ifneq ($(LOCAL_MODULE),$(filter $(LOCAL_MODULE),$(DEFAULT_DATA_OUT_MODULES)))
+    ifdef LOCAL_COMPATIBILITY_SUITE
+      ifneq (true, $(LOCAL_IS_HOST_MODULE))
+        use_testcase_folder := true
       endif
     endif
   endif
@@ -776,6 +774,10 @@ ALL_MODULES.$(my_register_name).CHECKED := \
     $(ALL_MODULES.$(my_register_name).CHECKED) $(my_checked_module)
 ALL_MODULES.$(my_register_name).BUILT := \
     $(ALL_MODULES.$(my_register_name).BUILT) $(LOCAL_BUILT_MODULE)
+ifndef LOCAL_IS_HOST_MODULE
+ALL_MODULES.$(my_register_name).TARGET_BUILT := \
+    $(ALL_MODULES.$(my_register_name).TARGET_BUILT) $(LOCAL_BUILT_MODULE)
+endif
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) \
