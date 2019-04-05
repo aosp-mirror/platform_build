@@ -85,8 +85,8 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     pm.dexopt.shared=speed
 
 # Enable resolution of startup const strings.
-# PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-#    dalvik.vm.dex2oat-resolve-startup-strings=true
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    dalvik.vm.dex2oat-resolve-startup-strings=true
 
 # Enable minidebuginfo generation unless overridden.
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
