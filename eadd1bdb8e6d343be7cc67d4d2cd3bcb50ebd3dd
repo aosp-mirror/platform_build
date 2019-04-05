@@ -16,6 +16,24 @@
       "revId": "eadd1bdb8e6d343be7cc67d4d2cd3bcb50ebd3dd",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c7438ab8_72a04f4e",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-04-05T12:40:09Z",
+      "side": 1,
+      "message": "Yes I think it\u0027s necessary. It is guaranteed that this is set for devices launched with P or later, but not for older devices.",
+      "parentUuid": "a9512a39_4726670e",
+      "revId": "eadd1bdb8e6d343be7cc67d4d2cd3bcb50ebd3dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
