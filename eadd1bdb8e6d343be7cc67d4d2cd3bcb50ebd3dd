@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a9512a39_4726670e",
+        "filename": "core/java.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 398,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-05T05:37:59Z",
+      "side": 1,
+      "message": "Is this conditional necessary?  It will make it harder to keep builds working if they only fail when this is set.",
+      "revId": "eadd1bdb8e6d343be7cc67d4d2cd3bcb50ebd3dd",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
