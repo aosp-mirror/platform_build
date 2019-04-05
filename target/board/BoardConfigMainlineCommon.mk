@@ -4,17 +4,13 @@
 
 # The generic product target doesn't have any hardware-specific pieces.
 TARGET_NO_BOOTLOADER := true
-TARGET_NO_KERNEL := true
 TARGET_NO_RECOVERY := true
 
 TARGET_USERIMAGES_USE_EXT4 := true
 
 # Mainline devices must have /vendor and /product partitions.
 TARGET_COPY_OUT_VENDOR := vendor
-BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
-
 TARGET_COPY_OUT_PRODUCT := product
-BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
 
 BOARD_VNDK_VERSION := current
 
@@ -42,7 +38,6 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 
 # Enable A/B update
 AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS := system
 
 # Enable system property split for Treble
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
