@@ -1538,11 +1538,10 @@ my_tidy_checks := $(subst $(space),,$(my_tidy_checks))
 
 # Add dependency of clang-tidy and clang-tidy.sh
 ifneq ($(my_tidy_checks),)
-  my_clang_tidy_programs := $(PATH_TO_CLANG_TIDY) $(PATH_TO_CLANG_TIDY_SHELL)
-  $(cpp_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
-  $(c_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
-  $(gen_cpp_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
-  $(gen_c_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
+  $(cpp_objects): $(intermediates)/%.o: $(PATH_TO_CLANG_TIDY)
+  $(c_objects): $(intermediates)/%.o: $(PATH_TO_CLANG_TIDY)
+  $(gen_cpp_objects): $(intermediates)/%.o: $(PATH_TO_CLANG_TIDY)
+  $(gen_c_objects): $(intermediates)/%.o: $(PATH_TO_CLANG_TIDY)
 endif
 
 # Move -l* entries from ldflags to ldlibs, and everything else to ldflags
