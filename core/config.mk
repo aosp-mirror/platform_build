@@ -605,7 +605,7 @@ VBOOT_SIGNER := prebuilts/misc/scripts/vboot_signer/vboot_signer.sh
 FEC := $(HOST_OUT_EXECUTABLES)/fec
 BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 
-DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump2$(BUILD_EXECUTABLE_SUFFIX)
+DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
@@ -614,8 +614,6 @@ FINDBUGS := $(FINDBUGS_DIR)/findbugs
 JETIFIER := prebuilts/sdk/tools/jetifier/jetifier-standalone/bin/jetifier-standalone
 
 EXTRACT_KERNEL := build/make/tools/extract_kernel.py
-
-COLUMN:= column
 
 USE_OPENJDK9 := true
 

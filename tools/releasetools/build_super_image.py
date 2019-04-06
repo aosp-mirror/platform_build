@@ -137,7 +137,7 @@ def BuildSuperImageFromDict(info_dict, output):
 
       cmd += GetArgumentsForImage(partition + "_b", group + "_b", other_image)
 
-  if has_image:
+  if info_dict.get("build_non_sparse_super_partition") != "true":
     cmd.append("--sparse")
 
   cmd += ["--output", output]
