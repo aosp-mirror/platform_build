@@ -615,8 +615,6 @@ JETIFIER := prebuilts/sdk/tools/jetifier/jetifier-standalone/bin/jetifier-standa
 
 EXTRACT_KERNEL := build/make/tools/extract_kernel.py
 
-COLUMN:= column
-
 USE_OPENJDK9 := true
 
 ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
