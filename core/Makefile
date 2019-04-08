@@ -280,10 +280,6 @@ $(INSTALLED_DEFAULT_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(intermediate_system_b
 	        echo "#" >> $@;
 	$(hide) $(foreach line,$(FINAL_DEFAULT_PROPERTIES), \
 	    echo "$(line)" >> $@;)
-	$(hide) echo "#" >> $@; \
-	        echo "# BOOTIMAGE_BUILD_PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(call generate-common-build-props,bootimage,$@)
 	$(hide) build/make/tools/post_process_props.py $@
 ifdef property_overrides_split_enabled
 	$(hide) mkdir -p $(TARGET_ROOT_OUT)
@@ -528,6 +524,10 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(intermediate_sys
 	$(hide) echo ro.product.board="$(TARGET_BOOTLOADER_BOARD_NAME)">>$@
 	$(hide) echo ro.board.platform="$(TARGET_BOARD_PLATFORM)">>$@
 	$(hide) $(call generate-common-build-props,vendor,$@)
+	$(hide) echo "#" >> $@; \
+	        echo "# BOOTIMAGE_BUILD_PROPERTIES" >> $@; \
+	        echo "#" >> $@;
+	$(hide) $(call generate-common-build-props,bootimage,$@)
 ifdef property_overrides_split_enabled
 	$(hide) echo "#" >> $@; \
 	        echo "# ADDITIONAL VENDOR BUILD PROPERTIES" >> $@; \
