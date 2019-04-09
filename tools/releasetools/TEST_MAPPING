@@ -1,0 +1,8 @@
+{
+  "presubmit": [
+    {
+      "name": "releasetools_test",
+      "host": true
+    }
+  ]
+}
