@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "34010227_3b06f8ed",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 3510,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-09T00:15:23Z",
+      "side": 0,
+      "message": "I think we need to include $(MINIGZIP) as well as the actual binary of toybox it points to (prebuilts/build-tools/linux-x86/bin/toybox) into otatools.zip. Otherwise otatools will be calling the random `gzip` (whatever available on the signing server) during signing.",
+      "range": {
+        "startLine": 3510,
+        "startChar": 13,
+        "endLine": 3510,
+        "endChar": 45
+      },
+      "revId": "6b529750c5720d598fe59470e1023d22d6553991",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
