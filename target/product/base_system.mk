@@ -337,7 +337,8 @@ PRODUCT_COPY_FILES += \
 
 # Add the compatibility library that is needed when android.test.base
 # is removed from the bootclasspath.
-ifeq ($(REMOVE_ATB_FROM_BCP),true)
+# Default to excluding android.test.base from the bootclasspath.
+ifneq ($(REMOVE_ATB_FROM_BCP),false)
 PRODUCT_PACKAGES += framework-atb-backward-compatibility
 PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
 else
