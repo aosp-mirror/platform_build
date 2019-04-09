@@ -5,11 +5,6 @@
 #
 ####################################
 
-# We want to install the profile even if we are not using preopt since it is required to generate
-# the image on the device.
-my_installed := $(call copy-many-files,$(DEXPREOPT_IMAGE_PROFILE_BUILT_INSTALLED),$(PRODUCT_OUT))
-ALL_DEFAULT_INSTALLED_MODULES += $(my_installed)
-
 # Install primary arch vdex files into a shared location, and then symlink them to both the primary
 # and secondary arch directories.
 my_vdex_copy_pairs := $(DEXPREOPT_IMAGE_VDEX_BUILT_INSTALLED_$(my_boot_image_name)_$(TARGET_ARCH))
