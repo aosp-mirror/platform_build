@@ -22,6 +22,30 @@
       "revId": "35a26ec959a3b43e82c9157d3ec5731d864fa92c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c0c35c1f_6e0a8820",
+        "filename": "target/board/gsi_system_user.prop",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-04-09T17:09:30Z",
+      "side": 1,
+      "message": "Or maybe the userdebug configuration should also always include the user configuration?",
+      "parentUuid": "edd6b594_c9f66306",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 38
+      },
+      "revId": "35a26ec959a3b43e82c9157d3ec5731d864fa92c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
