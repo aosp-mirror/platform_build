@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d306f750_f664ea71",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 552,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-04-09T00:24:29Z",
+      "side": 1,
+      "message": "we also need a darwin version",
+      "range": {
+        "startLine": 552,
+        "startChar": 39,
+        "endLine": 552,
+        "endChar": 44
+      },
+      "revId": "09e0e8bb23e4728ad4a841d8ada1cd07fd786cf7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
