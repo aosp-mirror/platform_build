@@ -89,6 +89,7 @@ _build_broken_var_list := \
   BUILD_BROKEN_DUP_RULES \
   BUILD_BROKEN_PHONY_TARGETS \
   BUILD_BROKEN_ENG_DEBUG_TAGS \
+  BUILD_BROKEN_USES_NETWORK \
 
 _board_true_false_vars := $(_build_broken_var_list)
 _board_strip_readonly_list += $(_build_broken_var_list)
@@ -101,11 +102,7 @@ endif
 # ###############################################################
 # Broken build defaults
 # ###############################################################
-BUILD_BROKEN_ANDROIDMK_EXPORTS :=
-BUILD_BROKEN_DUP_COPY_HEADERS :=
-BUILD_BROKEN_DUP_RULES :=
-BUILD_BROKEN_PHONY_TARGETS :=
-BUILD_BROKEN_ENG_DEBUG_TAGS :=
+$(foreach v,$(_build_broken_var_list),$(eval $(v) :=))
 
 # Boards may be defined under $(SRC_TARGET_DIR)/board/$(TARGET_DEVICE)
 # or under vendor/*/$(TARGET_DEVICE).  Search in both places, but
