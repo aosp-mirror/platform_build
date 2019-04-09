@@ -174,7 +174,7 @@ class DataImage(Image):
     return h.hexdigest()
 
   def ReadRangeSet(self, ranges):
-    return [self._GetRangeData(ranges)]
+    return list(self._GetRangeData(ranges))
 
   def TotalSha1(self, include_clobbered_blocks=False):
     if not include_clobbered_blocks:
