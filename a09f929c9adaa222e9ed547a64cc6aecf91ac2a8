@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "42aab646_72a9e8f4",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 3947,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-10T21:48:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "383341ef_f5b47c9c",
+      "range": {
+        "startLine": 3947,
+        "startChar": 0,
+        "endLine": 3947,
+        "endChar": 39
+      },
+      "revId": "a09f929c9adaa222e9ed547a64cc6aecf91ac2a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d3ef6607_61a0c117",
         "filename": "core/board_config.mk",
         "patchSetId": 2
@@ -92,6 +116,30 @@
       "revId": "a09f929c9adaa222e9ed547a64cc6aecf91ac2a8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d3be8c91_b975470a",
+        "filename": "core/board_config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 483,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-10T21:48:16Z",
+      "side": 1,
+      "message": "OTA payload (i.e. part of an OTA package) generator currently has a fallback logic to use boot + system:\nhttps://android.googlesource.com/platform/system/update_engine/+/refs/heads/master/scripts/brillo_update_payload#479\n\nI think it makes more sense to enforce AB_OTA_PARTITIONS when using AB_OTA_UPDATER as a general check. Because\n- places other than payload generator also need the info now (e.g. when writing metadata to declare a generic package)\n- \"boot + system\" doesn\u0027t look a right fit given the latest partition layout\n\nI\u0027ll remove this check from the current CL, and promote it as a generic check separately (after TreeHugger-ing more targets).",
+      "parentUuid": "4e33ac85_af4e15a9",
+      "range": {
+        "startLine": 483,
+        "startChar": 0,
+        "endLine": 483,
+        "endChar": 39
+      },
+      "revId": "a09f929c9adaa222e9ed547a64cc6aecf91ac2a8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
