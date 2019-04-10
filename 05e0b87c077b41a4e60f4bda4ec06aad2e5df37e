@@ -239,6 +239,30 @@
     },
     {
       "key": {
+        "uuid": "34bd6212_f75e1c64",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-10T21:08:35Z",
+      "side": 1,
+      "message": "Mark: \nI added back ext4 dedup to true; also checked sytem/bin/mke2fs exists, enabled\nCONFIG_OVERLAY_FS\u003dy in kernel, \nhowever, adb remount fails\n\nW failed to remount partition dev:/dev/block/dm-0 mnt:/: Read-only file system\n\nI am not seeing any debug/error information on the kernel log regarding overlayfs.\ndo I have to manually enable some debug flag somewhere so I know what has gone wrong ?\n\nthanks",
+      "parentUuid": "39562606_34448da0",
+      "range": {
+        "startLine": 31,
+        "startChar": 45,
+        "endLine": 31,
+        "endChar": 53
+      },
+      "revId": "05e0b87c077b41a4e60f4bda4ec06aad2e5df37e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a4c2c3de_39389b4a",
         "filename": "target/board/BoardConfigGsiCommon.mk",
         "patchSetId": 11
