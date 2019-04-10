@@ -25,11 +25,13 @@ endef
 #$(warning $(call find_and_earlier,A B C,D))
 
 define version-list
-$(1)PR1 $(1)PD1 $(1)PD2 $(1)PM1 $(1)PM2
+$(1)P1A $(1)P1B $(1)P2A $(1)P2B $(1)D1A $(1)D1B $(1)D2A $(1)D2B $(1)Q1A $(1)Q1B $(1)Q2A $(1)Q2B $(1)Q3A $(1)Q3B
 endef
 
-ALL_VERSIONS := O P Q R S T U V W X Y Z
-ALL_VERSIONS := $(foreach v,$(ALL_VERSIONS),$(call version-list,$(v)))
+PREV_VERSIONS := OPR1 OPD1 OPD2 OPM1 OPM2 PPR1 PPD1 PPD2 PPM1 PPM2 QPR1
+ALL_VERSIONS := Q R S T U V W X Y Z
+ALL_VERSIONS := $(PREV_VERSIONS) $(foreach v,$(ALL_VERSIONS),$(call version-list,$(v)))
+PREV_VERSIONS :=
 
 # Filters ALL_VERSIONS down to the range [$1, $2], and errors if $1 > $2 or $3 is
 # not in [$1, $2]
