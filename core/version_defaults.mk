@@ -39,9 +39,9 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-DEFAULT_PLATFORM_VERSION := QP1A
-MIN_PLATFORM_VERSION := QP1A
-MAX_PLATFORM_VERSION := QP1A
+DEFAULT_PLATFORM_VERSION := RP1A
+MIN_PLATFORM_VERSION := RP1A
+MAX_PLATFORM_VERSION := RP1A
 
 ALLOWED_VERSIONS := $(call allowed-platform-versions,\
   $(MIN_PLATFORM_VERSION),\
@@ -90,10 +90,12 @@ MAX_PLATFORM_VERSION :=
 # unreleased API level targetable by this branch, not just those that are valid
 # lunch targets for this branch.
 PLATFORM_VERSION.QP1A := 10
+PLATFORM_VERSION.RP1A := R
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
 PLATFORM_VERSION_CODENAME.QP1A := Q
+PLATFORM_VERSION_CODENAME.RP1A := R
 
 ifndef PLATFORM_VERSION
   PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
