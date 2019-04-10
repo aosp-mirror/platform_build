@@ -46,6 +46,30 @@
       "revId": "35a26ec959a3b43e82c9157d3ec5731d864fa92c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29751dbf_e6fd9215",
+        "filename": "target/board/gsi_system_user.prop",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-04-10T05:47:58Z",
+      "side": 1,
+      "message": "Originally, there are 2 files is because no \"include\" mechanism for build.prop files.\n \nHowever, just checked again and realized TARGET_SYSTEM_PROP can use \"+\u003d\". I can change:\n\nifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))\nTARGET_SYSTEM_PROP :\u003d build/make/target/board/gsi_system.prop\nelse\nTARGET_SYSTEM_PROP :\u003d build/make/target/board/gsi_system_user.prop\nendif\n\nto be:\n\nifneq (,$(filter userdebug eng,$(TARGET_BUILD_VARIANT)))\nTARGET_SYSTEM_PROP :\u003d build/make/target/board/gsi_system.prop\nTARGET_SYSTEM_PROP :\u003d build/make/target/board/gsi_system_userdebug.prop\nelse\nTARGET_SYSTEM_PROP :\u003d build/make/target/board/gsi_system.prop\nendif\n\nLet me refactor it with another CL.",
+      "parentUuid": "c0c35c1f_6e0a8820",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 38
+      },
+      "revId": "35a26ec959a3b43e82c9157d3ec5731d864fa92c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
