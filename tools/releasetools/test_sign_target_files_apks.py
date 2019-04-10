@@ -34,8 +34,8 @@ class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
 </policy>"""
 
   # pylint: disable=line-too-long
-  APEX_KEYS_TXT = """name="apex.apexd_test.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem" container_certificate="build/target/product/security/testkey.x509.pem" container_private_key="build/target/product/security/testkey.pk8"
-name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" container_certificate="build/target/product/security/testkey.x509.pem" container_private_key="build/target/product/security/testkey.pk8"
+  APEX_KEYS_TXT = """name="apex.apexd_test.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem" container_certificate="build/make/target/product/security/testkey.x509.pem" container_private_key="build/make/target/product/security/testkey.pk8"
+name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" container_certificate="build/make/target/product/security/testkey.x509.pem" container_private_key="build/make/target/product/security/testkey.pk8"
 """
 
   def setUp(self):
@@ -395,10 +395,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     self.assertEqual({
         'apex.apexd_test.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
-            'build/target/product/security/testkey'),
+            'build/make/target/product/security/testkey'),
         'apex.apexd_test_different_app.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/target/product/security/testkey'),
+            'build/make/target/product/security/testkey'),
         }, keys_info)
 
   def test_ReadApexKeysInfo_mismatchingContainerKeys(self):
@@ -407,8 +407,8 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         'name="apex.apexd_test_different_app2.apex" '
         'public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" '
         'private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" '
-        'container_certificate="build/target/product/security/testkey.x509.pem" '
-        'container_private_key="build/target/product/security/testkey2.pk8"')
+        'container_certificate="build/make/target/product/security/testkey.x509.pem" '
+        'container_private_key="build/make/target/product/security/testkey2.pk8"')
     target_files = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
@@ -421,8 +421,8 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     apex_keys = self.APEX_KEYS_TXT + (
         'name="apex.apexd_test_different_app2.apex" '
         'public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" '
-        'container_certificate="build/target/product/security/testkey.x509.pem" '
-        'container_private_key="build/target/product/security/testkey.pk8"')
+        'container_certificate="build/make/target/product/security/testkey.x509.pem" '
+        'container_private_key="build/make/target/product/security/testkey.pk8"')
     target_files = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
@@ -433,10 +433,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     self.assertEqual({
         'apex.apexd_test.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
-            'build/target/product/security/testkey'),
+            'build/make/target/product/security/testkey'),
         'apex.apexd_test_different_app.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/target/product/security/testkey'),
+            'build/make/target/product/security/testkey'),
         }, keys_info)
 
   def test_ReadApexKeysInfo_missingPayloadPublicKey(self):
@@ -444,8 +444,8 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     apex_keys = self.APEX_KEYS_TXT + (
         'name="apex.apexd_test_different_app2.apex" '
         'private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" '
-        'container_certificate="build/target/product/security/testkey.x509.pem" '
-        'container_private_key="build/target/product/security/testkey.pk8"')
+        'container_certificate="build/make/target/product/security/testkey.x509.pem" '
+        'container_private_key="build/make/target/product/security/testkey.pk8"')
     target_files = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)
@@ -456,8 +456,8 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
     self.assertEqual({
         'apex.apexd_test.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
-            'build/target/product/security/testkey'),
+            'build/make/target/product/security/testkey'),
         'apex.apexd_test_different_app.apex': (
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
-            'build/target/product/security/testkey'),
+            'build/make/target/product/security/testkey'),
         }, keys_info)

@@ -451,14 +451,14 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
       'name="RecoveryLocalizer.apk" certificate="certs/devkey.x509.pem"'
       ' private_key="certs/devkey.pk8"\n'
       'name="Settings.apk"'
-      ' certificate="build/target/product/security/platform.x509.pem"'
-      ' private_key="build/target/product/security/platform.pk8"\n'
+      ' certificate="build/make/target/product/security/platform.x509.pem"'
+      ' private_key="build/make/target/product/security/platform.pk8"\n'
       'name="TV.apk" certificate="PRESIGNED" private_key=""\n'
   )
 
   APKCERTS_CERTMAP1 = {
       'RecoveryLocalizer.apk' : 'certs/devkey',
-      'Settings.apk' : 'build/target/product/security/platform',
+      'Settings.apk' : 'build/make/target/product/security/platform',
       'TV.apk' : 'PRESIGNED',
   }
 
