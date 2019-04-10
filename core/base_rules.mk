@@ -760,6 +760,18 @@ endif  # LOCAL_PRESUBMIT_DISABLED
 ## Register with ALL_MODULES
 ###########################################################
 
+ifeq ($(filter $(my_register_name),$(ALL_MODULES)),)
+    # These keys are no longer used, they've been replaced by keys that specify
+    # target/host/host_cross (REQUIRED_FROM_TARGET / REQUIRED_FROM_HOST) and similar.
+    #
+    # Marking them obsolete to ensure that anyone using these internal variables looks for
+    # alternates.
+    $(KATI_obsolete_var ALL_MODULES.$(my_register_name).REQUIRED)
+    $(KATI_obsolete_var ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED)
+    $(KATI_obsolete_var ALL_MODULES.$(my_register_name).HOST_REQUIRED)
+    $(KATI_obsolete_var ALL_MODULES.$(my_register_name).TARGET_REQUIRED)
+endif
+
 ALL_MODULES += $(my_register_name)
 
 # Don't use += on subvars, or else they'll end up being
@@ -820,17 +832,42 @@ ifneq ($(LOCAL_USE_VNDK),)
   endif
 endif
 
-ALL_MODULES.$(my_register_name).REQUIRED := \
-    $(strip $(ALL_MODULES.$(my_register_name).REQUIRED) $(my_required_modules))
-ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED := \
-    $(strip $(ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED)\
-        $(my_required_modules))
-ALL_MODULES.$(my_register_name).TARGET_REQUIRED := \
-    $(strip $(ALL_MODULES.$(my_register_name).TARGET_REQUIRED)\
-        $(LOCAL_TARGET_REQUIRED_MODULES))
-ALL_MODULES.$(my_register_name).HOST_REQUIRED := \
-    $(strip $(ALL_MODULES.$(my_register_name).HOST_REQUIRED)\
-        $(LOCAL_HOST_REQUIRED_MODULES))
+ifdef LOCAL_IS_HOST_MODULE
+    ifneq ($(my_host_cross),true)
+        ALL_MODULES.$(my_register_name).REQUIRED_FROM_HOST := \
+            $(strip $(ALL_MODULES.$(my_register_name).REQUIRED_FROM_HOST) $(my_required_modules))
+        ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_HOST := \
+            $(strip $(ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_HOST)\
+                $(my_required_modules))
+        ALL_MODULES.$(my_register_name).TARGET_REQUIRED_FROM_HOST := \
+            $(strip $(ALL_MODULES.$(my_register_name).TARGET_REQUIRED_FROM_HOST)\
+                $(LOCAL_TARGET_REQUIRED_MODULES))
+    else
+        ALL_MODULES.$(my_register_name).REQUIRED_FROM_HOST_CROSS := \
+            $(strip $(ALL_MODULES.$(my_register_name).REQUIRED_FROM_HOST_CROSS) $(my_required_modules))
+        ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_HOST_CROSS := \
+            $(strip $(ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_HOST_CROSS)\
+                $(my_required_modules))
+        ifdef LOCAL_TARGET_REQUIRED_MODULES
+            $(call pretty-error,LOCAL_TARGET_REQUIRED_MODULES may not be used from host_cross modules)
+        endif
+    endif
+    ifdef LOCAL_HOST_REQUIRED_MODULES
+        $(call pretty-error,LOCAL_HOST_REQUIRED_MODULES may not be used from host modules. Use LOCAL_REQUIRED_MODULES instead)
+    endif
+else
+    ALL_MODULES.$(my_register_name).REQUIRED_FROM_TARGET := \
+        $(strip $(ALL_MODULES.$(my_register_name).REQUIRED_FROM_TARGET) $(my_required_modules))
+    ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_TARGET := \
+        $(strip $(ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_TARGET)\
+            $(my_required_modules))
+    ALL_MODULES.$(my_register_name).HOST_REQUIRED_FROM_TARGET := \
+        $(strip $(ALL_MODULES.$(my_register_name).HOST_REQUIRED_FROM_TARGET)\
+            $(LOCAL_HOST_REQUIRED_MODULES))
+    ifdef LOCAL_TARGET_REQUIRED_MODULES
+        $(call pretty-error,LOCAL_TARGET_REQUIRED_MODULES may not be used from target modules. Use LOCAL_REQUIRED_MODULES instead)
+    endif
+endif
 ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS := \
     $(ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS) $(event_log_tags)
 ALL_MODULES.$(my_register_name).MAKEFILE := \
