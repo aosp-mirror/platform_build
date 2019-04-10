@@ -1182,6 +1182,7 @@ class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
   def test_init(self):
     payload_signer = PayloadSigner()
     self.assertEqual('openssl', payload_signer.signer)
+    self.assertEqual(256, payload_signer.key_size)
 
   def test_init_withPassword(self):
     common.OPTIONS.package_key = os.path.join(
@@ -1195,9 +1196,16 @@ class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
   def test_init_withExternalSigner(self):
     common.OPTIONS.payload_signer = 'abc'
     common.OPTIONS.payload_signer_args = ['arg1', 'arg2']
+    common.OPTIONS.payload_signer_key_size = '512'
     payload_signer = PayloadSigner()
     self.assertEqual('abc', payload_signer.signer)
     self.assertEqual(['arg1', 'arg2'], payload_signer.signer_args)
+    self.assertEqual(512, payload_signer.key_size)
+
+  def test_GetKeySizeInBytes_512Bytes(self):
+    signing_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
+    key_size = PayloadSigner._GetKeySizeInBytes(signing_key)
+    self.assertEqual(512, key_size)
 
   def test_Sign(self):
     payload_signer = PayloadSigner()
