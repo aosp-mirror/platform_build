@@ -41,3 +41,6 @@ AB_OTA_UPDATER := true
 
 # Enable system property split for Treble
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
+
+# Generate an APEX image for experiment b/119800099.
+DEXPREOPT_GENERATE_APEX_IMAGE := true

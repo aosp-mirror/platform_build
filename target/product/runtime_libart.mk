@@ -85,8 +85,12 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     pm.dexopt.shared=speed
 
 # Enable resolution of startup const strings.
-# PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-#    dalvik.vm.dex2oat-resolve-startup-strings=true
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    dalvik.vm.dex2oat-resolve-startup-strings=true
+
+# Specify default block size of 512K to enable parallel image decompression.
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    dalvik.vm.dex2oat-max-image-block-size=524288
 
 # Enable minidebuginfo generation unless overridden.
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \

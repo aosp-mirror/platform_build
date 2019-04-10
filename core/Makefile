@@ -280,10 +280,6 @@ $(INSTALLED_DEFAULT_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(intermediate_system_b
 	        echo "#" >> $@;
 	$(hide) $(foreach line,$(FINAL_DEFAULT_PROPERTIES), \
 	    echo "$(line)" >> $@;)
-	$(hide) echo "#" >> $@; \
-	        echo "# BOOTIMAGE_BUILD_PROPERTIES" >> $@; \
-	        echo "#" >> $@;
-	$(hide) $(call generate-common-build-props,bootimage,$@)
 	$(hide) build/make/tools/post_process_props.py $@
 ifdef property_overrides_split_enabled
 	$(hide) mkdir -p $(TARGET_ROOT_OUT)
@@ -532,6 +528,10 @@ ifdef TARGET_SCREEN_DENSITY
 	$(hide) echo ro.sf.lcd_density="$(TARGET_SCREEN_DENSITY)">>$@
 endif
 	$(hide) $(call generate-common-build-props,vendor,$@)
+	$(hide) echo "#" >> $@; \
+	        echo "# BOOTIMAGE_BUILD_PROPERTIES" >> $@; \
+	        echo "#" >> $@;
+	$(hide) $(call generate-common-build-props,bootimage,$@)
 ifdef property_overrides_split_enabled
 	$(hide) echo "#" >> $@; \
 	        echo "# ADDITIONAL VENDOR BUILD PROPERTIES" >> $@; \
@@ -2285,19 +2285,6 @@ endif # INSTALLED_BOOTIMAGE_TARGET
 $(INSTALLED_SYSTEMIMAGE_TARGET): $(BUILT_SYSTEMIMAGE) $(RECOVERY_FROM_BOOT_PATCH)
 	@echo "Install system fs image: $@"
 	$(copy-file-to-target)
-ifdef RECOVERY_FROM_BOOT_PATCH
-ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
-ifeq ($(BOARD_SYSTEMIMAGE_PARTITION_SIZE),)
-	# system image size is dynamic, hence system_size in generated_system_image_info.txt does not
-	# have room for recovery from boot patch. Increase system_size so that check-all-partition-sizes
-	# accounts for the size of the patch.
-	sed -i'.bak' -e 's/^system_size=.*$$/system_size='"$$(( \
-	      $(call read-image-prop-dictionary,$(systemimage_intermediates)/generated_system_image_info.txt,system_size) + \
-	      $$($(call get-file-size,$(RECOVERY_FROM_BOOT_PATCH))) ))"'/' \
-	    $(systemimage_intermediates)/generated_system_image_info.txt
-endif
-endif
-endif
 	$(hide) $(call assert-max-image-size,$@ $(RECOVERY_FROM_BOOT_PATCH),\
 	    $(call read-image-prop-dictionary,\
 	        $(systemimage_intermediates)/generated_system_image_info.txt,system_size))
