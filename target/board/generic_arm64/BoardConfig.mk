@@ -67,7 +67,7 @@ BOARD_ROOT_EXTRA_SYMLINKS += /vendor/firmware_mnt:/firmware
 
 # TODO(b/36764215): remove this setting when the generic system image
 # no longer has QCOM-specific directories under /.
-BOARD_SEPOLICY_DIRS += build/target/board/generic_arm64_ab/sepolicy
+BOARD_SEPOLICY_DIRS += build/make/target/board/generic_arm64_ab/sepolicy
 
 # Wifi.
 BOARD_WLAN_DEVICE           := emulator
