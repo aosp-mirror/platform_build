@@ -38,7 +38,7 @@ Common options that apply to both of non-A/B and A/B OTAs
   -k  (--package_key) <key>
       Key to use to sign the package (default is the value of
       default_system_dev_certificate from the input target-files's
-      META/misc_info.txt, or "build/target/product/security/testkey" if that
+      META/misc_info.txt, or "build/make/target/product/security/testkey" if that
       value is not specified).
 
       For incremental OTAs, the default value is based on the source
@@ -2199,7 +2199,7 @@ def main(argv):
     if OPTIONS.package_key is None:
       OPTIONS.package_key = OPTIONS.info_dict.get(
           "default_system_dev_certificate",
-          "build/target/product/security/testkey")
+          "build/make/target/product/security/testkey")
     # Get signing keys
     OPTIONS.key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
 
