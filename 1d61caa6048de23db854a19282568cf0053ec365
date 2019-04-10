@@ -1,0 +1,84 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "001df229_6078a045",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 763,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-10T19:56:34Z",
+      "side": 1,
+      "message": "Comment what this is doing?",
+      "revId": "1d61caa6048de23db854a19282568cf0053ec365",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3a115384_a10a14e1",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 767,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-10T19:56:34Z",
+      "side": 1,
+      "message": "TARGET",
+      "range": {
+        "startLine": 767,
+        "startChar": 56,
+        "endLine": 767,
+        "endChar": 61
+      },
+      "revId": "1d61caa6048de23db854a19282568cf0053ec365",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "71433523_2060de53",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 847,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-10T19:56:34Z",
+      "side": 1,
+      "message": "Suggest LOCAL_REQUIRED_MODULES?",
+      "revId": "1d61caa6048de23db854a19282568cf0053ec365",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "29fe8578_9e3298dc",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-10T19:56:34Z",
+      "side": 1,
+      "message": "target",
+      "range": {
+        "startLine": 863,
+        "startChar": 79,
+        "endLine": 863,
+        "endChar": 83
+      },
+      "revId": "1d61caa6048de23db854a19282568cf0053ec365",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
