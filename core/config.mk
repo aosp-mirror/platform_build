@@ -105,7 +105,7 @@ ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
 
 UNAME := $(shell uname -sm)
 
-SRC_TARGET_DIR := $(TOPDIR)build/target
+SRC_TARGET_DIR := $(TOPDIR)build/make/target
 
 # Some specific paths to tools
 SRC_DROIDDOC_DIR := $(TOPDIR)build/make/tools/droiddoc
@@ -762,7 +762,7 @@ endif
 ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
   DEFAULT_SYSTEM_DEV_CERTIFICATE := $(PRODUCT_DEFAULT_DEV_CERTIFICATE)
 else
-  DEFAULT_SYSTEM_DEV_CERTIFICATE := build/target/product/security/testkey
+  DEFAULT_SYSTEM_DEV_CERTIFICATE := build/make/target/product/security/testkey
 endif
 .KATI_READONLY := DEFAULT_SYSTEM_DEV_CERTIFICATE
 

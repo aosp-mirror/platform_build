@@ -56,7 +56,7 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
 
       where $devkey is the directory part of the value of
       default_system_dev_certificate from the input target-files's
-      META/misc_info.txt.  (Defaulting to "build/target/product/security"
+      META/misc_info.txt.  (Defaulting to "build/make/target/product/security"
       if the value is not present in misc_info.
 
       -d and -k options are added to the set of mappings in the order
@@ -802,7 +802,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
     print("for OTA package verification")
   else:
     devkey = misc_info.get("default_system_dev_certificate",
-                           "build/target/product/security/testkey")
+                           "build/make/target/product/security/testkey")
     mapped_devkey = OPTIONS.key_map.get(devkey, devkey)
     if mapped_devkey != devkey:
       misc_info["default_system_dev_certificate"] = mapped_devkey
@@ -959,7 +959,7 @@ def BuildKeyMap(misc_info, key_mapping_options):
   for s, d in key_mapping_options:
     if s is None:   # -d option
       devkey = misc_info.get("default_system_dev_certificate",
-                             "build/target/product/security/testkey")
+                             "build/make/target/product/security/testkey")
       devkeydir = os.path.dirname(devkey)
 
       OPTIONS.key_map.update({
