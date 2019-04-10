@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "b4af2e94_dae29144",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 763,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-04-10T20:22:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "001df229_6078a045",
+      "revId": "1d61caa6048de23db854a19282568cf0053ec365",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a115384_a10a14e1",
         "filename": "core/base_rules.mk",
         "patchSetId": 3
@@ -42,6 +60,30 @@
     },
     {
       "key": {
+        "uuid": "b6025355_9747a171",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 767,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-04-10T20:22:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a115384_a10a14e1",
+      "range": {
+        "startLine": 767,
+        "startChar": 56,
+        "endLine": 767,
+        "endChar": 61
+      },
+      "revId": "1d61caa6048de23db854a19282568cf0053ec365",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "71433523_2060de53",
         "filename": "core/base_rules.mk",
         "patchSetId": 3
@@ -56,6 +98,24 @@
       "revId": "1d61caa6048de23db854a19282568cf0053ec365",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "82a147ee_3e1411da",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 847,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-04-10T20:22:38Z",
+      "side": 1,
+      "message": "I did this in the below two case. In this case, there\u0027s just no way to depend on target modules from windows modules -- it really isn\u0027t needed.",
+      "parentUuid": "71433523_2060de53",
+      "revId": "1d61caa6048de23db854a19282568cf0053ec365",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -79,6 +139,30 @@
       "revId": "1d61caa6048de23db854a19282568cf0053ec365",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "549b3d90_68fc6cda",
+        "filename": "core/base_rules.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 863,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-04-10T20:22:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "29fe8578_9e3298dc",
+      "range": {
+        "startLine": 863,
+        "startChar": 79,
+        "endLine": 863,
+        "endChar": 83
+      },
+      "revId": "1d61caa6048de23db854a19282568cf0053ec365",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
