@@ -834,7 +834,7 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
   reconstructed from the block list, for whom we should avoid applying imgdiff.
 
   Args:
-    which: The partition name, which must be "system" or "vendor".
+    which: The partition name, e.g. "system", "vendor".
     tmpdir: The directory that contains the prebuilt image and block map file.
     input_zip: The target-files ZIP archive.
     allow_shared_blocks: Whether having shared blocks is allowed.
@@ -843,8 +843,6 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
   Returns:
     A SparseImage object, with file_map info loaded.
   """
-  assert which in ("system", "vendor")
-
   path = os.path.join(tmpdir, "IMAGES", which + ".img")
   mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
 
