@@ -322,6 +322,11 @@ _product_var_list += \
 # set this variable to prevent OTA failures.
 _product_var_list += PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
+# If set to true, this product builds a generic OTA package, which installs generic system images
+# onto matching devices. The product may only build a subset of system images (e.g. only
+# system.img), so devices need to install the package in a system-only OTA manner.
+_product_var_list += PRODUCT_BUILD_GENERIC_OTA_PACKAGE
+
 # Whether any paths are excluded from being set XOM when ENABLE_XOM=true
 _product_var_list += PRODUCT_XOM_EXCLUDE_PATHS
 _product_var_list += PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
