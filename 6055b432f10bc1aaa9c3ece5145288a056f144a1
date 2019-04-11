@@ -22,6 +22,30 @@
       "revId": "6055b432f10bc1aaa9c3ece5145288a056f144a1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4356bb3a_c7094019",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-11T17:12:41Z",
+      "side": 1,
+      "message": "Bowgo,\n   --flag 2 actually disables it completely. \n\n[    1.196046] init: [libfs_mgr]Created logical partition system on device /dev/block/dm-0\n[    1.209143] init: [libfs_mgr]Created logical partition vendor on device /dev/block/dm-1\n[    1.215651] init: [libfs_avb]Returning avb_handle with status: VerificationDisabled\n[    1.218229] init: [libfs_avb]AVB HASHTREE disabled on: /system\n\nIIUC, you want the flag to be just 0 (enforcing) for all the build variant, right ?",
+      "parentUuid": "b7a3b5a7_7b78c43a",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 46
+      },
+      "revId": "6055b432f10bc1aaa9c3ece5145288a056f144a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
