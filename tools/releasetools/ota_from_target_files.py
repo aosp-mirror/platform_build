@@ -38,7 +38,7 @@ Common options that apply to both of non-A/B and A/B OTAs
   -k  (--package_key) <key>
       Key to use to sign the package (default is the value of
       default_system_dev_certificate from the input target-files's
-      META/misc_info.txt, or "build/target/product/security/testkey" if that
+      META/misc_info.txt, or "build/make/target/product/security/testkey" if that
       value is not specified).
 
       For incremental OTAs, the default value is based on the source
@@ -168,6 +168,9 @@ A/B OTA specific options
   --payload_signer_args <args>
       Specify the arguments needed for payload signer.
 
+  --payload_signer_key_size <key_size>
+      Specify the key size in bytes of the payload signer.
+
   --skip_postinstall
       Skip the postinstall hooks when generating an A/B OTA package (default:
       False). Note that this discards ALL the hooks, including non-optional
@@ -224,6 +227,7 @@ OPTIONS.stash_threshold = 0.8
 OPTIONS.log_diff = None
 OPTIONS.payload_signer = None
 OPTIONS.payload_signer_args = []
+OPTIONS.payload_signer_key_size = None
 OPTIONS.extracted_input = None
 OPTIONS.key_passwords = []
 OPTIONS.skip_postinstall = False
@@ -468,9 +472,35 @@ class PayloadSigner(object):
       self.signer = "openssl"
       self.signer_args = ["pkeyutl", "-sign", "-inkey", signing_key,
                           "-pkeyopt", "digest:sha256"]
+      self.key_size = self._GetKeySizeInBytes(signing_key)
     else:
       self.signer = OPTIONS.payload_signer
       self.signer_args = OPTIONS.payload_signer_args
+      if OPTIONS.payload_signer_key_size:
+        self.key_size = int(OPTIONS.payload_signer_key_size)
+        assert self.key_size == 256 or self.key_size == 512, \
+            "Unsupported key size {}".format(OPTIONS.payload_signer_key_size)
+      else:
+        self.key_size = 256
+
+  @staticmethod
+  def _GetKeySizeInBytes(signing_key):
+    modulus_file = common.MakeTempFile(prefix="modulus-")
+    cmd = ["openssl", "rsa", "-inform", "PEM", "-in", signing_key, "-modulus",
+           "-noout", "-out", modulus_file]
+    common.RunAndCheckOutput(cmd, verbose=False)
+
+    with open(modulus_file) as f:
+      modulus_string = f.read()
+    # The modulus string has the format "Modulus=$data", where $data is the
+    # concatenation of hex dump of the modulus.
+    MODULUS_PREFIX = "Modulus="
+    assert modulus_string.startswith(MODULUS_PREFIX)
+    modulus_string = modulus_string[len(MODULUS_PREFIX):]
+    key_size = len(modulus_string) / 2
+    assert key_size == 256 or key_size == 512, \
+        "Unsupported key size {}".format(key_size)
+    return key_size
 
   def Sign(self, in_file):
     """Signs the given input file. Returns the output filename."""
@@ -539,7 +569,7 @@ class Payload(object):
     metadata_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
     cmd = ["brillo_update_payload", "hash",
            "--unsigned_payload", self.payload_file,
-           "--signature_size", "256",
+           "--signature_size", str(payload_signer.key_size),
            "--metadata_hash_file", metadata_sig_file,
            "--payload_hash_file", payload_sig_file]
     common.RunAndCheckOutput(cmd)
@@ -554,7 +584,7 @@ class Payload(object):
     cmd = ["brillo_update_payload", "sign",
            "--unsigned_payload", self.payload_file,
            "--payload", signed_payload_file,
-           "--signature_size", "256",
+           "--signature_size", str(payload_signer.key_size),
            "--metadata_signature_file", signed_metadata_sig_file,
            "--payload_signature_file", signed_payload_sig_file]
     common.RunAndCheckOutput(cmd)
@@ -2087,6 +2117,8 @@ def main(argv):
       OPTIONS.payload_signer = a
     elif o == "--payload_signer_args":
       OPTIONS.payload_signer_args = shlex.split(a)
+    elif o == "--payload_signer_key_size":
+      OPTIONS.payload_signer_key_size = a
     elif o == "--extracted_input_target_files":
       OPTIONS.extracted_input = a
     elif o == "--skip_postinstall":
@@ -2125,6 +2157,7 @@ def main(argv):
                                  "log_diff=",
                                  "payload_signer=",
                                  "payload_signer_args=",
+                                 "payload_signer_key_size=",
                                  "extracted_input_target_files=",
                                  "skip_postinstall",
                                  "retrofit_dynamic_partitions",
@@ -2199,7 +2232,7 @@ def main(argv):
     if OPTIONS.package_key is None:
       OPTIONS.package_key = OPTIONS.info_dict.get(
           "default_system_dev_certificate",
-          "build/target/product/security/testkey")
+          "build/make/target/product/security/testkey")
     # Get signing keys
     OPTIONS.key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
 

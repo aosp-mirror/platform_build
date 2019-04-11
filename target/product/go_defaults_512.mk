@@ -15,7 +15,7 @@
 #
 
 # Inherit common Android Go defaults.
-$(call inherit-product, build/target/product/go_defaults_common.mk)
+$(call inherit-product, build/make/target/product/go_defaults_common.mk)
 
 # Add the system properties.
 TARGET_SYSTEM_PROP += \
