@@ -21,8 +21,8 @@ my_pickup_files :=
 my_modules_and_deps := $(my_modules)
 $(foreach m,$(my_modules),\
   $(eval _explicitly_required := \
-    $(strip $(ALL_MODULES.$(m).EXPLICITLY_REQUIRED)\
-    $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).EXPLICITLY_REQUIRED)))\
+    $(strip $(ALL_MODULES.$(m).EXPLICITLY_REQUIRED_FROM_TARGET)\
+    $(ALL_MODULES.$(m)$(TARGET_2ND_ARCH_MODULE_SUFFIX).EXPLICITLY_REQUIRED_FROM_TARGET)))\
   $(eval my_modules_and_deps += $(_explicitly_required))\
 )
 
