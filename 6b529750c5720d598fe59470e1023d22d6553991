@@ -118,6 +118,30 @@
       "revId": "6b529750c5720d598fe59470e1023d22d6553991",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa4c822d_85ac2686",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-11T06:40:49Z",
+      "side": 0,
+      "message": "Ack",
+      "parentUuid": "5bd1c44f_a226ca0a",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 45
+      },
+      "revId": "6b529750c5720d598fe59470e1023d22d6553991",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

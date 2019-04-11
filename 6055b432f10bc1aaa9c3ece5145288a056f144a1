@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b7a3b5a7_7b78c43a",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-11T06:40:49Z",
+      "side": 1,
+      "message": "forgot to remove?\n\nJust to be clear, in AVB, dm-verity will be enabled for all variants (including eng).\nSo we can probably add --flag 2 unconditionally here.",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 46
+      },
+      "revId": "6055b432f10bc1aaa9c3ece5145288a056f144a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
