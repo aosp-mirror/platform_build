@@ -405,6 +405,30 @@
     },
     {
       "key": {
+        "uuid": "745a1a5e_19411297",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 879,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-04-11T21:40:25Z",
+      "side": 1,
+      "message": "I added source_tmp and target_tmp to that list. source_info and target_info can be inferred from the input_tmp so I didn\u0027t put them in. See new PS.",
+      "parentUuid": "346d964c_a9ffe0db",
+      "range": {
+        "startLine": 879,
+        "startChar": 2,
+        "endLine": 879,
+        "endChar": 38
+      },
+      "revId": "6fcd779d7749827a04b34253b39c7c87d9656067",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d44081a5_0d3d0285",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 9
