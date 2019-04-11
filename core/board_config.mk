@@ -475,6 +475,13 @@ ifeq ($(AB_OTA_UPDATER),true)
   endif
 endif
 
+# Sanity check for building generic OTA packages. Currently it only supports A/B OTAs.
+ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
+  ifneq ($(AB_OTA_UPDATER),true)
+    $(error PRODUCT_BUILD_GENERIC_OTA_PACKAGE with 'AB_OTA_UPDATER != true' is not supported)
+  endif
+endif
+
 # Check BOARD_VNDK_VERSION
 define check_vndk_version
   $(eval vndk_path := prebuilts/vndk/v$(1)) \

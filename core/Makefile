@@ -3444,7 +3444,7 @@ ifeq ($(BUILD_OS),darwin)
   build_ota_package := false
   build_otatools_package := false
 else
-  # set build_ota_package, and allow opt-out below
+  # Set build_ota_package, and allow opt-out below.
   build_ota_package := true
   ifeq ($(TARGET_SKIP_OTA_PACKAGE),true)
     build_ota_package := false
@@ -3455,20 +3455,22 @@ else
   ifeq ($(TARGET_PRODUCT),sdk)
     build_ota_package := false
   endif
-  ifneq ($(filter generic%,$(TARGET_DEVICE)),)
-    build_ota_package := false
-  endif
-  ifeq ($(TARGET_NO_KERNEL),true)
-    build_ota_package := false
-  endif
-  ifeq ($(recovery_fstab),)
-    build_ota_package := false
-  endif
   ifeq ($(TARGET_BUILD_PDK),true)
     build_ota_package := false
   endif
+  ifneq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
+    ifneq ($(filter generic%,$(TARGET_DEVICE)),)
+      build_ota_package := false
+    endif
+    ifeq ($(TARGET_NO_KERNEL),true)
+      build_ota_package := false
+    endif
+    ifeq ($(recovery_fstab),)
+      build_ota_package := false
+    endif
+  endif # PRODUCT_BUILD_GENERIC_OTA_PACKAGE
 
-  # set build_otatools_package, and allow opt-out below
+  # Set build_otatools_package, and allow opt-out below.
   build_otatools_package := true
   ifeq ($(TARGET_SKIP_OTATOOLS_PACKAGE),true)
     build_otatools_package := false
@@ -3924,6 +3926,9 @@ endif
 	$(hide) echo 'mkbootimg_version_args=$(INTERNAL_MKBOOTIMG_VERSION_ARGS)' >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "multistage_support=1" >> $(zip_root)/META/misc_info.txt
 	$(hide) echo "blockimgdiff_versions=3,4" >> $(zip_root)/META/misc_info.txt
+ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
+	$(hide) echo "build_generic_ota_package=true" >> $(zip_root)/META/misc_info.txt
+endif
 ifneq ($(OEM_THUMBPRINT_PROPERTIES),)
 	# OTA scripts are only interested in fingerprint related properties
 	$(hide) echo "oem_fingerprint_properties=$(OEM_THUMBPRINT_PROPERTIES)" >> $(zip_root)/META/misc_info.txt
