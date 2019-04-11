@@ -70,6 +70,30 @@
       "revId": "6b529750c5720d598fe59470e1023d22d6553991",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2392679_b63516e4",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-11T03:12:46Z",
+      "side": 0,
+      "message": "re: init: [libfs_avb]total vbmeta size mismatch: 4224 (expected: 2752)\n\nFor devices with bootloader, we require the bootloader to read all vbmeta then provide the following in the kernel cmdline:\n\ne.g.,\n  [ro.boot.vbmeta.digest]: [c58b0c1b81ec41427d699bbf6710089e7de929ab90648592f659bbbd87ddf100]\n  [ro.boot.vbmeta.hash_alg]: [sha256]\n  [ro.boot.vbmeta.size]: [3264]\n\nAs emulator doesn\u0027t have bootloader, maybe there is some script to calculate this then put into kernel cmdline? So it\u0027s probably still can be solved?",
+      "parentUuid": "2ad52a38_d457fb4c",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 45
+      },
+      "revId": "6b529750c5720d598fe59470e1023d22d6553991",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
