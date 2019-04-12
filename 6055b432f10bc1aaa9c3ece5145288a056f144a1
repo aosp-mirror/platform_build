@@ -46,6 +46,30 @@
       "revId": "6055b432f10bc1aaa9c3ece5145288a056f144a1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2dc5a1bd_019add92",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-12T00:24:17Z",
+      "side": 1,
+      "message": "Oh, I see. \nI preferred --flag 2 for all variants, but now I think it probably can be 0 (enforcing) for all variants. (the bottom line is, all build variants should have the same setting).\n\nIn P and before, when OEM devices use GSI, it has to disable verity (i.e., with --flag 2).\nBecause we didn\u0027t sign GSI and init/fs_mgr doesn\u0027t have the ability to verify a \"standalone\" partition in an OEM device (where GSI\u0027s vbmeta isn\u0027t in /vbmeta).\n\nFor emulator side in P:\n   - vbmeta.img isn\u0027t used\n   - system-as-root\n   - Emulator has a script to extract \"system-as-root\" dm-verity params from vbmeta.img (and ignores the --flag 2), then pass it to kernel cmdline to enable dm-verity (for kernel to mount system.img as root).\n\nThat\u0027s how --flag 2 and having dm-verity on emulator co-exist in P.\n\n\nIn Q, we can support AVB for a standalone partition like GSI.\n - Emulator uses vbmeta.img, thus it can\u0027t have --flag 2.\n - In Q, GSI needs to be run with dm-verity, so we probably don\u0027t need --flag 2 as well\n\nLet\u0027s see how Szuwei think about it, as in current GSI release process, we always include a --flag 2 vbmeta.img in the .zip file.",
+      "parentUuid": "4356bb3a_c7094019",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 46
+      },
+      "revId": "6055b432f10bc1aaa9c3ece5145288a056f144a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
