@@ -94,6 +94,30 @@
       "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c58dbfad_fa7ad852",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-12T17:22:16Z",
+      "side": 1,
+      "message": "Oh, I see.\n\nBefore DAP:\n  1. Build system doesn\u0027t need to know _a/_b.\n  2. It can just build one copy of images: $OUT/system.img, $OUT/vendor.img, etc. (but not system_a.img, vendor_a.img).\n  3.For which slot (_a or _b) to flash to, it can be decided at flash time.\n\nAfter DAP (IIRC):\n  1. no physical _a _b slot, but only a single /super\n  2. system_a.img, system_b.img, etc will be placed on /super\n  3. This is more space-efficient as both slots can share the large /super partition, without splitting to two physical /super_a, /super_b.\n \nSeveral solutions on top of my head now:\n1) Create no _a / _b logical partitions if there is no ro.boot.slot_suffix.\n\n[    1.152893] init: [libfs_mgr]Created logical partition *system* on device /dev/block/dm-0\n[    1.168029] init: [libfs_mgr]Created logical partition *vendor* on device /dev/block/dm-1\n..\n\nOR\n\n2) Emulator adds ro.boot.slot_suffix\u003d_a for it.\n   DM_DEV_STATUS failed for *system*: No such device or address  \u003c\u003d\u003d then this might become \u0027system_a\u0027 and no failure ?\n\nOR\n\n3) Use AB_OTA_PARTITIONS instead of AB_OTA_UPDATER in lpmake to decide if a device is A/B or not. In emulator/GSI we can probably unset AB_OTA_PARTITIONS as there is no need to run OTA flow in both GSI and emulator?",
+      "parentUuid": "a6225c18_c8493a16",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 35
+      },
+      "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
