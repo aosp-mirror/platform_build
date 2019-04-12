@@ -46,6 +46,30 @@
       "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a6225c18_c8493a16",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-12T16:25:30Z",
+      "side": 1,
+      "message": "AB_OTA_UPDATER :\u003d true is making lpmake think that the device is AB and leading to boot failure\n\n[    1.152893] init: [libfs_mgr]Created logical partition system_a on device /dev/block/dm-0\n[    1.155010] init: [libfs_mgr]Skipping zero-length logical partition: system_b\n[    1.168029] init: [libfs_mgr]Created logical partition vendor_a on device /dev/block/dm-1\n[    1.170591] init: [libfs_mgr]Skipping zero-length logical partition: vendor_b\n[    1.172623] init: DM_DEV_STATUS failed for system: No such device or address\n[    1.174665] init: Failed to mount /system: No such device or address\n\n \"lpmake --metadata-size 65536 --super-name super --metadata-slots 2 --device super:8145338368 --group emulator_dynamic_partitions_a:4068474880 --group emulator_dynamic_partitions_b:4068474880 --partition system_a:readonly:1002172416:emulator_dynamic_partitions_a --image system_a\u003dout/target/product/generic_x86_arm/system.img --partition system_b:readonly:0:emulator_dynamic_partitions_b --partition vendor_a:readonly:60039168:emulator_dynamic_partitions_a --image vendor_a\u003dout/target/product/generic_x86_arm/vendor.img --partition vendor_b:readonly:0:emulator_dynamic_partitions_b --sparse --output out/target/product/generic_x86_arm/super.img\"",
+      "parentUuid": "6c39b8be_e3d70521",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 35
+      },
+      "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
