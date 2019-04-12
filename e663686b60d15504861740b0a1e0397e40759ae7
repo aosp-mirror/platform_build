@@ -166,6 +166,30 @@
       "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1b5b8e1a_2a4def01",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-12T19:23:32Z",
+      "side": 1,
+      "message": "I switched to a/b, the mounting errors are gone but\nthen updater is rebooting my device\n[    1.182770] init: [libfs_mgr]ReadFstabFromDt(): failed to read fstab from dt\n[    1.184865] init: Using Android DT directory /proc/device-tree/firmware/android/\n[    1.204458] init: [libfs_mgr]Created logical partition system_a on device /dev/block/dm-0\n[    1.205848] init: [libfs_mgr]Skipping zero-length logical partition: system_b\n[    1.222189] init: [libfs_mgr]Created logical partition vendor_a on device /dev/block/dm-1\n[    1.225393] init: [libfs_mgr]Skipping zero-length logical partition: vendor_b\n[    1.231494] init: [libfs_avb]Returning avb_handle with status: VerificationDisabled\n[    1.233079] init: [libfs_avb]AVB HASHTREE disabled on: /system\n[    1.234615] init: [libfs_mgr]superblock s_max_mnt_count:65535,/dev/block/dm-0\n[    1.249113] EXT4-fs (dm-0): mounted filesystem without journal. Opts: barrier\u003d1\n[    1.257013] EXT4-fs (dm-1): mounted filesystem without journal. Opts: barrier\u003d1\n\n[    2.362753] fscrypt: AES-256-XTS using implementation \"xts(ecb(aes-asm))\"\n[    2.393183] update_verifier: Started with arg 1: nonencrypted\n[    2.395465] update_verifier: Error getting bootctrl module.\n\n\nhttps://cs.corp.google.com/android/bootable/recovery/update_verifier/update_verifier.cpp?q\u003dupdate_verifier+package:%5Eandroid$\u0026dr\u003dCSs\u0026l\u003d313",
+      "parentUuid": "37d13103_8fc0368c",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 35
+      },
+      "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
