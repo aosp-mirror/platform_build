@@ -190,6 +190,30 @@
       "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e0e1f0ce_53d24140",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-12T19:37:00Z",
+      "side": 1,
+      "message": "update_verifier should not get that far, as it checks `ro.boot.slot_suffix` upon start:\nhttps://cs.corp.google.com/android/bootable/recovery/update_verifier/update_verifier_main.cpp?dr\u003dCSs\u0026g\u003d0\u0026l\u003d30\n\nThat flag is passed by bootloader on regular devices. Do we have non-empty value on emulator?",
+      "parentUuid": "1b5b8e1a_2a4def01",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 35
+      },
+      "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
