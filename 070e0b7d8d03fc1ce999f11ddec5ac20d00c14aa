@@ -22,6 +22,30 @@
       "revId": "070e0b7d8d03fc1ce999f11ddec5ac20d00c14aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "75b53865_d507e28b",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-12T14:45:50Z",
+      "side": 1,
+      "message": "this will impact aosp_arm[64], I have removed the modification on the flags, so it stay\nas --flags 2.\n\nI will probably only enforce --flags 0 in qt-emu-dev branch\n\nit looks like Gsi.mk and Emu.mk are always included together for aosp_arm[64] and aosp_x86[_64]",
+      "parentUuid": "e313dbf1_a3026666",
+      "range": {
+        "startLine": 26,
+        "startChar": 36,
+        "endLine": 26,
+        "endChar": 45
+      },
+      "revId": "070e0b7d8d03fc1ce999f11ddec5ac20d00c14aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
