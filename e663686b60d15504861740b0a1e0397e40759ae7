@@ -142,6 +142,30 @@
       "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37d13103_8fc0368c",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-12T18:52:03Z",
+      "side": 1,
+      "message": "I found another issue: there is this ro.build.ab_update\u003dtrue and it is preventing\nremount from working\n\n1|generic_x86:/system # remount\nW DM_DEV_STATUS failed for scratch: No such device or address\nE [liblp]Unsuffixed partition not allowed on A/B device: system\nE [libfs_mgr]open /dev/block/by-name/super metadata\nE Overlayfs setup for /system failed, skipping: No such file or directory\nW DM_DEV_STATUS failed for scratch: No such device or address\nE [liblp]Unsuffixed partition not allowed on A/B device: system\nE [libfs_mgr]open /dev/block/by-name/super metadata\nE Overlayfs setup for /vendor failed, skipping: No such file or directory\nW No partitions to remount",
+      "parentUuid": "c41b079a_66a2f42a",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 35
+      },
+      "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
