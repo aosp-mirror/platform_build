@@ -70,6 +70,30 @@
       "revId": "6055b432f10bc1aaa9c3ece5145288a056f144a1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6c0f61d_58d96e20",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-12T00:31:27Z",
+      "side": 1,
+      "message": "the only reason I want to keep --flag 2 for eng build is for framework\ndevelopment in build environment because \u0027adb disable-verity\u0027 does not\nwork on emulator(for lack of bootloader to re-calculate the vbmeta digets,\nas mentioned in the bug). so a compromise, how about \nremove --flag 2 from Gsi mk file but add --flag 2 in emu mk file for\neng build only ( I still want userdebug to have --flag 0)\n\nwhat do you think ?",
+      "parentUuid": "2dc5a1bd_019add92",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 46
+      },
+      "revId": "6055b432f10bc1aaa9c3ece5145288a056f144a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
