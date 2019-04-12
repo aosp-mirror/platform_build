@@ -118,6 +118,30 @@
       "revId": "6055b432f10bc1aaa9c3ece5145288a056f144a1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8caf4ae8_45a3ada9",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-12T04:49:14Z",
+      "side": 1,
+      "message": "Bowgo, I updated the cl to not change Gsi mk file at all;\nbut still get the following for emulator\n  user: --flag 0\n  userdebug: --flag 0\n  eng: --flag 2 \n\nPTAL",
+      "parentUuid": "7da10eb8_a7280044",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 46
+      },
+      "revId": "6055b432f10bc1aaa9c3ece5145288a056f144a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
