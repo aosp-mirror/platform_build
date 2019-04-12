@@ -9,11 +9,6 @@ include build/make/target/board/BoardConfigMainlineCommon.mk
 # This flag is set by mainline but isn't desired for GSI.
 BOARD_USES_SYSTEM_OTHER_ODEX :=
 
-# GSIs are historically released in sparse format.
-# Some vendors' bootloaders don't work properly with raw format images. So
-# we explicit specify this need below (even though it's the current default).
-TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
-
 # system.img is always ext4 with sparse option
 # GSI also includes make_f2fs to support userdata parition in f2fs
 # for some devices
