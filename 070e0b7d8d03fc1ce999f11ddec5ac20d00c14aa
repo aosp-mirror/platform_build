@@ -46,6 +46,30 @@
       "revId": "070e0b7d8d03fc1ce999f11ddec5ac20d00c14aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c1847535_347a4074",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-12T16:15:39Z",
+      "side": 1,
+      "message": "OK, if we have qt-emu-dev branch then no concern from my side :-)",
+      "parentUuid": "75b53865_d507e28b",
+      "range": {
+        "startLine": 26,
+        "startChar": 36,
+        "endLine": 26,
+        "endChar": 45
+      },
+      "revId": "070e0b7d8d03fc1ce999f11ddec5ac20d00c14aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

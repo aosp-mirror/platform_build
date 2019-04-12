@@ -22,6 +22,30 @@
       "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6c39b8be_e3d70521",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-12T16:15:39Z",
+      "side": 1,
+      "message": "No, AB_OTA_UPDATER needs to be kept.\n\nOtherwise, after flashing GSI on a A/B device + a few reboots, there is no update_engine to update A/B slot status \u003d\u003d\u003e bootloader will think the current slot not bootable.\nSee b/111778046#comment3 for details.\n\nOTOH, we\u0027ll not run update_engine on a non-A/B device:\nhttps://android-review.googlesource.com/c/platform/system/update_engine/+/567122\n\n\nNot sure will BOARD_EXT4_SHARE_DUP_BLOCKS be \u0027required\u0027 for DAP.\nBut it seems a good feature (can reduce image size?) so probably ok to enable it.",
+      "parentUuid": "6764bc8d_839e78c7",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 35
+      },
+      "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
