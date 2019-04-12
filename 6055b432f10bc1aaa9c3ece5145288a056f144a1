@@ -94,6 +94,30 @@
       "revId": "6055b432f10bc1aaa9c3ece5145288a056f144a1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7da10eb8_a7280044",
+        "filename": "target/board/BoardConfigGsiCommon.mk",
+        "patchSetId": 14
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-12T03:53:18Z",
+      "side": 1,
+      "message": "I see, as it will impact Q beta program (See b/130384742).\nCan we keep --flag 2 for all variants now?\n\nBecause the released (vbmeta.img + Q-GSI) will be used on P-vendor device. Where --flag 2 is needed to disable AVB.\n\nThen add a TODO(130384742): removes --flag 2\n\nre: remove --flag 2 from Gsi mk file but add --flag 2 in emu mk file for\neng build only (I still want userdebug to have --flag 0)\n\nJust to be clear, Emulator needs:\n  userd: --flag 0\n  userdebug: --flag 0\n  eng: --flag 2  (no GSI build for eng, IIRC)\n\nis that correct? If so, that seems works (after b/130384742 is resolved).\nBut I don\u0027t know much about the diff between emu mk v.s. gsi mk.\nSo better to get Szuwei\u0027s thought on this.",
+      "parentUuid": "b6c0f61d_58d96e20",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 46
+      },
+      "revId": "6055b432f10bc1aaa9c3ece5145288a056f144a1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
