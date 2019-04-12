@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e313dbf1_a3026666",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 16
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-12T05:22:21Z",
+      "side": 1,
+      "message": "will this impact aosp_arm[64]? \n\nIf yes, we might not put this for Q until b/130384742 is resolved (but ok for master).\n\nJust curious, what\u0027s the major diff between emu.mk v.s. gsi.mk.\n\nMy current understanding might be:\n   emu.mk + gsi.mk: aosp_arm[64], aosp_x86[_64]\n   gsi.mk only: _ab,*_a targets\n   emu.mk only: what other targets?",
+      "range": {
+        "startLine": 26,
+        "startChar": 36,
+        "endLine": 26,
+        "endChar": 45
+      },
+      "revId": "070e0b7d8d03fc1ce999f11ddec5ac20d00c14aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
