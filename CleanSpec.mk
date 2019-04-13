@@ -621,6 +621,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/init/android.frameworks.
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/super.img)
 
 $(call add-clean-step, find $(PRODUCT_OUT) -type f -name "generated_*_image_info.txt" -print0 | xargs -0 rm -f)
+
+# Clean up libicuuc.so and libicui18n.so
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libicu*)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
