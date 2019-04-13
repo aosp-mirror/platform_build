@@ -238,6 +238,30 @@
       "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fd08ca3c_6b19958f",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-13T00:19:29Z",
+      "side": 1,
+      "message": "re: I have to pass the boot.slot_suffix otherwise, it wont even mount system/ and vendor/\n\nThe mount means \u0027adb remount\u0027?\nDoes the remount failure exist if we change lpmake to use AB_OTA_PARTITIONS instead of AB_OTA_UPDATER?\n\nIf so, an OEM non-A/B device will have to specify boot.slot_suffix?",
+      "parentUuid": "cf514c9b_65600531",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 35
+      },
+      "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
