@@ -1233,6 +1233,7 @@ class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
     """Uses testdata/payload_signer.sh as the external payload signer."""
     common.OPTIONS.payload_signer = os.path.join(
         self.testdata_dir, 'payload_signer.sh')
+    os.chmod(common.OPTIONS.payload_signer, 0o700)
     common.OPTIONS.payload_signer_args = [
         os.path.join(self.testdata_dir, 'testkey.pk8')]
     payload_signer = PayloadSigner()
