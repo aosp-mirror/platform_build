@@ -205,6 +205,8 @@ class FileImage(Image):
     self.clobbered_blocks = RangeSet()
     self.extended = RangeSet()
 
+    self.generator_lock = threading.Lock()
+
     self.hashtree_info = None
     if hashtree_info_generator:
       self.hashtree_info = hashtree_info_generator.Generate(self)
@@ -236,10 +238,13 @@ class FileImage(Image):
     self._file.close()
 
   def _GetRangeData(self, ranges):
-    for s, e in ranges:
-      self._file.seek(s * self.blocksize)
-      for _ in range(s, e):
-        yield self._file.read(self.blocksize)
+    # Use a lock to protect the generator so that we will not run two
+    # instances of this generator on the same object simultaneously.
+    with self.generator_lock:
+      for s, e in ranges:
+        self._file.seek(s * self.blocksize)
+        for _ in range(s, e):
+          yield self._file.read(self.blocksize)
 
   def RangeSha1(self, ranges):
     h = sha1()
