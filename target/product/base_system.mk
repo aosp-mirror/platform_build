@@ -356,6 +356,7 @@ PRODUCT_PACKAGES_DEBUG := \
     showmap \
     sqlite3 \
     ss \
+    start_with_lockagent \
     strace \
     su \
     sanitizer-status \
