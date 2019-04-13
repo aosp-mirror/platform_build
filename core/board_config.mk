@@ -44,6 +44,7 @@ _board_strip_readonly_list := \
   TARGET_BOARD_PLATFORM \
   TARGET_BOARD_PLATFORM_GPU \
   TARGET_BOOTLOADER_BOARD_NAME \
+  TARGET_FS_CONFIG_GEN \
   TARGET_NO_BOOTLOADER \
   TARGET_NO_KERNEL \
   TARGET_NO_RECOVERY \
@@ -472,6 +473,13 @@ AB_OTA_UPDATER ?=
 ifeq ($(AB_OTA_UPDATER),true)
   ifneq ($(strip $(TARGET_RECOVERY_UPDATER_LIBS)),)
     $(error Do not use TARGET_RECOVERY_UPDATER_LIBS when using AB_OTA_UPDATER)
+  endif
+endif
+
+# Sanity check for building generic OTA packages. Currently it only supports A/B OTAs.
+ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
+  ifneq ($(AB_OTA_UPDATER),true)
+    $(error PRODUCT_BUILD_GENERIC_OTA_PACKAGE with 'AB_OTA_UPDATER != true' is not supported)
   endif
 endif
 
