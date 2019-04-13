@@ -56,8 +56,10 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
 
   def test_SignApexPayload_withSignerHelper(self):
     payload_file = self._GetTestPayload()
+    signing_helper = os.path.join(self.testdata_dir, 'signing_helper.sh')
+    os.chmod(signing_helper, 0o700)
     payload_signer_args = '--signing_helper_with_files {}'.format(
-        os.path.join(self.testdata_dir, 'signing_helper.sh'))
+        signing_helper)
     apex_utils.SignApexPayload(
         payload_file,
         self.payload_key,
