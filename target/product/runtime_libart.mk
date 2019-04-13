@@ -33,11 +33,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     ext \
 
-# Libcore ICU. TODO(b/124218500): Remove them explicitly when the bug is resolved.
-PRODUCT_PACKAGES += \
-    libicui18n \
-    libicuuc \
-
 # Android Runtime APEX module.
 PRODUCT_PACKAGES += com.android.runtime
 PRODUCT_HOST_PACKAGES += com.android.runtime
