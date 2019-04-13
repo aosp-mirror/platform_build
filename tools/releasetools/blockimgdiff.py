@@ -174,13 +174,85 @@ class DataImage(Image):
     return h.hexdigest()
 
   def ReadRangeSet(self, ranges):
-    return [self._GetRangeData(ranges)]
+    return list(self._GetRangeData(ranges))
 
   def TotalSha1(self, include_clobbered_blocks=False):
     if not include_clobbered_blocks:
       return self.RangeSha1(self.care_map.subtract(self.clobbered_blocks))
     else:
       return sha1(self.data).hexdigest()
+
+  def WriteRangeDataToFd(self, ranges, fd):
+    for data in self._GetRangeData(ranges): # pylint: disable=not-an-iterable
+      fd.write(data)
+
+
+class FileImage(Image):
+  """An image wrapped around a raw image file."""
+
+  def __init__(self, path, hashtree_info_generator=None):
+    self.path = path
+    self.blocksize = 4096
+    self._file_size = os.path.getsize(self.path)
+    self._file = open(self.path, 'r')
+
+    if self._file_size % self.blocksize != 0:
+      raise ValueError("Size of file %s must be multiple of %d bytes, but is %d"
+                       % self.path, self.blocksize, self._file_size)
+
+    self.total_blocks = self._file_size / self.blocksize
+    self.care_map = RangeSet(data=(0, self.total_blocks))
+    self.clobbered_blocks = RangeSet()
+    self.extended = RangeSet()
+
+    self.hashtree_info = None
+    if hashtree_info_generator:
+      self.hashtree_info = hashtree_info_generator.Generate(self)
+
+    zero_blocks = []
+    nonzero_blocks = []
+    reference = '\0' * self.blocksize
+
+    for i in range(self.total_blocks):
+      d = self._file.read(self.blocksize)
+      if d == reference:
+        zero_blocks.append(i)
+        zero_blocks.append(i+1)
+      else:
+        nonzero_blocks.append(i)
+        nonzero_blocks.append(i+1)
+
+    assert zero_blocks or nonzero_blocks
+
+    self.file_map = {}
+    if zero_blocks:
+      self.file_map["__ZERO"] = RangeSet(data=zero_blocks)
+    if nonzero_blocks:
+      self.file_map["__NONZERO"] = RangeSet(data=nonzero_blocks)
+    if self.hashtree_info:
+      self.file_map["__HASHTREE"] = self.hashtree_info.hashtree_range
+
+  def __del__(self):
+    self._file.close()
+
+  def _GetRangeData(self, ranges):
+    for s, e in ranges:
+      self._file.seek(s * self.blocksize)
+      for _ in range(s, e):
+        yield self._file.read(self.blocksize)
+
+  def RangeSha1(self, ranges):
+    h = sha1()
+    for data in self._GetRangeData(ranges): # pylint: disable=not-an-iterable
+      h.update(data)
+    return h.hexdigest()
+
+  def ReadRangeSet(self, ranges):
+    return list(self._GetRangeData(ranges))
+
+  def TotalSha1(self, include_clobbered_blocks=False):
+    assert not self.clobbered_blocks
+    return self.RangeSha1(self.care_map)
 
   def WriteRangeDataToFd(self, ranges, fd):
     for data in self._GetRangeData(ranges): # pylint: disable=not-an-iterable
