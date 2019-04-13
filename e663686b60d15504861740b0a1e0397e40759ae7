@@ -262,6 +262,30 @@
       "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3ce08dbc_a3afb320",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 17
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-13T05:09:17Z",
+      "side": 1,
+      "message": "Bowgo:\n  with AB_OTA_UPDATER :\u003d false, everything works: lpmake only create system/vendor, it boots\nand adb remount works fine;\n  with AB_OTA_UPDATER :\u003d true, but empty AB_OTA_PARTITIONS (with lpmake checking partitions\nand only creates system/vendor when partitions is empty), it boots fine; but adb remount\nfails as it thinks this is a/b device but the partition does not have a/b suffix.\n  with AB_OTA_UPDATER :\u003d true but no fix to lpmake, lpmake will create system_a/_b vendor_a/_b\nand I need to add androidboot.slot_suffix\u003d_a to get it to create system and vendor on dm-0 \nand dm-1; but then it cannot boot up because updater complains it cannot find bootcontrol\nmodule and reboots emulator continuously.\n  so I ended up making a dummy bootcontrol module and it boots fine with a/b and adb remount\nalso works",
+      "parentUuid": "fd08ca3c_6b19958f",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 35
+      },
+      "revId": "e663686b60d15504861740b0a1e0397e40759ae7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
