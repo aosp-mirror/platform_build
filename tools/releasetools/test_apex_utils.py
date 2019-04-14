@@ -39,6 +39,7 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
       payload_fp.write(os.urandom(8192))
     return payload_file
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_ParseApexPayloadInfo(self):
     payload_file = self._GetTestPayload()
     apex_utils.SignApexPayload(
@@ -48,12 +49,14 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual(self.SALT, payload_info['Salt'])
     self.assertEqual('testkey', payload_info['apex.key'])
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_SignApexPayload(self):
     payload_file = self._GetTestPayload()
     apex_utils.SignApexPayload(
         payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048', self.SALT)
     apex_utils.VerifyApexPayload(payload_file, self.payload_key)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_SignApexPayload_withSignerHelper(self):
     payload_file = self._GetTestPayload()
     signing_helper = os.path.join(self.testdata_dir, 'signing_helper.sh')
@@ -67,6 +70,7 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
         payload_signer_args)
     apex_utils.VerifyApexPayload(payload_file, self.payload_key)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_SignApexPayload_invalidKey(self):
     self.assertRaises(
         apex_utils.ApexSigningError,
@@ -77,6 +81,7 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
         'SHA256_RSA2048',
         self.SALT)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_VerifyApexPayload_wrongKey(self):
     payload_file = self._GetTestPayload()
     apex_utils.SignApexPayload(
