@@ -16,7 +16,6 @@
 
 import os.path
 
-import common
 import test_utils
 from merge_target_files import (
     read_config_list, validate_config_lists, default_system_item_list,

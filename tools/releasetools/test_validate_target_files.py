@@ -55,6 +55,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
         0, proc.returncode,
         "Failed to sign boot image with boot_signer: {}".format(stdoutdata))
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_ValidateVerifiedBootImages_bootImage(self):
     input_tmp = common.MakeTempDir()
     os.mkdir(os.path.join(input_tmp, 'IMAGES'))
@@ -69,6 +70,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     }
     ValidateVerifiedBootImages(input_tmp, info_dict, options)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_ValidateVerifiedBootImages_bootImage_wrongKey(self):
     input_tmp = common.MakeTempDir()
     os.mkdir(os.path.join(input_tmp, 'IMAGES'))
@@ -85,6 +87,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
         AssertionError, ValidateVerifiedBootImages, input_tmp, info_dict,
         options)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_ValidateVerifiedBootImages_bootImage_corrupted(self):
     input_tmp = common.MakeTempDir()
     os.mkdir(os.path.join(input_tmp, 'IMAGES'))
@@ -139,6 +142,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     # Append the verity metadata.
     verity_image_builder.Build(output_file)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_ValidateVerifiedBootImages_systemImage(self):
     input_tmp = common.MakeTempDir()
     os.mkdir(os.path.join(input_tmp, 'IMAGES'))
@@ -162,6 +166,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     }
     ValidateVerifiedBootImages(input_tmp, info_dict, options)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_ValidateFileConsistency_incompleteRange(self):
     input_tmp = common.MakeTempDir()
     os.mkdir(os.path.join(input_tmp, 'IMAGES'))
