@@ -427,6 +427,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     common.OPTIONS.search_path = test_utils.get_search_path()
     self.assertIsNotNone(common.OPTIONS.search_path)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_abOta_full(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
     target_info_dict['ab_update'] = 'true'
@@ -445,6 +446,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_abOta_incremental(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
     target_info_dict['ab_update'] = 'true'
@@ -467,6 +469,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_nonAbOta_full(self):
     target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     metadata = GetPackageMetadata(target_info)
@@ -482,6 +485,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_nonAbOta_incremental(self):
     target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     source_info = BuildInfo(self.TEST_SOURCE_INFO_DICT, None)
@@ -501,6 +505,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_wipe(self):
     target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     common.OPTIONS.wipe_user_data = True
@@ -518,6 +523,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_retrofitDynamicPartitions(self):
     target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     common.OPTIONS.retrofit_dynamic_partitions = True
@@ -542,6 +548,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
          source_info['build.prop']['ro.build.date.utc'],
          target_info['build.prop']['ro.build.date.utc'])
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_unintentionalDowngradeDetected(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
     source_info_dict = copy.deepcopy(self.TEST_SOURCE_INFO_DICT)
@@ -554,6 +561,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertRaises(RuntimeError, GetPackageMetadata, target_info,
                       source_info)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_downgrade(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
     source_info_dict = copy.deepcopy(self.TEST_SOURCE_INFO_DICT)
@@ -582,6 +590,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetTargetFilesZipForSecondaryImages(self):
     input_file = construct_target_files(secondary=True)
     target_file = GetTargetFilesZipForSecondaryImages(input_file)
@@ -600,6 +609,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertNotIn('IMAGES/system_other.img', namelist)
     self.assertNotIn('IMAGES/system.map', namelist)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetTargetFilesZipForSecondaryImages_skipPostinstall(self):
     input_file = construct_target_files(secondary=True)
     target_file = GetTargetFilesZipForSecondaryImages(
@@ -619,6 +629,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertNotIn('IMAGES/system.map', namelist)
     self.assertNotIn(POSTINSTALL_CONFIG, namelist)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetTargetFilesZipForSecondaryImages_withoutRadioImages(self):
     input_file = construct_target_files(secondary=True)
     common.ZipDelete(input_file, 'RADIO/bootloader.img')
@@ -639,12 +650,14 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertNotIn('RADIO/bootloader.img', namelist)
     self.assertNotIn('RADIO/modem.img', namelist)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetTargetFilesZipWithoutPostinstallConfig(self):
     input_file = construct_target_files()
     target_file = GetTargetFilesZipWithoutPostinstallConfig(input_file)
     with zipfile.ZipFile(target_file) as verify_zip:
       self.assertNotIn(POSTINSTALL_CONFIG, verify_zip.namelist())
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetTargetFilesZipWithoutPostinstallConfig_missingEntry(self):
     input_file = construct_target_files()
     common.ZipDelete(input_file, POSTINSTALL_CONFIG)
@@ -675,20 +688,25 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     FinalizeMetadata(metadata, zip_file, output_file, needed_property_files)
     self.assertIn('ota-test-property-files', metadata)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_FinalizeMetadata(self):
     self._test_FinalizeMetadata()
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_FinalizeMetadata_withNoSigning(self):
     common.OPTIONS.no_signing = True
     self._test_FinalizeMetadata()
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_FinalizeMetadata_largeEntry(self):
     self._test_FinalizeMetadata(large_entry=True)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_FinalizeMetadata_largeEntry_withNoSigning(self):
     common.OPTIONS.no_signing = True
     self._test_FinalizeMetadata(large_entry=True)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_FinalizeMetadata_insufficientSpace(self):
     entries = [
         'required-entry1',
@@ -766,6 +784,7 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
           expected = entry.replace('.', '-').upper().encode()
         self.assertEqual(expected, input_fp.read(size))
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Compute(self):
     entries = (
         'required-entry1',
@@ -805,6 +824,7 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(zip_file, 'r') as zip_fp:
       self.assertRaises(KeyError, property_files.Compute, zip_fp)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Finalize(self):
     entries = [
         'required-entry1',
@@ -825,6 +845,7 @@ class PropertyFilesTest(test_utils.ReleaseToolsTestCase):
     entries[2] = 'metadata'
     self._verify_entries(zip_file, tokens, entries)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Finalize_assertReservedLength(self):
     entries = (
         'required-entry1',
@@ -998,6 +1019,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
         ),
         property_files.optional)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPayloadMetadataOffsetAndSize(self):
     target_file = construct_target_files()
     payload = Payload()
@@ -1071,6 +1093,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
 
     return zip_file
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Compute(self):
     zip_file = self.construct_zip_package_withValidPayload()
     property_files = AbOtaPropertyFiles()
@@ -1084,6 +1107,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
     self._verify_entries(
         zip_file, tokens, ('care_map.txt', 'compatibility.zip'))
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Finalize(self):
     zip_file = self.construct_zip_package_withValidPayload(with_metadata=True)
     property_files = AbOtaPropertyFiles()
@@ -1099,6 +1123,7 @@ class AbOtaPropertyFilesTest(PropertyFilesTest):
     self._verify_entries(
         zip_file, tokens, ('care_map.txt', 'compatibility.zip'))
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Verify(self):
     zip_file = self.construct_zip_package_withValidPayload(with_metadata=True)
     property_files = AbOtaPropertyFiles()
@@ -1204,6 +1229,7 @@ class PayloadSignerTest(test_utils.ReleaseToolsTestCase):
 
   def test_GetKeySizeInBytes_512Bytes(self):
     signing_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
+    # pylint: disable=protected-access
     key_size = PayloadSigner._GetKeySizeInBytes(signing_key)
     self.assertEqual(512, key_size)
 
@@ -1273,14 +1299,17 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload.Generate(target_file, source_file)
     return payload
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Generate_full(self):
     payload = self._create_payload_full()
     self.assertTrue(os.path.exists(payload.payload_file))
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Generate_incremental(self):
     payload = self._create_payload_incremental()
     self.assertTrue(os.path.exists(payload.payload_file))
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Generate_additionalArgs(self):
     target_file = construct_target_files()
     source_file = construct_target_files()
@@ -1291,12 +1320,14 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
         target_file, additional_args=["--source_image", source_file])
     self.assertTrue(os.path.exists(payload.payload_file))
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Generate_invalidInput(self):
     target_file = construct_target_files()
     common.ZipDelete(target_file, 'IMAGES/vendor.img')
     payload = Payload()
     self.assertRaises(common.ExternalError, payload.Generate, target_file)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Sign_full(self):
     payload = self._create_payload_full()
     payload.Sign(PayloadSigner())
@@ -1310,6 +1341,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
         os.path.join(self.testdata_dir, 'testkey.x509.pem'),
         output_file)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Sign_incremental(self):
     payload = self._create_payload_incremental()
     payload.Sign(PayloadSigner())
@@ -1323,6 +1355,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
         os.path.join(self.testdata_dir, 'testkey.x509.pem'),
         output_file)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Sign_withDataWipe(self):
     common.OPTIONS.wipe_user_data = True
     payload = self._create_payload_full()
@@ -1331,6 +1364,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     with open(payload.payload_properties) as properties_fp:
       self.assertIn("POWERWASH=1", properties_fp.read())
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Sign_secondary(self):
     payload = self._create_payload_full(secondary=True)
     payload.Sign(PayloadSigner())
@@ -1338,6 +1372,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     with open(payload.payload_properties) as properties_fp:
       self.assertIn("SWITCH_SLOT_ON_REBOOT=0", properties_fp.read())
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_Sign_badSigner(self):
     """Tests that signing failure can be captured."""
     payload = self._create_payload_full()
@@ -1345,6 +1380,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     payload_signer.signer_args.append('bad-option')
     self.assertRaises(common.ExternalError, payload.Sign, payload_signer)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_WriteToZip(self):
     payload = self._create_payload_full()
     payload.Sign(PayloadSigner())
@@ -1366,6 +1402,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
           continue
         self.assertEqual(zipfile.ZIP_STORED, entry_info.compress_type)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_WriteToZip_unsignedPayload(self):
     """Unsigned payloads should not be allowed to be written to zip."""
     payload = self._create_payload_full()
@@ -1381,6 +1418,7 @@ class PayloadTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(output_file, 'w') as output_zip:
       self.assertRaises(AssertionError, payload.WriteToZip, output_zip)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_WriteToZip_secondary(self):
     payload = self._create_payload_full(secondary=True)
     payload.Sign(PayloadSigner())
