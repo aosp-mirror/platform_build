@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5c973654_5e53a69f",
+        "filename": "core/Makefile",
+        "patchSetId": 21
+      },
+      "lineNbr": 4416,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-15T12:09:23Z",
+      "side": 1,
+      "message": "I feel like this change could live in a separate CL?",
+      "range": {
+        "startLine": 4416,
+        "startChar": 0,
+        "endLine": 4416,
+        "endChar": 61
+      },
+      "revId": "9ae303db984a01293faa866206e6e5aa6f35e6f9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2cecfc2_d6b70896",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 21
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-15T12:09:23Z",
+      "side": 1,
+      "message": "Is the right way to read this that we have 8 gb of space but use 4 gb exclusively for adb sync-like usecases? Maybe a comment?",
+      "revId": "9ae303db984a01293faa866206e6e5aa6f35e6f9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
