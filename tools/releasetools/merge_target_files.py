@@ -54,6 +54,10 @@ Usage: merge_target_files.py [args]
       file patterns to copy into the --output-dir. Required if providing
       the --output-dir flag.
 
+  --output-super-empty output-super-empty-image
+      If provided, creates a super_empty.img file from the merged target
+      files package and saves it at this path.
+
   --rebuild_recovery
       Rebuild the recovery patch used by non-A/B devices and write it to the
       system image.
@@ -71,8 +75,9 @@ import shutil
 import sys
 import zipfile
 
-import common
 import add_img_to_target_files
+import build_super_image
+import common
 
 logger = logging.getLogger(__name__)
 OPTIONS = common.OPTIONS
@@ -85,6 +90,7 @@ OPTIONS.other_item_list = None
 OPTIONS.output_target_files = None
 OPTIONS.output_dir = None
 OPTIONS.output_item_list = None
+OPTIONS.output_super_empty = None
 OPTIONS.rebuild_recovery = False
 OPTIONS.keep_tmp = False
 
@@ -424,7 +430,7 @@ def process_misc_info_txt(
     # a shared system image.
     for partition_group in merged_info_dict['super_partition_groups'].split(' '):
       if ('super_%s_group_size' % partition_group) not in merged_info_dict:
-        raise common.ExternalError(
+        raise ValueError(
             'Other META/misc_info.txt does not contain required key '
             'super_%s_group_size.' % partition_group)
       key = 'super_%s_partition_list' % partition_group
@@ -584,6 +590,7 @@ def merge_target_files(
     output_target_files,
     output_dir,
     output_item_list,
+    output_super_empty,
     rebuild_recovery):
   """Merge two target files packages together.
 
@@ -617,6 +624,9 @@ def merge_target_files(
 
     output_target_files: The name of the output zip archive target files
     package created by merging system and other.
+
+    output_super_empty: If provided, creates a super_empty.img file from the
+    merged target files package and saves it at this path.
 
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
     devices and write it to the system image.
@@ -683,6 +693,27 @@ def merge_target_files(
       output_target_files_temp_dir=output_target_files_temp_dir,
       system_misc_info_keys=system_misc_info_keys,
       rebuild_recovery=rebuild_recovery)
+
+  # Create super_empty.img using the merged misc_info.txt.
+
+  if output_super_empty:
+    misc_info_txt = os.path.join(output_target_files_temp_dir,
+                                 'META', 'misc_info.txt')
+    def read_helper():
+      with open(misc_info_txt) as f:
+        return list(f.read().splitlines())
+
+    misc_info_dict = common.LoadDictionaryFromLines(read_helper())
+    if misc_info_dict.get('use_dynamic_partitions') != 'true':
+      raise ValueError(
+          'Building super_empty.img requires use_dynamic_partitions=true.')
+
+    build_super_image_args = [
+      '--verbose',
+      misc_info_txt,
+      output_super_empty,
+    ]
+    build_super_image.main(build_super_image_args)
 
   # Regenerate IMAGES in the temporary directory.
 
@@ -796,6 +827,8 @@ def main():
       OPTIONS.output_dir = a
     elif o == '--output-item-list':
       OPTIONS.output_item_list = a
+    elif o == '--output-super-empty':
+      OPTIONS.output_super_empty = a
     elif o == '--rebuild_recovery':
       OPTIONS.rebuild_recovery = True
     elif o == '--keep-tmp':
@@ -815,6 +848,7 @@ def main():
           'output-target-files=',
           'output-dir=',
           'output-item-list=',
+          'output-super-empty=',
           'rebuild_recovery',
           'keep-tmp',
       ],
@@ -867,6 +901,7 @@ def main():
           output_target_files=OPTIONS.output_target_files,
           output_dir=OPTIONS.output_dir,
           output_item_list=output_item_list,
+          output_super_empty=OPTIONS.output_super_empty,
           rebuild_recovery=OPTIONS.rebuild_recovery),
       OPTIONS.keep_tmp)
 
