@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "8fadda4a_0c5d968e",
+        "filename": "core/Makefile",
+        "patchSetId": 21
+      },
+      "lineNbr": 4416,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-15T15:46:11Z",
+      "side": 1,
+      "message": "Done\ngo/oag/944259",
+      "parentUuid": "5c973654_5e53a69f",
+      "range": {
+        "startLine": 4416,
+        "startChar": 0,
+        "endLine": 4416,
+        "endChar": 61
+      },
+      "revId": "9ae303db984a01293faa866206e6e5aa6f35e6f9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a2cecfc2_d6b70896",
         "filename": "target/board/BoardConfigEmuCommon.mk",
         "patchSetId": 21
@@ -39,6 +63,24 @@
       "revId": "9ae303db984a01293faa866206e6e5aa6f35e6f9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "79e7c904_bbab8238",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 21
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-15T15:46:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2cecfc2_d6b70896",
+      "revId": "9ae303db984a01293faa866206e6e5aa6f35e6f9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
