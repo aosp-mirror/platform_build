@@ -16,16 +16,70 @@
 
 import os.path
 
+import common
 import test_utils
-from merge_target_files import (
-    read_config_list, validate_config_lists, default_system_item_list,
-    default_other_item_list, default_system_misc_info_keys)
+from merge_target_files import (read_config_list, validate_config_lists,
+                                default_system_item_list,
+                                default_other_item_list,
+                                default_system_misc_info_keys, copy_items)
 
 
 class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
+
+  def test_copy_items_CopiesItemsMatchingPatterns(self):
+
+    def createEmptyFile(path):
+      if not os.path.exists(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
+      open(path, 'a').close()
+      return path
+
+    def createSymLink(source, dest):
+      os.symlink(source, dest)
+      return dest
+
+    def getRelPaths(start, filepaths):
+      return set(
+          os.path.relpath(path=filepath, start=start) for filepath in filepaths)
+
+    input_dir = common.MakeTempDir()
+    output_dir = common.MakeTempDir()
+    expected_copied_items = []
+    actual_copied_items = []
+    patterns = ['*.cpp', 'subdir/*.txt']
+
+    # Create various files that we expect to get copied because they
+    # match one of the patterns.
+    expected_copied_items.extend([
+        createEmptyFile(os.path.join(input_dir, 'a.cpp')),
+        createEmptyFile(os.path.join(input_dir, 'b.cpp')),
+        createEmptyFile(os.path.join(input_dir, 'subdir', 'c.txt')),
+        createEmptyFile(os.path.join(input_dir, 'subdir', 'd.txt')),
+        createEmptyFile(
+            os.path.join(input_dir, 'subdir', 'subsubdir', 'e.txt')),
+        createSymLink('a.cpp', os.path.join(input_dir, 'a_link.cpp')),
+    ])
+    # Create some more files that we expect to not get copied.
+    createEmptyFile(os.path.join(input_dir, 'a.h'))
+    createEmptyFile(os.path.join(input_dir, 'b.h'))
+    createEmptyFile(os.path.join(input_dir, 'subdir', 'subsubdir', 'f.gif'))
+    createSymLink('a.h', os.path.join(input_dir, 'a_link.h'))
+
+    # Copy items.
+    copy_items(input_dir, output_dir, patterns)
+
+    # Assert the actual copied items match the ones we expected.
+    for dirpath, _, filenames in os.walk(output_dir):
+      actual_copied_items.extend(
+          os.path.join(dirpath, filename) for filename in filenames)
+    self.assertEqual(
+        getRelPaths(output_dir, actual_copied_items),
+        getRelPaths(input_dir, expected_copied_items))
+    self.assertEqual(
+        os.readlink(os.path.join(output_dir, 'a_link.cpp')), 'a.cpp')
 
   def test_read_config_list(self):
     system_item_list_file = os.path.join(self.testdata_dir,
