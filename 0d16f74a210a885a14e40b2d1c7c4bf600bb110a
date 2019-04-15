@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d137539f_630a0baf",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 669,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-15T21:39:57Z",
+      "side": 1,
+      "message": "\"!\u003d\"\n\n\"is\" is to compare the objects being identical, which may not hold:\n\u003e\u003e\u003e x \u003d \u0027a\u0027\n\u003e\u003e\u003e x + \u0027b\u0027\n\u0027ab\u0027\n\u003e\u003e\u003e (x + \u0027b\u0027) is \u0027ab\u0027\nFalse",
+      "range": {
+        "startLine": 669,
+        "startChar": 52,
+        "endLine": 669,
+        "endChar": 58
+      },
+      "revId": "0d16f74a210a885a14e40b2d1c7c4bf600bb110a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
