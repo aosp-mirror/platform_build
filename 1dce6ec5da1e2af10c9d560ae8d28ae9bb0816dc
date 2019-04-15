@@ -46,6 +46,30 @@
       "revId": "1dce6ec5da1e2af10c9d560ae8d28ae9bb0816dc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b34dc902_ba705e6c",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-04-15T21:39:40Z",
+      "side": 1,
+      "message": "In common.py, it seems like ExternalError is (mostly) used to convey that a subprocess failed. On the other hand, ValueError is sometimes used in cases like this case. For example: https://android.googlesource.com/platform/build/+/8a66a71b06c62ba73953262b52ac45a2920df8af/tools/releasetools/common.py#325",
+      "parentUuid": "81571fe6_2f50cf54",
+      "range": {
+        "startLine": 671,
+        "startChar": 6,
+        "endLine": 671,
+        "endChar": 17
+      },
+      "revId": "1dce6ec5da1e2af10c9d560ae8d28ae9bb0816dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
