@@ -70,6 +70,30 @@
       "revId": "1dce6ec5da1e2af10c9d560ae8d28ae9bb0816dc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7cfe1669_42be1718",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-04-15T21:56:20Z",
+      "side": 1,
+      "message": "Ah makes sense. Thanks for doing the research. Changed this one \u0026 the other to use ValueError.",
+      "parentUuid": "b34dc902_ba705e6c",
+      "range": {
+        "startLine": 671,
+        "startChar": 6,
+        "endLine": 671,
+        "endChar": 17
+      },
+      "revId": "1dce6ec5da1e2af10c9d560ae8d28ae9bb0816dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
