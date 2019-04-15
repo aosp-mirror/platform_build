@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8dfb2d2a_3b66581b",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-15T23:08:40Z",
+      "side": 1,
+      "message": "$(MERGE_ZIPS) $(DEXPREOPT_IMAGE_ZIP_boot)",
+      "revId": "a88fbfe6053be0652b76e69b4557208f84562b67",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "856cc1de_8add5741",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-15T23:08:40Z",
+      "side": 1,
+      "message": "$@.tmp",
+      "range": {
+        "startLine": 34,
+        "startChar": 17,
+        "endLine": 34,
+        "endChar": 19
+      },
+      "revId": "a88fbfe6053be0652b76e69b4557208f84562b67",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9c71a2a3_f49e6fb4",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-15T23:08:40Z",
+      "side": 1,
+      "message": "$(MERGE_ZIPS) $@ $@.tmp $(DEXPREOPT_IMAGE_ZIP_boot)",
+      "revId": "a88fbfe6053be0652b76e69b4557208f84562b67",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
