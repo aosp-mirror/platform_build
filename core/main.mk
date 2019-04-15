@@ -218,8 +218,7 @@ include build/make/core/pdk_config.mk
 
 #
 # -----------------------------------------------------------------
-# Enable dynamic linker and hidden API developer warnings for
-# userdebug, eng and non-REL builds
+# Enable dynamic linker warnings for userdebug, eng and non-REL builds
 ifneq ($(TARGET_BUILD_VARIANT),user)
   ADDITIONAL_BUILD_PROPERTIES += ro.bionic.ld.warning=1
 else
@@ -255,6 +254,11 @@ endif
 # Add the system server compiler filter if they are specified for the product.
 ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
 ADDITIONAL_PRODUCT_PROPERTIES += dalvik.vm.systemservercompilerfilter=$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER)
+endif
+
+# Enable core platform API violation warnings on userdebug and eng builds.
+ifneq ($(TARGET_BUILD_VARIANT),user)
+ADDITIONAL_BUILD_PROPERTIES += persist.debug.dalvik.vm.core_platform_api_policy=just-warn
 endif
 
 # Sets the default value of ro.postinstall.fstab.prefix to /system.
