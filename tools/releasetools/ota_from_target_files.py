@@ -168,6 +168,9 @@ A/B OTA specific options
   --payload_signer_args <args>
       Specify the arguments needed for payload signer.
 
+  --payload_signer_key_size <key_size>
+      Specify the key size in bytes of the payload signer.
+
   --skip_postinstall
       Skip the postinstall hooks when generating an A/B OTA package (default:
       False). Note that this discards ALL the hooks, including non-optional
@@ -224,6 +227,7 @@ OPTIONS.stash_threshold = 0.8
 OPTIONS.log_diff = None
 OPTIONS.payload_signer = None
 OPTIONS.payload_signer_args = []
+OPTIONS.payload_signer_key_size = None
 OPTIONS.extracted_input = None
 OPTIONS.key_passwords = []
 OPTIONS.skip_postinstall = False
@@ -468,9 +472,35 @@ class PayloadSigner(object):
       self.signer = "openssl"
       self.signer_args = ["pkeyutl", "-sign", "-inkey", signing_key,
                           "-pkeyopt", "digest:sha256"]
+      self.key_size = self._GetKeySizeInBytes(signing_key)
     else:
       self.signer = OPTIONS.payload_signer
       self.signer_args = OPTIONS.payload_signer_args
+      if OPTIONS.payload_signer_key_size:
+        self.key_size = int(OPTIONS.payload_signer_key_size)
+        assert self.key_size == 256 or self.key_size == 512, \
+            "Unsupported key size {}".format(OPTIONS.payload_signer_key_size)
+      else:
+        self.key_size = 256
+
+  @staticmethod
+  def _GetKeySizeInBytes(signing_key):
+    modulus_file = common.MakeTempFile(prefix="modulus-")
+    cmd = ["openssl", "rsa", "-inform", "PEM", "-in", signing_key, "-modulus",
+           "-noout", "-out", modulus_file]
+    common.RunAndCheckOutput(cmd, verbose=False)
+
+    with open(modulus_file) as f:
+      modulus_string = f.read()
+    # The modulus string has the format "Modulus=$data", where $data is the
+    # concatenation of hex dump of the modulus.
+    MODULUS_PREFIX = "Modulus="
+    assert modulus_string.startswith(MODULUS_PREFIX)
+    modulus_string = modulus_string[len(MODULUS_PREFIX):]
+    key_size = len(modulus_string) / 2
+    assert key_size == 256 or key_size == 512, \
+        "Unsupported key size {}".format(key_size)
+    return key_size
 
   def Sign(self, in_file):
     """Signs the given input file. Returns the output filename."""
@@ -539,7 +569,7 @@ class Payload(object):
     metadata_sig_file = common.MakeTempFile(prefix="sig-", suffix=".bin")
     cmd = ["brillo_update_payload", "hash",
            "--unsigned_payload", self.payload_file,
-           "--signature_size", "256",
+           "--signature_size", str(payload_signer.key_size),
            "--metadata_hash_file", metadata_sig_file,
            "--payload_hash_file", payload_sig_file]
     common.RunAndCheckOutput(cmd)
@@ -554,7 +584,7 @@ class Payload(object):
     cmd = ["brillo_update_payload", "sign",
            "--unsigned_payload", self.payload_file,
            "--payload", signed_payload_file,
-           "--signature_size", "256",
+           "--signature_size", str(payload_signer.key_size),
            "--metadata_signature_file", signed_metadata_sig_file,
            "--payload_signature_file", signed_payload_sig_file]
     common.RunAndCheckOutput(cmd)
@@ -887,17 +917,14 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
 
   script.ShowProgress(system_progress, 0)
 
-  # See the notes in WriteBlockIncrementalOTAPackage().
-  allow_shared_blocks = target_info.get('ext4_share_dup_blocks') == "true"
-
   def GetBlockDifference(partition):
     # Full OTA is done as an "incremental" against an empty source image. This
     # has the effect of writing new data from the package to the entire
     # partition, but lets us reuse the updater code that writes incrementals to
     # do it.
-    tgt = common.GetSparseImage(partition, OPTIONS.input_tmp, input_zip,
-                                allow_shared_blocks)
-    tgt.ResetFileMap()
+    tgt = common.GetUserImage(partition, OPTIONS.input_tmp, input_zip,
+                              info_dict=target_info,
+                              reset_file_map=True)
     diff = common.BlockDifference(partition, tgt, src=None)
     return diff
 
@@ -1482,8 +1509,10 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
   device_specific = common.DeviceSpecificParams(
       source_zip=source_zip,
       source_version=source_api_version,
+      source_tmp=OPTIONS.source_tmp,
       target_zip=target_zip,
       target_version=target_api_version,
+      target_tmp=OPTIONS.target_tmp,
       output_zip=output_zip,
       script=script,
       metadata=metadata,
@@ -1499,20 +1528,20 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
   target_recovery = common.GetBootableImage(
       "/tmp/recovery.img", "recovery.img", OPTIONS.target_tmp, "RECOVERY")
 
-  # When target uses 'BOARD_EXT4_SHARE_DUP_BLOCKS := true', images may contain
-  # shared blocks (i.e. some blocks will show up in multiple files' block
-  # list). We can only allocate such shared blocks to the first "owner", and
-  # disable imgdiff for all later occurrences.
+  # See notes in common.GetUserImage()
   allow_shared_blocks = (source_info.get('ext4_share_dup_blocks') == "true" or
                          target_info.get('ext4_share_dup_blocks') == "true")
-  system_src = common.GetSparseImage("system", OPTIONS.source_tmp, source_zip,
-                                     allow_shared_blocks)
+  system_src = common.GetUserImage("system", OPTIONS.source_tmp, source_zip,
+                                   info_dict=source_info,
+                                   allow_shared_blocks=allow_shared_blocks)
 
   hashtree_info_generator = verity_utils.CreateHashtreeInfoGenerator(
       "system", 4096, target_info)
-  system_tgt = common.GetSparseImage("system", OPTIONS.target_tmp, target_zip,
-                                     allow_shared_blocks,
-                                     hashtree_info_generator)
+  system_tgt = common.GetUserImage("system", OPTIONS.target_tmp, target_zip,
+                                   info_dict=target_info,
+                                   allow_shared_blocks=allow_shared_blocks,
+                                   hashtree_info_generator=
+                                   hashtree_info_generator)
 
   blockimgdiff_version = max(
       int(i) for i in target_info.get("blockimgdiff_versions", "1").split(","))
@@ -1537,13 +1566,16 @@ def WriteBlockIncrementalOTAPackage(target_zip, source_zip, output_file):
   if HasVendorPartition(target_zip):
     if not HasVendorPartition(source_zip):
       raise RuntimeError("can't generate incremental that adds /vendor")
-    vendor_src = common.GetSparseImage("vendor", OPTIONS.source_tmp, source_zip,
-                                       allow_shared_blocks)
+    vendor_src = common.GetUserImage("vendor", OPTIONS.source_tmp, source_zip,
+                                     info_dict=source_info,
+                                     allow_shared_blocks=allow_shared_blocks)
     hashtree_info_generator = verity_utils.CreateHashtreeInfoGenerator(
         "vendor", 4096, target_info)
-    vendor_tgt = common.GetSparseImage(
-        "vendor", OPTIONS.target_tmp, target_zip, allow_shared_blocks,
-        hashtree_info_generator)
+    vendor_tgt = common.GetUserImage(
+        "vendor", OPTIONS.target_tmp, target_zip,
+        info_dict=target_info,
+        allow_shared_blocks=allow_shared_blocks,
+        hashtree_info_generator=hashtree_info_generator)
 
     # Check first block of vendor partition for remount R/W only if
     # disk type is ext4
@@ -2087,6 +2119,8 @@ def main(argv):
       OPTIONS.payload_signer = a
     elif o == "--payload_signer_args":
       OPTIONS.payload_signer_args = shlex.split(a)
+    elif o == "--payload_signer_key_size":
+      OPTIONS.payload_signer_key_size = a
     elif o == "--extracted_input_target_files":
       OPTIONS.extracted_input = a
     elif o == "--skip_postinstall":
@@ -2125,6 +2159,7 @@ def main(argv):
                                  "log_diff=",
                                  "payload_signer=",
                                  "payload_signer_args=",
+                                 "payload_signer_key_size=",
                                  "extracted_input_target_files=",
                                  "skip_postinstall",
                                  "retrofit_dynamic_partitions",

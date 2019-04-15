@@ -641,11 +641,13 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
         },
         sparse_image.file_map)
 
-  def test_GetSparseImage_invalidImageName(self):
+  def test_GetSparseImage_missingImageFile(self):
     self.assertRaises(
-        AssertionError, common.GetSparseImage, 'system2', None, None, False)
+        AssertionError, common.GetSparseImage, 'system2', self.testdata_dir,
+        None, False)
     self.assertRaises(
-        AssertionError, common.GetSparseImage, 'unknown', None, None, False)
+        AssertionError, common.GetSparseImage, 'unknown', self.testdata_dir,
+        None, False)
 
   def test_GetSparseImage_missingBlockMapFile(self):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')

@@ -33,6 +33,11 @@ $(call add_json_str,  Platform_sdk_codename,             $(PLATFORM_VERSION_CODE
 $(call add_json_bool, Platform_sdk_final,                $(filter REL,$(PLATFORM_VERSION_CODENAME)))
 $(call add_json_csv,  Platform_version_active_codenames, $(PLATFORM_VERSION_ALL_CODENAMES))
 $(call add_json_csv,  Platform_version_future_codenames, $(PLATFORM_VERSION_FUTURE_CODENAMES))
+$(call add_json_str,  Platform_security_patch,           $(PLATFORM_SECURITY_PATCH))
+$(call add_json_str,  Platform_preview_sdk_version,      $(PLATFORM_PREVIEW_SDK_VERSION))
+$(call add_json_str,  Platform_base_os,                  $(PLATFORM_BASE_OS))
+
+$(call add_json_str,  Platform_min_supported_target_sdk_version, $(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION))
 
 $(call add_json_bool, Allow_missing_dependencies,        $(ALLOW_MISSING_DEPENDENCIES))
 $(call add_json_bool, Unbundled_build,                   $(TARGET_BUILD_APPS))
@@ -159,6 +164,8 @@ $(call add_json_list, EnforceSystemCertificateWhitelist, $(ENFORCE_SYSTEM_CERTIF
 $(call add_json_list, ProductHiddenAPIStubs,             $(PRODUCT_HIDDENAPI_STUBS))
 $(call add_json_list, ProductHiddenAPIStubsSystem,       $(PRODUCT_HIDDENAPI_STUBS_SYSTEM))
 $(call add_json_list, ProductHiddenAPIStubsTest,         $(PRODUCT_HIDDENAPI_STUBS_TEST))
+
+$(call add_json_str,  TargetFSConfigGen,                 $(TARGET_FS_CONFIG_GEN))
 
 $(call add_json_map, VendorVars)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\
