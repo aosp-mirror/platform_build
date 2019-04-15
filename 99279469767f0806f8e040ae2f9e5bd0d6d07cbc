@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ad68c5b_b221e614",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-15T23:27:46Z",
+      "side": 1,
+      "message": "Add rm -f $@.tmp",
+      "revId": "99279469767f0806f8e040ae2f9e5bd0d6d07cbc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
