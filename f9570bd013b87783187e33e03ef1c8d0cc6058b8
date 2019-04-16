@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fc0f5fae_d449e184",
+        "filename": "core/dex_preopt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2019-04-16T21:55:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a3001e0c_0405d292",
+      "range": {
+        "startLine": 48,
+        "startChar": 8,
+        "endLine": 48,
+        "endChar": 38
+      },
+      "revId": "f9570bd013b87783187e33e03ef1c8d0cc6058b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b73192ec_1a497c80",
         "filename": "core/product_config.mk",
         "patchSetId": 3
@@ -42,6 +66,24 @@
     },
     {
       "key": {
+        "uuid": "a8fca019_20fb8529",
+        "filename": "core/product_config.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 380,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2019-04-16T21:55:00Z",
+      "side": 1,
+      "message": "Should I then keep this here?\nIt will essentially be a no-op",
+      "parentUuid": "b73192ec_1a497c80",
+      "revId": "f9570bd013b87783187e33e03ef1c8d0cc6058b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f8041923_052a82aa",
         "filename": "target/product/runtime_libart.mk",
         "patchSetId": 3
@@ -53,6 +95,30 @@
       "writtenOn": "2019-04-16T21:49:22Z",
       "side": 1,
       "message": "PRODUCT_USES_ART",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 30
+      },
+      "revId": "f9570bd013b87783187e33e03ef1c8d0cc6058b8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "99a09905_e503b116",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2019-04-16T21:55:00Z",
+      "side": 1,
+      "message": "Done (forgot to upload the lastest PS)",
+      "parentUuid": "f8041923_052a82aa",
       "range": {
         "startLine": 95,
         "startChar": 0,
