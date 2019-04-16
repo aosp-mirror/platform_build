@@ -16,6 +16,24 @@
       "revId": "f7a596404a175dace038a0304a0d90790ac0e4b6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c476a9bc_977c78b8",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2019-04-16T20:38:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "63a5fd2e_8a3ae93e",
+      "revId": "f7a596404a175dace038a0304a0d90790ac0e4b6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
