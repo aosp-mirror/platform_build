@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "22bbe47e_e038a68e",
+        "filename": "core/Makefile",
+        "patchSetId": 24
+      },
+      "lineNbr": 4487,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-16T10:40:28Z",
+      "side": 1,
+      "message": "please use the \"\u003ct\u003e: \u003cd\u003e\" spacing consistently (these 3 targets are all different right now, \":\", \" : \" or \": \".)",
+      "range": {
+        "startLine": 4487,
+        "startChar": 0,
+        "endLine": 4487,
+        "endChar": 32
+      },
+      "revId": "5c72e79d7bc981859fb3a8750165d5e979d31359",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e8314109_27696aa3",
+        "filename": "core/Makefile",
+        "patchSetId": 24
+      },
+      "lineNbr": 4492,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-16T10:40:28Z",
+      "side": 1,
+      "message": "this indent looks a little funny. Can you either make it 4 spaces or line it up with INSTALLED_VBMETAIMAGE_TARGET?",
+      "range": {
+        "startLine": 4492,
+        "startChar": 0,
+        "endLine": 4492,
+        "endChar": 37
+      },
+      "revId": "5c72e79d7bc981859fb3a8750165d5e979d31359",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
