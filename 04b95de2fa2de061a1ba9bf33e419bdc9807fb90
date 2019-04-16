@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a074da21_7216d021",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4439,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-16T10:30:31Z",
+      "side": 1,
+      "message": "can you also add a comment that the output is at a different path than the one you get for just \"superimage\"? That\u0027s different from how the other \"nod\" targets behave",
+      "revId": "04b95de2fa2de061a1ba9bf33e419bdc9807fb90",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
