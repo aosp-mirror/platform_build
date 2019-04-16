@@ -224,15 +224,15 @@ my_module_relative_path := $(strip $(LOCAL_MODULE_RELATIVE_PATH))
 ifdef LOCAL_IS_HOST_MODULE
   partition_tag :=
 else
-ifeq (true,$(LOCAL_VENDOR_MODULE))
+ifeq (true,$(strip $(LOCAL_VENDOR_MODULE)))
   partition_tag := _VENDOR
-else ifeq (true,$(LOCAL_OEM_MODULE))
+else ifeq (true,$(strip $(LOCAL_OEM_MODULE)))
   partition_tag := _OEM
-else ifeq (true,$(LOCAL_ODM_MODULE))
+else ifeq (true,$(strip $(LOCAL_ODM_MODULE)))
   partition_tag := _ODM
-else ifeq (true,$(LOCAL_PRODUCT_MODULE))
+else ifeq (true,$(strip $(LOCAL_PRODUCT_MODULE)))
   partition_tag := _PRODUCT
-else ifeq (true,$(LOCAL_PRODUCT_SERVICES_MODULE))
+else ifeq (true,$(strip $(LOCAL_PRODUCT_SERVICES_MODULE)))
   partition_tag := _PRODUCT_SERVICES
 else ifeq (NATIVE_TESTS,$(LOCAL_MODULE_CLASS))
   partition_tag := _DATA
@@ -242,6 +242,31 @@ else
   partition_tag := $(if $(call should-install-to-system,$(my_module_tags)),,_DATA)
 endif
 endif
+# For test modules that lack a suite tag, set null-suite as the default.
+# We only support adding a default suite to native tests, native benchmarks, and instrumentation tests.
+# This is because they are the only tests we currently auto-generate test configs for.
+ifndef LOCAL_COMPATIBILITY_SUITE
+  ifneq ($(filter NATIVE_TESTS NATIVE_BENCHMARK, $(LOCAL_MODULE_CLASS)),)
+    LOCAL_COMPATIBILITY_SUITE := null-suite
+  endif
+  ifneq ($(filter APPS, $(LOCAL_MODULE_CLASS)),)
+    ifneq ($(filter $(my_module_tags),tests),)
+      LOCAL_COMPATIBILITY_SUITE := null-suite
+    endif
+  endif
+endif
+
+use_testcase_folder :=
+ifeq ($(my_module_path),)
+  ifneq ($(LOCAL_MODULE),$(filter $(LOCAL_MODULE),$(DEFAULT_DATA_OUT_MODULES)))
+    ifdef LOCAL_COMPATIBILITY_SUITE
+      ifneq (true, $(LOCAL_IS_HOST_MODULE))
+        use_testcase_folder := true
+      endif
+    endif
+  endif
+endif
+
 ifeq ($(my_module_path),)
   install_path_var := $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)OUT$(partition_tag)_$(LOCAL_MODULE_CLASS)
   ifeq (true,$(LOCAL_PRIVILEGED_MODULE))
@@ -249,6 +274,16 @@ ifeq ($(my_module_path),)
   endif
 
   my_module_path := $($(install_path_var))
+
+  # If use_testcase_folder be set, and LOCAL_MODULE_PATH not set,
+  # overwrite the default path under testcase.
+  ifeq ($(use_testcase_folder),true)
+    arch_dir := $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+    testcase_folder := $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)/$(arch_dir)
+    my_module_path := $(testcase_folder)
+    arch_dir :=
+  endif
+
   ifeq ($(strip $(my_module_path)),)
     $(error $(LOCAL_PATH): unhandled install path "$(install_path_var) for $(LOCAL_MODULE)")
   endif
@@ -324,7 +359,9 @@ ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
   # Neither do Runtime Resource Overlay apks, which contain just the overlaid resources.
   else ifeq ($(LOCAL_IS_RUNTIME_RESOURCE_OVERLAY),true)
   else
-    my_module_path := $(my_module_path)/$(LOCAL_MODULE)
+    ifneq ($(use_testcase_folder),true)
+      my_module_path := $(my_module_path)/$(LOCAL_MODULE)
+    endif
   endif
   endif
   LOCAL_INSTALLED_MODULE := $(my_module_path)/$(my_installed_module_stem)
@@ -429,12 +466,21 @@ $(foreach c, $(my_path_components),\
 my_init_rc_installed :=
 my_init_rc_pairs :=
 my_installed_symlinks :=
+my_default_test_module :=
+ifeq ($(use_testcase_folder),true)
+arch_dir := $($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+my_default_test_module := $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)/$(arch_dir)/$(my_installed_module_stem)
+arch_dir :=
+endif
+
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
+ifneq ($(LOCAL_INSTALLED_MODULE),$(my_default_test_module))
 $(LOCAL_INSTALLED_MODULE): PRIVATE_POST_INSTALL_CMD := $(LOCAL_POST_INSTALL_CMD)
 $(LOCAL_INSTALLED_MODULE): $(LOCAL_BUILT_MODULE)
 	@echo "Install: $@"
 	$(copy-file-to-new-target)
 	$(PRIVATE_POST_INSTALL_CMD)
+endif
 
 ifndef LOCAL_IS_HOST_MODULE
 # Rule to install the module's companion init.rc.
@@ -544,20 +590,6 @@ endif
 endif
 endif
 
-# For test modules that lack a suite tag, set null-suite as the default.
-# We only support adding a default suite to native tests, native benchmarks, and instrumentation tests.
-# This is because they are the only tests we currently auto-generate test configs for.
-ifndef LOCAL_COMPATIBILITY_SUITE
-ifneq ($(filter NATIVE_TESTS NATIVE_BENCHMARK, $(LOCAL_MODULE_CLASS)),)
-LOCAL_COMPATIBILITY_SUITE := null-suite
-endif
-ifneq ($(filter APPS, $(LOCAL_MODULE_CLASS)),)
-ifneq ($(filter $(my_module_tags),tests),)
-LOCAL_COMPATIBILITY_SUITE := null-suite
-endif
-endif
-endif
-
 ###########################################################
 ## Compatibility suite files.
 ###########################################################
@@ -575,10 +607,23 @@ endif
 ifdef LOCAL_MULTILIB
   multi_arch := true
 endif
+
 ifdef multi_arch
+arch_dir := /$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
+else
+ifeq ($(use_testcase_folder),true)
   arch_dir := /$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
 endif
+endif
+
 multi_arch :=
+
+my_default_test_module :=
+my_default_test_module := $($(my_prefix)OUT_TESTCASES)/$(LOCAL_MODULE)$(arch_dir)/$(my_installed_module_stem)
+ifneq ($(LOCAL_INSTALLED_MODULE),$(my_default_test_module))
+# Install into the testcase folder
+$(LOCAL_INSTALLED_MODULE) : $(my_default_test_module)
+endif
 
 # The module itself.
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
@@ -671,6 +716,17 @@ ifneq (,$(filter $(SOONG_OUT_DIR)%,$(LOCAL_FULL_TEST_CONFIG)))
 endif
 
 
+ifeq ($(use_testcase_folder),true)
+ifneq ($(my_test_data_file_pairs),)
+$(foreach pair, $(my_test_data_file_pairs), \
+  $(eval parts := $(subst :,$(space),$(pair))) \
+  $(eval src_path := $(word 1,$(parts))) \
+  $(eval file := $(word 2,$(parts))) \
+  $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
+    $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
+      $(call filter-copy-pair,$(src_path),$(call append-path,$(dir),$(file)),$(my_installed_test_data))))))
+endif
+else
 ifneq ($(my_test_data_file_pairs),)
 $(foreach pair, $(my_test_data_file_pairs), \
   $(eval parts := $(subst :,$(space),$(pair))) \
@@ -680,6 +736,9 @@ $(foreach pair, $(my_test_data_file_pairs), \
     $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
       $(src_path):$(call append-path,$(dir),$(file))))))
 endif
+endif
+
+
 
 arch_dir :=
 is_native :=
@@ -701,6 +760,18 @@ endif  # LOCAL_PRESUBMIT_DISABLED
 ## Register with ALL_MODULES
 ###########################################################
 
+ifeq ($(filter $(my_register_name),$(ALL_MODULES)),)
+    # These keys are no longer used, they've been replaced by keys that specify
+    # target/host/host_cross (REQUIRED_FROM_TARGET / REQUIRED_FROM_HOST) and similar.
+    #
+    # Marking them obsolete to ensure that anyone using these internal variables looks for
+    # alternates.
+    $(KATI_obsolete_var ALL_MODULES.$(my_register_name).REQUIRED)
+    $(KATI_obsolete_var ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED)
+    $(KATI_obsolete_var ALL_MODULES.$(my_register_name).HOST_REQUIRED)
+    $(KATI_obsolete_var ALL_MODULES.$(my_register_name).TARGET_REQUIRED)
+endif
+
 ALL_MODULES += $(my_register_name)
 
 # Don't use += on subvars, or else they'll end up being
@@ -715,6 +786,10 @@ ALL_MODULES.$(my_register_name).CHECKED := \
     $(ALL_MODULES.$(my_register_name).CHECKED) $(my_checked_module)
 ALL_MODULES.$(my_register_name).BUILT := \
     $(ALL_MODULES.$(my_register_name).BUILT) $(LOCAL_BUILT_MODULE)
+ifndef LOCAL_IS_HOST_MODULE
+ALL_MODULES.$(my_register_name).TARGET_BUILT := \
+    $(ALL_MODULES.$(my_register_name).TARGET_BUILT) $(LOCAL_BUILT_MODULE)
+endif
 ifneq (true,$(LOCAL_UNINSTALLABLE_MODULE))
 ALL_MODULES.$(my_register_name).INSTALLED := \
     $(strip $(ALL_MODULES.$(my_register_name).INSTALLED) \
@@ -757,17 +832,42 @@ ifneq ($(LOCAL_USE_VNDK),)
   endif
 endif
 
-ALL_MODULES.$(my_register_name).REQUIRED := \
-    $(strip $(ALL_MODULES.$(my_register_name).REQUIRED) $(my_required_modules))
-ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED := \
-    $(strip $(ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED)\
-        $(my_required_modules))
-ALL_MODULES.$(my_register_name).TARGET_REQUIRED := \
-    $(strip $(ALL_MODULES.$(my_register_name).TARGET_REQUIRED)\
-        $(LOCAL_TARGET_REQUIRED_MODULES))
-ALL_MODULES.$(my_register_name).HOST_REQUIRED := \
-    $(strip $(ALL_MODULES.$(my_register_name).HOST_REQUIRED)\
-        $(LOCAL_HOST_REQUIRED_MODULES))
+ifdef LOCAL_IS_HOST_MODULE
+    ifneq ($(my_host_cross),true)
+        ALL_MODULES.$(my_register_name).REQUIRED_FROM_HOST := \
+            $(strip $(ALL_MODULES.$(my_register_name).REQUIRED_FROM_HOST) $(my_required_modules))
+        ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_HOST := \
+            $(strip $(ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_HOST)\
+                $(my_required_modules))
+        ALL_MODULES.$(my_register_name).TARGET_REQUIRED_FROM_HOST := \
+            $(strip $(ALL_MODULES.$(my_register_name).TARGET_REQUIRED_FROM_HOST)\
+                $(LOCAL_TARGET_REQUIRED_MODULES))
+    else
+        ALL_MODULES.$(my_register_name).REQUIRED_FROM_HOST_CROSS := \
+            $(strip $(ALL_MODULES.$(my_register_name).REQUIRED_FROM_HOST_CROSS) $(my_required_modules))
+        ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_HOST_CROSS := \
+            $(strip $(ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_HOST_CROSS)\
+                $(my_required_modules))
+        ifdef LOCAL_TARGET_REQUIRED_MODULES
+            $(call pretty-error,LOCAL_TARGET_REQUIRED_MODULES may not be used from host_cross modules)
+        endif
+    endif
+    ifdef LOCAL_HOST_REQUIRED_MODULES
+        $(call pretty-error,LOCAL_HOST_REQUIRED_MODULES may not be used from host modules. Use LOCAL_REQUIRED_MODULES instead)
+    endif
+else
+    ALL_MODULES.$(my_register_name).REQUIRED_FROM_TARGET := \
+        $(strip $(ALL_MODULES.$(my_register_name).REQUIRED_FROM_TARGET) $(my_required_modules))
+    ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_TARGET := \
+        $(strip $(ALL_MODULES.$(my_register_name).EXPLICITLY_REQUIRED_FROM_TARGET)\
+            $(my_required_modules))
+    ALL_MODULES.$(my_register_name).HOST_REQUIRED_FROM_TARGET := \
+        $(strip $(ALL_MODULES.$(my_register_name).HOST_REQUIRED_FROM_TARGET)\
+            $(LOCAL_HOST_REQUIRED_MODULES))
+    ifdef LOCAL_TARGET_REQUIRED_MODULES
+        $(call pretty-error,LOCAL_TARGET_REQUIRED_MODULES may not be used from target modules. Use LOCAL_REQUIRED_MODULES instead)
+    endif
+endif
 ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS := \
     $(ALL_MODULES.$(my_register_name).EVENT_LOG_TAGS) $(event_log_tags)
 ALL_MODULES.$(my_register_name).MAKEFILE := \

@@ -33,6 +33,11 @@ $(call add_json_str,  Platform_sdk_codename,             $(PLATFORM_VERSION_CODE
 $(call add_json_bool, Platform_sdk_final,                $(filter REL,$(PLATFORM_VERSION_CODENAME)))
 $(call add_json_csv,  Platform_version_active_codenames, $(PLATFORM_VERSION_ALL_CODENAMES))
 $(call add_json_csv,  Platform_version_future_codenames, $(PLATFORM_VERSION_FUTURE_CODENAMES))
+$(call add_json_str,  Platform_security_patch,           $(PLATFORM_SECURITY_PATCH))
+$(call add_json_str,  Platform_preview_sdk_version,      $(PLATFORM_PREVIEW_SDK_VERSION))
+$(call add_json_str,  Platform_base_os,                  $(PLATFORM_BASE_OS))
+
+$(call add_json_str,  Platform_min_supported_target_sdk_version, $(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION))
 
 $(call add_json_bool, Allow_missing_dependencies,        $(ALLOW_MISSING_DEPENDENCIES))
 $(call add_json_bool, Unbundled_build,                   $(TARGET_BUILD_APPS))
@@ -61,7 +66,8 @@ $(call add_json_str,  CrossHost,                         $(HOST_CROSS_OS))
 $(call add_json_str,  CrossHostArch,                     $(HOST_CROSS_ARCH))
 $(call add_json_str,  CrossHostSecondaryArch,            $(HOST_CROSS_2ND_ARCH))
 
-$(call add_json_list, ResourceOverlays,                  $(PRODUCT_PACKAGE_OVERLAYS) $(DEVICE_PACKAGE_OVERLAYS))
+$(call add_json_list, DeviceResourceOverlays,            $(DEVICE_PACKAGE_OVERLAYS))
+$(call add_json_list, ProductResourceOverlays,           $(PRODUCT_PACKAGE_OVERLAYS))
 $(call add_json_list, EnforceRROTargets,                 $(PRODUCT_ENFORCE_RRO_TARGETS))
 $(call add_json_list, EnforceRROExcludedOverlays,        $(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS))
 
@@ -114,11 +120,8 @@ $(call add_json_bool, UncompressPrivAppDex,              $(call invert_bool,$(fi
 $(call add_json_list, ModulesLoadedByPrivilegedModules,  $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
 
 $(call add_json_list, BootJars,                          $(PRODUCT_BOOT_JARS))
-$(call add_json_list, PreoptBootJars,                    $(DEXPREOPT_BOOT_JARS_MODULES))
 
-$(call add_json_bool, DisableDexPreopt,                  $(call invert_bool,$(filter true,$(WITH_DEXPREOPT))))
-$(call add_json_list, DisableDexPreoptModules,           $(DEXPREOPT_DISABLED_MODULES))
-$(call add_json_str,  DexPreoptProfileDir,               $(PRODUCT_DEX_PREOPT_PROFILE_DIR))
+$(call add_json_bool, VndkUseCoreVariant,                $(TARGET_VNDK_USE_CORE_VARIANT))
 
 $(call add_json_bool, Product_is_iot,                    $(filter true,$(PRODUCT_IOT)))
 
@@ -157,6 +160,12 @@ $(call add_json_list, CertificateOverrides,              $(PRODUCT_CERTIFICATE_O
 
 $(call add_json_bool, EnforceSystemCertificate,          $(ENFORCE_SYSTEM_CERTIFICATE))
 $(call add_json_list, EnforceSystemCertificateWhitelist, $(ENFORCE_SYSTEM_CERTIFICATE_WHITELIST))
+
+$(call add_json_list, ProductHiddenAPIStubs,             $(PRODUCT_HIDDENAPI_STUBS))
+$(call add_json_list, ProductHiddenAPIStubsSystem,       $(PRODUCT_HIDDENAPI_STUBS_SYSTEM))
+$(call add_json_list, ProductHiddenAPIStubsTest,         $(PRODUCT_HIDDENAPI_STUBS_TEST))
+
+$(call add_json_str,  TargetFSConfigGen,                 $(TARGET_FS_CONFIG_GEN))
 
 $(call add_json_map, VendorVars)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\

@@ -39,6 +39,7 @@ Usage:  check_target_file_signatures [flags] target_files
 
 """
 
+import logging
 import os
 import re
 import subprocess
@@ -51,6 +52,8 @@ if sys.hexversion < 0x02070000:
   print >> sys.stderr, "Python 2.7 or newer is required."
   sys.exit(1)
 
+
+logger = logging.getLogger(__name__)
 
 # Work around a bug in Python's zipfile module that prevents opening of zipfiles
 # if any entry has an extra field of between 1 and 3 bytes (which is common with
@@ -165,6 +168,7 @@ def CertFromPKCS7(data, filename):
 
 
 class APK(object):
+
   def __init__(self, full_filename, filename):
     self.filename = filename
     self.certs = None
@@ -241,12 +245,12 @@ class TargetFiles(object):
     # must decompress them individually before we perform any analysis.
 
     # This is the list of wildcards of files we extract from |filename|.
-    apk_extensions = ['*.apk']
+    apk_extensions = ['*.apk', '*.apex']
 
     self.certmap, compressed_extension = common.ReadApkCerts(
-        zipfile.ZipFile(filename, "r"))
+        zipfile.ZipFile(filename))
     if compressed_extension:
-      apk_extensions.append("*.apk" + compressed_extension)
+      apk_extensions.append('*.apk' + compressed_extension)
 
     d = common.UnzipTemp(filename, apk_extensions)
     self.apks = {}
@@ -269,7 +273,7 @@ class TargetFiles(object):
           os.remove(os.path.join(dirpath, fn))
           fn = uncompressed_fn
 
-        if fn.endswith(".apk"):
+        if fn.endswith(('.apk', '.apex')):
           fullname = os.path.join(dirpath, fn)
           displayname = fullname[len(d)+1:]
           apk = APK(fullname, displayname)
@@ -414,6 +418,8 @@ def main(argv):
   if len(args) != 1:
     common.Usage(__doc__)
     sys.exit(1)
+
+  common.InitLogging()
 
   ALL_CERTS.FindLocalCerts()
 

@@ -92,7 +92,7 @@ $(sort \
    ) \
   $(eval PRODUCT_MAKEFILES :=) \
   $(eval LOCAL_DIR :=) \
-  $(eval COMMON_LUNCH_CHOICES := $(sort $(_COMMON_LUNCH_CHOICES) $(LUNCH_MENU_CHOICES))) \
+  $(eval COMMON_LUNCH_CHOICES := $(sort $(_COMMON_LUNCH_CHOICES))) \
   $(eval _COMMON_LUNCH_CHOICES :=) \
  )
 endef
@@ -106,142 +106,262 @@ define get-all-product-makefiles
 $(call get-product-makefiles,$(_find-android-products-files))
 endef
 
-#
-# Functions for including product makefiles
-#
+_product_var_list :=
+_product_var_list += PRODUCT_NAME
+_product_var_list += PRODUCT_MODEL
 
-_product_var_list := \
-    PRODUCT_NAME \
-    PRODUCT_MODEL \
-    PRODUCT_LOCALES \
-    PRODUCT_AAPT_CONFIG \
-    PRODUCT_AAPT_PREF_CONFIG \
-    PRODUCT_AAPT_PREBUILT_DPI \
-    PRODUCT_PACKAGES \
-    PRODUCT_PACKAGES_DEBUG \
-    PRODUCT_PACKAGES_DEBUG_ASAN \
-    PRODUCT_PACKAGES_ENG \
-    PRODUCT_PACKAGES_TESTS \
-    PRODUCT_DEVICE \
-    PRODUCT_MANUFACTURER \
-    PRODUCT_BRAND \
-    PRODUCT_PROPERTY_OVERRIDES \
-    PRODUCT_DEFAULT_PROPERTY_OVERRIDES \
-    PRODUCT_PRODUCT_PROPERTIES \
-    PRODUCT_PRODUCT_SERVICES_PROPERTIES \
-    PRODUCT_ODM_PROPERTIES \
-    PRODUCT_CHARACTERISTICS \
-    PRODUCT_COPY_FILES \
-    PRODUCT_OTA_PUBLIC_KEYS \
-    PRODUCT_EXTRA_RECOVERY_KEYS \
-    PRODUCT_PACKAGE_OVERLAYS \
-    DEVICE_PACKAGE_OVERLAYS \
-    PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS \
-    PRODUCT_ENFORCE_RRO_TARGETS \
-    PRODUCT_SDK_ATREE_FILES \
-    PRODUCT_SDK_ADDON_NAME \
-    PRODUCT_SDK_ADDON_COPY_FILES \
-    PRODUCT_SDK_ADDON_COPY_MODULES \
-    PRODUCT_SDK_ADDON_DOC_MODULES \
-    PRODUCT_SDK_ADDON_SYS_IMG_SOURCE_PROP \
-    PRODUCT_SOONG_NAMESPACES \
-    PRODUCT_DEFAULT_WIFI_CHANNELS \
-    PRODUCT_DEFAULT_DEV_CERTIFICATE \
-    PRODUCT_RESTRICT_VENDOR_FILES \
-    PRODUCT_VENDOR_KERNEL_HEADERS \
-    PRODUCT_BOOT_JARS \
-    PRODUCT_SUPPORTS_BOOT_SIGNER \
-    PRODUCT_SUPPORTS_VBOOT \
-    PRODUCT_SUPPORTS_VERITY \
-    PRODUCT_SUPPORTS_VERITY_FEC \
-    PRODUCT_OEM_PROPERTIES \
-    PRODUCT_SYSTEM_DEFAULT_PROPERTIES \
-    PRODUCT_SYSTEM_PROPERTY_BLACKLIST \
-    PRODUCT_VENDOR_PROPERTY_BLACKLIST \
-    PRODUCT_SYSTEM_SERVER_APPS \
-    PRODUCT_SYSTEM_SERVER_JARS \
-    PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK \
-    PRODUCT_DEXPREOPT_SPEED_APPS \
-    PRODUCT_LOADED_BY_PRIVILEGED_MODULES \
-    PRODUCT_VBOOT_SIGNING_KEY \
-    PRODUCT_VBOOT_SIGNING_SUBKEY \
-    PRODUCT_VERITY_SIGNING_KEY \
-    PRODUCT_SYSTEM_VERITY_PARTITION \
-    PRODUCT_VENDOR_VERITY_PARTITION \
-    PRODUCT_PRODUCT_VERITY_PARTITION \
-    PRODUCT_PRODUCT_SERVICES_VERITY_PARTITION \
-    PRODUCT_ODM_VERITY_PARTITION \
-    PRODUCT_SYSTEM_SERVER_DEBUG_INFO \
-    PRODUCT_OTHER_JAVA_DEBUG_INFO \
-    PRODUCT_DEX_PREOPT_MODULE_CONFIGS \
-    PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER \
-    PRODUCT_DEX_PREOPT_DEFAULT_FLAGS \
-    PRODUCT_DEX_PREOPT_BOOT_FLAGS \
-    PRODUCT_DEX_PREOPT_PROFILE_DIR \
-    PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
-    PRODUCT_DEX_PREOPT_GENERATE_DM_FILES \
+# The resoure configuration options to use for this product.
+_product_var_list += PRODUCT_LOCALES
+_product_var_list += PRODUCT_AAPT_CONFIG
+_product_var_list += PRODUCT_AAPT_PREF_CONFIG
+_product_var_list += PRODUCT_AAPT_PREBUILT_DPI
+_product_var_list += PRODUCT_HOST_PACKAGES
+_product_var_list += PRODUCT_PACKAGES
+_product_var_list += PRODUCT_PACKAGES_DEBUG
+_product_var_list += PRODUCT_PACKAGES_DEBUG_ASAN
+_product_var_list += PRODUCT_PACKAGES_ENG
+_product_var_list += PRODUCT_PACKAGES_TESTS
+
+# The device that this product maps to.
+_product_var_list += PRODUCT_DEVICE
+_product_var_list += PRODUCT_MANUFACTURER
+_product_var_list += PRODUCT_BRAND
+
+# These PRODUCT_SYSTEM_* flags, if defined, are used in place of the
+# corresponding PRODUCT_* flags for the sysprops on /system.
+_product_var_list += \
+    PRODUCT_SYSTEM_NAME \
+    PRODUCT_SYSTEM_MODEL \
+    PRODUCT_SYSTEM_DEVICE \
+    PRODUCT_SYSTEM_BRAND \
+    PRODUCT_SYSTEM_MANUFACTURER \
+
+# A list of property assignments, like "key = value", with zero or more
+# whitespace characters on either side of the '='.
+_product_var_list += PRODUCT_PROPERTY_OVERRIDES
+
+# A list of property assignments, like "key = value", with zero or more
+# whitespace characters on either side of the '='.
+# used for adding properties to default.prop
+_product_var_list += PRODUCT_DEFAULT_PROPERTY_OVERRIDES
+
+# A list of property assignments, like "key = value", with zero or more
+# whitespace characters on either side of the '='.
+# used for adding properties to build.prop of product partition
+_product_var_list += PRODUCT_PRODUCT_PROPERTIES
+
+# A list of property assignments, like "key = value", with zero or more
+# whitespace characters on either side of the '='.
+# used for adding properties to build.prop of product partition
+_product_var_list += PRODUCT_PRODUCT_SERVICES_PROPERTIES
+_product_var_list += PRODUCT_ODM_PROPERTIES
+_product_var_list += PRODUCT_CHARACTERISTICS
+
+# A list of words like <source path>:<destination path>[:<owner>].
+# The file at the source path should be copied to the destination path
+# when building  this product.  <destination path> is relative to
+# $(PRODUCT_OUT), so it should look like, e.g., "system/etc/file.xml".
+# The rules for these copy steps are defined in build/make/core/Makefile.
+# The optional :<owner> is used to indicate the owner of a vendor file.
+_product_var_list += PRODUCT_COPY_FILES
+
+# The OTA key(s) specified by the product config, if any.  The names
+# of these keys are stored in the target-files zip so that post-build
+# signing tools can substitute them for the test key embedded by
+# default.
+_product_var_list += PRODUCT_OTA_PUBLIC_KEYS
+_product_var_list += PRODUCT_EXTRA_RECOVERY_KEYS
+
+# Should we use the default resources or add any product specific overlays
+_product_var_list += PRODUCT_PACKAGE_OVERLAYS
+_product_var_list += DEVICE_PACKAGE_OVERLAYS
+
+# Resource overlay list which must be excluded from enforcing RRO.
+_product_var_list += PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS
+
+# Package list to apply enforcing RRO.
+_product_var_list += PRODUCT_ENFORCE_RRO_TARGETS
+
+_product_var_list += PRODUCT_SDK_ATREE_FILES
+_product_var_list += PRODUCT_SDK_ADDON_NAME
+_product_var_list += PRODUCT_SDK_ADDON_COPY_FILES
+_product_var_list += PRODUCT_SDK_ADDON_COPY_MODULES
+_product_var_list += PRODUCT_SDK_ADDON_DOC_MODULES
+_product_var_list += PRODUCT_SDK_ADDON_SYS_IMG_SOURCE_PROP
+
+# which Soong namespaces to export to Make
+_product_var_list += PRODUCT_SOONG_NAMESPACES
+
+_product_var_list += PRODUCT_DEFAULT_WIFI_CHANNELS
+_product_var_list += PRODUCT_DEFAULT_DEV_CERTIFICATE
+_product_var_list += PRODUCT_RESTRICT_VENDOR_FILES
+
+# The list of product-specific kernel header dirs
+_product_var_list += PRODUCT_VENDOR_KERNEL_HEADERS
+
+# A list of module names of BOOTCLASSPATH (jar files)
+_product_var_list += PRODUCT_BOOT_JARS
+_product_var_list += PRODUCT_SUPPORTS_BOOT_SIGNER
+_product_var_list += PRODUCT_SUPPORTS_VBOOT
+_product_var_list += PRODUCT_SUPPORTS_VERITY
+_product_var_list += PRODUCT_SUPPORTS_VERITY_FEC
+_product_var_list += PRODUCT_OEM_PROPERTIES
+
+# A list of property assignments, like "key = value", with zero or more
+# whitespace characters on either side of the '='.
+# used for adding properties to default.prop of system partition
+_product_var_list += PRODUCT_SYSTEM_DEFAULT_PROPERTIES
+
+_product_var_list += PRODUCT_SYSTEM_PROPERTY_BLACKLIST
+_product_var_list += PRODUCT_VENDOR_PROPERTY_BLACKLIST
+_product_var_list += PRODUCT_SYSTEM_SERVER_APPS
+_product_var_list += PRODUCT_SYSTEM_SERVER_JARS
+
+# All of the apps that we force preopt, this overrides WITH_DEXPREOPT.
+_product_var_list += PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK
+_product_var_list += PRODUCT_DEXPREOPT_SPEED_APPS
+_product_var_list += PRODUCT_LOADED_BY_PRIVILEGED_MODULES
+_product_var_list += PRODUCT_VBOOT_SIGNING_KEY
+_product_var_list += PRODUCT_VBOOT_SIGNING_SUBKEY
+_product_var_list += PRODUCT_VERITY_SIGNING_KEY
+_product_var_list += PRODUCT_SYSTEM_VERITY_PARTITION
+_product_var_list += PRODUCT_VENDOR_VERITY_PARTITION
+_product_var_list += PRODUCT_PRODUCT_VERITY_PARTITION
+_product_var_list += PRODUCT_PRODUCT_SERVICES_VERITY_PARTITION
+_product_var_list += PRODUCT_ODM_VERITY_PARTITION
+_product_var_list += PRODUCT_SYSTEM_SERVER_DEBUG_INFO
+_product_var_list += PRODUCT_OTHER_JAVA_DEBUG_INFO
+
+# Per-module dex-preopt configs.
+_product_var_list += PRODUCT_DEX_PREOPT_MODULE_CONFIGS
+_product_var_list += PRODUCT_DEX_PREOPT_DEFAULT_COMPILER_FILTER
+_product_var_list += PRODUCT_DEX_PREOPT_DEFAULT_FLAGS
+_product_var_list += PRODUCT_DEX_PREOPT_BOOT_FLAGS
+_product_var_list += PRODUCT_DEX_PREOPT_PROFILE_DIR
+_product_var_list += PRODUCT_DEX_PREOPT_GENERATE_DM_FILES
+_product_var_list += PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING
+
+# Boot image options.
+_product_var_list += \
     PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE \
-    PRODUCT_SYSTEM_SERVER_COMPILER_FILTER \
-    PRODUCT_SANITIZER_MODULE_CONFIGS \
-    PRODUCT_SYSTEM_BASE_FS_PATH \
-    PRODUCT_VENDOR_BASE_FS_PATH \
-    PRODUCT_PRODUCT_BASE_FS_PATH \
-    PRODUCT_PRODUCT_SERVICES_BASE_FS_PATH \
-    PRODUCT_ODM_BASE_FS_PATH \
-    PRODUCT_SHIPPING_API_LEVEL \
-    VENDOR_PRODUCT_RESTRICT_VENDOR_FILES \
-    VENDOR_EXCEPTION_MODULES \
-    VENDOR_EXCEPTION_PATHS \
-    PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD \
-    PRODUCT_ART_USE_READ_BARRIER \
-    PRODUCT_IOT \
-    PRODUCT_SYSTEM_HEADROOM \
-    PRODUCT_MINIMIZE_JAVA_DEBUG_INFO \
-    PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS \
-    PRODUCT_ADB_KEYS \
-    PRODUCT_CFI_INCLUDE_PATHS \
-    PRODUCT_CFI_EXCLUDE_PATHS \
-    PRODUCT_DISABLE_SCUDO \
-    PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE \
-    PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE \
-    PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS \
-    PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT \
-    PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_WHITELIST \
-    PRODUCT_ARTIFACT_PATH_REQUIREMENT_HINT \
-    PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST \
+    PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
+
+_product_var_list += PRODUCT_SYSTEM_SERVER_COMPILER_FILTER
+# Per-module sanitizer configs
+_product_var_list += PRODUCT_SANITIZER_MODULE_CONFIGS
+_product_var_list += PRODUCT_SYSTEM_BASE_FS_PATH
+_product_var_list += PRODUCT_VENDOR_BASE_FS_PATH
+_product_var_list += PRODUCT_PRODUCT_BASE_FS_PATH
+_product_var_list += PRODUCT_PRODUCT_SERVICES_BASE_FS_PATH
+_product_var_list += PRODUCT_ODM_BASE_FS_PATH
+_product_var_list += PRODUCT_SHIPPING_API_LEVEL
+_product_var_list += VENDOR_PRODUCT_RESTRICT_VENDOR_FILES
+_product_var_list += VENDOR_EXCEPTION_MODULES
+_product_var_list += VENDOR_EXCEPTION_PATHS
+
+# Whether the product wants to ship libartd. For rules and meaning, see art/Android.mk.
+_product_var_list += PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD
+
+# Make this art variable visible to soong_config.mk.
+_product_var_list += PRODUCT_ART_USE_READ_BARRIER
+
+# Whether the product is an Android Things variant.
+_product_var_list += PRODUCT_IOT
+
+# Add reserved headroom to a system image.
+_product_var_list += PRODUCT_SYSTEM_HEADROOM
+
+# Whether to save disk space by minimizing java debug info
+_product_var_list += PRODUCT_MINIMIZE_JAVA_DEBUG_INFO
+
+# Whether any paths are excluded from sanitization when SANITIZE_TARGET=integer_overflow
+_product_var_list += PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS
+
+_product_var_list += PRODUCT_ADB_KEYS
+
+# Whether any paths should have CFI enabled for components
+_product_var_list += PRODUCT_CFI_INCLUDE_PATHS
+
+# Whether any paths are excluded from sanitization when SANITIZE_TARGET=cfi
+_product_var_list += PRODUCT_CFI_EXCLUDE_PATHS
+
+# Whether the Scudo hardened allocator is disabled platform-wide
+_product_var_list += PRODUCT_DISABLE_SCUDO
+
+# A flag to override PRODUCT_COMPATIBLE_PROPERTY
+_product_var_list += PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE
+
+# Whether the whitelist of actionable compatible properties should be disabled or not
+_product_var_list += PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE
+_product_var_list += PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS
+_product_var_list += PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT
+_product_var_list += PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_WHITELIST
+_product_var_list += PRODUCT_ARTIFACT_PATH_REQUIREMENT_HINT
+_product_var_list += PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST
+
+# List of modules that should be forcefully unmarked from being LOCAL_PRODUCT_MODULE, and hence
+# installed on /system directory by default.
+_product_var_list += PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION
+
+# When this is true, dynamic partitions is retrofitted on a device that has
+# already been launched without dynamic partitions. Otherwise, the device
+# is launched with dynamic partitions.
+# This flag implies PRODUCT_USE_DYNAMIC_PARTITIONS.
+_product_var_list += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
+
+# Other dynamic partition feature flags.PRODUCT_USE_DYNAMIC_PARTITION_SIZE and
+# PRODUCT_BUILD_SUPER_PARTITION default to the value of PRODUCT_USE_DYNAMIC_PARTITIONS.
+_product_var_list += \
+    PRODUCT_USE_DYNAMIC_PARTITIONS \
     PRODUCT_USE_DYNAMIC_PARTITION_SIZE \
     PRODUCT_BUILD_SUPER_PARTITION \
-    PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION \
-    PRODUCT_USE_DYNAMIC_PARTITIONS \
-    PRODUCT_RETROFIT_DYNAMIC_PARTITIONS \
-    PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS \
-    PRODUCT_XOM_EXCLUDE_PATHS \
-    PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES \
-    PRODUCT_PACKAGE_NAME_OVERRIDES \
-    PRODUCT_CERTIFICATE_OVERRIDES \
-    PRODUCT_BUILD_SYSTEM_IMAGE \
-    PRODUCT_BUILD_SYSTEM_OTHER_IMAGE \
-    PRODUCT_BUILD_VENDOR_IMAGE \
-    PRODUCT_BUILD_PRODUCT_IMAGE \
-    PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE \
-    PRODUCT_BUILD_ODM_IMAGE \
-    PRODUCT_BUILD_CACHE_IMAGE \
-    PRODUCT_BUILD_RAMDISK_IMAGE \
-    PRODUCT_BUILD_USERDATA_IMAGE \
-    PRODUCT_UPDATABLE_BOOT_MODULES \
-    PRODUCT_UPDATABLE_BOOT_LOCATIONS \
-    PRODUCT_CHECK_ELF_FILES \
+
+# If set, kernel configuration requirements are present in OTA package (and will be enforced
+# during OTA). Otherwise, kernel configuration requirements are enforced in VTS.
+# Devices that checks the running kernel (instead of the kernel in OTA package) should not
+# set this variable to prevent OTA failures.
+_product_var_list += PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
+
+# If set to true, this product builds a generic OTA package, which installs generic system images
+# onto matching devices. The product may only build a subset of system images (e.g. only
+# system.img), so devices need to install the package in a system-only OTA manner.
+_product_var_list += PRODUCT_BUILD_GENERIC_OTA_PACKAGE
+
+# Whether any paths are excluded from being set XOM when ENABLE_XOM=true
+_product_var_list += PRODUCT_XOM_EXCLUDE_PATHS
+_product_var_list += PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
+_product_var_list += PRODUCT_PACKAGE_NAME_OVERRIDES
+_product_var_list += PRODUCT_CERTIFICATE_OVERRIDES
+_product_var_list += PRODUCT_BUILD_SYSTEM_IMAGE
+_product_var_list += PRODUCT_BUILD_SYSTEM_OTHER_IMAGE
+_product_var_list += PRODUCT_BUILD_VENDOR_IMAGE
+_product_var_list += PRODUCT_BUILD_PRODUCT_IMAGE
+_product_var_list += PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE
+_product_var_list += PRODUCT_BUILD_ODM_IMAGE
+_product_var_list += PRODUCT_BUILD_CACHE_IMAGE
+_product_var_list += PRODUCT_BUILD_RAMDISK_IMAGE
+_product_var_list += PRODUCT_BUILD_USERDATA_IMAGE
+_product_var_list += PRODUCT_UPDATABLE_BOOT_MODULES
+_product_var_list += PRODUCT_UPDATABLE_BOOT_LOCATIONS
+
+# Whether the product would like to check prebuilt ELF files.
+_product_var_list += PRODUCT_CHECK_ELF_FILES
+.KATI_READONLY := _product_var_list
 
 define dump-product
-$(info ==== $(1) ====)\
+$(warning ==== $(1) ====)\
 $(foreach v,$(_product_var_list),\
-$(info PRODUCTS.$(1).$(v) := $(PRODUCTS.$(1).$(v))))\
-$(info --------)
+$(warning PRODUCTS.$(1).$(v) := $(PRODUCTS.$(1).$(v))))\
+$(warning --------)
 endef
 
 define dump-products
 $(foreach p,$(PRODUCTS),$(call dump-product,$(p)))
 endef
+
+#
+# Functions for including product makefiles
+#
 
 #
 # $(1): product to inherit
@@ -365,90 +485,44 @@ define resolve-short-product-name
 $(strip $(call _resolve-short-product-name,$(1)))
 endef
 
+# BoardConfig variables that are also inherited in product mks. Should ideally
+# be cleaned up to not be product variables.
+_readonly_late_variables := \
+  DEVICE_PACKAGE_OVERLAYS \
+  WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY \
 
-_product_stash_var_list := $(_product_var_list) \
-	PRODUCT_BOOTCLASSPATH \
-	PRODUCT_SYSTEM_SERVER_CLASSPATH \
-	TARGET_ARCH \
-	TARGET_ARCH_VARIANT \
-	TARGET_CPU_VARIANT \
-	TARGET_BOARD_PLATFORM \
-	TARGET_BOARD_PLATFORM_GPU \
-	TARGET_BOARD_KERNEL_HEADERS \
-	TARGET_DEVICE_KERNEL_HEADERS \
-	TARGET_PRODUCT_KERNEL_HEADERS \
-	TARGET_BOOTLOADER_BOARD_NAME \
-	TARGET_NO_BOOTLOADER \
-	TARGET_NO_KERNEL \
-	TARGET_NO_RECOVERY \
-	TARGET_NO_RADIOIMAGE \
-	TARGET_HARDWARE_3D \
-	TARGET_CPU_ABI \
-	TARGET_CPU_ABI2 \
+# Modified internally in the build system
+_readonly_late_variables += \
+  PRODUCT_COPY_FILES \
+  PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING \
+  PRODUCT_DEX_PREOPT_BOOT_FLAGS \
 
-
-_product_stash_var_list += \
-	BOARD_WPA_SUPPLICANT_DRIVER \
-	BOARD_WLAN_DEVICE \
-	BOARD_USES_GENERIC_AUDIO \
-	BOARD_KERNEL_CMDLINE \
-	BOARD_KERNEL_BASE \
-	BOARD_HAVE_BLUETOOTH \
-	BOARD_VENDOR_USE_AKMD \
-	BOARD_EGL_CFG \
-	BOARD_BOOTIMAGE_PARTITION_SIZE \
-	BOARD_RECOVERYIMAGE_PARTITION_SIZE \
-	BOARD_SYSTEMIMAGE_PARTITION_SIZE \
-	BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE \
-	BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE \
-	BOARD_USERDATAIMAGE_PARTITION_SIZE \
-	BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE \
-	BOARD_CACHEIMAGE_PARTITION_SIZE \
-	BOARD_FLASH_BLOCK_SIZE \
-	BOARD_VENDORIMAGE_PARTITION_SIZE \
-	BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE \
-	BOARD_PRODUCTIMAGE_PARTITION_SIZE \
-	BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE \
-	BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE \
-	BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE \
-	BOARD_ODMIMAGE_PARTITION_SIZE \
-	BOARD_ODMIMAGE_FILE_SYSTEM_TYPE \
-	BOARD_INSTALLER_CMDLINE \
-
-
-_product_stash_var_list += \
-	DEFAULT_SYSTEM_DEV_CERTIFICATE \
-	WITH_DEXPREOPT \
-	WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY
-
-# Logical partitions related variables.
-_dynamic_partitions_var_list += \
-	BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE \
-	BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE \
-	BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE \
-	BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE \
-	BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE \
-	BOARD_SUPER_PARTITION_SIZE \
-	BOARD_SUPER_PARTITION_GROUPS \
-
-_product_stash_var_list += $(_dynamic_partitions_var_list)
-_product_strip_var_list := $(_dynamic_partitions_var_list)
+_readonly_early_variables := $(filter-out $(_readonly_late_variables),$(_product_var_list))
 
 #
 # Mark the variables in _product_stash_var_list as readonly
 #
-define readonly-product-vars
-$(foreach v,$(_product_stash_var_list), \
-	$(eval $(v) ?=) \
-	$(eval .KATI_READONLY := $(v)) \
+define readonly-variables
+$(foreach v,$(1), \
+  $(eval $(v) ?=) \
+  $(eval .KATI_READONLY := $(v)) \
  )
+endef
+define readonly-product-vars
+$(call readonly-variables,$(_readonly_early_variables))
+endef
+
+define readonly-final-product-vars
+$(call readonly-variables,$(_readonly_late_variables))
 endef
 
 #
 # Strip the variables in _product_strip_var_list
 #
 define strip-product-vars
-$(foreach v,$(_product_strip_var_list),$(eval $(v) := $(strip $($(v)))))
+$(foreach v,$(_product_var_list), \
+  $(eval $(v) := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).$(v)))) \
+)
 endef
 
 define add-to-product-copy-files-if-exists

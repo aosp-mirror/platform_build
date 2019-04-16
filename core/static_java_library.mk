@@ -85,14 +85,22 @@ R_file_stamp := $(intermediates.COMMON)/src/R.stamp
 LOCAL_INTERMEDIATE_TARGETS += $(R_file_stamp)
 
 ifeq ($(LOCAL_USE_AAPT2),true)
-# For library we treat all the resource equal with no overlay.
-my_res_resources := $(all_resources)
-my_overlay_resources :=
-# For libraries put everything in the COMMON intermediate directory.
-my_res_package := $(intermediates.COMMON)/package-res.apk
+  ifneq ($(strip $(LOCAL_STATIC_ANDROID_LIBRARIES) $(LOCAL_STATIC_JAVA_AAR_LIBRARIES)),)
+    # If we are using static android libraries, every source file becomes an overlay.
+    # This is to emulate old AAPT behavior which simulated library support.
+    my_res_resources :=
+    my_overlay_resources := $(all_resources)
+  else
+    # Otherwise, for a library we treat all the resource equal with no overlay.
+    my_res_resources := $(all_resources)
+    my_overlay_resources :=
+  endif
+  # For libraries put everything in the COMMON intermediate directory.
+  my_res_package := $(intermediates.COMMON)/package-res.apk
 
-LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
+  LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
 endif  # LOCAL_USE_AAPT2
+
 endif  # need_compile_res
 
 all_res_assets := $(all_resources)

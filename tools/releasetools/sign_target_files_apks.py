@@ -21,11 +21,17 @@ target-files zip.
 Usage:  sign_target_files_apks [flags] input_target_files output_target_files
 
   -e  (--extra_apks)  <name,name,...=key>
-      Add extra APK name/key pairs as though they appeared in
-      apkcerts.txt (so mappings specified by -k and -d are applied).
-      Keys specified in -e override any value for that app contained
-      in the apkcerts.txt file.  Option may be repeated to give
-      multiple extra packages.
+      Add extra APK/APEX name/key pairs as though they appeared in apkcerts.txt
+      or apexkeys.txt (so mappings specified by -k and -d are applied). Keys
+      specified in -e override any value for that app contained in the
+      apkcerts.txt file, or the container key for an APEX. Option may be
+      repeated to give multiple extra packages.
+
+  --extra_apex_payload_key <name=key>
+      Add a mapping for APEX package name to payload signing key, which will
+      override the default payload signing key in apexkeys.txt. Note that the
+      container key should be overridden via the `--extra_apks` flag above.
+      Option may be repeated for multiple APEXes.
 
   --skip_apks_with_path_prefix  <prefix>
       Skip signing an APK if it has the matching prefix in its path. The prefix
@@ -50,7 +56,7 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
 
       where $devkey is the directory part of the value of
       default_system_dev_certificate from the input target-files's
-      META/misc_info.txt.  (Defaulting to "build/target/product/security"
+      META/misc_info.txt.  (Defaulting to "build/make/target/product/security"
       if the value is not present in misc_info.
 
       -d and -k options are added to the set of mappings in the order
@@ -85,12 +91,12 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       Replace the veritykeyid in BOOT/cmdline of input_target_file_zip
       with keyid of the cert pointed by <path_to_X509_PEM_cert_file>.
 
-  --avb_{boot,system,vendor,dtbo,vbmeta}_algorithm <algorithm>
-  --avb_{boot,system,vendor,dtbo,vbmeta}_key <key>
+  --avb_{boot,system,system_other,vendor,dtbo,vbmeta}_algorithm <algorithm>
+  --avb_{boot,system,system_other,vendor,dtbo,vbmeta}_key <key>
       Use the specified algorithm (e.g. SHA256_RSA4096) and the key to AVB-sign
       the specified image. Otherwise it uses the existing values in info dict.
 
-  --avb_{boot,system,vendor,dtbo,vbmeta}_extra_args <args>
+  --avb_{apex,boot,system,system_other,vendor,dtbo,vbmeta}_extra_args <args>
       Specify any additional args that are needed to AVB-sign the image
       (e.g. "--signing_helper /path/to/helper"). The args will be appended to
       the existing ones in info dict.
@@ -102,6 +108,8 @@ import base64
 import copy
 import errno
 import gzip
+import itertools
+import logging
 import os
 import re
 import shutil
@@ -113,6 +121,7 @@ import zipfile
 from xml.etree import ElementTree
 
 import add_img_to_target_files
+import apex_utils
 import common
 
 
@@ -121,9 +130,12 @@ if sys.hexversion < 0x02070000:
   sys.exit(1)
 
 
+logger = logging.getLogger(__name__)
+
 OPTIONS = common.OPTIONS
 
 OPTIONS.extra_apks = {}
+OPTIONS.extra_apex_payload_keys = {}
 OPTIONS.skip_apks_with_path_prefix = set()
 OPTIONS.key_map = {}
 OPTIONS.rebuild_recovery = False
@@ -149,6 +161,43 @@ def GetApkCerts(certmap):
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
 
   return certmap
+
+
+def GetApexKeys(keys_info, key_map):
+  """Gets APEX payload and container signing keys by applying the mapping rules.
+
+  Presigned payload / container keys will be set accordingly.
+
+  Args:
+    keys_info: A dict that maps from APEX filenames to a tuple of (payload_key,
+        container_key).
+    key_map: A dict that overrides the keys, specified via command-line input.
+
+  Returns:
+    A dict that contains the updated APEX key mapping, which should be used for
+    the current signing.
+  """
+  # Apply all the --extra_apex_payload_key options to override the payload
+  # signing keys in the given keys_info.
+  for apex, key in OPTIONS.extra_apex_payload_keys.items():
+    if not key:
+      key = 'PRESIGNED'
+    keys_info[apex] = (key, keys_info[apex][1])
+
+  # Apply the key remapping to container keys.
+  for apex, (payload_key, container_key) in keys_info.items():
+    keys_info[apex] = (payload_key, key_map.get(container_key, container_key))
+
+  # Apply all the --extra_apks options to override the container keys.
+  for apex, key in OPTIONS.extra_apks.items():
+    # Skip non-APEX containers.
+    if apex not in keys_info:
+      continue
+    if not key:
+      key = 'PRESIGNED'
+    keys_info[apex] = (keys_info[apex][0], key_map.get(key, key))
+
+  return keys_info
 
 
 def GetApkFileInfo(filename, compressed_extension, skipped_prefixes):
@@ -180,11 +229,8 @@ def GetApkFileInfo(filename, compressed_extension, skipped_prefixes):
 
   # skipped_prefixes should be one of set/list/tuple types. Other types such as
   # str shouldn't be accepted.
-  assert (isinstance(skipped_prefixes, tuple) or
-          isinstance(skipped_prefixes, set) or
-          isinstance(skipped_prefixes, list)), \
-              "Invalid skipped_prefixes input type: {}".format(
-                  type(skipped_prefixes))
+  assert isinstance(skipped_prefixes, (set, list, tuple)), \
+      "Invalid skipped_prefixes input type: {}".format(type(skipped_prefixes))
 
   compressed_apk_extension = (
       ".apk" + compressed_extension if compressed_extension else None)
@@ -200,34 +246,72 @@ def GetApkFileInfo(filename, compressed_extension, skipped_prefixes):
   return (True, is_compressed, should_be_skipped)
 
 
-def CheckAllApksSigned(input_tf_zip, apk_key_map, compressed_extension):
-  """Checks that all the APKs have keys specified, otherwise errors out.
+def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
+                                 compressed_extension, apex_keys):
+  """Checks that all the APKs and APEXes have keys specified.
 
   Args:
     input_tf_zip: An open target_files zip file.
-    apk_key_map: A dict of known signing keys key'd by APK names.
+    known_keys: A set of APKs and APEXes that have known signing keys.
     compressed_extension: The extension string of compressed APKs, such as
-        ".gz", or None if there's no compressed APKs.
+        '.gz', or None if there's no compressed APKs.
+    apex_keys: A dict that contains the key mapping from APEX name to
+        (payload_key, container_key).
 
   Raises:
-    AssertionError: On finding unknown APKs.
+    AssertionError: On finding unknown APKs and APEXes.
   """
-  unknown_apks = []
+  unknown_files = []
   for info in input_tf_zip.infolist():
+    # Handle APEXes first, e.g. SYSTEM/apex/com.android.tzdata.apex.
+    if (info.filename.startswith('SYSTEM/apex') and
+        info.filename.endswith('.apex')):
+      name = os.path.basename(info.filename)
+      if name not in known_keys:
+        unknown_files.append(name)
+      continue
+
+    # And APKs.
     (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
         info.filename, compressed_extension, OPTIONS.skip_apks_with_path_prefix)
     if not is_apk or should_be_skipped:
       continue
+
     name = os.path.basename(info.filename)
     if is_compressed:
       name = name[:-len(compressed_extension)]
-    if name not in apk_key_map:
-      unknown_apks.append(name)
+    if name not in known_keys:
+      unknown_files.append(name)
 
-  assert not unknown_apks, \
+  assert not unknown_files, \
       ("No key specified for:\n  {}\n"
        "Use '-e <apkname>=' to specify a key (which may be an empty string to "
-       "not sign this apk).".format("\n  ".join(unknown_apks)))
+       "not sign this apk).".format("\n  ".join(unknown_files)))
+
+  # For all the APEXes, double check that we won't have an APEX that has only
+  # one of the payload / container keys set.
+  if not apex_keys:
+    return
+
+  invalid_apexes = []
+  for info in input_tf_zip.infolist():
+    if (not info.filename.startswith('SYSTEM/apex') or
+        not info.filename.endswith('.apex')):
+      continue
+
+    name = os.path.basename(info.filename)
+    (payload_key, container_key) = apex_keys[name]
+    if ((payload_key in common.SPECIAL_CERT_STRINGS and
+         container_key not in common.SPECIAL_CERT_STRINGS) or
+        (payload_key not in common.SPECIAL_CERT_STRINGS and
+         container_key in common.SPECIAL_CERT_STRINGS)):
+      invalid_apexes.append(
+          "{}: payload_key {}, container_key {}".format(
+              name, payload_key, container_key))
+
+  assert not invalid_apexes, \
+      "Invalid APEX keys specified:\n  {}\n".format(
+          "\n  ".join(invalid_apexes))
 
 
 def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
@@ -293,9 +377,80 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
   return data
 
 
+def SignApex(apex_data, payload_key, container_key, container_pw,
+             codename_to_api_level_map, signing_args=None):
+  """Signs the current APEX with the given payload/container keys.
+
+  Args:
+    apex_data: Raw APEX data.
+    payload_key: The path to payload signing key (w/ extension).
+    container_key: The path to container signing key (w/o extension).
+    container_pw: The matching password of the container_key, or None.
+    codename_to_api_level_map: A dict that maps from codename to API level.
+    signing_args: Additional args to be passed to the payload signer.
+
+  Returns:
+    The path to the signed APEX file.
+  """
+  apex_file = common.MakeTempFile(prefix='apex-', suffix='.apex')
+  with open(apex_file, 'wb') as apex_fp:
+    apex_fp.write(apex_data)
+
+  APEX_PAYLOAD_IMAGE = 'apex_payload.img'
+  APEX_PUBKEY = 'apex_pubkey'
+
+  # 1a. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given
+  # payload_key.
+  payload_dir = common.MakeTempDir(prefix='apex-payload-')
+  with zipfile.ZipFile(apex_file) as apex_fd:
+    payload_file = apex_fd.extract(APEX_PAYLOAD_IMAGE, payload_dir)
+
+  payload_info = apex_utils.ParseApexPayloadInfo(payload_file)
+  apex_utils.SignApexPayload(
+      payload_file,
+      payload_key,
+      payload_info['apex.key'],
+      payload_info['Algorithm'],
+      payload_info['Salt'],
+      signing_args)
+
+  # 1b. Update the embedded payload public key.
+  payload_public_key = common.ExtractAvbPublicKey(payload_key)
+
+  common.ZipDelete(apex_file, APEX_PAYLOAD_IMAGE)
+  common.ZipDelete(apex_file, APEX_PUBKEY)
+  apex_zip = zipfile.ZipFile(apex_file, 'a')
+  common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
+  common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
+  common.ZipClose(apex_zip)
+
+  # 2. Align the files at page boundary (same as in apexer).
+  aligned_apex = common.MakeTempFile(
+      prefix='apex-container-', suffix='.apex')
+  common.RunAndCheckOutput(
+      ['zipalign', '-f', '4096', apex_file, aligned_apex])
+
+  # 3. Sign the APEX container with container_key.
+  signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
+
+  # Specify the 4K alignment when calling SignApk.
+  extra_signapk_args = OPTIONS.extra_signapk_args[:]
+  extra_signapk_args.extend(['-a', '4096'])
+
+  common.SignFile(
+      aligned_apex,
+      signed_apex,
+      container_key,
+      container_pw,
+      codename_to_api_level_map=codename_to_api_level_map,
+      extra_signapk_args=extra_signapk_args)
+
+  return signed_apex
+
+
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
-                       apk_key_map, key_passwords, platform_api_level,
-                       codename_to_api_level_map,
+                       apk_keys, apex_keys, key_passwords,
+                       platform_api_level, codename_to_api_level_map,
                        compressed_extension):
   # maxsize measures the maximum filename length, including the ones to be
   # skipped.
@@ -331,7 +486,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if is_compressed:
         name = name[:-len(compressed_extension)]
 
-      key = apk_key_map[name]
+      key = apk_keys[name]
       if key not in common.SPECIAL_CERT_STRINGS:
         print("    signing: %-*s (%s)" % (maxsize, name, key))
         signed_data = SignApk(data, key, key_passwords[key], platform_api_level,
@@ -343,6 +498,39 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             "NOT signing: %s\n"
             "        (skipped due to special cert string)" % (name,))
         common.ZipWriteStr(output_tf_zip, out_info, data)
+
+    # Sign bundled APEX files.
+    elif filename.startswith("SYSTEM/apex") and filename.endswith(".apex"):
+      name = os.path.basename(filename)
+      payload_key, container_key = apex_keys[name]
+
+      # We've asserted not having a case with only one of them PRESIGNED.
+      if (payload_key not in common.SPECIAL_CERT_STRINGS and
+          container_key not in common.SPECIAL_CERT_STRINGS):
+        print("    signing: %-*s container (%s)" % (
+            maxsize, name, container_key))
+        print("           : %-*s payload   (%s)" % (
+            maxsize, name, payload_key))
+
+        signed_apex = SignApex(
+            data,
+            payload_key,
+            container_key,
+            key_passwords[container_key],
+            codename_to_api_level_map,
+            OPTIONS.avb_extra_args.get('apex'))
+        common.ZipWrite(output_tf_zip, signed_apex, filename)
+
+      else:
+        print(
+            "NOT signing: %s\n"
+            "        (skipped due to special cert string)" % (name,))
+        common.ZipWriteStr(output_tf_zip, out_info, data)
+
+    # AVB public keys for the installed APEXes, which will be updated later.
+    elif (os.path.dirname(filename) == 'SYSTEM/etc/security/apex' and
+          filename != 'SYSTEM/etc/security/apex/'):
+      continue
 
     # System properties.
     elif filename in ("SYSTEM/build.prop",
@@ -401,6 +589,18 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # Skip the care_map as we will regenerate the system/vendor images.
     elif filename == "META/care_map.pb" or filename == "META/care_map.txt":
       pass
+
+    # Updates system_other.avbpubkey in /product/etc/.
+    elif filename in (
+        "PRODUCT/etc/security/avb/system_other.avbpubkey",
+        "SYSTEM/product/etc/security/avb/system_other.avbpubkey"):
+      # Only update system_other's public key, if the corresponding signing
+      # key is specified via --avb_system_other_key.
+      signing_key = OPTIONS.avb_keys.get("system_other")
+      if signing_key:
+        public_key = common.ExtractAvbPublicKey(signing_key)
+        print("    Rewriting AVB public key of system_other in /product")
+        common.ZipWrite(output_tf_zip, public_key, filename)
 
     # A non-APK file; copy it verbatim.
     else:
@@ -602,7 +802,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
     print("for OTA package verification")
   else:
     devkey = misc_info.get("default_system_dev_certificate",
-                           "build/target/product/security/testkey")
+                           "build/make/target/product/security/testkey")
     mapped_devkey = OPTIONS.key_map.get(devkey, devkey)
     if mapped_devkey != devkey:
       misc_info["default_system_dev_certificate"] = mapped_devkey
@@ -726,6 +926,7 @@ def ReplaceAvbSigningKeys(misc_info):
       'dtbo' : 'avb_dtbo_add_hash_footer_args',
       'recovery' : 'avb_recovery_add_hash_footer_args',
       'system' : 'avb_system_add_hashtree_footer_args',
+      'system_other' : 'avb_system_other_add_hashtree_footer_args',
       'vendor' : 'avb_vendor_add_hashtree_footer_args',
       'vbmeta' : 'avb_vbmeta_args',
   }
@@ -758,7 +959,7 @@ def BuildKeyMap(misc_info, key_mapping_options):
   for s, d in key_mapping_options:
     if s is None:   # -d option
       devkey = misc_info.get("default_system_dev_certificate",
-                             "build/target/product/security/testkey")
+                             "build/make/target/product/security/testkey")
       devkeydir = os.path.dirname(devkey)
 
       OPTIONS.key_map.update({
@@ -816,9 +1017,65 @@ def GetCodenameToApiLevelMap(input_tf_zip):
   result = dict()
   for codename in codenames:
     codename = codename.strip()
-    if len(codename) > 0:
+    if codename:
       result[codename] = api_level
   return result
+
+
+def ReadApexKeysInfo(tf_zip):
+  """Parses the APEX keys info from a given target-files zip.
+
+  Given a target-files ZipFile, parses the META/apexkeys.txt entry and returns a
+  dict that contains the mapping from APEX names (e.g. com.android.tzdata) to a
+  tuple of (payload_key, container_key).
+
+  Args:
+    tf_zip: The input target_files ZipFile (already open).
+
+  Returns:
+    (payload_key, container_key): payload_key contains the path to the payload
+        signing key; container_key contains the path to the container signing
+        key.
+  """
+  keys = {}
+  for line in tf_zip.read("META/apexkeys.txt").split("\n"):
+    line = line.strip()
+    if not line:
+      continue
+    matches = re.match(
+        r'^name="(?P<NAME>.*)"\s+'
+        r'public_key="(?P<PAYLOAD_PUBLIC_KEY>.*)"\s+'
+        r'private_key="(?P<PAYLOAD_PRIVATE_KEY>.*)"\s+'
+        r'container_certificate="(?P<CONTAINER_CERT>.*)"\s+'
+        r'container_private_key="(?P<CONTAINER_PRIVATE_KEY>.*)"$',
+        line)
+    if not matches:
+      continue
+
+    name = matches.group('NAME')
+    payload_private_key = matches.group("PAYLOAD_PRIVATE_KEY")
+
+    def CompareKeys(pubkey, pubkey_suffix, privkey, privkey_suffix):
+      pubkey_suffix_len = len(pubkey_suffix)
+      privkey_suffix_len = len(privkey_suffix)
+      return (pubkey.endswith(pubkey_suffix) and
+              privkey.endswith(privkey_suffix) and
+              pubkey[:-pubkey_suffix_len] == privkey[:-privkey_suffix_len])
+
+    # Sanity check on the container key names, as we'll carry them without the
+    # extensions. This doesn't apply to payload keys though, which we will use
+    # full names only.
+    container_cert = matches.group("CONTAINER_CERT")
+    container_private_key = matches.group("CONTAINER_PRIVATE_KEY")
+    if not CompareKeys(
+        container_cert, OPTIONS.public_key_suffix,
+        container_private_key, OPTIONS.private_key_suffix):
+      raise ValueError("Failed to parse container keys: \n{}".format(line))
+
+    keys[name] = (payload_private_key,
+                  container_cert[:-len(OPTIONS.public_key_suffix)])
+
+  return keys
 
 
 def main(argv):
@@ -831,6 +1088,9 @@ def main(argv):
       names = names.split(",")
       for n in names:
         OPTIONS.extra_apks[n] = key
+    elif o == "--extra_apex_payload_key":
+      apex_name, key = a.split("=")
+      OPTIONS.extra_apex_payload_keys[apex_name] = key
     elif o == "--skip_apks_with_path_prefix":
       # Sanity check the prefix, which must be in all upper case.
       prefix = a.split('/')[0]
@@ -881,12 +1141,20 @@ def main(argv):
       OPTIONS.avb_algorithms['system'] = a
     elif o == "--avb_system_extra_args":
       OPTIONS.avb_extra_args['system'] = a
+    elif o == "--avb_system_other_key":
+      OPTIONS.avb_keys['system_other'] = a
+    elif o == "--avb_system_other_algorithm":
+      OPTIONS.avb_algorithms['system_other'] = a
+    elif o == "--avb_system_other_extra_args":
+      OPTIONS.avb_extra_args['system_other'] = a
     elif o == "--avb_vendor_key":
       OPTIONS.avb_keys['vendor'] = a
     elif o == "--avb_vendor_algorithm":
       OPTIONS.avb_algorithms['vendor'] = a
     elif o == "--avb_vendor_extra_args":
       OPTIONS.avb_extra_args['vendor'] = a
+    elif o == "--avb_apex_extra_args":
+      OPTIONS.avb_extra_args['apex'] = a
     else:
       return False
     return True
@@ -896,6 +1164,7 @@ def main(argv):
       extra_opts="e:d:k:ot:",
       extra_long_opts=[
           "extra_apks=",
+          "extra_apex_payload_key=",
           "skip_apks_with_path_prefix=",
           "default_key_mappings=",
           "key_mapping=",
@@ -904,6 +1173,7 @@ def main(argv):
           "replace_verity_public_key=",
           "replace_verity_private_key=",
           "replace_verity_keyid=",
+          "avb_apex_extra_args=",
           "avb_vbmeta_algorithm=",
           "avb_vbmeta_key=",
           "avb_vbmeta_extra_args=",
@@ -916,6 +1186,9 @@ def main(argv):
           "avb_system_algorithm=",
           "avb_system_key=",
           "avb_system_extra_args=",
+          "avb_system_other_algorithm=",
+          "avb_system_other_key=",
+          "avb_system_other_extra_args=",
           "avb_vendor_algorithm=",
           "avb_vendor_key=",
           "avb_vendor_extra_args=",
@@ -926,6 +1199,8 @@ def main(argv):
     common.Usage(__doc__)
     sys.exit(1)
 
+  common.InitLogging()
+
   input_zip = zipfile.ZipFile(args[0], "r")
   output_zip = zipfile.ZipFile(args[1], "w",
                                compression=zipfile.ZIP_DEFLATED,
@@ -935,18 +1210,26 @@ def main(argv):
 
   BuildKeyMap(misc_info, key_mapping_options)
 
-  certmap, compressed_extension = common.ReadApkCerts(input_zip)
-  apk_key_map = GetApkCerts(certmap)
-  CheckAllApksSigned(input_zip, apk_key_map, compressed_extension)
+  apk_keys_info, compressed_extension = common.ReadApkCerts(input_zip)
+  apk_keys = GetApkCerts(apk_keys_info)
 
-  key_passwords = common.GetKeyPasswords(set(apk_key_map.values()))
+  apex_keys_info = ReadApexKeysInfo(input_zip)
+  apex_keys = GetApexKeys(apex_keys_info, apk_keys)
+
+  CheckApkAndApexKeysAvailable(
+      input_zip,
+      set(apk_keys.keys()) | set(apex_keys.keys()),
+      compressed_extension,
+      apex_keys)
+
+  key_passwords = common.GetKeyPasswords(
+      set(apk_keys.values()) | set(itertools.chain(*apex_keys.values())))
   platform_api_level, _ = GetApiLevelAndCodename(input_zip)
   codename_to_api_level_map = GetCodenameToApiLevelMap(input_zip)
 
   ProcessTargetFiles(input_zip, output_zip, misc_info,
-                     apk_key_map, key_passwords,
-                     platform_api_level,
-                     codename_to_api_level_map,
+                     apk_keys, apex_keys, key_passwords,
+                     platform_api_level, codename_to_api_level_map,
                      compressed_extension)
 
   common.ZipClose(input_zip)

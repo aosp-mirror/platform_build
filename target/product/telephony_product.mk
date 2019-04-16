@@ -21,3 +21,4 @@
 PRODUCT_PACKAGES += \
     CarrierConfig \
     Dialer \
+    EmergencyInfo \

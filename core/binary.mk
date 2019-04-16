@@ -257,6 +257,14 @@ ifneq ($(LOCAL_SDK_VERSION),)
   else # LOCAL_NDK_STL_VARIANT must be none
     # Do nothing.
   endif
+
+  # Clang's coverage/profile runtime needs symbols like 'stderr' that were not
+  # exported from libc prior to API level 23
+  ifneq ($(my_ndk_api),current)
+    ifeq ($(call math_lt, $(my_ndk_api),23),true)
+      my_native_coverage := false
+    endif
+  endif
 endif
 
 ifneq ($(LOCAL_USE_VNDK),)
@@ -432,9 +440,6 @@ endif
 ifneq ($(foreach i,$(my_c_includes),$(filter %/..,$(i))$(findstring /../,$(i))),)
 my_soong_problems += dotdot_incs
 endif
-ifneq ($(filter %.arm,$(my_src_files)),)
-my_soong_problems += srcs_dotarm
-endif
 
 ####################################################
 ## Add FDO flags if FDO is turned on and supported
@@ -498,19 +503,15 @@ endif
 ###########################################################
 LOCAL_ARM_MODE := $(strip $(LOCAL_ARM_MODE))
 ifeq ($($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH),arm)
-arm_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),arm)
 normal_objects_mode := $(if $(LOCAL_ARM_MODE),$(LOCAL_ARM_MODE),thumb)
 
 # Read the values from something like TARGET_arm_CFLAGS or
 # TARGET_thumb_CFLAGS.  HOST_(arm|thumb)_CFLAGS values aren't
 # actually used (although they are usually empty).
-arm_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(arm_objects_mode)_CFLAGS)
 normal_objects_cflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)$(normal_objects_mode)_CFLAGS)
 
 else
-arm_objects_mode :=
 normal_objects_mode :=
-arm_objects_cflags :=
 normal_objects_cflags :=
 endif
 
@@ -649,7 +650,7 @@ proto_gen_dir := $(generated_sources_dir)/proto
 proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
 
 my_rename_cpp_ext :=
-ifneq (,$(filter nanopb-c nanopb-c-enable_malloc, $(LOCAL_PROTOC_OPTIMIZE_TYPE)))
+ifneq (,$(filter nanopb-c nanopb-c-enable_malloc nanopb-c-16bit nanopb-c-enable_malloc-16bit nanopb-c-32bit nanopb-c-enable_malloc-32bit, $(LOCAL_PROTOC_OPTIMIZE_TYPE)))
 my_proto_source_suffix := .c
 my_proto_c_includes := external/nanopb-c
 my_protoc_flags := --nanopb_out=$(proto_gen_dir) \
@@ -704,6 +705,14 @@ ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-enable_malloc)
     my_static_libraries += libprotobuf-c-nano-enable_malloc
 else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c)
     my_static_libraries += libprotobuf-c-nano
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-enable_malloc-16bit)
+    my_static_libraries += libprotobuf-c-nano-enable_malloc-16bit
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-16bit)
+    my_static_libraries += libprotobuf-c-nano-16bit
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-enable_malloc-32bit)
+    my_static_libraries += libprotobuf-c-nano-enable_malloc-32bit
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nanopb-c-32bit)
+    my_static_libraries += libprotobuf-c-nano-32bit
 else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),full)
     ifdef LOCAL_SDK_VERSION
         my_static_libraries += libprotobuf-cpp-full-ndk
@@ -845,22 +854,9 @@ endif
 ## C++: Compile .cpp files to .o.
 ###########################################################
 
-# we also do this on host modules, even though
-# it's not really arm, because there are files that are shared.
-cpp_arm_sources := $(patsubst %$(LOCAL_CPP_EXTENSION).arm,%$(LOCAL_CPP_EXTENSION),$(filter %$(LOCAL_CPP_EXTENSION).arm,$(my_src_files)))
-dotdot_arm_sources := $(filter ../%,$(cpp_arm_sources))
-cpp_arm_sources := $(filter-out ../%,$(cpp_arm_sources))
-cpp_arm_objects := $(addprefix $(intermediates)/,$(cpp_arm_sources:$(LOCAL_CPP_EXTENSION)=.o))
-$(call track-src-file-obj,$(patsubst %,%.arm,$(cpp_arm_sources)),$(cpp_arm_objects))
-
-# For source files starting with ../, we remove all the ../ in the object file path,
-# to avoid object file escaping the intermediate directory.
-dotdot_arm_objects :=
-$(foreach s,$(dotdot_arm_sources),\
-  $(eval $(call compile-dotdot-cpp-file,$(s),\
-  $(my_additional_dependencies),\
-  dotdot_arm_objects)))
-$(call track-src-file-obj,$(patsubst %,%.arm,$(dotdot_arm_sources)),$(dotdot_arm_objects))
+ifneq ($(filter %$(LOCAL_CPP_EXTENSION).arm,$(my_src_files)),)
+$(call pretty-error,Files ending in $(LOCAL_CPP_EXTENSION).arm are deprecated. See $(CHANGES_URL)#file_arm)
+endif
 
 dotdot_sources := $(filter ../%$(LOCAL_CPP_EXTENSION),$(my_src_files))
 dotdot_objects :=
@@ -871,15 +867,11 @@ $(foreach s,$(dotdot_sources),\
 $(call track-src-file-obj,$(dotdot_sources),$(dotdot_objects))
 
 cpp_normal_sources := $(filter-out ../%,$(filter %$(LOCAL_CPP_EXTENSION),$(my_src_files)))
-cpp_normal_objects := $(addprefix $(intermediates)/,$(cpp_normal_sources:$(LOCAL_CPP_EXTENSION)=.o))
-$(call track-src-file-obj,$(cpp_normal_sources),$(cpp_normal_objects))
+cpp_objects := $(addprefix $(intermediates)/,$(cpp_normal_sources:$(LOCAL_CPP_EXTENSION)=.o))
+$(call track-src-file-obj,$(cpp_normal_sources),$(cpp_objects))
 
-$(dotdot_arm_objects) $(cpp_arm_objects): PRIVATE_ARM_MODE := $(arm_objects_mode)
-$(dotdot_arm_objects) $(cpp_arm_objects): PRIVATE_ARM_CFLAGS := $(arm_objects_cflags)
-$(dotdot_objects) $(cpp_normal_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
-$(dotdot_objects) $(cpp_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-
-cpp_objects        := $(cpp_arm_objects) $(cpp_normal_objects)
+$(dotdot_objects) $(cpp_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
+$(dotdot_objects) $(cpp_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 
 ifneq ($(strip $(cpp_objects)),)
 $(cpp_objects): $(intermediates)/%.o: \
@@ -889,7 +881,7 @@ $(cpp_objects): $(intermediates)/%.o: \
 $(call include-depfiles-for-objs, $(cpp_objects))
 endif
 
-cpp_objects += $(dotdot_arm_objects) $(dotdot_objects)
+cpp_objects += $(dotdot_objects)
 
 ###########################################################
 ## C++: Compile generated .cpp files to .o.
@@ -901,7 +893,6 @@ $(call track-gen-file-obj,$(gen_cpp_sources),$(gen_cpp_objects))
 
 ifneq ($(strip $(gen_cpp_objects)),)
 # Compile all generated files as thumb.
-# TODO: support compiling certain generated files as arm.
 $(gen_cpp_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_cpp_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(gen_cpp_objects): $(intermediates)/%.o: \
@@ -949,20 +940,9 @@ gen_o_objects := $(filter %.o,$(my_generated_sources))
 ## C: Compile .c files to .o.
 ###########################################################
 
-c_arm_sources := $(patsubst %.c.arm,%.c,$(filter %.c.arm,$(my_src_files)))
-dotdot_arm_sources := $(filter ../%,$(c_arm_sources))
-c_arm_sources := $(filter-out ../%,$(c_arm_sources))
-c_arm_objects := $(addprefix $(intermediates)/,$(c_arm_sources:.c=.o))
-$(call track-src-file-obj,$(patsubst %,%.arm,$(c_arm_sources)),$(c_arm_objects))
-
-# For source files starting with ../, we remove all the ../ in the object file path,
-# to avoid object file escaping the intermediate directory.
-dotdot_arm_objects :=
-$(foreach s,$(dotdot_arm_sources),\
-  $(eval $(call compile-dotdot-c-file,$(s),\
-    $(my_additional_dependencies),\
-    dotdot_arm_objects)))
-$(call track-src-file-obj,$(patsubst %,%.arm,$(dotdot_arm_sources)),$(dotdot_arm_objects))
+ifneq ($(filter %.c.arm,$(my_src_files)),)
+$(call pretty-error,Files ending in .c.arm are deprecated. See $(CHANGES_URL)#file_arm)
+endif
 
 dotdot_sources := $(filter ../%.c, $(my_src_files))
 dotdot_objects :=
@@ -973,15 +953,11 @@ $(foreach s, $(dotdot_sources),\
 $(call track-src-file-obj,$(dotdot_sources),$(dotdot_objects))
 
 c_normal_sources := $(filter-out ../%,$(filter %.c,$(my_src_files)))
-c_normal_objects := $(addprefix $(intermediates)/,$(c_normal_sources:.c=.o))
-$(call track-src-file-obj,$(c_normal_sources),$(c_normal_objects))
+c_objects := $(addprefix $(intermediates)/,$(c_normal_sources:.c=.o))
+$(call track-src-file-obj,$(c_normal_sources),$(c_objects))
 
-$(dotdot_arm_objects) $(c_arm_objects): PRIVATE_ARM_MODE := $(arm_objects_mode)
-$(dotdot_arm_objects) $(c_arm_objects): PRIVATE_ARM_CFLAGS := $(arm_objects_cflags)
-$(dotdot_objects) $(c_normal_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
-$(dotdot_objects) $(c_normal_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
-
-c_objects        := $(c_arm_objects) $(c_normal_objects)
+$(dotdot_objects) $(c_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
+$(dotdot_objects) $(c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 
 ifneq ($(strip $(c_objects)),)
 $(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c \
@@ -990,7 +966,7 @@ $(c_objects): $(intermediates)/%.o: $(TOPDIR)$(LOCAL_PATH)/%.c \
 $(call include-depfiles-for-objs, $(c_objects))
 endif
 
-c_objects += $(dotdot_arm_objects) $(dotdot_objects)
+c_objects += $(dotdot_objects)
 
 ###########################################################
 ## C: Compile generated .c files to .o.
@@ -1002,7 +978,6 @@ $(call track-gen-file-obj,$(gen_c_sources),$(gen_c_objects))
 
 ifneq ($(strip $(gen_c_objects)),)
 # Compile all generated files as thumb.
-# TODO: support compiling certain generated files as arm.
 $(gen_c_objects): PRIVATE_ARM_MODE := $(normal_objects_mode)
 $(gen_c_objects): PRIVATE_ARM_CFLAGS := $(normal_objects_cflags)
 $(gen_c_objects): $(intermediates)/%.o: $(intermediates)/%.c \
@@ -1239,17 +1214,17 @@ else ifdef LOCAL_USE_VNDK
         # with vendor_available: false
         my_link_type := native:vendor
         my_warn_types :=
-        my_allowed_types := native:vendor native:vndk
+        my_allowed_types := native:vendor native:vndk native:platform_vndk
     endif
 else ifneq ($(filter $(TARGET_RECOVERY_OUT)/%,$(call get_non_asan_path,$(LOCAL_MODULE_PATH))),)
 my_link_type := native:recovery
 my_warn_types :=
 # TODO(b/113303515) remove native:platform and my_allowed_ndk_types
-my_allowed_types := native:recovery native:platform $(my_allowed_ndk_types)
+my_allowed_types := native:recovery native:platform native:platform_vndk $(my_allowed_ndk_types)
 else
 my_link_type := native:platform
 my_warn_types := $(my_warn_ndk_types)
-my_allowed_types := $(my_allowed_ndk_types) native:platform
+my_allowed_types := $(my_allowed_ndk_types) native:platform native:platform_vndk
 endif
 
 my_link_deps := $(addprefix STATIC_LIBRARIES:,$(my_whole_static_libraries) $(my_static_libraries))
@@ -1563,11 +1538,10 @@ my_tidy_checks := $(subst $(space),,$(my_tidy_checks))
 
 # Add dependency of clang-tidy and clang-tidy.sh
 ifneq ($(my_tidy_checks),)
-  my_clang_tidy_programs := $(PATH_TO_CLANG_TIDY) $(PATH_TO_CLANG_TIDY_SHELL)
-  $(cpp_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
-  $(c_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
-  $(gen_cpp_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
-  $(gen_c_objects): $(intermediates)/%.o: $(my_clang_tidy_programs)
+  $(cpp_objects): $(intermediates)/%.o: $(PATH_TO_CLANG_TIDY)
+  $(c_objects): $(intermediates)/%.o: $(PATH_TO_CLANG_TIDY)
+  $(gen_cpp_objects): $(intermediates)/%.o: $(PATH_TO_CLANG_TIDY)
+  $(gen_c_objects): $(intermediates)/%.o: $(PATH_TO_CLANG_TIDY)
 endif
 
 # Move -l* entries from ldflags to ldlibs, and everything else to ldflags

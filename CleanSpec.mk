@@ -549,6 +549,77 @@ $(call add-clean-step, rm -f $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/hidden
 
 # Clean up previous default location of RROs
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/overlay)
+
+# Remove ART artifacts installed only by modules `art-runtime` and
+# `art-tools` in /system on target.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/dalvikvm)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/dalvikvm32)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/dalvikvm64)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/dex2oat)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/dex2oatd)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/dexdiag)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/dexdump)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/dexlist)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/dexoptanalyzer)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/dexoptanalyzerd)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/oatdump)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/profman)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/bin/profmand)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libadbconnection.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libadbconnectiond.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libart-compiler.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libartd-compiler.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libart-dexlayout.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libartd-dexlayout.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libart-disassembler.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libart.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libartd.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libartbase.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libartbased.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libdexfile.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libdexfiled.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libdexfile_external.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libdexfile_support.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libdt_fd_forward.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libdt_socket.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libjdwp.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libnpt.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libopenjdkd.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libopenjdkjvm.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libopenjdkjvmd.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libopenjdkjvmti.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libopenjdkjvmtid.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libprofile.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libprofiled.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libtombstoned_client.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libvixl.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libvixld.so)
+
+# Clean up old location of dexpreopted boot jars
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/dex_bootjars)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/dex_bootjars_input)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libnpt.so)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*)
+
+# Clean up old testcase files
+$(call add-clean-step, rm -rf $(TARGET_OUT_TESTCASES)/*)
+$(call add-clean-step, rm -rf $(HOST_OUT_TESTCASES)/*)
+$(call add-clean-step, rm -rf $(HOST_CROSS_OUT_TESTCASES)/*)
+$(call add-clean-step, rm -rf $(TARGET_OUT_DATA)/*)
+$(call add-clean-step, rm -rf $(HOST_OUT)/vts/*)
+$(call add-clean-step, rm -rf $(HOST_OUT)/framework/vts-tradefed.jar)
+
+# Clean up old location of system_other.avbpubkey
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/security/avb/)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/super.img)
+
+$(call add-clean-step, find $(PRODUCT_OUT) -type f -name "generated_*_image_info.txt" -print0 | xargs -0 rm -f)
+
+# Clean up libicuuc.so and libicui18n.so
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libicu*)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

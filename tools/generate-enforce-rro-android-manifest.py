@@ -23,10 +23,10 @@ import os
 import sys
 
 ANDROID_MANIFEST_TEMPLATE="""<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="%s.auto_generated_rro__"
+    package="%s.auto_generated_rro_%s__"
     android:versionCode="1"
     android:versionName="1.0">
-    <overlay android:targetPackage="%s" android:priority="0" android:isStatic="true"/>
+    <overlay android:targetPackage="%s" android:priority="%s" android:isStatic="true"/>
 </manifest>
 """
 
@@ -40,6 +40,12 @@ def get_args():
         '-p', '--package-info', required=True,
         help='Manifest package name or manifest file path of source module.')
     parser.add_argument(
+        '--partition', required=True,
+        help='The partition this RRO package is installed on.')
+    parser.add_argument(
+        '--priority', required=True,
+        help='The priority for the <overlay>.')
+    parser.add_argument(
         '-o', '--output', required=True,
         help='Output manifest file path.')
     return parser.parse_args()
@@ -48,8 +54,11 @@ def get_args():
 def main(argv):
   args = get_args()
 
-  package_name = args.package_info
-  if not args.use_package_name:
+  partition = args.partition
+  priority = args.priority
+  if args.use_package_name:
+    package_name = args.package_info
+  else:
     with open(args.package_info) as f:
       data = f.read()
       f.close()
@@ -57,7 +66,7 @@ def main(argv):
       package_name = dom.documentElement.getAttribute('package')
 
   with open(args.output, 'w+') as f:
-    f.write(ANDROID_MANIFEST_TEMPLATE % (package_name, package_name))
+    f.write(ANDROID_MANIFEST_TEMPLATE % (package_name, partition, package_name, priority))
     f.close()
 
 

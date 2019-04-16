@@ -34,18 +34,6 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
   def setUp(self):
     OPTIONS.input_tmp = common.MakeTempDir()
 
-  def _verifyCareMap(self, expected, file_name):
-    """Parses the care_map.pb; and checks the content in plain text."""
-    text_file = common.MakeTempFile(prefix="caremap-", suffix=".txt")
-
-    # Calls an external binary to convert the proto message.
-    cmd = ["care_map_generator", "--parse_proto", file_name, text_file]
-    common.RunAndCheckOutput(cmd)
-
-    with open(text_file, 'r') as verify_fp:
-      plain_text = verify_fp.read()
-    self.assertEqual('\n'.join(expected), plain_text)
-
   @staticmethod
   def _create_images(images, prefix):
     """Creates images under OPTIONS.input_tmp/prefix."""
@@ -164,6 +152,19 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     }
     return image_paths
 
+  def _verifyCareMap(self, expected, file_name):
+    """Parses the care_map.pb; and checks the content in plain text."""
+    text_file = common.MakeTempFile(prefix="caremap-", suffix=".txt")
+
+    # Calls an external binary to convert the proto message.
+    cmd = ["care_map_generator", "--parse_proto", file_name, text_file]
+    common.RunAndCheckOutput(cmd)
+
+    with open(text_file) as verify_fp:
+      plain_text = verify_fp.read()
+    self.assertEqual('\n'.join(expected), plain_text)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_AddCareMapForAbOta(self):
     image_paths = self._test_AddCareMapForAbOta()
 
@@ -179,6 +180,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     self._verifyCareMap(expected, care_map_file)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_AddCareMapForAbOta_withNonCareMapPartitions(self):
     """Partitions without care_map should be ignored."""
     image_paths = self._test_AddCareMapForAbOta()
@@ -196,6 +198,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     self._verifyCareMap(expected, care_map_file)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_AddCareMapForAbOta_withAvb(self):
     """Tests the case for device using AVB."""
     image_paths = self._test_AddCareMapForAbOta()
@@ -223,6 +226,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     self._verifyCareMap(expected, care_map_file)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_AddCareMapForAbOta_noFingerprint(self):
     """Tests the case for partitions without fingerprint."""
     image_paths = self._test_AddCareMapForAbOta()
@@ -240,6 +244,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     self._verifyCareMap(expected, care_map_file)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_AddCareMapForAbOta_withThumbprint(self):
     """Tests the case for partitions with thumbprint."""
     image_paths = self._test_AddCareMapForAbOta()
@@ -282,6 +287,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertRaises(AssertionError, AddCareMapForAbOta, None,
                       ['system', 'vendor'], image_paths)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_AddCareMapForAbOta_zipOutput(self):
     """Tests the case with ZIP output."""
     image_paths = self._test_AddCareMapForAbOta()
@@ -304,6 +310,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
                 "google/sailfish/678:user/dev-keys"]
     self._verifyCareMap(expected, os.path.join(temp_dir, care_map_name))
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_AddCareMapForAbOta_zipOutput_careMapEntryExists(self):
     """Tests the case with ZIP output which already has care_map entry."""
     image_paths = self._test_AddCareMapForAbOta()
@@ -338,6 +345,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual(
         ['--include_descriptors_from_image', '/path/to/system.img'], cmd)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
   def test_AppendVBMetaArgsForPartition_vendorAsChainedPartition(self):
     testdata_dir = test_utils.get_testdata_dir()
     pubkey = os.path.join(testdata_dir, 'testkey.pubkey.pem')
@@ -362,7 +370,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         (0xCAC3, 4),
         (0xCAC1, 6)])
     OPTIONS.info_dict = {
-        'system_image_blocks' : 12,
+        'system_image_size' : 53248,
     }
     name, care_map = GetCareMap('system', sparse_image)
     self.assertEqual('system', name)
@@ -377,6 +385,6 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         (0xCAC3, 4),
         (0xCAC1, 6)])
     OPTIONS.info_dict = {
-        'system_image_blocks' : -12,
+        'system_image_size' : -45056,
     }
     self.assertRaises(AssertionError, GetCareMap, 'system', sparse_image)

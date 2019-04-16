@@ -52,3 +52,59 @@ LOCAL_PREBUILT_MODULE_FILE := $(GEN)
 include $(BUILD_PREBUILT)
 BUILT_VENDOR_MANIFEST := $(LOCAL_BUILT_MODULE)
 endif
+
+# ODM manifest
+ifdef ODM_MANIFEST_FILES
+# ODM_MANIFEST_FILES is a list of files that is combined and installed as the default ODM manifest.
+include $(CLEAR_VARS)
+LOCAL_MODULE := odm_manifest.xml
+LOCAL_MODULE_STEM := manifest.xml
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_RELATIVE_PATH := vintf
+LOCAL_ODM_MODULE := true
+
+GEN := $(local-generated-sources-dir)/manifest.xml
+$(GEN): PRIVATE_SRC_FILES := $(ODM_MANIFEST_FILES)
+$(GEN): $(ODM_MANIFEST_FILES) $(HOST_OUT_EXECUTABLES)/assemble_vintf
+	# Set VINTF_IGNORE_TARGET_FCM_VERSION to true because it should only be in device manifest.
+	VINTF_IGNORE_TARGET_FCM_VERSION=true \
+	$(HOST_OUT_EXECUTABLES)/assemble_vintf -o $@ \
+		-i $(call normalize-path-list,$(PRIVATE_SRC_FILES))
+
+LOCAL_PREBUILT_MODULE_FILE := $(GEN)
+include $(BUILD_PREBUILT)
+endif # ODM_MANIFEST_FILES
+
+# ODM_MANIFEST_SKUS: a list of SKUS where ODM_MANIFEST_<sku>_FILES are defined.
+ifdef ODM_MANIFEST_SKUS
+
+# Install /odm/etc/vintf/manifest_$(sku).xml
+# $(1): sku
+define _add_odm_sku_manifest
+my_fragment_files_var := ODM_MANIFEST_$$(call to-upper,$(1))_FILES
+ifndef $$(my_fragment_files_var)
+$$(error $(1) is in ODM_MANIFEST_SKUS but $$(my_fragment_files_var) is not defined)
+endif
+my_fragment_files := $$($$(my_fragment_files_var))
+include $$(CLEAR_VARS)
+LOCAL_MODULE := odm_manifest_$(1).xml
+LOCAL_MODULE_STEM := manifest_$(1).xml
+LOCAL_MODULE_CLASS := ETC
+LOCAL_MODULE_RELATIVE_PATH := vintf
+LOCAL_ODM_MODULE := true
+GEN := $$(local-generated-sources-dir)/manifest_$(1).xml
+$$(GEN): PRIVATE_SRC_FILES := $$(my_fragment_files)
+$$(GEN): $$(my_fragment_files) $$(HOST_OUT_EXECUTABLES)/assemble_vintf
+	VINTF_IGNORE_TARGET_FCM_VERSION=true \
+	$$(HOST_OUT_EXECUTABLES)/assemble_vintf -o $$@ \
+		-i $$(call normalize-path-list,$$(PRIVATE_SRC_FILES))
+LOCAL_PREBUILT_MODULE_FILE := $$(GEN)
+include $$(BUILD_PREBUILT)
+my_fragment_files_var :=
+my_fragment_files :=
+endef
+
+$(foreach sku, $(ODM_MANIFEST_SKUS), $(eval $(call _add_odm_sku_manifest,$(sku))))
+_add_odm_sku_manifest :=
+
+endif # ODM_MANIFEST_SKUS

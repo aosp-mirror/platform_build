@@ -19,7 +19,7 @@
 # remove classes that are no longer in use.
 # Ideally we would just generate an empty boot.art but we don't have the build
 # support to separate the image from the compile code.
-PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION := build/target/product/empty-profile
+PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION := build/make/target/product/empty-profile
 PRODUCT_DEX_PREOPT_BOOT_FLAGS := --count-hotness-in-compiled-code
 DEX_PREOPT_DEFAULT := nostripping
 
@@ -28,7 +28,7 @@ DONT_UNCOMPRESS_PRIV_APPS_DEXS := true
 
 # Use an empty preloaded-classes list.
 PRODUCT_COPY_FILES += \
-    build/target/product/empty-preloaded-classes:system/etc/preloaded-classes
+    build/make/target/product/empty-preloaded-classes:system/etc/preloaded-classes
 
 # Boot image property overrides.
 PRODUCT_PROPERTY_OVERRIDES += \

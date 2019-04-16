@@ -18,12 +18,24 @@
 PRODUCT_PACKAGES += \
     adbd.recovery \
     android.hardware.health@2.0-impl-default.recovery \
+    cgroups.recovery.json \
+    charger.recovery \
     init_second_stage.recovery \
     ld.config.recovery.txt \
     linker.recovery \
     recovery \
     shell_and_utilities_recovery \
     watchdogd.recovery \
+
+# These had been pulled in via init_second_stage.recovery, but may not be needed.
+PRODUCT_HOST_PACKAGES += \
+    e2fsdroid \
+    mke2fs \
+    sload_f2fs \
+    make_f2fs \
+
+PRODUCT_HOST_PACKAGES += \
+    icu-data_host_runtime_apex
 
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \

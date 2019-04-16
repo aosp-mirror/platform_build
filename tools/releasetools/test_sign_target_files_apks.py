@@ -21,8 +21,8 @@ import zipfile
 import common
 import test_utils
 from sign_target_files_apks import (
-    CheckAllApksSigned, EditTags, GetApkFileInfo, ReplaceCerts,
-    ReplaceVerityKeyId, RewriteProps)
+    CheckApkAndApexKeysAvailable, EditTags, GetApkFileInfo, ReadApexKeysInfo,
+    ReplaceCerts, ReplaceVerityKeyId, RewriteProps)
 
 
 class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
@@ -32,6 +32,11 @@ class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
   <signer signature="{}"><seinfo value="platform"/></signer>
   <signer signature="{}"><seinfo value="media"/></signer>
 </policy>"""
+
+  # pylint: disable=line-too-long
+  APEX_KEYS_TXT = """name="apex.apexd_test.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem" container_certificate="build/make/target/product/security/testkey.x509.pem" container_private_key="build/make/target/product/security/testkey.pk8"
+name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" container_certificate="build/make/target/product/security/testkey.x509.pem" container_private_key="build/make/target/product/security/testkey.pk8"
+"""
 
   def setUp(self):
     self.testdata_dir = test_utils.get_testdata_dir()
@@ -207,7 +212,7 @@ class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
     }
     self.assertEqual(output_xml, ReplaceCerts(input_xml))
 
-  def test_CheckAllApksSigned(self):
+  def test_CheckApkAndApexKeysAvailable(self):
     input_file = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(input_file, 'w') as input_zip:
       input_zip.writestr('SYSTEM/app/App1.apk', "App1-content")
@@ -219,16 +224,50 @@ class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
         'App3.apk' : 'key3',
     }
     with zipfile.ZipFile(input_file) as input_zip:
-      CheckAllApksSigned(input_zip, apk_key_map, None)
-      CheckAllApksSigned(input_zip, apk_key_map, '.gz')
+      CheckApkAndApexKeysAvailable(input_zip, apk_key_map, None, {})
+      CheckApkAndApexKeysAvailable(input_zip, apk_key_map, '.gz', {})
 
       # 'App2.apk.gz' won't be considered as an APK.
-      CheckAllApksSigned(input_zip, apk_key_map, None)
-      CheckAllApksSigned(input_zip, apk_key_map, '.xz')
+      CheckApkAndApexKeysAvailable(input_zip, apk_key_map, None, {})
+      CheckApkAndApexKeysAvailable(input_zip, apk_key_map, '.xz', {})
 
       del apk_key_map['App2.apk']
       self.assertRaises(
-          AssertionError, CheckAllApksSigned, input_zip, apk_key_map, '.gz')
+          AssertionError, CheckApkAndApexKeysAvailable, input_zip, apk_key_map,
+          '.gz', {})
+
+  def test_CheckApkAndApexKeysAvailable_invalidApexKeys(self):
+    input_file = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(input_file, 'w') as input_zip:
+      input_zip.writestr('SYSTEM/apex/Apex1.apex', "Apex1-content")
+      input_zip.writestr('SYSTEM/apex/Apex2.apex', "Apex2-content")
+
+    apk_key_map = {
+        'Apex1.apex' : 'key1',
+        'Apex2.apex' : 'key2',
+        'Apex3.apex' : 'key3',
+    }
+    apex_keys = {
+        'Apex1.apex' : ('payload-key1', 'container-key1'),
+        'Apex2.apex' : ('payload-key2', 'container-key2'),
+    }
+    with zipfile.ZipFile(input_file) as input_zip:
+      CheckApkAndApexKeysAvailable(input_zip, apk_key_map, None, apex_keys)
+
+      # Fine to have both keys as PRESIGNED.
+      apex_keys['Apex2.apex'] = ('PRESIGNED', 'PRESIGNED')
+      CheckApkAndApexKeysAvailable(input_zip, apk_key_map, None, apex_keys)
+
+      # Having only one of them as PRESIGNED is not allowed.
+      apex_keys['Apex2.apex'] = ('payload-key2', 'PRESIGNED')
+      self.assertRaises(
+          AssertionError, CheckApkAndApexKeysAvailable, input_zip, apk_key_map,
+          None, apex_keys)
+
+      apex_keys['Apex2.apex'] = ('PRESIGNED', 'container-key1')
+      self.assertRaises(
+          AssertionError, CheckApkAndApexKeysAvailable, input_zip, apk_key_map,
+          None, apex_keys)
 
   def test_GetApkFileInfo(self):
     (is_apk, is_compressed, should_be_skipped) = GetApkFileInfo(
@@ -344,3 +383,81 @@ class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
     self.assertRaises(
         AssertionError, GetApkFileInfo, "SYSTEM_OTHER/preloads/apps/Chats.apk",
         None, None)
+
+  def test_ReadApexKeysInfo(self):
+    target_files = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.writestr('META/apexkeys.txt', self.APEX_KEYS_TXT)
+
+    with zipfile.ZipFile(target_files) as target_files_zip:
+      keys_info = ReadApexKeysInfo(target_files_zip)
+
+    self.assertEqual({
+        'apex.apexd_test.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
+            'build/make/target/product/security/testkey'),
+        'apex.apexd_test_different_app.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
+            'build/make/target/product/security/testkey'),
+        }, keys_info)
+
+  def test_ReadApexKeysInfo_mismatchingContainerKeys(self):
+    # Mismatching payload public / private keys.
+    apex_keys = self.APEX_KEYS_TXT + (
+        'name="apex.apexd_test_different_app2.apex" '
+        'public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" '
+        'private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" '
+        'container_certificate="build/make/target/product/security/testkey.x509.pem" '
+        'container_private_key="build/make/target/product/security/testkey2.pk8"')
+    target_files = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.writestr('META/apexkeys.txt', apex_keys)
+
+    with zipfile.ZipFile(target_files) as target_files_zip:
+      self.assertRaises(ValueError, ReadApexKeysInfo, target_files_zip)
+
+  def test_ReadApexKeysInfo_missingPayloadPrivateKey(self):
+    # Invalid lines will be skipped.
+    apex_keys = self.APEX_KEYS_TXT + (
+        'name="apex.apexd_test_different_app2.apex" '
+        'public_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.avbpubkey" '
+        'container_certificate="build/make/target/product/security/testkey.x509.pem" '
+        'container_private_key="build/make/target/product/security/testkey.pk8"')
+    target_files = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.writestr('META/apexkeys.txt', apex_keys)
+
+    with zipfile.ZipFile(target_files) as target_files_zip:
+      keys_info = ReadApexKeysInfo(target_files_zip)
+
+    self.assertEqual({
+        'apex.apexd_test.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
+            'build/make/target/product/security/testkey'),
+        'apex.apexd_test_different_app.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
+            'build/make/target/product/security/testkey'),
+        }, keys_info)
+
+  def test_ReadApexKeysInfo_missingPayloadPublicKey(self):
+    # Invalid lines will be skipped.
+    apex_keys = self.APEX_KEYS_TXT + (
+        'name="apex.apexd_test_different_app2.apex" '
+        'private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" '
+        'container_certificate="build/make/target/product/security/testkey.x509.pem" '
+        'container_private_key="build/make/target/product/security/testkey.pk8"')
+    target_files = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.writestr('META/apexkeys.txt', apex_keys)
+
+    with zipfile.ZipFile(target_files) as target_files_zip:
+      keys_info = ReadApexKeysInfo(target_files_zip)
+
+    self.assertEqual({
+        'apex.apexd_test.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
+            'build/make/target/product/security/testkey'),
+        'apex.apexd_test_different_app.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
+            'build/make/target/product/security/testkey'),
+        }, keys_info)
