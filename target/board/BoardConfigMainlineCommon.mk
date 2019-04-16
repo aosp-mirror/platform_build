@@ -4,17 +4,13 @@
 
 # The generic product target doesn't have any hardware-specific pieces.
 TARGET_NO_BOOTLOADER := true
-TARGET_NO_KERNEL := true
+TARGET_NO_RECOVERY := true
 
 TARGET_USERIMAGES_USE_EXT4 := true
 
 # Mainline devices must have /vendor and /product partitions.
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_PRODUCT := product
-
-# system-as-root is mandatory from Android P
-TARGET_NO_RECOVERY := true
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 
 BOARD_VNDK_VERSION := current
 
@@ -39,3 +35,12 @@ BOARD_AVB_ENABLE := true
 BOARD_AVB_ROLLBACK_INDEX := $(PLATFORM_SECURITY_PATCH_TIMESTAMP)
 
 BOARD_CHARGER_ENABLE_SUSPEND := true
+
+# Enable A/B update
+AB_OTA_UPDATER := true
+
+# Enable system property split for Treble
+BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
+
+# Generate an APEX image for experiment b/119800099.
+DEXPREOPT_GENERATE_APEX_IMAGE := true

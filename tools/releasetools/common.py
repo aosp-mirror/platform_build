@@ -17,6 +17,7 @@ from __future__ import print_function
 import collections
 import copy
 import errno
+import fnmatch
 import getopt
 import getpass
 import gzip
@@ -46,9 +47,16 @@ logger = logging.getLogger(__name__)
 
 class Options(object):
   def __init__(self):
+    base_out_path = os.getenv('OUT_DIR_COMMON_BASE')
+    if base_out_path is None:
+      base_search_path = "out"
+    else:
+      base_search_path = os.path.join(base_out_path,
+                                      os.path.basename(os.getcwd()))
+
     platform_search_path = {
-        "linux2": "out/host/linux-x86",
-        "darwin": "out/host/darwin-x86",
+        "linux2": os.path.join(base_search_path, "host/linux-x86"),
+        "darwin": os.path.join(base_search_path, "host/darwin-x86"),
     }
 
     self.search_path = platform_search_path.get(sys.platform)
@@ -188,6 +196,29 @@ def Run(args, verbose=None, **kwargs):
   if verbose != False:
     logger.info("  Running: \"%s\"", " ".join(args))
   return subprocess.Popen(args, **kwargs)
+
+
+def RunAndWait(args, verbose=None, **kwargs):
+  """Runs the given command waiting for it to complete.
+
+  Args:
+    args: The command represented as a list of strings.
+    verbose: Whether the commands should be shown. Default to the global
+        verbosity if unspecified.
+    kwargs: Any additional args to be passed to subprocess.Popen(), such as env,
+        stdin, etc. stdout and stderr will default to subprocess.PIPE and
+        subprocess.STDOUT respectively unless caller specifies any of them.
+
+  Raises:
+    ExternalError: On non-zero exit from the command.
+  """
+  proc = Run(args, verbose=verbose, **kwargs)
+  proc.wait()
+
+  if proc.returncode != 0:
+    raise ExternalError(
+        "Failed to run command '{}' (exit code {})".format(
+            args, proc.returncode))
 
 
 def RunAndCheckOutput(args, verbose=None, **kwargs):
@@ -523,11 +554,7 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   """
   if key is None:
     key = info_dict["avb_" + partition + "_key_path"]
-  avbtool = os.getenv('AVBTOOL') or info_dict["avb_avbtool"]
-  pubkey_path = MakeTempFile(prefix="avb-", suffix=".pubkey")
-  RunAndCheckOutput(
-      [avbtool, "extract_public_key", "--key", key, "--output", pubkey_path])
-
+  pubkey_path = ExtractAvbPublicKey(key)
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
   return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
@@ -678,7 +705,7 @@ def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
 
   # AVB: if enabled, calculate and add hash to boot.img or recovery.img.
   if info_dict.get("avb_enable") == "true":
-    avbtool = os.getenv('AVBTOOL') or info_dict["avb_avbtool"]
+    avbtool = info_dict["avb_avbtool"]
     part_size = info_dict[partition_name + "_size"]
     cmd = [avbtool, "add_hash_footer", "--image", img.name,
            "--partition_size", str(part_size), "--partition_name",
@@ -745,33 +772,128 @@ def Gunzip(in_filename, out_filename):
     shutil.copyfileobj(in_file, out_file)
 
 
+def UnzipToDir(filename, dirname, patterns=None):
+  """Unzips the archive to the given directory.
+
+  Args:
+    filename: The name of the zip file to unzip.
+    dirname: Where the unziped files will land.
+    patterns: Files to unzip from the archive. If omitted, will unzip the entire
+        archvie. Non-matching patterns will be filtered out. If there's no match
+        after the filtering, no file will be unzipped.
+  """
+  cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
+  if patterns is not None:
+    # Filter out non-matching patterns. unzip will complain otherwise.
+    with zipfile.ZipFile(filename) as input_zip:
+      names = input_zip.namelist()
+    filtered = [
+        pattern for pattern in patterns if fnmatch.filter(names, pattern)]
+
+    # There isn't any matching files. Don't unzip anything.
+    if not filtered:
+      return
+    cmd.extend(filtered)
+
+  RunAndCheckOutput(cmd)
+
+
 def UnzipTemp(filename, pattern=None):
   """Unzips the given archive into a temporary directory and returns the name.
 
-  If filename is of the form "foo.zip+bar.zip", unzip foo.zip into a temp dir,
-  then unzip bar.zip into that_dir/BOOTABLE_IMAGES.
+  Args:
+    filename: If filename is of the form "foo.zip+bar.zip", unzip foo.zip into
+    a temp dir, then unzip bar.zip into that_dir/BOOTABLE_IMAGES.
+
+    pattern: Files to unzip from the archive. If omitted, will unzip the entire
+    archvie.
 
   Returns:
     The name of the temporary directory.
   """
 
-  def unzip_to_dir(filename, dirname):
-    cmd = ["unzip", "-o", "-q", filename, "-d", dirname]
-    if pattern is not None:
-      cmd.extend(pattern)
-    RunAndCheckOutput(cmd)
-
   tmp = MakeTempDir(prefix="targetfiles-")
   m = re.match(r"^(.*[.]zip)\+(.*[.]zip)$", filename, re.IGNORECASE)
   if m:
-    unzip_to_dir(m.group(1), tmp)
-    unzip_to_dir(m.group(2), os.path.join(tmp, "BOOTABLE_IMAGES"))
+    UnzipToDir(m.group(1), tmp, pattern)
+    UnzipToDir(m.group(2), os.path.join(tmp, "BOOTABLE_IMAGES"), pattern)
     filename = m.group(1)
   else:
-    unzip_to_dir(filename, tmp)
+    UnzipToDir(filename, tmp, pattern)
 
   return tmp
 
+
+def GetUserImage(which, tmpdir, input_zip,
+                 info_dict=None,
+                 allow_shared_blocks=None,
+                 hashtree_info_generator=None,
+                 reset_file_map=False):
+  """Returns an Image object suitable for passing to BlockImageDiff.
+
+  This function loads the specified image from the given path. If the specified
+  image is sparse, it also performs additional processing for OTA purpose. For
+  example, it always adds block 0 to clobbered blocks list. It also detects
+  files that cannot be reconstructed from the block list, for whom we should
+  avoid applying imgdiff.
+
+  Args:
+    which: The partition name.
+    tmpdir: The directory that contains the prebuilt image and block map file.
+    input_zip: The target-files ZIP archive.
+    info_dict: The dict to be looked up for relevant info.
+    allow_shared_blocks: If image is sparse, whether having shared blocks is
+        allowed. If none, it is looked up from info_dict.
+    hashtree_info_generator: If present and image is sparse, generates the
+        hashtree_info for this sparse image.
+    reset_file_map: If true and image is sparse, reset file map before returning
+        the image.
+  Returns:
+    A Image object. If it is a sparse image and reset_file_map is False, the
+    image will have file_map info loaded.
+  """
+  if info_dict == None:
+    info_dict = LoadInfoDict(input_zip)
+
+  is_sparse = info_dict.get("extfs_sparse_flag")
+
+  # When target uses 'BOARD_EXT4_SHARE_DUP_BLOCKS := true', images may contain
+  # shared blocks (i.e. some blocks will show up in multiple files' block
+  # list). We can only allocate such shared blocks to the first "owner", and
+  # disable imgdiff for all later occurrences.
+  if allow_shared_blocks is None:
+    allow_shared_blocks = info_dict.get("ext4_share_dup_blocks") == "true"
+
+  if is_sparse:
+    img = GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
+                         hashtree_info_generator)
+    if reset_file_map:
+      img.ResetFileMap()
+    return img
+  else:
+    return GetNonSparseImage(which, tmpdir, hashtree_info_generator)
+
+
+def GetNonSparseImage(which, tmpdir, hashtree_info_generator=None):
+  """Returns a Image object suitable for passing to BlockImageDiff.
+
+  This function loads the specified non-sparse image from the given path.
+
+  Args:
+    which: The partition name.
+    tmpdir: The directory that contains the prebuilt image and block map file.
+  Returns:
+    A Image object.
+  """
+  path = os.path.join(tmpdir, "IMAGES", which + ".img")
+  mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
+
+  # The image and map files must have been created prior to calling
+  # ota_from_target_files.py (since LMP).
+  assert os.path.exists(path) and os.path.exists(mappath)
+
+  return blockimgdiff.FileImage(path, hashtree_info_generator=
+                                hashtree_info_generator)
 
 def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
                    hashtree_info_generator=None):
@@ -783,7 +905,7 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
   reconstructed from the block list, for whom we should avoid applying imgdiff.
 
   Args:
-    which: The partition name, which must be "system" or "vendor".
+    which: The partition name, e.g. "system", "vendor".
     tmpdir: The directory that contains the prebuilt image and block map file.
     input_zip: The target-files ZIP archive.
     allow_shared_blocks: Whether having shared blocks is allowed.
@@ -792,8 +914,6 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
   Returns:
     A SparseImage object, with file_map info loaded.
   """
-  assert which in ("system", "vendor")
-
   path = os.path.join(tmpdir, "IMAGES", which + ".img")
   mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
 
@@ -957,7 +1077,8 @@ def GetMinSdkVersionInt(apk_name, codename_to_api_level_map):
 
 
 def SignFile(input_name, output_name, key, password, min_api_level=None,
-             codename_to_api_level_map=None, whole_file=False):
+             codename_to_api_level_map=None, whole_file=False,
+             extra_signapk_args=None):
   """Sign the input_name zip/jar/apk, producing output_name.  Use the
   given key and password (the latter may be None if the key does not
   have a password.
@@ -972,9 +1093,14 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
 
   codename_to_api_level_map is needed to translate the codename which may be
   encountered as the APK's minSdkVersion.
+
+  Caller may optionally specify extra args to be passed to SignApk, which
+  defaults to OPTIONS.extra_signapk_args if omitted.
   """
   if codename_to_api_level_map is None:
     codename_to_api_level_map = {}
+  if extra_signapk_args is None:
+    extra_signapk_args = OPTIONS.extra_signapk_args
 
   java_library_path = os.path.join(
       OPTIONS.search_path, OPTIONS.signapk_shared_library_path)
@@ -982,7 +1108,7 @@ def SignFile(input_name, output_name, key, password, min_api_level=None,
   cmd = ([OPTIONS.java_path] + OPTIONS.java_args +
          ["-Djava.library.path=" + java_library_path,
           "-jar", os.path.join(OPTIONS.search_path, OPTIONS.signapk_path)] +
-         OPTIONS.extra_signapk_args)
+         extra_signapk_args)
   if whole_file:
     cmd.append("-w")
 
@@ -2013,7 +2139,7 @@ class BlockDifference(object):
 
 
 DataImage = blockimgdiff.DataImage
-
+EmptyImage = blockimgdiff.EmptyImage
 
 # map recovery.fstab's fs_types to mount/format "partition types"
 PARTITION_TYPES = {
@@ -2076,6 +2202,21 @@ def ExtractPublicKey(cert):
   assert proc.returncode == 0, \
       'Failed to dump public key from certificate: %s\n%s' % (cert, stderrdata)
   return pubkey
+
+
+def ExtractAvbPublicKey(key):
+  """Extracts the AVB public key from the given public or private key.
+
+  Args:
+    key: The input key file, which should be PEM-encoded public or private key.
+
+  Returns:
+    The path to the extracted AVB public key file.
+  """
+  output = MakeTempFile(prefix='avb-', suffix='.avbpubkey')
+  RunAndCheckOutput(
+      ['avbtool', 'extract_public_key', "--key", key, "--output", output])
+  return output
 
 
 def MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img,

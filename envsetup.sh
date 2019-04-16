@@ -267,6 +267,13 @@ function setpaths()
         export ANDROID_EMULATOR_PREBUILTS
     fi
 
+    # Append asuite prebuilts path to ANDROID_BUILD_PATHS.
+    local os_arch=$(get_build_var HOST_PREBUILT_TAG)
+    local ACLOUD_PATH="$T/prebuilts/asuite/acloud/$os_arch:"
+    local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch:"
+    local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch:"
+    export ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS$ACLOUD_PATH$AIDEGEN_PATH$ATEST_PATH
+
     export PATH=$ANDROID_BUILD_PATHS$PATH
 
     # out with the duplicate old
@@ -355,7 +362,7 @@ function addcompletions()
     local completion_files=(
       system/core/adb/adb.bash
       system/core/fastboot/fastboot.bash
-      tools/tradefederation/core/atest/atest_completion.sh
+      tools/asuite/asuite.sh
     )
     # Completion can be disabled selectively to allow users to use non-standard completion.
     # e.g.
@@ -548,19 +555,14 @@ function choosecombo()
     destroy_build_var_cache
 }
 
-# Clear this variable.  It will be built up again when the vendorsetup.sh
-# files are included at the end of this file.
-unset LUNCH_MENU_CHOICES
 function add_lunch_combo()
 {
-    local new_combo=$1
-    local c
-    for c in ${LUNCH_MENU_CHOICES[@]} ; do
-        if [ "$new_combo" = "$c" ] ; then
-            return
-        fi
-    done
-    LUNCH_MENU_CHOICES=(${LUNCH_MENU_CHOICES[@]} $new_combo)
+    if [ -n "$ZSH_VERSION" ]; then
+        echo -n "${funcfiletrace[1]}: "
+    else
+        echo -n "${BASH_SOURCE[1]}:${BASH_LINENO[0]}: "
+    fi
+    echo "add_lunch_combo is obsolete. Use COMMON_LUNCH_CHOICES in your AndroidProducts.mk instead."
 }
 
 function print_lunch_menu()
@@ -573,7 +575,7 @@ function print_lunch_menu()
 
     local i=1
     local choice
-    for choice in $(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES)
+    for choice in $(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
     do
         echo "     $i. $choice"
         i=$(($i+1))
@@ -601,7 +603,7 @@ function lunch()
         selection=aosp_arm-eng
     elif (echo -n $answer | grep -q -e "^[0-9][0-9]*$")
     then
-        local choices=($(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES))
+        local choices=($(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES))
         if [ $answer -le ${#choices[@]} ]
         then
             # array in zsh starts from 1 instead of 0.
@@ -671,7 +673,7 @@ function _lunch()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     if [ -z "$COMMON_LUNCH_CHOICES_CACHE" ]; then
-        COMMON_LUNCH_CHOICES_CACHE=$(TARGET_BUILD_APPS= LUNCH_MENU_CHOICES="${LUNCH_MENU_CHOICES[@]}" get_build_var COMMON_LUNCH_CHOICES)
+        COMMON_LUNCH_CHOICES_CACHE=$(TARGET_BUILD_APPS= get_build_var COMMON_LUNCH_CHOICES)
     fi
 
     COMPREPLY=( $(compgen -W "${COMMON_LUNCH_CHOICES_CACHE}" -- ${cur}) )
@@ -1694,23 +1696,6 @@ function provision()
     "$ANDROID_PRODUCT_OUT/provision-device" "$@"
 }
 
-function atest()
-{
-    # Let's use the built version over the prebuilt, then source code.
-    local os_arch=$(get_build_var HOST_PREBUILT_TAG)
-    local built_atest=${ANDROID_HOST_OUT}/bin/atest
-    local prebuilt_atest="$(gettop)"/prebuilts/asuite/atest/$os_arch/atest
-    if [[ -x $built_atest ]]; then
-        $built_atest "$@"
-    elif [[ -x $prebuilt_atest ]]; then
-        $prebuilt_atest "$@"
-    else
-        # TODO: once prebuilt atest released, remove the source code section
-        # and change the location of atest_completion.sh in addcompletions().
-        "$(gettop)"/tools/tradefederation/core/atest/atest.py "$@"
-    fi
-}
-
 # Zsh needs bashcompinit called to support bash-style completion.
 function enable_zsh_completion() {
     # Don't override user's options if bash-style completion is already enabled.
@@ -1735,46 +1720,34 @@ function validate_current_shell() {
     esac
 }
 
-function acloud()
-{
-    # Let's use the built version over the prebuilt.
-    local built_acloud=${ANDROID_HOST_OUT}/bin/acloud
-    if [ -f $built_acloud ]; then
-        $built_acloud "$@"
-        return $?
-    fi
-
-    local host_os_arch=$(get_build_var HOST_PREBUILT_TAG)
-    case $host_os_arch in
-        linux-x86) "$(gettop)"/prebuilts/asuite/acloud/linux-x86/acloud "$@"
-        ;;
-        darwin-x86) "$(gettop)"/prebuilts/asuite/acloud/darwin-x86/acloud "$@"
-        ;;
-    *)
-        echo "acloud is not supported on your host arch: $host_os_arch"
-        ;;
-    esac
-}
-
-function aidegen()
-{
-    # Always use the prebuilt version.
-    local host_os_arch=$(get_build_var HOST_PREBUILT_TAG)
-    case $host_os_arch in
-        linux-x86) "$(gettop)"/prebuilts/asuite/aidegen/linux-x86/aidegen "$@"
-        ;;
-    *)
-        echo "aidegen is not supported on your host arch: $host_os_arch"
-        ;;
-    esac
-}
-
 # Execute the contents of any vendorsetup.sh files we can find.
+# Unless we find an allowed-vendorsetup_sh-files file, in which case we'll only
+# load those.
+#
+# This allows loading only approved vendorsetup.sh files
 function source_vendorsetup() {
+    allowed=
+    for f in $(find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
+        if [ -n "$allowed" ]; then
+            echo "More than one 'allowed_vendorsetup_sh-files' file found, not including any vendorsetup.sh files:"
+            echo "  $allowed"
+            echo "  $f"
+            return
+        fi
+        allowed="$f"
+    done
+
+    allowed_files=
+    [ -n "$allowed" ] && allowed_files=$(cat "$allowed")
     for dir in device vendor product; do
         for f in $(test -d $dir && \
             find -L $dir -maxdepth 4 -name 'vendorsetup.sh' 2>/dev/null | sort); do
-            echo "including $f"; . $f
+
+            if [[ -z "$allowed" || "$allowed_files" =~ $f ]]; then
+                echo "including $f"; . "$f"
+            else
+                echo "ignoring $f, not in $allowed"
+            fi
         done
     done
 }

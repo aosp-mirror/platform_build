@@ -86,17 +86,21 @@ ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODUL
 endif
 
 ifdef LOCAL_USE_VNDK
-  name_without_suffix := $(patsubst %.vendor,%,$(LOCAL_MODULE))
-  ifneq ($(name_without_suffix),$(LOCAL_MODULE)
-    SPLIT_VENDOR.$(LOCAL_MODULE_CLASS).$(name_without_suffix) := 1
+  ifneq ($(LOCAL_VNDK_DEPEND_ON_CORE_VARIANT),true)
+    name_without_suffix := $(patsubst %.vendor,%,$(LOCAL_MODULE))
+    ifneq ($(name_without_suffix),$(LOCAL_MODULE)
+      SPLIT_VENDOR.$(LOCAL_MODULE_CLASS).$(name_without_suffix) := 1
+    endif
+    name_without_suffix :=
   endif
-  name_without_suffix :=
 endif
 
 # Check prebuilt ELF binaries.
-ifneq ($(LOCAL_CHECK_ELF_FILES),)
-my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
-include $(BUILD_SYSTEM)/check_elf_file.mk
+ifdef LOCAL_INSTALLED_MODULE
+  ifneq ($(LOCAL_CHECK_ELF_FILES),)
+    my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
+    include $(BUILD_SYSTEM)/check_elf_file.mk
+  endif
 endif
 
 # The real dependency will be added after all Android.mks are loaded and the install paths
@@ -113,24 +117,52 @@ ifdef LOCAL_INSTALLED_MODULE
   endif
 endif
 
+ifeq ($(LOCAL_VNDK_DEPEND_ON_CORE_VARIANT),true)
+  # Add $(LOCAL_BUILT_MODULE) as a dependency to no_vendor_variant_vndk_check so
+  # that the vendor variant will be built and checked against the core variant.
+  no_vendor_variant_vndk_check: $(LOCAL_BUILT_MODULE)
+
+  my_core_register_name := $(subst .vendor,,$(my_register_name))
+  my_core_variant_files := $(call module-target-built-files,$(my_core_register_name))
+  my_core_shared_lib := $(sort $(filter %.so,$(my_core_variant_files)))
+  $(LOCAL_BUILT_MODULE): PRIVATE_CORE_VARIANT := $(my_core_shared_lib)
+
+  # The built vendor variant library needs to depend on the built core variant
+  # so that we can perform identity check against the core variant.
+  $(LOCAL_BUILT_MODULE): $(my_core_shared_lib)
+endif
+
+ifeq ($(LOCAL_VNDK_DEPEND_ON_CORE_VARIANT),true)
+$(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE) $(LIBRARY_IDENTITY_CHECK_SCRIPT)
+	$(call verify-vndk-libs-identical,\
+		$(PRIVATE_CORE_VARIANT),\
+		$<,\
+		$($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)TOOLS_PREFIX))
+	$(copy-file-to-target)
+else
 $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
 	$(transform-prebuilt-to-target)
+endif
 ifneq ($(filter EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
 	$(hide) chmod +x $@
 endif
 
 ifndef LOCAL_IS_HOST_MODULE
   ifdef LOCAL_SOONG_UNSTRIPPED_BINARY
-    # Store a copy with symbols for symbolic debugging
-    my_unstripped_path := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
-    symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
-    $(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))
-    $(call add-dependency,$(LOCAL_BUILT_MODULE),$(symbolic_output))
+    ifneq ($(LOCAL_VNDK_DEPEND_ON_CORE_VARIANT),true)
+      my_symbol_path := $(if $(LOCAL_SOONG_SYMBOL_PATH),$(LOCAL_SOONG_SYMBOL_PATH),$(my_module_path))
+      # Store a copy with symbols for symbolic debugging
+      my_unstripped_path := $(TARGET_OUT_UNSTRIPPED)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_symbol_path))
+      # drop /root as /root is mounted as /
+      my_unstripped_path := $(patsubst $(TARGET_OUT_UNSTRIPPED)/root/%,$(TARGET_OUT_UNSTRIPPED)/%, $(my_unstripped_path))
+      symbolic_output := $(my_unstripped_path)/$(my_installed_module_stem)
+      $(eval $(call copy-one-file,$(LOCAL_SOONG_UNSTRIPPED_BINARY),$(symbolic_output)))
+      $(call add-dependency,$(LOCAL_BUILT_MODULE),$(symbolic_output))
 
-    ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
-      my_breakpad_path := $(TARGET_OUT_BREAKPAD)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_module_path))
-      breakpad_output := $(my_breakpad_path)/$(my_installed_module_stem).sym
-      $(breakpad_output) : $(LOCAL_SOONG_UNSTRIPPED_BINARY) | $(BREAKPAD_DUMP_SYMS) $(PRIVATE_READELF)
+      ifeq ($(BREAKPAD_GENERATE_SYMBOLS),true)
+        my_breakpad_path := $(TARGET_OUT_BREAKPAD)/$(patsubst $(PRODUCT_OUT)/%,%,$(my_symbol_path))
+        breakpad_output := $(my_breakpad_path)/$(my_installed_module_stem).sym
+        $(breakpad_output) : $(LOCAL_SOONG_UNSTRIPPED_BINARY) | $(BREAKPAD_DUMP_SYMS) $(PRIVATE_READELF)
 	@echo "target breakpad: $(PRIVATE_MODULE) ($@)"
 	@mkdir -p $(dir $@)
 	$(hide) if $(PRIVATE_READELF) -S $< > /dev/null 2>&1 ; then \
@@ -139,7 +171,8 @@ ifndef LOCAL_IS_HOST_MODULE
 	  echo "skipped for non-elf file."; \
 	  touch $@; \
 	fi
-      $(call add-dependency,$(LOCAL_BUILT_MODULE),$(breakpad_output))
+        $(call add-dependency,$(LOCAL_BUILT_MODULE),$(breakpad_output))
+      endif
     endif
   endif
 endif

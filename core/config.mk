@@ -105,7 +105,7 @@ ORIGINAL_MAKECMDGOALS := $(MAKECMDGOALS)
 
 UNAME := $(shell uname -sm)
 
-SRC_TARGET_DIR := $(TOPDIR)build/target
+SRC_TARGET_DIR := $(TOPDIR)build/make/target
 
 # Some specific paths to tools
 SRC_DROIDDOC_DIR := $(TOPDIR)build/make/tools/droiddoc
@@ -208,15 +208,6 @@ JAVA_TMPDIR_ARG :=
 endif
 
 # ###############################################################
-# Broken build defaults
-# ###############################################################
-BUILD_BROKEN_ANDROIDMK_EXPORTS :=
-BUILD_BROKEN_DUP_COPY_HEADERS :=
-BUILD_BROKEN_DUP_RULES :=
-BUILD_BROKEN_PHONY_TARGETS :=
-BUILD_BROKEN_ENG_DEBUG_TAGS :=
-
-# ###############################################################
 # Include sub-configuration files
 # ###############################################################
 
@@ -296,17 +287,7 @@ $(call validate-kernel-headers,$(TARGET_BOARD_KERNEL_HEADERS))
 TARGET_PRODUCT_KERNEL_HEADERS := $(strip $(wildcard $(PRODUCT_VENDOR_KERNEL_HEADERS)))
 TARGET_PRODUCT_KERNEL_HEADERS := $(patsubst %/,%,$(TARGET_PRODUCT_KERNEL_HEADERS))
 $(call validate-kernel-headers,$(TARGET_PRODUCT_KERNEL_HEADERS))
-
-# Clean up/verify variables defined by the board config file.
-TARGET_BOOTLOADER_BOARD_NAME := $(strip $(TARGET_BOOTLOADER_BOARD_NAME))
-TARGET_CPU_ABI := $(strip $(TARGET_CPU_ABI))
-ifeq ($(TARGET_CPU_ABI),)
-  $(error No TARGET_CPU_ABI defined by board config: $(board_config_mk))
-endif
-TARGET_CPU_ABI2 := $(strip $(TARGET_CPU_ABI2))
-
-BOARD_KERNEL_BASE := $(strip $(BOARD_KERNEL_BASE))
-BOARD_KERNEL_PAGESIZE := $(strip $(BOARD_KERNEL_PAGESIZE))
+.KATI_READONLY := TARGET_DEVICE_KERNEL_HEADERS TARGET_BOARD_KERNEL_HEADERS TARGET_PRODUCT_KERNEL_HEADERS
 
 # Commands to generate .toc file common to ELF .so files.
 define _gen_toc_command_for_elf
@@ -320,44 +301,6 @@ $(hide) $(HOST_OTOOL) -l $(1) | grep LC_ID_DYLIB -A 5 > $(2)
 $(hide) $(HOST_NM) -gP $(1) | cut -f1-2 -d" " | (grep -v U$$ >> $(2) || true)
 endef
 
-combo_target := HOST_
-combo_2nd_arch_prefix :=
-include $(BUILD_SYSTEM)/combo/select.mk
-
-# Load the 2nd host arch if it's needed.
-ifdef HOST_2ND_ARCH
-combo_target := HOST_
-combo_2nd_arch_prefix := $(HOST_2ND_ARCH_VAR_PREFIX)
-include $(BUILD_SYSTEM)/combo/select.mk
-endif
-
-# Load the windows cross compiler under Linux
-ifdef HOST_CROSS_OS
-combo_target := HOST_CROSS_
-combo_2nd_arch_prefix :=
-include $(BUILD_SYSTEM)/combo/select.mk
-
-ifdef HOST_CROSS_2ND_ARCH
-combo_target := HOST_CROSS_
-combo_2nd_arch_prefix := $(HOST_CROSS_2ND_ARCH_VAR_PREFIX)
-include $(BUILD_SYSTEM)/combo/select.mk
-endif
-endif
-
-# on windows, the tools have .exe at the end, and we depend on the
-# host config stuff being done first
-
-combo_target := TARGET_
-combo_2nd_arch_prefix :=
-include $(BUILD_SYSTEM)/combo/select.mk
-
-# Load the 2nd target arch if it's needed.
-ifdef TARGET_2ND_ARCH
-combo_target := TARGET_
-combo_2nd_arch_prefix := $(TARGET_2ND_ARCH_VAR_PREFIX)
-include $(BUILD_SYSTEM)/combo/select.mk
-endif
-
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
@@ -367,62 +310,6 @@ ifdef TARGET_PREFER_32_BIT
 TARGET_PREFER_32_BIT_APPS := true
 TARGET_PREFER_32_BIT_EXECUTABLES := true
 endif
-
-ifeq (,$(filter true,$(TARGET_SUPPORTS_32_BIT_APPS) $(TARGET_SUPPORTS_64_BIT_APPS)))
-  TARGET_SUPPORTS_32_BIT_APPS := true
-endif
-
-# Sanity check to warn about likely cryptic errors later in the build.
-ifeq ($(TARGET_IS_64_BIT),true)
-  ifeq (,$(filter true false,$(TARGET_SUPPORTS_64_BIT_APPS)))
-    $(warning Building a 32-bit-app-only product on a 64-bit device. \
-      If this is intentional, set TARGET_SUPPORTS_64_BIT_APPS := false)
-  endif
-endif
-
-# "ro.product.cpu.abilist32" and "ro.product.cpu.abilist64" are
-# comma separated lists of the 32 and 64 bit ABIs (in order of
-# preference) that the target supports. If TARGET_CPU_ABI_LIST_{32,64}_BIT
-# are defined by the board config, we use them. Else, we construct
-# these lists based on whether TARGET_IS_64_BIT is set.
-#
-# Note that this assumes that the 2ND_CPU_ABI for a 64 bit target
-# is always 32 bits. If this isn't the case, these variables should
-# be overriden in the board configuration.
-ifeq (,$(TARGET_CPU_ABI_LIST_64_BIT))
-  ifeq (true|true,$(TARGET_IS_64_BIT)|$(TARGET_SUPPORTS_64_BIT_APPS))
-    TARGET_CPU_ABI_LIST_64_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
-  endif
-endif
-
-ifeq (,$(TARGET_CPU_ABI_LIST_32_BIT))
-  ifneq (true,$(TARGET_IS_64_BIT))
-    TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
-  else
-    ifeq (true,$(TARGET_SUPPORTS_32_BIT_APPS))
-      # For a 64 bit target, assume that the 2ND_CPU_ABI
-      # is a 32 bit ABI.
-      TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_2ND_CPU_ABI) $(TARGET_2ND_CPU_ABI2)
-    endif
-  endif
-endif
-
-# "ro.product.cpu.abilist" is a comma separated list of ABIs (in order
-# of preference) that the target supports. If a TARGET_CPU_ABI_LIST
-# is specified by the board configuration, we use that. If not, we
-# build a list out of the TARGET_CPU_ABIs specified by the config.
-ifeq (,$(TARGET_CPU_ABI_LIST))
-  ifeq ($(TARGET_IS_64_BIT)|$(TARGET_PREFER_32_BIT_APPS),true|true)
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_32_BIT) $(TARGET_CPU_ABI_LIST_64_BIT)
-  else
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT)
-  endif
-endif
-
-# Strip whitespace from the ABI list string.
-TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST)))
-TARGET_CPU_ABI_LIST_32_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_32_BIT)))
-TARGET_CPU_ABI_LIST_64_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_64_BIT)))
 
 # GCC version selection
 TARGET_GCC_VERSION := 4.9
@@ -718,7 +605,7 @@ VBOOT_SIGNER := prebuilts/misc/scripts/vboot_signer/vboot_signer.sh
 FEC := $(HOST_OUT_EXECUTABLES)/fec
 BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 
-DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump2$(BUILD_EXECUTABLE_SUFFIX)
+DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman
 
 FINDBUGS_DIR := external/owasp/sanitizer/tools/findbugs/bin
@@ -727,8 +614,6 @@ FINDBUGS := $(FINDBUGS_DIR)/findbugs
 JETIFIER := prebuilts/sdk/tools/jetifier/jetifier-standalone/bin/jetifier-standalone
 
 EXTRACT_KERNEL := build/make/tools/extract_kernel.py
-
-COLUMN:= column
 
 USE_OPENJDK9 := true
 
@@ -877,8 +762,9 @@ endif
 ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
   DEFAULT_SYSTEM_DEV_CERTIFICATE := $(PRODUCT_DEFAULT_DEV_CERTIFICATE)
 else
-  DEFAULT_SYSTEM_DEV_CERTIFICATE := build/target/product/security/testkey
+  DEFAULT_SYSTEM_DEV_CERTIFICATE := build/make/target/product/security/testkey
 endif
+.KATI_READONLY := DEFAULT_SYSTEM_DEV_CERTIFICATE
 
 BUILD_NUMBER_FROM_FILE := $$(cat $(OUT_DIR)/build_number.txt)
 BUILD_DATETIME_FROM_FILE := $$(cat $(BUILD_DATETIME_FILE))
@@ -945,15 +831,20 @@ ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
 endif
 
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
-    requirements := \
-        PRODUCT_USE_DYNAMIC_PARTITION_SIZE \
-        PRODUCT_BUILD_SUPER_PARTITION \
-
-    $(foreach req,$(requirements),$(if $(filter false,$($(req))),\
-        $(error PRODUCT_USE_DYNAMIC_PARTITIONS requires $(req) to be true)))
-
-    requirements :=
+    ifeq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
+        $(error BOARD_BUILD_SYSTEM_ROOT_IMAGE cannot be true for devices with dynamic partitions)
+    endif
+    ifneq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
+        $(error PRODUCT_USE_DYNAMIC_PARTITION_SIZE must be true for devices with dynamic partitions)
+    endif
 endif
+
+ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
+    ifneq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
+        $(error Can only build super partition for devices with dynamic partitions)
+    endif
+endif
+
 
 ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)
 
@@ -994,7 +885,7 @@ endif
 
 endif # PRODUCT_USE_DYNAMIC_PARTITION_SIZE
 
-ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
+ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 
 # BOARD_SUPER_PARTITION_GROUPS defines a list of "updatable groups". Each updatable group is a
 # group of partitions that share the same pool of free spaces.
@@ -1005,12 +896,16 @@ ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
 #     - BOARD_{GROUP}_PARTITION_PARTITION_LIST: the list of partitions that belongs to this group.
 #       If empty, no partitions belong to this group, and the sum of sizes is effectively 0.
 $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
-    $(eval BOARD_$(group)_SIZE := $(strip $(BOARD_$(group)_SIZE))) \
-    $(if $(BOARD_$(group)_SIZE),,$(error BOARD_$(group)_SIZE must not be empty)) \
-    $(eval .KATI_READONLY := BOARD_$(group)_SIZE) \
     $(eval BOARD_$(group)_PARTITION_LIST ?=) \
     $(eval .KATI_READONLY := BOARD_$(group)_PARTITION_LIST) \
 )
+ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
+$(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
+    $(eval BOARD_$(group)_SIZE := $(strip $(BOARD_$(group)_SIZE))) \
+    $(if $(BOARD_$(group)_SIZE),,$(error BOARD_$(group)_SIZE must not be empty)) \
+    $(eval .KATI_READONLY := BOARD_$(group)_SIZE) \
+)
+endif # PRODUCT_BUILD_SUPER_PARTITION
 
 # BOARD_*_PARTITION_LIST: a list of the following tokens
 valid_super_partition_list := system vendor product product_services odm
@@ -1032,6 +927,10 @@ BOARD_SUPER_PARTITION_PARTITION_LIST := \
         $(BOARD_$(group)_PARTITION_LIST))
 .KATI_READONLY := BOARD_SUPER_PARTITION_PARTITION_LIST
 
+endif # PRODUCT_USE_DYNAMIC_PARTITIONS
+
+ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
+
 ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
 
@@ -1051,7 +950,7 @@ $(error BOARD_SUPER_PARTITION_METADATA_DEVICE is not listed in BOARD_SUPER_PARTI
 endif
 
 # The metadata device must be supplied to init via the kernel command-line.
-BOARD_KERNEL_CMDLINE += androidboot.super_partition=$(BOARD_SUPER_PARTITION_METADATA_DEVICE)
+INTERNAL_KERNEL_CMDLINE += androidboot.super_partition=$(BOARD_SUPER_PARTITION_METADATA_DEVICE)
 
 BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE := true
 
@@ -1085,7 +984,7 @@ BOARD_SUPER_PARTITION_$(call to-upper,$(strip $(BOARD_SUPER_PARTITION_BLOCK_DEVI
 endif
 
 ifneq ($(BOARD_SUPER_PARTITION_METADATA_DEVICE),super)
-BOARD_KERNEL_CMDLINE += androidboot.super_partition=$(BOARD_SUPER_PARTITION_METADATA_DEVICE)
+INTERNAL_KERNEL_CMDLINE += androidboot.super_partition=$(BOARD_SUPER_PARTITION_METADATA_DEVICE)
 endif
 BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE :=
 
@@ -1131,11 +1030,13 @@ endif
 first_non_empty_of_three = $(if $(1),$(1),$(if $(2),$(2),$(3)))
 DEX2OAT_TARGET_ARCH := $(TARGET_ARCH)
 DEX2OAT_TARGET_CPU_VARIANT := $(call first_non_empty_of_three,$(TARGET_CPU_VARIANT),$(TARGET_ARCH_VARIANT),default)
+DEX2OAT_TARGET_CPU_VARIANT_RUNTIME := $(call first_non_empty_of_three,$(TARGET_CPU_VARIANT_RUNTIME),$(TARGET_ARCH_VARIANT),default)
 DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
 
 ifdef TARGET_2ND_ARCH
 $(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_ARCH := $(TARGET_2ND_ARCH)
 $(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT := $(call first_non_empty_of_three,$(TARGET_2ND_CPU_VARIANT),$(TARGET_2ND_ARCH_VARIANT),default)
+$(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_CPU_VARIANT_RUNTIME := $(call first_non_empty_of_three,$(TARGET_2ND_CPU_VARIANT_RUNTIME),$(TARGET_2ND_ARCH_VARIANT),default)
 $(TARGET_2ND_ARCH_VAR_PREFIX)DEX2OAT_TARGET_INSTRUCTION_SET_FEATURES := default
 endif
 
@@ -1279,5 +1180,10 @@ ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ninja_config.mk
 include $(BUILD_SYSTEM)/soong_config.mk
 endif
+
+-include external/linux-kselftest/android/kselftest_test_list.mk
+-include external/ltp/android/ltp_package_list.mk
+DEFAULT_DATA_OUT_MODULES := ltp $(ltp_packages) $(kselftest_modules)
+.KATI_READONLY := DEFAULT_DATA_OUT_MODULES
 
 include $(BUILD_SYSTEM)/dumpvar.mk

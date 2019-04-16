@@ -22,6 +22,5 @@ PRODUCT_PACKAGES := \
     CarrierDefaultApp \
     CallLogBackup \
     CellBroadcastReceiver \
-    EmergencyInfo \
 
 PRODUCT_COPY_FILES := \

@@ -17,7 +17,6 @@
 # Base modules and settings for the system partition.
 PRODUCT_PACKAGES += \
     abb \
-    adb \
     adbd \
     am \
     android.hidl.allocator@1.0-service \
@@ -35,12 +34,10 @@ PRODUCT_PACKAGES += \
     app_process \
     appwidget \
     ashmemd \
-    atest \
     atrace \
     audioserver \
     BackupRestoreConfirmation \
     bcc \
-    bit \
     blank_screen \
     blkid \
     bmgr \
@@ -73,7 +70,6 @@ PRODUCT_PACKAGES += \
     e2fsck \
     ExtServices \
     ExtShared \
-    fastboot \
     flags_health_check \
     framework \
     framework-res \
@@ -94,7 +90,6 @@ PRODUCT_PACKAGES += \
     incident \
     incidentd \
     incident_helper \
-    incident_report \
     init.environ.rc \
     init.rc \
     init_system \
@@ -114,6 +109,7 @@ PRODUCT_PACKAGES += \
     libandroidfw \
     libandroid_runtime \
     libandroid_servers \
+    libartpalette-system \
     libashmemd_client \
     libaudioeffect_jni \
     libaudioflinger \
@@ -169,7 +165,6 @@ PRODUCT_PACKAGES += \
     libradio_metadata \
     librtp_jni \
     libsensorservice \
-    libsigchain \
     libskia \
     libsonic \
     libsonivox \
@@ -202,7 +197,6 @@ PRODUCT_PACKAGES += \
     lshal \
     mdnsd \
     media \
-    media_cmd \
     mediadrmserver \
     mediaextractor \
     mediametrics \
@@ -276,15 +270,49 @@ PRODUCT_PACKAGES += \
     framework_manifest.xml \
     system_compatibility_matrix.xml \
 
+# Host tools to install
+PRODUCT_HOST_PACKAGES += \
+    BugReport \
+    adb \
+    art-tools \
+    atest \
+    bcc \
+    bit \
+    e2fsck \
+    fastboot \
+    flags_health_check \
+    icu-data_host_runtime_apex \
+    incident_report \
+    ld.mc \
+    lpdump \
+    mdnsd \
+    minigzip \
+    mke2fs \
+    resize2fs \
+    sgdisk \
+    sqlite3 \
+    tinyplay \
+    tune2fs \
+    tzdatacheck \
+    unwind_info \
+    unwind_reg_info \
+    unwind_symbols \
+    viewcompiler \
+    tzdata_host \
+    tzdata_host_runtime_apex \
+    tzlookup.xml_host_runtime_apex \
+    tz_version_host \
+    tz_version_host_runtime_apex \
+
 ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
 endif
 
-# The order matters
+# The order matters for runtime class lookup performance.
 PRODUCT_BOOT_JARS := \
     $(TARGET_CORE_JARS) \
-    ext \
     framework \
+    ext \
     telephony-common \
     voip-common \
     ims-common
@@ -301,7 +329,8 @@ PRODUCT_COPY_FILES += \
 
 # Add the compatibility library that is needed when android.test.base
 # is removed from the bootclasspath.
-ifeq ($(REMOVE_ATB_FROM_BCP),true)
+# Default to excluding android.test.base from the bootclasspath.
+ifneq ($(REMOVE_ATB_FROM_BCP),false)
 PRODUCT_PACKAGES += framework-atb-backward-compatibility
 PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
 else
@@ -327,6 +356,7 @@ PRODUCT_PACKAGES_DEBUG := \
     showmap \
     sqlite3 \
     ss \
+    start_with_lockagent \
     strace \
     su \
     sanitizer-status \

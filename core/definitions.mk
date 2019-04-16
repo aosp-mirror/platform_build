@@ -651,6 +651,18 @@ endef
 
 ###########################################################
 ## Convert a list of short modules names (e.g., "framework", "Browser")
+## into the list of files that are built *for the target* for those modules.
+## NOTE: this won't return reliable results until after all
+## sub-makefiles have been included.
+## $(1): target list
+###########################################################
+
+define module-target-built-files
+$(foreach module,$(1),$(ALL_MODULES.$(module).TARGET_BUILT))
+endef
+
+###########################################################
+## Convert a list of short modules names (e.g., "framework", "Browser")
 ## into the list of files that should be used when linking
 ## against that module as a public API.
 ## TODO: Allow this for more than JAVA_LIBRARIES modules
@@ -1125,10 +1137,9 @@ define transform-cpp-to-o-compiler-args
 	$(PRIVATE_CPPFLAGS_NO_OVERRIDE)
 endef
 
-# PATH_TO_CLANG_TIDY_SHELL is defined in build/soong
+# PATH_TO_CLANG_TIDY is defined in build/soong
 define call-clang-tidy
-CLANG_TIDY=$(PATH_TO_CLANG_TIDY) \
-  $(PATH_TO_CLANG_TIDY_SHELL) \
+$(PATH_TO_CLANG_TIDY) \
   $(PRIVATE_TIDY_FLAGS) \
   -checks=$(PRIVATE_TIDY_CHECKS)
 endef
@@ -2225,7 +2236,7 @@ define transform-classes.jar-to-dex
 @mkdir -p $(dir $@)
 $(hide) rm -f $(dir $@)classes*.dex $(dir $@)d8_input.jar
 $(hide) $(ZIP2ZIP) -j -i $< -o $(dir $@)d8_input.jar "**/*.class"
-$(hide) $(DX_COMMAND) \
+$(hide) $(DX_COMMAND) $(DEX_FLAGS) \
     --output $(dir $@) \
     $(addprefix --lib ,$(PRIVATE_D8_LIBS)) \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
@@ -2388,7 +2399,7 @@ endef
 define run-appcompat
 $(hide) \
   echo "appcompat.sh output:" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
-  PACKAGING=$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING ANDROID_LOG_TAGS="*:e" art/tools/veridex/appcompat.sh --dex-file=$@ 2>&1 >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
+  PACKAGING=$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING ANDROID_LOG_TAGS="*:e" art/tools/veridex/appcompat.sh --dex-file=$@ --api-flags=$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS) 2>&1 >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
 endef
 appcompat-files = \
   art/tools/veridex/appcompat.sh \
@@ -2478,14 +2489,36 @@ $(2): $(1) $(ZIPALIGN) $(ZIP2ZIP)
 	$$(align-package)
 endef
 
+# Create copy pair for compatibility suite
+# Filter out $(LOCAL_INSTALLED_MODULE) to prevent overriding target
+# $(1): source path
+# $(2): destination path
+# The format of copy pair is src:dst
+define compat-copy-pair
+$(if $(filter-out $(2), $(LOCAL_INSTALLED_MODULE)), $(1):$(2))
+endef
+
+# Create copy pair for $(1) $(2)
+# If $(2) is substring of $(3) do nothing.
+# $(1): source path
+# $(2): destination path
+# $(3): filter-out target
+# The format of copy pair is src:dst
+define filter-copy-pair
+$(if $(findstring $(2), $(3)),,$(1):$(2))
+endef
+
 # Copies many files.
 # $(1): The files to copy.  Each entry is a ':' separated src:dst pair
+# $(2): An optional directory to prepend to the destination
 # Evaluates to the list of the dst files (ie suitable for a dependency list)
 define copy-many-files
 $(foreach f, $(1), $(strip \
     $(eval _cmf_tuple := $(subst :, ,$(f))) \
     $(eval _cmf_src := $(word 1,$(_cmf_tuple))) \
     $(eval _cmf_dest := $(word 2,$(_cmf_tuple))) \
+    $(if $(strip $(2)), \
+      $(eval _cmf_dest := $(patsubst %/,%,$(strip $(2)))/$(patsubst /%,%,$(_cmf_dest)))) \
     $(if $(filter-out $(_cmf_src), $(_cmf_dest)), \
       $(eval $(call copy-one-file,$(_cmf_src),$(_cmf_dest)))) \
     $(_cmf_dest)))
@@ -2694,7 +2727,8 @@ endif
 define transform-jar-to-dex-r8
 @echo R8: $@
 $(hide) rm -f $(PRIVATE_PROGUARD_DICTIONARY)
-$(hide) $(R8_COMPAT_PROGUARD) -injars '$<' \
+$(hide) $(R8_COMPAT_PROGUARD) $(DEX_FLAGS) \
+    -injars '$<' \
     --min-api $(PRIVATE_MIN_SDK_VERSION) \
     --no-data-resources \
     --force-proguard-compatibility --output $(subst classes.dex,,$@) \
@@ -3277,10 +3311,12 @@ include $(BUILD_SYSTEM)/distdir.mk
 #  $(4): Whether LOCAL_EXPORT_PACKAGE_RESOURCES is set or
 #        not for the source module.
 #  $(5): Resource overlay list.
+#  $(6): Target partition
 ###########################################################
 define append_enforce_rro_sources
   $(eval ENFORCE_RRO_SOURCES += \
-      $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||$(call normalize-path-list, $(strip $(5))))
+      $(strip $(1))||$(strip $(2))||$(strip $(3))||$(strip $(4))||$(call normalize-path-list, $(strip $(5)))||$(strip $(6)) \
+  )
 endef
 
 ###########################################################
@@ -3295,9 +3331,9 @@ $(foreach source,$(ENFORCE_RRO_SOURCES), \
   $(eval enforce_rro_source_manifest_package_info := $(word 3,$(_o))) \
   $(eval enforce_rro_use_res_lib := $(word 4,$(_o))) \
   $(eval enforce_rro_source_overlays := $(subst :, ,$(word 5,$(_o)))) \
-  $(eval enforce_rro_module := $(enforce_rro_source_module)__auto_generated_rro) \
+  $(eval enforce_rro_partition := $(word 6,$(_o))) \
   $(eval include $(BUILD_SYSTEM)/generate_enforce_rro.mk) \
-  $(eval ALL_MODULES.$(enforce_rro_source_module).REQUIRED += $(enforce_rro_module)) \
+  $(eval ALL_MODULES.$$(enforce_rro_source_module).REQUIRED_FROM_TARGET += $$(LOCAL_PACKAGE_NAME)) \
 )
 endef
 
@@ -3364,3 +3400,19 @@ $(KATI_obsolete_var \
   initialize-package-file \
   add-jni-shared-libs-to-package,\
   These functions have been removed)
+
+###########################################################
+## Verify the variants of a VNDK library are identical
+##
+## $(1): Path to the core variant shared library file.
+## $(2): Path to the vendor variant shared library file.
+## $(3): TOOLS_PREFIX
+###########################################################
+LIBRARY_IDENTITY_CHECK_SCRIPT := build/make/tools/check_identical_lib.sh
+define verify-vndk-libs-identical
+@echo "Checking VNDK vendor variant: $(2)"
+$(hide) CLANG_BIN="$(LLVM_PREBUILTS_PATH)" \
+	CROSS_COMPILE="$(strip $(3))" \
+	XZ="$(XZ)" \
+	$(LIBRARY_IDENTITY_CHECK_SCRIPT) $(SOONG_STRIP_PATH) $(1) $(2)
+endef

@@ -109,55 +109,54 @@ include $(BUILD_SYSTEM)/force_aapt2.mk
 # Process Support Library dependencies.
 include $(BUILD_SYSTEM)/support_libraries.mk
 
-package_resource_overlays := $(strip \
+# Determine whether auto-RRO is enabled for this package.
+enforce_rro_enabled :=
+ifeq ($(PRODUCT_ENFORCE_RRO_TARGETS),*)
+  # * means all system APKs, so enable conditionally based on module path.
+
+  # Note that base_rules.mk has not yet been included, so it's likely that only
+  # one of LOCAL_MODULE_PATH and the LOCAL_X_MODULE flags has been set.
+  ifeq (,$(LOCAL_MODULE_PATH))
+    non_system_module := $(filter true,\
+        $(LOCAL_ODM_MODULE) \
+        $(LOCAL_OEM_MODULE) \
+        $(LOCAL_PRODUCT_MODULE) \
+        $(LOCAL_PRODUCT_SERVICES_MODULE) \
+        $(LOCAL_PROPRIETARY_MODULE) \
+        $(LOCAL_VENDOR_MODULE))
+    enforce_rro_enabled := $(if $(non_system_module),,true)
+  else ifneq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
+    enforce_rro_enabled := true
+  endif
+else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
+  enforce_rro_enabled := true
+endif
+
+product_package_overlays := $(strip \
     $(wildcard $(foreach dir, $(PRODUCT_PACKAGE_OVERLAYS), \
-      $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))) \
+      $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))))
+device_package_overlays := $(strip \
     $(wildcard $(foreach dir, $(DEVICE_PACKAGE_OVERLAYS), \
       $(addprefix $(dir)/, $(LOCAL_RESOURCE_DIR)))))
 
-enforce_rro_enabled :=
-ifneq ($(PRODUCT_ENFORCE_RRO_TARGETS),)
-  ifneq ($(package_resource_overlays),)
-    ifeq ($(PRODUCT_ENFORCE_RRO_TARGETS),*)
-      enforce_rro_enabled := true
-    else ifneq (,$(filter $(LOCAL_PACKAGE_NAME), $(PRODUCT_ENFORCE_RRO_TARGETS)))
-      enforce_rro_enabled := true
-    endif
-  endif
-
-  ifdef enforce_rro_enabled
-    ifeq (,$(LOCAL_MODULE_PATH))
-      ifeq (true,$(LOCAL_PROPRIETARY_MODULE))
-        enforce_rro_enabled :=
-      else ifeq (true,$(LOCAL_OEM_MODULE))
-        enforce_rro_enabled :=
-      else ifeq (true,$(LOCAL_ODM_MODULE))
-        enforce_rro_enabled :=
-      else ifeq (true,$(LOCAL_PRODUCT_MODULE))
-        enforce_rro_enabled :=
-      else ifeq (true,$(LOCAL_PRODUCT_SERVICES_MODULE))
-        enforce_rro_enabled :=
-      endif
-    else ifeq ($(filter $(TARGET_OUT)/%,$(LOCAL_MODULE_PATH)),)
-      enforce_rro_enabled :=
-    endif
-  endif
-endif
-
+static_resource_overlays :=
+runtime_resource_overlays_product :=
+runtime_resource_overlays_vendor :=
 ifdef enforce_rro_enabled
   ifneq ($(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS),)
-    static_only_resource_overlays := $(filter $(addsuffix %,$(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS)),$(package_resource_overlays))
-    ifneq ($(static_only_resource_overlays),)
-      package_resource_overlays := $(filter-out $(static_only_resource_overlays),$(package_resource_overlays))
-      LOCAL_RESOURCE_DIR := $(static_only_resource_overlays) $(LOCAL_RESOURCE_DIR)
-      ifeq ($(package_resource_overlays),)
-        enforce_rro_enabled :=
-      endif
-    endif
+    # The PRODUCT_ exclusion variable applies to both inclusion variables..
+    static_resource_overlays += $(filter $(addsuffix %,$(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS)),$(product_package_overlays))
+    static_resource_overlays += $(filter $(addsuffix %,$(PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS)),$(device_package_overlays))
   endif
+  runtime_resource_overlays_product := $(filter-out $(static_resource_overlays),$(product_package_overlays))
+  runtime_resource_overlays_vendor := $(filter-out $(static_resource_overlays),$(device_package_overlays))
 else
-LOCAL_RESOURCE_DIR := $(package_resource_overlays) $(LOCAL_RESOURCE_DIR)
+  static_resource_overlays := $(product_package_overlays) $(device_package_overlays)
 endif
+
+# Add the static overlays. Auto-RRO is created later, as it depends on
+# other logic in this file.
+LOCAL_RESOURCE_DIR := $(static_resource_overlays) $(LOCAL_RESOURCE_DIR)
 
 all_assets := $(strip \
     $(foreach dir, $(LOCAL_ASSET_DIR), \
@@ -771,7 +770,7 @@ ifdef LOCAL_COMPATIBILITY_SUITE
 $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
   $(eval my_compat_dist_$(suite) := $(foreach dir, $(call compatibility_suite_dirs,$(suite)), \
     $(foreach s,$(my_split_suffixes),\
-      $(intermediates)/package_$(s).apk:$(dir)/$(LOCAL_MODULE)_$(s).apk))))
+      $(call compat-copy-pair,$(intermediates)/package_$(s).apk,$(dir)/$(LOCAL_MODULE)_$(s).apk)))))
 
 $(call create-suite-dependencies)
 
@@ -789,7 +788,7 @@ endif # skip_definition
 # Reset internal variables.
 all_res_assets :=
 
-ifdef enforce_rro_enabled
+ifneq (,$(runtime_resource_overlays_product)$(runtime_resource_overlays_vendor))
   ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
     enforce_rro_use_res_lib := true
   else
@@ -804,11 +803,24 @@ ifdef enforce_rro_enabled
     enforce_rro_manifest_package_info := $(full_android_manifest)
   endif
 
-$(call append_enforce_rro_sources, \
-    $(my_register_name), \
-    $(enforce_rro_is_manifest_package_name), \
-    $(enforce_rro_manifest_package_info), \
-    $(enforce_rro_use_res_lib), \
-    $(package_resource_overlays) \
+  ifdef runtime_resource_overlays_product
+    $(call append_enforce_rro_sources, \
+        $(my_register_name), \
+        $(enforce_rro_is_manifest_package_name), \
+        $(enforce_rro_manifest_package_info), \
+        $(enforce_rro_use_res_lib), \
+        $(runtime_resource_overlays_product), \
+        product \
     )
-endif  # enforce_rro_enabled
+  endif
+  ifdef runtime_resource_overlays_vendor
+    $(call append_enforce_rro_sources, \
+        $(my_register_name), \
+        $(enforce_rro_is_manifest_package_name), \
+        $(enforce_rro_manifest_package_info), \
+        $(enforce_rro_use_res_lib), \
+        $(runtime_resource_overlays_vendor), \
+        vendor \
+    )
+  endif
+endif

@@ -24,9 +24,8 @@ input_file: one of the following:
   - target files package. Same as above, but extracts the archive before
     building super image.
   - a dictionary file containing input arguments to build. Check
-    `dump_dynamic_partitions_info' for details.
+    `dump-super-image-info' for details.
     In addition:
-    - "ab_update" needs to be true for A/B devices.
     - If source images should be included in the output image (for super.img
       and super split images), a list of "*_image" should be paths of each
       source images.
@@ -59,16 +58,8 @@ logger = logging.getLogger(__name__)
 UNZIP_PATTERN = ["IMAGES/*", "META/*"]
 
 
-def GetPartitionSizeFromImage(img):
-  try:
-    simg = sparse_img.SparseImage(img)
-    return simg.blocksize * simg.total_blocks
-  except ValueError:
-    return os.path.getsize(img)
-
-
 def GetArgumentsForImage(partition, group, image=None):
-  image_size = GetPartitionSizeFromImage(image) if image else 0
+  image_size = sparse_img.GetImagePartitionSize(image) if image else 0
 
   cmd = ["--partition",
          "{}:readonly:{}:{}".format(partition, image_size, group)]
@@ -136,7 +127,7 @@ def BuildSuperImageFromDict(info_dict, output):
 
       cmd += GetArgumentsForImage(partition + "_b", group + "_b", other_image)
 
-  if has_image:
+  if info_dict.get("build_non_sparse_super_partition") != "true":
     cmd.append("--sparse")
 
   cmd += ["--output", output]

@@ -33,17 +33,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     ext \
 
-# Libcore ICU. TODO: Try to figure out if/why we need them explicitly.
-PRODUCT_PACKAGES += \
-    libicui18n \
-    libicuuc \
-
-# ART.
-PRODUCT_PACKAGES += art-runtime
-# ART/dex helpers.
-PRODUCT_PACKAGES += art-tools
 # Android Runtime APEX module.
 PRODUCT_PACKAGES += com.android.runtime
+PRODUCT_HOST_PACKAGES += com.android.runtime
 
 # Certificates.
 PRODUCT_PACKAGES += \
@@ -90,6 +82,10 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 # Enable resolution of startup const strings.
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     dalvik.vm.dex2oat-resolve-startup-strings=true
+
+# Specify default block size of 512K to enable parallel image decompression.
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+    dalvik.vm.dex2oat-max-image-block-size=524288
 
 # Enable minidebuginfo generation unless overridden.
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \

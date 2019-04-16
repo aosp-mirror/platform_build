@@ -1,0 +1,72 @@
+// Copyright (C) 2019 The Android Open Source Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+python_defaults {
+    name: "releasetools_test_defaults",
+    version: {
+        py2: {
+            enabled: true,
+            embedded_launcher: false,
+        },
+        py3: {
+            enabled: false,
+        },
+    },
+}
+
+python_library_host {
+    name: "releasetools_lib",
+    defaults: ["releasetools_test_defaults"],
+    srcs: [
+        "add_img_to_target_files.py",
+        "apex_utils.py",
+        "blockimgdiff.py",
+        "build_image.py",
+        "build_super_image.py",
+        "check_ota_package_signature.py",
+        "check_target_files_signatures.py",
+        "common.py",
+        "edify_generator.py",
+        "img_from_target_files.py",
+        "make_recovery_patch.py",
+        "merge_target_files.py",
+        "ota_from_target_files.py",
+        "ota_package_parser.py",
+        "rangelib.py",
+        "sign_target_files_apks.py",
+        "sparse_img.py",
+        "target_files_diff.py",
+        "validate_target_files.py",
+        "verity_utils.py",
+    ],
+}
+
+python_test_host {
+    name: "releasetools_test",
+    defaults: ["releasetools_test_defaults"],
+    main: "test_utils.py",
+    srcs: [
+        "test_*.py",
+    ],
+    libs: [
+        "releasetools_lib",
+    ],
+    data: [
+        "testdata/*",
+    ],
+    required: [
+        "otatools",
+    ],
+    test_suites: ["general-tests"],
+}

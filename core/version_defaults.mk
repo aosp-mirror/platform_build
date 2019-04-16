@@ -39,9 +39,9 @@ ifdef INTERNAL_BUILD_ID_MAKEFILE
   include $(INTERNAL_BUILD_ID_MAKEFILE)
 endif
 
-DEFAULT_PLATFORM_VERSION := QPR1
-MIN_PLATFORM_VERSION := QPR1
-MAX_PLATFORM_VERSION := QPR1
+DEFAULT_PLATFORM_VERSION := QP1A
+MIN_PLATFORM_VERSION := QP1A
+MAX_PLATFORM_VERSION := QP1A
 
 ALLOWED_VERSIONS := $(call allowed-platform-versions,\
   $(MIN_PLATFORM_VERSION),\
@@ -82,11 +82,11 @@ MAX_PLATFORM_VERSION :=
 # please add that PLATFORM_VERSION as well as clean up obsolete PLATFORM_VERSION's
 # in the following text file:
 # cts/tests/tests/os/assets/platform_versions.txt
-PLATFORM_VERSION.QPR1 := Q
+PLATFORM_VERSION.QP1A := Q
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.QPR1 := Q
+PLATFORM_VERSION_CODENAME.QP1A := Q
 
 ifndef PLATFORM_VERSION
   PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
@@ -252,7 +252,7 @@ ifndef PLATFORM_SECURITY_PATCH
     #  It must be of the form "YYYY-MM-DD" on production devices.
     #  It must match one of the Android Security Patch Level strings of the Public Security Bulletins.
     #  If there is no $PLATFORM_SECURITY_PATCH set, keep it empty.
-      PLATFORM_SECURITY_PATCH := 2019-01-05
+      PLATFORM_SECURITY_PATCH := 2019-04-05
 endif
 .KATI_READONLY := PLATFORM_SECURITY_PATCH
 

@@ -45,19 +45,21 @@ class Tests(unittest.TestCase):
     def test_aid(self):
         """Test AID class constructor"""
 
-        aid = AID('AID_FOO_BAR', '0xFF', 'myfakefile')
-        self.assertEquals(aid.identifier, 'AID_FOO_BAR')
-        self.assertEquals(aid.value, '0xFF')
-        self.assertEquals(aid.found, 'myfakefile')
-        self.assertEquals(aid.normalized_value, '255')
-        self.assertEquals(aid.friendly, 'foo_bar')
+        aid = AID('AID_FOO_BAR', '0xFF', 'myfakefile', '/system/bin/sh')
+        self.assertEqual(aid.identifier, 'AID_FOO_BAR')
+        self.assertEqual(aid.value, '0xFF')
+        self.assertEqual(aid.found, 'myfakefile')
+        self.assertEqual(aid.normalized_value, '255')
+        self.assertEqual(aid.friendly, 'foo_bar')
+        self.assertEqual(aid.login_shell, '/system/bin/sh')
 
-        aid = AID('AID_MEDIA_EX', '1234', 'myfakefile')
-        self.assertEquals(aid.identifier, 'AID_MEDIA_EX')
-        self.assertEquals(aid.value, '1234')
-        self.assertEquals(aid.found, 'myfakefile')
-        self.assertEquals(aid.normalized_value, '1234')
-        self.assertEquals(aid.friendly, 'mediaex')
+        aid = AID('AID_MEDIA_EX', '1234', 'myfakefile', '/vendor/bin/sh')
+        self.assertEqual(aid.identifier, 'AID_MEDIA_EX')
+        self.assertEqual(aid.value, '1234')
+        self.assertEqual(aid.found, 'myfakefile')
+        self.assertEqual(aid.normalized_value, '1234')
+        self.assertEqual(aid.friendly, 'mediaex')
+        self.assertEqual(aid.login_shell, '/vendor/bin/sh')
 
     def test_aid_header_parser_good(self):
         """Test AID Header Parser good input file"""
@@ -265,9 +267,9 @@ class Tests(unittest.TestCase):
             dirs = parser.dirs
             aids = parser.aids
 
-            self.assertEquals(len(files), 1)
-            self.assertEquals(len(dirs), 1)
-            self.assertEquals(len(aids), 1)
+            self.assertEqual(len(files), 1)
+            self.assertEqual(len(dirs), 1)
+            self.assertEqual(len(aids), 1)
 
             aid = aids[0]
             fcap = files[0]
@@ -275,14 +277,14 @@ class Tests(unittest.TestCase):
 
             self.assertEqual(fcap,
                              FSConfig('0777', 'AID_FOO', 'AID_SYSTEM',
-                                      '(1ULL << CAP_BLOCK_SUSPEND)',
+                                      'CAP_BLOCK_SUSPEND',
                                       '/system/bin/file', temp_file.name))
 
             self.assertEqual(dcap,
-                             FSConfig('0777', 'AID_FOO', 'AID_SYSTEM', '(0)',
+                             FSConfig('0777', 'AID_FOO', 'AID_SYSTEM', '0',
                                       '/vendor/path/dir/', temp_file.name))
 
-            self.assertEqual(aid, AID('AID_OEM1', '0x1389', temp_file.name))
+            self.assertEqual(aid, AID('AID_OEM1', '0x1389', temp_file.name, '/vendor/bin/sh'))
 
     def test_fs_config_file_parser_bad(self):
         """Test FSConfig Parser bad input file"""
