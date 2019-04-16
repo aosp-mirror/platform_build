@@ -425,9 +425,7 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     }
 
     common.OPTIONS.search_path = test_utils.get_search_path()
-    self.assertIsNotNone(common.OPTIONS.search_path)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_abOta_full(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
     target_info_dict['ab_update'] = 'true'
@@ -446,7 +444,6 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_abOta_incremental(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
     target_info_dict['ab_update'] = 'true'
@@ -469,7 +466,6 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_nonAbOta_full(self):
     target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     metadata = GetPackageMetadata(target_info)
@@ -485,7 +481,6 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_nonAbOta_incremental(self):
     target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     source_info = BuildInfo(self.TEST_SOURCE_INFO_DICT, None)
@@ -505,7 +500,6 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_wipe(self):
     target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     common.OPTIONS.wipe_user_data = True
@@ -523,7 +517,6 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         metadata)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_retrofitDynamicPartitions(self):
     target_info = BuildInfo(self.TEST_TARGET_INFO_DICT, None)
     common.OPTIONS.retrofit_dynamic_partitions = True
@@ -548,7 +541,6 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
          source_info['build.prop']['ro.build.date.utc'],
          target_info['build.prop']['ro.build.date.utc'])
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_unintentionalDowngradeDetected(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
     source_info_dict = copy.deepcopy(self.TEST_SOURCE_INFO_DICT)
@@ -561,7 +553,6 @@ class OtaFromTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertRaises(RuntimeError, GetPackageMetadata, target_info,
                       source_info)
 
-  @test_utils.SkipIfExternalToolsUnavailable()
   def test_GetPackageMetadata_downgrade(self):
     target_info_dict = copy.deepcopy(self.TEST_TARGET_INFO_DICT)
     source_info_dict = copy.deepcopy(self.TEST_SOURCE_INFO_DICT)
