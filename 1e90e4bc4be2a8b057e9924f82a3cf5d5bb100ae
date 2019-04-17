@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1a123f6f_fdeb5bff",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-17T15:50:59Z",
+      "side": 1,
+      "message": "On a second thought, it might be tricky to handle unwanted dirs with shutil.copytree. For example, if we have \u0027/path/to/file*\u0027 in patterns, it will still try to create \u0027/path/to\u0027 during the traversal, even if there\u0027s no matching file*. It\u0027s probably easier to go with the current CL by adding the symlink handling.",
+      "parentUuid": "fd704e95_8e3014af",
+      "range": {
+        "startLine": 228,
+        "startChar": 4,
+        "endLine": 228,
+        "endChar": 19
+      },
+      "revId": "1e90e4bc4be2a8b057e9924f82a3cf5d5bb100ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4bc88221_1c38e98f",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 3
