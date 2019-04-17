@@ -95,5 +95,3 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
 # Disable iorapd by default
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.iorapd.enable=false
-
-PRODUCT_USES_ART := true
