@@ -22,6 +22,29 @@
       "revId": "b30c83a7c3eb6588e73e65003c41e91a874916c9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6943c71c_db1ebceb",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 27
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-04-17T22:00:16Z",
+      "side": 1,
+      "message": "Did you undefine BOARD_SYSTEMIMAGE_PARTITION_SIZE for Dynamic partitions as well?",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 32
+      },
+      "revId": "b30c83a7c3eb6588e73e65003c41e91a874916c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
