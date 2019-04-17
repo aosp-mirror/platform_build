@@ -174,6 +174,8 @@ BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_static_ja
 BUILD_HOST_TEST_CONFIG :=$= $(BUILD_SYSTEM)/host_test_config.mk
 BUILD_TARGET_TEST_CONFIG :=$= $(BUILD_SYSTEM)/target_test_config.mk
 
+include $(BUILD_SYSTEM)/deprecation.mk
+
 # ###############################################################
 # Parse out any modifier targets.
 # ###############################################################
