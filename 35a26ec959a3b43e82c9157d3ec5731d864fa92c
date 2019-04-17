@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "c3134057_49fea1fb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-04-17T17:00:16Z",
+      "side": 1,
+      "message": "The concern is AOSP system.img code mistakenly using OEM extensions. For instance, if surfaceflinger said nnapi-\u003edoThing(0x923805, \"magic\"), then the api surface would have lost a level of integrity and would be unproven.",
+      "parentUuid": "ed5fcb0f_82dfe90c",
+      "revId": "35a26ec959a3b43e82c9157d3ec5731d864fa92c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "edd6b594_c9f66306",
         "filename": "target/board/gsi_system_user.prop",
         "patchSetId": 1
