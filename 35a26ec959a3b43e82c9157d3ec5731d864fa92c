@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "ed5fcb0f_82dfe90c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-17T13:20:17Z",
+      "side": 1,
+      "message": "k, that makes sense.. but I thought /product from the OEM doesn\u0027t get mounted when GSI is used right? is this change is preparing for when that\u0027s no longer the case?",
+      "parentUuid": "31c91ed2_e15bf739",
+      "revId": "35a26ec959a3b43e82c9157d3ec5731d864fa92c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "edd6b594_c9f66306",
         "filename": "target/board/gsi_system_user.prop",
         "patchSetId": 1
