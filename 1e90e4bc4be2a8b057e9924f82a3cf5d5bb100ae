@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd704e95_8e3014af",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-17T00:05:54Z",
+      "side": 1,
+      "message": "shutil.copyfile will not handle symlinks properly (and we have many of them under SYSTEM/ or VENDOR/ dirs). While we can specifically check and handle that, shall we just use shutil.copytree (with the `ignore` arg) instead?",
+      "range": {
+        "startLine": 228,
+        "startChar": 4,
+        "endLine": 228,
+        "endChar": 19
+      },
+      "revId": "1e90e4bc4be2a8b057e9924f82a3cf5d5bb100ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4bc88221_1c38e98f",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-17T00:05:54Z",
+      "side": 1,
+      "message": "nit: return early `if not output_target_files` to save one indentation level",
+      "range": {
+        "startLine": 699,
+        "startChar": 2,
+        "endLine": 699,
+        "endChar": 25
+      },
+      "revId": "1e90e4bc4be2a8b057e9924f82a3cf5d5bb100ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "93253d48_9e3e78ec",
+        "filename": "tools/releasetools/test_merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-17T00:05:54Z",
+      "side": 1,
+      "message": "nit: Seems more readable with extend:\n\nexpected_copied_items.extend([\n    createEmptyFile(),\n    createEmptyFile(),\n    createEmptyFile(),\n])",
+      "range": {
+        "startLine": 52,
+        "startChar": 4,
+        "endLine": 52,
+        "endChar": 33
+      },
+      "revId": "1e90e4bc4be2a8b057e9924f82a3cf5d5bb100ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
