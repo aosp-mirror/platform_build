@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a6c267a_8e750ac6",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 27
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-04-17T21:58:53Z",
+      "side": 1,
+      "message": "emulator is non-A/B or A/B? 2x is only needed for A/B devices.",
+      "range": {
+        "startLine": 25,
+        "startChar": 40,
+        "endLine": 25,
+        "endChar": 42
+      },
+      "revId": "b30c83a7c3eb6588e73e65003c41e91a874916c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
