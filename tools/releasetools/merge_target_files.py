@@ -42,7 +42,25 @@ Usage: merge_target_files.py [args]
       contents of default_other_item_list if provided.
 
   --output-target-files output-target-files-package
-      The output merged target files package. Also a zip archive.
+      If provided, the output merged target files package. Also a zip archive.
+
+  --output-dir output-directory
+      If provided, the destination directory for saving merged files. Requires
+      the --output-item-list flag.
+      Can be provided alongside --output-target-files, or by itself.
+
+  --output-item-list output-item-list-file.
+      The optional path to a newline-separated config file that specifies the
+      file patterns to copy into the --output-dir. Required if providing
+      the --output-dir flag.
+
+  --output-ota output-ota-package
+      The output ota package. This is a zip archive. Use of this flag may
+      require passing the --path common flag; see common.py.
+
+  --output-super-empty output-super-empty-image
+      If provided, creates a super_empty.img file from the merged target
+      files package and saves it at this path.
 
   --rebuild_recovery
       Rebuild the recovery patch used by non-A/B devices and write it to the
@@ -57,11 +75,14 @@ from __future__ import print_function
 import fnmatch
 import logging
 import os
+import shutil
 import sys
 import zipfile
 
-import common
 import add_img_to_target_files
+import build_super_image
+import common
+import ota_from_target_files
 
 logger = logging.getLogger(__name__)
 OPTIONS = common.OPTIONS
@@ -72,6 +93,10 @@ OPTIONS.system_misc_info_keys = None
 OPTIONS.other_target_files = None
 OPTIONS.other_item_list = None
 OPTIONS.output_target_files = None
+OPTIONS.output_dir = None
+OPTIONS.output_item_list = None
+OPTIONS.output_ota = None
+OPTIONS.output_super_empty = None
 OPTIONS.rebuild_recovery = False
 OPTIONS.keep_tmp = False
 
@@ -193,6 +218,29 @@ def extract_items(target_files, target_files_temp_dir, extract_item_list):
       target_files,
       target_files_temp_dir,
       filtered_extract_item_list)
+
+
+def copy_items(from_dir, to_dir, patterns):
+  """Similar to extract_items() except uses an input dir instead of zip."""
+  file_paths = []
+  for dirpath, _, filenames in os.walk(from_dir):
+    file_paths.extend(os.path.relpath(path=os.path.join(dirpath, filename),
+                                      start=from_dir) for filename in filenames)
+
+  filtered_file_paths = set()
+  for pattern in patterns:
+    filtered_file_paths.update(fnmatch.filter(file_paths, pattern))
+
+  for file_path in filtered_file_paths:
+    original_file_path = os.path.join(from_dir, file_path)
+    copied_file_path = os.path.join(to_dir, file_path)
+    copied_file_dir = os.path.dirname(copied_file_path)
+    if not os.path.exists(copied_file_dir):
+      os.makedirs(copied_file_dir)
+    if os.path.islink(original_file_path):
+      os.symlink(os.readlink(original_file_path), copied_file_path)
+    else:
+      shutil.copyfile(original_file_path, copied_file_path)
 
 
 def read_config_list(config_file_path):
@@ -388,7 +436,7 @@ def process_misc_info_txt(
     # a shared system image.
     for partition_group in merged_info_dict['super_partition_groups'].split(' '):
       if ('super_%s_group_size' % partition_group) not in merged_info_dict:
-        raise common.ExternalError(
+        raise ValueError(
             'Other META/misc_info.txt does not contain required key '
             'super_%s_group_size.' % partition_group)
       key = 'super_%s_partition_list' % partition_group
@@ -546,6 +594,10 @@ def merge_target_files(
     other_target_files,
     other_item_list,
     output_target_files,
+    output_dir,
+    output_item_list,
+    output_ota,
+    output_super_empty,
     rebuild_recovery):
   """Merge two target files packages together.
 
@@ -579,6 +631,11 @@ def merge_target_files(
 
     output_target_files: The name of the output zip archive target files
     package created by merging system and other.
+
+    output_ota: The name of the output zip archive ota package.
+
+    output_super_empty: If provided, creates a super_empty.img file from the
+    merged target files package and saves it at this path.
 
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
     devices and write it to the system image.
@@ -646,6 +703,27 @@ def merge_target_files(
       system_misc_info_keys=system_misc_info_keys,
       rebuild_recovery=rebuild_recovery)
 
+  # Create super_empty.img using the merged misc_info.txt.
+
+  if output_super_empty:
+    misc_info_txt = os.path.join(output_target_files_temp_dir,
+                                 'META', 'misc_info.txt')
+    def read_helper():
+      with open(misc_info_txt) as f:
+        return list(f.read().splitlines())
+
+    misc_info_dict = common.LoadDictionaryFromLines(read_helper())
+    if misc_info_dict.get('use_dynamic_partitions') != 'true':
+      raise ValueError(
+          'Building super_empty.img requires use_dynamic_partitions=true.')
+
+    build_super_image_args = [
+      '--verbose',
+      misc_info_txt,
+      output_super_empty,
+    ]
+    build_super_image.main(build_super_image_args)
+
   # Regenerate IMAGES in the temporary directory.
 
   add_img_args = ['--verbose']
@@ -655,7 +733,14 @@ def merge_target_files(
 
   add_img_to_target_files.main(add_img_args)
 
-  # Finally, create the output target files zip archive.
+  # Finally, create the output target files zip archive and/or copy the
+  # output items to the output target files directory.
+
+  if output_dir:
+    copy_items(output_target_files_temp_dir, output_dir, output_item_list)
+
+  if not output_target_files:
+    return
 
   output_zip = os.path.abspath(output_target_files)
   output_target_files_list = os.path.join(temp_dir, 'output.list')
@@ -693,6 +778,15 @@ def merge_target_files(
   ]
   logger.info('creating %s', output_target_files)
   common.RunAndWait(command, verbose=True)
+
+  # Create the OTA package from the merged target files package.
+
+  if output_ota:
+    ota_from_target_files_args = [
+        output_zip,
+        output_ota,
+    ]
+    ota_from_target_files.main(ota_from_target_files_args)
 
 
 def call_func_with_temp_dir(func, keep_tmp):
@@ -747,6 +841,14 @@ def main():
       OPTIONS.other_item_list = a
     elif o == '--output-target-files':
       OPTIONS.output_target_files = a
+    elif o == '--output-dir':
+      OPTIONS.output_dir = a
+    elif o == '--output-item-list':
+      OPTIONS.output_item_list = a
+    elif o == '--output-ota':
+      OPTIONS.output_ota = a
+    elif o == '--output-super-empty':
+      OPTIONS.output_super_empty = a
     elif o == '--rebuild_recovery':
       OPTIONS.rebuild_recovery = True
     elif o == '--keep-tmp':
@@ -764,6 +866,10 @@ def main():
           'other-target-files=',
           'other-item-list=',
           'output-target-files=',
+          'output-dir=',
+          'output-item-list=',
+          'output-ota=',
+          'output-super-empty=',
           'rebuild_recovery',
           'keep-tmp',
       ],
@@ -771,8 +877,11 @@ def main():
 
   if (len(args) != 0 or
       OPTIONS.system_target_files is None or
-      OPTIONS.other_target_files is None or
-      OPTIONS.output_target_files is None):
+      OPTIONS.other_target_files is None or (
+        OPTIONS.output_target_files is None and
+        OPTIONS.output_dir is None) or (
+        OPTIONS.output_dir is not None and
+        OPTIONS.output_item_list is None)):
     common.Usage(__doc__)
     sys.exit(1)
 
@@ -791,6 +900,11 @@ def main():
   else:
     other_item_list = default_other_item_list
 
+  if OPTIONS.output_item_list:
+    output_item_list = read_config_list(OPTIONS.output_item_list)
+  else:
+    output_item_list = None
+
   if not validate_config_lists(
       system_item_list=system_item_list,
       system_misc_info_keys=system_misc_info_keys,
@@ -806,6 +920,10 @@ def main():
           other_target_files=OPTIONS.other_target_files,
           other_item_list=other_item_list,
           output_target_files=OPTIONS.output_target_files,
+          output_dir=OPTIONS.output_dir,
+          output_item_list=output_item_list,
+          output_ota=OPTIONS.output_ota,
+          output_super_empty=OPTIONS.output_super_empty,
           rebuild_recovery=OPTIONS.rebuild_recovery),
       OPTIONS.keep_tmp)
 
