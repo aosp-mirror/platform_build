@@ -662,6 +662,8 @@ $(INSTALLED_SDK_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
 
 # -----------------------------------------------------------------
 # package stats
+ifdef BUILDING_SYSTEM_IMAGE
+
 PACKAGE_STATS_FILE := $(PRODUCT_OUT)/package-stats.txt
 PACKAGES_TO_STAT := \
     $(sort $(filter $(TARGET_OUT)/% $(TARGET_OUT_DATA)/%, \
@@ -679,6 +681,8 @@ endif
 
 .PHONY: package-stats
 package-stats: $(PACKAGE_STATS_FILE)
+
+endif # BUILDING_SYSTEM_IMAGE
 
 # -----------------------------------------------------------------
 # Cert-to-package mapping.  Used by the post-build signing tools.
@@ -2048,6 +2052,8 @@ FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
 # on the device because it depends on everything in a given device
 # image which defines a vintf_fragment.
 
+ifdef BUILDING_SYSTEM_IMAGE
+
 BUILT_ASSEMBLED_SYSTEM_MANIFEST := $(PRODUCT_OUT)/verified_assembled_system_manifest.xml
 $(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(HOST_OUT_EXECUTABLES)/assemble_vintf
 $(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(BUILT_VENDOR_MATRIX)
@@ -2061,6 +2067,8 @@ $(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(FULL_SYSTEMIMAGE_DEPS)
 	    $$([ -d $(TARGET_OUT)/etc/vintf/manifest ] && \
 	        find $(TARGET_OUT)/etc/vintf/manifest -type f -name "*.xml" | \
 	        sed "s/^/-i /" | tr '\n' ' ') -o $@
+
+endif # BUILDING_SYSTEM_IMAGE
 
 # -----------------------------------------------------------------
 ifdef BUILDING_SYSTEM_IMAGE
@@ -3263,6 +3271,7 @@ define build-chained-vbmeta-image
       --output $@
 endef
 
+ifdef BUILDING_SYSTEM_IMAGE
 ifdef BOARD_AVB_VBMETA_SYSTEM
 INSTALLED_VBMETA_SYSTEMIMAGE_TARGET := $(PRODUCT_OUT)/vbmeta_system.img
 $(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET): \
@@ -3271,6 +3280,7 @@ $(INSTALLED_VBMETA_SYSTEMIMAGE_TARGET): \
 	    $(BOARD_AVB_VBMETA_SYSTEM_KEY_PATH)
 	$(call build-chained-vbmeta-image,vbmeta_system)
 endif
+endif # BUILDING_SYSTEM_IMAGE
 
 ifdef BOARD_AVB_VBMETA_VENDOR
 INSTALLED_VBMETA_VENDORIMAGE_TARGET := $(PRODUCT_OUT)/vbmeta_vendor.img
@@ -3721,6 +3731,13 @@ define dump-dynamic-partitions-info
     echo "build_non_sparse_super_partition=true" >> $(1))
 endef
 
+# By conditionally including the dependency of the target files package on the
+# full system image deps, we speed up builds that do not build the system
+# image.
+ifdef BUILDING_SYSTEM_IMAGE
+$(BUILT_TARGET_FILES_PACKAGE): $(FULL_SYSTEMIMAGE_DEPS)
+endif
+
 # Depending on the various images guarantees that the underlying
 # directories are up-to-date.
 $(BUILT_TARGET_FILES_PACKAGE): \
@@ -3728,7 +3745,6 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(INSTALLED_BOOTIMAGE_TARGET) \
 	    $(INSTALLED_RADIOIMAGE_TARGET) \
 	    $(INSTALLED_RECOVERYIMAGE_TARGET) \
-	    $(FULL_SYSTEMIMAGE_DEPS) \
 	    $(INSTALLED_USERDATAIMAGE_TARGET) \
 	    $(INSTALLED_CACHEIMAGE_TARGET) \
 	    $(INSTALLED_VENDORIMAGE_TARGET) \
@@ -4106,7 +4122,9 @@ ifdef BUILDING_SYSTEM_OTHER_IMAGE
 endif
 	@# Metadata for compatibility verification.
 	$(hide) cp $(BUILT_SYSTEM_MATRIX) $(zip_root)/META/system_matrix.xml
+ifdef BUILT_ASSEMBLED_SYSTEM_MANIFEST
 	$(hide) cp $(BUILT_ASSEMBLED_SYSTEM_MANIFEST) $(zip_root)/META/system_manifest.xml
+endif
 ifdef BUILT_ASSEMBLED_VENDOR_MANIFEST
 	$(hide) cp $(BUILT_ASSEMBLED_VENDOR_MANIFEST) $(zip_root)/META/vendor_manifest.xml
 endif
