@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "b40b2c3f_f3190e0d",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 228,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-04-17T17:19:11Z",
+      "side": 1,
+      "message": "Good point, thanks. Added symlink handling, LMK if I missed any edge case you can think of (that is otherwise caught by common.UnzipToDir).",
+      "parentUuid": "1a123f6f_fdeb5bff",
+      "range": {
+        "startLine": 228,
+        "startChar": 4,
+        "endLine": 228,
+        "endChar": 19
+      },
+      "revId": "1e90e4bc4be2a8b057e9924f82a3cf5d5bb100ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4bc88221_1c38e98f",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 3
@@ -72,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "ece8c791_01570faa",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-04-17T17:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4bc88221_1c38e98f",
+      "range": {
+        "startLine": 699,
+        "startChar": 2,
+        "endLine": 699,
+        "endChar": 25
+      },
+      "revId": "1e90e4bc4be2a8b057e9924f82a3cf5d5bb100ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "93253d48_9e3e78ec",
         "filename": "tools/releasetools/test_merge_target_files.py",
         "patchSetId": 3
@@ -92,6 +140,30 @@
       "revId": "1e90e4bc4be2a8b057e9924f82a3cf5d5bb100ae",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ffdc3751_b077ada8",
+        "filename": "tools/releasetools/test_merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-04-17T17:19:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93253d48_9e3e78ec",
+      "range": {
+        "startLine": 52,
+        "startChar": 4,
+        "endLine": 52,
+        "endChar": 33
+      },
+      "revId": "1e90e4bc4be2a8b057e9924f82a3cf5d5bb100ae",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
