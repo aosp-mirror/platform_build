@@ -42,7 +42,7 @@ target_fs_config_gen_filegroup {
 genrule {
     name: "oemaids_header_gen",
     tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) oemaid --aid-header=$(location :android_filesystem_config_header) $(location :target_fs_config_gen) >$(out)",
+    cmd: "$(location fs_config_generator.py) oemaid --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -62,7 +62,7 @@ cc_library_headers {
 genrule {
     name: "passwd_gen",
     tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) passwd --required-prefix=vendor_ --aid-header=$(location :android_filesystem_config_header) $(location :target_fs_config_gen) >$(out)",
+    cmd: "$(location fs_config_generator.py) passwd --required-prefix=vendor_ --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -82,7 +82,7 @@ prebuilt_etc {
 genrule {
     name: "group_gen",
     tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) group --required-prefix=vendor_ --aid-header=$(location :android_filesystem_config_header) $(location :target_fs_config_gen) >$(out)",
+    cmd: "$(location fs_config_generator.py) group --required-prefix=vendor_ --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
