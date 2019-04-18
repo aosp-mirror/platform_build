@@ -70,6 +70,29 @@
       "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a71ae7e9_a0e7d0df",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-04-18T20:40:04Z",
+      "side": 1,
+      "message": "I was thinking that we should zip up the files that are already at os.path.join(output_target_files_temp_dir, \"IMAGES\") rather than unzipping and re-zipping. However, it\u0027s hard to ignore the convenience of this function, and there\u0027s probably not a huge gain avoiding the extra unzip (that\u0027s the fast part).",
+      "range": {
+        "startLine": 761,
+        "startChar": 4,
+        "endLine": 761,
+        "endChar": 58
+      },
+      "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
