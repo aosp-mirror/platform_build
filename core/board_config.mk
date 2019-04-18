@@ -92,6 +92,12 @@ _build_broken_var_list := \
   BUILD_BROKEN_ENG_DEBUG_TAGS \
   BUILD_BROKEN_USES_NETWORK \
 
+_build_broken_var_list += \
+  $(foreach m,$(AVAILABLE_BUILD_MODULE_TYPES) \
+              $(DEFAULT_WARNING_BUILD_MODULE_TYPES) \
+              $(DEFAULT_ERROR_BUILD_MODULE_TYPES), \
+    BUILD_BROKEN_USES_$(m))
+
 _board_true_false_vars := $(_build_broken_var_list)
 _board_strip_readonly_list += $(_build_broken_var_list)
 
@@ -511,3 +517,16 @@ ifneq (,$(_unsupported_systemsdk_versions))
   $(error System SDK versions '$(_unsupported_systemsdk_versions)' in BOARD_SYSTEMSDK_VERSIONS are not supported.\
           Supported versions are $(PLATFORM_SYSTEMSDK_VERSIONS))
 endif
+
+###########################################
+# Handle BUILD_BROKEN_USES_BUILD_*
+
+$(foreach m,$(DEFAULT_WARNING_BUILD_MODULE_TYPES),\
+  $(if $(filter false,$(BUILD_BROKEN_USES_$(m))),\
+    $(KATI_obsolete_var $(m),Please convert to Soong),\
+    $(KATI_deprecated_var $(m),Please convert to Soong)))
+
+$(foreach m,$(DEFAULT_ERROR_BUILD_MODULE_TYPES),\
+  $(if $(filter true,$(BUILD_BROKEN_USES_$(m))),\
+    $(KATI_deprecated_var $(m),Please convert to Soong),\
+    $(KATI_obsolete_var $(m),Please convert to Soong)))
