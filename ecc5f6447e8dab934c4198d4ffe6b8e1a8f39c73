@@ -22,6 +22,30 @@
       "revId": "ecc5f6447e8dab934c4198d4ffe6b8e1a8f39c73",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b2d714b5_a6610c4a",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1267,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-18T17:57:06Z",
+      "side": 1,
+      "message": "Good point! I thought that\u0027s infeasible due to the use of DEFAULT_SYSTEM_DEV_CERTIFICATE.x509.pem which is outside the module dir.\n\nPS4 moved the rule into a separate module (into build/make/target/product/security/Android.mk).",
+      "parentUuid": "bfadcfdb_06568ae5",
+      "range": {
+        "startLine": 1266,
+        "startChar": 27,
+        "endLine": 1267,
+        "endChar": 91
+      },
+      "revId": "ecc5f6447e8dab934c4198d4ffe6b8e1a8f39c73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
