@@ -145,6 +145,30 @@
     },
     {
       "key": {
+        "uuid": "672f4f3f_b087884b",
+        "filename": "tools/releasetools/img_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-04-18T23:46:49Z",
+      "side": 1,
+      "message": "Ah! I missed that 112 isn\u0027t in main(). Updated it. Thanks!",
+      "parentUuid": "90198c06_530d9262",
+      "range": {
+        "startLine": 100,
+        "startChar": 0,
+        "endLine": 100,
+        "endChar": 47
+      },
+      "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a71ae7e9_a0e7d0df",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 2
