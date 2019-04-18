@@ -127,32 +127,7 @@ ndk-docs: $(ndk_doxygen_out)/index.html
 .PHONY: ndk-docs
 endif
 
-# -----------------------------------------------------------------
-# generate preview API fingerprint
-api_fingerprint := $(call intermediates-dir-for,PACKAGING,api_fingerprint)/api_fingerprint.txt
-.KATI_READONLY := api_fingerprint
-
-ifeq (REL,$(PLATFORM_VERSION_CODENAME))
-  $(api_fingerprint):
-	echo REL >$@
-else ifneq ($(TARGET_BUILD_APPS),)
-  # TODO: use a prebuilt api_fingerprint.txt from prebuilts/sdk/current.txt once we have one
-  #$(eval $(call copy-one-file,prebuilts/sdk/current/api_fingerprint.txt,$(api_fingerprint)))
-  $(api_fingerprint):
-	echo $(PLATFORM_PREVIEW_SDK_VERSION) >$@
-else ifneq ($(TARGET_BUILD_PDK),)
-  $(eval $(call copy-one-file,$(_pdk_fusion_intermediates)/api_fingerprint.txt,$(api_fingerprint)))
-else
-  ifeq ($(HOST_OS),darwin)
-  $(api_fingerprint): PRIVATE_HASH := md5
-  else
-  $(api_fingerprint): PRIVATE_HASH := md5sum
-  endif
-  $(api_fingerprint): $(sort $(wildcard frameworks/base/api/*current.txt))
-	cat $^ | $(PRIVATE_HASH) | cut -d' ' -f1 >$@
-
-  $(call dist-for-goals,sdk,$(api_fingerprint))
-endif
+$(call dist-for-goals,sdk,$(API_FINGERPRINT))
 
 # -----------------------------------------------------------------
 # property_overrides_split_enabled
@@ -418,7 +393,7 @@ system_prop_file := $(TARGET_SYSTEM_PROP)
 else
 system_prop_file := $(wildcard $(TARGET_DEVICE_DIR)/system.prop)
 endif
-$(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(api_fingerprint)
+$(intermediate_system_build_prop): $(BUILDINFO_SH) $(BUILDINFO_COMMON_SH) $(INTERNAL_BUILD_ID_MAKEFILE) $(BUILD_SYSTEM)/version_defaults.mk $(system_prop_file) $(INSTALLED_ANDROID_INFO_TXT_TARGET) $(API_FINGERPRINT)
 	@echo Target buildinfo: $@
 	@mkdir -p $(dir $@)
 	$(hide) echo > $@
@@ -454,7 +429,7 @@ endif
 	        PLATFORM_BASE_OS="$(PLATFORM_BASE_OS)" \
 	        PLATFORM_SDK_VERSION="$(PLATFORM_SDK_VERSION)" \
 	        PLATFORM_PREVIEW_SDK_VERSION="$(PLATFORM_PREVIEW_SDK_VERSION)" \
-	        PLATFORM_PREVIEW_SDK_FINGERPRINT="$$(cat $(api_fingerprint))" \
+	        PLATFORM_PREVIEW_SDK_FINGERPRINT="$$(cat $(API_FINGERPRINT))" \
 	        PLATFORM_VERSION_CODENAME="$(PLATFORM_VERSION_CODENAME)" \
 	        PLATFORM_VERSION_ALL_CODENAMES="$(PLATFORM_VERSION_ALL_CODENAMES)" \
 	        PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION="$(PLATFORM_MIN_SUPPORTED_TARGET_SDK_VERSION)" \
@@ -2407,7 +2382,7 @@ $(INSTALLED_PLATFORM_ZIP): PRIVATE_ODEX_CONFIG := $(pdk_odex_config_mk)
 $(INSTALLED_PLATFORM_ZIP) : $(SOONG_ZIP)
 # dependencies for the other partitions are defined below after their file lists
 # are known
-$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES) $(pdk_classes_dex) $(pdk_odex_config_mk) $(api_fingerprint)
+$(INSTALLED_PLATFORM_ZIP) : $(INTERNAL_SYSTEMIMAGE_FILES) $(pdk_classes_dex) $(pdk_odex_config_mk) $(API_FINGERPRINT)
 	$(call pretty,"Platform zip package: $(INSTALLED_PLATFORM_ZIP)")
 	rm -f $@ $@.lst
 	echo "-C $(PRODUCT_OUT)" >> $@.lst
@@ -2440,7 +2415,7 @@ endif
 	@# Add dex-preopt files and config.
 	$(if $(PRIVATE_DEX_FILES),\
 	  echo "-C $(OUT_DIR) $(addprefix -f ,$(PRIVATE_DEX_FILES))") >> $@.lst
-	echo "-C $(dir $(api_fingerprint)) -f $(api_fingerprint)" >> $@.lst
+	echo "-C $(dir $(API_FINGERPRINT)) -f $(API_FINGERPRINT)" >> $@.lst
 	touch $(PRODUCT_OUT)/pdk.mk
 	echo "-C $(PRODUCT_OUT) -f $(PRIVATE_ODEX_CONFIG) -f $(PRODUCT_OUT)/pdk.mk" >> $@.lst
 	$(SOONG_ZIP) --ignore_missing_files -o $@ @$@.lst
