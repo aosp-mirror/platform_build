@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bfadcfdb_06568ae5",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 1267,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-18T13:35:31Z",
+      "side": 1,
+      "message": "maybe a stupid question, but why is this defined in Makefile as opposed to being a normal module required by update_engine? (not that it\u0027s a standard module type, but it could import base_rules.mk directly)",
+      "range": {
+        "startLine": 1266,
+        "startChar": 27,
+        "endLine": 1267,
+        "endChar": 91
+      },
+      "revId": "ecc5f6447e8dab934c4198d4ffe6b8e1a8f39c73",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
