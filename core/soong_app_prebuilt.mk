@@ -60,7 +60,7 @@ ifeq ($(module_run_appcompat),true)
   $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
 	@echo "Copy: $@"
 	$(copy-file-to-target)
-	$(call appcompat-header, aapt2)
+	$(appcompat-header)
 	$(run-appcompat)
 else
   $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
