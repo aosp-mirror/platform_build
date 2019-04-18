@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "09cc894a_28fb1713",
+        "filename": "tools/releasetools/img_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-04-18T21:03:49Z",
+      "side": 1,
+      "message": "That would be clean as well :) I planned to do that originally, but then got nervous because calling common.Cleanup() from img_from_target_files will cause *all* temp files to be cleaned up.\n\nIf some script happens to call img_from_target_files in the middle of its logic, when it still needs temp files, then they will get deleted. I guess the underlying issue is that tempfiles are grouped together across scripts instead of being specific to each script.\n\nThis solution *does* work for merge_target_files since it calls img_from_target_files at the very end of its logic, but this isn\u0027t guaranteed (forever, or for other scripts).",
+      "parentUuid": "c417efbf_979ef4f1",
+      "range": {
+        "startLine": 100,
+        "startChar": 0,
+        "endLine": 100,
+        "endChar": 47
+      },
+      "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a71ae7e9_a0e7d0df",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 2
