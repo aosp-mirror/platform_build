@@ -189,6 +189,30 @@
       "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da8a169f_ae74b3e7",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-04-18T21:09:36Z",
+      "side": 1,
+      "message": "I\u0027m good with keeping this logic centralized.",
+      "parentUuid": "277b493e_6af9d4ac",
+      "range": {
+        "startLine": 761,
+        "startChar": 4,
+        "endLine": 761,
+        "endChar": 58
+      },
+      "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
