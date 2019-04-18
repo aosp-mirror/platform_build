@@ -121,6 +121,30 @@
     },
     {
       "key": {
+        "uuid": "90198c06_530d9262",
+        "filename": "tools/releasetools/img_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-18T23:13:48Z",
+      "side": 1,
+      "message": "\u003e calling common.Cleanup() from img_from_target_files will cause *all* temp files to be cleaned up.\n\nwell i meant to move the call to L112. so the cleanup won\u0027t happen unless img_from_target_files.py is called as a standalone tool",
+      "parentUuid": "09cc894a_28fb1713",
+      "range": {
+        "startLine": 100,
+        "startChar": 0,
+        "endLine": 100,
+        "endChar": 47
+      },
+      "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a71ae7e9_a0e7d0df",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 2
