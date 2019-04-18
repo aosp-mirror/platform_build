@@ -93,6 +93,30 @@
       "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94a6ea27_a14ace0b",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-04-18T20:45:13Z",
+      "side": 1,
+      "message": "Right. I still lean toward using this existing function instead of something custom when possible, at least until someone requests that we speed up this step.",
+      "parentUuid": "a71ae7e9_a0e7d0df",
+      "range": {
+        "startLine": 761,
+        "startChar": 4,
+        "endLine": 761,
+        "endChar": 58
+      },
+      "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
