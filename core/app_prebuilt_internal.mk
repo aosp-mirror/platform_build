@@ -200,6 +200,9 @@ $(built_module) : | $(DEXPREOPT_STRIP_DEPS)
 $(built_module) : .KATI_DEPFILE := $(built_module).d
 endif
 endif
+ifeq ($(module_run_appcompat),true)
+$(built_module) : $(AAPT2)
+endif
 $(built_module) : $(my_prebuilt_src_file) | $(ZIPALIGN) $(ZIP2ZIP) $(SIGNAPK_JAR)
 	$(transform-prebuilt-to-target)
 	$(uncompress-prebuilt-embedded-jni-libs)
@@ -216,11 +219,7 @@ ifneq ($(LOCAL_CERTIFICATE),PRESIGNED)
 	@# Only strip out files if we can re-sign the package.
 # Run appcompat before stripping the classes.dex file.
 ifeq ($(module_run_appcompat),true)
-ifeq ($(LOCAL_USE_AAPT2),true)
 	$(call appcompat-header, aapt2)
-else
-	$(appcompat-header)
-endif
 	$(run-appcompat)
 endif  # module_run_appcompat
 ifdef LOCAL_DEX_PREOPT
