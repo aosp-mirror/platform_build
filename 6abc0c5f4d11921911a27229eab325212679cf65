@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "c417efbf_979ef4f1",
+        "filename": "tools/releasetools/img_from_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-18T20:52:00Z",
+      "side": 1,
+      "message": "Ah got you. Then I think it\u0027s cleaner to remove L99 and call common.Cleanup() at L112 instead?",
+      "parentUuid": "9db36e57_5c287d19",
+      "range": {
+        "startLine": 100,
+        "startChar": 0,
+        "endLine": 100,
+        "endChar": 47
+      },
+      "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a71ae7e9_a0e7d0df",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 2
@@ -117,6 +141,30 @@
       "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "277b493e_6af9d4ac",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 761,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-18T20:52:00Z",
+      "side": 1,
+      "message": "+1 to keep calling img_from_target_files.py. We happen to have another CL today (https://android-review.googlesource.com/c/platform/build/+/946984) that tries to change the logic to generate the -img.zip (which currently only changes the Makefile logic, but I asked on the CL to change img_from_target_files.py as well).",
+      "parentUuid": "94a6ea27_a14ace0b",
+      "range": {
+        "startLine": 761,
+        "startChar": 4,
+        "endLine": 761,
+        "endChar": 58
+      },
+      "revId": "6abc0c5f4d11921911a27229eab325212679cf65",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
