@@ -1251,42 +1251,6 @@ $(winpthreads_notice_file): \
 	$(hide) mkdir -p $(dir $@)
 	$(hide) $(ACP) $< $@
 
-# -----------------------------------------------------------------
-# Build a keystore with the authorized keys in it, used to verify the
-# authenticity of downloaded OTA packages.
-#
-# This rule adds to ALL_DEFAULT_INSTALLED_MODULES, so it needs to come
-# before the rules that use that variable to build the image.
-ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_ETC)/security/otacerts.zip
-$(TARGET_OUT_ETC)/security/otacerts.zip: PRIVATE_CERT := $(DEFAULT_KEY_CERT_PAIR).x509.pem
-$(TARGET_OUT_ETC)/security/otacerts.zip: $(SOONG_ZIP)
-$(TARGET_OUT_ETC)/security/otacerts.zip: $(DEFAULT_KEY_CERT_PAIR).x509.pem
-	$(hide) rm -f $@
-	$(hide) mkdir -p $(dir $@)
-	$(hide) $(SOONG_ZIP) -o $@ -C $(dir $(PRIVATE_CERT)) -f $(PRIVATE_CERT)
-
-# Carry the public key for update_engine if it's a non-IoT target that
-# uses the AB updater. We use the same key as otacerts but in RSA public key
-# format.
-ifeq ($(AB_OTA_UPDATER),true)
-ifneq ($(PRODUCT_IOT),true)
-ALL_DEFAULT_INSTALLED_MODULES += $(TARGET_OUT_ETC)/update_engine/update-payload-key.pub.pem
-$(TARGET_OUT_ETC)/update_engine/update-payload-key.pub.pem: $(DEFAULT_KEY_CERT_PAIR).x509.pem
-	$(hide) rm -f $@
-	$(hide) mkdir -p $(dir $@)
-	$(hide) openssl x509 -pubkey -noout -in $< > $@
-
-ALL_DEFAULT_INSTALLED_MODULES += \
-    $(TARGET_RECOVERY_ROOT_OUT)/system/etc/update_engine/update-payload-key.pub.pem
-$(TARGET_RECOVERY_ROOT_OUT)/system/etc/update_engine/update-payload-key.pub.pem: \
-	    $(TARGET_OUT_ETC)/update_engine/update-payload-key.pub.pem
-	$(hide) cp -f $< $@
-endif
-endif
-
-.PHONY: otacerts
-otacerts: $(TARGET_OUT_ETC)/security/otacerts.zip
-
 
 # #################################################################
 # Targets for user images
@@ -1851,22 +1815,6 @@ ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
   INTERNAL_RECOVERYIMAGE_ARGS += --dtb $(INSTALLED_DTBIMAGE_TARGET)
 endif
 
-# Keys authorized to sign OTA packages this build will accept.  The
-# build always uses dev-keys for this; release packaging tools will
-# substitute other keys for this one.
-OTA_PUBLIC_KEYS := $(DEFAULT_SYSTEM_DEV_CERTIFICATE).x509.pem
-
-# Generate a file containing the keys that will be read by the
-# recovery binary.
-RECOVERY_INSTALL_OTA_KEYS := \
-	$(call intermediates-dir-for,PACKAGING,ota_keys)/otacerts.zip
-$(RECOVERY_INSTALL_OTA_KEYS): PRIVATE_OTA_PUBLIC_KEYS := $(OTA_PUBLIC_KEYS)
-$(RECOVERY_INSTALL_OTA_KEYS): extra_keys := $(patsubst %,%.x509.pem,$(PRODUCT_EXTRA_RECOVERY_KEYS))
-$(RECOVERY_INSTALL_OTA_KEYS): $(SOONG_ZIP) $(OTA_PUBLIC_KEYS) $(extra_keys)
-	$(hide) rm -f $@
-	$(hide) mkdir -p $(dir $@)
-	$(hide) $(SOONG_ZIP) -o $@ $(foreach key_file, $(PRIVATE_OTA_PUBLIC_KEYS) $(extra_keys), -C $(dir $(key_file)) -f $(key_file))
-
 RECOVERYIMAGE_ID_FILE := $(PRODUCT_OUT)/recovery.id
 
 # $(1): output file
@@ -1898,8 +1846,6 @@ define build-recoveryimage-target
     cp -f $(item) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.fstab)
   $(if $(strip $(recovery_wipe)), \
     $(hide) cp -f $(recovery_wipe) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/recovery.wipe)
-  $(hide) mkdir -p $(TARGET_RECOVERY_ROOT_OUT)/system/etc/security
-  $(hide) cp $(RECOVERY_INSTALL_OTA_KEYS) $(TARGET_RECOVERY_ROOT_OUT)/system/etc/security/otacerts.zip
   $(hide) ln -sf prop.default $(TARGET_RECOVERY_ROOT_OUT)/default.prop
   $(BOARD_RECOVERY_IMAGE_PREPARE)
   $(hide) $(MKBOOTFS) -d $(TARGET_OUT) $(TARGET_RECOVERY_ROOT_OUT) | $(MINIGZIP) > $(recovery_ramdisk)
@@ -1956,7 +1902,6 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	    $(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
 	    $(recovery_resource_deps) \
 	    $(recovery_fstab) \
-	    $(RECOVERY_INSTALL_OTA_KEYS) \
 	    $(BOARD_RECOVERY_KERNEL_MODULES) \
 	    $(DEPMOD)
 	$(call pretty,"Target boot image from recovery: $@")
@@ -1987,7 +1932,6 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	    $(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
 	    $(recovery_resource_deps) \
 	    $(recovery_fstab) \
-	    $(RECOVERY_INSTALL_OTA_KEYS) \
 	    $(BOARD_RECOVERY_KERNEL_MODULES) \
 	    $(DEPMOD)
 	$(call build-recoveryimage-target, $@)
