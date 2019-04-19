@@ -58,6 +58,10 @@ Usage: merge_target_files.py [args]
       The output ota package. This is a zip archive. Use of this flag may
       require passing the --path common flag; see common.py.
 
+  --output-img output-img-package
+      The output img package, suitable for use with 'fastboot update'. Use of
+      this flag may require passing the --path common flag; see common.py.
+
   --output-super-empty output-super-empty-image
       If provided, creates a super_empty.img file from the merged target
       files package and saves it at this path.
@@ -82,6 +86,7 @@ import zipfile
 import add_img_to_target_files
 import build_super_image
 import common
+import img_from_target_files
 import ota_from_target_files
 
 logger = logging.getLogger(__name__)
@@ -96,6 +101,7 @@ OPTIONS.output_target_files = None
 OPTIONS.output_dir = None
 OPTIONS.output_item_list = None
 OPTIONS.output_ota = None
+OPTIONS.output_img = None
 OPTIONS.output_super_empty = None
 OPTIONS.rebuild_recovery = False
 OPTIONS.keep_tmp = False
@@ -558,8 +564,8 @@ def process_special_cases(temp_dir, system_target_files_temp_dir,
 def merge_target_files(temp_dir, system_target_files, system_item_list,
                        system_misc_info_keys, other_target_files,
                        other_item_list, output_target_files, output_dir,
-                       output_item_list, output_ota, output_super_empty,
-                       rebuild_recovery):
+                       output_item_list, output_ota, output_img,
+                       output_super_empty, rebuild_recovery):
   """Merge two target files packages together.
 
   This function takes system and other target files packages as input, performs
@@ -589,6 +595,7 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
     output_dir: The destination directory for saving merged files.
     output_item_list: The list of items to copy into the output_dir.
     output_ota: The name of the output zip archive ota package.
+    output_img: The name of the output zip archive img package.
     output_super_empty: If provided, creates a super_empty.img file from the
       merged target files package and saves it at this path.
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
@@ -654,28 +661,6 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
       system_misc_info_keys=system_misc_info_keys,
       rebuild_recovery=rebuild_recovery)
 
-  # Create super_empty.img using the merged misc_info.txt.
-
-  if output_super_empty:
-    misc_info_txt = os.path.join(output_target_files_temp_dir, 'META',
-                                 'misc_info.txt')
-
-    def read_helper():
-      with open(misc_info_txt) as f:
-        return list(f.read().splitlines())
-
-    misc_info_dict = common.LoadDictionaryFromLines(read_helper())
-    if misc_info_dict.get('use_dynamic_partitions') != 'true':
-      raise ValueError(
-          'Building super_empty.img requires use_dynamic_partitions=true.')
-
-    build_super_image_args = [
-        '--verbose',
-        misc_info_txt,
-        output_super_empty,
-    ]
-    build_super_image.main(build_super_image_args)
-
   # Regenerate IMAGES in the temporary directory.
 
   add_img_args = ['--verbose']
@@ -684,6 +669,34 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
   add_img_args.append(output_target_files_temp_dir)
 
   add_img_to_target_files.main(add_img_args)
+
+  # Create super_empty.img using the merged misc_info.txt.
+
+  misc_info_txt = os.path.join(output_target_files_temp_dir, 'META',
+                               'misc_info.txt')
+
+  def read_helper():
+    with open(misc_info_txt) as f:
+      return list(f.read().splitlines())
+
+  use_dynamic_partitions = common.LoadDictionaryFromLines(
+      read_helper()).get('use_dynamic_partitions')
+
+  if use_dynamic_partitions != 'true' and output_super_empty:
+    raise ValueError(
+        'Building super_empty.img requires use_dynamic_partitions=true.')
+  elif use_dynamic_partitions == 'true':
+    super_empty_img = os.path.join(output_target_files_temp_dir, 'IMAGES',
+                                   'super_empty.img')
+    build_super_image_args = [
+        misc_info_txt,
+        super_empty_img,
+    ]
+    build_super_image.main(build_super_image_args)
+
+    # Copy super_empty.img to the user-provided output_super_empty location.
+    if output_super_empty:
+      shutil.copyfile(super_empty_img, output_super_empty)
 
   # Finally, create the output target files zip archive and/or copy the
   # output items to the output target files directory.
@@ -737,6 +750,15 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
         output_ota,
     ]
     ota_from_target_files.main(ota_from_target_files_args)
+
+  # Create the IMG package from the merged target files package.
+
+  if output_img:
+    img_from_target_files_args = [
+        output_zip,
+        output_img,
+    ]
+    img_from_target_files.main(img_from_target_files_args)
 
 
 def call_func_with_temp_dir(func, keep_tmp):
@@ -796,6 +818,8 @@ def main():
       OPTIONS.output_item_list = a
     elif o == '--output-ota':
       OPTIONS.output_ota = a
+    elif o == '--output-img':
+      OPTIONS.output_img = a
     elif o == '--output-super-empty':
       OPTIONS.output_super_empty = a
     elif o == '--rebuild_recovery':
@@ -819,6 +843,7 @@ def main():
           'output-dir=',
           'output-item-list=',
           'output-ota=',
+          'output-img=',
           'output-super-empty=',
           'rebuild_recovery',
           'keep-tmp',
@@ -870,6 +895,7 @@ def main():
           output_dir=OPTIONS.output_dir,
           output_item_list=output_item_list,
           output_ota=OPTIONS.output_ota,
+          output_img=OPTIONS.output_img,
           output_super_empty=OPTIONS.output_super_empty,
           rebuild_recovery=OPTIONS.rebuild_recovery), OPTIONS.keep_tmp)
 
