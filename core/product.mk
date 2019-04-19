@@ -245,6 +245,7 @@ _product_var_list += PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING
 _product_var_list += \
     PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE \
     PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
+    PRODUCT_USES_ART \
 
 _product_var_list += PRODUCT_SYSTEM_SERVER_COMPILER_FILTER
 # Per-module sanitizer configs
