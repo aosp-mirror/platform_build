@@ -96,6 +96,7 @@ $(KATI_deprecated_var USER,Use BUILD_USERNAME instead. See $(CHANGES_URL)#USER)
 $(KATI_obsolete_var TARGET_ROOT_OUT_SBIN,/sbin has been removed, use /system/bin instead)
 $(KATI_obsolete_var TARGET_ROOT_OUT_SBIN_UNSTRIPPED,/sbin has been removed, use /system/bin instead)
 $(KATI_obsolete_var BUILD_BROKEN_PHONY_TARGETS)
+$(KATI_obsolete_var BUILD_BROKEN_DUP_COPY_HEADERS)
 
 # This is marked as obsolete in envsetup.mk after reading the BoardConfig.mk
 $(KATI_deprecate_export It is a global setting. See $(CHANGES_URL)#export_keyword)

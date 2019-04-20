@@ -91,9 +91,7 @@ all_copied_headers: $(ALL_COPIED_HEADERS)
 
 ifdef has_dup_copy_headers
   has_dup_copy_headers :=
-  ifneq ($(BUILD_BROKEN_DUP_COPY_HEADERS),true)
-    $(error duplicate header copies are no longer allowed. For more information about headers, see: https://android.googlesource.com/platform/build/soong/+/master/docs/best_practices.md#headers)
-  endif
+  $(error duplicate header copies are no longer allowed. For more information about headers, see: https://android.googlesource.com/platform/build/soong/+/master/docs/best_practices.md#headers)
 endif
 
 # -----------------------------------------------------------------
