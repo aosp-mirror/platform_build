@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "71fe935d_0073e33e",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 969,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-20T06:04:09Z",
+      "side": 1,
+      "message": "This is empty now, as it will be defined at L992 below.\n\nMoved the entire ramdisk-debug.img block to the same block as boot-debug.img in PS2.",
+      "range": {
+        "startLine": 969,
+        "startChar": 37,
+        "endLine": 969,
+        "endChar": 63
+      },
+      "revId": "8ed511e3512c4ae8b89f2f27ffafcc03bf293303",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
