@@ -62,7 +62,6 @@ PRODUCT_PACKAGES += \
     CtsShimPrebuilt \
     CtsShimPrivPrebuilt \
     debuggerd\
-    DefaultContainerService \
     device_config \
     dmctl \
     dnsmasq \
