@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "beda5955_9296a2e2",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2050,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-20T06:46:38Z",
+      "side": 1,
+      "message": "The different part than orignal ramdisk.img.\n\nrecovery.img has similar logic:\nhttps://android-review.googlesource.com/c/platform/build/+/732494",
+      "range": {
+        "startLine": 2047,
+        "startChar": 0,
+        "endLine": 2050,
+        "endChar": 73
+      },
+      "revId": "7bbf50e2849684ff74912c55379f23f13111c153",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "edf75b0e_7cf0c1a3",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2070,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-20T06:46:38Z",
+      "side": 1,
+      "message": "Also here, need to depend on boot.img",
+      "range": {
+        "startLine": 2068,
+        "startChar": 0,
+        "endLine": 2070,
+        "endChar": 64
+      },
+      "revId": "7bbf50e2849684ff74912c55379f23f13111c153",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "04ae07d7_ade1fd96",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2100,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-20T06:46:38Z",
+      "side": 1,
+      "message": "Copy the MKBOOTIMG ARGS from original boot.img, to replace the --ramdisk \"ramdisk.img\" to \"ramdisk-debug.img\".",
+      "range": {
+        "startLine": 2099,
+        "startChar": 0,
+        "endLine": 2100,
+        "endChar": 89
+      },
+      "revId": "7bbf50e2849684ff74912c55379f23f13111c153",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
