@@ -96,7 +96,6 @@ def main(argv):
   finally:
     logger.info("cleaning up...")
     common.ZipClose(output_zip)
-    shutil.rmtree(OPTIONS.input_tmp)
 
   logger.info("done.")
 
@@ -108,3 +107,5 @@ if __name__ == '__main__':
   except common.ExternalError as e:
     logger.exception("\n   ERROR:\n")
     sys.exit(1)
+  finally:
+    common.Cleanup()
