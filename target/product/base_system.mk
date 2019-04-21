@@ -214,6 +214,7 @@ PRODUCT_PACKAGES += \
     netd \
     NetworkStack \
     org.apache.http.legacy \
+    otacerts \
     PackageInstaller \
     perfetto \
     PermissionController \
