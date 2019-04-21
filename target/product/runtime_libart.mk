@@ -54,7 +54,7 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     dalvik.vm.dexopt.secondary=true \
     dalvik.vm.appimageformat=lz4
 
-PRODUCT_PROPERTY_OVERRIDES += \
+PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.dalvik.vm.native.bridge=0
 
 # Different dexopt types for different package update/install times.
