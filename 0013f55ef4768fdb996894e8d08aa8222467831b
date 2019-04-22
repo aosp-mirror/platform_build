@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e6d1e00d_96a45b1e",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 2020,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-22T14:03:46Z",
+      "side": 1,
+      "message": "Fixing this in PS7",
+      "range": {
+        "startLine": 2019,
+        "startChar": 0,
+        "endLine": 2020,
+        "endChar": 76
+      },
+      "revId": "0013f55ef4768fdb996894e8d08aa8222467831b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
