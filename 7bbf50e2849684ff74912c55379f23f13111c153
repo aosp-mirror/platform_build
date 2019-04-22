@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "0cf39504_1997271c",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2034,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-22T06:53:20Z",
+      "side": 1,
+      "message": "nit: use space",
+      "range": {
+        "startLine": 2034,
+        "startChar": 0,
+        "endLine": 2034,
+        "endChar": 1
+      },
+      "revId": "7bbf50e2849684ff74912c55379f23f13111c153",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6f4da374_a0324875",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2048,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-22T06:53:20Z",
+      "side": 1,
+      "message": "Do we need *all* the files from recovery ramdisk? https://android.googlesource.com/platform/system/core/+/refs/heads/master/init/first_stage_init.cpp#213 seems to want only certain files from /debug_ramdisk, but this CL copies everything (e.g. /system/bin/recovery and recovery resource files). We\u0027ll run into size issues more easily.",
+      "range": {
+        "startLine": 2048,
+        "startChar": 66,
+        "endLine": 2048,
+        "endChar": 86
+      },
+      "revId": "7bbf50e2849684ff74912c55379f23f13111c153",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "beda5955_9296a2e2",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -22,6 +68,29 @@
       "revId": "7bbf50e2849684ff74912c55379f23f13111c153",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ee0ea42_6952254d",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2052,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-04-22T06:53:20Z",
+      "side": 1,
+      "message": "nit: no longer needs these @ or $(hide)",
+      "range": {
+        "startLine": 2052,
+        "startChar": 1,
+        "endLine": 2052,
+        "endChar": 2
+      },
+      "revId": "7bbf50e2849684ff74912c55379f23f13111c153",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     },
     {
       "key": {
