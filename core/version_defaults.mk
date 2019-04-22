@@ -93,7 +93,7 @@ PLATFORM_VERSION.QP1A := 10
 
 # These are the current development codenames, if the build is not a final
 # release build.  If this is a final release build, it is simply "REL".
-PLATFORM_VERSION_CODENAME.QP1A := Q
+PLATFORM_VERSION_CODENAME.QP1A := REL
 
 ifndef PLATFORM_VERSION
   PLATFORM_VERSION := $(PLATFORM_VERSION.$(TARGET_PLATFORM_VERSION))
