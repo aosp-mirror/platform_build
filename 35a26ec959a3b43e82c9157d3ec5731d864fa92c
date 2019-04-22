@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "f52bd923_22ef8ba4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-04-22T06:41:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c3134057_49fea1fb",
+      "revId": "35a26ec959a3b43e82c9157d3ec5731d864fa92c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "edd6b594_c9f66306",
         "filename": "target/board/gsi_system_user.prop",
         "patchSetId": 1
