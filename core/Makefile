@@ -459,10 +459,11 @@ endif
 
 build_desc :=
 
-ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY)))
-INSTALLED_RECOVERYIMAGE_TARGET := $(PRODUCT_OUT)/recovery.img
-else
 INSTALLED_RECOVERYIMAGE_TARGET :=
+ifdef BUILDING_RECOVERY_IMAGE
+ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+INSTALLED_RECOVERYIMAGE_TARGET := $(PRODUCT_OUT)/recovery.img
+endif
 endif
 
 $(INSTALLED_BUILD_PROP_TARGET): $(intermediate_system_build_prop) $(INSTALLED_RECOVERYIMAGE_TARGET)
@@ -900,13 +901,14 @@ ramdisk-nodeps: $(MKBOOTFS) | $(MINIGZIP)
 
 endif # BUILDING_RAMDISK_IMAGE
 
-
-INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
-
-ifneq ($(strip $(TARGET_NO_KERNEL)),true)
-
 # -----------------------------------------------------------------
 # the boot image, which is a collection of other images.
+
+# This is defined here since we may be building recovery as boot
+# below and only want to define this once
+BUILT_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
+
+ifneq ($(strip $(TARGET_NO_KERNEL)),true)
 INTERNAL_BOOTIMAGE_ARGS := \
 	$(addprefix --second ,$(INSTALLED_2NDBOOTLOADER_TARGET)) \
 	--kernel $(INSTALLED_KERNEL_TARGET)
@@ -945,8 +947,10 @@ INTERNAL_MKBOOTIMG_VERSION_ARGS := \
     --os_version $(PLATFORM_VERSION) \
     --os_patch_level $(PLATFORM_SECURITY_PATCH)
 
-# We build recovery as boot image if BOARD_USES_RECOVERY_AS_BOOT is true.
-ifneq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+# Define these only if we are building boot
+ifdef BUILDING_BOOT_IMAGE
+INSTALLED_BOOTIMAGE_TARGET := $(BUILT_BOOTIMAGE_TARGET)
+
 ifeq ($(TARGET_BOOTIMAGE_USE_EXT2),true)
 $(error TARGET_BOOTIMAGE_USE_EXT2 is not supported anymore)
 
@@ -1017,7 +1021,7 @@ bootimage-nodeps: $(MKBOOTIMG)
 	$(hide) $(call assert-max-image-size,$(INSTALLED_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
 
 endif # TARGET_BOOTIMAGE_USE_EXT2
-endif # BOARD_USES_RECOVERY_AS_BOOT
+endif # BUILDING_BOOT_IMAGE
 
 else # TARGET_NO_KERNEL == "true"
 ifdef BOARD_PREBUILT_BOOTIMAGE
@@ -1493,7 +1497,7 @@ endef
 # Recovery image
 
 # Recovery image exists if we are building recovery, or building recovery as boot.
-ifneq (,$(INSTALLED_RECOVERYIMAGE_TARGET)$(filter true,$(BOARD_USES_RECOVERY_AS_BOOT)))
+ifdef BUILDING_RECOVERY_IMAGE
 
 INTERNAL_RECOVERYIMAGE_FILES := $(filter $(TARGET_RECOVERY_OUT)/%, \
     $(ALL_DEFAULT_INSTALLED_MODULES))
@@ -1506,6 +1510,7 @@ INSTALLED_FILES_JSON_RECOVERY := $(INSTALLED_FILES_FILE_RECOVERY:.txt=.json)
 # build-recoveryimage-target, which would touch the files under TARGET_RECOVERY_OUT and race with
 # the call to FILELIST.
 ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+INSTALLED_BOOTIMAGE_TARGET := $(BUILT_BOOTIMAGE_TARGET)
 $(INSTALLED_FILES_FILE_RECOVERY): $(INSTALLED_BOOTIMAGE_TARGET)
 else
 $(INSTALLED_FILES_FILE_RECOVERY): $(INSTALLED_RECOVERYIMAGE_TARGET)
@@ -1924,9 +1929,9 @@ recoveryimage-nodeps:
 	@echo "make $@: ignoring dependencies"
 	$(call build-recoveryimage-target, $(INSTALLED_RECOVERYIMAGE_TARGET))
 
-else # INSTALLED_RECOVERYIMAGE_TARGET not defined
+else # BUILDING_RECOVERY_IMAGE
 RECOVERY_RESOURCE_ZIP :=
-endif
+endif # BUILDING_RECOVERY_IMAGE
 
 .PHONY: recoveryimage
 recoveryimage: $(INSTALLED_RECOVERYIMAGE_TARGET) $(RECOVERY_RESOURCE_ZIP)
@@ -3907,6 +3912,9 @@ ifdef BOARD_FLASH_BLOCK_SIZE
 endif
 ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
 	$(hide) echo "boot_size=$(BOARD_BOOTIMAGE_PARTITION_SIZE)" >> $(zip_root)/META/misc_info.txt
+endif
+ifeq ($(INSTALLED_BOOTIMAGE_TARGET),)
+	$(hide) echo "no_boot=true" >> $(zip_root)/META/misc_info.txt
 endif
 ifeq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 	$(hide) echo "no_recovery=true" >> $(zip_root)/META/misc_info.txt
