@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "155d47cb_28ca9275",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2048,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-22T07:02:26Z",
+      "side": 1,
+      "message": "Probably still needed, at least for $OUT/recovery/root/system/bin/fastbootd and their dependencies (to flash dynamic partitions)\n\nI\u0027d prefer 1) copying everything from original boot.img 2) adds additional files needed for \"debug ramdisk\" if possible. fastbootd is the only issue I can think of now, but I\u0027m not sure will there be other problems. I will try to figure out though.\n\ncould you elaborate more about the size issue? Is it because of build artifacts?\n(currently ramdisk-debug.img is 10M and boot-debug.img is 30M)",
+      "parentUuid": "6f4da374_a0324875",
+      "range": {
+        "startLine": 2048,
+        "startChar": 66,
+        "endLine": 2048,
+        "endChar": 86
+      },
+      "revId": "7bbf50e2849684ff74912c55379f23f13111c153",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "beda5955_9296a2e2",
         "filename": "core/Makefile",
         "patchSetId": 4
