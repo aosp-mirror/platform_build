@@ -1,6 +1,9 @@
 # GSI always generate dex pre-opt in system image
 ro.cp_system_other_odex=0
 
+# GSI disables non-AOSP nnapi extensions on product partition
+ro.nnapi.extensions.deny_on_product=true
+
 # TODO(b/120679683): disable RescueParty before all problem apps solved
 persist.sys.disable_rescue=true
 
