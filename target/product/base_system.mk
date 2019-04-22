@@ -210,6 +210,7 @@ PRODUCT_PACKAGES += \
     netd \
     NetworkStack \
     org.apache.http.legacy \
+    otacerts \
     perfetto \
     ping \
     ping6 \
