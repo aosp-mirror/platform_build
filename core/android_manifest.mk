@@ -47,8 +47,21 @@ else
   fixed_android_manifest := $(full_android_manifest)
 endif
 
+my_target_sdk_version := $(call module-target-sdk-version)
+
+ifdef TARGET_BUILD_APPS
+  ifndef TARGET_BUILD_APPS_USE_PREBUILT_SDK
+    ifeq ($(my_target_sdk_version),$(PLATFORM_VERSION_CODENAME))
+      ifdef UNBUNDLED_BUILD_TARGET_SDK_WITH_API_FINGERPRINT
+        my_target_sdk_version := $(my_target_sdk_version).$$(cat $(API_FINGERPRINT))
+        $(fixed_android_manifest): $(API_FINGERPRINT)
+      endif
+    endif
+  endif
+endif
+
 $(fixed_android_manifest): PRIVATE_MIN_SDK_VERSION := $(call module-min-sdk-version)
-$(fixed_android_manifest): PRIVATE_TARGET_SDK_VERSION := $(call module-target-sdk-version)
+$(fixed_android_manifest): PRIVATE_TARGET_SDK_VERSION := $(my_target_sdk_version)
 
 my_exported_sdk_libs_file := $(call local-intermediates-dir,COMMON)/exported-sdk-libs
 $(fixed_android_manifest): PRIVATE_EXPORTED_SDK_LIBS_FILE := $(my_exported_sdk_libs_file)
