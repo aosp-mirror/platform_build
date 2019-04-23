@@ -1937,6 +1937,106 @@ $(error MTD device is no longer supported and thus BOARD_NAND_SPARE_SIZE is depr
 endif
 
 # -----------------------------------------------------------------
+# the debug ramdisk, which is the original ramdisk plus additional
+# files: force_debuggable, adb_debug.prop and userdebug sepolicy.
+# When /force_debuggable is present, /init will load userdebug sepolicy
+# and property files to allow adb root, if the device is unlocked.
+
+ifdef BUILDING_RAMDISK_IMAGE
+BUILT_DEBUG_RAMDISK_TARGET := $(PRODUCT_OUT)/ramdisk-debug.img
+INSTALLED_DEBUG_RAMDISK_TARGET := $(BUILT_DEBUG_RAMDISK_TARGET)
+
+INTERNAL_DEBUG_RAMDISK_FILES := $(filter $(TARGET_DEBUG_RAMDISK_OUT)/%, \
+    $(ALL_GENERATED_SOURCES) \
+    $(ALL_DEFAULT_INSTALLED_MODULES))
+
+# Note: TARGET_DEBUG_RAMDISK_OUT will be $(PRODUCT_OUT)/debug_ramdisk/first_stage_ramdisk,
+# if BOARD_USES_RECOVERY_AS_BOOT is true. Otherwise, it will be $(PRODUCT_OUT)/debug_ramdisk.
+# But the root dir of the ramdisk to build is always $(PRODUCT_OUT)/debug_ramdisk.
+my_debug_ramdisk_root_dir := $(PRODUCT_OUT)/debug_ramdisk
+
+INSTALLED_FILES_FILE_DEBUG_RAMDISK := $(PRODUCT_OUT)/installed-files-ramdisk-debug.txt
+INSTALLED_FILES_JSON_DEBUG_RAMDISK := $(INSTALLED_FILES_FILE_DEBUG_RAMDISK:.txt=.json)
+$(INSTALLED_FILES_FILE_DEBUG_RAMDISK): .KATI_IMPLICIT_OUTPUTS := $(INSTALLED_FILES_JSON_DEBUG_RAMDISK)
+$(INSTALLED_FILES_FILE_DEBUG_RAMDISK): DEBUG_RAMDISK_ROOT_DIR := $(my_debug_ramdisk_root_dir)
+
+# Cannot just depend on INTERNAL_DEBUG_RAMDISK_FILES like other INSTALLED_FILES_FILE_* rules.
+# Because ramdisk-debug.img will rsync from either ramdisk.img or ramdisk-recovery.img.
+# Need to depend on the built ramdisk-debug.img, to get a complete list of the installed files.
+$(INSTALLED_FILES_FILE_DEBUG_RAMDISK) : $(INSTALLED_DEBUG_RAMDISK_TARGET)
+$(INSTALLED_FILES_FILE_DEBUG_RAMDISK) : $(INTERNAL_DEBUG_RAMDISK_FILES) $(FILESLIST)
+	echo Installed file list: $@
+	mkdir -p $(dir $@)
+	rm -f $@
+	$(FILESLIST) $(DEBUG_RAMDISK_ROOT_DIR) > $(@:.txt=.json)
+	build/make/tools/fileslist_util.py -c $(@:.txt=.json) > $@
+
+# ramdisk-debug.img will rsync the content from either ramdisk.img or ramdisk-recovery.img,
+# depending on whether BOARD_USES_RECOVERY_AS_BOOT is set or not.
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+my_debug_ramdisk_sync_dir := $(TARGET_RECOVERY_ROOT_OUT)
+else
+my_debug_ramdisk_sync_dir := $(TARGET_RAMDISK_OUT)
+endif # BOARD_USES_RECOVERY_AS_BOOT
+
+$(INSTALLED_DEBUG_RAMDISK_TARGET): DEBUG_RAMDISK_SYNC_DIR := $(my_debug_ramdisk_sync_dir)
+$(INSTALLED_DEBUG_RAMDISK_TARGET): DEBUG_RAMDISK_ROOT_DIR := $(my_debug_ramdisk_root_dir)
+# We should have just depended on ramdisk.img or ramdisk-recovery.img.
+# But ramdisk-recovery.img is not a make target, so let's depend on the boot.img directly.
+$(INSTALLED_DEBUG_RAMDISK_TARGET): $(INSTALLED_BOOTIMAGE_TARGET)
+$(INSTALLED_DEBUG_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_DEBUG_RAMDISK_FILES) | $(MINIGZIP)
+	$(call pretty,"Target debug ram disk: $@")
+	mkdir -p $(TARGET_DEBUG_RAMDISK_OUT)
+	touch $(TARGET_DEBUG_RAMDISK_OUT)/force_debuggable
+	rsync -a $(DEBUG_RAMDISK_SYNC_DIR)/* $(DEBUG_RAMDISK_ROOT_DIR)
+	$(MKBOOTFS) -d $(TARGET_OUT) $(DEBUG_RAMDISK_ROOT_DIR) | $(MINIGZIP) > $@
+
+.PHONY: ramdisk_debug-nodeps
+ramdisk_debug-nodeps: DEBUG_RAMDISK_SYNC_DIR := $(my_debug_ramdisk_sync_dir)
+ramdisk_debug-nodeps: DEBUG_RAMDISK_ROOT_DIR := $(my_debug_ramdisk_root_dir)
+ramdisk_debug-nodeps: $(MKBOOTFS) | $(MINIGZIP)
+	echo "make $@: ignoring dependencies"
+	mkdir -p $(TARGET_DEBUG_RAMDISK_OUT)
+	touch $(TARGET_DEBUG_RAMDISK_OUT)/force_debuggable
+	rsync -a $(DEBUG_RAMDISK_SYNC_DIR)/* $(DEBUG_RAMDISK_ROOT_DIR)
+	$(MKBOOTFS) -d $(TARGET_OUT) $(DEBUG_RAMDISK_ROOT_DIR) | $(MINIGZIP) > $(INSTALLED_DEBUG_RAMDISK_TARGET)
+
+my_debug_ramdisk_sync_dir :=
+my_debug_ramdisk_root_dir :=
+
+endif # BUILDING_RAMDISK_IMAGE
+
+# -----------------------------------------------------------------
+# the boot-debug.img, which is the kernel plus ramdisk-debug.img
+#
+# Note: it's intentional to skip signing for boot-debug.img, because it
+# can only be used if the device is unlocked with verification error.
+ifneq ($(strip $(TARGET_NO_KERNEL)),true)
+
+INSTALLED_DEBUG_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot-debug.img
+
+# Replace ramdisk.img in $(MKBOOTIMG) ARGS with ramdisk-debug.img to build boot-debug.img
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+INTERNAL_DEBUG_BOOTIMAGE_ARGS := $(subst $(recovery_ramdisk),$(INSTALLED_DEBUG_RAMDISK_TARGET), $(INTERNAL_RECOVERYIMAGE_ARGS))
+else
+INTERNAL_DEBUG_BOOTIMAGE_ARGS := $(subst $(INSTALLED_RAMDISK_TARGET),$(INSTALLED_DEBUG_RAMDISK_TARGET), $(INTERNAL_BOOTIMAGE_ARGS))
+endif
+
+# Depends on original boot.img and ramdisk-debug.img, to build the new boot-debug.img
+$(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_DEBUG_RAMDISK_TARGET)
+	$(call pretty,"Target boot debug image: $@")
+	$(MKBOOTIMG) $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
+	$(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+
+.PHONY: bootimage_debug-nodeps
+bootimage_debug-nodeps: $(MKBOOTIMG)
+	echo "make $@: ignoring dependencies"
+	$(MKBOOTIMG) $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_DEBUG_BOOTIMAGE_TARGET)
+	$(call assert-max-image-size,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+
+endif # TARGET_NO_KERNEL
+
+# -----------------------------------------------------------------
 # system image
 #
 # Remove overridden packages from $(ALL_PDK_FUSION_FILES)
