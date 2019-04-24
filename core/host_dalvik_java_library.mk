@@ -104,7 +104,6 @@ $(full_classes_compiled_jar): \
 ifneq ($(TURBINE_ENABLED),false)
 
 $(full_classes_turbine_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
-$(full_classes_turbine_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_turbine_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
 $(full_classes_turbine_jar): \
     $(java_source_list_file) \
