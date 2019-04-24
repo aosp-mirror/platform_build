@@ -25,9 +25,6 @@ echo "ro.build.flavor=$TARGET_BUILD_FLAVOR"
 if [ -n "$BOARD_BUILD_SYSTEM_ROOT_IMAGE" ] ; then
   echo "ro.build.system_root_image=$BOARD_BUILD_SYSTEM_ROOT_IMAGE"
 fi
-if [ -n "$AB_OTA_UPDATER" ] ; then
-  echo "ro.build.ab_update=$AB_OTA_UPDATER"
-fi
 
 # These values are deprecated, use "ro.product.cpu.abilist"
 # instead (see below).

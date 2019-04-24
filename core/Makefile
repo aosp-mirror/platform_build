@@ -421,7 +421,6 @@ endif
 	        BUILD_HOSTNAME="$(BUILD_HOSTNAME)" \
 	        BUILD_NUMBER="$(BUILD_NUMBER_FROM_FILE)" \
 	        BOARD_BUILD_SYSTEM_ROOT_IMAGE="$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)" \
-	        AB_OTA_UPDATER="$(AB_OTA_UPDATER)" \
 	        PLATFORM_VERSION="$(PLATFORM_VERSION)" \
 	        PLATFORM_SECURITY_PATCH="$(PLATFORM_SECURITY_PATCH)" \
 	        PLATFORM_BASE_OS="$(PLATFORM_BASE_OS)" \
@@ -498,6 +497,9 @@ $(INSTALLED_VENDOR_BUILD_PROP_TARGET): $(BUILDINFO_COMMON_SH) $(intermediate_sys
 	$(hide) echo ro.hwui.use_vulkan="$(TARGET_USES_VULKAN)">>$@
 ifdef TARGET_SCREEN_DENSITY
 	$(hide) echo ro.sf.lcd_density="$(TARGET_SCREEN_DENSITY)">>$@
+endif
+ifeq ($(AB_OTA_UPDATER),true)
+	$(hide) echo ro.build.ab_update=true >> $@
 endif
 	$(hide) $(call generate-common-build-props,vendor,$@)
 	$(hide) echo "#" >> $@; \
