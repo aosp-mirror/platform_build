@@ -22,6 +22,30 @@
       "revId": "fc505ff49430e29b4bc08519145b766ca59843dc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3f141df7_bea29f18",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2261,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-24T15:45:34Z",
+      "side": 1,
+      "message": "sorry, missed this comment. Yeah, I don\u0027t think one is better than the other. If it was up to me, I\u0027d probably put it next to the other checks on product_target_FILES in main.mk, and move the banned libs to be defined before that (and then have this file depend on the APEX_MODULE_LIST var instead (or delete the `find`-based approach).",
+      "parentUuid": "ab24071d_7492fa28",
+      "range": {
+        "startLine": 2259,
+        "startChar": 74,
+        "endLine": 2261,
+        "endChar": 10
+      },
+      "revId": "fc505ff49430e29b4bc08519145b766ca59843dc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
