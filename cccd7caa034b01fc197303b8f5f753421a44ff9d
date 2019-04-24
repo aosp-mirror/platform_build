@@ -46,6 +46,30 @@
       "revId": "cccd7caa034b01fc197303b8f5f753421a44ff9d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27d9ba74_1a76ebb2",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2896,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-04-24T19:38:47Z",
+      "side": 1,
+      "message": "Looks like the original BUILD_SYSTEM_IMAGE check comes from b/123427297 to avoid building system-related files when building non-system builds (to speed up the build process for Keystone). I think it is fine to drop BUILDING_PRODUCT_IMAGE here.",
+      "parentUuid": "bd2f2616_f7bbba7a",
+      "range": {
+        "startLine": 2896,
+        "startChar": 6,
+        "endLine": 2896,
+        "endChar": 27
+      },
+      "revId": "cccd7caa034b01fc197303b8f5f753421a44ff9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
