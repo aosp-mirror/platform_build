@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17c513c2_274a42f3",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2262,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-24T14:36:44Z",
+      "side": 1,
+      "message": "can remove this ifdef\n1) it will be set\n2) if it was empty, it looks like apex_module_libs will just be empty",
+      "range": {
+        "startLine": 2261,
+        "startChar": 10,
+        "endLine": 2262,
+        "endChar": 26
+      },
+      "revId": "89cbdbb48b10e60ee4ca24f40accad7597cf3c17",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85333b02_ceadabdb",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2268,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-04-24T14:36:44Z",
+      "side": 1,
+      "message": "FYI - $(error) prints the filename+line it was called from. You can also get the current mk path with $(lastword $(MAKEFILE_LIST)) which is autopopulated by make. Feel free to keep as-is if you want though",
+      "range": {
+        "startLine": 2268,
+        "startChar": 2,
+        "endLine": 2268,
+        "endChar": 7
+      },
+      "revId": "89cbdbb48b10e60ee4ca24f40accad7597cf3c17",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
