@@ -698,6 +698,16 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
     if output_super_empty:
       shutil.copyfile(super_empty_img, output_super_empty)
 
+  # Create the IMG package from the merged target files (before zipping, in
+  # order to avoid an unnecessary unzip and copy).
+
+  if output_img:
+    img_from_target_files_args = [
+        output_target_files_temp_dir,
+        output_img,
+    ]
+    img_from_target_files.main(img_from_target_files_args)
+
   # Finally, create the output target files zip archive and/or copy the
   # output items to the output target files directory.
 
@@ -751,14 +761,6 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
     ]
     ota_from_target_files.main(ota_from_target_files_args)
 
-  # Create the IMG package from the merged target files package.
-
-  if output_img:
-    img_from_target_files_args = [
-        output_zip,
-        output_img,
-    ]
-    img_from_target_files.main(img_from_target_files_args)
 
 
 def call_func_with_temp_dir(func, keep_tmp):
