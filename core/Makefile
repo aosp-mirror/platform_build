@@ -2047,7 +2047,7 @@ $(INSTALLED_DEBUG_RAMDISK_TARGET): $(MKBOOTFS) $(INTERNAL_DEBUG_RAMDISK_FILES) |
 	$(call pretty,"Target debug ram disk: $@")
 	mkdir -p $(TARGET_DEBUG_RAMDISK_OUT)
 	touch $(TARGET_DEBUG_RAMDISK_OUT)/force_debuggable
-	rsync -a $(DEBUG_RAMDISK_SYNC_DIR)/* $(DEBUG_RAMDISK_ROOT_DIR)
+	rsync -a $(DEBUG_RAMDISK_SYNC_DIR)/ $(DEBUG_RAMDISK_ROOT_DIR)
 	$(MKBOOTFS) -d $(TARGET_OUT) $(DEBUG_RAMDISK_ROOT_DIR) | $(MINIGZIP) > $@
 
 .PHONY: ramdisk_debug-nodeps
@@ -2057,7 +2057,7 @@ ramdisk_debug-nodeps: $(MKBOOTFS) | $(MINIGZIP)
 	echo "make $@: ignoring dependencies"
 	mkdir -p $(TARGET_DEBUG_RAMDISK_OUT)
 	touch $(TARGET_DEBUG_RAMDISK_OUT)/force_debuggable
-	rsync -a $(DEBUG_RAMDISK_SYNC_DIR)/* $(DEBUG_RAMDISK_ROOT_DIR)
+	rsync -a $(DEBUG_RAMDISK_SYNC_DIR)/ $(DEBUG_RAMDISK_ROOT_DIR)
 	$(MKBOOTFS) -d $(TARGET_OUT) $(DEBUG_RAMDISK_ROOT_DIR) | $(MINIGZIP) > $(INSTALLED_DEBUG_RAMDISK_TARGET)
 
 my_debug_ramdisk_sync_dir :=
