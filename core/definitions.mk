@@ -1997,26 +1997,6 @@ define dump-words-to-file
         @$(call emit-line,$(wordlist 13001,13500,$(1)),$(2))
         @$(if $(wordlist 13501,13502,$(1)),$(error Too many words ($(words $(1)))))
 endef
-
-# For a list of jar files, unzip them to a specified directory,
-# but make sure that no META-INF files come along for the ride,
-# unless PRIVATE_DONT_DELETE_JAR_META_INF is set.
-#
-# $(1): files to unzip
-# $(2): destination directory
-define unzip-jar-files
-  $(hide) for f in $(1); \
-  do \
-    if [ ! -f $$f ]; then \
-      echo Missing file $$f; \
-      exit 1; \
-    fi; \
-    unzip -qo $$f -d $(2); \
-    rm -f $(2)/module-info.class; \
-  done
-  $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,$(hide) rm -rf $(2)/META-INF)
-endef
-
 # Return jar arguments to compress files in a given directory
 # $(1): directory
 #

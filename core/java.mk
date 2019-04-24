@@ -244,7 +244,6 @@ ifneq ($(TURBINE_ENABLED),false)
 
 $(full_classes_turbine_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_turbine_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
-$(full_classes_turbine_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_turbine_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
@@ -278,7 +277,6 @@ $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annota
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES := $(LOCAL_JAR_EXCLUDE_PACKAGES)
-$(full_classes_compiled_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_compiled_jar): PRIVATE_JAVA_SOURCE_LIST := $(java_source_list_file)
 $(full_classes_compiled_jar): PRIVATE_ALL_JAVA_HEADER_LIBRARIES := $(full_java_header_libs)
 $(full_classes_compiled_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
