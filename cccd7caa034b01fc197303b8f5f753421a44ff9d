@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cdda00d4_a5441671",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 2896,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-04-24T19:17:53Z",
+      "side": 1,
+      "message": "if only system is being built or only product is being built, we should just check that subset, right? Dan, is it possible for product to not be built?",
+      "range": {
+        "startLine": 2896,
+        "startChar": 6,
+        "endLine": 2896,
+        "endChar": 27
+      },
+      "revId": "cccd7caa034b01fc197303b8f5f753421a44ff9d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
