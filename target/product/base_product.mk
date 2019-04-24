@@ -19,3 +19,4 @@ PRODUCT_PACKAGES += \
     healthd \
     ModuleMetadata \
     product_compatibility_matrix.xml \
+    product_manifest.xml \
