@@ -602,6 +602,13 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         print("    Rewriting AVB public key of system_other in /product")
         common.ZipWrite(output_tf_zip, public_key, filename)
 
+    # Should NOT sign boot-debug.img.
+    elif filename in (
+        "BOOT/RAMDISK/force_debuggable",
+        "RECOVERY/RAMDISK/force_debuggable"
+        "RECOVERY/RAMDISK/first_stage_ramdisk/force_debuggable"):
+      raise common.ExternalError("debuggable boot.img cannot be signed")
+
     # A non-APK file; copy it verbatim.
     else:
       common.ZipWriteStr(output_tf_zip, out_info, data)
