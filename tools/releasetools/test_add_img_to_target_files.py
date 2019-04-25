@@ -135,6 +135,9 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
   def _test_AddCareMapForAbOta():
     """Helper function to set up the test for test_AddCareMapForAbOta()."""
     OPTIONS.info_dict = {
+        'extfs_sparse_flag' : '-s',
+        'system_image_size' : 65536,
+        'vendor_image_size' : 40960,
         'system_verity_block_device': '/dev/block/system',
         'vendor_verity_block_device': '/dev/block/vendor',
         'system.build.prop': {
@@ -143,7 +146,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         'vendor.build.prop': {
             'ro.vendor.build.fingerprint': 'google/sailfish/678:user/dev-keys',
-        }
+        },
     }
 
     # Prepare the META/ folder.
@@ -154,9 +157,9 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     system_image = test_utils.construct_sparse_image([
         (0xCAC1, 6),
         (0xCAC3, 4),
-        (0xCAC1, 6)])
+        (0xCAC1, 8)])
     vendor_image = test_utils.construct_sparse_image([
-        (0xCAC2, 10)])
+        (0xCAC2, 12)])
 
     image_paths = {
         'system' : system_image,
@@ -200,6 +203,9 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     """Tests the case for device using AVB."""
     image_paths = self._test_AddCareMapForAbOta()
     OPTIONS.info_dict = {
+        'extfs_sparse_flag' : '-s',
+        'system_image_size' : 65536,
+        'vendor_image_size' : 40960,
         'avb_system_hashtree_enable' : 'true',
         'avb_vendor_hashtree_enable' : 'true',
         'system.build.prop': {
@@ -227,6 +233,9 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     """Tests the case for partitions without fingerprint."""
     image_paths = self._test_AddCareMapForAbOta()
     OPTIONS.info_dict = {
+        'extfs_sparse_flag' : '-s',
+        'system_image_size' : 65536,
+        'vendor_image_size' : 40960,
         'system_verity_block_device': '/dev/block/system',
         'vendor_verity_block_device': '/dev/block/vendor',
     }
@@ -244,6 +253,9 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
     """Tests the case for partitions with thumbprint."""
     image_paths = self._test_AddCareMapForAbOta()
     OPTIONS.info_dict = {
+        'extfs_sparse_flag' : '-s',
+        'system_image_size' : 65536,
+        'vendor_image_size' : 40960,
         'system_verity_block_device': '/dev/block/system',
         'vendor_verity_block_device': '/dev/block/vendor',
         'system.build.prop': {
@@ -251,7 +263,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         },
         'vendor.build.prop' : {
             'ro.vendor.build.thumbprint': 'google/sailfish/456:user/dev-keys',
-        }
+        },
     }
 
     AddCareMapForAbOta(None, ['system', 'vendor'], image_paths)
@@ -362,6 +374,7 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         (0xCAC3, 4),
         (0xCAC1, 6)])
     OPTIONS.info_dict = {
+        'extfs_sparse_flag' : '-s',
         'system_image_size' : 53248,
     }
     name, care_map = GetCareMap('system', sparse_image)
@@ -377,6 +390,17 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
         (0xCAC3, 4),
         (0xCAC1, 6)])
     OPTIONS.info_dict = {
+        'extfs_sparse_flag' : '-s',
         'system_image_size' : -45056,
     }
     self.assertRaises(AssertionError, GetCareMap, 'system', sparse_image)
+
+  def test_GetCareMap_nonSparseImage(self):
+    OPTIONS.info_dict = {
+        'system_image_size' : 53248,
+    }
+    # 'foo' is the image filename, which is expected to be not used by
+    # GetCareMap().
+    name, care_map = GetCareMap('system', 'foo')
+    self.assertEqual('system', name)
+    self.assertEqual(RangeSet("0-12").to_string_raw(), care_map)
