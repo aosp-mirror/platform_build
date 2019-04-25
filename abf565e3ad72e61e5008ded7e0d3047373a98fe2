@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d1114795_3a689a5f",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2206,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-04-25T22:42:22Z",
+      "side": 1,
+      "message": "You might want to hold off on these after all - in my extended build test they fail on some targets: https://android-build.googleplex.com/builds/pending/P8422058/build_test/latest/view/logs/build.log\n\n+vichang",
+      "range": {
+        "startLine": 2205,
+        "startChar": 2,
+        "endLine": 2206,
+        "endChar": 15
+      },
+      "revId": "abf565e3ad72e61e5008ded7e0d3047373a98fe2",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
