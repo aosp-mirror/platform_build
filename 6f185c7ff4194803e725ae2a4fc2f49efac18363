@@ -46,6 +46,30 @@
       "revId": "6f185c7ff4194803e725ae2a4fc2f49efac18363",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d389365e_ff0269a0",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2208,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-04-25T15:16:46Z",
+      "side": 1,
+      "message": "Thanks.\n\nThere are many more libs that can be moved over now and I\u0027ve got a CL for that, but by all means feel free to move the ICU libs here if you like.",
+      "parentUuid": "298c48c3_b8a3d166",
+      "range": {
+        "startLine": 2208,
+        "startChar": 2,
+        "endLine": 2208,
+        "endChar": 18
+      },
+      "revId": "6f185c7ff4194803e725ae2a4fc2f49efac18363",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
