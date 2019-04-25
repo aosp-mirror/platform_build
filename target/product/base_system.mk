@@ -268,7 +268,7 @@ PRODUCT_PACKAGES += \
 
 # VINTF data for system image
 PRODUCT_PACKAGES += \
-    framework_manifest.xml \
+    system_manifest.xml \
     system_compatibility_matrix.xml \
 
 # Host tools to install
