@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "58fe98c4_f99a0558",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2262,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-04-25T14:48:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "17c513c2_274a42f3",
+      "range": {
+        "startLine": 2261,
+        "startChar": 10,
+        "endLine": 2262,
+        "endChar": 26
+      },
+      "revId": "89cbdbb48b10e60ee4ca24f40accad7597cf3c17",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "85333b02_ceadabdb",
         "filename": "core/Makefile",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "89cbdbb48b10e60ee4ca24f40accad7597cf3c17",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca763652_025e4cba",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2268,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-04-25T14:48:44Z",
+      "side": 1,
+      "message": "You mean the path gets printed twice counting the one in the message itself? I\u0027m not too concerned about that, and I also use $(error) to make it clear in the makefile that it is an error, and to make it stop.",
+      "parentUuid": "85333b02_ceadabdb",
+      "range": {
+        "startLine": 2268,
+        "startChar": 2,
+        "endLine": 2268,
+        "endChar": 7
+      },
+      "revId": "89cbdbb48b10e60ee4ca24f40accad7597cf3c17",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
