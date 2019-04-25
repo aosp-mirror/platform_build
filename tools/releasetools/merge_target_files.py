@@ -722,18 +722,21 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
   output_target_files_meta_dir = os.path.join(output_target_files_temp_dir,
                                               'META')
 
-  command = [
+  find_command = [
       'find',
       output_target_files_meta_dir,
   ]
-  # TODO(bpeckham): sort this to be more like build.
-  meta_content = common.RunAndCheckOutput(command, verbose=False)
-  command = [
+  find_process = common.Run(find_command, stdout=subprocess.PIPE, verbose=False)
+  meta_content = common.RunAndCheckOutput(['sort'], stdin=find_process.stdout,
+                                          verbose=False)
+
+  find_command = [
       'find', output_target_files_temp_dir, '-path',
       output_target_files_meta_dir, '-prune', '-o', '-print'
   ]
-  # TODO(bpeckham): sort this to be more like build.
-  other_content = common.RunAndCheckOutput(command, verbose=False)
+  find_process = common.Run(find_command, stdout=subprocess.PIPE, verbose=False)
+  other_content = common.RunAndCheckOutput(['sort'], stdin=find_process.stdout,
+                                           verbose=False)
 
   with open(output_target_files_list, 'wb') as f:
     f.write(meta_content)
