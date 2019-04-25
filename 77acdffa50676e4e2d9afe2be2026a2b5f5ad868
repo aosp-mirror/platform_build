@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "402d9153_571a87a8",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2272,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-04-25T15:25:06Z",
+      "side": 1,
+      "message": "But it doesn\u0027t catch make-level dependencies, only REQUIRED/etc.",
+      "revId": "77acdffa50676e4e2d9afe2be2026a2b5f5ad868",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
