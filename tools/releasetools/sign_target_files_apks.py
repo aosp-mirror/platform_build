@@ -176,6 +176,9 @@ def GetApexKeys(keys_info, key_map):
   Returns:
     A dict that contains the updated APEX key mapping, which should be used for
     the current signing.
+
+  Raises:
+    AssertionError: On invalid container / payload key overrides.
   """
   # Apply all the --extra_apex_payload_key options to override the payload
   # signing keys in the given keys_info.
@@ -196,6 +199,24 @@ def GetApexKeys(keys_info, key_map):
     if not key:
       key = 'PRESIGNED'
     keys_info[apex] = (keys_info[apex][0], key_map.get(key, key))
+
+  # A PRESIGNED container entails a PRESIGNED payload. Apply this to all the
+  # APEX key pairs. However, a PRESIGNED container with non-PRESIGNED payload
+  # (overridden via commandline) indicates a config error, which should not be
+  # allowed.
+  for apex, (payload_key, container_key) in keys_info.items():
+    if container_key != 'PRESIGNED':
+      continue
+    if apex in OPTIONS.extra_apex_payload_keys:
+      payload_override = OPTIONS.extra_apex_payload_keys[apex]
+      assert payload_override == '', \
+          ("Invalid APEX key overrides: {} has PRESIGNED container but "
+           "non-PRESIGNED payload key {}").format(apex, payload_override)
+    if payload_key != 'PRESIGNED':
+      print(
+          "Setting {} payload as PRESIGNED due to PRESIGNED container".format(
+              apex))
+    keys_info[apex] = ('PRESIGNED', 'PRESIGNED')
 
   return keys_info
 
@@ -289,7 +310,9 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
        "not sign this apk).".format("\n  ".join(unknown_files)))
 
   # For all the APEXes, double check that we won't have an APEX that has only
-  # one of the payload / container keys set.
+  # one of the payload / container keys set. Note that non-PRESIGNED container
+  # with PRESIGNED payload could be allowed but currently unsupported. It would
+  # require changing SignApex implementation.
   if not apex_keys:
     return
 
