@@ -22,6 +22,30 @@
       "revId": "6f185c7ff4194803e725ae2a4fc2f49efac18363",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "298c48c3_b8a3d166",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 2208,
+      "author": {
+        "id": 1334152
+      },
+      "writtenOn": "2019-04-25T14:44:55Z",
+      "side": 1,
+      "message": "Good plan.  I also moved the ICU libs from the comment into the check list as these are now removed from /system too.\n\nRe-tested with m installclean \u0026\u0026 m",
+      "parentUuid": "0577b4d8_7de75c9b",
+      "range": {
+        "startLine": 2208,
+        "startChar": 2,
+        "endLine": 2208,
+        "endChar": 18
+      },
+      "revId": "6f185c7ff4194803e725ae2a4fc2f49efac18363",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
