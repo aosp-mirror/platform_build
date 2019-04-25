@@ -318,13 +318,24 @@ class BuildInfo(object):
 
   @property
   def vendor_fingerprint(self):
-    if "vendor.build.prop" not in self.info_dict:
+    return self._fingerprint_of("vendor")
+
+  @property
+  def product_fingerprint(self):
+    return self._fingerprint_of("product")
+
+  @property
+  def odm_fingerprint(self):
+    return self._fingerprint_of("odm")
+
+  def _fingerprint_of(self, partition):
+    if partition + ".build.prop" not in self.info_dict:
       return None
-    vendor_build_prop = self.info_dict["vendor.build.prop"]
-    if "ro.vendor.build.fingerprint" in vendor_build_prop:
-      return vendor_build_prop["ro.vendor.build.fingerprint"]
-    if "ro.vendor.build.thumbprint" in vendor_build_prop:
-      return vendor_build_prop["ro.vendor.build.thumbprint"]
+    build_prop = self.info_dict[partition + ".build.prop"]
+    if "ro." + partition + ".build.fingerprint" in build_prop:
+      return build_prop["ro." + partition + ".build.fingerprint"]
+    if "ro." + partition + ".build.thumbprint" in build_prop:
+      return build_prop["ro." + partition + ".build.thumbprint"]
     return None
 
   @property
@@ -692,12 +703,24 @@ def HasRecoveryPatch(target_files_zip):
           "SYSTEM/etc/recovery.img" in namelist)
 
 
-def HasVendorPartition(target_files_zip):
+def HasPartition(target_files_zip, partition):
   try:
-    target_files_zip.getinfo("VENDOR/")
+    target_files_zip.getinfo(partition.upper() + "/")
     return True
   except KeyError:
     return False
+
+
+def HasVendorPartition(target_files_zip):
+  return HasPartition(target_files_zip, "vendor")
+
+
+def HasProductPartition(target_files_zip):
+  return HasPartition(target_files_zip, "product")
+
+
+def HasOdmPartition(target_files_zip):
+  return HasPartition(target_files_zip, "odm")
 
 
 def HasTrebleEnabled(target_files_zip, target_info):
@@ -745,23 +768,24 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
         generating an incremental OTA; None otherwise.
   """
 
-  def AddCompatibilityArchive(system_updated, vendor_updated):
-    """Adds compatibility info based on system/vendor update status.
+  def AddCompatibilityArchive(framework_updated, device_updated):
+    """Adds compatibility info based on update status of both sides of Treble
+    boundary.
 
     Args:
-      system_updated: If True, the system image will be updated and therefore
-          its metadata should be included.
-      vendor_updated: If True, the vendor image will be updated and therefore
-          its metadata should be included.
+      framework_updated: If True, the system / product image will be updated
+          and therefore their metadata should be included.
+      device_updated: If True, the vendor / odm image will be updated and
+          therefore their metadata should be included.
     """
     # Determine what metadata we need. Files are names relative to META/.
     compatibility_files = []
-    vendor_metadata = ("vendor_manifest.xml", "vendor_matrix.xml")
-    system_metadata = ("system_manifest.xml", "system_matrix.xml")
-    if vendor_updated:
-      compatibility_files += vendor_metadata
-    if system_updated:
-      compatibility_files += system_metadata
+    device_metadata = ("vendor_manifest.xml", "vendor_matrix.xml")
+    framework_metadata = ("system_manifest.xml", "system_matrix.xml")
+    if device_updated:
+      compatibility_files += device_metadata
+    if framework_updated:
+      compatibility_files += framework_metadata
 
     # Create new archive.
     compatibility_archive = tempfile.NamedTemporaryFile()
@@ -785,6 +809,11 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
                       arcname="compatibility.zip",
                       compress_type=zipfile.ZIP_STORED)
 
+  def FingerprintChanged(source_fp, target_fp):
+    if source_fp is None or target_fp is None:
+      return True
+    return source_fp != target_fp
+
   # Will only proceed if the target has enabled the Treble support (as well as
   # having a /vendor partition).
   if not HasTrebleEnabled(target_zip, target_info):
@@ -795,7 +824,7 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
   if OPTIONS.skip_compatibility_check:
     return
 
-  # Full OTA carries the info for system/vendor both.
+  # Full OTA carries the info for system/vendor/product/odm
   if source_info is None:
     AddCompatibilityArchive(True, True)
     return
@@ -804,16 +833,19 @@ def AddCompatibilityArchiveIfTrebleEnabled(target_zip, output_zip, target_info,
   target_fp = target_info.fingerprint
   system_updated = source_fp != target_fp
 
-  source_fp_vendor = source_info.vendor_fingerprint
-  target_fp_vendor = target_info.vendor_fingerprint
-  # vendor build fingerprints could be possibly blacklisted at build time. For
-  # such a case, we consider the vendor images being changed.
-  if source_fp_vendor is None or target_fp_vendor is None:
-    vendor_updated = True
-  else:
-    vendor_updated = source_fp_vendor != target_fp_vendor
+  # other build fingerprints could be possibly blacklisted at build time. For
+  # such a case, we consider those images being changed.
+  vendor_updated = FingerprintChanged(source_info.vendor_fingerprint,
+                                      target_info.vendor_fingerprint)
+  product_updated = HasProductPartition(target_zip) and \
+                    FingerprintChanged(source_info.product_fingerprint,
+                                       target_info.product_fingerprint)
+  odm_updated = HasOdmPartition(target_zip) and \
+                FingerprintChanged(source_info.odm_fingerprint,
+                                   target_info.odm_fingerprint)
 
-  AddCompatibilityArchive(system_updated, vendor_updated)
+  AddCompatibilityArchive(system_updated or product_updated,
+                          vendor_updated or odm_updated)
 
 
 def WriteFullOTAPackage(input_zip, output_file):

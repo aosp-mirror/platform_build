@@ -2071,29 +2071,6 @@ endif
 FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
 
 # -----------------------------------------------------------------
-# Final System VINTF manifest including fragments. This is not assembled
-# on the device because it depends on everything in a given device
-# image which defines a vintf_fragment.
-
-ifdef BUILDING_SYSTEM_IMAGE
-
-BUILT_ASSEMBLED_SYSTEM_MANIFEST := $(PRODUCT_OUT)/verified_assembled_system_manifest.xml
-$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(HOST_OUT_EXECUTABLES)/assemble_vintf
-$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(BUILT_VENDOR_MATRIX)
-$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(BUILT_SYSTEM_MANIFEST)
-$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(FULL_SYSTEMIMAGE_DEPS)
-	@echo "Verifying system VINTF manifest."
-	PRODUCT_ENFORCE_VINTF_MANIFEST=$(PRODUCT_ENFORCE_VINTF_MANIFEST) \
-	$(HOST_OUT_EXECUTABLES)/assemble_vintf \
-	    -c $(BUILT_VENDOR_MATRIX) \
-	    -i $(BUILT_SYSTEM_MANIFEST) \
-	    $$([ -d $(TARGET_OUT)/etc/vintf/manifest ] && \
-	        find $(TARGET_OUT)/etc/vintf/manifest -type f -name "*.xml" | \
-	        sed "s/^/-i /" | tr '\n' ' ') -o $@
-
-endif # BUILDING_SYSTEM_IMAGE
-
-# -----------------------------------------------------------------
 ifdef BUILDING_SYSTEM_IMAGE
 
 # installed file list
@@ -2285,7 +2262,6 @@ define build-systemimage-target
            exit 1 )
 endef
 
-$(BUILT_SYSTEMIMAGE): $(BUILT_ASSEMBLED_SYSTEM_MANIFEST)
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(BUILD_IMAGE_SRCS)
 	$(call build-systemimage-target,$@)
 
@@ -2917,6 +2893,48 @@ else ifdef BOARD_PREBUILT_PRODUCTIMAGE
 INSTALLED_PRODUCTIMAGE_TARGET := $(PRODUCT_OUT)/product.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_PRODUCTIMAGE),$(INSTALLED_PRODUCTIMAGE_TARGET)))
 endif
+
+# -----------------------------------------------------------------
+# Final Framework VINTF manifest including fragments. This is not assembled
+# on the device because it depends on everything in a given device
+# image which defines a vintf_fragment.
+
+ifdef BUILDING_SYSTEM_IMAGE
+
+ifndef BOARD_USES_PRODUCTIMAGE
+  # If no product image at all, check system manifest directly against device matrix.
+  check_framework_manifest := true
+else ifdef BUILDING_PRODUCT_IMAGE
+  # If device has a product image, only check if the product image is built.
+  check_framework_manifest := true
+endif
+
+ifeq ($(check_framework_manifest),true)
+
+BUILT_ASSEMBLED_FRAMEWORK_MANIFEST := $(PRODUCT_OUT)/verified_assembled_framework_manifest.xml
+$(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST): $(HOST_OUT_EXECUTABLES)/assemble_vintf \
+                                       $(BUILT_VENDOR_MATRIX) \
+                                       $(BUILT_SYSTEM_MANIFEST) \
+                                       $(FULL_SYSTEMIMAGE_DEPS) \
+                                       $(BUILT_PRODUCT_MANIFEST) \
+                                       $(BUILT_PRODUCTIMAGE_TARGET)
+	@echo "Verifying framework VINTF manifest."
+	PRODUCT_ENFORCE_VINTF_MANIFEST=$(PRODUCT_ENFORCE_VINTF_MANIFEST) \
+	$(HOST_OUT_EXECUTABLES)/assemble_vintf \
+	    -o $@ \
+	    -c $(BUILT_VENDOR_MATRIX) \
+	    -i $(BUILT_SYSTEM_MANIFEST) \
+	    $(addprefix -i ,\
+	      $(filter $(TARGET_OUT)/etc/vintf/manifest/%.xml,$(FULL_SYSTEMIMAGE_DEPS)) \
+	      $(BUILT_PRODUCT_MANIFEST) \
+	      $(filter $(TARGET_OUT_PRODUCT)/etc/vintf/manifest/%.xml,$(INTERNAL_PRODUCTIMAGE_FILES)))
+
+droidcore: $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST)
+
+endif # check_framework_manifest
+check_framework_manifest :=
+
+endif # BUILDING_SYSTEM_IMAGE
 
 # -----------------------------------------------------------------
 # product_services partition image
@@ -3810,7 +3828,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(HOST_OUT_EXECUTABLES)/bsdiff \
 	    $(HOST_OUT_EXECUTABLES)/care_map_generator \
 	    $(BUILD_IMAGE_SRCS) \
-	    $(BUILT_ASSEMBLED_SYSTEM_MANIFEST) \
+	    $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST) \
 	    $(BUILT_ASSEMBLED_VENDOR_MANIFEST) \
 	    $(BUILT_SYSTEM_MATRIX) \
 	    $(BUILT_VENDOR_MATRIX) \
@@ -4157,8 +4175,8 @@ ifdef BUILDING_SYSTEM_OTHER_IMAGE
 endif
 	@# Metadata for compatibility verification.
 	$(hide) cp $(BUILT_SYSTEM_MATRIX) $(zip_root)/META/system_matrix.xml
-ifdef BUILT_ASSEMBLED_SYSTEM_MANIFEST
-	$(hide) cp $(BUILT_ASSEMBLED_SYSTEM_MANIFEST) $(zip_root)/META/system_manifest.xml
+ifdef BUILT_ASSEMBLED_FRAMEWORK_MANIFEST
+	$(hide) cp $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST) $(zip_root)/META/system_manifest.xml
 endif
 ifdef BUILT_ASSEMBLED_VENDOR_MANIFEST
 	$(hide) cp $(BUILT_ASSEMBLED_VENDOR_MANIFEST) $(zip_root)/META/vendor_manifest.xml
