@@ -118,6 +118,30 @@
       "revId": "6bfdcda0e65352917968747537991495a2d3086b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "632dec6b_d7ff4d06",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1038443
+      },
+      "writtenOn": "2019-04-26T06:43:35Z",
+      "side": 1,
+      "message": "Yeah, it\u0027s very subtle. Maybe PRODUCT_USES_DEFAULT_ART_CONFIG as suggested by Calin is better. Calin, your call :)",
+      "parentUuid": "96c74045_58051266",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 24
+      },
+      "revId": "6bfdcda0e65352917968747537991495a2d3086b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
