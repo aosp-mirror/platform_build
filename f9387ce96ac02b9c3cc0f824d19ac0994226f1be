@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c48e4b5d_6b121b0d",
+        "filename": "core/Makefile",
+        "patchSetId": 18
+      },
+      "lineNbr": 4552,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-26T21:25:25Z",
+      "side": 1,
+      "message": "This seems like a fundamentally different artifact, maybe add it as a new build artifact and leave update-img.zip as-is?",
+      "revId": "f9387ce96ac02b9c3cc0f824d19ac0994226f1be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fb4528fa_ab4d6f22",
+        "filename": "core/Makefile",
+        "patchSetId": 18
+      },
+      "lineNbr": 4558,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-26T21:25:25Z",
+      "side": 1,
+      "message": "This seems really complicated, and it\u0027s reaching into the internals of the rule that created BUILT_TARGET_FILES_PACKAGE.  Can you do it by operating on BOARD_SUPER_PARTITION_PARTITION_LIST in Make instead?  Or using zip2zip -x and -X arguments?",
+      "revId": "f9387ce96ac02b9c3cc0f824d19ac0994226f1be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
