@@ -2916,6 +2916,10 @@ else ifdef BUILDING_PRODUCT_IMAGE
   check_framework_manifest := true
 endif
 
+# TODO (b/131425279): delete this line once build_mixed script can correctly merge system and
+# product manifests.
+check_framework_manifest := true
+
 ifeq ($(check_framework_manifest),true)
 
 BUILT_ASSEMBLED_FRAMEWORK_MANIFEST := $(PRODUCT_OUT)/verified_assembled_framework_manifest.xml
