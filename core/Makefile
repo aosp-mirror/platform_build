@@ -2176,7 +2176,7 @@ endif
 #   libprofile.so
 #   libsigchain.so  - cf_x86_phone-userdebug builds get this in system/lib/arm
 #   libtombstoned_client.so
-APEX_MODULE_LIBS= \
+APEX_MODULE_LIBS := \
   libadbconnection.so \
   libandroidicu.so \
   libdt_fd_forward.so \
@@ -2202,7 +2202,10 @@ DISABLE_APEX_LIBS_ABSENCE_CHECK ?=
 # on the native architecture.
 # TODO(b/130630776): Introduce a make variable for the appropriate directory
 # when native bridge is active.
-APEX_LIBS_ABSENCE_CHECK_EXCLUDE=lib/arm lib/arm64
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE := lib/arm lib/arm64
+
+# Exclude vndk-sp-* subdirectories which contain prebuilts from older releases.
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/vndk-% lib64/vndk-%
 
 # If the check below fails, some library has ended up in system/lib or
 # system/lib64 that is intended to only go into some APEX package. The likely
@@ -2230,7 +2233,7 @@ define check-apex-libs-absence
 $(hide) ( \
   cd $(TARGET_OUT) && \
   findres=$$(find lib* \
-    $(foreach dir,$(APEX_LIBS_ABSENCE_CHECK_EXCLUDE),-path $(dir) -prune -o) \
+    $(foreach dir,$(APEX_LIBS_ABSENCE_CHECK_EXCLUDE),-path "$(subst %,*,$(dir))" -prune -o) \
     -type f \( -false $(foreach lib,$(APEX_MODULE_LIBS),-o -name $(lib)) \) \
     -print) && \
   if [ -n "$$findres" ]; then \
