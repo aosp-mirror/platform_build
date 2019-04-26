@@ -2179,6 +2179,7 @@ endif
 APEX_MODULE_LIBS := \
   libadbconnection.so \
   libandroidicu.so \
+  libandroidio.so \
   libdt_fd_forward.so \
   libdt_socket.so \
   libjavacore.so \
@@ -2190,6 +2191,10 @@ APEX_MODULE_LIBS := \
   libopenjdkjvm.so \
   libopenjdkjvmti.so \
   libpac.so \
+
+# Conscrypt APEX_MODULE_LIBS
+APEX_MODULE_LIBS += \
+  libjavacrypto.so \
 
 # An option to disable the check below, for local use since some build targets
 # still may create these libraries in /system (b/129006418).
