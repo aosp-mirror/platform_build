@@ -461,3 +461,49 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
             'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
             'build/make/target/product/security/testkey'),
         }, keys_info)
+
+  def test_ReadApexKeysInfo_presignedKeys(self):
+    apex_keys = self.APEX_KEYS_TXT + (
+        'name="apex.apexd_test_different_app2.apex" '
+        'private_key="PRESIGNED" '
+        'public_key="PRESIGNED" '
+        'container_certificate="PRESIGNED" '
+        'container_private_key="PRESIGNED"')
+    target_files = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.writestr('META/apexkeys.txt', apex_keys)
+
+    with zipfile.ZipFile(target_files) as target_files_zip:
+      keys_info = ReadApexKeysInfo(target_files_zip)
+
+    self.assertEqual({
+        'apex.apexd_test.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
+            'build/make/target/product/security/testkey'),
+        'apex.apexd_test_different_app.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
+            'build/make/target/product/security/testkey'),
+        }, keys_info)
+
+  def test_ReadApexKeysInfo_presignedKeys(self):
+    apex_keys = self.APEX_KEYS_TXT + (
+        'name="apex.apexd_test_different_app2.apex" '
+        'private_key="PRESIGNED" '
+        'public_key="PRESIGNED" '
+        'container_certificate="PRESIGNED" '
+        'container_private_key="PRESIGNED"')
+    target_files = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.writestr('META/apexkeys.txt', apex_keys)
+
+    with zipfile.ZipFile(target_files) as target_files_zip:
+      keys_info = ReadApexKeysInfo(target_files_zip)
+
+    self.assertEqual({
+        'apex.apexd_test.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
+            'build/make/target/product/security/testkey'),
+        'apex.apexd_test_different_app.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
+            'build/make/target/product/security/testkey'),
+        }, keys_info)

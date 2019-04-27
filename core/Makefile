@@ -2071,29 +2071,6 @@ endif
 FULL_SYSTEMIMAGE_DEPS += $(INTERNAL_ROOT_FILES) $(INSTALLED_FILES_FILE_ROOT)
 
 # -----------------------------------------------------------------
-# Final System VINTF manifest including fragments. This is not assembled
-# on the device because it depends on everything in a given device
-# image which defines a vintf_fragment.
-
-ifdef BUILDING_SYSTEM_IMAGE
-
-BUILT_ASSEMBLED_SYSTEM_MANIFEST := $(PRODUCT_OUT)/verified_assembled_system_manifest.xml
-$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(HOST_OUT_EXECUTABLES)/assemble_vintf
-$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(BUILT_VENDOR_MATRIX)
-$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(BUILT_SYSTEM_MANIFEST)
-$(BUILT_ASSEMBLED_SYSTEM_MANIFEST): $(FULL_SYSTEMIMAGE_DEPS)
-	@echo "Verifying system VINTF manifest."
-	PRODUCT_ENFORCE_VINTF_MANIFEST=$(PRODUCT_ENFORCE_VINTF_MANIFEST) \
-	$(HOST_OUT_EXECUTABLES)/assemble_vintf \
-	    -c $(BUILT_VENDOR_MATRIX) \
-	    -i $(BUILT_SYSTEM_MANIFEST) \
-	    $$([ -d $(TARGET_OUT)/etc/vintf/manifest ] && \
-	        find $(TARGET_OUT)/etc/vintf/manifest -type f -name "*.xml" | \
-	        sed "s/^/-i /" | tr '\n' ' ') -o $@
-
-endif # BUILDING_SYSTEM_IMAGE
-
-# -----------------------------------------------------------------
 ifdef BUILDING_SYSTEM_IMAGE
 
 # installed file list
@@ -2199,9 +2176,10 @@ endif
 #   libprofile.so
 #   libsigchain.so  - cf_x86_phone-userdebug builds get this in system/lib/arm
 #   libtombstoned_client.so
-APEX_MODULE_LIBS= \
+APEX_MODULE_LIBS := \
   libadbconnection.so \
   libandroidicu.so \
+  libandroidio.so \
   libdt_fd_forward.so \
   libdt_socket.so \
   libjavacore.so \
@@ -2214,6 +2192,10 @@ APEX_MODULE_LIBS= \
   libopenjdkjvmti.so \
   libpac.so \
 
+# Conscrypt APEX_MODULE_LIBS
+APEX_MODULE_LIBS += \
+  libjavacrypto.so \
+
 # An option to disable the check below, for local use since some build targets
 # still may create these libraries in /system (b/129006418).
 DISABLE_APEX_LIBS_ABSENCE_CHECK ?=
@@ -2225,7 +2207,10 @@ DISABLE_APEX_LIBS_ABSENCE_CHECK ?=
 # on the native architecture.
 # TODO(b/130630776): Introduce a make variable for the appropriate directory
 # when native bridge is active.
-APEX_LIBS_ABSENCE_CHECK_EXCLUDE=lib/arm lib/arm64
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE := lib/arm lib/arm64
+
+# Exclude vndk-sp-* subdirectories which contain prebuilts from older releases.
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/vndk-% lib64/vndk-%
 
 # If the check below fails, some library has ended up in system/lib or
 # system/lib64 that is intended to only go into some APEX package. The likely
@@ -2253,7 +2238,7 @@ define check-apex-libs-absence
 $(hide) ( \
   cd $(TARGET_OUT) && \
   findres=$$(find lib* \
-    $(foreach dir,$(APEX_LIBS_ABSENCE_CHECK_EXCLUDE),-path $(dir) -prune -o) \
+    $(foreach dir,$(APEX_LIBS_ABSENCE_CHECK_EXCLUDE),-path "$(subst %,*,$(dir))" -prune -o) \
     -type f \( -false $(foreach lib,$(APEX_MODULE_LIBS),-o -name $(lib)) \) \
     -print) && \
   if [ -n "$$findres" ]; then \
@@ -2285,7 +2270,6 @@ define build-systemimage-target
            exit 1 )
 endef
 
-$(BUILT_SYSTEMIMAGE): $(BUILT_ASSEMBLED_SYSTEM_MANIFEST)
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(BUILD_IMAGE_SRCS)
 	$(call build-systemimage-target,$@)
 
@@ -2917,6 +2901,52 @@ else ifdef BOARD_PREBUILT_PRODUCTIMAGE
 INSTALLED_PRODUCTIMAGE_TARGET := $(PRODUCT_OUT)/product.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_PRODUCTIMAGE),$(INSTALLED_PRODUCTIMAGE_TARGET)))
 endif
+
+# -----------------------------------------------------------------
+# Final Framework VINTF manifest including fragments. This is not assembled
+# on the device because it depends on everything in a given device
+# image which defines a vintf_fragment.
+
+ifdef BUILDING_SYSTEM_IMAGE
+
+ifndef BOARD_USES_PRODUCTIMAGE
+  # If no product image at all, check system manifest directly against device matrix.
+  check_framework_manifest := true
+else ifdef BUILDING_PRODUCT_IMAGE
+  # If device has a product image, only check if the product image is built.
+  check_framework_manifest := true
+endif
+
+# TODO (b/131425279): delete this line once build_mixed script can correctly merge system and
+# product manifests.
+check_framework_manifest := true
+
+ifeq ($(check_framework_manifest),true)
+
+BUILT_ASSEMBLED_FRAMEWORK_MANIFEST := $(PRODUCT_OUT)/verified_assembled_framework_manifest.xml
+$(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST): $(HOST_OUT_EXECUTABLES)/assemble_vintf \
+                                       $(BUILT_VENDOR_MATRIX) \
+                                       $(BUILT_SYSTEM_MANIFEST) \
+                                       $(FULL_SYSTEMIMAGE_DEPS) \
+                                       $(BUILT_PRODUCT_MANIFEST) \
+                                       $(BUILT_PRODUCTIMAGE_TARGET)
+	@echo "Verifying framework VINTF manifest."
+	PRODUCT_ENFORCE_VINTF_MANIFEST=$(PRODUCT_ENFORCE_VINTF_MANIFEST) \
+	$(HOST_OUT_EXECUTABLES)/assemble_vintf \
+	    -o $@ \
+	    -c $(BUILT_VENDOR_MATRIX) \
+	    -i $(BUILT_SYSTEM_MANIFEST) \
+	    $(addprefix -i ,\
+	      $(filter $(TARGET_OUT)/etc/vintf/manifest/%.xml,$(FULL_SYSTEMIMAGE_DEPS)) \
+	      $(BUILT_PRODUCT_MANIFEST) \
+	      $(filter $(TARGET_OUT_PRODUCT)/etc/vintf/manifest/%.xml,$(INTERNAL_PRODUCTIMAGE_FILES)))
+
+droidcore: $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST)
+
+endif # check_framework_manifest
+check_framework_manifest :=
+
+endif # BUILDING_SYSTEM_IMAGE
 
 # -----------------------------------------------------------------
 # product_services partition image
@@ -3810,7 +3840,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(HOST_OUT_EXECUTABLES)/bsdiff \
 	    $(HOST_OUT_EXECUTABLES)/care_map_generator \
 	    $(BUILD_IMAGE_SRCS) \
-	    $(BUILT_ASSEMBLED_SYSTEM_MANIFEST) \
+	    $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST) \
 	    $(BUILT_ASSEMBLED_VENDOR_MANIFEST) \
 	    $(BUILT_SYSTEM_MATRIX) \
 	    $(BUILT_VENDOR_MATRIX) \
@@ -4157,8 +4187,8 @@ ifdef BUILDING_SYSTEM_OTHER_IMAGE
 endif
 	@# Metadata for compatibility verification.
 	$(hide) cp $(BUILT_SYSTEM_MATRIX) $(zip_root)/META/system_matrix.xml
-ifdef BUILT_ASSEMBLED_SYSTEM_MANIFEST
-	$(hide) cp $(BUILT_ASSEMBLED_SYSTEM_MANIFEST) $(zip_root)/META/system_manifest.xml
+ifdef BUILT_ASSEMBLED_FRAMEWORK_MANIFEST
+	$(hide) cp $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST) $(zip_root)/META/system_manifest.xml
 endif
 ifdef BUILT_ASSEMBLED_VENDOR_MANIFEST
 	$(hide) cp $(BUILT_ASSEMBLED_VENDOR_MANIFEST) $(zip_root)/META/vendor_manifest.xml
@@ -4442,7 +4472,7 @@ $(PROGUARD_DICT_ZIP) :
 endif # TARGET_BUILD_APPS
 
 # -----------------------------------------------------------------
-# super partition image
+# super partition image (dist)
 
 ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 
@@ -4457,31 +4487,83 @@ define dump-super-image-info
 endef
 
 ifneq (true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS))
-INSTALLED_SUPERIMAGE_TARGET := $(call intermediates-dir-for,PACKAGING,super.img)/super.img
-$(INSTALLED_SUPERIMAGE_TARGET): extracted_input_target_files := $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE))
-$(INSTALLED_SUPERIMAGE_TARGET): $(LPMAKE) $(BUILT_TARGET_FILES_PACKAGE) $(BUILD_SUPER_IMAGE)
-	$(call pretty,"Target super fs image: $@")
+
+# For real devices and for dist builds, build super image from target files to an intermediate directory.
+INTERNAL_SUPERIMAGE_DIST_TARGET := $(call intermediates-dir-for,PACKAGING,super.img)/super.img
+$(INTERNAL_SUPERIMAGE_DIST_TARGET): extracted_input_target_files := $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE))
+$(INTERNAL_SUPERIMAGE_DIST_TARGET): $(LPMAKE) $(BUILT_TARGET_FILES_PACKAGE) $(BUILD_SUPER_IMAGE)
+	$(call pretty,"Target super fs image from target files: $@")
 	PATH=$(dir $(LPMAKE)):$$PATH \
 	    $(BUILD_SUPER_IMAGE) -v $(extracted_input_target_files) $@
 
-# supernod uses images in the $(PRODUCT_OUT) directory instead of images from target files package.
-.PHONY: superimage-nodeps supernod
-superimage-nodeps supernod: intermediates := $(call intermediates-dir-for,PACKAGING,superimage-nodeps)
-superimage-nodeps supernod: | $(LPMAKE) $(BUILD_SUPER_IMAGE) \
-    $(foreach p, $(BOARD_SUPER_PARTITION_PARTITION_LIST), $(INSTALLED_$(call to-upper,$(p))IMAGE_TARGET))
-	$(call pretty,"make $(INSTALLED_SUPERIMAGE_TARGET): ignoring dependencies")
-	mkdir -p $(intermediates)
-	rm -rf $(intermediates)/misc_info.txt
-	$(call dump-super-image-info,$(intermediates)/misc_info.txt)
-	$(foreach p,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-	  echo "$(p)_image=$(INSTALLED_$(call to-upper,$(p))IMAGE_TARGET)" >> $(intermediates)/misc_info.txt;)
-	mkdir -p $(dir $(INSTALLED_SUPERIMAGE_TARGET))
-	PATH=$(dir $(LPMAKE)):$$PATH \
-	  $(BUILD_SUPER_IMAGE) -v $(intermediates)/misc_info.txt $(INSTALLED_SUPERIMAGE_TARGET)
+$(call dist-for-goals,dist_files,$(INTERNAL_SUPERIMAGE_DIST_TARGET))
+
+.PHONY: superimage_dist
+superimage_dist: $(INTERNAL_SUPERIMAGE_DIST_TARGET)
 
 endif # PRODUCT_RETROFIT_DYNAMIC_PARTITIONS != "true"
+endif # BOARD_SUPER_PARTITION_SIZE != ""
+endif # PRODUCT_BUILD_SUPER_PARTITION == "true"
 
-$(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_TARGET))
+# -----------------------------------------------------------------
+# super partition image for development
+
+ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
+ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
+ifneq (true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS))
+
+# Build super.img by using $(INSTALLED_*IMAGE_TARGET) to $(1)
+# $(1): built image path
+# $(2): misc_info.txt path; its contents should match expectation of build_super_image.py
+define build-superimage-target
+  mkdir -p $(dir $(2))
+  rm -rf $(2)
+  $(call dump-super-image-info,$(2))
+  $(foreach p,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+    echo "$(p)_image=$(INSTALLED_$(call to-upper,$(p))IMAGE_TARGET)" >> $(2);)
+  mkdir -p $(dir $(1))
+  PATH=$(dir $(LPMAKE)):$$PATH \
+    $(BUILD_SUPER_IMAGE) -v $(2) $(1)
+endef
+
+INSTALLED_SUPERIMAGE_TARGET := $(PRODUCT_OUT)/super.img
+INSTALLED_SUPERIMAGE_DEPENDENCIES := $(LPMAKE) $(BUILD_SUPER_IMAGE) \
+    $(foreach p, $(BOARD_SUPER_PARTITION_PARTITION_LIST), $(INSTALLED_$(call to-upper,$(p))IMAGE_TARGET))
+
+# If BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT is set, super.img is built from images in the
+# $(PRODUCT_OUT) directory, and is built to $(PRODUCT_OUT)/super.img. Also, it will
+# be built for non-dist builds. This is useful for devices that uses super.img directly, e.g.
+# virtual devices.
+ifeq (true,$(BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT))
+$(INSTALLED_SUPERIMAGE_TARGET): $(INSTALLED_SUPERIMAGE_DEPENDENCIES)
+	$(call pretty,"Target super fs image for debug: $@")
+	$(call build-superimage-target,$(INSTALLED_SUPERIMAGE_TARGET),\
+	  $(call intermediates-dir-for,PACKAGING,superimage_debug)/misc_info.txt)
+
+droidcore: $(INSTALLED_SUPERIMAGE_TARGET)
+
+# For devices that uses super image directly, the superimage target points to the file in $(PRODUCT_OUT).
+.PHONY: superimage
+superimage: $(INSTALLED_SUPERIMAGE_TARGET)
+endif # BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT
+
+# Build $(PRODUCT_OUT)/super.img without dependencies.
+.PHONY: superimage-nodeps supernod
+superimage-nodeps supernod: intermediates :=
+superimage-nodeps supernod: | $(INSTALLED_SUPERIMAGE_DEPENDENCIES)
+	$(call pretty,"make $(INSTALLED_SUPERIMAGE_TARGET): ignoring dependencies")
+	$(call build-superimage-target,$(INSTALLED_SUPERIMAGE_TARGET),\
+	  $(call intermediates-dir-for,PACKAGING,superimage-nodeps)/misc_info.txt)
+
+endif # PRODUCT_RETROFIT_DYNAMIC_PARTITIONS != "true"
+endif # BOARD_SUPER_PARTITION_SIZE != ""
+endif # PRODUCT_BUILD_SUPER_PARTITION == "true"
+
+# -----------------------------------------------------------------
+# super empty image
+
+ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
+ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 
 INSTALLED_SUPERIMAGE_EMPTY_TARGET := $(PRODUCT_OUT)/super_empty.img
 $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): intermediates := $(call intermediates-dir-for,PACKAGING,super_empty)
