@@ -140,6 +140,30 @@
       "revId": "b30c83a7c3eb6588e73e65003c41e91a874916c9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e560edcf_7e6b8e60",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 27
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-29T15:57:10Z",
+      "side": 1,
+      "message": "Did you mean for GSI to be used on system-as-root devices (e.g., P launched devices)?\n\nIt should be ok to unset BOARD_BUILD_SYSTEM_ROOT_IMAGE.\nWe\u0027ll create a symlink /init -\u003e /system/bin/init in the GSI, so it still can be used on non-dynamic devices. IIRC, BOARD_BUILD_SYSTEM_ROOT_IMAGE now mostly affects whether to build ramdisk or not and won\u0027t affect GSI image much.\n\nb/119851742#comment18\n\nAlso, shouldn\u0027t PRODUCT_USE_DYNAMIC_PARTITIONS + BOARD_BUILD_SYSTEM_ROOT_IMAGE leads to build error?\nhttps://android.googlesource.com/platform/build/+/0376d7dcbb5bd412344667751b200430fa358f20/core/config.mk#840\n\n\n\u003e can I assume all devices to use dynamic partition ?\nProbably not. All new launched device in Q need to enable dynamic partition, but not for upgrading devices (from P or O, etc).  Anyway, as stated above, it should be ok to unset BOARD_BUILD_SYSTEM_ROOT_IMAGE.",
+      "parentUuid": "b6f5205f_dd4a02e1",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 5
+      },
+      "revId": "b30c83a7c3eb6588e73e65003c41e91a874916c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
