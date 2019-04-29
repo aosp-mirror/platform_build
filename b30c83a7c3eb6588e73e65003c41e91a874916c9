@@ -212,6 +212,30 @@
       "revId": "b30c83a7c3eb6588e73e65003c41e91a874916c9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4ec26ef4_d6069f52",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 27
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-29T23:36:28Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "35ad01dc_7fee806a",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 5
+      },
+      "revId": "b30c83a7c3eb6588e73e65003c41e91a874916c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
