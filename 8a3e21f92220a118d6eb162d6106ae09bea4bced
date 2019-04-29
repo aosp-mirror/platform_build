@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "39ba924e_6b99821b",
+        "filename": "core/main.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 1433,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-04-29T19:38:55Z",
+      "side": 1,
+      "message": "This uncovered another case with ART libraries ending up in system: http://cs/aosp-master/device/google/fuchsia/fuchsia.mk\n\nThe reason that wasn\u0027t caught before was that the check in Makefile was contained within BUILDING_SYSTEM_IMAGE, which isn\u0027t defined for that product.\n\nNow I need to figure out whether that is a problem or not.",
+      "revId": "8a3e21f92220a118d6eb162d6106ae09bea4bced",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
