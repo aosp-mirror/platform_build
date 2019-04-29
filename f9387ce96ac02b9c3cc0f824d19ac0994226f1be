@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "0d2c8490_267d3b4a",
+        "filename": "core/Makefile",
+        "patchSetId": 18
+      },
+      "lineNbr": 4552,
+      "author": {
+        "id": 1293738
+      },
+      "writtenOn": "2019-04-29T17:50:26Z",
+      "side": 1,
+      "message": "I\u0027d prefer not to. I don\u0027t see why the -img- artifact has to contain filesystems that don\u0027t really exist and aren\u0027t appropriate for the target (super.img -\u003e \"super\" partition, and it can be used directly by cuttlefish.)",
+      "parentUuid": "2731c6dd_6bc5a6bb",
+      "revId": "f9387ce96ac02b9c3cc0f824d19ac0994226f1be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fb4528fa_ab4d6f22",
         "filename": "core/Makefile",
         "patchSetId": 18
