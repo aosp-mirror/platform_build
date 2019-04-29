@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "11fc8eda_3a52dab0",
+        "filename": "core/Makefile",
+        "patchSetId": 18
+      },
+      "lineNbr": 4552,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-04-29T17:53:03Z",
+      "side": 1,
+      "message": "For cuttlefish there\u0027s no `fastboot update`, but instead these images are used directly as partition images. Hence, I have a separate flag for cuttlefish to build img.zip like this.\n\nThis won\u0027t affect real devices because they don\u0027t define this flag.",
+      "parentUuid": "0d2c8490_267d3b4a",
+      "revId": "f9387ce96ac02b9c3cc0f824d19ac0994226f1be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fb4528fa_ab4d6f22",
         "filename": "core/Makefile",
         "patchSetId": 18
