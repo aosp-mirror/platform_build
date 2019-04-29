@@ -16,6 +16,24 @@
       "revId": "77acdffa50676e4e2d9afe2be2026a2b5f5ad868",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eb63f39e_43968939",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2272,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-04-29T16:04:19Z",
+      "side": 1,
+      "message": "Right, and I\u0027ve no intention to drop the find-based check as long as b/12900641 is open. I\u0027ve pointed this out a bit more now.",
+      "parentUuid": "402d9153_571a87a8",
+      "revId": "77acdffa50676e4e2d9afe2be2026a2b5f5ad868",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
