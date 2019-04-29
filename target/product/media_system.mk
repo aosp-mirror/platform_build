@@ -52,6 +52,7 @@ PRODUCT_PACKAGES += \
     libstagefright_soft_vorbisdec \
     libstagefright_soft_vpxdec \
     libstagefright_soft_vpxenc \
+    libstagefright_softomx_plugin \
     libwebviewchromium_loader \
     libwebviewchromium_plat_support \
     make_f2fs \
