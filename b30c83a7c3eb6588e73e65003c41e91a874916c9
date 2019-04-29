@@ -164,6 +164,30 @@
       "revId": "b30c83a7c3eb6588e73e65003c41e91a874916c9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "40714799_c44d3ace",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 27
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-29T16:00:13Z",
+      "side": 1,
+      "message": "Oh, please ignore \"Also, shouldn\u0027t PRODUCT_USE_DYNAMIC_PARTITIONS + BOARD_BUILD_SYSTEM_ROOT_IMAGE leads to build error?\".  As the BOARD_BUILD_SYSTEM_ROOT_IMAGE is in the else if part.",
+      "parentUuid": "e560edcf_7e6b8e60",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 5
+      },
+      "revId": "b30c83a7c3eb6588e73e65003c41e91a874916c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
