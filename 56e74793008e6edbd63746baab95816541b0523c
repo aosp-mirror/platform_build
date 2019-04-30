@@ -69,6 +69,30 @@
       "revId": "56e74793008e6edbd63746baab95816541b0523c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bb636636_5847a58d",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 28
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-30T14:50:07Z",
+      "side": 1,
+      "message": "I tried but it will cause checkbuild to fail;\nthere are devices that include emulator vendor.mk but does not support dynamic partition\n:(\n\nsee go/ag/7048274",
+      "parentUuid": "c588fb4c_eddaef02",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 38
+      },
+      "revId": "56e74793008e6edbd63746baab95816541b0523c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
