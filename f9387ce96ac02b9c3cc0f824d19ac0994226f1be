@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "562ecbc9_46867f6a",
+        "filename": "core/Makefile",
+        "patchSetId": 18
+      },
+      "lineNbr": 4552,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-04-30T17:53:35Z",
+      "side": 1,
+      "message": "I\u0027m fine with filtering out images that don\u0027t make sense, but this also seems to be changing the structure (now using zip2zip \"IMAGES/*.img:.\").",
+      "parentUuid": "11fc8eda_3a52dab0",
+      "revId": "f9387ce96ac02b9c3cc0f824d19ac0994226f1be",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "fb4528fa_ab4d6f22",
         "filename": "core/Makefile",
         "patchSetId": 18
