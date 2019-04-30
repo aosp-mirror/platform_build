@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b88c392d_1cdbac1f",
+        "filename": "core/Makefile",
+        "patchSetId": 20
+      },
+      "lineNbr": 4598,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-04-30T17:57:25Z",
+      "side": 1,
+      "message": "This line didn\u0027t change (See L4604 and original code). I am adding new images (OTA/super_*.img -\u003e super_*.img) and excluding some IMAGE/*.img.",
+      "range": {
+        "startLine": 4598,
+        "startChar": 3,
+        "endLine": 4598,
+        "endChar": 57
+      },
+      "revId": "0e97dbb8ca459c427f2f194d5796d49a14fa138e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
