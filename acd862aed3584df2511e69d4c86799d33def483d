@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c93a32b_6bd7b079",
+        "filename": "core/Makefile",
+        "patchSetId": 18
+      },
+      "lineNbr": 4293,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-04-30T17:55:21Z",
+      "side": 0,
+      "message": "Colin, see this line.",
+      "range": {
+        "startLine": 4293,
+        "startChar": 4,
+        "endLine": 4293,
+        "endChar": 58
+      },
+      "revId": "acd862aed3584df2511e69d4c86799d33def483d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
