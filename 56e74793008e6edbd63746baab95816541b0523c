@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c50bf570_87bcc130",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 28
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-04-30T03:04:23Z",
+      "side": 1,
+      "message": "Just came to think more about it.\n\nIf dynamic partitions is enabled, SYSTEM_ROOT_IMAGE cannot be true.\nBut it doesn\u0027t imply !dynamic partition --\u003e SYSTEM_ROOT_IMAGE needs to be true.\n\nHow about (and let\u0027s check elsk@\u0027s thought, too):\n\nifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)\n  Copy L27-L43\nelse ifeq ($(PRODUCT_USE_DYNAMIC_PARTITION_SIZE),true)\n  # Enable dynamic system image size and reserved 64MB in it.\n  BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE :\u003d 67108864 (or some other value)\n  BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE :\u003d 67108864\nelse\n  BOARD_SYSTEMIMAGE_PARTITION_SIZE :\u003d ? (some value)\n  BOARD_VENDORIMAGE_PARTITION_SIZE :\u003d 140963840\nendif\n\nIIRC, PRODUCT_USE_DYNAMIC_PARTITION_SIZE means to build system.img dynamically without the fixed BOARD_SYSTEMIMAGE_PARTITION_SIZE. But it doesn\u0027t mean PRODUCT_USE_DYNAMIC_PARTITIONS must be true.\n\nHowever, if PRODUCT_USE_DYNAMIC_PARTITIONS is true, then PRODUCT_USE_DYNAMIC_PARTITION_SIZE must be true.",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 37
+      },
+      "revId": "56e74793008e6edbd63746baab95816541b0523c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
