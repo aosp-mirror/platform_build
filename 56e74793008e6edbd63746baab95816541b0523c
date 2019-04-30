@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f10cbe51_37908104",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 28
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1046320
+      },
+      "writtenOn": "2019-04-30T15:14:55Z",
+      "side": 1,
+      "message": "elsk@: any comment?\npreviously, BOARD_BUILD_SYSTEM_ROOT_IMAGE is set to true, unconditionally;\n\nnow, what value it should be when dynamic partition is false ?",
+      "parentUuid": "c50bf570_87bcc130",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 37
+      },
+      "revId": "56e74793008e6edbd63746baab95816541b0523c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a5285994_19fa69ce",
         "filename": "target/product/aosp_arm.mk",
         "patchSetId": 28
