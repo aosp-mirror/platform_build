@@ -45,6 +45,30 @@
       "revId": "56e74793008e6edbd63746baab95816541b0523c",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c588fb4c_eddaef02",
+        "filename": "target/product/aosp_arm.mk",
+        "patchSetId": 28
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-04-30T05:40:47Z",
+      "side": 1,
+      "message": "or, .../goldfish/xxx-vendor.mk is alos fine.",
+      "parentUuid": "a5285994_19fa69ce",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 38
+      },
+      "revId": "56e74793008e6edbd63746baab95816541b0523c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
