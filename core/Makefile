@@ -3806,6 +3806,8 @@ define dump-dynamic-partitions-info
       echo "super_$(group)_partition_list=$(BOARD_$(call to-upper,$(group))_PARTITION_LIST)" >> $(1);))
   $(if $(filter true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED)), \
     echo "build_non_sparse_super_partition=true" >> $(1))
+  $(if $(filter true,$(BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE)), \
+    echo "super_image_in_update_package=true" >> $(1))
 endef
 
 # Depending on the various images guarantees that the underlying
@@ -4309,25 +4311,6 @@ endif # BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE
 endif    # build_ota_package
 
 # -----------------------------------------------------------------
-# The update package
-
-name := $(TARGET_PRODUCT)
-ifeq ($(TARGET_BUILD_TYPE),debug)
-  name := $(name)_debug
-endif
-name := $(name)-img-$(FILE_NAME_TAG)
-
-INTERNAL_UPDATE_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
-
-$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(ZIP2ZIP)
-	@echo "Package: $@"
-	$(hide) $(ZIP2ZIP) -i $(BUILT_TARGET_FILES_PACKAGE) -o $@ \
-	   OTA/android-info.txt:android-info.txt "IMAGES/*.img:."
-
-.PHONY: updatepackage
-updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
-
-# -----------------------------------------------------------------
 # A zip of the appcompat directory containing logs
 APPCOMPAT_ZIP := $(PRODUCT_OUT)/appcompat.zip
 # For apps_only build we'll establish the dependency later in build/make/core/main.mk.
@@ -4347,7 +4330,6 @@ $(APPCOMPAT_ZIP): $(SOONG_ZIP)
 	$(hide) mkdir -p $(dir $@) $(PRODUCT_OUT)/appcompat $(dir $(PRIVATE_LIST_FILE))
 	$(hide) find $(PRODUCT_OUT)/appcompat | sort >$(PRIVATE_LIST_FILE)
 	$(hide) $(SOONG_ZIP) -d -o $@ -C $(PRODUCT_OUT)/appcompat -l $(PRIVATE_LIST_FILE)
-
 
 # -----------------------------------------------------------------
 # A zip of the symbols directory.  Keep the full paths to make it
@@ -4497,7 +4479,10 @@ $(INTERNAL_SUPERIMAGE_DIST_TARGET): $(LPMAKE) $(BUILT_TARGET_FILES_PACKAGE) $(BU
 	PATH=$(dir $(LPMAKE)):$$PATH \
 	    $(BUILD_SUPER_IMAGE) -v $(extracted_input_target_files) $@
 
+# Skip packing it in dist package because it is in update package.
+ifneq (true,$(BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE))
 $(call dist-for-goals,dist_files,$(INTERNAL_SUPERIMAGE_DIST_TARGET))
+endif
 
 .PHONY: superimage_dist
 superimage_dist: $(INTERNAL_SUPERIMAGE_DIST_TARGET)
@@ -4580,6 +4565,50 @@ $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_EMPTY_TARGET))
 
 endif # BOARD_SUPER_PARTITION_SIZE != ""
 endif # PRODUCT_BUILD_SUPER_PARTITION == "true"
+
+
+# -----------------------------------------------------------------
+# The update package
+
+name := $(TARGET_PRODUCT)
+ifeq ($(TARGET_BUILD_TYPE),debug)
+  name := $(name)_debug
+endif
+name := $(name)-img-$(FILE_NAME_TAG)
+
+INTERNAL_UPDATE_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
+
+$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(ZIP2ZIP)
+
+ifeq (true,$(BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE))
+$(INTERNAL_UPDATE_PACKAGE_TARGET): $(INTERNAL_SUPERIMAGE_DIST_TARGET)
+	@echo "Package: $@"
+	# Filter out super_empty and images in BOARD_SUPER_PARTITION_PARTITION_LIST.
+	# Filter out system_other for launch DAP devices because it is in super image.
+	# Include OTA/super_*.img for retrofit devices and super.img for non-retrofit
+	# devices.
+	$(hide) $(ZIP2ZIP) -i $(BUILT_TARGET_FILES_PACKAGE) -o $@ \
+	  -x IMAGES/super_empty.img \
+	  $(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+	    -x IMAGES/$(partition).img) \
+	  $(if $(filter system, $(BOARD_SUPER_PARTITION_PARTITION_LIST)), \
+	    $(if $(filter true, $(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)),, \
+	      -x IMAGES/system_other.img)) \
+	  $(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)), \
+	    $(foreach device,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
+	      OTA/super_$(device).img:super_$(device).img)) \
+	  OTA/android-info.txt:android-info.txt "IMAGES/*.img:."
+	$(if $(INTERNAL_SUPERIMAGE_DIST_TARGET), zip -q -j -u $@ $(INTERNAL_SUPERIMAGE_DIST_TARGET))
+else
+$(INTERNAL_UPDATE_PACKAGE_TARGET):
+	@echo "Package: $@"
+	$(hide) $(ZIP2ZIP) -i $(BUILT_TARGET_FILES_PACKAGE) -o $@ \
+	  OTA/android-info.txt:android-info.txt "IMAGES/*.img:."
+endif # BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE
+
+.PHONY: updatepackage
+updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
+
 
 # -----------------------------------------------------------------
 # dalvik something
