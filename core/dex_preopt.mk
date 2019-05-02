@@ -26,7 +26,7 @@ $(foreach my_boot_image_name,$(DEXPREOPT_IMAGE_NAMES),$(eval include $(BUILD_SYS
 # We can do this only if preopt is enabled and if the product uses libart config (which sets the
 # default properties for preopting).
 ifeq ($(WITH_DEXPREOPT), true)
-ifeq ($(PRODUCT_USES_ART), true)
+ifeq ($(PRODUCT_USES_DEFAULT_ART_CONFIG), true)
 
 boot_zip := $(PRODUCT_OUT)/boot.zip
 bootclasspath_jars := $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)
@@ -45,5 +45,5 @@ $(boot_zip): $(bootclasspath_jars) $(system_server_jars) $(SOONG_ZIP) $(MERGE_ZI
 
 $(call dist-for-goals, droidcore, $(boot_zip))
 
-endif  #PRODUCT_USES_ART
+endif  #PRODUCT_USES_DEFAULT_ART_CONFIG
 endif  #WITH_DEXPREOPT
