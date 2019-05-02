@@ -22,7 +22,8 @@ from merge_target_files import (read_config_list, validate_config_lists,
                                 default_system_item_list,
                                 default_other_item_list,
                                 default_system_misc_info_keys, copy_items,
-                                merge_dynamic_partition_info_dicts)
+                                merge_dynamic_partition_info_dicts,
+                                process_apex_keys_apk_certs_common)
 
 
 class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
@@ -160,3 +161,55 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
         'super_group_b_size': '2000',
     }
     self.assertEqual(merged_dict, expected_merged_dict)
+
+  def test_process_apex_keys_apk_certs_ReturnsTrueIfNoConflicts(self):
+    output_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(output_dir, 'META'))
+
+    system_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(system_dir, 'META'))
+    os.symlink(
+        os.path.join(self.testdata_dir, 'apexkeys_system.txt'),
+        os.path.join(system_dir, 'META', 'apexkeys.txt'))
+
+    other_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(other_dir, 'META'))
+    os.symlink(
+        os.path.join(self.testdata_dir, 'apexkeys_other.txt'),
+        os.path.join(other_dir, 'META', 'apexkeys.txt'))
+
+    process_apex_keys_apk_certs_common(system_dir, other_dir, output_dir,
+                                       'apexkeys.txt')
+
+    merged_entries = []
+    merged_path = os.path.join(self.testdata_dir, 'apexkeys_merge.txt')
+
+    with open(merged_path) as f:
+      merged_entries = f.read().split('\n')
+
+    output_entries = []
+    output_path = os.path.join(output_dir, 'META', 'apexkeys.txt')
+
+    with open(output_path) as f:
+      output_entries = f.read().split('\n')
+
+    return self.assertEqual(merged_entries, output_entries)
+
+  def test_process_apex_keys_apk_certs_ReturnsFalseIfConflictsPresent(self):
+    output_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(output_dir, 'META'))
+
+    system_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(system_dir, 'META'))
+    os.symlink(
+        os.path.join(self.testdata_dir, 'apexkeys_system.txt'),
+        os.path.join(system_dir, 'META', 'apexkeys.txt'))
+
+    conflict_dir = common.MakeTempDir()
+    os.makedirs(os.path.join(conflict_dir, 'META'))
+    os.symlink(
+        os.path.join(self.testdata_dir, 'apexkeys_system_conflict.txt'),
+        os.path.join(conflict_dir, 'META', 'apexkeys.txt'))
+
+    self.assertRaises(ValueError, process_apex_keys_apk_certs_common,
+                      system_dir, conflict_dir, output_dir, 'apexkeys.txt')
