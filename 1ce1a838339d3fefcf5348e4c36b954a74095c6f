@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f6c29b3_1e7aea44",
+        "filename": "core/main.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 1286,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-05-02T15:36:38Z",
+      "side": 1,
+      "message": "if you inline this in the (suggested below) call, you could get rid of the $(eval $(var)) construct below and use $(call var) instead, which is a bit more common/orthodox",
+      "range": {
+        "startLine": 1283,
+        "startChar": 2,
+        "endLine": 1286,
+        "endChar": 84
+      },
+      "revId": "1ce1a838339d3fefcf5348e4c36b954a74095c6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e313cdf1_1695e1ab",
+        "filename": "core/main.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 1291,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-05-02T15:36:38Z",
+      "side": 1,
+      "message": "$(call maybe-print-list-and-error,$(apex_module_libs),message-here)",
+      "range": {
+        "startLine": 1287,
+        "startChar": 0,
+        "endLine": 1291,
+        "endChar": 5
+      },
+      "revId": "1ce1a838339d3fefcf5348e4c36b954a74095c6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9f6c584b_7632b02c",
+        "filename": "core/main.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 1318,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-05-02T15:36:38Z",
+      "side": 1,
+      "message": "just a readability nit, could we put the shorter(and positive) block first, and ideally indent the blocks properly too?\n\nifdef DISABLE_APEX_LIBS_ABSENCE_CHECK\n  check-apex-libs-absence :\u003d\n  check-apex-libs-absence-on-disk :\u003d\nelse\n  define ...\nendif",
+      "range": {
+        "startLine": 1314,
+        "startChar": 0,
+        "endLine": 1318,
+        "endChar": 5
+      },
+      "revId": "1ce1a838339d3fefcf5348e4c36b954a74095c6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
