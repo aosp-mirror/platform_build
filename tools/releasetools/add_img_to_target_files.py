@@ -113,7 +113,7 @@ def GetCareMap(which, imgname):
 
   Returns:
     (which, care_map_ranges): care_map_ranges is the raw string of the care_map
-    RangeSet; or an empty list.
+    RangeSet; or None.
   """
   assert which in common.PARTITIONS_WITH_CARE_MAP
 
@@ -123,7 +123,7 @@ def GetCareMap(which, imgname):
   # invalid reads.
   image_size = OPTIONS.info_dict.get(which + "_image_size")
   if not image_size:
-    return []
+    return None
 
   image_blocks = int(image_size) / 4096 - 1
   assert image_blocks > 0, "blocks for {} must be positive".format(which)
@@ -592,7 +592,11 @@ def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
         OPTIONS.info_dict.get(avb_hashtree_enable) == "true"):
       image_path = image_paths[partition]
       assert os.path.exists(image_path)
-      care_map_list += GetCareMap(partition, image_path)
+
+      care_map = GetCareMap(partition, image_path)
+      if not care_map:
+        continue
+      care_map_list += care_map
 
       # adds fingerprint field to the care_map
       build_props = OPTIONS.info_dict.get(partition + ".build.prop", {})
