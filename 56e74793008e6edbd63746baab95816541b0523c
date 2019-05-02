@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "595bb46f_8c5ded4e",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 28
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-05-02T04:28:58Z",
+      "side": 1,
+      "message": "Re \"unconditionally\":\n\nThat\u0027s probably because system-as-root is mandatory in P.\nBut in Q, system-as-root must be false to support DAP (also mandatory).\nIt\u0027s an unusual sharp turn though.\n\nhttps://android-review.googlesource.com/c/platform/build/+/932362\n\nSeems like we can just remove BOARD_BUILD_SYSTEM_ROOT_IMAGE.",
+      "parentUuid": "f3e811d4_c785e507",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 37
+      },
+      "revId": "56e74793008e6edbd63746baab95816541b0523c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a5285994_19fa69ce",
         "filename": "target/product/aosp_arm.mk",
         "patchSetId": 28
