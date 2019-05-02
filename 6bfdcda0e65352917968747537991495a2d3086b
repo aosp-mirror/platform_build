@@ -142,6 +142,30 @@
       "revId": "6bfdcda0e65352917968747537991495a2d3086b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "74dd1b08_ed2ddfcd",
+        "filename": "target/product/runtime_libart.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 1022077
+      },
+      "writtenOn": "2019-05-02T00:56:32Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/c/platform/build/+/955258",
+      "parentUuid": "632dec6b_d7ff4d06",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 24
+      },
+      "revId": "6bfdcda0e65352917968747537991495a2d3086b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
