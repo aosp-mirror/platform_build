@@ -16,6 +16,24 @@
       "revId": "8a3e21f92220a118d6eb162d6106ae09bea4bced",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1725d189_f8cc05ca",
+        "filename": "core/main.mk",
+        "patchSetId": 9
+      },
+      "lineNbr": 1433,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-05-02T17:17:44Z",
+      "side": 1,
+      "message": "Solved: http://r.android.com/953539",
+      "parentUuid": "39ba924e_6b99821b",
+      "revId": "8a3e21f92220a118d6eb162d6106ae09bea4bced",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

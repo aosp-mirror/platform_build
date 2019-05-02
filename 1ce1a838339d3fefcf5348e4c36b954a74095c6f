@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "01b37630_766775e8",
+        "filename": "core/main.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 1286,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-05-02T17:17:44Z",
+      "side": 1,
+      "message": "Done.\n\n($(call ...) is unnecessary since there are no args, but it seems to be a convention to use it for \"define\"d variables.)",
+      "parentUuid": "5f6c29b3_1e7aea44",
+      "range": {
+        "startLine": 1283,
+        "startChar": 2,
+        "endLine": 1286,
+        "endChar": 84
+      },
+      "revId": "1ce1a838339d3fefcf5348e4c36b954a74095c6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e313cdf1_1695e1ab",
         "filename": "core/main.mk",
         "patchSetId": 11
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "f224147a_3db52ff8",
+        "filename": "core/main.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 1291,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-05-02T17:17:44Z",
+      "side": 1,
+      "message": "Thanks for the tip, couldn\u0027t find a decent way to do that. It\u0027s a shame that GNU make didn\u0027t think to add a $(let) construct.",
+      "parentUuid": "e313cdf1_1695e1ab",
+      "range": {
+        "startLine": 1287,
+        "startChar": 0,
+        "endLine": 1291,
+        "endChar": 5
+      },
+      "revId": "1ce1a838339d3fefcf5348e4c36b954a74095c6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9f6c584b_7632b02c",
         "filename": "core/main.mk",
         "patchSetId": 11
@@ -68,6 +116,30 @@
       "revId": "1ce1a838339d3fefcf5348e4c36b954a74095c6f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b5dff5fb_d8e326c0",
+        "filename": "core/main.mk",
+        "patchSetId": 11
+      },
+      "lineNbr": 1318,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-05-02T17:17:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9f6c584b_7632b02c",
+      "range": {
+        "startLine": 1314,
+        "startChar": 0,
+        "endLine": 1318,
+        "endChar": 5
+      },
+      "revId": "1ce1a838339d3fefcf5348e4c36b954a74095c6f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
