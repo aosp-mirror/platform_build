@@ -278,6 +278,35 @@ class AddImagesToTargetFilesTest(test_utils.ReleaseToolsTestCase):
 
     self._verifyCareMap(expected, care_map_file)
 
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_AddCareMapForAbOta_skipPartition(self):
+    image_paths = self._test_AddCareMapForAbOta()
+
+    # Remove vendor_image_size to invalidate the care_map for vendor.img.
+    del OPTIONS.info_dict['vendor_image_size']
+
+    AddCareMapForAbOta(None, ['system', 'vendor'], image_paths)
+
+    care_map_file = os.path.join(OPTIONS.input_tmp, 'META', 'care_map.pb')
+    expected = ['system', RangeSet("0-5 10-15").to_string_raw(),
+                "ro.system.build.fingerprint",
+                "google/sailfish/12345:user/dev-keys"]
+
+    self._verifyCareMap(expected, care_map_file)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_AddCareMapForAbOta_skipAllPartitions(self):
+    image_paths = self._test_AddCareMapForAbOta()
+
+    # Remove the image_size properties for all the partitions.
+    del OPTIONS.info_dict['system_image_size']
+    del OPTIONS.info_dict['vendor_image_size']
+
+    AddCareMapForAbOta(None, ['system', 'vendor'], image_paths)
+
+    self.assertFalse(
+        os.path.exists(os.path.join(OPTIONS.input_tmp, 'META', 'care_map.pb')))
+
   def test_AddCareMapForAbOta_verityNotEnabled(self):
     """No care_map.pb should be generated if verity not enabled."""
     image_paths = self._test_AddCareMapForAbOta()
