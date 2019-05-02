@@ -123,7 +123,7 @@ ifndef PLATFORM_SDK_VERSION
   # When you increment the PLATFORM_SDK_VERSION please ensure you also
   # clear out the following text file of all older PLATFORM_VERSION's:
   # cts/tests/tests/os/assets/platform_versions.txt
-  PLATFORM_SDK_VERSION := 29
+  PLATFORM_SDK_VERSION := 28
 endif
 .KATI_READONLY := PLATFORM_SDK_VERSION
 
