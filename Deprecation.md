@@ -14,8 +14,8 @@ have any problems converting, please contact us via:
 
 | Module type                | State     |
 | -------------------------- | --------- |
-| `BUILD_HOST_TEST_CONFIG`   | Warning   |
-| `BUILD_TARGET_TEST_CONFIG` | Warning   |
+| `BUILD_HOST_TEST_CONFIG`   | Error     |
+| `BUILD_TARGET_TEST_CONFIG` | Error     |
 | `BUILD_*`                  | Available |
 
 ## Module Type Deprecation Process
