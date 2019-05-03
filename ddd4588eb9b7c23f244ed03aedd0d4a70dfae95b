@@ -22,6 +22,30 @@
       "revId": "ddd4588eb9b7c23f244ed03aedd0d4a70dfae95b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0a1bca5c_2c08452c",
+        "filename": "core/main.mk",
+        "patchSetId": 12
+      },
+      "lineNbr": 1288,
+      "author": {
+        "id": 1373864
+      },
+      "writtenOn": "2019-05-03T12:09:00Z",
+      "side": 1,
+      "message": "SG, done.\n\n(Makes me wonder a bit about pass-by-reference vs pass-by-value in this context. It\u0027s a rather big value after all, but otoh this isn\u0027t evaluated a lot. It would also make me sad to actually have to micro-optimise for make/kati.)",
+      "parentUuid": "e73291bd_4a193d55",
+      "range": {
+        "startLine": 1288,
+        "startChar": 64,
+        "endLine": 1288,
+        "endChar": 84
+      },
+      "revId": "ddd4588eb9b7c23f244ed03aedd0d4a70dfae95b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
