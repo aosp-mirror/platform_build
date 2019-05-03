@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "17f5fadc_a30fc63c",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2043,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-05-03T15:52:18Z",
+      "side": 1,
+      "message": "needs to conditionally depend on AVBTOOL and the key file",
+      "range": {
+        "startLine": 2043,
+        "startChar": 2,
+        "endLine": 2043,
+        "endChar": 34
+      },
+      "revId": "aab55f88dcb806555502319fb7352f4fb6af04aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
