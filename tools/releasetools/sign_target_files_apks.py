@@ -558,6 +558,13 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # System properties.
     elif filename in ("SYSTEM/build.prop",
                       "VENDOR/build.prop",
+                      "SYSTEM/vendor/build.prop",
+                      "ODM/build.prop",
+                      "VENDOR/odm/build.prop",
+                      "PRODUCT/build.prop",
+                      "SYSTEM/product/build.prop",
+                      "PRODUCT_SERVICES/build.prop",
+                      "SYSTEM/product_services/build.prop",
                       "SYSTEM/etc/prop.default",
                       "BOOT/RAMDISK/prop.default",
                       "BOOT/RAMDISK/default.prop",  # legacy
@@ -752,8 +759,8 @@ def RewriteProps(data):
     original_line = line
     if line and line[0] != '#' and "=" in line:
       key, value = line.split("=", 1)
-      if key in ("ro.build.fingerprint", "ro.build.thumbprint",
-                 "ro.vendor.build.fingerprint", "ro.vendor.build.thumbprint"):
+      if (key.startswith("ro.") and
+          key.endswith((".build.fingerprint", ".build.thumbprint"))):
         pieces = value.split("/")
         pieces[-1] = EditTags(pieces[-1])
         value = "/".join(pieces)
@@ -766,7 +773,7 @@ def RewriteProps(data):
         assert len(pieces) == 5
         pieces[-1] = EditTags(pieces[-1])
         value = " ".join(pieces)
-      elif key == "ro.build.tags":
+      elif key.startswith("ro.") and key.endswith(".build.tags"):
         value = EditTags(value)
       elif key == "ro.build.display.id":
         # change, eg, "JWR66N dev-keys" to "JWR66N"
