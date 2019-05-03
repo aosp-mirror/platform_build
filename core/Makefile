@@ -3566,8 +3566,8 @@ OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
   $(HOST_OUT_EXECUTABLES)/bsdiff \
   $(HOST_OUT_EXECUTABLES)/imgdiff \
   $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/VeritySigner.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/boot_signer.jar \
+  $(HOST_OUT_JAVA_LIBRARIES)/verity_signer.jar \
   $(HOST_OUT_EXECUTABLES)/mke2fs \
   $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs \
   $(HOST_OUT_EXECUTABLES)/e2fsdroid \
