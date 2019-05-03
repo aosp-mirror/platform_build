@@ -103,7 +103,7 @@ $(full_classes_combined_jar): $(full_classes_compiled_jar) \
             $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf)
 	$(MERGE_ZIPS) -j --ignore-duplicates $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
             $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
-            $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
+            $@ $< $(PRIVATE_STATIC_JAVA_LIBRARIES)
 
 # Run jarjar if necessary, otherwise just copy the file.
 ifneq ($(strip $(LOCAL_JARJAR_RULES)),)
