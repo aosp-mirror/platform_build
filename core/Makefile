@@ -2159,109 +2159,13 @@ define create-vendor-odm-symlink
 endef
 endif
 
-# Check that libraries that should only be in APEXes don't end up in the system
-# image. For the Runtime APEX this complements the checks in
-# art/build/apex/art_apex_test.py.
-# TODO(b/128708192): Implement this restriction in Soong instead.
-
-# Runtime APEX libraries
-APEX_MODULE_LIBS := \
-  libadbconnection.so \
-  libandroidicu.so \
-  libandroidio.so \
-  libart-compiler.so \
-  libart-dexlayout.so \
-  libart.so \
-  libartbase.so \
-  libartpalette.so \
-  libdexfile.so \
-  libdexfile_external.so \
-  libdexfiled_external.so \
-  libdt_fd_forward.so \
-  libdt_socket.so \
-  libicui18n.so \
-  libicuuc.so \
-  libjavacore.so \
-  libjdwp.so \
-  libnativebridge.so \
-  libnativehelper.so \
-  libnativeloader.so \
-  libnpt.so \
-  libopenjdk.so \
-  libopenjdkjvm.so \
-  libopenjdkjvmti.so \
-  libpac.so \
-  libprofile.so \
-  libsigchain.so \
-
-# Conscrypt APEX libraries
-APEX_MODULE_LIBS += \
-  libjavacrypto.so \
-
-# An option to disable the check below, for local use since some build targets
-# still may create these libraries in /system (b/129006418).
-DISABLE_APEX_LIBS_ABSENCE_CHECK ?=
-
-# Exclude lib/arm and lib/arm64 which contain the native bridge proxy libs.
-# They are compiled for the guest architecture and used with an entirely
-# different linker config. The native libs are then linked to as usual via
-# exported interfaces, so the proxy libs do not violate the interface boundaries
-# on the native architecture.
-# TODO(b/130630776): Introduce a make variable for the appropriate directory
-# when native bridge is active.
-APEX_LIBS_ABSENCE_CHECK_EXCLUDE := lib/arm lib/arm64
-
-# Exclude vndk-sp-* subdirectories which contain prebuilts from older releases.
-APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/vndk-% lib64/vndk-%
-
-# If the check below fails, some library has ended up in system/lib or
-# system/lib64 that is intended to only go into some APEX package. The likely
-# cause is that a library or binary in /system has grown a dependency that
-# directly or indirectly pulls in the prohibited library.
-#
-# To resolve this, look for the APEX package that the library belong to - search
-# for it in 'native_shared_lib' properties in 'apex' build modules (see
-# art/build/apex/Android.bp for an example). Then check if there is an exported
-# library in that APEX package that should be used instead, i.e. one listed in
-# its 'native_shared_lib' property for which the corresponding 'cc_library'
-# module has a 'stubs' clause (like libdexfile_external in
-# art/libdexfile/Android.bp).
-#
-# If you cannot find an APEX exported library that fits your needs, or you think
-# that the library you want to depend on should be allowed in /system, then
-# please contact the owners of the APEX package containing the library.
-#
-# If you get this error for a library that is exported in an APEX, then the APEX
-# might be misconfigured or something is wrong in the build system. Please reach
-# out to the APEX package owners and/or soong-team@, or
-# android-building@googlegroups.com externally.
-ifndef DISABLE_APEX_LIBS_ABSENCE_CHECK
-define check-apex-libs-absence
-$(hide) ( \
-  cd $(TARGET_OUT) && \
-  findres=$$(find lib* \
-    $(foreach dir,$(APEX_LIBS_ABSENCE_CHECK_EXCLUDE),-path "$(subst %,*,$(dir))" -prune -o) \
-    -type f \( -false $(foreach lib,$(APEX_MODULE_LIBS),-o -name $(lib)) \) \
-    -print) && \
-  if [ -n "$$findres" ]; then \
-    echo "APEX libraries found in system image (see comment in build/make/core/Makefile for details):" 1>&2; \
-    echo "$$findres" | sort 1>&2; \
-    false; \
-  fi; \
-)
-endef
-else
-define check-apex-libs-absence
-endef
-endif
-
 # $(1): output file
 define build-systemimage-target
   @echo "Target system fs image: $(1)"
   $(call create-system-vendor-symlink)
   $(call create-system-product-symlink)
   $(call create-system-product_services-symlink)
-  $(call check-apex-libs-absence)
+  $(call check-apex-libs-absence-on-disk)
   @mkdir -p $(dir $(1)) $(systemimage_intermediates) && rm -rf $(systemimage_intermediates)/system_image_info.txt
   $(call generate-image-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt,system, \
       skip_fsck=true)
