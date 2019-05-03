@@ -53,36 +53,60 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
 
   def test_RewriteProps(self):
     props = (
-        ('', '\n'),
+        ('', ''),
         ('ro.build.fingerprint=foo/bar/dev-keys',
-         'ro.build.fingerprint=foo/bar/release-keys\n'),
+         'ro.build.fingerprint=foo/bar/release-keys'),
         ('ro.build.thumbprint=foo/bar/dev-keys',
-         'ro.build.thumbprint=foo/bar/release-keys\n'),
+         'ro.build.thumbprint=foo/bar/release-keys'),
         ('ro.vendor.build.fingerprint=foo/bar/dev-keys',
-         'ro.vendor.build.fingerprint=foo/bar/release-keys\n'),
+         'ro.vendor.build.fingerprint=foo/bar/release-keys'),
         ('ro.vendor.build.thumbprint=foo/bar/dev-keys',
-         'ro.vendor.build.thumbprint=foo/bar/release-keys\n'),
-        ('# comment line 1', '# comment line 1\n'),
+         'ro.vendor.build.thumbprint=foo/bar/release-keys'),
+        ('ro.odm.build.fingerprint=foo/bar/test-keys',
+         'ro.odm.build.fingerprint=foo/bar/release-keys'),
+        ('ro.odm.build.thumbprint=foo/bar/test-keys',
+         'ro.odm.build.thumbprint=foo/bar/release-keys'),
+        ('ro.product.build.fingerprint=foo/bar/dev-keys',
+         'ro.product.build.fingerprint=foo/bar/release-keys'),
+        ('ro.product.build.thumbprint=foo/bar/dev-keys',
+         'ro.product.build.thumbprint=foo/bar/release-keys'),
+        ('ro.product_services.build.fingerprint=foo/bar/test-keys',
+         'ro.product_services.build.fingerprint=foo/bar/release-keys'),
+        ('ro.product_services.build.thumbprint=foo/bar/test-keys',
+         'ro.product_services.build.thumbprint=foo/bar/release-keys'),
+        ('# comment line 1', '# comment line 1'),
         ('ro.bootimage.build.fingerprint=foo/bar/dev-keys',
-         'ro.bootimage.build.fingerprint=foo/bar/release-keys\n'),
+         'ro.bootimage.build.fingerprint=foo/bar/release-keys'),
         ('ro.build.description='
          'sailfish-user 8.0.0 OPR6.170623.012 4283428 dev-keys',
          'ro.build.description='
-         'sailfish-user 8.0.0 OPR6.170623.012 4283428 release-keys\n'),
-        ('ro.build.tags=dev-keys', 'ro.build.tags=release-keys\n'),
-        ('# comment line 2', '# comment line 2\n'),
+         'sailfish-user 8.0.0 OPR6.170623.012 4283428 release-keys'),
+        ('ro.build.tags=dev-keys', 'ro.build.tags=release-keys'),
+        ('ro.build.tags=test-keys', 'ro.build.tags=release-keys'),
+        ('ro.system.build.tags=dev-keys',
+         'ro.system.build.tags=release-keys'),
+        ('ro.vendor.build.tags=dev-keys',
+         'ro.vendor.build.tags=release-keys'),
+        ('ro.odm.build.tags=dev-keys',
+         'ro.odm.build.tags=release-keys'),
+        ('ro.product.build.tags=dev-keys',
+         'ro.product.build.tags=release-keys'),
+        ('ro.product_services.build.tags=dev-keys',
+         'ro.product_services.build.tags=release-keys'),
+        ('# comment line 2', '# comment line 2'),
         ('ro.build.display.id=OPR6.170623.012 dev-keys',
-         'ro.build.display.id=OPR6.170623.012\n'),
-        ('# comment line 3', '# comment line 3\n'),
+         'ro.build.display.id=OPR6.170623.012'),
+        ('# comment line 3', '# comment line 3'),
     )
 
     # Assert the case for each individual line.
-    for prop, output in props:
-      self.assertEqual(RewriteProps(prop), output)
+    for prop, expected in props:
+      self.assertEqual(expected + '\n', RewriteProps(prop))
 
     # Concatenate all the input lines.
-    self.assertEqual(RewriteProps('\n'.join([prop[0] for prop in props])),
-                     ''.join([prop[1] for prop in props]))
+    self.assertEqual(
+        '\n'.join([prop[1] for prop in props]) + '\n',
+        RewriteProps('\n'.join([prop[0] for prop in props])))
 
   def test_ReplaceVerityKeyId(self):
     BOOT_CMDLINE1 = (
