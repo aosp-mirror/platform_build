@@ -97,6 +97,30 @@
     },
     {
       "key": {
+        "uuid": "3238bb90_b207660d",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 28
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-05-03T00:28:48Z",
+      "side": 1,
+      "message": "Is emulator always \"launch with Q\"? If so, just drop it.\n\nI am fine if you keep this for now though; you can clean it up later.",
+      "parentUuid": "595bb46f_8c5ded4e",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 37
+      },
+      "revId": "56e74793008e6edbd63746baab95816541b0523c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a5285994_19fa69ce",
         "filename": "target/product/aosp_arm.mk",
         "patchSetId": 28
