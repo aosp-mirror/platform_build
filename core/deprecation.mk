@@ -37,13 +37,13 @@ AVAILABLE_BUILD_MODULE_TYPES :=$= \
 # relevant BUILD_BROKEN_USES_BUILD_* variables, then these would move to
 # DEFAULT_ERROR_BUILD_MODULE_TYPES.
 DEFAULT_WARNING_BUILD_MODULE_TYPES :=$= \
-  BUILD_HOST_TEST_CONFIG \
-  BUILD_TARGET_TEST_CONFIG \
 
 # These are BUILD_* variables that are errors to reference, but you can set
 # BUILD_BROKEN_USES_BUILD_* in your BoardConfig.mk in order to turn them back
 # to warnings.
 DEFAULT_ERROR_BUILD_MODULE_TYPES :=$= \
+  BUILD_HOST_TEST_CONFIG \
+  BUILD_TARGET_TEST_CONFIG \
 
 # These are BUILD_* variables that are always errors to reference.
 # Setting the BUILD_BROKEN_USES_BUILD_* variables is also an error.
