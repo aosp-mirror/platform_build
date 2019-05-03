@@ -1,0 +1,5 @@
+// AOSP test certificate
+android_app_certificate {
+    name: "aosp-testkey",
+    certificate: "testkey",
+}
