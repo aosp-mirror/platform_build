@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43beedaa_8192fdb3",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 2041,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-05-04T01:14:34Z",
+      "side": 1,
+      "message": "added dependency here.",
+      "range": {
+        "startLine": 2041,
+        "startChar": 37,
+        "endLine": 2041,
+        "endChar": 80
+      },
+      "revId": "26b0a26e3ee58f661ed860a12de653f894dce073",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
