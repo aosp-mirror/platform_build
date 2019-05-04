@@ -22,6 +22,30 @@
       "revId": "aab55f88dcb806555502319fb7352f4fb6af04aa",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "11149b5d_9fc07fe5",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 2043,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-05-04T01:11:11Z",
+      "side": 1,
+      "message": "Done, added above under the if BOARD_AVB_BOOT_KEY_PATH (means /boot is chained).",
+      "parentUuid": "17f5fadc_a30fc63c",
+      "range": {
+        "startLine": 2043,
+        "startChar": 2,
+        "endLine": 2043,
+        "endChar": 34
+      },
+      "revId": "aab55f88dcb806555502319fb7352f4fb6af04aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
