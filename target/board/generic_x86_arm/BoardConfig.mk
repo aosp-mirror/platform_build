@@ -30,8 +30,8 @@ TARGET_TRANSLATE_2ND_ARCH := true
 BUILD_BROKEN_DUP_RULES := true
 
 
-include build/make/target/board/BoardConfigEmuCommon.mk
 include build/make/target/board/BoardConfigGsiCommon.mk
+include build/make/target/board/BoardConfigEmuCommon.mk
 
 # Resize to 4G to accomodate ASAN and CTS
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 4294967296
