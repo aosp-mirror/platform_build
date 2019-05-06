@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "71676932_ea781fda",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3516,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-05-06T16:35:36Z",
+      "side": 1,
+      "message": "We have sh_binary_host now, you could make this more consistent by converting VBOOT_SIGNER to a module.  If not, add a comment here why this is in _FILES instead of _MODULES.",
+      "revId": "c958e5cfb467aacecfd10eb5d802314114659331",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b1fea38_5e2817af",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3561,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-05-06T16:35:36Z",
+      "side": 1,
+      "message": "Missing a dependency on this",
+      "range": {
+        "startLine": 3561,
+        "startChar": 60,
+        "endLine": 3561,
+        "endChar": 93
+      },
+      "revId": "c958e5cfb467aacecfd10eb5d802314114659331",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
