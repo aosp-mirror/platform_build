@@ -390,7 +390,6 @@ $(foreach var, \
 
 # Macro to use below. $(1) is the name of the partition
 define product-build-image-config
-PRODUCT_BUILD_$(1)_IMAGE := $$(firstword $$(PRODUCT_BUILD_$(1)_IMAGE))
 ifneq ($$(filter-out true false,$$(PRODUCT_BUILD_$(1)_IMAGE)),)
     $$(error Invalid PRODUCT_BUILD_$(1)_IMAGE: $$(PRODUCT_BUILD_$(1)_IMAGE) -- true false and empty are supported)
 endif
