@@ -114,8 +114,8 @@ _product_single_value_vars :=
 # Variables that are lists of values.
 _product_list_vars :=
 
-_product_list_vars += PRODUCT_NAME
-_product_list_vars += PRODUCT_MODEL
+_product_single_value_vars += PRODUCT_NAME
+_product_single_value_vars += PRODUCT_MODEL
 
 # The resoure configuration options to use for this product.
 _product_list_vars += PRODUCT_LOCALES
@@ -130,13 +130,13 @@ _product_list_vars += PRODUCT_PACKAGES_ENG
 _product_list_vars += PRODUCT_PACKAGES_TESTS
 
 # The device that this product maps to.
-_product_list_vars += PRODUCT_DEVICE
-_product_list_vars += PRODUCT_MANUFACTURER
-_product_list_vars += PRODUCT_BRAND
+_product_single_value_vars += PRODUCT_DEVICE
+_product_single_value_vars += PRODUCT_MANUFACTURER
+_product_single_value_vars += PRODUCT_BRAND
 
 # These PRODUCT_SYSTEM_* flags, if defined, are used in place of the
 # corresponding PRODUCT_* flags for the sysprops on /system.
-_product_list_vars += \
+_product_single_value_vars += \
     PRODUCT_SYSTEM_NAME \
     PRODUCT_SYSTEM_MODEL \
     PRODUCT_SYSTEM_DEVICE \
@@ -228,16 +228,16 @@ _product_list_vars += PRODUCT_SYSTEM_SERVER_JARS
 _product_list_vars += PRODUCT_ALWAYS_PREOPT_EXTRACTED_APK
 _product_list_vars += PRODUCT_DEXPREOPT_SPEED_APPS
 _product_list_vars += PRODUCT_LOADED_BY_PRIVILEGED_MODULES
-_product_list_vars += PRODUCT_VBOOT_SIGNING_KEY
-_product_list_vars += PRODUCT_VBOOT_SIGNING_SUBKEY
-_product_list_vars += PRODUCT_VERITY_SIGNING_KEY
-_product_list_vars += PRODUCT_SYSTEM_VERITY_PARTITION
-_product_list_vars += PRODUCT_VENDOR_VERITY_PARTITION
-_product_list_vars += PRODUCT_PRODUCT_VERITY_PARTITION
-_product_list_vars += PRODUCT_PRODUCT_SERVICES_VERITY_PARTITION
-_product_list_vars += PRODUCT_ODM_VERITY_PARTITION
-_product_list_vars += PRODUCT_SYSTEM_SERVER_DEBUG_INFO
-_product_list_vars += PRODUCT_OTHER_JAVA_DEBUG_INFO
+_product_single_value_vars += PRODUCT_VBOOT_SIGNING_KEY
+_product_single_value_vars += PRODUCT_VBOOT_SIGNING_SUBKEY
+_product_single_value_vars += PRODUCT_VERITY_SIGNING_KEY
+_product_single_value_vars += PRODUCT_SYSTEM_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_VENDOR_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_PRODUCT_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_PRODUCT_SERVICES_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_ODM_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_SYSTEM_SERVER_DEBUG_INFO
+_product_single_value_vars += PRODUCT_OTHER_JAVA_DEBUG_INFO
 
 # Per-module dex-preopt configs.
 _product_list_vars += PRODUCT_DEX_PREOPT_MODULE_CONFIGS
@@ -250,7 +250,7 @@ _product_list_vars += PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING
 _product_list_vars += PRODUCT_DEX_PREOPT_RESOLVE_STARTUP_STRINGS
 
 # Boot image options.
-_product_list_vars += \
+_product_single_value_vars += \
     PRODUCT_USE_PROFILE_FOR_BOOT_IMAGE \
     PRODUCT_DEX_PREOPT_BOOT_IMAGE_PROFILE_LOCATION \
     PRODUCT_USES_DEFAULT_ART_CONFIG \
@@ -258,35 +258,37 @@ _product_list_vars += \
 _product_list_vars += PRODUCT_SYSTEM_SERVER_COMPILER_FILTER
 # Per-module sanitizer configs
 _product_list_vars += PRODUCT_SANITIZER_MODULE_CONFIGS
-_product_list_vars += PRODUCT_SYSTEM_BASE_FS_PATH
-_product_list_vars += PRODUCT_VENDOR_BASE_FS_PATH
-_product_list_vars += PRODUCT_PRODUCT_BASE_FS_PATH
-_product_list_vars += PRODUCT_PRODUCT_SERVICES_BASE_FS_PATH
-_product_list_vars += PRODUCT_ODM_BASE_FS_PATH
-_product_list_vars += PRODUCT_SHIPPING_API_LEVEL
+_product_single_value_vars += PRODUCT_SYSTEM_BASE_FS_PATH
+_product_single_value_vars += PRODUCT_VENDOR_BASE_FS_PATH
+_product_single_value_vars += PRODUCT_PRODUCT_BASE_FS_PATH
+_product_single_value_vars += PRODUCT_PRODUCT_SERVICES_BASE_FS_PATH
+_product_single_value_vars += PRODUCT_ODM_BASE_FS_PATH
+
+# The first API level this product shipped with
+_product_single_value_vars += PRODUCT_SHIPPING_API_LEVEL
+
 _product_list_vars += VENDOR_PRODUCT_RESTRICT_VENDOR_FILES
 _product_list_vars += VENDOR_EXCEPTION_MODULES
 _product_list_vars += VENDOR_EXCEPTION_PATHS
-
 # Whether the product wants to ship libartd. For rules and meaning, see art/Android.mk.
-_product_list_vars += PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD
+_product_single_value_vars += PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD
 
 # Make this art variable visible to soong_config.mk.
-_product_list_vars += PRODUCT_ART_USE_READ_BARRIER
+_product_single_value_vars += PRODUCT_ART_USE_READ_BARRIER
 
 # Whether the product is an Android Things variant.
-_product_list_vars += PRODUCT_IOT
+_product_single_value_vars += PRODUCT_IOT
 
 # Add reserved headroom to a system image.
-_product_list_vars += PRODUCT_SYSTEM_HEADROOM
+_product_single_value_vars += PRODUCT_SYSTEM_HEADROOM
 
 # Whether to save disk space by minimizing java debug info
-_product_list_vars += PRODUCT_MINIMIZE_JAVA_DEBUG_INFO
+_product_single_value_vars += PRODUCT_MINIMIZE_JAVA_DEBUG_INFO
 
 # Whether any paths are excluded from sanitization when SANITIZE_TARGET=integer_overflow
 _product_list_vars += PRODUCT_INTEGER_OVERFLOW_EXCLUDE_PATHS
 
-_product_list_vars += PRODUCT_ADB_KEYS
+_product_single_value_vars += PRODUCT_ADB_KEYS
 
 # Whether any paths should have CFI enabled for components
 _product_list_vars += PRODUCT_CFI_INCLUDE_PATHS
@@ -295,15 +297,16 @@ _product_list_vars += PRODUCT_CFI_INCLUDE_PATHS
 _product_list_vars += PRODUCT_CFI_EXCLUDE_PATHS
 
 # Whether the Scudo hardened allocator is disabled platform-wide
-_product_list_vars += PRODUCT_DISABLE_SCUDO
+_product_single_value_vars += PRODUCT_DISABLE_SCUDO
 
 # A flag to override PRODUCT_COMPATIBLE_PROPERTY
-_product_list_vars += PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE
+_product_single_value_vars += PRODUCT_COMPATIBLE_PROPERTY_OVERRIDE
 
 # Whether the whitelist of actionable compatible properties should be disabled or not
-_product_list_vars += PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE
-_product_list_vars += PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS
-_product_list_vars += PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT
+_product_single_value_vars += PRODUCT_ACTIONABLE_COMPATIBLE_PROPERTY_DISABLE
+
+_product_single_value_vars += PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS
+_product_single_value_vars += PRODUCT_ENFORCE_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT
 _product_list_vars += PRODUCT_ARTIFACT_SYSTEM_CERTIFICATE_REQUIREMENT_WHITELIST
 _product_list_vars += PRODUCT_ARTIFACT_PATH_REQUIREMENT_HINT
 _product_list_vars += PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST
@@ -316,11 +319,11 @@ _product_list_vars += PRODUCT_FORCE_PRODUCT_MODULES_TO_SYSTEM_PARTITION
 # already been launched without dynamic partitions. Otherwise, the device
 # is launched with dynamic partitions.
 # This flag implies PRODUCT_USE_DYNAMIC_PARTITIONS.
-_product_list_vars += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
+_product_single_value_vars += PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 
 # Other dynamic partition feature flags.PRODUCT_USE_DYNAMIC_PARTITION_SIZE and
 # PRODUCT_BUILD_SUPER_PARTITION default to the value of PRODUCT_USE_DYNAMIC_PARTITIONS.
-_product_list_vars += \
+_product_single_value_vars += \
     PRODUCT_USE_DYNAMIC_PARTITIONS \
     PRODUCT_USE_DYNAMIC_PARTITION_SIZE \
     PRODUCT_BUILD_SUPER_PARTITION \
@@ -334,27 +337,29 @@ _product_list_vars += PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 # If set to true, this product builds a generic OTA package, which installs generic system images
 # onto matching devices. The product may only build a subset of system images (e.g. only
 # system.img), so devices need to install the package in a system-only OTA manner.
-_product_list_vars += PRODUCT_BUILD_GENERIC_OTA_PACKAGE
+_product_single_value_vars += PRODUCT_BUILD_GENERIC_OTA_PACKAGE
 
 # Whether any paths are excluded from being set XOM when ENABLE_XOM=true
 _product_list_vars += PRODUCT_XOM_EXCLUDE_PATHS
 _product_list_vars += PRODUCT_MANIFEST_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_PACKAGE_NAME_OVERRIDES
 _product_list_vars += PRODUCT_CERTIFICATE_OVERRIDES
-_product_list_vars += PRODUCT_BUILD_SYSTEM_IMAGE
-_product_list_vars += PRODUCT_BUILD_SYSTEM_OTHER_IMAGE
-_product_list_vars += PRODUCT_BUILD_VENDOR_IMAGE
-_product_list_vars += PRODUCT_BUILD_PRODUCT_IMAGE
-_product_list_vars += PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE
-_product_list_vars += PRODUCT_BUILD_ODM_IMAGE
-_product_list_vars += PRODUCT_BUILD_CACHE_IMAGE
-_product_list_vars += PRODUCT_BUILD_RAMDISK_IMAGE
-_product_list_vars += PRODUCT_BUILD_USERDATA_IMAGE
+
+# Controls for whether different partitions are built for the current product.
+_product_single_value_vars += PRODUCT_BUILD_SYSTEM_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_SYSTEM_OTHER_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_VENDOR_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_PRODUCT_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_ODM_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_CACHE_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_RAMDISK_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_USERDATA_IMAGE
+
 _product_list_vars += PRODUCT_UPDATABLE_BOOT_MODULES
 _product_list_vars += PRODUCT_UPDATABLE_BOOT_LOCATIONS
-
 # Whether the product would like to check prebuilt ELF files.
-_product_list_vars += PRODUCT_CHECK_ELF_FILES
+_product_single_value_vars += PRODUCT_CHECK_ELF_FILES
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)
