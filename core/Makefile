@@ -4285,7 +4285,7 @@ $(SYMBOLS_ZIP): $(SOONG_ZIP)
 	$(hide) rm -rf $@ $(PRIVATE_LIST_FILE)
 	$(hide) mkdir -p $(dir $@) $(TARGET_OUT_UNSTRIPPED) $(dir $(PRIVATE_LIST_FILE))
 	$(hide) find -L $(TARGET_OUT_UNSTRIPPED) -type f | sort >$(PRIVATE_LIST_FILE)
-	$(hide) $(SOONG_ZIP) -d -o $@ -C $(OUT_DIR)/.. -l $(PRIVATE_LIST_FILE)
+	$(hide) $(SOONG_ZIP) --ignore_missing_files -d -o $@ -C $(OUT_DIR)/.. -l $(PRIVATE_LIST_FILE)
 # -----------------------------------------------------------------
 # A zip of the coverage directory.
 #
