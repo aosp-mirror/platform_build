@@ -22,6 +22,29 @@
       "revId": "97d8a5c5a59523724075284fd17e2eabbac2fe5e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "545ab866_94df153e",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 533,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-05-07T00:47:25Z",
+      "side": 1,
+      "message": "Nit: avoid adding this based on input parameter to merge_dynamic_partition_info_dicts or maybe a separate function.",
+      "range": {
+        "startLine": 533,
+        "startChar": 2,
+        "endLine": 533,
+        "endChar": 62
+      },
+      "revId": "97d8a5c5a59523724075284fd17e2eabbac2fe5e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
