@@ -244,14 +244,6 @@ else
 ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
 endif
 
-ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.boot.dynamic_partitions=true
-endif
-
-ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.boot.dynamic_partitions_retrofit=true
-endif
-
 # Add the system server compiler filter if they are specified for the product.
 ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
 ADDITIONAL_PRODUCT_PROPERTIES += dalvik.vm.systemservercompilerfilter=$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER)
