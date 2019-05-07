@@ -2031,17 +2031,40 @@ else
 INTERNAL_DEBUG_BOOTIMAGE_ARGS := $(subst $(INSTALLED_RAMDISK_TARGET),$(INSTALLED_DEBUG_RAMDISK_TARGET), $(INTERNAL_BOOTIMAGE_ARGS))
 endif
 
+# If boot.img is chained but boot-debug.img is not signed, libavb in bootloader
+# will fail to find valid AVB metadata from the end of /boot, thus stop booting.
+# Using a test key to sign boot-debug.img to continue booting with the mismatched
+# public key, if the device is unlocked.
+ifneq ($(BOARD_AVB_BOOT_KEY_PATH),)
+BOARD_AVB_DEBUG_BOOT_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+$(INSTALLED_DEBUG_BOOTIMAGE_TARGET): PRIVATE_AVB_DEBUG_BOOT_SIGNING_ARGS := \
+  --algorithm SHA256_RSA2048 --key $(BOARD_AVB_DEBUG_BOOT_KEY_PATH)
+$(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(AVBTOOL) $(BOARD_AVB_DEBUG_BOOT_KEY_PATH)
+endif
+
 # Depends on original boot.img and ramdisk-debug.img, to build the new boot-debug.img
 $(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_BOOTIMAGE_TARGET) $(INSTALLED_DEBUG_RAMDISK_TARGET)
 	$(call pretty,"Target boot debug image: $@")
 	$(MKBOOTIMG) $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $@
-	$(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	$(if $(BOARD_AVB_BOOT_KEY_PATH),\
+	  $(call assert-max-image-size,$@,$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE))); \
+	  $(AVBTOOL) add_hash_footer \
+	    --image $@ \
+	    --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
+	    --partition_name boot $(PRIVATE_AVB_DEBUG_BOOT_SIGNING_ARGS), \
+	  $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
 
 .PHONY: bootimage_debug-nodeps
 bootimage_debug-nodeps: $(MKBOOTIMG)
 	echo "make $@: ignoring dependencies"
 	$(MKBOOTIMG) $(INTERNAL_DEBUG_BOOTIMAGE_ARGS) $(INTERNAL_MKBOOTIMG_VERSION_ARGS) $(BOARD_MKBOOTIMG_ARGS) --output $(INSTALLED_DEBUG_BOOTIMAGE_TARGET)
-	$(call assert-max-image-size,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE))
+	$(if $(BOARD_AVB_BOOT_KEY_PATH),\
+	  $(call assert-max-image-size,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(call get-hash-image-max-size,$(BOARD_BOOTIMAGE_PARTITION_SIZE))); \
+	  $(AVBTOOL) add_hash_footer \
+	    --image $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
+	    --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
+	    --partition_name boot $(PRIVATE_AVB_DEBUG_BOOT_SIGNING_ARGS), \
+	  $(call assert-max-image-size,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
 
 endif # TARGET_NO_KERNEL
 
