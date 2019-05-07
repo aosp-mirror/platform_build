@@ -1373,12 +1373,9 @@ ifneq (true,$(TARGET_USERIMAGES_SPARSE_SQUASHFS_DISABLED))
 endif
 
 INTERNAL_USERIMAGES_DEPS := \
-    $(BLK_ALLOC_TO_BASE_FS) \
-    $(E2FSCK) \
+    $(BUILD_IMAGE) \
     $(MKE2FS_CONF) \
-    $(MKEXTUSERIMG) \
-    $(SIMG2IMG) \
-    $(TUNE2FS)
+    $(MKEXTUSERIMG)
 
 ifeq ($(TARGET_USERIMAGES_USE_F2FS),true)
 INTERNAL_USERIMAGES_DEPS += $(MKF2FSUSERIMG)
@@ -2298,16 +2295,17 @@ define build-systemimage-target
   $(call generate-image-prop-dictionary, $(systemimage_intermediates)/system_image_info.txt,system, \
       skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-      build/make/tools/releasetools/build_image.py \
-      $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1) $(TARGET_OUT) \
-      || ( mkdir -p $${DIST_DIR}; cp $(INSTALLED_FILES_FILE) $${DIST_DIR}/installed-files-rescued.txt; \
-           exit 1 )
+      $(BUILD_IMAGE) \
+          $(TARGET_OUT) $(systemimage_intermediates)/system_image_info.txt $(1) $(TARGET_OUT) \
+          || ( mkdir -p $${DIST_DIR}; \
+               cp $(INSTALLED_FILES_FILE) $${DIST_DIR}/installed-files-rescued.txt; \
+               exit 1 )
 endef
 
 ifeq ($(BOARD_AVB_ENABLE),true)
 $(BUILT_SYSTEMIMAGE): $(BOARD_AVB_SYSTEM_KEY_PATH)
 endif
-$(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(BUILD_IMAGE_SRCS)
+$(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE)
 	$(call build-systemimage-target,$@)
 
 INSTALLED_SYSTEMIMAGE_TARGET := $(PRODUCT_OUT)/system.img
@@ -2488,17 +2486,17 @@ define build-userdataimage-target
   @mkdir -p $(userdataimage_intermediates) && rm -rf $(userdataimage_intermediates)/userdata_image_info.txt
   $(call generate-image-prop-dictionary, $(userdataimage_intermediates)/userdata_image_info.txt,userdata,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-      build/make/tools/releasetools/build_image.py \
-      $(TARGET_OUT_DATA) $(userdataimage_intermediates)/userdata_image_info.txt $(INSTALLED_USERDATAIMAGE_TARGET) $(TARGET_OUT)
-  $(hide) $(call assert-max-image-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_PARTITION_SIZE))
+      $(BUILD_IMAGE) \
+          $(TARGET_OUT_DATA) $(userdataimage_intermediates)/userdata_image_info.txt \
+          $(INSTALLED_USERDATAIMAGE_TARGET) $(TARGET_OUT)
+  $(call assert-max-image-size,$(INSTALLED_USERDATAIMAGE_TARGET),$(BOARD_USERDATAIMAGE_PARTITION_SIZE))
 endef
 
 # We just build this directly to the install location.
 INSTALLED_USERDATAIMAGE_TARGET := $(BUILT_USERDATAIMAGE_TARGET)
 INSTALLED_USERDATAIMAGE_TARGET_DEPS := \
     $(INTERNAL_USERIMAGES_DEPS) \
-    $(INTERNAL_USERDATAIMAGE_FILES) \
-    $(BUILD_IMAGE_SRCS)
+    $(INTERNAL_USERDATAIMAGE_FILES)
 $(INSTALLED_USERDATAIMAGE_TARGET): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS)
 	$(build-userdataimage-target)
 
@@ -2571,14 +2569,15 @@ define build-cacheimage-target
   @mkdir -p $(cacheimage_intermediates) && rm -rf $(cacheimage_intermediates)/cache_image_info.txt
   $(call generate-image-prop-dictionary, $(cacheimage_intermediates)/cache_image_info.txt,cache,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-      build/make/tools/releasetools/build_image.py \
-      $(TARGET_OUT_CACHE) $(cacheimage_intermediates)/cache_image_info.txt $(INSTALLED_CACHEIMAGE_TARGET) $(TARGET_OUT)
-  $(hide) $(call assert-max-image-size,$(INSTALLED_CACHEIMAGE_TARGET),$(BOARD_CACHEIMAGE_PARTITION_SIZE))
+      $(BUILD_IMAGE) \
+          $(TARGET_OUT_CACHE) $(cacheimage_intermediates)/cache_image_info.txt \
+          $(INSTALLED_CACHEIMAGE_TARGET) $(TARGET_OUT)
+  $(call assert-max-image-size,$(INSTALLED_CACHEIMAGE_TARGET),$(BOARD_CACHEIMAGE_PARTITION_SIZE))
 endef
 
 # We just build this directly to the install location.
 INSTALLED_CACHEIMAGE_TARGET := $(BUILT_CACHEIMAGE_TARGET)
-$(INSTALLED_CACHEIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_CACHEIMAGE_FILES) $(BUILD_IMAGE_SRCS)
+$(INSTALLED_CACHEIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_CACHEIMAGE_FILES)
 	$(build-cacheimage-target)
 
 .PHONY: cacheimage-nodeps
@@ -2642,9 +2641,10 @@ define build-systemotherimage-target
   @mkdir -p $(systemotherimage_intermediates) && rm -rf $(systemotherimage_intermediates)/system_other_image_info.txt
   $(call generate-image-prop-dictionary, $(systemotherimage_intermediates)/system_other_image_info.txt,system,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-      build/make/tools/releasetools/build_image.py \
-      $(TARGET_OUT_SYSTEM_OTHER) $(systemotherimage_intermediates)/system_other_image_info.txt $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) $(TARGET_OUT)
-  $(hide) $(call assert-max-image-size,$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
+      $(BUILD_IMAGE) \
+          $(TARGET_OUT_SYSTEM_OTHER) $(systemotherimage_intermediates)/system_other_image_info.txt \
+          $(INSTALLED_SYSTEMOTHERIMAGE_TARGET) $(TARGET_OUT)
+  $(call assert-max-image-size,$(INSTALLED_SYSTEMOTHERIMAGE_TARGET),$(BOARD_SYSTEMIMAGE_PARTITION_SIZE))
 endef
 
 # We just build this directly to the install location.
@@ -2795,9 +2795,10 @@ define build-vendorimage-target
   @mkdir -p $(vendorimage_intermediates) && rm -rf $(vendorimage_intermediates)/vendor_image_info.txt
   $(call generate-image-prop-dictionary, $(vendorimage_intermediates)/vendor_image_info.txt,vendor,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-      build/make/tools/releasetools/build_image.py \
-      $(TARGET_OUT_VENDOR) $(vendorimage_intermediates)/vendor_image_info.txt $(INSTALLED_VENDORIMAGE_TARGET) $(TARGET_OUT)
-  $(hide) $(call assert-max-image-size,$(INSTALLED_VENDORIMAGE_TARGET),$(BOARD_VENDORIMAGE_PARTITION_SIZE))
+      $(BUILD_IMAGE) \
+          $(TARGET_OUT_VENDOR) $(vendorimage_intermediates)/vendor_image_info.txt \
+          $(INSTALLED_VENDORIMAGE_TARGET) $(TARGET_OUT)
+  $(call assert-max-image-size,$(INSTALLED_VENDORIMAGE_TARGET),$(BOARD_VENDORIMAGE_PARTITION_SIZE))
 endef
 
 # We just build this directly to the install location.
@@ -2805,7 +2806,10 @@ INSTALLED_VENDORIMAGE_TARGET := $(BUILT_VENDORIMAGE_TARGET)
 ifdef BUILT_VENDOR_MANIFEST
 $(INSTALLED_VENDORIMAGE_TARGET): $(BUILT_ASSEMBLED_VENDOR_MANIFEST)
 endif
-$(INSTALLED_VENDORIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_VENDORIMAGE_FILES) $(INSTALLED_FILES_FILE_VENDOR) $(BUILD_IMAGE_SRCS)
+$(INSTALLED_VENDORIMAGE_TARGET): \
+    $(INTERNAL_USERIMAGES_DEPS) \
+    $(INTERNAL_VENDORIMAGE_FILES) \
+    $(INSTALLED_FILES_FILE_VENDOR)
 	$(build-vendorimage-target)
 
 .PHONY: vendorimage-nodeps vnod
@@ -2850,14 +2854,18 @@ define build-productimage-target
   @mkdir -p $(productimage_intermediates) && rm -rf $(productimage_intermediates)/product_image_info.txt
   $(call generate-image-prop-dictionary, $(productimage_intermediates)/product_image_info.txt,product,skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-      ./build/tools/releasetools/build_image.py \
-      $(TARGET_OUT_PRODUCT) $(productimage_intermediates)/product_image_info.txt $(INSTALLED_PRODUCTIMAGE_TARGET) $(TARGET_OUT)
-  $(hide) $(call assert-max-image-size,$(INSTALLED_PRODUCTIMAGE_TARGET),$(BOARD_PRODUCTIMAGE_PARTITION_SIZE))
+      $(BUILD_IMAGE) \
+          $(TARGET_OUT_PRODUCT) $(productimage_intermediates)/product_image_info.txt \
+          $(INSTALLED_PRODUCTIMAGE_TARGET) $(TARGET_OUT)
+  $(call assert-max-image-size,$(INSTALLED_PRODUCTIMAGE_TARGET),$(BOARD_PRODUCTIMAGE_PARTITION_SIZE))
 endef
 
 # We just build this directly to the install location.
 INSTALLED_PRODUCTIMAGE_TARGET := $(BUILT_PRODUCTIMAGE_TARGET)
-$(INSTALLED_PRODUCTIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_PRODUCTIMAGE_FILES) $(INSTALLED_FILES_FILE_PRODUCT) $(BUILD_IMAGE_SRCS)
+$(INSTALLED_PRODUCTIMAGE_TARGET): \
+    $(INTERNAL_USERIMAGES_DEPS) \
+    $(INTERNAL_PRODUCTIMAGE_FILES) \
+    $(INSTALLED_FILES_FILE_PRODUCT)
 	$(build-productimage-target)
 
 .PHONY: productimage-nodeps pnod
@@ -2948,14 +2956,20 @@ define build-system_extimage-target
   @mkdir -p $(system_extimage_intermediates) && rm -rf $(system_extimage_intermediates)/system_ext_image_info.txt
   $(call generate-image-prop-dictionary, $(system_extimage_intermediates)/system_ext_image_info.txt,system_ext, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-      ./build/tools/releasetools/build_image.py \
-      $(TARGET_OUT_SYSTEM_EXT) $(system_extimage_intermediates)/system_ext_image_info.txt $(INSTALLED_SYSTEM_EXTIMAGE_TARGET) $(TARGET_OUT)
-  $(hide) $(call assert-max-image-size,$(INSTALLED_SYSTEM_EXTIMAGE_TARGET),$(BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE))
+      $(BUILD_IMAGE) \
+          $(TARGET_OUT_SYSTEM_EXT) \
+          $(system_extimage_intermediates)/system_ext_image_info.txt \
+          $(INSTALLED_SYSTEM_EXTIMAGE_TARGET) \
+          $(TARGET_OUT)
+  $(call assert-max-image-size,$(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET),$(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE))
 endef
 
 # We just build this directly to the install location.
 INSTALLED_SYSTEM_EXTIMAGE_TARGET := $(BUILT_SYSTEM_EXTIMAGE_TARGET)
-$(INSTALLED_SYSTEM_EXTIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_SYSTEM_EXTIMAGE_FILES) $(INSTALLED_FILES_FILE_SYSTEM_EXT) $(BUILD_IMAGE_SRCS)
+$(INSTALLED_SYSTEM_EXTIMAGE_TARGET): \
+    $(INTERNAL_USERIMAGES_DEPS) \
+    $(INTERNAL_SYSTEM_EXTIMAGE_FILES) \
+    $(INSTALLED_FILES_FILE_SYSTEM_EXT)
 	$(build-system_extimage-target)
 
 .PHONY: systemextimage-nodeps senod
@@ -2999,14 +3013,18 @@ define build-odmimage-target
   @mkdir -p $(odmimage_intermediates) && rm -rf $(odmimage_intermediates)/odm_image_info.txt
   $(call generate-userimage-prop-dictionary, $(odmimage_intermediates)/odm_image_info.txt, skip_fsck=true)
   PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-      ./build/tools/releasetools/build_image.py \
-      $(TARGET_OUT_ODM) $(odmimage_intermediates)/odm_image_info.txt $(INSTALLED_ODMIMAGE_TARGET) $(TARGET_OUT)
-  $(hide) $(call assert-max-image-size,$(INSTALLED_ODMIMAGE_TARGET),$(BOARD_ODMIMAGE_PARTITION_SIZE))
+      $(BUILD_IMAGE) \
+          $(TARGET_OUT_ODM) $(odmimage_intermediates)/odm_image_info.txt \
+          $(INSTALLED_ODMIMAGE_TARGET) $(TARGET_OUT)
+  $(call assert-max-image-size,$(INSTALLED_ODMIMAGE_TARGET),$(BOARD_ODMIMAGE_PARTITION_SIZE))
 endef
 
 # We just build this directly to the install location.
 INSTALLED_ODMIMAGE_TARGET := $(BUILT_ODMIMAGE_TARGET)
-$(INSTALLED_ODMIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_ODMIMAGE_FILES) $(INSTALLED_FILES_FILE_ODM) $(BUILD_IMAGE_SRCS)
+$(INSTALLED_ODMIMAGE_TARGET): \
+    $(INTERNAL_USERIMAGES_DEPS) \
+    $(INTERNAL_ODMIMAGE_FILES) \
+    $(INSTALLED_FILES_FILE_ODM)
 	$(build-odmimage-target)
 
 .PHONY: odmimage-nodeps onod
@@ -3580,6 +3598,8 @@ INTERNAL_OTATOOLS_MODULES := \
   brillo_update_payload \
   brotli \
   bsdiff \
+  build_image \
+  build_super_image \
   build_verity_metadata \
   build_verity_tree \
   care_map_generator \
