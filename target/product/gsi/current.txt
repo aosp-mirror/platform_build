@@ -261,7 +261,6 @@ VNDK-core: libstagefright_flacdec.so
 VNDK-core: libstagefright_foundation.so
 VNDK-core: libstagefright_omx.so
 VNDK-core: libstagefright_omx_utils.so
-VNDK-core: libstagefright_softomx.so
 VNDK-core: libstagefright_xmlparser.so
 VNDK-core: libsysutils.so
 VNDK-core: libtinyalsa.so
