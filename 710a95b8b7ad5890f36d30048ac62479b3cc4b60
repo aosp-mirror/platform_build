@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "042224ab_f06a994f",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-05-07T22:06:06Z",
+      "side": 1,
+      "message": "Set this from within Soong using a MakeVarsProvider.\n\nAlso, pass the list of files instead of just the directory.",
+      "range": {
+        "startLine": 51,
+        "startChar": 27,
+        "endLine": 51,
+        "endChar": 71
+      },
+      "revId": "710a95b8b7ad5890f36d30048ac62479b3cc4b60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
