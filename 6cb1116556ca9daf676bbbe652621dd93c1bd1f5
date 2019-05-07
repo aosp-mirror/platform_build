@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "65957088_8d8079a1",
+        "filename": "core/product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-05-07T09:14:15Z",
+      "side": 1,
+      "message": "add a new comment for vndk versions",
+      "revId": "6cb1116556ca9daf676bbbe652621dd93c1bd1f5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
