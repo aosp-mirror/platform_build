@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "db73f7cd_85204ddc",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3516,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-05-07T03:06:24Z",
+      "side": 1,
+      "message": "Done by converting VBOOT_SIGNER to module: https://android-review.googlesource.com/c/platform/prebuilts/misc/+/956819",
+      "parentUuid": "71676932_ea781fda",
+      "revId": "c958e5cfb467aacecfd10eb5d802314114659331",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9b1fea38_5e2817af",
         "filename": "core/Makefile",
         "patchSetId": 1
@@ -39,6 +57,30 @@
       "revId": "c958e5cfb467aacecfd10eb5d802314114659331",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1124304_b4ec39f1",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3561,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-05-07T03:06:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9b1fea38_5e2817af",
+      "range": {
+        "startLine": 3561,
+        "startChar": 60,
+        "endLine": 3561,
+        "endChar": 93
+      },
+      "revId": "c958e5cfb467aacecfd10eb5d802314114659331",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
