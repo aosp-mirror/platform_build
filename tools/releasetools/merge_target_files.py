@@ -160,6 +160,7 @@ default_system_misc_info_keys = [
 
 default_other_item_list = [
     'META/boot_filesystem_config.txt',
+    'META/file_contexts.bin',
     'META/otakeys.txt',
     'META/releasetools.py',
     'META/vendor_filesystem_config.txt',
@@ -442,81 +443,7 @@ def process_misc_info_txt(system_target_files_temp_dir,
       output.write('{}={}\n'.format(key, merged_info_dict[key]))
 
 
-def process_file_contexts_bin(temp_dir, output_target_files_temp_dir):
-  """Perform special processing for META/file_contexts.bin.
-
-  This function combines plat_file_contexts and vendor_file_contexts, which are
-  expected to already be extracted in temp_dir, to produce a merged
-  file_contexts.bin that will land in temp_dir at META/file_contexts.bin.
-
-  Args:
-    temp_dir: The name of a scratch directory that this function can use for
-      intermediate files generated during processing.
-    output_target_files_temp_dir: The name of the working directory that must
-      already contain plat_file_contexts and vendor_file_contexts (in the
-      appropriate sub directories), and to which META/file_contexts.bin will be
-      written.
-  """
-
-  # To create a merged file_contexts.bin file, we use the system and vendor
-  # file contexts files as input, the m4 tool to combine them, the sorting tool
-  # to sort, and finally the sefcontext_compile tool to generate the final
-  # output. We currently omit a checkfc step since the files had been checked
-  # as part of the build.
-
-  # The m4 step concatenates the two input files contexts files. Since m4
-  # writes to stdout, we receive that into an array of bytes, and then write it
-  # to a file.
-
-  # Collect the file contexts that we're going to combine from SYSTEM, VENDOR,
-  # PRODUCT, and ODM. We require SYSTEM and VENDOR, but others are optional.
-
-  file_contexts_list = []
-
-  for partition in ['SYSTEM', 'VENDOR', 'PRODUCT', 'ODM']:
-    prefix = 'plat' if partition == 'SYSTEM' else partition.lower()
-
-    file_contexts = os.path.join(output_target_files_temp_dir, partition, 'etc',
-                                 'selinux', prefix + '_file_contexts')
-
-    mandatory = partition in ['SYSTEM', 'VENDOR']
-
-    if mandatory or os.path.isfile(file_contexts):
-      file_contexts_list.append(file_contexts)
-    else:
-      logger.warning('file not found: %s', file_contexts)
-
-  command = ['m4', '--fatal-warnings', '-s'] + file_contexts_list
-
-  merged_content = common.RunAndCheckOutput(command, verbose=False)
-
-  merged_file_contexts_txt = os.path.join(temp_dir, 'merged_file_contexts.txt')
-
-  with open(merged_file_contexts_txt, 'wb') as f:
-    f.write(merged_content)
-
-  # The sort step sorts the concatenated file.
-
-  sorted_file_contexts_txt = os.path.join(temp_dir, 'sorted_file_contexts.txt')
-  command = ['fc_sort', merged_file_contexts_txt, sorted_file_contexts_txt]
-  common.RunAndWait(command, verbose=True)
-
-  # Finally, the compile step creates the final META/file_contexts.bin.
-
-  file_contexts_bin = os.path.join(output_target_files_temp_dir, 'META',
-                                   'file_contexts.bin')
-
-  command = [
-      'sefcontext_compile',
-      '-o',
-      file_contexts_bin,
-      sorted_file_contexts_txt,
-  ]
-
-  common.RunAndWait(command, verbose=True)
-
-
-def process_special_cases(temp_dir, system_target_files_temp_dir,
+def process_special_cases(system_target_files_temp_dir,
                           other_target_files_temp_dir,
                           output_target_files_temp_dir, system_misc_info_keys,
                           rebuild_recovery):
@@ -526,8 +453,6 @@ def process_special_cases(temp_dir, system_target_files_temp_dir,
   processing. This function performs all that special-case processing.
 
   Args:
-    temp_dir: The name of a scratch directory that this function can use for
-      intermediate files generated during processing.
     system_target_files_temp_dir: The name of a directory containing the special
       items extracted from the system target files package.
     other_target_files_temp_dir: The name of a directory containing the special
@@ -556,10 +481,6 @@ def process_special_cases(temp_dir, system_target_files_temp_dir,
       other_target_files_temp_dir=other_target_files_temp_dir,
       output_target_files_temp_dir=output_target_files_temp_dir,
       system_misc_info_keys=system_misc_info_keys)
-
-  process_file_contexts_bin(
-      temp_dir=temp_dir,
-      output_target_files_temp_dir=output_target_files_temp_dir)
 
 
 def merge_target_files(temp_dir, system_target_files, system_item_list,
@@ -655,7 +576,6 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
   # files package are in place.
 
   process_special_cases(
-      temp_dir=temp_dir,
       system_target_files_temp_dir=system_target_files_temp_dir,
       other_target_files_temp_dir=other_target_files_temp_dir,
       output_target_files_temp_dir=output_target_files_temp_dir,
