@@ -21,7 +21,8 @@ import test_utils
 from merge_target_files import (read_config_list, validate_config_lists,
                                 default_system_item_list,
                                 default_other_item_list,
-                                default_system_misc_info_keys, copy_items)
+                                default_system_misc_info_keys, copy_items,
+                                merge_dynamic_partition_info_dicts)
 
 
 class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
@@ -128,3 +129,34 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
       self.assertFalse(
           validate_config_lists(default_system_item_list, system_misc_info_keys,
                                 default_other_item_list))
+
+  def test_merge_dynamic_partition_info_dicts_ReturnsMergedDict(self):
+    system_dict = {
+        'super_partition_groups': 'group_a',
+        'dynamic_partition_list': 'system',
+        'super_group_a_list': 'system',
+    }
+    other_dict = {
+        'super_partition_groups': 'group_a group_b',
+        'dynamic_partition_list': 'vendor product',
+        'super_group_a_list': 'vendor',
+        'super_group_a_size': '1000',
+        'super_group_b_list': 'product',
+        'super_group_b_size': '2000',
+    }
+    merged_dict = merge_dynamic_partition_info_dicts(
+        system_dict=system_dict,
+        other_dict=other_dict,
+        size_prefix='super_',
+        size_suffix='_size',
+        list_prefix='super_',
+        list_suffix='_list')
+    expected_merged_dict = {
+        'super_partition_groups': 'group_a group_b',
+        'dynamic_partition_list': 'system vendor product',
+        'super_group_a_list': 'system vendor',
+        'super_group_a_size': '1000',
+        'super_group_b_list': 'product',
+        'super_group_b_size': '2000',
+    }
+    self.assertEqual(merged_dict, expected_merged_dict)
