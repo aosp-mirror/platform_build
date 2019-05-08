@@ -332,10 +332,8 @@ def LoadInfoDict(input_file, repacking=False):
     raise ValueError("Failed to find 'fstab_version'")
 
   if repacking:
-    # We carry a copy of file_contexts.bin under META/. If not available, search
-    # BOOT/RAMDISK/. Note that sometimes we may need a different file to build
-    # images than the one running on device, in that case, we must have the one
-    # for image generation copied to META/.
+    # "selinux_fc" should point to the file_contexts file (file_contexts.bin)
+    # under META/.
     fc_basename = os.path.basename(d.get("selinux_fc", "file_contexts"))
     fc_config = os.path.join(input_file, "META", fc_basename)
     assert os.path.exists(fc_config)
