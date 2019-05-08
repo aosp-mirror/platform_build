@@ -730,6 +730,7 @@ def AddImagesToTargetFiles(filename):
   OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.input_tmp, repacking=True)
 
   has_recovery = OPTIONS.info_dict.get("no_recovery") != "true"
+  has_boot = OPTIONS.info_dict.get("no_boot") != "true"
 
   # {vendor,odm,product,product_services}.img are unlike system.img or
   # system_other.img. Because it could be built from source, or dropped into
@@ -777,17 +778,19 @@ def AddImagesToTargetFiles(filename):
   def banner(s):
     logger.info("\n\n++++ " + s + " ++++\n\n")
 
-  banner("boot")
-  # common.GetBootableImage() returns the image directly if present.
-  boot_image = common.GetBootableImage(
-      "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
-  # boot.img may be unavailable in some targets (e.g. aosp_arm64).
-  if boot_image:
-    partitions['boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES", "boot.img")
-    if not os.path.exists(partitions['boot']):
-      boot_image.WriteToDir(OPTIONS.input_tmp)
-      if output_zip:
-        boot_image.AddToZip(output_zip)
+  boot_image = None
+  if has_boot:
+    banner("boot")
+    # common.GetBootableImage() returns the image directly if present.
+    boot_image = common.GetBootableImage(
+        "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
+    # boot.img may be unavailable in some targets (e.g. aosp_arm64).
+    if boot_image:
+      partitions['boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES", "boot.img")
+      if not os.path.exists(partitions['boot']):
+        boot_image.WriteToDir(OPTIONS.input_tmp)
+        if output_zip:
+          boot_image.AddToZip(output_zip)
 
   recovery_image = None
   if has_recovery:
