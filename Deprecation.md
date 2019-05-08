@@ -12,11 +12,18 @@ have any problems converting, please contact us via:
 
 [build/make/core/deprecation.mk] is the source of truth, but for easy browsing:
 
-| Module type                | State     |
-| -------------------------- | --------- |
-| `BUILD_HOST_TEST_CONFIG`   | Error     |
-| `BUILD_TARGET_TEST_CONFIG` | Error     |
-| `BUILD_*`                  | Available |
+| Module type                      | State     |
+| -------------------------------- | --------- |
+| `BUILD_AUX_EXECUTABLE`           | Warning   |
+| `BUILD_AUX_STATIC_LIBRARY`       | Warning   |
+| `BUILD_HOST_FUZZ_TEST`           | Warning   |
+| `BUILD_HOST_NATIVE_TEST`         | Warning   |
+| `BUILD_HOST_STATIC_TEST_LIBRARY` | Warning   |
+| `BUILD_HOST_TEST_CONFIG`         | Error     |
+| `BUILD_NATIVE_BENCHMARK`         | Warning   |
+| `BUILD_STATIC_TEST_LIBRARY`      | Warning   |
+| `BUILD_TARGET_TEST_CONFIG`       | Error     |
+| `BUILD_*`                        | Available |
 
 ## Module Type Deprecation Process
 
