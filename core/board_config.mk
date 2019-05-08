@@ -290,8 +290,33 @@ else ifeq ($(PRODUCT_BUILD_CACHE_IMAGE),true)
 endif
 .KATI_READONLY := BUILDING_CACHE_IMAGE
 
-# TODO: Add BUILDING_BOOT_IMAGE / BUILDING_RECOVERY_IMAGE
-# This gets complicated with BOARD_USES_RECOVERY_AS_BOOT, so skipping for now.
+# Are we building a boot image
+BUILDING_BOOT_IMAGE :=
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+  BUILDING_BOOT_IMAGE :=
+else ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),)
+  ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
+    BUILDING_BOOT_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),true)
+  BUILDING_BOOT_IMAGE := true
+endif
+.KATI_READONLY := BUILDING_BOOT_IMAGE
+
+# Are we building a recovery image
+BUILDING_RECOVERY_IMAGE :=
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+  BUILDING_RECOVERY_IMAGE := true
+else ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),)
+  ifdef BOARD_RECOVERYIMAGE_PARTITION_SIZE
+    ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY)))
+      BUILDING_RECOVERY_IMAGE := true
+    endif
+  endif
+else ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),true)
+  BUILDING_RECOVERY_IMAGE := true
+endif
+.KATI_READONLY := BUILDING_RECOVERY_IMAGE
 
 # Are we building a ramdisk image
 BUILDING_RAMDISK_IMAGE := true
