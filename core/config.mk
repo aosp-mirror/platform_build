@@ -608,7 +608,7 @@ BUILD_VERITY_METADATA := $(HOST_OUT_EXECUTABLES)/build_verity_metadata
 BUILD_VERITY_TREE := $(HOST_OUT_EXECUTABLES)/build_verity_tree
 BOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/boot_signer
 FUTILITY := $(HOST_OUT_EXECUTABLES)/futility-host
-VBOOT_SIGNER := prebuilts/misc/scripts/vboot_signer/vboot_signer.sh
+VBOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/vboot_signer
 FEC := $(HOST_OUT_EXECUTABLES)/fec
 BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 
