@@ -22,6 +22,30 @@
       "revId": "710a95b8b7ad5890f36d30048ac62479b3cc4b60",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a2745624_63983c12",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2019-05-08T23:30:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "042224ab_f06a994f",
+      "range": {
+        "startLine": 51,
+        "startChar": 27,
+        "endLine": 51,
+        "endChar": 71
+      },
+      "revId": "710a95b8b7ad5890f36d30048ac62479b3cc4b60",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
