@@ -3483,131 +3483,112 @@ else
 endif
 
 ifeq ($(build_otatools_package),true)
-OTATOOLS :=  $(HOST_OUT_EXECUTABLES)/minigzip \
-  $(HOST_OUT_EXECUTABLES)/aapt \
-  $(HOST_OUT_EXECUTABLES)/checkvintf \
-  $(HOST_OUT_EXECUTABLES)/mkbootfs \
-  $(HOST_OUT_EXECUTABLES)/mkbootimg \
-  $(HOST_OUT_EXECUTABLES)/fs_config \
-  $(HOST_OUT_EXECUTABLES)/zipalign \
-  $(HOST_OUT_EXECUTABLES)/bsdiff \
-  $(HOST_OUT_EXECUTABLES)/imgdiff \
-  $(HOST_OUT_JAVA_LIBRARIES)/signapk.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/boot_signer.jar \
-  $(HOST_OUT_JAVA_LIBRARIES)/verity_signer.jar \
-  $(HOST_OUT_EXECUTABLES)/mke2fs \
-  $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs \
-  $(HOST_OUT_EXECUTABLES)/e2fsdroid \
-  $(HOST_OUT_EXECUTABLES)/tune2fs \
-  $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh \
-  $(HOST_OUT_EXECUTABLES)/mksquashfs \
-  $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh \
-  $(HOST_OUT_EXECUTABLES)/make_f2fs \
-  $(HOST_OUT_EXECUTABLES)/sload_f2fs \
-  $(HOST_OUT_EXECUTABLES)/simg2img \
-  $(HOST_OUT_EXECUTABLES)/e2fsck \
-  $(HOST_OUT_EXECUTABLES)/generate_verity_key \
-  $(HOST_OUT_EXECUTABLES)/verity_signer \
-  $(HOST_OUT_EXECUTABLES)/verity_verifier \
-  $(HOST_OUT_EXECUTABLES)/append2simg \
-  $(HOST_OUT_EXECUTABLES)/img2simg \
-  $(HOST_OUT_EXECUTABLES)/boot_signer \
-  $(HOST_OUT_EXECUTABLES)/fec \
-  $(HOST_OUT_EXECUTABLES)/brillo_update_payload \
-  $(HOST_OUT_EXECUTABLES)/lib/shflags/shflags \
-  $(HOST_OUT_EXECUTABLES)/delta_generator \
-  $(HOST_OUT_EXECUTABLES)/care_map_generator \
-  $(HOST_OUT_EXECUTABLES)/fc_sort \
-  $(HOST_OUT_EXECUTABLES)/sefcontext_compile \
-  $(LPMAKE) \
-  $(AVBTOOL) \
-  $(BLK_ALLOC_TO_BASE_FS) \
-  $(BROTLI) \
-  $(BUILD_VERITY_METADATA) \
-  $(BUILD_VERITY_TREE)
+
+INTERNAL_OTATOOLS_MODULES := \
+  aapt \
+  append2simg \
+  avbtool \
+  blk_alloc_to_base_fs \
+  boot_signer \
+  brillo_update_payload \
+  brotli \
+  bsdiff \
+  build_verity_metadata \
+  build_verity_tree \
+  care_map_generator \
+  checkvintf \
+  delta_generator \
+  e2fsck \
+  e2fsdroid \
+  fc_sort \
+  fec \
+  fs_config \
+  generate_verity_key \
+  img2simg \
+  imgdiff \
+  libconscrypt_openjdk_jni \
+  lpmake \
+  make_f2fs \
+  minigzip \
+  mkbootfs \
+  mkbootimg \
+  mke2fs \
+  mke2fs.conf \
+  mkf2fsuserimg.sh \
+  mksquashfs \
+  mksquashfsimage.sh \
+  mkuserimg_mke2fs \
+  sefcontext_compile \
+  shflags \
+  signapk \
+  simg2img \
+  sload_f2fs \
+  tune2fs \
+  verity_signer \
+  verity_verifier \
+  zipalign \
 
 ifeq (true,$(PRODUCT_SUPPORTS_VBOOT))
-OTATOOLS += \
-  $(FUTILITY) \
-  $(VBOOT_SIGNER)
+INTERNAL_OTATOOLS_MODULES += \
+  futility \
+  vboot_signer
 endif
 
-# Shared libraries.
-OTATOOLS += \
-  $(HOST_LIBRARY_PATH)/libc++$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/liblog$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libcutils$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libselinux$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libcrypto_utils$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libcrypto-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2fs-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2_blkid-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2_com_err-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2_e2p-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2_quota-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext2_uuid-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libconscrypt_openjdk_jni$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libbrillo$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libbrillo-stream$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libchrome$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libevent-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libprotobuf-cpp-lite$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libssl-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libz-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libsparse-host$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libbase$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libpcre2$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libbrotli$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/liblp$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libext4_utils$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libfec$(HOST_SHLIB_SUFFIX) \
-  $(HOST_LIBRARY_PATH)/libsquashfs_utils$(HOST_SHLIB_SUFFIX)
-
+INTERNAL_OTATOOLS_FILES := \
+  $(filter $(HOST_OUT)/%,$(call module-installed-files,$(INTERNAL_OTATOOLS_MODULES)))
 
 .PHONY: otatools
-otatools: $(OTATOOLS)
+otatools: $(INTERNAL_OTATOOLS_FILES)
 
-BUILT_OTATOOLS_PACKAGE := $(PRODUCT_OUT)/otatools.zip
-$(BUILT_OTATOOLS_PACKAGE): zip_root := $(call intermediates-dir-for,PACKAGING,otatools)/otatools
+# For each module, recursively resolve its host shared library dependencies. Then we have a full
+# list of modules whose installed files need to be packed.
+INTERNAL_OTATOOLS_MODULES_WITH_DEPS := \
+  $(sort $(INTERNAL_OTATOOLS_MODULES) \
+      $(foreach m,$(INTERNAL_OTATOOLS_MODULES),$(call get-all-shared-libs-deps,$(m))))
 
-OTATOOLS_DEPS := \
-  system/extras/ext4_utils/mke2fs.conf \
-  $(sort $(shell find build/make/target/product/security -type f -name "*.x509.pem" -o -name "*.pk8" -o \
-      -name verity_key))
+INTERNAL_OTATOOLS_PACKAGE_FILES := \
+  $(filter $(HOST_OUT)/%,$(call module-installed-files,$(INTERNAL_OTATOOLS_MODULES_WITH_DEPS)))
+
+INTERNAL_OTATOOLS_PACKAGE_FILES += \
+  $(sort $(shell find build/make/target/product/security -type f -name "*.x509.pem" -o \
+      -name "*.pk8" -o -name verity_key))
 
 ifneq (,$(wildcard device))
-OTATOOLS_DEPS += \
+INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find device $(wildcard vendor) -type f -name "*.pk8" -o -name "verifiedboot*" -o \
       -name "*.x509.pem" -o -name "oem*.prop"))
 endif
 ifneq (,$(wildcard external/avb))
-OTATOOLS_DEPS += \
+INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find external/avb/test/data -type f -name "testkey_*.pem" -o \
       -name "atx_metadata.bin"))
 endif
 ifneq (,$(wildcard system/update_engine))
-OTATOOLS_DEPS += \
+INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find system/update_engine/scripts -name "*.pyc" -prune -o -type f -print))
 endif
-
-OTATOOLS_RELEASETOOLS := \
-  $(sort $(shell find build/make/tools/releasetools -name "*.pyc" -prune -o -type f))
-
 ifeq (true,$(PRODUCT_SUPPORTS_VBOOT))
-OTATOOLS_DEPS += \
+INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find external/vboot_reference/tests/devkeys -type f))
 endif
 
-$(BUILT_OTATOOLS_PACKAGE): $(OTATOOLS) $(OTATOOLS_DEPS) $(OTATOOLS_RELEASETOOLS) $(SOONG_ZIP)
+INTERNAL_OTATOOLS_RELEASETOOLS := \
+  $(sort $(shell find build/make/tools/releasetools -name "*.pyc" -prune -o \
+      \( -type f -o -type l \) -print))
+
+BUILT_OTATOOLS_PACKAGE := $(PRODUCT_OUT)/otatools.zip
+$(BUILT_OTATOOLS_PACKAGE): PRIVATE_ZIP_ROOT := $(call intermediates-dir-for,PACKAGING,otatools)/otatools
+$(BUILT_OTATOOLS_PACKAGE): PRIVATE_OTATOOLS_PACKAGE_FILES := $(INTERNAL_OTATOOLS_PACKAGE_FILES)
+$(BUILT_OTATOOLS_PACKAGE): PRIVATE_OTATOOLS_RELEASETOOLS := $(INTERNAL_OTATOOLS_RELEASETOOLS)
+$(BUILT_OTATOOLS_PACKAGE): $(INTERNAL_OTATOOLS_PACKAGE_FILES) $(INTERNAL_OTATOOLS_RELEASETOOLS)
+$(BUILT_OTATOOLS_PACKAGE): $(SOONG_ZIP)
 	@echo "Package OTA tools: $@"
-	$(hide) rm -rf $@ $(zip_root)
-	$(hide) mkdir -p $(dir $@) $(zip_root)/bin $(zip_root)/framework $(zip_root)/releasetools
-	$(call copy-files-with-structure,$(OTATOOLS),$(HOST_OUT)/,$(zip_root))
-	$(hide) cp $(SOONG_ZIP) $(zip_root)/bin/
-	$(hide) cp -r -d -p build/make/tools/releasetools/* $(zip_root)/releasetools
-	$(hide) rm -rf $@ $(zip_root)/releasetools/*.pyc
-	$(hide) $(SOONG_ZIP) -o $@ -C $(zip_root) -D $(zip_root) \
-	  -C . $(addprefix -f ,$(OTATOOLS_DEPS))
+	rm -rf $@ $(PRIVATE_ZIP_ROOT)
+	mkdir -p $(dir $@)
+	$(call copy-files-with-structure,$(PRIVATE_OTATOOLS_PACKAGE_FILES),$(HOST_OUT)/,$(PRIVATE_ZIP_ROOT))
+	$(call copy-files-with-structure,$(PRIVATE_OTATOOLS_RELEASETOOLS),build/make/tools/,$(PRIVATE_ZIP_ROOT))
+	cp $(SOONG_ZIP) $(PRIVATE_ZIP_ROOT)/bin/
+	$(SOONG_ZIP) -o $@ -C $(PRIVATE_ZIP_ROOT) -D $(PRIVATE_ZIP_ROOT)
 
 .PHONY: otatools-package
 otatools-package: $(BUILT_OTATOOLS_PACKAGE)
