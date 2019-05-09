@@ -355,9 +355,12 @@ _product_single_value_vars += PRODUCT_BUILD_ODM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_CACHE_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RAMDISK_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_USERDATA_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_RECOVERY_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_BOOT_IMAGE
 
 _product_list_vars += PRODUCT_UPDATABLE_BOOT_MODULES
 _product_list_vars += PRODUCT_UPDATABLE_BOOT_LOCATIONS
+
 # Whether the product would like to check prebuilt ELF files.
 _product_single_value_vars += PRODUCT_CHECK_ELF_FILES
 
