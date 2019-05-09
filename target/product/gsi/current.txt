@@ -209,8 +209,6 @@ VNDK-core: libcamera_metadata.so
 VNDK-core: libcap.so
 VNDK-core: libcn-cbor.so
 VNDK-core: libcodec2.so
-VNDK-core: libcodec2_hidl@1.0.so
-VNDK-core: libcodec2_vndk.so
 VNDK-core: libcrypto.so
 VNDK-core: libcrypto_utils.so
 VNDK-core: libcurl.so
