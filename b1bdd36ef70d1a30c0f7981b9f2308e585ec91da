@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3d4ce30e_515cf387",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1203210
+      },
+      "writtenOn": "2019-05-09T14:35:05Z",
+      "side": 1,
+      "message": "It\u0027s not a pure rename (because we\u0027re removing support for the \"1.8\" value) but, sure, I guess it\u0027s close enough.",
+      "parentUuid": "80c0664d_bc6c3e2f",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "b1bdd36ef70d1a30c0f7981b9f2308e585ec91da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "89f0d7ff_97789e4b",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "110b1b61_3c39ca48",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1203210
+      },
+      "writtenOn": "2019-05-09T14:35:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "89f0d7ff_97789e4b",
+      "range": {
+        "startLine": 17,
+        "startChar": 21,
+        "endLine": 17,
+        "endChar": 28
+      },
+      "revId": "b1bdd36ef70d1a30c0f7981b9f2308e585ec91da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1df8999d_ca996694",
         "filename": "/COMMIT_MSG",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "b1bdd36ef70d1a30c0f7981b9f2308e585ec91da",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f482fbbe_2270ba11",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1203210
+      },
+      "writtenOn": "2019-05-09T14:35:05Z",
+      "side": 1,
+      "message": "I already did this :-). I\u0027ll add a note.",
+      "parentUuid": "1df8999d_ca996694",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 4
+      },
+      "revId": "b1bdd36ef70d1a30c0f7981b9f2308e585ec91da",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
