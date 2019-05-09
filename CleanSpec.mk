@@ -636,6 +636,8 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libjavacrypto.so)
 $(call add-clean-step, rm -rf $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar)
 $(call add-clean-step, rm -rf $(HOST_OUT_JAVA_LIBRARIES)/VeritySigner.jar)
 $(call add-clean-step, rm -rf $(HOST_OUT_EXECUTABLES)/build_verity_metadata.py)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libc_malloc*)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
