@@ -2245,37 +2245,37 @@ endif
 # art/build/apex/art_apex_test.py.
 # TODO(b/128708192): Implement this restriction in Soong instead.
 
-# TODO(b/124293228): Fix remaining bugs and add these libraries to the list:
-#   libart-compiler.so
-#   libart-dexlayout.so
-#   libart.so
-#   libartbase.so
-#   libartpalette.so
-#   libdexfile.so
-#   libdexfile_external.so  - aosp_marlin-userdebug gets this in a vndk-sp-Q subdirectory.
-#   libicui18n.so
-#   libicuuc.so
-#   libnativehelper.so  - cf_x86_phone-userdebug builds get this in system/lib/arm
-#   libprofile.so
-#   libsigchain.so  - cf_x86_phone-userdebug builds get this in system/lib/arm
-#   libtombstoned_client.so
+# Runtime APEX libraries
 APEX_MODULE_LIBS := \
   libadbconnection.so \
   libandroidicu.so \
   libandroidio.so \
+  libart-compiler.so \
+  libart-dexlayout.so \
+  libart.so \
+  libartbase.so \
+  libartpalette.so \
+  libdexfile.so \
+  libdexfile_external.so \
+  libdexfiled_external.so \
   libdt_fd_forward.so \
   libdt_socket.so \
+  libicui18n.so \
+  libicuuc.so \
   libjavacore.so \
   libjdwp.so \
   libnativebridge.so \
+  libnativehelper.so \
   libnativeloader.so \
   libnpt.so \
   libopenjdk.so \
   libopenjdkjvm.so \
   libopenjdkjvmti.so \
   libpac.so \
+  libprofile.so \
+  libsigchain.so \
 
-# Conscrypt APEX_MODULE_LIBS
+# Conscrypt APEX libraries
 APEX_MODULE_LIBS += \
   libjavacrypto.so \
 
