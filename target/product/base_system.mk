@@ -126,8 +126,6 @@ PRODUCT_PACKAGES += \
     libcamera2ndk \
     libcamera_client \
     libcameraservice \
-    libc_malloc_debug \
-    libc_malloc_hooks \
     libcutils \
     libdl.bootstrap \
     libdrmframework \
