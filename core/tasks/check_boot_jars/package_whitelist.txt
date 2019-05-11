@@ -46,6 +46,8 @@ java\.util\.regex
 java\.util\.spi
 java\.util\.stream
 java\.util\.zip
+# TODO: Remove javax.annotation.processing if possible, see http://b/132338110:
+javax\.annotation\.processing
 javax\.crypto
 javax\.crypto\.interfaces
 javax\.crypto\.spec

@@ -62,7 +62,6 @@ PRODUCT_PACKAGES += \
     CtsShimPrebuilt \
     CtsShimPrivPrebuilt \
     debuggerd\
-    DefaultContainerService \
     device_config \
     dmctl \
     dnsmasq \
@@ -126,8 +125,6 @@ PRODUCT_PACKAGES += \
     libcamera2ndk \
     libcamera_client \
     libcameraservice \
-    libc_malloc_debug \
-    libc_malloc_hooks \
     libcutils \
     libdl.bootstrap \
     libdrmframework \

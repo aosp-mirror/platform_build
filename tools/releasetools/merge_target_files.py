@@ -584,9 +584,9 @@ def process_special_cases(system_target_files_temp_dir,
       system_misc_info_keys=system_misc_info_keys)
 
   process_dynamic_partitions_info_txt(
-      system_target_files_temp_dir=system_target_files_temp_dir,
-      other_target_files_temp_dir=other_target_files_temp_dir,
-      output_target_files_temp_dir=output_target_files_temp_dir)
+      system_target_files_dir=system_target_files_temp_dir,
+      other_target_files_dir=other_target_files_temp_dir,
+      output_target_files_dir=output_target_files_temp_dir)
 
 
 def merge_target_files(temp_dir, system_target_files, system_item_list,

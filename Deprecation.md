@@ -18,9 +18,11 @@ have any problems converting, please contact us via:
 | `BUILD_AUX_STATIC_LIBRARY`       | Warning   |
 | `BUILD_HOST_FUZZ_TEST`           | Warning   |
 | `BUILD_HOST_NATIVE_TEST`         | Warning   |
+| `BUILD_HOST_SHARED_TEST_LIBRARY` | Error     |
 | `BUILD_HOST_STATIC_TEST_LIBRARY` | Warning   |
 | `BUILD_HOST_TEST_CONFIG`         | Error     |
 | `BUILD_NATIVE_BENCHMARK`         | Warning   |
+| `BUILD_SHARED_TEST_LIBRARY`      | Error     |
 | `BUILD_STATIC_TEST_LIBRARY`      | Warning   |
 | `BUILD_TARGET_TEST_CONFIG`       | Error     |
 | `BUILD_*`                        | Available |
