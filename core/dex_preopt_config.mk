@@ -1,4 +1,4 @@
-DEX_PREOPT_CONFIG := $(PRODUCT_OUT)/dexpreopt.config
+DEX_PREOPT_CONFIG := $(SOONG_OUT_DIR)/dexpreopt.config
 
 # The default value for LOCAL_DEX_PREOPT
 DEX_PREOPT_DEFAULT ?= true
@@ -168,12 +168,6 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
       rm $(DEX_PREOPT_CONFIG).tmp; \
     fi)
 endif
-
-# Dummy rule to create dexpreopt.config, it will already have been created
-# by the $(file) call above, but a rule needs to exist to keep the dangling
-# rule check happy.
-$(DEX_PREOPT_CONFIG):
-	@#empty
 
 DEXPREOPT_GEN_DEPS := \
   $(SOONG_HOST_OUT_EXECUTABLES)/profman \
