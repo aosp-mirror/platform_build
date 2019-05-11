@@ -223,7 +223,9 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_ADDITIONAL_DEPENDENCIES)
 #
 # Filter out some NDK libraries that are not being exported.
 my_static_libraries := \
-    $(filter-out ndk_libc++_static ndk_libc++abi ndk_libandroid_support ndk_libunwind, \
+    $(filter-out ndk_libc++_static ndk_libc++abi ndk_libandroid_support ndk_libunwind \
+      ndk_libc++_static.native_bridge ndk_libc++abi.native_bridge \
+      ndk_libandroid_support.native_bridge ndk_libunwind.native_bridge, \
       $(LOCAL_STATIC_LIBRARIES))
 installed_static_library_notice_file_targets := \
     $(foreach lib,$(my_static_libraries) $(LOCAL_WHOLE_STATIC_LIBRARIES), \
