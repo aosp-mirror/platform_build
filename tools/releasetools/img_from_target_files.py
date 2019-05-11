@@ -180,8 +180,10 @@ def main(argv):
     OPTIONS.input_tmp = target_files
   elif zipfile.is_zipfile(target_files):
     logger.info("Building image zip from target files zip.")
-    OPTIONS.input_tmp = common.UnzipTemp(target_files,
-                                         ["IMAGES/*", "OTA/*", "META/*"])
+    # We need files under IMAGES/, OTA/, META/ for img_from_target_files.py.
+    # However, common.LoadInfoDict() may read additional files under BOOT/,
+    # RECOVERY/ and ROOT/. So unzip everything from the target_files.zip.
+    OPTIONS.input_tmp = common.UnzipTemp(target_files)
   else:
     raise ValueError("%s is not a valid path." % target_files)
 
