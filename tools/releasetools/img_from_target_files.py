@@ -166,8 +166,10 @@ def main(argv):
 
   common.InitLogging()
 
-  OPTIONS.input_tmp = common.UnzipTemp(args[0],
-                                       ["IMAGES/*", "OTA/*", "META/*"])
+  # We need files under IMAGES/, OTA/, META/ for img_from_target_files.py.
+  # However, common.LoadInfoDict() may read additional files under BOOT/,
+  # RECOVERY/ and ROOT/. So unzip everything from the target_files.zip.
+  OPTIONS.input_tmp = common.UnzipTemp(args[0])
   LoadOptions(OPTIONS.input_tmp)
   output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED,
                                allowZip64=not OPTIONS.sparse_userimages)
