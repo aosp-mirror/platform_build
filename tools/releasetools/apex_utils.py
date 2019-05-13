@@ -19,10 +19,13 @@ import os.path
 import re
 import shlex
 import sys
+import zipfile
 
 import common
 
 logger = logging.getLogger(__name__)
+
+OPTIONS = common.OPTIONS
 
 
 class ApexInfoError(Exception):
@@ -145,3 +148,72 @@ def ParseApexPayloadInfo(payload_path):
           'Failed to find {} prop in {}'.format(key, payload_path))
 
   return payload_info
+
+
+def SignApex(apex_data, payload_key, container_key, container_pw,
+             codename_to_api_level_map, signing_args=None):
+  """Signs the current APEX with the given payload/container keys.
+
+  Args:
+    apex_data: Raw APEX data.
+    payload_key: The path to payload signing key (w/ extension).
+    container_key: The path to container signing key (w/o extension).
+    container_pw: The matching password of the container_key, or None.
+    codename_to_api_level_map: A dict that maps from codename to API level.
+    signing_args: Additional args to be passed to the payload signer.
+
+  Returns:
+    The path to the signed APEX file.
+  """
+  apex_file = common.MakeTempFile(prefix='apex-', suffix='.apex')
+  with open(apex_file, 'wb') as apex_fp:
+    apex_fp.write(apex_data)
+
+  APEX_PAYLOAD_IMAGE = 'apex_payload.img'
+  APEX_PUBKEY = 'apex_pubkey'
+
+  # 1a. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given
+  # payload_key.
+  payload_dir = common.MakeTempDir(prefix='apex-payload-')
+  with zipfile.ZipFile(apex_file) as apex_fd:
+    payload_file = apex_fd.extract(APEX_PAYLOAD_IMAGE, payload_dir)
+
+  payload_info = ParseApexPayloadInfo(payload_file)
+  SignApexPayload(
+      payload_file,
+      payload_key,
+      payload_info['apex.key'],
+      payload_info['Algorithm'],
+      payload_info['Salt'],
+      signing_args)
+
+  # 1b. Update the embedded payload public key.
+  payload_public_key = common.ExtractAvbPublicKey(payload_key)
+
+  common.ZipDelete(apex_file, APEX_PAYLOAD_IMAGE)
+  common.ZipDelete(apex_file, APEX_PUBKEY)
+  apex_zip = zipfile.ZipFile(apex_file, 'a')
+  common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
+  common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
+  common.ZipClose(apex_zip)
+
+  # 2. Align the files at page boundary (same as in apexer).
+  aligned_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
+  common.RunAndCheckOutput(['zipalign', '-f', '4096', apex_file, aligned_apex])
+
+  # 3. Sign the APEX container with container_key.
+  signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
+
+  # Specify the 4K alignment when calling SignApk.
+  extra_signapk_args = OPTIONS.extra_signapk_args[:]
+  extra_signapk_args.extend(['-a', '4096'])
+
+  common.SignFile(
+      aligned_apex,
+      signed_apex,
+      container_key,
+      container_pw,
+      codename_to_api_level_map=codename_to_api_level_map,
+      extra_signapk_args=extra_signapk_args)
+
+  return signed_apex
