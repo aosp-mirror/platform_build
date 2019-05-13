@@ -22,6 +22,30 @@
       "revId": "c636647cd2916d69834327cc1dc1b1c3e1542e21",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0a286306_30eef572",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1308042
+      },
+      "writtenOn": "2019-05-13T01:52:05Z",
+      "side": 1,
+      "message": "Thanks for your suggestion.\nIn my view, generating R.java is the main goal so I put it in the first to emphasize it.",
+      "parentUuid": "9c09ce3c_2d7ceae7",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 55
+      },
+      "revId": "c636647cd2916d69834327cc1dc1b1c3e1542e21",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
