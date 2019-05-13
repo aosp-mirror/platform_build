@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9c09ce3c_2d7ceae7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1342378
+      },
+      "writtenOn": "2019-05-13T01:29:40Z",
+      "side": 1,
+      "message": "I suggest,\n\nAIDEGen needs to build the module to generate R.java of app modules, but it might cause system.img oversized, Therefore,",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 55
+      },
+      "revId": "c636647cd2916d69834327cc1dc1b1c3e1542e21",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
