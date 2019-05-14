@@ -162,7 +162,9 @@ _product_list_vars += PRODUCT_PRODUCT_PROPERTIES
 # used for adding properties to build.prop of product partition
 _product_list_vars += PRODUCT_PRODUCT_SERVICES_PROPERTIES
 _product_list_vars += PRODUCT_ODM_PROPERTIES
-_product_list_vars += PRODUCT_CHARACTERISTICS
+
+# The characteristics of the product, which among other things is passed to aapt
+_product_single_value_vars += PRODUCT_CHARACTERISTICS
 
 # A list of words like <source path>:<destination path>[:<owner>].
 # The file at the source path should be copied to the destination path
