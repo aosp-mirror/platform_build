@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "efdb6945_180b1985",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2019-05-14T09:48:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bac4250e_8b36a107",
+      "range": {
+        "startLine": 67,
+        "startChar": 15,
+        "endLine": 67,
+        "endChar": 44
+      },
+      "revId": "52ae68aa35fb289b8b47d72694718bf09f80bd4d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4a2f0655_74f8daab",
         "filename": "core/tasks/vndk.mk",
         "patchSetId": 2
@@ -36,6 +60,24 @@
       "writtenOn": "2019-05-09T20:16:00Z",
       "side": 1,
       "message": "You could also do this with RuleBuilderInstalls in Soong, which can be created manually or from RuleBuilder.Installs().  RuleBuilderInstalls.String() produces a list of from:to pairs.  That way you don\u0027t have to match up the soong variables with install locations, you can do something like copy-many-files, although inside the rule instead of creating its own rules.",
+      "revId": "52ae68aa35fb289b8b47d72694718bf09f80bd4d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ca0da032_e22558c2",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1291338
+      },
+      "writtenOn": "2019-05-14T09:48:05Z",
+      "side": 1,
+      "message": "Can we leave this? I\u0027m worried that:\n\n1) cleaning soong out files are difficult\n2) we\u0027re going to remove this file after migrating is done\n3) I don\u0027t like calling both rule.Install() and ctx.Build(), and anyway we should use ctx.Build() when migrating into Soong",
+      "parentUuid": "4a2f0655_74f8daab",
       "revId": "52ae68aa35fb289b8b47d72694718bf09f80bd4d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
