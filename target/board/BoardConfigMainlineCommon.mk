@@ -24,6 +24,9 @@ TARGET_ENABLE_MEDIADRM_64 := true
 # stripped from APKs.
 BOARD_USES_SYSTEM_OTHER_ODEX := true
 
+# Audio: must using XML format for Treblized devices
+USE_XML_AUDIO_POLICY_CONF := 1
+
 # Bluetooth defines
 # TODO(b/123695868): Remove the need for this
 BOARD_BLUETOOTH_BDROID_BUILDCFG_INCLUDE_DIR := build/make/target/board/mainline_arm64/bluetooth
