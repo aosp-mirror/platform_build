@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6ff9bc4_b391cc17",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 734,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-05-14T16:12:08Z",
+      "side": 1,
+      "message": "and it silently does nothing otherwise? Is this needed?\n\n(if it\u0027s not -- you can put this logic in product_config.mk instead and remove the late-readonly  addition in the other file).",
+      "range": {
+        "startLine": 734,
+        "startChar": 2,
+        "endLine": 734,
+        "endChar": 26
+      },
+      "revId": "481dd02d8f2af2918abd1473e0e53b9f053193c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dca96569_0f11db3b",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 740,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-05-14T16:12:08Z",
+      "side": 1,
+      "message": "what\u0027s this for? won\u0027t this fail the build if OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS is used?",
+      "range": {
+        "startLine": 738,
+        "startChar": 0,
+        "endLine": 740,
+        "endChar": 45
+      },
+      "revId": "481dd02d8f2af2918abd1473e0e53b9f053193c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
