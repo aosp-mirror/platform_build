@@ -81,6 +81,24 @@
       "revId": "52ae68aa35fb289b8b47d72694718bf09f80bd4d",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "767b8c7a_22d742ee",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-05-14T21:24:59Z",
+      "side": 1,
+      "message": "You don\u0027t have to go through rule.Install(), you can create RuleBuilderInstalls manually, for example see http://cs/android/build/soong/java/dexpreopt_bootjars.go?l\u003d338\u0026rcl\u003d2148472eef1d2c9d913905408a0e2842dcf1ece3.  Then installing those files becomes trivial with http://cs/android/build/make/core/dex_preopt_libart_boot.mk?l\u003d11\u0026rcl\u003d6d994942b7b9c9bdadc489bdc509ba3a1df37356.  The advantage is it avoids all the copy-pasted code with modifications, which is easy to have bugs in (as evidenced by the change to this file in PS3).\n\nBut if this is going to be removed I\u0027m fine with leaving it as-is for now.",
+      "parentUuid": "ca0da032_e22558c2",
+      "revId": "52ae68aa35fb289b8b47d72694718bf09f80bd4d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
