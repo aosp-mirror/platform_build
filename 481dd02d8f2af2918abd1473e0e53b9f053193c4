@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6df0e10c_1ef224c1",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 734,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-05-15T02:35:45Z",
+      "side": 1,
+      "message": "Without BOARD_VNDK_VERSION, PRODUCT_EXTRA_VNDK_VERSIONS does nothing. But it is not critical. We may skip this.\nI moved this to product_config.mk as recommended.",
+      "parentUuid": "d6ff9bc4_b391cc17",
+      "range": {
+        "startLine": 734,
+        "startChar": 2,
+        "endLine": 734,
+        "endChar": 26
+      },
+      "revId": "481dd02d8f2af2918abd1473e0e53b9f053193c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "dca96569_0f11db3b",
         "filename": "core/config.mk",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2019-05-14T16:12:08Z",
       "side": 1,
       "message": "what\u0027s this for? won\u0027t this fail the build if OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS is used?",
+      "range": {
+        "startLine": 738,
+        "startChar": 0,
+        "endLine": 740,
+        "endChar": 45
+      },
+      "revId": "481dd02d8f2af2918abd1473e0e53b9f053193c4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3055c311_5fc2900c",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 740,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-05-15T02:35:45Z",
+      "side": 1,
+      "message": "Yes, it will fail if used.\nOVERRIDE variable is only for overriding the original variable. It must not be used directly.\nI copied this as well to product_config.mk.",
+      "parentUuid": "dca96569_0f11db3b",
       "range": {
         "startLine": 738,
         "startChar": 0,
