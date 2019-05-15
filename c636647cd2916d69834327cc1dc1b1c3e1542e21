@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1a2b4328_32b68e97",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1348646
+      },
+      "writtenOn": "2019-05-15T11:23:06Z",
+      "side": 1,
+      "message": "Suggest not to use the term aapt2 in this commit, because there\u0027s no relevant usage of it in those files you touched. Using \"srcjar path  of modules\" is enough for this CL.",
+      "range": {
+        "startLine": 7,
+        "startChar": 17,
+        "endLine": 7,
+        "endChar": 33
+      },
+      "revId": "c636647cd2916d69834327cc1dc1b1c3e1542e21",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "9c09ce3c_2d7ceae7",
         "filename": "/COMMIT_MSG",
         "patchSetId": 1
@@ -70,6 +93,52 @@
       "revId": "c636647cd2916d69834327cc1dc1b1c3e1542e21",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ab76fa18_86ed46ed",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1348646
+      },
+      "writtenOn": "2019-05-15T11:23:06Z",
+      "side": 1,
+      "message": "ditto",
+      "range": {
+        "startLine": 12,
+        "startChar": 11,
+        "endLine": 12,
+        "endChar": 17
+      },
+      "revId": "c636647cd2916d69834327cc1dc1b1c3e1542e21",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a73c775e_cfa2a3cc",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1348646
+      },
+      "writtenOn": "2019-05-15T11:23:06Z",
+      "side": 1,
+      "message": "by grep \"target/common/obj/APPS/Settings_intermediates/aapt2.srcjar\" in module-info.json. \n\nIt\u0027s easier to judge the test result.",
+      "range": {
+        "startLine": 16,
+        "startChar": 61,
+        "endLine": 16,
+        "endChar": 62
+      },
+      "revId": "c636647cd2916d69834327cc1dc1b1c3e1542e21",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
