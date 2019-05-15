@@ -1214,6 +1214,8 @@ APEX_MODULE_LIBS := \
   libartd.so \
   libartpalette.so \
   libc.so \
+  libc_malloc_debug.so \
+  libc_malloc_hooks.so \
   libdexfile.so \
   libdexfile_external.so \
   libdexfiled.so \
