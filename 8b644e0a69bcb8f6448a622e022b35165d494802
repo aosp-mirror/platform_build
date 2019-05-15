@@ -91,6 +91,46 @@
       "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7d2f29d3_6e04e539",
+        "filename": "tools/releasetools/test_merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-15T17:52:16Z",
+      "side": 1,
+      "message": "Why does this raise an error? I thought the method only raised if there were conflicting values, but not if there were non-conflicting duplicates (which should be the case when using 2 of the same input files right?)",
+      "range": {
+        "startLine": 204,
+        "startChar": 4,
+        "endLine": 204,
+        "endChar": 121
+      },
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4183b913_8059cda3",
+        "filename": "tools/releasetools/testdata/apexkeys_system.txt",
+        "patchSetId": 5
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-15T17:52:16Z",
+      "side": 1,
+      "message": "Just to cover our bases, can you please make apexkeys_other and apexkeys_system share a line? That way we\u0027re testing the should-be-successful use case of duplicate but non-conflicting values.",
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
