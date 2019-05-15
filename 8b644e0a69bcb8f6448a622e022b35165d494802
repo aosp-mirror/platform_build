@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "67153fc9_a2ccceb3",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 556,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-15T17:45:16Z",
+      "side": 1,
+      "message": "Nit: apkcerts.txt is missing in this sentence.",
+      "range": {
+        "startLine": 556,
+        "startChar": 40,
+        "endLine": 556,
+        "endChar": 58
+      },
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fec783bc_e77d0950",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 572,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-15T17:45:16Z",
+      "side": 1,
+      "message": "Nit: Can you please make this var name more generic since the function\u0027s purpose is shared between the two files.",
+      "range": {
+        "startLine": 572,
+        "startChar": 4,
+        "endLine": 572,
+        "endChar": 17
+      },
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f90b452c_43aa279b",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 585,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-15T17:45:16Z",
+      "side": 1,
+      "message": "Since you mentioned before in a previous comment of mine that \u0027key\u0027 itself is already included in x_dict[key], what about including file_name in this ValueError string instead of key? That way they know right away which file (apkcerts or apexkeys) caused the issue.",
+      "range": {
+        "startLine": 585,
+        "startChar": 0,
+        "endLine": 585,
+        "endChar": 98
+      },
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e76af8ef_37ab3927",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-15T17:45:16Z",
+      "side": 1,
+      "message": "Since we do this a couple times in a couple other functions now, what do you think of making a simple write_sorted_dict(dictionary, filename) function? for here \u0026 the other couple functions that write sorted dicts.",
+      "range": {
+        "startLine": 592,
+        "startChar": 4,
+        "endLine": 592,
+        "endChar": 45
+      },
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
