@@ -85,7 +85,6 @@ _dynamic_partitions_var_list += \
 _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 
 _build_broken_var_list := \
-  BUILD_BROKEN_ANDROIDMK_EXPORTS \
   BUILD_BROKEN_DUP_RULES \
   BUILD_BROKEN_USES_NETWORK \
 
@@ -228,10 +227,6 @@ endif
 TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST)))
 TARGET_CPU_ABI_LIST_32_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_32_BIT)))
 TARGET_CPU_ABI_LIST_64_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_64_BIT)))
-
-ifneq ($(BUILD_BROKEN_ANDROIDMK_EXPORTS),true)
-$(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
-endif
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_RAMDISK
