@@ -384,6 +384,15 @@ ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),)
   endif
 endif
 
+# If build command defines OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS,
+# override PRODUCT_EXTRA_VNDK_VERSIONS with it.
+ifdef OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS
+  PRODUCT_EXTRA_VNDK_VERSIONS := $(OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS)
+endif
+
+$(KATI_obsolete_var OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS \
+    ,Use PRODUCT_EXTRA_VNDK_VERSIONS instead)
+
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\
     $$(if $$(filter 2,$$(words $$(subst :,$$(space),$$(rule)))),,\
