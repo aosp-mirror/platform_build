@@ -261,6 +261,30 @@
     },
     {
       "key": {
+        "uuid": "315f7899_889340f0",
+        "filename": "tools/releasetools/test_merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-16T17:23:27Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "192f964e_53b003de",
+      "range": {
+        "startLine": 204,
+        "startChar": 4,
+        "endLine": 204,
+        "endChar": 121
+      },
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4183b913_8059cda3",
         "filename": "tools/releasetools/testdata/apexkeys_system.txt",
         "patchSetId": 5
