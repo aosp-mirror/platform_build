@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "620e985e_1507cc95",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 556,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-05-16T02:28:17Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "67153fc9_a2ccceb3",
+      "range": {
+        "startLine": 556,
+        "startChar": 40,
+        "endLine": 556,
+        "endChar": 58
+      },
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fec783bc_e77d0950",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 5
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "2b5f326f_086700ab",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 572,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-05-16T02:28:17Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "fec783bc_e77d0950",
+      "range": {
+        "startLine": 572,
+        "startChar": 4,
+        "endLine": 572,
+        "endChar": 17
+      },
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f90b452c_43aa279b",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 5
@@ -68,6 +116,30 @@
       "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d5cba30e_b3fbdc2e",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 585,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-05-16T02:28:17Z",
+      "side": 1,
+      "message": "Sure, I\u0027ll add that. I will say though that from the lines that print out its pretty obvious if its an apk or apex entry that causes the issue.",
+      "parentUuid": "f90b452c_43aa279b",
+      "range": {
+        "startLine": 585,
+        "startChar": 0,
+        "endLine": 585,
+        "endChar": 98
+      },
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -118,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "c40ef43d_cf3523ea",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 592,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-05-16T02:28:17Z",
+      "side": 1,
+      "message": "I attempted to come up with something that might fulfill what\u0027s wanted here. If we think more is needed beyond what was done in patchset 7 then we revert to how things were done previously and open a bug.",
+      "parentUuid": "6b5e4055_6d319455",
+      "range": {
+        "startLine": 592,
+        "startChar": 4,
+        "endLine": 592,
+        "endChar": 45
+      },
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7d2f29d3_6e04e539",
         "filename": "tools/releasetools/test_merge_target_files.py",
         "patchSetId": 5
@@ -129,6 +225,30 @@
       "writtenOn": "2019-05-15T17:52:16Z",
       "side": 1,
       "message": "Why does this raise an error? I thought the method only raised if there were conflicting values, but not if there were non-conflicting duplicates (which should be the case when using 2 of the same input files right?)",
+      "range": {
+        "startLine": 204,
+        "startChar": 4,
+        "endLine": 204,
+        "endChar": 121
+      },
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "192f964e_53b003de",
+        "filename": "tools/releasetools/test_merge_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 204,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-05-16T02:28:17Z",
+      "side": 1,
+      "message": "This was wrong. I was using assertRaises incorrectly here and the passing tests was a false positive. As you noted the inputs shouldn\u0027t have causes this tests to pass.",
+      "parentUuid": "7d2f29d3_6e04e539",
       "range": {
         "startLine": 204,
         "startChar": 4,
@@ -155,6 +275,24 @@
       "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "35098b4e_8c8c8140",
+        "filename": "tools/releasetools/testdata/apexkeys_system.txt",
+        "patchSetId": 5
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-05-16T02:28:17Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "4183b913_8059cda3",
+      "revId": "8b644e0a69bcb8f6448a622e022b35165d494802",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
