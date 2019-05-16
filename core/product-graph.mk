@@ -52,13 +52,27 @@ all_products := $(call gather-all-products)
 open_parethesis := (
 close_parenthesis := )
 
+node_color_target := orange
+node_color_common := beige
+node_color_vendor := lavenderblush
+node_color_default := white
+define node-color
+$(if $(filter $(1),$(PRIVATE_PRODUCTS_FILTER)),\
+  $(node_color_target),\
+  $(if $(filter build/make/target/product/%,$(1)),\
+    $(node_color_common),\
+    $(if $(filter vendor/%,$(1)),$(node_color_vendor),$(node_color_default))\
+  )\
+)
+endef
+
 # Emit properties of a product node to a file.
 # $(1) the product
 # $(2) the output file
 define emit-product-node-props
 $(hide) echo \"$(1)\" [ \
 label=\"$(dir $(1))\\n$(notdir $(1))\\n\\n$(subst $(close_parenthesis),,$(subst $(open_parethesis),,$(PRODUCTS.$(strip $(1)).PRODUCT_MODEL)))\\n$(PRODUCTS.$(strip $(1)).PRODUCT_DEVICE)\" \
-$(if $(filter $(1),$(PRIVATE_PRODUCTS_FILTER)), style=\"filled\" fillcolor=\"#FFFDB0\",) \
+style=\"filled\" fillcolor=\"$(strip $(call node-color,$(1)))\" \
 colorscheme=\"svg\" fontcolor=\"darkblue\" href=\"products/$(1).html\" \
 ] >> $(2)
 
