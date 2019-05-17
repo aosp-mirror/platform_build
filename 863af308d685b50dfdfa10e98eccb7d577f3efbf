@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e5221d81_1a632094",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-05-17T00:08:41Z",
+      "side": 1,
+      "message": "nit: sorted(data) is sufficient to get the same result -- it\u0027ll return a list of sorted keys for dict.",
+      "range": {
+        "startLine": 200,
+        "startChar": 18,
+        "endLine": 201,
+        "endChar": 75
+      },
+      "revId": "863af308d685b50dfdfa10e98eccb7d577f3efbf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
