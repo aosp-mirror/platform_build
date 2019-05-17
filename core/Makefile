@@ -567,7 +567,7 @@ endif  # BOARD_USES_PRODUCTIMAGE
 
 # ----------------------------------------------------------------
 # odm build.prop
-INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/build.prop
+INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_ODM_BUILD_PROP_TARGET)
 
 FINAL_ODM_BUILD_PROPERTIES += \
