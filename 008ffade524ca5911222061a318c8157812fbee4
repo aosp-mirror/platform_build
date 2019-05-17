@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "33c84610_a3c319e9",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-05-17T17:30:56Z",
+      "side": 1,
+      "message": "This seems like the wrong place to do this.  We should always be creating the rule for the NOTICE file, but if the module is not installed then nothing will depend on the rule and the NOTICE file will not be copied.",
+      "revId": "008ffade524ca5911222061a318c8157812fbee4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9d9d6807_498a6d50",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-05-17T17:30:56Z",
+      "side": 1,
+      "message": "I don\u0027t like using LOCAL_SOONG_LINK_TYPE for this, can you add an explicit flag (LOCAL_SOONG_IS_CURRENT_VNDK_MODULE?)",
+      "revId": "008ffade524ca5911222061a318c8157812fbee4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
