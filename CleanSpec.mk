@@ -631,6 +631,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/target/common/obj/framework.aidl)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/adb_debug.prop)
 
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libjavacrypto.so)
+
+# Clean up old location of soft OMX plugins
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libstagefright_soft*)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

@@ -85,6 +85,11 @@ PRODUCT_PACKAGES += \
     libnl \
     libprotobuf-cpp-full \
 
+# Camera service uses 'libdepthphoto' for adding dynamic depth
+# metadata inside depth jpegs.
+PRODUCT_PACKAGES += \
+    libdepthphoto \
+
 PRODUCT_PACKAGES_DEBUG += \
     avbctl \
     bootctl \
