@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1ea2fb55_f0a681f2",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2019-05-18T00:43:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33c84610_a3c319e9",
+      "revId": "008ffade524ca5911222061a318c8157812fbee4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9d9d6807_498a6d50",
         "filename": "core/soong_cc_prebuilt.mk",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2019-05-17T17:30:56Z",
       "side": 1,
       "message": "I don\u0027t like using LOCAL_SOONG_LINK_TYPE for this, can you add an explicit flag (LOCAL_SOONG_IS_CURRENT_VNDK_MODULE?)",
+      "revId": "008ffade524ca5911222061a318c8157812fbee4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8377bc21_0eddc24c",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2019-05-18T00:43:30Z",
+      "side": 1,
+      "message": "Or I\u0027m thinking about moving this \"LOCAL_UNINSTALLABLE_MODULE :\u003d true\" to Soong, which knows better about the relevant information. But it requires passing \"TARGET_SKIP_CURRENT_VNDK\" to Soong. What do you think, Colin?",
+      "parentUuid": "9d9d6807_498a6d50",
       "revId": "008ffade524ca5911222061a318c8157812fbee4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
