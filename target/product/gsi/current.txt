@@ -236,7 +236,6 @@ VNDK-core: libminijail.so
 VNDK-core: libmkbootimg_abi_check.so
 VNDK-core: libnetutils.so
 VNDK-core: libnl.so
-VNDK-core: libopus.so
 VNDK-core: libpcre2.so
 VNDK-core: libpiex.so
 VNDK-core: libpng.so
@@ -251,11 +250,8 @@ VNDK-core: libsoftkeymasterdevice.so
 VNDK-core: libspeexresampler.so
 VNDK-core: libsqlite.so
 VNDK-core: libssl.so
-VNDK-core: libstagefright_amrnb_common.so
 VNDK-core: libstagefright_bufferpool@2.0.so
 VNDK-core: libstagefright_bufferqueue_helper.so
-VNDK-core: libstagefright_enc_common.so
-VNDK-core: libstagefright_flacdec.so
 VNDK-core: libstagefright_foundation.so
 VNDK-core: libstagefright_omx.so
 VNDK-core: libstagefright_omx_utils.so
@@ -265,7 +261,6 @@ VNDK-core: libtinyalsa.so
 VNDK-core: libtinyxml2.so
 VNDK-core: libui.so
 VNDK-core: libusbhost.so
-VNDK-core: libvorbisidec.so
 VNDK-core: libwifi-system-iface.so
 VNDK-core: libxml2.so
 VNDK-core: libyuv.so
