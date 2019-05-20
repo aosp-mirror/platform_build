@@ -3381,8 +3381,12 @@ droid_targets: check-all-partition-sizes
 
 .PHONY: check-all-partition-sizes check-all-partition-sizes-nodeps
 
+check_all_partition_sizes_file := $(call intermediates-dir-for,PACKAGING,check-all-partition-sizes)/timestamp
+
+check-all-partition-sizes: $(check_all_partition_sizes_file)
+
 # Add image dependencies so that generated_*_image_info.txt are written before checking.
-check-all-partition-sizes: \
+$(check_all_partition_sizes_file): \
     build/make/tools/releasetools/sparse_img.py \
     $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
 
@@ -3450,7 +3454,12 @@ define check-all-partition-sizes-target
   fi
 endef
 
-check-all-partition-sizes check-all-partition-sizes-nodeps:
+$(check_all_partition_sizes_file):
+	$(call check-all-partition-sizes-target)
+	$(call check-super-partition-size)
+	touch $@
+
+check-all-partition-sizes-nodeps:
 	$(call check-all-partition-sizes-target)
 	$(call check-super-partition-size)
 
