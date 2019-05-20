@@ -493,6 +493,12 @@ ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
   endif
 endif
 
+ifdef BOARD_PREBUILT_DTBIMAGE_DIR
+  ifneq ($(BOARD_INCLUDE_DTB_IN_BOOTIMG),true)
+    $(error BOARD_PREBUILT_DTBIMAGE_DIR with 'BOARD_INCLUDE_DTB_IN_BOOTIMG != true' is not supported)
+  endif
+endif
+
 # Check BOARD_VNDK_VERSION
 define check_vndk_version
   $(eval vndk_path := prebuilts/vndk/v$(1)) \
