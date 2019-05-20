@@ -69,6 +69,24 @@
       "revId": "008ffade524ca5911222061a318c8157812fbee4",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e4056493_d3067459",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-05-20T08:11:13Z",
+      "side": 1,
+      "message": "As Colin commented link type does not show if the VNDK module is current or not but only shows if the module is VNDK.\nI recommend to define LOCAL_SOONG_VNDK_VERSION to indicate the target VNDK version of the module.",
+      "parentUuid": "8377bc21_0eddc24c",
+      "revId": "008ffade524ca5911222061a318c8157812fbee4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
