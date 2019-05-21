@@ -29,8 +29,8 @@ TARGET_CPU_VARIANT := generic
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 
-include build/make/target/board/BoardConfigEmuCommon.mk
 include build/make/target/board/BoardConfigGsiCommon.mk
+include build/make/target/board/BoardConfigEmuCommon.mk
 
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 

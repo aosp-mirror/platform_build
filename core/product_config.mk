@@ -376,6 +376,23 @@ ifndef PRODUCT_BUILD_SUPER_PARTITION
   PRODUCT_BUILD_SUPER_PARTITION := $(PRODUCT_USE_DYNAMIC_PARTITIONS)
 endif
 
+ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),)
+  ifdef PRODUCT_SHIPPING_API_LEVEL
+    ifeq (true,$(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29))
+      PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := true
+    endif
+  endif
+endif
+
+# If build command defines OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS,
+# override PRODUCT_EXTRA_VNDK_VERSIONS with it.
+ifdef OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS
+  PRODUCT_EXTRA_VNDK_VERSIONS := $(OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS)
+endif
+
+$(KATI_obsolete_var OVERRIDE_PRODUCT_EXTRA_VNDK_VERSIONS \
+    ,Use PRODUCT_EXTRA_VNDK_VERSIONS instead)
+
 define product-overrides-config
 $$(foreach rule,$$(PRODUCT_$(1)_OVERRIDES),\
     $$(if $$(filter 2,$$(words $$(subst :,$$(space),$$(rule)))),,\
@@ -390,7 +407,6 @@ $(foreach var, \
 
 # Macro to use below. $(1) is the name of the partition
 define product-build-image-config
-PRODUCT_BUILD_$(1)_IMAGE := $$(firstword $$(PRODUCT_BUILD_$(1)_IMAGE))
 ifneq ($$(filter-out true false,$$(PRODUCT_BUILD_$(1)_IMAGE)),)
     $$(error Invalid PRODUCT_BUILD_$(1)_IMAGE: $$(PRODUCT_BUILD_$(1)_IMAGE) -- true false and empty are supported)
 endif
@@ -406,7 +422,9 @@ $(foreach image, \
     ODM \
     CACHE \
     RAMDISK \
-    USERDATA, \
+    USERDATA \
+    BOOT \
+    RECOVERY, \
   $(eval $(call product-build-image-config,$(image))))
 
 product-build-image-config :=

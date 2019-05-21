@@ -25,3 +25,12 @@ TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := generic
 
 include build/make/target/board/BoardConfigMainlineCommon.mk
+
+TARGET_NO_KERNEL := true
+
+# Build generic A/B format system-only OTA.
+AB_OTA_UPDATER := true
+AB_OTA_PARTITIONS := system
+
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4

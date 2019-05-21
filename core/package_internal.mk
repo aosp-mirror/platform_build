@@ -171,12 +171,7 @@ ifneq ($(all_assets),)
 need_compile_asset := true
 endif
 
-ifdef LOCAL_AAPT2_ONLY
-LOCAL_USE_AAPT2 := true
-endif
-
 my_res_package :=
-ifeq ($(LOCAL_USE_AAPT2),true)
 # In aapt2 the last takes precedence.
 my_resource_dirs := $(call reverse-list,$(LOCAL_RESOURCE_DIR))
 my_res_dir :=
@@ -210,29 +205,11 @@ all_resources := $(strip $(my_res_resources) $(my_overlay_resources))
 my_res_package := $(intermediates)/package-res.apk
 LOCAL_INTERMEDIATE_TARGETS += $(my_res_package)
 
-ifeq ($(LOCAL_USE_AAPT2),true)
-  my_bundle_module := $(intermediates)/base.zip
-  LOCAL_INTERMEDIATE_TARGETS += $(my_bundle_module)
-endif
+my_bundle_module := $(intermediates)/base.zip
+LOCAL_INTERMEDIATE_TARGETS += $(my_bundle_module)
 
 # Always run aapt2, because we need to at least compile the AndroidManifest.xml.
 need_compile_res := true
-
-else  # LOCAL_USE_AAPT2
-all_resources := $(strip \
-    $(foreach dir, $(LOCAL_RESOURCE_DIR), \
-      $(addprefix $(dir)/, \
-        $(patsubst res/%,%, \
-          $(call find-subdir-assets,$(dir)) \
-         ) \
-       ) \
-     ))
-
-ifdef LOCAL_PACKAGE_SPLITS
-LOCAL_AAPT_FLAGS += $(addprefix --split ,$(LOCAL_PACKAGE_SPLITS))
-endif
-
-endif  # LOCAL_USE_AAPT2
 
 ifneq ($(all_resources),)
   need_compile_res := true
@@ -369,71 +346,24 @@ $(R_file_stamp) $(my_res_package): PRIVATE_MANIFEST_PACKAGE_NAME := $(LOCAL_MANI
 $(R_file_stamp) $(my_res_package): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_MANIFEST_INSTRUMENTATION_FOR)
 
 ###############################
-## AAPT/AAPT2
+## AAPT2
 
-ifeq ($(LOCAL_USE_AAPT2),true)
-  my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res
-  ifneq (,$(filter-out current,$(renderscript_target_api)))
-    ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
-      my_generated_res_zips := $(rs_generated_res_zip)
-    endif  # renderscript_target_api < 21
-  endif  # renderscript_target_api is set
-  my_asset_dirs := $(LOCAL_ASSET_DIR)
-  my_full_asset_paths := $(all_assets)
+my_compiled_res_base_dir := $(intermediates.COMMON)/flat-res
+ifneq (,$(filter-out current,$(renderscript_target_api)))
+  ifneq ($(call math_gt_or_eq,$(renderscript_target_api),21),true)
+    my_generated_res_zips := $(rs_generated_res_zip)
+  endif  # renderscript_target_api < 21
+endif  # renderscript_target_api is set
+my_asset_dirs := $(LOCAL_ASSET_DIR)
+my_full_asset_paths := $(all_assets)
 
-  # Add AAPT2 link specific flags.
-  $(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
-  ifndef LOCAL_AAPT_NAMESPACES
-    $(my_res_package): PRIVATE_AAPT_FLAGS += --no-static-lib-packages
-  endif
+# Add AAPT2 link specific flags.
+$(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
+ifndef LOCAL_AAPT_NAMESPACES
+  $(my_res_package): PRIVATE_AAPT_FLAGS += --no-static-lib-packages
+endif
 
-  include $(BUILD_SYSTEM)/aapt2.mk
-else  # LOCAL_USE_AAPT2
-
-  my_srcjar := $(intermediates.COMMON)/aapt.srcjar
-  LOCAL_SRCJARS += $(my_srcjar)
-  $(R_file_stamp): PRIVATE_SRCJAR := $(my_srcjar)
-  $(R_file_stamp): PRIVATE_JAVA_GEN_DIR := $(intermediates.COMMON)/aapt
-  $(R_file_stamp): .KATI_IMPLICIT_OUTPUTS := $(my_srcjar)
-  # Since we don't know where the real R.java file is going to end up,
-  # we need to use another file to stand in its place.  We'll just
-  # copy the generated file to src/R.stamp, which means it will
-  # have the same contents and timestamp as the actual file.
-  #
-  # At the same time, this will copy the R.java file to a central
-  # 'R' directory to make it easier to add the files to an IDE.
-  #
-
-  $(R_file_stamp): PRIVATE_RESOURCE_PUBLICS_OUTPUT := \
-			$(intermediates.COMMON)/public_resources.xml
-  $(R_file_stamp): PRIVATE_PROGUARD_OPTIONS_FILE := $(proguard_options_file)
-  $(R_file_stamp): PRIVATE_RESOURCE_LIST := $(all_res_assets)
-  $(R_file_stamp): $(all_res_assets) $(full_android_manifest) $(rs_generated_res_zip) $(AAPT) $(SOONG_ZIP) | $(ACP)
-	@echo "target R.java/Manifest.java: $(PRIVATE_MODULE) ($@)"
-	@rm -rf $@ && mkdir -p $(dir $@)
-	$(create-resource-java-files)
-	$(call find-generated-R.java,$(PRIVATE_JAVA_GEN_DIR),$@)
-
-  $(proguard_options_file): $(R_file_stamp)
-
-  ifdef LOCAL_EXPORT_PACKAGE_RESOURCES
-    # Put this module's resources into a PRODUCT-agnositc package that
-    # other packages can use to build their own PRODUCT-agnostic R.java (etc.)
-    # files.
-    resource_export_package := $(intermediates.COMMON)/package-export.apk
-    $(R_file_stamp): $(resource_export_package)
-
-    # create-assets-package looks at PRODUCT_AAPT_CONFIG, but this target
-    # can't know anything about PRODUCT.  Clear it out just for this target.
-    $(resource_export_package): PRIVATE_PRODUCT_AAPT_CONFIG :=
-    $(resource_export_package): PRIVATE_PRODUCT_AAPT_PREF_CONFIG :=
-    $(resource_export_package): PRIVATE_RESOURCE_LIST := $(all_res_assets)
-    $(resource_export_package): $(all_res_assets) $(full_android_manifest) $(rs_generated_res_zip) $(AAPT)
-	@echo "target Export Resources: $(PRIVATE_MODULE) ($@)"
-	$(call create-assets-package,$@)
-  endif
-
-endif  # LOCAL_USE_AAPT2
+include $(BUILD_SYSTEM)/aapt2.mk
 
 endif  # need_compile_res
 
@@ -496,9 +426,7 @@ $(resource_export_package) $(R_file_stamp) $(LOCAL_BUILT_MODULE): $(all_library_
 $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_AAPT_INCLUDES := $(all_library_res_package_exports)
 
-ifeq ($(LOCAL_USE_AAPT2),true)
 $(my_res_package) : $(all_library_res_package_export_deps)
-endif
 
 # These four are set above for $(R_stamp_file) and $(my_res_package), but
 # $(LOCAL_BUILT_MODULE) is not set before java.mk, so they have to be set again
@@ -595,13 +523,8 @@ endif
 $(LOCAL_BUILT_MODULE): PRIVATE_RESOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/resources
 $(LOCAL_BUILT_MODULE) : $(jni_shared_libraries)
 $(LOCAL_BUILT_MODULE) : $(JAR_ARGS) $(SOONG_ZIP) $(MERGE_ZIPS) $(ZIP2ZIP)
-ifeq ($(LOCAL_USE_AAPT2),true)
 $(LOCAL_BUILT_MODULE): PRIVATE_RES_PACKAGE := $(my_res_package)
 $(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2) | $(ACP)
-else
-$(LOCAL_BUILT_MODULE): PRIVATE_RESOURCE_LIST := $(all_res_assets)
-$(LOCAL_BUILT_MODULE) : $(all_res_assets) $(full_android_manifest) $(AAPT) $(ZIPALIGN)
-endif  # LOCAL_USE_AAPT2
 ifdef LOCAL_COMPRESSED_MODULE
 $(LOCAL_BUILT_MODULE) : $(MINIGZIP)
 endif
@@ -622,11 +545,7 @@ $(LOCAL_BUILT_MODULE):
 	@echo "target Package: $(PRIVATE_MODULE) ($@)"
 	rm -rf $@.parts
 	mkdir -p $@.parts
-ifeq ($(LOCAL_USE_AAPT2),true)
 	cp -f $(PRIVATE_RES_PACKAGE) $@.parts/apk.zip
-else  # ! LOCAL_USE_AAPT2
-	$(call create-assets-package,$@.parts/apk.zip)
-endif  # LOCAL_USE_AAPT2
 ifneq ($(jni_shared_libraries),)
 	$(call create-jni-shared-libs-package,$@.parts/jni.zip,$(PRIVATE_USE_EMBEDDED_NATIVE_LIBS))
 endif
@@ -645,11 +564,7 @@ ifeq (true, $(LOCAL_UNCOMPRESS_DEX))
 endif
 # Run appcompat before stripping the classes.dex file.
 ifeq ($(module_run_appcompat),true)
-ifeq ($(LOCAL_USE_AAPT2),true)
-	$(call appcompat-header, aapt2)
-else
 	$(appcompat-header)
-endif
 	$(run-appcompat)
 endif  # module_run_appcompat
 ifdef LOCAL_DEX_PREOPT
@@ -665,63 +580,57 @@ ifdef LOCAL_COMPRESSED_MODULE
 	$(compress-package)
 endif  # LOCAL_COMPRESSED_MODULE
 
-ifeq ($(LOCAL_USE_AAPT2),true)
-  my_package_res_pb := $(intermediates)/package-res.pb.apk
-  $(my_package_res_pb): $(my_res_package) $(AAPT2)
+my_package_res_pb := $(intermediates)/package-res.pb.apk
+$(my_package_res_pb): $(my_res_package) $(AAPT2)
 	$(AAPT2) convert --output-format proto $< -o $@
 
-  $(my_bundle_module): $(my_package_res_pb)
-  $(my_bundle_module): PRIVATE_RES_PACKAGE := $(my_package_res_pb)
+$(my_bundle_module): $(my_package_res_pb)
+$(my_bundle_module): PRIVATE_RES_PACKAGE := $(my_package_res_pb)
 
-  $(my_bundle_module): $(jni_shared_libraries)
-  $(my_bundle_module): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries_with_abis)
-  $(my_bundle_module): PRIVATE_JNI_SHARED_LIBRARIES_ABI := $(jni_shared_libraries_abis)
+$(my_bundle_module): $(jni_shared_libraries)
+$(my_bundle_module): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries_with_abis)
+$(my_bundle_module): PRIVATE_JNI_SHARED_LIBRARIES_ABI := $(jni_shared_libraries_abis)
 
-  ifneq ($(full_classes_jar),)
-    $(my_bundle_module): PRIVATE_DEX_FILE := $(built_dex)
-    # Use the jarjar processed archive as the initial package file.
-    $(my_bundle_module): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar)
-    $(my_bundle_module): $(built_dex)
-  else
-    $(my_bundle_module): PRIVATE_DEX_FILE :=
-    $(my_bundle_module): PRIVATE_SOURCE_ARCHIVE :=
-  endif # full_classes_jar
+ifneq ($(full_classes_jar),)
+  $(my_bundle_module): PRIVATE_DEX_FILE := $(built_dex)
+  # Use the jarjar processed archive as the initial package file.
+  $(my_bundle_module): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar)
+  $(my_bundle_module): $(built_dex)
+else
+  $(my_bundle_module): PRIVATE_DEX_FILE :=
+  $(my_bundle_module): PRIVATE_SOURCE_ARCHIVE :=
+endif # full_classes_jar
 
-  $(my_bundle_module): $(MERGE_ZIPS) $(SOONG_ZIP) $(ZIP2ZIP)
+$(my_bundle_module): $(MERGE_ZIPS) $(SOONG_ZIP) $(ZIP2ZIP)
 	@echo "target Bundle: $(PRIVATE_MODULE) ($@)"
 	rm -rf $@.parts
 	mkdir -p $@.parts
 	$(ZIP2ZIP) -i $(PRIVATE_RES_PACKAGE) -o $@.parts/apk.zip AndroidManifest.xml:manifest/AndroidManifest.xml resources.pb "res/**/*" "assets/**/*"
-        ifneq ($(jni_shared_libraries),)
+      ifneq ($(jni_shared_libraries),)
 	  $(call create-jni-shared-libs-package,$@.parts/jni.zip)
-        endif
-        ifeq ($(full_classes_jar),)
-        # We don't build jar, need to add the Java resources here.
+      endif
+      ifeq ($(full_classes_jar),)
+      # We don't build jar, need to add the Java resources here.
 	  $(if $(PRIVATE_EXTRA_JAR_ARGS),\
 	    $(call create-java-resources-jar,$@.parts/res.zip) && \
 	    $(ZIP2ZIP) -i $@.parts/res.zip -o $@.parts/res.zip.tmp "**/*:root/" && \
 	    mv -f $@.parts/res.zip.tmp $@.parts/res.zip)
-        else  # full_classes_jar
+      else  # full_classes_jar
 	  $(call create-dex-jar,$@.parts/dex.zip,$(PRIVATE_DEX_FILE))
 	  $(ZIP2ZIP) -i $@.parts/dex.zip -o $@.parts/dex.zip.tmp "classes*.dex:dex/"
 	  mv -f $@.parts/dex.zip.tmp $@.parts/dex.zip
 	  $(call extract-resources-jar,$@.parts/res.zip,$(PRIVATE_SOURCE_ARCHIVE))
 	  $(ZIP2ZIP) -i $@.parts/res.zip -o $@.parts/res.zip.tmp "**/*:root/"
 	  mv -f $@.parts/res.zip.tmp $@.parts/res.zip
-        endif  # full_classes_jar
+      endif  # full_classes_jar
 	$(MERGE_ZIPS) $@ $@.parts/*.zip
 	rm -rf $@.parts
-  ALL_MODULES.$(LOCAL_MODULE).BUNDLE := $(my_bundle_module)
-endif
+ALL_MODULES.$(LOCAL_MODULE).BUNDLE := $(my_bundle_module)
 
-###############################
-## Build dpi-specific apks, if it's apps_only build.
 ifdef TARGET_BUILD_APPS
-ifdef LOCAL_DPI_VARIANTS
-$(foreach d, $(LOCAL_DPI_VARIANTS), \
-  $(eval my_dpi := $(d)) \
-  $(eval include $(BUILD_SYSTEM)/dpi_specific_apk.mk))
-endif
+  ifdef LOCAL_DPI_VARIANTS
+    $(call pretty-error,Building DPI-specific APKs is no longer supported)
+  endif
 endif
 
 ###############################

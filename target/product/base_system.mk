@@ -122,8 +122,6 @@ PRODUCT_PACKAGES += \
     libcamera2ndk \
     libcamera_client \
     libcameraservice \
-    libc_malloc_debug \
-    libc_malloc_hooks \
     libcutils \
     libdl.bootstrap \
     libdrmframework \
@@ -210,6 +208,7 @@ PRODUCT_PACKAGES += \
     netd \
     NetworkStack \
     org.apache.http.legacy \
+    otacerts \
     perfetto \
     ping \
     ping6 \
@@ -267,7 +266,7 @@ PRODUCT_PACKAGES += \
 
 # VINTF data for system image
 PRODUCT_PACKAGES += \
-    framework_manifest.xml \
+    system_manifest.xml \
     system_compatibility_matrix.xml \
 
 # Host tools to install
@@ -329,7 +328,8 @@ PRODUCT_COPY_FILES += \
 
 # Add the compatibility library that is needed when android.test.base
 # is removed from the bootclasspath.
-ifeq ($(REMOVE_ATB_FROM_BCP),true)
+# Default to excluding android.test.base from the bootclasspath.
+ifneq ($(REMOVE_ATB_FROM_BCP),false)
 PRODUCT_PACKAGES += framework-atb-backward-compatibility
 PRODUCT_BOOT_JARS += framework-atb-backward-compatibility
 else
@@ -355,6 +355,7 @@ PRODUCT_PACKAGES_DEBUG := \
     showmap \
     sqlite3 \
     ss \
+    start_with_lockagent \
     strace \
     su \
     sanitizer-status \

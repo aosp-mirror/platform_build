@@ -18,6 +18,8 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/handheld_system.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/telephony_system.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_default.mk)
+# Enable updating of APEXes
+#$(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 # Add adb keys to debuggable AOSP builds (if they exist)
 $(call inherit-product-if-exists, vendor/google/security/adb/vendor_key.mk)
 
@@ -76,6 +78,7 @@ PRODUCT_PACKAGES += \
     android.hardware.secure_element@1.0 \
     android.hardware.wifi@1.0 \
     libaudio-resampler \
+    libdrm \
     liblogwrap \
     liblz4 \
     libminui \

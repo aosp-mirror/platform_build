@@ -1,5 +1,9 @@
 # Build System Changes for Android.mk Writers
 
+## Deprecation of `BUILD_*` module types
+
+See [build/make/Deprecation.md](Deprecation.md) for the current status.
+
 ## `PRODUCT_HOST_PACKAGES` split from `PRODUCT_PACKAGES` {#PRODUCT_HOST_PACKAGES}
 
 Previously, adding a module to `PRODUCT_PACKAGES` that supported both the host

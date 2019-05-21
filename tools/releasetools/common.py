@@ -93,9 +93,11 @@ BLOCK_SIZE = 4096
 # Values for "certificate" in apkcerts that mean special things.
 SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 
-# The partitions allowed to be signed by AVB (Android verified boot 2.0).
-AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'product',
-                  'product_services', 'dtbo', 'odm')
+# The partitions allowed to be signed by AVB (Android Verified Boot 2.0). Note
+# that system_other is not in the list because we don't want to include its
+# descriptor into vbmeta.img.
+AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'product_services',
+                  'recovery', 'system', 'vendor')
 
 # Partitions that should have their care_map added to META/care_map.pb
 PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product_services',
@@ -330,10 +332,8 @@ def LoadInfoDict(input_file, repacking=False):
     raise ValueError("Failed to find 'fstab_version'")
 
   if repacking:
-    # We carry a copy of file_contexts.bin under META/. If not available, search
-    # BOOT/RAMDISK/. Note that sometimes we may need a different file to build
-    # images than the one running on device, in that case, we must have the one
-    # for image generation copied to META/.
+    # "selinux_fc" should point to the file_contexts file (file_contexts.bin)
+    # under META/.
     fc_basename = os.path.basename(d.get("selinux_fc", "file_contexts"))
     fc_config = os.path.join(input_file, "META", fc_basename)
     assert os.path.exists(fc_config)
@@ -824,6 +824,77 @@ def UnzipTemp(filename, pattern=None):
   return tmp
 
 
+def GetUserImage(which, tmpdir, input_zip,
+                 info_dict=None,
+                 allow_shared_blocks=None,
+                 hashtree_info_generator=None,
+                 reset_file_map=False):
+  """Returns an Image object suitable for passing to BlockImageDiff.
+
+  This function loads the specified image from the given path. If the specified
+  image is sparse, it also performs additional processing for OTA purpose. For
+  example, it always adds block 0 to clobbered blocks list. It also detects
+  files that cannot be reconstructed from the block list, for whom we should
+  avoid applying imgdiff.
+
+  Args:
+    which: The partition name.
+    tmpdir: The directory that contains the prebuilt image and block map file.
+    input_zip: The target-files ZIP archive.
+    info_dict: The dict to be looked up for relevant info.
+    allow_shared_blocks: If image is sparse, whether having shared blocks is
+        allowed. If none, it is looked up from info_dict.
+    hashtree_info_generator: If present and image is sparse, generates the
+        hashtree_info for this sparse image.
+    reset_file_map: If true and image is sparse, reset file map before returning
+        the image.
+  Returns:
+    A Image object. If it is a sparse image and reset_file_map is False, the
+    image will have file_map info loaded.
+  """
+  if info_dict == None:
+    info_dict = LoadInfoDict(input_zip)
+
+  is_sparse = info_dict.get("extfs_sparse_flag")
+
+  # When target uses 'BOARD_EXT4_SHARE_DUP_BLOCKS := true', images may contain
+  # shared blocks (i.e. some blocks will show up in multiple files' block
+  # list). We can only allocate such shared blocks to the first "owner", and
+  # disable imgdiff for all later occurrences.
+  if allow_shared_blocks is None:
+    allow_shared_blocks = info_dict.get("ext4_share_dup_blocks") == "true"
+
+  if is_sparse:
+    img = GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
+                         hashtree_info_generator)
+    if reset_file_map:
+      img.ResetFileMap()
+    return img
+  else:
+    return GetNonSparseImage(which, tmpdir, hashtree_info_generator)
+
+
+def GetNonSparseImage(which, tmpdir, hashtree_info_generator=None):
+  """Returns a Image object suitable for passing to BlockImageDiff.
+
+  This function loads the specified non-sparse image from the given path.
+
+  Args:
+    which: The partition name.
+    tmpdir: The directory that contains the prebuilt image and block map file.
+  Returns:
+    A Image object.
+  """
+  path = os.path.join(tmpdir, "IMAGES", which + ".img")
+  mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
+
+  # The image and map files must have been created prior to calling
+  # ota_from_target_files.py (since LMP).
+  assert os.path.exists(path) and os.path.exists(mappath)
+
+  return blockimgdiff.FileImage(path, hashtree_info_generator=
+                                hashtree_info_generator)
+
 def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
                    hashtree_info_generator=None):
   """Returns a SparseImage object suitable for passing to BlockImageDiff.
@@ -834,7 +905,7 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
   reconstructed from the block list, for whom we should avoid applying imgdiff.
 
   Args:
-    which: The partition name, which must be "system" or "vendor".
+    which: The partition name, e.g. "system", "vendor".
     tmpdir: The directory that contains the prebuilt image and block map file.
     input_zip: The target-files ZIP archive.
     allow_shared_blocks: Whether having shared blocks is allowed.
@@ -843,8 +914,6 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
   Returns:
     A SparseImage object, with file_map info loaded.
   """
-  assert which in ("system", "vendor")
-
   path = os.path.join(tmpdir, "IMAGES", which + ".img")
   mappath = os.path.join(tmpdir, "IMAGES", which + ".map")
 
@@ -2070,7 +2139,7 @@ class BlockDifference(object):
 
 
 DataImage = blockimgdiff.DataImage
-
+EmptyImage = blockimgdiff.EmptyImage
 
 # map recovery.fstab's fs_types to mount/format "partition types"
 PARTITION_TYPES = {

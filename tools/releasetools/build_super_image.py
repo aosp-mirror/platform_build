@@ -58,16 +58,8 @@ logger = logging.getLogger(__name__)
 UNZIP_PATTERN = ["IMAGES/*", "META/*"]
 
 
-def GetPartitionSizeFromImage(img):
-  try:
-    simg = sparse_img.SparseImage(img)
-    return simg.blocksize * simg.total_blocks
-  except ValueError:
-    return os.path.getsize(img)
-
-
 def GetArgumentsForImage(partition, group, image=None):
-  image_size = GetPartitionSizeFromImage(image) if image else 0
+  image_size = sparse_img.GetImagePartitionSize(image) if image else 0
 
   cmd = ["--partition",
          "{}:readonly:{}:{}".format(partition, image_size, group)]
@@ -135,7 +127,7 @@ def BuildSuperImageFromDict(info_dict, output):
 
       cmd += GetArgumentsForImage(partition + "_b", group + "_b", other_image)
 
-  if has_image:
+  if info_dict.get("build_non_sparse_super_partition") != "true":
     cmd.append("--sparse")
 
   cmd += ["--output", output]
