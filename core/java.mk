@@ -108,7 +108,7 @@ aidl_preprocess_import :=
 ifdef LOCAL_SDK_VERSION
 ifneq ($(filter current system_current test_current core_current, $(LOCAL_SDK_VERSION)$(TARGET_BUILD_APPS_USE_PREBUILT_SDK)),)
   # LOCAL_SDK_VERSION is current and no TARGET_BUILD_APPS
-  aidl_preprocess_import := $(TARGET_OUT_COMMON_INTERMEDIATES)/framework.aidl
+  aidl_preprocess_import := $(FRAMEWORK_AIDL)
 else
   aidl_preprocess_import := $(call resolve-prebuilt-sdk-aidl-path,$(LOCAL_SDK_VERSION))
 endif # not current or system_current
@@ -240,11 +240,12 @@ java_sources_deps := \
 $(java_source_list_file): $(java_sources_deps)
 	$(write-java-source-list)
 
+ALL_MODULES.$(my_register_name).SRCJARS := $(LOCAL_SRCJARS)
+
 ifneq ($(TURBINE_ENABLED),false)
 
 $(full_classes_turbine_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
 $(full_classes_turbine_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
-$(full_classes_turbine_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_turbine_jar): \
     $(java_source_list_file) \
     $(java_sources_deps) \
@@ -278,7 +279,6 @@ $(full_classes_compiled_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annota
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_FILES := $(LOCAL_JAR_EXCLUDE_FILES)
 $(full_classes_compiled_jar): PRIVATE_JAR_PACKAGES := $(LOCAL_JAR_PACKAGES)
 $(full_classes_compiled_jar): PRIVATE_JAR_EXCLUDE_PACKAGES := $(LOCAL_JAR_EXCLUDE_PACKAGES)
-$(full_classes_compiled_jar): PRIVATE_DONT_DELETE_JAR_META_INF := $(LOCAL_DONT_DELETE_JAR_META_INF)
 $(full_classes_compiled_jar): PRIVATE_JAVA_SOURCE_LIST := $(java_source_list_file)
 $(full_classes_compiled_jar): PRIVATE_ALL_JAVA_HEADER_LIBRARIES := $(full_java_header_libs)
 $(full_classes_compiled_jar): PRIVATE_SRCJARS := $(LOCAL_SRCJARS)
@@ -311,7 +311,7 @@ $(full_classes_combined_jar): $(full_classes_compiled_jar) \
             $(PRIVATE_JAR_MANIFEST) > $(dir $@)/manifest.mf)
 	$(MERGE_ZIPS) -j --ignore-duplicates $(if $(PRIVATE_JAR_MANIFEST),-m $(dir $@)/manifest.mf) \
             $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,-stripDir META-INF -zipToNotStrip $<) \
-            $@ $< $(call reverse-list,$(PRIVATE_STATIC_JAVA_LIBRARIES))
+            $@ $< $(PRIVATE_STATIC_JAVA_LIBRARIES)
 
 ifdef LOCAL_JAR_PROCESSOR
 # LOCAL_JAR_PROCESSOR_ARGS must be evaluated here to set up the rule-local
@@ -395,6 +395,13 @@ else
   # that would break apps that use APIs removed from the current SDK.
   my_proguard_sdk_raise := $(call java-lib-header-files,$(TARGET_DEFAULT_BOOTCLASSPATH_LIBRARIES) $(TARGET_DEFAULT_JAVA_LIBRARIES))
 endif
+ifdef BOARD_SYSTEMSDK_VERSIONS
+ifneq (,$(filter true,$(LOCAL_VENDOR_MODULE) $(LOCAL_ODM_MODULE) $(LOCAL_PROPRIETARY_MODULE)))
+  # But for vendor or odm apks, don't raise SDK as the apks are required to
+  # use SDK APIs only
+  my_proguard_sdk_raise :=
+endif
+endif
 endif
 
 legacy_proguard_flags := $(addprefix -libraryjars ,$(my_proguard_sdk_raise) \
@@ -415,10 +422,8 @@ ifneq ($(LOCAL_INSTRUMENTATION_FOR)$(filter tests,$(LOCAL_MODULE_TAGS)),)
 common_proguard_flags += -dontshrink # don't shrink tests by default
 endif # test package
 ifneq ($(LOCAL_PROGUARD_ENABLED),custom)
-  ifeq ($(LOCAL_USE_AAPT2),true)
-    common_proguard_flag_files += $(foreach l,$(LOCAL_STATIC_ANDROID_LIBRARIES),\
-        $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/export_proguard_flags)
-  endif
+  common_proguard_flag_files += $(foreach l,$(LOCAL_STATIC_ANDROID_LIBRARIES),\
+      $(call intermediates-dir-for,JAVA_LIBRARIES,$(l),,COMMON)/export_proguard_flags)
 endif
 ifneq ($(common_proguard_flag_files),)
 common_proguard_flags += $(addprefix -include , $(common_proguard_flag_files))

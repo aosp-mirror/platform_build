@@ -113,21 +113,32 @@ def GetCareMap(which, imgname):
 
   Returns:
     (which, care_map_ranges): care_map_ranges is the raw string of the care_map
-    RangeSet.
+    RangeSet; or None.
   """
   assert which in common.PARTITIONS_WITH_CARE_MAP
 
-  simg = sparse_img.SparseImage(imgname)
-  care_map_ranges = simg.care_map
-  size_key = which + "_image_size"
-  image_size = OPTIONS.info_dict.get(size_key)
-  if image_size:
-    # excludes the verity metadata blocks of the given image. When AVB is enabled,
-    # this size is the max image size returned by the AVB tool
-    image_blocks = int(image_size) / 4096 - 1
-    assert image_blocks > 0, "blocks for {} must be positive".format(which)
-    care_map_ranges = care_map_ranges.intersect(
+  # which + "_image_size" contains the size that the actual filesystem image
+  # resides in, which is all that needs to be verified. The additional blocks in
+  # the image file contain verity metadata, by reading which would trigger
+  # invalid reads.
+  image_size = OPTIONS.info_dict.get(which + "_image_size")
+  if not image_size:
+    return None
+
+  image_blocks = int(image_size) / 4096 - 1
+  assert image_blocks > 0, "blocks for {} must be positive".format(which)
+
+  # For sparse images, we will only check the blocks that are listed in the care
+  # map, i.e. the ones with meaningful data.
+  if "extfs_sparse_flag" in OPTIONS.info_dict:
+    simg = sparse_img.SparseImage(imgname)
+    care_map_ranges = simg.care_map.intersect(
         rangelib.RangeSet("0-{}".format(image_blocks)))
+
+  # Otherwise for non-sparse images, we read all the blocks in the filesystem
+  # image.
+  else:
+    care_map_ranges = rangelib.RangeSet("0-{}".format(image_blocks))
 
   return [which, care_map_ranges.to_string_raw()]
 
@@ -581,7 +592,11 @@ def AddCareMapForAbOta(output_zip, ab_partitions, image_paths):
         OPTIONS.info_dict.get(avb_hashtree_enable) == "true"):
       image_path = image_paths[partition]
       assert os.path.exists(image_path)
-      care_map_list += GetCareMap(partition, image_path)
+
+      care_map = GetCareMap(partition, image_path)
+      if not care_map:
+        continue
+      care_map_list += care_map
 
       # adds fingerprint field to the care_map
       build_props = OPTIONS.info_dict.get(partition + ".build.prop", {})
@@ -715,6 +730,7 @@ def AddImagesToTargetFiles(filename):
   OPTIONS.info_dict = common.LoadInfoDict(OPTIONS.input_tmp, repacking=True)
 
   has_recovery = OPTIONS.info_dict.get("no_recovery") != "true"
+  has_boot = OPTIONS.info_dict.get("no_boot") != "true"
 
   # {vendor,odm,product,product_services}.img are unlike system.img or
   # system_other.img. Because it could be built from source, or dropped into
@@ -762,17 +778,19 @@ def AddImagesToTargetFiles(filename):
   def banner(s):
     logger.info("\n\n++++ " + s + " ++++\n\n")
 
-  banner("boot")
-  # common.GetBootableImage() returns the image directly if present.
-  boot_image = common.GetBootableImage(
-      "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
-  # boot.img may be unavailable in some targets (e.g. aosp_arm64).
-  if boot_image:
-    partitions['boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES", "boot.img")
-    if not os.path.exists(partitions['boot']):
-      boot_image.WriteToDir(OPTIONS.input_tmp)
-      if output_zip:
-        boot_image.AddToZip(output_zip)
+  boot_image = None
+  if has_boot:
+    banner("boot")
+    # common.GetBootableImage() returns the image directly if present.
+    boot_image = common.GetBootableImage(
+        "IMAGES/boot.img", "boot.img", OPTIONS.input_tmp, "BOOT")
+    # boot.img may be unavailable in some targets (e.g. aosp_arm64).
+    if boot_image:
+      partitions['boot'] = os.path.join(OPTIONS.input_tmp, "IMAGES", "boot.img")
+      if not os.path.exists(partitions['boot']):
+        boot_image.WriteToDir(OPTIONS.input_tmp)
+        if output_zip:
+          boot_image.AddToZip(output_zip)
 
   recovery_image = None
   if has_recovery:

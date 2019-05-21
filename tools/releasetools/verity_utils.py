@@ -52,7 +52,7 @@ def GetVerityTreeSize(image_size):
 
 
 def GetVerityMetadataSize(image_size):
-  cmd = ["build_verity_metadata.py", "size", str(image_size)]
+  cmd = ["build_verity_metadata", "size", str(image_size)]
   output = common.RunAndCheckOutput(cmd, verbose=False)
   return int(output)
 
@@ -97,7 +97,7 @@ def BuildVerityTree(sparse_image_path, verity_image_path):
 def BuildVerityMetadata(image_size, verity_metadata_path, root_hash, salt,
                         block_device, signer_path, key, signer_args,
                         verity_disable):
-  cmd = ["build_verity_metadata.py", "build", str(image_size),
+  cmd = ["build_verity_metadata", "build", str(image_size),
          verity_metadata_path, root_hash, salt, block_device, signer_path, key]
   if signer_args:
     cmd.append("--signer_args=\"%s\"" % (' '.join(signer_args),))

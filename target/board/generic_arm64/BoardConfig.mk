@@ -52,8 +52,8 @@ TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_VARIANT := generic
 endif
 
-include build/make/target/board/BoardConfigEmuCommon.mk
 include build/make/target/board/BoardConfigGsiCommon.mk
+include build/make/target/board/BoardConfigEmuCommon.mk
 
 BOARD_USERDATAIMAGE_PARTITION_SIZE := 576716800
 
@@ -67,7 +67,7 @@ BOARD_ROOT_EXTRA_SYMLINKS += /vendor/firmware_mnt:/firmware
 
 # TODO(b/36764215): remove this setting when the generic system image
 # no longer has QCOM-specific directories under /.
-BOARD_SEPOLICY_DIRS += build/target/board/generic_arm64_ab/sepolicy
+BOARD_SEPOLICY_DIRS += build/make/target/board/generic_arm64_ab/sepolicy
 
 # Wifi.
 BOARD_WLAN_DEVICE           := emulator

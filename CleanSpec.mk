@@ -615,6 +615,25 @@ $(call add-clean-step, rm -rf $(HOST_OUT)/framework/vts-tradefed.jar)
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/security/avb/)
 
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/super.img)
+
+$(call add-clean-step, find $(PRODUCT_OUT) -type f -name "generated_*_image_info.txt" -print0 | xargs -0 rm -f)
+
+# Clean up libicuuc.so and libicui18n.so
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libicu*)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/target/common/obj/framework.aidl)
+
+# Clean up adb_debug.propr
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/etc/adb_debug.prop)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libjavacrypto.so)
+
+# Clean up old verity tools.
+$(call add-clean-step, rm -rf $(HOST_OUT_JAVA_LIBRARIES)/BootSignature.jar)
+$(call add-clean-step, rm -rf $(HOST_OUT_JAVA_LIBRARIES)/VeritySigner.jar)
+$(call add-clean-step, rm -rf $(HOST_OUT_EXECUTABLES)/build_verity_metadata.py)
+
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libc_malloc*)
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************

@@ -1,4 +1,4 @@
-DEX_PREOPT_CONFIG := $(PRODUCT_OUT)/dexpreopt.config
+DEX_PREOPT_CONFIG := $(SOONG_OUT_DIR)/dexpreopt.config
 
 # The default value for LOCAL_DEX_PREOPT
 DEX_PREOPT_DEFAULT ?= true
@@ -91,6 +91,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_list, DisablePreoptModules,               $(DEXPREOPT_DISABLED_MODULES))
   $(call add_json_bool, OnlyPreoptBootImageAndSystemServer, $(filter true,$(WITH_DEXPREOPT_BOOT_IMG_AND_SYSTEM_SERVER_ONLY)))
   $(call add_json_bool, GenerateApexImage,                  $(filter true,$(DEXPREOPT_GENERATE_APEX_IMAGE)))
+  $(call add_json_bool, UseApexImage,                       $(filter true,$(DEXPREOPT_USE_APEX_IMAGE)))
   $(call add_json_bool, DontUncompressPrivAppsDex,          $(filter true,$(DONT_UNCOMPRESS_PRIV_APPS_DEXS)))
   $(call add_json_list, ModulesLoadedByPrivilegedModules,   $(PRODUCT_LOADED_BY_PRIVILEGED_MODULES))
   $(call add_json_bool, HasSystemOther,                     $(BOARD_USES_SYSTEM_OTHER_ODEX))
@@ -110,6 +111,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, GenerateDmFiles,                    $(PRODUCT_DEX_PREOPT_GENERATE_DM_FILES))
   $(call add_json_bool, NeverAllowStripping,                $(PRODUCT_DEX_PREOPT_NEVER_ALLOW_STRIPPING))
   $(call add_json_bool, NoDebugInfo,                        $(filter false,$(WITH_DEXPREOPT_DEBUG_INFO)))
+  $(call add_json_bool, DontResolveStartupStrings,          $(filter false,$(PRODUCT_DEX_PREOPT_RESOLVE_STARTUP_STRINGS)))
   $(call add_json_bool, AlwaysSystemServerDebugInfo,        $(filter true,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)))
   $(call add_json_bool, NeverSystemServerDebugInfo,         $(filter false,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)))
   $(call add_json_bool, AlwaysOtherDebugInfo,               $(filter true,$(PRODUCT_OTHER_JAVA_DEBUG_INFO)))
@@ -166,12 +168,6 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
       rm $(DEX_PREOPT_CONFIG).tmp; \
     fi)
 endif
-
-# Dummy rule to create dexpreopt.config, it will already have been created
-# by the $(file) call above, but a rule needs to exist to keep the dangling
-# rule check happy.
-$(DEX_PREOPT_CONFIG):
-	@#empty
 
 DEXPREOPT_GEN_DEPS := \
   $(SOONG_HOST_OUT_EXECUTABLES)/profman \

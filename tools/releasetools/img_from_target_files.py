@@ -15,11 +15,19 @@
 # limitations under the License.
 
 """
-Given a target-files zipfile, produces an image zipfile suitable for
-use with 'fastboot update'.
+Given target-files, produces an image zipfile suitable for use
+with 'fastboot update'.
 
 Usage:  img_from_target_files [flags] input_target_files output_image_zip
 
+input_target_files: one of the following:
+  - directory containing extracted target files. It will load info from
+    OTA/android-info.txt, META/misc_info.txt and build the image zipfile using
+    images from IMAGES/.
+  - target files package. Same as above, but extracts the archive before
+    building the image zipfile.
+
+Flags:
   -z  (--bootable_zip)
       Include only the bootable images (eg 'boot' and 'recovery') in
       the output.
@@ -35,6 +43,7 @@ import sys
 import zipfile
 
 import common
+from build_super_image import BuildSuperImage
 
 if sys.hexversion < 0x02070000:
   print("Python 2.7 or newer is required.", file=sys.stderr)
@@ -45,11 +54,100 @@ logger = logging.getLogger(__name__)
 OPTIONS = common.OPTIONS
 
 
-def CopyInfo(output_zip):
+def LoadOptions(input_file):
+  """
+  Load information from input_file to OPTIONS.
+
+  Args:
+    input_file: A Zipfile instance of input zip file, or path to the directory
+      of extracted zip.
+  """
+  info = OPTIONS.info_dict = common.LoadInfoDict(input_file)
+
+  OPTIONS.put_super = info.get("super_image_in_update_package") == "true"
+  OPTIONS.dynamic_partition_list = info.get("dynamic_partition_list",
+                                            "").strip().split()
+  OPTIONS.super_device_list = info.get("super_block_devices",
+                                       "").strip().split()
+  OPTIONS.retrofit_dap = info.get("dynamic_partition_retrofit") == "true"
+  OPTIONS.build_super = info.get("build_super_partition") == "true"
+  OPTIONS.sparse_userimages = bool(info.get("extfs_sparse_flag"))
+
+
+def CopyInfo(input_tmp, output_zip):
   """Copy the android-info.txt file from the input to the output."""
   common.ZipWrite(
-      output_zip, os.path.join(OPTIONS.input_tmp, "OTA", "android-info.txt"),
+      output_zip, os.path.join(input_tmp, "OTA", "android-info.txt"),
       "android-info.txt")
+
+
+def CopyUserImages(input_tmp, output_zip):
+  """
+  Copy user images from the unzipped input and write to output_zip.
+
+  Args:
+    input_tmp: path to the unzipped input.
+    output_zip: a ZipFile instance to write images to.
+  """
+  dynamic_images = [p + ".img" for p in OPTIONS.dynamic_partition_list]
+
+  # Filter out system_other for launch DAP devices because it is in super image.
+  if not OPTIONS.retrofit_dap and "system" in OPTIONS.dynamic_partition_list:
+    dynamic_images.append("system_other.img")
+
+  images_path = os.path.join(input_tmp, "IMAGES")
+  # A target-files zip must contain the images since Lollipop.
+  assert os.path.exists(images_path)
+  for image in sorted(os.listdir(images_path)):
+    if OPTIONS.bootable_only and image not in ("boot.img", "recovery.img"):
+      continue
+    if not image.endswith(".img"):
+      continue
+    if image == "recovery-two-step.img":
+      continue
+    if OPTIONS.put_super:
+      if image == "super_empty.img":
+        continue
+      if image in dynamic_images:
+        continue
+    logger.info("writing %s to archive...", os.path.join("IMAGES", image))
+    common.ZipWrite(output_zip, os.path.join(images_path, image), image)
+
+
+def WriteSuperImages(input_tmp, output_zip):
+  """
+  Write super images from the unzipped input and write to output_zip. This is
+  only done if super_image_in_update_package is set to "true".
+
+  - For retrofit dynamic partition devices, copy split super images from target
+    files package.
+  - For devices launched with dynamic partitions, build super image from target
+    files package.
+
+  Args:
+    input_tmp: path to the unzipped input.
+    output_zip: a ZipFile instance to write images to.
+  """
+  if not OPTIONS.build_super or not OPTIONS.put_super:
+    return
+
+  if OPTIONS.retrofit_dap:
+    # retrofit devices already have split super images under OTA/
+    images_path = os.path.join(input_tmp, "OTA")
+    for device in OPTIONS.super_device_list:
+      image = "super_%s.img" % device
+      image_path = os.path.join(images_path, image)
+      assert os.path.exists(image_path)
+      logger.info("writing %s to archive...", os.path.join("OTA", image))
+      common.ZipWrite(output_zip, image_path, image)
+  else:
+    # super image for non-retrofit devices aren't in target files package,
+    # so build it.
+    super_file = common.MakeTempFile("super_", ".img")
+    logger.info("building super image %s...", super_file)
+    BuildSuperImage(input_tmp, super_file)
+    logger.info("writing super.img to archive...")
+    common.ZipWrite(output_zip, super_file, "super.img")
 
 
 def main(argv):
@@ -68,7 +166,7 @@ def main(argv):
                              extra_long_opts=["bootable_zip"],
                              extra_option_handler=option_handler)
 
-  bootable_only = bootable_only_array[0]
+  OPTIONS.bootable_only = bootable_only_array[0]
 
   if len(args) != 2:
     common.Usage(__doc__)
@@ -76,27 +174,30 @@ def main(argv):
 
   common.InitLogging()
 
-  OPTIONS.input_tmp = common.UnzipTemp(args[0], ["IMAGES/*", "OTA/*"])
-  output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED)
-  CopyInfo(output_zip)
+  target_files = args[0]
+  if os.path.isdir(target_files):
+    logger.info("Building image zip from extracted target files.")
+    OPTIONS.input_tmp = target_files
+  elif zipfile.is_zipfile(target_files):
+    logger.info("Building image zip from target files zip.")
+    # We need files under IMAGES/, OTA/, META/ for img_from_target_files.py.
+    # However, common.LoadInfoDict() may read additional files under BOOT/,
+    # RECOVERY/ and ROOT/. So unzip everything from the target_files.zip.
+    OPTIONS.input_tmp = common.UnzipTemp(target_files)
+  else:
+    raise ValueError("%s is not a valid path." % target_files)
+
+  LoadOptions(OPTIONS.input_tmp)
+  output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED,
+                               allowZip64=not OPTIONS.sparse_userimages)
 
   try:
-    images_path = os.path.join(OPTIONS.input_tmp, "IMAGES")
-    # A target-files zip must contain the images since Lollipop.
-    assert os.path.exists(images_path)
-    for image in sorted(os.listdir(images_path)):
-      if bootable_only and image not in ("boot.img", "recovery.img"):
-        continue
-      if not image.endswith(".img"):
-        continue
-      if image == "recovery-two-step.img":
-        continue
-      common.ZipWrite(output_zip, os.path.join(images_path, image), image)
-
+    CopyInfo(OPTIONS.input_tmp, output_zip)
+    CopyUserImages(OPTIONS.input_tmp, output_zip)
+    WriteSuperImages(OPTIONS.input_tmp, output_zip)
   finally:
     logger.info("cleaning up...")
     common.ZipClose(output_zip)
-    shutil.rmtree(OPTIONS.input_tmp)
 
   logger.info("done.")
 
@@ -108,3 +209,5 @@ if __name__ == '__main__':
   except common.ExternalError as e:
     logger.exception("\n   ERROR:\n")
     sys.exit(1)
+  finally:
+    common.Cleanup()

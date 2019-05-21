@@ -6,13 +6,10 @@
 
 include build/make/target/board/BoardConfigMainlineCommon.mk
 
+TARGET_NO_KERNEL := true
+
 # This flag is set by mainline but isn't desired for GSI.
 BOARD_USES_SYSTEM_OTHER_ODEX :=
-
-# GSIs are historically released in sparse format.
-# Some vendors' bootloaders don't work properly with raw format images. So
-# we explicit specify this need below (even though it's the current default).
-TARGET_USERIMAGES_SPARSE_EXT_DISABLED := false
 
 # system.img is always ext4 with sparse option
 # GSI also includes make_f2fs to support userdata parition in f2fs
@@ -31,16 +28,9 @@ BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE :=
 BOARD_USES_METADATA_PARTITION := true
 
 # Android Verified Boot (AVB):
-#   Set AVB_VBMETA_IMAGE_FLAGS_VERIFICATION_DISABLED (--flags 2) in
-#   vbmeta.img to disable AVB verification. Also set the rollback index
-#   to zero, to prevent the device bootloader from updating the last seen
-#   rollback index in the tamper-evident storage.
-#
-# To disable AVB for GSI, use the vbmeta.img and the GSI together.
-# To enable AVB for GSI, include the GSI public key into the device-specific
-# vbmeta.img.
+#   Set the rollback index to zero, to prevent the device bootloader from
+#   updating the last seen rollback index in the tamper-evident storage.
 BOARD_AVB_ROLLBACK_INDEX := 0
-BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 2
 
 # Enable chain partition for system.
 BOARD_AVB_SYSTEM_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem

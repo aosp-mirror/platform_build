@@ -14,9 +14,13 @@
 # limitations under the License.
 #
 
+import os
+from hashlib import sha1
+
 import common
 from blockimgdiff import (
-    BlockImageDiff, EmptyImage, HeapItem, ImgdiffStats, Transfer)
+    BlockImageDiff, DataImage, EmptyImage, FileImage, HeapItem, ImgdiffStats,
+    Transfer)
 from rangelib import RangeSet
 from test_utils import ReleaseToolsTestCase
 
@@ -261,3 +265,45 @@ class ImgdiffStatsTest(ReleaseToolsTestCase):
 
     self.assertRaises(AssertionError, imgdiff_stats.Log, "/system/app/app1.apk",
                       "invalid reason")
+
+
+class DataImageTest(ReleaseToolsTestCase):
+  def test_read_range_set(self):
+    data = "file" + ('\0' * 4092)
+    image = DataImage(data)
+    self.assertEqual(data, "".join(image.ReadRangeSet(image.care_map)))
+
+
+class FileImageTest(ReleaseToolsTestCase):
+  def setUp(self):
+    self.file_path = common.MakeTempFile()
+    self.data = os.urandom(4096 * 4)
+    with open(self.file_path, 'w') as f:
+      f.write(self.data)
+    self.file = FileImage(self.file_path)
+
+  def test_totalsha1(self):
+    self.assertEqual(sha1(self.data).hexdigest(), self.file.TotalSha1())
+
+  def test_ranges(self):
+    blocksize = self.file.blocksize
+    for s in range(4):
+      for e in range(s, 4):
+        expected_data = self.data[s * blocksize : e * blocksize]
+
+        rs = RangeSet([s, e])
+        data = "".join(self.file.ReadRangeSet(rs))
+        self.assertEqual(expected_data, data)
+
+        sha1sum = self.file.RangeSha1(rs)
+        self.assertEqual(sha1(expected_data).hexdigest(), sha1sum)
+
+        tmpfile = common.MakeTempFile()
+        with open(tmpfile, 'w') as f:
+          self.file.WriteRangeDataToFd(rs, f)
+        with open(tmpfile, 'r') as f:
+          self.assertEqual(expected_data, f.read())
+
+  def test_read_all(self):
+    data = "".join(self.file.ReadRangeSet(self.file.care_map))
+    self.assertEqual(self.data, data)

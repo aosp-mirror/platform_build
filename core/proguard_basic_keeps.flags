@@ -1,6 +1,3 @@
-# To prevent name conflict in incremental obfuscation.
--useuniqueclassmembernames
-
 # Some classes in the libraries extend package private classes to chare common functionality
 # that isn't explicitly part of the API
 -dontskipnonpubliclibraryclasses -dontskipnonpubliclibraryclassmembers
@@ -65,6 +62,13 @@
 # LOCAL_SDK_VERSION lower than the support library's LOCAL_SDK_VERSION.
 # See bug/20658265.
 # -dontwarn android.support.**
+
+# From https://github.com/google/guava/wiki/UsingProGuardWithGuava
+# Striped64, LittleEndianByteArray, UnsignedBytes, AbstractFuture
+-dontwarn sun.misc.Unsafe
+# Futures.getChecked (which often won't work with Proguard anyway) uses this. It
+# has a fallback, but again, don't use Futures.getChecked on Android regardless.
+-dontwarn java.lang.ClassValue
 
 # Less spammy.
 -dontnote

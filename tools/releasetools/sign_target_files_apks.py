@@ -56,7 +56,7 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
 
       where $devkey is the directory part of the value of
       default_system_dev_certificate from the input target-files's
-      META/misc_info.txt.  (Defaulting to "build/target/product/security"
+      META/misc_info.txt.  (Defaulting to "build/make/target/product/security"
       if the value is not present in misc_info.
 
       -d and -k options are added to the set of mappings in the order
@@ -91,12 +91,15 @@ Usage:  sign_target_files_apks [flags] input_target_files output_target_files
       Replace the veritykeyid in BOOT/cmdline of input_target_file_zip
       with keyid of the cert pointed by <path_to_X509_PEM_cert_file>.
 
-  --avb_{boot,system,system_other,vendor,dtbo,vbmeta}_algorithm <algorithm>
-  --avb_{boot,system,system_other,vendor,dtbo,vbmeta}_key <key>
+  --avb_{boot,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
+         vbmeta_vendor}_algorithm <algorithm>
+  --avb_{boot,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
+         vbmeta_vendor}_key <key>
       Use the specified algorithm (e.g. SHA256_RSA4096) and the key to AVB-sign
       the specified image. Otherwise it uses the existing values in info dict.
 
-  --avb_{apex,boot,system,system_other,vendor,dtbo,vbmeta}_extra_args <args>
+  --avb_{apex,boot,system,system_other,vendor,dtbo,vbmeta,vbmeta_system,
+         vbmeta_vendor}_extra_args <args>
       Specify any additional args that are needed to AVB-sign the image
       (e.g. "--signing_helper /path/to/helper"). The args will be appended to
       the existing ones in info dict.
@@ -176,6 +179,9 @@ def GetApexKeys(keys_info, key_map):
   Returns:
     A dict that contains the updated APEX key mapping, which should be used for
     the current signing.
+
+  Raises:
+    AssertionError: On invalid container / payload key overrides.
   """
   # Apply all the --extra_apex_payload_key options to override the payload
   # signing keys in the given keys_info.
@@ -196,6 +202,24 @@ def GetApexKeys(keys_info, key_map):
     if not key:
       key = 'PRESIGNED'
     keys_info[apex] = (keys_info[apex][0], key_map.get(key, key))
+
+  # A PRESIGNED container entails a PRESIGNED payload. Apply this to all the
+  # APEX key pairs. However, a PRESIGNED container with non-PRESIGNED payload
+  # (overridden via commandline) indicates a config error, which should not be
+  # allowed.
+  for apex, (payload_key, container_key) in keys_info.items():
+    if container_key != 'PRESIGNED':
+      continue
+    if apex in OPTIONS.extra_apex_payload_keys:
+      payload_override = OPTIONS.extra_apex_payload_keys[apex]
+      assert payload_override == '', \
+          ("Invalid APEX key overrides: {} has PRESIGNED container but "
+           "non-PRESIGNED payload key {}").format(apex, payload_override)
+    if payload_key != 'PRESIGNED':
+      print(
+          "Setting {} payload as PRESIGNED due to PRESIGNED container".format(
+              apex))
+    keys_info[apex] = ('PRESIGNED', 'PRESIGNED')
 
   return keys_info
 
@@ -289,7 +313,9 @@ def CheckApkAndApexKeysAvailable(input_tf_zip, known_keys,
        "not sign this apk).".format("\n  ".join(unknown_files)))
 
   # For all the APEXes, double check that we won't have an APEX that has only
-  # one of the payload / container keys set.
+  # one of the payload / container keys set. Note that non-PRESIGNED container
+  # with PRESIGNED payload could be allowed but currently unsupported. It would
+  # require changing SignApex implementation.
   if not apex_keys:
     return
 
@@ -377,77 +403,6 @@ def SignApk(data, keyname, pw, platform_api_level, codename_to_api_level_map,
   return data
 
 
-def SignApex(apex_data, payload_key, container_key, container_pw,
-             codename_to_api_level_map, signing_args=None):
-  """Signs the current APEX with the given payload/container keys.
-
-  Args:
-    apex_data: Raw APEX data.
-    payload_key: The path to payload signing key (w/ extension).
-    container_key: The path to container signing key (w/o extension).
-    container_pw: The matching password of the container_key, or None.
-    codename_to_api_level_map: A dict that maps from codename to API level.
-    signing_args: Additional args to be passed to the payload signer.
-
-  Returns:
-    The path to the signed APEX file.
-  """
-  apex_file = common.MakeTempFile(prefix='apex-', suffix='.apex')
-  with open(apex_file, 'wb') as apex_fp:
-    apex_fp.write(apex_data)
-
-  APEX_PAYLOAD_IMAGE = 'apex_payload.img'
-  APEX_PUBKEY = 'apex_pubkey'
-
-  # 1a. Extract and sign the APEX_PAYLOAD_IMAGE entry with the given
-  # payload_key.
-  payload_dir = common.MakeTempDir(prefix='apex-payload-')
-  with zipfile.ZipFile(apex_file) as apex_fd:
-    payload_file = apex_fd.extract(APEX_PAYLOAD_IMAGE, payload_dir)
-
-  payload_info = apex_utils.ParseApexPayloadInfo(payload_file)
-  apex_utils.SignApexPayload(
-      payload_file,
-      payload_key,
-      payload_info['apex.key'],
-      payload_info['Algorithm'],
-      payload_info['Salt'],
-      signing_args)
-
-  # 1b. Update the embedded payload public key.
-  payload_public_key = common.ExtractAvbPublicKey(payload_key)
-
-  common.ZipDelete(apex_file, APEX_PAYLOAD_IMAGE)
-  common.ZipDelete(apex_file, APEX_PUBKEY)
-  apex_zip = zipfile.ZipFile(apex_file, 'a')
-  common.ZipWrite(apex_zip, payload_file, arcname=APEX_PAYLOAD_IMAGE)
-  common.ZipWrite(apex_zip, payload_public_key, arcname=APEX_PUBKEY)
-  common.ZipClose(apex_zip)
-
-  # 2. Align the files at page boundary (same as in apexer).
-  aligned_apex = common.MakeTempFile(
-      prefix='apex-container-', suffix='.apex')
-  common.RunAndCheckOutput(
-      ['zipalign', '-f', '4096', apex_file, aligned_apex])
-
-  # 3. Sign the APEX container with container_key.
-  signed_apex = common.MakeTempFile(prefix='apex-container-', suffix='.apex')
-
-  # Specify the 4K alignment when calling SignApk.
-  extra_signapk_args = OPTIONS.extra_signapk_args[:]
-  extra_signapk_args.extend(['-a', '4096'])
-
-  common.SignFile(
-      aligned_apex,
-      signed_apex,
-      container_key,
-      container_pw,
-      codename_to_api_level_map=codename_to_api_level_map,
-      extra_signapk_args=extra_signapk_args)
-
-  return signed_apex
-
-
 def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
                        apk_keys, apex_keys, key_passwords,
                        platform_api_level, codename_to_api_level_map,
@@ -512,7 +467,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         print("           : %-*s payload   (%s)" % (
             maxsize, name, payload_key))
 
-        signed_apex = SignApex(
+        signed_apex = apex_utils.SignApex(
             data,
             payload_key,
             container_key,
@@ -535,6 +490,13 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     # System properties.
     elif filename in ("SYSTEM/build.prop",
                       "VENDOR/build.prop",
+                      "SYSTEM/vendor/build.prop",
+                      "ODM/build.prop",
+                      "VENDOR/odm/build.prop",
+                      "PRODUCT/build.prop",
+                      "SYSTEM/product/build.prop",
+                      "PRODUCT_SERVICES/build.prop",
+                      "SYSTEM/product_services/build.prop",
                       "SYSTEM/etc/prop.default",
                       "BOOT/RAMDISK/prop.default",
                       "BOOT/RAMDISK/default.prop",  # legacy
@@ -601,6 +563,13 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         public_key = common.ExtractAvbPublicKey(signing_key)
         print("    Rewriting AVB public key of system_other in /product")
         common.ZipWrite(output_tf_zip, public_key, filename)
+
+    # Should NOT sign boot-debug.img.
+    elif filename in (
+        "BOOT/RAMDISK/force_debuggable",
+        "RECOVERY/RAMDISK/force_debuggable"
+        "RECOVERY/RAMDISK/first_stage_ramdisk/force_debuggable"):
+      raise common.ExternalError("debuggable boot.img cannot be signed")
 
     # A non-APK file; copy it verbatim.
     else:
@@ -722,8 +691,8 @@ def RewriteProps(data):
     original_line = line
     if line and line[0] != '#' and "=" in line:
       key, value = line.split("=", 1)
-      if key in ("ro.build.fingerprint", "ro.build.thumbprint",
-                 "ro.vendor.build.fingerprint", "ro.vendor.build.thumbprint"):
+      if (key.startswith("ro.") and
+          key.endswith((".build.fingerprint", ".build.thumbprint"))):
         pieces = value.split("/")
         pieces[-1] = EditTags(pieces[-1])
         value = "/".join(pieces)
@@ -736,7 +705,7 @@ def RewriteProps(data):
         assert len(pieces) == 5
         pieces[-1] = EditTags(pieces[-1])
         value = " ".join(pieces)
-      elif key == "ro.build.tags":
+      elif key.startswith("ro.") and key.endswith(".build.tags"):
         value = EditTags(value)
       elif key == "ro.build.display.id":
         # change, eg, "JWR66N dev-keys" to "JWR66N"
@@ -802,7 +771,7 @@ def ReplaceOtaKeys(input_tf_zip, output_tf_zip, misc_info):
     print("for OTA package verification")
   else:
     devkey = misc_info.get("default_system_dev_certificate",
-                           "build/target/product/security/testkey")
+                           "build/make/target/product/security/testkey")
     mapped_devkey = OPTIONS.key_map.get(devkey, devkey)
     if mapped_devkey != devkey:
       misc_info["default_system_dev_certificate"] = mapped_devkey
@@ -929,6 +898,8 @@ def ReplaceAvbSigningKeys(misc_info):
       'system_other' : 'avb_system_other_add_hashtree_footer_args',
       'vendor' : 'avb_vendor_add_hashtree_footer_args',
       'vbmeta' : 'avb_vbmeta_args',
+      'vbmeta_system' : 'avb_vbmeta_system_args',
+      'vbmeta_vendor' : 'avb_vbmeta_vendor_args',
   }
 
   def ReplaceAvbPartitionSigningKey(partition):
@@ -959,7 +930,7 @@ def BuildKeyMap(misc_info, key_mapping_options):
   for s, d in key_mapping_options:
     if s is None:   # -d option
       devkey = misc_info.get("default_system_dev_certificate",
-                             "build/target/product/security/testkey")
+                             "build/make/target/product/security/testkey")
       devkeydir = os.path.dirname(devkey)
 
       OPTIONS.key_map.update({
@@ -1067,13 +1038,16 @@ def ReadApexKeysInfo(tf_zip):
     # full names only.
     container_cert = matches.group("CONTAINER_CERT")
     container_private_key = matches.group("CONTAINER_PRIVATE_KEY")
-    if not CompareKeys(
+    if container_cert == 'PRESIGNED' and container_private_key == 'PRESIGNED':
+      container_key = 'PRESIGNED'
+    elif CompareKeys(
         container_cert, OPTIONS.public_key_suffix,
         container_private_key, OPTIONS.private_key_suffix):
+      container_key = container_cert[:-len(OPTIONS.public_key_suffix)]
+    else:
       raise ValueError("Failed to parse container keys: \n{}".format(line))
 
-    keys[name] = (payload_private_key,
-                  container_cert[:-len(OPTIONS.public_key_suffix)])
+    keys[name] = (payload_private_key, container_key)
 
   return keys
 
@@ -1153,6 +1127,18 @@ def main(argv):
       OPTIONS.avb_algorithms['vendor'] = a
     elif o == "--avb_vendor_extra_args":
       OPTIONS.avb_extra_args['vendor'] = a
+    elif o == "--avb_vbmeta_system_key":
+      OPTIONS.avb_keys['vbmeta_system'] = a
+    elif o == "--avb_vbmeta_system_algorithm":
+      OPTIONS.avb_algorithms['vbmeta_system'] = a
+    elif o == "--avb_vbmeta_system_extra_args":
+      OPTIONS.avb_extra_args['vbmeta_system'] = a
+    elif o == "--avb_vbmeta_vendor_key":
+      OPTIONS.avb_keys['vbmeta_vendor'] = a
+    elif o == "--avb_vbmeta_vendor_algorithm":
+      OPTIONS.avb_algorithms['vbmeta_vendor'] = a
+    elif o == "--avb_vbmeta_vendor_extra_args":
+      OPTIONS.avb_extra_args['vbmeta_vendor'] = a
     elif o == "--avb_apex_extra_args":
       OPTIONS.avb_extra_args['apex'] = a
     else:
@@ -1192,6 +1178,12 @@ def main(argv):
           "avb_vendor_algorithm=",
           "avb_vendor_key=",
           "avb_vendor_extra_args=",
+          "avb_vbmeta_system_algorithm=",
+          "avb_vbmeta_system_key=",
+          "avb_vbmeta_system_extra_args=",
+          "avb_vbmeta_vendor_algorithm=",
+          "avb_vbmeta_vendor_key=",
+          "avb_vbmeta_vendor_extra_args=",
       ],
       extra_option_handler=option_handler)
 

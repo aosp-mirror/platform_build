@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+#
 # Copyright (C) 2014 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from __future__ import print_function
+
+import argparse
 import bisect
 import logging
 import os
@@ -344,3 +349,21 @@ class SparseImage(object):
     """Throw away the file map and treat the entire image as
     undifferentiated data."""
     self.file_map = {"__DATA": self.care_map}
+
+
+def GetImagePartitionSize(img):
+  try:
+    simg = SparseImage(img, build_map=False)
+    return simg.blocksize * simg.total_blocks
+  except ValueError:
+    return os.path.getsize(img)
+
+
+if __name__ == '__main__':
+  parser = argparse.ArgumentParser()
+  parser.add_argument('image')
+  parser.add_argument('--get_partition_size', action='store_true',
+                      help='Return partition size of the image')
+  args = parser.parse_args()
+  if args.get_partition_size:
+    print(GetImagePartitionSize(args.image))
