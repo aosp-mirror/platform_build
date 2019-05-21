@@ -185,6 +185,26 @@ other_extract_special_item_list = [
 ]
 
 
+def write_sorted_data(data, path):
+  """Write the sorted contents of either a list or dict to file.
+
+  This function sorts the contents of the list or dict and then
+  writes the resulting sorted contents to a file specified by path.
+
+  Args:
+    data: The list or dict to sort and write.
+    path: Path to the file to write the sorted values to. The file at path will
+      be overridden if it exists.
+  """
+  with open(path, 'w') as output:
+    sorted_data = sorted(data.keys()) if isinstance(data,
+                                                    dict) else sorted(data)
+    for entry in sorted_data:
+      out_str = '{}={}\n'.format(entry, data[entry]) if isinstance(
+          data, dict) else '{}\n'.format(entry)
+      output.write(out_str)
+
+
 def extract_items(target_files, target_files_temp_dir, extract_item_list):
   """Extract items from target files to temporary directory.
 
@@ -341,9 +361,7 @@ def process_ab_partitions_txt(system_target_files_temp_dir,
   output_ab_partitions_txt = os.path.join(output_target_files_temp_dir, 'META',
                                           'ab_partitions.txt')
 
-  with open(output_ab_partitions_txt, 'w') as output:
-    for partition in sorted(output_ab_partitions):
-      output.write('%s\n' % partition)
+  write_sorted_data(data=output_ab_partitions, path=output_ab_partitions_txt)
 
 
 def append_recovery_to_filesystem_config(output_target_files_temp_dir):
@@ -485,10 +503,7 @@ def process_misc_info_txt(system_target_files_temp_dir,
 
   output_misc_info_txt = os.path.join(output_target_files_temp_dir, 'META',
                                       'misc_info.txt')
-  with open(output_misc_info_txt, 'w') as output:
-    sorted_keys = sorted(merged_info_dict.keys())
-    for key in sorted_keys:
-      output.write('{}={}\n'.format(key, merged_info_dict[key]))
+  write_sorted_data(data=merged_info_dict, path=output_misc_info_txt)
 
 
 def process_dynamic_partitions_info_txt(system_target_files_dir,
@@ -538,10 +553,56 @@ def process_dynamic_partitions_info_txt(system_target_files_dir,
 
   output_dynamic_partitions_info_txt = os.path.join(
       output_target_files_dir, 'META', 'dynamic_partitions_info.txt')
-  with open(output_dynamic_partitions_info_txt, 'w') as output:
-    sorted_keys = sorted(merged_dynamic_partitions_dict.keys())
-    for key in sorted_keys:
-      output.write('{}={}\n'.format(key, merged_dynamic_partitions_dict[key]))
+  write_sorted_data(
+      data=merged_dynamic_partitions_dict,
+      path=output_dynamic_partitions_info_txt)
+
+
+def process_apex_keys_apk_certs_common(system_target_files_dir,
+                                       other_target_files_dir,
+                                       output_target_files_dir, file_name):
+  """Perform special processing for META/apexkeys.txt or META/apkcerts.txt.
+
+  This function merges the contents of the META/apexkeys.txt or
+  META/apkcerts.txt
+  files from the system directory and the other directory, placing the merged
+  result in the output directory. The precondition in that the files are already
+  extracted.
+  The post condition is that the output META/apexkeys.txt or META/apkcerts.txt
+  contains the merged content.
+
+  Args:
+    system_target_files_dir: The name of a directory containing the special
+      items extracted from the system target files package.
+    other_target_files_dir: The name of a directory containing the special items
+      extracted from the other target files package.
+    output_target_files_dir: The name of a directory that will be used to create
+      the output target files package after all the special cases are processed.
+    file_name: The name of the file to merge. One of apkcerts.txt or
+      apexkeys.txt.
+  """
+
+  def read_helper(d):
+    temp = {}
+    file_path = os.path.join(d, 'META', file_name)
+    with open(file_path) as f:
+      for line in f:
+        if line.strip():
+          temp[line.split()[0]] = line.strip()
+    return temp
+
+  system_dict = read_helper(system_target_files_dir)
+  other_dict = read_helper(other_target_files_dir)
+
+  for key in system_dict:
+    if key in other_dict and other_dict[key] != system_dict[key]:
+      raise ValueError('Conflicting entries found in %s:\n %s and\n %s' %
+                       (file_name, system_dict[key], other_dict[key]))
+    other_dict[key] = system_dict[key]
+
+  output_file = os.path.join(output_target_files_dir, 'META', file_name)
+
+  write_sorted_data(data=other_dict.values(), path=output_file)
 
 
 def process_special_cases(system_target_files_temp_dir,
@@ -587,6 +648,18 @@ def process_special_cases(system_target_files_temp_dir,
       system_target_files_dir=system_target_files_temp_dir,
       other_target_files_dir=other_target_files_temp_dir,
       output_target_files_dir=output_target_files_temp_dir)
+
+  process_apex_keys_apk_certs_common(
+      system_target_files_dir=system_target_files_temp_dir,
+      other_target_files_dir=other_target_files_temp_dir,
+      output_target_files_dir=output_target_files_temp_dir,
+      file_name='apkcerts.txt')
+
+  process_apex_keys_apk_certs_common(
+      system_target_files_dir=system_target_files_temp_dir,
+      other_target_files_dir=other_target_files_temp_dir,
+      output_target_files_dir=output_target_files_temp_dir,
+      file_name='apexkeys.txt')
 
 
 def merge_target_files(temp_dir, system_target_files, system_item_list,
