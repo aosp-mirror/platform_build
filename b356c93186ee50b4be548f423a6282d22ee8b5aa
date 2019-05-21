@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8b2971cf_f8dac1e4",
+        "filename": "core/notice_files.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2019-05-21T14:50:00Z",
+      "side": 1,
+      "message": "ifneq (SHARED_LIBRARIES,$(LOCAL_MODULE_CLASS))\n\nfilter is error-prone as it allows partial matches.",
+      "range": {
+        "startLine": 64,
+        "startChar": 7,
+        "endLine": 64,
+        "endChar": 64
+      },
+      "revId": "b356c93186ee50b4be548f423a6282d22ee8b5aa",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
