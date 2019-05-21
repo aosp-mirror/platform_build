@@ -1,0 +1,1 @@
+name="com.android.runtime.debug.apex" public_key="art/build/apex/com.android.runtime.avbpubkey" private_key="art/build/apex/com.android.runtime.pem" container_certificate="art/build/apex/com.android.runtime.release.x509.pem" container_private_key="art/build/apex/com.android.runtime.debug.pk8"

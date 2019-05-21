@@ -53,36 +53,60 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
 
   def test_RewriteProps(self):
     props = (
-        ('', '\n'),
+        ('', ''),
         ('ro.build.fingerprint=foo/bar/dev-keys',
-         'ro.build.fingerprint=foo/bar/release-keys\n'),
+         'ro.build.fingerprint=foo/bar/release-keys'),
         ('ro.build.thumbprint=foo/bar/dev-keys',
-         'ro.build.thumbprint=foo/bar/release-keys\n'),
+         'ro.build.thumbprint=foo/bar/release-keys'),
         ('ro.vendor.build.fingerprint=foo/bar/dev-keys',
-         'ro.vendor.build.fingerprint=foo/bar/release-keys\n'),
+         'ro.vendor.build.fingerprint=foo/bar/release-keys'),
         ('ro.vendor.build.thumbprint=foo/bar/dev-keys',
-         'ro.vendor.build.thumbprint=foo/bar/release-keys\n'),
-        ('# comment line 1', '# comment line 1\n'),
+         'ro.vendor.build.thumbprint=foo/bar/release-keys'),
+        ('ro.odm.build.fingerprint=foo/bar/test-keys',
+         'ro.odm.build.fingerprint=foo/bar/release-keys'),
+        ('ro.odm.build.thumbprint=foo/bar/test-keys',
+         'ro.odm.build.thumbprint=foo/bar/release-keys'),
+        ('ro.product.build.fingerprint=foo/bar/dev-keys',
+         'ro.product.build.fingerprint=foo/bar/release-keys'),
+        ('ro.product.build.thumbprint=foo/bar/dev-keys',
+         'ro.product.build.thumbprint=foo/bar/release-keys'),
+        ('ro.product_services.build.fingerprint=foo/bar/test-keys',
+         'ro.product_services.build.fingerprint=foo/bar/release-keys'),
+        ('ro.product_services.build.thumbprint=foo/bar/test-keys',
+         'ro.product_services.build.thumbprint=foo/bar/release-keys'),
+        ('# comment line 1', '# comment line 1'),
         ('ro.bootimage.build.fingerprint=foo/bar/dev-keys',
-         'ro.bootimage.build.fingerprint=foo/bar/release-keys\n'),
+         'ro.bootimage.build.fingerprint=foo/bar/release-keys'),
         ('ro.build.description='
          'sailfish-user 8.0.0 OPR6.170623.012 4283428 dev-keys',
          'ro.build.description='
-         'sailfish-user 8.0.0 OPR6.170623.012 4283428 release-keys\n'),
-        ('ro.build.tags=dev-keys', 'ro.build.tags=release-keys\n'),
-        ('# comment line 2', '# comment line 2\n'),
+         'sailfish-user 8.0.0 OPR6.170623.012 4283428 release-keys'),
+        ('ro.build.tags=dev-keys', 'ro.build.tags=release-keys'),
+        ('ro.build.tags=test-keys', 'ro.build.tags=release-keys'),
+        ('ro.system.build.tags=dev-keys',
+         'ro.system.build.tags=release-keys'),
+        ('ro.vendor.build.tags=dev-keys',
+         'ro.vendor.build.tags=release-keys'),
+        ('ro.odm.build.tags=dev-keys',
+         'ro.odm.build.tags=release-keys'),
+        ('ro.product.build.tags=dev-keys',
+         'ro.product.build.tags=release-keys'),
+        ('ro.product_services.build.tags=dev-keys',
+         'ro.product_services.build.tags=release-keys'),
+        ('# comment line 2', '# comment line 2'),
         ('ro.build.display.id=OPR6.170623.012 dev-keys',
-         'ro.build.display.id=OPR6.170623.012\n'),
-        ('# comment line 3', '# comment line 3\n'),
+         'ro.build.display.id=OPR6.170623.012'),
+        ('# comment line 3', '# comment line 3'),
     )
 
     # Assert the case for each individual line.
-    for prop, output in props:
-      self.assertEqual(RewriteProps(prop), output)
+    for prop, expected in props:
+      self.assertEqual(expected + '\n', RewriteProps(prop))
 
     # Concatenate all the input lines.
-    self.assertEqual(RewriteProps('\n'.join([prop[0] for prop in props])),
-                     ''.join([prop[1] for prop in props]))
+    self.assertEqual(
+        '\n'.join([prop[1] for prop in props]) + '\n',
+        RewriteProps('\n'.join([prop[0] for prop in props])))
 
   def test_ReplaceVerityKeyId(self):
     BOOT_CMDLINE1 = (
@@ -446,6 +470,29 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         'private_key="system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem" '
         'container_certificate="build/make/target/product/security/testkey.x509.pem" '
         'container_private_key="build/make/target/product/security/testkey.pk8"')
+    target_files = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(target_files, 'w') as target_files_zip:
+      target_files_zip.writestr('META/apexkeys.txt', apex_keys)
+
+    with zipfile.ZipFile(target_files) as target_files_zip:
+      keys_info = ReadApexKeysInfo(target_files_zip)
+
+    self.assertEqual({
+        'apex.apexd_test.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package.pem',
+            'build/make/target/product/security/testkey'),
+        'apex.apexd_test_different_app.apex': (
+            'system/apex/apexd/apexd_testdata/com.android.apex.test_package_2.pem',
+            'build/make/target/product/security/testkey'),
+        }, keys_info)
+
+  def test_ReadApexKeysInfo_presignedKeys(self):
+    apex_keys = self.APEX_KEYS_TXT + (
+        'name="apex.apexd_test_different_app2.apex" '
+        'private_key="PRESIGNED" '
+        'public_key="PRESIGNED" '
+        'container_certificate="PRESIGNED" '
+        'container_private_key="PRESIGNED"')
     target_files = common.MakeTempFile(suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
       target_files_zip.writestr('META/apexkeys.txt', apex_keys)

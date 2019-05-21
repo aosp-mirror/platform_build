@@ -243,14 +243,6 @@ else
 ADDITIONAL_DEFAULT_PROPERTIES += ro.actionable_compatible_property.enabled=${PRODUCT_COMPATIBLE_PROPERTY}
 endif
 
-ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.boot.dynamic_partitions=true
-endif
-
-ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
-ADDITIONAL_PRODUCT_PROPERTIES += ro.boot.dynamic_partitions_retrofit=true
-endif
-
 # Add the system server compiler filter if they are specified for the product.
 ifneq (,$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER))
 ADDITIONAL_PRODUCT_PROPERTIES += dalvik.vm.systemservercompilerfilter=$(PRODUCT_SYSTEM_SERVER_COMPILER_FILTER)
@@ -722,7 +714,7 @@ $(foreach m,$(ALL_MODULES), \
     $(eval req_files := )\
     $(foreach req_mod,$(req_mods), \
       $(eval req_file := $(filter $(TARGET_OUT_ROOT)/%, $(call module-installed-files,$(req_mod)))) \
-      $(if $(strip $(req_file)),\
+      $(if $(strip $(req_file))$(ONE_SHOT_MAKEFILE),\
         ,\
         $(error $(m).LOCAL_TARGET_REQUIRED_MODULES : illegal value $(req_mod) : not a device module. If you want to specify host modules to be required to be installed along with your host module, add those module names to LOCAL_REQUIRED_MODULES instead)\
       )\
@@ -748,7 +740,7 @@ $(foreach m,$(ALL_MODULES), \
     $(eval req_files := )\
     $(foreach req_mod,$(req_mods), \
       $(eval req_file := $(filter $(HOST_OUT)/%, $(call module-installed-files,$(req_mod)))) \
-      $(if $(strip $(req_file)),\
+      $(if $(strip $(req_file))$(ONE_SHOT_MAKEFILE),\
         ,\
         $(error $(m).LOCAL_HOST_REQUIRED_MODULES : illegal value $(req_mod) : not a host module. If you want to specify target modules to be required to be installed along with your target module, add those module names to LOCAL_REQUIRED_MODULES instead)\
       )\
@@ -1200,6 +1192,135 @@ $(if $(strip $(1)), \
 )
 endef
 
+# Check that libraries that should only be in APEXes don't end up in the system
+# image. For the Runtime APEX this complements the checks in
+# art/build/apex/art_apex_test.py.
+# TODO(b/128708192): Implement this restriction in Soong instead.
+
+# Runtime APEX libraries
+APEX_MODULE_LIBS := \
+  libadbconnection.so \
+  libadbconnectiond.so \
+  libandroidicu.so \
+  libandroidio.so \
+  libart-compiler.so \
+  libart-dexlayout.so \
+  libart-disassembler.so \
+  libart.so \
+  libartbase.so \
+  libartbased.so \
+  libartd-compiler.so \
+  libartd-dexlayout.so \
+  libartd.so \
+  libartpalette.so \
+  libc.so \
+  libc_malloc_debug.so \
+  libc_malloc_hooks.so \
+  libdexfile.so \
+  libdexfile_external.so \
+  libdexfiled.so \
+  libdexfiled_external.so \
+  libdl.so \
+  libdt_fd_forward.so \
+  libdt_socket.so \
+  libicui18n.so \
+  libicuuc.so \
+  libjavacore.so \
+  libjdwp.so \
+  libm.so \
+  libnativebridge.so \
+  libnativehelper.so \
+  libnativeloader.so \
+  libnpt.so \
+  libopenjdk.so \
+  libopenjdkjvm.so \
+  libopenjdkjvmd.so \
+  libopenjdkjvmti.so \
+  libopenjdkjvmtid.so \
+  libpac.so \
+  libprofile.so \
+  libprofiled.so \
+  libsigchain.so \
+
+# Conscrypt APEX libraries
+APEX_MODULE_LIBS += \
+  libjavacrypto.so \
+
+# An option to disable the check below, for local use since some build targets
+# still may create these libraries in /system (b/129006418).
+DISABLE_APEX_LIBS_ABSENCE_CHECK ?=
+
+# Bionic should not be in /system, except for the bootstrap instance.
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE := lib/bootstrap lib64/bootstrap
+
+# Exclude lib/arm and lib/arm64 which contain the native bridge proxy libs. They
+# are compiled for the guest architecture and used with an entirely different
+# linker config. The native libs are then linked to as usual via exported
+# interfaces, so the proxy libs do not violate the interface boundaries on the
+# native architecture.
+# TODO(b/130630776): Introduce a make variable for the appropriate directory
+# when native bridge is active.
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/arm lib/arm64
+
+# Exclude vndk-* subdirectories which contain prebuilts from older releases.
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/vndk-% lib64/vndk-%
+
+ifdef DISABLE_APEX_LIBS_ABSENCE_CHECK
+  check-apex-libs-absence :=
+  check-apex-libs-absence-on-disk :=
+else
+  # If the check below fails, some library has ended up in system/lib or
+  # system/lib64 that is intended to only go into some APEX package. The likely
+  # cause is that a library or binary in /system has grown a dependency that
+  # directly or indirectly pulls in the prohibited library.
+  #
+  # To resolve this, look for the APEX package that the library belong to -
+  # search for it in 'native_shared_lib' properties in 'apex' build modules (see
+  # art/build/apex/Android.bp for an example). Then check if there is an
+  # exported library in that APEX package that should be used instead, i.e. one
+  # listed in its 'native_shared_lib' property for which the corresponding
+  # 'cc_library' module has a 'stubs' clause (like libdexfile_external in
+  # art/libdexfile/Android.bp).
+  #
+  # If you cannot find an APEX exported library that fits your needs, or you
+  # think that the library you want to depend on should be allowed in /system,
+  # then please contact the owners of the APEX package containing the library.
+  #
+  # If you get this error for a library that is exported in an APEX, then the
+  # APEX might be misconfigured or something is wrong in the build system.
+  # Please reach out to the APEX package owners and/or soong-team@, or
+  # android-building@googlegroups.com externally.
+  define check-apex-libs-absence
+    $(call maybe-print-list-and-error, \
+      $(filter $(foreach lib,$(APEX_MODULE_LIBS),%/$(lib)), \
+        $(filter-out $(foreach dir,$(APEX_LIBS_ABSENCE_CHECK_EXCLUDE), \
+                       $(TARGET_OUT)/$(if $(findstring %,$(dir)),$(dir),$(dir)/%)), \
+          $(filter $(TARGET_OUT)/lib/% $(TARGET_OUT)/lib64/%,$(1)))), \
+      APEX libraries found in system image (see comment for check-apex-libs-absence in \
+      build/make/core/main.mk for details))
+  endef
+
+  # TODO(b/129006418): The check above catches libraries through product
+  # dependencies visible to make, but as long as they have install rules in
+  # /system they may still be created there through other make targets. To catch
+  # that we also do a check on disk just before the system image is built.
+  define check-apex-libs-absence-on-disk
+    $(hide) ( \
+      cd $(TARGET_OUT) && \
+      findres=$$(find lib* \
+        $(foreach dir,$(APEX_LIBS_ABSENCE_CHECK_EXCLUDE),-path "$(subst %,*,$(dir))" -prune -o) \
+        -type f \( -false $(foreach lib,$(APEX_MODULE_LIBS),-o -name $(lib)) \) \
+        -print) && \
+      if [ -n "$$findres" ]; then \
+        echo "APEX libraries found in system image (see comment for check-apex-libs-absence" 1>&2; \
+        echo "in build/make/core/main.mk for details):" 1>&2; \
+        echo "$$findres" | sort 1>&2; \
+        false; \
+      fi; \
+    )
+  endef
+endif
+
 ifdef FULL_BUILD
   ifneq (true,$(ALLOW_MISSING_DEPENDENCIES))
     # Check to ensure that all modules in PRODUCT_PACKAGES exist (opt in per product)
@@ -1312,6 +1433,8 @@ $(PRODUCT_OUT)/offending_artifacts.txt:
 	rm -f $@
 	$(foreach f,$(sort $(all_offending_files)),echo $(f) >> $@;)
   endif
+
+  $(call check-apex-libs-absence,$(product_target_FILES))
 else
   # We're not doing a full build, and are probably only including
   # a subset of the module makefiles.  Don't try to build any modules
@@ -1429,6 +1552,9 @@ endif
 .PHONY: ramdisk
 ramdisk: $(INSTALLED_RAMDISK_TARGET)
 
+.PHONY: ramdisk_debug
+ramdisk_debug: $(INSTALLED_DEBUG_RAMDISK_TARGET)
+
 .PHONY: systemtarball
 systemtarball: $(INSTALLED_SYSTEMTARBALL_TARGET)
 
@@ -1466,14 +1592,14 @@ odmimage: $(INSTALLED_ODMIMAGE_TARGET)
 .PHONY: systemotherimage
 systemotherimage: $(INSTALLED_SYSTEMOTHERIMAGE_TARGET)
 
-.PHONY: superimage
-superimage: $(INSTALLED_SUPERIMAGE_TARGET)
-
 .PHONY: superimage_empty
 superimage_empty: $(INSTALLED_SUPERIMAGE_EMPTY_TARGET)
 
 .PHONY: bootimage
 bootimage: $(INSTALLED_BOOTIMAGE_TARGET)
+
+.PHONY: bootimage_debug
+bootimage_debug: $(INSTALLED_DEBUG_BOOTIMAGE_TARGET)
 
 .PHONY: vbmetaimage
 vbmetaimage: $(INSTALLED_VBMETAIMAGE_TARGET)
@@ -1487,6 +1613,8 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_SYSTEMIMAGE_TARGET) \
     $(INSTALLED_RAMDISK_TARGET) \
     $(INSTALLED_BOOTIMAGE_TARGET) \
+    $(INSTALLED_DEBUG_RAMDISK_TARGET) \
+    $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
     $(INSTALLED_RECOVERYIMAGE_TARGET) \
     $(INSTALLED_VBMETAIMAGE_TARGET) \
     $(INSTALLED_USERDATAIMAGE_TARGET) \
@@ -1511,6 +1639,8 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
     $(INSTALLED_FILES_FILE_RAMDISK) \
     $(INSTALLED_FILES_JSON_RAMDISK) \
+    $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) \
+    $(INSTALLED_FILES_JSON_DEBUG_RAMDISK) \
     $(INSTALLED_FILES_FILE_ROOT) \
     $(INSTALLED_FILES_JSON_ROOT) \
     $(INSTALLED_FILES_FILE_RECOVERY) \
@@ -1631,6 +1761,10 @@ else # TARGET_BUILD_APPS
     $(call dist-for-goals, droidcore, \
       $(INSTALLED_FILES_FILE_RAMDISK) \
       $(INSTALLED_FILES_JSON_RAMDISK) \
+      $(INSTALLED_FILES_FILE_DEBUG_RAMDISK) \
+      $(INSTALLED_FILES_JSON_DEBUG_RAMDISK) \
+      $(INSTALLED_DEBUG_RAMDISK_TARGET) \
+      $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
     )
   endif
 

@@ -60,7 +60,7 @@ ifeq ($(module_run_appcompat),true)
   $(LOCAL_BUILT_MODULE): $(LOCAL_PREBUILT_MODULE_FILE)
 	@echo "Copy: $@"
 	$(copy-file-to-target)
-	$(call appcompat-header, aapt2)
+	$(appcompat-header)
 	$(run-appcompat)
 else
   $(eval $(call copy-one-file,$(LOCAL_PREBUILT_MODULE_FILE),$(LOCAL_BUILT_MODULE)))
@@ -129,7 +129,15 @@ my_prebuilt_jni_libs :=
 my_2nd_arch_prefix :=
 
 PACKAGES := $(PACKAGES) $(LOCAL_MODULE)
-ifdef LOCAL_CERTIFICATE
+ifeq ($(LOCAL_CERTIFICATE),PRESIGNED)
+  # The magic string "PRESIGNED" means this package is already checked
+  # signed with its release key.
+  #
+  # By setting .CERTIFICATE but not .PRIVATE_KEY, this package will be
+  # mentioned in apkcerts.txt (with certificate set to "PRESIGNED")
+  # but the dexpreopt process will not try to re-sign the app.
+  PACKAGES.$(LOCAL_MODULE).CERTIFICATE := PRESIGNED
+else ifneq ($(LOCAL_CERTIFICATE),)
   PACKAGES.$(LOCAL_MODULE).CERTIFICATE := $(LOCAL_CERTIFICATE)
   PACKAGES.$(LOCAL_MODULE).PRIVATE_KEY := $(patsubst %.x509.pem,%.pk8,$(LOCAL_CERTIFICATE))
 endif

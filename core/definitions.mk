@@ -1846,42 +1846,6 @@ endef
 # b/37750224
 AAPT_ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=0
 
-# TODO: Right now we generate the asset resources twice, first as part
-# of generating the Java classes, then at the end when packaging the final
-# assets.  This should be changed to do one of two things: (1) Don't generate
-# any resource files the first time, only create classes during that stage;
-# or (2) Don't use the -c flag with the second stage, instead taking the
-# resource files from the first stage as additional input.  My original intent
-# was to use approach (2), but this requires a little more work in the tool.
-# Maybe we should just use approach (1).
-
-# This rule creates the R.java and Manifest.java files, both of which
-# are PRODUCT-neutral.  Don't pass PRIVATE_PRODUCT_AAPT_CONFIG to this invocation.
-define create-resource-java-files
-@mkdir -p $(dir $(PRIVATE_RESOURCE_PUBLICS_OUTPUT))
-rm -rf $(PRIVATE_JAVA_GEN_DIR)
-mkdir -p $(PRIVATE_JAVA_GEN_DIR)
-$(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package $(PRIVATE_AAPT_FLAGS) -m \
-    $(eval # PRIVATE_PRODUCT_AAPT_CONFIG is intentionally missing-- see comment.) \
-    $(addprefix -J , $(PRIVATE_JAVA_GEN_DIR)) \
-    $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
-    $(addprefix -P , $(PRIVATE_RESOURCE_PUBLICS_OUTPUT)) \
-    $(addprefix -S , $(PRIVATE_RESOURCE_DIR)) \
-    $(addprefix -A , $(PRIVATE_ASSET_DIR)) \
-    $(addprefix -I , $(PRIVATE_AAPT_INCLUDES)) \
-    $(addprefix -G , $(PRIVATE_PROGUARD_OPTIONS_FILE)) \
-    $(addprefix --min-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
-    $(addprefix --target-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
-    $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,--version-code $(PLATFORM_SDK_VERSION)) \
-    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,--version-name $(APPS_DEFAULT_VERSION_NAME)) \
-    $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
-    $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
-    --skip-symbols-without-default-localization
-$(SOONG_ZIP) -o $(PRIVATE_SRCJAR) -C $(PRIVATE_JAVA_GEN_DIR) -D $(PRIVATE_JAVA_GEN_DIR)
-# So that we re-run aapt when the list of input files change
-$(hide) echo $(PRIVATE_RESOURCE_LIST) >/dev/null
-endef
-
 # Search for generated R.java/Manifest.java in $1, copy the found R.java as $2.
 # Also copy them to a central 'R' directory to make it easier to add the files to an IDE.
 define find-generated-R.java
@@ -2033,26 +1997,6 @@ define dump-words-to-file
         @$(call emit-line,$(wordlist 13001,13500,$(1)),$(2))
         @$(if $(wordlist 13501,13502,$(1)),$(error Too many words ($(words $(1)))))
 endef
-
-# For a list of jar files, unzip them to a specified directory,
-# but make sure that no META-INF files come along for the ride,
-# unless PRIVATE_DONT_DELETE_JAR_META_INF is set.
-#
-# $(1): files to unzip
-# $(2): destination directory
-define unzip-jar-files
-  $(hide) for f in $(1); \
-  do \
-    if [ ! -f $$f ]; then \
-      echo Missing file $$f; \
-      exit 1; \
-    fi; \
-    unzip -qo $$f -d $(2); \
-    rm -f $(2)/module-info.class; \
-  done
-  $(if $(PRIVATE_DONT_DELETE_JAR_META_INF),,$(hide) rm -rf $(2)/META-INF)
-endef
-
 # Return jar arguments to compress files in a given directory
 # $(1): directory
 #
@@ -2150,9 +2094,9 @@ $(hide) if [ -s $(PRIVATE_JAVA_SOURCE_LIST) -o -n "$(PRIVATE_SRCJARS)" ] ; then 
     $(addprefix --bootclasspath ,$(strip $(PRIVATE_BOOTCLASSPATH))) \
     $(addprefix --classpath ,$(strip $(PRIVATE_ALL_JAVA_HEADER_LIBRARIES))) \
     || ( rm -rf $(dir $@)/classes-turbine ; exit 41 ) && \
-    $(MERGE_ZIPS) -j --ignore-duplicates -stripDir META-INF $@.tmp $@.premerged $(call reverse-list,$(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES)) ; \
+    $(MERGE_ZIPS) -j --ignore-duplicates -stripDir META-INF $@.tmp $@.premerged $(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES) ; \
 else \
-    $(MERGE_ZIPS) -j --ignore-duplicates -stripDir META-INF $@.tmp $(call reverse-list,$(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES)) ; \
+    $(MERGE_ZIPS) -j --ignore-duplicates -stripDir META-INF $@.tmp $(PRIVATE_STATIC_JAVA_HEADER_LIBRARIES) ; \
 fi
 $(hide) $(ZIPTIME) $@.tmp
 $(hide) $(call commit-change-for-toc,$@)
@@ -2244,37 +2188,6 @@ $(hide) $(DX_COMMAND) $(DEX_FLAGS) \
         $(filter-out --core-library --multi-dex --minimal-main-dex,$(PRIVATE_DX_FLAGS))) \
     $(dir $@)d8_input.jar
 $(hide) rm -f $(dir $@)d8_input.jar
-endef
-
-#TODO: we kinda want to build different asset packages for
-#      different configurations, then combine them later (or something).
-#      Per-locale, etc.
-#      A list of dynamic and static parameters;  build layers for
-#      dynamic params that lay over the static ones.
-#TODO: update the manifest to point to the package file
-#Note that the version numbers are given to aapt as simple default
-#values; applications can override these by explicitly stating
-#them in their manifest.
-# $(1) the package file
-define create-assets-package
-$(hide) $(AAPT_ASAN_OPTIONS) $(AAPT) package $(PRIVATE_AAPT_FLAGS) \
-    $(addprefix -c , $(PRIVATE_PRODUCT_AAPT_CONFIG)) \
-    $(addprefix --preferred-density , $(PRIVATE_PRODUCT_AAPT_PREF_CONFIG)) \
-    $(addprefix -M , $(PRIVATE_ANDROID_MANIFEST)) \
-    $(addprefix -S , $(PRIVATE_RESOURCE_DIR)) \
-    $(addprefix -A , $(PRIVATE_ASSET_DIR)) \
-    $(addprefix -I , $(PRIVATE_AAPT_INCLUDES)) \
-    $(addprefix --min-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
-    $(addprefix --target-sdk-version , $(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
-    $(if $(filter --product,$(PRIVATE_AAPT_FLAGS)),,$(addprefix --product , $(PRIVATE_TARGET_AAPT_CHARACTERISTICS))) \
-    $(if $(filter --version-code,$(PRIVATE_AAPT_FLAGS)),,--version-code $(PLATFORM_SDK_VERSION)) \
-    $(if $(filter --version-name,$(PRIVATE_AAPT_FLAGS)),,--version-name $(APPS_DEFAULT_VERSION_NAME)) \
-    $(addprefix --rename-manifest-package , $(PRIVATE_MANIFEST_PACKAGE_NAME)) \
-    $(addprefix --rename-instrumentation-target-package , $(PRIVATE_MANIFEST_INSTRUMENTATION_FOR)) \
-    --skip-symbols-without-default-localization \
-    -F $(1)
-# So that we re-run aapt when the list of input files change
-$(hide) echo $(PRIVATE_RESOURCE_LIST) >/dev/null
 endef
 
 # We need the extra blank line, so that the command will be on a separate line.
@@ -2381,16 +2294,14 @@ endef
 ifeq ($(HOST_OS),linux)
 # Runs appcompat and store logs in $(PRODUCT_OUT)/appcompat
 define extract-package
-$(if $(filter aapt2, $(1)), \
-  $(AAPT2) dump $@ | awk -F ' |=' '/^Package/{print $$3}' >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log &&, \
-  $(AAPT) dump badging $@ | awk -F \' '/^package/{print $$2}' >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log &&)
+$(AAPT2) dump $@ | awk -F ' |=' '/^Package/{print $$3}' >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log &&
 endef
 define appcompat-header
 $(hide) \
   mkdir -p $(PRODUCT_OUT)/appcompat && \
   rm -f $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
   echo -n "Package name: " >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
-  $(call extract-package, $(1)) \
+  $(extract-package) \
   echo "Module name in Android tree: $(PRIVATE_MODULE)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
   echo "Local path in Android tree: $(PRIVATE_PATH)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
   echo "Install path on $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT): $(PRIVATE_INSTALLED_MODULE)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
