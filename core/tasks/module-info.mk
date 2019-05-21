@@ -17,6 +17,7 @@ $(MODULE_INFO_JSON):
 			'"test_config": [$(if $(ALL_MODULES.$(m).TEST_CONFIG),"$(ALL_MODULES.$(m).TEST_CONFIG)")], ' \
 			'"dependencies": [$(foreach w,$(sort $(ALL_DEPS.$(m).ALL_DEPS)),"$(w)", )], ' \
 			'"srcs": [$(foreach w,$(sort $(ALL_MODULES.$(m).SRCS)),"$(w)", )], ' \
+			'"srcjars": [$(foreach w,$(sort $(ALL_MODULES.$(m).SRCJARS)),"$(w)", )], ' \
 			'},\n' \
 	 ) | sed -e 's/, *\]/]/g' -e 's/, *\}/ }/g' -e '$$s/,$$//' >> $@
 	$(hide) echo '}' >> $@
