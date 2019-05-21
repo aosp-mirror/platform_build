@@ -17,6 +17,7 @@ endif
 ANDROID_BUILD_PATHS := $(ABP)
 ANDROID_PREBUILTS := prebuilt/$(HOST_PREBUILT_TAG)
 ANDROID_GCC_PREBUILTS := prebuilts/gcc/$(HOST_PREBUILT_TAG)
+ANDROID_CLANG_PREBUILTS := prebuilts/clang/host/$(HOST_PREBUILT_TAG)
 
 # Dump mulitple variables to "<var>=<value>" pairs, one per line.
 # The output may be executed as bash script.
