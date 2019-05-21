@@ -696,7 +696,7 @@ $(APKCERTS_FILE):
 	@echo APK certs list: $@
 	@mkdir -p $(dir $@)
 	@rm -f $@
-	$(foreach p,$(PACKAGES),\
+	$(foreach p,$(sort $(PACKAGES)),\
 	  $(if $(PACKAGES.$(p).EXTERNAL_KEY),\
 	    $(call _apkcerts_write_line,$(p),"EXTERNAL","",$(PACKAGES.$(p).COMPRESSED),$@),\
 	    $(call _apkcerts_write_line,$(p),$(PACKAGES.$(p).CERTIFICATE),$(PACKAGES.$(p).PRIVATE_KEY),$(PACKAGES.$(p).COMPRESSED),$@)))
