@@ -240,6 +240,8 @@ java_sources_deps := \
 $(java_source_list_file): $(java_sources_deps)
 	$(write-java-source-list)
 
+ALL_MODULES.$(my_register_name).SRCJARS := $(LOCAL_SRCJARS)
+
 ifneq ($(TURBINE_ENABLED),false)
 
 $(full_classes_turbine_jar): PRIVATE_JAVACFLAGS := $(LOCAL_JAVACFLAGS) $(annotation_processor_flags)
