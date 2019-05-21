@@ -93,6 +93,10 @@ $(KATI_obsolete_var \
 $(KATI_obsolete_var DIST_DIR dist_goal,Use dist-for-goals instead. See $(CHANGES_URL)#dist)
 $(KATI_obsolete_var TARGET_ANDROID_FILESYSTEM_CONFIG_H,Use TARGET_FS_CONFIG_GEN instead)
 $(KATI_deprecated_var USER,Use BUILD_USERNAME instead. See $(CHANGES_URL)#USER)
+$(KATI_obsolete_var TARGET_ROOT_OUT_SBIN,/sbin has been removed, use /system/bin instead)
+$(KATI_obsolete_var TARGET_ROOT_OUT_SBIN_UNSTRIPPED,/sbin has been removed, use /system/bin instead)
+$(KATI_obsolete_var BUILD_BROKEN_PHONY_TARGETS)
+$(KATI_obsolete_var BUILD_BROKEN_DUP_COPY_HEADERS)
 
 # This is marked as obsolete in envsetup.mk after reading the BoardConfig.mk
 $(KATI_deprecate_export It is a global setting. See $(CHANGES_URL)#export_keyword)
@@ -133,45 +137,48 @@ include $(BUILD_SYSTEM)/project_definitions.mk
 # Build system internal files
 # ###############################################################
 
-BUILD_COMBOS:= $(BUILD_SYSTEM)/combo
+BUILD_COMBOS :=$= $(BUILD_SYSTEM)/combo
 
-CLEAR_VARS:= $(BUILD_SYSTEM)/clear_vars.mk
-BUILD_HOST_STATIC_LIBRARY:= $(BUILD_SYSTEM)/host_static_library.mk
-BUILD_HOST_SHARED_LIBRARY:= $(BUILD_SYSTEM)/host_shared_library.mk
-BUILD_STATIC_LIBRARY:= $(BUILD_SYSTEM)/static_library.mk
-BUILD_HEADER_LIBRARY:= $(BUILD_SYSTEM)/header_library.mk
-BUILD_AUX_STATIC_LIBRARY:= $(BUILD_SYSTEM)/aux_static_library.mk
-BUILD_AUX_EXECUTABLE:= $(BUILD_SYSTEM)/aux_executable.mk
-BUILD_SHARED_LIBRARY:= $(BUILD_SYSTEM)/shared_library.mk
-BUILD_EXECUTABLE:= $(BUILD_SYSTEM)/executable.mk
-BUILD_HOST_EXECUTABLE:= $(BUILD_SYSTEM)/host_executable.mk
-BUILD_PACKAGE:= $(BUILD_SYSTEM)/package.mk
-BUILD_PHONY_PACKAGE:= $(BUILD_SYSTEM)/phony_package.mk
-BUILD_RRO_PACKAGE:= $(BUILD_SYSTEM)/build_rro_package.mk
-BUILD_HOST_PREBUILT:= $(BUILD_SYSTEM)/host_prebuilt.mk
-BUILD_PREBUILT:= $(BUILD_SYSTEM)/prebuilt.mk
-BUILD_MULTI_PREBUILT:= $(BUILD_SYSTEM)/multi_prebuilt.mk
-BUILD_JAVA_LIBRARY:= $(BUILD_SYSTEM)/java_library.mk
-BUILD_STATIC_JAVA_LIBRARY:= $(BUILD_SYSTEM)/static_java_library.mk
-BUILD_HOST_JAVA_LIBRARY:= $(BUILD_SYSTEM)/host_java_library.mk
-BUILD_COPY_HEADERS := $(BUILD_SYSTEM)/copy_headers.mk
-BUILD_NATIVE_TEST := $(BUILD_SYSTEM)/native_test.mk
-BUILD_NATIVE_BENCHMARK := $(BUILD_SYSTEM)/native_benchmark.mk
-BUILD_HOST_NATIVE_TEST := $(BUILD_SYSTEM)/host_native_test.mk
-BUILD_FUZZ_TEST := $(BUILD_SYSTEM)/fuzz_test.mk
-BUILD_HOST_FUZZ_TEST := $(BUILD_SYSTEM)/host_fuzz_test.mk
+CLEAR_VARS :=$= $(BUILD_SYSTEM)/clear_vars.mk
 
-BUILD_SHARED_TEST_LIBRARY := $(BUILD_SYSTEM)/shared_test_lib.mk
-BUILD_HOST_SHARED_TEST_LIBRARY := $(BUILD_SYSTEM)/host_shared_test_lib.mk
-BUILD_STATIC_TEST_LIBRARY := $(BUILD_SYSTEM)/static_test_lib.mk
-BUILD_HOST_STATIC_TEST_LIBRARY := $(BUILD_SYSTEM)/host_static_test_lib.mk
+BUILD_HOST_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/host_static_library.mk
+BUILD_HOST_SHARED_LIBRARY :=$= $(BUILD_SYSTEM)/host_shared_library.mk
+BUILD_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/static_library.mk
+BUILD_HEADER_LIBRARY :=$= $(BUILD_SYSTEM)/header_library.mk
+BUILD_AUX_STATIC_LIBRARY :=$= $(BUILD_SYSTEM)/aux_static_library.mk
+BUILD_AUX_EXECUTABLE :=$= $(BUILD_SYSTEM)/aux_executable.mk
+BUILD_SHARED_LIBRARY :=$= $(BUILD_SYSTEM)/shared_library.mk
+BUILD_EXECUTABLE :=$= $(BUILD_SYSTEM)/executable.mk
+BUILD_HOST_EXECUTABLE :=$= $(BUILD_SYSTEM)/host_executable.mk
+BUILD_PACKAGE :=$= $(BUILD_SYSTEM)/package.mk
+BUILD_PHONY_PACKAGE :=$= $(BUILD_SYSTEM)/phony_package.mk
+BUILD_RRO_PACKAGE :=$= $(BUILD_SYSTEM)/build_rro_package.mk
+BUILD_HOST_PREBUILT :=$= $(BUILD_SYSTEM)/host_prebuilt.mk
+BUILD_PREBUILT :=$= $(BUILD_SYSTEM)/prebuilt.mk
+BUILD_MULTI_PREBUILT :=$= $(BUILD_SYSTEM)/multi_prebuilt.mk
+BUILD_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/java_library.mk
+BUILD_STATIC_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/static_java_library.mk
+BUILD_HOST_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_java_library.mk
+BUILD_COPY_HEADERS :=$= $(BUILD_SYSTEM)/copy_headers.mk
+BUILD_NATIVE_TEST :=$= $(BUILD_SYSTEM)/native_test.mk
+BUILD_NATIVE_BENCHMARK :=$= $(BUILD_SYSTEM)/native_benchmark.mk
+BUILD_HOST_NATIVE_TEST :=$= $(BUILD_SYSTEM)/host_native_test.mk
+BUILD_FUZZ_TEST :=$= $(BUILD_SYSTEM)/fuzz_test.mk
+BUILD_HOST_FUZZ_TEST :=$= $(BUILD_SYSTEM)/host_fuzz_test.mk
 
-BUILD_NOTICE_FILE := $(BUILD_SYSTEM)/notice_files.mk
-BUILD_HOST_DALVIK_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_java_library.mk
-BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY := $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
+BUILD_SHARED_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/shared_test_lib.mk
+BUILD_HOST_SHARED_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/host_shared_test_lib.mk
+BUILD_STATIC_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/static_test_lib.mk
+BUILD_HOST_STATIC_TEST_LIBRARY :=$= $(BUILD_SYSTEM)/host_static_test_lib.mk
 
-BUILD_HOST_TEST_CONFIG := $(BUILD_SYSTEM)/host_test_config.mk
-BUILD_TARGET_TEST_CONFIG := $(BUILD_SYSTEM)/target_test_config.mk
+BUILD_NOTICE_FILE :=$= $(BUILD_SYSTEM)/notice_files.mk
+BUILD_HOST_DALVIK_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_java_library.mk
+BUILD_HOST_DALVIK_STATIC_JAVA_LIBRARY :=$= $(BUILD_SYSTEM)/host_dalvik_static_java_library.mk
+
+BUILD_HOST_TEST_CONFIG :=$= $(BUILD_SYSTEM)/host_test_config.mk
+BUILD_TARGET_TEST_CONFIG :=$= $(BUILD_SYSTEM)/target_test_config.mk
+
+include $(BUILD_SYSTEM)/deprecation.mk
 
 # ###############################################################
 # Parse out any modifier targets.
@@ -597,11 +604,11 @@ MERGETAGS := build/make/tools/merge-event-log-tags.py
 BUILD_IMAGE_SRCS := $(wildcard build/make/tools/releasetools/*.py)
 APPEND2SIMG := $(HOST_OUT_EXECUTABLES)/append2simg
 VERITY_SIGNER := $(HOST_OUT_EXECUTABLES)/verity_signer
-BUILD_VERITY_METADATA := $(HOST_OUT_EXECUTABLES)/build_verity_metadata.py
+BUILD_VERITY_METADATA := $(HOST_OUT_EXECUTABLES)/build_verity_metadata
 BUILD_VERITY_TREE := $(HOST_OUT_EXECUTABLES)/build_verity_tree
 BOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/boot_signer
 FUTILITY := $(HOST_OUT_EXECUTABLES)/futility-host
-VBOOT_SIGNER := prebuilts/misc/scripts/vboot_signer/vboot_signer.sh
+VBOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/vboot_signer
 FEC := $(HOST_OUT_EXECUTABLES)/fec
 BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 
@@ -617,11 +624,9 @@ EXTRACT_KERNEL := build/make/tools/extract_kernel.py
 
 USE_OPENJDK9 := true
 
-ifeq ($(EXPERIMENTAL_USE_OPENJDK9),)
+ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),)
 TARGET_OPENJDK9 :=
-else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),1.8)
-TARGET_OPENJDK9 :=
-else ifeq ($(EXPERIMENTAL_USE_OPENJDK9),true)
+else ifeq ($(EXPERIMENTAL_JAVA_LANGUAGE_LEVEL_9),true)
 TARGET_OPENJDK9 := true
 endif
 
@@ -807,15 +812,6 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
     PLATFORM_SEPOLICY_VERSION \
     TOT_SEPOLICY_VERSION \
-
-ifeq ($(PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS),)
-  ifdef PRODUCT_SHIPPING_API_LEVEL
-    ifeq (true,$(call math_gt_or_eq,$(PRODUCT_SHIPPING_API_LEVEL),29))
-      PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS := true
-    endif
-  endif
-endif
-.KATI_READONLY := PRODUCT_OTA_ENFORCE_VINTF_KERNEL_REQUIREMENTS
 
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
   ifneq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
@@ -1106,7 +1102,7 @@ TARGET_AVAILABLE_SDK_VERSIONS += test_current
 TARGET_AVAIALBLE_SDK_VERSIONS := $(call numerically_sort,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
 TARGET_SDK_VERSIONS_WITHOUT_JAVA_18_SUPPORT := $(call numbers_less_than,24,$(TARGET_AVAILABLE_SDK_VERSIONS))
-TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,27,$(TARGET_AVAILABLE_SDK_VERSIONS))
+TARGET_SDK_VERSIONS_WITHOUT_JAVA_19_SUPPORT := $(call numbers_less_than,30,$(TARGET_AVAILABLE_SDK_VERSIONS))
 
 ifndef INTERNAL_PLATFORM_PRIVATE_API_FILE
 INTERNAL_PLATFORM_PRIVATE_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/private.txt
@@ -1171,7 +1167,9 @@ dont_bother_goals := out \
     onod odmimage-nodeps \
     systemotherimage-nodeps \
     ramdisk-nodeps \
+    ramdisk_debug-nodeps \
     bootimage-nodeps \
+    bootimage_debug-nodeps \
     recoveryimage-nodeps \
     vbmetaimage-nodeps \
     product-graph dump-products

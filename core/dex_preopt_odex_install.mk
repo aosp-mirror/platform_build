@@ -242,12 +242,12 @@ ifdef LOCAL_DEX_PREOPT
 
   .KATI_RESTAT: $(my_dexpreopt_script) $(my_strip_script)
   $(my_dexpreopt_script): PRIVATE_MODULE := $(LOCAL_MODULE)
-  $(my_dexpreopt_script): PRIVATE_GLOBAL_CONFIG := $(PRODUCT_OUT)/dexpreopt.config
+  $(my_dexpreopt_script): PRIVATE_GLOBAL_CONFIG := $(DEX_PREOPT_CONFIG_FOR_MAKE)
   $(my_dexpreopt_script): PRIVATE_MODULE_CONFIG := $(my_dexpreopt_config)
   $(my_dexpreopt_script): PRIVATE_STRIP_SCRIPT := $(my_strip_script)
   $(my_dexpreopt_script): .KATI_IMPLICIT_OUTPUTS := $(my_strip_script)
   $(my_dexpreopt_script): $(DEXPREOPT_GEN)
-  $(my_dexpreopt_script): $(my_dexpreopt_config) $(PRODUCT_OUT)/dexpreopt.config
+  $(my_dexpreopt_script): $(my_dexpreopt_config) $(DEX_PREOPT_CONFIG_FOR_MAKE)
 	@echo "$(PRIVATE_MODULE) dexpreopt gen"
 	$(DEXPREOPT_GEN) -global $(PRIVATE_GLOBAL_CONFIG) -module $(PRIVATE_MODULE_CONFIG) \
 	-dexpreopt_script $@ -strip_script $(PRIVATE_STRIP_SCRIPT) \

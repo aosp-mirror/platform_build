@@ -93,9 +93,11 @@ BLOCK_SIZE = 4096
 # Values for "certificate" in apkcerts that mean special things.
 SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 
-# The partitions allowed to be signed by AVB (Android verified boot 2.0).
-AVB_PARTITIONS = ('boot', 'recovery', 'system', 'vendor', 'product',
-                  'product_services', 'dtbo', 'odm')
+# The partitions allowed to be signed by AVB (Android Verified Boot 2.0). Note
+# that system_other is not in the list because we don't want to include its
+# descriptor into vbmeta.img.
+AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'product_services',
+                  'recovery', 'system', 'vendor')
 
 # Partitions that should have their care_map added to META/care_map.pb
 PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product_services',
@@ -330,10 +332,8 @@ def LoadInfoDict(input_file, repacking=False):
     raise ValueError("Failed to find 'fstab_version'")
 
   if repacking:
-    # We carry a copy of file_contexts.bin under META/. If not available, search
-    # BOOT/RAMDISK/. Note that sometimes we may need a different file to build
-    # images than the one running on device, in that case, we must have the one
-    # for image generation copied to META/.
+    # "selinux_fc" should point to the file_contexts file (file_contexts.bin)
+    # under META/.
     fc_basename = os.path.basename(d.get("selinux_fc", "file_contexts"))
     fc_config = os.path.join(input_file, "META", fc_basename)
     assert os.path.exists(fc_config)

@@ -122,8 +122,6 @@ PRODUCT_PACKAGES += \
     libcamera2ndk \
     libcamera_client \
     libcameraservice \
-    libc_malloc_debug \
-    libc_malloc_hooks \
     libcutils \
     libdl.bootstrap \
     libdrmframework \
@@ -210,6 +208,7 @@ PRODUCT_PACKAGES += \
     netd \
     NetworkStack \
     org.apache.http.legacy \
+    otacerts \
     perfetto \
     ping \
     ping6 \
@@ -267,7 +266,7 @@ PRODUCT_PACKAGES += \
 
 # VINTF data for system image
 PRODUCT_PACKAGES += \
-    framework_manifest.xml \
+    system_manifest.xml \
     system_compatibility_matrix.xml \
 
 # Host tools to install

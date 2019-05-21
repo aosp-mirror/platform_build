@@ -24,7 +24,7 @@ func init() {
 	android.RegisterModuleType("target_fs_config_gen_filegroup", targetFSConfigGenFactory)
 }
 
-// target_fs_config_gen_filegroup is used to expose the file pointed to by TARGET_FS_CONFIG_GEN to
+// target_fs_config_gen_filegroup is used to expose the files pointed to by TARGET_FS_CONFIG_GEN to
 // genrules in Soong. If TARGET_FS_CONFIG_GEN is empty, it will export an empty file instead.
 func targetFSConfigGenFactory() android.Module {
 	module := &targetFSConfigGen{}
@@ -36,17 +36,17 @@ var _ android.SourceFileProducer = (*targetFSConfigGen)(nil)
 
 type targetFSConfigGen struct {
 	android.ModuleBase
-	path android.Path
+	paths android.Paths
 }
 
 func (targetFSConfigGen) DepsMutator(ctx android.BottomUpMutatorContext) {}
 
 func (t *targetFSConfigGen) GenerateAndroidBuildActions(ctx android.ModuleContext) {
-	if ret := ctx.DeviceConfig().TargetFSConfigGen(); ret != nil && *ret != "" {
-		t.path = android.PathForSource(ctx, *ret)
+	if ret := ctx.DeviceConfig().TargetFSConfigGen(); len(ret) != 0 {
+		t.paths = android.PathsForSource(ctx, ret)
 	} else {
 		path := android.PathForModuleGen(ctx, "empty")
-		t.path = path
+		t.paths = android.Paths{path}
 
 		rule := android.NewRuleBuilder()
 		rule.Command().Text("rm -rf").Output(path)
@@ -56,5 +56,5 @@ func (t *targetFSConfigGen) GenerateAndroidBuildActions(ctx android.ModuleContex
 }
 
 func (t *targetFSConfigGen) Srcs() android.Paths {
-	return android.Paths{t.path}
+	return t.paths
 }

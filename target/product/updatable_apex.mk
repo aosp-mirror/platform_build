@@ -14,9 +14,8 @@
 # limitations under the License.
 #
 
-# Base modules and settings for the product partition.
-PRODUCT_PACKAGES += \
-    healthd \
-    ModuleMetadata \
-    product_compatibility_matrix.xml \
-    product_manifest.xml \
+# Inherit this when the target needs to support updating APEXes
+
+PRODUCT_PROPERTY_OVERRIDES := ro.apex.updatable=true
+PRODUCT_PACKAGES := com.android.apex.cts.shim.v1_prebuilt
+TARGET_FLATTEN_APEX := false

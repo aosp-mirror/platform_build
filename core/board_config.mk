@@ -86,11 +86,15 @@ _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 
 _build_broken_var_list := \
   BUILD_BROKEN_ANDROIDMK_EXPORTS \
-  BUILD_BROKEN_DUP_COPY_HEADERS \
   BUILD_BROKEN_DUP_RULES \
-  BUILD_BROKEN_PHONY_TARGETS \
   BUILD_BROKEN_ENG_DEBUG_TAGS \
   BUILD_BROKEN_USES_NETWORK \
+
+_build_broken_var_list += \
+  $(foreach m,$(AVAILABLE_BUILD_MODULE_TYPES) \
+              $(DEFAULT_WARNING_BUILD_MODULE_TYPES) \
+              $(DEFAULT_ERROR_BUILD_MODULE_TYPES), \
+    BUILD_BROKEN_USES_$(m))
 
 _board_true_false_vars := $(_build_broken_var_list)
 _board_strip_readonly_list += $(_build_broken_var_list)
@@ -177,7 +181,7 @@ endif
 # Sanity check to warn about likely cryptic errors later in the build.
 ifeq ($(TARGET_IS_64_BIT),true)
   ifeq (,$(filter true false,$(TARGET_SUPPORTS_64_BIT_APPS)))
-    $(warning Building a 32-bit-app-only product on a 64-bit device. \
+    $(error Building a 32-bit-app-only product on a 64-bit device. \
       If this is intentional, set TARGET_SUPPORTS_64_BIT_APPS := false)
   endif
 endif
@@ -237,6 +241,12 @@ TARGET_COPY_OUT_RAMDISK := $(TARGET_COPY_OUT_ROOT)
 endif
 
 ###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_DEBUG_RAMDISK
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+TARGET_COPY_OUT_DEBUG_RAMDISK := debug_ramdisk/first_stage_ramdisk
+endif
+
+###########################################
 # Configure whether we're building the system image
 BUILDING_SYSTEM_IMAGE := true
 ifeq ($(PRODUCT_BUILD_SYSTEM_IMAGE),)
@@ -280,8 +290,33 @@ else ifeq ($(PRODUCT_BUILD_CACHE_IMAGE),true)
 endif
 .KATI_READONLY := BUILDING_CACHE_IMAGE
 
-# TODO: Add BUILDING_BOOT_IMAGE / BUILDING_RECOVERY_IMAGE
-# This gets complicated with BOARD_USES_RECOVERY_AS_BOOT, so skipping for now.
+# Are we building a boot image
+BUILDING_BOOT_IMAGE :=
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+  BUILDING_BOOT_IMAGE :=
+else ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),)
+  ifdef BOARD_BOOTIMAGE_PARTITION_SIZE
+    BUILDING_BOOT_IMAGE := true
+  endif
+else ifeq ($(PRODUCT_BUILD_BOOT_IMAGE),true)
+  BUILDING_BOOT_IMAGE := true
+endif
+.KATI_READONLY := BUILDING_BOOT_IMAGE
+
+# Are we building a recovery image
+BUILDING_RECOVERY_IMAGE :=
+ifeq ($(BOARD_USES_RECOVERY_AS_BOOT),true)
+  BUILDING_RECOVERY_IMAGE := true
+else ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),)
+  ifdef BOARD_RECOVERYIMAGE_PARTITION_SIZE
+    ifeq (,$(filter true, $(TARGET_NO_KERNEL) $(TARGET_NO_RECOVERY)))
+      BUILDING_RECOVERY_IMAGE := true
+    endif
+  endif
+else ifeq ($(PRODUCT_BUILD_RECOVERY_IMAGE),true)
+  BUILDING_RECOVERY_IMAGE := true
+endif
+.KATI_READONLY := BUILDING_RECOVERY_IMAGE
 
 # Are we building a ramdisk image
 BUILDING_RAMDISK_IMAGE := true
@@ -450,7 +485,7 @@ else ifdef BOARD_USES_ODMIMAGE
 endif
 
 BUILDING_ODM_IMAGE :=
-ifeq ($(ODM_BUILD_ODM_IMAGE),)
+ifeq ($(PRODUCT_BUILD_ODM_IMAGE),)
   ifdef BOARD_ODMIMAGE_FILE_SYSTEM_TYPE
     BUILDING_ODM_IMAGE := true
   endif
@@ -499,6 +534,14 @@ else
   TARGET_VENDOR_TEST_SUFFIX :=
 endif
 
+###########################################
+# APEXes are by default flattened, i.e. non-updatable.
+# It can be unflattened (and updatable) by inheriting from
+# updatable_apex.mk
+ifeq (,$(TARGET_FLATTEN_APEX))
+TARGET_FLATTEN_APEX := true
+endif
+
 ifeq (,$(TARGET_BUILD_APPS))
 ifdef PRODUCT_EXTRA_VNDK_VERSIONS
   $(foreach v,$(PRODUCT_EXTRA_VNDK_VERSIONS),$(call check_vndk_version,$(v)))
@@ -511,3 +554,16 @@ ifneq (,$(_unsupported_systemsdk_versions))
   $(error System SDK versions '$(_unsupported_systemsdk_versions)' in BOARD_SYSTEMSDK_VERSIONS are not supported.\
           Supported versions are $(PLATFORM_SYSTEMSDK_VERSIONS))
 endif
+
+###########################################
+# Handle BUILD_BROKEN_USES_BUILD_*
+
+$(foreach m,$(DEFAULT_WARNING_BUILD_MODULE_TYPES),\
+  $(if $(filter false,$(BUILD_BROKEN_USES_$(m))),\
+    $(KATI_obsolete_var $(m),Please convert to Soong),\
+    $(KATI_deprecated_var $(m),Please convert to Soong)))
+
+$(foreach m,$(DEFAULT_ERROR_BUILD_MODULE_TYPES),\
+  $(if $(filter true,$(BUILD_BROKEN_USES_$(m))),\
+    $(KATI_deprecated_var $(m),Please convert to Soong),\
+    $(KATI_obsolete_var $(m),Please convert to Soong)))
