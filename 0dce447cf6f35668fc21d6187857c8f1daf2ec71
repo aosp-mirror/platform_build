@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "5580f72e_2a95f106",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1413,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-05-21T15:51:20Z",
+      "side": 1,
+      "message": "This line can be removed, right?",
+      "range": {
+        "startLine": 1413,
+        "startChar": 0,
+        "endLine": 1413,
+        "endChar": 47
+      },
+      "revId": "0dce447cf6f35668fc21d6187857c8f1daf2ec71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "39167cbc_92615037",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 1483,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-05-21T15:51:20Z",
+      "side": 1,
+      "message": "We also have BUILDING_CACHE_IMAGE",
+      "range": {
+        "startLine": 1483,
+        "startChar": 26,
+        "endLine": 1483,
+        "endChar": 31
+      },
+      "revId": "0dce447cf6f35668fc21d6187857c8f1daf2ec71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e45ecd9c_bb0cc3fd",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 4
@@ -37,6 +83,30 @@
       "side": 1,
       "message": "Right, tried to keep it equivalent with what was here before.\n\nTao, are you fine if I remove it for the reason Bill stated?",
       "parentUuid": "e45ecd9c_bb0cc3fd",
+      "range": {
+        "startLine": 259,
+        "startChar": 4,
+        "endLine": 259,
+        "endChar": 21
+      },
+      "revId": "0dce447cf6f35668fc21d6187857c8f1daf2ec71",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "145e5d73_eb9a291f",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-05-21T15:51:20Z",
+      "side": 1,
+      "message": "https://android-review.googlesource.com/c/platform/build/+/961899/4/core/tasks/build_custom_images.mk#37 has a (last) user that may call this script without passing selinux_fc. Although that user itself might have been effectively dead, we need to keep it as an optional flag until killing that user. Would be great if you can help add a comment here.",
+      "parentUuid": "b33b21d3_d49243bc",
       "range": {
         "startLine": 259,
         "startChar": 4,
