@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1c0d0453_92d46982",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1626,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-05-22T20:47:19Z",
+      "side": 1,
+      "message": "is it supposed to be checked differently for source and target?",
+      "range": {
+        "startLine": 1626,
+        "startChar": 2,
+        "endLine": 1626,
+        "endChar": 21
+      },
+      "revId": "371fb3c4bc8e0da7b91e73c1a8da2eb2b640d002",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c2d7ad48_301a34cf",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1668,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-05-22T20:47:19Z",
+      "side": 1,
+      "message": "The generation for cuttlefish specific product partitions doesn\u0027t consider these parameters. And I believe we are supposed to.",
+      "range": {
+        "startLine": 1666,
+        "startChar": 0,
+        "endLine": 1668,
+        "endChar": 75
+      },
+      "revId": "371fb3c4bc8e0da7b91e73c1a8da2eb2b640d002",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
