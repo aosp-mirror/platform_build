@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2bf9afbb_e04888e8",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-05-22T16:00:30Z",
+      "side": 1,
+      "message": "Just wondering, when does this file get used / how does this list get used?  Is it only used on the new files in the OTA and is it only used with the current platform release?  If both are true, then I think we can drop these legacy paths now, right?  Once you put in this CL, we won\u0027t generate those paths, so they shouldn\u0027t be in \u0027target files\u0027 and shouldn\u0027t need to be signed, right?",
+      "revId": "71a4d5cdd5fba29f9726773fc63bf272acc3b212",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
