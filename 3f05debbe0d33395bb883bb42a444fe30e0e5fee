@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "32141463_0c3fc0e3",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-22T00:16:13Z",
+      "side": 1,
+      "message": "I think I resolved this by just using copy_prop to handle using the correct \u003cimage\u003e_selinux_fc props.",
+      "parentUuid": "bfa5bab8_92bdc5a8",
+      "range": {
+        "startLine": 252,
+        "startChar": 0,
+        "endLine": 259,
+        "endChar": 21
+      },
+      "revId": "3f05debbe0d33395bb883bb42a444fe30e0e5fee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "46187926_35bf4ca5",
         "filename": "tools/releasetools/build_image.py",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "3f05debbe0d33395bb883bb42a444fe30e0e5fee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5dd7c25d_2f91a01e",
+        "filename": "tools/releasetools/build_image.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 532,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-22T00:16:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "46187926_35bf4ca5",
+      "range": {
+        "startLine": 532,
+        "startChar": 6,
+        "endLine": 532,
+        "endChar": 35
+      },
+      "revId": "3f05debbe0d33395bb883bb42a444fe30e0e5fee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
