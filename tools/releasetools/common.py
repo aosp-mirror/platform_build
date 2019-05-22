@@ -242,6 +242,8 @@ def RunAndCheckOutput(args, verbose=None, **kwargs):
   """
   proc = Run(args, verbose=verbose, **kwargs)
   output, _ = proc.communicate()
+  if output is None:
+    output = ""
   # Don't log any if caller explicitly says so.
   if verbose != False:
     logger.info("%s", output.rstrip())
