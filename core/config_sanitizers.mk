@@ -235,12 +235,17 @@ ifneq ($(filter default-ub,$(my_sanitize)),)
   my_sanitize := $(CLANG_DEFAULT_UB_CHECKS)
 endif
 
-ifneq ($(filter coverage,$(my_sanitize)),)
-  ifeq ($(filter address,$(my_sanitize)),)
-    $(error $(LOCAL_PATH): $(LOCAL_MODULE): Use of 'coverage' also requires 'address')
-  endif
-  my_cflags += -fsanitize-coverage=trace-pc-guard,indirect-calls,trace-cmp
-  my_sanitize := $(filter-out coverage,$(my_sanitize))
+ifneq ($(filter fuzzer,$(my_sanitize)),)
+  # SANITIZE_TARGET='fuzzer' actually means to create the fuzzer coverage
+  # information, not to link against the fuzzer main().
+  my_sanitize := $(filter-out fuzzer,$(my_sanitize))
+  my_sanitize += fuzzer-no-link
+
+  # TODO(b/131771163): Disable LTO for fuzzer builds. Note that Cfi causes
+  # dependency on LTO.
+  my_sanitize := $(filter-out cfi,$(my_sanitize))
+  my_cflags += -fno-lto
+  my_ldflags += -fno-lto
 endif
 
 ifneq ($(filter integer_overflow,$(my_sanitize)),)
@@ -280,7 +285,12 @@ ifneq ($(my_sanitize),)
   my_cflags += -fsanitize=$(fsanitize_arg)
   my_asflags += -fsanitize=$(fsanitize_arg)
 
-  ifdef LOCAL_IS_HOST_MODULE
+  # When fuzzing, we wish to crash with diagnostics on any bug.
+  ifneq ($(filter fuzzer-no-link,$(my_sanitize)),)
+    my_cflags += -fno-sanitize-trap=all
+    my_cflags += -fno-sanitize-recover=all
+    my_ldflags += -fsanitize=fuzzer-no-link
+  else ifdef LOCAL_IS_HOST_MODULE
     my_cflags += -fno-sanitize-recover=all
     my_ldflags += -fsanitize=$(fsanitize_arg)
   else
@@ -378,7 +388,7 @@ ifeq ($(LOCAL_IS_HOST_MODULE)$(LOCAL_IS_AUX_MODULE),)
   ifneq ($(filter unsigned-integer-overflow signed-integer-overflow integer,$(my_sanitize)),)
     ifeq ($(filter unsigned-integer-overflow signed-integer-overflow integer,$(my_sanitize_diag)),)
       ifeq ($(filter cfi,$(my_sanitize_diag)),)
-        ifeq ($(filter address hwaddress,$(my_sanitize)),)
+        ifeq ($(filter address hwaddress fuzzer-no-link,$(my_sanitize)),)
           my_cflags += -fsanitize-minimal-runtime
           my_cflags += -fno-sanitize-trap=integer
           my_cflags += -fno-sanitize-recover=integer
