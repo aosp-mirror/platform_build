@@ -52,6 +52,24 @@
       "revId": "71a4d5cdd5fba29f9726773fc63bf272acc3b212",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b6aa3e80_5bae3768",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-05-23T05:15:28Z",
+      "side": 1,
+      "message": "\u003e from the matching dev branch\n\nOK, as we backported this into Q so we still have to keep it.\nFor later clean-ups b/133306570 (that only in master), I\u0027ll probably just remove those # legacy paths.\n\nThanks for the clarification!",
+      "parentUuid": "a38b5103_b3d06b00",
+      "revId": "71a4d5cdd5fba29f9726773fc63bf272acc3b212",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
