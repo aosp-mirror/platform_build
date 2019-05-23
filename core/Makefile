@@ -568,7 +568,7 @@ endif  # BOARD_USES_PRODUCTIMAGE
 
 # ----------------------------------------------------------------
 # odm build.prop
-INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/build.prop
+INSTALLED_ODM_BUILD_PROP_TARGET := $(TARGET_OUT_ODM)/etc/build.prop
 ALL_DEFAULT_INSTALLED_MODULES += $(INSTALLED_ODM_BUILD_PROP_TARGET)
 
 FINAL_ODM_BUILD_PROPERTIES += \
@@ -867,11 +867,12 @@ $(call dist-for-goals, sdk win_sdk sdk_addon, $(INSTALLED_FILES_FILE_ROOT))
 
 #------------------------------------------------------------------
 # dtb
-
-ifdef BOARD_PREBUILT_DTBIMAGE_DIR
+ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
 INSTALLED_DTBIMAGE_TARGET := $(PRODUCT_OUT)/dtb.img
+ifdef BOARD_PREBUILT_DTBIMAGE_DIR
 $(INSTALLED_DTBIMAGE_TARGET) : $(sort $(wildcard $(BOARD_PREBUILT_DTBIMAGE_DIR)/*.dtb))
 	cat $^ > $@
+endif
 endif
 
 # -----------------------------------------------------------------
@@ -3762,6 +3763,7 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(INTERNAL_SYSTEMOTHERIMAGE_FILES) \
 	    $(INSTALLED_ANDROID_INFO_TXT_TARGET) \
 	    $(INSTALLED_KERNEL_TARGET) \
+	    $(INSTALLED_DTBIMAGE_TARGET) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
 	    $(BOARD_PREBUILT_DTBOIMAGE) \
 	    $(BOARD_PREBUILT_RECOVERY_DTBOIMAGE) \
@@ -3814,7 +3816,7 @@ endif
 ifdef BOARD_INCLUDE_RECOVERY_ACPIO
 	$(hide) cp $(BOARD_RECOVERY_ACPIO) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/recovery_acpio
 endif
-ifdef BOARD_INCLUDE_DTB_IN_BOOTIMG
+ifdef INSTALLED_DTBIMAGE_TARGET
 	$(hide) cp $(INSTALLED_DTBIMAGE_TARGET) $(zip_root)/$(PRIVATE_RECOVERY_OUT)/dtb
 endif
 ifdef INTERNAL_KERNEL_CMDLINE
