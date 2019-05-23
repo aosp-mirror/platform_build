@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "013994bc_b99ec356",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 1395887
+      },
+      "writtenOn": "2019-05-23T00:19:10Z",
+      "side": 1,
+      "message": "Now that you\u0027re using copy_prop, do you need this change? It seems like the old code would work as the prop is copied to selinux_fc (exactly).",
+      "range": {
+        "startLine": 335,
+        "startChar": 0,
+        "endLine": 343,
+        "endChar": 26
+      },
+      "revId": "59f814ce3733ce796fd399ed18b2b4d35b3a73ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
