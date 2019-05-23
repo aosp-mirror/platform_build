@@ -70,6 +70,24 @@
       "revId": "71a4d5cdd5fba29f9726773fc63bf272acc3b212",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0e0e4e54_29a57b26",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-05-23T08:32:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b6aa3e80_5bae3768",
+      "revId": "71a4d5cdd5fba29f9726773fc63bf272acc3b212",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
