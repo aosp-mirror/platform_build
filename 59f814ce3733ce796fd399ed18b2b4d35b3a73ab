@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "3e2eb2fe_c6266140",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-23T17:48:55Z",
+      "side": 1,
+      "message": "Yup, this change is needed. \u0027seliux_fc\u0027 no longer exists when LoadInfoDict() called.",
+      "parentUuid": "54188699_fba0b7cb",
+      "range": {
+        "startLine": 335,
+        "startChar": 0,
+        "endLine": 343,
+        "endChar": 26
+      },
+      "revId": "59f814ce3733ce796fd399ed18b2b4d35b3a73ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4882e195_0d327725",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 10
