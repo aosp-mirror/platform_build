@@ -16,6 +16,24 @@
       "revId": "71a4d5cdd5fba29f9726773fc63bf272acc3b212",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4ffca515_14d37ae3",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 1080813
+      },
+      "writtenOn": "2019-05-23T04:48:03Z",
+      "side": 1,
+      "message": "That probably is to make otatools.zip more generic, so it can sign images from earlier releases. \n\nhttps://docs.google.com/document/d/1BpLEeQoavp6GMwg-N6HEUKxUWIViRA26zldfqIrUJh8/edit#heading\u003dh.6ew26n2xgo7a\n\nFrom, b/131441932#comment24, looks like we have the same signing tool to sign images from different releases. Rather than 1:1 mapping between signing tool and the device image for a given dessert version.\n\ntbao@ might know more details.",
+      "parentUuid": "2bf9afbb_e04888e8",
+      "revId": "71a4d5cdd5fba29f9726773fc63bf272acc3b212",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
