@@ -1253,14 +1253,14 @@ DISABLE_APEX_LIBS_ABSENCE_CHECK ?=
 # Bionic should not be in /system, except for the bootstrap instance.
 APEX_LIBS_ABSENCE_CHECK_EXCLUDE := lib/bootstrap lib64/bootstrap
 
-# Exclude lib/arm and lib/arm64 which contain the native bridge proxy libs. They
+# Exclude lib/arm and lib64/arm64 which contain the native bridge proxy libs. They
 # are compiled for the guest architecture and used with an entirely different
 # linker config. The native libs are then linked to as usual via exported
 # interfaces, so the proxy libs do not violate the interface boundaries on the
 # native architecture.
 # TODO(b/130630776): Introduce a make variable for the appropriate directory
 # when native bridge is active.
-APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/arm lib/arm64
+APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/arm lib64/arm64
 
 # Exclude vndk-* subdirectories which contain prebuilts from older releases.
 APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/vndk-% lib64/vndk-%
