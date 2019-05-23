@@ -34,6 +34,24 @@
       "revId": "71a4d5cdd5fba29f9726773fc63bf272acc3b212",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a38b5103_b3d06b00",
+        "filename": "tools/releasetools/sign_target_files_apks.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 494,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-05-23T05:10:57Z",
+      "side": 1,
+      "message": "We sign builds with the latest otatools (i.e. this file included) from the matching dev branch. So if we take this CL into Q, we need to keep the legacy lines in that cherry-pick CL to handle the existing / older Q builds. For the CL in master, we don\u0027t need the legacy lines.\n\n(The one from b/131441932#comment24 is for google3 signing code. That applies to all branches.)",
+      "parentUuid": "4ffca515_14d37ae3",
+      "revId": "71a4d5cdd5fba29f9726773fc63bf272acc3b212",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
