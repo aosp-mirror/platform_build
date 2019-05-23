@@ -93,6 +93,30 @@
       "revId": "59f814ce3733ce796fd399ed18b2b4d35b3a73ab",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aa094bf8_dd8585ef",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 623,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-23T18:14:28Z",
+      "side": 1,
+      "message": "Done.\n\nAdded logic to pull the renamed files if they exist, and if not fall back on the original-named file.",
+      "parentUuid": "4882e195_0d327725",
+      "range": {
+        "startLine": 623,
+        "startChar": 53,
+        "endLine": 623,
+        "endChar": 70
+      },
+      "revId": "59f814ce3733ce796fd399ed18b2b4d35b3a73ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
