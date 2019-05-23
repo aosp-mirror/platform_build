@@ -642,6 +642,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libc_malloc*)
 # Clean up old location of soft OMX plugins
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libstagefright_soft*)
 
+# Move odm build.prop to /odm/etc/.
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/odm/build.prop)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/odm/build.prop)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
