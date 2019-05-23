@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "16802941_cb2c97f7",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 250,
+      "author": {
+        "id": 1087625
+      },
+      "writtenOn": "2019-05-23T06:37:45Z",
+      "side": 1,
+      "message": "L279 exports ANDROID_BUILD_PATHS again. Deleted this line.",
+      "parentUuid": "f6f2e759_cd32ec91",
+      "revId": "181bc7526a49a23709b24010a4aeda0583385212",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4d19ea01_7671707c",
         "filename": "envsetup.sh",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "7ffd50fa_4f72e373",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 1087625
+      },
+      "writtenOn": "2019-05-23T06:37:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4d19ea01_7671707c",
+      "revId": "181bc7526a49a23709b24010a4aeda0583385212",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b554275f_a5d7220a",
         "filename": "envsetup.sh",
         "patchSetId": 1
@@ -47,6 +83,30 @@
       "writtenOn": "2019-05-22T23:58:12Z",
       "side": 1,
       "message": "I think this colon is a typo on Line 249 as well.",
+      "range": {
+        "startLine": 254,
+        "startChar": 67,
+        "endLine": 254,
+        "endChar": 68
+      },
+      "revId": "181bc7526a49a23709b24010a4aeda0583385212",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8d665a05_fadf2352",
+        "filename": "envsetup.sh",
+        "patchSetId": 1
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 1087625
+      },
+      "writtenOn": "2019-05-23T06:37:45Z",
+      "side": 1,
+      "message": "This colon is actually required. When appending the path, we don\u0027t add a colon in the middle (L270).\n\nRefactored the code to make this more readable anyway.",
+      "parentUuid": "b554275f_a5d7220a",
       "range": {
         "startLine": 254,
         "startChar": 67,
