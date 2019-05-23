@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "54188699_fba0b7cb",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 10
+      },
+      "lineNbr": 343,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-23T05:15:27Z",
+      "side": 1,
+      "message": "I think it\u0027s still needed because I believe the flow is:\n\n1. add_img_to_target_files.AddImagesToTargetFiles() calls common.LoadInfoDict()\n2. add_img_to_target_files calls e.g. AddSystem() which calls CreateImage()\n3. CreateImage() replaces the dict from 1. with build_image.ImagePropFromGlobalDict()\n4. CreateImage() calls build_image.BuildImage() with the dict from 3.\n\nIf this is the case, copy_prop doesn\u0027t happen until step 3 above so when this method is called the dict still contains the *_selinux_fc props.\n\nI will double-check and update this comment thread soon.",
+      "parentUuid": "013994bc_b99ec356",
+      "range": {
+        "startLine": 335,
+        "startChar": 0,
+        "endLine": 343,
+        "endChar": 26
+      },
+      "revId": "59f814ce3733ce796fd399ed18b2b4d35b3a73ab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4882e195_0d327725",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 10
