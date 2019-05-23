@@ -468,8 +468,10 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     elif filename in ("SYSTEM/build.prop",
                       "VENDOR/build.prop",
                       "SYSTEM/vendor/build.prop",
-                      "ODM/build.prop",
-                      "VENDOR/odm/build.prop",
+                      "ODM/build.prop",  # legacy
+                      "ODM/etc/build.prop",
+                      "VENDOR/odm/build.prop",  # legacy
+                      "VENDOR/odm/etc/build.prop",
                       "PRODUCT/build.prop",
                       "SYSTEM/product/build.prop",
                       "PRODUCT_SERVICES/build.prop",
