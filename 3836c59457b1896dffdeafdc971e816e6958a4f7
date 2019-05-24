@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fb87c80b_6948f60e",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-05-24T15:17:45Z",
+      "side": 1,
+      "message": "I don\u0027t think the variable name is good and prefer you\u0027d change it. It\u0027s not obvious to me that this being set means the module is in the vndk. Consider LOCAL_SDK_VERSION, which doesn\u0027t mean the class is part of the SDK. In fact it means to opposite.\n\nAt a minimum, document here what it means.",
+      "range": {
+        "startLine": 5,
+        "startChar": 31,
+        "endLine": 6,
+        "endChar": 26
+      },
+      "revId": "3836c59457b1896dffdeafdc971e816e6958a4f7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d2638881_d1e299a7",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-05-24T15:17:45Z",
+      "side": 1,
+      "message": "do you need this conditional?",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 55,
+        "endChar": 33
+      },
+      "revId": "3836c59457b1896dffdeafdc971e816e6958a4f7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
