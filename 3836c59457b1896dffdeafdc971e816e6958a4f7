@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "0625a795_9b5a78e9",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2019-05-24T17:16:50Z",
+      "side": 1,
+      "message": "Colin\u0027s idea was \"LOCAL_SOONG_IS_CURRENT_VNDK_MODULE\", and this is quite straightforward. However, I and Justin(justinyun@) settled that we\u0027d better convey more information(version of the lib) than simple bool(is_current or not). We didn\u0027t think that the variable name LOCAL_SOONG_VNDK_VERSION could be misleading.\n\nI tried to come up with a better name, something like _PART_OF_VNDK_VERSION. But not sure it is better or not.\n\nI put a comment of what this variable means.",
+      "parentUuid": "fb87c80b_6948f60e",
+      "range": {
+        "startLine": 5,
+        "startChar": 31,
+        "endLine": 6,
+        "endChar": 26
+      },
+      "revId": "3836c59457b1896dffdeafdc971e816e6958a4f7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d2638881_d1e299a7",
         "filename": "core/soong_cc_prebuilt.mk",
         "patchSetId": 6
@@ -45,6 +69,30 @@
       "revId": "3836c59457b1896dffdeafdc971e816e6958a4f7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8f12893c_d60e9062",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1415877
+      },
+      "writtenOn": "2019-05-24T17:16:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d2638881_d1e299a7",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 55,
+        "endChar": 33
+      },
+      "revId": "3836c59457b1896dffdeafdc971e816e6958a4f7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
