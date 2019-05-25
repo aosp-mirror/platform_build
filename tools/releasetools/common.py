@@ -415,8 +415,14 @@ def LoadInfoDict(input_file, repacking=False):
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
   for partition in PARTITIONS_WITH_CARE_MAP:
-    d["{}.build.prop".format(partition)] = LoadBuildProp(
+    partition_prop = "{}.build.prop".format(partition)
+    d[partition_prop] = LoadBuildProp(
         read_helper, "{}/build.prop".format(partition.upper()))
+    # Some partition might use /<partition>/etc/build.prop as the new path.
+    # TODO: try new path first when majority of them switch to the new path.
+    if not d[partition_prop]:
+      d[partition_prop] = LoadBuildProp(
+          read_helper, "{}/etc/build.prop".format(partition.upper()))
   d["build.prop"] = d["system.build.prop"]
 
   # Set up the salt (based on fingerprint or thumbprint) that will be used when
