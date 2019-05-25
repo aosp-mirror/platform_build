@@ -332,13 +332,15 @@ def LoadInfoDict(input_file, repacking=False):
     raise ValueError("Failed to find 'fstab_version'")
 
   if repacking:
-    # "selinux_fc" should point to the file_contexts file (file_contexts.bin)
-    # under META/.
-    fc_basename = os.path.basename(d.get("selinux_fc", "file_contexts"))
-    fc_config = os.path.join(input_file, "META", fc_basename)
-    assert os.path.exists(fc_config)
+    # "selinux_fc" properties should point to the file_contexts files
+    # (file_contexts.bin) under META/.
+    for key in d:
+      if key.endswith("selinux_fc"):
+        fc_basename = os.path.basename(d[key])
+        fc_config = os.path.join(input_file, "META", fc_basename)
+        assert os.path.exists(fc_config)
 
-    d["selinux_fc"] = fc_config
+        d[key] = fc_config
 
     # Similarly we need to redirect "root_dir", and "root_fs_config".
     d["root_dir"] = os.path.join(input_file, "ROOT")
