@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "082a2ba8_4f14c0ac",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 972,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-05-28T05:22:13Z",
+      "side": 1,
+      "message": "nit: maybe prefer device-specific script over generic script for duplicated partitions?",
+      "range": {
+        "startLine": 971,
+        "startChar": 8,
+        "endLine": 972,
+        "endChar": 68
+      },
+      "revId": "371fb3c4bc8e0da7b91e73c1a8da2eb2b640d002",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1c0d0453_92d46982",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 4
@@ -36,6 +59,30 @@
       "writtenOn": "2019-05-22T20:47:19Z",
       "side": 1,
       "message": "The generation for cuttlefish specific product partitions doesn\u0027t consider these parameters. And I believe we are supposed to.",
+      "range": {
+        "startLine": 1666,
+        "startChar": 0,
+        "endLine": 1668,
+        "endChar": 75
+      },
+      "revId": "371fb3c4bc8e0da7b91e73c1a8da2eb2b640d002",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5a71f9c4_d4865cbb",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1668,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-05-28T05:22:13Z",
+      "side": 1,
+      "message": "By the way, feel free to modify the cuttlefish OTA generation script if needed. Keep in mind that some partner devices may also include product partition in their OTA generation script though.\n\nWhat do these arguments do? Are they critical? OTA seems to work on cuttlefish without these arguments...",
+      "parentUuid": "c2d7ad48_301a34cf",
       "range": {
         "startLine": 1666,
         "startChar": 0,
