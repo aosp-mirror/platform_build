@@ -92,6 +92,30 @@
       "revId": "371fb3c4bc8e0da7b91e73c1a8da2eb2b640d002",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ffc6c66a_0ec7bd77",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 1668,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-05-28T21:20:02Z",
+      "side": 1,
+      "message": "I moved the product diff generation for cuttlefish in https://android-review.googlesource.com/c/device/google/cuttlefish/+/967792. These arguments try to handle the uncommon cases e.g. check_first_block recover the corrupted devices, and disable_imgdiff always uses `bsdiff` (imgdiff may fail for squash fs).\n\nSo I kinda worried about the inconsistency in oem\u0027s device-specific script (While I don\u0027t want to abort because oem\u0027s META/releasetools is part of the source target-file. So new host tools won\u0027t work on these old sources if we choose to abort).",
+      "parentUuid": "5a71f9c4_d4865cbb",
+      "range": {
+        "startLine": 1666,
+        "startChar": 0,
+        "endLine": 1668,
+        "endChar": 75
+      },
+      "revId": "371fb3c4bc8e0da7b91e73c1a8da2eb2b640d002",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
