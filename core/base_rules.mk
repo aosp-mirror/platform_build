@@ -167,19 +167,14 @@ ifdef my_bad_module_tags
   ifeq (true,$(LOCAL_UNINSTALLABLE_MODULE))
     $(call pretty-warning,LOCAL_MODULE_TAGS := $(my_bad_module_tags) does not do anything for uninstallable modules)
   endif
-  ifneq ($(BUILD_BROKEN_ENG_DEBUG_TAGS),true)
-    $(call pretty-error,LOCAL_MODULE_TAGS := $(my_bad_module_tags) is obsolete. See $(CHANGES_URL)#LOCAL_MODULE_TAGS)
-  else
-    $(call pretty-warning,LOCAL_MODULE_TAGS := $(my_bad_module_tags) is deprecated. See $(CHANGES_URL)#LOCAL_MODULE_TAGS)
-  endif
-  my_bad_module_tags :=
+  $(call pretty-error,LOCAL_MODULE_TAGS := $(my_bad_module_tags) is obsolete. See $(CHANGES_URL)#LOCAL_MODULE_TAGS)
 endif
 
 # Only the tags mentioned in this test are expected to be set by module
 # makefiles. Anything else is either a typo or a source of unexpected
 # behaviors.
-ifneq ($(filter-out debug eng tests optional samples,$(my_module_tags)),)
-$(call pretty-error,unusual tags: $(filter-out debug eng tests optional samples,$(my_module_tags)))
+ifneq ($(filter-out tests optional samples,$(my_module_tags)),)
+$(call pretty-error,unusual tags: $(filter-out tests optional samples,$(my_module_tags)))
 endif
 
 # Add implicit tags.
