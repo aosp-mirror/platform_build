@@ -183,6 +183,22 @@ ifdef LOCAL_DEX_PREOPT
     endif  # TARGET_2ND_ARCH
   endif  # LOCAL_MODULE_CLASS
 
+  my_filtered_optional_uses_libraries := $(filter-out $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES), \
+    $(LOCAL_OPTIONAL_USES_LIBRARIES))
+
+  # dexpreopt needs the paths to the dex jars of these libraries in case
+  # construct_context.sh needs to pass them to dex2oat.
+  my_extra_dexpreopt_libs := \
+    org.apache.http.legacy \
+    android.hidl.base-V1.0-java \
+    android.hidl.manager-V1.0-java \
+
+  my_dexpreopt_libs := $(sort \
+    $(LOCAL_USES_LIBRARIES) \
+    $(my_filtered_optional_uses_libraries) \
+    $(my_extra_dexpreopt_libs) \
+  )
+
   # Record dex-preopt config.
   DEXPREOPT.$(LOCAL_MODULE).DEX_PREOPT := $(LOCAL_DEX_PREOPT)
   DEXPREOPT.$(LOCAL_MODULE).MULTILIB := $(LOCAL_MULTILIB)
@@ -213,7 +229,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_list, OptionalUsesLibraries,          $(LOCAL_OPTIONAL_USES_LIBRARIES))
   $(call add_json_list, UsesLibraries,                  $(LOCAL_USES_LIBRARIES))
   $(call add_json_map,  LibraryPaths)
-  $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
+  $(foreach lib,$(my_dexpreopt_libs),\
     $(call add_json_str, $(lib), $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar))
   $(call end_json_map)
   $(call add_json_list, Archs,                          $(my_dexpreopt_archs))
@@ -256,7 +272,7 @@ ifdef LOCAL_DEX_PREOPT
   my_dexpreopt_deps := $(my_dex_jar)
   my_dexpreopt_deps += $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE))
   my_dexpreopt_deps += \
-    $(foreach lib,$(sort $(LOCAL_USES_LIBRARIES) $(LOCAL_OPTIONAL_USES_LIBRARIES) org.apache.http.legacy android.hidl.base-V1.0-java android.hidl.manager-V1.0-java),\
+    $(foreach lib, $(my_dexpreopt_libs), \
       $(call intermediates-dir-for,JAVA_LIBRARIES,$(lib),,COMMON)/javalib.jar)
   my_dexpreopt_deps += $(my_dexpreopt_images)
   my_dexpreopt_deps += $(DEXPREOPT_BOOTCLASSPATH_DEX_FILES)

@@ -519,7 +519,6 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
   common_props = (
       "extfs_sparse_flag",
       "squashfs_sparse_flag",
-      "selinux_fc",
       "skip_fsck",
       "ext_mkuserimg",
       "verity",
@@ -564,6 +563,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("system_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
     copy_prop("system_reserved_size", "partition_reserved_size")
+    copy_prop("system_selinux_fc", "selinux_fc")
   elif mount_point == "system_other":
     # We inherit the selinux policies of /system since we contain some of its
     # files.
@@ -587,6 +587,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("system_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
     copy_prop("system_reserved_size", "partition_reserved_size")
+    copy_prop("system_selinux_fc", "selinux_fc")
   elif mount_point == "data":
     # Copy the generic fs type first, override with specific one if available.
     copy_prop("fs_type", "fs_type")
@@ -594,9 +595,11 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("userdata_size", "partition_size")
     copy_prop("flash_logical_block_size", "flash_logical_block_size")
     copy_prop("flash_erase_block_size", "flash_erase_block_size")
+    copy_prop("userdata_selinux_fc", "selinux_fc")
   elif mount_point == "cache":
     copy_prop("cache_fs_type", "fs_type")
     copy_prop("cache_size", "partition_size")
+    copy_prop("cache_selinux_fc", "selinux_fc")
   elif mount_point == "vendor":
     copy_prop("avb_vendor_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_vendor_add_hashtree_footer_args",
@@ -618,6 +621,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("vendor_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
     copy_prop("vendor_reserved_size", "partition_reserved_size")
+    copy_prop("vendor_selinux_fc", "selinux_fc")
   elif mount_point == "product":
     copy_prop("avb_product_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_product_add_hashtree_footer_args",
@@ -639,6 +643,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("product_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
     copy_prop("product_reserved_size", "partition_reserved_size")
+    copy_prop("product_selinux_fc", "selinux_fc")
   elif mount_point == "product_services":
     copy_prop("avb_product_services_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_product_services_add_hashtree_footer_args",
@@ -662,6 +667,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("product_services_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
     copy_prop("product_services_reserved_size", "partition_reserved_size")
+    copy_prop("product_services_selinux_fc", "selinux_fc")
   elif mount_point == "odm":
     copy_prop("avb_odm_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_odm_add_hashtree_footer_args",
@@ -683,6 +689,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     if not copy_prop("odm_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
     copy_prop("odm_reserved_size", "partition_reserved_size")
+    copy_prop("odm_selinux_fc", "selinux_fc")
   elif mount_point == "oem":
     copy_prop("fs_type", "fs_type")
     copy_prop("oem_size", "partition_size")
@@ -692,6 +699,7 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
     copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
     if not copy_prop("oem_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
+    copy_prop("oem_selinux_fc", "selinux_fc")
   d["partition_name"] = mount_point
   return d
 

@@ -87,7 +87,6 @@ _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 _build_broken_var_list := \
   BUILD_BROKEN_ANDROIDMK_EXPORTS \
   BUILD_BROKEN_DUP_RULES \
-  BUILD_BROKEN_ENG_DEBUG_TAGS \
   BUILD_BROKEN_USES_NETWORK \
 
 _build_broken_var_list += \
@@ -515,6 +514,12 @@ endif
 ifeq ($(PRODUCT_BUILD_GENERIC_OTA_PACKAGE),true)
   ifneq ($(AB_OTA_UPDATER),true)
     $(error PRODUCT_BUILD_GENERIC_OTA_PACKAGE with 'AB_OTA_UPDATER != true' is not supported)
+  endif
+endif
+
+ifdef BOARD_PREBUILT_DTBIMAGE_DIR
+  ifneq ($(BOARD_INCLUDE_DTB_IN_BOOTIMG),true)
+    $(error BOARD_PREBUILT_DTBIMAGE_DIR with 'BOARD_INCLUDE_DTB_IN_BOOTIMG != true' is not supported)
   endif
 endif
 
