@@ -97,6 +97,7 @@ $(KATI_obsolete_var TARGET_ROOT_OUT_SBIN,/sbin has been removed, use /system/bin
 $(KATI_obsolete_var TARGET_ROOT_OUT_SBIN_UNSTRIPPED,/sbin has been removed, use /system/bin instead)
 $(KATI_obsolete_var BUILD_BROKEN_PHONY_TARGETS)
 $(KATI_obsolete_var BUILD_BROKEN_DUP_COPY_HEADERS)
+$(KATI_obsolete_var BUILD_BROKEN_ENG_DEBUG_TAGS)
 
 # This is marked as obsolete in envsetup.mk after reading the BoardConfig.mk
 $(KATI_deprecate_export It is a global setting. See $(CHANGES_URL)#export_keyword)
@@ -1118,8 +1119,11 @@ INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIAT
 endif
 
 # Missing optional uses-libraries so that the platform doesn't create build rules that depend on
-# them. See setup_one_odex.mk.
-INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := com.google.android.ble com.google.android.wearable
+# them.
+INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := \
+  com.google.android.ble \
+  com.google.android.media.effects \
+  com.google.android.wearable \
 
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
