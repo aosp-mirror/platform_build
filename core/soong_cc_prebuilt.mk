@@ -3,6 +3,7 @@
 # LOCAL_SOONG_LINK_TYPE
 # LOCAL_SOONG_TOC
 # LOCAL_SOONG_UNSTRIPPED_BINARY
+# LOCAL_SOONG_VNDK_VERSION : means the version of VNDK where this module belongs
 
 ifneq ($(LOCAL_MODULE_MAKEFILE),$(SOONG_ANDROID_MK))
   $(call pretty-error,soong_cc_prebuilt.mk may only be used from Soong)
@@ -47,6 +48,13 @@ ifndef skip_module
 # Don't install static libraries by default.
 ifndef LOCAL_UNINSTALLABLE_MODULE
   ifeq (STATIC_LIBRARIES,$(LOCAL_MODULE_CLASS))
+    LOCAL_UNINSTALLABLE_MODULE := true
+  endif
+endif
+
+# Don't install modules of current VNDK when it is told so
+ifeq ($(TARGET_SKIP_CURRENT_VNDK),true)
+  ifeq ($(LOCAL_SOONG_VNDK_VERSION),$(PLATFORM_VNDK_VERSION))
     LOCAL_UNINSTALLABLE_MODULE := true
   endif
 endif

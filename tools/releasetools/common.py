@@ -332,13 +332,15 @@ def LoadInfoDict(input_file, repacking=False):
     raise ValueError("Failed to find 'fstab_version'")
 
   if repacking:
-    # "selinux_fc" should point to the file_contexts file (file_contexts.bin)
-    # under META/.
-    fc_basename = os.path.basename(d.get("selinux_fc", "file_contexts"))
-    fc_config = os.path.join(input_file, "META", fc_basename)
-    assert os.path.exists(fc_config)
+    # "selinux_fc" properties should point to the file_contexts files
+    # (file_contexts.bin) under META/.
+    for key in d:
+      if key.endswith("selinux_fc"):
+        fc_basename = os.path.basename(d[key])
+        fc_config = os.path.join(input_file, "META", fc_basename)
+        assert os.path.exists(fc_config)
 
-    d["selinux_fc"] = fc_config
+        d[key] = fc_config
 
     # Similarly we need to redirect "root_dir", and "root_fs_config".
     d["root_dir"] = os.path.join(input_file, "ROOT")
@@ -415,8 +417,14 @@ def LoadInfoDict(input_file, repacking=False):
   # Tries to load the build props for all partitions with care_map, including
   # system and vendor.
   for partition in PARTITIONS_WITH_CARE_MAP:
-    d["{}.build.prop".format(partition)] = LoadBuildProp(
+    partition_prop = "{}.build.prop".format(partition)
+    d[partition_prop] = LoadBuildProp(
         read_helper, "{}/build.prop".format(partition.upper()))
+    # Some partition might use /<partition>/etc/build.prop as the new path.
+    # TODO: try new path first when majority of them switch to the new path.
+    if not d[partition_prop]:
+      d[partition_prop] = LoadBuildProp(
+          read_helper, "{}/etc/build.prop".format(partition.upper()))
   d["build.prop"] = d["system.build.prop"]
 
   # Set up the salt (based on fingerprint or thumbprint) that will be used when
