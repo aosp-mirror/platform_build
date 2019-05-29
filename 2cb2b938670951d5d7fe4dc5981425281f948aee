@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "2dec3f1a_ad460d7c",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 1421169
+      },
+      "writtenOn": "2019-05-29T20:31:55Z",
+      "side": 1,
+      "message": "Will, I much prefer the solution of just quoting and having logic in python. Done.",
+      "parentUuid": "a16b0324_541a6ecb",
+      "revId": "2cb2b938670951d5d7fe4dc5981425281f948aee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fcee093d_d6bf82ff",
         "filename": "tools/fs_config/fs_config_generator.py",
         "patchSetId": 7
@@ -33,6 +51,24 @@
       "revId": "2cb2b938670951d5d7fe4dc5981425281f948aee",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "27152244_aab2779e",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 7
+      },
+      "lineNbr": 1135,
+      "author": {
+        "id": 1421169
+      },
+      "writtenOn": "2019-05-29T20:31:55Z",
+      "side": 1,
+      "message": "I\u0027ve taken out this change since there is no need to check \"self._all_partitions\" for emptiness now - it will always be a string object, though it can be an empty string.\nSplitting an empty string will emit an empty list, which is still fine for this case.",
+      "parentUuid": "fcee093d_d6bf82ff",
+      "revId": "2cb2b938670951d5d7fe4dc5981425281f948aee",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
