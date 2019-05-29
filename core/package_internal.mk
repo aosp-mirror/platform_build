@@ -25,18 +25,6 @@
 ## be set for you.
 ###########################################################
 
-# If this makefile is being read from within an inheritance,
-# use the new values.
-skip_definition:=
-ifdef LOCAL_PACKAGE_OVERRIDES
-  package_overridden := $(call set-inherited-package-variables)
-  ifeq ($(strip $(package_overridden)),)
-    skip_definition := true
-  endif
-endif
-
-ifndef skip_definition
-
 LOCAL_PACKAGE_NAME := $(strip $(LOCAL_PACKAGE_NAME))
 ifeq ($(LOCAL_PACKAGE_NAME),)
 $(error $(LOCAL_PATH): Package modules must define LOCAL_PACKAGE_NAME)
@@ -691,8 +679,6 @@ PACKAGES.$(LOCAL_PACKAGE_NAME).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 PACKAGES.$(LOCAL_PACKAGE_NAME).RESOURCE_FILES := $(all_resources)
 
 PACKAGES := $(PACKAGES) $(LOCAL_PACKAGE_NAME)
-
-endif # skip_definition
 
 # Reset internal variables.
 all_res_assets :=
