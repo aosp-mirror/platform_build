@@ -14,16 +14,16 @@ have any problems converting, please contact us via:
 
 | Module type                      | State     |
 | -------------------------------- | --------- |
-| `BUILD_AUX_EXECUTABLE`           | Warning   |
-| `BUILD_AUX_STATIC_LIBRARY`       | Warning   |
-| `BUILD_HOST_FUZZ_TEST`           | Warning   |
-| `BUILD_HOST_NATIVE_TEST`         | Warning   |
+| `BUILD_AUX_EXECUTABLE`           | Error     |
+| `BUILD_AUX_STATIC_LIBRARY`       | Error     |
+| `BUILD_HOST_FUZZ_TEST`           | Error     |
+| `BUILD_HOST_NATIVE_TEST`         | Error     |
 | `BUILD_HOST_SHARED_TEST_LIBRARY` | Error     |
-| `BUILD_HOST_STATIC_TEST_LIBRARY` | Warning   |
+| `BUILD_HOST_STATIC_TEST_LIBRARY` | Error     |
 | `BUILD_HOST_TEST_CONFIG`         | Error     |
-| `BUILD_NATIVE_BENCHMARK`         | Warning   |
+| `BUILD_NATIVE_BENCHMARK`         | Error     |
 | `BUILD_SHARED_TEST_LIBRARY`      | Error     |
-| `BUILD_STATIC_TEST_LIBRARY`      | Warning   |
+| `BUILD_STATIC_TEST_LIBRARY`      | Error     |
 | `BUILD_TARGET_TEST_CONFIG`       | Error     |
 | `BUILD_*`                        | Available |
 
