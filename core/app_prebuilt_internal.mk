@@ -92,6 +92,32 @@ my_preopt_for_extracted_apk := true
 endif
 endif
 
+# Verify LOCAL_USES_LIBRARIES/LOCAL_OPTIONAL_USES_LIBRARIES
+# If LOCAL_ENFORCE_USES_LIBRARIES is not set, default to true if either of LOCAL_USES_LIBRARIES or
+# LOCAL_OPTIONAL_USES_LIBRARIES are specified.
+# Will change the default to true unconditionally in the future.
+ifndef LOCAL_ENFORCE_USES_LIBRARIES
+  ifneq (,$(strip $(LOCAL_USES_LIBRARIES)$(LOCAL_OPTIONAL_USES_LIBRARIES)))
+    LOCAL_ENFORCE_USES_LIBRARIES := true
+  endif
+endif
+
+my_enforced_uses_libraries :=
+ifdef LOCAL_ENFORCE_USES_LIBRARIES
+  my_enforced_uses_libraries := $(intermediates.COMMON)/enforce_uses_libraries.timestamp
+  $(my_enforced_uses_libraries): PRIVATE_USES_LIBRARIES := $(LOCAL_USES_LIBRARIES)
+  $(my_enforced_uses_libraries): PRIVATE_OPTIONAL_USES_LIBRARIES := $(LOCAL_OPTIONAL_USES_LIBRARIES)
+  $(my_enforced_uses_libraries): $(BUILD_SYSTEM)/verify_uses_libraries.sh $(AAPT)
+  $(my_enforced_uses_libraries): $(my_prebuilt_src_file)
+	@echo Verifying uses-libraries: $<
+	aapt_binary=$(AAPT) \
+	  uses_library_names="$(strip $(PRIVATE_USES_LIBRARIES))" \
+	  optional_uses_library_names="$(strip $(PRIVATE_OPTIONAL_USES_LIBRARIES))" \
+	  $(BUILD_SYSTEM)/verify_uses_libraries.sh $<
+	touch $@
+  $(built_module) : $(my_enforced_uses_libraries)
+endif
+
 dex_preopt_profile_src_file := $(my_prebuilt_src_file)
 
 rs_compatibility_jni_libs :=
