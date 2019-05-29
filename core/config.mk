@@ -1119,8 +1119,11 @@ INTERNAL_PLATFORM_SYSTEM_PRIVATE_DEX_API_FILE := $(TARGET_OUT_COMMON_INTERMEDIAT
 endif
 
 # Missing optional uses-libraries so that the platform doesn't create build rules that depend on
-# them. See setup_one_odex.mk.
-INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := com.google.android.ble com.google.android.wearable
+# them.
+INTERNAL_PLATFORM_MISSING_USES_LIBRARIES := \
+  com.google.android.ble \
+  com.google.android.media.effects \
+  com.google.android.wearable \
 
 # This is the standard way to name a directory containing prebuilt target
 # objects. E.g., prebuilt/$(TARGET_PREBUILT_TAG)/libc.so
