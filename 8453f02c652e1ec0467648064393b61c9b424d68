@@ -16,6 +16,24 @@
       "revId": "8453f02c652e1ec0467648064393b61c9b424d68",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d54b1bf9_be64886d",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 1006,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-05-29T21:01:05Z",
+      "side": 1,
+      "message": "Understood.",
+      "parentUuid": "46ae4beb_3763f345",
+      "revId": "8453f02c652e1ec0467648064393b61c9b424d68",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
