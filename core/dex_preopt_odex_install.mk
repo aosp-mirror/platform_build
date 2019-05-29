@@ -103,18 +103,6 @@ ifeq (true,$(my_process_profile))
   endif
 endif
 
-# If LOCAL_ENFORCE_USES_LIBRARIES is not set, default to true if either of LOCAL_USES_LIBRARIES or
-# LOCAL_OPTIONAL_USES_LIBRARIES are specified.
-ifeq (,$(LOCAL_ENFORCE_USES_LIBRARIES))
-  # Will change the default to true unconditionally in the future.
-  ifneq (,$(LOCAL_OPTIONAL_USES_LIBRARIES))
-    LOCAL_ENFORCE_USES_LIBRARIES := true
-  endif
-  ifneq (,$(LOCAL_USES_LIBRARIES))
-    LOCAL_ENFORCE_USES_LIBRARIES := true
-  endif
-endif
-
 my_dexpreopt_archs :=
 my_dexpreopt_images :=
 my_dexpreopt_infix := boot
@@ -218,6 +206,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_str,  Name,                           $(LOCAL_MODULE))
   $(call add_json_str,  DexLocation,                    $(patsubst $(PRODUCT_OUT)%,%,$(LOCAL_INSTALLED_MODULE)))
   $(call add_json_str,  BuildPath,                      $(LOCAL_BUILT_MODULE))
+  $(call add_json_str,  ManifestPath,                   $(full_android_manifest))
   $(call add_json_str,  ExtrasOutputPath,               $$2)
   $(call add_json_bool, Privileged,                     $(filter true,$(LOCAL_PRIVILEGED_MODULE)))
   $(call add_json_bool, UncompressedDex,                $(filter true,$(LOCAL_UNCOMPRESS_DEX)))
@@ -226,7 +215,7 @@ ifdef LOCAL_DEX_PREOPT
   $(call add_json_str,  ProfileClassListing,            $(if $(my_process_profile),$(LOCAL_DEX_PREOPT_PROFILE)))
   $(call add_json_bool, ProfileIsTextListing,           $(my_profile_is_text_listing))
   $(call add_json_bool, EnforceUsesLibraries,           $(LOCAL_ENFORCE_USES_LIBRARIES))
-  $(call add_json_list, OptionalUsesLibraries,          $(LOCAL_OPTIONAL_USES_LIBRARIES))
+  $(call add_json_list, OptionalUsesLibraries,          $(my_filtered_optional_uses_libraries))
   $(call add_json_list, UsesLibraries,                  $(LOCAL_USES_LIBRARIES))
   $(call add_json_map,  LibraryPaths)
   $(foreach lib,$(my_dexpreopt_libs),\

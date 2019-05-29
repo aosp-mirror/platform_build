@@ -116,7 +116,6 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_bool, NeverSystemServerDebugInfo,         $(filter false,$(PRODUCT_SYSTEM_SERVER_DEBUG_INFO)))
   $(call add_json_bool, AlwaysOtherDebugInfo,               $(filter true,$(PRODUCT_OTHER_JAVA_DEBUG_INFO)))
   $(call add_json_bool, NeverOtherDebugInfo,                $(filter false,$(PRODUCT_OTHER_JAVA_DEBUG_INFO)))
-  $(call add_json_list, MissingUsesLibraries,               $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES))
   $(call add_json_bool, IsEng,                              $(filter eng,$(TARGET_BUILD_VARIANT)))
   $(call add_json_bool, SanitizeLite,                       $(SANITIZE_LITE))
   $(call add_json_bool, DefaultAppImages,                   $(WITH_DEX_PREOPT_APP_IMAGE))
@@ -152,7 +151,7 @@ ifeq ($(WRITE_SOONG_VARIABLES),true)
   $(call add_json_str,  Aapt,                               $(SOONG_HOST_OUT_EXECUTABLES)/aapt)
   $(call add_json_str,  SoongZip,                           $(SOONG_ZIP))
   $(call add_json_str,  Zip2zip,                            $(ZIP2ZIP))
-  $(call add_json_str,  VerifyUsesLibraries,                $(BUILD_SYSTEM)/verify_uses_libraries.sh)
+  $(call add_json_str,  ManifestCheck,                      $(SOONG_HOST_OUT_EXECUTABLES)/manifest_check)
   $(call add_json_str,  ConstructContext,                   $(BUILD_SYSTEM)/construct_context.sh)
   $(call end_json_map)
 
@@ -175,7 +174,6 @@ DEXPREOPT_GEN_DEPS := \
   $(SOONG_HOST_OUT_EXECUTABLES)/aapt \
   $(SOONG_ZIP) \
   $(ZIP2ZIP) \
-  $(BUILD_SYSTEM)/verify_uses_libraries.sh \
   $(BUILD_SYSTEM)/construct_context.sh \
 
 DEXPREOPT_STRIP_DEPS := \
