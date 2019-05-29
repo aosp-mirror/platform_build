@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "103ae754_190833f0",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 1007,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-05-29T20:31:24Z",
+      "side": 0,
+      "message": "We can probably leave this here too now that the makefile will pass an empty string, right?  I think requiring an empty string is a good idea, to ensure future users don\u0027t mistakenly forget this.",
+      "revId": "cd56c0df95f2b4b275ad3c876a848cd2ce90a6d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
