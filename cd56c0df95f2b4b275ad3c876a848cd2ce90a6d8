@@ -16,6 +16,24 @@
       "revId": "cd56c0df95f2b4b275ad3c876a848cd2ce90a6d8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c15e08ac_c605be0c",
+        "filename": "tools/fs_config/fs_config_generator.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 1007,
+      "author": {
+        "id": 1421169
+      },
+      "writtenOn": "2019-05-29T20:34:20Z",
+      "side": 0,
+      "message": "(Repeating here since you commented a split-second before I typed up my comment)\nChecking _all_partitions against None is superfluous since either argparse will catch the empty argument and fail early, or the argument will be a string, in which case it will not be None.",
+      "parentUuid": "103ae754_190833f0",
+      "revId": "cd56c0df95f2b4b275ad3c876a848cd2ce90a6d8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
