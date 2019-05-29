@@ -425,8 +425,8 @@ endef
 
 define find-subdir-assets
 $(sort $(if $(1),$(patsubst ./%,%, \
-	$(shell if [ -d $(1) ] ; then cd $(1) ; find -L ./ -not -name '.*' -and -type f ; fi)), \
-	$(warning Empty argument supplied to find-subdir-assets in $(LOCAL_PATH)) \
+  $(shell if [ -d $(1) ] ; then cd $(1) ; find -L ./ -not -name '.*' -and -type f ; fi)), \
+  $(warning Empty argument supplied to find-subdir-assets in $(LOCAL_PATH)) \
 ))
 endef
 
@@ -782,8 +782,8 @@ endef
 #TODO(jbq): as of 20100106 nobody uses the second parameter
 define get-tagged-modules
 $(filter-out \
-	$(call modules-for-tag-list,$(2)), \
-	    $(call modules-for-tag-list,$(1)))
+  $(call modules-for-tag-list,$(2)), \
+    $(call modules-for-tag-list,$(1)))
 endef
 
 ###########################################################
@@ -950,16 +950,16 @@ define transform-bc-to-so
 @echo "Renderscript compatibility: $(notdir $@) <= $(notdir $<)"
 $(hide) mkdir -p $(dir $@)
 $(hide) $(BCC_COMPAT) -O3 -o $(dir $@)/$(notdir $(<:.bc=.o)) -fPIC -shared \
-	-rt-path $(RS_PREBUILT_CLCORE) -mtriple $(RS_COMPAT_TRIPLE) $<
+  -rt-path $(RS_PREBUILT_CLCORE) -mtriple $(RS_COMPAT_TRIPLE) $<
 $(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) -nostdlib \
-	-Wl,-rpath,\$$ORIGIN/../lib \
-	$(dir $@)/$(notdir $(<:.bc=.o)) \
-	$(RS_PREBUILT_COMPILER_RT) \
-	-o $@ $(CLANG_TARGET_GLOBAL_LDFLAGS) -Wl,--hash-style=sysv \
-	-L $(SOONG_OUT_DIR)/ndk/platforms/android-$(PRIVATE_SDK_VERSION)/arch-$(TARGET_ARCH)/usr/lib64 \
-	-L $(SOONG_OUT_DIR)/ndk/platforms/android-$(PRIVATE_SDK_VERSION)/arch-$(TARGET_ARCH)/usr/lib \
-	$(call intermediates-dir-for,SHARED_LIBRARIES,libRSSupport)/libRSSupport.so \
-	-lm -lc
+  -Wl,-rpath,\$$ORIGIN/../lib \
+  $(dir $@)/$(notdir $(<:.bc=.o)) \
+  $(RS_PREBUILT_COMPILER_RT) \
+  -o $@ $(CLANG_TARGET_GLOBAL_LDFLAGS) -Wl,--hash-style=sysv \
+  -L $(SOONG_OUT_DIR)/ndk/platforms/android-$(PRIVATE_SDK_VERSION)/arch-$(TARGET_ARCH)/usr/lib64 \
+  -L $(SOONG_OUT_DIR)/ndk/platforms/android-$(PRIVATE_SDK_VERSION)/arch-$(TARGET_ARCH)/usr/lib \
+  $(call intermediates-dir-for,SHARED_LIBRARIES,libRSSupport)/libRSSupport.so \
+  -lm -lc
 endef
 
 ###########################################################
@@ -1093,10 +1093,10 @@ define transform-proto-to-cc
 @echo "Protoc: $@ <= $<"
 @mkdir -p $(dir $@)
 $(hide) \
-	$(PROTOC) \
-	$(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
-	$(PRIVATE_PROTOC_FLAGS) \
-	$<
+  $(PROTOC) \
+  $(addprefix --proto_path=, $(PRIVATE_PROTO_INCLUDES)) \
+  $(PRIVATE_PROTOC_FLAGS) \
+  $<
 @# aprotoc outputs only .cc. Rename it to .cpp if necessary.
 $(if $(PRIVATE_RENAME_CPP_EXT),\
   $(hide) mv $(basename $@).cc $@)
@@ -1122,19 +1122,19 @@ endef
 ###########################################################
 
 define transform-cpp-to-o-compiler-args
-	$(c-includes) \
-	-c \
-	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-	    $(PRIVATE_TARGET_GLOBAL_CFLAGS) \
-	    $(PRIVATE_TARGET_GLOBAL_CPPFLAGS) \
-	    $(PRIVATE_ARM_CFLAGS) \
-	 ) \
-	$(PRIVATE_RTTI_FLAG) \
-	$(PRIVATE_CFLAGS) \
-	$(PRIVATE_CPPFLAGS) \
-	$(PRIVATE_DEBUG_CFLAGS) \
-	$(PRIVATE_CFLAGS_NO_OVERRIDE) \
-	$(PRIVATE_CPPFLAGS_NO_OVERRIDE)
+$(c-includes) \
+-c \
+$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
+    $(PRIVATE_TARGET_GLOBAL_CFLAGS) \
+    $(PRIVATE_TARGET_GLOBAL_CPPFLAGS) \
+    $(PRIVATE_ARM_CFLAGS) \
+ ) \
+$(PRIVATE_RTTI_FLAG) \
+$(PRIVATE_CFLAGS) \
+$(PRIVATE_CPPFLAGS) \
+$(PRIVATE_DEBUG_CFLAGS) \
+$(PRIVATE_CFLAGS_NO_OVERRIDE) \
+$(PRIVATE_CPPFLAGS_NO_OVERRIDE)
 endef
 
 # PATH_TO_CLANG_TIDY is defined in build/soong
@@ -1172,14 +1172,14 @@ endif
 
 # $(1): extra flags
 define transform-c-or-s-to-o-compiler-args
-	$(c-includes) \
-	-c \
-	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-	    $(PRIVATE_TARGET_GLOBAL_CFLAGS) \
-	    $(PRIVATE_TARGET_GLOBAL_CONLYFLAGS) \
-	    $(PRIVATE_ARM_CFLAGS) \
-	 ) \
-	 $(1)
+$(c-includes) \
+-c \
+$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
+    $(PRIVATE_TARGET_GLOBAL_CFLAGS) \
+    $(PRIVATE_TARGET_GLOBAL_CONLYFLAGS) \
+    $(PRIVATE_ARM_CFLAGS) \
+ ) \
+ $(1)
 endef
 
 define transform-c-to-o-compiler-args
@@ -1245,17 +1245,17 @@ endef
 ###########################################################
 
 define transform-host-cpp-to-o-compiler-args
-	$(c-includes) \
-	-c \
-	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-	    $(PRIVATE_HOST_GLOBAL_CFLAGS) \
-	    $(PRIVATE_HOST_GLOBAL_CPPFLAGS) \
-	 ) \
-	$(PRIVATE_CFLAGS) \
-	$(PRIVATE_CPPFLAGS) \
-	$(PRIVATE_DEBUG_CFLAGS) \
-	$(PRIVATE_CFLAGS_NO_OVERRIDE) \
-	$(PRIVATE_CPPFLAGS_NO_OVERRIDE)
+$(c-includes) \
+-c \
+$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
+    $(PRIVATE_HOST_GLOBAL_CFLAGS) \
+    $(PRIVATE_HOST_GLOBAL_CPPFLAGS) \
+ ) \
+$(PRIVATE_CFLAGS) \
+$(PRIVATE_CPPFLAGS) \
+$(PRIVATE_DEBUG_CFLAGS) \
+$(PRIVATE_CFLAGS_NO_OVERRIDE) \
+$(PRIVATE_CPPFLAGS_NO_OVERRIDE)
 endef
 
 define clang-tidy-host-cpp
@@ -1285,12 +1285,12 @@ endif
 ###########################################################
 
 define transform-host-c-or-s-to-o-common-args
-	$(c-includes) \
-	-c \
-	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-	    $(PRIVATE_HOST_GLOBAL_CFLAGS) \
-	    $(PRIVATE_HOST_GLOBAL_CONLYFLAGS) \
-	 )
+$(c-includes) \
+-c \
+$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
+    $(PRIVATE_HOST_GLOBAL_CFLAGS) \
+    $(PRIVATE_HOST_GLOBAL_CONLYFLAGS) \
+ )
 endef
 
 # $(1): extra flags
@@ -1534,15 +1534,15 @@ endef
 
 define transform-o-to-aux-executable-inner
 $(hide) $(PRIVATE_CXX) -pie \
-	-Bdynamic \
-	-Wl,--gc-sections \
-	$(PRIVATE_ALL_OBJECTS) \
-	-Wl,--whole-archive \
-	$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
-	-Wl,--no-whole-archive \
-	$(PRIVATE_ALL_STATIC_LIBRARIES) \
-	$(PRIVATE_LDFLAGS) \
-	-o $@
+  -Bdynamic \
+  -Wl,--gc-sections \
+  $(PRIVATE_ALL_OBJECTS) \
+  -Wl,--whole-archive \
+  $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
+  -Wl,--no-whole-archive \
+  $(PRIVATE_ALL_STATIC_LIBRARIES) \
+  $(PRIVATE_LDFLAGS) \
+  -o $@
 endef
 
 define transform-o-to-aux-executable
@@ -1553,16 +1553,16 @@ endef
 
 define transform-o-to-aux-static-executable-inner
 $(hide) $(PRIVATE_CXX) \
-	-Bstatic \
-	-Wl,--gc-sections \
-	$(PRIVATE_ALL_OBJECTS) \
-	-Wl,--whole-archive \
-	$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
-	-Wl,--no-whole-archive \
-	$(PRIVATE_ALL_STATIC_LIBRARIES) \
-	$(PRIVATE_LDFLAGS) \
-	-Wl,-Map=$(@).map \
-	-o $@
+  -Bstatic \
+  -Wl,--gc-sections \
+  $(PRIVATE_ALL_OBJECTS) \
+  -Wl,--whole-archive \
+  $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
+  -Wl,--no-whole-archive \
+  $(PRIVATE_ALL_STATIC_LIBRARIES) \
+  $(PRIVATE_LDFLAGS) \
+  -Wl,-Map=$(@).map \
+  -o $@
 endef
 
 define transform-o-to-aux-static-executable
@@ -1654,25 +1654,25 @@ endef
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-shared-lib-inner
 $(hide) $(PRIVATE_CXX) \
-	-Wl,-rpath,\$$ORIGIN/../$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)OUT_SHARED_LIBRARIES)) \
-	-Wl,-rpath,\$$ORIGIN/$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)OUT_SHARED_LIBRARIES)) \
-	-shared -Wl,-soname,$(notdir $@) \
-	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-	   $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
-	) \
-	$(PRIVATE_LDFLAGS) \
-	$(PRIVATE_ALL_OBJECTS) \
-	-Wl,--whole-archive \
-	$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
-	-Wl,--no-whole-archive \
-	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
-	$(PRIVATE_ALL_STATIC_LIBRARIES) \
-	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-	$(if $(filter true,$(NATIVE_COVERAGE)),-lgcov) \
-	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
-	$(PRIVATE_ALL_SHARED_LIBRARIES) \
-	-o $@ \
-	$(PRIVATE_LDLIBS)
+  -Wl,-rpath,\$$ORIGIN/../$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)OUT_SHARED_LIBRARIES)) \
+  -Wl,-rpath,\$$ORIGIN/$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)OUT_SHARED_LIBRARIES)) \
+  -shared -Wl,-soname,$(notdir $@) \
+  $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
+     $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
+  ) \
+  $(PRIVATE_LDFLAGS) \
+  $(PRIVATE_ALL_OBJECTS) \
+  -Wl,--whole-archive \
+  $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
+  -Wl,--no-whole-archive \
+  $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
+  $(PRIVATE_ALL_STATIC_LIBRARIES) \
+  $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
+  $(if $(filter true,$(NATIVE_COVERAGE)),-lgcov) \
+  $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
+  $(PRIVATE_ALL_SHARED_LIBRARIES) \
+  -o $@ \
+  $(PRIVATE_LDLIBS)
 endef
 endif
 
@@ -1695,27 +1695,27 @@ endef
 
 define transform-o-to-shared-lib-inner
 $(hide) $(PRIVATE_CXX) \
-	-nostdlib -Wl,-soname,$(notdir $@) \
-	-Wl,--gc-sections \
-	-shared \
-	$(PRIVATE_TARGET_CRTBEGIN_SO_O) \
-	$(PRIVATE_ALL_OBJECTS) \
-	-Wl,--whole-archive \
-	$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
-	-Wl,--no-whole-archive \
-	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
-	$(PRIVATE_ALL_STATIC_LIBRARIES) \
-	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
-	$(PRIVATE_TARGET_LIBCRT_BUILTINS) \
-	$(PRIVATE_TARGET_LIBATOMIC) \
-	$(PRIVATE_TARGET_LIBGCC) \
-	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
-	$(PRIVATE_LDFLAGS) \
-	$(PRIVATE_ALL_SHARED_LIBRARIES) \
-	-o $@ \
-	$(PRIVATE_TARGET_CRTEND_SO_O) \
-	$(PRIVATE_LDLIBS)
+  -nostdlib -Wl,-soname,$(notdir $@) \
+  -Wl,--gc-sections \
+  -shared \
+  $(PRIVATE_TARGET_CRTBEGIN_SO_O) \
+  $(PRIVATE_ALL_OBJECTS) \
+  -Wl,--whole-archive \
+  $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
+  -Wl,--no-whole-archive \
+  $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
+  $(PRIVATE_ALL_STATIC_LIBRARIES) \
+  $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
+  $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
+  $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
+  $(PRIVATE_TARGET_LIBATOMIC) \
+  $(PRIVATE_TARGET_LIBGCC) \
+  $(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
+  $(PRIVATE_LDFLAGS) \
+  $(PRIVATE_ALL_SHARED_LIBRARIES) \
+  -o $@ \
+  $(PRIVATE_TARGET_CRTEND_SO_O) \
+  $(PRIVATE_LDLIBS)
 endef
 
 define transform-o-to-shared-lib
@@ -1730,28 +1730,28 @@ endef
 
 define transform-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) -pie \
-	-nostdlib -Bdynamic \
-	-Wl,-dynamic-linker,$(PRIVATE_LINKER) \
-	-Wl,--gc-sections \
-	-Wl,-z,nocopyreloc \
-	$(PRIVATE_TARGET_CRTBEGIN_DYNAMIC_O) \
-	$(PRIVATE_ALL_OBJECTS) \
-	-Wl,--whole-archive \
-	$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
-	-Wl,--no-whole-archive \
-	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
-	$(PRIVATE_ALL_STATIC_LIBRARIES) \
-	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
-	$(PRIVATE_TARGET_LIBCRT_BUILTINS) \
-	$(PRIVATE_TARGET_LIBATOMIC) \
-	$(PRIVATE_TARGET_LIBGCC) \
-	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
-	$(PRIVATE_LDFLAGS) \
-	$(PRIVATE_ALL_SHARED_LIBRARIES) \
-	-o $@ \
-	$(PRIVATE_TARGET_CRTEND_O) \
-	$(PRIVATE_LDLIBS)
+  -nostdlib -Bdynamic \
+  -Wl,-dynamic-linker,$(PRIVATE_LINKER) \
+  -Wl,--gc-sections \
+  -Wl,-z,nocopyreloc \
+  $(PRIVATE_TARGET_CRTBEGIN_DYNAMIC_O) \
+  $(PRIVATE_ALL_OBJECTS) \
+  -Wl,--whole-archive \
+  $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
+  -Wl,--no-whole-archive \
+  $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
+  $(PRIVATE_ALL_STATIC_LIBRARIES) \
+  $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
+  $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
+  $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
+  $(PRIVATE_TARGET_LIBATOMIC) \
+  $(PRIVATE_TARGET_LIBGCC) \
+  $(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
+  $(PRIVATE_LDFLAGS) \
+  $(PRIVATE_ALL_SHARED_LIBRARIES) \
+  -o $@ \
+  $(PRIVATE_TARGET_CRTEND_O) \
+  $(PRIVATE_LDLIBS)
 endef
 
 define transform-o-to-executable
@@ -1773,28 +1773,28 @@ endef
 
 define transform-o-to-static-executable-inner
 $(hide) $(PRIVATE_CXX) \
-	-nostdlib -Bstatic \
-	$(if $(filter $(PRIVATE_LDFLAGS),-shared),,-static) \
-	-Wl,--gc-sections \
-	-o $@ \
-	$(PRIVATE_TARGET_CRTBEGIN_STATIC_O) \
-	$(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
-	$(PRIVATE_LDFLAGS) \
-	$(PRIVATE_ALL_OBJECTS) \
-	-Wl,--whole-archive \
-	$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
-	-Wl,--no-whole-archive \
-	$(filter-out %libcompiler_rt.hwasan.a %libc_nomalloc.hwasan.a %libc.hwasan.a %libcompiler_rt.a %libc_nomalloc.a %libc.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
-	-Wl,--start-group \
-	$(filter %libc.a %libc.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
-	$(filter %libc_nomalloc.a %libc_nomalloc.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
-	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
-	$(PRIVATE_TARGET_LIBATOMIC) \
-	$(filter %libcompiler_rt.a %libcompiler_rt.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
-	$(PRIVATE_TARGET_LIBCRT_BUILTINS) \
-	$(PRIVATE_TARGET_LIBGCC) \
-	-Wl,--end-group \
-	$(PRIVATE_TARGET_CRTEND_O)
+  -nostdlib -Bstatic \
+  $(if $(filter $(PRIVATE_LDFLAGS),-shared),,-static) \
+  -Wl,--gc-sections \
+  -o $@ \
+  $(PRIVATE_TARGET_CRTBEGIN_STATIC_O) \
+  $(PRIVATE_TARGET_GLOBAL_LDFLAGS) \
+  $(PRIVATE_LDFLAGS) \
+  $(PRIVATE_ALL_OBJECTS) \
+  -Wl,--whole-archive \
+  $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
+  -Wl,--no-whole-archive \
+  $(filter-out %libcompiler_rt.hwasan.a %libc_nomalloc.hwasan.a %libc.hwasan.a %libcompiler_rt.a %libc_nomalloc.a %libc.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+  -Wl,--start-group \
+  $(filter %libc.a %libc.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+  $(filter %libc_nomalloc.a %libc_nomalloc.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+  $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_TARGET_COVERAGE_LIB)) \
+  $(PRIVATE_TARGET_LIBATOMIC) \
+  $(filter %libcompiler_rt.a %libcompiler_rt.hwasan.a,$(PRIVATE_ALL_STATIC_LIBRARIES)) \
+  $(PRIVATE_TARGET_LIBCRT_BUILTINS) \
+  $(PRIVATE_TARGET_LIBGCC) \
+  -Wl,--end-group \
+  $(PRIVATE_TARGET_CRTEND_O)
 endef
 
 define transform-o-to-static-executable
@@ -1811,24 +1811,24 @@ endef
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-executable-inner
 $(hide) $(PRIVATE_CXX) \
-	$(PRIVATE_ALL_OBJECTS) \
-	-Wl,--whole-archive \
-	$(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
-	-Wl,--no-whole-archive \
-	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
-	$(PRIVATE_ALL_STATIC_LIBRARIES) \
-	$(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
-	$(if $(filter true,$(NATIVE_COVERAGE)),-lgcov) \
-	$(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
-	$(PRIVATE_ALL_SHARED_LIBRARIES) \
-	$(foreach path,$(PRIVATE_RPATHS), \
-	  -Wl,-rpath,\$$ORIGIN/$(path)) \
-	$(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
-		$(PRIVATE_HOST_GLOBAL_LDFLAGS) \
-	) \
-	$(PRIVATE_LDFLAGS) \
-	-o $@ \
-	$(PRIVATE_LDLIBS)
+  $(PRIVATE_ALL_OBJECTS) \
+  -Wl,--whole-archive \
+  $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
+  -Wl,--no-whole-archive \
+  $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--start-group) \
+  $(PRIVATE_ALL_STATIC_LIBRARIES) \
+  $(if $(PRIVATE_GROUP_STATIC_LIBRARIES),-Wl$(comma)--end-group) \
+  $(if $(filter true,$(NATIVE_COVERAGE)),-lgcov) \
+  $(if $(filter true,$(NATIVE_COVERAGE)),$(PRIVATE_HOST_LIBPROFILE_RT)) \
+  $(PRIVATE_ALL_SHARED_LIBRARIES) \
+  $(foreach path,$(PRIVATE_RPATHS), \
+    -Wl,-rpath,\$$ORIGIN/$(path)) \
+  $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),, \
+      $(PRIVATE_HOST_GLOBAL_LDFLAGS) \
+  ) \
+  $(PRIVATE_LDFLAGS) \
+  -o $@ \
+  $(PRIVATE_LDLIBS)
 endef
 endif
 
@@ -1853,15 +1853,15 @@ $(hide) for GENERATED_MANIFEST_FILE in `find $(1) \
   -name Manifest.java 2> /dev/null`; do \
     dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_MANIFEST_FILE`; \
     mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
-    $(ACP) -fp $$GENERATED_MANIFEST_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
+    cp $$GENERATED_MANIFEST_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
   done;
 $(hide) for GENERATED_R_FILE in `find $(1) \
   -name R.java 2> /dev/null`; do \
     dir=`awk '/package/{gsub(/\./,"/",$$2);gsub(/;/,"",$$2);print $$2;exit}' $$GENERATED_R_FILE`; \
     mkdir -p $(TARGET_COMMON_OUT_ROOT)/R/$$dir; \
-    $(ACP) -fp $$GENERATED_R_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir \
+    cp $$GENERATED_R_FILE $(TARGET_COMMON_OUT_ROOT)/R/$$dir \
       || exit 31; \
-    $(ACP) -fp $$GENERATED_R_FILE $(2) || exit 32; \
+    cp $$GENERATED_R_FILE $(2) || exit 32; \
   done;
 @# Ensure that the target file is always created, i.e. also in case we did not
 @# enter the GENERATED_R_FILE-loop above. This avoids unnecessary rebuilding.
@@ -3323,7 +3323,7 @@ LIBRARY_IDENTITY_CHECK_SCRIPT := build/make/tools/check_identical_lib.sh
 define verify-vndk-libs-identical
 @echo "Checking VNDK vendor variant: $(2)"
 $(hide) CLANG_BIN="$(LLVM_PREBUILTS_PATH)" \
-	CROSS_COMPILE="$(strip $(3))" \
-	XZ="$(XZ)" \
-	$(LIBRARY_IDENTITY_CHECK_SCRIPT) $(SOONG_STRIP_PATH) $(1) $(2)
+  CROSS_COMPILE="$(strip $(3))" \
+  XZ="$(XZ)" \
+  $(LIBRARY_IDENTITY_CHECK_SCRIPT) $(SOONG_STRIP_PATH) $(1) $(2)
 endef
