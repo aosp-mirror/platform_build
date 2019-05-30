@@ -197,6 +197,7 @@ VNDK-core: android.hidl.allocator@1.0.so
 VNDK-core: android.hidl.memory.block@1.0.so
 VNDK-core: android.hidl.token@1.0.so
 VNDK-core: android.hidl.token@1.0-utils.so
+VNDK-core: android.system.ashmem@1.0.so
 VNDK-core: android.system.net.netd@1.0.so
 VNDK-core: android.system.net.netd@1.1.so
 VNDK-core: android.system.suspend@1.0.so
