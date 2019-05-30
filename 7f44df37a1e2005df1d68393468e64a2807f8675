@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d553be0b_3ae21bee",
+        "filename": "core/etc_prebuilt_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2019-05-30T16:26:13Z",
+      "side": 1,
+      "message": "How about misc_prebuilt_internal.mk? Starting a file name with etc feels weird to me. Plus, it may give the reader an impression that this is only for ETC class modules.",
+      "revId": "7f44df37a1e2005df1d68393468e64a2807f8675",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d6fd2193_804e4674",
+        "filename": "core/etc_prebuilt_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2019-05-30T16:26:13Z",
+      "side": 1,
+      "message": "ETC, SCRIPT, and DATA?",
+      "range": {
+        "startLine": 18,
+        "startChar": 27,
+        "endLine": 18,
+        "endChar": 30
+      },
+      "revId": "7f44df37a1e2005df1d68393468e64a2807f8675",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7266bcbe_246c5440",
+        "filename": "core/etc_prebuilt_internal.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2019-05-30T16:26:13Z",
+      "side": 1,
+      "message": "Please add a class type check as we do in app_prebuilt_internal and java_prebuilt_internal. I didn\u0027t put it in cc_prebuilt_internal because it was the everything-else bucket. Speaking of which, please do the same in cc_prebuilt_internal, too.",
+      "revId": "7f44df37a1e2005df1d68393468e64a2807f8675",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
