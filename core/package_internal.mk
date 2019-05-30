@@ -25,18 +25,6 @@
 ## be set for you.
 ###########################################################
 
-# If this makefile is being read from within an inheritance,
-# use the new values.
-skip_definition:=
-ifdef LOCAL_PACKAGE_OVERRIDES
-  package_overridden := $(call set-inherited-package-variables)
-  ifeq ($(strip $(package_overridden)),)
-    skip_definition := true
-  endif
-endif
-
-ifndef skip_definition
-
 LOCAL_PACKAGE_NAME := $(strip $(LOCAL_PACKAGE_NAME))
 ifeq ($(LOCAL_PACKAGE_NAME),)
 $(error $(LOCAL_PATH): Package modules must define LOCAL_PACKAGE_NAME)
@@ -483,6 +471,31 @@ PACKAGES.$(LOCAL_PACKAGE_NAME).CERTIFICATE := $(certificate)
 $(LOCAL_BUILT_MODULE): $(additional_certificates)
 $(LOCAL_BUILT_MODULE): PRIVATE_ADDITIONAL_CERTIFICATES := $(additional_certificates)
 
+# Verify LOCAL_USES_LIBRARIES/LOCAL_OPTIONAL_USES_LIBRARIES
+# If LOCAL_ENFORCE_USES_LIBRARIES is not set, default to true if either of LOCAL_USES_LIBRARIES or
+# LOCAL_OPTIONAL_USES_LIBRARIES are specified.
+# Will change the default to true unconditionally in the future.
+ifndef LOCAL_ENFORCE_USES_LIBRARIES
+  ifneq (,$(strip $(LOCAL_USES_LIBRARIES)$(LOCAL_OPTIONAL_USES_LIBRARIES)))
+    LOCAL_ENFORCE_USES_LIBRARIES := true
+  endif
+endif
+
+my_enforced_uses_libraries :=
+ifdef LOCAL_ENFORCE_USES_LIBRARIES
+  my_manifest_check := $(intermediates.COMMON)/manifest/AndroidManifest.xml.check
+  $(my_manifest_check): $(MANIFEST_CHECK)
+  $(my_manifest_check): PRIVATE_USES_LIBRARIES := $(LOCAL_USES_LIBRARIES)
+  $(my_manifest_check): PRIVATE_OPTIONAL_USES_LIBRARIES := $(LOCAL_OPTIONAL_USES_LIBRARIES)
+  $(my_manifest_check): $(full_android_manifest)
+	@echo Checking manifest: $<
+	$(MANIFEST_CHECK) --enforce-uses-libraries \
+	  $(addprefix --uses-library ,$(PRIVATE_USES_LIBRARIES)) \
+	  $(addprefix --optional-uses-library ,$(PRIVATE_OPTIONAL_USES_LIBRARIES)) \
+	  $< -o $@
+  $(LOCAL_BUILT_MODULE): $(my_manifest_check)
+endif
+
 # Define the rule to build the actual package.
 # PRIVATE_JNI_SHARED_LIBRARIES is a list of <abi>:<path_of_built_lib>.
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries_with_abis)
@@ -524,7 +537,7 @@ $(LOCAL_BUILT_MODULE): PRIVATE_RESOURCE_INTERMEDIATES_DIR := $(intermediates.COM
 $(LOCAL_BUILT_MODULE) : $(jni_shared_libraries)
 $(LOCAL_BUILT_MODULE) : $(JAR_ARGS) $(SOONG_ZIP) $(MERGE_ZIPS) $(ZIP2ZIP)
 $(LOCAL_BUILT_MODULE): PRIVATE_RES_PACKAGE := $(my_res_package)
-$(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2) | $(ACP)
+$(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2)
 ifdef LOCAL_COMPRESSED_MODULE
 $(LOCAL_BUILT_MODULE) : $(MINIGZIP)
 endif
@@ -691,8 +704,6 @@ PACKAGES.$(LOCAL_PACKAGE_NAME).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 PACKAGES.$(LOCAL_PACKAGE_NAME).RESOURCE_FILES := $(all_resources)
 
 PACKAGES := $(PACKAGES) $(LOCAL_PACKAGE_NAME)
-
-endif # skip_definition
 
 # Reset internal variables.
 all_res_assets :=
