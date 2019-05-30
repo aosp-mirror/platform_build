@@ -99,7 +99,7 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
 	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
 	   --partition system \
-	   --all-partitions $(subst $(space),$(comma),$(PRIVATE_PARTITION_LIST)) \
+	   --all-partitions "$(subst $(space),$(comma),$(PRIVATE_PARTITION_LIST))" \
 	   --dirs \
 	   --out_file $@ \
 	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)
@@ -124,7 +124,7 @@ $(LOCAL_BUILT_MODULE): $(LOCAL_PATH)/fs_config_generator.py $(TARGET_FS_CONFIG_G
 	   --aid-header $(PRIVATE_ANDROID_FS_HDR) \
 	   --capability-header $(PRIVATE_ANDROID_CAP_HDR) \
 	   --partition system \
-	   --all-partitions $(subst $(space),$(comma),$(PRIVATE_PARTITION_LIST)) \
+	   --all-partitions "$(subst $(space),$(comma),$(PRIVATE_PARTITION_LIST))" \
 	   --files \
 	   --out_file $@ \
 	   $(or $(PRIVATE_TARGET_FS_CONFIG_GEN),/dev/null)

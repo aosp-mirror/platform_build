@@ -1004,10 +1004,6 @@ class FSConfigGen(BaseGenerator):
 
         self._partition = args['partition']
         self._all_partitions = args['all_partitions']
-        if self._partition == 'system' and self._all_partitions is None:
-            sys.exit(
-                'All other partitions must be provided if generating output'
-                ' for the system partition')
 
         self._out_file = args['out_file']
 
