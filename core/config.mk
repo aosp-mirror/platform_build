@@ -100,6 +100,7 @@ $(KATI_obsolete_var BUILD_BROKEN_DUP_COPY_HEADERS)
 $(KATI_obsolete_var BUILD_BROKEN_ENG_DEBUG_TAGS)
 $(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
 $(KATI_obsolete_var BUILD_BROKEN_ANDROIDMK_EXPORTS)
+$(KATI_obsolete_var PRODUCT_STATIC_BOOT_CONTROL_HAL,Use shared library module instead. See $(CHANGES_URL)#PRODUCT_STATIC_BOOT_CONTROL_HAL)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
