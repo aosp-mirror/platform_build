@@ -22,6 +22,30 @@
       "revId": "6360b9c6baa11f62279c483eabdc50d4ca3e3d8b",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34277134_68176302",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-05-31T17:57:15Z",
+      "side": 1,
+      "message": "Done. Did here \u0026 for the other constants already at module level.",
+      "parentUuid": "93ea9e0b_3c52801f",
+      "range": {
+        "startLine": 319,
+        "startChar": 2,
+        "endLine": 319,
+        "endChar": 25
+      },
+      "revId": "6360b9c6baa11f62279c483eabdc50d4ca3e3d8b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
