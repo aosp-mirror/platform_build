@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eb69e3a7_fe92eb4f",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-05-31T18:01:54Z",
+      "side": 1,
+      "message": "(\u0027META/*\u0027,)\n\n(note the extra comma, which makes it a one-element tuple rather than evaluating an expr)",
+      "range": {
+        "startLine": 132,
+        "startChar": 35,
+        "endLine": 132,
+        "endChar": 45
+      },
+      "revId": "18119499784202f8ecb2e3f2db30ade4f02edf0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6922c150_64be5b2c",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 180,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-05-31T18:01:54Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 180,
+        "startChar": 43,
+        "endLine": 180,
+        "endChar": 44
+      },
+      "revId": "18119499784202f8ecb2e3f2db30ade4f02edf0b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
