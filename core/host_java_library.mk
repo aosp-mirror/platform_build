@@ -52,6 +52,8 @@ java_sources := $(addprefix $(LOCAL_PATH)/, $(filter %.java,$(LOCAL_SRC_FILES)))
                 $(filter %.java,$(LOCAL_GENERATED_SOURCES))
 all_java_sources := $(java_sources)
 
+ALL_MODULES.$(my_register_name).SRCS := $(ALL_MODULES.$(my_register_name).SRCS) $(all_java_sources)
+
 include $(BUILD_SYSTEM)/java_common.mk
 
 # The layers file allows you to enforce a layering between java packages.
