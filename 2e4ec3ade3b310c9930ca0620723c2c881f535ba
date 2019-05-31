@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7090f190_101ebcea",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 1148,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-05-31T23:18:04Z",
+      "side": 1,
+      "message": "This isn\u0027t correct, testcases do have notice files, they just may not be relevant to the system image.",
+      "revId": "2e4ec3ade3b310c9930ca0620723c2c881f535ba",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
