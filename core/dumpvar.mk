@@ -27,6 +27,6 @@ ANDROID_CLANG_PREBUILTS := prebuilts/clang/host/$(HOST_PREBUILT_TAG)
 .PHONY: dump-many-vars
 dump-many-vars :
 	@$(foreach v, $(DUMP_MANY_VARS),\
-	  echo "$(DUMP_VAR_PREFIX)$(v)='$($(v))'";)
+	  printf "%s='%s'\n" '$(DUMP_VAR_PREFIX)$(v)' '$($(v))';)
 
 endif # CALLED_FROM_SETUP
