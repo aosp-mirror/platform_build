@@ -27,11 +27,11 @@ Usage: merge_target_files.py [args]
 
   --system-item-list system-item-list-file
       The optional path to a newline-separated config file that replaces the
-      contents of default_system_item_list if provided.
+      contents of DEFAULT_SYSTEM_ITEM_LIST if provided.
 
   --system-misc-info-keys system-misc-info-keys-file
       The optional path to a newline-separated config file that replaces the
-      contents of default_system_misc_info_keys if provided.
+      contents of DEFAULT_SYSTEM_MISC_INFO_KEYS if provided.
 
   --other-target-files other-target-files-zip-archive
       The input target files package containing other bits. This is a zip
@@ -39,7 +39,7 @@ Usage: merge_target_files.py [args]
 
   --other-item-list other-item-list-file
       The optional path to a newline-separated config file that replaces the
-      contents of default_other_item_list if provided.
+      contents of DEFAULT_OTHER_ITEM_LIST if provided.
 
   --output-target-files output-target-files-package
       If provided, the output merged target files package. Also a zip archive.
@@ -107,12 +107,12 @@ OPTIONS.output_super_empty = None
 OPTIONS.rebuild_recovery = False
 OPTIONS.keep_tmp = False
 
-# default_system_item_list is a list of items to extract from the partial
+# DEFAULT_SYSTEM_ITEM_LIST is a list of items to extract from the partial
 # system target files package as is, meaning these items will land in the
 # output target files package exactly as they appear in the input partial
 # system target files package.
 
-default_system_item_list = [
+DEFAULT_SYSTEM_ITEM_LIST = (
     'META/apkcerts.txt',
     'META/filesystem_config.txt',
     'META/root_filesystem_config.txt',
@@ -122,21 +122,19 @@ default_system_item_list = [
     'PRODUCT/*',
     'ROOT/*',
     'SYSTEM/*',
-]
+)
 
-# system_extract_special_item_list is a list of items to extract from the
+# SYSTEM_EXTRACT_SPECIAL_ITEM_LIST is a list of items to extract from the
 # partial system target files package that need some special processing, such
 # as some sort of combination with items from the partial other target files
 # package.
 
-system_extract_special_item_list = [
-    'META/*',
-]
+SYSTEM_EXTRACT_SPECIAL_ITEM_LIST = ('META/*',)
 
-# default_system_misc_info_keys is a list of keys to obtain from the system
+# DEFAULT_SYSTEM_MISC_INFO_KEYS is a list of keys to obtain from the system
 # instance of META/misc_info.txt. The remaining keys from the other instance.
 
-default_system_misc_info_keys = [
+DEFAULT_SYSTEM_MISC_INFO_KEYS = (
     'avb_system_hashtree_enable',
     'avb_system_add_hashtree_footer_args',
     'avb_system_key_path',
@@ -151,14 +149,14 @@ default_system_misc_info_keys = [
     'ab_update',
     'default_system_dev_certificate',
     'system_size',
-]
+)
 
-# default_other_item_list is a list of items to extract from the partial
+# DEFAULT_OTHER_ITEM_LIST is a list of items to extract from the partial
 # other target files package as is, meaning these items will land in the output
 # target files package exactly as they appear in the input partial other target
 # files package.
 
-default_other_item_list = [
+DEFAULT_OTHER_ITEM_LIST = (
     'META/boot_filesystem_config.txt',
     'META/otakeys.txt',
     'META/releasetools.py',
@@ -172,16 +170,33 @@ default_other_item_list = [
     'PREBUILT_IMAGES/*',
     'RADIO/*',
     'VENDOR/*',
-]
+)
 
-# other_extract_special_item_list is a list of items to extract from the
+# OTHER_EXTRACT_SPECIAL_ITEM_LIST is a list of items to extract from the
 # partial other target files package that need some special processing, such as
 # some sort of combination with items from the partial system target files
 # package.
 
-other_extract_special_item_list = [
-    'META/*',
-]
+OTHER_EXTRACT_SPECIAL_ITEM_LIST = ('META/*',)
+
+# The merge config lists should not attempt to extract items from both
+# builds for any of the following partitions. The partitions in
+# SINGLE_BUILD_PARTITIONS should come entirely from a single build (either
+# system or other, but not both).
+
+SINGLE_BUILD_PARTITIONS = (
+    'BOOT/',
+    'DATA/',
+    'ODM/',
+    'PRODUCT/',
+    'PRODUCT_SERVICES/',
+    'RADIO/',
+    'RECOVERY/',
+    'ROOT/',
+    'SYSTEM/',
+    'SYSTEM_OTHER/',
+    'VENDOR/',
+)
 
 
 def write_sorted_data(data, path):
@@ -295,8 +310,10 @@ def validate_config_lists(system_item_list, system_misc_info_keys,
   Returns:
     False if a validation fails, otherwise true.
   """
-  default_combined_item_set = set(default_system_item_list)
-  default_combined_item_set.update(default_other_item_list)
+  has_error = False
+
+  default_combined_item_set = set(DEFAULT_SYSTEM_ITEM_LIST)
+  default_combined_item_set.update(DEFAULT_OTHER_ITEM_LIST)
 
   combined_item_set = set(system_item_list)
   combined_item_set.update(other_item_list)
@@ -309,15 +326,25 @@ def validate_config_lists(system_item_list, system_misc_info_keys,
     logger.error('Please ensure missing items are in either the '
                  'system-item-list or other-item-list files provided to '
                  'this script.')
-    return False
+    has_error = True
+
+  for partition in SINGLE_BUILD_PARTITIONS:
+    in_system = any(item.startswith(partition) for item in system_item_list)
+    in_other = any(item.startswith(partition) for item in other_item_list)
+    if in_system and in_other:
+      logger.error(
+          'Cannot extract items from {0} for both the system and other builds. '
+          'Please ensure only one merge config item list includes {0}.'.format(
+              partition))
+      has_error = True
 
   if ('dynamic_partition_list' in system_misc_info_keys) or (
       'super_partition_groups' in system_misc_info_keys):
     logger.error('Dynamic partition misc info keys should come from '
                  'the other instance of META/misc_info.txt.')
-    return False
+    has_error = True
 
-  return True
+  return not has_error
 
 
 def process_ab_partitions_txt(system_target_files_temp_dir,
@@ -619,18 +646,22 @@ def process_apex_keys_apk_certs_common(system_target_files_dir,
 def copy_file_contexts(system_target_files_dir, other_target_files_dir,
                        output_target_files_dir):
   """Creates named copies of each build's file_contexts.bin in output META/."""
-  system_fc_path = os.path.join(system_target_files_dir, 'META', 'system_file_contexts.bin')
+  system_fc_path = os.path.join(system_target_files_dir, 'META',
+                                'system_file_contexts.bin')
   if not os.path.exists(system_fc_path):
-    system_fc_path = os.path.join(system_target_files_dir, 'META', 'file_contexts.bin')
+    system_fc_path = os.path.join(system_target_files_dir, 'META',
+                                  'file_contexts.bin')
     if not os.path.exists(system_fc_path):
       raise ValueError('Missing system file_contexts.bin.')
   shutil.copyfile(
       system_fc_path,
       os.path.join(output_target_files_dir, 'META', 'system_file_contexts.bin'))
 
-  other_fc_path = os.path.join(other_target_files_dir, 'META', 'other_file_contexts.bin')
+  other_fc_path = os.path.join(other_target_files_dir, 'META',
+                               'other_file_contexts.bin')
   if not os.path.exists(other_fc_path):
-    other_fc_path = os.path.join(other_target_files_dir, 'META', 'file_contexts.bin')
+    other_fc_path = os.path.join(other_target_files_dir, 'META',
+                                 'file_contexts.bin')
     if not os.path.exists(other_fc_path):
       raise ValueError('Missing other file_contexts.bin.')
   shutil.copyfile(
@@ -776,7 +807,7 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
   extract_items(
       target_files=system_target_files,
       target_files_temp_dir=system_target_files_temp_dir,
-      extract_item_list=system_extract_special_item_list)
+      extract_item_list=SYSTEM_EXTRACT_SPECIAL_ITEM_LIST)
 
   # Extract "special" items from the input other partial target files package.
   # We extract these items to different directory since they require special
@@ -785,7 +816,7 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
   extract_items(
       target_files=other_target_files,
       target_files_temp_dir=other_target_files_temp_dir,
-      extract_item_list=other_extract_special_item_list)
+      extract_item_list=OTHER_EXTRACT_SPECIAL_ITEM_LIST)
 
   # Now that the temporary directories contain all the extracted files, perform
   # special case processing on any items that need it. After this function
@@ -1004,17 +1035,17 @@ def main():
   if OPTIONS.system_item_list:
     system_item_list = read_config_list(OPTIONS.system_item_list)
   else:
-    system_item_list = default_system_item_list
+    system_item_list = DEFAULT_SYSTEM_ITEM_LIST
 
   if OPTIONS.system_misc_info_keys:
     system_misc_info_keys = read_config_list(OPTIONS.system_misc_info_keys)
   else:
-    system_misc_info_keys = default_system_misc_info_keys
+    system_misc_info_keys = DEFAULT_SYSTEM_MISC_INFO_KEYS
 
   if OPTIONS.other_item_list:
     other_item_list = read_config_list(OPTIONS.other_item_list)
   else:
-    other_item_list = default_other_item_list
+    other_item_list = DEFAULT_OTHER_ITEM_LIST
 
   if OPTIONS.output_item_list:
     output_item_list = read_config_list(OPTIONS.output_item_list)
