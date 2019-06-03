@@ -19,9 +19,9 @@ import os.path
 import common
 import test_utils
 from merge_target_files import (read_config_list, validate_config_lists,
-                                default_system_item_list,
-                                default_other_item_list,
-                                default_system_misc_info_keys, copy_items,
+                                DEFAULT_SYSTEM_ITEM_LIST,
+                                DEFAULT_OTHER_ITEM_LIST,
+                                DEFAULT_SYSTEM_MISC_INFO_KEYS, copy_items,
                                 merge_dynamic_partition_info_dicts,
                                 process_apex_keys_apk_certs_common)
 
@@ -101,35 +101,42 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertItemsEqual(system_item_list, expected_system_item_list)
 
   def test_validate_config_lists_ReturnsFalseIfMissingDefaultItem(self):
-    system_item_list = default_system_item_list[:]
+    system_item_list = list(DEFAULT_SYSTEM_ITEM_LIST)
     system_item_list.remove('SYSTEM/*')
     self.assertFalse(
-        validate_config_lists(system_item_list, default_system_misc_info_keys,
-                              default_other_item_list))
+        validate_config_lists(system_item_list, DEFAULT_SYSTEM_MISC_INFO_KEYS,
+                              DEFAULT_OTHER_ITEM_LIST))
 
   def test_validate_config_lists_ReturnsTrueIfDefaultItemInDifferentList(self):
-    system_item_list = default_system_item_list[:]
+    system_item_list = list(DEFAULT_SYSTEM_ITEM_LIST)
     system_item_list.remove('ROOT/*')
-    other_item_list = default_other_item_list[:]
+    other_item_list = list(DEFAULT_OTHER_ITEM_LIST)
     other_item_list.append('ROOT/*')
     self.assertTrue(
-        validate_config_lists(system_item_list, default_system_misc_info_keys,
+        validate_config_lists(system_item_list, DEFAULT_SYSTEM_MISC_INFO_KEYS,
                               other_item_list))
 
   def test_validate_config_lists_ReturnsTrueIfExtraItem(self):
-    system_item_list = default_system_item_list[:]
+    system_item_list = list(DEFAULT_SYSTEM_ITEM_LIST)
     system_item_list.append('MY_NEW_PARTITION/*')
     self.assertTrue(
-        validate_config_lists(system_item_list, default_system_misc_info_keys,
-                              default_other_item_list))
+        validate_config_lists(system_item_list, DEFAULT_SYSTEM_MISC_INFO_KEYS,
+                              DEFAULT_OTHER_ITEM_LIST))
+
+  def test_validate_config_lists_ReturnsFalseIfSharedExtractedPartition(self):
+    other_item_list = list(DEFAULT_OTHER_ITEM_LIST)
+    other_item_list.append('SYSTEM/my_system_file')
+    self.assertFalse(
+        validate_config_lists(DEFAULT_SYSTEM_ITEM_LIST,
+                              DEFAULT_SYSTEM_MISC_INFO_KEYS, other_item_list))
 
   def test_validate_config_lists_ReturnsFalseIfBadSystemMiscInfoKeys(self):
     for bad_key in ['dynamic_partition_list', 'super_partition_groups']:
-      system_misc_info_keys = default_system_misc_info_keys[:]
+      system_misc_info_keys = list(DEFAULT_SYSTEM_MISC_INFO_KEYS)
       system_misc_info_keys.append(bad_key)
       self.assertFalse(
-          validate_config_lists(default_system_item_list, system_misc_info_keys,
-                                default_other_item_list))
+          validate_config_lists(DEFAULT_SYSTEM_ITEM_LIST, system_misc_info_keys,
+                                DEFAULT_OTHER_ITEM_LIST))
 
   def test_merge_dynamic_partition_info_dicts_ReturnsMergedDict(self):
     system_dict = {
