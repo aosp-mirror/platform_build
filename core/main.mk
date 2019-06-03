@@ -1327,15 +1327,18 @@ ifdef FULL_BUILD
     ifeq (true,$(PRODUCT_ENFORCE_PACKAGES_EXIST))
       _whitelist := $(PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST)
       _modules := $(PRODUCT_PACKAGES)
+      # Strip :32 and :64 suffixes
+      _modules := $(patsubst %:32,%,$(_modules))
+      _modules := $(patsubst %:64,%,$(_modules))
       # Sanity check all modules in PRODUCT_PACKAGES exist. We check for the
       # existence if either <module> or the <module>_32 variant.
-      _nonexistant_modules := $(filter-out $(ALL_MODULES),$(_modules))
-      _nonexistant_modules := $(foreach m,$(_nonexistant_modules),\
+      _nonexistent_modules := $(filter-out $(ALL_MODULES),$(_modules))
+      _nonexistent_modules := $(foreach m,$(_nonexistent_modules),\
         $(if $(call get-32-bit-modules,$(m)),,$(m)))
-      $(call maybe-print-list-and-error,$(filter-out $(_whitelist),$(_nonexistant_modules)),\
-        $(INTERNAL_PRODUCT) includes non-existant modules in PRODUCT_PACKAGES)
-      $(call maybe-print-list-and-error,$(filter-out $(_nonexistant_modules),$(_whitelist)),\
-        $(INTERNAL_PRODUCT) includes redundant whitelist entries for nonexistant PRODUCT_PACKAGES)
+      $(call maybe-print-list-and-error,$(filter-out $(_whitelist),$(_nonexistent_modules)),\
+        $(INTERNAL_PRODUCT) includes non-existent modules in PRODUCT_PACKAGES)
+      $(call maybe-print-list-and-error,$(filter-out $(_nonexistent_modules),$(_whitelist)),\
+        $(INTERNAL_PRODUCT) includes redundant whitelist entries for nonexistent PRODUCT_PACKAGES)
     endif
 
     # Check to ensure that all modules in PRODUCT_HOST_PACKAGES exist
@@ -1344,10 +1347,13 @@ ifdef FULL_BUILD
     # maybe it would make sense to have PRODUCT_HOST_PACKAGES_LINUX/_DARWIN?
     ifneq ($(HOST_OS),darwin)
       _modules := $(PRODUCT_HOST_PACKAGES)
-      _nonexistant_modules := $(foreach m,$(_modules),\
+      # Strip :32 and :64 suffixes
+      _modules := $(patsubst %:32,%,$(_modules))
+      _modules := $(patsubst %:64,%,$(_modules))
+      _nonexistent_modules := $(foreach m,$(_modules),\
         $(if $(ALL_MODULES.$(m).REQUIRED_FROM_HOST)$(filter $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,$(m)))
-      $(call maybe-print-list-and-error,$(_nonexistant_modules),\
-        $(INTERNAL_PRODUCT) includes non-existant modules in PRODUCT_HOST_PACKAGES)
+      $(call maybe-print-list-and-error,$(_nonexistent_modules),\
+        $(INTERNAL_PRODUCT) includes non-existent modules in PRODUCT_HOST_PACKAGES)
     endif
   endif
 
