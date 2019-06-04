@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "06612865_18062808",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-06-04T22:41:51Z",
+      "side": 1,
+      "message": "This should just be a change, not a merge.",
+      "revId": "8265e3e98735963874f0bee02ff4039ca25cd5b1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
