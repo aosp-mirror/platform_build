@@ -4432,6 +4432,7 @@ ifneq (true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS))
 
 # For real devices and for dist builds, build super image from target files to an intermediate directory.
 INTERNAL_SUPERIMAGE_DIST_TARGET := $(call intermediates-dir-for,PACKAGING,super.img)/super.img
+INTERNAL_SUPERIMAGE_MISC_INFO := $(call intermediates-dir-for,PACKAGING,superimage_debug)/misc_info.txt
 $(INTERNAL_SUPERIMAGE_DIST_TARGET): extracted_input_target_files := $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE))
 $(INTERNAL_SUPERIMAGE_DIST_TARGET): $(LPMAKE) $(BUILT_TARGET_FILES_PACKAGE) $(BUILD_SUPER_IMAGE)
 	$(call pretty,"Target super fs image from target files: $@")
@@ -4483,7 +4484,7 @@ ifeq (true,$(BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT))
 $(INSTALLED_SUPERIMAGE_TARGET): $(INSTALLED_SUPERIMAGE_DEPENDENCIES)
 	$(call pretty,"Target super fs image for debug: $@")
 	$(call build-superimage-target,$(INSTALLED_SUPERIMAGE_TARGET),\
-	  $(call intermediates-dir-for,PACKAGING,superimage_debug)/misc_info.txt)
+	  $(INTERNAL_SUPERIMAGE_MISC_INFO))
 
 droidcore: $(INSTALLED_SUPERIMAGE_TARGET)
 
@@ -4557,6 +4558,7 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(INTERNAL_SUPERIMAGE_DIST_TARGET)
 	    $(foreach device,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
 	      OTA/super_$(device).img:super_$(device).img)) \
 	  OTA/android-info.txt:android-info.txt "IMAGES/*.img:."
+	$(if $(INTERNAL_SUPERIMAGE_MISC_INFO), zip -q -j -u $@ $(INTERNAL_SUPERIMAGE_MISC_INFO))
 	$(if $(INTERNAL_SUPERIMAGE_DIST_TARGET), zip -q -j -u $@ $(INTERNAL_SUPERIMAGE_DIST_TARGET))
 else
 $(INTERNAL_UPDATE_PACKAGE_TARGET):
