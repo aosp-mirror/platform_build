@@ -388,7 +388,7 @@ errors.
 
 | instead of                                                   | use                  |
 |--------------------------------------------------------------|----------------------|
-| OUT {#OUT}                                                   | OUT_DIR              |
+| OUT {#OUT}                                                   | PRODUCT_OUT          |
 | ANDROID_HOST_OUT {#ANDROID_HOST_OUT}                         | HOST_OUT             |
 | ANDROID_PRODUCT_OUT {#ANDROID_PRODUCT_OUT}                   | PRODUCT_OUT          |
 | ANDROID_HOST_OUT_TESTCASES {#ANDROID_HOST_OUT_TESTCASES}     | HOST_OUT_TESTCASES   |
