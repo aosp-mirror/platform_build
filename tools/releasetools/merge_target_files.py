@@ -15,31 +15,31 @@
 # the License.
 """This script merges two partial target files packages.
 
-One package contains system files, and the other contains non-system files.
+One package contains framework files, and the other contains vendor files.
 It produces a complete target files package that can be used to generate an
 OTA package.
 
 Usage: merge_target_files.py [args]
 
-  --system-target-files system-target-files-zip-archive
-      The input target files package containing system bits. This is a zip
+  --framework-target-files framework-target-files-zip-archive
+      The input target files package containing framework bits. This is a zip
       archive.
 
-  --system-item-list system-item-list-file
+  --framework-item-list framework-item-list-file
       The optional path to a newline-separated config file that replaces the
-      contents of DEFAULT_SYSTEM_ITEM_LIST if provided.
+      contents of DEFAULT_FRAMEWORK_ITEM_LIST if provided.
 
-  --system-misc-info-keys system-misc-info-keys-file
+  --framework-misc-info-keys framework-misc-info-keys-file
       The optional path to a newline-separated config file that replaces the
-      contents of DEFAULT_SYSTEM_MISC_INFO_KEYS if provided.
+      contents of DEFAULT_FRAMEWORK_MISC_INFO_KEYS if provided.
 
-  --other-target-files other-target-files-zip-archive
-      The input target files package containing other bits. This is a zip
+  --vendor-target-files vendor-target-files-zip-archive
+      The input target files package containing vendor bits. This is a zip
       archive.
 
-  --other-item-list other-item-list-file
+  --vendor-item-list vendor-item-list-file
       The optional path to a newline-separated config file that replaces the
-      contents of DEFAULT_OTHER_ITEM_LIST if provided.
+      contents of DEFAULT_VENDOR_ITEM_LIST if provided.
 
   --output-target-files output-target-files-package
       If provided, the output merged target files package. Also a zip archive.
@@ -93,11 +93,11 @@ import ota_from_target_files
 logger = logging.getLogger(__name__)
 OPTIONS = common.OPTIONS
 OPTIONS.verbose = True
-OPTIONS.system_target_files = None
-OPTIONS.system_item_list = None
-OPTIONS.system_misc_info_keys = None
-OPTIONS.other_target_files = None
-OPTIONS.other_item_list = None
+OPTIONS.framework_target_files = None
+OPTIONS.framework_item_list = None
+OPTIONS.framework_misc_info_keys = None
+OPTIONS.vendor_target_files = None
+OPTIONS.vendor_item_list = None
 OPTIONS.output_target_files = None
 OPTIONS.output_dir = None
 OPTIONS.output_item_list = None
@@ -107,12 +107,12 @@ OPTIONS.output_super_empty = None
 OPTIONS.rebuild_recovery = False
 OPTIONS.keep_tmp = False
 
-# DEFAULT_SYSTEM_ITEM_LIST is a list of items to extract from the partial
-# system target files package as is, meaning these items will land in the
+# DEFAULT_FRAMEWORK_ITEM_LIST is a list of items to extract from the partial
+# framework target files package as is, meaning these items will land in the
 # output target files package exactly as they appear in the input partial
-# system target files package.
+# framework target files package.
 
-DEFAULT_SYSTEM_ITEM_LIST = (
+DEFAULT_FRAMEWORK_ITEM_LIST = (
     'META/apkcerts.txt',
     'META/filesystem_config.txt',
     'META/root_filesystem_config.txt',
@@ -124,17 +124,18 @@ DEFAULT_SYSTEM_ITEM_LIST = (
     'SYSTEM/*',
 )
 
-# SYSTEM_EXTRACT_SPECIAL_ITEM_LIST is a list of items to extract from the
-# partial system target files package that need some special processing, such
-# as some sort of combination with items from the partial other target files
+# FRAMEWORK_EXTRACT_SPECIAL_ITEM_LIST is a list of items to extract from the
+# partial framework target files package that need some special processing, such
+# as some sort of combination with items from the partial vendor target files
 # package.
 
-SYSTEM_EXTRACT_SPECIAL_ITEM_LIST = ('META/*',)
+FRAMEWORK_EXTRACT_SPECIAL_ITEM_LIST = ('META/*',)
 
-# DEFAULT_SYSTEM_MISC_INFO_KEYS is a list of keys to obtain from the system
-# instance of META/misc_info.txt. The remaining keys from the other instance.
+# DEFAULT_FRAMEWORK_MISC_INFO_KEYS is a list of keys to obtain from the
+# framework instance of META/misc_info.txt. The remaining keys from the
+# vendor instance.
 
-DEFAULT_SYSTEM_MISC_INFO_KEYS = (
+DEFAULT_FRAMEWORK_MISC_INFO_KEYS = (
     'avb_system_hashtree_enable',
     'avb_system_add_hashtree_footer_args',
     'avb_system_key_path',
@@ -151,12 +152,12 @@ DEFAULT_SYSTEM_MISC_INFO_KEYS = (
     'system_size',
 )
 
-# DEFAULT_OTHER_ITEM_LIST is a list of items to extract from the partial
-# other target files package as is, meaning these items will land in the output
-# target files package exactly as they appear in the input partial other target
+# DEFAULT_VENDOR_ITEM_LIST is a list of items to extract from the partial
+# vendor target files package as is, meaning these items will land in the output
+# target files package exactly as they appear in the input partial vendor target
 # files package.
 
-DEFAULT_OTHER_ITEM_LIST = (
+DEFAULT_VENDOR_ITEM_LIST = (
     'META/boot_filesystem_config.txt',
     'META/otakeys.txt',
     'META/releasetools.py',
@@ -172,17 +173,17 @@ DEFAULT_OTHER_ITEM_LIST = (
     'VENDOR/*',
 )
 
-# OTHER_EXTRACT_SPECIAL_ITEM_LIST is a list of items to extract from the
-# partial other target files package that need some special processing, such as
-# some sort of combination with items from the partial system target files
+# VENDOR_EXTRACT_SPECIAL_ITEM_LIST is a list of items to extract from the
+# partial vendor target files package that need some special processing, such as
+# some sort of combination with items from the partial framework target files
 # package.
 
-OTHER_EXTRACT_SPECIAL_ITEM_LIST = ('META/*',)
+VENDOR_EXTRACT_SPECIAL_ITEM_LIST = ('META/*',)
 
 # The merge config lists should not attempt to extract items from both
 # builds for any of the following partitions. The partitions in
 # SINGLE_BUILD_PARTITIONS should come entirely from a single build (either
-# system or other, but not both).
+# framework or vendor, but not both).
 
 SINGLE_BUILD_PARTITIONS = (
     'BOOT/',
@@ -211,9 +212,7 @@ def write_sorted_data(data, path):
       be overridden if it exists.
   """
   with open(path, 'w') as output:
-    sorted_data = sorted(data.keys()) if isinstance(data,
-                                                    dict) else sorted(data)
-    for entry in sorted_data:
+    for entry in sorted(data):
       out_str = '{}={}\n'.format(entry, data[entry]) if isinstance(
           data, dict) else '{}\n'.format(entry)
       output.write(out_str)
@@ -295,28 +294,29 @@ def read_config_list(config_file_path):
     return config_file.read().splitlines()
 
 
-def validate_config_lists(system_item_list, system_misc_info_keys,
-                          other_item_list):
+def validate_config_lists(framework_item_list, framework_misc_info_keys,
+                          vendor_item_list):
   """Performs validations on the merge config lists.
 
   Args:
-    system_item_list: The list of items to extract from the partial system
+    framework_item_list: The list of items to extract from the partial framework
       target files package as is.
-    system_misc_info_keys: A list of keys to obtain from the system instance of
-      META/misc_info.txt. The remaining keys from the other instance.
-    other_item_list: The list of items to extract from the partial other target
-      files package as is.
+    framework_misc_info_keys: A list of keys to obtain from the framework
+      instance of META/misc_info.txt. The remaining keys from the vendor
+      instance.
+    vendor_item_list: The list of items to extract from the partial vendor
+      target files package as is.
 
   Returns:
     False if a validation fails, otherwise true.
   """
   has_error = False
 
-  default_combined_item_set = set(DEFAULT_SYSTEM_ITEM_LIST)
-  default_combined_item_set.update(DEFAULT_OTHER_ITEM_LIST)
+  default_combined_item_set = set(DEFAULT_FRAMEWORK_ITEM_LIST)
+  default_combined_item_set.update(DEFAULT_VENDOR_ITEM_LIST)
 
-  combined_item_set = set(system_item_list)
-  combined_item_set.update(other_item_list)
+  combined_item_set = set(framework_item_list)
+  combined_item_set.update(vendor_item_list)
 
   # Check that the merge config lists are not missing any item specified
   # by the default config lists.
@@ -324,36 +324,37 @@ def validate_config_lists(system_item_list, system_misc_info_keys,
   if difference:
     logger.error('Missing merge config items: %s', list(difference))
     logger.error('Please ensure missing items are in either the '
-                 'system-item-list or other-item-list files provided to '
+                 'framework-item-list or vendor-item-list files provided to '
                  'this script.')
     has_error = True
 
   for partition in SINGLE_BUILD_PARTITIONS:
-    in_system = any(item.startswith(partition) for item in system_item_list)
-    in_other = any(item.startswith(partition) for item in other_item_list)
-    if in_system and in_other:
+    in_framework = any(
+        item.startswith(partition) for item in framework_item_list)
+    in_vendor = any(item.startswith(partition) for item in vendor_item_list)
+    if in_framework and in_vendor:
       logger.error(
-          'Cannot extract items from {0} for both the system and other builds. '
+          'Cannot extract items from {0} for both the framework and vendor builds. '
           'Please ensure only one merge config item list includes {0}.'.format(
               partition))
       has_error = True
 
-  if ('dynamic_partition_list' in system_misc_info_keys) or (
-      'super_partition_groups' in system_misc_info_keys):
+  if ('dynamic_partition_list' in framework_misc_info_keys) or (
+      'super_partition_groups' in framework_misc_info_keys):
     logger.error('Dynamic partition misc info keys should come from '
-                 'the other instance of META/misc_info.txt.')
+                 'the vendor instance of META/misc_info.txt.')
     has_error = True
 
   return not has_error
 
 
-def process_ab_partitions_txt(system_target_files_temp_dir,
-                              other_target_files_temp_dir,
+def process_ab_partitions_txt(framework_target_files_temp_dir,
+                              vendor_target_files_temp_dir,
                               output_target_files_temp_dir):
   """Perform special processing for META/ab_partitions.txt.
 
   This function merges the contents of the META/ab_partitions.txt files from
-  the system directory and the other directory, placing the merged result in
+  the framework directory and the vendor directory, placing the merged result in
   the output directory. The precondition in that the files are already
   extracted. The post condition is that the output META/ab_partitions.txt
   contains the merged content. The format for each ab_partitions.txt a one
@@ -361,28 +362,28 @@ def process_ab_partitions_txt(system_target_files_temp_dir,
   names.
 
   Args:
-    system_target_files_temp_dir: The name of a directory containing the special
-      items extracted from the system target files package.
-    other_target_files_temp_dir: The name of a directory containing the special
-      items extracted from the other target files package.
+    framework_target_files_temp_dir: The name of a directory containing the
+      special items extracted from the framework target files package.
+    vendor_target_files_temp_dir: The name of a directory containing the special
+      items extracted from the vendor target files package.
     output_target_files_temp_dir: The name of a directory that will be used to
       create the output target files package after all the special cases are
       processed.
   """
 
-  system_ab_partitions_txt = os.path.join(system_target_files_temp_dir, 'META',
+  framework_ab_partitions_txt = os.path.join(framework_target_files_temp_dir,
+                                             'META', 'ab_partitions.txt')
+
+  vendor_ab_partitions_txt = os.path.join(vendor_target_files_temp_dir, 'META',
                                           'ab_partitions.txt')
 
-  other_ab_partitions_txt = os.path.join(other_target_files_temp_dir, 'META',
-                                         'ab_partitions.txt')
+  with open(framework_ab_partitions_txt) as f:
+    framework_ab_partitions = f.read().splitlines()
 
-  with open(system_ab_partitions_txt) as f:
-    system_ab_partitions = f.read().splitlines()
+  with open(vendor_ab_partitions_txt) as f:
+    vendor_ab_partitions = f.read().splitlines()
 
-  with open(other_ab_partitions_txt) as f:
-    other_ab_partitions = f.read().splitlines()
-
-  output_ab_partitions = set(system_ab_partitions + other_ab_partitions)
+  output_ab_partitions = set(framework_ab_partitions + vendor_ab_partitions)
 
   output_ab_partitions_txt = os.path.join(output_target_files_temp_dir, 'META',
                                           'ab_partitions.txt')
@@ -416,8 +417,8 @@ def append_recovery_to_filesystem_config(output_target_files_temp_dir):
             'selabel=u:object_r:install_recovery_exec:s0 capabilities=0x0\n')
 
 
-def merge_dynamic_partition_info_dicts(system_dict,
-                                       other_dict,
+def merge_dynamic_partition_info_dicts(framework_dict,
+                                       vendor_dict,
                                        include_dynamic_partition_list=True,
                                        size_prefix='',
                                        size_suffix='',
@@ -426,10 +427,10 @@ def merge_dynamic_partition_info_dicts(system_dict,
   """Merges dynamic partition info variables.
 
   Args:
-    system_dict: The dictionary of dynamic partition info variables from the
-      partial system target files.
-    other_dict: The dictionary of dynamic partition info variables from the
-      partial other target files.
+    framework_dict: The dictionary of dynamic partition info variables from the
+      partial framework target files.
+    vendor_dict: The dictionary of dynamic partition info variables from the
+      partial vendor target files.
     include_dynamic_partition_list: If true, merges the dynamic_partition_list
       variable. Not all use cases need this variable merged.
     size_prefix: The prefix in partition group size variables that precedes the
@@ -447,53 +448,56 @@ def merge_dynamic_partition_info_dicts(system_dict,
     The merged dynamic partition info dictionary.
   """
   merged_dict = {}
-  # Partition groups and group sizes are defined by the other (non-system)
-  # dict because these values may vary for each board that uses a shared system
-  # image.
-  merged_dict['super_partition_groups'] = other_dict['super_partition_groups']
+  # Partition groups and group sizes are defined by the vendor dict because
+  # these values may vary for each board that uses a shared system image.
+  merged_dict['super_partition_groups'] = vendor_dict['super_partition_groups']
   if include_dynamic_partition_list:
-    system_dynamic_partition_list = system_dict.get('dynamic_partition_list',
+    framework_dynamic_partition_list = framework_dict.get(
+        'dynamic_partition_list', '')
+    vendor_dynamic_partition_list = vendor_dict.get('dynamic_partition_list',
                                                     '')
-    other_dynamic_partition_list = other_dict.get('dynamic_partition_list', '')
     merged_dict['dynamic_partition_list'] = (
-        '%s %s' %
-        (system_dynamic_partition_list, other_dynamic_partition_list)).strip()
+        '%s %s' % (framework_dynamic_partition_list,
+                   vendor_dynamic_partition_list)).strip()
   for partition_group in merged_dict['super_partition_groups'].split(' '):
-    # Set the partition group's size using the value from the other dict.
+    # Set the partition group's size using the value from the vendor dict.
     key = '%s%s%s' % (size_prefix, partition_group, size_suffix)
-    if key not in other_dict:
-      raise ValueError('Other dict does not contain required key %s.' % key)
-    merged_dict[key] = other_dict[key]
+    if key not in vendor_dict:
+      raise ValueError('Vendor dict does not contain required key %s.' % key)
+    merged_dict[key] = vendor_dict[key]
 
     # Set the partition group's partition list using a concatenation of the
-    # system and other partition lists.
+    # framework and vendor partition lists.
     key = '%s%s%s' % (list_prefix, partition_group, list_suffix)
     merged_dict[key] = (
-        '%s %s' % (system_dict.get(key, ''), other_dict.get(key, ''))).strip()
+        '%s %s' %
+        (framework_dict.get(key, ''), vendor_dict.get(key, ''))).strip()
   return merged_dict
 
 
-def process_misc_info_txt(system_target_files_temp_dir,
-                          other_target_files_temp_dir,
-                          output_target_files_temp_dir, system_misc_info_keys):
+def process_misc_info_txt(framework_target_files_temp_dir,
+                          vendor_target_files_temp_dir,
+                          output_target_files_temp_dir,
+                          framework_misc_info_keys):
   """Perform special processing for META/misc_info.txt.
 
   This function merges the contents of the META/misc_info.txt files from the
-  system directory and the other directory, placing the merged result in the
+  framework directory and the vendor directory, placing the merged result in the
   output directory. The precondition in that the files are already extracted.
   The post condition is that the output META/misc_info.txt contains the merged
   content.
 
   Args:
-    system_target_files_temp_dir: The name of a directory containing the special
-      items extracted from the system target files package.
-    other_target_files_temp_dir: The name of a directory containing the special
-      items extracted from the other target files package.
+    framework_target_files_temp_dir: The name of a directory containing the
+      special items extracted from the framework target files package.
+    vendor_target_files_temp_dir: The name of a directory containing the special
+      items extracted from the vendor target files package.
     output_target_files_temp_dir: The name of a directory that will be used to
       create the output target files package after all the special cases are
       processed.
-    system_misc_info_keys: A list of keys to obtain from the system instance of
-      META/misc_info.txt. The remaining keys from the other instance.
+    framework_misc_info_keys: A list of keys to obtain from the framework
+      instance of META/misc_info.txt. The remaining keys from the vendor
+      instance.
   """
 
   def read_helper(d):
@@ -501,72 +505,72 @@ def process_misc_info_txt(system_target_files_temp_dir,
     with open(misc_info_txt) as f:
       return list(f.read().splitlines())
 
-  system_info_dict = common.LoadDictionaryFromLines(
-      read_helper(system_target_files_temp_dir))
+  framework_dict = common.LoadDictionaryFromLines(
+      read_helper(framework_target_files_temp_dir))
 
-  # We take most of the misc info from the other target files.
+  # We take most of the misc info from the vendor target files.
 
-  merged_info_dict = common.LoadDictionaryFromLines(
-      read_helper(other_target_files_temp_dir))
+  merged_dict = common.LoadDictionaryFromLines(
+      read_helper(vendor_target_files_temp_dir))
 
-  # Replace certain values in merged_info_dict with values from
-  # system_info_dict.
+  # Replace certain values in merged_dict with values from
+  # framework_dict.
 
-  for key in system_misc_info_keys:
-    merged_info_dict[key] = system_info_dict[key]
+  for key in framework_misc_info_keys:
+    merged_dict[key] = framework_dict[key]
 
   # Merge misc info keys used for Dynamic Partitions.
-  if (merged_info_dict.get('use_dynamic_partitions') == 'true') and (
-      system_info_dict.get('use_dynamic_partitions') == 'true'):
+  if (merged_dict.get('use_dynamic_partitions') == 'true') and (
+      framework_dict.get('use_dynamic_partitions') == 'true'):
     merged_dynamic_partitions_dict = merge_dynamic_partition_info_dicts(
-        system_dict=system_info_dict,
-        other_dict=merged_info_dict,
+        framework_dict=framework_dict,
+        vendor_dict=merged_dict,
         size_prefix='super_',
         size_suffix='_group_size',
         list_prefix='super_',
         list_suffix='_partition_list')
-    merged_info_dict.update(merged_dynamic_partitions_dict)
+    merged_dict.update(merged_dynamic_partitions_dict)
 
-  # Replace <image>_selinux_fc values with system or other file_contexts.bin
+  # Replace <image>_selinux_fc values with framework or vendor file_contexts.bin
   # depending on which dictionary the key came from.
   # Only the file basename is required because all selinux_fc properties are
   # replaced with the full path to the file under META/ when misc_info.txt is
   # loaded from target files for repacking. See common.py LoadInfoDict().
-  for key in merged_info_dict:
+  for key in merged_dict:
     if key.endswith('_selinux_fc'):
-      merged_info_dict[key] = 'other_file_contexts.bin'
-  for key in system_info_dict:
+      merged_dict[key] = 'vendor_file_contexts.bin'
+  for key in framework_dict:
     if key.endswith('_selinux_fc'):
-      merged_info_dict[key] = 'system_file_contexts.bin'
+      merged_dict[key] = 'framework_file_contexts.bin'
 
   output_misc_info_txt = os.path.join(output_target_files_temp_dir, 'META',
                                       'misc_info.txt')
-  write_sorted_data(data=merged_info_dict, path=output_misc_info_txt)
+  write_sorted_data(data=merged_dict, path=output_misc_info_txt)
 
 
-def process_dynamic_partitions_info_txt(system_target_files_dir,
-                                        other_target_files_dir,
+def process_dynamic_partitions_info_txt(framework_target_files_dir,
+                                        vendor_target_files_dir,
                                         output_target_files_dir):
   """Perform special processing for META/dynamic_partitions_info.txt.
 
   This function merges the contents of the META/dynamic_partitions_info.txt
-  files from the system directory and the other directory, placing the merged
-  result in the output directory.
+  files from the framework directory and the vendor directory, placing the
+  merged result in the output directory.
 
-  This function does nothing if META/dynamic_partitions_info.txt from the other
+  This function does nothing if META/dynamic_partitions_info.txt from the vendor
   directory does not exist.
 
   Args:
-    system_target_files_dir: The name of a directory containing the special
-      items extracted from the system target files package.
-    other_target_files_dir: The name of a directory containing the special items
-      extracted from the other target files package.
+    framework_target_files_dir: The name of a directory containing the special
+      items extracted from the framework target files package.
+    vendor_target_files_dir: The name of a directory containing the special
+      items extracted from the vendor target files package.
     output_target_files_dir: The name of a directory that will be used to create
       the output target files package after all the special cases are processed.
   """
 
   if not os.path.exists(
-      os.path.join(other_target_files_dir, 'META',
+      os.path.join(vendor_target_files_dir, 'META',
                    'dynamic_partitions_info.txt')):
     return
 
@@ -576,14 +580,14 @@ def process_dynamic_partitions_info_txt(system_target_files_dir,
     with open(dynamic_partitions_info_txt) as f:
       return list(f.read().splitlines())
 
-  system_dynamic_partitions_dict = common.LoadDictionaryFromLines(
-      read_helper(system_target_files_dir))
-  other_dynamic_partitions_dict = common.LoadDictionaryFromLines(
-      read_helper(other_target_files_dir))
+  framework_dynamic_partitions_dict = common.LoadDictionaryFromLines(
+      read_helper(framework_target_files_dir))
+  vendor_dynamic_partitions_dict = common.LoadDictionaryFromLines(
+      read_helper(vendor_target_files_dir))
 
   merged_dynamic_partitions_dict = merge_dynamic_partition_info_dicts(
-      system_dict=system_dynamic_partitions_dict,
-      other_dict=other_dynamic_partitions_dict,
+      framework_dict=framework_dynamic_partitions_dict,
+      vendor_dict=vendor_dynamic_partitions_dict,
       # META/dynamic_partitions_info.txt does not use dynamic_partition_list.
       include_dynamic_partition_list=False,
       size_suffix='_size',
@@ -596,24 +600,23 @@ def process_dynamic_partitions_info_txt(system_target_files_dir,
       path=output_dynamic_partitions_info_txt)
 
 
-def process_apex_keys_apk_certs_common(system_target_files_dir,
-                                       other_target_files_dir,
+def process_apex_keys_apk_certs_common(framework_target_files_dir,
+                                       vendor_target_files_dir,
                                        output_target_files_dir, file_name):
   """Perform special processing for META/apexkeys.txt or META/apkcerts.txt.
 
   This function merges the contents of the META/apexkeys.txt or
-  META/apkcerts.txt
-  files from the system directory and the other directory, placing the merged
-  result in the output directory. The precondition in that the files are already
-  extracted.
-  The post condition is that the output META/apexkeys.txt or META/apkcerts.txt
-  contains the merged content.
+  META/apkcerts.txt files from the framework directory and the vendor
+  directory, placing the merged result in the output directory. The
+  precondition in that the files are already extracted. The post condition
+  is that the output META/apexkeys.txt or META/apkcerts.txt contains the
+  merged content.
 
   Args:
-    system_target_files_dir: The name of a directory containing the special
-      items extracted from the system target files package.
-    other_target_files_dir: The name of a directory containing the special items
-      extracted from the other target files package.
+    framework_target_files_dir: The name of a directory containing the special
+      items extracted from the framework target files package.
+    vendor_target_files_dir: The name of a directory containing the special
+      items extracted from the vendor target files package.
     output_target_files_dir: The name of a directory that will be used to create
       the output target files package after all the special cases are processed.
     file_name: The name of the file to merge. One of apkcerts.txt or
@@ -629,73 +632,75 @@ def process_apex_keys_apk_certs_common(system_target_files_dir,
           temp[line.split()[0]] = line.strip()
     return temp
 
-  system_dict = read_helper(system_target_files_dir)
-  other_dict = read_helper(other_target_files_dir)
+  framework_dict = read_helper(framework_target_files_dir)
+  vendor_dict = read_helper(vendor_target_files_dir)
 
-  for key in system_dict:
-    if key in other_dict and other_dict[key] != system_dict[key]:
+  for key in framework_dict:
+    if key in vendor_dict and vendor_dict[key] != framework_dict[key]:
       raise ValueError('Conflicting entries found in %s:\n %s and\n %s' %
-                       (file_name, system_dict[key], other_dict[key]))
-    other_dict[key] = system_dict[key]
+                       (file_name, framework_dict[key], vendor_dict[key]))
+    vendor_dict[key] = framework_dict[key]
 
   output_file = os.path.join(output_target_files_dir, 'META', file_name)
 
-  write_sorted_data(data=other_dict.values(), path=output_file)
+  write_sorted_data(data=vendor_dict.values(), path=output_file)
 
 
-def copy_file_contexts(system_target_files_dir, other_target_files_dir,
+def copy_file_contexts(framework_target_files_dir, vendor_target_files_dir,
                        output_target_files_dir):
   """Creates named copies of each build's file_contexts.bin in output META/."""
-  system_fc_path = os.path.join(system_target_files_dir, 'META',
-                                'system_file_contexts.bin')
-  if not os.path.exists(system_fc_path):
-    system_fc_path = os.path.join(system_target_files_dir, 'META',
+  framework_fc_path = os.path.join(framework_target_files_dir, 'META',
+                                   'framework_file_contexts.bin')
+  if not os.path.exists(framework_fc_path):
+    framework_fc_path = os.path.join(framework_target_files_dir, 'META',
+                                     'file_contexts.bin')
+    if not os.path.exists(framework_fc_path):
+      raise ValueError('Missing framework file_contexts.bin.')
+  shutil.copyfile(
+      framework_fc_path,
+      os.path.join(output_target_files_dir, 'META',
+                   'framework_file_contexts.bin'))
+
+  vendor_fc_path = os.path.join(vendor_target_files_dir, 'META',
+                                'vendor_file_contexts.bin')
+  if not os.path.exists(vendor_fc_path):
+    vendor_fc_path = os.path.join(vendor_target_files_dir, 'META',
                                   'file_contexts.bin')
-    if not os.path.exists(system_fc_path):
-      raise ValueError('Missing system file_contexts.bin.')
+    if not os.path.exists(vendor_fc_path):
+      raise ValueError('Missing vendor file_contexts.bin.')
   shutil.copyfile(
-      system_fc_path,
-      os.path.join(output_target_files_dir, 'META', 'system_file_contexts.bin'))
-
-  other_fc_path = os.path.join(other_target_files_dir, 'META',
-                               'other_file_contexts.bin')
-  if not os.path.exists(other_fc_path):
-    other_fc_path = os.path.join(other_target_files_dir, 'META',
-                                 'file_contexts.bin')
-    if not os.path.exists(other_fc_path):
-      raise ValueError('Missing other file_contexts.bin.')
-  shutil.copyfile(
-      other_fc_path,
-      os.path.join(output_target_files_dir, 'META', 'other_file_contexts.bin'))
+      vendor_fc_path,
+      os.path.join(output_target_files_dir, 'META', 'vendor_file_contexts.bin'))
 
 
-def process_special_cases(system_target_files_temp_dir,
-                          other_target_files_temp_dir,
-                          output_target_files_temp_dir, system_misc_info_keys,
-                          rebuild_recovery):
+def process_special_cases(framework_target_files_temp_dir,
+                          vendor_target_files_temp_dir,
+                          output_target_files_temp_dir,
+                          framework_misc_info_keys, rebuild_recovery):
   """Perform special-case processing for certain target files items.
 
   Certain files in the output target files package require special-case
   processing. This function performs all that special-case processing.
 
   Args:
-    system_target_files_temp_dir: The name of a directory containing the special
-      items extracted from the system target files package.
-    other_target_files_temp_dir: The name of a directory containing the special
-      items extracted from the other target files package.
+    framework_target_files_temp_dir: The name of a directory containing the
+      special items extracted from the framework target files package.
+    vendor_target_files_temp_dir: The name of a directory containing the special
+      items extracted from the vendor target files package.
     output_target_files_temp_dir: The name of a directory that will be used to
       create the output target files package after all the special cases are
       processed.
-    system_misc_info_keys: A list of keys to obtain from the system instance of
-      META/misc_info.txt. The remaining keys from the other instance.
+    framework_misc_info_keys: A list of keys to obtain from the framework
+      instance of META/misc_info.txt. The remaining keys from the vendor
+      instance.
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
       devices and write it to the system image.
   """
 
-  if 'ab_update' in system_misc_info_keys:
+  if 'ab_update' in framework_misc_info_keys:
     process_ab_partitions_txt(
-        system_target_files_temp_dir=system_target_files_temp_dir,
-        other_target_files_temp_dir=other_target_files_temp_dir,
+        framework_target_files_temp_dir=framework_target_files_temp_dir,
+        vendor_target_files_temp_dir=vendor_target_files_temp_dir,
         output_target_files_temp_dir=output_target_files_temp_dir)
 
   if rebuild_recovery:
@@ -703,65 +708,66 @@ def process_special_cases(system_target_files_temp_dir,
         output_target_files_temp_dir=output_target_files_temp_dir)
 
   copy_file_contexts(
-      system_target_files_dir=system_target_files_temp_dir,
-      other_target_files_dir=other_target_files_temp_dir,
+      framework_target_files_dir=framework_target_files_temp_dir,
+      vendor_target_files_dir=vendor_target_files_temp_dir,
       output_target_files_dir=output_target_files_temp_dir)
 
   process_misc_info_txt(
-      system_target_files_temp_dir=system_target_files_temp_dir,
-      other_target_files_temp_dir=other_target_files_temp_dir,
+      framework_target_files_temp_dir=framework_target_files_temp_dir,
+      vendor_target_files_temp_dir=vendor_target_files_temp_dir,
       output_target_files_temp_dir=output_target_files_temp_dir,
-      system_misc_info_keys=system_misc_info_keys)
+      framework_misc_info_keys=framework_misc_info_keys)
 
   process_dynamic_partitions_info_txt(
-      system_target_files_dir=system_target_files_temp_dir,
-      other_target_files_dir=other_target_files_temp_dir,
+      framework_target_files_dir=framework_target_files_temp_dir,
+      vendor_target_files_dir=vendor_target_files_temp_dir,
       output_target_files_dir=output_target_files_temp_dir)
 
   process_apex_keys_apk_certs_common(
-      system_target_files_dir=system_target_files_temp_dir,
-      other_target_files_dir=other_target_files_temp_dir,
+      framework_target_files_dir=framework_target_files_temp_dir,
+      vendor_target_files_dir=vendor_target_files_temp_dir,
       output_target_files_dir=output_target_files_temp_dir,
       file_name='apkcerts.txt')
 
   process_apex_keys_apk_certs_common(
-      system_target_files_dir=system_target_files_temp_dir,
-      other_target_files_dir=other_target_files_temp_dir,
+      framework_target_files_dir=framework_target_files_temp_dir,
+      vendor_target_files_dir=vendor_target_files_temp_dir,
       output_target_files_dir=output_target_files_temp_dir,
       file_name='apexkeys.txt')
 
 
-def merge_target_files(temp_dir, system_target_files, system_item_list,
-                       system_misc_info_keys, other_target_files,
-                       other_item_list, output_target_files, output_dir,
+def merge_target_files(temp_dir, framework_target_files, framework_item_list,
+                       framework_misc_info_keys, vendor_target_files,
+                       vendor_item_list, output_target_files, output_dir,
                        output_item_list, output_ota, output_img,
                        output_super_empty, rebuild_recovery):
   """Merge two target files packages together.
 
-  This function takes system and other target files packages as input, performs
-  various file extractions, special case processing, and finally creates a
-  merged zip archive as output.
+  This function takes framework and vendor target files packages as input,
+  performs various file extractions, special case processing, and finally
+  creates a merged zip archive as output.
 
   Args:
     temp_dir: The name of a directory we use when we extract items from the
       input target files packages, and also a scratch directory that we use for
       temporary files.
-    system_target_files: The name of the zip archive containing the system
+    framework_target_files: The name of the zip archive containing the framework
       partial target files package.
-    system_item_list: The list of items to extract from the partial system
+    framework_item_list: The list of items to extract from the partial framework
       target files package as is, meaning these items will land in the output
-      target files package exactly as they appear in the input partial system
+      target files package exactly as they appear in the input partial framework
       target files package.
-    system_misc_info_keys: The list of keys to obtain from the system instance
-      of META/misc_info.txt. The remaining keys from the other instance.
-    other_target_files: The name of the zip archive containing the other partial
+    framework_misc_info_keys: The list of keys to obtain from the framework
+      instance of META/misc_info.txt. The remaining keys from the vendor
+      instance.
+    vendor_target_files: The name of the zip archive containing the vendor
+      partial target files package.
+    vendor_item_list: The list of items to extract from the partial vendor
+      target files package as is, meaning these items will land in the output
+      target files package exactly as they appear in the input partial vendor
       target files package.
-    other_item_list: The list of items to extract from the partial other target
-      files package as is, meaning these items will land in the output target
-      files package exactly as they appear in the input partial other target
-      files package.
     output_target_files: The name of the output zip archive target files package
-      created by merging system and other.
+      created by merging framework and vendor.
     output_dir: The destination directory for saving merged files.
     output_item_list: The list of items to copy into the output_dir.
     output_ota: The name of the output zip archive ota package.
@@ -772,51 +778,51 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
       devices and write it to the system image.
   """
 
-  logger.info('starting: merge system %s and other %s into output %s',
-              system_target_files, other_target_files, output_target_files)
+  logger.info('starting: merge framework %s and vendor %s into output %s',
+              framework_target_files, vendor_target_files, output_target_files)
 
-  # Create directory names that we'll use when we extract files from system,
-  # and other, and for zipping the final output.
+  # Create directory names that we'll use when we extract files from framework,
+  # and vendor, and for zipping the final output.
 
-  system_target_files_temp_dir = os.path.join(temp_dir, 'system')
-  other_target_files_temp_dir = os.path.join(temp_dir, 'other')
+  framework_target_files_temp_dir = os.path.join(temp_dir, 'framework')
+  vendor_target_files_temp_dir = os.path.join(temp_dir, 'vendor')
   output_target_files_temp_dir = os.path.join(temp_dir, 'output')
 
-  # Extract "as is" items from the input system partial target files package.
+  # Extract "as is" items from the input framework partial target files package.
   # We extract them directly into the output temporary directory since the
   # items do not need special case processing.
 
   extract_items(
-      target_files=system_target_files,
+      target_files=framework_target_files,
       target_files_temp_dir=output_target_files_temp_dir,
-      extract_item_list=system_item_list)
+      extract_item_list=framework_item_list)
 
-  # Extract "as is" items from the input other partial target files package. We
+  # Extract "as is" items from the input vendor partial target files package. We
   # extract them directly into the output temporary directory since the items
   # do not need special case processing.
 
   extract_items(
-      target_files=other_target_files,
+      target_files=vendor_target_files,
       target_files_temp_dir=output_target_files_temp_dir,
-      extract_item_list=other_item_list)
+      extract_item_list=vendor_item_list)
 
-  # Extract "special" items from the input system partial target files package.
+  # Extract "special" items from the input framework partial target files
+  # package. We extract these items to different directory since they require
+  # special processing before they will end up in the output directory.
+
+  extract_items(
+      target_files=framework_target_files,
+      target_files_temp_dir=framework_target_files_temp_dir,
+      extract_item_list=FRAMEWORK_EXTRACT_SPECIAL_ITEM_LIST)
+
+  # Extract "special" items from the input vendor partial target files package.
   # We extract these items to different directory since they require special
   # processing before they will end up in the output directory.
 
   extract_items(
-      target_files=system_target_files,
-      target_files_temp_dir=system_target_files_temp_dir,
-      extract_item_list=SYSTEM_EXTRACT_SPECIAL_ITEM_LIST)
-
-  # Extract "special" items from the input other partial target files package.
-  # We extract these items to different directory since they require special
-  # processing before they will end up in the output directory.
-
-  extract_items(
-      target_files=other_target_files,
-      target_files_temp_dir=other_target_files_temp_dir,
-      extract_item_list=OTHER_EXTRACT_SPECIAL_ITEM_LIST)
+      target_files=vendor_target_files,
+      target_files_temp_dir=vendor_target_files_temp_dir,
+      extract_item_list=VENDOR_EXTRACT_SPECIAL_ITEM_LIST)
 
   # Now that the temporary directories contain all the extracted files, perform
   # special case processing on any items that need it. After this function
@@ -824,10 +830,10 @@ def merge_target_files(temp_dir, system_target_files, system_item_list,
   # files package are in place.
 
   process_special_cases(
-      system_target_files_temp_dir=system_target_files_temp_dir,
-      other_target_files_temp_dir=other_target_files_temp_dir,
+      framework_target_files_temp_dir=framework_target_files_temp_dir,
+      vendor_target_files_temp_dir=vendor_target_files_temp_dir,
       output_target_files_temp_dir=output_target_files_temp_dir,
-      system_misc_info_keys=system_misc_info_keys,
+      framework_misc_info_keys=framework_misc_info_keys,
       rebuild_recovery=rebuild_recovery)
 
   # Regenerate IMAGES in the temporary directory.
@@ -976,15 +982,35 @@ def main():
 
   def option_handler(o, a):
     if o == '--system-target-files':
-      OPTIONS.system_target_files = a
+      logger.warning(
+          '--system-target-files has been renamed to --framework-target-files')
+      OPTIONS.framework_target_files = a
+    elif o == '--framework-target-files':
+      OPTIONS.framework_target_files = a
     elif o == '--system-item-list':
-      OPTIONS.system_item_list = a
+      logger.warning(
+          '--system-item-list has been renamed to --framework-item-list')
+      OPTIONS.framework_item_list = a
+    elif o == '--framework-item-list':
+      OPTIONS.framework_item_list = a
     elif o == '--system-misc-info-keys':
-      OPTIONS.system_misc_info_keys = a
+      logger.warning(
+          '--system-misc-info-keys has been renamed to --framework-misc-info-keys'
+      )
+      OPTIONS.framework_misc_info_keys = a
+    elif o == '--framework-misc-info-keys':
+      OPTIONS.framework_misc_info_keys = a
     elif o == '--other-target-files':
-      OPTIONS.other_target_files = a
+      logger.warning(
+          '--other-target-files has been renamed to --vendor-target-files')
+      OPTIONS.vendor_target_files = a
+    elif o == '--vendor-target-files':
+      OPTIONS.vendor_target_files = a
     elif o == '--other-item-list':
-      OPTIONS.other_item_list = a
+      logger.warning('--other-item-list has been renamed to --vendor-item-list')
+      OPTIONS.vendor_item_list = a
+    elif o == '--vendor-item-list':
+      OPTIONS.vendor_item_list = a
     elif o == '--output-target-files':
       OPTIONS.output_target_files = a
     elif o == '--output-dir':
@@ -1010,10 +1036,15 @@ def main():
       __doc__,
       extra_long_opts=[
           'system-target-files=',
+          'framework-target-files=',
           'system-item-list=',
+          'framework-item-list=',
           'system-misc-info-keys=',
+          'framework-misc-info-keys=',
           'other-target-files=',
+          'vendor-target-files=',
           'other-item-list=',
+          'vendor-item-list=',
           'output-target-files=',
           'output-dir=',
           'output-item-list=',
@@ -1025,27 +1056,28 @@ def main():
       ],
       extra_option_handler=option_handler)
 
-  if (args or OPTIONS.system_target_files is None or
-      OPTIONS.other_target_files is None or
+  if (args or OPTIONS.framework_target_files is None or
+      OPTIONS.vendor_target_files is None or
       (OPTIONS.output_target_files is None and OPTIONS.output_dir is None) or
       (OPTIONS.output_dir is not None and OPTIONS.output_item_list is None)):
     common.Usage(__doc__)
     sys.exit(1)
 
-  if OPTIONS.system_item_list:
-    system_item_list = read_config_list(OPTIONS.system_item_list)
+  if OPTIONS.framework_item_list:
+    framework_item_list = read_config_list(OPTIONS.framework_item_list)
   else:
-    system_item_list = DEFAULT_SYSTEM_ITEM_LIST
+    framework_item_list = DEFAULT_FRAMEWORK_ITEM_LIST
 
-  if OPTIONS.system_misc_info_keys:
-    system_misc_info_keys = read_config_list(OPTIONS.system_misc_info_keys)
+  if OPTIONS.framework_misc_info_keys:
+    framework_misc_info_keys = read_config_list(
+        OPTIONS.framework_misc_info_keys)
   else:
-    system_misc_info_keys = DEFAULT_SYSTEM_MISC_INFO_KEYS
+    framework_misc_info_keys = DEFAULT_FRAMEWORK_MISC_INFO_KEYS
 
-  if OPTIONS.other_item_list:
-    other_item_list = read_config_list(OPTIONS.other_item_list)
+  if OPTIONS.vendor_item_list:
+    vendor_item_list = read_config_list(OPTIONS.vendor_item_list)
   else:
-    other_item_list = DEFAULT_OTHER_ITEM_LIST
+    vendor_item_list = DEFAULT_VENDOR_ITEM_LIST
 
   if OPTIONS.output_item_list:
     output_item_list = read_config_list(OPTIONS.output_item_list)
@@ -1053,19 +1085,19 @@ def main():
     output_item_list = None
 
   if not validate_config_lists(
-      system_item_list=system_item_list,
-      system_misc_info_keys=system_misc_info_keys,
-      other_item_list=other_item_list):
+      framework_item_list=framework_item_list,
+      framework_misc_info_keys=framework_misc_info_keys,
+      vendor_item_list=vendor_item_list):
     sys.exit(1)
 
   call_func_with_temp_dir(
       lambda temp_dir: merge_target_files(
           temp_dir=temp_dir,
-          system_target_files=OPTIONS.system_target_files,
-          system_item_list=system_item_list,
-          system_misc_info_keys=system_misc_info_keys,
-          other_target_files=OPTIONS.other_target_files,
-          other_item_list=other_item_list,
+          framework_target_files=OPTIONS.framework_target_files,
+          framework_item_list=framework_item_list,
+          framework_misc_info_keys=framework_misc_info_keys,
+          vendor_target_files=OPTIONS.vendor_target_files,
+          vendor_item_list=vendor_item_list,
           output_target_files=OPTIONS.output_target_files,
           output_dir=OPTIONS.output_dir,
           output_item_list=output_item_list,
