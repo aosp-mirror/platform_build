@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cc8b169b_0d3db8ee",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 1453040
+      },
+      "writtenOn": "2019-06-06T18:16:26Z",
+      "side": 1,
+      "message": "nit: Would it be possible to define a readonly variable? It\u0027s being repeated numerously. You can then share it for both build-image-kernel-modules and build-image-kernel-modules-depmod with the # Depmod comment.",
+      "range": {
+        "startLine": 671,
+        "startChar": 4,
+        "endLine": 671,
+        "endChar": 21
+      },
+      "revId": "1c1a4ea4a098d16e8aac9c7a1475c7165511578a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7e1ef150_82feef19",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 683,
+      "author": {
+        "id": 1453040
+      },
+      "writtenOn": "2019-06-06T18:16:26Z",
+      "side": 1,
+      "message": "nit: Could you add a comment on what parts of the string being removed?",
+      "range": {
+        "startLine": 683,
+        "startChar": 1,
+        "endLine": 683,
+        "endChar": 133
+      },
+      "revId": "1c1a4ea4a098d16e8aac9c7a1475c7165511578a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
