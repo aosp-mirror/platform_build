@@ -49,6 +49,7 @@ PRODUCT_PACKAGES += \
     gralloc.default \
     group \
     init_vendor \
+    libashmemd_hidl_client \
     libbundlewrapper \
     libclearkeycasplugin \
     libdownmix \
