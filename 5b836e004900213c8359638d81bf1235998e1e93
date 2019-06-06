@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "80df51d9_1e3311f8",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-06-06T18:10:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "64533220_e37f8564",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 29
+      },
+      "revId": "5b836e004900213c8359638d81bf1235998e1e93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "317ca1a4_bbeb6b96",
         "filename": "core/tasks/general-tests.mk",
         "patchSetId": 1
@@ -71,6 +95,54 @@
     },
     {
       "key": {
+        "uuid": "0b198a78_c0a3cfc7",
+        "filename": "core/tasks/general-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-06-06T18:10:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6407c745_2e32a4b9",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 30
+      },
+      "revId": "5b836e004900213c8359638d81bf1235998e1e93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "504bd0b2_1b3c78b5",
+        "filename": "core/tasks/general-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-06-06T18:10:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "317ca1a4_bbeb6b96",
+      "range": {
+        "startLine": 38,
+        "startChar": 49,
+        "endLine": 38,
+        "endChar": 79
+      },
+      "revId": "5b836e004900213c8359638d81bf1235998e1e93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aec00133_6e993770",
         "filename": "core/tasks/general-tests.mk",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "5b836e004900213c8359638d81bf1235998e1e93",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dd420bf6_812f785f",
+        "filename": "core/tasks/general-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-06-06T18:10:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aec00133_6e993770",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 30
+      },
+      "revId": "5b836e004900213c8359638d81bf1235998e1e93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
