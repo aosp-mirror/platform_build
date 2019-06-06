@@ -22,6 +22,8 @@
         <option name="test-file-name" value="{MODULE}.apk" />
     </target_preparer>
 
+    {EXTRA_CONFIGS}
+
     <test class="com.android.tradefed.testtype.{TEST_TYPE}" >
         <option name="package" value="{PACKAGE}" />
         <option name="runner" value="{RUNNER}" />
