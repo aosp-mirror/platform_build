@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "64533220_e37f8564",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2019-06-06T16:53:34Z",
+      "side": 1,
+      "message": "device-tests-configs-zip\n\nrepeat everywhere.",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 29
+      },
+      "revId": "5b836e004900213c8359638d81bf1235998e1e93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "317ca1a4_bbeb6b96",
+        "filename": "core/tasks/general-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2019-06-06T16:53:34Z",
+      "side": 1,
+      "message": "general-tests-configs.zip",
+      "range": {
+        "startLine": 38,
+        "startChar": 49,
+        "endLine": 38,
+        "endChar": 79
+      },
+      "revId": "5b836e004900213c8359638d81bf1235998e1e93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6407c745_2e32a4b9",
+        "filename": "core/tasks/general-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2019-06-06T16:53:34Z",
+      "side": 1,
+      "message": "general_tests_configs_zip?",
+      "range": {
+        "startLine": 38,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 30
+      },
+      "revId": "5b836e004900213c8359638d81bf1235998e1e93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "aec00133_6e993770",
+        "filename": "core/tasks/general-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2019-06-06T16:53:34Z",
+      "side": 1,
+      "message": "general_tests_configs_zip",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 95,
+        "endChar": 30
+      },
+      "revId": "5b836e004900213c8359638d81bf1235998e1e93",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
