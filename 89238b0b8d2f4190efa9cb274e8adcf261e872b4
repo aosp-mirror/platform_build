@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd21ec97_63cb0b6d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1848,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-06-07T19:50:20Z",
+      "side": 1,
+      "message": "use -C here, like I explained in the soong side",
+      "range": {
+        "startLine": 1848,
+        "startChar": 39,
+        "endLine": 1848,
+        "endChar": 41
+      },
+      "revId": "89238b0b8d2f4190efa9cb274e8adcf261e872b4",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
