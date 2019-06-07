@@ -931,6 +931,7 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   ]
   logger.info('creating %s', output_target_files)
   common.RunAndWait(command, verbose=True)
+  logger.info('finished creating %s', output_target_files)
 
   # Create the OTA package from the merged target files package.
 
