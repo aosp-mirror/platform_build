@@ -54,7 +54,6 @@ PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     jobscheduler-service \
     ethernet-service \
-    wifi-service \
     com.android.location.provider \
 
 PRODUCT_COPY_FILES += \
