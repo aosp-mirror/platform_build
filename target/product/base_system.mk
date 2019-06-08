@@ -285,6 +285,7 @@ PRODUCT_HOST_PACKAGES += \
     fastboot \
     flags_health_check \
     icu-data_host_runtime_apex \
+    icu_tzdata.dat_host_tzdata_apex \
     idmap2 \
     incident_report \
     ld.mc \
@@ -304,9 +305,12 @@ PRODUCT_HOST_PACKAGES += \
     viewcompiler \
     tzdata_host \
     tzdata_host_runtime_apex \
+    tzdata_host_tzdata_apex \
     tzlookup.xml_host_runtime_apex \
+    tzlookup.xml_host_tzdata_apex \
     tz_version_host \
     tz_version_host_runtime_apex \
+    tz_version_host_tzdata_apex \
 
 ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
