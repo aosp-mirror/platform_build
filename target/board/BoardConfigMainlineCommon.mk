@@ -41,3 +41,6 @@ BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 
 # Generate an APEX image for experiment b/119800099.
 DEXPREOPT_GENERATE_APEX_IMAGE := true
+
+# Mainline devices support apex
+TARGET_FLATTEN_APEX := false
