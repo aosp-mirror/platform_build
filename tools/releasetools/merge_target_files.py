@@ -530,6 +530,10 @@ def process_misc_info_txt(framework_target_files_temp_dir,
         list_prefix='super_',
         list_suffix='_partition_list')
     merged_dict.update(merged_dynamic_partitions_dict)
+    # Ensure that add_img_to_target_files rebuilds super_empty.img. This flag
+    # may have been set to false in the partial builds to prevent duplicate
+    # building of super.img and super_empty.img.
+    merged_dict['build_super_partition'] = 'true'
 
   # Replace <image>_selinux_fc values with framework or vendor file_contexts.bin
   # depending on which dictionary the key came from.
