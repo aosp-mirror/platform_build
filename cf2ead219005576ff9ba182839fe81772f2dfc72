@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "21ca99a2_ee08f185",
+        "filename": "core/java_prebuilt_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-06-10T17:35:53Z",
+      "side": 1,
+      "message": "You may need to collect Make java prebuilts too.",
+      "revId": "cf2ead219005576ff9ba182839fe81772f2dfc72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
