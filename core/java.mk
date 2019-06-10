@@ -237,7 +237,7 @@ java_sources_deps := \
     $(LOCAL_SRCJARS) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
-$(java_source_list_file): $(java_sources_deps)
+$(java_source_list_file): $(java_sources_deps) $(NORMALIZE_PATH)
 	$(write-java-source-list)
 
 ALL_MODULES.$(my_register_name).SRCJARS := $(LOCAL_SRCJARS)
