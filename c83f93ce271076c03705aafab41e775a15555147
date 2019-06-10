@@ -16,6 +16,24 @@
       "revId": "c83f93ce271076c03705aafab41e775a15555147",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f47666dc_d24b1490",
+        "filename": "core/soong_cc_prebuilt.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 1345967
+      },
+      "writtenOn": "2019-06-10T22:56:26Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "ecf3ea86_1b49f4b8",
+      "revId": "c83f93ce271076c03705aafab41e775a15555147",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
