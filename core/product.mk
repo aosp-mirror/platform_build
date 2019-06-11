@@ -126,6 +126,8 @@ _product_list_vars += PRODUCT_HOST_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES
 _product_list_vars += PRODUCT_PACKAGES_DEBUG
 _product_list_vars += PRODUCT_PACKAGES_DEBUG_ASAN
+# Packages included only for eng/userdebug builds, when building with EMMA_INSTRUMENT=true
+_product_list_vars += PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE
 _product_list_vars += PRODUCT_PACKAGES_ENG
 _product_list_vars += PRODUCT_PACKAGES_TESTS
 
