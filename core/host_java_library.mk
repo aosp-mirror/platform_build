@@ -64,7 +64,6 @@ layers_file := $(addprefix $(LOCAL_PATH)/, $(LOCAL_JAVA_LAYERS_FILE))
 java_sources_deps := \
     $(java_sources) \
     $(java_resource_sources) \
-    $(proto_java_sources_file_stamp) \
     $(LOCAL_SRCJARS) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
