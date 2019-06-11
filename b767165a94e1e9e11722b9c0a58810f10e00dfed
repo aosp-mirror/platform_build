@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ff8b6060_163d775d",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-06-11T20:23:18Z",
+      "side": 1,
+      "message": "You need a unique name here, otherwise host and device modules will overwrite each other.",
+      "range": {
+        "startLine": 23,
+        "startChar": 14,
+        "endLine": 23,
+        "endChar": 26
+      },
+      "revId": "b767165a94e1e9e11722b9c0a58810f10e00dfed",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
