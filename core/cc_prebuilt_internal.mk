@@ -18,6 +18,11 @@
 # Internal build rules for native prebuilt modules
 ############################################################
 
+prebuilt_module_classes := STATIC_LIBRARIES SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS
+ifeq ($(filter $(prebuilt_module_classes),$(LOCAL_MODULE_CLASS)),)
+$(call pretty-error,cc_prebuilt_internal.mk is for $(prebuilt_module_classes) modules only)
+endif
+
 my_strip_module := $(firstword \
   $(LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
   $(LOCAL_STRIP_MODULE))

@@ -49,9 +49,12 @@ ifeq (APPS,$(LOCAL_MODULE_CLASS))
   include $(BUILD_SYSTEM)/app_prebuilt_internal.mk
 else ifeq (JAVA_LIBRARIES,$(LOCAL_MODULE_CLASS))
   include $(BUILD_SYSTEM)/java_prebuilt_internal.mk
-else
-  # TODO(jungjw): Check LOCAL_MODULE_CLASS value and generate an error for unexpected ones.
+else ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
   include $(BUILD_SYSTEM)/cc_prebuilt_internal.mk
+else ifneq ($(filter SCRIPT ETC DATA,$(LOCAL_MODULE_CLASS)),)
+  include $(BUILD_SYSTEM)/misc_prebuilt_internal.mk
+else
+  $(error $(LOCAL_MODULE) : unexpected LOCAL_MODULE_CLASS for prebuilts: $(LOCAL_MODULE_CLASS))
 endif
 
 $(built_module) : $(LOCAL_ADDITIONAL_DEPENDENCIES)
