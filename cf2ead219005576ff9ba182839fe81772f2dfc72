@@ -16,6 +16,24 @@
       "revId": "cf2ead219005576ff9ba182839fe81772f2dfc72",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e5deb19_4ee53ed9",
+        "filename": "core/java_prebuilt_internal.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 1308042
+      },
+      "writtenOn": "2019-06-11T03:23:58Z",
+      "side": 1,
+      "message": "Thanks for the reminder.",
+      "parentUuid": "21ca99a2_ee08f185",
+      "revId": "cf2ead219005576ff9ba182839fe81772f2dfc72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
