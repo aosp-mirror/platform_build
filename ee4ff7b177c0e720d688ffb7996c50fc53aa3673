@@ -16,6 +16,24 @@
       "revId": "ee4ff7b177c0e720d688ffb7996c50fc53aa3673",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "91a4dca3_a2607544",
+        "filename": "core/native_benchmark_test_config_template.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-06-11T19:04:22Z",
+      "side": 1,
+      "message": "unlike cc_test, benchmark_test doesn\u0027t have optionsMap when calling AutoGenNativeBenchmarkTestConfig. We can add it later when it\u0027s needed.",
+      "parentUuid": "c1f8e237_0d851922",
+      "revId": "ee4ff7b177c0e720d688ffb7996c50fc53aa3673",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
