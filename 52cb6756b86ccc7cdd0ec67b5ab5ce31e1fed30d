@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8af30043_65351bd5",
+        "filename": "core/tasks/vndk.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-06-12T04:54:05Z",
+      "side": 1,
+      "message": "This becomes $(vndk_snapshot_top)/vndk-snapshot-soong/vndk-snapshot, which looks weird to me. Why do we need vndk-snapshot subdir?",
+      "range": {
+        "startLine": 69,
+        "startChar": 57,
+        "endLine": 69,
+        "endChar": 97
+      },
+      "revId": "52cb6756b86ccc7cdd0ec67b5ab5ce31e1fed30d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
