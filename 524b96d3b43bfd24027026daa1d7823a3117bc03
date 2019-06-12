@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "1f7359e1_96ed02bd",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-06-12T18:22:48Z",
+      "side": 1,
+      "message": "you can define another variable like\nPRIVATE_test_mappings_original :\u003d $(test_mappings)",
+      "parentUuid": "96e6e816_bea7cb88",
+      "range": {
+        "startLine": 39,
+        "startChar": 42,
+        "endLine": 39,
+        "endChar": 55
+      },
+      "revId": "524b96d3b43bfd24027026daa1d7823a3117bc03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "f790216a_b7c2d7d9",
         "filename": "core/tasks/test_mapping.mk",
         "patchSetId": 3

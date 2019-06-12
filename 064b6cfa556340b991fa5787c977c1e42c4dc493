@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a24e310d_3da2b533",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-06-12T18:22:48Z",
+      "side": 1,
+      "message": "try to use pass in arg like $(2)?",
+      "range": {
+        "startLine": 23,
+        "startChar": 29,
+        "endLine": 23,
+        "endChar": 57
+      },
+      "revId": "064b6cfa556340b991fa5787c977c1e42c4dc493",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2fccab6a_d2de3c8a",
+        "filename": "core/tasks/test_mapping.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-06-12T18:22:48Z",
+      "side": 1,
+      "message": "pass in PRIVATE_test_mapping_tmp_dir in the command line.",
+      "revId": "064b6cfa556340b991fa5787c977c1e42c4dc493",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
