@@ -1362,6 +1362,10 @@ built_shared_libraries += \
     $(my_ndk_shared_libraries_fullpath) \
     $(my_system_shared_libraries_fullpath) \
 
+built_shared_library_deps += \
+    $(my_ndk_shared_libraries_fullpath) \
+    $(my_system_shared_libraries_fullpath) \
+
 else
 built_shared_libraries := \
     $(foreach lib,$(installed_shared_library_module_names), \
