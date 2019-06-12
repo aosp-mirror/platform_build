@@ -74,11 +74,11 @@ $(linked_module): PRIVATE_TARGET_CRTEND_O := $(my_target_crtend_o)
 $(linked_module): PRIVATE_POST_LINK_CMD := $(LOCAL_POST_LINK_CMD)
 
 ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
-$(linked_module): $(my_target_crtbegin_static_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libcrt_builtins) $(my_target_libgcc) $(my_target_libatomic)
+$(linked_module): $(my_target_crtbegin_static_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libcrt_builtins) $(my_target_libgcc) $(my_target_libatomic) $(CLANG_CXX)
 	$(transform-o-to-static-executable)
 	$(PRIVATE_POST_LINK_CMD)
 else
-$(linked_module): $(my_target_crtbegin_dynamic_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libcrt_builtins) $(my_target_libgcc) $(my_target_libatomic)
+$(linked_module): $(my_target_crtbegin_dynamic_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libcrt_builtins) $(my_target_libgcc) $(my_target_libatomic) $(CLANG_CXX)
 	$(transform-o-to-executable)
 	$(PRIVATE_POST_LINK_CMD)
 endif

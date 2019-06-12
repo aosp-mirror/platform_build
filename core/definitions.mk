@@ -1365,7 +1365,7 @@ DOTDOT_REPLACEMENT := dotdot/
 # $(3): the variable name to collect the output object file.
 define compile-dotdot-cpp-file
 o := $(intermediates)/$(patsubst %$(LOCAL_CPP_EXTENSION),%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
-$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
+$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2) $(CLANG_CXX)
 	$$(transform-$$(PRIVATE_HOST)cpp-to-o)
 $$(call include-depfiles-for-objs, $$(o))
 $(3) += $$(o)
@@ -1378,7 +1378,7 @@ endef
 # $(3): the variable name to collect the output object file.
 define compile-dotdot-c-file
 o := $(intermediates)/$(patsubst %.c,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
-$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
+$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2) $(CLANG)
 	$$(transform-$$(PRIVATE_HOST)c-to-o)
 $$(call include-depfiles-for-objs, $$(o))
 $(3) += $$(o)
@@ -1391,7 +1391,7 @@ endef
 # $(3): the variable name to collect the output object file.
 define compile-dotdot-s-file
 o := $(intermediates)/$(patsubst %.S,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
-$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
+$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2) $(CLANG)
 	$$(transform-$$(PRIVATE_HOST)s-to-o)
 $$(call include-depfiles-for-objs, $$(o))
 $(3) += $$(o)
@@ -1404,7 +1404,7 @@ endef
 # $(3): the variable name to collect the output object file.
 define compile-dotdot-s-file-no-deps
 o := $(intermediates)/$(patsubst %.s,%.o,$(subst ../,$(DOTDOT_REPLACEMENT),$(1)))
-$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2)
+$$(o) : $(TOPDIR)$(LOCAL_PATH)/$(1) $(2) $(CLANG)
 	$$(transform-$$(PRIVATE_HOST)s-to-o)
 $(3) += $$(o)
 endef
