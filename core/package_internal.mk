@@ -651,7 +651,7 @@ endif
 ## the APK
 ifdef LOCAL_DEX_PREOPT
   $(my_dex_jar): PRIVATE_DEX_FILE := $(built_dex)
-  $(my_dex_jar): $(built_dex)
+  $(my_dex_jar): $(built_dex) $(SOONG_ZIP)
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 	$(call create-dex-jar,$@,$(PRIVATE_DEX_FILE))
 endif
