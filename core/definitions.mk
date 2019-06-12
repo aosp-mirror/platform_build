@@ -1082,7 +1082,7 @@ $(hide) for f in $(PRIVATE_PROTO_SRC_FILES); do \
         $(PRIVATE_PROTOC_FLAGS) \
         $$f || exit 33; \
         done
-$(hide) touch $@
+$(SOONG_ZIP) -o $@ -C $(PRIVATE_PROTO_JAVA_OUTPUT_DIR) -D $(PRIVATE_PROTO_JAVA_OUTPUT_DIR)
 endef
 
 ######################################################################
@@ -2013,8 +2013,6 @@ define fetch-additional-java-source
 $(hide) if [ -d "$(PRIVATE_SOURCE_INTERMEDIATES_DIR)" ]; then \
     find $(PRIVATE_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $(1); \
 fi
-$(if $(PRIVATE_HAS_PROTO_SOURCES), \
-    $(hide) find $(PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR) -name '*.java' -and -not -name '.*' >> $(1))
 endef
 
 # Some historical notes:

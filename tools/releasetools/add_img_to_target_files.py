@@ -450,7 +450,7 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
     if partition not in needed_partitions:
       continue
     assert (partition in common.AVB_PARTITIONS or
-            partition.startswith('vbmeta_')), \
+            partition in common.AVB_VBMETA_PARTITIONS), \
         'Unknown partition: {}'.format(partition)
     assert os.path.exists(path), \
         'Failed to find {} for {}'.format(path, partition)
