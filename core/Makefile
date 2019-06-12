@@ -4342,11 +4342,10 @@ $(SYMBOLS_ZIP): $(SOONG_ZIP)
 # -----------------------------------------------------------------
 # A zip of the coverage directory.
 #
-name := $(TARGET_PRODUCT)
+name := gcov-report-files-all
 ifeq ($(TARGET_BUILD_TYPE),debug)
 name := $(name)_debug
 endif
-name := $(name)-coverage-$(FILE_NAME_TAG)
 COVERAGE_ZIP := $(PRODUCT_OUT)/$(name).zip
 ifndef TARGET_BUILD_APPS
 $(COVERAGE_ZIP): $(INSTALLED_SYSTEMIMAGE_TARGET) \
