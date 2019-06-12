@@ -1012,7 +1012,7 @@ endef
 # You must call this with $(eval).
 define define-aidl-java-rule
 define-aidl-java-rule-src := $(patsubst %.aidl,%.java,$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
-$$(define-aidl-java-rule-src) : $(LOCAL_PATH)/$(1) $(AIDL)
+$$(define-aidl-java-rule-src) : $(call clean-path,$(LOCAL_PATH)/$(1)) $(AIDL)
 	$$(transform-aidl-to-java)
 $(3) += $$(define-aidl-java-rule-src)
 endef
@@ -1025,7 +1025,7 @@ endef
 # You must call this with $(eval).
 define define-aidl-cpp-rule
 define-aidl-cpp-rule-src := $(patsubst %.aidl,%$(LOCAL_CPP_EXTENSION),$(subst ../,dotdot/,$(addprefix $(2)/,$(1))))
-$$(define-aidl-cpp-rule-src) : $(LOCAL_PATH)/$(1) $(AIDL_CPP)
+$$(define-aidl-cpp-rule-src) : $(call clean-path,$(LOCAL_PATH)/$(1)) $(AIDL_CPP)
 	$$(transform-aidl-to-cpp)
 $(3) += $$(define-aidl-cpp-rule-src)
 endef
@@ -1925,7 +1925,7 @@ $(hide) $(AAPT2) link -o $@ \
   $(addprefix --manifest ,$(PRIVATE_ANDROID_MANIFEST)) \
   $(addprefix -I ,$(PRIVATE_AAPT_INCLUDES)) \
   $(addprefix -I ,$(PRIVATE_SHARED_ANDROID_LIBRARIES)) \
-  $(addprefix -A ,$(PRIVATE_ASSET_DIR)) \
+  $(addprefix -A ,$(foreach d,$(PRIVATE_ASSET_DIR),$(call clean-path,$(d)))) \
   $(addprefix --java ,$(PRIVATE_JAVA_GEN_DIR)) \
   $(addprefix --proguard ,$(PRIVATE_PROGUARD_OPTIONS_FILE)) \
   $(addprefix --min-sdk-version ,$(PRIVATE_DEFAULT_APP_TARGET_SDK)) \
