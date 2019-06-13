@@ -649,6 +649,57 @@ $(INSTALLED_SDK_BUILD_PROP_TARGET): $(INSTALLED_BUILD_PROP_TARGET)
 	$(hide) mv $@.tmp $@
 
 # -----------------------------------------------------------------
+# kernel modules
+
+# Depmod requires a well-formed kernel version so 0.0 is used as a placeholder.
+DEPMOD_STAGING_SUBDIR :=$= lib/modules/0.0
+
+# $(1): modules list
+# $(2): output dir
+# $(3): mount point
+# $(4): staging dir
+# Returns the a list of src:dest pairs to install the modules using copy-many-files.
+define build-image-kernel-modules
+  $(foreach module,$(1),$(module):$(2)/lib/modules/$(notdir $(module))) \
+  $(eval $(call build-image-kernel-modules-depmod,$(1),$(2),$(3),$(4))) \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep:$(2)/lib/modules/modules.dep \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias:$(2)/lib/modules/modules.alias
+endef
+
+# $(1): modules list
+# $(2): output dir
+# $(3): mount point
+# $(4): staging dir
+define build-image-kernel-modules-depmod
+$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: .KATI_IMPLICIT_OUTPUTS := $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias
+$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(DEPMOD)
+$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULES := $(1)
+$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_OUTPUT_DIR := $(2)
+$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MOUNT_POINT := $(3)
+$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_STAGING_DIR := $(4)
+$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1)
+	@echo depmod $$(PRIVATE_STAGING_DIR)
+	rm -rf $$(PRIVATE_STAGING_DIR)
+	mkdir -p $$(PRIVATE_STAGING_DIR)/$$(DEPMOD_STAGING_SUBDIR)/$$(PRIVATE_MOUNT_POINT)/lib/modules
+	cp $$(PRIVATE_MODULES) $$(PRIVATE_STAGING_DIR)/$$(DEPMOD_STAGING_SUBDIR)/$$(PRIVATE_MOUNT_POINT)/lib/modules
+	$(DEPMOD) -b $$(PRIVATE_STAGING_DIR) 0.0
+	# Turn paths in modules.dep into absolute paths
+	sed -i.tmp -e 's|\([^: ]*/lib/modules/[^: ]*\)|/\1|g' $$(PRIVATE_STAGING_DIR)/$$(DEPMOD_STAGING_SUBDIR)/modules.dep
+endef
+
+ifdef BOARD_RECOVERY_KERNEL_MODULES
+  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery)))
+endif
+
+ifdef BOARD_VENDOR_KERNEL_MODULES
+  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_VENDOR_KERNEL_MODULES),$(TARGET_OUT_VENDOR),vendor,$(call intermediates-dir-for,PACKAGING,depmod_vendor)))
+endif
+
+ifdef BOARD_ODM_KERNEL_MODULES
+  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_ODM_KERNEL_MODULES),$(TARGET_OUT_ODM),odm,$(call intermediates-dir-for,PACKAGING,depmod_odm)))
+endif
+
+# -----------------------------------------------------------------
 # package stats
 ifdef BUILDING_SYSTEM_IMAGE
 
@@ -1505,23 +1556,6 @@ define read-image-prop-dictionary
 $$(grep '$(2)=' $(1) | cut -f2- -d'=')
 endef
 
-# $(1): modules list
-# $(2): output dir
-# $(3): mount point
-# $(4): staging dir
-# Depmod requires a well-formed kernel version so 0.0 is used as a placeholder.
-define build-image-kernel-modules
-    $(hide) rm -rf $(2)/lib/modules
-    $(hide) mkdir -p $(2)/lib/modules
-    $(hide) cp $(1) $(2)/lib/modules/
-    $(hide) rm -rf $(4)
-    $(hide) mkdir -p $(4)/lib/modules/0.0/$(3)lib/modules
-    $(hide) cp $(1) $(4)/lib/modules/0.0/$(3)lib/modules
-    $(hide) $(DEPMOD) -b $(4) 0.0
-    $(hide) sed -e 's/\(.*modules.*\):/\/\1:/g' -e 's/ \([^ ]*modules[^ ]*\)/ \/\1/g' $(4)/lib/modules/0.0/modules.dep > $(2)/lib/modules/modules.dep
-    $(hide) cp $(4)/lib/modules/0.0/modules.alias $(2)/lib/modules
-endef
-
 # -----------------------------------------------------------------
 # Recovery image
 
@@ -1836,8 +1870,6 @@ define build-recoveryimage-target
   # Modifying ramdisk contents...
   $(if $(filter true,$(BOARD_BUILD_SYSTEM_ROOT_IMAGE)),, \
     $(hide) ln -sf /system/bin/init $(TARGET_RECOVERY_ROOT_OUT)/init)
-  $(if $(BOARD_RECOVERY_KERNEL_MODULES), \
-    $(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery)))
   # Removes $(TARGET_RECOVERY_ROOT_OUT)/init*.rc EXCEPT init.recovery*.rc.
   $(hide) find $(TARGET_RECOVERY_ROOT_OUT) -maxdepth 1 -name 'init*.rc' -type f -not -name "init.recovery.*.rc" | xargs rm -f
   $(hide) cp -f $(recovery_initrc) $(TARGET_RECOVERY_ROOT_OUT)/
@@ -1909,9 +1941,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
 	    $(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
 	    $(recovery_resource_deps) \
-	    $(recovery_fstab) \
-	    $(BOARD_RECOVERY_KERNEL_MODULES) \
-	    $(DEPMOD)
+	    $(recovery_fstab)
 	$(call pretty,"Target boot image from recovery: $@")
 	$(call build-recoveryimage-target, $@)
 endif # BOARD_USES_RECOVERY_AS_BOOT
@@ -1939,9 +1969,7 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTFS) $(MKBOOTIMG) $(MINIGZIP) \
 	    $(INSTALLED_2NDBOOTLOADER_TARGET) \
 	    $(INSTALLED_RECOVERY_BUILD_PROP_TARGET) \
 	    $(recovery_resource_deps) \
-	    $(recovery_fstab) \
-	    $(BOARD_RECOVERY_KERNEL_MODULES) \
-	    $(DEPMOD)
+	    $(recovery_fstab)
 	$(call build-recoveryimage-target, $@)
 
 ifdef RECOVERY_RESOURCE_ZIP
@@ -2783,8 +2811,6 @@ define build-vendorimage-target
   $(call create-vendor-odm-symlink)
   @mkdir -p $(vendorimage_intermediates) && rm -rf $(vendorimage_intermediates)/vendor_image_info.txt
   $(call generate-image-prop-dictionary, $(vendorimage_intermediates)/vendor_image_info.txt,vendor,skip_fsck=true)
-  $(if $(BOARD_VENDOR_KERNEL_MODULES), \
-    $(call build-image-kernel-modules,$(BOARD_VENDOR_KERNEL_MODULES),$(TARGET_OUT_VENDOR),vendor/,$(call intermediates-dir-for,PACKAGING,depmod_vendor)))
   $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
       build/make/tools/releasetools/build_image.py \
       $(TARGET_OUT_VENDOR) $(vendorimage_intermediates)/vendor_image_info.txt $(INSTALLED_VENDORIMAGE_TARGET) $(TARGET_OUT)
@@ -2796,11 +2822,11 @@ INSTALLED_VENDORIMAGE_TARGET := $(BUILT_VENDORIMAGE_TARGET)
 ifdef BUILT_VENDOR_MANIFEST
 $(INSTALLED_VENDORIMAGE_TARGET): $(BUILT_ASSEMBLED_VENDOR_MANIFEST)
 endif
-$(INSTALLED_VENDORIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_VENDORIMAGE_FILES) $(INSTALLED_FILES_FILE_VENDOR) $(BUILD_IMAGE_SRCS) $(DEPMOD) $(BOARD_VENDOR_KERNEL_MODULES)
+$(INSTALLED_VENDORIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_VENDORIMAGE_FILES) $(INSTALLED_FILES_FILE_VENDOR) $(BUILD_IMAGE_SRCS)
 	$(build-vendorimage-target)
 
 .PHONY: vendorimage-nodeps vnod
-vendorimage-nodeps vnod: | $(INTERNAL_USERIMAGES_DEPS) $(DEPMOD)
+vendorimage-nodeps vnod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-vendorimage-target)
 
 sync: $(INTERNAL_VENDORIMAGE_FILES)
@@ -2989,8 +3015,6 @@ define build-odmimage-target
   @mkdir -p $(TARGET_OUT_ODM)
   @mkdir -p $(odmimage_intermediates) && rm -rf $(odmimage_intermediates)/odm_image_info.txt
   $(call generate-userimage-prop-dictionary, $(odmimage_intermediates)/odm_image_info.txt, skip_fsck=true)
-  $(if $(BOARD_ODM_KERNEL_MODULES), \
-    $(call build-image-kernel-modules,$(BOARD_ODM_KERNEL_MODULES),$(TARGET_OUT_ODM),odm/,$(call intermediates-dir-for,PACKAGING,depmod_odm)))
   $(hide) PATH=$(foreach p,$(INTERNAL_USERIMAGES_BINARY_PATHS),$(p):)$$PATH \
       ./build/tools/releasetools/build_image.py \
       $(TARGET_OUT_ODM) $(odmimage_intermediates)/odm_image_info.txt $(INSTALLED_ODMIMAGE_TARGET) $(TARGET_OUT)
@@ -2999,11 +3023,11 @@ endef
 
 # We just build this directly to the install location.
 INSTALLED_ODMIMAGE_TARGET := $(BUILT_ODMIMAGE_TARGET)
-$(INSTALLED_ODMIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_ODMIMAGE_FILES) $(INSTALLED_FILES_FILE_ODM) $(BUILD_IMAGE_SRCS) $(DEPMOD) $(BOARD_ODM_KERNEL_MODULES)
+$(INSTALLED_ODMIMAGE_TARGET): $(INTERNAL_USERIMAGES_DEPS) $(INTERNAL_ODMIMAGE_FILES) $(INSTALLED_FILES_FILE_ODM) $(BUILD_IMAGE_SRCS)
 	$(build-odmimage-target)
 
 .PHONY: odmimage-nodeps onod
-odmimage-nodeps onod: | $(INTERNAL_USERIMAGES_DEPS) $(DEPMOD)
+odmimage-nodeps onod: | $(INTERNAL_USERIMAGES_DEPS)
 	$(build-odmimage-target)
 
 sync: $(INTERNAL_ODMIMAGE_FILES)
