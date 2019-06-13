@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85c8f35b_458ddd0f",
+        "filename": "core/java_prebuilt_internal.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-06-13T21:12:33Z",
+      "side": 1,
+      "message": "my_register_name should be set any time after base_rules.mk is included.",
+      "revId": "22e998f16b2f0873999ace007e6ba1a0802e8e33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e8edb89_a6811e05",
+        "filename": "core/soong_java_prebuilt.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-06-13T21:12:33Z",
+      "side": 1,
+      "message": "Put this with the other ALL_MODULES lines on line 129",
+      "revId": "22e998f16b2f0873999ace007e6ba1a0802e8e33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
