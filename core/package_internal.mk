@@ -428,7 +428,7 @@ ifneq ($(full_classes_jar),)
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
 # Use the jarjar processed arhive as the initial package file.
 $(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar)
-$(LOCAL_BUILT_MODULE): $(built_dex)
+$(LOCAL_BUILT_MODULE): $(built_dex) $(full_classes_pre_proguard_jar)
 else
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE :=
 $(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE :=
@@ -651,7 +651,7 @@ endif
 ## the APK
 ifdef LOCAL_DEX_PREOPT
   $(my_dex_jar): PRIVATE_DEX_FILE := $(built_dex)
-  $(my_dex_jar): $(built_dex)
+  $(my_dex_jar): $(built_dex) $(SOONG_ZIP)
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 	$(call create-dex-jar,$@,$(PRIVATE_DEX_FILE))
 endif
