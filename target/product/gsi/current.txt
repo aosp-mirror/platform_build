@@ -73,6 +73,7 @@ VNDK-core: android.hardware.audio@5.0.so
 VNDK-core: android.hardware.authsecret@1.0.so
 VNDK-core: android.hardware.automotive.audiocontrol@1.0.so
 VNDK-core: android.hardware.automotive.evs@1.0.so
+VNDK-core: android.hardware.automotive.evs@1.1.so
 VNDK-core: android.hardware.automotive.vehicle@2.0.so
 VNDK-core: android.hardware.biometrics.face@1.0.so
 VNDK-core: android.hardware.biometrics.fingerprint@2.1.so
