@@ -2259,6 +2259,9 @@ define build-systemimage-target
            exit 1 )
 endef
 
+ifeq ($(BOARD_AVB_ENABLE),true)
+$(BUILT_SYSTEMIMAGE): $(BOARD_AVB_SYSTEM_KEY_PATH)
+endif
 $(BUILT_SYSTEMIMAGE): $(FULL_SYSTEMIMAGE_DEPS) $(INSTALLED_FILES_FILE) $(BUILD_IMAGE_SRCS)
 	$(call build-systemimage-target,$@)
 
