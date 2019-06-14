@@ -22,6 +22,30 @@
       "revId": "77b13cfa989160133d4426bc75fbb5f43b5349fc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e96e89eb_5f30162d",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 989,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-14T17:42:12Z",
+      "side": 1,
+      "message": "Moving this line was needed to avoid the error from setting KATI_READONLY to an unset variable, which was happening when (PRODUCT_USE_DYNAMIC_PARTITIONS \u003d\u003d true \u0026\u0026 BOARD_SUPER_PARTITION_SIZE \u003d\u003d empty).\n\nThis was not failing *before* this change because apparently there was never a case where (PRODUCT_BUILD_SUPER_PARTITION \u003d\u003d true \u0026\u0026 BOARD_SUPER_PARTITIONS_SIZE \u003d\u003d empty).",
+      "parentUuid": "ebe9420f_1479ad8a",
+      "range": {
+        "startLine": 989,
+        "startChar": 0,
+        "endLine": 989,
+        "endChar": 34
+      },
+      "revId": "77b13cfa989160133d4426bc75fbb5f43b5349fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
