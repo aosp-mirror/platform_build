@@ -22,6 +22,30 @@
       "revId": "8ee9443dfe774e018f082921ca2b607cb1a0dd72",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2fb6e13e_9473935b",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 3433,
+      "author": {
+        "id": 1021676
+      },
+      "writtenOn": "2019-06-14T04:47:17Z",
+      "side": 1,
+      "message": "I agree, why use 98%? We don\u0027t want to waste 2% of the super, that could be quite a lot of space depending on the super size.",
+      "parentUuid": "ddda9fa5_73f39b4a",
+      "range": {
+        "startLine": 3433,
+        "startChar": 0,
+        "endLine": 3433,
+        "endChar": 33
+      },
+      "revId": "8ee9443dfe774e018f082921ca2b607cb1a0dd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
