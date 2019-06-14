@@ -46,6 +46,30 @@
       "revId": "8ee9443dfe774e018f082921ca2b607cb1a0dd72",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "47d06c90_d33eece0",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 3433,
+      "author": {
+        "id": 1120612
+      },
+      "writtenOn": "2019-06-14T16:25:20Z",
+      "side": 1,
+      "message": "Changed to initialize to BOARD_SUPER_PARTITION_SIZE instead.",
+      "parentUuid": "2fb6e13e_9473935b",
+      "range": {
+        "startLine": 3433,
+        "startChar": 0,
+        "endLine": 3433,
+        "endChar": 33
+      },
+      "revId": "8ee9443dfe774e018f082921ca2b607cb1a0dd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
