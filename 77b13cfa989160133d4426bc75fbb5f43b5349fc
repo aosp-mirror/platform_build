@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ebe9420f_1479ad8a",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 989,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-06-14T17:29:45Z",
+      "side": 1,
+      "message": "(Sorry coming to this CL late)\n\nMoving this line seems weird: is there a need to use the three vars above as non-readonly now?",
+      "range": {
+        "startLine": 989,
+        "startChar": 0,
+        "endLine": 989,
+        "endChar": 34
+      },
+      "revId": "77b13cfa989160133d4426bc75fbb5f43b5349fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
