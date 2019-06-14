@@ -94,6 +94,30 @@
       "revId": "77b13cfa989160133d4426bc75fbb5f43b5349fc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5bc446af_3a5a6c0e",
+        "filename": "core/config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 989,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-14T18:40:44Z",
+      "side": 1,
+      "message": "Done. Thanks for the suggestion! That looks a lot safer.",
+      "parentUuid": "61073012_89b5eb1f",
+      "range": {
+        "startLine": 989,
+        "startChar": 0,
+        "endLine": 989,
+        "endChar": 34
+      },
+      "revId": "77b13cfa989160133d4426bc75fbb5f43b5349fc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
