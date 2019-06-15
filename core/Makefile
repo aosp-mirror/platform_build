@@ -3403,6 +3403,14 @@ define super-slot-suffix
 $(if $(filter true,$(AB_OTA_UPDATER)),$(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)),,_a))
 endef
 
+ifndef BOARD_SUPER_PARTITION_WARN_LIMIT
+BOARD_SUPER_PARTITION_WARN_LIMIT := $$(($(BOARD_SUPER_PARTITION_SIZE) * 95 / 100))
+endif
+
+ifndef BOARD_SUPER_PARTITION_ERROR_LIMIT
+BOARD_SUPER_PARTITION_ERROR_LIMIT := $(BOARD_SUPER_PARTITION_SIZE)
+endif
+
 droid_targets: check-all-partition-sizes
 
 .PHONY: check-all-partition-sizes check-all-partition-sizes-nodeps
@@ -3433,6 +3441,10 @@ endif
 # $(1): human-readable max size string
 # $(2): max size expression
 # $(3): list of partition names
+# $(4): human-readable warn size string
+# $(5): warn size expression
+# $(6): human readable error size string
+# $(7): error size expression
 define check-sum-of-partition-sizes
   partition_size_list="$$(for i in $(call read-size-of-partitions,$(3)); do \
     echo $(call round-partition-size,$${i}); \
@@ -3443,6 +3455,17 @@ define check-sum-of-partition-sizes
     echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' "$(2)" '==' $$(( $(2) )); \
     exit 1; \
   else \
+    if [[ ! -z "$(7)" ]] && [ $$(( $${sum_sizes_expr} )) -gt $$(( $(7) )) ]; then \
+        echo "!!!! ERROR !!!! The sum of sizes of [$(strip $(3))] is larger than $(strip $(6)):"; \
+        echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' "$(7)" '==' $$(( $(7) )); \
+        echo "Super partition is" $$(( $$(( $$(( $${sum_sizes_expr} )) * 100)) / $$(( $(2) )) )) "percent occupied!"; \
+        exit 1; \
+    fi; \
+    if [[ ! -z "$(5)" ]] && [ $$(( $${sum_sizes_expr} )) -gt $$(( $(5) )) ]; then \
+        echo "!!!! WARNING !!!! The sum of sizes of [$(strip $(3))] is larger than $(strip $(4)):"; \
+        echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '>' "$(5)" '==' $$(( $(5) )); \
+        echo "Super partition is" $$(( $$(( $$(( $${sum_sizes_expr} )) * 100)) / $$(( $(2) )) )) "percent occupied!"; \
+    fi; \
     echo "The sum of sizes of [$(strip $(3))] is within $(strip $(1)):"; \
     echo $${sum_sizes_expr} '==' $$(( $${sum_sizes_expr} )) '<=' "$(2)" '==' $$(( $(2) )); \
   fi;
@@ -3452,7 +3475,12 @@ define check-all-partition-sizes-target
   # Check sum(all partitions) <= super partition (/ 2 for A/B devices launched with dynamic partitions)
   $(if $(BOARD_SUPER_PARTITION_SIZE),$(if $(BOARD_SUPER_PARTITION_PARTITION_LIST), \
     $(call check-sum-of-partition-sizes,BOARD_SUPER_PARTITION_SIZE$(if $(call super-slot-suffix), / 2), \
-      $(BOARD_SUPER_PARTITION_SIZE)$(if $(call super-slot-suffix), / 2),$(BOARD_SUPER_PARTITION_PARTITION_LIST))))
+      $(BOARD_SUPER_PARTITION_SIZE)$(if $(call super-slot-suffix), / 2),$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
+      BOARD_SUPER_PARTITION_WARN_LIMIT$(if $(call super-slot-suffix), / 2), \
+      $(BOARD_SUPER_PARTITION_WARN_LIMIT)$(if $(call super-slot-suffix), / 2), \
+      BOARD_SUPER_PARTITION_ERROR_LIMIT$(if $(call super-slot-suffix), / 2), \
+      $(BOARD_SUPER_PARTITION_ERROR_LIMIT)$(if $(call super-slot-suffix), / 2)) \
+  ))
 
   # For each group, check sum(partitions in group) <= group size
   $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
