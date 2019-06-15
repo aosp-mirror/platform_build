@@ -22,6 +22,9 @@
         <option name="push" value="cts-dalvik-device-test-runner.jar->/data/local/tmp/{MODULE}/cts-dalvik-device-test-runner.jar" />
         <option name="push" value="{MODULE}.jar->/data/local/tmp/{MODULE}/{MODULE}.jar" />
     </target_preparer>
+
+    {EXTRA_CONFIGS}
+
     <test class="com.android.compatibility.testtype.DalvikTest" >
         <option name="run-name" value="{MODULE}" />
         <option name="classpath" value="/data/local/tmp/{MODULE}/{MODULE}.jar" />

@@ -19,6 +19,7 @@ have any problems converting, please contact us via:
 | `BUILD_HOST_FUZZ_TEST`           | Error     |
 | `BUILD_HOST_NATIVE_TEST`         | Error     |
 | `BUILD_HOST_SHARED_TEST_LIBRARY` | Error     |
+| `BUILD_HOST_STATIC_LIBRARY`      | Warning   |
 | `BUILD_HOST_STATIC_TEST_LIBRARY` | Error     |
 | `BUILD_HOST_TEST_CONFIG`         | Error     |
 | `BUILD_NATIVE_BENCHMARK`         | Error     |
