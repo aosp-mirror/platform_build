@@ -39,6 +39,8 @@ ifneq ($(filter $(LOCAL_MODULE),$(PRODUCT_BOOT_JARS)),)
   $(call pretty-error,Modules in PRODUCT_BOOT_JARS must be defined in Android.bp files)
 endif
 
+ALL_MODULES.$(my_register_name).CLASSES_JAR := $(common_classes_jar)
+
 #######################################
 # defines built_odex along with rule to install odex
 include $(BUILD_SYSTEM)/dex_preopt_odex_install.mk
@@ -239,4 +241,3 @@ $(my_exported_sdk_libs_file):
 
 endif # ! prebuilt_module_is_dex_javalib
 endif # LOCAL_IS_HOST_MODULE is not set
-
