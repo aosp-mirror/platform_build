@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "378459b1_273aa65e",
+        "filename": "core/java_prebuilt_internal.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 1308042
+      },
+      "writtenOn": "2019-06-17T02:22:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9f8343f8_6387ce0b",
+      "revId": "22e998f16b2f0873999ace007e6ba1a0802e8e33",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e8edb89_a6811e05",
         "filename": "core/soong_java_prebuilt.mk",
         "patchSetId": 8
