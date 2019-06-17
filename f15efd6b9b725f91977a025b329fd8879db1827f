@@ -99,6 +99,24 @@
       "revId": "f15efd6b9b725f91977a025b329fd8879db1827f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9dcfdf9a_5e5e4a0c",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-06-17T21:30:42Z",
+      "side": 1,
+      "message": "That\u0027s a good point. Meanwhile, this CL is not changing the behavior of how TF will run based on the build artifacts. So if someone adds a broken jar and cause lab to fail, it should be caught in presubmit. Then we will need to find a way to fix it. So far it\u0027s unclear how we differentiate a jar for test data and a jar that should be loaded in TF run.",
+      "parentUuid": "ddb83c85_31ecdc44",
+      "revId": "f15efd6b9b725f91977a025b329fd8879db1827f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
