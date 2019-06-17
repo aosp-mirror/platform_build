@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "bb173968_b9514c70",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-06-17T21:13:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "29877d5d_355522ad",
+      "range": {
+        "startLine": 32,
+        "startChar": 11,
+        "endLine": 32,
+        "endChar": 12
+      },
+      "revId": "f15efd6b9b725f91977a025b329fd8879db1827f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8e807883_357fd232",
         "filename": "core/tasks/device-tests.mk",
         "patchSetId": 3
@@ -36,6 +60,24 @@
       "writtenOn": "2019-06-17T20:56:46Z",
       "side": 1,
       "message": "How are you differentiating files used as test data vs utilities for tradefed?",
+      "revId": "f15efd6b9b725f91977a025b329fd8879db1827f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "eebcc784_df66ae9e",
+        "filename": "core/tasks/device-tests.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-06-17T21:13:45Z",
+      "side": 1,
+      "message": "We currently don\u0027t differentiate the jars from test data. Their existence shouldn\u0027t cause issue to actual TF test. The existing behavior will also search all jars in testcases directory which includes the jars from test data folders.",
+      "parentUuid": "8e807883_357fd232",
       "revId": "f15efd6b9b725f91977a025b329fd8879db1827f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
