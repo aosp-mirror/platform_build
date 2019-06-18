@@ -2370,14 +2370,16 @@ class DynamicPartitionsDifference(object):
   def __init__(self, info_dict, block_diffs, progress_dict=None,
                source_info_dict=None):
     if progress_dict is None:
-      progress_dict = dict()
+      progress_dict = {}
 
     self._remove_all_before_apply = False
     if source_info_dict is None:
       self._remove_all_before_apply = True
-      source_info_dict = dict()
+      source_info_dict = {}
 
-    block_diff_dict = {e.partition:e for e in block_diffs}
+    block_diff_dict = collections.OrderedDict(
+        [(e.partition, e) for e in block_diffs])
+
     assert len(block_diff_dict) == len(block_diffs), \
         "Duplicated BlockDifference object for {}".format(
             [partition for partition, count in
