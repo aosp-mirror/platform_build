@@ -416,8 +416,8 @@ ifeq ($(LOCAL_JAVA_LANGUAGE_VERSION),1.9)
       ifndef SOONG_SYSTEM_MODULES_$(my_system_modules)
         $(call pretty-error, Invalid system modules $(my_system_modules))
       endif
-      full_java_system_modules_deps := $(SOONG_SYSTEM_MODULES_$(my_system_modules))
-      my_system_modules_dir := $(patsubst %/lib/modules,%,$(SOONG_SYSTEM_MODULES_$(my_system_modules)))
+      full_java_system_modules_deps := $(SOONG_SYSTEM_MODULES_DEPS_$(my_system_modules))
+      my_system_modules_dir := $(SOONG_SYSTEM_MODULES_$(my_system_modules))
     endif
   endif
 endif
