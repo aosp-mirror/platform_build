@@ -863,7 +863,7 @@ def GetUserImage(which, tmpdir, input_zip,
     A Image object. If it is a sparse image and reset_file_map is False, the
     image will have file_map info loaded.
   """
-  if info_dict == None:
+  if info_dict is None:
     info_dict = LoadInfoDict(input_zip)
 
   is_sparse = info_dict.get("extfs_sparse_flag")
@@ -1568,6 +1568,15 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
       perms = 0o100644
   else:
     zinfo = zinfo_or_arcname
+    # Python 2 and 3 behave differently when calling ZipFile.writestr() with
+    # zinfo.external_attr being 0. Python 3 uses `0o600 << 16` as the value for
+    # such a case (since
+    # https://github.com/python/cpython/commit/18ee29d0b870caddc0806916ca2c823254f1a1f9),
+    # which seems to make more sense. Otherwise the entry will have 0o000 as the
+    # permission bits. We follow the logic in Python 3 to get consistent
+    # behavior between using the two versions.
+    if not zinfo.external_attr:
+      zinfo.external_attr = 0o600 << 16
 
   # If compress_type is given, it overrides the value in zinfo.
   if compress_type is not None:
@@ -1600,7 +1609,7 @@ def ZipDelete(zip_filename, entries):
   Raises:
     AssertionError: In case of non-zero return from 'zip'.
   """
-  if isinstance(entries, basestring):
+  if isinstance(entries, str):
     entries = [entries]
   cmd = ["zip", "-d", zip_filename] + entries
   RunAndCheckOutput(cmd)
