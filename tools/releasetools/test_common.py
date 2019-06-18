@@ -1151,7 +1151,7 @@ class FakeSparseImage(object):
 class DynamicPartitionsDifferenceTest(test_utils.ReleaseToolsTestCase):
   @staticmethod
   def get_op_list(output_path):
-    with zipfile.ZipFile(output_path, 'r') as output_zip:
+    with zipfile.ZipFile(output_path) as output_zip:
       with output_zip.open("dynamic_partitions_op_list") as op_list:
         return [line.strip() for line in op_list.readlines()
                 if not line.startswith("#")]
@@ -1176,12 +1176,12 @@ super_group_foo_partition_list=system vendor
 
     self.assertEqual(str(self.script).strip(), """
 assert(update_dynamic_partitions(package_extract_file("dynamic_partitions_op_list")));
-patch(vendor);
-verify(vendor);
-unmap_partition("vendor");
 patch(system);
 verify(system);
 unmap_partition("system");
+patch(vendor);
+verify(vendor);
+unmap_partition("vendor");
 """.strip())
 
     lines = self.get_op_list(self.output_path)
@@ -1229,7 +1229,8 @@ super_group_qux_group_size={group_qux_size}
     grown = lines.index("resize_group group_baz 4294967296")
     added = lines.index("add_group group_qux 1073741824")
 
-    self.assertLess(max(removed, shrunk) < min(grown, added),
+    self.assertLess(max(removed, shrunk),
+                    min(grown, added),
                     "ops that remove / shrink partitions must precede ops that "
                     "grow / add partitions")
 
