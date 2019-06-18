@@ -299,12 +299,9 @@ PRODUCT_HOST_PACKAGES += \
     unwind_symbols \
     viewcompiler \
     tzdata_host \
-    tzdata_host_runtime_apex \
     tzdata_host_tzdata_apex \
-    tzlookup.xml_host_runtime_apex \
     tzlookup.xml_host_tzdata_apex \
     tz_version_host \
-    tz_version_host_runtime_apex \
     tz_version_host_tzdata_apex \
 
 ifeq ($(TARGET_CORE_JARS),)
