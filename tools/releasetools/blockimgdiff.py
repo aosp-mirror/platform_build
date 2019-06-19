@@ -126,7 +126,7 @@ class DataImage(Image):
 
     assert len(self.data) % self.blocksize == 0
 
-    self.total_blocks = len(self.data) / self.blocksize
+    self.total_blocks = len(self.data) // self.blocksize
     self.care_map = RangeSet(data=(0, self.total_blocks))
     # When the last block is padded, we always write the whole block even for
     # incremental OTAs. Because otherwise the last block may get skipped if
@@ -179,8 +179,7 @@ class DataImage(Image):
   def TotalSha1(self, include_clobbered_blocks=False):
     if not include_clobbered_blocks:
       return self.RangeSha1(self.care_map.subtract(self.clobbered_blocks))
-    else:
-      return sha1(self.data).hexdigest()
+    return sha1(self.data).hexdigest()
 
   def WriteRangeDataToFd(self, ranges, fd):
     for data in self._GetRangeData(ranges): # pylint: disable=not-an-iterable
@@ -194,13 +193,13 @@ class FileImage(Image):
     self.path = path
     self.blocksize = 4096
     self._file_size = os.path.getsize(self.path)
-    self._file = open(self.path, 'r')
+    self._file = open(self.path, 'rb')
 
     if self._file_size % self.blocksize != 0:
       raise ValueError("Size of file %s must be multiple of %d bytes, but is %d"
                        % self.path, self.blocksize, self._file_size)
 
-    self.total_blocks = self._file_size / self.blocksize
+    self.total_blocks = self._file_size // self.blocksize
     self.care_map = RangeSet(data=(0, self.total_blocks))
     self.clobbered_blocks = RangeSet()
     self.extended = RangeSet()
@@ -391,7 +390,7 @@ class ImgdiffStats(object):
 
     def print_header(header, separator):
       logger.info(header)
-      logger.info(separator * len(header) + '\n')
+      logger.info('%s\n', separator * len(header))
 
     print_header('  Imgdiff Stats Report  ', '=')
     for key in self.REASONS:
@@ -779,7 +778,7 @@ class BlockImageDiff(object):
     out.insert(2, "0\n")
     out.insert(3, str(max_stashed_blocks) + "\n")
 
-    with open(prefix + ".transfer.list", "wb") as f:
+    with open(prefix + ".transfer.list", "w") as f:
       for i in out:
         f.write(i)
 
@@ -1009,7 +1008,7 @@ class BlockImageDiff(object):
     # - we write every block we care about exactly once.
 
     # Start with no blocks having been touched yet.
-    touched = array.array("B", "\0" * self.tgt.total_blocks)
+    touched = array.array("B", b"\0" * self.tgt.total_blocks)
 
     # Imagine processing the transfers in order.
     for xf in self.transfers:
@@ -1671,8 +1670,8 @@ class BlockImageDiff(object):
 
         split_tgt_size = int(info[1])
         assert split_tgt_size % 4096 == 0
-        assert split_tgt_size / 4096 <= tgt_remain.size()
-        split_tgt_ranges = tgt_remain.first(split_tgt_size / 4096)
+        assert split_tgt_size // 4096 <= tgt_remain.size()
+        split_tgt_ranges = tgt_remain.first(split_tgt_size // 4096)
         tgt_remain = tgt_remain.subtract(split_tgt_ranges)
 
         # Find the split_src_ranges within the image file from its relative
@@ -1744,7 +1743,7 @@ class BlockImageDiff(object):
                                                     lines)
         for index, (patch_start, patch_length, split_tgt_ranges,
                     split_src_ranges) in enumerate(split_info_list):
-          with open(patch_file) as f:
+          with open(patch_file, 'rb') as f:
             f.seek(patch_start)
             patch_content = f.read(patch_length)
 
