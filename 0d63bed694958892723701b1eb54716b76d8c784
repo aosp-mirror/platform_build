@@ -22,6 +22,30 @@
       "revId": "0d63bed694958892723701b1eb54716b76d8c784",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "78adc7ea_ca4971be",
+        "filename": "envsetup.sh",
+        "patchSetId": 6
+      },
+      "lineNbr": 1499,
+      "author": {
+        "id": 1453040
+      },
+      "writtenOn": "2019-06-19T21:16:57Z",
+      "side": 1,
+      "message": "ah. I forgot to remove this code. I was trying a different way to auto generate the functions but there are cases it did not work. Removed it.",
+      "parentUuid": "b21695a3_4022aec7",
+      "range": {
+        "startLine": 1492,
+        "startChar": 0,
+        "endLine": 1499,
+        "endChar": 0
+      },
+      "revId": "0d63bed694958892723701b1eb54716b76d8c784",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
