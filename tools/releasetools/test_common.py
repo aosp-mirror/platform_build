@@ -41,7 +41,7 @@ def get_2gb_string():
   # Generate a long string with holes, e.g. 'xyz\x00abc\x00...'.
   for _ in range(0, size, step_size):
     yield os.urandom(block_size)
-    yield '\0' * (step_size - block_size)
+    yield b'\0' * (step_size - block_size)
 
 
 class CommonZipTest(test_utils.ReleaseToolsTestCase):
@@ -72,7 +72,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     # Verify the zip contents.
     entry = zip_file.open(arcname)
     sha1_hash = sha1()
-    for chunk in iter(lambda: entry.read(4 * MiB), ''):
+    for chunk in iter(lambda: entry.read(4 * MiB), b''):
       sha1_hash.update(chunk)
     self.assertEqual(expected_hash, sha1_hash.hexdigest())
     self.assertIsNone(zip_file.testzip())
@@ -97,8 +97,8 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     try:
       sha1_hash = sha1()
       for data in contents:
-        sha1_hash.update(data)
-        test_file.write(data)
+        sha1_hash.update(bytes(data))
+        test_file.write(bytes(data))
       test_file.close()
 
       expected_stat = os.stat(test_file_name)
@@ -136,8 +136,11 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         expected_mode = extra_args.get("perms", 0o644)
       else:
         arcname = zinfo_or_arcname.filename
-        expected_mode = extra_args.get("perms",
-                                       zinfo_or_arcname.external_attr >> 16)
+        if zinfo_or_arcname.external_attr:
+          zinfo_perms = zinfo_or_arcname.external_attr >> 16
+        else:
+          zinfo_perms = 0o600
+        expected_mode = extra_args.get("perms", zinfo_perms)
 
       common.ZipWriteStr(zip_file, zinfo_or_arcname, contents, **extra_args)
       common.ZipClose(zip_file)
@@ -262,6 +265,10 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         "perms": 0o600,
         "compress_type": zipfile.ZIP_STORED,
     })
+    self._test_ZipWriteStr(zinfo, random_string, {
+        "perms": 0o000,
+        "compress_type": zipfile.ZIP_STORED,
+    })
 
   def test_ZipWriteStr_large_file(self):
     # zipfile.writestr() doesn't work when the str size is over 2GiB even with
@@ -274,9 +281,9 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     })
 
   def test_ZipWriteStr_resets_ZIP64_LIMIT(self):
-    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, "foo", "")
+    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, 'foo', b'')
     zinfo = zipfile.ZipInfo(filename="foo")
-    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, zinfo, "")
+    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, zinfo, b'')
 
   def test_bug21309935(self):
     zip_file = tempfile.NamedTemporaryFile(delete=False)
