@@ -22,6 +22,30 @@
       "revId": "711d696eb3af759c63c416b0224faeac1f6c04f1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1c4d6764_1c9b836d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-06-19T01:56:52Z",
+      "side": 1,
+      "message": "\u003e are there potential problems here when GSI replaces an OEM\u0027s /system since GSI isn\u0027t setting the props anymore?\n\nI expect it should be okay by 2 reasons:\n\n1. aosp_$arch has vendor partition because of emulator, so these system property are not in GSI on aosp_$arch from P. The patch fix the targets aosp_$arch_ab and gsi_$arch to sync with aosp_$arch.\n\n2. The number of these system properties is less than 10 (That\u0027s why we did not realize the problem before). I had reviewed them one-by-one. For the properties should be in the GSI, I move them to product partition (/system/product/build.prop).\n\nBTW, we found the problem is because ro.apex.updatable\u003dtrue, it should be in vendor but it is in GSI (aosp_$arch_ab) without the patch. And we need the patch for Q beta.",
+      "parentUuid": "017ede0c_c36b1023",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 42
+      },
+      "revId": "711d696eb3af759c63c416b0224faeac1f6c04f1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
