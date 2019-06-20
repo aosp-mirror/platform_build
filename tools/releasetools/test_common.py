@@ -41,7 +41,7 @@ def get_2gb_string():
   # Generate a long string with holes, e.g. 'xyz\x00abc\x00...'.
   for _ in range(0, size, step_size):
     yield os.urandom(block_size)
-    yield '\0' * (step_size - block_size)
+    yield b'\0' * (step_size - block_size)
 
 
 class CommonZipTest(test_utils.ReleaseToolsTestCase):
@@ -72,7 +72,7 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     # Verify the zip contents.
     entry = zip_file.open(arcname)
     sha1_hash = sha1()
-    for chunk in iter(lambda: entry.read(4 * MiB), ''):
+    for chunk in iter(lambda: entry.read(4 * MiB), b''):
       sha1_hash.update(chunk)
     self.assertEqual(expected_hash, sha1_hash.hexdigest())
     self.assertIsNone(zip_file.testzip())
@@ -97,8 +97,8 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     try:
       sha1_hash = sha1()
       for data in contents:
-        sha1_hash.update(data)
-        test_file.write(data)
+        sha1_hash.update(bytes(data))
+        test_file.write(bytes(data))
       test_file.close()
 
       expected_stat = os.stat(test_file_name)
@@ -136,8 +136,11 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         expected_mode = extra_args.get("perms", 0o644)
       else:
         arcname = zinfo_or_arcname.filename
-        expected_mode = extra_args.get("perms",
-                                       zinfo_or_arcname.external_attr >> 16)
+        if zinfo_or_arcname.external_attr:
+          zinfo_perms = zinfo_or_arcname.external_attr >> 16
+        else:
+          zinfo_perms = 0o600
+        expected_mode = extra_args.get("perms", zinfo_perms)
 
       common.ZipWriteStr(zip_file, zinfo_or_arcname, contents, **extra_args)
       common.ZipClose(zip_file)
@@ -262,6 +265,10 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
         "perms": 0o600,
         "compress_type": zipfile.ZIP_STORED,
     })
+    self._test_ZipWriteStr(zinfo, random_string, {
+        "perms": 0o000,
+        "compress_type": zipfile.ZIP_STORED,
+    })
 
   def test_ZipWriteStr_large_file(self):
     # zipfile.writestr() doesn't work when the str size is over 2GiB even with
@@ -274,9 +281,9 @@ class CommonZipTest(test_utils.ReleaseToolsTestCase):
     })
 
   def test_ZipWriteStr_resets_ZIP64_LIMIT(self):
-    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, "foo", "")
+    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, 'foo', b'')
     zinfo = zipfile.ZipInfo(filename="foo")
-    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, zinfo, "")
+    self._test_reset_ZIP64_LIMIT(self._test_ZipWriteStr, zinfo, b'')
 
   def test_bug21309935(self):
     zip_file = tempfile.NamedTemporaryFile(delete=False)
@@ -1151,7 +1158,7 @@ class FakeSparseImage(object):
 class DynamicPartitionsDifferenceTest(test_utils.ReleaseToolsTestCase):
   @staticmethod
   def get_op_list(output_path):
-    with zipfile.ZipFile(output_path, 'r') as output_zip:
+    with zipfile.ZipFile(output_path) as output_zip:
       with output_zip.open("dynamic_partitions_op_list") as op_list:
         return [line.strip() for line in op_list.readlines()
                 if not line.startswith("#")]
@@ -1176,12 +1183,12 @@ super_group_foo_partition_list=system vendor
 
     self.assertEqual(str(self.script).strip(), """
 assert(update_dynamic_partitions(package_extract_file("dynamic_partitions_op_list")));
-patch(vendor);
-verify(vendor);
-unmap_partition("vendor");
 patch(system);
 verify(system);
 unmap_partition("system");
+patch(vendor);
+verify(vendor);
+unmap_partition("vendor");
 """.strip())
 
     lines = self.get_op_list(self.output_path)
@@ -1229,7 +1236,8 @@ super_group_qux_group_size={group_qux_size}
     grown = lines.index("resize_group group_baz 4294967296")
     added = lines.index("add_group group_qux 1073741824")
 
-    self.assertLess(max(removed, shrunk) < min(grown, added),
+    self.assertLess(max(removed, shrunk),
+                    min(grown, added),
                     "ops that remove / shrink partitions must precede ops that "
                     "grow / add partitions")
 
