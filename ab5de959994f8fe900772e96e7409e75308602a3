@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "cc6a5434_57d5a356",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-06-20T17:49:19Z",
+      "side": 1,
+      "message": "I\u0027ll fix this.",
+      "parentUuid": "3cfa38a9_f79db919",
+      "revId": "ab5de959994f8fe900772e96e7409e75308602a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b8ac3d75_1f43ba85",
         "filename": "/COMMIT_MSG",
         "patchSetId": 6
@@ -30,6 +48,24 @@
       "writtenOn": "2019-06-19T23:50:10Z",
       "side": 1,
       "message": "I\u0027m not sure this is going to always be the way these are configured -- especially since system and product/product_services are currently tightly coupled.",
+      "revId": "ab5de959994f8fe900772e96e7409e75308602a3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8b00067c_eb4679e1",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-06-20T17:49:19Z",
+      "side": 1,
+      "message": "I should be more clear in my commit message. Any of paritions outside of system that aren\u0027t also explicitly called out into their own notice file. Product and product_services have their own notice file and will continue to.",
+      "parentUuid": "b8ac3d75_1f43ba85",
       "revId": "ab5de959994f8fe900772e96e7409e75308602a3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true

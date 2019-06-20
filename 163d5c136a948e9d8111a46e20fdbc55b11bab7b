@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "da87e2db_fa116340",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1211,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-06-20T17:49:19Z",
+      "side": 1,
+      "message": "I was trying to find a convenient way to ensure that the vendor image was going to be created. That is if a system image being built was going to have a corresponding vendor image to use. I thought this flag was useful for that. My goal here was to put only the system license in the system image and then put the remainder into vendor if such an image was going to be present.",
+      "parentUuid": "cbe90b4a_f1328a8d",
+      "range": {
+        "startLine": 1211,
+        "startChar": 6,
+        "endLine": 1211,
+        "endChar": 24
+      },
+      "revId": "163d5c136a948e9d8111a46e20fdbc55b11bab7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2af05ded_fa2d642e",
         "filename": "core/Makefile",
         "patchSetId": 7
@@ -36,6 +60,30 @@
       "writtenOn": "2019-06-20T09:53:40Z",
       "side": 1,
       "message": "can we be explicit about what goes into /vendor and have /system continue being the remainder?",
+      "range": {
+        "startLine": 1212,
+        "startChar": 0,
+        "endLine": 1212,
+        "endChar": 22
+      },
+      "revId": "163d5c136a948e9d8111a46e20fdbc55b11bab7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e3fffcd2_93d49fff",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1212,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-06-20T17:49:19Z",
+      "side": 1,
+      "message": "We can, though one issue we would like to solve here (and the reason we started looking into this) was to reduce the over-build in system-only builds. Currently system-only builds include modules meant for other partitions that won\u0027t be built at the same time (e.g. recovery modules), but since they are scooped in the license_reset list they get built. We thought add the remainder to the vendor image would get around this and have the added benefit that when vendor was built all the remaining licenses would be included. \n\nThis does assume that the remaining images that are explicitly called out will be built from the same source tree as the vendor image. That may not be a good assumption.",
+      "parentUuid": "2af05ded_fa2d642e",
       "range": {
         "startLine": 1212,
         "startChar": 0,
