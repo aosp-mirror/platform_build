@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "2cdf8574_1f0bec7a",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1211,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-06-20T18:13:10Z",
+      "side": 1,
+      "message": "BUILDING_VENDOR_IMAGE is the variable that indicates whether we\u0027re configured to build a vendor image. BOARD_USES_VENDORIMAGE is the variable that indicates that a vendor partition will exist on the final device (whether or not we\u0027re building it currently).\n\nThere are corresponding BUILDING_*_IMAGE variables for every partition, and BOARD_USES_* for some partitions (mostly the optional ones). There\u0027s nothing that enforces that we build the recovery partition with the same source tree as the vendor partition.",
+      "parentUuid": "da87e2db_fa116340",
+      "range": {
+        "startLine": 1211,
+        "startChar": 6,
+        "endLine": 1211,
+        "endChar": 24
+      },
+      "revId": "163d5c136a948e9d8111a46e20fdbc55b11bab7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2af05ded_fa2d642e",
         "filename": "core/Makefile",
         "patchSetId": 7
