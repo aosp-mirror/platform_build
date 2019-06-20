@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cbe90b4a_f1328a8d",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1211,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-06-20T09:53:40Z",
+      "side": 1,
+      "message": "does this behavior need to be gated on BOARD_VNDK_VERSION? What happens otherwise?",
+      "range": {
+        "startLine": 1211,
+        "startChar": 6,
+        "endLine": 1211,
+        "endChar": 24
+      },
+      "revId": "163d5c136a948e9d8111a46e20fdbc55b11bab7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2af05ded_fa2d642e",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1212,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-06-20T09:53:40Z",
+      "side": 1,
+      "message": "can we be explicit about what goes into /vendor and have /system continue being the remainder?",
+      "range": {
+        "startLine": 1212,
+        "startChar": 0,
+        "endLine": 1212,
+        "endChar": 22
+      },
+      "revId": "163d5c136a948e9d8111a46e20fdbc55b11bab7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
