@@ -22,6 +22,30 @@
       "revId": "efbd6603584496754ad5b7a6bd07210648afcbff",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7b7fa6d3_d219c4fd",
+        "filename": "core/soong_config.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 1060667
+      },
+      "writtenOn": "2019-06-20T18:05:26Z",
+      "side": 1,
+      "message": "Good to know. Thanks. Abandoning this.",
+      "parentUuid": "9d27804d_905507d2",
+      "range": {
+        "startLine": 188,
+        "startChar": 59,
+        "endLine": 188,
+        "endChar": 79
+      },
+      "revId": "efbd6603584496754ad5b7a6bd07210648afcbff",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
