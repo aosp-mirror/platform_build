@@ -1088,6 +1088,7 @@ ifneq ($(BOARD_BUILD_SYSTEM_ROOT_IMAGE),true)
 # Remove when b/63676296 is resolved.
 $(error Prebuilt bootimage is only supported for AB targets)
 endif
+INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 $(eval $(call copy-one-file,$(BOARD_PREBUILT_BOOTIMAGE),$(INSTALLED_BOOTIMAGE_TARGET)))
 else # BOARD_PREBUILT_BOOTIMAGE not defined
 INSTALLED_BOOTIMAGE_TARGET :=
