@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "70bbeb63_70807ed4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-06-20T16:20:57Z",
+      "side": 1,
+      "message": "More specifically, this is the case where BOARD_PREBUILT_BOOTIMAGE is set. We\u0027ve got plenty of products that set TARGET_NO_KERNEL, but don\u0027t set a BOARD_PREBUILT_BOOTIMAGE.",
+      "range": {
+        "startLine": 7,
+        "startChar": 42,
+        "endLine": 7,
+        "endChar": 66
+      },
+      "revId": "48d41a2fb1a580374ac23f994575cbd5c02491e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
