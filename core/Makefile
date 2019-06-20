@@ -1113,7 +1113,7 @@ endif # TARGET_NO_KERNEL
 # $(2) - Plain text output file
 # $(3) - HTML/XML output file
 # $(4) - File title
-# $(5) - Directory to use.  Notice files are all $(4)/src.  Other
+# $(5) - Directory to use.  Notice files are all $(5)/src.  Other
 #		 directories in there will be used for scratch
 # $(6) - Dependencies for the output files
 #
