@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "5494a732_24f02472",
+        "filename": "core/Makefile",
+        "patchSetId": 7
+      },
+      "lineNbr": 1211,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-06-20T18:34:01Z",
+      "side": 1,
+      "message": "Thanks. The BOARD_USES_VENDORIMAGE is much better. I don\u0027t believe the BUIDING_VENDOR_IMAGE flag will work here since the system image build will turn that flag off and at the time won\u0027t be sure if we need to include the licenses here or leave to the vendor image. \n\nI agree, but if the recovery image is built on its own (or that matter any partition that is not Settings-readable) then I\u0027m not sure how we get the appropriate licenses into notice file.",
+      "parentUuid": "2cdf8574_1f0bec7a",
+      "range": {
+        "startLine": 1211,
+        "startChar": 6,
+        "endLine": 1211,
+        "endChar": 24
+      },
+      "revId": "163d5c136a948e9d8111a46e20fdbc55b11bab7b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2af05ded_fa2d642e",
         "filename": "core/Makefile",
         "patchSetId": 7
