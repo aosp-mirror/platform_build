@@ -52,6 +52,24 @@
       "revId": "01b24f6b476592324b6f8893051f0665c9710bb7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5e0a9678_346cb36e",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2449,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-21T23:52:12Z",
+      "side": 1,
+      "message": "Done. Wasn\u0027t sure where exactly it should go in config.mk so please let me know if I should move it up or down.\n\nAlso, Steven is your comment \u0027KNOWN_INTERFACES\u0027 (without \u0027_HIDL_\u0027) intentional? Do you think this should be made more generic by removing HIDL, to perhaps allow AIDL interfaces in here?",
+      "parentUuid": "9b0951d3_9d01c0ff",
+      "revId": "01b24f6b476592324b6f8893051f0665c9710bb7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
