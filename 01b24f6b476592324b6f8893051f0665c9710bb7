@@ -16,6 +16,24 @@
       "revId": "01b24f6b476592324b6f8893051f0665c9710bb7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ee417b4e_6f6eb304",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2449,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-06-21T17:24:03Z",
+      "side": 1,
+      "message": "oh, oh, yeah, Daniel, since this is in a macro, I think $$(KNOWN_INTERFACES) should work and make the variable expand when copy-init-script-file-checked is used? Is that right, Colin?",
+      "parentUuid": "32a46b51_c4c17d53",
+      "revId": "01b24f6b476592324b6f8893051f0665c9710bb7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
