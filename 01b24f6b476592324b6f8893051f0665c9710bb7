@@ -34,6 +34,24 @@
       "revId": "01b24f6b476592324b6f8893051f0665c9710bb7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9b0951d3_9d01c0ff",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2449,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-06-21T17:41:08Z",
+      "side": 1,
+      "message": "If you put it in config.mk, make it:\nKNOWN_INTERFACES :\u003d $(TARGET_OUT_INTERMEDIATES)/PACKAGING/known_hidl_interfaces_intermediates/known_hidl_interfaces.txt\nthen you don\u0027t need to worry about evaluation order",
+      "parentUuid": "ee417b4e_6f6eb304",
+      "revId": "01b24f6b476592324b6f8893051f0665c9710bb7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
