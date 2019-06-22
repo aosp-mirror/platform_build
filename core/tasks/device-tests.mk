@@ -18,25 +18,33 @@
 device-tests-zip := $(PRODUCT_OUT)/device-tests.zip
 # Create an artifact to include a list of test config files in device-tests.
 device-tests-list-zip := $(PRODUCT_OUT)/device-tests_list.zip
+# Create an artifact to include all test config files in device-tests.
+device-tests-configs-zip := $(PRODUCT_OUT)/device-tests_configs.zip
 my_host_shared_lib_for_device_tests := $(call copy-many-files,$(COMPATIBILITY.device-tests.HOST_SHARED_LIBRARY.FILES))
-$(device-tests-zip) : .KATI_IMPLICIT_OUTPUTS := $(device-tests-list-zip)
+$(device-tests-zip) : .KATI_IMPLICIT_OUTPUTS := $(device-tests-list-zip) $(device-tests-configs-zip)
 $(device-tests-zip) : PRIVATE_device_tests_list := $(PRODUCT_OUT)/device-tests_list
 $(device-tests-zip) : PRIVATE_HOST_SHARED_LIBS := $(my_host_shared_lib_for_device_tests)
 $(device-tests-zip) : $(COMPATIBILITY.device-tests.FILES) $(my_host_shared_lib_for_device_tests) $(SOONG_ZIP)
 	echo $(sort $(COMPATIBILITY.device-tests.FILES)) | tr " " "\n" > $@.list
 	grep $(HOST_OUT_TESTCASES) $@.list > $@-host.list || true
+	grep -e .*\\.config$$ $@-host.list > $@-host-test-configs.list || true
 	$(hide) for shared_lib in $(PRIVATE_HOST_SHARED_LIBS); do \
 	  echo $$shared_lib >> $@-host.list; \
 	done
 	grep $(TARGET_OUT_TESTCASES) $@.list > $@-target.list || true
+	grep -e .*\\.config$$ $@-target.list > $@-target-test-configs.list || true
 	$(hide) $(SOONG_ZIP) -d -o $@ -P host -C $(HOST_OUT) -l $@-host.list -P target -C $(PRODUCT_OUT) -l $@-target.list
+	$(hide) $(SOONG_ZIP) -d -o $(device-tests-configs-zip) \
+	  -P host -C $(HOST_OUT) -l $@-host-test-configs.list \
+	  -P target -C $(PRODUCT_OUT) -l $@-target-test-configs.list
 	rm -f $(PRIVATE_device_tests_list)
-	$(hide) grep -e .*.config$$ $@-host.list | sed s%$(HOST_OUT)%host%g > $(PRIVATE_device_tests_list)
-	$(hide) grep -e .*.config$$ $@-target.list | sed s%$(PRODUCT_OUT)%target%g >> $(PRIVATE_device_tests_list)
+	$(hide) grep -e .*\\.config$$ $@-host.list | sed s%$(HOST_OUT)%host%g > $(PRIVATE_device_tests_list)
+	$(hide) grep -e .*\\.config$$ $@-target.list | sed s%$(PRODUCT_OUT)%target%g >> $(PRIVATE_device_tests_list)
 	$(hide) $(SOONG_ZIP) -d -o $(device-tests-list-zip) -C $(dir $@) -f $(PRIVATE_device_tests_list)
-	rm -f $@.list $@-host.list $@-target.list $(PRIVATE_device_tests_list)
+	rm -f $@.list $@-host.list $@-target.list $@-host-test-configs.list $@-target-test-configs.list \
+	  $(PRIVATE_device_tests_list)
 
 device-tests: $(device-tests-zip)
-$(call dist-for-goals, device-tests, $(device-tests-zip) $(device-tests-list-zip))
+$(call dist-for-goals, device-tests, $(device-tests-zip) $(device-tests-list-zip) $(device-tests-configs-zip))
 
 tests: device-tests
