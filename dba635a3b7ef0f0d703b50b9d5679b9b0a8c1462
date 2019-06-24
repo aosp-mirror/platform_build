@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b42ea5f2_5992d75e",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 1345,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-06-24T22:58:52Z",
+      "side": 1,
+      "message": "FYI: PS2 rebased to pick up the change from https://android-review.googlesource.com/c/platform/build/+/987339, which addresses the TH failure in PS1 (an issue uncovered by PS1).",
+      "range": {
+        "startLine": 1344,
+        "startChar": 0,
+        "endLine": 1345,
+        "endChar": 98
+      },
+      "revId": "dba635a3b7ef0f0d703b50b9d5679b9b0a8c1462",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
