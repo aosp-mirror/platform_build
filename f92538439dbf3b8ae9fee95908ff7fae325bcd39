@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "619fc57b_79f5368d",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-06-24T17:11:09Z",
+      "side": 1,
+      "message": "Although support is added above to generate the module load list, there is a case where we need to generate two module load lists on a single partition - recovery used for boot. module-load-list-copy-paths and build-image-module-load-list are used to generate the extra file in this case.",
+      "revId": "f92538439dbf3b8ae9fee95908ff7fae325bcd39",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
