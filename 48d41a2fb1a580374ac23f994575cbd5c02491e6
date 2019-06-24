@@ -22,6 +22,30 @@
       "revId": "48d41a2fb1a580374ac23f994575cbd5c02491e6",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "37e21eab_d2aaddba",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-06-24T00:48:56Z",
+      "side": 1,
+      "message": "I updated commit message as you mentioned. Like you said this is quite rare case but we have faced this issue from our project.",
+      "parentUuid": "70bbeb63_70807ed4",
+      "range": {
+        "startLine": 7,
+        "startChar": 42,
+        "endLine": 7,
+        "endChar": 66
+      },
+      "revId": "48d41a2fb1a580374ac23f994575cbd5c02491e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
