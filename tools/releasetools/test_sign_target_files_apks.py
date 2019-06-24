@@ -136,7 +136,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       ReplaceVerityKeyId(input_zip, output_zip, cert_file)
 
     with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE1, output_zip.read('BOOT/cmdline'))
+      self.assertEqual(BOOT_CMDLINE1, output_zip.read('BOOT/cmdline').decode())
 
     # Test with the second certificate.
     cert_file = os.path.join(self.testdata_dir, 'testkey.x509.pem')
@@ -146,7 +146,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       ReplaceVerityKeyId(input_zip, output_zip, cert_file)
 
     with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE2, output_zip.read('BOOT/cmdline'))
+      self.assertEqual(BOOT_CMDLINE2, output_zip.read('BOOT/cmdline').decode())
 
   def test_ReplaceVerityKeyId_no_veritykeyid(self):
     BOOT_CMDLINE = (
@@ -164,7 +164,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       ReplaceVerityKeyId(input_zip, output_zip, None)
 
     with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE, output_zip.read('BOOT/cmdline'))
+      self.assertEqual(BOOT_CMDLINE, output_zip.read('BOOT/cmdline').decode())
 
   def test_ReplaceCerts(self):
     cert1_path = os.path.join(self.testdata_dir, 'platform.x509.pem')

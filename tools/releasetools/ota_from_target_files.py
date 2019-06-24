@@ -1938,7 +1938,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   target_file = common.MakeTempFile(prefix="targetfiles-", suffix=".zip")
   shutil.copyfile(input_file, target_file)
 
-  with zipfile.ZipFile(input_file, 'r') as input_zip:
+  with zipfile.ZipFile(input_file) as input_zip:
     namelist = input_zip.namelist()
 
   input_tmp = common.UnzipTemp(input_file, RETROFIT_DAP_UNZIP_PATTERN)
