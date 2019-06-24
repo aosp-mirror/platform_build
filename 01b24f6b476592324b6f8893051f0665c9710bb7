@@ -70,6 +70,24 @@
       "revId": "01b24f6b476592324b6f8893051f0665c9710bb7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f0f158fb_4f04e3c9",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 2449,
+      "author": {
+        "id": 1120458
+      },
+      "writtenOn": "2019-06-24T22:17:51Z",
+      "side": 1,
+      "message": "Nope, it was accidental. We should distinguish them. Sorry",
+      "parentUuid": "5e0a9678_346cb36e",
+      "revId": "01b24f6b476592324b6f8893051f0665c9710bb7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
