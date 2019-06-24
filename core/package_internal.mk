@@ -328,7 +328,7 @@ my_split_suffixes := $(subst $(comma),_,$(my_apk_split_configs))
 built_apk_splits := $(foreach s,$(my_split_suffixes),$(intermediates)/package_$(s).apk)
 endif
 
-$(R_file_stamp) $(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
+$(R_file_stamp) $(my_res_package): PRIVATE_AAPT_FLAGS := $(filter-out --legacy,$(LOCAL_AAPT_FLAGS))
 $(R_file_stamp) $(my_res_package): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_AAPT_CHARACTERISTICS)
 $(R_file_stamp) $(my_res_package): PRIVATE_MANIFEST_PACKAGE_NAME := $(LOCAL_MANIFEST_PACKAGE_NAME)
 $(R_file_stamp) $(my_res_package): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_MANIFEST_INSTRUMENTATION_FOR)
@@ -346,7 +346,6 @@ my_asset_dirs := $(LOCAL_ASSET_DIR)
 my_full_asset_paths := $(all_assets)
 
 # Add AAPT2 link specific flags.
-$(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
 ifndef LOCAL_AAPT_NAMESPACES
   $(my_res_package): PRIVATE_AAPT_FLAGS += --no-static-lib-packages
 endif
@@ -415,14 +414,6 @@ $(LOCAL_INTERMEDIATE_TARGETS): \
     PRIVATE_AAPT_INCLUDES := $(all_library_res_package_exports)
 
 $(my_res_package) : $(all_library_res_package_export_deps)
-
-# These four are set above for $(R_stamp_file) and $(my_res_package), but
-# $(LOCAL_BUILT_MODULE) is not set before java.mk, so they have to be set again
-# here.
-$(LOCAL_BUILT_MODULE): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_AAPT_CHARACTERISTICS)
-$(LOCAL_BUILT_MODULE): PRIVATE_MANIFEST_PACKAGE_NAME := $(LOCAL_MANIFEST_PACKAGE_NAME)
-$(LOCAL_BUILT_MODULE): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_MANIFEST_INSTRUMENTATION_FOR)
 
 ifneq ($(full_classes_jar),)
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
