@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "81ffc267_245d8866",
+        "filename": "tools/warn.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-06-24T20:04:07Z",
+      "side": 1,
+      "message": "why not use:\n\n from __future__ import print_function",
+      "revId": "9ff974e9d1b7d4556180ca0660fabc5e089feb8d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
