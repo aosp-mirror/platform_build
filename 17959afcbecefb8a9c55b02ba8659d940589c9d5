@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "eed00f6c_e2d604f2",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2942,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-06-24T21:48:25Z",
+      "side": 1,
+      "message": "It would be better to write this file in Soong using a rule in a Singleton and set the path using ctx.Strict in a MakeVarsProvider",
+      "revId": "17959afcbecefb8a9c55b02ba8659d940589c9d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
