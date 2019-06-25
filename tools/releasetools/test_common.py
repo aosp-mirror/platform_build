@@ -1254,10 +1254,10 @@ super_group_qux_group_size={group_qux_size}
 
   def test_incremental(self):
     source_info = common.LoadDictionaryFromLines("""
-dynamic_partition_list=system vendor product product_services
+dynamic_partition_list=system vendor product system_ext
 super_partition_groups=group_foo
 super_group_foo_group_size={group_foo_size}
-super_group_foo_partition_list=system vendor product product_services
+super_group_foo_partition_list=system vendor product system_ext
 """.format(group_foo_size=4 * GiB).split("\n"))
     target_info = common.LoadDictionaryFromLines("""
 dynamic_partition_list=system vendor product odm
@@ -1274,7 +1274,7 @@ super_group_bar_partition_list=product
                                        src=FakeSparseImage(1024 * MiB)),
                    MockBlockDifference("product", FakeSparseImage(1024 * MiB),
                                        src=FakeSparseImage(1024 * MiB)),
-                   MockBlockDifference("product_services", None,
+                   MockBlockDifference("system_ext", None,
                                        src=FakeSparseImage(1024 * MiB)),
                    MockBlockDifference("odm", FakeSparseImage(1024 * MiB),
                                        src=None)]
@@ -1297,11 +1297,11 @@ super_group_bar_partition_list=product
       self.assertLess(patch_idx, verify_idx,
                       "Should verify {} after patching".format(p))
 
-    self.assertNotIn("patch(product_services);", self.script.lines)
+    self.assertNotIn("patch(system_ext);", self.script.lines)
 
     lines = self.get_op_list(self.output_path)
 
-    remove = lines.index("remove product_services")
+    remove = lines.index("remove system_ext")
     move_product_out = lines.index("move product default")
     shrink = lines.index("resize vendor 536870912")
     shrink_group = lines.index("resize_group group_foo 3221225472")

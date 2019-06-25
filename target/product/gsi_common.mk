@@ -55,10 +55,10 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     system/etc/init/config/skip_mount.cfg \
     system/etc/init/init.gsi.rc \
 
-# Exclude all files under system/product and system/product_services
+# Exclude all files under system/product and system/system_ext
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
     system/product/% \
-    system/product_services/%
+    system/system_ext/%
 
 
 # Split selinux policy

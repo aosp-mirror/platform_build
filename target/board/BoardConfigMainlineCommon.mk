@@ -8,7 +8,8 @@ TARGET_NO_RECOVERY := true
 
 TARGET_USERIMAGES_USE_EXT4 := true
 
-# Mainline devices must have /vendor and /product partitions.
+# Mainline devices must have /system_ext, /vendor and /product partitions.
+TARGET_COPY_OUT_SYSTEM_EXT := system_ext
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_PRODUCT := product
 

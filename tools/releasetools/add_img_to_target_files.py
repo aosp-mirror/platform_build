@@ -222,20 +222,20 @@ def AddProduct(output_zip):
   return img.name
 
 
-def AddProductServices(output_zip):
-  """Turn the contents of PRODUCT_SERVICES into a product_services image and
-  store it in output_zip."""
+def AddSystemExt(output_zip):
+  """Turn the contents of SYSTEM_EXT into a system_ext image and store it in
+  output_zip."""
 
   img = OutputFile(output_zip, OPTIONS.input_tmp, "IMAGES",
-                   "product_services.img")
+                   "system_ext.img")
   if os.path.exists(img.name):
-    logger.info("product_services.img already exists; no need to rebuild...")
+    logger.info("system_ext.img already exists; no need to rebuild...")
     return img.name
 
   block_list = OutputFile(
-      output_zip, OPTIONS.input_tmp, "IMAGES", "product_services.map")
+      output_zip, OPTIONS.input_tmp, "IMAGES", "system_ext.map")
   CreateImage(
-      OPTIONS.input_tmp, OPTIONS.info_dict, "product_services", img,
+      OPTIONS.input_tmp, OPTIONS.info_dict, "system_ext", img,
       block_list=block_list)
   return img.name
 
@@ -734,10 +734,10 @@ def AddImagesToTargetFiles(filename):
   has_recovery = OPTIONS.info_dict.get("no_recovery") != "true"
   has_boot = OPTIONS.info_dict.get("no_boot") != "true"
 
-  # {vendor,odm,product,product_services}.img are unlike system.img or
+  # {vendor,odm,product,system_ext}.img are unlike system.img or
   # system_other.img. Because it could be built from source, or dropped into
   # target_files.zip as a prebuilt blob. We consider either of them as
-  # {vendor,product,product_services}.img being available, which could be
+  # {vendor,product,system_ext}.img being available, which could be
   # used when generating vbmeta.img for AVB.
   has_vendor = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "VENDOR")) or
                 os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
@@ -748,11 +748,11 @@ def AddImagesToTargetFiles(filename):
   has_product = (os.path.isdir(os.path.join(OPTIONS.input_tmp, "PRODUCT")) or
                  os.path.exists(os.path.join(OPTIONS.input_tmp, "IMAGES",
                                              "product.img")))
-  has_product_services = (os.path.isdir(os.path.join(OPTIONS.input_tmp,
-                                                     "PRODUCT_SERVICES")) or
-                          os.path.exists(os.path.join(OPTIONS.input_tmp,
-                                                      "IMAGES",
-                                                      "product_services.img")))
+  has_system_ext = (os.path.isdir(os.path.join(OPTIONS.input_tmp,
+                                               "SYSTEM_EXT")) or
+                    os.path.exists(os.path.join(OPTIONS.input_tmp,
+                                                "IMAGES",
+                                                "system_ext.img")))
   has_system = os.path.isdir(os.path.join(OPTIONS.input_tmp, "SYSTEM"))
   has_system_other = os.path.isdir(os.path.join(OPTIONS.input_tmp,
                                                 "SYSTEM_OTHER"))
@@ -833,9 +833,9 @@ def AddImagesToTargetFiles(filename):
     banner("product")
     partitions['product'] = AddProduct(output_zip)
 
-  if has_product_services:
-    banner("product_services")
-    partitions['product_services'] = AddProductServices(output_zip)
+  if has_system_ext:
+    banner("system_ext")
+    partitions['system_ext'] = AddSystemExt(output_zip)
 
   if has_odm:
     banner("odm")
