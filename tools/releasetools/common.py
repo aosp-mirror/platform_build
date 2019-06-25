@@ -14,6 +14,7 @@
 
 from __future__ import print_function
 
+import base64
 import collections
 import copy
 import errno
@@ -30,7 +31,6 @@ import platform
 import re
 import shlex
 import shutil
-import string
 import subprocess
 import sys
 import tempfile
@@ -190,6 +190,8 @@ def Run(args, verbose=None, **kwargs):
     kwargs: Any additional args to be passed to subprocess.Popen(), such as env,
         stdin, etc. stdout and stderr will default to subprocess.PIPE and
         subprocess.STDOUT respectively unless caller specifies any of them.
+        universal_newlines will default to True, as most of the users in
+        releasetools expect string output.
 
   Returns:
     A subprocess.Popen object.
@@ -197,6 +199,8 @@ def Run(args, verbose=None, **kwargs):
   if 'stdout' not in kwargs and 'stderr' not in kwargs:
     kwargs['stdout'] = subprocess.PIPE
     kwargs['stderr'] = subprocess.STDOUT
+  if 'universal_newlines' not in kwargs:
+    kwargs['universal_newlines'] = True
   # Don't log any if caller explicitly says so.
   if verbose != False:
     logger.info("  Running: \"%s\"", " ".join(args))
@@ -314,7 +318,7 @@ def LoadInfoDict(input_file, repacking=False):
 
   def read_helper(fn):
     if isinstance(input_file, zipfile.ZipFile):
-      return input_file.read(fn)
+      return input_file.read(fn).decode()
     else:
       path = os.path.join(input_file, *fn.split("/"))
       try:
@@ -526,7 +530,7 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
   # system. Other areas assume system is always at "/system" so point /system
   # at /.
   if system_root_image:
-    assert not d.has_key("/system") and d.has_key("/")
+    assert '/system' not in d and '/' in d
     d["/system"] = d["/"]
   return d
 
@@ -953,7 +957,7 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
     # filename listed in system.map may contain an additional leading slash
     # (i.e. "//system/framework/am.jar"). Using lstrip to get consistent
     # results.
-    arcname = string.replace(entry, which, which.upper(), 1).lstrip('/')
+    arcname = entry.replace(which, which.upper(), 1).lstrip('/')
 
     # Special handling another case, where files not under /system
     # (e.g. "/sbin/charger") are packed under ROOT/ in a target_files.zip.
@@ -1223,7 +1227,7 @@ def ReadApkCerts(tf_zip):
     if basename:
       installed_files.add(basename)
 
-  for line in tf_zip.read("META/apkcerts.txt").split("\n"):
+  for line in tf_zip.read('META/apkcerts.txt').decode().split('\n'):
     line = line.strip()
     if not line:
       continue
@@ -1433,6 +1437,8 @@ class PasswordManager(object):
 
       if not first:
         print("key file %s still missing some passwords." % (self.pwfile,))
+        if sys.version_info[0] >= 3:
+          raw_input = input  # pylint: disable=redefined-builtin
         answer = raw_input("try to edit again? [y]> ").strip()
         if answer and answer[0] not in 'yY':
           raise RuntimeError("key passwords unavailable")
@@ -2185,7 +2191,7 @@ def ParseCertificate(data):
   This gives the same result as `openssl x509 -in <filename> -outform DER`.
 
   Returns:
-    The decoded certificate string.
+    The decoded certificate bytes.
   """
   cert_buffer = []
   save = False
@@ -2196,7 +2202,7 @@ def ParseCertificate(data):
       cert_buffer.append(line)
     if "--BEGIN CERTIFICATE--" in line:
       save = True
-  cert = "".join(cert_buffer).decode('base64')
+  cert = base64.b64decode("".join(cert_buffer))
   return cert
 
 
@@ -2338,7 +2344,7 @@ fi
 
   logger.info("putting script in %s", sh_location)
 
-  output_sink(sh_location, sh)
+  output_sink(sh_location, sh.encode())
 
 
 class DynamicPartitionUpdate(object):
