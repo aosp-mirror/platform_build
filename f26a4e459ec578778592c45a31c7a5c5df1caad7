@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8ee7e1ef_1d8701dd",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-06-25T00:24:13Z",
+      "side": 0,
+      "message": "this makes me think if the ExtractPublicKey should return bytes. Since we seem to write bytes in its usages.",
+      "range": {
+        "startLine": 583,
+        "startChar": 48,
+        "endLine": 583,
+        "endChar": 64
+      },
+      "revId": "f26a4e459ec578778592c45a31c7a5c5df1caad7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

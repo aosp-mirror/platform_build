@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8163e183_c39104cd",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 2345,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-06-25T00:24:13Z",
+      "side": 1,
+      "message": "this one should still be location?",
+      "range": {
+        "startLine": 2345,
+        "startChar": 38,
+        "endLine": 2345,
+        "endChar": 40
+      },
+      "revId": "141bf603ffd0a3a4e119b1d73da97bcc22d59ac7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
