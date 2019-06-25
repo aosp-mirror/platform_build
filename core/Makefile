@@ -4264,14 +4264,14 @@ ifeq ($(build_ota_package),true)
 # $(1): output file
 # $(2): additional args
 define build-ota-package-target
-PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH MKBOOTIMG=$(MKBOOTIMG) \
-   build/make/tools/releasetools/ota_from_target_files -v \
-   --block \
-   --extracted_input_target_files $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE)) \
-   -p $(HOST_OUT) \
-   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
-   $(2) \
-   $(BUILT_TARGET_FILES_PACKAGE) $(1)
+PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
+    build/make/tools/releasetools/ota_from_target_files \
+    --verbose \
+    --extracted_input_target_files $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE)) \
+    --path $(HOST_OUT) \
+    $(if $(OEM_OTA_CONFIG), --oem_settings $(OEM_OTA_CONFIG)) \
+    $(2) \
+    $(BUILT_TARGET_FILES_PACKAGE) $(1)
 endef
 
 name := $(TARGET_PRODUCT)
