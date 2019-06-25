@@ -832,6 +832,9 @@ endif
 $(call update-host-shared-libs-deps-for-suites)
 ifdef HOST_CROSS_OS
 $(call resolve-shared-libs-depes,HOST_CROSS_,,true)
+ifdef HOST_CROSS_2ND_ARCH
+$(call resolve-shared-libs-depes,HOST_CROSS_,true,true)
+endif
 endif
 
 # Pass the shared libraries dependencies to prebuilt ELF file check.
