@@ -46,6 +46,30 @@
       "revId": "f26a4e459ec578778592c45a31c7a5c5df1caad7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "da5d8f41_9202f429",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-06-25T07:02:01Z",
+      "side": 0,
+      "message": "Yeah, this one will be changed then https://cs.corp.google.com/android/build/make/tools/releasetools/check_ota_package_signature.py?l\u003d159",
+      "parentUuid": "e6484af4_4ae88906",
+      "range": {
+        "startLine": 583,
+        "startChar": 48,
+        "endLine": 583,
+        "endChar": 64
+      },
+      "revId": "f26a4e459ec578778592c45a31c7a5c5df1caad7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
