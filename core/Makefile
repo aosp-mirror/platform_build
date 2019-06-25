@@ -3615,6 +3615,7 @@ INTERNAL_OTATOOLS_MODULES := \
   imgdiff \
   libconscrypt_openjdk_jni \
   lpmake \
+  lpunpack \
   make_f2fs \
   minigzip \
   mkbootfs \
