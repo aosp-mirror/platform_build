@@ -70,6 +70,30 @@
       "revId": "f26a4e459ec578778592c45a31c7a5c5df1caad7",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94dfca8d_3b3cdae4",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 583,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-06-25T16:35:24Z",
+      "side": 0,
+      "message": "Ah I see. CL coming shortly",
+      "parentUuid": "da5d8f41_9202f429",
+      "range": {
+        "startLine": 583,
+        "startChar": 48,
+        "endLine": 583,
+        "endChar": 64
+      },
+      "revId": "f26a4e459ec578778592c45a31c7a5c5df1caad7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
