@@ -59,9 +59,9 @@ def SignApexPayload(payload_file, payload_key_path, payload_key_name, algorithm,
   try:
     common.RunAndCheckOutput(cmd)
   except common.ExternalError as e:
-    raise ApexSigningError, \
+    raise ApexSigningError(
         'Failed to sign APEX payload {} with {}:\n{}'.format(
-            payload_file, payload_key_path, e), sys.exc_info()[2]
+            payload_file, payload_key_path, e))
 
   # Verify the signed payload image with specified public key.
   logger.info('Verifying %s', payload_file)
@@ -75,9 +75,9 @@ def VerifyApexPayload(payload_file, payload_key):
   try:
     common.RunAndCheckOutput(cmd)
   except common.ExternalError as e:
-    raise ApexSigningError, \
+    raise ApexSigningError(
         'Failed to validate payload signing for {} with {}:\n{}'.format(
-            payload_file, payload_key, e), sys.exc_info()[2]
+            payload_file, payload_key, e))
 
 
 def ParseApexPayloadInfo(payload_path):
@@ -100,9 +100,9 @@ def ParseApexPayloadInfo(payload_path):
   try:
     output = common.RunAndCheckOutput(cmd)
   except common.ExternalError as e:
-    raise ApexInfoError, \
+    raise ApexInfoError(
         'Failed to get APEX payload info for {}:\n{}'.format(
-            payload_path, e), sys.exc_info()[2]
+            payload_path, e))
 
   # Extract the Algorithm / Salt / Prop info from payload (i.e. an image signed
   # with avbtool). For example,
