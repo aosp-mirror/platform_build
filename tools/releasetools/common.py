@@ -455,6 +455,13 @@ def LoadBuildProp(read_helper, prop_file):
   return LoadDictionaryFromLines(data.split("\n"))
 
 
+def LoadDictionaryFromFile(file_path):
+  with open(file_path) as f:
+    lines = list(f.read().splitlines())
+
+  return LoadDictionaryFromLines(lines)
+
+
 def LoadDictionaryFromLines(lines):
   d = {}
   for line in lines:
