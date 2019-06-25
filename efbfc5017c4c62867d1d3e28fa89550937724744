@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4bc5c047_2d8ae9a5",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-06-25T14:29:35Z",
+      "side": 1,
+      "message": "nit: two blank lines above",
+      "range": {
+        "startLine": 457,
+        "startChar": 0,
+        "endLine": 457,
+        "endChar": 3
+      },
+      "revId": "efbfc5017c4c62867d1d3e28fa89550937724744",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3095358d_69a6b0a4",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-06-25T14:29:35Z",
+      "side": 1,
+      "message": "this \"read_helper\" doesn\u0027t help anything. just read directly",
+      "range": {
+        "startLine": 458,
+        "startChar": 6,
+        "endLine": 458,
+        "endChar": 17
+      },
+      "revId": "efbfc5017c4c62867d1d3e28fa89550937724744",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3adfdd98_482cfde8",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 850,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-06-25T14:29:35Z",
+      "side": 1,
+      "message": "nit: two more space (run `pylint --rcfile\u003dpylintrc merge_target_files.py`)",
+      "range": {
+        "startLine": 850,
+        "startChar": 2,
+        "endLine": 850,
+        "endChar": 4
+      },
+      "revId": "efbfc5017c4c62867d1d3e28fa89550937724744",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
