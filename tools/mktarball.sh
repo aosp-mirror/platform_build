@@ -37,7 +37,7 @@ for f in ${subdirs} ${files} ; do
 #    echo "$f: dir: $is_dir curr: $curr_perms uid: $new_uid gid: $new_gid "\
 #         "perms: $new_perms"
     tar --no-recursion --numeric-owner --owner $new_uid \
-        --group $new_gid --mode $new_perms -p -rf ${target_tar} ${f}
+        --group $new_gid --mode $new_perms -rf ${target_tar} ${f}
 done
 
 if [ $? -eq 0 ] ; then
