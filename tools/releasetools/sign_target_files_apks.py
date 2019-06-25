@@ -488,23 +488,33 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       continue
 
     # System properties.
-    elif filename in ("SYSTEM/build.prop",
-                      "VENDOR/build.prop",
-                      "SYSTEM/vendor/build.prop",
-                      "ODM/build.prop",  # legacy
-                      "ODM/etc/build.prop",
-                      "VENDOR/odm/build.prop",  # legacy
-                      "VENDOR/odm/etc/build.prop",
-                      "PRODUCT/build.prop",
-                      "SYSTEM/product/build.prop",
-                      "PRODUCT_SERVICES/build.prop",
-                      "SYSTEM/product_services/build.prop",
-                      "SYSTEM/etc/prop.default",
-                      "BOOT/RAMDISK/prop.default",
-                      "BOOT/RAMDISK/default.prop",  # legacy
-                      "ROOT/default.prop",  # legacy
-                      "RECOVERY/RAMDISK/prop.default",
-                      "RECOVERY/RAMDISK/default.prop"):  # legacy
+    elif filename in (
+        "SYSTEM/build.prop",
+
+        "VENDOR/build.prop",
+        "SYSTEM/vendor/build.prop",
+
+        "ODM/etc/build.prop",
+        "VENDOR/odm/etc/build.prop",
+
+        "PRODUCT/build.prop",
+        "SYSTEM/product/build.prop",
+
+        "PRODUCT_SERVICES/build.prop",
+        "SYSTEM/product_services/build.prop",
+
+        "SYSTEM/etc/prop.default",
+        "BOOT/RAMDISK/prop.default",
+        "RECOVERY/RAMDISK/prop.default",
+
+        # ROOT/default.prop is a legacy path, but may still exist for upgrading
+        # devices that don't support `property_overrides_split_enabled`.
+        "ROOT/default.prop",
+
+        # RECOVERY/RAMDISK/default.prop is a legacy path, but will always exist
+        # as a symlink in the current code. So it's a no-op here. Keeping the
+        # path here for clarity.
+        "RECOVERY/RAMDISK/default.prop"):
       print("Rewriting %s:" % (filename,))
       if stat.S_ISLNK(info.external_attr >> 16):
         new_data = data
