@@ -39,6 +39,9 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 # Enable system property split for Treble
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 
+# Include stats logging code in LMKD
+TARGET_LMKD_STATS_LOG := true
+
 # Generate an APEX image for experiment b/119800099.
 DEXPREOPT_GENERATE_APEX_IMAGE := true
 
