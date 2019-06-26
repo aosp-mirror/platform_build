@@ -140,6 +140,30 @@
       "revId": "efbfc5017c4c62867d1d3e28fa89550937724744",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6f592932_98884307",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 850,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-06-26T06:08:18Z",
+      "side": 1,
+      "message": "yeah, i fully agree that configuring the linter as repo hook would be helpful. but the following two items from https://android.googlesource.com/platform/tools/repohooks/+/refs/heads/master/README.md#todo_limitations seem to be the major blockers right now:\n\n * pylint should support per-directory pylintrc files.\n * We need to add pylint tool to the AOSP manifest and use that local copy instead of relying on the version that is in $PATH.\n\nplus only one PREUPLOAD is supported per project.\n\nSo having that PREUPLOAD hook will apply to all the py files under build/make (unless we fix per-dir support, which seems doable), and will require CL committers to install pylint locally until pulling the linter into AOSP (not sure about the right team to push this one forward).",
+      "parentUuid": "6645f4fe_b51eb047",
+      "range": {
+        "startLine": 850,
+        "startChar": 2,
+        "endLine": 850,
+        "endChar": 4
+      },
+      "revId": "efbfc5017c4c62867d1d3e28fa89550937724744",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
