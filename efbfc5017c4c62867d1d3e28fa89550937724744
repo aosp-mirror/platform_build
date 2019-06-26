@@ -164,6 +164,30 @@
       "revId": "efbfc5017c4c62867d1d3e28fa89550937724744",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c51dfb46_641c2d4c",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 850,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-06-26T07:35:13Z",
+      "side": 1,
+      "message": "Thanks for the information.\n\nI thought pylint works with own (not in $PATH) version from AOSP based on my experience, but maybe not perfect.\n\nFor now I cannot find any clear way to enforce pylint. I thought about include pylint or autopep8 in build time, but seems it would be not easy either.",
+      "parentUuid": "6f592932_98884307",
+      "range": {
+        "startLine": 850,
+        "startChar": 2,
+        "endLine": 850,
+        "endChar": 4
+      },
+      "revId": "efbfc5017c4c62867d1d3e28fa89550937724744",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
