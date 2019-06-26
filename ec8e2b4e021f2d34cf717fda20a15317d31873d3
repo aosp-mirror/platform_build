@@ -22,6 +22,30 @@
       "revId": "ec8e2b4e021f2d34cf717fda20a15317d31873d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e294e190_881f18aa",
+        "filename": "tools/releasetools/check_ota_package_signature.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-06-26T06:55:30Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "0d96c752_5825dc7c",
+      "range": {
+        "startLine": 173,
+        "startChar": 19,
+        "endLine": 173,
+        "endChar": 29
+      },
+      "revId": "ec8e2b4e021f2d34cf717fda20a15317d31873d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
