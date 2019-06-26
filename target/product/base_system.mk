@@ -187,6 +187,7 @@ PRODUCT_PACKAGES += \
     libwifi-service \
     libwilhelm \
     linker \
+    linkerconfig \
     lmkd \
     locksettings \
     logcat \
