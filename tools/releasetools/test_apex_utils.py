@@ -43,8 +43,9 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
   def test_ParseApexPayloadInfo(self):
     payload_file = self._GetTestPayload()
     apex_utils.SignApexPayload(
-        payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048', self.SALT)
-    payload_info = apex_utils.ParseApexPayloadInfo(payload_file)
+        'avbtool', payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048',
+        self.SALT)
+    payload_info = apex_utils.ParseApexPayloadInfo('avbtool', payload_file)
     self.assertEqual('SHA256_RSA2048', payload_info['Algorithm'])
     self.assertEqual(self.SALT, payload_info['Salt'])
     self.assertEqual('testkey', payload_info['apex.key'])
@@ -53,8 +54,9 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
   def test_SignApexPayload(self):
     payload_file = self._GetTestPayload()
     apex_utils.SignApexPayload(
-        payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048', self.SALT)
-    apex_utils.VerifyApexPayload(payload_file, self.payload_key)
+        'avbtool', payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048',
+        self.SALT)
+    apex_utils.VerifyApexPayload('avbtool', payload_file, self.payload_key)
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_SignApexPayload_withSignerHelper(self):
@@ -64,17 +66,19 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
     payload_signer_args = '--signing_helper_with_files {}'.format(
         signing_helper)
     apex_utils.SignApexPayload(
+        'avbtool',
         payload_file,
         self.payload_key,
         'testkey', 'SHA256_RSA2048', self.SALT,
         payload_signer_args)
-    apex_utils.VerifyApexPayload(payload_file, self.payload_key)
+    apex_utils.VerifyApexPayload('avbtool', payload_file, self.payload_key)
 
   @test_utils.SkipIfExternalToolsUnavailable()
   def test_SignApexPayload_invalidKey(self):
     self.assertRaises(
         apex_utils.ApexSigningError,
         apex_utils.SignApexPayload,
+        'avbtool',
         self._GetTestPayload(),
         os.path.join(self.testdata_dir, 'testkey.x509.pem'),
         'testkey',
@@ -85,10 +89,12 @@ class ApexUtilsTest(test_utils.ReleaseToolsTestCase):
   def test_VerifyApexPayload_wrongKey(self):
     payload_file = self._GetTestPayload()
     apex_utils.SignApexPayload(
-        payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048', self.SALT)
-    apex_utils.VerifyApexPayload(payload_file, self.payload_key)
+        'avbtool', payload_file, self.payload_key, 'testkey', 'SHA256_RSA2048',
+        self.SALT)
+    apex_utils.VerifyApexPayload('avbtool', payload_file, self.payload_key)
     self.assertRaises(
         apex_utils.ApexSigningError,
         apex_utils.VerifyApexPayload,
+        'avbtool',
         payload_file,
         os.path.join(self.testdata_dir, 'testkey_with_passwd.key'))
