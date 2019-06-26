@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1959a2d8_8c44f6a8",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 695,
+      "author": {
+        "id": 1131915
+      },
+      "writtenOn": "2019-06-26T20:54:55Z",
+      "side": 1,
+      "message": "This shouldn\u0027t be necessary, but for a reason I don\u0027t currently understand, when the variables here are toggled between being empty and non-empty, the modules.load/modules.load.recovery files stop being generated. A clean build fixes it, and adding this also fixes it.",
+      "revId": "3277d05f02297c0cdc67c5bb7e76088d376e59e6",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
