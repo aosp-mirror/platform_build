@@ -25,4 +25,5 @@ PRODUCT_BRAND := generic
 PRODUCT_DEVICE := generic
 PRODUCT_NAME := generic
 
-$(call enforce-product-packages-exist,)
+whitelist := product_manifest.xml
+$(call enforce-product-packages-exist,$(whitelist))
