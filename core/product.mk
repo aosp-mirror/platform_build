@@ -541,10 +541,15 @@ $(call readonly-variables,$(_readonly_late_variables))
 endef
 
 #
-# Strip the variables in _product_strip_var_list
+# Strip the variables in _product_var_list and a few build-system
+# internal variables, and assign the ones for the current product
+# to a shorthand that is more convenient to read from elsewhere.
 #
 define strip-product-vars
-$(foreach v,$(_product_var_list), \
+$(foreach v,\
+  $(_product_var_list) \
+    PRODUCT_ENFORCE_PACKAGES_EXIST \
+    PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST, \
   $(eval $(v) := $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).$(v)))) \
 )
 endef
