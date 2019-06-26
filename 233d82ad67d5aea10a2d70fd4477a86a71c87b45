@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "555b31ce_cc8e8f19",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 461,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-06-26T03:56:37Z",
+      "side": 1,
+      "message": "nit: reduce the indentation level for this line",
+      "range": {
+        "startLine": 461,
+        "startChar": 2,
+        "endLine": 461,
+        "endChar": 4
+      },
+      "revId": "233d82ad67d5aea10a2d70fd4477a86a71c87b45",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
