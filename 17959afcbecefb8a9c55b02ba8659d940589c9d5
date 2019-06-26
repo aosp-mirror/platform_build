@@ -16,6 +16,24 @@
       "revId": "17959afcbecefb8a9c55b02ba8659d940589c9d5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3907d54d_d912c6b9",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 2942,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-26T18:32:38Z",
+      "side": 1,
+      "message": "Done. See http://r.android.com/986605.",
+      "parentUuid": "eed00f6c_e2d604f2",
+      "revId": "17959afcbecefb8a9c55b02ba8659d940589c9d5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
