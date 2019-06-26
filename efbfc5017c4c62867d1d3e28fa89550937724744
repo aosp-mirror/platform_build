@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6237d1ff_00594509",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 457,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-06-26T04:12:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4bc5c047_2d8ae9a5",
+      "range": {
+        "startLine": 457,
+        "startChar": 0,
+        "endLine": 457,
+        "endChar": 3
+      },
+      "revId": "efbfc5017c4c62867d1d3e28fa89550937724744",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3095358d_69a6b0a4",
         "filename": "tools/releasetools/common.py",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "54351b81_f0f228cd",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 458,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-06-26T04:12:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3095358d_69a6b0a4",
+      "range": {
+        "startLine": 458,
+        "startChar": 6,
+        "endLine": 458,
+        "endChar": 17
+      },
+      "revId": "efbfc5017c4c62867d1d3e28fa89550937724744",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3adfdd98_482cfde8",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 3
@@ -68,6 +116,30 @@
       "revId": "efbfc5017c4c62867d1d3e28fa89550937724744",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6645f4fe_b51eb047",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 850,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-06-26T04:12:17Z",
+      "side": 1,
+      "message": "Done, and I made a few more changes from pylint.\n\nI think it would be better if pylint is included in PREUPLOAD hook.\nIf it is ok then I will raise other CR to add pylint as preupload hook in build/make project",
+      "parentUuid": "3adfdd98_482cfde8",
+      "range": {
+        "startLine": 850,
+        "startChar": 2,
+        "endLine": 850,
+        "endChar": 4
+      },
+      "revId": "efbfc5017c4c62867d1d3e28fa89550937724744",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
