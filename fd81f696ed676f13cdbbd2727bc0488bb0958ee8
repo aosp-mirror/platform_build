@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b3adefb_887da3d6",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1157738
+      },
+      "writtenOn": "2019-06-26T23:37:12Z",
+      "side": 1,
+      "message": "Not sure what this one is doing but maybe it should be removed as well?",
+      "range": {
+        "startLine": 101,
+        "startChar": 0,
+        "endLine": 101,
+        "endChar": 21
+      },
+      "revId": "fd81f696ed676f13cdbbd2727bc0488bb0958ee8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
