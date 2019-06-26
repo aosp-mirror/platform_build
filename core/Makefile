@@ -1311,26 +1311,25 @@ DEFAULT_TARGET_RECOVERY_FSTYPE_MOUNT_OPTIONS := ext4=max_batch_time=0,commit=1,d
 ifneq (true,$(TARGET_USERIMAGES_SPARSE_EXT_DISABLED))
   INTERNAL_USERIMAGES_SPARSE_EXT_FLAG := -s
 endif
-
-INTERNAL_USERIMAGES_DEPS := $(SIMG2IMG)
-INTERNAL_USERIMAGES_DEPS += $(MKEXTUSERIMG) $(MAKE_EXT4FS) $(E2FSCK) $(TUNE2FS)
-ifeq ($(TARGET_USERIMAGES_USE_F2FS),true)
-INTERNAL_USERIMAGES_DEPS += $(MKF2FSUSERIMG) $(MAKE_F2FS)
-endif
-
-ifeq ($(BOARD_AVB_ENABLE),true)
-INTERNAL_USERIMAGES_DEPS += $(AVBTOOL)
-endif
-
 ifneq (true,$(TARGET_USERIMAGES_SPARSE_SQUASHFS_DISABLED))
   INTERNAL_USERIMAGES_SPARSE_SQUASHFS_FLAG := -s
 endif
-ifneq ($(filter $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE) $(BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE) $(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE) $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE) $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),squashfs),)
-INTERNAL_USERIMAGES_DEPS += $(MAKE_SQUASHFS) $(MKSQUASHFSUSERIMG) $(IMG2SIMG)
+
+INTERNAL_USERIMAGES_DEPS := \
+    $(BLK_ALLOC_TO_BASE_FS) \
+    $(E2FSCK) \
+    $(MKE2FS_CONF) \
+    $(MKEXTUSERIMG) \
+    $(SIMG2IMG) \
+    $(TUNE2FS)
+
+ifeq ($(TARGET_USERIMAGES_USE_F2FS),true)
+INTERNAL_USERIMAGES_DEPS += $(MKF2FSUSERIMG)
 endif
 
-# Get a colon-separated list of search paths.
-INTERNAL_USERIMAGES_BINARY_PATHS := $(subst $(space),:,$(sort $(dir $(INTERNAL_USERIMAGES_DEPS))))
+ifneq ($(filter $(BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE) $(BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE) $(BOARD_ODMIMAGE_FILE_SYSTEM_TYPE) $(BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE) $(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE),squashfs),)
+INTERNAL_USERIMAGES_DEPS += $(MKSQUASHFSUSERIMG)
+endif
 
 ifeq (true,$(PRODUCT_SUPPORTS_VERITY))
 INTERNAL_USERIMAGES_DEPS += $(BUILD_VERITY_METADATA) $(BUILD_VERITY_TREE) $(APPEND2SIMG) $(VERITY_SIGNER)
@@ -1339,12 +1338,15 @@ INTERNAL_USERIMAGES_DEPS += $(FEC)
 endif
 endif
 
+ifeq ($(BOARD_AVB_ENABLE),true)
+INTERNAL_USERIMAGES_DEPS += $(AVBTOOL)
+endif
+
+# Get a colon-separated list of search paths.
+INTERNAL_USERIMAGES_BINARY_PATHS := $(subst $(space),:,$(sort $(dir $(INTERNAL_USERIMAGES_DEPS))))
+
 SELINUX_FC := $(call intermediates-dir-for,ETC,file_contexts.bin)/file_contexts.bin
 INTERNAL_USERIMAGES_DEPS += $(SELINUX_FC)
-
-INTERNAL_USERIMAGES_DEPS += $(BLK_ALLOC_TO_BASE_FS)
-
-INTERNAL_USERIMAGES_DEPS += $(MKE2FS_CONF)
 
 ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
 
@@ -3617,6 +3619,7 @@ INTERNAL_OTATOOLS_MODULES := \
   imgdiff \
   libconscrypt_openjdk_jni \
   lpmake \
+  lpunpack \
   make_f2fs \
   minigzip \
   mkbootfs \
@@ -4262,14 +4265,14 @@ ifeq ($(build_ota_package),true)
 # $(1): output file
 # $(2): additional args
 define build-ota-package-target
-PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH MKBOOTIMG=$(MKBOOTIMG) \
-   build/make/tools/releasetools/ota_from_target_files -v \
-   --block \
-   --extracted_input_target_files $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE)) \
-   -p $(HOST_OUT) \
-   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
-   $(2) \
-   $(BUILT_TARGET_FILES_PACKAGE) $(1)
+PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
+    build/make/tools/releasetools/ota_from_target_files \
+    --verbose \
+    --extracted_input_target_files $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE)) \
+    --path $(HOST_OUT) \
+    $(if $(OEM_OTA_CONFIG), --oem_settings $(OEM_OTA_CONFIG)) \
+    $(2) \
+    $(BUILT_TARGET_FILES_PACKAGE) $(1)
 endef
 
 name := $(TARGET_PRODUCT)

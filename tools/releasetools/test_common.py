@@ -579,7 +579,7 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   def test_ExtractPublicKey(self):
     cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
     pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
-    with open(pubkey, 'rb') as pubkey_fp:
+    with open(pubkey) as pubkey_fp:
       self.assertEqual(pubkey_fp.read(), common.ExtractPublicKey(cert))
 
   def test_ExtractPublicKey_invalidInput(self):
@@ -590,15 +590,16 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   def test_ExtractAvbPublicKey(self):
     privkey = os.path.join(self.testdata_dir, 'testkey.key')
     pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
-    with open(common.ExtractAvbPublicKey(privkey)) as privkey_fp, \
-        open(common.ExtractAvbPublicKey(pubkey)) as pubkey_fp:
+    with open(common.ExtractAvbPublicKey(privkey), 'rb') as privkey_fp, \
+        open(common.ExtractAvbPublicKey(pubkey), 'rb') as pubkey_fp:
       self.assertEqual(privkey_fp.read(), pubkey_fp.read())
 
   def test_ParseCertificate(self):
     cert = os.path.join(self.testdata_dir, 'testkey.x509.pem')
 
     cmd = ['openssl', 'x509', '-in', cert, '-outform', 'DER']
-    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = common.Run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                      universal_newlines=False)
     expected, _ = proc.communicate()
     self.assertEqual(0, proc.returncode)
 
@@ -914,7 +915,7 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
     with zipfile.ZipFile(target_files, 'w') as target_files_zip:
       info_values = ''.join(
-          ['{}={}\n'.format(k, v) for k, v in sorted(info_dict.iteritems())])
+          ['{}={}\n'.format(k, v) for k, v in sorted(info_dict.items())])
       common.ZipWriteStr(target_files_zip, 'META/misc_info.txt', info_values)
 
       FSTAB_TEMPLATE = "/dev/block/system {} ext4 ro,barrier=1 defaults"
@@ -1085,7 +1086,7 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
     loc = os.path.join(self._tempdir, prefix, name)
     if not os.path.exists(os.path.dirname(loc)):
       os.makedirs(os.path.dirname(loc))
-    with open(loc, "w+") as f:
+    with open(loc, "wb") as f:
       f.write(data)
 
   def test_full_recovery(self):
@@ -1110,7 +1111,7 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
                                                         self._info)
     # Validate 'recovery-from-boot' with bonus argument.
-    self._out_tmp_sink("etc/recovery-resource.dat", "bonus", "SYSTEM")
+    self._out_tmp_sink("etc/recovery-resource.dat", b"bonus", "SYSTEM")
     common.MakeRecoveryPatch(self._tempdir, self._out_tmp_sink,
                              recovery_image, boot_image, self._info)
     validate_target_files.ValidateInstallRecoveryScript(self._tempdir,
@@ -1118,25 +1119,30 @@ class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
 
 
 class MockScriptWriter(object):
-  """A class that mocks edify_generator.EdifyGenerator.
-  """
+  """A class that mocks edify_generator.EdifyGenerator."""
+
   def __init__(self, enable_comments=False):
     self.lines = []
     self.enable_comments = enable_comments
+
   def Comment(self, comment):
     if self.enable_comments:
-      self.lines.append("# {}".format(comment))
+      self.lines.append('# {}'.format(comment))
+
   def AppendExtra(self, extra):
     self.lines.append(extra)
+
   def __str__(self):
-    return "\n".join(self.lines)
+    return '\n'.join(self.lines)
 
 
 class MockBlockDifference(object):
+
   def __init__(self, partition, tgt, src=None):
     self.partition = partition
     self.tgt = tgt
     self.src = src
+
   def WriteScript(self, script, _, progress=None,
                   write_verify_script=False):
     if progress:
@@ -1144,11 +1150,13 @@ class MockBlockDifference(object):
     script.AppendExtra("patch({});".format(self.partition))
     if write_verify_script:
       self.WritePostInstallVerifyScript(script)
+
   def WritePostInstallVerifyScript(self, script):
     script.AppendExtra("verify({});".format(self.partition))
 
 
 class FakeSparseImage(object):
+
   def __init__(self, size):
     self.blocksize = 4096
     self.total_blocks = size // 4096
@@ -1156,12 +1164,13 @@ class FakeSparseImage(object):
 
 
 class DynamicPartitionsDifferenceTest(test_utils.ReleaseToolsTestCase):
+
   @staticmethod
   def get_op_list(output_path):
     with zipfile.ZipFile(output_path) as output_zip:
-      with output_zip.open("dynamic_partitions_op_list") as op_list:
-        return [line.strip() for line in op_list.readlines()
-                if not line.startswith("#")]
+      with output_zip.open('dynamic_partitions_op_list') as op_list:
+        return [line.decode().strip() for line in op_list.readlines()
+                if not line.startswith(b'#')]
 
   def setUp(self):
     self.script = MockScriptWriter()
