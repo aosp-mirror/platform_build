@@ -16,6 +16,24 @@
       "revId": "dd0740321afe76152b47b9592685b7d6e90c795f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c086202b_cbd70716",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 1512800
+      },
+      "writtenOn": "2019-06-27T16:31:09Z",
+      "side": 1,
+      "message": "I\u0027ve clarified that it\u0027s java coverage we care about for this module. Do you think that\u0027s specific enough? I could say \"EMMA_COVERAGE\" but it applies to all java coverage, even if we change the system by which we do coverage to not be emma-based.",
+      "parentUuid": "b8400d06_e9f38938",
+      "revId": "dd0740321afe76152b47b9592685b7d6e90c795f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
