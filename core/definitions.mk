@@ -2450,7 +2450,7 @@ define copy-init-script-file-checked
 # Host init verifier doesn't exist on darwin.
 ifneq ($(HOST_OS),darwin)
 $(2): $(1) $(HOST_INIT_VERIFIER) $(call intermediates-dir-for,ETC,passwd)/passwd
-	$(hide) $(HOST_INIT_VERIFIER) $$< $(call intermediates-dir-for,ETC,passwd)/passwd
+	$(hide) $(HOST_INIT_VERIFIER) -p $(call intermediates-dir-for,ETC,passwd)/passwd $$<
 else
 $(2): $(1)
 endif
