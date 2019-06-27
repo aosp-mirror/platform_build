@@ -22,6 +22,29 @@
       "revId": "fd81f696ed676f13cdbbd2727bc0488bb0958ee8",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5fa832d1_e3ac6e7e",
+        "filename": "target/product/mainline_system.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 1061057
+      },
+      "writtenOn": "2019-06-27T02:57:03Z",
+      "side": 1,
+      "message": "It enables the LMKD_LOG_STATS compile flag in lmkd.c. I think we should keep it so CSI/GSI can work in accordance to ro.lmk.log_stats.",
+      "range": {
+        "startLine": 101,
+        "startChar": 0,
+        "endLine": 101,
+        "endChar": 21
+      },
+      "revId": "fd81f696ed676f13cdbbd2727bc0488bb0958ee8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
