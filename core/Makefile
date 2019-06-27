@@ -659,45 +659,105 @@ DEPMOD_STAGING_SUBDIR :=$= lib/modules/0.0
 # $(2): output dir
 # $(3): mount point
 # $(4): staging dir
+# $(5): module load list
+# $(6): module load list filename
 # Returns the a list of src:dest pairs to install the modules using copy-many-files.
 define build-image-kernel-modules
   $(foreach module,$(1),$(module):$(2)/lib/modules/$(notdir $(module))) \
-  $(eval $(call build-image-kernel-modules-depmod,$(1),$(2),$(3),$(4))) \
+  $(eval $(call build-image-kernel-modules-depmod,$(1),$(3),$(4),$(5),$(6))) \
   $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep:$(2)/lib/modules/modules.dep \
-  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias:$(2)/lib/modules/modules.alias
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias:$(2)/lib/modules/modules.alias \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/$(6):$(2)/lib/modules/$(6)
 endef
 
 # $(1): modules list
-# $(2): output dir
-# $(3): mount point
-# $(4): staging dir
+# $(2): mount point
+# $(3): staging dir
+# $(4): module load list
+# $(5): module load list filename
 define build-image-kernel-modules-depmod
-$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: .KATI_IMPLICIT_OUTPUTS := $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias
-$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(DEPMOD)
-$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULES := $(1)
-$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_OUTPUT_DIR := $(2)
-$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MOUNT_POINT := $(3)
-$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_STAGING_DIR := $(4)
-$(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: .KATI_IMPLICIT_OUTPUTS := $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.alias $(3)/$(DEPMOD_STAGING_SUBDIR)/$(5)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(DEPMOD)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULES := $(1)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MOUNT_POINT := $(2)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULE_DIR := $(3)/$(DEPMOD_STAGING_SUBDIR)/$(2)/lib/modules
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_STAGING_DIR := $(3)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_LOAD_MODULES := $(4)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_LOAD_FILE := $(3)/$(DEPMOD_STAGING_SUBDIR)/$(5)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(1)
 	@echo depmod $$(PRIVATE_STAGING_DIR)
 	rm -rf $$(PRIVATE_STAGING_DIR)
-	mkdir -p $$(PRIVATE_STAGING_DIR)/$$(DEPMOD_STAGING_SUBDIR)/$$(PRIVATE_MOUNT_POINT)/lib/modules
-	cp $$(PRIVATE_MODULES) $$(PRIVATE_STAGING_DIR)/$$(DEPMOD_STAGING_SUBDIR)/$$(PRIVATE_MOUNT_POINT)/lib/modules
+	mkdir -p $$(PRIVATE_MODULE_DIR)
+	cp $$(PRIVATE_MODULES) $$(PRIVATE_MODULE_DIR)/
 	$(DEPMOD) -b $$(PRIVATE_STAGING_DIR) 0.0
 	# Turn paths in modules.dep into absolute paths
-	sed -i.tmp -e 's|\([^: ]*/lib/modules/[^: ]*\)|/\1|g' $$(PRIVATE_STAGING_DIR)/$$(DEPMOD_STAGING_SUBDIR)/modules.dep
+	sed -i.tmp -e 's|\([^: ]*lib/modules/[^: ]*\)|/\1|g' $$(PRIVATE_STAGING_DIR)/$$(DEPMOD_STAGING_SUBDIR)/modules.dep
+	touch $$(PRIVATE_LOAD_FILE)
+	(for MODULE in $$(PRIVATE_LOAD_MODULES); do basename $$$$MODULE >> $$(PRIVATE_LOAD_FILE); done)
 endef
 
+# $(1): staging dir
+# $(2): module load list
+# $(3): module load list filename
+# $(4): output dir
+define module-load-list-copy-paths
+  $(eval $(call build-image-module-load-list,$(1),$(2),$(3))) \
+  $(1)/$(DEPMOD_STAGING_SUBDIR)/$(3):$(4)/lib/modules/$(3)
+endef
+
+# $(1): staging dir
+# $(2): module load list
+# $(3): module load list filename
+define build-image-module-load-list
+$(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): PRIVATE_STAGING_DIR := $(1)
+$(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): PRIVATE_LOAD_MODULES := $(2)
+$(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): PRIVATE_LOAD_FILENAME := $(3)
+$(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): $(2)
+	rm -f $$@
+	(for MODULE in $$(PRIVATE_LOAD_MODULES); do basename $$$$MODULE >> $$@; done)
+endef
+
+
+ifeq ($(BOARD_RECOVERY_KERNEL_MODULES_LOAD),)
+  BOARD_RECOVERY_KERNEL_MODULES_LOAD := $(BOARD_RECOVERY_KERNEL_MODULES)
+endif
+ifeq ($(BOARD_RAMDISK_KERNEL_MODULES_LOAD),)
+  BOARD_RAMDISK_KERNEL_MODULES_LOAD := $(BOARD_RAMDISK_KERNEL_MODULES)
+endif
+
+ifdef BOARD_RAMDISK_KERNEL_MODULES
+  ifeq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
+    BOARD_RECOVERY_KERNEL_MODULES += $(BOARD_RAMDISK_KERNEL_MODULES)
+  endif
+endif
+
 ifdef BOARD_RECOVERY_KERNEL_MODULES
-  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery)))
+  ifeq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
+    ifdef BOARD_RAMDISK_KERNEL_MODULES_LOAD
+      ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,ramdisk_modules),$(BOARD_RAMDISK_KERNEL_MODULES_LOAD),modules.load,$(TARGET_RECOVERY_ROOT_OUT)))
+    endif
+  endif
+  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery),$(BOARD_RECOVERY_KERNEL_MODULES_LOAD),modules.load.recovery))
+endif
+
+ifneq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
+  ifdef BOARD_RAMDISK_KERNEL_MODULES
+    ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_RAMDISK_KERNEL_MODULES),$(TARGET_RAMDISK_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_ramdisk),$(BOARD_RAMDISK_KERNEL_MODULES_LOAD),modules.load))
+  endif
 endif
 
 ifdef BOARD_VENDOR_KERNEL_MODULES
-  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_VENDOR_KERNEL_MODULES),$(TARGET_OUT_VENDOR),vendor,$(call intermediates-dir-for,PACKAGING,depmod_vendor)))
+  ifeq ($(BOARD_VENDOR_KERNEL_MODULES_LOAD),)
+    BOARD_VENDOR_KERNEL_MODULES_LOAD := $(BOARD_VENDOR_KERNEL_MODULES)
+  endif
+  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_VENDOR_KERNEL_MODULES),$(TARGET_OUT_VENDOR),vendor,$(call intermediates-dir-for,PACKAGING,depmod_vendor),$(BOARD_VENDOR_KERNEL_MODULES_LOAD),modules.load))
 endif
 
 ifdef BOARD_ODM_KERNEL_MODULES
-  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_ODM_KERNEL_MODULES),$(TARGET_OUT_ODM),odm,$(call intermediates-dir-for,PACKAGING,depmod_odm)))
+  ifeq ($(BOARD_RECOVERY_KERNEL_MODULES_LOAD),)
+    BOARD_ODM_KERNEL_MODULES_LOAD := $(BOARD_ODM_KERNEL_MODULES)
+  endif
+  ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_ODM_KERNEL_MODULES),$(TARGET_OUT_ODM),odm,$(call intermediates-dir-for,PACKAGING,depmod_odm),$(BOARD_ODM_KERNEL_MODULES_LOAD),modules.load))
 endif
 
 # -----------------------------------------------------------------
