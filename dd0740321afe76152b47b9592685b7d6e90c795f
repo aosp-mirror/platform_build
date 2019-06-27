@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b8400d06_e9f38938",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-06-27T10:53:28Z",
+      "side": 1,
+      "message": "there appears to be 3 different uses of \"coverage\"\n- VTS coverage targets\n- NATIVE_COVERAGE\n- EMMA_INSTRUMENT\n\nPRODUCT_PACKAGES_DEBUG_COVERAGE only affecting one of these seems a bit unintuitive.",
+      "revId": "dd0740321afe76152b47b9592685b7d6e90c795f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
