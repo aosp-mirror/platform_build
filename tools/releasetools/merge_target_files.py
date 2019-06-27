@@ -334,9 +334,9 @@ def validate_config_lists(framework_item_list, framework_misc_info_keys,
     in_vendor = any(item.startswith(partition) for item in vendor_item_list)
     if in_framework and in_vendor:
       logger.error(
-          'Cannot extract items from {0} for both the framework and vendor builds. '
-          'Please ensure only one merge config item list includes {0}.'.format(
-              partition))
+          'Cannot extract items from {0} for both the framework and vendor'
+          ' builds. Please ensure only one merge config item list'
+          ' includes {0}.'.format(partition))
       has_error = True
 
   if ('dynamic_partition_list' in framework_misc_info_keys) or (
@@ -500,18 +500,14 @@ def process_misc_info_txt(framework_target_files_temp_dir,
       instance.
   """
 
-  def read_helper(d):
-    misc_info_txt = os.path.join(d, 'META', 'misc_info.txt')
-    with open(misc_info_txt) as f:
-      return list(f.read().splitlines())
-
-  framework_dict = common.LoadDictionaryFromLines(
-      read_helper(framework_target_files_temp_dir))
+  misc_info_path = ['META', 'misc_info.txt']
+  framework_dict = common.LoadDictionaryFromFile(
+      os.path.join(framework_target_files_temp_dir, *misc_info_path))
 
   # We take most of the misc info from the vendor target files.
 
-  merged_dict = common.LoadDictionaryFromLines(
-      read_helper(vendor_target_files_temp_dir))
+  merged_dict = common.LoadDictionaryFromFile(
+      os.path.join(vendor_target_files_temp_dir, *misc_info_path))
 
   # Replace certain values in merged_dict with values from
   # framework_dict.
@@ -578,16 +574,12 @@ def process_dynamic_partitions_info_txt(framework_target_files_dir,
                    'dynamic_partitions_info.txt')):
     return
 
-  def read_helper(d):
-    dynamic_partitions_info_txt = os.path.join(d, 'META',
-                                               'dynamic_partitions_info.txt')
-    with open(dynamic_partitions_info_txt) as f:
-      return list(f.read().splitlines())
+  dynamic_partitions_info_path = ['META', 'dynamic_partitions_info.txt']
 
-  framework_dynamic_partitions_dict = common.LoadDictionaryFromLines(
-      read_helper(framework_target_files_dir))
-  vendor_dynamic_partitions_dict = common.LoadDictionaryFromLines(
-      read_helper(vendor_target_files_dir))
+  framework_dynamic_partitions_dict = common.LoadDictionaryFromFile(
+      os.path.join(framework_target_files_dir, *dynamic_partitions_info_path))
+  vendor_dynamic_partitions_dict = common.LoadDictionaryFromFile(
+      os.path.join(vendor_target_files_dir, *dynamic_partitions_info_path))
 
   merged_dynamic_partitions_dict = merge_dynamic_partition_info_dicts(
       framework_dict=framework_dynamic_partitions_dict,
@@ -854,12 +846,8 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   misc_info_txt = os.path.join(output_target_files_temp_dir, 'META',
                                'misc_info.txt')
 
-  def read_helper():
-    with open(misc_info_txt) as f:
-      return list(f.read().splitlines())
-
-  use_dynamic_partitions = common.LoadDictionaryFromLines(
-      read_helper()).get('use_dynamic_partitions')
+  use_dynamic_partitions = common.LoadDictionaryFromFile(misc_info_txt).get(
+      'use_dynamic_partitions')
 
   if use_dynamic_partitions != 'true' and output_super_empty:
     raise ValueError(
@@ -1000,7 +988,8 @@ def main():
       OPTIONS.framework_item_list = a
     elif o == '--system-misc-info-keys':
       logger.warning(
-          '--system-misc-info-keys has been renamed to --framework-misc-info-keys'
+          '--system-misc-info-keys has been renamed to '
+          '--framework-misc-info-keys'
       )
       OPTIONS.framework_misc_info_keys = a
     elif o == '--framework-misc-info-keys':
