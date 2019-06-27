@@ -40,6 +40,20 @@ import common
 logger = logging.getLogger(__name__)
 
 
+def SignApexFile(apex_file, payload_key, container_key, signing_args=None):
+  """Signs the given apex file."""
+  with open(apex_file, 'rb') as input_fp:
+    apex_data = input_fp.read()
+
+  return apex_utils.SignApex(
+      apex_data,
+      payload_key=payload_key,
+      container_key=container_key,
+      container_pw=None,
+      codename_to_api_level_map=None,
+      signing_args=signing_args)
+
+
 def main(argv):
 
   options = {}
@@ -76,20 +90,12 @@ def main(argv):
 
   common.InitLogging()
 
-  input_zip = args[0]
-  output_zip = args[1]
-  with open(input_zip) as input_fp:
-    apex_data = input_fp.read()
-
-  signed_apex = apex_utils.SignApex(
-      apex_data,
-      payload_key=options['payload_key'],
-      container_key=options['container_key'],
-      container_pw=None,
-      codename_to_api_level_map=None,
-      signing_args=options.get('payload_extra_args'))
-
-  shutil.copyfile(signed_apex, output_zip)
+  signed_apex = SignApexFile(
+      args[0],
+      options['payload_key'],
+      options['container_key'],
+      options.get('payload_extra_args'))
+  shutil.copyfile(signed_apex, args[1])
   logger.info("done.")
 
 
