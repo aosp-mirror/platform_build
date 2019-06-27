@@ -98,7 +98,7 @@ class ValidateTargetFilesTest(test_utils.ReleaseToolsTestCase):
     with open(boot_image, 'r+b') as boot_fp:
       boot_fp.seek(-1, os.SEEK_END)
       last_byte = boot_fp.read(1)
-      last_byte = chr(255 - ord(last_byte))
+      last_byte = bytes([255 - ord(last_byte)])
       boot_fp.seek(-1, os.SEEK_END)
       boot_fp.write(last_byte)
 

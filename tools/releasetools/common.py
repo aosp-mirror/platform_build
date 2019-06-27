@@ -54,7 +54,9 @@ class Options(object):
       base_search_path = os.path.join(base_out_path,
                                       os.path.basename(os.getcwd()))
 
+    # Python >= 3.3 returns 'linux', whereas Python 2.7 gives 'linux2'.
     platform_search_path = {
+        "linux": os.path.join(base_search_path, "host/linux-x86"),
         "linux2": os.path.join(base_search_path, "host/linux-x86"),
         "darwin": os.path.join(base_search_path, "host/darwin-x86"),
     }
