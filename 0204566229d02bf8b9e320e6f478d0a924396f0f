@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "feb130ff_acf740dd",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 3577,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-06-28T20:23:09Z",
+      "side": 1,
+      "message": "Will also need to update this part to allow group size being 0. Checking / testing other potential impact",
+      "range": {
+        "startLine": 3577,
+        "startChar": 4,
+        "endLine": 3577,
+        "endChar": 31
+      },
+      "revId": "0204566229d02bf8b9e320e6f478d0a924396f0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
