@@ -22,6 +22,30 @@
       "revId": "63cf1326dafb562ea36dafe91630e9882c2da18e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1126888a_996163c9",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-06-28T12:22:00Z",
+      "side": 0,
+      "message": "No, that\u0027s not true.\nIt will install LOCAL_PRODUCT_SERVICES_MODULE to product partition.\nNothing will be changed, otherwise, the white listing will report errors.\nYou may see the presubmit result to check.",
+      "parentUuid": "7c4cef7f_85fc0564",
+      "range": {
+        "startLine": 596,
+        "startChar": 0,
+        "endLine": 599,
+        "endChar": 7
+      },
+      "revId": "63cf1326dafb562ea36dafe91630e9882c2da18e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
