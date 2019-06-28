@@ -22,6 +22,30 @@
       "revId": "0204566229d02bf8b9e320e6f478d0a924396f0f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "01c76088_54c92181",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 3577,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-06-28T21:44:27Z",
+      "side": 1,
+      "message": "PS4 removed the comment that allows group size being 0, so it stays as group size \"must not be empty\".\n\nWe would hit other issues when allowing zero group size (e.g. the check at https://android.googlesource.com/platform/system/update_engine/+/refs/heads/master/payload_generator/payload_generation_config.cc#190 when generating payload, and there could be more at runtime).\n\nWhen thinking more about the group size, feels like always requiring a value makes more sense. So that we can avoid the conflicts when multiple updatable groups compete for space (which is one of the design goals of having updatable groups).\n\nFor the case of *SSI, it also looks beneficial to have the limit for this \"single system image\" target. In practice, it could be the min value of all the super partition sizes.",
+      "parentUuid": "feb130ff_acf740dd",
+      "range": {
+        "startLine": 3577,
+        "startChar": 4,
+        "endLine": 3577,
+        "endChar": 31
+      },
+      "revId": "0204566229d02bf8b9e320e6f478d0a924396f0f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
