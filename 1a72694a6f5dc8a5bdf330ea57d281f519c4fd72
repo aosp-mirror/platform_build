@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b38d0e1e_2266f63b",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 736,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-28T17:42:23Z",
+      "side": 1,
+      "message": "SuperNit: here \u0026 other methods, can you please end the docstring sentences with a period.",
+      "range": {
+        "startLine": 736,
+        "startChar": 5,
+        "endLine": 736,
+        "endChar": 31
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cab8a27a_2df7b2d7",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-28T17:42:23Z",
+      "side": 1,
+      "message": "packages",
+      "range": {
+        "startLine": 758,
+        "startChar": 28,
+        "endLine": 758,
+        "endChar": 35
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13c260d9_ce750d93",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 845,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-28T17:42:23Z",
+      "side": 1,
+      "message": "Since this method by itself doesn\u0027t rely on the fact that the input artifacts came from a merged build, nor that the directory is a temp directory, what do you think of:\n\n\"\"\"Generate images from target files.\n\nand then using \u0027target_files_dir\u0027 instead of \u0027output_tmp_dir\u0027\nand updating the # comment as necessary.\n\n?",
+      "range": {
+        "startLine": 845,
+        "startChar": 6,
+        "endLine": 845,
+        "endChar": 28
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "560ff33c_f49317a2",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 866,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-28T17:42:23Z",
+      "side": 1,
+      "message": "Are you thinking of expanding this to support both super_empty.img and super.img?\n\nEither way, for now maybe something like \u0027generate_super_empty_image\u0027 to be clear this is for super_empty and not super?",
+      "range": {
+        "startLine": 866,
+        "startChar": 4,
+        "endLine": 866,
+        "endChar": 24
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "806769d1_3676f8f0",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 870,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-28T17:42:23Z",
+      "side": 1,
+      "message": "How about \"target files package\" to be more explicit which artifact",
+      "range": {
+        "startLine": 870,
+        "startChar": 28,
+        "endLine": 870,
+        "endChar": 43
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7113c1ad_a83ce8d4",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 901,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-28T17:42:23Z",
+      "side": 1,
+      "message": "For here \u0026 in the #comment below, same point I mentioned for generate_images(): maybe remove \"merged\" since this doesn\u0027t explicitly rely on having a *merged* target files.",
+      "range": {
+        "startLine": 901,
+        "startChar": 30,
+        "endLine": 901,
+        "endChar": 36
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f01fa0e6_da6fa7e5",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-28T17:42:23Z",
+      "side": 1,
+      "message": "Should probably move this part now to wherever this create_img_archive() is used, since it doesn\u0027t make much sense by itself alone in this function.",
+      "range": {
+        "startLine": 907,
+        "startChar": 57,
+        "endLine": 908,
+        "endChar": 50
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "9e1e758b_be4e5615",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 917,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-28T17:42:23Z",
+      "side": 1,
+      "message": "Maybe \u0027create_target_files_archive\u0027 to be more clear what the output is in the method name itself.",
+      "range": {
+        "startLine": 917,
+        "startChar": 4,
+        "endLine": 917,
+        "endChar": 25
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0c25d5c9_458ef204",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 925,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-06-28T17:42:23Z",
+      "side": 1,
+      "message": "I think this should be the doc for \u0027output_target_files_list\u0027 instead.",
+      "range": {
+        "startLine": 924,
+        "startChar": 4,
+        "endLine": 925,
+        "endChar": 46
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
