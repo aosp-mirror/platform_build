@@ -154,11 +154,11 @@ OPTIONS.avb_extra_args = {}
 
 def GetApkCerts(certmap):
   # apply the key remapping to the contents of the file
-  for apk, cert in certmap.iteritems():
+  for apk, cert in certmap.items():
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
 
   # apply all the -e options, overriding anything in the file
-  for apk, cert in OPTIONS.extra_apks.iteritems():
+  for apk, cert in OPTIONS.extra_apks.items():
     if not cert:
       cert = "PRESIGNED"
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
@@ -519,14 +519,14 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       if stat.S_ISLNK(info.external_attr >> 16):
         new_data = data
       else:
-        new_data = RewriteProps(data)
+        new_data = RewriteProps(data.decode())
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
 
     # Replace the certs in *mac_permissions.xml (there could be multiple, such
     # as {system,vendor}/etc/selinux/{plat,nonplat}_mac_permissions.xml).
     elif filename.endswith("mac_permissions.xml"):
       print("Rewriting %s with new keys." % (filename,))
-      new_data = ReplaceCerts(data)
+      new_data = ReplaceCerts(data.decode())
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
 
     # Ask add_img_to_target_files to rebuild the recovery patch if needed.
@@ -630,17 +630,17 @@ def ReplaceCerts(data):
   Raises:
     AssertionError: On finding duplicate entries.
   """
-  for old, new in OPTIONS.key_map.iteritems():
+  for old, new in OPTIONS.key_map.items():
     if OPTIONS.verbose:
       print("    Replacing %s.x509.pem with %s.x509.pem" % (old, new))
 
     try:
       with open(old + ".x509.pem") as old_fp:
         old_cert16 = base64.b16encode(
-            common.ParseCertificate(old_fp.read())).lower()
+            common.ParseCertificate(old_fp.read())).decode().lower()
       with open(new + ".x509.pem") as new_fp:
         new_cert16 = base64.b16encode(
-            common.ParseCertificate(new_fp.read())).lower()
+            common.ParseCertificate(new_fp.read())).decode().lower()
     except IOError as e:
       if OPTIONS.verbose or e.errno != errno.ENOENT:
         print("    Error accessing %s: %s.\nSkip replacing %s.x509.pem with "
@@ -858,7 +858,7 @@ def ReplaceVerityKeyId(input_zip, output_zip, key_path):
         writable.
     key_path: The path to the PEM encoded X.509 certificate.
   """
-  in_cmdline = input_zip.read("BOOT/cmdline")
+  in_cmdline = input_zip.read("BOOT/cmdline").decode()
   # Copy in_cmdline to output_zip if veritykeyid is not present.
   if "veritykeyid" not in in_cmdline:
     common.ZipWriteStr(output_zip, "BOOT/cmdline", in_cmdline)
@@ -891,7 +891,7 @@ def ReplaceMiscInfoTxt(input_zip, output_zip, misc_info):
   current in-memory dict contains additional items computed at runtime.
   """
   misc_info_old = common.LoadDictionaryFromLines(
-      input_zip.read('META/misc_info.txt').split('\n'))
+      input_zip.read('META/misc_info.txt').decode().split('\n'))
   items = []
   for key in sorted(misc_info):
     if key in misc_info_old:
@@ -957,7 +957,7 @@ def BuildKeyMap(misc_info, key_mapping_options):
 
 
 def GetApiLevelAndCodename(input_tf_zip):
-  data = input_tf_zip.read("SYSTEM/build.prop")
+  data = input_tf_zip.read("SYSTEM/build.prop").decode()
   api_level = None
   codename = None
   for line in data.split("\n"):
@@ -979,7 +979,7 @@ def GetApiLevelAndCodename(input_tf_zip):
 
 
 def GetCodenameToApiLevelMap(input_tf_zip):
-  data = input_tf_zip.read("SYSTEM/build.prop")
+  data = input_tf_zip.read("SYSTEM/build.prop").decode()
   api_level = None
   codenames = None
   for line in data.split("\n"):
@@ -997,7 +997,7 @@ def GetCodenameToApiLevelMap(input_tf_zip):
   if codenames is None:
     raise ValueError("No ro.build.version.all_codenames in SYSTEM/build.prop")
 
-  result = dict()
+  result = {}
   for codename in codenames:
     codename = codename.strip()
     if codename:
@@ -1025,7 +1025,7 @@ def ReadApexKeysInfo(tf_zip):
         key.
   """
   keys = {}
-  for line in tf_zip.read("META/apexkeys.txt").split("\n"):
+  for line in tf_zip.read('META/apexkeys.txt').decode().split('\n'):
     line = line.strip()
     if not line:
       continue
