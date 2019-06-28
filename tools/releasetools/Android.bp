@@ -44,6 +44,7 @@ python_library_host {
         "ota_from_target_files.py",
         "ota_package_parser.py",
         "rangelib.py",
+        "sign_apex.py",
         "sign_target_files_apks.py",
         "sparse_img.py",
         "target_files_diff.py",

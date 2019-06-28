@@ -1883,20 +1883,20 @@ endef
 ###########################################################
 define aapt2-compile-one-resource-file
 @mkdir -p $(dir $@)
-$(hide) $(AAPT2) compile -o $(dir $@) $(PRIVATE_AAPT2_CFLAGS) --legacy $<
+$(hide) $(AAPT2) compile -o $(dir $@) $(PRIVATE_AAPT2_CFLAGS) $<
 endef
 
 define aapt2-compile-resource-dirs
 @mkdir -p $(dir $@)
 $(hide) $(AAPT2) compile -o $@ $(addprefix --dir ,$(PRIVATE_SOURCE_RES_DIRS)) \
-  $(PRIVATE_AAPT2_CFLAGS) --legacy
+  $(PRIVATE_AAPT2_CFLAGS)
 endef
 
 # TODO(b/74574557): use aapt2 compile --zip if it gets implemented
 define aapt2-compile-resource-zips
 @mkdir -p $(dir $@)
 $(ZIPSYNC) -d $@.contents -l $@.list $(PRIVATE_SOURCE_RES_ZIPS)
-$(hide) $(AAPT2) compile -o $@ --dir $@.contents $(PRIVATE_AAPT2_CFLAGS) --legacy
+$(hide) $(AAPT2) compile -o $@ --dir $@.contents $(PRIVATE_AAPT2_CFLAGS)
 endef
 
 # Set up rule to compile one resource file with aapt2.
@@ -2450,7 +2450,7 @@ define copy-init-script-file-checked
 # Host init verifier doesn't exist on darwin.
 ifneq ($(HOST_OS),darwin)
 $(2): $(1) $(HOST_INIT_VERIFIER) $(call intermediates-dir-for,ETC,passwd)/passwd
-	$(hide) $(HOST_INIT_VERIFIER) $$< $(call intermediates-dir-for,ETC,passwd)/passwd
+	$(hide) $(HOST_INIT_VERIFIER) -p $(call intermediates-dir-for,ETC,passwd)/passwd $$<
 else
 $(2): $(1)
 endif
