@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c4cef7f_85fc0564",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-06-28T11:52:48Z",
+      "side": 0,
+      "message": "Wouldn\u0027t merging this CL as-is would move a large number of modules to /system? We don\u0027t want that",
+      "range": {
+        "startLine": 596,
+        "startChar": 0,
+        "endLine": 599,
+        "endChar": 7
+      },
+      "revId": "63cf1326dafb562ea36dafe91630e9882c2da18e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
