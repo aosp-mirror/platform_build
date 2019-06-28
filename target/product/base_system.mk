@@ -188,6 +188,7 @@ PRODUCT_PACKAGES += \
     libwifi-service \
     libwilhelm \
     linker \
+    linkerconfig \
     lmkd \
     LocalTransport \
     locksettings \
