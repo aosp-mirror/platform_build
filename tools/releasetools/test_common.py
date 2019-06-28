@@ -590,8 +590,10 @@ class CommonApkUtilsTest(test_utils.ReleaseToolsTestCase):
   def test_ExtractAvbPublicKey(self):
     privkey = os.path.join(self.testdata_dir, 'testkey.key')
     pubkey = os.path.join(self.testdata_dir, 'testkey.pubkey.pem')
-    with open(common.ExtractAvbPublicKey(privkey), 'rb') as privkey_fp, \
-        open(common.ExtractAvbPublicKey(pubkey), 'rb') as pubkey_fp:
+    extracted_from_privkey = common.ExtractAvbPublicKey('avbtool', privkey)
+    extracted_from_pubkey = common.ExtractAvbPublicKey('avbtool', pubkey)
+    with open(extracted_from_privkey, 'rb') as privkey_fp, \
+        open(extracted_from_pubkey, 'rb') as pubkey_fp:
       self.assertEqual(privkey_fp.read(), pubkey_fp.read())
 
   def test_ParseCertificate(self):
