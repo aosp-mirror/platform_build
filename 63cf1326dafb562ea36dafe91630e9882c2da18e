@@ -46,6 +46,30 @@
       "revId": "63cf1326dafb562ea36dafe91630e9882c2da18e",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "88de3cb3_6db98800",
+        "filename": "core/Makefile",
+        "patchSetId": 5
+      },
+      "lineNbr": 599,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-06-29T12:17:38Z",
+      "side": 0,
+      "message": "Sorry, my comment didn\u0027t make much sense, and I put it at the wrong place. Was a bit rushed! Saw the added workaround in base_rules now.",
+      "parentUuid": "1126888a_996163c9",
+      "range": {
+        "startLine": 596,
+        "startChar": 0,
+        "endLine": 599,
+        "endChar": 7
+      },
+      "revId": "63cf1326dafb562ea36dafe91630e9882c2da18e",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
