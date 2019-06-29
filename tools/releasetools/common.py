@@ -54,7 +54,9 @@ class Options(object):
       base_search_path = os.path.join(base_out_path,
                                       os.path.basename(os.getcwd()))
 
+    # Python >= 3.3 returns 'linux', whereas Python 2.7 gives 'linux2'.
     platform_search_path = {
+        "linux": os.path.join(base_search_path, "host/linux-x86"),
         "linux2": os.path.join(base_search_path, "host/linux-x86"),
         "darwin": os.path.join(base_search_path, "host/darwin-x86"),
     }
@@ -576,7 +578,7 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   """
   if key is None:
     key = info_dict["avb_" + partition + "_key_path"]
-  pubkey_path = ExtractAvbPublicKey(key)
+  pubkey_path = ExtractAvbPublicKey(info_dict["avb_avbtool"], key)
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
   return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
@@ -2237,10 +2239,11 @@ def ExtractPublicKey(cert):
   return pubkey
 
 
-def ExtractAvbPublicKey(key):
+def ExtractAvbPublicKey(avbtool, key):
   """Extracts the AVB public key from the given public or private key.
 
   Args:
+    avbtool: The AVB tool to use.
     key: The input key file, which should be PEM-encoded public or private key.
 
   Returns:
@@ -2248,7 +2251,7 @@ def ExtractAvbPublicKey(key):
   """
   output = MakeTempFile(prefix='avb-', suffix='.avbpubkey')
   RunAndCheckOutput(
-      ['avbtool', 'extract_public_key', "--key", key, "--output", output])
+      [avbtool, 'extract_public_key', "--key", key, "--output", output])
   return output
 
 

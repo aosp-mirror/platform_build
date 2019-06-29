@@ -18,7 +18,6 @@ import logging
 import os.path
 import re
 import shlex
-import sys
 import zipfile
 
 import common
@@ -42,11 +41,11 @@ class ApexSigningError(Exception):
     Exception.__init__(self, message)
 
 
-def SignApexPayload(payload_file, payload_key_path, payload_key_name, algorithm,
-                    salt, signing_args=None):
+def SignApexPayload(avbtool, payload_file, payload_key_path, payload_key_name,
+                    algorithm, salt, signing_args=None):
   """Signs a given payload_file with the payload key."""
   # Add the new footer. Old footer, if any, will be replaced by avbtool.
-  cmd = ['avbtool', 'add_hashtree_footer',
+  cmd = [avbtool, 'add_hashtree_footer',
          '--do_not_generate_fec',
          '--algorithm', algorithm,
          '--key', payload_key_path,
@@ -65,12 +64,12 @@ def SignApexPayload(payload_file, payload_key_path, payload_key_name, algorithm,
 
   # Verify the signed payload image with specified public key.
   logger.info('Verifying %s', payload_file)
-  VerifyApexPayload(payload_file, payload_key_path)
+  VerifyApexPayload(avbtool, payload_file, payload_key_path)
 
 
-def VerifyApexPayload(payload_file, payload_key):
+def VerifyApexPayload(avbtool, payload_file, payload_key):
   """Verifies the APEX payload signature with the given key."""
-  cmd = ['avbtool', 'verify_image', '--image', payload_file,
+  cmd = [avbtool, 'verify_image', '--image', payload_file,
          '--key', payload_key]
   try:
     common.RunAndCheckOutput(cmd)
@@ -80,10 +79,11 @@ def VerifyApexPayload(payload_file, payload_key):
             payload_file, payload_key, e))
 
 
-def ParseApexPayloadInfo(payload_path):
+def ParseApexPayloadInfo(avbtool, payload_path):
   """Parses the APEX payload info.
 
   Args:
+    avbtool: The AVB tool to use.
     payload_path: The path to the payload image.
 
   Raises:
@@ -96,7 +96,7 @@ def ParseApexPayloadInfo(payload_path):
   if not os.path.exists(payload_path):
     raise ApexInfoError('Failed to find image: {}'.format(payload_path))
 
-  cmd = ['avbtool', 'info_image', '--image', payload_path]
+  cmd = [avbtool, 'info_image', '--image', payload_path]
   try:
     output = common.RunAndCheckOutput(cmd)
   except common.ExternalError as e:
@@ -150,7 +150,7 @@ def ParseApexPayloadInfo(payload_path):
   return payload_info
 
 
-def SignApex(apex_data, payload_key, container_key, container_pw,
+def SignApex(avbtool, apex_data, payload_key, container_key, container_pw,
              codename_to_api_level_map, signing_args=None):
   """Signs the current APEX with the given payload/container keys.
 
@@ -178,8 +178,9 @@ def SignApex(apex_data, payload_key, container_key, container_pw,
   with zipfile.ZipFile(apex_file) as apex_fd:
     payload_file = apex_fd.extract(APEX_PAYLOAD_IMAGE, payload_dir)
 
-  payload_info = ParseApexPayloadInfo(payload_file)
+  payload_info = ParseApexPayloadInfo(avbtool, payload_file)
   SignApexPayload(
+      avbtool,
       payload_file,
       payload_key,
       payload_info['apex.key'],
@@ -188,7 +189,7 @@ def SignApex(apex_data, payload_key, container_key, container_pw,
       signing_args)
 
   # 1b. Update the embedded payload public key.
-  payload_public_key = common.ExtractAvbPublicKey(payload_key)
+  payload_public_key = common.ExtractAvbPublicKey(avbtool, payload_key)
 
   common.ZipDelete(apex_file, APEX_PAYLOAD_IMAGE)
   common.ZipDelete(apex_file, APEX_PUBKEY)

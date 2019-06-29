@@ -35,6 +35,7 @@ class SignApexTest(test_utils.ReleaseToolsTestCase):
     payload_key = os.path.join(self.testdata_dir, 'testkey_RSA4096.key')
     container_key = os.path.join(self.testdata_dir, 'testkey')
     signed_foo_apex = sign_apex.SignApexFile(
+        'avbtool',
         foo_apex,
         payload_key,
         container_key)
