@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f58ef54c_cf23abc8",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 736,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-07-01T08:30:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b38d0e1e_2266f63b",
+      "range": {
+        "startLine": 736,
+        "startChar": 5,
+        "endLine": 736,
+        "endChar": 31
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cab8a27a_2df7b2d7",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0f92abe6_eff73943",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-07-01T08:30:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cab8a27a_2df7b2d7",
+      "range": {
+        "startLine": 758,
+        "startChar": 28,
+        "endLine": 758,
+        "endChar": 35
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "386cbd48_eb2f8c5b",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 845,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-07-01T08:30:11Z",
+      "side": 1,
+      "message": "Done as suggested. Good as it is more generic.",
+      "parentUuid": "13c260d9_ce750d93",
+      "range": {
+        "startLine": 845,
+        "startChar": 6,
+        "endLine": 845,
+        "endChar": 28
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "560ff33c_f49317a2",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 1
@@ -91,6 +163,30 @@
       "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "24116f74_05da5255",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 866,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-07-01T08:30:11Z",
+      "side": 1,
+      "message": "Yes we are thinking about generating super (not empty) image for SLSI. I think we can do that from one function because the difference between generating super and super_empty is quite small, but let\u0027s discuss about it from other CR when we actually add it.",
+      "parentUuid": "560ff33c_f49317a2",
+      "range": {
+        "startLine": 866,
+        "startChar": 4,
+        "endLine": 866,
+        "endChar": 24
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "2085c4bf_9fcdcca4",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 870,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-07-01T08:30:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "806769d1_3676f8f0",
+      "range": {
+        "startLine": 870,
+        "startChar": 28,
+        "endLine": 870,
+        "endChar": 43
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7113c1ad_a83ce8d4",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 1
@@ -137,6 +257,30 @@
       "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "10f1ce09_ecde9365",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 901,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-07-01T08:30:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7113c1ad_a83ce8d4",
+      "range": {
+        "startLine": 901,
+        "startChar": 30,
+        "endLine": 901,
+        "endChar": 36
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -163,6 +307,30 @@
     },
     {
       "key": {
+        "uuid": "d7db4996_cdac1b97",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 908,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-07-01T08:30:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f01fa0e6_da6fa7e5",
+      "range": {
+        "startLine": 907,
+        "startChar": 57,
+        "endLine": 908,
+        "endChar": 50
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e1e758b_be4e5615",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 1
@@ -186,6 +354,30 @@
     },
     {
       "key": {
+        "uuid": "1f61c92b_22a5d0aa",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 917,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-07-01T08:30:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9e1e758b_be4e5615",
+      "range": {
+        "startLine": 917,
+        "startChar": 4,
+        "endLine": 917,
+        "endChar": 25
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0c25d5c9_458ef204",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 1
@@ -206,6 +398,30 @@
       "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "97c2eef0_62860280",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 925,
+      "author": {
+        "id": 1413436
+      },
+      "writtenOn": "2019-07-01T08:30:11Z",
+      "side": 1,
+      "message": "Oops, my mistake :( Done.",
+      "parentUuid": "0c25d5c9_458ef204",
+      "range": {
+        "startLine": 924,
+        "startChar": 4,
+        "endLine": 925,
+        "endChar": 46
+      },
+      "revId": "1a72694a6f5dc8a5bdf330ea57d281f519c4fd72",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
