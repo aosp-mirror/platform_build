@@ -28,8 +28,6 @@ PRODUCT_RESTRICT_VENDOR_FILES := all
 PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
   root/init.zygote64_32.rc \
-  system/etc/seccomp_policy/crash_dump.arm.policy \
-  system/etc/seccomp_policy/mediacodec.policy \
 
 # Modules that are to be moved to /product
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
@@ -64,10 +62,6 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
   system/priv-app/Launcher3QuickStep/Launcher3QuickStep.apk \
   system/priv-app/OneTimeInitializer/OneTimeInitializer.apk \
   system/priv-app/Provision/Provision.apk \
-  system/priv-app/Settings/Settings.apk \
   system/priv-app/SettingsIntelligence/SettingsIntelligence.apk \
   system/priv-app/StorageManager/StorageManager.apk \
-  system/priv-app/SystemUI/SystemUI.apk \
-  system/priv-app/SystemUI/oat/arm64/SystemUI.odex \
-  system/priv-app/SystemUI/oat/arm64/SystemUI.vdex \
   system/priv-app/WallpaperCropper/WallpaperCropper.apk \
