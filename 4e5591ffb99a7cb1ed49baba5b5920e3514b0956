@@ -22,6 +22,30 @@
       "revId": "4e5591ffb99a7cb1ed49baba5b5920e3514b0956",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "418a9259_244e7791",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3638,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-07-02T22:18:12Z",
+      "side": 1,
+      "message": "So it\u0027s a host tool working only on non-A/B devices. And I consider it similar to the other host tools like imgdiff. Would it be better off if we add it to the target file of all non-A/B devices?",
+      "parentUuid": "a334b3a7_ffecefba",
+      "range": {
+        "startLine": 3638,
+        "startChar": 2,
+        "endLine": 3638,
+        "endChar": 23
+      },
+      "revId": "4e5591ffb99a7cb1ed49baba5b5920e3514b0956",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
