@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a334b3a7_ffecefba",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3638,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-07-02T22:13:59Z",
+      "side": 1,
+      "message": "Is there a reason that this tool is device-specific? I\u0027d generally assume that you can share otatools, otherwise it should probably go into the target files package (though I\u0027d really prefer it not to be device-specific).",
+      "range": {
+        "startLine": 3638,
+        "startChar": 2,
+        "endLine": 3638,
+        "endChar": 23
+      },
+      "revId": "4e5591ffb99a7cb1ed49baba5b5920e3514b0956",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
