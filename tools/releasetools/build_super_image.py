@@ -80,10 +80,12 @@ def BuildSuperImageFromDict(info_dict, output):
   block_devices = shlex.split(info_dict.get("super_block_devices", "").strip())
   groups = shlex.split(info_dict.get("super_partition_groups", "").strip())
 
-  if ab_update:
+  if ab_update and retrofit:
     cmd += ["--metadata-slots", "2"]
+  elif ab_update:
+    cmd += ["--metadata-slots", "3"]
   else:
-    cmd += ["--metadata-slots", "1"]
+    cmd += ["--metadata-slots", "2"]
 
   if ab_update and retrofit:
     cmd.append("--auto-slot-suffixing")

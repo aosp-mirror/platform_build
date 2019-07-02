@@ -23,10 +23,7 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/media_vendor.mk)
 # /vendor packages
 PRODUCT_PACKAGES += \
     audio.primary.default \
-    DisplayCutoutEmulationCornerOverlay \
-    DisplayCutoutEmulationDoubleOverlay \
-    DisplayCutoutEmulationTallOverlay \
     local_time.default \
     power.default \
-    SysuiDarkThemeOverlay \
     vibrator.default \
+
