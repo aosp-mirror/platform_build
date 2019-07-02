@@ -70,6 +70,30 @@
       "revId": "4e5591ffb99a7cb1ed49baba5b5920e3514b0956",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dd402833_988f92a5",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 3638,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-07-02T22:33:50Z",
+      "side": 1,
+      "message": "ahh, I see. The reason is the device specific extension to the non-A/B updater. (The same reason why updater is still in the mk file).\n\nI should probably stop supporting the extension in the simulator, but move it into the bp file instead.",
+      "parentUuid": "b10e17d0_6b85186d",
+      "range": {
+        "startLine": 3638,
+        "startChar": 2,
+        "endLine": 3638,
+        "endChar": 23
+      },
+      "revId": "4e5591ffb99a7cb1ed49baba5b5920e3514b0956",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
