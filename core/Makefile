@@ -4447,6 +4447,19 @@ $(PROGUARD_DICT_ZIP) :
 
 endif # TARGET_BUILD_APPS
 
+
+ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
+
+# Dump variables used by build_super_image.py (for building super.img and super_empty.img).
+# $(1): output file
+define dump-super-image-info
+  $(call dump-dynamic-partitions-info,$(1))
+  $(if $(filter true,$(AB_OTA_UPDATER)), \
+    echo "ab_update=true" >> $(1))
+endef
+
+endif # PRODUCT_USE_DYNAMIC_PARTITIONS
+
 # -----------------------------------------------------------------
 # super partition image (dist)
 
@@ -4454,13 +4467,6 @@ ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 
 # BOARD_SUPER_PARTITION_SIZE must be defined to build super image.
 ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
-
-# Dump variables used by build_super_image.py.
-define dump-super-image-info
-  $(call dump-dynamic-partitions-info,$(1))
-  $(if $(filter true,$(AB_OTA_UPDATER)), \
-    echo "ab_update=true" >> $(1))
-endef
 
 ifneq (true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS))
 
@@ -4541,7 +4547,7 @@ endif # PRODUCT_BUILD_SUPER_PARTITION == "true"
 # -----------------------------------------------------------------
 # super empty image
 
-ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
+ifeq (true,$(PRODUCT_USE_DYNAMIC_PARTITIONS))
 ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 
 INSTALLED_SUPERIMAGE_EMPTY_TARGET := $(PRODUCT_OUT)/super_empty.img
@@ -4557,7 +4563,7 @@ $(INSTALLED_SUPERIMAGE_EMPTY_TARGET): $(LPMAKE) $(BUILD_SUPER_IMAGE)
 $(call dist-for-goals,dist_files,$(INSTALLED_SUPERIMAGE_EMPTY_TARGET))
 
 endif # BOARD_SUPER_PARTITION_SIZE != ""
-endif # PRODUCT_BUILD_SUPER_PARTITION == "true"
+endif # PRODUCT_USE_DYNAMIC_PARTITIONS == "true"
 
 
 # -----------------------------------------------------------------

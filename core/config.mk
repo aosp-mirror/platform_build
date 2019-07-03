@@ -887,16 +887,12 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 #     - BOARD_{GROUP}_PARTITION_PARTITION_LIST: the list of partitions that belongs to this group.
 #       If empty, no partitions belong to this group, and the sum of sizes is effectively 0.
 $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
-    $(eval BOARD_$(group)_PARTITION_LIST ?=) \
-    $(eval .KATI_READONLY := BOARD_$(group)_PARTITION_LIST) \
-)
-ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
-$(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
     $(eval BOARD_$(group)_SIZE := $(strip $(BOARD_$(group)_SIZE))) \
     $(if $(BOARD_$(group)_SIZE),,$(error BOARD_$(group)_SIZE must not be empty)) \
     $(eval .KATI_READONLY := BOARD_$(group)_SIZE) \
+    $(eval BOARD_$(group)_PARTITION_LIST ?=) \
+    $(eval .KATI_READONLY := BOARD_$(group)_PARTITION_LIST) \
 )
-endif # PRODUCT_BUILD_SUPER_PARTITION
 
 # BOARD_*_PARTITION_LIST: a list of the following tokens
 valid_super_partition_list := system vendor product product_services odm
@@ -917,10 +913,6 @@ BOARD_SUPER_PARTITION_PARTITION_LIST := \
     $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
         $(BOARD_$(group)_PARTITION_LIST))
 .KATI_READONLY := BOARD_SUPER_PARTITION_PARTITION_LIST
-
-endif # PRODUCT_USE_DYNAMIC_PARTITIONS
-
-ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
 
 ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
@@ -981,8 +973,11 @@ BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE :=
 
 endif # PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 endif # BOARD_SUPER_PARTITION_SIZE
+BOARD_SUPER_PARTITION_BLOCK_DEVICES ?=
 .KATI_READONLY := BOARD_SUPER_PARTITION_BLOCK_DEVICES
+BOARD_SUPER_PARTITION_METADATA_DEVICE ?=
 .KATI_READONLY := BOARD_SUPER_PARTITION_METADATA_DEVICE
+BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE ?=
 .KATI_READONLY := BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE
 
 $(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)), \
@@ -991,7 +986,7 @@ $(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)), \
         $(error BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE must not be empty)) \
     $(eval .KATI_READONLY := BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE))
 
-endif # PRODUCT_BUILD_SUPER_PARTITION
+endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 
 # ###############################################################
 # Set up final options.
