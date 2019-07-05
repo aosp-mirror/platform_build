@@ -54,6 +54,7 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.conscrypt \
+    com.android.i18n \
     com.android.location.provider \
     com.android.resolv \
     com.android.neuralnetworks \
@@ -286,7 +287,7 @@ PRODUCT_HOST_PACKAGES += \
     e2fsck \
     fastboot \
     flags_health_check \
-    icu-data_host_runtime_apex \
+    icu-data_host_i18n_apex \
     icu_tzdata.dat_host_tzdata_apex \
     incident_report \
     ld.mc \
