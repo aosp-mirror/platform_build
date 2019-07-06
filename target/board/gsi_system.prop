@@ -12,3 +12,8 @@ persist.sys.disable_rescue=true
 
 # TODO(b/78105955): disable privapp_permissions checking before the bug solved
 ro.control_privapp_permissions=disable
+
+# TODO(b/136212765): the default for LMK
+ro.lmk.kill_heaviest_task=true
+ro.lmk.kill_timeout_ms=100
+ro.lmk.use_minfree_levels=true
