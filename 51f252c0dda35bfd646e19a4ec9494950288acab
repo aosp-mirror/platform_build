@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "d91c9992_37aacce5",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4645,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-07T17:37:34Z",
+      "side": 1,
+      "message": "Instead of moving the py file, build it with python_binary_host and use the executable.",
+      "range": {
+        "startLine": 4645,
+        "startChar": 28,
+        "endLine": 4645,
+        "endChar": 76
+      },
+      "revId": "51f252c0dda35bfd646e19a4ec9494950288acab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8fa27369_372bf3a5",
         "filename": "tools/releasetools/mk_combined_img.py",
         "patchSetId": 1
