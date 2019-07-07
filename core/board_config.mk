@@ -397,9 +397,9 @@ ifeq ($(TARGET_COPY_OUT_PRODUCT_SERVICES),$(_product_services_path_placeholder))
   MERGE_PRODUCT_SERVICES_INTO_PRODUCT := true
 else ifeq ($(TARGET_COPY_OUT_PRODUCT),$(TARGET_COPY_OUT_PRODUCT_SERVICES))
   MERGE_PRODUCT_SERVICES_INTO_PRODUCT := true
-else ifeq ($(filter product_services system/product_services,$(TARGET_COPY_OUT_PRODUCT_SERVICES)),)
-  $(error TARGET_COPY_OUT_PRODUCT_SERVICES must be either 'product_services',\
-    '$(TARGET_COPY_OUT_PRODUCT)' or 'system/product_services', seeing '$(TARGET_COPY_OUT_PRODUCT_SERVICES)'.)
+else ifeq ($(filter system/product_services,$(TARGET_COPY_OUT_PRODUCT_SERVICES)),)
+  $(error TARGET_COPY_OUT_PRODUCT_SERVICES must be either '$(TARGET_COPY_OUT_PRODUCT)'\
+    or 'system/product_services', seeing '$(TARGET_COPY_OUT_PRODUCT_SERVICES)'.)
 endif
 .KATI_READONLY := MERGE_PRODUCT_SERVICES_INTO_PRODUCT
 PRODUCT_COPY_FILES := $(subst $(_product_services_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),$(PRODUCT_COPY_FILES))
@@ -414,7 +414,7 @@ endif
 ifeq ($(TARGET_COPY_OUT_PRODUCT_SERVICES),product_services)
   BOARD_USES_PRODUCT_SERVICESIMAGE := true
 else ifdef BOARD_USES_PRODUCT_SERVICESIMAGE
-  $(error TARGET_COPY_OUT_PRODUCT_SERVICES must be set to 'product_services' to use a product_services image)
+  $(error A 'product_services' partition should not be used. Use 'system/product_services' instead.)
 endif
 
 BUILDING_PRODUCT_SERVICES_IMAGE :=
