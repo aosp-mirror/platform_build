@@ -732,16 +732,30 @@ def process_special_cases(framework_target_files_temp_dir,
       file_name='apexkeys.txt')
 
 
-def merge_target_files(temp_dir, framework_target_files, framework_item_list,
-                       framework_misc_info_keys, vendor_target_files,
-                       vendor_item_list, output_target_files, output_dir,
-                       output_item_list, output_ota, output_img,
-                       output_super_empty, rebuild_recovery):
-  """Merge two target files packages together.
+def files_from_path(target_path, extra_args=None):
+  """Get files under given path.
 
-  This function takes framework and vendor target files packages as input,
-  performs various file extractions, special case processing, and finally
-  creates a merged zip archive as output.
+  Get (sub)files from given target path and return sorted list.
+
+  Args:
+    target_path: Target path to get subfiles.
+    extra_args: List of extra argument for find command. Optional.
+
+  Returns:
+    Sorted files and directories list.
+  """
+
+  find_command = ['find', target_path] + (extra_args or [])
+  find_process = common.Run(find_command, stdout=subprocess.PIPE, verbose=False)
+  return common.RunAndCheckOutput(['sort'], stdin=find_process.stdout,
+                                  verbose=False)
+
+
+def create_merged_package(temp_dir, framework_target_files, framework_item_list,
+                          vendor_target_files, vendor_item_list,
+                          framework_misc_info_keys,
+                          rebuild_recovery):
+  """Merge two target files packages into one target files structure.
 
   Args:
     temp_dir: The name of a directory we use when we extract items from the
@@ -753,29 +767,21 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
       target files package as is, meaning these items will land in the output
       target files package exactly as they appear in the input partial framework
       target files package.
-    framework_misc_info_keys: The list of keys to obtain from the framework
-      instance of META/misc_info.txt. The remaining keys from the vendor
-      instance.
     vendor_target_files: The name of the zip archive containing the vendor
       partial target files package.
     vendor_item_list: The list of items to extract from the partial vendor
       target files package as is, meaning these items will land in the output
       target files package exactly as they appear in the input partial vendor
       target files package.
-    output_target_files: The name of the output zip archive target files package
-      created by merging framework and vendor.
-    output_dir: The destination directory for saving merged files.
-    output_item_list: The list of items to copy into the output_dir.
-    output_ota: The name of the output zip archive ota package.
-    output_img: The name of the output zip archive img package.
-    output_super_empty: If provided, creates a super_empty.img file from the
-      merged target files package and saves it at this path.
+    framework_misc_info_keys: The list of keys to obtain from the framework
+      instance of META/misc_info.txt. The remaining keys from the vendor
+      instance.
     rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
       devices and write it to the system image.
-  """
 
-  logger.info('starting: merge framework %s and vendor %s into output %s',
-              framework_target_files, vendor_target_files, output_target_files)
+  Returns:
+    Path to merged package under temp directory.
+  """
 
   # Create directory names that we'll use when we extract files from framework,
   # and vendor, and for zipping the final output.
@@ -832,18 +838,43 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
       framework_misc_info_keys=framework_misc_info_keys,
       rebuild_recovery=rebuild_recovery)
 
-  # Regenerate IMAGES in the temporary directory.
+  return output_target_files_temp_dir
+
+
+def generate_images(target_files_dir, rebuild_recovery):
+  """Generate images from target files.
+
+  This function takes merged output temporary directory and create images
+  from it.
+
+  Args:
+    target_files_dir: Path to merged temp directory.
+    rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
+      devices and write it to the system image.
+  """
+
+  # Regenerate IMAGES in the target directory.
 
   add_img_args = ['--verbose']
   if rebuild_recovery:
     add_img_args.append('--rebuild_recovery')
-  add_img_args.append(output_target_files_temp_dir)
+  add_img_args.append(target_files_dir)
 
   add_img_to_target_files.main(add_img_args)
 
+
+def generate_super_empty_image(target_dir, output_super_empty):
+  """ Generate super_empty image from target package.
+
+  Args:
+    target_dir: Path to the target file package which contains misc_info.txt for
+      detailed information for super image.
+    output_super_empty: If provided, copies a super_empty.img file from the
+      target files package to this path.
+  """
   # Create super_empty.img using the merged misc_info.txt.
 
-  misc_info_txt = os.path.join(output_target_files_temp_dir, 'META',
+  misc_info_txt = os.path.join(target_dir, 'META',
                                'misc_info.txt')
 
   use_dynamic_partitions = common.LoadDictionaryFromFile(misc_info_txt).get(
@@ -853,7 +884,7 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
     raise ValueError(
         'Building super_empty.img requires use_dynamic_partitions=true.')
   elif use_dynamic_partitions == 'true':
-    super_empty_img = os.path.join(output_target_files_temp_dir, 'IMAGES',
+    super_empty_img = os.path.join(target_dir, 'IMAGES',
                                    'super_empty.img')
     build_super_image_args = [
         misc_info_txt,
@@ -865,47 +896,39 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
     if output_super_empty:
       shutil.copyfile(super_empty_img, output_super_empty)
 
-  # Create the IMG package from the merged target files (before zipping, in
-  # order to avoid an unnecessary unzip and copy).
 
-  if output_img:
-    img_from_target_files_args = [
-        output_target_files_temp_dir,
-        output_img,
-    ]
-    img_from_target_files.main(img_from_target_files_args)
+def create_img_archive(source_path, target_path):
+  """ Create IMG archive in target path from source package.
 
-  # Finally, create the output target files zip archive and/or copy the
-  # output items to the output target files directory.
+  Args:
+    source_path: Path of the source package to be packed.
+    target_path: Create IMG package from the source package.
+  """
 
-  if output_dir:
-    copy_items(output_target_files_temp_dir, output_dir, output_item_list)
+  img_from_target_files_args = [
+      source_path,
+      target_path,
+  ]
+  img_from_target_files.main(img_from_target_files_args)
 
-  if not output_target_files:
-    return
 
-  output_zip = os.path.abspath(output_target_files)
+def create_target_files_archive(output_file, source_dir, temp_dir):
+  """ Create archive from target package.
+
+  Args:
+    output_file: The name of the zip archive target files package.
+    source_dir: The target directory contains package to be archived.
+    temp_dir: Path to temporary directory for any intermediate files.
+  """
   output_target_files_list = os.path.join(temp_dir, 'output.list')
-  output_target_files_meta_dir = os.path.join(output_target_files_temp_dir,
+  output_zip = os.path.abspath(output_file)
+  output_target_files_meta_dir = os.path.join(source_dir,
                                               'META')
 
-  find_command = [
-      'find',
-      output_target_files_meta_dir,
-  ]
-  find_process = common.Run(find_command, stdout=subprocess.PIPE, verbose=False)
-  meta_content = common.RunAndCheckOutput(['sort'],
-                                          stdin=find_process.stdout,
-                                          verbose=False)
-
-  find_command = [
-      'find', output_target_files_temp_dir, '-path',
-      output_target_files_meta_dir, '-prune', '-o', '-print'
-  ]
-  find_process = common.Run(find_command, stdout=subprocess.PIPE, verbose=False)
-  other_content = common.RunAndCheckOutput(['sort'],
-                                           stdin=find_process.stdout,
-                                           verbose=False)
+  meta_content = files_from_path(output_target_files_meta_dir)
+  other_content = files_from_path(source_dir,
+                                  ['-path', output_target_files_meta_dir,
+                                   '-prune', '-o', '-print'])
 
   with open(output_target_files_list, 'wb') as f:
     f.write(meta_content)
@@ -917,22 +940,108 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
       '-o',
       output_zip,
       '-C',
-      output_target_files_temp_dir,
+      source_dir,
       '-l',
       output_target_files_list,
   ]
-  logger.info('creating %s', output_target_files)
+
+  logger.info('creating %s', output_file)
   common.RunAndWait(command, verbose=True)
-  logger.info('finished creating %s', output_target_files)
+  logger.info('finished creating %s', output_file)
+
+  return output_zip
+
+
+def create_ota_package(zip_package, output_ota):
+  """ Create OTA package from archived package.
+
+  Args:
+    zip_package: The name of the zip archived package.
+    output_ota: The name of the output zip archive ota package.
+  """
+  ota_from_target_files_args = [
+      zip_package,
+      output_ota,
+  ]
+  ota_from_target_files.main(ota_from_target_files_args)
+
+
+def merge_target_files(temp_dir, framework_target_files, framework_item_list,
+                       framework_misc_info_keys, vendor_target_files,
+                       vendor_item_list, output_target_files, output_dir,
+                       output_item_list, output_ota, output_img,
+                       output_super_empty, rebuild_recovery):
+  """Merge two target files packages together.
+
+  This function takes framework and vendor target files packages as input,
+  performs various file extractions, special case processing, and finally
+  creates a merged zip archive as output.
+
+  Args:
+    temp_dir: The name of a directory we use when we extract items from the
+      input target files packages, and also a scratch directory that we use for
+      temporary files.
+    framework_target_files: The name of the zip archive containing the framework
+      partial target files package.
+    framework_item_list: The list of items to extract from the partial framework
+      target files package as is, meaning these items will land in the output
+      target files package exactly as they appear in the input partial framework
+      target files package.
+    framework_misc_info_keys: The list of keys to obtain from the framework
+      instance of META/misc_info.txt. The remaining keys from the vendor
+      instance.
+    vendor_target_files: The name of the zip archive containing the vendor
+      partial target files package.
+    vendor_item_list: The list of items to extract from the partial vendor
+      target files package as is, meaning these items will land in the output
+      target files package exactly as they appear in the input partial vendor
+      target files package.
+    output_target_files: The name of the output zip archive target files package
+      created by merging framework and vendor.
+    output_dir: The destination directory for saving merged files.
+    output_item_list: The list of items to copy into the output_dir.
+    output_ota: The name of the output zip archive ota package.
+    output_img: The name of the output zip archive img package.
+    output_super_empty: If provided, creates a super_empty.img file from the
+      merged target files package and saves it at this path.
+    rebuild_recovery: If true, rebuild the recovery patch used by non-A/B
+      devices and write it to the system image.
+  """
+
+  logger.info('starting: merge framework %s and vendor %s into output %s',
+              framework_target_files, vendor_target_files, output_target_files)
+
+  output_target_files_temp_dir = create_merged_package(
+      temp_dir, framework_target_files, framework_item_list,
+      vendor_target_files, vendor_item_list, framework_misc_info_keys,
+      rebuild_recovery)
+
+  generate_images(output_target_files_temp_dir, rebuild_recovery)
+
+  generate_super_empty_image(output_target_files_temp_dir, output_super_empty)
+
+  if output_img:
+    # Create the IMG package from the merged target files (before zipping, in
+    # order to avoid an unnecessary unzip and copy).
+    create_img_archive(output_target_files_temp_dir, output_img)
+
+  # Finally, create the output target files zip archive and/or copy the
+  # output items to the output target files directory.
+
+  if output_dir:
+    copy_items(output_target_files_temp_dir, output_dir, output_item_list)
+
+  if not output_target_files:
+    return
+
+  output_zip = create_target_files_archive(output_target_files,
+                                           output_target_files_temp_dir,
+                                           temp_dir)
 
   # Create the OTA package from the merged target files package.
 
   if output_ota:
-    ota_from_target_files_args = [
-        output_zip,
-        output_ota,
-    ]
-    ota_from_target_files.main(ota_from_target_files_args)
+    create_ota_package(output_zip, output_ota)
 
 
 def call_func_with_temp_dir(func, keep_tmp):
@@ -955,8 +1064,6 @@ def call_func_with_temp_dir(func, keep_tmp):
 
   try:
     func(temp_dir)
-  except:
-    raise
   finally:
     if keep_tmp:
       logger.info('keeping %s', temp_dir)
