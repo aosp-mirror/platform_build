@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2c5d88dc_0db44008",
+        "filename": "tools/releasetools/merge_target_files.py",
+        "patchSetId": 3
+      },
+      "lineNbr": 748,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-08T03:06:05Z",
+      "side": 1,
+      "message": "This will lead to syntax error when extra_args takes the default value of None",
+      "range": {
+        "startLine": 748,
+        "startChar": 41,
+        "endLine": 748,
+        "endChar": 51
+      },
+      "revId": "af00beaf0e6122b5762ebe908375a415f772695b",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
