@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "de1834e7_f0d02bad",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4645,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2019-07-08T07:03:57Z",
+      "side": 1,
+      "message": "Done. See aosp/1011164 (same topic)",
+      "parentUuid": "d91c9992_37aacce5",
+      "range": {
+        "startLine": 4645,
+        "startChar": 28,
+        "endLine": 4645,
+        "endChar": 76
+      },
+      "revId": "51f252c0dda35bfd646e19a4ec9494950288acab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8fa27369_372bf3a5",
         "filename": "tools/releasetools/mk_combined_img.py",
         "patchSetId": 1
