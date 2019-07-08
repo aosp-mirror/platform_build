@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "a43559d2_6072ce04",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 4237,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-08T16:15:23Z",
+      "side": 1,
+      "message": "declare the dependency on this tool",
+      "range": {
+        "startLine": 4237,
+        "startChar": 30,
+        "endLine": 4237,
+        "endChar": 62
+      },
+      "revId": "4d5904caa0763828558529ea2db665298f9c29db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4c2ca492_14ab799b",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 4646,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-08T16:15:23Z",
+      "side": 1,
+      "message": "Should this point to the one under HOST_OUT_EXECUTABLES now?",
+      "range": {
+        "startLine": 4646,
+        "startChar": 28,
+        "endLine": 4646,
+        "endChar": 76
+      },
+      "revId": "4d5904caa0763828558529ea2db665298f9c29db",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
