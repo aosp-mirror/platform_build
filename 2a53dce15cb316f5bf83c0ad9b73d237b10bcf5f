@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "142f455a_8c53b2b0",
+        "filename": "target/product/aosp_product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-07-08T09:52:09Z",
+      "side": 1,
+      "message": "We want have binary unique CSI and allocate time slot to clean up these at this time.",
+      "parentUuid": "7a4abef9_8f33dc7b",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 52
+      },
+      "revId": "2a53dce15cb316f5bf83c0ad9b73d237b10bcf5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6058d30e_d19b7c87",
         "filename": "target/product/aosp_product.mk",
         "patchSetId": 1
@@ -39,6 +63,24 @@
       "revId": "2a53dce15cb316f5bf83c0ad9b73d237b10bcf5f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a89ab73f_268472f3",
+        "filename": "target/product/aosp_product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-07-08T09:52:09Z",
+      "side": 1,
+      "message": "Good point. These are for GSI release only, let me move them to gsi_release.mk",
+      "parentUuid": "6058d30e_d19b7c87",
+      "revId": "2a53dce15cb316f5bf83c0ad9b73d237b10bcf5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "44c64881_4413883f",
+        "filename": "target/product/aosp_x86.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-07-08T09:52:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "98838804_5c92ac96",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 48
+      },
+      "revId": "2a53dce15cb316f5bf83c0ad9b73d237b10bcf5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5b40df44_39a291a3",
         "filename": "target/product/gsi_arm64.mk",
         "patchSetId": 1
@@ -85,6 +151,30 @@
       "revId": "2a53dce15cb316f5bf83c0ad9b73d237b10bcf5f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "f3dbf2b6_e5e2e9bc",
+        "filename": "target/product/gsi_arm64.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-07-08T09:52:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5b40df44_39a291a3",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 53
+      },
+      "revId": "2a53dce15cb316f5bf83c0ad9b73d237b10bcf5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
