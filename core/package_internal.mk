@@ -109,7 +109,7 @@ ifeq ($(PRODUCT_ENFORCE_RRO_TARGETS),*)
         $(LOCAL_ODM_MODULE) \
         $(LOCAL_OEM_MODULE) \
         $(LOCAL_PRODUCT_MODULE) \
-        $(LOCAL_PRODUCT_SERVICES_MODULE) \
+        $(LOCAL_SYSTEM_EXT_MODULE) \
         $(LOCAL_PROPRIETARY_MODULE) \
         $(LOCAL_VENDOR_MODULE))
     enforce_rro_enabled := $(if $(non_system_module),,true)
@@ -508,7 +508,7 @@ else
 endif
 endif
 
-# Run veridex on product, product_services and vendor modules.
+# Run veridex on product, system_ext and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
 ifeq (true,$(non_system_module))
