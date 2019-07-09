@@ -501,8 +501,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
         "PRODUCT/build.prop",
         "SYSTEM/product/build.prop",
 
-        "PRODUCT_SERVICES/build.prop",
-        "SYSTEM/product_services/build.prop",
+        "SYSTEM_EXT/build.prop",
+        "SYSTEM/system_ext/build.prop",
 
         "SYSTEM/etc/prop.default",
         "BOOT/RAMDISK/prop.default",

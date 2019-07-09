@@ -276,8 +276,8 @@ class BuildInfo(object):
   _RO_PRODUCT_RESOLVE_PROPS = ["ro.product.brand", "ro.product.device",
                                "ro.product.manufacturer", "ro.product.model",
                                "ro.product.name"]
-  _RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER = ["product", "product_services",
-                                            "odm", "vendor", "system"]
+  _RO_PRODUCT_PROPS_DEFAULT_SOURCE_ORDER = ["product", "odm", "vendor",
+                                            "system_ext", "system"]
 
   def __init__(self, info_dict, oem_dicts):
     """Initializes a BuildInfo instance with the given dicts.
