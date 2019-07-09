@@ -8,8 +8,8 @@ DEX_PREOPT_DEFAULT ?= true
 SYSTEM_OTHER_ODEX_FILTER ?= \
     app/% \
     priv-app/% \
-    product_services/app/% \
-    product_services/priv-app/% \
+    system_ext/app/% \
+    system_ext/priv-app/% \
     product/app/% \
     product/priv-app/% \
 

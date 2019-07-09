@@ -644,30 +644,30 @@ def ImagePropFromGlobalDict(glob_dict, mount_point):
       d["extfs_rsv_pct"] = "0"
     copy_prop("product_reserved_size", "partition_reserved_size")
     copy_prop("product_selinux_fc", "selinux_fc")
-  elif mount_point == "product_services":
-    copy_prop("avb_product_services_hashtree_enable", "avb_hashtree_enable")
-    copy_prop("avb_product_services_add_hashtree_footer_args",
+  elif mount_point == "system_ext":
+    copy_prop("avb_system_ext_hashtree_enable", "avb_hashtree_enable")
+    copy_prop("avb_system_ext_add_hashtree_footer_args",
               "avb_add_hashtree_footer_args")
-    copy_prop("avb_product_services_key_path", "avb_key_path")
-    copy_prop("avb_product_services_algorithm", "avb_algorithm")
-    copy_prop("product_services_fs_type", "fs_type")
-    copy_prop("product_services_size", "partition_size")
-    if not copy_prop("product_services_journal_size", "journal_size"):
+    copy_prop("avb_system_ext_key_path", "avb_key_path")
+    copy_prop("avb_system_ext_algorithm", "avb_algorithm")
+    copy_prop("system_ext_fs_type", "fs_type")
+    copy_prop("system_ext_size", "partition_size")
+    if not copy_prop("system_ext_journal_size", "journal_size"):
       d["journal_size"] = "0"
-    copy_prop("product_services_verity_block_device", "verity_block_device")
+    copy_prop("system_ext_verity_block_device", "verity_block_device")
     copy_prop("ext4_share_dup_blocks", "ext4_share_dup_blocks")
-    copy_prop("product_services_squashfs_compressor", "squashfs_compressor")
-    copy_prop("product_services_squashfs_compressor_opt",
+    copy_prop("system_ext_squashfs_compressor", "squashfs_compressor")
+    copy_prop("system_ext_squashfs_compressor_opt",
               "squashfs_compressor_opt")
-    copy_prop("product_services_squashfs_block_size", "squashfs_block_size")
-    copy_prop("product_services_squashfs_disable_4k_align",
+    copy_prop("system_ext_squashfs_block_size", "squashfs_block_size")
+    copy_prop("system_ext_squashfs_disable_4k_align",
               "squashfs_disable_4k_align")
-    copy_prop("product_services_base_fs_file", "base_fs_file")
-    copy_prop("product_services_extfs_inode_count", "extfs_inode_count")
-    if not copy_prop("product_services_extfs_rsv_pct", "extfs_rsv_pct"):
+    copy_prop("system_ext_base_fs_file", "base_fs_file")
+    copy_prop("system_ext_extfs_inode_count", "extfs_inode_count")
+    if not copy_prop("system_ext_extfs_rsv_pct", "extfs_rsv_pct"):
       d["extfs_rsv_pct"] = "0"
-    copy_prop("product_services_reserved_size", "partition_reserved_size")
-    copy_prop("product_services_selinux_fc", "selinux_fc")
+    copy_prop("system_ext_reserved_size", "partition_reserved_size")
+    copy_prop("system_ext_selinux_fc", "selinux_fc")
   elif mount_point == "odm":
     copy_prop("avb_odm_hashtree_enable", "avb_hashtree_enable")
     copy_prop("avb_odm_add_hashtree_footer_args",
@@ -736,8 +736,8 @@ def GlobalDictFromImageProp(image_prop, mount_point):
     copy_prop("partition_size", "odm_size")
   elif mount_point == "product":
     copy_prop("partition_size", "product_size")
-  elif mount_point == "product_services":
-    copy_prop("partition_size", "product_services_size")
+  elif mount_point == "system_ext":
+    copy_prop("partition_size", "system_ext_size")
   return d
 
 
@@ -777,8 +777,8 @@ def main(argv):
       mount_point = "oem"
     elif image_filename == "product.img":
       mount_point = "product"
-    elif image_filename == "product_services.img":
-      mount_point = "product_services"
+    elif image_filename == "system_ext.img":
+      mount_point = "system_ext"
     else:
       logger.error("Unknown image file name %s", image_filename)
       sys.exit(1)
