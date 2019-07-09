@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "23be0474_4bb8b54c",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 3853,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-09T19:39:13Z",
+      "side": 1,
+      "message": "I think this var needs to be defined prior to this line (or moving the definition into core/config.mk).\n\nAlso not sure if device/generic/goldfish is always included in manifests. If not, might be more safe to declare the dependency conditionally (similar to L3763).",
+      "range": {
+        "startLine": 3853,
+        "startChar": 7,
+        "endLine": 3853,
+        "endChar": 39
+      },
+      "revId": "df77477e7e89ea71662b040e6f276d283bed1e89",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
