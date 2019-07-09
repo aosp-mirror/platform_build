@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3e37d751_61c1de3a",
+        "filename": "core/Makefile",
+        "patchSetId": 10
+      },
+      "lineNbr": 1293,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-09T03:57:47Z",
+      "side": 1,
+      "message": "Its still possible that the system notice file may include redundant licenses here if the system image is built along with any if non-excluded partitions.",
+      "revId": "47831be8385d200ef6fd211342bdd42bed606462",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
