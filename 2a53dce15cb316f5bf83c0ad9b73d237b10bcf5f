@@ -84,6 +84,24 @@
     },
     {
       "key": {
+        "uuid": "326eaca9_32b591d5",
+        "filename": "target/product/aosp_product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-07-09T10:40:06Z",
+      "side": 1,
+      "message": "(Correct the previous comment.)\n\nPath requirement sounds good.\n\nHowever, the goal this time is syncing CSI.\nAlso, aosp_product.mk could be inherited from other makefile, ex. xxx_product.mk.\n\nMaybe we could think about this later.",
+      "parentUuid": "a89ab73f_268472f3",
+      "revId": "2a53dce15cb316f5bf83c0ad9b73d237b10bcf5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "98838804_5c92ac96",
         "filename": "target/product/aosp_x86.mk",
         "patchSetId": 1
