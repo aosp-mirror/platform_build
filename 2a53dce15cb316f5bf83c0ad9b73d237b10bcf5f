@@ -102,6 +102,24 @@
     },
     {
       "key": {
+        "uuid": "56513ad5_57d66730",
+        "filename": "target/product/aosp_product.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-07-09T10:45:41Z",
+      "side": 1,
+      "message": "Yeah, makes sense. We could add a layer of indirection where the path requirement sits in a layer that has no content (like if we move the remaining contents of aosp_product.mk to handheld_product.mk, then add the path requirement in aosp_product.mk, and other makefiles shouldn\u0027t be inheriting aosp_product).",
+      "parentUuid": "a89ab73f_268472f3",
+      "revId": "2a53dce15cb316f5bf83c0ad9b73d237b10bcf5f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "98838804_5c92ac96",
         "filename": "target/product/aosp_x86.mk",
         "patchSetId": 1

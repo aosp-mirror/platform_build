@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e78a2f6d_49175ca3",
+        "filename": "target/product/aosp_product.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-07-09T10:45:41Z",
+      "side": 1,
+      "message": "sort",
+      "range": {
+        "startLine": 49,
+        "startChar": 16,
+        "endLine": 51,
+        "endChar": 21
+      },
+      "revId": "df09892cdb10dd5af52ca6af51178c4519077672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
