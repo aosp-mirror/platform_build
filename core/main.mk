@@ -1111,7 +1111,7 @@ endef
 define resolve-product-relative-paths
   $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),\
     $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
-      $(subst $(_product_services_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),\
+      $(subst $(_system_ext_path_placeholder),$(TARGET_COPY_OUT_SYSTEM_EXT),\
         $(subst $(_odm_path_placeholder),$(TARGET_COPY_OUT_ODM),\
           $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))
 endef
@@ -1601,8 +1601,8 @@ vendorimage: $(INSTALLED_VENDORIMAGE_TARGET)
 .PHONY: productimage
 productimage: $(INSTALLED_PRODUCTIMAGE_TARGET)
 
-.PHONY: productservicesimage
-productservicesimage: $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
+.PHONY: systemextimage
+systemextimage: $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
 
 .PHONY: odmimage
 odmimage: $(INSTALLED_ODMIMAGE_TARGET)
@@ -1652,8 +1652,8 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_ODM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
-    $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) \
-    $(INSTALLED_FILES_JSON_PRODUCT_SERVICES) \
+    $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
+    $(INSTALLED_FILES_JSON_SYSTEM_EXT) \
     $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
     $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
     $(INSTALLED_FILES_FILE_RAMDISK) \
@@ -1745,8 +1745,8 @@ else # TARGET_BUILD_APPS
     $(INSTALLED_FILES_JSON_ODM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
-    $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) \
-    $(INSTALLED_FILES_JSON_PRODUCT_SERVICES) \
+    $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
+    $(INSTALLED_FILES_JSON_SYSTEM_EXT) \
     $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
     $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
     $(INSTALLED_FILES_FILE_RECOVERY) \

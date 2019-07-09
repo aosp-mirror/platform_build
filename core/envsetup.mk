@@ -233,11 +233,14 @@ TARGET_COPY_OUT_RECOVERY := recovery
 # BoardConfig, to be either the partition dir, or a subdir within 'system'.
 _vendor_path_placeholder := ||VENDOR-PATH-PH||
 _product_path_placeholder := ||PRODUCT-PATH-PH||
-_product_services_path_placeholder := ||PRODUCT_SERVICES-PATH-PH||
+_system_ext_path_placeholder := ||SYSTEM_EXT-PATH-PH||
 _odm_path_placeholder := ||ODM-PATH-PH||
 TARGET_COPY_OUT_VENDOR := $(_vendor_path_placeholder)
 TARGET_COPY_OUT_PRODUCT := $(_product_path_placeholder)
-TARGET_COPY_OUT_PRODUCT_SERVICES := $(_product_services_path_placeholder)
+# TODO(b/135957588) TARGET_COPY_OUT_PRODUCT_SERVICES will copy the target to
+# product
+TARGET_COPY_OUT_PRODUCT_SERVICES := $(_product_path_placeholder)
+TARGET_COPY_OUT_SYSTEM_EXT := $(_system_ext_path_placeholder)
 TARGET_COPY_OUT_ODM := $(_odm_path_placeholder)
 
 # Returns the non-sanitized version of the path provided in $1.
@@ -785,38 +788,38 @@ $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS_PRIVILEGED := $(TARGET_OUT_
   $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS \
   $(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_APPS_PRIVILEGED
 
-TARGET_OUT_PRODUCT_SERVICES := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_PRODUCT_SERVICES)
+TARGET_OUT_SYSTEM_EXT := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_SYSTEM_EXT)
 ifneq ($(filter address,$(SANITIZE_TARGET)),)
-target_out_product_services_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_PRODUCT_SERVICES)
+target_out_system_ext_shared_libraries_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_SYSTEM_EXT)
 ifeq ($(SANITIZE_LITE),true)
 # When using SANITIZE_LITE, APKs must not be packaged with sanitized libraries, as they will not
 # work with unsanitized app_process. For simplicity, generate APKs into /data/asan/.
-target_out_product_services_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_PRODUCT_SERVICES)
+target_out_system_ext_app_base := $(PRODUCT_OUT)/$(TARGET_COPY_OUT_ASAN)/$(TARGET_COPY_OUT_SYSTEM_EXT)
 else
-target_out_product_services_app_base := $(TARGET_OUT_PRODUCT_SERVICES)
+target_out_system_ext_app_base := $(TARGET_OUT_SYSTEM_EXT)
 endif
 else
-target_out_product_services_shared_libraries_base := $(TARGET_OUT_PRODUCT_SERVICES)
-target_out_product_services_app_base := $(TARGET_OUT_PRODUCT_SERVICES)
+target_out_system_ext_shared_libraries_base := $(TARGET_OUT_SYSTEM_EXT)
+target_out_system_ext_app_base := $(TARGET_OUT_SYSTEM_EXT)
 endif
 
 ifeq ($(TARGET_IS_64_BIT),true)
-TARGET_OUT_PRODUCT_SERVICES_SHARED_LIBRARIES := $(target_out_product_services_shared_libraries_base)/lib64
+TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES := $(target_out_system_ext_shared_libraries_base)/lib64
 else
-TARGET_OUT_PRODUCT_SERVICES_SHARED_LIBRARIES := $(target_out_product_services_shared_libraries_base)/lib
+TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES := $(target_out_system_ext_shared_libraries_base)/lib
 endif
-TARGET_OUT_PRODUCT_SERVICES_JAVA_LIBRARIES:= $(TARGET_OUT_PRODUCT_SERVICES)/framework
-TARGET_OUT_PRODUCT_SERVICES_APPS := $(target_out_product_services_app_base)/app
-TARGET_OUT_PRODUCT_SERVICES_APPS_PRIVILEGED := $(target_out_product_services_app_base)/priv-app
-TARGET_OUT_PRODUCT_SERVICES_ETC := $(TARGET_OUT_PRODUCT_SERVICES)/etc
+TARGET_OUT_SYSTEM_EXT_JAVA_LIBRARIES:= $(TARGET_OUT_SYSTEM_EXT)/framework
+TARGET_OUT_SYSTEM_EXT_APPS := $(target_out_system_ext_app_base)/app
+TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED := $(target_out_system_ext_app_base)/priv-app
+TARGET_OUT_SYSTEM_EXT_ETC := $(TARGET_OUT_SYSTEM_EXT)/etc
 
 ifeq ($(TARGET_TRANSLATE_2ND_ARCH),true)
-$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SERVICES_SHARED_LIBRARIES := $(target_out_product_services_shared_libraries_base)/lib/$(TARGET_2ND_ARCH)
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES := $(target_out_system_ext_shared_libraries_base)/lib/$(TARGET_2ND_ARCH)
 else
-$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SERVICES_SHARED_LIBRARIES := $(target_out_product_services_shared_libraries_base)/lib
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_SHARED_LIBRARIES := $(target_out_system_ext_shared_libraries_base)/lib
 endif
-$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SERVICES_APPS := $(TARGET_OUT_PRODUCT_SERVICES_APPS)
-$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_PRODUCT_SERVICES_APPS_PRIVILEGED := $(TARGET_OUT_PRODUCT_SERVICES_APPS_PRIVILEGED)
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_APPS := $(TARGET_OUT_SYSTEM_EXT_APPS)
+$(TARGET_2ND_ARCH_VAR_PREFIX)TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED := $(TARGET_OUT_SYSTEM_EXT_APPS_PRIVILEGED)
 
 TARGET_OUT_BREAKPAD := $(PRODUCT_OUT)/breakpad
 .KATI_READONLY := TARGET_OUT_BREAKPAD

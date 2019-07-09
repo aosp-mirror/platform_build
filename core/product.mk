@@ -161,8 +161,8 @@ _product_list_vars += PRODUCT_PRODUCT_PROPERTIES
 
 # A list of property assignments, like "key = value", with zero or more
 # whitespace characters on either side of the '='.
-# used for adding properties to build.prop of product partition
-_product_list_vars += PRODUCT_PRODUCT_SERVICES_PROPERTIES
+# used for adding properties to build.prop of system_ext and odm partitions
+_product_list_vars += PRODUCT_SYSTEM_EXT_PROPERTIES
 _product_list_vars += PRODUCT_ODM_PROPERTIES
 
 # The characteristics of the product, which among other things is passed to aapt
@@ -238,7 +238,7 @@ _product_single_value_vars += PRODUCT_VERITY_SIGNING_KEY
 _product_single_value_vars += PRODUCT_SYSTEM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_VENDOR_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_PRODUCT_VERITY_PARTITION
-_product_single_value_vars += PRODUCT_PRODUCT_SERVICES_VERITY_PARTITION
+_product_single_value_vars += PRODUCT_SYSTEM_EXT_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_ODM_VERITY_PARTITION
 _product_single_value_vars += PRODUCT_SYSTEM_SERVER_DEBUG_INFO
 _product_single_value_vars += PRODUCT_OTHER_JAVA_DEBUG_INFO
@@ -265,7 +265,7 @@ _product_list_vars += PRODUCT_SANITIZER_MODULE_CONFIGS
 _product_single_value_vars += PRODUCT_SYSTEM_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_VENDOR_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_PRODUCT_BASE_FS_PATH
-_product_single_value_vars += PRODUCT_PRODUCT_SERVICES_BASE_FS_PATH
+_product_single_value_vars += PRODUCT_SYSTEM_EXT_BASE_FS_PATH
 _product_single_value_vars += PRODUCT_ODM_BASE_FS_PATH
 
 # The first API level this product shipped with
@@ -357,7 +357,7 @@ _product_single_value_vars += PRODUCT_BUILD_SYSTEM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_SYSTEM_OTHER_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_VENDOR_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_PRODUCT_IMAGE
-_product_single_value_vars += PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE
+_product_single_value_vars += PRODUCT_BUILD_SYSTEM_EXT_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_ODM_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_CACHE_IMAGE
 _product_single_value_vars += PRODUCT_BUILD_RAMDISK_IMAGE

@@ -43,7 +43,7 @@ ifdef LOCAL_SOONG_CLASSES_JAR
   endif # TURBINE_ENABLED != false
 endif
 
-# Run veridex on product, product_services and vendor modules.
+# Run veridex on product, system_ext and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
 ifeq (true,$(non_system_module))
