@@ -13,7 +13,9 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-"""This script merges two partial target files packages.
+
+"""
+This script merges two partial target files packages.
 
 One package contains framework files, and the other contains vendor files.
 It produces a complete target files package that can be used to generate an
@@ -91,6 +93,7 @@ import img_from_target_files
 import ota_from_target_files
 
 logger = logging.getLogger(__name__)
+
 OPTIONS = common.OPTIONS
 OPTIONS.verbose = True
 OPTIONS.framework_target_files = None
@@ -201,10 +204,10 @@ SINGLE_BUILD_PARTITIONS = (
 
 
 def write_sorted_data(data, path):
-  """Write the sorted contents of either a list or dict to file.
+  """Writes the sorted contents of either a list or dict to file.
 
-  This function sorts the contents of the list or dict and then
-  writes the resulting sorted contents to a file specified by path.
+  This function sorts the contents of the list or dict and then writes the
+  resulting sorted contents to a file specified by path.
 
   Args:
     data: The list or dict to sort and write.
@@ -219,7 +222,7 @@ def write_sorted_data(data, path):
 
 
 def extract_items(target_files, target_files_temp_dir, extract_item_list):
-  """Extract items from target files to temporary directory.
+  """Extracts items from target files to temporary directory.
 
   This function extracts from the specified target files zip archive into the
   specified temporary directory, the items specified in the extract item list.
@@ -237,7 +240,7 @@ def extract_items(target_files, target_files_temp_dir, extract_item_list):
   # zip file. Otherwise, the extraction step will fail.
 
   with zipfile.ZipFile(
-      target_files, 'r', allowZip64=True) as target_files_zipfile:
+      target_files, allowZip64=True) as target_files_zipfile:
     target_files_namelist = target_files_zipfile.namelist()
 
   filtered_extract_item_list = []
@@ -334,9 +337,9 @@ def validate_config_lists(framework_item_list, framework_misc_info_keys,
     in_vendor = any(item.startswith(partition) for item in vendor_item_list)
     if in_framework and in_vendor:
       logger.error(
-          'Cannot extract items from {0} for both the framework and vendor'
+          'Cannot extract items from %s for both the framework and vendor'
           ' builds. Please ensure only one merge config item list'
-          ' includes {0}.'.format(partition))
+          ' includes %s.', partition, partition)
       has_error = True
 
   if ('dynamic_partition_list' in framework_misc_info_keys) or (
@@ -351,15 +354,14 @@ def validate_config_lists(framework_item_list, framework_misc_info_keys,
 def process_ab_partitions_txt(framework_target_files_temp_dir,
                               vendor_target_files_temp_dir,
                               output_target_files_temp_dir):
-  """Perform special processing for META/ab_partitions.txt.
+  """Performs special processing for META/ab_partitions.txt.
 
-  This function merges the contents of the META/ab_partitions.txt files from
-  the framework directory and the vendor directory, placing the merged result in
-  the output directory. The precondition in that the files are already
-  extracted. The post condition is that the output META/ab_partitions.txt
-  contains the merged content. The format for each ab_partitions.txt a one
-  partition name per line. The output file contains the union of the parition
-  names.
+  This function merges the contents of the META/ab_partitions.txt files from the
+  framework directory and the vendor directory, placing the merged result in the
+  output directory. The precondition in that the files are already extracted.
+  The post condition is that the output META/ab_partitions.txt contains the
+  merged content. The format for each ab_partitions.txt a one partition name per
+  line. The output file contains the union of the parition names.
 
   Args:
     framework_target_files_temp_dir: The name of a directory containing the
@@ -392,10 +394,10 @@ def process_ab_partitions_txt(framework_target_files_temp_dir,
 
 
 def append_recovery_to_filesystem_config(output_target_files_temp_dir):
-  """Perform special processing for META/filesystem_config.txt.
+  """Performs special processing for META/filesystem_config.txt.
 
-  This function appends recovery information to META/filesystem_config.txt
-  so that recovery patch regeneration will succeed.
+  This function appends recovery information to META/filesystem_config.txt so
+  that recovery patch regeneration will succeed.
 
   Args:
     output_target_files_temp_dir: The name of a directory that will be used to
@@ -479,7 +481,7 @@ def process_misc_info_txt(framework_target_files_temp_dir,
                           vendor_target_files_temp_dir,
                           output_target_files_temp_dir,
                           framework_misc_info_keys):
-  """Perform special processing for META/misc_info.txt.
+  """Performs special processing for META/misc_info.txt.
 
   This function merges the contents of the META/misc_info.txt files from the
   framework directory and the vendor directory, placing the merged result in the
@@ -551,7 +553,7 @@ def process_misc_info_txt(framework_target_files_temp_dir,
 def process_dynamic_partitions_info_txt(framework_target_files_dir,
                                         vendor_target_files_dir,
                                         output_target_files_dir):
-  """Perform special processing for META/dynamic_partitions_info.txt.
+  """Performs special processing for META/dynamic_partitions_info.txt.
 
   This function merges the contents of the META/dynamic_partitions_info.txt
   files from the framework directory and the vendor directory, placing the
@@ -599,14 +601,13 @@ def process_dynamic_partitions_info_txt(framework_target_files_dir,
 def process_apex_keys_apk_certs_common(framework_target_files_dir,
                                        vendor_target_files_dir,
                                        output_target_files_dir, file_name):
-  """Perform special processing for META/apexkeys.txt or META/apkcerts.txt.
+  """Performs special processing for META/apexkeys.txt or META/apkcerts.txt.
 
   This function merges the contents of the META/apexkeys.txt or
-  META/apkcerts.txt files from the framework directory and the vendor
-  directory, placing the merged result in the output directory. The
-  precondition in that the files are already extracted. The post condition
-  is that the output META/apexkeys.txt or META/apkcerts.txt contains the
-  merged content.
+  META/apkcerts.txt files from the framework directory and the vendor directory,
+  placing the merged result in the output directory. The precondition in that
+  the files are already extracted. The post condition is that the output
+  META/apexkeys.txt or META/apkcerts.txt contains the merged content.
 
   Args:
     framework_target_files_dir: The name of a directory containing the special
@@ -673,7 +674,7 @@ def process_special_cases(framework_target_files_temp_dir,
                           vendor_target_files_temp_dir,
                           output_target_files_temp_dir,
                           framework_misc_info_keys, rebuild_recovery):
-  """Perform special-case processing for certain target files items.
+  """Performs special-case processing for certain target files items.
 
   Certain files in the output target files package require special-case
   processing. This function performs all that special-case processing.
@@ -733,7 +734,7 @@ def process_special_cases(framework_target_files_temp_dir,
 
 
 def files_from_path(target_path, extra_args=None):
-  """Get files under given path.
+  """Gets files under given path.
 
   Get (sub)files from given target path and return sorted list.
 
@@ -755,7 +756,7 @@ def create_merged_package(temp_dir, framework_target_files, framework_item_list,
                           vendor_target_files, vendor_item_list,
                           framework_misc_info_keys,
                           rebuild_recovery):
-  """Merge two target files packages into one target files structure.
+  """Merges two target files packages into one target files structure.
 
   Args:
     temp_dir: The name of a directory we use when we extract items from the
@@ -864,7 +865,7 @@ def generate_images(target_files_dir, rebuild_recovery):
 
 
 def generate_super_empty_image(target_dir, output_super_empty):
-  """ Generate super_empty image from target package.
+  """Generates super_empty image from target package.
 
   Args:
     target_dir: Path to the target file package which contains misc_info.txt for
@@ -898,7 +899,7 @@ def generate_super_empty_image(target_dir, output_super_empty):
 
 
 def create_img_archive(source_path, target_path):
-  """ Create IMG archive in target path from source package.
+  """Creates IMG archive in target path from source package.
 
   Args:
     source_path: Path of the source package to be packed.
@@ -913,7 +914,7 @@ def create_img_archive(source_path, target_path):
 
 
 def create_target_files_archive(output_file, source_dir, temp_dir):
-  """ Create archive from target package.
+  """Creates archive from target package.
 
   Args:
     output_file: The name of the zip archive target files package.
@@ -930,7 +931,7 @@ def create_target_files_archive(output_file, source_dir, temp_dir):
                                   ['-path', output_target_files_meta_dir,
                                    '-prune', '-o', '-print'])
 
-  with open(output_target_files_list, 'wb') as f:
+  with open(output_target_files_list, 'w') as f:
     f.write(meta_content)
     f.write(other_content)
 
@@ -953,7 +954,7 @@ def create_target_files_archive(output_file, source_dir, temp_dir):
 
 
 def create_ota_package(zip_package, output_ota):
-  """ Create OTA package from archived package.
+  """Creates OTA package from archived package.
 
   Args:
     zip_package: The name of the zip archived package.
@@ -971,7 +972,7 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
                        vendor_item_list, output_target_files, output_dir,
                        output_item_list, output_ota, output_img,
                        output_super_empty, rebuild_recovery):
-  """Merge two target files packages together.
+  """Merges two target files packages together.
 
   This function takes framework and vendor target files packages as input,
   performs various file extractions, special case processing, and finally
@@ -1045,7 +1046,7 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
 
 
 def call_func_with_temp_dir(func, keep_tmp):
-  """Manage the creation and cleanup of the temporary directory.
+  """Manages the creation and cleanup of the temporary directory.
 
   This function calls the given function after first creating a temporary
   directory. It also cleans up the temporary directory.
@@ -1157,6 +1158,7 @@ def main():
       ],
       extra_option_handler=option_handler)
 
+  # pylint: disable=too-many-boolean-expressions
   if (args or OPTIONS.framework_target_files is None or
       OPTIONS.vendor_target_files is None or
       (OPTIONS.output_target_files is None and OPTIONS.output_dir is None) or
