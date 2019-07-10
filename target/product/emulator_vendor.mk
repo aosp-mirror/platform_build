@@ -29,6 +29,7 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST := \
     system/lib/egl/libGLES_android.so \
     system/lib64/egl/libGLES_android.so \
     system/priv-app/SdkSetup/SdkSetup.apk \
+    system/priv-app/SdkSetup/oat/% \
 
 # Device modules
 PRODUCT_PACKAGES += \
