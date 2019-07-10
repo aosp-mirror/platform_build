@@ -63,6 +63,24 @@
       "revId": "51f252c0dda35bfd646e19a4ec9494950288acab",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "786fec90_1837a7bd",
+        "filename": "tools/releasetools/mk_combined_img.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2019-07-10T11:14:13Z",
+      "side": 1,
+      "message": "I added an Android.bp to build a stand-alone binary for the script (with python_binary_host), instead of using the script directly, so no need to move it from device/generic/goldfish/tools to build/make/tools/releasetools.",
+      "parentUuid": "8fa27369_372bf3a5",
+      "revId": "51f252c0dda35bfd646e19a4ec9494950288acab",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
