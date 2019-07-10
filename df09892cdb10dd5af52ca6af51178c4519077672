@@ -22,6 +22,30 @@
       "revId": "df09892cdb10dd5af52ca6af51178c4519077672",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "64a56d1f_7d0f3619",
+        "filename": "target/product/aosp_product.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-07-10T03:49:21Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "e78a2f6d_49175ca3",
+      "range": {
+        "startLine": 49,
+        "startChar": 16,
+        "endLine": 51,
+        "endChar": 21
+      },
+      "revId": "df09892cdb10dd5af52ca6af51178c4519077672",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
