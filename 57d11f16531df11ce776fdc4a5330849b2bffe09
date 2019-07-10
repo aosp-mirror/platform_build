@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3d0b8ae1_cb6dbfee",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 3826,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-10T20:58:52Z",
+      "side": 1,
+      "message": "This doesn\u0027t express a dependency on the tool, but simply defining a variable with that string.\n\nMK_COMBINE_QEMU_IMAGE_SH :\u003d device/...\n\n$(MK_COMBINE_QEMU_IMAGE_SH): $(MK_COMBINE_QEMU_IMAGE_SH)\n...",
+      "range": {
+        "startLine": 3825,
+        "startChar": 0,
+        "endLine": 3826,
+        "endChar": 83
+      },
+      "revId": "57d11f16531df11ce776fdc4a5330849b2bffe09",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
