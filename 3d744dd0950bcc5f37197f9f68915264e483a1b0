@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6177af51_f7c49eb2",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-07-10T20:14:26Z",
+      "side": 1,
+      "message": "hmm, how is it different from calling directly RunAndCheckOutput(args, stdout\u003dNone, stderr\u003dNone), since the returned output will be none by default?",
+      "range": {
+        "startLine": 246,
+        "startChar": 0,
+        "endLine": 246,
+        "endChar": 53
+      },
+      "revId": "3d744dd0950bcc5f37197f9f68915264e483a1b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
