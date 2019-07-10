@@ -98,15 +98,14 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # The partitions allowed to be signed by AVB (Android Verified Boot 2.0). Note
 # that system_other is not in the list because we don't want to include its
 # descriptor into vbmeta.img.
-AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'product_services',
-                  'recovery', 'system', 'vendor')
+AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'recovery', 'system',
+                  'system_ext', 'vendor')
 
 # Chained VBMeta partitions.
 AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
 
 # Partitions that should have their care_map added to META/care_map.pb
-PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product_services',
-                            'odm')
+PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'system_ext', 'odm')
 
 
 class ErrorCode(object):

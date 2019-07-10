@@ -81,10 +81,16 @@ else ifneq ($(filter $(TARGET_OUT_ODM)/%,$(_path)),)
 LOCAL_ODM_MODULE := true
 else ifneq ($(filter $(TARGET_OUT_PRODUCT)/%,$(_path)),)
 LOCAL_PRODUCT_MODULE := true
-else ifneq ($(filter $(TARGET_OUT_PRODUCT_SERVICES)/%,$(_path)),)
-LOCAL_PRODUCT_SERVICES_MODULE := true
+else ifneq ($(filter $(TARGET_OUT_SYSTEM_EXT)/%,$(_path)),)
+LOCAL_SYSTEM_EXT_MODULE := true
 endif
 _path :=
+
+# TODO(b/135957588) Remove following workaround
+# LOCAL_PRODUCT_SERVICES_MODULE to LOCAL_PRODUCT_MODULE for all Android.mk
+ifndef LOCAL_PRODUCT_MODULE
+LOCAL_PRODUCT_MODULE := $(LOCAL_PRODUCT_SERVICES_MODULE)
+endif
 
 ifndef LOCAL_PROPRIETARY_MODULE
   LOCAL_PROPRIETARY_MODULE := $(LOCAL_VENDOR_MODULE)
@@ -98,7 +104,7 @@ endif
 
 non_system_module := $(filter true, \
    $(LOCAL_PRODUCT_MODULE) \
-   $(LOCAL_PRODUCT_SERVICES_MODULE) \
+   $(LOCAL_SYSTEM_EXT_MODULE) \
    $(LOCAL_VENDOR_MODULE) \
    $(LOCAL_PROPRIETARY_MODULE))
 
@@ -227,8 +233,8 @@ else ifeq (true,$(strip $(LOCAL_ODM_MODULE)))
   partition_tag := _ODM
 else ifeq (true,$(strip $(LOCAL_PRODUCT_MODULE)))
   partition_tag := _PRODUCT
-else ifeq (true,$(strip $(LOCAL_PRODUCT_SERVICES_MODULE)))
-  partition_tag := _PRODUCT_SERVICES
+else ifeq (true,$(strip $(LOCAL_SYSTEM_EXT_MODULE)))
+  partition_tag := _SYSTEM_EXT
 else ifeq (NATIVE_TESTS,$(LOCAL_MODULE_CLASS))
   partition_tag := _DATA
 else
