@@ -282,6 +282,30 @@
       "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1bf378df_5d8028c0",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-07-11T22:11:26Z",
+      "side": 1,
+      "message": "disclaimer: I didn\u0027t understand the comment from Dan about building system+ramdisk but not vendor. Are we talking about prebuilt /vendor or non-existant vendor? Dan, I think you\u0027re in a better spot to do this review..",
+      "parentUuid": "b7c3e50a_4fb06466",
+      "range": {
+        "startLine": 1277,
+        "startChar": 2,
+        "endLine": 1277,
+        "endChar": 36
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
