@@ -2315,13 +2315,14 @@ $(hide) \
   echo "Install path on $(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT): $(PRIVATE_INSTALLED_MODULE)" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
   echo >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
 endef
+ART_VERIDEX_APPCOMPAT_SCRIPT:=$(HOST_OUT)/bin/appcompat.sh
 define run-appcompat
 $(hide) \
   echo "appcompat.sh output:" >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log && \
-  PACKAGING=$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING ANDROID_LOG_TAGS="*:e" art/tools/veridex/appcompat.sh --dex-file=$@ --api-flags=$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS) 2>&1 >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
+  PACKAGING=$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING ANDROID_LOG_TAGS="*:e" $(ART_VERIDEX_APPCOMPAT_SCRIPT) --dex-file=$@ --api-flags=$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS) 2>&1 >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
 endef
 appcompat-files = \
-  art/tools/veridex/appcompat.sh \
+  $(ART_VERIDEX_APPCOMPAT_SCRIPT) \
   $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS) \
   $(HOST_OUT_EXECUTABLES)/veridex \
   $(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING/core_dex_intermediates/classes.dex \
