@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9eb094fe_0cc09e4b",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1166,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-07-11T18:59:06Z",
+      "side": 1,
+      "message": "Why do we have two \"remainder\"-style variants now?",
+      "range": {
+        "startLine": 1166,
+        "startChar": 9,
+        "endLine": 1166,
+        "endChar": 72
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8cef4796_0f752435",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1255,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-07-11T18:59:06Z",
+      "side": 1,
+      "message": "Does the settings app read this?",
+      "range": {
+        "startLine": 1255,
+        "startChar": 0,
+        "endLine": 1255,
+        "endChar": 66
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5bff0608_85b9bcee",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1270,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-07-11T18:59:06Z",
+      "side": 1,
+      "message": "hmmm why are we separating this one out now and not before? how is it related to the rest of this change?",
+      "range": {
+        "startLine": 1270,
+        "startChar": 0,
+        "endLine": 1270,
+        "endChar": 76
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2bf49cb0_d5387f5c",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1272,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-07-11T18:59:06Z",
+      "side": 1,
+      "message": "mixed tabs and spaces here (and below). Spaces only when not making a recipe please",
+      "range": {
+        "startLine": 1272,
+        "startChar": 0,
+        "endLine": 1272,
+        "endChar": 16
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cb74329a_b4ad618f",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-07-11T18:59:06Z",
+      "side": 1,
+      "message": "The flag you\u0027re using right now is \"if we are using a vendor image\" (but potentially not building it -- correct?)\n\nEither way - why do we need a conditional for VENDOR but not the other partitions? Can\u0027t we just *always* put the remainder in the vendor notice file?",
+      "range": {
+        "startLine": 1277,
+        "startChar": 2,
+        "endLine": 1277,
+        "endChar": 36
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
