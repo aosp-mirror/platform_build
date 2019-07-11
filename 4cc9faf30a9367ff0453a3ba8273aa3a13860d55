@@ -214,6 +214,30 @@
     },
     {
       "key": {
+        "uuid": "a5087cec_28e570d7",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2451,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-07-11T21:34:19Z",
+      "side": 1,
+      "message": "Is the current patchset fine where I just copy everything?  It does work for me now.",
+      "parentUuid": "79665579_19970675",
+      "range": {
+        "startLine": 2451,
+        "startChar": 3,
+        "endLine": 2451,
+        "endChar": 24
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d1e0135c_d8cb5d47",
         "filename": "tools/fs_config/Android.mk",
         "patchSetId": 4

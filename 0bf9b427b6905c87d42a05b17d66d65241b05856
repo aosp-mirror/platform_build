@@ -52,6 +52,24 @@
       "revId": "0bf9b427b6905c87d42a05b17d66d65241b05856",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "295d3a6b_c2a67f80",
+        "filename": "tools/fs_config/Android.bp",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-07-11T21:34:19Z",
+      "side": 0,
+      "message": "Where would I specify that we should build these?  They\u0027re coming from target/product/base_vendor.mk and target/product/base_system.mk now.  Is there a better place to specify the \u0027system_ext\u0027 one for example?",
+      "parentUuid": "99cce381_6b214e6d",
+      "revId": "0bf9b427b6905c87d42a05b17d66d65241b05856",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
