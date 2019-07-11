@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ab45eb72_baa030af",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2442,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-07-11T18:19:58Z",
+      "side": 1,
+      "message": "You should just be able to rely on BOARD_USES_VENDORIMAGE, it will always be set if BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE is set",
+      "range": {
+        "startLine": 2442,
+        "startChar": 63,
+        "endLine": 2442,
+        "endChar": 97
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8febc8da_5df281bc",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2444,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-07-11T18:19:58Z",
+      "side": 1,
+      "message": "What\u0027s the intent of these -- I assume they should only be set if we\u0027re actually building them, since if we\u0027re not building them, they\u0027re not guaranteed to be valid? In which case you should be using BUILDING_*_IMAGE to check.",
+      "range": {
+        "startLine": 2444,
+        "startChar": 6,
+        "endLine": 2444,
+        "endChar": 28
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3b640ced_957629e3",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2450,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-07-11T18:19:58Z",
+      "side": 1,
+      "message": "Similarly, we may not be building the system image, right? (For vendor-only builds)",
+      "range": {
+        "startLine": 2450,
+        "startChar": 0,
+        "endLine": 2450,
+        "endChar": 64
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ad8a13ef_7d64642f",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2451,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-07-11T18:19:58Z",
+      "side": 1,
+      "message": "IIRC, you can\u0027t use PRIVATE_ variables here, but you can check the ninja file to make sure",
+      "range": {
+        "startLine": 2451,
+        "startChar": 3,
+        "endLine": 2451,
+        "endChar": 24
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d1e0135c_d8cb5d47",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 422,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-07-11T18:19:58Z",
+      "side": 1,
+      "message": "These should probably always be defined",
+      "range": {
+        "startLine": 422,
+        "startChar": 0,
+        "endLine": 422,
+        "endChar": 68
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

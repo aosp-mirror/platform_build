@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bea2d556_e0e00d74",
+        "filename": "tools/fs_config/Android.bp",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-07-11T18:19:58Z",
+      "side": 0,
+      "message": "What\u0027s forcing these out of Android.bp?",
+      "revId": "0bf9b427b6905c87d42a05b17d66d65241b05856",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
