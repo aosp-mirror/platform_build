@@ -1460,7 +1460,7 @@ class PasswordManager(object):
     values.
     """
     result = {}
-    for k, v in sorted(current.iteritems()):
+    for k, v in sorted(current.items()):
       if v:
         result[k] = v
       else:
@@ -1481,7 +1481,7 @@ class PasswordManager(object):
     f.write("# (Additional spaces are harmless.)\n\n")
 
     first_line = None
-    sorted_list = sorted([(not v, k, v) for (k, v) in current.iteritems()])
+    sorted_list = sorted([(not v, k, v) for (k, v) in current.items()])
     for i, (_, k, v) in enumerate(sorted_list):
       f.write("[[[  %s  ]]] %s\n" % (v, k))
       if not v and first_line is None:
@@ -1647,7 +1647,7 @@ class DeviceSpecificParams(object):
     """Keyword arguments to the constructor become attributes of this
     object, which is passed to all functions in the device-specific
     module."""
-    for k, v in kwargs.iteritems():
+    for k, v in kwargs.items():
       setattr(self, k, v)
     self.extras = OPTIONS.extras
 
