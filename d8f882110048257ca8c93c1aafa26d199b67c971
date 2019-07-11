@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "9435dba3_f764ede1",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1166,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-07-11T21:56:13Z",
+      "side": 1,
+      "message": "I don\u0027t think we should be paranoid. The build system should make sense and do the right thing",
+      "parentUuid": "6996685e_ecf3a63d",
+      "range": {
+        "startLine": 1166,
+        "startChar": 9,
+        "endLine": 1166,
+        "endChar": 72
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8cef4796_0f752435",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -225,6 +249,30 @@
       "side": 1,
       "message": "Yeah, I\u0027ll update the comment. We can, sure. As long as we put the remainder into both system and vendor lists; thinking about the case where we don\u0027t build a vendor image at all.",
       "parentUuid": "cb74329a_b4ad618f",
+      "range": {
+        "startLine": 1277,
+        "startChar": 2,
+        "endLine": 1277,
+        "endChar": 36
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b7c3e50a_4fb06466",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-07-11T21:56:13Z",
+      "side": 1,
+      "message": "I don\u0027t understand. If you\u0027re not building a vendor image, you shouldn\u0027t get the notices that belong on the vendor image right?\n\nTo me what makes most sense is that we decide in which notice file module the licenses for each partition belongs in. If you don\u0027t have a separate vendor partition, all vendor modules will end up in /system/vendor, including its notice file module.\n\nIt doesn\u0027t make sense to me to have the remainder in two places.",
+      "parentUuid": "d8fe7953_e4506e73",
       "range": {
         "startLine": 1277,
         "startChar": 2,
