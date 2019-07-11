@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "6996685e_ecf3a63d",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1166,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-11T21:15:17Z",
+      "side": 1,
+      "message": "We needed a new remainder variant for adding excess partitions to the vendor image. One that excluded system instead of vendor. Right now the notice files for both system and vendor include any excess partitions when they are built (in an effort to be paranoid about license collection)",
+      "parentUuid": "9eb094fe_0cc09e4b",
+      "range": {
+        "startLine": 1166,
+        "startChar": 9,
+        "endLine": 1166,
+        "endChar": 72
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "8cef4796_0f752435",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -36,6 +60,30 @@
       "writtenOn": "2019-07-11T18:59:06Z",
       "side": 1,
       "message": "Does the settings app read this?",
+      "range": {
+        "startLine": 1255,
+        "startChar": 0,
+        "endLine": 1255,
+        "endChar": 66
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cbe0387f_41745614",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1255,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-11T21:15:17Z",
+      "side": 1,
+      "message": "It does: https://android.git.corp.google.com/platform/frameworks/base/+/5578077ad368279e8d13a2a87ccab5fc7bd8992a/packages/SettingsLib/src/com/android/settingslib/license/LicenseHtmlLoader.java#39",
+      "parentUuid": "8cef4796_0f752435",
       "range": {
         "startLine": 1255,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "ba1856bb_5b588b8c",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1270,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-11T21:15:17Z",
+      "side": 1,
+      "message": "Simply so that we don\u0027t build userdata artifacts because of the notice file. Part of the changes was to lessen some over-build that happens. I don\u0027t when images are signed we generate an empty userdata partition anyway, so we shouldn\u0027t be populating shipping images with userdata content.",
+      "parentUuid": "5bff0608_85b9bcee",
+      "range": {
+        "startLine": 1270,
+        "startChar": 0,
+        "endLine": 1270,
+        "endChar": 76
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2bf49cb0_d5387f5c",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "dd7ec426_eaab8e9f",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1272,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-11T21:15:17Z",
+      "side": 1,
+      "message": "Yep, thanks. I\u0027ll fix.",
+      "parentUuid": "2bf49cb0_d5387f5c",
+      "range": {
+        "startLine": 1272,
+        "startChar": 0,
+        "endLine": 1272,
+        "endChar": 16
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "cb74329a_b4ad618f",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -105,6 +201,30 @@
       "writtenOn": "2019-07-11T18:59:06Z",
       "side": 1,
       "message": "The flag you\u0027re using right now is \"if we are using a vendor image\" (but potentially not building it -- correct?)\n\nEither way - why do we need a conditional for VENDOR but not the other partitions? Can\u0027t we just *always* put the remainder in the vendor notice file?",
+      "range": {
+        "startLine": 1277,
+        "startChar": 2,
+        "endLine": 1277,
+        "endChar": 36
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d8fe7953_e4506e73",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-11T21:15:17Z",
+      "side": 1,
+      "message": "Yeah, I\u0027ll update the comment. We can, sure. As long as we put the remainder into both system and vendor lists; thinking about the case where we don\u0027t build a vendor image at all.",
+      "parentUuid": "cb74329a_b4ad618f",
       "range": {
         "startLine": 1277,
         "startChar": 2,
