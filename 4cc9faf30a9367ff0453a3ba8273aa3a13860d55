@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "2171d2a9_90d94213",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2442,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-07-11T20:37:14Z",
+      "side": 1,
+      "message": "Ack; Will swap.",
+      "parentUuid": "ab45eb72_baa030af",
+      "range": {
+        "startLine": 2442,
+        "startChar": 63,
+        "endLine": 2442,
+        "endChar": 97
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "8febc8da_5df281bc",
         "filename": "core/definitions.mk",
         "patchSetId": 4
@@ -45,6 +69,30 @@
       "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66b42e7d_3f0dc520",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2444,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-07-11T20:37:14Z",
+      "side": 1,
+      "message": "Ack, I\u0027ll swap to that.",
+      "parentUuid": "8febc8da_5df281bc",
+      "range": {
+        "startLine": 2444,
+        "startChar": 6,
+        "endLine": 2444,
+        "endChar": 28
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "dc4c8ffb_485d8d9d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2450,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-07-11T20:37:14Z",
+      "side": 1,
+      "message": "Ack; I didn\u0027t think of that.",
+      "parentUuid": "3b640ced_957629e3",
+      "range": {
+        "startLine": 2450,
+        "startChar": 0,
+        "endLine": 2450,
+        "endChar": 64
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ad8a13ef_7d64642f",
         "filename": "core/definitions.mk",
         "patchSetId": 4
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "a6c7b5b3_c9c6999d",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2451,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-07-11T20:37:14Z",
+      "side": 1,
+      "message": "Is it the PRIVATE_ prefix that\u0027s the problem or can I not define variables ahead of the dependencies at all?\n\nI\u0027m guessing it\u0027s that I can\u0027t do this at all, since I only see /dev/null when this gets called.",
+      "parentUuid": "ad8a13ef_7d64642f",
+      "range": {
+        "startLine": 2451,
+        "startChar": 3,
+        "endLine": 2451,
+        "endChar": 24
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d1e0135c_d8cb5d47",
         "filename": "tools/fs_config/Android.mk",
         "patchSetId": 4
@@ -105,6 +201,30 @@
       "writtenOn": "2019-07-11T18:19:58Z",
       "side": 1,
       "message": "These should probably always be defined",
+      "range": {
+        "startLine": 422,
+        "startChar": 0,
+        "endLine": 422,
+        "endChar": 68
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "85790150_2076fc5f",
+        "filename": "tools/fs_config/Android.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 422,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-07-11T20:37:14Z",
+      "side": 1,
+      "message": "Without these, I end up with\n\nbuild/make/core/base_rules.mk:481: error: writing to readonly directory: \"/etc/group\"\n\nPresumably due to TARGET_OUT_\u003csomething\u003e not being defined.",
+      "parentUuid": "d1e0135c_d8cb5d47",
       "range": {
         "startLine": 422,
         "startChar": 0,

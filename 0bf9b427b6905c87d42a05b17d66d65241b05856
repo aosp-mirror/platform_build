@@ -16,6 +16,24 @@
       "revId": "0bf9b427b6905c87d42a05b17d66d65241b05856",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "94b81b5d_4467319c",
+        "filename": "tools/fs_config/Android.bp",
+        "patchSetId": 4
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 1064128
+      },
+      "writtenOn": "2019-07-11T20:37:14Z",
+      "side": 0,
+      "message": "The below segment can\u0027t depend on these in Android.bp\n\nLOCAL_MODULE :\u003d passwd\nLOCAL_REQUIRED_MODULES :\u003d \\\n\t$(foreach t,$(fs_config_generate_extra_partition_list),$(LOCAL_MODULE)_$(t))\ninclude $(BUILD_PHONY_PACKAGE)\n\nIs there any easy way to do that in Android.bp?\n\nOr alternatively, are we always generating /system/odm/... /system/system_ext/... in the case that we\u0027re not actually building the partitions?  Maybe I just always create these and let the build system figure out where they\u0027re supposed to go?",
+      "parentUuid": "bea2d556_e0e00d74",
+      "revId": "0bf9b427b6905c87d42a05b17d66d65241b05856",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
