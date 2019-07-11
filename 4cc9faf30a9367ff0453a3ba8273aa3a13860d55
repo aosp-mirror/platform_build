@@ -190,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "79665579_19970675",
+        "filename": "core/definitions.mk",
+        "patchSetId": 4
+      },
+      "lineNbr": 2451,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-07-11T21:12:01Z",
+      "side": 1,
+      "message": "target-specific variables (the \"$(2): \" prefix), which we start with PRIVATE_ by convention",
+      "parentUuid": "a6c7b5b3_c9c6999d",
+      "range": {
+        "startLine": 2451,
+        "startChar": 3,
+        "endLine": 2451,
+        "endChar": 24
+      },
+      "revId": "4cc9faf30a9367ff0453a3ba8273aa3a13860d55",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d1e0135c_d8cb5d47",
         "filename": "tools/fs_config/Android.mk",
         "patchSetId": 4
