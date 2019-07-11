@@ -135,9 +135,9 @@ else
     endif
 endif
 
-my_shared_libraries := \
+my_shared_libraries := $(strip \
     $(filter-out $(my_system_shared_libraries),$(LOCAL_SHARED_LIBRARIES)) \
-    $(my_system_shared_libraries)
+    $(my_system_shared_libraries))
 
 # Extra shared libraries introduced by LOCAL_CXX_STL (may append some libraries to
 # my_shared_libraries).
