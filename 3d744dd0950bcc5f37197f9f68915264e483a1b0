@@ -22,6 +22,30 @@
       "revId": "3d744dd0950bcc5f37197f9f68915264e483a1b0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2e466148_69b4d6b3",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 1528595
+      },
+      "writtenOn": "2019-07-11T08:48:45Z",
+      "side": 1,
+      "message": "You are correct, calling directly RunAndCheckOutput with parameters (args, stdout\u003dNone, stderr\u003dNone) is a better approach.\nThis avoids to change RunAndCheckOutput, only required change is to make sure that output is not NoneType (it happens  with stdout\u003dNone, stderr\u003dNone) which make the return output to fail. New patchset is implemented accordingly.",
+      "parentUuid": "6177af51_f7c49eb2",
+      "range": {
+        "startLine": 246,
+        "startChar": 0,
+        "endLine": 246,
+        "endChar": 53
+      },
+      "revId": "3d744dd0950bcc5f37197f9f68915264e483a1b0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
