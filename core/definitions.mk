@@ -2444,8 +2444,16 @@ $(2): \
 	$(1) \
 	$(HOST_INIT_VERIFIER) \
 	$(HIDL_INHERITANCE_HIERARCHY) \
-	$(call intermediates-dir-for,ETC,passwd)/passwd
-	$(hide) $(HOST_INIT_VERIFIER) -p $(call intermediates-dir-for,ETC,passwd)/passwd -i $(HIDL_INHERITANCE_HIERARCHY) $$<
+	$(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	$(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
+	$(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
+	$(call intermediates-dir-for,ETC,passwd_product)/passwd_product
+	$(hide) $(HOST_INIT_VERIFIER) \
+	  -p $(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	  -p $(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
+	  -p $(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
+	  -p $(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
+	  -i $(HIDL_INHERITANCE_HIERARCHY) $$<
 else
 $(2): $(1)
 endif
