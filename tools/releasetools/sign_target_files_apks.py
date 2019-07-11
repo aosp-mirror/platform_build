@@ -188,6 +188,9 @@ def GetApexKeys(keys_info, key_map):
   for apex, key in OPTIONS.extra_apex_payload_keys.items():
     if not key:
       key = 'PRESIGNED'
+    if apex not in keys_info:
+      logger.warning('Failed to find %s in target_files; Ignored', apex)
+      continue
     keys_info[apex] = (key, keys_info[apex][1])
 
   # Apply the key remapping to container keys.
