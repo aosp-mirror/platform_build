@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1453bf63_81036ba1",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1276,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2019-07-12T14:07:46Z",
+      "side": 1,
+      "message": "The TARGET_NATIVE_BRIDGE_RELATIVE_PATH is currently optional and defaults to arm and arm64. So we still need these",
+      "parentUuid": "ed1c4aec_55fd8467",
+      "revId": "c1419c22781f10a3e2c1e829d099110a0644e0d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "b6584ad6_9de36b60",
         "filename": "core/main.mk",
         "patchSetId": 1
@@ -33,6 +51,24 @@
       "revId": "c1419c22781f10a3e2c1e829d099110a0644e0d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a3965656_67f3ab0c",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1278,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2019-07-12T14:07:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b6584ad6_9de36b60",
+      "revId": "c1419c22781f10a3e2c1e829d099110a0644e0d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -56,6 +92,30 @@
       "revId": "c1419c22781f10a3e2c1e829d099110a0644e0d3",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dae9501d_a99f7c2d",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 1279,
+      "author": {
+        "id": 1041673
+      },
+      "writtenOn": "2019-07-12T14:07:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3ba99bb5_6b50d553",
+      "range": {
+        "startLine": 1279,
+        "startChar": 84,
+        "endLine": 1279,
+        "endChar": 121
+      },
+      "revId": "c1419c22781f10a3e2c1e829d099110a0644e0d3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
