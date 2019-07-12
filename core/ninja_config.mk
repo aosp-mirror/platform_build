@@ -16,7 +16,6 @@ PARSE_TIME_MAKE_GOALS := \
 	all \
 	ECLIPSE-% \
 	AUX-% \
-	boottarball-nodeps \
 	brillo_tests \
 	btnod \
 	build-art% \
@@ -44,7 +43,6 @@ PARSE_TIME_MAKE_GOALS := \
 	snod \
 	stnod \
 	systemimage-nodeps \
-	systemtarball-nodeps \
 	target-files-package \
 	test-art% \
 	user \
