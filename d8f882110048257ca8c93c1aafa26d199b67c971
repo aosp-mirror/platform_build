@@ -191,6 +191,30 @@
     },
     {
       "key": {
+        "uuid": "fb2db92b_d32ff855",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1270,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-12T03:19:07Z",
+      "side": 1,
+      "message": "SGTM.",
+      "parentUuid": "05722f83_bf68eada",
+      "range": {
+        "startLine": 1270,
+        "startChar": 0,
+        "endLine": 1270,
+        "endChar": 76
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2bf49cb0_d5387f5c",
         "filename": "core/Makefile",
         "patchSetId": 11
