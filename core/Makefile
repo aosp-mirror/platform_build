@@ -659,6 +659,7 @@ define build-image-kernel-modules
   $(eval $(call build-image-kernel-modules-depmod,$(1),$(3),$(4),$(5),$(6))) \
   $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep:$(2)/lib/modules/modules.dep \
   $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias:$(2)/lib/modules/modules.alias \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.softdep:$(2)/lib/modules/modules.softdep \
   $(4)/$(DEPMOD_STAGING_SUBDIR)/$(6):$(2)/lib/modules/$(6)
 endef
 
@@ -668,7 +669,7 @@ endef
 # $(4): module load list
 # $(5): module load list filename
 define build-image-kernel-modules-depmod
-$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: .KATI_IMPLICIT_OUTPUTS := $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.alias $(3)/$(DEPMOD_STAGING_SUBDIR)/$(5)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: .KATI_IMPLICIT_OUTPUTS := $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.alias $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.softdep $(3)/$(DEPMOD_STAGING_SUBDIR)/$(5)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(DEPMOD)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULES := $(1)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MOUNT_POINT := $(2)
