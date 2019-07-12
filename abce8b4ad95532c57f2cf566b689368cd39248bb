@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8f7ca5c6_98486874",
+        "filename": "core/Makefile",
+        "patchSetId": 10
+      },
+      "lineNbr": 3097,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-07-12T18:16:05Z",
+      "side": 1,
+      "message": "is this supposed to be space as it\u0027s dependency?",
+      "range": {
+        "startLine": 3097,
+        "startChar": 0,
+        "endLine": 3097,
+        "endChar": 1
+      },
+      "revId": "abce8b4ad95532c57f2cf566b689368cd39248bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
