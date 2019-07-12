@@ -22,6 +22,30 @@
       "revId": "abce8b4ad95532c57f2cf566b689368cd39248bb",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "35ae939c_a0a52b84",
+        "filename": "core/Makefile",
+        "patchSetId": 10
+      },
+      "lineNbr": 3097,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-12T19:22:25Z",
+      "side": 1,
+      "message": "(I followed the current style in this file, which comes from Anton\u0027s cleanup earlier, e.g. https://android-review.googlesource.com/c/platform/build/+/835906/1/core/Makefile#1732).\n\nI think the first tab is to ensure these deps always show up as continuation of previous line, regardless of the tab expansion settings. Otherwise if with space there\u0027s a chance they appear to be another indentation level in between the target line and the recipes.",
+      "parentUuid": "8f7ca5c6_98486874",
+      "range": {
+        "startLine": 3097,
+        "startChar": 0,
+        "endLine": 3097,
+        "endChar": 1
+      },
+      "revId": "abce8b4ad95532c57f2cf566b689368cd39248bb",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
