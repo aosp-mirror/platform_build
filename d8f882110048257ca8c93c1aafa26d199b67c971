@@ -167,6 +167,30 @@
     },
     {
       "key": {
+        "uuid": "05722f83_bf68eada",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1270,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-07-12T00:15:48Z",
+      "side": 1,
+      "message": "Thoughts on splitting this change to 3 changes:\n(1) filtering out userdata notices\n(2) adding ODM notices\n(3) putting notices in the vendor NOTICE file\n?\n\nThat way when someone git blames for an odm/userdata lines around here, they don\u0027t get confused about it necessarily relating to the vendor image.",
+      "parentUuid": "ba1856bb_5b588b8c",
+      "range": {
+        "startLine": 1270,
+        "startChar": 0,
+        "endLine": 1270,
+        "endChar": 76
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "2bf49cb0_d5387f5c",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -297,6 +321,30 @@
       "side": 1,
       "message": "disclaimer: I didn\u0027t understand the comment from Dan about building system+ramdisk but not vendor. Are we talking about prebuilt /vendor or non-existant vendor? Dan, I think you\u0027re in a better spot to do this review..",
       "parentUuid": "b7c3e50a_4fb06466",
+      "range": {
+        "startLine": 1277,
+        "startChar": 2,
+        "endLine": 1277,
+        "endChar": 36
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0628d987_dea988a0",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-07-12T00:15:48Z",
+      "side": 1,
+      "message": "Responding to \"It doesn\u0027t make sense to me to have the remainder in two places.\":\n\nI believe Chris\u0027 intent here is to solve what he mentions as notice files that \"could come\nfrom disperate source trees\". For certain partners that use mixed/merged builds, the system image is built from a different view of the source tree than the vendor image.\nThat\u0027s what necessitates putting remainders in both locations; for the \"system build\" (the build that creates system.img), its remainders are likely to differ than the \"vendor build\" (the build that creates vendor.img) remainders.",
+      "parentUuid": "1bf378df_5d8028c0",
       "range": {
         "startLine": 1277,
         "startChar": 2,
