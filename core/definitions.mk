@@ -364,7 +364,7 @@ endef
 ###########################################################
 
 define all-renderscript-files-under
-$(call find-subdir-files,$(1) \( -name "*.rs" -or -name "*.fs" \) -and -not -name ".*")
+$(call find-subdir-files,$(1) \( -name "*.rscript" -or -name "*.fs" \) -and -not -name ".*")
 endef
 
 ###########################################################
