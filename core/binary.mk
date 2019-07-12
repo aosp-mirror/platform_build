@@ -560,7 +560,7 @@ ALL_GENERATED_SOURCES += $(my_generated_sources)
 ## Compile RenderScript with reflected C++
 ####################################################
 
-renderscript_sources := $(filter %.rs %.fs,$(my_src_files))
+renderscript_sources := $(filter %.rscript %.fs,$(my_src_files))
 
 ifneq (,$(renderscript_sources))
 my_soong_problems += rs
@@ -604,7 +604,7 @@ renderscript_includes := $(LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE)
 endif
 
 bc_dep_files := $(addprefix $(renderscript_intermediate)/, \
-    $(patsubst %.fs,%.d, $(patsubst %.rs,%.d, $(notdir $(renderscript_sources)))))
+    $(patsubst %.fs,%.d, $(patsubst %.rscript,%.d, $(notdir $(renderscript_sources)))))
 
 $(RenderScript_file_stamp): PRIVATE_RS_INCLUDES := $(renderscript_includes)
 $(RenderScript_file_stamp): PRIVATE_RS_CC := $(LOCAL_RENDERSCRIPT_CC)
@@ -622,7 +622,7 @@ $(call include-depfile,$(RenderScript_file_stamp).d,$(RenderScript_file_stamp))
 LOCAL_INTERMEDIATE_TARGETS += $(RenderScript_file_stamp)
 
 rs_generated_cpps := $(addprefix \
-    $(renderscript_intermediate)/ScriptC_,$(patsubst %.fs,%.cpp, $(patsubst %.rs,%.cpp, \
+    $(renderscript_intermediate)/ScriptC_,$(patsubst %.fs,%.cpp, $(patsubst %.rscript,%.cpp, \
     $(notdir $(renderscript_sources)))))
 
 $(call track-src-file-gen,$(renderscript_sources),$(rs_generated_cpps))
