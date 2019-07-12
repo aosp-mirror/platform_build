@@ -2443,9 +2443,9 @@ ifneq ($(HOST_OS),darwin)
 $(2): \
 	$(1) \
 	$(HOST_INIT_VERIFIER) \
-	$(KNOWN_HIDL_INTERFACES) \
+	$(HIDL_INHERITANCE_HIERARCHY) \
 	$(call intermediates-dir-for,ETC,passwd)/passwd
-	$(hide) $(HOST_INIT_VERIFIER) -p $(call intermediates-dir-for,ETC,passwd)/passwd -k $(KNOWN_HIDL_INTERFACES) $$<
+	$(hide) $(HOST_INIT_VERIFIER) -p $(call intermediates-dir-for,ETC,passwd)/passwd -i $(HIDL_INHERITANCE_HIERARCHY) $$<
 else
 $(2): $(1)
 endif
