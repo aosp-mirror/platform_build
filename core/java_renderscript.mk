@@ -1,10 +1,10 @@
 ###############################################################
 ## Renderscript support for java
-## Adds rules to convert .rs files to .java and .bc files
+## Adds rules to convert .rscript files to .java and .bc files
 ###############################################################
 
-renderscript_sources := $(filter %.rs,$(LOCAL_SRC_FILES))
-LOCAL_SRC_FILES := $(filter-out %.rs,$(LOCAL_SRC_FILES))
+renderscript_sources := $(filter %.rscript,$(LOCAL_SRC_FILES))
+LOCAL_SRC_FILES := $(filter-out %.rscript,$(LOCAL_SRC_FILES))
 
 rs_generated_res_zip :=
 rs_generated_src_jar :=
@@ -67,7 +67,7 @@ ifneq ($(LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE),)
 LOCAL_RENDERSCRIPT_INCLUDES := $(LOCAL_RENDERSCRIPT_INCLUDES_OVERRIDE)
 endif
 
-bc_files := $(patsubst %.rs,%.bc, $(notdir $(renderscript_sources)))
+bc_files := $(patsubst %.rscript,%.bc, $(notdir $(renderscript_sources)))
 bc_dep_files := $(addprefix $(renderscript_intermediate.COMMON)/,$(patsubst %.bc,%.d,$(bc_files)))
 
 $(rs_generated_src_jar): PRIVATE_RS_INCLUDES := $(LOCAL_RENDERSCRIPT_INCLUDES)
