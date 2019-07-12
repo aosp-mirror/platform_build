@@ -710,32 +710,40 @@ $(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): $(2)
 	(for MODULE in $$(PRIVATE_LOAD_MODULES); do basename $$$$MODULE >> $$@; done)
 endef
 
+# Until support for a vendor-boot/vendor-ramdisk is added, store vendor ramdisk
+# kernel modules on the generic ramdisk as a stopgap.
+ifneq ($(BOARD_VENDOR_RAMDISK_KERNEL_MODULES),)
+  BOARD_GENERIC_RAMDISK_KERNEL_MODULES += $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES)
+endif
+ifneq ($(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD),)
+  BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD += $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD)
+endif
 
 ifeq ($(BOARD_RECOVERY_KERNEL_MODULES_LOAD),)
   BOARD_RECOVERY_KERNEL_MODULES_LOAD := $(BOARD_RECOVERY_KERNEL_MODULES)
 endif
-ifeq ($(BOARD_RAMDISK_KERNEL_MODULES_LOAD),)
-  BOARD_RAMDISK_KERNEL_MODULES_LOAD := $(BOARD_RAMDISK_KERNEL_MODULES)
+ifeq ($(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),)
+  BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD := $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES)
 endif
 
-ifdef BOARD_RAMDISK_KERNEL_MODULES
+ifdef BOARD_GENERIC_RAMDISK_KERNEL_MODULES
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
-    BOARD_RECOVERY_KERNEL_MODULES += $(BOARD_RAMDISK_KERNEL_MODULES)
+    BOARD_RECOVERY_KERNEL_MODULES += $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES)
   endif
 endif
 
 ifdef BOARD_RECOVERY_KERNEL_MODULES
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
-    ifdef BOARD_RAMDISK_KERNEL_MODULES_LOAD
-      ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,ramdisk_modules),$(BOARD_RAMDISK_KERNEL_MODULES_LOAD),modules.load,$(TARGET_RECOVERY_ROOT_OUT)))
+    ifdef BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD
+      ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,ramdisk_modules),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),modules.load,$(TARGET_RECOVERY_ROOT_OUT)))
     endif
   endif
   ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery),$(BOARD_RECOVERY_KERNEL_MODULES_LOAD),modules.load.recovery))
 endif
 
 ifneq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
-  ifdef BOARD_RAMDISK_KERNEL_MODULES
-    ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_RAMDISK_KERNEL_MODULES),$(TARGET_RAMDISK_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_ramdisk),$(BOARD_RAMDISK_KERNEL_MODULES_LOAD),modules.load))
+  ifdef BOARD_GENERIC_RAMDISK_KERNEL_MODULES
+    ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES),$(TARGET_RAMDISK_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_ramdisk),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),modules.load))
   endif
 endif
 
