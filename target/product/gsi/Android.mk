@@ -101,8 +101,10 @@ ifneq ($(BOARD_VNDK_VERSION),)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := vndk_package
+# Filter LLNDK libs moved to APEX to avoid pulling them into /system/LIB
 LOCAL_REQUIRED_MODULES := \
-    $(LLNDK_LIBRARIES)
+    $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES)))
+
 ifneq ($(TARGET_SKIP_CURRENT_VNDK),true)
 LOCAL_REQUIRED_MODULES += \
     llndk.libraries.txt \
