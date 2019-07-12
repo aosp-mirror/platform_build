@@ -1573,21 +1573,12 @@ ramdisk: $(INSTALLED_RAMDISK_TARGET)
 .PHONY: ramdisk_debug
 ramdisk_debug: $(INSTALLED_DEBUG_RAMDISK_TARGET)
 
-.PHONY: systemtarball
-systemtarball: $(INSTALLED_SYSTEMTARBALL_TARGET)
-
-.PHONY: boottarball
-boottarball: $(INSTALLED_BOOTTARBALL_TARGET)
-
 .PHONY: userdataimage
 userdataimage: $(INSTALLED_USERDATAIMAGE_TARGET)
 
 ifneq (,$(filter userdataimage, $(MAKECMDGOALS)))
 $(call dist-for-goals, userdataimage, $(BUILT_USERDATAIMAGE_TARGET))
 endif
-
-.PHONY: userdatatarball
-userdatatarball: $(INSTALLED_USERDATATARBALL_TARGET)
 
 .PHONY: cacheimage
 cacheimage: $(INSTALLED_CACHEIMAGE_TARGET)
