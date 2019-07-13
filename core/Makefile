@@ -660,6 +660,7 @@ define build-image-kernel-modules
   $(eval $(call build-image-kernel-modules-depmod,$(1),$(3),$(4),$(5),$(6))) \
   $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.dep:$(2)/lib/modules/modules.dep \
   $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.alias:$(2)/lib/modules/modules.alias \
+  $(4)/$(DEPMOD_STAGING_SUBDIR)/modules.softdep:$(2)/lib/modules/modules.softdep \
   $(4)/$(DEPMOD_STAGING_SUBDIR)/$(6):$(2)/lib/modules/$(6)
 endef
 
@@ -669,7 +670,7 @@ endef
 # $(4): module load list
 # $(5): module load list filename
 define build-image-kernel-modules-depmod
-$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: .KATI_IMPLICIT_OUTPUTS := $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.alias $(3)/$(DEPMOD_STAGING_SUBDIR)/$(5)
+$(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: .KATI_IMPLICIT_OUTPUTS := $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.alias $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.softdep $(3)/$(DEPMOD_STAGING_SUBDIR)/$(5)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: $(DEPMOD)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MODULES := $(1)
 $(3)/$(DEPMOD_STAGING_SUBDIR)/modules.dep: PRIVATE_MOUNT_POINT := $(2)
@@ -710,32 +711,40 @@ $(1)/$(DEPMOD_STAGING_SUBDIR)/$(3): $(2)
 	(for MODULE in $$(PRIVATE_LOAD_MODULES); do basename $$$$MODULE >> $$@; done)
 endef
 
+# Until support for a vendor-boot/vendor-ramdisk is added, store vendor ramdisk
+# kernel modules on the generic ramdisk as a stopgap.
+ifneq ($(BOARD_VENDOR_RAMDISK_KERNEL_MODULES),)
+  BOARD_GENERIC_RAMDISK_KERNEL_MODULES += $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES)
+endif
+ifneq ($(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD),)
+  BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD += $(BOARD_VENDOR_RAMDISK_KERNEL_MODULES_LOAD)
+endif
 
 ifeq ($(BOARD_RECOVERY_KERNEL_MODULES_LOAD),)
   BOARD_RECOVERY_KERNEL_MODULES_LOAD := $(BOARD_RECOVERY_KERNEL_MODULES)
 endif
-ifeq ($(BOARD_RAMDISK_KERNEL_MODULES_LOAD),)
-  BOARD_RAMDISK_KERNEL_MODULES_LOAD := $(BOARD_RAMDISK_KERNEL_MODULES)
+ifeq ($(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),)
+  BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD := $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES)
 endif
 
-ifdef BOARD_RAMDISK_KERNEL_MODULES
+ifdef BOARD_GENERIC_RAMDISK_KERNEL_MODULES
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
-    BOARD_RECOVERY_KERNEL_MODULES += $(BOARD_RAMDISK_KERNEL_MODULES)
+    BOARD_RECOVERY_KERNEL_MODULES += $(BOARD_GENERIC_RAMDISK_KERNEL_MODULES)
   endif
 endif
 
 ifdef BOARD_RECOVERY_KERNEL_MODULES
   ifeq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
-    ifdef BOARD_RAMDISK_KERNEL_MODULES_LOAD
-      ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,ramdisk_modules),$(BOARD_RAMDISK_KERNEL_MODULES_LOAD),modules.load,$(TARGET_RECOVERY_ROOT_OUT)))
+    ifdef BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD
+      ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call module-load-list-copy-paths,$(call intermediates-dir-for,PACKAGING,ramdisk_modules),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),modules.load,$(TARGET_RECOVERY_ROOT_OUT)))
     endif
   endif
   ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_RECOVERY_KERNEL_MODULES),$(TARGET_RECOVERY_ROOT_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_recovery),$(BOARD_RECOVERY_KERNEL_MODULES_LOAD),modules.load.recovery))
 endif
 
 ifneq ($(BOARD_USES_RECOVERY_AS_BOOT), true)
-  ifdef BOARD_RAMDISK_KERNEL_MODULES
-    ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_RAMDISK_KERNEL_MODULES),$(TARGET_RAMDISK_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_ramdisk),$(BOARD_RAMDISK_KERNEL_MODULES_LOAD),modules.load))
+  ifdef BOARD_GENERIC_RAMDISK_KERNEL_MODULES
+    ALL_DEFAULT_INSTALLED_MODULES += $(call copy-many-files,$(call build-image-kernel-modules,$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES),$(TARGET_RAMDISK_OUT),,$(call intermediates-dir-for,PACKAGING,depmod_ramdisk),$(BOARD_GENERIC_RAMDISK_KERNEL_MODULES_LOAD),modules.load))
   endif
 endif
 
@@ -2363,36 +2372,6 @@ endif # BUILDING_SYSTEM_IMAGE
 .PHONY: sync syncsys
 sync syncsys: $(INTERNAL_SYSTEMIMAGE_FILES)
 
-#######
-## system tarball
-define build-systemtarball-target
-  $(call pretty,"Target system fs tarball: $(INSTALLED_SYSTEMTARBALL_TARGET)")
-  $(call create-system-vendor-symlink)
-  $(call create-system-product-symlink)
-  $(call create-system-system_ext-symlink)
-  $(MKTARBALL) $(FS_GET_STATS) \
-    $(PRODUCT_OUT) system $(PRIVATE_SYSTEM_TAR) \
-    $(INSTALLED_SYSTEMTARBALL_TARGET) $(TARGET_OUT)
-endef
-
-ifndef SYSTEM_TARBALL_FORMAT
-    SYSTEM_TARBALL_FORMAT := bz2
-endif
-
-system_tar := $(PRODUCT_OUT)/system.tar
-INSTALLED_SYSTEMTARBALL_TARGET := $(system_tar).$(SYSTEM_TARBALL_FORMAT)
-$(INSTALLED_SYSTEMTARBALL_TARGET): PRIVATE_SYSTEM_TAR := $(system_tar)
-$(INSTALLED_SYSTEMTARBALL_TARGET): $(FS_GET_STATS) $(INTERNAL_SYSTEMIMAGE_FILES)
-	$(build-systemtarball-target)
-
-.PHONY: systemtarball-nodeps
-systemtarball-nodeps: $(FS_GET_STATS) \
-                      $(filter-out systemtarball-nodeps stnod,$(MAKECMDGOALS))
-	$(build-systemtarball-target)
-
-.PHONY: stnod
-stnod: systemtarball-nodeps
-
 # -----------------------------------------------------------------
 ## platform.zip: system, plus other files to be used in PDK fusion build,
 ## in a zip file
@@ -2495,34 +2474,6 @@ endif
 endif # BUILD_PLATFORM_ZIP
 
 # -----------------------------------------------------------------
-## boot tarball
-define build-boottarball-target
-    $(hide) echo "Target boot fs tarball: $(INSTALLED_BOOTTARBALL_TARGET)"
-    $(hide) mkdir -p $(PRODUCT_OUT)/boot
-    $(hide) cp -f $(INTERNAL_BOOTIMAGE_FILES) $(PRODUCT_OUT)/boot/.
-    $(hide) echo $(INTERNAL_KERNEL_CMDLINE) > $(PRODUCT_OUT)/boot/cmdline
-    $(hide) $(MKTARBALL) $(FS_GET_STATS) \
-                 $(PRODUCT_OUT) boot $(PRIVATE_BOOT_TAR) \
-                 $(INSTALLED_BOOTTARBALL_TARGET) $(TARGET_OUT)
-endef
-
-ifndef BOOT_TARBALL_FORMAT
-    BOOT_TARBALL_FORMAT := bz2
-endif
-
-boot_tar := $(PRODUCT_OUT)/boot.tar
-INSTALLED_BOOTTARBALL_TARGET := $(boot_tar).$(BOOT_TARBALL_FORMAT)
-$(INSTALLED_BOOTTARBALL_TARGET): PRIVATE_BOOT_TAR := $(boot_tar)
-$(INSTALLED_BOOTTARBALL_TARGET): $(FS_GET_STATS) $(INTERNAL_BOOTIMAGE_FILES)
-	$(build-boottarball-target)
-
-.PHONY: boottarball-nodeps btnod
-boottarball-nodeps btnod: $(FS_GET_STATS) \
-                      $(filter-out boottarball-nodeps btnod,$(MAKECMDGOALS))
-	$(build-boottarball-target)
-
-
-# -----------------------------------------------------------------
 # data partition image
 INTERNAL_USERDATAIMAGE_FILES := \
     $(filter $(TARGET_OUT_DATA)/%,$(ALL_DEFAULT_INSTALLED_MODULES))
@@ -2570,29 +2521,6 @@ ASAN_SYSTEM_INSTALL_OPTIONS := --owner=1000 --group=1000
 #       enough space.
 $(ASAN_IN_SYSTEM_INSTALLED): $(INSTALLED_USERDATAIMAGE_TARGET_DEPS)
 	tar cfj $(ASAN_IN_SYSTEM_INSTALLED) $(ASAN_SYSTEM_INSTALL_OPTIONS) -C $(TARGET_OUT_DATA)/.. $(ASAN_OUT_DIRS_FOR_SYSTEM_INSTALL) >/dev/null
-
-#######
-## data partition tarball
-define build-userdatatarball-target
-    $(call pretty,"Target userdata fs tarball: " \
-                  "$(INSTALLED_USERDATATARBALL_TARGET)")
-    $(MKTARBALL) $(FS_GET_STATS) \
-	    $(PRODUCT_OUT) data $(PRIVATE_USERDATA_TAR) \
-	    $(INSTALLED_USERDATATARBALL_TARGET) $(TARGET_OUT)
-endef
-
-userdata_tar := $(PRODUCT_OUT)/userdata.tar
-INSTALLED_USERDATATARBALL_TARGET := $(userdata_tar).bz2
-$(INSTALLED_USERDATATARBALL_TARGET): PRIVATE_USERDATA_TAR := $(userdata_tar)
-$(INSTALLED_USERDATATARBALL_TARGET): $(FS_GET_STATS) $(INTERNAL_USERDATAIMAGE_FILES)
-	$(build-userdatatarball-target)
-
-$(call dist-for-goals,userdatatarball,$(INSTALLED_USERDATATARBALL_TARGET))
-
-.PHONY: userdatatarball-nodeps
-userdatatarball-nodeps: $(FS_GET_STATS)
-	$(build-userdatatarball-target)
-
 
 # -----------------------------------------------------------------
 # partition table image
