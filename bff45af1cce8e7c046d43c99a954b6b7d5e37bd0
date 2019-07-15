@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "cd599437_2f635a7d",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2019-07-15T13:36:04Z",
+      "side": 1,
+      "message": "This will probably break some use cases of GSI. Let\u0027s discuss offline.",
+      "range": {
+        "startLine": 34,
+        "startChar": 2,
+        "endLine": 34,
+        "endChar": 45
+      },
+      "revId": "bff45af1cce8e7c046d43c99a954b6b7d5e37bd0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
