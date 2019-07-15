@@ -3613,6 +3613,7 @@ INTERNAL_OTATOOLS_MODULES := \
   simg2img \
   sload_f2fs \
   tune2fs \
+  update_host_simulator \
   verity_signer \
   verity_verifier \
   zipalign \
