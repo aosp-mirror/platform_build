@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c471a569_34bd8795",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2176,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-15T22:51:17Z",
+      "side": 0,
+      "message": "May keep these two lines to avoid pylint warning of unused imports warning\n\nAlso add comment to clarify that these two imports expose such modules to vendor-specific scripts",
+      "range": {
+        "startLine": 2175,
+        "startChar": 0,
+        "endLine": 2176,
+        "endChar": 36
+      },
+      "revId": "1277b8cca11b138f889507e1805503617a6f9f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

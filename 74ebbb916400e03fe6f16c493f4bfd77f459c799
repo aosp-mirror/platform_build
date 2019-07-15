@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4ef24ad3_5a0a914f",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-15T22:51:17Z",
+      "side": 1,
+      "message": "inconsistent ordering\n\neither all the `import`s appear before `from`s (the current style in releasetools):\nimport a\nimport x\nfrom c import Something\n\nor sorting based on the module names (Google style):\nimport a\nfrom c import Something\nimport x",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 17
+      },
+      "revId": "74ebbb916400e03fe6f16c493f4bfd77f459c799",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e965b988_38eb6606",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-15T22:51:17Z",
+      "side": 1,
+      "message": "nit: move between L27 and L28",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 1
+      },
+      "revId": "74ebbb916400e03fe6f16c493f4bfd77f459c799",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
