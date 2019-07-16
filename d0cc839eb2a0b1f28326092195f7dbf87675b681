@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "65af8e09_ecbc94d6",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4124,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-07-16T00:04:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a7c46164_4ba59f43",
+      "range": {
+        "startLine": 4124,
+        "startChar": 5,
+        "endLine": 4124,
+        "endChar": 6
+      },
+      "revId": "d0cc839eb2a0b1f28326092195f7dbf87675b681",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "24d7ffb7_c73c0c4b",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "e8ee05be_5bc818ee",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4126,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-07-16T00:04:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "24d7ffb7_c73c0c4b",
+      "range": {
+        "startLine": 4126,
+        "startChar": 64,
+        "endLine": 4126,
+        "endChar": 65
+      },
+      "revId": "d0cc839eb2a0b1f28326092195f7dbf87675b681",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7dae01a6_7f0c4662",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -59,6 +107,30 @@
       "writtenOn": "2019-07-15T21:54:03Z",
       "side": 1,
       "message": "Could this simply be `$(hide) echo \"tool_extensions\u003d$(tool_extension)\" \u003e\u003e $@`?",
+      "range": {
+        "startLine": 4155,
+        "startChar": 0,
+        "endLine": 4160,
+        "endChar": 5
+      },
+      "revId": "d0cc839eb2a0b1f28326092195f7dbf87675b681",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ae42503d_a2d9f68c",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4160,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-07-16T00:04:28Z",
+      "side": 1,
+      "message": "Had to add $(dir) but lets see!",
+      "parentUuid": "7dae01a6_7f0c4662",
       "range": {
         "startLine": 4155,
         "startChar": 0,
