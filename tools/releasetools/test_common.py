@@ -25,9 +25,9 @@ from hashlib import sha1
 import common
 import test_utils
 import validate_target_files
+from images import EmptyImage, DataImage
 from rangelib import RangeSet
 
-from blockimgdiff import EmptyImage, DataImage
 
 KiB = 1024
 MiB = 1024 * KiB
