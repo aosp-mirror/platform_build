@@ -40,6 +40,7 @@ python_library_host {
         "common.py",
         "edify_generator.py",
         "img_from_target_files.py",
+        "images.py",
         "make_recovery_patch.py",
         "merge_target_files.py",
         "ota_from_target_files.py",
