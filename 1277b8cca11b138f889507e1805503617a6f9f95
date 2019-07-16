@@ -22,6 +22,30 @@
       "revId": "1277b8cca11b138f889507e1805503617a6f9f95",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1898fe01_b79533ec",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 4
+      },
+      "lineNbr": 2176,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-07-16T00:07:24Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "c471a569_34bd8795",
+      "range": {
+        "startLine": 2175,
+        "startChar": 0,
+        "endLine": 2176,
+        "endChar": 36
+      },
+      "revId": "1277b8cca11b138f889507e1805503617a6f9f95",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
