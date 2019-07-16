@@ -39,8 +39,9 @@ import time
 import zipfile
 from hashlib import sha1, sha256
 
-import blockimgdiff
+import images
 import sparse_img
+from blockimgdiff import BlockImageDiff
 
 logger = logging.getLogger(__name__)
 
@@ -915,8 +916,8 @@ def GetNonSparseImage(which, tmpdir, hashtree_info_generator=None):
   # ota_from_target_files.py (since LMP).
   assert os.path.exists(path) and os.path.exists(mappath)
 
-  return blockimgdiff.FileImage(path, hashtree_info_generator=
-                                hashtree_info_generator)
+  return images.FileImage(path, hashtree_info_generator=hashtree_info_generator)
+
 
 def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
                    hashtree_info_generator=None):
@@ -1916,9 +1917,9 @@ class BlockDifference(object):
     assert version >= 3
     self.version = version
 
-    b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
-                                    version=self.version,
-                                    disable_imgdiff=self.disable_imgdiff)
+    b = BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
+                       version=self.version,
+                       disable_imgdiff=self.disable_imgdiff)
     self.path = os.path.join(MakeTempDir(), partition)
     b.Compute(self.path)
     self._required_cache = b.max_stashed_size
@@ -2172,8 +2173,10 @@ class BlockDifference(object):
     return ctx.hexdigest()
 
 
-DataImage = blockimgdiff.DataImage
-EmptyImage = blockimgdiff.EmptyImage
+# Expose these two classes to support vendor-specific scripts
+DataImage = images.DataImage
+EmptyImage = images.EmptyImage
+
 
 # map recovery.fstab's fs_types to mount/format "partition types"
 PARTITION_TYPES = {
