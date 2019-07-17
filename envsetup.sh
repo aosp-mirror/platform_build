@@ -272,12 +272,12 @@ function setpaths()
 
     # Append asuite prebuilts path to ANDROID_BUILD_PATHS.
     local os_arch=$(get_build_var HOST_PREBUILT_TAG)
-    local ACLOUD_PATH="$T/prebuilts/asuite/acloud/$os_arch:"
-    local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch:"
-    local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch:"
-    export ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH$AIDEGEN_PATH$ATEST_PATH
+    local ACLOUD_PATH="$T/prebuilts/asuite/acloud/$os_arch"
+    local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch"
+    local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch"
+    export ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH:$AIDEGEN_PATH:$ATEST_PATH:
 
-    export PATH=$ANDROID_BUILD_PATHS:$PATH
+    export PATH=$ANDROID_BUILD_PATHS$PATH
 
     # out with the duplicate old
     if [ -n $ANDROID_PYTHONPATH ]; then
