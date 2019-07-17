@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85fcf8dc_731b13ff",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 3830,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-07-17T20:30:21Z",
+      "side": 1,
+      "message": "You are using this variable before it is set, so there won\u0027t be a dependency on the file (but because of Make weirdness the file will be copied, the value in the recipe is evaluated later than this value).",
+      "revId": "b56782060609b8ec0cfa6c3a5529a100552844c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e90877fe_6f0cdf4a",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 4156,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-07-17T20:30:21Z",
+      "side": 1,
+      "message": "Use the PRIVATE_* style, or make sure tool_extensions is read only with :\u003d$\u003d or .KATI_READONLY :\u003d",
+      "range": {
+        "startLine": 4156,
+        "startChar": 31,
+        "endLine": 4156,
+        "endChar": 49
+      },
+      "revId": "b56782060609b8ec0cfa6c3a5529a100552844c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
