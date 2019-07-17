@@ -22,6 +22,30 @@
       "revId": "bff45af1cce8e7c046d43c99a954b6b7d5e37bd0",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3bf8bbf1_042d791f",
+        "filename": "target/board/BoardConfigEmuCommon.mk",
+        "patchSetId": 7
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2019-07-17T10:20:32Z",
+      "side": 1,
+      "message": "Yes, this indeed will (at least) break GSI release, which needs system.img instead of super.img. I\u0027ll revert this part.",
+      "parentUuid": "cd599437_2f635a7d",
+      "range": {
+        "startLine": 34,
+        "startChar": 2,
+        "endLine": 34,
+        "endChar": 45
+      },
+      "revId": "bff45af1cce8e7c046d43c99a954b6b7d5e37bd0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
