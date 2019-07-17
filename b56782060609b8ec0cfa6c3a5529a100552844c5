@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7c1e1059_645585dc",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 3830,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-07-17T21:14:55Z",
+      "side": 1,
+      "message": "Done.\nMoved misc_info above target files.",
+      "parentUuid": "85fcf8dc_731b13ff",
+      "revId": "b56782060609b8ec0cfa6c3a5529a100552844c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e90877fe_6f0cdf4a",
         "filename": "core/Makefile",
         "patchSetId": 6
@@ -39,6 +57,30 @@
       "revId": "b56782060609b8ec0cfa6c3a5529a100552844c5",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13de97e1_942a78ec",
+        "filename": "core/Makefile",
+        "patchSetId": 6
+      },
+      "lineNbr": 4156,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-07-17T21:14:55Z",
+      "side": 1,
+      "message": "Done. Made it KATI_READONLY",
+      "parentUuid": "e90877fe_6f0cdf4a",
+      "range": {
+        "startLine": 4156,
+        "startChar": 31,
+        "endLine": 4156,
+        "endChar": 49
+      },
+      "revId": "b56782060609b8ec0cfa6c3a5529a100552844c5",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
