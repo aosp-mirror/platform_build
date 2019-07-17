@@ -517,7 +517,7 @@ class PayloadSigner(object):
     """Signs the given input file. Returns the output filename."""
     out_file = common.MakeTempFile(prefix="signed-", suffix=".bin")
     cmd = [self.signer] + self.signer_args + ['-in', in_file, '-out', out_file]
-    common.RunAndCheckOutput(cmd)
+    common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
     return out_file
 
 
@@ -559,7 +559,7 @@ class Payload(object):
     if source_file is not None:
       cmd.extend(["--source_image", source_file])
     cmd.extend(additional_args)
-    common.RunAndCheckOutput(cmd)
+    common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
 
     self.payload_file = payload_file
     self.payload_properties = None
@@ -583,7 +583,7 @@ class Payload(object):
            "--signature_size", str(payload_signer.key_size),
            "--metadata_hash_file", metadata_sig_file,
            "--payload_hash_file", payload_sig_file]
-    common.RunAndCheckOutput(cmd)
+    common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
 
     # 2. Sign the hashes.
     signed_payload_sig_file = payload_signer.Sign(payload_sig_file)
@@ -598,7 +598,7 @@ class Payload(object):
            "--signature_size", str(payload_signer.key_size),
            "--metadata_signature_file", signed_metadata_sig_file,
            "--payload_signature_file", signed_payload_sig_file]
-    common.RunAndCheckOutput(cmd)
+    common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
 
     # 4. Dump the signed payload properties.
     properties_file = common.MakeTempFile(prefix="payload-properties-",
@@ -606,7 +606,7 @@ class Payload(object):
     cmd = ["brillo_update_payload", "properties",
            "--payload", signed_payload_file,
            "--properties_file", properties_file]
-    common.RunAndCheckOutput(cmd)
+    common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
 
     if self.secondary:
       with open(properties_file, "a") as f:
