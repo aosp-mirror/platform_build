@@ -128,6 +128,7 @@ my_built_installed := $(foreach f,$(LOCAL_SOONG_BUILT_INSTALLED),\
 my_installed := $(call copy-many-files, $(my_built_installed))
 ALL_MODULES.$(my_register_name).INSTALLED += $(my_installed)
 ALL_MODULES.$(my_register_name).BUILT_INSTALLED += $(my_built_installed)
+ALL_MODULES.$(my_register_name).CLASSES_JAR := $(full_classes_jar)
 $(my_register_name): $(my_installed)
 
 ifdef LOCAL_SOONG_AAR

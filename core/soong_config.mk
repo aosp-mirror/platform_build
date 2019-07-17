@@ -25,7 +25,7 @@ $(call json_start)
 $(call add_json_str,  Make_suffix, -$(TARGET_PRODUCT))
 
 $(call add_json_str,  BuildId,                           $(BUILD_ID))
-$(call add_json_str,  BuildNumberFromFile,               $$$(BUILD_NUMBER_FROM_FILE))
+$(call add_json_str,  BuildNumberFromFile,               $(BUILD_NUMBER_FROM_FILE))
 
 $(call add_json_str,  Platform_version_name,             $(PLATFORM_VERSION))
 $(call add_json_val,  Platform_sdk_version,              $(PLATFORM_SDK_VERSION))
@@ -62,11 +62,13 @@ $(call add_json_str,  NativeBridgeArch,                  $(TARGET_NATIVE_BRIDGE_
 $(call add_json_str,  NativeBridgeArchVariant,           $(TARGET_NATIVE_BRIDGE_ARCH_VARIANT))
 $(call add_json_str,  NativeBridgeCpuVariant,            $(TARGET_NATIVE_BRIDGE_CPU_VARIANT))
 $(call add_json_list, NativeBridgeAbi,                   $(TARGET_NATIVE_BRIDGE_ABI))
+$(call add_json_str,  NativeBridgeRelativePath,          $(TARGET_NATIVE_BRIDGE_RELATIVE_PATH))
 
 $(call add_json_str,  NativeBridgeSecondaryArch,         $(TARGET_NATIVE_BRIDGE_2ND_ARCH))
 $(call add_json_str,  NativeBridgeSecondaryArchVariant,  $(TARGET_NATIVE_BRIDGE_2ND_ARCH_VARIANT))
 $(call add_json_str,  NativeBridgeSecondaryCpuVariant,   $(TARGET_NATIVE_BRIDGE_2ND_CPU_VARIANT))
 $(call add_json_list, NativeBridgeSecondaryAbi,          $(TARGET_NATIVE_BRIDGE_2ND_ABI))
+$(call add_json_str,  NativeBridgeSecondaryRelativePath, $(TARGET_NATIVE_BRIDGE_2ND_RELATIVE_PATH))
 
 $(call add_json_str,  HostArch,                          $(HOST_ARCH))
 $(call add_json_str,  HostSecondaryArch,                 $(HOST_2ND_ARCH))
@@ -146,7 +148,7 @@ $(call add_json_bool, Use_lmkd_stats_log,                $(filter true,$(TARGET_
 $(call add_json_str,  VendorPath,                        $(TARGET_COPY_OUT_VENDOR))
 $(call add_json_str,  OdmPath,                           $(TARGET_COPY_OUT_ODM))
 $(call add_json_str,  ProductPath,                       $(TARGET_COPY_OUT_PRODUCT))
-$(call add_json_str,  ProductServicesPath,               $(TARGET_COPY_OUT_PRODUCT_SERVICES))
+$(call add_json_str,  SystemExtPath,                     $(TARGET_COPY_OUT_SYSTEM_EXT))
 $(call add_json_bool, MinimizeJavaDebugInfo,             $(filter true,$(PRODUCT_MINIMIZE_JAVA_DEBUG_INFO)))
 
 $(call add_json_bool, UseGoma,                           $(filter-out false,$(USE_GOMA)))
@@ -182,6 +184,8 @@ $(call add_json_list, ProductPrivateSepolicyDirs,        $(PRODUCT_PRIVATE_SEPOL
 $(call add_json_bool, ProductCompatibleProperty,         $(PRODUCT_COMPATIBLE_PROPERTY))
 
 $(call add_json_list, TargetFSConfigGen,                 $(TARGET_FS_CONFIG_GEN))
+
+$(call add_json_list, MissingUsesLibraries,              $(INTERNAL_PLATFORM_MISSING_USES_LIBRARIES))
 
 $(call add_json_map, VendorVars)
 $(foreach namespace,$(SOONG_CONFIG_NAMESPACES),\

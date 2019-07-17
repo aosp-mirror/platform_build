@@ -98,9 +98,9 @@ $(KATI_obsolete_var TARGET_ROOT_OUT_SBIN_UNSTRIPPED,/sbin has been removed, use 
 $(KATI_obsolete_var BUILD_BROKEN_PHONY_TARGETS)
 $(KATI_obsolete_var BUILD_BROKEN_DUP_COPY_HEADERS)
 $(KATI_obsolete_var BUILD_BROKEN_ENG_DEBUG_TAGS)
-
-# This is marked as obsolete in envsetup.mk after reading the BoardConfig.mk
-$(KATI_deprecate_export It is a global setting. See $(CHANGES_URL)#export_keyword)
+$(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
+$(KATI_obsolete_var BUILD_BROKEN_ANDROIDMK_EXPORTS)
+$(KATI_obsolete_var PRODUCT_STATIC_BOOT_CONTROL_HAL,Use shared library module instead. See $(CHANGES_URL)#PRODUCT_STATIC_BOOT_CONTROL_HAL)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -522,6 +522,7 @@ ACP := $(prebuilt_build_tools_bin)/acp
 CKATI := $(prebuilt_build_tools_bin)/ckati
 DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
 FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
+FILESLIST_UTIL :=$= build/make/tools/fileslist_util.py
 HOST_INIT_VERIFIER := $(HOST_OUT_EXECUTABLES)/host_init_verifier
 MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
 SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
@@ -576,18 +577,13 @@ AVBTOOL := $(BOARD_CUSTOM_AVBTOOL)
 endif
 APICHECK := $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX)
 FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
-MAKE_EXT4FS := $(HOST_OUT_EXECUTABLES)/mke2fs$(HOST_EXECUTABLE_SUFFIX)
 MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs
 MKE2FS_CONF := system/extras/ext4_utils/mke2fs.conf
 BLK_ALLOC_TO_BASE_FS := $(HOST_OUT_EXECUTABLES)/blk_alloc_to_base_fs$(HOST_EXECUTABLE_SUFFIX)
-MAKE_SQUASHFS := $(HOST_OUT_EXECUTABLES)/mksquashfs$(HOST_EXECUTABLE_SUFFIX)
 MKSQUASHFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh
-MAKE_F2FS := $(HOST_OUT_EXECUTABLES)/make_f2fs$(HOST_EXECUTABLE_SUFFIX)
 MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh
 SIMG2IMG := $(HOST_OUT_EXECUTABLES)/simg2img$(HOST_EXECUTABLE_SUFFIX)
-IMG2SIMG := $(HOST_OUT_EXECUTABLES)/img2simg$(HOST_EXECUTABLE_SUFFIX)
 E2FSCK := $(HOST_OUT_EXECUTABLES)/e2fsck$(HOST_EXECUTABLE_SUFFIX)
-MKTARBALL := build/make/tools/mktarball.sh
 TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
@@ -808,6 +804,7 @@ PLATFORM_SEPOLICY_COMPAT_VERSIONS := \
     26.0 \
     27.0 \
     28.0 \
+    29.0 \
 
 .KATI_READONLY := \
     PLATFORM_SEPOLICY_COMPAT_VERSIONS \
@@ -873,10 +870,10 @@ $(error Should not define BOARD_PRODUCTIMAGE_PARTITION_SIZE and \
 endif
 endif
 
-ifneq ($(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE),)
-ifneq ($(BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE),)
-$(error Should not define BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE and \
-    BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE together)
+ifneq ($(BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE),)
+ifneq ($(BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE),)
+$(error Should not define BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE and \
+    BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE together)
 endif
 endif
 
@@ -893,19 +890,15 @@ ifeq ($(PRODUCT_USE_DYNAMIC_PARTITIONS),true)
 #     - BOARD_{GROUP}_PARTITION_PARTITION_LIST: the list of partitions that belongs to this group.
 #       If empty, no partitions belong to this group, and the sum of sizes is effectively 0.
 $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
-    $(eval BOARD_$(group)_PARTITION_LIST ?=) \
-    $(eval .KATI_READONLY := BOARD_$(group)_PARTITION_LIST) \
-)
-ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
-$(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
     $(eval BOARD_$(group)_SIZE := $(strip $(BOARD_$(group)_SIZE))) \
     $(if $(BOARD_$(group)_SIZE),,$(error BOARD_$(group)_SIZE must not be empty)) \
     $(eval .KATI_READONLY := BOARD_$(group)_SIZE) \
+    $(eval BOARD_$(group)_PARTITION_LIST ?=) \
+    $(eval .KATI_READONLY := BOARD_$(group)_PARTITION_LIST) \
 )
-endif # PRODUCT_BUILD_SUPER_PARTITION
 
 # BOARD_*_PARTITION_LIST: a list of the following tokens
-valid_super_partition_list := system vendor product product_services odm
+valid_super_partition_list := system vendor product system_ext odm
 $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
     $(if $(filter-out $(valid_super_partition_list),$(BOARD_$(group)_PARTITION_LIST)), \
         $(error BOARD_$(group)_PARTITION_LIST contains invalid partition name \
@@ -923,10 +916,6 @@ BOARD_SUPER_PARTITION_PARTITION_LIST := \
     $(foreach group,$(call to-upper,$(BOARD_SUPER_PARTITION_GROUPS)), \
         $(BOARD_$(group)_PARTITION_LIST))
 .KATI_READONLY := BOARD_SUPER_PARTITION_PARTITION_LIST
-
-endif # PRODUCT_USE_DYNAMIC_PARTITIONS
-
-ifeq ($(PRODUCT_BUILD_SUPER_PARTITION),true)
 
 ifneq ($(BOARD_SUPER_PARTITION_SIZE),)
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
@@ -987,8 +976,11 @@ BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE :=
 
 endif # PRODUCT_RETROFIT_DYNAMIC_PARTITIONS
 endif # BOARD_SUPER_PARTITION_SIZE
+BOARD_SUPER_PARTITION_BLOCK_DEVICES ?=
 .KATI_READONLY := BOARD_SUPER_PARTITION_BLOCK_DEVICES
+BOARD_SUPER_PARTITION_METADATA_DEVICE ?=
 .KATI_READONLY := BOARD_SUPER_PARTITION_METADATA_DEVICE
+BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE ?=
 .KATI_READONLY := BOARD_BUILD_RETROFIT_DYNAMIC_PARTITIONS_OTA_PACKAGE
 
 $(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)), \
@@ -997,7 +989,7 @@ $(foreach device,$(call to-upper,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES)), \
         $(error BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE must not be empty)) \
     $(eval .KATI_READONLY := BOARD_SUPER_PARTITION_$(device)_DEVICE_SIZE))
 
-endif # PRODUCT_BUILD_SUPER_PARTITION
+endif # PRODUCT_USE_DYNAMIC_PARTITIONS
 
 # ###############################################################
 # Set up final options.
@@ -1161,13 +1153,12 @@ endef
 # in the source tree.
 dont_bother_goals := out \
     snod systemimage-nodeps \
-    stnod systemtarball-nodeps \
-    userdataimage-nodeps userdatatarball-nodeps \
+    userdataimage-nodeps \
     cacheimage-nodeps \
     bptimage-nodeps \
     vnod vendorimage-nodeps \
     pnod productimage-nodeps \
-    psnod productservicesimage-nodeps \
+    senod systemextimage-nodeps \
     onod odmimage-nodeps \
     systemotherimage-nodeps \
     ramdisk-nodeps \

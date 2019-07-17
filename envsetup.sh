@@ -272,12 +272,12 @@ function setpaths()
 
     # Append asuite prebuilts path to ANDROID_BUILD_PATHS.
     local os_arch=$(get_build_var HOST_PREBUILT_TAG)
-    local ACLOUD_PATH="$T/prebuilts/asuite/acloud/$os_arch:"
-    local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch:"
-    local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch:"
-    export ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH$AIDEGEN_PATH$ATEST_PATH
+    local ACLOUD_PATH="$T/prebuilts/asuite/acloud/$os_arch"
+    local AIDEGEN_PATH="$T/prebuilts/asuite/aidegen/$os_arch"
+    local ATEST_PATH="$T/prebuilts/asuite/atest/$os_arch"
+    export ANDROID_BUILD_PATHS=$ANDROID_BUILD_PATHS:$ACLOUD_PATH:$AIDEGEN_PATH:$ATEST_PATH:
 
-    export PATH=$ANDROID_BUILD_PATHS:$PATH
+    export PATH=$ANDROID_BUILD_PATHS$PATH
 
     # out with the duplicate old
     if [ -n $ANDROID_PYTHONPATH ]; then
@@ -766,218 +766,6 @@ function gettop
             fi
         fi
     fi
-}
-
-function m()
-{
-    local T=$(gettop)
-    if [ "$T" ]; then
-        _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
-    else
-        echo "Couldn't locate the top of the tree.  Try setting TOP."
-        return 1
-    fi
-}
-
-function findmakefile()
-{
-    local TOPFILE=build/make/core/envsetup.mk
-    local HERE=$PWD
-    if [ "$1" ]; then
-        \cd $1
-    fi;
-    local T=
-    while [ \( ! \( -f $TOPFILE \) \) -a \( $PWD != "/" \) ]; do
-        T=`PWD= /bin/pwd`
-        if [ -f "$T/Android.mk" -o -f "$T/Android.bp" ]; then
-            echo $T/Android.mk
-            \cd $HERE
-            return
-        fi
-        \cd ..
-    done
-    \cd $HERE
-    return 1
-}
-
-function mm()
-{
-    local T=$(gettop)
-    # If we're sitting in the root of the build tree, just do a
-    # normal build.
-    if [ -f build/soong/soong_ui.bash ]; then
-        _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
-    else
-        # Find the closest Android.mk file.
-        local M=$(findmakefile)
-        local MODULES=
-        local GET_INSTALL_PATH=
-        local ARGS=
-        # Remove the path to top as the makefilepath needs to be relative
-        local M=`echo $M|sed 's:'$T'/::'`
-        if [ ! "$T" ]; then
-            echo "Couldn't locate the top of the tree.  Try setting TOP."
-            return 1
-        elif [ ! "$M" ]; then
-            echo "Couldn't locate a makefile from the current directory."
-            return 1
-        else
-            local ARG
-            for ARG in $@; do
-                case $ARG in
-                  GET-INSTALL-PATH) GET_INSTALL_PATH=$ARG;;
-                esac
-            done
-            if [ -n "$GET_INSTALL_PATH" ]; then
-              MODULES=
-              ARGS=GET-INSTALL-PATH-IN-$(dirname ${M})
-              ARGS=${ARGS//\//-}
-            else
-              MODULES=MODULES-IN-$(dirname ${M})
-              # Convert "/" to "-".
-              MODULES=${MODULES//\//-}
-              ARGS=$@
-            fi
-            if [ "1" = "${WITH_TIDY_ONLY}" -o "true" = "${WITH_TIDY_ONLY}" ]; then
-              MODULES=tidy_only
-            fi
-            ONE_SHOT_MAKEFILE=$M _wrap_build $T/build/soong/soong_ui.bash --make-mode $MODULES $ARGS
-        fi
-    fi
-}
-
-function mmm()
-{
-    local T=$(gettop)
-    if [ "$T" ]; then
-        local MAKEFILE=
-        local MODULES=
-        local MODULES_IN_PATHS=
-        local ARGS=
-        local DIR TO_CHOP
-        local DIR_MODULES
-        local GET_INSTALL_PATH=
-        local GET_INSTALL_PATHS=
-        local DASH_ARGS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^-.*$/')
-        local DIRS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^[^-].*$/')
-        for DIR in $DIRS ; do
-            DIR_MODULES=`echo $DIR | sed -n -e 's/.*:\(.*$\)/\1/p' | sed 's/,/ /'`
-            DIR=`echo $DIR | sed -e 's/:.*//' -e 's:/$::'`
-            # Remove the leading ./ and trailing / if any exists.
-            DIR=${DIR#./}
-            DIR=${DIR%/}
-            local M
-            if [ "$DIR_MODULES" = "" ]; then
-                M=$(findmakefile $DIR)
-            else
-                # Only check the target directory if a module is specified.
-                if [ -f $DIR/Android.mk -o -f $DIR/Android.bp ]; then
-                    local HERE=$PWD
-                    cd $DIR
-                    M=`PWD= /bin/pwd`
-                    M=$M/Android.mk
-                    cd $HERE
-                fi
-            fi
-            if [ "$M" ]; then
-                # Remove the path to top as the makefilepath needs to be relative
-                local M=`echo $M|sed 's:'$T'/::'`
-                if [ "$DIR_MODULES" = "" ]; then
-                    MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN-$(dirname ${M})"
-                    GET_INSTALL_PATHS="$GET_INSTALL_PATHS GET-INSTALL-PATH-IN-$(dirname ${M})"
-                else
-                    MODULES="$MODULES $DIR_MODULES"
-                fi
-                MAKEFILE="$MAKEFILE $M"
-            else
-                case $DIR in
-                  showcommands | snod | dist | *=*) ARGS="$ARGS $DIR";;
-                  GET-INSTALL-PATH) GET_INSTALL_PATH=$DIR;;
-                  *) if [ -d $DIR ]; then
-                         echo "No Android.mk in $DIR.";
-                     else
-                         echo "Couldn't locate the directory $DIR";
-                     fi
-                     return 1;;
-                esac
-            fi
-        done
-        if [ -n "$GET_INSTALL_PATH" ]; then
-          ARGS=${GET_INSTALL_PATHS//\//-}
-          MODULES=
-          MODULES_IN_PATHS=
-        fi
-        if [ "1" = "${WITH_TIDY_ONLY}" -o "true" = "${WITH_TIDY_ONLY}" ]; then
-          MODULES=tidy_only
-          MODULES_IN_PATHS=
-        fi
-        # Convert "/" to "-".
-        MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-        ONE_SHOT_MAKEFILE="$MAKEFILE" _wrap_build $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $MODULES $MODULES_IN_PATHS $ARGS
-    else
-        echo "Couldn't locate the top of the tree.  Try setting TOP."
-        return 1
-    fi
-}
-
-function mma()
-{
-  local T=$(gettop)
-  if [ -f build/soong/soong_ui.bash ]; then
-    _wrap_build $T/build/soong/soong_ui.bash --make-mode $@
-  else
-    if [ ! "$T" ]; then
-      echo "Couldn't locate the top of the tree.  Try setting TOP."
-      return 1
-    fi
-    local M=$(findmakefile || echo $(realpath $PWD)/Android.mk)
-    # Remove the path to top as the makefilepath needs to be relative
-    local M=`echo $M|sed 's:'$T'/::'`
-    local MODULES_IN_PATHS=MODULES-IN-$(dirname ${M})
-    # Convert "/" to "-".
-    MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-    _wrap_build $T/build/soong/soong_ui.bash --make-mode $@ $MODULES_IN_PATHS
-  fi
-}
-
-function mmma()
-{
-  local T=$(gettop)
-  if [ "$T" ]; then
-    local DASH_ARGS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^-.*$/')
-    local DIRS=$(echo "$@" | awk -v RS=" " -v ORS=" " '/^[^-].*$/')
-    local MY_PWD=`PWD= /bin/pwd`
-    if [ "$MY_PWD" = "$T" ]; then
-      MY_PWD=
-    else
-      MY_PWD=`echo $MY_PWD|sed 's:'$T'/::'`
-    fi
-    local DIR=
-    local MODULES_IN_PATHS=
-    local ARGS=
-    for DIR in $DIRS ; do
-      if [ -d $DIR ]; then
-        # Remove the leading ./ and trailing / if any exists.
-        DIR=${DIR#./}
-        DIR=${DIR%/}
-        if [ "$MY_PWD" != "" ]; then
-          DIR=$MY_PWD/$DIR
-        fi
-        MODULES_IN_PATHS="$MODULES_IN_PATHS MODULES-IN-$DIR"
-      else
-        case $DIR in
-          showcommands | snod | dist | *=*) ARGS="$ARGS $DIR";;
-          *) echo "Couldn't find directory $DIR"; return 1;;
-        esac
-      fi
-    done
-    # Convert "/" to "-".
-    MODULES_IN_PATHS=${MODULES_IN_PATHS//\//-}
-    _wrap_build $T/build/soong/soong_ui.bash --make-mode $DASH_ARGS $ARGS $MODULES_IN_PATHS
-  else
-    echo "Couldn't locate the top of the tree.  Try setting TOP."
-    return 1
-  fi
 }
 
 function croot()
@@ -1664,6 +1452,41 @@ function _wrap_build()
     echo
     return $ret
 }
+
+function _trigger_build()
+(
+    local -r bc="$1"; shift
+    if T="$(gettop)"; then
+      _wrap_build "$T/build/soong/soong_ui.bash" --build-mode --${bc} --dir="$(pwd)" "$@"
+    else
+      echo "Couldn't locate the top of the tree. Try setting TOP."
+    fi
+)
+
+function m()
+(
+    _trigger_build "all-modules" "$@"
+)
+
+function mm()
+(
+    _trigger_build "modules-in-a-dir-no-deps" "$@"
+)
+
+function mmm()
+(
+    _trigger_build "modules-in-dirs-no-deps" "$@"
+)
+
+function mma()
+(
+    _trigger_build "modules-in-a-dir" "$@"
+)
+
+function mmma()
+(
+    _trigger_build "modules-in-dirs" "$@"
+)
 
 function make()
 {

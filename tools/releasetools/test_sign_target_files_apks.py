@@ -70,10 +70,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
          'ro.product.build.fingerprint=foo/bar/release-keys'),
         ('ro.product.build.thumbprint=foo/bar/dev-keys',
          'ro.product.build.thumbprint=foo/bar/release-keys'),
-        ('ro.product_services.build.fingerprint=foo/bar/test-keys',
-         'ro.product_services.build.fingerprint=foo/bar/release-keys'),
-        ('ro.product_services.build.thumbprint=foo/bar/test-keys',
-         'ro.product_services.build.thumbprint=foo/bar/release-keys'),
+        ('ro.system_ext.build.fingerprint=foo/bar/test-keys',
+         'ro.system_ext.build.fingerprint=foo/bar/release-keys'),
+        ('ro.system_ext.build.thumbprint=foo/bar/test-keys',
+         'ro.system_ext.build.thumbprint=foo/bar/release-keys'),
         ('# comment line 1', '# comment line 1'),
         ('ro.bootimage.build.fingerprint=foo/bar/dev-keys',
          'ro.bootimage.build.fingerprint=foo/bar/release-keys'),
@@ -91,8 +91,8 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
          'ro.odm.build.tags=release-keys'),
         ('ro.product.build.tags=dev-keys',
          'ro.product.build.tags=release-keys'),
-        ('ro.product_services.build.tags=dev-keys',
-         'ro.product_services.build.tags=release-keys'),
+        ('ro.system_ext.build.tags=dev-keys',
+         'ro.system_ext.build.tags=release-keys'),
         ('# comment line 2', '# comment line 2'),
         ('ro.build.display.id=OPR6.170623.012 dev-keys',
          'ro.build.display.id=OPR6.170623.012'),
@@ -136,7 +136,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       ReplaceVerityKeyId(input_zip, output_zip, cert_file)
 
     with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE1, output_zip.read('BOOT/cmdline'))
+      self.assertEqual(BOOT_CMDLINE1, output_zip.read('BOOT/cmdline').decode())
 
     # Test with the second certificate.
     cert_file = os.path.join(self.testdata_dir, 'testkey.x509.pem')
@@ -146,7 +146,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       ReplaceVerityKeyId(input_zip, output_zip, cert_file)
 
     with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE2, output_zip.read('BOOT/cmdline'))
+      self.assertEqual(BOOT_CMDLINE2, output_zip.read('BOOT/cmdline').decode())
 
   def test_ReplaceVerityKeyId_no_veritykeyid(self):
     BOOT_CMDLINE = (
@@ -164,7 +164,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       ReplaceVerityKeyId(input_zip, output_zip, None)
 
     with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE, output_zip.read('BOOT/cmdline'))
+      self.assertEqual(BOOT_CMDLINE, output_zip.read('BOOT/cmdline').decode())
 
   def test_ReplaceCerts(self):
     cert1_path = os.path.join(self.testdata_dir, 'platform.x509.pem')

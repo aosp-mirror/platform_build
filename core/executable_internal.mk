@@ -74,17 +74,17 @@ $(linked_module): PRIVATE_TARGET_CRTEND_O := $(my_target_crtend_o)
 $(linked_module): PRIVATE_POST_LINK_CMD := $(LOCAL_POST_LINK_CMD)
 
 ifeq ($(LOCAL_FORCE_STATIC_EXECUTABLE),true)
-$(linked_module): $(my_target_crtbegin_static_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libcrt_builtins) $(my_target_libgcc) $(my_target_libatomic)
+$(linked_module): $(my_target_crtbegin_static_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libcrt_builtins) $(my_target_libgcc) $(my_target_libatomic) $(CLANG_CXX)
 	$(transform-o-to-static-executable)
 	$(PRIVATE_POST_LINK_CMD)
 else
-$(linked_module): $(my_target_crtbegin_dynamic_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libcrt_builtins) $(my_target_libgcc) $(my_target_libatomic)
+$(linked_module): $(my_target_crtbegin_dynamic_o) $(all_objects) $(all_libraries) $(my_target_crtend_o) $(my_target_libcrt_builtins) $(my_target_libgcc) $(my_target_libatomic) $(CLANG_CXX)
 	$(transform-o-to-executable)
 	$(PRIVATE_POST_LINK_CMD)
 endif
 
 ifeq ($(my_native_coverage),true)
-gcno_suffix := .gcnodir
+gcno_suffix := .zip
 
 built_whole_gcno_libraries := \
     $(foreach lib,$(my_whole_static_libraries), \
@@ -106,11 +106,11 @@ endif
 
 GCNO_ARCHIVE := $(my_installed_module_stem)$(gcno_suffix)
 
+$(intermediates)/$(GCNO_ARCHIVE) : $(SOONG_ZIP) $(MERGE_ZIPS)
 $(intermediates)/$(GCNO_ARCHIVE) : PRIVATE_ALL_OBJECTS := $(strip $(LOCAL_GCNO_FILES))
 $(intermediates)/$(GCNO_ARCHIVE) : PRIVATE_ALL_WHOLE_STATIC_LIBRARIES := $(strip $(built_whole_gcno_libraries)) $(strip $(built_static_gcno_libraries))
-$(intermediates)/$(GCNO_ARCHIVE) : PRIVATE_INTERMEDIATES_DIR := $(intermediates)
 $(intermediates)/$(GCNO_ARCHIVE) : $(LOCAL_GCNO_FILES) $(built_whole_gcno_libraries) $(built_static_gcno_libraries)
-	$(transform-o-to-static-lib)
+	$(package-coverage-files)
 
 $(my_coverage_path)/$(GCNO_ARCHIVE) : $(intermediates)/$(GCNO_ARCHIVE)
 	$(copy-file-to-target)

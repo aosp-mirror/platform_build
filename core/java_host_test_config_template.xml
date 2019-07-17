@@ -17,6 +17,9 @@
 <configuration description="Runs {MODULE}">
     <option name="test-suite-tag" value="apct" />
     <option name="test-suite-tag" value="apct-junit" />
+
+    {EXTRA_CONFIGS}
+
     <test class="com.android.tradefed.testtype.HostTest" >
         <option name="jar" value="{MODULE}.jar" />
     </test>

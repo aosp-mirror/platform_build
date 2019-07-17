@@ -13,21 +13,22 @@
 // limitations under the License.
 
 python_defaults {
-    name: "releasetools_test_defaults",
+    name: "releasetools_defaults",
     version: {
         py2: {
             enabled: true,
             embedded_launcher: false,
         },
         py3: {
-            enabled: false,
+            enabled: true,
+            embedded_launcher: false,
         },
     },
 }
 
 python_library_host {
     name: "releasetools_lib",
-    defaults: ["releasetools_test_defaults"],
+    defaults: ["releasetools_defaults"],
     srcs: [
         "add_img_to_target_files.py",
         "apex_utils.py",
@@ -39,11 +40,13 @@ python_library_host {
         "common.py",
         "edify_generator.py",
         "img_from_target_files.py",
+        "images.py",
         "make_recovery_patch.py",
         "merge_target_files.py",
         "ota_from_target_files.py",
         "ota_package_parser.py",
         "rangelib.py",
+        "sign_apex.py",
         "sign_target_files_apks.py",
         "sparse_img.py",
         "target_files_diff.py",
@@ -52,10 +55,9 @@ python_library_host {
     ],
 }
 
-python_test_host {
-    name: "releasetools_test",
-    defaults: ["releasetools_test_defaults"],
-    main: "test_utils.py",
+python_defaults {
+    name: "releasetools_test_defaults",
+    defaults: ["releasetools_defaults"],
     srcs: [
         "test_*.py",
     ],
@@ -68,5 +70,38 @@ python_test_host {
     required: [
         "otatools",
     ],
+}
+
+python_test_host {
+    name: "releasetools_test",
+    defaults: ["releasetools_test_defaults"],
+    main: "test_utils.py",
+    version: {
+        py2: {
+            enabled: true,
+            embedded_launcher: false,
+        },
+        py3: {
+            enabled: false,
+            embedded_launcher: false,
+        },
+    },
+    test_suites: ["general-tests"],
+}
+
+python_test_host {
+    name: "releasetools_py3_test",
+    defaults: ["releasetools_test_defaults"],
+    main: "test_utils.py",
+    version: {
+        py2: {
+            enabled: false,
+            embedded_launcher: false,
+        },
+        py3: {
+            enabled: true,
+            embedded_launcher: false,
+        },
+    },
     test_suites: ["general-tests"],
 }

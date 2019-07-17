@@ -1,5 +1,23 @@
 # Build System Changes for Android.mk Writers
 
+## PRODUCT_STATIC_BOOT_CONTROL_HAL is obsolete {#PRODUCT_STATIC_BOOT_CONTROL_HAL}
+
+`PRODUCT_STATIC_BOOT_CONTROL_HAL` was the workaround to allow sideloading with
+statically linked boot control HAL, before shared library HALs were supported
+under recovery. Android Q has added such support (HALs will be loaded in
+passthrough mode), and the workarounds are being removed. Targets should build
+and install the recovery variant of boot control HAL modules into recovery
+image, similar to the ones installed for normal boot. See the change to
+crosshatch for example of this:
+
+* [device/google/crosshatch/bootctrl/Android.bp] for `bootctrl.sdm845` building
+  rules
+* [device/google/crosshatch/device.mk] for installing `bootctrl.sdm845.recovery`
+  and `android.hardware.boot@1.0-impl.recovery` into recovery image
+
+[device/google/crosshatch/bootctrl/Android.bp]: https://android.googlesource.com/device/google/crosshatch/+/master/bootctrl/Android.bp
+[device/google/crosshatch/device.mk]: https://android.googlesource.com/device/google/crosshatch/+/master/device.mk
+
 ## Deprecation of `BUILD_*` module types
 
 See [build/make/Deprecation.md](Deprecation.md) for the current status.
@@ -194,11 +212,9 @@ you're not trying to actively debug the kernel.
 
 ## `export` and `unexport` deprecation  {#export_keyword}
 
-The `export` and `unexport` keywords have been deprecated, and will throw
-warnings or errors depending on where they are used.
+The `export` and `unexport` keywords are obsolete, and will throw errors when
+used.
 
-Early in the make system, during product configuration and BoardConfig.mk
-reading: these will throw a warnings, and will be an error in the future.
 Device specific configuration should not be able to affect common core build
 steps -- we're looking at triggering build steps to be invalidated if the set
 of environment variables they can access changes. If device specific
@@ -206,10 +222,9 @@ configuration is allowed to change those, switching devices with the same
 output directory could become significantly more expensive than it already can
 be.
 
-Later, during Android.mk files, and later tasks: these will throw errors, since
-it is increasingly likely that they are being used incorrectly, attempting to
-change the environment for a single build step, and instead setting it for
-hundreds of thousands.
+If used during Android.mk files, and later tasks, it is increasingly likely
+that they are being used incorrectly. Attempting to change the environment for
+a single build step, and instead setting it for hundreds of thousands.
 
 It is not recommended to just move the environment variable setting outside of
 the build (in vendorsetup.sh, or some other configuration script or wrapper).
@@ -373,7 +388,7 @@ errors.
 
 | instead of                                                   | use                  |
 |--------------------------------------------------------------|----------------------|
-| OUT {#OUT}                                                   | OUT_DIR              |
+| OUT {#OUT}                                                   | PRODUCT_OUT          |
 | ANDROID_HOST_OUT {#ANDROID_HOST_OUT}                         | HOST_OUT             |
 | ANDROID_PRODUCT_OUT {#ANDROID_PRODUCT_OUT}                   | PRODUCT_OUT          |
 | ANDROID_HOST_OUT_TESTCASES {#ANDROID_HOST_OUT_TESTCASES}     | HOST_OUT_TESTCASES   |
