@@ -256,10 +256,10 @@ endef
 #################################################################
 # Set up minimal BOOTCLASSPATH list of jars to build/execute
 # java code with dalvikvm/art.
-# Jars present in the runtime apex. These should match exactly the list of
-# Java libraries in the runtime apex build rule.
-RUNTIME_APEX_JARS := core-oj core-libart core-icu4j okhttp bouncycastle apache-xml
-TARGET_CORE_JARS := $(RUNTIME_APEX_JARS) conscrypt
+# Jars present in the ART apex. These should match exactly the list of
+# Java libraries in the ART apex build rule.
+ART_APEX_JARS := core-oj core-libart core-icu4j okhttp bouncycastle apache-xml
+TARGET_CORE_JARS := $(ART_APEX_JARS) conscrypt
 ifeq ($(EMMA_INSTRUMENT),true)
   ifneq ($(EMMA_INSTRUMENT_STATIC),true)
     # For instrumented build, if Jacoco is not being included statically
