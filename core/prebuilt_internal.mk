@@ -23,13 +23,13 @@ my_32_64_bit_suffix := $(if $($(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)IS_64_BIT)
 ifdef LOCAL_PREBUILT_MODULE_FILE
   my_prebuilt_src_file := $(LOCAL_PREBUILT_MODULE_FILE)
 else ifdef LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)
-  my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH))
+  my_prebuilt_src_file := $(call clean-path,$(LOCAL_PATH)/$(LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)))
   LOCAL_SRC_FILES_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH) :=
 else ifdef LOCAL_SRC_FILES_$(my_32_64_bit_suffix)
-  my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES_$(my_32_64_bit_suffix))
+  my_prebuilt_src_file := $(call clean-path,$(LOCAL_PATH)/$(LOCAL_SRC_FILES_$(my_32_64_bit_suffix)))
   LOCAL_SRC_FILES_$(my_32_64_bit_suffix) :=
 else ifdef LOCAL_SRC_FILES
-  my_prebuilt_src_file := $(LOCAL_PATH)/$(LOCAL_SRC_FILES)
+  my_prebuilt_src_file := $(call clean-path,$(LOCAL_PATH)/$(LOCAL_SRC_FILES))
   LOCAL_SRC_FILES :=
 else ifdef LOCAL_REPLACE_PREBUILT_APK_INSTALLED
   # This is handled specially in app_prebuilt_internal.mk
@@ -49,9 +49,12 @@ ifeq (APPS,$(LOCAL_MODULE_CLASS))
   include $(BUILD_SYSTEM)/app_prebuilt_internal.mk
 else ifeq (JAVA_LIBRARIES,$(LOCAL_MODULE_CLASS))
   include $(BUILD_SYSTEM)/java_prebuilt_internal.mk
-else
-  # TODO(jungjw): Check LOCAL_MODULE_CLASS value and generate an error for unexpected ones.
+else ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS,$(LOCAL_MODULE_CLASS)),)
   include $(BUILD_SYSTEM)/cc_prebuilt_internal.mk
+else ifneq ($(filter SCRIPT ETC DATA,$(LOCAL_MODULE_CLASS)),)
+  include $(BUILD_SYSTEM)/misc_prebuilt_internal.mk
+else
+  $(error $(LOCAL_MODULE) : unexpected LOCAL_MODULE_CLASS for prebuilts: $(LOCAL_MODULE_CLASS))
 endif
 
 $(built_module) : $(LOCAL_ADDITIONAL_DEPENDENCIES)

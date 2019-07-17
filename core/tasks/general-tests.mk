@@ -34,11 +34,18 @@ my_general_tests_shared_lib_files := \
 
 my_host_shared_lib_for_general_tests += $(call copy-many-files,$(my_general_tests_shared_lib_files))
 
+# Create an artifact to include all test config files in general-tests.
+general_tests_configs_zip := $(PRODUCT_OUT)/general-tests_configs.zip
+# Create an artifact to include all shared librariy files in general-tests.
+general_tests_host_shared_libs_zip := $(PRODUCT_OUT)/general-tests_host-shared-libs.zip
+
 $(general_tests_zip) : PRIVATE_general_tests_list_zip := $(general_tests_list_zip)
-$(general_tests_zip) : .KATI_IMPLICIT_OUTPUTS := $(general_tests_list_zip)
+$(general_tests_zip) : .KATI_IMPLICIT_OUTPUTS := $(general_tests_list_zip) $(general_tests_configs_zip) $(general_tests_host_shared_libs_zip)
 $(general_tests_zip) : PRIVATE_TOOLS := $(general_tests_tools)
 $(general_tests_zip) : PRIVATE_INTERMEDIATES_DIR := $(intermediates_dir)
 $(general_tests_zip) : PRIVATE_HOST_SHARED_LIBS := $(my_host_shared_lib_for_general_tests)
+$(general_tests_zip) : PRIVATE_general_tests_configs_zip := $(general_tests_configs_zip)
+$(general_tests_zip) : PRIVATE_general_host_shared_libs_zip := $(general_tests_host_shared_libs_zip)
 $(general_tests_zip) : $(COMPATIBILITY.general-tests.FILES) $(general_tests_tools) $(my_host_shared_lib_for_general_tests) $(SOONG_ZIP)
 	rm -rf $(PRIVATE_INTERMEDIATES_DIR)
 	rm -f $@ $(PRIVATE_general_tests_list_zip)
@@ -46,22 +53,33 @@ $(general_tests_zip) : $(COMPATIBILITY.general-tests.FILES) $(general_tests_tool
 	echo $(sort $(COMPATIBILITY.general-tests.FILES)) | tr " " "\n" > $(PRIVATE_INTERMEDIATES_DIR)/list
 	grep $(HOST_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/host.list || true
 	grep $(TARGET_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/list > $(PRIVATE_INTERMEDIATES_DIR)/target.list || true
+	grep -e .*\\.config$$ $(PRIVATE_INTERMEDIATES_DIR)/host.list > $(PRIVATE_INTERMEDIATES_DIR)/host-test-configs.list || true
+	grep -e .*\\.config$$ $(PRIVATE_INTERMEDIATES_DIR)/target.list > $(PRIVATE_INTERMEDIATES_DIR)/target-test-configs.list || true
 	$(hide) for shared_lib in $(PRIVATE_HOST_SHARED_LIBS); do \
 	  echo $$shared_lib >> $(PRIVATE_INTERMEDIATES_DIR)/host.list; \
+	  echo $$shared_lib >> $(PRIVATE_INTERMEDIATES_DIR)/shared-libs.list; \
 	done
+	grep $(HOST_OUT_TESTCASES) $(PRIVATE_INTERMEDIATES_DIR)/shared-libs.list > $(PRIVATE_INTERMEDIATES_DIR)/host-shared-libs.list || true
 	cp -fp $(PRIVATE_TOOLS) $(PRIVATE_INTERMEDIATES_DIR)/tools/
 	$(SOONG_ZIP) -d -o $@ \
 	  -P host -C $(PRIVATE_INTERMEDIATES_DIR) -D $(PRIVATE_INTERMEDIATES_DIR)/tools \
 	  -P host -C $(HOST_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/host.list \
 	  -P target -C $(PRODUCT_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/target.list
-	grep -e .*.config$$ $(PRIVATE_INTERMEDIATES_DIR)/host.list | sed s%$(HOST_OUT)%host%g > $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
-	grep -e .*.config$$ $(PRIVATE_INTERMEDIATES_DIR)/target.list | sed s%$(PRODUCT_OUT)%target%g >> $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
+	$(SOONG_ZIP) -d -o $(PRIVATE_general_tests_configs_zip) \
+	  -P host -C $(HOST_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/host-test-configs.list \
+	  -P target -C $(PRODUCT_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/target-test-configs.list
+	$(SOONG_ZIP) -d -o $(PRIVATE_general_host_shared_libs_zip) \
+	  -P host -C $(HOST_OUT) -l $(PRIVATE_INTERMEDIATES_DIR)/host-shared-libs.list
+	grep -e .*\\.config$$ $(PRIVATE_INTERMEDIATES_DIR)/host.list | sed s%$(HOST_OUT)%host%g > $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
+	grep -e .*\\.config$$ $(PRIVATE_INTERMEDIATES_DIR)/target.list | sed s%$(PRODUCT_OUT)%target%g >> $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
 	$(SOONG_ZIP) -d -o $(PRIVATE_general_tests_list_zip) -C $(PRIVATE_INTERMEDIATES_DIR) -f $(PRIVATE_INTERMEDIATES_DIR)/general-tests_list
 
 general-tests: $(general_tests_zip)
-$(call dist-for-goals, general-tests, $(general_tests_zip) $(general_tests_list_zip))
+$(call dist-for-goals, general-tests, $(general_tests_zip) $(general_tests_list_zip) $(general_tests_configs_zip) $(general_tests_host_shared_libs_zip))
 
 intermediates_dir :=
 general_tests_tools :=
 general_tests_zip :=
 general_tests_list_zip :=
+general_tests_configs_zip :=
+general_tests_host_shared_libs_zip :=

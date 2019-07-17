@@ -16,7 +16,8 @@
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/mainline.mk)
-$(call enforce-product-packages-exist,)
+whitelist := product_manifest.xml
+$(call enforce-product-packages-exist,$(whitelist))
 
 PRODUCT_NAME := mainline_arm64
 PRODUCT_DEVICE := mainline_arm64

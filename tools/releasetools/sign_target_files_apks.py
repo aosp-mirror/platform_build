@@ -154,11 +154,11 @@ OPTIONS.avb_extra_args = {}
 
 def GetApkCerts(certmap):
   # apply the key remapping to the contents of the file
-  for apk, cert in certmap.iteritems():
+  for apk, cert in certmap.items():
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
 
   # apply all the -e options, overriding anything in the file
-  for apk, cert in OPTIONS.extra_apks.iteritems():
+  for apk, cert in OPTIONS.extra_apks.items():
     if not cert:
       cert = "PRESIGNED"
     certmap[apk] = OPTIONS.key_map.get(cert, cert)
@@ -188,6 +188,9 @@ def GetApexKeys(keys_info, key_map):
   for apex, key in OPTIONS.extra_apex_payload_keys.items():
     if not key:
       key = 'PRESIGNED'
+    if apex not in keys_info:
+      logger.warning('Failed to find %s in target_files; Ignored', apex)
+      continue
     keys_info[apex] = (key, keys_info[apex][1])
 
   # Apply the key remapping to container keys.
@@ -468,6 +471,7 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
             maxsize, name, payload_key))
 
         signed_apex = apex_utils.SignApex(
+            misc_info['avb_avbtool'],
             data,
             payload_key,
             container_key,
@@ -488,35 +492,45 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       continue
 
     # System properties.
-    elif filename in ("SYSTEM/build.prop",
-                      "VENDOR/build.prop",
-                      "SYSTEM/vendor/build.prop",
-                      "ODM/build.prop",  # legacy
-                      "ODM/etc/build.prop",
-                      "VENDOR/odm/build.prop",  # legacy
-                      "VENDOR/odm/etc/build.prop",
-                      "PRODUCT/build.prop",
-                      "SYSTEM/product/build.prop",
-                      "PRODUCT_SERVICES/build.prop",
-                      "SYSTEM/product_services/build.prop",
-                      "SYSTEM/etc/prop.default",
-                      "BOOT/RAMDISK/prop.default",
-                      "BOOT/RAMDISK/default.prop",  # legacy
-                      "ROOT/default.prop",  # legacy
-                      "RECOVERY/RAMDISK/prop.default",
-                      "RECOVERY/RAMDISK/default.prop"):  # legacy
+    elif filename in (
+        "SYSTEM/build.prop",
+
+        "VENDOR/build.prop",
+        "SYSTEM/vendor/build.prop",
+
+        "ODM/etc/build.prop",
+        "VENDOR/odm/etc/build.prop",
+
+        "PRODUCT/build.prop",
+        "SYSTEM/product/build.prop",
+
+        "SYSTEM_EXT/build.prop",
+        "SYSTEM/system_ext/build.prop",
+
+        "SYSTEM/etc/prop.default",
+        "BOOT/RAMDISK/prop.default",
+        "RECOVERY/RAMDISK/prop.default",
+
+        # ROOT/default.prop is a legacy path, but may still exist for upgrading
+        # devices that don't support `property_overrides_split_enabled`.
+        "ROOT/default.prop",
+
+        # RECOVERY/RAMDISK/default.prop is a legacy path, but will always exist
+        # as a symlink in the current code. So it's a no-op here. Keeping the
+        # path here for clarity.
+        "RECOVERY/RAMDISK/default.prop"):
       print("Rewriting %s:" % (filename,))
       if stat.S_ISLNK(info.external_attr >> 16):
         new_data = data
       else:
-        new_data = RewriteProps(data)
+        new_data = RewriteProps(data.decode())
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
 
     # Replace the certs in *mac_permissions.xml (there could be multiple, such
     # as {system,vendor}/etc/selinux/{plat,nonplat}_mac_permissions.xml).
     elif filename.endswith("mac_permissions.xml"):
       print("Rewriting %s with new keys." % (filename,))
-      new_data = ReplaceCerts(data)
+      new_data = ReplaceCerts(data.decode())
       common.ZipWriteStr(output_tf_zip, out_info, new_data)
 
     # Ask add_img_to_target_files to rebuild the recovery patch if needed.
@@ -562,7 +576,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
       # key is specified via --avb_system_other_key.
       signing_key = OPTIONS.avb_keys.get("system_other")
       if signing_key:
-        public_key = common.ExtractAvbPublicKey(signing_key)
+        public_key = common.ExtractAvbPublicKey(
+            misc_info['avb_avbtool'], signing_key)
         print("    Rewriting AVB public key of system_other in /product")
         common.ZipWrite(output_tf_zip, public_key, filename)
 
@@ -620,17 +635,17 @@ def ReplaceCerts(data):
   Raises:
     AssertionError: On finding duplicate entries.
   """
-  for old, new in OPTIONS.key_map.iteritems():
+  for old, new in OPTIONS.key_map.items():
     if OPTIONS.verbose:
       print("    Replacing %s.x509.pem with %s.x509.pem" % (old, new))
 
     try:
       with open(old + ".x509.pem") as old_fp:
         old_cert16 = base64.b16encode(
-            common.ParseCertificate(old_fp.read())).lower()
+            common.ParseCertificate(old_fp.read())).decode().lower()
       with open(new + ".x509.pem") as new_fp:
         new_cert16 = base64.b16encode(
-            common.ParseCertificate(new_fp.read())).lower()
+            common.ParseCertificate(new_fp.read())).decode().lower()
     except IOError as e:
       if OPTIONS.verbose or e.errno != errno.ENOENT:
         print("    Error accessing %s: %s.\nSkip replacing %s.x509.pem with "
@@ -848,7 +863,7 @@ def ReplaceVerityKeyId(input_zip, output_zip, key_path):
         writable.
     key_path: The path to the PEM encoded X.509 certificate.
   """
-  in_cmdline = input_zip.read("BOOT/cmdline")
+  in_cmdline = input_zip.read("BOOT/cmdline").decode()
   # Copy in_cmdline to output_zip if veritykeyid is not present.
   if "veritykeyid" not in in_cmdline:
     common.ZipWriteStr(output_zip, "BOOT/cmdline", in_cmdline)
@@ -881,7 +896,7 @@ def ReplaceMiscInfoTxt(input_zip, output_zip, misc_info):
   current in-memory dict contains additional items computed at runtime.
   """
   misc_info_old = common.LoadDictionaryFromLines(
-      input_zip.read('META/misc_info.txt').split('\n'))
+      input_zip.read('META/misc_info.txt').decode().split('\n'))
   items = []
   for key in sorted(misc_info):
     if key in misc_info_old:
@@ -947,7 +962,7 @@ def BuildKeyMap(misc_info, key_mapping_options):
 
 
 def GetApiLevelAndCodename(input_tf_zip):
-  data = input_tf_zip.read("SYSTEM/build.prop")
+  data = input_tf_zip.read("SYSTEM/build.prop").decode()
   api_level = None
   codename = None
   for line in data.split("\n"):
@@ -969,7 +984,7 @@ def GetApiLevelAndCodename(input_tf_zip):
 
 
 def GetCodenameToApiLevelMap(input_tf_zip):
-  data = input_tf_zip.read("SYSTEM/build.prop")
+  data = input_tf_zip.read("SYSTEM/build.prop").decode()
   api_level = None
   codenames = None
   for line in data.split("\n"):
@@ -987,7 +1002,7 @@ def GetCodenameToApiLevelMap(input_tf_zip):
   if codenames is None:
     raise ValueError("No ro.build.version.all_codenames in SYSTEM/build.prop")
 
-  result = dict()
+  result = {}
   for codename in codenames:
     codename = codename.strip()
     if codename:
@@ -1011,7 +1026,7 @@ def ReadApexKeysInfo(tf_zip):
         key.
   """
   keys = {}
-  for line in tf_zip.read("META/apexkeys.txt").split("\n"):
+  for line in tf_zip.read('META/apexkeys.txt').decode().split('\n'):
     line = line.strip()
     if not line:
       continue

@@ -25,18 +25,6 @@
 ## be set for you.
 ###########################################################
 
-# If this makefile is being read from within an inheritance,
-# use the new values.
-skip_definition:=
-ifdef LOCAL_PACKAGE_OVERRIDES
-  package_overridden := $(call set-inherited-package-variables)
-  ifeq ($(strip $(package_overridden)),)
-    skip_definition := true
-  endif
-endif
-
-ifndef skip_definition
-
 LOCAL_PACKAGE_NAME := $(strip $(LOCAL_PACKAGE_NAME))
 ifeq ($(LOCAL_PACKAGE_NAME),)
 $(error $(LOCAL_PATH): Package modules must define LOCAL_PACKAGE_NAME)
@@ -121,7 +109,7 @@ ifeq ($(PRODUCT_ENFORCE_RRO_TARGETS),*)
         $(LOCAL_ODM_MODULE) \
         $(LOCAL_OEM_MODULE) \
         $(LOCAL_PRODUCT_MODULE) \
-        $(LOCAL_PRODUCT_SERVICES_MODULE) \
+        $(LOCAL_SYSTEM_EXT_MODULE) \
         $(LOCAL_PROPRIETARY_MODULE) \
         $(LOCAL_VENDOR_MODULE))
     enforce_rro_enabled := $(if $(non_system_module),,true)
@@ -340,7 +328,7 @@ my_split_suffixes := $(subst $(comma),_,$(my_apk_split_configs))
 built_apk_splits := $(foreach s,$(my_split_suffixes),$(intermediates)/package_$(s).apk)
 endif
 
-$(R_file_stamp) $(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
+$(R_file_stamp) $(my_res_package): PRIVATE_AAPT_FLAGS := $(filter-out --legacy,$(LOCAL_AAPT_FLAGS))
 $(R_file_stamp) $(my_res_package): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_AAPT_CHARACTERISTICS)
 $(R_file_stamp) $(my_res_package): PRIVATE_MANIFEST_PACKAGE_NAME := $(LOCAL_MANIFEST_PACKAGE_NAME)
 $(R_file_stamp) $(my_res_package): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_MANIFEST_INSTRUMENTATION_FOR)
@@ -358,7 +346,6 @@ my_asset_dirs := $(LOCAL_ASSET_DIR)
 my_full_asset_paths := $(all_assets)
 
 # Add AAPT2 link specific flags.
-$(my_res_package): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
 ifndef LOCAL_AAPT_NAMESPACES
   $(my_res_package): PRIVATE_AAPT_FLAGS += --no-static-lib-packages
 endif
@@ -428,19 +415,11 @@ $(LOCAL_INTERMEDIATE_TARGETS): \
 
 $(my_res_package) : $(all_library_res_package_export_deps)
 
-# These four are set above for $(R_stamp_file) and $(my_res_package), but
-# $(LOCAL_BUILT_MODULE) is not set before java.mk, so they have to be set again
-# here.
-$(LOCAL_BUILT_MODULE): PRIVATE_AAPT_FLAGS := $(LOCAL_AAPT_FLAGS)
-$(LOCAL_BUILT_MODULE): PRIVATE_TARGET_AAPT_CHARACTERISTICS := $(TARGET_AAPT_CHARACTERISTICS)
-$(LOCAL_BUILT_MODULE): PRIVATE_MANIFEST_PACKAGE_NAME := $(LOCAL_MANIFEST_PACKAGE_NAME)
-$(LOCAL_BUILT_MODULE): PRIVATE_MANIFEST_INSTRUMENTATION_FOR := $(LOCAL_MANIFEST_INSTRUMENTATION_FOR)
-
 ifneq ($(full_classes_jar),)
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE := $(built_dex)
 # Use the jarjar processed arhive as the initial package file.
 $(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar)
-$(LOCAL_BUILT_MODULE): $(built_dex)
+$(LOCAL_BUILT_MODULE): $(built_dex) $(full_classes_pre_proguard_jar)
 else
 $(LOCAL_BUILT_MODULE): PRIVATE_DEX_FILE :=
 $(LOCAL_BUILT_MODULE): PRIVATE_SOURCE_ARCHIVE :=
@@ -483,6 +462,31 @@ PACKAGES.$(LOCAL_PACKAGE_NAME).CERTIFICATE := $(certificate)
 $(LOCAL_BUILT_MODULE): $(additional_certificates)
 $(LOCAL_BUILT_MODULE): PRIVATE_ADDITIONAL_CERTIFICATES := $(additional_certificates)
 
+# Verify LOCAL_USES_LIBRARIES/LOCAL_OPTIONAL_USES_LIBRARIES
+# If LOCAL_ENFORCE_USES_LIBRARIES is not set, default to true if either of LOCAL_USES_LIBRARIES or
+# LOCAL_OPTIONAL_USES_LIBRARIES are specified.
+# Will change the default to true unconditionally in the future.
+ifndef LOCAL_ENFORCE_USES_LIBRARIES
+  ifneq (,$(strip $(LOCAL_USES_LIBRARIES)$(LOCAL_OPTIONAL_USES_LIBRARIES)))
+    LOCAL_ENFORCE_USES_LIBRARIES := true
+  endif
+endif
+
+my_enforced_uses_libraries :=
+ifdef LOCAL_ENFORCE_USES_LIBRARIES
+  my_manifest_check := $(intermediates.COMMON)/manifest/AndroidManifest.xml.check
+  $(my_manifest_check): $(MANIFEST_CHECK)
+  $(my_manifest_check): PRIVATE_USES_LIBRARIES := $(LOCAL_USES_LIBRARIES)
+  $(my_manifest_check): PRIVATE_OPTIONAL_USES_LIBRARIES := $(LOCAL_OPTIONAL_USES_LIBRARIES)
+  $(my_manifest_check): $(full_android_manifest)
+	@echo Checking manifest: $<
+	$(MANIFEST_CHECK) --enforce-uses-libraries \
+	  $(addprefix --uses-library ,$(PRIVATE_USES_LIBRARIES)) \
+	  $(addprefix --optional-uses-library ,$(PRIVATE_OPTIONAL_USES_LIBRARIES)) \
+	  $< -o $@
+  $(LOCAL_BUILT_MODULE): $(my_manifest_check)
+endif
+
 # Define the rule to build the actual package.
 # PRIVATE_JNI_SHARED_LIBRARIES is a list of <abi>:<path_of_built_lib>.
 $(LOCAL_BUILT_MODULE): PRIVATE_JNI_SHARED_LIBRARIES := $(jni_shared_libraries_with_abis)
@@ -504,7 +508,7 @@ else
 endif
 endif
 
-# Run veridex on product, product_services and vendor modules.
+# Run veridex on product, system_ext and vendor modules.
 # We skip it for unbundled app builds where we cannot build veridex.
 module_run_appcompat :=
 ifeq (true,$(non_system_module))
@@ -524,7 +528,7 @@ $(LOCAL_BUILT_MODULE): PRIVATE_RESOURCE_INTERMEDIATES_DIR := $(intermediates.COM
 $(LOCAL_BUILT_MODULE) : $(jni_shared_libraries)
 $(LOCAL_BUILT_MODULE) : $(JAR_ARGS) $(SOONG_ZIP) $(MERGE_ZIPS) $(ZIP2ZIP)
 $(LOCAL_BUILT_MODULE): PRIVATE_RES_PACKAGE := $(my_res_package)
-$(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2) | $(ACP)
+$(LOCAL_BUILT_MODULE) : $(my_res_package) $(AAPT2)
 ifdef LOCAL_COMPRESSED_MODULE
 $(LOCAL_BUILT_MODULE) : $(MINIGZIP)
 endif
@@ -638,7 +642,7 @@ endif
 ## the APK
 ifdef LOCAL_DEX_PREOPT
   $(my_dex_jar): PRIVATE_DEX_FILE := $(built_dex)
-  $(my_dex_jar): $(built_dex)
+  $(my_dex_jar): $(built_dex) $(SOONG_ZIP)
 	$(hide) mkdir -p $(dir $@) && rm -f $@
 	$(call create-dex-jar,$@,$(PRIVATE_DEX_FILE))
 endif
@@ -691,8 +695,6 @@ PACKAGES.$(LOCAL_PACKAGE_NAME).OVERRIDES := $(strip $(LOCAL_OVERRIDES_PACKAGES))
 PACKAGES.$(LOCAL_PACKAGE_NAME).RESOURCE_FILES := $(all_resources)
 
 PACKAGES := $(PACKAGES) $(LOCAL_PACKAGE_NAME)
-
-endif # skip_definition
 
 # Reset internal variables.
 all_res_assets :=

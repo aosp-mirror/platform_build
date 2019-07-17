@@ -131,7 +131,8 @@ def Append(target, file_to_append, error_message):
     BuildVerityImageError: On error.
   """
   try:
-    with open(target, "a") as out_file, open(file_to_append, "r") as input_file:
+    with open(target, 'ab') as out_file, \
+        open(file_to_append, 'rb') as input_file:
       for line in input_file:
         out_file.write(line)
   except IOError:
@@ -178,6 +179,8 @@ def CreateVerityImageBuilder(prop_dict):
     # key_path and algorithm are only available when chain partition is used.
     key_path = prop_dict.get("avb_key_path")
     algorithm = prop_dict.get("avb_algorithm")
+
+    # Image uses hash footer.
     if prop_dict.get("avb_hash_enable") == "true":
       return VerifiedBootVersion2VerityImageBuilder(
           prop_dict["partition_name"],
@@ -188,16 +191,17 @@ def CreateVerityImageBuilder(prop_dict):
           algorithm,
           prop_dict.get("avb_salt"),
           prop_dict["avb_add_hash_footer_args"])
-    else:
-      return VerifiedBootVersion2VerityImageBuilder(
-          prop_dict["partition_name"],
-          partition_size,
-          VerifiedBootVersion2VerityImageBuilder.AVB_HASHTREE_FOOTER,
-          prop_dict["avb_avbtool"],
-          key_path,
-          algorithm,
-          prop_dict.get("avb_salt"),
-          prop_dict["avb_add_hashtree_footer_args"])
+
+    # Image uses hashtree footer.
+    return VerifiedBootVersion2VerityImageBuilder(
+        prop_dict["partition_name"],
+        partition_size,
+        VerifiedBootVersion2VerityImageBuilder.AVB_HASHTREE_FOOTER,
+        prop_dict["avb_avbtool"],
+        key_path,
+        algorithm,
+        prop_dict.get("avb_salt"),
+        prop_dict["avb_add_hashtree_footer_args"])
 
   return None
 
@@ -605,19 +609,19 @@ class VerifiedBootVersion1HashtreeInfoGenerator(HashtreeInfoGenerator):
     self.metadata_size = metadata_size
 
     self.hashtree_info.filesystem_range = RangeSet(
-        data=[0, adjusted_size / self.block_size])
+        data=[0, adjusted_size // self.block_size])
     self.hashtree_info.hashtree_range = RangeSet(
-        data=[adjusted_size / self.block_size,
-              (adjusted_size + verity_tree_size) / self.block_size])
+        data=[adjusted_size // self.block_size,
+              (adjusted_size + verity_tree_size) // self.block_size])
 
   def _ParseHashtreeMetadata(self):
     """Parses the hash_algorithm, root_hash, salt from the metadata block."""
 
     metadata_start = self.filesystem_size + self.hashtree_size
     metadata_range = RangeSet(
-        data=[metadata_start / self.block_size,
-              (metadata_start + self.metadata_size) / self.block_size])
-    meta_data = ''.join(self.image.ReadRangeSet(metadata_range))
+        data=[metadata_start // self.block_size,
+              (metadata_start + self.metadata_size) // self.block_size])
+    meta_data = b''.join(self.image.ReadRangeSet(metadata_range))
 
     # More info about the metadata structure available in:
     # system/extras/verity/build_verity_metadata.py
@@ -640,9 +644,9 @@ class VerifiedBootVersion1HashtreeInfoGenerator(HashtreeInfoGenerator):
     assert (int(table_entries[5]) * self.block_size == self.filesystem_size and
             int(table_entries[6]) * self.block_size == self.filesystem_size)
 
-    self.hashtree_info.hash_algorithm = table_entries[7]
-    self.hashtree_info.root_hash = table_entries[8]
-    self.hashtree_info.salt = table_entries[9]
+    self.hashtree_info.hash_algorithm = table_entries[7].decode()
+    self.hashtree_info.root_hash = table_entries[8].decode()
+    self.hashtree_info.salt = table_entries[9].decode()
 
   def ValidateHashtree(self):
     """Checks that we can reconstruct the verity hash tree."""
@@ -669,8 +673,8 @@ class VerifiedBootVersion1HashtreeInfoGenerator(HashtreeInfoGenerator):
 
     # Reads the generated hash tree and checks if it has the exact same bytes
     # as the one in the sparse image.
-    with open(generated_verity_tree, "rb") as fd:
-      return fd.read() == ''.join(self.image.ReadRangeSet(
+    with open(generated_verity_tree, 'rb') as fd:
+      return fd.read() == b''.join(self.image.ReadRangeSet(
           self.hashtree_info.hashtree_range))
 
   def Generate(self, image):

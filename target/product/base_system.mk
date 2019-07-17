@@ -187,6 +187,7 @@ PRODUCT_PACKAGES += \
     libwifi-service \
     libwilhelm \
     linker \
+    linkerconfig \
     lmkd \
     locksettings \
     logcat \
@@ -281,6 +282,7 @@ PRODUCT_HOST_PACKAGES += \
     fastboot \
     flags_health_check \
     icu-data_host_runtime_apex \
+    icu_tzdata.dat_host_tzdata_apex \
     incident_report \
     ld.mc \
     lpdump \
@@ -298,10 +300,10 @@ PRODUCT_HOST_PACKAGES += \
     unwind_symbols \
     viewcompiler \
     tzdata_host \
-    tzdata_host_runtime_apex \
-    tzlookup.xml_host_runtime_apex \
+    tzdata_host_tzdata_apex \
+    tzlookup.xml_host_tzdata_apex \
     tz_version_host \
-    tz_version_host_runtime_apex \
+    tz_version_host_tzdata_apex \
 
 ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
@@ -373,6 +375,9 @@ PRODUCT_SYSTEM_SERVER_APPS += \
 
 # Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
 PRODUCT_PACKAGES_DEBUG_ASAN :=
+
+PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
+    libdumpcoverage
 
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)

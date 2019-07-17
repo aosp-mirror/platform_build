@@ -418,7 +418,7 @@ $(foreach image, \
     SYSTEM_OTHER \
     VENDOR \
     PRODUCT \
-    PRODUCT_SERVICES \
+    SYSTEM_EXT \
     ODM \
     CACHE \
     RAMDISK \

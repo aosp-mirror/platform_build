@@ -343,6 +343,15 @@ ifneq (,$(filter debug,$(tags_to_install)))
 endif
 endif
 
+## java coverage ##
+# Install additional tools on java coverage builds
+ifeq (true,$(EMMA_INSTRUMENT))
+ifneq (,$(filter debug,$(tags_to_install)))
+  tags_to_install += java_coverage
+endif
+endif
+
+
 ## sdk ##
 
 ifdef is_sdk_build
@@ -832,6 +841,9 @@ endif
 $(call update-host-shared-libs-deps-for-suites)
 ifdef HOST_CROSS_OS
 $(call resolve-shared-libs-depes,HOST_CROSS_,,true)
+ifdef HOST_CROSS_2ND_ARCH
+$(call resolve-shared-libs-depes,HOST_CROSS_,true,true)
+endif
 endif
 
 # Pass the shared libraries dependencies to prebuilt ELF file check.
@@ -1099,7 +1111,7 @@ endef
 define resolve-product-relative-paths
   $(subst $(_vendor_path_placeholder),$(TARGET_COPY_OUT_VENDOR),\
     $(subst $(_product_path_placeholder),$(TARGET_COPY_OUT_PRODUCT),\
-      $(subst $(_product_services_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),\
+      $(subst $(_system_ext_path_placeholder),$(TARGET_COPY_OUT_SYSTEM_EXT),\
         $(subst $(_odm_path_placeholder),$(TARGET_COPY_OUT_ODM),\
           $(foreach p,$(1),$(call append-path,$(PRODUCT_OUT),$(p)$(2)))))))
 endef
@@ -1137,6 +1149,7 @@ define product-installed-files
     $(if $(filter debug,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG)) \
     $(if $(filter tests,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_TESTS)) \
     $(if $(filter asan,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_ASAN)) \
+    $(if $(filter java_coverage,$(tags_to_install)),$(PRODUCTS.$(_mk).PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE)) \
     $(call auto-included-modules) \
   ) \
   $(eval ### Filter out the overridden packages and executables before doing expansion) \
@@ -1262,6 +1275,14 @@ APEX_LIBS_ABSENCE_CHECK_EXCLUDE := lib/bootstrap lib64/bootstrap
 # when native bridge is active.
 APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/arm lib64/arm64
 
+ifdef TARGET_NATIVE_BRIDGE_RELATIVE_PATH
+	APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/$(TARGET_NATIVE_BRIDGE_RELATIVE_PATH) lib64/$(TARGET_NATIVE_BRIDGE_RELATIVE_PATH)
+endif
+
+ifdef TARGET_NATIVE_BRIDGE_2ND_RELATIVE_PATH
+	APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/$(TARGET_NATIVE_BRIDGE_2ND_RELATIVE_PATH) lib64/$(TARGET_NATIVE_BRIDGE_2ND_RELATIVE_PATH)
+endif
+
 # Exclude vndk-* subdirectories which contain prebuilts from older releases.
 APEX_LIBS_ABSENCE_CHECK_EXCLUDE += lib/vndk-% lib64/vndk-%
 
@@ -1327,15 +1348,18 @@ ifdef FULL_BUILD
     ifeq (true,$(PRODUCT_ENFORCE_PACKAGES_EXIST))
       _whitelist := $(PRODUCT_ENFORCE_PACKAGES_EXIST_WHITELIST)
       _modules := $(PRODUCT_PACKAGES)
+      # Strip :32 and :64 suffixes
+      _modules := $(patsubst %:32,%,$(_modules))
+      _modules := $(patsubst %:64,%,$(_modules))
       # Sanity check all modules in PRODUCT_PACKAGES exist. We check for the
       # existence if either <module> or the <module>_32 variant.
-      _nonexistant_modules := $(filter-out $(ALL_MODULES),$(_modules))
-      _nonexistant_modules := $(foreach m,$(_nonexistant_modules),\
+      _nonexistent_modules := $(filter-out $(ALL_MODULES),$(_modules))
+      _nonexistent_modules := $(foreach m,$(_nonexistent_modules),\
         $(if $(call get-32-bit-modules,$(m)),,$(m)))
-      $(call maybe-print-list-and-error,$(filter-out $(_whitelist),$(_nonexistant_modules)),\
-        $(INTERNAL_PRODUCT) includes non-existant modules in PRODUCT_PACKAGES)
-      $(call maybe-print-list-and-error,$(filter-out $(_nonexistant_modules),$(_whitelist)),\
-        $(INTERNAL_PRODUCT) includes redundant whitelist entries for nonexistant PRODUCT_PACKAGES)
+      $(call maybe-print-list-and-error,$(filter-out $(_whitelist),$(_nonexistent_modules)),\
+        $(INTERNAL_PRODUCT) includes non-existent modules in PRODUCT_PACKAGES)
+      $(call maybe-print-list-and-error,$(filter-out $(_nonexistent_modules),$(_whitelist)),\
+        $(INTERNAL_PRODUCT) includes redundant whitelist entries for nonexistent PRODUCT_PACKAGES)
     endif
 
     # Check to ensure that all modules in PRODUCT_HOST_PACKAGES exist
@@ -1344,10 +1368,13 @@ ifdef FULL_BUILD
     # maybe it would make sense to have PRODUCT_HOST_PACKAGES_LINUX/_DARWIN?
     ifneq ($(HOST_OS),darwin)
       _modules := $(PRODUCT_HOST_PACKAGES)
-      _nonexistant_modules := $(foreach m,$(_modules),\
+      # Strip :32 and :64 suffixes
+      _modules := $(patsubst %:32,%,$(_modules))
+      _modules := $(patsubst %:64,%,$(_modules))
+      _nonexistent_modules := $(foreach m,$(_modules),\
         $(if $(ALL_MODULES.$(m).REQUIRED_FROM_HOST)$(filter $(HOST_OUT_ROOT)/%,$(ALL_MODULES.$(m).INSTALLED)),,$(m)))
-      $(call maybe-print-list-and-error,$(_nonexistant_modules),\
-        $(INTERNAL_PRODUCT) includes non-existant modules in PRODUCT_HOST_PACKAGES)
+      $(call maybe-print-list-and-error,$(_nonexistent_modules),\
+        $(INTERNAL_PRODUCT) includes non-existent modules in PRODUCT_HOST_PACKAGES)
     endif
   endif
 
@@ -1554,21 +1581,12 @@ ramdisk: $(INSTALLED_RAMDISK_TARGET)
 .PHONY: ramdisk_debug
 ramdisk_debug: $(INSTALLED_DEBUG_RAMDISK_TARGET)
 
-.PHONY: systemtarball
-systemtarball: $(INSTALLED_SYSTEMTARBALL_TARGET)
-
-.PHONY: boottarball
-boottarball: $(INSTALLED_BOOTTARBALL_TARGET)
-
 .PHONY: userdataimage
 userdataimage: $(INSTALLED_USERDATAIMAGE_TARGET)
 
 ifneq (,$(filter userdataimage, $(MAKECMDGOALS)))
 $(call dist-for-goals, userdataimage, $(BUILT_USERDATAIMAGE_TARGET))
 endif
-
-.PHONY: userdatatarball
-userdatatarball: $(INSTALLED_USERDATATARBALL_TARGET)
 
 .PHONY: cacheimage
 cacheimage: $(INSTALLED_CACHEIMAGE_TARGET)
@@ -1582,8 +1600,8 @@ vendorimage: $(INSTALLED_VENDORIMAGE_TARGET)
 .PHONY: productimage
 productimage: $(INSTALLED_PRODUCTIMAGE_TARGET)
 
-.PHONY: productservicesimage
-productservicesimage: $(INSTALLED_PRODUCT_SERVICESIMAGE_TARGET)
+.PHONY: systemextimage
+systemextimage: $(INSTALLED_SYSTEM_EXTIMAGE_TARGET)
 
 .PHONY: odmimage
 odmimage: $(INSTALLED_ODMIMAGE_TARGET)
@@ -1633,8 +1651,8 @@ droidcore: $(filter $(HOST_OUT_ROOT)/%,$(modules_to_install)) \
     $(INSTALLED_FILES_JSON_ODM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
-    $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) \
-    $(INSTALLED_FILES_JSON_PRODUCT_SERVICES) \
+    $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
+    $(INSTALLED_FILES_JSON_SYSTEM_EXT) \
     $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
     $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
     $(INSTALLED_FILES_FILE_RAMDISK) \
@@ -1726,8 +1744,8 @@ else # TARGET_BUILD_APPS
     $(INSTALLED_FILES_JSON_ODM) \
     $(INSTALLED_FILES_FILE_PRODUCT) \
     $(INSTALLED_FILES_JSON_PRODUCT) \
-    $(INSTALLED_FILES_FILE_PRODUCT_SERVICES) \
-    $(INSTALLED_FILES_JSON_PRODUCT_SERVICES) \
+    $(INSTALLED_FILES_FILE_SYSTEM_EXT) \
+    $(INSTALLED_FILES_JSON_SYSTEM_EXT) \
     $(INSTALLED_FILES_FILE_SYSTEMOTHER) \
     $(INSTALLED_FILES_JSON_SYSTEMOTHER) \
     $(INSTALLED_FILES_FILE_RECOVERY) \

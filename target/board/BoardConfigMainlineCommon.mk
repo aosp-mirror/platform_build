@@ -8,7 +8,8 @@ TARGET_NO_RECOVERY := true
 
 TARGET_USERIMAGES_USE_EXT4 := true
 
-# Mainline devices must have /vendor and /product partitions.
+# Mainline devices must have /system_ext, /vendor and /product partitions.
+TARGET_COPY_OUT_SYSTEM_EXT := system_ext
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_PRODUCT := product
 
@@ -39,5 +40,11 @@ BOARD_CHARGER_ENABLE_SUSPEND := true
 # Enable system property split for Treble
 BOARD_PROPERTY_OVERRIDES_SPLIT_ENABLED := true
 
+# Include stats logging code in LMKD
+TARGET_LMKD_STATS_LOG := true
+
 # Generate an APEX image for experiment b/119800099.
 DEXPREOPT_GENERATE_APEX_IMAGE := true
+
+# Mainline devices support apex
+TARGET_FLATTEN_APEX := false

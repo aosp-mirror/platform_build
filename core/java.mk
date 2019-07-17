@@ -233,11 +233,10 @@ endif
 java_sources_deps := \
     $(java_sources) \
     $(java_resource_sources) \
-    $(proto_java_sources_file_stamp) \
     $(LOCAL_SRCJARS) \
     $(LOCAL_ADDITIONAL_DEPENDENCIES)
 
-$(java_source_list_file): $(java_sources_deps)
+$(java_source_list_file): $(java_sources_deps) $(NORMALIZE_PATH)
 	$(write-java-source-list)
 
 ALL_MODULES.$(my_register_name).SRCJARS := $(LOCAL_SRCJARS)
@@ -410,7 +409,7 @@ legacy_proguard_flags := $(addprefix -libraryjars ,$(my_proguard_sdk_raise) \
     $(full_shared_java_header_libs)))
 
 legacy_proguard_lib_deps := $(my_proguard_sdk_raise) \
-  $(filter-out $(my_proguard_sdk_raise),$(full_shared_java_header_libs))
+  $(filter-out $(my_proguard_sdk_raise),$(full_java_bootclasspath_libs) $(full_shared_java_header_libs))
 
 legacy_proguard_flags += -printmapping $(proguard_dictionary)
 legacy_proguard_flags += -printconfiguration $(proguard_configuration)

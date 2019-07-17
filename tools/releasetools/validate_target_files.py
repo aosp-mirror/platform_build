@@ -44,7 +44,7 @@ def _ReadFile(file_name, unpacked_name, round_up=False):
   """Constructs and returns a File object. Rounds up its size if needed."""
 
   assert os.path.exists(unpacked_name)
-  with open(unpacked_name, 'r') as f:
+  with open(unpacked_name, 'rb') as f:
     file_data = f.read()
   file_size = len(file_data)
   if round_up:
@@ -324,14 +324,18 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
 
     # avbtool verifies all the images that have descriptors listed in vbmeta.
     image = os.path.join(input_tmp, 'IMAGES', 'vbmeta.img')
-    cmd = ['avbtool', 'verify_image', '--image', image, '--key', key]
+    cmd = [info_dict['avb_avbtool'], 'verify_image', '--image', image,
+           '--key', key]
 
     # Append the args for chained partitions if any.
-    for partition in common.AVB_PARTITIONS:
+    for partition in common.AVB_PARTITIONS + common.AVB_VBMETA_PARTITIONS:
       key_name = 'avb_' + partition + '_key_path'
       if info_dict.get(key_name) is not None:
+        # Use the key file from command line if specified; otherwise fall back
+        # to the one in info dict.
+        key_file = options.get(key_name, info_dict[key_name])
         chained_partition_arg = common.GetAvbChainedPartitionArg(
-            partition, info_dict, options[key_name])
+            partition, info_dict, key_file)
         cmd.extend(["--expected_chain_partition", chained_partition_arg])
 
     proc = common.Run(cmd)
@@ -357,7 +361,7 @@ def main():
       help='the verity public key to verify the bootable images (Verified '
            'Boot 1.0), or the vbmeta image (Verified Boot 2.0, aka AVB), where '
            'applicable')
-  for partition in common.AVB_PARTITIONS:
+  for partition in common.AVB_PARTITIONS + common.AVB_VBMETA_PARTITIONS:
     parser.add_argument(
         '--avb_' + partition + '_key_path',
         help='the public or private key in PEM format to verify AVB chained '
