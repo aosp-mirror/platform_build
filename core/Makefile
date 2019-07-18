@@ -3598,6 +3598,7 @@ INTERNAL_OTATOOLS_MODULES := \
   lpunpack \
   make_f2fs \
   minigzip \
+  mk_combined_img \
   mkbootfs \
   mkbootimg \
   mke2fs \
@@ -3607,6 +3608,7 @@ INTERNAL_OTATOOLS_MODULES := \
   mksquashfsimage.sh \
   mkuserimg_mke2fs \
   sefcontext_compile \
+  sgdisk \
   shflags \
   signapk \
   simg2img \
@@ -3924,6 +3926,11 @@ ifdef BUILDING_SYSTEM_IMAGE
 $(BUILT_TARGET_FILES_PACKAGE): $(FULL_SYSTEMIMAGE_DEPS)
 endif
 
+ifeq ($(BUILD_QEMU_IMAGES),true)
+MK_VBMETA_BOOT_KERNEL_CMDLINE_SH := device/generic/goldfish/tools/mk_vbmeta_boot_params.sh
+$(BUILT_TARGET_FILES_PACKAGE): $(MK_VBMETA_BOOT_KERNEL_CMDLINE_SH)
+endif
+
 # Depending on the various images guarantees that the underlying
 # directories are up-to-date.
 $(BUILT_TARGET_FILES_PACKAGE): \
@@ -4230,6 +4237,10 @@ endif # BOARD_SUPER_PARTITION_GROUPS
 	@# TODO(b/134525174): Remove `-r` after addressing the issue with recovery patch generation.
 	$(hide) PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH MKBOOTIMG=$(MKBOOTIMG) \
 	    build/make/tools/releasetools/add_img_to_target_files -a -r -v -p $(HOST_OUT) $(zip_root)
+ifeq ($(BUILD_QEMU_IMAGES),true)
+	$(hide) AVBTOOL=$(AVBTOOL) $(MK_VBMETA_BOOT_KERNEL_CMDLINE_SH) $(zip_root)/IMAGES/vbmeta.img \
+	    $(zip_root)/IMAGES/system.img $(zip_root)/IMAGES/VerifiedBootParams.textproto
+endif
 	@# Zip everything up, preserving symlinks and placing META/ files first to
 	@# help early validation of the .zip file while uploading it.
 	$(hide) find $(zip_root)/META | sort >$@.list
@@ -4620,6 +4631,7 @@ $(INTERNAL_UPDATE_PACKAGE_TARGET): $(INTERNAL_SUPERIMAGE_DIST_TARGET)
 	  $(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)), \
 	    $(foreach device,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
 	      OTA/super_$(device).img:super_$(device).img)) \
+	  IMAGES/VerifiedBootParams.textproto:VerifiedBootParams.textproto \
 	  OTA/android-info.txt:android-info.txt "IMAGES/*.img:."
 	$(if $(INTERNAL_SUPERIMAGE_MISC_INFO), zip -q -j -u $@ $(INTERNAL_SUPERIMAGE_MISC_INFO))
 	$(if $(INTERNAL_SUPERIMAGE_DIST_TARGET), zip -q -j -u $@ $(INTERNAL_SUPERIMAGE_DIST_TARGET))
@@ -4627,6 +4639,7 @@ else
 $(INTERNAL_UPDATE_PACKAGE_TARGET):
 	@echo "Package: $@"
 	$(hide) $(ZIP2ZIP) -i $(BUILT_TARGET_FILES_PACKAGE) -o $@ \
+	  IMAGES/VerifiedBootParams.textproto:VerifiedBootParams.textproto \
 	  OTA/android-info.txt:android-info.txt "IMAGES/*.img:."
 endif # BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE
 
@@ -4641,7 +4654,7 @@ dalvikfiles: $(INTERNAL_DALVIK_MODULES)
 
 ifeq ($(BUILD_QEMU_IMAGES),true)
 MK_QEMU_IMAGE_SH := device/generic/goldfish/tools/mk_qemu_image.sh
-MK_COMBINE_QEMU_IMAGE_SH := device/generic/goldfish/tools/mk_combined_img.py
+MK_COMBINE_QEMU_IMAGE := $(HOST_OUT_EXECUTABLES)/mk_combined_img
 SGDISK_HOST := $(HOST_OUT_EXECUTABLES)/sgdisk
 
 ifdef INSTALLED_SYSTEMIMAGE_TARGET
@@ -4650,11 +4663,11 @@ INSTALLED_SYSTEM_QEMU_CONFIG := $(PRODUCT_OUT)/system-qemu-config.txt
 $(INSTALLED_SYSTEM_QEMU_CONFIG): $(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_VBMETAIMAGE_TARGET)
 	@echo "$(PRODUCT_OUT)/vbmeta.img vbmeta 1" > $@
 	@echo "$(INSTALLED_SUPERIMAGE_TARGET) super 2" >> $@
-$(INSTALLED_QEMU_SYSTEMIMAGE): $(INSTALLED_VBMETAIMAGE_TARGET) $(MK_COMBINE_QEMU_IMAGE_SH) $(SGDISK_HOST) $(SIMG2IMG) \
+$(INSTALLED_QEMU_SYSTEMIMAGE): $(INSTALLED_VBMETAIMAGE_TARGET) $(MK_COMBINE_QEMU_IMAGE) $(SGDISK_HOST) $(SIMG2IMG) \
     $(INSTALLED_SUPERIMAGE_TARGET) $(INSTALLED_SYSTEM_QEMU_CONFIG)
 	@echo Create system-qemu.img now
 	(export SGDISK=$(SGDISK_HOST) SIMG2IMG=$(SIMG2IMG); \
-     $(MK_COMBINE_QEMU_IMAGE_SH) -i $(INSTALLED_SYSTEM_QEMU_CONFIG) -o $@)
+     $(MK_COMBINE_QEMU_IMAGE) -i $(INSTALLED_SYSTEM_QEMU_CONFIG) -o $@)
 
 systemimage: $(INSTALLED_QEMU_SYSTEMIMAGE)
 droidcore: $(INSTALLED_QEMU_SYSTEMIMAGE)
@@ -4697,7 +4710,6 @@ droidcore: $(INSTALLED_QEMU_ODMIMAGE)
 endif
 
 QEMU_VERIFIED_BOOT_PARAMS := $(PRODUCT_OUT)/VerifiedBootParams.textproto
-MK_VBMETA_BOOT_KERNEL_CMDLINE_SH := device/generic/goldfish/tools/mk_vbmeta_boot_params.sh
 $(QEMU_VERIFIED_BOOT_PARAMS): $(INSTALLED_VBMETAIMAGE_TARGET) $(INSTALLED_SYSTEMIMAGE_TARGET) \
     $(MK_VBMETA_BOOT_KERNEL_CMDLINE_SH) $(AVBTOOL)
 	@echo Creating $@
