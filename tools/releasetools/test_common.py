@@ -912,6 +912,23 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
       'recovery_as_boot': 'true',
   }
 
+  def test_LoadListFromFile(self):
+    file_path = os.path.join(self.testdata_dir,
+                             'merge_config_framework_item_list')
+    contents = common.LoadListFromFile(file_path)
+    expected_contents = [
+        'META/apkcerts.txt',
+        'META/filesystem_config.txt',
+        'META/root_filesystem_config.txt',
+        'META/system_manifest.xml',
+        'META/system_matrix.xml',
+        'META/update_engine_config.txt',
+        'PRODUCT/*',
+        'ROOT/*',
+        'SYSTEM/*',
+    ]
+    self.assertEqual(sorted(contents), sorted(expected_contents))
+
   @staticmethod
   def _test_LoadInfoDict_createTargetFiles(info_dict, fstab_path):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
