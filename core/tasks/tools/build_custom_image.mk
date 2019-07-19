@@ -152,8 +152,8 @@ $(my_built_custom_image): $(INTERNAL_USERIMAGES_DEPS) $(my_built_modules) $(my_i
 	$(if $(filter oem,$(PRIVATE_MOUNT_POINT)), \
 	  $(hide) echo "oem.buildnumber=$(BUILD_NUMBER_FROM_FILE)" >> $(PRIVATE_STAGING_DIR)/oem.prop)
 	$(hide) PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-	  build/make/tools/releasetools/build_image.py \
-	  $(PRIVATE_STAGING_DIR) $(PRIVATE_INTERMEDIATES)/image_info.txt $@ $(TARGET_OUT)
+	    $(BUILD_IMAGE) \
+	        $(PRIVATE_STAGING_DIR) $(PRIVATE_INTERMEDIATES)/image_info.txt $@ $(TARGET_OUT)
 
 my_installed_custom_image := $(PRODUCT_OUT)/$(notdir $(my_built_custom_image))
 $(my_installed_custom_image) : $(my_built_custom_image)

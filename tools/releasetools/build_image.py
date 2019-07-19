@@ -18,7 +18,7 @@
 Builds output_image from the given input_directory, properties_file,
 and writes the image to target_output_directory.
 
-Usage:  build_image.py input_directory properties_file output_image \\
+Usage:  build_image input_directory properties_file output_image \\
             target_output_directory
 """
 
