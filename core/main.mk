@@ -1319,7 +1319,7 @@ else
         $(filter-out $(foreach dir,$(APEX_LIBS_ABSENCE_CHECK_EXCLUDE), \
                        $(TARGET_OUT)/$(if $(findstring %,$(dir)),$(dir),$(dir)/%)), \
           $(filter $(TARGET_OUT)/lib/% $(TARGET_OUT)/lib64/%,$(1)))), \
-      APEX libraries found in system image (see comment for check-apex-libs-absence in \
+      APEX libraries found in product_target_FILES (see comment for check-apex-libs-absence in \
       build/make/core/main.mk for details))
   endef
 
@@ -1327,6 +1327,11 @@ else
   # dependencies visible to make, but as long as they have install rules in
   # /system they may still be created there through other make targets. To catch
   # that we also do a check on disk just before the system image is built.
+  # NB: This check may fail if you have built intermediate targets in the out
+  # tree earlier, e.g. "m <some lib in APEX_MODULE_LIBS>". In that case, please
+  # try "m installclean && m systemimage" to get a correct system image. For
+  # local work you can also disable the check with the
+  # DISABLE_APEX_LIBS_ABSENCE_CHECK environment variable.
   define check-apex-libs-absence-on-disk
     $(hide) ( \
       cd $(TARGET_OUT) && \
@@ -1335,8 +1340,9 @@ else
         -type f \( -false $(foreach lib,$(APEX_MODULE_LIBS),-o -name $(lib)) \) \
         -print) && \
       if [ -n "$$findres" ]; then \
-        echo "APEX libraries found in system image (see comment for check-apex-libs-absence" 1>&2; \
-        echo "in build/make/core/main.mk for details):" 1>&2; \
+        echo "APEX libraries found in system image in TARGET_OUT (see comments for" 1>&2; \
+        echo "check-apex-libs-absence and check-apex-libs-absence-on-disk in" 1>&2; \
+        echo "build/make/core/main.mk for details):" 1>&2; \
         echo "$$findres" | sort 1>&2; \
         false; \
       fi; \
