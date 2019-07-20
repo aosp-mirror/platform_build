@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "138948a8_8f541ad0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-07-20T00:45:33Z",
+      "side": 1,
+      "message": "We do occasionally ship userdata images -- usually for things like retail mode, but asan has also used them.\n\nCan these userdata modules just be moved out of PRODUCT_PACAKGES / userdata? The only thing I see on my phone right now is a test, which should have been moved out of userdata already (tests no longer live in data/nativtests, but in testcases/...)",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 80
+      },
+      "revId": "ae8025d5988e89918088da9324fd06e3e26b901c",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
