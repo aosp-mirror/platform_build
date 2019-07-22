@@ -80,6 +80,7 @@ PRODUCT_PACKAGES += \
     fsck_msdos \
     fs_config_files_system \
     fs_config_dirs_system \
+    group_system \
     gsid \
     gsi_tool \
     heapprofd \
@@ -214,6 +215,7 @@ PRODUCT_PACKAGES += \
     org.apache.http.legacy \
     otacerts \
     PackageInstaller \
+    passwd_system \
     perfetto \
     PermissionController \
     ping \

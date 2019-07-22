@@ -20,7 +20,7 @@ bootstrap_go_package {
         "soong-genrule",
     ],
     srcs: [
-        "fs_config.go"
+        "fs_config.go",
     ],
     pluginFor: ["soong_build"],
 }
@@ -56,13 +56,13 @@ cc_library_headers {
     export_generated_headers: ["oemaids_header_gen"],
 }
 
-// Generate the vendor/etc/passwd text file for the target
-// This file may be empty if no AIDs are defined in
+// Generate the */etc/passwd text files for the target
+// These files may be empty if no AIDs are defined in
 // TARGET_FS_CONFIG_GEN files.
 genrule {
-    name: "passwd_gen",
+    name: "passwd_gen_system",
     tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) passwd --required-prefix=vendor_ --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    cmd: "$(location fs_config_generator.py) passwd --partition=system --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -71,18 +71,90 @@ genrule {
 }
 
 prebuilt_etc {
-    name: "passwd",
-    vendor: true,
-    src: ":passwd_gen",
+    name: "passwd_system",
+    filename: "passwd",
+    src: ":passwd_gen_system",
 }
 
-// Generate the vendor/etc/group text file for the target
-// This file may be empty if no AIDs are defined in
+genrule {
+    name: "passwd_gen_vendor",
+    tool_files: ["fs_config_generator.py"],
+    cmd: "$(location fs_config_generator.py) passwd --partition=vendor --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    srcs: [
+        ":target_fs_config_gen",
+        ":android_filesystem_config_header",
+    ],
+    out: ["passwd"],
+}
+
+prebuilt_etc {
+    name: "passwd_vendor",
+    filename: "passwd",
+    vendor: true,
+    src: ":passwd_gen_vendor",
+}
+
+genrule {
+    name: "passwd_gen_odm",
+    tool_files: ["fs_config_generator.py"],
+    cmd: "$(location fs_config_generator.py) passwd --partition=odm --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    srcs: [
+        ":target_fs_config_gen",
+        ":android_filesystem_config_header",
+    ],
+    out: ["passwd"],
+}
+
+prebuilt_etc {
+    name: "passwd_odm",
+    filename: "passwd",
+    device_specific: true,
+    src: ":passwd_gen_odm",
+}
+
+genrule {
+    name: "passwd_gen_product",
+    tool_files: ["fs_config_generator.py"],
+    cmd: "$(location fs_config_generator.py) passwd --partition=product --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    srcs: [
+        ":target_fs_config_gen",
+        ":android_filesystem_config_header",
+    ],
+    out: ["passwd"],
+}
+
+prebuilt_etc {
+    name: "passwd_product",
+    filename: "passwd",
+    product_specific: true,
+    src: ":passwd_gen_product",
+}
+
+genrule {
+    name: "passwd_gen_system_ext",
+    tool_files: ["fs_config_generator.py"],
+    cmd: "$(location fs_config_generator.py) passwd --partition=system_ext --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    srcs: [
+        ":target_fs_config_gen",
+        ":android_filesystem_config_header",
+    ],
+    out: ["passwd"],
+}
+
+prebuilt_etc {
+    name: "passwd_system_ext",
+    filename: "passwd",
+    system_ext_specific: true,
+    src: ":passwd_gen_system_ext",
+}
+
+// Generate the */etc/group text files for the target
+// These files may be empty if no AIDs are defined in
 // TARGET_FS_CONFIG_GEN files.
 genrule {
-    name: "group_gen",
+    name: "group_gen_system",
     tool_files: ["fs_config_generator.py"],
-    cmd: "$(location fs_config_generator.py) group --required-prefix=vendor_ --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    cmd: "$(location fs_config_generator.py) group --partition=system --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
     srcs: [
         ":target_fs_config_gen",
         ":android_filesystem_config_header",
@@ -91,7 +163,79 @@ genrule {
 }
 
 prebuilt_etc {
-    name: "group",
+    name: "group_system",
+    filename: "group",
+    src: ":group_gen_system",
+}
+
+genrule {
+    name: "group_gen_vendor",
+    tool_files: ["fs_config_generator.py"],
+    cmd: "$(location fs_config_generator.py) group --partition=vendor --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    srcs: [
+        ":target_fs_config_gen",
+        ":android_filesystem_config_header",
+    ],
+    out: ["group"],
+}
+
+prebuilt_etc {
+    name: "group_vendor",
+    filename: "group",
     vendor: true,
-    src: ":group_gen",
+    src: ":group_gen_vendor",
+}
+
+genrule {
+    name: "group_gen_odm",
+    tool_files: ["fs_config_generator.py"],
+    cmd: "$(location fs_config_generator.py) group --partition=odm --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    srcs: [
+        ":target_fs_config_gen",
+        ":android_filesystem_config_header",
+    ],
+    out: ["group"],
+}
+
+prebuilt_etc {
+    name: "group_odm",
+    filename: "group",
+    device_specific: true,
+    src: ":group_gen_odm",
+}
+
+genrule {
+    name: "group_gen_product",
+    tool_files: ["fs_config_generator.py"],
+    cmd: "$(location fs_config_generator.py) group --partition=product --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    srcs: [
+        ":target_fs_config_gen",
+        ":android_filesystem_config_header",
+    ],
+    out: ["group"],
+}
+
+prebuilt_etc {
+    name: "group_product",
+    filename: "group",
+    product_specific: true,
+    src: ":group_gen_product",
+}
+
+genrule {
+    name: "group_gen_system_ext",
+    tool_files: ["fs_config_generator.py"],
+    cmd: "$(location fs_config_generator.py) group --partition=system_ext --aid-header=$(location :android_filesystem_config_header) $(locations :target_fs_config_gen) >$(out)",
+    srcs: [
+        ":target_fs_config_gen",
+        ":android_filesystem_config_header",
+    ],
+    out: ["group"],
+}
+
+prebuilt_etc {
+    name: "group_system_ext",
+    filename: "group",
+    system_ext_specific: true,
+    src: ":group_gen_system_ext",
 }
