@@ -345,9 +345,6 @@ ifneq ($(filter address,$(my_global_sanitize) $(my_sanitize)),)
       my_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_RUNTIME_LIBRARY) \
                              $(my_shared_libraries)
     endif
-    ifeq (,$(filter $(LOCAL_MODULE),$(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)))
-      my_static_libraries += $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)
-    endif
 
     # Do not add unnecessary dependency in shared libraries.
     ifeq ($(LOCAL_MODULE_CLASS),SHARED_LIBRARIES)
