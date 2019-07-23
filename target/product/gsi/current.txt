@@ -224,7 +224,6 @@ VNDK-core: libgatekeeper.so
 VNDK-core: libgui.so
 VNDK-core: libhardware_legacy.so
 VNDK-core: libhidlallocatorutils.so
-VNDK-core: libhidlcache.so
 VNDK-core: libjpeg.so
 VNDK-core: libkeymaster_messages.so
 VNDK-core: libkeymaster_portable.so
