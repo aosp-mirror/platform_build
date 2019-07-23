@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b7c51a94_69f26baa",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 5
+      },
+      "lineNbr": 135,
+      "author": {
+        "id": 1146974
+      },
+      "writtenOn": "2019-07-23T05:52:05Z",
+      "side": 1,
+      "message": "Can we add \"$(hide) mkdir -p $(dir $@)\" before \"$(hide) touch $@\" to break dependency with \"check-vndk-list-timestamp\"?",
+      "range": {
+        "startLine": 135,
+        "startChar": 1,
+        "endLine": 135,
+        "endChar": 17
+      },
+      "revId": "d3a466a9a69d0e693e7296ec1e9fd03195a8f3c3",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
