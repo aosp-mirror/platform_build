@@ -222,6 +222,7 @@ PRODUCT_PACKAGES += \
     resize2fs \
     rss_hwm_reset \
     run-as \
+    sanitizer.libraries.txt \
     schedtest \
     screencap \
     sdcard \
@@ -259,6 +260,8 @@ PRODUCT_PACKAGES += \
     viewcompiler \
     voip-common \
     vold \
+    vndkcore.libraries.txt \
+    vndkprivate.libraries.txt \
     WallpaperBackup \
     watchdogd \
     wificond \
