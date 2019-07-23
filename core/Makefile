@@ -1173,7 +1173,7 @@ endif # TARGET_NO_KERNEL
 .PHONY: notice_files
 
 # Create the rule to combine the files into text and html/xml forms
-# $(1) - xml_excluded_vendor_product|xml_vendor|xml_product|html
+# $(1) - xml_excluded_vendor_product|xml_vendor|xml_product|xml_odm|html
 # $(2) - Plain text output file
 # $(3) - HTML/XML output file
 # $(4) - File title
@@ -1198,11 +1198,12 @@ $(2) $(3): PRIVATE_DIR := $(5)
 $(2) : $(3)
 $(3) : $(6) $(BUILD_SYSTEM)/Makefile build/make/tools/generate-notice-files.py
 	build/make/tools/generate-notice-files.py --text-output $(2) \
-	    $(if $(filter $(1),xml_excluded_extra_partitions),-e vendor -e product -e system_ext --xml-output, \
+	    $(if $(filter $(1),xml_excluded_extra_partitions),-e vendor -e product -e system_ext -e odm --xml-output, \
 	      $(if $(filter $(1),xml_vendor),-i vendor --xml-output, \
 	        $(if $(filter $(1),xml_product),-i product --xml-output, \
 	          $(if $(filter $(1),xml_system_ext),-i system_ext --xml-output, \
-	            --html-output)))) $(3) \
+	            $(if $(filter $(1),xml_odm),-i odm --xml-output, \
+	              --html-output))))) $(3) \
 	    -t $$(PRIVATE_MESSAGE) -s $$(PRIVATE_DIR)/src
 notice_files: $(2) $(3)
 endef
@@ -1255,6 +1256,11 @@ target_system_ext_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE_SYSTEM_E
 target_system_ext_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_SYSTEM_EXT.xml.gz
 installed_system_ext_notice_xml_gz := $(TARGET_OUT_SYSTEM_EXT)/etc/NOTICE.xml.gz
 
+target_odm_notice_file_txt := $(TARGET_OUT_INTERMEDIATES)/NOTICE_ODM.txt
+target_odm_notice_file_xml := $(TARGET_OUT_INTERMEDIATES)/NOTICE_ODM.xml
+target_odm_notice_file_xml_gz := $(TARGET_OUT_INTERMEDIATES)/NOTICE_ODM.xml.gz
+installed_odm_notice_xml_gz := $(TARGET_OUT_ODM)/etc/NOTICE.xml.gz
+
 # Notice files are copied to TARGET_OUT_NOTICE_FILES as a side-effect of their module
 # being built. A notice xml file must depend on all modules that could potentially
 # install a license file relevant to it.
@@ -1266,7 +1272,11 @@ license_modules := $(filter-out $(TARGET_OUT_TESTCASES)/%,$(license_modules))
 license_modules_vendor := $(filter $(TARGET_OUT_VENDOR)/%,$(license_modules))
 license_modules_product := $(filter $(TARGET_OUT_PRODUCT)/%,$(license_modules))
 license_modules_system_ext := $(filter $(TARGET_OUT_SYSTEM_EXT)/%,$(license_modules))
-license_modules_agg := $(license_modules_vendor) $(license_modules_product) $(license_modules_system_ext)
+license_modules_odm := $(filter $(TARGET_OUT_ODM)/%,$(license_modules))
+license_modules_agg := $(license_modules_vendor) \
+                       $(license_modules_product) \
+                       $(license_modules_system_ext) \
+                       $(license_modules_odm)
 license_modules_rest := $(filter-out $(license_modules_agg),$(license_modules))
 
 $(eval $(call combine-notice-files, xml_excluded_extra_partitions, \
@@ -1293,6 +1303,12 @@ $(eval $(call combine-notice-files, xml_system_ext, \
 	        "Notices for files contained in the system_ext filesystem image in this directory:", \
 	        $(TARGET_OUT_NOTICE_FILES), \
 	        $(license_modules_system_ext)))
+$(eval $(call combine-notice-files, xml_odm, \
+	        $(target_odm_notice_file_txt), \
+	        $(target_odm_notice_file_xml), \
+	        "Notices for files contained in the odm filesystem image in this directory:", \
+	        $(TARGET_OUT_NOTICE_FILES), \
+	        $(license_modules_odm)))
 
 $(target_notice_file_xml_gz): $(target_notice_file_xml) | $(MINIGZIP)
 	$(hide) $(MINIGZIP) -9 < $< > $@
@@ -1302,6 +1318,8 @@ $(target_product_notice_file_xml_gz): $(target_product_notice_file_xml) | $(MINI
 	$(hide) $(MINIGZIP) -9 < $< > $@
 $(target_system_ext_notice_file_xml_gz): $(target_system_ext_notice_file_xml) | $(MINIGZIP)
 	$(hide) $(MINIGZIP) -9 < $< > $@
+$(target_odm_notice_file_xml_gz): $(target_odm_notice_file_xml) | $(MINIGZIP)
+	$(hide) $(MINIGZIP) -9 < $< > $@
 $(installed_notice_html_or_xml_gz): $(target_notice_file_xml_gz)
 	$(copy-file-to-target)
 $(installed_vendor_notice_xml_gz): $(target_vendor_notice_file_xml_gz)
@@ -1310,6 +1328,8 @@ $(installed_product_notice_xml_gz): $(target_product_notice_file_xml_gz)
 	$(copy-file-to-target)
 $(installed_system_ext_notice_xml_gz): $(target_system_ext_notice_file_xml_gz)
 	$(copy-file-to-target)
+$(installed_odm_notice_xml_gz): $(target_odm_notice_file_xml_gz)
+	$(copy-file-to-target)
 
 # if we've been run my mm, mmm, etc, don't reinstall this every time
 ifeq ($(ONE_SHOT_MAKEFILE),)
@@ -1317,6 +1337,7 @@ ifeq ($(ONE_SHOT_MAKEFILE),)
   ALL_DEFAULT_INSTALLED_MODULES += $(installed_vendor_notice_xml_gz)
   ALL_DEFAULT_INSTALLED_MODULES += $(installed_product_notice_xml_gz)
   ALL_DEFAULT_INSTALLED_MODULES += $(installed_system_ext_notice_xml_gz)
+  ALL_DEFAULT_INSTALLED_MODULES += $(installed_odm_notice_xml_gz)
 endif
 endif # PRODUCT_NOTICE_SPLIT
 
@@ -3588,7 +3609,7 @@ endif
 ifeq ($(build_otatools_package),true)
 
 INTERNAL_OTATOOLS_MODULES := \
-  aapt \
+  aapt2 \
   append2simg \
   avbtool \
   blk_alloc_to_base_fs \
