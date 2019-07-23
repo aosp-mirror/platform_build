@@ -22,6 +22,30 @@
       "revId": "fd477fc5a4a90f041717ed0ad4bfeb6b3abede03",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c58f1217_68083435",
+        "filename": "target/product/gsi/Android.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2019-07-23T03:04:51Z",
+      "side": 1,
+      "message": "\u003e Is it intended to have this inside \"BOARD_VNDK_VERSION\" check?\n\u003e As is for checking VNDK file list change, I believe this also need to be checked regardless of \"BOARD_VNDK_VERSION\".\n\nIt\u0027s not intended. Thanks for pointing it out.\n\n\u003e Can we include this in \"check-vndk-list\" or make another phony module for this?\n\nDone",
+      "parentUuid": "6631491d_a264196d",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 0
+      },
+      "revId": "fd477fc5a4a90f041717ed0ad4bfeb6b3abede03",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
