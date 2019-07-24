@@ -2187,7 +2187,8 @@ $(INSTALLED_DEBUG_BOOTIMAGE_TARGET): $(MKBOOTIMG) $(INSTALLED_BOOTIMAGE_TARGET) 
 	  $(AVBTOOL) add_hash_footer \
 	    --image $@ \
 	    --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
-	    --partition_name boot $(PRIVATE_AVB_DEBUG_BOOT_SIGNING_ARGS), \
+	    --partition_name boot $(PRIVATE_AVB_DEBUG_BOOT_SIGNING_ARGS) \
+	    $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS), \
 	  $(call assert-max-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
 
 .PHONY: bootimage_debug-nodeps
@@ -2199,7 +2200,8 @@ bootimage_debug-nodeps: $(MKBOOTIMG)
 	  $(AVBTOOL) add_hash_footer \
 	    --image $(INSTALLED_DEBUG_BOOTIMAGE_TARGET) \
 	    --partition_size $(BOARD_BOOTIMAGE_PARTITION_SIZE) \
-	    --partition_name boot $(PRIVATE_AVB_DEBUG_BOOT_SIGNING_ARGS), \
+	    --partition_name boot $(PRIVATE_AVB_DEBUG_BOOT_SIGNING_ARGS) \
+	    $(BOARD_AVB_BOOT_ADD_HASH_FOOTER_ARGS), \
 	  $(call assert-max-image-size,$(INSTALLED_DEBUG_BOOTIMAGE_TARGET),$(BOARD_BOOTIMAGE_PARTITION_SIZE)))
 
 endif # TARGET_NO_KERNEL

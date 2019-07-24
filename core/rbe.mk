@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2008 The Android Open Source Project
+# Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,9 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# BUILD_ID is usually used to specify the branch name
-# (like "MAIN") or a branch name and a release candidate
-# (like "CRB01").  It must be a single word, and is
-# capitalized by convention.
 
-BUILD_ID=RP1A.190724.001
+# Notice: this works only with Google's RBE service.
+ifneq ($(filter-out false,$(USE_RBE)),)
+  ifdef RBE_DIR
+    rbe_dir := $(RBE_DIR)
+  else
+    rbe_dir := $(HOME)/rbe
+  endif
+  RBE_WRAPPER := $(rbe_dir)/rewrapper
+
+  # Append rewrapper to existing *_WRAPPER variables so it's possible to
+  # use both ccache and rewrapper.
+  CC_WRAPPER := $(strip $(CC_WRAPPER) $(RBE_WRAPPER))
+  CXX_WRAPPER := $(strip $(CXX_WRAPPER) $(RBE_WRAPPER))
+
+  rbe_dir :=
+endif
