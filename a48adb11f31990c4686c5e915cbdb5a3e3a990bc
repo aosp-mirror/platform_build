@@ -22,6 +22,30 @@
       "revId": "a48adb11f31990c4686c5e915cbdb5a3e3a990bc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0cac5daf_0d86952a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-07-24T21:36:43Z",
+      "side": 1,
+      "message": "Done in this CL, was easy enough to add.",
+      "parentUuid": "2569a764_49352427",
+      "range": {
+        "startLine": 12,
+        "startChar": 45,
+        "endLine": 12,
+        "endChar": 64
+      },
+      "revId": "a48adb11f31990c4686c5e915cbdb5a3e3a990bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
