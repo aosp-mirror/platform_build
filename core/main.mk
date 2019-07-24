@@ -1246,6 +1246,7 @@ APEX_MODULE_LIBS := \
   libnativebridge.so \
   libnativehelper.so \
   libnativeloader.so \
+  libneuralnetworks.so \
   libnpt.so \
   libopenjdk.so \
   libopenjdkjvm.so \
