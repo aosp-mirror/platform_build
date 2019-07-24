@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "0e95f33d_bf4a0c8a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-07-24T18:41:36Z",
+      "side": 1,
+      "message": "sure, we will follow the same module as existing *TS (using the general TF).\n\nThe vts-core suite_harness is certainly part of the plan.",
+      "parentUuid": "d60617df_f026669c",
+      "revId": "ad5fe1a579284da3b4f2a9fc3bd5422c4549a7c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "96f48f4b_6d4f6f01",
         "filename": "core/tasks/vts-core-tests.mk",
         "patchSetId": 1
