@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2569a764_49352427",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-24T21:17:02Z",
+      "side": 1,
+      "message": "One thing I\u0027m working on is to move the scripts here to hermetic Python (b/63866463), by building and installing the tools as modules, e.g. https://android.googlesource.com/platform/build/+/refs/heads/master/tools/releasetools/Android.bp#78.\n\nSince it\u0027s a new tool, I\u0027d suggest doing the same since the beginning, so we don\u0027t need to come back to modify all the callers. It\u0027s fine to make that change via a separate CL.",
+      "range": {
+        "startLine": 12,
+        "startChar": 45,
+        "endLine": 12,
+        "endChar": 64
+      },
+      "revId": "a48adb11f31990c4686c5e915cbdb5a3e3a990bc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}

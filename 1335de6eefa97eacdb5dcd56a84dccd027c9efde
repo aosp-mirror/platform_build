@@ -46,6 +46,30 @@
       "revId": "1335de6eefa97eacdb5dcd56a84dccd027c9efde",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "df8e4c8e_9ca91ec3",
+        "filename": "tools/releasetools/merge_builds.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-24T21:17:02Z",
+      "side": 1,
+      "message": "Seems fine to me to serve the use case of supporting `fastboot flashall`. +dwillemsen@ in case he has other concerns.",
+      "parentUuid": "4a921a0e_03e58624",
+      "range": {
+        "startLine": 20,
+        "startChar": 50,
+        "endLine": 20,
+        "endChar": 67
+      },
+      "revId": "1335de6eefa97eacdb5dcd56a84dccd027c9efde",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
