@@ -19,6 +19,9 @@ PRODUCT_PACKAGES += \
     abb \
     adbd \
     am \
+    android.hardware.neuralnetworks@1.0 \
+    android.hardware.neuralnetworks@1.1 \
+    android.hardware.neuralnetworks@1.2 \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
@@ -55,6 +58,7 @@ PRODUCT_PACKAGES += \
     com.android.media \
     com.android.media.swcodec \
     com.android.resolv \
+    com.android.neuralnetworks \
     com.android.tzdata \
     ContactsProvider \
     content \
@@ -156,7 +160,6 @@ PRODUCT_PACKAGES += \
     libnetd_client \
     libnetlink \
     libnetutils \
-    libneuralnetworks \
     libOpenMAXAL \
     libOpenSLES \
     libpdfium \
