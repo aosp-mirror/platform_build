@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "a770e106_7b3b6b99",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-07-24T18:04:13Z",
+      "side": 1,
+      "message": "I was thinking about using a TF command line to run vts-core suite through the test-suite-tag of vts-core.\n\nLater we can create a vts-core-tradefed.sh to simplify the command line.",
+      "parentUuid": "b00a4962_b09bc5b5",
+      "revId": "ad5fe1a579284da3b4f2a9fc3bd5422c4549a7c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "96f48f4b_6d4f6f01",
         "filename": "core/tasks/vts-core-tests.mk",
         "patchSetId": 1
