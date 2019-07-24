@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "50545f29_b67d1278",
+        "filename": "core/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 1296,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-07-24T17:48:17Z",
+      "side": 1,
+      "message": "Thoughts on updating this now that the logic has changed?\nSomething like\n\nsystem_xml_directories :\u003d xml_system\nsystem_notice_file_message :\u003d \"Notices for files contained in the system filesystem image in this directory:\"\n\nifdef ...\nsystem_xml_directories :\u003d xml_excluded_vendor_product_odm\nsystem_notice_file_message :\u003d \"Notices for files contained in all filesystem images except vendor, system_ext, product, and odm in this directory:\"\nendif\n\nThen use $(system_notice_file_message) for combine-notice-files system_xml_directories.",
+      "range": {
+        "startLine": 1296,
+        "startChar": 0,
+        "endLine": 1296,
+        "endChar": 85
+      },
+      "revId": "97efe4365d091c2dfd9b824237dac7d0d9999039",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b22ab5a7_831319b9",
+        "filename": "core/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 1302,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-07-24T17:48:17Z",
+      "side": 1,
+      "message": "Should probably also be updated, something like\n\"Notices for files contained in all filesystem images except system, system_ext, product, and odm in this directory:\"",
+      "range": {
+        "startLine": 1302,
+        "startChar": 0,
+        "endLine": 1302,
+        "endChar": 91
+      },
+      "revId": "97efe4365d091c2dfd9b824237dac7d0d9999039",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
