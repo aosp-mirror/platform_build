@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "b00a4962_b09bc5b5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2019-07-24T17:52:28Z",
+      "side": 1,
+      "message": "This is great but can you run the module :P\n\nEither in this CL or the next one, you need a vts-core-tradefed.sh and associated makefiles.\n\nhttps://cs.corp.google.com/android/test/suite_harness/tools/cts-tradefed/?sq\u003dpackage:%5Eandroid$\u0026g\u003d0",
+      "revId": "ad5fe1a579284da3b4f2a9fc3bd5422c4549a7c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "96f48f4b_6d4f6f01",
         "filename": "core/tasks/vts-core-tests.mk",
         "patchSetId": 1
