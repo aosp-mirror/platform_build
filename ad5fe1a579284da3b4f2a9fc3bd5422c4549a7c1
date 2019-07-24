@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "d60617df_f026669c",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1083173
+      },
+      "writtenOn": "2019-07-24T18:38:55Z",
+      "side": 1,
+      "message": "My thoughts to that:\n\n1) That\u0027s diverging from *TS, i.e. CTS, GTS, etc. It\u0027d be best to stay uniform rather than moving in a new separate direction. So unless we also push them to this model, this may introduce other issues/differences in the future.\n\n2) You still need a standalone zip and command line to ship for compliance use-cases.",
+      "parentUuid": "a770e106_7b3b6b99",
+      "revId": "ad5fe1a579284da3b4f2a9fc3bd5422c4549a7c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "96f48f4b_6d4f6f01",
         "filename": "core/tasks/vts-core-tests.mk",
         "patchSetId": 1
