@@ -22,6 +22,30 @@
       "revId": "1335de6eefa97eacdb5dcd56a84dccd027c9efde",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "4a921a0e_03e58624",
+        "filename": "tools/releasetools/merge_builds.py",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-07-24T00:59:37Z",
+      "side": 1,
+      "message": "Right now it will only support users that do not require regenerating vbmeta.img (like when using a chained vbmeta struct on system.img or vbmeta_system.img).\n\nI added some TODOs to get this support added in for users who do indeed need vbmeta.img regeneration (to be implemented in a future change, since I think it\u0027ll require a nontrivial amount of code/flags to make the right misc_info dict similar to merge_target_files.py).",
+      "parentUuid": "8ec19492_82e9875e",
+      "range": {
+        "startLine": 20,
+        "startChar": 50,
+        "endLine": 20,
+        "endChar": 67
+      },
+      "revId": "1335de6eefa97eacdb5dcd56a84dccd027c9efde",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
