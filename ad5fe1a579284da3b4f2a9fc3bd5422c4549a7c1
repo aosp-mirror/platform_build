@@ -109,6 +109,24 @@
     },
     {
       "key": {
+        "uuid": "c3c0a772_9c4a4b6d",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1088076
+      },
+      "writtenOn": "2019-07-25T16:55:59Z",
+      "side": 1,
+      "message": "let\u0027s land it first to start building the build artifact.\n\nvts-core-tradefed.sh will be similar to cts-tradefed. It will compile a command line to run all tests in vts-core-tests.zip.",
+      "parentUuid": "0f55e142_8afa3ac0",
+      "revId": "ad5fe1a579284da3b4f2a9fc3bd5422c4549a7c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "96f48f4b_6d4f6f01",
         "filename": "core/tasks/vts-core-tests.mk",
         "patchSetId": 1
