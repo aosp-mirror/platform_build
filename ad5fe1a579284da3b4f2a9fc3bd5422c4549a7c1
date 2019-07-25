@@ -91,6 +91,24 @@
     },
     {
       "key": {
+        "uuid": "0f55e142_8afa3ac0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2019-07-25T09:12:18Z",
+      "side": 1,
+      "message": "Currently, it can just run by tradefed.sh or atest.\ne.g. \n1. patch aosp/1089570\n\n2. tradefed.sh run template/local_min --template:map test\u003dvts_test_binary_qtaguid_module\nor\n2. atest vts_test_binary_qtaguid_module",
+      "parentUuid": "9e7c45d9_6e7f8b7f",
+      "revId": "ad5fe1a579284da3b4f2a9fc3bd5422c4549a7c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "96f48f4b_6d4f6f01",
         "filename": "core/tasks/vts-core-tests.mk",
         "patchSetId": 1
