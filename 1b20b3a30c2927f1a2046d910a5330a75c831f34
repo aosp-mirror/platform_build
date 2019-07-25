@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "cee6a0bf_63a675e2",
+        "filename": "core/dex_preopt_odex_install.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 201,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-07-25T04:06:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8449b408_3266f4a0",
+      "revId": "1b20b3a30c2927f1a2046d910a5330a75c831f34",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "97cfc6ff_92ab3a4b",
         "filename": "target/product/aosp_arm64.mk",
         "patchSetId": 2
@@ -33,6 +51,24 @@
       "revId": "1b20b3a30c2927f1a2046d910a5330a75c831f34",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dc5bb2b2_70f2a6e6",
+        "filename": "target/product/aosp_arm64.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-07-25T04:06:47Z",
+      "side": 1,
+      "message": "This is so wired. I do not remember why I did this...\nThanks a lot!",
+      "parentUuid": "97cfc6ff_92ab3a4b",
+      "revId": "1b20b3a30c2927f1a2046d910a5330a75c831f34",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
