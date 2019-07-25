@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "11b419f0_394bcae8",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1255,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-25T17:28:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cbe0387f_41745614",
+      "range": {
+        "startLine": 1255,
+        "startChar": 0,
+        "endLine": 1255,
+        "endChar": 66
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5bff0608_85b9bcee",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -215,6 +239,30 @@
     },
     {
       "key": {
+        "uuid": "f11e54e9_98a4fee4",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1270,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-25T17:28:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fb2db92b_d32ff855",
+      "range": {
+        "startLine": 1270,
+        "startChar": 0,
+        "endLine": 1270,
+        "endChar": 76
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2bf49cb0_d5387f5c",
         "filename": "core/Makefile",
         "patchSetId": 11
@@ -259,6 +307,30 @@
       "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d15aee65_fa895a8c",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1272,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-25T17:28:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dd7ec426_eaab8e9f",
+      "range": {
+        "startLine": 1272,
+        "startChar": 0,
+        "endLine": 1272,
+        "endChar": 16
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -378,6 +450,30 @@
       "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0d3841a4_3400aaf5",
+        "filename": "core/Makefile",
+        "patchSetId": 11
+      },
+      "lineNbr": 1277,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-25T17:28:46Z",
+      "side": 1,
+      "message": "I misread some of the logic here originally and we really only need to worry about the prebuilt vendor image case (maybe). The latest patchsets represent this. We really don\u0027t care if we are building a separate vendor image or not. Things will fall into place regardless.\n\nIf we do care about builds that use a pre-built vendor image, then I think we still need to direct the remainder back into the system notice file.",
+      "parentUuid": "0628d987_dea988a0",
+      "range": {
+        "startLine": 1277,
+        "startChar": 2,
+        "endLine": 1277,
+        "endChar": 36
+      },
+      "revId": "d8f882110048257ca8c93c1aafa26d199b67c971",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }

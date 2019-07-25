@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "d949e4b5_7555fee3",
+        "filename": "core/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 1296,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-25T17:28:46Z",
+      "side": 1,
+      "message": "SGTM. I\u0027ll change these strings to be more representative of the current contents.",
+      "parentUuid": "50545f29_b67d1278",
+      "range": {
+        "startLine": 1296,
+        "startChar": 0,
+        "endLine": 1296,
+        "endChar": 85
+      },
+      "revId": "97efe4365d091c2dfd9b824237dac7d0d9999039",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b22ab5a7_831319b9",
         "filename": "core/Makefile",
         "patchSetId": 15
@@ -45,6 +69,30 @@
       "revId": "97efe4365d091c2dfd9b824237dac7d0d9999039",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e71ea43_5f28bbe4",
+        "filename": "core/Makefile",
+        "patchSetId": 15
+      },
+      "lineNbr": 1302,
+      "author": {
+        "id": 1479653
+      },
+      "writtenOn": "2019-07-25T17:28:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b22ab5a7_831319b9",
+      "range": {
+        "startLine": 1302,
+        "startChar": 0,
+        "endLine": 1302,
+        "endChar": 91
+      },
+      "revId": "97efe4365d091c2dfd9b824237dac7d0d9999039",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
