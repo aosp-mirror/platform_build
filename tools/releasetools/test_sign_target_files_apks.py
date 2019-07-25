@@ -15,6 +15,7 @@
 #
 
 import base64
+import io
 import os.path
 import zipfile
 
@@ -22,7 +23,7 @@ import common
 import test_utils
 from sign_target_files_apks import (
     CheckApkAndApexKeysAvailable, EditTags, GetApkFileInfo, ReadApexKeysInfo,
-    ReplaceCerts, ReplaceVerityKeyId, RewriteProps)
+    ReplaceCerts, ReplaceVerityKeyId, RewriteProps, WriteOtacerts)
 
 
 class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
@@ -235,6 +236,22 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         cert2_path[:-9] : 'non-existent',
     }
     self.assertEqual(output_xml, ReplaceCerts(input_xml))
+
+  def test_WriteOtacerts(self):
+    certs = [
+        os.path.join(self.testdata_dir, 'platform.x509.pem'),
+        os.path.join(self.testdata_dir, 'media.x509.pem'),
+        os.path.join(self.testdata_dir, 'testkey.x509.pem'),
+    ]
+    entry_name = 'SYSTEM/etc/security/otacerts.zip'
+    output_file = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(output_file, 'w') as output_zip:
+      WriteOtacerts(output_zip, entry_name, certs)
+    with zipfile.ZipFile(output_file) as input_zip:
+      self.assertIn(entry_name, input_zip.namelist())
+      otacerts_file = io.BytesIO(input_zip.read(entry_name))
+      with zipfile.ZipFile(otacerts_file) as otacerts_zip:
+        self.assertEqual(3, len(otacerts_zip.namelist()))
 
   def test_CheckApkAndApexKeysAvailable(self):
     input_file = common.MakeTempFile(suffix='.zip')
