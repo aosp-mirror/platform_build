@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "9e7c45d9_6e7f8b7f",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2019-07-25T07:17:12Z",
+      "side": 1,
+      "message": "vts-core-tradefed.sh can just be a wrapper of tradefed.sh.\n\nBut it maybe a better way to move this CL and vts-core-harness to test/vts or tradefed/core?",
+      "parentUuid": "0e95f33d_bf4a0c8a",
+      "revId": "ad5fe1a579284da3b4f2a9fc3bd5422c4549a7c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "96f48f4b_6d4f6f01",
         "filename": "core/tasks/vts-core-tests.mk",
         "patchSetId": 1
