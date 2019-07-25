@@ -111,6 +111,7 @@ import base64
 import copy
 import errno
 import gzip
+import io
 import itertools
 import logging
 import os
@@ -746,12 +747,7 @@ def WriteOtacerts(output_zip, filename, keys):
     filename: The archive name in the output zip.
     keys: A list of public keys to use during OTA package verification.
   """
-
-  try:
-    from StringIO import StringIO
-  except ImportError:
-    from io import StringIO
-  temp_file = StringIO()
+  temp_file = io.BytesIO()
   certs_zip = zipfile.ZipFile(temp_file, "w")
   for k in keys:
     common.ZipWrite(certs_zip, k)
