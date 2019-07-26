@@ -27,3 +27,5 @@ include $(BUILD_SYSTEM)/base_rules.mk
 
 $(LOCAL_BUILT_MODULE) : $(my_prebuilt_src_file)
 	$(transform-prebuilt-to-target)
+
+built_module := $(LOCAL_BUILT_MODULE)
