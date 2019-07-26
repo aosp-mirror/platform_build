@@ -7,7 +7,7 @@ endif
 KATI_OUTPUT_PATTERNS := $(OUT_DIR)/build%.ninja $(OUT_DIR)/ninja%.sh
 
 # Modifier goals we don't need to pass to Ninja.
-NINJA_EXCLUDE_GOALS := all APP-% PRODUCT-%
+NINJA_EXCLUDE_GOALS := all PRODUCT-%
 
 # A list of goals which affect parsing of makefiles and we need to pass to Kati.
 PARSE_TIME_MAKE_GOALS := \
