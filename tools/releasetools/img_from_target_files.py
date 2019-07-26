@@ -103,8 +103,6 @@ def CopyUserImages(input_tmp, output_zip):
       continue
     if not image.endswith(".img"):
       continue
-    if image == "recovery-two-step.img":
-      continue
     if OPTIONS.put_super:
       if image == "super_empty.img":
         continue
