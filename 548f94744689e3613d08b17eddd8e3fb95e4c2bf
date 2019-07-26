@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "725598db_45268b7b",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-26T21:01:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8fbc70f1_e12b8ca4",
+      "range": {
+        "startLine": 243,
+        "startChar": 48,
+        "endLine": 243,
+        "endChar": 49
+      },
+      "revId": "548f94744689e3613d08b17eddd8e3fb95e4c2bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6335cc0b_25073cef",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 1
@@ -45,6 +69,30 @@
       "revId": "548f94744689e3613d08b17eddd8e3fb95e4c2bf",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "49862f97_302a4e8c",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 686,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-07-26T21:01:33Z",
+      "side": 1,
+      "message": "Changed to ZipWrite the file directly (instead of going through GetBootableImage).",
+      "parentUuid": "6335cc0b_25073cef",
+      "range": {
+        "startLine": 686,
+        "startChar": 35,
+        "endLine": 686,
+        "endChar": 51
+      },
+      "revId": "548f94744689e3613d08b17eddd8e3fb95e4c2bf",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
