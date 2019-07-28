@@ -423,7 +423,8 @@ def ProcessTargetFiles(input_tf_zip, output_tf_zip, misc_info,
     if filename.startswith("IMAGES/"):
       continue
 
-    # Skip split super images, which will be re-generated during signing.
+    # Skip OTA-specific images (e.g. split super images), which will be
+    # re-generated during signing.
     if filename.startswith("OTA/") and filename.endswith(".img"):
       continue
 
