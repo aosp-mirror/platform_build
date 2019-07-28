@@ -240,7 +240,7 @@ METADATA_NAME = 'META-INF/com/android/metadata'
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
 AB_PARTITIONS = 'META/ab_partitions.txt'
-UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'RADIO/*']
+UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*', 'RADIO/*']
 RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
 
 
@@ -681,13 +681,12 @@ def _WriteRecoveryImageToBoot(script, output_zip):
 
   recovery_two_step_img_name = "recovery-two-step.img"
   recovery_two_step_img_path = os.path.join(
-      OPTIONS.input_tmp, "IMAGES", recovery_two_step_img_name)
+      OPTIONS.input_tmp, "OTA", recovery_two_step_img_name)
   if os.path.exists(recovery_two_step_img_path):
-    recovery_two_step_img = common.GetBootableImage(
-        recovery_two_step_img_name, recovery_two_step_img_name,
-        OPTIONS.input_tmp, "RECOVERY")
-    common.ZipWriteStr(
-        output_zip, recovery_two_step_img_name, recovery_two_step_img.data)
+    common.ZipWrite(
+        output_zip,
+        recovery_two_step_img_path,
+        arcname=recovery_two_step_img_name)
     logger.info(
         "two-step package: using %s in stage 1/3", recovery_two_step_img_name)
     script.WriteRawImage("/boot", recovery_two_step_img_name)
