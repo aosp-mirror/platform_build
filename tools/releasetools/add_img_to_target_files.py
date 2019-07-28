@@ -810,11 +810,11 @@ def AddImagesToTargetFiles(filename):
       banner("recovery (two-step image)")
       # The special recovery.img for two-step package use.
       recovery_two_step_image = common.GetBootableImage(
-          "IMAGES/recovery-two-step.img", "recovery-two-step.img",
+          "OTA/recovery-two-step.img", "recovery-two-step.img",
           OPTIONS.input_tmp, "RECOVERY", two_step_image=True)
       assert recovery_two_step_image, "Failed to create recovery-two-step.img."
       recovery_two_step_image_path = os.path.join(
-          OPTIONS.input_tmp, "IMAGES", "recovery-two-step.img")
+          OPTIONS.input_tmp, "OTA", "recovery-two-step.img")
       if not os.path.exists(recovery_two_step_image_path):
         recovery_two_step_image.WriteToDir(OPTIONS.input_tmp)
         if output_zip:
