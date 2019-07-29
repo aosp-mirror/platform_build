@@ -82,8 +82,6 @@ CORRECT_BUILD_ENV_SEQUENCE_NUMBER := 13
 
 # ---------------------------------------------------------------
 # The product defaults to generic on hardware
-# NOTE: This will be overridden in product_config.mk if make
-# was invoked with a PRODUCT-xxx-yyy goal.
 ifeq ($(TARGET_PRODUCT),)
 TARGET_PRODUCT := aosp_arm
 endif
@@ -93,6 +91,13 @@ endif
 ifeq ($(strip $(TARGET_BUILD_VARIANT)),)
 TARGET_BUILD_VARIANT := eng
 endif
+
+TARGET_BUILD_APPS ?=
+
+.KATI_READONLY := \
+  TARGET_PRODUCT \
+  TARGET_BUILD_VARIANT \
+  TARGET_BUILD_APPS
 
 # ---------------------------------------------------------------
 # Set up configuration for host machine.  We don't do cross-
