@@ -33,5 +33,8 @@ PRODUCT_COPY_FILES += \
     system/core/rootdir/init.zygote64_32.rc:root/init.zygote64_32.rc \
     system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc
 
+# Force both build odex for zygote32_64
+DEX_PREOPT_SYSTEM_SERVER_BOTH := true
+
 TARGET_SUPPORTS_32_BIT_APPS := true
 TARGET_SUPPORTS_64_BIT_APPS := true

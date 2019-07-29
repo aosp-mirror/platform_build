@@ -196,10 +196,14 @@ ifeq ($(LOCAL_MODULE_CLASS),JAVA_LIBRARIES)
 # For a Java library, by default we build odex for both 1st arch and 2nd arch.
 # But it can be overridden with "LOCAL_MULTILIB := first".
 ifneq (,$(filter $(PRODUCT_SYSTEM_SERVER_JARS),$(LOCAL_MODULE)))
-# For system server jars, we build for only "first".
-my_module_multilib := first
+  # For system server jars, we build for only "first" by default.
+  ifeq (true,$(DEX_PREOPT_SYSTEM_SERVER_BOTH))
+    my_module_multilib := both
+  else
+    my_module_multilib := first
+  endif
 else
-my_module_multilib := $(LOCAL_MULTILIB)
+  my_module_multilib := $(LOCAL_MULTILIB)
 endif
 # #################################################
 # Odex for the 1st arch
