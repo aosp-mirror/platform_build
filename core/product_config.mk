@@ -139,15 +139,7 @@ endif # CALLED_FROM_SETUP
 ifeq ($(CALLED_FROM_SETUP),true)
 unbundled_goals := $(strip $(filter APP-%,$(MAKECMDGOALS)))
 ifdef unbundled_goals
-  ifneq ($(words $(unbundled_goals)),1)
-    $(error Only one APP-* goal may be specified; saw "$(unbundled_goals)")
-  endif
-  TARGET_BUILD_APPS := $(strip $(subst -, ,$(patsubst APP-%,%,$(unbundled_goals))))
-  ifneq ($(filter droid,$(MAKECMDGOALS)),)
-    override MAKECMDGOALS := $(patsubst $(unbundled_goals),,$(MAKECMDGOALS))
-  else
-    override MAKECMDGOALS := $(patsubst $(unbundled_goals),droid,$(MAKECMDGOALS))
-  endif
+  $(error The APP-* goal is no longer supported. Use `TARGET_BUILD_APPS="<app>" m droid` instead)
 endif # unbundled_goals
 endif
 
