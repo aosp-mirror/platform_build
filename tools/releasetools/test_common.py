@@ -1074,6 +1074,69 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
       self.assertRaises(
           AssertionError, common.LoadInfoDict, target_files_zip, True)
 
+  def test_MergeDynamicPartitionInfoDicts_ReturnsMergedDict(self):
+    framework_dict = {
+        'super_partition_groups': 'group_a',
+        'dynamic_partition_list': 'system',
+        'super_group_a_list': 'system',
+    }
+    vendor_dict = {
+        'super_partition_groups': 'group_a group_b',
+        'dynamic_partition_list': 'vendor product',
+        'super_group_a_list': 'vendor',
+        'super_group_a_size': '1000',
+        'super_group_b_list': 'product',
+        'super_group_b_size': '2000',
+    }
+    merged_dict = common.MergeDynamicPartitionInfoDicts(
+        framework_dict=framework_dict,
+        vendor_dict=vendor_dict,
+        size_prefix='super_',
+        size_suffix='_size',
+        list_prefix='super_',
+        list_suffix='_list')
+    expected_merged_dict = {
+        'super_partition_groups': 'group_a group_b',
+        'dynamic_partition_list': 'system vendor product',
+        'super_group_a_list': 'system vendor',
+        'super_group_a_size': '1000',
+        'super_group_b_list': 'product',
+        'super_group_b_size': '2000',
+    }
+    self.assertEqual(merged_dict, expected_merged_dict)
+
+  def test_MergeDynamicPartitionInfoDicts_IgnoringFrameworkGroupSize(self):
+    framework_dict = {
+        'super_partition_groups': 'group_a',
+        'dynamic_partition_list': 'system',
+        'super_group_a_list': 'system',
+        'super_group_a_size': '5000',
+    }
+    vendor_dict = {
+        'super_partition_groups': 'group_a group_b',
+        'dynamic_partition_list': 'vendor product',
+        'super_group_a_list': 'vendor',
+        'super_group_a_size': '1000',
+        'super_group_b_list': 'product',
+        'super_group_b_size': '2000',
+    }
+    merged_dict = common.MergeDynamicPartitionInfoDicts(
+        framework_dict=framework_dict,
+        vendor_dict=vendor_dict,
+        size_prefix='super_',
+        size_suffix='_size',
+        list_prefix='super_',
+        list_suffix='_list')
+    expected_merged_dict = {
+        'super_partition_groups': 'group_a group_b',
+        'dynamic_partition_list': 'system vendor product',
+        'super_group_a_list': 'system vendor',
+        'super_group_a_size': '1000',
+        'super_group_b_list': 'product',
+        'super_group_b_size': '2000',
+    }
+    self.assertEqual(merged_dict, expected_merged_dict)
+
 
 class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
   """Checks the format of install-recovery.sh.

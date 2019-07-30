@@ -106,6 +106,19 @@ python_binary_host {
     ],
 }
 
+python_binary_host {
+    name: "merge_builds",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "build_super_image.py",
+        "merge_builds.py",
+    ],
+    main: "merge_builds.py",
+    libs: [
+        "releasetools_common",
+    ],
+}
+
 python_defaults {
     name: "releasetools_test_defaults",
     srcs: [
