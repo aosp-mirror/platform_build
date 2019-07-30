@@ -194,6 +194,8 @@ $(info ***************************************************************)
 $(error stopping)
 endif
 
+# These are the valid values of TARGET_BUILD_VARIANT.
+INTERNAL_VALID_VARIANTS := user userdebug eng
 ifneq ($(filter-out $(INTERNAL_VALID_VARIANTS),$(TARGET_BUILD_VARIANT)),)
 $(info ***************************************************************)
 $(info ***************************************************************)
