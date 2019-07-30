@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a17cb24_fc739b65",
+        "filename": "core/Makefile",
+        "patchSetId": 17
+      },
+      "lineNbr": 1285,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-07-30T10:47:42Z",
+      "side": 1,
+      "message": "shouldn\u0027t these 3 lines be in an \"else\" block of the conditional below ? Wouldn\u0027t mind keeping a license_modules_remainder variable too, for clarity+deduplication",
+      "range": {
+        "startLine": 1283,
+        "startChar": 0,
+        "endLine": 1285,
+        "endChar": 109
+      },
+      "revId": "aad39b32817a5f5ccfc75676be9df5c618fe1618",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
