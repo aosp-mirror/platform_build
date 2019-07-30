@@ -10,21 +10,10 @@ SHELL := /bin/bash
 endif
 
 ifndef KATI
-
-host_prebuilts := linux-x86
-ifeq ($(shell uname),Darwin)
-host_prebuilts := darwin-x86
+$(warning Calling make directly is no longer supported.)
+$(warning Either use 'envsetup.sh; m' or 'build/soong/soong_ui.bash --make-mode')
+$(error done)
 endif
-
-.PHONY: run_soong_ui
-run_soong_ui:
-	+@prebuilts/build-tools/$(host_prebuilts)/bin/makeparallel --ninja build/soong/soong_ui.bash --make-mode $(MAKECMDGOALS)
-
-.PHONY: $(MAKECMDGOALS)
-$(sort $(MAKECMDGOALS)) : run_soong_ui
-	@#empty
-
-else # KATI
 
 $(info [1/1] initializing build system ...)
 
@@ -1893,5 +1882,3 @@ ndk: $(SOONG_OUT_DIR)/ndk.timestamp
 $(call dist-write-file,$(KATI_PACKAGE_MK_DIR)/dist.mk)
 
 $(info [$(call inc_and_print,subdir_makefiles_inc)/$(subdir_makefiles_total)] writing build rules ...)
-
-endif # KATI
