@@ -402,64 +402,6 @@ def append_recovery_to_filesystem_config(output_target_files_temp_dir):
             'selabel=u:object_r:install_recovery_exec:s0 capabilities=0x0\n')
 
 
-def merge_dynamic_partition_info_dicts(framework_dict,
-                                       vendor_dict,
-                                       include_dynamic_partition_list=True,
-                                       size_prefix='',
-                                       size_suffix='',
-                                       list_prefix='',
-                                       list_suffix=''):
-  """Merges dynamic partition info variables.
-
-  Args:
-    framework_dict: The dictionary of dynamic partition info variables from the
-      partial framework target files.
-    vendor_dict: The dictionary of dynamic partition info variables from the
-      partial vendor target files.
-    include_dynamic_partition_list: If true, merges the dynamic_partition_list
-      variable. Not all use cases need this variable merged.
-    size_prefix: The prefix in partition group size variables that precedes the
-      name of the partition group. For example, partition group 'group_a' with
-      corresponding size variable 'super_group_a_group_size' would have the
-      size_prefix 'super_'.
-    size_suffix: Similar to size_prefix but for the variable's suffix. For
-      example, 'super_group_a_group_size' would have size_suffix '_group_size'.
-    list_prefix: Similar to size_prefix but for the partition group's
-      partition_list variable.
-    list_suffix: Similar to size_suffix but for the partition group's
-      partition_list variable.
-
-  Returns:
-    The merged dynamic partition info dictionary.
-  """
-  merged_dict = {}
-  # Partition groups and group sizes are defined by the vendor dict because
-  # these values may vary for each board that uses a shared system image.
-  merged_dict['super_partition_groups'] = vendor_dict['super_partition_groups']
-  if include_dynamic_partition_list:
-    framework_dynamic_partition_list = framework_dict.get(
-        'dynamic_partition_list', '')
-    vendor_dynamic_partition_list = vendor_dict.get('dynamic_partition_list',
-                                                    '')
-    merged_dict['dynamic_partition_list'] = (
-        '%s %s' % (framework_dynamic_partition_list,
-                   vendor_dynamic_partition_list)).strip()
-  for partition_group in merged_dict['super_partition_groups'].split(' '):
-    # Set the partition group's size using the value from the vendor dict.
-    key = '%s%s%s' % (size_prefix, partition_group, size_suffix)
-    if key not in vendor_dict:
-      raise ValueError('Vendor dict does not contain required key %s.' % key)
-    merged_dict[key] = vendor_dict[key]
-
-    # Set the partition group's partition list using a concatenation of the
-    # framework and vendor partition lists.
-    key = '%s%s%s' % (list_prefix, partition_group, list_suffix)
-    merged_dict[key] = (
-        '%s %s' %
-        (framework_dict.get(key, ''), vendor_dict.get(key, ''))).strip()
-  return merged_dict
-
-
 def process_misc_info_txt(framework_target_files_temp_dir,
                           vendor_target_files_temp_dir,
                           output_target_files_temp_dir,
@@ -503,7 +445,7 @@ def process_misc_info_txt(framework_target_files_temp_dir,
   # Merge misc info keys used for Dynamic Partitions.
   if (merged_dict.get('use_dynamic_partitions') == 'true') and (
       framework_dict.get('use_dynamic_partitions') == 'true'):
-    merged_dynamic_partitions_dict = merge_dynamic_partition_info_dicts(
+    merged_dynamic_partitions_dict = common.MergeDynamicPartitionInfoDicts(
         framework_dict=framework_dict,
         vendor_dict=merged_dict,
         size_prefix='super_',
@@ -566,7 +508,7 @@ def process_dynamic_partitions_info_txt(framework_target_files_dir,
   vendor_dynamic_partitions_dict = common.LoadDictionaryFromFile(
       os.path.join(vendor_target_files_dir, *dynamic_partitions_info_path))
 
-  merged_dynamic_partitions_dict = merge_dynamic_partition_info_dicts(
+  merged_dynamic_partitions_dict = common.MergeDynamicPartitionInfoDicts(
       framework_dict=framework_dynamic_partitions_dict,
       vendor_dict=vendor_dynamic_partitions_dict,
       # META/dynamic_partitions_info.txt does not use dynamic_partition_list.
