@@ -193,20 +193,29 @@ endif
 # Note that this assumes that the 2ND_CPU_ABI for a 64 bit target
 # is always 32 bits. If this isn't the case, these variables should
 # be overriden in the board configuration.
+#
+# Similarly, TARGET_NATIVE_BRIDGE_2ND_ABI for a 64 bit target is always
+# 32 bits. Note that all CPU_ABIs are preferred over all NATIVE_BRIDGE_ABIs.
+_target_native_bridge_abi_list_32_bit :=
+_target_native_bridge_abi_list_64_bit :=
+
 ifeq (,$(TARGET_CPU_ABI_LIST_64_BIT))
   ifeq (true|true,$(TARGET_IS_64_BIT)|$(TARGET_SUPPORTS_64_BIT_APPS))
     TARGET_CPU_ABI_LIST_64_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
+    _target_native_bridge_abi_list_64_bit := $(TARGET_NATIVE_BRIDGE_ABI)
   endif
 endif
 
 ifeq (,$(TARGET_CPU_ABI_LIST_32_BIT))
   ifneq (true,$(TARGET_IS_64_BIT))
     TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
+    _target_native_bridge_abi_list_32_bit := $(TARGET_NATIVE_BRIDGE_ABI)
   else
     ifeq (true,$(TARGET_SUPPORTS_32_BIT_APPS))
       # For a 64 bit target, assume that the 2ND_CPU_ABI
       # is a 32 bit ABI.
       TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_2ND_CPU_ABI) $(TARGET_2ND_CPU_ABI2)
+      _target_native_bridge_abi_list_32_bit := $(TARGET_NATIVE_BRIDGE_2ND_ABI)
     endif
   endif
 endif
@@ -215,13 +224,20 @@ endif
 # of preference) that the target supports. If a TARGET_CPU_ABI_LIST
 # is specified by the board configuration, we use that. If not, we
 # build a list out of the TARGET_CPU_ABIs specified by the config.
+# Add NATIVE_BRIDGE_ABIs at the end to keep order of preference.
 ifeq (,$(TARGET_CPU_ABI_LIST))
   ifeq ($(TARGET_IS_64_BIT)|$(TARGET_PREFER_32_BIT_APPS),true|true)
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_32_BIT) $(TARGET_CPU_ABI_LIST_64_BIT)
+    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_32_BIT) $(TARGET_CPU_ABI_LIST_64_BIT) \
+                           $(_target_native_bridge_abi_list_32_bit) $(_target_native_bridge_abi_list_64_bit)
   else
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT)
+    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT) \
+                           $(_target_native_bridge_abi_list_64_bit) $(_target_native_bridge_abi_list_32_bit)
   endif
 endif
+
+# Add NATIVE_BRIDGE_ABIs at the end of 32 and 64 bit CPU_ABIs to keep order of preference.
+TARGET_CPU_ABI_LIST_32_BIT += $(_target_native_bridge_abi_list_32_bit)
+TARGET_CPU_ABI_LIST_64_BIT += $(_target_native_bridge_abi_list_64_bit)
 
 # Strip whitespace from the ABI list string.
 TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST)))
