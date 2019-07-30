@@ -3655,7 +3655,7 @@ OTATOOLS_DEPS := \
 ifneq (,$(wildcard device))
 OTATOOLS_DEPS += \
   $(sort $(shell find device $(wildcard vendor) -type f -name "*.pk8" -o -name "verifiedboot*" -o \
-      -name "*.x509.pem" -o -name "oem*.prop"))
+      -name "*.pem" -o -name "oem*.prop" -o -name "*.avbpubkey"))
 endif
 ifneq (,$(wildcard external/avb))
 OTATOOLS_DEPS += \
