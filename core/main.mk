@@ -970,45 +970,6 @@ ifdef link_type_error
   $(error exiting from previous errors)
 endif
 
-# The intermediate filename for link type rules
-#
-# APPS are special -- they have up to three different rules:
-#  1. The COMMON rule for Java libraries
-#  2. The jni_link_type rule for embedded native code
-#  3. The 2ND_jni_link_type for the second architecture native code
-define link-type-file
-$(eval _ltf_aux_variant:=$(link-type-aux-variant))\
-$(if $(_ltf_aux_variant),$(call aux-variant-load-env,$(_ltf_aux_variant)))\
-$(call intermediates-dir-for,$(link-type-class),$(link-type-name),$(filter AUX HOST HOST_CROSS,$(link-type-prefix)),$(link-type-common),$(link-type-2ndarchprefix),$(filter HOST_CROSS,$(link-type-prefix)))/$(if $(filter APPS,$(link-type-class)),$(if $(link-type-common),,$(link-type-2ndarchprefix)jni_))link_type\
-$(if $(_ltf_aux_variant),$(call aux-variant-load-env,none))\
-$(eval _ltf_aux_variant:=)
-endef
-
-# Write out the file-based link_type rules for the ALLOW_MISSING_DEPENDENCIES
-# case. We always need to write the file for mm to work, but only need to
-# check it if we weren't able to check it when reading the Android.mk files.
-define link-type-file-rule
-my_link_type_deps := $(foreach l,$($(1).DEPS),$(call link-type-file,$(l)))
-my_link_type_file := $(call link-type-file,$(1))
-$($(1).BUILT): | $$(my_link_type_file)
-$$(my_link_type_file): PRIVATE_DEPS := $$(my_link_type_deps)
-ifeq ($($(1).MISSING),true)
-$$(my_link_type_file): $(CHECK_LINK_TYPE)
-endif
-$$(my_link_type_file): $$(my_link_type_deps)
-	@echo Check module type: $$@
-	$$(hide) mkdir -p $$(dir $$@) && rm -f $$@
-ifeq ($($(1).MISSING),true)
-	$$(hide) $(CHECK_LINK_TYPE) --makefile $($(1).MAKEFILE) --module $(link-type-name) \
-	  --type "$($(1).TYPE)" $(addprefix --allowed ,$($(1).ALLOWED)) \
-	  $(addprefix --warn ,$($(1).WARN)) $$(PRIVATE_DEPS)
-endif
-	$$(hide) echo "$($(1).TYPE)" >$$@
-endef
-
-$(foreach lt,$(ALL_LINK_TYPES),\
-  $(eval $(call link-type-file-rule,$(lt))))
-
 # -------------------------------------------------------------------
 # Figure out our module sets.
 #
