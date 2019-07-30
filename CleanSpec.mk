@@ -648,6 +648,10 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/vendor/odm/build.prop)
 
 $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/apex)
 
+# Remove libcameraservice and libcamera_client from base_system
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libcameraservice.so)
+$(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libcamera_client.so)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
