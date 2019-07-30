@@ -112,6 +112,7 @@ PRODUCT_PACKAGES += \
     iptables \
     ip-up-vpn \
     javax.obex \
+    jobscheduler-service \
     keystore \
     ld.config.txt \
     ld.mc \
