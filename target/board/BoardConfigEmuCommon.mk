@@ -27,10 +27,10 @@ USE_OPENGL_RENDERER := true
 
 TARGET_COPY_OUT_VENDOR := vendor
 
-# ~100 MB vendor image. Please adjust system image / vendor image sizes
+# ~140 MB vendor image. Please adjust system image / vendor image sizes
 # when finalizing them. The partition size needs to be a multiple of image
 # block size: 4096.
-BOARD_VENDORIMAGE_PARTITION_SIZE := 100003840
+BOARD_VENDORIMAGE_PARTITION_SIZE := 140963840
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_FLASH_BLOCK_SIZE := 512
 DEVICE_MATRIX_FILE   := device/generic/goldfish/compatibility_matrix.xml
