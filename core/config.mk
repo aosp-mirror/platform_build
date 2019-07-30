@@ -484,7 +484,6 @@ endif
 prebuilt_sdk_tools := prebuilts/sdk/tools
 prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
 
-# Always use prebuilts for ckati and makeparallel
 prebuilt_build_tools := prebuilts/build-tools
 prebuilt_build_tools_wrappers := prebuilts/build-tools/common/bin
 prebuilt_build_tools_jars := prebuilts/build-tools/common/framework
@@ -542,7 +541,6 @@ DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
 FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
 FILESLIST_UTIL :=$= build/make/tools/fileslist_util.py
 HOST_INIT_VERIFIER := $(HOST_OUT_EXECUTABLES)/host_init_verifier
-MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
 SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
 MERGE_ZIPS := $(SOONG_HOST_OUT_EXECUTABLES)/merge_zips
