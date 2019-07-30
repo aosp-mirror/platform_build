@@ -1173,7 +1173,8 @@ endif # TARGET_NO_KERNEL
 .PHONY: notice_files
 
 # Create the rule to combine the files into text and html/xml forms
-# $(1) - xml_excluded_vendor_product|xml_vendor|xml_product|xml_odm|html
+# $(1) - xml_excluded_system_product_odm|xml_excluded_vendor_product_odm
+#        xml_product|xml_odm|xml_system_ext|xml_system|html
 # $(2) - Plain text output file
 # $(3) - HTML/XML output file
 # $(4) - File title
@@ -1198,12 +1199,13 @@ $(2) $(3): PRIVATE_DIR := $(5)
 $(2) : $(3)
 $(3) : $(6) $(BUILD_SYSTEM)/Makefile build/make/tools/generate-notice-files.py
 	build/make/tools/generate-notice-files.py --text-output $(2) \
-	    $(if $(filter $(1),xml_excluded_extra_partitions),-e vendor -e product -e system_ext -e odm --xml-output, \
-	      $(if $(filter $(1),xml_vendor),-i vendor --xml-output, \
+	    $(if $(filter $(1),xml_excluded_vendor_product_odm),-e vendor -e product -e system_ext -e odm --xml-output, \
+	      $(if $(filter $(1),xml_excluded_system_product_odm),-e system -e product -e system_ext -e odm --xml-output, \
 	        $(if $(filter $(1),xml_product),-i product --xml-output, \
 	          $(if $(filter $(1),xml_system_ext),-i system_ext --xml-output, \
-	            $(if $(filter $(1),xml_odm),-i odm --xml-output, \
-	              --html-output))))) $(3) \
+	            $(if $(filter $(1),xml_system),-i system --xml-output, \
+	              $(if $(filter $(1),xml_odm),-i odm --xml-output, \
+	                --html-output)))))) $(3) \
 	    -t $$(PRIVATE_MESSAGE) -s $$(PRIVATE_DIR)/src
 notice_files: $(2) $(3)
 endef
@@ -1269,26 +1271,38 @@ license_modules := $(ALL_DEFAULT_INSTALLED_MODULES) $(kernel_notice_file) $(pdk_
 license_modules := $(filter-out $(TARGET_OUT_FAKE)/%,$(license_modules))
 # testcases are not relevant to the system image.
 license_modules := $(filter-out $(TARGET_OUT_TESTCASES)/%,$(license_modules))
+license_modules_system := $(filter $(TARGET_OUT)/%,$(license_modules))
 license_modules_vendor := $(filter $(TARGET_OUT_VENDOR)/%,$(license_modules))
 license_modules_product := $(filter $(TARGET_OUT_PRODUCT)/%,$(license_modules))
 license_modules_system_ext := $(filter $(TARGET_OUT_SYSTEM_EXT)/%,$(license_modules))
 license_modules_odm := $(filter $(TARGET_OUT_ODM)/%,$(license_modules))
-license_modules_agg := $(license_modules_vendor) \
+license_modules_agg := $(license_modules_system) \
+                       $(license_modules_vendor) \
                        $(license_modules_product) \
                        $(license_modules_system_ext) \
                        $(license_modules_odm)
-license_modules_rest := $(filter-out $(license_modules_agg),$(license_modules))
+license_modules_vendor += $(filter-out $(license_modules_agg),$(license_modules))
+system_xml_directories := xml_system
+system_notice_file_message := "Notices for files contained in the system filesystem image in this directory:"
 
-$(eval $(call combine-notice-files, xml_excluded_extra_partitions, \
+# If we are building in a configuration that includes a prebuilt vendor.img, we can't
+# update its notice file, so include those notices in the system partition instead
+ifdef BOARD_PREBUILT_VENDORIMAGE
+license_modules_system += $(filter-out $(license_modules_agg),$(license_modules))
+system_xml_directories := xml_excluded_vendor_product_odm
+system_notice_file_message := "Notices for files contained in all filesystem images except vendor/system_ext/product/odm in this directory:"
+endif
+
+$(eval $(call combine-notice-files, $(system_xml_directories), \
 	        $(target_notice_file_txt), \
 	        $(target_notice_file_xml), \
-	        "Notices for files contained in the filesystem images in this directory:", \
+	        $(system_notice_file_message), \
 	        $(TARGET_OUT_NOTICE_FILES), \
-	        $(license_modules_rest)))
-$(eval $(call combine-notice-files, xml_vendor, \
+	        $(license_modules_system)))
+$(eval $(call combine-notice-files, xml_excluded_system_product_odm, \
 	        $(target_vendor_notice_file_txt), \
 	        $(target_vendor_notice_file_xml), \
-	        "Notices for files contained in the vendor filesystem image in this directory:", \
+	        "Notices for files contained in all filesystem images except system/system_ext/product/odm in this directory:", \
 	        $(TARGET_OUT_NOTICE_FILES), \
 	        $(license_modules_vendor)))
 $(eval $(call combine-notice-files, xml_product, \
