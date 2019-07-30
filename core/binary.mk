@@ -112,6 +112,8 @@ endif
 my_ndk_sysroot :=
 my_ndk_sysroot_include :=
 my_ndk_sysroot_lib :=
+my_api_level := 10000
+
 ifneq ($(LOCAL_SDK_VERSION),)
   ifdef LOCAL_IS_HOST_MODULE
     $(error $(LOCAL_PATH): LOCAL_SDK_VERSION cannot be used in host module)
@@ -147,19 +149,13 @@ ifneq ($(LOCAL_SDK_VERSION),)
     my_ndk_api := $(call math_max,$(my_ndk_api),$(my_min_sdk_version))
   endif
 
-  my_ndk_api_def := $(my_ndk_api)
   my_ndk_hist_api := $(my_ndk_api)
   ifeq ($(my_ndk_api),current)
-    my_ndk_api_def := __ANDROID_API_FUTURE__
     # The last API level supported by the old prebuilt NDKs.
     my_ndk_hist_api := 24
+  else
+    my_api_level := $(my_ndk_api)
   endif
-
-
-  # Traditionally this has come from android/api-level.h, but with the libc
-  # headers unified it must be set by the build system since we don't have
-  # per-API level copies of that header now.
-  my_cflags += -D__ANDROID_API__=$(my_ndk_api_def)
 
   my_ndk_source_root := \
       $(HISTORICAL_NDK_VERSIONS_ROOT)/$(LOCAL_NDK_VERSION)/sources
@@ -283,14 +279,14 @@ endif
 
 ifneq ($(LOCAL_USE_VNDK),)
   # Required VNDK version for vendor modules is BOARD_VNDK_VERSION.
-  my_vndk_version := $(BOARD_VNDK_VERSION)
-  ifeq ($(my_vndk_version),current)
+  my_api_level := $(BOARD_VNDK_VERSION)
+  ifeq ($(my_api_level),current)
     # Build with current PLATFORM_VNDK_VERSION.
     # If PLATFORM_VNDK_VERSION has a CODENAME, it will return
     # __ANDROID_API_FUTURE__.
-    my_vndk_version := $(call codename-or-sdk-to-sdk,$(PLATFORM_VNDK_VERSION))
+    my_api_level := $(call codename-or-sdk-to-sdk,$(PLATFORM_VNDK_VERSION))
   endif
-  my_cflags += -D__ANDROID_API__=$(my_vndk_version) -D__ANDROID_VNDK__
+  my_cflags += -D__ANDROID_VNDK__
 endif
 
 ifndef LOCAL_IS_HOST_MODULE
@@ -1624,6 +1620,16 @@ ifeq ($(my_use_clang_lld),true)
 else
   my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LDFLAGS)
 endif # my_use_clang_lld
+
+my_target_triple := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)TRIPLE)
+ifndef LOCAL_IS_HOST_MODULE
+  my_target_triple_flag := -target $(my_target_triple)$(my_api_level)
+else
+  my_target_triple_flag := -target $(my_target_triple)
+endif
+my_asflags += $(my_target_triple_flag)
+my_cflags += $(my_target_triple_flag)
+my_ldflags += $(my_target_triple_flag)
 
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_INCLUDES := $(my_target_global_c_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_GLOBAL_C_SYSTEM_INCLUDES := $(my_target_global_c_system_includes)
