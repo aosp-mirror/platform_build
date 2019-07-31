@@ -1281,16 +1281,18 @@ license_modules_agg := $(license_modules_system) \
                        $(license_modules_product) \
                        $(license_modules_system_ext) \
                        $(license_modules_odm)
-license_modules_vendor += $(filter-out $(license_modules_agg),$(license_modules))
-system_xml_directories := xml_system
-system_notice_file_message := "Notices for files contained in the system filesystem image in this directory:"
+license_modules_rest := $(filter-out $(license_modules_agg),$(license_modules))
 
 # If we are building in a configuration that includes a prebuilt vendor.img, we can't
 # update its notice file, so include those notices in the system partition instead
 ifdef BOARD_PREBUILT_VENDORIMAGE
-license_modules_system += $(filter-out $(license_modules_agg),$(license_modules))
+license_modules_system += $(license_modules_rest)
 system_xml_directories := xml_excluded_vendor_product_odm
 system_notice_file_message := "Notices for files contained in all filesystem images except vendor/system_ext/product/odm in this directory:"
+else
+license_modules_vendor += $(license_modules_rest)
+system_xml_directories := xml_system
+system_notice_file_message := "Notices for files contained in the system filesystem image in this directory:"
 endif
 
 $(eval $(call combine-notice-files, $(system_xml_directories), \
