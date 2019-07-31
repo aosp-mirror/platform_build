@@ -7,7 +7,7 @@ endif
 KATI_OUTPUT_PATTERNS := $(OUT_DIR)/build%.ninja $(OUT_DIR)/ninja%.sh
 
 # Modifier goals we don't need to pass to Ninja.
-NINJA_EXCLUDE_GOALS := all PRODUCT-%
+NINJA_EXCLUDE_GOALS := all
 
 # A list of goals which affect parsing of makefiles and we need to pass to Kati.
 PARSE_TIME_MAKE_GOALS := \
@@ -55,7 +55,7 @@ PARSE_TIME_MAKE_GOALS := \
 include $(wildcard vendor/*/build/ninja_config.mk)
 
 # Any Android goals that need to be built.
-ANDROID_GOALS := $(filter-out $(KATI_OUTPUT_PATTERNS) $(CKATI) $(MAKEPARALLEL),\
+ANDROID_GOALS := $(filter-out $(KATI_OUTPUT_PATTERNS),\
     $(sort $(ORIGINAL_MAKECMDGOALS) $(MAKECMDGOALS)))
 # Goals we need to pass to Ninja.
 NINJA_GOALS := $(filter-out $(NINJA_EXCLUDE_GOALS), $(ANDROID_GOALS))
