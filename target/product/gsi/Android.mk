@@ -120,13 +120,13 @@ NDK_ABI_DUMPS := $(call find-abi-dump-paths,$(NDK_ABI_DUMP_DIR))
 
 $(check-vndk-abi-dump-list-timestamp): $(VNDK_ABI_DUMPS) $(NDK_ABI_DUMPS)
 	$(eval added_vndk_abi_dumps := $(strip $(sort $(filter-out \
-	  $(addsuffix .so.lsdump,$(VNDK_SAMEPROCESS_LIBRARIES) $(VNDK_CORE_LIBRARIES)), \
+	  $(addsuffix .so.lsdump,$(filter-out $(NDK_MIGRATED_LIBS) $(VNDK_PRIVATE_LIBRARIES),$(LLNDK_LIBRARIES) $(VNDK_SAMEPROCESS_LIBRARIES) $(VNDK_CORE_LIBRARIES))), \
 	  $(notdir $(VNDK_ABI_DUMPS))))))
 	$(if $(added_vndk_abi_dumps), \
 	  echo -e "Found ABI reference dumps for non-VNDK libraries. Run \`find \$${ANDROID_BUILD_TOP}/$(VNDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_vndk_abi_dumps)) ')' -delete\` to delete the dumps.")
 
 	$(eval added_ndk_abi_dumps := $(strip $(sort $(filter-out \
-	  $(addsuffix .so.lsdump,$(NDK_MIGRATED_LIBS) $(LLNDK_LIBRARIES)), \
+	  $(addsuffix .so.lsdump,$(NDK_MIGRATED_LIBS)), \
 	  $(notdir $(NDK_ABI_DUMPS))))))
 	$(if $(added_ndk_abi_dumps), \
 	  echo -e "Found ABI reference dumps for non-NDK libraries. Run \`find \$${ANDROID_BUILD_TOP}/$(NDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_ndk_abi_dumps)) ')' -delete\` to delete the dumps.")
