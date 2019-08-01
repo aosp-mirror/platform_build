@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e7a4f480_f513f1f8",
+        "filename": "tools/releasetools/merge_builds.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-08-01T22:59:58Z",
+      "side": 1,
+      "message": "Note: This logic mirrors the logic here:\nhttps://android.git.corp.google.com/platform/build/+/8b8b9b6bf8291ba9eb1d6c92956e0ac3b912a058/tools/releasetools/add_img_to_target_files.py#863",
+      "revId": "d4de431fddee15c917a075fdf577bb477cdb5c4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    }
+  ]
+}
