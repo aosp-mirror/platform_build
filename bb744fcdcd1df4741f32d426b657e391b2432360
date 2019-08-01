@@ -46,6 +46,30 @@
       "revId": "bb744fcdcd1df4741f32d426b657e391b2432360",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f296c69_ed4426f2",
+        "filename": "target/product/gsi_release.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-08-01T19:15:55Z",
+      "side": 1,
+      "message": "I\u0027m tempted to add all the init.zygoteNN_NN.rc files to CSI and just have a sysprop in /vendor saying which one to use. It would make the system image more generic",
+      "parentUuid": "8e4dd934_d16cc5f9",
+      "range": {
+        "startLine": 64,
+        "startChar": 52,
+        "endLine": 65,
+        "endChar": 78
+      },
+      "revId": "bb744fcdcd1df4741f32d426b657e391b2432360",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
