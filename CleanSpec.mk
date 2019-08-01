@@ -656,6 +656,9 @@ $(call add-clean-step, rm -rf $(PRODUCT_OUT)/system/lib*/libcamera_client.so)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/generic*/*/product)
 $(call add-clean-step, rm -rf $(OUT_DIR)/target/product/generic*/*/system_ext)
 
+# link_type and jni_link_type files are no longer needed
+$(call add-clean-step, find $(OUT_DIR) -type f -name "*link_type" -print0 | xargs -0 rm -f)
+
 # ************************************************
 # NEWER CLEAN STEPS MUST BE AT THE END OF THE LIST
 # ************************************************
