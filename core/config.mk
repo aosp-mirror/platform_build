@@ -118,6 +118,7 @@ $(KATI_obsolete_var \
   ARCH_X86_HAVE_SSE4_2 \
   ARCH_X86_HAVE_SSSE3 \
 )
+$(KATI_obsolete_var PRODUCT_IOT)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
