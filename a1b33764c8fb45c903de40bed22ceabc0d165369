@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ca958396_f4ab7402",
+        "filename": "core/main.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 990,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-08-01T14:32:24Z",
+      "side": 1,
+      "message": "It looks like I\u0027m segfaulting kati in some builds around here. The tracebacks point inside jemalloc\u0027s malloc function.",
+      "revId": "a1b33764c8fb45c903de40bed22ceabc0d165369",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
