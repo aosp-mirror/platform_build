@@ -22,6 +22,30 @@
       "revId": "bb744fcdcd1df4741f32d426b657e391b2432360",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "8e4dd934_d16cc5f9",
+        "filename": "target/product/gsi_release.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-08-01T03:58:56Z",
+      "side": 1,
+      "message": "Good catch. However after more thinking, I would like to keep the condition.\nMy idea is:\n\n- 32 bits and 64 bits GSI are separated\n- init.zygote32_64.rc can not work on 32 bits GSI, even it won\u0027t be used in normal case. We could exclude init.zygote32_64.rc on 32 bits GSI if possible.",
+      "parentUuid": "3fd2d1b9_4cc303e0",
+      "range": {
+        "startLine": 64,
+        "startChar": 52,
+        "endLine": 65,
+        "endChar": 78
+      },
+      "revId": "bb744fcdcd1df4741f32d426b657e391b2432360",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
