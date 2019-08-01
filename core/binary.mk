@@ -1614,7 +1614,9 @@ my_target_global_cppflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLO
 ifeq ($(my_use_clang_lld),true)
   my_target_global_ldflags := $($(LOCAL_2ND_ARCH_VAR_PREFIX)CLANG_$(my_prefix)GLOBAL_LLDFLAGS)
   include $(BUILD_SYSTEM)/pack_dyn_relocs_setup.mk
-  ifeq ($(my_pack_module_relocations),false)
+  ifeq ($(my_pack_module_relocations),true)
+    my_target_global_ldflags += -Wl,--pack-dyn-relocs=android+relr -Wl,--use-android-relr-tags
+  else
     my_target_global_ldflags += -Wl,--pack-dyn-relocs=none
   endif
 else
