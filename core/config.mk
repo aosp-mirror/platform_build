@@ -138,6 +138,9 @@ ifdef TARGET_DEVICE_DIR
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
 
+ONE_SHOT_MAKEFILE :=
+.KATI_READONLY := ONE_SHOT_MAKEFILE
+
 # Set up efficient math functions which are used in make.
 # Here since this file is included by envsetup as well as during build.
 include $(BUILD_SYSTEM_COMMON)/math.mk
@@ -470,9 +473,6 @@ endif
 ifneq ($(filter true,$(SOONG_ALLOW_MISSING_DEPENDENCIES)),)
 ALLOW_MISSING_DEPENDENCIES := true
 endif
-ifneq ($(ONE_SHOT_MAKEFILE),)
-ALLOW_MISSING_DEPENDENCIES := true
-endif
 .KATI_READONLY := ALLOW_MISSING_DEPENDENCIES
 
 TARGET_BUILD_APPS_USE_PREBUILT_SDK :=
@@ -604,7 +604,6 @@ TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/make/tools/fat16copy.py
-CHECK_LINK_TYPE := build/make/tools/check_link_type.py
 CHECK_ELF_FILE := build/make/tools/check_elf_file.py
 LPMAKE := $(HOST_OUT_EXECUTABLES)/lpmake$(HOST_EXECUTABLE_SUFFIX)
 BUILD_IMAGE := $(HOST_OUT_EXECUTABLES)/build_image$(HOST_EXECUTABLE_SUFFIX)
