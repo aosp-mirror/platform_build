@@ -70,6 +70,30 @@
       "revId": "bb744fcdcd1df4741f32d426b657e391b2432360",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a15af87_806ded4d",
+        "filename": "target/product/gsi_release.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-08-01T19:17:59Z",
+      "side": 1,
+      "message": "(note all 64 bit devices already have both init.zygote32.rc [unused] and init.zygote64_32.rc [used])",
+      "parentUuid": "8f296c69_ed4426f2",
+      "range": {
+        "startLine": 64,
+        "startChar": 52,
+        "endLine": 65,
+        "endChar": 78
+      },
+      "revId": "bb744fcdcd1df4741f32d426b657e391b2432360",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
