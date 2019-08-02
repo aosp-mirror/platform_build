@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "cab2102b_2019bbf3",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 680,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-02T00:05:51Z",
+      "side": 1,
+      "message": "nit: update",
+      "range": {
+        "startLine": 680,
+        "startChar": 4,
+        "endLine": 680,
+        "endChar": 68
+      },
+      "revId": "d4de431fddee15c917a075fdf577bb477cdb5c4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "e7a4f480_f513f1f8",
         "filename": "tools/releasetools/merge_builds.py",
         "patchSetId": 2
@@ -16,6 +39,29 @@
       "revId": "d4de431fddee15c917a075fdf577bb477cdb5c4f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "af2d5ea3_71f2f67c",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1140,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-02T00:05:51Z",
+      "side": 1,
+      "message": "wrong indentation (which makes it an inner function that won\u0027t be invoked)",
+      "range": {
+        "startLine": 1140,
+        "startChar": 4,
+        "endLine": 1140,
+        "endChar": 7
+      },
+      "revId": "d4de431fddee15c917a075fdf577bb477cdb5c4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
