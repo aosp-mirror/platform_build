@@ -94,6 +94,30 @@
       "revId": "bb744fcdcd1df4741f32d426b657e391b2432360",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "45cabd44_841eb4ff",
+        "filename": "target/product/gsi_release.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1128729
+      },
+      "writtenOn": "2019-08-02T07:09:09Z",
+      "side": 1,
+      "message": "Agree.\n\nBTW, We tried to have one GSI for both 32/64 bits devices 2 years ago, but failed.\nMaybe I could evaluate it again.",
+      "parentUuid": "3a15af87_806ded4d",
+      "range": {
+        "startLine": 64,
+        "startChar": 52,
+        "endLine": 65,
+        "endChar": 78
+      },
+      "revId": "bb744fcdcd1df4741f32d426b657e391b2432360",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
