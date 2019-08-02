@@ -625,6 +625,33 @@ def AppendAVBSigningArgs(cmd, partition):
     cmd.extend(["--salt", avb_salt])
 
 
+def GetAvbPartitionArg(partition, image, info_dict = None):
+  """Returns the VBMeta arguments for partition.
+
+  It sets up the VBMeta argument by including the partition descriptor from the
+  given 'image', or by configuring the partition as a chained partition.
+
+  Args:
+    partition: The name of the partition (e.g. "system").
+    image: The path to the partition image.
+    info_dict: A dict returned by common.LoadInfoDict(). Will use
+        OPTIONS.info_dict if None has been given.
+
+  Returns:
+    A list of VBMeta arguments.
+  """
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  # Check if chain partition is used.
+  key_path = info_dict.get("avb_" + partition + "_key_path")
+  if key_path:
+    chained_partition_arg = GetAvbChainedPartitionArg(partition, info_dict)
+    return ["--chain_partition", chained_partition_arg]
+  else:
+    return ["--include_descriptors_from_image", image]
+
+
 def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   """Constructs and returns the arg to build or verify a chained partition.
 
@@ -645,6 +672,65 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
   return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
+
+
+def BuildVBMeta(image_path, partitions, name, needed_partitions):
+  """Creates a VBMeta image.
+
+  It generates the requested VBMeta image. The requested image could be for
+  top-level or chained VBMeta image, which is determined based on the name.
+
+  Args:
+    image_path: The output path for the new VBMeta image.
+    partitions: A dict that's keyed by partition names with image paths as
+        values. Only valid partition names are accepted, as listed in
+        common.AVB_PARTITIONS.
+    name: Name of the VBMeta partition, e.g. 'vbmeta', 'vbmeta_system'.
+    needed_partitions: Partitions whose descriptors should be included into the
+        generated VBMeta image.
+
+  Raises:
+    AssertionError: On invalid input args.
+  """
+  avbtool = OPTIONS.info_dict["avb_avbtool"]
+  cmd = [avbtool, "make_vbmeta_image", "--output", image_path]
+  AppendAVBSigningArgs(cmd, name)
+
+  for partition, path in partitions.items():
+    if partition not in needed_partitions:
+      continue
+    assert (partition in AVB_PARTITIONS or
+            partition in AVB_VBMETA_PARTITIONS), \
+        'Unknown partition: {}'.format(partition)
+    assert os.path.exists(path), \
+        'Failed to find {} for {}'.format(path, partition)
+    cmd.extend(GetAvbPartitionArg(partition, path))
+
+  args = OPTIONS.info_dict.get("avb_{}_args".format(name))
+  if args and args.strip():
+    split_args = shlex.split(args)
+    for index, arg in enumerate(split_args[:-1]):
+      # Sanity check that the image file exists. Some images might be defined
+      # as a path relative to source tree, which may not be available at the
+      # same location when running this script (we have the input target_files
+      # zip only). For such cases, we additionally scan other locations (e.g.
+      # IMAGES/, RADIO/, etc) before bailing out.
+      if arg == '--include_descriptors_from_image':
+        image_path = split_args[index + 1]
+        if os.path.exists(image_path):
+          continue
+        found = False
+        for dir_name in ['IMAGES', 'RADIO', 'PREBUILT_IMAGES']:
+          alt_path = os.path.join(
+              OPTIONS.input_tmp, dir_name, os.path.basename(image_path))
+          if os.path.exists(alt_path):
+            split_args[index + 1] = alt_path
+            found = True
+            break
+        assert found, 'Failed to find {}'.format(image_path)
+    cmd.extend(split_args)
+
+  RunAndCheckOutput(cmd)
 
 
 def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
