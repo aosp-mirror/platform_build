@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "c748078d_9ef7ccae",
+        "filename": "tools/releasetools/common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 680,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-08-02T18:17:43Z",
+      "side": 1,
+      "message": "Whoops. Thanks for the catch!",
+      "parentUuid": "cab2102b_2019bbf3",
+      "range": {
+        "startLine": 680,
+        "startChar": 4,
+        "endLine": 680,
+        "endChar": 68
+      },
+      "revId": "d4de431fddee15c917a075fdf577bb477cdb5c4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e7a4f480_f513f1f8",
         "filename": "tools/releasetools/merge_builds.py",
         "patchSetId": 2
@@ -62,6 +86,30 @@
       "revId": "d4de431fddee15c917a075fdf577bb477cdb5c4f",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "df6e70b3_07318ccd",
+        "filename": "tools/releasetools/test_common.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 1140,
+      "author": {
+        "id": 1455782
+      },
+      "writtenOn": "2019-08-02T18:17:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "af2d5ea3_71f2f67c",
+      "range": {
+        "startLine": 1140,
+        "startChar": 4,
+        "endLine": 1140,
+        "endChar": 7
+      },
+      "revId": "d4de431fddee15c917a075fdf577bb477cdb5c4f",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
