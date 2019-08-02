@@ -1137,6 +1137,30 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     }
     self.assertEqual(merged_dict, expected_merged_dict)
 
+  def test_GetAvbPartitionArg(self):
+    info_dict = {}
+    cmd = common.GetAvbPartitionArg('system', '/path/to/system.img', info_dict)
+    self.assertEqual(
+        ['--include_descriptors_from_image', '/path/to/system.img'], cmd)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_AppendVBMetaArgsForPartition_vendorAsChainedPartition(self):
+    testdata_dir = test_utils.get_testdata_dir()
+    pubkey = os.path.join(testdata_dir, 'testkey.pubkey.pem')
+    info_dict = {
+        'avb_avbtool': 'avbtool',
+        'avb_vendor_key_path': pubkey,
+        'avb_vendor_rollback_index_location': 5,
+    }
+    cmd = common.GetAvbPartitionArg('vendor', '/path/to/vendor.img', info_dict)
+    self.assertEqual(2, len(cmd))
+    self.assertEqual('--chain_partition', cmd[0])
+    chained_partition_args = cmd[1].split(':')
+    self.assertEqual(3, len(chained_partition_args))
+    self.assertEqual('vendor', chained_partition_args[0])
+    self.assertEqual('5', chained_partition_args[1])
+    self.assertTrue(os.path.exists(chained_partition_args[2]))
+
 
 class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):
   """Checks the format of install-recovery.sh.
