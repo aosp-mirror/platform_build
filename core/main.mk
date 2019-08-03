@@ -431,43 +431,6 @@ endef
 subdir_makefiles_inc := .
 FULL_BUILD :=
 
-ifneq ($(ONE_SHOT_MAKEFILE),)
-# We've probably been invoked by the "mm" shell function
-# with a subdirectory's makefile.
-include $(SOONG_ANDROID_MK) $(wildcard $(ONE_SHOT_MAKEFILE))
-# Change CUSTOM_MODULES to include only modules that were
-# defined by this makefile; this will install all of those
-# modules as a side-effect.  Do this after including ONE_SHOT_MAKEFILE
-# so that the modules will be installed in the same place they
-# would have been with a normal make.
-CUSTOM_MODULES := $(sort $(call get-tagged-modules,$(ALL_MODULE_TAGS)))
-
-# A helper goal printing out install paths
-define register_module_install_path
-.PHONY: GET-MODULE-INSTALL-PATH-$(1)
-GET-MODULE-INSTALL-PATH-$(1):
-	echo 'INSTALL-PATH: $(1) $(ALL_MODULES.$(1).INSTALLED)'
-endef
-
-SORTED_ALL_MODULES := $(sort $(ALL_MODULES))
-UNIQUE_ALL_MODULES :=
-$(foreach m,$(SORTED_ALL_MODULES),\
-    $(if $(call streq,$(m),$(lastword $(UNIQUE_ALL_MODULES))),,\
-        $(eval UNIQUE_ALL_MODULES += $(m))))
-SORTED_ALL_MODULES :=
-
-$(foreach mod,$(UNIQUE_ALL_MODULES),$(if $(ALL_MODULES.$(mod).INSTALLED),\
-    $(eval $(call register_module_install_path,$(mod)))\
-    $(foreach path,$(ALL_MODULES.$(mod).PATH),\
-        $(eval my_path_prefix := GET-INSTALL-PATH-IN)\
-        $(foreach component,$(subst /,$(space),$(path)),\
-            $(eval my_path_prefix := $$(my_path_prefix)-$$(component))\
-            $(eval .PHONY: $$(my_path_prefix))\
-            $(eval $$(my_path_prefix): GET-MODULE-INSTALL-PATH-$(mod))))))
-UNIQUE_ALL_MODULES :=
-
-else # ONE_SHOT_MAKEFILE
-
 ifneq ($(dont_bother),true)
 FULL_BUILD := true
 #
@@ -488,8 +451,6 @@ endif # PDK_FUSION_PLATFORM_ZIP || PDK_FUSION_PLATFORM_DIR
 droid_targets : blueprint_tools
 
 endif # dont_bother
-
-endif # ONE_SHOT_MAKEFILE
 
 ifndef subdir_makefiles_total
 subdir_makefiles_total := $(words init post finish)
@@ -716,7 +677,7 @@ $(foreach m,$(ALL_MODULES), \
     $(eval req_files := )\
     $(foreach req_mod,$(req_mods), \
       $(eval req_file := $(filter $(TARGET_OUT_ROOT)/%, $(call module-installed-files,$(req_mod)))) \
-      $(if $(strip $(req_file))$(ONE_SHOT_MAKEFILE),\
+      $(if $(strip $(req_file)),\
         ,\
         $(error $(m).LOCAL_TARGET_REQUIRED_MODULES : illegal value $(req_mod) : not a device module. If you want to specify host modules to be required to be installed along with your host module, add those module names to LOCAL_REQUIRED_MODULES instead)\
       )\
@@ -742,7 +703,7 @@ $(foreach m,$(ALL_MODULES), \
     $(eval req_files := )\
     $(foreach req_mod,$(req_mods), \
       $(eval req_file := $(filter $(HOST_OUT)/%, $(call module-installed-files,$(req_mod)))) \
-      $(if $(strip $(req_file))$(ONE_SHOT_MAKEFILE),\
+      $(if $(strip $(req_file)),\
         ,\
         $(error $(m).LOCAL_HOST_REQUIRED_MODULES : illegal value $(req_mod) : not a host module. If you want to specify target modules to be required to be installed along with your target module, add those module names to LOCAL_REQUIRED_MODULES instead)\
       )\
@@ -1010,45 +971,6 @@ $(foreach lt,$(ALL_LINK_TYPES),\
 ifdef link_type_error
   $(error exiting from previous errors)
 endif
-
-# The intermediate filename for link type rules
-#
-# APPS are special -- they have up to three different rules:
-#  1. The COMMON rule for Java libraries
-#  2. The jni_link_type rule for embedded native code
-#  3. The 2ND_jni_link_type for the second architecture native code
-define link-type-file
-$(eval _ltf_aux_variant:=$(link-type-aux-variant))\
-$(if $(_ltf_aux_variant),$(call aux-variant-load-env,$(_ltf_aux_variant)))\
-$(call intermediates-dir-for,$(link-type-class),$(link-type-name),$(filter AUX HOST HOST_CROSS,$(link-type-prefix)),$(link-type-common),$(link-type-2ndarchprefix),$(filter HOST_CROSS,$(link-type-prefix)))/$(if $(filter APPS,$(link-type-class)),$(if $(link-type-common),,$(link-type-2ndarchprefix)jni_))link_type\
-$(if $(_ltf_aux_variant),$(call aux-variant-load-env,none))\
-$(eval _ltf_aux_variant:=)
-endef
-
-# Write out the file-based link_type rules for the ALLOW_MISSING_DEPENDENCIES
-# case. We always need to write the file for mm to work, but only need to
-# check it if we weren't able to check it when reading the Android.mk files.
-define link-type-file-rule
-my_link_type_deps := $(foreach l,$($(1).DEPS),$(call link-type-file,$(l)))
-my_link_type_file := $(call link-type-file,$(1))
-$($(1).BUILT): | $$(my_link_type_file)
-$$(my_link_type_file): PRIVATE_DEPS := $$(my_link_type_deps)
-ifeq ($($(1).MISSING),true)
-$$(my_link_type_file): $(CHECK_LINK_TYPE)
-endif
-$$(my_link_type_file): $$(my_link_type_deps)
-	@echo Check module type: $$@
-	$$(hide) mkdir -p $$(dir $$@) && rm -f $$@
-ifeq ($($(1).MISSING),true)
-	$$(hide) $(CHECK_LINK_TYPE) --makefile $($(1).MAKEFILE) --module $(link-type-name) \
-	  --type "$($(1).TYPE)" $(addprefix --allowed ,$($(1).ALLOWED)) \
-	  $(addprefix --warn ,$($(1).WARN)) $$(PRIVATE_DEPS)
-endif
-	$$(hide) echo "$($(1).TYPE)" >$$@
-endef
-
-$(foreach lt,$(ALL_LINK_TYPES),\
-  $(eval $(call link-type-file-rule,$(lt))))
 
 # -------------------------------------------------------------------
 # Figure out our module sets.

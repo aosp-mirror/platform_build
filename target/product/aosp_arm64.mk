@@ -40,7 +40,6 @@ PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 endif
 
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-    root/init.zygote32_64.rc \
     root/init.zygote64_32.rc \
 
 #
@@ -60,14 +59,6 @@ $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_arm64/device.mk)
 #
 ifeq (aosp_arm64,$(TARGET_PRODUCT))
 $(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
-
-# Copy different zygote settings for vendor.img to select by setting property
-# ro.zygote=zygote64_32 or ro.zygote=zygote32_64:
-#   1. 64-bit primary, 32-bit secondary OR
-#   2. 32-bit primary, 64-bit secondary
-# init.zygote64_32.rc is in the core_64_bit.mk below
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc
 endif
 
 
