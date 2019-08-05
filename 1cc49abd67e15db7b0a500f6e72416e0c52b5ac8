@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "285e0bc0_3c8e195a",
+        "filename": "tools/releasetools/merge_builds.py",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-05T15:47:19Z",
+      "side": 1,
+      "message": "merged_dict[key] \u003d framework_dict.get(key)",
+      "range": {
+        "startLine": 120,
+        "startChar": 6,
+        "endLine": 123,
+        "endChar": 31
+      },
+      "revId": "1cc49abd67e15db7b0a500f6e72416e0c52b5ac8",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
