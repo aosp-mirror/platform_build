@@ -75,18 +75,9 @@ else  # my_strip_module not true
   built_module := $(LOCAL_BUILT_MODULE)
 
 ifdef prebuilt_module_is_a_library
-export_includes := $(intermediates)/export_includes
-export_cflags := $(foreach d,$(LOCAL_EXPORT_C_INCLUDE_DIRS),-I $(d))
-$(export_includes): PRIVATE_EXPORT_CFLAGS := $(export_cflags)
-$(export_includes): $(LOCAL_EXPORT_C_INCLUDE_DEPS)
-	@echo Export includes file: $< -- $@
-	$(hide) mkdir -p $(dir $@) && rm -f $@
-ifdef export_cflags
-	$(hide) echo "$(PRIVATE_EXPORT_CFLAGS)" >$@
-else
-	$(hide) touch $@
-endif
-export_cflags :=
+EXPORTS_LIST := $(EXPORTS_LIST) $(intermediates)
+EXPORTS.$(intermediates).FLAGS := $(foreach d,$(LOCAL_EXPORT_C_INCLUDE_DIRS),-I $(d))
+EXPORTS.$(intermediates).DEPS := $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 
 include $(BUILD_SYSTEM)/allowed_ndk_types.mk
 

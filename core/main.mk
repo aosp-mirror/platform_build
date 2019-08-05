@@ -973,6 +973,27 @@ ifdef link_type_error
 endif
 
 # -------------------------------------------------------------------
+# Handle exported/imported includes
+
+# Recursively calculate flags
+$(foreach export,$(EXPORTS_LIST), \
+  $(eval EXPORTS.$$(export) = $$(EXPORTS.$(export).FLAGS) \
+    $(foreach dep,$(EXPORTS.$(export).REEXPORT),$$(EXPORTS.$(dep)))))
+
+# Recursively calculate dependencies
+$(foreach export,$(EXPORTS_LIST), \
+  $(eval EXPORT_DEPS.$$(export) = $$(EXPORTS.$(export).DEPS) \
+    $(foreach dep,$(EXPORTS.$(export).REEXPORT),$$(EXPORT_DEPS.$(dep)))))
+
+# Converts the recursive variables to simple variables so that we don't have to
+# evaluate them for every .o rule
+$(foreach export,$(EXPORTS_LIST),$(eval EXPORTS.$$(export) := $$(strip $$(EXPORTS.$$(export)))))
+$(foreach export,$(EXPORTS_LIST),$(eval EXPORT_DEPS.$$(export) := $$(sort $$(EXPORT_DEPS.$$(export)))))
+
+# Add dependencies
+$(foreach export,$(EXPORTS_LIST),$(eval $(call add-dependency,$$(EXPORTS.$$(export).USERS),$$(EXPORT_DEPS.$$(export)))))
+
+# -------------------------------------------------------------------
 # Figure out our module sets.
 #
 # Of the modules defined by the component makefiles,
