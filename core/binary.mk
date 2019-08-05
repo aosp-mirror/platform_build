@@ -1174,31 +1174,6 @@ endif
 
 
 ####################################################
-## Import includes
-####################################################
-import_includes := $(intermediates)/import_includes
-import_includes_deps := $(strip \
-    $(if $(LOCAL_USE_VNDK),\
-      $(call intermediates-dir-for,HEADER_LIBRARIES,device_kernel_headers,$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes) \
-    $(foreach l, $(installed_shared_library_module_names), \
-      $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes) \
-    $(foreach l, $(my_static_libraries) $(my_whole_static_libraries), \
-      $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes) \
-    $(foreach l, $(my_header_libraries), \
-      $(call intermediates-dir-for,HEADER_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
-$(import_includes): PRIVATE_IMPORT_EXPORT_INCLUDES := $(import_includes_deps)
-$(import_includes) : $(import_includes_deps)
-	@echo Import includes file: $@
-	$(hide) mkdir -p $(dir $@) && rm -f $@
-ifdef import_includes_deps
-	$(hide) for f in $(PRIVATE_IMPORT_EXPORT_INCLUDES); do \
-	  cat $$f >> $@; \
-	done
-else
-	$(hide) touch $@
-endif
-
-####################################################
 ## Verify that NDK-built libraries only link against
 ## other NDK-built libraries
 ####################################################
@@ -1309,7 +1284,6 @@ endif
 # that custom build rules which generate .o files don't consume other generated
 # sources as input (or if they do they take care of that dependency themselves).
 $(normal_objects) : | $(my_generated_sources)
-$(all_objects) : $(import_includes)
 ALL_C_CPP_ETC_OBJECTS += $(all_objects)
 
 
@@ -1678,6 +1652,22 @@ ifeq ($(NATIVE_COVERAGE),true)
     $(LOCAL_INTERMEDIATE_TARGETS): $(my_coverage_lib)
 endif
 
+####################################################
+## Import includes
+####################################################
+imported_includes := $(strip \
+    $(if $(LOCAL_USE_VNDK),\
+      $(call intermediates-dir-for,HEADER_LIBRARIES,device_kernel_headers,$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))) \
+    $(foreach l, $(installed_shared_library_module_names), \
+      $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))) \
+    $(foreach l, $(my_static_libraries) $(my_whole_static_libraries), \
+      $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))) \
+    $(foreach l, $(my_header_libraries), \
+      $(call intermediates-dir-for,HEADER_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))))
+
+$(foreach dep,$(imported_includes),\
+  $(eval EXPORTS.$$(dep).USERS := $$(EXPORTS.$$(dep).USERS) $$(all_objects)))
+
 ###########################################################
 ## Define PRIVATE_ variables used by multiple module types
 ###########################################################
@@ -1730,7 +1720,7 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CPPFLAGS_NO_OVERRIDE := $(my_cppflags_no_
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_RTTI_FLAG := $(LOCAL_RTTI_FLAG)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_DEBUG_CFLAGS := $(debug_cflags)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_C_INCLUDES := $(my_c_includes)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_IMPORT_INCLUDES := $(import_includes)
+$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_IMPORTED_INCLUDES := $(imported_includes)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LDFLAGS := $(my_ldflags)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_LDLIBS := $(my_ldlibs)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_TIDY_CHECKS := $(my_tidy_checks)
@@ -1757,51 +1747,30 @@ all_libraries := \
 ###########################################################
 # Export includes
 ###########################################################
-export_includes := $(intermediates)/export_includes
-export_cflags := $(foreach d,$(my_export_c_include_dirs),-I $(d))
-$(export_includes): PRIVATE_EXPORT_CFLAGS := $(export_cflags)
+
 # Headers exported by whole static libraries are also exported by this library.
 export_include_deps := $(strip \
    $(foreach l,$(my_whole_static_libraries), \
-     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
+     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))))
 # Re-export requested headers from shared libraries.
 export_include_deps += $(strip \
    $(foreach l,$(LOCAL_EXPORT_SHARED_LIBRARY_HEADERS), \
-     $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
+     $(call intermediates-dir-for,SHARED_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))))
 # Re-export requested headers from static libraries.
 export_include_deps += $(strip \
    $(foreach l,$(LOCAL_EXPORT_STATIC_LIBRARY_HEADERS), \
-     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
+     $(call intermediates-dir-for,STATIC_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))))
 # Re-export requested headers from header libraries.
 export_include_deps += $(strip \
    $(foreach l,$(LOCAL_EXPORT_HEADER_LIBRARY_HEADERS), \
-     $(call intermediates-dir-for,HEADER_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))/export_includes))
-$(export_includes): PRIVATE_REEXPORTED_INCLUDES := $(export_include_deps)
-# By adding $(my_generated_sources) it makes sure the headers get generated
-# before any dependent source files get compiled.
-$(export_includes) : $(my_export_c_include_deps) $(my_generated_sources) $(export_include_deps) $(LOCAL_EXPORT_C_INCLUDE_DEPS)
-	@echo Export includes file: $< -- $@
-	$(hide) mkdir -p $(dir $@) && rm -f $@.tmp && touch $@.tmp
-ifdef export_cflags
-	$(hide) echo "$(PRIVATE_EXPORT_CFLAGS)" >>$@.tmp
-endif
-ifdef export_include_deps
-	$(hide) for f in $(PRIVATE_REEXPORTED_INCLUDES); do \
-		cat $$f >> $@.tmp; \
-		done
-endif
-	$(hide) if cmp -s $@.tmp $@ ; then \
-	  rm $@.tmp ; \
-	else \
-	  mv $@.tmp $@ ; \
-	fi
-export_cflags :=
+     $(call intermediates-dir-for,HEADER_LIBRARIES,$(l),$(my_kind),,$(LOCAL_2ND_ARCH_VAR_PREFIX),$(my_host_cross))))
 
-# Kati adds restat=1 to ninja. GNU make does nothing for this.
-.KATI_RESTAT: $(export_includes)
-
-# Make sure export_includes gets generated when you are running mm/mmm
-$(LOCAL_BUILT_MODULE) : | $(export_includes)
+ifneq ($(strip $(my_export_c_include_dirs)$(export_include_deps)),)
+  EXPORTS_LIST := $(EXPORTS_LIST) $(intermediates)
+  EXPORTS.$(intermediates).FLAGS := $(foreach d,$(my_export_c_include_dirs),-I $(d))
+  EXPORTS.$(intermediates).REEXPORT := $(export_include_deps)
+  EXPORTS.$(intermediates).DEPS := $(my_export_c_include_deps) $(my_generated_sources) $(LOCAL_EXPORT_C_INCLUDE_DEPS)
+endif
 
 ifneq (,$(filter-out $(LOCAL_PATH)/%,$(my_export_c_include_dirs)))
 my_soong_problems += non_local__export_c_include_dirs

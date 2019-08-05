@@ -1107,7 +1107,7 @@ endef
 ###########################################################
 define c-includes
 $(addprefix -I , $(PRIVATE_C_INCLUDES)) \
-$$(cat $(PRIVATE_IMPORT_INCLUDES))\
+$(foreach i,$(PRIVATE_IMPORTED_INCLUDES),$(EXPORTS.$(i)))\
 $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),,\
     $(addprefix -I ,\
         $(filter-out $(PRIVATE_C_INCLUDES), \

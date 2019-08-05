@@ -65,16 +65,9 @@ include $(BUILD_SYSTEM)/base_rules.mk
 
 ifneq ($(filter STATIC_LIBRARIES SHARED_LIBRARIES HEADER_LIBRARIES,$(LOCAL_MODULE_CLASS)),)
   # Soong module is a static or shared library
-  export_includes := $(intermediates)/export_includes
-  $(export_includes): PRIVATE_EXPORT_CFLAGS := $(LOCAL_EXPORT_CFLAGS)
-  $(export_includes): $(LOCAL_EXPORT_C_INCLUDE_DEPS)
-	@echo Export includes file: $< -- $@
-	$(hide) mkdir -p $(dir $@) && rm -f $@
-  ifdef LOCAL_EXPORT_CFLAGS
-	$(hide) echo "$(PRIVATE_EXPORT_CFLAGS)" >$@
-  else
-	$(hide) touch $@
-  endif
+  EXPORTS_LIST := $(EXPORTS_LIST) $(intermediates)
+  EXPORTS.$(intermediates).FLAGS := $(LOCAL_EXPORT_CFLAGS)
+  EXPORTS.$(intermediates).DEPS := $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 
   ifdef LOCAL_SOONG_TOC
     $(eval $(call copy-one-file,$(LOCAL_SOONG_TOC),$(LOCAL_BUILT_MODULE).toc))
