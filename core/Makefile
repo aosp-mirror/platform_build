@@ -4697,6 +4697,7 @@ endif # BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE
 
 .PHONY: updatepackage
 updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
+$(call dist-for-goals,updatepackage,$(INTERNAL_UPDATE_PACKAGE_TARGET))
 
 
 # -----------------------------------------------------------------
