@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "04b8bc3e_11be64be",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-08-05T15:56:24Z",
+      "side": 1,
+      "message": "How about instead of pattern matching against the path you separate out the setting into VENDOR_PYTHONPATH, and then add it to ANDROID_PYTHONPATH for clearing.  Then the only change to this function would be:\n\nif [ -n $VENDOR_PYTHONPATH ]; then\n    ANDROID_PYTHONPATH\u003d$ANDROID_PYTHONPATH$VENDOR_PYTHON_PATH:\nfi",
+      "revId": "b48035d98902fa3d6a29a3060245637027ae3646",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "358532fa_ead59ed2",
+        "filename": "envsetup.sh",
+        "patchSetId": 2
+      },
+      "lineNbr": 1564,
+      "author": {
+        "id": 1002751
+      },
+      "writtenOn": "2019-08-05T15:56:24Z",
+      "side": 1,
+      "message": "Add here:\n\n    unset VENDOR_PYTHONPATH",
+      "revId": "b48035d98902fa3d6a29a3060245637027ae3646",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
