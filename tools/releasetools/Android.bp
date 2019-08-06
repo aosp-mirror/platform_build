@@ -119,6 +119,22 @@ python_binary_host {
     ],
 }
 
+python_binary_host {
+    name: "ota_from_target_files",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "edify_generator.py",
+        "ota_from_target_files.py",
+    ],
+    libs: [
+        "releasetools_common",
+        "releasetools_verity_utils",
+    ],
+    required: [
+        "brillo_update_payload",
+    ],
+}
+
 python_defaults {
     name: "releasetools_test_defaults",
     srcs: [
