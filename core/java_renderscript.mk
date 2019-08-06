@@ -139,6 +139,7 @@ $(rs_compatibility_jni_libs): $(RS_PREBUILT_CLCORE) \
     $(rs_support_lib) $(rs_support_io_lib) $(rs_jni_lib) $(rs_compiler_rt)
 $(rs_compatibility_jni_libs): $(BCC_COMPAT)
 $(rs_compatibility_jni_libs): PRIVATE_CXX := $(CXX_WRAPPER) $(CLANG_CXX)
+$(rs_compatibility_jni_libs): PRIVATE_CXX_LINK := $(CLANG_CXX)
 $(rs_compatibility_jni_libs): PRIVATE_SDK_VERSION := $(my_min_sdk_version)
 $(rs_compatibility_jni_libs): $(renderscript_intermediate)/librs.%.so: \
     $(renderscript_intermediate.bc_folder)%.bc \
