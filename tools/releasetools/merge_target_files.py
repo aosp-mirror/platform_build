@@ -94,7 +94,6 @@ import ota_from_target_files
 logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
-OPTIONS.verbose = True
 OPTIONS.framework_target_files = None
 OPTIONS.framework_item_list = None
 OPTIONS.framework_misc_info_keys = None
@@ -1056,6 +1055,9 @@ def main():
       (OPTIONS.output_dir is not None and OPTIONS.output_item_list is None)):
     common.Usage(__doc__)
     sys.exit(1)
+
+  # Always turn on verbose logging.
+  OPTIONS.verbose = True
 
   if OPTIONS.framework_item_list:
     framework_item_list = common.LoadListFromFile(OPTIONS.framework_item_list)
