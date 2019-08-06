@@ -127,6 +127,24 @@
     },
     {
       "key": {
+        "uuid": "b4aa9922_6f5c7bb2",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2019-08-06T02:21:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c3c0a772_9c4a4b6d",
+      "revId": "ad5fe1a579284da3b4f2a9fc3bd5422c4549a7c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "96f48f4b_6d4f6f01",
         "filename": "core/tasks/vts-core-tests.mk",
         "patchSetId": 1
@@ -141,6 +159,24 @@
       "revId": "ad5fe1a579284da3b4f2a9fc3bd5422c4549a7c1",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "efd6293f_f0c7153a",
+        "filename": "core/tasks/vts-core-tests.mk",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1307893
+      },
+      "writtenOn": "2019-08-06T02:21:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "96f48f4b_6d4f6f01",
+      "revId": "ad5fe1a579284da3b4f2a9fc3bd5422c4549a7c1",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
