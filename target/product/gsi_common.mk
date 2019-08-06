@@ -76,7 +76,7 @@ PRODUCT_COPY_FILES += \
     build/make/target/product/gsi/init.gsi.rc:system/etc/init/init.gsi.rc \
 
 # Support addtional P vendor interface
-PRODUCT_EXTRA_VNDK_VERSIONS := 28
+PRODUCT_EXTRA_VNDK_VERSIONS := 28 29
 
 # More AOSP packages
 PRODUCT_PACKAGES += \
