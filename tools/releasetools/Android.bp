@@ -25,6 +25,14 @@ python_defaults {
 }
 
 python_library_host {
+    name: "releasetools_build_super_image",
+    defaults: ["releasetools_library_defaults"],
+    srcs: [
+        "build_super_image.py",
+    ],
+}
+
+python_library_host {
     name: "releasetools_common",
     defaults: ["releasetools_library_defaults"],
     srcs: [
@@ -110,11 +118,11 @@ python_binary_host {
     name: "merge_builds",
     defaults: ["releasetools_binary_defaults"],
     srcs: [
-        "build_super_image.py",
         "merge_builds.py",
     ],
     main: "merge_builds.py",
     libs: [
+        "releasetools_build_super_image",
         "releasetools_common",
     ],
 }
@@ -141,7 +149,6 @@ python_defaults {
         "add_img_to_target_files.py",
         "apex_utils.py",
         "build_image.py",
-        "build_super_image.py",
         "check_ota_package_signature.py",
         "check_target_files_signatures.py",
         "edify_generator.py",
@@ -158,6 +165,7 @@ python_defaults {
         "test_*.py",
     ],
     libs: [
+        "releasetools_build_super_image",
         "releasetools_common",
         "releasetools_verity_utils",
     ],
