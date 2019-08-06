@@ -22,6 +22,30 @@
       "revId": "2aac9c9d6d8d99c0879de021f382196a5003b12a",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dbd45efd_5471dd11",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-06T18:00:01Z",
+      "side": 1,
+      "message": "did you use zip2zip (note this CL doesn\u0027t contain that change yet). zip2zip avoids the cost to do _zipping_, so the save would be more than the unzipping.",
+      "parentUuid": "af524ea9_0810345e",
+      "range": {
+        "startLine": 12,
+        "startChar": 13,
+        "endLine": 12,
+        "endChar": 22
+      },
+      "revId": "2aac9c9d6d8d99c0879de021f382196a5003b12a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
