@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af524ea9_0810345e",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-08-06T17:55:10Z",
+      "side": 1,
+      "message": "In my test it\u0027s 1m20s vs 1m; the 20s difference is the time to perform the unzip...",
+      "range": {
+        "startLine": 12,
+        "startChar": 13,
+        "endLine": 12,
+        "endChar": 22
+      },
+      "revId": "2aac9c9d6d8d99c0879de021f382196a5003b12a",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
