@@ -3659,6 +3659,7 @@ INTERNAL_OTATOOLS_MODULES := \
   mksquashfs \
   mksquashfsimage.sh \
   mkuserimg_mke2fs \
+  ota_from_target_files \
   sefcontext_compile \
   sgdisk \
   shflags \
@@ -4323,13 +4324,13 @@ ifeq ($(build_ota_package),true)
 # $(2): additional args
 define build-ota-package-target
 PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH \
-    build/make/tools/releasetools/ota_from_target_files \
-    --verbose \
-    --extracted_input_target_files $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE)) \
-    --path $(HOST_OUT) \
-    $(if $(OEM_OTA_CONFIG), --oem_settings $(OEM_OTA_CONFIG)) \
-    $(2) \
-    $(BUILT_TARGET_FILES_PACKAGE) $(1)
+    $(OTA_FROM_TARGET_FILES) \
+        --verbose \
+        --extracted_input_target_files $(patsubst %.zip,%,$(BUILT_TARGET_FILES_PACKAGE)) \
+        --path $(HOST_OUT) \
+        $(if $(OEM_OTA_CONFIG), --oem_settings $(OEM_OTA_CONFIG)) \
+        $(2) \
+        $(BUILT_TARGET_FILES_PACKAGE) $(1)
 endef
 
 name := $(TARGET_PRODUCT)
@@ -4339,21 +4340,11 @@ endif
 name := $(name)-ota-$(FILE_NAME_TAG)
 
 INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
-
 INTERNAL_OTA_METADATA := $(PRODUCT_OUT)/ota_metadata
 
 $(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
-
-ifeq ($(AB_OTA_UPDATER),true)
-$(INTERNAL_OTA_PACKAGE_TARGET): $(BRILLO_UPDATE_PAYLOAD)
-else
-$(INTERNAL_OTA_PACKAGE_TARGET): $(BROTLI)
-endif
-
 $(INTERNAL_OTA_PACKAGE_TARGET): .KATI_IMPLICIT_OUTPUTS := $(INTERNAL_OTA_METADATA)
-
-$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
-	    build/make/tools/releasetools/ota_from_target_files
+$(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTA_FROM_TARGET_FILES)
 	@echo "Package OTA: $@"
 	$(call build-ota-package-target,$@,-k $(KEY_CERT_PAIR) --output_metadata_path $(INTERNAL_OTA_METADATA))
 
@@ -4368,17 +4359,10 @@ endif
 name := $(name)-ota-retrofit-$(FILE_NAME_TAG)
 
 INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
-
 $(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
-
-ifeq ($(AB_OTA_UPDATER),true)
-$(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET): $(BRILLO_UPDATE_PAYLOAD)
-else
-$(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET): $(BROTLI)
-endif
-
-$(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) \
-	    build/make/tools/releasetools/ota_from_target_files
+$(INTERNAL_OTA_RETROFIT_DYNAMIC_PARTITIONS_PACKAGE_TARGET): \
+    $(BUILT_TARGET_FILES_PACKAGE) \
+    $(OTA_FROM_TARGET_FILES)
 	@echo "Package OTA (retrofit dynamic partitions): $@"
 	$(call build-ota-package-target,$@,-k $(KEY_CERT_PAIR) --retrofit_dynamic_partitions)
 
@@ -4698,6 +4682,7 @@ endif # BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE
 
 .PHONY: updatepackage
 updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)
+$(call dist-for-goals,updatepackage,$(INTERNAL_UPDATE_PACKAGE_TARGET))
 
 
 # -----------------------------------------------------------------
