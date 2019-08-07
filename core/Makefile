@@ -3435,8 +3435,7 @@ ifeq (true,$(PRODUCT_BUILD_SUPER_PARTITION))
 # (1): list of items like "system", "vendor", "product", "system_ext"
 # return: map each item into a command ( wrapped in $$() ) that reads the size
 define read-size-of-partitions
-$(foreach image,$(call images-for-partitions,$(1)),$$( \
-    build/make/tools/releasetools/sparse_img.py --get_partition_size $(image)))
+$(foreach image,$(call images-for-partitions,$(1)),$$($(SPARSE_IMG) --get_partition_size $(image)))
 endef
 
 # round result to BOARD_SUPER_PARTITION_ALIGNMENT
@@ -3473,7 +3472,7 @@ check-all-partition-sizes: $(check_all_partition_sizes_file)
 
 # Add image dependencies so that generated_*_image_info.txt are written before checking.
 $(check_all_partition_sizes_file): \
-    build/make/tools/releasetools/sparse_img.py \
+    $(SPARSE_IMG) \
     $(call images-for-partitions,$(BOARD_SUPER_PARTITION_PARTITION_LIST))
 
 ifeq ($(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS),true)
@@ -4019,9 +4018,8 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(SOONG_APEX_KEYS_FILE) \
 	    $(SOONG_ZIP) \
 	    $(HOST_OUT_EXECUTABLES)/fs_config \
-	    $(HOST_OUT_EXECUTABLES)/imgdiff \
-	    $(HOST_OUT_EXECUTABLES)/bsdiff \
 	    $(HOST_OUT_EXECUTABLES)/care_map_generator \
+	    $(MAKE_RECOVERY_PATCH) \
 	    $(BUILD_IMAGE_SRCS) \
 	    $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST) \
 	    $(BUILT_ASSEMBLED_VENDOR_MANIFEST) \
@@ -4180,7 +4178,7 @@ endif
 ifneq ($(INSTALLED_RECOVERYIMAGE_TARGET),)
 ifdef BUILDING_SYSTEM_IMAGE
 	$(hide) PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH MKBOOTIMG=$(MKBOOTIMG) \
-	    build/make/tools/releasetools/make_recovery_patch $(zip_root) $(zip_root)
+	    $(MAKE_RECOVERY_PATCH) $(zip_root) $(zip_root)
 endif # BUILDING_SYSTEM_IMAGE
 endif
 ifeq ($(AB_OTA_UPDATER),true)
