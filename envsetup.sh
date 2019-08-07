@@ -285,6 +285,9 @@ function setpaths()
     fi
     # and in with the new
     export ANDROID_PYTHONPATH=$T/development/python-packages:
+    if [ -n $VENDOR_PYTHONPATH  ]; then
+        ANDROID_PYTHONPATH=$ANDROID_PYTHONPATH$VENDOR_PYTHONPATH
+    fi
     export PYTHONPATH=$ANDROID_PYTHONPATH$PYTHONPATH
 
     export ANDROID_JAVA_HOME=$(get_abs_build_var ANDROID_JAVA_HOME)
@@ -1552,6 +1555,7 @@ function validate_current_shell() {
 #
 # This allows loading only approved vendorsetup.sh files
 function source_vendorsetup() {
+    unset VENDOR_PYTHONPATH
     allowed=
     for f in $(find -L device vendor product -maxdepth 4 -name 'allowed-vendorsetup_sh-files' 2>/dev/null | sort); do
         if [ -n "$allowed" ]; then
