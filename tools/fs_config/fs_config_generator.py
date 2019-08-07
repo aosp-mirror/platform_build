@@ -1037,7 +1037,7 @@ class FSConfigGen(BaseGenerator):
             caps_split = caps.split(',')
             for cap in caps_split:
                 if cap not in caps_dict:
-                    sys.exit('Unkonwn cap "%s" found!' % cap)
+                    sys.exit('Unknown cap "%s" found!' % cap)
                 caps_value += 1 << caps_dict[cap]
 
         path_length_with_null = len(path) + 1
