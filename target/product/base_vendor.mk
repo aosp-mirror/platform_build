@@ -36,7 +36,7 @@ PRODUCT_HOST_PACKAGES += \
     make_f2fs \
 
 PRODUCT_HOST_PACKAGES += \
-    icu-data_host_runtime_apex
+    icu-data_host_i18n_apex
 
 # Base modules and settings for the vendor partition.
 PRODUCT_PACKAGES += \
