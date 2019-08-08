@@ -206,6 +206,14 @@ ifeq (,$(TARGET_CPU_ABI_LIST_64_BIT))
   endif
 endif
 
+# "arm64-v8a-hwasan", the ABI for libraries compiled with HWASAN, is supported
+# in all builds with SANITIZE_TARGET=hwaddress.
+ifneq ($(filter hwaddress,$(SANITIZE_TARGET)),)
+  ifneq ($(filter arm64-v8a,$(TARGET_CPU_ABI_LIST_64_BIT)),)
+    TARGET_CPU_ABI_LIST_64_BIT := arm64-v8a-hwasan $(TARGET_CPU_ABI_LIST_64_BIT)
+  endif
+endif
+
 ifeq (,$(TARGET_CPU_ABI_LIST_32_BIT))
   ifneq (true,$(TARGET_IS_64_BIT))
     TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
