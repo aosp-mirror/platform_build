@@ -74,6 +74,7 @@ ifneq ($(filter custom,$(LOCAL_PROGUARD_ENABLED)),custom)
 endif
 
 LOCAL_PROGUARD_FLAGS := $(addprefix -include ,$(proguard_options_file)) $(LOCAL_PROGUARD_FLAGS)
+LOCAL_PROGUARD_FLAGS_DEPS += $(proguard_options_file)
 
 R_file_stamp := $(intermediates.COMMON)/src/R.stamp
 LOCAL_INTERMEDIATE_TARGETS += $(R_file_stamp)
