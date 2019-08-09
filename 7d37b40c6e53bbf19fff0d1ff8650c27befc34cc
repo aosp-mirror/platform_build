@@ -46,6 +46,30 @@
       "revId": "7d37b40c6e53bbf19fff0d1ff8650c27befc34cc",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "2b8ea657_65bdf69c",
+        "filename": "core/product.mk",
+        "patchSetId": 8
+      },
+      "lineNbr": 375,
+      "author": {
+        "id": 1132673
+      },
+      "writtenOn": "2019-08-09T23:41:43Z",
+      "side": 1,
+      "message": "Yeah, that\u0027s what I meant. I wonder if we need inheritance overriding for these ones. But that should be no harm.",
+      "parentUuid": "4e551a57_07c92fb3",
+      "range": {
+        "startLine": 371,
+        "startChar": 0,
+        "endLine": 375,
+        "endChar": 61
+      },
+      "revId": "7d37b40c6e53bbf19fff0d1ff8650c27befc34cc",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
