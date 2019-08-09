@@ -470,6 +470,8 @@ endif # LOCAL_INSTRUMENTATION_FOR
 proguard_flag_files := $(addprefix $(LOCAL_PATH)/, $(LOCAL_PROGUARD_FLAG_FILES))
 proguard_flag_files += $(addprefix $(LOCAL_PATH)/, $(LOCAL_R8_FLAG_FILES))
 LOCAL_PROGUARD_FLAGS += $(addprefix -include , $(proguard_flag_files))
+LOCAL_PROGUARD_FLAGS_DEPS += $(proguard_flag_files)
+proguard_flag_files :=
 
 ifdef LOCAL_TEST_MODULE_TO_PROGUARD_WITH
 extra_input_jar := $(call intermediates-dir-for,APPS,$(LOCAL_TEST_MODULE_TO_PROGUARD_WITH),,COMMON)/classes.jar
@@ -481,8 +483,6 @@ ifneq ($(filter obfuscation,$(LOCAL_PROGUARD_ENABLED)),)
   $(built_dex_intermediate): .KATI_IMPLICIT_OUTPUTS := $(proguard_dictionary) $(proguard_configuration)
 endif
 
-else  # LOCAL_PROGUARD_ENABLED not defined
-proguard_flag_files :=
 endif # LOCAL_PROGUARD_ENABLED defined
 
 ifneq ($(LOCAL_IS_STATIC_JAVA_LIBRARY),true)
@@ -492,7 +492,7 @@ ifdef LOCAL_PROGUARD_ENABLED
   $(built_dex_intermediate): PRIVATE_EXTRA_INPUT_JAR := $(extra_input_jar)
   $(built_dex_intermediate): PRIVATE_PROGUARD_FLAGS := $(legacy_proguard_flags) $(common_proguard_flags) $(LOCAL_PROGUARD_FLAGS)
   $(built_dex_intermediate): PRIVATE_PROGUARD_DICTIONARY := $(proguard_dictionary)
-  $(built_dex_intermediate) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD)
+  $(built_dex_intermediate) : $(full_classes_pre_proguard_jar) $(extra_input_jar) $(my_proguard_sdk_raise) $(common_proguard_flag_files) $(legacy_proguard_lib_deps) $(R8_COMPAT_PROGUARD) $(LOCAL_PROGUARD_FLAGS_DEPS)
 	$(transform-jar-to-dex-r8)
 else # !LOCAL_PROGUARD_ENABLED
   $(built_dex_intermediate): PRIVATE_D8_LIBS := $(full_java_bootclasspath_libs) $(full_shared_java_header_libs)
