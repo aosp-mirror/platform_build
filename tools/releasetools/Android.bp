@@ -144,7 +144,9 @@ python_binary_host {
     srcs: [
         "edify_generator.py",
         "ota_from_target_files.py",
+        "target_files_diff.py",
     ],
+    main: "ota_from_target_files.py",
     libs: [
         "releasetools_common",
         "releasetools_verity_utils",

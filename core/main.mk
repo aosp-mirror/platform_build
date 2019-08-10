@@ -1,14 +1,3 @@
-# Only use ANDROID_BUILD_SHELL to wrap around bash.
-# DO NOT use other shells such as zsh.
-ifdef ANDROID_BUILD_SHELL
-SHELL := $(ANDROID_BUILD_SHELL)
-else
-# Use bash, not whatever shell somebody has installed as /bin/sh
-# This is repeated in config.mk, since envsetup.sh runs that file
-# directly.
-SHELL := /bin/bash
-endif
-
 ifndef KATI
 $(warning Calling make directly is no longer supported.)
 $(warning Either use 'envsetup.sh; m' or 'build/soong/soong_ui.bash --make-mode')
@@ -21,9 +10,6 @@ $(info [1/1] initializing build system ...)
 # This overrides the shell variable $PWD, which does not necessarily points to
 # the top of the source tree, for example when "make -C" is used in m/mm/mmm.
 PWD := $(shell pwd)
-
-TOP := .
-TOPDIR :=
 
 # This is the default target.  It must be the first declared target.
 .PHONY: droid
