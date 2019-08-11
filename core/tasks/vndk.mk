@@ -47,64 +47,28 @@ vndk_prebuilt_txts := \
 
 vndk_snapshot_top := $(call intermediates-dir-for,PACKAGING,vndk-snapshot)
 vndk_snapshot_out := $(vndk_snapshot_top)/vndk-snapshot
+vndk_snapshot_soong_dir := $(call intermediates-dir-for,PACKAGING,vndk-snapshot-soong)
 vndk_snapshot_configs_out := $(vndk_snapshot_top)/configs
 
 #######################################
 # vndk_snapshot_zip
 vndk_snapshot_variant := $(vndk_snapshot_out)/$(TARGET_ARCH)
-binder :=
-ifneq ($(TARGET_IS_64_BIT), true)
-  ifneq ($(TARGET_USES_64_BIT_BINDER), true)
-    binder := binder32
-  endif
-endif
-vndk_lib_dir := $(subst $(space),/,$(strip $(vndk_snapshot_variant) $(binder) arch-$(TARGET_ARCH)-$(TARGET_ARCH_VARIANT)))
-vndk_lib_dir_2nd := $(subst $(space),/,$(strip $(vndk_snapshot_variant) $(binder) arch-$(TARGET_2ND_ARCH)-$(TARGET_2ND_ARCH_VARIANT)))
 vndk_snapshot_zip := $(PRODUCT_OUT)/android-vndk-$(TARGET_PRODUCT).zip
 
 $(vndk_snapshot_zip): PRIVATE_VNDK_SNAPSHOT_OUT := $(vndk_snapshot_out)
 
-prebuilts := $(SOONG_VNDK_SNAPSHOT_CORE_LIBS)
-$(vndk_snapshot_zip): PRIVATE_VNDK_CORE_OUT := $(vndk_lib_dir)/shared/vndk-core
-$(vndk_snapshot_zip): PRIVATE_VNDK_CORE_SOONG_PREBUILTS := $(prebuilts)
-$(vndk_snapshot_zip): $(prebuilts)
-prebuilts :=
-
-prebuilts := $(SOONG_VNDK_SNAPSHOT_SP_LIBS)
-$(vndk_snapshot_zip): PRIVATE_VNDK_SP_OUT := $(vndk_lib_dir)/shared/vndk-sp
-$(vndk_snapshot_zip): PRIVATE_VNDK_SP_SOONG_PREBUILTS := $(prebuilts)
-$(vndk_snapshot_zip): $(prebuilts)
-prebuilts :=
-
 deps := $(call paths-of-intermediates,$(foreach txt,$(vndk_prebuilt_txts), \
           $(txt):$(patsubst %.txt,%.$(PLATFORM_VNDK_VERSION).txt,$(txt))))
-prebuilts := $(SOONG_VNDK_SNAPSHOT_CONFIGS)
 $(vndk_snapshot_zip): PRIVATE_CONFIGS_OUT := $(vndk_snapshot_variant)/configs
 $(vndk_snapshot_zip): PRIVATE_CONFIGS_INTERMEDIATES := $(deps)
-$(vndk_snapshot_zip): PRIVATE_CONFIGS_SOONG_PREBUILTS := $(prebuilts)
-$(vndk_snapshot_zip): $(foreach d,$(deps),$(call word-colon,1,$(d))) $(prebuilts)
+$(vndk_snapshot_zip): $(foreach d,$(deps),$(call word-colon,1,$(d)))
 deps :=
-prebuilts :=
 
-prebuilts := $(SOONG_VNDK_SNAPSHOT_NOTICES)
-$(vndk_snapshot_zip): PRIVATE_NOTICE_FILES_OUT := $(vndk_snapshot_variant)/NOTICE_FILES
-$(vndk_snapshot_zip): PRIVATE_NOTICE_FILES_SOONG_PREBUILTS := $(prebuilts)
-$(vndk_snapshot_zip): $(prebuilts)
-prebuilts :=
+vndk_snapshot_soong_files := $(call copy-many-files, $(SOONG_VNDK_SNAPSHOT_FILES), $(vndk_snapshot_soong_dir))
 
-ifdef TARGET_2ND_ARCH
-prebuilts := $(SOONG_VNDK_SNAPSHOT_CORE_LIBS_2ND)
-$(vndk_snapshot_zip): PRIVATE_VNDK_CORE_OUT_2ND := $(vndk_lib_dir_2nd)/shared/vndk-core
-$(vndk_snapshot_zip): PRIVATE_VNDK_CORE_SOONG_PREBUILTS_2ND := $(prebuilts)
-$(vndk_snapshot_zip): $(prebuilts)
-prebuilts :=
-
-prebuilts := $(SOONG_VNDK_SNAPSHOT_SP_LIBS_2ND)
-$(vndk_snapshot_zip): PRIVATE_VNDK_SP_OUT_2ND := $(vndk_lib_dir_2nd)/shared/vndk-sp
-$(vndk_snapshot_zip): PRIVATE_VNDK_SP_SOONG_PREBUILTS_2ND := $(prebuilts)
-$(vndk_snapshot_zip): $(prebuilts)
-prebuilts :=
-endif
+$(vndk_snapshot_zip): PRIVATE_VNDK_SNAPSHOT_SOONG_DIR := $(vndk_snapshot_soong_dir)
+$(vndk_snapshot_zip): PRIVATE_VNDK_SNAPSHOT_SOONG_FILES := $(sort $(vndk_snapshot_soong_files))
+$(vndk_snapshot_zip): $(vndk_snapshot_soong_files)
 
 # Args
 #   $(1): destination directory
@@ -118,16 +82,6 @@ $(vndk_snapshot_zip): private-copy-intermediates = \
     true \
   ))
 
-# Args
-#   $(1): destination directory
-#   $(2): list of prebuilts to copy
-$(vndk_snapshot_zip): private-copy-prebuilts = \
-  $(if $(2),$(strip \
-    @mkdir -p $(1) && \
-    $(foreach file, $(2), cp $(file) $(1) && ) \
-    true \
-  ))
-
 $(vndk_snapshot_zip): $(SOONG_ZIP)
 	@echo 'Generating VNDK snapshot: $@'
 	@rm -f $@
@@ -135,21 +89,8 @@ $(vndk_snapshot_zip): $(SOONG_ZIP)
 	@mkdir -p $(PRIVATE_VNDK_SNAPSHOT_OUT)
 	$(call private-copy-intermediates, \
 		$(PRIVATE_CONFIGS_OUT),$(PRIVATE_CONFIGS_INTERMEDIATES))
-	$(call private-copy-prebuilts, \
-		$(PRIVATE_VNDK_CORE_OUT),$(PRIVATE_VNDK_CORE_SOONG_PREBUILTS))
-	$(call private-copy-prebuilts, \
-		$(PRIVATE_VNDK_SP_OUT),$(PRIVATE_VNDK_SP_SOONG_PREBUILTS))
-	$(call private-copy-prebuilts, \
-		$(PRIVATE_CONFIGS_OUT),$(PRIVATE_CONFIGS_SOONG_PREBUILTS))
-	$(call private-copy-prebuilts, \
-		$(PRIVATE_NOTICE_FILES_OUT),$(PRIVATE_NOTICE_FILES_SOONG_PREBUILTS))
-ifdef TARGET_2ND_ARCH
-	$(call private-copy-prebuilts, \
-		$(PRIVATE_VNDK_CORE_OUT_2ND),$(PRIVATE_VNDK_CORE_SOONG_PREBUILTS_2ND))
-	$(call private-copy-prebuilts, \
-		$(PRIVATE_VNDK_SP_OUT_2ND),$(PRIVATE_VNDK_SP_SOONG_PREBUILTS_2ND))
-endif
-	$(hide) $(SOONG_ZIP) -o $@ -C $(PRIVATE_VNDK_SNAPSHOT_OUT) -D $(PRIVATE_VNDK_SNAPSHOT_OUT)
+	$(hide) $(SOONG_ZIP) -o $@ -C $(PRIVATE_VNDK_SNAPSHOT_OUT) -D $(PRIVATE_VNDK_SNAPSHOT_OUT) \
+		-C $(PRIVATE_VNDK_SNAPSHOT_SOONG_DIR) $(foreach f,$(PRIVATE_VNDK_SNAPSHOT_SOONG_FILES),-f $(f))
 
 .PHONY: vndk
 vndk: $(vndk_snapshot_zip)
@@ -162,11 +103,10 @@ paths-of-intermediates :=
 vndk_prebuilt_txts :=
 vndk_snapshot_top :=
 vndk_snapshot_out :=
+vndk_snapshot_soong_dir :=
+vndk_snapshot_soong_files :=
 vndk_snapshot_configs_out :=
 vndk_snapshot_variant :=
-binder :=
-vndk_lib_dir :=
-vndk_lib_dir_2nd :=
 
 else # BOARD_VNDK_RUNTIME_DISABLE is set to 'true'
 error_msg := "CANNOT generate VNDK snapshot. BOARD_VNDK_RUNTIME_DISABLE must not be set to 'true'."
