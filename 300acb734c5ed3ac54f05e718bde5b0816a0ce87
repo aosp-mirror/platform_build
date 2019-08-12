@@ -16,6 +16,24 @@
       "revId": "300acb734c5ed3ac54f05e718bde5b0816a0ce87",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "cef74d0d_ff64ae48",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1705,
+      "author": {
+        "id": 1465028
+      },
+      "writtenOn": "2019-08-12T17:07:10Z",
+      "side": 1,
+      "message": "I changed it to behave like my_cxx and use LOCAL_CXX if provided.",
+      "parentUuid": "5f50bf06_f4133589",
+      "revId": "300acb734c5ed3ac54f05e718bde5b0816a0ce87",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
