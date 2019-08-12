@@ -258,7 +258,7 @@ endef
 # java code with dalvikvm/art.
 # Jars present in the runtime apex. These should match exactly the list of
 # Java libraries in the runtime apex build rule.
-RUNTIME_APEX_JARS := core-oj core-libart okhttp bouncycastle apache-xml
+RUNTIME_APEX_JARS := core-oj core-libart core-icu4j okhttp bouncycastle apache-xml
 TARGET_CORE_JARS := $(RUNTIME_APEX_JARS) conscrypt
 ifeq ($(EMMA_INSTRUMENT),true)
   ifneq ($(EMMA_INSTRUMENT_STATIC),true)
