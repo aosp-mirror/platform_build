@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5f50bf06_f4133589",
+        "filename": "core/binary.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 1705,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-08-12T16:51:43Z",
+      "side": 1,
+      "message": "This should be outside the conditional (so that it\u0027s set even if LOCAL_CXX is set)",
+      "revId": "300acb734c5ed3ac54f05e718bde5b0816a0ce87",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
