@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b26240b0_b2cb5751",
+        "filename": "core/definitions.mk",
+        "patchSetId": 3
+      },
+      "lineNbr": 954,
+      "author": {
+        "id": 1074628
+      },
+      "writtenOn": "2019-08-12T17:07:12Z",
+      "side": 1,
+      "message": "This will require adding PRIVATE_CXX_LINK to build/make/core/java_renderscript.mk",
+      "revId": "5917efeca6ee1d551f651bc96aec21185083fb3d",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
