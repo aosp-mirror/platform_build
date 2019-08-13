@@ -38,6 +38,7 @@ endif
 droidcore: check-vndk-list
 
 check-vndk-list-timestamp := $(call intermediates-dir-for,PACKAGING,vndk)/check-list-timestamp
+check-vndk-abi-dump-list-timestamp := $(call intermediates-dir-for,PACKAGING,vndk)/check-abi-dump-list-timestamp
 
 ifeq ($(TARGET_IS_64_BIT)|$(TARGET_2ND_ARCH),true|)
 # TODO(b/110429754) remove this condition when we support 64-bit-only device
@@ -50,6 +51,9 @@ else ifeq ($(TARGET_SKIP_CURRENT_VNDK),true)
 check-vndk-list: ;
 else
 check-vndk-list: $(check-vndk-list-timestamp)
+ifneq ($(SKIP_ABI_CHECKS),true)
+check-vndk-list: $(check-vndk-abi-dump-list-timestamp)
+endif
 endif
 
 _vndk_check_failure_message := " error: VNDK library list has been changed.\n"
@@ -97,12 +101,51 @@ else
 endif
 	@chmod a+x $@
 
+#####################################################################
+# Check that all ABI reference dumps have corresponding NDK/VNDK
+# libraries.
+
+# $(1): The directory containing ABI dumps.
+# Return a list of ABI dump paths ending with .so.lsdump.
+define find-abi-dump-paths
+$(if $(wildcard $(1)), \
+  $(addprefix $(1)/, \
+    $(call find-files-in-subdirs,$(1),"*.so.lsdump" -and -type f,.)))
+endef
+
+VNDK_ABI_DUMP_DIR := prebuilts/abi-dumps/vndk/$(PLATFORM_VNDK_VERSION)
+NDK_ABI_DUMP_DIR := prebuilts/abi-dumps/ndk/$(PLATFORM_VNDK_VERSION)
+VNDK_ABI_DUMPS := $(call find-abi-dump-paths,$(VNDK_ABI_DUMP_DIR))
+NDK_ABI_DUMPS := $(call find-abi-dump-paths,$(NDK_ABI_DUMP_DIR))
+
+$(check-vndk-abi-dump-list-timestamp): $(VNDK_ABI_DUMPS) $(NDK_ABI_DUMPS)
+	$(eval added_vndk_abi_dumps := $(strip $(sort $(filter-out \
+	  $(addsuffix .so.lsdump,$(VNDK_SAMEPROCESS_LIBRARIES) $(VNDK_CORE_LIBRARIES)), \
+	  $(notdir $(VNDK_ABI_DUMPS))))))
+	$(if $(added_vndk_abi_dumps), \
+	  echo -e "Found ABI reference dumps for non-VNDK libraries. Run \`find \$${ANDROID_BUILD_TOP}/$(VNDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_vndk_abi_dumps)) ')' -delete\` to delete the dumps.")
+
+	$(eval added_ndk_abi_dumps := $(strip $(sort $(filter-out \
+	  $(addsuffix .so.lsdump,$(NDK_MIGRATED_LIBS) $(LLNDK_LIBRARIES)), \
+	  $(notdir $(NDK_ABI_DUMPS))))))
+	$(if $(added_ndk_abi_dumps), \
+	  echo -e "Found ABI reference dumps for non-NDK libraries. Run \`find \$${ANDROID_BUILD_TOP}/$(NDK_ABI_DUMP_DIR) '(' -name $(subst $(space), -or -name ,$(added_ndk_abi_dumps)) ')' -delete\` to delete the dumps.")
+
+	$(if $(added_vndk_abi_dumps)$(added_ndk_abi_dumps),exit 1)
+	$(hide) mkdir -p $(dir $@)
+	$(hide) touch $@
+
+#####################################################################
+# VNDK package and snapshot.
+
 ifneq ($(BOARD_VNDK_VERSION),)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := vndk_package
+# Filter LLNDK libs moved to APEX to avoid pulling them into /system/LIB
 LOCAL_REQUIRED_MODULES := \
-    $(LLNDK_LIBRARIES)
+    $(filter-out $(LLNDK_MOVED_TO_APEX_LIBRARIES),$(LLNDK_LIBRARIES)))
+
 ifneq ($(TARGET_SKIP_CURRENT_VNDK),true)
 LOCAL_REQUIRED_MODULES += \
     llndk.libraries.txt \

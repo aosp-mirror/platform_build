@@ -82,8 +82,6 @@ CORRECT_BUILD_ENV_SEQUENCE_NUMBER := 13
 
 # ---------------------------------------------------------------
 # The product defaults to generic on hardware
-# NOTE: This will be overridden in product_config.mk if make
-# was invoked with a PRODUCT-xxx-yyy goal.
 ifeq ($(TARGET_PRODUCT),)
 TARGET_PRODUCT := aosp_arm
 endif
@@ -93,6 +91,13 @@ endif
 ifeq ($(strip $(TARGET_BUILD_VARIANT)),)
 TARGET_BUILD_VARIANT := eng
 endif
+
+TARGET_BUILD_APPS ?=
+
+.KATI_READONLY := \
+  TARGET_PRODUCT \
+  TARGET_BUILD_VARIANT \
+  TARGET_BUILD_APPS
 
 # ---------------------------------------------------------------
 # Set up configuration for host machine.  We don't do cross-
@@ -253,7 +258,7 @@ endef
 # java code with dalvikvm/art.
 # Jars present in the runtime apex. These should match exactly the list of
 # Java libraries in the runtime apex build rule.
-RUNTIME_APEX_JARS := core-oj core-libart okhttp bouncycastle apache-xml
+RUNTIME_APEX_JARS := core-oj core-libart core-icu4j okhttp bouncycastle apache-xml
 TARGET_CORE_JARS := $(RUNTIME_APEX_JARS) conscrypt
 ifeq ($(EMMA_INSTRUMENT),true)
   ifneq ($(EMMA_INSTRUMENT_STATIC),true)

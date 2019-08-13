@@ -257,7 +257,10 @@ def ValidateVerifiedBootImages(input_tmp, info_dict, options):
     if verity_key is None:
       verity_key = info_dict['verity_key'] + '.x509.pem'
     for image in ('boot.img', 'recovery.img', 'recovery-two-step.img'):
-      image_path = os.path.join(input_tmp, 'IMAGES', image)
+      if image == 'recovery-two-step.img':
+        image_path = os.path.join(input_tmp, 'OTA', image)
+      else:
+        image_path = os.path.join(input_tmp, 'IMAGES', image)
       if not os.path.exists(image_path):
         continue
 

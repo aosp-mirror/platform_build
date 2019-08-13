@@ -1,4 +1,3 @@
-#
 # Copyright (C) 2019 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-# Base modules and settings for the product partition.
-PRODUCT_PACKAGES += \
-    group_product \
-    healthd \
-    ModuleMetadata \
-    passwd_product \
-    product_compatibility_matrix.xml \
-    product_manifest.xml \
+test_suite_name := mts
+test_suite_tradefed := mts-tradefed
+test_suite_readme := test/mts/README.md
+
+include $(BUILD_SYSTEM)/tasks/tools/compatibility.mk
+
+.PHONY: mts
+mts: $(compatibility_zip)
+$(call dist-for-goals, mts, $(compatibility_zip))

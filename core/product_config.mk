@@ -78,85 +78,17 @@ $(sort $(shell find $(2) -name "$(1)" -type f | $(SED_EXTENDED) "s:($(2)/?(.*)):
 endef
 
 # ---------------------------------------------------------------
-
-# These are the valid values of TARGET_BUILD_VARIANT.  Also, if anything else is passed
-# as the variant in the PRODUCT-$TARGET_BUILD_PRODUCT-$TARGET_BUILD_VARIANT form,
-# it will be treated as a goal, and the eng variant will be used.
-INTERNAL_VALID_VARIANTS := user userdebug eng
-
-# ---------------------------------------------------------------
-# Provide "PRODUCT-<prodname>-<goal>" targets, which lets you build
-# a particular configuration without needing to set up the environment.
-#
+# Check for obsolete PRODUCT- and APP- goals
 ifeq ($(CALLED_FROM_SETUP),true)
 product_goals := $(strip $(filter PRODUCT-%,$(MAKECMDGOALS)))
 ifdef product_goals
-  # Scrape the product and build names out of the goal,
-  # which should be of the form PRODUCT-<productname>-<buildname>.
-  #
-  ifneq ($(words $(product_goals)),1)
-    $(error Only one PRODUCT-* goal may be specified; saw "$(product_goals)")
-  endif
-  goal_name := $(product_goals)
-  product_goals := $(patsubst PRODUCT-%,%,$(product_goals))
-  product_goals := $(subst -, ,$(product_goals))
-  ifneq ($(words $(product_goals)),2)
-    $(error Bad PRODUCT-* goal "$(goal_name)")
-  endif
-
-  # The product they want
-  TARGET_PRODUCT := $(word 1,$(product_goals))
-
-  # The variant they want
-  TARGET_BUILD_VARIANT := $(word 2,$(product_goals))
-
-  ifeq ($(TARGET_BUILD_VARIANT),tests)
-    $(error "tests" has been deprecated as a build variant. Use it as a build goal instead.)
-  endif
-
-  # The build server wants to do make PRODUCT-dream-sdk
-  # which really means TARGET_PRODUCT=dream make sdk.
-  ifneq ($(filter-out $(INTERNAL_VALID_VARIANTS),$(TARGET_BUILD_VARIANT)),)
-    override MAKECMDGOALS := $(MAKECMDGOALS) $(TARGET_BUILD_VARIANT)
-    TARGET_BUILD_VARIANT := userdebug
-    default_goal_substitution :=
-  else
-    default_goal_substitution := droid
-  endif
-
-  # Replace the PRODUCT-* goal with the build goal that it refers to.
-  # Note that this will ensure that it appears in the same relative
-  # position, in case it matters.
-  override MAKECMDGOALS := $(patsubst $(goal_name),$(default_goal_substitution),$(MAKECMDGOALS))
+  $(error The PRODUCT-* goal is no longer supported. Use `TARGET_PRODUCT=<product> m droid` instead)
 endif
-endif # CALLED_FROM_SETUP
-# else: Use the value set in the environment or buildspec.mk.
-
-# ---------------------------------------------------------------
-# Provide "APP-<appname>" targets, which lets you build
-# an unbundled app.
-#
-ifeq ($(CALLED_FROM_SETUP),true)
 unbundled_goals := $(strip $(filter APP-%,$(MAKECMDGOALS)))
 ifdef unbundled_goals
-  ifneq ($(words $(unbundled_goals)),1)
-    $(error Only one APP-* goal may be specified; saw "$(unbundled_goals)")
-  endif
-  TARGET_BUILD_APPS := $(strip $(subst -, ,$(patsubst APP-%,%,$(unbundled_goals))))
-  ifneq ($(filter droid,$(MAKECMDGOALS)),)
-    override MAKECMDGOALS := $(patsubst $(unbundled_goals),,$(MAKECMDGOALS))
-  else
-    override MAKECMDGOALS := $(patsubst $(unbundled_goals),droid,$(MAKECMDGOALS))
-  endif
+  $(error The APP-* goal is no longer supported. Use `TARGET_BUILD_APPS="<app>" m droid` instead)
 endif # unbundled_goals
 endif
-
-# Now that we've parsed APP-* and PRODUCT-*, mark these as readonly
-TARGET_BUILD_APPS ?=
-.KATI_READONLY := \
-  TARGET_PRODUCT \
-  TARGET_BUILD_VARIANT \
-  TARGET_BUILD_APPS
 
 # Default to building dalvikvm on hosts that support it...
 ifeq ($(HOST_OS),linux)

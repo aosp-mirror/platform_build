@@ -912,6 +912,23 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
       'recovery_as_boot': 'true',
   }
 
+  def test_LoadListFromFile(self):
+    file_path = os.path.join(self.testdata_dir,
+                             'merge_config_framework_item_list')
+    contents = common.LoadListFromFile(file_path)
+    expected_contents = [
+        'META/apkcerts.txt',
+        'META/filesystem_config.txt',
+        'META/root_filesystem_config.txt',
+        'META/system_manifest.xml',
+        'META/system_matrix.xml',
+        'META/update_engine_config.txt',
+        'PRODUCT/*',
+        'ROOT/*',
+        'SYSTEM/*',
+    ]
+    self.assertEqual(sorted(contents), sorted(expected_contents))
+
   @staticmethod
   def _test_LoadInfoDict_createTargetFiles(info_dict, fstab_path):
     target_files = common.MakeTempFile(prefix='target_files-', suffix='.zip')
@@ -1056,6 +1073,93 @@ class CommonUtilsTest(test_utils.ReleaseToolsTestCase):
     with zipfile.ZipFile(target_files, 'r') as target_files_zip:
       self.assertRaises(
           AssertionError, common.LoadInfoDict, target_files_zip, True)
+
+  def test_MergeDynamicPartitionInfoDicts_ReturnsMergedDict(self):
+    framework_dict = {
+        'super_partition_groups': 'group_a',
+        'dynamic_partition_list': 'system',
+        'super_group_a_list': 'system',
+    }
+    vendor_dict = {
+        'super_partition_groups': 'group_a group_b',
+        'dynamic_partition_list': 'vendor product',
+        'super_group_a_list': 'vendor',
+        'super_group_a_size': '1000',
+        'super_group_b_list': 'product',
+        'super_group_b_size': '2000',
+    }
+    merged_dict = common.MergeDynamicPartitionInfoDicts(
+        framework_dict=framework_dict,
+        vendor_dict=vendor_dict,
+        size_prefix='super_',
+        size_suffix='_size',
+        list_prefix='super_',
+        list_suffix='_list')
+    expected_merged_dict = {
+        'super_partition_groups': 'group_a group_b',
+        'dynamic_partition_list': 'system vendor product',
+        'super_group_a_list': 'system vendor',
+        'super_group_a_size': '1000',
+        'super_group_b_list': 'product',
+        'super_group_b_size': '2000',
+    }
+    self.assertEqual(merged_dict, expected_merged_dict)
+
+  def test_MergeDynamicPartitionInfoDicts_IgnoringFrameworkGroupSize(self):
+    framework_dict = {
+        'super_partition_groups': 'group_a',
+        'dynamic_partition_list': 'system',
+        'super_group_a_list': 'system',
+        'super_group_a_size': '5000',
+    }
+    vendor_dict = {
+        'super_partition_groups': 'group_a group_b',
+        'dynamic_partition_list': 'vendor product',
+        'super_group_a_list': 'vendor',
+        'super_group_a_size': '1000',
+        'super_group_b_list': 'product',
+        'super_group_b_size': '2000',
+    }
+    merged_dict = common.MergeDynamicPartitionInfoDicts(
+        framework_dict=framework_dict,
+        vendor_dict=vendor_dict,
+        size_prefix='super_',
+        size_suffix='_size',
+        list_prefix='super_',
+        list_suffix='_list')
+    expected_merged_dict = {
+        'super_partition_groups': 'group_a group_b',
+        'dynamic_partition_list': 'system vendor product',
+        'super_group_a_list': 'system vendor',
+        'super_group_a_size': '1000',
+        'super_group_b_list': 'product',
+        'super_group_b_size': '2000',
+    }
+    self.assertEqual(merged_dict, expected_merged_dict)
+
+  def test_GetAvbPartitionArg(self):
+    info_dict = {}
+    cmd = common.GetAvbPartitionArg('system', '/path/to/system.img', info_dict)
+    self.assertEqual(
+        ['--include_descriptors_from_image', '/path/to/system.img'], cmd)
+
+  @test_utils.SkipIfExternalToolsUnavailable()
+  def test_AppendVBMetaArgsForPartition_vendorAsChainedPartition(self):
+    testdata_dir = test_utils.get_testdata_dir()
+    pubkey = os.path.join(testdata_dir, 'testkey.pubkey.pem')
+    info_dict = {
+        'avb_avbtool': 'avbtool',
+        'avb_vendor_key_path': pubkey,
+        'avb_vendor_rollback_index_location': 5,
+    }
+    cmd = common.GetAvbPartitionArg('vendor', '/path/to/vendor.img', info_dict)
+    self.assertEqual(2, len(cmd))
+    self.assertEqual('--chain_partition', cmd[0])
+    chained_partition_args = cmd[1].split(':')
+    self.assertEqual(3, len(chained_partition_args))
+    self.assertEqual('vendor', chained_partition_args[0])
+    self.assertEqual('5', chained_partition_args[1])
+    self.assertTrue(os.path.exists(chained_partition_args[2]))
 
 
 class InstallRecoveryScriptFormatTest(test_utils.ReleaseToolsTestCase):

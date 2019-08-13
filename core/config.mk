@@ -101,6 +101,24 @@ $(KATI_obsolete_var BUILD_BROKEN_ENG_DEBUG_TAGS)
 $(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
 $(KATI_obsolete_var BUILD_BROKEN_ANDROIDMK_EXPORTS)
 $(KATI_obsolete_var PRODUCT_STATIC_BOOT_CONTROL_HAL,Use shared library module instead. See $(CHANGES_URL)#PRODUCT_STATIC_BOOT_CONTROL_HAL)
+$(KATI_obsolete_var \
+  ARCH_ARM_HAVE_ARMV7A \
+  ARCH_DSP_REV \
+  ARCH_HAVE_ALIGNED_DOUBLES \
+  ARCH_MIPS_HAS_DSP \
+  ARCH_MIPS_HAS_FPU \
+  ARCH_MIPS_REV6 \
+  ARCH_X86_HAVE_AES_NI \
+  ARCH_X86_HAVE_AVX \
+  ARCH_X86_HAVE_AVX2 \
+  ARCH_X86_HAVE_AVX512 \
+  ARCH_X86_HAVE_MOVBE \
+  ARCH_X86_HAVE_POPCNT \
+  ARCH_X86_HAVE_SSE4 \
+  ARCH_X86_HAVE_SSE4_2 \
+  ARCH_X86_HAVE_SSSE3 \
+)
+$(KATI_obsolete_var PRODUCT_IOT)
 
 # Used to force goals to build.  Only use for conditionally defined goals.
 .PHONY: FORCE
@@ -119,6 +137,9 @@ SRC_DROIDDOC_DIR := $(TOPDIR)build/make/tools/droiddoc
 ifdef TARGET_DEVICE_DIR
   .KATI_READONLY := TARGET_DEVICE_DIR
 endif
+
+ONE_SHOT_MAKEFILE :=
+.KATI_READONLY := ONE_SHOT_MAKEFILE
 
 # Set up efficient math functions which are used in make.
 # Here since this file is included by envsetup as well as during build.
@@ -312,6 +333,7 @@ endef
 ifeq ($(CALLED_FROM_SETUP),true)
 include $(BUILD_SYSTEM)/ccache.mk
 include $(BUILD_SYSTEM)/goma.mk
+include $(BUILD_SYSTEM)/rbe.mk
 endif
 
 ifdef TARGET_PREFER_32_BIT
@@ -451,9 +473,6 @@ endif
 ifneq ($(filter true,$(SOONG_ALLOW_MISSING_DEPENDENCIES)),)
 ALLOW_MISSING_DEPENDENCIES := true
 endif
-ifneq ($(ONE_SHOT_MAKEFILE),)
-ALLOW_MISSING_DEPENDENCIES := true
-endif
 .KATI_READONLY := ALLOW_MISSING_DEPENDENCIES
 
 TARGET_BUILD_APPS_USE_PREBUILT_SDK :=
@@ -466,7 +485,6 @@ endif
 prebuilt_sdk_tools := prebuilts/sdk/tools
 prebuilt_sdk_tools_bin := $(prebuilt_sdk_tools)/$(HOST_OS)/bin
 
-# Always use prebuilts for ckati and makeparallel
 prebuilt_build_tools := prebuilts/build-tools
 prebuilt_build_tools_wrappers := prebuilts/build-tools/common/bin
 prebuilt_build_tools_jars := prebuilts/build-tools/common/framework
@@ -524,7 +542,6 @@ DEPMOD := $(HOST_OUT_EXECUTABLES)/depmod
 FILESLIST := $(SOONG_HOST_OUT_EXECUTABLES)/fileslist
 FILESLIST_UTIL :=$= build/make/tools/fileslist_util.py
 HOST_INIT_VERIFIER := $(HOST_OUT_EXECUTABLES)/host_init_verifier
-MAKEPARALLEL := $(prebuilt_build_tools_bin)/makeparallel
 SOONG_JAVAC_WRAPPER := $(SOONG_HOST_OUT_EXECUTABLES)/soong_javac_wrapper
 SOONG_ZIP := $(SOONG_HOST_OUT_EXECUTABLES)/soong_zip
 MERGE_ZIPS := $(SOONG_HOST_OUT_EXECUTABLES)/merge_zips
@@ -559,7 +576,6 @@ NANOPB_SRCS := $(HOST_OUT_EXECUTABLES)/protoc-gen-nanopb
 VTSC := $(HOST_OUT_EXECUTABLES)/vtsc$(HOST_EXECUTABLE_SUFFIX)
 MKBOOTFS := $(HOST_OUT_EXECUTABLES)/mkbootfs$(HOST_EXECUTABLE_SUFFIX)
 MINIGZIP := $(HOST_OUT_EXECUTABLES)/minigzip$(HOST_EXECUTABLE_SUFFIX)
-BROTLI := $(HOST_OUT_EXECUTABLES)/brotli$(HOST_EXECUTABLE_SUFFIX)
 ifeq (,$(strip $(BOARD_CUSTOM_MKBOOTIMG)))
 MKBOOTIMG := $(HOST_OUT_EXECUTABLES)/mkbootimg$(HOST_EXECUTABLE_SUFFIX)
 else
@@ -579,7 +595,6 @@ APICHECK := $(HOST_OUT_JAVA_LIBRARIES)/metalava$(COMMON_JAVA_PACKAGE_SUFFIX)
 FS_GET_STATS := $(HOST_OUT_EXECUTABLES)/fs_get_stats$(HOST_EXECUTABLE_SUFFIX)
 MKEXTUSERIMG := $(HOST_OUT_EXECUTABLES)/mkuserimg_mke2fs
 MKE2FS_CONF := system/extras/ext4_utils/mke2fs.conf
-BLK_ALLOC_TO_BASE_FS := $(HOST_OUT_EXECUTABLES)/blk_alloc_to_base_fs$(HOST_EXECUTABLE_SUFFIX)
 MKSQUASHFSUSERIMG := $(HOST_OUT_EXECUTABLES)/mksquashfsimage.sh
 MKF2FSUSERIMG := $(HOST_OUT_EXECUTABLES)/mkf2fsuserimg.sh
 SIMG2IMG := $(HOST_OUT_EXECUTABLES)/simg2img$(HOST_EXECUTABLE_SUFFIX)
@@ -588,10 +603,13 @@ TUNE2FS := $(HOST_OUT_EXECUTABLES)/tune2fs$(HOST_EXECUTABLE_SUFFIX)
 JARJAR := $(HOST_OUT_JAVA_LIBRARIES)/jarjar.jar
 DATA_BINDING_COMPILER := $(HOST_OUT_JAVA_LIBRARIES)/databinding-compiler.jar
 FAT16COPY := build/make/tools/fat16copy.py
-CHECK_LINK_TYPE := build/make/tools/check_link_type.py
 CHECK_ELF_FILE := build/make/tools/check_elf_file.py
 LPMAKE := $(HOST_OUT_EXECUTABLES)/lpmake$(HOST_EXECUTABLE_SUFFIX)
-BUILD_SUPER_IMAGE := build/make/tools/releasetools/build_super_image.py
+BUILD_IMAGE := $(HOST_OUT_EXECUTABLES)/build_image$(HOST_EXECUTABLE_SUFFIX)
+BUILD_SUPER_IMAGE := $(HOST_OUT_EXECUTABLES)/build_super_image$(HOST_EXECUTABLE_SUFFIX)
+MAKE_RECOVERY_PATCH := $(HOST_OUT_EXECUTABLES)/make_recovery_patch$(HOST_EXECUTABLE_SUFFIX)
+OTA_FROM_TARGET_FILES := $(HOST_OUT_EXECUTABLES)/ota_from_target_files$(HOST_EXECUTABLE_SUFFIX)
+SPARSE_IMG := $(HOST_OUT_EXECUTABLES)/sparse_img$(HOST_EXECUTABLE_SUFFIX)
 
 PROGUARD_HOME := external/proguard
 PROGUARD := $(PROGUARD_HOME)/bin/proguard.sh
@@ -607,7 +625,6 @@ BOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/boot_signer
 FUTILITY := $(HOST_OUT_EXECUTABLES)/futility-host
 VBOOT_SIGNER := $(HOST_OUT_EXECUTABLES)/vboot_signer
 FEC := $(HOST_OUT_EXECUTABLES)/fec
-BRILLO_UPDATE_PAYLOAD := $(HOST_OUT_EXECUTABLES)/brillo_update_payload
 
 DEXDUMP := $(HOST_OUT_EXECUTABLES)/dexdump$(BUILD_EXECUTABLE_SUFFIX)
 PROFMAN := $(HOST_OUT_EXECUTABLES)/profman

@@ -14,8 +14,6 @@
 
 .PHONY: sdk_addon
 
-ifndef ONE_SHOT_MAKEFILE
-
 # If they didn't define PRODUCT_SDK_ADDON_NAME, then we won't define
 # any of these rules.
 addon_name := $(PRODUCT_SDK_ADDON_NAME)
@@ -150,5 +148,3 @@ ifneq ($(filter sdk_addon,$(MAKECMDGOALS)),)
 $(error Trying to build sdk_addon, but product '$(INTERNAL_PRODUCT)' does not define one)
 endif
 endif # addon_name
-
-endif # !ONE_SHOT_MAKEFILE

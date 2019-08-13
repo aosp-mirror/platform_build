@@ -240,7 +240,10 @@ METADATA_NAME = 'META-INF/com/android/metadata'
 POSTINSTALL_CONFIG = 'META/postinstall_config.txt'
 DYNAMIC_PARTITION_INFO = 'META/dynamic_partitions_info.txt'
 AB_PARTITIONS = 'META/ab_partitions.txt'
-UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'RADIO/*']
+UNZIP_PATTERN = ['IMAGES/*', 'META/*', 'OTA/*', 'RADIO/*']
+# Files to be unzipped for target diffing purpose.
+TARGET_DIFFING_UNZIP_PATTERN = ['BOOT', 'RECOVERY', 'SYSTEM/*', 'VENDOR/*',
+                                'PRODUCT/*', 'SYSTEM_EXT/*', 'ODM/*']
 RETROFIT_DAP_UNZIP_PATTERN = ['OTA/super_*.img', AB_PARTITIONS]
 
 
@@ -517,7 +520,7 @@ class PayloadSigner(object):
     """Signs the given input file. Returns the output filename."""
     out_file = common.MakeTempFile(prefix="signed-", suffix=".bin")
     cmd = [self.signer] + self.signer_args + ['-in', in_file, '-out', out_file]
-    common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
+    common.RunAndCheckOutput(cmd)
     return out_file
 
 
@@ -539,6 +542,15 @@ class Payload(object):
     self.payload_properties = None
     self.secondary = secondary
 
+  def _Run(self, cmd):  # pylint: disable=no-self-use
+    # Don't pipe (buffer) the output if verbose is set. Let
+    # brillo_update_payload write to stdout/stderr directly, so its progress can
+    # be monitored.
+    if OPTIONS.verbose:
+      common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
+    else:
+      common.RunAndCheckOutput(cmd)
+
   def Generate(self, target_file, source_file=None, additional_args=None):
     """Generates a payload from the given target-files zip(s).
 
@@ -559,7 +571,7 @@ class Payload(object):
     if source_file is not None:
       cmd.extend(["--source_image", source_file])
     cmd.extend(additional_args)
-    common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
+    self._Run(cmd)
 
     self.payload_file = payload_file
     self.payload_properties = None
@@ -583,7 +595,7 @@ class Payload(object):
            "--signature_size", str(payload_signer.key_size),
            "--metadata_hash_file", metadata_sig_file,
            "--payload_hash_file", payload_sig_file]
-    common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
+    self._Run(cmd)
 
     # 2. Sign the hashes.
     signed_payload_sig_file = payload_signer.Sign(payload_sig_file)
@@ -598,7 +610,7 @@ class Payload(object):
            "--signature_size", str(payload_signer.key_size),
            "--metadata_signature_file", signed_metadata_sig_file,
            "--payload_signature_file", signed_payload_sig_file]
-    common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
+    self._Run(cmd)
 
     # 4. Dump the signed payload properties.
     properties_file = common.MakeTempFile(prefix="payload-properties-",
@@ -606,7 +618,7 @@ class Payload(object):
     cmd = ["brillo_update_payload", "properties",
            "--payload", signed_payload_file,
            "--properties_file", properties_file]
-    common.RunAndCheckOutput(cmd, stdout=None, stderr=None)
+    self._Run(cmd)
 
     if self.secondary:
       with open(properties_file, "a") as f:
@@ -681,13 +693,12 @@ def _WriteRecoveryImageToBoot(script, output_zip):
 
   recovery_two_step_img_name = "recovery-two-step.img"
   recovery_two_step_img_path = os.path.join(
-      OPTIONS.input_tmp, "IMAGES", recovery_two_step_img_name)
+      OPTIONS.input_tmp, "OTA", recovery_two_step_img_name)
   if os.path.exists(recovery_two_step_img_path):
-    recovery_two_step_img = common.GetBootableImage(
-        recovery_two_step_img_name, recovery_two_step_img_name,
-        OPTIONS.input_tmp, "RECOVERY")
-    common.ZipWriteStr(
-        output_zip, recovery_two_step_img_name, recovery_two_step_img.data)
+    common.ZipWrite(
+        output_zip,
+        recovery_two_step_img_path,
+        arcname=recovery_two_step_img_name)
     logger.info(
         "two-step package: using %s in stage 1/3", recovery_two_step_img_name)
     script.WriteRawImage("/boot", recovery_two_step_img_name)
@@ -1997,8 +2008,7 @@ def GetTargetFilesZipForRetrofitDynamicPartitions(input_file,
   return target_file
 
 
-def WriteABOTAPackageWithBrilloScript(target_file, output_file,
-                                      source_file=None):
+def GenerateAbOtaPackage(target_file, output_file, source_file=None):
   """Generates an Android OTA package that has A/B update payload."""
   # Stage the output zip package for package signing.
   if not OPTIONS.no_signing:
@@ -2094,6 +2104,66 @@ def WriteABOTAPackageWithBrilloScript(target_file, output_file,
       StreamingPropertyFiles(),
   )
   FinalizeMetadata(metadata, staging_file, output_file, needed_property_files)
+
+
+def GenerateNonAbOtaPackage(target_file, output_file, source_file=None):
+  """Generates a non-A/B OTA package."""
+  # Sanity check the loaded info dicts first.
+  if OPTIONS.info_dict.get("no_recovery") == "true":
+    raise common.ExternalError(
+        "--- target build has specified no recovery ---")
+
+  # Non-A/B OTAs rely on /cache partition to store temporary files.
+  cache_size = OPTIONS.info_dict.get("cache_size")
+  if cache_size is None:
+    logger.warning("--- can't determine the cache partition size ---")
+  OPTIONS.cache_size = cache_size
+
+  if OPTIONS.extra_script is not None:
+    with open(OPTIONS.extra_script) as fp:
+      OPTIONS.extra_script = fp.read()
+
+  if OPTIONS.extracted_input is not None:
+    OPTIONS.input_tmp = OPTIONS.extracted_input
+  else:
+    logger.info("unzipping target target-files...")
+    OPTIONS.input_tmp = common.UnzipTemp(target_file, UNZIP_PATTERN)
+  OPTIONS.target_tmp = OPTIONS.input_tmp
+
+  # If the caller explicitly specified the device-specific extensions path via
+  # -s / --device_specific, use that. Otherwise, use META/releasetools.py if it
+  # is present in the target target_files. Otherwise, take the path of the file
+  # from 'tool_extensions' in the info dict and look for that in the local
+  # filesystem, relative to the current directory.
+  if OPTIONS.device_specific is None:
+    from_input = os.path.join(OPTIONS.input_tmp, "META", "releasetools.py")
+    if os.path.exists(from_input):
+      logger.info("(using device-specific extensions from target_files)")
+      OPTIONS.device_specific = from_input
+    else:
+      OPTIONS.device_specific = OPTIONS.info_dict.get("tool_extensions")
+
+  if OPTIONS.device_specific is not None:
+    OPTIONS.device_specific = os.path.abspath(OPTIONS.device_specific)
+
+  # Generate a full OTA.
+  if source_file is None:
+    with zipfile.ZipFile(target_file) as input_zip:
+      WriteFullOTAPackage(
+          input_zip,
+          output_file)
+
+  # Generate an incremental OTA.
+  else:
+    logger.info("unzipping source target-files...")
+    OPTIONS.source_tmp = common.UnzipTemp(
+        OPTIONS.incremental_source, UNZIP_PATTERN)
+    with zipfile.ZipFile(target_file) as input_zip, \
+        zipfile.ZipFile(source_file) as source_zip:
+      WriteBlockIncrementalOTAPackage(
+          input_zip,
+          source_zip,
+          output_file)
 
 
 def main(argv):
@@ -2270,76 +2340,29 @@ def main(argv):
     OPTIONS.key_passwords = common.GetKeyPasswords([OPTIONS.package_key])
 
   if ab_update:
-    WriteABOTAPackageWithBrilloScript(
+    GenerateAbOtaPackage(
         target_file=args[0],
         output_file=args[1],
         source_file=OPTIONS.incremental_source)
 
-    logger.info("done.")
-    return
-
-  # Sanity check the loaded info dicts first.
-  if OPTIONS.info_dict.get("no_recovery") == "true":
-    raise common.ExternalError(
-        "--- target build has specified no recovery ---")
-
-  # Non-A/B OTAs rely on /cache partition to store temporary files.
-  cache_size = OPTIONS.info_dict.get("cache_size")
-  if cache_size is None:
-    logger.warning("--- can't determine the cache partition size ---")
-  OPTIONS.cache_size = cache_size
-
-  if OPTIONS.extra_script is not None:
-    with open(OPTIONS.extra_script) as fp:
-      OPTIONS.extra_script = fp.read()
-
-  if OPTIONS.extracted_input is not None:
-    OPTIONS.input_tmp = OPTIONS.extracted_input
   else:
-    logger.info("unzipping target target-files...")
-    OPTIONS.input_tmp = common.UnzipTemp(args[0], UNZIP_PATTERN)
-  OPTIONS.target_tmp = OPTIONS.input_tmp
+    GenerateNonAbOtaPackage(
+        target_file=args[0],
+        output_file=args[1],
+        source_file=OPTIONS.incremental_source)
 
-  # If the caller explicitly specified the device-specific extensions path via
-  # -s / --device_specific, use that. Otherwise, use META/releasetools.py if it
-  # is present in the target target_files. Otherwise, take the path of the file
-  # from 'tool_extensions' in the info dict and look for that in the local
-  # filesystem, relative to the current directory.
-  if OPTIONS.device_specific is None:
-    from_input = os.path.join(OPTIONS.input_tmp, "META", "releasetools.py")
-    if os.path.exists(from_input):
-      logger.info("(using device-specific extensions from target_files)")
-      OPTIONS.device_specific = from_input
-    else:
-      OPTIONS.device_specific = OPTIONS.info_dict.get("tool_extensions")
+  # Post OTA generation works.
+  if OPTIONS.incremental_source is not None and OPTIONS.log_diff:
+    logger.info("Generating diff logs...")
+    logger.info("Unzipping target-files for diffing...")
+    target_dir = common.UnzipTemp(args[0], TARGET_DIFFING_UNZIP_PATTERN)
+    source_dir = common.UnzipTemp(
+        OPTIONS.incremental_source, TARGET_DIFFING_UNZIP_PATTERN)
 
-  if OPTIONS.device_specific is not None:
-    OPTIONS.device_specific = os.path.abspath(OPTIONS.device_specific)
-
-  # Generate a full OTA.
-  if OPTIONS.incremental_source is None:
-    with zipfile.ZipFile(args[0], 'r') as input_zip:
-      WriteFullOTAPackage(
-          input_zip,
-          output_file=args[1])
-
-  # Generate an incremental OTA.
-  else:
-    logger.info("unzipping source target-files...")
-    OPTIONS.source_tmp = common.UnzipTemp(
-        OPTIONS.incremental_source, UNZIP_PATTERN)
-    with zipfile.ZipFile(args[0], 'r') as input_zip, \
-        zipfile.ZipFile(OPTIONS.incremental_source, 'r') as source_zip:
-      WriteBlockIncrementalOTAPackage(
-          input_zip,
-          source_zip,
-          output_file=args[1])
-
-    if OPTIONS.log_diff:
-      with open(OPTIONS.log_diff, 'w') as out_file:
-        import target_files_diff
-        target_files_diff.recursiveDiff(
-            '', OPTIONS.source_tmp, OPTIONS.input_tmp, out_file)
+    with open(OPTIONS.log_diff, 'w') as out_file:
+      import target_files_diff
+      target_files_diff.recursiveDiff(
+          '', source_dir, target_dir, out_file)
 
   logger.info("done.")
 

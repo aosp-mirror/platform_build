@@ -13,9 +13,8 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations under
 # the License.
-
-"""
-This script merges two partial target files packages.
+#
+"""This script merges two partial target files packages.
 
 One package contains framework files, and the other contains vendor files.
 It produces a complete target files package that can be used to generate an
@@ -95,7 +94,6 @@ import ota_from_target_files
 logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
-OPTIONS.verbose = True
 OPTIONS.framework_target_files = None
 OPTIONS.framework_item_list = None
 OPTIONS.framework_misc_info_keys = None
@@ -239,8 +237,7 @@ def extract_items(target_files, target_files_temp_dir, extract_item_list):
   # Filter the extract_item_list to remove any items that do not exist in the
   # zip file. Otherwise, the extraction step will fail.
 
-  with zipfile.ZipFile(
-      target_files, allowZip64=True) as target_files_zipfile:
+  with zipfile.ZipFile(target_files, allowZip64=True) as target_files_zipfile:
     target_files_namelist = target_files_zipfile.namelist()
 
   filtered_extract_item_list = []
@@ -280,21 +277,6 @@ def copy_items(from_dir, to_dir, patterns):
       os.symlink(os.readlink(original_file_path), copied_file_path)
     else:
       shutil.copyfile(original_file_path, copied_file_path)
-
-
-def read_config_list(config_file_path):
-  """Reads a config file into a list of strings.
-
-  Expects the file to be newline-separated.
-
-  Args:
-    config_file_path: The path to the config file to open and read.
-
-  Returns:
-    The list of strings in the config file.
-  """
-  with open(config_file_path) as config_file:
-    return config_file.read().splitlines()
 
 
 def validate_config_lists(framework_item_list, framework_misc_info_keys,
@@ -419,64 +401,6 @@ def append_recovery_to_filesystem_config(output_target_files_temp_dir):
             'selabel=u:object_r:install_recovery_exec:s0 capabilities=0x0\n')
 
 
-def merge_dynamic_partition_info_dicts(framework_dict,
-                                       vendor_dict,
-                                       include_dynamic_partition_list=True,
-                                       size_prefix='',
-                                       size_suffix='',
-                                       list_prefix='',
-                                       list_suffix=''):
-  """Merges dynamic partition info variables.
-
-  Args:
-    framework_dict: The dictionary of dynamic partition info variables from the
-      partial framework target files.
-    vendor_dict: The dictionary of dynamic partition info variables from the
-      partial vendor target files.
-    include_dynamic_partition_list: If true, merges the dynamic_partition_list
-      variable. Not all use cases need this variable merged.
-    size_prefix: The prefix in partition group size variables that precedes the
-      name of the partition group. For example, partition group 'group_a' with
-      corresponding size variable 'super_group_a_group_size' would have the
-      size_prefix 'super_'.
-    size_suffix: Similar to size_prefix but for the variable's suffix. For
-      example, 'super_group_a_group_size' would have size_suffix '_group_size'.
-    list_prefix: Similar to size_prefix but for the partition group's
-      partition_list variable.
-    list_suffix: Similar to size_suffix but for the partition group's
-      partition_list variable.
-
-  Returns:
-    The merged dynamic partition info dictionary.
-  """
-  merged_dict = {}
-  # Partition groups and group sizes are defined by the vendor dict because
-  # these values may vary for each board that uses a shared system image.
-  merged_dict['super_partition_groups'] = vendor_dict['super_partition_groups']
-  if include_dynamic_partition_list:
-    framework_dynamic_partition_list = framework_dict.get(
-        'dynamic_partition_list', '')
-    vendor_dynamic_partition_list = vendor_dict.get('dynamic_partition_list',
-                                                    '')
-    merged_dict['dynamic_partition_list'] = (
-        '%s %s' % (framework_dynamic_partition_list,
-                   vendor_dynamic_partition_list)).strip()
-  for partition_group in merged_dict['super_partition_groups'].split(' '):
-    # Set the partition group's size using the value from the vendor dict.
-    key = '%s%s%s' % (size_prefix, partition_group, size_suffix)
-    if key not in vendor_dict:
-      raise ValueError('Vendor dict does not contain required key %s.' % key)
-    merged_dict[key] = vendor_dict[key]
-
-    # Set the partition group's partition list using a concatenation of the
-    # framework and vendor partition lists.
-    key = '%s%s%s' % (list_prefix, partition_group, list_suffix)
-    merged_dict[key] = (
-        '%s %s' %
-        (framework_dict.get(key, ''), vendor_dict.get(key, ''))).strip()
-  return merged_dict
-
-
 def process_misc_info_txt(framework_target_files_temp_dir,
                           vendor_target_files_temp_dir,
                           output_target_files_temp_dir,
@@ -520,7 +444,7 @@ def process_misc_info_txt(framework_target_files_temp_dir,
   # Merge misc info keys used for Dynamic Partitions.
   if (merged_dict.get('use_dynamic_partitions') == 'true') and (
       framework_dict.get('use_dynamic_partitions') == 'true'):
-    merged_dynamic_partitions_dict = merge_dynamic_partition_info_dicts(
+    merged_dynamic_partitions_dict = common.MergeDynamicPartitionInfoDicts(
         framework_dict=framework_dict,
         vendor_dict=merged_dict,
         size_prefix='super_',
@@ -583,7 +507,7 @@ def process_dynamic_partitions_info_txt(framework_target_files_dir,
   vendor_dynamic_partitions_dict = common.LoadDictionaryFromFile(
       os.path.join(vendor_target_files_dir, *dynamic_partitions_info_path))
 
-  merged_dynamic_partitions_dict = merge_dynamic_partition_info_dicts(
+  merged_dynamic_partitions_dict = common.MergeDynamicPartitionInfoDicts(
       framework_dict=framework_dynamic_partitions_dict,
       vendor_dict=vendor_dynamic_partitions_dict,
       # META/dynamic_partitions_info.txt does not use dynamic_partition_list.
@@ -748,14 +672,14 @@ def files_from_path(target_path, extra_args=None):
 
   find_command = ['find', target_path] + (extra_args or [])
   find_process = common.Run(find_command, stdout=subprocess.PIPE, verbose=False)
-  return common.RunAndCheckOutput(['sort'], stdin=find_process.stdout,
+  return common.RunAndCheckOutput(['sort'],
+                                  stdin=find_process.stdout,
                                   verbose=False)
 
 
 def create_merged_package(temp_dir, framework_target_files, framework_item_list,
                           vendor_target_files, vendor_item_list,
-                          framework_misc_info_keys,
-                          rebuild_recovery):
+                          framework_misc_info_keys, rebuild_recovery):
   """Merges two target files packages into one target files structure.
 
   Args:
@@ -875,8 +799,7 @@ def generate_super_empty_image(target_dir, output_super_empty):
   """
   # Create super_empty.img using the merged misc_info.txt.
 
-  misc_info_txt = os.path.join(target_dir, 'META',
-                               'misc_info.txt')
+  misc_info_txt = os.path.join(target_dir, 'META', 'misc_info.txt')
 
   use_dynamic_partitions = common.LoadDictionaryFromFile(misc_info_txt).get(
       'use_dynamic_partitions')
@@ -885,8 +808,7 @@ def generate_super_empty_image(target_dir, output_super_empty):
     raise ValueError(
         'Building super_empty.img requires use_dynamic_partitions=true.')
   elif use_dynamic_partitions == 'true':
-    super_empty_img = os.path.join(target_dir, 'IMAGES',
-                                   'super_empty.img')
+    super_empty_img = os.path.join(target_dir, 'IMAGES', 'super_empty.img')
     build_super_image_args = [
         misc_info_txt,
         super_empty_img,
@@ -896,21 +818,6 @@ def generate_super_empty_image(target_dir, output_super_empty):
     # Copy super_empty.img to the user-provided output_super_empty location.
     if output_super_empty:
       shutil.copyfile(super_empty_img, output_super_empty)
-
-
-def create_img_archive(source_path, target_path):
-  """Creates IMG archive in target path from source package.
-
-  Args:
-    source_path: Path of the source package to be packed.
-    target_path: Create IMG package from the source package.
-  """
-
-  img_from_target_files_args = [
-      source_path,
-      target_path,
-  ]
-  img_from_target_files.main(img_from_target_files_args)
 
 
 def create_target_files_archive(output_file, source_dir, temp_dir):
@@ -923,13 +830,12 @@ def create_target_files_archive(output_file, source_dir, temp_dir):
   """
   output_target_files_list = os.path.join(temp_dir, 'output.list')
   output_zip = os.path.abspath(output_file)
-  output_target_files_meta_dir = os.path.join(source_dir,
-                                              'META')
+  output_target_files_meta_dir = os.path.join(source_dir, 'META')
 
   meta_content = files_from_path(output_target_files_meta_dir)
-  other_content = files_from_path(source_dir,
-                                  ['-path', output_target_files_meta_dir,
-                                   '-prune', '-o', '-print'])
+  other_content = files_from_path(
+      source_dir,
+      ['-path', output_target_files_meta_dir, '-prune', '-o', '-print'])
 
   with open(output_target_files_list, 'w') as f:
     f.write(meta_content)
@@ -951,20 +857,6 @@ def create_target_files_archive(output_file, source_dir, temp_dir):
   logger.info('finished creating %s', output_file)
 
   return output_zip
-
-
-def create_ota_package(zip_package, output_ota):
-  """Creates OTA package from archived package.
-
-  Args:
-    zip_package: The name of the zip archived package.
-    output_ota: The name of the output zip archive ota package.
-  """
-  ota_from_target_files_args = [
-      zip_package,
-      output_ota,
-  ]
-  ota_from_target_files.main(ota_from_target_files_args)
 
 
 def merge_target_files(temp_dir, framework_target_files, framework_item_list,
@@ -1024,7 +916,7 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   if output_img:
     # Create the IMG package from the merged target files (before zipping, in
     # order to avoid an unnecessary unzip and copy).
-    create_img_archive(output_target_files_temp_dir, output_img)
+    img_from_target_files.main([output_target_files_temp_dir, output_img])
 
   # Finally, create the output target files zip archive and/or copy the
   # output items to the output target files directory.
@@ -1042,7 +934,7 @@ def merge_target_files(temp_dir, framework_target_files, framework_item_list,
   # Create the OTA package from the merged target files package.
 
   if output_ota:
-    create_ota_package(output_zip, output_ota)
+    ota_from_target_files.main([output_zip, output_ota])
 
 
 def call_func_with_temp_dir(func, keep_tmp):
@@ -1095,10 +987,8 @@ def main():
     elif o == '--framework-item-list':
       OPTIONS.framework_item_list = a
     elif o == '--system-misc-info-keys':
-      logger.warning(
-          '--system-misc-info-keys has been renamed to '
-          '--framework-misc-info-keys'
-      )
+      logger.warning('--system-misc-info-keys has been renamed to '
+                     '--framework-misc-info-keys')
       OPTIONS.framework_misc_info_keys = a
     elif o == '--framework-misc-info-keys':
       OPTIONS.framework_misc_info_keys = a
@@ -1166,24 +1056,27 @@ def main():
     common.Usage(__doc__)
     sys.exit(1)
 
+  # Always turn on verbose logging.
+  OPTIONS.verbose = True
+
   if OPTIONS.framework_item_list:
-    framework_item_list = read_config_list(OPTIONS.framework_item_list)
+    framework_item_list = common.LoadListFromFile(OPTIONS.framework_item_list)
   else:
     framework_item_list = DEFAULT_FRAMEWORK_ITEM_LIST
 
   if OPTIONS.framework_misc_info_keys:
-    framework_misc_info_keys = read_config_list(
+    framework_misc_info_keys = common.LoadListFromFile(
         OPTIONS.framework_misc_info_keys)
   else:
     framework_misc_info_keys = DEFAULT_FRAMEWORK_MISC_INFO_KEYS
 
   if OPTIONS.vendor_item_list:
-    vendor_item_list = read_config_list(OPTIONS.vendor_item_list)
+    vendor_item_list = common.LoadListFromFile(OPTIONS.vendor_item_list)
   else:
     vendor_item_list = DEFAULT_VENDOR_ITEM_LIST
 
   if OPTIONS.output_item_list:
-    output_item_list = read_config_list(OPTIONS.output_item_list)
+    output_item_list = common.LoadListFromFile(OPTIONS.output_item_list)
   else:
     output_item_list = None
 

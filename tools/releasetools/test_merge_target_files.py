@@ -18,11 +18,10 @@ import os.path
 
 import common
 import test_utils
-from merge_target_files import (read_config_list, validate_config_lists,
+from merge_target_files import (validate_config_lists,
                                 DEFAULT_FRAMEWORK_ITEM_LIST,
                                 DEFAULT_VENDOR_ITEM_LIST,
                                 DEFAULT_FRAMEWORK_MISC_INFO_KEYS, copy_items,
-                                merge_dynamic_partition_info_dicts,
                                 process_apex_keys_apk_certs_common)
 
 
@@ -83,24 +82,6 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
     self.assertEqual(
         os.readlink(os.path.join(output_dir, 'a_link.cpp')), 'a.cpp')
 
-  def test_read_config_list(self):
-    framework_item_list_file = os.path.join(self.testdata_dir,
-                                            'merge_config_framework_item_list')
-    framework_item_list = read_config_list(framework_item_list_file)
-    expected_framework_item_list = [
-        'META/apkcerts.txt',
-        'META/filesystem_config.txt',
-        'META/root_filesystem_config.txt',
-        'META/system_manifest.xml',
-        'META/system_matrix.xml',
-        'META/update_engine_config.txt',
-        'PRODUCT/*',
-        'ROOT/*',
-        'SYSTEM/*',
-    ]
-    self.assertEqual(sorted(framework_item_list),
-                     sorted(expected_framework_item_list))
-
   def test_validate_config_lists_ReturnsFalseIfMissingDefaultItem(self):
     framework_item_list = list(DEFAULT_FRAMEWORK_ITEM_LIST)
     framework_item_list.remove('SYSTEM/*')
@@ -143,69 +124,6 @@ class MergeTargetFilesTest(test_utils.ReleaseToolsTestCase):
           validate_config_lists(DEFAULT_FRAMEWORK_ITEM_LIST,
                                 framework_misc_info_keys,
                                 DEFAULT_VENDOR_ITEM_LIST))
-
-  def test_merge_dynamic_partition_info_dicts_ReturnsMergedDict(self):
-    framework_dict = {
-        'super_partition_groups': 'group_a',
-        'dynamic_partition_list': 'system',
-        'super_group_a_list': 'system',
-    }
-    vendor_dict = {
-        'super_partition_groups': 'group_a group_b',
-        'dynamic_partition_list': 'vendor product',
-        'super_group_a_list': 'vendor',
-        'super_group_a_size': '1000',
-        'super_group_b_list': 'product',
-        'super_group_b_size': '2000',
-    }
-    merged_dict = merge_dynamic_partition_info_dicts(
-        framework_dict=framework_dict,
-        vendor_dict=vendor_dict,
-        size_prefix='super_',
-        size_suffix='_size',
-        list_prefix='super_',
-        list_suffix='_list')
-    expected_merged_dict = {
-        'super_partition_groups': 'group_a group_b',
-        'dynamic_partition_list': 'system vendor product',
-        'super_group_a_list': 'system vendor',
-        'super_group_a_size': '1000',
-        'super_group_b_list': 'product',
-        'super_group_b_size': '2000',
-    }
-    self.assertEqual(merged_dict, expected_merged_dict)
-
-  def test_merge_dynamic_partition_info_dicts_IgnoringFrameworkGroupSize(self):
-    framework_dict = {
-        'super_partition_groups': 'group_a',
-        'dynamic_partition_list': 'system',
-        'super_group_a_list': 'system',
-        'super_group_a_size': '5000',
-    }
-    vendor_dict = {
-        'super_partition_groups': 'group_a group_b',
-        'dynamic_partition_list': 'vendor product',
-        'super_group_a_list': 'vendor',
-        'super_group_a_size': '1000',
-        'super_group_b_list': 'product',
-        'super_group_b_size': '2000',
-    }
-    merged_dict = merge_dynamic_partition_info_dicts(
-        framework_dict=framework_dict,
-        vendor_dict=vendor_dict,
-        size_prefix='super_',
-        size_suffix='_size',
-        list_prefix='super_',
-        list_suffix='_list')
-    expected_merged_dict = {
-        'super_partition_groups': 'group_a group_b',
-        'dynamic_partition_list': 'system vendor product',
-        'super_group_a_list': 'system vendor',
-        'super_group_a_size': '1000',
-        'super_group_b_list': 'product',
-        'super_group_b_size': '2000',
-    }
-    self.assertEqual(merged_dict, expected_merged_dict)
 
   def test_process_apex_keys_apk_certs_ReturnsTrueIfNoConflicts(self):
     output_dir = common.MakeTempDir()

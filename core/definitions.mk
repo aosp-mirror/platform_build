@@ -364,7 +364,7 @@ endef
 ###########################################################
 
 define all-renderscript-files-under
-$(call find-subdir-files,$(1) \( -name "*.rs" -or -name "*.fs" \) -and -not -name ".*")
+$(call find-subdir-files,$(1) \( -name "*.rscript" -or -name "*.fs" \) -and -not -name ".*")
 endef
 
 ###########################################################
@@ -1107,7 +1107,7 @@ endef
 ###########################################################
 define c-includes
 $(addprefix -I , $(PRIVATE_C_INCLUDES)) \
-$$(cat $(PRIVATE_IMPORT_INCLUDES))\
+$(foreach i,$(PRIVATE_IMPORTED_INCLUDES),$(EXPORTS.$(i)))\
 $(if $(PRIVATE_NO_DEFAULT_COMPILER_FLAGS),,\
     $(addprefix -I ,\
         $(filter-out $(PRIVATE_C_INCLUDES), \
@@ -2322,6 +2322,7 @@ $(hide) \
   PACKAGING=$(TARGET_OUT_COMMON_INTERMEDIATES)/PACKAGING ANDROID_LOG_TAGS="*:e" $(ART_VERIDEX_APPCOMPAT_SCRIPT) --dex-file=$@ --api-flags=$(INTERNAL_PLATFORM_HIDDENAPI_FLAGS) 2>&1 >> $(PRODUCT_OUT)/appcompat/$(PRIVATE_MODULE).log
 endef
 appcompat-files = \
+  $(AAPT2) \
   $(ART_VERIDEX_APPCOMPAT_SCRIPT) \
   $(INTERNAL_PLATFORM_HIDDENAPI_FLAGS) \
   $(HOST_OUT_EXECUTABLES)/veridex \
@@ -2444,8 +2445,16 @@ $(2): \
 	$(1) \
 	$(HOST_INIT_VERIFIER) \
 	$(HIDL_INHERITANCE_HIERARCHY) \
-	$(call intermediates-dir-for,ETC,passwd)/passwd
-	$(hide) $(HOST_INIT_VERIFIER) -p $(call intermediates-dir-for,ETC,passwd)/passwd -i $(HIDL_INHERITANCE_HIERARCHY) $$<
+	$(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	$(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
+	$(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
+	$(call intermediates-dir-for,ETC,passwd_product)/passwd_product
+	$(hide) $(HOST_INIT_VERIFIER) \
+	  -p $(call intermediates-dir-for,ETC,passwd_system)/passwd_system \
+	  -p $(call intermediates-dir-for,ETC,passwd_vendor)/passwd_vendor \
+	  -p $(call intermediates-dir-for,ETC,passwd_odm)/passwd_odm \
+	  -p $(call intermediates-dir-for,ETC,passwd_product)/passwd_product \
+	  -i $(HIDL_INHERITANCE_HIERARCHY) $$<
 else
 $(2): $(1)
 endif

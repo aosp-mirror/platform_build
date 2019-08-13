@@ -13,56 +13,184 @@
 // limitations under the License.
 
 python_defaults {
-    name: "releasetools_defaults",
+    name: "releasetools_library_defaults",
     version: {
         py2: {
             enabled: true,
-            embedded_launcher: false,
         },
         py3: {
             enabled: true,
-            embedded_launcher: false,
         },
     },
 }
 
 python_library_host {
-    name: "releasetools_lib",
-    defaults: ["releasetools_defaults"],
+    name: "releasetools_build_super_image",
+    defaults: ["releasetools_library_defaults"],
     srcs: [
-        "add_img_to_target_files.py",
-        "apex_utils.py",
-        "blockimgdiff.py",
-        "build_image.py",
         "build_super_image.py",
-        "check_ota_package_signature.py",
-        "check_target_files_signatures.py",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_common",
+    defaults: ["releasetools_library_defaults"],
+    srcs: [
+        "blockimgdiff.py",
         "common.py",
-        "edify_generator.py",
-        "img_from_target_files.py",
         "images.py",
-        "make_recovery_patch.py",
-        "merge_target_files.py",
-        "ota_from_target_files.py",
-        "ota_package_parser.py",
         "rangelib.py",
-        "sign_apex.py",
-        "sign_target_files_apks.py",
         "sparse_img.py",
-        "target_files_diff.py",
-        "validate_target_files.py",
+    ],
+    // Only the tools that are referenced directly are listed as required modules. For example,
+    // `avbtool` is not here, as the script always uses the one from info_dict['avb_avbtool'].
+    required: [
+        "aapt",
+        "boot_signer",
+        "brotli",
+        "bsdiff",
+        "imgdiff",
+        "minigzip",
+        "mkbootfs",
+    ],
+}
+
+python_library_host {
+    name: "releasetools_verity_utils",
+    defaults: ["releasetools_library_defaults"],
+    srcs: [
         "verity_utils.py",
+    ],
+    required: [
+        "append2simg",
+        "build_verity_metadata",
+        "build_verity_tree",
+        "fec",
     ],
 }
 
 python_defaults {
-    name: "releasetools_test_defaults",
-    defaults: ["releasetools_defaults"],
+    name: "releasetools_binary_defaults",
+    version: {
+        py2: {
+            enabled: true,
+            embedded_launcher: true,
+        },
+        py3: {
+            enabled: false,
+            embedded_launcher: false,
+        },
+    },
+}
+
+python_binary_host {
+    name: "build_image",
+    defaults: ["releasetools_binary_defaults"],
     srcs: [
+        "build_image.py",
+    ],
+    main: "build_image.py",
+    libs: [
+        "releasetools_common",
+        "releasetools_verity_utils",
+    ],
+    required: [
+        "blk_alloc_to_base_fs",
+        "e2fsck",
+        "simg2img",
+        "tune2fs",
+    ],
+}
+
+python_binary_host {
+    name: "build_super_image",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "build_super_image.py",
+    ],
+    main: "build_super_image.py",
+    libs: [
+        "releasetools_common",
+    ],
+}
+
+python_binary_host {
+    name: "make_recovery_patch",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "make_recovery_patch.py",
+    ],
+    libs: [
+        "releasetools_common",
+    ],
+}
+
+python_binary_host {
+    name: "merge_builds",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "merge_builds.py",
+    ],
+    main: "merge_builds.py",
+    libs: [
+        "releasetools_build_super_image",
+        "releasetools_common",
+    ],
+}
+
+python_binary_host {
+    name: "ota_from_target_files",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "edify_generator.py",
+        "ota_from_target_files.py",
+        "target_files_diff.py",
+    ],
+    main: "ota_from_target_files.py",
+    libs: [
+        "releasetools_common",
+        "releasetools_verity_utils",
+    ],
+    required: [
+        "brillo_update_payload",
+    ],
+}
+
+python_binary_host {
+    name: "sparse_img",
+    defaults: ["releasetools_binary_defaults"],
+    srcs: [
+        "rangelib.py",
+        "sparse_img.py",
+    ],
+    main: "sparse_img.py",
+}
+
+python_defaults {
+    name: "releasetools_test_defaults",
+    srcs: [
+        "add_img_to_target_files.py",
+        "apex_utils.py",
+        "build_image.py",
+        "check_ota_package_signature.py",
+        "check_target_files_signatures.py",
+        "edify_generator.py",
+        "img_from_target_files.py",
+        "make_recovery_patch.py",
+        "merge_target_files.py",
+        "ota_from_target_files.py",
+        "ota_package_parser.py",
+        "sign_apex.py",
+        "sign_target_files_apks.py",
+        "target_files_diff.py",
+        "validate_target_files.py",
+
         "test_*.py",
     ],
     libs: [
-        "releasetools_lib",
+        "releasetools_build_super_image",
+        "releasetools_common",
+        "releasetools_verity_utils",
     ],
     data: [
         "testdata/*",
@@ -79,6 +207,9 @@ python_test_host {
     version: {
         py2: {
             enabled: true,
+            // When using embedded launcher, atest will try (but may fail) to load libc++.so from
+            // host, because the test executable won't be able to find the needed libs via its
+            // runpath.
             embedded_launcher: false,
         },
         py3: {
