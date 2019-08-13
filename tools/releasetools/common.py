@@ -463,10 +463,13 @@ def LoadBuildProp(read_helper, prop_file):
   return LoadDictionaryFromLines(data.split("\n"))
 
 
-def LoadDictionaryFromFile(file_path):
+def LoadListFromFile(file_path):
   with open(file_path) as f:
-    lines = list(f.read().splitlines())
+    return f.read().splitlines()
 
+
+def LoadDictionaryFromFile(file_path):
+  lines = LoadListFromFile(file_path)
   return LoadDictionaryFromLines(lines)
 
 
@@ -551,6 +554,64 @@ def DumpInfoDict(d):
     logger.info("%-25s = (%s) %s", k, type(v).__name__, v)
 
 
+def MergeDynamicPartitionInfoDicts(framework_dict,
+                                   vendor_dict,
+                                   include_dynamic_partition_list=True,
+                                   size_prefix="",
+                                   size_suffix="",
+                                   list_prefix="",
+                                   list_suffix=""):
+  """Merges dynamic partition info variables.
+
+  Args:
+    framework_dict: The dictionary of dynamic partition info variables from the
+      partial framework target files.
+    vendor_dict: The dictionary of dynamic partition info variables from the
+      partial vendor target files.
+    include_dynamic_partition_list: If true, merges the dynamic_partition_list
+      variable. Not all use cases need this variable merged.
+    size_prefix: The prefix in partition group size variables that precedes the
+      name of the partition group. For example, partition group 'group_a' with
+      corresponding size variable 'super_group_a_group_size' would have the
+      size_prefix 'super_'.
+    size_suffix: Similar to size_prefix but for the variable's suffix. For
+      example, 'super_group_a_group_size' would have size_suffix '_group_size'.
+    list_prefix: Similar to size_prefix but for the partition group's
+      partition_list variable.
+    list_suffix: Similar to size_suffix but for the partition group's
+      partition_list variable.
+
+  Returns:
+    The merged dynamic partition info dictionary.
+  """
+  merged_dict = {}
+  # Partition groups and group sizes are defined by the vendor dict because
+  # these values may vary for each board that uses a shared system image.
+  merged_dict["super_partition_groups"] = vendor_dict["super_partition_groups"]
+  if include_dynamic_partition_list:
+    framework_dynamic_partition_list = framework_dict.get(
+        "dynamic_partition_list", "")
+    vendor_dynamic_partition_list = vendor_dict.get("dynamic_partition_list",
+                                                    "")
+    merged_dict["dynamic_partition_list"] = (
+        "%s %s" % (framework_dynamic_partition_list,
+                   vendor_dynamic_partition_list)).strip()
+  for partition_group in merged_dict["super_partition_groups"].split(" "):
+    # Set the partition group's size using the value from the vendor dict.
+    key = "%s%s%s" % (size_prefix, partition_group, size_suffix)
+    if key not in vendor_dict:
+      raise ValueError("Vendor dict does not contain required key %s." % key)
+    merged_dict[key] = vendor_dict[key]
+
+    # Set the partition group's partition list using a concatenation of the
+    # framework and vendor partition lists.
+    key = "%s%s%s" % (list_prefix, partition_group, list_suffix)
+    merged_dict[key] = (
+        "%s %s" %
+        (framework_dict.get(key, ""), vendor_dict.get(key, ""))).strip()
+  return merged_dict
+
+
 def AppendAVBSigningArgs(cmd, partition):
   """Append signing arguments for avbtool."""
   # e.g., "--key path/to/signing_key --algorithm SHA256_RSA4096"
@@ -562,6 +623,33 @@ def AppendAVBSigningArgs(cmd, partition):
   # make_vbmeta_image doesn't like "--salt" (and it's not needed).
   if avb_salt and not partition.startswith("vbmeta"):
     cmd.extend(["--salt", avb_salt])
+
+
+def GetAvbPartitionArg(partition, image, info_dict = None):
+  """Returns the VBMeta arguments for partition.
+
+  It sets up the VBMeta argument by including the partition descriptor from the
+  given 'image', or by configuring the partition as a chained partition.
+
+  Args:
+    partition: The name of the partition (e.g. "system").
+    image: The path to the partition image.
+    info_dict: A dict returned by common.LoadInfoDict(). Will use
+        OPTIONS.info_dict if None has been given.
+
+  Returns:
+    A list of VBMeta arguments.
+  """
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  # Check if chain partition is used.
+  key_path = info_dict.get("avb_" + partition + "_key_path")
+  if key_path:
+    chained_partition_arg = GetAvbChainedPartitionArg(partition, info_dict)
+    return ["--chain_partition", chained_partition_arg]
+  else:
+    return ["--include_descriptors_from_image", image]
 
 
 def GetAvbChainedPartitionArg(partition, info_dict, key=None):
@@ -584,6 +672,65 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
   return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
+
+
+def BuildVBMeta(image_path, partitions, name, needed_partitions):
+  """Creates a VBMeta image.
+
+  It generates the requested VBMeta image. The requested image could be for
+  top-level or chained VBMeta image, which is determined based on the name.
+
+  Args:
+    image_path: The output path for the new VBMeta image.
+    partitions: A dict that's keyed by partition names with image paths as
+        values. Only valid partition names are accepted, as listed in
+        common.AVB_PARTITIONS.
+    name: Name of the VBMeta partition, e.g. 'vbmeta', 'vbmeta_system'.
+    needed_partitions: Partitions whose descriptors should be included into the
+        generated VBMeta image.
+
+  Raises:
+    AssertionError: On invalid input args.
+  """
+  avbtool = OPTIONS.info_dict["avb_avbtool"]
+  cmd = [avbtool, "make_vbmeta_image", "--output", image_path]
+  AppendAVBSigningArgs(cmd, name)
+
+  for partition, path in partitions.items():
+    if partition not in needed_partitions:
+      continue
+    assert (partition in AVB_PARTITIONS or
+            partition in AVB_VBMETA_PARTITIONS), \
+        'Unknown partition: {}'.format(partition)
+    assert os.path.exists(path), \
+        'Failed to find {} for {}'.format(path, partition)
+    cmd.extend(GetAvbPartitionArg(partition, path))
+
+  args = OPTIONS.info_dict.get("avb_{}_args".format(name))
+  if args and args.strip():
+    split_args = shlex.split(args)
+    for index, arg in enumerate(split_args[:-1]):
+      # Sanity check that the image file exists. Some images might be defined
+      # as a path relative to source tree, which may not be available at the
+      # same location when running this script (we have the input target_files
+      # zip only). For such cases, we additionally scan other locations (e.g.
+      # IMAGES/, RADIO/, etc) before bailing out.
+      if arg == '--include_descriptors_from_image':
+        image_path = split_args[index + 1]
+        if os.path.exists(image_path):
+          continue
+        found = False
+        for dir_name in ['IMAGES', 'RADIO', 'PREBUILT_IMAGES']:
+          alt_path = os.path.join(
+              OPTIONS.input_tmp, dir_name, os.path.basename(image_path))
+          if os.path.exists(alt_path):
+            split_args[index + 1] = alt_path
+            found = True
+            break
+        assert found, 'Failed to find {}'.format(image_path)
+    cmd.extend(split_args)
+
+  RunAndCheckOutput(cmd)
 
 
 def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,

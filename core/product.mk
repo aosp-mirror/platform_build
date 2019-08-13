@@ -280,9 +280,6 @@ _product_single_value_vars += PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD
 # Make this art variable visible to soong_config.mk.
 _product_single_value_vars += PRODUCT_ART_USE_READ_BARRIER
 
-# Whether the product is an Android Things variant.
-_product_single_value_vars += PRODUCT_IOT
-
 # Add reserved headroom to a system image.
 _product_single_value_vars += PRODUCT_SYSTEM_HEADROOM
 
@@ -370,6 +367,12 @@ _product_list_vars += PRODUCT_UPDATABLE_BOOT_LOCATIONS
 
 # Whether the product would like to check prebuilt ELF files.
 _product_single_value_vars += PRODUCT_CHECK_ELF_FILES
+
+# If set, device uses virtual A/B.
+_product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA
+
+# If set, device retrofits virtual A/B.
+_product_single_value_vars += PRODUCT_VIRTUAL_AB_OTA_RETROFIT
 
 .KATI_READONLY := _product_single_value_vars _product_list_vars
 _product_var_list :=$= $(_product_single_value_vars) $(_product_list_vars)

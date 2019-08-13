@@ -391,28 +391,6 @@ def AddUserdata(output_zip):
   img.Write()
 
 
-def AppendVBMetaArgsForPartition(cmd, partition, image):
-  """Appends the VBMeta arguments for partition.
-
-  It sets up the VBMeta argument by including the partition descriptor from the
-  given 'image', or by configuring the partition as a chained partition.
-
-  Args:
-    cmd: A list of command args that will be used to generate the vbmeta image.
-        The argument for the partition will be appended to the list.
-    partition: The name of the partition (e.g. "system").
-    image: The path to the partition image.
-  """
-  # Check if chain partition is used.
-  key_path = OPTIONS.info_dict.get("avb_" + partition + "_key_path")
-  if key_path:
-    chained_partition_arg = common.GetAvbChainedPartitionArg(
-        partition, OPTIONS.info_dict)
-    cmd.extend(["--chain_partition", chained_partition_arg])
-  else:
-    cmd.extend(["--include_descriptors_from_image", image])
-
-
 def AddVBMeta(output_zip, partitions, name, needed_partitions):
   """Creates a VBMeta image and stores it in output_zip.
 
@@ -442,45 +420,7 @@ def AddVBMeta(output_zip, partitions, name, needed_partitions):
     logger.info("%s.img already exists; not rebuilding...", name)
     return img.name
 
-  avbtool = OPTIONS.info_dict["avb_avbtool"]
-  cmd = [avbtool, "make_vbmeta_image", "--output", img.name]
-  common.AppendAVBSigningArgs(cmd, name)
-
-  for partition, path in partitions.items():
-    if partition not in needed_partitions:
-      continue
-    assert (partition in common.AVB_PARTITIONS or
-            partition in common.AVB_VBMETA_PARTITIONS), \
-        'Unknown partition: {}'.format(partition)
-    assert os.path.exists(path), \
-        'Failed to find {} for {}'.format(path, partition)
-    AppendVBMetaArgsForPartition(cmd, partition, path)
-
-  args = OPTIONS.info_dict.get("avb_{}_args".format(name))
-  if args and args.strip():
-    split_args = shlex.split(args)
-    for index, arg in enumerate(split_args[:-1]):
-      # Sanity check that the image file exists. Some images might be defined
-      # as a path relative to source tree, which may not be available at the
-      # same location when running this script (we have the input target_files
-      # zip only). For such cases, we additionally scan other locations (e.g.
-      # IMAGES/, RADIO/, etc) before bailing out.
-      if arg == '--include_descriptors_from_image':
-        image_path = split_args[index + 1]
-        if os.path.exists(image_path):
-          continue
-        found = False
-        for dir_name in ['IMAGES', 'RADIO', 'PREBUILT_IMAGES']:
-          alt_path = os.path.join(
-              OPTIONS.input_tmp, dir_name, os.path.basename(image_path))
-          if os.path.exists(alt_path):
-            split_args[index + 1] = alt_path
-            found = True
-            break
-        assert found, 'Failed to find {}'.format(image_path)
-    cmd.extend(split_args)
-
-  common.RunAndCheckOutput(cmd)
+  common.BuildVBMeta(img.name, partitions, name, needed_partitions)
   img.Write()
   return img.name
 
@@ -810,11 +750,11 @@ def AddImagesToTargetFiles(filename):
       banner("recovery (two-step image)")
       # The special recovery.img for two-step package use.
       recovery_two_step_image = common.GetBootableImage(
-          "IMAGES/recovery-two-step.img", "recovery-two-step.img",
+          "OTA/recovery-two-step.img", "recovery-two-step.img",
           OPTIONS.input_tmp, "RECOVERY", two_step_image=True)
       assert recovery_two_step_image, "Failed to create recovery-two-step.img."
       recovery_two_step_image_path = os.path.join(
-          OPTIONS.input_tmp, "IMAGES", "recovery-two-step.img")
+          OPTIONS.input_tmp, "OTA", "recovery-two-step.img")
       if not os.path.exists(recovery_two_step_image_path):
         recovery_two_step_image.WriteToDir(OPTIONS.input_tmp)
         if output_zip:

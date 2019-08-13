@@ -14,11 +14,19 @@
 # limitations under the License.
 #
 
-# Base modules and settings for the product partition.
-PRODUCT_PACKAGES += \
-    group_product \
-    healthd \
-    ModuleMetadata \
-    passwd_product \
-    product_compatibility_matrix.xml \
-    product_manifest.xml \
+# Notice: this works only with Google's RBE service.
+ifneq ($(filter-out false,$(USE_RBE)),)
+  ifdef RBE_DIR
+    rbe_dir := $(RBE_DIR)
+  else
+    rbe_dir := $(HOME)/rbe
+  endif
+  RBE_WRAPPER := $(rbe_dir)/rewrapper
+
+  # Append rewrapper to existing *_WRAPPER variables so it's possible to
+  # use both ccache and rewrapper.
+  CC_WRAPPER := $(strip $(CC_WRAPPER) $(RBE_WRAPPER))
+  CXX_WRAPPER := $(strip $(CXX_WRAPPER) $(RBE_WRAPPER))
+
+  rbe_dir :=
+endif
