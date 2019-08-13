@@ -21,7 +21,7 @@ ifneq ($(filter-out false,$(USE_RBE)),)
   else
     rbe_dir := $(HOME)/rbe
   endif
-  RBE_WRAPPER := $(rbe_dir)/rewrapper
+  RBE_WRAPPER := $(rbe_dir)/rewrapper --labels=type=compile,lang=cpp,compiler=clang
 
   # Append rewrapper to existing *_WRAPPER variables so it's possible to
   # use both ccache and rewrapper.
