@@ -3396,6 +3396,7 @@ define build-vbmetaimage-target
   $(hide) rm -rf $(AVB_CHAIN_KEY_DIR)
 endef
 
+ifdef BUILDING_VBMETA_IMAGE
 INSTALLED_VBMETAIMAGE_TARGET := $(BUILT_VBMETAIMAGE_TARGET)
 $(INSTALLED_VBMETAIMAGE_TARGET): PRIVATE_AVB_VBMETA_SIGNING_ARGS := \
     --algorithm $(BOARD_AVB_ALGORITHM) --key $(BOARD_AVB_KEY_PATH)
@@ -3420,6 +3421,7 @@ $(INSTALLED_VBMETAIMAGE_TARGET): \
 .PHONY: vbmetaimage-nodeps
 vbmetaimage-nodeps:
 	$(build-vbmetaimage-target)
+endif # BUILDING_VBMETA_IMAGE
 
 endif # BOARD_AVB_ENABLE
 
