@@ -3622,6 +3622,7 @@ ifeq ($(build_otatools_package),true)
 
 INTERNAL_OTATOOLS_MODULES := \
   aapt2 \
+  add_img_to_target_files \
   append2simg \
   avbtool \
   blk_alloc_to_base_fs \
@@ -3634,6 +3635,8 @@ INTERNAL_OTATOOLS_MODULES := \
   build_verity_metadata \
   build_verity_tree \
   care_map_generator \
+  check_ota_package_signature \
+  check_target_files_signatures \
   checkvintf \
   delta_generator \
   e2fsck \
@@ -3643,11 +3646,13 @@ INTERNAL_OTATOOLS_MODULES := \
   fs_config \
   generate_verity_key \
   img2simg \
+  img_from_target_files \
   imgdiff \
   libconscrypt_openjdk_jni \
   lpmake \
   lpunpack \
   make_f2fs \
+  merge_target_files \
   minigzip \
   mk_combined_img \
   mkbootfs \
@@ -3662,11 +3667,14 @@ INTERNAL_OTATOOLS_MODULES := \
   sefcontext_compile \
   sgdisk \
   shflags \
+  sign_apex \
+  sign_target_files_apks \
   signapk \
   simg2img \
   sload_f2fs \
   tune2fs \
   update_host_simulator \
+  validate_target_files \
   verity_signer \
   verity_verifier \
   zipalign \
@@ -4018,9 +4026,8 @@ $(BUILT_TARGET_FILES_PACKAGE): \
 	    $(SOONG_APEX_KEYS_FILE) \
 	    $(SOONG_ZIP) \
 	    $(HOST_OUT_EXECUTABLES)/fs_config \
-	    $(HOST_OUT_EXECUTABLES)/care_map_generator \
+	    $(ADD_IMG_TO_TARGET_FILES) \
 	    $(MAKE_RECOVERY_PATCH) \
-	    $(BUILD_IMAGE_SRCS) \
 	    $(BUILT_ASSEMBLED_FRAMEWORK_MANIFEST) \
 	    $(BUILT_ASSEMBLED_VENDOR_MANIFEST) \
 	    $(BUILT_SYSTEM_MATRIX) \
@@ -4287,7 +4294,7 @@ ifneq ($(BOARD_SUPER_PARTITION_GROUPS),)
 endif # BOARD_SUPER_PARTITION_GROUPS
 	@# TODO(b/134525174): Remove `-r` after addressing the issue with recovery patch generation.
 	$(hide) PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$$PATH MKBOOTIMG=$(MKBOOTIMG) \
-	    build/make/tools/releasetools/add_img_to_target_files -a -r -v -p $(HOST_OUT) $(zip_root)
+	    $(ADD_IMG_TO_TARGET_FILES) -a -r -v -p $(HOST_OUT) $(zip_root)
 ifeq ($(BUILD_QEMU_IMAGES),true)
 	$(hide) AVBTOOL=$(AVBTOOL) $(MK_VBMETA_BOOT_KERNEL_CMDLINE_SH) $(zip_root)/IMAGES/vbmeta.img \
 	    $(zip_root)/IMAGES/system.img $(zip_root)/IMAGES/VerifiedBootParams.textproto
