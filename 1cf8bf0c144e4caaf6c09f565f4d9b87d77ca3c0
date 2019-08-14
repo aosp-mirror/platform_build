@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c4f43dcb_28008326",
+        "filename": "core/Makefile",
+        "patchSetId": 14
+      },
+      "lineNbr": 3623,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-14T19:37:49Z",
+      "side": 1,
+      "message": "Here\u0027s the place that causes the merge conflict. ag/9146893 to land the change internally first.",
+      "range": {
+        "startLine": 3623,
+        "startChar": 2,
+        "endLine": 3623,
+        "endChar": 6
+      },
+      "revId": "1cf8bf0c144e4caaf6c09f565f4d9b87d77ca3c0",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
