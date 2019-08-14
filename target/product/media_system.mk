@@ -52,10 +52,10 @@ endif
 # The order here is the same order they end up on the classpath, so it matters.
 PRODUCT_SYSTEM_SERVER_JARS := \
     services \
-    jobscheduler-service \
     ethernet-service \
     wifi-service \
     com.android.location.provider \
+    jobscheduler-service \
 
 PRODUCT_COPY_FILES += \
     system/core/rootdir/etc/public.libraries.android.txt:system/etc/public.libraries.txt

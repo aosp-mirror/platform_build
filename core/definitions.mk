@@ -951,7 +951,7 @@ define transform-bc-to-so
 $(hide) mkdir -p $(dir $@)
 $(hide) $(BCC_COMPAT) -O3 -o $(dir $@)/$(notdir $(<:.bc=.o)) -fPIC -shared \
   -rt-path $(RS_PREBUILT_CLCORE) -mtriple $(RS_COMPAT_TRIPLE) $<
-$(hide) $(PRIVATE_CXX) -shared -Wl,-soname,$(notdir $@) -nostdlib \
+$(hide) $(PRIVATE_CXX_LINK) -shared -Wl,-soname,$(notdir $@) -nostdlib \
   -Wl,-rpath,\$$ORIGIN/../lib \
   $(dir $@)/$(notdir $(<:.bc=.o)) \
   $(RS_PREBUILT_COMPILER_RT) \
@@ -1533,7 +1533,7 @@ $(hide) mv -f $@.tmp $@
 endef
 
 define transform-o-to-aux-executable-inner
-$(hide) $(PRIVATE_CXX) -pie \
+$(hide) $(PRIVATE_CXX_LINK) -pie \
   -Bdynamic \
   -Wl,--gc-sections \
   $(PRIVATE_ALL_OBJECTS) \
@@ -1552,7 +1552,7 @@ $(transform-o-to-aux-executable-inner)
 endef
 
 define transform-o-to-aux-static-executable-inner
-$(hide) $(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX_LINK) \
   -Bstatic \
   -Wl,--gc-sections \
   $(PRIVATE_ALL_OBJECTS) \
@@ -1653,7 +1653,7 @@ endef
 # it to be overriden en-masse see combo/linux-arm.make for an example.
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-shared-lib-inner
-$(hide) $(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX_LINK) \
   -Wl,-rpath,\$$ORIGIN/../$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)OUT_SHARED_LIBRARIES)) \
   -Wl,-rpath,\$$ORIGIN/$(notdir $($(PRIVATE_2ND_ARCH_VAR_PREFIX)$(PRIVATE_PREFIX)OUT_SHARED_LIBRARIES)) \
   -shared -Wl,-soname,$(notdir $@) \
@@ -1694,7 +1694,7 @@ endef
 ###########################################################
 
 define transform-o-to-shared-lib-inner
-$(hide) $(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX_LINK) \
   -nostdlib -Wl,-soname,$(notdir $@) \
   -Wl,--gc-sections \
   -shared \
@@ -1729,7 +1729,7 @@ endef
 ###########################################################
 
 define transform-o-to-executable-inner
-$(hide) $(PRIVATE_CXX) -pie \
+$(hide) $(PRIVATE_CXX_LINK) -pie \
   -nostdlib -Bdynamic \
   -Wl,-dynamic-linker,$(PRIVATE_LINKER) \
   -Wl,--gc-sections \
@@ -1772,7 +1772,7 @@ endef
 ###########################################################
 
 define transform-o-to-static-executable-inner
-$(hide) $(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX_LINK) \
   -nostdlib -Bstatic \
   $(if $(filter $(PRIVATE_LDFLAGS),-shared),,-static) \
   -Wl,--gc-sections \
@@ -1810,7 +1810,7 @@ endef
 
 ifneq ($(HOST_CUSTOM_LD_COMMAND),true)
 define transform-host-o-to-executable-inner
-$(hide) $(PRIVATE_CXX) \
+$(hide) $(PRIVATE_CXX_LINK) \
   $(PRIVATE_ALL_OBJECTS) \
   -Wl,--whole-archive \
   $(PRIVATE_ALL_WHOLE_STATIC_LIBRARIES) \
