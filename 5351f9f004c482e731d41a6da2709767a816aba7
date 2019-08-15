@@ -49,6 +49,30 @@
     },
     {
       "key": {
+        "uuid": "21cdcccc_4edcc2a2",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4026,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-15T19:35:36Z",
+      "side": 1,
+      "message": "These four dependency lines should stay only if the XMLs are still being packed into target_files.zip (PS2 doesn\u0027t cp the files, but still declares the dependency).",
+      "parentUuid": "9ea85621_045fd2ea",
+      "range": {
+        "startLine": 4023,
+        "startChar": 0,
+        "endLine": 4026,
+        "endChar": 29
+      },
+      "revId": "5351f9f004c482e731d41a6da2709767a816aba7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d36e1a6e_66f8275b",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 1
