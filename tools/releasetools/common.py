@@ -14,6 +14,7 @@
 
 from __future__ import print_function
 
+import base64
 import collections
 import copy
 import errno
@@ -30,7 +31,6 @@ import platform
 import re
 import shlex
 import shutil
-import string
 import subprocess
 import sys
 import tempfile
@@ -39,8 +39,9 @@ import time
 import zipfile
 from hashlib import sha1, sha256
 
-import blockimgdiff
+import images
 import sparse_img
+from blockimgdiff import BlockImageDiff
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +55,9 @@ class Options(object):
       base_search_path = os.path.join(base_out_path,
                                       os.path.basename(os.getcwd()))
 
+    # Python >= 3.3 returns 'linux', whereas Python 2.7 gives 'linux2'.
     platform_search_path = {
+        "linux": os.path.join(base_search_path, "host/linux-x86"),
         "linux2": os.path.join(base_search_path, "host/linux-x86"),
         "darwin": os.path.join(base_search_path, "host/darwin-x86"),
     }
@@ -96,12 +99,14 @@ SPECIAL_CERT_STRINGS = ("PRESIGNED", "EXTERNAL")
 # The partitions allowed to be signed by AVB (Android Verified Boot 2.0). Note
 # that system_other is not in the list because we don't want to include its
 # descriptor into vbmeta.img.
-AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'product_services',
-                  'recovery', 'system', 'vendor')
+AVB_PARTITIONS = ('boot', 'dtbo', 'odm', 'product', 'recovery', 'system',
+                  'system_ext', 'vendor')
+
+# Chained VBMeta partitions.
+AVB_VBMETA_PARTITIONS = ('vbmeta_system', 'vbmeta_vendor')
 
 # Partitions that should have their care_map added to META/care_map.pb
-PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'product_services',
-                            'odm')
+PARTITIONS_WITH_CARE_MAP = ('system', 'vendor', 'product', 'system_ext', 'odm')
 
 
 class ErrorCode(object):
@@ -187,6 +192,8 @@ def Run(args, verbose=None, **kwargs):
     kwargs: Any additional args to be passed to subprocess.Popen(), such as env,
         stdin, etc. stdout and stderr will default to subprocess.PIPE and
         subprocess.STDOUT respectively unless caller specifies any of them.
+        universal_newlines will default to True, as most of the users in
+        releasetools expect string output.
 
   Returns:
     A subprocess.Popen object.
@@ -194,6 +201,8 @@ def Run(args, verbose=None, **kwargs):
   if 'stdout' not in kwargs and 'stderr' not in kwargs:
     kwargs['stdout'] = subprocess.PIPE
     kwargs['stderr'] = subprocess.STDOUT
+  if 'universal_newlines' not in kwargs:
+    kwargs['universal_newlines'] = True
   # Don't log any if caller explicitly says so.
   if verbose != False:
     logger.info("  Running: \"%s\"", " ".join(args))
@@ -242,6 +251,8 @@ def RunAndCheckOutput(args, verbose=None, **kwargs):
   """
   proc = Run(args, verbose=verbose, **kwargs)
   output, _ = proc.communicate()
+  if output is None:
+    output = ""
   # Don't log any if caller explicitly says so.
   if verbose != False:
     logger.info("%s", output.rstrip())
@@ -311,7 +322,7 @@ def LoadInfoDict(input_file, repacking=False):
 
   def read_helper(fn):
     if isinstance(input_file, zipfile.ZipFile):
-      return input_file.read(fn)
+      return input_file.read(fn).decode()
     else:
       path = os.path.join(input_file, *fn.split("/"))
       try:
@@ -452,6 +463,16 @@ def LoadBuildProp(read_helper, prop_file):
   return LoadDictionaryFromLines(data.split("\n"))
 
 
+def LoadListFromFile(file_path):
+  with open(file_path) as f:
+    return f.read().splitlines()
+
+
+def LoadDictionaryFromFile(file_path):
+  lines = LoadListFromFile(file_path)
+  return LoadDictionaryFromLines(lines)
+
+
 def LoadDictionaryFromLines(lines):
   d = {}
   for line in lines:
@@ -523,7 +544,7 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
   # system. Other areas assume system is always at "/system" so point /system
   # at /.
   if system_root_image:
-    assert not d.has_key("/system") and d.has_key("/")
+    assert '/system' not in d and '/' in d
     d["/system"] = d["/"]
   return d
 
@@ -531,6 +552,64 @@ def LoadRecoveryFSTab(read_helper, fstab_version, recovery_fstab_path,
 def DumpInfoDict(d):
   for k, v in sorted(d.items()):
     logger.info("%-25s = (%s) %s", k, type(v).__name__, v)
+
+
+def MergeDynamicPartitionInfoDicts(framework_dict,
+                                   vendor_dict,
+                                   include_dynamic_partition_list=True,
+                                   size_prefix="",
+                                   size_suffix="",
+                                   list_prefix="",
+                                   list_suffix=""):
+  """Merges dynamic partition info variables.
+
+  Args:
+    framework_dict: The dictionary of dynamic partition info variables from the
+      partial framework target files.
+    vendor_dict: The dictionary of dynamic partition info variables from the
+      partial vendor target files.
+    include_dynamic_partition_list: If true, merges the dynamic_partition_list
+      variable. Not all use cases need this variable merged.
+    size_prefix: The prefix in partition group size variables that precedes the
+      name of the partition group. For example, partition group 'group_a' with
+      corresponding size variable 'super_group_a_group_size' would have the
+      size_prefix 'super_'.
+    size_suffix: Similar to size_prefix but for the variable's suffix. For
+      example, 'super_group_a_group_size' would have size_suffix '_group_size'.
+    list_prefix: Similar to size_prefix but for the partition group's
+      partition_list variable.
+    list_suffix: Similar to size_suffix but for the partition group's
+      partition_list variable.
+
+  Returns:
+    The merged dynamic partition info dictionary.
+  """
+  merged_dict = {}
+  # Partition groups and group sizes are defined by the vendor dict because
+  # these values may vary for each board that uses a shared system image.
+  merged_dict["super_partition_groups"] = vendor_dict["super_partition_groups"]
+  if include_dynamic_partition_list:
+    framework_dynamic_partition_list = framework_dict.get(
+        "dynamic_partition_list", "")
+    vendor_dynamic_partition_list = vendor_dict.get("dynamic_partition_list",
+                                                    "")
+    merged_dict["dynamic_partition_list"] = (
+        "%s %s" % (framework_dynamic_partition_list,
+                   vendor_dynamic_partition_list)).strip()
+  for partition_group in merged_dict["super_partition_groups"].split(" "):
+    # Set the partition group's size using the value from the vendor dict.
+    key = "%s%s%s" % (size_prefix, partition_group, size_suffix)
+    if key not in vendor_dict:
+      raise ValueError("Vendor dict does not contain required key %s." % key)
+    merged_dict[key] = vendor_dict[key]
+
+    # Set the partition group's partition list using a concatenation of the
+    # framework and vendor partition lists.
+    key = "%s%s%s" % (list_prefix, partition_group, list_suffix)
+    merged_dict[key] = (
+        "%s %s" %
+        (framework_dict.get(key, ""), vendor_dict.get(key, ""))).strip()
+  return merged_dict
 
 
 def AppendAVBSigningArgs(cmd, partition):
@@ -544,6 +623,33 @@ def AppendAVBSigningArgs(cmd, partition):
   # make_vbmeta_image doesn't like "--salt" (and it's not needed).
   if avb_salt and not partition.startswith("vbmeta"):
     cmd.extend(["--salt", avb_salt])
+
+
+def GetAvbPartitionArg(partition, image, info_dict = None):
+  """Returns the VBMeta arguments for partition.
+
+  It sets up the VBMeta argument by including the partition descriptor from the
+  given 'image', or by configuring the partition as a chained partition.
+
+  Args:
+    partition: The name of the partition (e.g. "system").
+    image: The path to the partition image.
+    info_dict: A dict returned by common.LoadInfoDict(). Will use
+        OPTIONS.info_dict if None has been given.
+
+  Returns:
+    A list of VBMeta arguments.
+  """
+  if info_dict is None:
+    info_dict = OPTIONS.info_dict
+
+  # Check if chain partition is used.
+  key_path = info_dict.get("avb_" + partition + "_key_path")
+  if key_path:
+    chained_partition_arg = GetAvbChainedPartitionArg(partition, info_dict)
+    return ["--chain_partition", chained_partition_arg]
+  else:
+    return ["--include_descriptors_from_image", image]
 
 
 def GetAvbChainedPartitionArg(partition, info_dict, key=None):
@@ -562,10 +668,69 @@ def GetAvbChainedPartitionArg(partition, info_dict, key=None):
   """
   if key is None:
     key = info_dict["avb_" + partition + "_key_path"]
-  pubkey_path = ExtractAvbPublicKey(key)
+  pubkey_path = ExtractAvbPublicKey(info_dict["avb_avbtool"], key)
   rollback_index_location = info_dict[
       "avb_" + partition + "_rollback_index_location"]
   return "{}:{}:{}".format(partition, rollback_index_location, pubkey_path)
+
+
+def BuildVBMeta(image_path, partitions, name, needed_partitions):
+  """Creates a VBMeta image.
+
+  It generates the requested VBMeta image. The requested image could be for
+  top-level or chained VBMeta image, which is determined based on the name.
+
+  Args:
+    image_path: The output path for the new VBMeta image.
+    partitions: A dict that's keyed by partition names with image paths as
+        values. Only valid partition names are accepted, as listed in
+        common.AVB_PARTITIONS.
+    name: Name of the VBMeta partition, e.g. 'vbmeta', 'vbmeta_system'.
+    needed_partitions: Partitions whose descriptors should be included into the
+        generated VBMeta image.
+
+  Raises:
+    AssertionError: On invalid input args.
+  """
+  avbtool = OPTIONS.info_dict["avb_avbtool"]
+  cmd = [avbtool, "make_vbmeta_image", "--output", image_path]
+  AppendAVBSigningArgs(cmd, name)
+
+  for partition, path in partitions.items():
+    if partition not in needed_partitions:
+      continue
+    assert (partition in AVB_PARTITIONS or
+            partition in AVB_VBMETA_PARTITIONS), \
+        'Unknown partition: {}'.format(partition)
+    assert os.path.exists(path), \
+        'Failed to find {} for {}'.format(path, partition)
+    cmd.extend(GetAvbPartitionArg(partition, path))
+
+  args = OPTIONS.info_dict.get("avb_{}_args".format(name))
+  if args and args.strip():
+    split_args = shlex.split(args)
+    for index, arg in enumerate(split_args[:-1]):
+      # Sanity check that the image file exists. Some images might be defined
+      # as a path relative to source tree, which may not be available at the
+      # same location when running this script (we have the input target_files
+      # zip only). For such cases, we additionally scan other locations (e.g.
+      # IMAGES/, RADIO/, etc) before bailing out.
+      if arg == '--include_descriptors_from_image':
+        image_path = split_args[index + 1]
+        if os.path.exists(image_path):
+          continue
+        found = False
+        for dir_name in ['IMAGES', 'RADIO', 'PREBUILT_IMAGES']:
+          alt_path = os.path.join(
+              OPTIONS.input_tmp, dir_name, os.path.basename(image_path))
+          if os.path.exists(alt_path):
+            split_args[index + 1] = alt_path
+            found = True
+            break
+        assert found, 'Failed to find {}'.format(image_path)
+    cmd.extend(split_args)
+
+  RunAndCheckOutput(cmd)
 
 
 def _BuildBootableImage(sourcedir, fs_config_file, info_dict=None,
@@ -860,7 +1025,7 @@ def GetUserImage(which, tmpdir, input_zip,
     A Image object. If it is a sparse image and reset_file_map is False, the
     image will have file_map info loaded.
   """
-  if info_dict == None:
+  if info_dict is None:
     info_dict = LoadInfoDict(input_zip)
 
   is_sparse = info_dict.get("extfs_sparse_flag")
@@ -900,8 +1065,8 @@ def GetNonSparseImage(which, tmpdir, hashtree_info_generator=None):
   # ota_from_target_files.py (since LMP).
   assert os.path.exists(path) and os.path.exists(mappath)
 
-  return blockimgdiff.FileImage(path, hashtree_info_generator=
-                                hashtree_info_generator)
+  return images.FileImage(path, hashtree_info_generator=hashtree_info_generator)
+
 
 def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
                    hashtree_info_generator=None):
@@ -950,7 +1115,7 @@ def GetSparseImage(which, tmpdir, input_zip, allow_shared_blocks,
     # filename listed in system.map may contain an additional leading slash
     # (i.e. "//system/framework/am.jar"). Using lstrip to get consistent
     # results.
-    arcname = string.replace(entry, which, which.upper(), 1).lstrip('/')
+    arcname = entry.replace(which, which.upper(), 1).lstrip('/')
 
     # Special handling another case, where files not under /system
     # (e.g. "/sbin/charger") are packed under ROOT/ in a target_files.zip.
@@ -1220,7 +1385,7 @@ def ReadApkCerts(tf_zip):
     if basename:
       installed_files.add(basename)
 
-  for line in tf_zip.read("META/apkcerts.txt").split("\n"):
+  for line in tf_zip.read('META/apkcerts.txt').decode().split('\n'):
     line = line.strip()
     if not line:
       continue
@@ -1430,6 +1595,8 @@ class PasswordManager(object):
 
       if not first:
         print("key file %s still missing some passwords." % (self.pwfile,))
+        if sys.version_info[0] >= 3:
+          raw_input = input  # pylint: disable=redefined-builtin
         answer = raw_input("try to edit again? [y]> ").strip()
         if answer and answer[0] not in 'yY':
           raise RuntimeError("key passwords unavailable")
@@ -1443,7 +1610,7 @@ class PasswordManager(object):
     values.
     """
     result = {}
-    for k, v in sorted(current.iteritems()):
+    for k, v in sorted(current.items()):
       if v:
         result[k] = v
       else:
@@ -1464,7 +1631,7 @@ class PasswordManager(object):
     f.write("# (Additional spaces are harmless.)\n\n")
 
     first_line = None
-    sorted_list = sorted([(not v, k, v) for (k, v) in current.iteritems()])
+    sorted_list = sorted([(not v, k, v) for (k, v) in current.items()])
     for i, (_, k, v) in enumerate(sorted_list):
       f.write("[[[  %s  ]]] %s\n" % (v, k))
       if not v and first_line is None:
@@ -1565,6 +1732,15 @@ def ZipWriteStr(zip_file, zinfo_or_arcname, data, perms=None,
       perms = 0o100644
   else:
     zinfo = zinfo_or_arcname
+    # Python 2 and 3 behave differently when calling ZipFile.writestr() with
+    # zinfo.external_attr being 0. Python 3 uses `0o600 << 16` as the value for
+    # such a case (since
+    # https://github.com/python/cpython/commit/18ee29d0b870caddc0806916ca2c823254f1a1f9),
+    # which seems to make more sense. Otherwise the entry will have 0o000 as the
+    # permission bits. We follow the logic in Python 3 to get consistent
+    # behavior between using the two versions.
+    if not zinfo.external_attr:
+      zinfo.external_attr = 0o600 << 16
 
   # If compress_type is given, it overrides the value in zinfo.
   if compress_type is not None:
@@ -1597,7 +1773,7 @@ def ZipDelete(zip_filename, entries):
   Raises:
     AssertionError: In case of non-zero return from 'zip'.
   """
-  if isinstance(entries, basestring):
+  if isinstance(entries, str):
     entries = [entries]
   cmd = ["zip", "-d", zip_filename] + entries
   RunAndCheckOutput(cmd)
@@ -1621,7 +1797,7 @@ class DeviceSpecificParams(object):
     """Keyword arguments to the constructor become attributes of this
     object, which is passed to all functions in the device-specific
     module."""
-    for k, v in kwargs.iteritems():
+    for k, v in kwargs.items():
       setattr(self, k, v)
     self.extras = OPTIONS.extras
 
@@ -1890,9 +2066,9 @@ class BlockDifference(object):
     assert version >= 3
     self.version = version
 
-    b = blockimgdiff.BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
-                                    version=self.version,
-                                    disable_imgdiff=self.disable_imgdiff)
+    b = BlockImageDiff(tgt, src, threads=OPTIONS.worker_threads,
+                       version=self.version,
+                       disable_imgdiff=self.disable_imgdiff)
     self.path = os.path.join(MakeTempDir(), partition)
     b.Compute(self.path)
     self._required_cache = b.max_stashed_size
@@ -2146,8 +2322,10 @@ class BlockDifference(object):
     return ctx.hexdigest()
 
 
-DataImage = blockimgdiff.DataImage
-EmptyImage = blockimgdiff.EmptyImage
+# Expose these two classes to support vendor-specific scripts
+DataImage = images.DataImage
+EmptyImage = images.EmptyImage
+
 
 # map recovery.fstab's fs_types to mount/format "partition types"
 PARTITION_TYPES = {
@@ -2173,7 +2351,7 @@ def ParseCertificate(data):
   This gives the same result as `openssl x509 -in <filename> -outform DER`.
 
   Returns:
-    The decoded certificate string.
+    The decoded certificate bytes.
   """
   cert_buffer = []
   save = False
@@ -2184,7 +2362,7 @@ def ParseCertificate(data):
       cert_buffer.append(line)
     if "--BEGIN CERTIFICATE--" in line:
       save = True
-  cert = "".join(cert_buffer).decode('base64')
+  cert = base64.b64decode("".join(cert_buffer))
   return cert
 
 
@@ -2212,10 +2390,11 @@ def ExtractPublicKey(cert):
   return pubkey
 
 
-def ExtractAvbPublicKey(key):
+def ExtractAvbPublicKey(avbtool, key):
   """Extracts the AVB public key from the given public or private key.
 
   Args:
+    avbtool: The AVB tool to use.
     key: The input key file, which should be PEM-encoded public or private key.
 
   Returns:
@@ -2223,7 +2402,7 @@ def ExtractAvbPublicKey(key):
   """
   output = MakeTempFile(prefix='avb-', suffix='.avbpubkey')
   RunAndCheckOutput(
-      ['avbtool', 'extract_public_key', "--key", key, "--output", output])
+      [avbtool, 'extract_public_key', "--key", key, "--output", output])
   return output
 
 
@@ -2326,7 +2505,7 @@ fi
 
   logger.info("putting script in %s", sh_location)
 
-  output_sink(sh_location, sh)
+  output_sink(sh_location, sh.encode())
 
 
 class DynamicPartitionUpdate(object):
@@ -2367,14 +2546,16 @@ class DynamicPartitionsDifference(object):
   def __init__(self, info_dict, block_diffs, progress_dict=None,
                source_info_dict=None):
     if progress_dict is None:
-      progress_dict = dict()
+      progress_dict = {}
 
     self._remove_all_before_apply = False
     if source_info_dict is None:
       self._remove_all_before_apply = True
-      source_info_dict = dict()
+      source_info_dict = {}
 
-    block_diff_dict = {e.partition:e for e in block_diffs}
+    block_diff_dict = collections.OrderedDict(
+        [(e.partition, e) for e in block_diffs])
+
     assert len(block_diff_dict) == len(block_diffs), \
         "Duplicated BlockDifference object for {}".format(
             [partition for partition, count in

@@ -28,14 +28,11 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # build quite specifically for the emulator, and might not be
 # entirely appropriate to inherit from for on-device configurations.
 
-# GSI for system/product
+#
+# All components inherited here go to system image
+#
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_common.mk)
-
-# Emulator for vendor
-$(call inherit-product-if-exists, device/generic/goldfish/arm64-vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/board/generic_arm64/device.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
 
 # Enable mainline checking for excat this product name
 ifeq (aosp_arm64,$(TARGET_PRODUCT))
@@ -43,16 +40,27 @@ PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 endif
 
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
-    root/init.zygote32_64.rc \
     root/init.zygote64_32.rc \
 
-# Copy different zygote settings for vendor.img to select by setting property
-# ro.zygote=zygote64_32 or ro.zygote=zygote32_64:
-#   1. 64-bit primary, 32-bit secondary OR
-#   2. 32-bit primary, 64-bit secondary
-# init.zygote64_32.rc is in the core_64_bit.mk below
-PRODUCT_COPY_FILES += \
-    system/core/rootdir/init.zygote32_64.rc:root/init.zygote32_64.rc
+#
+# All components inherited here go to product image
+#
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
+
+#
+# All components inherited here go to vendor image
+#
+$(call inherit-product-if-exists, device/generic/goldfish/arm64-vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/board/generic_arm64/device.mk)
+
+#
+# Special settings for GSI releasing
+#
+ifeq (aosp_arm64,$(TARGET_PRODUCT))
+$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
+endif
+
 
 PRODUCT_NAME := aosp_arm64
 PRODUCT_DEVICE := generic_arm64

@@ -19,6 +19,9 @@ PRODUCT_PACKAGES += \
     abb \
     adbd \
     am \
+    android.hardware.neuralnetworks@1.0 \
+    android.hardware.neuralnetworks@1.1 \
+    android.hardware.neuralnetworks@1.2 \
     android.hidl.allocator@1.0-service \
     android.hidl.base-V1.0-java \
     android.hidl.manager-V1.0-java \
@@ -51,8 +54,10 @@ PRODUCT_PACKAGES += \
     charger \
     cmd \
     com.android.conscrypt \
+    com.android.i18n \
     com.android.location.provider \
     com.android.resolv \
+    com.android.neuralnetworks \
     com.android.tzdata \
     ContactsProvider \
     content \
@@ -77,6 +82,7 @@ PRODUCT_PACKAGES += \
     fsck_msdos \
     fs_config_files_system \
     fs_config_dirs_system \
+    group_system \
     gsid \
     heapprofd \
     heapprofd_client \
@@ -153,7 +159,6 @@ PRODUCT_PACKAGES += \
     libnetd_client \
     libnetlink \
     libnetutils \
-    libneuralnetworks \
     libOpenMAXAL \
     libOpenSLES \
     libpdfium \
@@ -187,6 +192,7 @@ PRODUCT_PACKAGES += \
     libwifi-service \
     libwilhelm \
     linker \
+    linkerconfig \
     lmkd \
     locksettings \
     logcat \
@@ -209,6 +215,7 @@ PRODUCT_PACKAGES += \
     NetworkStack \
     org.apache.http.legacy \
     otacerts \
+    passwd_system \
     perfetto \
     ping \
     ping6 \
@@ -221,6 +228,7 @@ PRODUCT_PACKAGES += \
     resize2fs \
     rss_hwm_reset \
     run-as \
+    sanitizer.libraries.txt \
     schedtest \
     screencap \
     sdcard \
@@ -258,6 +266,8 @@ PRODUCT_PACKAGES += \
     viewcompiler \
     voip-common \
     vold \
+    vndkcore.libraries.txt \
+    vndkprivate.libraries.txt \
     WallpaperBackup \
     watchdogd \
     wificond \
@@ -280,7 +290,8 @@ PRODUCT_HOST_PACKAGES += \
     e2fsck \
     fastboot \
     flags_health_check \
-    icu-data_host_runtime_apex \
+    icu-data_host_i18n_apex \
+    icu_tzdata.dat_host_tzdata_apex \
     incident_report \
     ld.mc \
     lpdump \
@@ -298,10 +309,10 @@ PRODUCT_HOST_PACKAGES += \
     unwind_symbols \
     viewcompiler \
     tzdata_host \
-    tzdata_host_runtime_apex \
-    tzlookup.xml_host_runtime_apex \
+    tzdata_host_tzdata_apex \
+    tzlookup.xml_host_tzdata_apex \
     tz_version_host \
-    tz_version_host_runtime_apex \
+    tz_version_host_tzdata_apex \
 
 ifeq ($(TARGET_CORE_JARS),)
 $(error TARGET_CORE_JARS is empty; cannot initialize PRODUCT_BOOT_JARS variable)
@@ -373,6 +384,9 @@ PRODUCT_SYSTEM_SERVER_APPS += \
 
 # Packages included only for eng/userdebug builds, when building with SANITIZE_TARGET=address
 PRODUCT_PACKAGES_DEBUG_ASAN :=
+
+PRODUCT_PACKAGES_DEBUG_JAVA_COVERAGE := \
+    libdumpcoverage
 
 PRODUCT_COPY_FILES += $(call add-to-product-copy-files-if-exists,\
     frameworks/base/config/preloaded-classes:system/etc/preloaded-classes)

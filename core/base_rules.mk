@@ -81,10 +81,16 @@ else ifneq ($(filter $(TARGET_OUT_ODM)/%,$(_path)),)
 LOCAL_ODM_MODULE := true
 else ifneq ($(filter $(TARGET_OUT_PRODUCT)/%,$(_path)),)
 LOCAL_PRODUCT_MODULE := true
-else ifneq ($(filter $(TARGET_OUT_PRODUCT_SERVICES)/%,$(_path)),)
-LOCAL_PRODUCT_SERVICES_MODULE := true
+else ifneq ($(filter $(TARGET_OUT_SYSTEM_EXT)/%,$(_path)),)
+LOCAL_SYSTEM_EXT_MODULE := true
 endif
 _path :=
+
+# TODO(b/135957588) Remove following workaround
+# LOCAL_PRODUCT_SERVICES_MODULE to LOCAL_PRODUCT_MODULE for all Android.mk
+ifndef LOCAL_PRODUCT_MODULE
+LOCAL_PRODUCT_MODULE := $(LOCAL_PRODUCT_SERVICES_MODULE)
+endif
 
 ifndef LOCAL_PROPRIETARY_MODULE
   LOCAL_PROPRIETARY_MODULE := $(LOCAL_VENDOR_MODULE)
@@ -98,7 +104,7 @@ endif
 
 non_system_module := $(filter true, \
    $(LOCAL_PRODUCT_MODULE) \
-   $(LOCAL_PRODUCT_SERVICES_MODULE) \
+   $(LOCAL_SYSTEM_EXT_MODULE) \
    $(LOCAL_VENDOR_MODULE) \
    $(LOCAL_PROPRIETARY_MODULE))
 
@@ -227,8 +233,8 @@ else ifeq (true,$(strip $(LOCAL_ODM_MODULE)))
   partition_tag := _ODM
 else ifeq (true,$(strip $(LOCAL_PRODUCT_MODULE)))
   partition_tag := _PRODUCT
-else ifeq (true,$(strip $(LOCAL_PRODUCT_SERVICES_MODULE)))
-  partition_tag := _PRODUCT_SERVICES
+else ifeq (true,$(strip $(LOCAL_SYSTEM_EXT_MODULE)))
+  partition_tag := _SYSTEM_EXT
 else ifeq (NATIVE_TESTS,$(LOCAL_MODULE_CLASS))
   partition_tag := _DATA
 else
@@ -396,7 +402,7 @@ endif
 logtags_sources := $(filter %.logtags,$(LOCAL_SRC_FILES)) $(LOCAL_LOGTAGS_FILES)
 
 ifneq ($(strip $(logtags_sources)),)
-event_log_tags := $(addprefix $(LOCAL_PATH)/,$(logtags_sources))
+event_log_tags := $(foreach f,$(addprefix $(LOCAL_PATH)/,$(logtags_sources)),$(call clean-path,$(f)))
 else
 event_log_tags :=
 endif
@@ -518,11 +524,11 @@ my_vintf_installed := $(foreach xml,$(my_vintf_pairs),$(call word-colon,2,$(xml)
 
 # Only set up copy rules once, even if another arch variant shares it
 my_vintf_new_pairs := $(filter-out $(ALL_VINTF_MANIFEST_FRAGMENTS_LIST),$(my_vintf_pairs))
-my_vintf_new_installed := $(call copy-many-vintf-manifest-files-checked,$(my_vintf_pairs))
+my_vintf_new_installed := $(call copy-many-vintf-manifest-files-checked,$(my_vintf_new_pairs))
 
 ALL_VINTF_MANIFEST_FRAGMENTS_LIST += $(my_vintf_new_pairs)
 
-$(my_all_targets) : $(my_vintf_installed)
+$(my_all_targets) : $(my_vintf_new_installed)
 endif # LOCAL_VINTF_FRAGMENTS
 endif # !LOCAL_IS_HOST_MODULE
 endif # !LOCAL_UNINSTALLABLE_MODULE
@@ -710,18 +716,6 @@ ifneq (,$(filter $(SOONG_OUT_DIR)%,$(LOCAL_FULL_TEST_CONFIG)))
   endif
 endif
 
-
-ifeq ($(use_testcase_folder),true)
-ifneq ($(my_test_data_file_pairs),)
-$(foreach pair, $(my_test_data_file_pairs), \
-  $(eval parts := $(subst :,$(space),$(pair))) \
-  $(eval src_path := $(word 1,$(parts))) \
-  $(eval file := $(word 2,$(parts))) \
-  $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
-    $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
-      $(call filter-copy-pair,$(src_path),$(call append-path,$(dir),$(file)),$(my_installed_test_data))))))
-endif
-else
 ifneq ($(my_test_data_file_pairs),)
 $(foreach pair, $(my_test_data_file_pairs), \
   $(eval parts := $(subst :,$(space),$(pair))) \
@@ -730,7 +724,6 @@ $(foreach pair, $(my_test_data_file_pairs), \
   $(foreach suite, $(LOCAL_COMPATIBILITY_SUITE), \
     $(eval my_compat_dist_$(suite) += $(foreach dir, $(call compatibility_suite_dirs,$(suite),$(arch_dir)), \
       $(src_path):$(call append-path,$(dir),$(file))))))
-endif
 endif
 
 
@@ -887,13 +880,13 @@ INSTALLABLE_FILES.$(LOCAL_INSTALLED_MODULE).MODULE := $(my_register_name)
 # Use $(LOCAL_MODULE) instead of $(my_register_name) to ignore module's bitness.
 ALL_DEPS.MODULES := $(ALL_DEPS.MODULES) $(LOCAL_MODULE)
 ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS := $(sort \
-  $(ALL_MODULES.$(LOCAL_MODULE).ALL_DEPS) \
+  $(ALL_DEPS.$(LOCAL_MODULE).ALL_DEPS) \
   $(LOCAL_STATIC_LIBRARIES) \
   $(LOCAL_WHOLE_STATIC_LIBRARIES) \
   $(LOCAL_SHARED_LIBRARIES) \
   $(LOCAL_HEADER_LIBRARIES) \
   $(LOCAL_STATIC_JAVA_LIBRARIES) \
-  $(LOCAL_JAVA_LIBRARIES)\
+  $(LOCAL_JAVA_LIBRARIES) \
   $(LOCAL_JNI_SHARED_LIBRARIES))
 
 ALL_DEPS.$(LOCAL_MODULE).LICENSE := $(sort $(ALL_DEPS.$(LOCAL_MODULE).LICENSE) $(license_files))

@@ -15,6 +15,7 @@
 #
 
 import base64
+import io
 import os.path
 import zipfile
 
@@ -22,7 +23,7 @@ import common
 import test_utils
 from sign_target_files_apks import (
     CheckApkAndApexKeysAvailable, EditTags, GetApkFileInfo, ReadApexKeysInfo,
-    ReplaceCerts, ReplaceVerityKeyId, RewriteProps)
+    ReplaceCerts, ReplaceVerityKeyId, RewriteProps, WriteOtacerts)
 
 
 class SignTargetFilesApksTest(test_utils.ReleaseToolsTestCase):
@@ -70,10 +71,10 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
          'ro.product.build.fingerprint=foo/bar/release-keys'),
         ('ro.product.build.thumbprint=foo/bar/dev-keys',
          'ro.product.build.thumbprint=foo/bar/release-keys'),
-        ('ro.product_services.build.fingerprint=foo/bar/test-keys',
-         'ro.product_services.build.fingerprint=foo/bar/release-keys'),
-        ('ro.product_services.build.thumbprint=foo/bar/test-keys',
-         'ro.product_services.build.thumbprint=foo/bar/release-keys'),
+        ('ro.system_ext.build.fingerprint=foo/bar/test-keys',
+         'ro.system_ext.build.fingerprint=foo/bar/release-keys'),
+        ('ro.system_ext.build.thumbprint=foo/bar/test-keys',
+         'ro.system_ext.build.thumbprint=foo/bar/release-keys'),
         ('# comment line 1', '# comment line 1'),
         ('ro.bootimage.build.fingerprint=foo/bar/dev-keys',
          'ro.bootimage.build.fingerprint=foo/bar/release-keys'),
@@ -91,8 +92,8 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
          'ro.odm.build.tags=release-keys'),
         ('ro.product.build.tags=dev-keys',
          'ro.product.build.tags=release-keys'),
-        ('ro.product_services.build.tags=dev-keys',
-         'ro.product_services.build.tags=release-keys'),
+        ('ro.system_ext.build.tags=dev-keys',
+         'ro.system_ext.build.tags=release-keys'),
         ('# comment line 2', '# comment line 2'),
         ('ro.build.display.id=OPR6.170623.012 dev-keys',
          'ro.build.display.id=OPR6.170623.012'),
@@ -136,7 +137,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       ReplaceVerityKeyId(input_zip, output_zip, cert_file)
 
     with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE1, output_zip.read('BOOT/cmdline'))
+      self.assertEqual(BOOT_CMDLINE1, output_zip.read('BOOT/cmdline').decode())
 
     # Test with the second certificate.
     cert_file = os.path.join(self.testdata_dir, 'testkey.x509.pem')
@@ -146,7 +147,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       ReplaceVerityKeyId(input_zip, output_zip, cert_file)
 
     with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE2, output_zip.read('BOOT/cmdline'))
+      self.assertEqual(BOOT_CMDLINE2, output_zip.read('BOOT/cmdline').decode())
 
   def test_ReplaceVerityKeyId_no_veritykeyid(self):
     BOOT_CMDLINE = (
@@ -164,7 +165,7 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
       ReplaceVerityKeyId(input_zip, output_zip, None)
 
     with zipfile.ZipFile(output_file) as output_zip:
-      self.assertEqual(BOOT_CMDLINE, output_zip.read('BOOT/cmdline'))
+      self.assertEqual(BOOT_CMDLINE, output_zip.read('BOOT/cmdline').decode())
 
   def test_ReplaceCerts(self):
     cert1_path = os.path.join(self.testdata_dir, 'platform.x509.pem')
@@ -235,6 +236,22 @@ name="apex.apexd_test_different_app.apex" public_key="system/apex/apexd/apexd_te
         cert2_path[:-9] : 'non-existent',
     }
     self.assertEqual(output_xml, ReplaceCerts(input_xml))
+
+  def test_WriteOtacerts(self):
+    certs = [
+        os.path.join(self.testdata_dir, 'platform.x509.pem'),
+        os.path.join(self.testdata_dir, 'media.x509.pem'),
+        os.path.join(self.testdata_dir, 'testkey.x509.pem'),
+    ]
+    entry_name = 'SYSTEM/etc/security/otacerts.zip'
+    output_file = common.MakeTempFile(suffix='.zip')
+    with zipfile.ZipFile(output_file, 'w') as output_zip:
+      WriteOtacerts(output_zip, entry_name, certs)
+    with zipfile.ZipFile(output_file) as input_zip:
+      self.assertIn(entry_name, input_zip.namelist())
+      otacerts_file = io.BytesIO(input_zip.read(entry_name))
+      with zipfile.ZipFile(otacerts_file) as otacerts_zip:
+        self.assertEqual(3, len(otacerts_zip.namelist()))
 
   def test_CheckApkAndApexKeysAvailable(self):
     input_file = common.MakeTempFile(suffix='.zip')

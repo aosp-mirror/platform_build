@@ -32,9 +32,12 @@ import common
 logging.basicConfig(stream=sys.stdout)
 
 # Use ANDROID_BUILD_TOP as an indicator to tell if the needed tools (e.g.
-# avbtool, mke2fs) are available while running the tests. Not having the var or
-# having empty string means we can't run the tests that require external tools.
-EXTERNAL_TOOLS_UNAVAILABLE = not os.environ.get("ANDROID_BUILD_TOP")
+# avbtool, mke2fs) are available while running the tests, unless
+# FORCE_RUN_RELEASETOOLS is set to '1'. Not having the required vars means we
+# can't run the tests that require external tools.
+EXTERNAL_TOOLS_UNAVAILABLE = (
+    not os.environ.get('ANDROID_BUILD_TOP') and
+    os.environ.get('FORCE_RUN_RELEASETOOLS') != '1')
 
 
 def SkipIfExternalToolsUnavailable():
