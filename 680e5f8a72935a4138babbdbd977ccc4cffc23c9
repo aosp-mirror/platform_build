@@ -22,6 +22,29 @@
       "revId": "680e5f8a72935a4138babbdbd977ccc4cffc23c9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3dec8256_329edd3e",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4656,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-15T21:38:40Z",
+      "side": 1,
+      "message": "This mess comes from an early change in https://android-review.googlesource.com/c/platform/build/+/976069/6/core/Makefile, where the dependency wasn\u0027t declared properly.\n\nFor example, when a target defines BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT \u003d\u003d true but without BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT \u003d\u003d true, it will hit build time error at L4677. Because INTERNAL_SUPERIMAGE_MISC_INFO is non-empty (from L4542), but there\u0027s no building rule to generate that file.\n\nPlease fix those issues before introducing more hacks.",
+      "range": {
+        "startLine": 4650,
+        "startChar": 0,
+        "endLine": 4656,
+        "endChar": 5
+      },
+      "revId": "680e5f8a72935a4138babbdbd977ccc4cffc23c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
