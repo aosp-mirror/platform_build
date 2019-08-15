@@ -53,7 +53,6 @@ endif
 PRODUCT_SYSTEM_SERVER_JARS := \
     services \
     ethernet-service \
-    wifi-service \
     com.android.location.provider \
     jobscheduler-service \
 

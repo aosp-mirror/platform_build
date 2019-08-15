@@ -189,7 +189,6 @@ PRODUCT_PACKAGES += \
     libutils \
     libvorbisidec \
     libvulkan \
-    libwifi-service \
     libwilhelm \
     linker \
     linkerconfig \
@@ -273,8 +272,8 @@ PRODUCT_PACKAGES += \
     vndkprivate.libraries.txt \
     WallpaperBackup \
     watchdogd \
+    InProcessWifiStack \
     wificond \
-    wifi-service \
     wm \
 
 # VINTF data for system image
