@@ -3714,10 +3714,6 @@ INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find external/avb/test/data -type f -name "testkey_*.pem" -o \
       -name "atx_metadata.bin"))
 endif
-ifneq (,$(wildcard system/update_engine))
-INTERNAL_OTATOOLS_PACKAGE_FILES += \
-  $(sort $(shell find system/update_engine/scripts -name "*.pyc" -prune -o -type f -print))
-endif
 ifeq (true,$(PRODUCT_SUPPORTS_VBOOT))
 INTERNAL_OTATOOLS_PACKAGE_FILES += \
   $(sort $(shell find external/vboot_reference/tests/devkeys -type f))
