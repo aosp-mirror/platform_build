@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "af497448_d5ec0c60",
+        "filename": "core/config.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 787,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-08-15T08:54:12Z",
+      "side": 1,
+      "message": "networkstack, or all mainline sepolicy contexts?",
+      "range": {
+        "startLine": 787,
+        "startChar": 22,
+        "endLine": 787,
+        "endChar": 34
+      },
+      "revId": "87d0f2703f209dc4200bca96db5ea8eeaff17def",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6daa6e6b_8627848c",
+        "filename": "core/product.mk",
+        "patchSetId": 2
+      },
+      "lineNbr": 208,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-08-15T08:54:12Z",
+      "side": 1,
+      "message": "so this variable can reasonably have multiple values in a list? otherwise, put it in the single_value_vars list instead.",
+      "range": {
+        "startLine": 208,
+        "startChar": 0,
+        "endLine": 208,
+        "endChar": 64
+      },
+      "revId": "87d0f2703f209dc4200bca96db5ea8eeaff17def",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
