@@ -3708,13 +3708,13 @@ $(BUILT_OTATOOLS_PACKAGE): PRIVATE_ZIP_ROOT := $(call intermediates-dir-for,PACK
 $(BUILT_OTATOOLS_PACKAGE): PRIVATE_OTATOOLS_PACKAGE_FILES := $(INTERNAL_OTATOOLS_PACKAGE_FILES)
 $(BUILT_OTATOOLS_PACKAGE): PRIVATE_OTATOOLS_RELEASETOOLS := $(INTERNAL_OTATOOLS_RELEASETOOLS)
 $(BUILT_OTATOOLS_PACKAGE): $(INTERNAL_OTATOOLS_PACKAGE_FILES) $(INTERNAL_OTATOOLS_RELEASETOOLS)
-$(BUILT_OTATOOLS_PACKAGE): $(SOONG_ZIP)
+$(BUILT_OTATOOLS_PACKAGE): $(SOONG_ZIP) $(ZIP2ZIP)
 	@echo "Package OTA tools: $@"
 	rm -rf $@ $(PRIVATE_ZIP_ROOT)
 	mkdir -p $(dir $@)
 	$(call copy-files-with-structure,$(PRIVATE_OTATOOLS_PACKAGE_FILES),$(HOST_OUT)/,$(PRIVATE_ZIP_ROOT))
 	$(call copy-files-with-structure,$(PRIVATE_OTATOOLS_RELEASETOOLS),build/make/tools/,$(PRIVATE_ZIP_ROOT))
-	cp $(SOONG_ZIP) $(PRIVATE_ZIP_ROOT)/bin/
+	cp $(SOONG_ZIP) $(ZIP2ZIP) $(PRIVATE_ZIP_ROOT)/bin/
 	$(SOONG_ZIP) -o $@ -C $(PRIVATE_ZIP_ROOT) -D $(PRIVATE_ZIP_ROOT)
 
 .PHONY: otatools-package
@@ -4631,35 +4631,12 @@ name := $(name)-img-$(FILE_NAME_TAG)
 
 INTERNAL_UPDATE_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
 
-$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(ZIP2ZIP)
-
-ifeq (true,$(BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE))
-$(INTERNAL_UPDATE_PACKAGE_TARGET): $(INTERNAL_SUPERIMAGE_DIST_TARGET)
-	@echo "Package: $@"
-	# Filter out super_empty and images in BOARD_SUPER_PARTITION_PARTITION_LIST.
-	# Filter out system_other for launch DAP devices because it is in super image.
-	# Include OTA/super_*.img for retrofit devices and super.img for non-retrofit
-	# devices.
-	$(hide) $(ZIP2ZIP) -i $(BUILT_TARGET_FILES_PACKAGE) -o $@ \
-	  -x IMAGES/super_empty.img \
-	  $(foreach partition,$(BOARD_SUPER_PARTITION_PARTITION_LIST), \
-	    -x IMAGES/$(partition).img) \
-	  $(if $(filter system, $(BOARD_SUPER_PARTITION_PARTITION_LIST)), \
-	    $(if $(filter true, $(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)),, \
-	      -x IMAGES/system_other.img)) \
-	  $(if $(filter true,$(PRODUCT_RETROFIT_DYNAMIC_PARTITIONS)), \
-	    $(foreach device,$(BOARD_SUPER_PARTITION_BLOCK_DEVICES), \
-	      OTA/super_$(device).img:super_$(device).img)) \
-	  IMAGES/VerifiedBootParams.textproto:VerifiedBootParams.textproto \
-	  OTA/android-info.txt:android-info.txt "IMAGES/*.img:."
-	$(if $(INTERNAL_SUPERIMAGE_DIST_TARGET), zip -q -j -u $@ $(INTERNAL_SUPERIMAGE_DIST_TARGET))
-else
-$(INTERNAL_UPDATE_PACKAGE_TARGET):
-	@echo "Package: $@"
-	$(hide) $(ZIP2ZIP) -i $(BUILT_TARGET_FILES_PACKAGE) -o $@ \
-	  IMAGES/VerifiedBootParams.textproto:VerifiedBootParams.textproto \
-	  OTA/android-info.txt:android-info.txt "IMAGES/*.img:."
-endif # BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE
+$(INTERNAL_UPDATE_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(IMG_FROM_TARGET_FILES)
+	$(call pretty,"Package: $@")
+	PATH=$(INTERNAL_USERIMAGES_BINARY_PATHS):$(dir $(ZIP2ZIP)):$$PATH \
+	    $(IMG_FROM_TARGET_FILES) \
+	        --additional IMAGES/VerifiedBootParams.textproto:VerifiedBootParams.textproto \
+	        $(BUILT_TARGET_FILES_PACKAGE) $@
 
 .PHONY: updatepackage
 updatepackage: $(INTERNAL_UPDATE_PACKAGE_TARGET)

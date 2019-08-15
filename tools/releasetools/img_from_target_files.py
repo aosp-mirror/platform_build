@@ -27,6 +27,14 @@ Flags:
       Include only the bootable images (eg 'boot' and 'recovery') in
       the output.
 
+  --additional <filespec>
+      Include an additional entry into the generated zip file. The filespec is
+      in a format that's accepted by zip2zip (e.g.
+      'OTA/android-info.txt:android-info.txt', to copy `OTA/android-info.txt`
+      from input_file into output_file as `android-info.txt`. Refer to the
+      `filespec` arg in zip2zip's help message). The option can be repeated to
+      include multiple entries.
+
 """
 
 from __future__ import print_function
@@ -47,6 +55,7 @@ logger = logging.getLogger(__name__)
 
 OPTIONS = common.OPTIONS
 
+OPTIONS.additional_entries = []
 OPTIONS.bootable_only = False
 OPTIONS.put_super = None
 OPTIONS.dynamic_partition_list = None
@@ -60,9 +69,10 @@ def LoadOptions(input_file):
   """Loads information from input_file to OPTIONS.
 
   Args:
-    input_file: Path to the root dir of an extracted target_files zip.
+    input_file: Path to the input target_files zip file.
   """
-  info = OPTIONS.info_dict = common.LoadInfoDict(input_file)
+  with zipfile.ZipFile(input_file) as input_zip:
+    info = OPTIONS.info_dict = common.LoadInfoDict(input_zip)
 
   OPTIONS.put_super = info.get('super_image_in_update_package') == 'true'
   OPTIONS.dynamic_partition_list = info.get('dynamic_partition_list',
@@ -74,19 +84,29 @@ def LoadOptions(input_file):
   OPTIONS.sparse_userimages = bool(info.get('extfs_sparse_flag'))
 
 
-def CopyInfo(input_tmp, output_zip):
-  """Copies the android-info.txt file from the input to the output."""
-  common.ZipWrite(
-      output_zip, os.path.join(input_tmp, 'OTA', 'android-info.txt'),
-      'android-info.txt')
-
-
-def CopyUserImages(input_tmp, output_zip):
-  """Copies user images from the unzipped input and write to output_zip.
+def CopyZipEntries(input_file, output_file, entries):
+  """Copies ZIP entries between input and output files.
 
   Args:
-    input_tmp: path to the unzipped input.
-    output_zip: a ZipFile instance to write images to.
+    input_file: Path to the input target_files zip.
+    output_file: Output filename.
+    entries: A list of entries to copy, in a format that's accepted by zip2zip
+        (e.g. 'OTA/android-info.txt:android-info.txt', which copies
+        `OTA/android-info.txt` from input_file into output_file as
+        `android-info.txt`. Refer to the `filespec` arg in zip2zip's help
+        message).
+  """
+  logger.info('Writing %d entries to archive...', len(entries))
+  cmd = ['zip2zip', '-i', input_file, '-o', output_file]
+  cmd.extend(entries)
+  common.RunAndCheckOutput(cmd)
+
+
+def EntriesForUserImages(input_file):
+  """Returns the user images entries to be copied.
+
+  Args:
+    input_file: Path to the input target_files zip file.
   """
   dynamic_images = [p + '.img' for p in OPTIONS.dynamic_partition_list]
 
@@ -94,56 +114,62 @@ def CopyUserImages(input_tmp, output_zip):
   if not OPTIONS.retrofit_dap and 'system' in OPTIONS.dynamic_partition_list:
     dynamic_images.append('system_other.img')
 
-  images_path = os.path.join(input_tmp, 'IMAGES')
-  # A target-files zip must contain the images since Lollipop.
-  assert os.path.exists(images_path)
-  for image in sorted(os.listdir(images_path)):
+  entries = [
+      'OTA/android-info.txt:android-info.txt',
+  ]
+  with zipfile.ZipFile(input_file) as input_zip:
+    namelist = input_zip.namelist()
+
+  for image_path in [name for name in namelist if name.startswith('IMAGES/')]:
+    image = os.path.basename(image_path)
     if OPTIONS.bootable_only and image not in ('boot.img', 'recovery.img'):
       continue
     if not image.endswith('.img'):
       continue
+    # Filter out super_empty and the images that are already in super partition.
     if OPTIONS.put_super:
       if image == 'super_empty.img':
         continue
       if image in dynamic_images:
         continue
-    logger.info('writing %s to archive...', os.path.join('IMAGES', image))
-    common.ZipWrite(output_zip, os.path.join(images_path, image), image)
+    entries.append('{}:{}'.format(image_path, image))
+  return entries
 
 
-def WriteSuperImages(input_tmp, output_zip):
-  """Writes super images from the unzipped input into output_zip.
+def EntriesForSplitSuperImages(input_file):
+  """Returns the entries for split super images.
 
-  This is only done if super_image_in_update_package is set to 'true'.
-
-  - For retrofit dynamic partition devices, copy split super images from target
-    files package.
-  - For devices launched with dynamic partitions, build super image from target
-    files package.
+  This is only done for retrofit dynamic partition devices.
 
   Args:
-    input_tmp: path to the unzipped input.
-    output_zip: a ZipFile instance to write images to.
+    input_file: Path to the input target_files zip file.
   """
-  if not OPTIONS.build_super or not OPTIONS.put_super:
-    return
+  with zipfile.ZipFile(input_file) as input_zip:
+    namelist = input_zip.namelist()
+  entries = []
+  for device in OPTIONS.super_device_list:
+    image = 'OTA/super_{}.img'.format(device)
+    assert image in namelist, 'Failed to find {}'.format(image)
+    entries.append('{}:{}'.format(image, os.path.basename(image)))
+  return entries
 
-  if OPTIONS.retrofit_dap:
-    # retrofit devices already have split super images under OTA/
-    images_path = os.path.join(input_tmp, 'OTA')
-    for device in OPTIONS.super_device_list:
-      image = 'super_%s.img' % device
-      image_path = os.path.join(images_path, image)
-      assert os.path.exists(image_path)
-      logger.info('writing %s to archive...', os.path.join('OTA', image))
-      common.ZipWrite(output_zip, image_path, image)
-  else:
-    # super image for non-retrofit devices aren't in target files package,
-    # so build it.
-    super_file = common.MakeTempFile('super_', '.img')
-    logger.info('building super image %s...', super_file)
-    BuildSuperImage(input_tmp, super_file)
-    logger.info('writing super.img to archive...')
+
+def RebuildAndWriteSuperImages(input_file, output_file):
+  """Builds and writes super images to the output file."""
+  logger.info('Building super image...')
+
+  # We need files under IMAGES/, OTA/, META/ for img_from_target_files.py.
+  # However, common.LoadInfoDict() may read additional files under BOOT/,
+  # RECOVERY/ and ROOT/. So unzip everything from the target_files.zip.
+  input_tmp = common.UnzipTemp(input_file)
+
+  super_file = common.MakeTempFile('super_', '.img')
+  BuildSuperImage(input_tmp, super_file)
+
+  logger.info('Writing super.img to archive...')
+  with zipfile.ZipFile(
+      output_file, 'a', compression=zipfile.ZIP_DEFLATED,
+      allowZip64=not OPTIONS.sparse_userimages) as output_zip:
     common.ZipWrite(output_zip, super_file, 'super.img')
 
 
@@ -162,38 +188,47 @@ def ImgFromTargetFiles(input_file, output_file):
 
   logger.info('Building image zip from target files zip.')
 
-  # We need files under IMAGES/, OTA/, META/ for img_from_target_files.py.
-  # However, common.LoadInfoDict() may read additional files under BOOT/,
-  # RECOVERY/ and ROOT/. So unzip everything from the target_files.zip.
-  input_tmp = common.UnzipTemp(input_file)
+  LoadOptions(input_file)
 
-  LoadOptions(input_tmp)
-  output_zip = zipfile.ZipFile(
-      output_file, 'w', compression=zipfile.ZIP_DEFLATED,
-      allowZip64=not OPTIONS.sparse_userimages)
+  # Entries to be copied into the output file.
+  entries = EntriesForUserImages(input_file)
 
-  try:
-    CopyInfo(input_tmp, output_zip)
-    CopyUserImages(input_tmp, output_zip)
-    WriteSuperImages(input_tmp, output_zip)
-  finally:
-    common.ZipClose(output_zip)
+  # Only for devices that retrofit dynamic partitions there're split super
+  # images available in the target_files.zip.
+  rebuild_super = False
+  if OPTIONS.build_super and OPTIONS.put_super:
+    if OPTIONS.retrofit_dap:
+      entries += EntriesForSplitSuperImages(input_file)
+    else:
+      rebuild_super = True
+
+  # Any additional entries provided by caller.
+  entries += OPTIONS.additional_entries
+
+  CopyZipEntries(input_file, output_file, entries)
+
+  if rebuild_super:
+    RebuildAndWriteSuperImages(input_file, output_file)
 
 
 def main(argv):
 
-  def option_handler(o, _):
+  def option_handler(o, a):
     if o in ('-z', '--bootable_zip'):
       OPTIONS.bootable_only = True
+    elif o == '--additional':
+      OPTIONS.additional_entries.append(a)
     else:
       return False
     return True
 
   args = common.ParseOptions(argv, __doc__,
                              extra_opts='z',
-                             extra_long_opts=['bootable_zip'],
+                             extra_long_opts=[
+                                 'additional=',
+                                 'bootable_zip',
+                             ],
                              extra_option_handler=option_handler)
-
   if len(args) != 2:
     common.Usage(__doc__)
     sys.exit(1)
