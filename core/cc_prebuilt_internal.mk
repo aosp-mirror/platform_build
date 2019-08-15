@@ -18,6 +18,11 @@
 # Internal build rules for native prebuilt modules
 ############################################################
 
+prebuilt_module_classes := STATIC_LIBRARIES SHARED_LIBRARIES EXECUTABLES NATIVE_TESTS
+ifeq ($(filter $(prebuilt_module_classes),$(LOCAL_MODULE_CLASS)),)
+$(call pretty-error,cc_prebuilt_internal.mk is for $(prebuilt_module_classes) modules only)
+endif
+
 my_strip_module := $(firstword \
   $(LOCAL_STRIP_MODULE_$($(my_prefix)$(LOCAL_2ND_ARCH_VAR_PREFIX)ARCH)) \
   $(LOCAL_STRIP_MODULE))
@@ -70,18 +75,9 @@ else  # my_strip_module not true
   built_module := $(LOCAL_BUILT_MODULE)
 
 ifdef prebuilt_module_is_a_library
-export_includes := $(intermediates)/export_includes
-export_cflags := $(foreach d,$(LOCAL_EXPORT_C_INCLUDE_DIRS),-I $(d))
-$(export_includes): PRIVATE_EXPORT_CFLAGS := $(export_cflags)
-$(export_includes): $(LOCAL_EXPORT_C_INCLUDE_DEPS)
-	@echo Export includes file: $< -- $@
-	$(hide) mkdir -p $(dir $@) && rm -f $@
-ifdef export_cflags
-	$(hide) echo "$(PRIVATE_EXPORT_CFLAGS)" >$@
-else
-	$(hide) touch $@
-endif
-export_cflags :=
+EXPORTS_LIST := $(EXPORTS_LIST) $(intermediates)
+EXPORTS.$(intermediates).FLAGS := $(foreach d,$(LOCAL_EXPORT_C_INCLUDE_DIRS),-I $(d))
+EXPORTS.$(intermediates).DEPS := $(LOCAL_EXPORT_C_INCLUDE_DEPS)
 
 include $(BUILD_SYSTEM)/allowed_ndk_types.mk
 
@@ -130,21 +126,23 @@ else
     endif
 endif
 
-my_shared_libraries := \
+my_shared_libraries := $(strip \
     $(filter-out $(my_system_shared_libraries),$(LOCAL_SHARED_LIBRARIES)) \
-    $(my_system_shared_libraries)
+    $(my_system_shared_libraries))
+
+# Extra shared libraries introduced by LOCAL_CXX_STL (may append some libraries to
+# my_shared_libraries).
+include $(BUILD_SYSTEM)/cxx_stl_setup.mk
 
 ifdef my_shared_libraries
-# Extra shared libraries introduced by LOCAL_CXX_STL.
-include $(BUILD_SYSTEM)/cxx_stl_setup.mk
 ifdef LOCAL_USE_VNDK
   my_shared_libraries := $(foreach l,$(my_shared_libraries),\
     $(if $(SPLIT_VENDOR.SHARED_LIBRARIES.$(l)),$(l).vendor,$(l)))
 endif
 $(LOCAL_2ND_ARCH_VAR_PREFIX)$(my_prefix)DEPENDENCIES_ON_SHARED_LIBRARIES += \
   $(my_register_name):$(LOCAL_INSTALLED_MODULE):$(subst $(space),$(comma),$(my_shared_libraries))
-endif
 endif  # my_shared_libraries
+endif  # LOCAL_INSTALLED_MODULE
 
 # We need to enclose the above export_includes and my_built_shared_libraries in
 # "my_strip_module not true" because otherwise the rules are defined in dynamic_binary.mk.

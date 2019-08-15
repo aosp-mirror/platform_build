@@ -23,18 +23,37 @@ PRODUCT_USE_DYNAMIC_PARTITIONS := true
 # - VNDK enforcement
 # - compatible property override enabled
 
-# GSI for system/product
-$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_common.mk)
+#
+# All components inherited here go to system image
+#
+$(call inherit-product, $(SRC_TARGET_DIR)/product/mainline_system.mk)
 
 # Enable mainline checking for excat this product name
 ifeq (aosp_arm,$(TARGET_PRODUCT))
 PRODUCT_ENFORCE_ARTIFACT_PATH_REQUIREMENTS := relaxed
 endif
 
-# Emulator for vendor
+PRODUCT_ARTIFACT_PATH_REQUIREMENT_WHITELIST += \
+
+#
+# All components inherited here go to product image
+#
+$(call inherit-product, $(SRC_TARGET_DIR)/product/aosp_product.mk)
+
+#
+# All components inherited here go to vendor image
+#
 $(call inherit-product-if-exists, device/generic/goldfish/arm32-vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/emulator_vendor.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86/device.mk)
+
+#
+# Special settings for GSI releasing
+#
+ifeq (aosp_arm,$(TARGET_PRODUCT))
+$(call inherit-product, $(SRC_TARGET_DIR)/product/gsi_release.mk)
+endif
+
 
 PRODUCT_NAME := aosp_arm
 PRODUCT_DEVICE := generic

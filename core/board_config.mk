@@ -67,8 +67,8 @@ _board_strip_readonly_list += \
   BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE \
   BOARD_PRODUCTIMAGE_PARTITION_SIZE \
   BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE \
-  BOARD_PRODUCT_SERVICESIMAGE_PARTITION_SIZE \
-  BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE \
+  BOARD_SYSTEM_EXTIMAGE_PARTITION_SIZE \
+  BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE \
   BOARD_ODMIMAGE_PARTITION_SIZE \
   BOARD_ODMIMAGE_FILE_SYSTEM_TYPE \
 
@@ -78,14 +78,13 @@ _dynamic_partitions_var_list += \
   BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE \
-  BOARD_PRODUCT_SERVICESIMAGE_PARTITION_RESERVED_SIZE \
+  BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE \
   BOARD_SUPER_PARTITION_SIZE \
   BOARD_SUPER_PARTITION_GROUPS \
 
 _board_strip_readonly_list += $(_dynamic_partitions_var_list)
 
 _build_broken_var_list := \
-  BUILD_BROKEN_ANDROIDMK_EXPORTS \
   BUILD_BROKEN_DUP_RULES \
   BUILD_BROKEN_USES_NETWORK \
 
@@ -194,20 +193,37 @@ endif
 # Note that this assumes that the 2ND_CPU_ABI for a 64 bit target
 # is always 32 bits. If this isn't the case, these variables should
 # be overriden in the board configuration.
+#
+# Similarly, TARGET_NATIVE_BRIDGE_2ND_ABI for a 64 bit target is always
+# 32 bits. Note that all CPU_ABIs are preferred over all NATIVE_BRIDGE_ABIs.
+_target_native_bridge_abi_list_32_bit :=
+_target_native_bridge_abi_list_64_bit :=
+
 ifeq (,$(TARGET_CPU_ABI_LIST_64_BIT))
   ifeq (true|true,$(TARGET_IS_64_BIT)|$(TARGET_SUPPORTS_64_BIT_APPS))
     TARGET_CPU_ABI_LIST_64_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
+    _target_native_bridge_abi_list_64_bit := $(TARGET_NATIVE_BRIDGE_ABI)
+  endif
+endif
+
+# "arm64-v8a-hwasan", the ABI for libraries compiled with HWASAN, is supported
+# in all builds with SANITIZE_TARGET=hwaddress.
+ifneq ($(filter hwaddress,$(SANITIZE_TARGET)),)
+  ifneq ($(filter arm64-v8a,$(TARGET_CPU_ABI_LIST_64_BIT)),)
+    TARGET_CPU_ABI_LIST_64_BIT := arm64-v8a-hwasan $(TARGET_CPU_ABI_LIST_64_BIT)
   endif
 endif
 
 ifeq (,$(TARGET_CPU_ABI_LIST_32_BIT))
   ifneq (true,$(TARGET_IS_64_BIT))
     TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_CPU_ABI) $(TARGET_CPU_ABI2)
+    _target_native_bridge_abi_list_32_bit := $(TARGET_NATIVE_BRIDGE_ABI)
   else
     ifeq (true,$(TARGET_SUPPORTS_32_BIT_APPS))
       # For a 64 bit target, assume that the 2ND_CPU_ABI
       # is a 32 bit ABI.
       TARGET_CPU_ABI_LIST_32_BIT := $(TARGET_2ND_CPU_ABI) $(TARGET_2ND_CPU_ABI2)
+      _target_native_bridge_abi_list_32_bit := $(TARGET_NATIVE_BRIDGE_2ND_ABI)
     endif
   endif
 endif
@@ -216,22 +232,25 @@ endif
 # of preference) that the target supports. If a TARGET_CPU_ABI_LIST
 # is specified by the board configuration, we use that. If not, we
 # build a list out of the TARGET_CPU_ABIs specified by the config.
+# Add NATIVE_BRIDGE_ABIs at the end to keep order of preference.
 ifeq (,$(TARGET_CPU_ABI_LIST))
   ifeq ($(TARGET_IS_64_BIT)|$(TARGET_PREFER_32_BIT_APPS),true|true)
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_32_BIT) $(TARGET_CPU_ABI_LIST_64_BIT)
+    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_32_BIT) $(TARGET_CPU_ABI_LIST_64_BIT) \
+                           $(_target_native_bridge_abi_list_32_bit) $(_target_native_bridge_abi_list_64_bit)
   else
-    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT)
+    TARGET_CPU_ABI_LIST := $(TARGET_CPU_ABI_LIST_64_BIT) $(TARGET_CPU_ABI_LIST_32_BIT) \
+                           $(_target_native_bridge_abi_list_64_bit) $(_target_native_bridge_abi_list_32_bit)
   endif
 endif
+
+# Add NATIVE_BRIDGE_ABIs at the end of 32 and 64 bit CPU_ABIs to keep order of preference.
+TARGET_CPU_ABI_LIST_32_BIT += $(_target_native_bridge_abi_list_32_bit)
+TARGET_CPU_ABI_LIST_64_BIT += $(_target_native_bridge_abi_list_64_bit)
 
 # Strip whitespace from the ABI list string.
 TARGET_CPU_ABI_LIST := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST)))
 TARGET_CPU_ABI_LIST_32_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_32_BIT)))
 TARGET_CPU_ABI_LIST_64_BIT := $(subst $(space),$(comma),$(strip $(TARGET_CPU_ABI_LIST_64_BIT)))
-
-ifneq ($(BUILD_BROKEN_ANDROIDMK_EXPORTS),true)
-$(KATI_obsolete_export It is a global setting. See $(CHANGES_URL)#export_keyword)
-endif
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_RAMDISK
@@ -418,48 +437,48 @@ endif
 .KATI_READONLY := BUILDING_PRODUCT_IMAGE
 
 ###########################################
-# Now we can substitute with the real value of TARGET_COPY_OUT_PRODUCT_SERVICES
-MERGE_PRODUCT_SERVICES_INTO_PRODUCT :=
-ifeq ($(TARGET_COPY_OUT_PRODUCT_SERVICES),$(_product_services_path_placeholder))
-  TARGET_COPY_OUT_PRODUCT_SERVICES := $(TARGET_COPY_OUT_PRODUCT)
-  MERGE_PRODUCT_SERVICES_INTO_PRODUCT := true
-else ifeq ($(TARGET_COPY_OUT_PRODUCT),$(TARGET_COPY_OUT_PRODUCT_SERVICES))
-  MERGE_PRODUCT_SERVICES_INTO_PRODUCT := true
-else ifeq ($(filter product_services system/product_services,$(TARGET_COPY_OUT_PRODUCT_SERVICES)),)
-  $(error TARGET_COPY_OUT_PRODUCT_SERVICES must be either 'product_services',\
-    '$(TARGET_COPY_OUT_PRODUCT)' or 'system/product_services', seeing '$(TARGET_COPY_OUT_PRODUCT_SERVICES)'.)
-endif
-.KATI_READONLY := MERGE_PRODUCT_SERVICES_INTO_PRODUCT
-PRODUCT_COPY_FILES := $(subst $(_product_services_path_placeholder),$(TARGET_COPY_OUT_PRODUCT_SERVICES),$(PRODUCT_COPY_FILES))
+# TODO(b/135957588) TARGET_COPY_OUT_PRODUCT_SERVICES will be set to
+# TARGET_COPY_OUT_PRODUCT as a workaround.
+TARGET_COPY_OUT_PRODUCT_SERVICES := $(TARGET_COPY_OUT_PRODUCT)
 
-BOARD_USES_PRODUCT_SERVICESIMAGE :=
-ifdef BOARD_PREBUILT_PRODUCT_SERVICESIMAGE
-  BOARD_USES_PRODUCT_SERVICESIMAGE := true
+###########################################
+# Now we can substitute with the real value of TARGET_COPY_OUT_SYSTEM_EXT
+ifeq ($(TARGET_COPY_OUT_SYSTEM_EXT),$(_system_ext_path_placeholder))
+TARGET_COPY_OUT_SYSTEM_EXT := system/system_ext
+else ifeq ($(filter system_ext system/system_ext,$(TARGET_COPY_OUT_SYSTEM_EXT)),)
+$(error TARGET_COPY_OUT_SYSTEM_EXT must be either 'system_ext' or 'system/system_ext', seeing '$(TARGET_COPY_OUT_SYSTEM_EXT)'.)
 endif
-ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
-  BOARD_USES_PRODUCT_SERVICESIMAGE := true
-endif
-ifeq ($(TARGET_COPY_OUT_PRODUCT_SERVICES),product_services)
-  BOARD_USES_PRODUCT_SERVICESIMAGE := true
-else ifdef BOARD_USES_PRODUCT_SERVICESIMAGE
-  $(error TARGET_COPY_OUT_PRODUCT_SERVICES must be set to 'product_services' to use a product_services image)
-endif
+PRODUCT_COPY_FILES := $(subst $(_system_ext_path_placeholder),$(TARGET_COPY_OUT_SYSTEM_EXT),$(PRODUCT_COPY_FILES))
 
-BUILDING_PRODUCT_SERVICES_IMAGE :=
-ifeq ($(PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE),)
-  ifdef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
-    BUILDING_PRODUCT_SERVICES_IMAGE := true
+BOARD_USES_SYSTEM_EXTIMAGE :=
+ifdef BOARD_PREBUILT_SYSTEM_EXTIMAGE
+  BOARD_USES_SYSTEM_EXTIMAGE := true
+endif
+ifdef BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE
+  BOARD_USES_SYSTEM_EXTIMAGE := true
+endif
+ifeq ($(TARGET_COPY_OUT_SYSTEM_EXT),system_ext)
+  BOARD_USES_SYSTEM_EXTIMAGE := true
+else ifdef BOARD_USES_SYSTEM_EXTIMAGE
+  $(error TARGET_COPY_OUT_SYSTEM_EXT must be set to 'system_ext' to use a system_ext image)
+endif
+.KATI_READONLY := BOARD_USES_SYSTEM_EXTIMAGE
+
+BUILDING_SYSTEM_EXT_IMAGE :=
+ifeq ($(PRODUCT_BUILD_SYSTEM_EXT_IMAGE),)
+  ifdef BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE
+    BUILDING_SYSTEM_EXT_IMAGE := true
   endif
-else ifeq ($(PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE),true)
-  BUILDING_PRODUCT_SERVICES_IMAGE := true
-  ifndef BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE
-    $(error PRODUCT_BUILD_PRODUCT_SERVICES_IMAGE set to true, but BOARD_PRODUCT_SERVICESIMAGE_FILE_SYSTEM_TYPE not defined)
+else ifeq ($(PRODUCT_BUILD_SYSTEM_EXT_IMAGE),true)
+  BUILDING_SYSTEM_EXT_IMAGE := true
+  ifndef BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE
+    $(error PRODUCT_BUILD_SYSTEM_EXT_IMAGE set to true, but BOARD_SYSTEM_EXTIMAGE_FILE_SYSTEM_TYPE not defined)
   endif
 endif
-ifdef BOARD_PREBUILT_PRODUCT_SERVICESIMAGE
-  BUILDING_PRODUCT_SERVICES_IMAGE :=
+ifdef BOARD_PREBUILT_SYSTEM_EXTIMAGE
+  BUILDING_SYSTEM_EXT_IMAGE :=
 endif
-.KATI_READONLY := BUILDING_PRODUCT_SERVICES_IMAGE
+.KATI_READONLY := BUILDING_SYSTEM_EXT_IMAGE
 
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_ODM

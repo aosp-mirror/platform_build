@@ -3,6 +3,10 @@
     {
       "name": "releasetools_test",
       "host": true
+    },
+    {
+      "name": "releasetools_py3_test",
+      "host": true
     }
   ]
 }

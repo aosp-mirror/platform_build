@@ -44,6 +44,7 @@ ifeq (true,$(EMMA_INSTRUMENT_STATIC))
 LOCAL_STATIC_JAVA_LIBRARIES += jacocoagent
 # Exclude jacoco classes from proguard
 LOCAL_PROGUARD_FLAGS += -include $(BUILD_SYSTEM)/proguard.jacoco.flags
+LOCAL_PROGUARD_FLAGS_DEPS += $(BUILD_SYSTEM)/proguard.jacoco.flags
 endif # LOCAL_EMMA_INSTRUMENT
 endif # EMMA_INSTRUMENT_STATIC
 else
@@ -68,7 +69,7 @@ else # !LOCAL_IS_STATIC_JAVA_LIBRARY
 $(common_javalib.jar): PRIVATE_DEX_FILE := $(built_dex)
 $(common_javalib.jar): PRIVATE_SOURCE_ARCHIVE := $(full_classes_pre_proguard_jar)
 $(common_javalib.jar): $(MERGE_ZIPS) $(SOONG_ZIP) $(ZIP2ZIP)
-$(common_javalib.jar) : $(built_dex) $(java_resource_sources) | $(ZIPTIME) $(ZIPALIGN)
+$(common_javalib.jar) : $(full_classes_pre_proguard_jar) $(built_dex) $(java_resource_sources) | $(ZIPTIME) $(ZIPALIGN)
 	@echo "target Jar: $(PRIVATE_MODULE) ($@)"
 	rm -rf $@.parts && mkdir -p $@.parts
 	$(call create-dex-jar,$@.parts/dex.zip,$(PRIVATE_DEX_FILE))

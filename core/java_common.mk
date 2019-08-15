@@ -67,37 +67,34 @@ ifeq ($(strip $(LOCAL_PROTOC_OPTIMIZE_TYPE)),)
   LOCAL_PROTOC_OPTIMIZE_TYPE := lite
 endif
 proto_sources := $(filter %.proto,$(LOCAL_SRC_FILES))
-# Because names of the .java files compiled from .proto files are unknown until the
-# .proto files are compiled, we use a timestamp file as depedency.
-proto_java_sources_file_stamp :=
 ifneq ($(proto_sources),)
 proto_sources_fullpath := $(addprefix $(LOCAL_PATH)/, $(proto_sources))
 
 proto_java_intemediate_dir := $(intermediates.COMMON)/proto
-proto_java_sources_file_stamp := $(proto_java_intemediate_dir)/Proto.stamp
 proto_java_sources_dir := $(proto_java_intemediate_dir)/src
+proto_java_srcjar := $(intermediates.COMMON)/proto.srcjar
 
-$(proto_java_sources_file_stamp): PRIVATE_PROTO_INCLUDES := $(TOP)
-$(proto_java_sources_file_stamp): PRIVATE_PROTO_SRC_FILES := $(proto_sources_fullpath)
-$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_DIR := $(proto_java_sources_dir)
-$(proto_java_sources_file_stamp): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS)
+LOCAL_SRCJARS += $(proto_java_srcjar)
+
+$(proto_java_srcjar): PRIVATE_PROTO_INCLUDES := $(TOP)
+$(proto_java_srcjar): PRIVATE_PROTO_SRC_FILES := $(proto_sources_fullpath)
+$(proto_java_srcjar): PRIVATE_PROTO_JAVA_OUTPUT_DIR := $(proto_java_sources_dir)
+$(proto_java_srcjar): PRIVATE_PROTOC_FLAGS := $(LOCAL_PROTOC_FLAGS)
 ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),micro)
-$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javamicro_out
+  $(proto_java_srcjar): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javamicro_out
+  $(proto_java_srcjar): PRIVATE_PROTOC_FLAGS += --plugin=$(HOST_OUT_EXECUTABLES)/protoc-gen-javamicro
+  $(proto_java_srcjar): $(HOST_OUT_EXECUTABLES)/protoc-gen-javamicro
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nano)
+  $(proto_java_srcjar): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javanano_out
+else ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),stream)
+  $(proto_java_srcjar): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javastream_out
+  $(proto_java_srcjar): PRIVATE_PROTOC_FLAGS += --plugin=$(HOST_OUT_EXECUTABLES)/protoc-gen-javastream
+  $(proto_java_srcjar): $(HOST_OUT_EXECUTABLES)/protoc-gen-javastream
 else
-  ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),nano)
-$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javanano_out
-  else
-    ifeq ($(LOCAL_PROTOC_OPTIMIZE_TYPE),stream)
-$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --javastream_out
-$(proto_java_sources_file_stamp): PRIVATE_PROTOC_FLAGS += --plugin=$(HOST_OUT_EXECUTABLES)/protoc-gen-javastream
-$(proto_java_sources_file_stamp): $(HOST_OUT_EXECUTABLES)/protoc-gen-javastream
-    else
-$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --java_out
-    endif
-  endif
+  $(proto_java_srcjar): PRIVATE_PROTO_JAVA_OUTPUT_OPTION := --java_out
 endif
-$(proto_java_sources_file_stamp): PRIVATE_PROTO_JAVA_OUTPUT_PARAMS := $(if $(filter lite,$(LOCAL_PROTOC_OPTIMIZE_TYPE)),lite$(if $(LOCAL_PROTO_JAVA_OUTPUT_PARAMS),:,),)$(LOCAL_PROTO_JAVA_OUTPUT_PARAMS)
-$(proto_java_sources_file_stamp) : $(proto_sources_fullpath) $(PROTOC)
+$(proto_java_srcjar): PRIVATE_PROTO_JAVA_OUTPUT_PARAMS := $(if $(filter lite,$(LOCAL_PROTOC_OPTIMIZE_TYPE)),lite$(if $(LOCAL_PROTO_JAVA_OUTPUT_PARAMS),:,),)$(LOCAL_PROTO_JAVA_OUTPUT_PARAMS)
+$(proto_java_srcjar) : $(proto_sources_fullpath) $(PROTOC) $(SOONG_ZIP)
 	$(call transform-proto-to-java)
 
 #TODO: protoc should output the dependencies introduced by imports.
@@ -231,8 +228,6 @@ $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ASSET_DIR := $(LOCAL_ASSET_DIR)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_CLASS_INTERMEDIATES_DIR := $(intermediates.COMMON)/classes
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_ANNO_INTERMEDIATES_DIR := $(intermediates.COMMON)/anno
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/src
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HAS_PROTO_SOURCES := $(if $(proto_sources),true)
-$(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_PROTO_SOURCE_INTERMEDIATES_DIR := $(intermediates.COMMON)/proto
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_HAS_RS_SOURCES :=
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAVA_SOURCES := $(all_java_sources)
 $(LOCAL_INTERMEDIATE_TARGETS): PRIVATE_JAVA_SOURCE_LIST := $(java_source_list_file)
@@ -419,8 +414,8 @@ ifeq ($(LOCAL_JAVA_LANGUAGE_VERSION),1.9)
       ifndef SOONG_SYSTEM_MODULES_$(my_system_modules)
         $(call pretty-error, Invalid system modules $(my_system_modules))
       endif
-      full_java_system_modules_deps := $(SOONG_SYSTEM_MODULES_$(my_system_modules))
-      my_system_modules_dir := $(patsubst %/lib/modules,%,$(SOONG_SYSTEM_MODULES_$(my_system_modules)))
+      full_java_system_modules_deps := $(SOONG_SYSTEM_MODULES_DEPS_$(my_system_modules))
+      my_system_modules_dir := $(SOONG_SYSTEM_MODULES_$(my_system_modules))
     endif
   endif
 endif
@@ -497,13 +492,9 @@ ALL_MODULES.$(my_register_name).INTERMEDIATE_SOURCE_DIR := \
 ##########################################################
 # Copy NOTICE files of transitive static dependencies
 # Don't do this in mm, since many of the targets won't exist.
-ifeq ($(ONE_SHOT_MAKEFILE),)
 installed_static_library_notice_file_targets := \
     $(foreach lib,$(LOCAL_STATIC_JAVA_LIBRARIES), \
       NOTICE-$(if $(LOCAL_IS_HOST_MODULE),HOST$(if $(my_host_cross),_CROSS,),TARGET)-JAVA_LIBRARIES-$(lib))
-else
-installed_static_library_notice_file_targets :=
-endif
 
 $(notice_target): | $(installed_static_library_notice_file_targets)
 $(LOCAL_INSTALLED_MODULE): | $(notice_target)

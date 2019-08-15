@@ -246,6 +246,9 @@ ifneq ($(filter fuzzer,$(my_sanitize)),)
   my_sanitize := $(filter-out cfi,$(my_sanitize))
   my_cflags += -fno-lto
   my_ldflags += -fno-lto
+
+  # TODO(b/133876586): Disable experimental pass manager for fuzzer builds.
+  my_cflags += -fno-experimental-new-pass-manager
 endif
 
 ifneq ($(filter integer_overflow,$(my_sanitize)),)
@@ -341,9 +344,6 @@ ifneq ($(filter address,$(my_global_sanitize) $(my_sanitize)),)
     ifeq (,$(filter $(LOCAL_MODULE),$($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_RUNTIME_LIBRARY)))
       my_shared_libraries := $($(LOCAL_2ND_ARCH_VAR_PREFIX)ADDRESS_SANITIZER_RUNTIME_LIBRARY) \
                              $(my_shared_libraries)
-    endif
-    ifeq (,$(filter $(LOCAL_MODULE),$(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)))
-      my_static_libraries += $(ADDRESS_SANITIZER_CONFIG_EXTRA_STATIC_LIBRARIES)
     endif
 
     # Do not add unnecessary dependency in shared libraries.

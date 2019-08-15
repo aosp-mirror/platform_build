@@ -15,17 +15,12 @@
 # limitations under the License.
 
 """
-Given target-files, produces an image zipfile suitable for use
-with 'fastboot update'.
+Given an input target-files, produces an image zipfile suitable for use with
+'fastboot update'.
 
 Usage:  img_from_target_files [flags] input_target_files output_image_zip
 
-input_target_files: one of the following:
-  - directory containing extracted target files. It will load info from
-    OTA/android-info.txt, META/misc_info.txt and build the image zipfile using
-    images from IMAGES/.
-  - target files package. Same as above, but extracts the archive before
-    building the image zipfile.
+input_target_files: Path to the input target_files zip.
 
 Flags:
   -z  (--bootable_zip)
@@ -38,7 +33,6 @@ from __future__ import print_function
 
 import logging
 import os
-import shutil
 import sys
 import zipfile
 
@@ -55,12 +49,10 @@ OPTIONS = common.OPTIONS
 
 
 def LoadOptions(input_file):
-  """
-  Load information from input_file to OPTIONS.
+  """Loads information from input_file to OPTIONS.
 
   Args:
-    input_file: A Zipfile instance of input zip file, or path to the directory
-      of extracted zip.
+    input_file: Path to the root dir of an extracted target_files zip.
   """
   info = OPTIONS.info_dict = common.LoadInfoDict(input_file)
 
@@ -75,15 +67,14 @@ def LoadOptions(input_file):
 
 
 def CopyInfo(input_tmp, output_zip):
-  """Copy the android-info.txt file from the input to the output."""
+  """Copies the android-info.txt file from the input to the output."""
   common.ZipWrite(
       output_zip, os.path.join(input_tmp, "OTA", "android-info.txt"),
       "android-info.txt")
 
 
 def CopyUserImages(input_tmp, output_zip):
-  """
-  Copy user images from the unzipped input and write to output_zip.
+  """Copies user images from the unzipped input and write to output_zip.
 
   Args:
     input_tmp: path to the unzipped input.
@@ -103,8 +94,6 @@ def CopyUserImages(input_tmp, output_zip):
       continue
     if not image.endswith(".img"):
       continue
-    if image == "recovery-two-step.img":
-      continue
     if OPTIONS.put_super:
       if image == "super_empty.img":
         continue
@@ -115,9 +104,9 @@ def CopyUserImages(input_tmp, output_zip):
 
 
 def WriteSuperImages(input_tmp, output_zip):
-  """
-  Write super images from the unzipped input and write to output_zip. This is
-  only done if super_image_in_update_package is set to "true".
+  """Writes super images from the unzipped input into output_zip.
+
+  This is only done if super_image_in_update_package is set to "true".
 
   - For retrofit dynamic partition devices, copy split super images from target
     files package.
@@ -150,6 +139,40 @@ def WriteSuperImages(input_tmp, output_zip):
     common.ZipWrite(output_zip, super_file, "super.img")
 
 
+def ImgFromTargetFiles(input_file, output_file):
+  """Creates an image archive from the input target_files zip.
+
+  Args:
+    input_file: Path to the input target_files zip.
+    output_file: Output filename.
+
+  Raises:
+    ValueError: On invalid input.
+  """
+  if not zipfile.is_zipfile(input_file):
+    raise ValueError("%s is not a valid zipfile" % input_file)
+
+  logger.info("Building image zip from target files zip.")
+
+  # We need files under IMAGES/, OTA/, META/ for img_from_target_files.py.
+  # However, common.LoadInfoDict() may read additional files under BOOT/,
+  # RECOVERY/ and ROOT/. So unzip everything from the target_files.zip.
+  input_tmp = common.UnzipTemp(input_file)
+
+  LoadOptions(input_tmp)
+  output_zip = zipfile.ZipFile(
+      output_file, "w", compression=zipfile.ZIP_DEFLATED,
+      allowZip64=not OPTIONS.sparse_userimages)
+
+  try:
+    CopyInfo(input_tmp, output_zip)
+    CopyUserImages(input_tmp, output_zip)
+    WriteSuperImages(input_tmp, output_zip)
+  finally:
+    logger.info("cleaning up...")
+    common.ZipClose(output_zip)
+
+
 def main(argv):
   # This allows modifying the value from inner function.
   bootable_only_array = [False]
@@ -174,30 +197,7 @@ def main(argv):
 
   common.InitLogging()
 
-  target_files = args[0]
-  if os.path.isdir(target_files):
-    logger.info("Building image zip from extracted target files.")
-    OPTIONS.input_tmp = target_files
-  elif zipfile.is_zipfile(target_files):
-    logger.info("Building image zip from target files zip.")
-    # We need files under IMAGES/, OTA/, META/ for img_from_target_files.py.
-    # However, common.LoadInfoDict() may read additional files under BOOT/,
-    # RECOVERY/ and ROOT/. So unzip everything from the target_files.zip.
-    OPTIONS.input_tmp = common.UnzipTemp(target_files)
-  else:
-    raise ValueError("%s is not a valid path." % target_files)
-
-  LoadOptions(OPTIONS.input_tmp)
-  output_zip = zipfile.ZipFile(args[1], "w", compression=zipfile.ZIP_DEFLATED,
-                               allowZip64=not OPTIONS.sparse_userimages)
-
-  try:
-    CopyInfo(OPTIONS.input_tmp, output_zip)
-    CopyUserImages(OPTIONS.input_tmp, output_zip)
-    WriteSuperImages(OPTIONS.input_tmp, output_zip)
-  finally:
-    logger.info("cleaning up...")
-    common.ZipClose(output_zip)
+  ImgFromTargetFiles(args[0], args[1])
 
   logger.info("done.")
 
