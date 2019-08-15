@@ -45,6 +45,30 @@
       "revId": "680e5f8a72935a4138babbdbd977ccc4cffc23c9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "abe85d4a_8b82f30f",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4656,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-15T21:40:11Z",
+      "side": 1,
+      "message": "Correction: The problematic case is when a target defines BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE \u003d\u003d true but without BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT \u003d\u003d true.",
+      "parentUuid": "3dec8256_329edd3e",
+      "range": {
+        "startLine": 4650,
+        "startChar": 0,
+        "endLine": 4656,
+        "endChar": 5
+      },
+      "revId": "680e5f8a72935a4138babbdbd977ccc4cffc23c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
