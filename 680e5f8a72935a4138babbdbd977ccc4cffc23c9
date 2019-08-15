@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "45e98b6d_caf2f045",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-15T16:36:48Z",
+      "side": 1,
+      "message": "No. For normal devices, the included misc_info.txt matches the dist\u0027d super.img, which are both based on the images in target_files.zip.\n\nOnly for the ones that define BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT (i.e. emulators), the built and dist\u0027d super.img is based on the images under PRODUCT_OUT.\n\nIt seems you only want this \"misc_info.txt\" for emulator based builds, but not real devices? If so,\n- can you please remove misc_info.txt from the image archive for real devices? The archive is supposed to be used for flashing purpose. It\u0027s not a container to pack intermediate files.\n- dist \"misc_info.txt\" as a separate artifact, and ideally with a better name, such as super_misc_info.txt to avoid confusion.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 63
+      },
+      "revId": "680e5f8a72935a4138babbdbd977ccc4cffc23c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
