@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "09f50833_d1a2e806",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2019-08-16T07:23:45Z",
+      "side": 1,
+      "message": "Please take a look at PS3 and see if it\u0027s what you meant.",
+      "parentUuid": "45e98b6d_caf2f045",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 63
+      },
+      "revId": "680e5f8a72935a4138babbdbd977ccc4cffc23c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "3dec8256_329edd3e",
         "filename": "core/Makefile",
         "patchSetId": 2
@@ -60,6 +84,30 @@
       "side": 1,
       "message": "Correction: The problematic case is when a target defines BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE \u003d\u003d true but without BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT \u003d\u003d true.",
       "parentUuid": "3dec8256_329edd3e",
+      "range": {
+        "startLine": 4650,
+        "startChar": 0,
+        "endLine": 4656,
+        "endChar": 5
+      },
+      "revId": "680e5f8a72935a4138babbdbd977ccc4cffc23c9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1cbcc3c9_45189103",
+        "filename": "core/Makefile",
+        "patchSetId": 2
+      },
+      "lineNbr": 4656,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2019-08-16T07:23:45Z",
+      "side": 1,
+      "message": "I believe the error occurred in L4684 (the else part of BOARD_SUPER_IMAGE_IN_UPDATE_PACKAGE) for other reason, but anyway PS3 removes misc_info.txt from the update package.",
+      "parentUuid": "abe85d4a_8b82f30f",
       "range": {
         "startLine": 4650,
         "startChar": 0,
