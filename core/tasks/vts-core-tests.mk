@@ -45,3 +45,5 @@ $(vts-core-zip) : $(COMPATIBILITY.vts-core.FILES) $(my_host_shared_lib_for_vts_c
 
 vts-core: $(vts-core-zip)
 $(call dist-for-goals, vts-core, $(vts-core-zip) $(vts-core-list-zip) $(vts-core-configs-zip))
+
+tests: vts-core
