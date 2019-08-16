@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "6242b939_aa5e2180",
+        "filename": "core/Makefile",
+        "patchSetId": 1
+      },
+      "lineNbr": 4026,
+      "author": {
+        "id": 1121838
+      },
+      "writtenOn": "2019-08-16T00:09:13Z",
+      "side": 1,
+      "message": "Make sense, will delete them.",
+      "parentUuid": "21cdcccc_4edcc2a2",
+      "range": {
+        "startLine": 4023,
+        "startChar": 0,
+        "endLine": 4026,
+        "endChar": 29
+      },
+      "revId": "5351f9f004c482e731d41a6da2709767a816aba7",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d36e1a6e_66f8275b",
         "filename": "tools/releasetools/merge_target_files.py",
         "patchSetId": 1
