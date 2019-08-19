@@ -22,6 +22,30 @@
       "revId": "99a1ca4bad3b0c1793ae18b28f8db53c43cbe622",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5777794f_abdf4291",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1060959
+      },
+      "writtenOn": "2019-08-19T16:37:03Z",
+      "side": 1,
+      "message": "oh, I see what\u0027s going on. The two lines are duplicated on aosp_product.mk and gsi_common.mk, and aosp_arm64 inherits both of these.\n\nI think this CL is fine, but please update the description to match. It\u0027s unrelated to the linked CL",
+      "parentUuid": "dd39e188_241d4100",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 40
+      },
+      "revId": "99a1ca4bad3b0c1793ae18b28f8db53c43cbe622",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
