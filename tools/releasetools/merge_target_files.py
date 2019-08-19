@@ -781,6 +781,7 @@ def generate_images(target_files_dir, rebuild_recovery):
   # Regenerate IMAGES in the target directory.
 
   add_img_args = ['--verbose']
+  add_img_args.append('--add_missing')
   if rebuild_recovery:
     add_img_args.append('--rebuild_recovery')
   add_img_args.append(target_files_dir)
