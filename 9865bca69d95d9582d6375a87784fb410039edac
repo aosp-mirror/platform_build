@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "25048bde_13adf167",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 4652,
+      "author": {
+        "id": 1130827
+      },
+      "writtenOn": "2019-08-19T02:58:14Z",
+      "side": 1,
+      "message": "I think you have to delete $@ before this function call.\n\nHow about defining a new function build-superimage-misc-info before build-superimage-target at line 4571?",
+      "range": {
+        "startLine": 4652,
+        "startChar": 1,
+        "endLine": 4652,
+        "endChar": 33
+      },
+      "revId": "9865bca69d95d9582d6375a87784fb410039edac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
