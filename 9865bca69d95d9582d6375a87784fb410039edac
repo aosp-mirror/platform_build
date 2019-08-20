@@ -22,6 +22,30 @@
       "revId": "9865bca69d95d9582d6375a87784fb410039edac",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "475bb11a_3644a639",
+        "filename": "core/Makefile",
+        "patchSetId": 3
+      },
+      "lineNbr": 4652,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2019-08-20T04:52:21Z",
+      "side": 1,
+      "message": "\u003e I think you have to delete $@ before this function call.\n\ndone in PS4\n\n\u003e How about defining a new function build-superimage-misc-info before build-superimage-target at line 4571?\n\nCurrently only a couple of usage instances, so maybe later when there are more such usage.",
+      "parentUuid": "25048bde_13adf167",
+      "range": {
+        "startLine": 4652,
+        "startChar": 1,
+        "endLine": 4652,
+        "endChar": 33
+      },
+      "revId": "9865bca69d95d9582d6375a87784fb410039edac",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
