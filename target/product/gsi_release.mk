@@ -54,8 +54,8 @@ PRODUCT_COPY_FILES += \
     build/make/target/product/gsi/skip_mount.cfg:system/etc/init/config/skip_mount.cfg \
     build/make/target/product/gsi/init.gsi.rc:system/etc/init/init.gsi.rc \
 
-# Support addtional P VNDK packages
-PRODUCT_EXTRA_VNDK_VERSIONS := 28
+# Support addtional P and Q VNDK packages
+PRODUCT_EXTRA_VNDK_VERSIONS := 28 29
 
 # The 64 bits GSI build targets inhiert core_64_bit.mk to enable 64 bits and
 # include the init.zygote64_32.rc.
