@@ -13,6 +13,10 @@ TARGET_COPY_OUT_SYSTEM_EXT := system_ext
 TARGET_COPY_OUT_VENDOR := vendor
 TARGET_COPY_OUT_PRODUCT := product
 
+# Creates metadata partition mount point under root for
+# the devices with metadata parition
+BOARD_USES_METADATA_PARTITION := true
+
 BOARD_VNDK_VERSION := current
 
 # Required flag for non-64 bit devices from P.
