@@ -22,6 +22,30 @@
       "revId": "b755e1fedc2c8bc14340f5c8d0180baa5725a8f9",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "13a35ec4_bd9d0bc8",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4650,
+      "author": {
+        "id": 1139803
+      },
+      "writtenOn": "2019-08-20T09:53:34Z",
+      "side": 1,
+      "message": "\u003e Based on the code, I think currently the only difference between the two \"misc_info.txt\" lies in the \"*_image\u003d...\" lines?\n\nBasically, yes.\n\n\u003e those lines have to be replaced when re-generating the super.img?\n\nYes.\n\n\u003e If so, can we dist the super_misc_info.txt for INTERNAL_SUPERIMAGE_DIST_TARGET?\n\u003e (Also the change should stay closer to L4590.)\n\nDone.",
+      "parentUuid": "c1819bed_1704f90c",
+      "range": {
+        "startLine": 4650,
+        "startChar": 13,
+        "endLine": 4650,
+        "endChar": 47
+      },
+      "revId": "b755e1fedc2c8bc14340f5c8d0180baa5725a8f9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
     }
   ]
 }
