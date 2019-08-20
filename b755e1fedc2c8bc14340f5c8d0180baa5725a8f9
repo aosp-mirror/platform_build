@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c1819bed_1704f90c",
+        "filename": "core/Makefile",
+        "patchSetId": 4
+      },
+      "lineNbr": 4650,
+      "author": {
+        "id": 1056365
+      },
+      "writtenOn": "2019-08-20T05:26:31Z",
+      "side": 1,
+      "message": "There\u0027re two \"super.img\"s:\n* one under $(PRODUCT_OUT), i.e. INSTALLED_SUPERIMAGE_TARGET;\n* the other INTERNAL_SUPERIMAGE_DIST_TARGET.\n\nWith BOARD_BUILD_SUPER_IMAGE_BY_DEFAULT set to true, both will be built, but still it\u0027s INTERNAL_SUPERIMAGE_DIST_TARGET that gets dist\u0027d. Then the change here leads to inconsistency: INTERNAL_SUPERIMAGE_DIST_TARGET is dist\u0027d along with the \"super_misc_info.txt\" for INSTALLED_SUPERIMAGE_TARGET.\n\nBased on the code, I think currently the only difference between the two \"misc_info.txt\" lies in the \"*_image\u003d...\" lines? And I guess those lines have to be replaced when re-generating the super.img? If so, can we dist the super_misc_info.txt for INTERNAL_SUPERIMAGE_DIST_TARGET?\n\n(Also the change should stay closer to L4590.)",
+      "range": {
+        "startLine": 4650,
+        "startChar": 13,
+        "endLine": 4650,
+        "endChar": 47
+      },
+      "revId": "b755e1fedc2c8bc14340f5c8d0180baa5725a8f9",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    }
+  ]
+}
