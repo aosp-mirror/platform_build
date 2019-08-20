@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "f839b0f5_00826d44",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-08-20T07:50:43Z",
+      "side": 1,
+      "message": "Yeah. I feel we\u0027d better change the progress in the device specific script to zero. Also, the script in atom computes the block difference and writes to script in IncrementalOTA_InstallEnd.\nhttps://partner-android.googlesource.com/device/harman/atom/+/refs/heads/p-tv-dr-dev/releasetools.py#278\n\nAnd I didn\u0027t find a way to prevent it and force these script compute block diffs in IncrementalOTA_GetBlockDifferences(). But when I run this cl on atom, I do get the error when writing duplicate patch entries to the zipfile. We can keep the current behavior, or add an assertion during the zip write to make it more explicit.",
+      "parentUuid": "243ccf9d_f70a3789",
+      "range": {
+        "startLine": 18,
+        "startChar": 5,
+        "endLine": 18,
+        "endChar": 14
+      },
+      "revId": "c680f104a3f87f62e8c1c3661727f5c50dfaed04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "a84144ce_63cbf5e3",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 5
@@ -45,6 +69,30 @@
       "revId": "c680f104a3f87f62e8c1c3661727f5c50dfaed04",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "1059987f_1c592e79",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 909,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-08-20T07:50:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a84144ce_63cbf5e3",
+      "range": {
+        "startLine": 909,
+        "startChar": 50,
+        "endLine": 909,
+        "endChar": 51
+      },
+      "revId": "c680f104a3f87f62e8c1c3661727f5c50dfaed04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     },
     {
       "key": {
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "a173ef35_2e22d239",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 913,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-08-20T07:50:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7d6131fa_ff52ef8d",
+      "range": {
+        "startLine": 913,
+        "startChar": 11,
+        "endLine": 913,
+        "endChar": 14
+      },
+      "revId": "c680f104a3f87f62e8c1c3661727f5c50dfaed04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "aa2867df_8cc358a5",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 5
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "16a2fc52_ee32f394",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 920,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-08-20T07:50:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa2867df_8cc358a5",
+      "range": {
+        "startLine": 920,
+        "startChar": 18,
+        "endLine": 920,
+        "endChar": 21
+      },
+      "revId": "c680f104a3f87f62e8c1c3661727f5c50dfaed04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "42681f96_a79d82e1",
         "filename": "tools/releasetools/ota_from_target_files.py",
         "patchSetId": 5
@@ -114,6 +210,30 @@
       "revId": "c680f104a3f87f62e8c1c3661727f5c50dfaed04",
       "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "6b8e228f_f9a51646",
+        "filename": "tools/releasetools/ota_from_target_files.py",
+        "patchSetId": 5
+      },
+      "lineNbr": 1709,
+      "author": {
+        "id": 1088085
+      },
+      "writtenOn": "2019-08-20T07:50:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "42681f96_a79d82e1",
+      "range": {
+        "startLine": 1709,
+        "startChar": 2,
+        "endLine": 1709,
+        "endChar": 21
+      },
+      "revId": "c680f104a3f87f62e8c1c3661727f5c50dfaed04",
+      "serverId": "85c56323-6fa9-3386-8a01-6480fb634889",
+      "unresolved": false
     }
   ]
 }
