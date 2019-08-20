@@ -358,6 +358,13 @@ else ifeq ($(PRODUCT_BUILD_USERDATA_IMAGE),true)
 endif
 .KATI_READONLY := BUILDING_USERDATA_IMAGE
 
+# Are we building a vbmeta image
+BUILDING_VBMETA_IMAGE := true
+ifeq ($(PRODUCT_BUILD_VBMETA_IMAGE),false)
+  BUILDING_VBMETA_IMAGE :=
+endif
+.KATI_READONLY := BUILDING_VBMETA_IMAGE
+
 ###########################################
 # Now we can substitute with the real value of TARGET_COPY_OUT_VENDOR
 ifeq ($(TARGET_COPY_OUT_VENDOR),$(_vendor_path_placeholder))
